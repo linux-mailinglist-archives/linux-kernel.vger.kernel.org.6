@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-281782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C49D294DB42
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:55:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B098994DB43
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E43F91C211B0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D97B1F21B96
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B109814A604;
-	Sat, 10 Aug 2024 07:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7ED014A624;
+	Sat, 10 Aug 2024 07:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="hmtiIhQd"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KzIonzyV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MZFq2thD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KzIonzyV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MZFq2thD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03E42F5E;
-	Sat, 10 Aug 2024 07:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B82C2F5E;
+	Sat, 10 Aug 2024 07:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723276498; cv=none; b=LzKZftKGvsx93bZ0he3CmHNhhAGl95V2NFNVgRj0HrkhgKh6DQPlENRuetWzwXTdA4NQd4IQrBeIW2P3YcTWbmW8jNdXwM2/uchz9hh9Hp7q77uKSBubZf3L93DPy5OVzLzXagISMy0X5ZJaCU7ILzGmFmpBt9wEhzCc6YRRjKY=
+	t=1723276626; cv=none; b=ZToRL1wzv0IcJXF1yyH5O/tPqR0M1T002Ee78k/8XInNYnViAN/b9v2wjf7ZhO+ph0JYyeDoYVN4Kr3J9iS3vWWs1dYgDEXfiW0DMzSFwmWRJrkKJMOg9jSv5iCoXNgtQgTiDxZFli4GZ17KR/7k32UKQOviCEdwHudUgD9tpNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723276498; c=relaxed/simple;
-	bh=Gj2/LU1fn1ts1+xFvoPFkT9HHYcdH9RWtfsun/iJSHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZOW56hU0Jy/Sr9pcIAysVA24pQ5e/Eny40TZi2RFIyyw3U/zpP6bfjLoLX6RmUnVYYoX0/buQaQB1SXDL0BFhqrUciRT4zMxBqFNS4kySuEO6qbh+3Ox4k+HjgbYV/FmBzMoqoB/xvum5T+H4zisKAz3OpyKZXM3dIDbN+Z3B8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=hmtiIhQd; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723276487;
-	bh=Gj2/LU1fn1ts1+xFvoPFkT9HHYcdH9RWtfsun/iJSHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hmtiIhQdkxLFZj/uSClqoPqAaFG/4Jm2DAeK+xfOW6sjBBAAIZ/Awl6HwRZozyhBH
-	 oscusCZ211sB8lUL5dTD2vBuF35diyUdb2j9aNrKDxYa4/hjH7W+Qoe3K88RgKIQxV
-	 C+6h91lwu9KBqAG8UA7vuJibxzCjCQwvc/DNI7Qs=
-Date: Sat, 10 Aug 2024 09:54:46 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <7e3cd6a0-a493-40bc-af2d-23fd1d344b6c@t-8ch.de>
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
- <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
- <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
- <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
- <66ef2ce9-5e7d-48fd-abeb-96e463d575ad@t-8ch.de>
- <nbr7h4owyxfdyd4olis7ccrh3ljz6gco6qf7p7uzttw5ijsquj@ws7iqib576rm>
+	s=arc-20240116; t=1723276626; c=relaxed/simple;
+	bh=NOFQbZhMWY3kji6rmTI3u/1KuA468HeSAuM7BUrlFYM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PuL3yAOyFDr1gXJtN2a0n/7X27yqWs+RsveyXA/j1hdokhA8dfU+m0cThS3G2owqeeooMeCPy86g7LmK2zC/tqQfaCmcZLcZGaPERLYuHhA/qlPJmsxLi8e/JLUwfLjnu1/NA4lRIPMqdvECkHK++7q516scwASHDjHn2K15aDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KzIonzyV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MZFq2thD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KzIonzyV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MZFq2thD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BCD8620066;
+	Sat, 10 Aug 2024 07:57:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723276621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpOEi5+FSjuXUxGTm0Z868dRm/7akdjBvOtYoiYVsY4=;
+	b=KzIonzyVRtz5XiGu/KkeDHp82aR31Riem7f+pWrlQj7FDLZDSPHS4nyeQ0mDf8rHMN7ohi
+	93MDls3AexFd2DYWk2pjkTWVf5xkL/4Wqnivr70clmJtllWoDIx0YN4DPplj1mvpCgfoxu
+	JtbAOJRNr7MoWnPku8TM3rXh3B9cv4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723276621;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpOEi5+FSjuXUxGTm0Z868dRm/7akdjBvOtYoiYVsY4=;
+	b=MZFq2thDTmC2daOn9dRJB/ygD226VSVEVeU3OnA2k6X9eEUJbIRgFbeorgvPj7fs2KWxkL
+	KOsGwBbUnHK1GFCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=KzIonzyV;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=MZFq2thD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723276621; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpOEi5+FSjuXUxGTm0Z868dRm/7akdjBvOtYoiYVsY4=;
+	b=KzIonzyVRtz5XiGu/KkeDHp82aR31Riem7f+pWrlQj7FDLZDSPHS4nyeQ0mDf8rHMN7ohi
+	93MDls3AexFd2DYWk2pjkTWVf5xkL/4Wqnivr70clmJtllWoDIx0YN4DPplj1mvpCgfoxu
+	JtbAOJRNr7MoWnPku8TM3rXh3B9cv4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723276621;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LpOEi5+FSjuXUxGTm0Z868dRm/7akdjBvOtYoiYVsY4=;
+	b=MZFq2thDTmC2daOn9dRJB/ygD226VSVEVeU3OnA2k6X9eEUJbIRgFbeorgvPj7fs2KWxkL
+	KOsGwBbUnHK1GFCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 90ACA13704;
+	Sat, 10 Aug 2024 07:57:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d6OIIU0dt2ZtGQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Sat, 10 Aug 2024 07:57:01 +0000
+Date: Sat, 10 Aug 2024 09:57:41 +0200
+Message-ID: <87jzgolsi2.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Parsa Poorshikhian <parsa.poorsh@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	tiwai@suse.com,
+	kailang@realtek.com
+Subject: Re: forgot to CC all relevant maintainers
+In-Reply-To: <20240809221755.352238-2-parsa.poorsh@gmail.com>
+References: <20240809181303.9882-1-parsa.poorsh@gmail.com>
+	<20240809221755.352238-2-parsa.poorsh@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <nbr7h4owyxfdyd4olis7ccrh3ljz6gco6qf7p7uzttw5ijsquj@ws7iqib576rm>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -2.01
+X-Rspamd-Queue-Id: BCD8620066
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On 2024-08-09 18:16:36+0000, Jose Fernandez wrote:
-> On 24/08/07 07:31PM, Thomas Weißschuh wrote:
-> > On 2024-08-08 02:02:59+0000, Masahiro Yamada wrote:
-> > > On Thu, Aug 8, 2024 at 1:41 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > > On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
-> > > > > On Wed, Aug 7, 2024 at 11:28 AM Jose Fernandez <jose.fernandez@linux.dev> wrote:
-> > 
-> > <snip>
-> > 
-> > > > > Lastly, I will never accept new error messages
-> > > > > with CONFIG_MODULES=n.
-> > > >
-> > > > Could you elaborate?
-> > > > For me this works fine with CONFIG_MODULES=n.
-> > > > (After having fixed the above issues so all subpackages are built)
-> > > 
-> > > $ make  allnoconfig pacman-pkg
-> > > 
-> > > Check the linux-headers log closely.
-> >  
-> > I see now, previously I was not on kbuild/for-next and had an old
-> > Module.symvers sitting around, hiding the issue.
-> > 
-> > ==> Starting package_linux-upstream-headers()...
-> > Installing build files...
-> > tar: Module.symvers: Cannot stat: No such file or directory
-> > tar: Exiting with failure status due to previous errors
-> > Installing System.map and config...
-> > Adding symlink...
-> > ==> Tidying install...
-> > 
-> > (coming from scripts/package/install-extmod-build)
-> > 
-> > linux-upstream-headers also contains .config and System.map which are
-> > useful without modules.
-> > So either we completely disable linux-upstream-headers or skip
-> > install-extmod-build when CONFIG_MODULES=n.
-> > And maybe move System.map and .config to some other package,
-> > which would then deviate from the original PKGBUILD.
-> > 
-> > Neither option feels great, but it probably won't make a big difference.
-> > If you have a preference, let's go with that.
+On Sat, 10 Aug 2024 00:17:56 +0200,
+Parsa Poorshikhian wrote:
 > 
-> Thomas, Masahiro,
-> Thanks for the feedback. It seems that System.map and .config are commonly
-> included in -header Arch packages. To avoid deviating too much and to address
-> the issue with install-extmod-build when CONFIG_MODULES=n, how about considering
-> something like this:
+> i forgot to CC all relevant maintainers in previous patch email, so this
+> reply would CC them. sorry for the inconvenience. this is my first time
+> doing merge request in linux.
 > 
-> mkdir -p "${builddir}" # needed if install-extmod-build is not run
-> if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> 	echo "Installing build files..."
-> 	"${srctree}/scripts/package/install-extmod-build" "${builddir}"	
-> fi
-> 
-> echo "Installing System.map and config..."
-> cp System.map "${builddir}/System.map"
-> cp .config "${builddir}/.config"
+> Signed-off-by: Parsa Poorshikhian <parsa.poorsh@gmail.com>
 
-Sounds good to me.
+I'm not sure which exact patch you're referring to.
+
+Could you rather just resubmit your patch with your proper
+Signed-off-by tag?
 
 
-Thomas
+thanks,
+
+Takashi
 
