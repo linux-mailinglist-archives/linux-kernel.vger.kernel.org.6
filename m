@@ -1,226 +1,311 @@
-Return-Path: <linux-kernel+bounces-282016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 993E094DE50
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 21:53:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7680594DE7C
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21D07282C7F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:53:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB4921F21AD4
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:05:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 283DB13D51A;
-	Sat, 10 Aug 2024 19:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gER3hwxT"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9771813D62C;
+	Sat, 10 Aug 2024 20:05:31 +0000 (UTC)
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB8713C83A
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 19:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3078E44C68;
+	Sat, 10 Aug 2024 20:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723319604; cv=none; b=faB3aRkr6HT1Xh1M+l5LGl0xECgQSq+kx0Ay07ct6TYPTFH0ivyZRIVGZ6eZo2JFJj9mHXCyx8ddZel/wRbOI9U4YxL1E46qjpU0XI/n8QB/t8f5ox87PIHdpSnsitlVK7r1eeTHIWpkBgBT6wIWOdyiF8UyWVoZppr6bNOnVMk=
+	t=1723320331; cv=none; b=PDwpMA9SpFyD48hnc7qOAxUxQ+qoCub490PFMZjWc1tXhXcp/cVuRKbnCoc0Kj9wvg4w3vqe05unoLtauqDeKZ3OhOmSgEbvkJorIhSlUiKmVK9w+3szNlSWpSawD2vICCRMgR69qp8cZtaCZDS/qgJnhbK5UTr2F7Aru8zvZdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723319604; c=relaxed/simple;
-	bh=BHIU2InSC64hLrVrzlFekZ0somTwM/HyiGBUHzA7vAA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=R/3pyTs/Sbpb++xIhxM+5L8rgmexjkg33tLJH6NFo/mFAvIPOsNNZBB81rjq4NBydZy7aeazPaHxJb8bkoax/c+Efh5+7bMoI6wZM1kKUOzTYnoWufOX9jAop1YZEt2JWHqaKiPOm3gHJdRaanAxoaS8rv1Gfb/Bu/Adg1pFH6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gER3hwxT; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d213dff499so60860a91.1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 12:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723319602; x=1723924402; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RT/8SZgyxy/IdolTekKRVwjoG2TSesGN9ly9JHx/q30=;
-        b=gER3hwxT61qgFIf3YE/JPvCQyiu+Tt7LiVmeTb5mzq6pumcJF2UIDewy/m7ykOzMbq
-         eNH7UnikQ0lVWcM0rbf//wLZrXo8WxPd1jf+suVVgWC+qJZEBElNXRg282E0UaON4Roo
-         Bg8e941BuhXigsHTYYab9fPzd2Vc0L31wByeY7KGafkMKSIe4rDUcuzC0QR3Xfd/8pUy
-         JE5KLzn69i54yY014to0ZPcUzw/yC7DOx9ePmVfEvT8zo77IhVbS8CFIDICgaebAx7QC
-         fOjx9lm2+tTl9KDQb0e8v7EIIeyKZai4po4/MHogQJUVcL0XJqri4aolD3qHSk7gRHgv
-         TvGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723319602; x=1723924402;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RT/8SZgyxy/IdolTekKRVwjoG2TSesGN9ly9JHx/q30=;
-        b=HAwUY+J3zHa9/t2cEWmJnuFAC4fJesl3/yc7oYqFmw74Hg+ZnhJIVyj4rrOtY9Snfp
-         0EpC99XLvqD5zw5y2fujUuf7S5ub9TLTs0gDe9Ij6nRII9NYQ/G/5+2oHImzynMk3shb
-         LALXyI0z820TYxGvmoDdb2VfwfRXFrKF7wDDVwRdHtxgvGDx7GVcIUAUPqQMm9DHMGPL
-         OGZlhW+eVDupkZKM9rcu0LbVdihxjoySZJdFtdUoGvNzezomV2ZYhZZ+mkwYj9NFJHZJ
-         DCOqcy+vj/+OsG1PUHtljzf0GHaE/mAzThAeq7MGZb0OjEV7EnM69HR1OiSkynXNoxfw
-         k8sA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvamFT+ZEaI2npRRkxPhqqvasFiuirzlzldNxvZ6T0sVZtyVS474j9CuAn8nn8z0uvG1BdeglUvnH16+bVWNfIVrxxvOgbOpBXa+D5
-X-Gm-Message-State: AOJu0YyXqFcigNfJtEo+uFXaO8LyIXnxTzRhSP1aoTlGadm36/dLin6z
-	IgJKUB9xffj44fvO7b4NJypDPnHXLx7tGzhwdanGF1U1ncCjGDxt
-X-Google-Smtp-Source: AGHT+IEyegN8ne/NBe7gxuyhDgh79XREsz5HAjvumAutY7om9XUbSM263saQc/jYpgj7FaBCSg9lHw==
-X-Received: by 2002:a17:902:d491:b0:1fd:d6d8:134a with SMTP id d9443c01a7336-200ae69dc2bmr40423735ad.11.1723319601970;
-        Sat, 10 Aug 2024 12:53:21 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bbb3a8desm14596535ad.281.2024.08.10.12.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 12:53:21 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com
-Cc: jserv@ccns.ncku.edu.tw,
-	ocfs2-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] ocfs2: Remove custom swap functions in favor of built-in sort swap
-Date: Sun, 11 Aug 2024 03:53:16 +0800
-Message-Id: <20240810195316.186504-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723320331; c=relaxed/simple;
+	bh=V8k+LowYYOyKVujwCvCYLKZqEzPBWcRIa/WNWwRJxt4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXZlOlabBHE6PIlja5Z+LrOXDH7Ck5mZV5M5PyIAchsGXmMJ9RXAI851JNPUlFvGlfoAumhfzACozZK8XMwHX4L1O5LoxeMrtz3RvaoC1vQgd0Qmpc/6Vlh729FHRaEGnXOz2mUC/ElI8paiHLfgRKqZlx67UXJ8UkkzTPg1rrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 4E34950; Sat, 10 Aug 2024 15:05:26 -0500 (CDT)
+Date: Sat, 10 Aug 2024 15:05:26 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Fan Wu <wufan@linux.microsoft.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org,
+	serge@hallyn.com, tytso@mit.edu, ebiggers@kernel.org,
+	axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+	mpatocka@redhat.com, eparis@redhat.com, paul@paul-moore.com,
+	linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Deven Bowers <deven.desai@linux.microsoft.com>
+Subject: Re: [PATCH v20 03/20] ipe: add evaluation loop
+Message-ID: <20240810200526.GA40028@mail.hallyn.com>
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-4-git-send-email-wufan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1722665314-21156-4-git-send-email-wufan@linux.microsoft.com>
 
-The custom swap functions used in ocfs2 do not perform any special
-operations and can be replaced with the built-in swap function of sort.
-This change not only reduces code size but also improves efficiency,
-especially in scenarios where CONFIG_RETPOLINE is enabled, as it makes
-indirect function calls more expensive.
+On Fri, Aug 02, 2024 at 11:08:17PM -0700, Fan Wu wrote:
+> From: Deven Bowers <deven.desai@linux.microsoft.com>
+> 
+> Introduce a core evaluation function in IPE that will be triggered by
+> various security hooks (e.g., mmap, bprm_check, kexec). This function
+> systematically assesses actions against the defined IPE policy, by
+> iterating over rules specific to the action being taken. This critical
+> addition enables IPE to enforce its security policies effectively,
+> ensuring that actions intercepted by these hooks are scrutinized for policy
+> compliance before they are allowed to proceed.
+> 
+> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
 
-By using the built-in swap, we avoid these costly indirect function
-calls, leading to better performance.
+(started at this longer than I care to admit)
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
-Note: Build test only.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
- fs/ocfs2/dir.c          | 12 +-----------
- fs/ocfs2/refcounttree.c | 13 +++----------
- fs/ocfs2/xattr.c        | 15 +++------------
- 3 files changed, 7 insertions(+), 33 deletions(-)
-
-diff --git a/fs/ocfs2/dir.c b/fs/ocfs2/dir.c
-index f0beb173dbba..fa5d0819a997 100644
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -3511,16 +3511,6 @@ static int dx_leaf_sort_cmp(const void *a, const void *b)
- 	return 0;
- }
- 
--static void dx_leaf_sort_swap(void *a, void *b, int size)
--{
--	struct ocfs2_dx_entry *entry1 = a;
--	struct ocfs2_dx_entry *entry2 = b;
--
--	BUG_ON(size != sizeof(*entry1));
--
--	swap(*entry1, *entry2);
--}
--
- static int ocfs2_dx_leaf_same_major(struct ocfs2_dx_leaf *dx_leaf)
- {
- 	struct ocfs2_dx_entry_list *dl_list = &dx_leaf->dl_list;
-@@ -3781,7 +3771,7 @@ static int ocfs2_dx_dir_rebalance(struct ocfs2_super *osb, struct inode *dir,
- 	 */
- 	sort(dx_leaf->dl_list.de_entries, num_used,
- 	     sizeof(struct ocfs2_dx_entry), dx_leaf_sort_cmp,
--	     dx_leaf_sort_swap);
-+	     NULL);
- 
- 	ocfs2_journal_dirty(handle, dx_leaf_bh);
- 
-diff --git a/fs/ocfs2/refcounttree.c b/fs/ocfs2/refcounttree.c
-index 1f303b1adf1a..4f85508538fc 100644
---- a/fs/ocfs2/refcounttree.c
-+++ b/fs/ocfs2/refcounttree.c
-@@ -1392,13 +1392,6 @@ static int cmp_refcount_rec_by_cpos(const void *a, const void *b)
- 	return 0;
- }
- 
--static void swap_refcount_rec(void *a, void *b, int size)
--{
--	struct ocfs2_refcount_rec *l = a, *r = b;
--
--	swap(*l, *r);
--}
--
- /*
-  * The refcount cpos are ordered by their 64bit cpos,
-  * But we will use the low 32 bit to be the e_cpos in the b-tree.
-@@ -1474,7 +1467,7 @@ static int ocfs2_divide_leaf_refcount_block(struct buffer_head *ref_leaf_bh,
- 	 */
- 	sort(&rl->rl_recs, le16_to_cpu(rl->rl_used),
- 	     sizeof(struct ocfs2_refcount_rec),
--	     cmp_refcount_rec_by_low_cpos, swap_refcount_rec);
-+	     cmp_refcount_rec_by_low_cpos, NULL);
- 
- 	ret = ocfs2_find_refcount_split_pos(rl, &cpos, &split_index);
- 	if (ret) {
-@@ -1499,11 +1492,11 @@ static int ocfs2_divide_leaf_refcount_block(struct buffer_head *ref_leaf_bh,
- 
- 	sort(&rl->rl_recs, le16_to_cpu(rl->rl_used),
- 	     sizeof(struct ocfs2_refcount_rec),
--	     cmp_refcount_rec_by_cpos, swap_refcount_rec);
-+	     cmp_refcount_rec_by_cpos, NULL);
- 
- 	sort(&new_rl->rl_recs, le16_to_cpu(new_rl->rl_used),
- 	     sizeof(struct ocfs2_refcount_rec),
--	     cmp_refcount_rec_by_cpos, swap_refcount_rec);
-+	     cmp_refcount_rec_by_cpos, NULL);
- 
- 	*split_cpos = cpos;
- 	return 0;
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 35c0cc2a51af..0e58a5ce539e 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -4167,15 +4167,6 @@ static int cmp_xe(const void *a, const void *b)
- 	return 0;
- }
- 
--static void swap_xe(void *a, void *b, int size)
--{
--	struct ocfs2_xattr_entry *l = a, *r = b, tmp;
--
--	tmp = *l;
--	memcpy(l, r, sizeof(struct ocfs2_xattr_entry));
--	memcpy(r, &tmp, sizeof(struct ocfs2_xattr_entry));
--}
--
- /*
-  * When the ocfs2_xattr_block is filled up, new bucket will be created
-  * and all the xattr entries will be moved to the new bucket.
-@@ -4241,7 +4232,7 @@ static void ocfs2_cp_xattr_block_to_bucket(struct inode *inode,
- 	trace_ocfs2_cp_xattr_block_to_bucket_end(offset, size, off_change);
- 
- 	sort(target + offset, count, sizeof(struct ocfs2_xattr_entry),
--	     cmp_xe, swap_xe);
-+	     cmp_xe, NULL);
- }
- 
- /*
-@@ -4436,7 +4427,7 @@ static int ocfs2_defrag_xattr_bucket(struct inode *inode,
- 	 */
- 	sort(entries, le16_to_cpu(xh->xh_count),
- 	     sizeof(struct ocfs2_xattr_entry),
--	     cmp_xe_offset, swap_xe);
-+	     cmp_xe_offset, NULL);
- 
- 	/* Move all name/values to the end of the bucket. */
- 	xe = xh->xh_entries;
-@@ -4478,7 +4469,7 @@ static int ocfs2_defrag_xattr_bucket(struct inode *inode,
- 	/* sort the entries by their name_hash. */
- 	sort(entries, le16_to_cpu(xh->xh_count),
- 	     sizeof(struct ocfs2_xattr_entry),
--	     cmp_xe, swap_xe);
-+	     cmp_xe, NULL);
- 
- 	buf = bucket_buf;
- 	for (i = 0; i < bucket->bu_blocks; i++, buf += blocksize)
--- 
-2.34.1
-
+> 
+> ---
+> v2:
+> + Split evaluation loop, access control hooks, and evaluation loop from policy parser and userspace interface to pass mailing list character limit
+> 
+> v3:
+> + Move ipe_load_properties to patch 04.
+> + Remove useless 0-initializations Prefix extern variables with ipe_
+> + Remove kernel module parameters, as these are exposed through sysctls.
+> + Add more prose to the IPE base config option help text.
+> + Use GFP_KERNEL for audit_log_start.
+> + Remove unnecessary caching system.
+> + Remove comments from headers
+> + Use rcu_access_pointer for rcu-pointer null check
+> + Remove usage of reqprot; use prot only.
+> +Move policy load and activation audit event to 03/12
+> 
+> v4:
+> + Remove sysctls in favor of securityfs nodes
+> + Re-add kernel module parameters, as these are now exposed through securityfs.
+> + Refactor property audit loop to a separate function.
+> 
+> v5:
+> + fix minor grammatical errors
+> + do not group rule by curly-brace in audit record,
+> + reconstruct the exact rule.
+> 
+> v6:
+> + No changes
+> 
+> v7:
+> + Further split lsm creation into a separate commit from the evaluation loop and audit system, for easier review.
+> + Propagating changes to support the new ipe_context structure in the evaluation loop.
+> 
+> v8:
+> + Remove ipe_hook enumeration; hooks can be correlated via syscall record.
+> 
+> v9:
+> + Remove ipe_context related code and simplify the evaluation loop.
+> 
+> v10:
+> + Split eval part and boot_verified part
+> 
+> v11:
+> + Fix code style issues
+> 
+> v12:
+> + Correct an rcu_read_unlock usage
+> + Add a WARN to unknown op during evaluation
+> 
+> v13:
+> + No changes
+> 
+> v14:
+> + No changes
+> 
+> v15:
+> + No changes
+> 
+> v16:
+> + No changes
+> 
+> v17:
+> + Add years to license header
+> + Fix code and documentation style issues
+> 
+> v18:
+> + No changes
+> 
+> v19:
+> + No changes
+> 
+> v20:
+> + No changes
+> ---
+>  security/ipe/Makefile |   1 +
+>  security/ipe/eval.c   | 102 ++++++++++++++++++++++++++++++++++++++++++
+>  security/ipe/eval.h   |  24 ++++++++++
+>  3 files changed, 127 insertions(+)
+>  create mode 100644 security/ipe/eval.c
+>  create mode 100644 security/ipe/eval.h
+> 
+> diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+> index 3093de1afd3e..4cc17eb92060 100644
+> --- a/security/ipe/Makefile
+> +++ b/security/ipe/Makefile
+> @@ -6,6 +6,7 @@
+>  #
+>  
+>  obj-$(CONFIG_SECURITY_IPE) += \
+> +	eval.o \
+>  	ipe.o \
+>  	policy.o \
+>  	policy_parser.o \
+> diff --git a/security/ipe/eval.c b/security/ipe/eval.c
+> new file mode 100644
+> index 000000000000..f6a681ca49f6
+> --- /dev/null
+> +++ b/security/ipe/eval.c
+> @@ -0,0 +1,102 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
+> + */
+> +
+> +#include <linux/fs.h>
+> +#include <linux/types.h>
+> +#include <linux/slab.h>
+> +#include <linux/file.h>
+> +#include <linux/sched.h>
+> +#include <linux/rcupdate.h>
+> +
+> +#include "ipe.h"
+> +#include "eval.h"
+> +#include "policy.h"
+> +
+> +struct ipe_policy __rcu *ipe_active_policy;
+> +
+> +/**
+> + * evaluate_property() - Analyze @ctx against a rule property.
+> + * @ctx: Supplies a pointer to the context to be evaluated.
+> + * @p: Supplies a pointer to the property to be evaluated.
+> + *
+> + * This is a placeholder. The actual function will be introduced in the
+> + * latter commits.
+> + *
+> + * Return:
+> + * * %true	- The current @ctx match the @p
+> + * * %false	- The current @ctx doesn't match the @p
+> + */
+> +static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
+> +			      struct ipe_prop *p)
+> +{
+> +	return false;
+> +}
+> +
+> +/**
+> + * ipe_evaluate_event() - Analyze @ctx against the current active policy.
+> + * @ctx: Supplies a pointer to the context to be evaluated.
+> + *
+> + * This is the loop where all policy evaluations happen against the IPE policy.
+> + *
+> + * Return:
+> + * * %0		- Success
+> + * * %-EACCES	- @ctx did not pass evaluation
+> + */
+> +int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx)
+> +{
+> +	const struct ipe_op_table *rules = NULL;
+> +	const struct ipe_rule *rule = NULL;
+> +	struct ipe_policy *pol = NULL;
+> +	struct ipe_prop *prop = NULL;
+> +	enum ipe_action_type action;
+> +	bool match = false;
+> +
+> +	rcu_read_lock();
+> +
+> +	pol = rcu_dereference(ipe_active_policy);
+> +	if (!pol) {
+> +		rcu_read_unlock();
+> +		return 0;
+> +	}
+> +
+> +	if (ctx->op == IPE_OP_INVALID) {
+> +		if (pol->parsed->global_default_action == IPE_ACTION_DENY) {
+> +			rcu_read_unlock();
+> +			return -EACCES;
+> +		}
+> +		if (pol->parsed->global_default_action == IPE_ACTION_INVALID)
+> +			WARN(1, "no default rule set for unknown op, ALLOW it");
+> +		rcu_read_unlock();
+> +		return 0;
+> +	}
+> +
+> +	rules = &pol->parsed->rules[ctx->op];
+> +
+> +	list_for_each_entry(rule, &rules->rules, next) {
+> +		match = true;
+> +
+> +		list_for_each_entry(prop, &rule->props, next) {
+> +			match = evaluate_property(ctx, prop);
+> +			if (!match)
+> +				break;
+> +		}
+> +
+> +		if (match)
+> +			break;
+> +	}
+> +
+> +	if (match)
+> +		action = rule->action;
+> +	else if (rules->default_action != IPE_ACTION_INVALID)
+> +		action = rules->default_action;
+> +	else
+> +		action = pol->parsed->global_default_action;
+> +
+> +	rcu_read_unlock();
+> +	if (action == IPE_ACTION_DENY)
+> +		return -EACCES;
+> +
+> +	return 0;
+> +}
+> diff --git a/security/ipe/eval.h b/security/ipe/eval.h
+> new file mode 100644
+> index 000000000000..b137f2107852
+> --- /dev/null
+> +++ b/security/ipe/eval.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2020-2024 Microsoft Corporation. All rights reserved.
+> + */
+> +
+> +#ifndef _IPE_EVAL_H
+> +#define _IPE_EVAL_H
+> +
+> +#include <linux/file.h>
+> +#include <linux/types.h>
+> +
+> +#include "policy.h"
+> +
+> +extern struct ipe_policy __rcu *ipe_active_policy;
+> +
+> +struct ipe_eval_ctx {
+> +	enum ipe_op_type op;
+> +
+> +	const struct file *file;
+> +};
+> +
+> +int ipe_evaluate_event(const struct ipe_eval_ctx *const ctx);
+> +
+> +#endif /* _IPE_EVAL_H */
+> -- 
+> 2.44.0
 
