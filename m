@@ -1,160 +1,361 @@
-Return-Path: <linux-kernel+bounces-281915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D406094DCEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:42:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2E094DCED
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31984B214EC
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527981F21A29
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316F715886A;
-	Sat, 10 Aug 2024 12:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFF01586CF;
+	Sat, 10 Aug 2024 12:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="dnrTkd9S"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBRCk0DY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6552416DC17;
-	Sat, 10 Aug 2024 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293600; cv=pass; b=mFsVYWWWCVliZl/yi+XBmkPPxW2MN1UiMHqxqx8oRqCYis6KuplHmd89tmAZcj+DnZGDgtNGju6bvKrsmW0wj7PxUeE4ymQA5sPIy0OxF3an8yAm52Imz2+9t7Ix9134adoLMTMPFIlwk0TX8L8ST3Lla0eX0ZC0UqMz4vQMlRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293600; c=relaxed/simple;
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XNRBTnsQXdv9VvMEw75Bigja7aQqHmmnAPyT/ktNoppqWJvTymLO9YSG8WLQw/+OgjnWiXwDyKnyJ9aR05liDCk9zgtNufMxFBBcYDmPbSDbAlhfERMBlvSNUrLHjxF2XbTIFPmzHvdzVXCsWEcN0XuoaNoXcDTfbzrilmpqS/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=dnrTkd9S; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-Delivered-To: angelogioacchino.delregno@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723293583; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QyH4Jwd6Yg/lZk16RtIbLj59ifl+n7IAOWwawevdrzZkyGl1vf/HWs8oVam+J1/Y0O9e5YBfwYWfvvAsltY382lXRV1NeSnrAtEkXrxfxvWwt18aV3Mud78OTpOAcijmaiCbUuOrRI/Oe/nhTRmVVJGjQj/gH3Zstv0u/vwhVuc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723293583; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=; 
-	b=QlNoixQi4+N3pIHjUYAGhfZjBJsdQPo6yr08em3TTlsZGUDf6S0X7Ap91R3mcMV0/9Zs2/rBKMpKiBg+ctmqM/99FWzCsGhRv2TAsx791VA32X2UqTIFKzLO62E4IgT6Mje6Av2o4zR90sYPS3nw7WvY7tHqRHo7ZvVsBxEeths=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723293583;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=;
-	b=dnrTkd9SWhYGrJ+/Tk3ZPwexyIF2n15RKjCfxksh12KUze0cwI75TaqgT/t7W/td
-	dvZ8NsNXuqDXbGA9rbMbUANzHfYttZl1YMtwK8TVRNPMGp5M8cbMMRQEHwHemP80poD
-	ioKw+dOSz8vJVFaHEVfskxE34ya9ZK8JFHMjpjggv9klLmLCb9v4kFC61JLAeSF4Fr8
-	fI8qQCNhCKRnmWYvVkGrRq2SlDEQ/rfPnEEk2wG0p4C9xpVu0Gf9XSc3nA57sfHXiJG
-	znOxFqKoVNOcx1efLcfJX8OgeB4dhR4xSbuwuy8tae7KUHJd32r2rh9FKKz1279d/rJ
-	J439K7+2HA==
-Received: by mx.zohomail.com with SMTPS id 1723293581631329.92947824948465;
-	Sat, 10 Aug 2024 05:39:41 -0700 (PDT)
-Message-ID: <77dc97aa009ae6eb54c616ac03cd85817836f0cf.camel@icenowy.me>
-Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for
- Series6XT
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Frank Binns <Frank.Binns@imgtec.com>, "matthias.bgg@gmail.com"
- <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, Matt
- Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "maarten.lankhorst@linux.intel.com"
- <maarten.lankhorst@linux.intel.com>, "wenst@chromium.org"
- <wenst@chromium.org>,  "mripard@kernel.org" <mripard@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, 
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, 
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,  "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>
-Date: Sat, 10 Aug 2024 20:39:31 +0800
-In-Reply-To: <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-References: <20240530083513.4135052-1-wenst@chromium.org>
-	 <20240530083513.4135052-5-wenst@chromium.org>
-	 <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 582851E86E;
+	Sat, 10 Aug 2024 12:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723293868; cv=none; b=CZZBWPLEgEgBSka1xVKhBXdGqhb1F4caExt9PVs9c3JwYJoKQ346N5GHe3vIyPbwLf+Gdh5mzRmaN7jQeIGHGPY3+wMErWipSiq0SQ24QixqiTlKzhF/xcPcHXLTPlF0z4oBhXjMtkLwfQBI7IVZz37J9SAffbVr2leWf1FIrwM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723293868; c=relaxed/simple;
+	bh=u0AAH4/SI9Mt5qQofVmjij+85q0umZRFDunjPco/8jo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SLwEyBo07BuSWcdfHGtqCkNrW8crQOAFgBE/5jldeJF58/9pbfkZb2NDco88BsPZD7Ejfa4gCK8sbNtEM5hzfcPNXciiusQRRAhogvDWR/6qUQFkyGnwck9XtgmTlDkHRlQ0XmxfMFXR4JMuEvxBifx3XtKgjoKjHXtqpjP8UYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBRCk0DY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A779C32781;
+	Sat, 10 Aug 2024 12:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723293867;
+	bh=u0AAH4/SI9Mt5qQofVmjij+85q0umZRFDunjPco/8jo=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=RBRCk0DYsknlwGR5P95YM4lJYNNk9TstM0STiGj7T2AGt1a0/+lizst3ZvCcMcE6P
+	 kN42twl00IF9qLTe4+657/j9n6jH+xbjCO6OidtMikpYZ6GJZlGxe17qiiTgOPvoYl
+	 jimAXb/U2j0kVGtz2dx9rCCWO1WuVB02p9eZN+YqKWTuRQyiBpwbsi/QwK11HEWfsm
+	 nyVeX710sDCYoLiwKS6+5b2IcF5ylqVZ43NUMCqnzsvva2U6bggV76R5mOQD6gCycF
+	 46TBMSxQXMR4a7hNaxZLSrjm2BUbu7icSh2yP60xGSiUAX9foeHa9mJNm98h29thbB
+	 qA2LJ7ebSHO4w==
+Message-ID: <561b467a-58aa-471c-8ea6-cd6ef927c287@kernel.org>
+Date: Sat, 10 Aug 2024 14:44:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <77dc97aa009ae6eb54c616ac03cd85817836f0cf.camel@icenowy.me>+zmo_0_
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: imu: smi240: imu driver
+To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
+ Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
+References: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
+ <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-=E5=9C=A8 2024-05-31=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 11:18 +0000=EF=BC=
-=8CFrank Binns=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is
-> > part
-> > of the Series6XT, another variation of the Rogue family of GPUs.
-> >=20
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > =C2=A0drivers/gpu/drm/imagination/pvr_drv.c | 1 +
-> > =C2=A01 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/imagination/pvr_drv.c
-> > b/drivers/gpu/drm/imagination/pvr_drv.c
-> > index 5c3b2d58d766..3d1a933c8303 100644
-> > --- a/drivers/gpu/drm/imagination/pvr_drv.c
-> > +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-> > @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
-> > =C2=A0
-> > =C2=A0static const struct of_device_id dt_match[] =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .compatible =3D "img,=
-img-axe", .data =3D NULL },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .compatible =3D "img,power=
-vr-6xt", .data =3D NULL },
->=20
-> I assume that by adding this to the list of supported devices we're
-> essentially
-> freezing the existing uapi. This concerns me, as we've not yet
-> started running
-> Vulkan conformance on any Series6XT GPUs and there's a chance we may
-> need to
-> make some tweaks.
+On 09/08/2024 13:16, Jianping.Shen@de.bosch.com wrote:
+> From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
+> 
+> iio: imu: smi240: driver improvements
 
-Is there anything in the Series 6 XT GPUs that will affect conformance
-test and need new ABI to drive? Well I think the GX6250 GPU has TLA
-despite AXE (and BXE) has none, but what TLA does seems to be for
-transfer jobs, which we already support by using fragment pipeline?
+?????
 
-In addition, if we add bits to the ABI, we can recognize the new ABI by
-raising the version number returned by the DRM driver.
+> Signed-off-by: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>
+> ---
+> 
 
-And, if my understand is right, I think we're keeping the command
-stream the same among different GPUs, so if the FWIF is changed, it's
-quite possible that every GPU, not only S6XT but also AXE will be
-affected too.
 
->=20
-> I'm not really sure what the accepted approach is to hardware
-> enablement /
-> experimental support. I'm not sure if it's sufficient to hide support
-> behind a
-> Kconfig option and/or module parameter or whether we just have to
-> hold this
-> patch back for the time being.
->=20
-> Thanks
-> Frank
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{}
-> > =C2=A0};
-> > =C2=A0MODULE_DEVICE_TABLE(of, dt_match);
+...
+
+> +	ret = regmap_read(data->regmap, SMI240_CHIP_ID_REG, &response);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Read chip id failed\n");
+> +
+> +	if (response != SMI240_CHIP_ID)
+> +		dev_info(dev, "Unknown chip id: 0x%04x\n", response);
+> +
+> +	ret = smi240_init(data);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Device initialization failed\n");
+> +
+> +	indio_dev->channels = smi240_channels;
+> +	indio_dev->num_channels = ARRAY_SIZE(smi240_channels);
+> +	indio_dev->name = "smi240";
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->info = &smi240_info;
+> +
+> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> +					      iio_pollfunc_store_time,
+> +					      smi240_trigger_handler, NULL);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "Setup triggered buffer failed\n");
+> +
+> +	ret = devm_iio_device_register(dev, indio_dev);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Register IIO device failed\n");
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(smi240_core_probe);
+> +
+> +MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>");
+> +MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>");
+> +MODULE_DESCRIPTION("Bosch SMI240 driver");
+> +MODULE_LICENSE("Dual BSD/GPL");
+
+Hm? How many modules do you have here? What are their names?
+
+
+> diff --git a/drivers/iio/imu/smi240/smi240_spi.c b/drivers/iio/imu/smi240/smi240_spi.c
+> new file mode 100644
+> index 00000000000..ac9e37ffa37
+> --- /dev/null
+> +++ b/drivers/iio/imu/smi240/smi240_spi.c
+> @@ -0,0 +1,173 @@
+> +// SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Robert Bosch GmbH.
+> + *
+> + */
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regmap.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/iio/iio.h>
+> +
+> +#include "smi240.h"
+> +
+> +#define SMI240_CRC_INIT 0x05
+> +#define SMI240_CRC_POLY 0x0B
+> +#define SMI240_BUS_ID 0x00
+> +
+> +#define SMI240_SD_BIT_MASK 0x80000000
+> +#define SMI240_CS_BIT_MASK 0x00000008
+> +
+> +#define SMI240_WRITE_ADDR_MASK GENMASK(29, 22)
+> +#define SMI240_WRITE_BIT_MASK 0x00200000
+> +#define SMI240_WRITE_DATA_MASK GENMASK(18, 3)
+> +#define SMI240_CAP_BIT_MASK 0x00100000
+> +#define SMI240_READ_DATA_MASK GENMASK(19, 4)
+> +
+> +static u8 smi240_crc3(u32 data, u8 init, u8 poly)
+> +{
+> +	u8 crc = init;
+> +	u8 do_xor;
+> +	s8 i = 31;
+> +
+> +	do {
+> +		do_xor = crc & 0x04;
+> +		crc <<= 1;
+> +		crc |= 0x01 & (data >> i);
+> +		if (do_xor)
+> +			crc ^= poly;
+> +
+> +		crc &= 0x07;
+> +	} while (--i >= 0);
+> +
+> +	return crc;
+> +}
+> +
+> +static bool smi240_sensor_data_is_valid(u32 data)
+> +{
+> +	if (smi240_crc3(data, SMI240_CRC_INIT, SMI240_CRC_POLY) != 0)
+> +		return false;
+> +
+> +	if (FIELD_GET(SMI240_SD_BIT_MASK, data) &
+> +	    FIELD_GET(SMI240_CS_BIT_MASK, data))
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static int smi240_regmap_spi_read(void *context, const void *reg_buf,
+> +				  size_t reg_size, void *val_buf,
+> +				  size_t val_size)
+> +{
+> +	int ret;
+> +	__be32 request, response;
+> +	struct spi_device *spi = context;
+> +	struct iio_dev *indio_dev = dev_get_drvdata(&spi->dev);
+> +	struct smi240_data *data = iio_priv(indio_dev);
+> +
+> +	request = SMI240_BUS_ID << 30;
+> +	request |= FIELD_PREP(SMI240_CAP_BIT_MASK, data->capture);
+> +	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, *(u8 *)reg_buf);
+> +	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
+> +	request = cpu_to_be32(request);
+> +
+> +	/*
+> +	 * SMI240 module consists of a 32Bit Out Of Frame (OOF)
+> +	 * SPI protocol, where the slave interface responds to
+> +	 * the Master request in the next frame.
+> +	 * CS signal must toggle (> 700 ns) between the frames.
+> +	 */
+> +	ret = spi_write(spi, &request, sizeof(request));
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = spi_read(spi, &response, sizeof(response));
+> +	if (ret)
+> +		return ret;
+> +
+> +	response = be32_to_cpu(response);
+> +
+> +	if (!smi240_sensor_data_is_valid(response))
+> +		return -EIO;
+> +
+> +	response = FIELD_GET(SMI240_READ_DATA_MASK, response);
+> +	memcpy(val_buf, &response, val_size);
+> +
+> +	return 0;
+> +}
+> +
+> +static int smi240_regmap_spi_write(void *context, const void *data,
+> +				   size_t count)
+> +{
+> +	__be32 request;
+> +	struct spi_device *spi = context;
+> +	u8 reg_addr = ((u8 *)data)[0];
+> +	u16 reg_data = ((u8 *)data)[2] << 8 | ((u8 *)data)[1];
+> +
+> +	request = SMI240_BUS_ID << 30;
+> +	request |= FIELD_PREP(SMI240_WRITE_BIT_MASK, 1);
+> +	request |= FIELD_PREP(SMI240_WRITE_ADDR_MASK, reg_addr);
+> +	request |= FIELD_PREP(SMI240_WRITE_DATA_MASK, reg_data);
+> +	request |= smi240_crc3(request, SMI240_CRC_INIT, SMI240_CRC_POLY);
+> +	request = cpu_to_be32(request);
+> +
+> +	return spi_write(spi, &request, sizeof(request));
+> +}
+> +
+> +static struct regmap_bus smi240_regmap_bus = {
+
+Not const?
+
+> +	.read = smi240_regmap_spi_read,
+> +	.write = smi240_regmap_spi_write,
+> +};
+> +
+> +static const struct regmap_config smi240_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 16,
+> +	.val_format_endian = REGMAP_ENDIAN_LITTLE,
+> +};
+> +
+> +static int smi240_spi_probe(struct spi_device *spi)
+> +{
+> +	struct regmap *regmap;
+> +
+> +	u32 max_frequency = 10000000;
+> +
+> +	of_property_read_u32(spi->dev.of_node, "spi-max-frequency",
+> +			     &max_frequency);
+
+Why?
+
+
+> +
+> +	spi->bits_per_word = 8;
+
+That's  default.
+
+> +	spi->max_speed_hz = max_frequency;
+
+Why? Core does it.
+
+> +	spi->mode = SPI_MODE_0;
+
+I really wonder why you need all this code...
+
+> +
+> +	regmap = devm_regmap_init(&spi->dev, &smi240_regmap_bus, &spi->dev,
+> +				  &smi240_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(&spi->dev, PTR_ERR(regmap),
+> +				     "Failed to initialize SPI Regmap\n");
+> +
+> +	return smi240_core_probe(&spi->dev, regmap);
+> +}
+> +
+> +static const struct spi_device_id smi240_spi_id[] = { { "smi240", 0 }, {} };
+
+Don't wrap it.
+
+> +MODULE_DEVICE_TABLE(spi, smi240_spi_id);
+> +
+> +static const struct of_device_id smi240_of_match[] = {
+> +	{ .compatible = "bosch,smi240" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, smi240_of_match);
+> +
+> +static struct spi_driver smi240_spi_driver = {
+> +	.probe = smi240_spi_probe,
+> +	.id_table = smi240_spi_id,
+> +	.driver = {
+> +		.of_match_table = of_match_ptr(smi240_of_match),
+
+Why did it appear? You introduce now warnings.
+
+
+Best regards,
+Krzysztof
 
 
