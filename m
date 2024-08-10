@@ -1,118 +1,164 @@
-Return-Path: <linux-kernel+bounces-281780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9CE94DB3D
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:40:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCD2A94DB3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:42:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B7E1F21BF9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:40:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45491C21126
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04D14A614;
-	Sat, 10 Aug 2024 07:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5990D142E62;
+	Sat, 10 Aug 2024 07:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMFN45cl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUPDCPvT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FE44409;
-	Sat, 10 Aug 2024 07:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964504409;
+	Sat, 10 Aug 2024 07:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723275642; cv=none; b=JNQRCyECnD7rQ6m/XZlnd9xtfeyFHctorNNQeJBZZhquJhOG2dmyK6TolK/s9ndi4k/V5ZkEcekaC6idVvkQ40ueqRqLRZvo8GXMJUBNDTfnm1tp81CHcbyGjbGwI3TyU4ezwCJPH6BFYIVKE0pq2BWcevciqKv9Bahrv0uhON0=
+	t=1723275732; cv=none; b=kmRgB0nwdAX3sielDZlPtr1JrH8xjRnCkZdcBUZm9go7j6qhadCLPbYTQ2DsKxjduMVKFDsGicSsdaikSdLQBsqhn7eZXLBt7wsj102YF0CiFjJZWUMgDGq+e4LQs6Dl8W4BFC4V2K+sw75vUME7WdM8hcG6OsyZhBRIyO5rEZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723275642; c=relaxed/simple;
-	bh=Nl4OXvIMotYY8Q5haHsAFwkxwm98GxGwhJj9xrOO2HM=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=caaJV3vWhYmVzsrhIbFa2Asr+lFsVJorYQXSIDFYrAYCkzc0YhIxj6wpiytNiuEOjpnynav0gAy+JZ9Q6RM1Ml1I4C86/R3UUzIu9qFVh91goB895BWpX9ieiuGpOhbJNbo7Kej0PgHrHMooQxvzdYjm7CmRdPvqknYF9sbKRLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMFN45cl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10228C32781;
-	Sat, 10 Aug 2024 07:40:39 +0000 (UTC)
+	s=arc-20240116; t=1723275732; c=relaxed/simple;
+	bh=venEbJeLY1keYVx1mBsecVmKdgZyvzJTRYHNngVs3+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aiAzqEqOQY2qmjXhqNxy09FPp17ZzIjsgp5V7M5OJMomNN5D0zyHyN9HuUMnaG59Z7QXAV0mOqKZnzib+s59QLEltzd7jCfL0WN8og4PoinTd2l4CSrAuv9aKSPYmnJ67HdVl4LXhWzQf8V/hbLmi0xlMBdCHV2DgQ4WGuT4Y9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUPDCPvT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28825C4AF0B;
+	Sat, 10 Aug 2024 07:42:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723275641;
-	bh=Nl4OXvIMotYY8Q5haHsAFwkxwm98GxGwhJj9xrOO2HM=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=AMFN45cl3GpwU/lkaJfHgWJznULD3wnjCEP2DnpKPRAckch0vUiNbLpYlZIZ88S6s
-	 T/rPXslunD5T4G8yDM28Upn8QFszVYune9pejqu0WlbRLZqvgp6PJhkXcidCoAX5ku
-	 epFg9gd0kJ8N/g92xNPXpTC8Qj87yMS1Pp1HDQWHTbGuQb/wZ7mDwyjCwzMzsu+qiA
-	 wo4fCVMkly7QD+jJ8rqO/z+WvekaTRolfc59ZXRE1NbleUbttbpCOBcUNuStwvDLJt
-	 KZfma8pDxlTKQS5j09dhOuTbatVZJlM4wv7i47xMsz7LXVYR8HR/KVf/KGGEnndcK2
-	 ZlED+gd4cNDFw==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723275732;
+	bh=venEbJeLY1keYVx1mBsecVmKdgZyvzJTRYHNngVs3+g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cUPDCPvTchI1Jb6Jjb/lHf8FbeH/a+ZPqA1iAotDA86PuhSKRSPtJNAhhSJ7fRJrY
+	 8/AA5m2NMx1X6QUiTCsl+Pyeo7ioSSXYr13n8/JsnooOWN8J8y9+dFwfn2cU+1f2QT
+	 EBmW/TMM0UMBq/TaK3ukWicv1Bu5ndM1J7u2KpCVW8HOitIk7qkWwmR8F1VJ/qEgnS
+	 ySTiAhrdgZhYOJSEgGNnNLd6hlUXpXcFruME0ypLYzQX7XzKi+Uz/aTm1AxpD0nIEQ
+	 XfcTbiTlREL4ujIU+pEOreZAYYFWPMm4TQ8bwBm4oVH3HQHM9AtPql0t1ju93W9cTs
+	 MHrdp0xacnY8Q==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f136e23229so29277551fa.1;
+        Sat, 10 Aug 2024 00:42:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWnoepb5U5GxOrWXwtI+AdFBUc1pOMMR/JpYpjqMGMy9H3hFdzeWPoAot6xKqYQMixdjzULTFsFYHVTZ3t+GpJlcWzv09qRgduGkdOZA44CLacnLCxcdDtQ7C6jMI2pdSEmGI8q9/aWvsW6
+X-Gm-Message-State: AOJu0YzA90acQUlbKOdlHnsx0zTbW1CtN7tRIlValY/ZvajhTADXODvX
+	+Rhqo71mpmr+Td6Ro07b+Y7PIk5LHvg1u3DB7XsNt68369ywqnHWxrHriDMfZnmztt0GCu6+irg
+	dQ35KpdPMOjQWUCTQIay5HNxqido=
+X-Google-Smtp-Source: AGHT+IHNg1VsiJ/dt4/RADK6EgqhfrzkjF7X9d3+6AzFYJOjDUsk8UDfdHd/jN6I6sQ4gSg1D3YJLuvZMfiSXIN2uJk=
+X-Received: by 2002:a2e:5109:0:b0:2ee:7c12:7b36 with SMTP id
+ 38308e7fff4ca-2f1a6d0e42dmr29516321fa.19.1723275730799; Sat, 10 Aug 2024
+ 00:42:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [next] wifi: ipw2x00: libipw: Avoid
- -Wflex-array-member-not-at-end warnings
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <ZrJqtUpCI+uCeb4D@cute>
-References: <ZrJqtUpCI+uCeb4D@cute>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- linux-hardening@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172327563820.395581.15278397593129937648.kvalo@kernel.org>
-Date: Sat, 10 Aug 2024 07:40:39 +0000 (UTC)
+References: <20240807022718.24838-2-jose.fernandez@linux.dev>
+ <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
+ <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de> <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
+ <66ef2ce9-5e7d-48fd-abeb-96e463d575ad@t-8ch.de> <nbr7h4owyxfdyd4olis7ccrh3ljz6gco6qf7p7uzttw5ijsquj@ws7iqib576rm>
+In-Reply-To: <nbr7h4owyxfdyd4olis7ccrh3ljz6gco6qf7p7uzttw5ijsquj@ws7iqib576rm>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Sat, 10 Aug 2024 16:41:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQ0CDceJNAhD-RbE3Ph0Q+UOqk1=M6k3tEKb_5j9j2GNw@mail.gmail.com>
+Message-ID: <CAK7LNAQ0CDceJNAhD-RbE3Ph0Q+UOqk1=M6k3tEKb_5j9j2GNw@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
+On Sat, Aug 10, 2024 at 9:16=E2=80=AFAM Jose Fernandez <jose.fernandez@linu=
+x.dev> wrote:
+>
+> On 24/08/07 07:31PM, Thomas Wei=C3=9Fschuh wrote:
+> > On 2024-08-08 02:02:59+0000, Masahiro Yamada wrote:
+> > > On Thu, Aug 8, 2024 at 1:41=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@w=
+eissschuh.net> wrote:
+> > > > On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
+> > > > > On Wed, Aug 7, 2024 at 11:28=E2=80=AFAM Jose Fernandez <jose.fern=
+andez@linux.dev> wrote:
+> >
+> > <snip>
+> >
+> > > > > Lastly, I will never accept new error messages
+> > > > > with CONFIG_MODULES=3Dn.
+> > > >
+> > > > Could you elaborate?
+> > > > For me this works fine with CONFIG_MODULES=3Dn.
+> > > > (After having fixed the above issues so all subpackages are built)
+> > >
+> > > $ make  allnoconfig pacman-pkg
+> > >
+> > > Check the linux-headers log closely.
+> >
+> > I see now, previously I was not on kbuild/for-next and had an old
+> > Module.symvers sitting around, hiding the issue.
+> >
+> > =3D=3D> Starting package_linux-upstream-headers()...
+> > Installing build files...
+> > tar: Module.symvers: Cannot stat: No such file or directory
+> > tar: Exiting with failure status due to previous errors
+> > Installing System.map and config...
+> > Adding symlink...
+> > =3D=3D> Tidying install...
+> >
+> > (coming from scripts/package/install-extmod-build)
+> >
+> > linux-upstream-headers also contains .config and System.map which are
+> > useful without modules.
+> > So either we completely disable linux-upstream-headers or skip
+> > install-extmod-build when CONFIG_MODULES=3Dn.
+> > And maybe move System.map and .config to some other package,
+> > which would then deviate from the original PKGBUILD.
+> >
+> > Neither option feels great, but it probably won't make a big difference=
+.
+> > If you have a preference, let's go with that.
+>
+> Thomas, Masahiro,
+> Thanks for the feedback. It seems that System.map and .config are commonl=
+y
+> included in -header Arch packages. To avoid deviating too much and to add=
+ress
+> the issue with install-extmod-build when CONFIG_MODULES=3Dn, how about co=
+nsidering
+> something like this:
 
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> So, in order to avoid ending up with a flexible-array member in the
-> middle of multiple other structs, we use the `__struct_group()`
-> helper to create a new tagged `struct libipw_hdr_3addr_hdr`.
-> This structure groups together all the members of the flexible
-> `struct libipw_hdr_3addr` except the flexible array.
-> 
-> As a result, the array is effectively separated from the rest of the
-> members without modifying the memory layout of the flexible structure.
-> We then change the type of the middle struct members currently causing
-> trouble from `struct libipw_hdr_3addr` to `struct libipw_hdr_3addr_hdr`.
-> 
-> We also want to ensure that when new members need to be added to the
-> flexible structure, they are always included within the newly created
-> tagged struct. For this, we use `static_assert()`. This ensures that the
-> memory layout for both the flexible structure and the new tagged struct
-> is the same after any changes.
-> 
-> This approach avoids having to implement `struct libipw_hdr_3addr_hdr`
-> as a completely separate structure, thus preventing having to maintain
-> two independent but basically identical structures, closing the door
-> to potential bugs in the future.
-> 
-> Also, remove a couple of unused structures `struct libipw_ibss_dfs` and
-> `struct libipw_assoc_request`.
-> 
-> So, with these changes, fix the following warnings:
-> 
-> drivers/net/wireless/intel/ipw2x00/libipw.h:403:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:420:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:433:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:441:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:447:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:460:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:468:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:476:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> drivers/net/wireless/intel/ipw2x00/libipw.h:592:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-Patch applied to wireless-next.git, thanks.
+I am fine.
 
-089332e703b6 wifi: ipw2x00: libipw: Avoid -Wflex-array-member-not-at-end warnings
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/patch/ZrJqtUpCI+uCeb4D@cute/
+>
+> mkdir -p "${builddir}" # needed if install-extmod-build is not run
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+This comment might not be necessary if you move this code
+right before copying System.map.
 
+
+
+
+> if grep -q CONFIG_MODULES=3Dy include/config/auto.conf; then
+>         echo "Installing build files..."
+>         "${srctree}/scripts/package/install-extmod-build" "${builddir}"
+> fi
+>
+> echo "Installing System.map and config..."
+> cp System.map "${builddir}/System.map"
+> cp .config "${builddir}/.config"
+>
+> Thanks,
+> Jose
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
