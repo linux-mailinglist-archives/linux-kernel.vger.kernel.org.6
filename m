@@ -1,565 +1,214 @@
-Return-Path: <linux-kernel+bounces-281716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE0194DA3E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:52:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78EE894DA3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:05:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10E98B21C02
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:52:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 961951C21259
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481661339B1;
-	Sat, 10 Aug 2024 02:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109CF446A1;
+	Sat, 10 Aug 2024 03:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4mVwyJi"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="e5uM41eX"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E3842069;
-	Sat, 10 Aug 2024 02:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723258350; cv=fail; b=PQ9Tk4k3+XwTb4W1kSI0XDtGtKCMvunkPofHe9uM11LGBBTojjfAfzEsevozy15cpgh/AMB3dQT8TUbexDHRpv6Mdw1nb7pRZH/EP9FmM0eLs/EEDejlmMnaKKmVqNyukjvZFO1jpooFlqu/zjM+l5R2haQYjN4eRCOK5A0NTT0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723258350; c=relaxed/simple;
-	bh=bNv1TD87V5Lcby4Nh264fstPxVDxkVPUJaCGYbOc8Y0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jCAPShBUXPJ5JqN4gf9ZQ7CO1NeZgXBIA4c5eSTPWnWlaVUQsu5mELb4RSj45OMejSD56563+THPxIKZKlYziBT6a9Lmx+SOXLCvKbs+yNaS0ZWRgW+JZH4eu2QJZ7vln6ahjkxTT6v1X6VbVwdHE95+LJ2aiNCqaJwjsVQSIvo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4mVwyJi; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723258348; x=1754794348;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=bNv1TD87V5Lcby4Nh264fstPxVDxkVPUJaCGYbOc8Y0=;
-  b=J4mVwyJixUiRiaSR2pknejdNXmMFIZUic4w4QYZ1PS/aqUnJIcVvUi4s
-   Vw6t6su38wFNORixGpoTGsUR7GY4FxJC5/2Te24SU/zt1v51zMNoBRXpf
-   K8Li1BGlntiw9573FM5exWlcVgF8pC2jeSU+CWv6YPBHJCFc2v7Bkk02A
-   SKfW+jiGAiVH5+hJ50HBPM4YeD05qlGhNNrzr8C3dLsk7cA+RT6jBzPD3
-   gEhce804kvbmD3m/BZzYJh/gIABtv793jJ3aOL1xcWih9NBW1jbZsd/+8
-   DAL1DjU9uHUkBdiFPuYJ6LNMd6ehTB5JDFhhIJOgEWYjf/r2DjDZ7hTKe
-   Q==;
-X-CSE-ConnectionGUID: xed94sXsTTmtsVn/hbydzQ==
-X-CSE-MsgGUID: 3vKcJG4sTIO4gnpVy2SftQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21253707"
-X-IronPort-AV: E=Sophos;i="6.09,278,1716274800"; 
-   d="scan'208";a="21253707"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 19:52:27 -0700
-X-CSE-ConnectionGUID: AxcmT74TR+aVaNcyNuJ6Tw==
-X-CSE-MsgGUID: M35MOSKfQyi6iqRbJlMfUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,278,1716274800"; 
-   d="scan'208";a="88387927"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa002.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Aug 2024 19:52:27 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Fri, 9 Aug 2024 19:52:26 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Fri, 9 Aug 2024 19:52:26 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.171)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 9 Aug 2024 19:52:25 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RW+ScuEoDRgEzX8UaL63g8PGfPvKdNYMzTmNyrkfAipx/aSMvx4awzRUcBNay7BngCho+Nxfbts8KibbVEu+z9036qvkA8hcScf9SjI9C6PWW5ljEce+ROZQzGenBYMVZw381FSYuEzO7A0WI3G+OOytAiBvFQiLJENnXV3fYDYRLge1wX1WsiPscSJSsphV+YYZkIfInqBPBAP+PGIaAEEsdyTdJHzkTgsJAGFC9iLROTdN1yxy953bzIi6il8MQ/yfyXD/kisxoQKVeRHO7dJ9LvBlk5TgNr+n4o+SVKtjxnGbhsJkp9mL54KCfXDakZXRE8B0zX3hk7EpotWZnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/2+1Q3jdA0RgO0Yrlu+p9VQ+vr78WU/ivj5hHZRYD4Y=;
- b=IvOMmYNn2xWveIp+WPBmNu9Izasw/QdlGTf41jfUwwA7OF/BMlUMxDHlIgHp2nv1M3iwTDrj00YPE4mTyOsncRF5TO4rmGqvnpFeK9NdDZpAijiPcbUfO1tkB0CMYiJFwnmWtPy0dKG+iw1ERWXPjT61oXd4cU1KMOwQu7EGg9vzjceRo2h4QXyiH8u2YXKPXuJWZ1Avfie7bsCsvNOlYFJ68P8qQrab/N199w31N+4sCiN08mkNiCUWbPlFVInCL4b+NUxl16lv2kHt5EVsjfKurucwfhJDIGFrucMEe6qFMzQm9SkVYpyP9g8vN26OijYvhMY5pKj0X8K8xiowAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
- by PH0PR11MB7447.namprd11.prod.outlook.com (2603:10b6:510:28b::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Sat, 10 Aug
- 2024 02:52:23 +0000
-Received: from IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
- ([fe80::dd3b:ce77:841a:722b%3]) with mapi id 15.20.7828.023; Sat, 10 Aug 2024
- 02:52:23 +0000
-From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
-To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal
-	<sumit.semwal@linaro.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
-	<christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-Subject: RE: [PATCH v2 4/4] udmabuf: remove folio unpin list
-Thread-Topic: [PATCH v2 4/4] udmabuf: remove folio unpin list
-Thread-Index: AQHa5udGaTCYZnNxL0+aEZr4pYOeeLIeHMAw
-Date: Sat, 10 Aug 2024 02:52:22 +0000
-Message-ID: <IA0PR11MB7185115BF4B741E9229D0E68F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
-References: <20240805032550.3912454-1-link@vivo.com>
- <20240805032550.3912454-5-link@vivo.com>
-In-Reply-To: <20240805032550.3912454-5-link@vivo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|PH0PR11MB7447:EE_
-x-ms-office365-filtering-correlation-id: 6cd7c5a5-aee8-48ee-6969-08dcb8e775a6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?iso-8859-1?Q?ZAL8cVTCrNzC5SboGT8udKjki46hRidsyuOjxgwenSuJUtMMWNLnskVryV?=
- =?iso-8859-1?Q?X4ST/XTrPXshsZz5L4Ji5bMWgYu5YZ0jS7Mh6MJENb1YbQHEAC8YoyYMmS?=
- =?iso-8859-1?Q?ST7qlMlvE3lwM6YKmo1hV/qvFakAuTXE8ru0aZ8dnPbrjJX+z0opJJSKLi?=
- =?iso-8859-1?Q?GBsCVYsQBgcKHYmwaGmiME5/khEu87/MxFgICFHC41n851QY9AqSz9eKA0?=
- =?iso-8859-1?Q?ZnkdFkmpz3nnCXAsM6gLo2tRCtqSMZKb91sPTha18fi7qirKfEKohYPjTf?=
- =?iso-8859-1?Q?mPVgi1l02ccz4hlmYzS8Ay/jfbDJ6tpVvB8ze3IkN5BjnqGRJSvW5ONTIY?=
- =?iso-8859-1?Q?dAPHt6kiNEEterxZ2yrt96Rsta6HD/aCYpyQNRpNehJLP4E5+NcVqurMoV?=
- =?iso-8859-1?Q?ygCpRWZWS/1rb/bfoGYQ91uYy/1fqjDXvjqFeGnAdm9ToMyOgtt0UN72HS?=
- =?iso-8859-1?Q?zBgSVlbphmpVMasHvlAFuMlBFM6UfPVjLxivd4W/3mm9+DX54MOTz3pbQJ?=
- =?iso-8859-1?Q?y4cm3eW4iOI7KoRoc2eqRSo9877mZs3KN3iFqLdyDPKwJ47x3P7VjYpeBV?=
- =?iso-8859-1?Q?2DE4bXPdRAVh9dhuWvvmgSJdbRvIfavb6tJZJW8bTFek4J6Q2XbFWOlw7m?=
- =?iso-8859-1?Q?cgVedZyiYP87qoC3nBbb56ddFCrOXiuWueI7ThXVfDer3nGl818n/OAfIY?=
- =?iso-8859-1?Q?a11lMvfoqnB6ON8BwA2+7IGdyJ1OUnGTJg/yJtZ8eETlyQ6n+gomEC6wYy?=
- =?iso-8859-1?Q?EFQoD4nUsCLasoOZw68JF3L31BD++LuIAmvisoh7WAh68DfR0LJh8SI/eN?=
- =?iso-8859-1?Q?s94Qa8yp4SeSP5IL9XWGQAe8/ZUvoTqjUgE8jSg9hcG18GuEhrWUkWpyvD?=
- =?iso-8859-1?Q?ITXEb8j/D54EFppeBXmNUBUo1lPw9WKHfxu0Wm4PwVkjxllU/tKyPlAIJq?=
- =?iso-8859-1?Q?R+GC7GmqwcAxSupUq/dBbT23H3756HYHNWb6rDS+JlsKm/Kj6UEfQkd+zj?=
- =?iso-8859-1?Q?z8ISqjoxyBbpBD/3QJBHzmFxJeVVe/xI/WDEZu0wANups2M3YUAk0Btdne?=
- =?iso-8859-1?Q?MRiGvQdBB2EDFtYf584ozfzhfYLy44WNLGZiI6/T+SVsGyxlelP9iST7eK?=
- =?iso-8859-1?Q?+qPLNUzI4HcUEUD4aYc6hhfz7jDtoKbwwS4WzSWpOKSHK2JYUFQhJRZ2xj?=
- =?iso-8859-1?Q?kkMdrG6bjYvlSsN17CcDJgQsUHogBGNi3okpz0/SDMQprgZ9ukfNaI/Gpv?=
- =?iso-8859-1?Q?qO5ftzavgvGEKZNFxT7+1S4hGbm/MgWd5uIOv9KjG2RlM6K70I2KB95NQU?=
- =?iso-8859-1?Q?5wOIyl5gDzwAmn9MF2pZZCjceH+lRdQDXw7Dc851vbrCyf3N4KeByfRhkY?=
- =?iso-8859-1?Q?1YnMmFYw/Xmi5tJ3eFa5DB1Xt+Yz1sNzBpAEGyfKqh3b5ngksfCNrbKDX4?=
- =?iso-8859-1?Q?nywNwhhANnZaraaAggANaPZpnDgVxVyGmZmgHw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?24xcR2iN2Y3x8SaaZJjm1meh2uHr94AXM3908GU/dDEdPcKVPvqzP+UCst?=
- =?iso-8859-1?Q?gkZ0IxzSw23xO6YwVrVBXbRnJz8Dgfh9PI0/8SIodZLZubDquZh7J06FmS?=
- =?iso-8859-1?Q?C3obvODFb3SO48Mch4Q15dZTq7piFdXxXKHzaSgUoinm3riwMzBJuv2Pg9?=
- =?iso-8859-1?Q?KfSgkJJd+e9yYznJoepV+cTyiY5o0ZM44fut9ppRm/CehLs+SF1mn5AvZ8?=
- =?iso-8859-1?Q?oN3OnMvoQzphLuVz5FfFnCVgH7kOr1rbHvqpk3HnaB4hLOhdbfMd06zzeJ?=
- =?iso-8859-1?Q?1B+ZjwQTjbLM/trJswbTNdexthexozgoU9d3r5rJLNzeBXYs+ayKvfmicC?=
- =?iso-8859-1?Q?9ywaL8m2BPGbp7FsReCJHJrU6+cJdBF+o0ZN+BBPiNVG+Q7Q9nudacN8N4?=
- =?iso-8859-1?Q?oMLbmWF6KJOL+Ojd0SNvKAQr0/yNFP7CWP2pgFWIO/AFDZaPuuqZPtRlpa?=
- =?iso-8859-1?Q?ywnAKrApPkZY8ItcTSo29J7qF4P7vnzT4FqVJuXSsmurWxzFpWT1mf6bKL?=
- =?iso-8859-1?Q?0LupBV1nFudQ6kdVJ2ciHJQnjbC1wQVGsPMTJO6KWMf0S5DCN3kpe/jPqE?=
- =?iso-8859-1?Q?XkQ9KF+HjX8j5qBwmCSTjgnNey4E4pJfpwLE0CZQtbW7FNZEDoQ2IyAXvE?=
- =?iso-8859-1?Q?12mx2dKuRrMoWo9iRM9Ltz6VV9L2vC3VYOLq4aNk2ji+QIe7T3rN9aEmnS?=
- =?iso-8859-1?Q?ppwFdHF3qtRQXhabGJwh47s2WqQyfQypazcJguLUovvmil2qxfRMF7I2oA?=
- =?iso-8859-1?Q?zg8+u0yO70yAsqHJ4FeeuIsook9GRejmVSAvgiv9rDnQLxe+mhGdZU0Ftm?=
- =?iso-8859-1?Q?0Q/cdQjfKoQ145+KVjxRGKpu1aSVic0/JWEGR8J8rHU0lqkH5jecwDQDGV?=
- =?iso-8859-1?Q?+IlYAiZ3fZ2hCGxYhwP526a9pro5qRh+rs17K732cXYDrlKYQC1JGv4BCz?=
- =?iso-8859-1?Q?Kc4wtMgzUWvDfxTmTbT7NDSbjgtbdYOxNnYtcbKIYk+m8AfhiSub2bY3LC?=
- =?iso-8859-1?Q?1zVjGZQ4RnbwgeXMl08+wsCMcU0s2J4CPnY/VPEA+StDJwOiZ4Pvfi0XS/?=
- =?iso-8859-1?Q?RnitxrAYBbxwThZ8B2P8ICkW2PRq5GTbNLatEX42Bm7qoKknCYwogFq+65?=
- =?iso-8859-1?Q?3TdIl9I7Tp2Vvb8BEXjYh/lei7mVSwLMxI2eDHM6N+R1lAXmq3Q2tSEzJ0?=
- =?iso-8859-1?Q?RdybByyr3eIcrWU9aW6eJ4AgpYFj3H8dhBynbj0OP3ehFBn2flnb/3yFlz?=
- =?iso-8859-1?Q?nH7q3q+11H3SeC27ZRhpfQOp68VMYp5gknl8y5ue5IXACLyZXZG1ORE7WO?=
- =?iso-8859-1?Q?fAHhzKQiyzmiS3gZDydYCtWJtELbwQmslP8xEjWL+T05u1m0vzrz9IX8Pl?=
- =?iso-8859-1?Q?ydknAuSN4z+a9p++D8VICn+8ECnYKrIkgv5t8259L9t0JmIIdbuzjP++4/?=
- =?iso-8859-1?Q?pgIJogXp3+xp0En2HbcrxWY1grY1YCRbwGRbbbSzxv3tHlBkjfce0G3r3a?=
- =?iso-8859-1?Q?uxNy5ULSzw/7x0qC4g8Lh9+D4MnOAmpEs7jzb+Kz4KX7B2tf/EbNb+LvD4?=
- =?iso-8859-1?Q?xv+Hws+uhKzf7TLPy5wCeeFyuL1vQJZhiM9PlJJuWGALp2mRcpBWjYdpVi?=
- =?iso-8859-1?Q?5K+ETVYw+LR6TFKacrH7bcp8f9U9KxTN+c?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3291DFEF
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 03:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723259099; cv=none; b=ITDo2ezoPSToQQOECwr+bP05UufsE0jTTDLfXAvqP0MIDH3wGVbnByi1yFJDfui7o+q2eXBln1iDIxM60d3j29AohzhL7P6CFLlSeZw2wrQGt4+n7b9Ehp4Y98OXKV/lWeTiK8BIMPw+EbOakEyYImTx8t4KyI9TXcKVS7IxMu8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723259099; c=relaxed/simple;
+	bh=a+n2chq7GDDziB8UnHBJdV4UnaciuVrR1vmYsk4Wd1I=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=LWWrR96bG5nZpwqMZF2wJxInKe056GZUFSki/bEIehZzqnVG3TDLw4r9XwZOh5/mU4Z6JQT9IxfikCnaVMjT37m4U7MhRd8eFy0FkVFSwuC5O7PC/R6DwbI1H5h24+XHF7Ub60LCmz/1rhnBID6ioNlRBEjGsD90aIeszCdGMN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=e5uM41eX; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723259092; bh=pxKu+KH/Wuah9nqEGGwHYdMyUoXc/vJ6Ahll6JMFerU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=e5uM41eXILadAE4fwNlVwj0aqPNG/6sLhTiYK2eFSe/nBEIcMP5H5S/NSsc5TNF2M
+	 fY2T/tx8M6V+kObVWibHAcGg85/MEaU/cc7j1tivJE9Hig9gYna4c9ONAqwKlnvNLK
+	 bhj1lwcRA0/54/cfP52RG9oKG7gKfcT8hC3uSuCs=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-0.qq.com (NewEsmtp) with SMTP
+	id E2706276; Sat, 10 Aug 2024 10:56:39 +0800
+X-QQ-mid: xmsmtpt1723258599tbomu2s9e
+Message-ID: <tencent_F9DE2ED60CB227C5C6FB92F30665498B6E06@qq.com>
+X-QQ-XMAILINFO: OaubouGXmhNzNDsCabnRXfwQaqugLHEhvayfaId+wGWk+CDNifyF7YIzg1vI6s
+	 bgQLZMO5nhyguQxj7XKlcUbcfOVzxg1qsYKkJmZoCnWXXJF3Wc+s3koxt8QdDtJSFrg8UnqVHN9o
+	 qPP3mpx5oPpUUqdkjgZvPOJWyOLUiGM5mHf9vE+ePMfMFeScGwLNOFg1nhY4Nh17UjTZis0YGS/3
+	 jj0g4kDjGohLyS+jf5SyFbW+usob+lND6PwtOBcBdwdNg5yDCaO9io0EUWR10I36gZUd5yq2uvLN
+	 eapM535PHtbkzXHSzV3jmgVP/14eBggwC7J5uLOJWtYDVFciwkm9j7AlkokNverK79VPw5z8RB5E
+	 ops0gYRxWOYMzRRfMlS0EhaCbJ/GQNzU5qeQD0qxtoy0qJIe3tHt/SoVNjWksiikovCZwosK/5Ee
+	 LOi0g5TjX35pqNzacWYDlcONS0Jg/r/+XaJxhga8hu81lLuJhhZkw5GZCWbqzh6DF1D5VHGqwgWk
+	 mab2tFxSgE49QWZIzFdZnMfAmPns0fR+DXDGC0+V7S+mEl1ZfWNyiMi2fBIu/3O1iXU1IAxbaqUZ
+	 AtCA0NTUi8LZozIrBJkD2bzUpcBO9m7i68gHl77ccTSrTNBunC1xKxMHayccR4bYxz9RdyeUzPsg
+	 zsE7sSXzJVht1p82lA23F/tqxXZAw9eH7zbzfoRB94MvnNjkS/K/RLkNLVUka+nBa2RuOMGI9vDR
+	 CW7zV0jPcKdR9hJnlitc5s2H+pvwrwNNfPls1RVOfgBL3M1cZ1dYYrs5lN53Nfmx5G5Ewef7OK+b
+	 jycxpbZljGXhLyCHBnrSKM0QGdMZS+0PQgbxeksCjEupA5z1v0LMzusY98+CeAI9q+K0vrZEHi8w
+	 G3RhZq/z1i2EN02T5JSXhMQ1aOwUMimvboTgW1pzq43g1C0jPKybr4K0VX1Gk8OKVWNhr/An/gLX
+	 fAkmLQ+A61mYArlNnQOkI1C9nOTsPAikJgh0mxaCg=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Sat, 10 Aug 2024 10:56:40 +0800
+X-OQ-MSGID: <20240810025639.1991934-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6cd7c5a5-aee8-48ee-6969-08dcb8e775a6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2024 02:52:23.0104
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bhC+hzPgWnJ1mEEI5aOLJLyKnXuEAFQ42voZjpOwUHScve/en77tjPnpKYHRhKf2bE88gnoSDBuhzohNyEL32I1+O9FYw4C4jqdscgeMqhg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7447
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Hi Huan,
+debug
 
->=20
-> Currently, udmabuf handles folio by creating an unpin list to record
-> each folio obtained from the list and unpinning them when released. To
-> maintain this approach, many data structures have been established.
->=20
-> However, maintaining this type of data structure requires a significant
-> amount of memory and traversing the list is a substantial overhead,
-Have you tried to quantify this overhead?
+#syz test: upstream c0ecd6388360
 
-> which is not friendly to the CPU cache, TLB, and so on.
->=20
-> Therefore, this patch removes the relationship between the folio and its
-> offset in the linear address mapping.
->=20
-> As an alternative, udmabuf both maintain the folio array and page array,
-> folio array use to unpin, and the page array is used as before to handle
-> the requirements for the page.
-Using pages is a step backwards, given the trend towards embracing folios.
-Moreover, the feedback from the former hugetlb maintainer (Mike Kravetz)
-was to not use subpages (or tail pages) of a hugetlb folio directly in udma=
-buf
-driver as it would cause problems, particularly when hugetlb vmemmap
-optimization (HVO) is enabled. AFAIU, if HVO is enabled by default, a tail =
-page's
-struct page pointer may not be available (as it may very well be freed to
-save memory). Given all of this, it made sense to convert the udmabuf drive=
-r
-to only use the head pages of a folio along with the offsets of tail pages.
-
->=20
-> So, udmabuf's folios only save the folio struct, foliocount point
-> the size of array. pages save page in folios, number offset given by
-> create list, pagecount point the size of array.
->=20
-> Even if we restore the pages structure, its memory usage should be
-> smaller than the combined memory usage of offsets(8 bytes in 64bit
-> machine)
-> and udmabuf_folio structures(24 bytes in 64bit machine).
->=20
-> By doing this, we can accept the overhead of the udmabuf_folio structure
-> and the performance loss of traversing the list during unpinning.
-Does your use-case involve frequent pinning/unpinning operations? Note
-that this would be considered "shortterm" pin, which is different from the
-the way the folios are currently pinned in udmabuf driver, which is conside=
-red
-"longterm" pin.
-
-However, one optimization I can think of, for memfds backed by shmem, is
-to not use unpin_list completely. This way you can probably avoid creating
-udmabuf_folio objects and having to traverse the list. But this would requi=
-re
-differentiating udmabufs backed by shmem vs hugetlb folios, which is not
-great in my opinion and may not work if THP is enabled.
-
-Thanks,
-Vivek
-
->=20
-> Signed-off-by: Huan Yang <link@vivo.com>
-> ---
->  drivers/dma-buf/udmabuf.c | 167 ++++++++++++++------------------------
->  1 file changed, 61 insertions(+), 106 deletions(-)
->=20
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index 9737f063b6b3..442ed99d8b33 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -25,17 +25,24 @@ module_param(size_limit_mb, int, 0644);
->  MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes.
-> Default is 64.");
->=20
->  struct udmabuf {
-> +	/**
-> +	 * Each page used by udmabuf in the folio. When obtaining a page
-> from a
-> +	 * folio, it does not necessarily begin from the head page. This is
-> +	 * determined by the offset of the memfd when udmabuf created.
-> +	 */
->  	pgoff_t pagecount;
-> +	struct page **pages;
-> +
-> +	/**
-> +	 * Each folio in memfd, when a udmabuf is created, it is pinned to
-> +	 * ensure that the folio is not moved or reclaimed.
-> +	 * folio array used to unpin all when releasing.
-> +	 */
-> +	pgoff_t foliocount;
->  	struct folio **folios;
-> +
->  	struct sg_table *sg;
->  	struct miscdevice *device;
-> -	pgoff_t *offsets;
-> -	struct list_head unpin_list;
-> -};
-> -
-> -struct udmabuf_folio {
-> -	struct folio *folio;
-> -	struct list_head list;
->  };
->=20
->  static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
-> *vma)
-> @@ -51,9 +58,7 @@ static int mmap_udmabuf(struct dma_buf *buf, struct
-> vm_area_struct *vma)
->=20
->  	for (pgoff =3D vma->vm_pgoff, end =3D vma->vm_end, addr =3D vma-
-> >vm_start;
->  	     addr < end; pgoff++, addr +=3D PAGE_SIZE) {
-> -		struct page *page =3D
-> -			folio_page(ubuf->folios[pgoff],
-> -				   ubuf->offsets[pgoff] >> PAGE_SHIFT);
-> +		struct page *page =3D ubuf->pages[pgoff];
->=20
->  		ret =3D remap_pfn_range(vma, addr, page_to_pfn(page),
-> PAGE_SIZE,
->  				      vma->vm_page_prot);
-> @@ -67,22 +72,11 @@ static int mmap_udmabuf(struct dma_buf *buf,
-> struct vm_area_struct *vma)
->  static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
->  {
->  	struct udmabuf *ubuf =3D buf->priv;
-> -	struct page **pages;
->  	void *vaddr;
-> -	pgoff_t pg;
->=20
->  	dma_resv_assert_held(buf->resv);
->=20
-> -	pages =3D kvmalloc_array(ubuf->pagecount, sizeof(*pages),
-> GFP_KERNEL);
-> -	if (!pages)
-> -		return -ENOMEM;
-> -
-> -	for (pg =3D 0; pg < ubuf->pagecount; pg++)
-> -		pages[pg] =3D folio_page(ubuf->folios[pg],
-> -				       ubuf->offsets[pg] >> PAGE_SHIFT);
-> -
-> -	vaddr =3D vm_map_ram(pages, ubuf->pagecount, -1);
-> -	kvfree(pages);
-> +	vaddr =3D vm_map_ram(ubuf->pages, ubuf->pagecount, -1);
->  	if (!vaddr)
->  		return -EINVAL;
->=20
-> @@ -104,30 +98,25 @@ static struct sg_table *get_sg_table(struct device
-> *dev, struct dma_buf *buf,
->  {
->  	struct udmabuf *ubuf =3D buf->priv;
->  	struct sg_table *sg;
-> -	struct scatterlist *sgl;
-> -	unsigned int i =3D 0;
->  	int ret;
->=20
->  	sg =3D kzalloc(sizeof(*sg), GFP_KERNEL);
->  	if (!sg)
->  		return ERR_PTR(-ENOMEM);
->=20
-> -	ret =3D sg_alloc_table(sg, ubuf->pagecount, GFP_KERNEL);
-> +	ret =3D sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->pagecount,
-> +					0, ubuf->pagecount << PAGE_SHIFT,
-> +					GFP_KERNEL);
->  	if (ret < 0)
-> -		goto err_alloc;
-> -
-> -	for_each_sg(sg->sgl, sgl, ubuf->pagecount, i)
-> -		sg_set_folio(sgl, ubuf->folios[i], PAGE_SIZE,
-> -			     ubuf->offsets[i]);
-> +		goto err;
->=20
->  	ret =3D dma_map_sgtable(dev, sg, direction, 0);
->  	if (ret < 0)
-> -		goto err_map;
-> +		goto err;
->  	return sg;
->=20
-> -err_map:
-> +err:
->  	sg_free_table(sg);
-> -err_alloc:
->  	kfree(sg);
->  	return ERR_PTR(ret);
->  }
-> @@ -153,34 +142,6 @@ static void unmap_udmabuf(struct
-> dma_buf_attachment *at,
->  	return put_sg_table(at->dev, sg, direction);
->  }
->=20
-> -static void unpin_all_folios(struct list_head *unpin_list)
-> -{
-> -	struct udmabuf_folio *ubuf_folio;
-> -
-> -	while (!list_empty(unpin_list)) {
-> -		ubuf_folio =3D list_first_entry(unpin_list,
-> -					      struct udmabuf_folio, list);
-> -		unpin_folio(ubuf_folio->folio);
-> -
-> -		list_del(&ubuf_folio->list);
-> -		kfree(ubuf_folio);
-> -	}
-> -}
-> -
-> -static int add_to_unpin_list(struct list_head *unpin_list,
-> -			     struct folio *folio)
-> -{
-> -	struct udmabuf_folio *ubuf_folio;
-> -
-> -	ubuf_folio =3D kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
-> -	if (!ubuf_folio)
-> -		return -ENOMEM;
-> -
-> -	ubuf_folio->folio =3D folio;
-> -	list_add_tail(&ubuf_folio->list, unpin_list);
-> -	return 0;
-> -}
-> -
->  static void release_udmabuf(struct dma_buf *buf)
->  {
->  	struct udmabuf *ubuf =3D buf->priv;
-> @@ -189,9 +150,9 @@ static void release_udmabuf(struct dma_buf *buf)
->  	if (ubuf->sg)
->  		put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
->=20
-> -	unpin_all_folios(&ubuf->unpin_list);
-> -	kvfree(ubuf->offsets);
-> +	unpin_folios(ubuf->folios, ubuf->foliocount);
->  	kvfree(ubuf->folios);
-> +	kvfree(ubuf->pages);
->  	kfree(ubuf);
->  }
->=20
-> @@ -289,19 +250,18 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  			   struct udmabuf_create_list *head,
->  			   struct udmabuf_create_item *list)
->  {
-> -	pgoff_t pgoff, pgcnt, pglimit, pgbuf =3D 0;
-> -	long nr_folios, ret =3D -EINVAL;
-> +	pgoff_t pgoff, pgcnt, pglimit, nr_pages;
-> +	long nr_folios =3D 0, ret =3D -EINVAL;
->  	struct file *memfd =3D NULL;
->  	struct folio **folios;
->  	struct udmabuf *ubuf;
-> -	u32 i, j, k, flags;
-> +	u32 i, flags;
->  	loff_t end;
->=20
->  	ubuf =3D kzalloc(sizeof(*ubuf), GFP_KERNEL);
->  	if (!ubuf)
->  		return -ENOMEM;
->=20
-> -	INIT_LIST_HEAD(&ubuf->unpin_list);
->  	pglimit =3D (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
->  	for (i =3D 0; i < head->count; i++) {
->  		if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
-> @@ -322,64 +282,58 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  		ret =3D -ENOMEM;
->  		goto err;
->  	}
-> -	ubuf->offsets =3D
-> -		kvcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
-> GFP_KERNEL);
-> -	if (!ubuf->offsets) {
-> +	folios =3D ubuf->folios;
-> +
-> +	ubuf->pages =3D kvmalloc_array(ubuf->pagecount, sizeof(*ubuf-
-> >pages),
-> +				     GFP_KERNEL);
-> +	if (!ubuf->pages) {
->  		ret =3D -ENOMEM;
->  		goto err;
->  	}
->=20
-> -	pgbuf =3D 0;
-> -	for (i =3D 0; i < head->count; i++) {
-> +	for (i =3D 0, nr_pages =3D 0; i < head->count; i++) {
-> +		u32 j, pg;
-> +
->  		memfd =3D fget(list[i].memfd);
->  		ret =3D check_memfd_seals(memfd);
->  		if (ret < 0)
->  			goto err;
->=20
->  		pgcnt =3D list[i].size >> PAGE_SHIFT;
-> -		folios =3D kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
-> -		if (!folios) {
-> -			ret =3D -ENOMEM;
-> -			goto err;
-> -		}
->=20
->  		end =3D list[i].offset + (pgcnt << PAGE_SHIFT) - 1;
-> -		ret =3D memfd_pin_folios(memfd, list[i].offset, end,
-> -				       folios, pgcnt, &pgoff);
-> +		ret =3D memfd_pin_folios(memfd, list[i].offset, end, folios,
-> +				       pgcnt, &pgoff);
->  		if (ret <=3D 0) {
-> -			kvfree(folios);
-> -			if (!ret)
-> -				ret =3D -EINVAL;
-> +			ret =3D ret ?: -EINVAL;
->  			goto err;
->  		}
->=20
-> -		nr_folios =3D ret;
-> -		pgoff >>=3D PAGE_SHIFT;
-> -		for (j =3D 0, k =3D 0; j < pgcnt; j++) {
-> -			ubuf->folios[pgbuf] =3D folios[k];
-> -			ubuf->offsets[pgbuf] =3D pgoff << PAGE_SHIFT;
-> -
-> -			if (j =3D=3D 0 || ubuf->folios[pgbuf-1] !=3D folios[k]) {
-> -				ret =3D add_to_unpin_list(&ubuf->unpin_list,
-> -							folios[k]);
-> -				if (ret < 0) {
-> -					kfree(folios);
-> -					goto err;
-> -				}
-> -			}
-> -
-> -			pgbuf++;
-> -			if (++pgoff =3D=3D folio_nr_pages(folios[k])) {
-> -				pgoff =3D 0;
-> -				if (++k =3D=3D nr_folios)
-> -					break;
-> +		/**
-> +		 * Iter the pinned folios and record them for later unpin
-> +		 * when releasing.
-> +		 * memfd may start from any offset, so we need check it
-> +		 * carefully at first.
-> +		 */
-> +		for (j =3D 0, pgoff >>=3D PAGE_SHIFT, pg =3D 0; j < ret;
-> +		     ++j, pgoff =3D 0) {
-> +			pgoff_t k;
-> +			struct folio *folio =3D folios[j];
-> +
-> +			for (k =3D pgoff; k < folio_nr_pages(folio); ++k) {
-> +				ubuf->pages[nr_pages++] =3D folio_page(folio,
-> k);
-> +
-> +				if (++pg >=3D pgcnt)
-> +					goto end;
->  			}
->  		}
-> -
-> -		kvfree(folios);
-> +end:
-> +		folios +=3D ret;
-> +		nr_folios +=3D ret;
->  		fput(memfd);
->  		memfd =3D NULL;
->  	}
-> +	ubuf->foliocount =3D nr_folios;
->=20
->  	flags =3D head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
->  	ret =3D export_udmabuf(ubuf, device, flags);
-> @@ -391,8 +345,9 @@ static long udmabuf_create(struct miscdevice
-> *device,
->  err:
->  	if (memfd)
->  		fput(memfd);
-> -	unpin_all_folios(&ubuf->unpin_list);
-> -	kvfree(ubuf->offsets);
-> +	if (nr_folios)
-> +		unpin_folios(ubuf->folios, nr_folios);
-> +	kvfree(ubuf->pages);
->  	kvfree(ubuf->folios);
->  	kfree(ubuf);
->  	return ret;
-> --
-> 2.45.2
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e2..b5ccab74bb6f 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -13,6 +13,7 @@
+ #include <linux/sched.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/file.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..7768cc70439d 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
+ {
+ 	struct p9_fid *fid;
+ 
++	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
+ 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
+ 	if (!fid) {
+ 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..3fe715ab6efd 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -219,6 +219,15 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 			retval = filemap_fdatawrite(inode->i_mapping);
+ 
+ 		spin_lock(&inode->i_lock);
++		printk("del, ino: %lx, ino sync: %d, comm: %s, %s\n", inode->i_ino, inode->i_state & I_SYNC, current->comm, __func__);
++		if (I_SYNC & inode->i_state) {
++			spin_unlock(&inode->i_lock);
++			if (wait_on_bit_timeout(&inode->i_state, I_SYNC,
++						TASK_UNINTERRUPTIBLE, 5 * HZ))
++				return -EBUSY;
++			spin_lock(&inode->i_lock);
++		}
++
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..4d37c1932de4 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -22,6 +22,7 @@
+ #include <linux/slab.h>
+ #include <net/9p/9p.h>
+ #include <net/9p/client.h>
++#include <linux/security.h>
+ 
+ #include "v9fs.h"
+ #include "v9fs_vfs.h"
+@@ -44,6 +45,12 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	if ((file->f_flags & O_RDWR || file->f_flags & O_WRONLY) &&
++	    security_file_permission(file, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino, __func__);
++		return -EPERM;
++	}
++
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
+@@ -397,6 +404,12 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct p9_fid *fid = file->private_data;
++	struct inode *inode = file_inode(file);
++
++	if (security_file_permission(filp, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", file, inode->i_ino,  __func__);
++		return -EPERM;
++	}
+ 
+ 	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
+ 
+@@ -460,6 +473,11 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	struct inode *inode = file_inode(filp);
+ 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+ 
++	if (security_file_permission(filp, MAY_WRITE)) {
++		pr_info("file: %p no permission, ino: %lx, %s\n", filp, inode->i_ino, __func__);
++		return -EPERM;
++	}
++
+ 	p9_debug(P9_DEBUG_MMAP, "filp :%p\n", filp);
+ 
+ 	if (!(v9ses->cache & CACHE_WRITEBACK)) {
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 9258d30cffe3..4434bf37caa1 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -522,12 +522,23 @@ int netfs_writepages(struct address_space *mapping,
+ 	trace_netfs_write(wreq, netfs_write_trace_writeback);
+ 	netfs_stat(&netfs_n_wh_writepages);
+ 
++	unsigned long  i_state = wreq->inode->i_state;
++	wreq->inode->i_state |= I_SYNC;
++	printk("doing sync: %d, before sync: %d, ino: %lx, comm: %s, %s\n", wreq->inode->i_state & I_SYNC,
++			i_state & I_SYNC,
++			wreq->inode->i_ino, current->comm, __func__);
++	if (i_state & I_SYNC) {
++		error = -EBUSY;
++		goto couldnt_start;
++	}
++
+ 	do {
+ 		_debug("wbiter %lx %llx", folio->index, wreq->start + wreq->submitted);
+ 
+ 		/* It appears we don't have to handle cyclic writeback wrapping. */
+ 		WARN_ON_ONCE(wreq && folio_pos(folio) < wreq->start + wreq->submitted);
+ 
++		printk("ino: %lx, folio: %p, %s\n", wreq->inode->i_ino, folio, __func__);
+ 		if (netfs_folio_group(folio) != NETFS_FOLIO_COPY_TO_CACHE &&
+ 		    unlikely(!test_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags))) {
+ 			set_bit(NETFS_RREQ_UPLOAD_TO_SERVER, &wreq->flags);
+@@ -538,6 +549,9 @@ int netfs_writepages(struct address_space *mapping,
+ 		if (error < 0)
+ 			break;
+ 	} while ((folio = writeback_iter(mapping, wbc, folio, &error)));
++	wreq->inode->i_state &= ~I_SYNC;
++	printk("end sync: %d, ino: %lx, comm: %s, error: %d, %s\n", wreq->inode->i_state & I_SYNC,
++			wreq->inode->i_ino, current->comm, error, __func__);
+ 
+ 	for (int s = 0; s < NR_IO_STREAMS; s++)
+ 		netfs_issue_write(wreq, &wreq->io_streams[s]);
 
 
