@@ -1,347 +1,405 @@
-Return-Path: <linux-kernel+bounces-281855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B0FA94DC20
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3766A94DC2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F13CB2184F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9860CB218D3
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:05:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 490A8156228;
-	Sat, 10 Aug 2024 09:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB09152DE7;
+	Sat, 10 Aug 2024 10:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRJdI8Wi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUt9Id2W"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3021E1798C;
-	Sat, 10 Aug 2024 09:54:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CB722EE3;
+	Sat, 10 Aug 2024 10:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723283659; cv=none; b=dhHH7wDaky1skgWcbbBf43MS/16jlmUPMdPo8Ifl8h3iX8czuK1EY5p5b64HyuRSIjIBIhyYrDDdTLXvl0Y4BzRJP6AqVSSp7ALy5RPQiUoUX0GyUOyYmosZWSypnjPRbaY3lPKW7tQJxQtOUDZ2tiz8HSoJ32TrR3Z2EHio8iw=
+	t=1723284306; cv=none; b=kbW5H1mrGEqQq/ZPaMTVFreEkGMa4D4kjGmFdVeP0pqHYdFXIJ1g+9GT0U70tuOxRloysHOBIgw18gB3NNUzuEPJwgcY+2DRlQtO6zb5Nv/9MAU2LpiWXbS3yWn9lUJQBt01fO+z3xJnOG0A1F0NcrAbjnkK9brI4DvZkAQeb3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723283659; c=relaxed/simple;
-	bh=vD/GVYgEx33+GRsz3bP143VKfVsdmGsrNmwftjVh2O8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R0rRWjNKEcNkpDNW4L+9WjFLLRyxeTGMXwP9L/84H3arvRDSfelFwaYaUdnEGJ5sEjKpDxBAJM0QL9dPcuO4wxZE3WH7JSxA1IYjEs09OGE0uIBZlc9EJPJ5cJ+GczQyXFB1Ap+nU/jXxHgc2XT+uVWKWmw766UYaGcyMAhJsxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRJdI8Wi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8EFC32781;
-	Sat, 10 Aug 2024 09:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723283658;
-	bh=vD/GVYgEx33+GRsz3bP143VKfVsdmGsrNmwftjVh2O8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VRJdI8Wi9cheKo3EwQoC6+guL3GF3ZkqoO5upO/S6/2nG/6KTCk9uys3/FYaBtYjY
-	 Bt5aj/J8HhdsRV9W5bnTME7LQCHh/4rh30KZcNAZ51cnnOSEZ2Fc1vLfb5NQx0ADlm
-	 SDbGq7rYNRFJBb/4jxtIU3cmEmAonVtRRVqf7ramvsXPRkfaLUG+gNOK9GZKdkQ/UD
-	 J9AdnL0YA59rTrTGAJ68Y5hBF/SZ+4hreomg2y/bQ/isqaIDIuGRyOor9ezigoWT4t
-	 9SmDd2jc10T20DjwWkBJCWeege2YIvSKu+FGPbsHFoN9yX5zDbC1SAjfp8M7apI7sy
-	 l6piymPyrj1hg==
-Date: Sat, 10 Aug 2024 10:54:11 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marius Cristea <marius.cristea@microchip.com>,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] iio: adc: add support for pac1921
-Message-ID: <20240810105411.705cb225@jic23-huawei>
-In-Reply-To: <66b1f288678b6_31cc370bc@njaxe.notmuch>
-References: <20240724-iio-pac1921-v4-0-723698e903a3@gmail.com>
-	<20240724-iio-pac1921-v4-3-723698e903a3@gmail.com>
-	<20240728135306.422713ea@jic23-huawei>
-	<66a784bac1db7_89a37017@njaxe.notmuch>
-	<20240729211100.0d602d6e@jic23-huawei>
-	<66b1f288678b6_31cc370bc@njaxe.notmuch>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723284306; c=relaxed/simple;
+	bh=f7mYBjzrASiDpoKqjas0Sfy9EVbR9TSyCA3WLxFtubk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=ewKcKDDbqDaWqKFcZwkqiUf1V50TW+Y+CWyeE/ekqkGkcbPLkIyp4lvnNHvrfre9cEpMB2Tvb8FB77Me+8L2AcsF5o0bMyz36Riwhy0xz50KTSiSN+9aUBkH7lXLOKYWB4ZtqZdCmN6d9RIYstjdL84ONngvL5YijVMHXz8xTXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MUt9Id2W; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3684407b2deso1523976f8f.1;
+        Sat, 10 Aug 2024 03:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723284302; x=1723889102; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UiuEsq3GLq68LGc1BaoQUV67m1D+Qh4yT7XC1jFUnLs=;
+        b=MUt9Id2WKpKlraqpUVF7d0VCLCKdLM9E0Lw/3QlfNh0c1HiINHnHBf1uEinuKcPDpn
+         nncwFWjOF/cEdBubETHVcV1bpSvlfONq2XO1ACK0OrP9Qio8MikMbBg7mc6zaobbh7MF
+         5dn35QNYhIhvm6jjvN4zlNkoJDdg60e1lyryY5m8mfpCWnf+Nd1h61NBPXyowASDpz0Z
+         mlEthyep28TRs71neVXvA6T0bjromxkhLhdyG+r/dQ/Dbpgf0Di2L1j/VyWaDa/vqskk
+         VDKxsWu2AFI5V/HmimmHYYWu2AN5BTFoZqj/jz3kH0iDtsiBw2HOgjQhqsovmDFc26dt
+         oPuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723284302; x=1723889102;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UiuEsq3GLq68LGc1BaoQUV67m1D+Qh4yT7XC1jFUnLs=;
+        b=jYEcCDACCFLNcHDKIUWXSFpIbyX1ZCIW23P3wC7w+rY+v0QGpnrRRJjFxq/3tprb0r
+         Ziw9uV74Fa3P7U7n4N3d2JhYQWnHGNtBkBVs2+Hr0WGayFqkQkitxlHxJkj0MgvqunEq
+         sOndyyBKIxjk5sr1TG4tl0nsXU9U3Gd1lJEvtawqulgTfXb0xkfGvooB/vfyE/h4ZQbH
+         eYXMbdq1CwYfK+LHy/G/i+/zSh5qqLqMa6qw4OfE5/sivD3DcN0q4nGSMgvy3V0NGLmh
+         r5aTkJhwLKHmPoeSYTPiNfbrDJJrbM6C6Y+C0ZVvnACNOy8TNhCzh2ddeOWGpx97oWbC
+         ZXTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUX4Hus74whIJAPjvzI+ZXVNcfKP1f5MjvicxVCnZLEX/pKb2Fzya5weBsVXH1+LvuVmh7Lw0f79Of8jaLrTgsCsxMJVuNhZ7wPS5E8
+X-Gm-Message-State: AOJu0YwWdnw/GzHIShyZAVdhepf/XUIEsVs8i40PmFIQ4ZqwA2d8mgU/
+	pz7SXzka0Lcphf0el3pxWMm43CG3TN6acgv4a2CPScFzaJXDWEnp
+X-Google-Smtp-Source: AGHT+IEQe8G+KQku4MZOeXarr48P56yuy8i4/B6XNQ5N0y7r3ZGqriN6gwWVuB1luzcNJnwiSuTXGA==
+X-Received: by 2002:a05:6000:1d2:b0:368:36e6:b248 with SMTP id ffacd0b85a97d-36d5e4d0a46mr2588138f8f.23.1723284301955;
+        Sat, 10 Aug 2024 03:05:01 -0700 (PDT)
+Received: from laptop.. (117.red-83-52-251.dynamicip.rima-tde.net. [83.52.251.117])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51ec46sm1791588f8f.81.2024.08.10.03.05.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Aug 2024 03:05:01 -0700 (PDT)
+From: =?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	=?UTF-8?q?Sergio=20Gonz=C3=A1lez=20Collado?= <sergio.collado@gmail.com>
+Subject: [PATCH v2] docs/sp_SP: Add translation for scheduler/sched-bwc.rst
+Date: Sat, 10 Aug 2024 12:04:49 +0200
+Message-Id: <20240810100449.14491-1-sergio.collado@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 06 Aug 2024 11:53:12 +0200
-Matteo Martelli <matteomartelli3@gmail.com> wrote:
+Translate Documentation/scheduler/sched-bwc.rst into Spanish.
 
-> Jonathan Cameron wrote:
-> > > > > +
-> > > > > +/*
-> > > > > + * Emit on sysfs the list of available scales contained in scales_tbl
-> > > > > + *
-> > > > > + * TODO:: this function can be replaced with iio_format_avail_list() if the
-> > > > > + * latter will ever be exported.    
-> > > > 
-> > > > You could just have added a precursor patch doing that.
-> > > > If you have time I'd certainly consider a patch that does export that function
-> > > > and uses it here.
-> > > >    
-> > > I wasn't sure that one usage was enough to justify the export. I could
-> > > definitely do it, I am assuming it would now go to a new patch series since
-> > > this has already been merged into testing, right?  
-> > The requirements for justifying exporting an existing function is less
-> > than it would be to add a new one.  As such I think it makes sense.
-> > 
-> > As you note, needs a separate patch on top of the tree.
-> >   
-> I will try to address this more generally by adding a new
-> read_avail_release_resource() iio_info function, see below. If that goes
-> through, exporting the iio_format_avail_list() would not be necessary since the
-> driver could directly use the read_avail iio_info function.
-> 
-> > >   
-> > > > > + *
-> > > > > + * Must be called with lock held if the scales_tbl can change runtime (e.g. for
-> > > > > + * the current scales table)
-> > > > > + */
-> > > > > +static ssize_t pac1921_format_scale_avail(const int (*const scales_tbl)[2],
-> > > > > +					  size_t size, char *buf)
-> > > > > +{
-> > > > > +	ssize_t len = 0;
-> > > > > +
-> > > > > +	for (unsigned int i = 0; i < size; i++) {
-> > > > > +		if (i != 0) {
-> > > > > +			len += sysfs_emit_at(buf, len, " ");
-> > > > > +			if (len >= PAGE_SIZE)
-> > > > > +				return -EFBIG;
-> > > > > +		}
-> > > > > +		len += sysfs_emit_at(buf, len, "%d.%09d", scales_tbl[i][0],
-> > > > > +				     scales_tbl[i][1]);
-> > > > > +		if (len >= PAGE_SIZE)
-> > > > > +			return -EFBIG;
-> > > > > +	}
-> > > > > +
-> > > > > +	len += sysfs_emit_at(buf, len, "\n");
-> > > > > +	return len;
-> > > > > +}
-> > > > > +
-> > > > > +/*
-> > > > > + * Read available scales for a specific channel
-> > > > > + *
-> > > > > + * NOTE: using extended info insted of iio.read_avail() because access to
-> > > > > + * current scales must be locked as they depend on shunt resistor which may
-> > > > > + * change runtime. Caller of iio.read_avail() would access the table unlocked
-> > > > > + * instead.    
-> > > > 
-> > > > That's a corner case we should think about closing. Would require an indicator
-> > > > to read_avail that the buffer it has been passed is a snapshot that it should
-> > > > free on completion of the string building.  I don't like passing ownership
-> > > > of data around like that, but it is fiddly to do anything else given
-> > > > any simple double buffering is subject to race conditions.
-> > > >    
-> > > If I understand your suggestion the driver would allocate a new table and copy
-> > > the values into it at each read_avail() call. Then
-> > > iio_read_channel_info_avail() would free the buffer if some sort of
-> > > free-after-use indicator flag is set. I guess such indicator might be set via an
-> > > additional read_avail function argument (would be an extensive API change) or
-> > > maybe via a new iio_chan_spec attribute.  
-> > 
-> > Probably needs to be in read_avail() as otherwise we end up with yet more masks.
-> > However, doesn't need to be global.  read_avail_ext() could be added that
-> > is used in preference to read_avail() if it is supplied.  That new one can
-> > be used only be drivers that need to handle the allocation and free.
-> > However I prefer the explicit resource free option as we can in theory
-> > at least do much cleverer things than simply freeing the buffer.
-> >   
-> > >   
-> > > > An alternative would use a key of sometype to associate individual read_avail
-> > > > calls with new ones to read_avail_release_resource. That might be cleaner.
-> > > >     
-> > > Are you referring to introduce a new read_avail_realease_resource callback that
-> > > would be called at the end of iio_read_channel_info_avail() if set? Similarly
-> > > to the previous point the driver would allocate a new table and copy the values
-> > > into it at each read_avail() call, but the driver would also define a release
-> > > callback to free such table. If otherwise you are referring to something less
-> > > trivial, is there a similar API in the kernel that can be referred to for
-> > > clarity?  
-> > 
-> > Indeed what you suggest. Key is it puts the burden on the driver to do it's
-> > own management. That avoids handing ownership of the buffer to the core
-> > which is a pattern I'm not that keen on if we can avoid it.
-> > 
-> > The new callback would take the buffer pointer that came back from read_avail()
-> > and pass that back to the driver.  In simple case the driver could just
-> > free the buffer.  However, it could also do some cleverer stuff to keep
-> > it around if a write hasn't raced with this code.  That might make sense if
-> > it's a big table and calculating the values is expensive.
-> >  
-> I am trying to achieve this and it looks pretty straightforward for the case we
-> considered, iio would be extended like the following:
-> 
-> diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> index e6fad8a6a1fc..fe6ad8e9722f 100644
-> --- a/drivers/iio/industrialio-core.c
-> +++ b/drivers/iio/industrialio-core.c
-> @@ -860,12 +860,20 @@ static ssize_t iio_read_channel_info_avail(struct device *dev,
->                 return ret;
->         switch (ret) {
->         case IIO_AVAIL_LIST:
-> -               return iio_format_avail_list(buf, vals, type, length);
-> +               ret = iio_format_avail_list(buf, vals, type, length);
-> +               break;
->         case IIO_AVAIL_RANGE:
-> -               return iio_format_avail_range(buf, vals, type);
-> +               ret = iio_format_avail_range(buf, vals, type);
-> +               break;
->         default:
-> -               return -EINVAL;
-> +               ret = -EINVAL;
->         }
-> +
-> +       if (indio_dev->info->read_avail_release_resource)
-> +               indio_dev->info->read_avail_release_resource(
-> +                       indio_dev, this_attr->c, vals, this_attr->address);
-> +
-> +       return ret;
->  }
-> 
->  /**
-> diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-> index f6c0499853bb..0ab08b94bad0 100644
-> --- a/include/linux/iio/iio.h
-> +++ b/include/linux/iio/iio.h
-> @@ -491,6 +491,10 @@ struct iio_info {
->                           int *length,
->                           long mask);
-> 
-> +       void (*read_avail_release_resource)(struct iio_dev *indio_dev,
-> +                                           struct iio_chan_spec const *chan,
-> +                                           const int *vals, long mask);
-> +
->         int (*write_raw)(struct iio_dev *indio_dev,
->                          struct iio_chan_spec const *chan,
->                          int val, 
-> 
-> And with the following usage example for the pac1921 driver:
-> 
-> static int pac1921_read_avail(struct iio_dev *indio_dev,
-> 			      struct iio_chan_spec const *chan,
-> 			      const int **vals, int *type, int *length,
-> 			      long mask)
-> {
-> 	switch (mask) {
-> 	//...
-> 	case IIO_CHAN_INFO_SCALE:
-> 		switch (chan->channel) {
-> 		//...
-> 		case PAC1921_CHAN_CURRENT: {
-> 			struct pac1921_priv *priv = iio_priv(indio_dev);
-> 			size_t len;
-> 			int *buf;
-> 
-> 			len = ARRAY_SIZE(priv->current_scales) * 2;
-> 			buf = kmalloc_array(len, sizeof(int), GFP_KERNEL);
-> 			if (!buf)
-> 				return -ENOMEM;
-> 
-> 			for (unsigned int i = 0; i < len; i++)
-> 				buf[i] = ((int *)priv->current_scales)[i];
-> 
-> 			*vals = buf;
-> 			*length = (int)len;
-> 			*type = IIO_VAL_INT_PLUS_NANO;
-> 			return IIO_AVAIL_LIST;
-> 		}
-> 		default:
-> 			return -EINVAL;
-> 		}
-> 	default:
-> 		return -EINVAL;
-> 	}
-> }
-> 
-> static void pac1921_read_avail_release_res(struct iio_dev *indio_dev,
-> 					   struct iio_chan_spec const *chan,
-> 					   const int *vals, long mask)
-> {
-> 	if (mask == IIO_CHAN_INFO_SCALE &&
-> 	    chan->channel == PAC1921_CHAN_CURRENT)
-> 		kfree(vals);
-> }
-> 
-> static const struct iio_info pac1921_iio = {
-> 	//...
-> 	.read_avail = pac1921_read_avail,
-> 	.read_avail_release_resource = pac1921_read_avail_release_res,
-> };
-> 
-> However I noticed that some consumer drivers also expose the producer's
-> available lists through the following functions:
-> - iio_read_avail_channel_attribute()
-> - iio_read_avail_channel_raw()
-> - iio_channel_read_max()
-> - iio_channel_read_min()
-> 
-> While addressing the read_max()/read_min() is trivial since the
-> release_resource() can be called at the end of those function, I think the
-> first twos should be tracked as well for later release by the consumer drivers.
+Signed-off-by: Sergio González Collado <sergio.collado@gmail.com>
+---
+v1 -> v2 typos corrected
+---
+ .../translations/sp_SP/scheduler/index.rst    |   1 +
+ .../sp_SP/scheduler/sched-bwc.rst             | 288 ++++++++++++++++++
+ 2 files changed, 289 insertions(+)
+ create mode 100644 Documentation/translations/sp_SP/scheduler/sched-bwc.rst
 
-We can mostly avoid this by taking a copy in the consumers that use these interfaces then
-immediately calling the release. 
-
-> So for example the consumer driver would also expose a
-> iio_read_avail_channel_attribute_release_resource() (any suggestion for shorter
-> function names?) mapped to the read_avail_release_resource() iio_info function.
-
-> However the fact that iio_read_avail_channel_attribute() locks on
-> info_exist_lock, makes me think that the driver could be unregistered between a
-> read_avail() and a read_avail_release_resource() and in that case an allocated
-> list would be leaked, right? Any suggestion on how best handle this case? My
-> guess is to let iio destroy the list at some point during device release, that
-> would be done if the list allocation was done through devm_kmalloc (or similar)
-> but I think it would result in double frees during usual case, so maybe there
-> should be a way to let it free the list only if not already freed? Or maybe a
-> complete different approach?
-
-Locking is a bit of a pain. I don't want to reference count for something
-as trivial as this.
-
-Perhaps the original idea of a release callback isn't best solution for these
-in kernel interfaces and we should just 'always' make a copy of the data to
-avoid the lifetime issue.  I don't want to do that for the IIO core case
-because it's a big waste of memory and we don't have the lifetime issues,
-but for the in kernel consumer interfaces copying sounds fine.
-
-> 
-> > >   
-> > > > oh well, a cleanup job for another day.   I suspect we have drivers today
-> > > > that are subject to tearing of their available lists.
-> > > >     
-> > > I've just taken a quick look at the other drivers and the following twos seem
-> > > to have the race condition issue since they are updating an available table
-> > > during a write_raw() call and also exposing it during a read_avail() call:
-> > > * drivers/iio/light/as73211.c: see int_time_avail table
-> > > * drivers/iio/adc/ad7192.c: see filter_freq_avail table
-> > > 
-> > > There might be others, I've only looked into those that seemed likely to have
-> > > this issue after some trivial greps.
-> > > 
-> > > Is there already a common way for iio to keep track of open issues (e.g. Issue
-> > > tracker/TODO lists/etc)?  
-> > 
-> > Not really.  Email to the list tends to be the most we do for tracking.
-> > I have had various todo lists public over the years, but they tend to rot.
-> > 
-> > Fix stuff before we forget about it! :(
-> >   
-> I could try to provide fix patches for those two drivers as well, but I could
-> not test them on the real HW. I am wondering whether to add them to the same
-> release_resource() patch series or into a separate series since those fixes
-> could be sit for a while waiting for additional tests.
-Either is fine.  I don't necessarily have to pick the whole series up in one
-go.  Just put those other drivers towards the end.
-
-Jonathan
-
-> 
-> Thanks,
-> Matteo Martelli
-> 
+diff --git a/Documentation/translations/sp_SP/scheduler/index.rst b/Documentation/translations/sp_SP/scheduler/index.rst
+index 768488d6f001..3aef47ca87e0 100644
+--- a/Documentation/translations/sp_SP/scheduler/index.rst
++++ b/Documentation/translations/sp_SP/scheduler/index.rst
+@@ -6,3 +6,4 @@
+     :maxdepth: 1
+ 
+     sched-design-CFS
++    sched-bwc
+diff --git a/Documentation/translations/sp_SP/scheduler/sched-bwc.rst b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
+new file mode 100644
+index 000000000000..ee9b34673560
+--- /dev/null
++++ b/Documentation/translations/sp_SP/scheduler/sched-bwc.rst
+@@ -0,0 +1,288 @@
++.. include:: ../disclaimer-sp.rst
++
++:Original: :ref:`Documentation/scheduler/sched-design-CFS.rst <sched_design_CFS>`
++:Translator: Sergio González Collado <sergio.collado@gmail.com>
++
++.. _sp_sched_bwc:
++
++=================================
++CFS con control de ancho de banda
++=================================
++
++.. note::
++   Este documento únicamente trata el control de ancho de banda de CPUs
++   para SCHED_NORMAL. El caso de SCHED_RT se trata en Documentation/scheduler/sched-rt-group.rst
++
++El control de ancho de banda es una extensión CONFIG_FAIR_GROUP_SCHED que
++permite especificar el máximo uso disponible de CPU para un grupo o una jerarquía.
++
++El ancho de banda permitido para un grupo de tareas se especifica usando una
++cuota y un periodo. Dentro de un "periodo" (microsegundos), a un grupo
++de tareas se le asigna hasta su "cuota" de tiempo de uso de CPU en
++microsegundos. Esa cuota es asignada para cada CPU en colas de ejecución
++en porciones de tiempo de ejecución en la CPU según los hilos de ejecución
++del grupo de tareas van siendo candidatos a ejecutarse. Una vez toda la cuota
++ha sido asignada cualquier petición adicional de cuota resultará en esos hilos
++de ejecución siendo limitados/estrangulados. Los hilos de ejecución limitados,
++no serán capaces de ejecutarse de nuevo hasta el siguiente periodo cuando
++la cuota sea restablecida.
++
++La cuota sin asignar de un grupo es monitorizada globalmente, siendo
++restablecidas cfs_quota unidades al final de cada periodo. Según los
++hilos de ejecución van consumiendo este ancho de banda, este se
++transfiere a los "silos" de las cpu-locales en base a la demanda. La
++cantidad transferida en cada una de esas actualizaciones es ajustable y
++es descrito como un "slice".
++
++Característica de ráfaga
++--------------------------
++
++Esta característica toma prestado tiempo ahora, que en un futuro tendrá que
++devolver, con el coste de una mayor interferencia hacia los otros usuarios
++del sistema. Todo acotado perfectamente.
++
++El tradicional control de ancho de banda (UP-EDF) es algo como:
++
++  (U = \Sum u_i) <= 1
++
++Esto garantiza dos cosas: que cada tiempo límite de ejecución es cumplido
++y que el sistema es estable. De todas formas, si U fuese > 1, entonces
++por cada segundo de tiempo de reloj de una tarea, tendríamos que
++ejecutar más de un segundo de tiempo de ejecución de programa, y
++obviamente no se cumpliría con el tiempo límite de ejecución de la
++tarea, pero en el siguiente periodo de ejecución el tiempo límite de
++la tarea estaría todavía más lejos, y nunca se tendría tiempo de alcanzar
++la ejecución, cayendo así en un fallo no acotado.
++
++La característica de ráfaga implica el trabajo de una tarea no siempre
++consuma totalmente la cuota; esto permite que se pueda describir u_i
++como una distribución estadística.
++
++Por ejemplo, se tiene u_i = {x,e}_i, donde x es el p(95) y x+e p(100)
++(el tradicional WCET (WCET:Worst Case Execution Time: son las siglas
++en inglés para "peor tiempo de ejecución")). Esto efectivamente permite
++a u ser más pequeño, aumentando la eficiencia (podemos ejecutar más
++tareas en el sistema), pero al coste de perder el instante límite de
++finalización deseado de la tarea, cuando coincidan las peores
++probabilidades. De todas formas, si se mantiene la estabilidad, ya que
++cada sobre-ejecución se empareja con una infra-ejecución en tanto x esté
++por encima de la media.
++
++Es decir, supóngase que se tienen 2 tareas, ambas específicamente
++con p(95), entonces tenemos p(95)*p(95) = 90.25% de probabilidad de
++que ambas tareas se ejecuten dentro de su cuota asignada y todo
++salga bien. Al mismo tiempo se tiene que p(5)*p(5) = 0.25% de
++probabilidad que ambas tareas excedan su cuota de ejecución (fallo
++garantizado de su tiempo final de ejecución). En algún punto por
++en medio, hay un umbral donde una tarea excede su tiempo límite de
++ejecución y la otra no, de forma que se compensan; esto depende de la
++función de probabilidad acumulada específica de la tarea.
++
++Al mismo tiempo, se puede decir que el peor caso de sobrepasar el
++tiempo límite de ejecución será \Sum e_i; esto es una retraso acotado
++(asumiendo que x+e es de hecho el WCET).
++
++La interferencia cuando se usa una ráfaga se evalúa por las posibilidades
++de fallar en el cumplimiento del tiempo límite y el promedio de WCET.
++Los resultados de los tests han mostrado que cuando hay muchos cgroups o
++una CPU está infrautilizada, la interferencia es más limitada. Más detalles
++se aportan en: https://lore.kernel.org/lkml/5371BD36-55AE-4F71-B9D7-B86DC32E3D2B@linux.alibaba.com/
++
++Gestión:
++--------
++
++Cuota, periodo y ráfaga se se gestionan dentro del subsistema de cpu por medio
++de cgroupfs.
++
++.. note::
++   Los archivos cgroupfs descritos en esta sección solo se aplican a el
++   cgroup v1. Para cgroup v2, ver :ref:`Documentation/admin-guide/cgroup-v2.rst <cgroup-v2-cpu>`.
++
++- cpu.cfs_quota_us: tiempo de ejecución que se refresca cada periodo (en microsegundos)
++- cpu.cfs_period_us: la duración del periodo (en microsegundos)
++- cpu.stat: exporta las estadísticas de limitación [explicado a continuación]
++- cpu.cfs_burst_us: el máximo tiempo de ejecución acumulado (en microsegundos)
++
++Los valores por defecto son::
++
++	cpu.cfs_period_us=100ms
++	cpu.cfs_quota_us=-1
++	cpu.cfs_burst_us=0
++
++Un valor de -1 para cpu.cfs_quota_us indica que el grupo no tiene ninguna
++restricción de ancho de banda aplicado, ese grupo se describe como un grupo
++con ancho de banda sin restringir. Esto representa el comportamiento
++tradicional para CFS.
++
++Asignar cualquier valor (válido) y positivo no menor que cpu.cfs_burst_us
++definirá el límite del ancho de banda. La cuota mínima permitida para
++la cuota o periodo es 1ms. Hay también un límite superior en la duración del
++periodo de 1s. Existen restricciones adicionales cuando los límites de
++ancho de banda se usan de manera jerárquica, estos se explican en mayor
++detalle más adelante.
++
++Asignar cualquier valor negativo a cpu.cfs_quota_us eliminará el límite de
++ancho de banda y devolverá de nuevo al grupo a un estado sin restricciones.
++
++Un valor de 0 para cpu.cfs_burst_us indica que el grupo no puede acumular
++ningún ancho de banda sin usar. Esto hace que el control del comportamiento
++tradicional del ancho de banda para CFS no cambie. Definir cualquier valor
++(válido) positivo no mayor que cpu.cfs_quota_us en cpu.cgs_burst_us definirá
++el límite con el ancho de banda acumulado no usado.
++
++Cualquier actualización a las especificaciones del ancho de banda usado
++por un grupo resultará en que se deje de limitar si está en un estado
++restringido.
++
++Ajustes globales del sistema
++----------------------------
++
++Por eficiencia el tiempo de ejecución es transferido en lotes desde una reserva
++global y el "silo" de una CPU local. Esto reduce en gran medida la presión
++por la contabilidad en grandes sistemas. La cantidad transferida cada vez
++que se requiere una actualización se describe como "slice".
++
++Esto es ajustable vía procfs::
++
++	/proc/sys/kernel/sched_cfs_bandwidth_slice_us (valor por defecto=5ms)
++
++Valores de "slice" más grandes reducirán el costo de transferencia, mientras
++que valores más pequeños permitirán un control más fino del consumo.
++
++Estadísticas
++------------
++
++Las estadísticas del ancho de banda de un grupo se exponen en 5 campos en cpu.stat.
++
++cpu.stat:
++
++- nr_periods: Número de intervalos aplicados que han pasado.
++- nr_throttled: Número de veces que el grupo ha sido restringido/limitado.
++- throttled_time: La duración de tiempo total (en nanosegundos) en las
++  que las entidades del grupo han sido limitadas.
++- nr_bursts: Número de periodos en que ha ocurrido una ráfaga.
++- burst_time: Tiempo acumulado (en nanosegundos) en la que una CPU ha
++  usado más de su cuota en los respectivos periodos.
++
++Este interfaz es de solo lectura.
++
++Consideraciones jerárquicas
++---------------------------
++
++El interfaz refuerza que el ancho de banda de una entidad individual
++sea siempre factible, esto es: max(c_i) <= C. De todas maneras,
++la sobre-suscripción en el caso agregado está explícitamente permitida
++para hacer posible semánticas de conservación de trabajo dentro de una
++jerarquia.
++
++  e.g. \Sum (c_i) puede superar C
++
++[ Donde C es el ancho de banda de el padre, y c_i el de su hijo ]
++
++Hay dos formas en las que un grupo puede ser limitado:
++
++        a. este consume totalmente su propia cuota en un periodo.
++        b. la cuota del padre es consumida totalmente en su periodo.
++
++En el caso b) anterior, incluso si el hijo pudiera tener tiempo de
++ejecución restante, este no le será permitido hasta que el tiempo de
++ejecución del padre sea actualizado.
++
++Advertencias sobre el CFS con control de cuota de ancho de banda
++----------------------------------------------------------------
++
++Una vez una "slice" se asigna a una cpu esta no expira. A pesar de eso todas,
++excepto las "slices" menos las de 1ms, puede ser devueltas a la reserva global
++si todos los hilos en esa cpu pasan a ser no ejecutables. Esto se configura
++en el tiempo de compilación por la variable min_cfs_rq_runtime. Esto es un
++ajuste en la eficacia que ayuda a prevenir añadir bloqueos en el candado global.
++
++El hecho de que las "slices" de una cpu local no expiren tiene como resultado
++algunos casos extremos interesantes que debieran ser comprendidos.
++
++Para una aplicación que es un cgroup y que está limitada en su uso de cpu
++es un punto discutible ya que de forma natural consumirá toda su parte
++de cuota así como también la totalidad de su cuota en cpu locales en cada
++periodo. Como resultado se espera que nr_periods sea aproximadamente igual
++a nr_throttled, y que cpuacct.usage se incremente aproximadamente igual
++a cfs_quota_us en cada periodo.
++
++Para aplicaciones que tienen un gran número de hilos de ejecución y que no
++estan ligadas a una cpu, este matiz de la no-expiración permite que las
++aplicaciones brevemente sobrepasen su cuota límite en la cantidad que
++no ha sido usada en cada cpu en la que el grupo de tareas se está ejecutando
++(típicamente como mucho 1ms por cada cpu o lo que se ha definido como
++min_cfs_rq_runtime). Este pequeño sobreuso únicamente tiene lugar si
++la cuota que ha sido asignada a una cpu y no ha sido completamente usada
++o devuelta en periodos anteriores. Esta cantidad de sobreuso no será
++transferida entre núcleos. Como resultado, este mecanismo todavía cumplirá
++estrictamente los límites de la tarea de grupo en el promedio del uso,
++pero sobre una ventana de tiempo mayor que un único periodo. Esto
++también limita la habilidad de un sobreuso a no más de 1ms por cada cpu.
++Esto provee de una experiencia de uso más predecible para aplicaciones
++con muchos hilos y con límites de cuota pequeños en máquinas con muchos
++núcleos. Esto también elimina la propensión a limitar estas
++aplicaciones mientras que simultáneamente usan menores cuotas
++de uso por cpu. Otra forma de decir esto es que permitiendo que
++la parte no usada de una "slice" permanezca válida entre periodos
++disminuye la posibilidad de malgastare cuota que va a expirar en
++las reservas de la cpu locales que no necesitan una "slice" completa
++de tiempo de ejecución de cpu.
++
++La interacción entre las aplicaciones ligadas a una CPU y las que no están
++ligadas a ninguna cpu ha de ser también considerada, especialmente cuando
++un único núcleo tiene un uso del 100%. Si se da a cada una de esas
++aplicaciones la mitad de la capacidad de una CPU-núcleo y ambas
++están gestionadas en la misma CPU es teóricamente posible que la aplicación
++no ligada a ninguna CPU use su 1ms adicional de cuota en algunos periodos,
++y por tanto evite que la aplicación ligada a una CPU pueda usar su
++cuota completa por esa misma cantidad. En esos caso el algoritmo CFS (vea
++sched-design-CFS.rst) el que decida qué aplicación es la elegida para
++ejecutarse, ya que ambas serán candidatas a ser ejecutadas y tienen
++cuota restante. Esta discrepancia en el tiempo de ejecución se compensará
++en los periodos siguientes cuando el sistema esté inactivo.
++
++Ejemplos
++---------
++
++1. Un grupo limitado a 1 CPU de tiempo de ejecución.
++
++    Si el periodo son 250ms y la cuota son 250ms el grupo de tareas tendrá el tiempo
++    de ejecución de 1 CPU cada 250ms::
++
++	# echo 250000 > cpu.cfs_quota_us /* cuota = 250ms */
++	# echo 250000 > cpu.cfs_period_us /* periodo = 250ms */
++
++2. Un grupo limitado al tiempo de ejecución de 2 CPUs en una máquina varias CPUs.
++
++    Con un periodo de 500ms y una cuota de 1000ms el grupo de tareas tiene el tiempo
++    de ejecución de 2 CPUs cada 500ms::
++
++	# echo 1000000 > cpu.cfs_quota_us /* cuota = 1000ms */
++	# echo 500000 > cpu.cfs_period_us /* periodo = 500ms */
++
++    El periodo más largo aquí permite una capacidad de ráfaga mayor.
++
++3. Un grupo limitado a un 20% de 1 CPU.
++
++    Con un periodo de 50ms, 10ms de cuota son equivalentes al 20% de 1 CPUs::
++
++	# echo 10000 > cpu.cfs_quota_us /* cuota = 10ms */
++	# echo 50000 > cpu.cfs_period_us /* periodo = 50ms */
++
++    Usando un periodo pequeño aquí nos aseguramos una respuesta de
++    la latencia consistente a expensas de capacidad de ráfaga.
++
++4. Un grupo limitado al 40% de 1 CPU, y permite acumular adicionalmente
++   hasta un 20% de 1 CPU.
++
++    Con un periodo de 50ms, 20ms de cuota son equivalentes al 40% de
++    1 CPU. Y 10ms de ráfaga, son equivalentes a un 20% de 1 CPU::
++
++	# echo 20000 > cpu.cfs_quota_us /* cuota = 20ms */
++	# echo 50000 > cpu.cfs_period_us /* periodo = 50ms */
++	# echo 10000 > cpu.cfs_burst_us /* ráfaga = 10ms */
++
++    Un ajuste mayor en la capacidad de almacenamiento (no mayor que la cuota)
++    permite una mayor capacidad de ráfaga.
++
+-- 
+2.39.2
 
 
