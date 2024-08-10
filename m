@@ -1,127 +1,128 @@
-Return-Path: <linux-kernel+bounces-281950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC2F94DD63
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:57:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32D994DD67
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E071F21854
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66669B216ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099121607B8;
-	Sat, 10 Aug 2024 14:57:22 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C61E1C28E;
-	Sat, 10 Aug 2024 14:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2779F161306;
+	Sat, 10 Aug 2024 14:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO2mn4sq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589B11C28E;
+	Sat, 10 Aug 2024 14:58:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723301841; cv=none; b=dRaGkKobbRx2oM9EhSa6nsiPeG7n7r/km8LtPWOedJhqb13GMUYW0hTu1dOOjHMpqNyt3d8iGCpsSmhDvMFk0RlalPeWmN3ri54wOe1ZuT+tzI7WxQFcHyoDeAaBeY5xd3di7XzoBe9RiEEXAUveZJXSMeCnZbf+q3XgJ7N7BBY=
+	t=1723301890; cv=none; b=UJupg+5X9e5PlRZsw6q5rRz9Nu6oYIU/kVubfnJsotvthyov5YSuL/+w30G5zAKphJaM29pnOuUuF4xc2sPEZa/hOM5BBSOKQwacNLvTcUBUhy4sKTOYmcOs2SzyMIKOJYR54YLlI7+mpwYNJHB4lUPZFzyIxWLPa4K60RB/3Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723301841; c=relaxed/simple;
-	bh=6XYSJ2mZrjHZt8VI4dBSBoz2Kw0t5F1Trt0QbRAoIWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCEe8XV5tMQpYjneX5u9IGcizTG88dT2ygjf2bT6lBLzUytlJFAvex0qdHLnJBYDSSOkq3eQg8HOJB0CfMj6VTwGNHca5HTMoCfCp3Pk+0FuR4pJP0PKDVx+ao7/mPIsstpjzQbbBYAuE8XcSMOufQA12+yMeTtmghkFfmurJEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 47AEvDFj009492;
-	Sat, 10 Aug 2024 16:57:13 +0200
-Date: Sat, 10 Aug 2024 16:57:13 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v2 00/15] tools/nolibc: improve LLVM/clang support
-Message-ID: <20240810145713.GC9168@1wt.eu>
-References: <20240807-nolibc-llvm-v2-0-c20f2f5fc7c2@weissschuh.net>
- <dc3b8c77-8051-4232-9feb-753ea0b44f4f@linuxfoundation.org>
+	s=arc-20240116; t=1723301890; c=relaxed/simple;
+	bh=6wn6WZKBhkPS5cUhZTFdPMVnY1vO7KQWfsp8NGIT5xA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m48T7Kd3jZMSSaPQfzwPJFYImNJr/E1PXCKZL6wvw+YFy8uxIi/Xk3S4Ai6KYHmVSGyd6sqL1e5f4DIydkulEi2U5wmOIDtlzfBikktInIfWiGmVBc59YZtG4h18OvhujYuVo1aeaBHXWNDzE7CJctVR26vdrY2LL4giVulDJBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO2mn4sq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A48DC32781;
+	Sat, 10 Aug 2024 14:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723301888;
+	bh=6wn6WZKBhkPS5cUhZTFdPMVnY1vO7KQWfsp8NGIT5xA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AO2mn4sq81SOsVbByRT5/wdbcZy16A6Wi9ViOr1JcoL0IVyOJVGZBs0hX/YVZNMGX
+	 eDqKqjoTdDEBVcyF534iI8Vy8oLafTEIFPD02Tdgna2O6kyuZvIkPnp24NJLKmvpsq
+	 TVAk7fz7x2ofZGjG9kRf5gsNzN+KKB4TKkfcwDEZY2pJwCmKo55BDf4SwmDvGnNE5W
+	 NR2qthubdmyhpLx+5mSojbcY0vwsYagAnRKIx+HL6HAlUpS97PRkgRnV5apPT0qEt7
+	 b1Oc1ytVrONPnr6JFrh6S8sQvdxYxkcJxxdD2bsDzwYwV4lsXX93r4m01f8wcnNROE
+	 QoB0c4417CeJQ==
+Message-ID: <4191344c-c59b-4dda-8fc1-b8a34aaf25e6@kernel.org>
+Date: Sat, 10 Aug 2024 16:58:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc3b8c77-8051-4232-9feb-753ea0b44f4f@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] dt-bindings: PCI: layerscape-pci: drop compatible
+ string fsl,lx2160a-pcie
+To: Frank Li <Frank.Li@nxp.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Zhiqiang.Hou@nxp.com
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev
+References: <20240808-mobivel_cleanup-v1-0-f4f6ea5b16de@nxp.com>
+ <20240808-mobivel_cleanup-v1-1-f4f6ea5b16de@nxp.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808-mobivel_cleanup-v1-1-f4f6ea5b16de@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Aug 07, 2024 at 04:09:41PM -0600, Shuah Khan wrote:
-> On 8/7/24 15:51, Thomas Weiﬂschuh wrote:
-> > The current support for LLVM and clang in nolibc and its testsuite is
-> > very limited.
-> > 
-> > * Various architectures plain do not compile
-> > * The user *has* to specify "-Os" otherwise the program crashes
-> > * Cross-compilation of the tests does not work
-> > * Using clang is not wired up in run-tests.sh
-> > 
-> > This series extends this support.
-> > 
-> > Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> > ---
-> > Changes in v2:
-> > - Add support for all architectures
-> >    - powerpc: "selftests/nolibc: don't use libgcc when building with clang"
-> >    - mips: "tools/nolibc: mips: load current function to $t9"
-> >    - s390: "selftests/nolibc: use correct clang target for s390/powerz"
-> > - Expand commit messages
-> > - Use __nolibc_ prefix for custom macros
-> > - Link to v1: https://lore.kernel.org/r/20240728-nolibc-llvm-v1-0-bc384269bc35@weissschuh.net
-> > 
-> > ---
-> > Thomas Weiﬂschuh (15):
-> >        tools/nolibc: arm: use clang-compatible asm syntax
-> >        tools/nolibc: mips: load current function to $t9
-> >        tools/nolibc: powerpc: limit stack-protector workaround to GCC
-> >        tools/nolibc: compiler: introduce __nolibc_has_attribute()
-> >        tools/nolibc: move entrypoint specifics to compiler.h
-> >        tools/nolibc: compiler: use attribute((naked)) if available
-> >        selftests/nolibc: report failure if no testcase passed
-> >        selftests/nolibc: avoid passing NULL to printf("%s")
-> >        selftests/nolibc: determine $(srctree) first
-> >        selftests/nolibc: add support for LLVM= parameter
-> >        selftests/nolibc: add cc-option compatible with clang cross builds
-> >        selftests/nolibc: run-tests.sh: avoid overwriting CFLAGS_EXTRA
-> >        selftests/nolibc: don't use libgcc when building with clang
-> >        selftests/nolibc: use correct clang target for s390/powerz
-> >        selftests/nolibc: run-tests.sh: allow building through LLVM
-> > 
-> >   tools/include/nolibc/arch-aarch64.h          |  4 +--
-> >   tools/include/nolibc/arch-arm.h              |  8 +++---
-> >   tools/include/nolibc/arch-i386.h             |  4 +--
-> >   tools/include/nolibc/arch-loongarch.h        |  4 +--
-> >   tools/include/nolibc/arch-mips.h             |  8 ++++--
-> >   tools/include/nolibc/arch-powerpc.h          |  6 ++--
-> >   tools/include/nolibc/arch-riscv.h            |  4 +--
-> >   tools/include/nolibc/arch-s390.h             |  4 +--
-> >   tools/include/nolibc/arch-x86_64.h           |  4 +--
-> >   tools/include/nolibc/compiler.h              | 24 +++++++++++-----
-> >   tools/testing/selftests/nolibc/Makefile      | 41 +++++++++++++++++++---------
-> >   tools/testing/selftests/nolibc/nolibc-test.c |  4 +--
-> >   tools/testing/selftests/nolibc/run-tests.sh  | 16 ++++++++---
-> >   13 files changed, 83 insertions(+), 48 deletions(-)
-> > ---
-> > base-commit: ae1f550efc11eaf1496c431d9c6e784cb49124c5
-> > change-id: 20240727-nolibc-llvm-3fad68590d4c
-> > 
-> > Best regards,
+On 08/08/2024 18:02, Frank Li wrote:
+> fsl,lx2160a-pcie compatible is used for mobivel according to
+> Documentation/devicetree/bindings/pci/layerscape-pcie-gen4.txt
 > 
-> Looks good to me. For selftests patches:
+> fsl,layerscape-pcie.yaml is used for designware PCIe controller binding. So
+> drop it.
 > 
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-And all the series looks good to me as well (modulo that tiny "powerz"
-vs "systemz" mentioned in the 14th patch's commit message). The commit
-messages are now way more detailed and more pleasant to go through,
-thanks for that!
+Fixes tag? You added during conversion which was neither explained in
+commit msg (and commit must point such differences from pure conversion)
+nor needed.
 
-Acked-by: Willy Tarreau <w@1wt.eu>
+Best regards,
+Krzysztof
 
-Willy
 
