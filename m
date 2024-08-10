@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-281779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E028D94DB3A
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:39:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9CE94DB3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEB1D1C20DDA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B7E1F21BF9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B5014A4F3;
-	Sat, 10 Aug 2024 07:39:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C04D14A614;
+	Sat, 10 Aug 2024 07:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzQOOFha"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AMFN45cl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1841D4409;
-	Sat, 10 Aug 2024 07:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5FE44409;
+	Sat, 10 Aug 2024 07:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723275547; cv=none; b=U7I8p8NUFeihZ7zfnsDG6WSXGEhmVjH0aiEvXLIrxLNoqTQXqJtOI7NgVnEDkYU2uAiIWhUM9jUNjOEFutfSFvQ1sLx1W2HxBI4eVMjqqkiLwbjubtZdwCPjFFF3YK2X6/GGQsPb+ujENrGRHfYca+S7r0lAYkbIL6aSyipTYwY=
+	t=1723275642; cv=none; b=JNQRCyECnD7rQ6m/XZlnd9xtfeyFHctorNNQeJBZZhquJhOG2dmyK6TolK/s9ndi4k/V5ZkEcekaC6idVvkQ40ueqRqLRZvo8GXMJUBNDTfnm1tp81CHcbyGjbGwI3TyU4ezwCJPH6BFYIVKE0pq2BWcevciqKv9Bahrv0uhON0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723275547; c=relaxed/simple;
-	bh=BKN7eEO6247XJ7M0uWy7T9SpOKqKHpaK9T5Y77p68p4=;
+	s=arc-20240116; t=1723275642; c=relaxed/simple;
+	bh=Nl4OXvIMotYY8Q5haHsAFwkxwm98GxGwhJj9xrOO2HM=;
 	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=d/hO00KbJDKas8o2q8VHl/wc2SmFMZpLqh3tiTLk5nBbVB4abwijYBqeI/ik2QqkX0T3s6TTaShogQWnsBB9uUZlkYRQh/1XqA5iQ8EB/nzFqXrQt6Cgt1wsnKIwzPM8tmHUqZU5FWfo4DtlTAt7L2pKSTM5gSzhgx76l0UaWOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzQOOFha; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2D1C32781;
-	Sat, 10 Aug 2024 07:39:04 +0000 (UTC)
+	 Cc:Message-ID:Date; b=caaJV3vWhYmVzsrhIbFa2Asr+lFsVJorYQXSIDFYrAYCkzc0YhIxj6wpiytNiuEOjpnynav0gAy+JZ9Q6RM1Ml1I4C86/R3UUzIu9qFVh91goB895BWpX9ieiuGpOhbJNbo7Kej0PgHrHMooQxvzdYjm7CmRdPvqknYF9sbKRLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AMFN45cl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10228C32781;
+	Sat, 10 Aug 2024 07:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723275546;
-	bh=BKN7eEO6247XJ7M0uWy7T9SpOKqKHpaK9T5Y77p68p4=;
+	s=k20201202; t=1723275641;
+	bh=Nl4OXvIMotYY8Q5haHsAFwkxwm98GxGwhJj9xrOO2HM=;
 	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=JzQOOFhauxRbDpcktDviZlJigf82beXA4eI6nJ7HxpulQOPpGtOF7YErqiiutxs+h
-	 oqpglHNYEAghn/J7yp5A5gfWfVjPmhBmJG5xyIzpNG1G4AUgY9J61w9bASJ4BQ0sIE
-	 DwEK0rqHCnErWkY6KGENAqtXJYiuYCwhhDE16cR5Ya4HCMEFwLDaKm1zvDYggrTntq
-	 D5DXfYSwsJhpMgL2LNED4nxCMAs/WpnXeEwRF4WGem1jVxR0PPLO0zbrmITXybIq47
-	 5ZOHqfVshmywOoTxy4qSMgfKr/GF32FkjIpGJn6L3RkOkSxkgN0zIXfPPLFTJTirnn
-	 wZL/UxhFO/GWQ==
+	b=AMFN45cl3GpwU/lkaJfHgWJznULD3wnjCEP2DnpKPRAckch0vUiNbLpYlZIZ88S6s
+	 T/rPXslunD5T4G8yDM28Upn8QFszVYune9pejqu0WlbRLZqvgp6PJhkXcidCoAX5ku
+	 epFg9gd0kJ8N/g92xNPXpTC8Qj87yMS1Pp1HDQWHTbGuQb/wZ7mDwyjCwzMzsu+qiA
+	 wo4fCVMkly7QD+jJ8rqO/z+WvekaTRolfc59ZXRE1NbleUbttbpCOBcUNuStwvDLJt
+	 KZfma8pDxlTKQS5j09dhOuTbatVZJlM4wv7i47xMsz7LXVYR8HR/KVf/KGGEnndcK2
+	 ZlED+gd4cNDFw==
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,42 +48,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 1/3] wifi: mwifiex: simplify WPA flags setting
+Subject: Re: [next] wifi: ipw2x00: libipw: Avoid
+ -Wflex-array-member-not-at-end warnings
 From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: 
- <20240805-mwifiex-wpa-psk-sha256-v4-1-e1eee80508e6@pengutronix.de>
-References: <20240805-mwifiex-wpa-psk-sha256-v4-1-e1eee80508e6@pengutronix.de>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Brian Norris <briannorris@chromium.org>,
- Francesco Dolcini <francesco@dolcini.it>, David Lin <yu-hao.lin@nxp.com>,
+In-Reply-To: <ZrJqtUpCI+uCeb4D@cute>
+References: <ZrJqtUpCI+uCeb4D@cute>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Stanislav Yakovlev <stas.yakovlev@gmail.com>,
  linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Francesco Dolcini <francesco.dolcini@toradex.com>
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-hardening@vger.kernel.org
 User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172327554335.395581.13187629837954009763.kvalo@kernel.org>
-Date: Sat, 10 Aug 2024 07:39:04 +0000 (UTC)
+Message-ID: <172327563820.395581.15278397593129937648.kvalo@kernel.org>
+Date: Sat, 10 Aug 2024 07:40:39 +0000 (UTC)
 
-Sascha Hauer <s.hauer@pengutronix.de> wrote:
+"Gustavo A. R. Silva" <gustavoars@kernel.org> wrote:
 
-> The WPA flags setting only depends on the wpa_versions bitfield and not
-> on the AKM suite, so move it out of the switch/case to simplify the code
-> a bit. Also set bss_config->protocol to zero explicitly. This is done
-> only to make the code clearer, bss_config has been zero alloced by the
-> caller, so should be zero already. No functional change intended.
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
 > 
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Acked-by: Brian Norris <briannorris@chromium.org>
-> Link: https://lore.kernel.org/r/20240723-mwifiex-wpa-psk-sha256-v3-1-025168a91da1@pengutronix.de
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> So, in order to avoid ending up with a flexible-array member in the
+> middle of multiple other structs, we use the `__struct_group()`
+> helper to create a new tagged `struct libipw_hdr_3addr_hdr`.
+> This structure groups together all the members of the flexible
+> `struct libipw_hdr_3addr` except the flexible array.
+> 
+> As a result, the array is effectively separated from the rest of the
+> members without modifying the memory layout of the flexible structure.
+> We then change the type of the middle struct members currently causing
+> trouble from `struct libipw_hdr_3addr` to `struct libipw_hdr_3addr_hdr`.
+> 
+> We also want to ensure that when new members need to be added to the
+> flexible structure, they are always included within the newly created
+> tagged struct. For this, we use `static_assert()`. This ensures that the
+> memory layout for both the flexible structure and the new tagged struct
+> is the same after any changes.
+> 
+> This approach avoids having to implement `struct libipw_hdr_3addr_hdr`
+> as a completely separate structure, thus preventing having to maintain
+> two independent but basically identical structures, closing the door
+> to potential bugs in the future.
+> 
+> Also, remove a couple of unused structures `struct libipw_ibss_dfs` and
+> `struct libipw_assoc_request`.
+> 
+> So, with these changes, fix the following warnings:
+> 
+> drivers/net/wireless/intel/ipw2x00/libipw.h:403:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:420:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:433:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:441:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:447:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:460:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:468:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:476:33: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/intel/ipw2x00/libipw.h:592:36: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-3 patches applied to wireless-next.git, thanks.
+Patch applied to wireless-next.git, thanks.
 
-eb84567e7208 wifi: mwifiex: simplify WPA flags setting
-36aa64991543 wifi: mwifiex: fix key_mgmt setting
-ca0107c3aa30 wifi: mwifiex: add support for WPA-PSK-SHA256
+089332e703b6 wifi: ipw2x00: libipw: Avoid -Wflex-array-member-not-at-end warnings
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240805-mwifiex-wpa-psk-sha256-v4-1-e1eee80508e6@pengutronix.de/
+https://patchwork.kernel.org/project/linux-wireless/patch/ZrJqtUpCI+uCeb4D@cute/
 
 https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
