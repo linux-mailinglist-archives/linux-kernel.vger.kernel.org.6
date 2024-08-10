@@ -1,86 +1,139 @@
-Return-Path: <linux-kernel+bounces-281769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A400A94DB17
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:29:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 840F494DB1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A4421F21DE4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:29:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89EA282B03
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C18AD14A4E9;
-	Sat, 10 Aug 2024 06:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hhXJSjSx"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6659614A600;
+	Sat, 10 Aug 2024 06:41:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7ACF7E574;
-	Sat, 10 Aug 2024 06:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E7BEC2
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 06:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723271362; cv=none; b=uJkkaAAUluzco/v+pG7zhS0Uo8PnawCa8tor8HWcEApJ2o3b/ET10xcvmSbtIO0y0Hy1eb/3K7UvO3Gq5d+4Y/PrV59C5MGsJdbAqdJAJM4Dy0ugQ9etvKZhbMIIRzHdSfo7AHOGpF33IldNJ+JVbmj3eVHebvBxvJabDQsZz0Q=
+	t=1723272113; cv=none; b=bV4tP3rDd8MuL40K1tLptq6Vi6IGhP75XdQJVV8SVVc6mw+tZxZoLnfqPHEzDrIaGRMYowRHo4LX23/9/ntwEE6NbRuLvdle77ylxqrXczOA9WBiIWIWrYHkJY0Otdio+9bOLR3QmSkRU2247EpZ0RY/EYaMnZO9gYYZVZvWdCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723271362; c=relaxed/simple;
-	bh=k/5VlWzwVVowwhlqRYhC2v/c3NubWye5YxtUtbW0KLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ya2155vhFQGbFp+j31lm29QpKP/oL/PjA/3NFLK8NCuJVq8zA3P/5U6Nd31FjiK94sWp7xCdmAHYewkVerPL5ohuSKK4WIvIMvIbaNJoP/JanQ4D0wVxGeOPbHnwmRVk5gZUrVJPpEx6DoSVV2Xr7+gUtuGiWwwD2iTvIEZi9Fk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hhXJSjSx; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:In-Reply-To:References;
-	bh=twKdxJ32BgNeyLtIrT8zoE0CD1rdmGNP99uLtFb/tD0=; b=hhXJSjSxHucrMjs0oDBzDe8Y3d
-	Dg0oPyQ+m8N8Xi/57uZMtG/H76Rwse4Rvs8ch8Vbg9g5DXlVVZR0LTgS+d7/TJbKL3bpa2V2ZBUQ4
-	GgdWycCmimOpNv2pHYcyjuXRSddPo3LiOL0oiktYM457T37utG9bdVklqNeRA2E/+D4fcv8UmWspT
-	4tN+xPZqnN9rl6ZzSeJxUP5WM9uilkwwU95P46nXPS+AwWMhpkZ+TqeV5PZkiqvO4rqMn+IxkOOdA
-	3rOM46CJAaKLHXdLqotlkKM09TqLlqgEMewbokGQy11/ySVXBj+Xav5sujyXqnIcKxKT7krUU/46/
-	a4aYkjKw==;
-Received: from 2a02-8389-2341-5b80-5d7d-cd8b-d335-1928.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:5d7d:cd8b:d335:1928] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1scfbJ-0000000DIWx-3VSZ;
-	Sat, 10 Aug 2024 06:29:18 +0000
-Date: Sat, 10 Aug 2024 08:29:14 +0200
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev
-Subject: [GIT PULL] dma-mapping fix for Linux 6.11
-Message-ID: <ZrcIusRi8Z1nlJTw@infradead.org>
+	s=arc-20240116; t=1723272113; c=relaxed/simple;
+	bh=ApztVBERhT7zYHqLmBC+/SFrH40TQCtTmaX3IuZ4IMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aU/iMQTxKzQ1Ha0A66nBH9z7diOvZvmT4lGb820Bv+cYfQWJaYdmHCleb3kLpNKjfjRTrno3ZMTcqsR0MrZAPwnphdTYUm9NhpA8yJGEkX9gSMMRW2fducCCDy42qx2TWlASu3Huciy6bIW4WxRU4Yw383x4cf86XD3rtGHcSAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfnK-0005se-KH; Sat, 10 Aug 2024 08:41:42 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfnJ-005qCM-Hj; Sat, 10 Aug 2024 08:41:41 +0200
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1scfnJ-00Cc1W-1O;
+	Sat, 10 Aug 2024 08:41:41 +0200
+Date: Sat, 10 Aug 2024 08:41:41 +0200
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/3] phy: Add Open Alliance helpers for the
+ PHY framework
+Message-ID: <ZrcLpXS5dd_rZq6F@pengutronix.de>
+References: <20240808130833.2083875-1-o.rempel@pengutronix.de>
+ <20240808130833.2083875-2-o.rempel@pengutronix.de>
+ <eab136c5-ef49-4d4e-860c-c56840747199@lunn.ch>
+ <ZrWmfqtYICzaj-HY@pengutronix.de>
+ <5d62cf99-c025-42f1-99db-f1f872d1650a@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5d62cf99-c025-42f1-99db-f1f872d1650a@lunn.ch>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The following changes since commit 94ede2a3e9135764736221c080ac7c0ad993dc2d:
+On Fri, Aug 09, 2024 at 04:00:53PM +0200, Andrew Lunn wrote:
+> On Fri, Aug 09, 2024 at 07:17:50AM +0200, Oleksij Rempel wrote:
+> > On Thu, Aug 08, 2024 at 03:54:06PM +0200, Andrew Lunn wrote:
+> > 
+> > > Please could you give a reference to the exact standard. I think this
+> > > is "Advanced diagnostic features for 1000BASE-T1 automotive Ethernet
+> > > PHYs TC12 - advanced PHY features" ?
+> > > 
+> > > The standard seem open, so you could include a URL:
+> > > 
+> > > https://opensig.org/wp-content/uploads/2024/03/Advanced_PHY_features_for_automotive_Ethernet_v2.0_fin.pdf
+> > 
+> > I already started to implement other diagnostic features supported by the
+> > TI DP83TG720 PHY. For example following can be implemented too:
+> > 6.3 Link quality – start-up time and link losses (LQ)
+> > 6.3.1 Link training time (LTT)
+> > 6.3.2 Local receiver time (LRT)
+> > 6.3.3 Remote receiver time (RRT)
+> 
+> These three are the time it takes for some action. Not really a
+> statistic in the normal netdev sense, since it does not count up. But
+> they are kind of statistics, so it is probably not abusing statistics
+> too much, so maybe O.K.
+> 
+> > 6.3.4 Link Failures and Losses (LFL)
+> 
+> This is a count, so does fit statistics. 
+> 
+> > 6.3.5 Communication ready status (COM)
+> 
+> Similar to the BMSR link bit. Do it add anything useful?
 
-  profiling: remove stale percpu flip buffer variables (2024-07-29 16:34:17 -0700)
+Probably. I can leave it for now
 
-are available in the Git repository at:
+> > 6.4 Polarity Detection and Correction (POL)
+> > 6.4.1 Polarity Detection (DET)
+> > 6.4.2 Polarity Correction (COR)
+> 
+> Could these be mapped to ETH_TP_MDI* ? 
 
-  git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-6.11-2024-08-10
+Yes, but it will look confusing in the user space. To make better
+representation in ethtool we will probably need a new port type. For
+example instead of PORT_TP it will be PORT_STP (single twiste pair) or
+PORT_SPE (single pair ethernet). What do you think?
 
-for you to fetch changes up to bd44ca3de49cc1badcff7a96010fa2c64f04868c:
+Beside, there are some not standard specific fail indicators. It can show RGMII
+and SGMII specific errors. For example R/S_GMII FIFO full/empty errors. If
+i see it correctly, it will not drop MDI link, so I won't be able to
+return a link fail reason for this case.
 
-  dma-debug: avoid deadlock between dma debug vs printk and netconsole (2024-08-06 10:29:32 -0700)
-
-----------------------------------------------------------------
-dma-mapping fix for Linux 6.11
-
- - avoid a deadlock with dma-debug and netconsole (Rik van Riel)
-
-----------------------------------------------------------------
-Rik van Riel (1):
-      dma-debug: avoid deadlock between dma debug vs printk and netconsole
-
- kernel/dma/debug.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Regards,
+Oleksij
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
