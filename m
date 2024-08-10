@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-282027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD57594DEA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:53:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DC994DEA3
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 23:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A7F1C21530
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF7EA1F21552
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 21:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57013DDA2;
-	Sat, 10 Aug 2024 20:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435C513DDDD;
+	Sat, 10 Aug 2024 21:04:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HfdLvVdn"
-Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WSyOlZN4"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B983483CA1;
-	Sat, 10 Aug 2024 20:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D93AC36;
+	Sat, 10 Aug 2024 21:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723323223; cv=none; b=pK6g4Y+b2UmGX6EC4LQnvjFkq1Th8rZXSyFzMtWRT7B2ghBmEv9d33zxCs0hgVXDSQ05RDB4Rn59/xCWYyOIirQlBY0YEO+fSfqNb/MNR7CdWlvPTMTsZQVleWddekK2HA0tVXAk7S9WD5La73tQfv/2e8rjz8WRiWZxO+OCnRw=
+	t=1723323877; cv=none; b=sHMUvV7+1AJKoTaHy5kOSmbRSv/MdPLaC9pphvtqysU48DkQ4g0Bpiz7peSVHwltVKjk3xix2pPeMpk4/pYBFaLw0BnsO5PwfbrDBW5bFSQZjUl79InKHst6x1H0erBDxCULr2v9Kc9pgvSZFCiu/fjP5m6XWahvzwVGok5sQg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723323223; c=relaxed/simple;
-	bh=57Gb5iOBwKagGAbuQ5OIFQ1d9VwsdVWPo1WBsonn8EY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWCAdl7VB1aEoUf94Ku+XaDlq1EEYBXfC7cGnc+qaSPjMBycfllXV36XH5E0DOV/vxxCOVEGCD60e09oMcON1N60qdBGSjWZbgkkD2Mb6YLnuupgRMGI6VeZ/DEjA+QZPSr4DRxExspPoLh81VhTmPH6VOol00dB5FjHpuxIFEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HfdLvVdn; arc=none smtp.client-ip=193.252.23.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id ct4YsQhfG3VI6ct4YspXs9; Sat, 10 Aug 2024 22:52:23 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723323143;
-	bh=43d3uOIcW8QezMC9CUty94x+xF7qIsJvgPKmflbkadU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=HfdLvVdnu1vAyuQvgZk6NT2f+arBfQ10rr/bBp4JOUz/cGo+w2AX/kQGNHruvDMnE
-	 BEdr4t2KD+cs7OewygUcxECv0rvEngLzQASvLZJlUmNWn/1I1cpK3NXrlD0wshpKG4
-	 O/TOEEDZvv721qzdKi08ss3wqYy0aZTQg5dMxA5Jq4sHDc48iSQfCNEisH15HwoPQX
-	 Uu1Dk3Z6fgWg6JAqtotiF+9RhhEmIhUHj0nae/CV91wVd9AoT7kKH6mCleTtFP9iw3
-	 kxk23XTov2U2hJr1Hzmizt8qsd8Iy9R5fb9qDDGkhmTPrvDyn0+btO9ouo+H63P3aQ
-	 fcOmlSrhSOILA==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 10 Aug 2024 22:52:23 +0200
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-usb@vger.kernel.org
-Subject: [PATCH] usb: gadget: configfs: Make check_user_usb_string() static
-Date: Sat, 10 Aug 2024 22:52:17 +0200
-Message-ID: <958cb49dca1bff4254a3492c018efbf3b01918b4.1723323107.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723323877; c=relaxed/simple;
+	bh=U6uyqW0VIsr3ynf+I05mOzu59oLHp/XRqRKQdkUKQPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YkFoGwfSWIZ9nV+AcCAuP/+Y9mk2ozoqkIHT1FL/Gy0/bqNkZApyG1qALvdmIrDjNRfr8mVuc1ZvgK2jaG05zSpCrMWz4pus+4Uj0MzhJcxKdMXMhhdAe4RU4VnZ+oo3FJq774gSkKR2EcT16lK7XWOhJO/ch8inhkoEtaSRaFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=WSyOlZN4; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=L5ZaMkcysgxHBoobfCUH51gejY2SZF51sPwk8BxYjEY=; b=WSyOlZN4Nni7gLJNXzcNaOAvzJ
+	AGptP8rQIgN+f0r3MKaa4DkO8n0uajfvfFHFin2/Bt8kD3YAo9vEUuRl1Bupm9EadiUsbtx7hSql/
+	a8CkFGhTcyPe5ZoM/Dz28ZIEApK1jA67plyopWOnjdxd8Am17AfJWo7UaF3NqvbZcOn5fRgJ5ikG/
+	p7WlXxAtLLnWnn/XjjEmwkOEdDCvSLYCRAq1X4fFc4ZgXbYymk4kT6SIvGoQtEcCkjSjqLxp+eKdj
+	acvI13ItRy/3Cn738bv0ltJVQZNhgXszAuribt/HlAdGjnA9yaqgfs/Kf+cSvUsGKtI8rLZwpgI+r
+	WLGtRLyA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sctFn-00000007Fdg-2gux;
+	Sat, 10 Aug 2024 21:04:00 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3BB1B300729; Sat, 10 Aug 2024 23:03:59 +0200 (CEST)
+Date: Sat, 10 Aug 2024 23:03:59 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-riscv@lists.infradead.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
+	Tiezhu Yang <yangtiezhu@loongson.cn>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
+Subject: Re: [PATCH v6 5/5] rust: add arch_static_branch
+Message-ID: <20240810210359.GD11646@noisy.programming.kicks-ass.net>
+References: <20240808-tracepoint-v6-0-a23f800f1189@google.com>
+ <20240808-tracepoint-v6-5-a23f800f1189@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-tracepoint-v6-5-a23f800f1189@google.com>
 
-"linux/usb/gadget_configfs.h" is only included in
-"drivers/usb/gadget/configfs.c", so there is no need to declare a function
-in the header file. it is only used in this .c file.
+On Thu, Aug 08, 2024 at 05:23:41PM +0000, Alice Ryhl wrote:
 
-It's better to have it static.
+> +/// Wrapper around `asm!` that uses at&t syntax on x86.
+> +// Uses a semicolon to avoid parsing ambiguities, even though this does not match native `asm!`
+> +// syntax.
+> +#[cfg(target_arch = "x86_64")]
+> +#[macro_export]
+> +macro_rules! asm {
+> +    ($($asm:expr),* ; $($rest:tt)*) => {
+> +        ::core::arch::asm!( $($asm)*, options(att_syntax), $($rest)* )
+> +    };
+> +}
+> +
+> +/// Wrapper around `asm!` that uses at&t syntax on x86.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-I've not checked, but I suspect gcc to both inline check_user_usb_string()
-in its only caller and keep it as-is for any potential other callers.
+^ the above line seems out of place given the 'not' below.
 
-Before:
-======
-$ size drivers/usb/gadget/configfs.o
-   text	   data	    bss	    dec	    hex	filename
-  41197	   5120	     64	  46381	   b52d	drivers/usb/gadget/configfs.o
-
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-  40834	   5112	     64	  46010	   b3ba	drivers/usb/gadget/configfs.o
----
- drivers/usb/gadget/configfs.c       | 2 +-
- include/linux/usb/gadget_configfs.h | 3 ---
- 2 files changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
-index 0e7c1e947c0a..e0bf2b2bfc01 100644
---- a/drivers/usb/gadget/configfs.c
-+++ b/drivers/usb/gadget/configfs.c
-@@ -12,7 +12,7 @@
- #include "u_f.h"
- #include "u_os_desc.h"
- 
--int check_user_usb_string(const char *name,
-+static int check_user_usb_string(const char *name,
- 		struct usb_gadget_strings *stringtab_dev)
- {
- 	u16 num;
-diff --git a/include/linux/usb/gadget_configfs.h b/include/linux/usb/gadget_configfs.h
-index d61aebd68128..6a552dd4dec9 100644
---- a/include/linux/usb/gadget_configfs.h
-+++ b/include/linux/usb/gadget_configfs.h
-@@ -4,9 +4,6 @@
- 
- #include <linux/configfs.h>
- 
--int check_user_usb_string(const char *name,
--		struct usb_gadget_strings *stringtab_dev);
--
- #define GS_STRINGS_W(__struct, __name)	\
- static ssize_t __struct##_##__name##_store(struct config_item *item, \
- 		const char *page, size_t len)		\
--- 
-2.46.0
-
+> +// For non-x86 arches we just pass through to `asm!`.
+> +#[cfg(not(target_arch = "x86_64"))]
+         ^^^
+> +#[macro_export]
+> +macro_rules! asm {
+> +    ($($asm:expr),* ; $($rest:tt)*) => {
+> +        ::core::arch::asm!( $($asm)*, $($rest)* )
+> +    };
+> +}
 
