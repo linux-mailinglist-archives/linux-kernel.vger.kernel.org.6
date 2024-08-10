@@ -1,124 +1,181 @@
-Return-Path: <linux-kernel+bounces-281762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5938B94DAE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:29:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EF9B94DAEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DD1B1F22303
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:29:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DFDB22316
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8855813C8EE;
-	Sat, 10 Aug 2024 05:29:04 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EE245C1C;
+	Sat, 10 Aug 2024 05:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="XVlnXFg0"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E5F1CD37
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 05:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95D8107A0;
+	Sat, 10 Aug 2024 05:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723267744; cv=none; b=Vn2N63BUdDRxCnqLPmi830VYO4QsfDIEDCpxvhy4elSJxcYxn6ccVKMu2gOboenJmaQ2MzPsw8Ae6XKKLmz6b9A18RuO7Uf1LOPdNukEeEORdAA2ExYjOmGutxdLPKlZMHogSUAIkYI8htHjQ1v4M5p3A9yGileMVM/VGbVEO4c=
+	t=1723268206; cv=none; b=bvxIt+uOkYNf8XfIJA+PxmS4hlskm3L5yTdSHm06sxlh4euAi8JKBw/Gp5xOBp69XqpX1W4NF/rQqgZqP8SfV/IbUs+CzkgFkhKhGTRSi50rlTZhLLzihtkd9UbfJyPHkrpGMxdKG3injY+AK7SsE3gggHrU2yumlVPrzRIySyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723267744; c=relaxed/simple;
-	bh=HCFRJl1n0Zat2bEtJqSV0wuOHBfgyJ5I6N0Av8jEel8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bzHzalufItX5d8qztRwBy+4EL1arY2t1nQHBhikM6hZRwmoV+YyZARGOr0AtXD2psWbRA4YbLuJy/67NVQEJ74fZ/33JKXMb9CVwnsXPzyXA3i5eadaI07DRNaNYIhhKUBVFeSP18b/z5vdKVQcggiyd40qulcRF0COXB2CITGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39a16e61586so35188225ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 22:29:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723267742; x=1723872542;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SNpz67BHJn/KoY1MLDQIFrifjd+BorGTioJ0gkOf2UU=;
-        b=bwhtIyMiK+tDHyQwpjpCzx8Oi1e4UHJU1xSwNGtlsa3dXCJhH9z7gqkUqQmeJ2IGiZ
-         UXM0SooczSCLM80POeA4recMbhrUaU6xhAAuP0M1diur0hC7NJOyNqINDSTkmigCkBbv
-         ooziJH7ASLHOlzzO74iJnC70ds6rZSk1t4DAvpGmg77BbIafbtJBfRPwBkAtGzkShMFM
-         0lXAcP+G5TPj8grQ0xPvlAVA5iDDok/DzHOt44VSTXAoHCrnNDUcBSOYyAA67vNe8N1k
-         n7Mr5VeZyJ+22CLm3ojUKLGBjxlQWsId5JxbHUZ3dj3VgIsPuqZIrQEFnIwHHi6RmGHe
-         nvZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP/RraOaqII5D0FabkWf5YuUEqamB6pcLoIu4bRymzF6zRRwJhABTSs8Hxj6TgDgrxCxsnUa2CGAgu4h42qdy50RxRhK2EZkR0fo0Y
-X-Gm-Message-State: AOJu0YyBoGLB0Obusd/ZCcIXa6QFq0/mtca4eMFVjOHujTkCm4A1COZ9
-	GPD5yuj9Hqy4Hdb5II/8Ugcc7hKe/su12FS6xEWAIip6PohRlyJF+VFBwGBPzQsy9Rbzae1IN4K
-	zCuYi5IF2DS1BgZPVSvsdLJErxTlgFr6UcZaPSmV808a+kBz/TeEouh8=
-X-Google-Smtp-Source: AGHT+IGGNhDy2Xfi7YiKpSfYwJ5Hnz7I1gJRdzac9dD1FLj1vPZVgrpFvlqCyJ56NwhsQjNyfglmS/CzFSJU5hcDvtsU0IWryKGH
+	s=arc-20240116; t=1723268206; c=relaxed/simple;
+	bh=t4qDXuJ3LWu7+c88bMi8bdmGb/8sdDFS6TnXOjpDKPk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=Bl2Tu/RBgOvD2LpjUEkVriLOlbbWxC+dpdIndmBt2G6PqIs8e6b41bA6n4nX/huL+GigABbFofNG9t6eHAsqnua+qWwL1cY9aDmDCLKYqGCSFm6hq1lBtjH0FVCLaZ9BjAXfckrubes5vagCY8hlmteVk95NXhdfsOohARifZcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=XVlnXFg0; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Cc:Reply-To:From:References:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=PJAH/CyktIH57Dj1P/inZNXFX+n40cLs0bpRdnjZKo0=;
+	t=1723268204; x=1723700204; b=XVlnXFg0ZlPTLukxDhGM4SoTabQJmjidKbqBzJCp+FgxrG9
+	yfkuxBbf2PPbTyrufw2furbfQfEmkaDhSi+Cps3GSO8GoZSOHWgH178i+UzLf/Il832bMsslrfW7Z
+	2I6f7IE0gWetg7raBSiJJ/WcKxUu+8scw45X9bCxQbj4RtPj3899Z/TruqHImC3Y0eHEBL20fNfWA
+	ZhE1ucugFeKA6YOtrqu5joLYLSJDCHnGpN2KvSx0Zvf5dOdqgmOAiH01GG/V319MD0vm3tK/Kqfgj
+	8E6pAR0He+u/0alYwo6DtpGdPVpkkxyjlk6qkZF4Bx8Rovrb433M9XT+K+O0tOdQ==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1scemI-0000NC-UF; Sat, 10 Aug 2024 07:36:35 +0200
+Message-ID: <3b3262d9-5383-494e-a19b-698a9e289c2c@leemhuis.info>
+Date: Sat, 10 Aug 2024 07:36:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c87:b0:381:24e:7a85 with SMTP id
- e9e14a558f8ab-39b7484d530mr2964465ab.1.1723267741683; Fri, 09 Aug 2024
- 22:29:01 -0700 (PDT)
-Date: Fri, 09 Aug 2024 22:29:01 -0700
-In-Reply-To: <tencent_741B7B2507BA67BBF633729E061B244B3808@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000098a26b061f4d896f@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Bisected Regression: Cache filling up causing drastic performance
+ degradation on Linux 6.10.3
+To: Filipe Manana <fdmanana@suse.com>,
+ Abhinav Praveen <abhinav@praveen.org.uk>
+References: <f43jqpkjg7gehwtskurg5ze6omkcldme62u32ftsht32xevc5y@sdnm66w24ins>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+Content-Language: en-US, de-DE
+Cc: regressions@lists.linux.dev, linux-btrfs <linux-btrfs@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, David Sterba <dsterba@suse.com>,
+ Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>
+In-Reply-To: <f43jqpkjg7gehwtskurg5ze6omkcldme62u32ftsht32xevc5y@sdnm66w24ins>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723268204;b50555c4;
+X-HE-SMSGID: 1scemI-0000NC-UF
 
-Hello,
+On 10.08.24 02:28, Abhinav Praveen wrote:
+> I recently ran into an IO/Memory Management issue and posted about it on
+> the linux-mm mailing list here:
+> https://marc.info/?l=linux-mm&m=172306192530745&w=2
+> 
+> I have since bisected with mainline and found that:
+> 956a17d9d050761e34ae6f2624e9c1ce456de204 is the first bad commit
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+TWIMC, that is 956a17d9d05076 ("btrfs: add a shrinker for extent maps")
+[v6.10-rc1]
 
-ino: 1901335, folio: ffffea0000cd8c00, netfs_writepages
-ino: 1901335, v9fs_begin_writeback
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901335
-WARNING: CPU: 2 PID: 1105 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Modules linked in:
-CPU: 2 UID: 0 PID: 1105 Comm: kworker/u32:6 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-1559)
-RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 a0 9b 8e 8b e8 65 49 0d fe 90 <0f> 0b 90 90 eb 80 e8 49 2a a8 fe e9 6f ff ff ff e8 af 29 a8 fe e9
-RSP: 0018:ffffc90005c0f478 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888032f6c060 RCX: ffffffff814cc379
-RDX: ffff888022edc880 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff888032f6c060
-R13: ffffc90005c0f840 R14: ffff888025835380 R15: ffff888025835618
-FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd489a9e18 CR3: 0000000043618000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x839/0x1080 fs/netfs/write_issue.c:541
- do_writepages+0x1a3/0x7f0 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+Adding Filipe and the Btrfs folks to the list of recipients.
 
+Abhinav: thx for the report. There are at least two other discussion
+ongoing about what to my untrained eyes look like similar problems that
+remain after the fixes than went into 6.10 right before the release. You
+might want to consult them:
 
-Tested on:
+https://lore.kernel.org/all/CAHPNGSSt-a4ZZWrtJdVyYnJFscFjP9S7rMcvEMaNSpR556DdLA@mail.gmail.com/
+https://bugzilla.kernel.org/show_bug.cgi?id=219121
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a328ed980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11223d11980000
+Ciao, Thorsten
 
+> The issue is present on mainline commit:
+> 58d40f5f8131479a1e688828e2fa0a7836cf5358 (Fri Aug 9 10:23:18 2024)
+> 
+> The bisect log is below:
+> git bisect start
+> # status: waiting for both good and bad commits
+> # bad: [58d40f5f8131479a1e688828e2fa0a7836cf5358] Merge tag 'asm-generic-fixes-6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic
+> git bisect bad 58d40f5f8131479a1e688828e2fa0a7836cf5358
+> # status: waiting for good commit(s), bad commit known
+> # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
+> git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
+> # bad: [3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a] Merge tag 'tty-6.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
+> git bisect bad 3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a
+> # bad: [d34672777da3ea919e8adb0670ab91ddadf7dea0] Merge tag 'fbdev-for-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev
+> git bisect bad d34672777da3ea919e8adb0670ab91ddadf7dea0
+> # bad: [b850dc206a57ae272c639e31ac202ec0c2f46960] Merge tag 'firewire-updates-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394
+> git bisect bad b850dc206a57ae272c639e31ac202ec0c2f46960
+> # good: [59729c8a76544d9d7651287a5d28c5bf7fc9fccc] Merge tag 'tag-chrome-platform-for-v6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux
+> git bisect good 59729c8a76544d9d7651287a5d28c5bf7fc9fccc
+> # good: [101b7a97143a018b38b1f7516920a7d7d23d1745] Merge tag 'acpi-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+> git bisect good 101b7a97143a018b38b1f7516920a7d7d23d1745
+> # good: [47e9bff7fc042b28eb4cf375f0cf249ab708fdfa] Merge tag 'erofs-for-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs
+> git bisect good 47e9bff7fc042b28eb4cf375f0cf249ab708fdfa
+> # bad: [b2665fe61d8a51ef70b27e1a830635a72dcc6ad8] Merge tag 'ata-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
+> git bisect bad b2665fe61d8a51ef70b27e1a830635a72dcc6ad8
+> # bad: [aa5ccf29173acfaa8aa2fdd1421aa6aca1a50cf2] btrfs: handle errors in btrfs_reloc_clone_csums properly
+> git bisect bad aa5ccf29173acfaa8aa2fdd1421aa6aca1a50cf2
+> # good: [d3fbb00f5e21c6dfaa6e820a21df0c9a3455a028] btrfs: embed data_ref and tree_ref in btrfs_delayed_ref_node
+> git bisect good d3fbb00f5e21c6dfaa6e820a21df0c9a3455a028
+> # good: [5fa8a6baff817c1b427aa7a8bfc1482043be6d58] btrfs: pass the extent map tree's inode to try_merge_map()
+> git bisect good 5fa8a6baff817c1b427aa7a8bfc1482043be6d58
+> # bad: [9a7b68d32afc4e92909c21e166ad993801236be3] btrfs: report filemap_fdata<write|wait>_range() error
+> git bisect bad 9a7b68d32afc4e92909c21e166ad993801236be3
+> # bad: [85d288309ab5463140a2d00b3827262fb14e7db4] btrfs: use btrfs_get_fs_generation() at try_release_extent_mapping()
+> git bisect bad 85d288309ab5463140a2d00b3827262fb14e7db4
+> # bad: [65bb9fb00b7012a78b2f5d1cd042bf098900c5d3] btrfs: update comment for btrfs_set_inode_full_sync() about locking
+> git bisect bad 65bb9fb00b7012a78b2f5d1cd042bf098900c5d3
+> # bad: [956a17d9d050761e34ae6f2624e9c1ce456de204] btrfs: add a shrinker for extent maps
+> git bisect bad 956a17d9d050761e34ae6f2624e9c1ce456de204
+> # good: [f1d97e76915285013037c487d9513ab763005286] btrfs: add a global per cpu counter to track number of used extent maps
+> git bisect good f1d97e76915285013037c487d9513ab763005286
+> # first bad commit: [956a17d9d050761e34ae6f2624e9c1ce456de204] btrfs: add a shrinker for extent maps
+> 
+> The original issue (from my previous post) is as follows:
+> 
+> If I read from my Steam Library (this has about 430GiB of data), stored on an
+> ext4 formatted NVMe drive like this:
+> 
+> find /mnt/SteamLibrary/steamapps/common -type f -exec cat {} + -type f | pv >
+> /dev/null
+> 
+> I see that it initially starts reading at 800MiB/s (6.4 Gbps) then, once my
+> cache fills up (as shown by buff/cache in free), the read speed drops to as low
+> as 6MiB/s (48 Mbps) but periodically returns to 800MiB/s as the cache gets
+> freed.
+> 
+> When the cache fills, other tasks are also affected (e.g video playback
+> stutters or stops). I also see high CPU usage from kswapd0 and btrfs-cleaner
+> (which is strange because, again, it's an ext4 filesystem that I'm reading
+> from) using top.
+> 
+> Running echo 1 > /proc/sys/vm/drop_caches immediately improves performance.
+> 
+> But, instead, if I run the same read command in a Memory cgroup with memory.max
+> set to 500M, I get a solid 800MiB/s read speed without filling up the cache or
+> affecting other tasks.
+> 
+> TL;DR simply reading files seems to be enough to cause major system-wide
+> performance degradation. This also applies when updating games on Steam or
+> moving them between Library locations.
+> 
+> Anyone know if this is a bug or regression in Linux 6.10? Or whether there are
+> any tunables or Sysctls that could improve performance without manually running
+> things in CGroups?
+> 
+> This happens on a AMD 7950X3D with 96GB of ram.
+> 
+> I describe the same thing on my post at:
+> https://www.reddit.com/r/linuxquestions/comments/1emetro/cache_filling_up_causing_drastic_performance/
+> 
+> It also seems that someone else has experienced something similar here*:
+> https://www.reddit.com/r/linuxquestions/comments/1e83ltj/610_disk_caching_vs_memory_exhaustion_issues/
+> 
+> *Their issue seems to have been resolved by 6.10.2 however.
 
