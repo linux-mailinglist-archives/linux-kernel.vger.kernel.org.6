@@ -1,127 +1,101 @@
-Return-Path: <linux-kernel+bounces-281933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0DB294DD27
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:54:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D6F94DD2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B6492824E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:54:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9FF41C20E48
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A722A15990C;
-	Sat, 10 Aug 2024 13:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9825A15AD9B;
+	Sat, 10 Aug 2024 14:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JjEWXJxW"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ca8U+fKT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15D4157E87;
-	Sat, 10 Aug 2024 13:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E2F26AE6
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 14:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723298023; cv=none; b=tOBRs0Ni9VlIu1pQz2LHc3paf6HOKYoWu9OXjKqEwQURPuslfmgYmLLhwCfTpLWhMRRQrr6Bo7vxPuAdOzm94NvKNRXStcLUijCEvfmbq/j/denBDkOdi27BQa5a8VJmJ09ZIG4X2tgCexnNSWCmN56k6+fy143R95cvoLE/ZVY=
+	t=1723298431; cv=none; b=moqq3B0q/AKMXvmf6JYRd6CAsxDHuxL52zJTnMj4hnGYR1tjI+iR4i/NEi8r+Od1X5fZzSLg7LWT0Chsrr32eO5okpQHOVIvp3RB6TarqiKgqC1Tek0ZO7d68Eg10wQ2Y9VVlsW63IEOJ8gQc0MxFmOqn7eyPyBHPYaZ0buRg+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723298023; c=relaxed/simple;
-	bh=TL9SBHZ3Of0qFRJZEwFUH6a+xx0rZtC1FIueuIbaijw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=T09IdVUAi//5iX9LEqTXwyuRvioQvh/MQVSb9YxVhB1LPLdFVivXBjqPw5FQCy3WptqeXmjCA4ZjybBdtviMmPB/6V1eAYsSXRqnSeg4enYUYRHkiLjG8bjmFPfTfaHxlurfpmrEr5Op93vtgZh7BEaExU/y2jSK+SEsrZe96lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JjEWXJxW; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-710ec581999so299044b3a.2;
-        Sat, 10 Aug 2024 06:53:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723298021; x=1723902821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rJAwO9+D33fPB0w4WqDUJ7+khhrjnGCpVIskO9r4ZQ4=;
-        b=JjEWXJxWL/AylESAQTfQighZ1XMSd10WmuHxlkyAePhY5zt+rBELoCxgfjHnTO6K68
-         U+L4DG2+4RZnoGW0+cVMqn8lKUUyXhx34yoTb8+M/p/LkcAvCCH4NEiW7rBNT8XOAxF9
-         R0xL700OyrGoGGnL/XuT8LiVGB8yD+JqGu/9QuWmJgcfAwkr5BurGWL2OF/FJ7iYOO8l
-         qEBmdRziFsLadluPzrVla+lA+YoQM9Olvzhv6xAaefDP00YuFO1BW8KxNfgjtX/EiX0Q
-         3LSYcSSZtwkddTjUh0m+es1/ncJCgXzfJpcxpe3xh944RWYvuU81sRZMEgzQN0rF2fw1
-         YykQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723298021; x=1723902821;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rJAwO9+D33fPB0w4WqDUJ7+khhrjnGCpVIskO9r4ZQ4=;
-        b=S3Mwi/bO3ZQkrNApMVuldYtXDHETJeHqLKixnZk2KEcdw5yrjPC89jU3xpvrDtE8AS
-         K7ZCYFLgvzPgxXtxPoXeMSE1CJfQBfXzLp+bEvZ1bsZJWC1I+XjRBR5jJs3AACQCXf4c
-         Dj5IAHeLsOOOy27ddfAsQ6erTX5qPqNilcvxqXUGfxLiKFN96XElwOlmkfbrIaqBoXZM
-         kRryU5N80vPtoS8575Eyd9savFiurbd63HHyAd2RpGkXbgSXds44W7XnQO/8rpWEQ7//
-         xwS7YbVuCoDUVroGbyNWC+PRlwPxI0mbuwFjBZqfvT2SZeMZoL4UW/f7CecqOxoANUfC
-         IPNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvxtqybereLZOLOBpJvwAN+HqZ+nsGdmi0rq09nsgF8bB2xFX2WByGN30kLO0ODwLE0OEoBXZdRcxhdpV5NDIDa3B1tWG5+eZacw9+8PL5Pztg6kB7h9vV7pm2XhGlH3oJ4qV/I7IMXiZ0Cx0R
-X-Gm-Message-State: AOJu0YzWiIwXH8TQ6gRvX3tyH5HseTy3S8vg0FNphgtSflFZmrpiDf/d
-	x0ghfVzvVYhqLUSORMUltl4KAKExO/vU90I5+sZdyptT+3RNkppb
-X-Google-Smtp-Source: AGHT+IFgdIxTfbezU1OPet1TfdxCPMCk1L5X7ZSGt7qACP0tfD0d27u13OSwjjufETx0/c9dJBOutw==
-X-Received: by 2002:a05:6a00:3985:b0:70d:1dcf:e2a5 with SMTP id d2e1a72fcca58-710dc6c1056mr5579749b3a.3.1723298020805;
-        Sat, 10 Aug 2024 06:53:40 -0700 (PDT)
-Received: from dev0.. ([2405:201:6803:30b3:43ae:d83d:a773:c8db])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a8b508sm1314532b3a.177.2024.08.10.06.53.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 10 Aug 2024 06:53:40 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: shuah@kernel.org,
-	brauner@kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: [PATCH] selftests: filesystems: fix warn_unused_result build warnings
-Date: Sat, 10 Aug 2024 19:23:33 +0530
-Message-Id: <20240810135333.672845-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723298431; c=relaxed/simple;
+	bh=Cj1Yx0PJFEYVxLn4UyvZAIGlvRL72QXzxSOUQM3nhDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPxlN8OU0NHyR7h10EJcMI8fXmRhRMmr/Zekjy01LivcIVEHw6JkC+YDarz/dFbZkJktBqTAJHw0fH/S+UML/7OsSv7nvHTnuBSITv4Rzsc19hNt6OFwGKrYyhJ0aYVr0X9XsTFTtqyiVNA4nWZ4+kbQZcUUV2QAv6wDkbE8W4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ca8U+fKT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723298429;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=624V9XyG5KuMz5zJt7ndl3ScBb1+yoRWVwukoiM9UV8=;
+	b=Ca8U+fKTH1+eWDX560GHE4WsMtwhHR8KtV1zO7l5Czis2+0QY6lq4m0Mm1VcGWfyVrOvr5
+	5sy2mit7+Kj8V6PZ/k/26STJDjR2FRIXRiVNaHOOiTQrqEz9JoZZyazjpynhQ0Rl+rd6rf
+	zLshXuH2B0D0y3vm9jC12YY30hS0TY0=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-66-q4Qa9PKFOGqoKeri_5PBrQ-1; Sat,
+ 10 Aug 2024 10:00:25 -0400
+X-MC-Unique: q4Qa9PKFOGqoKeri_5PBrQ-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 734B01956080;
+	Sat, 10 Aug 2024 14:00:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.43])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 133F419373D7;
+	Sat, 10 Aug 2024 14:00:18 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 10 Aug 2024 16:00:21 +0200 (CEST)
+Date: Sat, 10 Aug 2024 16:00:15 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org
+Subject: Re: [PATCH 7/8] uprobes: perform lockless SRCU-protected
+ uprobes_tree lookup
+Message-ID: <20240810140015.GA21800@redhat.com>
+References: <20240731214256.3588718-1-andrii@kernel.org>
+ <20240731214256.3588718-8-andrii@kernel.org>
+ <20240808134007.GE8020@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808134007.GE8020@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Add return value checks for read & write calls in test_listmount_ns
-function. This patch resolves below compilation warnings:
+On 08/08, Oleg Nesterov wrote:
+>
+> On 07/31, Andrii Nakryiko wrote:
+> >
+> >  static DEFINE_RWLOCK(uprobes_treelock);	/* serialize rbtree access */
+> > +static seqcount_rwlock_t uprobes_seqcount = SEQCNT_RWLOCK_ZERO(uprobes_seqcount, &uprobes_treelock);
+>
+> Just noticed... Why seqcount_rwlock_t?
+>
+> find_uprobe_rcu() doesn't use read_seqbegin_or_lock(),
+> seqcount_t should work just fine.
 
-```
-statmount_test_ns.c: In function ‘test_listmount_ns’:
+Please ignore... I forgot that seqcount_t is not CONFIG_PREEMPT_RT-friendly.
 
-statmount_test_ns.c:322:17: warning: ignoring return value of ‘write’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
+Hmm. __seqprop_preemptible() returns 0, this doesn't look right... Nevermend.
 
-statmount_test_ns.c:323:17: warning: ignoring return value of ‘read’
-declared with attribute ‘warn_unused_result’ [-Wunused-result]
-```
-
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- .../selftests/filesystems/statmount/statmount_test_ns.c    | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-index e044f5fc57fd..70cb0c8b21cf 100644
---- a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-+++ b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-@@ -319,8 +319,11 @@ static void test_listmount_ns(void)
- 		 * Tell our parent how many mounts we have, and then wait for it
- 		 * to tell us we're done.
- 		 */
--		write(child_ready_pipe[1], &nr_mounts, sizeof(nr_mounts));
--		read(parent_ready_pipe[0], &cval, sizeof(cval));
-+		if (write(child_ready_pipe[1], &nr_mounts, sizeof(nr_mounts)) !=
-+					sizeof(nr_mounts))
-+			ret = NSID_ERROR;
-+		if (read(parent_ready_pipe[0], &cval, sizeof(cval)) != sizeof(cval))
-+			ret = NSID_ERROR;
- 		exit(NSID_PASS);
- 	}
- 
--- 
-2.34.1
+Oleg.
 
 
