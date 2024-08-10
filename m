@@ -1,47 +1,61 @@
-Return-Path: <linux-kernel+bounces-281738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E64594DA97
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796F594DA99
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:06:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B128A1C21A24
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:05:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CA31F2294E
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E89413B2B4;
-	Sat, 10 Aug 2024 04:05:33 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3D113B592;
+	Sat, 10 Aug 2024 04:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E962WysW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42604409;
-	Sat, 10 Aug 2024 04:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC73F4409;
+	Sat, 10 Aug 2024 04:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723262732; cv=none; b=JH/d8/tjZd8zjvElbbXIJ8TU9h0EcO/1ZpGbAY+0XZOxefvv1HQXtr7yVIdNts0GfH6oPSGUAeswfnXEKJrGflVMd7EhBZpRJ6C1Kmokp8sCnLSMoMrjoHhwFz9Sr+qZ8+H9Q9XsuF4o42iqawfeZyRQIF4x0DyTfL0BFVhFH3U=
+	t=1723262781; cv=none; b=JUwfu6nsLRLz5AkwN8DVbouhqGXL9IR4yDU1Pb/fueJV7QPKCXTBruR8PV3oXTYAxdR1Xl4jjlc3EmP7IWtvfinjtVV1MBSoSEpz6MdNuuNXsrenQCqfXinXNKK6Gt9dIY5+fbU0rgUsq0PN8s+82n5fdFCveKjNeaQFbEdNoJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723262732; c=relaxed/simple;
-	bh=n1qTkf0PwQ59B//afhTL/1aAU9z2u2nd+TAWev/OX4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=SStE4wbz2Tt1a7/D5zipePBV9KrSEuy5v48u3Yr6NpnumwBMKUoQc+D3w52zZRma5aw+DYV3CY5YYNFacUkNRFIqhk/PtHBhKKAZpWyUzxiMX/NH10ntatM1ZaLem7V/sTk4JeBFrs62iyM6qPJMRaS7y3QeRMiKFD/CjsErSAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1scdDS-003hgG-10;
-	Sat, 10 Aug 2024 12:05:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 10 Aug 2024 12:05:15 +0800
-Date: Sat, 10 Aug 2024 12:05:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Waiman Long <longman@redhat.com>
-Cc: steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, longman@redhat.com
-Subject: Re: [PATCH] padata: Fix possible divide-by-0 panic in
- padata_mt_helper()
-Message-ID: <Zrbm--AxRXgfHUek@gondor.apana.org.au>
+	s=arc-20240116; t=1723262781; c=relaxed/simple;
+	bh=SOtjsHWHRwe769zIY4hqS+ETtzzThW1sY7Ow+VYY1gs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mU4ET8q/+Y20Fpmp6M149pMKAkPfsyaGSUAN8SkTOx0X/NhRBaqXPFU8akCDxSQ5JfozPmWFjdeybbY7rBIBOPIgz9jQgcxRuEQvDinzDnwO8wHaErVx/3GWSccrbKgaFkzsr00pN2PfRxpCIwUuR49gZjvWFrrlZl34L3oSKDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E962WysW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341D4C32781;
+	Sat, 10 Aug 2024 04:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723262781;
+	bh=SOtjsHWHRwe769zIY4hqS+ETtzzThW1sY7Ow+VYY1gs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E962WysW/7ySwspbABoO0RJDoRAliGwxCOx6lTfj91l7RBY0US2Q0b4bSZotvPBLK
+	 49IfehDaJWhe1Fl64Ie71KIX22EZHac8RRFqsdoapjhZjieTYQtEI9RE3ez15YNl03
+	 d8UnB8H5jHyymdLk7167hqDGWisnqBmvCjk2bGpmKyFX84w8maXDBE0+q6vWv5LFLZ
+	 l4cwc0fCuKJYpVB5kY4G5/ZK87zQG38tH0hGoe0MG+9rczitjxfIhVb/I2BW3zcgXS
+	 ms/l5Y8oSzbS4bfZjlocTDY6mGdtaywSYcuNlgVy+EeLcG/yI5H3QNTxxJZ8Y4mVlO
+	 JIhpaWHQN23MA==
+Date: Fri, 9 Aug 2024 21:06:20 -0700
+From: Kees Cook <kees@kernel.org>
+To: Brian Mak <makb@juniper.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Message-ID: <202408092104.FCE51021@keescook>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <172300808013.2419749.16446009147309523545.b4-ty@kernel.org>
+ <D1EFC173-A7A8-4B0E-8AF6-34AB1A65D2DB@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,32 +64,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240806174647.1050398-1-longman@redhat.com>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
+In-Reply-To: <D1EFC173-A7A8-4B0E-8AF6-34AB1A65D2DB@juniper.net>
 
-Waiman Long <longman@redhat.com> wrote:
->
-> diff --git a/kernel/padata.c b/kernel/padata.c
-> index 53f4bc912712..0fa6c2895460 100644
-> --- a/kernel/padata.c
-> +++ b/kernel/padata.c
-> @@ -517,6 +517,13 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
->        ps.chunk_size = max(ps.chunk_size, job->min_chunk);
->        ps.chunk_size = roundup(ps.chunk_size, job->align);
+On Sat, Aug 10, 2024 at 12:52:16AM +0000, Brian Mak wrote:
+> On Aug 6, 2024, at 10:21 PM, Kees Cook <kees@kernel.org> wrote:
+> > 
+> > On Tue, 06 Aug 2024 18:16:02 +0000, Brian Mak wrote:
+> >> Large cores may be truncated in some scenarios, such as with daemons
+> >> with stop timeouts that are not large enough or lack of disk space. This
+> >> impacts debuggability with large core dumps since critical information
+> >> necessary to form a usable backtrace, such as stacks and shared library
+> >> information, are omitted.
+> >> 
+> >> We attempted to figure out which VMAs are needed to create a useful
+> >> backtrace, and it turned out to be a non-trivial problem. Instead, we
+> >> try simply sorting the VMAs by size, which has the intended effect.
+> >> 
+> >> [...]
+> > 
+> > While waiting on rr test validation, and since we're at the start of the
+> > dev cycle, I figure let's get this into -next ASAP to see if anything
+> > else pops out. We can drop/revise if there are problems. (And as always,
+> > I will add any Acks/Reviews/etc that show up on the thread.)
+> > 
+> > Applied to for-next/execve, thanks!
+> > 
+> > [1/1] binfmt_elf: Dump smaller VMAs first in ELF cores
+> >      https://urldefense.com/v3/__https://git.kernel.org/kees/c/9c531dfdc1bc__;!!NEt6yMaO-gk!FK3UfXVndoYpve8Y7q7vacIoHOrTj2nJgSJbugqUB5LfciKy0_Xvit9aXz_XCWlXHpdRQO2ArP0$
 > 
-> +       /*
-> +        * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
-> +        * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
-> +        */
-> +       if (!ps.chunk_size)
-> +               ps.chunk_size = 1U;
+> Thanks, Kees! And, thanks Linus + Eric for taking the time to comment on
+> this.
+> 
+> Regarding the rr tests, it was not an easy task to get the environment
+> set up to do this, but I did it and was able to run the tests. The rr
+> tests require a lot of kernel config options and there's no list
+> documenting what's needed anywhere...
 
-Perhaps change the first ps.chunk_size assignment to use DIV_ROUND_UP
-instead?
+Thanks for suffering through that!
 
-Thanks,
+> All the tests pass except for the sioc and sioc-no-syscallbuf tests.
+> However, these test failures are due to an incompatibility with the
+> network adapter I'm using. It seems that it only likes older network
+> adapters. I've switched my virtualized network adapter twice now, and
+> each time, the test gets a bit further than the previous time. Will
+> continue trying different network adapters until something hopefully
+> works. In any case, since this error isn't directly related to my
+> changes and the rest of the tests pass, then I think we can be pretty
+> confident that this change is not breaking rr.
+
+Perfect! Okay, we'll keep our eyes open for any reports of breakage. :)
+
+-Kees
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Kees Cook
 
