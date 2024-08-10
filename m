@@ -1,104 +1,112 @@
-Return-Path: <linux-kernel+bounces-281846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E84894DC05
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:39:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA9C94DBFF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:36:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0610EB2161B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:39:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34F8A1F21BC2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:36:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAD91514DC;
-	Sat, 10 Aug 2024 09:38:56 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D149E1514E2;
+	Sat, 10 Aug 2024 09:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8bgch89"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78C81D555
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 09:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E9643ACB;
+	Sat, 10 Aug 2024 09:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723282736; cv=none; b=TDJ+NiEupmtozyGkgO6lzfe65gC+vVt0ARLPVFiiBcSBXkEmwlO4FgxefOtonYX8koecwdVJWjJe/dwN4Z6dWzxx9aEm5cCP/te6EJ8ncV/dfPdt9NAC2F64boXgH4ACsNi4iiR2LD2no8CbGghUHv2alBgzAV4w2mQt1lnse+8=
+	t=1723282598; cv=none; b=LneaoW24pD6xhWqkifYIumfh3O1B+JKK9oGG53XIOk+eAKR9S0orzBLTXWgR4XhVUa7C0KVYOsj4zbTwf/fZ0eG1wnL8ig/Gs+v6S5jeEBDp6W70KDy0nGtdhiD3+svNWaio7ToZgNCO7a9vpmt89/Nldt+du27OYLte1bg7r2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723282736; c=relaxed/simple;
-	bh=UZd6c404VOORgzoc62eafZAY0wJbawFWD9/3pzFJb4w=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OFThVF550WdtVwkRMlukobjSHqucxCHCqzST2JIYuQKRQkHUc6vMw3OnAFMbbOxyzWgtdU4iNX/tLIQbx2bafi7BEYbHeOKBA1D7R5T5loLbqmSlfGmvKuArpkkI0vbIKo/SRxvmfDtN+yn9NRsJ1OeTL2HpQ5VC0mldmJU8hN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WgwbK09nFzQnrm;
-	Sat, 10 Aug 2024 17:34:21 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id F2B49140135;
-	Sat, 10 Aug 2024 17:38:50 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 10 Aug
- 2024 17:38:50 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, <yuehaibing@huawei.com>
-Subject: [PATCH -next] x86/apic: Remove unused extern declarations
-Date: Sat, 10 Aug 2024 17:36:10 +0800
-Message-ID: <20240810093610.2586665-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723282598; c=relaxed/simple;
+	bh=3lUjB1WK9Fne6VB6kxW11s7MxDtScbkXERRd3Pzikik=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B5D4gnrfjOolCwMUC2zINvUYmaN5Pi6mwk6PKEwgRIa4pwM76eOOX3COoLSYFdjlxABieDZ+u049J9r6En2ZvHfPF/vzjBESuhHWDwxGMkumBq0hivWuBboYP3V47uu2fa3IyNjj0LwGv3l1ksMeb0imxNo2qliHI40LIZIofKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8bgch89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D97D1C32781;
+	Sat, 10 Aug 2024 09:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723282597;
+	bh=3lUjB1WK9Fne6VB6kxW11s7MxDtScbkXERRd3Pzikik=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=s8bgch89+qX06X6lJgCo0rvqjc0VJeEc0N8u7RFX/T+Wjo4Umoe6RY9ftC7G4KswR
+	 rIcPCRZNny+dQ8c5CeG2HBpCN1vEsNd5Ol7v+lox1ZUCkzO+hRqc33zyfFdAOAdHxD
+	 HZlZGimTJBR2JsNrqF0CSj27oBTllDO9c/a424lQIK7cEvvKoSrF4FGpXmfZ1ctVT/
+	 dDhGjtljGKjQ8JJj0vsHlz6F4iNvftFskSeMWwNGrt5fY5RqCOEUTnd/9SRQhpXRMU
+	 nuDTws3EWJBIurHLKlVCXaoKh9HZd5frgGEjzXRz1GgfoOdfpxrLXE4GSw1TcnT5XI
+	 5VqxOzddY5Z6g==
+Date: Sat, 10 Aug 2024 10:36:30 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/2] doc: iio: ad4695: document buffered read
+Message-ID: <20240810103630.0fbe8610@jic23-huawei>
+In-Reply-To: <20240807-iio-adc-ad4695-buffered-read-v1-2-bdafc39b2283@baylibre.com>
+References: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
+	<20240807-iio-adc-ad4695-buffered-read-v1-2-bdafc39b2283@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Commit 517234446c1a ("x86/apic: Get rid of get_physical_broadcast()")
-removed get_physical_broadcast() but leave the declaration. And
-commit 79c9a17c16e9 ("x86/apic/32: Decrapify the def_bigsmp mechanism")
-leave generic_bigsmp_probe() declaration. Commit d8666cf78020 ("x86/apic:
-Sanitize APIC ID range validation") leave default_apic_id_valid() declaration.
+On Wed,  7 Aug 2024 15:02:11 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- arch/x86/include/asm/apic.h | 6 ------
- 1 file changed, 6 deletions(-)
+> The ad4695 driver has a quirk where the temperature channel can't be
+> enabled on its own for buffered reads, so we should document this.
+> 
+> Also, since there are 4 possible modes of reading conversion data, it
+> is useful to know which one is actually being used, namely the advanced
+> sequencer mode.
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> ---
+>  Documentation/iio/ad4695.rst | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
+> index a33e573d61d6..af76ce2d0702 100644
+> --- a/Documentation/iio/ad4695.rst
+> +++ b/Documentation/iio/ad4695.rst
+> @@ -147,9 +147,19 @@ Unimplemented features
+>  ----------------------
+>  
+>  - Additional wiring modes
+> -- Buffered reads
+>  - Threshold events
+>  - Oversampling
+>  - Gain/offset calibration
+>  - GPIO support
+>  - CRC support
+> +
+> +Device buffers
+> +==============
+> +
+> +This driver supports hardware triggered buffers. This uses the "advanced
+> +sequencer" feature of the chip to trigger a burst of conversions.
+> +
+> +Due to hardware constraints, the temperature channel cannot be read on its own
+> +for buffered reads. At least one voltage channel must also be enabled.
+As per driver review, userspace shouldn't care about that.
+We can always read too much and throw the extra away :)
 
-diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
-index 9dd22ee27117..d48c03e947d3 100644
---- a/arch/x86/include/asm/apic.h
-+++ b/arch/x86/include/asm/apic.h
-@@ -127,8 +127,6 @@ static inline bool apic_is_x2apic_enabled(void)
- 
- extern void enable_IR_x2apic(void);
- 
--extern int get_physical_broadcast(void);
--
- extern int lapic_get_maxlvt(void);
- extern void clear_local_APIC(void);
- extern void disconnect_bsp_APIC(int virt_wire_setup);
-@@ -516,8 +514,6 @@ static inline bool is_vector_pending(unsigned int vector)
- #define TRAMPOLINE_PHYS_LOW		0x467
- #define TRAMPOLINE_PHYS_HIGH		0x469
- 
--extern void generic_bigsmp_probe(void);
--
- #ifdef CONFIG_X86_LOCAL_APIC
- 
- #include <asm/smp.h>
-@@ -540,8 +536,6 @@ static inline int default_acpi_madt_oem_check(char *a, char *b) { return 0; }
- static inline void x86_64_probe_apic(void) { }
- #endif
- 
--extern int default_apic_id_valid(u32 apicid);
--
- extern u32 apic_default_calc_apicid(unsigned int cpu);
- extern u32 apic_flat_calc_apicid(unsigned int cpu);
- 
--- 
-2.34.1
+Jonathan
+
+> +
+> +Also see :doc:`iio_devbuf` for more general information.
+> 
 
 
