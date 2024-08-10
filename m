@@ -1,231 +1,131 @@
-Return-Path: <linux-kernel+bounces-281805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C3694DB88
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:45:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FF394DB8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E7651C20D61
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:45:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73B0B2817FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB2E14C583;
-	Sat, 10 Aug 2024 08:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FAF14D715;
+	Sat, 10 Aug 2024 08:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="EWVz73eW"
-Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2058.outbound.protection.outlook.com [40.92.102.58])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="B+qIo6I3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BH9CrZL5"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A301474C3;
-	Sat, 10 Aug 2024 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723279517; cv=fail; b=R/Anr9C6bNMK2TuvQ0bHwFIAa25m7eb7fETviuo7qRu4DmZJG6AFEwSvPbHx11soq8Td6rdz2NgrV7RRK5/x/NfmfQ4hxAok1V58/rkFmXikJIzAGhptt2iX/e7CKqrWO4bwbqsI8WEcF60BaNGXhauK3zVHt4yJCG8vfDvVGrQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723279517; c=relaxed/simple;
-	bh=7+sP8H4r1FlqiTf61OoqGUyoHg22uMxCbdQRsU8iwts=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=DcPYgGPakfM6M4DxHnQHyegCNRNcLo1G84BHasup3D2yV22nxfDlEMkdpk6lJ1saLe13UWie9PETQjVSdlMVvGwMTtu7qJv5mna+TSJp0qyV2w8IyzhQgpZAjhQYqyYC37OOOGi/eJfhzpY7U/CfZ6DHfXqu2X9qyO4nNZLJdwo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=EWVz73eW; arc=fail smtp.client-ip=40.92.102.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=L4f7B0hCb0OSmjpK/QtbfhexH1B5rXlbSarLbhnbLaNo3tPSYePo2SGV4wXWnSfb7o/W/uKE93tcfKroQk7s3yJfVbt/RXhyWID1R6lBpuyeA+7gMEYdU8xNu2hagbxINP9d/ZGhUrUi9uVYEWaEVDdUh++DW0OEQodfQtI/Cpu1MmXYL1iXG5wEmU9c4ysc0EXKU1AFy//Qpag0MWDJsq/mdau4MADJQyW4EeSn5dRz87C/iMPfX3Cu9o+0XIYAJov2jC+sF4UY+hy/CCorx/d/p4CyJ1bjevCuiMfZvCETv5icSY2yDNfuAtr1R/Mw/axTHGMeX9NEHpHzZd701w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=IKeO3KY0ZGF0LRzcPMg0swtCXBI9vvV2vcZkKL2g3EQ=;
- b=dK6bLnWwiUl04q7evzSLH/fVRF13ANhB90Hl43UwDfoqjzgwPh3GNBqGTaf/rXa/cvOxvUlI8yFQStXkWM2d5r65Pmxg2AQWm6JVFmrZtczZjvjYpERzfuD78jEw0K4bZBYRQ/vhwHJ2a8zMkXRGWeVthUEoFAawXrhKc30TrFDEatKl86S6maV6kEWn7oLLouHTWAPeplGFPKINNV7Z97vmJfQMtE+PUzJi5AySWq+Jmsaqkow6sru8/l5fjyqc7Q4CELQ4+ppc+v358D65MOvFQYPOTID6LUKQ5Of14I8PsTvXXUKdwgfLXioAs1Fjetd8soeQ368yX4kkFLHLzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IKeO3KY0ZGF0LRzcPMg0swtCXBI9vvV2vcZkKL2g3EQ=;
- b=EWVz73eWgCRcjfChXN3O1eMtZSYgS/VxXnZnjwm9oLSDKKobd9oWlO7M42nelfCTuKWdfzwMIZxCl0s4Pz0ZVUj2Gj6YEVVYU1tjzmIvu9o+QqsfCzSm/cDqLday2RckBytWQk2FxystCe2WnmVqL19nJsHxuyIsKSCl1e78GhaV+COp/sgpNS9QdciZpir4wSoO5Jy3EC8t5iVSTOVgIHxOP23ZZ3gHxAHeWBGcnIOUOPrsVJZeVDI4v7EzReTpRE6+z3Ces3BOUlKNnetHYl+7SUjaVVVzXM0AAAB8+sIixOdlGELtUOFNQPC0QMZDbP9VzYbXhqEfWoVQd1Js4w==
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
- PN0P287MB1153.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:141::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.18; Sat, 10 Aug 2024 08:45:09 +0000
-Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
- ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.015; Sat, 10 Aug 2024
- 08:45:09 +0000
-From: Aditya Garg <gargaditya08@live.com>
-To: "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
-	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
-	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
-	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>
-CC: Kerem Karabay <kekrby@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>, Orlando Chamberlain <orlandoch.dev@gmail.com>
-Subject: [PATCH v4 0/10] Touch Bar support for T2 Macs
-Thread-Topic: [PATCH v4 0/10] Touch Bar support for T2 Macs
-Thread-Index: AQHa6wGbVnv2F2HmGUyiZHmthnK98Q==
-Date: Sat, 10 Aug 2024 08:45:09 +0000
-Message-ID: <20190CD7-46CE-400D-9C58-29798479660E@live.com>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:
- [DkgCAXVrzzN0X8+BsSlQ6X7UbaKvGvA4aOuCI9EsScqYw6ZhEEfw/Ll3nYBob4ifg4HAT5Fz5z0=]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MA0P287MB0217:EE_|PN0P287MB1153:EE_
-x-ms-office365-filtering-correlation-id: 5f15c4e8-1acb-4c84-1faa-08dcb918bd9c
-x-microsoft-antispam:
- BCL:0;ARA:14566002|8060799006|461199028|19110799003|15080799003|3412199025|440099028|4302099013|102099032|1602099012;
-x-microsoft-antispam-message-info:
- FWmPVEIPKE6TzhBZPLzQwWlv5MlnM7mjpbCZs327YF27wjdbfORbDjmUt2DzRgpHOhHYj04M6DobRifSshhFBjGH+FeftS+NW9TWwawAKqISpRnhAcSlVvD3zPisleElAeptpd6sJUsF6C8deWJvxPmYLVlm70qc5GLRwr6GwXsnaLx1QbMBUoQZ1hKo83Y7+3YjY8sX05xyvedKdj3c+vdXD7xBZbyFregZuIuaDglZgfw96p4QEuIq41Nm/VLZeVUufjG3fKz0dLTXPMaP7H/5zEJeeVtls2yGx6jI/JWkmUBiV+kKMdrJTfiL+2Ek8krTGTtpCzJgT8vy8p4ic+qsMpPRnHb5yeGGmVyOqgjzeISdQFljjBxzbrDgWvUzONRKkEYHtfEUu2WvdT0ZtvKJFIi9JsbZwLwkicd3GETuklp7qjc5LDXrw5jS8ztOhfvlb64YIlUSKLLJLTOYvociwvr77j4lHyeyUkOJk6ULZynDefMV8NLRvlGtm0zTPZTfzJNA/n7WbKyRdLxPP6s3COXm9QYzHDrccmlgpFPE1CX5X19WXQcub9a0FNyBnhpre8uIijHJH0OyYohf6Wb1rRxlMSZsqdA7KdwSEpOJ7RBFqyNMTlQxbcF8Z9g4zUSGxsHhJwBTOXtX1PKo8y2EpBmhuOna63L2cgToE2s/7cUJ5osMe4mwmFlGBAYA8seugREXAhxbbugzT9oF9cS4/+NRAw7iTvh56gmRn9Fo4pordxgGBriNI4xo08HgcKbbvXspQY3FwwhOBCxgAJAOqWlLr90eQkHSwTvio7c=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LmNUda/FWCbH6NiNKQH3OUWxEGuLQbt39jEqsuhDWnBJRR92WJLSyC2EkhGp?=
- =?us-ascii?Q?vTCH4Y0aRYyCF8OXptJaFJPxuPYGRAoSec1OlTeplUP6JS0MdJ67z5aJp/cY?=
- =?us-ascii?Q?3M8TvRzlkcsSpokUfRu+nsEdUyEiu+UMUwEAtZFkRThDUYxgjWQwwFiuZo4m?=
- =?us-ascii?Q?Ez0W1CrN61fPvsB8NQ0EqgPAKuOql8Gmxq5ZuuC3Q9pFzyxhI2Kxw6xCdtts?=
- =?us-ascii?Q?KiiVw4PC5NkH+rDfgHTxOVOHxxf/kpKKe/2on8/hfHWiAws77pnqj46DowYQ?=
- =?us-ascii?Q?KiPwKoYq7Rdb3ZEDtEaSlRpEFmT45Dl1H4EoiuR1SM7drT5wN/SLv82SyY73?=
- =?us-ascii?Q?ytWoR7g3C7L0VYERTx59x0NJ3IrYgrsYxtZ3Vq8FmbOfvv7DRMhq4v5Zcy2h?=
- =?us-ascii?Q?nSx94koud2GLe+hibQiVeynEITzt5Xgw3aXsqreGxQds1MdkFyN8tgP2cqja?=
- =?us-ascii?Q?CewJNmnTxBDSwkf4DQ5n4ykLhL3tLSLzpFhQZGxyGOoIY5duyIss9cf9ItZV?=
- =?us-ascii?Q?YWNeP/t/2TrmW8Icj+RwHK48kl7tyhDWEQ7WV+kDtocB8UAuoJBUgmA9blHr?=
- =?us-ascii?Q?9uUM4i4CRsSmyt05MppAsmXkvyXX9OTKZjOR+/3gXdmc3f54pucHFxEGQln1?=
- =?us-ascii?Q?WCKK7NrMHRe7AXuGuarykseHLvhqtdxZyFIaz0DbtkiLOSqYwf1/EInZeqXS?=
- =?us-ascii?Q?lWRasElSnPz0nySyRECXjYrgoqvZyVW3hVI7Wa15yz1A6/xZWtZNexUoNHET?=
- =?us-ascii?Q?t9gV1KeANoZ0jkr1Olsabf+9voxOcFKuN8gVgp0Jt4///IZQi4OFN2c6TO5C?=
- =?us-ascii?Q?dCXogp3dphtyYUAzRtk4+L9s8SJV9PDjfHLmTZuyEP9360c9s64uu+AQOMPJ?=
- =?us-ascii?Q?DTOwl2O4iRPRNWh4/blAPz+WN+iRGu8dUkBZzrBvuvhgDe2z/m0CG3QnlAup?=
- =?us-ascii?Q?3JGx8b8UuB4h392rYlxy6D3SKfMyVrjl3pIwL6rbczsiNsGyIhKdosuj5dps?=
- =?us-ascii?Q?/ug4YbFC/OMhEiALJoGXT+V7FNw3B1m4vGD2zw79uc7ZQq6sP5lOs+FThVWd?=
- =?us-ascii?Q?OGkMcmrqXXiMEHX/yo/0dim6WBcvb/HFsXUfU1RCg3vk1s/QvwdgJgy7eDqc?=
- =?us-ascii?Q?PCli3MyRVspKTjeMx4xrsLtQNcswnY593wJ2j4H7r6lhes9IKtMRxuwB0GI5?=
- =?us-ascii?Q?xeg1XDX5X6iKJywu/kzh4C+ascNAh+Nu1gko0sxFjdezObRVI6ar9CLtHxEr?=
- =?us-ascii?Q?wCPAEPgHtFTFXTJjimHE005NOXee7iKRYttMYGfgkJ0ImXC842r8C8FYJndN?=
- =?us-ascii?Q?DoAiw2Aw477Ckv1N2m0HYPyB?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <A5819DF9AB1EE249A347C6F8CA10856C@INDP287.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00AAA14C5B3;
+	Sat, 10 Aug 2024 08:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723279521; cv=none; b=m7j3JOYqzIZqr2DR4EsaJ8pP8QiYQDcCB6qRgiLFLG8sJagJBmCzkwqhw/zBW1ODimcJXXWnKfJBfKaR9u7ZySR6veo015d6pDC0/bvlzfNp27Cp3OQBZB2SmJfGKnkDZdFzcZC0HsF10z8Uxxhxsxca5mEOuUB4VQ0dmzl/z9I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723279521; c=relaxed/simple;
+	bh=SuPUJenUXnr0BMBShF0UHK3iUChHp7wzXRULMT/jlwM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NZDHV7WGGbhnSpQDTOVE2E4qyTLtN5SpgFOU9B2ofK6Hq8OqvhKaLUr24eW3CEqDAcuaCAqEc/ZlwTeb3YaVFCtWuBSHRH3+zhOoeyxnvUJh9eA3LU6kNiDU9KGZMHkhVQjgg5sumn7Oh+d6ppN0MlfXmo5DbD2+GpYkl33QyC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=B+qIo6I3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BH9CrZL5; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 10 Aug 2024 08:45:17 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723279518;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hy/kMvBkr+hruugCsGp0VY/ojuxjrCUy6tkeoB7pQRs=;
+	b=B+qIo6I3700aFsGolfbe/1FF3oO8FXKqNyqUbL9/CBF4IqoaqdHztQWuDriWy3HOH+6Jqn
+	NVIaxWrhb7pkUtIgcLctinjiY9qJY+9vIkNXPk4FjrvXNhCjcxC/d9XwLjpe9qjQi3Q7E3
+	c+wqETP4d/4vgH/l++P9H51MmOeKtDMw2kIBTWSOIXAJ2W7jJ2x4p0N6rda6ZDbVf44Tsi
+	RkXXWYYg7qANRxHoeaIKMCPwFOEvFogAKrnzouHRV2gFPLGg2qob3ruFV7C5Q0Xqtf4anU
+	PqVVoxOiYxqxqSdM74KdEPciwX4reSC7+TqOPlU+n5HvKL941vPbIUXDYA559Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723279518;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hy/kMvBkr+hruugCsGp0VY/ojuxjrCUy6tkeoB7pQRs=;
+	b=BH9CrZL5HaC44KvXVJlLeC2kwiqitthUvihhKfJwdHIp1WrkpOy9k7uIV3vs38vj0iv8XR
+	TKp4t5jNwgildvDw==
+From: "tip-bot2 for Radhey Shyam Pandey" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/xilinx: Fix shift out of bounds
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Thomas Gleixner <tglx@linutronix.de>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <1723186944-3571957-1-git-send-email-radhey.shyam.pandey@amd.com>
+References: <1723186944-3571957-1-git-send-email-radhey.shyam.pandey@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5f15c4e8-1acb-4c84-1faa-08dcb918bd9c
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2024 08:45:09.1132
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1153
+Message-ID: <172327951777.2215.8494612611829907133.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Maintainers
+The following commit has been merged into the irq/urgent branch of tip:
 
-The Touch Bars found on x86 Macs support two USB configurations: one
-where the device presents itself as a HID keyboard and can display
-predefined sets of keys, and one where the operating system has full
-control over what is displayed.
+Commit-ID:     d73f0f49daa84176c3beee1606e73c7ffb6af8b2
+Gitweb:        https://git.kernel.org/tip/d73f0f49daa84176c3beee1606e73c7ffb6af8b2
+Author:        Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+AuthorDate:    Fri, 09 Aug 2024 12:32:24 +05:30
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 10 Aug 2024 10:39:24 +02:00
 
-This patch series adds support for both the configurations.
+irqchip/xilinx: Fix shift out of bounds
 
-The hid-appletb-bl driver adds support for the backlight of the Touch Bar.
-This enables the user to control the brightness of the Touch Bar from
-userspace. The Touch Bar supports 3 modes here: Max brightness, Dim and Off=
-.
-So, daemons, used to manage Touch Bar can easily manage these modes by writ=
-ing
-to /sys/class/backlight/appletb_backlight/brightness. It is needed by both =
-the
-configurations of the Touch Bar.
+The device tree property 'xlnx,kind-of-intr' is sanity checked that the
+bitmask contains only set bits which are in the range of the number of
+interrupts supported by the controller.
 
-The hid-appletb-kbd adds support for the first (predefined keys) configurat=
-ion.
-There are 4 modes here: Esc key only, Fn mode, Media keys and No keys.
-Mode can be changed by writing to /sys/bus/hid/drivers/hid-appletb-kbd/<dev=
->/mode
-This configuration is what Windows uses with the official Apple Bootcamp dr=
-ivers.
+The check is done by shifting the mask right by the number of supported
+interrupts and checking the result for zero.
 
-Rest patches support the second configuration, where the OS has full contro=
-l
-on what's displayed on the Touch Bar. It is achieved by the patching the
-hid-multitouch driver to add support for touch feedback from the Touch Bar
-and the appletbdrm driver, that displays what we want to on the Touch Bar.
-This configuration is what macOS uses.
+The data type of the mask is u32 and the number of supported interrupts is
+up to 32. In case of 32 interrupts the shift is out of bounds, resulting in
+a mismatch warning. The out of bounds condition is also reported by UBSAN:
 
-The appletbdrm driver is based on the similar driver made for Windows by
-imbushuo [1].
+  UBSAN: shift-out-of-bounds in irq-xilinx-intc.c:332:22
+  shift exponent 32 is too large for 32-bit type 'unsigned int'
 
-Currently, a daemon named tiny-dfr [2] is being used to display function ke=
-ys
-and media controls using the second configuration for both Apple Silicon an=
-d
-T2 Macs.
+Fix it by promoting the mask to u64 for the test.
 
-A daemon for the first configuration is being developed, but that's a users=
-pace
-thing.
+Fixes: d50466c90724 ("microblaze: intc: Refactor DT sanity check")
+Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/all/1723186944-3571957-1-git-send-email-radhey.shyam.pandey@amd.com
+---
+ drivers/irqchip/irq-xilinx-intc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[1]: https://github.com/imbushuo/DFRDisplayKm
-[2]: https://github.com/WhatAmISupposedToPutHere/tiny-dfr
-
-v2:
-  1. Cleaned up some code in the hid-appletb-kbd driver.
-  2. Fixed wrong subject in drm/format-helper patch.
-  3. Fixed Co-developed-by wrongly added to hid-multitouch patch.
-
-v3:
-  1. Fixed key mapping for Function keys in hid-appletb-kbd driver.
-
-v4:
-  1. Added support for fn key toggle in the hid-appletb-kbd driver.
-
-Aditya Garg (1):
-  HID: hid-appletb-kbd: add support for fn toggle between media and
-    function mode
-
-Kerem Karabay (9):
-  HID: hid-appletb-bl: add driver for the backlight of Apple Touch Bars
-  HID: hid-appletb-kbd: add driver for the keyboard mode of Apple Touch
-    Bars
-  HID: multitouch: support getting the contact ID from
-    HID_DG_TRANSDUCER_INDEX fields
-  HID: multitouch: support getting the tip state from HID_DG_TOUCH
-    fields
-  HID: multitouch: take cls->maxcontacts into account for devices
-    without a HID_DG_CONTACTMAX field too
-  HID: multitouch: allow specifying if a device is direct in a class
-  HID: multitouch: add device ID for Apple Touch Bars
-  drm/format-helper: Add conversion from XRGB8888 to BGR888 conversion
-  drm/tiny: add driver for Apple Touch Bars in x86 Macs
-
- .../ABI/testing/sysfs-driver-hid-appletb-kbd  |  13 +
- MAINTAINERS                                   |   6 +
- drivers/gpu/drm/drm_format_helper.c           |  54 ++
- .../gpu/drm/tests/drm_format_helper_test.c    |  81 +++
- drivers/gpu/drm/tiny/Kconfig                  |  12 +
- drivers/gpu/drm/tiny/Makefile                 |   1 +
- drivers/gpu/drm/tiny/appletbdrm.c             | 624 ++++++++++++++++++
- drivers/hid/Kconfig                           |  22 +
- drivers/hid/Makefile                          |   2 +
- drivers/hid/hid-appletb-bl.c                  | 206 ++++++
- drivers/hid/hid-appletb-kbd.c                 | 432 ++++++++++++
- drivers/hid/hid-multitouch.c                  |  60 +-
- drivers/hid/hid-quirks.c                      |   8 +-
- include/drm/drm_format_helper.h               |   3 +
- 14 files changed, 1508 insertions(+), 16 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-appletb-kbd
- create mode 100644 drivers/gpu/drm/tiny/appletbdrm.c
- create mode 100644 drivers/hid/hid-appletb-bl.c
- create mode 100644 drivers/hid/hid-appletb-kbd.c
-
---=20
-2.43.0
-
+diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-intc.c
+index 238d3d3..7e08714 100644
+--- a/drivers/irqchip/irq-xilinx-intc.c
++++ b/drivers/irqchip/irq-xilinx-intc.c
+@@ -189,7 +189,7 @@ static int __init xilinx_intc_of_init(struct device_node *intc,
+ 		irqc->intr_mask = 0;
+ 	}
+ 
+-	if (irqc->intr_mask >> irqc->nr_irq)
++	if ((u64)irqc->intr_mask >> irqc->nr_irq)
+ 		pr_warn("irq-xilinx: mismatch in kind-of-intr param\n");
+ 
+ 	pr_info("irq-xilinx: %pOF: num_irq=%d, edge=0x%x\n",
 
