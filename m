@@ -1,92 +1,122 @@
-Return-Path: <linux-kernel+bounces-281836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEE194DBE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:15:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9A994DBE8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E0A1F221F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:15:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7205E1C21143
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741914F130;
-	Sat, 10 Aug 2024 09:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0D81509AE;
+	Sat, 10 Aug 2024 09:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaLpRAZY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oiqi1YA4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A184436E;
-	Sat, 10 Aug 2024 09:15:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F31E4436E;
+	Sat, 10 Aug 2024 09:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723281322; cv=none; b=QO1ZWPf3XxH7SaKZPNGhhovYymLeGMQHI5KIrIyQjSnCYR8HvEaVJiw7SB/0OyCUMDQyB4UKp3JOfKkn9GgBWpkToneuQw/Zb+yhzMB5e39onDSEBRUa9NJXb/HbHd8MdqYQGf2OswtIMatFibOAJ+5HhjbVCt9k77jbiUy3AJY=
+	t=1723281428; cv=none; b=tWbCskYNUwEnUKqu4F09fAXrIC3Vtdv8jQYn+qGYsYKkiaHXmgBswxLrueAhd4aA+8CBMZmNWM6z/k7X/dfLMSlnz/1qiMeoc7paZ5Kj58o7NarVAskZCvwvo2Abcu2dqmNymYkoyaYYtZ3UAVOocnppwBq0cU6Ytl8Wfup9rs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723281322; c=relaxed/simple;
-	bh=4jUI/8vLUn4atLkGFI6Gwc9rkYad1USbcCUKjP4w6r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PH4Uwm/Zik1tPztKAoRGfk6ZsZ3iIk0w9Vsh1OTpXhqn4Gxq99RanTJ48dSL6w5D0i7CjHuXwoXa/I1mwetxDMY3Q/lS/I2EX7tXcjS3mEQKBdBO638wOxgWVjVs+6ddzJUpzz8iTjKryWRQrQShsnv24f5J1ba8ntq3H1gJxQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaLpRAZY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43593C32781;
-	Sat, 10 Aug 2024 09:15:18 +0000 (UTC)
+	s=arc-20240116; t=1723281428; c=relaxed/simple;
+	bh=zb4bAQPkC8PuI8iRT17mPKYwOYBQem3QeLvrxpTiEH4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a/2INPId1tybvweKLfPvmXz9L3nYWGwot6WcUINlSZCrraCBAwSb4BX75ftoVm3SQG/PI1bExE+b4N//VCgybodoXK1LOPys8g4f4zjknqNF4X0OeyX9g1sPTHes3jDhb5d4/8gjdVSBqnTN89DKjdlk7sj6mfLlFpfLKvEhP2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oiqi1YA4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB139C32781;
+	Sat, 10 Aug 2024 09:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723281321;
-	bh=4jUI/8vLUn4atLkGFI6Gwc9rkYad1USbcCUKjP4w6r8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SaLpRAZYOti5YU7qbko3JJJ2CZde5/24AD+JvX9dfRVjvcoGQDfAjAOzSyhgy5Imr
-	 9jCV7MBLxGbVtwRE6Uup2c+E1ErsE7T/6so0OKjHWMlHUIj73THWgMZld3sIZ7lHUL
-	 7jN36UFq60ttbWo+cyZY002tBYeDX6B8RsVIJAEpkJEK6Bzqtyrzb3p1q2QePM2CBf
-	 zNlwA5u5mTKjeCCdowGQGDPDF3ISYgWktBTrZRVlQE1CVWzf+kKHF8gW89x6KW60RP
-	 szk+SV7xD11uakyy9pVnbKhsBv0agBvG+NpHb3wpJjpVwdfrJIbbDZebmJPKGjrQMC
-	 nsgJH6sLT4NPA==
-Date: Sat, 10 Aug 2024 10:15:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>, Conor Dooley
- <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Hennerich <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: iio: ad4695: fix common-mode-channel
-Message-ID: <20240810101513.2e61cd9c@jic23-huawei>
-In-Reply-To: <172322677990.966347.12423820402689548305.robh@kernel.org>
-References: <20240808-iio-adc-ad4695-fix-dt-bindings-v1-1-5cf37b9547b0@baylibre.com>
-	<172322677990.966347.12423820402689548305.robh@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1723281428;
+	bh=zb4bAQPkC8PuI8iRT17mPKYwOYBQem3QeLvrxpTiEH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Oiqi1YA4ZgNRWmOpHCOBWeHgy3LzYP5gWGnHlWVvFn0ZEKtMIdQ6+YGJ2A38JzEgq
+	 9Oo5aofLeP+A2OBgb2PGtnjzGc7/ts/0oszaEAba+/RwKfEcBpaWRk9d5HLqUDnc5B
+	 cpjL0lw8DMBdvuuZSfxtVF4qu+4AipMwdqCrvVCHPb1JlqRYm9JMTyxQNfcvwOe4n5
+	 Cft8ouLSki2/L6FZS/DTD613X48gbeBms6hkNeX3wqzIrIjPHy9u/9jo16Difkoqa6
+	 ZRHl6qkq7D5iM2eo/vGMMdS71s4i5SWU+IEmIV0/nB9UuCvJ8yx297YpnWsgXMmxKq
+	 dIBOq5VaW3snw==
+Date: Sat, 10 Aug 2024 10:17:03 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gui-Dong Han <hanguidong02@outlook.com>
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH] ice: Fix improper handling of refcount in
+ ice_dpll_init_rclk_pins()
+Message-ID: <20240810091703.GG1951@kernel.org>
+References: <SY8P300MB0460FB85729319189B40576FC0BA2@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SY8P300MB0460FB85729319189B40576FC0BA2@SY8P300MB0460.AUSP300.PROD.OUTLOOK.COM>
 
-On Fri, 9 Aug 2024 12:06:40 -0600
-"Rob Herring (Arm)" <robh@kernel.org> wrote:
-
-> On Thu, 08 Aug 2024 16:12:08 -0500, David Lechner wrote:
-> > The common-mode-channel property is a scalar, not an array, so we should
-> > not be using items: in the schema when specifying allowable values.
-> > 
-> > Reported-by: Rob Herring <robh@kernel.org>
-> > Closes: https://lore.kernel.org/linux-iio/CAL_JsqKaddw8FnPfdnhKhHUb8AcTxFadc_eZmxjX0QxFR80=mw@mail.gmail.com/
-> > Fixes: b40cafc11436 ("dt-bindings: iio: adc: add AD4695 and similar ADCs")
-> > Signed-off-by: David Lechner <dlechner@baylibre.com>
-> > ---
-> >  Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> >   
+On Fri, Aug 09, 2024 at 01:02:15PM +0800, Gui-Dong Han wrote:
+> This patch addresses a reference count handling issue in the
+> ice_dpll_init_rclk_pins() function. The function calls ice_dpll_get_pins(),
+> which increments the reference count of the relevant resources. However,
+> if the condition WARN_ON((!vsi || !vsi->netdev)) is met, the function
+> currently returns an error without properly releasing the resources
+> acquired by ice_dpll_get_pins(), leading to a reference count leak.
 > 
-> Thanks for the quick fix.
+> To resolve this, the patch introduces a goto unregister_pins; statement
+> when the condition is met, ensuring that the resources are correctly
+> released and the reference count is decremented before returning the error.
+> This change prevents potential memory leaks and ensures proper resource
+>  management within the function.
 > 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> This bug was identified by an experimental static analysis tool developed
+> by our team. The tool specializes in analyzing reference count operations
+> and detecting potential issues where resources are not properly managed.
+> In this case, the tool flagged the missing release operation as a
+> potential problem, which led to the development of this patch.
 > 
+> Fixes: d7999f5ea64b ("ice: implement dpll interface to control cgu")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Gui-Dong Han <hanguidong02@outlook.com>
+> ---
+>  drivers/net/ethernet/intel/ice/ice_dpll.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/ice/ice_dpll.c b/drivers/net/ethernet/intel/ice/ice_dpll.c
+> index e92be6f130a3..f3f204cae093 100644
+> --- a/drivers/net/ethernet/intel/ice/ice_dpll.c
+> +++ b/drivers/net/ethernet/intel/ice/ice_dpll.c
+> @@ -1641,8 +1641,10 @@ ice_dpll_init_rclk_pins(struct ice_pf *pf, struct ice_dpll_pin *pin,
+>  		if (ret)
+>  			goto unregister_pins;
+>  	}
+> -	if (WARN_ON((!vsi || !vsi->netdev)))
+> -		return -EINVAL;
+> +	if (WARN_ON((!vsi || !vsi->netdev))) {
+> +		ret = -EINVAL;
+> +		goto unregister_pins;
+> +	}
 
+Hi,
 
-Applied and pushed out for next to pick up. 
-Thanks,
+I wonder if it would make sense to move the check to the
+top of the function. It seems to be more of a verification
+of state at the time the function is run than anything else.
 
-Jonathan
+Doing so would avoid the need to handle unwind in this case.
+
+>  	dpll_netdev_pin_set(vsi->netdev, pf->dplls.rclk.pin);
+>  
+>  	return 0;
+> -- 
+> 2.25.1
+> 
+> 
 
