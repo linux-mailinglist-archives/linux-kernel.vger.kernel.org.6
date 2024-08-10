@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-281870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D541B94DC51
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:35:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58E5D94DC54
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:35:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F44282692
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:35:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D92F4B21ACD
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BCA157A61;
-	Sat, 10 Aug 2024 10:34:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D783157E61;
+	Sat, 10 Aug 2024 10:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PI1l3Kko"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JR2rs4p7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C9914E2C0;
-	Sat, 10 Aug 2024 10:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F16155A32;
+	Sat, 10 Aug 2024 10:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723286097; cv=none; b=dToWKoY4verSQJ5ZQlrbhf11OIPOwPuMEzlfYfBEih6wn7UBt70OF9v1xlmVFSPRFSKZvfcIKnb2YuYY9c1zCqeZEFkQjzU9H0F8rVMDeb0pNRIz2E60sA+pbu8yeLHF5PveJ9QpPHBcmbI0P4HUeBXZ7H4A7nftJPy9ZFqylJI=
+	t=1723286126; cv=none; b=ccqMEcNX1z7uHn2hb/RgplbQOofHtGrvUgRx0goienMryDt2SZph9QI+wYOobisWdgizLrlH2X1TKae/jyxa4Z2IREKp7mRaUSLwv384598kBLH5yibcncgHHKTcU2y3RfPJsrzeLjhQhMv79JX9LI4Mmqk+d/p+zzgnD3lT8oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723286097; c=relaxed/simple;
-	bh=bZW3wVjp7+9zA4pIm9iIi9zx0S5TgK2QEyTc0Gze+bg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l+FOjdGZUGkrfCLRqGCZg9uLvfgzog8x3sRbgNEDmQgWzAHuJjwRox/vuwrVfkipU/2Q3fQKTaWfgSUl3k2vEO7mKAUieoJZlxtvmnuQSGXtU7KiTyZdQCoxWsVlf2GYVtKTszi4Kx5vUtRhbLvo//dWtIuGTsg9DWfT1X0gvNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PI1l3Kko; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7afd1aeac83so2838985a12.0;
-        Sat, 10 Aug 2024 03:34:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723286096; x=1723890896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bZW3wVjp7+9zA4pIm9iIi9zx0S5TgK2QEyTc0Gze+bg=;
-        b=PI1l3KkooR6On9MhkQsTFEbhWCWEAktHf37/j/0k8OzoGtue60D4trCWZ7Usgn36BE
-         AiqjbU+GjtUE+LHn5G4QsVrw2NaPzUikK8sNJjCFoyOBMGsd0Co0CPM/8Cvu3VeUV/jI
-         rs+pvL0oQSE/XR0wG71Adh3bQ/Y4+7Rkz0E0axBIjYM5EcX24HwbVgcJVJIvTW5ibdqi
-         t/XfMu4FsNh3Ojf5DlrPqV1q8VHLAwJfYS37y92lLXW4jFQAfJ46pGvZNINcVvqOdyT7
-         bxlxQDgebuSf2d1HVAEoaHm9Dxx13pSg1tiwZXr+pxMwg4uYjMY/sDSppBUkzKr0z6dE
-         eVKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723286096; x=1723890896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bZW3wVjp7+9zA4pIm9iIi9zx0S5TgK2QEyTc0Gze+bg=;
-        b=QsRzLY3EnAn9QuzrpvZOQpOdNb1pNYHazzrlm3hMCY8l/XVQH8OxDXF7oJ95CoMdru
-         3GR7+9Nxzzh1WQkYOL4s+1EoDazcKk39fdu8ZosO3nMHE/4g1+ZprkO+3k4GYRD4lDmQ
-         Ah7Eonp5fEv9LZjmGhjO3Shgk5Cc9kH8G2mZy0jmQ1IK8YhTRJ8vftqv3426/xa/hEqc
-         y9gcviePM1sfYzY1smdGgSu2ZsWZJTn1kWg/uDb4MCqBOrYHG3cfclxyhU1xumuTHywb
-         aWNJzhiTI9ZI/dggWLU6dbVGcGDQCMd9QBXk7T33EKKMsr8fXcd9SaOyUrILFR4NgM1d
-         3Uog==
-X-Forwarded-Encrypted: i=1; AJvYcCWlL/0569EAwo3A2YUtalSiJ/s7tj4lyUXGQm0rTwZGLKFSG2hjOyVYjlczvNK4iIlKt0ggklY4+mRQBAfVvsy5gvT4CgB+DQrqS7FJJuPkBtsLp21/R4uMjrb3GCxJFJOCuIQWt88P8wVhTokJdYUSBC1zp/zPjquKFy1NQ3dd506/UZ+vHskDDhxzB7g=
-X-Gm-Message-State: AOJu0Yw4WFJZGgL+HgfYVftweaHdPESeNvApm8XlF33XHxE/4rhC5rBN
-	DJW3HGysyVNk+FNA7eYIiBcWYSIRnl5IRkI/jdNsa+2mOL2qgPHUPVMLe+Qz+0/9RdhUu9Inoqu
-	/M9MVzeKBIAwvVXAk6YsNlu54/r7n5x8UXRk=
-X-Google-Smtp-Source: AGHT+IG2EhrfCQGZpybZk9Zk/Risy0Rk6+C7uAFv1cW8iDmmShSmLA5zvW3rWSvXfscTYf4ZvlCpOXAdQRHTafHPw5U=
-X-Received: by 2002:a17:90b:1e49:b0:2c8:2cd1:881b with SMTP id
- 98e67ed59e1d1-2d1c4c468demr11570308a91.20.1723286095818; Sat, 10 Aug 2024
- 03:34:55 -0700 (PDT)
+	s=arc-20240116; t=1723286126; c=relaxed/simple;
+	bh=ZnGSufR7s2y1R0aQ0nDt624omjlslN8ADPJg5cctc50=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sn81EktwxIbwCXUxVBS3IOkvbKVetIxxKpi052CyJ6YQohLLGOsGXZHXrxKVlhn/NV84sovo5pLvRry38oHuJy+bSXADzfMzM3caFTKm47wVAXDanqvOcuM7BfwboPkl0VVnDcrDyTa1zmx9U3e6XelbWY0w42gXo6ZxlgTYOMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JR2rs4p7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53041C32781;
+	Sat, 10 Aug 2024 10:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723286125;
+	bh=ZnGSufR7s2y1R0aQ0nDt624omjlslN8ADPJg5cctc50=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JR2rs4p7/9Vyb3rJnUhMyiKeHKLx9G2zdgJyJYXGFMFeRhZ87TeO2+zqHP2EnCG+U
+	 PA3wGZtNkZ5n2HjS2TsTkq2/Gxsr59W/WmUamkaEEVBUIhEL+gp/zDQqHk1Bj1wdtW
+	 eKkHEnoSCbWScBkWLwKDLxql1cPRokrMJyUeAxHlOINMwjjG/FzglJ2YSJAh9fns6E
+	 Ymu7uZacU5Jp0D0UxjfITnDdtotrgJ9BNfsOMEQeptQYDhtfHJD9a/0nAqiPVE+aTP
+	 hrVU74nej3PjWbHyychcNtLg7/A8nEsS/UPN9tj8LQzPUpojSlWKCGgfQ4ovGnlChV
+	 Vmw7SBsMQplCw==
+Date: Sat, 10 Aug 2024 11:35:18 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Matteo Martelli <matteomartelli3@gmail.com>, Christophe JAILLET
+ <christophe.jaillet@wanadoo.fr>, kernel-janitors@vger.kernel.org,
+ lars@metafoo.de, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: pac1921: add missing error return in probe()
+Message-ID: <20240810113518.2cbceb66@jic23-huawei>
+In-Reply-To: <9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
+References: <1fa4ab12-0939-477d-bc92-306fd32e4fd9@stanley.mountain>
+	<36b1a47a-7af2-4baf-8188-72f6eed78529@wanadoo.fr>
+	<66b5c5df76766_133d37031@njaxe.notmuch>
+	<9a98aab5-bb68-4206-9ecf-32fbf6c9c7ef@stanley.mountain>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802124536.2905797-1-anders.roxell@linaro.org> <20240802124536.2905797-2-anders.roxell@linaro.org>
-In-Reply-To: <20240802124536.2905797-2-anders.roxell@linaro.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 10 Aug 2024 12:34:43 +0200
-Message-ID: <CANiq72kb9mDd0xndGFnMQXP4Hg-GE91eQ07yYiQW1HwWv75Qtw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] selftests: rust: config: disable GCC_PLUGINS
-To: Anders Roxell <anders.roxell@linaro.org>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com, 
-	shuah@kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 2, 2024 at 2:45=E2=80=AFPM Anders Roxell <anders.roxell@linaro.=
-org> wrote:
->
-> CONFIG_RUST depends on !CONFIG_GCC_PLUGINS. Disable CONFIG_GCC_PLUGINS
-> in rust/config file to make sure it doesn't get enabled.
->
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+On Fri, 9 Aug 2024 18:18:13 +0300
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> On Fri, Aug 09, 2024 at 09:31:43AM +0200, Matteo Martelli wrote:
+> > Christophe JAILLET wrote: =20
+> > > Le 08/08/2024 =C3=A0 21:28, Dan Carpenter a =C3=A9crit=C2=A0: =20
+> > > > This error path was intended to return, and not just print an error=
+.  The
+> > > > current code will lead to an error pointer dereference.
+> > > >=20
+> > > > Fixes: 371f778b83cd ("iio: adc: add support for pac1921")
+> > > > Signed-off-by: Dan Carpenter <dan.carpenter-QSEj5FYQhm4dnm+yROfE0A@=
+public.gmane.org>
+> > > > ---
+> > > >   drivers/iio/adc/pac1921.c | 4 ++--
+> > > >   1 file changed, 2 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+> > > > index d04c6685d780..8200a47bdf21 100644
+> > > > --- a/drivers/iio/adc/pac1921.c
+> > > > +++ b/drivers/iio/adc/pac1921.c
+> > > > @@ -1168,8 +1168,8 @@ static int pac1921_probe(struct i2c_client *c=
+lient)
+> > > >  =20
+> > > >   	priv->regmap =3D devm_regmap_init_i2c(client, &pac1921_regmap_co=
+nfig);
+> > > >   	if (IS_ERR(priv->regmap))
+> > > > -		dev_err_probe(dev, (int)PTR_ERR(priv->regmap),
+> > > > -			      "Cannot initialize register map\n");
+> > > > +		return dev_err_probe(dev, (int)PTR_ERR(priv->regmap), =20
+> > >=20
+> > > The (int) is unusual.
+> > > =20
+> > The (int) explicit cast is to address Wconversion warnings since dev_er=
+r_probe
+> > takes an int as argument. =20
+>=20
+> I don't want to remove the int because it's unrelated, but Christophe is =
+right
+> that the int is unusual.  We really would want to discourage that.
 
-When https://lore.kernel.org/rust-for-linux/20240731125615.3368813-1-neal@g=
-ompa.dev/
-goes in, this could also be relaxed.
+Applied, but I'd ideally like a follow up patch removing the int and the
+couple of similar instances from this driver.  Anyone want to spin one?
 
-Thanks!
+Thanks,
 
-Cheers,
-Miguel
+Jonathan
+
+>=20
+> regards,
+> dan carpenter
+>=20
+
 
