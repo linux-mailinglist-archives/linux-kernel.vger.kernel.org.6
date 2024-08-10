@@ -1,131 +1,113 @@
-Return-Path: <linux-kernel+bounces-281652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B90194D95C
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:16:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33F594D95F
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:20:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2165A1F22523
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:16:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70C88B219A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:20:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A9F101C4;
-	Sat, 10 Aug 2024 00:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DAA01BC2F;
+	Sat, 10 Aug 2024 00:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JqaP9a4G"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMHOAiaW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9440C441F
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 00:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A03D441F;
+	Sat, 10 Aug 2024 00:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723249007; cv=none; b=sK0aqb9CRKwPBMNd5ATXoO72cy50RTUjl4KDJOAAn5tnBOrpQZgiwSll7uKQ+BVPItPgXk1GCrK+hBi9bVdnh4rr3O+JAUM3Rza5ltq2ZVDGWGLcPZSELwC7xxqk5fEyBxKbDeT56aC9ArZiX3U5GrG3H8/dNH7ytQ1gpGDEUM8=
+	t=1723249223; cv=none; b=IsULPL/fEcL1VsyWXfHAp526GAXp5+FJ/efQ6FciDxaYeJ54wSlOSN2kg4h8HL8xmDd7HzZzkg6YaJCZdUZZbNfLQb0XTt962Br52WB31I/HgMMvgUzDPM4IiUT7o0UemHMUnmWJ+4Mh2Uub9S0/+yx6oMt06qe/yuIFcYj3648=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723249007; c=relaxed/simple;
-	bh=WACofQWdwAkbE5ke6bFhsACE4OIkGjWD8HDhe4FYJIk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1QE/Pw3vEkZJv9D0/9VsPcHJNLZ20atE/6U1jACY+E1Fb6O0eP6J04pNAS949dVBfS2rmf0fDnh207ml+YNHLouvYjWbJxxID7xQfFfD+t22TWI9Xqg757Ip9CMHvJE7uTfkcDNOICHJAXfUNKRw6HAGIMdKsd/vGyrw+M+duA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JqaP9a4G; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 9 Aug 2024 18:16:36 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723249002;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tVv3rZrHzx7MST34i4ApDOfnrFMCTY00UBmlr5tyqU4=;
-	b=JqaP9a4G9mt2Uvh9W5mHv8SeW9DdUbZ4bRaxaoc+mjjxyJdajrJ7HAePLWm8vOtZF5gn13
-	U2Jk8M+OMfZGO32FT+LkQj16HPno2XZdBKXO9lWptnEYabA28KcBYiZTFHiVryVGLQqcDH
-	jRexw/38tzXg63w8PYCEqPvUw7NKeeA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jose Fernandez <jose.fernandez@linux.dev>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <nbr7h4owyxfdyd4olis7ccrh3ljz6gco6qf7p7uzttw5ijsquj@ws7iqib576rm>
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
- <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
- <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
- <CAK7LNATuA4O3xVLcp5Lywr4njaUneKOJwPHZa11YQe63KXQpMA@mail.gmail.com>
- <66ef2ce9-5e7d-48fd-abeb-96e463d575ad@t-8ch.de>
+	s=arc-20240116; t=1723249223; c=relaxed/simple;
+	bh=QO3u2CGmjXPMln6wADcUqf90kgfAOUK87AMIW5V9i4Y=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=ij/QW7x1Mnsgm+QAx039s37DTX8VPwt/eRUCN2/6/qZoiXT2f9OVj2tYKbR9xSMJNE4qavrs6jsdwb2k9tv6R7fueS/+UWqTUcUMgoSjrGE3ecdPfjrGG7o6Q23Diwz2eNHWWD6bQGHF8B3z/GWzGUHGUo7y3lbhqhbRZQSAIiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMHOAiaW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A46CAC32782;
+	Sat, 10 Aug 2024 00:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723249222;
+	bh=QO3u2CGmjXPMln6wADcUqf90kgfAOUK87AMIW5V9i4Y=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=uMHOAiaWm0jvw3WTfHVgmMTLu6fMqoM8lXDpSoiD8u1Moiva1r0soIMfeht8TkOIo
+	 CMIeOIoUVyhkY4S8+vHqlbZ+GTJikJpmyEbkeOxqjBB14KWcK7aXSl1pz5rMLHJd2a
+	 cV7cdyv1CgvxlIOv78sd7dqnqEh3kH/GABbIJged5GD1BSK1aHepIso04DEgWJQSKn
+	 sn1woWoiJR0saSm5zYGZkNMKTzpC6HsoV0x6L+WmV0BWTn9FJEb1q8XbhEphSQ+ARi
+	 /V0ozJlSUCqG506ijhsUYoGifvhObFCFb+qhspwhIMmXN1qYQH3zlWfWIs0dvI17st
+	 YSImK2t2+oDNw==
+Date: Fri, 09 Aug 2024 18:20:21 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <66ef2ce9-5e7d-48fd-abeb-96e463d575ad@t-8ch.de>
-X-Migadu-Flow: FLOW_OUT
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Tristram.Ha@microchip.com
+Cc: Eric Dumazet <edumazet@google.com>, linux-kernel@vger.kernel.org, 
+ UNGLinuxDriver@microchip.com, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Vladimir Oltean <olteanv@gmail.com>, devicetree@vger.kernel.org, 
+ Florian Fainelli <f.fainelli@gmail.com>, 
+ Woojung Huh <woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, 
+ Jakub Kicinski <kuba@kernel.org>, Marek Vasut <marex@denx.de>, 
+ Tristram Ha <tristram.ha@microchip.com>, netdev@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240809233840.59953-2-Tristram.Ha@microchip.com>
+References: <20240809233840.59953-1-Tristram.Ha@microchip.com>
+ <20240809233840.59953-2-Tristram.Ha@microchip.com>
+Message-Id: <172324922165.2057557.834820350130126130.robh@kernel.org>
+Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dsa: microchip: add
+ SGMII port support to KSZ9477 switch
 
-On 24/08/07 07:31PM, Thomas Weißschuh wrote:
-> On 2024-08-08 02:02:59+0000, Masahiro Yamada wrote:
-> > On Thu, Aug 8, 2024 at 1:41 AM Thomas Weißschuh <linux@weissschuh.net> wrote:
-> > > On 2024-08-07 22:37:47+0000, Masahiro Yamada wrote:
-> > > > On Wed, Aug 7, 2024 at 11:28 AM Jose Fernandez <jose.fernandez@linux.dev> wrote:
-> 
-> <snip>
-> 
-> > > > Lastly, I will never accept new error messages
-> > > > with CONFIG_MODULES=n.
-> > >
-> > > Could you elaborate?
-> > > For me this works fine with CONFIG_MODULES=n.
-> > > (After having fixed the above issues so all subpackages are built)
-> > 
-> > $ make  allnoconfig pacman-pkg
-> > 
-> > Check the linux-headers log closely.
->  
-> I see now, previously I was not on kbuild/for-next and had an old
-> Module.symvers sitting around, hiding the issue.
-> 
-> ==> Starting package_linux-upstream-headers()...
-> Installing build files...
-> tar: Module.symvers: Cannot stat: No such file or directory
-> tar: Exiting with failure status due to previous errors
-> Installing System.map and config...
-> Adding symlink...
-> ==> Tidying install...
-> 
-> (coming from scripts/package/install-extmod-build)
-> 
-> linux-upstream-headers also contains .config and System.map which are
-> useful without modules.
-> So either we completely disable linux-upstream-headers or skip
-> install-extmod-build when CONFIG_MODULES=n.
-> And maybe move System.map and .config to some other package,
-> which would then deviate from the original PKGBUILD.
-> 
-> Neither option feels great, but it probably won't make a big difference.
-> If you have a preference, let's go with that.
 
-Thomas, Masahiro,
-Thanks for the feedback. It seems that System.map and .config are commonly
-included in -header Arch packages. To avoid deviating too much and to address
-the issue with install-extmod-build when CONFIG_MODULES=n, how about considering
-something like this:
+On Fri, 09 Aug 2024 16:38:37 -0700, Tristram.Ha@microchip.com wrote:
+> From: Tristram Ha <tristram.ha@microchip.com>
+> 
+> The SGMII module of KSZ9477 switch can be setup in 3 ways: 0 for direct
+> connect, 1 for 1000BaseT SFP, and 2 for 10/100/1000 SFP.
+> 
+> SFP is typically used so the default is 1.  The driver can detect
+> 10/100/1000 SFP and change the mode to 2.  For direct connect this mode
+> has to be explicitly set to 0 as driver cannot detect that
+> configuration.
+> 
+> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
+> ---
+>  .../devicetree/bindings/net/dsa/microchip,ksz.yaml   | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
 
-mkdir -p "${builddir}" # needed if install-extmod-build is not run
-if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-	echo "Installing build files..."
-	"${srctree}/scripts/package/install-extmod-build" "${builddir}"	
-fi
+My bot found errors running 'make dt_binding_check' on your patch:
 
-echo "Installing System.map and config..."
-cp System.map "${builddir}/System.map"
-cp .config "${builddir}/.config"
+yamllint warnings/errors:
 
-Thanks,
-Jose
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/dsa/microchip,ksz.example.dtb: switch@0: Unevaluated properties are not allowed ('sgmii-mode' was unexpected)
+	from schema $id: http://devicetree.org/schemas/net/dsa/microchip,ksz.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240809233840.59953-2-Tristram.Ha@microchip.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
