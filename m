@@ -1,94 +1,193 @@
-Return-Path: <linux-kernel+bounces-281892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2630E94DCAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:07:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BBED94DCAF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:11:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59AB81C20FA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12F22282163
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C889B158552;
-	Sat, 10 Aug 2024 12:07:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4454115854A;
+	Sat, 10 Aug 2024 12:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1/FpRTY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B9414F130
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 12:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D4114BF90;
+	Sat, 10 Aug 2024 12:10:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723291625; cv=none; b=QyXVOLLwYGMADNULBcik7/V3JokQfgIwB2p0OJuadWnkWNY0Ik6jxVO74m3fEn52e2jeeVumY1Hp1yWOHTc+5EXHWztIOf8g0Ywna9RaXiZPqycyjaLT1LZGP0Jggj0xwt517j8/XN6vmiN1GE6u+NcQd+NEmzwQFSCjbQpL5+4=
+	t=1723291855; cv=none; b=EzT/Bi06D+TCVDGSNORD7OvCNTZucdnXynet2GXD1jCvInhbRyFeO/7TyWTi1xAYlYfeNoy4Lrc1BKwYKSMLskzk/MTCuVAk8LgwDrTEo8I+nVUYnHr3FP4Lmicz3dgCdF9QJRie9c9X/P/vzLYCGyf01/B6eqhS4gjsPL1gWY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723291625; c=relaxed/simple;
-	bh=JMi4VqlR6VLRsS45yK6xehSfzEWKZlPxzkPo4WsyD6E=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=daCJXJ1SFmBSLLhGCjl88p+b8s02VqW9KCw6qN8061pfxH7pIx9dXCO1wOCum9uhFqgJfFiPgCt4qVvV5qklh0CcN+qTrOvcOJarYHid0pCrls4n/gOxCaKrVbD79KyLwY3pzmfYpW737n1t++1p9z7vRsqWisuCMPvPzQRYAvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b2938b171so35518945ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 05:07:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723291623; x=1723896423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=brS7xkekpvIr1jOYZCd0Wlyr5RS+/5cL13gt+qEWR4I=;
-        b=LC9ql0jCYH/iQ3/Q5IWC//pYVbVf6Kb+n9z9h4QhM7P+2GABhPKWQuNBRJck7N4asn
-         VaaLhT7/AM0qRF4ZdgrWXycz6u+Ssq4pvpg5aWHRHGaND/nQ+r8/ScveLk2JtpAUwbC4
-         LMOlgMY1StXEsyocK0Xgqt2b0IDxQSjhqwvXz6t5mvmvRsGWVisP0ewUjQjDx1Mvk+H6
-         vNcOEBgZxJy/zCazWyJc9n3HBjYHv//n8eW5tX3K9kdvmR9IBnVwPSJPuto/10GWnRcu
-         R82oTKGR6Vn5dZP/Edy1ofseHpoWMSToCd0Qt3frPnsdFaBal26xE0iW/YYYsBZZDPbK
-         W+iA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0BgUCWbD4eJOTAl1no/yJcbs010B75d/bssBoMGbpYvg0CZvgeHVtR8A8+7zP+1ZKJ+n3HLSKgdr5HWTS0jBsvkJ3+6U676RjE/LV
-X-Gm-Message-State: AOJu0YymZtH4jzR+y+29Ido9ibQmXhAJEI/L2zDNdeBiHwHYu7tEbzzl
-	HmxvOQsdO+j10+v+ewbnzT/WaQoTgCI7VNg2JEDeQ/ve5+vBQ2YAM7LU5U2OzG+QxC+nSWaZdHJ
-	esPJCqWRlI8Mk5anGa9aXGZNbOC/++7RixE/uoDxLfTyrNiIlXstB/eM=
-X-Google-Smtp-Source: AGHT+IFy+VeqXqzz/19A1XE5ksRo66lpGRBRIcR5gsemJWKDHHV8VcCm7/3BuhZRoKjTALyu3JVCmRt4uDYiNtIkUWqL8gt9FFWm
+	s=arc-20240116; t=1723291855; c=relaxed/simple;
+	bh=+GPZY64xnIzZ0d7Ib77Ct+6ZmK4cs//CrHJl5arfxAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tXqhs1AV2E/0WwogAMHQvFJxmbRUrWxd972RMl9MkfZO6B8eV4LaWBJZ8eC2VZj8onUvV8n28IRm9pIKymgY7pMcsLEqhjqGQuP/OYVQ2p7Gc9FlkZ0R7OVx5f30uTdKMV/KMjzj0Ho8JLwUtqjK1VAyd5lnG+8IRV3mojY+ZjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1/FpRTY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBEB0C32781;
+	Sat, 10 Aug 2024 12:10:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723291854;
+	bh=+GPZY64xnIzZ0d7Ib77Ct+6ZmK4cs//CrHJl5arfxAc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=n1/FpRTYJS2IOt+vQGn72KjJi+H8ps+xE6ogU4UltWXfQUMcKldbY4MR9MZwE8Guo
+	 zXxBh280cH/x4NlhEeYyTXRemVVF/uI9tXttQuEG17l8RKZGGf+UO5Q3iPbqnNBAJh
+	 pKDAuxZAlj3PNlmaEFVdZnINUlWaXa8WMWF4GQJb/7xdo6VT4e5Z2XhszH+2T0pJK/
+	 pm5xPMbp5RpLb4NjaveLLbcbr6H0KI+wqb5xKSiKNDgMzZ3OOCq/R3OosxSXrRa0vj
+	 P16/o23raSvyCWq9c4RmKnKIulTG9+IBn0LokwcFG0GBiBCTgmkvbaefJcPTu5nFX0
+	 9tEMG/QyhDpVQ==
+Message-ID: <03eca85c-50d7-4ff0-a5b6-83e3322cb04d@kernel.org>
+Date: Sat, 10 Aug 2024 14:10:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d9a:b0:382:feb2:2117 with SMTP id
- e9e14a558f8ab-39b8134a48amr3691455ab.6.1723291623131; Sat, 10 Aug 2024
- 05:07:03 -0700 (PDT)
-Date: Sat, 10 Aug 2024 05:07:03 -0700
-In-Reply-To: <0000000000005f5a6d061f43aabe@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000a9b85061f5319be@google.com>
-Subject: Re: [syzbot] [net?] [virt?] BUG: stack guard page was hit in vsock_bpf_recvmsg
-From: syzbot <syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com>
-To: bobby.eshleman@bytedance.com, bpf@vger.kernel.org, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	mst@redhat.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sgarzare@redhat.com, syzkaller-bugs@googlegroups.com, 
-	virtualization@lists.linux-foundation.org, virtualization@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
+To: Trevor Gamblin <tgamblin@baylibre.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ David Lechner <dlechner@baylibre.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240809-ad7625_r1-v2-0-f85e7ac83150@baylibre.com>
+ <20240809-ad7625_r1-v2-1-f85e7ac83150@baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240809-ad7625_r1-v2-1-f85e7ac83150@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
+On 09/08/2024 20:41, Trevor Gamblin wrote:
+> Add a binding specification for the Analog Devices Inc. AD7625,
+> AD7626, AD7960, and AD7961 ADCs.
+> 
 
-commit 634f1a7110b439c65fd8a809171c1d2d28bcea6f
-Author: Bobby Eshleman <bobby.eshleman@bytedance.com>
-Date:   Mon Mar 27 19:11:51 2023 +0000
+Thank you for your patch. There is something to discuss/improve.
 
-    vsock: support sockmap
+> +allOf:
+> +  - if:
+> +      required:
+> +        - ref-supply
+> +    then:
+> +      # refin-supply is not needed if ref-supply is given
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13d3c97d980000
-start commit:   eb3ab13d997a net: ti: icssg_prueth: populate netdev of_node
-git tree:       net-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1033c97d980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d3c97d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
-dashboard link: https://syzkaller.appspot.com/bug?extid=bdb4bd87b5e22058e2a4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a1b97d980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17e7b2f3980000
+Not needed or not allowed? Schema says the latter.
 
-Reported-by: syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com
-Fixes: 634f1a7110b4 ("vsock: support sockmap")
+> +      properties:
+> +        refin-supply: false
+> +  - if:
+> +      required:
+> +        - refin-supply
+> +    then:
+> +      # ref-supply is not needed if refin-supply is given
+> +      properties:
+> +        ref-supply: false
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - adi,ad7625
+> +              - adi,ad7626
+> +    then:
+> +      properties:
+> +        en2-gpios: false
+> +        en3-gpios: false
+> +        adi,en2-always-on: false
+> +        adi,en3-always-on: false
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - adi,ad7960
+> +              - adi,ad7961
+> +    then:
+> +      # ad796x parts must have one of the two supplies
+> +      oneOf:
+> +        - required: [ref-supply]
+> +        - required: [refin-supply]
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+That's duplicating first and second if. And all three - comment, first
+if:then: and this one here is kind of contradictory so I don't know what
+you want to achieve.
+
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    adc {
+> +        compatible = "adi,ad7625";
+> +        vdd1-supply = <&supply_5V>;
+> +        vdd2-supply = <&supply_2_5V>;
+> +        vio-supply = <&supply_2_5V>;
+> +        io-backends = <&axi_adc>;
+> +        clocks = <&ref_clk>;
+> +        pwms = <&axi_pwm_gen 0 0>, <&axi_pwm_gen 1 0>;
+> +        pwm-names = "cnv", "clk_gate";
+
+Make example complete - en0 or en1 GPIOs or whatever else is applicable.
+
+
+Best regards,
+Krzysztof
+
 
