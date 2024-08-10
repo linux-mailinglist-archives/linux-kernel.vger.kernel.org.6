@@ -1,186 +1,156 @@
-Return-Path: <linux-kernel+bounces-281923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4EA94DD05
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:03:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B05094DD0B
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:20:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D24B1F21BE2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A70628221A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:20:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBED15886C;
-	Sat, 10 Aug 2024 13:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b="T+RvZSWO"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2091.outbound.protection.outlook.com [40.107.94.91])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F942158845;
+	Sat, 10 Aug 2024 13:20:24 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B97D4502F;
-	Sat, 10 Aug 2024 13:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.91
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723294991; cv=fail; b=MsCacdhm+hswcOONp5h5P+R0KEsPzbDutpJ8miOgNwpALu7+YPN1CYwcsnUwWShb4kk8IWYi3hLPdKJMByyTb3Gk0E9hvBAZvWLv8MK1JNQZ2hDgkzzW0EIWQVxZ1U6OhbuaOa/ETpGFFSjccogiNWgRpmAWMu/CQlQUlC4zR10=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723294991; c=relaxed/simple;
-	bh=CCax6PUQJudRgfeGWjyKvrUXpiOh6wt8+DGVolxIVhM=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=YyBbfES0f4uRm6wWL6k3G6qdOtwPR1qjEj/1xG0MLmN2KXk8wi1G3kAQXyECa9LWfai7jAmIl8koR+1rW3ZJuzBxfKQDqmY/dvcCdNo/JqHfTF/qFbXhJuA0HX8nwh3crFKjdhvXKCQv/uRxeYBJq9aXVj9pk+pmJD9i5PegffE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com; spf=pass smtp.mailfrom=inmusicbrands.com; dkim=pass (1024-bit key) header.d=inmusicbrands.com header.i=@inmusicbrands.com header.b=T+RvZSWO; arc=fail smtp.client-ip=40.107.94.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inmusicbrands.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inmusicbrands.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wH/h+FcF21w7FHpQboV3U6YYpcWcwP5CXrNokbQAv8mvyUKzl/XHeMc64Eg4SRWwBbvGNqjJ0dNAO8CPJpJNd/OLr+Z6GWyT981Cz9Y0tmp+eNkAve6G39/c08/qeTIqYvHYpkzc6QTlzcb0dls6W0QLvwRegPzvVCLzDq9BA4s3KAxbN4TvbNz67wN5NMCT7n9MicU9LNbaMK+odwgeEgf5QiRUzYgFpC+JyTsesny0+9wlEI2rBF2jtzLENyQYOYP9V80MAsp6XDKPt++JsjVk4okDNFIPR3RKhnkHy6QpEjZW/6wCf7f9FlCnSzwzscq/0sRkezv5hqksAybFNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UgPNBFcSiGwGsDOLdjttGKBM7fKNio7mPdTx/h3Q3Ek=;
- b=NoVN5R6PvHVyMz8R4/SeB+8bRMmSTvsIe24qHBdWhUJxJJI6K+jUer1LxA32DfEZX7n0BlD/PaREOISdykbBnQp+CpBIGIuOIdXjD/yM5xbK/xIHB5kxTifOgZ2B6/IoAh9MDQGnziVNcPDlCbI27vDgwz26QCs8RyTtRGA0ddCxc51WOuuXqZhUsbRL6yEVzXq19X/tl/nTwP+QmJcFxRxCscwgG+B2IYSI1n/ElGPYkViZUWU1LpJsO1lB8ZYt7M0cEUJ15uolGX6xwibgj3SlBERZx9kLX5QU+qlCsuw5iChAFyNMtjuDxcXBANDuvTPmQH/FneHIFUZoNuVu9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=inmusicbrands.com; dmarc=pass action=none
- header.from=inmusicbrands.com; dkim=pass header.d=inmusicbrands.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=inmusicbrands.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UgPNBFcSiGwGsDOLdjttGKBM7fKNio7mPdTx/h3Q3Ek=;
- b=T+RvZSWOcB6dotImvMMi7a7UNt5l9D3fsph/T91phV9cYOLKGI69BWcDzHNUcKUFoc6DBplPqBgGZeCh7+yjTFqKuME+ZJJLQCJSB/1vAtlqou6wl80ts5yij4mQqIpT77ot4tyFiWPbmgaydgYx/VwhKQrIBOxgVGK0nL6f3lc=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=inmusicbrands.com;
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com (2603:10b6:303:1bd::18)
- by LV3PR08MB9290.namprd08.prod.outlook.com (2603:10b6:408:216::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.19; Sat, 10 Aug
- 2024 13:03:07 +0000
-Received: from MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401]) by MW4PR08MB8282.namprd08.prod.outlook.com
- ([fe80::55b3:31f1:11c0:4401%4]) with mapi id 15.20.7849.008; Sat, 10 Aug 2024
- 13:03:07 +0000
-From: John Keeping <jkeeping@inmusicbrands.com>
-To: linux-media@vger.kernel.org
-Cc: John Keeping <jkeeping@inmusicbrands.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] media: rockchip: rga: fix rga offset lookup
-Date: Sat, 10 Aug 2024 14:02:54 +0100
-Message-ID: <20240810130254.3338363-1-jkeeping@inmusicbrands.com>
-X-Mailer: git-send-email 2.46.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0235.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a7::6) To MW4PR08MB8282.namprd08.prod.outlook.com
- (2603:10b6:303:1bd::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2942A1E4AB
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 13:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723296023; cv=none; b=kHolJuJttLvyG+UH/4rrL7SUgoboHMhU7cuayM7WA20bFbz3pCJOokmmYoPoOe+LQApuHBUfIpT47CJtYL/wS3OZxmTj1SAd94iod3ohKeqIBZuXiEeDfiAnFXUMVu7RDYLDYbG9iqpEvPLtRs7dGAWPBzBgrg2qUjD+2PqU6BU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723296023; c=relaxed/simple;
+	bh=19oEkv1/eaXy2nNZjx2J+oCUrbBZbMQbjfsOTbXIALw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LxpcsgzPVAnJ6aiYSbMHCWjQDTpyqeqwTZcLhjDQZS42LeorfyqQK8Vsd6qsaJ+Xee6MWyWTWztOnzC4Gzo8sBwyI47vYFxaZiCzzYTeuEElWrlLAh8Z9SjU4k3reVVY5OrScGaXsMQg/hUOYc0L4XdLoudngIuy6hNJobEPopI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3cd180ffso36606995ab.1
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 06:20:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723296021; x=1723900821;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Tf5N057z2TxyRabMrpFMuIe/31O3a+xUE+vz0NvPDlQ=;
+        b=ZrZPM79PpzOPaXkjhsgJTdVNUdNbYA4bDgEHumom2jbk/5vviJDIquJUics1i7LKUl
+         vNDoKM1/tA2EVkwhy6z2pi2XQvA3DXX5xcYPyhpfdmFfcTP/tZ9kwvMsDHXdB2rsCiaT
+         sJ9pz1L/ATT3byPTen/Yjoz+Yj4ahupbtUS1motY3LPTN0En71r9bSWd/kLX4AShKytO
+         LM1RzRN8urmB/p/qFCoJ/OweDhIFk9TyX+VIapUpWrtctDj4HB5F78B+UoTNSeV9xLNl
+         3wRgIXilwvKK9i97QyZ0FDKq5+64Crt26itSf2k6Wl7YBThGFBYaVleAInliZ8fFn4b0
+         pEtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHSGz1l3Nv7we7cNlc69o5oXAe8wlFRJtFFtbWVGUCf5ACfUwN8bF3f7rUbrvGY/Jxjc2zymuGlQz4ScE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4QJZ+L7JNxVbeq2wR1FQIPJWtPFX3QUfxrdnNhj70EH1KDcdo
+	MxXjiuzrTrIuTN6shisdgzv1QOwVqFu4O6iG20IAW578xXy7n3QX5D+trJgNVugGteeNHtxsq4N
+	IVend4GmgL7BnyhnO3nMhbsdrI5pdoQ0RTGsesrYAqUpBd1YfrWk0sLM=
+X-Google-Smtp-Source: AGHT+IHllZM4Et292r1oIa+zpIpSzAfPRc5d735oMXHvmC4FdYCNjl7Fpl2RVeZslYTd2vsjmbRyS0Gy5utuaFGlboA7wwJO/1MW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR08MB8282:EE_|LV3PR08MB9290:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1df1648c-1087-4caa-c665-08dcb93cc737
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CXvg+LR+lsc1s+dP7U2S5fF1Gom22MU0NNlpaSnd/nNe7zE5FlaymncW6tIk?=
- =?us-ascii?Q?7o9Ptr1uJbmn27SKMbK77TN9X72i2/0vcwEnjlwg823IwY2aNKMZVKtdteMI?=
- =?us-ascii?Q?IZf/rUiZU1P1nlnd+RV0lL2LQqCpS9k3dYyGWl3jsXp/ZWDQVSMV1YDiVlxz?=
- =?us-ascii?Q?3UXXkK08paYdjJ/beCtwBEepRrIEk51qIwho7IkxNbFOHiY2NCWueKmkUsxS?=
- =?us-ascii?Q?V/sf72AwZfWG1a2+tpMy0BcMaUGVtCLsTEAEIjF7ElLCFHJtF+1OkwAbx0yV?=
- =?us-ascii?Q?xAMolfhDSGVovFWFWfNLeU0aGPh9rPJ65bwPntokb7sIFb56qT/308pbUjD2?=
- =?us-ascii?Q?lxkcBOadIVUbq2XccZo6nJoCbfS511nlaGE8Tx2lloUMGRsxIQggI91FVz+g?=
- =?us-ascii?Q?NZZjm91xiWMxY/nRV1o0oWcMOsQ4rpfUWZR64qadwM3vwHDkGFE6/qQKhseG?=
- =?us-ascii?Q?WBRFUR3YuRrywIRtLo7DZUNWpf6eIlZPakhkE46fp8qAaFSW8BLv1JZfaHXG?=
- =?us-ascii?Q?CSdt/TrvmQkrlPcHtvhEQy2zidu2WU09sv9NtOfW3AptdejuRzUGOWT+qEmy?=
- =?us-ascii?Q?T8/a4RHH/cSzOWHildF88aZ9idQ0YkjinEAcueYFWX12ia965dgn76MIHU4n?=
- =?us-ascii?Q?1DPSyF0l8m3N64tn1nun3H0SddJLuwtQVvWtqAZgNt5zcLrUOR5IHKYaC94C?=
- =?us-ascii?Q?h9G/DcV79u8To+A28Ud11GG7VuOc8SEFWa5bZUa9gD+77M7BWL6ctI6+2Ko+?=
- =?us-ascii?Q?TtFbpJQA9pHBG3mJ5w8e5aVPrLVQPAC6Ld6V958Mg9IYQc57Dq8mHTytpHj7?=
- =?us-ascii?Q?Y3xiI19MaaBbzqQfexou0xH5qvXinLYh2co51XTSQF+J34baLHsza+CvW0YA?=
- =?us-ascii?Q?sLa7u6rCV16rYcHh7XT1/RBUUPdfRBy+HiL+8EJb4iwyKgC6UK7Y0qGtMzdb?=
- =?us-ascii?Q?elucv/4PrSwvF3QKblnVMYwiu3J0MH3KPASREuEG7+YsyR15uU6Hgh0Ljbvx?=
- =?us-ascii?Q?bsuaKNoZxoYK8BoISAeKNc3PRl8IvewyeZ93n8AkMPDjC8vFq87K1nu/tQHC?=
- =?us-ascii?Q?b4q1P1Loorc06ADgG46fHNSfp37PkXHZ2CPnQQzjRX4wtMxNLBhCy1Vf/n3v?=
- =?us-ascii?Q?10ARB++HP/LnCV6e4uChM3bF3O/FkFvyu7MxnSm+2Tve66vyEsPYoyB6fw3h?=
- =?us-ascii?Q?hDEWKhD45CrVU5zK3zBpCaDpVGD5cfrPnNf+WwLDjyh7NogN0YK/JEs0hcnH?=
- =?us-ascii?Q?kru3j9XCzcYtu7Yu7OUpQlrlm5dgmd6wNfPce4VTYb+2rfUYUrFLhYfZyoP/?=
- =?us-ascii?Q?TbrFtCAQ6DaOZvFR0OSwcwsCnKqmtuhjVqUB+ICQMSp0UIvZCw4fQiVLTR61?=
- =?us-ascii?Q?I9dpIz4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR08MB8282.namprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JDG3fJFjGb3h1/QijdTKYBEjKj3y0/pL1cQ6RIYEML1f5FVFo6VpQaLTJrll?=
- =?us-ascii?Q?lV5er5u8EnfhPzA+1Rcx7f1PnA3Ut8QAGpmAC29oKjchmgK7XXdV0yYWCqQE?=
- =?us-ascii?Q?AM4xxaRPKJkgu6ddOeXAntHgeTGVZ/iHAcYNqaDLaGCJ8+cxNxSQlwZXXhB5?=
- =?us-ascii?Q?FRRt2DPoXr5wRxXfSE2Jn5Gb4vJrj9S2NGhCcbnxc2S1R/y32TrhRvltxWab?=
- =?us-ascii?Q?Si1gonzn1B35Mn+ICKSA3K//M+50nDtHckRWzs3GAoN+JAjiogV8DIMXYnAN?=
- =?us-ascii?Q?cmAAsbb6PdCZUfYFCeFjiNgWEO1189l4JkAkAaz9zAXAUAHiqhu5tbeH+4el?=
- =?us-ascii?Q?8Pey+bDEBEVURNRChdxt6MhAd7LVgOohqaX/A60pdZGUg4xwdq3babaTV6X+?=
- =?us-ascii?Q?grJ60EuALEIgoDurl/OKKOmcX34vgEJi5W1Hm4Jftuda347+RNq/L275KG89?=
- =?us-ascii?Q?4EpPneS0OnuMPqpTXIen6kklaL2bA+/qB/ipyp3AJiqBPsEY/SZwGvCnPydS?=
- =?us-ascii?Q?GzD5/Tgk+TdpHzVxWiyX1zk1N+SHB5zicnAZhBD2MGXNJk7GW1BVa71e7xAj?=
- =?us-ascii?Q?mA5SQTFR7023Hx1fLoJQQBymINnBDg09NIaIANyWPCnzZYjJDySrt6N86dkU?=
- =?us-ascii?Q?Z8pjNmY3HPFvSFmbsR4tEAgzrJ3mR+6XTrcEfWu2Du08y3ahOIzGUDzVYvpf?=
- =?us-ascii?Q?1vNgMowby9CWRqGDLw0QA/aSQalzGs8hMIUR5h2u3n4Ch56ppRqOIwnyfshY?=
- =?us-ascii?Q?47OfWKcJuWZEnbRLUUJgKCp+Fy1MlOfJV6GZQysnfwW65CuZLns/ys5pNxNc?=
- =?us-ascii?Q?bzEm85so7DOm1RyozOMjGAa0aqbysW3OjfBz55dQy5HGlcn/bJtElMVwKsBu?=
- =?us-ascii?Q?l4Wma3RdvDe9a/CWLlOcIhwhvCxJmnVNTOeVTKx44l2fpbiEbHYmUL1w4/tY?=
- =?us-ascii?Q?L7wsSq/zOmqEkUM4U0jiplckZQsFRi1HoZn2Btoa49hArxTB4+Mnb3q4ujr6?=
- =?us-ascii?Q?o+rS8otaiXGnEQ+hMAEnWOirJRDJbL/yJ6GQP3+l/bmvhyvkhlGMuVOBzvuI?=
- =?us-ascii?Q?aS9Av82/IzcIXx3MpAPdEsskIjrFcxGWOSTo3RwahK9trocaYwmqiwmPZ1ZW?=
- =?us-ascii?Q?mMObgO1p3r0xLF0GDYnzw074TfmD9lcRM6re0cE/kTQVtPtqjrGWZYNL69/R?=
- =?us-ascii?Q?HyI4qeC3orVGnfkuK6E3+GcniFDQgGxVHoJs6Ij8c5EYW3Z5scOmiTvVafQm?=
- =?us-ascii?Q?WQTvfu6JAAbhs73+9UwC3lN9bm8sREhQ1Og70TTPwrn7La6zbfdW6ubKwpxK?=
- =?us-ascii?Q?S4/lCRvsEVBI033Echs3fLBmkCdeh/1iSKCU4sDw18tNrAE51LI/sAG4GBo1?=
- =?us-ascii?Q?+7ZP4vqa3tA8hNV+KyPn3bwJuxx5N0UDNkIawbVWwXrddKZ3l2sP6kb+Qnfh?=
- =?us-ascii?Q?Y8YGv6tTGBX8jYYSJos6mUcQ4FBl9fkBOPxrv1nWeU5i3AtGal33fbAfCjll?=
- =?us-ascii?Q?mX7Xx6TjNpPAUOCOo8a0s11u0nB25b2qdWUuRll5ZEy6FMV6Z4c5j2obNAlX?=
- =?us-ascii?Q?fuqsx2Tsau33pk72HU4NygJNBDW8qN8Nifbivzz+6uNX6FmhcTq5a9p7UerJ?=
- =?us-ascii?Q?pA=3D=3D?=
-X-OriginatorOrg: inmusicbrands.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1df1648c-1087-4caa-c665-08dcb93cc737
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR08MB8282.namprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2024 13:03:07.3689
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 24507e43-fb7c-4b60-ab03-f78fafaf0a65
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: bEdTV65q/ScwOQ+N30dll3i2HZ8l7cAquUfgq4eIY9+9432S2GjufuK1Q2PlmpBp6tqO3BXQN9Bt71MJYxJcVt+4guWbcWsO01thdz0PPX4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR08MB9290
+X-Received: by 2002:a05:6e02:1d0b:b0:398:d1fe:9868 with SMTP id
+ e9e14a558f8ab-39b7a75252dmr3456555ab.4.1723296021137; Sat, 10 Aug 2024
+ 06:20:21 -0700 (PDT)
+Date: Sat, 10 Aug 2024 06:20:21 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002edcf0061f541f85@google.com>
+Subject: [syzbot] [net?] WARNING in l2tp_udp_encap_destroy
+From: syzbot <syzbot+1ff81cc9c56e63938cf9@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The arguments to rga_lookup_draw_pos() are passed in the wrong order,
-rotate mode should be before mirror mode.
+Hello,
 
-Fixes: 558c248f930e6 ("media: rockchip: rga: split src and dst buffer setup")
-Signed-off-by: John Keeping <jkeeping@inmusicbrands.com>
+syzbot found the following issue on:
+
+HEAD commit:    eb3ab13d997a net: ti: icssg_prueth: populate netdev of_node
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13589dbd980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+dashboard link: https://syzkaller.appspot.com/bug?extid=1ff81cc9c56e63938cf9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/451ec795f57e/disk-eb3ab13d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e6f090c32577/vmlinux-eb3ab13d.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ac63cb5127b1/bzImage-eb3ab13d.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1ff81cc9c56e63938cf9@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 13137 at kernel/workqueue.c:2259 __queue_work+0xcd3/0xf50 kernel/workqueue.c:2258
+Modules linked in:
+CPU: 0 UID: 0 PID: 13137 Comm: syz.1.2857 Not tainted 6.11.0-rc2-syzkaller-00271-geb3ab13d997a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:__queue_work+0xcd3/0xf50 kernel/workqueue.c:2258
+Code: ff e8 41 85 36 00 90 0f 0b 90 e9 1e fd ff ff e8 33 85 36 00 eb 13 e8 2c 85 36 00 eb 0c e8 25 85 36 00 eb 05 e8 1e 85 36 00 90 <0f> 0b 90 48 83 c4 60 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
+RSP: 0018:ffffc900042b7ac8 EFLAGS: 00010093
+RAX: ffffffff815cf254 RBX: ffff88802a4abc00 RCX: ffff88802a4abc00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff815ce6b4 R09: 0000000000000000
+R10: ffffc900042b7ba0 R11: fffff52000856f75 R12: ffff88802ac9d800
+R13: ffff88802ac9d9c0 R14: dffffc0000000000 R15: 0000000000000008
+FS:  0000555569316500(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b3291aff8 CR3: 0000000074d8c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ queue_work_on+0x1c2/0x380 kernel/workqueue.c:2392
+ l2tp_udp_encap_destroy+0x2a/0x40 net/l2tp/l2tp_core.c:1323
+ udpv6_destroy_sock+0x19e/0x240 net/ipv6/udp.c:1683
+ sk_common_release+0x72/0x320 net/core/sock.c:3742
+ inet_release+0x17d/0x200 net/ipv4/af_inet.c:437
+ __sock_release net/socket.c:659 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1421
+ __fput+0x24a/0x8a0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0994d779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe09b036c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 0000000000052632 RCX: 00007f0994d779f9
+RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+RBP: 00007ffe09b037a0 R08: 0000000000000001 R09: 00007ffe09b039af
+R10: 00007f0994c00000 R11: 0000000000000246 R12: 0000000000000032
+R13: 00007ffe09b037c0 R14: 00007ffe09b037e0 R15: ffffffffffffffff
+ </TASK>
+
+
 ---
- drivers/media/platform/rockchip/rga/rga-hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/media/platform/rockchip/rga/rga-hw.c b/drivers/media/platform/rockchip/rga/rga-hw.c
-index 11c3d72347572..b2ef3beec5258 100644
---- a/drivers/media/platform/rockchip/rga/rga-hw.c
-+++ b/drivers/media/platform/rockchip/rga/rga-hw.c
-@@ -376,7 +376,7 @@ static void rga_cmd_set_dst_info(struct rga_ctx *ctx,
- 	 * Configure the dest framebuffer base address with pixel offset.
- 	 */
- 	offsets = rga_get_addr_offset(&ctx->out, offset, dst_x, dst_y, dst_w, dst_h);
--	dst_offset = rga_lookup_draw_pos(&offsets, mir_mode, rot_mode);
-+	dst_offset = rga_lookup_draw_pos(&offsets, rot_mode, mir_mode);
- 
- 	dest[(RGA_DST_Y_RGB_BASE_ADDR - RGA_MODE_BASE_REG) >> 2] =
- 		dst_offset->y_off;
--- 
-2.46.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
