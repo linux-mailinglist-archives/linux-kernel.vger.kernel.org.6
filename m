@@ -1,284 +1,222 @@
-Return-Path: <linux-kernel+bounces-281957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C2D594DD78
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5616694DD7D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93E9F1F21ACD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:25:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B9601C20D64
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 15:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AE416A925;
-	Sat, 10 Aug 2024 15:25:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30176166301;
+	Sat, 10 Aug 2024 15:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="maQmKgX+"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="Y/dlVpLL"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2084.outbound.protection.outlook.com [40.92.102.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FAD166314
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 15:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723303507; cv=none; b=uL4mNoPw1VAOdUhmklOa/h6x7Pbnrhx+uxpBDP0Mko42b5JnmusJ9ehiN5rMUtxriWDmQxZ7AA172q6jGNjEfl21v8ZouQvdwd8f75wfZEm/RW2AynRkb6w4tnhigTs/aUAVbCCcWl0CIqU8HMzWrMgIExgQYyiLAQd7frs2WU0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723303507; c=relaxed/simple;
-	bh=W6P5mhHnBDt8GTxk6TjzOmyyfhkvaPS3xldpqvB5tUY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=brB9HA+SBa4+x4kjC83+QPLYf1HL3QIzU/dDz+oBQeYTXc+o9D9XqmNBeXRUe5iQFSu2xi5/a5KD0HgIGRU46V/Nn3Z/EVgRTJDe6ii5agQqfS5P4+hY4MteYeIGZux2yGGFaA+YNo4J8s3ZGBQjvB4j1JaDCQkdb3ehX49b5dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=maQmKgX+; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240810152457epoutp0270836394143f0c46feb6fdc97a174b88~qZ2Z7l-l-0659406594epoutp02b
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 15:24:57 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240810152457epoutp0270836394143f0c46feb6fdc97a174b88~qZ2Z7l-l-0659406594epoutp02b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723303497;
-	bh=V62DCjCfgaGoBP6BvPH2p9TGD9S+1fBA6+ndYZM8SWM=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=maQmKgX+vKomztKkg0ZRUSHMYVnQMaCv4mIUKskWhgl4yrHQX8AfaVArqcL8Vca6M
-	 Q3m3n2ORH6h8HjjCUzvZ/wCf0lpEP8bgW8gRVTQ512SVKa+1HsffoKqT+a5k3sinc5
-	 h3NpGXSWeFggS/heYIn+Oz6dV9pyrxYkMzK260Lo=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240810152456epcas5p34c9245d0db0a81e87b2b88b536b75d85~qZ2ZSpyHK2660726607epcas5p3N;
-	Sat, 10 Aug 2024 15:24:56 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4Wh4Mq32Y0z4x9Pp; Sat, 10 Aug
-	2024 15:24:55 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	89.51.09743.74687B66; Sun, 11 Aug 2024 00:24:55 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240810151456epcas5p30ac47e95a0f55cdf81410495389abd2c~qZtqwnE9o1956319563epcas5p3O;
-	Sat, 10 Aug 2024 15:14:56 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240810151456epsmtrp2f5a28982d9f3ecacef1ee0878136aa3f~qZtqv54790514905149epsmtrp2m;
-	Sat, 10 Aug 2024 15:14:56 +0000 (GMT)
-X-AuditID: b6c32a4a-14fff7000000260f-b5-66b78647ffd3
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F1.12.08456.0F387B66; Sun, 11 Aug 2024 00:14:56 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240810151454epsmtip2b5a42ba0b969f1a4043a0a18540e7ac8~qZtoziKD-2489724897epsmtip2l;
-	Sat, 10 Aug 2024 15:14:54 +0000 (GMT)
-Message-ID: <7fbd2cce-20a0-43c1-862a-3e0b756d8920@samsung.com>
-Date: Sat, 10 Aug 2024 20:44:53 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99383FB31;
+	Sat, 10 Aug 2024 15:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723303866; cv=fail; b=r/vlgzbzoDiZ14pDYYSCK7BH1FAlWFqS/zHb3C49rZ7ggffkilRnIfyoUC8xm8awa0bFsNFdGwGp+t7Kkuk+30OH+0+KaPuq+iU3TN7thLJkZ2xx5QbXU2qEnJ2AFq50GijkCHm+QGySCOAua3Q+rHUQ1tDAxeu7DjSgOKWZnWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723303866; c=relaxed/simple;
+	bh=LdSwqHOAXBPqtLCwNW9vduPoREyy/l1NmcVVval+/eo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=m7uSKAJpe3uQDRXSrWkw1JWvFOefLtdnCdhDbmisQbtHjHLNEQ2rBCf1RHIyDirflYQ3AsLu6LGTSCM4fTv/sFL0AdPB5DoA9raqinbsqRrvx9IKzoeO5elMbeZ3Tu9Fb1Ddx/YaqEfYTx4kPOEtllx7mldtw1pQPxu26Q0In8Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=Y/dlVpLL; arc=fail smtp.client-ip=40.92.102.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XMaFCNVBxmRijVTXveolf8Km2VidbwRWiMY1eYqfDbgLHgThSTPz5kBggN36A6oEOUuPX0Sw6j11E7N1QMRqHFiR0roF1t86gbQ9nSVq6tHz9RphDGtV0uTOgMaAViaiakVEhsOHxgpTne11xPvyP5hqeWosNWKI/MkYuYbPPwMVAyDLxJyzSIRFkOaXnZb/bSp9Orwtg25Q1EoQj5/HXQXvEGSjgcEMXCRpAItP9W8SCEu8TI2qTtiGPlvRvNMZ8CrG+dV6FGF1JA6tto6TkAndQYSgZ2TiqF6SP70khco54XU1GGM7CMbODgSyquf1SOjdr/Rh1u/J2Vttfb+tAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LdSwqHOAXBPqtLCwNW9vduPoREyy/l1NmcVVval+/eo=;
+ b=XlZ1BzwvrRxtMoCfxyFEXO8yuFw2I2ar2wShai5t96ViVVD37Wiy4SNPcI2Gtm6+TDWq6rQlGrT6Hw5U082R2RUM6mDjkZOIF4CA1THv5GtHsDebWA1iavjXB99W7XSDvAnjmk/6uXnC5ygy91+aVrsyJwDS5A8zO6FHKstSYbS8XIO55b406uHiS4l1d+gh4merSNF5zjjf1q18PEW5K8ga9Pgue22eqZIcbnF04wF2j7oblFO1rBX7l48AfpTVBPqNpJhZ6hykJHPx2q7kmtsC0OtAMvFqbkEMAKLVTnFkaAEZNhznXTcLERgScnCaNj608n0ubgWUoBgl5v46pg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LdSwqHOAXBPqtLCwNW9vduPoREyy/l1NmcVVval+/eo=;
+ b=Y/dlVpLL++Rtd0Ti7Jk0FIpYgKe//T6K28JWQW5aaDv9qKW4tOJ2aKtc3wqPVkmOCVKljLBP56Rfd23eSE/PHoX/AGHOdFnfprQDq+WOnfldwN7692xLNJS5h4fnuxvnESmEqf57F8PNancOFJxkI8wm6OF9wWlhdHpX1CRx7usDFViv8XJ8sokctaKZCKcT1sitVUBKM74AKWKwpyId31WfAdX5pK2b1S0Xdxg6s29mo5tJJu+Qarj0TlqWJfcz9R4s0n6CWSfui4X6exyVOQw0Loow7QbcLv0tbzYXX/Lj0XWPR8EJJQvWjdl48GSzSNDhNNA3Qv+ZqvH9tqOTTg==
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:b3::9) by
+ MAZP287MB0408.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:cf::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.17; Sat, 10 Aug 2024 15:30:58 +0000
+Received: from MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a]) by MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+ ([fe80::98d2:3610:b33c:435a%5]) with mapi id 15.20.7849.015; Sat, 10 Aug 2024
+ 15:30:58 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: =?utf-8?B?VGhvbWFzIFdlacOfc2NodWg=?= <thomas@t-8ch.de>
+CC: "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "airlied@gmail.com"
+	<airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, Jiri Kosina
+	<jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, Orlando
+ Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v3 1/9] HID: hid-appletb-bl: add driver for the backlight
+ of Apple Touch Bars
+Thread-Topic: [PATCH v3 1/9] HID: hid-appletb-bl: add driver for the backlight
+ of Apple Touch Bars
+Thread-Index: AQHa6ZnwyB5bPU44IEyDnWntQU6RLbIgavQAgAASw4CAABOOAIAAEBEA
+Date: Sat, 10 Aug 2024 15:30:58 +0000
+Message-ID: <6340DD46-4537-434E-9E14-EEFE7E04AAD0@live.com>
+References: <1368FEE8-58BB-41C9-B9AD-7F2F68FF1D53@live.com>
+ <0DDD5C22-A42A-49F2-984C-F3595F71AB1C@live.com>
+ <9e398f1b-05c2-4dd3-bc56-2b61c6784aef@t-8ch.de>
+ <79DB1D9D-8D32-474F-972F-F82C818AF38F@live.com>
+ <375d99a9-5516-4a39-a912-1961b3dd725d@t-8ch.de>
+In-Reply-To: <375d99a9-5516-4a39-a912-1961b3dd725d@t-8ch.de>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn: [o/BNm2l7MdqRuZdYEX0+O58jhFLKbXMTvH9cQcEuHAkHXdpqG2rS3djVECxycf3r]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MA0P287MB0217:EE_|MAZP287MB0408:EE_
+x-ms-office365-filtering-correlation-id: 5ec367e5-5c47-4ad7-6152-08dcb9516ec0
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|15080799003|19110799003|461199028|102099032|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ 43Ww+8st+CXZ5CKrVkCL7i6unoBZt7Axz87eEjqB98uwt8MJeDLTHGQdRbYZ2E8iIKIRINqNxUbp+8S62lrWSzz3k4dzAjJ7Nda+izAjwGkf7znaBoCwZfV/6yHyhR4f/uTr+eGWjpvnQiYGi7tw6dQyfzMAsoHSeJs7eXCcNllS8JpHyIo2J4jFi2sV/s51XRvnvFkwgQqh3IyiBy1BhJXtHCeWluuKba33IJa1vxUSNn+bLBfziZICMSeBRjV6hBG+OeR62bs2RMnn71sMyt9DNsA0uHeq3V2wfSh+ODRXV2GcEZpv7crhNUl4rpKcodMMFBu7ecrZwe/0zMOMaiahveWJANW/+fE6Gv/kfa9c+JR8mNV5msSDm0g3Sijue0MsAfFC2MeloFuNEaTS0p0BdBzZ5xCDqnA9IuwUX1whxge+8HJo4t5xceHkgJ1OAi+8rH8KJH+a/PMPbcGLPfYB3hBY+0dxMhvOXXN0lG5omAGx4JJZ1hZRCegnwgVnHvWNUVyjdp+I9QKlDoMVwydtn1yoJn23Xin9ccMjgH97Yedn90CeTh3LXTs/4+IfT2mdLS4s8GYk36nowF929Ffg54D6iHPbh/EHoWLej55iAd3AUJKUAMLj9Levn+JsZwsLaU/u8KNvuy+elDovyLjmLeAsI9yzqTokN7KX21k9+8yWDwqyj1jbHsHsuzqa
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?T29ERXdnQ2xuVm4zTHp5NFpGb0pqNTRkcDh2RytRa2xTdXRaOTN2MHU4emps?=
+ =?utf-8?B?WUlUQlFNNjBWNDUvTkFHaElxbjFDQjY2U3d2OWJwV3c4akRIeTI2N0M2ZWlR?=
+ =?utf-8?B?MlFpbGtiTlU0dCtMVTJRWG9MaFVSL0FWYkMxeGVvblhDTXVwdXRzeWlNb3ZR?=
+ =?utf-8?B?blJYc1gxMEFxZlhNRVBBNXRpZWJKUi9Tc1I3TDJ5MHY2TXdjeUFCcUdSMkQw?=
+ =?utf-8?B?aTc4TGZhcGJZOFJaVzh3UTg0KytTeXk5WVI5V01rSVZoRHRnUnBDektXRUpu?=
+ =?utf-8?B?eEVLNlR5TElpQzRtSUhwdkpMcGhFSjViZVRLV05JTlk3R1ZBaG85T0R0Qm5r?=
+ =?utf-8?B?K3IzUDduZG1KblE0MVZjWktuekM0SnFIT0hiWmNXMVlpQ2NHb0NlUjNLMStp?=
+ =?utf-8?B?aHZQdVk4QS9uekVrQTNYeWVQVlVyd1Z6aHJsTFlrMHJ5bEVMc1kvUExoZEg2?=
+ =?utf-8?B?WXN1cFFKZUpPM0RMVmpPQWdqTkVEMEpuUm40TURsS2JJNVRGWkNtNzV6dXNL?=
+ =?utf-8?B?LzkxOGZoWDNmY2YvNGc0Ni9HRDRiYzhDN0JyNFUxU3pTRlpHQlNCUHJKVnRK?=
+ =?utf-8?B?NXl0Sk1MYjBuRE13TTA3Q09lQkJidmxDM0lRRFdlNHhmcDljdGtZZGxtQ3du?=
+ =?utf-8?B?RjFmQnVzbkVoSDh2WDl0cXdySllUQTlvVy9obWxpYTVGeldrcWlEVzNabGlF?=
+ =?utf-8?B?ZFNnMzFtdnZOa0lYSndESG8zdi9QNWFxMElrZnVwQnBhNStVOHV5bmdJbjgz?=
+ =?utf-8?B?Y1Bra2R6MlQ4dG5GZ2xIbFptSmppQUs3QUZRaUVObkowV21ybE1VWllZRmph?=
+ =?utf-8?B?L2ZkUEMvckU3cTZGZWVlc1ErNWdiOHRIc213NmlmSzVScElqdHg5anFadW00?=
+ =?utf-8?B?dVZEYklLZG16dGJjZXhubCtFN3Q0VUpsKzJQQ2RQMDYxS1pNZE4rZEpyNUV5?=
+ =?utf-8?B?RU9iWFVleFU5N3huYUJCN1YyWFBaRXNQdk9ZQWR6MTJQQ05uVE9iNituRHBO?=
+ =?utf-8?B?MGcxQ2ViellONzNnYk1aT1ZOZXBMNWhoRjBUbzRJQXNZS29XWlhFNjRaYk9w?=
+ =?utf-8?B?ZUdSUGtMOVdqN3dyOEkwRmRmdlEvdWlPZzkvd2IwOTZGZndDb0FVR3VaREhM?=
+ =?utf-8?B?TmJYUDhtdDZxejZvYnBDTSsyaXNtNlpkOFRQMzhGUUJQeS94bUVoTzhra0pD?=
+ =?utf-8?B?RW1jd09HRk1JbTBQWFBpUXRRUkZvM0JsbjhhbkR1YVhpRkZXWDQrOWhnbWt4?=
+ =?utf-8?B?Y1RNd21pVTBYK3RTY01ycGFoUWU1VFNYbFVhQmZYSGpuRFNTeC9XU2ZuUUhV?=
+ =?utf-8?B?Y3lrSFN1RXZJdkZLRUhFSHRDL2FOc0ZFUGhDRmkrTC80YjYzbDVlaEJMM1RO?=
+ =?utf-8?B?RkNuZjFvMVFiaE5LYmprbjNrdlYzYmNlNlZTL1lzQ0ZENnM4U3ppQ0cyd2pQ?=
+ =?utf-8?B?ZzZaNGRNaGhtUDdsMEVPb1VtWW45MVlWeWxRNjZ1SWdRdit3M09tVnRTbDVS?=
+ =?utf-8?B?M0dnZmNENjNKRmprVmhhNGM1KzBjNTFHMGVQcG9CbEJCRFFNM3hPWHRwdW45?=
+ =?utf-8?B?WTJaeDJNa3ErVTJjeVJXMFA3ME5hRE8ybk1KOHNxc3RlcWEzRkpNc2YzcXFw?=
+ =?utf-8?B?T2YwbHljemQ4UUtodDNKSmNkVEllaDFvZng2OXQ1dEdUTWFKRUZXMWF2UEpE?=
+ =?utf-8?B?dkhkcDkwMzdvamdwODgvZklIY0tKSGNuYW5WOEl3YzFYUC9VT1pKQVdLV2cx?=
+ =?utf-8?Q?Pqy91X1eDzR62aqcYTtP5xikDcH8ITDWMLiKExU?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1D37DB1927A8314AA8EF5E2466B885D7@INDP287.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: dwc3: Potential fix of possible dwc3 interrupt
- storm
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"jh0801.jung@samsung.com" <jh0801.jung@samsung.com>, "dh10.jung@samsung.com"
-	<dh10.jung@samsung.com>, "naushad@samsung.com" <naushad@samsung.com>,
-	"akash.m5@samsung.com" <akash.m5@samsung.com>, "rc93.raju@samsung.com"
-	<rc93.raju@samsung.com>, "taehyun.cho@samsung.com"
-	<taehyun.cho@samsung.com>, "hongpooh.kim@samsung.com"
-	<hongpooh.kim@samsung.com>, "eomji.oh@samsung.com" <eomji.oh@samsung.com>,
-	"shijie.cai@samsung.com" <shijie.cai@samsung.com>
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <20240809234540.wyanxgos7j4d7cu2@synopsys.com>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmpq572/Y0g2kP+C3eXF3FanFnwTQm
-	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9li0kFRi1UL
-	DrA78Hrsn7uG3aNvyypGjy37PzN6fN4kF8ASlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pm
-	YKhraGlhrqSQl5ibaqvk4hOg65aZA3SekkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKbUg
-	JafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE74/+Ku0wFnUYV3xa+YWpgnK3excjJISFgInG7
-	aTZjFyMXh5DAbkaJb+fWsYIkhAQ+MUqs3ywCkfjGKHHoZgsjTMfkxQtYIBJ7GSWurFrGAtHx
-	llFi70FTEJtXwE5i85MJbCA2i4CqxOPD99kg4oISJ2c+AasXFZCXuH9rBjuILSwQIHFlyQyw
-	BSICOhIHTpxnAlnALNDBKrGgu40JJMEsIC5x68l8IJuDg03AUOLZCRuQMKeAtcTtZ1sYIUrk
-	JZq3zmYG6ZUQ2MIhsW/NJVaIq10kPp56BmULS7w6voUdwpaS+PxuLxuEXS2x+s5HNojmFkaJ
-	w0++QRXZSzw++ogZZDGzgKbE+l36EGFZiamn1kHdxifR+/sJE0ScV2LHPBhbVeJU42Wo+dIS
-	95Zcg7rBQ2LSk+0sExgVZyGFyywkb85C8s8shM0LGFlWMUqmFhTnpqcWmxYY5aWWwyM8OT93
-	EyM49Wp57WB8+OCD3iFGJg7GQ4wSHMxKIrzN4ZvShHhTEiurUovy44tKc1KLDzGaAiNoIrOU
-	aHI+MPnnlcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXAlBFobb1A
-	bMepq+LJSufm5y82Et0RMiksQfly7xeXd95y8bvuVF/zvpniK2vodtOpv2mLg5/ORXmLxz9l
-	Pi1pX2rnUCice0lm066k7z4f7XlLQ69sfbxy5ae5d2wn79/1tN/u4vEd0fu4i14WWz7IcU4/
-	Ib+T1X4x909dL4EkkRqDqHmm2WtuNZ8vXWG4zmGPBGN06pUOxpKTT8vy2Z7famFbErj4puzC
-	c5pXX57jcdnSLaQ/LzxNYrLl75g/fZbTL3TMjBE1d3scLHDZeNICPSGetTvW/ZTylXkfd5dR
-	cqr31RXGP9kytIPlFuw6On2ewDTZtTPq1l6Y/urv5bK1FzeIWVTkV738U2Xe5a4dqcRSnJFo
-	qMVcVJwIAHjgkL5GBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCSvO6H5u1pBj1L1SzeXF3FanFnwTQm
-	i1PLFzJZNC9ez2Yxac9WFou7D3+wWFzeNYfNYtGyVmaLT0f/s1qs6pwDFPu+k9li0kFRi1UL
-	DrA78Hrsn7uG3aNvyypGjy37PzN6fN4kF8ASxWWTkpqTWZZapG+XwJXxf8VdpoJOo4pvC98w
-	NTDOVu9i5OSQEDCRmLx4AUsXIxeHkMBuRonVZ34yQiSkJV7P6oKyhSVW/nvODlH0mlHi06s7
-	LCAJXgE7ic1PJrCB2CwCqhKPD99ng4gLSpyc+QSsRlRAXuL+rRnsILawgJ/E9DcnwIaKCOhI
-	HDhxnglkKLNAD6vEl68foc7Ywyxxb/p2VpAqZgFxiVtP5gNVcXCwCRhKPDthAxLmFLCWuP1s
-	CyNEiZlE19YuKFteonnrbOYJjEKzkNwxC8mkWUhaZiFpWcDIsopRMrWgODc9t9iwwCgvtVyv
-	ODG3uDQvXS85P3cTIzjStLR2MO5Z9UHvECMTB+MhRgkOZiUR3ubwTWlCvCmJlVWpRfnxRaU5
-	qcWHGKU5WJTEeb+97k0REkhPLEnNTk0tSC2CyTJxcEo1MOlsOP513Q65XqZMhh0aZZPnmyep
-	SnjLOWTo9xfdDdgi+OZIYNKXJ7dl/2++u7GKbbZ93vI/skEMV1YYl+7RSmK4bWz6+lrA/Pup
-	ktcTeWf73tc1t322Np79/8tD12ys9X71lE2wUpUwDrusrfN6bXnKy7+NsxZFmt+NufnV99N9
-	28iAB7adv79vFCvMfCW37Z2brobcRo9grr4VfiePTmPv4NvL0y73IVxCQr3EQPRj3sKCd0zL
-	j85fkvrpV8KsufJM7240nWr5NGOz5q/Lv7Q/JcWv515wqoItY0Ys75/PEUEfGSSiNk3XCbF5
-	Wyh7s+qv/7NX7oKGfpxh0t8PZdmEZixdvXnNRc2zUp/7NimxFGckGmoxFxUnAgCgptmMIwMA
-	AA==
-X-CMS-MailID: 20240810151456epcas5p30ac47e95a0f55cdf81410495389abd2c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2
-References: <CGME20240719110149epcas5p3dd468685a095c094ed2e540279bf3ec2@epcas5p3.samsung.com>
-	<20240719110100.329-1-selvarasu.g@samsung.com>
-	<20240807003806.5owtgwgw2lczg4u5@synopsys.com>
-	<b6baeb45-1684-4fcb-8c71-392cb4788c85@samsung.com>
-	<20240808011536.oid627ez4ppdfkhp@synopsys.com>
-	<b48e7aba-6c54-431f-bbb5-3e5490df0c1a@samsung.com>
-	<20240809234227.eriwy5e6leatzdyh@synopsys.com>
-	<20240809234540.wyanxgos7j4d7cu2@synopsys.com>
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-24072.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB0217.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ec367e5-5c47-4ad7-6152-08dcb9516ec0
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2024 15:30:58.1242
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZP287MB0408
 
-
-On 8/10/2024 5:15 AM, Thinh Nguyen wrote:
-> On Fri, Aug 09, 2024, Thinh Nguyen wrote:
->> On Thu, Aug 08, 2024, Selvarasu Ganesan wrote:
->>> On 8/8/2024 6:45 AM, Thinh Nguyen wrote:
->>>> On Wed, Aug 07, 2024, Selvarasu Ganesan wrote:
->>>>> On 8/7/2024 6:08 AM, Thinh Nguyen wrote:
->>>>>> On Fri, Jul 19, 2024, Selvarasu Ganesan wrote:
->>>>>>> In certain scenarios, there is a chance that the CPU may not be
->>>>>>> scheduled the bottom half of dwc3 interrupt. This is because the CPU
->>>>>>> may hang up where any work queue lockup has happened for the same CPU
->>>>>>> that is trying to schedule the dwc3 thread interrupt. In this scenario,
->>>>>>> the USB can enter runtime suspend as the bus may idle for a longer time
->>>>>>> , or user can reconnect the USB cable. Then, the dwc3 event interrupt
->>>>>>> can be enabled when runtime resume is happening with regardless of the
->>>>>>> previous event status. This can lead to a dwc3 IRQ storm due to the
->>>>>>> return from the interrupt handler by checking only the evt->flags as
->>>>>>> DWC3_EVENT_PENDING, where the same flag was set as DWC3_EVENT_PENDING
->>>>>>> in previous work queue lockup.
->>>>>>> Let's consider the following sequences in this scenario,
->>>>>>>
->>>>>>> Call trace of dwc3 IRQ after workqueue lockup scenario
->>>>>>> ======================================================
->>>>>>> IRQ #1:
->>>>>>> ->dwc3_interrupt()
->>>>>>>      ->dwc3_check_event_buf()
->>>>>>>            ->if (evt->flags & DWC3_EVENT_PENDING)
->>>>>>>                         return IRQ_HANDLED;
->>>>>>>            ->evt->flags |= DWC3_EVENT_PENDING;
->>>>>>>            ->/* Disable interrupt by setting DWC3_GEVNTSIZ_INTMASK  in
->>>>>>>                                                            DWC3_GEVNTSIZ
->>>>>>>            ->return IRQ_WAKE_THREAD; // No workqueue scheduled for dwc3
->>>>>>>                                         thread_fu due to workqueue lockup
->>>>>>>                                         even after return IRQ_WAKE_THREAD
->>>>>>>                                         from top-half.
->>>>>>>
->>>>>>> Thread #2:
->>>>>>> ->dwc3_runtime_resume()
->>>>>>>     ->dwc3_resume_common()
->>>>>>>       ->dwc3_gadget_resume()
->>>>>>>          ->dwc3_gadget_soft_connect()
->>>>>>>            ->dwc3_event_buffers_setup()
->>>>>>>               ->/*Enable interrupt by clearing  DWC3_GEVNTSIZ_INTMASK in
->>>>>>>                                                            DWC3_GEVNTSIZ*/
->>>>>>>
->>>>>>> Start IRQ Storming after enable dwc3 event in resume path
->>>>>>> =========================================================
->>>>>>> CPU0: IRQ
->>>>>>> dwc3_interrupt()
->>>>>>>     dwc3_check_event_buf()
->>>>>>>            if (evt->flags & DWC3_EVENT_PENDING)
->>>>>>>             return IRQ_HANDLED;
->>>>>>>
->>>>>>> CPU0: IRQ
->>>>>>> dwc3_interrupt()
->>>>>>>     dwc3_check_event_buf()
->>>>>>>            if (evt->flags & DWC3_EVENT_PENDING)
->>>>>>>             return IRQ_HANDLED;
->>>>>>> ..
->>>>>>> ..
->>>>>>>
->>>>>>> To fix this issue by avoiding enabling of the dwc3 event interrupt in
->>>>>>> the runtime resume path if dwc3 event processing is in progress.
->>>>>>>
->>>>>>> Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
->>>>>>> ---
->>>>>>>     drivers/usb/dwc3/core.c | 8 ++++++--
->>>>>>>     1 file changed, 6 insertions(+), 2 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->>>>>>> index cb82557678dd..610792a70805 100644
->>>>>>> --- a/drivers/usb/dwc3/core.c
->>>>>>> +++ b/drivers/usb/dwc3/core.c
->>>>>>> @@ -549,8 +549,12 @@ int dwc3_event_buffers_setup(struct dwc3 *dwc)
->>>>>>>     			lower_32_bits(evt->dma));
->>>>>>>     	dwc3_writel(dwc->regs, DWC3_GEVNTADRHI(0),
->>>>>>>     			upper_32_bits(evt->dma));
->>>>>>> -	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
->>>>>>> -			DWC3_GEVNTSIZ_SIZE(evt->length));
->>>>>>> +
->>>>>>> +	/* Skip enable dwc3 event interrupt if event is processing in middle */
->>>>>>> +	if (!(evt->flags & DWC3_EVENT_PENDING))
->>>>>>> +		dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
->>>>>>> +				DWC3_GEVNTSIZ_SIZE(evt->length));
->>>>>>> +
->>>>>>>     	dwc3_writel(dwc->regs, DWC3_GEVNTCOUNT(0), 0);
->>>>>>>     
->>>>>>>     	return 0;
->>>>>>> -- 
->>>>>>> 2.17.1
->>>>>>>
->>>>>> We're not waking up from a hibernation. So after a soft-reset and
->>>>>> resume, the events that weren't processed are stale. They should be
->>>>>> processed prior to entering suspend or be discarded before resume.
->>>>>>
->>>>>> The synchronize_irq() during suspend() was not sufficient to prevent
->>>>>> this? What are we missing here.
->>>>>>
->>>>>> Thanks,
->>>>>> Thinh
->>>>> I don’t think the triggering of interrupt would not be stopped even if
->>>>> do soft reset. It's because of event count is may be valid .
->>>> Ok. I think I see what you're referring to when you say "event is
->>>> processing in the middle" now.
->>>>
->>>> What you want to check is probably this in dwc3_event_buffers_setup().
->>>> Please confirm:
->>>>
->>>> if (dwc->pending_events)
->>>> 	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
->>>> 			DWC3_GEVNTSIZ_INTMASK | DWC3_GEVNTSIZ_SIZE(evt->length));
->>>> else
->>>> 	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0), DWC3_GEVNTSIZ_SIZE(evt->length));
->>> Yes, we are expecting the same. But, we must verify the status of
->>> evt->flags, which will indicate whether the event is currently
->>> processing in middle or not. The below code is for the reference.
->>>
->>> if (!(evt->flags & DWC3_EVENT_PENDING))
->>> 	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
->>> 			 DWC3_GEVNTSIZ_SIZE(evt->length));
->>> else
->>> 	dwc3_writel(dwc->regs, DWC3_GEVNTSIZ(0),
->>> 			DWC3_GEVNTSIZ_INTMASK | DWC3_GEVNTSIZ_SIZE(evt->length));
->> So, this happens while pending_events is set right? I need to review
->> this runtime suspend flow next week. Something doesn't look right. When
-
-yes. You are correct. Its happening while pending_events is set.
->> there's a suspend/resume runtime or not, there's a soft disconnect. We
->> shouldn't be processing any event prior to going into suspend. Also, we
-> Clarification: I mean we shouldn't process any event that happened prior
-> to suspend on resume because there was a disconnect.
-
-Agree.
->
->> shouldn't be doing soft-disconnect while connected and in operation
->> unless we specifically tell it to.
-> Thinh
+DQo+IA0KPiBBbHNvIGluY2x1ZGUgbGludXgvZGV2aWNlLmggYXMgeW91IGFyZSB1c2luZyBmdW5j
+dGlvbnMgZnJvbSB0aGVyZS4NCj4gTGlrZSBkZXZtX2tjYWxsb2MoKS4NCg0KQWxyaWdodCwgSeKA
+mWxsIGFkZCB0aGF0DQo+IA0KPj4+IA0KPj4+PiArI2luY2x1ZGUgPGxpbnV4L2hpZC5oPg0KPj4+
+PiArI2luY2x1ZGUgPGxpbnV4L2JhY2tsaWdodC5oPg0KPj4+PiArDQo+Pj4+ICsjaW5jbHVkZSAi
+aGlkLWlkcy5oIg0KPj4+PiArDQo+Pj4+ICsjZGVmaW5lIEFQUExFVEJfQkxfT04gMQ0KPj4+PiAr
+I2RlZmluZSBBUFBMRVRCX0JMX0RJTSAzDQo+Pj4+ICsjZGVmaW5lIEFQUExFVEJfQkxfT0ZGIDQN
+Cj4+Pj4gKw0KPj4+PiArI2RlZmluZSBISURfVVBfQVBQTEVWRU5ET1JfVEJfQkwgMHhmZjEyMDAw
+MA0KPj4+PiArDQo+Pj4+ICsjZGVmaW5lIEhJRF9WRF9BUFBMRV9UQl9CUklHSFRORVNTIDB4ZmYx
+MjAwMDENCj4+Pj4gKyNkZWZpbmUgSElEX1VTQUdFX0FVWDEgMHhmZjEyMDAyMA0KPj4+PiArI2Rl
+ZmluZSBISURfVVNBR0VfQlJJR0hUTkVTUyAweGZmMTIwMDIxDQo+Pj4+ICsNCj4+Pj4gK3N0YXRp
+YyBpbnQgYXBwbGV0Yl9ibF9kZWZfYnJpZ2h0bmVzcyA9IDI7DQo+Pj4+ICttb2R1bGVfcGFyYW1f
+bmFtZWQoYnJpZ2h0bmVzcywgYXBwbGV0Yl9ibF9kZWZfYnJpZ2h0bmVzcywgaW50LCAwNDQ0KTsN
+Cj4+Pj4gK01PRFVMRV9QQVJNX0RFU0MoYnJpZ2h0bmVzcywgIkRlZmF1bHQgYnJpZ2h0bmVzczpc
+biINCj4+Pj4gKyAgIiAgICAwIC0gVG91Y2hiYXIgaXMgb2ZmXG4iDQo+Pj4+ICsgICIgICAgMSAt
+IERpbSBicmlnaHRuZXNzXG4iDQo+Pj4+ICsgICIgICAgWzJdIC0gRnVsbCBicmlnaHRuZXNzIik7
+DQo+Pj4+ICsNCj4+Pj4gK3N0cnVjdCBhcHBsZXRiX2JsIHsNCj4+Pj4gKyBzdHJ1Y3QgaGlkX2Zp
+ZWxkICphdXgxX2ZpZWxkLCAqYnJpZ2h0bmVzc19maWVsZDsNCj4+Pj4gKyBzdHJ1Y3QgYmFja2xp
+Z2h0X2RldmljZSAqYmRldjsNCj4+Pj4gKw0KPj4+PiArIGJvb2wgZnVsbF9vbjsNCj4+Pj4gK307
+DQo+Pj4+ICsNCj4+Pj4gK2NvbnN0IHU4IGFwcGxldGJfYmxfYnJpZ2h0bmVzc19tYXBbXSA9IHsN
+Cj4+PiANCj4+PiBzdGF0aWM/DQo+Pj4gDQo+Pj4+ICsgQVBQTEVUQl9CTF9PRkYsDQo+Pj4+ICsg
+QVBQTEVUQl9CTF9ESU0sDQo+Pj4+ICsgQVBQTEVUQl9CTF9PTg0KPj4+IA0KPj4+IFRoZSBsYXN0
+IGVsZW1lbnQgaXMgbm90IGEgc2VudGluZWwgZWxlbWVudCwgc28gaXQgc2hvdWxkIGhhdmUgY29t
+bWEuDQo+PiANCj4+IHN0YXRpYyBjb25zdCB1OCBhcHBsZXRiX2JsX2JyaWdodG5lc3NfbWFwW10g
+PSB7DQo+PiBBUFBMRVRCX0JMX09GRiwNCj4+IEFQUExFVEJfQkxfRElNLA0KPj4gQVBQTEVUQl9C
+TF9PTiwNCj4+IH07DQo+PiANCj4+IFRoaXM/DQo+IA0KPiBZZXMuDQo+IA0KPj4+IA0KPj4+PiAr
+fTsNCj4+Pj4gKw0KPj4+PiArc3RhdGljIGludCBhcHBsZXRiX2JsX3NldF9icmlnaHRuZXNzKHN0
+cnVjdCBhcHBsZXRiX2JsICpibCwgdTggYnJpZ2h0bmVzcykNCj4+Pj4gK3sNCj4+Pj4gKyBzdHJ1
+Y3QgaGlkX3JlcG9ydCAqcmVwb3J0ID0gYmwtPmJyaWdodG5lc3NfZmllbGQtPnJlcG9ydDsNCj4+
+Pj4gKyBzdHJ1Y3QgaGlkX2RldmljZSAqaGRldiA9IHJlcG9ydC0+ZGV2aWNlOw0KPj4+PiArIGlu
+dCByZXQ7DQo+Pj4+ICsNCj4+Pj4gKyByZXQgPSBoaWRfc2V0X2ZpZWxkKGJsLT5hdXgxX2ZpZWxk
+LCAwLCAxKTsNCj4+Pj4gKyBpZiAocmV0KSB7DQo+Pj4+ICsgaGlkX2VycihoZGV2LCAiRmFpbGVk
+IHRvIHNldCBhdXhpbGlhcnkgZmllbGQgKCVwZSlcbiIsIEVSUl9QVFIocmV0KSk7DQo+Pj4+ICsg
+cmV0dXJuIHJldDsNCj4+Pj4gKyB9DQo+Pj4+ICsNCj4+Pj4gKyByZXQgPSBoaWRfc2V0X2ZpZWxk
+KGJsLT5icmlnaHRuZXNzX2ZpZWxkLCAwLCBicmlnaHRuZXNzKTsNCj4+Pj4gKyBpZiAocmV0KSB7
+DQo+Pj4+ICsgaGlkX2VycihoZGV2LCAiRmFpbGVkIHRvIHNldCBicmlnaHRuZXNzIGZpZWxkICgl
+cGUpXG4iLCBFUlJfUFRSKHJldCkpOw0KPj4+PiArIHJldHVybiByZXQ7DQo+Pj4+ICsgfQ0KPj4+
+PiArDQo+Pj4+ICsgaWYgKCFibC0+ZnVsbF9vbikgew0KPj4+PiArIHJldCA9IGhpZF9od19wb3dl
+cihoZGV2LCBQTV9ISU5UX0ZVTExPTik7DQo+Pj4+ICsgaWYgKHJldCA8IDApIHsNCj4+Pj4gKyBo
+aWRfZXJyKGhkZXYsICJEZXZpY2UgZGlkbid0IHBvd2VyIG9uICglcGUpXG4iLCBFUlJfUFRSKHJl
+dCkpOw0KPj4+PiArIHJldHVybiByZXQ7DQo+Pj4+ICsgfQ0KPj4+PiArDQo+Pj4+ICsgYmwtPmZ1
+bGxfb24gPSB0cnVlOw0KPj4+PiArIH0NCj4+Pj4gKw0KPj4+PiArIGhpZF9od19yZXF1ZXN0KGhk
+ZXYsIHJlcG9ydCwgSElEX1JFUV9TRVRfUkVQT1JUKTsNCj4+Pj4gKw0KPj4+PiArIGlmIChicmln
+aHRuZXNzID09IEFQUExFVEJfQkxfT0ZGKSB7DQo+Pj4+ICsgaGlkX2h3X3Bvd2VyKGhkZXYsIFBN
+X0hJTlRfTk9STUFMKTsNCj4+Pj4gKyBibC0+ZnVsbF9vbiA9IGZhbHNlOw0KPj4+PiArIH0NCj4+
+Pj4gKw0KPj4+PiArIHJldHVybiAwOw0KPj4+PiArfQ0KPj4+PiArDQo+Pj4+ICtzdGF0aWMgaW50
+IGFwcGxldGJfYmxfdXBkYXRlX3N0YXR1cyhzdHJ1Y3QgYmFja2xpZ2h0X2RldmljZSAqYmRldikN
+Cj4+Pj4gK3sNCj4+Pj4gKyBzdHJ1Y3QgYXBwbGV0Yl9ibCAqYmwgPSBibF9nZXRfZGF0YShiZGV2
+KTsNCj4+Pj4gKyB1MTYgYnJpZ2h0bmVzczsNCj4+Pj4gKw0KPj4+PiArIGlmIChiZGV2LT5wcm9w
+cy5zdGF0ZSAmIEJMX0NPUkVfU1VTUEVOREVEKQ0KPj4+PiArIGJyaWdodG5lc3MgPSAwOw0KPj4+
+IA0KPj4+IEZyb20gYmFja2xpZ2h0Lmg6DQo+Pj4gDQo+Pj4gKiBiYWNrbGlnaHQgZHJpdmVycyBh
+cmUgZXhwZWN0ZWQgdG8gdXNlIGJhY2tsaWdodF9pc19ibGFuaygpDQo+Pj4gKiBpbiB0aGVpciB1
+cGRhdGVfc3RhdHVzKCkgb3BlcmF0aW9uIHJhdGhlciB0aGFuIHJlYWRpbmcgdGhlDQo+Pj4gKiBz
+dGF0ZSBwcm9wZXJ0eS4NCj4+PiANCj4+PiBTZWVtcyB0byBiZSBhcHBsaWNhYmxlIGhlcmUuDQo+
+Pj4gDQo+Pj4gQWxzbyB0aGUgaGFyZGNvZGVkICIwIiBhcyBpbmRleCBpbnRvIGFwcGxldGJfYmxf
+YnJpZ2h0bmVzc19tYXAgY291bGQgYmUNCj4+PiBhdm9pZGVkIGJ5IHNvbWUgcmVzdHJ1Y3R1cmlu
+Zy4NCj4+IA0KPj4gc3RhdGljIGludCBhcHBsZXRiX2JsX3VwZGF0ZV9zdGF0dXMoc3RydWN0IGJh
+Y2tsaWdodF9kZXZpY2UgKmJkZXYpDQo+PiB7DQo+PiBzdHJ1Y3QgYXBwbGV0Yl9ibCAqYmwgPSBi
+bF9nZXRfZGF0YShiZGV2KTsNCj4+IHUxNiBicmlnaHRuZXNzOw0KPj4gDQo+PiBpZiAoYmFja2xp
+Z2h0X2lzX2JsYW5rKGJkZXYpKQ0KPj4gYnJpZ2h0bmVzcyA9IEFQUExFVEJfQkxfT0ZGOw0KPj4g
+ZWxzZQ0KPj4gYnJpZ2h0bmVzcyA9IGJhY2tsaWdodF9nZXRfYnJpZ2h0bmVzcyhiZGV2KTsNCj4+
+IA0KPj4gcmV0dXJuIGFwcGxldGJfYmxfc2V0X2JyaWdodG5lc3MoYmwsIGFwcGxldGJfYmxfYnJp
+Z2h0bmVzc19tYXBbYnJpZ2h0bmVzc10pOw0KPj4gfQ0KPj4gDQo+PiBUaGlzPw0KPiANCj4gVGhp
+cyBub3cgbG9va3MgdG8gYmUgYSBkaWZmZXJlbnQgbG9naWMgdGhhbiBiZWZvcmUuDQo+IEJlbG93
+IHNob3VsZCBiZSB0aGUgc2FtZSBhcyBpbiB0aGUgb3JpZ2luYWwgcGF0Y2guDQo+IA0KPiBzdGF0
+aWMgaW50IGFwcGxldGJfYmxfdXBkYXRlX3N0YXR1cyhzdHJ1Y3QgYmFja2xpZ2h0X2RldmljZSAq
+YmRldikNCj4gew0KPiBzdHJ1Y3QgYXBwbGV0Yl9ibCAqYmwgPSBibF9nZXRfZGF0YShiZGV2KTsN
+Cj4gdTggYnJpZ2h0bmVzczsNCj4gDQo+IGlmIChiYWNrbGlnaHRfaXNfYmxhbmsoYmRldikpDQo+
+IGJyaWdodG5lc3MgPSBBUFBMRVRCX0JMX09GRjsNCj4gZWxzZQ0KPiBicmlnaHRuZXNzID0gYXBw
+bGV0Yl9ibF9icmlnaHRuZXNzX21hcFtiYWNrbGlnaHRfZ2V0X2JyaWdodG5lc3MoYmRldildKTsN
+Cj4gDQo+IHJldHVybiBhcHBsZXRiX2JsX3NldF9icmlnaHRuZXNzKGJsLCBicmlnaHRuZXNzKTsN
+Cj4gfQ0KDQpJ4oCZbGwgcmVwbGFjZSB0aGUgb3JpZ2luYWwgY29kZSB3aXRoIHRoaXMNCg0KPiAN
+Cj4gTWF5YmUgaXQncyB3b3J0aCB0byBtYWtlIEFQUExFVEJfQkxfKiBhbiBlbnVtIGZvciBtb3Jl
+IGNsYXJpdHkuDQoNCkkgZG9u4oCZdCB0aGluayB0aGVyZSBpcyBhIHNwZWNpZmljIG5lZWQgZm9y
+IGFuIGVudW0gaGVyZQ0KDQpJZiB5b3UgYXJlIGZpbmUgd2l0aCB0aGVzZSBjaGFuZ2VzLCBJ4oCZ
+bGwgc2VuZCBhIHY1DQo+IA0KPj4+PiArIGVsc2UNCj4+Pj4gKyBicmlnaHRuZXNzID0gYmFja2xp
+Z2h0X2dldF9icmlnaHRuZXNzKGJkZXYpOw0KPj4+PiArDQo+Pj4+ICsgcmV0dXJuIGFwcGxldGJf
+Ymxfc2V0X2JyaWdodG5lc3MoYmwsIGFwcGxldGJfYmxfYnJpZ2h0bmVzc19tYXBbYnJpZ2h0bmVz
+c10pOw0KPj4+PiArfQ0KPj4+PiArDQo+IA0KPiA8c25pcD4NCg0KVGhhbmtzDQpBZGl0eWENCg0K
 
