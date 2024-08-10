@@ -1,121 +1,123 @@
-Return-Path: <linux-kernel+bounces-282026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F40B94DE94
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:46:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD57594DEA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D307C282759
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:46:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A7F1C21530
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5442A96;
-	Sat, 10 Aug 2024 20:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F57013DDA2;
+	Sat, 10 Aug 2024 20:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SYzN/+gm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="luYSufYO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="HfdLvVdn"
+Received: from msa.smtpout.orange.fr (msa-211.smtpout.orange.fr [193.252.23.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1806F381BA;
-	Sat, 10 Aug 2024 20:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B983483CA1;
+	Sat, 10 Aug 2024 20:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.23.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723322803; cv=none; b=ReSuaVtZofE5utdgpXgtEV+AyF7oKhF6snVqJiz426T1Jqvu6iQ9eaHlhrjmk6HIeNuVPGZV9x4Jw04cOCD9oZvX2TUcoE94BHf6nqmAkzU2gfBxZ3cLttFk98FnKc1gB4Eiv3tkDpoApkOczPg67/gQUo3/SKjKuWHAN0D7j5k=
+	t=1723323223; cv=none; b=pK6g4Y+b2UmGX6EC4LQnvjFkq1Th8rZXSyFzMtWRT7B2ghBmEv9d33zxCs0hgVXDSQ05RDB4Rn59/xCWYyOIirQlBY0YEO+fSfqNb/MNR7CdWlvPTMTsZQVleWddekK2HA0tVXAk7S9WD5La73tQfv/2e8rjz8WRiWZxO+OCnRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723322803; c=relaxed/simple;
-	bh=KKatjUDfUDh3394abB3/k7FYraV6vbUqJI+NfUHQpFs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eem9tSbL5M+OnhJ0EKvLP88w5hutYT9OKbF9CzecbBTcJqKjhFUYorHoF992/XDz5jvm0G0EJL+GAutl8b0VUdyw7cav64djztW2e98Op/0ena1oQ39dXDMaqXbQcH8BFwf6r/EDhXPJUqcAxIGx0eywjG+IWTjX8XUrDSLva8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SYzN/+gm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=luYSufYO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723322800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4EB6G605UpqViWz3uTt7qqaR1ty9Iaba8hEW5CoDrxE=;
-	b=SYzN/+gmwiSt8zjP5e320hPbBMJJpemWcEOV/C61HAH+KNL9nsWIox8NbYP2pgPBu/3Xz0
-	yQL8Z8FSMjkgq5HqSuP3gglZpwJZJxIfnWtlHXDOTcatRP1ge7bHqk2O+5jYypO4nKQ/ie
-	Y5cm2q2/hr3uG9ha5MFfXl6J6BBW4gQrUxg75QKpAy+135p/m1Kd+Jstf+lgMCdSUk8MXH
-	pu0y/bELyEwu9AzPBifUCklSNog2tdhdovqPMzyMx8swps0UV/6FVWNTC0VTEh9ekXSO7e
-	Qd14+TnDIrnYJw/OwzlPX2Gp8eipcnz9IzOivrr1ZiQS5ZXyNK++cAFXZz/uxw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723322800;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4EB6G605UpqViWz3uTt7qqaR1ty9Iaba8hEW5CoDrxE=;
-	b=luYSufYOE9iMYEfrZDBXG+F6zYOlckEFvz6toHP8i6rE/EeatF5aAnFxWLQz2Qdz7uhNAW
-	T3FJE0uaRdpNJgDA==
-To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
- Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, x86@kernel.org, Song Gao
- <gaosong@loongson.cn>
-Subject: Re: [PATCH v5 3/3] irqchip/loongson-eiointc: Add extioi virt
- extension support
-In-Reply-To: <20240805073546.668475-4-maobibo@loongson.cn>
-References: <20240805073546.668475-1-maobibo@loongson.cn>
- <20240805073546.668475-4-maobibo@loongson.cn>
-Date: Sat, 10 Aug 2024 22:46:39 +0200
-Message-ID: <87wmkortqo.ffs@tglx>
+	s=arc-20240116; t=1723323223; c=relaxed/simple;
+	bh=57Gb5iOBwKagGAbuQ5OIFQ1d9VwsdVWPo1WBsonn8EY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWCAdl7VB1aEoUf94Ku+XaDlq1EEYBXfC7cGnc+qaSPjMBycfllXV36XH5E0DOV/vxxCOVEGCD60e09oMcON1N60qdBGSjWZbgkkD2Mb6YLnuupgRMGI6VeZ/DEjA+QZPSr4DRxExspPoLh81VhTmPH6VOol00dB5FjHpuxIFEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=HfdLvVdn; arc=none smtp.client-ip=193.252.23.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id ct4YsQhfG3VI6ct4YspXs9; Sat, 10 Aug 2024 22:52:23 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723323143;
+	bh=43d3uOIcW8QezMC9CUty94x+xF7qIsJvgPKmflbkadU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=HfdLvVdnu1vAyuQvgZk6NT2f+arBfQ10rr/bBp4JOUz/cGo+w2AX/kQGNHruvDMnE
+	 BEdr4t2KD+cs7OewygUcxECv0rvEngLzQASvLZJlUmNWn/1I1cpK3NXrlD0wshpKG4
+	 O/TOEEDZvv721qzdKi08ss3wqYy0aZTQg5dMxA5Jq4sHDc48iSQfCNEisH15HwoPQX
+	 Uu1Dk3Z6fgWg6JAqtotiF+9RhhEmIhUHj0nae/CV91wVd9AoT7kKH6mCleTtFP9iw3
+	 kxk23XTov2U2hJr1Hzmizt8qsd8Iy9R5fb9qDDGkhmTPrvDyn0+btO9ouo+H63P3aQ
+	 fcOmlSrhSOILA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sat, 10 Aug 2024 22:52:23 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-usb@vger.kernel.org
+Subject: [PATCH] usb: gadget: configfs: Make check_user_usb_string() static
+Date: Sat, 10 Aug 2024 22:52:17 +0200
+Message-ID: <958cb49dca1bff4254a3492c018efbf3b01918b4.1723323107.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 05 2024 at 15:35, Bibo Mao wrote:
+"linux/usb/gadget_configfs.h" is only included in
+"drivers/usb/gadget/configfs.c", so there is no need to declare a function
+in the header file. it is only used in this .c file.
 
-> Interrupts can be routed to maximal four virtual CPUs with one external
-> hardware interrupt. Add the extioi virt extension support so that
-> Interrupts can be routed to 256 vcpus on hypervisor mode.
+It's better to have it static.
 
-interrupts .... 256 vCPUs in hypervisor mode.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+I've not checked, but I suspect gcc to both inline check_user_usb_string()
+in its only caller and keep it as-is for any potential other callers.
 
->  static int cpu_to_eio_node(int cpu)
->  {
-> -	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-> +	int cores;
-> +
-> +	if (kvm_para_available() && kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
+Before:
+======
+$ size drivers/usb/gadget/configfs.o
+   text	   data	    bss	    dec	    hex	filename
+  41197	   5120	     64	  46381	   b52d	drivers/usb/gadget/configfs.o
 
-Why isn't that kvm_para_available() check inside of
-kvm_para_has_feature() instead of inflicting it on every usage site?
-That's just error prone.
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  40834	   5112	     64	  46010	   b3ba	drivers/usb/gadget/configfs.o
+---
+ drivers/usb/gadget/configfs.c       | 2 +-
+ include/linux/usb/gadget_configfs.h | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-> +		cores = CORES_PER_VEIO_NODE;
-> +	else
-> +		cores = CORES_PER_EIO_NODE;
-> +	return cpu_logical_map(cpu) / cores;
->  }
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index 0e7c1e947c0a..e0bf2b2bfc01 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -12,7 +12,7 @@
+ #include "u_f.h"
+ #include "u_os_desc.h"
+ 
+-int check_user_usb_string(const char *name,
++static int check_user_usb_string(const char *name,
+ 		struct usb_gadget_strings *stringtab_dev)
+ {
+ 	u16 num;
+diff --git a/include/linux/usb/gadget_configfs.h b/include/linux/usb/gadget_configfs.h
+index d61aebd68128..6a552dd4dec9 100644
+--- a/include/linux/usb/gadget_configfs.h
++++ b/include/linux/usb/gadget_configfs.h
+@@ -4,9 +4,6 @@
+ 
+ #include <linux/configfs.h>
+ 
+-int check_user_usb_string(const char *name,
+-		struct usb_gadget_strings *stringtab_dev);
+-
+ #define GS_STRINGS_W(__struct, __name)	\
+ static ssize_t __struct##_##__name##_store(struct config_item *item, \
+ 		const char *page, size_t len)		\
+-- 
+2.46.0
 
-> @@ -105,18 +144,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
-> @@ -140,17 +185,23 @@ static int eiointc_index(int node)
->  
->  static int eiointc_router_init(unsigned int cpu)
->  {
-> -	int i, bit;
-> -	uint32_t data;
-> -	uint32_t node = cpu_to_eio_node(cpu);
-> -	int index = eiointc_index(node);
-> +	uint32_t data, node;
-> +	int i, bit, cores, index;
-
-Is it so hard to follow:
-
-  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
-
-?
-
-Thanks,
-
-        tglx
 
