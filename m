@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-281787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50FA294DB50
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3204894DB54
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 10:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C169A1F221E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:04:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35B031C212BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EBD414B081;
-	Sat, 10 Aug 2024 08:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3047314B091;
+	Sat, 10 Aug 2024 08:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ExPgPpOw"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2033.outbound.protection.outlook.com [40.92.42.33])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="KjWiWT44"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10olkn2067.outbound.protection.outlook.com [40.92.42.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AD934CE5;
-	Sat, 10 Aug 2024 08:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E72B34CE5;
+	Sat, 10 Aug 2024 08:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.42.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723277038; cv=fail; b=SZ4MWGM9dsv83Pm3j/0+nVDKAPtUXg+s9c04xNj4oZikA25LNSVxnhYjpT813y3dtdw7eYvBaspdrLjQd7wcNsLXnI5J6e2GMxu0jc6P4/G7U9kjjlG/c4K7qFNHISKFwmNqBEDMjHsihNW2nTEj97CwkOhLFgeQA9E32xObLF4=
+	t=1723277078; cv=fail; b=RIVmOlBqcT0wNrxC6z7odcAkRaoZ4TMD5qPCbnf6RcOxwhHHYGlz9gZ+MXIjnERQI5prFx7xxbhxAbB6n+T9NuEfvLHDzs8aQxUK4HXR7TRfDEle4XniaQZD1reZ06eVt8CoANoJRv/m3t+HQEkvkdN0YmCL1N5+4NEZolVjeyQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723277038; c=relaxed/simple;
-	bh=f5u7/HOWtC3oS9BWDOOz4KxoWLRlqmrS7rql1RDNLSE=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XJE+RTtJ6y5ZZDr/O1UDeDVQj2VyDXE0PmiJ9TnvXcJNhy1P0JSbE10C60j8FDHDA5XwrMaz56zx8pMbIhiH9CgDzpw+sivEGaKK38pdmwgCjGvP5ZFz+HBNVBjhyBFt13K8W1VJoaowOAXaLCOD26oOjqDxHEJJQ1tnAVhSx+A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ExPgPpOw; arc=fail smtp.client-ip=40.92.42.33
+	s=arc-20240116; t=1723277078; c=relaxed/simple;
+	bh=pUUlnEYQLKGFDYNNgM7qDiyyi9r4EzIJ9carsmiNCvM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bZ4xi2xAcHKHg6ND5Is6PrS/+ZFJX1r0pF+BCFdeEolDKOwH7S4fRi00cY3TrS0WXDHzXAtS6CBT19mAJZhd+UovibW4JzXuZ8LSqYoqPf4KYqmMPWCZo/2/y6XWZqgIPKzUtGSd9nxJGydR2+GLdzx82s7IpnSV4CPOKz3dYCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=KjWiWT44; arc=fail smtp.client-ip=40.92.42.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Qn6bYJo4DDY/gGFfQvSrRdsITQvs8skjGEbwvcQrSNnCJe3oJgTfLgTT4Wqxxx8cIWwI3Gi90QXJnnts38bUTpW9Uwm+h4MKDBXoUKAIRbcNJDuMb+43epSqypKTWJ3hFYIwudatVoFeVJFkfgYmDVU22DtMdICvriT3fNTBSpGuMNgHOw91NfwnDQrzQo+kQnkbxSfH/Tz/HuW33nni5YdkLt+2pQKQaXiSC5EIxLD1peczKZciUR7NeOFJTC1oSpB72Fk+Ldq/EJxa3RmD3Uzey535cFUsOeMEcT8L+axO+HorXTVjhPRXp65ultIdmgMSSDUjnwsweIMx2kDCxg==
+ b=Tu5Ac5qiQ2JzUcGy3T5PlKAGJavgmdOqdMbNc6LK4oQAarTui+g6hsqZqoSPHWJ/Q9/DxzlZ6Gu93pFa12oqmmjagtsWuDN44CqH/VmlKNAc6Xw5zTUzSPc1wUG2anr9VMwq4jGKhG7fIGdY6/r0/Z1j/v7w69NLSGKNUr4bjurIcIzdxjBacMo7IYM14imwW4vuhxDrrJMRjfoWW2cxMmzEuE+X/46degImZeJM7pq4/9Rtli7vXkyqSoWyrqticMGevxwNqWNMX4raAcpF61ZkWEze6VjseMUmbBO3updFIPbzagc/OZsuSzkbbOUelZYDBrR1UcRPfHOuxXlD+w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mi3Az0JRlQjKq+1wQWxafTGjvrVZazpXaXtVblE35I0=;
- b=UYnZD0Oj3wMRJHlCX5cQjeqdDuW3AvRtxM8NLC2POMookpti+4iQ5WW1UopD1Si+K89vE4nMIpAvcZR/INQG1ulc+Tr0TLW31515g0UkdxY5dJ4GhJNA+YWeFtSSbfAA6V4j8fieibnhZfYxzy9XmGmlwQrkG2MhYhyergZnLJ769+1MM0KKBjaNG2zrD2cAyyjuyvvjJLDqrm2iViuYi6F4L6o/lW4coUu2OCddvi5uttip7H1QVIFIIuBc2SBPYfk7Hko2qZZghnj5SDE8F5Ifl0dEi95WkFKCAE+XQuI7Hivel7llW40RoXOfjljuCRpqsyuXoYtUQ7ctuFSBaQ==
+ bh=pYrG99WMMaEn/7nhZeUcYwO99UpIRAGGmfiQygB+tpI=;
+ b=dhvC3la2cO/qWkx6PXqZ2uMeMvI05/CVBV1OjqDMDdLQ38yyLtN7Fq8q768mn4zlksLvbQb+vWeyg/wMOeZnoxIWDF/Ci65w6CBXPrcHct5jk27woCdzQ9cUBwbsqYVXhU6FSENK+FOHs0Wpq3yjZ7DPI/B1uWR7Wd74/j4TQN17MtbGXI8cwoAHj9f4kJPwUeHriHrqXnDZZxUr+85ueVbGOkeQaUDwPH1jC+7GPdd8Pv2O4Wb16x9OqnZxefqhEZH7EqDbalLnUUi1dPk4GjvivrPfIKqDCno2sSbsV2+j0DQvGRDpHmckMjmlrNd5uiWKKXobvWPWVFgVQNSqnA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
  dkim=none; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mi3Az0JRlQjKq+1wQWxafTGjvrVZazpXaXtVblE35I0=;
- b=ExPgPpOwnbrurTK7djWgV13tvdz8XdX5Dryb17X6KKCy/UAUZyW4bD2tol3mYbhfk532EdRbA/NJc6moaYGVxMPjGryUgjfa1PJFUsPTaf+bk0nF+SjvFW/yJcGp6AhsW8zjwkzl8MynOmH3cZB9vSd4FTqo4JDnDxk2jHKdSDb5as3G5FJsUg7KXKebZcvse4kirdia4qeSzEQwYmPkAEwzhh48G2GRdEQp8p/kcdqepiJis2iTs2HPOgYkpwhOxHO9nmUYOOlWBqOZnmS9hN8cngF80CQ8QBuWeo7vMp5utXDc3oZ1FeflI7kwOzAwD5+pXPhCn3QNbgDVz4wZMA==
+ bh=pYrG99WMMaEn/7nhZeUcYwO99UpIRAGGmfiQygB+tpI=;
+ b=KjWiWT44L1Hy2l8egfwdScKWvWFEyXhrAv0Q97sTIBAtgzc5vvA0Tdd3pta4fff4vmZhbGKpmCr4idvwfRUKo9ATrYP9HuzislLA8ZdFUlwpJ06915LFS85qMa9l6DkvnBioBUxOhtMhp/MX/Vb+g9Jz6T7jounhwW5fH5GbpRVxxn43pRI8tLxpjaDxCJ8iSaIj4EhEYOdTgdhAUc+1M8prD+OkY66PLHZbfX+P3/MpGeV4Fwrc2ot9y3ZiyaqAxqsCRCq+RndLQ1GIoY1oAWR8hv8o2F6CJH3VSvf5ujt/JTw90eHzZ91Zqsra9FnejZ8alnnzUkUKhAi+Amq8PA==
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
  by PH7PR20MB5117.namprd20.prod.outlook.com (2603:10b6:510:1b0::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.24; Sat, 10 Aug
- 2024 08:03:50 +0000
+ 2024 08:04:32 +0000
 Received: from IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
  ([fe80::ab0b:c0d3:1f91:d149%4]) with mapi id 15.20.7849.015; Sat, 10 Aug 2024
- 08:03:50 +0000
+ 08:04:32 +0000
 From: Inochi Amaoto <inochiama@outlook.com>
 To: Jean Delvare <jdelvare@suse.com>,
 	Guenter Roeck <linux@roeck-us.net>,
@@ -74,20 +75,23 @@ Cc: linux-hwmon@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-doc@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v10 0/4] riscv: sophgo: Add SG2042 external hardware monitor support
-Date: Sat, 10 Aug 2024 16:03:13 +0800
+	linux-riscv@lists.infradead.org,
+	Conor Dooley <conor.dooley@microchip.com>
+Subject: [PATCH v10 1/4] dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor support
+Date: Sat, 10 Aug 2024 16:03:50 +0800
 Message-ID:
- <IA1PR20MB4953C5DB4AC5DF01236CE785BBBB2@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB4953504C4B0DBE232F903D17BBBB2@IA1PR20MB4953.namprd20.prod.outlook.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <IA1PR20MB4953C5DB4AC5DF01236CE785BBBB2@IA1PR20MB4953.namprd20.prod.outlook.com>
+References: <IA1PR20MB4953C5DB4AC5DF01236CE785BBBB2@IA1PR20MB4953.namprd20.prod.outlook.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-TMN: [fUL1MM2j2DHRk5Sq2Af3uE7/7Ch5OAk7b+ng64cyD6c=]
-X-ClientProxiedBy: TYCP286CA0154.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:383::19) To IA1PR20MB4953.namprd20.prod.outlook.com
+X-TMN: [zQSdtavhWEVe/rGB2h4nInpjdIXI/+pYw4fmVa5YY5k=]
+X-ClientProxiedBy: TYAPR01CA0165.jpnprd01.prod.outlook.com
+ (2603:1096:404:7e::33) To IA1PR20MB4953.namprd20.prod.outlook.com
  (2603:10b6:208:3af::19)
 X-Microsoft-Original-Message-ID:
- <20240810080314.382409-1-inochiama@outlook.com>
+ <20240810080354.387820-1-inochiama@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,40 +101,40 @@ MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|PH7PR20MB5117:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8a649d99-a707-4c97-74bd-08dcb912f831
+X-MS-Office365-Filtering-Correlation-Id: 7e660935-11a2-4260-2001-08dcb9131169
 X-Microsoft-Antispam:
 	BCL:0;ARA:14566002|8060799006|19110799003|15080799003|5072599009|461199028|1602099012|440099028|4302099013|3412199025|1710799026;
 X-Microsoft-Antispam-Message-Info:
-	niZzoufR1FtIbRAcByuqxhSu52kGc7NGr53bu1N9OlUm2GTL8xpvIIPHC+RcrRGo04v0985rRt/FupH6Z2No50zvoWB9bMGBo8FPwDfXUlCUqxnSrRA23MwkhCsBB3JzaKaADIQW7PrT2IQdyDmeYYp3HMz2ysOKhThBu4wm+xy4dP6qxtyprhNG5VDAzq7PJ5uORazBFke66leW1bWO7HVUiyvb3fvouDGJZJVFokO1iwmUR6RtT1W8HwLfcnO+7n7vrWnd8ZrkJZRKJyC72Kcn99mD/t+zTY3dg/OqrVrgrjbMPZYRAi/N1YE5zXxzLytplV8KFjisUf9EA5ParZaENYQQGPUXcZ+VM9KTV8r14k6wG79+wxI1SQ4bDxZl2IV4JwkpFK7U0WB2ZiVs1XVs/AxvHelm52rSq0LVsTQ6xQBUuH7YicP1k7rmussnhdI3NZiRXozpnHCtlmfD5r5VehgM1tRDCdBZOK9C4OmXvqOmj/cU6lk6gJ5d+0KezhnWy30s2aPeaQ+tSfZC4E51cYbwyAh4yyDjVB2s1KvIEj5RoDBl2XHAAqV6NSE7rDGRNAuhRVl4VAzEvfgkfn/WhC/2sT3i54BEtzPCJGhC8TxIx66SKyFN4Dr65v/ppz3vX+3/kYlTd/wii76el4UXhEIpTa7HCzlbS84jR/N9Buf0NlCK7Mzs1Og97Z4lEHrRvsqGJVwuo1OTj0RGvxUbwpQBtrwl67QnAp8RzyX6mGJ3gbXQXql8SL9eldDeLJ8oIdYv/VlqnlZ8WEHdQTIwrr9a2wAQYBkapc9+ouoe5LggTih6r7y1swamXn3jUJ9oZ5bFInOCBtZBqxPmjw==
+	1HWW7h6PoYcPsyKmz5iZ2cdY8jKQrZ7LRVyOMdKU0IQZsPC2N3dsPoJJ6mOrYMuevjFJ8M2IkMVb2GQP06UL0Lgx6UzBWWAHS7nBGeCpIcznAv0YhxN9YhjK3bFJ73UgaklCP4rX/Oop6wh1wVt7p0sbnjWtmVoFDkEMJnAxNWKd9Q62vzfFsdzfhCS5Ap3WkWjG6cAxA7M7yEPlPS2nlWlizuO5Tb6f9wK8+CuST88hjIU0AGB0nEPjG/yjdr4nsugbd6Bdvm4er6AAiJC7k9YqdGnRzJaYKTJrYnto6rfLXcxRwimJ7oUF5/DawMxGgW8CluJE/qEGhtS7jLjjmISB0uXgNc0J5VzCfyyyhn8p6uUmyKYuPO/V8EaUzSMoHJEjkoIJxMpEn0/lBPerpb+Hul5fifPctaHe/9z39/KsoB7OSLOEvVTE1kq2Jeo6DlUkJwTBMrlxxXJrjbAiwG7MPzipitvz0cAWqYEdkaQ5MQes2ncxK4eZnTq9qBmq+MtWa7YNha9XcWDdWtYU6l9mhT2lk1BkRUmWIEI/ph7xDNVvaqy5C9pyIA6rwUee2M8Ww7eNz/pwvlmfeN1VnMI0Ok35Nll9cONos8CWnJbO3TkbSm7I7B6GgjDVFo44bRgB23FJ35CihyJDW1PPjrAYF3oDoz++FGk8kECkTYo973ZMZgpIqvHRP0lKiVvrOKeEX9derTC0qCv0+0WHG9UWQhZFO9htRlMpnNBxP6iJh06gAxLcYgKI8xF7KBfQnSiIVr+BfVgW9EVrGnATplaIwSSInlDaYca9yf7icL5Apgktk0PC1Ja6hSCtDPw3tbX43ImjNdcVKnP/o84fXkd2uewTJpGmiGPCBajU1pk=
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?pTfspcu0mgXLvIxMq6VJAQwnU380kp6VKOrVsZk5+li5r2RUXs7rL8i9V/Rf?=
- =?us-ascii?Q?naDMpI5CN4mhUOWknO1O7+YN37bWlruLgxU69pvl+I/8tymmsLqs970yVXk3?=
- =?us-ascii?Q?zwm9Q75CRf5lvmVbNBEYctA99mRhRSS8185iA87X4JVbKCk9pQxZSwmIDC9u?=
- =?us-ascii?Q?qJIIE5yCDJKFapI/sDKJtTi6NAgey/WxMAUSx5FWHtP7WJ482ynn7OJTyBdE?=
- =?us-ascii?Q?aNRCELOPUGqC8aJsjL+Q+S0rqFEuIy2s31TdFGx/v7w6tpq7F6x55HgZ3XiR?=
- =?us-ascii?Q?bOfYqzH/uH7QWAklfEXzpLlDqM2yxqMuyQXrCRgESGDZgB6+Ji/Bv1v0NUJK?=
- =?us-ascii?Q?c/FRg+HM5I3WlSDultKiaJTFUYTehwe5jLf8H3l7sRm3/KBv73jdxGxHdmHl?=
- =?us-ascii?Q?FgplLjXiw6kzhdrNmKaKxE1cvHeCUY7q/bjvkuIm5ADuhrsk9keUkPbzhft0?=
- =?us-ascii?Q?ezJAY+dorKAc+uI95glpP3v8P7+RW5cv0+XeJSMuNuablP19WYrtSuiykUTo?=
- =?us-ascii?Q?mko6JxBV4B8OYgcPAMXpYVuZ2UpUIvtlKGnFeUc649V5vgSFeejNhVBn/I9D?=
- =?us-ascii?Q?DY/pBioRoAwTSEKsi3nifq3fH9qyq140kiaPZb+jZWas2SXhIuYTjsqsJyRK?=
- =?us-ascii?Q?hEEforW0+vAPHjLUjoPEX98SQFx0mh4ZWza9MlOg21irIWo0SPV8av1SZ+4S?=
- =?us-ascii?Q?42FHcSN3nUbgm9Rn3aCczKYUqIESwId9NHKf8lSp10iyVXiGXbnVdcYGDf5s?=
- =?us-ascii?Q?bSac2cltgx/CptjMezhjr7GEh1Y4yqQUhriFG2DZDLFvGUf8Pxuz5Okzrmg2?=
- =?us-ascii?Q?ydYuwLB/SJKzLXTilyL4vvxdxqLlo+WmcdrO2EgZIOeaSd7KznnBZX+lGVes?=
- =?us-ascii?Q?YZnwMZbYRzuLuF+0rC6Cm3yyInKULPgLx2yjyKGEnMO8GtdyX/F8UaQ8LhuU?=
- =?us-ascii?Q?MHVwGiFm5Ldb734ub+1PEU+FOmDXTGkZhgnLdstFZWXB5uY+ExdO339iFu+q?=
- =?us-ascii?Q?0A+hsgoom7344HEAlNbWrzyZZousyL9snVVZi+s3vBge7b+uMMOwB7Bj/G/w?=
- =?us-ascii?Q?g1V9ZnLbVmHyIp4wFEbB8EH23bz9Ql8FuMtdB01jlWPZNzu8jGkttr/URzcX?=
- =?us-ascii?Q?UD4QD/bgSbcNDWDj7YdzTFipdEwbjeOn9FESRiUCq5DkHxdpLSQetCuzFtzT?=
- =?us-ascii?Q?rhZBGzL9hsyIbwJeqvDXGVMqCk8+76rrGXLUqSTEcu4fIbtFJxAKI2PKgGc5?=
- =?us-ascii?Q?a8N/2/w6MZymrkYS9wpb?=
+	=?us-ascii?Q?xb7oryYwn2zZ+ie4dDJ6NH0v7AGTf6kX1acUPY9ACPDEtfDvo2JcRb4rC0JW?=
+ =?us-ascii?Q?/50ASj43Z07UkadDxnxifIE3Syt2lxg76ajNVytaK5wJjkolQu3YRJ3VxnMV?=
+ =?us-ascii?Q?RKOTlYXFbHOne49CIboRYwLJE1hfJXrpf52roukbrk1W6OPDZ0jR46FyBzZ4?=
+ =?us-ascii?Q?nDXX0TbstJyu9Y2XJ/1TsgqxqZdDGZhWWRSRM776aG3HKVbBWAQNzv0DVgr4?=
+ =?us-ascii?Q?00k/hSEO+ORQi7/5gjBx0IsIrx1bHzVurJIevOl6++M2GCsH7grLWT/XJ4nV?=
+ =?us-ascii?Q?ouzyDcd5CdNWILbNuXdxoO5rf9c7SiMf6rFBFOP1uE6CbjBPy0Gh0o+EHzF0?=
+ =?us-ascii?Q?wPKrp7258OSQ1leFTMO9O580m1gk9h1foHWwpMkT33KT+jXCS94mg1hrKtmW?=
+ =?us-ascii?Q?xugUvAoqk5GE8TSILubHBXKOGoBGkYz/xRHzjLbftRkaeHot7N+kPEQRsM/F?=
+ =?us-ascii?Q?MOzDg1a4KhpP84p0yS40CE9TasgXSvrmfOldhIDn2KzZPJwEIRCDARlluwg+?=
+ =?us-ascii?Q?UOjQ7sHLUu+QdgxQBM9k+dXjgwNsQwSNjbI22JpnuR+PydGwFDRfCWxqyzC0?=
+ =?us-ascii?Q?cPEMnii2pr3kEUpUhJREeJaw5pjWza1jkVGaed4aUgp1yNTEcHMJsa4pWuvY?=
+ =?us-ascii?Q?WnB9NLKo/fcw2EtFyebyRNvK8kWCs+wGq0ziL4eJXpPtrLKAHAeFeDEQnDgz?=
+ =?us-ascii?Q?4ap2Okr/b1CBsav4dnACUvbiEsMDyKPTi3zU6CQIDjJi1u+6Flrr0pZ6vh2T?=
+ =?us-ascii?Q?93AOtFnnckMgJobV1mL9AdUx0OgpaP1t8DQZA9S1WlgL77fEaEWAWmRYCXC6?=
+ =?us-ascii?Q?coRvf05xyouugHgPvhVfi93xGCwz2qDpmACbZlIEXJER/wwb3uZ5txM5DhtM?=
+ =?us-ascii?Q?ueydWYKKGHV0UW5CefY4syO6HXZVO2hNxqpyubla4TKVJNa+q+4naFC70dVv?=
+ =?us-ascii?Q?/qGuYTZGqyVZ2DP5/Gxhr//ocT2CB3wkUl8y2jUoJX8SPFQOh8ZTsOqR84HL?=
+ =?us-ascii?Q?Zf6KukQKpFYHEAbv6mQoSammv8+bm2iA66C/mTSi0zI5LYtJW1YTTMKIMdIe?=
+ =?us-ascii?Q?/yVE3oo7FvaHqPl050BafDI7rVvbd83R+drCQAw4np9dRCHtJO9mfUEfTZ/5?=
+ =?us-ascii?Q?VxBmmpm/tp3+ES9zuXBzKCNI8LetYexcUPmZVsqipbbpKPKh9FbCXFUEw6BG?=
+ =?us-ascii?Q?KsTEwSaridmb2Jpa311+ck5fVjbmGz+DH/jGA5iU2xwYorK4ROzT7LVjyTgf?=
+ =?us-ascii?Q?7bePtcULNWEDpkc8XtJ8?=
 X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a649d99-a707-4c97-74bd-08dcb912f831
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e660935-11a2-4260-2001-08dcb9131169
 X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2024 08:03:50.6542
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Aug 2024 08:04:32.8883
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
@@ -138,77 +142,70 @@ X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
 	00000000-0000-0000-0000-000000000000
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR20MB5117
 
-Add support for the onboard hardware monitor for SG2042.
-Can be tested with OpenSBI v1.5.
+Due to the design, Sophgo SG2042 use an external MCU to provide
+hardware information, thermal information and reset control.
 
-The patch require the following i2c patch:
-https://lore.kernel.org/all/IA1PR20MB4953DB82FB7D75BF8409FFF4BBB72@IA1PR20MB4953.namprd20.prod.outlook.com/
+Add bindings for this monitor device.
 
-Changed from v9:
-1. remove missed wrong return value.
-2. add documentation for the other interface of the driver.
-3. rename repower_action to repower_policy.
-4. use break to unify "return 0" in is_visible function.
-
-Changed from v8:
-1. rename critical_action to repower_action, and add some comment
-2. remove unnecessary wrap function
-3. use guard macro to simplify mutex process.
-
-Changed from v7:
-1. add mutex protected and fix the return value when writing
-"critical_action"
-
-Changed from v6:
-1. restore the driver name to sg2042-mcu
-2. remove unnecessary wrap function and check in the driver.
-3. add dts and config entry.
-
-Changed from v5:
-1. rename driver name to sgmcu as it will support more sophgo chip.
-2. move some attr to debugfs.
-3. add standard crit_hyst support
-4. add documentation
-
-Changed from v4:
-1. use fix patch for binding ref.
-2. use unevaluatedProperties instead of additionalProperties for binding
-
-Changed from v3:
-1. add thermal-sensor check.
-2. change node type from syscon to hwmon
-
-Changed from v2:
-1. fix bindings id path.
-
-Changed from v1:
-1. Move patch from soc to hwmon.
-2. Fix typo.
-
-Inochi Amaoto (4):
-  dt-bindings: hwmon: Add Sophgo SG2042 external hardware monitor
-    support
-  drivers: hwmon: sophgo: Add SG2042 external hardware monitor support
-  riscv: dts: sophgo: Add mcu device for Milk-V Pioneer
-  riscv: defconfig: Enable MCU support for SG2042
-
- .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        |  43 ++
- Documentation/hwmon/index.rst                 |   1 +
- Documentation/hwmon/sg2042-mcu.rst            |  77 ++++
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  60 +++
- arch/riscv/configs/defconfig                  |   1 +
- drivers/hwmon/Kconfig                         |  11 +
- drivers/hwmon/Makefile                        |   1 +
- drivers/hwmon/sg2042-mcu.c                    | 388 ++++++++++++++++++
- 8 files changed, 582 insertions(+)
+Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Tested-by: Chen Wang <unicorn_wang@outlook.com>
+Reviewed-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ .../hwmon/sophgo,sg2042-hwmon-mcu.yaml        | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
- create mode 100644 Documentation/hwmon/sg2042-mcu.rst
- create mode 100644 drivers/hwmon/sg2042-mcu.c
 
-
-base-commit: d2d190621b60d77496d36659e1621b20c897b25d
-prerequisite-patch-id: 5e7221ed1c63bb4d68e4a2a0141440e32d29e397
---
+diff --git a/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
+new file mode 100644
+index 000000000000..f0667ac41d75
+--- /dev/null
++++ b/Documentation/devicetree/bindings/hwmon/sophgo,sg2042-hwmon-mcu.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/hwmon/sophgo,sg2042-hwmon-mcu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Sophgo SG2042 onboard MCU support
++
++maintainers:
++  - Inochi Amaoto <inochiama@outlook.com>
++
++properties:
++  compatible:
++    const: sophgo,sg2042-hwmon-mcu
++
++  reg:
++    maxItems: 1
++
++  "#thermal-sensor-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - "#thermal-sensor-cells"
++
++allOf:
++  - $ref: /schemas/thermal/thermal-sensor.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        hwmon@17 {
++            compatible = "sophgo,sg2042-hwmon-mcu";
++            reg = <0x17>;
++            #thermal-sensor-cells = <1>;
++        };
++    };
+-- 
 2.46.0
 
 
