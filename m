@@ -1,81 +1,77 @@
-Return-Path: <linux-kernel+bounces-281772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AAE94DB21
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:48:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB5694DB25
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:52:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123DD1C2124F
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:48:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5581F22024
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E7714A4F3;
-	Sat, 10 Aug 2024 06:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E777514A4E7;
+	Sat, 10 Aug 2024 06:52:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOh1NUBr"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XBvigmjH"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD191BC2F;
-	Sat, 10 Aug 2024 06:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D261B21A0B;
+	Sat, 10 Aug 2024 06:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723272489; cv=none; b=HJ742PmjzimuP26kRQAgG0Nm1YJRv0lcHq8kh0gRbgxF6KRioA1msnP7niJz1Y3IDc5+WQZZduWuffV7k0dNpAxUI490M5lML2sC/svOadzuDrRJe20TYmSEMU8R/IgdTLt+ouTPR4TOBy7P3BnD0Coej5W/cOpNzpJYC3gLWcE=
+	t=1723272769; cv=none; b=GPTgOlnNGyUPYjyIyFPpvVjABnphLzU23i4aLHOzKLLeC4XKKTYjrasSzab7qDyN45VqIZ8R8pBRqR+yk/+lp+/YdqRwjGKt2X2o2+hQHGyP4vmRMH247KsoKpEnyWYe7H4zUKu0cA6CIE7AI+eOLrQ7XlPZUYH0dPxWpI9l8x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723272489; c=relaxed/simple;
-	bh=2aBKsvw/7eAmcVMx4np8T+QpRUtZjEaVBMKXT90GpqE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VlFtT//KJY34GzQqhHOtkKiQah/Sc2Bx18uIm54W2qgyijkuXyxvJPluIT+1gFEOqK6zIH/b7V85U/vwiMPbdJZ3Bg6PSwppnZtypiU0A8yxLGXmedjpa5bDaMEQZsG5NWQ3SCSo43S5xlcwg/7GI2Y8OCEwL1zE4jZDL9IdjMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOh1NUBr; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1723272769; c=relaxed/simple;
+	bh=FudGx2PxtWdv1Ey9bknRFbztOC+S9px4S1BtXbCAxoA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IDKq+Z6IiJqSC3lGIqgcOQZZxSv6dnP93aYWZg3kHgP9I7ZVgmnzjtz1h/YAbBTbRrPMJz8umB/1xSo5fy9k2qBEd5yDUmuIEGAdl1PvMxFV1s0EAPqNu7+IjEsCOzasXoygHDPGDf/Q/5D8nGbed9YI14mMqSRJIHOj9ba0Apw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XBvigmjH; arc=none smtp.client-ip=209.85.215.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so3474487e87.2;
-        Fri, 09 Aug 2024 23:48:07 -0700 (PDT)
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7b594936e9bso1961433a12.1;
+        Fri, 09 Aug 2024 23:52:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723272485; x=1723877285; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723272767; x=1723877567; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=YGVwGkYoOW2hmbgHFaX2pCkcnciPQPU19yUSzm3vxW0=;
-        b=QOh1NUBroyCKWUy7QB6e4R5jWFRBqgjf3lw1ifWUPtX2wX/w66JmONUd5IGvVjS50/
-         fGpF8kVnYJMAwgwCFH/6TfhmhUTB/7NqKPU8lwo8XuljgfBPbwSJRyJHGPh6mI/O0jX5
-         htOh5agIjaDVd9AL31gXREZ4f6//vBjhP+wKSi+3I4sHl81/rzXS1V2ugejSuznI4Dnc
-         cCTT31Zc8PSNoh6Uckq3hvxTopXTUcJAsAe9WAMVKWzE5jPndMmPH3iiITasy01C+PZA
-         +zPc2MyAx5xcSJd1apcxC7AGIt/mI/7EIz6e7aSdHtQXGB8NWyj1OGJmoQUALROfHmMt
-         5cgg==
+        bh=HxgVMOpRDF5vpjeN8YLiua76dTY/jjl6Cq5qYi3DIs4=;
+        b=XBvigmjHkQJiaan6EOdvktOjrQV6b/OrKiBoGTeilzoe9lum8rY1rx6hz7mkX1g57G
+         T3uKIBS8ITVyG/Gwj8Rj3T6KZtdlWHTZBL1E74naH1DiICQ4uwZHgndYHh581X7cwUs+
+         jWoBRive1jhZR/gPXO7aNicQDR9kDhk78g7/gMD6SCBTfNJCIa1ExCznQLNzdyyqFnZg
+         QhGLB2fqy07pub0npxfwu+lnGlk60jVRHGdEH9lsxZJczNqK0HLKndNz8HsYSH+ghjoD
+         Gap6uJGlyBb0KVcXu/IZ5xGb3JFVH2JrniX44kLKlbSK9clJ7qezOzF0sQ+LlW+3rfdR
+         IVBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723272485; x=1723877285;
+        d=1e100.net; s=20230601; t=1723272767; x=1723877567;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=YGVwGkYoOW2hmbgHFaX2pCkcnciPQPU19yUSzm3vxW0=;
-        b=jtJkZEFcIXLhR1s/ASVWE4bNLHHl4m5xtIRXxaQNgtZOczuZF0RgsO4aDYHmB3U+bF
-         sSG+cFn43/VOq17rReFyReaAiHIIDv6JvkuEwQfpWdmhDmdZ3gIc9PqKzcClPiCPyTGc
-         6eWh/LUkXXRVFuoBOQHCfAKRuEVLTLlcca0CM4mpr7LV3VcsfZmnOhkHlN9VGMmkcryA
-         /IW2b+aIJS7Jf6EzIe31EvReaEuWEQkTku7Jjsas6LtYMwBOHwkIrfuECXSDyHR8Xnd/
-         VU7qJDC89j/cl7MbQ4szjT1ChyF+oy+TKAHfJb9Xe+DMv0jAcxI20k4YJckRg6xyFefZ
-         21bw==
-X-Forwarded-Encrypted: i=1; AJvYcCX5/aaCi/FlvR3AWlifHWXswbmrWbxLbyWNEBm0CSGMR5YwwGceqBF85EjvAiZ6jnZJx96gBcAfHu7zTdqR0H0u7qZlSEUAekjZHhU5tKcnlopqi0VKL44MYtmq8E6YzJPMownM3DKsAzDUPw==
-X-Gm-Message-State: AOJu0YwZSiW1LmHXok0L8jaVQGVzgZj7l4o/xZ8XkGuej1wQPhh9yq6g
-	VCtMhfSVuP+PQi5QEEKb1ExsbjyDX0Ol940apsYZX8nF2qhXDMc3
-X-Google-Smtp-Source: AGHT+IFhi/0+AjXCkvuFQ3UeKIULxACot3KpIrraSIu/4sbNCJJripap19DqStSqeLQq8SyBgPFLpg==
-X-Received: by 2002:a05:6512:318c:b0:52c:8a12:3d3b with SMTP id 2adb3069b0e04-530eea064b6mr2381380e87.56.1723272485007;
-        Fri, 09 Aug 2024 23:48:05 -0700 (PDT)
-Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd191a1ffesm374776a12.38.2024.08.09.23.48.02
+        bh=HxgVMOpRDF5vpjeN8YLiua76dTY/jjl6Cq5qYi3DIs4=;
+        b=ifxBQuZCX7OWHDrCEScSsOfeDohhj4OIZKKYXKUs9q83D3LUFaHTfxrroSYqOG/OEH
+         AC6EWMnFBnihU83axumY8h54HvLQfpq0/i+CjUEJaAeFmydguj/jfT/A+2ef+w3VZBgS
+         JbIO5pvgaazEv01C+YAGTX6uSUuTz0u623eYLL0F28KmLew3dMCzIRZeQODO8XgLPLee
+         8wKI9FLiUKhAl6TbnSA85yFrcmwg1Hdz/sm6HYDZxEOh15cK/pgoh7vv3BM7jEJJuBNJ
+         HCmFTe7aZoUHo5TEIDzU1yCDtlOoXyunAQjo4yaJfWBtFpCJfyBnxCQMjYTcHY5+4ba0
+         E/xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwmfHYbUilDciUDd5dpAmr/yN/k7oNtaxESjIPd9Q9+YOPvXEZVHmYKUyH7G8i6nJNk8PmsC6L+iQT403Ln/8Aj05MEkvv4sWq0mSy
+X-Gm-Message-State: AOJu0Yzinak873TvhdRaxexye2iUBOATMx5gKrgz7/2mZZdxVjVlJdVb
+	cuou1ewIdMX4RPpKjMES2zHJpd7K4lCwQJ1X1+PXTqAl1cCLAkNg1d8AWA==
+X-Google-Smtp-Source: AGHT+IFkEJeQJF3PLn1zazXFMXbKgsFiU7lFDe7Yoq3f2s8oZB9b7Wz3ghCtOXaMyCaK/tragUJ8Lw==
+X-Received: by 2002:a05:6a20:e68e:b0:1c2:8cf4:766c with SMTP id adf61e73a8af0-1c8a00bbdd1mr4639753637.33.1723272766822;
+        Fri, 09 Aug 2024 23:52:46 -0700 (PDT)
+Received: from carrot.. (i222-151-34-139.s42.a014.ap.plala.or.jp. [222.151.34.139])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c7becasm4123166a91.18.2024.08.09.23.52.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 23:48:04 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH v2] vfs: only read fops once in fops_get/put
-Date: Sat, 10 Aug 2024 08:47:53 +0200
-Message-ID: <20240810064753.1211441-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        Fri, 09 Aug 2024 23:52:45 -0700 (PDT)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix missing cleanup on rollforward recovery error
+Date: Sat, 10 Aug 2024 15:52:42 +0900
+Message-Id: <20240810065242.3701-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,61 +80,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In do_dentry_open() the usage is:
-	f->f_op = fops_get(inode->i_fop);
+In an error injection test of a routine for mount-time recovery, KASAN
+found a use-after-free bug.
 
-In generated asm the compiler emits 2 reads from inode->i_fop instead of
-just one.
+It turned out that if data recovery was performed using partial logs
+created by dsync writes, but an error occurred before starting the log
+writer to create a recovered checkpoint, the inodes whose data had
+been recovered were left in the ns_dirty_files list of the nilfs
+object and were not freed.
 
-This popped up due to false-sharing where loads from that offset end up
-bouncing a cacheline during parallel open. While this is going to be fixed,
-the spurious load does not need to be there.
+Fix this issue by cleaning up inodes that have read the recovery data
+if the recovery routine fails midway before the log writer starts.
 
-This makes do_dentry_open() go down from 1177 to 1154 bytes.
-
-fops_put() is patched to maintain some consistency.
-
-No functional changes.
-
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Fixes: 0f3e1c7f23f8 ("nilfs2: recovery functions")
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Cc: stable@vger.kernel.org
 ---
+Andrew, please apply this as a bug fix.
 
-This is the same as v1 except for the commit message, which on second
-look might have failed to convey what's up.
+This fixes missing cleanup on error that KASAN detected during an
+error injection test of recovery on mount.
 
-That said please replace the patch, thanks and sorry for the churn :)
+Thanks,
+Ryusuke Konishi
 
- include/linux/fs.h | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ fs/nilfs2/recovery.c | 35 +++++++++++++++++++++++++++++++++--
+ 1 file changed, 33 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ef5ada9d5e33..87d191798454 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2565,10 +2565,17 @@ struct super_block *sget(struct file_system_type *type,
- struct super_block *sget_dev(struct fs_context *fc, dev_t dev);
+diff --git a/fs/nilfs2/recovery.c b/fs/nilfs2/recovery.c
+index b638dc06df2f..61e25a980f73 100644
+--- a/fs/nilfs2/recovery.c
++++ b/fs/nilfs2/recovery.c
+@@ -715,6 +715,33 @@ static void nilfs_finish_roll_forward(struct the_nilfs *nilfs,
+ 	brelse(bh);
+ }
  
- /* Alas, no aliases. Too much hassle with bringing module.h everywhere */
--#define fops_get(fops) \
--	(((fops) && try_module_get((fops)->owner) ? (fops) : NULL))
--#define fops_put(fops) \
--	do { if (fops) module_put((fops)->owner); } while(0)
-+#define fops_get(fops) ({						\
-+	const struct file_operations *_fops = (fops);			\
-+	(((_fops) && try_module_get((_fops)->owner) ? (_fops) : NULL));	\
-+})
++/**
++ * nilfs_abort_roll_forward - cleaning up after a failed rollforward recovery
++ * @nilfs: nilfs object
++ */
++static void nilfs_abort_roll_forward(struct the_nilfs *nilfs)
++{
++	struct nilfs_inode_info *ii, *n;
++	LIST_HEAD(head);
 +
-+#define fops_put(fops) ({						\
-+	const struct file_operations *_fops = (fops);			\
-+	if (_fops)							\
-+		module_put((_fops)->owner);				\
-+})
++	/* Abandon inodes that have read recovery data */
++	spin_lock(&nilfs->ns_inode_lock);
++	list_splice_init(&nilfs->ns_dirty_files, &head);
++	spin_unlock(&nilfs->ns_inode_lock);
++	if (list_empty(&head))
++		return;
 +
- /*
-  * This one is to be used *ONLY* from ->open() instances.
-  * fops must be non-NULL, pinned down *and* module dependencies
++	set_nilfs_purging(nilfs);
++	list_for_each_entry_safe(ii, n, &head, i_dirty) {
++		spin_lock(&nilfs->ns_inode_lock);
++		list_del_init(&ii->i_dirty);
++		spin_unlock(&nilfs->ns_inode_lock);
++
++		iput(&ii->vfs_inode);
++	}
++	clear_nilfs_purging(nilfs);
++}
++
+ /**
+  * nilfs_salvage_orphan_logs - salvage logs written after the latest checkpoint
+  * @nilfs: nilfs object
+@@ -773,15 +800,19 @@ int nilfs_salvage_orphan_logs(struct the_nilfs *nilfs,
+ 		if (unlikely(err)) {
+ 			nilfs_err(sb, "error %d writing segment for recovery",
+ 				  err);
+-			goto failed;
++			goto put_root;
+ 		}
+ 
+ 		nilfs_finish_roll_forward(nilfs, ri);
+ 	}
+ 
+- failed:
++put_root:
+ 	nilfs_put_root(root);
+ 	return err;
++
++failed:
++	nilfs_abort_roll_forward(nilfs);
++	goto put_root;
+ }
+ 
+ /**
 -- 
-2.43.0
+2.34.1
 
 
