@@ -1,83 +1,63 @@
-Return-Path: <linux-kernel+bounces-282018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CEF94DE80
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:06:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DC0094DE83
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:10:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C376E1F21BA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:06:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 906BCB21D69
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D0A13D891;
-	Sat, 10 Aug 2024 20:05:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3CE13D512;
+	Sat, 10 Aug 2024 20:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MWK/a331"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="hd2xZ0h0"
+Received: from gnuweeb.org (gnuweeb.org [51.81.211.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E460433DD;
-	Sat, 10 Aug 2024 20:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE6A40870
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 20:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.81.211.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723320358; cv=none; b=P1Tos2PkWaObpmpfTf+GFj22+uCyC+CKNI2TwwrR3+EzAOVFZ+S+qUyiOWjm/mejcYY9ILAFWSAuLDOOjrQ1x314fRYmyND8QBsWle5okDYiBhczvegfuV6XQDRe013M1aTmTOT31TRs5OL3w19bX5UsBvyF8tY/lkE8eTcMtf4=
+	t=1723320641; cv=none; b=OKK24sudkKgD683w9hGSuZWC1JtEbqKuxq1UldQPhVGgeKobwGjvNYKxz0lh8LbZpdPRVVqjtd0qE50yepoJXKLKvARxLuXAOxtORNJ1PcGh8WtMVShPFo/mktbyyMvBQj9IXPCRUQCh06qT7OfPKFryrP1Jd4cXn0ux3k9prHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723320358; c=relaxed/simple;
-	bh=/0lQasp91D+kBrslK0ue8j6f66yAubgt4IwOH2uM4cs=;
+	s=arc-20240116; t=1723320641; c=relaxed/simple;
+	bh=5qU6w71yG9BtLJuBIekCb9HqyN3NGuyPBShuH4t4e9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NPVBEeL8ydCMQaamIMPUhI8a/Zm6PfxnbJOPF25xU3VK2kyU3RWfxndU8MNJFqd0Ww2v+bZuk+7mH3INEhzcbTlUpJjZVImeNtuvky+glFtbg0ez3ygTTgxPZj8ZFylPNLuk4PixNGygRqlgR7exIkCkpLHV4oefe0oM+d9lgL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MWK/a331; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723320356; x=1754856356;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/0lQasp91D+kBrslK0ue8j6f66yAubgt4IwOH2uM4cs=;
-  b=MWK/a331PoVVRlV9mPSvCr0svPWyvjFxKWjTPGoov1SsHpAFdDvjG6V3
-   KfOljtYQgXK39awlUo5JAHKtgkneT+36t+OT0BF94j5kABwMssw0V2cq+
-   Z+wFGGXQ7e3N2aKUUKfntW9QkI1xay2/vfzBzBFNg3rDTTdB+JwnCPSlS
-   gDT2F5vCt4ypMTZR9uN8PLwFZDsA3TO7JS79AFhVeq/u57UkYTQhVUKTi
-   4OwGdBe2m4teS7OJPgFBm4RxKjy97wt5ScYeWL8rO0FTXzaFXlj/MvHSG
-   m1goDEHKC8tyN/RD79QEOktLZrd6E0MvMoiXD3QD7AQIYS8nIaj5nMaof
-   g==;
-X-CSE-ConnectionGUID: ldrrqHZzSdOMAciiV+39vw==
-X-CSE-MsgGUID: oYmi/6okQEKyhGpBZ95xlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="25336716"
-X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
-   d="scan'208";a="25336716"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 13:05:55 -0700
-X-CSE-ConnectionGUID: WdQRY8y3RSmcjzlCH8qENA==
-X-CSE-MsgGUID: Mev2OkZ5QcWfEW0J5goX0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
-   d="scan'208";a="62272713"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 10 Aug 2024 13:05:52 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scsLW-000AGN-2n;
-	Sat, 10 Aug 2024 20:05:50 +0000
-Date: Sun, 11 Aug 2024 04:05:49 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Miri Korenblit <miriam.rachel.korenblit@intel.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and
- avoid -Wfamnae warnings
-Message-ID: <202408110304.CRXk8u09-lkp@intel.com>
-References: <ZrZs5KL5Pz9tIinr@cute>
+	 Content-Type:Content-Disposition:In-Reply-To; b=a21qtLlFxODUCY3txPDisVGtB39Isa8Mrz95WA9nuCkL1dyg6jLIrDAhFQnK2RBqN6g14iRZpVEmtDBvPVAiXaz1toB857dUVorF28BfW7i2+yVY+CiPmBC5M0v1bLy+DpGImcK9FuAR2yUx+XBLG/KqXfNNjAWCTnO3aGRBmz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=hd2xZ0h0; arc=none smtp.client-ip=51.81.211.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=default; t=1723320639;
+	bh=5qU6w71yG9BtLJuBIekCb9HqyN3NGuyPBShuH4t4e9Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=hd2xZ0h0xo39vwAFRMmraXpZynki6EsVC5PuG3ElO/42BGR28R1LHJ3fogFe722Ta
+	 GVmSQKnXJQIKZIt76hJIZduxEkmu9HuTNUhhCXYUsn+8WGGbf+REmyTQ3vKekFWdSx
+	 +rCcVyuUyUn4T2gu2KcBGrmSQJ+iIXVYX+oYidMwrNhHRJA++ZHtPXqENNv0mUvg2r
+	 0PhOP4Ka3usTUJGrhCs6deUoOR4RZeQDDFYw1EgjQaGcsk48Wyh9X8S24gPRTrgaC5
+	 gluKtB7+JPqVdsnaV85XBbE9WUOFR7bfr8qJ5u1qcHzyaSr3D4hcZAgko4YiuXDLPU
+	 iXt13+8/0UDMQ==
+Received: from biznet-home.integral.gnuweeb.org (unknown [182.253.126.223])
+	by gnuweeb.org (Postfix) with ESMTPSA id 0D79824D05A;
+	Sun, 11 Aug 2024 03:10:37 +0700 (WIB)
+Date: Sun, 11 Aug 2024 03:10:34 +0700
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
+Message-ID: <ZrfJOr6Dmn0j00Yh@biznet-home.integral.gnuweeb.org>
+References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
+ <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
+ <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
+ <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
+ <20240810143556.GA9168@1wt.eu>
+ <384a1d29-13ca-4e4b-b4b7-2a99e3fdb01b@t-8ch.de>
+ <Zre8cPOKetof24nJ@biznet-home.integral.gnuweeb.org>
+ <20240810194545.GA5065@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,93 +66,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrZs5KL5Pz9tIinr@cute>
+In-Reply-To: <20240810194545.GA5065@1wt.eu>
+X-Bpl: hUx9VaHkTWcLO7S8CQCslj6OzqBx2hfLChRz45nPESx5VSB/xuJQVOKOB1zSXE3yc9ntP27bV1M1
 
-Hi Gustavo,
+On Sat, Aug 10, 2024 at 09:45:45PM +0200, Willy Tarreau wrote:
+> The constraints are trivial, the problem is that they're not supposed to
+> be used in a naked function. I tried, as you can guess. gcc accepted
+> them without complaining but clang not at all. However what's interesting
+> is that the compiler being aware of our unability to inform it about the
+> clobber list, it did consider everything clobbered and saved the registers
+> in the caller in this case. That does make sense, otherwise it would be
+> impossible to use asm in naked functions. However we need to restrict
+> this use case to true naked functions, not the ones we were doing ourselves
+> before the existence of the naked attribute.
 
-kernel test robot noticed the following build errors:
+Ah, I get it now. Apparently, my ignorance of naked functions led to,
+well, not knowing about naked functions. I didn't know about the naked
+attribute.
 
-[auto build test ERROR on wireless-next/main]
-[also build test ERROR on wireless/main linus/master v6.11-rc2 next-20240809]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Yeah, clang indeed throws errors while GCC does not:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gustavo-A-R-Silva/wifi-iwlwifi-mvm-Use-__counted_by-and-avoid-Wfamnae-warnings/20240810-103759
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/ZrZs5KL5Pz9tIinr%40cute
-patch subject: [PATCH v2][next] wifi: iwlwifi: mvm: Use __counted_by() and avoid -Wfamnae warnings
-config: sparc-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110304.CRXk8u09-lkp@intel.com/config)
-compiler: sparc64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110304.CRXk8u09-lkp@intel.com/reproduce)
+```
+  <source>:24:10: error: parameter references not allowed in naked functions
+     24 |                 : "+D"(dst), "+S"(src), "+c"(len), "=a"(rax)
+        |                        ^
+  <source>:4:16: note: attribute is here
+      4 | __attribute__((naked))
+        |                ^
+  <source>:7:2: error: non-ASM statement in naked function is not supported
+      7 |         void *rax;
+        |         ^
+  <source>:4:16: note: attribute is here
+      4 | __attribute__((naked))
+        |                ^
+  2 errors generated.
+  Compiler returned: 1
+```
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408110304.CRXk8u09-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from <command-line>:
-   drivers/net/wireless/intel/iwlwifi/mvm/d3.c: In function 'iwl_mvm_gtk_rekey':
->> include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_821' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_CCMP
-     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
-     491 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
-     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2148:9: note: in expansion of macro 'BUILD_BUG_ON'
-    2148 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_CCMP);
-         |         ^~~~~~~~~~~~
->> include/linux/compiler_types.h:510:45: error: call to '__compiletime_assert_822' declared with attribute error: BUILD_BUG_ON failed: conf->keylen < WLAN_KEY_LEN_GCMP_256
-     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |                                             ^
-   include/linux/compiler_types.h:491:25: note: in definition of macro '__compiletime_assert'
-     491 |                         prefix ## suffix();                             \
-         |                         ^~~~~~
-   include/linux/compiler_types.h:510:9: note: in expansion of macro '_compiletime_assert'
-     510 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:39:37: note: in expansion of macro 'compiletime_assert'
-      39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-         |                                     ^~~~~~~~~~~~~~~~~~
-   include/linux/build_bug.h:50:9: note: in expansion of macro 'BUILD_BUG_ON_MSG'
-      50 |         BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/net/wireless/intel/iwlwifi/mvm/d3.c:2149:9: note: in expansion of macro 'BUILD_BUG_ON'
-    2149 |         BUILD_BUG_ON(conf->keylen < WLAN_KEY_LEN_GCMP_256);
-         |         ^~~~~~~~~~~~
-
-
-vim +/__compiletime_assert_821 +510 include/linux/compiler_types.h
-
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  496  
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  497  #define _compiletime_assert(condition, msg, prefix, suffix) \
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  498  	__compiletime_assert(condition, msg, prefix, suffix)
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  499  
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  500  /**
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  501   * compiletime_assert - break build and emit msg if condition is false
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  502   * @condition: a compile-time constant condition to check
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  503   * @msg:       a message to emit if condition is false
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  504   *
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  505   * In tradition of POSIX assert, this macro will break the build if the
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  506   * supplied condition is *false*, emitting the supplied error message if the
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  507   * compiler has support to do so.
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  508   */
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  509  #define compiletime_assert(condition, msg) \
-eb5c2d4b45e3d2 Will Deacon 2020-07-21 @510  	_compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-eb5c2d4b45e3d2 Will Deacon 2020-07-21  511  
+For now, I'll wait for your discussion with Thomas to resolve this
+issue. And yes, I agree that we should find a solution that doesn't
+require maintaining two different versions.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ammar Faizi
+
 
