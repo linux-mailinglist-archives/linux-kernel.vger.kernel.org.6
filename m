@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-282025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7104D94DE92
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:46:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F40B94DE94
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 22:46:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989AF1C20D43
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D307C282759
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 20:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B1213D512;
-	Sat, 10 Aug 2024 20:45:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E5442A96;
+	Sat, 10 Aug 2024 20:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fLtQbXPA"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SYzN/+gm";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="luYSufYO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0871381BA
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 20:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1806F381BA;
+	Sat, 10 Aug 2024 20:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723322757; cv=none; b=Gf1S7dg+IyyAz1LGl9bwIjuBcIKfUDol8KwWSR+cHqGWcdBGkXoFBzaKeo9FWagX+FI5T/SZKJ938e7IFbV6eJpdwfTyq4jFdkSG625aoUyaQYtmmZY2G4CFoPEsolGFv6dhl1jbdbZ1rcIMwwDfU36Rp5YmUjqKvcTQxFC/Bh0=
+	t=1723322803; cv=none; b=ReSuaVtZofE5utdgpXgtEV+AyF7oKhF6snVqJiz426T1Jqvu6iQ9eaHlhrjmk6HIeNuVPGZV9x4Jw04cOCD9oZvX2TUcoE94BHf6nqmAkzU2gfBxZ3cLttFk98FnKc1gB4Eiv3tkDpoApkOczPg67/gQUo3/SKjKuWHAN0D7j5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723322757; c=relaxed/simple;
-	bh=d8huKyiUI7JCX9l9KEZC1tHcCmhaf1ajD1lXLOp9Q38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1yH8rvI8tW6H24aLb4YzjSYTM6NxYNEcXDRzqzPRqXQmY0IgI4ZJwS7Ce/dNtIONyio0rB4IdMgKZEjy5xt2s2FPyxS/gxmOKvOmRe+nQeUajGFHVNxQdScWtNOSy3XoIgOLj2KOaT4iusyYq6+7KnDb+wDFj4NVtldeQ1Ahjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fLtQbXPA; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=IVIXeCl0FYncKg58jPRc2oTSMm1XYf38TAxCRLMXzU8=; b=fLtQbXPAe2C8ScPQWjbL7uVAEq
-	1mmn1EuJCFiKM6B9yURVMn1DA4rRf7Z8KgN/C2qs47q9a0Au2YK6Li1NuVZMpccvwb6GpdoJJAQbE
-	hZccNWLgzVd3kr+TgyR8MnM+FhMzhzJP0ITMyy00unpO0aWs4R1K31cssftWccQE03+P+yPHZ6308
-	ndaqMIr0szRswUulp8/DAV4H2+KsK6TMHLkVj1mZ+mMFa4iZUL7fytcHS2uiSC0sAVgVyTLo2uW+u
-	qatUm+f524W04FdYNvaatNbAzPvRKLbJEeA2PcQ6wH6d4P0oRlcSu/qJffbvcW8aZsD03X1RLDp8V
-	C/f787fA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1scsy7-0000000Ci9G-2Oej;
-	Sat, 10 Aug 2024 20:45:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3104B300729; Sat, 10 Aug 2024 22:45:42 +0200 (CEST)
-Date: Sat, 10 Aug 2024 22:45:42 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
-	Ingo Molnar <mingo@redhat.com>, Alexei Starovoitov <ast@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [GIT PULL] sched_ext: Initial pull request for v6.11
-Message-ID: <20240810204542.GA11646@noisy.programming.kicks-ass.net>
-References: <ZpWjbCQPtuUcvo8r@slm.duckdns.org>
- <20240723163358.GM26750@noisy.programming.kicks-ass.net>
- <ZqAFtfSijJ-KMVHo@slm.duckdns.org>
- <20240724085221.GO26750@noisy.programming.kicks-ass.net>
- <ZqmVG9ZiktN6bnm0@slm.duckdns.org>
- <20240806211002.GA37996@noisy.programming.kicks-ass.net>
- <ZrKW2wZTT3myBI0d@slm.duckdns.org>
- <20240806215535.GA36996@noisy.programming.kicks-ass.net>
- <ZrKfK1BCOARiWRr0@slm.duckdns.org>
+	s=arc-20240116; t=1723322803; c=relaxed/simple;
+	bh=KKatjUDfUDh3394abB3/k7FYraV6vbUqJI+NfUHQpFs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eem9tSbL5M+OnhJ0EKvLP88w5hutYT9OKbF9CzecbBTcJqKjhFUYorHoF992/XDz5jvm0G0EJL+GAutl8b0VUdyw7cav64djztW2e98Op/0ena1oQ39dXDMaqXbQcH8BFwf6r/EDhXPJUqcAxIGx0eywjG+IWTjX8XUrDSLva8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SYzN/+gm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=luYSufYO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723322800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4EB6G605UpqViWz3uTt7qqaR1ty9Iaba8hEW5CoDrxE=;
+	b=SYzN/+gmwiSt8zjP5e320hPbBMJJpemWcEOV/C61HAH+KNL9nsWIox8NbYP2pgPBu/3Xz0
+	yQL8Z8FSMjkgq5HqSuP3gglZpwJZJxIfnWtlHXDOTcatRP1ge7bHqk2O+5jYypO4nKQ/ie
+	Y5cm2q2/hr3uG9ha5MFfXl6J6BBW4gQrUxg75QKpAy+135p/m1Kd+Jstf+lgMCdSUk8MXH
+	pu0y/bELyEwu9AzPBifUCklSNog2tdhdovqPMzyMx8swps0UV/6FVWNTC0VTEh9ekXSO7e
+	Qd14+TnDIrnYJw/OwzlPX2Gp8eipcnz9IzOivrr1ZiQS5ZXyNK++cAFXZz/uxw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723322800;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4EB6G605UpqViWz3uTt7qqaR1ty9Iaba8hEW5CoDrxE=;
+	b=luYSufYOE9iMYEfrZDBXG+F6zYOlckEFvz6toHP8i6rE/EeatF5aAnFxWLQz2Qdz7uhNAW
+	T3FJE0uaRdpNJgDA==
+To: Bibo Mao <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, x86@kernel.org, Song Gao
+ <gaosong@loongson.cn>
+Subject: Re: [PATCH v5 3/3] irqchip/loongson-eiointc: Add extioi virt
+ extension support
+In-Reply-To: <20240805073546.668475-4-maobibo@loongson.cn>
+References: <20240805073546.668475-1-maobibo@loongson.cn>
+ <20240805073546.668475-4-maobibo@loongson.cn>
+Date: Sat, 10 Aug 2024 22:46:39 +0200
+Message-ID: <87wmkortqo.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrKfK1BCOARiWRr0@slm.duckdns.org>
+Content-Type: text/plain
 
-On Tue, Aug 06, 2024 at 12:09:47PM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Aug 06, 2024 at 11:55:35PM +0200, Peter Zijlstra wrote:
-> ...
-> > > > And the above condition seems a little core_sched specific. Is that
-> > > > suitable for the primary pick function?
-> > > 
-> > > Would there be any distinction between pick_task() being called for regular
-> > > and core sched paths?
-> > 
-> > There currently is not -- but if you need that, we can definitely add a
-> > boolean argument or something. But I think it would be good if a policy
-> 
-> Yeah, SCX might need that.
+On Mon, Aug 05 2024 at 15:35, Bibo Mao wrote:
 
-Right, patch is trivial ofcourse.
+> Interrupts can be routed to maximal four virtual CPUs with one external
+> hardware interrupt. Add the extioi virt extension support so that
+> Interrupts can be routed to 256 vcpus on hypervisor mode.
 
-> > can inherently know if curr is the better pick.
-> > ISTR you having two queue types, one FIFO and one vtime ordered, for
-> > both I think it should be possible to determine order, right?
-> 
-> It is tricky because the kernel part can't make assumptions about whether
-> two tasks are even on the same timeline. In the usual scheduling path, this
-> isn't a problem as the decision is made by the BPF scheduler from balance()
-> - if it wants to keep running the current task, it doesn't dispatch a new
-> one. Otherwise, it dispatches the next task.
+interrupts .... 256 vCPUs in hypervisor mode.
 
-But I have a question.. don't you clear scx.slice when a task needs to
-be preempted? That is, why isn't that condition sufficient to determine
-if curr has precedence over the first queued? If curr and it is still
-queued and its slice is non-zero, take curr.
+>  static int cpu_to_eio_node(int cpu)
+>  {
+> -	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+> +	int cores;
+> +
+> +	if (kvm_para_available() && kvm_para_has_feature(KVM_FEATURE_VIRT_EXTIOI))
 
-Am I missing something obvoius?
+Why isn't that kvm_para_available() check inside of
+kvm_para_has_feature() instead of inflicting it on every usage site?
+That's just error prone.
+
+> +		cores = CORES_PER_VEIO_NODE;
+> +	else
+> +		cores = CORES_PER_EIO_NODE;
+> +	return cpu_logical_map(cpu) / cores;
+>  }
+
+> @@ -105,18 +144,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask *af
+> @@ -140,17 +185,23 @@ static int eiointc_index(int node)
+>  
+>  static int eiointc_router_init(unsigned int cpu)
+>  {
+> -	int i, bit;
+> -	uint32_t data;
+> -	uint32_t node = cpu_to_eio_node(cpu);
+> -	int index = eiointc_index(node);
+> +	uint32_t data, node;
+> +	int i, bit, cores, index;
+
+Is it so hard to follow:
+
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#variable-declarations
+
+?
+
+Thanks,
+
+        tglx
 
