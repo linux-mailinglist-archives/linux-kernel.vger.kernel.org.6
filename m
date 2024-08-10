@@ -1,295 +1,281 @@
-Return-Path: <linux-kernel+bounces-281842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE5894DBF8
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:35:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E74594DBFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:35:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333EB1C210AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93E1E1C20F71
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:35:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A138C14D443;
-	Sat, 10 Aug 2024 09:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B17015358F;
+	Sat, 10 Aug 2024 09:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+u5gAjT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZhs+gzi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404BB43ACB
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 09:35:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0793D43ACB;
+	Sat, 10 Aug 2024 09:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723282531; cv=none; b=RwfDnP4EL38TVHIhaIwpEQeYx5Z5RiD9CkEgpn4+ofJ0+fX5rBQY5ZsOaURyP3/VV6OhTn0/PTH07LeSmBmoNny3UFjL/47nR6lcoZdBckpsNj8gdlZgSCDlsHMhqwurbAJAoFQ7WxFdHRLjdEHhLMShzN9B8JSI0ZFabkdNM9w=
+	t=1723282548; cv=none; b=CBGyy0kfpJ9MdeSpXDF5/ODoUqLB47BmoOsa5z430VGULgmiV7YA0bgSwnccKr+5xmqR9eIS/cp7BfPb2hAQ4WE5p1XRCGL77HqWKfwvRakyBD47BLRA8sYmOGmT8AKO6ywJEVn7xSw8u8KqKpPpcDGABqC9E4tHfpGCFLoYR2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723282531; c=relaxed/simple;
-	bh=C2bhf0Z127KUrpmdxuSrvzr6g3K4XkK0AodYOg5dH1E=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=UqjamFkew1Zt0aVulp2A2LDQxDRH2qKwZ5GKRAftoKd4dMdxlqej3nMfWlY1lIm90lBKdJCn/BcdDXawoLIeNhSrKNVUIgWfpBCJ1tGXAQfFvVCtZcOS6qYPYStM6Au3DRIz6/MByYHUlBgpr65kC5YKNFUoT6qW73NRHyE215s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+u5gAjT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723282529; x=1754818529;
-  h=date:from:to:cc:subject:message-id;
-  bh=C2bhf0Z127KUrpmdxuSrvzr6g3K4XkK0AodYOg5dH1E=;
-  b=n+u5gAjTQr+RL5jYJT9TIWCzvjg1AyhdVZr7iAnQ4+6fOxiM/LuiGSfx
-   5rMac4jRQhoRke4BSA5tdADOd0qdObyGyiCvruILRa/vaSKlyTpg/4msH
-   aK+ibC13Hww4iPWtuRYYatLgdsmFS7o2xDLuM0wQqm06pcxBbSFGazcOy
-   paoWQD7Yy8156Z92xzUZ/6MouG8+3vwZjlqCX8J/PU3uw9Y1QH/Dd4B4e
-   7qjqJ9YozYd+wy7Ua3fci0yJFhTMHncxiTnw3Nf8PFOPhu07VQT2JGxPQ
-   sqRIaqJZ2rzwONdWrtnYbEanMHmFkvwp4vlNLxcdC2R2uI1XYDQe/F/fq
-   g==;
-X-CSE-ConnectionGUID: ImTrCmM9SSeOZh2OFcZXeA==
-X-CSE-MsgGUID: lJqAmJP9TES7lT7ylba0xQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="46860523"
-X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
-   d="scan'208";a="46860523"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 02:35:28 -0700
-X-CSE-ConnectionGUID: qWVI5ezDS3mlUGKzUgD8bQ==
-X-CSE-MsgGUID: E4SO6kFATb+WwWgLsACJKg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,279,1716274800"; 
-   d="scan'208";a="57452167"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 10 Aug 2024 02:35:27 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sciVR-0009nj-1L;
-	Sat, 10 Aug 2024 09:35:25 +0000
-Date: Sat, 10 Aug 2024 17:34:50 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/apic] BUILD SUCCESS
- 838ba7733e4e3a94a928e8d0a058de1811a58621
-Message-ID: <202408101748.xdKEtqSv-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723282548; c=relaxed/simple;
+	bh=LJKrvdisHKRPIlJ/9MEfbKehx7YGUJSAL0PubB2SuJw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DoD3UHAHgIO5PFK/tMhR5NHwV0Noy2dX75AQH895Y8tx2lShvPdYqiR/y1uetbVVDGa70oJee+Crc2YtkfN7aXV6G3EbLsqWGXo6km/1lFEjjLEeRF/X8iV/IN3fkONzEmZ6nT32DhUry+rFG6MhDZicrdCb0trwOD4iy8bIRlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZhs+gzi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A59CC32781;
+	Sat, 10 Aug 2024 09:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723282547;
+	bh=LJKrvdisHKRPIlJ/9MEfbKehx7YGUJSAL0PubB2SuJw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DZhs+gziSdBTD429Nkpi7QU0R2jGBXFykapqzDi9/xGJWHQuUr1ChZYOusM//Bd7i
+	 gpo32ByxOaS7JzPtwUbofiXFN/ZEbBCUfyVNinqKTLZSesD444QoXFo9pVRiirSlnI
+	 1UHKa3Ri+ncKUdhhiZ2A4JnQZXxK7Lr9rThoB/T3sroRgkaeEyuJeQmigmOtgAks7c
+	 eFuRO6VEOQhhJ2Tsl+ub9k98nDDva6nJOKbAXTxEuPLsCp1GQbRF1WnuWvbZSCZBCe
+	 3v5Smy0lJv2+9IWcqE4VptY9xZSgMCdJLaKIEa/WOSJNRsAe39LWhYUZ/nFLcOQqx9
+	 /ELuft4yrFBbw==
+Date: Sat, 10 Aug 2024 10:35:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
+Message-ID: <20240810103540.03e758a5@jic23-huawei>
+In-Reply-To: <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
+References: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
+	<20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/apic
-branch HEAD: 838ba7733e4e3a94a928e8d0a058de1811a58621  x86/apic: Remove logical destination mode for 64-bit
+On Wed,  7 Aug 2024 15:02:10 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-elapsed time: 1218m
+> This implements buffered reads for the ad4695 driver using the typical
+> triggered buffer implementation, including adding a soft timestamp
+> channel.
+> 
+> The chip has 4 different modes for doing conversions. The driver is
+> using the advanced sequencer mode since that is the only mode that
+> allows individual configuration of all aspects each channel (e.g.
+> bipolar config currently and oversampling to be added in the future).
+> 
+> Signed-off-by: David Lechner <dlechner@baylibre.com>
 
-configs tested: 203
-configs skipped: 7
+Main thing in here is I think you can use available_scan_masks
+to avoid the need for the error path on just the temperature channel
+being enabled.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Jonathan
 
-tested configs:
-alpha                             allnoconfig   gcc-13.2.0
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.2.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                          axs101_defconfig   gcc-13.2.0
-arc                          axs103_defconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240810   gcc-13.2.0
-arc                   randconfig-002-20240810   gcc-13.2.0
-arm                              allmodconfig   gcc-13.2.0
-arm                               allnoconfig   clang-20
-arm                               allnoconfig   gcc-13.2.0
-arm                              allyesconfig   gcc-13.2.0
-arm                                 defconfig   gcc-13.2.0
-arm                            mps2_defconfig   clang-20
-arm                            mps2_defconfig   gcc-13.2.0
-arm                             mxs_defconfig   clang-20
-arm                   randconfig-001-20240810   gcc-13.2.0
-arm                   randconfig-002-20240810   gcc-13.2.0
-arm                   randconfig-003-20240810   gcc-13.2.0
-arm                   randconfig-004-20240810   gcc-13.2.0
-arm                         socfpga_defconfig   clang-20
-arm64                            allmodconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-13.2.0
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-13.2.0
-arm64                 randconfig-001-20240810   gcc-13.2.0
-arm64                 randconfig-002-20240810   gcc-13.2.0
-arm64                 randconfig-003-20240810   gcc-13.2.0
-arm64                 randconfig-004-20240810   gcc-13.2.0
-csky                              allnoconfig   gcc-13.2.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-13.2.0
-csky                  randconfig-001-20240810   gcc-13.2.0
-csky                  randconfig-002-20240810   gcc-13.2.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-i386                             allmodconfig   clang-18
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   clang-18
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   clang-18
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240810   clang-18
-i386         buildonly-randconfig-002-20240810   clang-18
-i386         buildonly-randconfig-003-20240810   clang-18
-i386         buildonly-randconfig-004-20240810   clang-18
-i386         buildonly-randconfig-005-20240810   clang-18
-i386         buildonly-randconfig-005-20240810   gcc-12
-i386         buildonly-randconfig-006-20240810   clang-18
-i386         buildonly-randconfig-006-20240810   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240810   clang-18
-i386                  randconfig-002-20240810   clang-18
-i386                  randconfig-002-20240810   gcc-12
-i386                  randconfig-003-20240810   clang-18
-i386                  randconfig-004-20240810   clang-18
-i386                  randconfig-004-20240810   gcc-12
-i386                  randconfig-005-20240810   clang-18
-i386                  randconfig-005-20240810   gcc-12
-i386                  randconfig-006-20240810   clang-18
-i386                  randconfig-011-20240810   clang-18
-i386                  randconfig-011-20240810   gcc-12
-i386                  randconfig-012-20240810   clang-18
-i386                  randconfig-012-20240810   gcc-12
-i386                  randconfig-013-20240810   clang-18
-i386                  randconfig-014-20240810   clang-18
-i386                  randconfig-014-20240810   gcc-12
-i386                  randconfig-015-20240810   clang-18
-i386                  randconfig-015-20240810   gcc-12
-i386                  randconfig-016-20240810   clang-18
-i386                  randconfig-016-20240810   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-13.2.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-13.2.0
-loongarch             randconfig-001-20240810   gcc-13.2.0
-loongarch             randconfig-002-20240810   gcc-13.2.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-13.2.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                                defconfig   gcc-13.2.0
-m68k                          sun3x_defconfig   gcc-13.2.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-13.2.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-13.2.0
-mips                              allnoconfig   gcc-14.1.0
-mips                  cavium_octeon_defconfig   gcc-13.2.0
-mips                           ci20_defconfig   clang-20
-mips                            gpr_defconfig   clang-20
-mips                  maltasmvp_eva_defconfig   gcc-13.2.0
-mips                        qi_lb60_defconfig   gcc-13.2.0
-mips                       rbtx49xx_defconfig   gcc-13.2.0
-mips                         rt305x_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-13.2.0
-nios2                 randconfig-001-20240810   gcc-13.2.0
-nios2                 randconfig-002-20240810   gcc-13.2.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240810   gcc-13.2.0
-parisc                randconfig-002-20240810   gcc-13.2.0
-parisc64                         alldefconfig   gcc-13.2.0
-parisc64                            defconfig   gcc-13.2.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   gcc-14.1.0
-powerpc                     ep8248e_defconfig   gcc-13.2.0
-powerpc                      ep88xc_defconfig   clang-20
-powerpc                 linkstation_defconfig   gcc-13.2.0
-powerpc                     mpc5200_defconfig   clang-20
-powerpc64             randconfig-001-20240810   gcc-13.2.0
-powerpc64             randconfig-002-20240810   gcc-13.2.0
-powerpc64             randconfig-003-20240810   gcc-13.2.0
-riscv                            allmodconfig   gcc-14.1.0
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   gcc-14.1.0
-riscv                               defconfig   gcc-14.1.0
-riscv                    nommu_k210_defconfig   clang-20
-riscv                 randconfig-001-20240810   gcc-13.2.0
-riscv                 randconfig-002-20240810   gcc-13.2.0
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                              allnoconfig   gcc-14.1.0
-s390                             allyesconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   gcc-14.1.0
-s390                  randconfig-001-20240810   gcc-13.2.0
-s390                  randconfig-002-20240810   gcc-13.2.0
-s390                       zfcpdump_defconfig   gcc-13.2.0
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-13.2.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                         ecovec24_defconfig   gcc-13.2.0
-sh                          lboxre2_defconfig   gcc-13.2.0
-sh                     magicpanelr2_defconfig   gcc-13.2.0
-sh                    randconfig-001-20240810   gcc-13.2.0
-sh                    randconfig-002-20240810   gcc-13.2.0
-sh                             shx3_defconfig   gcc-13.2.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240810   gcc-13.2.0
-sparc64               randconfig-002-20240810   gcc-13.2.0
-um                               allmodconfig   clang-20
-um                               allmodconfig   gcc-13.3.0
-um                                allnoconfig   clang-17
-um                                allnoconfig   gcc-14.1.0
-um                               allyesconfig   gcc-12
-um                               allyesconfig   gcc-13.3.0
-um                                  defconfig   gcc-14.1.0
-um                             i386_defconfig   gcc-14.1.0
-um                    randconfig-001-20240810   gcc-13.2.0
-um                    randconfig-002-20240810   gcc-13.2.0
-um                           x86_64_defconfig   gcc-14.1.0
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64       buildonly-randconfig-001-20240810   gcc-12
-x86_64       buildonly-randconfig-002-20240810   gcc-12
-x86_64       buildonly-randconfig-003-20240810   gcc-12
-x86_64       buildonly-randconfig-004-20240810   gcc-12
-x86_64       buildonly-randconfig-005-20240810   gcc-12
-x86_64       buildonly-randconfig-006-20240810   gcc-12
-x86_64                              defconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                randconfig-001-20240810   gcc-12
-x86_64                randconfig-002-20240810   gcc-12
-x86_64                randconfig-003-20240810   gcc-12
-x86_64                randconfig-004-20240810   gcc-12
-x86_64                randconfig-005-20240810   gcc-12
-x86_64                randconfig-006-20240810   gcc-12
-x86_64                randconfig-011-20240810   gcc-12
-x86_64                randconfig-012-20240810   gcc-12
-x86_64                randconfig-013-20240810   gcc-12
-x86_64                randconfig-014-20240810   gcc-12
-x86_64                randconfig-015-20240810   gcc-12
-x86_64                randconfig-016-20240810   gcc-12
-x86_64                randconfig-071-20240810   gcc-12
-x86_64                randconfig-072-20240810   gcc-12
-x86_64                randconfig-073-20240810   gcc-12
-x86_64                randconfig-074-20240810   gcc-12
-x86_64                randconfig-075-20240810   gcc-12
-x86_64                randconfig-076-20240810   gcc-12
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-13.2.0
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240810   gcc-13.2.0
-xtensa                randconfig-002-20240810   gcc-13.2.0
+> +/**
+> + * ad4695_enter_advanced_sequencer_mode - Put the ADC in advanced sequencer mode
+> + * @st: The driver state
+> + * @n: The number of slots to use - must be >= 2, <= 128
+> + *
+> + * As per the datasheet, to enable advanced sequencer, we need to set
+> + * STD_SEQ_EN=0, NUM_SLOTS_AS=n-1 and CYC_CTRL=0 (Table 15). Setting SPI_MODE=1
+> + * triggers the first conversion using the channel in AS_SLOT0.
+> + *
+> + * Return: 0 on success, a negative error code on failure
+> + */
+> +static int ad4695_enter_advanced_sequencer_mode(struct ad4695_state *st, u32 n)
+> +{
+> +	u32 mask, val;
+> +	int ret;
+> +
+> +	mask = AD4695_REG_SEQ_CTRL_STD_SEQ_EN;
+> +	val = FIELD_PREP(AD4695_REG_SEQ_CTRL_STD_SEQ_EN, 0);
+> +
+> +	mask |= AD4695_REG_SEQ_CTRL_NUM_SLOTS_AS;
+> +	val |= FIELD_PREP(AD4695_REG_SEQ_CTRL_NUM_SLOTS_AS, n - 1);
+> +
+> +	ret = regmap_update_bits(st->regmap, AD4695_REG_SEQ_CTRL, mask, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	mask = AD4695_REG_SETUP_SPI_MODE;
+> +	val = FIELD_PREP(AD4695_REG_SETUP_SPI_MODE, 1);
+> +
+> +	mask |= AD4695_REG_SETUP_SPI_CYC_CTRL;
+> +	val |= FIELD_PREP(AD4695_REG_SETUP_SPI_CYC_CTRL, 0);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I'd just combine the two parts of mask and val.  If it were a long
+complex list then fair enough to keep them as individual parts, but
+not needed for 2 items.
+
+> +
+> +	return regmap_update_bits(st->regmap, AD4695_REG_SETUP, mask, val);
+> +}
+> +
+> +/**
+> + * ad4695_exit_conversion_mode - Exit conversion mode
+> + * @st: The AD4695 state
+> + *
+> + * Sends SPI command to exit conversion mode.
+> + *
+> + * Return: 0 on success, a negative error code on failure
+> + */
+> +static int ad4695_exit_conversion_mode(struct ad4695_state *st)
+> +{
+> +	struct spi_transfer xfer = { };
+	struct spi_transfer xfer = {
+		.tx_buf = &st->cnv_cmd2,
+		.len = 1,
+		.delay.value ...
+
+	};
+
+Might as well fill it in from the start.
+Doesn't matter that the data is filled in just after this even if
+that doesn't feel quite right, the code is so close I don't think
+it will confuse readers and it's a common pattern.
+
+> +
+> +	st->cnv_cmd2 = AD4695_CMD_EXIT_CNV_MODE << 3;
+> +	xfer.tx_buf = &st->cnv_cmd2;
+> +	xfer.len = 1;
+> +	xfer.delay.value = AD4695_T_REGCONFIG_NS;
+> +	xfer.delay.unit = SPI_DELAY_UNIT_NSECS;
+> +
+> +	return spi_sync_transfer(st->spi, &xfer, 1);
+> +}
+> +
+>  static int ad4695_set_ref_voltage(struct ad4695_state *st, int vref_mv)
+>  {
+>  	u8 val;
+> @@ -296,6 +371,147 @@ static int ad4695_write_chn_cfg(struct ad4695_state *st,
+>  				  mask, val);
+>  }
+>  
+> +static int ad4695_buffer_preenable(struct iio_dev *indio_dev)
+> +{
+> +	struct ad4695_state *st = iio_priv(indio_dev);
+> +	struct spi_transfer *xfer;
+> +	u8 temp_chan_bit = st->chip_info->num_voltage_inputs;
+> +	bool temp_chan_en = false;
+> +	u32 reg, mask, val, bit, num_xfer, num_slots;
+> +	int ret;
+> +
+> +	/*
+> +	 * We are using the advanced sequencer since it is the only way to read
+> +	 * multiple channels that allows individual configuration of each
+> +	 * voltage input channel. Slot 0 in the advanced sequencer is used to
+> +	 * account for the gap between trigger polls - we don't read data from
+> +	 * this slot. Each enabled voltage channel is assigned a slot starting
+> +	 * with slot 1.
+> +	 */
+> +	num_slots = 1;
+> +
+> +	memset(st->buf_read_xfer, 0, sizeof(st->buf_read_xfer));
+> +
+> +	/* First xfer is only to trigger conversion of slot 1, so no rx. */
+> +	xfer = &st->buf_read_xfer[0];
+> +	xfer->cs_change = 1;
+> +	xfer->delay.value = AD4695_T_CNVL_NS;
+> +	xfer->delay.unit = SPI_DELAY_UNIT_NSECS;
+> +	xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+> +	xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> +	num_xfer = 1;
+> +
+> +	iio_for_each_active_channel(indio_dev, bit) {
+> +		xfer = &st->buf_read_xfer[num_xfer];
+> +		xfer->bits_per_word = 16;
+> +		xfer->rx_buf = &st->buf[(num_xfer - 1) * 2];
+> +		xfer->len = 2;
+> +		xfer->cs_change = 1;
+> +		xfer->cs_change_delay.value = AD4695_T_CONVERT_NS;
+> +		xfer->cs_change_delay.unit = SPI_DELAY_UNIT_NSECS;
+> +
+> +		if (bit == temp_chan_bit) {
+> +			temp_chan_en = true;
+> +		} else {
+> +			reg = AD4695_REG_AS_SLOT(num_slots);
+> +			val = FIELD_PREP(AD4695_REG_AS_SLOT_INX, bit);
+> +
+> +			ret = regmap_write(st->regmap, reg, val);
+> +			if (ret)
+> +				return ret;
+> +
+> +			num_slots++;
+> +		}
+> +
+> +		num_xfer++;
+> +	}
+> +
+> +	/*
+> +	 * Don't keep CS asserted after last xfer. Also triggers conversion of
+> +	 * slot 0.
+> +	 */
+> +	xfer->cs_change = 0;
+> +
+> +	/**
+> +	 * The advanced sequencer requires that at least 2 slots are enabled.
+> +	 * Since slot 0 is always used for other purposes, we need only 1
+> +	 * enabled voltage channel to meet this requirement. This error will
+> +	 * only happen if only the temperature channel is enabled.
+> +	 */
+> +	if (num_slots < 2) {
+
+Can you use available_scanmasks to let the IIO core figure out it needs
+to enable (and then hide) an extra channel?
+
+Either that or spin up a channel to meet the requirement, just don't
+capture it - Given this is an unlikely case, better to leave it to the
+IIO core buffer demux handling than to bother handling locally.
+
+
+> +		dev_err_ratelimited(&indio_dev->dev,
+> +			"Buffered read requires at least 1 voltage channel enabled\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * Temperature channel isn't included in the sequence, but rather
+> +	 * controlled by setting a bit in the TEMP_CTRL register.
+> +	 */
+> +
+> +	reg = AD4695_REG_TEMP_CTRL;
+> +	mask = AD4695_REG_TEMP_CTRL_TEMP_EN;
+> +	val = FIELD_PREP(mask, temp_chan_en ? 1 : 0);
+This is the line the bot didn't like. The local variables reg and
+mask don't add anything anyway, so get rid of them and use the
+values inline.
+
+> +
+> +	ret = regmap_update_bits(st->regmap, reg, mask, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	spi_message_init_with_transfers(&st->buf_read_msg, st->buf_read_xfer,
+> +					num_xfer);
+> +
+> +	ret = spi_optimize_message(st->spi, &st->buf_read_msg);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* This triggers conversion of slot 0. */
+> +	ret = ad4695_enter_advanced_sequencer_mode(st, num_slots);
+> +	if (ret) {
+> +		spi_unoptimize_message(&st->buf_read_msg);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+
 
