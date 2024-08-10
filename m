@@ -1,95 +1,231 @@
-Return-Path: <linux-kernel+bounces-281968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8580094DD99
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 18:16:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F34794DD9D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 18:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D02391C20DA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:16:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83A7C1C20C0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 16:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF66168492;
-	Sat, 10 Aug 2024 16:16:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285311798C;
-	Sat, 10 Aug 2024 16:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3123A16849C;
+	Sat, 10 Aug 2024 16:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b="ZraDnMHz"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65EC01798C;
+	Sat, 10 Aug 2024 16:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723306577; cv=none; b=BCGmQcKxC4cqcbDH2ZjDKZIBwgU3ayfA7l1DQOhJJbGvpIKwIyAiQ0F6gZCAJyf8VEuVmXEaBTdSrCwLrmbloP7kqj0vq/YaSdDEwwXzSF5f+zEVlRhuTGQTAHZaUUTPDXiqGmC6sNUIu8pfHvtacG6LB+zBj99dHpw3tG4qAVs=
+	t=1723307182; cv=none; b=T0zuTyAEo+/SBOwgRuPDMlMVHBtqC/jForhxjEbvGshSS1Bq/xzXM+/cfsXo9hhblcSfMN0aLJkrLxKzScV0iPbBdTUXLAW1JxNk9texQk3Ff8I/Jpu+BX4TXN6YaMxeB3BgWd77rxjM3CSbtCIvPRQ7X84huSK3+Vq4QMJdYeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723306577; c=relaxed/simple;
-	bh=D3D32SrpDNrDy4cockWsCqpamN76Db0cd49m73FiSxM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bEYXc+H8OCpX/c+iqRiUWvovI9kHLVPXPJ/dIYOOQfKrUlfPyQpfVqfqiqAt/BsPgLJXJZPmhpAFZwAvYmDkISQtns22gumsVZ9WdWlYzdskJZ2f+aePYyEHendYriCLxF5llMH5QFCHNpiC11WKSp4DvC73VrduO4CGr1l16W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 65437FEC;
-	Sat, 10 Aug 2024 09:16:34 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8DF673F71E;
-	Sat, 10 Aug 2024 09:16:06 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	james.clark@linaro.org,
-	Govindarajan.Mohandoss@arm.com
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH] perf docs: Refine the description for the buffer size
-Date: Sat, 10 Aug 2024 17:15:40 +0100
-Message-Id: <20240810161540.2282535-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723307182; c=relaxed/simple;
+	bh=Vpxk8JuF4KOoq7Cw89uDOviY/FT/Ljoz6ZcVe3LqKrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AOVPjE2aZ2z8QFb9AqJXNjAX9h5jMyOj4i+fCgRHM576ZffNeU3UlVoaDYW7EBQ2D7D52SSLfQ+yZCOD//epsdAXyVvrOMMkVQuYxpnmIcfipiVmwcUHbtEUlXgXrQqC9b1mgdK6doppr1agpqkxzpF2+GdgxdCJGKY8saEK56I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de; spf=pass smtp.mailfrom=t-8ch.de; dkim=pass (1024-bit key) header.d=t-8ch.de header.i=@t-8ch.de header.b=ZraDnMHz; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=t-8ch.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-8ch.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=t-8ch.de; s=mail;
+	t=1723307178; bh=Vpxk8JuF4KOoq7Cw89uDOviY/FT/Ljoz6ZcVe3LqKrg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZraDnMHzno/ehMraVX+6/Fsi1XXHephdQUw+OX5DePD+3zDFRaJ17dDeGzhTKzt2f
+	 4b/4QzFGfwD2NURzlMehHl7Pt0Pe4ch0goBYXv/JJZsohK7krZ3G20/NFkd95JpwzY
+	 IApjZDTT3MHu28ja03VPYupMYDdHsBTNOWmQoE38=
+Date: Sat, 10 Aug 2024 18:26:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas@t-8ch.de>
+To: Aditya Garg <gargaditya08@live.com>
+Cc: "tzimmermann@suse.de" <tzimmermann@suse.de>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
+	Jiri Kosina <jikos@kernel.org>, "bentiss@kernel.org" <bentiss@kernel.org>, 
+	Orlando Chamberlain <orlandoch.dev@gmail.com>, Kerem Karabay <kekrby@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Subject: Re: [PATCH v3 1/9] HID: hid-appletb-bl: add driver for the backlight
+ of Apple Touch Bars
+Message-ID: <1166bdaa-ea14-430a-be2e-9593cc08491a@t-8ch.de>
+References: <1368FEE8-58BB-41C9-B9AD-7F2F68FF1D53@live.com>
+ <0DDD5C22-A42A-49F2-984C-F3595F71AB1C@live.com>
+ <9e398f1b-05c2-4dd3-bc56-2b61c6784aef@t-8ch.de>
+ <79DB1D9D-8D32-474F-972F-F82C818AF38F@live.com>
+ <375d99a9-5516-4a39-a912-1961b3dd725d@t-8ch.de>
+ <6340DD46-4537-434E-9E14-EEFE7E04AAD0@live.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6340DD46-4537-434E-9E14-EEFE7E04AAD0@live.com>
 
-Current description for the AUX trace buffer size is misleading. When a
-user specifies the option '-m,512M', it represents a size value in bytes
-(512MiB) but not 512M pages (512M x 4KiB regard to a page of 4KiB).
+On 2024-08-10 15:30:58+0000, Aditya Garg wrote:
+> 
+> > 
+> > Also include linux/device.h as you are using functions from there.
+> > Like devm_kcalloc().
+> 
+> Alright, I’ll add that
+> > 
+> >>> 
+> >>>> +#include <linux/hid.h>
+> >>>> +#include <linux/backlight.h>
+> >>>> +
+> >>>> +#include "hid-ids.h"
+> >>>> +
+> >>>> +#define APPLETB_BL_ON 1
+> >>>> +#define APPLETB_BL_DIM 3
+> >>>> +#define APPLETB_BL_OFF 4
+> >>>> +
+> >>>> +#define HID_UP_APPLEVENDOR_TB_BL 0xff120000
+> >>>> +
+> >>>> +#define HID_VD_APPLE_TB_BRIGHTNESS 0xff120001
+> >>>> +#define HID_USAGE_AUX1 0xff120020
+> >>>> +#define HID_USAGE_BRIGHTNESS 0xff120021
+> >>>> +
+> >>>> +static int appletb_bl_def_brightness = 2;
+> >>>> +module_param_named(brightness, appletb_bl_def_brightness, int, 0444);
+> >>>> +MODULE_PARM_DESC(brightness, "Default brightness:\n"
+> >>>> +  "    0 - Touchbar is off\n"
+> >>>> +  "    1 - Dim brightness\n"
+> >>>> +  "    [2] - Full brightness");
+> >>>> +
+> >>>> +struct appletb_bl {
+> >>>> + struct hid_field *aux1_field, *brightness_field;
+> >>>> + struct backlight_device *bdev;
+> >>>> +
+> >>>> + bool full_on;
+> >>>> +};
+> >>>> +
+> >>>> +const u8 appletb_bl_brightness_map[] = {
+> >>> 
+> >>> static?
+> >>> 
+> >>>> + APPLETB_BL_OFF,
+> >>>> + APPLETB_BL_DIM,
+> >>>> + APPLETB_BL_ON
+> >>> 
+> >>> The last element is not a sentinel element, so it should have comma.
+> >> 
+> >> static const u8 appletb_bl_brightness_map[] = {
+> >> APPLETB_BL_OFF,
+> >> APPLETB_BL_DIM,
+> >> APPLETB_BL_ON,
+> >> };
+> >> 
+> >> This?
+> > 
+> > Yes.
+> > 
+> >>> 
+> >>>> +};
+> >>>> +
+> >>>> +static int appletb_bl_set_brightness(struct appletb_bl *bl, u8 brightness)
+> >>>> +{
+> >>>> + struct hid_report *report = bl->brightness_field->report;
+> >>>> + struct hid_device *hdev = report->device;
+> >>>> + int ret;
+> >>>> +
+> >>>> + ret = hid_set_field(bl->aux1_field, 0, 1);
+> >>>> + if (ret) {
+> >>>> + hid_err(hdev, "Failed to set auxiliary field (%pe)\n", ERR_PTR(ret));
+> >>>> + return ret;
+> >>>> + }
+> >>>> +
+> >>>> + ret = hid_set_field(bl->brightness_field, 0, brightness);
+> >>>> + if (ret) {
+> >>>> + hid_err(hdev, "Failed to set brightness field (%pe)\n", ERR_PTR(ret));
+> >>>> + return ret;
+> >>>> + }
+> >>>> +
+> >>>> + if (!bl->full_on) {
+> >>>> + ret = hid_hw_power(hdev, PM_HINT_FULLON);
+> >>>> + if (ret < 0) {
+> >>>> + hid_err(hdev, "Device didn't power on (%pe)\n", ERR_PTR(ret));
+> >>>> + return ret;
+> >>>> + }
+> >>>> +
+> >>>> + bl->full_on = true;
+> >>>> + }
+> >>>> +
+> >>>> + hid_hw_request(hdev, report, HID_REQ_SET_REPORT);
+> >>>> +
+> >>>> + if (brightness == APPLETB_BL_OFF) {
+> >>>> + hid_hw_power(hdev, PM_HINT_NORMAL);
+> >>>> + bl->full_on = false;
+> >>>> + }
+> >>>> +
+> >>>> + return 0;
+> >>>> +}
+> >>>> +
+> >>>> +static int appletb_bl_update_status(struct backlight_device *bdev)
+> >>>> +{
+> >>>> + struct appletb_bl *bl = bl_get_data(bdev);
+> >>>> + u16 brightness;
+> >>>> +
+> >>>> + if (bdev->props.state & BL_CORE_SUSPENDED)
+> >>>> + brightness = 0;
+> >>> 
+> >>> From backlight.h:
+> >>> 
+> >>> * backlight drivers are expected to use backlight_is_blank()
+> >>> * in their update_status() operation rather than reading the
+> >>> * state property.
+> >>> 
+> >>> Seems to be applicable here.
+> >>> 
+> >>> Also the hardcoded "0" as index into appletb_bl_brightness_map could be
+> >>> avoided by some restructuring.
+> >> 
+> >> static int appletb_bl_update_status(struct backlight_device *bdev)
+> >> {
+> >> struct appletb_bl *bl = bl_get_data(bdev);
+> >> u16 brightness;
+> >> 
+> >> if (backlight_is_blank(bdev))
+> >> brightness = APPLETB_BL_OFF;
+> >> else
+> >> brightness = backlight_get_brightness(bdev);
+> >> 
+> >> return appletb_bl_set_brightness(bl, appletb_bl_brightness_map[brightness]);
+> >> }
+> >> 
+> >> This?
+> > 
+> > This now looks to be a different logic than before.
+> > Below should be the same as in the original patch.
+> > 
+> > static int appletb_bl_update_status(struct backlight_device *bdev)
+> > {
+> > struct appletb_bl *bl = bl_get_data(bdev);
+> > u8 brightness;
+> > 
+> > if (backlight_is_blank(bdev))
+> > brightness = APPLETB_BL_OFF;
+> > else
+> > brightness = appletb_bl_brightness_map[backlight_get_brightness(bdev)]);
+> > 
+> > return appletb_bl_set_brightness(bl, brightness);
+> > }
+> 
+> I’ll replace the original code with this
+> 
+> > 
+> > Maybe it's worth to make APPLETB_BL_* an enum for more clarity.
+> 
+> I don’t think there is a specific need for an enum here
+> 
+> If you are fine with these changes, I’ll send a v5
 
-Make the document clear that the normal buffer and the AUX tracing
-buffer share the same semantics.
+Sounds good.
 
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/Documentation/perf-record.txt | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 41e36b4dc765..242223240a08 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -273,10 +273,11 @@ OPTIONS
- -m::
- --mmap-pages=::
- 	Number of mmap data pages (must be a power of two) or size
--	specification with appended unit character - B/K/M/G. The
--	size is rounded up to have nearest pages power of two value.
--	Also, by adding a comma, the number of mmap pages for AUX
--	area tracing can be specified.
-+	specification in bytes with appended unit character - B/K/M/G.
-+	The size is rounded up to the nearest power-of-two page value.
-+	By adding a comma, an additional parameter with the same
-+	semantics used for the normal mmap areas can be specified for
-+	AUX tracing area.
- 
- -g::
- 	Enables call-graph (stack chain/backtrace) recording for both
--- 
-2.34.1
-
+FYI I'll also review the other patches soonish.
+So sending a v5 right away is not necessary.
 
