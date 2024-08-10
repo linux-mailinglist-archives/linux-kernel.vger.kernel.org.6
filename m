@@ -1,121 +1,102 @@
-Return-Path: <linux-kernel+bounces-281739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796F594DA99
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:06:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A341D94DAA1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:18:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14CA31F2294E
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:06:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1382DB224DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3D113B592;
-	Sat, 10 Aug 2024 04:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869BE13AA35;
+	Sat, 10 Aug 2024 04:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E962WysW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3rGzmPX"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC73F4409;
-	Sat, 10 Aug 2024 04:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD6A4438B
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 04:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723262781; cv=none; b=JUwfu6nsLRLz5AkwN8DVbouhqGXL9IR4yDU1Pb/fueJV7QPKCXTBruR8PV3oXTYAxdR1Xl4jjlc3EmP7IWtvfinjtVV1MBSoSEpz6MdNuuNXsrenQCqfXinXNKK6Gt9dIY5+fbU0rgUsq0PN8s+82n5fdFCveKjNeaQFbEdNoJs=
+	t=1723263512; cv=none; b=Gek72IHK99hmlXgReUwBU76T+L8g4zYcLQnzhvxQ5mjbvxxFlZ9rtOISju+A34xwYEVvA4KivnIOcfZSNA4y3CxcFm8J0vfZl9D7br3UGowfQ2wOvVT7OE/0w08GKHYhZ2a7ltJOSc3njQJnCp9k5KQLCUqfFr1MDQk8VPMnRWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723262781; c=relaxed/simple;
-	bh=SOtjsHWHRwe769zIY4hqS+ETtzzThW1sY7Ow+VYY1gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mU4ET8q/+Y20Fpmp6M149pMKAkPfsyaGSUAN8SkTOx0X/NhRBaqXPFU8akCDxSQ5JfozPmWFjdeybbY7rBIBOPIgz9jQgcxRuEQvDinzDnwO8wHaErVx/3GWSccrbKgaFkzsr00pN2PfRxpCIwUuR49gZjvWFrrlZl34L3oSKDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E962WysW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 341D4C32781;
-	Sat, 10 Aug 2024 04:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723262781;
-	bh=SOtjsHWHRwe769zIY4hqS+ETtzzThW1sY7Ow+VYY1gs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E962WysW/7ySwspbABoO0RJDoRAliGwxCOx6lTfj91l7RBY0US2Q0b4bSZotvPBLK
-	 49IfehDaJWhe1Fl64Ie71KIX22EZHac8RRFqsdoapjhZjieTYQtEI9RE3ez15YNl03
-	 d8UnB8H5jHyymdLk7167hqDGWisnqBmvCjk2bGpmKyFX84w8maXDBE0+q6vWv5LFLZ
-	 l4cwc0fCuKJYpVB5kY4G5/ZK87zQG38tH0hGoe0MG+9rczitjxfIhVb/I2BW3zcgXS
-	 ms/l5Y8oSzbS4bfZjlocTDY6mGdtaywSYcuNlgVy+EeLcG/yI5H3QNTxxJZ8Y4mVlO
-	 JIhpaWHQN23MA==
-Date: Fri, 9 Aug 2024 21:06:20 -0700
-From: Kees Cook <kees@kernel.org>
-To: Brian Mak <makb@juniper.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
-Message-ID: <202408092104.FCE51021@keescook>
-References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
- <172300808013.2419749.16446009147309523545.b4-ty@kernel.org>
- <D1EFC173-A7A8-4B0E-8AF6-34AB1A65D2DB@juniper.net>
+	s=arc-20240116; t=1723263512; c=relaxed/simple;
+	bh=FE3RXVpoNHBCXWk6ztfgMYmPJ16jVDYUoJHp645GAPQ=;
+	h=Subject:To:Cc:In-Reply-To:References:From:MIME-Version:
+	 Content-Type:Date:Message-ID; b=Dbq/VNDsKRC7BBNiJ/TRc8xIEpU1GOOhzzLjqWdfm8tX5wufgLJ/bhM4FfZD22OEiEHJqJXEG/xUzQvCoM3s8xtITooEHscvm51BSrVBfwB9z6o8l3XVHJnXnUm7Wcw+rjZhJ+nUP875E2dSe/ukaJK8zB0h9jz2OPFqjqCLK9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3rGzmPX; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fc66fc35f2so26925495ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 21:18:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723263511; x=1723868311; darn=vger.kernel.org;
+        h=message-id:date:content-id:mime-version:from:references:in-reply-to
+         :cc:to:subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=FE3RXVpoNHBCXWk6ztfgMYmPJ16jVDYUoJHp645GAPQ=;
+        b=A3rGzmPXkj5wuJQR8HQDGHqrKluuk7IEl45BpwIbQ5a7BgckSx2LvxFIP0nWAbol67
+         fsponSWcW+R91N/rBvF8zrWA++CeOHOjeG9KeCCqfbiNHccepg3v0iidXjh7J6jvqW8e
+         1BDY8D11UGQ0zU/nunNE99mE7LAv50y6e6GgQvLvjBoNcNF4EW1q2ILtdwiglNHyivB/
+         kWI84tn0Ih2CvHC4r2jCHHVPV5H9Yd515aHaxdsP+lrBe/c5O0C/hYU/wnueFEc3Vakh
+         dG4tjthZh9TknpwX4Cg29gkz2avllp/PuP7Wlm8UFhc4lyZI+gVFqXFipkOby5biwPt3
+         p7vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723263511; x=1723868311;
+        h=message-id:date:content-id:mime-version:from:references:in-reply-to
+         :cc:to:subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FE3RXVpoNHBCXWk6ztfgMYmPJ16jVDYUoJHp645GAPQ=;
+        b=OlkYYMvjQGFt6bVFv7Q0EEJBhNFhhvZGPAnlb4OiOyl4pv3q5BhfMcxlR/8QIetdjq
+         cBb0xkFFasCqOHgF6ad6Z9+PfF2Cf5saDHzmaIdpeknl4r++gjWuIgdukINPJp3B6POc
+         MsJqNuCWc1dANMb8W+SuZzVBlx6LMhLDmu/eKQRoYRQPnzUxRm2wWQqr7ecsQgtKKuhW
+         e7MaMLXYqEVxTVT1HB/+eMgdmVafseWdeMe9QlQSaiFQlxuO2WkM8K0RpBoJukyY+cDR
+         w1bdBUnFTYkN7BspNcJp7lBIdT+0iFCBpYslsUaxnptwef7vpciN50pMfb3Wi49GdOVK
+         soyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXqE1qZ1oxD4GaMem7lkISkVYYVQ9oT8p3OxxoNDsLBajj7D8ZhUE3k3dvGshzxfp0GtoE2C1MUYVjGBDDPfzAksu7q6Ed9k5VjtK2A
+X-Gm-Message-State: AOJu0YxM5UPdvkWfPr2Pl9OaLrQa3n/8yN4fRZ2R9gt99j3KmPbcT8LG
+	PVP9fZLnxdLuQ85tZuNCj51k9akGzwWuzv/MJ0l2ZnGy86GqAL3p
+X-Google-Smtp-Source: AGHT+IGzmnBHlj8tYo55BkjEKYkGabt/XhXe162vvHGU5FptPWptWBC0emyH9Usq39y9mLT1GF4ptQ==
+X-Received: by 2002:a17:903:182:b0:1fb:80a3:5826 with SMTP id d9443c01a7336-200ae4dacf1mr52885255ad.4.1723263510619;
+        Fri, 09 Aug 2024 21:18:30 -0700 (PDT)
+Received: from jromail.nowhere (h219-110-241-048.catv02.itscom.jp. [219.110.241.48])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb7eed50sm4856325ad.10.2024.08.09.21.18.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Aug 2024 21:18:30 -0700 (PDT)
+Received: from jro by jrotkm2 id 1scd1K-0002Dx-2d ;
+	Sat, 10 Aug 2024 12:43:58 +0900
+Subject: Re: [PATCH v2 1/3] lockdep: fix upper limit for LOCKDEP_*_BITS configs
+To: Carlos Llamas <cmllamas@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+    linux-kernel@vger.kernel.org, kernel-team@android.com,
+    Peter Zijlstra <peterz@infradead.org>,
+    Boqun Feng <boqun.feng@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+    Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>
+In-Reply-To: <ZrZlY-5h5N28PMH7@google.com>
+References: <20240807143922.919604-1-cmllamas@google.com> <20240807143922.919604-2-cmllamas@google.com> <1503.1723080058@jrotkm2> <ZrZlY-5h5N28PMH7@google.com>
+From: hooanon05g@gmail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D1EFC173-A7A8-4B0E-8AF6-34AB1A65D2DB@juniper.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <8551.1723261438.1@jrotkm2>
+Date: Sat, 10 Aug 2024 12:43:58 +0900
+Message-ID: <8552.1723261438@jrotkm2>
 
-On Sat, Aug 10, 2024 at 12:52:16AM +0000, Brian Mak wrote:
-> On Aug 6, 2024, at 10:21 PM, Kees Cook <kees@kernel.org> wrote:
-> > 
-> > On Tue, 06 Aug 2024 18:16:02 +0000, Brian Mak wrote:
-> >> Large cores may be truncated in some scenarios, such as with daemons
-> >> with stop timeouts that are not large enough or lack of disk space. This
-> >> impacts debuggability with large core dumps since critical information
-> >> necessary to form a usable backtrace, such as stacks and shared library
-> >> information, are omitted.
-> >> 
-> >> We attempted to figure out which VMAs are needed to create a useful
-> >> backtrace, and it turned out to be a non-trivial problem. Instead, we
-> >> try simply sorting the VMAs by size, which has the intended effect.
-> >> 
-> >> [...]
-> > 
-> > While waiting on rr test validation, and since we're at the start of the
-> > dev cycle, I figure let's get this into -next ASAP to see if anything
-> > else pops out. We can drop/revise if there are problems. (And as always,
-> > I will add any Acks/Reviews/etc that show up on the thread.)
-> > 
-> > Applied to for-next/execve, thanks!
-> > 
-> > [1/1] binfmt_elf: Dump smaller VMAs first in ELF cores
-> >      https://urldefense.com/v3/__https://git.kernel.org/kees/c/9c531dfdc1bc__;!!NEt6yMaO-gk!FK3UfXVndoYpve8Y7q7vacIoHOrTj2nJgSJbugqUB5LfciKy0_Xvit9aXz_XCWlXHpdRQO2ArP0$
-> 
-> Thanks, Kees! And, thanks Linus + Eric for taking the time to comment on
-> this.
-> 
-> Regarding the rr tests, it was not an easy task to get the environment
-> set up to do this, but I did it and was able to run the tests. The rr
-> tests require a lot of kernel config options and there's no list
-> documenting what's needed anywhere...
+Carlos Llamas:
+> Yeah, I say that's expected if you bump these values to the max all at
+> once. The values I gave were tested individually on top of the defconfig
+> and boot completed fine (qemu x86_64 and aarch64 with -m 8G). I think
+> it's fair to leave room to configure these knobs individually.
 
-Thanks for suffering through that!
+I see, understood.
+Now you can freely add Acked-by from me.
 
-> All the tests pass except for the sioc and sioc-no-syscallbuf tests.
-> However, these test failures are due to an incompatibility with the
-> network adapter I'm using. It seems that it only likes older network
-> adapters. I've switched my virtualized network adapter twice now, and
-> each time, the test gets a bit further than the previous time. Will
-> continue trying different network adapters until something hopefully
-> works. In any case, since this error isn't directly related to my
-> changes and the rest of the tests pass, then I think we can be pretty
-> confident that this change is not breaking rr.
 
-Perfect! Okay, we'll keep our eyes open for any reports of breakage. :)
-
--Kees
-
--- 
-Kees Cook
+J. R. Okajima
 
