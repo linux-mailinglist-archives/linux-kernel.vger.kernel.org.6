@@ -1,265 +1,168 @@
-Return-Path: <linux-kernel+bounces-281735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1F7D94DA90
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:01:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC32494DA91
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CE552836D3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:01:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85354283D37
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4F913BAC3;
-	Sat, 10 Aug 2024 04:01:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7002D137742;
+	Sat, 10 Aug 2024 04:02:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0B21FDD;
-	Sat, 10 Aug 2024 04:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E2D13FEC
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 04:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723262497; cv=none; b=hbE0osm30Im26QBahy3xyINYCysa9glwlYDMWOGE7FEQd+bhqWxAuP+LNwsOHlJCEDBYD6SVdnaBKwbxbEm5Qi4fgx5k6jp3ez9m4d6JtuF+L2Esmg1vEYtDlxfHEWvYv8MCcf0pDJCwNKSvgyudoH0O96tJ6jTbxlLLKM7y0vQ=
+	t=1723262525; cv=none; b=FV7kLENr90QwBso+g3oJZ/hAGNyk/c1DCNtWMo2vAREEpkTOhjwbX8pC/E4mQ8/GGeJToLcNisdzn52xdF4el62yyusHCdDwlTAYt0zZxPnIXmATan4WZd3HERER94cp8Hw30bwKlBwYSLVXtGyAk99k39Ezb5Jr5exVfwFNEjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723262497; c=relaxed/simple;
-	bh=YOlRbOcCiL7cuUSlHsIqsz7g3qu4gdisg6LvYPh3ndU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=VuK0gvh4/M36ofAuq1Z/F1qLX7VQaAHaGUTTKtfePoVPa3GWZGe5bBe4oARZw2VbBfhUk5EurJwACgJYhQjB3D7cNbrwsMwucySo+I/+j/2yukIqd6OqcDyl3kVSxQEI1GHRH0CHPI0+xkBBsksMzHyjIIPDbQ8ASgFW+GJaCUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WgnC127Dxz4f3jrx;
-	Sat, 10 Aug 2024 12:01:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C74841A1356;
-	Sat, 10 Aug 2024 12:01:30 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCHr4UZ5rZmoskSBQ--.6322S3;
-	Sat, 10 Aug 2024 12:01:30 +0800 (CST)
-Subject: Re: [PATCH v2 06/10] ext4: update delalloc data reserve spcae in
- ext4_es_insert_extent()
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com
-References: <20240802115120.362902-1-yi.zhang@huaweicloud.com>
- <20240802115120.362902-7-yi.zhang@huaweicloud.com>
- <20240807174108.l2bbbhlnpznztp34@quack3>
- <a23023f6-93cc-584d-c55a-9f8395e360ae@huaweicloud.com>
- <20240808183619.vmxttspcs5ngm6g3@quack3>
- <d6b8ed3c-82a7-6344-bdb9-8c18b1f526ca@huaweicloud.com>
- <20240809162013.tieom26umwqcsfe4@quack3>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <5dcb2dc2-7622-05bd-d330-610e9c009fe2@huaweicloud.com>
-Date: Sat, 10 Aug 2024 12:01:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723262525; c=relaxed/simple;
+	bh=n489zQ+lnHUHa5DLpWoeh0VGlHr66+OmNS5E4bIt7hs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=X2x2pxgwkEyGzfgpdMnGbbY3Al3kX21GooxM2B91r6un8MqdwkTPbpENlHZHegdbcWbfjTBk/3PaR3i42Bs4EoC6WYJrqANcjeo29lch3YjPVZEfJvYI5g6oDqpxdcPCMKze9Q8X59vUuLj+etnj43l32UteKbM2bQgf1ZTiAdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8223aed78e2so328458339f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 09 Aug 2024 21:02:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723262523; x=1723867323;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cI7/EOSL+zEJ+LIkyTC05n7rzKbtccoJH1s4Qnl/Dgk=;
+        b=uOUBkRZqQ/DRzaCtcvD9+Un5IJ7hI/3k9Odv4mir5XKdQTXvrk425FqQrtwpZvSUvP
+         FXKWpCm/tKgB4GfhDPJ5b+NvaEKvW3+JnNOpAlUn3/h/LeCHvb2TJRBhewAg99q1wpzH
+         UnDn3C6wcVHrbxTskzDFACegzswvjcctvHF1QKLIz9b0Mx5TI4BtZawoMPLuKW5rJqfW
+         9ykj5jm9Q4agzMq/FaQf5antAgi7/lrt5WKOTlmmnYL/kmfUb/rorJ2Y/YLFctFnZCb6
+         ck+ZaB1r/0KxbnfMaYcUMvm6FIS5DRK5g93rY5mxVcJRNFzhYdFW/5QwCMJCWw0I569E
+         UVYw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfK1Zr+Jm3ugUtxbOEXUVSfy5O+1BJzq6/xhYRKyy2D2i+m+em+gT/36aAt4jornCQCzMy/9s0+COndO+gpN3jQJdonObojUlswCou
+X-Gm-Message-State: AOJu0Yy3KFbYkr8/RU3eJ2X21t7gL5n0CXDxwiTbDNQQKNeQmg0QAWBT
+	2UMQu33hnpKLmrxUZnzmyiptGLsLSjeoj5nfPBQvyvp6G79wIFhOlj3xt+ay0nuOe/8N9oUUi18
+	T4aEMOXvL+Al+E9kVrier3v7CnGHFXcljJGsGgy1o1YUU54WL3c8NEQo=
+X-Google-Smtp-Source: AGHT+IGvVKciEMx8dzDNXSmsJuabAC8D9BMyoWznkpgXNZ7/aMZb5zQd08ZFpAIuGBMGnrEPCOzPrlY0T5uHZzspv1NHeNSPPvrM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240809162013.tieom26umwqcsfe4@quack3>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHr4UZ5rZmoskSBQ--.6322S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wry5Xw1fZrW3Ar47tFyrWFg_yoWfJFyUpF
-	W5CF15Kw15Jr1UCrZIqw15Xr1S9w4DJF4UXrZIqry8ZF98tF1fWFnrJF45uFZ29r4xJFn8
-	XFy5C347uF98Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-Received: by 2002:a05:6638:6c88:b0:4c2:8e08:f579 with SMTP id
+ 8926c6da1cb9f-4ca6ece3068mr226622173.2.1723262523323; Fri, 09 Aug 2024
+ 21:02:03 -0700 (PDT)
+Date: Fri, 09 Aug 2024 21:02:03 -0700
+In-Reply-To: <tencent_656F489598E922EF0ACE8479566E702EF90A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008ecbff061f4c524f@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/8/10 0:20, Jan Kara wrote:
-> On Fri 09-08-24 11:35:49, Zhang Yi wrote:
->> On 2024/8/9 2:36, Jan Kara wrote:
->>> On Thu 08-08-24 19:18:30, Zhang Yi wrote:
->>>> On 2024/8/8 1:41, Jan Kara wrote:
->>>>> On Fri 02-08-24 19:51:16, Zhang Yi wrote:
->>>>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>>>
->>>>>> Now that we update data reserved space for delalloc after allocating
->>>>>> new blocks in ext4_{ind|ext}_map_blocks(), and if bigalloc feature is
->>>>>> enabled, we also need to query the extents_status tree to calculate the
->>>>>> exact reserved clusters. This is complicated now and it appears that
->>>>>> it's better to do this job in ext4_es_insert_extent(), because
->>>>>> __es_remove_extent() have already count delalloc blocks when removing
->>>>>> delalloc extents and __revise_pending() return new adding pending count,
->>>>>> we could update the reserved blocks easily in ext4_es_insert_extent().
->>>>>>
->>>>>> Thers is one special case needs to concern is the quota claiming, when
->>>>>> bigalloc is enabled, if the delayed cluster allocation has been raced
->>>>>> by another no-delayed allocation(e.g. from fallocate) which doesn't
->>>>>> cover the delayed blocks:
->>>>>>
->>>>>>   |<       one cluster       >|
->>>>>>   hhhhhhhhhhhhhhhhhhhdddddddddd
->>>>>>   ^            ^
->>>>>>   |<          >| < fallocate this range, don't claim quota again
->>>>>>
->>>>>> We can't claim quota as usual because the fallocate has already claimed
->>>>>> it in ext4_mb_new_blocks(), we could notice this case through the
->>>>>> removed delalloc blocks count.
->>>>>>
->>>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>>>> ...
->>>>>> @@ -926,9 +928,27 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>>>>>  			__free_pending(pr);
->>>>>>  			pr = NULL;
->>>>>>  		}
->>>>>> +		pending = err3;
->>>>>>  	}
->>>>>>  error:
->>>>>>  	write_unlock(&EXT4_I(inode)->i_es_lock);
->>>>>> +	/*
->>>>>> +	 * Reduce the reserved cluster count to reflect successful deferred
->>>>>> +	 * allocation of delayed allocated clusters or direct allocation of
->>>>>> +	 * clusters discovered to be delayed allocated.  Once allocated, a
->>>>>> +	 * cluster is not included in the reserved count.
->>>>>> +	 *
->>>>>> +	 * When bigalloc is enabled, allocating non-delayed allocated blocks
->>>>>> +	 * which belong to delayed allocated clusters (from fallocate, filemap,
->>>>>> +	 * DIO, or clusters allocated when delalloc has been disabled by
->>>>>> +	 * ext4_nonda_switch()). Quota has been claimed by ext4_mb_new_blocks(),
->>>>>> +	 * so release the quota reservations made for any previously delayed
->>>>>> +	 * allocated clusters.
->>>>>> +	 */
->>>>>> +	resv_used = rinfo.delonly_cluster + pending;
->>>>>> +	if (resv_used)
->>>>>> +		ext4_da_update_reserve_space(inode, resv_used,
->>>>>> +					     rinfo.delonly_block);
->>>>>
->>>>> I'm not sure I understand here. We are inserting extent into extent status
->>>>> tree. We are replacing resv_used clusters worth of space with delayed
->>>>> allocation reservation with normally allocated clusters so we need to
->>>>> release the reservation (mballoc already reduced freeclusters counter).
->>>>> That I understand. In normal case we should also claim quota because we are
->>>>> converting from reserved into allocated state. Now if we allocated blocks
->>>>> under this range (e.g. from fallocate()) without
->>>>> EXT4_GET_BLOCKS_DELALLOC_RESERVE, we need to release quota reservation here
->>>>> instead of claiming it. But I fail to see how rinfo.delonly_block > 0 is
->>>>> related to whether EXT4_GET_BLOCKS_DELALLOC_RESERVE was set when allocating
->>>>> blocks for this extent or not.
->>>>
->>>> Oh, this is really complicated due to the bigalloc feature, please let me
->>>> explain it more clearly by listing all related situations.
->>>>
->>>> There are 2 types of paths of allocating delayed/reserved cluster:
->>>> 1. Normal case, normally allocate delayed clusters from the write back path.
->>>> 2. Special case, allocate blocks under this delayed range, e.g. from
->>>>    fallocate().
->>>>
->>>> There are 4 situations below:
->>>>
->>>> A. bigalloc is disabled. This case is simple, after path 2, we don't need
->>>>    to distinguish path 1 and 2, when calling ext4_es_insert_extent(), we
->>>>    set EXT4_GET_BLOCKS_DELALLOC_RESERVE after EXT4_MAP_DELAYED bit is
->>>>    detected. If the flag is set, we must be replacing a delayed extent and
->>>>    rinfo.delonly_block must be > 0. So rinfo.delonly_block > 0 is equal
->>>>    to set EXT4_GET_BLOCKS_DELALLOC_RESERVE.
->>>
->>> Right. So fallocate() will call ext4_map_blocks() and
->>> ext4_es_lookup_extent() will find delayed extent and set EXT4_MAP_DELAYED
->>> which you (due to patch 2 of this series) transform into
->>> EXT4_GET_BLOCKS_DELALLOC_RESERVE. We used to update the delalloc
->>> accounting through in ext4_ext_map_blocks() but this patch moved the update
->>> to ext4_es_insert_extent(). But there is one cornercase even here AFAICT:
->>>
->>> Suppose fallocate is called for range 0..16k, we have delalloc extent at
->>> 8k..16k. In this case ext4_map_blocks() at block 0 will not find the
->>> delalloc extent but ext4_ext_map_blocks() will allocate 16k from mballoc
->>> without using delalloc reservation but then ext4_es_insert_extent() will
->>> still have rinfo.delonly_block > 0 so we claim the quota reservation
->>> instead of releasing it?
->>>
->>
->> After commit 6430dea07e85 ("ext4: correct the hole length returned by
->> ext4_map_blocks()"), the fallocate range 0-16K would be divided into two
->> rounds. When we first calling ext4_map_blocks() with 0-16K, the map range
->> will be corrected to 0-8k by ext4_ext_determine_insert_hole() and the
->> allocating range should not cover any delayed range.
-> 
-> Eww, subtle, subtle, subtle... And isn't this also racy? We drop i_data_sem
-> in ext4_map_blocks() after we do the initial lookup. So there can be some
-> changes to both the extent tree and extent status tree before we grab
-> i_data_sem again for the allocation. We hold inode_lock so there can be
-> only writeback and page faults racing with us but e.g. ext4_page_mkwrite()
-> -> block_page_mkwrite -> ext4_da_get_block_prep() -> ext4_da_map_blocks()
-> can add delayed extent into extent status tree in that window causing
-> breakage, can't it?
+Hello,
 
-Oh! you are totally right, I missed that current ext4_fallocate() doesn't
-hold invalidate_lock for the normal fallocate path, hence there's nothing
-could prevent this race now, thanks a lot for pointing this out.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: task hung in v9fs_evict_inode
 
-> 
->> Then
->> ext4_alloc_file_blocks() will call ext4_map_blocks() again to allocate
->> 8K-16K in the second round, in this round, we are allocating a real
->> delayed range. Please below graph for details,
->>
->> ext4_alloc_file_blocks() //0-16K
->>  ext4_map_blocks()  //0-16K
->>   ext4_es_lookup_extent() //find nothing
->>    ext4_ext_map_blocks(0)
->>     ext4_ext_determine_insert_hole() //change map range to 0-8K
->>    ext4_ext_map_blocks(EXT4_GET_BLOCKS_CREATE) //allocate blocks under hole
->>  ext4_map_blocks()  //8-16K
->>   ext4_es_lookup_extent() //find delayed extent
->>   ext4_ext_map_blocks(EXT4_GET_BLOCKS_CREATE)
->>     //allocate blocks under a whole delayed range,
->>     //use rinfo.delonly_block > 0 is okay
->>
->> Hence the allocating range can't mixed with delayed and non-delayed extent
->> at a time, and the rinfo.delonly_block > 0 should work.
-> 
-> Besides the race above I agree. So either we need to trim mapping extent in
-> ext4_map_blocks() after re-acquiring i_data_sem
+INFO: task syz-executor:5811 blocked for more than 143 seconds.
+      Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:23952 pid:5811  tgid:5811  ppid:1      flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5188 [inline]
+ __schedule+0xe37/0x5490 kernel/sched/core.c:6529
+ __schedule_loop kernel/sched/core.c:6606 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6621
+ netfs_wait_for_outstanding_io include/linux/netfs.h:535 [inline]
+ v9fs_evict_inode+0x271/0x310 fs/9p/vfs_inode.c:351
+ evict+0x2ed/0x6c0 fs/inode.c:669
+ dispose_list+0x117/0x1e0 fs/inode.c:712
+ evict_inodes+0x34e/0x450 fs/inode.c:762
+ generic_shutdown_super+0xb5/0x3d0 fs/super.c:627
+ kill_anon_super+0x3a/0x60 fs/super.c:1237
+ v9fs_kill_super+0x3d/0xa0 fs/9p/vfs_super.c:193
+ deactivate_locked_super+0xbe/0x1a0 fs/super.c:473
+ deactivate_super+0xde/0x100 fs/super.c:506
+ cleanup_mnt+0x222/0x450 fs/namespace.c:1373
+ task_work_run+0x14e/0x250 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7b6a1786e7
+RSP: 002b:00007ffeeb983478 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 00007f7b6a1786e7
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007ffeeb983530
+RBP: 00007ffeeb983530 R08: 0000000000000000 R09: 0000000000000000
+R10: 00000000ffffffff R11: 0000000000000246 R12: 00007ffeeb9845b0
+R13: 00007f7b6a1e4784 R14: 0000000000028c1d R15: 00007ffeeb9845f0
+ </TASK>
 
-Yeah, if we keep on using this solution, it looks like we have to add similar
-logic we've done in ext4_da_map_blocks() a few months ago into the begin of
-the new helper ext4_map_create_blocks(). I guess it may expensive and not
-worth now.
+Showing all locks held in the system:
+1 lock held by khungtaskd/40:
+ #0: ffffffff8ddb53a0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:326 [inline]
+ #0: ffffffff8ddb53a0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:838 [inline]
+ #0: ffffffff8ddb53a0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x75/0x340 kernel/locking/lockdep.c:6620
+2 locks held by getty/5135:
+ #0: ffff8880235fb0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
+ #1: ffffc900000db2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfc8/0x1490 drivers/tty/n_tty.c:2211
+1 lock held by syz-executor/5811:
+ #0: ffff888020a800e0 (&type->s_umount_key#67){+.+.}-{3:3}, at: __super_lock fs/super.c:56 [inline]
+ #0: ffff888020a800e0 (&type->s_umount_key#67){+.+.}-{3:3}, at: __super_lock_excl fs/super.c:71 [inline]
+ #0: ffff888020a800e0 (&type->s_umount_key#67){+.+.}-{3:3}, at: deactivate_super+0xd6/0x100 fs/super.c:505
+2 locks held by syz.0.4336/14555:
+ #0: ffffffff8ec222b8 (qp_broker_list.mutex){+.+.}-{3:3}, at: vmci_qp_broker_detach+0x14d/0x1370 drivers/misc/vmw_vmci/vmci_queue_pair.c:2095
+ #1: ffffffff8ddc0b38 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock+0x282/0x3b0 kernel/rcu/tree_exp.h:296
 
-	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
-		map->m_len = min_t(unsigned int, map->m_len,
-				   es.es_len - (map->m_lblk - es.es_lblk));
-	} else
-		retval = ext4_map_query_blocks(NULL, inode, map);
-		...
-	}
+=============================================
 
-> or we need to deal with
-> unwritten extents that are partially delalloc. I'm more and more leaning
-> towards just passing the information whether delalloc was used or not to
-> extent status tree insertion. Because that can deal with partial extents
-> just fine...
-> 
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 40 Comm: khungtaskd Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xf4e/0x1280 kernel/hung_task.c:379
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0,2-3:
+NMI backtrace for cpu 3 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 3 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 3 skipped: idling at default_idle+0xf/0x20 arch/x86/kernel/process.c:742
+NMI backtrace for cpu 2 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 2 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 2 skipped: idling at default_idle+0xf/0x20 arch/x86/kernel/process.c:742
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 0 skipped: idling at default_idle+0xf/0x20 arch/x86/kernel/process.c:742
 
-Yeah, I agree with you, passing the information to ext4_es_init_extent()
-is simple and looks fine. I will change to use this solution.
 
-> Thanks for your patience with me :).
-> 
+Tested on:
 
-Anytime! I appreciate your review and suggestions as well. :)
-
-Thanks,
-Yi.
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1265c113980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12a5c113980000
 
 
