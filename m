@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-281901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED40C94DCCD
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DF494DCD0
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 14:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9514282473
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:35:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC4C928240A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 12:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B86F1581F0;
-	Sat, 10 Aug 2024 12:35:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E5D1586CD;
+	Sat, 10 Aug 2024 12:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WY0M2ZL1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MnaiYeBb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F33158520;
-	Sat, 10 Aug 2024 12:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0A4158520;
+	Sat, 10 Aug 2024 12:37:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293309; cv=none; b=JSFPc7bF5JVgayhc0UjbThZTu8Sz3gzdqOZBlnNVt2q2fpdlcWb9A/igKlql8ybl35MZoXS22M6xficQ3hGAqXO3yTXvjKNvDRw/iTXQyBSFHds2oFvDrwq9LxEQ4yBa7xVRoOyO5YSOUDiXhe++NrZMa8JPOuMkEsOVuLbSnmg=
+	t=1723293433; cv=none; b=XKRnFMMC1uwvWKRK2sx7cxZ7BQEda4+nkF5OwO7LiuzHw4C55Cbjxk5xzXXQPwyBrEU/7DyMb6rIIZ9On3eDiQvLqsnOc1EsGyCzJb1+LGQvP6u1l+5PcCCqlFBKATZViPFg1vw5iwhRSuS3hwowCqVBo+0F/HdgbY0xQEBqviI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293309; c=relaxed/simple;
-	bh=ptzjTGluuL+41Igjh0PWCntVwN8czL3T2wfcNMPpkKU=;
+	s=arc-20240116; t=1723293433; c=relaxed/simple;
+	bh=xXGthnQb+Qw3gokaosvDgIsRr+6EIcuaKbr8TVT9Bog=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PkIKey0+jTCOUaJybDLcsYg/ooMjw/P4EMy5+UznAZy0mGqWonS+GxmuFqVzHfrHr4MsfqeEhSJTsZ8O/8m6z88+8pvfaT5eDCb3pmIXbG7nrfuPq+WuPqTi/X8X5UlsGy/C43teGV+C2QXXeAFTO01QfubzS082uFf7dHQNfDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WY0M2ZL1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21498C32781;
-	Sat, 10 Aug 2024 12:35:02 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=V/OHdpbt67XCRHS3h4Ky0Y6wecTBYldVrSiMdj8VX29hYRQJW8uaEeHU8S6FllNVaU7qnRfinOu3/1Yew/u5z8gptD7gD/KISnpp8uHh6gbfjXskqHbtqjU99BW12GSTTwY6xKNQZwHUojpbw4uM0mWmTdQolZrpXKWDMxS4tOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MnaiYeBb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3421CC32781;
+	Sat, 10 Aug 2024 12:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723293308;
-	bh=ptzjTGluuL+41Igjh0PWCntVwN8czL3T2wfcNMPpkKU=;
+	s=k20201202; t=1723293432;
+	bh=xXGthnQb+Qw3gokaosvDgIsRr+6EIcuaKbr8TVT9Bog=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WY0M2ZL1p77mv5fwSxY9HB6+2MkMxt8dYvk6lQoMd19QWPfRtnrnCaicdEJyismKh
-	 bqxOR4w5yyWThGtYTsGCQVNA8KCPZflF4Ed5cCju3UFTgL/W0+hGlNs+puMijBVuZr
-	 w6sNy7S7B9RKPQMgHVs/2NtMO9L02QYEyT+ttIWJPPVCOvvtRPrU+fZoExehV96k0R
-	 VTMa/PdzXkrvcQfrR/kCgec5QCrQ8bS3yf4fmFtvlLG4O04lLeNeaaX6ZJtJyjF8Gi
-	 gxdPalOxr/UD+3abDqxxr2Ul/6vGDQMN6whiMlE3cL2nEWizkn3h4M24nD0zm3YcTU
-	 j8V6kL3lB3zYA==
-Message-ID: <192e3c22-fd63-4891-86b2-89a3383ab76d@kernel.org>
-Date: Sat, 10 Aug 2024 14:35:00 +0200
+	b=MnaiYeBbSqTuo79qSOc6F3uaHrMYEaXbE9GyhnhDkQxZPDY2rWCc6pamjFBF0WPL0
+	 gFPn/x5z8HCnD3jzEKhYCv5TTL38yYlN8m2M6ucQklWLxPxebzrdMvL64+KNismnUY
+	 EM5qVhMReVaIWfLUToqG5pvF1Rgh/DW9Mr72Gmn+ySkpm1eQs3vlP4p+kVs8HChKFC
+	 L58oHSvcLs9Hshr5zTsERJtzD6zUDPlGePDbM7j3f0Hxk39dg7AYm+tSvAdfptiCjG
+	 zXuOl8n1sXo+qTXs6Z4kkxfk5ZDwkh0MZQCtPLWMnjgKxqREHlBJQAch0aGTEyGR/u
+	 3a0RsdWpZas1Q==
+Message-ID: <a8c46d0e-e98b-4150-9a12-bcbd815e0257@kernel.org>
+Date: Sat, 10 Aug 2024 14:37:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,50 +49,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] Add DisplayPort sound support for Fairphone 5
- smartphone
-To: Luca Weiss <luca.weiss@fairphone.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH 1/1] dt-bindings: net: convert maxim,ds26522.txt to yaml
+ format
+To: Frank Li <Frank.Li@nxp.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
- alsa-devel@alsa-project.org, linux-arm-msm@vger.kernel.org,
- linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
+ <conor+dt@kernel.org>, "open list:NETWORKING DRIVERS"
+ <netdev@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240809143208.3447888-1-Frank.Li@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240809-fp5-dp-sound-v1-0-d7ba2c24f6b9@fairphone.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240809143208.3447888-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 9.08.2024 10:33 AM, Luca Weiss wrote:
-> Add the necessary sound card bits and some dts additions to enable sound
-> over DisplayPort-over-USB-C, e.g. to a connected TV or monitor.
+On 09/08/2024 16:32, Frank Li wrote:
+> Convert binding doc maxim,ds26522.txt to yaml format.
+> Additional changes
+> - Remove spi-max-frequency because ref to
+> /schemas/spi/spi-peripheral-props.yaml
+> - Add address-cells and size-cells in example
 > 
-> The UCM files can be found here:
-> https://gitlab.com/postmarketOS/pmaports/-/tree/master/device/testing/device-fairphone-fp5/ucm
-> 
-> Two extra notes:
-> 
-> 1. I don't quite understand whether the sound driver should have
->    SoC-specific compatible or device-specific compatible. Some earlier
->    patches by another author for a QCM6490 board and a QCS6490 board use
->    device-specific compatible - but from what I can tell this is not how
->    it's generally done for other sound drivers?
-> 
-> 2. Unfortunately DisplayPort enablement itself for Fairphone 5 is not
->    upstream yet. This is blocked by DSI display bringup upstream which
->    is blocked by DSC 1:1:1 not being supported upstream yet and just
->    working with a hacky patch. Nevertheless, DisplayPort audio was
->    validated working with no additional sound-related changes so once
->    DisplayPort gets enabled, sound should also just work upstream.
 
-You can enable DP and keep DSI disabled for the time being
+This could go to trivial-devices, I think. Well, fine also as is.
 
-Konrad
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
+
 
