@@ -1,90 +1,105 @@
-Return-Path: <linux-kernel+bounces-281822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10CDA94DBBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:08:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F2C94DBBF
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:09:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B76AA1F21A4B
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:08:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF6FCB21DAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD9014D451;
-	Sat, 10 Aug 2024 09:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EDE314D2BB;
+	Sat, 10 Aug 2024 09:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YCHzy3lH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUKNgHfb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9671214A4E7;
-	Sat, 10 Aug 2024 09:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D226F1CD37;
+	Sat, 10 Aug 2024 09:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723280881; cv=none; b=nvR0+4/L/Wvh4WHXX3W6G/ueOfFhG7U42TiDvMt9R8QVYxetr8DJR9VJ4pEkSL9P4AcIuLiGrLtANh3KZbVfL32vyfvDPtuEnHlMcGHDUPK6XckoTIcId73GXPOtRizGiaku41+oUQepGH58PwlsoWhldpBBSfKF5/K10ZtYuEI=
+	t=1723280966; cv=none; b=jp6TIJnL+ITtKqNfmAIobzY/W0QnVVZdgYhN6s6buzhyyYUyET3ggkx/FR/elAa3v/Ki1HuDsTFZK0pTVIo9R8KwCmOWB1x+NKvVLNf0U6hZksJIG8ZEjbK1iKe4A9FM9b4Xksq+LrxQbPHZCz3CAfD42LfrTWlq4KUMinvPJcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723280881; c=relaxed/simple;
-	bh=LSEYZZaYbNQKdqepD0wrNbt38kVeyCJHNCV1B8OLWb0=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=OOIcbLEFvJgCZ217LGy5zS0BRjXhS91bZeUDzACplPgH3YxZKH1jjhgzsn+BX07atOtbKOZniIlXWAsO/EJQjZher/OqEfKV+Me1mbE9GvrLFBW2UgZ2AAOL3WXSw9S5OHeSsBKc7Ie3NryFgIV/6TkgqTyvDLZhjtD0QTkoaJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YCHzy3lH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE5A4C32781;
-	Sat, 10 Aug 2024 09:07:58 +0000 (UTC)
+	s=arc-20240116; t=1723280966; c=relaxed/simple;
+	bh=oJdNYm3xIb8SsemhyEVCYW+SiamiZrrV94Dn2d41vVg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pDXqgs8ssQqPgGJkiNSMxei3mIGWsM76eMfCjd6pYqxMy9dSYh2Kp4VqOhz4Lbgn3aiivIkRrwm9cUani8y86FtUhWdFXyxIuyntRktU733zyIvy2a54QE3+X4lCq5Jpb/+gDT7zyGrEUCFfnpsCWzaVZjEX8cCa72RteSZ8kP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUKNgHfb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E3BC32781;
+	Sat, 10 Aug 2024 09:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723280881;
-	bh=LSEYZZaYbNQKdqepD0wrNbt38kVeyCJHNCV1B8OLWb0=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=YCHzy3lHvOir9DBkkeH+WRA2Snnc7MgU8kc8LFFsWRjSD8Pmd9zly3f7URUg/zqNy
-	 FlkyhiK4D+Ae6eAsK5w4GNnbLl8w03DCr6pCyKiGVrNSYYHHZvkTqQgeIPzmyG8Cbk
-	 L55ovnJ276uICnKbf5A8Bey2EoAz69wS1BYCDkEYbHzSq76pOFKOIAB4G57OXNDgth
-	 hE5vSnoMGwm311bfOlJZiJ6IwBjwruCcQq8ahuoII2Hdc23KMx6W3K97mW4cxEaYk9
-	 aXBt3xDft7dWQfJ7RYg4BNYp146um824zbV5TuKRIHdC6LMpTzs5fVqRcu+E7kbDwu
-	 2hnlhOz9aA6gA==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723280966;
+	bh=oJdNYm3xIb8SsemhyEVCYW+SiamiZrrV94Dn2d41vVg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZUKNgHfbqNBa0epCG9+OXiYSfkXmHIBWD9RzeONcxlpSzIVlrigAOW/XyP6PTAmBi
+	 uGYISosHyzVsQ9bzQNz1fjEE5JMZz8Xu7h/BXC7V2aASNB1Aevk0Rk9hqr5STf+dDa
+	 N4RBj2S3g7BZZh2+7EWctZV4UoEKFGFhEGXdkon2xaEOd6lruVKMAovluBjzBST4oM
+	 KK0dQ+L7uaNK40VGMWMt/ZbK1wneRQsnxnRj6TZ99/XA+DH+6cDVPHUHzdsJm5BwTU
+	 e/AJbMCx/mqduWfIYovFeJajp1Wnz7GZVEwOAk1P2PNVkhwBus/PDzCJcUN/AYKK3O
+	 k6PeMMOit2sQQ==
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Moudy Ho <moudy.ho@mediatek.com>,
+	"Jason-JH . Lin" <jason-jh.lin@mediatek.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Subject: [PATCH v3 0/5] Remove cl in struct cmdq_pkt
+Date: Sat, 10 Aug 2024 09:09:13 +0000
+Message-Id: <20240810090918.7457-1-chunkuang.hu@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-References: <20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net>
-To: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Cc: Arend van Spriel <arend.vanspriel@broadcom.com>,
- Hector Martin <marcan@marcan.st>, Linus Walleij <linus.walleij@linaro.org>,
- linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
- brcm80211-dev-list.pdl@broadcom.com, linux-kernel@vger.kernel.org,
- asahi@lists.linux.dev, stable@vger.kernel.org, Janne Grunau <j@jannau.net>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <172328087714.488646.5392085332216751958.kvalo@kernel.org>
-Date: Sat, 10 Aug 2024 09:07:58 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 
-Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org> wrote:
+cl in struct cmdq_pkt is used to store struct cmdq_client, but every client
+driver has the struct cmdq_client information, so it's not necessary to
+store struct cmdq_client in struct cmdq_pkt. Because mailbox maintainer
+do not like to mix mailbox patch with other patches in a series, so
+mailbox patch [1] would be sent independently.
 
-> From: Janne Grunau <j@jannau.net>
-> 
-> wpa_supplicant 2.11 sends since 1efdba5fdc2c ("Handle PMKSA flush in the
-> driver for SAE/OWE offload cases") SSID based PMKSA del commands.
-> brcmfmac is not prepared and tries to dereference the NULL bssid and
-> pmkid pointers in cfg80211_pmksa. PMKID_V3 operations support SSID based
-> updates so copy the SSID.
-> 
-> Fixes: a96202acaea4 ("wifi: brcmfmac: cfg80211: Add support for PMKID_V3 operations")
-> Cc: stable@vger.kernel.org # 6.4.x
-> Signed-off-by: Janne Grunau <j@jannau.net>
-> Reviewed-by: Neal Gompa <neal@gompa.dev>
-> Acked-by: Arend van Spriel <arend.vanspriel@broadcom.com>
+Changes in v3:
+1. Rebase onto Linux 6.11-rc1 and fix conflicts.
+Changes in v2:
+1. Fix typo of CMDQ_JUMP_RELATIVE
+2. Refine cmdq_pkt_create() and cmdq_pkt_destroy()
+3. Rename cmdq_pkt_jump() to cmdq_pkt_jump_abs()
+4. Add cmdq_pkt_jump_rel() helper function
+5. drm/mediatek: Use cmdq_pkt_create() and cmdq_pkt_destroy()
+6. mtk-mdp3: Get fine-grain control of cmdq_pkt_finalize()
+7. mtk-mdp3: Use cmdq_pkt_create() and cmdq_pkt_destroy()
 
-Patch applied to wireless.git, thanks.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/commit/?h=mediatek-cmdq8&id=a1b2f7a7488285975c1f439086f1c4cc51a13bb9
 
-2ad4e1ada8ee wifi: brcmfmac: cfg80211: Handle SSID based pmksa deletion
+Chun-Kuang Hu (5):
+  drm/mediatek: Use cmdq_pkt_eoc() instead of cmdq_pkt_finalize()
+  drm/mediatek: Use cmdq_pkt_create() and cmdq_pkt_destroy()
+  media: platform: mtk-mdp3: Get fine-grain control of
+    cmdq_pkt_finalize()
+  media: platform: mtk-mdp3: Use cmdq_pkt_create() and
+    cmdq_pkt_destroy()
+  soc: mediatek: cmdq: Remove cmdq_pkt_finalize() helper function
+
+ drivers/gpu/drm/mediatek/mtk_crtc.c           | 48 ++-----------------
+ .../platform/mediatek/mdp3/mtk-mdp3-cmdq.c    | 48 +++----------------
+ .../platform/mediatek/mdp3/mtk-mdp3-core.c    |  2 +
+ .../platform/mediatek/mdp3/mtk-mdp3-core.h    |  1 +
+ drivers/soc/mediatek/mtk-cmdq-helper.c        | 22 ---------
+ include/linux/soc/mediatek/mtk-cmdq.h         | 13 -----
+ 6 files changed, 14 insertions(+), 120 deletions(-)
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20240803-brcmfmac_pmksa_del_ssid-v1-1-4e85f19135e1@jannau.net/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.34.1
 
 
