@@ -1,181 +1,106 @@
-Return-Path: <linux-kernel+bounces-281763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF9B94DAEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 07:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7810D94DB00
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 08:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DFDB22316
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 05:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E4F51F22015
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 06:06:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4EE245C1C;
-	Sat, 10 Aug 2024 05:36:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E9D45C1C;
+	Sat, 10 Aug 2024 06:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="XVlnXFg0"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	dkim=pass (2048-bit key) header.d=toneromala.space header.i=@toneromala.space header.b="5zK8tX+g"
+Received: from mail.toneromala.space (mail.toneromala.space [107.172.211.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95D8107A0;
-	Sat, 10 Aug 2024 05:36:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44A579C4
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 06:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=107.172.211.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723268206; cv=none; b=bvxIt+uOkYNf8XfIJA+PxmS4hlskm3L5yTdSHm06sxlh4euAi8JKBw/Gp5xOBp69XqpX1W4NF/rQqgZqP8SfV/IbUs+CzkgFkhKhGTRSi50rlTZhLLzihtkd9UbfJyPHkrpGMxdKG3injY+AK7SsE3gggHrU2yumlVPrzRIySyA=
+	t=1723269994; cv=none; b=s5cElu4CXeTS/x6LhV3VIHbV+ySPpsjLFzenC7TJvK1PCIVHx1sTzuUCBQk2dr9E4D5fK3Jbk57Z3HUBvV3wRABKeX4jcz17Hln+zRUGrgyqoeQH5lRRXppCEK4Qe2J2DnJ30gAFgvo+Xsuwpmy8VqwF2cJS4zlXeA+RmaPVgrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723268206; c=relaxed/simple;
-	bh=t4qDXuJ3LWu7+c88bMi8bdmGb/8sdDFS6TnXOjpDKPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=Bl2Tu/RBgOvD2LpjUEkVriLOlbbWxC+dpdIndmBt2G6PqIs8e6b41bA6n4nX/huL+GigABbFofNG9t6eHAsqnua+qWwL1cY9aDmDCLKYqGCSFm6hq1lBtjH0FVCLaZ9BjAXfckrubes5vagCY8hlmteVk95NXhdfsOohARifZcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=XVlnXFg0; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Cc:Reply-To:From:References:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=PJAH/CyktIH57Dj1P/inZNXFX+n40cLs0bpRdnjZKo0=;
-	t=1723268204; x=1723700204; b=XVlnXFg0ZlPTLukxDhGM4SoTabQJmjidKbqBzJCp+FgxrG9
-	yfkuxBbf2PPbTyrufw2furbfQfEmkaDhSi+Cps3GSO8GoZSOHWgH178i+UzLf/Il832bMsslrfW7Z
-	2I6f7IE0gWetg7raBSiJJ/WcKxUu+8scw45X9bCxQbj4RtPj3899Z/TruqHImC3Y0eHEBL20fNfWA
-	ZhE1ucugFeKA6YOtrqu5joLYLSJDCHnGpN2KvSx0Zvf5dOdqgmOAiH01GG/V319MD0vm3tK/Kqfgj
-	8E6pAR0He+u/0alYwo6DtpGdPVpkkxyjlk6qkZF4Bx8Rovrb433M9XT+K+O0tOdQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1scemI-0000NC-UF; Sat, 10 Aug 2024 07:36:35 +0200
-Message-ID: <3b3262d9-5383-494e-a19b-698a9e289c2c@leemhuis.info>
-Date: Sat, 10 Aug 2024 07:36:34 +0200
+	s=arc-20240116; t=1723269994; c=relaxed/simple;
+	bh=j69zzRH9k/nQ1IAn2woSJ6H9IVQYL6Bv5jaLMBXKS7o=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fTePMsUZ21SUJN27rRLm55FEqt9LGt9uf96XYSnm+fRkrQO8lIamJKakgKG6leF+mKsM2WfnowBd9GeqFRDk/3WpzBmprCP8ik1P4ZlGatKrUmLPcXQORgzel+hlLRC8yQkJXOlBO/7OSBCaVTo+k+fDk9IiVO72CcnA6WU42hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toneromala.space; spf=pass smtp.mailfrom=toneromala.space; dkim=pass (2048-bit key) header.d=toneromala.space header.i=@toneromala.space header.b=5zK8tX+g; arc=none smtp.client-ip=107.172.211.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=toneromala.space
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toneromala.space
+Received: from [45.80.158.93] (unknown [45.80.158.93])
+	(Authenticated sender: admin@toneromala.space)
+	by mail.toneromala.space (Postfix) with ESMTPSA id B0315C252C
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 07:03:53 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toneromala.space;
+	s=default; t=1723269834;
+	bh=j69zzRH9k/nQ1IAn2woSJ6H9IVQYL6Bv5jaLMBXKS7o=;
+	h=Reply-To:From:To:Subject:Date:From;
+	b=5zK8tX+gaxZh5u0chvz9fg2fimyBB8WAyLo9JW1C9cDpyJOPk5kzSn4MhnZbYvy2S
+	 jCUi5pwWgQYk/+wl/SD2QdS1QLBZSUFn/lIyHeCnvm1Je414OLXj5lNmUN4AA2hP5w
+	 9ZUCZfMD/1DZGlbptvX2sMQvYoZwEfmn87l6dN8XYCZtBMX9+6Gk4pY6+K7oXYhEei
+	 mewZAKQryxrafqh+go8PImcfpWah/ocI5MiI3CDMPr+hDsdD+k8LWwBD4OebV8rfQe
+	 Tr3Uve7P2rf3GyBk24tZxeY2DVJlIRYWMc3tYDeNERlF7rgqI0usRe3u72P5bbcORs
+	 flPSLuBWh5Pew==
+Reply-To: careers.proclientstaffing@gmail.com
+From: TFWP-PROGRAM <administrator@toneromala.space>
+To: linux-kernel@vger.kernel.org
+Subject: =?UTF-8?B?TWFucG93ZXIgUmVjcnVpdG1lbnQgRm9yIENhbmFkYeKEog==?=
+Date: 10 Aug 2024 08:03:50 +0200
+Message-ID: <20240810080350.E1DD864C27605F36@toneromala.space>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Bisected Regression: Cache filling up causing drastic performance
- degradation on Linux 6.10.3
-To: Filipe Manana <fdmanana@suse.com>,
- Abhinav Praveen <abhinav@praveen.org.uk>
-References: <f43jqpkjg7gehwtskurg5ze6omkcldme62u32ftsht32xevc5y@sdnm66w24ins>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Content-Language: en-US, de-DE
-Cc: regressions@lists.linux.dev, linux-btrfs <linux-btrfs@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, David Sterba <dsterba@suse.com>,
- Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>
-In-Reply-To: <f43jqpkjg7gehwtskurg5ze6omkcldme62u32ftsht32xevc5y@sdnm66w24ins>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1723268204;b50555c4;
-X-HE-SMSGID: 1scemI-0000NC-UF
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10.08.24 02:28, Abhinav Praveen wrote:
-> I recently ran into an IO/Memory Management issue and posted about it on
-> the linux-mm mailing list here:
-> https://marc.info/?l=linux-mm&m=172306192530745&w=2
-> 
-> I have since bisected with mainline and found that:
-> 956a17d9d050761e34ae6f2624e9c1ce456de204 is the first bad commit
+Hello Sir/Madam,
 
-TWIMC, that is 956a17d9d05076 ("btrfs: add a shrinker for extent maps")
-[v6.10-rc1]
+We are authorized to recruit 120 unskilled workers to work in=20
+Canada on a two years contract. Please kindly let us know if you=20
+can supply the same workers as my clients' requirements for the=20
+following positions. Fish Packers, Cleaners, Laborers, Fruit=20
+packers, Supervisors, supermarket managers, salesman/woman,=20
+Storekeeper, Ground Maintenance, Gardener, and Truck Drivers. Age=20
+from 20 to 55 years old are eligible to work, Primary Location:=20
+Montreal Quebec Canada.
 
-Adding Filipe and the Btrfs folks to the list of recipients.
+NOTE: No qualification is needed.
 
-Abhinav: thx for the report. There are at least two other discussion
-ongoing about what to my untrained eyes look like similar problems that
-remain after the fixes than went into 6.10 right before the release. You
-might want to consult them:
+TERMS AND CONDITIONS:
 
-https://lore.kernel.org/all/CAHPNGSSt-a4ZZWrtJdVyYnJFscFjP9S7rMcvEMaNSpR556DdLA@mail.gmail.com/
-https://bugzilla.kernel.org/show_bug.cgi?id=219121
+1. Accommodation           - Provided.
+2. Ticket                  -Provided.
+3. Medical                 - Provided.
+4. Transportation          - Provided.
+5. Working hours           - 8a.m-4p.m [Mon-Sat]
+6. Vacation                - 28.5 days every year
+7. Salary                  - Ca$20 per hourly
+8. Contract                - 2 years. Renewable
+9. Extra time              - Ca$22per hourly
+10. Insurance & Pension     - According to Quebec Labor laws.
+11. Requirement               120 workers
+12. job description           Laborers
+13. Skilled required          Physically fit
+Other Benefits                Family Status, group benefit and
+other fringe benefits.
 
-Ciao, Thorsten
 
-> The issue is present on mainline commit:
-> 58d40f5f8131479a1e688828e2fa0a7836cf5358 (Fri Aug 9 10:23:18 2024)
-> 
-> The bisect log is below:
-> git bisect start
-> # status: waiting for both good and bad commits
-> # bad: [58d40f5f8131479a1e688828e2fa0a7836cf5358] Merge tag 'asm-generic-fixes-6.11-2' of git://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic
-> git bisect bad 58d40f5f8131479a1e688828e2fa0a7836cf5358
-> # status: waiting for good commit(s), bad commit known
-> # good: [a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6] Linux 6.9
-> git bisect good a38297e3fb012ddfa7ce0321a7e5a8daeb1872b6
-> # bad: [3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a] Merge tag 'tty-6.10-rc6' of git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty
-> git bisect bad 3e334486ec5cc6e79e7b0c4f58757fe8e05fbe5a
-> # bad: [d34672777da3ea919e8adb0670ab91ddadf7dea0] Merge tag 'fbdev-for-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/deller/linux-fbdev
-> git bisect bad d34672777da3ea919e8adb0670ab91ddadf7dea0
-> # bad: [b850dc206a57ae272c639e31ac202ec0c2f46960] Merge tag 'firewire-updates-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394
-> git bisect bad b850dc206a57ae272c639e31ac202ec0c2f46960
-> # good: [59729c8a76544d9d7651287a5d28c5bf7fc9fccc] Merge tag 'tag-chrome-platform-for-v6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux
-> git bisect good 59729c8a76544d9d7651287a5d28c5bf7fc9fccc
-> # good: [101b7a97143a018b38b1f7516920a7d7d23d1745] Merge tag 'acpi-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-> git bisect good 101b7a97143a018b38b1f7516920a7d7d23d1745
-> # good: [47e9bff7fc042b28eb4cf375f0cf249ab708fdfa] Merge tag 'erofs-for-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs
-> git bisect good 47e9bff7fc042b28eb4cf375f0cf249ab708fdfa
-> # bad: [b2665fe61d8a51ef70b27e1a830635a72dcc6ad8] Merge tag 'ata-6.10-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/libata/linux
-> git bisect bad b2665fe61d8a51ef70b27e1a830635a72dcc6ad8
-> # bad: [aa5ccf29173acfaa8aa2fdd1421aa6aca1a50cf2] btrfs: handle errors in btrfs_reloc_clone_csums properly
-> git bisect bad aa5ccf29173acfaa8aa2fdd1421aa6aca1a50cf2
-> # good: [d3fbb00f5e21c6dfaa6e820a21df0c9a3455a028] btrfs: embed data_ref and tree_ref in btrfs_delayed_ref_node
-> git bisect good d3fbb00f5e21c6dfaa6e820a21df0c9a3455a028
-> # good: [5fa8a6baff817c1b427aa7a8bfc1482043be6d58] btrfs: pass the extent map tree's inode to try_merge_map()
-> git bisect good 5fa8a6baff817c1b427aa7a8bfc1482043be6d58
-> # bad: [9a7b68d32afc4e92909c21e166ad993801236be3] btrfs: report filemap_fdata<write|wait>_range() error
-> git bisect bad 9a7b68d32afc4e92909c21e166ad993801236be3
-> # bad: [85d288309ab5463140a2d00b3827262fb14e7db4] btrfs: use btrfs_get_fs_generation() at try_release_extent_mapping()
-> git bisect bad 85d288309ab5463140a2d00b3827262fb14e7db4
-> # bad: [65bb9fb00b7012a78b2f5d1cd042bf098900c5d3] btrfs: update comment for btrfs_set_inode_full_sync() about locking
-> git bisect bad 65bb9fb00b7012a78b2f5d1cd042bf098900c5d3
-> # bad: [956a17d9d050761e34ae6f2624e9c1ce456de204] btrfs: add a shrinker for extent maps
-> git bisect bad 956a17d9d050761e34ae6f2624e9c1ce456de204
-> # good: [f1d97e76915285013037c487d9513ab763005286] btrfs: add a global per cpu counter to track number of used extent maps
-> git bisect good f1d97e76915285013037c487d9513ab763005286
-> # first bad commit: [956a17d9d050761e34ae6f2624e9c1ce456de204] btrfs: add a shrinker for extent maps
-> 
-> The original issue (from my previous post) is as follows:
-> 
-> If I read from my Steam Library (this has about 430GiB of data), stored on an
-> ext4 formatted NVMe drive like this:
-> 
-> find /mnt/SteamLibrary/steamapps/common -type f -exec cat {} + -type f | pv >
-> /dev/null
-> 
-> I see that it initially starts reading at 800MiB/s (6.4 Gbps) then, once my
-> cache fills up (as shown by buff/cache in free), the read speed drops to as low
-> as 6MiB/s (48 Mbps) but periodically returns to 800MiB/s as the cache gets
-> freed.
-> 
-> When the cache fills, other tasks are also affected (e.g video playback
-> stutters or stops). I also see high CPU usage from kswapd0 and btrfs-cleaner
-> (which is strange because, again, it's an ext4 filesystem that I'm reading
-> from) using top.
-> 
-> Running echo 1 > /proc/sys/vm/drop_caches immediately improves performance.
-> 
-> But, instead, if I run the same read command in a Memory cgroup with memory.max
-> set to 500M, I get a solid 800MiB/s read speed without filling up the cache or
-> affecting other tasks.
-> 
-> TL;DR simply reading files seems to be enough to cause major system-wide
-> performance degradation. This also applies when updating games on Steam or
-> moving them between Library locations.
-> 
-> Anyone know if this is a bug or regression in Linux 6.10? Or whether there are
-> any tunables or Sysctls that could improve performance without manually running
-> things in CGroups?
-> 
-> This happens on a AMD 7950X3D with 96GB of ram.
-> 
-> I describe the same thing on my post at:
-> https://www.reddit.com/r/linuxquestions/comments/1emetro/cache_filling_up_causing_drastic_performance/
-> 
-> It also seems that someone else has experienced something similar here*:
-> https://www.reddit.com/r/linuxquestions/comments/1e83ltj/610_disk_caching_vs_memory_exhaustion_issues/
-> 
-> *Their issue seems to have been resolved by 6.10.2 however.
+If you need more information about this recruitment, please=20
+contact us at your convenience.
+
+Your Quick and Favorable Response would be highly appreciated.
+
+
+Best Regards.
+
+Mr. Aiden Benjamin
+510 Rue du Prince-=C3=89douard,
+Qu=C3=A9bec, QC G1K 9G8, Canada.
+E-mail | careers.proclientstaffing@gmail.com
 
