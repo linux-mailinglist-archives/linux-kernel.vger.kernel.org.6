@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-282013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9419F94DE40
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 21:27:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BAF94DE44
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 21:34:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16C952818D4
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:27:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37093281867
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C45D13C81B;
-	Sat, 10 Aug 2024 19:27:09 +0000 (UTC)
-Received: from omta001.cacentral1.a.cloudfilter.net (omta001.cacentral1.a.cloudfilter.net [3.97.99.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF2413C8FE;
+	Sat, 10 Aug 2024 19:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GSU6Ieor"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44D54776A
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 19:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.97.99.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09C54965B
+	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 19:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723318029; cv=none; b=P4YXsnBpBxcuaLiHcQ0aUDq8HPEKhwfrCISLXMZZwDp86r8Nswdukj4D8QX4JVE2+2jKObiMRN3gRpjWMqsFJqstkMHTaXrb+5ZxT1KBo1BK71fWKoPNBb7pUWVI7swx1jkI8BccTrQko85I5rsc5WHdP5yrwI55vxsEX3ov8lY=
+	t=1723318437; cv=none; b=aXBALmqOMbemYglh5JD/NK7TJpOHGAJYNVhvGNg8emUTLs+2Tuh83J7/HSgjnkLN9HigIovNCmmYr8m9NTsxI0KBJpTBNkPu85M8CZvL7F3SBygFbjvymxI9OV0s5q/xthEtBMMDDa6hQiVKQXReZIg7mk8aM+RArrcAbXPDxuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723318029; c=relaxed/simple;
-	bh=01wgOQT9vxaKLoZuw9TsM+NHRt9+1T4JVeIPL+H83Oc=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=lDFK7+a82oTOwkbiinGVqyr/0NFiHEnywONbZJr1MniTILjG4Y0qUH9UYgWyftgpb4OduhXDC3PMImCXevnj23Lr8X/jD8hEpv0XNSCEssMX/8Pniu8aGC54eDkHB7Dn+zw1816rH1Olwdy1FDx1GlSw4zawlY+OUKGIgCHs6MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net; spf=pass smtp.mailfrom=tuyoix.net; arc=none smtp.client-ip=3.97.99.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuyoix.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuyoix.net
-Received: from shw-obgw-4004a.ext.cloudfilter.net ([10.228.9.227])
-	by cmsmtp with ESMTPS
-	id clRest8P5kYKFcriUsZlzl; Sat, 10 Aug 2024 19:25:30 +0000
-Received: from fanir.tuyoix.net ([68.150.218.192])
-	by cmsmtp with ESMTP
-	id criSsmMd6KHV8criTs7RWp; Sat, 10 Aug 2024 19:25:30 +0000
-X-Authority-Analysis: v=2.4 cv=XeEqz555 c=1 sm=1 tr=0 ts=66b7beaa
- a=LfNn7serMq+1bQZBlMsSfQ==:117 a=LfNn7serMq+1bQZBlMsSfQ==:17
- a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=M51BFTxLslgA:10 a=3I1X_3ewAAAA:8
- a=VwQbUJbxAAAA:8 a=3OOS-fkSXJapXGOR-JsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=VG9N9RgkD3hcbI6YpJ1l:22 a=AjGcO6oz07-iQ99wixmX:22
-Received: from tuyoix.net (fanir.tuyoix.net [192.168.144.16])
-	(authenticated bits=0)
-	by fanir.tuyoix.net (8.18.1/8.18.1) with ESMTPSA id 47AJPRWV015402
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Sat, 10 Aug 2024 13:25:27 -0600
-Date: Sat, 10 Aug 2024 13:25:27 -0600 (MDT)
-From: =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Christian Brauner <brauner@kernel.org>,
-        David Howells <dhowells@redhat.com>, Eric Sandeen <sandeen@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] debugfs show actual source in /proc/mounts
-Message-ID: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net>
+	s=arc-20240116; t=1723318437; c=relaxed/simple;
+	bh=uS7kuTth5Gi0txrcxus7eDZiFeWkr94qLJsPs0pMWT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mum+8+5lK4nkTuxQ17qcH20WrTDtpi1Iwnw+pAQqPVmlAxhbq/bc2lKxZPwZwxPuc45lqLRqqNmTX4LfaAwp+EuxaNsO87YOA73V8vziFCueNta+mP23QDtVPUchYgfTgzp914/dcvmTfHsGNrGuT78bEBQw7fG6qLJr1erPTYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GSU6Ieor; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3684e8220f9so1729057f8f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 12:33:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723318434; x=1723923234; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iWxErkwV88mNdLnqLG46bRp9mJagvADdkYHKQJjbHr0=;
+        b=GSU6Ieorp5SnNM6Senfi/zM4oTQ8eDM5SJakWQlFEcKyaaedq+ohTAybEe/urvm/kL
+         LHmYc0u+5/rDnBBQHHnEBO8i+tpVJCHPI5k8h246QnCdJeBHW2dSKoS1omOIYYsjI5ZI
+         X/f+rolqEQGy3DRVG5bu73j3jbTH+YFPK1fTFqvGGcjT1AoMfqwVIDvcPw1Nn/4zqI1f
+         RZ4WW0WV1vhXozkz76I5Y7BDkBsP1KBLPCpcsGGDOmF/tVppZzbzAqjWaIkt/EHQQktD
+         QyMh4YERbFiwCUDh/AByx40Cuf1NnwPwYtqRrleRYpFbwEvbPt/VI8YzSZJZNLiRFprR
+         obXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723318434; x=1723923234;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iWxErkwV88mNdLnqLG46bRp9mJagvADdkYHKQJjbHr0=;
+        b=aFr00sD0GBWLJP8fNk0U0tileuphT92J8ebughjfg8GGd8Gy6QPmWwfQ+lp9LP5BfQ
+         8oiTU5NH/iacNouR5MQJc9OJ/kTW7Fd32/n/Rq9t0IRdRAzw8UV8vxA69/mlL/hKUT2/
+         LFnrFa9p0JALgbgVrwG4rvpFkJoPJhU7kc3g80K5s7S6sIzZ5e0rnwVXUrRrgFAVkCHs
+         S/iJ8NozmrzdK8HxwgF4wcW3BPFZ9h5oeRVxFLTxwEjcV3WhFj8xafxVI2GgtXMydcVe
+         rD2MKVDF/gsrQH0DQYakcsNaI+SQugZgQ5BJ3OFLGZs9sJrk7B8vCakWIM4SdZlu1d59
+         UKXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmAM9i92UFQNmPkbknm+pwgzWg+LsukDpWKDEbdwC8ERtdk+YInz3WFzN1WUldmToS9QKoG8tkQja4F46DCg/AAnJHuPq4pik8ZIHt
+X-Gm-Message-State: AOJu0YznF2eddKS0FI3Guyyp4GaDIkLkbUHyu+Jj/C3A/Js02UCZBCgY
+	r9Gin0XMsLMYHZ3duec974VNaX58ciK9C0a0P5//acuWJcSUoM7gJdwk91b9Oas=
+X-Google-Smtp-Source: AGHT+IFYB2SyMPqpA/wUEs0CCCwXxydnmVu+bRpHDFW6Nu8KGRs9akzdD+gI6ho23cphgUAHz33pqg==
+X-Received: by 2002:a5d:5982:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-36d281fd0bemr8334017f8f.27.1723318433830;
+        Sat, 10 Aug 2024 12:33:53 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2a08:ed5c:1f55:659c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c36bb07sm3200288f8f.5.2024.08.10.12.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Aug 2024 12:33:53 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Keerthy <j-keerthy@ti.com>,
+	Jared McArthur <j-mcarthur@ti.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 0/1] dt-bindings: gpio: gpio-davinci: Add the gpio-reserved-ranges property
+Date: Sat, 10 Aug 2024 21:33:51 +0200
+Message-ID: <172331842973.5054.2650724478798968340.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240809154638.394091-1-j-mcarthur@ti.com>
+References: <20240809154638.394091-1-j-mcarthur@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-CMAE-Envelope: MS4xfPT0KhYLsp+U/XViqnCdSjnaHhlPV5KdarVENFWYShN7mjlQAVE7AAecTzHAd0zJMt+Tx2/kpPcbJU4RefhUf2/tjD6yeXkb9RQ7AED2Ld1eWRht9VgV
- j4rZzasPlhXA7cvXGdo3nFEqXEvqczPAHPgHrov11Y3DYcFPi/1bJ+JmIy95M2N+nrsir7wx/uLv/nrKeHSfRycQRNxGy86X7kOUuy0C+Ir62h7fgZi9qj+1
- gQo2afPy8tCSL6KEgjfEPUQ6tcMn/AHiukoEx/27ecHQoFI0LsN17suno0fxSu9IAVKGBV2f5KQawAfsNhnyFBxwRf0kFYmwdZOb+m6WEAK6daSJz87q0TF4
- P7J3yoEx
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-After its conversion to the new mount API, debugfs displays "none" in
-/proc/mounts instead of the actual source.  Fix this by recognising its
-"source" mount option.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
-Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
-Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
-Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
 
-diff -NRapruz -X /etc/diff.excludes linux-6.11.0-rc2/fs/debugfs/inode.c devel-6.11.0-rc2/fs/debugfs/inode.c
---- linux-6.11.0-rc2/fs/debugfs/inode.c	2024-08-04 14:50:53.000000000 -0600
-+++ devel-6.11.0-rc2/fs/debugfs/inode.c	2024-08-05 17:12:45.414338128 -0600
-@@ -89,12 +89,14 @@ enum {
- 	Opt_uid,
- 	Opt_gid,
- 	Opt_mode,
-+	Opt_source,
- };
+On Fri, 09 Aug 2024 10:46:37 -0500, Jared McArthur wrote:
+> This patch adds the gpio-reserved-ranges property to
+> gpio-davinci.yaml. This allows davinci gpio controllers (compatible
+> fields: "ti,keystone-gpio", "ti,am654-gpio", and "ti,dm6441-gpio") to
+> use the gpio-reserved-ranges property.
+> 
+> This property will prevent users from trying to access gpios that
+> don't exist.
+> 
+> [...]
 
- static const struct fs_parameter_spec debugfs_param_specs[] = {
- 	fsparam_gid	("gid",		Opt_gid),
- 	fsparam_u32oct	("mode",	Opt_mode),
- 	fsparam_uid	("uid",		Opt_uid),
-+	fsparam_string	("source",	Opt_source),
- 	{}
- };
+Applied, thanks!
 
-@@ -126,6 +128,12 @@ static int debugfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case Opt_mode:
- 		opts->mode = result.uint_32 & S_IALLUGO;
- 		break;
-+	case Opt_source:
-+		if (fc->source)
-+			return invalfc(fc, "Multiple sources specified");
-+		fc->source = param->string;
-+		param->string = NULL;
-+		break;
- 	/*
- 	 * We might like to report bad mount options here;
- 	 * but traditionally debugfs has ignored all mount options
+[1/1] dt-bindings: gpio: gpio-davinci: Add the gpio-reserved-ranges property
+      commit: 789ce0f6028f9e68fc27f6748acefbd2e23f4716
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
