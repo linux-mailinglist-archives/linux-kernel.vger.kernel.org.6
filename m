@@ -1,88 +1,92 @@
-Return-Path: <linux-kernel+bounces-281835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244F794DBE0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:14:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEE194DBE2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:15:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 577791C210AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:14:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1E0A1F221F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 09:15:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F314014E2CA;
-	Sat, 10 Aug 2024 09:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0741914F130;
+	Sat, 10 Aug 2024 09:15:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fF282oPu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaLpRAZY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DAA93C062;
-	Sat, 10 Aug 2024 09:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A184436E;
+	Sat, 10 Aug 2024 09:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723281241; cv=none; b=OWBXFznuWAsouEyQSUZdHdiB9fYNfwXNde0DMUGhthIKgbop7b299nL3PkF8ToZ4wdQ7lIsUiA3AEITZQnSCWY3zr8MhRNz/ABbJGMbt2/Ji4ViRlxzwVLbyF0i6SwDmn7PxAL99Gbyxyib9G2DvRCNIQD82GBMdlJmmvEYgado=
+	t=1723281322; cv=none; b=QO1ZWPf3XxH7SaKZPNGhhovYymLeGMQHI5KIrIyQjSnCYR8HvEaVJiw7SB/0OyCUMDQyB4UKp3JOfKkn9GgBWpkToneuQw/Zb+yhzMB5e39onDSEBRUa9NJXb/HbHd8MdqYQGf2OswtIMatFibOAJ+5HhjbVCt9k77jbiUy3AJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723281241; c=relaxed/simple;
-	bh=Ob3FxBBXolQb8TSNkw7wVEqH25eTxoNzKRSeMRC4IGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xm1mnxkWfIovhiTuflOcEW0GG2wUUF9EFExGidyXzG3zGLVH7vn81VtuKZVqKcdrtU74cYnQcQS1PQ6ErIkjEkWdOM2bfGP2i4sJiAS1w17ivUCS7YnWmy8rxKfmnE2IDrXRhi5GPItOYsgWOFjY4+JPVw316Uu9Yh+3MGNY+UM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fF282oPu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CFE7C32781;
-	Sat, 10 Aug 2024 09:14:00 +0000 (UTC)
+	s=arc-20240116; t=1723281322; c=relaxed/simple;
+	bh=4jUI/8vLUn4atLkGFI6Gwc9rkYad1USbcCUKjP4w6r8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PH4Uwm/Zik1tPztKAoRGfk6ZsZ3iIk0w9Vsh1OTpXhqn4Gxq99RanTJ48dSL6w5D0i7CjHuXwoXa/I1mwetxDMY3Q/lS/I2EX7tXcjS3mEQKBdBO638wOxgWVjVs+6ddzJUpzz8iTjKryWRQrQShsnv24f5J1ba8ntq3H1gJxQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaLpRAZY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43593C32781;
+	Sat, 10 Aug 2024 09:15:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723281240;
-	bh=Ob3FxBBXolQb8TSNkw7wVEqH25eTxoNzKRSeMRC4IGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fF282oPuVU2f4UxhRPjzu/9f1ONAbASiPCu4oAe8mCQmU8Gx4pXdBWOe/aYOo1qws
-	 YF0K8X4sHrU4apZP2pIFqxiHYa6ZC/ru+Y+lkDL5Z8obKKK6Tkzlt9MGx5l1tfj/dx
-	 2EiTOh8yLri7akXpsQYnenlGykwtFSi/5+kq+ozNRTtcjETqqEaO7T8Y0jZrXMkUnh
-	 g8cldeFUvPLYRyEHTGCYPiAqkBuLYbaBW6CmthVodzIK10dHjzFMxyxjWRYnH/P6f2
-	 o2TkcMEaKIeqa1eLwWZgEk1kgv3ZNNCQm2Pg/1HwMylw5vkCtK8f5GBAFa3Sy3iA0L
-	 wWESk/wCyuJVg==
-Date: Sat, 10 Aug 2024 05:13:59 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Charles Keepax <ckeepax@opensource.cirrus.com>,
-	Bard Liao <yung-chuan.liao@linux.intel.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>, cezary.rojewski@intel.com,
-	liam.r.girdwood@linux.intel.com, peter.ujfalusi@linux.intel.com,
-	ranjani.sridharan@linux.intel.com, kai.vehmanen@linux.intel.com,
-	perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.10 02/11] ASoC: Intel: sof_sdw: Add quirks for
- some new Dell laptops
-Message-ID: <ZrcvVz_5EQioiFft@sashalap>
-References: <20240728160954.2054068-1-sashal@kernel.org>
- <20240728160954.2054068-2-sashal@kernel.org>
- <ZqdFCzqqkEWFl8tA@duo.ucw.cz>
+	s=k20201202; t=1723281321;
+	bh=4jUI/8vLUn4atLkGFI6Gwc9rkYad1USbcCUKjP4w6r8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SaLpRAZYOti5YU7qbko3JJJ2CZde5/24AD+JvX9dfRVjvcoGQDfAjAOzSyhgy5Imr
+	 9jCV7MBLxGbVtwRE6Uup2c+E1ErsE7T/6so0OKjHWMlHUIj73THWgMZld3sIZ7lHUL
+	 7jN36UFq60ttbWo+cyZY002tBYeDX6B8RsVIJAEpkJEK6Bzqtyrzb3p1q2QePM2CBf
+	 zNlwA5u5mTKjeCCdowGQGDPDF3ISYgWktBTrZRVlQE1CVWzf+kKHF8gW89x6KW60RP
+	 szk+SV7xD11uakyy9pVnbKhsBv0agBvG+NpHb3wpJjpVwdfrJIbbDZebmJPKGjrQMC
+	 nsgJH6sLT4NPA==
+Date: Sat, 10 Aug 2024 10:15:13 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Hennerich <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: iio: ad4695: fix common-mode-channel
+Message-ID: <20240810101513.2e61cd9c@jic23-huawei>
+In-Reply-To: <172322677990.966347.12423820402689548305.robh@kernel.org>
+References: <20240808-iio-adc-ad4695-fix-dt-bindings-v1-1-5cf37b9547b0@baylibre.com>
+	<172322677990.966347.12423820402689548305.robh@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <ZqdFCzqqkEWFl8tA@duo.ucw.cz>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 29, 2024 at 09:30:19AM +0200, Pavel Machek wrote:
->Hi!
->
->> From: Charles Keepax <ckeepax@opensource.cirrus.com>
->>
->> [ Upstream commit 91cdecaba791c74df6da0650e797fe1192cf2700 ]
->>
->> Add quirks for some new Dell laptops using Cirrus amplifiers in a bridge
->> configuration.
->
->This is queued for 5.10, but not for 6.1. Mistake?
+On Fri, 9 Aug 2024 12:06:40 -0600
+"Rob Herring (Arm)" <robh@kernel.org> wrote:
 
-Yup, needs to get dropped from everywhere. Thanks!
+> On Thu, 08 Aug 2024 16:12:08 -0500, David Lechner wrote:
+> > The common-mode-channel property is a scalar, not an array, so we should
+> > not be using items: in the schema when specifying allowable values.
+> > 
+> > Reported-by: Rob Herring <robh@kernel.org>
+> > Closes: https://lore.kernel.org/linux-iio/CAL_JsqKaddw8FnPfdnhKhHUb8AcTxFadc_eZmxjX0QxFR80=mw@mail.gmail.com/
+> > Fixes: b40cafc11436 ("dt-bindings: iio: adc: add AD4695 and similar ADCs")
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > ---
+> >  Documentation/devicetree/bindings/iio/adc/adi,ad4695.yaml | 6 ++----
+> >  1 file changed, 2 insertions(+), 4 deletions(-)
+> >   
+> 
+> Thanks for the quick fix.
+> 
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> 
 
--- 
+
+Applied and pushed out for next to pick up. 
 Thanks,
-Sasha
+
+Jonathan
 
