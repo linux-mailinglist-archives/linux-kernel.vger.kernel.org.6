@@ -1,507 +1,304 @@
-Return-Path: <linux-kernel+bounces-281678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0752B94D9D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:30:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66CF794D9C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79F661F22F54
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:30:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E70E91F22721
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D70D13C838;
-	Sat, 10 Aug 2024 01:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8170645979;
+	Sat, 10 Aug 2024 01:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UIEdC5UG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYMutwby"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75E874BF5;
-	Sat, 10 Aug 2024 01:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723253357; cv=none; b=hmnPdCEdkQMPHByh13vmWnAy0qeTzfYAA4mi+anJ17wTqc2fZQTQx2s/BmTbAjhUhPkTNQ+3ZUyXpUz417R0OxxtXWDDXjYH+J8SskUCG/nQBeKc4rPMYOWJZ4ur8Q0tQRW0R3wuUOzVfa3QUvNkT03Su59Bpf9pLbBmQKMguXI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723253357; c=relaxed/simple;
-	bh=Sz6C8T3BoJ/QMt3ceuNkARbbFklF+dRTPeA+1lTrtd8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VplCMWAMeSmfzyGbn9TuTHTThAR/9ovFBUBV6CbRUE7umkLYaetvpREwWkuYiYfys47WmRBd5b1TrANMdNTThZToJjcxGm0lUeb2tA3wj8QKHcy1FQ85d0HeDCWLkh4GXgqxsTG9xZIdgGj8T9QKHElllsBtRBaf21gOyD8sLKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UIEdC5UG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F148DC32782;
-	Sat, 10 Aug 2024 01:29:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723253357;
-	bh=Sz6C8T3BoJ/QMt3ceuNkARbbFklF+dRTPeA+1lTrtd8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UIEdC5UGfU3pdC6Z+bQrcdEy5nJSoXcOeEavtwWFoz+RVyd4j/jI0KQvY8/CQFv8m
-	 vPINFke4rQ44wDCfKD7kpFTlQuEGtx64gHuFVb3HGEwM4vW3oM6MZAHcCMSsfZgZHf
-	 NYtTZsWIIQL4sB1GqbLhbPWpSb2kcPOw4UKjfsG7ok9iijVtbNJojXeCPKGlL22k5/
-	 elb0ZDzCXcRVycvJy+2GrHyYNpslGVYeKW/DpmuPmaqeA6qcYJxKfLAj/ENIxnXCO8
-	 jsMca9qSJtqS2sYVTrYXvY7HI7Q03im3r5wTjpIT0BmNM7PJwB9l6J9WJeXicepkgI
-	 UrA96KtMsy1EQ==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Sat, 10 Aug 2024 03:28:40 +0200
-Subject: [PATCH v2 3/3] platform/surface: Add OF support
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FFE43BBE5;
+	Sat, 10 Aug 2024 01:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723253336; cv=fail; b=gK/RpCXOSIBoBIufCSrAePITG1TiPWvT+LcIhzwMA52e4IC/Oq/ULcApZ6YpPSPbHpuHI9LJotmlnbAublYQ4ybKsTSpCycVU6wnX8IydnnheyUOd6aJNN7DG/T5SmqeEqwG63VSBhpE+SNtbFz1rZldmQlVSFRyUl0Wj0qqIPs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723253336; c=relaxed/simple;
+	bh=jeNQnqqScYHk1kwAU+0nvS5SsQDqiP5AcBUC78MmHvY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=qzSPFVVwgzitIdPhaPh8mWWE7CSukR7VWhzmjMC6n5AbwcHBR9RCt1seaERcUcKZfMwf3KhuuJMSck8CGX1oUmZhDJCa05o9J46amlkIMqtzCrBck3coJXi4WxwhvZo6KPFMsvHWbdH8ZkxEBZCJ5s5kCbf0ShoGDGYaUzU+SCQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYMutwby; arc=fail smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723253334; x=1754789334;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=jeNQnqqScYHk1kwAU+0nvS5SsQDqiP5AcBUC78MmHvY=;
+  b=UYMutwbyHlqWppdwWRC3w6eqSJgN/tuMNxSluY9s+byOMwokImOPczHk
+   JHqpKlA1VfhzLne2Irp3SbyT1p4jhP3awUfg69CLrRMWaGMaEQqeTo9Bj
+   7qAOkpPvvIDgZY6mbtrL3JnCB2Uixh13mEih0j8j4nr+KnOUzEkyDo9sb
+   iQJtiO9HEeSdJ+CJaAEzH818eIpHqk2LzoI2b5ZZy24ULiiO4wdwtFEd1
+   TNrAVZh/QhzccgffUyuniy2oSE8DZAkIqQ263Q0OBW2hFlj2BQ2Be236G
+   d86dxIgQUKTPI8M3R4fCTAGaHAkm9G9pauFhSg0waaw1Ai5JViZd+72C+
+   A==;
+X-CSE-ConnectionGUID: MO+SSblzQqyaSkYc6STSmw==
+X-CSE-MsgGUID: j01cF3KaQtqV7e4EMnma1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11159"; a="21592496"
+X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
+   d="scan'208";a="21592496"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Aug 2024 18:28:53 -0700
+X-CSE-ConnectionGUID: 19KRqTIYRAKUogX9B4N1Ag==
+X-CSE-MsgGUID: wPhFUU8uSmmyIu5NLyOHcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,277,1716274800"; 
+   d="scan'208";a="57631632"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Aug 2024 18:28:54 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 9 Aug 2024 18:28:52 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 9 Aug 2024 18:28:52 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 9 Aug 2024 18:28:51 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QI4qvtJ+sIDUzbU9Zp/QWnY1Ifao7D8m/Uq51v03s7jLSVl8djjugpMyQH3HpJ3ibUl9V94Mi1uclh4gZ6jNtlU8Hpb8gdV/u85+8OXWM8gDQvEOxkS/riXUUhN0r+CFJxzH8f2tThfua084gEERvEZ1bQubD2RqOnVcYzJpwL1GKjZuScxl7r5CbOTgQYPPvPCPis4GK5ixTPmdWZ4Bw/NRHHF3UbnzxMVRzyQzj7GU/eAhY/Mtr7I7cufDlt58iI7W0g7D9k4z0JT3hOSq3lBHguc73zXGQj7XZBAVlp3SClJMF1tsMx7ARvMzr763AMGng7LCurpwzOW/PF0TtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aKMfg+jRdv7H9Biio3GoEFNmZ/K8PU39N7RnmMvGMzk=;
+ b=aB6p0OxCwW8hW6sNPzfrSVRpUltY+IluHFXM/FfZfqK8Vx3AMJw0X691e/mcZrE7tNhpSm2fHXyR6NbvkeXK0ce1YiI7F9Q89KeinTp06yEVQ+IvFsAIGrVDvaEgWCVLQKkDKHCnih4Piof3NGkbXnc89i7FcTtxkRmXjX+Ec6Sv6OD0lI+qYNCr1YF/OTgWlxILjmxfPScVaESdDo+yglFQFpogWpBd4kaauGld7IVSyqhnAYtn5OImns9WI9u7T6T/RgcHJK/OMryCs+TIa9ZGSEwZ407GC+vpQhdCW26yuQEfuCX7YG3d37BN87b6oNL3fj/lYsoA/Do9SSOvlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com (2603:10b6:208:432::20)
+ by CH0PR11MB5299.namprd11.prod.outlook.com (2603:10b6:610:be::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.31; Sat, 10 Aug
+ 2024 01:28:50 +0000
+Received: from IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b]) by IA0PR11MB7185.namprd11.prod.outlook.com
+ ([fe80::dd3b:ce77:841a:722b%3]) with mapi id 15.20.7828.023; Sat, 10 Aug 2024
+ 01:28:49 +0000
+From: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>
+To: Huan Yang <link@vivo.com>, Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal
+	<sumit.semwal@linaro.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+Subject: RE: [PATCH v2 1/4] udmabuf: cancel mmap page fault, direct map it
+Thread-Topic: [PATCH v2 1/4] udmabuf: cancel mmap page fault, direct map it
+Thread-Index: AQHa5uc/EbdykAxM+ECUA5tcjekmybIeFDuA
+Date: Sat, 10 Aug 2024 01:28:49 +0000
+Message-ID: <IA0PR11MB718542BA11A38A5BD40ECB00F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+References: <20240805032550.3912454-1-link@vivo.com>
+ <20240805032550.3912454-2-link@vivo.com>
+In-Reply-To: <20240805032550.3912454-2-link@vivo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: IA0PR11MB7185:EE_|CH0PR11MB5299:EE_
+x-ms-office365-filtering-correlation-id: 5bd33ec5-a376-43c7-8a75-08dcb8dbc998
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?ouSgv4Glf0tbXi3p+R8scuXqc6sP04kte5yF/HyyKUyIHrDuodPjtA0seY?=
+ =?iso-8859-1?Q?7Z2+L4AQRzMSbDRRUmU04MC+fhBRS82GgLH89i7unb4F2VTRA5FNQGr9o9?=
+ =?iso-8859-1?Q?TyvjuHshsSdqEakaunZO4Wq4YYquE5sRf+ULzaCytn4gSfUxAnA9bSvtNj?=
+ =?iso-8859-1?Q?khQcuBD7B4BMNuBY3KKP0TVNEzq+/Z8/BDmT1e0zXqzB1tOl9fvyj+GTvT?=
+ =?iso-8859-1?Q?dYX4Tdr43n3FgmqmgZjTnuRIhJ6oNl62P0Q6Kc+VWqlCyoOWcBNTEftXW3?=
+ =?iso-8859-1?Q?9dp2UDpuaxTMNs1jabci4A/H9bYI9k0IluvqZyqnWy4ATvuMT/f26UAp+S?=
+ =?iso-8859-1?Q?ir/VkS5gycYY8H0q29KOhraLd3mCV2BMZoqMl0ggC0fVNiWscLvTWoTzmm?=
+ =?iso-8859-1?Q?7c0uE684XKAYaZoN29tSf3/xsa4s8BpYNjlYAc36XoUYVCB0ewlp3WLEEj?=
+ =?iso-8859-1?Q?xlDmWmLVr+KQY2SyRxuMMDd537Dk/D8b+8DbKqSazApmMhUyuxyHRz0N2q?=
+ =?iso-8859-1?Q?vT6Kyb9k95o6Ad/Sa1Uc0GftUp4N1NMAE8EBgm7uQDw6bBHTVoXaUMBsJy?=
+ =?iso-8859-1?Q?ZXKbkp8ttL7K3VNQsFeRA829AtzR5DsxEhgL/K44OhALKLJmSawGO/rtLH?=
+ =?iso-8859-1?Q?tEg3XJh3mKZKKS4uBEnLs01ja7Cfduk3M0zSxmkauHTJ6cYNovPb4KYnZm?=
+ =?iso-8859-1?Q?BTQaIRXGcXU0fU99GgT7VWfsrEKeX4pLbcZnoHzAcWOMmJhNXzXjlgg/Yw?=
+ =?iso-8859-1?Q?CeZtTrP3bA4I9ESBJlmo3N0g2cJe4QM8kWgHl8+Sj7M/bDX9XOVrss8G0J?=
+ =?iso-8859-1?Q?hGfCtFrFxkCeyN1zIWgUpfsD8q6iI8k3iTgoSmOpFmdtPZlepT0uUNB+f7?=
+ =?iso-8859-1?Q?fIrjPEyHk9tAV0PAoNuVpn9YYR0d0Lvo+pQQFni1vhCwYD48UJzN8WIfmA?=
+ =?iso-8859-1?Q?pfZaUyumbuBkDq+z7WX92nlDNCRnZTflYV/H1cFxwtsDIgUQR60BBIxTA5?=
+ =?iso-8859-1?Q?l2W/BsWOlsTCwXZdzLPLkwFk9P2AmL8XpKMfU0cibeLTzfSZrrOadkThf8?=
+ =?iso-8859-1?Q?Wk3IigCS07VTx3dremDHybArNedTWdAju5Kvf2Kx13P3uau/HwDlaxOF3U?=
+ =?iso-8859-1?Q?Mw1bIithJg7asmPPb4KzXD/o0rukVTC9ojpcAodK7omR2wRvhJG6Drx/JM?=
+ =?iso-8859-1?Q?VkIMdbTLAJPT13dcRpCXlO4Qy8/uHut6emxD0FYQRzCypewbi7O1DIfrNl?=
+ =?iso-8859-1?Q?SHJCzf26u0rZEWg1X0hiJ0r7r+/g3NF3e4NvQfRa3ty9e4RtbNlsXgVPON?=
+ =?iso-8859-1?Q?gEhXyToI0UgVF9tOanw82k166z8Cb4SaAscRtBM2Grp4/TQbCt1zGVp0UI?=
+ =?iso-8859-1?Q?6d2GnZ6fkQLb5SoL5Gd98ROigrJjVnFXNqyPnbmB5LCnOpeBle5BMFF9ZS?=
+ =?iso-8859-1?Q?tCKDUY8p2dPfnyElBC/sdhkisJEXJOIw9IOtcA=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7185.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?vs1zxxxGMhY2R0fD1hfDNpqFRPWjxofPHuBYlOwD77wVbXccUhWqitzbHa?=
+ =?iso-8859-1?Q?Bh+2wDb2WfGVKVwelh4fbdKIyqWeHTtgqR3XMw6+FAGwodoFHwCFQ8yVan?=
+ =?iso-8859-1?Q?mXWB+dM1SFGTpWSuBiKd4EAp4uPOSjiqDgYpvh8+KS07/QJ53kM3+Xhv+1?=
+ =?iso-8859-1?Q?uy/Xc3+G5HenywwNtuBhzr5fYZSzyFea9WYFSp82kfq3A2dhHPy65xqUPe?=
+ =?iso-8859-1?Q?hPqaN+gC80Hvs/rrnS5CGT0uzRRowd3fE/SSrMF+tWPFVeoYe/Rt/CjLoG?=
+ =?iso-8859-1?Q?Ocqaso55rj7p+APqEiSDZqOaeBr1jkNNYhspOKI+O5FK14/Iinm3g721f5?=
+ =?iso-8859-1?Q?JjE3ujzfOmCv/rraSkHovoLLjw42q9OtnsHKmtYZaVUakoohZEAly5lgjw?=
+ =?iso-8859-1?Q?kduKOGbWb5DFJqwMMxVOd0gzObi1I+SLiZwJIZ0QTTL0DZGTfQ8EXV4CuT?=
+ =?iso-8859-1?Q?pJ5oaCuBwjcur26kiw95Car9FVaVFcvn5QHt1h+X7wlfPjC5cZdLLgGg3Y?=
+ =?iso-8859-1?Q?r8iTIrzCkbgHxIU1w6HQRI8h1RmB6I/K/8BMoRBEricIKOX8yWiSyHGWJL?=
+ =?iso-8859-1?Q?DyViltmM9WJF5xg6c6tCoN/rRLIkSOQ0M0+ksy+lQN/D/Qw8KiBYSItdT2?=
+ =?iso-8859-1?Q?05w4Ftd3PmEJlrV6EskGa9TpjSBonCMN5+bHj29A8eckIAtpy/6NAtk9kE?=
+ =?iso-8859-1?Q?XRLfENBbluLNX75x+zSlyKEqEaXzpt0a91gMIumCa8XDfPV4RmwcbbKBdt?=
+ =?iso-8859-1?Q?ndqS4ztamVaPABFxBZrHfYsSBPnzeld/za3Gzo/2KDSFujGT2PevTYj6lU?=
+ =?iso-8859-1?Q?wLrj3+O+FhV0MnZfGUqQaJ1yEgHY1n47NPLZsjR/m3i0WQ7IUSQxT7Tfq6?=
+ =?iso-8859-1?Q?iBVh87qzN05a+kKAmnZFLsSQ+iuPDf0GC1vS0NDOZULsxNr1/NcU+KeOPU?=
+ =?iso-8859-1?Q?uU6t5vBdVY34m1yPmvxW0/r7AJp1AnNVpG1kagRIKscfLnV+kNIeyFJWTK?=
+ =?iso-8859-1?Q?Qs2ZtvIlw/yR+I3BWq90Ae9fDIZS+HpxVg/d3t/6cV3AN4N3AFTX31p7f7?=
+ =?iso-8859-1?Q?toKzX/t79r4qrBzGy/FxexZEm7ZQ5AsJeebHTL045YMYNhGncpREMO5G6x?=
+ =?iso-8859-1?Q?nXcsYmm07dt8PLd9+lnyXQIAW3Qz0cueBuxPXW5GhGwyRT4PDrUzjqMR5H?=
+ =?iso-8859-1?Q?sJZjX90H70FP4+vTGtY+T2n5hmcic6X49Hg0eaB6wnmdBBPLHcjfLbeJJt?=
+ =?iso-8859-1?Q?wcLu0oD/OWqMiLndbbaT0b6hOdjmnhDetOSY6UQ1an1+bVWqxAxHNpS/Bq?=
+ =?iso-8859-1?Q?DhI7Fmikh/oTIkt11m32vN5reFI4bmZsg6ge3Dc6FSvdN8+nn6WihLkIIr?=
+ =?iso-8859-1?Q?YWe3t27r7TUKE1zf/7Y+mP/LDypRgIsniLHgagrTuv9LuPpfnQT6GJhNu9?=
+ =?iso-8859-1?Q?3+9Zso7p+LJa0vykmcbeloPlHlYLs+HwwedChN5ethH9S/btD37YGRAdyd?=
+ =?iso-8859-1?Q?twBHUUQehyyYj0qWUtG9qDUF4TufzmdcxJGa6ilVuWGZKP+bAQXdt+XvW2?=
+ =?iso-8859-1?Q?UNQtKaLjYN2CT8L1D2cqtRTNQ+MuiFoITEfbSI8i2OpgFJE5AgdTE4pSfb?=
+ =?iso-8859-1?Q?6nNJoHY/jKwdAW7Kry5HrMp+Zch442ssiP?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240810-topic-sam-v2-3-8a8eb368a4f0@quicinc.com>
-References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
-In-Reply-To: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
-To: Rob Herring <robh@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- Maximilian Luz <luzmaximilian@gmail.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org, 
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723253333; l=14424;
- i=quic_kdybcio@quicinc.com; s=20230215; h=from:subject:message-id;
- bh=kzJQ8HBMMY7jGytHe5cgO7AgIRChWOBSlnoraKikZs4=;
- b=vV8zzhynDJOBZPS7TNQSr2kUtDnOX1hScFae7NGhKKY6xp6pwaCXSJfRpYEaWLxB34Ikb3J+O
- jeYCzxP8QWqAajqNlhkqTRakhHZ3VpG6T7bYnlFb5MsxaksJWKXFZIy
-X-Developer-Key: i=quic_kdybcio@quicinc.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7185.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bd33ec5-a376-43c7-8a75-08dcb8dbc998
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Aug 2024 01:28:49.9268
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kLbLHXyTQympKIvQuSD3hCd40ztuZq3xJSCPwWi55n0ubKPrIW1tWmKRI8wbXgHPuxpCtRSKDkKhVPt2fJrPSDC7bNvK9ek47z+AbKU1dbM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5299
+X-OriginatorOrg: intel.com
 
-From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+Hi Huan,
 
-Add basic support for registering the aggregator module on Device Tree-
-based platforms. These include at least three generations of Qualcomm
-Snapdragon-based Surface devices:
+>=20
+> The current udmabuf mmap uses a page fault mechanism to populate the
+> vma.
+>=20
+> However, the current udmabuf has already obtained and pinned the folio
+> upon completion of the creation.This means that the physical memory has
+> already been acquired, rather than being accessed dynamically. The
+> current page fault method only saves some page table memory.
+>=20
+> As a result, the page fault mechanism has lost its purpose as a demanding
+> page. Due to the fact that page fault requires trapping into kernel mode
+> and filling in when accessing the corresponding virtual address in mmap,
+> this means that user mode access to virtual addresses needs to trap into
+> kernel mode.
+>=20
+> Therefore, when creating a large size udmabuf, this represents a
+> considerable overhead.
+>=20
+> The current patch removes the page fault method of mmap and
+> instead fills it directly when mmap is triggered.
+I think it makes sense to populate the vma when the first fault is triggere=
+d
+instead of doing it during mmap. This is because the userspace may call
+mmap but does not actually use the data. Qemu works this way depending on
+whether opengl is available in the environment or not.
 
-- SC8180X / SQ1 / SQ2: Pro X,
-- SC8280XP / SQ3: Devkit 2023, Pro 9
-- X Elite: Laptop 7 / Pro11
+>=20
+> Signed-off-by: Huan Yang <link@vivo.com>
+> ---
+>  drivers/dma-buf/udmabuf.c | 39 ++++++++++++++++-----------------------
+>  1 file changed, 16 insertions(+), 23 deletions(-)
+>=20
+> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+> index 047c3cd2ceff..475268d4ebb1 100644
+> --- a/drivers/dma-buf/udmabuf.c
+> +++ b/drivers/dma-buf/udmabuf.c
+> @@ -38,36 +38,29 @@ struct udmabuf_folio {
+>  	struct list_head list;
+>  };
+>=20
+> -static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
+> -{
+> -	struct vm_area_struct *vma =3D vmf->vma;
+> -	struct udmabuf *ubuf =3D vma->vm_private_data;
+> -	pgoff_t pgoff =3D vmf->pgoff;
+> -	unsigned long pfn;
+> -
+> -	if (pgoff >=3D ubuf->pagecount)
+> -		return VM_FAULT_SIGBUS;
+> -
+> -	pfn =3D folio_pfn(ubuf->folios[pgoff]);
+> -	pfn +=3D ubuf->offsets[pgoff] >> PAGE_SHIFT;
+> -
+> -	return vmf_insert_pfn(vma, vmf->address, pfn);
+> -}
+> -
+> -static const struct vm_operations_struct udmabuf_vm_ops =3D {
+> -	.fault =3D udmabuf_vm_fault,
+> -};
+> -
+>  static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
+> *vma)
+>  {
+>  	struct udmabuf *ubuf =3D buf->priv;
+> +	unsigned long addr;
+> +	unsigned long end;
+> +	unsigned long pgoff;
+> +	int ret;
+>=20
+>  	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) =3D=3D 0)
+>  		return -EINVAL;
+>=20
+> -	vma->vm_ops =3D &udmabuf_vm_ops;
+> -	vma->vm_private_data =3D ubuf;
+> -	vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND |
+> VM_DONTDUMP);
+> +	for (pgoff =3D vma->vm_pgoff, end =3D vma->vm_end, addr =3D vma-
+> >vm_start;
+> +	     addr < end; pgoff++, addr +=3D PAGE_SIZE) {
+> +		struct page *page =3D
+> +			folio_page(ubuf->folios[pgoff],
+> +				   ubuf->offsets[pgoff] >> PAGE_SHIFT);
+Please don't use struct page pointers, given the recent conversion to use
+only folios in udmabuf driver. I think what you are trying to do above can
+be done using only folios.
 
-Thankfully, the aggregators on these seem to be configured in an
-identical way, which allows for using these settings as defaults and
-no DT properties need to be introduced (until that changes, anyway).
+> +
+> +		ret =3D remap_pfn_range(vma, addr, page_to_pfn(page),
+> PAGE_SIZE,
+> +				      vma->vm_page_prot);
+Could you please retain the use of vmf_insert_pfn() here, given the simplic=
+ity,
+among other reasons?
 
-Based on the work done by Maximilian Luz, largely rewritten.
+Thanks,
+Vivek
 
-Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
----
- drivers/platform/surface/aggregator/bus.c          |  2 +
- drivers/platform/surface/aggregator/controller.c   | 67 ++++++++++++++----
- drivers/platform/surface/aggregator/core.c         | 82 +++++++++++++++++-----
- drivers/platform/surface/surface3_power.c          |  4 +-
- drivers/platform/surface/surface_acpi_notify.c     |  4 +-
- .../platform/surface/surface_aggregator_registry.c | 44 ++++++++++--
- 6 files changed, 164 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/platform/surface/aggregator/bus.c b/drivers/platform/surface/aggregator/bus.c
-index af8d573aae93..d68d231e716e 100644
---- a/drivers/platform/surface/aggregator/bus.c
-+++ b/drivers/platform/surface/aggregator/bus.c
-@@ -6,6 +6,7 @@
-  */
- 
- #include <linux/device.h>
-+#include <linux/of.h>
- #include <linux/property.h>
- #include <linux/slab.h>
- 
-@@ -441,6 +442,7 @@ static int ssam_add_client_device(struct device *parent, struct ssam_controller
- 
- 	sdev->dev.parent = parent;
- 	sdev->dev.fwnode = fwnode_handle_get(node);
-+	sdev->dev.of_node = to_of_node(node);
- 
- 	status = ssam_device_add(sdev);
- 	if (status)
-diff --git a/drivers/platform/surface/aggregator/controller.c b/drivers/platform/surface/aggregator/controller.c
-index 7fc602e01487..27eadf22b292 100644
---- a/drivers/platform/surface/aggregator/controller.c
-+++ b/drivers/platform/surface/aggregator/controller.c
-@@ -1104,13 +1104,6 @@ int ssam_controller_caps_load_from_acpi(acpi_handle handle,
- 	u64 funcs;
- 	int status;
- 
--	/* Set defaults. */
--	caps->ssh_power_profile = U32_MAX;
--	caps->screen_on_sleep_idle_timeout = U32_MAX;
--	caps->screen_off_sleep_idle_timeout = U32_MAX;
--	caps->d3_closes_handle = false;
--	caps->ssh_buffer_size = U32_MAX;
--
- 	/* Pre-load supported DSM functions. */
- 	status = ssam_dsm_get_functions(handle, &funcs);
- 	if (status)
-@@ -1149,6 +1142,52 @@ int ssam_controller_caps_load_from_acpi(acpi_handle handle,
- 	return 0;
- }
- 
-+/**
-+ * ssam_controller_caps_load_from_of() - Load controller capabilities from OF/DT.
-+ * @dev:  A pointer to the controller device
-+ * @caps: Where to store the capabilities in.
-+ *
-+ * Return: Returns zero on success, a negative error code on failure.
-+ */
-+static int ssam_controller_caps_load_from_of(struct device *dev, struct ssam_controller_caps *caps)
-+{
-+	/*
-+	 * Every device starting with Surface Pro X through Laptop 7 uses these
-+	 * identical values, which makes them good defaults.
-+	 */
-+	caps->d3_closes_handle = true;
-+	caps->screen_on_sleep_idle_timeout = 5000;
-+	caps->screen_off_sleep_idle_timeout = 30;
-+	caps->ssh_buffer_size = 48;
-+	/* TODO: figure out power profile */
-+
-+	return 0;
-+}
-+
-+/**
-+ * ssam_controller_caps_load() - Load controller capabilities
-+ * @dev:  A pointer to the controller device
-+ * @caps: Where to store the capabilities in.
-+ *
-+ * Return: Returns zero on success, a negative error code on failure.
-+ */
-+static int ssam_controller_caps_load(struct device *dev, struct ssam_controller_caps *caps)
-+{
-+	acpi_handle handle = ACPI_HANDLE(dev);
-+
-+	/* Set defaults. */
-+	caps->ssh_power_profile = U32_MAX;
-+	caps->screen_on_sleep_idle_timeout = U32_MAX;
-+	caps->screen_off_sleep_idle_timeout = U32_MAX;
-+	caps->d3_closes_handle = false;
-+	caps->ssh_buffer_size = U32_MAX;
-+
-+	if (handle)
-+		return ssam_controller_caps_load_from_acpi(handle, caps);
-+	else
-+		return ssam_controller_caps_load_from_of(dev, caps);
-+}
-+
- /**
-  * ssam_controller_init() - Initialize SSAM controller.
-  * @ctrl:   The controller to initialize.
-@@ -1165,13 +1204,12 @@ int ssam_controller_caps_load_from_acpi(acpi_handle handle,
- int ssam_controller_init(struct ssam_controller *ctrl,
- 			 struct serdev_device *serdev)
- {
--	acpi_handle handle = ACPI_HANDLE(&serdev->dev);
- 	int status;
- 
- 	init_rwsem(&ctrl->lock);
- 	kref_init(&ctrl->kref);
- 
--	status = ssam_controller_caps_load_from_acpi(handle, &ctrl->caps);
-+	status = ssam_controller_caps_load(&serdev->dev, &ctrl->caps);
- 	if (status)
- 		return status;
- 
-@@ -2715,11 +2753,12 @@ int ssam_irq_setup(struct ssam_controller *ctrl)
- 	const int irqf = IRQF_ONESHOT | IRQF_TRIGGER_RISING | IRQF_NO_AUTOEN;
- 
- 	gpiod = gpiod_get(dev, "ssam_wakeup-int", GPIOD_ASIS);
--	if (IS_ERR(gpiod))
--		return PTR_ERR(gpiod);
--
--	irq = gpiod_to_irq(gpiod);
--	gpiod_put(gpiod);
-+	if (IS_ERR(gpiod)) {
-+		irq = fwnode_irq_get(dev_fwnode(dev), 0);
-+	} else {
-+		irq = gpiod_to_irq(gpiod);
-+		gpiod_put(gpiod);
-+	}
- 
- 	if (irq < 0)
- 		return irq;
-diff --git a/drivers/platform/surface/aggregator/core.c b/drivers/platform/surface/aggregator/core.c
-index 797d0645bd77..2691b6438c0a 100644
---- a/drivers/platform/surface/aggregator/core.c
-+++ b/drivers/platform/surface/aggregator/core.c
-@@ -17,9 +17,12 @@
- #include <linux/kernel.h>
- #include <linux/kref.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
- #include <linux/pm.h>
- #include <linux/serdev.h>
- #include <linux/sysfs.h>
-+#include <linux/units.h>
- 
- #include <linux/surface_aggregator/controller.h>
- #include <linux/surface_aggregator/device.h>
-@@ -299,7 +302,7 @@ static const struct attribute_group ssam_sam_group = {
- };
- 
- 
--/* -- ACPI based device setup. ---------------------------------------------- */
-+/* -- Serial device setup. ------------------------------------------------- */
- 
- static acpi_status ssam_serdev_setup_via_acpi_crs(struct acpi_resource *rsc,
- 						  void *ctx)
-@@ -352,13 +355,28 @@ static acpi_status ssam_serdev_setup_via_acpi_crs(struct acpi_resource *rsc,
- 	return AE_CTRL_TERMINATE;
- }
- 
--static acpi_status ssam_serdev_setup_via_acpi(acpi_handle handle,
--					      struct serdev_device *serdev)
-+static int ssam_serdev_setup_via_acpi(struct serdev_device *serdev, acpi_handle handle)
- {
--	return acpi_walk_resources(handle, METHOD_NAME__CRS,
--				   ssam_serdev_setup_via_acpi_crs, serdev);
-+	acpi_status status;
-+
-+	status = acpi_walk_resources(handle, METHOD_NAME__CRS,
-+				     ssam_serdev_setup_via_acpi_crs, serdev);
-+
-+	return status ? -ENXIO : 0;
- }
- 
-+static int ssam_serdev_setup(struct acpi_device *ssh, struct serdev_device *serdev)
-+{
-+	if (ssh)
-+		return ssam_serdev_setup_via_acpi(serdev, ssh->handle);
-+
-+	/* TODO: these values may differ per board/implementation */
-+	serdev_device_set_baudrate(serdev, 4 * HZ_PER_MHZ);
-+	serdev_device_set_flow_control(serdev, true);
-+	serdev_device_set_parity(serdev, SERDEV_PARITY_NONE);
-+
-+	return 0;
-+}
- 
- /* -- Power management. ----------------------------------------------------- */
- 
-@@ -621,16 +639,17 @@ static int ssam_serial_hub_probe(struct serdev_device *serdev)
- 	struct device *dev = &serdev->dev;
- 	struct acpi_device *ssh = ACPI_COMPANION(dev);
- 	struct ssam_controller *ctrl;
--	acpi_status astatus;
- 	int status;
- 
--	status = gpiod_count(dev, NULL);
--	if (status < 0)
--		return dev_err_probe(dev, status, "no GPIO found\n");
-+	if (ssh) {
-+		status = gpiod_count(dev, NULL);
-+		if (status < 0)
-+			return dev_err_probe(dev, status, "no GPIO found\n");
- 
--	status = devm_acpi_dev_add_driver_gpios(dev, ssam_acpi_gpios);
--	if (status)
--		return status;
-+		status = devm_acpi_dev_add_driver_gpios(dev, ssam_acpi_gpios);
-+		if (status)
-+			return status;
-+	}
- 
- 	/* Allocate controller. */
- 	ctrl = kzalloc(sizeof(*ctrl), GFP_KERNEL);
-@@ -655,9 +674,9 @@ static int ssam_serial_hub_probe(struct serdev_device *serdev)
- 		goto err_devopen;
- 	}
- 
--	astatus = ssam_serdev_setup_via_acpi(ssh->handle, serdev);
--	if (ACPI_FAILURE(astatus)) {
--		status = dev_err_probe(dev, -ENXIO, "failed to setup serdev\n");
-+	status = ssam_serdev_setup(ssh, serdev);
-+	if (status) {
-+		status = dev_err_probe(dev, status, "failed to setup serdev\n");
- 		goto err_devinit;
- 	}
- 
-@@ -717,7 +736,23 @@ static int ssam_serial_hub_probe(struct serdev_device *serdev)
- 	 *       For now let's thus default power/wakeup to false.
- 	 */
- 	device_set_wakeup_capable(dev, true);
--	acpi_dev_clear_dependencies(ssh);
-+
-+	/*
-+	 * When using DT, we have to register the platform hub driver manually,
-+	 * as it can't be matched based on top-level board compatible (like it
-+	 * does the ACPI case).
-+	 */
-+	if (!ssh) {
-+		struct platform_device *ph_pdev =
-+			platform_device_register_simple("surface_aggregator_platform_hub",
-+							0, NULL, 0);
-+		if (IS_ERR(ph_pdev))
-+			return dev_err_probe(dev, PTR_ERR(ph_pdev),
-+					     "Failed to register the platform hub driver\n");
-+	}
-+
-+	if (ssh)
-+		acpi_dev_clear_dependencies(ssh);
- 
- 	return 0;
- 
-@@ -782,18 +817,27 @@ static void ssam_serial_hub_remove(struct serdev_device *serdev)
- 	device_set_wakeup_capable(&serdev->dev, false);
- }
- 
--static const struct acpi_device_id ssam_serial_hub_match[] = {
-+static const struct acpi_device_id ssam_serial_hub_acpi_match[] = {
- 	{ "MSHW0084", 0 },
- 	{ },
- };
--MODULE_DEVICE_TABLE(acpi, ssam_serial_hub_match);
-+MODULE_DEVICE_TABLE(acpi, ssam_serial_hub_acpi_match);
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id ssam_serial_hub_of_match[] = {
-+	{ .compatible = "microsoft,surface-sam", },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, ssam_serial_hub_of_match);
-+#endif
- 
- static struct serdev_device_driver ssam_serial_hub = {
- 	.probe = ssam_serial_hub_probe,
- 	.remove = ssam_serial_hub_remove,
- 	.driver = {
- 		.name = "surface_serial_hub",
--		.acpi_match_table = ssam_serial_hub_match,
-+		.acpi_match_table = ACPI_PTR(ssam_serial_hub_acpi_match),
-+		.of_match_table = of_match_ptr(ssam_serial_hub_of_match),
- 		.pm = &ssam_serial_hub_pm_ops,
- 		.shutdown = ssam_serial_hub_shutdown,
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-diff --git a/drivers/platform/surface/surface3_power.c b/drivers/platform/surface/surface3_power.c
-index 4c0f92562a79..7eab6a124712 100644
---- a/drivers/platform/surface/surface3_power.c
-+++ b/drivers/platform/surface/surface3_power.c
-@@ -478,7 +478,9 @@ static int mshw0011_install_space_handler(struct i2c_client *client)
- 		return -ENOMEM;
- 	}
- 
--	acpi_dev_clear_dependencies(adev);
-+	if (adev)
-+		acpi_dev_clear_dependencies(adev);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/platform/surface/surface_acpi_notify.c b/drivers/platform/surface/surface_acpi_notify.c
-index 20f3870915d2..b0d43e639db2 100644
---- a/drivers/platform/surface/surface_acpi_notify.c
-+++ b/drivers/platform/surface/surface_acpi_notify.c
-@@ -815,7 +815,9 @@ static int san_probe(struct platform_device *pdev)
- 	if (status)
- 		goto err_install_dev;
- 
--	acpi_dev_clear_dependencies(san);
-+	if (san)
-+		acpi_dev_clear_dependencies(san);
-+
- 	return 0;
- 
- err_install_dev:
-diff --git a/drivers/platform/surface/surface_aggregator_registry.c b/drivers/platform/surface/surface_aggregator_registry.c
-index 1c4d74db08c9..57787f2ff38b 100644
---- a/drivers/platform/surface/surface_aggregator_registry.c
-+++ b/drivers/platform/surface/surface_aggregator_registry.c
-@@ -12,6 +12,7 @@
- #include <linux/acpi.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/property.h>
- #include <linux/types.h>
-@@ -273,6 +274,18 @@ static const struct software_node *ssam_node_group_sl5[] = {
- 	NULL,
- };
- 
-+/* Devices for Surface Laptop 7. */
-+static const struct software_node *ssam_node_group_sl7[] = {
-+	&ssam_node_root,
-+	&ssam_node_bat_ac,
-+	&ssam_node_bat_main,
-+	&ssam_node_tmp_perf_profile_with_fan,
-+	&ssam_node_fan_speed,
-+	&ssam_node_hid_sam_keyboard,
-+	/* TODO: evaluate thermal sensors devices when we get a driver for that */
-+	NULL,
-+};
-+
- /* Devices for Surface Laptop Studio. */
- static const struct software_node *ssam_node_group_sls[] = {
- 	&ssam_node_root,
-@@ -346,7 +359,7 @@ static const struct software_node *ssam_node_group_sp9[] = {
- 
- /* -- SSAM platform/meta-hub driver. ---------------------------------------- */
- 
--static const struct acpi_device_id ssam_platform_hub_match[] = {
-+static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
- 	/* Surface Pro 4, 5, and 6 (OMBR < 0x10) */
- 	{ "MSHW0081", (unsigned long)ssam_node_group_gen5 },
- 
-@@ -402,16 +415,39 @@ static const struct acpi_device_id ssam_platform_hub_match[] = {
- };
- MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_match);
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id ssam_platform_hub_of_match[] = {
-+	/* Surface Laptop 7 */
-+	{ .compatible = "microsoft,romulus13", (void *)ssam_node_group_sl7 },
-+	{ .compatible = "microsoft,romulus15", (void *)ssam_node_group_sl7 },
-+	{ },
-+};
-+#endif
-+
- static int ssam_platform_hub_probe(struct platform_device *pdev)
- {
- 	const struct software_node **nodes;
-+	const struct of_device_id *match;
-+	struct device_node *fdt_root;
- 	struct ssam_controller *ctrl;
- 	struct fwnode_handle *root;
- 	int status;
- 
- 	nodes = (const struct software_node **)acpi_device_get_match_data(&pdev->dev);
--	if (!nodes)
--		return -ENODEV;
-+	if (!nodes) {
-+		fdt_root = of_find_node_by_path("/");
-+		if (!fdt_root)
-+			return -ENODEV;
-+
-+		match = of_match_node(ssam_platform_hub_of_match, fdt_root);
-+		of_node_put(fdt_root);
-+		if (!match)
-+			return -ENODEV;
-+
-+		nodes = (const struct software_node **)match->data;
-+		if (!nodes)
-+			return -ENODEV;
-+	}
- 
- 	/*
- 	 * As we're adding the SSAM client devices as children under this device
-@@ -460,7 +496,7 @@ static struct platform_driver ssam_platform_hub_driver = {
- 	.remove_new = ssam_platform_hub_remove,
- 	.driver = {
- 		.name = "surface_aggregator_platform_hub",
--		.acpi_match_table = ssam_platform_hub_match,
-+		.acpi_match_table = ssam_platform_hub_acpi_match,
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- };
-
--- 
-2.46.0
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>=20
+> --
+> 2.45.2
 
 
