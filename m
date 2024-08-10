@@ -1,116 +1,113 @@
-Return-Path: <linux-kernel+bounces-281974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72F394DDB0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2F9F94DDB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 19:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4402820B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 075A71C20D42
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 17:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E80115854B;
-	Sat, 10 Aug 2024 17:00:39 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD971366
-	for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 17:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF2616B39E;
+	Sat, 10 Aug 2024 17:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="m2o9tDNB"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C02A1366;
+	Sat, 10 Aug 2024 17:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723309238; cv=none; b=ORfGikOEiTQW6+LK9QhkZZKD2WhwK1i01pbafJfBViKZp2zWxTmUl1OlHsxQq6vj9ICkukFene2UNQDEk3qPs+bG2rBD4EkSQuorowbDNMrDg4ZcV90W/thy9w9tReA9jOm8lT5Cb99cGOhGcvuF6+mMe1so++YKvrSn/Bt97sE=
+	t=1723309244; cv=none; b=Eq7Pq02IBnsBhKK/nC/wTCBf2AFuerjs2yMJSAQ+BgxgDv2+m0O2NaQTG/yCYI6ugyfHIxaOUbwPvxvLC2gaZcY4DILgug0bXgj4AOOaWkO8RXjWpROgm27H9EOcDz9i1UnZmysRlem/Eq28Ehkdm3tmsadrISMl2Pzhr7Ul9+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723309238; c=relaxed/simple;
-	bh=jeUoSqGnWGwLFZ+h8ieL7KcjYKdNgjT7EmiDJk/JWpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wsqv0GQ64bxJbImJIha5exWeGxL/i02yKZwam/ekGO9AABicky7YjGxd+yY6bB6dqCdzUYCNO9qX/W0ukB4rFIlSX27u3FEUC38CnkXHQlqMqmSLYZMUko82FJJvyTTWnFiZRAoZ+mPztEINRHnZ+Az546JJ/ppoDlNJ3d00ooI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 47AH0Usv030601;
-	Sat, 10 Aug 2024 19:00:30 +0200
-Date: Sat, 10 Aug 2024 19:00:30 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
-Message-ID: <20240810170030.GA4461@1wt.eu>
-References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
- <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
- <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
- <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
- <20240810143556.GA9168@1wt.eu>
- <384a1d29-13ca-4e4b-b4b7-2a99e3fdb01b@t-8ch.de>
- <17ed9bf5-64da-418e-b40e-6e3d40c67769@t-8ch.de>
+	s=arc-20240116; t=1723309244; c=relaxed/simple;
+	bh=Eo3bJfzjjj8svkQqJ5ojDFc5ObyZLNW4pjZdYRkfj+k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=H//H8Qq61qehZVp91M4xHzxD83I3Y0GVC7hBC4OfrbBBKEqOTM4mrZ/M8p3NlcO0wFgDUeGRlu1t4BgC20Y4G9WqO9PIhszF3BWSK76R3NcUTkke/Bn1h24ZtLd6W/9tzIiUCeyk2sSWXi8B0lcpisHaMlye+ERiLfz562qL8UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=m2o9tDNB; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1723309238;
+	bh=Eo3bJfzjjj8svkQqJ5ojDFc5ObyZLNW4pjZdYRkfj+k=;
+	h=From:Date:Subject:To:Cc:From;
+	b=m2o9tDNBO3wNWg7MWz+8hGHQOQtE6wjex5xYeROMt4Q4jmPHVhy7UCzp1Vx31L4CX
+	 lNU2y2KaK1Lp15x/qFlVDjN3P3TGLCh2GPUFCJlYGL4G/uKnsSHmxRoysQj9Vwmxu4
+	 CmCYcgcI+3DXPJ3k7IX9x2ILSl4+MY0fnwGBYDW8=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Sat, 10 Aug 2024 19:00:35 +0200
+Subject: [PATCH] sysctl: update comments to new registration APIs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <17ed9bf5-64da-418e-b40e-6e3d40c67769@t-8ch.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Message-Id: <20240810-sysctl-procname-null-comment-v1-1-816cd335de1b@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIALKct2YC/x3M0QqDMAxA0V+RPBtIRYbbrwwfXI0u0KbSqEzEf
+ 1/x8cDlnmCchQ1e1QmZdzFJWuDqCvx30JlRxmJoqGmpc4R2mF8DLjl5HSKjbiGgTzGyrtiRe9B
+ nLOVzgrJYMk/yu/fv/rr+oJN2jG4AAAA=
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, 
+ Joel Granados <j.granados@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723309238; l=1780;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=Eo3bJfzjjj8svkQqJ5ojDFc5ObyZLNW4pjZdYRkfj+k=;
+ b=tl/JXdJ5WUmGKxZbSZpikbqJzmJo8f2vkFA0B6hQx5uk51Jd59PX6Kg4THlOmEs9PiOvvMZ0A
+ FGZwf0OtbR+BTWqcwElLYV2sWhw9WOTsLR6vbFjlCOoWLNFs7Mzacwp
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-On Sat, Aug 10, 2024 at 06:45:19PM +0200, Thomas Wei�schuh wrote:
-> Iff we really want to support it, we could do use naked where available
-> and fall back to toplevel asm otherwise.
-> This should work on newer compilers and older ones without -flto.
-> It looks horrible though.
-> 
->   #define NOLIBC_ARCH_HAS_MEMSET
->   void *memset(void *dst, int c, size_t len);
->   
->   #if __nolibc_has_attribute(naked)
-> 
->   __attribute__((weak,naked))
->   void *memset(void *dst __attribute__((unused)), int c __attribute__((unused)), size_t len __attribute__((unused))) {
-> 
->   #else
-> 
->   __asm__ (
->   ".section .text.nolibc_memset\n"
->   ".weak memset\n"
->   "memset:\n"
->   );
-> 
->   #endif
-> 
->   __asm__ (
->   	"xchgl %eax, %esi\n\t"
->   	"movq  %rdx, %rcx\n\t"
->   	"pushq %rdi\n\t"
->   	"rep stosb\n\t"
->   	"popq  %rax\n\t"
->   	"retq\n"
->   );
-> 
->   #if __nolibc_has_attribute(naked)
->   }
->   #endif
-> 
-> (Or some impenetrable macro wrapper abstraction thereof)
+The sysctl registration APIs do not need a terminating table entry
+anymore and with commit acc154691fc7 ("sysctl: Warn on an empty procname element")
+even emit warnings if such a sentinel entry is supplied.
 
-One dangerous part above is that the compiler can reorder toplevel asm
-statements, so having a label in one and the code in another may result
-in random bugs.
+While at it also remove the mention of "table->de" which was removed in
+commit 3fbfa98112fc ("[PATCH] sysctl: remove the proc_dir_entry member for the sysctl tables")
+back in 2007.
 
-> The memcpy / memmove combination could be split up into one real
-> function and one C inline wrapper and then the same pattern would apply.
-> 
-> But to be honest I'd be fine with not supporting -flto on GCC.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+ include/linux/sysctl.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-That could also be a reasonable solution. The primary goal of nolibc
-is to make it easy for developers to develop tests, and for those who
-want to create pre-boot code to do so. By nature this code is prone to
-bugs. If it becomes totally unreadable for very unlikely cases, it will
-cause issues that are hard to debug by the users themselves. It's sure
-that supporting a variety of compilers and setups is great, but we should
-keep in mind the maintainability goal when thinking about this. I think
-that LTO will mostly be used for testing, and in this case I think it's
-totally reasonable to restrict the choice of compatible compilers.
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index aa4c6d44aaa0..47ca2536865b 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -90,9 +90,7 @@ int proc_do_static_key(const struct ctl_table *table, int write, void *buffer,
+ 
+ /*
+  * Register a set of sysctl names by calling register_sysctl
+- * with an initialised array of struct ctl_table's.  An entry with 
+- * NULL procname terminates the table.  table->de will be
+- * set up by the registration and need not be initialised in advance.
++ * with an initialised array of struct ctl_table's.
+  *
+  * sysctl names can be mirrored automatically under /proc/sys.  The
+  * procname supplied controls /proc naming.
+@@ -133,7 +131,7 @@ static inline void *proc_sys_poll_event(struct ctl_table_poll *poll)
+ 
+ /* A sysctl table is an array of struct ctl_table: */
+ struct ctl_table {
+-	const char *procname;		/* Text ID for /proc/sys, or zero */
++	const char *procname;		/* Text ID for /proc/sys */
+ 	void *data;
+ 	int maxlen;
+ 	umode_t mode;
 
-Willy
+---
+base-commit: 34ac1e82e5a78d5ed7f647766f5b1b51ca4d983a
+change-id: 20240810-sysctl-procname-null-comment-80160bd4089f
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
