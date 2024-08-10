@@ -1,85 +1,52 @@
-Return-Path: <linux-kernel+bounces-281684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 491A194D9E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:07:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6DFC94DA00
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:15:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90155B22543
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:07:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618761F2321D
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCFC12D766;
-	Sat, 10 Aug 2024 02:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P74P4bv3"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB291459E0;
+	Sat, 10 Aug 2024 02:13:04 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955B11802B;
-	Sat, 10 Aug 2024 02:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916CE13D89A;
+	Sat, 10 Aug 2024 02:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723255642; cv=none; b=ZTVUSA1rDF07JyigbETJNseCi4VoZ+UGqVY8BSPXPeLR8EZSxyjqB7iJx3kND0/byWMt9MdBvUqynafoX3gGOd1ed8w1QldcmCO0mr5TEw8lG4loghQ1wAHqkG6ZX6owysb06EJv+vYWu40QBAwAlicMass/N7neCMbyX43W01I=
+	t=1723255983; cv=none; b=meaFWgI0JEii/uaQoJUY4xNHaFG4RB8z1YN6zGYsBVuuBmsN3Bom5ayO1HKtuxRA1lWKC7rIV8qnAO8fi1JkIJn1TRZ+R3Qh29e44x/uCb+ZKpMr1IDAmY5cmO1Vt8kVjA8o5C1Wy8QhMRIrz5NN5ajDMHELtMZr3QF3NlFW9zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723255642; c=relaxed/simple;
-	bh=FszU0eWGF+7YV5v6loTRFKt9FQXPF/rqGxQmR77obo8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n2OcOvDmOF69aJRWH2m+H8k0Vx+40xhYMxEGGalE04a1UdAKEQ9uBO9fbDqM7n19EP+YMCda+xUVJk+Ujoa1GLx1TTOfND9gSNb4s6Pd0y2p0W90CxWK0sPdCjfukXXFTrbY8B7uEOHM8KcYt8RoK6H5vzgSHIFYOBjrfyv1VPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P74P4bv3; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-1fc491f9b55so21139885ad.3;
-        Fri, 09 Aug 2024 19:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723255639; x=1723860439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EO3mVztBgbiVsE4xJVCsdRCCfzIJ6lRteSoBlqZb/Ms=;
-        b=P74P4bv3z4M+Ht2W6cO3wLfr+JQ7ybt6gLqaPGr6bdJ8RYlV6M5S0GIQAbZutA06SW
-         Gydpo3Dcw56XnmY/iGNF+XhFGhKesXNk45h4hKyyS7BtMje6ez9RTX+e7doM6qf6mDs2
-         rWUthV66wgp7rgYFtDgFi/umJiwbwK1ROqbTmBFf7shW+WMXZI48yncby4lI6+ngt8o4
-         gjnltyH3MFNMNPI6FGtAXiH7PQeqeUD3Q/FTLCZxC6RLs9SC+wiUiO3gsPwsZfh5UoOo
-         Qoxf0UUWX/kfW4gbKfaKnz6v9J774YvH2FxeUiyUvmmACZtNkpSbCUlFXO7dNu6W14Qy
-         s+5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723255639; x=1723860439;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EO3mVztBgbiVsE4xJVCsdRCCfzIJ6lRteSoBlqZb/Ms=;
-        b=UXaSzXAFrzmdrxxFuGVvHFDwt+8kgZIjK8lxDVkf5xfn9w77JYE4+U5yIp8Xhli2My
-         opnPO1c8+TN/iw7na+H3pkP7Yz7HGIPUSt78zvoFGvHKyxQORvBaYXUJ8cw12kUCoV94
-         wuHLm+gOa5cVbB4f9KVKnPDf6UWuO/8pu2PYE3UjFrdLOkKLi7SFPfqP5M8aZ5/2rOzR
-         EepOmZsm5S2GiR5Q/tXsH33xMN1NSKofXXJq1Yr57i+tGBaTFKso0EKmtIHtYqdkWokd
-         0y1H5zZNMNetKDwvGb6TBqCN/rMHOkyf/aZ8S5A6LAbmq4KMFAiWH+CNZmzPIbgPkVKQ
-         YZ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWaOrG23KNABTaA1V1WfxY2SA1jhnbZlx/+GKSlNeNqwQ+9wDqwz7Y4PacsOaV1F6F4OTNuuOiAlCXhMNaZ2llBD/S1j/vknq7vjuhz3XuxrnIZtX9ccV75MDEPc/1c589mFj3l
-X-Gm-Message-State: AOJu0Ywb0z3BTNJgrkPdvwIEKDC2oaOOJFX/1jtUArODXoHnmEBAHiB3
-	nBg1r/VO+M7pedAuI+ikpNgJkzfUGgGhLzJNURBQyKea9/bUTdfP
-X-Google-Smtp-Source: AGHT+IE29VQRew1pZF4nx0oomtXBBNwOeMsSjUnyHugVMaDdB4CGqdPsdW5FeDg6fsq99QTJW5HQPg==
-X-Received: by 2002:a17:903:230a:b0:1fd:6766:6848 with SMTP id d9443c01a7336-200ae4d9da4mr35459185ad.17.1723255638720;
-        Fri, 09 Aug 2024 19:07:18 -0700 (PDT)
-Received: from localhost.localdomain ([43.129.25.208])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba01c8dsm3677385ad.231.2024.08.09.19.07.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 Aug 2024 19:07:18 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: kuba@kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	idosch@nvidia.com,
-	amcohen@nvidia.com,
-	gnault@redhat.com,
-	dongml2@chinatelecom.cn,
-	b.galvani@gmail.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next] net: vxlan: remove duplicated initialization in vxlan_xmit
-Date: Sat, 10 Aug 2024 10:06:32 +0800
-Message-Id: <20240810020632.367019-1-dongml2@chinatelecom.cn>
+	s=arc-20240116; t=1723255983; c=relaxed/simple;
+	bh=GEqzeXHzBGyJZ6Q6bERULR38QZpobGbOj5ok+GOFjg8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Oc7F4HHGOW2x/+bLJ2plbYsEXhivwQt8EClr6KOcUdik7SgOQ0Laq3SiKwBaHtDMa6TDDDkqzh85cyWzspowytsDdPB0Q0eglrOjMq+zbZu7QdQmfmhthQ4C8MdVxwrHjPJZNSJeK0xso7eoAJeSHYrD0gbSJOaZfMFYfBrLAs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Wgkng0XZwz4f3jMD;
+	Sat, 10 Aug 2024 10:12:39 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F3921A0568;
+	Sat, 10 Aug 2024 10:12:52 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4WizLZmErwLBQ--.1937S4;
+	Sat, 10 Aug 2024 10:12:52 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC -next 00/26] md/md-bitmap: introduce bitmap_operations
+Date: Sat, 10 Aug 2024 10:08:28 +0800
+Message-Id: <20240810020854.797814-1-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -88,32 +55,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHL4WizLZmErwLBQ--.1937S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF4DWrWxXr1fAw17tFy8AFb_yoW5Aw4DpF
+	WDK34rCw43GFs3Ww1YkryvyFyrtF1ktwsxKr1fCw4rGFyDAF9xJr48W3WIy34xWrZrtFsx
+	Xr15tr48Ww17ZFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
+	U==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-The variable "did_rsc" is initialized twice, which is unnecessary. Just
-remove one of them.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
- drivers/net/vxlan/vxlan_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The background is that currently bitmap is using a global spin_lock,
+cauing lock contention and huge IO performance degration for all raid
+levels.
 
-diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_core.c
-index fa3c4e08044a..0ddb2eca744d 100644
---- a/drivers/net/vxlan/vxlan_core.c
-+++ b/drivers/net/vxlan/vxlan_core.c
-@@ -2710,11 +2710,11 @@ static netdev_tx_t vxlan_xmit(struct sk_buff *skb, struct net_device *dev)
- 	struct vxlan_dev *vxlan = netdev_priv(dev);
- 	struct vxlan_rdst *rdst, *fdst = NULL;
- 	const struct ip_tunnel_info *info;
--	bool did_rsc = false;
- 	struct vxlan_fdb *f;
- 	struct ethhdr *eth;
- 	__be32 vni = 0;
- 	u32 nhid = 0;
-+	bool did_rsc;
- 
- 	info = skb_tunnel_info(skb);
- 
+However, it's impossible to implement a new lock free bitmap with
+current situation that md-bitmap exposes the internal implementation
+with lots of exported apis. Hence bitmap_operations is invented, to
+describe bitmap core implementation, and a new bitmap can be introduced
+with a new bitmap_operations, we only need to switch to the new one
+during initialization.
+
+And with this we can build bitmap as kernel module, but that's not
+our concern for now.
+
+Noted I just compile this patchset, not tested yet.
+
+Yu Kuai (26):
+  md/md-bitmap: introduce struct bitmap_operations
+  md/md-bitmap: merge md_bitmap_create() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_load() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_destroy() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_flush() into bitmap_operations
+  md/md-bitmap: don't expose md_bitmap_print_sb()
+  md/md-bitmap: merge md_bitmap_update_sb() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_status() into bitmap_operations
+  md/md-bitmap: remove md_bitmap_setallbits()
+  md/md-bitmap: merge bitmap_write_all() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_dirty_bits() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_startwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_endwrite() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_start_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_end_sync() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_close_sync() into bitmap_operations
+  md/md-bitmap: mrege md_bitmap_cond_end_sync() into bitmap_operations
+  md/md-bitmap: merge bitmap_sync_with_cluster() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_resize() into bitmap_operations
+  md/md-bitmap: merge get_bitmap_from_slot() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_copy_from_slot() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_free() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_wait_behind_writes() into
+    bitmap_operations
+  md/md-bitmap: merge md_bitmap_daemon_work() into bitmap_operations
+  md/md-bitmap: merge md_bitmap_unplug() and md_bitmap_unplug_async()
+  md/md-bitmap: merge bitmap_unplug() into bitmap_operations
+
+ drivers/md/dm-raid.c     |   2 +-
+ drivers/md/md-bitmap.c   | 216 +++++++++++++++++---------------
+ drivers/md/md-bitmap.h   | 259 ++++++++++++++++++++++++++++++++++-----
+ drivers/md/md-cluster.c  |  21 ++--
+ drivers/md/md.c          |  13 +-
+ drivers/md/md.h          |   1 +
+ drivers/md/raid1-10.c    |   7 +-
+ drivers/md/raid1.c       |  22 ++--
+ drivers/md/raid10.c      |  32 +++--
+ drivers/md/raid5-cache.c |   2 +-
+ drivers/md/raid5.c       |  25 ++--
+ 11 files changed, 401 insertions(+), 199 deletions(-)
+
 -- 
 2.39.2
 
