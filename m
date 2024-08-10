@@ -1,87 +1,107 @@
-Return-Path: <linux-kernel+bounces-281673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14EF94D9BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 03:23:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A83A94D95A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AE6F2824CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 01:23:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FABB1F22300
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 00:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E05094437A;
-	Sat, 10 Aug 2024 01:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFEB28F3;
+	Sat, 10 Aug 2024 00:11:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="dDY7XknW"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XxoyP0t1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E1A3A8F7;
-	Sat, 10 Aug 2024 01:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB439EC2;
+	Sat, 10 Aug 2024 00:11:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723253028; cv=none; b=WJCRJ9TTpPtW3oJ4CRpxE6BzjvwZqUZbAyCDSQjlrznAR1bOxPz0Ul7YfXKC0Azsi22y/StT8rVqmLn1S1pp2FGMpRjv2kUE7L+vmBP/H7bD3x1KAFlJe5WpIZ/i8oy7KfZmGq1vCgEIJuSZPRua9REm3YyFSUTuXna0nqzlsp4=
+	t=1723248677; cv=none; b=XK7AkwEp/UqTP1D1OXzt6qH5wGYUA0Nnqko8XVW4bgF1YvFcHLwKs6+PCsj+o/Mw9H1/qGt+0IZLYBBM3LZi2ABhZaApN0otiXSWtWjY7cTu1KBzTV7vVm/egi+vT27rhxi5MjMq7JIL+bJzn2rjH88xgVD+8HdfIgDQ8jq/ot8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723253028; c=relaxed/simple;
-	bh=vQg2bI0BX9ECTdn28x4JH7g4kcPq0cvqSpJS1FF2MJo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=pc0Yid0rzka3cLsAIjAcpymi6yuvkr86I/srd7Fde8igRUooOFLqmU1Uw7+935fgD+r84KXQ+rb/8huWAI1yAs8B4tV4RDUkjs7vJ5d9CEtxDhYK5VMPq8xK4zMagOwYcmsaHQGF561h3L3Bh5y4o34gDW0oshb4043iLYcOXkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=dDY7XknW; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1723237750;
-	bh=vQg2bI0BX9ECTdn28x4JH7g4kcPq0cvqSpJS1FF2MJo=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=dDY7XknWmpb3ufXCetghO7ZOm6G+oR2qD+NtSovvK7OAlUJwHXZ+GiCKcR5vKYHuy
-	 7cBkVljXXd+zf5DS+LsQBBZ9gPx+EwKwR3MuMcBQmqHzgaMoGgWhCVZd39/eqgIUJz
-	 4MI5erDvu77ja20k9BLVR5ZF4p5krRYrpJUUvFAs=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 257154040D; Fri,  9 Aug 2024 14:09:10 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 236B04035C;
-	Fri,  9 Aug 2024 14:09:10 -0700 (PDT)
-Date: Fri, 9 Aug 2024 14:09:10 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: David Hildenbrand <david@redhat.com>
-cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org, 
-    willy@infradead.org, ryan.roberts@arm.com, anshuman.khandual@arm.com, 
-    catalin.marinas@arm.com, vbabka@suse.cz, mhocko@suse.com, 
-    apopple@nvidia.com, osalvador@suse.de, baolin.wang@linux.alibaba.com, 
-    dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org, 
-    ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com, 
-    kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org, 
-    yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org, 
-    mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org, 
-    linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-In-Reply-To: <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
-Message-ID: <43db36cb-339c-4aa8-8940-1a197bd1001d@gentwo.org>
-References: <20240809103129.365029-1-dev.jain@arm.com> <20240809103129.365029-2-dev.jain@arm.com> <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
+	s=arc-20240116; t=1723248677; c=relaxed/simple;
+	bh=gYS5jG6xlZXpyS9QHhFNcXJ6ASrsMVVrI/e/j0Qdmdo=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NxdVF2msmSkTK1XFOtFdHKcAHglxEivWz+KevnWDisTT9NpamE4vfV6k8dBVRTkvzvgxQznMIRixlLB2OmmxpcnfKLybIBPmLv7N003/B3tXXn+ZLq+Glg2gHalp80O8iTVzhV+xJejD/LLJ6UWM5jwdz5R+eB1Umj36s0XYdmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XxoyP0t1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF830C32782;
+	Sat, 10 Aug 2024 00:11:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1723248676;
+	bh=gYS5jG6xlZXpyS9QHhFNcXJ6ASrsMVVrI/e/j0Qdmdo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XxoyP0t1FdEWz+90LiVzsWSUn38ZfzifjeCgencTdiv+8miMXnJyreCrVt7DsIHjd
+	 0+0JPSr3sxikYEZVMHnH+gutK77KfSWOUZnrL3Weewi2bO+QxJqVphKsAehfholDZF
+	 1a1pYqOVJdpAoLVJ2dvao0zqZqz99345ByME7AqU=
+Date: Fri, 9 Aug 2024 17:11:15 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Jann Horn <jannh@google.com>, "Paul E. McKenney" <paulmck@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Josh Triplett
+ <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>, Christoph
+ Lameter <cl@linux.com>, David Rientjes <rientjes@google.com>, Stephen
+ Rothwell <sfr@canb.auug.org.au>, Steven Rostedt <rostedt@goodmis.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Lai Jiangshan
+ <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, Julia Lawall
+ <Julia.Lawall@inria.fr>, Jakub Kicinski <kuba@kernel.org>,
+ "Jason A. Donenfeld" <Jason@zx2c4.com>, "Uladzislau Rezki (Sony)"
+ <urezki@gmail.com>, Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon
+ Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, rcu@vger.kernel.org, Alexander Potapenko
+ <glider@google.com>, Marco Elver <elver@google.com>, Dmitry Vyukov
+ <dvyukov@google.com>, kasan-dev@googlegroups.com, Mateusz Guzik
+ <mjguzik@gmail.com>
+Subject: Re: [-next conflict imminent] Re: [PATCH v2 0/7] mm, slub: handle
+ pending kfree_rcu() in kmem_cache_destroy()
+Message-Id: <20240809171115.9e5faf65d43143efb57a7c96@linux-foundation.org>
+In-Reply-To: <e7f58926-80a7-4dcc-9a6a-21c42d664d4a@suse.cz>
+References: <20240807-b4-slab-kfree_rcu-destroy-v2-0-ea79102f428c@suse.cz>
+	<54d62d5a-16e3-4ea9-83c6-8801ee99855e@suse.cz>
+	<CAG48ez3Y7NbEGV0JzGvWjQtBwjrO3BNTEZZLNc3_T09zvp8T-g@mail.gmail.com>
+	<e7f58926-80a7-4dcc-9a6a-21c42d664d4a@suse.cz>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, 9 Aug 2024, David Hildenbrand wrote:
+On Fri, 9 Aug 2024 17:14:40 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 
->
-> This really seems to be the latest point where we can "easily" back off and 
-> unlock the source folio -- in this function :)
->
-> I wonder if we should be smarter in the migrate_pages_batch() loop when we 
-> start the actual migrations via migrate_folio_move(): if we detect that a 
-> folio has unexpected references *and* it has waiters (PG_waiters), back off 
-> then and retry the folio later. If it only has unexpected references, just 
-> keep retrying: no waiters -> nobody is waiting for the lock to make progress.
+> On 8/9/24 17:12, Jann Horn wrote:
+> > On Fri, Aug 9, 2024 at 5:02 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+> >> On 8/7/24 12:31, Vlastimil Babka wrote:
+> >> > Also in git:
+> >> > https://git.kernel.org/vbabka/l/slab-kfree_rcu-destroy-v2r2
+> >>
+> >> I've added this to slab/for-next, there will be some conflicts and here's my
+> >> resulting git show or the merge commit I tried over today's next.
+> >>
+> >> It might look a bit different with tomorrow's next as mm will have v7 of the
+> >> conflicting series from Jann:
+> >>
+> >> https://lore.kernel.org/all/1ca6275f-a2fc-4bad-81dc-6257d4f8d750@suse.cz/
+> >>
+> >> (also I did resolve it in the way I suggested to move Jann's block before
+> >> taking slab_mutex() but unless that happens in mm-unstable it would probably be more
+> >> correct to keep where he did)
+> > 
+> > Regarding my conflicting patch: Do you want me to send a v8 of that
+> > one now to move things around in my patch as you suggested? Or should
+> > we do that in the slab tree after the conflict has been resolved in
+> > Linus' tree, or something like that?
+> > I'm not sure which way of doing this would minimize work for maintainers...
+> 
+> I guess it would be easiest to send a -fix to Andrew as it's rather minor
+> change. Thanks!
 
-Well just backoff ASAP if there are waiters detected anytime. A waiter 
-would have increased the refcount. And a waiter will likely modify the page status soon. So 
-push it to the end of the pages to be migrated to give it as much time 
-as we can and check again later.
+That's quite a large conflict.  How about we carry Jann's patchset in
+the slab tree?
 
