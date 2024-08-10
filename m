@@ -1,278 +1,197 @@
-Return-Path: <linux-kernel+bounces-281703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA73794DA10
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:17:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C282594DA22
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 04:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF47B1C230A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 213AA1F224E9
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 02:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7543614F124;
-	Sat, 10 Aug 2024 02:13:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F91311A7;
+	Sat, 10 Aug 2024 02:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E6Asb0GG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F4A1459FC;
-	Sat, 10 Aug 2024 02:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD7BA48;
+	Sat, 10 Aug 2024 02:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723255986; cv=none; b=IKHoliUvkllVx8dctAlx4/FatPz668Ug7vxBGPGaKEOJE9V59mb66BEhBWl6ZpSYkiRISQezAdFt+/iTNpMra3X4W5R5Nj7f5JxCKU/1DTfEtBSl9e0rL/NQNEJFeXAwEo7DPj1KKp5sQjNaa1y0LDt42ogULbozs7loRu5MzYA=
+	t=1723256484; cv=none; b=YNo5dS4bjBZaNkxjsuXWdSaQD4CdJOBKiyZEHcpLeN/oOawXLlwxk6XJ+BfbE/Yzft+9GAbe38ZjhLIHmNk6JJ4284Vph/LLg2Pt0/9cCbngfUuPMvgWg+gutVlNTdrUDZYJySeMc71Xcx3ErRXn/CMhYPK5OkAEUHIUEgcIlrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723255986; c=relaxed/simple;
-	bh=C22l+sN+EahvZitAw6Nos0NBz1atzmQNuIhYxDl+K3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PYRcKDU4OhPYZjGa3EzZZYxLgxxCmev5YH25xImhZ9p4+L4RvlWjAQzEUeBEYUYHwPeDQcJMfBE1HxmPR/Rfr/8gBl3ClXnhh99nAhS67CwrwwjBL/2L/If16GFSRDiEZKPqH9CoI9/ai/LHMjEPz6bEci4leY2vK28HJAqgwT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wgknw1cM8z4f3jk0;
-	Sat, 10 Aug 2024 10:12:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5A32B1A15A6;
-	Sat, 10 Aug 2024 10:13:01 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4WizLZmErwLBQ--.1937S30;
-	Sat, 10 Aug 2024 10:13:01 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC -next 26/26] md/md-bitmap: merge bitmap_unplug() into bitmap_operations
-Date: Sat, 10 Aug 2024 10:08:54 +0800
-Message-Id: <20240810020854.797814-27-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240810020854.797814-1-yukuai1@huaweicloud.com>
-References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1723256484; c=relaxed/simple;
+	bh=c8XOrfbLn4szTf8GfdDJDvKMldI5+D24v2UFaIrfRls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mTzqdg5icx4LH52kJv8q6UWowWmW292/9SUF/0bRQ5gfvCs/pdaKfs1RUcmCnqPfa25dCQ+Xl0t5KAh3tyEaOfGV0xTJYUTuwZhytui/M56F3ltxUlsWvua5K9FbhdfSuipvwhjqlDQ8YQouMSf+JvEorF8G5wqAdSKDlDJsw6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E6Asb0GG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47A0Xjqu032443;
+	Sat, 10 Aug 2024 02:21:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	98RgCUpNJYLjdc9KHu/DCjP9Nu3Ihp6wUSaZA+69PCo=; b=E6Asb0GG+7f5sL14
+	8ls8bpDZ5zB4CTFcrr9joR2GsomJ3FjHBu5l878PQGHPkPPe5DDcMPXOOJKqXirw
+	kG8RonmovXXZRL2RIbDO202SfbJ+VmPonDazXc8xudOpGxlsSdI/OMDIowkcn05g
+	Og740XDHIonkp6tyc0V/J1TVB8Zm+4dM0XoRxSxwyrAKx8ItAKUOYYfaqc5hg3If
+	KBUGTPHFdZd25LfMvKWAkV2OQbEbTg5EDxqrjJrszVrCICKjUhrjdO4WUNUb6odL
+	P44ZGkY8uQrwEX+UKWmYUjyeXFS35Hm07Thg00YGG2jwb+eNYqLR0OrDdPY94Q80
+	5mCz7g==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40wwjn03uk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 10 Aug 2024 02:21:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 47A2LBgC012871
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 10 Aug 2024 02:21:11 GMT
+Received: from [10.111.178.37] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 9 Aug 2024
+ 19:21:11 -0700
+Message-ID: <8d31adac-fd43-4cf9-8fc8-655b359a573c@quicinc.com>
+Date: Fri, 9 Aug 2024 19:21:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHL4WizLZmErwLBQ--.1937S30
-X-Coremail-Antispam: 1UD129KBjvJXoW3Gr18tr1rur1fGryxWFyUZFb_yoW3Jw4Up3
-	yUta45CF45JFW3Xw1DArZruF1Fq3WktF9rtryfCwn5uF17Xr9xGF4rGFyUtw1DAr13JFs8
-	Aw45trykGF1UXF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWUAV
-	WUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v2
-	6r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2
-	Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW5JVW7JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_
-	Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr
-	1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvYLPU
-	UUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] wifi: ath11k: Avoid -Wflex-array-member-not-at-end
+ warnings
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Kalle Valo
+	<kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath11k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-hardening@vger.kernel.org>
+References: <ZrZB3Rjswe0ZXtug@cute>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <ZrZB3Rjswe0ZXtug@cute>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xvaVOjwy3M799k-1WttWrW3yKTBXUBF7
+X-Proofpoint-ORIG-GUID: xvaVOjwy3M799k-1WttWrW3yKTBXUBF7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-10_01,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 adultscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0
+ priorityscore=1501 phishscore=0 impostorscore=0 mlxscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408100016
 
-From: Yu Kuai <yukuai3@huawei.com>
+On 8/9/2024 9:20 AM, Gustavo A. R. Silva wrote:
+> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+> getting ready to enable it, globally.
+> 
+> Move the conflicting declaration to the end of the structure. Notice
+> that `struct ieee80211_chanctx_conf` is a flexible structure --a
+> structure that contains a flexible-array member.
+> 
+> Also, remove a couple of unused structures.
+> 
+> Fix the following warnings:
+> drivers/net/wireless/ath/ath11k/core.h:409:39: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/ath/ath11k/dp.h:1309:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> drivers/net/wireless/ath/ath11k/dp.h:1368:24: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>  drivers/net/wireless/ath/ath11k/core.h |  4 +++-
+>  drivers/net/wireless/ath/ath11k/dp.h   | 23 -----------------------
+>  2 files changed, 3 insertions(+), 24 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
+> index df24f0e409af..e283415dccf3 100644
+> --- a/drivers/net/wireless/ath/ath11k/core.h
+> +++ b/drivers/net/wireless/ath/ath11k/core.h
+> @@ -406,11 +406,13 @@ struct ath11k_vif {
+>  	bool wpaie_present;
+>  	bool bcca_zero_sent;
+>  	bool do_not_send_tmpl;
+> -	struct ieee80211_chanctx_conf chanctx;
+>  	struct ath11k_arp_ns_offload arp_ns_offload;
+>  	struct ath11k_rekey_data rekey_data;
+>  
+>  	struct ath11k_reg_tpc_power_info reg_tpc_info;
+> +
+> +	/* Must be last - ends in a flexible-array member. */
+> +	struct ieee80211_chanctx_conf chanctx;
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/md-bitmap.c | 16 ++++++++--------
- drivers/md/md-bitmap.h | 11 +++++++++--
- drivers/md/md.c        |  2 +-
- drivers/md/raid1-10.c  |  4 ++--
- drivers/md/raid1.c     |  2 +-
- drivers/md/raid10.c    |  4 ++--
- drivers/md/raid5.c     |  2 +-
- 7 files changed, 24 insertions(+), 17 deletions(-)
+there is something illogical about this since the vif is allocated using
+sizeof() and hence there will never be memory allocated for the flexible
+array, and it is assigned using either struct assignment or memcpy using the
+struct size which (fortunately) would not transfer the flexible array contents:
+		arvif->chanctx = *ctx;
 
-diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
-index b08476746350..449556124d0e 100644
---- a/drivers/md/md-bitmap.c
-+++ b/drivers/md/md-bitmap.c
-@@ -1030,7 +1030,7 @@ static int md_bitmap_file_test_bit(struct bitmap *bitmap, sector_t block)
- /* this gets called when the md device is ready to unplug its underlying
-  * (slave) device queues -- before we let any writes go down, we need to
-  * sync the dirty pages of the bitmap file to disk */
--static void bitmap_unplug(struct bitmap *bitmap)
-+static void __bitmap_unplug(struct bitmap *bitmap)
- {
- 	unsigned long i;
- 	int dirty, need_write;
-@@ -1074,7 +1074,7 @@ static void md_bitmap_unplug_fn(struct work_struct *work)
- 	struct bitmap_unplug_work *unplug_work =
- 		container_of(work, struct bitmap_unplug_work, work);
- 
--	bitmap_unplug(unplug_work->bitmap);
-+	__bitmap_unplug(unplug_work->bitmap);
- 	complete(unplug_work->done);
- }
- 
-@@ -1091,14 +1091,13 @@ static void bitmap_unplug_async(struct bitmap *bitmap)
- 	wait_for_completion(&done);
- }
- 
--void md_bitmap_unplug(struct bitmap *bitmap, bool sync)
-+static void bitmap_unplug(struct bitmap *bitmap, bool sync)
- {
- 	if (sync)
--		bitmap_unplug(bitmap);
-+		__bitmap_unplug(bitmap);
- 	else
- 		bitmap_unplug_async(bitmap);
- }
--EXPORT_SYMBOL(md_bitmap_unplug);
- 
- static void md_bitmap_set_memory_bits(struct bitmap *bitmap, sector_t offset, int needed);
- 
-@@ -2067,9 +2066,9 @@ static int bitmap_copy_from_slot(struct mddev *mddev, int slot, sector_t *low,
- 		for (i = 0; i < bitmap->storage.file_pages; i++)
- 			if (test_page_attr(bitmap, i, BITMAP_PAGE_PENDING))
- 				set_page_attr(bitmap, i, BITMAP_PAGE_NEEDWRITE);
--		bitmap_unplug(bitmap);
-+		__bitmap_unplug(bitmap);
- 	}
--	bitmap_unplug(mddev->bitmap);
-+	__bitmap_unplug(mddev->bitmap);
- 	*low = lo;
- 	*high = hi;
- 	__bitmap_free(bitmap);
-@@ -2303,7 +2302,7 @@ static int bitmap_resize(struct bitmap *bitmap, sector_t blocks,
- 	spin_unlock_irq(&bitmap->counts.lock);
- 
- 	if (!init) {
--		bitmap_unplug(bitmap);
-+		__bitmap_unplug(bitmap);
- 		bitmap->mddev->pers->quiesce(bitmap->mddev, 0);
- 	}
- 	ret = 0;
-@@ -2706,6 +2705,7 @@ static struct bitmap_operations bitmap_ops = {
- 	.close_sync		= bitmap_close_sync,
- 	.cond_end_sync		= bitmap_cond_end_sync,
- 	.wait_behind_writes	= bitmap_wait_behind_writes,
-+	.unplug			= bitmap_unplug,
- 
- 	.update_sb		= bitmap_update_sb,
- 	.resize			= bitmap_resize,
-diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
-index 054e85c4a704..9e9e328d675c 100644
---- a/drivers/md/md-bitmap.h
-+++ b/drivers/md/md-bitmap.h
-@@ -255,6 +255,7 @@ struct bitmap_operations {
- 	void (*cond_end_sync)(struct bitmap *bitmap, sector_t sector, bool force);
- 	void (*wait_behind_writes)(struct bitmap *bitmap);
- 	void (*daemon_work)(struct bitmap *bitmap);
-+	void (*unplug)(struct bitmap *bitmap, bool sync);
- 
- 	void (*update_sb)(struct bitmap *bitmap);
- 	int (*resize)(struct bitmap *bitmap, sector_t blocks, int chunksize,
-@@ -413,6 +414,14 @@ static inline void md_bitmap_daemon_work(struct mddev *mddev)
- 	mddev->bitmap_ops->daemon_work(mddev->bitmap);
- }
- 
-+static inline void md_bitmap_unplug(struct mddev *mddev, bool sync)
-+{
-+	if (!mddev->bitmap && !mddev->bitmap_ops->unplug)
-+		return;
-+
-+	mddev->bitmap_ops->unplug(mddev->bitmap, sync);
-+}
-+
- static inline int md_bitmap_resize(struct mddev *mddev, sector_t blocks,
- 				   int chunksize, int init)
- {
-@@ -460,8 +469,6 @@ static inline void md_bitmap_free(struct mddev *mddev, struct bitmap *bitmap)
- 	return mddev->bitmap_ops->free(bitmap);
- }
- 
--void md_bitmap_unplug(struct bitmap *bitmap, bool sync);
--
- static inline bool md_bitmap_enabled(struct bitmap *bitmap)
- {
- 	return bitmap && bitmap->storage.filemap &&
-diff --git a/drivers/md/md.c b/drivers/md/md.c
-index 2e6270c47317..8610b6fec263 100644
---- a/drivers/md/md.c
-+++ b/drivers/md/md.c
-@@ -4691,7 +4691,7 @@ bitmap_store(struct mddev *mddev, const char *buf, size_t len)
- 		md_bitmap_dirty_bits(mddev, chunk, end_chunk);
- 		buf = skip_spaces(end);
- 	}
--	md_bitmap_unplug(mddev->bitmap, true); /* flush the bits to disk */
-+	md_bitmap_unplug(mddev, true); /* flush the bits to disk */
- out:
- 	mddev_unlock(mddev);
- 	return len;
-diff --git a/drivers/md/raid1-10.c b/drivers/md/raid1-10.c
-index e8410d0cc96f..45b30f08f3a5 100644
---- a/drivers/md/raid1-10.c
-+++ b/drivers/md/raid1-10.c
-@@ -166,9 +166,9 @@ static inline bool raid1_add_bio_to_plug(struct mddev *mddev, struct bio *bio,
-  * while current io submission must wait for bitmap io to be done. In order to
-  * avoid such deadlock, submit bitmap io asynchronously.
-  */
--static inline void raid1_prepare_flush_writes(struct bitmap *bitmap)
-+static inline void raid1_prepare_flush_writes(struct mddev *mddev)
- {
--	md_bitmap_unplug(bitmap, current->bio_list == NULL);
-+	md_bitmap_unplug(mddev, current->bio_list == NULL);
- }
- 
- /*
-diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-index fef69fce586c..4e8dd032a453 100644
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -893,7 +893,7 @@ static void wake_up_barrier(struct r1conf *conf)
- static void flush_bio_list(struct r1conf *conf, struct bio *bio)
- {
- 	/* flush any pending bitmap writes to disk before proceeding w/ I/O */
--	raid1_prepare_flush_writes(conf->mddev->bitmap);
-+	raid1_prepare_flush_writes(conf->mddev);
- 	wake_up_barrier(conf);
- 
- 	while (bio) { /* submit pending writes */
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index a8a14cda8446..13f61e07d513 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -883,7 +883,7 @@ static void flush_pending_writes(struct r10conf *conf)
- 		__set_current_state(TASK_RUNNING);
- 
- 		blk_start_plug(&plug);
--		raid1_prepare_flush_writes(conf->mddev->bitmap);
-+		raid1_prepare_flush_writes(conf->mddev);
- 		wake_up(&conf->wait_barrier);
- 
- 		while (bio) { /* submit pending writes */
-@@ -1099,7 +1099,7 @@ static void raid10_unplug(struct blk_plug_cb *cb, bool from_schedule)
- 
- 	/* we aren't scheduling, so we can do the write-out directly. */
- 	bio = bio_list_get(&plug->pending);
--	raid1_prepare_flush_writes(mddev->bitmap);
-+	raid1_prepare_flush_writes(mddev);
- 	wake_up_barrier(conf);
- 
- 	while (bio) { /* submit pending writes */
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index 99332649bac3..0bb3608dd3c8 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -6766,7 +6766,7 @@ static void raid5d(struct md_thread *thread)
- 			/* Now is a good time to flush some bitmap updates */
- 			conf->seq_flush++;
- 			spin_unlock_irq(&conf->device_lock);
--			md_bitmap_unplug(mddev->bitmap, true);
-+			md_bitmap_unplug(mddev, true);
- 			spin_lock_irq(&conf->device_lock);
- 			conf->seq_write = conf->seq_flush;
- 			activate_bit_delay(conf, conf->temp_inactive_list);
--- 
-2.39.2
+		memcpy(&arvif->chanctx, ctx, sizeof(*ctx));
+
+since ath11k doesn't actually use the drv_priv[] I guess this change is OK, it
+is just strange to me.
+
+also makes me wonder why ath11k keeps a copy of the chanctx instead of just
+getting it from the underlying ieee80211_link_data. but that is outside the
+scope of this discussion.
+
+>  };
+>  
+>  struct ath11k_vif_iter {
+> diff --git a/drivers/net/wireless/ath/ath11k/dp.h b/drivers/net/wireless/ath/ath11k/dp.h
+> index 2f6dd69d3be2..65d2bc0687c8 100644
+> --- a/drivers/net/wireless/ath/ath11k/dp.h
+> +++ b/drivers/net/wireless/ath/ath11k/dp.h
+> @@ -1305,18 +1305,6 @@ struct htt_ppdu_stats_user_rate {
+>  #define HTT_TX_INFO_PEERID(_flags) \
+>  			FIELD_GET(HTT_PPDU_STATS_TX_INFO_FLAGS_PEERID_M, _flags)
+>  
+> -struct htt_tx_ppdu_stats_info {
+> -	struct htt_tlv tlv_hdr;
+> -	u32 tx_success_bytes;
+> -	u32 tx_retry_bytes;
+> -	u32 tx_failed_bytes;
+> -	u32 flags; /* %HTT_PPDU_STATS_TX_INFO_FLAGS_ */
+> -	u16 tx_success_msdus;
+> -	u16 tx_retry_msdus;
+> -	u16 tx_failed_msdus;
+> -	u16 tx_duration; /* united in us */
+> -} __packed;
+> -
+>  enum  htt_ppdu_stats_usr_compln_status {
+>  	HTT_PPDU_STATS_USER_STATUS_OK,
+>  	HTT_PPDU_STATS_USER_STATUS_FILTERED,
+> @@ -1364,17 +1352,6 @@ struct htt_ppdu_stats_usr_cmpltn_ack_ba_status {
+>  	u32 success_bytes;
+>  } __packed;
+>  
+> -struct htt_ppdu_stats_usr_cmn_array {
+> -	struct htt_tlv tlv_hdr;
+> -	u32 num_ppdu_stats;
+> -	/* tx_ppdu_stats_info is filled by multiple struct htt_tx_ppdu_stats_info
+> -	 * elements.
+> -	 * tx_ppdu_stats_info is variable length, with length =
+> -	 *     number_of_ppdu_stats * sizeof (struct htt_tx_ppdu_stats_info)
+> -	 */
+> -	struct htt_tx_ppdu_stats_info tx_ppdu_info[];
+> -} __packed;
+> -
+>  struct htt_ppdu_user_stats {
+>  	u16 peer_id;
+>  	u32 tlv_flags;
+
+the second part if definitely ok.
+
+Acked-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
 
