@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-281890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-281891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5212294DCA0
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:52:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479494DCA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 13:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 074DB1F21CCF
-	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:52:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16AC31F2121A
+	for <lists+linux-kernel@lfdr.de>; Sat, 10 Aug 2024 11:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4016D158546;
-	Sat, 10 Aug 2024 11:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B322F158544;
+	Sat, 10 Aug 2024 11:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ex48/d/c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/R0Z0xy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 794291E86E;
-	Sat, 10 Aug 2024 11:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76FC146D75;
+	Sat, 10 Aug 2024 11:59:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723290735; cv=none; b=RYaPMI1c3ek9rKSG+joYMx9OGHPfCfU9t7/L5dwc7LZzNwTAhtIBODzmf9VgOkKX7O6J8xLKlo53X+ft52B3hN141Li9vqEg16tAfLFdBrpYaiRcfUxQ9i9y7cD4d/9iZ5mLr4cc5f6QMBe1FRMyA03o6ZfzbzH4KNwkh/aib3s=
+	t=1723291167; cv=none; b=NLGUFdutryODzD0QVryZBJe0bsffyx5ZAILt4uOydi9lOT/7Z6nTgMiEzSKBrfY3ja2o4XVfSTBC1O2gJpcztqwDapEVWJoeUmcU0/KdwlchQYM/l9uCIjmpe7hS5jeVagjrxrbBLMMH9EXsHmtMvCtgj7lmdObCHLF2zmUa1hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723290735; c=relaxed/simple;
-	bh=DhrLnFvKHwOjN4NJb0CGA55P0fs2j6maIAprfsF40B4=;
+	s=arc-20240116; t=1723291167; c=relaxed/simple;
+	bh=SnFM9Mkwg0UkMMuBuHlVIyneuob9XMDMBy8QxCiJwV0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RSHJc0Ed1Y0clGr5fSIg84eMjBgD+5mrWjB+ZU3RHeJG6t+iWGJ9qG1T1Hxg/RXRozywghPiVTsAmmp565C76TK6zQVHAje8pBipH5GG8EvE2wu8NpLW9HSb01HdvFiCiAupu8FafzT+N+F6sc5XPTBZDytiT+Kyoj+BaxAaEwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ex48/d/c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1BD0C32781;
-	Sat, 10 Aug 2024 11:52:09 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=n/9xk7ChW8BRhPRZkzZpNj3f1md67+Eg9jwW9HY/z0d2bLmgR1aA5ZOjhTyWaC/iWoVkMb0lY5Q4qDu5YXoSR6FNyeKo6nsAoOLbYG4R/3IVYiqRfTmg6duyTy6EPHMIKroWqQuX7ON83kLsRDSq1eNdYQe5/6gIVhrOvxN0zbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/R0Z0xy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D71FEC32781;
+	Sat, 10 Aug 2024 11:59:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723290735;
-	bh=DhrLnFvKHwOjN4NJb0CGA55P0fs2j6maIAprfsF40B4=;
+	s=k20201202; t=1723291165;
+	bh=SnFM9Mkwg0UkMMuBuHlVIyneuob9XMDMBy8QxCiJwV0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ex48/d/cdSa0MfVtpzizxJihtjD3MHd4z+S52r0VIBWbSbyBi6VV0HqpWvw9AVcgU
-	 bPHj2iK8xX/7aK7A+8wvcCNS63ipUA/QDgkEQwlWuY2sclJwmCUJprz3Lsl4Q1XCjy
-	 a6dcyvHKIDSSTIcNWpz1HxQtLH4sYfHvzNYEpw3XgE4BRG+V6cOddDbkZjzWwHYxYp
-	 OC+LWsdk+1ARSlitVZc9upTbBkqRyGeK3KhItklRlUdWFD4GJs0yqgQvQSaRxECEbF
-	 6FUOF4gjrLY78itnJczZ65aBwRXmja9tnOqElMGjNwiRj2VFGXK7zIg5kPVThvoUfV
-	 9h6LALfG4iKwg==
-Message-ID: <221d19e0-41de-4522-95fa-1adf9024b0e0@kernel.org>
-Date: Sat, 10 Aug 2024 13:52:07 +0200
+	b=R/R0Z0xyEWktq3l9iLDZ9EYdtZL2BHId4nqRsDryo6Idp30Kh7/F3r/fV+J9hOfuT
+	 NWN3eKzMyCnWd/hZcieT2yeulP9JUxbXhmfsWggBQELNmvJ+l45CNWacYyHMRp1v/g
+	 HXaZn+BFJOifCG95nfwm0exDIGYAXHCv5xZ1c1lSj5CP2sVqoMF0HQbvB+tdOH2Bjk
+	 cbr5Q7H2jiXO6V95MlNZjBxjJQXOJDyeZbELqEPdn8PBMpqI5r0HUphzhCsGcGCtTT
+	 aNmMx5Uz/SE1rZELrNxXCmF5PtEOhThrq3inNQek1+0knv8mZHDpEEvTTSKinSAx1w
+	 4BOTTTo7yn77g==
+Message-ID: <f7d83c56-d59b-4c9b-87a1-31556b3ef5de@kernel.org>
+Date: Sat, 10 Aug 2024 13:59:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v3 1/2] dt-bindings: net: dsa: microchip: Add
- KSZ8895/KSZ8864 switch support
-To: Tristram.Ha@microchip.com, Woojung Huh <woojung.huh@microchip.com>,
- UNGLinuxDriver@microchip.com, devicetree@vger.kernel.org,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240809212142.3575-1-Tristram.Ha@microchip.com>
- <20240809212142.3575-2-Tristram.Ha@microchip.com>
+Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert ad7879 to
+ yaml format
+To: Frank Li <Frank.Li@nxp.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev
+References: <20240809200534.3503223-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,27 +105,97 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240809212142.3575-2-Tristram.Ha@microchip.com>
+In-Reply-To: <20240809200534.3503223-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/08/2024 23:21, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
-> 
-> KSZ8895/KSZ8864 is a switch family developed before KSZ8795 and after
-> KSZ8863, so it shares some registers and functions in those switches.
-> KSZ8895 has 5 ports and so is more similar to KSZ8795.
-> 
-> KSZ8864 is a 4-port version of KSZ8895.  The first port is removed
-> while port 5 remains as a host port.
-> 
-> Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
-> ---
->  Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+On 09/08/2024 22:05, Frank Li wrote:
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    description: |
+> +      for SPI slave, use "adi,ad7879"
+> +      for I2C slave, use "adi,ad7879-1"
+> +    enum:
+> +      - adi,ad7879
+> +      - adi,ad7879-1
 
-Considering your earlier and later submissions were not tested, was this
-one? Did you test it before sending?
+Driver (and binding) could be fixed to use only one compatible, but
+that's another task.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  touchscreen-max-pressure:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: maximum reported pressure
+> +
+> +  adi,resistance-plate-x:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: total resistance of X-plate (for pressure calculation)
+> +
+> +  touchscreen-swapped-x-y:
+> +    $ref: /schemas/types.yaml#/definitions/flag
+> +    description: X and Y axis are swapped (boolean)
+> +
+> +  adi,first-conversion-delay:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    minimum: 0
+> +    maximum: 15
+> +    description: |
+> +      0-12: In 128us steps (starting with 128us)
+> +      13  : 2.560ms
+> +      14  : 3.584ms
+> +      15  : 4.096ms
+> +      This property has to be a '/bits/ 8' value
+> +
+> +  adi,acquisition-time:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
+> +    description: |
+> +      0: 2us
+> +      1: 4us
+> +      2: 8us
+> +      3: 16us
+> +      This property has to be a '/bits/ 8' value
+> +
+> +  adi,median-filter-size:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
+> +    description: |
+> +      0: disabled
+> +      1: 4 measurements
+> +      2: 8 measurements
+> +      3: 16 measurements
+> +      This property has to be a '/bits/ 8' value
+> +
+> +  adi,averaging:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    enum: [0, 1, 2, 3]
+> +    description: |
+> +      0: 2 middle values (1 if median disabled)
+> +      1: 4 middle values
+> +      2: 8 middle values
+> +      3: 16 values
+> +      This property has to be a '/bits/ 8' value
+> +
+> +  adi,conversion-interval:
+> +    $ref: /schemas/types.yaml#/definitions/uint8
+> +    description: |
+> +      0    : convert one time only
+> +      1-255: 515us + val * 35us (up to 9.440ms)
+> +      This property has to be a '/bits/ 8' value
+
+All above should have the "default: 0", based on driver behavior.
+
+
 
 Best regards,
 Krzysztof
