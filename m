@@ -1,50 +1,48 @@
-Return-Path: <linux-kernel+bounces-282260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9C694E167
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:24:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CB4F94E16A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01BF1F2106B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:24:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0995A281968
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8449813BC39;
-	Sun, 11 Aug 2024 13:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="obeBcN3X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996731494BD;
+	Sun, 11 Aug 2024 13:24:23 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32DE3F9C5;
-	Sun, 11 Aug 2024 13:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627BA148838;
+	Sun, 11 Aug 2024 13:24:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723382644; cv=none; b=gYTfzj0nadItgdAaudBtj5nq65tgHhJNXPXLTo5/D8gyvtgbOCzReRn4P7jVa4F7ywI+pnWKwBHHau1NhtXBb1vYqfI/RW6JANlyM7b7/Mnl7WykFWFo1SsrYgwWK3C+9MKIaBG/YXKPMorVUOTrvFH5fpUvOAE63UP0CpIL7Hk=
+	t=1723382663; cv=none; b=mrGzcZ+/wMMgg43q1HdjlmBGsTAFQC/oDWo/NEKEt72E9Lew4p3CeOcaf57y1WVOQ7DSzX7GTEqiM2+sb2DFLWUMVuSxqPT8+NV7HQSy0Ukhgx7cM8FvOhx7XDHdDpYfTrhi5k67uNLPhk8TA5ABzi2eRhJZ3VZ3pPWY2W7luCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723382644; c=relaxed/simple;
-	bh=gG2idkdXx+dqi+4VS16L6uh+EdJH4OL7szIt8LtidB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H236/MDghFa8d2rc7xSu6+4k8zr90TMptV1fO6810rZr0DAK5ZAStAblhM5aQFYl3EIlP1VetkwWzI+VKTHQbFf1wUE+fkysQ9S70TJjtXZ5m0OnUma/8W1aBm2tDtUm5e3jJrt5Z0QK3C8TXkiJMxR5WXe6koDef0G3mSX1MMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=obeBcN3X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4A73C32786;
-	Sun, 11 Aug 2024 13:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723382644;
-	bh=gG2idkdXx+dqi+4VS16L6uh+EdJH4OL7szIt8LtidB0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=obeBcN3XR0eyBAYeu0n3e25pnEOqIfC+g29cbqbFU70hGrF7ZZXfM/9hRShHlS25+
-	 KIK7+3Iw7ZkHpWVPs0She67C6IpOHtK2rzPHgDtJGIyMfpjEb54nMaN6tLs/+nKgbf
-	 2BQr+yY70vOg9fDJ6dr4127V3B1YkTsZ7ZeCJbv0=
-Date: Sun, 11 Aug 2024 15:24:01 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY / Serial driver fixes for 6.11-rc3
-Message-ID: <Zri7cUG-SZsEn2vY@kroah.com>
+	s=arc-20240116; t=1723382663; c=relaxed/simple;
+	bh=Po5/mFOf0/VTScGzn6+mtQuzX/UGKG4Vw71o8feai/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rywU/UX41czih6GDcckmzd8V/ZFUrY8ApPPhpGarGLxLhvRrtUhWvtT4No2Hc8JrY9v0WjDADAkprOkU2aF//Z6ePQ738n4dX+iTtqlx6KvfYq6TcoYga5yLrKNwXTHCTyKvI8M0jnEveUpnNpp2VniP8n65bvsc52yMJbRDZuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sd8YN-0004rw-GL; Sun, 11 Aug 2024 15:24:11 +0200
+Date: Sun, 11 Aug 2024 15:24:11 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com,
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
+Message-ID: <20240811132411.GB13736@breakpoint.cc>
+References: <0000000000003a5292061f5e4e19@google.com>
+ <20240811022903.49188-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,46 +51,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240811022903.49188-1-kuniyu@amazon.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> From: syzbot <syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com>
+> Date: Sat, 10 Aug 2024 18:29:20 -0700
+> > Hello,
+> > 
+> > syzbot found the following issue on:
+> > 
+> > HEAD commit:    33e02dc69afb Merge tag 'sound-6.10-rc1' of git://git.kerne..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=117f3182980000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=8ea26396ff85d23a8929
+> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> > 
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> > 
+> > Downloadable assets:
+> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-33e02dc6.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/573c88ac3233/vmlinux-33e02dc6.xz
+> > kernel image: https://storage.googleapis.com/syzbot-assets/760a52b9a00a/bzImage-33e02dc6.xz
+> > 
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com
+> > 
+> > ------------[ cut here ]------------
+> > refcount_t: decrement hit 0; leaking memory.
+> > WARNING: CPU: 3 PID: 1396 at lib/refcount.c:31 refcount_warn_saturate+0x1ed/0x210 lib/refcount.c:31
+> 
+> Eric, this is the weird report I was talking about at netdevconf :)
+> 
+> It seems refcount_dec(&tw->tw_dr->tw_refcount) is somehow done earlier
+> than refcount_inc().
+> 
+> I started to see the same splat at a very low rate after consuming
+> commit b334b924c9b7 ("net: tcp/dccp: prepare for tw_timer un-pinning").
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+I think I see why.
 
-are available in the Git repository at:
+The reported splat is without this above commit.
+But from backtrace we entered here:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.11-rc3
+                if (net->ipv4.tcp_death_row.hashinfo->pernet) {
+                        /* Even if tw_refcount == 1, we must clean up kernel reqsk */
+                        inet_twsk_purge(net->ipv4.tcp_death_row.hashinfo);
+                } else if (!purged_once) {
+-------------->         inet_twsk_purge(&tcp_hashinfo);  // THIS
+                        purged_once = true;
 
-for you to fetch changes up to 6e20753da6bc651e02378a0cdb78f16c42098c88:
+> The commit a bit deferred refcount_inc(tw_refcount) after the hash dance,
+> so twsk is now visible before tw_dr->tw_refcount is incremented.
+> 
+> I came up with the diff below but was suspecting a bug in another place,
+> possibly QEMU, so I haven't posted the diff officially.
+> 
+> refcount_inc() was actually deferred, but it's still under an ehash lock,
 
-  tty: vt: conmakehash: cope with abs_srctree no longer in env (2024-07-31 12:31:32 +0200)
-
-----------------------------------------------------------------
-tty/serial driver fixes for 6.11-rc3
-
-Here are some small tty and serial driver fixes for reported problems
-for 6.11-rc3.  Included in here are:
- - sc16is7xx serial driver fixes
- - uartclk bugfix for a divide by zero issue
- - conmakehash userspace build issue fix
-
-All of these have been in linux-next for a while with no reported
-issues.
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-George Kennedy (1):
-      serial: core: check uartclk for zero to avoid divide by zero
-
-Hugo Villeneuve (2):
-      serial: sc16is7xx: fix TX fifo corruption
-      serial: sc16is7xx: fix invalid FIFO access with special register set
-
-Max Krummenacher (1):
-      tty: vt: conmakehash: cope with abs_srctree no longer in env
-
- drivers/tty/serial/sc16is7xx.c   | 25 +++++++++++++++----------
- drivers/tty/serial/serial_core.c |  8 ++++++++
- drivers/tty/vt/conmakehash.c     | 20 +++++++-------------
- 3 files changed, 30 insertions(+), 23 deletions(-)
+but different struct inet_hashinfo, so the locks don't help :/
 
