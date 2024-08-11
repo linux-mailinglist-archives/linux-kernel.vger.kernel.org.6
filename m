@@ -1,96 +1,183 @@
-Return-Path: <linux-kernel+bounces-282178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDDCE94E07F
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:27:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF6F494E07D
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:23:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 162B31C20A7E
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:27:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B8A5B21098
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F7C12206E;
-	Sun, 11 Aug 2024 08:27:34 +0000 (UTC)
-Received: from mslow1.mail.gandi.net (mslow1.mail.gandi.net [217.70.178.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DBD222615;
+	Sun, 11 Aug 2024 08:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="d6lj7iei";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="d6lj7iei"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C03BB200A3
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C8E613D;
+	Sun, 11 Aug 2024 08:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723364853; cv=none; b=eH5EazlnZ77kn4DK3L4B6xUUxBOQwVocEYw8vgFDJD5+M8PVjDR71CFVnTdepe6sSw8a7BU5IfYvyYuNxc+3wWMJDkAC7jpbyqArYUBg2iQ9fdhDLG993tmc4ueXJHKiQClFTvUpbgV9sh2Zn55W6cZRuJAs0bgygjs87qMuuQM=
+	t=1723364580; cv=none; b=TgPyR+GofQkJQbj/4vdq0XLu40sOp2hu5Z1CSdjNfdVF6f8Z6TSfHpNICs+sChwe85f5k+q7DgTHcZBdPmG/Pv1C3VfjhfM/sWAPfhyEv+Ev+S5C1y3J9Z5HvSDlIffeZPB2VVZPgjsRDyzonGdrU/BS9T1hBJdgzcgyfIdZGyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723364853; c=relaxed/simple;
-	bh=y0guvFZ8p5lFnkpPgfWzA+FUF0sAYJKOFfIGKGqpiDg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMGjzT9/wbKzUcHKlCnUnM6HdDhr/Yrqh40WCPsisRCfu6NiSphBOxsKkiXoA5s06dtDI9FIHibFVANG0skia7RR+OOYBqxBdq2+QHAL3qgK85+YDX/qKkqKP+C+qrqld8DtNvp0KgVgvW1gI0wkIsPgXuI/fT/FU1LeYm5YV38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.178.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: from relay6-d.mail.gandi.net (unknown [IPv6:2001:4b98:dc4:8::226])
-	by mslow1.mail.gandi.net (Postfix) with ESMTP id B8B37C6238
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:21:51 +0000 (UTC)
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B3CCC0003;
-	Sun, 11 Aug 2024 08:21:41 +0000 (UTC)
-Message-ID: <2171ee94-ec78-4146-b6fa-9aecbb99efd8@ghiti.fr>
-Date: Sun, 11 Aug 2024 10:21:41 +0200
+	s=arc-20240116; t=1723364580; c=relaxed/simple;
+	bh=hN8Oh44lZxQ/h5jy7JrCn8EZc4lCq58CYL8f93KN1L8=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=cu3a9OPdYQK9vubeEnhoZLzt0TdQOPIfsUvwUiyxE5sPtM8TIyZfAIA/qYNm2Xd926mNXgB1C4WqoA4EUWi2lPVyVoTdPzAwIX7DkAF3fAI+JFGjYq1u3ndPRK7umpIz3wlFDOkct+041BS6xS/mYy+IamGgP1SOc3CTjrn0dQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=d6lj7iei; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=d6lj7iei; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1723364575;
+	bh=hN8Oh44lZxQ/h5jy7JrCn8EZc4lCq58CYL8f93KN1L8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=d6lj7ieibF7NGm8O+Bgtmw3BPb6G6gKATR+Vf9TtiA/+q5kWSmbDA8lQm6At+W3NY
+	 oTVokSaqp3YThO6zKI64yVEGNz4kSoN1B0gLBSDC3h3s/mzWK1GQi/gMA6ppewehNz
+	 u35LffQPi4HiBUE1sU4dmdN8FbIQs7wWaSc/6bk0=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id DA9CC1287323;
+	Sun, 11 Aug 2024 04:22:55 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id NnBw0NOmL-MG; Sun, 11 Aug 2024 04:22:55 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1723364575;
+	bh=hN8Oh44lZxQ/h5jy7JrCn8EZc4lCq58CYL8f93KN1L8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=d6lj7ieibF7NGm8O+Bgtmw3BPb6G6gKATR+Vf9TtiA/+q5kWSmbDA8lQm6At+W3NY
+	 oTVokSaqp3YThO6zKI64yVEGNz4kSoN1B0gLBSDC3h3s/mzWK1GQi/gMA6ppewehNz
+	 u35LffQPi4HiBUE1sU4dmdN8FbIQs7wWaSc/6bk0=
+Received: from [IPv6:2a00:23c8:1007:7701:19d1:8255:2991:876d] (unknown [IPv6:2a00:23c8:1007:7701:19d1:8255:2991:876d])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8039C128730B;
+	Sun, 11 Aug 2024 04:22:54 -0400 (EDT)
+Message-ID: <cf2e36dcab26d1a1e2137897f28d41c59ee501a1.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.11-rc2
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Sun, 11 Aug 2024 09:22:51 +0100
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: Make riscv_isa_vendor_ext_andes array static
-Content-Language: en-US
-To: Charlie Jenkins <charlie@rivosinc.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- kernel test robot <lkp@intel.com>
-References: <20240807-make_andes_static-v1-1-b64bf4c3d941@rivosinc.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240807-make_andes_static-v1-1-b64bf4c3d941@rivosinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
 
-Hi Charlie,
+Two core fixes: one to prevent discard type changes (seen on iSCSI)
+during intermittent errors and the other is fixing a lockdep problem
+caused by the queue limits change. One driver fix in ufs.
 
-On 08/08/2024 02:27, Charlie Jenkins wrote:
-> Since this array is only used in this file, it should be static.
->
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407241530.ej5SVgX1-lkp@intel.com/
-> ---
->   arch/riscv/kernel/vendor_extensions/andes.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/riscv/kernel/vendor_extensions/andes.c b/arch/riscv/kernel/vendor_extensions/andes.c
-> index ec688c88456a..51f302b6d503 100644
-> --- a/arch/riscv/kernel/vendor_extensions/andes.c
-> +++ b/arch/riscv/kernel/vendor_extensions/andes.c
-> @@ -8,7 +8,7 @@
->   #include <linux/types.h>
->   
->   /* All Andes vendor extensions supported in Linux */
-> -const struct riscv_isa_ext_data riscv_isa_vendor_ext_andes[] = {
-> +static const struct riscv_isa_ext_data riscv_isa_vendor_ext_andes[] = {
->   	__RISCV_ISA_EXT_DATA(xandespmu, RISCV_ISA_VENDOR_EXT_XANDESPMU),
->   };
->   
->
-> ---
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
-> change-id: 20240807-make_andes_static-ec524bae21f2
+The patch is available here:
 
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+The short changelog is:
 
-Thanks,
+Li Feng (1):
+      scsi: sd: Keep the discard mode stable
 
-Alex
+Shin'ichiro Kawasaki (1):
+      scsi: sd: Move sd_read_cpr() out of the q->limits_lock region
+
+Vamshi Gajjela (1):
+      scsi: ufs: core: Fix hba->last_dme_cmd_tstamp timestamp updating logic
+
+And the diffstat:
+
+ drivers/scsi/sd.c         | 15 ++++++++++-----
+ drivers/ufs/core/ufshcd.c | 11 ++++++++---
+ 2 files changed, 18 insertions(+), 8 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 8bb3a3611851..699f4f9674d9 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2711,8 +2711,6 @@ static int read_capacity_16(struct scsi_disk *sdkp, struct scsi_device *sdp,
+ 
+ 		if (buffer[14] & 0x40) /* LBPRZ */
+ 			sdkp->lbprz = 1;
+-
+-		sd_config_discard(sdkp, lim, SD_LBP_WS16);
+ 	}
+ 
+ 	sdkp->capacity = lba + 1;
+@@ -3365,8 +3363,6 @@ static void sd_read_block_limits(struct scsi_disk *sdkp,
+ 			sdkp->unmap_alignment =
+ 				get_unaligned_be32(&vpd->data[32]) & ~(1 << 31);
+ 
+-		sd_config_discard(sdkp, lim, sd_discard_mode(sdkp));
+-
+ config_atomic:
+ 		sdkp->max_atomic = get_unaligned_be32(&vpd->data[44]);
+ 		sdkp->atomic_alignment = get_unaligned_be32(&vpd->data[48]);
+@@ -3753,9 +3749,10 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 			sd_read_block_limits_ext(sdkp);
+ 			sd_read_block_characteristics(sdkp, &lim);
+ 			sd_zbc_read_zones(sdkp, &lim, buffer);
+-			sd_read_cpr(sdkp);
+ 		}
+ 
++		sd_config_discard(sdkp, &lim, sd_discard_mode(sdkp));
++
+ 		sd_print_capacity(sdkp, old_capacity);
+ 
+ 		sd_read_write_protect_flag(sdkp, buffer);
+@@ -3808,6 +3805,14 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 	if (err)
+ 		return err;
+ 
++	/*
++	 * Query concurrent positioning ranges after
++	 * queue_limits_commit_update() unlocked q->limits_lock to avoid
++	 * deadlock with q->sysfs_dir_lock and q->sysfs_lock.
++	 */
++	if (sdkp->media_present && scsi_device_supports_vpd(sdp))
++		sd_read_cpr(sdkp);
++
+ 	/*
+ 	 * For a zoned drive, revalidating the zones can be done only once
+ 	 * the gendisk capacity is set. So if this fails, set back the gendisk
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 5e3c67e96956..0b3d0c8e0dda 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -4100,11 +4100,16 @@ static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba)
+ 			min_sleep_time_us =
+ 				MIN_DELAY_BEFORE_DME_CMDS_US - delta;
+ 		else
+-			return; /* no more delay required */
++			min_sleep_time_us = 0; /* no more delay required */
+ 	}
+ 
+-	/* allow sleep for extra 50us if needed */
+-	usleep_range(min_sleep_time_us, min_sleep_time_us + 50);
++	if (min_sleep_time_us > 0) {
++		/* allow sleep for extra 50us if needed */
++		usleep_range(min_sleep_time_us, min_sleep_time_us + 50);
++	}
++
++	/* update the last_dme_cmd_tstamp */
++	hba->last_dme_cmd_tstamp = ktime_get();
+ }
+ 
+ /**
+
 
 
