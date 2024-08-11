@@ -1,132 +1,160 @@
-Return-Path: <linux-kernel+bounces-282297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C5C94E1C8
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:17:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD2994E1C9
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:18:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4591C208CF
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:17:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE981B20EB6
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:18:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E1414A619;
-	Sun, 11 Aug 2024 15:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8607814A615;
+	Sun, 11 Aug 2024 15:18:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cn0u8nF2"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVkDor9t"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C40DD29E
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A58814885E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:18:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723389466; cv=none; b=LqolL3XiE8dyZneDJlfv5lUL7bf03MeYeXZZbpZq+YG2Oa11P8K/r8Z4b6GDcrPBav/2FfDdx+W1XLFcxGXlsrLnlGdsfn9fYmvrms+J3CyORLyiOyRmj0YTKxyJg33adWUQHZPJFSvmdIq9QP6okojSYhD3XBcGe7UVlJZ473o=
+	t=1723389486; cv=none; b=Z1F3lBjE70xvTmJfcLHgpN/6kLcqC1IRHdMfCg2KJ4wXbXDTBkWkZQU9+wAQxv5Cwl9juIdEjDd9rL+IZkXEMe3gkHEavbnW1RLuCEvTKIVHsyVa79Q7+vG2EGzT3yZRO5skHYo7Bgmwdi9eiKYVeBuqg3dk0nGShtwfAw633ow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723389466; c=relaxed/simple;
-	bh=hwPVKIVNZucKk3ZL8dP72AoDLjFo65gMygfi6XUsnZg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9Vn0EtCEn6BFkX1VC9Ax68iTIYvpmPkzStmOLnYSl6nDjg5zQQocl4QyWYJFKxHeavRLzpBkC+rEvBLQTcwnj76Vv72Qa9+OGq9h70uZB3htVMOS9I5+zx4k9Q3+EG4OI0JgJdwkVymTuV6zQfNkZzDKcNToAmnB39Ql/apqDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cn0u8nF2; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso393978766b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:17:43 -0700 (PDT)
+	s=arc-20240116; t=1723389486; c=relaxed/simple;
+	bh=4ArGjgjGgZ8+9bXkrKgdj4peHUqfLsIk0DoyKZPmqYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eNZV24rF7mSd0NLAc9nVfhFyVikU6I1lZHRM9ES0qY/dae0xjjOBnVj2w06JzFWQ+cDcHsytaL+qn45QhbV3TiUQ8jP9A8egWyii5fYCfscZhP1DCUOGiAuvxr8UxE0xrhORpRvMIrndgH6ukVUc8/LABjSk8U7uG3ydtoDYAzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVkDor9t; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-710ec581999so894984b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:18:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723389462; x=1723994262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nOrrFPO2+Eu1RsdiiDnsQDZT+Eoua4cGMzFbuz7CsgI=;
-        b=cn0u8nF2/2gjkOdcS86nBOr3ItfYkB/OFuhfrasmu4/1gygfCPC469Zm1pnLE/0M7h
-         nP/Z5tTVCHeMKhlcq+V6gmFW9konu7NUWO882ifVBlBsqr4zTGyD1cRKcaJRVCT4DE0C
-         6m8iw+Ot6NVH+dZvRoAGhh19d38n0rpznqM/HvvjzUDxpRAYdcWrx/EiRz/wE8L05FKF
-         NgigCRvAE3eCjHIMCA5JJTUV6dWbHwOkgidq5mkXCcTRRB1m3lOO80b3T2SGMTX1UN6a
-         jdVmbZKqYrRKobN/8h1URxXOOw3HYiECZmlsj1l4YEJbbpH+L+fUlTAxX9A38qNkaTm9
-         fMyg==
+        d=gmail.com; s=20230601; t=1723389485; x=1723994285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/Exf1Ks9OVMj8l16xwqoWZ+txdNuiQp3EQWjvEd25oI=;
+        b=MVkDor9tVXXl8jkFNqSBSAy8qpypYSSL/IcBME1Rfp56sygt0LdMYNoeuPRGdJZTsK
+         1WBIFIm+SRXJaO5c5xUDSwKrZLvjG43j/cEfJKfzc3m74xA9J9tspnVdSGAO5hS0nWda
+         UI9laLC0aGJupeJFl1TCyl0+Sb/mCmzbU6VwirPNrkDCsjPhUZLEl3TMOIbTIthXORJZ
+         NxmaLhRHajgkv//2pDqAx8Lbn8M49yvHtADUB3nHNtUZnySwrzSCV59KXoDALxTUEYbY
+         sttzKvH7OI7bHjTpsIJmjMN4EAtn5lafEZeZMJeJTXeEmJTCTQo72O5pdg2gZlsa4xB3
+         lSTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723389462; x=1723994262;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nOrrFPO2+Eu1RsdiiDnsQDZT+Eoua4cGMzFbuz7CsgI=;
-        b=Jg2Am4iX782lXn32ZJkZfWb8UxfzYDENG335JaWuV+f4HIhhFD7JIdV2bd/4glVUXC
-         aH56pqlVGMy0pgGC5hcJhtHQ6X6KT8tYUOAuWip2jRCv5U6KyCNERsMvsCuU7Ayqujr8
-         mZ3Qp99CGmf5/VHjbsLDvDaZqnOrDzWpiz6k3DGkT8qnFF5Xzao3E6pkb1+DlTlqZCCv
-         wp12H49kTa7J8iPtUsGbD9k6HAE2zgYQPLVEusk7SVVPUAWjE3hde9kD88lWwl5+qBmX
-         /Gi8fYAZiCOC2Ns15BNvOI59JhVAVVb80q9QbW3O6mUzExa4l+oTi2YTCxBr9Wa9wlqS
-         m/7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVJDG5YelEyJqmmZTT99gkiuoLJDKO2kA/UPX7bvx6Tt+BPkVxtWsjoGM6tSt1pAFm5h5NQsQKbLdkTRddEmCp9vhljkGRCSpC9IUup
-X-Gm-Message-State: AOJu0YxA/LlgW6l5yGxgfX8hmBlQ4wGbT4QxfHXZfSVW3e1Z1gCUFJ3e
-	TyaHSXfJIBrDeYu3WJh6zvWbDYaZ0g4TOoWffdJw5HQlzh1C9dEmvZtJ91+tx7VnGh2GyKW2KJw
-	L
-X-Google-Smtp-Source: AGHT+IFMkuh2pshcMEllN4JDzZBehDboH1YV/ev7+K4CsgIw5JNm3uxhpSKfKT45jnx67W0QXEExTw==
-X-Received: by 2002:a17:907:6d11:b0:a7d:3672:a594 with SMTP id a640c23a62f3a-a80aa67acbamr477098766b.61.1723389462194;
-        Sun, 11 Aug 2024 08:17:42 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0904f5sm157030666b.18.2024.08.11.08.17.40
+        d=1e100.net; s=20230601; t=1723389485; x=1723994285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/Exf1Ks9OVMj8l16xwqoWZ+txdNuiQp3EQWjvEd25oI=;
+        b=VOAloqGyxdmd2mqIdaskTX0rbyMM4+3z4grPZFUBAQW8+foFGPrNIMeF5b5yJ/nAGS
+         xTgpfP3fwa906PBIiUAxDvyQPt/7TLZ0quxX+8rxd3l95zIIDFAS5eXDYlKGtG4VBig8
+         sowK8mP99y2JB20mMygGeslBlL074HFDqvzAHzQL1tS4+SD9wOFop9icfIH8/p/SXzSK
+         if/+W81VymRLcrcvuGglQNdJF10VNjZTGSnKV1uxE8A2RRe5h9N/qq6OJKhrriGT8j8e
+         RtW8VASRfeHP7UPOuSK6gkvsxGjyOFD3XZidTCOH0aZ8rC4ohAOEgrYQ+ZxBGWDcBO/f
+         MTzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCdxX6F/1oyiqpBSXgIiJ45vhbKWHeMeIc4b5zAPYaFZ7uMpo9b/SKLE6J2dti3LO7axZTHC26S0b1NYPtvo4aDXQeR22vxwPxB8cT
+X-Gm-Message-State: AOJu0YxdDOjtUynOmLusc/ymWzAkoFNmF9f65reaWHseAofEI3F/+GQG
+	lAjt+0FS2EkF/+8Ko+1+XoxFFECBHqJQtg2pDL8rGZGZEuX3WRY7zRmxn8+3
+X-Google-Smtp-Source: AGHT+IG+QEbw0gxyMUhdKj0e8rySEGmVcWggsFtoIE6591TjztomR3HMc5RxBqrTxBj6gI4D2mz72g==
+X-Received: by 2002:a05:6a21:920e:b0:1c4:c160:2859 with SMTP id adf61e73a8af0-1c89ff80124mr10409047637.31.1723389484517;
+        Sun, 11 Aug 2024 08:18:04 -0700 (PDT)
+Received: from localhost ([216.228.127.130])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58aa1easm2515437b3a.53.2024.08.11.08.18.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 08:17:41 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
+        Sun, 11 Aug 2024 08:18:04 -0700 (PDT)
+Date: Sun, 11 Aug 2024 08:18:01 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
 	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: nvmem: st,stm32-romem: add missing "unevaluatedProperties" on child nodes
-Date: Sun, 11 Aug 2024 17:17:37 +0200
-Message-ID: <20240811151737.106194-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+Subject: Re: [PATCH] cpumask: Ensure the visibility of set_nr_cpu_ids
+Message-ID: <ZrjWKV0a37yTO1km@yury-ThinkPad>
+References: <20240811092501.87653-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811092501.87653-1-richard120310@gmail.com>
 
-All nodes need an explicit additionalProperties or unevaluatedProperties
-unless a $ref has one that's false.  Fixing this for STM32
-Factory-programmed data binding needs referencing fixed layout schema
-for children.  Add reference to the NVMEM deprecated cells for the
-schema to be complete.
+On Sun, Aug 11, 2024 at 05:25:01PM +0800, I Hsin Cheng wrote:
+> The variable "nr_cpu_ids" is a system-wide variable which should be seen
+> as consistent all the time. For example it's set in one of the kernel
+> setup procedure "prefill_possible_map", the operations here should
+> happens before all the code after setup, which means the operations here
+> should be visible to all the code after setup.
+> 
+> set_cpu_possible() ensure it's visibility because it eventually falls
+> into an atomic instruction, however the function "set_nr_cpu_ids()"
+> fails to make the guarantee since it only performs a normal write
+> operations.
 
-This fixes dt_binding_check warning:
-
-  st,stm32-romem.yaml: ^.*@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
-index 92bfe25f0571..3b2aa605a551 100644
---- a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
-@@ -17,6 +17,7 @@ maintainers:
+Set_cpu_possible() is a completely different thing.
  
- allOf:
-   - $ref: nvmem.yaml#
-+  - $ref: nvmem-deprecated-cells.yaml#
- 
- properties:
-   compatible:
-@@ -32,6 +33,8 @@ properties:
- patternProperties:
-   "^.*@[0-9a-f]+$":
-     type: object
-+    $ref: layouts/fixed-cell.yaml
-+    unevaluatedProperties: false
- 
-     properties:
-       st,non-secure-otp:
--- 
-2.43.0
+> Adding the macro "WRITE_ONCE()" will prevent the compiler from re-order
+> the instruction of the write operation for "nr_cpu_ids", so we can
+> guarantee the operation is visible to all the codes coming after it.
+> 
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 
+I don't understand this. nr_cpu_ids is initialized at compile time
+to NR_CPUS, to represent maximum number of bits in cpumasks.
+
+Later on runtime we update nr_cpu_ids with an actual number of possible
+CPUs in the system. The type of the variable is unsigned int, and it
+means that threads accessing it will either fetch NR_CPUS, or new value
+coherently.
+
+Having nr_cpu_ids == NR_CPUS is not an error, it's just a non-optimal
+value. The only effect of it is that kernel algorithms traverse unused
+part of cpumasks for the first few microseconds after boot.
+
+Can you explain in details what type of race you're trying to fix?
+Which architecture? What is the race scenario?
+
+> ---
+>  include/linux/cpumask.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+> index f10fb87d4..3731f5e43 100644
+> --- a/include/linux/cpumask.h
+> +++ b/include/linux/cpumask.h
+> @@ -46,7 +46,7 @@ static inline void set_nr_cpu_ids(unsigned int nr)
+>  #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
+>  	WARN_ON(nr != nr_cpu_ids);
+>  #else
+> -	nr_cpu_ids = nr;
+> +	WRITE_ONCE(nr_cpu_ids, nr);
+
+
+WRITE_ONCE()? How is that supposed to work? The only possible effect
+would be reordering of a couple of instructions. How would that help
+threads running on other CPUs synchronize any better?
+
+Regardless, WRITE_ONCE() should always be paired with READ_ONCE() to
+make it working. So, if we take this, we should also make every read of
+nr_cpu_ids by using READ_ONCE(). nr_cpu_ids is used in fast paths in
+many places, particularly as loop termination condition. Things like
+this:
+
+        while (cpu < READ_ONCE(nr_cpu_ids))
+                do_something_very_quick();
+
+would definitely hit performance.
+
+Thanks,
+Yury
+
+>  #endif
+>  }
+>  
+> -- 
+> 2.34.1
 
