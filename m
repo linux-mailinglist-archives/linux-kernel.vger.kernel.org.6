@@ -1,156 +1,113 @@
-Return-Path: <linux-kernel+bounces-282411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 895AB94E3A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:11:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D794E3A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:27:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9AC1C2089B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:11:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CFC281694
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6461315FCED;
-	Sun, 11 Aug 2024 22:10:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D2915FA7A;
+	Sun, 11 Aug 2024 22:27:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="t6dfPEG+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="pXNV2Erl"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF5A41C75;
-	Sun, 11 Aug 2024 22:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D16A158D98
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723414252; cv=none; b=Btd75AEGqUtLc0qaUNIaC4cd2R3fFk4Y6DBKluIk5rEQ0QQzXp/4Ed8azqUtpVNizeP4FMQSAIS1K1rUL/rpO9IrbMFZ+rZGzaSOQXn/PjIVL2VzsUNzDU0si4JcunxONdBBFt1eMT/4FNW57UlfrfyC8DW6qxQwhSNgisl2Gw0=
+	t=1723415248; cv=none; b=JdcW367qxHfNy9n+gPoGAtiNM4y/Uj8DCUbF4Cr8bBtZZzv/+2GhqYnn3nP9l9RzBccUd/UmnTPYPhTeWZdFKaTn70ZLN0KNwnywzXgbufGewnq3r7sOolYEjjE0q9E0MBWSyOexwRWYU6TfBS60vzMcw9VMtB8deJxYxklRMM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723414252; c=relaxed/simple;
-	bh=llJ0nBQ3a8YJjWgU+YyU/PZa1LAUju9dQvr5S9GOOxI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ltR0SbiLPcmJA7sHkBSY4qqM+dR9CY0TCTm3uLRAzGYMcZW1vaO9plJ8ZKTxr3+68rLSWwrZqmypOd68qmF7JTjfMIS3P/WReCKANWdtkRuR7qh0dEGeZqd/HpNrY3ynR6wiPN1Isnd/0LFM+sOaYpU17eQxdRJUND3k38rCWIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=t6dfPEG+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723414247;
-	bh=updplUf/T/ZiyhfUJfBUOBIfKbqdsymCwLeJTp9KXdY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=t6dfPEG+s7m/a09jodcxwNVN/lZJCP9mGl/5+L3gQVb0mPDsFhL4iKB2/8CZ0Y4Uj
-	 pZ3JUHErDe242aBMO5y9xixfIdsfzrvJJgN3eZler8943gdOVI1QoQwo2vv8rfMGFC
-	 8GZQrh83wXPFLLriXSxwJL7n3Lqg1BTeSRW8gC2TU4XnFBz4ruy0Hxhi5+05Mm/2w4
-	 utxd5RpCPIzLdW+oBjy/b0pzHvmvvglAh72EeqVcebqYk5MTmTiKCet2RtpdA9PERP
-	 2ZU0hVSJHzDrz2KKkWrhD6rU6vQeTaFXbFrfen2rFQeYqRlU+xa8p/3PUhwKBJtZp/
-	 F8arpqI1t4BxA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhsKf6VKjz4x8C;
-	Mon, 12 Aug 2024 08:10:46 +1000 (AEST)
-Date: Mon, 12 Aug 2024 08:10:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Brauner <brauner@kernel.org>, Namjae Jeon
- <linkinjeon@kernel.org>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Yuezhang Mo <Yuezhang.Mo@sony.com>, Zhiguo Niu
- <zhiguo.niu@unisoc.com>
-Subject: linux-next: manual merge of the vfs-brauner tree with the exfat
- tree
-Message-ID: <20240812081046.369bbba5@canb.auug.org.au>
+	s=arc-20240116; t=1723415248; c=relaxed/simple;
+	bh=SzyJrnQp8Uz830lPa3hcN4gxoi7JSiSAYiOGEnSLnIo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YLhjaO50Ow9rP4vaIQKGEsu43KCD5pP8b3lEIZ7eYMOYAveKydRiVeChpftTEPulPGIODr0mEg3rrGnzQm1upP4l1gOgDkQrVmD15oMqSiLtdhwlq3v0TcGBYOa3Qs68ujPolXF2JHm3i5RmTCM3gaK8EM4fDPN5JaXcEJey9No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=pXNV2Erl; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso5058122a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:27:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723415245; x=1724020045; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e4Zac+A5KLRIfYXaRReKZx0UGyVecnM7nQMC/JMtMM8=;
+        b=pXNV2Erlq6D6aOXOF89sa94GVEfnnzb7eC/BsvlR7N3HYLINXPVZ0JvY3+K9p0vRcR
+         72VTOgjvo2pGDOA34MZ8vFWJlJETQXtD9AZhNeci6e0M7tK0hzSjFTjledfvORL7KuZC
+         pevm0IUE9wXHAA6scPwJiGCCwdwwEDHHBKxm8OhzyIUHzlwEpYwSGBHnsYUBQq8xSw5y
+         9giEFUzSjKFrOfCNYIE2vZKoQkp3cklYnilgi9Te3VH4w3cRbf+k3NlcIlVe2nw5/z0D
+         wwob16L6g5DuhupjpxPfS/+TQMcEPG2615U0jb0e/8gn1uhZq2g1Cu3uc61Zq9UTcNO0
+         EkiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723415245; x=1724020045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e4Zac+A5KLRIfYXaRReKZx0UGyVecnM7nQMC/JMtMM8=;
+        b=DFTkP/Bep/Do5C/ZRB8iWR9x8TCuJvCpndXFPEyl8VtW1oUVLAet2PHPXCSxDkKeQs
+         yVdEYVAnV0iHKrim5tXYmz7wQ12cY+rJ3pMN1waNKFntPyY9Ki4WyPf28Y1J8l3OJpbm
+         kS1zcKBLHly83qNslSieZ7JqrT8e0T172Pf2J2R9qcHP5MaKYYM5iyEE41V4HFwm2HBX
+         QPOaqp4Iyq615xCJdGnudIJmuextDSANhwDr4PAHbE8UnsPdrhck2vRU08CkIEp8QC0q
+         AyeCVvD3tDQcM13gCijBxEVlY6H37C9qzVs7T0UzfMcj8K/delqxn+lLXi8RDOZx3sfp
+         EOfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOvaBrP1Ipev4y9Dk2EOn8vs87gJPGRWKE9ZlBtCDfuUaZ0Esy/Y2JqhLoJc9pxc7lvPtFG1D9ZNoWBM0Q/FbvNsodNZUMflsOjtZq
+X-Gm-Message-State: AOJu0Yy2sby//AWrbif5Z8MMxF1T9kwWW6D1hGf58uPGgvX5qdGAXuaS
+	zd8iKyYy77qQXaZdmqpdIdjncXhFkQiyudvvrPpP6Z6+IHXv9tvtqcDAvOJbjdc=
+X-Google-Smtp-Source: AGHT+IFuRotOvb7NG9VaBxjLgw3eDaFGdEzAK/4EBQJP5b+w6dEHIXP2tg92tewHv2u6HT5+eJvTWw==
+X-Received: by 2002:a17:906:d247:b0:a7a:b43e:86cf with SMTP id a640c23a62f3a-a80aa5a6dadmr522707266b.27.1723415244273;
+        Sun, 11 Aug 2024 15:27:24 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb212e49sm174447566b.160.2024.08.11.15.27.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 15:27:23 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: axboe@kernel.dk,
+	asml.silence@gmail.com
+Cc: io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] io_uring/net: Remove unneeded if check in io_net_vec_assign()
+Date: Mon, 12 Aug 2024 00:26:39 +0200
+Message-ID: <20240811222638.24464-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/3/8_tH_IGSMCLFm6LiHEaxL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/3/8_tH_IGSMCLFm6LiHEaxL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+kfree() already checks if its argument is NULL. Remove the unneeded if
+check and fix the following Coccinelle/coccicheck warning reported by
+ifnullfree.cocci:
 
-Hi all,
+  WARNING: NULL check before some freeing functions is not needed
 
-Today's linux-next merge of the vfs-brauner tree got a conflict in:
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ io_uring/net.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-  fs/exfat/inode.c
+diff --git a/io_uring/net.c b/io_uring/net.c
+index d08abcca89cc..9f35f1eb54cb 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -189,8 +189,7 @@ static int io_net_vec_assign(struct io_kiocb *req, struct io_async_msghdr *kmsg,
+ 	if (iov) {
+ 		req->flags |= REQ_F_NEED_CLEANUP;
+ 		kmsg->free_iov_nr = kmsg->msg.msg_iter.nr_segs;
+-		if (kmsg->free_iov)
+-			kfree(kmsg->free_iov);
++		kfree(kmsg->free_iov);
+ 		kmsg->free_iov = iov;
+ 	}
+ 	return 0;
+-- 
+2.46.0
 
-between commits:
-
-  3e491faa7648 ("exfat: do not fallback to buffered write")
-  98ad7b9012b5 ("exfat: Implement sops->shutdown and ioctl")
-
-from the exfat tree and commits:
-
-  a225800f322a ("fs: Convert aops->write_end to take a folio")
-  1da86618bdce ("fs: Convert aops->write_begin to take a folio")
-
-from the vfs-brauner tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc fs/exfat/inode.c
-index 7d43a0942911,05f0e07b01d0..000000000000
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@@ -428,11 -452,7 +428,10 @@@ static int exfat_write_begin(struct fil
-  {
-  	int ret;
- =20
- +	if (unlikely(exfat_forced_shutdown(mapping->host->i_sb)))
- +		return -EIO;
- +
-- 	*pagep =3D NULL;
-- 	ret =3D block_write_begin(mapping, pos, len, pagep, exfat_get_block);
-+ 	ret =3D block_write_begin(mapping, pos, len, foliop, exfat_get_block);
- =20
-  	if (ret < 0)
-  		exfat_write_failed(mapping, pos+len);
-@@@ -448,7 -468,15 +447,7 @@@ static int exfat_write_end(struct file=20
-  	struct exfat_inode_info *ei =3D EXFAT_I(inode);
-  	int err;
- =20
-- 	err =3D generic_write_end(file, mapping, pos, len, copied, pagep, fsdata=
-);
-+ 	err =3D generic_write_end(file, mapping, pos, len, copied, folio, fsdata=
-);
- -
- -	if (ei->i_size_aligned < i_size_read(inode)) {
- -		exfat_fs_error(inode->i_sb,
- -			"invalid size(size(%llu) > aligned(%llu)\n",
- -			i_size_read(inode), ei->i_size_aligned);
- -		return -EIO;
- -	}
- -
-  	if (err < len)
-  		exfat_write_failed(mapping, pos+len);
- =20
-
---Sig_/3/8_tH_IGSMCLFm6LiHEaxL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5NuYACgkQAVBC80lX
-0Gx+8ggApfMyAfs7ASI5jkF/gSJcdksjYbp0mTmJUhpcpYImqkwnL3TTyFyu3Tyc
-ZkdMqtJcigaD3eQruGzL/jDqfXGrV6X8Fp9W9t334sSACxVEPdvl/DBPgRlcBCMt
-Blcf/eKT/jWJcw7jHWgBAnpT6Gzeb5iDFSgOU1Qy5nGslihL7y6AJdqeUHlON1qN
-ib+X1Nj3tvfnUvGkfy65BuEBKn5sicQmbtbdU85WjqFb8wjuAaPP3oE91QJFsuzI
-mI370ddmEvK1jp+Z22xVBALvduS2HQJSq3WcWNVz408AIYISmhlg+WZUS8m6V7mw
-qDzeUuoDkydCFKtkk4xx6UDzO9sE2g==
-=mY3z
------END PGP SIGNATURE-----
-
---Sig_/3/8_tH_IGSMCLFm6LiHEaxL--
 
