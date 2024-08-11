@@ -1,79 +1,82 @@
-Return-Path: <linux-kernel+bounces-282243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1500F94E145
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:47:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2072A94E148
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F481C20CBC
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:47:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA06B1F21753
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4220747F64;
-	Sun, 11 Aug 2024 12:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07024EB37;
+	Sun, 11 Aug 2024 12:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k+cw2Oay"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQynGlmc"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA319441F;
-	Sun, 11 Aug 2024 12:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71E6C441F;
+	Sun, 11 Aug 2024 12:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723380417; cv=none; b=hW7mgtbWpqDmW+2LSaB3eErOABn8QrTG+257HOqgjzNGuBMw1g+ha6M0va2OzVRA2ubCFRR34JBcB41gw/XZ4MIXk1CvBg9wgyImifhn9pacLKKlIuR9hZsHNoUQBPaqkAcwas7NDNm4PvvSmsOuANkOQzQ7uSCc62ceJKt272o=
+	t=1723380749; cv=none; b=JiwlaEFypLmXoZRTCPtBB+hMuXxp3236MGmUkokMOwELlzoF86VAI5auBOimKpLpRtB+nqNfLMyqLANBHRmUMDQuAh8ab2W3NU00dAG2XT3LNyBNINQkIxIjqeINx0aJGtlhCtJ0pWWdnwdQ86bNsW9nldkclXSk3H98cxt5ajw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723380417; c=relaxed/simple;
-	bh=UOTW0S88uks4HP7UMdz48xRDXQIW94fYPNKBpBibqO0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BnhYPtZybwCBLIiNK3lENgy8TeBLbI6NGWMNazZ3mRnUTaMrSzEPTnWLlyZhSjKCotNv3D2uwQ4FxNPeVuJ490ArYrB98X8WJx8l+uAX4Te4dG8zt3Tpx3bHil9ZxKkrP1zZUCveKhoVWG6+8CHphxr3cch1trL38E+hRPTuqF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k+cw2Oay; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1723380749; c=relaxed/simple;
+	bh=WdElzGY7aR8mZowAM8w3IRVv2J4wkevPaljOjQZKnmk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HbRL0S3vob0Bula/KmB4Byww8Co/Ac8+xB9Pl3biS95R1+8Wy+QFrAKh+rDisbjN5g3bQlZ+OxWzdnj6zexV0hcGNiPSHmjhjXPNghBbIPIzAYTaBubkaxfA6a0EX2ohtY0cUdwBW15Eh2lVAqmMXhYaCPAPuIeaoURkIviyMOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQynGlmc; arc=none smtp.client-ip=209.85.210.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-368440b073bso2012278f8f.0;
-        Sun, 11 Aug 2024 05:46:55 -0700 (PDT)
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-7093ba310b0so1524471a34.2;
+        Sun, 11 Aug 2024 05:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723380414; x=1723985214; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723380746; x=1723985546; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4o2TWP+Vhvp3od6SuhOiNbj//yyX7aMfSacjM3aiopk=;
-        b=k+cw2OayiJacm6HrolHLLO1crtccC/JnvAuyd80RYpj9FYGOrML2YUMuP7CUH2lnLF
-         dDGkpzv7yfmZswAxygddXR8GJ1uhHgz2TAGqsV57k857vS2MztqbcmnPD9RsQf1UiWp6
-         um787sjhx+0h9HYjj7UEoSQ3D1YiSTNELVAkfLI27m4oyP7xXsEz+6zDiczWNPKJnXV6
-         gdhpTrsDiUqO7WBFp6VxyPenFeflgqN1gZ5NbjFhMtrb1qd269Y4ftnRhwk0xC4bBSbH
-         RFZ+iI1o9PXqU98JhciIE0hDXdkpKfM1dtFIiM1RCQnTnPyfwhRxLOwavTd+MRS1fbOH
-         ogog==
+        bh=cTfzU28ds2lhNVbW5LCx1QfX8jZBtBYy6jG1aASeDKs=;
+        b=eQynGlmcGX4AdsriClVSHMEl8SwOz/GcK7maliUNHcckldLbvzO78iYb04YIXcK+Sq
+         XqoRha2yw9H5L03yti/N9P/YkrJuDnA6IrBToM1csBHpDe+DWjzEkBWMsuFkT36zGKk7
+         +R7diFXJATNo9iFITX5Ie3YRwVT0yUQgyUiubLmeGz+XI/roFjlDOMVZWjQjRNaFU4sE
+         Axij+irf9s2kU205f9i6cb0xtnsO3i4sAaIpXgLgh62XqOUuzbrFmWzkQ+mDKhl7LM17
+         BB75/uyi52/ae0yN2Imqw/CU7gzU276yal2jNJLdymioj/Btcm1fQP/c4+r9x4mKvap0
+         AcnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723380414; x=1723985214;
+        d=1e100.net; s=20230601; t=1723380746; x=1723985546;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4o2TWP+Vhvp3od6SuhOiNbj//yyX7aMfSacjM3aiopk=;
-        b=ueOWwvUJvF6h4u2xzIZv5kwERI2D6DLhbC5dxvffDgOZM5ij4Gn2Sm1PxYkknry4mF
-         /ArtTz3hreQ2HHLrdQdInMJpWaFdIV5jH36pD9i+hhmaUizvvHWsJQ9qu2Kt8LEkqnXp
-         9eyhXpphY6EpBhNxNejuS4bFNguqIIfchjs48guSXz2W76h/+Lti4lNBnDperMswcaJW
-         7aycsB5bY4Y+Gwp1FoIj5S9dLiGrJot+rrCP44vLnDuDG2D8cU1IcxBUPMGrRv2XXI8n
-         KxZieIX9ivVjKj4M/dYeZQWyBpoPZr7pY1bfkR5GF09aHNA8ic354OhCiGDOoPRVjG8+
-         W3aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZUiOkrgHTCs83Dv38OMD9M3eZNAhc1sWbzJa/dQolLOFD/DxC44jEc4EVe5KjRqrXoZ63l2cmkQ1R3IvuJ0cGeLooKi30RRZcftqf8WEE8dhxVuyrHPlwjvVrLExL+HIyDRTfVsgfrZAZkxw5mDAV3Q==
-X-Gm-Message-State: AOJu0YyqNN9B8oQGfT06U5yI4Cc2cT761X1e9pywRisQADq14gv6YUVm
-	VZtoROz8nJiOyLdFjN9RWge2pudBJukddM4dpJh7ItqQyo7lOzONkzQvZw==
-X-Google-Smtp-Source: AGHT+IFbiubdkYVo25iGBEa2LO/vfULgoIQ5BI7E2vfc3y99ro3sx/UK7xuDahjUGDns1xQmvwxZfg==
-X-Received: by 2002:adf:e98a:0:b0:368:3ee9:e119 with SMTP id ffacd0b85a97d-36d282060acmr8116035f8f.29.1723380413840;
-        Sun, 11 Aug 2024 05:46:53 -0700 (PDT)
-Received: from xws.fritz.box ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c72d4c9sm153452945e9.8.2024.08.11.05.46.52
+        bh=cTfzU28ds2lhNVbW5LCx1QfX8jZBtBYy6jG1aASeDKs=;
+        b=Zv0OCCezPZ3aJEXgBoc542rzUqIs7etN5pLlkBMzAD6jKEvTYsZ1wwfNNoUjh8lGi2
+         zqNoL8DQKIvRQG/afVIZ31p384qJzNAY6pUtPggHK85G90pLLX07vpQvdAZci683m4mq
+         jWr0FO8ETLb5lnMRioIE+KYev2EDHRmIf8CXXx3hTQfkcWjhDzQn3TsQR48SGABtYc+Q
+         LopRfqwPkI4G3OaFTreIZqS4H/FEApMiOqQHIV+Cdtgjsq2AuoEgIS8xbJSm0Z8gKEy0
+         3EXo1uod59HrWlT4pi5t/DvTdtsk/5hT0yLQJlnqVJNRSeAkY1+lCG2rcTYxqcPUzLry
+         Gnfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDq3oSIWhWRLpNTQw3+nLR2au9qqcQdrVKdKfzLIOW87pNONUT8LjmO+YkD8fNdu5BSHA1Rw/CxnZF8xD2UYzimqWOOp49RXw13jg9My3qRsgRIh00GHLD6kcSjG2f9sP1YLx1XIYMEDJ/
+X-Gm-Message-State: AOJu0YxbBL4h4C/jo8BhXbM9F5MZLpGPxp+Ps7gUv/JJIl0U3S/pa9FE
+	qgRnvx4HSy7Ct5ngpOobU+3WobKcvg9HLxFoZbxUMbWKMH0f0uYOAP8xS2fp
+X-Google-Smtp-Source: AGHT+IHuaKVgZDTiOIXFNwyqCYMJa9aukyn1bY7sx8VIIMzAYBrrWz42nwWEjA3wYgs2tkEnrgvwyg==
+X-Received: by 2002:a05:6830:6285:b0:704:466b:15a2 with SMTP id 46e09a7af769-70b7483729dmr8755701a34.20.1723380746331;
+        Sun, 11 Aug 2024 05:52:26 -0700 (PDT)
+Received: from dev0.. ([49.43.168.43])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c64b14sm6413126a91.5.2024.08.11.05.52.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 05:46:53 -0700 (PDT)
-From: Maximilian Luz <luzmaximilian@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Maximilian Luz <luzmaximilian@gmail.com>,
-	platform-driver-x86@vger.kernel.org,
+        Sun, 11 Aug 2024 05:52:26 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu,
+	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/surface: aggregator: Fix warning when controller is destroyed in probe
-Date: Sun, 11 Aug 2024 14:46:44 +0200
-Message-ID: <20240811124645.246016-1-luzmaximilian@gmail.com>
-X-Mailer: git-send-email 2.46.0
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	Abhinav Jain <jain.abhinav177@gmail.com>
+Subject: [PATCH] scripts: Enhance vmlinux checks as per TODO
+Date: Sun, 11 Aug 2024 12:52:18 +0000
+Message-Id: <20240811125218.45759-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,52 +85,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There is a small window in ssam_serial_hub_probe() where the controller
-is initialized but has not been started yet. Specifically, between
-ssam_controller_init() and ssam_controller_start(). Any failure in this
-window, for example caused by a failure of serdev_device_open(),
-currently results in an incorrect warning being emitted.
+Add checks for ELF validity, critical sections, symbols and static
+linkage.
+Zero warnings/errors as per scripts/checkpatch.pl for this patch.
 
-In particular, any failure in this window results in the controller
-being destroyed via ssam_controller_destroy(). This function checks the
-state of the controller and, in an attempt to validate that the
-controller has been cleanly shut down before we try and deallocate any
-resources, emits a warning if that state is not SSAM_CONTROLLER_STOPPED.
-
-However, since we have only just initialized the controller and have not
-yet started it, its state is SSAM_CONTROLLER_INITIALIZED. Note that this
-is the only point at which the controller has this state, as it will
-change after we start the controller with ssam_controller_start() and
-never revert back. Further, at this point no communication has taken
-place and the sender and receiver threads have not been started yet (and
-we may not even have an open serdev device either).
-
-Therefore, it is perfectly safe to call ssam_controller_destroy() with a
-state of SSAM_CONTROLLER_INITIALIZED. This, however, means that the
-warning currently being emitted is incorrect. Fix it by extending the
-check.
-
-Fixes: c167b9c7e3d6 ("platform/surface: Add Surface Aggregator subsystem")
-Signed-off-by: Maximilian Luz <luzmaximilian@gmail.com>
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 ---
- drivers/platform/surface/aggregator/controller.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ scripts/extract-vmlinux | 68 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 63 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/surface/aggregator/controller.c b/drivers/platform/surface/aggregator/controller.c
-index 7fc602e01487..7e89f547999b 100644
---- a/drivers/platform/surface/aggregator/controller.c
-+++ b/drivers/platform/surface/aggregator/controller.c
-@@ -1354,7 +1354,8 @@ void ssam_controller_destroy(struct ssam_controller *ctrl)
- 	if (ctrl->state == SSAM_CONTROLLER_UNINITIALIZED)
- 		return;
+diff --git a/scripts/extract-vmlinux b/scripts/extract-vmlinux
+index 8995cd304e6e..2c35dde8a8ce 100755
+--- a/scripts/extract-vmlinux
++++ b/scripts/extract-vmlinux
+@@ -12,12 +12,70 @@
  
--	WARN_ON(ctrl->state != SSAM_CONTROLLER_STOPPED);
-+	WARN_ON(ctrl->state != SSAM_CONTROLLER_STOPPED &&
-+		ctrl->state != SSAM_CONTROLLER_INITIALIZED);
+ check_vmlinux()
+ {
+-	# Use readelf to check if it's a valid ELF
+-	# TODO: find a better to way to check that it's really vmlinux
+-	#       and not just an elf
+-	readelf -h $1 > /dev/null 2>&1 || return 1
++	# Use readelf/nm to check if it's a valid ELF
++	# Check for valid ELF, critical sections, symbols, static linking
  
- 	/*
- 	 * Note: New events could still have been received after the previous
+-	cat $1
++	# Check if the file is a valid ELF file
++	if ! readelf -h "$file" > /dev/null 2>&1; then
++		echo "Error: File is not a valid ELF file."
++		return 1
++	fi
++
++	# Check the ELF type (should be ET_EXEC for executable)
++	if ! readelf -h "$file" | grep -q "Type:\s*EXEC (Executable file)"; then
++		echo "Error: ELF file is not an executable type."
++		return 1
++	fi
++
++	# Check for the presence of key kernel sections
++	if ! readelf -S "$file" | grep -q '\.text'; then
++		echo "Error: File does not contain a .text section, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! readelf -S "$file" | grep -q '\.data'; then
++		echo "Error: File does not contain a .data section, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! readelf -S "$file" | grep -q '\.bss'; then
++		echo "Error: File does not contain a .bss section, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! readelf -S "$file" | grep -q '\.rodata'; then
++		echo "Error: File does not contain a .rodata section, not a valid vmlinux file."
++		return 1
++	fi
++
++	# Check for the presence of key kernel symbols
++	if ! nm "$file" | grep -q ' T start_kernel'; then
++		echo "Error: File does not contain the start_kernel symbol, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! nm "$file" | grep -q ' T _stext'; then
++		echo "Error: File does not contain the _stext symbol, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! nm "$file" | grep -q ' D _sdata'; then
++		echo "Error: File does not contain the _sdata symbol, not a valid vmlinux file."
++		return 1
++	fi
++
++	if ! nm "$file" | grep -q ' B __bss_start'; then
++		echo "Error: File does not contain the __bss_start symbol, not a valid vmlinux file."
++		return 1
++	fi
++
++	# Check for the absence of dynamic linking sections
++	if readelf -d "$file" 2>/dev/null | grep -q 'Shared library'; then
++		echo "Error: File contains dynamic linking information, not a valid vmlinux file."
++		return 1
++	fi
++
++	echo "File is a valid vmlinux file."
+ 	exit 0
+ }
+ 
 -- 
-2.46.0
+2.34.1
 
 
