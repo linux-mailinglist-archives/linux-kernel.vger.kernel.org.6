@@ -1,68 +1,83 @@
-Return-Path: <linux-kernel+bounces-282162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010EC94E04F
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:33:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 187C994E049
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:28:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2446281F10
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:33:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A71281A2C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4721CA81;
-	Sun, 11 Aug 2024 06:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF891C2BD;
+	Sun, 11 Aug 2024 06:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b="PfNbj/sX"
-Received: from mail.tkos.co.il (guitar.tkos.co.il [84.110.109.230])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIuG11Qv"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2052B1C6A1;
-	Sun, 11 Aug 2024 06:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.110.109.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110401BC41;
+	Sun, 11 Aug 2024 06:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723357973; cv=none; b=DnKz6RILMt4IrhZraOTK9Ut3cOM8JprbKV83V74vSyDPx6hBm266yvsmwSSGRmlkaKiCWhzYsDuitlAnbWzQ1YlV8gLbPiLsA8gTmeDO7QPUZfHJRbe5lPiBVK6I5KJJuLtx8xFfk0RuJyHyK5Y8fdriDPXiO16iWLhUVzzf8WA=
+	t=1723357707; cv=none; b=OIIitLTXHg16tCPUVYToh+D4uPot32Hhw2qY29rw/Ysr/xfrAMEITVtTYWw2s1fYfSVjcYKDeo9EUvdfc2u3jNHZ0gfCctwfRKdlxU2hne1rTOWttwqsQhbzUs9pvaT3lramML1Nq6Vwzcz7zfsGvjkGfL9lZ/hsJHvpz1TEDQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723357973; c=relaxed/simple;
-	bh=pBuS/H7+odet/nPa5tfwLx8uhXkgW9g6Vrhua5wFMuU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=th+g8xD141Ic/k+XFeGXyOu8OuU5SlQczUidFkeW3rjkN3bK5tRTrI3Dcyxqs9+ZZrPInkQCnmhVCkagFl1ywcN3w7VsGgBrCFSzJ8WnXuRvjdE+mStdLmu633rahveo95RWERKjdTnMGvR1IC/27qBaw6Vnz2beAbRcSJ+lizc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il; spf=pass smtp.mailfrom=tkos.co.il; dkim=pass (2048-bit key) header.d=tkos.co.il header.i=@tkos.co.il header.b=PfNbj/sX; arc=none smtp.client-ip=84.110.109.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tkos.co.il
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tkos.co.il
-Received: from tarshish.tkos.co.il (unknown [10.0.8.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mail.tkos.co.il (Postfix) with ESMTPS id B2F3D440F36;
-	Sun, 11 Aug 2024 09:24:16 +0300 (IDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tkos.co.il;
-	s=default; t=1723357456;
-	bh=pBuS/H7+odet/nPa5tfwLx8uhXkgW9g6Vrhua5wFMuU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PfNbj/sXq8c5ebZNSC3HNka6aYpupsv8+Df6xqGEC2T97lXp6QlHy6zMjudvbbxFW
-	 yR1gSASK6c3Pune5qpUoYJxmkpKQ7KQ4/GKI+I8nbnx0rdb4G0F3TUe2qhm1C7LSI6
-	 yMt9e2AbgrFTmO/xw9zXTnOAGuf7Ihhk0xF9DAK4cWr95mlI71tpEOYelZ+rxMJz62
-	 4RkPYc8dhQQqDkoKVo5BvZVaImmyxC+KwLxT49oBpQvsvhzu3rIb/i+NlsWiuMJRWt
-	 tLYihkWv9oNS6uRlhXqbqOzmupn3UBF61fBTeFdUK1BOn0NPiPXqX8Bdi6YdTM3H4o
-	 Cz0yrvSxxGC1Q==
-From: Baruch Siach <baruch@tkos.co.il>
-To: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: Baruch Siach <baruchs-c@neureality.ai>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1723357707; c=relaxed/simple;
+	bh=ITlBrNk/nnNYFawhBXPmlXS015YrTn0oyia8RryqSnc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bCVFFsxTUvysPJQYWNymL+8SFGzqgpKP2oW4DGUwdDbxf7H27E9oP2OWo/Lxgd2GbwAuu/2BXzj10kA04JuOOVC4k9ofSHqL0QtVH222z4POzqrfwfA4PcMqm4ldUO20F2SSwnTuWFHhFOyt9SrjVbSTMlJ/MY9B325O2qbCIyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIuG11Qv; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7c2595f5c35so547421a12.1;
+        Sat, 10 Aug 2024 23:28:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723357705; x=1723962505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/DMcAaFP8TtynypPN0f9sbeN3Vgz8QTUBmxZp6aEgJE=;
+        b=kIuG11Qvd/MZYLN53ZOm7EXjeSgDaUpsduJQuikIxmfvHFx+L9jDAs96J5c97yLqku
+         UokrfIK1wrxXqZRGdf+uW0VyhB1ZpPcbGl86U+T6oa/1pOrRAMVfltjDjPdyGVPtwJ+t
+         +COrvFOjETNx4MNKJ6uML2cbcIiA1HFLZx7WLFUXzCxKnKAQhffgs9I3oDFZjwMsL18i
+         LNm+be9VpsGvBTVpNEtqhtoilBCywAigtVKvsqtR9YuNefOMoTI/jNtp+rgApVeEYI8J
+         4VA60zVeWSqADG0Ihj30L7OLAKFULrAbQOEZv0242UekEAEv9EocZ0vYCYTbr5XOUc8u
+         jDAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723357705; x=1723962505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/DMcAaFP8TtynypPN0f9sbeN3Vgz8QTUBmxZp6aEgJE=;
+        b=ewwTP9BFcvzDaztEwb0xafF3KIKPTezSVbhI77PCyAaa5VNiQfxKBpTF84+WsJeTmi
+         XwYBuSfNONHNpvhigYDQrYz1Z6Nh1MX0Hrf2rLBVmhi+lkgNgxgFsOUlVzuf6fWGv4lS
+         Ao0HiWLu2JT/1kFKiLaQNLs/eFpLfWlhaV2bqjURykGDDq2ynGYEezSwIQ4kEDEvWGhA
+         hlL4Gy8hzendXcyxiTEfcDDx6VAbqMPgT6ynFtR/X6gePBiNwGyNnrwTMLXOvkINa4o1
+         lvagmdBhacueOohEiR6fIcGHVYH2EPpR0rXtaH5eOrFLm4mshXFYBpqIxdcXxcHRsSKy
+         j1Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCUJYsiYXaJQMjnFz/JtzQowQeD/4Qi1Nn2Jt6j9f/ujWtjMa6x+OiIQBJD9CAl+NaFDJricUDZ/XfAktTTQ@vger.kernel.org, AJvYcCV5elIC2+QJHOvckVYCwbIOdKRxoFHK0KcsIgf72dqCfQaoUN5n7kVBTPx2J95qF9kGyMe3hABAgznTZ/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiC1RDpv96scMPekqjfk+4J72uoip0e12bWpTb7F3909eWeOnt
+	ykt63ILpl8USuOLTAzmilaBaOTjfDUxFrCBZ9k2aA5oxBcLQa2/H
+X-Google-Smtp-Source: AGHT+IER3XajM5bBFvxQnnjDkNDUhSDbah17k73U0KUx8IyAlBH0JwbLi+zdu0VJ+kWqdFtqTyDWCQ==
+X-Received: by 2002:a17:902:ec8a:b0:1f7:2046:a8ae with SMTP id d9443c01a7336-200ae25aa5amr47643885ad.0.1723357705138;
+        Sat, 10 Aug 2024 23:28:25 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9038fesm18836795ad.114.2024.08.10.23.28.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Aug 2024 23:28:24 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: bbrezillon@kernel.org,
+	arno@natisbad.org,
+	schalla@marvell.com
+Cc: herbert@gondor.apana.org.au,
+	davem@davemloft.net,
+	jserv@ccns.ncku.edu.tw,
+	linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org,
-	=?UTF-8?q?Petr=20Tesa=C5=99=C3=ADk?= <petr@tesarici.cz>,
-	Ramon Fried <ramon@neureality.ai>,
-	Elad Nachman <enachman@marvell.com>
-Subject: [PATCH v6 0/2] dma: support DMA zone starting above 4GB
-Date: Sun, 11 Aug 2024 09:25:38 +0300
-Message-ID: <cover.1723357023.git.baruchs-c@neureality.ai>
-X-Mailer: git-send-email 2.43.0
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH 0/2] crypto: marvell - Remove custom swap function in favor of built-in sort swap
+Date: Sun, 11 Aug 2024 14:28:15 +0800
+Message-Id: <20240811062817.210527-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,97 +86,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Baruch Siach <baruchs-c@neureality.ai>
+The custom swap function used in octeontx/octeontx2 driver do not
+perform any special operations and can be replaced with the built-in
+swap function of sort. This change not only reduces code size but also
+improves efficiency, especially in scenarios where CONFIG_RETPOLINE is
+enabled, as it makes indirect function calls more expensive.
 
-DMA zones code assumes that DMA lower limit is zero. When there is no RAM 
-below 4GB, arm64 platform code sets DMA/DMA32 zone limits to cover the entire 
-RAM[0].
+By using the built-in swap, we avoid these costly indirect function
+calls, leading to better performance.
 
-My target platform has RAM starting at 32GB. Devices with 30-bit DMA mask are 
-mapped to 1GB at the bottom of RAM, between 32GB - 33GB. DMA zone over the 
-entire RAM breaks DMA allocation for these devices.
+Kuan-Wei Chiu (2):
+  crypto: octeontx - Remove custom swap function in favor of built-in
+    sort swap
+  crypto: octeontx2 - Remove custom swap functions in favor of built-in
+    sort swap
 
-In response to a previous RFC hack[1] Catalin Marinas suggested to add a
-separate offset value as base address for the DMA zone, and then refined the 
-suggestion to use start of RAM[3]. This series attempts to implement that 
-suggestion.
+ drivers/crypto/marvell/octeontx/otx_cptvf_algs.c   | 12 ++----------
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_algs.c | 10 +---------
+ 2 files changed, 3 insertions(+), 19 deletions(-)
 
-With this series applied, the DMA zone covers the right RAM range for my 
-platform.
-
-v6:
-
-  * Drop the first patch; existing logic is just fine
-
-  * Modify powerpc code to avoid off by one issue
-
-v5:
-
-  * Test the correct kernel
-
-  * Add missing patch that actually makes DMA zone work
-
-  * Extend the treatment of zone_dma_limit > DMA_BIT_MASK(32)
-
-  * Use max() to make the code somewhat more readable
-
-  * Change zone_dma_limit type to u64 to match DMA_BIT_MASK()
-
-v4:
-
-  * Drop last patch. zone_dma_limit includes RAM base address.
-
-  * Adjust DMA zone selection in swiotlb as well.
-
-  * Don't change max_zone_phys() behaviour
-
-  * Update code to fallback to DMA zone when zone_dma_limit > DMA_BIT_MASK(32)
-
-v3:
-
-  * Rebase on v6.11-rc1.
-
-  * Drop zone_dma_base. Use memblock_start_of_DRAM() instead.
-
-  * Drop DT patches. Low DMA range limit no longer needed.
-
-  * Add patch to improve dma_direct_optimal_gfp_mask() heuristics as Catalin 
-    suggested.
-
-RFC v2:
-
-  * Add patch from Catalin[2] changing zone_dma_bits to zone_dma_limit to 
-    simplify subsequent patches
-
-  * Test on real hardware
-
-RFC v1: https://lore.kernel.org/all/cover.1703683642.git.baruch@tkos.co.il/
-
-[0] See commit 791ab8b2e3db ("arm64: Ignore any DMA offsets in the 
-    max_zone_phys() calculation")
-
-[1] https://lore.kernel.org/all/9af8a19c3398e7dc09cfc1fbafed98d795d9f83e.1699464622.git.baruch@tkos.co.il/
-
-[2] https://lore.kernel.org/all/ZZ2HnHJV3gdzu1Aj@arm.com/
-
-[3] https://lore.kernel.org/all/ZnH-VU2iz9Q2KLbr@arm.com/
-
-Catalin Marinas (2):
-  dma: replace zone_dma_bits by zone_dma_limit
-  arm64: support DMA zone above 4GB
-
- arch/arm64/mm/init.c       | 32 ++++++++++----------------------
- arch/powerpc/mm/mem.c      |  5 ++++-
- arch/s390/mm/init.c        |  2 +-
- include/linux/dma-direct.h |  2 +-
- kernel/dma/direct.c        |  6 +++---
- kernel/dma/pool.c          |  4 ++--
- kernel/dma/swiotlb.c       |  6 +++---
- 7 files changed, 24 insertions(+), 33 deletions(-)
-
-
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
 -- 
-2.43.0
+2.34.1
 
 
