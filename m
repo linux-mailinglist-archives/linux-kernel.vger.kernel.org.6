@@ -1,319 +1,257 @@
-Return-Path: <linux-kernel+bounces-282143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813E594E019
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 07:20:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25E2194E01C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 07:21:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB9FC1F2155A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 05:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 850262813F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 05:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53635208D1;
-	Sun, 11 Aug 2024 05:20:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A67517740;
+	Sun, 11 Aug 2024 05:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DbFbaMUZ"
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A46917547
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 05:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2805E56A
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 05:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723353635; cv=none; b=S3hQA6D2y+JxTcZ1FWso38r671HGvIJHXoH8yzeDiuUG4YErLGxf9pp0f+OiN617xfrqjBsiRfAuXZGAM0VnWpKqn8q+vtuPcTc1y/x5Fmqp+cYvEUH5j1qCOII8HIAI1IwnJjR1daF47gDAoDxRIzm0ZLTw1WjmtLFyzUQXQIc=
+	t=1723353651; cv=none; b=W4L/3USl4oXDuzCXYaOKThhdsf/MJFKmEzKfADt8pXfMRizJusin0srFRPvmezSsUJx5vRVXx+RboD7NrWPYAM6o2amJDJAUxVGCRsjadTiiLa+QBwo+JhCXh71kVQjWx/tvsSLF/KZrHcLJsYbREDMw1XtRKhrBC8t1FyCaKV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723353635; c=relaxed/simple;
-	bh=vlbkNoYP2j5e0GPK16xqyatdla3pugrJU/oYKYwjJSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JrP2KQKKZnsWeO95Fs6FL7yB5TFGEJ8AVskrsc976ysvahgnjQ0+5pB+XDRAHHLnazDnbldz2sC3NSXg1mdJY6NmgEUMqz+OB1eFXuQ+gEsPmcuD6SFE8XJmv/QDcu/T6BxXoHYA0ss27g/4cSNlzayO4lVqgZcSA04dT6D/PMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sd0zw-0005xe-It; Sun, 11 Aug 2024 07:20:08 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sd0zu-0063X4-PV; Sun, 11 Aug 2024 07:20:06 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sd0zu-004Fff-2L;
-	Sun, 11 Aug 2024 07:20:06 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v4 3/3] net: phy: dp83tg720: Add cable testing support
-Date: Sun, 11 Aug 2024 07:20:05 +0200
-Message-Id: <20240811052005.1013512-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240811052005.1013512-1-o.rempel@pengutronix.de>
-References: <20240811052005.1013512-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723353651; c=relaxed/simple;
+	bh=vSAtaYgtzU8WvMzlvCAm+gV1WF/xhjdPrI8JDzfjRY8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jbICNJjB1yuQ4OMpZO8BURCc5bSqiSCNJ94NJZkJMq06JOJ+73jfXaSi5r62U/T7NtnrR6KUzY5L62PZH6KgOYaU0kyCBvU8bnNNqE5tTwQTaKnzYHUAPOS90hajdqomgpxe0sfKAyZHfyDV41mFQHHYXPprUepCUBjcvMI1BYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DbFbaMUZ; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-4f6ac477ff4so1934494e0c.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 22:20:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723353648; x=1723958448; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RevC54WGHITOMl6WLV6J8Ojm15LinFzCuYl4UNPBWi8=;
+        b=DbFbaMUZznr68+Ch70gcSv4QGmj6MuLNeAJzTNsbcP55ee8x2LAoEbqW2Vv2eDXmdU
+         EvcJZkJSqAXYl8LgRGwy7RGCjuMC2+jQ6pVX5sxMqqFSyMhVptjqCiLETk7qCOCQvjW+
+         tirTiNKEOP/3lTtoYvQ8gSt9ptKqoREjpxU1bFwabim55UXeOFTTGm2zhNKtY193xJ0H
+         3N3M3txsf6vQgzN9tHbEyyVVphYnUmT1xjS/rdnGqyih4/ZXPIFGkBBdz5HeOCTdUA8u
+         35C/EHGNrFj1oI1nBmxfI3Pz96JT97HIwQtPBd9BiR0kWWxqoa/0lMkIihsjhkwTPo2e
+         IdXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723353648; x=1723958448;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RevC54WGHITOMl6WLV6J8Ojm15LinFzCuYl4UNPBWi8=;
+        b=bO7oSXus2icL9UhWiPqGsMsPwYwDVKwNYjoctoArazwYA392/Dfjlw9etCVx3/hg6J
+         SldOQMKdmhQEjXCaxCBvBEqupSuiKHktYRpyBOb0H8pRsBa/0HGwpf/AKJqtDicJHrTg
+         1avxl44vRdXtXwzCpUbZRI7AvL/S1vyIo+jH63Nkh0RzbKq428w9yVNoldcRi1Eh2OVV
+         O9cuWMkoUgZRJUo9TKzwyG/DLUIW/InzFuAwuAbyJafhDrqXN43N5yU6a9T1l6RLD5Gx
+         CIFUvoMG41M9l0mZm2WcSRGZ/AuNkBvJWr4ujHNC8yw0Tzsc//a4Dl01Aa1n2notK3il
+         ZEPg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVZWRYMt/QSmrvlopWx8jRECvj25WdcogVT9fnoptGhCsq+RzCAp9uKuIW5Pt7BRQ2KPdh/sOjHGYe6lMyGWuNPG1oUzOmhj7M/wjP
+X-Gm-Message-State: AOJu0YzrnjPZRpzwBY1vxGmuP8zC9b2wndaz/wySiem3TajrPF5tDyS2
+	Z/1WokpUZ9xDwii0zXydCVsx76EwMqUEv03WFs0GckpqjXoXj9oYt6LCZBAWdL3G3cE9KUkKFsd
+	dgV92oLNbRSvAm4V/6PY/zkUEBaM=
+X-Google-Smtp-Source: AGHT+IGkeQaUTtML4BAUSknZ/hBerb+DXBKsTJxJ9HJGdHKaCjW0i004NcOl8UENx+Mx7weGwmwsaIpcn7zI/0kuIRQ=
+X-Received: by 2002:a05:6102:3588:b0:48f:e5d1:241d with SMTP id
+ ada2fe7eead31-495d84855e9mr7514227137.14.1723353648360; Sat, 10 Aug 2024
+ 22:20:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <41b49313-5804-46ba-9e1d-358b079274cd@redhat.com>
+ <20240809070412.33847-1-21cnbao@gmail.com> <62d758b1-595a-4c05-ab89-3fe43d79f1bf@redhat.com>
+In-Reply-To: <62d758b1-595a-4c05-ab89-3fe43d79f1bf@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 11 Aug 2024 17:20:37 +1200
+Message-ID: <CAGsJ_4z-bCSSQecYq=L4U1QuoQUCtgY1WXbAX=eCEO9rXv8eNQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
+	chrisl@kernel.org, hanchuanhua@oppo.com, ioworker0@gmail.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
+	ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Introduce cable testing support for the DP83TG720 PHY. This implementation
-is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
-Compliance (Rev. B)" application note.
+On Fri, Aug 9, 2024 at 7:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 09.08.24 09:04, Barry Song wrote:
+> >>>> I would appreciate if we leave the rmap out here.
+> >>>>
+> >>>> Can't we handle that when actually freeing the folio? folio_test_ano=
+n()
+> >>>> is sticky until freed.
+> >>>
+> >>> To be clearer: we increment the counter when we set a folio anon, whi=
+ch
+> >>> should indeed only happen in folio_add_new_anon_rmap(). We'll have to
+> >>> ignore hugetlb here where we do it in hugetlb_add_new_anon_rmap().
+> >>>
+> >>> Then, when we free an anon folio we decrement the counter. (hugetlb
+> >>> should clear the anon flag when an anon folio gets freed back to its
+> >>> allocator -- likely that is already done).
+> >>>
+> >>
+> >> Sorry that I am talking to myself: I'm wondering if we also have to
+> >> adjust the counter when splitting a large folio to multiple
+> >> smaller-but-still-large folios.
+> >
+> > Hi David,
+> >
+> > The conceptual code is shown below. Does this make more
+> > sense to you? we have a line "mod_mthp_stat(new_order,
+> > MTHP_STAT_NR_ANON, 1 << (order - new_order));"
+> >
+> > @@ -3270,8 +3272,9 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >       struct deferred_split *ds_queue =3D get_deferred_split_queue(foli=
+o);
+> >       /* reset xarray order to new order after split */
+> >       XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_o=
+rder);
+> > -     struct anon_vma *anon_vma =3D NULL;
+> > +     bool is_anon =3D folio_test_anon(folio);
+> >       struct address_space *mapping =3D NULL;
+> > +     struct anon_vma *anon_vma =3D NULL;
+> >       int order =3D folio_order(folio);
+> >       int extra_pins, ret;
+> >       pgoff_t end;
+> > @@ -3283,7 +3286,7 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >       if (new_order >=3D folio_order(folio))
+> >               return -EINVAL;
+> >
+> > -     if (folio_test_anon(folio)) {
+> > +     if (is_anon) {
+> >               /* order-1 is not supported for anonymous THP. */
+> >               if (new_order =3D=3D 1) {
+> >                       VM_WARN_ONCE(1, "Cannot split to order-1 folio");
+> > @@ -3323,7 +3326,7 @@ int split_huge_page_to_list_to_order(struct page =
+*page, struct list_head *list,
+> >       if (folio_test_writeback(folio))
+> >               return -EBUSY;
+> >
+> > -     if (folio_test_anon(folio)) {
+> > +     if (is_anon) {
+> >               /*
+> >                * The caller does not necessarily hold an mmap_lock that=
+ would
+> >                * prevent the anon_vma disappearing so we first we take =
+a
+> > @@ -3437,6 +3440,10 @@ int split_huge_page_to_list_to_order(struct page=
+ *page, struct list_head *list,
+> >                       }
+> >               }
+> >
+> > +             if (is_anon) {
+> > +                     mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> > +                     mod_mthp_stat(new_order, MTHP_STAT_NR_ANON, 1 << =
+(order - new_order));
+> > +             }
+> >               __split_huge_page(page, list, end, new_order);
+> >               ret =3D 0;
+> >       } else {
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 408ef3d25cf5..c869d0601614 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1039,6 +1039,7 @@ __always_inline bool free_pages_prepare(struct pa=
+ge *page,
+> >       bool skip_kasan_poison =3D should_skip_kasan_poison(page);
+> >       bool init =3D want_init_on_free();
+> >       bool compound =3D PageCompound(page);
+> > +     bool anon =3D PageAnon(page);
+> >
+> >       VM_BUG_ON_PAGE(PageTail(page), page);
+> >
+> > @@ -1130,6 +1131,9 @@ __always_inline bool free_pages_prepare(struct pa=
+ge *page,
+> >
+> >       debug_pagealloc_unmap_pages(page, 1 << order);
+> >
+> > +     if (anon && compound)
+> > +             mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> > +
+> >       return true;
+>
+> I'd have placed it here, when we are already passed the "PageMappingFlags=
+" check and
+> shouldn't have any added overhead for most !anon pages IIRC (mostly only =
+anon/ksm pages should
+> run into that path).
+>
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 408ef3d25cf5..a11b9dd62964 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -1079,8 +1079,11 @@ __always_inline bool free_pages_prepare(struct pag=
+e *page,
+>                          (page + i)->flags &=3D ~PAGE_FLAGS_CHECK_AT_PREP=
+;
+>                  }
+>          }
+> -       if (PageMappingFlags(page))
+> +       if (PageMappingFlags(page)) {
+> +               if (PageAnon(page) && compound)
+> +                       mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+>                  page->mapping =3D NULL;
+> +       }
+>          if (is_check_pages_enabled()) {
+>                  if (free_page_is_bad(page))
+>                          bad++;
+>
 
-The feature has been tested with cables of various lengths:
-- No cable: 1m till open reported.
-- 5 meter cable: reported properly.
-- 20 meter cable: reported as 19m.
-- 40 meter cable: reported as cable ok.
+This looks better, but we're not concerned about the bad pages, correct?
+For bad pages, we're reducing the count by 1, but they aren't actually
+freed. We don't need to worry about this since it's already considered
+a bug, right?
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3:
-- select OPEN_ALLIANCE_HELPERS
-changes v2:
-- use open alliance specific helpers for the TDR results
----
- drivers/net/phy/Kconfig     |   1 +
- drivers/net/phy/dp83tg720.c | 154 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+)
+> Conceptually LGTM. We account an anon folio as long as it's anon,
+> even when still GUP-pinned after unmapping it or when temporarily
+> unmapping+remapping it during migration.
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 874422e530ff0..f530fcd092fe4 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -417,6 +417,7 @@ config DP83TD510_PHY
- 
- config DP83TG720_PHY
- 	tristate "Texas Instruments DP83TG720 Ethernet 1000Base-T1 PHY"
-+	select OPEN_ALLIANCE_HELPERS
- 	help
- 	  The DP83TG720S-Q1 is an automotive Ethernet physical layer
- 	  transceiver compliant with IEEE 802.3bp and Open Alliance
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index c706429b225a2..0ef4d7dba0656 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -3,10 +3,13 @@
-  * Copyright (c) 2023 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-  */
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
- 
-+#include "open_alliance_helpers.h"
-+
- #define DP83TG720S_PHY_ID			0x2000a284
- 
- /* MDIO_MMD_VEND2 registers */
-@@ -14,6 +17,17 @@
- #define DP83TG720S_STS_MII_INT			BIT(7)
- #define DP83TG720S_LINK_STATUS			BIT(0)
- 
-+/* TDR Configuration Register (0x1E) */
-+#define DP83TG720S_TDR_CFG			0x1e
-+/* 1b = TDR start, 0b = No TDR */
-+#define DP83TG720S_TDR_START			BIT(15)
-+/* 1b = TDR auto on link down, 0b = Manual TDR start */
-+#define DP83TG720S_CFG_TDR_AUTO_RUN		BIT(14)
-+/* 1b = TDR done, 0b = TDR in progress */
-+#define DP83TG720S_TDR_DONE			BIT(1)
-+/* 1b = TDR fail, 0b = TDR success */
-+#define DP83TG720S_TDR_FAIL			BIT(0)
-+
- #define DP83TG720S_PHY_RESET			0x1f
- #define DP83TG720S_HW_RESET			BIT(15)
- 
-@@ -22,18 +36,155 @@
- /* Power Mode 0 is Normal mode */
- #define DP83TG720S_LPS_CFG3_PWR_MODE_0		BIT(0)
- 
-+/* Open Aliance 1000BaseT1 compatible HDD.TDR Fault Status Register */
-+#define DP83TG720S_TDR_FAULT_STATUS		0x30f
-+
-+/* Register 0x0301: TDR Configuration 2 */
-+#define DP83TG720S_TDR_CFG2			0x301
-+
-+/* Register 0x0303: TDR Configuration 3 */
-+#define DP83TG720S_TDR_CFG3			0x303
-+
-+/* Register 0x0304: TDR Configuration 4 */
-+#define DP83TG720S_TDR_CFG4			0x304
-+
-+/* Register 0x0405: Unknown Register */
-+#define DP83TG720S_UNKNOWN_0405			0x405
-+
-+/* Register 0x0576: TDR Master Link Down Control */
-+#define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
-+
- #define DP83TG720S_RGMII_DELAY_CTRL		0x602
- /* In RGMII mode, Enable or disable the internal delay for RXD */
- #define DP83TG720S_RGMII_RX_CLK_SEL		BIT(1)
- /* In RGMII mode, Enable or disable the internal delay for TXD */
- #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
- 
-+/* Register 0x083F: Unknown Register */
-+#define DP83TG720S_UNKNOWN_083F			0x83f
-+
- #define DP83TG720S_SQI_REG_1			0x871
- #define DP83TG720S_SQI_OUT_WORST		GENMASK(7, 5)
- #define DP83TG720S_SQI_OUT			GENMASK(3, 1)
- 
- #define DP83TG720_SQI_MAX			7
- 
-+/**
-+ * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is based on the documented procedure for the DP83TG720 PHY.
-+ *
-+ * Returns: 0 on success, a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Initialize the PHY to run the TDR test as described in the
-+	 * "DP83TG720S-Q1: Configuring for Open Alliance Specification
-+	 * Compliance (Rev. B)" application note.
-+	 * Most of the registers are not documented. Some of register names
-+	 * are guessed by comparing the register offsets with the DP83TD510E.
-+	 */
-+
-+	/* Force master link down */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
-+			       DP83TG720S_TDR_MASTER_LINK_DOWN, 0x0400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG2,
-+			    0xa008);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG3,
-+			    0x0928);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG4,
-+			    0x0004);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_0405,
-+			    0x6400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_083F,
-+			    0x3003);
-+	if (ret)
-+		return ret;
-+
-+	/* Start the TDR */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG,
-+			       DP83TG720S_TDR_START);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83tg720_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	/* Read the TDR status */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Check if the TDR test is done */
-+	if (!(ret & DP83TG720S_TDR_DONE))
-+		return 0;
-+
-+	/* Check for TDR test failure */
-+	if (!(ret & DP83TG720S_TDR_FAIL)) {
-+		int location;
-+
-+		/* Read fault status */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TG720S_TDR_FAULT_STATUS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Get fault type */
-+		stat = oa_1000bt1_get_ethtool_cable_result_code(ret);
-+
-+		/* Determine fault location */
-+		location = oa_1000bt1_get_tdr_distance(ret);
-+		if (location > 0)
-+			ethnl_cable_test_fault_length(phydev,
-+						      ETHTOOL_A_CABLE_PAIR_A,
-+						      location);
-+	} else {
-+		/* Active link partner or other issues */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
- static int dp83tg720_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
-@@ -195,12 +346,15 @@ static struct phy_driver dp83tg720_driver[] = {
- 	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
- 	.name		= "TI DP83TG720S",
- 
-+	.flags          = PHY_POLL_CABLE_TEST,
- 	.config_aneg	= dp83tg720_config_aneg,
- 	.read_status	= dp83tg720_read_status,
- 	.get_features	= genphy_c45_pma_read_ext_abilities,
- 	.config_init	= dp83tg720_config_init,
- 	.get_sqi	= dp83tg720_get_sqi,
- 	.get_sqi_max	= dp83tg720_get_sqi_max,
-+	.cable_test_start = dp83tg720_cable_test_start,
-+	.cable_test_get_status = dp83tg720_cable_test_get_status,
- 
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
--- 
-2.39.2
+right. but migration might be a problem? as the dst folio doesn't
+call folio_add_new_anon_rmap(), dst->mapping is copied from
+src. So I suspect we need the below (otherwise, src has been put
+and got -1, but dst won't get +1),
 
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 7e1267042a56..11ef11e59036 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1102,6 +1102,8 @@ static void migrate_folio_done(struct folio *src,
+                mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
+                                    folio_is_file_lru(src),
+-folio_nr_pages(src));
+
++       mod_mthp_stat(folio_order(src), MTHP_STAT_NR_ANON, 1);
++
+        if (reason !=3D MR_MEMORY_FAILURE)
+                /* We release the page in page_handle_poison. */
+                folio_put(src);
+
+
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
 
