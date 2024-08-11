@@ -1,232 +1,171 @@
-Return-Path: <linux-kernel+bounces-282331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38DB94E254
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:44:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32DF194E25A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7987B21346
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0BDE281658
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D401537D7;
-	Sun, 11 Aug 2024 16:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57622155A32;
+	Sun, 11 Aug 2024 16:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMTVaL0A"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ng8k0Y8U"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E989D18E06;
-	Sun, 11 Aug 2024 16:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD3114E2CF
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 16:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723394648; cv=none; b=gzPEuAIfrh1cfz+olmX7BX/Kyl3QrImTOI+y1ZN0PunGBiqJaXpec+zTN1VDNgQ7t0FwKU/u3L0zdlQwHJBgS63eFjaWw1f/F8Qz4eN9X0+D0CIcqARazHvXPB0J03tc4XrgvlJid6s3H4eMlovO99t0pdkWAU9lomVNj10gjwA=
+	t=1723395314; cv=none; b=R7MadnNF/RmW87OnMkd9HKht9TW3tUkN+sfcqTt9f9S9lUFnFNvqsftCp9YbiknpRZUNVQmWW7JlyKPETEdDc96o2oiF/Dur4YR97Iadskmg2dIzBeZ3I5mQapdXyWK0uHFlYpoYVJQPoKXV0+pK6JsBE1sIqsO5+MUzbpMfyLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723394648; c=relaxed/simple;
-	bh=Zmsunm964HuzM2ri18gx/TQMJsEOatE4/DOmrifmKWE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ai2bnahCj5rMkrlnmDNQstbs+rHaOFv/BRqlQRQtXW8bSTbUopOOZEYTg88hSWhIxEBoTr740jlO0tSKXGUaygbyIUi+L6Mi3O2dA/eo3vT1vXPVOPRBoR65OKm2+wD6BcyhpxFNYLnZPoXUms4gm/+F817pWAjxItPksyoWHno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMTVaL0A; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5d59e491fefso1766197eaf.1;
-        Sun, 11 Aug 2024 09:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723394646; x=1723999446; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5sJH8hfEK81Q8nQYIEInnXVBydwUeu1gKVM21zLkZMA=;
-        b=BMTVaL0AsJX8r3mvbeD1kApA1Z+l6oT/QViBs3JkoZPxulGOuadV5yd14hgPbln3C3
-         nz3g5OwhW0wi4O9gitmMtIo0wF+SOFSppuzX3Ohun1f51kmqb5lV3NBXUo2V7ko6mL5r
-         8/DSphXcXlGNVX7GyvO6F5ZmCcEPRIg+w/fhH4OPV270voobHQdOOhCKw5PRc7ZKI1yf
-         hQ1f/9r2Bbkk3a8wcCsTYJlCn6UdMLRxF/IAMyhxRzR7imRiDpjjFF26aFyH65J135HA
-         SQd56ple1EOlC8JqFKMY5Dxay29e6ff7OgO9Acz17Hd8PfgpWiZrSsd6CaPeKbhqFXKM
-         ri/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723394646; x=1723999446;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5sJH8hfEK81Q8nQYIEInnXVBydwUeu1gKVM21zLkZMA=;
-        b=mkd4ilVgUAWsxL1u0hKsOX0nzU9xuQzGCw/Ruig6hYkygSOcQL/hww05ynG0COROd1
-         kC9No+6e3+X61YdVcQx3wv9Y3JsIAw/L3I17wvMT3wjxW3xNrJe6MFDa85k5ot8uwnm7
-         ymGYlTxfHZQqBWGWA9HoscZyfBd6uvl1rnlz8vgJHdHiYba+GPGZH7r2eIIr7+VX6dBy
-         UURUO4317xfU7xU/wo/W+vMdKafCV4XTeEIbygPLJVf2pFq/sH6qDC4V4oRy2lLR83NY
-         H9tbPSie8qGBTMFKh2wiBxiwQdeRJpIgYSaBgFpZXiC+WPUxqXJQOB+u6u8rzvrlFvYS
-         Bbew==
-X-Forwarded-Encrypted: i=1; AJvYcCVOFe/yV6nueGKWF42WsUXPq08+b+Ep3rKd2nvMx4n69JlupG7fO0ecta+NYQB+Llo+z7QZQWvrgNWhJUjI8g2TXkCP0JXqCY0Sm3AW
-X-Gm-Message-State: AOJu0YwvRkFx3JzvbIPBHcxo02EElgHkHSMp5kgxk6+ZMUDVyxqA5iIz
-	yM8XqJIkohDsDyvPUM2OXA54mgPhzfIBwWfhZ+w1AQpyuQbtQOxr
-X-Google-Smtp-Source: AGHT+IFTVTapixqAHDc9XcjCZ55b6J52aJUgIFUIx78Ch4jHuaGuI9MW8g4HeEjhD2b1077bH4v+OA==
-X-Received: by 2002:a05:6820:229f:b0:5d8:10cb:c336 with SMTP id 006d021491bc7-5d867d39531mr7092151eaf.1.1723394645709;
-        Sun, 11 Aug 2024 09:44:05 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5da3e53e167sm924909eaf.5.2024.08.11.09.44.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 09:44:05 -0700 (PDT)
-Message-ID: <e555c73b-e060-40d6-aee7-e7e40ceae4ee@gmail.com>
-Date: Sun, 11 Aug 2024 11:44:04 -0500
+	s=arc-20240116; t=1723395314; c=relaxed/simple;
+	bh=vHKPWfiQWvlSo4VoE8qHtUeppbgKxJPqBsnzf17dE1M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=I8fYUXxHLnKnY7JI37obB1bSImXiw/5Lhm6SYfqjkLzSQa4/JccKtaNFMczcWnhAqSS7pknJhy4u6NSqzhTxsiusW4wx/896vSLbRIMXFjITJpT7xVErDpuLpyVy6j5M+nZ5n94hFfEczJbWb3/y5mpuh3y00EcTEO1QSXhM8ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Ng8k0Y8U; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240811165504epoutp02809d486acdf93d2b48582012de0002e9~quuX75ahe2731727317epoutp02V
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 16:55:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240811165504epoutp02809d486acdf93d2b48582012de0002e9~quuX75ahe2731727317epoutp02V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723395304;
+	bh=hd+fiVs9oF1v/I8T9U+QYPDLsJffRXyK3AHnAirESvk=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=Ng8k0Y8UZs6ms0QLTdhbgNTV6xP+vkTyETuCFpUXRoui6So1jeNMYKXgYjdPhHjeo
+	 RLI0pHhc4g6OjTyYv3hoJLqQFDXVSl55AxBAs0elRUwmy896Wd0fHob5UIYEtN+SU6
+	 vPL2TcvJrS+94a9I6oFxK5kX8kiv97dhONaOo/58=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240811165502epcas5p30380bcb0d1bedc8adf60b5d8ad888a7d~quuWo54st2486024860epcas5p3q;
+	Sun, 11 Aug 2024 16:55:02 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.175]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WhkKK1z97z4x9Pt; Sun, 11 Aug
+	2024 16:55:01 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AD.28.19863.5ECE8B66; Mon, 12 Aug 2024 01:55:01 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240811165500epcas5p32d48a528ec0b99b2867f7c27bdecc5a8~quuUI2HQD2970829708epcas5p3S;
+	Sun, 11 Aug 2024 16:55:00 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240811165500epsmtrp27d587a693cfdf318892d5304e5336552~quuUIFhjG1434314343epsmtrp2G;
+	Sun, 11 Aug 2024 16:55:00 +0000 (GMT)
+X-AuditID: b6c32a50-c73ff70000004d97-8c-66b8ece547de
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0C.03.08456.4ECE8B66; Mon, 12 Aug 2024 01:55:00 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240811165458epsmtip25e1cffbfb83e37a1cc3ab595ee5b69a1~quuSQOOD91628316283epsmtip2f;
+	Sun, 11 Aug 2024 16:54:58 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Sunyeal Hong'"
+	<sunyeal.hong@samsung.com>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
+ Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
+Subject: RE: [PATCH v5 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+Date: Sun, 11 Aug 2024 22:24:56 +0530
+Message-ID: <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] docs/sp_Sp: Add translation to spanish of the
- documentation related to EEVDF
-To: =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20240810111513.20049-1-sergio.collado@gmail.com>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <20240810111513.20049-1-sergio.collado@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQF6vxHYtquPDfXNJNR6Q4M3hEm7ZwGgrKQGAnAwy/YBn8h2zbK1GALg
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmuu7TNzvSDN785bJYs/cck8X1L89Z
+	LeYfOcdqcf78BnaLTY+vsVp87LnHanF51xw2ixnn9zFZXDzlavF/zw52i8Nv2lkt/l3byGLR
+	tGw9kwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
+	8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QCcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
+	S2yVUgtScgpMCvSKE3OLS/PS9fJSS6wMDQyMTIEKE7IzVr1+wFjwnK1i2ha2BsY1rF2MnBwS
+	AiYSn1u/sYPYQgJ7GCUernXtYuQCsj8xSuxeOYMRIvGNUaLzKAtMw56HSxkhivYySnTtPcsK
+	4bxglDjcOgWsg01AV2LH4jY2kISIwD0miY6J+1lAHGaBdYwSm2ceAVvIKWAnsWfnbTBbWCBM
+	Yv/t6WA2i4CqROfq3WwgNq+ApUTntJ0sELagxMmZT8BsZgFtiWULXzND3KQg8fPpMrCHRATc
+	JKafn8gIUSMu8fIoyC4uoJoDHBI7J/yCanCRmPNsKtRDwhKvjm9hh7ClJD6/28sGYWdLHL84
+	C8qukOhu/QhVYy+x89FNoF4OoAWaEut36UPs4pPo/f2ECSQsIcAr0dEmBFGtKtH87irUJmmJ
+	id3d0HD3kLixYyP7BEbFWUg+m4Xks1lIPpiFsGwBI8sqRqnUguLc9NRk0wJD3bzUcniEJ+fn
+	bmIEp2CtgB2Mqzf81TvEyMTBeIhRgoNZSYS3OXxTmhBvSmJlVWpRfnxRaU5q8SFGU2B4T2SW
+	Ek3OB2aBvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg+pg4OKUamOYEnhL8
+	fTzbIy1Az6jsEqeD5A5l3o3KCuuMt7hU8HQqX7goG+DN1uH9fOmn2VnH+aRuLfGwX612Ts7t
+	65Mrkk4zL3npuU5L6dq+3i4/yGqjyY1C0eKX2SwKz40O5af8YDwi+Vir8ZJuh4HlJ9knM/j2
+	L34ndFxyUVvFZ6v7Tbfvb77ttl1FT0NtZ4bak9sWIrOdBT6FTpkd+PfP12a3ojt/LuwLkJki
+	FNW0rVdudkeGgqDQpU9ZL9fHLtO7dlbEm3+/9JuPN9JWGCst0TRNcD3cd+XQ/AT/N+t/2y+6
+	IJky7XhvFfvExrYM1p5/Fx7ufbFsctD+FxOqVt45Jv/UpPVQxp4Dyv9Tf7z5Z2j5s1WJpTgj
+	0VCLuag4EQDAeusxSgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEIsWRmVeSWpSXmKPExsWy7bCSvO6TNzvSDBq+s1us2XuOyeL6l+es
+	FvOPnGO1OH9+A7vFpsfXWC0+9txjtbi8aw6bxYzz+5gsLp5ytfi/Zwe7xeE37awW/65tZLFo
+	WraeyYHX4/2NVnaPTas62Tw2L6n36NuyitHj8ya5ANYoLpuU1JzMstQifbsEroxbzw+xF9xm
+	q1iw7QNLA+MC1i5GTg4JAROJPQ+XMnYxcnEICexmlOjds4kZIiEtcX3jBHYIW1hi5b/n7BBF
+	zxgllu96CVbEJqArsWNxGxtIQkTgCZPEtZZNYKOYBTYxSpzbfZMNouU7o8S0P2cZQVo4Bewk
+	9uy8DTZXWCBE4uehP2wgNouAqkTn6t1gNq+ApUTntJ0sELagxMmZT8BsZgFtid6HrYww9rKF
+	r6FuVZD4+XQZ2EMiAm4S089PhKoRl3h59Aj7BEbhWUhGzUIyahaSUbOQtCxgZFnFKJlaUJyb
+	nltsWGCUl1quV5yYW1yal66XnJ+7iREcjVpaOxj3rPqgd4iRiYPxEKMEB7OSCG9z+KY0Id6U
+	xMqq1KL8+KLSnNTiQ4zSHCxK4rzfXvemCAmkJ5akZqemFqQWwWSZODilGpj2TWgrfrNmXU2F
+	wJtVm/nrzx67uPTq5Fsn+1Zmtk6xuKeeFtjQHCaUZ1evX12Qx7CistFPZhXD7fsfg1OY70zM
+	CQjZueDgSm+nN1cv1y/bEnf7X+jFY1UZgdf2v7Koj13B2cGU3WjxUizl5PGNRSZztodqCOSv
+	+3PKpMA0YpXtWfHra47M6r1n8Esv9uDy79d+x62cVvKVoW/T9Fcblu86tdMu4H4ft8Oz9K1b
+	TZmyJ8juj1cwYQmbMX3DLJUlW6/IXf0Vf1hXZ3lWD4PyK26T2U0bpnPPWmynZKrl2Nvp98wo
+	KKt5dax/1t1J39bcKLi40fGF0Sx/iQrXZJcLjSWNpanXFpcs0Itf891hV3qiEktxRqKhFnNR
+	cSIA23yVbDUDAAA=
+X-CMS-MailID: 20240811165500epcas5p32d48a528ec0b99b2867f7c27bdecc5a8
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240730071227epcas2p278017961013950cd75c4266eda45c236
+References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
+	<CGME20240730071227epcas2p278017961013950cd75c4266eda45c236@epcas2p2.samsung.com>
+	<20240730071221.2590284-2-sunyeal.hong@samsung.com>
+	<db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
 
-Hello,
+Hi Krzysztof
 
-On 8/10/24 06:15, Sergio González Collado wrote:
-> Translate Documentation/scheduler/sched-eevdf.rst to spanish.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: Wednesday, July 31, 2024 2:57 PM
+> To: Sunyeal Hong <sunyeal.hong=40samsung.com>; Sylwester Nawrocki
+=5Bsnip=5D
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynosautov920-cmu-top
+> > +      - samsung,exynosautov920-cmu-peric0
+>=20
+> Maybe I misinterpreted previous discussion, but I had impression that
+> binding was incomplete and you wanted to add more devices?
+>=20
+There are other CMU controller blocks likes any other Exynos SoC.=20
+Are you suggesting to add all of them?=20
+In the above case cmu_top provides clocks to cmu_peric0.=20
+And I think the subject patch Intension is to add binding for this clock tr=
+ee.=20
 
+> > +
+> > +  clocks:
+> > +    minItems: 1
+=5Bsnip=5D
+>=20
+> Best regards,
+> Krzysztof
 
-s/spanish/Spanish
-
-
->
-> Signed-off-by: Sergio González Collado <sergio.collado@gmail.com>
-> ---
->  v1 -> v2: correct the commit message.
-> ---
->  .../translations/sp_SP/scheduler/index.rst    |  1 +
->  .../sp_SP/scheduler/sched-design-CFS.rst      |  8 +--
->  .../sp_SP/scheduler/sched-eevdf.rst           | 58 +++++++++++++++++++
->  3 files changed, 63 insertions(+), 4 deletions(-)
->  create mode 100644 Documentation/translations/sp_SP/scheduler/sched-eevdf.rst
->
-> diff --git a/Documentation/translations/sp_SP/scheduler/index.rst b/Documentation/translations/sp_SP/scheduler/index.rst
-> index 768488d6f001..32f9fd7517b2 100644
-> --- a/Documentation/translations/sp_SP/scheduler/index.rst
-> +++ b/Documentation/translations/sp_SP/scheduler/index.rst
-> @@ -6,3 +6,4 @@
->      :maxdepth: 1
->  
->      sched-design-CFS
-> +    sched-eevdf
-> diff --git a/Documentation/translations/sp_SP/scheduler/sched-design-CFS.rst b/Documentation/translations/sp_SP/scheduler/sched-design-CFS.rst
-> index 90a153cad4e8..8b8eb581c7be 100644
-> --- a/Documentation/translations/sp_SP/scheduler/sched-design-CFS.rst
-> +++ b/Documentation/translations/sp_SP/scheduler/sched-design-CFS.rst
-> @@ -14,10 +14,10 @@ Gestor de tareas CFS
->  
->  CFS viene de las siglas en inglés de "Gestor de tareas totalmente justo"
->  ("Completely Fair Scheduler"), y es el nuevo gestor de tareas de escritorio
-> -implementado por Ingo Molnar e integrado en Linux 2.6.23. Es el sustituto de
-> -el previo gestor de tareas SCHED_OTHER.
-> -
-> -Nota: El planificador EEVDF fue incorporado más recientemente al kernel.
-> +implementado por Ingo Molnar e integrado en Linux 2.6.23. Es el sustituto
-> +del previo gestor de tareas SCHED_OTHER. Hoy en día se está abriendo camino
-> +para el gestor de tareas EEVDF cuya documentación se puede ver en
-
-
-s/EEVDF/EEVDF,
-
-
-> +Documentation/scheduler/sched-eevdf.rst
->  
->  El 80% del diseño de CFS puede ser resumido en una única frase: CFS
->  básicamente modela una "CPU ideal, precisa y multi-tarea" sobre hardware
-> diff --git a/Documentation/translations/sp_SP/scheduler/sched-eevdf.rst b/Documentation/translations/sp_SP/scheduler/sched-eevdf.rst
-> new file mode 100644
-> index 000000000000..54f68473f31a
-> --- /dev/null
-> +++ b/Documentation/translations/sp_SP/scheduler/sched-eevdf.rst
-> @@ -0,0 +1,58 @@
-> +
-> +.. include:: ../disclaimer-sp.rst
-> +
-> +:Original: :ref:`Documentation/scheduler/sched-eevdf.rst <sched_eevdf>`
-> +:Translator: Sergio González Collado <sergio.collado@gmail.com>
-> +
-> +======================
-> +Gestor de tareas EEVDF
-> +======================
-> +
-> +El gestor de tareas EEVDF,del inglés: "Earliest Eligible Virtual Deadline
-
-
-s/EEVDF,del/EEVDF, del
-
-(With a space)
-
-
-> +First", fue presentado por primera vez en una publicación científica en
-> +1995 [1]. El kernel de Linux comenzó a transicionar hacia EEVPF en la
-> +versión 6.6 (y como una nueva opción en 2024), alejándose del gestor
-> +de tareas CFS, en favor de una versión de EEVDF propuesta por Peter
-> +Zijlstra en 2023 [2-4]. Más información relativa a CFS puede encontrarse
-> +en Documentation/scheduler/sched-design-CFS.rst.
-> +
-> +De forma parecida a CFS, EEVDF intenta distribuir el tiempo de ejecución
-> +de la CPU de forma equitativa entre todas las tareas que tengan la misma
-> +prioridad y puedan ser ejecutables. Para eso, asigna un tiempo de
-> +ejecución virtual a cada tarea, creando un "retraso" que puede ser usado
-> +para determinar si una tarea ha recibido su cantidad justa de tiempo
-> +de ejecución en la CPU. De esta manera, una tarea con un "retraso"
-> +positivo, es porque se le debe tiempo de ejecución, mientras que una
-> +con "retraso" negativo implica que la tarea ha excedido su cuota de
-> +tiempo. EEVDF elige las tareas con un "retraso" mayor igual a cero y
-> +calcula un tiempo límite de ejecución virtual (VD, del inglés: virtual
-> +deadline) para cada una, eligiendo la tarea con la VD más próxima para
-> +ser ejecutada a continuación. Es importante darse cuenta que esto permite
-> +que la tareas que sean sensibles a la latencia que tengan porciones de
-> +tiempos de ejecución de CPU más cortos ser priorizadas, lo cual ayuda con
-> +su menor tiempo de respuesta.
-> +
-> +Ahora mismo se está discutiendo cómo gestionar esos "retrasos", especialmente
-> +en tareas que estén en un estado durmiente; pero en el momento en el que
-> +se escribe este texto EEVDF usa un mecanismo de "decaimiento" basado en el
-> +tiempo virtual de ejecución (VRT, del inglés: virtual run time). Esto previene
-> +a las tareas de abusar del sistema simplemente durmiendo brevemente para
-> +reajustar su retraso negativo: cuando una tarea duerme, esta permanece en
-> +la cola de ejecución pero marcada para "desencolado diferido", permitiendo
-> +a su retraso decaer a lo largo de VRT. Por tanto, las tareas que duerman
-> +por más tiempo eventualmente eliminarán su retraso. Finalmente, las tareas
-> +pueden adelantarse a otras si su VD es más próximo el tiempo, y las
-
-
-s/el tiempo/en el tiempo
-
-
-> +tareas podrán pedir porciones de tiempo específicas con la nueva llamada
-> +del sistema sched_setattr(), todo esto facilitara el trabajo en las aplicaciones
-
-
-s/en las/de las
-
-
-> +que sean sensibles a las latencias.
-> +
-> +REFERENCIAS
-> +===========
-> +
-> +[1] https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=805acf7726282721504c8f00575d91ebfd750564
-> +
-> +[2] https://lore.kernel.org/lkml/a79014e6-ea83-b316-1e12-2ae056bda6fa@linux.vnet.ibm.com/
-> +
-> +[3] https://lwn.net/Articles/969062/
-> +
-> +[4] https://lwn.net/Articles/925371/
-> -- 2.39.2
-
-
-Nice! With these changes,
-
-Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 
 
