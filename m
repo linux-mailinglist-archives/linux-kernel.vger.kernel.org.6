@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-282429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE2894E3D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F7094E3D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03CF1C20E4D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:28:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AE91C20E31
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFE8165EE0;
-	Sun, 11 Aug 2024 23:28:13 +0000 (UTC)
-Received: from sxb1plsmtpa01-01.prod.sxb1.secureserver.net (sxb1plsmtpa01-01.prod.sxb1.secureserver.net [188.121.53.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576BA15F40D;
+	Sun, 11 Aug 2024 23:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TKUs28P+"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3F4C7E
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBC626287;
+	Sun, 11 Aug 2024 23:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723418892; cv=none; b=lSdEWtqod67WnZNrRWFBxavo93Myup4C13XoLaAnt6RG11h+qREvaCSaqNo6CxZV+3Lre/BoqZIUikaNytLw+trZPHem/xx6GkEAT1T9N3+/yBKz8oXhICRo+/EZJwsprJ9UvOCq2tpG/ZwpKo8PDcPZeqofgQl34HjBAAewb2M=
+	t=1723419024; cv=none; b=FNVkz4Tn/Abfaed+J+eVWmjXuQIp4us5RViaie+zQqLre1ffktxik0LnldhOEegcmICfK0PvPvogBtfCrRuWOK1JDiDRQUsOcvK0M2dI+3J6CqwdJWb7NZG1f9CT+CrVW9moqgFrHGa3bN1i1+Cky2drH1MUP/z3o0Et1KSfbY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723418892; c=relaxed/simple;
-	bh=0LhUPbXTy9pdwvQ4YkiZMMkLq0j5DEixcApfQlOOrYQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ojDk3nVa6UiXVnUW+5PPYadrlvwSlkasx1BAG1qptbCaCAk+oAdpdkj8H/GdxCWBHfBNKbW3YuoraHQf53lHMrwyHVMxuD+auDffwcvxG9e7mB1Mm1T/ymLe1x47J6N6kQ2Px7pip7uUq+eZ5U1UQlHjROR9kJcVGNdguVjRIXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
-Received: from phoenix.fritz.box ([82.69.79.175])
-	by :SMTPAUTH: with ESMTPA
-	id dHyXsXxYxPxTTdHyhs0hh7; Sun, 11 Aug 2024 16:28:00 -0700
-X-CMAE-Analysis: v=2.4 cv=PMvE+uqC c=1 sm=1 tr=0 ts=66b94901
- a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=FXvPX3liAAAA:8
- a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=aXxt9TpeGBesqlHbmUgA:9 a=UObqyxdv-6Yh2QiB9mM_:22 a=FdTzh2GWekK77mhwV6Dw:22
- a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
-X-SECURESERVER-ACCT: phillip@squashfs.org.uk
-From: Phillip Lougher <phillip@squashfs.org.uk>
-To: akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Phillip Lougher <phillip@squashfs.org.uk>,
-	Lizhi Xu <lizhi.xu@windriver.com>,
-	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Subject: [PATCH V2] Squashfs: sanity check symbolic link size
-Date: Mon, 12 Aug 2024 00:28:21 +0100
-Message-Id: <20240811232821.13903-1-phillip@squashfs.org.uk>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723419024; c=relaxed/simple;
+	bh=wm5ktlve6wgsgEwPPW3LGQhe3Ut07NARvGK41EApS2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ocPf8D6lpD6muL2CAJuxikCh3n1CxLJeQDFVFbI20gr3F8uLHQSTf0agWeRmDVyrBZzBjED0oJy7yfRMcgc9xx4wulLWSg7488mS9JutqRy3yFts8vM+tCbaXf3MqpMeEeGLwKT8l5kXjk/qhzENiuam/yToLGqcKESccqKuhn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TKUs28P+; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723419017;
+	bh=eNSUCQPx866Pg64nr1Hw9XLv8/hOtNshdhzYQlDzNg8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TKUs28P+1wnbsi9oYp/C/afLCG/llEZmehKo44rUsT7ocTdW44Iyj7cTocucdXBP6
+	 TTW7VD3M7nSKDDnestmsUnWmqC2dwdnfdApe8/VvNFfXTjKzvxLRz7MUHRY+aVC+Bo
+	 MEzyzC33L+d1yLOyXnR+yyTZI8TccJ5M/edzK7Ir2FITWpd/JihabTiYXcf8AC2jzb
+	 RF4HkY94Ri94obMRse+uJN9fuRPukTqUl58UEXGHdhH9zeazkNn8cL1n56qJIiDo1P
+	 J6r0gML0bNiZ+P4SVNf5v00CLaUApPyphEraCpD6ufRSCkTGOkmwBiLj7EISsl7ri/
+	 L9FUqhKfFmYTg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Whv5P022qz4wx5;
+	Mon, 12 Aug 2024 09:30:16 +1000 (AEST)
+Date: Mon, 12 Aug 2024 09:30:16 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kaiyang Zhao <kaiyang2@cs.cmu.edu>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20240812093016.148a433c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfBRiLdx9hdHg3BQlZZ42kFfI6TsgiSiR7+Ep0JLGXbm59LJvUmz/3N9DUVs3uCkUIs1evK0j85rvJEJkj5Oe5y8IEpK9zgBVsofh9TjQ0Tn5hTpSXhJH
- Pa8oF0wNuEy9LAE6u2MAvTwXuStoT7ZJxfLDKtb/S/mNvq5TKbnaes8w020fyh9xOnsPPA0KkbcJMHehpq4mhVCWNmENG659y8s661FpRDy3NNSnJ8fM1Df7
- NElWZ5Cziu8rc2gmzS08wprsR2gb/n1kSixpynMwC3bLxUgRntj79rZJeUJG1pGxBUaBape5bPW9xXJfNaWOCMa33Gwh0lzej0BIvOdOx2USP5Wl+gERiVsH
- 0yxNKCyn8o2xJ/7LFeDmCdvq6KPxhiBHIF5XY8gJmIMxB8xXowfcnvEaNsUbofhmxUFfG5jTMYYUUw8cdVj1mSWIKiPucikwYd2m+cRMf8fw3URmT9DjYJDC
- SBeWOwUyT8LtYlVo8uggMEzSdw0b8p/oTK2+SG1gibQpbRHDm2gJZFkL4t4=
+Content-Type: multipart/signed; boundary="Sig_/P4EBZ2.lgsmOHcFdZGLC2S4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Syzkiller reports a "KMSAN: uninit-value in pick_link" bug.
+--Sig_/P4EBZ2.lgsmOHcFdZGLC2S4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This is caused by an uninitialised page, which is ultimately caused
-by a corrupted symbolic link size read from disk.
+Hi all,
 
-The reason why the corrupted symlink size causes an uninitialised
-page is due to the following sequence of events:
+After merging the mm tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
-1. squashfs_read_inode() is called to read the symbolic
-   link from disk.  This assigns the corrupted value
-   3875536935 to inode->i_size.
+mm/memory.c: In function 'numa_migrate_check':
+mm/memory.c:5403:41: error: 'NUMA_HINT_FAULTS' undeclared (first use in thi=
+s function)
+ 5403 |         count_memcg_folio_events(folio, NUMA_HINT_FAULTS, 1);
+      |                                         ^~~~~~~~~~~~~~~~
+mm/memory.c:5403:41: note: each undeclared identifier is reported only once=
+ for each function it appears in
 
-2. Later squashfs_symlink_read_folio() is called, which assigns
-   this corrupted value to the length variable, which being a
-   signed int, overflows producing a negative number.
+Caused by commit
 
-3. The following loop that fills in the page contents checks that
-   the copied bytes is less than length, which being negative means
-   the loop is skipped, producing an uninitialised page.
+  75747a26eec1 ("mm,memcg: provide per-cgroup counters for NUMA balancing o=
+perations")
 
-This patch adds a sanity check which checks that the symbolic
-link size is not larger than expected.
+from the mm-unstable branch of the mm tree.
 
-Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
-Reported-by: Lizhi Xu <lizhi.xu@windriver.com>
-Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/all/000000000000a90e8c061e86a76b@google.com/
---
-V2: fix spelling mistake.
+CONFIG_NUMA_BALANCING is not set for this build.  I note that the
+preexisting calls to count_vm_numa_event() compile because it is
+implemented as a macro ...
+
+Not the best fix, but I applied the patch below.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 12 Aug 2024 09:09:52 +1000
+Subject: [PATCH] fixup for "mm,memcg: provide per-cgroup counters for NUMA
+ balancing operations"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- fs/squashfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ mm/memory.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
-index 16bd693d0b3a..d5918eba27e3 100644
---- a/fs/squashfs/inode.c
-+++ b/fs/squashfs/inode.c
-@@ -279,8 +279,13 @@ int squashfs_read_inode(struct inode *inode, long long ino)
- 		if (err < 0)
- 			goto failed_read;
- 
--		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
- 		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
-+		if (inode->i_size > PAGE_SIZE) {
-+			ERROR("Corrupted symlink\n");
-+			return -EINVAL;
-+		}
-+
-+		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
- 		inode->i_op = &squashfs_symlink_inode_ops;
- 		inode_nohighmem(inode);
- 		inode->i_data.a_ops = &squashfs_symlink_aops;
--- 
-2.39.2
+diff --git a/mm/memory.c b/mm/memory.c
+index 231c7b2297bd..13b679ad182c 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -5400,7 +5400,9 @@ int numa_migrate_check(struct folio *folio, struct vm=
+_fault *vmf,
+ 	vma_set_access_pid_bit(vma);
+=20
+ 	count_vm_numa_event(NUMA_HINT_FAULTS);
++#ifdef CONFIG_NUMA_BALANCING
+ 	count_memcg_folio_events(folio, NUMA_HINT_FAULTS, 1);
++#endif
+ 	if (folio_nid(folio) =3D=3D numa_node_id()) {
+ 		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
+ 		*flags |=3D TNF_FAULT_LOCAL;
+--=20
+2.43.0
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/P4EBZ2.lgsmOHcFdZGLC2S4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5SYgACgkQAVBC80lX
+0GxtvQf/ZQfd0sngpIh0Szbap2v0OeEdViqYFC6YXq1y4SRrLe6fzXZDppVOh5/u
+ARILfYbfaM6yj7Z8QfhGW5LowrCBu0AMkzV95z0vJQSw7pWl5z2IZjUyzL+Gjg6v
+ybeTzIqiG5FomUUx5oXPvafCGNHRokrd7sPiY+j2o68yZwqp9rPIfCb5yBVMfNps
+oRwqimATTjHOUHZ0qDrt67DKYykvhHyVqFa4Cj5XzLJo0NjZJ1nEkC1PTSOniYKo
+pATnHeES+f+5G9Qy6ne57X/+FwhlQPuqZA5xY6u2o/RBgXgjz1253LzlLY3Akj2Y
+4XWIDg22RGycxtcfiRRIvlJU22YAdA==
+=0Yk4
+-----END PGP SIGNATURE-----
+
+--Sig_/P4EBZ2.lgsmOHcFdZGLC2S4--
 
