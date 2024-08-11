@@ -1,139 +1,115 @@
-Return-Path: <linux-kernel+bounces-282201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FA994E0CA
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:14:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E2394E0DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:26:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C20A1C20298
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:14:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E9F1F21482
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313613E49D;
-	Sun, 11 Aug 2024 10:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BD63E49D;
+	Sun, 11 Aug 2024 10:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RWJWX60A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvD6WfAG"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BD625774;
-	Sun, 11 Aug 2024 10:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C5929424
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 10:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723371289; cv=none; b=SWd2M1OOcYZAcBFxRdQVRCFboptBRQUgX4MpyVs9F/rkdP1ouaQ6RAjEIFkPOKXWanwLroEw/DOCWIKgpkBKQpUGhpIS6jHC8d/htiiproPt8Z4zkEMy+TP/KEbusxZCcjgcsQroBLPAIeB0dBpZ+QR6TL4cr8DuNS+GAPwkdKw=
+	t=1723371974; cv=none; b=GzBJQSwRIr0FCyLbWd1qNT3NjGVP6nj/bOudntasbjYwLYa1gvl5QuSE4LTVmUsMMRUgqTCXexXVg4f8u7WMZyel7D2gJTl2uQO8n1za+Mi/NEGwNm1An6aFPhCOtcxbHajHHUHw25uArPxIHiutRrP4qMnz5nIYY8JHzHxJFAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723371289; c=relaxed/simple;
-	bh=Ys2xZRQLEQ80J6XX4GeFDWVO9pFKSSZFUOFsKJMairY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ljhANtH6zJ2am02hAzrwL/NF7PRav7i0jIq9y96tTIxgKdLXjWrwvceFvZJZi8T7ZFtFP0ZmMxZhdWl+ZIJbwdQaKshFe902arclWet2I90GGJINqDuNtH9oxpmwUjBJd+11ql/bNked1O0PDEX53ZMvwTStRDkVZrPLJF56VdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RWJWX60A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1595CC32786;
-	Sun, 11 Aug 2024 10:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723371288;
-	bh=Ys2xZRQLEQ80J6XX4GeFDWVO9pFKSSZFUOFsKJMairY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RWJWX60A7Qu7gMO1UGhu1+x0tyMZNl3vjzqnZg9rUi+we7eTkl+eqU5XhG5Kwvgba
-	 Y7qCqSyjtLu2LKOB3T2EjzNEnceIMpV6hY8TQ1hbVIaUks8vR+l+1AA/YZsyw6fBrA
-	 l6zjZkS9oYboXvnMZy1qdOEFZmOMKm4yLbtTPhY0=
-Date: Sun, 11 Aug 2024 12:14:44 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Ron Economos <re@w6rz.net>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
-Message-ID: <2024081131-punch-uninvited-9557@gregkh>
-References: <20240808091131.014292134@linuxfoundation.org>
- <96b86f9b-c516-9742-5e33-e5cbfbed10b3@w6rz.net>
- <c4b1489f-42b8-8c16-f487-93b0dd8cd8c4@w6rz.net>
- <b6caeb4b-116e-068c-440d-7489ce7e8af3@w6rz.net>
+	s=arc-20240116; t=1723371974; c=relaxed/simple;
+	bh=ZrfNi0Mgkt+yMvdlIDHXabQXi/swOE0PqzkHBCidFSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m3PyKMjOATRC13Sc0y+pVflht2SmxoKpQMdPZNjyvcdhDEjSUV+OPmJITsMkYiZSQQzPGxzj6hplvHXS10vjPOLz+EtzAjeuLsTZyph0s5Cg/3Q1NAfmB++9GHe/NV33d8ps1M/126aD+Y2k1H7K0NblrJ8UztzzMPXAr3RnaiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvD6WfAG; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7a10b293432so2473730a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 03:26:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723371972; x=1723976772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VrMQAl2Hs8NqoMzMBNb3FrFT3TtFUbe/Zaju8CjWfw=;
+        b=CvD6WfAG+4kKXaYUSGFy9J/QdACDLbBsknJdNsQp2gu6z7+DKVBZS4JpJSyyttA7g3
+         3rG/0CGx3NvADbj5+IKI4u7FWQVE4t8AYktFgKArJ/5BmvQxQ9dx6sQegiUZitkwcLN/
+         ZR8krAqk2BCPvTT0hd131SDWuZk83wBJYrAuhmcBLdW07qxQ6xl80asc86C0IzyFoaCP
+         TC9JUGweY1neOEg1/Gl31zxQNEB+mZP+GY9CW1tYOCtmc2hrC1gr85veyNy2gSlBJ4aR
+         zvqK0mgdWe4kmpkuKTz041Hc96cQqHtVRZL3DXPZjNYHBFfhtQF0gv1lZu0VXHsFqqjp
+         H+tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723371972; x=1723976772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/VrMQAl2Hs8NqoMzMBNb3FrFT3TtFUbe/Zaju8CjWfw=;
+        b=siRq+fvmdSYmPM1sgHTb8fw7bUNinc+pkXw0rB5Rw7iZGAyCrIhgC4z6NZNFDgKiMW
+         wg8G5R66+IwY6MMYKeS/tf8/zhxstHVvzLYYFeoaMGpfN+p24hSNyiURmwi3poDfsKVy
+         Q2N9yvjcDJF3ZDkKcZ0Smxl52i6cf3u6FgB9/R/SrjZaoz/UBasyMH+I/+0L2LkF0d6+
+         MkuWPqBVvALgu/z9Mg+6kzrhY9PL9C9lsJauSl4bwPcc7tmAy99+kzfqsaOlb7+EgnSw
+         Ou7BQWc4Qou9bw9NGIna3NZryXZ0HiH59RFKOx/A2GvHBRgjzx6KUiIW+KF8xLwiG6bi
+         OdZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjj+AkQofGa/GDLz9G9sQ1eHuc4kUalGqUgvPhCvH+ECE/oTtTKqbM9s4S2QV30gmq+ovA00i4dky7puS/paHQCmlgDZB5fVzywcEy
+X-Gm-Message-State: AOJu0Yy8Jmrlmbons183yiN93X6dZnmNKVVn3lYyIYAcwkmhvb4i7GZo
+	VY7YslO4/cIdEyKk1whyZDSgxAjUgReiiuZogprkeRUwcF0ZMUls
+X-Google-Smtp-Source: AGHT+IGceJgtvbEHrAhmOy3u7lAjDJxBa1LGz4pl6v6wY9aVymYthfS05cwQXQ+Nci/28SSEZGMX7w==
+X-Received: by 2002:a05:6a21:670d:b0:1c2:8af6:31d3 with SMTP id adf61e73a8af0-1c89fe7208bmr6481901637.10.1723371972094;
+        Sun, 11 Aug 2024 03:26:12 -0700 (PDT)
+Received: from localhost.localdomain ([49.37.217.20])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-710e5a8a456sm2217670b3a.165.2024.08.11.03.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 03:26:11 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: airlied@gmail.com,
+	daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de
+Cc: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm: Add missing documentation for struct drm_plane_size_hint
+Date: Sun, 11 Aug 2024 06:16:51 -0400
+Message-ID: <20240811101653.170223-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <b6caeb4b-116e-068c-440d-7489ce7e8af3@w6rz.net>
 
-On Thu, Aug 08, 2024 at 09:45:57AM -0700, Ron Economos wrote:
-> On 8/8/24 7:43 AM, Ron Economos wrote:
-> > On 8/8/24 4:55 AM, Ron Economos wrote:
-> > > On 8/8/24 2:11 AM, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 6.1.104 release.
-> > > > There are 86 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > > The whole patch series can be found in one patch at:
-> > > >     https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz
-> > > > 
-> > > > or in the git tree and branch at:
-> > > >     git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > > > linux-6.1.y
-> > > > and the diffstat can be found below.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > > greg k-h
-> > > > 
-> > > I'm seeing a build failure.
-> > > 
-> > > sound/pci/hda/patch_conexant.c:273:10: error: ‘const struct
-> > > hda_codec_ops’ has no member named ‘suspend’
-> > >   273 |         .suspend = cx_auto_suspend,
-> > >       |          ^~~~~~~
-> > > sound/pci/hda/patch_conexant.c:273:20: error: initialization of
-> > > ‘void (*)(struct hda_codec *, hda_nid_t,  unsigned int)’ {aka ‘void
-> > > (*)(struct hda_codec *, short unsigned int,  unsigned int)’} from
-> > > incompatible pointer type ‘int (*)(struct hda_codec *)’
-> > > [-Werror=incompatible-pointer-types]
-> > >   273 |         .suspend = cx_auto_suspend,
-> > >       |                    ^~~~~~~~~~~~~~~
-> > > sound/pci/hda/patch_conexant.c:273:20: note: (near initialization
-> > > for ‘cx_auto_patch_ops.set_power_state’)
-> > > sound/pci/hda/patch_conexant.c:274:10: error: ‘const struct
-> > > hda_codec_ops’ has no member named ‘check_power_status’; did you
-> > > mean ‘set_power_state’?
-> > >   274 |         .check_power_status = snd_hda_gen_check_power_status,
-> > >       |          ^~~~~~~~~~~~~~~~~~
-> > >       |          set_power_state
-> > > sound/pci/hda/patch_conexant.c:274:31: error:
-> > > ‘snd_hda_gen_check_power_status’ undeclared here (not in a
-> > > function); did you mean ‘snd_hda_check_power_state’?
-> > >   274 |         .check_power_status = snd_hda_gen_check_power_status,
-> > >       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > >       |                               snd_hda_check_power_state
-> > > 
-> > > This is triggered because my config does not include CONFIG_PM. But
-> > > the error is caused by upstream patch
-> > > 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda: codec: Reduce
-> > > CONFIG_PM dependencies" being missing. This patch removes the #ifdef
-> > > CONFIG_PM in the hda_codec_ops structure. So if CONFIG_PM is not
-> > > set, some structure members are missing and the the build fails.
-> > > 
-> > > 
-> > Same failure occurs in 6.6.45-rc1 if CONFIG_PM is not set.
-> > 
-> > 
-> Note: Both upstream 9e993b3d722fb452e274e1f8694d8940db183323 "ALSA: hda:
-> codec: Reduce CONFIG_PM dependencies" and
-> 6c8fd3499423fc3ebb735f32d4a52bc5825f6301 "ALSA: hda: generic: Reduce
-> CONFIG_PM dependencies" are required to fix the build if CONFIG_PM is not
-> set.
+This patch takes care of the following warnings during documentation
+compiling:
 
-thanks, I have fixed this all now up.
+./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'width' not described in 'drm_plane_size_hint'
+./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'height' not described in 'drm_plane_size_hint'
 
-greg k-h
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+---
+ include/uapi/drm/drm_mode.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+index d390011b8..c082810c0 100644
+--- a/include/uapi/drm/drm_mode.h
++++ b/include/uapi/drm/drm_mode.h
+@@ -859,6 +859,8 @@ struct drm_color_lut {
+ 
+ /**
+  * struct drm_plane_size_hint - Plane size hints
++ * @width: The width of the plane in pixel
++ * @height: The height of the plane in pixel
+  *
+  * The plane SIZE_HINTS property blob contains an
+  * array of struct drm_plane_size_hint.
+-- 
+2.43.0
+
 
