@@ -1,138 +1,138 @@
-Return-Path: <linux-kernel+bounces-282376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D929A94E300
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:46:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3DF594E303
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:50:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E10281A60
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D075D1C20FFE
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85669157A4D;
-	Sun, 11 Aug 2024 20:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65192158A13;
+	Sun, 11 Aug 2024 20:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dbmA9461"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MVOsk2m3"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288791798C
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 20:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07DB215C120;
+	Sun, 11 Aug 2024 20:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723409210; cv=none; b=lLaGbqxs65a5xPpxQ2OaKBLEhvPa1vZVZJw1FVKK+BokNKSb7NgEQloDzNzo3hLdTdm1pKM2MLfasYbaE8pYfl+LBEbny3kZJJToxm2hjCvdLQRpRRf8UfriSO+OIHzoJ/FeokaKU3OcC8RJTDnGK55n5EZ+xSY0fxTTLfRJoDI=
+	t=1723409414; cv=none; b=vENRNSBRCO6c57ZyADGN1W4EstzulbpXmYiEwpnd2rpg0kn144Y5S1Rcoe98Ymi7s6MQdXVHsYRwqxledyUKYvrP/MNvOX21qQLXwV2qGIV6ymRAwVstEvNv0UFYrYV4gEsVKz+qSlYRGNuOHzuWks78qzeXKwXvfnQYg+aHAhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723409210; c=relaxed/simple;
-	bh=8HOrcd3rmFhcJWXKJhZg0i7YnSBkyGwC4lfXgvOunj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOOcDlIwXfHQTbYPmCP0YBK6I+mz8U+UGccX01bV4dcYNMuxAktRda9ZJg48YFIevj6zs/AN10qdIfOWQletfi7UUZjPP4DKVx3ERziQSf8NwDTvzchV12yv2A8ql0KnTQTN086d6udmGzIn4Sh50C8J/dzvE+jbrCYnW3zjlrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dbmA9461; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 11 Aug 2024 14:46:37 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723409204;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E3sZQz6AplYxGQjfc6fNqrCt2rn+D5lHIxZl2vw26Rk=;
-	b=dbmA9461kiRz14cOI8QWprzfhj2avuKniqc2h9Z+S7zH61pGypfioMODJIMqDBgLrm25VW
-	wBvgARWMORO8vo7bavsPunJ91AaKdC/aFLgrIS0k2ZoTCCSIaMcCFn8hz7VlWU6RRBo9HR
-	mm97yMDWkUU8k/mmIbB+otBEUZeV7fA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Jose Fernandez <jose.fernandez@linux.dev>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <un2bi7rsfa7nwrqqtgbzd2nefhohuvglup6lpd5ncdklndisl3@vdo2nkgmuyoq>
-References: <20240807022718.24838-2-jose.fernandez@linux.dev>
- <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
- <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
+	s=arc-20240116; t=1723409414; c=relaxed/simple;
+	bh=Y3Rt1DKKmYYCdiPVzga7f2YbCKphkD8g6/ODiOuRNZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sKucvwoIoI/38q2juuA3CiBPLqSwI2P/XXhzP9QbwI8dOJ8cGseosAZetLNZf+t/vTPW+140SVJb461wi6ZheoZG4Bzm98UvRckimwa1xE0ivSoehnZJn+wOniZkisp/+Ycxddm70D05PrYxGrnFPCMXjqDaf+3Wv0pFftiU4Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MVOsk2m3; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42803bbf842so36299535e9.1;
+        Sun, 11 Aug 2024 13:50:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723409411; x=1724014211; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1kcgSlJ61ZKboNOX2w3un+qbRoIWDm1KIjcx7iwfcVs=;
+        b=MVOsk2m3UC+08mQe20r1ZP9UbrPqIIQEHEXJHJ5L9sflbKsG2Mp3bG3+IzgmkRtYie
+         JQHNm34rwipFlTJsLwkZKCUwbylqgbmA6dQGXok4Bwb99CbVIFjz22ojsG2O8U9ucm/I
+         FJItVwUsgW3+Gqql4bIggoRpCxol8DwSgDXebpofbEJF71DeYJqhyuXsZYC8LccneWzB
+         9lc/Nt+ealTIHvsfDhsRgmwj+6BFIoA+hQM/OG1KsDbJrNZkH61R+G3+NDE24bSrrSxy
+         jw2fuJLqaHxtUluReRCJTY4H1gQIxEqx46edpa0CffvxZK+WfjvCQLvW8MloqXM33CGT
+         +TFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723409411; x=1724014211;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1kcgSlJ61ZKboNOX2w3un+qbRoIWDm1KIjcx7iwfcVs=;
+        b=rBOAq6UqV8eRWSq+CN13Cnak/turpzes2Ch0qbqusL6q09CHBcwU9HsTwbCndiV+HA
+         NUYJXO1PHuQe+EV1ayuFMRYAXvURw1SzZqVh6SeT61CabAFB5f6/Apj+VzMfooVlePtA
+         JaKoGoilo22I/f1t+7ohfhbt4YWX46/4LFT4xk/fqv5zLqMz046hEYmhVqMeD9v4gKgy
+         s5c1gY1sJJS9RTp0a1Yhsl1zyrbdq0pTHsCXMXu6nBi4TllPgldUd988xhNjpgi7cpFq
+         reQTGc/90JzYwgVcRZhwZZ6SOpfJCOBohco9HNqOdhK++Pe4MlyVzS4NCd/bzuRcPdUw
+         4Yxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj/WTNwvGxUhL2i8AME3AEHXfHAENHOgJwbl+pixtfid32668M3F8OY7AZ0Mm7U5DdxUnNKzj6k23wwmljc57igbs0y5l42WOFrw9hJChA0zPbU6A5ZT4l1vLk6vfPgsfBsWBvJZjzqg==
+X-Gm-Message-State: AOJu0YzzHYKhkZHfUSJZfP6TbSZMKmQGvge7OIke4GZIZ3chrSDSUs+u
+	NKE+wqzYT8fs8HpZsNNjcAM66Xc2f5U/oR6acz1TZg4072s9mwc7
+X-Google-Smtp-Source: AGHT+IFGv5E71YRzOcAenQDOCa9XQrFIZRKLqcVNJx6Q50j2aypZnVhKJdfhtZechgXVRab84mmMLQ==
+X-Received: by 2002:a05:600c:3b83:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-429c3a179f8mr70784025e9.5.1723409410943;
+        Sun, 11 Aug 2024 13:50:10 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c750f0absm76421845e9.17.2024.08.11.13.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 13:50:10 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/8] Add support for Renesas RZ/V2H(P) SoC and GP-EVK platform
+Date: Sun, 11 Aug 2024 21:49:47 +0100
+Message-Id: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
-X-Migadu-Flow: FLOW_OUT
 
-On 24/08/07 06:40PM, Thomas Weiﬂschuh wrote:
-<snip>
-> > > +
-> > >  PHONY += pacman-pkg
-> > >  pacman-pkg:
-> > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
-> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
-> > > index 663ce300dd06..8de869f9b1d4 100644
-> > > --- a/scripts/package/PKGBUILD
-> > > +++ b/scripts/package/PKGBUILD
-> > > @@ -3,10 +3,13 @@
-> > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
-> > >
-> > >  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
-> > > -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
-> > > -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
-> > > -       pkgname+=("${pkgbase}-headers")
-> > > -fi
-> > > +pkgname=("${pkgbase}")
-> > > +
-> > > +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
-> > 
-> > 
-> > Instead of adding inconsistent defaults in two places,
-> > I would write like this:
-> > 
-> > _extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
-> 
-> Agreed.
-> 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Closing the loop on this topic. I removed all changes made to Makefile.package
-and set the default in PKGBUILD as suggested:
+Hi All,
 
- _extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
+This patch series aims to add initial support for Renesas RZ/V2H(P) SoC
+and GP-EVK platform. Support for below peripherals is enabled on
+RZ/V2H GP-EVK platform:
+- RIIC
+- OSTM
+- SDHI
+- WDT
 
-Running the pacman-pkg target without setting PACMAN_EXTRAPACKAGES will build
-all packages:
+patch #1 and #2 depends on
+1] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240724094707.569596-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-make pacman-pkg
-...
-==> Creating package "linux-upstream"...
-...
-==> Creating package "linux-upstream-headers"...
-...
-==> Creating package "linux-upstream-api-headers"...
+patch #3, #4, #5 and #7 depends on
+1] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240805193846.52416-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Setting PACMAN_EXTRAPACKAGES to an empty value will build only the kernel
-package:
+patch #6 and #8 depends on
+1] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240805193846.52416-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+2] https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240806210623.183842-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-make pacman-pkg PACMAN_EXTRAPACKAGES=""
-objtree="/home/jose/Code/linux/linux" \
-	BUILDDIR="/home/jose/Code/linux/linux/pacman" \
-	CARCH="i386" \
-	KBUILD_MAKEFLAGS="rR --no-print-directory -- PACMAN_EXTRAPACKAGES=" \
-	KBUILD_REVISION="46" \
-	makepkg 
-...
-==> Creating package "linux-upstream"...
-  -> Generating .PKGINFO file...
-  -> Generating .BUILDINFO file...
-  -> Generating .MTREE file...
-  -> Compressing package...
-==> Leaving fakeroot environment.
-==> Finished making: linux-upstream 6.11.0_rc2+-46 (Sun 11 Aug 2024 01:13:45 PM MDT)
+Cheers,
+Prabhakar
 
-Make exports command line arguments as env variables to sub-processes and this
-is how the PACMAN_EXTRAPACKAGES is passed to makepg without an explicit export
-with this change. V3 will include this change.
+Lad Prabhakar (8):
+  arm64: dts: renesas: Add initial SoC DTSI for RZ/V2H(P) SoC
+  arm64: dts: renesas: Add initial DTS for RZ/V2H GP-EVK board
+  arm64: dts: renesas: r9a09g057: Add OSTM0-OSTM7 nodes
+  arm64: dts: renesas: r9a09g057: Add RIIC0-RIIC8 nodes
+  arm64: dts: renesas: r9a09g057: Add SDHI0-SDHI2 nodes
+  arm64: dts: renesas: r9a09g057: Add WDT0-WDT3 nodes
+  arm64: dts: renesas: r9a09g057h44-gp-evk: Enable OSTM, I2C, and SDHI
+  arm64: dts: renesas: r9a09g057h44-gp-evk: Enable watchdog
+
+ arch/arm64/boot/dts/renesas/Makefile          |   2 +
+ arch/arm64/boot/dts/renesas/r9a09g057.dtsi    | 532 ++++++++++++++++++
+ .../boot/dts/renesas/r9a09g057h44-gp-evk.dts  | 256 +++++++++
+ 3 files changed, 790 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g057.dtsi
+ create mode 100644 arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+
+-- 
+2.34.1
+
 
