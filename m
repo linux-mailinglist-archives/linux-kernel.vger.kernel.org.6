@@ -1,205 +1,86 @@
-Return-Path: <linux-kernel+bounces-282290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77FE94E1B1
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:40:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC2A94E1B5
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54C6E1F214E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2B951F213C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0081714A0B8;
-	Sun, 11 Aug 2024 14:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2C14A602;
+	Sun, 11 Aug 2024 14:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="F8P7OLbR"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u2JtRZCQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285C61CAAF;
-	Sun, 11 Aug 2024 14:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3BA1CAAF;
+	Sun, 11 Aug 2024 14:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723387217; cv=none; b=QN1hrmrcAl7unlBjbAnuzfiVieeyi8ezVik6jcR12Uiew9sELJARw3FzfEQ+xfn7AG5anAJEOmDZeAkQgso8mqtnF8AADRmP7pICjCrEAD0WGgUJYdT35mEeER4mOhOKqGza/0wLP/ft5XOtnClGdait6AFu+jKUfal1nCHujQo=
+	t=1723387312; cv=none; b=HwPvGG+0XDnCoqRLrXoFKWwQ6ruyL8qgrngEIEs9bYTdSCW0uvSjLOjhjznwXjn8spLUm5HF7ejffQHx6SChcJ4aTRFhvekc1Nv4RwLQLCLSP9nmyJN0qaHBwYUAWXYgW+4FMBvlnv11gGhIrtPHYMOx9hujLulcIFLxLgvJeAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723387217; c=relaxed/simple;
-	bh=nVVQLsYEGtFzdLbTni7wqzhtxOLYmc7w5UyYNwtC2v8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ARfh6q0s0eftXRrJTxonoVdUg1QPq4+6TgPjchVIjb+IHBvHvC51ZbYo4P13SzR3ZgdmT/2TYJ8diKWUscYBkyMr0TNAnKrKIhWIIawHG0Hv5n3io/zAMTPhO2ocsnxWXDBloLcL7EVVN0GWz0cyHajhUxVf99L+S0j3mbKeWVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=F8P7OLbR; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1723387215; x=1754923215;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nVVQLsYEGtFzdLbTni7wqzhtxOLYmc7w5UyYNwtC2v8=;
-  b=F8P7OLbRzF5VNbFsGTwVcx59aN6BpWmp2tE659bpmVioGjJmtb6U8n3d
-   C2hsr890Jgq4kScGRtDFwuXdDtC1Z7FdGxD0XeNeERFUKpJp4TxjbAIfP
-   w3JHJN1GqcjuyZQdnm28/iOqREMLhLFyZ22CEmH0C8zOXOscSGrxPqYpA
-   +X8blSXbZ6ifsobzC2N+hwxNvWI6tHBX2D2UR8OJCJs82pRNKiUNoCkQN
-   +b1xTpA53e8orNviz4xbmyBRlMI/5dDf6PRbnagoDttvBlDyDhl5EgJcC
-   Sw4cdcxKMbrSWQ9tQ2IWU+CKrXAmKcuygXh+0Dtl3dsfoZZReg4KLQ3VN
-   g==;
-X-CSE-ConnectionGUID: gYP/e/VNShqHcCaHhGFiJw==
-X-CSE-MsgGUID: qu3xM0c9Sx+00LfHrlT97w==
-X-IronPort-AV: E=Sophos;i="6.09,281,1716220800"; 
-   d="scan'208";a="25021083"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 11 Aug 2024 22:40:08 +0800
-IronPort-SDR: 66b8c09d_a86kdrX+KyFMEmbkV3NPsXFfxlu0U8KWn7lzA/8fJgynm3w
- rhfJf6YiwvuyK1O4hRsIyQVxmaYDEmhpJcPtN2Q==
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Aug 2024 06:46:05 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Aug 2024 07:40:06 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1723387312; c=relaxed/simple;
+	bh=e9DgOEq6OLvmcRv/CH6wRxKEHV8xntvIpbRaCP8T9Pg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ClgsFk9brj2ywi0mfBDgAkLJgpsXXTGQKsoFVz8C7RMLik3AulpYMLevEB81K96l4svkt3svj7YjZTOZ0onj6flirHWf+QJQbRgc1Nn7+1LKrPaawnN4mEWkCHBedbnmlAe4ooU9J5RQVv7NKCs9dP6YRSkin1eqs29F/eyLIqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u2JtRZCQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD0DC32786;
+	Sun, 11 Aug 2024 14:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723387311;
+	bh=e9DgOEq6OLvmcRv/CH6wRxKEHV8xntvIpbRaCP8T9Pg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u2JtRZCQUiBO8aEG94JtdjaLJL1ab3qWYNwtnmPDDaR1GVWCLpZUIuLzm2qf9LpsQ
+	 QtHuo/VuhFaH2bn7DNb9dAWd7z/cmi26koZ5LJPCsvnjKMJGhzudAt67ADkRhXFfAe
+	 nBRWsMyD2ZPzeOPEBp4XoMn6rcTkVIXwfvLFrT0aFlE2MrwZg+5+Wfjm5mt0oKnSDx
+	 F1y89gru3HUTcDbHsVNfLGaMALb9/zmYZg1IvH5PNoNsb4S5tvoD4SPYjrx5tfTOTp
+	 K24kZh2ELuvrd0Rcv/aaJMzD1rNJu0I/K/g1CJR3LUdDR3kONDxIEFTYPmH4LxCL8R
+	 +3ZwF5RI5uL5w==
+Date: Sun, 11 Aug 2024 15:41:47 +0100
+From: Simon Horman <horms@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Keoseong Park <keosung.park@samsung.com>,
-	Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
-	Avri Altman <avri.altman@wdc.com>,
-	Bean Huo <beanhuo@micron.com>
-Subject: [PATCH v4 2/2] scsi: ufs: Add HCI capabilities sysfs group
-Date: Sun, 11 Aug 2024 17:37:57 +0300
-Message-Id: <20240811143757.2538212-3-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240811143757.2538212-1-avri.altman@wdc.com>
-References: <20240811143757.2538212-1-avri.altman@wdc.com>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
+ configuration
+Message-ID: <20240811144147.GL1951@kernel.org>
+References: <20240809082146.3496481-1-o.rempel@pengutronix.de>
+ <20240810095129.GH1951@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240810095129.GH1951@kernel.org>
 
-The standard register map of UFSHCI is comprised of several groups.  The
-first group (starting from offset 0x00), is the host capabilities group.
-It contains some interesting information, that otherwise is not
-available, e.g. the UFS version of the platform etc.
+On Sat, Aug 10, 2024 at 10:51:29AM +0100, Simon Horman wrote:
+> On Fri, Aug 09, 2024 at 10:21:46AM +0200, Oleksij Rempel wrote:
+> > Rename 'pins1' to 'pins' in the qspi_bk1_pins_a node to correct the
+> > subnode name. The incorrect name caused the configuration to be
+> > applied to the wrong subnode, resulting in QSPI not working properly.
+> > 
+> > To avoid this kind of regression, all references to pin configuration
+> > nodes are now referenced directly using the format &{label/subnode}.
+> > 
+> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> 
+> Pass
 
-Reviewed-by: Keoseong Park <keosung.park@samsung.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Reviewed-by: Bean Huo <beanhuo@micron.com>
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- Documentation/ABI/testing/sysfs-driver-ufs | 27 +++++++++++
- drivers/ufs/core/ufs-sysfs.c               | 53 ++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
-index fe943ce76c60..5fa6655aee84 100644
---- a/Documentation/ABI/testing/sysfs-driver-ufs
-+++ b/Documentation/ABI/testing/sysfs-driver-ufs
-@@ -1532,3 +1532,30 @@ Contact:	Bean Huo <beanhuo@micron.com>
- Description:
- 		rtc_update_ms indicates how often the host should synchronize or update the
- 		UFS RTC. If set to 0, this will disable UFS RTC periodic update.
-+
-+What:		/sys/devices/platform/.../ufshci_capabilities/version
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: UFS version register.
-+		Symbol - VER.  This file shows the UFSHCD version.
-+		Example: Version 3.12 would be represented as 0000_0312h.
-+		The file is read only.
-+
-+What:		/sys/devices/platform/.../ufshci_capabilities/product_id
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: product ID register.
-+		Symbol - HCPID.  This file shows the UFSHCD product id.
-+		The content of this register is vendor specific.
-+		The file is read only.
-+
-+What:		/sys/devices/platform/.../ufshci_capabilities/man_id
-+Date:		August 2024
-+Contact:	Avri Altman <avri.altman@wdc.com>
-+Description:
-+		Host Capabilities register group: manufacturer ID register.
-+		Symbol - HCMID. This file shows the UFSHCD manufacturer id.
-+		The Manufacturer ID is defined by JEDEC in JEDEC-JEP106.
-+		The file is read only.
-diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
-index dec7746c98e0..fe313800aed0 100644
---- a/drivers/ufs/core/ufs-sysfs.c
-+++ b/drivers/ufs/core/ufs-sysfs.c
-@@ -525,6 +525,58 @@ static const struct attribute_group ufs_sysfs_capabilities_group = {
- 	.attrs = ufs_sysfs_capabilities_attrs,
- };
- 
-+static ssize_t version_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	return sysfs_emit(buf, "0x%x\n", hba->ufs_version);
-+}
-+
-+static ssize_t product_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_PID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static ssize_t man_id_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	int ret;
-+	u32 val;
-+	struct ufs_hba *hba = dev_get_drvdata(dev);
-+
-+	ret = ufshcd_read_hci_reg(hba, &val, REG_CONTROLLER_MID);
-+	if (ret)
-+		return ret;
-+
-+	return sysfs_emit(buf, "0x%x\n", val);
-+}
-+
-+static DEVICE_ATTR_RO(version);
-+static DEVICE_ATTR_RO(product_id);
-+static DEVICE_ATTR_RO(man_id);
-+
-+static struct attribute *ufs_sysfs_ufshci_cap_attrs[] = {
-+	&dev_attr_version.attr,
-+	&dev_attr_product_id.attr,
-+	&dev_attr_man_id.attr,
-+	NULL
-+};
-+
-+static const struct attribute_group ufs_sysfs_ufshci_group = {
-+	.name = "ufshci_capabilities",
-+	.attrs = ufs_sysfs_ufshci_cap_attrs,
-+};
-+
- static ssize_t monitor_enable_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
-@@ -1508,6 +1560,7 @@ static const struct attribute_group ufs_sysfs_attributes_group = {
- static const struct attribute_group *ufs_sysfs_groups[] = {
- 	&ufs_sysfs_default_group,
- 	&ufs_sysfs_capabilities_group,
-+	&ufs_sysfs_ufshci_group,
- 	&ufs_sysfs_monitor_group,
- 	&ufs_sysfs_power_info_group,
- 	&ufs_sysfs_device_descriptor_group,
--- 
-2.25.1
-
+Sorry about the noise here. This was supposed to be a note to myself, that
+I am not planning to review this.  It doesn't imply anything about the
+patch.
 
