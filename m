@@ -1,79 +1,65 @@
-Return-Path: <linux-kernel+bounces-282195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C6C94E0AF
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:25:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E7894E0B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:30:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6CB11F21685
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E12E61C21070
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:30:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E666C381BA;
-	Sun, 11 Aug 2024 09:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743E438F9C;
+	Sun, 11 Aug 2024 09:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEq9b/WD"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ejLoU/KY"
+Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E838F8F70
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B402206E;
+	Sun, 11 Aug 2024 09:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723368309; cv=none; b=ILJIxavBEdV7KYxgY39Hxb5f9lN5fwkujSJaqxLPMHylG3P+Xt4ATPdzg5e3fsNOSTwXew3XpgvhsJLuDbrapoL0e8lY+CtNKTrzqMZvjKbkjFYDZ5bjGmEezpLxlFyJRuU5GhP/icJAbt2b0BSp5YMZlQ8ScgV0cO0wM8rVVWg=
+	t=1723368638; cv=none; b=dATimAlid3kRbUhIpED9z/Azyit3oCcoqoXu1q9HTDHh7bX1kSWcu/S52/lLHlYx2bPfsuPY+Y1P6RbPi29z5MaotINJO1SvFQ8OmV/gWV1pgEcs+Zs6DuMTY6LLFDvlNP7Ryp/hg8OL96KTrQAXGuSnWedo47di0R5ucvePBW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723368309; c=relaxed/simple;
-	bh=s5EOxWPBW2cOnQr5KUN3wvCVINoq9XaqynnriLDSpg8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I/nSIt+D1GB6c5q65pUqfMWFq9HEncpKIf0UT+nE7YMlYJJyHnhO9LrstkpTyHhweueTjrVXREjq4FBNRq/fWLtVe71LNtmaeW7eg3Vf9yMhVtx05VjK2/dCiErYyO29g+cQczauhiaSA62AX6+haNks7qAg8+rWwoCSfAO6zOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEq9b/WD; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2d21a652107so100079a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 02:25:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723368307; x=1723973107; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=frrpN+m3gMmqKsOI96fqGv3fhIwLzZc9F2Y2cWSIilo=;
-        b=gEq9b/WDl2lq0ILCBuGvx93LhxSCx7v3YkRF6fOAtXaRHO64rA8U/f1C9ACG0rNBsU
-         IgbuxdRD7dFkI1VeZDNn5gjbQWA8oEvu5YIWuN/EO1c6VUa/Vfj30L68jpfdbPLsoPdi
-         Jo0AbbTws86wwVlyZZXpqU32zqiGeKa7v88NBd/PzEI/GP8yi/BZPqkPQ0ZMlrRtuFWs
-         8B9qGfs0gyZHjr5VpW49EqkzS7x67dhm7naVG/CTwMFAsfcels2pA3RZs+BltyF5URmJ
-         9q2wOpqUQu+PnqfU868t4ncAOWBbRg9Rt3zGeJ1KN7PkO2UColmP9HRilmBr0tzuaQ1R
-         nnPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723368307; x=1723973107;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=frrpN+m3gMmqKsOI96fqGv3fhIwLzZc9F2Y2cWSIilo=;
-        b=q2BCfjF3mz28eaOIu1OFFR+wPtrtkP6LQtg2amCEMVPcitGcymeGzPHOrrfNRi1nJA
-         rVDtzcDMgla+Hjgxlickx7ounfs/C/Ss2YIlI5eHmayRHKB8gM1qribSY26ScFqnuXkd
-         U4fKdy7lGEC6g/xplbz21N74QPeeIJFSW/iuYJf39+rj2VmV8Tm0frjY/p+QNafXKC/G
-         KiC/PKoKLwSiin4M1Sf09FUIRiK3HVCcd5wTDrlguZlk+AvZ8LCq7haywOaoO0VZzkLv
-         85OwFfdvQoKbCrrJnq58Rn4UtvUbVy53J7z3eQeY5xt0A42mQDhgTNyheT5cUwZ9S05W
-         DpUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9En1iRCv0bxYUOHxjLzMEn9kLDuu1xNM+4+2lGUrPRUXvWyqRx9t6X8pigLueHl9CFUgUlsGrc14haZO8QizHv5UKps6r1rYG3lNG
-X-Gm-Message-State: AOJu0Yw6LVeTSjDAORra/loZF9gMRO99mNH+sXoForhOltr9aEALJKfJ
-	jJkJ2kjE5c9UBRK/updujn8eQhuVwLVjqt1PdBJ/j5t6serFl3JhL7zqX3LZ
-X-Google-Smtp-Source: AGHT+IHeMq++OLofod9u13STLy/QzQckqsQYcyBh2IUeDHKzYrZu45zYrV9aVTcqoFE5qnpVX2FR7w==
-X-Received: by 2002:a05:6a20:6a20:b0:1c6:bed1:bbd0 with SMTP id adf61e73a8af0-1c89f7f45demr6245042637.0.1723368307037;
-        Sun, 11 Aug 2024 02:25:07 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360.. ([2001:288:7001:2703:40a9:60e2:c14a:3ef8])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a438a4sm2176033b3a.108.2024.08.11.02.25.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 02:25:06 -0700 (PDT)
-From: I Hsin Cheng <richard120310@gmail.com>
-To: yury.norov@gmail.com
-Cc: andriy.shevchenko@linux.intel.com,
-	linux@rasmusvillemoes.dk,
-	linux-kernel@vger.kernel.org,
-	I Hsin Cheng <richard120310@gmail.com>
-Subject: [PATCH] cpumask: Ensure the visibility of set_nr_cpu_ids
-Date: Sun, 11 Aug 2024 17:25:01 +0800
-Message-Id: <20240811092501.87653-1-richard120310@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723368638; c=relaxed/simple;
+	bh=GN0A5EbIfQaHhXtYr8sTGVmRQRCvKxqIVGy51w+O5G0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oLA5x2ItBOQAt5rK+Uupag17xk3O0gP0t8vPl7yoNWxox3JJuyt565HnBupXw0o5VRovMtZB1V1I7y1vs8JMAMmdvpGhddSUiicUQretUaegi+/gM8IRFkUJj0rCPYa+KLT+O/QxG+Y6iLOyxSKb9aUMnH0h78gOY0gzeiEYG50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ejLoU/KY; arc=none smtp.client-ip=80.12.242.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id d4u8sXXQdPZ0yd4u8seuKK; Sun, 11 Aug 2024 11:30:27 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723368627;
+	bh=vH6776X2q6P6GBwTwVrFQw2I+W41yFf77V4n/US8fFg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=ejLoU/KYvz82OqY5KPL8/I6MerFK5CJr+IDJ8AO8pJMYBsBZY85GrI80CGexz55SO
+	 9FRMKvzSP9JNRVosZ8HCssAV35JOvIWm6ByRWNph0Q2xStJmen/CE6tCXx2DGOhwvd
+	 z1baL4vtT0en8xo3DKSMB8bRIAnoFu/7vRp1h0StPEXvfkqpcn8tqGV7oi9jT5e2Qw
+	 IV/s/PmaqC/46mIvRLk5lCZoLUm89Ez7rmSRLcnAWSPew8DWYvksX76ztfHCemvWv7
+	 CtebWI4ee9kv/+AASqzrhR+cBgtSADI2bYKS0o2IHWuzdaX1ZlCLRd3VS1UmFGKAMn
+	 a+PdM02r/naSw==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 11 Aug 2024 11:30:27 +0200
+X-ME-IP: 90.11.132.44
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] coresight: configfs: Constify struct config_item_type
+Date: Sun, 11 Aug 2024 11:30:20 +0200
+Message-ID: <1011717e5ed35ec12113a0d8c233823e820fb524.1723368522.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,40 +68,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The variable "nr_cpu_ids" is a system-wide variable which should be seen
-as consistent all the time. For example it's set in one of the kernel
-setup procedure "prefill_possible_map", the operations here should
-happens before all the code after setup, which means the operations here
-should be visible to all the code after setup.
+'struct config_item_type' is not modified in this driver.
 
-set_cpu_possible() ensure it's visibility because it eventually falls
-into an atomic instruction, however the function "set_nr_cpu_ids()"
-fails to make the guarantee since it only performs a normal write
-operations.
+These structures are only used with config_group_init_type_name() which
+takes a "const struct config_item_type *" as a 3rd argument or with
+struct config_group.cg_item.ci_type which is also a "const struct
+config_item_type	*".
 
-Adding the macro "WRITE_ONCE()" will prevent the compiler from re-order
-the instruction of the write operation for "nr_cpu_ids", so we can
-guarantee the operation is visible to all the codes coming after it.
+Constifying this structure moves some data to a read-only section, so
+increase overall security, especially when the structure holds some
+function pointers.
 
-Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+   4904	   1376	    136	   6416	   1910	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+   5264	   1120	     16	   6400	   1900	drivers/hwtracing/coresight/coresight-syscfg-configfs.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- include/linux/cpumask.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Compile tested-only.
+---
+ .../hwtracing/coresight/coresight-syscfg-configfs.c  | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index f10fb87d4..3731f5e43 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -46,7 +46,7 @@ static inline void set_nr_cpu_ids(unsigned int nr)
- #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
- 	WARN_ON(nr != nr_cpu_ids);
- #else
--	nr_cpu_ids = nr;
-+	WRITE_ONCE(nr_cpu_ids, nr);
- #endif
+diff --git a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+index 433ede94dd63..213b4159b062 100644
+--- a/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
++++ b/drivers/hwtracing/coresight/coresight-syscfg-configfs.c
+@@ -160,7 +160,7 @@ static struct configfs_attribute *cscfg_config_view_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_config_view_type = {
++static const struct config_item_type cscfg_config_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_config_view_attrs,
+ };
+@@ -170,7 +170,7 @@ static struct configfs_attribute *cscfg_config_preset_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_config_preset_type = {
++static const struct config_item_type cscfg_config_preset_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_config_preset_attrs,
+ };
+@@ -272,7 +272,7 @@ static struct configfs_attribute *cscfg_feature_view_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_feature_view_type = {
++static const struct config_item_type cscfg_feature_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_feature_view_attrs,
+ };
+@@ -309,7 +309,7 @@ static struct configfs_attribute *cscfg_param_view_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct config_item_type cscfg_param_view_type = {
++static const struct config_item_type cscfg_param_view_type = {
+ 	.ct_owner = THIS_MODULE,
+ 	.ct_attrs = cscfg_param_view_attrs,
+ };
+@@ -380,7 +380,7 @@ static struct config_group *cscfg_create_feature_group(struct cscfg_feature_desc
+ 	return &feat_view->group;
  }
  
+-static struct config_item_type cscfg_configs_type = {
++static const struct config_item_type cscfg_configs_type = {
+ 	.ct_owner = THIS_MODULE,
+ };
+ 
+@@ -414,7 +414,7 @@ void cscfg_configfs_del_config(struct cscfg_config_desc *config_desc)
+ 	}
+ }
+ 
+-static struct config_item_type cscfg_features_type = {
++static const struct config_item_type cscfg_features_type = {
+ 	.ct_owner = THIS_MODULE,
+ };
+ 
 -- 
-2.34.1
+2.46.0
 
 
