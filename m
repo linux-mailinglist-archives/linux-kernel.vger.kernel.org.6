@@ -1,251 +1,132 @@
-Return-Path: <linux-kernel+bounces-282296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C4994E1C4
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C5C94E1C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8561C20AC2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C4591C208CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5486CD29E;
-	Sun, 11 Aug 2024 15:16:21 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39E1414A619;
+	Sun, 11 Aug 2024 15:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cn0u8nF2"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147C03A1B5
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C40DD29E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723389380; cv=none; b=B3XvReOMTljCWuRpW6lposWbhOG8sMUiVD1Nz2qtk6OKhEQP9e57jkQx3dhrXvWH11FNRMKoNiZ/UWLQzP4kTyQSI5fzRbsqGNKRWPOs9VbgIL65AFf+sNf+TuyuY3qM9+jwuXXZPmsPM1Xw/n4j+2Ml2BWyf9jkA9c9UQMus8s=
+	t=1723389466; cv=none; b=LqolL3XiE8dyZneDJlfv5lUL7bf03MeYeXZZbpZq+YG2Oa11P8K/r8Z4b6GDcrPBav/2FfDdx+W1XLFcxGXlsrLnlGdsfn9fYmvrms+J3CyORLyiOyRmj0YTKxyJg33adWUQHZPJFSvmdIq9QP6okojSYhD3XBcGe7UVlJZ473o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723389380; c=relaxed/simple;
-	bh=PX2Qyk2sj2YaPRE4vAlMIG+yD1O2x+23AfU91/Rmmzc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JuAUeUZXq/itfqLE1bH0KNjXK7QEPmsyEMBuV8vfrc9Mwb1hJ903KHzKXLr8KVbsRsu74tFDXDgRpkaJkSrafGw0Pm/jPrC+XQpPPDZQhNAiFTQ5HSeeEPxLFkWa4c6xnqboakTCPntXrnmFELw2VGcoTjmvBNDzSr1XzCzu1ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b2938b171so44626445ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:16:18 -0700 (PDT)
+	s=arc-20240116; t=1723389466; c=relaxed/simple;
+	bh=hwPVKIVNZucKk3ZL8dP72AoDLjFo65gMygfi6XUsnZg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s9Vn0EtCEn6BFkX1VC9Ax68iTIYvpmPkzStmOLnYSl6nDjg5zQQocl4QyWYJFKxHeavRLzpBkC+rEvBLQTcwnj76Vv72Qa9+OGq9h70uZB3htVMOS9I5+zx4k9Q3+EG4OI0JgJdwkVymTuV6zQfNkZzDKcNToAmnB39Ql/apqDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cn0u8nF2; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a7a8a4f21aeso393978766b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:17:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723389462; x=1723994262; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nOrrFPO2+Eu1RsdiiDnsQDZT+Eoua4cGMzFbuz7CsgI=;
+        b=cn0u8nF2/2gjkOdcS86nBOr3ItfYkB/OFuhfrasmu4/1gygfCPC469Zm1pnLE/0M7h
+         nP/Z5tTVCHeMKhlcq+V6gmFW9konu7NUWO882ifVBlBsqr4zTGyD1cRKcaJRVCT4DE0C
+         6m8iw+Ot6NVH+dZvRoAGhh19d38n0rpznqM/HvvjzUDxpRAYdcWrx/EiRz/wE8L05FKF
+         NgigCRvAE3eCjHIMCA5JJTUV6dWbHwOkgidq5mkXCcTRRB1m3lOO80b3T2SGMTX1UN6a
+         jdVmbZKqYrRKobN/8h1URxXOOw3HYiECZmlsj1l4YEJbbpH+L+fUlTAxX9A38qNkaTm9
+         fMyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723389378; x=1723994178;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GpqsDr7Fcpr/7oyJ3XUVZU4wjeRME0LvNsxEkl7xmII=;
-        b=Rukg0fgDrgUmF/lJ68Hh443EmdUk9teeYgnnt8CdKTp/KHA7RK+vFZbHQGu2umVBh1
-         7c1A26LjtcElvtdzZeW7dLaxDn+hZmJANpL3d3GT8vQVsw4QADCeejz1IptFka9xjbW2
-         4FntiaUtqnY6Dw0+qqyeeNkBfSZB3Aggz+LbJisHB5nWbl8th+kbHqo7H56Njk372K25
-         96W8u6lAvlc4mpH5+kxNGWt0ozuzxgB/k28PFqRDlD2AhXVKhMf995ultJY4HEPB4Vpj
-         KYhSSAQDoNUiTgrdwElr3SBpJeG61bhF1Iyo3nQFJmGx5p9JHQS1PuLKVKE4xKxKqQ13
-         Yd2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUBkhjbemLCThS7NTkNpRgT5ZDpyLEdTP4RLak/2VjyKnAGLPNTrsTuuqaqIBTI3HAqqUD56BfGEDssjxA1bOi9pdRP7yeZ9ahOUG+Z
-X-Gm-Message-State: AOJu0YzoEHKuL+BEk6T6g0D3xu45eG/HCCtvaoHJKemJw+vlHV9fjvOl
-	DZHlBheUbNJhPG1lshgYt/LHuCt5RzEM6DTjGH44X1nppDJ3eYV+x7+h5jn1I2hsyxeU2s4uJKY
-	AqYvDxfM0ESYKLsiV5GvKfPgk55NzbGx5dIKfyGtlA9gcwzVZlorISKY=
-X-Google-Smtp-Source: AGHT+IHmHGGs5LmOfUwYNaTLMuPRKQUdmKFj6p7TiMr30uCvMxNr/7J2hDeOgjBG80mju7GweKZbi5GIsEczl83tezpx/VIYPVhV
+        d=1e100.net; s=20230601; t=1723389462; x=1723994262;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nOrrFPO2+Eu1RsdiiDnsQDZT+Eoua4cGMzFbuz7CsgI=;
+        b=Jg2Am4iX782lXn32ZJkZfWb8UxfzYDENG335JaWuV+f4HIhhFD7JIdV2bd/4glVUXC
+         aH56pqlVGMy0pgGC5hcJhtHQ6X6KT8tYUOAuWip2jRCv5U6KyCNERsMvsCuU7Ayqujr8
+         mZ3Qp99CGmf5/VHjbsLDvDaZqnOrDzWpiz6k3DGkT8qnFF5Xzao3E6pkb1+DlTlqZCCv
+         wp12H49kTa7J8iPtUsGbD9k6HAE2zgYQPLVEusk7SVVPUAWjE3hde9kD88lWwl5+qBmX
+         /Gi8fYAZiCOC2Ns15BNvOI59JhVAVVb80q9QbW3O6mUzExa4l+oTi2YTCxBr9Wa9wlqS
+         m/7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVJDG5YelEyJqmmZTT99gkiuoLJDKO2kA/UPX7bvx6Tt+BPkVxtWsjoGM6tSt1pAFm5h5NQsQKbLdkTRddEmCp9vhljkGRCSpC9IUup
+X-Gm-Message-State: AOJu0YxA/LlgW6l5yGxgfX8hmBlQ4wGbT4QxfHXZfSVW3e1Z1gCUFJ3e
+	TyaHSXfJIBrDeYu3WJh6zvWbDYaZ0g4TOoWffdJw5HQlzh1C9dEmvZtJ91+tx7VnGh2GyKW2KJw
+	L
+X-Google-Smtp-Source: AGHT+IFMkuh2pshcMEllN4JDzZBehDboH1YV/ev7+K4CsgIw5JNm3uxhpSKfKT45jnx67W0QXEExTw==
+X-Received: by 2002:a17:907:6d11:b0:a7d:3672:a594 with SMTP id a640c23a62f3a-a80aa67acbamr477098766b.61.1723389462194;
+        Sun, 11 Aug 2024 08:17:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0904f5sm157030666b.18.2024.08.11.08.17.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 08:17:41 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Fabrice Gasnier <fabrice.gasnier@foss.st.com>,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: nvmem: st,stm32-romem: add missing "unevaluatedProperties" on child nodes
+Date: Sun, 11 Aug 2024 17:17:37 +0200
+Message-ID: <20240811151737.106194-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24a:0:b0:397:ca8e:d377 with SMTP id
- e9e14a558f8ab-39b6c11b447mr6284165ab.0.1723389378217; Sun, 11 Aug 2024
- 08:16:18 -0700 (PDT)
-Date: Sun, 11 Aug 2024 08:16:18 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b2d765061f69db06@google.com>
-Subject: [syzbot] [input?] possible deadlock in __input_unregister_device
-From: syzbot <syzbot+3f4bf5c599ee9b16d704@syzkaller.appspotmail.com>
-To: dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+All nodes need an explicit additionalProperties or unevaluatedProperties
+unless a $ref has one that's false.  Fixing this for STM32
+Factory-programmed data binding needs referencing fixed layout schema
+for children.  Add reference to the NVMEM deprecated cells for the
+schema to be complete.
 
-syzbot found the following issue on:
+This fixes dt_binding_check warning:
 
-HEAD commit:    25f51b76f90f xhci-pci: Make xhci-pci-renesas a proper modu..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=11831703980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=10d86428d89226d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f4bf5c599ee9b16d704
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+  st,stm32-romem.yaml: ^.*@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c1824302a322/disk-25f51b76.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9f387ec15c0a/vmlinux-25f51b76.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/58ba53ce9979/bzImage-25f51b76.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3f4bf5c599ee9b16d704@syzkaller.appspotmail.com
-
-UDC core: USB Raw Gadget: couldn't find an available UDC or it's busy
-misc raw-gadget: fail, usb_gadget_register_driver returned -16
-UDC core: USB Raw Gadget: couldn't find an available UDC or it's busy
-misc raw-gadget: fail, usb_gadget_register_driver returned -16
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-rc1-syzkaller-00033-g25f51b76f90f #0 Not tainted
-------------------------------------------------------
-syz.2.38/5056 is trying to acquire lock:
-ffff8881177d42c0 (&dev->mutex#2){+.+.}-{3:3}, at: input_disconnect_device drivers/input/input.c:724 [inline]
-ffff8881177d42c0 (&dev->mutex#2){+.+.}-{3:3}, at: __input_unregister_device+0x24/0x450 drivers/input/input.c:2273
-
-but task is already holding lock:
-ffff8881131b5e20 (&hdev->ll_open_lock){+.+.}-{3:3}, at: hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&hdev->ll_open_lock){+.+.}-{3:3}:
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
-       input_open_device+0x1c9/0x320 drivers/input/input.c:617
-       evdev_open_device drivers/input/evdev.c:391 [inline]
-       evdev_open+0x533/0x6a0 drivers/input/evdev.c:478
-       chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
-       do_dentry_open+0x957/0x1490 fs/open.c:959
-       vfs_open+0x82/0x3f0 fs/open.c:1089
-       do_open fs/namei.c:3727 [inline]
-       path_openat+0x2141/0x2d20 fs/namei.c:3886
-       do_filp_open+0x1dc/0x430 fs/namei.c:3913
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1442
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&dev->mutex#2){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3133 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
-       validate_chain kernel/locking/lockdep.c:3868 [inline]
-       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
-       lock_acquire kernel/locking/lockdep.c:5759 [inline]
-       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
-       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
-       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
-       input_disconnect_device drivers/input/input.c:724 [inline]
-       __input_unregister_device+0x24/0x450 drivers/input/input.c:2273
-       input_unregister_device+0xb9/0x100 drivers/input/input.c:2514
-       steam_input_unregister+0x10c/0x2c0 drivers/hid/hid-steam.c:917
-       steam_client_ll_open+0xc9/0x100 drivers/hid/hid-steam.c:1121
-       hid_hw_open+0xe2/0x170 drivers/hid/hid-core.c:2366
-       hidraw_open+0x274/0x7e0 drivers/hid/hidraw.c:296
-       chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
-       do_dentry_open+0x957/0x1490 fs/open.c:959
-       vfs_open+0x82/0x3f0 fs/open.c:1089
-       do_open fs/namei.c:3727 [inline]
-       path_openat+0x2141/0x2d20 fs/namei.c:3886
-       do_filp_open+0x1dc/0x430 fs/namei.c:3913
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
-       do_sys_open fs/open.c:1431 [inline]
-       __do_sys_openat fs/open.c:1447 [inline]
-       __se_sys_openat fs/open.c:1442 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1442
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&hdev->ll_open_lock);
-                               lock(&dev->mutex#2);
-                               lock(&hdev->ll_open_lock);
-  lock(&dev->mutex#2);
-
- *** DEADLOCK ***
-
-2 locks held by syz.2.38/5056:
- #0: ffffffff89d34790 (minors_rwsem){+.+.}-{3:3}, at: hidraw_open+0xa6/0x7e0 drivers/hid/hidraw.c:282
- #1: ffff8881131b5e20 (&hdev->ll_open_lock){+.+.}-{3:3}, at: hid_hw_open+0x25/0x170 drivers/hid/hid-core.c:2361
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5056 Comm: syz.2.38 Not tainted 6.11.0-rc1-syzkaller-00033-g25f51b76f90f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:93 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
- check_prev_add kernel/locking/lockdep.c:3133 [inline]
- check_prevs_add kernel/locking/lockdep.c:3252 [inline]
- validate_chain kernel/locking/lockdep.c:3868 [inline]
- __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
- lock_acquire kernel/locking/lockdep.c:5759 [inline]
- lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
- __mutex_lock_common kernel/locking/mutex.c:608 [inline]
- __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
- input_disconnect_device drivers/input/input.c:724 [inline]
- __input_unregister_device+0x24/0x450 drivers/input/input.c:2273
- input_unregister_device+0xb9/0x100 drivers/input/input.c:2514
- steam_input_unregister+0x10c/0x2c0 drivers/hid/hid-steam.c:917
- steam_client_ll_open+0xc9/0x100 drivers/hid/hid-steam.c:1121
- hid_hw_open+0xe2/0x170 drivers/hid/hid-core.c:2366
- hidraw_open+0x274/0x7e0 drivers/hid/hidraw.c:296
- chrdev_open+0x26d/0x6f0 fs/char_dev.c:414
- do_dentry_open+0x957/0x1490 fs/open.c:959
- vfs_open+0x82/0x3f0 fs/open.c:1089
- do_open fs/namei.c:3727 [inline]
- path_openat+0x2141/0x2d20 fs/namei.c:3886
- do_filp_open+0x1dc/0x430 fs/namei.c:3913
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1416
- do_sys_open fs/open.c:1431 [inline]
- __do_sys_openat fs/open.c:1447 [inline]
- __se_sys_openat fs/open.c:1442 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1442
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4c34136390
-Code: 48 89 44 24 20 75 93 44 89 54 24 0c e8 19 8e 02 00 44 8b 54 24 0c 89 da 48 89 ee 41 89 c0 bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 77 38 44 89 c7 89 44 24 0c e8 6c 8e 02 00 8b 44
-RSP: 002b:00007f4c32db6b70 EFLAGS: 00000293 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 000000000014a042 RCX: 00007f4c34136390
-RDX: 000000000014a042 RSI: 00007f4c32db6c10 RDI: 00000000ffffff9c
-RBP: 00007f4c32db6c10 R08: 0000000000000000 R09: 0023776172646968
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f4c342c5f80 R15: 00007ffd273fd598
- </TASK>
-UDC core: USB Raw Gadget: couldn't find an available UDC or it's busy
-misc raw-gadget: fail, usb_gadget_register_driver returned -16
-UDC core: USB Raw Gadget: couldn't find an available UDC or it's busy
-misc raw-gadget: fail, usb_gadget_register_driver returned -16
-
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml | 3 +++
+ 1 file changed, 3 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
+index 92bfe25f0571..3b2aa605a551 100644
+--- a/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
++++ b/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml
+@@ -17,6 +17,7 @@ maintainers:
+ 
+ allOf:
+   - $ref: nvmem.yaml#
++  - $ref: nvmem-deprecated-cells.yaml#
+ 
+ properties:
+   compatible:
+@@ -32,6 +33,8 @@ properties:
+ patternProperties:
+   "^.*@[0-9a-f]+$":
+     type: object
++    $ref: layouts/fixed-cell.yaml
++    unevaluatedProperties: false
+ 
+     properties:
+       st,non-secure-otp:
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
