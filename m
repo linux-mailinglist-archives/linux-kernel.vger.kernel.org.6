@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-282300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4323394E1D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:29:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D35A394E1D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F404428153A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:29:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10C8F1C20987
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F53814AD2D;
-	Sun, 11 Aug 2024 15:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B9514B09F;
+	Sun, 11 Aug 2024 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="K4ZTNRk/"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gK0b4DL9"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3F5848D;
-	Sun, 11 Aug 2024 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A427313634C;
+	Sun, 11 Aug 2024 15:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723390178; cv=none; b=YUbN2tgQxtmpq0GfBle/f4jkmsT+F/eGZG4d23xiHnCcMaALaaHc2dQqr6D74Wd/XacHwE9BLJ6egYrdSjQ98F6ZyCrckcPbGWdMKBBsPjjdahx5DO8kQhNCMWio7jRnJBYx1HUf89xHL6r5EvCCOm8WpalHwxSRagR0hJTylaM=
+	t=1723390382; cv=none; b=i+fcOa1GMd/to9ZrgK3hW63PQLYR6On00YbXeuRJ24IHEQVf8degzf0XTzW6wWqt3XCBkWIIaupBuEw33OfJBr0NIaiUz2H4GdQwCoOs2YuNW8TZbDVIF5BAP+019vgfCvFNbZs0OkqQjG1lNeH9i7l3F/jLrsbGfV+GRgMd4gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723390178; c=relaxed/simple;
-	bh=WUzmrG2wgWfKz+f1yGgmG65B8k6DMu8tu+wTkIhbE4M=;
+	s=arc-20240116; t=1723390382; c=relaxed/simple;
+	bh=BgiK4WA8k9hiOIJW6ruJgN3LAj18BVIM9m5SDBB48TQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jaz9fxkhupTtxMFsaXGB8uCIIc55qaVQYC3SaRckvQJz3rt57BZwS5XJYKabv9KBSV0rOhNwQElirPSRPjTHN3atOZh5/1vqSmPKOSixRoeN0r7DaKh0NAjtfTxU8UZM/JQfmiFfou5kQteuSXjlufEy6QiplwTevH63nBQeyTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=K4ZTNRk/; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=aKegx6mtqXhBj4awX7EnHaR2GUz3PsevtfyKNz1zTzlZQc7YcYGv9uab+FzOrs5VLG2l5+0rP3YmBxdb2KkBwY5QarUhzjlxfQbcS4oGGnnsgKTQQxbFjr9T1+czN1I9wmVTamg/r/bcdmD2JZJRfkvvLHNlhzO0su3wML32oxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gK0b4DL9; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1siOTTqwXddXX2Vyg6Z5ahDYeVHQRGvP6BwJe6iJn5M=; b=K4ZTNRk/Bnjycq2T18pXaEZ2lm
-	+PnlmTRuSVqhJEOGU3zo7uCpUY84z8kC+Mh7Qvh0fE8SpBZQR2GsyscEurTQayFwnm+V9K0/L8q0N
-	AjVDm2JQQ31y6EA0UoxFl0jvIg7utp9Dv/7Ak2JrDYm65FjynXwmox3JHqg4CqNiZ4Io=;
+	bh=LjDQFa72z/JTv9jgo1xnkqFqOnuZge/K6x8cYBbqkPA=; b=gK0b4DL9nsCCd+Po83/o2VulCD
+	0amGwyEWmnA6Q9BqvbmUINJSWGmP7GAAulJG+lyDSxn3aL7kuCyJPn9VyiA4z67a8TJ4hrErOWEdn
+	2hKJ8sFEyKSSsXaCJhiIAbr4zPES9PH86jCQXyKEEvlJt83B2qZb3blSHku7wSyATirY=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1sdAVV-004VLH-Ei; Sun, 11 Aug 2024 17:29:21 +0200
-Date: Sun, 11 Aug 2024 17:29:21 +0200
+	id 1sdAYt-004VME-J2; Sun, 11 Aug 2024 17:32:51 +0200
+Date: Sun, 11 Aug 2024 17:32:51 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Oleksij Rempel <o.rempel@pengutronix.de>
 Cc: Heiner Kallweit <hkallweit1@gmail.com>,
@@ -51,10 +51,11 @@ Cc: Heiner Kallweit <hkallweit1@gmail.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
 	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v4 1/3] ethtool: Add new result codes for TDR
- diagnostics
-Message-ID: <00ed3f2c-e1de-4147-82e4-10f8b53e3c46@lunn.ch>
+Subject: Re: [PATCH net-next v4 3/3] net: phy: dp83tg720: Add cable testing
+ support
+Message-ID: <0aaf3031-f63f-4ba1-a017-ee2c7e673abc@lunn.ch>
 References: <20240811052005.1013512-1-o.rempel@pengutronix.de>
+ <20240811052005.1013512-3-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,16 +64,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240811052005.1013512-1-o.rempel@pengutronix.de>
+In-Reply-To: <20240811052005.1013512-3-o.rempel@pengutronix.de>
 
-On Sun, Aug 11, 2024 at 07:20:03AM +0200, Oleksij Rempel wrote:
-> Add new result codes to support TDR diagnostics in preparation for
-> Open Alliance 1000BaseT1 TDR support:
+On Sun, Aug 11, 2024 at 07:20:05AM +0200, Oleksij Rempel wrote:
+> Introduce cable testing support for the DP83TG720 PHY. This implementation
+> is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
+> Compliance (Rev. B)" application note.
 > 
-> - ETHTOOL_A_CABLE_RESULT_CODE_NOISE: TDR not possible due to high noise
->   level.
-> - ETHTOOL_A_CABLE_RESULT_CODE_RESOLUTION_NOT_POSSIBLE: TDR resolution not
->   possible / out of distance.
+> The feature has been tested with cables of various lengths:
+> - No cable: 1m till open reported.
+> - 5 meter cable: reported properly.
+> - 20 meter cable: reported as 19m.
+> - 40 meter cable: reported as cable ok.
 > 
 > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 
