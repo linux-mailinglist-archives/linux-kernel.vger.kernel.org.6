@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-282432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F7094E3D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:30:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7E494E3DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:36:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AE91C20E31
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:30:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5C528187F
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576BA15F40D;
-	Sun, 11 Aug 2024 23:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB2C165F01;
+	Sun, 11 Aug 2024 23:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TKUs28P+"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VbR1ij9V"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBC626287;
-	Sun, 11 Aug 2024 23:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8011547D6
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:35:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723419024; cv=none; b=FNVkz4Tn/Abfaed+J+eVWmjXuQIp4us5RViaie+zQqLre1ffktxik0LnldhOEegcmICfK0PvPvogBtfCrRuWOK1JDiDRQUsOcvK0M2dI+3J6CqwdJWb7NZG1f9CT+CrVW9moqgFrHGa3bN1i1+Cky2drH1MUP/z3o0Et1KSfbY4=
+	t=1723419355; cv=none; b=VrN9LJCAvRVH7IcFoBvoN+IXUXTOde9oHCHRjViFTCHNR4CFkhlA6tqeb0SWVeFzbpNip49W8EmhrHYoVtEewIV3utkvUXTcUj3gNg9M6RO8vbLESBML+JeVfMLLzhTnxrf3zdQg4PEyZHmZi+VTHQtWSqXC6qG0vnDX2d9by00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723419024; c=relaxed/simple;
-	bh=wm5ktlve6wgsgEwPPW3LGQhe3Ut07NARvGK41EApS2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ocPf8D6lpD6muL2CAJuxikCh3n1CxLJeQDFVFbI20gr3F8uLHQSTf0agWeRmDVyrBZzBjED0oJy7yfRMcgc9xx4wulLWSg7488mS9JutqRy3yFts8vM+tCbaXf3MqpMeEeGLwKT8l5kXjk/qhzENiuam/yToLGqcKESccqKuhn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TKUs28P+; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723419017;
-	bh=eNSUCQPx866Pg64nr1Hw9XLv8/hOtNshdhzYQlDzNg8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=TKUs28P+1wnbsi9oYp/C/afLCG/llEZmehKo44rUsT7ocTdW44Iyj7cTocucdXBP6
-	 TTW7VD3M7nSKDDnestmsUnWmqC2dwdnfdApe8/VvNFfXTjKzvxLRz7MUHRY+aVC+Bo
-	 MEzyzC33L+d1yLOyXnR+yyTZI8TccJ5M/edzK7Ir2FITWpd/JihabTiYXcf8AC2jzb
-	 RF4HkY94Ri94obMRse+uJN9fuRPukTqUl58UEXGHdhH9zeazkNn8cL1n56qJIiDo1P
-	 J6r0gML0bNiZ+P4SVNf5v00CLaUApPyphEraCpD6ufRSCkTGOkmwBiLj7EISsl7ri/
-	 L9FUqhKfFmYTg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Whv5P022qz4wx5;
-	Mon, 12 Aug 2024 09:30:16 +1000 (AEST)
-Date: Mon, 12 Aug 2024 09:30:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Kaiyang Zhao <kaiyang2@cs.cmu.edu>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20240812093016.148a433c@canb.auug.org.au>
+	s=arc-20240116; t=1723419355; c=relaxed/simple;
+	bh=yb0ny0zY4VuXPLTCQZNYbnK3oc52429hwYQFgNULx1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yij8zZQ3wHZiufpTWwDKJUrZr5DfvdTBJSXwlBJl4x2Op/SmzXCpf5t/oy5UfM+hDLCva06RmqyvKG9QAdZjsyUPsqF4IRRxSusWOxJ2CyR5bmNvhWbs70kn42rcND5J6mFdUxBrVMjS8Tc6eg4pbjYr6ufvNRVqMSNG9K0FbEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VbR1ij9V; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70d2a6e31f1so173234b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 16:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1723419352; x=1724024152; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hO37jwTmuSgE1Z4eVGpKU3tnYdMedGjB31Oft97scek=;
+        b=VbR1ij9VvJ5R1Xp+0Tf+tjuWY9r6cJUsaJ3mU+3cOGpyd/gO5p4JaUOZ2NkDEcINUX
+         7XlXByUu6nyNtPM29yVEAIf3B3sXR0IakfKZxiwrmvaeg/9dcEo8QXjNGNtvWCJMS+We
+         izk2mXgvfdJjgdt7neJkrQLvIllwO7guC3FH4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723419352; x=1724024152;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hO37jwTmuSgE1Z4eVGpKU3tnYdMedGjB31Oft97scek=;
+        b=s4/g+Lx9bKlM/jse7pvdHEopN28q/wjJIClMU61KTMDQfNCFUVWK1B31WKPbXEJkZ5
+         tJ5yV0XnlZO2bWNAb6yMqMvIFaJKidJXCdavMzCYB4/F1qCNJy1BLhh/EgYtBJzGj+op
+         jh0839qawmXb3Roaw2slBNjpyNwOTLngEy517A5m2t17xLrXH0FEpirDJxMBoIvAfUSy
+         CbsuGQHYd9et1A5rRaPAY4KUrnVkONE20Cc3gCwYxsvuHZv4brKOVXjkIJAmWWFl07o9
+         w8CYJSPYj/ytkM55OFg6OdClOLYPXPr5v11IGEZpcVKqz15FtgazBQgh/V35/akILQlz
+         Svgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXc3RylV9pPCjvahbgKmKbD9Li9RlEeibQz9L4HWF7ikyVS0ugJM7PrZOe9c85Zj3Q2zGGD2HfKcAfNd+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyj+DTpSG73FtMToaeOd2L2wQH5TIaUMKV9SrGhpisBmvkkftex
+	4VgZx2LQ2IJGVpHqhgjAybsicIE5CejMatQMSmWCE1yRZOmvQUKEQs54wy+gx0+bxyn0jQD1Tt7
+	KEy8=
+X-Google-Smtp-Source: AGHT+IED5VVnpv8Jj/o2aNdwI2tSUckratzTwSCTsE+zxtRcpvo79CBOM3dI2QieB5Cx1UViO5mYtg==
+X-Received: by 2002:a05:6a00:9149:b0:706:aadc:b0a7 with SMTP id d2e1a72fcca58-710dc687057mr5239855b3a.1.1723419352538;
+        Sun, 11 Aug 2024 16:35:52 -0700 (PDT)
+Received: from [172.31.140.29] (softbank126051159161.bbtec.net. [126.51.159.161])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a43948sm2840815b3a.122.2024.08.11.16.35.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Aug 2024 16:35:51 -0700 (PDT)
+Message-ID: <de8abe69-3735-4ffc-9cc2-21a167aab44f@linuxfoundation.org>
+Date: Sun, 11 Aug 2024 17:35:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/P4EBZ2.lgsmOHcFdZGLC2S4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] selftests: rust: config: disable GCC_PLUGINS
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Anders Roxell <anders.roxell@linaro.org>
+Cc: ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+ shuah@kernel.org, rust-for-linux@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240802124536.2905797-1-anders.roxell@linaro.org>
+ <20240802124536.2905797-2-anders.roxell@linaro.org>
+ <CANiq72kb9mDd0xndGFnMQXP4Hg-GE91eQ07yYiQW1HwWv75Qtw@mail.gmail.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <CANiq72kb9mDd0xndGFnMQXP4Hg-GE91eQ07yYiQW1HwWv75Qtw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/P4EBZ2.lgsmOHcFdZGLC2S4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 8/10/24 04:34, Miguel Ojeda wrote:
+> On Fri, Aug 2, 2024 at 2:45 PM Anders Roxell <anders.roxell@linaro.org> wrote:
+>>
+>> CONFIG_RUST depends on !CONFIG_GCC_PLUGINS. Disable CONFIG_GCC_PLUGINS
+>> in rust/config file to make sure it doesn't get enabled.
+>>
+>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> 
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+> 
+> When https://lore.kernel.org/rust-for-linux/20240731125615.3368813-1-neal@gompa.dev/
+> goes in, this could also be relaxed.
+> 
+> Thanks!
+> 
+> Cheers,
+> Miguel
 
-Hi all,
+Applied to linux-kselftest next for Linux 6.12-rc1.
 
-After merging the mm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-mm/memory.c: In function 'numa_migrate_check':
-mm/memory.c:5403:41: error: 'NUMA_HINT_FAULTS' undeclared (first use in thi=
-s function)
- 5403 |         count_memcg_folio_events(folio, NUMA_HINT_FAULTS, 1);
-      |                                         ^~~~~~~~~~~~~~~~
-mm/memory.c:5403:41: note: each undeclared identifier is reported only once=
- for each function it appears in
-
-Caused by commit
-
-  75747a26eec1 ("mm,memcg: provide per-cgroup counters for NUMA balancing o=
-perations")
-
-from the mm-unstable branch of the mm tree.
-
-CONFIG_NUMA_BALANCING is not set for this build.  I note that the
-preexisting calls to count_vm_numa_event() compile because it is
-implemented as a macro ...
-
-Not the best fix, but I applied the patch below.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 12 Aug 2024 09:09:52 +1000
-Subject: [PATCH] fixup for "mm,memcg: provide per-cgroup counters for NUMA
- balancing operations"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- mm/memory.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/mm/memory.c b/mm/memory.c
-index 231c7b2297bd..13b679ad182c 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -5400,7 +5400,9 @@ int numa_migrate_check(struct folio *folio, struct vm=
-_fault *vmf,
- 	vma_set_access_pid_bit(vma);
-=20
- 	count_vm_numa_event(NUMA_HINT_FAULTS);
-+#ifdef CONFIG_NUMA_BALANCING
- 	count_memcg_folio_events(folio, NUMA_HINT_FAULTS, 1);
-+#endif
- 	if (folio_nid(folio) =3D=3D numa_node_id()) {
- 		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
- 		*flags |=3D TNF_FAULT_LOCAL;
---=20
-2.43.0
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/P4EBZ2.lgsmOHcFdZGLC2S4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5SYgACgkQAVBC80lX
-0GxtvQf/ZQfd0sngpIh0Szbap2v0OeEdViqYFC6YXq1y4SRrLe6fzXZDppVOh5/u
-ARILfYbfaM6yj7Z8QfhGW5LowrCBu0AMkzV95z0vJQSw7pWl5z2IZjUyzL+Gjg6v
-ybeTzIqiG5FomUUx5oXPvafCGNHRokrd7sPiY+j2o68yZwqp9rPIfCb5yBVMfNps
-oRwqimATTjHOUHZ0qDrt67DKYykvhHyVqFa4Cj5XzLJo0NjZJ1nEkC1PTSOniYKo
-pATnHeES+f+5G9Qy6ne57X/+FwhlQPuqZA5xY6u2o/RBgXgjz1253LzlLY3Akj2Y
-4XWIDg22RGycxtcfiRRIvlJU22YAdA==
-=0Yk4
------END PGP SIGNATURE-----
-
---Sig_/P4EBZ2.lgsmOHcFdZGLC2S4--
+thanks,
+-- Shuah
 
