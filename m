@@ -1,151 +1,160 @@
-Return-Path: <linux-kernel+bounces-282294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE9594E1BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:02:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC83094E1BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F04F81C20ACA
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72BF61F21398
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5086A14A4DC;
-	Sun, 11 Aug 2024 15:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376CB14AD17;
+	Sun, 11 Aug 2024 15:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="qtuG2Zgu"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlZPxKrM"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E2BB64E
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D13B64E;
+	Sun, 11 Aug 2024 15:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723388556; cv=none; b=u4Wj1dzWumw4Y0v9g8D3Yqf8KE2wksEYqJr3IT5P59ESLfqR9SZUpFe9C4Rh5ghCtA+gkIypqYToNoPk+1zvr33t8TBmIKTlXWRaUoSak/DkewkDBhsewmMLo9MDHsox5aKLu13eQrqLUoKdpJToWrkx1CVb1bmsac5AAQHLLsI=
+	t=1723388630; cv=none; b=D/CTZDcUoPTU0QrzC5BFZBm2AI+RJJOP9ck4W9+IqoFZfTQAc+rtZbSlK4QsvzWXsKxsWeY7ENnUP7/uJt/A7N+7M02nfjdjtPGvtnGaZrrTMg/YtGxWUccRxg2788TpxwHjl6TbEQ4yDDHLB6/tSrjrebyPCuHlwL7YtbSeJ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723388556; c=relaxed/simple;
-	bh=jQWRBifP3hn2MLO3T+N+xofhWxRbJBmY0S9EDLKMbAs=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=YqD0zW9SGNrjEdx4fhAl8kKhSIe5fpBmHXNgioJ4kuYJAo9oC4/IKbXbvovS08HP6/Qo/spbl9e9GREnpmwdJLSR8nYomRKt2i/Zi2ZKpRu6II9/j4o050uK0vm742JpfVvR1cmVm3iGZ55qOkCuc+VPdwnZsFeFRspGDynrS9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=qtuG2Zgu; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f1870c355cso34704771fa.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:02:33 -0700 (PDT)
+	s=arc-20240116; t=1723388630; c=relaxed/simple;
+	bh=t56VbpVtJ+Zdlnja/qi8vfMVnThbtLYAwjUZlQMKN0I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ww25z070e2T8i0TaCiVgFRKyvAa94LJf1MtLtU3tOvq0diOFxh5o3v6A6/c8ubeNXl7Mo9aJw8dKQs3ZCrMacCo2PtiUzJrWEYHiocjxmm9ImW3FsqYK9v/rIHE4Py9MAGSscFeHjv228GIJSprL3IuUR+28hL/QowEIsJkuPv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlZPxKrM; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4281faefea9so25949225e9.2;
+        Sun, 11 Aug 2024 08:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723388552; x=1723993352; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dPwjDhi7KuLfP5w2qSCJy9Pe3ty8wsK+Of52u0lxUqk=;
-        b=qtuG2Zgu6h2PNwfZ3feUZvw9TqZEhuv5UCBpCRJALFRd8FuORbYq56sO/de2zSBcWp
-         IXFfAeCdJWdoOoWvwQdZcAUXuKKf+HXhLWOYdZBHY6mpvJx0EcM9rjDSKa99xnLX7zW3
-         L0N5jSzf9ku/TxgIo1dXyf40nR0/6+5TIM2jw41U/OOuicZClBGIzGj3DR7iE5cLhW1w
-         aL+/1Te4s2qTRov/++PgndmoJzb01nJzbotkRGA2k0WjpqGbB3EDk9NrW/B6CikM7HTr
-         IOCD2QOvHoWswJuttNbNtBI6hsLI/Atygllw+9gCVUpSeRrmQ8hQEOLU5pu5AMBMDUun
-         NDew==
+        d=gmail.com; s=20230601; t=1723388627; x=1723993427; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BLQEJ+WX0ldiAMY/HSIi4WEWR2xNDc8YrU3kn4DHc6g=;
+        b=MlZPxKrM9vhx1Bxa/4lxoTv/PEzhSfe0K4uYHbfF3wD4z8wv262Oc64t94pJVzE67r
+         aQGKbtrXB3g5bx/zxDqfmhgh5sA2fwKaSIAKV2xBzKwMokW2fPpagQCNTXZF8B2vo3Fk
+         SSJXTUgfS++wsclf9BtgWW3Rr6MlzUUhAVGQmAm5iug5ONTAvEEmgQez1n3p2mMMls1q
+         4cp6yEG7I6zE+T/esGv8pmlx+t5k2FpCHs9C7cIHXXXmaTbGOQt8yNgUki75XnXg/Bs7
+         nUeppUoVVTJ1AVDLf47hru0OTECGzCCMBCNBxHifyTEbG53U6Dw79yzUVK/mgMltYJcu
+         7Oqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723388552; x=1723993352;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dPwjDhi7KuLfP5w2qSCJy9Pe3ty8wsK+Of52u0lxUqk=;
-        b=NEoPuP7VXzmIKWKkHYhTcHLnoWNooOSOUdCuZr6JFMofL/6Vz5HBvM4CeH9QwUC7l6
-         lY2HXs8tTSohu8CIJpdBJ+r3uFkcWs4vMMbgYo5amm0CXxYjZBuXj1V1RR63DEwfbGO/
-         /OCvqbeoJfYo7DPn4S2WuBbqKtVzD6SI51QMG4fLXmmRop4UKvCqU3oXeSPb4wPFE92G
-         9SdiS6ra0oubHzZMONyvQ9mqwrVruAMtBAh1eo1vaZc34RUNkNvtw0SNtXaWBrgqg3m9
-         sfnoEUZlf89m2/EH5XxTPEnNDLJSafGyLRwtYySMnc4ytdGQ4wVQornpbe9XwGkyPKmy
-         fa5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVA+AE6+ufBK8H6YJqh8liMY4445BNwhRjnv1B6bnOigBsb0xe5PE44pWr8WpmBFs4gvKu8jkxaGmSX8D11dSy8xDX6RZKn5kZquvcZ
-X-Gm-Message-State: AOJu0YxcT+vasCElL5dy4NACeeq3qFiKaosj6JdiUt7eEStK1LeRosNL
-	kpo9JeFSi4Fmx1CRklbzCzJRPGMuNYOuYuHHYSpYoq7m1h/XQ7bNBF8JqnK/PGrvOlZezXzKSRm
-	D
-X-Google-Smtp-Source: AGHT+IFvk8ykrXwv5JN7Ut+OBiNYWgGRWCFMRTpXj8rPw95TTv9BOxj1UW1uuL24C6SjPGc/jTFePg==
-X-Received: by 2002:a2e:f1a:0:b0:2ef:2c87:3bd7 with SMTP id 38308e7fff4ca-2f1a6ce6ea0mr45870891fa.37.1723388551654;
-        Sun, 11 Aug 2024 08:02:31 -0700 (PDT)
-Received: from alex-rivos.home (amontpellier-656-1-456-62.w92-145.abo.wanadoo.fr. [92.145.124.62])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738e01sm152901205e9.11.2024.08.11.08.02.31
+        d=1e100.net; s=20230601; t=1723388627; x=1723993427;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BLQEJ+WX0ldiAMY/HSIi4WEWR2xNDc8YrU3kn4DHc6g=;
+        b=cElpbXoS4rx4UG6Q44/ZeAc1co2QIALyD1Yi2ZEg7XMwmsCITM21FcTxp1mKws5vlD
+         xlrY7g/ER+8PNKjyuDxdfC3QnMlmSTJhaSJzsDVZCvlWwsl6TYPwgFXwDab4PHwxsnTM
+         qdj1bdOnRfGlnIQ1V/Z+0ims8gwdMHB/7M8epuEyg+X8ApAlpOc/gjTf3qWnkjTeO3vw
+         tzfJAyzLTOIUsFDTErdMar+c/wJLa7yc7KBNnp0ZLS1uS0oyZqS9Rz+r+wo9bzHdXUNe
+         ANNTeRnA+FKcUI72quYLuETZokrwJPxjisVgBuRL4dqWi+OdQpSv5tVfZzCEWvN/IIwx
+         rV9A==
+X-Forwarded-Encrypted: i=1; AJvYcCVUyC4LzQNwra/H2RdPE4GTPB8x0QO+FAOUO+e/8KHnhgJekb/C929YWq/JKFbu36TZSr93KYqq1ZZok1OLULLh5AclPzGMHo9BlUvLzdWUwyy1wY0hKe7Kb8IN/6wWeWYO
+X-Gm-Message-State: AOJu0Yxpwh1tDuFZq3VkdggEdaKvOjiwZi4cFIOnhuxRa20cRLuRN3Yc
+	7ZhzN11e+klcIbMlfP2YmBGNNbb230VGhvWmBmiBpTL0BjOk88AX
+X-Google-Smtp-Source: AGHT+IGRCcyYRtOhzZaRR+hNljuWSn1EeObk0KM0LDvFEUW0jXe00dokU1umwMkyPsJJouac/jht5Q==
+X-Received: by 2002:a05:600c:4f8f:b0:426:6ea8:5037 with SMTP id 5b1f17b1804b1-429c3a643bdmr46498235e9.37.1723388626791;
+        Sun, 11 Aug 2024 08:03:46 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-242-114.customer.ggaweb.ch. [82.192.242.114])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4f0a6d76sm5087903f8f.115.2024.08.11.08.03.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 08:02:31 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH -fixes] riscv: Fix out-of-bounds when accessing Andes per hart vendor extension array
-Date: Sun, 11 Aug 2024 17:02:29 +0200
-Message-Id: <20240811150229.82321-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+        Sun, 11 Aug 2024 08:03:45 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 2F04ABE2DE0; Sun, 11 Aug 2024 17:03:45 +0200 (CEST)
+Date: Sun, 11 Aug 2024 17:03:45 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Akemi Yagi <toracat@elrepo.org>,
+	Hardik Garg <hargar@linux.microsoft.com>,
+	Quentin Monnet <qmo@kernel.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
+Message-ID: <ZrjS0V-tCQ1tGkRu@eldamar.lan>
+References: <20240807150039.247123516@linuxfoundation.org>
+ <ZrPafx6KUuhZZsci@eldamar.lan>
+ <2024081117-delusion-halved-9e9c@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024081117-delusion-halved-9e9c@gregkh>
 
-The out-of-bounds access is reported by UBSAN:
+Hi Greg,
 
-[    0.000000] UBSAN: array-index-out-of-bounds in ../arch/riscv/kernel/vendor_extensions.c:41:66
-[    0.000000] index -1 is out of range for type 'riscv_isavendorinfo [32]'
-[    0.000000] CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.11.0-rc2ubuntu-defconfig #2
-[    0.000000] Hardware name: riscv-virtio,qemu (DT)
-[    0.000000] Call Trace:
-[    0.000000] [<ffffffff94e078ba>] dump_backtrace+0x32/0x40
-[    0.000000] [<ffffffff95c83c1a>] show_stack+0x38/0x44
-[    0.000000] [<ffffffff95c94614>] dump_stack_lvl+0x70/0x9c
-[    0.000000] [<ffffffff95c94658>] dump_stack+0x18/0x20
-[    0.000000] [<ffffffff95c8bbb2>] ubsan_epilogue+0x10/0x46
-[    0.000000] [<ffffffff95485a82>] __ubsan_handle_out_of_bounds+0x94/0x9c
-[    0.000000] [<ffffffff94e09442>] __riscv_isa_vendor_extension_available+0x90/0x92
-[    0.000000] [<ffffffff94e043b6>] riscv_cpufeature_patch_func+0xc4/0x148
-[    0.000000] [<ffffffff94e035f8>] _apply_alternatives+0x42/0x50
-[    0.000000] [<ffffffff95e04196>] apply_boot_alternatives+0x3c/0x100
-[    0.000000] [<ffffffff95e05b52>] setup_arch+0x85a/0x8bc
-[    0.000000] [<ffffffff95e00ca0>] start_kernel+0xa4/0xfb6
+On Sun, Aug 11, 2024 at 12:09:30PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Aug 07, 2024 at 10:35:11PM +0200, Salvatore Bonaccorso wrote:
+> > Hi Greg,
+> > 
+> > On Wed, Aug 07, 2024 at 04:59:39PM +0200, Greg Kroah-Hartman wrote:
+> > > This is the start of the stable review cycle for the 6.1.104 release.
+> > > There are 86 patches in this series, all will be posted as a response
+> > > to this one.  If anyone has any issues with these being applied, please
+> > > let me know.
+> > > 
+> > > Responses should be made by Fri, 09 Aug 2024 15:00:24 +0000.
+> > > Anything received after that time might be too late.
+> > 
+> > 6.1.103 had the regression of bpftool not building, due to a missing
+> > backport:
+> > 
+> > https://lore.kernel.org/stable/v8lqgl$15bq$1@ciao.gmane.io/
+> > 
+> > The problem is that da5f8fd1f0d3 ("bpftool: Mount bpffs when pinmaps
+> > path not under the bpffs") was backported to 6.1.103 but there is no
+> > defintion of create_and_mount_bpffs_dir(). 
+> > 
+> > it was suggested to revert the commit completely.
+> 
+> Thanks for this, I'll fix it up after this release.
 
-This happens because we unconditionally use the cpu parameter to access
-this array. But if -1 is passed, that means we should not and we don't
-need to access this array, so simply prevent accessing the array in that case.
+Thanks! Note today Quentin Monnet proposed another solution by
+cherry-picking two commits:
 
-Fixes: 23c996fc2bc1 ("riscv: Extend cpufeature.c to detect vendor extensions")
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
----
- arch/riscv/kernel/vendor_extensions.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+https://lore.kernel.org/stable/67bfcb8a-e00e-47b2-afe2-970a60e4a173@kernel.org/
 
-diff --git a/arch/riscv/kernel/vendor_extensions.c b/arch/riscv/kernel/vendor_extensions.c
-index b6c1e7b5d34b..01dc79b1d17b 100644
---- a/arch/riscv/kernel/vendor_extensions.c
-+++ b/arch/riscv/kernel/vendor_extensions.c
-@@ -27,7 +27,7 @@ const size_t riscv_isa_vendor_ext_list_size = ARRAY_SIZE(riscv_isa_vendor_ext_li
-  * @bit: bit position of the desired extension
-  * Return: true or false
-  *
-- * NOTE: When cpu is -1, will check if extension is available on all cpus
-+ * NOTE: When cpu is VENDOR_EXT_ALL_CPUS, will check if extension is available on all cpus
-  */
- bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsigned int bit)
- {
-@@ -38,14 +38,15 @@ bool __riscv_isa_vendor_extension_available(int cpu, unsigned long vendor, unsig
- 	#ifdef CONFIG_RISCV_ISA_VENDOR_EXT_ANDES
- 	case ANDES_VENDOR_ID:
- 		bmap = &riscv_isa_vendor_ext_list_andes.all_harts_isa_bitmap;
--		cpu_bmap = &riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap[cpu];
-+		if (cpu != VENDOR_EXT_ALL_CPUS)
-+			cpu_bmap = &riscv_isa_vendor_ext_list_andes.per_hart_isa_bitmap[cpu];
- 		break;
- 	#endif
- 	default:
- 		return false;
- 	}
- 
--	if (cpu != -1)
-+	if (cpu != VENDOR_EXT_ALL_CPUS)
- 		bmap = &cpu_bmap[cpu];
- 
- 	if (bit >= RISCV_ISA_VENDOR_EXT_MAX)
--- 
-2.39.2
+Quoting:
 
+> You should be able to fix the build by first cherry-picking commit
+> 2a36c26fe3b8 ("bpftool: Support bpffs mountpoint as pin path for prog
+> loadall"), and then commit 478a535ae54a ("bpftool: Mount bpffs on
+> provided dir instead of parent dir") as you figured. Both commits have a
+> minor conflict on tools/bpf/bpftool/struct_ops.c, which should be
+> addressed by discarding the relevant hunk (for both commit).
+> 
+> Alternatively, it's also fine to revert the breaking commit. It's a
+> quality of life improvement without which users may have to manually
+> mount the bpffs at the location they want to pin their maps when loading
+> multiple BPF programs with "bpftool prog loadall", in the unlikely event
+> they're not using /sys/kernel/bpf, prior to running the bpftool command.
+> It's not in use during the kernel build process or for the BPF
+> selftests, so not necessary on stable branches.
+> 
+> I hope this helps,
+> Quentin
+
+I cannot judge which is less risky, but I will for Debian in any case
+follow what will be picked (if needed to cherry-pick those in advance;
+I was meaning to release another update but can now as well wait for
+6.1.105 with that bpftool fix).
+
+Regards,
+Salvatore
 
