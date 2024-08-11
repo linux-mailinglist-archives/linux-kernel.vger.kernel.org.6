@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-282238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE5C94E13B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:35:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267D094E13A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640591F22ECB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:35:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA9331F22E00
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9AE6E613;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D4561FFA;
 	Sun, 11 Aug 2024 12:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QwdejKFq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BInu8C1H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7FEEBA
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 12:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6274D8AE;
+	Sun, 11 Aug 2024 12:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723379725; cv=none; b=UHnj4BB9u4KgjipevRoCEc6KIt9UBKCuggCZeGOT83/IV4jIXy44XkEF2Pm4K/KOdeaqlXnSz3G2k7Z00bTOqyF42eC/nMNOlEP+Ypi1zVNPc8aWq184KcpViyD0pC0FSkcca9cxI8okEJaMQTNcrHUxKMueS5Q70J5dye0rt0g=
+	t=1723379725; cv=none; b=jujrzVuF7U6prPxAoWVOOeEJwK8MbICD3f0/4F1KwriYTVU9MQvhJV8ijXq3rcKliepIRsbGtuFfP5RMGJLWNxagVKMBCNRB52wADV+ZorRC16grz9WkPenNZ6zE70pTI2fH9Uj9tX07q+hPNb6A6dzHh5rFESwBiomqCnhct6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723379725; c=relaxed/simple;
-	bh=8HbDmLL+NTBeeBc0mZ30qbLS+R+pE60UQRFzXh0Qd40=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nh7VfQ3uD4aaMPxcoOZDHYtUOgSYNgSFtGYMFLL9wZFxxnp8PvO91pUYUGM4tt2oFmzy2KC9Bud8a+UT5HkxrHR6sKtQbqnwEwAE8NouvUCjKi2qdAMPdYARCuMps97aOLnrb9Wk1h2vR72LDCeiTY6POczX98HRCWpCOd0PyYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QwdejKFq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723379723;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHlXnDYMSxlvXOLG5yqCHeaThdF+GjL3IUfr75SJ08A=;
-	b=QwdejKFqstZJ3IQVwuxcVECdxajgN4VPQ6CvqDnatw8d5psJrV6pjb7WCQ0thr0A7bzKnd
-	psMgmXkKAIfksVD5Okagrr6TNqOc9zMr/1luQRkgeJILjYlK0+F9iym7LLoe237aX1lbLK
-	9n9ABL6gxgSedNVsggq3esAjoT+sSaU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-357-H9lsxKNuPV-qWIxBFCY7Sg-1; Sun,
- 11 Aug 2024 08:35:16 -0400
-X-MC-Unique: H9lsxKNuPV-qWIxBFCY7Sg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4ABCF195609E;
-	Sun, 11 Aug 2024 12:35:14 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1F5A219560AE;
-	Sun, 11 Aug 2024 12:35:07 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sun, 11 Aug 2024 14:35:11 +0200 (CEST)
-Date: Sun, 11 Aug 2024 14:35:04 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: syzbot <syzbot+f7a1c2c2711e4a780f19@syzkaller.appspotmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>, jolsa@kernel.org
-Cc: acme@kernel.org, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, irogers@google.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
-	mhiramat@kernel.org, mingo@redhat.com, namhyung@kernel.org,
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [perf?] KASAN: slab-use-after-free Read in
- __uprobe_unregister
-Message-ID: <20240811123504.GB30068@redhat.com>
-References: <000000000000382d39061f59f2dd@google.com>
- <20240811121444.GA30068@redhat.com>
+	bh=+SrK9lm6okUOBtPTMErWmS5VBrEJZyjKsdchhtjqI7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dz4ufHoQLqYSwxNyLnHs9uPPj3zVUYITROcV9VQn9u21PETnC/1+SOOn2YzOZIK6Op3zk3P/iaVMTlJmMAj3LQR10GrYVuCysNlxs4+YqaMiPq5xZeogZg0fuGkCJSYCxBanh+dhfbGnAZdL9Ja8ml1CGeiOOfXby0MD+SO/hkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BInu8C1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12C12C32786;
+	Sun, 11 Aug 2024 12:35:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723379724;
+	bh=+SrK9lm6okUOBtPTMErWmS5VBrEJZyjKsdchhtjqI7g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BInu8C1HnZDd26nRWJSeJeAOtW7TDKhKu0dI0r4+trPyXO6LxQzqtyQDXFhDUj1fE
+	 MPz7swGKBxGKjns+7wq8eP7L3z1/IXxkL6DGDDasAiHNbPY7/1BfD+YsW0NcPMNtjR
+	 xQDW5VayAccxXi172btjfpZvU71HwAlKXUxzVsTPfeuDoAP+hc7ejBem4G6/QdYANt
+	 t2QnFNoKLoj55hb9VJbzEOFbevENztDL+/Fegh1EOnvXV0X/o2PQ4jqlsekE3PkJxp
+	 sddkHz6bKv10SkY/DQmjMx5T44OgUterNo01CqdCT/Hmzf2AYiBZ6lojYoLSHi78uz
+	 QDHqjuK9jxXkA==
+Message-ID: <cc0ea64f-f300-4d66-80f4-af2038a36ba7@kernel.org>
+Date: Sun, 11 Aug 2024 14:35:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811121444.GA30068@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/6] dt-bindings: thermal: samsung,exynos: remove
+ driver-specific information
+To: Mateusz Majewski <m.majewski2@samsung.com>, linux-pm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Anand Moon <linux.amoon@gmail.com>
+References: <20240807084829.1037303-1-m.majewski2@samsung.com>
+ <CGME20240807084917eucas1p28c675c9da74f0de0bb09689819202c39@eucas1p2.samsung.com>
+ <20240807084829.1037303-7-m.majewski2@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240807084829.1037303-7-m.majewski2@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 08/11, Oleg Nesterov wrote:
->
-> Hmm, bpf_uprobe_multi_link_attach() looks obviously wrong.
->
-> bpf_link_prime() is called after the
->
-> 	for (i = 0; i < cnt; i++) {
-> 		uprobe_register(...);
-> 		...
-> 	}
->
-> loop. If bpf_link_prime() fails, bpf_uprobe_multi_link_attach() just do
-> kvfree(uprobes) without _unregister(). In particular, this leaks the freed
-> bpf_uprobe->consumer in the uprobe->consumers list.
->
-> After that another _unregister() on the same uprobe can hit the problem.
->
-> I guess we need a simple patch for -stable...
+On 07/08/2024 10:48, Mateusz Majewski wrote:
+> The number of supported trip points was only limited by the driver
+> implementation at the time, which mapped each trip point defined in the
+> devicetree source file to a hardware trip point. An implementation that
+> does not have this limitation is possible; indeed, that is how the
+> driver works currently. Therefore, this information should be removed
+> from the bindings description, which are meant to be independent of
+> the details of the driver implementation.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
 
-Something like below on top of perf/core. But I don't like the usage of
-"i" in the +error_unregister path...
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Oleg.
-
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3486,17 +3486,19 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 						    &uprobes[i].consumer);
- 		if (IS_ERR(uprobes[i].uprobe)) {
- 			err = PTR_ERR(uprobes[i].uprobe);
--			bpf_uprobe_unregister(uprobes, i);
--			goto error_free;
-+			goto error_unregister;
- 		}
- 	}
- 
- 	err = bpf_link_prime(&link->link, &link_primer);
- 	if (err)
--		goto error_free;
-+		goto error_unregister;
- 
- 	return bpf_link_settle(&link_primer);
- 
-+error_unregister:
-+	bpf_uprobe_unregister(uprobes, i);
-+
- error_free:
- 	kvfree(uprobes);
- 	kfree(link);
+Best regards,
+Krzysztof
 
 
