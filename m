@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-282393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288C194E349
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F62594E34F
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:21:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77B01F21FB5
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D39B91F220ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:21:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E62B15C150;
-	Sun, 11 Aug 2024 21:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398CA158D98;
+	Sun, 11 Aug 2024 21:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KqFV3P4V"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p559lYce"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2A1383AB;
-	Sun, 11 Aug 2024 21:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C3D79F4
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 21:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723410999; cv=none; b=RbH3xsQ00Wd/ckTbSyH1pHJwEEK4921hqA1tHgn+jmDScPQGo7oo/OaQwDXttfp5cmIFFsCqt9ZtdVhYMf1ify30RLl3KuDEm7Qyf/nr6PReDyM5EYAQiJCCxQNCJhwBUl7al0wxWpVBKz8Twb39zkFMi94svSGDlTY8F76e8WA=
+	t=1723411295; cv=none; b=hCIq7vkwZjTnpOEEOiHm5yqEFBHJX4btWHatDSzabVsEhJMeJ02vrpFX59ZXZHL9ymeSLJzKgUX8wnbu4bVNRt5DxYg2xm5Wnq6N3OUTsQ1gKVHEpNYaCl2AKjQQc6cikVr4M8BsKBsKKf6w/l2t0h+poMJ9INSCW/n+OZxeIwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723410999; c=relaxed/simple;
-	bh=fRlJMxs/wcR/vUjjha1a0SI0jWE8mPk5xBeDsIvx2ZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvG1p5WGxx1wjiFrwAPQBJBoDyPzmTo/qMCuAn8GKICt1ft6UprbTkqhN0/UL7jgsZVko6r3qrFHnwUakhXo6ODbqL0elCOYPhGGtO09oMv6poejMjEDznswpqBDA5PFt5nG1JMVwSbqRYhDUWrmHL4up6F38fXITL7hIFa4Q4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KqFV3P4V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A195AC32786;
-	Sun, 11 Aug 2024 21:16:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723410998;
-	bh=fRlJMxs/wcR/vUjjha1a0SI0jWE8mPk5xBeDsIvx2ZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KqFV3P4VOt8UDLWDdQ8yShtull9lEKI+g82SEwKdtvNR1xsGRz1e3snhhF3QXCsCU
-	 R4TDrSSCJAWHQASy7obP48oM7sFxlus2aHekNt5WOL8wapQHDFDu9fByGPZKxknhRn
-	 DUySAtEscS2BoqGzICYPj8pwyrv+K6xihViI6aBKdPvMdUcGD/GnFxyhmm4BWFxmHf
-	 Mrak/RQoF6SVEey4CKHWFVdGHghIP68eWbwhRQQ5krZTErdmm6pQLNqaYGjX3T87QL
-	 fuHkbt1SyqVh3elVWYXujeOOMNPUpCprjQ5ReqW/AE6+SM/YfbHSOQ9/qQNNpmfz4U
-	 nf6j9h3kq6Whw==
-Date: Sun, 11 Aug 2024 17:16:37 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>, nic_swsd@realtek.com,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.10 03/27] r8169: remove detection of chip
- version 11 (early RTL8168b)
-Message-ID: <ZrkqNUHo5rGKtbf3@sashalap>
-References: <20240728005329.1723272-1-sashal@kernel.org>
- <20240728005329.1723272-3-sashal@kernel.org>
- <111ac84e-0d22-43cb-953e-fc5f029fe37c@gmail.com>
- <Zrcu7-CfCIoGO18V@sashalap>
- <39b2fc1f-421a-4547-b7bb-47b207975d73@gmail.com>
+	s=arc-20240116; t=1723411295; c=relaxed/simple;
+	bh=zdJH9lPfRzalvjW3zjAuD7vEMsNp2Y7O1sie0Q/il8Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=p+w3QuAh1PNL7QwkbgJZfTSODbi0ZU9IbRWRUIdaiHLdEG7L6rwOrg86T9hjWlPHEVR7Gim7TmQZofhQmlFozyg6ZQqzq/jSYfuHJcXKRysFzPWoxdydcIg/wN7EqSt6mIwRp9hemuJhzS4nZKbRJzsaOkI11vqak+EuLXMqQ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p559lYce; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-672bea19dd3so85705757b3.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 14:21:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723411293; x=1724016093; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mBxodn3ncL47aIchV0k38iOmKnnFrlE+aQTP6s51zh8=;
+        b=p559lYcehw5QEWItECtwpAEWCzTpMKhzEexY/arfXA+fTN0rCrz/wkRDcKi30SYTie
+         RcGnhypuoC3jgHPsQKv2x/oE+Z+ZOr/mI2rqqg2/pHr+u4N7X81u5ASLvQvaULoJ7OzV
+         xBvnDAqHUeCQ0nCi38V+9X+V+3wAXJTpI7SuCXsBbjzpzvUSY8tvGD0v1icMkNW8WV/3
+         V26CXzmjeFMfrSaSnZVWSr9HWk+iFr2wg9bYijtw5Ks+yGcciZv+YWcs+v5mOtCXIjJJ
+         Ij1Bs2e3idhsdazINqpw19Idbk1bRendQGcWLU3pIyxHCFovsJz0RXgUHE/3Z0wDHsPk
+         CSVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723411293; x=1724016093;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mBxodn3ncL47aIchV0k38iOmKnnFrlE+aQTP6s51zh8=;
+        b=bXsGmpFw2Pg/oQo4m2DoXmsr91MhuyW4NX4YRvCUyI621J1/H5MHSN7+wd+iiaSeIh
+         T0IEeSJfIkLFisF2OwPTfZ0OKq/xBMLSs+wE7fBJS7/bDz5Gemh86kmVrRDOAsaiBVal
+         v4IDBu3Zlz8kIvABtVhWZpBpjSG4Kp4odD8qknocEkC8dRUxuVBzfTiBGi30cOLMSYFk
+         HxkyZq4vXTnXTz72HnkHZS8Kqv5ipta3bPgLuTV8eYcb4BbSv8HDYtz+86RHKLLDrwEQ
+         +5JiAiqP3IGTeFOdB6f8Y0z6Lt+0ij9Swst+JudMat68n0/ayU3S2zkwh73SqVxl6bbQ
+         NL2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXfqQoi8pXzbOOVr1dF23/vzrYtwXHLOElCNFyjT3C4gFiasildyOz2emBgEMYOBej0BQtiDeXxZo3DHWh2p+/ztDaIFKHrvrcQIssA
+X-Gm-Message-State: AOJu0YzBaRWFm4wqWCHO1tYjKQ0vlT4c88+VN0CJYNQUtSgRZBjElVGy
+	8r5BGvrMhXypqZOs9iL1EioH+HFjAo0bgKE2ZuIg3+wJ7YUkEqGlRFsliPNLjXhRzCem6/4rsDE
+	T2A==
+X-Google-Smtp-Source: AGHT+IFDMuZv5daYo57AB4TlP3rAjpDKVJCYpQFPl2Vwy95c8vjlp62B/QB4tXK7JtoEaxQaoZ9BYYpvXVY=
+X-Received: from yuzhao2.bld.corp.google.com ([2a00:79e0:2e28:6:c9c:12b4:a1e3:7f10])
+ (user=yuzhao job=sendgmr) by 2002:a25:aa8e:0:b0:e02:ba8f:2bd5 with SMTP id
+ 3f1490d57ef6-e0eb9a01882mr133827276.7.1723411292989; Sun, 11 Aug 2024
+ 14:21:32 -0700 (PDT)
+Date: Sun, 11 Aug 2024 15:21:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <39b2fc1f-421a-4547-b7bb-47b207975d73@gmail.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240811212129.3074314-1-yuzhao@google.com>
+Subject: [PATCH mm-unstable v1 0/3] mm/hugetlb: alloc/free gigantic folios
+From: Yu Zhao <yuzhao@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Muchun Song <muchun.song@linux.dev>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Yu Zhao <yuzhao@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Aug 11, 2024 at 04:32:07PM +0200, Heiner Kallweit wrote:
->On 10.08.2024 11:12, Sasha Levin wrote:
->> On Mon, Jul 29, 2024 at 10:45:15AM +0200, Heiner Kallweit wrote:
->>> On 28.07.2024 02:52, Sasha Levin wrote:
->>>> From: Heiner Kallweit <hkallweit1@gmail.com>
->>>>
->>>> [ Upstream commit 982300c115d229565d7af8e8b38aa1ee7bb1f5bd ]
->>>>
->>>> This early RTL8168b version was the first PCIe chip version, and it's
->>>> quite quirky. Last sign of life is from more than 15 yrs ago.
->>>> Let's remove detection of this chip version, we'll see whether anybody
->>>> complains. If not, support for this chip version can be removed a few
->>>> kernel versions later.
->>>>
->>>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>>> Link: https://lore.kernel.org/r/875cdcf4-843c-420a-ad5d-417447b68572@gmail.com
->>>> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>>> ---
->>>>  drivers/net/ethernet/realtek/r8169_main.c | 4 +++-
->>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
->>>> index 7b9e04884575e..d2d46fe17631a 100644
->>>> --- a/drivers/net/ethernet/realtek/r8169_main.c
->>>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
->>>> @@ -2274,7 +2274,9 @@ static enum mac_version rtl8169_get_mac_version(u16 xid, bool gmii)
->>>>
->>>>          /* 8168B family. */
->>>>          { 0x7c8, 0x380,    RTL_GIGA_MAC_VER_17 },
->>>> -        { 0x7c8, 0x300,    RTL_GIGA_MAC_VER_11 },
->>>> +        /* This one is very old and rare, let's see if anybody complains.
->>>> +         * { 0x7c8, 0x300,    RTL_GIGA_MAC_VER_11 },
->>>> +         */
->>>>
->>>>          /* 8101 family. */
->>>>          { 0x7c8, 0x448,    RTL_GIGA_MAC_VER_39 },
->>>
->>> It may be the case that there are still few users out there with this ancient hw.
->>> We will know better once 6.11 is out for a few month. In this case we would have to
->>> revert this change.
->>> I don't think it's a change which should go to stable.
->>
->> Sure, I'll drop it.
->>
->Just saw that this patch has been added to stable again an hour ago.
->Technical issue?
+Use __GFP_COMP for gigantic folios can greatly reduce not only the
+complexity in the code but also the allocation and free time.
 
-Indeed, I ended up dropping from the wrong local branch yesterday,
-sorry!
+Approximate LOC to mm/hugetlb.c: -200, +50
 
+Allocate and free 500 1GB hugeTLB memory without HVO by:
+  time echo 500 >/sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
+  time echo 0 >/sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages
+
+       Before  After
+Alloc  ~13s    ~10s
+Free   ~15s    <1s
+
+The above magnitude generally holds for multiple x86 and arm64 CPU
+models.
+
+Yu Zhao (3):
+  mm/contig_alloc: support __GFP_COMP
+  mm/cma: add cma_alloc_folio()
+  mm/hugetlb: use __GFP_COMP for gigantic folios
+
+ include/linux/cma.h     |   1 +
+ include/linux/hugetlb.h |   9 +-
+ mm/cma.c                |  47 +++++---
+ mm/compaction.c         |  48 +-------
+ mm/hugetlb.c            | 244 ++++++++--------------------------------
+ mm/internal.h           |   9 ++
+ mm/page_alloc.c         | 111 +++++++++++++-----
+ 7 files changed, 177 insertions(+), 292 deletions(-)
+
+
+base-commit: b447504e1fed49fabbc03d6c2530126824f87c92
+prerequisite-patch-id: 9fe502f7c87a9f951d0aee61f426bd85bc43ef74
 -- 
-Thanks,
-Sasha
+2.46.0.76.ge559c4bf1a-goog
+
 
