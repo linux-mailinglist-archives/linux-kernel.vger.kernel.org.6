@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-282267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A5194E176
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:33:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C01094E179
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C7DB1C209E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:33:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0D01F2136A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806011494BD;
-	Sun, 11 Aug 2024 13:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8701494A8;
+	Sun, 11 Aug 2024 13:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCFpbobL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLocwIUX"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21895336B;
-	Sun, 11 Aug 2024 13:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9044A5336B;
+	Sun, 11 Aug 2024 13:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723383226; cv=none; b=jKOXstKIFD/y/tZAgUFeHM1J/DA4Dfi//pUhkVy6pDaF5sVkFtYT91T2NetXe7ksT7zJGSIPvJ8AV3BiwoUuprfrufqFI7HxtUbtxW4yAnm4MHsxU2KuQlyu4EYfltRT9AxBspxepdznXAtlbcShJ0JMKQYOMzecSPNlC7hPh2I=
+	t=1723383279; cv=none; b=A2Z3qSewV6yf+PTtj9PFHWt+qM5r72p4ZNlI3sRvEjEABfR9N2Vau+27uFkzPLYsO0Y+TO7gIizYCqIJwxiuT7yc0qZKrW2U2ihedIgyn62lTVS0r28lyFlOSWNDBR0nZJJ0I5SLNnST7pwr/ZQSRjeE50EP1Sji0VJjZNBoHgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723383226; c=relaxed/simple;
-	bh=P3TiR38u5zb98PNMkm4vuY+lMtoH4iKqWrcrYeZOZDE=;
+	s=arc-20240116; t=1723383279; c=relaxed/simple;
+	bh=uxscTfST6W+Brpho1UnEzO979mM1Go8VwMSP9eNRfcE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G8UhKS7V4OcZshDbKZF3Sb2HjqFpNGYxIm3hdabRT0YPgEev9rYwf1+s7uZE5ma40G3rfZtAUCFnGEnpArgeIKcFJ6I0tn+ZZTmHb2sIQ48/WO5OdzLMn/3IBYj7cOYnUSp8erDq5RSWQZxbMLBTZPeLeC8v7Yjw6an4tZpDc4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sCFpbobL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 447FBC32786;
-	Sun, 11 Aug 2024 13:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723383226;
-	bh=P3TiR38u5zb98PNMkm4vuY+lMtoH4iKqWrcrYeZOZDE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sCFpbobLZcEgG9xrOtzF0DF/7wBWd/Q9vChEx8GV8GKgZMRy3G1lNijbsjmJWhkOX
-	 vZosAho2gb2oFgbU/K01aaHGFLvyjzC6vrMEH1nHGNBnH0OaYmgKbubB0PIxgVJQ8C
-	 l5tWW+B38WGCe4YpGU1YeYlM/pUB6PkhZ+n5F89t24doDdCLLEoeLobrbxz3SQYpK1
-	 zLHecFmJY5hxcI2apzKjTRSIi8w73of7kl7Xs0ns7hHVXH4hxumOHDoiOO/jVly7P4
-	 NPBOnbMQb4ZyJJiyG5CsoTqqlH+ovrE84exflNsv8SoGuEfLE3qrxYc+CXJjoneO3e
-	 6AMva0wFBnPDw==
-Message-ID: <d7d379d3-6a5c-4452-9791-7f18d1ed19c8@kernel.org>
-Date: Sun, 11 Aug 2024 15:33:37 +0200
+	 In-Reply-To:Content-Type; b=uvNHYhqI0YhLifsLJ0IpQ4eY+QB7A8q5njr3l7avdUCGZHzVYRHvBynAVzQHWT60JbyJBogXRKLeOgWUeg9uKv1DybBSday7pZsQlZrKrhvRlZStkT/MuSFiiALA9JnLsvRge3IGqWkxJoUqTcnL6TFB7IwrnwiHMvR1jjdTwXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLocwIUX; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so567468966b.0;
+        Sun, 11 Aug 2024 06:34:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723383276; x=1723988076; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gDP4JBbjZ7f+r3I+R+OZmHOfI/aYQpmgdxRS6riJceE=;
+        b=BLocwIUX3P2p2NgXe8wjIn1n7PHLsCgaHxrpb/+pjDYsjlozEB55Lg2uJ9GFe/hsPs
+         CQVq62wsaAG8mAMlMnYuWjGFuJSHVKkuFCE/6KG4wYo8cjJLjG08GTmIOJgkvt90d8Li
+         whYUL4b4TK+HjgggdAhsUcqW/D54f5VK6Sbr/kL42WMDH7Tw8y7nHFjXQlSDJQnYiOWV
+         IsJnqO3Q4uoWyNBIW38BptrxK5CoXcH5vvR6pGEGQLREmYKRADQNJPqtcCm7GS1qHSCT
+         D5UKrwYtfkR9fSeAXlLyuHUkH98G+kRkuUjs9zptSrZ+hhbqx92izmMgJiyyWl4E1eeW
+         qvgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723383276; x=1723988076;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gDP4JBbjZ7f+r3I+R+OZmHOfI/aYQpmgdxRS6riJceE=;
+        b=fwIHdvG3dsL0FdZdVHTxgNpjiKHlZfGquQ2QpfbhI7F9qx0vVutnV0E7qiuD8s33pr
+         gVmdrush2xmgCgTbpRupc91biOVDDVMhNy7XhEI59u6CpsNMuWR/TniCOPqF8mufFEDa
+         T//PdfwFecH352vrpXl7CimuRqw28PnTwCtMySydqtI6FmO2W5xZniPiNR0NdOKFNbZt
+         L11PGa22VNYMo71hzJo6NsT+iLVoWVEZdF3y9FIlvdsvMqvOTjI6gh6P18Q+7lL42shg
+         1TyiSAjwI6OtqMdBtS2Kxi5aiKamfTnLtw5IRUvbRcExBgjGcBwf77+J0v9jy6XO2v2c
+         +4Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUrpv7gArSYto0FWAKQedyYMPbJmzvgTLl10tS3LmwZrUwSt2qpDl6YdPPKWrTQYIUEgCYnMoYSsG9/+Eg+DWh3v+srIdx4OkMLMVU+Jw=
+X-Gm-Message-State: AOJu0YwkooeaKbJnfLKmK86fZDi7mP91DI6WlYjfPi8HcQNmMd9hAL+s
+	W/+Sw7TCxXOxIJy+661fBl7XUHEWwNerRttQZWM+80AvW1CoP2Kn
+X-Google-Smtp-Source: AGHT+IFDpN/u69SzR6a0wP2IqNWiO9qczVeUd9bIco/dglV0vH+mU4zbUWUirvSHzEPXDqzT/ENbQw==
+X-Received: by 2002:a17:906:794c:b0:a7a:a33e:47bf with SMTP id a640c23a62f3a-a8091f1eb93mr857963466b.18.1723383275128;
+        Sun, 11 Aug 2024 06:34:35 -0700 (PDT)
+Received: from [192.168.178.20] (dh207-40-227.xnet.hr. [88.207.40.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0904f5sm151296666b.18.2024.08.11.06.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Aug 2024 06:34:34 -0700 (PDT)
+Message-ID: <a0562a00-a45f-4df6-98cf-3087ea4af848@gmail.com>
+Date: Sun, 11 Aug 2024 15:34:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,87 +75,236 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Allow embedded-controller as
- child node
-To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Maximilian Luz <luzmaximilian@gmail.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
- <20240810-topic-sam-v2-1-8a8eb368a4f0@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: =?UTF-8?Q?Re=3A_=5BPROBLEM_linux-next=5D_fs/reiserfs/do=5Fbalan=2Ec?=
+ =?UTF-8?B?OjExNDc6MTM6IGVycm9yOiB2YXJpYWJsZSDigJhsZWFmX21p4oCZIHNldCBidXQg?=
+ =?UTF-8?Q?not_used_=5B-Werror=3Dunused-but-set-variable=5D?=
+To: Jan Kara <jack@suse.cz>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, Kees Cook <kees@kernel.org>,
+ Christian Brauner <brauner@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>,
+ reiserfs-devel@vger.kernel.org
+References: <39591663-9151-42f9-9906-4684acaa685c@gmail.com>
+ <20240715172826.wbmlg52ckdxze7sg@quack3>
+ <9aec9df8-ca82-4b2f-b227-5e318c66b97e@gmail.com>
+ <20240717154434.jba66jupaf566tes@quack3>
+ <83c22d71-8706-4779-8d20-6b18a75c95a5@gmail.com>
+ <20240718093943.qtyc2bdt4oerjuek@quack3>
+ <25a65d69-5f04-433b-a5a3-5fd8dbe787aa@gmail.com>
+ <20240805130415.ws3t7sgvcg7cj5ev@quack3>
+ <38de6ac2-a7d8-41dc-a065-68ce60d5b662@gmail.com>
+ <20240806082558.ytq673mhuji32koz@quack3>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240810-topic-sam-v2-1-8a8eb368a4f0@quicinc.com>
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+In-Reply-To: <20240806082558.ytq673mhuji32koz@quack3>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/08/2024 03:28, Konrad Dybcio wrote:
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+On 8/6/24 10:25, Jan Kara wrote:
+> On Mon 05-08-24 23:24:06, Mirsad Todorovac wrote:
+>> On 8/5/24 15:04, Jan Kara wrote:
+>>> On Fri 02-08-24 18:31:46, Mirsad Todorovac wrote:
+>>>> On 7/18/24 11:39, Jan Kara wrote:
+>>>>> On Thu 18-07-24 00:14:24, Mirsad Todorovac wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 7/17/24 17:44, Jan Kara wrote:
+>>>>>>> On Tue 16-07-24 19:17:05, Mirsad Todorovac wrote:
+>>>>>>>> On 7/15/24 19:28, Jan Kara wrote:
+>>>>>>>>> Hello Mirsad!
+>>>>>>>>>
+>>>>>>>>> On Wed 10-07-24 20:09:27, Mirsad Todorovac wrote:
+>>>>>>>>>> On the linux-next vanilla next-20240709 tree, I have attempted the seed KCONFIG_SEED=0xEE7AB52F
+>>>>>>>>>> which was known from before to trigger various errors in compile and build process.
+>>>>>>>>>>
+>>>>>>>>>> Though this might seem as contributing to channel noise, Linux refuses to build this config,
+>>>>>>>>>> treating warnings as errors, using this build line:
+>>>>>>>>>>
+>>>>>>>>>> $ time nice make W=1 -k -j 36 |& tee ../err-next-20230709-01a.log; date
+>>>>>>>>>>
+>>>>>>>>>> As I know that the Chief Penguin doesn't like warnings, but I am also aware that there are plenty
+>>>>>>>>>> left, there seems to be more tedious work ahead to make the compilers happy.
+>>>>>>>>>>
+>>>>>>>>>> The compiler output is:
+>>>>>>>>>>
+>>>>>>>>>> ---------------------------------------------------------------------------------------------------------
+>>>>>>>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_new_nodes_paste_whole’:
+>>>>>>>>>> fs/reiserfs/do_balan.c:1147:13: error: variable ‘leaf_mi’ set but not used [-Werror=unused-but-set-variable]
+>>>>>>>>>>  1147 |         int leaf_mi;
+>>>>>>>>>>       |             ^~~~~~~
+>>>>>>>>>
+>>>>>>>>> Frankly, I wouldn't bother with reiserfs. The warning is there for ages,
+>>>>>>>>> the code is going to get removed in two releases, so I guess we can live
+>>>>>>>>> with these warnings for a few more months...
+>>>>>>>>
+>>>>>>>> In essence I agree with you, but for sentimental reasons I would like to
+>>>>>>>> keep it because it is my first journaling Linux system on Knoppix 🙂
+>>>>>>>
+>>>>>>> As much as I understand your sentiment (I have a bit of history with that
+>>>>>>> fs as well) the maintenance cost isn't really worth it and most fs folks
+>>>>>>> will celebrate when it's removed. We have already announced the removal
+>>>>>>> year and half ago and I'm fully for executing that plan at the end of this
+>>>>>>> year.
+>>>>>>>
+>>>>>>>> Patch is also simple and a no-brainer, as proposed by Mr. Cook:
+>>>>>>>>
+>>>>>>>> -------------------------------><------------------------------------------
+>>>>>>>> diff --git a/fs/reiserfs/do_balan.c b/fs/reiserfs/do_balan.c
+>>>>>>>> index 5129efc6f2e6..fbe73f267853 100644
+>>>>>>>> --- a/fs/reiserfs/do_balan.c
+>>>>>>>> +++ b/fs/reiserfs/do_balan.c
+>>>>>>>> @@ -1144,7 +1144,9 @@ static void balance_leaf_new_nodes_paste_whole(struct tree_balance *tb,
+>>>>>>>>  {
+>>>>>>>>  	struct buffer_head *tbS0 = PATH_PLAST_BUFFER(tb->tb_path);
+>>>>>>>>  	int n = B_NR_ITEMS(tbS0);
+>>>>>>>> +#ifdef CONFIG_REISERFS_CHECK
+>>>>>>>>  	int leaf_mi;
+>>>>>>>> +#endif
+>>>>>>>
+>>>>>>> Well, I would not like this even for actively maintained code ;) If you
+>>>>>>> want to silence these warnings in this dead code, then I could live with
+>>>>>>> something like:
+>>>>>>>
+>>>>>>> #if defined( CONFIG_REISERFS_CHECK )
+>>>>>>> #define RFALSE(cond, format, args...) __RASSERT(!(cond), ....)
+>>>>>>> #else
+>>>>>>> - #define RFALSE( cond, format, args... ) do {;} while( 0 )
+>>>>>>> + #define RFALSE( cond, format, args... ) do { (void)cond; } while( 0 )
+>>>>>>> #endif
+>>>>>>
+>>>>>> Yes, one line change is much smarter than 107 line patch of mine :-)
+>>>>>>
+>>>>>> Verified, and this line solved all the warnings:
+>>>>>>
+>>>>>>   CC      fs/reiserfs/bitmap.o
+>>>>>>   CC      fs/reiserfs/do_balan.o
+>>>>>>   CC      fs/reiserfs/namei.o
+>>>>>>   CC      fs/reiserfs/inode.o
+>>>>>>   CC      fs/reiserfs/file.o
+>>>>>>   CC      fs/reiserfs/dir.o
+>>>>>>   CC      fs/reiserfs/fix_node.o
+>>>>>>   CC      fs/reiserfs/super.o
+>>>>>>   CC      fs/reiserfs/prints.o
+>>>>>>   CC      fs/reiserfs/objectid.o
+>>>>>>   CC      fs/reiserfs/lbalance.o
+>>>>>>   CC      fs/reiserfs/ibalance.o
+>>>>>>   CC      fs/reiserfs/stree.o
+>>>>>>   CC      fs/reiserfs/hashes.o
+>>>>>>   CC      fs/reiserfs/tail_conversion.o
+>>>>>>   CC      fs/reiserfs/journal.o
+>>>>>>   CC      fs/reiserfs/resize.o
+>>>>>>   CC      fs/reiserfs/item_ops.o
+>>>>>>   CC      fs/reiserfs/ioctl.o
+>>>>>>   CC      fs/reiserfs/xattr.o
+>>>>>>   CC      fs/reiserfs/lock.o
+>>>>>>   CC      fs/reiserfs/procfs.o
+>>>>>>   AR      fs/reiserfs/built-in.a
+>>>>>>
+>>>>>> Just FWIW, back then in year 2000/2001 a journaling file system on my
+>>>>>> Knoppix box was a quantum leap - it would simply replay the journal if
+>>>>>> there was a power loss before shutdown. No several minutes of fsck.
+>>>>>
+>>>>> Well, there was also ext3 at that time already :-) That's where I became
+>>>>> familiar with the idea of journalling. Reiserfs was interesting to me
+>>>>> because of completely different approach to on-disk format (b-tree with
+>>>>> formatted items), packing of small files / file tails (interesting in 2000,
+>>>>> not so much 20 years later) and reasonable scalability for large
+>>>>> directories.
+>>>>>
+>>>>>> I think your idea is great and if you wish a patch could be submitted
+>>>>>> after the merge window.
+>>>>>
+>>>>> I'll leave it up to you. If the warnings annoy you, send the patch along
+>>>>> the lines I've proposed (BTW (void)cond should better be (void)(cond) for
+>>>>> macro safety) and I'll push it to Linus.
+>>>>>
+>>>>> 								Honza
+>>>>
+>>>> Hi, Jan,
+>>>>
+>>>> After a short break, I just tried a full build with this hack against the vanilla
+>>>> linux-next tree:
+>>>>
+>>>> #define RFALSE( cond, format, args... ) do { (void)(cond); } while( 0 )
+>>>>
+>>>> and it breaks at least here:
+>>>>
+>>>> In file included from fs/reiserfs/do_balan.c:15:
+>>>> fs/reiserfs/do_balan.c: In function ‘balance_leaf_when_delete_del’:
+>>>> fs/reiserfs/do_balan.c:86:28: error: ‘ih’ undeclared (first use in this function)
+>>>>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+>>>>       |                            ^~
+>>>> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+>>>>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+>>>>       |                                                      ^~~~
+>>>> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
+>>>>    91 | #define le16_to_cpu __le16_to_cpu
+>>>>       |                     ^~~~~~~~~~~~~
+>>>> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
+>>>>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+>>>>       |                ^~~~~~~~~~~
+>>>> fs/reiserfs/do_balan.c:86:28: note: each undeclared identifier is reported only once for each function it appears in
+>>>>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+>>>>       |                            ^~
+>>>> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+>>>>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+>>>>       |                                                      ^~~~
+>>>> ./include/linux/byteorder/generic.h:91:21: note: in expansion of macro ‘__le16_to_cpu’
+>>>>    91 | #define le16_to_cpu __le16_to_cpu
+>>>>       |                     ^~~~~~~~~~~~~
+>>>> fs/reiserfs/do_balan.c:86:16: note: in expansion of macro ‘ih_item_len’
+>>>>    86 |         RFALSE(ih_item_len(ih) + IH_SIZE != -tb->insert_size[0],
+>>>>       |                ^~~~~~~~~~~
+>>>> fs/reiserfs/do_balan.c: In function ‘do_balance_starts’:
+>>>> fs/reiserfs/do_balan.c:1800:16: error: implicit declaration of function ‘check_before_balancing’ [-Werror=implicit-function-declaration]
+>>>>  1800 |         RFALSE(check_before_balancing(tb), "PAP-12340: locked buffers in TB");
+>>>>       |                ^~~~~~~~~~~~~~~~~~~~~~
+>>>> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+>>>>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+>>>>       |                                                      ^~~~
+>>>> cc1: some warnings being treated as errors
+>>>> make[7]: *** [scripts/Makefile.build:244: fs/reiserfs/do_balan.o] Error 1
+>>>>   CC [M]  fs/reiserfs/stree.o
+>>>> In file included from fs/reiserfs/stree.c:15:
+>>>> fs/reiserfs/stree.c: In function ‘reiserfs_delete_item’:
+>>>> fs/reiserfs/stree.c:1283:24: error: ‘mode’ undeclared (first use in this function)
+>>>>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
+>>>>       |                        ^~~~
+>>>> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+>>>>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+>>>>       |                                                      ^~~~
+>>>> fs/reiserfs/stree.c:1283:24: note: each undeclared identifier is reported only once for each function it appears in
+>>>>  1283 |                 RFALSE(mode != M_DELETE, "PAP-5320: mode must be M_DELETE");
+>>>>       |                        ^~~~
+>>>> fs/reiserfs/reiserfs.h:919:54: note: in definition of macro ‘RFALSE’
+>>>>   919 | #define RFALSE( cond, format, args... ) do { (void) (cond); } while( 0 )
+>>>>       |                                                      ^~~~
+>>>>
+>>>> Last time it compiled, but now it expects variables in (void)(cond) expressions to be defined.
+>>>>
+>>>> I have try to fix those warnings, submitting the patch for review:
+>>>
+>>> Yeah, this looks ok to me.
+>>>
+>>> 								Honza
+>>
+>> Hi, Jan,
+>>
+>> As I understood from the previous experiences, and the Code of Conduct,
+>> and explicit Reviwed-by: or Acked-by: is required ...
+>>
+>> Or otherwise, the Suggested-by: is used?
 > 
-> There exist some embedded controllers (like Microsoft SAM found on
-> Surface devices or Apple Oscar found on old iPhones) that connect to
-> the host device via serial.
+> So I was waiting for you to submit official patch with proper changelog and
+> your Signed-off-by. Then I can pick up the patch into my tree and merge it. 
 > 
-> Allow that class of devices to exist under serial interface controller
-> nodes.
-> 
-> Signed-off-by: Konrad Dybcio <quic_kdybcio@quicinc.com>
+> 								Honza
 
+Aaah, sorry I've just noticed your reply. I missed it this morning already.
 
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Yes, at your request, I will proceed as you recommended.
 
 Best regards,
-Krzysztof
-
+Mirsad Todorovac
 
