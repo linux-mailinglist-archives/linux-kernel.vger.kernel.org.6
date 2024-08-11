@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-282063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A73D694DF4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:05:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7FA994DF4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 515411F21A2D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:05:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 074FFB2143D
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CDCA50;
-	Sun, 11 Aug 2024 00:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED8191113;
+	Sun, 11 Aug 2024 00:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cu2R13ZT"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uaTLXXt3"
 Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDD34A00
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 00:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0317F6
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 00:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723334709; cv=none; b=IGnq/BWEu8xvSB1UwBxqTJ21VbaSwJkOI/Quefgiyb48hvxhQrZvNDTKlbFOjmHNImZj1utMEbFs5UeacRBLB1eVyL1OOqNtJ0z013q2+kzYRCEuB0hN4du5CZTEmv4NtdGgzkWNdrO6BD18ZnwW6VNI6lstj6yZPcS+ls1R/vc=
+	t=1723335237; cv=none; b=bJ5PXpwu3b8IBNRNBrpMGgIHJf0jABoRsWKi94lWuYD0zIjjP+KXZOlbExvpYDjL2R+YGf0MPhHFbeOGe8ivCesas7EpvAjilGHHJ/gbGvWFh7esIIqJqG3MpZQCyCwojzOa872yXy/RIBWn+VP8VX0Mk4DBrFME4Po/0SwYEic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723334709; c=relaxed/simple;
-	bh=+WKdIuC+p530GHPOQlXZIux1ngHdwRNECGfQ0w2ExHg=;
-	h=To:Cc:Message-Id:From:Subject:Date; b=ViDCwuXocwukV5O+neCpMXgQLhGiL2IY8bLvm4U5eLdTNnuwSjYME+NsUobqpjOKDYJ5UkPL/gX5kKOSN9wRbN+gGByOo2x5fnZu4haEQL0gj8RijpzWflVH4vCErnhsQaD8wASNay+RI+qQ+H8mAJr9hBBzuWPoNrpn8eh2HdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cu2R13ZT; arc=none smtp.client-ip=103.168.172.153
+	s=arc-20240116; t=1723335237; c=relaxed/simple;
+	bh=cowJQfiDDVlOVSXxfvYoFDidpicz3RI5/vmjQXYLfCo=;
+	h=To:Cc:Message-Id:From:Subject:Date; b=ASSfExUBAVrVJWy+AYMZOHc66hwDGj/xLPc3TA4xSWduHo59Sdn/BRDRbinoLgAgdVtJzX7VIIOZqinAlUKoewEFFDnc0sWvV88ZtdMc6jif3+QVYWsfWnkNiWkUxSQ2RrL/CdOZdLFPrvVUF40fCmzvW4uaVPPj1a6hgvDDQTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uaTLXXt3; arc=none smtp.client-ip=103.168.172.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 41B121151B81;
-	Sat, 10 Aug 2024 20:05:06 -0400 (EDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id C03C3114C2AA;
+	Sat, 10 Aug 2024 20:13:53 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Sat, 10 Aug 2024 20:05:06 -0400
+  by compute4.internal (MEProxy); Sat, 10 Aug 2024 20:13:53 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
 	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
 	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1723334706; x=1723421106; bh=9vmpys9j51EiE
-	NEz8IFCUMk8fjEsJF6w5WceFyF82OM=; b=cu2R13ZTI7LDu7lqIwdX0gF1Tw2dP
-	5M+xIFq8gDQx8mkwjF+vS58RNYI7Qp3rBKJBiosNWOIUbSlTJI38iGbXCNCt5Ri1
-	5AtmWnfhuL/X+4jypMy7OunQGvTBjwWOvg/sbZZW1VMNU5rupriBAWPo68IfqhxH
-	ZQtel1A1ZJtETsXzzcucIeFeAlXSdrGj1J7acU1faAtZBch9AkERvU1zwT6a4iAK
-	9LhsPRhjac9ZV5LMEf9usoOjKfYKm8uAWjdOWCOKAvpKGUgnzd6Q+/vGMKTu/tWY
-	vWMKtgLr2wTTy3ZxUbSY/XRht25K8iQwngP8xOoYCzZDbUpZq6NkoQiXg==
-X-ME-Sender: <xms:MgC4ZlbROzMe4cNdFWtbIw4xyG8h8idhjiq3hllSwtkc2aZYgHgMHw>
-    <xme:MgC4ZsaByWV8_OnucDTuC5reWL5guqfSOBiMB2x04IYXS9c0CbQp-m-QyzFaZ01aF
-    5InmHJs8F8k2wVDT84>
-X-ME-Received: <xmr:MgC4Zn99TK8ARKcpj-PfJEgJeiijBEnnk5qrpHgrJVH8dpx3JqiTpzoBRVzuQkgTAnYoxjy16xZ7Zi0ZiwPhjS5GYEiCIrEeIpE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleejgdefudcutefuodetggdotefrodftvf
+	:x-sasl-enc; s=fm3; t=1723335233; x=1723421633; bh=bxMGoKXycPFPw
+	5bnHotmJYai6CfMkuRulgDaUjgKP+Q=; b=uaTLXXt33vznMfbqAY0RpLgmgZCa9
+	uHLkZXlKCrDgR+2iAfdZi1K+J96oN5uWMEGaQe5PI+/i3TeYYssNElFZ4evvhxYt
+	7WlgF+qyZOeqwRjMZ2fUM0UzYsrfJK43WOQEyTcoLGSqMB7cH7ZNlry6U/Xri96T
+	h0M0pSDwD85Sz8Je6jO7gHleUPeJAhAntZ4wCuZBELHdzPUIM99HRBJPqcM9KJQt
+	SSoVHeZmmzt3QwMo08pQLR/gf5GpUwMFkI1PcdEMcmlLz8gQDCpn6K5RCzUHeB28
+	M6bV7fD9+gEpQqA0E6CX+9aF0/czDaYXsgvLCybSVVUocx9penD2LS4/w==
+X-ME-Sender: <xms:QQK4Zj_53Ib33_p8tU0PzOn0w0gnjpikmHCx1aeSSMARHT-0DTzDaw>
+    <xme:QQK4ZvvVDqQ5qLl5nS4bV526DSTyhxpQb8WexbUaUQVorIUhCVeoKM25eOltXk0MP
+    cz4wSJjqsNmMslZSZQ>
+X-ME-Received: <xmr:QQK4ZhD2VBP_AgEFz6S_qWuo-g-RhHJIDf2p2BJCVG03kT0slmIgC-NJ_Tth3R1U_qOX11DztwporhtlFcOVb_J9YiNYNnMxtew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleejgdefgecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
     tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
     hsucdlqddutddtmdenucfjughrpefvvefkhffuffestddtredttddttdenucfhrhhomhep
@@ -64,24 +64,24 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleejgdefudcutefuodetggdote
     mhdprhgtphhtthhopehlihhnuhigqdhmieekkheslhhishhtshdrlhhinhhugidqmheike
     hkrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhn
     vghlrdhorhhg
-X-ME-Proxy: <xmx:MgC4Zjr1SHSu_WWv4GSvBCsid7Lnz_glVPl4Ejs5nv-YGpPnAcWN9w>
-    <xmx:MgC4ZgpKHqmeYFfxccAXVFGj3IpdkaFN84JSCSqfaAvzgyviESaheQ>
-    <xmx:MgC4ZpQeiabalLZ0WziK0N-m0UzftWuvBfiI3RA3bZ3XNwezth0W2Q>
-    <xmx:MgC4ZoqO6BQ1i2XgiA_8HlBM2sX-Jf8oJiARMx1_uCJHGwbErLE-bQ>
-    <xmx:MgC4ZlCBfde6AxC2LisduDfcHOckbscnfa7RsPUhta080cqB9Phx4nlS>
+X-ME-Proxy: <xmx:QQK4ZveQ4otFQEGH23IJ4jwxPdzAFS8lU5aB-5VGSdcN5CGkIOmgbQ>
+    <xmx:QQK4ZoNnrS_DmR5RwORATmrKNYZQ1TKWD-_8-D5O2PULCXkIggcnMQ>
+    <xmx:QQK4Zhlhf59YlO_HkFTYllapEzv0ZgOg0RIVdah6L6-B18kLRDrvpQ>
+    <xmx:QQK4ZitfIv4Ywea7QZab3ueu-s0NsNoJxiBeGCAsPUICzCB5S7m4AA>
+    <xmx:QQK4Zn3gxZPlEmCXa0gFSnkgLIGndymPNFtm2uzRTxhIvRYev47vazdV>
 Feedback-ID: i58a146ae:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 10 Aug 2024 20:05:03 -0400 (EDT)
+ 10 Aug 2024 20:13:52 -0400 (EDT)
 To: Geert Uytterhoeven <geert@linux-m68k.org>
 Cc: Christian Brauner <brauner@kernel.org>,
     Greg Ungerer <gerg@linux-m68k.org>,
     Stan Johnson <userm57@yahoo.com>,
     linux-m68k@lists.linux-m68k.org,
     linux-kernel@vger.kernel.org
-Message-Id: <0a3abf529ab9e47a136c2216af1c9d33b2b7dae3.1723334660.git.fthain@linux-m68k.org>
+Message-Id: <3463f1e5d4e95468dc9f3368f2b78ffa7b72199b.1723335149.git.fthain@linux-m68k.org>
 From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH v2] m68k: Fix kernel_clone_args.flags in m68k_clone()
-Date: Sun, 11 Aug 2024 10:04:20 +1000
+Subject: [PATCH v3] m68k: Fix kernel_clone_args.flags in m68k_clone()
+Date: Sun, 11 Aug 2024 10:12:29 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,7 +103,7 @@ The dump program uses the clone syscall with the CLONE_IO flag, that is,
 flags == 0x80000000. When that value is promoted from long int to u64 by
 m68k_clone(), it undergoes sign-extension. The new value includes
 CLONE_INTO_CGROUP so the validation in cgroup_css_set_fork() fails and
-the syscall returns -EBADFD. Avoid sign-extension by casting to u32.
+the syscall returns -EBADF. Avoid sign-extension by casting to u32.
 
 Cc: Stan Johnson <userm57@yahoo.com>
 Reported-by: Stan Johnson <userm57@yahoo.com>
@@ -113,6 +113,8 @@ Signed-off-by: Finn Thain <fthain@linux-m68k.org>
 ---
 Changed since v1:
  - Cast to u32 instead of using lower_32_bits() as suggested by Geert.
+Changed since v2:
+ - Commit log ammended with -EBADF instead of -EBADFD.
 ---
  arch/m68k/kernel/process.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
