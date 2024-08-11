@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-282329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39CF294E250
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:38:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9864094E252
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C01C2093B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4281F1F219E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:38:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625791537D7;
-	Sun, 11 Aug 2024 16:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780DA1537D7;
+	Sun, 11 Aug 2024 16:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQF6LNYX"
-Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oSrj0YTO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4A43715E;
-	Sun, 11 Aug 2024 16:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18014A4F1;
+	Sun, 11 Aug 2024 16:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723394295; cv=none; b=Ankzeqs52MAVEKBIF+JOts/0R6KhUl9m5tZemPE+irFVYm/u9afOIkLi4wvFiR8nevT1gSr10t+6K+9rPQlNFSM8GPqB07CsWA7kW0Zwu4lKhyGhqV+t2/qFr6Dwx0DQm38qtgjPYWfcq0wvod39qoDoCfPYFbZ/Icj+hm7AZ3E=
+	t=1723394327; cv=none; b=MhKlZr0r/kt5s10ae34TuTTdum7p/B2D5Vi5tjad3ehgUZuwdqbGjTxNpQqZrlr32nPGAcL2qhKfzc2OuZchIuJYryRD3H5cld7MT6w2WJGCY8QeWaC4fet39DnrokP3jij2bBRtzHHEnQ1yds1xkoWgHRLIDIkPb6PFRYc0kqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723394295; c=relaxed/simple;
-	bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=drtVwsGUwuvIyG5Xu5jlN3bifCd0wvz0BCWaj7ffRInTv2wNZrDNefS0FsYKaxz53eU4rh+xcQBibFubHDvmu6luoj0bADkyVgsDJIljLRNmtxQ/qAXnaw2PBRZqG8pFBpexZeKYzcXiBawk+WN+cE1zcbLe+xC/isoYHr90F1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQF6LNYX; arc=none smtp.client-ip=209.85.160.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-261112c303bso2842683fac.1;
-        Sun, 11 Aug 2024 09:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723394293; x=1723999093; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
-        b=HQF6LNYXoUrKCuBQ6224+zCuH4AIVU6z7Yk88N2UAoLjXxV+gz+nyIao8avoGlFxgH
-         6h1MUIBPrH9dcTwdBeNXxM+Gnf6zgjyQ/86PU/RPqyNG9tFNSu5Vkp+cOT2XpOQmHYiA
-         fyjemRm1orNwAAn0251rvHk06mxrs9pMFcDVdNj/d1A9gZtoIJO3MyEtabZFgsuJ1YGv
-         6LzazYBuE+/46QgcMj/JUjMwHWnfy6Umo1nQMTQ+ZDY++q1nP+fQCI+MVIUhgPHUZwJ9
-         zqH1MekowTwadynpeKK5iLoeFrppgFkpWE7r3CRgVymreCmnaGHAVVy77mAQlFzUDJy6
-         DkMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723394293; x=1723999093;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
-        b=H/MWtyKIxbeE6Z+l41LF82vl4df8GnAKr+/w5snvHFyQDYmayRYEpT0RY1fbDKQf/9
-         57D37a/8sUORCgwK27d3iMKjHd6ZlV1HIQ1DlkqIpUMRGb2pK+sPlnQdg4SOAcaBbE0n
-         unlzBTIhKvEvrzidjywTAZLt6CZ/R8LyDo+vRxj56psRlstW35ii2dD1eg4DF4EbNvIm
-         BiiPww6PMFqcQ46txCSe/rso3MveowBA86MWK06FNtH6fEulmLzs/GmSKNGA5rogRmB8
-         MHWpsFmHduxBQdXhb0G8saj3H0O4hm5arB7vzGR9Df6ANuTmX6uUb54kx5rlGS7tjzSJ
-         X/Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCWuKMSABxplsod+EsF3bKGDqt5iryCAfTOHiPUIPkh842jm2rIzoIV1tfUzGUddidGfBXwqo04jN7um2Fvy/eYZCjO5aNWPIfvWHPPl
-X-Gm-Message-State: AOJu0YzFrwu5MBYcXnFBqLBSqlgQoOzKPwbs2b6ei/qcPYYzToI83o5/
-	Uw5UZhWwk8MR9BgMdNQfwhGS33DM7nEwVKnZVW3NrgRWGLbqMt7y
-X-Google-Smtp-Source: AGHT+IFt4OWbki80dHWLXSe8zfKBrJruDBoPMUW3zsS4VoHmKLWspr7mqFgIFh8+tZFFnEYjguPmZA==
-X-Received: by 2002:a05:6871:b25:b0:25e:1f67:b3bb with SMTP id 586e51a60fabf-26c62c426e3mr9228165fac.10.1723394293340;
-        Sun, 11 Aug 2024 09:38:13 -0700 (PDT)
-Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26c72045928sm1327064fac.4.2024.08.11.09.38.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 09:38:13 -0700 (PDT)
-Message-ID: <17afa9c2-29f9-43e8-8dfe-398eed312cea@gmail.com>
-Date: Sun, 11 Aug 2024 11:38:12 -0500
+	s=arc-20240116; t=1723394327; c=relaxed/simple;
+	bh=evOBG5xxFap9DEmPDfAZO40tsVzPvbnvJU9nM+60lno=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Eah4ubwfZLcMk7Y0GpS89im9FKwY+KPMslc/G+P6GRAw4NbFQoqqi2NH/1rpSFRQEH6WYj2IrTnU0ZO/VWxYv6xJjMACq/0HogQeEeUYUBX4SxWGPtYumUM8ZtVsNR/3nmVW3F8T+PoeQs4BifmqoFmkQJLHne4aX9L89L52dBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oSrj0YTO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 237EBC32786;
+	Sun, 11 Aug 2024 16:38:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723394326;
+	bh=evOBG5xxFap9DEmPDfAZO40tsVzPvbnvJU9nM+60lno=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oSrj0YTOF7TixMhBQC5em1jgDg7wJbRvWmm0aMFYxFCFwMJoqFAxxbBNHLk76T0/9
+	 I8Uxw1keZO90WiSyvZAzN7cISSyRI/TkM2ZJs2F+VUV4G3+60HCynmdODo+a5hir+F
+	 NH/tW35YDefDUZKvr6mQeqKqssc5cRgcqwW8TYMiB3N72AlzF6rN5FBrnXTz8cz5Vk
+	 pkJ+PxAU2LQxgU4TYdRXtHLtorZ1BwtwyrdBXwVZkIyhI/vT4swWfepBnZg3qSZ65o
+	 R8exXW3ntUFdcBCVezD/o3qcz9f0UKwVD19SvBeZWphy0md68eXL4uQJvZsObAadNd
+	 +D61bZfCUS56Q==
+From: Mike Rapoport <rppt@kernel.org>
+To: agordeev@linux.ibm.com,
+	gerald.schaefer@linux.ibm.com,
+	hca@linux.ibm.com,
+	akpm@linux-foundation.org,
+	brauner@kernel.org,
+	oleg@redhat.com,
+	Wei Yang <richard.weiyang@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v6 1/3] mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
+Date: Sun, 11 Aug 2024 19:38:31 +0300
+Message-ID: <172339430546.1161596.15408670748567422629.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240808001415.6298-1-richard.weiyang@gmail.com>
+References: <20240808001415.6298-1-richard.weiyang@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/sp_SP: Add translation for
- scheduler/sched-bwc.rst
-To: Jonathan Corbet <corbet@lwn.net>,
- =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-References: <20240810100955.14901-1-sergio.collado@gmail.com>
- <87le14bfm7.fsf@trenco.lwn.net>
-Content-Language: en-US
-From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
-In-Reply-To: <87le14bfm7.fsf@trenco.lwn.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 8/10/24 09:46, Jonathan Corbet wrote:
+From: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-> Sergio González Collado <sergio.collado@gmail.com> writes:
->
->> Translate Documentation/scheduler/sched-bwc.rst into Spanish.
->>
->> Signed-off-by: Sergio González Collado <sergio.collado@gmail.com>
->> ---
->> v1 -> v2 typos corrected
->> ---
->> v2 -> v3 typos corrected
-> Thanks for working to improve our docs but ... if you find yourself
-> sending three versions in less than 30 minutes, that is perhaps a sign
-> that it would be good to slow down just a bit and be a little more
-> careful.
+On Thu, 08 Aug 2024 00:14:13 +0000, Wei Yang wrote:
+> During bootup, system may need the number of free pages in the whole system
+> to do some calculation before all pages are freed to buddy system. Usually
+> this number is get from totalram_pages(). Since we plan to move the free
+> pages accounting in __free_pages_core(), this value may not represent
+> total free pages at the early stage, especially when
+> CONFIG_DEFERRED_STRUCT_PAGE_INIT is enabled.
+> 
+> [...]
 
+Applied to for-next branch of memblock.git tree, thanks!
 
-This v3 does not have the changes I asked you for v2, Sergio. You'll need
-to send v4.
+[1/3] mm/memblock: introduce a new helper memblock_estimated_nr_free_pages()
+      commit: d0f8a8973f265f6a276f99d091af99edfb2b87de
+[2/3] kernel/fork.c: get estimated free pages by memblock api
+      commit: 0910bf0ef85c5404aac94394cb31e076e4eb03f1
+[3/3] s390/mm: get estimated free pages by memblock api
+      commit: cb088e38aab4c7e9ce711c18c66e851c8f4227bb
 
+tree: https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock
+branch: for-next
 
-> Thanks,
->
-> jon
-
-
-Thanks,
-
-Carlos
+--
+Sincerely yours,
+Mike.
 
 
