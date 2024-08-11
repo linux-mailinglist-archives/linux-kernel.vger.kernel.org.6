@@ -1,114 +1,161 @@
-Return-Path: <linux-kernel+bounces-282262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CB4F94E16A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:24:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3870A94E16C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0995A281968
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 078791C2097B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:25:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 996731494BD;
-	Sun, 11 Aug 2024 13:24:23 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2028114A602;
+	Sun, 11 Aug 2024 13:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Ru0Wcn2K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627BA148838;
-	Sun, 11 Aug 2024 13:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8014A0A0;
+	Sun, 11 Aug 2024 13:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723382663; cv=none; b=mrGzcZ+/wMMgg43q1HdjlmBGsTAFQC/oDWo/NEKEt72E9Lew4p3CeOcaf57y1WVOQ7DSzX7GTEqiM2+sb2DFLWUMVuSxqPT8+NV7HQSy0Ukhgx7cM8FvOhx7XDHdDpYfTrhi5k67uNLPhk8TA5ABzi2eRhJZ3VZ3pPWY2W7luCc=
+	t=1723382664; cv=none; b=NoFEsBi+Y6p6bHbmg9r20Kxj8NL60m4COzF+SUBPlC572Ive2dIFqGBUSXoPzYBXd3s3slPrPKIjDPmRJMIZhoxvTrh7EwLPUQ140sDQrdmSquK3UkSB3AU4zUcxbriS6gYOa2DEdhBd46+EgYmmVLPKImDtwkKqNNdq9VQxfOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723382663; c=relaxed/simple;
-	bh=Po5/mFOf0/VTScGzn6+mtQuzX/UGKG4Vw71o8feai/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rywU/UX41czih6GDcckmzd8V/ZFUrY8ApPPhpGarGLxLhvRrtUhWvtT4No2Hc8JrY9v0WjDADAkprOkU2aF//Z6ePQ738n4dX+iTtqlx6KvfYq6TcoYga5yLrKNwXTHCTyKvI8M0jnEveUpnNpp2VniP8n65bvsc52yMJbRDZuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1sd8YN-0004rw-GL; Sun, 11 Aug 2024 15:24:11 +0200
-Date: Sun, 11 Aug 2024 15:24:11 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com,
-	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
-Message-ID: <20240811132411.GB13736@breakpoint.cc>
-References: <0000000000003a5292061f5e4e19@google.com>
- <20240811022903.49188-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1723382664; c=relaxed/simple;
+	bh=zFkf5A0SCILJybBzNgZN7vOViti+xx2JoLKzkJ4gsQk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=arRNZnukWq3H4aaq0lSonvK/Rh48C7B5h1UOueN+SCsAYHAp74uez+hxuLpTPd+ZzdpbxOL/myfb7MrTE3yVEdERcjS9/09xbRjooVer+Aim/YVOK8CBfB/8tmKWNY2yMW/0PM9/y0C3FMbxSGl89wmn/j6VETMQRafM6d9Ns0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Ru0Wcn2K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61EE1C4AF0E;
+	Sun, 11 Aug 2024 13:24:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723382663;
+	bh=zFkf5A0SCILJybBzNgZN7vOViti+xx2JoLKzkJ4gsQk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ru0Wcn2K4oYhLkw54tTkjMHvuEYyoNljeFQH437r8YF6fjd4hbmvijM0fxWk72pW/
+	 7qvgtrkEcr+THj0dOLHTowKj5a+wNMM/8B8aBiYl8teYCrCJn0kAwEW8Yn35oHk1JB
+	 Zl4lQ0n6jPTASZdIp7XhsPxe+H0hq/KWO2y29Jps=
+Date: Sun, 11 Aug 2024 15:24:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB driver fixes for 6.11-rc3
+Message-ID: <Zri7hMbzgp6fZeAa@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20240811022903.49188-1-kuniyu@amazon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
-> From: syzbot <syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com>
-> Date: Sat, 10 Aug 2024 18:29:20 -0700
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    33e02dc69afb Merge tag 'sound-6.10-rc1' of git://git.kerne..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=117f3182980000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=25544a2faf4bae65
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=8ea26396ff85d23a8929
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> > 
-> > Downloadable assets:
-> > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-33e02dc6.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/573c88ac3233/vmlinux-33e02dc6.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/760a52b9a00a/bzImage-33e02dc6.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com
-> > 
-> > ------------[ cut here ]------------
-> > refcount_t: decrement hit 0; leaking memory.
-> > WARNING: CPU: 3 PID: 1396 at lib/refcount.c:31 refcount_warn_saturate+0x1ed/0x210 lib/refcount.c:31
-> 
-> Eric, this is the weird report I was talking about at netdevconf :)
-> 
-> It seems refcount_dec(&tw->tw_dr->tw_refcount) is somehow done earlier
-> than refcount_inc().
-> 
-> I started to see the same splat at a very low rate after consuming
-> commit b334b924c9b7 ("net: tcp/dccp: prepare for tw_timer un-pinning").
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-I think I see why.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-The reported splat is without this above commit.
-But from backtrace we entered here:
+are available in the Git repository at:
 
-                if (net->ipv4.tcp_death_row.hashinfo->pernet) {
-                        /* Even if tw_refcount == 1, we must clean up kernel reqsk */
-                        inet_twsk_purge(net->ipv4.tcp_death_row.hashinfo);
-                } else if (!purged_once) {
--------------->         inet_twsk_purge(&tcp_hashinfo);  // THIS
-                        purged_once = true;
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.11-rc3
 
-> The commit a bit deferred refcount_inc(tw_refcount) after the hash dance,
-> so twsk is now visible before tw_dr->tw_refcount is incremented.
-> 
-> I came up with the diff below but was suspecting a bug in another place,
-> possibly QEMU, so I haven't posted the diff officially.
-> 
-> refcount_inc() was actually deferred, but it's still under an ehash lock,
+for you to fetch changes up to 65ba8cef0416816b912c04850fc2468329994353:
 
-but different struct inet_hashinfo, so the locks don't help :/
+  usb: typec: ucsi: Fix a deadlock in ucsi_send_command_common() (2024-08-07 12:48:30 +0200)
+
+----------------------------------------------------------------
+USB fixes for 6.11-rc3
+
+Here are a number of small USB driver fixes for reported issues for
+6.11-rc3.  Included in here are:
+  - usb serial driver MODULE_DESCRIPTION() updates
+  - usb serial driver fixes
+  - typec driver fixes
+  - usb-ip driver fix
+  - gadget driver fixes
+  - dt binding update
+
+All of these have been in linux-next with no reported issues.
+
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+----------------------------------------------------------------
+Alexander Stein (1):
+      dt-bindings: usb: microchip,usb2514: Add USB2517 compatible
+
+Chris Wulff (2):
+      usb: gadget: u_audio: Check return codes from usb_ep_enable and config_ep_by_speed.
+      usb: gadget: core: Check for unset descriptor
+
+Dan Carpenter (1):
+      usb: typec: tcpci: Fix error code in tcpci_check_std_output_cap()
+
+Dr. David Alan Gilbert (1):
+      USB: serial: spcp8x5: remove unused struct 'spcp8x5_usb_ctrl_arg'
+
+Greg Kroah-Hartman (2):
+      Merge tag 'usb-serial-6.11-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
+      Merge tag 'usb-serial-6.11-rc2' of https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus
+
+Harshit Mogalapalli (2):
+      usb: typec: tipd: Fix dereferencing freeing memory in tps6598x_apply_patch()
+      usb: typec: tipd: Delete extra semi-colon
+
+Heikki Krogerus (1):
+      usb: typec: ucsi: Fix a deadlock in ucsi_send_command_common()
+
+Javier Carrasco (2):
+      USB: serial: garmin_gps: annotate struct garmin_packet with __counted_by
+      USB: serial: garmin_gps: use struct_size() to allocate pkt
+
+Jeff Johnson (1):
+      USB: serial: add missing MODULE_DESCRIPTION() macros
+
+Konrad Dybcio (1):
+      usb: typec: fsa4480: Check if the chip is really there
+
+Marek Marczykowski-Górecki (1):
+      USB: serial: debug: do not echo input by default
+
+Oliver Neukum (1):
+      usb: vhci-hcd: Do not drop references before new references are gained
+
+Prashanth K (1):
+      usb: gadget: u_serial: Set start_delayed during suspend
+
+Takashi Iwai (1):
+      usb: gadget: midi2: Fix the response for FB info with block 0xff
+
+Tudor Ambarus (2):
+      usb: gadget: f_fs: restore ffs_func_disable() functionality
+      usb: gadget: f_fs: pull out f->disable() from ffs_func_set_alt()
+
+Xu Yang (1):
+      usb: typec: tcpm: avoid sink goto SNK_UNATTACHED state if not received source capability message
+
+ .../devicetree/bindings/usb/microchip,usb2514.yaml |  1 +
+ drivers/usb/gadget/function/f_fs.c                 | 32 ++++++++++-------
+ drivers/usb/gadget/function/f_midi2.c              | 21 +++++++----
+ drivers/usb/gadget/function/u_audio.c              | 42 +++++++++++++++++-----
+ drivers/usb/gadget/function/u_serial.c             |  1 +
+ drivers/usb/gadget/udc/core.c                      | 10 +++---
+ drivers/usb/serial/ch341.c                         |  1 +
+ drivers/usb/serial/garmin_gps.c                    |  5 ++-
+ drivers/usb/serial/mxuport.c                       |  1 +
+ drivers/usb/serial/navman.c                        |  1 +
+ drivers/usb/serial/qcaux.c                         |  1 +
+ drivers/usb/serial/spcp8x5.c                       | 10 ------
+ drivers/usb/serial/symbolserial.c                  |  1 +
+ drivers/usb/serial/usb-serial-simple.c             |  1 +
+ drivers/usb/serial/usb_debug.c                     |  8 +++++
+ drivers/usb/typec/mux/fsa4480.c                    | 14 ++++++++
+ drivers/usb/typec/tcpm/tcpci.c                     |  2 +-
+ drivers/usb/typec/tcpm/tcpm.c                      |  2 +-
+ drivers/usb/typec/tipd/core.c                      |  4 +--
+ drivers/usb/typec/ucsi/ucsi.c                      | 11 +++---
+ drivers/usb/usbip/vhci_hcd.c                       |  9 +++--
+ 21 files changed, 119 insertions(+), 59 deletions(-)
 
