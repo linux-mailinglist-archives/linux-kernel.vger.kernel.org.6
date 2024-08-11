@@ -1,99 +1,118 @@
-Return-Path: <linux-kernel+bounces-282303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A734794E1D9
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:33:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C250F94E1DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 454F8B20E5F
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:33:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E7CEB20F1C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE0E14B971;
-	Sun, 11 Aug 2024 15:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB014B94A;
+	Sun, 11 Aug 2024 15:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bhG3Zwb/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP0h/ov2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D302E14B950;
-	Sun, 11 Aug 2024 15:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ED01CA85;
+	Sun, 11 Aug 2024 15:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723390420; cv=none; b=ASlBenUK/kdUrxNIzVu4CTAEmMPfuC9k1Ej9wb5HvIMzflllp15NxggImEx8S0AfXq2QOcr7XI9Jrsvf0G70153E1PPGa03RNK5Wvet3nOxpC/0IVgw7GjBLGM1wm9pzLksDjfHjD9laXuWMDh9aKMHmPy0cb6tDPPbGWRNJTa0=
+	t=1723390473; cv=none; b=B2Je7TN0Dj374QXwFPqjS9F6G/t5FpQ8DCMGj3IpLV/O66bXWbCk6h/SCRhUeug0XmjmY2yfMVueZ326b8h/UdCf7ER2zYpVTH6vb33S6Gmd33nYZ2Uty9XIPb7ny2XItWiTIvTqI84++BOkG9iCJcZ8u2RFzRezXud2COZxHTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723390420; c=relaxed/simple;
-	bh=0DERmHmJKOIgCh+I8BWA17AHixrHq1a1nOOrAyV2JnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fulpFQEQd+H/E9VoLTbyuDoCVXY+JWOXk59G2BUY31gSeWyuOqTo26LYQ13uhNbZ8OBr93t+0r5Uw3oQ4Hx96MS5TjJIWbbZNDLvwyDXz5cWrQMO7wnnKQs5aHewZZMbi9jKL/jCy92m2Bh8/uPShi2nVGGaGq6nJ7WmGKOKWac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bhG3Zwb/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D59F8C32786;
-	Sun, 11 Aug 2024 15:33:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723390420;
-	bh=0DERmHmJKOIgCh+I8BWA17AHixrHq1a1nOOrAyV2JnQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bhG3Zwb/SgrEnVx77ZLduSCeo37PONWRBnhW+lW/zMb9NvNDDFw2IvUyRnBBLmaF4
-	 ob0t4fERpysL3tJt2rYLv+FnrZFxpRYEVyG8S3sK6Wwn3fbF62Y711paf3UWRLjTfe
-	 c3bScYYVpygU9NESu5ynPZz5iWV7ZoauBvDJ+2ec=
-Date: Sun, 11 Aug 2024 17:33:37 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Neronin, Niklas" <niklas.neronin@linux.intel.com>
-Cc: Jinjiang Tu <tujinjiang@huawei.com>, cve@kernel.org,
-	linux-cve-announce@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: CVE-2024-42226: usb: xhci: prevent potential failure in
- handle_tx_event() for Transfer events without TRB
-Message-ID: <2024081131-tamer-dreadful-17e4@gregkh>
-References: <d5691b1b-c7e6-ddea-bd58-10855fd36d40@huawei.com>
- <9409f3d3-02d1-1e31-a6da-056b44a9523f@huawei.com>
- <010cb430-b0bd-40f9-897e-b48e326a9caa@linux.intel.com>
- <d36feb2f-c1f2-90c2-bb33-e6d0ff41096d@huawei.com>
- <6327d2ed-f1de-406d-a713-97934dbb6c39@linux.intel.com>
+	s=arc-20240116; t=1723390473; c=relaxed/simple;
+	bh=YwksnDw8VPXal3P7dd2jgZKdFH8IbM7kCgoHRSJTUYY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JgPShqX5j8Hpy8KCi4fBpDrM0EfDJX2Tw7QzlOp/YI2AAWNHR/aoRURQOq3WhyAe/0ipZk8f3eCYg70jKxg8GdnQVNhGXDs/sOJFEDTQEncXP9Z9gsgkPxZ3QA85tlqoyF3/TGf71Afuo472KUrRVq2rayOq+GmuXH4a1yRNWHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP0h/ov2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47578C4AF0F;
+	Sun, 11 Aug 2024 15:34:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723390473;
+	bh=YwksnDw8VPXal3P7dd2jgZKdFH8IbM7kCgoHRSJTUYY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uP0h/ov2VCuj/kvYMNcD36MxjugPyiSj+MHglw0bQ0tA5F8/GSpNRpJJAgiHY86pU
+	 8QxTnuajNui3/AMs27Lv2hMZPz6N+VlvuOERM8EOenyAStEpB12ZFcfIw0zmQCXBVF
+	 k6GOpVD1uw/MsGuWF8o1ROayt3thJLY13Q3pjmkzkDqho+pwt/PfKX+JYyNdUX+66m
+	 CZJOYiDGGq3Uiu7YjD+PepjdsWE13UGnxgma1FHfgoZtXbYO4C139Lkf2wN0qDfKi8
+	 lqEIFp7zVqSFItxiX4T2nwOXDrRq5REMkulNTZd9W3cbIfiCQq+T8enrER5t7qCtVl
+	 dD7+as510aapQ==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5320d8155b4so13811e87.3;
+        Sun, 11 Aug 2024 08:34:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWYlo7UB8fyCqZd8N5Wd0viLM26RubhkoWxbn9Gwk7Hv2uTrJW59YU4U5kjc+27tCHe5WaIZneBwPn0XckmKTAArH4CF/6zdlxSgG6pE7zqfzWwYtM7zDm7HxMB+9s+L7QJnO3VttFCTXk=
+X-Gm-Message-State: AOJu0YxHWAIY9L1835x1pQ9JiQtLzOxEWoj0jM3NVmCPwZ8UPx8ktCcB
+	Z0jCiTUDGNn1YhPPCoTsaUZuuM+YGKgzqgOkHNM+mDwcO6VVwboq28D/6sgfsppXMyPexQWTrY8
+	F9ISAKjEdgvxIGOtTiuW2lLv02fA=
+X-Google-Smtp-Source: AGHT+IES5W/xGCH2uWWHRv0dGCi0+rtFXcqtmn0Bv5Fx/hX0jdnU/L373uRehGhIcqIZ7MBs+7C0ZG9WFLxHO80NtD0=
+X-Received: by 2002:a05:6512:690:b0:52e:933c:5a18 with SMTP id
+ 2adb3069b0e04-530eea5da02mr4470050e87.56.1723390471606; Sun, 11 Aug 2024
+ 08:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6327d2ed-f1de-406d-a713-97934dbb6c39@linux.intel.com>
+References: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
+ <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com>
+In-Reply-To: <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Sun, 11 Aug 2024 16:33:54 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
+Message-ID: <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
+Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
+ execution time of the kswapd0 process and symptoms as if there is not enough memory
+To: =?UTF-8?Q?Jannik_Gl=C3=BCckert?= <jannik.glueckert@gmail.com>
+Cc: andrea.gelmini@gmail.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	mikhail.v.gavrilov@gmail.com, regressions@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 07, 2024 at 12:31:56PM +0300, Neronin, Niklas wrote:
-> 
-> 
-> On 06/08/2024 16.53, Jinjiang Tu wrote:
-> > 
-> > 在 2024/8/6 19:15, Neronin, Niklas 写道:
-> >> On 06/08/2024 12.25, Jinjiang Tu wrote:
-> >>> Hi, Niklas
-> >>>
-> >>> The commit 66cb618bf0bb ("usb: xhci: prevent potential failure in handle_tx_event() for Transfer events without TRB")
-> >>> has been assigned with CVE-2024-42226, but the commit has been reverted in 6.1.99 and 6.6.39 due to
-> >>> performance regression. Do you have a plan to address this issue, or if this CVE should be rejected?
-> >>>
-> >>> Thanks!
-> >>>
-> >> Hi,
-> >>
-> >> Currently, I have no plan to address this issue.
-> >>
-> >> The commit in question, was not intended for any previous Linux versions.
-> >> It was created as part of my handle_tx_event() rework series. Future changes
-> >> in said series could potentially trigger the issue, so preemptively preventing
-> >> it was both simpler and more secure.
-> > I don't know if I'm understanding this right, do you mean the issue mentioned in
-> > the commit will not be actually triggered in previous Linux versions? Now the commit
-> > is reverted in v6.1 and v6.6, but the issue can not be triggered in these versions,
-> > so no more fixes patch is needed for these LTS versions?
-> 
-> I'm not aware of any cases where this issue has been triggered. As it has been in the
-> Linux kernel for a long time, I assume it does not trigger.
+On Sun, Aug 11, 2024 at 9:08=E2=80=AFAM Jannik Gl=C3=BCckert
+<jannik.glueckert@gmail.com> wrote:
+>
+> Hello,
+>
+> I am still encountering this issue on 6.10.3. As far as I can see this
+> is the last post in the thread, if the discussion continued elsewhere
+> please let me know.
+>
+> My workload is a backup via restic, the system is idle otherwise.
+> This is on a Zen4 CPU with a very fast PCIe Gen4 nvme, so perhaps it was
+> fixed for others because they had comparatively slow IO or a smaller
+> workload?
+>
+> I have attached the bpftrace run and a graph of the memory PSI. kswapd0
+> is at 100% during the critical sections. dmesg is empty.
+> Important events were e.g. 09:31-09:32 and 09:33-09:34 where the system
+> was completely unresponsive multiple times, for about 5 seconds at a time=
+.
+>
+> I did also mention this on the #btrfs IRC channel and there are other
+> users still encountering this on 6.10
 
-Ok, now rejected, thanks.
+This came to my attention a couple days ago in a bugzilla report here:
 
-greg k-h
+https://bugzilla.kernel.org/show_bug.cgi?id=3D219121
+
+There's also 2 other recent threads in the mailing about it.
+
+There's a fix there in the bugzilla, and I've just sent it to the mailing l=
+ist.
+In case you want to try it:
+
+https://lore.kernel.org/linux-btrfs/d85d72b968a1f7b8538c581eeb8f5baa973dfc9=
+5.1723377230.git.fdmanana@suse.com/
+
+Thanks.
+
+
+
+>
+> Best
+> Jannik
 
