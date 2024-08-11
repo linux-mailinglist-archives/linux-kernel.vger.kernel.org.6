@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-282273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CC094E184
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D7BA594E185
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9A22815BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:58:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 949A92816F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933771494C2;
-	Sun, 11 Aug 2024 13:58:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BBE149C5E;
+	Sun, 11 Aug 2024 13:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1pEXuTN9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8R6kU5mn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BuZ7zdLv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MUhMintu"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8D6446AF
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 13:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C45514884C
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 13:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723384690; cv=none; b=MWe0HXuorLuNV8r8v43HwO/WyEqULiPiQW4HhiV3Zf6rLK33a0HHbzNh0zlPhcW7Q2wT1IsL5KfnbmHYUBYMkqFblnRxyZ/sslMSDPqvlisoX2UVZkrVvo1oF+WqtIB9fvCaNo50RkZ1vxDfy0ZXEI92Y/4RuweeJSWVQjoXRHA=
+	t=1723384691; cv=none; b=QUsYqHBbtxTtlooP16rQDfCwa3cD7ckBum2JUeMAQwSfmNybkm+bhMlOIU2PvsOsNMchs9koThADnQ/qgSuL42TgphYLGmtsgQnkbhrE90h2Ncu5b1dBFeszEFUt32J59Gv3RXYLBB3dYUC9F3adplfj0Il7TsGQrEHkaoNDOAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723384690; c=relaxed/simple;
-	bh=zT3OOJlYVDfoPxrzzG+NTlJeGXZLr9+6r1u1RnMuzlg=;
-	h=From:To:Cc:Subject:Message-ID:Content-Type:MIME-Version:Date; b=E/+DVsEEJUVi/xeJ/VCjWK7BXLrtRFRYqGDJK7Qkh4JLKQDeOBAnM8hsSBrK8ca53npFTFHdFceZGmh/P7G43uxzfl00oK1kt1PqMBWXLQN7ihOqxe96qEcp1KsvQ8CIuO8szMGUCE0Ms3E5TIO+7oKaCk3y09I3/6SLDzmMAEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1pEXuTN9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8R6kU5mn; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1723384691; c=relaxed/simple;
+	bh=oU9uqGSdmXK11gTUzIJ/SQBG1vbHug91j7JTDgKPx8A=;
+	h=From:To:Cc:Subject:References:Message-ID:Content-Type:
+	 MIME-Version:Date; b=EpuRe85o48szDT+a9X+LxDTs6O1zArl9JP3INE0cV5ffRuwl3CfRrmI4VZFC0vqylRWvWfPrDXRLL339n4Tv0UTWQKWGQuYo0pCW/8w4rkVQR6W24kodgUksYfs+5sjPqgU7AirJ3B8JLOPFsA+F2QRPGEJrduO3/b5eX4/6xPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BuZ7zdLv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MUhMintu; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723384686;
+	s=2020; t=1723384687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8gyFGJW9F+p+UElimSfLYu8bLJB+gVwV+TcSEn1nU4I=;
-	b=1pEXuTN9x8YY/AW+fim7wMXpwGZW/95+XMimURYOTr1fwIAvEyOhARA5ytzE0srsJsaWOf
-	8oiCyIflNJxvM+NbO5bU5veFo8QtCDVMTflyFqyk7CWLSMkTQQY2SL+le3ootxSUqZ8rSj
-	3xmSifIRZzf87Hu6DdRd/8ipLBTuZspNYK/p1YRPTeC4P62ade/4fHkV6rexjXOGt36vHs
-	5TLyHWSTaStCLxDnNLjVncBHXkKC9xuNRJWtvExsP5hEOku8knHA9JhVhXkftOBPb6ECWl
-	ev1W0PuteYnaZe67y6eRt9+vbozwWLjZfqMAsL+ISfXkvm2J5rYEmm4nea3hvw==
+	 content-transfer-encoding:content-transfer-encoding:  references:references;
+	bh=okbW1cunU7TgFyPkXQxrxOtSIXGv17jmQh1GuMM3h0M=;
+	b=BuZ7zdLvcJ+/ZJ29VsP02ogzbodmpl6VU/3VvTO6KQ4R7Rd5GfMU7Q5ni0dcvWI86GhE8+
+	Zmd9Sos1eXLFvKvfy6+zAf4CfogUtNWXecehy1k49dBRp7wnqBb6qeCIBPpUDYiG8ZiCrl
+	jw/ViNhcoZXct7e2cQljpMm47uY24gsQLZ77zFqSO9iPQAhkjhlDEf2SsrNQzPdRr6MQnE
+	7WT2HNYK8HkPNu5HFiYEMk9hEvHs9AEwVds3wFYBQc3dwRK/v9ZdPFWFs1Lg9G0zanhdWL
+	S+RE2OwVf2T8cyxReE2kEbkDqd9Z2IPGDYrArRAhT3Rd3gCtxImBojZ2LckppQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723384686;
+	s=2020e; t=1723384687;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8gyFGJW9F+p+UElimSfLYu8bLJB+gVwV+TcSEn1nU4I=;
-	b=8R6kU5mn5OV1ms5P9KddXpn/CEo7hW8wiRkoNaDP4VMB2o2xIcBbECmxMBDZADSRH41XNm
-	ZfhjjimHo3O4VKBw==
+	 content-transfer-encoding:content-transfer-encoding:  references:references;
+	bh=okbW1cunU7TgFyPkXQxrxOtSIXGv17jmQh1GuMM3h0M=;
+	b=MUhMintuiwWRtrNhi0D+e3D7SNIkPZ6zEzWBTVMXg8PbiEHDS7EqG7PoJjNyuINmghTbps
+	Y/WbphoFdlWD2ZBw==
 To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [GIT pull] irq/urgent for v6.11-rc3
-Message-ID: 
+Subject: [GIT pull] timers/urgent for v6.11-rc3
+References: 
  <172338466501.1168419.15927287413698158262.tglx@xen13.tec.linutronix.de>
+Message-ID: 
+ <172338466622.1168419.14975326329561608062.tglx@xen13.tec.linutronix.de>
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -63,141 +66,97 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Sun, 11 Aug 2024 15:58:05 +0200 (CEST)
+Date: Sun, 11 Aug 2024 15:58:06 +0200 (CEST)
 
 Linus,
 
-please pull the latest irq/urgent branch from:
+please pull the latest timers/urgent branch from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-2024-=
-08-11
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-20=
+24-08-11
 
-up to:  03f9885c60ad: irqchip/riscv-aplic: Retrigger MSI interrupt on source =
-configuration
+up to:  5916be8a53de: timekeeping: Fix bogus clock_was_set() invocation in do=
+_adjtimex()
 
 
-Three small fixes for interrupt core and drivers:
+Updates for time keeping:
 
-    - The interrupt core fails to honor caller supplied affinity hints for
-      non-managed interrupts and uses the system default affinity on
-      startup instead. Set the missing flag in the descriptor to tell the
-      core to use the provided affinity.
+  - Fix a couple of issues in the NTP code where user supplied values are
+    neither sanity checked nor clamped to the operating range. This results
+    in integer overflows and eventualy NTP getting out of sync.
 
-    - Fix a shift out of bounds error in the Xilinx driver
+    According to the history the sanity checks had been removed in favor of
+    clamping the values, but the clamping never worked correctly under all
+    circumstances. The NTP people asked to not bring the sanity checks back
+    as it might break existing applications.
 
-    - Handle switching to level trigger correctly in the RISCV APLIC
-      driver. It failed to retrigger the interrupt which causes it to
-      become stale.
+    Make the clamping work correctly and add it where it's missing
+
+  - If adjtimex() sets the clock it has to trigger the hrtimer subsystem so
+    it can adjust and if the clock was set into the future expire timers if
+    needed. The caller should provide a bitmask to tell hrtimers which
+    clocks have been adjusted. adjtimex() uses not the proper constant and
+    uses CLOCK_REALTIME instead, which is 0. So hrtimers adjusts only the
+    clocks, but does not check for expired timers, which might make them
+    expire really late. Use the proper bitmask constant instead.
+
 
 Thanks,
 
 	tglx
 
 ------------------>
-Radhey Shyam Pandey (1):
-      irqchip/xilinx: Fix shift out of bounds
+Justin Stitt (2):
+      ntp: Clamp maxerror and esterror to operating range
+      ntp: Safeguard against time_constant overflow
 
-Shay Drory (1):
-      genirq/irqdesc: Honor caller provided affinity in alloc_desc()
-
-Yong-Xuan Wang (1):
-      irqchip/riscv-aplic: Retrigger MSI interrupt on source configuration
+Thomas Gleixner (1):
+      timekeeping: Fix bogus clock_was_set() invocation in do_adjtimex()
 
 
- drivers/irqchip/irq-riscv-aplic-msi.c | 32 +++++++++++++++++++++++++-------
- drivers/irqchip/irq-xilinx-intc.c     |  2 +-
- kernel/irq/irqdesc.c                  |  1 +
- 3 files changed, 27 insertions(+), 8 deletions(-)
+ kernel/time/ntp.c         | 9 ++++-----
+ kernel/time/timekeeping.c | 2 +-
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/irqchip/irq-riscv-aplic-msi.c b/drivers/irqchip/irq-risc=
-v-aplic-msi.c
-index 028444af48bd..d7773f76e5d0 100644
---- a/drivers/irqchip/irq-riscv-aplic-msi.c
-+++ b/drivers/irqchip/irq-riscv-aplic-msi.c
-@@ -32,15 +32,10 @@ static void aplic_msi_irq_unmask(struct irq_data *d)
- 	aplic_irq_unmask(d);
- }
-=20
--static void aplic_msi_irq_eoi(struct irq_data *d)
-+static void aplic_msi_irq_retrigger_level(struct irq_data *d)
- {
- 	struct aplic_priv *priv =3D irq_data_get_irq_chip_data(d);
-=20
--	/*
--	 * EOI handling is required only for level-triggered interrupts
--	 * when APLIC is in MSI mode.
--	 */
--
- 	switch (irqd_get_trigger_type(d)) {
- 	case IRQ_TYPE_LEVEL_LOW:
- 	case IRQ_TYPE_LEVEL_HIGH:
-@@ -59,6 +54,29 @@ static void aplic_msi_irq_eoi(struct irq_data *d)
- 	}
- }
-=20
-+static void aplic_msi_irq_eoi(struct irq_data *d)
-+{
-+	/*
-+	 * EOI handling is required only for level-triggered interrupts
-+	 * when APLIC is in MSI mode.
-+	 */
-+	aplic_msi_irq_retrigger_level(d);
-+}
-+
-+static int aplic_msi_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	int rc =3D aplic_irq_set_type(d, type);
-+
-+	if (rc)
-+		return rc;
-+	/*
-+	 * Updating sourcecfg register for level-triggered interrupts
-+	 * requires interrupt retriggering when APLIC is in MSI mode.
-+	 */
-+	aplic_msi_irq_retrigger_level(d);
-+	return 0;
-+}
-+
- static void aplic_msi_write_msg(struct irq_data *d, struct msi_msg *msg)
- {
- 	unsigned int group_index, hart_index, guest_index, val;
-@@ -130,7 +148,7 @@ static const struct msi_domain_template aplic_msi_templat=
-e =3D {
- 		.name			=3D "APLIC-MSI",
- 		.irq_mask		=3D aplic_msi_irq_mask,
- 		.irq_unmask		=3D aplic_msi_irq_unmask,
--		.irq_set_type		=3D aplic_irq_set_type,
-+		.irq_set_type		=3D aplic_msi_irq_set_type,
- 		.irq_eoi		=3D aplic_msi_irq_eoi,
- #ifdef CONFIG_SMP
- 		.irq_set_affinity	=3D irq_chip_set_affinity_parent,
-diff --git a/drivers/irqchip/irq-xilinx-intc.c b/drivers/irqchip/irq-xilinx-i=
-ntc.c
-index 238d3d344949..7e08714d507f 100644
---- a/drivers/irqchip/irq-xilinx-intc.c
-+++ b/drivers/irqchip/irq-xilinx-intc.c
-@@ -189,7 +189,7 @@ static int __init xilinx_intc_of_init(struct device_node =
-*intc,
- 		irqc->intr_mask =3D 0;
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index 406dccb79c2b..8d2dd214ec68 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -727,17 +727,16 @@ static inline void process_adjtimex_modes(const struct =
+__kernel_timex *txc,
  	}
 =20
--	if (irqc->intr_mask >> irqc->nr_irq)
-+	if ((u64)irqc->intr_mask >> irqc->nr_irq)
- 		pr_warn("irq-xilinx: mismatch in kind-of-intr param\n");
+ 	if (txc->modes & ADJ_MAXERROR)
+-		time_maxerror =3D txc->maxerror;
++		time_maxerror =3D clamp(txc->maxerror, 0, NTP_PHASE_LIMIT);
 =20
- 	pr_info("irq-xilinx: %pOF: num_irq=3D%d, edge=3D0x%x\n",
-diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
-index 07e99c936ba5..1dee88ba0ae4 100644
---- a/kernel/irq/irqdesc.c
-+++ b/kernel/irq/irqdesc.c
-@@ -530,6 +530,7 @@ static int alloc_descs(unsigned int start, unsigned int c=
-nt, int node,
- 				flags =3D IRQD_AFFINITY_MANAGED |
- 					IRQD_MANAGED_SHUTDOWN;
- 			}
-+			flags |=3D IRQD_AFFINITY_SET;
- 			mask =3D &affinity->mask;
- 			node =3D cpu_to_node(cpumask_first(mask));
- 			affinity++;
+ 	if (txc->modes & ADJ_ESTERROR)
+-		time_esterror =3D txc->esterror;
++		time_esterror =3D clamp(txc->esterror, 0, NTP_PHASE_LIMIT);
+=20
+ 	if (txc->modes & ADJ_TIMECONST) {
+-		time_constant =3D txc->constant;
++		time_constant =3D clamp(txc->constant, 0, MAXTC);
+ 		if (!(time_status & STA_NANO))
+ 			time_constant +=3D 4;
+-		time_constant =3D min(time_constant, (long)MAXTC);
+-		time_constant =3D max(time_constant, 0l);
++		time_constant =3D clamp(time_constant, 0, MAXTC);
+ 	}
+=20
+ 	if (txc->modes & ADJ_TAI &&
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 2fa87dcfeda9..5391e4167d60 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2606,7 +2606,7 @@ int do_adjtimex(struct __kernel_timex *txc)
+ 		clock_set |=3D timekeeping_advance(TK_ADV_FREQ);
+=20
+ 	if (clock_set)
+-		clock_was_set(CLOCK_REALTIME);
++		clock_was_set(CLOCK_SET_WALL);
+=20
+ 	ntp_notify_cmos_timer();
+=20
 
 
