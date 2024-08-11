@@ -1,47 +1,49 @@
-Return-Path: <linux-kernel+bounces-282125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1062A94DFE0
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 05:44:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9173794DFE2
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 05:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A0F9B21221
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 03:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE87280D55
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 03:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4B9EEDD;
-	Sun, 11 Aug 2024 03:44:23 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60418FC11;
+	Sun, 11 Aug 2024 03:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Re6t0UXl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56CABA47;
-	Sun, 11 Aug 2024 03:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A7B87F6;
+	Sun, 11 Aug 2024 03:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723347863; cv=none; b=QG62rhUktqO0f5dtgIPUJC0EY7gF7of4MwSyAqQwAc+KdOZa98eamSw3htyVRniEyJuOaZbCGEafTvNDu0tqY6ZKZNkZWcfz/yLyHlZ8PIE8os/sZUVW19+N3iS/t29In+ClIHq0/XsVCGDZu7nh0/XX2RRjJHjvFjJS968D1jQ=
+	t=1723348349; cv=none; b=spztGepy6A/e4aeKCYwIoGc0GmaAo/phA8LFRcQstaFroh/cXPiq2YmSZkvx/c71jiucOz0ZxR6DxVwSB8yOTOIztNEO0nT5aZXuFtaIei88f0CR+IvST2YJYpvzfFysu7ZlFq/QoR3yuaUv9wRq1UQUaxvczjpwt6Yu1bSJgdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723347863; c=relaxed/simple;
-	bh=yLmXaG/cKVhz7dTlSNAsmqnxExRJustnfBGAs+3vvSQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pDXoMfxShehm6lAs6LMaZoO+v9K5QVDS+3BNFFfCRXa45uuEzh7vKg+M984bj8wZ8BJQbxJVJN/Fyl3yfgg9X3T7l8F+AgGyrn1NLC2Y9AxDaSZivBVQ0VMOC7mOlkhPuoL7TdvxedwyzzYULxP76XqMjdedhdl/ZrIQ1Z6q0to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowABXXUl6M7hmxlZFBQ--.8961S2;
-	Sun, 11 Aug 2024 11:44:04 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: vkoul@kernel.org,
-	arnd@arndb.de,
-	akpm@linux-foundation.org
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 RESEND] dmaengine: moxart: handle irq_of_parse_and_map() errors
-Date: Sun, 11 Aug 2024 11:43:53 +0800
-Message-Id: <20240811034353.3481879-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723348349; c=relaxed/simple;
+	bh=fN++KgPGR5/sXVo/bRH9P3iTs/+SpQubUS+dKOMu1SQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=JJeeotOa6j0Noa4gSqhnWA613dZZwoAgAoh28PSiS9Ypn5gWMdgNfxN8xmyjYaMFZKoH1z6cvKaHfp0il/fvu1t8NvEzkURWAJOslHyZaKf5wrc8KDo7VMMKOK3ofeTtmSG17TOlG8V1Vk04uajAI3oh34TgZfCxb24lCHSDlpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Re6t0UXl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 071FEC4AF0C;
+	Sun, 11 Aug 2024 03:52:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723348349;
+	bh=fN++KgPGR5/sXVo/bRH9P3iTs/+SpQubUS+dKOMu1SQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Re6t0UXlOF5vNvBLBUgr8MUyPMgo+FTY/RjSqYx7b6fUSHIzehOD2HszxfgGSFBNz
+	 CnwrTNmcunnRa2iQHCWJG5ZvR91Kf/UdzSGR0D5nvJCqBKar30RheNBpyN4AbFedFc
+	 3Em3pusNDW2A7ia0M4q0V8GSM5lFEfX2w5j8E64O9hNzCFyX6ojzxWWdFBm98w20km
+	 FR6r0gw2cRN5Zv/hgM3MSs+z5a6cOYpZ9NYuQVD4ijd/92HPFDmg749Qlr1+E2vvf3
+	 tgV+HP/nEp/jbuLwQwWZoHwMGz0SaQ6MyCzNwFPb0G+uDq245R2knsg1pe5w5I65Ej
+	 HIwt/UgWIFlyA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F953823358;
+	Sun, 11 Aug 2024 03:52:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,50 +51,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABXXUl6M7hmxlZFBQ--.8961S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrWfuF17Kr4DCryUJw47urg_yoW3trgEk3
-	WI9FWfZr1DJF1j9w1Yywn3AFy0yF1rWrn29Fn0q3sxCryUJF1avr4xZFn3Jr1DXry09ry2
-	yrWDuryfua47CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Jr0_
-	Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr
-	1UM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa
-	73UjIFyTuYvjfUY3kuUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+Subject: Re: [PATCH v3] net: ethernet: use ip_hdrlen() instead of bit shift
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172334834804.125619.10250611606174817787.git-patchwork-notify@kernel.org>
+Date: Sun, 11 Aug 2024 03:52:28 +0000
+References: <20240807100721.101498-1-yyyynoom@gmail.com>
+In-Reply-To: <20240807100721.101498-1-yyyynoom@gmail.com>
+To: Moon Yeounsu <yyyynoom@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Zero and negative number is not a valid IRQ for in-kernel code and the
-irq_of_parse_and_map() function returns zero on error.  So this check for
-valid IRQs should only accept values > 0.
+Hello:
 
-Cc: stable@vger.kernel.org
-Fixes: 2d9e31b9412c ("dmaengine: moxart: remove NO_IRQ")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/dma/moxart-dma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/dma/moxart-dma.c b/drivers/dma/moxart-dma.c
-index 66dc6d31b603..16dd3c5aba4d 100644
---- a/drivers/dma/moxart-dma.c
-+++ b/drivers/dma/moxart-dma.c
-@@ -568,7 +568,7 @@ static int moxart_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	irq = irq_of_parse_and_map(node, 0);
--	if (!irq) {
-+	if (irq <= 0) {
- 		dev_err(dev, "no IRQ resource\n");
- 		return -EINVAL;
- 	}
+On Wed,  7 Aug 2024 19:07:21 +0900 you wrote:
+> `ip_hdr(skb)->ihl << 2` is the same as `ip_hdrlen(skb)`
+> Therefore, we should use a well-defined function not a bit shift
+> to find the header length.
+> 
+> It also compresses two lines to a single line.
+> 
+> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [v3] net: ethernet: use ip_hdrlen() instead of bit shift
+    https://git.kernel.org/netdev/net/c/9a039eeb71a4
+
+You are awesome, thank you!
 -- 
-2.25.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
