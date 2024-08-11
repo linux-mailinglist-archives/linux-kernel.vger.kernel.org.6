@@ -1,248 +1,278 @@
-Return-Path: <linux-kernel+bounces-282153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E24A94E031
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:00:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E0094E034
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:01:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913441F2166E
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:00:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45553281975
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673E41B813;
-	Sun, 11 Aug 2024 06:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="f8sWuXEu"
-Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE7F11C6A1;
+	Sun, 11 Aug 2024 06:01:21 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8CD291E;
-	Sun, 11 Aug 2024 06:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A7217740
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 06:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723356022; cv=none; b=BMdrcnzUhKMAkD4xI3OhHgoNcScX7GKN+Yiv+RXUIqwS7uZMcYbg2xJYMxkdLy9NYeEJ4d+2buXTdMl4JwjC6tufdi+LFpJuAqLu6Rn9lpqmWcMagnIJ0RFeaRuMX/eZ/ze4XhUxp5MowROSZ5MKC9N6OHq/zQYxoeOpEIuO2Vo=
+	t=1723356081; cv=none; b=cbiHzGln8YSgufE46f5aszXhuVNClR/xi5gJkozNw3ZP2/6BbCMIfgdV8k1raXRxD3bo+3MQbm9CFH1H+aBFHzUmOOLVPlR7roEF/+AgGKojN00Kobg9XC2gff0KYXYulJXZNBCckJq6Mb9uqtK7Z0+Xb0MYZsaNswMT6jLG1sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723356022; c=relaxed/simple;
-	bh=JuMLIa27s8EkpSzyIH8/+w1g/u0A6oHfh0oWdPU+STI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pk6y3BFkybZEln2x0gG/i3R5/c6x/M/1cRVmbVbZ0lGNePUvz2jxyHxAcj7ij4uNWdhWv7yUq09Wyilo09aBG6i6/tAf2xG/ejowZqxLP8sSn8zUU+5MaPQX0ixQoxms7qsD3JJEAFxXKLlmUQpKmNVA6IKlOnk3JaQf0YX6GT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=f8sWuXEu; arc=none smtp.client-ip=80.12.242.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id d1cesT0px3VI6d1cesqN8q; Sun, 11 Aug 2024 08:00:09 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1723356009;
-	bh=J+JwXICX6ZzQ0JiaWAjb8FuEa8I8yjuyVEqSpGAhSNw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=f8sWuXEufGWZ8gvOyucxFEXRfUVzZuoCXIaug8XCY6HPFKUXOf41cpTRRHFSA1fBB
-	 kkPz+JmobeEBBxSsXAn0+5jqZKzJJDDsMASCxb1OnIXJiDkDkFiHgIyKSi6uoKTw2i
-	 AhM2EhRewQXLFwYflmZyPeZ2++tUYpVADL0H1s3DMLMjHDvoIhfN/E95LIbe+QSF0p
-	 phETbBdoP+H6Pyu6OCJiB6mINCA0fNDCa27jsTcUAzIUTe6amWcnRwJwOrGLMgX+7r
-	 9tJ5l6+G2d5HOzF6KKE1MotdMJ3Pr+n04OU6NSEUsn0BfP23cE6WlCzKEzQXp8NS5b
-	 1PkMF6Q0YXLYA==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 11 Aug 2024 08:00:09 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <6246542f-6059-4bf8-91f7-6de713707711@wanadoo.fr>
-Date: Sun, 11 Aug 2024 08:00:05 +0200
+	s=arc-20240116; t=1723356081; c=relaxed/simple;
+	bh=OUzTIG+Fl3PrbPCXeIsMCI8osZxo7JHQCkYvA6qdWUY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ridFpkXN57LRC1jyiz0sC95BfEXS2YYoRx4sqlBEnka4t1DC5SeyGSfoNBb/kJDK/4NPpPZzgYGWzzNef3es8exrfBG9jcUaqBEdruFVTZMaGR6MUgxn5nZYbGokdZQHD4y/ZI3zCUeaDDxQLKtMcAq/NUPuAXUF4BNrZ0moeO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39b3b585980so44571415ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 23:01:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723356078; x=1723960878;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9vsBRnhg3SOv3kE+B7z/Y+oRRX8zoCKH4iOcoSYS3Sg=;
+        b=socKVYPa/vHmFHhGO/i8bwG49+58zjKxbUeNynP3iJpq3snVNQu7pwrutMvK+Em5D4
+         q56s+KdavDO9kpPxkhrYk9c8wEC6J9wUjXaxT4nyBPydFgOffADDm2I9WifgcKVNXwAz
+         GE0y32CGWr+M6rO0x0Pq0TOAG1U1bsEeSmogIy/gtdrveFaWDHfd5FhtnLjnfen4lrnD
+         TZ3lhcz8YEI1edq8Oz7AhlPh38U78IqIHhiTVvOIC5Gpvi/f6RzRv2u/XAGrZ5Vyn5ID
+         LaKmHRua6K20Ek1vGmf9u7yojFUL5j5GWyPuqewl89NoBHhMLJTsdlC4+DyIBXhrqizj
+         5g3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVRfMco5+MfSxsFVuAbv6Xf/Mla+HLV4sWVv2mDXy9pP+FYJpWD/6wsrv34a6K4pZKxH4WwAlmbCv5xxiQ08cOndctze1VJNJZkJOcW
+X-Gm-Message-State: AOJu0Ywcx5nCY4cpldGf21A+Q30ovVybdQiRHvXEWj2UUZSpHF+hYTOI
+	50qG+JmEsFcvr9JaygZ49N+PGsA/dFqOJKh+B2WQsHSu0Nz6s8UThS2W1u9ItPMgO79dQB/EOiq
+	BE9tSdaoLfU7nQL1vu6KKLn4GeWPgQGEyWdDyy6w/CnfzxlMt6Nusl0w=
+X-Google-Smtp-Source: AGHT+IE+kG9M3DKTCK6qoePs8ZDlrvby4lkA1q3uYiy1yRK+7XiBYi0mkLuryO6JYeHjIHfd7ZO24NXzLBDWADyP3vB1AI8vyohS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/3] dmaengine: add driver for Sophgo CV18XX/SG200X
- dmamux
-To: Inochi Amaoto <inochiama@outlook.com>, Vinod Koul <vkoul@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <IA1PR20MB495324F3EF7517562CB4CACFBB842@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB49533EAD95963C2E99D27B88BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <IA1PR20MB49533EAD95963C2E99D27B88BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:18ce:b0:39a:ea7d:2a9a with SMTP id
+ e9e14a558f8ab-39b8709167fmr4857235ab.6.1723356078625; Sat, 10 Aug 2024
+ 23:01:18 -0700 (PDT)
+Date: Sat, 10 Aug 2024 23:01:18 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e364c9061f621a56@google.com>
+Subject: [syzbot] [rdma?] possible deadlock in sock_set_reuseaddr
+From: syzbot <syzbot+af5682e4f50cd6bce838@syzkaller.appspotmail.com>
+To: jgg@ziepe.ca, leon@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Le 11/08/2024 à 07:16, Inochi Amaoto a écrit :
-> Sophgo CV18XX/SG200X use DW AXI CORE with a multiplexer for remapping
-> its request lines. The multiplexer supports at most 8 request lines.
-> 
-> Add driver for Sophgo CV18XX/SG200X DMA multiplexer.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
-> ---
+Hello,
 
-Hi,
+syzbot found the following issue on:
 
-...
+HEAD commit:    d4560686726f Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1621ea83980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=505ed4a1dd93463a
+dashboard link: https://syzkaller.appspot.com/bug?extid=af5682e4f50cd6bce838
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> +static void *cv1800_dmamux_route_allocate(struct of_phandle_args *dma_spec,
-> +					  struct of_dma *ofdma)
-> +{
-> +	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
-> +	struct cv1800_dmamux_data *dmamux = platform_get_drvdata(pdev);
-> +	struct cv1800_dmamux_map *map;
-> +	struct llist_node *node;
-> +	unsigned long flags;
-> +	unsigned int chid, devid, cpuid;
-> +	int ret;
-> +
-> +	if (dma_spec->args_count != DMAMUX_NCELLS) {
-> +		dev_err(&pdev->dev, "invalid number of dma mux args\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	devid = dma_spec->args[0];
-> +	cpuid = dma_spec->args[1];
-> +	dma_spec->args_count = 1;
-> +
-> +	if (devid > MAX_DMA_MAPPING_ID) {
-> +		dev_err(&pdev->dev, "invalid device id: %u\n", devid);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	if (cpuid > MAX_DMA_CPU_ID) {
-> +		dev_err(&pdev->dev, "invalid cpu id: %u\n", cpuid);
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", 0);
-> +	if (!dma_spec->np) {
-> +		dev_err(&pdev->dev, "can't get dma master\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	spin_lock_irqsave(&dmamux->lock, flags);
-> +
-> +	if (test_bit(devid, dmamux->mapped_peripherals)) {
-> +		llist_for_each_entry(map, dmamux->reserve_maps.first, node) {
-> +			if (map->peripheral == devid && map->cpu == cpuid)
-> +				goto found;
-> +		}
-> +
-> +		ret = -EINVAL;
-> +		goto failed;
-> +	} else {
-> +		node = llist_del_first(&dmamux->free_maps);
-> +		if (!node) {
-> +			ret = -ENODEV;
-> +			goto failed;
-> +		}
-> +
-> +		map = llist_entry(node, struct cv1800_dmamux_map, node);
-> +		llist_add(&map->node, &dmamux->reserve_maps);
-> +		set_bit(devid, dmamux->mapped_peripherals);
-> +	}
-> +
-> +found:
-> +	chid = map->channel;
-> +	map->peripheral = devid;
-> +	map->cpu = cpuid;
-> +
-> +	regmap_set_bits(dmamux->regmap,
-> +			DMAMUX_CH_REG(chid),
-> +			DMAMUX_CH_SET(chid, devid));
-> +
-> +	regmap_update_bits(dmamux->regmap, CV1800_SDMA_DMA_INT_MUX,
-> +			   DMAMUX_INT_CH_MASK(chid, cpuid),
-> +			   DMAMUX_INT_CH_BIT(chid, cpuid));
-> +
-> +	spin_unlock_irqrestore(&dmamux->lock, flags);
-> +
-> +	dma_spec->args[0] = chid;
-> +
-> +	dev_dbg(&pdev->dev, "register channel %u for req %u (cpu %u)\n",
-> +		chid, devid, cpuid);
-> +
-> +	return map;
-> +
-> +failed:
-> +	spin_unlock_irqrestore(&dmamux->lock, flags);
-> +	of_node_put(dma_spec->np);
-> +	dev_err(&pdev->dev, "errno %d\n", ret);
-> +	return ERR_PTR(ret);
-> +
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Nitpick: Unneeded empty new line.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc7510fe41f/non_bootable_disk-d4560686.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3304e311b45d/vmlinux-d4560686.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/c5fa8d141fd4/bzImage-d4560686.xz
 
-> +}
-> +
-> +static int cv1800_dmamux_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *mux_node = dev->of_node;
-> +	struct cv1800_dmamux_data *data;
-> +	struct cv1800_dmamux_map *tmp;
-> +	struct device *parent = dev->parent;
-> +	struct regmap *regmap = NULL;
-> +	unsigned int i;
-> +
-> +	if (!parent)
-> +		return -ENODEV;
-> +
-> +	regmap = device_node_to_regmap(parent->of_node);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	data = devm_kmalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&data->lock);
-> +	init_llist_head(&data->free_maps);
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+af5682e4f50cd6bce838@syzkaller.appspotmail.com
 
-Why init free_maps and not reserve_maps?
-'data' is not zeroed, so it should be needed, IMHO.
+ip6gretap0 speed is unknown, defaulting to 1000
+ip6gretap0 speed is unknown, defaulting to 1000
+iwpm_register_pid: Unable to send a nlmsg (client = 2)
+======================================================
+WARNING: possible circular locking dependency detected
+6.11.0-rc2-syzkaller-00013-gd4560686726f #0 Not tainted
+------------------------------------------------------
+syz.0.201/6238 is trying to acquire lock:
+ffff888024153658 (sk_lock-AF_INET6){+.+.}-{0:0}, at: lock_sock include/net/sock.h:1607 [inline]
+ffff888024153658 (sk_lock-AF_INET6){+.+.}-{0:0}, at: sock_set_reuseaddr+0x17/0x60 net/core/sock.c:782
 
-Same for mapped_peripherals. It is not initialized.
+but task is already holding lock:
+ffffffff8f68af68 (lock#8){+.+.}-{3:3}, at: cma_add_one+0x674/0xdd0 drivers/infiniband/core/cma.c:5354
 
-I think that using devm_kzalloc() above is needed. (and 
-init_llist_head(&data->free_maps) could then be removed, if you want)
-
-Just my 2c.
-
-> +
-> +	for (i = 0; i <= MAX_DMA_CH_ID; i++) {
-> +		tmp = devm_kmalloc(dev, sizeof(*tmp), GFP_KERNEL);
-> +		if (!tmp) {
-> +			/* It is OK for not allocating all channel */
-> +			dev_warn(dev, "can not allocate channel %u\n", i);
-> +			continue;
-> +		}
-> +
-> +		init_llist_node(&tmp->node);
-> +		tmp->channel = i;
-> +		llist_add(&tmp->node, &data->free_maps);
-> +	}
-> +
-> +	/* if no channel is allocated, the probe must fail */
-> +	if (llist_empty(&data->free_maps))
-> +		return -ENOMEM;
-> +
-> +	data->regmap = regmap;
-> +	data->dmarouter.dev = dev;
-> +	data->dmarouter.route_free = cv1800_dmamux_free;
-> +
-> +	platform_set_drvdata(pdev, data);
-> +
-> +	return of_dma_router_register(mux_node,
-> +				      cv1800_dmamux_route_allocate,
-> +				      &data->dmarouter);
-> +}
-
-...
-
-CJ
+which lock already depends on the new lock.
 
 
+the existing dependency chain (in reverse order) is:
+
+-> #2 (lock#8){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       cma_init+0x1d/0x150 drivers/infiniband/core/cma.c:5438
+       do_one_initcall+0x128/0x700 init/main.c:1267
+       do_initcall_level init/main.c:1329 [inline]
+       do_initcalls init/main.c:1345 [inline]
+       do_basic_setup init/main.c:1364 [inline]
+       kernel_init_freeable+0x69d/0xca0 init/main.c:1578
+       kernel_init+0x1c/0x2b0 init/main.c:1467
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (rtnl_mutex){+.+.}-{3:3}:
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x175/0x9c0 kernel/locking/mutex.c:752
+       smc_vlan_by_tcpsk+0x251/0x620 net/smc/smc_core.c:1853
+       __smc_connect+0x44d/0x4830 net/smc/af_smc.c:1522
+       smc_connect+0x2fc/0x760 net/smc/af_smc.c:1702
+       __sys_connect_file+0x15f/0x1a0 net/socket.c:2061
+       __sys_connect+0x149/0x170 net/socket.c:2078
+       __do_sys_connect net/socket.c:2088 [inline]
+       __se_sys_connect net/socket.c:2085 [inline]
+       __x64_sys_connect+0x72/0xb0 net/socket.c:2085
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (sk_lock-AF_INET6){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3133 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+       validate_chain kernel/locking/lockdep.c:3868 [inline]
+       __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+       lock_acquire kernel/locking/lockdep.c:5759 [inline]
+       lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+       lock_sock_nested+0x3a/0xf0 net/core/sock.c:3543
+       lock_sock include/net/sock.h:1607 [inline]
+       sock_set_reuseaddr+0x17/0x60 net/core/sock.c:782
+       siw_create_listen+0x1ab/0x11f0 drivers/infiniband/sw/siw/siw_cm.c:1776
+       iw_cm_listen+0x16a/0x1f0 drivers/infiniband/core/iwcm.c:585
+       cma_iw_listen drivers/infiniband/core/cma.c:2668 [inline]
+       rdma_listen+0x7ef/0xe20 drivers/infiniband/core/cma.c:3953
+       cma_listen_on_dev+0x4dc/0x810 drivers/infiniband/core/cma.c:2727
+       cma_add_one+0x78b/0xdd0 drivers/infiniband/core/cma.c:5357
+       add_client_context+0x3dd/0x590 drivers/infiniband/core/device.c:727
+       enable_device_and_get+0x1d5/0x3f0 drivers/infiniband/core/device.c:1338
+       ib_register_device drivers/infiniband/core/device.c:1426 [inline]
+       ib_register_device+0x880/0xbf0 drivers/infiniband/core/device.c:1372
+       siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
+       siw_newlink drivers/infiniband/sw/siw/siw_main.c:489 [inline]
+       siw_newlink+0xc13/0xe90 drivers/infiniband/sw/siw/siw_main.c:465
+       nldev_newlink+0x392/0x660 drivers/infiniband/core/nldev.c:1794
+       rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
+       rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
+       netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+       netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
+       netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+       sock_sendmsg_nosec net/socket.c:730 [inline]
+       __sock_sendmsg net/socket.c:745 [inline]
+       ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
+       ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
+       __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  sk_lock-AF_INET6 --> rtnl_mutex --> lock#8
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(lock#8);
+                               lock(rtnl_mutex);
+                               lock(lock#8);
+  lock(sk_lock-AF_INET6);
+
+ *** DEADLOCK ***
+
+6 locks held by syz.0.201/6238:
+ #0: ffffffff9522c4d8 (&rdma_nl_types[idx].sem){.+.+}-{3:3}, at: rdma_nl_rcv_msg+0x16a/0x6e0 drivers/infiniband/core/netlink.c:164
+ #1: ffffffff8f672c90 (link_ops_rwsem){++++}-{3:3}, at: nldev_newlink+0x2d7/0x660 drivers/infiniband/core/nldev.c:1784
+ #2: ffffffff8f65f3f0 (devices_rwsem){++++}-{3:3}, at: enable_device_and_get+0x104/0x3f0 drivers/infiniband/core/device.c:1328
+ #3: ffffffff8f65f2b0 (clients_rwsem){++++}-{3:3}, at: enable_device_and_get+0x163/0x3f0 drivers/infiniband/core/device.c:1336
+ #4: ffff8880474285d0 (&device->client_data_rwsem){++++}-{3:3}, at: add_client_context+0x3a9/0x590 drivers/infiniband/core/device.c:725
+ #5: ffffffff8f68af68 (lock#8){+.+.}-{3:3}, at: cma_add_one+0x674/0xdd0 drivers/infiniband/core/cma.c:5354
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6238 Comm: syz.0.201 Not tainted 6.11.0-rc2-syzkaller-00013-gd4560686726f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:119
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2186
+ check_prev_add kernel/locking/lockdep.c:3133 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3252 [inline]
+ validate_chain kernel/locking/lockdep.c:3868 [inline]
+ __lock_acquire+0x24ed/0x3cb0 kernel/locking/lockdep.c:5142
+ lock_acquire kernel/locking/lockdep.c:5759 [inline]
+ lock_acquire+0x1b1/0x560 kernel/locking/lockdep.c:5724
+ lock_sock_nested+0x3a/0xf0 net/core/sock.c:3543
+ lock_sock include/net/sock.h:1607 [inline]
+ sock_set_reuseaddr+0x17/0x60 net/core/sock.c:782
+ siw_create_listen+0x1ab/0x11f0 drivers/infiniband/sw/siw/siw_cm.c:1776
+ iw_cm_listen+0x16a/0x1f0 drivers/infiniband/core/iwcm.c:585
+ cma_iw_listen drivers/infiniband/core/cma.c:2668 [inline]
+ rdma_listen+0x7ef/0xe20 drivers/infiniband/core/cma.c:3953
+ cma_listen_on_dev+0x4dc/0x810 drivers/infiniband/core/cma.c:2727
+ cma_add_one+0x78b/0xdd0 drivers/infiniband/core/cma.c:5357
+ add_client_context+0x3dd/0x590 drivers/infiniband/core/device.c:727
+ enable_device_and_get+0x1d5/0x3f0 drivers/infiniband/core/device.c:1338
+ ib_register_device drivers/infiniband/core/device.c:1426 [inline]
+ ib_register_device+0x880/0xbf0 drivers/infiniband/core/device.c:1372
+ siw_device_register drivers/infiniband/sw/siw/siw_main.c:72 [inline]
+ siw_newlink drivers/infiniband/sw/siw/siw_main.c:489 [inline]
+ siw_newlink+0xc13/0xe90 drivers/infiniband/sw/siw/siw_main.c:465
+ nldev_newlink+0x392/0x660 drivers/infiniband/core/nldev.c:1794
+ rdma_nl_rcv_msg+0x388/0x6e0 drivers/infiniband/core/netlink.c:195
+ rdma_nl_rcv_skb.constprop.0.isra.0+0x2e6/0x450 drivers/infiniband/core/netlink.c:239
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x544/0x830 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8b8/0xd70 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg net/socket.c:745 [inline]
+ ____sys_sendmsg+0xab5/0xc90 net/socket.c:2597
+ ___sys_sendmsg+0x135/0x1e0 net/socket.c:2651
+ __sys_sendmsg+0x117/0x1f0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f83257779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f83264f5038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f8325906058 RCX: 00007f83257779f9
+RDX: 0000000000000000 RSI: 0000000020000280 RDI: 0000000000000008
+RBP: 00007f83257e58ee R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8325906058 R15: 00007ffc662de808
+ </TASK>
+infiniband syz2: RDMA CMA: cma_listen_on_dev, error -98
+ip6gretap0 speed is unknown, defaulting to 1000
+ip6gretap0 speed is unknown, defaulting to 1000
+ip6gretap0 speed is unknown, defaulting to 1000
+ip6gretap0 speed is unknown, defaulting to 1000
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
