@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-282357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305C594E2C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:27:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF07094E2C5
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:37:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E67EB20E79
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:27:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4C21C20A81
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A2B14B96F;
-	Sun, 11 Aug 2024 19:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC6415886A;
+	Sun, 11 Aug 2024 19:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0rRvsfug"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrYOPBjq"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202B31D699
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 19:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EA91F945;
+	Sun, 11 Aug 2024 19:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723404438; cv=none; b=SJ8MQ//W5FikD2X8WTdu8lm1KDwbBAoh1YZvzNE5Jpre44IEh3LDL92UbmypwU6jhNCyCMzTHk/8x7inVM23Tteo/UOJkNBFRgAms2gWBA2fzCySK6ZcmakqsxCRXPKxazncUjZt20LY7WB8lW9yLPJLTH6KylrGwA4lqVZoYX0=
+	t=1723405046; cv=none; b=E8zTlzShB+DGbrTzOQNqpPkyE4U6t3leGPf74oPyFPZ4uJkcQKAiEjcfdd1bbttm6g2+mJHfUra/eVbspi/nsrIVbv5wyw+7TZgrShOQItG4k90BduwfyhEKwwzJbOPDKixvUWjnaQ38eHAxGS8KnnVrGyLrgnXNcPNQGyJwioQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723404438; c=relaxed/simple;
-	bh=fCMtz0tuHOR4dScOQBteNQbide3c0rC1YBKQmUX5DnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KV74g73CvNVsWmkrp2uE91fWCzcFgmzRgB3cKKx7IiD20pJy6uPqiF1LPY4CBteCSHEz+SKyIrmpAb3knBpeiVvMX/zVtECPm8N8XUSbxPGFdiVO/+Ba//jP3BsIMZcs/jNc4qCFt2UjShr0d8cUrsoKA2qadUthUPV5TfBPm9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0rRvsfug; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280ee5f1e3so27934205e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 12:27:16 -0700 (PDT)
+	s=arc-20240116; t=1723405046; c=relaxed/simple;
+	bh=ikmiCCPOlqRkEb6DUx1eUYL3/MPw3G/PtfYjQ9vhX8U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KNtDRd4rzowo9mixQqp/qT/ahpiUOChuGz9nT5VxPqImrAFLKLGylQtuTrHUmLl4hIioPEHP0y+8IVH30Rc+SeERSnu9NeNtLlmCNSI8YkGMA5WSntz5XAx6Iwkz6JLhjVcgZ5L+5FzEoel4yIwXxNL/8EMJFHo1tfj66H4cLvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrYOPBjq; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so3455614b3a.1;
+        Sun, 11 Aug 2024 12:37:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723404435; x=1724009235; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qi4pCNP1Gdr9h0T5um8ZgiG7jkuJMsbVZXb0oh3Hft4=;
-        b=0rRvsfugDJv6Q2bwnrcxrI07Te9szTqH9lP6AQX0nFozBLLc6scN3kD5VDmKlIRiiQ
-         8RCEtzadsUavkwPOGRFIn7Dy54nA4eS7QxzHkHm+7QCXXJUljVqbTBTdIFqiEHKr7Hjt
-         TgxKuY4pH+qIlm9542kb3x4rOhaa1L/F98uKMRxwYBDUPcWpjDxSad+u5DP4rYasmbOY
-         O72Owsi5n8HUgIgUkJ3X1DPTY8pfsZBDS4KD9G+UMmVRvK33RAjCBcDJo4kj2G/OWD6M
-         xZ0NAzzalFBT1XEdF2pFQgfUwZG2Ge5XdOiMl6L/95Rmpizob4dfJxrXu/68fzE1I5fK
-         3BSw==
+        d=gmail.com; s=20230601; t=1723405043; x=1724009843; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FT4xeysPtgZnEED7ZNSpLO1Roz20Xrz/qSgj/gG8LH4=;
+        b=lrYOPBjqvCjAMxCn5IZ+8gHsfm9niYnWyB4CORocjJiU5Nu+GtzW3PFFvFe6WFcpVZ
+         oVNkt0XeElHdIJ9eLDuMEHi0trw9MDWvB/WWf9w4fN+c9DdiW4MpS6uud9DpyQS2Kp+g
+         A8YI4VBBWy0aZV8VmhZo2dBoy/dD89IsdtS0bSXzd+G47j/U1gs8tFkcwO9TTX2udiAL
+         oVgtVeilC8jbLh+NGYJgOlqnbCIn3qjhU4gP0sPbiJDADpMN6E4toO0IVVtnX57lGx2v
+         9NZoMG+Mvgan7wRC0+Sx0AvdJBH70QnszuDNPAMgfb5e6NyAWTv7ty8q/MBR1U+m4lHI
+         lbKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723404435; x=1724009235;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qi4pCNP1Gdr9h0T5um8ZgiG7jkuJMsbVZXb0oh3Hft4=;
-        b=F1fcIm1Y9/14BtG0hYFikxcZ+goSOsb7567heCad+VTHV54HH/tT445jjehU11ogvU
-         Yj9p9MTVpFCc7hgudpp83T+Z8XQiJDal7DZ9GI0SeE/L5iqrKMkHZNX3DZDIejplxS7w
-         ylDoQgnk7Y1qYShmWO+Mz/H/fW83OIbUlINkxYuZ9DQyepXDvOfmHN8WJaygen/qv18W
-         nLQY3wS1kTLCQL2o5VGD3ktov0knKqP37q7tvnEj/D+KIqzx5rCd+JWS1/rRPGrC1GNl
-         jsQaISjIiLzmPKj4rEGW/uMj3QfgGi/jkGqSAgF1JcK2mTpPG7LxE8FtY2crsC6FaUZB
-         ZDHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3gQsSr+dzyYV0gWHuXGE7n4iFc5H0ACCG/6clhN/IRQp5Ne8p2w6rtiCgC7XJHtZ+YMJSQjO+II9fg0Ufo5iHI10Jsja+26XYMgYp
-X-Gm-Message-State: AOJu0YzaHotUjtNM5QVH/+bZQ0qaGRiU03WDWuxJ3fL0tORGP+4IT2Z/
-	HCiRL7CdDbuSQIhcBGTSZ5ww3DljLK6M5tgtPuToPYXkKoQtmm1NMbKfst5UHwU=
-X-Google-Smtp-Source: AGHT+IGagufT2xNn/QKQu3bmVrV6jU72TWeF3FBl77gAzQllDDZ8/5qNg/Q6eq++X65pc/tFy4d3Pw==
-X-Received: by 2002:adf:f349:0:b0:368:664a:d4f9 with SMTP id ffacd0b85a97d-36d5eb08646mr5681407f8f.28.1723404435210;
-        Sun, 11 Aug 2024 12:27:15 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6978:7b03:bbeb:d1af])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfefe71sm5552517f8f.62.2024.08.11.12.27.14
+        d=1e100.net; s=20230601; t=1723405043; x=1724009843;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FT4xeysPtgZnEED7ZNSpLO1Roz20Xrz/qSgj/gG8LH4=;
+        b=OsElUovaqwAikmC2quqEuzavHqaDuZbAz0xSos3E6PI1q6pvTocJi92FlYa7ZGNfrL
+         m4p8y7jZnhbS7JxLL5eOnNLn1beadRsq6sHR2lGHs1xTh/UnNTRzUqwUdyqGWbaNgAU8
+         UiwDHLD4eeJbEaDKg8ItvW+DLWQ993HbX6gCyBEgKMiz/VLiWuymHycH/DrkKvZgqLzC
+         wFpe2/RDgs7PH6/RDYNXRQItCmmXESocWVyDhIj7lhC1CxNpCkJGGrAOps6c2D+dZNwU
+         rhRg8xrqcZpu6nyBvS8nHkxHyykjMg7vyj4XvF5M3m67+IWGwLURlwJfNbddTT0+R8dK
+         vGkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8hIFT9KrWS+u4uRvpyX2o3tHkoNkp0unAFjBitdzMs5SHBfGFfrImPCbOlbfIw1uxQ1rL3xXasMRCTCioonW09K68NAkSuSwph8c3XmqMo6ui/ohrSEis6YTfGAcrGX7nm5nqr3R4bOFjIQqF8fT9orsq09oDnAsH1eYUTgqgyA==
+X-Gm-Message-State: AOJu0YyUPlP4tVMrYZkI3vxoG21rWETCGx/qt/xKJkLN9hraHvfbysnu
+	dPMO9s+BRydIWhSCvO+UQWnK+ANjj1KOoLYA4xZ44hLRx/Xrlxhp
+X-Google-Smtp-Source: AGHT+IH6q7CgRJyf1EjyGEzPBy1TOPudwIDMCx/3t0n1OAzxptirUSj6B0BDWeUKJD5hWul1RvfnKA==
+X-Received: by 2002:a05:6a21:3a45:b0:1be:c6a5:5e74 with SMTP id adf61e73a8af0-1c89ff22057mr11146417637.21.1723405043063;
+        Sun, 11 Aug 2024 12:37:23 -0700 (PDT)
+Received: from dev0.. ([2405:201:6803:30b3:6c2e:a6d:389a:e911])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5872b1csm2689564b3a.40.2024.08.11.12.37.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 12:27:14 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: brgl@bgdev.pl,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	ukleinek@debian.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/2] dt-bindings: eeprom: at24: Add compatible for Giantec GT24C04A
-Date: Sun, 11 Aug 2024 21:27:13 +0200
-Message-ID: <172340442666.7060.12608274118090495917.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240810211438.286441-2-heiko@sntech.de>
-References: <20240810211438.286441-1-heiko@sntech.de> <20240810211438.286441-2-heiko@sntech.de>
+        Sun, 11 Aug 2024 12:37:22 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: idryomov@gmail.com,
+	xiubli@redhat.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	ceph-devel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	javier.carrasco.cruz@gmail.com,
+	Abhinav Jain <jain.abhinav177@gmail.com>
+Subject: [PATCH net] libceph: Make the input const as per the TODO
+Date: Mon, 12 Aug 2024 01:06:45 +0530
+Message-Id: <20240811193645.1082042-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Modify arguments to const in ceph_crypto_key_decode().
+Modify ceph_key_preparse() in accordance with the changes.
 
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+---
+ net/ceph/crypto.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-On Sat, 10 Aug 2024 23:14:37 +0200, Heiko Stuebner wrote:
-> The gt24c04a is just yet another 2404 compatible eeprom, and does not
-> follow the generic naming matching, so add a separate compatible for it.
-> 
-> 
-
-Applied, thanks!
-
-[1/2] dt-bindings: eeprom: at24: Add compatible for Giantec GT24C04A
-      commit: a825dea2cd27a30e49816f18b7bc16545d5f0f89
-
-Best regards,
+diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
+index 051d22c0e4ad..cfd485d6d3c5 100644
+--- a/net/ceph/crypto.c
++++ b/net/ceph/crypto.c
+@@ -86,7 +86,7 @@ int ceph_crypto_key_encode(struct ceph_crypto_key *key, void **p, void *end)
+ 	return 0;
+ }
+ 
+-int ceph_crypto_key_decode(struct ceph_crypto_key *key, void **p, void *end)
++int ceph_crypto_key_decode(struct ceph_crypto_key *key, const void **p, const void *end)
+ {
+ 	int ret;
+ 
+@@ -300,7 +300,7 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
+ 	struct ceph_crypto_key *ckey;
+ 	size_t datalen = prep->datalen;
+ 	int ret;
+-	void *p;
++	const void *p;
+ 
+ 	ret = -EINVAL;
+ 	if (datalen <= 0 || datalen > 32767 || !prep->data)
+@@ -311,9 +311,8 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
+ 	if (!ckey)
+ 		goto err;
+ 
+-	/* TODO ceph_crypto_key_decode should really take const input */
+-	p = (void *)prep->data;
+-	ret = ceph_crypto_key_decode(ckey, &p, (char*)prep->data+datalen);
++	p = prep->data;
++	ret = ceph_crypto_key_decode(ckey, &p, (const char *)prep->data + datalen);
+ 	if (ret < 0)
+ 		goto err_ckey;
+ 
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.34.1
+
 
