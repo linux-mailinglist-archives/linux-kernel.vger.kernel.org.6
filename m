@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-282292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB18894E1B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:55:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4646494E1BC
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:01:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3772FB20819
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:55:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1DC0281397
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADF11494A4;
-	Sun, 11 Aug 2024 14:54:55 +0000 (UTC)
-Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD95514A60D;
+	Sun, 11 Aug 2024 15:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIw+pSyt"
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B51851DA22;
-	Sun, 11 Aug 2024 14:54:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5F53B64E;
+	Sun, 11 Aug 2024 15:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723388095; cv=none; b=g3wvR5n3y7T1wnzet3kzg4dPSyI+o0v4TImYrJg+CYsAo+Dfi63j1dX0Wc7dgqKgitq02Xg/IRHCt9HaOj3fn/thfzCcsh4G/qSElMQOpmP3muHUws2Eboi/sTwLZi3GKSirC/vzcX8J230HUf5avNrNZP51Ws05OlqifU3M4kg=
+	t=1723388453; cv=none; b=hkhZSBsHeM9g+p7yzhsMpLi6vOD9xUaxvbMLLOmAM8tlhx1pE2PeUtWnlV37k5Y+P8H9vy8iXagy978REhLarNPgESOoFd0nrZ2pL+xsS8RaSZzU+5KMXkr0NKyTWrsmp+BKYd6HrWk18d33Ag/zy5cgBVhqPpudJUskoz5YHIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723388095; c=relaxed/simple;
-	bh=zpNMteEMTs0lxqMYFV36vnyd4fQM3LiBFf4xu8Vtp4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDBfA0jANkDL0+8PVMHU5nwIhrebTRrB0f/a0/9SQMYTvT6zMIy593soqJ1tNYrulBH5hbdBsCgE7oUpJjrmBQps0NhBt+mZ73QCGnr9AWbb3aZsE7Jv4bwcr/mYT5yVz6qqJQ1eVx/Sy94cDmOHrVBLJ1tnci14P2stjVP7vBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
-Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
-	(envelope-from <fw@strlen.de>)
-	id 1sd9xz-0005Ri-4Z; Sun, 11 Aug 2024 16:54:43 +0200
-Date: Sun, 11 Aug 2024 16:54:43 +0200
-From: Florian Westphal <fw@strlen.de>
-To: Florian Westphal <fw@strlen.de>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>,
-	syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com,
-	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
-	kuba@kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
-Message-ID: <20240811145443.GD13736@breakpoint.cc>
-References: <0000000000003a5292061f5e4e19@google.com>
- <20240811022903.49188-1-kuniyu@amazon.com>
- <20240811132411.GB13736@breakpoint.cc>
+	s=arc-20240116; t=1723388453; c=relaxed/simple;
+	bh=S9IJOizBISp63DNmHQaW5E+RvhnQ/UMlG1+NU22jFDk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k0dhXH0uH0VBx5FgCPxB765NMXPEw44jo47bSzmr1sHn/VizH2WZnT7T4FaibWYAhn5AlFzcaBOTT4FljQyuPwkiMrO+uoFoVo8YKE6tQd9sWjvOzKZYGAf7rKaDn66aQ0oNZdcQz1GQBuVykvESrEleL1jgLuA/V4t10y4r9NY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIw+pSyt; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7093abb12edso2640470a34.3;
+        Sun, 11 Aug 2024 08:00:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723388451; x=1723993251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pfBc+ff67QC7mdj/Loo7l4PIYi+bwKE4KNgOnmb8TNU=;
+        b=AIw+pSytbaHRdON10Ru5adGfBWgoVfusjnnp++FkL16fJUcyoxtt4y30qSBXz42J8L
+         dla1GPP1GKN9M3tjymBIcsmYtzNzeS0R0QzEWsNN06ofQGjAA0/sbW8+SPmHrdSeEah6
+         O8Qrpe4u92UqrqUYDtuNSA2jYxN6V0wn6D7d4yT1ReoAlaCuQoSShXRyqtbFeMkHYLJQ
+         P6aY1F5PrEYlxfUTyWKcRuVvegTOy2sdWeZrP8d1u+InIzi0wl5mEzSvUTv8QXskmwiE
+         abMYpsGXkKq17pmBEynngcxeK0ydPG6t7UjnCRT0LNSomK/WxZJzN3YtjblDg9p1SwSv
+         dznA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723388451; x=1723993251;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pfBc+ff67QC7mdj/Loo7l4PIYi+bwKE4KNgOnmb8TNU=;
+        b=eyuiovVZgFNAHwMi1+atm91vjMWnl2CLYann1RNEjFwkXKIVNZoP02rUhOLZ4jCous
+         QaTLj0PU8x4VHg8FEPQ5O8KdErHMH/XB/c6Av+U/AS04Jfb4c9J1D85/i1fCGNwuIA7K
+         99QlxPq6sh0cl6PCUakHBtha57MqQXX1JlypyW2hGE63TDwmAgqh1H1PC1kyaCxkQxR6
+         lJtFZGCMQTgDm0ANVQt5q5LhuwcSS/6cvuSSiJpT/gMPvCOJvIwoxnz6ak6tlVzIVus/
+         73CcQfKJ2JI2soNl6EFMuRJGSVagZaedeTmAJjYtrZEnK7sew2azYGi3J+yZQEaMJtIj
+         y+fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUtDSg340lzxCpC1whLzy87NiLnXj7dgceoe7bgkSwMjiv1wb0jd20dLKsxG9ipIsUJPbXTyJTqZd2cLoSMEs35sYgwo8MzrXCqHuITq9ejBgjXRO8SVbK3j1qX+mmQAyEnZAnZcBVbXO+DGXXwibgjSORTn4gddV0PxvOah8Y9TrUIPvUTUQ==
+X-Gm-Message-State: AOJu0Yww++wV9M3n78qyh44DCa8xMLVkQJPpfDpL/3sW0D8ZPq5cOFCF
+	EhjnTuRudFYE/4BRZ0aMoYC9XoT0j8jTNiybv4UGv6WBcrI7L4jJ
+X-Google-Smtp-Source: AGHT+IEMA414kW03hmeGkCEkocWgIKzclm9K+gA1MhdJCW4WGO0QgA0cpEC+ZM64V/Fm2ASyi6bF/Q==
+X-Received: by 2002:a05:6830:621c:b0:704:45b5:6464 with SMTP id 46e09a7af769-70b7c47cb7dmr10612414a34.29.1723388450627;
+        Sun, 11 Aug 2024 08:00:50 -0700 (PDT)
+Received: from localhost.localdomain ([49.37.215.150])
+        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-7c3dbe04068sm2711311a12.6.2024.08.11.08.00.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 08:00:50 -0700 (PDT)
+From: Mohammed Anees <pvmohammedanees2003@gmail.com>
+To: hannes@cmpxchg.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	tj@kernel.org,
+	lizefan.x@bytedance.com,
+	mkoutny@suse.com,
+	shuah@kernel.org
+Cc: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kselftest/cgroup: Add missing newline in test_zswap.c
+Date: Sun, 11 Aug 2024 10:58:58 -0400
+Message-ID: <20240811145900.433711-1-pvmohammedanees2003@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811132411.GB13736@breakpoint.cc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-Florian Westphal <fw@strlen.de> wrote:
-> > I came up with the diff below but was suspecting a bug in another place,
-> > possibly QEMU, so I haven't posted the diff officially.
-> > 
-> > refcount_inc() was actually deferred, but it's still under an ehash lock,
-> 
-> but different struct inet_hashinfo, so the locks don't help :/
+Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
+---
+ tools/testing/selftests/cgroup/test_zswap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-No, fallback is fine: pernet tw_refcount, init_net ehash lock array. so
-they same buckets should serialize on same ehash lock.
+diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
+index 190096017..7c849d836 100644
+--- a/tools/testing/selftests/cgroup/test_zswap.c
++++ b/tools/testing/selftests/cgroup/test_zswap.c
+@@ -351,7 +351,7 @@ static int test_zswap_writeback(const char *root, bool wb)
+ 		goto out;
+ 
+ 	if (wb != !!zswpwb_after) {
+-		ksft_print_msg("zswpwb_after is %ld while wb is %s",
++		ksft_print_msg("zswpwb_after is %ld while wb is %s\n",
+ 				zswpwb_after, wb ? "enabled" : "disabled");
+ 		goto out;
+ 	}
+-- 
+2.43.0
 
-https://syzkaller.appspot.com/x/log.txt?x=117f3182980000
-
-... shows at two cores racing:
-
-[ 3127.234402][ T1396] CPU: 3 PID: 1396 Comm: syz-executor.3 Not
-and
-[ 3127.257864][   T13] CPU: 1 PID: 13 Comm: kworker/u32:1 Not tainted 6.9.0-syzkalle (netns cleanup net).
-
-
-first splat backtrace shows invocation of tcp_sk_exit_batch() from
-netns error unwinding code.
-
-Second one lacks backtrace, but its also in tcp_sk_exit_batch(),
-likely walking init_net tcp_hashinfo.
-
-The warn of second core is:
-WARN_ON_ONCE(!refcount_dec_and_test(&net->ipv4.tcp_death_row.tw_refcount));
-
-Looks like somehow netns cleanup work queue skipped at least one tw sk,
-hitting above splat.
-
-Then, first core did refcount_dec() on tw_refcount, which produces
-dec-to-0 warn (which makes sense if "supposedly final" decrement was
-already done.
 
