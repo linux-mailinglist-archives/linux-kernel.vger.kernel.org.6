@@ -1,128 +1,123 @@
-Return-Path: <linux-kernel+bounces-282328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A326694E24D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:36:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CF294E250
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:38:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FE60B212D7
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D1C01C2093B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259A11537DB;
-	Sun, 11 Aug 2024 16:35:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625791537D7;
+	Sun, 11 Aug 2024 16:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkVZGXG2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQF6LNYX"
+Received: from mail-oa1-f47.google.com (mail-oa1-f47.google.com [209.85.160.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AC81537A7;
-	Sun, 11 Aug 2024 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4A43715E;
+	Sun, 11 Aug 2024 16:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723394149; cv=none; b=htVp3NbKm5WAFaQStYehJCNnty6+tqEc6RMR8Ki3dDjOh5vvoyWb+PFiuqnE17qGG04tVsRQjblzlJ4hd++s1XI2BBpJyqqU6jdMMhRy2RKOBGLsr6bqAI/SslWcRFtuTcpPbhdehwsOcdDIm8JpTUG7RYm/datK5qmK9Ppk2i4=
+	t=1723394295; cv=none; b=Ankzeqs52MAVEKBIF+JOts/0R6KhUl9m5tZemPE+irFVYm/u9afOIkLi4wvFiR8nevT1gSr10t+6K+9rPQlNFSM8GPqB07CsWA7kW0Zwu4lKhyGhqV+t2/qFr6Dwx0DQm38qtgjPYWfcq0wvod39qoDoCfPYFbZ/Icj+hm7AZ3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723394149; c=relaxed/simple;
-	bh=JWC3mgdz2ktAtm0H6Q0A+PYoh4dsi333CkWUpefiwTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrAZiW7MoeMQXEx6Zgyk/oUeBTIq7IzxpOfbVDBeURr+6wXyzlT9t8VFhApahvQRx0wF0gBAwlF8uC7NXbwgT97ruB3t7J/ZaajLiWBBQ54eJUdJyLWC7dtKFXJy8u1Mk/8HBhYeQ1XMib01srPvzHeGffki4xsB2pv1385adnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkVZGXG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30118C4AF0D;
-	Sun, 11 Aug 2024 16:35:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723394148;
-	bh=JWC3mgdz2ktAtm0H6Q0A+PYoh4dsi333CkWUpefiwTs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LkVZGXG2B04KEwhASYe0vn0UbubvJskcdiZ48Fj381Pat/uHAGPW+1QGjUAXyGKai
-	 9HdQ9PTWMNPaFKVmWhvRu5mWX0xT/qyz2f3hrWTdEiRcbsq9ETalzizQdCx7wiKmN3
-	 7Tx3PCNS4p4pOvtlnF3Sp6ONa5s6t4wR4pfiTHNdXOn3hWjdxE90BArYS60SOJte7M
-	 rTZI010lgwijCgyLuBu2w5tNZGjO5PUBlsW/a10DvWiRH7sCNzjF5kDVjOr5dFOcSq
-	 DVbL3MTse1AwAUPExKhC8/As3AJ7PIsygcZ1Y7t1WJszPayTZYRDnTIdawBKhSvJow
-	 goti7KOisr8Gw==
-Date: Sun, 11 Aug 2024 19:33:30 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	kernel@collabora.com, stable@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] selftests: memfd_secret: don't build memfd_secret test
- on unsupported arches
-Message-ID: <Zrjn2qIcGxPBuSP9@kernel.org>
-References: <20240809075642.403247-1-usama.anjum@collabora.com>
+	s=arc-20240116; t=1723394295; c=relaxed/simple;
+	bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=drtVwsGUwuvIyG5Xu5jlN3bifCd0wvz0BCWaj7ffRInTv2wNZrDNefS0FsYKaxz53eU4rh+xcQBibFubHDvmu6luoj0bADkyVgsDJIljLRNmtxQ/qAXnaw2PBRZqG8pFBpexZeKYzcXiBawk+WN+cE1zcbLe+xC/isoYHr90F1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQF6LNYX; arc=none smtp.client-ip=209.85.160.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-261112c303bso2842683fac.1;
+        Sun, 11 Aug 2024 09:38:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723394293; x=1723999093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
+        b=HQF6LNYXoUrKCuBQ6224+zCuH4AIVU6z7Yk88N2UAoLjXxV+gz+nyIao8avoGlFxgH
+         6h1MUIBPrH9dcTwdBeNXxM+Gnf6zgjyQ/86PU/RPqyNG9tFNSu5Vkp+cOT2XpOQmHYiA
+         fyjemRm1orNwAAn0251rvHk06mxrs9pMFcDVdNj/d1A9gZtoIJO3MyEtabZFgsuJ1YGv
+         6LzazYBuE+/46QgcMj/JUjMwHWnfy6Umo1nQMTQ+ZDY++q1nP+fQCI+MVIUhgPHUZwJ9
+         zqH1MekowTwadynpeKK5iLoeFrppgFkpWE7r3CRgVymreCmnaGHAVVy77mAQlFzUDJy6
+         DkMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723394293; x=1723999093;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y+NTnHleEkqfILvvk4qSrCw+HTpzEe30ogMxm29uIlE=;
+        b=H/MWtyKIxbeE6Z+l41LF82vl4df8GnAKr+/w5snvHFyQDYmayRYEpT0RY1fbDKQf/9
+         57D37a/8sUORCgwK27d3iMKjHd6ZlV1HIQ1DlkqIpUMRGb2pK+sPlnQdg4SOAcaBbE0n
+         unlzBTIhKvEvrzidjywTAZLt6CZ/R8LyDo+vRxj56psRlstW35ii2dD1eg4DF4EbNvIm
+         BiiPww6PMFqcQ46txCSe/rso3MveowBA86MWK06FNtH6fEulmLzs/GmSKNGA5rogRmB8
+         MHWpsFmHduxBQdXhb0G8saj3H0O4hm5arB7vzGR9Df6ANuTmX6uUb54kx5rlGS7tjzSJ
+         X/Vw==
+X-Forwarded-Encrypted: i=1; AJvYcCWuKMSABxplsod+EsF3bKGDqt5iryCAfTOHiPUIPkh842jm2rIzoIV1tfUzGUddidGfBXwqo04jN7um2Fvy/eYZCjO5aNWPIfvWHPPl
+X-Gm-Message-State: AOJu0YzFrwu5MBYcXnFBqLBSqlgQoOzKPwbs2b6ei/qcPYYzToI83o5/
+	Uw5UZhWwk8MR9BgMdNQfwhGS33DM7nEwVKnZVW3NrgRWGLbqMt7y
+X-Google-Smtp-Source: AGHT+IFt4OWbki80dHWLXSe8zfKBrJruDBoPMUW3zsS4VoHmKLWspr7mqFgIFh8+tZFFnEYjguPmZA==
+X-Received: by 2002:a05:6871:b25:b0:25e:1f67:b3bb with SMTP id 586e51a60fabf-26c62c426e3mr9228165fac.10.1723394293340;
+        Sun, 11 Aug 2024 09:38:13 -0700 (PDT)
+Received: from ?IPV6:2603:8080:7400:36da:dff5:4180:2562:4c1e? ([2603:8080:7400:36da:dff5:4180:2562:4c1e])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26c72045928sm1327064fac.4.2024.08.11.09.38.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Aug 2024 09:38:13 -0700 (PDT)
+Message-ID: <17afa9c2-29f9-43e8-8dfe-398eed312cea@gmail.com>
+Date: Sun, 11 Aug 2024 11:38:12 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809075642.403247-1-usama.anjum@collabora.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs/sp_SP: Add translation for
+ scheduler/sched-bwc.rst
+To: Jonathan Corbet <corbet@lwn.net>,
+ =?UTF-8?Q?Sergio_Gonz=C3=A1lez_Collado?= <sergio.collado@gmail.com>,
+ Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20240810100955.14901-1-sergio.collado@gmail.com>
+ <87le14bfm7.fsf@trenco.lwn.net>
+Content-Language: en-US
+From: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+In-Reply-To: <87le14bfm7.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 09, 2024 at 12:56:42PM +0500, Muhammad Usama Anjum wrote:
-> [1] mentions that memfd_secret is only supported on arm64, riscv, x86
-> and x86_64 for now. It doesn't support other architectures. I found the
-> build error on arm and decided to send the fix as it was creating noise
-> on KernelCI. Hence I'm adding condition that memfd_secret should only be
-> compiled on supported architectures.
-> 
-> Also check in run_vmtests script if memfd_secret binary is present
-> before executing it.
-> 
-> [1] https://lore.kernel.org/all/20210518072034.31572-7-rppt@kernel.org/
-> Cc: stable@vger.kernel.org
-> Fixes: 76fe17ef588a ("secretmem: test: add basic selftest for memfd_secret(2)")
-> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+On 8/10/24 09:46, Jonathan Corbet wrote:
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Sergio González Collado <sergio.collado@gmail.com> writes:
+>
+>> Translate Documentation/scheduler/sched-bwc.rst into Spanish.
+>>
+>> Signed-off-by: Sergio González Collado <sergio.collado@gmail.com>
+>> ---
+>> v1 -> v2 typos corrected
+>> ---
+>> v2 -> v3 typos corrected
+> Thanks for working to improve our docs but ... if you find yourself
+> sending three versions in less than 30 minutes, that is perhaps a sign
+> that it would be good to slow down just a bit and be a little more
+> careful.
 
-> ---
->  tools/testing/selftests/mm/Makefile       | 2 ++
->  tools/testing/selftests/mm/run_vmtests.sh | 3 +++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
-> index 1a83b70e84535..4ea188be0588a 100644
-> --- a/tools/testing/selftests/mm/Makefile
-> +++ b/tools/testing/selftests/mm/Makefile
-> @@ -53,7 +53,9 @@ TEST_GEN_FILES += madv_populate
->  TEST_GEN_FILES += map_fixed_noreplace
->  TEST_GEN_FILES += map_hugetlb
->  TEST_GEN_FILES += map_populate
-> +ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
->  TEST_GEN_FILES += memfd_secret
-> +endif
->  TEST_GEN_FILES += migration
->  TEST_GEN_FILES += mkdirty
->  TEST_GEN_FILES += mlock-random-test
-> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
-> index 03ac4f2e1cce6..36045edb10dea 100755
-> --- a/tools/testing/selftests/mm/run_vmtests.sh
-> +++ b/tools/testing/selftests/mm/run_vmtests.sh
-> @@ -374,8 +374,11 @@ CATEGORY="hmm" run_test bash ./test_hmm.sh smoke
->  # MADV_POPULATE_READ and MADV_POPULATE_WRITE tests
->  CATEGORY="madv_populate" run_test ./madv_populate
->  
-> +if [ -x ./memfd_secret ]
-> +then
->  (echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
->  CATEGORY="memfd_secret" run_test ./memfd_secret
-> +fi
->  
->  # KSM KSM_MERGE_TIME_HUGE_PAGES test with size of 100
->  CATEGORY="ksm" run_test ./ksm_tests -H -s 100
-> -- 
-> 2.39.2
-> 
 
--- 
-Sincerely yours,
-Mike.
+This v3 does not have the changes I asked you for v2, Sergio. You'll need
+to send v4.
+
+
+> Thanks,
+>
+> jon
+
+
+Thanks,
+
+Carlos
+
 
