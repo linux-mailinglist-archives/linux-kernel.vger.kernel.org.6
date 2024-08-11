@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-282074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3E2E94DF64
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3292594DF66
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 611A6281B70
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:26:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0DED1F216C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B3479F0;
-	Sun, 11 Aug 2024 00:26:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF175672;
+	Sun, 11 Aug 2024 00:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G217z+xc"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDGanktD"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79C944689;
-	Sun, 11 Aug 2024 00:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E48C360;
+	Sun, 11 Aug 2024 00:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723336002; cv=none; b=mf+i2vJeP4RgbpDtWdExtLHSwu85eZ/63EoNH9LIHABKSihyD4s9J9kFqbN6ViahDNXXD4AOAOsWfVkfGBsHA43vvco13S0LS4FTYCn0gA7v/puQ+3pfiw1JTg+qV4FBT5ZX63f3mnTPrbkcF5Ualx0WYupo1xk1JhZB7Ow55RM=
+	t=1723336231; cv=none; b=md5tbQxyFZVWOPd9Az5P1Aqs+VxOga++uc9l4V6KhOc1dMcChutkuDLQ7Qmapwq/QuP+SRkWW4Rxs02Ltoa6Qg0REAytmJQNygaxF3b2Uj4FdbE1/ecNv7j3h9bRAnWlxTctP+PuzFt5ul5d4JOqzCQKZqfqPZSvOlz289E6vhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723336002; c=relaxed/simple;
-	bh=4F4WrJKMMj/mzhKGOf6beBPkIcpH11FmNTcDNr7IdQs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0/a1P8PLW4JFplNI3LWnDkgsq/hofnmCA1ssFB1tULO/YgcF7QgoJLCdpA5L9eCdBeseLPBvalxnMCBbMweJDbficwQ2d9CHO5D5+5YyyeAZSzi+RFJu8R1gNPxmEb/79t6sD00dOdivNgVBSATQeSxRoLtl9MruTAWe0BODIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G217z+xc; arc=none smtp.client-ip=209.85.167.50
+	s=arc-20240116; t=1723336231; c=relaxed/simple;
+	bh=vaUddXrjASxrFU7ujZ90h3PNCsSdvh8bEciES9HDY5w=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7K+Q6NnV/Ft1rg+2Fvjufu4uooYIVGpwIojJzJiXCAoxdOTm5n3zt+9oqturitb9EldcxwVnrYtRzK2hsVgIrLljRi78p5Gz7En2RxN7QFM7wf8vaYlg5HujpSGXi771VhetgrEjq+KhdNCadOsAe+CX1VJCpPEj3aPw6IeMeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDGanktD; arc=none smtp.client-ip=209.85.210.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so4431799e87.2;
-        Sat, 10 Aug 2024 17:26:40 -0700 (PDT)
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70ea2f25bfaso2434460b3a.1;
+        Sat, 10 Aug 2024 17:30:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723335998; x=1723940798; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KzucCDEgUPc/knhsH0R6bnlBW2fZ6eS9QbdJKQ4MQ6s=;
-        b=G217z+xcQNw7qwAkFkmllxykzqShurDi6LxEOazzg+i2Fp1giacG38njru7EldJZef
-         ylIBNuIRYnA0NWPEGtmYszro0g1OYvIjwntoyGA0BLMLrP/uyB+W7XdxJ33OSoQtulV/
-         talu8FX0/m32HXPFS15ChdjkRl0tSZqg4I9EEEkHKdPj4J1QNI2CQFPR58PtMEmiPqRl
-         7usLQhB5bPYZM6bcRYxy8hp9XCqbmjvtzIMQa3roVnCL613cLmHctM6jf/YI/bHvrNKs
-         ECfwubXoNK9qFb15/2Rll5YWMkUEvGQEs9zowl2Thllz3miG5G/7Lh25hB5u/pqOePr3
-         jwJQ==
+        d=gmail.com; s=20230601; t=1723336229; x=1723941029; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=RTU5KagBlB4zAmSVjdZRQ8PvXJgJUde7W6biB3B8HIU=;
+        b=PDGanktDT6sCdu8YITX9U/RDW+QLuH4ER8rT3mHeqjob5JBeEmUPCc+Tkpa1FFNoOy
+         340ww0fBwpbAy3lcDORxgDCi20misjdwnDgRfFzHWqmwkSfkn/DZfdb07Ie/F5DetfWo
+         JQrZ8B1rmN8+47fR8xiA6wj0Sbqq3lOeehyWejA/9ldNToz4u84svqX0uGPxc7SF609d
+         tLGL2RRUPZc9AGCjmdHWgQ7wfJGgoQBsoIKdOZd5OJAAxmWw8TyPSJldNOpzwOasfyTy
+         Fs7A29RuJfOwLmjzbvWUAOfqKF4xb8hld7gl8hju9T9xLKF4q3mD+mhlPftdbmBX+0UU
+         Rz3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723335998; x=1723940798;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KzucCDEgUPc/knhsH0R6bnlBW2fZ6eS9QbdJKQ4MQ6s=;
-        b=WME7VtE3FMJLFc+CqxavFJF8670/4haeK+hLhy0RhOcE5yGxgbnttTiNPoWkS6lsNq
-         PbOzuenovUVQA9xA8wf1PyqGNlzLB/XdeX5ULoqTja09/MJJgdua6ktJF6MX6M0itz/v
-         4sBkcmIUEaLUPqEElu4WvnGvsF0OXKipyhOc2Dx+SDDfLfC79x5tKSu/nnNKpXshpGFy
-         jfGU64UvY2g4Zf1DZsYnxTvdzHxFiKl9VS/y4NikGkbqOTGu/ZCeCuchOpGYdrFauz+2
-         vAM1Zce6ot/wiPoD/hvuLnTYQwLsoD0mKrzTt2mV7f2bsi3P24cFX/vV5c6VsZQaG4Tb
-         g9AQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV043k7jjFdkyenwyZU5gecFPCoOo+flWbKp7RgnKRECBVkyNhC55mcT3s3RzbUtV3ud7oxFipn0Yq3XmDkWzxMjuIJw6y5GcwcN5TMBbvXdbkwh7lUbxax3nZS5q88LtbU/TqYFYUJRmocpBlqe8kvTmW/UwLPfAesVAZ18aD1Rf9HtaVL6Q4TaX4reI75CFh2wQgFFkL5cDvtMO2ULP9JTCn7c5alubwdERqZiVHpC31fHPJbof18X2I5mDxQ9H3daL5/r8sp
-X-Gm-Message-State: AOJu0YzR+Ropoev0mdrhrxjkuWOp5kaPPQC5FXLk+LTpLc2OYFEtk7XA
-	X5A0Ktwq6/MiEK3xpA1Nn2mOfoqe12bZxLnMkkLV9yKH6Jr1C3v4
-X-Google-Smtp-Source: AGHT+IHGUDxTBJfpaHljrBfVqf8VHFwyZebTa6fbP6EnQs4QbnrVNUPOXxqYqfTpTIhUbCCRTtnLjw==
-X-Received: by 2002:a05:6512:3ca4:b0:52c:d905:9645 with SMTP id 2adb3069b0e04-530ee998c1fmr4413909e87.13.1723335997946;
-        Sat, 10 Aug 2024 17:26:37 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb2136a3sm108263966b.172.2024.08.10.17.26.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Aug 2024 17:26:37 -0700 (PDT)
-Message-ID: <40f3a81a-b5b9-459d-8231-25ba3dc71b68@gmail.com>
-Date: Sun, 11 Aug 2024 02:26:35 +0200
+        d=1e100.net; s=20230601; t=1723336229; x=1723941029;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RTU5KagBlB4zAmSVjdZRQ8PvXJgJUde7W6biB3B8HIU=;
+        b=WZGH9oE6vRn95vxPc/vo9UhHa7z8ud3uXwqBcLOGI5smgTkCmo1yAU8XllVDWURNK6
+         csC44v/HJ7eOAbnphz6wYO/TPKSM3x40p0LHX3VKJbxgX3jnMnAffeiFBGieesOCVR73
+         nmHYv5vhsmu9Oot/KWwNa5LQTovvsI3UPg6n3ivrLdFaoUEhGBKxJziVGePtWeK4ADjU
+         Rs64yN8PJqlteSgI5I29oB/864nz6+mgfGUz4dCjSK5DHlDkcffDJ4SxKwaoQvfEi/it
+         reKUn7I1DsDmlDYbymc3bW85TquvFqtkdbcbVZarv5rojR3UOgHCul3OSQCVxsud/QW0
+         9ohg==
+X-Forwarded-Encrypted: i=1; AJvYcCVp12g21QJvqL0g2AFzZ+ESZgf8paLiz/s65Oahn0sjF1iTR77xbXRshI1FgArN0sq592MNEx9X5/FrXNA1T4OmqAb4fC0f98j6bOnR9aie1GZDrCNF6CoapPYa5712VwFHWlh9
+X-Gm-Message-State: AOJu0Yxwi4dUJOcTGqPf0oao9c+YuwLOz7XfNtKtQNQQpNzY4Pm2+npX
+	63ayW7P9LdUUBCqn9hL01t2Kg2ui8fbVKFcl2cbEr9H6wClj08R4
+X-Google-Smtp-Source: AGHT+IHmJtGI/0vlKenALImUzngCP/eRiB6LzA0ka4Y6QAeUFBN2+br1D17hsZWcPi8WeKtYzvaJRg==
+X-Received: by 2002:a05:6a00:a2a:b0:70d:1d48:a7d9 with SMTP id d2e1a72fcca58-710dc768d0dmr5741709b3a.15.1723336229256;
+        Sat, 10 Aug 2024 17:30:29 -0700 (PDT)
+Received: from Cyndaquil. ([174.127.224.220])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a43cc2sm1713303b3a.104.2024.08.10.17.30.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Aug 2024 17:30:28 -0700 (PDT)
+Message-ID: <66b80624.050a0220.39b486.4736@mx.google.com>
+X-Google-Original-Message-ID: <ZrgGI/4lVVJuN+uE@Cyndaquil.>
+Date: Sat, 10 Aug 2024 17:30:27 -0700
+From: Mitchell Levy <levymitchell0@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Mitchell Levy via B4 Relay <devnull+levymitchell0.gmail.com@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+	linux-kernel@vger.kernel.org, Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2] x86/fpu: Avoid writing LBR bit to IA32_XSS unless
+ supported
+References: <20240809-xsave-lbr-fix-v2-1-04296b387380@gmail.com>
+ <87ttfsrn6l.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] platform/surface: Add OF support
-To: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <quic_kdybcio@quicinc.com>
-References: <20240810-topic-sam-v2-0-8a8eb368a4f0@quicinc.com>
- <20240810-topic-sam-v2-3-8a8eb368a4f0@quicinc.com>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <20240810-topic-sam-v2-3-8a8eb368a4f0@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ttfsrn6l.ffs@tglx>
 
-On 8/10/24 3:28 AM, Konrad Dybcio wrote:
-> From: Konrad Dybcio <quic_kdybcio@quicinc.com>
+On Sun, Aug 11, 2024 at 01:08:18AM +0200, Thomas Gleixner wrote:
+> On Fri, Aug 09 2024 at 13:53, Mitchell Levy via wrote:
+> > From: Mitchell Levy <levymitchell0@gmail.com>
+> 
+> ...
+> 
+> > Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+> > ---
+> > Changes in v2:
+> > - Corrected Fixes tag (thanks tglx)
+> > - Properly check for XSAVES support of LBR (thanks tglx)
+> 
+> IOW. I provided you the proper fix and now you are reposting it and
+> claiming authorship for it?
+Apologies, I did not consider authorship implications when resubmitting,
+as I haven't encountered the situation where a patch is essentially
+rewritten during the review process before. I will be much more mindful
+of issues of authorship in future, and I appreciate you pointing this
+out to me.
 
-[...]
+> May I ask you to read Documentation/process/ ?
+Yes, I have now more thoroughly covered these docs. On second look, it
+appears there's no Signed-off-by in your reply to my v1. I can send the
+patch with you properly listed as the author and the proper
+Signed-off-by lines if I have your permission to add your signoff.
+Alternatively, feel free to reuse part/all of my commit message if you'd
+rather submit the patch directly; it's quite understandable if you feel
+unenthusiastic about me being involved with code you've authored.
 
-> @@ -346,7 +359,7 @@ static const struct software_node *ssam_node_group_sp9[] = {
->   
->   /* -- SSAM platform/meta-hub driver. ---------------------------------------- */
->   
-> -static const struct acpi_device_id ssam_platform_hub_match[] = {
-> +static const struct acpi_device_id ssam_platform_hub_acpi_match[] = {
->   	/* Surface Pro 4, 5, and 6 (OMBR < 0x10) */
->   	{ "MSHW0081", (unsigned long)ssam_node_group_gen5 },
->   
-> @@ -402,16 +415,39 @@ static const struct acpi_device_id ssam_platform_hub_match[] = {
->   };
->   MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_match);
-
-This should be
-
-     MODULE_DEVICE_TABLE(acpi, ssam_platform_hub_acpi_match);
-
-as it has been renamed above. In addition to this, the
-surface_aggregator_registry module currently does not auto-load. So we
-also need to add
-
-     MODULE_ALIAS("platform:surface_aggregator_platform_hub");
-
-somewhere. With that fixed, it builds and runs fine on the SPX.
-
-Best regards,
-Max
+> Thanks,
+> 
+>         tglx
 
