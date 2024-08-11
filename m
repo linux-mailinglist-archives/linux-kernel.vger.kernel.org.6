@@ -1,118 +1,90 @@
-Return-Path: <linux-kernel+bounces-282071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CEA94DF5C
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:20:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE75C94DF5E
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7311F2225D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38BD2281FC5
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 00:22:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27431B813;
-	Sun, 11 Aug 2024 00:19:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B465223;
+	Sun, 11 Aug 2024 00:22:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="qmYKKRLx"
-Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4To2Hv4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB04DDA6
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 00:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416234689;
+	Sun, 11 Aug 2024 00:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723335571; cv=none; b=C9kal8RYlhxLHod7AWJwy7nVJWq4N2LT/rnEeE2XIu+8hoiL8oK7fzecU1wggVsAotqE0GT6V+qptWX5yc1CXJpIPYbhpAyfQOnGqeLgXc/XsJZcJcmKKm0OLfJDjoDiWMZ8tHpAL3YBkvgeFiHulJMssPFQV3y2nl9/v80rlZQ=
+	t=1723335759; cv=none; b=XSkpg1IRwrno50oKl/nlK6ft9YT90Rx9bQpYwPTFpSI6oiq2dBlH7YLEce1hLEMnEOwtsMl4BCLn5bkVM3OCtsQMapoH7JK1Ruaz7pdHhsR6mOOf65lI/eIEpFYDqIRMSgzjUqWWR+fe15C8ba1GSrgziifQMvU8yp0Io7grldo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723335571; c=relaxed/simple;
-	bh=KvOpYbmYWjV+rXzyCv7qf0TDxg/EynZxXUCOxIezkv0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RvTSQ7T4++IBjNuKPtLK6aASdoBF54uxyPMuGnPAIEoAYb2/rhR61i7iXrlgWrmoXbMo5RbP6PZBWmt03jG9/naJc1Cd69eJywHqf6lHh8WbKEVvSzCa02NOBek+FEXTfiyD7gJp+Uq+z93ryn1Kkh4I4LJFWZvNiCPV0GOaM1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=qmYKKRLx; arc=none smtp.client-ip=17.58.6.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723335569;
-	bh=g0ifbuA5vAN4F2zvFBRG6+qhsDphBeYH944qW7z03P8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=qmYKKRLx9Y82CbRQ5af60iWurvgbjfFFy1jHlL2/cDHM7exhNOdzRoXacrnKaVrq0
-	 1GPSIZcgi4HderXO8iiaTSTmoF3eCUvwTgnIDuc1mWACn7xf+0noHRNEtBE+aa3QTp
-	 yeoDztR5HIGyQUBmWZw4PppRM8o4GEldznvFNauP30lg7uBysSzlTOQzNPm2InqyMu
-	 +egkE3WcX1oc5j012t/UVATl3PmYF1JG+Z8iWaZSYOqUdpQ8vCJ09BH8jQ9itxi5lk
-	 1MzKTrnaMON87PrCpyXJsBE39O4pG0pxsQLi6/sEZmjm24fHWDzoKQkZB+7cTc4E6C
-	 srV2ji0zC/vvg==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 701106800FC;
-	Sun, 11 Aug 2024 00:19:22 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Sun, 11 Aug 2024 08:18:11 +0800
-Subject: [PATCH 5/5] net: qcom/emac: Prevent device_find_child() from
- modifying caller's match data
+	s=arc-20240116; t=1723335759; c=relaxed/simple;
+	bh=p2b60XdkdQpNkq0moIBMnfnbnRrr+23Ws/v8H5Jva3k=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLnJeJzyGNQlLEdh35LiReRgB4LnQ6DczYvC/gTd6P/REe/dKcYpN33qmlBJJCAY4QUKAWNgPjkALl+/EGSXWNG275z9nXRDEnPX2GcKIXUkfcUnWaGHw9YBCPUACB2S8BEpJSLaeWvMn7/Liumx7PJRl4H1QOJWClNDTuJDVDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4To2Hv4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1547CC32781;
+	Sun, 11 Aug 2024 00:22:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723335758;
+	bh=p2b60XdkdQpNkq0moIBMnfnbnRrr+23Ws/v8H5Jva3k=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=L4To2Hv4S50T+DY8a38CbeVqIGCu5ve2IibVJw+ZCZRj5ltAaH73bV3LA1CFlZAMy
+	 XXiMtgzYtfjxSwPvbxDJPOsvQIQYXegP+xEgvhh49OHcHYM7sAx6gq4P8FQyBTy9rl
+	 Kzby/5bc5tsqHClx0KO2uvAEvhAz5YUxy7p2OyumCiHlCrmrpj2A49vTszYRKZA/k7
+	 BVFwR+6S9+P5bMitJZDYi9hQRU5S+WVef8Ze8oFQqtiDZVFK6fxfzlzxsO2qqM0xev
+	 b8AhXv3hQuyxX7HxkQRe3ASyB6k2TGVIKTtfFfWMsknsRPAg3UmuYXKjJe0ONnnTVG
+	 qohUhziSjdG6Q==
+Date: Sun, 11 Aug 2024 01:22:34 +0100
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	linux-i2c <linux-i2c@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, 
+	Gaosheng Cui <cuigaosheng1@huawei.com>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [GIT PULL] i2c-host-fixes for v6.11-rc3
+Message-ID: <iv6kyqlhjopmq2rm6h3mlkmwday7oxwne635mlasiq6pfzoxpe@q45nn3vpmrh5>
+References: <3oxrthtenkyypr5pqpduxyndw6wxihn24s67p6ppogkcdd6mjd@s5pg3swp6flp>
+ <ZrYaLQ1GZFBAii0Q@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240811-const_dfc_prepare-v1-5-d67cc416b3d3@quicinc.com>
-References: <20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com>
-In-Reply-To: <20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Davidlohr Bueso <dave@stgolabs.net>, 
- Jonathan Cameron <jonathan.cameron@huawei.com>, 
- Dave Jiang <dave.jiang@intel.com>, 
- Alison Schofield <alison.schofield@intel.com>, 
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- Dan Williams <dan.j.williams@intel.com>, 
- Takashi Sakamoto <o-takashi@sakamocchi.jp>, Timur Tabi <timur@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- linux-cxl@vger.kernel.org, linux1394-devel@lists.sourceforge.net, 
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: 6F8FPtT7sCunyxHLCfRp5cxUElMTOGvd
-X-Proofpoint-GUID: 6F8FPtT7sCunyxHLCfRp5cxUElMTOGvd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-10_19,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 phishscore=0
- mlxlogscore=999 clxscore=1015 malwarescore=0 bulkscore=0 adultscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408110001
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrYaLQ1GZFBAii0Q@shikoro>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+Hi Wolfram,
 
-It does not make sense for emac_sgmii_acpi_match() as device_find_child()'s
-match function to modify caller's match data, fixed by using
-constify_device_find_child_helper() instead of device_find_child().
+On Fri, Aug 09, 2024 at 03:31:25PM GMT, Wolfram Sang wrote:
+> > two fixes from Gaosheng in this pull request on the Qualcomm Geni
+> > device.
+> 
+> Pulled. But I wonder why this wasn't just one fix because it is the same
+> error path?
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/net/ethernet/qualcomm/emac/emac-sgmii.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+The second patch came as a suggestion to the first patch and it
+arrived after I merged the first.
 
-diff --git a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-index e4bc18009d08..e53065756a1d 100644
---- a/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-+++ b/drivers/net/ethernet/qualcomm/emac/emac-sgmii.c
-@@ -358,8 +358,9 @@ int emac_sgmii_config(struct platform_device *pdev, struct emac_adapter *adpt)
- 	if (has_acpi_companion(&pdev->dev)) {
- 		struct device *dev;
- 
--		dev = device_find_child(&pdev->dev, &phy->sgmii_ops,
--					emac_sgmii_acpi_match);
-+		dev = constify_device_find_child_helper(&pdev->dev,
-+							&phy->sgmii_ops,
-+							emac_sgmii_acpi_match);
- 
- 		if (!dev) {
- 			dev_warn(&pdev->dev, "cannot find internal phy node\n");
+Besides They have different Fixes tag and I spent some times at
+checking and they look correct.
 
--- 
-2.34.1
+At the end I left it as it was sent.
+
+Thanks,
+Andi
+
+> > Wish you a great weekend,
+> 
+> Thanks, same to you!
+> 
+>    Wolfram
+> 
+
 
 
