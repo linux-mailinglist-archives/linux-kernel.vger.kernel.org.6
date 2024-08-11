@@ -1,250 +1,147 @@
-Return-Path: <linux-kernel+bounces-282171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA34F94E072
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F4A94E073
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C683B21056
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE5D1F21538
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9DDF2B9AA;
-	Sun, 11 Aug 2024 08:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E6A200DE;
+	Sun, 11 Aug 2024 08:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IayuqrgV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpWSpDy+"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95BB200A3;
-	Sun, 11 Aug 2024 08:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898FF15AF6
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723363847; cv=none; b=XeClIvAgoZaGJtxn6VFdTDQVF+VmDsjysx0Qll107LmlzmbxCtXyORzwQNA1UqOLkDTvMGom9cLPt4kYHnd/aFTF0dxxaA1YSs9IYp9aKyOr2LAoxkUBsTgMjUeX35e4LGW8oIRfiAScqm5ScOm1mepfsviAnbsFgVu704+P/Vc=
+	t=1723364045; cv=none; b=V8ZE+0PWS8r3xil2SlGMYKzinLbepq6aOMIsyLgmRJ4Nn8r0x3I53fQVwP+W4uywjrMdn52CD1dxk0m0VsMSwr74OkyTfz8oy0DfpS/4r5CsueAQYn7vTIqc/rUwiMx9eDm1BQ0I0DH0W9yuQSFp7LAjz28zEMVyBKS1eN28Qps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723363847; c=relaxed/simple;
-	bh=nZFC08tDh3nttnNBJVhskJcR0F7oLOKEuY05u6lL1vI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=CxuA3ZVID5pTIIFclHEdIT1knXHjNHJI/d3WPmySbEVwAU+HT++rYazskaqCw5hawz5sjmZsNoxVhv+mfLITfJqWpOtnnfjqKdpV9EEAcyq26hFfk/tmvWUVns2t7ieZH+FGFqrjc6BzdI0p1S65tJkLuoB0OYwVSR9SCqHynDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IayuqrgV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F856C4AF0C;
-	Sun, 11 Aug 2024 08:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723363847;
-	bh=nZFC08tDh3nttnNBJVhskJcR0F7oLOKEuY05u6lL1vI=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=IayuqrgVtF03hxP3tVa0X2jMdwJIQiZvedasEzt4EiDzetg/YWqw+N3rHwOUgj1O7
-	 glWVz2/gjDD8FiVKSJCHkDIkCJXTMZ6qDM/YbL/NWJ8z7JGsUd5OYXqHyPNNZFkGJj
-	 gYB4t2FWWnQdSTtDD9lgpCezPjYX4TRLQ7x0dT96pPH22G2GD4nakyMQxWA98Imdey
-	 IdUYWoNzWedlDi8tZWfK8QwP+Owg9tnWU9v3y3AoknpKEJ7h8fTipsA8OwSpEhCYlD
-	 198BwYKta2npoYls9aUNOuSxuf5kzTa4BkaVBAOaASOOL9jTicowjyAceLcKdzcinD
-	 Tj0bIFimIcfUg==
-From: Kalle Valo <kvalo@kernel.org>
-To: Arend van Spriel <arend.vanspriel@broadcom.com>
-Cc: jacobe.zang@wesion.com,  Sai Krishna Gajula <saikrishnag@marvell.com>,
-  "robh@kernel.org" <robh@kernel.org>,  "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "heiko@sntech.de" <heiko@sntech.de>,
-  "davem@davemloft.net" <davem@davemloft.net>,  "edumazet@google.com"
- <edumazet@google.com>,  "kuba@kernel.org" <kuba@kernel.org>,
-  "pabeni@redhat.com" <pabeni@redhat.com>,  "conor+dt@kernel.org"
- <conor+dt@kernel.org>,  "efectn@protonmail.com" <efectn@protonmail.com>,
-  "dsimic@manjaro.org" <dsimic@manjaro.org>,  "jagan@edgeble.ai"
- <jagan@edgeble.ai>,  "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>,  "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
-  "linux-rockchip@lists.infradead.org"
- <linux-rockchip@lists.infradead.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>,  "arend@broadcom.com"
- <arend@broadcom.com>,  "linux-wireless@vger.kernel.org"
- <linux-wireless@vger.kernel.org>,  "netdev@vger.kernel.org"
- <netdev@vger.kernel.org>,  "megi@xff.cz" <megi@xff.cz>,
-  "duoming@zju.edu.cn" <duoming@zju.edu.cn>,  "bhelgaas@google.com"
- <bhelgaas@google.com>,  "minipli@grsecurity.net" <minipli@grsecurity.net>,
-  "brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
-  "brcm80211-dev-list.pdl@broadcom.com"
- <brcm80211-dev-list.pdl@broadcom.com>,  "nick@khadas.com"
- <nick@khadas.com>
-Subject: Re: [PATCH v9 4/5] wifi: brcmfmac: Add optional lpo clock enable
- support
-References: <20240810035141.439024-1-jacobe.zang@wesion.com>
-	<20240810035141.439024-5-jacobe.zang@wesion.com>
-	<BY3PR18MB47072A9CC7E1EEB4BD1FC063A0BB2@BY3PR18MB4707.namprd18.prod.outlook.com>
-	<d9a182e4-c620-476d-8eb2-752dfd1ba4f8@wesion.com>
-	<fb9947fa-bca8-4c51-9feb-bf7ac6c6cc22@broadcom.com>
-Date: Sun, 11 Aug 2024 11:10:39 +0300
-In-Reply-To: <fb9947fa-bca8-4c51-9feb-bf7ac6c6cc22@broadcom.com> (Arend van
-	Spriel's message of "Sat, 10 Aug 2024 20:32:42 +0200")
-Message-ID: <8734nb32f4.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723364045; c=relaxed/simple;
+	bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MPim0uJlzKXCUGZ4e0B4VOpS3o5rSWxLUfNPDI3+levNxi+DzgZKRTaHWnFIhLOO64YP3/IoyFBMhvnu3FQglqq5hYziusgz6/z3t8GBVDBdv7jXjbuWeq3FpdOYSxms+MOr3rdPQZuiUx5IXyKkoZhaYvSAX/A8IhvvgK2gG1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpWSpDy+; arc=none smtp.client-ip=209.85.221.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f6c136a947so1648325e0c.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 01:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723364042; x=1723968842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
+        b=lpWSpDy+vFPbm5DSvRkLQgsYsbyHfTkmDhxLqgtEMF86rCDp2m1yvvtOtNNzKTPlT2
+         ZiKOO9GBGpMGSEutF0n2GvIbD46ttPVO8IMdHST30E7jSSFeSuW93qVHse1ZLy9AotQ3
+         rX5NNYY0rpOJs35tF0BfE8xznfK1vMfcfeG3aBRZ+Ac2T3uuaq8VWIina37iKydOnDp9
+         gq5zv02gGUa6eJd2l5TbT7Bn7+5VXaLIeBAfD+kZwCQAua+wi1LBjCqwl+wo6C1u15MU
+         qJn+X3/Dlwt51lqhAa/UWcguM04yQNAI1sFxE6jGDR8DFylMNxNTb0zD0gHVU2EmQqO1
+         4Swg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723364042; x=1723968842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
+        b=qGXMQS5eA2ltF/yBpix/OWdJSUAFoIILTJvTU6VIvwbo4wzf/xg4BgO4KTsqU18J1G
+         lIqVP0G0wYsVvz/LjeupLUFiH87Y8iN2RWujarjeYImcPn2CUybgHTitJXz8aSddSr+b
+         g9a4bG2Oq0cB2Yy3z1/WBozpk9257fZBxT7rBYGHwuiwtyrt2za6Cc0kEOKudV2+0NwO
+         EX4nAzTrDqDQRHl2Dg/eWVfMu4S0c5J6wbR/zOI7Wq3PBT1KljTnb5z8u+VsQKDNGUSe
+         10hWRF1J8SU3Gw3XqRAZL9Q/DSB4ROJNLZ2pQsaTkkfP4uZ2rQzNBxHVjWKZpbBxNbSZ
+         9umg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV7yMG5cxZA5m6L3GKYzsibPP7pwzccZ5sV3k53r0ECc8N2H+Tq9S/htqOvCN6VwQcOR4WkInYYMKXEReMJ+lqlrhQQauG1F9xeb8H
+X-Gm-Message-State: AOJu0Yxb4izqxEDFMJgKivZG+gZDnO1kVkaGPweluGUymbJTIyaViM5I
+	s0GtYOfom1wBlVCPoht963SaFaV+g4lS1/Uh17CwxdFBXdfzGieWnytD8yG5bkRRkL2ZGy7AU83
+	BZveesSHattzMqm5aqsCE1UECEoA=
+X-Google-Smtp-Source: AGHT+IGstJESyRPUBiJVn6xiheFxwi4sK2Krx9epzULVscTdmL+n5CMPQ2jMSBdoSQrYii0fuUohFmb+NBq+GBerOU0=
+X-Received: by 2002:a05:6122:2919:b0:4f6:adb5:aee1 with SMTP id
+ 71dfb90a1353d-4f912ed2b4amr7148974e0c.13.1723364042364; Sun, 11 Aug 2024
+ 01:14:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20240808010457.228753-1-21cnbao@gmail.com> <20240808010457.228753-2-21cnbao@gmail.com>
+ <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com> <1222cd76-e732-4238-9413-61843249c1e8@arm.com>
+ <4465afdc-23e9-4844-a0a0-519f49b1229c@redhat.com> <616401ea-289d-4ae2-acde-6704b0fa9c46@redhat.com>
+ <9f8ba5c8-5bc3-4af2-96d2-2f52ee923ef5@arm.com> <c063335f-a29e-433e-9192-39c7b3e5d06e@redhat.com>
+In-Reply-To: <c063335f-a29e-433e-9192-39c7b3e5d06e@redhat.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 11 Aug 2024 20:13:51 +1200
+Message-ID: <CAGsJ_4xgT=E7XFiGnzwYm_26f3xSUFeD3Aiyvewge=KZjxzjow@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+To: David Hildenbrand <david@redhat.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	chrisl@kernel.org, kaleshsingh@google.com, kasong@tencent.com, 
+	linux-kernel@vger.kernel.org, ioworker0@gmail.com, 
+	baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com, 
+	Barry Song <v-songbaohua@oppo.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Arend van Spriel <arend.vanspriel@broadcom.com> writes:
-
-> On 8/10/2024 12:08 PM, jacobe.zang@wesion.com wrote:
+On Fri, Aug 9, 2024 at 9:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
->> On 2024/8/10 17:44, Sai Krishna Gajula <saikrishnag@marvell.com>
->> wrote:
->>>
->>> > -----Original Message-----
->>> > From: Jacobe Zang <jacobe.zang@wesion.com>
->>> > Sent: Saturday, August 10, 2024 9:22 AM
->>> > To: robh@kernel.org; krzk+dt@kernel.org; heiko@sntech.de;
->>> > kvalo@kernel.org; davem@davemloft.net; edumazet@google.com;
->>> > kuba@kernel.org; pabeni@redhat.com; conor+dt@kernel.org;
->>> > arend.vanspriel@broadcom.com
->>> > Cc: efectn@protonmail.com; dsimic@manjaro.org; jagan@edgeble.ai;
->>> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
->>> linux-
->>> > rockchip@lists.infradead.org; linux-kernel@vger.kernel.org;
->>> > arend@broadcom.com; linux-wireless@vger.kernel.org;
->>> > netdev@vger.kernel.org; megi@xff.cz; duoming@zju.edu.cn;
->>> > bhelgaas@google.com; minipli@grsecurity.net; brcm80211@lists.linux.de=
-v;
->>> > brcm80211-dev-list.pdl@broadcom.com; nick@khadas.com; Jacobe Zang
->>> > <jacobe.zang@wesion.com>
->>> > Subject:=C2=A0 [PATCH v9 4/5] wifi: brcmfmac: Add optional lpo clock
->>> > enable support
->>> >
->>> > WiFi modules often require 32kHz clock to function. Add support
->>> to enable
->>> > the clock to PCIe driver and move "brcm,bcm4329-fmac" check to
->>> the top of
->>> > brcmf_of_probe. Change function prototypes from void to int and add
->>> > appropriate errno's for return
->>> > WiFi modules often require 32kHz clock to function. Add support
->>> to enable
->>> > the clock to PCIe driver and move "brcm,bcm4329-fmac" check to
->>> the top of
->>> > brcmf_of_probe. Change function prototypes from void to int and add
->>> > appropriate errno's for return values that will be send to bus
->>> when error
->>> > occurred.
->>> >
->>> > Co-developed-by: Ondrej Jirman <megi@xff.cz>
->>> > Signed-off-by: Ondrej Jirman <megi@xff.cz>
->>> > Co-developed-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>> > Signed-off-by: Arend van Spriel <arend.vanspriel@broadcom.com>
->>> > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
->>> > ---
->>> >=C2=A0=C2=A0 .../broadcom/brcm80211/brcmfmac/bcmsdh.c=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 4 +-
->>> >=C2=A0=C2=A0 .../broadcom/brcm80211/brcmfmac/common.c=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 3 +-
->>> >=C2=A0=C2=A0 .../wireless/broadcom/brcm80211/brcmfmac/of.c | 53
->>> +++++++++++--------
->>> > .../wireless/broadcom/brcm80211/brcmfmac/of.h |=C2=A0 9 ++--
->>> >=C2=A0=C2=A0 .../broadcom/brcm80211/brcmfmac/pcie.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
->>> >=C2=A0=C2=A0 .../broadcom/brcm80211/brcmfmac/sdio.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 | 24 ++++++---
->>> >=C2=A0=C2=A0 .../broadcom/brcm80211/brcmfmac/usb.c=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
->>> >=C2=A0=C2=A0 7 files changed, 63 insertions(+), 36 deletions(-)
->>> >
->>> > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> > index 13391c2d82aae..b2ede4e579c5c 100644
->>> > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c
->>> > @@ -947,8 +947,8 @@ int brcmf_sdiod_probe(struct brcmf_sdio_dev
->>> > *sdiodev)
->>> >
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* try to attach to the target de=
-vice */
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 sdiodev->bus =3D brcmf_sdio_probe=
-(sdiodev);
->>> > -=C2=A0=C2=A0=C2=A0 if (!sdiodev->bus) {
->>> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D -ENODEV;
->>> > +=C2=A0=C2=A0=C2=A0 if (IS_ERR(sdiodev->bus)) {
->>> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D PTR_ERR(sdiodev->=
-bus);
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto out;
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 brcmf_sdiod_host_fixup(sdiodev->f=
-unc2->card->host);
->>> > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> > index b24faae35873d..58d50918dd177 100644
->>> > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/common.c
->>> > @@ -561,7 +561,8 @@ struct brcmf_mp_device
->>> > *brcmf_get_module_param(struct device *dev,
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!found) {
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* No pla=
-tform data for this device, try OF and DMI data */
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 brcmf_dmi=
-_probe(settings, chip, chiprev);
->>> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 brcmf_of_probe(dev, bus_t=
-ype, settings);
->>> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (brcmf_of_probe(dev, b=
-us_type, settings) =3D=3D -
->>> > EPROBE_DEFER)
->>> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 r=
-eturn ERR_PTR(-EPROBE_DEFER);
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 brcmf_acp=
-i_probe(dev, bus_type, settings);
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return settings;
->>> > diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> > b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> > index e406e11481a62..f19dc7355e0e8 100644
->>> > --- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> > +++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/of.c
->>> > @@ -6,6 +6,7 @@
->>> >=C2=A0=C2=A0 #include <linux/of.h>
->>> >=C2=A0=C2=A0 #include <linux/of_irq.h>
->>> >=C2=A0=C2=A0 #include <linux/of_net.h>
->>> > +#include <linux/clk.h>
->>> >
->>> >=C2=A0=C2=A0 #include <defs.h>
->>> >=C2=A0=C2=A0 #include "debug.h"
->>> > @@ -65,17 +66,21 @@ static int brcmf_of_get_country_codes(struct devi=
-ce
->>> > *dev,
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>> >=C2=A0=C2=A0 }
->>> >
->>> > -void brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->>> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 s=
-truct brcmf_mp_device *settings)
->>> > +int brcmf_of_probe(struct device *dev, enum brcmf_bus_type bus_type,
->>> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct =
-brcmf_mp_device *settings)
->>> >=C2=A0=C2=A0 {
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct brcmfmac_sdio_pd *sdio =3D=
- &settings->bus.sdio;
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device_node *root, *np =3D=
- dev->of_node;
->>> > +=C2=A0=C2=A0=C2=A0 struct clk *clk;
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char *prop;
->>>
->>> Small nit, please check if reverse x-mas tree order need to be
->>> follow here.
->>>
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int irq;
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
->>> >=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 irqf;
->> It can be seen from this line that there should be no need to follow
->> the reverse x-mas tree order. Because it is a struct variable, so
->> place with other struct ones.
+> On 09.08.24 11:05, Ryan Roberts wrote:
+> > On 09/08/2024 09:58, David Hildenbrand wrote:
+> >> On 09.08.24 10:42, David Hildenbrand wrote:
+> >>>>> Not sure I fully understand why David prefers to do the unaccountin=
+g at
+> >>>>> free-time though? It feels unbalanced to me to increment when first=
+ mapped but
+> >>>>> decrement when freed. Surely its safer to either use alloc/free or =
+use first
+> >>>>> map/last map?
+> >>>>>
+> >>>>> If using alloc/free isn't there a THP constructor/destructor that p=
+repares the
+> >>>>> deferred list? (My memory may be failing me). Could we use that?
+> >>>>
+> >>>> Additionally, if we wanted to extend (eventually) to track the numbe=
+r of shmem
+> >>>> and file mthps in additional counters, could we also account using s=
+imilar folio
+> >>>> free-time hooks? If not, it might be an argument to account in rmap_=
+unmap to be
+> >>>> consistent for all?
+> >>>
+> >>> Again, see NR_FILE_THPS handling. No rmap over-complication please.
+> >>
+> >> ... not to mention that it is non-sensical to only count pageache foli=
+os that
+> >> are mapped to user space ;)
+> >
+> > Yes, good point. I'll get back in my box. :)
 >
-> As driver maintainer I do not care about such neatness, but maybe
-> Kalle has another preference. The code above looks fine to me.
+> Well, it was a valuable discussion!
+>
+> anon folios in the swapcache are interesting: they are only "anon" after
+> we first mapped them (harder to change, but would be possible by using a
+> NULL mapping maybe, if really worth it; with memdesc that might turn out
+> interesting). But once they are anon, they will stay anon until actually
+> reclaimed -> freed.
 
-We haven't been strongly requiring reverse x-mas tree in wireless code,
-it has been just a preference. Also for me the code above looks fine.
+I assume we don=E2=80=99t need to worry about this, as even AnonPages (NR_A=
+NON_MAPPED)
+in /proc/meminfo also entirely depends on anon pages becoming anon mappings=
+.
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
+Thanks
+Barry
 
