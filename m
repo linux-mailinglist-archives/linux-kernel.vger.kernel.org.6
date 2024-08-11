@@ -1,184 +1,124 @@
-Return-Path: <linux-kernel+bounces-282286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACE194E1AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:32:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 747EE94E1AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF731C20D14
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6C821C20E0C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 14:33:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FD514A4E5;
-	Sun, 11 Aug 2024 14:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AhG+5zRZ"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6801494A8;
+	Sun, 11 Aug 2024 14:33:04 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF421798C;
-	Sun, 11 Aug 2024 14:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAA31798C
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723386731; cv=none; b=tCpHM4vV36aeyLVDoh7tYOpIocHeyTtlN3+SpJmK7qK47saQTZoAB8qzpnP7DwXqee7YBdK+9mZByVxV/y7VwCFI9VkHvi+HxyE8AshkaLqRtq5I4sC3eBXfVxRf/W0JJLQ6Ij+zZPERR3jGxe3th4OXblbg5fGzNaUzFmyRo6k=
+	t=1723386784; cv=none; b=N7LJGaiSguFT55NDCdYNSIARGjMafRNzU6HEvDHayGHUFcaORwbJ/uCpigqpU5y/tgCq47/FhjIlkgJoPGMDy3xFmDq3tjmvkzB890cNejq5UzIxmV0AUwrCFEKaJN+Q69NHh3RxDOKKKyoqoNgpV9+4Ua5Ekz57KA6QSePKBdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723386731; c=relaxed/simple;
-	bh=8wlOlKEv1P2u6aMLa1BbhYFSivgyaJ10HmRu/onwV6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mLNjhO53nPmUU+qLrQv1p0iA81oYeWFlvdBdkPxTv5oM197KKjbSCdjUPKNSmSgtwjWOI2RMWCIdaXpz8rzePIaSWcBFpCSvc2+BWe7YAiemThc8i4SB1vtsPHCoPhry2j71pbJTWw4LmYrSNh0+a5b9CxTN9GgZrNCw/DolnUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AhG+5zRZ; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-530ad969360so3738017e87.0;
-        Sun, 11 Aug 2024 07:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723386728; x=1723991528; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lRZPDQeJi8gV5FjG+WOyNGRr8ce7b4ax/xgMOADtm0Y=;
-        b=AhG+5zRZqwIG1e3vx4aehXSmBLaitHQZMjWekiig8rW/lsCuOl2d2eH96SBzntsWjA
-         qaJHo7TWi6l/XWThiOYRbT7jSOtPS/gvoVyhKbzd253QPXKE3mAf/ZFt+C8YddR1flJS
-         hi82zGqPDXZ+IUqT/3xsiXLg0z3HkFkRvEmIQe9g/EqRmcgR60EAsFZvU4fbgR8JxuFr
-         etii8/k/g39kMExY9I4nJjsGfhfONcXq3PFaDTtGBumXBm0yLSB9AMyC5xcoBnaT4lQI
-         NXegUtYQIo8+iyqwXl+NdtyZrB1zcrVe1Y8ps1algRqFPxyKaUHKP9hPI2po6zMnj80b
-         Z6yQ==
+	s=arc-20240116; t=1723386784; c=relaxed/simple;
+	bh=1qxA6gdXrx3Bh4Vb32h+/uLtTqf9J6agBrFOcJnWxiI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nUciKQqIZsFK9hu2f9FjFzZAwp2TWEV+lOaQt5RFPTqNdtb8KJv91lxad99waLxgtAgTCGduaqnuBCKKnsAY9/OQgcl8XCs5Mvufh7IxaZGj+sNL+FjEzk9TeF+mesZ6U/v5qQEN0Pw/Vd3Ouh88u3fnVTYYABAT/51dKCNlFYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81faf98703eso478554439f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 07:33:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723386728; x=1723991528;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lRZPDQeJi8gV5FjG+WOyNGRr8ce7b4ax/xgMOADtm0Y=;
-        b=kF3+Glhw+2Vr6lafEg73B9uTKLQTbbSK+S0PnXXLTaRZpMQ033EBO36lCPZK88rViL
-         9k7gLD+1XApOw/zmX+zu50eElGuZqPE4/rKzuUx4ed9Z0H+DGs1kEHGXYeaGYFzdnzdA
-         i7CADnbyeW/DS/W4LtP6VuCT5PESWo0SwDtoqcXm/PKiVkiKdDGfAb4LGqecp+UXXZYW
-         rIG5/mDsl42RFIpWJouDQTPA6qUI2/FGnqAI3T+2lAeaPyk5hVpIGhuWsxhP+Ku3D32C
-         FWCGFg1t4YBlJQOJG4/hg+cx4mIfKZrhdbhH6nVPw+sq6F1fClJOF6J9VIDbeSrhlzS2
-         LDIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwY+qu0kZdo44x5U/iCBSwfV3YSAvmOcvQIJ+WQYH4aU/czzP3vj/WR7AFL5v957LWH5DR+P9655u620f0cUe4cL6mEjsTc1A+Vb5UIIHo88/nkJvWHTTtVZzpspF+
-X-Gm-Message-State: AOJu0YzNNNAUiyX9XrvXxWbtoUiz64enBCTxgYEWQlqIl8+hf4rnmR0g
-	lnYxKRPte7tznObYAJu2OeE9voeBVw4WwdvMEhtEKVGyS21XIyT0
-X-Google-Smtp-Source: AGHT+IHuqBgINOZtfRlI8H+UyUlqnCWQjYa3wuCYd5xj0DdASVkL/x1Ho7y7mQOdMzWYRjmHHNXR8A==
-X-Received: by 2002:a05:6512:138d:b0:52f:cffd:39f9 with SMTP id 2adb3069b0e04-530ee984473mr4735154e87.24.1723386727199;
-        Sun, 11 Aug 2024 07:32:07 -0700 (PDT)
-Received: from ?IPV6:2a01:c23:bdf7:500:55ff:b5b3:d77:9d3a? (dynamic-2a01-0c23-bdf7-0500-55ff-b5b3-0d77-9d3a.c23.pool.telefonica.de. [2a01:c23:bdf7:500:55ff:b5b3:d77:9d3a])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4fe2sm1370276a12.9.2024.08.11.07.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 07:32:06 -0700 (PDT)
-Message-ID: <39b2fc1f-421a-4547-b7bb-47b207975d73@gmail.com>
-Date: Sun, 11 Aug 2024 16:32:07 +0200
+        d=1e100.net; s=20230601; t=1723386781; x=1723991581;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0PgIS2zfsxKODMuDp8kp4cSzi3TYPfrmeL0DlFXiVt4=;
+        b=MKJG8EQTdsPp9d84elhSo2eAzpRYXYDeRUENDxLubjR9LvcdQ20PDJfYQYBD8PtTWd
+         821hnUK/c5kE17tezWF8ncDSoEd5RtVK/n+tfwAt2FnxZ6fFLmoSBzsy8wmcxHqfr+5e
+         1fxaJNSfuCNYT8Kfh1PbuaaBKjyIQUJJh3bMqNLPnflZARAxib/1G/uC1d88jFaJnu+2
+         dtSzhR+ZrgrFMZICosCRx+cJDwdk75a+YDtt00bHBnp2SxktFRUkoNuze9B5GVmcE8/i
+         Sov3uv08SKUvzkHCZg2xnhjp1U/PFOpGo7quTFq92nIPZalU2AAS81vTNlwMazwcBmrz
+         OWNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDAvrJWkMl3rxBgvUGpIutqmqjhTHSMwyJVZK5XomPW1vwyiHS5MfiBRSPIVXREazVTwQOBlXBzIvAa0sBAD3KNweomeLkasFl3XFn
+X-Gm-Message-State: AOJu0YyBlRna1KvQPd6ZL8G+Nj7aHrhCyFEA7qfwQwNwbwGmhckghNRW
+	ermgra1rWzd6LfxV8Iw4c/f/P33bcYkKsWJAKbfYoDL1pggdMwMcJsBS1RR5ITLSe0ZIqas6XLo
+	/42sLERh5opV2lSZ/mlDhnWAHP5O4Y8K1k6+mG6M98SJ/QklVp6uv1GY=
+X-Google-Smtp-Source: AGHT+IEkDHPxMeuH1TpNq4t6DHDG7IGNI/8KeTQ3mdvYQF8I8eFYLTWv6k2QayPpAuTp5y20HlvA9Fu4t3kfOwtiok8ehfNMEnS0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.10 03/27] r8169: remove detection of chip
- version 11 (early RTL8168b)
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Jakub Kicinski <kuba@kernel.org>, nic_swsd@realtek.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org
-References: <20240728005329.1723272-1-sashal@kernel.org>
- <20240728005329.1723272-3-sashal@kernel.org>
- <111ac84e-0d22-43cb-953e-fc5f029fe37c@gmail.com> <Zrcu7-CfCIoGO18V@sashalap>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- xsFNBF/0ZFUBEAC0eZyktSE7ZNO1SFXL6cQ4i4g6Ah3mOUIXSB4pCY5kQ6OLKHh0FlOD5/5/
- sY7IoIouzOjyFdFPnz4Bl3927ClT567hUJJ+SNaFEiJ9vadI6vZm2gcY4ExdIevYHWe1msJF
- MVE4yNwdS+UsPeCF/6CQQTzHc+n7DomE7fjJD5J1hOJjqz2XWe71fTvYXzxCFLwXXbBiqDC9
- dNqOe5odPsa4TsWZ09T33g5n2nzTJs4Zw8fCy8rLqix/raVsqr8fw5qM66MVtdmEljFaJ9N8
- /W56qGCp+H8Igk/F7CjlbWXiOlKHA25mPTmbVp7VlFsvsmMokr/imQr+0nXtmvYVaKEUwY2g
- 86IU6RAOuA8E0J5bD/BeyZdMyVEtX1kT404UJZekFytJZrDZetwxM/cAH+1fMx4z751WJmxQ
- J7mIXSPuDfeJhRDt9sGM6aRVfXbZt+wBogxyXepmnlv9K4A13z9DVLdKLrYUiu9/5QEl6fgI
- kPaXlAZmJsQfoKbmPqCHVRYj1lpQtDM/2/BO6gHASflWUHzwmBVZbS/XRs64uJO8CB3+V3fa
- cIivllReueGCMsHh6/8wgPAyopXOWOxbLsZ291fmZqIR0L5Y6b2HvdFN1Xhc+YrQ8TKK+Z4R
- mJRDh0wNQ8Gm89g92/YkHji4jIWlp2fwzCcx5+lZCQ1XdqAiHQARAQABzSZIZWluZXIgS2Fs
- bHdlaXQgPGhrYWxsd2VpdDFAZ21haWwuY29tPsLBjgQTAQgAOBYhBGxfqY/yOyXjyjJehXLe
- ig9U8DoMBQJf9GRVAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHLeig9U8DoMSycQ
- AJbfg8HZEK0ljV4M8nvdaiNixWAufrcZ+SD8zhbxl8GispK4F3Yo+20Y3UoZ7FcIidJWUUJL
- axAOkpI/70YNhlqAPMsuudlAieeYZKjIv1WV5ucNZ3VJ7dC+dlVqQdAr1iD869FZXvy91KhJ
- wYulyCf+s4T9YgmLC6jLMBZghKIf1uhSd0NzjyCqYWbk2ZxByZHgunEShOhHPHswu3Am0ftt
- ePaYIHgZs+Vzwfjs8I7EuW/5/f5G9w1vibXxtGY/GXwgGGHRDjFM7RSprGOv4F5eMGh+NFUJ
- TU9N96PQYMwXVxnQfRXl8O6ffSVmFx4H9rovxWPKobLmqQL0WKLLVvA/aOHCcMKgfyKRcLah
- 57vGC50Ga8oT2K1g0AhKGkyJo7lGXkMu5yEs0m9O+btqAB261/E3DRxfI1P/tvDZpLJKtq35
- dXsj6sjvhgX7VxXhY1wE54uqLLHY3UZQlmH3QF5t80MS7/KhxB1pO1Cpcmkt9hgyzH8+5org
- +9wWxGUtJWNP7CppY+qvv3SZtKJMKsxqk5coBGwNkMms56z4qfJm2PUtJQGjA65XWdzQACib
- 2iaDQoBqGZfXRdPT0tC1H5kUJuOX4ll1hI/HBMEFCcO8++Bl2wcrUsAxLzGvhINVJX2DAQaF
- aNetToazkCnzubKfBOyiTqFJ0b63c5dqziAgzsFNBF/0ZFUBEADF8UEZmKDl1w/UxvjeyAeX
- kghYkY3bkK6gcIYXdLRfJw12GbvMioSguvVzASVHG8h7NbNjk1yur6AONfbUpXKSNZ0skV8V
- fG+ppbaY+zQofsSMoj5gP0amwbwvPzVqZCYJai81VobefTX2MZM2Mg/ThBVtGyzV3NeCpnBa
- 8AX3s9rrX2XUoCibYotbbxx9afZYUFyflOc7kEpc9uJXIdaxS2Z6MnYLHsyVjiU6tzKCiVOU
- KJevqvzPXJmy0xaOVf7mhFSNQyJTrZpLa+tvB1DQRS08CqYtIMxRrVtC0t0LFeQGly6bOngr
- ircurWJiJKbSXVstLHgWYiq3/GmCSx/82ObeLO3PftklpRj8d+kFbrvrqBgjWtMH4WtK5uN5
- 1WJ71hWJfNchKRlaJ3GWy8KolCAoGsQMovn/ZEXxrGs1ndafu47yXOpuDAozoHTBGvuSXSZo
- ythk/0EAuz5IkwkhYBT1MGIAvNSn9ivE5aRnBazugy0rTRkVggHvt3/7flFHlGVGpBHxFUwb
- /a4UjJBPtIwa4tWR8B1Ma36S8Jk456k2n1id7M0LQ+eqstmp6Y+UB+pt9NX6t0Slw1NCdYTW
- gJezWTVKF7pmTdXszXGxlc9kTrVUz04PqPjnYbv5UWuDd2eyzGjrrFOsJEi8OK2d2j4FfF++
- AzOMdW09JVqejQARAQABwsF2BBgBCAAgFiEEbF+pj/I7JePKMl6Fct6KD1TwOgwFAl/0ZFUC
- GwwACgkQct6KD1TwOgxUfg//eAoYc0Vm4NrxymfcY30UjHVD0LgSvU8kUmXxil3qhFPS7KA+
- y7tgcKLHOkZkXMX5MLFcS9+SmrAjSBBV8omKoHNo+kfFx/dUAtz0lot8wNGmWb+NcHeKM1eb
- nwUMOEa1uDdfZeKef/U/2uHBceY7Gc6zPZPWgXghEyQMTH2UhLgeam8yglyO+A6RXCh+s6ak
- Wje7Vo1wGK4eYxp6pwMPJXLMsI0ii/2k3YPEJPv+yJf90MbYyQSbkTwZhrsokjQEaIfjrIk3
- rQRjTve/J62WIO28IbY/mENuGgWehRlTAbhC4BLTZ5uYS0YMQCR7v9UGMWdNWXFyrOB6PjSu
- Trn9MsPoUc8qI72mVpxEXQDLlrd2ijEWm7Nrf52YMD7hL6rXXuis7R6zY8WnnBhW0uCfhajx
- q+KuARXC0sDLztcjaS3ayXonpoCPZep2Bd5xqE4Ln8/COCslP7E92W1uf1EcdXXIrx1acg21
- H/0Z53okMykVs3a8tECPHIxnre2UxKdTbCEkjkR4V6JyplTS47oWMw3zyI7zkaadfzVFBxk2
- lo/Tny+FX1Azea3Ce7oOnRUEZtWSsUidtIjmL8YUQFZYm+JUIgfRmSpMFq8JP4VH43GXpB/S
- OCrl+/xujzvoUBFV/cHKjEQYBxo+MaiQa1U54ykM2W4DnHb1UiEf5xDkFd4=
-In-Reply-To: <Zrcu7-CfCIoGO18V@sashalap>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:15d4:b0:80c:826f:ae77 with SMTP id
+ ca18e2360f4ac-8225ee44169mr16737439f.2.1723386781503; Sun, 11 Aug 2024
+ 07:33:01 -0700 (PDT)
+Date: Sun, 11 Aug 2024 07:33:01 -0700
+In-Reply-To: <tencent_9BD4192E4F948D96A5F58DC9925C5DAADD07@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ec2483061f69409d@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10.08.2024 11:12, Sasha Levin wrote:
-> On Mon, Jul 29, 2024 at 10:45:15AM +0200, Heiner Kallweit wrote:
->> On 28.07.2024 02:52, Sasha Levin wrote:
->>> From: Heiner Kallweit <hkallweit1@gmail.com>
->>>
->>> [ Upstream commit 982300c115d229565d7af8e8b38aa1ee7bb1f5bd ]
->>>
->>> This early RTL8168b version was the first PCIe chip version, and it's
->>> quite quirky. Last sign of life is from more than 15 yrs ago.
->>> Let's remove detection of this chip version, we'll see whether anybody
->>> complains. If not, support for this chip version can be removed a few
->>> kernel versions later.
->>>
->>> Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
->>> Link: https://lore.kernel.org/r/875cdcf4-843c-420a-ad5d-417447b68572@gmail.com
->>> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
->>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>> ---
->>>  drivers/net/ethernet/realtek/r8169_main.c | 4 +++-
->>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
->>> index 7b9e04884575e..d2d46fe17631a 100644
->>> --- a/drivers/net/ethernet/realtek/r8169_main.c
->>> +++ b/drivers/net/ethernet/realtek/r8169_main.c
->>> @@ -2274,7 +2274,9 @@ static enum mac_version rtl8169_get_mac_version(u16 xid, bool gmii)
->>>
->>>          /* 8168B family. */
->>>          { 0x7c8, 0x380,    RTL_GIGA_MAC_VER_17 },
->>> -        { 0x7c8, 0x300,    RTL_GIGA_MAC_VER_11 },
->>> +        /* This one is very old and rare, let's see if anybody complains.
->>> +         * { 0x7c8, 0x300,    RTL_GIGA_MAC_VER_11 },
->>> +         */
->>>
->>>          /* 8101 family. */
->>>          { 0x7c8, 0x448,    RTL_GIGA_MAC_VER_39 },
->>
->> It may be the case that there are still few users out there with this ancient hw.
->> We will know better once 6.11 is out for a few month. In this case we would have to
->> revert this change.
->> I don't think it's a change which should go to stable.
-> 
-> Sure, I'll drop it.
-> 
-Just saw that this patch has been added to stable again an hour ago.
-Technical issue?
+Hello,
+
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
+
+ino state: 393351, ino: 190133a, comm: kworker/u32:0, folio: ffffea0000de1400, netfs_writepages
+ino: 190133a, v9fs_begin_writeback
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=190133a
+WARNING: CPU: 2 PID: 11 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Modules linked in:
+CPU: 2 UID: 0 PID: 11 Comm: kworker/u32:0 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-212)
+RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 e0 9f 8e 8b e8 35 40 0d fe 90 <0f> 0b 90 90 eb 80 e8 19 29 a8 fe e9 6f ff ff ff e8 7f 28 a8 fe e9
+RSP: 0018:ffffc900000e7478 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff888032acd3b0 RCX: ffffffff814cc379
+RDX: ffff888017ea2440 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff888032acd3b0
+R13: ffff888026ce12d8 R14: dffffc0000000000 R15: ffffc900000e7840
+FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000740 CR3: 000000001efc6000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x97c/0x10a0 fs/netfs/write_issue.c:546
+ do_writepages+0x1ae/0x940 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+Tested on:
+
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b7d95d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16d13d11980000
 
 
