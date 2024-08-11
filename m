@@ -1,155 +1,205 @@
-Return-Path: <linux-kernel+bounces-282132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AEBC94E001
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:48:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5701B94E003
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCFAD1F21430
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 04:48:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A940D281C20
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 04:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4414D17740;
-	Sun, 11 Aug 2024 04:47:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23749171BB;
+	Sun, 11 Aug 2024 04:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="yR97CCBO"
-Received: from pv50p00im-ztdg10011301.me.com (pv50p00im-ztdg10011301.me.com [17.58.6.40])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="wTaXN3/9"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC3D11CB8
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 04:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.40
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F43A2572
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 04:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723351675; cv=none; b=VJ2vRiytBhupC5ifWM2SFLWvIhBZzaGuidY0hjxaDKgiBeFzL8odTV3LMlBcXscJBLu8PAZ1Vodc95H2ScChtq032pCX5tYlqXapRq04RSUjAhG0xI3UWaiOjMU+lc7n+z2QvtJy7e+TmGe24Q9C8hOaUCgCu0DRry7AWExJrog=
+	t=1723352170; cv=none; b=cNapAdRgX6UuJjvZDH8qLzntawUBjMtOuDcyenp6oBicdnhER/gxppYigQTx/rgJ7d4CNRVM/wvUqPWNS/05jgm+9j9nEQ62/70v5Oe6sEytdp8LhncEb13tKLocXLEsAqD8P1mjtZKcVUlEWZX4kCuI5RetOyHnE0a0btwgtd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723351675; c=relaxed/simple;
-	bh=WoClrAp6/PDEPBO+fOKBj7MIutBkmR70T8FmVhfwHKY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=g8o+nZkIOcgYvXo5GMuL6yspOyd7jeLQ7fL5oJKTSWtAyL6+tzQTZnGHS4By5BObgUHdtMv6ju15dVoWf+kdzabSKZkOharrVGddrPiH4WycaJTbBGi8GsUEUXJkMeX11+N/yRSjLxMXHlajhH7jYH6jlFNVooQLTsEzLI3ql7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=yR97CCBO; arc=none smtp.client-ip=17.58.6.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723351673;
-	bh=ChF3NJJHe5glh40340pDkN0lWNi8wdR9eqNWQFsg3gg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=yR97CCBOtE4Iy0XYyNoEKhyDToSpTult/mhnVrLRbNleYVY6jni+Lph5x1LqNUieP
-	 dXw1D5M3p7XT/MiY4qFldn5ERG1MxjZB+ao2DvJMrMfEXtk48DW7CN7K4gzFc2/aX8
-	 KqHdcd98CisnKrtm90p01P2vYjliP4fs8s5YUZDbbiTO2i/I1oWQ3Ny6Y/8Mzdkjcr
-	 Sv0ZeH/2tNZF7XT7oNY2E+NSe8mACpnGONvfVDm5eE6BKW8hFJckIjjnTySpjDaozW
-	 LH0v0KoD0l4fnWaW2QkXNktXGRiUfuyd/TEQTYcIl/a6bHUga/qww+V5964jNgvx0D
-	 m7CgG0620jL7w==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011301.me.com (Postfix) with ESMTPSA id 174D1180169;
-	Sun, 11 Aug 2024 04:47:45 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Sun, 11 Aug 2024 12:47:26 +0800
-Subject: [PATCH v2] wifi: rfkill: Correct parameter type for
- rfkill_set_hw_state_reason()
+	s=arc-20240116; t=1723352170; c=relaxed/simple;
+	bh=Vz8Kwq5reUBIKlhhCOOHjMye+z5JuFEP3wCQxzqOon8=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=KrFV0GkzYYw/J7UK7OaIwjLPGUHvBKfwP5qN+nTwL7hChPLCa5Np30at+r0PlJmHfVpN9tA7/GpC7NqaM0F+g2lSK7iOoBOOOdec2XyBtO/MwvzxnHZs4NOsQOwz8+FLLTiE2r5pBUTirkqRG3H7dWGhE6uWREk3AG1+ZbQMRT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=wTaXN3/9; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1723352156; bh=1d/Pa7L9RMz4/IPF83ub21ldEnUxmIYS5oTi791UEzw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=wTaXN3/9l6YidR7uMa5KRrV3hxpHN8Y/ElEsoK3VVU2lp3Eq1PA+/jpNzgHOM398X
+	 cGY9PJgO/HucEHt7uXNn+zOIWP7eQeAXFJ6zurT3H+ghs1kg04KQap/7kJzsMzdHbf
+	 sERCV/TsPGhjJmNNmvwaUVY1EYyL/9jTdE0QEbDs=
+Received: from pek-lxu-l1.wrs.com ([111.198.225.4])
+	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
+	id C743C6F7; Sun, 11 Aug 2024 12:49:52 +0800
+X-QQ-mid: xmsmtpt1723351792t5kvx24ho
+Message-ID: <tencent_E50D86925ADD975D9F19124F878D82259407@qq.com>
+X-QQ-XMAILINFO: M0PjjqbLT90wjYbeoWL1romV8hHwRA/xuwZme9sYYSPs7j9T5bYCNYYe6BFxdE
+	 fSztQVxJg3fydp2RyoRnOCSVZJwuV4UbmHEwgqjKvv74r9Mfy6PAWyh2o1w90ieSAd7MBC4t7OV3
+	 Q7o+tj+GiR310FGjV2Ydj9bn/+O9htbmlflLW8FH+SkSTmU+dMCnvNGLOhXp3xZfGd27dAu7cSmd
+	 JHv1LbXcmIj5WyyeqaxzJI2a0ml1p69QT8We9dwQIf3cal0rHVBpnSwRbFWvOfrHYx2yXmVgSOc6
+	 gJ9pKqevEH4MBoNG1RD1ORAxOwdfD5W0KQ3EXk4rOv9iuzaZ14cm7GfCfSRc2S5KUXuZ/Fh4zbY/
+	 xlzi19xQFv3PDGY26ZRyzP3N+w9pIzuuDfiqniF84TipChROQyreZ60/ZC0oSzrvCB3uO3952afM
+	 2xdVQbZiNx9loslS0mNORvWuVaIpUEZ9hEVkr8/MoKT506I5VFdtrBNuQ5yBm9YAYgFVJGfnYCRY
+	 hfxE9lEmW393Lth++Ahbvxb10qwbAoKbtERLq7Cna7tlQAOi7doeeDF/XWwGs2+HVaWfIyhfAa6x
+	 TeXRLFAX8bMkvrXMdHDgpQ5sBDIUP/8Xs19tCsSxz480ySQJdlphhQqpBQNvXIkllnoqmEtjdIKP
+	 l6p6rraAuxZuCO2Yv4vRjT8ERGUvLPRjhmPWxYS/9UozkYcjUyH6yLf6YeTR/1PoxC4aYv7FVvlC
+	 VVUXxoSY11DXER2Mx/2ixNCmaYKNQLKf9qKV2Gsvmun/QBFl/M4FpgdG/d7vkZoJ3Muzk8Vcp/xa
+	 1GP0aInXufo6e3Nyw6e1Vu8gpTaSz2gaMoCiimq/YZJ7snxINPslOUlScMVafZOSGhzZvvLWmO8J
+	 b0s27n/7kz/KBKMRS50aChaxSGiWnAEBG352HAYturG+vbKxdpivqdFY182npj6A==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+Date: Sun, 11 Aug 2024 12:49:52 +0800
+X-OQ-MSGID: <20240811044952.2909018-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <0000000000007ec511061f00a7b2@google.com>
+References: <0000000000007ec511061f00a7b2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240811-rfkill_fix-v2-1-9050760336f4@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAF1CuGYC/22MQQ6CMBAAv0L2bA0tFNCT/yDE1LKVjdhKq42G9
- O9Wzh5nkpkVAnrCAMdiBY+RAjmbQewK0JOyV2Q0ZgZRirpsuWTe3Giez4berKqkMkpg12kFOXh
- 4zHqb9UPmicLT+c/2jvxn/24iZ5ypgxGjbC51y5vT8iJNVu+1u8OQUvoCcNSKwqYAAAA=
-To: Johannes Berg <johannes@sipsolutions.net>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Kalle Valo <quic_kvalo@quicinc.com>, 
- Jeff Johnson <quic_jjohnson@quicinc.com>, Zijun Hu <zijun_hu@icloud.com>, 
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: aFkN8vTURkYiH0M8XK_lgUN5YSWV8baT
-X-Proofpoint-GUID: aFkN8vTURkYiH0M8XK_lgUN5YSWV8baT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-11_03,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 mlxlogscore=999 spamscore=0
- mlxscore=0 suspectscore=0 clxscore=1011 phishscore=0 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408110036
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+debug
 
-Change type of parameter @reason to enum rfkill_hard_block_reasons
-for API rfkill_set_hw_state_reason() according to its comments, and
-all kernel callers have invoked the API with enum type actually.
+#syz test: upstream c0ecd6388360
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-Changes in v2:
-- Fix indentation issue and correct commit message
-- Git rebase over the following commit:
-  Commit: cc32e9fb380d ("Merge tag 'rtw-next-2024-08-09' of https://github.com/pkshih/rtw")
-- Link to v1: https://lore.kernel.org/r/20240715-rfkill_fix-v1-1-a9f2d56b4716@quicinc.com
----
- include/linux/rfkill.h | 5 +++--
- net/rfkill/core.c      | 8 ++------
- 2 files changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
-index 373003ace639..997b34197385 100644
---- a/include/linux/rfkill.h
-+++ b/include/linux/rfkill.h
-@@ -147,7 +147,8 @@ void rfkill_destroy(struct rfkill *rfkill);
-  * Prefer to use rfkill_set_hw_state if you don't need any special reason.
-  */
- bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
--				bool blocked, unsigned long reason);
-+				bool blocked,
-+				enum rfkill_hard_block_reasons reason);
- /**
-  * rfkill_set_hw_state - Set the internal rfkill hardware block state
-  * @rfkill: pointer to the rfkill class to modify.
-@@ -280,7 +281,7 @@ static inline void rfkill_destroy(struct rfkill *rfkill)
+diff --git a/mm/filemap.c b/mm/filemap.c
+index d62150418b91..f854a3fe0335 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -394,6 +394,7 @@ int filemap_fdatawrite_wbc(struct address_space *mapping,
+ 		return 0;
  
- static inline bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
- 					      bool blocked,
--					      unsigned long reason)
-+					      enum rfkill_hard_block_reasons reason)
- {
- 	return blocked;
+ 	wbc_attach_fdatawrite_inode(wbc, mapping->host);
++	printk("ino: %lx, comm: %s, %s\n", mapping->host->i_ino, current->comm, __func__);
+ 	ret = do_writepages(mapping, wbc);
+ 	wbc_detach_inode(wbc);
+ 	return ret;
+@@ -427,6 +428,7 @@ int __filemap_fdatawrite_range(struct address_space *mapping, loff_t start,
+ 		.range_end = end,
+ 	};
+ 
++	printk("ino: %lx, comm: %s, %s\n", mapping->host->i_ino, current->comm, __func__);
+ 	return filemap_fdatawrite_wbc(mapping, &wbc);
  }
-diff --git a/net/rfkill/core.c b/net/rfkill/core.c
-index 7a5367628c05..13a5126bc36e 100644
---- a/net/rfkill/core.c
-+++ b/net/rfkill/core.c
-@@ -539,18 +539,14 @@ bool rfkill_get_global_sw_state(const enum rfkill_type type)
- #endif
  
- bool rfkill_set_hw_state_reason(struct rfkill *rfkill,
--				bool blocked, unsigned long reason)
-+				bool blocked,
-+				enum rfkill_hard_block_reasons reason)
+@@ -4227,6 +4229,7 @@ int filemap_invalidate_inode(struct inode *inode, bool flush,
+ 			.range_end	= end,
+ 		};
+ 
++		printk("ino: %lx, comm: %s, %s\n", inode->i_ino, current->comm, __func__);
+ 		filemap_fdatawrite_wbc(mapping, &wbc);
+ 	}
+ 
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 4430ac68e4c4..f76ce90a5396 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2687,6 +2687,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
+ 			/* deal with chardevs and other special files */
+ 			ret = 0;
+ 		}
++		printk("ret: %d, ino: %lx, comm: %s, %s\n", ret, mapping->host->i_ino, current->comm, __func__);
+ 		if (ret != -ENOMEM || wbc->sync_mode != WB_SYNC_ALL)
+ 			break;
+ 
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 4726c315453c..b7877f5c6bb0 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -510,6 +510,7 @@ ssize_t netfs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	netfs_end_io_write(inode);
+ 	if (ret > 0)
+ 		ret = generic_write_sync(iocb, ret);
++	printk("ino: %lx, in state: %lu, comm: %s, %s\n", inode->i_ino, inode->state, current->comm, __func__);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(netfs_file_write_iter);
+diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
+index 9258d30cffe3..2720943c47ba 100644
+--- a/fs/netfs/write_issue.c
++++ b/fs/netfs/write_issue.c
+@@ -522,6 +522,8 @@ int netfs_writepages(struct address_space *mapping,
+ 	trace_netfs_write(wreq, netfs_write_trace_writeback);
+ 	netfs_stat(&netfs_n_wh_writepages);
+ 
++	printk("ino state: %lu, ino: %lx, comm: %s, folio: %p, %s\n", wreq->inode->i_state,
++			wreq->inode->i_ino, current->comm, folio, __func__);
+ 	do {
+ 		_debug("wbiter %lx %llx", folio->index, wreq->start + wreq->submitted);
+ 
+diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
+index a97ceb105cd8..7768cc70439d 100644
+--- a/fs/9p/vfs_addr.c
++++ b/fs/9p/vfs_addr.c
+@@ -34,6 +34,7 @@ static void v9fs_begin_writeback(struct netfs_io_request *wreq)
  {
- 	unsigned long flags;
- 	bool ret, prev;
+ 	struct p9_fid *fid;
  
- 	BUG_ON(!rfkill);
++	printk("ino: %lx, %s\n", wreq->inode->i_ino, __func__);
+ 	fid = v9fs_fid_find_inode(wreq->inode, true, INVALID_UID, true);
+ 	if (!fid) {
+ 		WARN_ONCE(1, "folio expected an open fid inode->i_ino=%lx\n",
+diff --git a/fs/9p/vfs_dir.c b/fs/9p/vfs_dir.c
+index e0d34e4e9076..73cff02644b2 100644
+--- a/fs/9p/vfs_dir.c
++++ b/fs/9p/vfs_dir.c
+@@ -219,6 +219,7 @@ int v9fs_dir_release(struct inode *inode, struct file *filp)
+ 			retval = filemap_fdatawrite(inode->i_mapping);
  
--	if (WARN(reason & ~(RFKILL_HARD_BLOCK_SIGNAL |
--			    RFKILL_HARD_BLOCK_NOT_OWNER),
--		 "hw_state reason not supported: 0x%lx", reason))
--		return rfkill_blocked(rfkill);
--
- 	spin_lock_irqsave(&rfkill->lock, flags);
- 	prev = !!(rfkill->hard_block_reasons & reason);
- 	if (blocked) {
-
----
-base-commit: cc32e9fb380d8afdbf3486d7063d5520bfb0f071
-change-id: 20240715-rfkill_fix-335afa2e88ca
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+ 		spin_lock(&inode->i_lock);
++		printk("del, ino: %lx, ino sync: %d, comm: %s, %s\n", inode->i_ino, inode->i_state & I_SYNC, current->comm, __func__);
+ 		hlist_del(&fid->ilist);
+ 		spin_unlock(&inode->i_lock);
+ 		put_err = p9_fid_put(fid);
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 348cc90bf9c5..0ebcd847f2b0 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -44,6 +44,7 @@ int v9fs_file_open(struct inode *inode, struct file *file)
+ 	struct p9_fid *fid;
+ 	int omode;
+ 
++	pr_info("ino: %lx, %s\n", inode->i_ino, __func__);
+ 	p9_debug(P9_DEBUG_VFS, "inode: %p file: %p\n", inode, file);
+ 	v9ses = v9fs_inode2v9ses(inode);
+ 	if (v9fs_proto_dotl(v9ses))
+@@ -397,12 +398,14 @@ v9fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ {
+ 	struct file *file = iocb->ki_filp;
+ 	struct p9_fid *fid = file->private_data;
++	struct inode *inode = file_inode(file);
+ 
+ 	p9_debug(P9_DEBUG_VFS, "fid %d\n", fid->fid);
+ 
+ 	if (fid->mode & (P9L_DIRECT | P9L_NOWRITECACHE))
+ 		return netfs_unbuffered_write_iter(iocb, from);
+ 
++	pr_info("ino: %lx, comm: %s, %s\n", inode->i_ino, current->comm, __func__);
+ 	p9_debug(P9_DEBUG_CACHE, "(cached)\n");
+ 	return netfs_file_write_iter(iocb, from);
+ }
+@@ -461,6 +464,7 @@ v9fs_file_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
+ 
+ 	p9_debug(P9_DEBUG_MMAP, "filp :%p\n", filp);
++	pr_info("ino: %lx, comm: %s, %s\n", inode->i_ino, current->comm, __func__);
+ 
+ 	if (!(v9ses->cache & CACHE_WRITEBACK)) {
+ 		p9_debug(P9_DEBUG_CACHE, "(read-only mmap mode)");
 
 
