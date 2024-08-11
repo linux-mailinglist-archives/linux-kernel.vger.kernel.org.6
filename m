@@ -1,370 +1,485 @@
-Return-Path: <linux-kernel+bounces-282360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3157094E2D2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:46:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E1094E2D6
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523401C20AFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:46:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8672B212F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F9158860;
-	Sun, 11 Aug 2024 19:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08FB1598E3;
+	Sun, 11 Aug 2024 19:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmgTP6EO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGbeszJ6"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898E826ACB
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 19:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D275914B95B;
+	Sun, 11 Aug 2024 19:57:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723405593; cv=none; b=MRH1k+h8Ie79RRUxBY4Fgd19CBz3mfoTqeoaHDG+cWGbXQqXiFPdvbaqmc8ZWfbnlaXVNV71gbx3KkxYyDJIP7Ew52UMEr4fpak3TUt1rPiJfk8oNhQTaBeLAisRDbGP3rzh0l1261hGTGDhQOhmxh4NlBjzqi2rlC20jp2AGzc=
+	t=1723406249; cv=none; b=sFZLyeiMjNhqdryWZHScmeRhOUaPN99uMWchjUD49ImickhVpc836Yop+V87YpaADOMgkeWep7Rt+9bHe4A9wcpJyH9uCcm1rdhFo+2iFuWcvgXAiq8ER2xGLK3mGMggrDyRZQQl7IPFWm1oHn9P9vO+Kwrfz1vmVnfRbt2kSTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723405593; c=relaxed/simple;
-	bh=leSE0qLj2SrfNxvVQSlP6iN8ODykphKaX9Iglic1MQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E5Ns0UNc3NYP6tmSDEVk8wWn5sOtPd2Fi18iT8v0Z2bDQTHvmUG7xT0a4LFaEoFBz0N4huGrGx4NT/ysgSVhTihRw+mHjCOCTtWdfVm8h+OaS7XzYUUrC0wH1hKazYMqiJ3sL277nQMpm3mqR2Qh9hCkRSSoPOPlshSCfw7QXSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmgTP6EO; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723405591; x=1754941591;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=leSE0qLj2SrfNxvVQSlP6iN8ODykphKaX9Iglic1MQE=;
-  b=nmgTP6EOcuuPcJooBfL7CQc89duJhJEre05yPGOaBHRSsEUZfl6GaM3h
-   5WHxeIwORGr3CbdMxIxSv4NkGHVz2nCMw2mibiZOCjwlG0Z1UZmQHZ0Pw
-   uPmlB9fpyM3ScMZakfvP4vVi3O7iKiQR2P4PWtAf0YH0yTxC4ljEYzzNW
-   +x2xYI5pCYWasmFknZ4l7KNIvnmZCfRHUow4VFIwc9+mRFcEh/6lwOEvv
-   aO5wgGQal3EAOkjApAijYq0ZWUqJMUYKxOFjQK7YensGH6vTCzENHQ882
-   MT1nLqkeU6RSf5RBRVg4k8QQvtaxZdIucgmwH9FwEQCWhf+TwThdZp6lA
-   w==;
-X-CSE-ConnectionGUID: YGtHQ76hRsmT46RqCB202g==
-X-CSE-MsgGUID: olc+Eeg0ShCpv3zZdyaLzQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21660261"
-X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
-   d="scan'208";a="21660261"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 12:46:30 -0700
-X-CSE-ConnectionGUID: 55I1cSovRVu/EIx6+SLhSA==
-X-CSE-MsgGUID: ZHITwqftTv+8t2oxaC8i3A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
-   d="scan'208";a="62714478"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 11 Aug 2024 12:46:28 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdEWI-000B67-0c;
-	Sun, 11 Aug 2024 19:46:26 +0000
-Date: Mon, 12 Aug 2024 03:46:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexei Starovoitov <ast@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Daniel Borkmann <daniel@iogearbox.net>
-Subject: kernel/bpf/verifier.c:19160:44: sparse: sparse: cast truncates bits
- from constant value (c000000000002000 becomes 2000)
-Message-ID: <202408120308.0TU4frfu-lkp@intel.com>
+	s=arc-20240116; t=1723406249; c=relaxed/simple;
+	bh=o34MXk9Ae0cxEHH5RTH7U6By+nTAU+RwokKL/MaH3s0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DpiN6vORnqTCAZadTNMC3n1lNdu0N6urt958rGgV3qjUi1PTn5o86JgjmxURittiSP8ET/P90duEBFK7D/mZcSyMJWp3eJCMiTPEmj4FQ6C9MeczUjTOQiBDXLdi7YNgu3B2jcfviX/qeOYgfmSjrj3wJObGjSftGnjJsSNl3bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGbeszJ6; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ef95ec938so3648779e87.3;
+        Sun, 11 Aug 2024 12:57:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723406246; x=1724011046; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9+u/LkSsXMPd+naif3Saq+zqxF4qBn/RNIKVe/GBe0E=;
+        b=HGbeszJ6BqjkTrUBGqQkJSorTSU5LpNpmytWQthU3eZLZgDTctW2MJqbh1Maf99m6v
+         cyp2S+WB4eXoVhGrqNvwc4OnIbKNy0pU/E+6Jo4oVtqWfWV+yt07s8MB57U5DALt3cJS
+         w9NGdioBdkqQG1FbXxc+2QeNsr4Hl/ZdjUW1CM5SM9Nlq32jBvd8JQjm6sr0YmYfUvNC
+         FsgyvUCQoekEt4ju1vIcI4WmEZEtN+WL14c46ea9M27VqMuPtnKKcc1S0gvIQbzN7Zgd
+         LDqwz0QBlI3jACux36jNUTnFZoFthYPsQmxnhncQsTh8cKR+/K1Hn04T0dcHzVAPG0Vx
+         Ojdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723406246; x=1724011046;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9+u/LkSsXMPd+naif3Saq+zqxF4qBn/RNIKVe/GBe0E=;
+        b=IMQb49ygKI6C+SvlcZf4g7ObMHBu4jR7ENrVNtyUgkKwKOkQk3B6SHd9EID8Jnvujj
+         3J2FQtM+FxvS0DwlivC1sgntjL2gc2ulzpKtJkAMlHT7sJXJDIsOVWQG+TRAXOiLj0or
+         MYpCGtvZzcXoJBKgqId02IKBIR3s9ZLjCzpToWuDFZXgqAuIqi2iZWoOS20cBvjVJcJ1
+         8OA/2KDSNabWBx/Y9khgc+/Bo9id28lXxApaTU21iXWt47bBEvJJRHsCP5COeHisY3Y2
+         Ie+GWeE8d1mXttCS6OVWRMHT8VzdvgSLpVSmJYVkD2IXDuYmZW9zPq9ngF1HnjexoHEH
+         bdUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBDobMGH81JNlKPyRgdcioPiXf5O+6vo03QFk21Kexf8VkFMGIaDmnWUDeNsWeHH6CrwiVFqmThf3WnnGfWh7d5p+YeDw4OG+oSw3C
+X-Gm-Message-State: AOJu0YxT7btiFFFAZPopos/cnaSkzrUSJkL6Rc21NNiLrxOc2qfvKZmd
+	0PJKsu0LWlfmb683DtsQ43scsrwHJfl5t21M4ZeNIiqAimxIARbPjYfcQAVR
+X-Google-Smtp-Source: AGHT+IGmIB7GIfbX0M7SYL3M3JX7EzWm1pCVVEl3i0nDe7T5iMj7ZBIVLESEAlGFGRKRbSs8qQFxLw==
+X-Received: by 2002:a05:6512:39cd:b0:52c:8a37:6cf4 with SMTP id 2adb3069b0e04-530ee9741e0mr5163529e87.14.1723406245349;
+        Sun, 11 Aug 2024 12:57:25 -0700 (PDT)
+Received: from WBEC325.dom.lan ([2001:470:608f:0:95a:8e8a:ba04:86f8])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f1b514sm550558e87.222.2024.08.11.12.57.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 12:57:24 -0700 (PDT)
+From: Pawel Dembicki <paweldembicki@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Pawel Dembicki <paweldembicki@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: dsa: vsc73xx: implement FDB operations
+Date: Sun, 11 Aug 2024 21:56:49 +0200
+Message-Id: <20240811195649.2360966-1-paweldembicki@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7006fe2f7f781fc96c8bab9df0c0417fd670a8e1
-commit: af682b767a41772499f8e54ca7d7e1deb3395f44 bpf: Optimize emit_mov_imm64().
-date:   4 months ago
-config: mips-randconfig-r133-20240811 (https://download.01.org/0day-ci/archive/20240812/202408120308.0TU4frfu-lkp@intel.com/config)
-compiler: mips64-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20240812/202408120308.0TU4frfu-lkp@intel.com/reproduce)
+This commit introduces implementations of three functions:
+.port_fdb_dump
+.port_fdb_add
+.port_fdb_del
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408120308.0TU4frfu-lkp@intel.com/
+The FDB database organization is the same as in other old Vitesse chips:
+It has 2048 rows and 4 columns (buckets). The row index is calculated by
+the hash function 'vsc73xx_calc_hash' and the FDB entry must be placed
+exactly into row[hash]. The chip selects the row number by itself.
 
-sparse warnings: (new ones prefixed by >>)
-   kernel/bpf/verifier.c:20219:38: sparse: sparse: subtraction of functions? Share your drugs
-   kernel/bpf/verifier.c: note: in included file (through include/linux/bpf.h, include/linux/bpf-cgroup.h):
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
->> kernel/bpf/verifier.c:19160:44: sparse: sparse: cast truncates bits from constant value (c000000000002000 becomes 2000)
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast to non-scalar
-   include/linux/bpfptr.h:65:40: sparse: sparse: cast from non-scalar
+Signed-off-by: Pawel Dembicki <paweldembicki@gmail.com>
+---
+ drivers/net/dsa/vitesse-vsc73xx-core.c | 302 +++++++++++++++++++++++++
+ drivers/net/dsa/vitesse-vsc73xx.h      |   2 +
+ 2 files changed, 304 insertions(+)
 
-vim +19160 kernel/bpf/verifier.c
-
- 19113	
- 19114	static int jit_subprogs(struct bpf_verifier_env *env)
- 19115	{
- 19116		struct bpf_prog *prog = env->prog, **func, *tmp;
- 19117		int i, j, subprog_start, subprog_end = 0, len, subprog;
- 19118		struct bpf_map *map_ptr;
- 19119		struct bpf_insn *insn;
- 19120		void *old_bpf_func;
- 19121		int err, num_exentries;
- 19122	
- 19123		if (env->subprog_cnt <= 1)
- 19124			return 0;
- 19125	
- 19126		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
- 19127			if (!bpf_pseudo_func(insn) && !bpf_pseudo_call(insn))
- 19128				continue;
- 19129	
- 19130			/* Upon error here we cannot fall back to interpreter but
- 19131			 * need a hard reject of the program. Thus -EFAULT is
- 19132			 * propagated in any case.
- 19133			 */
- 19134			subprog = find_subprog(env, i + insn->imm + 1);
- 19135			if (subprog < 0) {
- 19136				WARN_ONCE(1, "verifier bug. No program starts at insn %d\n",
- 19137					  i + insn->imm + 1);
- 19138				return -EFAULT;
- 19139			}
- 19140			/* temporarily remember subprog id inside insn instead of
- 19141			 * aux_data, since next loop will split up all insns into funcs
- 19142			 */
- 19143			insn->off = subprog;
- 19144			/* remember original imm in case JIT fails and fallback
- 19145			 * to interpreter will be needed
- 19146			 */
- 19147			env->insn_aux_data[i].call_imm = insn->imm;
- 19148			/* point imm to __bpf_call_base+1 from JITs point of view */
- 19149			insn->imm = 1;
- 19150			if (bpf_pseudo_func(insn)) {
- 19151	#if defined(MODULES_VADDR)
- 19152				u64 addr = MODULES_VADDR;
- 19153	#else
- 19154				u64 addr = VMALLOC_START;
- 19155	#endif
- 19156				/* jit (e.g. x86_64) may emit fewer instructions
- 19157				 * if it learns a u32 imm is the same as a u64 imm.
- 19158				 * Set close enough to possible prog address.
- 19159				 */
- 19160				insn[0].imm = (u32)addr;
- 19161				insn[1].imm = addr >> 32;
- 19162			}
- 19163		}
- 19164	
- 19165		err = bpf_prog_alloc_jited_linfo(prog);
- 19166		if (err)
- 19167			goto out_undo_insn;
- 19168	
- 19169		err = -ENOMEM;
- 19170		func = kcalloc(env->subprog_cnt, sizeof(prog), GFP_KERNEL);
- 19171		if (!func)
- 19172			goto out_undo_insn;
- 19173	
- 19174		for (i = 0; i < env->subprog_cnt; i++) {
- 19175			subprog_start = subprog_end;
- 19176			subprog_end = env->subprog_info[i + 1].start;
- 19177	
- 19178			len = subprog_end - subprog_start;
- 19179			/* bpf_prog_run() doesn't call subprogs directly,
- 19180			 * hence main prog stats include the runtime of subprogs.
- 19181			 * subprogs don't have IDs and not reachable via prog_get_next_id
- 19182			 * func[i]->stats will never be accessed and stays NULL
- 19183			 */
- 19184			func[i] = bpf_prog_alloc_no_stats(bpf_prog_size(len), GFP_USER);
- 19185			if (!func[i])
- 19186				goto out_free;
- 19187			memcpy(func[i]->insnsi, &prog->insnsi[subprog_start],
- 19188			       len * sizeof(struct bpf_insn));
- 19189			func[i]->type = prog->type;
- 19190			func[i]->len = len;
- 19191			if (bpf_prog_calc_tag(func[i]))
- 19192				goto out_free;
- 19193			func[i]->is_func = 1;
- 19194			func[i]->sleepable = prog->sleepable;
- 19195			func[i]->aux->func_idx = i;
- 19196			/* Below members will be freed only at prog->aux */
- 19197			func[i]->aux->btf = prog->aux->btf;
- 19198			func[i]->aux->func_info = prog->aux->func_info;
- 19199			func[i]->aux->func_info_cnt = prog->aux->func_info_cnt;
- 19200			func[i]->aux->poke_tab = prog->aux->poke_tab;
- 19201			func[i]->aux->size_poke_tab = prog->aux->size_poke_tab;
- 19202	
- 19203			for (j = 0; j < prog->aux->size_poke_tab; j++) {
- 19204				struct bpf_jit_poke_descriptor *poke;
- 19205	
- 19206				poke = &prog->aux->poke_tab[j];
- 19207				if (poke->insn_idx < subprog_end &&
- 19208				    poke->insn_idx >= subprog_start)
- 19209					poke->aux = func[i]->aux;
- 19210			}
- 19211	
- 19212			func[i]->aux->name[0] = 'F';
- 19213			func[i]->aux->stack_depth = env->subprog_info[i].stack_depth;
- 19214			func[i]->jit_requested = 1;
- 19215			func[i]->blinding_requested = prog->blinding_requested;
- 19216			func[i]->aux->kfunc_tab = prog->aux->kfunc_tab;
- 19217			func[i]->aux->kfunc_btf_tab = prog->aux->kfunc_btf_tab;
- 19218			func[i]->aux->linfo = prog->aux->linfo;
- 19219			func[i]->aux->nr_linfo = prog->aux->nr_linfo;
- 19220			func[i]->aux->jited_linfo = prog->aux->jited_linfo;
- 19221			func[i]->aux->linfo_idx = env->subprog_info[i].linfo_idx;
- 19222			func[i]->aux->arena = prog->aux->arena;
- 19223			num_exentries = 0;
- 19224			insn = func[i]->insnsi;
- 19225			for (j = 0; j < func[i]->len; j++, insn++) {
- 19226				if (BPF_CLASS(insn->code) == BPF_LDX &&
- 19227				    (BPF_MODE(insn->code) == BPF_PROBE_MEM ||
- 19228				     BPF_MODE(insn->code) == BPF_PROBE_MEM32 ||
- 19229				     BPF_MODE(insn->code) == BPF_PROBE_MEMSX))
- 19230					num_exentries++;
- 19231				if ((BPF_CLASS(insn->code) == BPF_STX ||
- 19232				     BPF_CLASS(insn->code) == BPF_ST) &&
- 19233				     BPF_MODE(insn->code) == BPF_PROBE_MEM32)
- 19234					num_exentries++;
- 19235			}
- 19236			func[i]->aux->num_exentries = num_exentries;
- 19237			func[i]->aux->tail_call_reachable = env->subprog_info[i].tail_call_reachable;
- 19238			func[i]->aux->exception_cb = env->subprog_info[i].is_exception_cb;
- 19239			if (!i)
- 19240				func[i]->aux->exception_boundary = env->seen_exception;
- 19241			func[i] = bpf_int_jit_compile(func[i]);
- 19242			if (!func[i]->jited) {
- 19243				err = -ENOTSUPP;
- 19244				goto out_free;
- 19245			}
- 19246			cond_resched();
- 19247		}
- 19248	
- 19249		/* at this point all bpf functions were successfully JITed
- 19250		 * now populate all bpf_calls with correct addresses and
- 19251		 * run last pass of JIT
- 19252		 */
- 19253		for (i = 0; i < env->subprog_cnt; i++) {
- 19254			insn = func[i]->insnsi;
- 19255			for (j = 0; j < func[i]->len; j++, insn++) {
- 19256				if (bpf_pseudo_func(insn)) {
- 19257					subprog = insn->off;
- 19258					insn[0].imm = (u32)(long)func[subprog]->bpf_func;
- 19259					insn[1].imm = ((u64)(long)func[subprog]->bpf_func) >> 32;
- 19260					continue;
- 19261				}
- 19262				if (!bpf_pseudo_call(insn))
- 19263					continue;
- 19264				subprog = insn->off;
- 19265				insn->imm = BPF_CALL_IMM(func[subprog]->bpf_func);
- 19266			}
- 19267	
- 19268			/* we use the aux data to keep a list of the start addresses
- 19269			 * of the JITed images for each function in the program
- 19270			 *
- 19271			 * for some architectures, such as powerpc64, the imm field
- 19272			 * might not be large enough to hold the offset of the start
- 19273			 * address of the callee's JITed image from __bpf_call_base
- 19274			 *
- 19275			 * in such cases, we can lookup the start address of a callee
- 19276			 * by using its subprog id, available from the off field of
- 19277			 * the call instruction, as an index for this list
- 19278			 */
- 19279			func[i]->aux->func = func;
- 19280			func[i]->aux->func_cnt = env->subprog_cnt - env->hidden_subprog_cnt;
- 19281			func[i]->aux->real_func_cnt = env->subprog_cnt;
- 19282		}
- 19283		for (i = 0; i < env->subprog_cnt; i++) {
- 19284			old_bpf_func = func[i]->bpf_func;
- 19285			tmp = bpf_int_jit_compile(func[i]);
- 19286			if (tmp != func[i] || func[i]->bpf_func != old_bpf_func) {
- 19287				verbose(env, "JIT doesn't support bpf-to-bpf calls\n");
- 19288				err = -ENOTSUPP;
- 19289				goto out_free;
- 19290			}
- 19291			cond_resched();
- 19292		}
- 19293	
- 19294		/* finally lock prog and jit images for all functions and
- 19295		 * populate kallsysm. Begin at the first subprogram, since
- 19296		 * bpf_prog_load will add the kallsyms for the main program.
- 19297		 */
- 19298		for (i = 1; i < env->subprog_cnt; i++) {
- 19299			err = bpf_prog_lock_ro(func[i]);
- 19300			if (err)
- 19301				goto out_free;
- 19302		}
- 19303	
- 19304		for (i = 1; i < env->subprog_cnt; i++)
- 19305			bpf_prog_kallsyms_add(func[i]);
- 19306	
- 19307		/* Last step: make now unused interpreter insns from main
- 19308		 * prog consistent for later dump requests, so they can
- 19309		 * later look the same as if they were interpreted only.
- 19310		 */
- 19311		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
- 19312			if (bpf_pseudo_func(insn)) {
- 19313				insn[0].imm = env->insn_aux_data[i].call_imm;
- 19314				insn[1].imm = insn->off;
- 19315				insn->off = 0;
- 19316				continue;
- 19317			}
- 19318			if (!bpf_pseudo_call(insn))
- 19319				continue;
- 19320			insn->off = env->insn_aux_data[i].call_imm;
- 19321			subprog = find_subprog(env, i + insn->off + 1);
- 19322			insn->imm = subprog;
- 19323		}
- 19324	
- 19325		prog->jited = 1;
- 19326		prog->bpf_func = func[0]->bpf_func;
- 19327		prog->jited_len = func[0]->jited_len;
- 19328		prog->aux->extable = func[0]->aux->extable;
- 19329		prog->aux->num_exentries = func[0]->aux->num_exentries;
- 19330		prog->aux->func = func;
- 19331		prog->aux->func_cnt = env->subprog_cnt - env->hidden_subprog_cnt;
- 19332		prog->aux->real_func_cnt = env->subprog_cnt;
- 19333		prog->aux->bpf_exception_cb = (void *)func[env->exception_callback_subprog]->bpf_func;
- 19334		prog->aux->exception_boundary = func[0]->aux->exception_boundary;
- 19335		bpf_prog_jit_attempt_done(prog);
- 19336		return 0;
- 19337	out_free:
- 19338		/* We failed JIT'ing, so at this point we need to unregister poke
- 19339		 * descriptors from subprogs, so that kernel is not attempting to
- 19340		 * patch it anymore as we're freeing the subprog JIT memory.
- 19341		 */
- 19342		for (i = 0; i < prog->aux->size_poke_tab; i++) {
- 19343			map_ptr = prog->aux->poke_tab[i].tail_call.map;
- 19344			map_ptr->ops->map_poke_untrack(map_ptr, prog->aux);
- 19345		}
- 19346		/* At this point we're guaranteed that poke descriptors are not
- 19347		 * live anymore. We can just unlink its descriptor table as it's
- 19348		 * released with the main prog.
- 19349		 */
- 19350		for (i = 0; i < env->subprog_cnt; i++) {
- 19351			if (!func[i])
- 19352				continue;
- 19353			func[i]->aux->poke_tab = NULL;
- 19354			bpf_jit_free(func[i]);
- 19355		}
- 19356		kfree(func);
- 19357	out_undo_insn:
- 19358		/* cleanup main prog to be interpreted */
- 19359		prog->jit_requested = 0;
- 19360		prog->blinding_requested = 0;
- 19361		for (i = 0, insn = prog->insnsi; i < prog->len; i++, insn++) {
- 19362			if (!bpf_pseudo_call(insn))
- 19363				continue;
- 19364			insn->off = 0;
- 19365			insn->imm = env->insn_aux_data[i].call_imm;
- 19366		}
- 19367		bpf_prog_jit_attempt_done(prog);
- 19368		return err;
- 19369	}
- 19370	
-
+diff --git a/drivers/net/dsa/vitesse-vsc73xx-core.c b/drivers/net/dsa/vitesse-vsc73xx-core.c
+index a82b550a9e40..7da1641b8bab 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx-core.c
++++ b/drivers/net/dsa/vitesse-vsc73xx-core.c
+@@ -46,6 +46,8 @@
+ #define VSC73XX_BLOCK_MII_EXTERNAL	0x1 /* External MDIO subblock */
+ 
+ #define CPU_PORT	6 /* CPU port */
++#define VSC73XX_NUM_FDB_RECORDS	2048
++#define VSC73XX_NUM_BUCKETS	4
+ 
+ /* MAC Block registers */
+ #define VSC73XX_MAC_CFG		0x00
+@@ -197,6 +199,21 @@
+ #define VSC73XX_SRCMASKS_MIRROR			BIT(26)
+ #define VSC73XX_SRCMASKS_PORTS_MASK		GENMASK(7, 0)
+ 
++#define VSC73XX_MACHDATA_VID			GENMASK(27, 16)
++#define VSC73XX_MACHDATA_VID_SHIFT		16
++#define VSC73XX_MACHDATA_MAC0_SHIFT		8
++#define VSC73XX_MACHDATA_MAC1_SHIFT		0
++#define VSC73XX_MACLDATA_MAC2_SHIFT		24
++#define VSC73XX_MACLDATA_MAC3_SHIFT		16
++#define VSC73XX_MACLDATA_MAC4_SHIFT		8
++#define VSC73XX_MACLDATA_MAC5_SHIFT		0
++#define VSC73XX_MAC_BYTE_MASK			GENMASK(7, 0)
++
++#define VSC73XX_MACTINDX_SHADOW			BIT(13)
++#define VSC73XX_MACTINDX_BUCKET_MASK		GENMASK(12, 11)
++#define VSC73XX_MACTINDX_BUCKET_MASK_SHIFT	11
++#define VSC73XX_MACTINDX_INDEX_MASK		GENMASK(10, 0)
++
+ #define VSC73XX_MACACCESS_CPU_COPY		BIT(14)
+ #define VSC73XX_MACACCESS_FWD_KILL		BIT(13)
+ #define VSC73XX_MACACCESS_IGNORE_VLAN		BIT(12)
+@@ -204,6 +221,7 @@
+ #define VSC73XX_MACACCESS_VALID			BIT(10)
+ #define VSC73XX_MACACCESS_LOCKED		BIT(9)
+ #define VSC73XX_MACACCESS_DEST_IDX_MASK		GENMASK(8, 3)
++#define VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT	3
+ #define VSC73XX_MACACCESS_CMD_MASK		GENMASK(2, 0)
+ #define VSC73XX_MACACCESS_CMD_IDLE		0
+ #define VSC73XX_MACACCESS_CMD_LEARN		1
+@@ -329,6 +347,13 @@ struct vsc73xx_counter {
+ 	const char *name;
+ };
+ 
++struct vsc73xx_fdb {
++	u16 vid;
++	u8 port;
++	u8 mac[6];
++	bool valid;
++};
++
+ /* Counters are named according to the MIB standards where applicable.
+  * Some counters are custom, non-standard. The standard counters are
+  * named in accordance with RFC2819, RFC2021 and IEEE Std 802.3-2002 Annex
+@@ -1829,6 +1854,278 @@ static void vsc73xx_port_stp_state_set(struct dsa_switch *ds, int port,
+ 		vsc73xx_refresh_fwd_map(ds, port, state);
+ }
+ 
++static u16 vsc73xx_calc_hash(const unsigned char *addr, u16 vid)
++{
++	/* VID 5-0, MAC 47-44 */
++	u16 hash = ((vid & GENMASK(5, 0)) << 4) | (addr[0] >> 4);
++
++	/* MAC 43-33 */
++	hash ^= ((addr[0] & GENMASK(3, 0)) << 7) | (addr[1] >> 1);
++	/* MAC 32-22 */
++	hash ^= ((addr[1] & BIT(0)) << 10) | (addr[2] << 2) | (addr[3] >> 6);
++	/* MAC 21-11 */
++	hash ^= ((addr[3] & GENMASK(5, 0)) << 5) | (addr[4] >> 3);
++	/* MAC 10-0 */
++	hash ^= ((addr[4] & GENMASK(2, 0)) << 8) | addr[5];
++
++	return hash;
++}
++
++static int
++vsc73xx_port_wait_for_mac_table_cmd(struct vsc73xx *vsc)
++{
++	int ret, err;
++	u32 val;
++
++	ret = read_poll_timeout(vsc73xx_read, err,
++				err < 0 ||
++				((val & VSC73XX_MACACCESS_CMD_MASK) ==
++				 VSC73XX_MACACCESS_CMD_IDLE),
++				VSC73XX_POLL_SLEEP_US, VSC73XX_POLL_TIMEOUT_US,
++				false, vsc, VSC73XX_BLOCK_ANALYZER,
++				0, VSC73XX_MACACCESS, &val);
++	if (ret)
++		return ret;
++	return err;
++}
++
++static int vsc73xx_port_read_mac_table_entry(struct vsc73xx *vsc, u16 index,
++					     struct vsc73xx_fdb *fdb)
++{
++	int ret, i;
++	u32 val;
++
++	if (!fdb)
++		return -EINVAL;
++	if (index >= VSC73XX_NUM_FDB_RECORDS)
++		return -EINVAL;
++
++	for (i = 0; i < VSC73XX_NUM_BUCKETS; i++) {
++		vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX,
++			      (i ? 0 : VSC73XX_MACTINDX_SHADOW) |
++			      i << VSC73XX_MACTINDX_BUCKET_MASK_SHIFT |
++			      index);
++		ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
++		if (ret)
++			return ret;
++
++		vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
++				    VSC73XX_MACACCESS,
++				    VSC73XX_MACACCESS_CMD_MASK,
++				    VSC73XX_MACACCESS_CMD_READ_ENTRY);
++		ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
++		if (ret)
++			return ret;
++
++		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACACCESS,
++			     &val);
++		fdb[i].valid = val & VSC73XX_MACACCESS_VALID;
++		if (!fdb[i].valid)
++			continue;
++
++		fdb[i].port = (val & VSC73XX_MACACCESS_DEST_IDX_MASK) >>
++			      VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT;
++
++		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACHDATA,
++			     &val);
++		fdb[i].vid = (val & VSC73XX_MACHDATA_VID) >>
++			     VSC73XX_MACHDATA_VID_SHIFT;
++		fdb[i].mac[0] = (val >> VSC73XX_MACHDATA_MAC0_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++		fdb[i].mac[1] = (val >> VSC73XX_MACHDATA_MAC1_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++
++		vsc73xx_read(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACLDATA,
++			     &val);
++		fdb[i].mac[2] = (val >> VSC73XX_MACLDATA_MAC2_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++		fdb[i].mac[3] = (val >> VSC73XX_MACLDATA_MAC3_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++		fdb[i].mac[4] = (val >> VSC73XX_MACLDATA_MAC4_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++		fdb[i].mac[5] = (val >> VSC73XX_MACLDATA_MAC5_SHIFT) &
++				VSC73XX_MAC_BYTE_MASK;
++	}
++
++	return ret;
++}
++
++static void
++vsc73xx_fdb_insert_mac(struct vsc73xx *vsc, const unsigned char *addr, u16 vid)
++{
++	u32 val;
++
++	val = (vid << VSC73XX_MACHDATA_VID_SHIFT) & VSC73XX_MACHDATA_VID;
++	val |= (addr[0] << VSC73XX_MACHDATA_MAC0_SHIFT);
++	val |= (addr[1] << VSC73XX_MACHDATA_MAC1_SHIFT);
++	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACHDATA, val);
++
++	val = (addr[2] << VSC73XX_MACLDATA_MAC2_SHIFT);
++	val |= (addr[3] << VSC73XX_MACLDATA_MAC3_SHIFT);
++	val |= (addr[4] << VSC73XX_MACLDATA_MAC4_SHIFT);
++	val |= (addr[5] << VSC73XX_MACLDATA_MAC5_SHIFT);
++	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACLDATA, val);
++}
++
++static int vsc73xx_fdb_del_entry(struct vsc73xx *vsc, int port,
++				 const unsigned char *addr, u16 vid)
++{
++	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
++	u16 hash = vsc73xx_calc_hash(addr, vid);
++	int bucket, ret;
++
++	mutex_lock(&vsc->fdb_lock);
++
++	ret = vsc73xx_port_read_mac_table_entry(vsc, hash, fdb);
++	if (ret)
++		goto err;
++
++	for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
++		if (fdb[bucket].valid && fdb[bucket].port == port &&
++		    !memcmp(addr, fdb[bucket].mac, ETH_ALEN))
++			break;
++	}
++
++	if (bucket == VSC73XX_NUM_BUCKETS) {
++		/* Can't find MAC in MAC table */
++		ret = -ENODATA;
++		goto err;
++	}
++
++	vsc73xx_fdb_insert_mac(vsc, addr, vid);
++	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX, hash);
++
++	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
++	if (ret)
++		goto err;
++
++	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACACCESS,
++			    VSC73XX_MACACCESS_CMD_MASK,
++			    VSC73XX_MACACCESS_CMD_FORGET);
++	ret =  vsc73xx_port_wait_for_mac_table_cmd(vsc);
++err:
++	mutex_unlock(&vsc->fdb_lock);
++	return ret;
++}
++
++static int vsc73xx_fdb_add_entry(struct vsc73xx *vsc, int port,
++				 const unsigned char *addr, u16 vid)
++{
++	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
++	u16 hash = vsc73xx_calc_hash(addr, vid);
++	int bucket, ret;
++	u32 val;
++
++	mutex_lock(&vsc->fdb_lock);
++
++	vsc73xx_port_read_mac_table_entry(vsc, hash, fdb);
++
++	for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
++		if (!fdb[bucket].valid)
++			break;
++	}
++
++	if (bucket == VSC73XX_NUM_BUCKETS) {
++		/* Bucket is full */
++		ret = -EOVERFLOW;
++		goto err;
++	}
++
++	vsc73xx_fdb_insert_mac(vsc, addr, vid);
++
++	vsc73xx_write(vsc, VSC73XX_BLOCK_ANALYZER, 0, VSC73XX_MACTINDX, hash);
++	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
++	if (ret)
++		goto err;
++
++	val = (port << VSC73XX_MACACCESS_DEST_IDX_MASK_SHIFT) &
++	      VSC73XX_MACACCESS_DEST_IDX_MASK;
++
++	vsc73xx_update_bits(vsc, VSC73XX_BLOCK_ANALYZER, 0,
++			    VSC73XX_MACACCESS,
++			    VSC73XX_MACACCESS_VALID |
++			    VSC73XX_MACACCESS_CMD_MASK |
++			    VSC73XX_MACACCESS_DEST_IDX_MASK |
++			    VSC73XX_MACACCESS_LOCKED,
++			    VSC73XX_MACACCESS_VALID |
++			    VSC73XX_MACACCESS_CMD_LEARN |
++			    VSC73XX_MACACCESS_LOCKED | val);
++	ret = vsc73xx_port_wait_for_mac_table_cmd(vsc);
++
++err:
++	mutex_unlock(&vsc->fdb_lock);
++	return ret;
++}
++
++static int vsc73xx_fdb_add(struct dsa_switch *ds, int port,
++			   const unsigned char *addr, u16 vid, struct dsa_db db)
++{
++	struct vsc73xx *vsc = ds->priv;
++
++	if (!vid) {
++		switch (db.type) {
++		case DSA_DB_PORT:
++			vid = dsa_tag_8021q_standalone_vid(db.dp);
++			break;
++		case DSA_DB_BRIDGE:
++			vid = dsa_tag_8021q_bridge_vid(db.bridge.num);
++			break;
++		default:
++			return -EOPNOTSUPP;
++		}
++	}
++
++	return vsc73xx_fdb_add_entry(vsc, port, addr, vid);
++}
++
++static int vsc73xx_fdb_del(struct dsa_switch *ds, int port,
++			   const unsigned char *addr, u16 vid, struct dsa_db db)
++{
++	struct vsc73xx *vsc = ds->priv;
++
++	if (!vid) {
++		switch (db.type) {
++		case DSA_DB_PORT:
++			vid = dsa_tag_8021q_standalone_vid(db.dp);
++			break;
++		case DSA_DB_BRIDGE:
++			vid = dsa_tag_8021q_bridge_vid(db.bridge.num);
++			break;
++		default:
++			return -EOPNOTSUPP;
++		}
++	}
++
++	return vsc73xx_fdb_del_entry(vsc, port, addr, vid);
++}
++
++static int vsc73xx_port_fdb_dump(struct dsa_switch *ds,
++				 int port, dsa_fdb_dump_cb_t *cb, void *data)
++{
++	struct vsc73xx_fdb fdb[VSC73XX_NUM_BUCKETS];
++	struct vsc73xx *vsc = ds->priv;
++	u16 i, bucket;
++
++	mutex_lock(&vsc->fdb_lock);
++
++	for (i = 0; i < VSC73XX_NUM_FDB_RECORDS; i++) {
++		vsc73xx_port_read_mac_table_entry(vsc, i, fdb);
++
++		for (bucket = 0; bucket < VSC73XX_NUM_BUCKETS; bucket++) {
++			if (!fdb[bucket].valid || fdb[bucket].port != port)
++				continue;
++
++			/* We need to hide dsa_8021q VLANs from the user */
++			if (vid_is_dsa_8021q(fdb[bucket].vid))
++				fdb[bucket].vid = 0;
++			cb(fdb[bucket].mac, fdb[bucket].vid, false, data);
++		}
++	}
++
++	mutex_unlock(&vsc->fdb_lock);
++	return 0;
++}
++
+ static const struct phylink_mac_ops vsc73xx_phylink_mac_ops = {
+ 	.mac_config = vsc73xx_mac_config,
+ 	.mac_link_down = vsc73xx_mac_link_down,
+@@ -1851,6 +2148,9 @@ static const struct dsa_switch_ops vsc73xx_ds_ops = {
+ 	.port_bridge_join = dsa_tag_8021q_bridge_join,
+ 	.port_bridge_leave = dsa_tag_8021q_bridge_leave,
+ 	.port_change_mtu = vsc73xx_change_mtu,
++	.port_fdb_add = vsc73xx_fdb_add,
++	.port_fdb_del = vsc73xx_fdb_del,
++	.port_fdb_dump = vsc73xx_port_fdb_dump,
+ 	.port_max_mtu = vsc73xx_get_max_mtu,
+ 	.port_stp_state_set = vsc73xx_port_stp_state_set,
+ 	.port_vlan_filtering = vsc73xx_port_vlan_filtering,
+@@ -1981,6 +2281,8 @@ int vsc73xx_probe(struct vsc73xx *vsc)
+ 		return -ENODEV;
+ 	}
+ 
++	mutex_init(&vsc->fdb_lock);
++
+ 	eth_random_addr(vsc->addr);
+ 	dev_info(vsc->dev,
+ 		 "MAC for control frames: %02X:%02X:%02X:%02X:%02X:%02X\n",
+diff --git a/drivers/net/dsa/vitesse-vsc73xx.h b/drivers/net/dsa/vitesse-vsc73xx.h
+index 3ca579acc798..a36ca607671e 100644
+--- a/drivers/net/dsa/vitesse-vsc73xx.h
++++ b/drivers/net/dsa/vitesse-vsc73xx.h
+@@ -45,6 +45,7 @@ struct vsc73xx_portinfo {
+  * @vlans: List of configured vlans. Contains port mask and untagged status of
+  *	every vlan configured in port vlan operation. It doesn't cover tag_8021q
+  *	vlans.
++ * @fdb_lock: Mutex protects fdb access
+  */
+ struct vsc73xx {
+ 	struct device			*dev;
+@@ -57,6 +58,7 @@ struct vsc73xx {
+ 	void				*priv;
+ 	struct vsc73xx_portinfo		portinfo[VSC73XX_MAX_NUM_PORTS];
+ 	struct list_head		vlans;
++	struct mutex			fdb_lock; /* protects fdb access */
+ };
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
