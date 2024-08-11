@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-282216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A132194E0EE
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E9CB94E0F2
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 13:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A89D1F214AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:18:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5DA81C20986
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B214436C;
-	Sun, 11 Aug 2024 11:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2E547A74;
+	Sun, 11 Aug 2024 11:21:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=robert.mader@collabora.com header.b="N70IP/sv"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MKXQr6db"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8C02595
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 11:18:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723375082; cv=pass; b=ZOLy6h96pWPP7203TeSVd10YEVFJhfz6LeU2v300DyHOEoj4POxyWwOT6sNvJPJuu+tXyenkh1sNmoeoSEO+Ai8PIPMid3VzHUHaQqN1X79khlVVzWC0AIfvMVfFQNAoTZTC3CWJ1pMAbz0GZfwoGfvDQjQqQ1quHBycter7Vws=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723375082; c=relaxed/simple;
-	bh=06Y3ZCE6t58fv7ioNNp5RA4gyffmDvtpFDdEDMX7h+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bBGr5UULt3czvEl7Uw932aQGYTOHNvsej9YQ22RB+Q6hi65iFr9675VEde0hazE4IQiL5eVVY15/J1yjxt0DkmOCMcekT11zh3n2KlkDery3IFW9/AwZ9MekuL8yWJhILmjbdYp5IH6VJxupMIyljn6eyFojzl/k1cgR21YmBiA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=robert.mader@collabora.com header.b=N70IP/sv; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: robert.mader@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723375073; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=GzDiZlUmKRZ+Nr1bPfcU10+Lvg98XQX7Uy6rFFSZkNNuwu5QfGTxpSKFbG+lZvJb/HrmKh9gQC+H2RW9xzf8bNPi3oobLVhYLokZRnoJp0JqEJHKupfzO/SM8AG8AVbfODAeAp7y4v+KwIdGWkx5PvXH/psB6bCbeY4qWyHDj/o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723375073; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rXC5Y6aabeGaXCfpaHE5pi2wTVvK1E/AuRwctWhkQjQ=; 
-	b=Qk5yXiANHJvqHArjQEethpkBe3Um3FLcThMRC3mVp/JISO8gEq5V3tdH9LB4Ns8Q5XHNH1kNmA5M7M+Nh2rc/wNw9iYUk8ycv2ExSuGxNFXCDCOOyBeiA8NUFcVfDOG304RDP/2hLC4cVCSdBFl2zPYch2D6h94PMEhif1fTeJg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=robert.mader@collabora.com;
-	dmarc=pass header.from=<robert.mader@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723375073;
-	s=zohomail; d=collabora.com; i=robert.mader@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=rXC5Y6aabeGaXCfpaHE5pi2wTVvK1E/AuRwctWhkQjQ=;
-	b=N70IP/svR0ScSi7iuTDWGvJ4hQGQuJI1hg6QM+0wue/Rp3PFQeeJsXVV+D3WU4my
-	P+u2NdTVTEnGBSGUKjDRxnqeLb+b2/EAtqPpbzPg6ScoJcJtFIE3uqWpP5pKj/ZjXSN
-	QvAWirpBK1t6U3SbjRh0is9ID3HdaPu1SasglNjI=
-Received: by mx.zohomail.com with SMTPS id 1723375071369221.40284585100392;
-	Sun, 11 Aug 2024 04:17:51 -0700 (PDT)
-From: Robert Mader <robert.mader@collabora.com>
-To: linux-kernel@vger.kernel.org
-Cc: jacopo.mondi@ideasonboard.com,
-	sakari.ailus@linux.intel.com,
-	javierm@redhat.com,
-	kieran.bingham@ideasonboard.com,
-	Robert Mader <robert.mader@collabora.com>
-Subject: [PATCH v2] media: i2c: imx355: Parse and register properties
-Date: Sun, 11 Aug 2024 13:17:04 +0200
-Message-ID: <20240811111718.22513-1-robert.mader@collabora.com>
-X-Mailer: git-send-email 2.46.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838DD2595;
+	Sun, 11 Aug 2024 11:21:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723375296; cv=none; b=KZ4cJCGUhUyGBbPVnE9sgBoQdRKeUG3HsEItWdyptPiF33oYTx9obQgAPpsU7OWz/6zjTI4j779MvwICN0+sPRrkED2wywOe7n9mNwMbU4XWiOYIW9MVzuhnKl+0J8SbhqHMFoe5/0wME/RxTSyRwfx0onD0uPG335/dsRg9HD8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723375296; c=relaxed/simple;
+	bh=Gdr51COVieTY5mrVxCXKgCq+keQ1L5ijtxDnbxt0GyE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ioJf/j9Xk8eBWwS6hasEdOJsNsdJLrtcaHk2n09u37XRWPM04U2THabD8Vk/pAj/ZTXWsNjV6dWtm96vwn/WngOQcBBFiEQsogWy72EU7nKH/05EtGzMyKQPrXk8LXortlHzuL7tfYxoQUY6h86cWwf3rgFq+AFz/FK/pGvZEYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MKXQr6db; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso2282162f8f.1;
+        Sun, 11 Aug 2024 04:21:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723375293; x=1723980093; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ZnLtP4Jlo5z6XBsoC2N73Rmmoe/0J8rH89644qOH5hI=;
+        b=MKXQr6dbxB57UtsHICFIqziqczsybhpk5r2M3VyokzoRzJnyh5sXQXvYh8kp1Gljws
+         EyXYojSHV3qjO6OzGvdPQZSn93rzYVkJVSzBdJEmb+oWbL3c+2W7yyTpCjEN7AcqT78m
+         Hv1VcQ4d5zjQDanOM3tzVsUD4evRXvUQraqGZeOy1mru0ydKfDxU7wnfRcvRRs4UkU8i
+         EfpTygRU+PfAwB2bD6E1tvNEqxNukH3er5wVHBz4EWOPYLhkU9QMsed9vRYg8jD2BsRc
+         mpujJQY1bk9+b7eyh7oFBuIYRB47X5z3ZKvfdLjY450JzvzhtStchOxK0r5X76avBWGK
+         AS7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723375293; x=1723980093;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZnLtP4Jlo5z6XBsoC2N73Rmmoe/0J8rH89644qOH5hI=;
+        b=qSJ3jx6FpUODw+WYXvXMmu9TAcV/zQ8u4P2GfTsUkFAyrAz0tIXSmTiTqee7XEtrBz
+         OYSD59voNI6x+Usowy3vqpHiILWetVZz2E/A3LckjiGDipooOy5fCe5Fdff8ZBE74CQM
+         Gfy6rU4+LfY6JJjYB7+JXnBzyAEP0A/O6I6AdNgCYpWZfABzsaYdXzWBiV28MUwHouSR
+         Q2zUIHUTWyo+gm7UeGEDKYvFL8Oz+pzVJ3feqsTUjUuJ6ZtPoDcBGHKyppdmxOP+EYAm
+         DtfMjP3rcHPx9HNNg4gBFPqmrnswIGeSAM4EWOpJVaz+p/XOHm8xsgbIH9kjqinDAUXo
+         mlJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX5OOpUon9JRdwZsI3OPvfLvG8LfGayxeRuuCnCpwARSODuiv33TmfJjmg/D9XdIqMXFxJQY0X9Ldmvqveqh0Z6aLET2gnNtLil6uHqHj+PkZy/VOlPr7mruAA1COV1OQ+/gJLgPKAE972fgBUDk/mwOG24wHhkhS8FKg5jV8B5
+X-Gm-Message-State: AOJu0Yy6qi2076ExqnGgHOI5mIjUT69/MggOwwRHTMsooBjHnyRReu3c
+	Ep6bfCfluScrR+ivoXtswYpMQNCHi8ssvYBvmoAhJh2tSuqdzE2z
+X-Google-Smtp-Source: AGHT+IGlRFewMR/DsubRDOiLtPN6fIBeQb+cs4kiJBkyXCZVoDCG22xujgNipHgJBkzgCgVBPkHHMw==
+X-Received: by 2002:a5d:6d84:0:b0:367:33f0:91c6 with SMTP id ffacd0b85a97d-36d621d98ddmr4287242f8f.62.1723375292219;
+        Sun, 11 Aug 2024 04:21:32 -0700 (PDT)
+Received: from [172.27.59.236] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c36be8csm4662445f8f.4.2024.08.11.04.21.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Aug 2024 04:21:31 -0700 (PDT)
+Message-ID: <65a77bbb-b7dc-40d8-b09f-c0cf0cb01271@gmail.com>
+Date: Sun, 11 Aug 2024 14:21:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+Subject: Re: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
+To: Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
+ Anna Schumaker <Anna.Schumaker@Netapp.com>,
+ Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ Maxim Mikityanskiy <maxtram95@gmail.com>, David Howells
+ <dhowells@redhat.com>, Sabrina Dubroca <sd@queasysnail.net>,
+ Mina Almasry <almasrymina@google.com>
+Cc: Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Networking <netdev@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
+References: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com>
+ <77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me>
+ <4f42fac4-2a4e-426a-be86-1f4bb79987b4@gmail.com>
+ <3e08421f-91ac-4bd1-9886-3d5ecf9afa04@grimberg.me>
+ <8683155c-79ad-4090-9aff-fc8d765b096b@gmail.com>
+Content-Language: en-US
+In-Reply-To: <8683155c-79ad-4090-9aff-fc8d765b096b@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Analogous to e.g. the imx219 driver. This enables propagating the
-V4L2_CID_CAMERA_SENSOR_ROTATION and V4L2_CID_CAMERA_ORIENTATION
-values so that userspace - e.g. libcamera - can detect the
-correct rotation and orientation from the device tree.
 
-Signed-off-by: Robert Mader <robert.mader@collabora.com>
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
 
----
+On 06/08/2024 13:07, Tariq Toukan wrote:
+> 
+> 
+> On 06/08/2024 11:09, Sagi Grimberg wrote:
+>>
+>>
+>>
+>> On 06/08/2024 7:43, Tariq Toukan wrote:
+>>>
+>>>
+>>> On 05/08/2024 14:43, Sagi Grimberg wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 05/08/2024 13:40, Tariq Toukan wrote:
+>>>>> Hi,
+>>>>>
+>>>>> A recent patch [1] to 'fs' broke the TX TLS device-offloaded flow 
+>>>>> starting from v6.11-rc1.
+>>>>>
+>>>>> The kernel crashes. Different runs result in different kernel traces.
+>>>>> See below [2].
+>>>>> All of them disappear once patch [1] is reverted.
+>>>>>
+>>>>> The issues appears only with "sendfile on and zerocopy on".
+>>>>> We couldn't repro with "sendfile off", or with "sendfile on and 
+>>>>> zerocopy off".
+>>>>>
+>>>>> The repro test is as simple as a repeated client/server 
+>>>>> communication (wrk/nginx), with sendfile on and zc on, and with 
+>>>>> "tls-hw-tx-offload: on".
+>>>>>
+>>>>> $ for i in `seq 10`; do wrk -b::2:2:2:3 -t10 -c100 -d15 --timeout 
+>>>>> 5s https://[::2:2:2:2]:20448/16000b.img; done
+>>>>>
+>>>>> We can provide more details if needed, to help with the analysis 
+>>>>> and debug.
+>>>>
+>>>> Does tls sw (i.e. no offload) also break?
+>>>>
+>>>
+>>> No it doesn't.
+>>> Only the "sendfile with ZC" flow of the TX device-offloaded TLS.
+>>
+> 
+> Adding Maxim Mikityanskiy, he might have some insights.
+> 
+>> Not familiar with the TLS offload code, are there any assumptions on 
+>> PAGE_SIZE contig buffers? Or assumptions on individual
+>> page references/lifetime?
+>>
+>> The sporadic panics you reported look like a result of memory 
+>> corruption or use-after-free conditions.
 
-Changes since v1:
- - Slightly changed the commit message
- - Added RBs
----
- drivers/media/i2c/imx355.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+You can find the original patch that implements it here:
+c1318b39c7d3 tls: Add opt-in zerocopy mode of sendfile()
 
-diff --git a/drivers/media/i2c/imx355.c b/drivers/media/i2c/imx355.c
-index 7e9c2f65fa08..0dd25eeea60b 100644
---- a/drivers/media/i2c/imx355.c
-+++ b/drivers/media/i2c/imx355.c
-@@ -1520,6 +1520,7 @@ static const struct v4l2_subdev_internal_ops imx355_internal_ops = {
- static int imx355_init_controls(struct imx355 *imx355)
- {
- 	struct i2c_client *client = v4l2_get_subdevdata(&imx355->sd);
-+	struct v4l2_fwnode_device_properties props;
- 	struct v4l2_ctrl_handler *ctrl_hdlr;
- 	s64 exposure_max;
- 	s64 vblank_def;
-@@ -1531,7 +1532,7 @@ static int imx355_init_controls(struct imx355 *imx355)
- 	int ret;
- 
- 	ctrl_hdlr = &imx355->ctrl_handler;
--	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 10);
-+	ret = v4l2_ctrl_handler_init(ctrl_hdlr, 12);
- 	if (ret)
- 		return ret;
- 
-@@ -1603,6 +1604,15 @@ static int imx355_init_controls(struct imx355 *imx355)
- 		goto error;
- 	}
- 
-+	ret = v4l2_fwnode_device_parse(&client->dev, &props);
-+	if (ret)
-+		goto error;
-+
-+	ret = v4l2_ctrl_new_fwnode_properties(ctrl_hdlr, &imx355_ctrl_ops,
-+					      &props);
-+	if (ret)
-+		goto error;
-+
- 	imx355->sd.ctrl_handler = ctrl_hdlr;
- 
- 	return 0;
--- 
-2.46.0
+In this flow (sendfile + ZC), page is shared for kernel and userspace, 
+and the extra copy is skipped.
 
+There were a few code changes in this area since the feature was introduced.
+Adding relevant ppl, including David Howells <dhowells@redhat.com>, who 
+removed the sendpage() routine and added MSG_SPLICE_PAGES support to 
+tls_device.
+
+Regards,
+Tariq
 
