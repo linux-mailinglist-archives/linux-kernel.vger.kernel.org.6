@@ -1,175 +1,564 @@
-Return-Path: <linux-kernel+bounces-282184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8C3694E095
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 272B294E099
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 227CBB21033
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:51:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 425BDB20D97
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1B12E83F;
-	Sun, 11 Aug 2024 08:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069E538DD4;
+	Sun, 11 Aug 2024 09:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cCJcRoIE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lRcyNWV4"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F447208D1
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E29B64E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723366309; cv=none; b=D1W7OcU/dffYEU0FfNXutQPkWQRsmBuY9vSb0X4vZtj1UIloHqrdXsM2dqXnqHgAX/741ztwDzMrdYMqqCDino3eO2hYeWHsC2i+Oq0foSVwoNPXvj84u36hQYrM1PfNiD1l0O5hyYokgcTlETbgH7vZfzWZMp9t5NwoIBiEnQc=
+	t=1723366838; cv=none; b=rhZj4shJ+kP0B/X1JGDH2iGC/uG8K4+Ft/z9GHz8Krp2z3LQVcjLlGcBSMBugjF4AC9DrbDfp9IS43/dJwo65MsOdURYJvLMfk0hVlqug9bVeCtXU7CNhzb+3+vN5f7siE9fDpaI6jOiZQt73fLPgbPERIbQBHqSYt4LaVgswHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723366309; c=relaxed/simple;
-	bh=1B5I15DMAAc8If4jXdpqKf2hcp5AongQfAE7XpPFObE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ptFwPCUfOL+adbR+9XJ4uKpa8Pk7LtCF2uz6cnBu6BWs3H+W3u8g2DxlOJit5Gp/ZsUxrP0qkGUIYyn+IsSxi/oMHZLbsuUl0gL8VByKQQobwgWp9l4zb4YtarFT9FDLnQlEqTQ/rk6mEXyq1GPg2JyCYPI+LwKrG545rldYtNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cCJcRoIE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723366306;
+	s=arc-20240116; t=1723366838; c=relaxed/simple;
+	bh=cpmPot3UypV0566uXETNsAnR4jQN7MSNedvZVNQ1zEk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V9zsmA4LXT3UQYlmjjBZpeFjTVZ0OHIXbteR2cdbmNVU4/1yZCp5kWqvNOclUmr++YsuXUe9hDhco2rW6N5mlOuFBU6Sj3xgZ4O+EDKvLtIw3PPq1KRBsZ2tQKzMYSvZpe0zl7spmJipe8tfR+xLZLAgZuOEprErgDkFmOrO6LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lRcyNWV4; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723366831;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nO8zDpNtu5TNqECPQNAF0g6rVZ54IeB2gyr7WMkyB+0=;
-	b=cCJcRoIEPLY48sLIRX/RsyAYjMSzBOPNwvh5aL941Ext1FKXtpQ21OmK3KLO7bS1B1L/4p
-	k5InwJIxFSXqQ+vDLwFt0P2rhY7oQ5j1HHPniAN1cJtxtbselB8uN1yCDXWsdQALz7E5By
-	MiVHILVyqXYPidlQSVuGdaAUYcVxQD0=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-IO0_xXP0NVKQuLJZuWTYRA-1; Sun, 11 Aug 2024 04:51:45 -0400
-X-MC-Unique: IO0_xXP0NVKQuLJZuWTYRA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a7a822ee907so296445466b.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 01:51:44 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723366304; x=1723971104;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nO8zDpNtu5TNqECPQNAF0g6rVZ54IeB2gyr7WMkyB+0=;
-        b=p9CG6zFaYv+1gyg2lLon/YVUWvvKkW3AuXg7rKMe2wOSAbsjh3cIdrY406mRtN1HBe
-         FZhKNfVKgEmUQLbMLS+Nsyh+e8lvRex2n2bZaTXXsJa2aYP14Oyu4686+gDMkRMp5art
-         PjKqHHSI3+xOWpWHopQU4BZvQ7HgjzguC9rZiOHhUYbkGuFifsSzcLIJ0JubztH6ZnG/
-         fR0FDs3RNJnO9eI1Y3SVVNzUac6qOcRSenMAjRgt3F4oMwnq1WaD6yxJBdgbUDal2UcQ
-         jiRbPGbBbb8LcoSqWqeiXICLf5N5w772yEm+PlS2Yvzh9CmbD0/Ht33NVu+pFZHw4kE0
-         dwXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdZ0rSBONjdiAyRNnyqXmL1cb9wElnpChYArh7WslTgvrpDG7CNb0y52sjktG3xN9l84x8iZ47BEFgutuWa6Nv4PugZ4Vt2nbkr6d1
-X-Gm-Message-State: AOJu0YztDTdhsXF3mXJQ9gA+fY1zw6hPeuxkbCCShd9YEjRxEGb6KLg2
-	qXdaoO65/c156KkAgV8poqW8yxL/+pXv8iYePPUCDIfR3ETUuaI614QqI6AZSpxRb3G8m1wNWKz
-	ZhJZMk/UxatwnNuSoIE3PX8iYgSYYCTlTd8//2xLWjt1LHHuqoRzCKEAT86uYIQ==
-X-Received: by 2002:a17:907:efe4:b0:a7a:8378:625c with SMTP id a640c23a62f3a-a80aa5dd596mr460885366b.36.1723366303956;
-        Sun, 11 Aug 2024 01:51:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLTEoCLje1+/EozjL6GLfA0Ify15zjAfHJS26Fb5eQomnIUpFA6R4LxXVepKUXAl2+doTCQA==
-X-Received: by 2002:a17:907:efe4:b0:a7a:8378:625c with SMTP id a640c23a62f3a-a80aa5dd596mr460884266b.36.1723366303477;
-        Sun, 11 Aug 2024 01:51:43 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1d153csm132038166b.137.2024.08.11.01.51.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 01:51:43 -0700 (PDT)
-Message-ID: <fae2def0-918a-495b-a89b-3a8eedd44b1f@redhat.com>
-Date: Sun, 11 Aug 2024 10:51:41 +0200
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=I78vjwufIMSw2G1NDLXd8Ffd5rAeAoezy0EvhzKcT4A=;
+	b=lRcyNWV498yjUdb/7e/5Ura5EtDVe6PpdYyz+Zcxgz8YzQdu0UguUcKy1fOPVmoV769+Si
+	CJrDUwYoTf3CBf6lJyrcRn8U+Pkiz7c2TDXqUYCpqqsBuR6Ouj2XPBVpF/l8ooP6AEZuNZ
+	V54gvb1FluuKa22LpLhyB7svEo//KXA=
+From: Wen Yang <wen.yang@linux.dev>
+To: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Wen Yang <wen.yang@linux.dev>,
+	Jens Axboe <axboe@kernel.dk>,
+	Dylan Yudaken <dylany@fb.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Dave Young <dyoung@redhat.com>,
+	kernel test robot <lkp@intel.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2] eventfd: introduce ratelimited wakeup for non-semaphore eventfd
+Date: Sun, 11 Aug 2024 16:59:54 +0800
+Message-Id: <20240811085954.17162-1-wen.yang@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
-To: Barry Song <21cnbao@gmail.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com,
- chrisl@kernel.org, hanchuanhua@oppo.com, ioworker0@gmail.com,
- kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, ryan.roberts@arm.com, v-songbaohua@oppo.com,
- ziy@nvidia.com
-References: <41b49313-5804-46ba-9e1d-358b079274cd@redhat.com>
- <20240809070412.33847-1-21cnbao@gmail.com>
- <62d758b1-595a-4c05-ab89-3fe43d79f1bf@redhat.com>
- <CAGsJ_4z-bCSSQecYq=L4U1QuoQUCtgY1WXbAX=eCEO9rXv8eNQ@mail.gmail.com>
- <CAGsJ_4w0SzyA50zNcGAgUc36GOEVr3L6gcZntw4ejBogC9b6+Q@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGsJ_4w0SzyA50zNcGAgUc36GOEVr3L6gcZntw4ejBogC9b6+Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-> the correct place should be:
-> 
-> @@ -1329,6 +1326,10 @@ static int migrate_folio_move(free_folio_t
-> put_new_folio, unsigned long private,
->          if (anon_vma)
->                  put_anon_vma(anon_vma);
->          folio_unlock(src);
-> +
-> +       if (folio_test_anon(src))
-> +               mod_mthp_stat(folio_order(src), MTHP_STAT_NR_ANON, 1);
-> +
->          migrate_folio_done(src, reason);
-> 
->          return rc;
-> 
-> Without this modification in migration code, my tests fail, anon_num can
-> become negative.
+For the NON-SEMAPHORE eventfd, a write (2) call adds the 8-byte integer
+value provided in its buffer to the counter, while a read (2) returns the
+8-byte value containing the value and resetting the counter value to 0.
+Therefore, the accumulated value of multiple writes can be retrieved by a
+single read.
 
-I was wondering if we should do it in __folio_migrate_mapping().
+However, the current situation is to immediately wake up the read thread
+after writing the NON-SEMAPHORE eventfd, which increases unnecessary CPU
+overhead. By introducing a configurable rate limiting mechanism in
+eventfd_write, these unnecessary wake-up operations are reduced.
 
-There, we set newfolio->mapping.
+We may use the following test code:
+	#define _GNU_SOURCE
+	#include <assert.h>
+	#include <err.h>
+	#include <errno.h>
+	#include <getopt.h>
+	#include <pthread.h>
+	#include <poll.h>
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <string.h>
+	#include <sys/eventfd.h>
+	#include <sys/prctl.h>
+	#include <sys/ioctl.h>
 
+	struct eventfd_qos {
+		__u32 token_capacity;
+		__u32 token_rate;
+	};
+
+	#define EFD_IOC_SET_QOS        _IOW('E', 0, struct eventfd_qos)
+	#define EFD_IOC_GET_QOS        _IOR('E', 0, struct eventfd_qos)
+
+	struct pub_param {
+		int fd;
+		int cpu;
+		struct eventfd_qos *qos;
+	};
+
+	struct sub_param {
+		int fd;
+		int cpu;
+	};
+
+	static void publish(void *data)
+	{
+		struct pub_param * param = (struct pub_param *)data;
+		unsigned long long value = 1;
+		cpu_set_t cpuset;
+		int ret;
+
+		prctl(PR_SET_NAME,"publish");
+
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		if (param->qos) {
+			ret = ioctl(param->fd, EFD_IOC_SET_QOS, param->qos);
+			if (ret == -1) {
+				printf("ioctl failed, error=%s\n",
+					strerror(errno));
+				return;
+			}
+		}
+
+		while (1) {
+			ret = eventfd_write(param->fd, value);
+			if (ret < 0)
+				printf("XXX: write failed, %s\n",
+				       	strerror(errno));
+		}
+	}
+
+	static void subscribe(void *data)
+	{
+		struct sub_param *param = (struct sub_param *)data;
+		unsigned long long value = 0;
+		struct pollfd pfds[1];
+		cpu_set_t cpuset;
+
+		prctl(PR_SET_NAME,"subscribe");
+		CPU_ZERO(&cpuset);
+		CPU_SET(param->cpu, &cpuset);
+		sched_setaffinity(0, sizeof(cpuset), &cpuset);
+
+		pfds[0].fd = param->fd;
+		pfds[0].events = POLLIN;
+
+		while(1) {
+			poll(pfds, 1, -1);
+			if(pfds[0].revents & POLLIN) {
+				read(param->fd, &value, sizeof(value));
+			}
+		}
+	}
+
+	static void usage(void)
+	{
+		printf("Usage: \n");
+		printf("\t");
+		printf("<-p cpuid> <-s cpuid > [ -r rate ] [ -c capacity ] \n");
+	}
+
+	int main(int argc, char *argv[])
+	{
+		char *optstr = "p:s:r::c::";
+		struct sub_param sub_param = {0};
+		struct pub_param pub_param = {0};
+		struct eventfd_qos qos = {0};
+		pid_t pid;
+		int fd;
+		int opt;
+
+		if (argc < 3) {
+			usage();
+			return 1;
+		}
+
+		while((opt = getopt(argc, argv, optstr)) != -1){
+			switch(opt) {
+				case 'p':
+					pub_param.cpu = atoi(optarg);
+					break;
+				case 's':
+					sub_param.cpu = atoi(optarg);
+					break;
+				case 'r':
+					qos.token_rate = atoi(optarg);
+					break;
+				case 'c':
+					qos.token_capacity = atoi(optarg);
+					break;
+				case '?':
+					usage();
+					return 1;
+			}
+		}
+
+		fd = eventfd(0, EFD_CLOEXEC | EFD_NONBLOCK | EFD_NONBLOCK);
+		assert(fd);
+
+		sub_param.fd = fd;
+		pub_param.fd = fd;
+		pub_param.qos = (qos.token_capacity && qos.token_rate) ? &qos : NULL;
+
+		pid = fork();
+		if (pid == 0)
+			subscribe(&sub_param);
+		else if (pid > 0)
+			publish(&pub_param);
+		else {
+			printf("XXX: fork error!\n");
+			return -1;
+		}
+
+		return 0;
+	}
+
+	# ./a.out  -p 2 -s 3
+	The original cpu usage is as follows:
+09:53:38 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+09:53:40 PM    2   47.26    0.00   52.74    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+09:53:40 PM    3   44.72    0.00   55.28    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+
+09:53:40 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+09:53:42 PM    2   45.73    0.00   54.27    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+09:53:42 PM    3   46.00    0.00   54.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+
+09:53:42 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+09:53:44 PM    2   48.00    0.00   52.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+09:53:44 PM    3   45.50    0.00   54.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+
+Then enable the ratelimited wakeup, eg:
+	# ./a.out  -p 2 -s 3  -r1000 -c2
+
+Observing a decrease of over 20% in CPU utilization (CPU # 3, 54% ->30%), as shown below:
+10:02:32 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+10:02:34 PM    2   53.00    0.00   47.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+10:02:34 PM    3   30.81    0.00   30.81    0.00    0.00    0.00    0.00    0.00    0.00   38.38
+
+10:02:34 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+10:02:36 PM    2   48.50    0.00   51.50    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+10:02:36 PM    3   30.20    0.00   30.69    0.00    0.00    0.00    0.00    0.00    0.00   39.11
+
+10:02:36 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+10:02:38 PM    2   45.00    0.00   55.00    0.00    0.00    0.00    0.00    0.00    0.00    0.00
+10:02:38 PM    3   27.08    0.00   30.21    0.00    0.00    0.00    0.00    0.00    0.00   42.71
+
+Signed-off-by: Wen Yang <wen.yang@linux.dev>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Dylan Yudaken <dylany@fb.com>
+Cc: David Woodhouse <dwmw@amazon.co.uk>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: kernel test robot <lkp@intel.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v2: fix the build errors reported by kernel test robot
+
+ fs/eventfd.c                 | 188 ++++++++++++++++++++++++++++++++++-
+ include/uapi/linux/eventfd.h |   8 ++
+ init/Kconfig                 |  18 ++++
+ 3 files changed, 213 insertions(+), 1 deletion(-)
+
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 9afdb722fa92..a6161ba73f94 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -27,6 +27,15 @@
+ 
+ static DEFINE_IDA(eventfd_ida);
+ 
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++struct eventfd_bucket {
++	struct eventfd_qos qos;
++	struct hrtimer timer;
++	u64 timestamp;
++	u64 tokens;
++};
++#endif
++
+ struct eventfd_ctx {
+ 	struct kref kref;
+ 	wait_queue_head_t wqh;
+@@ -41,8 +50,97 @@ struct eventfd_ctx {
+ 	__u64 count;
+ 	unsigned int flags;
+ 	int id;
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++	struct eventfd_bucket bucket;
++#endif
+ };
+ 
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++
++static void eventfd_refill_tokens(struct eventfd_bucket *bucket)
++{
++	unsigned int rate = bucket->qos.token_rate;
++	u64 now = ktime_get_ns();
++	u64 tokens;
++
++	tokens = ktime_sub(now, bucket->timestamp) * rate;
++	do_div(tokens, NSEC_PER_SEC);
++	if (tokens > 0) {
++		tokens += bucket->tokens;
++		bucket->tokens = (tokens > bucket->qos.token_capacity) ?
++				 tokens : bucket->qos.token_capacity;
++	}
++	bucket->timestamp = now;
++}
++
++static int eventfd_consume_tokens(struct eventfd_bucket *bucket)
++{
++	if (bucket->tokens > 0) {
++		bucket->tokens--;
++		return 1;
++	} else
++		return 0;
++}
++
++static bool eventfd_detect_storm(struct eventfd_ctx *ctx)
++{
++	u32 rate = ctx->bucket.qos.token_rate;
++
++	if (rate == 0)
++		return false;
++
++	eventfd_refill_tokens(&ctx->bucket);
++	return !eventfd_consume_tokens(&ctx->bucket);
++}
++
++static enum hrtimer_restart eventfd_timer_handler(struct hrtimer *timer)
++{
++	struct eventfd_ctx *ctx;
++	unsigned long flags;
++
++	ctx = container_of(timer, struct eventfd_ctx, bucket.timer);
++	spin_lock_irqsave(&ctx->wqh.lock, flags);
++
++	/*
++	 * Checking for locked entry and wake_up_locked_poll() happens
++	 * under the ctx->wqh.lock lock spinlock
++	 */
++	if (waitqueue_active(&ctx->wqh))
++		wake_up_locked_poll(&ctx->wqh, EPOLLIN);
++
++	spin_unlock_irqrestore(&ctx->wqh.lock, flags);
++	eventfd_ctx_put(ctx);
++
++	return HRTIMER_NORESTART;
++}
++
++static void eventfd_ratelimited_wake_up(struct eventfd_ctx *ctx)
++{
++	u32 rate = ctx->bucket.qos.token_rate;
++	u64 now = ktime_get_ns();
++	u64 slack_ns;
++	u64 expires;
++
++	if (likely(rate)) {
++		slack_ns = NSEC_PER_SEC/rate;
++	} else {
++		WARN_ON_ONCE("fallback to the default NSEC_PER_SEC.");
++		slack_ns = NSEC_PER_MSEC;
++	}
++
++	/* if already queued, don't bother */
++	if (hrtimer_is_queued(&ctx->bucket.timer))
++		return;
++
++	/* determine next wakeup, add a timer margin */
++	expires = now + slack_ns;
++
++	kref_get(&ctx->kref);
++	hrtimer_start(&ctx->bucket.timer, expires, HRTIMER_MODE_ABS);
++}
++
++#endif
++
+ /**
+  * eventfd_signal_mask - Increment the event counter
+  * @ctx: [in] Pointer to the eventfd context.
+@@ -270,8 +368,23 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 	if (likely(res > 0)) {
+ 		ctx->count += ucnt;
+ 		current->in_eventfd = 1;
+-		if (waitqueue_active(&ctx->wqh))
++
++		/*
++		 * Checking for locked entry and wake_up_locked_poll() happens
++		 * under the ctx->wqh.lock spinlock
++		 */
++		if (waitqueue_active(&ctx->wqh)) {
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++			if ((ctx->flags & EFD_SEMAPHORE) || !eventfd_detect_storm(ctx))
++				wake_up_locked_poll(&ctx->wqh, EPOLLIN);
++			else
++				eventfd_ratelimited_wake_up(ctx);
++
++#else
+ 			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
++#endif
++		}
++
+ 		current->in_eventfd = 0;
+ 	}
+ 	spin_unlock_irq(&ctx->wqh.lock);
+@@ -299,6 +412,66 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
+ }
+ #endif
+ 
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++static long eventfd_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	struct eventfd_ctx *ctx = file->private_data;
++	void __user *uaddr = (void __user *)arg;
++	struct eventfd_qos qos;
++
++	if (ctx->flags & EFD_SEMAPHORE)
++		return -EINVAL;
++	if (!uaddr)
++		return -EINVAL;
++
++	switch (cmd) {
++	case EFD_IOC_SET_QOS:
++		if (copy_from_user(&qos, uaddr, sizeof(qos)))
++			return -EFAULT;
++		if (qos.token_rate > NSEC_PER_SEC)
++			return -EINVAL;
++
++		for (;;) {
++			spin_lock_irq(&ctx->wqh.lock);
++			if (hrtimer_try_to_cancel(&ctx->bucket.timer) >= 0) {
++				spin_unlock_irq(&ctx->wqh.lock);
++				break;
++			}
++			spin_unlock_irq(&ctx->wqh.lock);
++			hrtimer_cancel_wait_running(&ctx->bucket.timer);
++		}
++
++		spin_lock_irq(&ctx->wqh.lock);
++		ctx->bucket.timestamp = ktime_get_ns();
++		ctx->bucket.qos = qos;
++		ctx->bucket.tokens = qos.token_capacity;
++
++		current->in_eventfd = 1;
++		/*
++		 * Checking for locked entry and wake_up_locked_poll() happens
++		 * under the ctx->wqh.lock lock spinlock
++		 */
++		if ((!ctx->count) && (waitqueue_active(&ctx->wqh)))
++			wake_up_locked_poll(&ctx->wqh, EPOLLIN);
++		current->in_eventfd = 0;
++
++		spin_unlock_irq(&ctx->wqh.lock);
++		return 0;
++
++	case EFD_IOC_GET_QOS:
++		qos = READ_ONCE(ctx->bucket.qos);
++		if (copy_to_user(uaddr, &qos, sizeof(qos)))
++			return -EFAULT;
++		return 0;
++
++	default:
++		return -ENOENT;
++	}
++
++	return -EINVAL;
++}
++#endif
++
+ static const struct file_operations eventfd_fops = {
+ #ifdef CONFIG_PROC_FS
+ 	.show_fdinfo	= eventfd_show_fdinfo,
+@@ -308,6 +481,10 @@ static const struct file_operations eventfd_fops = {
+ 	.read_iter	= eventfd_read,
+ 	.write		= eventfd_write,
+ 	.llseek		= noop_llseek,
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++	.unlocked_ioctl	= eventfd_ioctl,
++	.compat_ioctl	= eventfd_ioctl,
++#endif
+ };
+ 
+ /**
+@@ -403,6 +580,15 @@ static int do_eventfd(unsigned int count, int flags)
+ 	ctx->flags = flags;
+ 	ctx->id = ida_alloc(&eventfd_ida, GFP_KERNEL);
+ 
++#ifdef CONFIG_EVENTFD_RATELIMITED_WAKEUP
++	ctx->bucket.qos.token_rate = 0;
++	ctx->bucket.qos.token_capacity = 0;
++	ctx->bucket.tokens = 0;
++	ctx->bucket.timestamp = ktime_get_ns();
++	hrtimer_init(&ctx->bucket.timer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++	ctx->bucket.timer.function = eventfd_timer_handler;
++#endif
++
+ 	flags &= EFD_SHARED_FCNTL_FLAGS;
+ 	flags |= O_RDWR;
+ 	fd = get_unused_fd_flags(flags);
+diff --git a/include/uapi/linux/eventfd.h b/include/uapi/linux/eventfd.h
+index 2eb9ab6c32f3..8e9d5361ec6a 100644
+--- a/include/uapi/linux/eventfd.h
++++ b/include/uapi/linux/eventfd.h
+@@ -8,4 +8,12 @@
+ #define EFD_CLOEXEC O_CLOEXEC
+ #define EFD_NONBLOCK O_NONBLOCK
+ 
++struct eventfd_qos {
++	__u32 token_capacity;
++	__u32 token_rate;
++};
++
++#define EFD_IOC_SET_QOS	_IOW('E', 0, struct eventfd_qos)
++#define EFD_IOC_GET_QOS	_IOR('E', 0, struct eventfd_qos)
++
+ #endif /* _UAPI_LINUX_EVENTFD_H */
+diff --git a/init/Kconfig b/init/Kconfig
+index 0a021d6b4939..ebfc79ff34ca 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1646,6 +1646,24 @@ config EVENTFD
+ 
+ 	  If unsure, say Y.
+ 
++config EVENTFD_RATELIMITED_WAKEUP
++	bool "support ratelimited wakeups for the NON-SEMAPHORE eventfd" if EXPERT
++	default n
++	depends on EVENTFD
++	help
++	  This option enables the ratelimited wakeups for the non-semaphore
++	  eventfd. Frequent writing to an eventfd can lead to frequent wakeup
++	  of processes waiting for reading on this eventfd, resulting in
++	  significant overhead. However, for the NON-SEMAPHORE eventfd, if its
++	  counter has a non-zero value, read (2) returns 8 bytes containing
++	  that value, and the counter value is reset to zero. This means that
++	  a read operation can retrieve the accumulated value caused by
++	  multiple write operations.
++	  By introducing the ratelimited wakeups for the NON-SEMAPHORE eventfd,
++	  these CPU overhead can be reduced.
++
++	  If unsure, say N.
++
+ config SHMEM
+ 	bool "Use full shmem filesystem" if EXPERT
+ 	default y
 -- 
-Cheers,
-
-David / dhildenb
+2.25.1
 
 
