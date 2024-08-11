@@ -1,235 +1,248 @@
-Return-Path: <linux-kernel+bounces-282152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB62D94E02D
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 07:56:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E24A94E031
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:00:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81836281854
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 05:56:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913441F2166E
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C66E11B7E9;
-	Sun, 11 Aug 2024 05:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673E41B813;
+	Sun, 11 Aug 2024 06:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iuxDWv1Y"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="f8sWuXEu"
+Received: from smtp.smtpout.orange.fr (smtp-13.smtpout.orange.fr [80.12.242.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234951757D
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 05:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8CD291E;
+	Sun, 11 Aug 2024 06:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723355796; cv=none; b=KA4eQaItfnleewFkRZxeINzluqv7TWizbuyl7upH6Dz+usRK5EtDyg8u+40E3Au0Qo/OtxyPk/g0JNz8iP6TWa28PeRwdlh4j/ZU6n5KoRwn6wNNOv/dp9siMhH3eTXUEyNo2qDMoOXZQG4d9ZhuFKkkOAnC8/1BVdA7IVbG/Cw=
+	t=1723356022; cv=none; b=BMdrcnzUhKMAkD4xI3OhHgoNcScX7GKN+Yiv+RXUIqwS7uZMcYbg2xJYMxkdLy9NYeEJ4d+2buXTdMl4JwjC6tufdi+LFpJuAqLu6Rn9lpqmWcMagnIJ0RFeaRuMX/eZ/ze4XhUxp5MowROSZ5MKC9N6OHq/zQYxoeOpEIuO2Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723355796; c=relaxed/simple;
-	bh=uP0try4nm03ngJMJYGni4dzCy44FI37Qk7hZ74WMHgg=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=ji3/77v0QxM2lok+864KDdLDJwQLUNw/DKMxpNgeOVuZec+IkCozHmPvoiQ/nAa5x1xUHCnyOM5Gbwsi63XTr+bFTi02SbEe8053nENAHQRHAB++UNM3tnhnQIYgQCIs9FBCFKkLJfQTt0+s2rdGNXTPsTOAhAt4bjOEdDleHcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iuxDWv1Y; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723355796; x=1754891796;
-  h=date:from:to:cc:subject:message-id;
-  bh=uP0try4nm03ngJMJYGni4dzCy44FI37Qk7hZ74WMHgg=;
-  b=iuxDWv1YDVRbZbGvvWX1YVQb5T7FgkmoN/Q82QjWbi4gPXcFQmRZ2Dz/
-   rqnT89c9lNe9JA0bLrSSzSac1fjCvduOx5kGqUkAZTn1YA+X92XnpSy4N
-   U1qkpJLF4d0rXvLQXaBmnrpc++mUKpsF6gIlsfhhcgK/mGPENa3EP40hg
-   9LTPbvSAeazO5pd1+I1eZdzl1PR85TEkerlHqhmqJmQA9/kdPoJwxwTX0
-   xlcGQx+pd9Z5kOrati0+ZLMm+B8UsK6VgHXHiQky0LbxQ6O3zccXd9LGL
-   WjcthkJMgiKGvI6Dyw7wHfYM9xse8JRpqiKK7P6v988HqzrVr/BplyGio
-   w==;
-X-CSE-ConnectionGUID: YQSA2fXnRZOwa8DT2mlQ1g==
-X-CSE-MsgGUID: oxt7N+VUQsiKOb4d3UZyag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="32635297"
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="32635297"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 22:56:35 -0700
-X-CSE-ConnectionGUID: JpuBSwP4SjqUaN4HFbdNWw==
-X-CSE-MsgGUID: CUGOEAVkRUmhTxdAymjw5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="57845208"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa009.jf.intel.com with ESMTP; 10 Aug 2024 22:56:33 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sd1Z8-000Ad5-2m;
-	Sun, 11 Aug 2024 05:56:30 +0000
-Date: Sun, 11 Aug 2024 13:56:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:master] BUILD SUCCESS
- 885c9c1c668b0a82ca79c680e68321f8b4f3bf80
-Message-ID: <202408111315.LxjT2Yju-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1723356022; c=relaxed/simple;
+	bh=JuMLIa27s8EkpSzyIH8/+w1g/u0A6oHfh0oWdPU+STI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pk6y3BFkybZEln2x0gG/i3R5/c6x/M/1cRVmbVbZ0lGNePUvz2jxyHxAcj7ij4uNWdhWv7yUq09Wyilo09aBG6i6/tAf2xG/ejowZqxLP8sSn8zUU+5MaPQX0ixQoxms7qsD3JJEAFxXKLlmUQpKmNVA6IKlOnk3JaQf0YX6GT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=f8sWuXEu; arc=none smtp.client-ip=80.12.242.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id d1cesT0px3VI6d1cesqN8q; Sun, 11 Aug 2024 08:00:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1723356009;
+	bh=J+JwXICX6ZzQ0JiaWAjb8FuEa8I8yjuyVEqSpGAhSNw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=f8sWuXEufGWZ8gvOyucxFEXRfUVzZuoCXIaug8XCY6HPFKUXOf41cpTRRHFSA1fBB
+	 kkPz+JmobeEBBxSsXAn0+5jqZKzJJDDsMASCxb1OnIXJiDkDkFiHgIyKSi6uoKTw2i
+	 AhM2EhRewQXLFwYflmZyPeZ2++tUYpVADL0H1s3DMLMjHDvoIhfN/E95LIbe+QSF0p
+	 phETbBdoP+H6Pyu6OCJiB6mINCA0fNDCa27jsTcUAzIUTe6amWcnRwJwOrGLMgX+7r
+	 9tJ5l6+G2d5HOzF6KKE1MotdMJ3Pr+n04OU6NSEUsn0BfP23cE6WlCzKEzQXp8NS5b
+	 1PkMF6Q0YXLYA==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sun, 11 Aug 2024 08:00:09 +0200
+X-ME-IP: 90.11.132.44
+Message-ID: <6246542f-6059-4bf8-91f7-6de713707711@wanadoo.fr>
+Date: Sun, 11 Aug 2024 08:00:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/3] dmaengine: add driver for Sophgo CV18XX/SG200X
+ dmamux
+To: Inochi Amaoto <inochiama@outlook.com>, Vinod Koul <vkoul@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+References: <IA1PR20MB495324F3EF7517562CB4CACFBB842@IA1PR20MB4953.namprd20.prod.outlook.com>
+ <IA1PR20MB49533EAD95963C2E99D27B88BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <IA1PR20MB49533EAD95963C2E99D27B88BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
-branch HEAD: 885c9c1c668b0a82ca79c680e68321f8b4f3bf80  Merge branch into tip/master: 'x86/timers'
+Le 11/08/2024 à 07:16, Inochi Amaoto a écrit :
+> Sophgo CV18XX/SG200X use DW AXI CORE with a multiplexer for remapping
+> its request lines. The multiplexer supports at most 8 request lines.
+> 
+> Add driver for Sophgo CV18XX/SG200X DMA multiplexer.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+> ---
 
-elapsed time: 1277m
+Hi,
 
-configs tested: 143
-configs skipped: 5
+...
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> +static void *cv1800_dmamux_route_allocate(struct of_phandle_args *dma_spec,
+> +					  struct of_dma *ofdma)
+> +{
+> +	struct platform_device *pdev = of_find_device_by_node(ofdma->of_node);
+> +	struct cv1800_dmamux_data *dmamux = platform_get_drvdata(pdev);
+> +	struct cv1800_dmamux_map *map;
+> +	struct llist_node *node;
+> +	unsigned long flags;
+> +	unsigned int chid, devid, cpuid;
+> +	int ret;
+> +
+> +	if (dma_spec->args_count != DMAMUX_NCELLS) {
+> +		dev_err(&pdev->dev, "invalid number of dma mux args\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	devid = dma_spec->args[0];
+> +	cpuid = dma_spec->args[1];
+> +	dma_spec->args_count = 1;
+> +
+> +	if (devid > MAX_DMA_MAPPING_ID) {
+> +		dev_err(&pdev->dev, "invalid device id: %u\n", devid);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	if (cpuid > MAX_DMA_CPU_ID) {
+> +		dev_err(&pdev->dev, "invalid cpu id: %u\n", cpuid);
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", 0);
+> +	if (!dma_spec->np) {
+> +		dev_err(&pdev->dev, "can't get dma master\n");
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	spin_lock_irqsave(&dmamux->lock, flags);
+> +
+> +	if (test_bit(devid, dmamux->mapped_peripherals)) {
+> +		llist_for_each_entry(map, dmamux->reserve_maps.first, node) {
+> +			if (map->peripheral == devid && map->cpu == cpuid)
+> +				goto found;
+> +		}
+> +
+> +		ret = -EINVAL;
+> +		goto failed;
+> +	} else {
+> +		node = llist_del_first(&dmamux->free_maps);
+> +		if (!node) {
+> +			ret = -ENODEV;
+> +			goto failed;
+> +		}
+> +
+> +		map = llist_entry(node, struct cv1800_dmamux_map, node);
+> +		llist_add(&map->node, &dmamux->reserve_maps);
+> +		set_bit(devid, dmamux->mapped_peripherals);
+> +	}
+> +
+> +found:
+> +	chid = map->channel;
+> +	map->peripheral = devid;
+> +	map->cpu = cpuid;
+> +
+> +	regmap_set_bits(dmamux->regmap,
+> +			DMAMUX_CH_REG(chid),
+> +			DMAMUX_CH_SET(chid, devid));
+> +
+> +	regmap_update_bits(dmamux->regmap, CV1800_SDMA_DMA_INT_MUX,
+> +			   DMAMUX_INT_CH_MASK(chid, cpuid),
+> +			   DMAMUX_INT_CH_BIT(chid, cpuid));
+> +
+> +	spin_unlock_irqrestore(&dmamux->lock, flags);
+> +
+> +	dma_spec->args[0] = chid;
+> +
+> +	dev_dbg(&pdev->dev, "register channel %u for req %u (cpu %u)\n",
+> +		chid, devid, cpuid);
+> +
+> +	return map;
+> +
+> +failed:
+> +	spin_unlock_irqrestore(&dmamux->lock, flags);
+> +	of_node_put(dma_spec->np);
+> +	dev_err(&pdev->dev, "errno %d\n", ret);
+> +	return ERR_PTR(ret);
+> +
 
-tested configs:
-alpha                             allnoconfig   gcc-13.3.0
-alpha                            allyesconfig   gcc-13.3.0
-alpha                               defconfig   gcc-13.3.0
-arc                              allmodconfig   gcc-13.2.0
-arc                               allnoconfig   gcc-13.2.0
-arc                              allyesconfig   gcc-13.2.0
-arc                                 defconfig   gcc-13.2.0
-arc                   randconfig-001-20240811   gcc-13.2.0
-arc                   randconfig-002-20240811   gcc-13.2.0
-arm                              allmodconfig   gcc-14.1.0
-arm                               allnoconfig   clang-20
-arm                              allyesconfig   gcc-14.1.0
-arm                         bcm2835_defconfig   clang-20
-arm                                 defconfig   clang-14
-arm                            mps2_defconfig   clang-20
-arm                       multi_v4t_defconfig   clang-20
-arm                         mv78xx0_defconfig   clang-20
-arm                   randconfig-001-20240811   clang-14
-arm                   randconfig-002-20240811   clang-20
-arm                   randconfig-003-20240811   gcc-14.1.0
-arm                   randconfig-004-20240811   gcc-14.1.0
-arm64                            allmodconfig   clang-20
-arm64                             allnoconfig   gcc-14.1.0
-arm64                               defconfig   gcc-14.1.0
-arm64                 randconfig-001-20240811   clang-20
-arm64                 randconfig-002-20240811   gcc-14.1.0
-arm64                 randconfig-003-20240811   gcc-14.1.0
-arm64                 randconfig-004-20240811   gcc-14.1.0
-csky                              allnoconfig   gcc-14.1.0
-csky                                defconfig   gcc-14.1.0
-csky                  randconfig-001-20240811   gcc-14.1.0
-csky                  randconfig-002-20240811   gcc-14.1.0
-hexagon                          allmodconfig   clang-20
-hexagon                           allnoconfig   clang-20
-hexagon                          allyesconfig   clang-20
-hexagon                             defconfig   clang-20
-hexagon               randconfig-001-20240811   clang-20
-hexagon               randconfig-002-20240811   clang-20
-i386                             allmodconfig   gcc-12
-i386                              allnoconfig   gcc-12
-i386                             allyesconfig   gcc-12
-i386         buildonly-randconfig-001-20240810   clang-18
-i386         buildonly-randconfig-002-20240810   clang-18
-i386         buildonly-randconfig-003-20240810   clang-18
-i386         buildonly-randconfig-004-20240810   clang-18
-i386         buildonly-randconfig-005-20240810   gcc-12
-i386         buildonly-randconfig-006-20240810   gcc-12
-i386                                defconfig   clang-18
-i386                  randconfig-001-20240810   clang-18
-i386                  randconfig-002-20240810   gcc-12
-i386                  randconfig-003-20240810   clang-18
-i386                  randconfig-004-20240810   gcc-12
-i386                  randconfig-005-20240810   gcc-12
-i386                  randconfig-006-20240810   clang-18
-i386                  randconfig-011-20240810   gcc-12
-i386                  randconfig-012-20240810   gcc-12
-i386                  randconfig-013-20240810   clang-18
-i386                  randconfig-014-20240810   gcc-12
-i386                  randconfig-015-20240810   gcc-12
-i386                  randconfig-016-20240810   gcc-12
-loongarch                        allmodconfig   gcc-14.1.0
-loongarch                         allnoconfig   gcc-14.1.0
-loongarch                           defconfig   gcc-14.1.0
-loongarch             randconfig-001-20240811   gcc-14.1.0
-loongarch             randconfig-002-20240811   gcc-14.1.0
-m68k                             allmodconfig   gcc-14.1.0
-m68k                              allnoconfig   gcc-14.1.0
-m68k                             allyesconfig   gcc-14.1.0
-m68k                          atari_defconfig   gcc-14.1.0
-m68k                                defconfig   gcc-14.1.0
-m68k                        mvme16x_defconfig   gcc-14.1.0
-microblaze                       allmodconfig   gcc-14.1.0
-microblaze                        allnoconfig   gcc-14.1.0
-microblaze                       allyesconfig   gcc-14.1.0
-microblaze                          defconfig   gcc-14.1.0
-mips                              allnoconfig   gcc-14.1.0
-mips                          ath25_defconfig   clang-20
-mips                        bcm47xx_defconfig   clang-15
-mips                      maltasmvp_defconfig   gcc-13.2.0
-mips                  maltasmvp_eva_defconfig   gcc-13.2.0
-nios2                             allnoconfig   gcc-14.1.0
-nios2                               defconfig   gcc-14.1.0
-nios2                 randconfig-001-20240811   gcc-14.1.0
-nios2                 randconfig-002-20240811   gcc-14.1.0
-openrisc                          allnoconfig   gcc-14.1.0
-openrisc                         allyesconfig   gcc-14.1.0
-openrisc                            defconfig   gcc-14.1.0
-parisc                           allmodconfig   gcc-14.1.0
-parisc                            allnoconfig   gcc-14.1.0
-parisc                           allyesconfig   gcc-14.1.0
-parisc                              defconfig   gcc-14.1.0
-parisc                randconfig-001-20240811   gcc-14.1.0
-parisc                randconfig-002-20240811   gcc-14.1.0
-parisc64                            defconfig   gcc-14.1.0
-powerpc                          allmodconfig   gcc-14.1.0
-powerpc                           allnoconfig   gcc-14.1.0
-powerpc                          allyesconfig   clang-20
-powerpc                     mpc512x_defconfig   clang-20
-powerpc                 mpc834x_itx_defconfig   clang-20
-powerpc               randconfig-001-20240811   clang-20
-powerpc               randconfig-003-20240811   clang-20
-powerpc                     tqm8555_defconfig   clang-20
-powerpc64             randconfig-001-20240811   clang-14
-powerpc64             randconfig-002-20240811   gcc-14.1.0
-riscv                            allmodconfig   clang-20
-riscv                             allnoconfig   gcc-14.1.0
-riscv                            allyesconfig   clang-20
-riscv                               defconfig   clang-20
-riscv                 randconfig-001-20240811   gcc-14.1.0
-riscv                 randconfig-002-20240811   clang-20
-s390                             allmodconfig   clang-20
-s390                              allnoconfig   clang-20
-s390                             allyesconfig   gcc-14.1.0
-s390                                defconfig   clang-20
-s390                  randconfig-001-20240811   clang-20
-s390                  randconfig-002-20240811   clang-20
-sh                               allmodconfig   gcc-14.1.0
-sh                                allnoconfig   gcc-14.1.0
-sh                               allyesconfig   gcc-14.1.0
-sh                                  defconfig   gcc-14.1.0
-sh                    randconfig-001-20240811   gcc-14.1.0
-sh                    randconfig-002-20240811   gcc-14.1.0
-sh                   rts7751r2dplus_defconfig   gcc-14.1.0
-sh                           se7619_defconfig   gcc-14.1.0
-sparc                            allmodconfig   gcc-14.1.0
-sparc64                             defconfig   gcc-14.1.0
-sparc64               randconfig-001-20240811   gcc-14.1.0
-sparc64               randconfig-002-20240811   gcc-14.1.0
-um                               allmodconfig   clang-20
-um                                allnoconfig   clang-17
-um                               allyesconfig   gcc-12
-um                                  defconfig   clang-20
-um                             i386_defconfig   gcc-12
-um                    randconfig-001-20240811   gcc-12
-um                    randconfig-002-20240811   clang-20
-um                           x86_64_defconfig   clang-15
-x86_64                            allnoconfig   clang-18
-x86_64                           allyesconfig   clang-18
-x86_64                              defconfig   gcc-11
-x86_64                          rhel-8.3-rust   clang-18
-xtensa                            allnoconfig   gcc-14.1.0
-xtensa                randconfig-001-20240811   gcc-14.1.0
-xtensa                randconfig-002-20240811   gcc-14.1.0
+Nitpick: Unneeded empty new line.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +}
+> +
+> +static int cv1800_dmamux_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *mux_node = dev->of_node;
+> +	struct cv1800_dmamux_data *data;
+> +	struct cv1800_dmamux_map *tmp;
+> +	struct device *parent = dev->parent;
+> +	struct regmap *regmap = NULL;
+> +	unsigned int i;
+> +
+> +	if (!parent)
+> +		return -ENODEV;
+> +
+> +	regmap = device_node_to_regmap(parent->of_node);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	data = devm_kmalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	spin_lock_init(&data->lock);
+> +	init_llist_head(&data->free_maps);
+
+Why init free_maps and not reserve_maps?
+'data' is not zeroed, so it should be needed, IMHO.
+
+Same for mapped_peripherals. It is not initialized.
+
+I think that using devm_kzalloc() above is needed. (and 
+init_llist_head(&data->free_maps) could then be removed, if you want)
+
+Just my 2c.
+
+> +
+> +	for (i = 0; i <= MAX_DMA_CH_ID; i++) {
+> +		tmp = devm_kmalloc(dev, sizeof(*tmp), GFP_KERNEL);
+> +		if (!tmp) {
+> +			/* It is OK for not allocating all channel */
+> +			dev_warn(dev, "can not allocate channel %u\n", i);
+> +			continue;
+> +		}
+> +
+> +		init_llist_node(&tmp->node);
+> +		tmp->channel = i;
+> +		llist_add(&tmp->node, &data->free_maps);
+> +	}
+> +
+> +	/* if no channel is allocated, the probe must fail */
+> +	if (llist_empty(&data->free_maps))
+> +		return -ENOMEM;
+> +
+> +	data->regmap = regmap;
+> +	data->dmarouter.dev = dev;
+> +	data->dmarouter.route_free = cv1800_dmamux_free;
+> +
+> +	platform_set_drvdata(pdev, data);
+> +
+> +	return of_dma_router_register(mux_node,
+> +				      cv1800_dmamux_route_allocate,
+> +				      &data->dmarouter);
+> +}
+
+...
+
+CJ
+
+
 
