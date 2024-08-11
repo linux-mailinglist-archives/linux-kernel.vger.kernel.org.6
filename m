@@ -1,68 +1,55 @@
-Return-Path: <linux-kernel+bounces-282428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C5494E3CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:23:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE2894E3D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF578B2173A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:23:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B03CF1C20E4D
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B186E1607A5;
-	Sun, 11 Aug 2024 23:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b="yTRAEKNf"
-Received: from read.uberspace.de (read.uberspace.de [185.26.156.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFE8165EE0;
+	Sun, 11 Aug 2024 23:28:13 +0000 (UTC)
+Received: from sxb1plsmtpa01-01.prod.sxb1.secureserver.net (sxb1plsmtpa01-01.prod.sxb1.secureserver.net [188.121.53.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2344C7E
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA3F4C7E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723418588; cv=none; b=ONjEc+HY5U5IguPgIcfYFiH3NEKbmamWN0Lfn17oJZyapi4SficZ5LxlsA2c93tzHXRqmQBxlLhUxt3fDRHBaOmhSd+gGl+Wp4xcZvzMSLM7NvBdpZfkIHzcXs2cqmhm8FbFEwlS60dOxZZYUobZVc9nsz/2cWs7Oex8P5d5cFI=
+	t=1723418892; cv=none; b=lSdEWtqod67WnZNrRWFBxavo93Myup4C13XoLaAnt6RG11h+qREvaCSaqNo6CxZV+3Lre/BoqZIUikaNytLw+trZPHem/xx6GkEAT1T9N3+/yBKz8oXhICRo+/EZJwsprJ9UvOCq2tpG/ZwpKo8PDcPZeqofgQl34HjBAAewb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723418588; c=relaxed/simple;
-	bh=83ni0oxgvU7wO3TGJK4AznLbgJf+G+hKoJ+YstNEvTc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oUNA57Ru6X2CXd0+b7aAe5CueWFJDV2s2fdfOVPscEYBRfC21E0fqOOfIuXHo7m2V5cJy18NFmFWXYdZbReU3ff5LuEtVunfitLheqUSvShB5qFfa0USmMrACv1u8HcgfZ1LAEh2F59OaqcEnGeONX3iR9agpzb1q/n/Zo535BE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de; spf=pass smtp.mailfrom=florommel.de; dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b=yTRAEKNf; arc=none smtp.client-ip=185.26.156.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=florommel.de
-Received: (qmail 9135 invoked by uid 990); 11 Aug 2024 23:22:58 -0000
-Authentication-Results: read.uberspace.de;
-	auth=pass (plain)
-Received: from unknown (HELO unkown) (::1)
-	by read.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 12 Aug 2024 01:22:58 +0200
-From: Florian Rommel <mail@florommel.de>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Jason Wessel <jason.wessel@windriver.com>,
-	Daniel Thompson <daniel.thompson@linaro.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Lorena Kretzschmar <qy15sije@cip.cs.fau.de>,
-	Stefan Saecherl <stefan.saecherl@fau.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	kgdb-bugreport@lists.sourceforge.net,
-	x86@kernel.org,
+	s=arc-20240116; t=1723418892; c=relaxed/simple;
+	bh=0LhUPbXTy9pdwvQ4YkiZMMkLq0j5DEixcApfQlOOrYQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ojDk3nVa6UiXVnUW+5PPYadrlvwSlkasx1BAG1qptbCaCAk+oAdpdkj8H/GdxCWBHfBNKbW3YuoraHQf53lHMrwyHVMxuD+auDffwcvxG9e7mB1Mm1T/ymLe1x47J6N6kQ2Px7pip7uUq+eZ5U1UQlHjROR9kJcVGNdguVjRIXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from phoenix.fritz.box ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPA
+	id dHyXsXxYxPxTTdHyhs0hh7; Sun, 11 Aug 2024 16:28:00 -0700
+X-CMAE-Analysis: v=2.4 cv=PMvE+uqC c=1 sm=1 tr=0 ts=66b94901
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17 a=FXvPX3liAAAA:8
+ a=t7CeM3EgAAAA:8 a=hSkVLCK3AAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
+ a=aXxt9TpeGBesqlHbmUgA:9 a=UObqyxdv-6Yh2QiB9mM_:22 a=FdTzh2GWekK77mhwV6Dw:22
+ a=cQPPKAXgyycSBL8etih5:22 a=AjGcO6oz07-iQ99wixmX:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+From: Phillip Lougher <phillip@squashfs.org.uk>
+To: akpm@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Florian Rommel <mail@florommel.de>
-Subject: [PATCH 2/2] x86/kgdb: fix hang on failed breakpoint removal
-Date: Mon, 12 Aug 2024 01:22:08 +0200
-Message-ID: <20240811232208.234261-3-mail@florommel.de>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240811232208.234261-1-mail@florommel.de>
-References: <20240811232208.234261-1-mail@florommel.de>
+Cc: Phillip Lougher <phillip@squashfs.org.uk>,
+	Lizhi Xu <lizhi.xu@windriver.com>,
+	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Subject: [PATCH V2] Squashfs: sanity check symbolic link size
+Date: Mon, 12 Aug 2024 00:28:21 +0100
+Message-Id: <20240811232821.13903-1-phillip@squashfs.org.uk>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,82 +57,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Bar: ---
-X-Rspamd-Report: REPLY(-4) SUSPICIOUS_RECIPS(1.5) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) BAYES_HAM(-2.887071) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: -3.987071
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=florommel.de; s=uberspace;
-	h=from:to:cc:subject:date;
-	bh=83ni0oxgvU7wO3TGJK4AznLbgJf+G+hKoJ+YstNEvTc=;
-	b=yTRAEKNfu1DizVL9DZp9uTn697ofRBui9cOjT13fsPEl2wk0mZ8VMKLxbCwDm9LE/xraa+LilK
-	xkuBOCGh2wg9jBunAPd/pGpWp3c2DLS/IahJoY5MT2At3OsiIj/9yv6vfTmEKy+d1TBIrxcwOjza
-	SY/bAhv+BE6ohili6YsSh/l0NJv8ueyYFtIHsoV6qJ4vACEdw1iOwbp7DG4k4okloO4+U5Xhi3Gu
-	gfKonjkdwqjtqXqZiOp4ZGqU3b78MmwHUj1bznmcJmMVAjDyQdP2l/asruvG5OTUJNpI3bKw2Lo7
-	BWFU4NeVZSh5sI+H4cP003mI+plpSHvhI/qCm//JtMEkNDumD/3hZOULvL39X1eTPPtWklJ6j7vM
-	tcdbZREELmIy48Bkfxdl9Fig+EOucGNedN0fTU93srnjUuDIXw7iFxjMkZplJvzuxemS0wheK6TG
-	YgXJU1Euz64JZMoccHy6crRTWTQcb87ewqAbI61J2zbyinq3qLt7d6YkBxTqTfsj/zdFw3Kg5xF4
-	MtNDA23Y20WbGc5zzQpo7zr79uO7h9FxHH8QUVEpfoHoYl7vgqXdgb1cclIlot9ezVog9qFXsaSG
-	shuLUtOJYYS0+MAMKS0FiyBMb9ZXypikP7Up9EYwdqdrrOIOljW5ES+Oo71MiAr83ks3TSW8G4d5
-	k=
+X-CMAE-Envelope: MS4xfBRiLdx9hdHg3BQlZZ42kFfI6TsgiSiR7+Ep0JLGXbm59LJvUmz/3N9DUVs3uCkUIs1evK0j85rvJEJkj5Oe5y8IEpK9zgBVsofh9TjQ0Tn5hTpSXhJH
+ Pa8oF0wNuEy9LAE6u2MAvTwXuStoT7ZJxfLDKtb/S/mNvq5TKbnaes8w020fyh9xOnsPPA0KkbcJMHehpq4mhVCWNmENG659y8s661FpRDy3NNSnJ8fM1Df7
+ NElWZ5Cziu8rc2gmzS08wprsR2gb/n1kSixpynMwC3bLxUgRntj79rZJeUJG1pGxBUaBape5bPW9xXJfNaWOCMa33Gwh0lzej0BIvOdOx2USP5Wl+gERiVsH
+ 0yxNKCyn8o2xJ/7LFeDmCdvq6KPxhiBHIF5XY8gJmIMxB8xXowfcnvEaNsUbofhmxUFfG5jTMYYUUw8cdVj1mSWIKiPucikwYd2m+cRMf8fw3URmT9DjYJDC
+ SBeWOwUyT8LtYlVo8uggMEzSdw0b8p/oTK2+SG1gibQpbRHDm2gJZFkL4t4=
 
-On x86, occasionally, the removal of a breakpoint (i.e., removal of
-the int3 instruction) fails because the text_mutex is taken by another
-CPU (mainly due to the static_key mechanism, I think).  The function
-kgdb_skipexception catches exceptions from these spurious int3
-instructions, bails out of KGDB, and continues execution from the
-previous PC address.
+Syzkiller reports a "KMSAN: uninit-value in pick_link" bug.
 
-However, this led to an endless loop between the int3 instruction and
-kgdb_skipexception since the int3 instruction (being still present)
-triggered again.  This effectively caused the system to hang.
+This is caused by an uninitialised page, which is ultimately caused
+by a corrupted symbolic link size read from disk.
 
-With this patch, we try to remove the concerned spurious int3
-instruction in kgdb_skipexception before continuing execution.  This
-may take a few attempts until the concurrent holders of the text_mutex
-have released it, but eventually succeeds and the kernel can continue.
+The reason why the corrupted symlink size causes an uninitialised
+page is due to the following sequence of events:
 
-Signed-off-by: Florian Rommel <mail@florommel.de>
+1. squashfs_read_inode() is called to read the symbolic
+   link from disk.  This assigns the corrupted value
+   3875536935 to inode->i_size.
+
+2. Later squashfs_symlink_read_folio() is called, which assigns
+   this corrupted value to the length variable, which being a
+   signed int, overflows producing a negative number.
+
+3. The following loop that fills in the page contents checks that
+   the copied bytes is less than length, which being negative means
+   the loop is skipped, producing an uninitialised page.
+
+This patch adds a sanity check which checks that the symbolic
+link size is not larger than expected.
+
+Signed-off-by: Phillip Lougher <phillip@squashfs.org.uk>
+Reported-by: Lizhi Xu <lizhi.xu@windriver.com>
+Reported-by: syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/000000000000a90e8c061e86a76b@google.com/
+--
+V2: fix spelling mistake.
 ---
- arch/x86/kernel/kgdb.c | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ fs/squashfs/inode.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 64c332151af7..585a7a72af74 100644
---- a/arch/x86/kernel/kgdb.c
-+++ b/arch/x86/kernel/kgdb.c
-@@ -723,7 +723,31 @@ void kgdb_arch_exit(void)
- int kgdb_skipexception(int exception, struct pt_regs *regs)
- {
- 	if (exception == 3 && kgdb_isremovedbreak(regs->ip - 1)) {
-+		struct kgdb_bkpt *bpt;
-+		int i, error;
-+
- 		regs->ip -= 1;
-+
-+		/*
-+		 * Try to remove the spurious int3 instruction.
-+		 * These int3s can result from failed breakpoint removals
-+		 * in kgdb_arch_remove_breakpoint.
-+		 */
-+		for (bpt = NULL, i = 0; i < KGDB_MAX_BREAKPOINTS; i++) {
-+			if (kgdb_break[i].bpt_addr == regs->ip &&
-+			    kgdb_break[i].state == BP_REMOVED &&
-+			    (kgdb_break[i].type == BP_BREAKPOINT ||
-+			     kgdb_break[i].type == BP_POKE_BREAKPOINT)) {
-+				bpt = &kgdb_break[i];
-+				break;
-+			}
+diff --git a/fs/squashfs/inode.c b/fs/squashfs/inode.c
+index 16bd693d0b3a..d5918eba27e3 100644
+--- a/fs/squashfs/inode.c
++++ b/fs/squashfs/inode.c
+@@ -279,8 +279,13 @@ int squashfs_read_inode(struct inode *inode, long long ino)
+ 		if (err < 0)
+ 			goto failed_read;
+ 
+-		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+ 		inode->i_size = le32_to_cpu(sqsh_ino->symlink_size);
++		if (inode->i_size > PAGE_SIZE) {
++			ERROR("Corrupted symlink\n");
++			return -EINVAL;
 +		}
-+		if (!bpt)
-+			return 1;
-+		error = kgdb_arch_remove_breakpoint(bpt);
-+		if (error)
-+			pr_err("skipexception: breakpoint remove failed: %lx\n",
-+			       bpt->bpt_addr);
- 		return 1;
- 	}
- 	return 0;
++
++		set_nlink(inode, le32_to_cpu(sqsh_ino->nlink));
+ 		inode->i_op = &squashfs_symlink_inode_ops;
+ 		inode_nohighmem(inode);
+ 		inode->i_data.a_ops = &squashfs_symlink_aops;
 -- 
-2.46.0
+2.39.2
 
 
