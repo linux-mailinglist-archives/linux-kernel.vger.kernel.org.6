@@ -1,126 +1,138 @@
-Return-Path: <linux-kernel+bounces-282375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4457D94E2FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:30:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D929A94E300
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:46:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5731F21C1B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E10281A60
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:46:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C931F1547CB;
-	Sun, 11 Aug 2024 20:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85669157A4D;
+	Sun, 11 Aug 2024 20:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1AbKLilA"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dbmA9461"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD28079C4
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 20:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288791798C
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 20:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723408231; cv=none; b=VzwleChKilDwV/w+/0jlOSBigP5wCuAa/xJslkubRHpcs2NncxMEx/FQECWl9Txzyz4+DnDnru9yVK+f74hJVL5xI/pSfDSUOyiBiV00TSiznjscIgtYaf7YlVXeaneocRaOtqGpjU60GGYDLacEKA1dn6Kbo9XGg/BtIBtY4VI=
+	t=1723409210; cv=none; b=lLaGbqxs65a5xPpxQ2OaKBLEhvPa1vZVZJw1FVKK+BokNKSb7NgEQloDzNzo3hLdTdm1pKM2MLfasYbaE8pYfl+LBEbny3kZJJToxm2hjCvdLQRpRRf8UfriSO+OIHzoJ/FeokaKU3OcC8RJTDnGK55n5EZ+xSY0fxTTLfRJoDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723408231; c=relaxed/simple;
-	bh=CyETbTQpNxeIbVE/caPQ+TWr0ZLAPXE/w5iOZv5rERU=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OTxa6jcQ/PdM4kL7Oopiz4gNOtCMTejcSx+eogpGBfj+D5jj3wCkC2j66g6qBVNBoolpJLUw1Ingkhmi7E5Ybyqd9DIQzVXkzQPf5OFXc8tzLeaaZrFGIO5IYOBZKCXW4KSsm108DB2/OvGJQExK4jMAJuLkIovZ2kXp+7EUfhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1AbKLilA; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39b6493b7dfso220685ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 13:30:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723408229; x=1724013029; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5LHinhJkPM7mgzzCEWfaYX6R0BuSflcxoeZfjEH9AQ=;
-        b=1AbKLilA8JqoJxb5mjsM8fhshbGjbRWrJ+wkAf2ptqGSHBY6RKXb9FH1geqolDme92
-         GP8rIO0Irvhrvj/f4u6iXLnT8IccXl3PClPvQwfpw9C62yhj4276mmApCsdDT7wz44jN
-         P33E/Zxn8tp/PAEU2wIoGySJ4O+KqBjqu2qHGkVRgdG7jF7oH2TSUhyUt77V+wwQNwEh
-         RXLP2ZbmzCao0VC44kO3vcI2Sf0XeoT3EkT7ue8fPFoBJVH3/UqkdDZ5VFfM16zpY0DT
-         Q/Q+tG0cqDUt6AQM3RFHfUYr/tlaJoXt4/Uq06HVdzlvwkAlXr2vhLkMEGfYiLo64Mbq
-         K0zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723408229; x=1724013029;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5LHinhJkPM7mgzzCEWfaYX6R0BuSflcxoeZfjEH9AQ=;
-        b=q9huW0BpQg6DXFjd1L7QUUQOLylMOW4zxh56RnkHx1w3q6bEPeY9xk9jbNwsGCk68a
-         UAPOyteUy+hmoQlksqyFjow8tNqkeKOYZtQsmmnBp59mDlyWiRBE70hqpeGiEmlS7rov
-         6UzZUigY+8xTWJE7iKWxV7O16dbXUADQMme0l9Yx3+EHqG7N9WmRDx10bDd3cYFO97EQ
-         rtARoa4QNWc9WJCAvmXpF6wE6selOe29SSKcxSMD8i22BeY6hXKTrkML5kZD39FuJd7R
-         0tJodq2FRWwqUXU1yQ99F86qeRhY/xOc3PyTcsguDKn5GtabrGifN38Snym6bDPSnM4n
-         MmWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUH73QVD4jT23uwQnw6WaSmtKaFMj4aRAHmCwZ+YrKAQ74UUHcnvln6vUDZ/8fjsBAmb2kXKIk76LwqEOrnt7llpIA4wgpjBeE4OlS
-X-Gm-Message-State: AOJu0YzMIa7QyIQgFlXEC+cMQfJtNSd6jyl8Xu9XxoQ11aDx9hoYmNg4
-	ZmY9/zWVf4JzsLrhjmYLHDgJ9neJyb3PxHiTVn1kFrUaHuqvKrHCW2t6+XlvYA==
-X-Google-Smtp-Source: AGHT+IFXIUx75qgMWLqs135JhpCsuvZbm9wkrWd9JKjCSRxOax9133ZPYsZN263oH9Ox29T93Eb/FA==
-X-Received: by 2002:a05:6e02:1448:b0:396:2b04:f489 with SMTP id e9e14a558f8ab-39c3146b4e4mr2784305ab.15.1723408228737;
-        Sun, 11 Aug 2024 13:30:28 -0700 (PDT)
-Received: from [2620:0:1008:15:49ba:9fa:21c6:8a73] ([2620:0:1008:15:49ba:9fa:21c6:8a73])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba3f374sm25712555ad.259.2024.08.11.13.30.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 13:30:28 -0700 (PDT)
-Date: Sun, 11 Aug 2024 13:30:27 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-In-Reply-To: <20240807090746.2146479-1-pedro.falcato@gmail.com>
-Message-ID: <cdfc5a08-c0ee-30a3-d6c5-22d4cfddc3a4@google.com>
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com>
+	s=arc-20240116; t=1723409210; c=relaxed/simple;
+	bh=8HOrcd3rmFhcJWXKJhZg0i7YnSBkyGwC4lfXgvOunj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tOOcDlIwXfHQTbYPmCP0YBK6I+mz8U+UGccX01bV4dcYNMuxAktRda9ZJg48YFIevj6zs/AN10qdIfOWQletfi7UUZjPP4DKVx3ERziQSf8NwDTvzchV12yv2A8ql0KnTQTN086d6udmGzIn4Sh50C8J/dzvE+jbrCYnW3zjlrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dbmA9461; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 11 Aug 2024 14:46:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723409204;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E3sZQz6AplYxGQjfc6fNqrCt2rn+D5lHIxZl2vw26Rk=;
+	b=dbmA9461kiRz14cOI8QWprzfhj2avuKniqc2h9Z+S7zH61pGypfioMODJIMqDBgLrm25VW
+	wBvgARWMORO8vo7bavsPunJ91AaKdC/aFLgrIS0k2ZoTCCSIaMcCFn8hz7VlWU6RRBo9HR
+	mm97yMDWkUU8k/mmIbB+otBEUZeV7fA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Jose Fernandez <jose.fernandez@linux.dev>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Christian Heusel <christian@heusel.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kbuild: control extra pacman packages with
+ PACMAN_EXTRAPACKAGES
+Message-ID: <un2bi7rsfa7nwrqqtgbzd2nefhohuvglup6lpd5ncdklndisl3@vdo2nkgmuyoq>
+References: <20240807022718.24838-2-jose.fernandez@linux.dev>
+ <CAK7LNAS4t_naRxdxFTaj9zrdf2Hjjoaq+cBO4Gx7=PhCJk9+4w@mail.gmail.com>
+ <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f65f1d49-8c6f-45e9-a4b2-30d4cfff10b1@t-8ch.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 7 Aug 2024, Pedro Falcato wrote:
+On 24/08/07 06:40PM, Thomas Weiﬂschuh wrote:
+<snip>
+> > > +
+> > >  PHONY += pacman-pkg
+> > >  pacman-pkg:
+> > >         @ln -srf $(srctree)/scripts/package/PKGBUILD $(objtree)/PKGBUILD
+> > > diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+> > > index 663ce300dd06..8de869f9b1d4 100644
+> > > --- a/scripts/package/PKGBUILD
+> > > +++ b/scripts/package/PKGBUILD
+> > > @@ -3,10 +3,13 @@
+> > >  # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+> > >
+> > >  pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+> > > -pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+> > > -if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+> > > -       pkgname+=("${pkgbase}-headers")
+> > > -fi
+> > > +pkgname=("${pkgbase}")
+> > > +
+> > > +_extrapackages=${PACMAN_EXTRAPACKAGES:-}
+> > 
+> > 
+> > Instead of adding inconsistent defaults in two places,
+> > I would write like this:
+> > 
+> > _extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
+> 
+> Agreed.
+> 
 
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 40b582a014b..1abe6a577d5 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -88,6 +88,19 @@ unsigned int kmem_cache_size(struct kmem_cache *s)
->  EXPORT_SYMBOL(kmem_cache_size);
->  
->  #ifdef CONFIG_DEBUG_VM
-> +
-> +static bool kmem_cache_is_duplicate_name(const char *name)
-> +{
-> +	struct kmem_cache *s;
-> +
-> +	list_for_each_entry(s, &slab_caches, list) {
-> +		if (!strcmp(s->name, name))
-> +			return true;
-> +	}
-> +
-> +	return false;
-> +}
-> +
->  static int kmem_cache_sanity_check(const char *name, unsigned int size)
->  {
->  	if (!name || in_interrupt() || size > KMALLOC_MAX_SIZE) {
-> @@ -95,6 +108,11 @@ static int kmem_cache_sanity_check(const char *name, unsigned int size)
->  		return -EINVAL;
->  	}
->  
-> +	if (kmem_cache_is_duplicate_name(name)) {
-> +		/* Duplicate names will confuse slabtop, et al */
-> +		pr_warn("%s: name %s already exists as a cache\n", __func__, name);
+Closing the loop on this topic. I removed all changes made to Makefile.package
+and set the default in PKGBUILD as suggested:
 
+ _extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
 
-Shouldn't this be a full WARN_ON() instead of pr_warn()?  I assume we'll 
-be interested in who is adding the cache when the name already exists.
+Running the pacman-pkg target without setting PACMAN_EXTRAPACKAGES will build
+all packages:
+
+make pacman-pkg
+...
+==> Creating package "linux-upstream"...
+...
+==> Creating package "linux-upstream-headers"...
+...
+==> Creating package "linux-upstream-api-headers"...
+
+Setting PACMAN_EXTRAPACKAGES to an empty value will build only the kernel
+package:
+
+make pacman-pkg PACMAN_EXTRAPACKAGES=""
+objtree="/home/jose/Code/linux/linux" \
+	BUILDDIR="/home/jose/Code/linux/linux/pacman" \
+	CARCH="i386" \
+	KBUILD_MAKEFLAGS="rR --no-print-directory -- PACMAN_EXTRAPACKAGES=" \
+	KBUILD_REVISION="46" \
+	makepkg 
+...
+==> Creating package "linux-upstream"...
+  -> Generating .PKGINFO file...
+  -> Generating .BUILDINFO file...
+  -> Generating .MTREE file...
+  -> Compressing package...
+==> Leaving fakeroot environment.
+==> Finished making: linux-upstream 6.11.0_rc2+-46 (Sun 11 Aug 2024 01:13:45 PM MDT)
+
+Make exports command line arguments as env variables to sub-processes and this
+is how the PACMAN_EXTRAPACKAGES is passed to makepg without an explicit export
+with this change. V3 will include this change.
 
