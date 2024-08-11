@@ -1,236 +1,136 @@
-Return-Path: <linux-kernel+bounces-282082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C25794DF87
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 04:15:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0D0E94DF88
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 04:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18ED51C20B0B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187D11C20A89
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 02:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE0058F48;
-	Sun, 11 Aug 2024 02:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="FysaUJS0"
-Received: from mr85p00im-ztdg06011801.me.com (mr85p00im-ztdg06011801.me.com [17.58.23.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7497C156;
+	Sun, 11 Aug 2024 02:16:23 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816254C79
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 02:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B4F8F48
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 02:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723342537; cv=none; b=nPrN/nT9KhBOS/LqUb0G6LWIaAMtGMnrtOSVO3k2hopg5j15fR6kwzesSpfjr3EBQhE5+t+pFfhCGp9iqymdlmARZNR81xYbP+Joct4ZEsgwUCZ+O9BI8GO1jSB5Hgqsd5ewbXjForfGHmACUVBuynX5ydaAbhXwO8kKQnE5FY8=
+	t=1723342583; cv=none; b=Gkg2vLvaOjDM+I70a1R77Ee90pMEFvT/uy7/Z3aJ7e7ATmEjckgBlme9vWn+AIy2h0yvQSXrPqUX+RTCyMy98m1IbeL3I/Pyo47tAU+uSPfoxUxFrzE/y3FiAGGubBjemNSiMlUdcKz/6+z1vwCGUH7UVQjHjEulo1CBNiskOwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723342537; c=relaxed/simple;
-	bh=/sFCC6knJcMtyd+ULWXT81qIxi4jsAku/SX02VWevLU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XMVq8NgLLLf7Xoz/xbF6DP6LhJhLL2n5jVClzgv2DMFX0Z2ZZSm6f5zMjts32iuGvmJFe7FIWa7hwOVVdfJmtXrAa9OpkD9meC8s0o7umEcxINLWSvnmJbuTc/viOU1lUs2a2m7jO+0Z2qbKmo5YAcdU5j7I6VMI/B1CAf51eW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=FysaUJS0; arc=none smtp.client-ip=17.58.23.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1723342534;
-	bh=JypY8h8GBMMSB96O4kYZJ4c91XlL92MNCkBYBQzmvu8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=FysaUJS0OaaU5hwUP9NR7ygRa4LvU1ChcwBU/wcaZi2gGsXQJK4l6xZe9z6nBtW3w
-	 LHtYZd5WuWBCZCayYSUwH/B3g/lwrmMNR0Q+sKZOrpRl9pB3o4yOUmNGTQO1bjAru7
-	 7xhx3bGPdnUs5aARs5inDlNSwmOL2L5prFv/+op/GJafc4NIRjStFNamnsUqWGQpcg
-	 2Q28e7/bconGzt2DesTb09fJ3IGm8Igjj5GSdQiqp9dCghGcLhKkmMYL9GyQEvSdYO
-	 HxwxhI1qKYwP8WTsGAkCchFGKBtwfj5P7FK05AbVopsKE2RIH8PYXQnkIH/8t0Yyh5
-	 et6LWauq5Xnaw==
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-ztdg06011801.me.com (Postfix) with ESMTPSA id 6830B20B075D;
-	Sun, 11 Aug 2024 02:15:31 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Sun, 11 Aug 2024 10:15:16 +0800
-Subject: [PATCH v2] drivers/base: Introduce device_match_t for device
- finding APIs
+	s=arc-20240116; t=1723342583; c=relaxed/simple;
+	bh=jLHclSGFHdYmaYVg1qTSRRtdACzAngEvV0TI+fQS98U=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sA09mN5smt7VDssh3nFQVTVKlVZgv4BY5sFJRD1KwZrBREQOudxxlStyjcI/v/3C+MFIeCoaOFh3YTP7gzUHX0ddiiwWGh5seLkF1pdlKB0aFfsYtuVxkOb4sFJ10B0ss5adkB+l3K5a/iYga6w5/lP3pL09Wi5JqeH1TlIbWS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81faf98703eso434927139f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 19:16:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723342581; x=1723947381;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HsKAC2w8OIj8E2V22o2IjRuSBUakLf2Sx3QWeN5iaxE=;
+        b=hHtjxM0htksVlExvz57V3t65KvAmgflWX/j1KPtJW/zNkyE6eY3rGl7scog6tzTapQ
+         tbEgdk1tLw7BPtZOcn29QJSA7rpkVypyZzKUfGhGZB5H0bcrl2llZ5Cp9LGljZoL2wo0
+         wNfiW6hu0N22qo0h9NESKVwYxxIbP3ol4pg67OJpfMmV1RtG4omNFhq1pDBtmwJwjFja
+         nV+5UjoZiL8LskoWOar83i7b7T6YugXwu0YF8Hl9tqboLlBv5Mx25866XN1pPsfMsSMX
+         umG+sGMaCpi8QMBZn+llCA+L0t9k6pnozzlURAODyyx2a63LPc5Jr0k4zrdAEgqfxnUV
+         9v1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVXS8EzmJDYzmEc+pU/vEfCehr8L703LMd7csj5WsMlLyikxOBU9C/Yz6KKDwMrSh2hRZWTL0Wtwlap2TJ4orE8rnYZ6GVKIP5VSWWy
+X-Gm-Message-State: AOJu0YyzB7+ffiWmG+tLjUHgCNryMt1oagLiR0qOFbFe+hHvmT0hfPaC
+	bZKRLv3pJrgMIEnAgMCRJQ+XEchhRUqdCiX7SHZwbMC9xqEECksBVRM7NamoGfGsy3zcc8hYC94
+	3SDrnHg+Qq9sondNef7sa/GNTHblvxgBwBPJN7UEego1cAeRwMIbDylE=
+X-Google-Smtp-Source: AGHT+IGpR5OwATLInzqEwF5W5qNe9mvZBRGoTkNxRNNJqDDfxDORIbmTqQL2eKomEF4w7lml2Wa3LrJmR+KLE35arAnW0IfHzjUD
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240811-dev_match_api-v2-1-dd22ff555a30@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALMeuGYC/13MywrCMBCF4VcpszaSSRsVV76HlJKmEzuL3pIal
- JJ3NxbcuPwPnG+DQJ4pwLXYwFPkwNOYQx0KsL0ZHyS4yw1KqkpeJIqOYjOY1faNmVlUqM1Za2e
- dayF/Zk+OX7t3r3P3HNbJv3c+4nf9SepPiihQaCQ8dWXrZIm35cmWR3u00wB1SukDikrqqawAA
- AA=
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: CvDFPFxSZ0d6Ncen3Kc2pz7HRXQeTEt6
-X-Proofpoint-ORIG-GUID: CvDFPFxSZ0d6Ncen3Kc2pz7HRXQeTEt6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-11_01,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 clxscore=1015 malwarescore=0 mlxscore=0 adultscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2408110016
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+X-Received: by 2002:a05:6e02:1d0b:b0:398:d1fe:9868 with SMTP id
+ e9e14a558f8ab-39b7a75252dmr4874335ab.4.1723342580929; Sat, 10 Aug 2024
+ 19:16:20 -0700 (PDT)
+Date: Sat, 10 Aug 2024 19:16:20 -0700
+In-Reply-To: <0000000000006fc563061cbc7f9c@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005cea8e061f5ef6da@google.com>
+Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbFindBits
+From: syzbot <syzbot+e38d703eeb410b17b473@syzkaller.appspotmail.com>
+To: andrew.kanner@gmail.com, ghandatmanas@gmail.com, 
+	jfs-discussion@lists.sourceforge.net, juntong.deng@outlook.com, 
+	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	osmtendev@gmail.com, rbrasga@uci.edu, shaggy@kernel.org, 
+	skhan@linuxfoundation.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+syzbot has found a reproducer for the following issue on:
 
-There are several drivers/base APIs for finding a specific device, and
-they currently use the following good type for the @match parameter:
-int (*match)(struct device *dev, const void *data)
+HEAD commit:    34ac1e82e5a7 Merge tag '6.11-rc2-smb3-client-fixes' of git..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=15f035d9980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=e38d703eeb410b17b473
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161cc96d980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f899d9980000
 
-Since these operations do not modify the caller-provided @*data, this
-type is worthy of a dedicated typedef:
-typedef int (*device_match_t)(struct device *dev, const void *data)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2c13802fbda4/disk-34ac1e82.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/74423353023b/vmlinux-34ac1e82.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/61da8b25f42a/bzImage-34ac1e82.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/4d2d380a51d6/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/53f5a740bbef/mount_2.gz
 
-Advantages of using device_match_t:
- - Shorter API declarations and definitions
- - Prevent further APIs from using a bad type for @match
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e38d703eeb410b17b473@syzkaller.appspotmail.com
 
-So introduce device_match_t and apply it to the existing
-(bus|class|driver|auxiliary)_find_device() APIs.
+ERROR: (device loop0): remounting filesystem as read-only
+jfs_rename: dtInsert returned -EIO
+ERROR: (device loop0): dbAllocBits: leaf page corrupt
+------------[ cut here ]------------
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:3025:47
+shift exponent 32 is too large for 32-bit type 'u32' (aka 'unsigned int')
+CPU: 0 UID: 0 PID: 5213 Comm: syz-executor267 Not tainted 6.11.0-rc2-syzkaller-00239-g34ac1e82e5a7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:93 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+ ubsan_epilogue lib/ubsan.c:231 [inline]
+ __ubsan_handle_shift_out_of_bounds+0x3c8/0x420 lib/ubsan.c:468
+ dbFindBits+0x11a/0x1d0 fs/jfs/jfs_dmap.c:3025
+ dbAllocDmapLev+0x1e9/0x4a0 fs/jfs/jfs_dmap.c:1985
+ dbAllocCtl+0x113/0x920 fs/jfs/jfs_dmap.c:1825
+ dbAllocAG+0x28f/0x10b0 fs/jfs/jfs_dmap.c:1364
+ dbDiscardAG+0x352/0xa20 fs/jfs/jfs_dmap.c:1613
+ jfs_ioc_trim+0x433/0x670 fs/jfs/jfs_discard.c:100
+ jfs_ioctl+0x2d0/0x3e0 fs/jfs/ioctl.c:131
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbb2632d059
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe933950b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbb26376095 RCX: 00007fbb2632d059
+RDX: 0000000020000080 RSI: 00000000c0185879 RDI: 0000000000000006
+RBP: 00007fbb263a85f0 R08: 000055555ee264c0 R09: 000055555ee264c0
+R10: 000055555ee264c0 R11: 0000000000000246 R12: 00007ffe933950e0
+R13: 00007ffe93395308 R14: 431bde82d7b634db R15: 00007fbb2637603b
+ </TASK>
+---[ end trace ]---
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
-Changes in v2:
-- Git rebase over the following commit:
-  bfa54a793ba7 ("driver core: bus: Fix double free in driver API bus_register()")
-- Link to v1: https://lore.kernel.org/r/20240802-dev_match_api-v1-1-51e16d3bf031@quicinc.com
----
- drivers/base/auxiliary.c      | 2 +-
- drivers/base/bus.c            | 2 +-
- drivers/base/class.c          | 3 +--
- drivers/base/driver.c         | 2 +-
- include/linux/auxiliary_bus.h | 2 +-
- include/linux/device/bus.h    | 5 +++--
- include/linux/device/class.h  | 2 +-
- include/linux/device/driver.h | 2 +-
- 8 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-index 54b92839e05c..7823888af4f6 100644
---- a/drivers/base/auxiliary.c
-+++ b/drivers/base/auxiliary.c
-@@ -352,7 +352,7 @@ EXPORT_SYMBOL_GPL(__auxiliary_device_add);
-  */
- struct auxiliary_device *auxiliary_find_device(struct device *start,
- 					       const void *data,
--					       int (*match)(struct device *dev, const void *data))
-+					       device_match_t match)
- {
- 	struct device *dev;
- 
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index abf090ace833..657c93c38b0d 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -391,7 +391,7 @@ EXPORT_SYMBOL_GPL(bus_for_each_dev);
-  */
- struct device *bus_find_device(const struct bus_type *bus,
- 			       struct device *start, const void *data,
--			       int (*match)(struct device *dev, const void *data))
-+			       device_match_t match)
- {
- 	struct subsys_private *sp = bus_to_subsys(bus);
- 	struct klist_iter i;
-diff --git a/drivers/base/class.c b/drivers/base/class.c
-index 7b38fdf8e1d7..ae22fa992c04 100644
---- a/drivers/base/class.c
-+++ b/drivers/base/class.c
-@@ -433,8 +433,7 @@ EXPORT_SYMBOL_GPL(class_for_each_device);
-  * code.  There's no locking restriction.
-  */
- struct device *class_find_device(const struct class *class, const struct device *start,
--				 const void *data,
--				 int (*match)(struct device *, const void *))
-+				 const void *data, device_match_t match)
- {
- 	struct subsys_private *sp = class_to_subsys(class);
- 	struct class_dev_iter iter;
-diff --git a/drivers/base/driver.c b/drivers/base/driver.c
-index 88c6fd1f1992..b4eb5b89c4ee 100644
---- a/drivers/base/driver.c
-+++ b/drivers/base/driver.c
-@@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(driver_for_each_device);
-  */
- struct device *driver_find_device(const struct device_driver *drv,
- 				  struct device *start, const void *data,
--				  int (*match)(struct device *dev, const void *data))
-+				  device_match_t match)
- {
- 	struct klist_iter i;
- 	struct device *dev;
-diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
-index 662b8ae54b6a..31762324bcc9 100644
---- a/include/linux/auxiliary_bus.h
-+++ b/include/linux/auxiliary_bus.h
-@@ -271,6 +271,6 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
- 
- struct auxiliary_device *auxiliary_find_device(struct device *start,
- 					       const void *data,
--					       int (*match)(struct device *dev, const void *data));
-+					       device_match_t match);
- 
- #endif /* _AUXILIARY_BUS_H_ */
-diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
-index 807831d6bf0f..970de5ee5562 100644
---- a/include/linux/device/bus.h
-+++ b/include/linux/device/bus.h
-@@ -126,6 +126,8 @@ struct bus_attribute {
- int __must_check bus_create_file(const struct bus_type *bus, struct bus_attribute *attr);
- void bus_remove_file(const struct bus_type *bus, struct bus_attribute *attr);
- 
-+/* Matching function type for drivers/base APIs to find a specific device */
-+typedef int (*device_match_t)(struct device *dev, const void *data);
- /* Generic device matching functions that all busses can use to match with */
- int device_match_name(struct device *dev, const void *name);
- int device_match_of_node(struct device *dev, const void *np);
-@@ -139,8 +141,7 @@ int device_match_any(struct device *dev, const void *unused);
- int bus_for_each_dev(const struct bus_type *bus, struct device *start, void *data,
- 		     int (*fn)(struct device *dev, void *data));
- struct device *bus_find_device(const struct bus_type *bus, struct device *start,
--			       const void *data,
--			       int (*match)(struct device *dev, const void *data));
-+			       const void *data, device_match_t match);
- /**
-  * bus_find_device_by_name - device iterator for locating a particular device
-  * of a specific name.
-diff --git a/include/linux/device/class.h b/include/linux/device/class.h
-index c576b49c55c2..518c9c83d64b 100644
---- a/include/linux/device/class.h
-+++ b/include/linux/device/class.h
-@@ -95,7 +95,7 @@ void class_dev_iter_exit(struct class_dev_iter *iter);
- int class_for_each_device(const struct class *class, const struct device *start, void *data,
- 			  int (*fn)(struct device *dev, void *data));
- struct device *class_find_device(const struct class *class, const struct device *start,
--				 const void *data, int (*match)(struct device *, const void *));
-+				 const void *data, device_match_t match);
- 
- /**
-  * class_find_device_by_name - device iterator for locating a particular device
-diff --git a/include/linux/device/driver.h b/include/linux/device/driver.h
-index 1fc8b68786de..5c04b8e3833b 100644
---- a/include/linux/device/driver.h
-+++ b/include/linux/device/driver.h
-@@ -157,7 +157,7 @@ int __must_check driver_for_each_device(struct device_driver *drv, struct device
- 					void *data, int (*fn)(struct device *dev, void *));
- struct device *driver_find_device(const struct device_driver *drv,
- 				  struct device *start, const void *data,
--				  int (*match)(struct device *dev, const void *data));
-+				  device_match_t match);
- 
- /**
-  * driver_find_device_by_name - device iterator for locating a particular device
 
 ---
-base-commit: bfa54a793ba77ef696755b66f3ac4ed00c7d1248
-change-id: 20240801-dev_match_api-415a755fcffb
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
