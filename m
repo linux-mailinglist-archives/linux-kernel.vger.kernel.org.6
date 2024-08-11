@@ -1,147 +1,238 @@
-Return-Path: <linux-kernel+bounces-282172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F4A94E073
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:14:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC6B94E077
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEE5D1F21538
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF2A2818EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E6A200DE;
-	Sun, 11 Aug 2024 08:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE82200A3;
+	Sun, 11 Aug 2024 08:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpWSpDy+"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXnyscKj"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898FF15AF6
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BE402E3FE;
+	Sun, 11 Aug 2024 08:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723364045; cv=none; b=V8ZE+0PWS8r3xil2SlGMYKzinLbepq6aOMIsyLgmRJ4Nn8r0x3I53fQVwP+W4uywjrMdn52CD1dxk0m0VsMSwr74OkyTfz8oy0DfpS/4r5CsueAQYn7vTIqc/rUwiMx9eDm1BQ0I0DH0W9yuQSFp7LAjz28zEMVyBKS1eN28Qps=
+	t=1723364277; cv=none; b=J054njSLe7QKfKfG8rbKYnOIEY03hQ1DRWJ2Cxsnb9HkfG5BqBU9mh96Fc6K5RG3St+yZ0HJHw8qSg7VEqJjocf4E9BZyIgoSzKmFDJQIokcGfCryuu6NKiDVo4yATdJhcizHugvs5scNv5htU//weh8UM7OlMy5q4+2Vux3XFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723364045; c=relaxed/simple;
-	bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MPim0uJlzKXCUGZ4e0B4VOpS3o5rSWxLUfNPDI3+levNxi+DzgZKRTaHWnFIhLOO64YP3/IoyFBMhvnu3FQglqq5hYziusgz6/z3t8GBVDBdv7jXjbuWeq3FpdOYSxms+MOr3rdPQZuiUx5IXyKkoZhaYvSAX/A8IhvvgK2gG1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpWSpDy+; arc=none smtp.client-ip=209.85.221.181
+	s=arc-20240116; t=1723364277; c=relaxed/simple;
+	bh=dYmk/v4GcwMNGyJcnCZCnhULAdndPcrBuDC//BgL4zA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AMXVXYdemyJpuihE17N3E2ufkHkscfmPsDFc5Ls3pHLuxOL7i68sMlB+9Wnun9yS4LYPd+I43gXCz+8F1G3kgtpl37P5+JDuGbw+vQK9qt2NGUTMps/0jJuqo0Ehwu8H9XX8c7MwysL9ScCW3CzVQ/2tu36AG8Pg9e5t8aHLWyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iXnyscKj; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f6c136a947so1648325e0c.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 01:14:03 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52f025ab3a7so4315616e87.2;
+        Sun, 11 Aug 2024 01:17:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723364042; x=1723968842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
-        b=lpWSpDy+vFPbm5DSvRkLQgsYsbyHfTkmDhxLqgtEMF86rCDp2m1yvvtOtNNzKTPlT2
-         ZiKOO9GBGpMGSEutF0n2GvIbD46ttPVO8IMdHST30E7jSSFeSuW93qVHse1ZLy9AotQ3
-         rX5NNYY0rpOJs35tF0BfE8xznfK1vMfcfeG3aBRZ+Ac2T3uuaq8VWIina37iKydOnDp9
-         gq5zv02gGUa6eJd2l5TbT7Bn7+5VXaLIeBAfD+kZwCQAua+wi1LBjCqwl+wo6C1u15MU
-         qJn+X3/Dlwt51lqhAa/UWcguM04yQNAI1sFxE6jGDR8DFylMNxNTb0zD0gHVU2EmQqO1
-         4Swg==
+        d=gmail.com; s=20230601; t=1723364274; x=1723969074; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/0ChP9IwL7YQBex/oGiDrTwaSzIWU+Wsc1zQ50EPWhk=;
+        b=iXnyscKjwry3FefxvFAE0ZaH4Q1Dfx3EhDyaVinnenOYJaR3qh/J5e72iA+tOSigBU
+         gzj+7fdRV4+b2MV7OVkv6BWd/wp7gUZc8saLJ3fVS4wXZr305wmcdfb8bM1mLQMnK5sL
+         7bjHZj2Z90cbpaUkcJRlcwCAgCNz6bzI+d3aA5oMJNdse2kcyXrc0nPxEmH6QJikQa+C
+         K+kgtpxG3A+yn8R7Rq6n710sH0TsHuasQebE8cOjD0F2BZ8WMBqk9+Qt+287QsC/oCyk
+         uzsznSEynwPT93lLZ7xgbzZ6oQHz9vdEFhjA3fykLwq+v+sXS1TKQdUg7G27+ff1rLf7
+         bruA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723364042; x=1723968842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IW8D8ky6VmDxd30J5JsudFbHqq4Ga6YraHQcz2FJiIs=;
-        b=qGXMQS5eA2ltF/yBpix/OWdJSUAFoIILTJvTU6VIvwbo4wzf/xg4BgO4KTsqU18J1G
-         lIqVP0G0wYsVvz/LjeupLUFiH87Y8iN2RWujarjeYImcPn2CUybgHTitJXz8aSddSr+b
-         g9a4bG2Oq0cB2Yy3z1/WBozpk9257fZBxT7rBYGHwuiwtyrt2za6Cc0kEOKudV2+0NwO
-         EX4nAzTrDqDQRHl2Dg/eWVfMu4S0c5J6wbR/zOI7Wq3PBT1KljTnb5z8u+VsQKDNGUSe
-         10hWRF1J8SU3Gw3XqRAZL9Q/DSB4ROJNLZ2pQsaTkkfP4uZ2rQzNBxHVjWKZpbBxNbSZ
-         9umg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV7yMG5cxZA5m6L3GKYzsibPP7pwzccZ5sV3k53r0ECc8N2H+Tq9S/htqOvCN6VwQcOR4WkInYYMKXEReMJ+lqlrhQQauG1F9xeb8H
-X-Gm-Message-State: AOJu0Yxb4izqxEDFMJgKivZG+gZDnO1kVkaGPweluGUymbJTIyaViM5I
-	s0GtYOfom1wBlVCPoht963SaFaV+g4lS1/Uh17CwxdFBXdfzGieWnytD8yG5bkRRkL2ZGy7AU83
-	BZveesSHattzMqm5aqsCE1UECEoA=
-X-Google-Smtp-Source: AGHT+IGstJESyRPUBiJVn6xiheFxwi4sK2Krx9epzULVscTdmL+n5CMPQ2jMSBdoSQrYii0fuUohFmb+NBq+GBerOU0=
-X-Received: by 2002:a05:6122:2919:b0:4f6:adb5:aee1 with SMTP id
- 71dfb90a1353d-4f912ed2b4amr7148974e0c.13.1723364042364; Sun, 11 Aug 2024
- 01:14:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723364274; x=1723969074;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/0ChP9IwL7YQBex/oGiDrTwaSzIWU+Wsc1zQ50EPWhk=;
+        b=P4+JoVTTq0cDd/terWLNSTRLHgj4hozl+NOUZ7nAWV6eMAh9YZo3MeCBvRcAY8Cgbb
+         wr6Vhg8DJYvezhBULbsoy9wq4Bw7++Lvh9l9LCT0ZcZBz4c/Kt68/wz7JDauDoq/DIv9
+         O1xuyykXG0/dKBSMM1q/KCIXT+4Tf4by/AP7UTjjbNNtfU8lUOB3gU2EmpTCx+ZQx5sO
+         1rv9qCCPzyuzvHeakkqxQl5Ww0YkJtXBANpP5WJWOjmyTd+35KkpYFKDC1zWwGkazGoU
+         R7qvkaYR0yCJ5KCdcTyA/YS5JjTX6Q9bPB1ZWwBVHSE5SrC23h99uYRU2fmaYrRnCK7S
+         Sv/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXL0BTyYKaVwarRR3f9AAbMFU0bteF5ZAinvPn99shkIWueukxGiuXmAbf9xHzN8Ghtr7fpIV932NrMEIjlaq4FBDeOAjbq6rl8cy4m
+X-Gm-Message-State: AOJu0YwcunuKkdySX7x5lBORyqhtoQWi0U22iv35k/9YNaOBs5w/qmNy
+	6YLDy/6rIwpweBQXfyVu/8YMwZLkXx9E38IWqQVLz3ndCrsUOlpW7FHvnVxb
+X-Google-Smtp-Source: AGHT+IFGpsASx6mXYu4SJ4KXMoaYKFNh+VL8MvgLhj8Qz3PgNJRLJKj81wmZTSIVlaf3cg4s65Nxjw==
+X-Received: by 2002:a05:6512:3095:b0:52f:ccb0:9ea7 with SMTP id 2adb3069b0e04-530eea144e0mr3662492e87.60.1723364273051;
+        Sun, 11 Aug 2024 01:17:53 -0700 (PDT)
+Received: from [192.168.68.110] (c83-253-44-175.bredband.tele2.se. [83.253.44.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200eb3ebcsm402417e87.11.2024.08.11.01.17.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Aug 2024 01:17:52 -0700 (PDT)
+Message-ID: <4697de37-a630-402f-a547-cc4b70de9dc3@gmail.com>
+Date: Sun, 11 Aug 2024 10:17:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808010457.228753-1-21cnbao@gmail.com> <20240808010457.228753-2-21cnbao@gmail.com>
- <e9f82fd8-e1da-49ea-a735-b174575c02bc@arm.com> <1222cd76-e732-4238-9413-61843249c1e8@arm.com>
- <4465afdc-23e9-4844-a0a0-519f49b1229c@redhat.com> <616401ea-289d-4ae2-acde-6704b0fa9c46@redhat.com>
- <9f8ba5c8-5bc3-4af2-96d2-2f52ee923ef5@arm.com> <c063335f-a29e-433e-9192-39c7b3e5d06e@redhat.com>
-In-Reply-To: <c063335f-a29e-433e-9192-39c7b3e5d06e@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sun, 11 Aug 2024 20:13:51 +1200
-Message-ID: <CAGsJ_4xgT=E7XFiGnzwYm_26f3xSUFeD3Aiyvewge=KZjxzjow@mail.gmail.com>
-Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
-To: David Hildenbrand <david@redhat.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	chrisl@kernel.org, kaleshsingh@google.com, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, ioworker0@gmail.com, 
-	baolin.wang@linux.alibaba.com, ziy@nvidia.com, hanchuanhua@oppo.com, 
-	Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: XFS mount timeout in linux-6.9.11
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
+ <ZraeRdPmGXpbRM7V@dread.disaster.area>
+ <252d91e2-282e-4af4-b99b-3b8147d98bc3@gmail.com>
+ <ZrfzsIcTX1Qi+IUi@dread.disaster.area>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <ZrfzsIcTX1Qi+IUi@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 9, 2024 at 9:22=E2=80=AFPM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> On 09.08.24 11:05, Ryan Roberts wrote:
-> > On 09/08/2024 09:58, David Hildenbrand wrote:
-> >> On 09.08.24 10:42, David Hildenbrand wrote:
-> >>>>> Not sure I fully understand why David prefers to do the unaccountin=
-g at
-> >>>>> free-time though? It feels unbalanced to me to increment when first=
- mapped but
-> >>>>> decrement when freed. Surely its safer to either use alloc/free or =
-use first
-> >>>>> map/last map?
-> >>>>>
-> >>>>> If using alloc/free isn't there a THP constructor/destructor that p=
-repares the
-> >>>>> deferred list? (My memory may be failing me). Could we use that?
-> >>>>
-> >>>> Additionally, if we wanted to extend (eventually) to track the numbe=
-r of shmem
-> >>>> and file mthps in additional counters, could we also account using s=
-imilar folio
-> >>>> free-time hooks? If not, it might be an argument to account in rmap_=
-unmap to be
-> >>>> consistent for all?
-> >>>
-> >>> Again, see NR_FILE_THPS handling. No rmap over-complication please.
-> >>
-> >> ... not to mention that it is non-sensical to only count pageache foli=
-os that
-> >> are mapped to user space ;)
-> >
-> > Yes, good point. I'll get back in my box. :)
->
-> Well, it was a valuable discussion!
->
-> anon folios in the swapcache are interesting: they are only "anon" after
-> we first mapped them (harder to change, but would be possible by using a
-> NULL mapping maybe, if really worth it; with memdesc that might turn out
-> interesting). But once they are anon, they will stay anon until actually
-> reclaimed -> freed.
 
-I assume we don=E2=80=99t need to worry about this, as even AnonPages (NR_A=
-NON_MAPPED)
-in /proc/meminfo also entirely depends on anon pages becoming anon mappings=
-.
 
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+On 2024-08-11 01:11, Dave Chinner wrote:
+> On Sat, Aug 10, 2024 at 10:29:38AM +0200, Anders Blomdell wrote:
+>>
+>>
+>> On 2024-08-10 00:55, Dave Chinner wrote:
+>>> On Fri, Aug 09, 2024 at 07:08:41PM +0200, Anders Blomdell wrote:
+>>>> With a filesystem that contains a very large amount of hardlinks
+>>>> the time to mount the filesystem skyrockets to around 15 minutes
+>>>> on 6.9.11-200.fc40.x86_64 as compared to around 1 second on
+>>>> 6.8.10-300.fc40.x86_64,
+>>>
+>>> That sounds like the filesystem is not being cleanly unmounted on
+>>> 6.9.11-200.fc40.x86_64 and so is having to run log recovery on the
+>>> next mount and so is recovering lots of hardlink operations that
+>>> weren't written back at unmount.
+>>>
+>>> Hence this smells like an unmount or OS shutdown process issue, not
+>>> a mount issue. e.g. if something in the shutdown scripts hangs,
+>>> systemd may time out the shutdown and power off/reboot the machine
+>>> wihtout completing the full shutdown process. The result of this is
+>>> the filesystem has to perform recovery on the next mount and so you
+>>> see a long mount time because of some other unrelated issue.
+>>>
+>>> What is the dmesg output for the mount operations? That will tell us
+>>> if journal recovery is the difference for certain.  Have you also
+>>> checked to see what is happening in the shutdown/unmount process
+>>> before the long mount times occur?
+>> echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+>> mount /dev/vg1/test /test
+>> echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+>> umount /test
+>> echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+>> mount /dev/vg1/test /test
+>> echo $(uname -r) $(date +%H:%M:%S) > /dev/kmsg
+>>
+>> [55581.470484] 6.8.0-rc4-00129-g14dd46cf31f4 09:17:20
+>> [55581.492733] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [56048.292804] XFS (dm-7): Ending clean mount
+>> [56516.433008] 6.8.0-rc4-00129-g14dd46cf31f4 09:32:55
+> 
+> So it took ~450s to determine that the mount was clean, then another
+> 450s to return to userspace?
+Yeah, that aligns with my userspace view that the mount takes 15 minutes.
+> 
+>> [56516.434695] XFS (dm-7): Unmounting Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [56516.925145] 6.8.0-rc4-00129-g14dd46cf31f4 09:32:56
+>> [56517.039873] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [56986.017144] XFS (dm-7): Ending clean mount
+>> [57454.876371] 6.8.0-rc4-00129-g14dd46cf31f4 09:48:34
+> 
+> Same again.
+> 
+> Can you post the 'xfs_info /mnt/pt' for that filesystem?
+# uname -r ; xfs_info /test
+6.8.0-rc4-00128-g8541a7d9da2d
+meta-data=/dev/mapper/vg1-test isize=512    agcount=8, agsize=268435455 blks
+          =                       sectsz=4096  attr=2, projid32bit=1
+          =                       crc=1        finobt=1, sparse=0, rmapbt=0
+          =                       reflink=1    bigtime=0 inobtcount=0 nrext64=0
+data     =                       bsize=4096   blocks=2147483640, imaxpct=20
+          =                       sunit=0      swidth=0 blks
+naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+log      =internal log           bsize=4096   blocks=521728, version=2
+          =                       sectsz=4096  sunit=1 blks, lazy-count=1
+realtime =none                   extsz=4096   blocks=0, rtextents=0
+> 
+>> And rebooting to the kernel before the offending commit:
+>>
+>> [   60.177951] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:00
+>> [   61.009283] SGI XFS with ACLs, security attributes, realtime, scrub, quota, no debug enabled
+>> [   61.017422] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [   61.351100] XFS (dm-7): Ending clean mount
+>> [   61.366359] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
+>> [   61.367673] XFS (dm-7): Unmounting Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [   61.444552] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
+>> [   61.459358] XFS (dm-7): Mounting V5 Filesystem e2159bbc-18fb-4d4b-a6c5-14c97b8e5380
+>> [   61.513938] XFS (dm-7): Ending clean mount
+>> [   61.524056] 6.8.0-rc4-00128-g8541a7d9da2d 10:23:01
+> 
+> Yeah, that's what I'd expect to see.
+> 
+> But, hold on, the kernel version you are testing is apparently is in
+> the middle of 6.8-rc4. This commit wasn't merged until 6.9-rc1 and
+> there were no XFS changes merged in the between 6.8-rc3 and 6.8-rc6.
+If I read the logs correctly, these commited xfs changes were based on the
+6.8-rc4, and not rebased to 6.8.0 (which is totally OK, but confusing at
+times, after doing some kernel bisects I have stopped thinking about it).
 
-Thanks
-Barry
+> So as the bisect is walking back in time through the XFS commits,
+> the base kernel is also changing. Hence there's a lot more change
+> in the kernel being tested by each bisect step than just the XFS
+> commits, right?
+Yes, it's a binary search through the highly convoluted graph of commits.
+It always suprises me how few of these "random" points fails miserably
+during a bisect (in this particular case none), so kudos to all linux
+maintainers to keep things so sane!
+
+> 
+> This smells like a bisect jumping randomly backwards in time as it
+> lands inside merges rather than bisecting the order in which commits
+> were merged into the main tree. Can you post the full bisect log?
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [73f3c33036904bada1b9b6476a883b1a966440cc] Linux 6.9.11
+git bisect bad 73f3c33036904bada1b9b6476a883b1a966440cc
+# status: waiting for good commit(s), bad commit known
+# good: [a0c69a570e420e86c7569b8c052913213eef2b45] Linux 6.8.10
+git bisect good a0c69a570e420e86c7569b8c052913213eef2b45
+# good: [e8f897f4afef0031fe618a8e94127a0934896aba] Linux 6.8
+git bisect good e8f897f4afef0031fe618a8e94127a0934896aba
+# bad: [fe46a7dd189e25604716c03576d05ac8a5209743] Merge tag 'sound-6.9-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect bad fe46a7dd189e25604716c03576d05ac8a5209743
+# good: [9187210eee7d87eea37b45ea93454a88681894a4] Merge tag 'net-next-6.9' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next
+git bisect good 9187210eee7d87eea37b45ea93454a88681894a4
+# good: [119b225f01e4d3ce974cd3b4d982c76a380c796d] Merge tag 'amd-drm-next-6.9-2024-03-08-1' of https://gitlab.freedesktop.org/agd5f/linux into drm-next
+git bisect good 119b225f01e4d3ce974cd3b4d982c76a380c796d
+# good: [70ef654469b371d0a71bcf967fa3dcbca05d4b25] Merge tag 'efi-next-for-v6.9' of git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi
+git bisect good 70ef654469b371d0a71bcf967fa3dcbca05d4b25
+# bad: [8403ce70be339d462892a2b935ae30ee52416f92] Merge tag 'mfd-next-6.9' of git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd
+git bisect bad 8403ce70be339d462892a2b935ae30ee52416f92
+# bad: [480e035fc4c714fb5536e64ab9db04fedc89e910] Merge tag 'drm-next-2024-03-13' of https://gitlab.freedesktop.org/drm/kernel
+git bisect bad 480e035fc4c714fb5536e64ab9db04fedc89e910
+# bad: [57982d6c835a71da5c66e6090680de1adf6e736a] xfs: consolidate btree ptr checking
+git bisect bad 57982d6c835a71da5c66e6090680de1adf6e736a
+# good: [0b8686f19879d896bbe2d3e893f433a08160452d] xfs: separate the marking of sick and checked metadata
+git bisect good 0b8686f19879d896bbe2d3e893f433a08160452d
+# good: [1a9d26291c68fbb8f8d24f9f694b32223a072745] xfs: store the btree pointer length in struct xfs_btree_ops
+git bisect good 1a9d26291c68fbb8f8d24f9f694b32223a072745
+# good: [802f91f7b1d535ac975e2d696bf5b5dea82816e7] xfs: fold xfs_bmbt_init_common into xfs_bmbt_init_cursor
+git bisect good 802f91f7b1d535ac975e2d696bf5b5dea82816e7
+# good: [4bfb028a4c00d0a079a625d7867325efb3c37de2] xfs: remove the btnum argument to xfs_inobt_count_blocks
+git bisect good 4bfb028a4c00d0a079a625d7867325efb3c37de2
+# bad: [fbeef4e061ab28bf556af4ee2a5a9848dc4616c5] xfs: pass a 'bool is_finobt' to xfs_inobt_insert
+git bisect bad fbeef4e061ab28bf556af4ee2a5a9848dc4616c5
+# good: [8541a7d9da2dd6e44f401f2363b21749b7413fc9] xfs: split xfs_inobt_insert_sprec
+git bisect good 8541a7d9da2dd6e44f401f2363b21749b7413fc9
+# bad: [14dd46cf31f4aaffcf26b00de9af39d01ec8d547] xfs: split xfs_inobt_init_cursor
+git bisect bad 14dd46cf31f4aaffcf26b00de9af39d01ec8d547
+# first bad commit: [14dd46cf31f4aaffcf26b00de9af39d01ec8d547] xfs: split xfs_inobt_init_cursor
+
+/Anders
+
 
