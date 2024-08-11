@@ -1,124 +1,353 @@
-Return-Path: <linux-kernel+bounces-282213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E622A94E0E3
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:43:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E69694E0E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E70B1C20DAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:43:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 304401F2182B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA4A3EA83;
-	Sun, 11 Aug 2024 10:43:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E9144C7B;
+	Sun, 11 Aug 2024 10:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cOJOw2FW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E147C8E9
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 10:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD1F41C62;
+	Sun, 11 Aug 2024 10:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723372985; cv=none; b=S8F6D20aKFRVE2lJMu+5g5FTOeDEhTF38VHRhuIZO7DKGu2j92FQPKFKEpLl19EBWY1W/mxDRJwQGYUxfbg2xKKLPqEC2dgxaKghlFzwPD1e/I1juM99SBmFy1T2bgtbH0yr/p5udCnV6+5nNjXKL7Q7qlvag57o6NNfcVVOiGc=
+	t=1723373891; cv=none; b=aCHAI4l2a5hcvccVqQlojYIjvh3WMqukkD1epoNjkvXh2CRpJgufC1DuGYNPidzFlzHIALTSk1MOOdGwTful99jAa1aeUT53AOJ/Qr7bW6lsRgCDxwnXG8sptqbshIEZn2Xbk0GLXhOzdC5DyidlvRWRyIsSDC1dR4FuMjzimpM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723372985; c=relaxed/simple;
-	bh=aUnMoTq2jIXbg8u/VBEZbX0vfSzeUKq/JletJa8Mm1o=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=U//5dJ+WJO+UqtqiLX++u7JdjH9GGj+VxLJROkvwSGwUQTE2MiheJQTbjL/9uJFXHvoyjnKiwqTjpZS6W35ZadedZLfwaANx2rEgHTU9riIkW5joQpj0H8bbDucjNBaOQ+SukeFxjHtY55FrQSch9e1Ru+KfRE9QpLkKemypDYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-39b349a0234so51237435ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 03:43:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723372983; x=1723977783;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XHnf0rYTZCNPZDDGcyfulut31vwLZIHnkhGfxnekLC0=;
-        b=ZPNYXHcQ8IdG4SK6UHRR/tddquW+dvPcB284k69k4ugiAKTfpPBD9TXr8lVjLEanWj
-         20jvM2+igTSACgU6FWKbaLI4T8zt0K7aZ4LUV48O6rcqONdrKtvUSAkD5hfXXMyZrHzY
-         aAVIpIEhvDLyQAs6NiiY787jftaAHoyxPeL/M47fUs7ni9rGBgEABYMhjwUGlfEH/Wpk
-         0noxG4gcz69qiXXEJP7FJbCVd5lQNrxf0/T3Y9UTCS/ItK7hT2mcSpY34u6ATTe6XcGp
-         /5OcpC5uAynHe1NWGAERNSFgoNvREalwILJNYAl0TrMFLIjkWIfrBxZp72RzlZv3VcyK
-         AlpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVCCKInxgneafqtgKtuIWLcDOo//g3vYaoFmCJZcjQHtf8rUxVZgZd14scf+jxafnje0A+HfQQ5fnzxtHnsVst08Z510i6rgK6aMRFG
-X-Gm-Message-State: AOJu0Yx4ZgOU2FLWKxAboKkKCXX4cojsYZUqRXfFZlYCdVjLEBLoJEFB
-	/+kIvKAzPMSozM9fEcDbx/xhqaSUEuzVefBbz1nm5If4CJbRIdC2h0WXqpw2pEescfHGlFNXFBn
-	K+6F/Tg1eYcik5OlPpKzUjnfNOPL4vDZi7ulXw/2p4q6hCGRZrleQmB8=
-X-Google-Smtp-Source: AGHT+IFefyKRpwO20nqs3n+flBNAF5z59p/3O0V3Y/BPFOhX2WTBK87W5dS8GXrvGSBzm2LobdT7/cGW88aF/KDGyRyLPTGRNP9N
+	s=arc-20240116; t=1723373891; c=relaxed/simple;
+	bh=QXxs+rBPKrFRmT930Lmc9nK3MhuISIJDJ+3d3lEbmw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rjy5N0yUl9JVk40rhLa8zGXnR6Ztz2wtZ8UtqWsdylpTVN8Mb9bSuZJDsyZ23/HOF8L55GwjGv2mSSNTvCdZh80DyQ1F8SeehDL89avLMH0Ni4vMxv3lI2mvmcF1A6yLzA6J/1FmXhOprAiIVZsZUKYUXPrvREXhUw0Gw34EwKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cOJOw2FW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3F54C32786;
+	Sun, 11 Aug 2024 10:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723373891;
+	bh=QXxs+rBPKrFRmT930Lmc9nK3MhuISIJDJ+3d3lEbmw0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cOJOw2FWKYGOBth4xTwWCv3yWCc6db3mJzl635eOA3mv8uLZV6ZEexEvi6iKzRxJE
+	 bKrd/tuvFf0c92W97A+p6TsZhPpsZ5qyKj2tjMjMVs19MVplmz2Z7m6WsjoAq6ExCT
+	 bKNDdM28u5ZwHjAkh+gVWB7aBXukKaqRcCXdkzYQ=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	torvalds@linux-foundation.org,
+	stable@vger.kernel.org
+Cc: lwn@lwn.net,
+	jslaby@suse.cz,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Linux 6.1.104
+Date: Sun, 11 Aug 2024 12:58:06 +0200
+Message-ID: <2024081106-supper-yelling-eded@gregkh>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8f:b0:381:37d6:e590 with SMTP id
- e9e14a558f8ab-39bd755259fmr5067435ab.2.1723372983564; Sun, 11 Aug 2024
- 03:43:03 -0700 (PDT)
-Date: Sun, 11 Aug 2024 03:43:03 -0700
-In-Reply-To: <tencent_8CEBCCA4E7D406EF12CD864A49942EFEEE06@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000804cad061f660ac2@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+I'm announcing the release of the 6.1.104 kernel.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+All users of the 6.1 kernel series must upgrade.
 
-ino state: 393351, ino: 1901337, comm: kworker/u32:9, folio: ffffea0000b70480, netfs_writepages
-ino: 1901337, v9fs_begin_writeback
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901337
-WARNING: CPU: 0 PID: 1137 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Modules linked in:
-CPU: 0 UID: 0 PID: 1137 Comm: kworker/u32:9 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-246)
-RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 e0 a2 8e 8b e8 15 3e 0d fe 90 <0f> 0b 90 90 eb 80 e8 39 27 a8 fe e9 6f ff ff ff e8 9f 26 a8 fe e9
-RSP: 0018:ffffc90005b77478 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff88804550b9f0 RCX: ffffffff814cc379
-RDX: ffff888022754880 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff88804550b9f0
-R13: dffffc0000000000 R14: ffffc90005b77840 R15: ffff88801b231958
-FS:  0000000000000000(0000) GS:ffff88806b000000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020001000 CR3: 000000000db7c000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x6ee/0xec0 fs/netfs/write_issue.c:536
- do_writepages+0x1ae/0x940 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+The updated 6.1.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-6.1.y
+and can be browsed at the normal kernel.org git web browser:
+	https://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
 
+thanks,
 
-Tested on:
+greg k-h
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=11288d7d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=113ac96d980000
+------------
+
+ Makefile                                              |    2 
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi                 |    2 
+ arch/arm64/boot/dts/qcom/msm8998.dtsi                 |   36 +---
+ arch/arm64/include/asm/jump_label.h                   |    1 
+ arch/arm64/kernel/jump_label.c                        |   11 +
+ arch/mips/boot/dts/loongson/loongson64-2k1000.dtsi    |   84 +++++++---
+ arch/riscv/mm/fault.c                                 |   17 +-
+ drivers/cpufreq/qcom-cpufreq-nvmem.c                  |   56 +++----
+ drivers/gpu/drm/i915/display/intel_dp_link_training.c |   54 ++++++
+ drivers/gpu/drm/i915/display/intel_dpll_mgr.c         |    6 
+ drivers/gpu/drm/i915/display/intel_hdcp_regs.h        |    2 
+ drivers/gpu/drm/nouveau/nouveau_prime.c               |    3 
+ drivers/gpu/drm/udl/Makefile                          |    2 
+ drivers/gpu/drm/udl/udl_connector.c                   |  139 ------------------
+ drivers/gpu/drm/udl/udl_connector.h                   |   15 -
+ drivers/gpu/drm/udl/udl_drv.h                         |   11 +
+ drivers/gpu/drm/udl/udl_modeset.c                     |  135 +++++++++++++++++
+ drivers/gpu/drm/vmwgfx/vmwgfx_fence.c                 |   17 --
+ drivers/gpu/drm/vmwgfx/vmwgfx_overlay.c               |    2 
+ drivers/gpu/drm/vmwgfx/vmwgfx_stdu.c                  |   29 +++
+ drivers/hid/amd-sfh-hid/amd_sfh_client.c              |   55 ++-----
+ drivers/hid/wacom_wac.c                               |    3 
+ drivers/leds/led-triggers.c                           |   32 ++--
+ drivers/leds/trigger/ledtrig-timer.c                  |    5 
+ drivers/net/ethernet/intel/ice/ice_txrx.c             |    2 
+ drivers/net/ethernet/intel/ice/ice_xsk.c              |   19 +-
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c       |    6 
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c  |    7 
+ drivers/net/ethernet/mellanox/mlx5/core/fw_reset.c    |    5 
+ drivers/net/ethernet/mellanox/mlx5/core/lag/lag.c     |    2 
+ drivers/net/ethernet/realtek/r8169_main.c             |    8 -
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c     |    2 
+ drivers/net/usb/sr9700.c                              |   11 +
+ drivers/platform/chrome/cros_ec_proto.c               |    2 
+ fs/btrfs/block-group.c                                |   13 +
+ fs/btrfs/extent-tree.c                                |    3 
+ fs/btrfs/free-space-cache.c                           |    4 
+ fs/btrfs/space-info.c                                 |    2 
+ fs/btrfs/space-info.h                                 |    1 
+ fs/ext4/extents.c                                     |    5 
+ fs/ext4/extents_status.c                              |   14 -
+ fs/ext4/extents_status.h                              |    6 
+ fs/ext4/inode.c                                       |  115 ++++++++------
+ fs/f2fs/segment.c                                     |    4 
+ fs/file.c                                             |    1 
+ fs/proc/proc_sysctl.c                                 |    8 -
+ include/linux/leds.h                                  |   30 +--
+ include/linux/sysctl.h                                |    1 
+ include/trace/events/btrfs.h                          |    8 +
+ include/trace/events/mptcp.h                          |    2 
+ init/Kconfig                                          |    1 
+ ipc/ipc_sysctl.c                                      |   36 ++++
+ ipc/mq_sysctl.c                                       |   35 ++++
+ kernel/irq/irqdomain.c                                |    7 
+ mm/Kconfig                                            |   11 +
+ mm/page_alloc.c                                       |   19 +-
+ net/bluetooth/hci_sync.c                              |   21 ++
+ net/core/rtnetlink.c                                  |    2 
+ net/ipv4/netfilter/iptable_nat.c                      |   18 +-
+ net/ipv6/ndisc.c                                      |   34 ++--
+ net/ipv6/netfilter/ip6table_nat.c                     |   14 +
+ net/iucv/af_iucv.c                                    |    4 
+ net/mptcp/options.c                                   |    2 
+ net/mptcp/pm_netlink.c                                |   28 ++-
+ net/mptcp/protocol.c                                  |   18 +-
+ net/mptcp/protocol.h                                  |    1 
+ net/mptcp/subflow.c                                   |   17 +-
+ net/netfilter/ipset/ip_set_list_set.c                 |    3 
+ net/sched/act_ct.c                                    |    4 
+ net/sysctl_net.c                                      |    1 
+ sound/firewire/amdtp-stream.c                         |   38 +++-
+ sound/firewire/amdtp-stream.h                         |    1 
+ sound/pci/hda/hda_controller.h                        |    2 
+ sound/pci/hda/hda_intel.c                             |   10 +
+ sound/pci/hda/patch_conexant.c                        |   54 +-----
+ sound/pci/hda/patch_realtek.c                         |    1 
+ sound/usb/stream.c                                    |    4 
+ tools/testing/selftests/net/mptcp/mptcp_connect.c     |    8 -
+ 78 files changed, 812 insertions(+), 582 deletions(-)
+
+Al Viro (1):
+      protect the fetch of ->fd[fd] in do_dup2() from mispredictions
+
+Alexander Maltsev (1):
+      netfilter: ipset: Add list flush to cancel_gc
+
+Alexandra Winter (1):
+      net/iucv: fix use after free in iucv_sock_close()
+
+Alexey Gladkov (2):
+      sysctl: allow change system v ipc sysctls inside ipc namespace
+      sysctl: allow to change limits for posix messages queues
+
+Alice Ryhl (1):
+      rust: SHADOW_CALL_STACK is incompatible with Rust
+
+Andy Chiu (1):
+      net: axienet: start napi before enabling Rx/Tx
+
+Baokun Li (1):
+      ext4: make ext4_es_insert_extent() return void
+
+Basavaraj Natikar (3):
+      HID: amd_sfh: Remove duplicate cleanup
+      HID: amd_sfh: Split sensor and HID initialization
+      HID: amd_sfh: Move sensor discovery before HID device initialization
+
+Binbin Zhou (1):
+      MIPS: Loongson64: DTS: Add RTC support to Loongson-2K1000
+
+Dan Carpenter (1):
+      net: mvpp2: Don't re-use loop iterator
+
+Danilo Krummrich (1):
+      drm/nouveau: prime: fix refcount underflow
+
+Dmitry Baryshkov (1):
+      arm64: dts: qcom: msm8998: switch USB QMP PHY to new style of bindings
+
+Edmund Raile (2):
+      Revert "ALSA: firewire-lib: obsolete workqueue for period update"
+      Revert "ALSA: firewire-lib: operate for period elapse event in process context"
+
+Eric Dumazet (1):
+      sched: act_ct: take care of padding in struct zones_ht_key
+
+Greg Kroah-Hartman (1):
+      Linux 6.1.104
+
+Hans de Goede (1):
+      leds: trigger: Call synchronize_rcu() before calling trig->activate()
+
+Heiner Kallweit (3):
+      leds: trigger: Remove unused function led_trigger_rename_static()
+      leds: trigger: Store brightness set by led_trigger_event()
+      r8169: don't increment tx_dropped in case of NETDEV_TX_BUSY
+
+Herve Codina (1):
+      irqdomain: Fixed unbalanced fwnode get and put
+
+Huang Ying (1):
+      mm: restrict the pcp batch scale factor to avoid too long latency
+
+Ian Forbes (2):
+      drm/vmwgfx: Fix overlay when using Screen Targets
+      drm/vmwgfx: Trigger a modeset when the screen moves
+
+Imre Deak (1):
+      drm/i915/dp: Don't switch the LTTPR mode on an active link
+
+Jaegeuk Kim (1):
+      f2fs: assign CURSEG_ALL_DATA_ATGC if blkaddr is valid
+
+Javier Carrasco (1):
+      cpufreq: qcom-nvmem: fix memory leaks in probe error paths
+
+Jiaxun Yang (3):
+      MIPS: Loongson64: DTS: Fix PCIe port nodes for ls7a
+      MIPS: dts: loongson: Fix liointc IRQ polarity
+      MIPS: dts: loongson: Fix ls2k1000-rtc interrupt
+
+Krishna Kurapati (2):
+      arm64: dts: qcom: msm8998: Disable SS instance in Parkmode for USB
+      arm64: dts: qcom: ipq8074: Disable SS instance in Parkmode for USB
+
+Kuniyuki Iwashima (3):
+      rtnetlink: Don't ignore IFLA_TARGET_NETNSID when ifname is specified in rtnl_dellink().
+      netfilter: iptables: Fix null-ptr-deref in iptable_nat_table_init().
+      netfilter: iptables: Fix potential null-ptr-deref in ip6table_nat_table_init().
+
+Li Zhijian (1):
+      mm/page_alloc: fix pcp->count race between drain_pages_zone() vs __rmqueue_pcplist()
+
+Liu Jing (1):
+      selftests: mptcp: always close input's FD if opened
+
+Lucas Stach (1):
+      mm: page_alloc: control latency caused by zone PCP draining
+
+Luiz Augusto von Dentz (1):
+      Bluetooth: hci_sync: Fix suspending with wrong filter policy
+
+Ma Ke (1):
+      net: usb: sr9700: fix uninitialized variable use in sr_mdio_read
+
+Maciej Fijalkowski (3):
+      ice: don't busy wait for Rx queue disable in ice_qp_dis()
+      ice: replace synchronize_rcu with synchronize_net
+      ice: add missing WRITE_ONCE when clearing ice_rx_ring::xdp_prog
+
+Maciej Żenczykowski (1):
+      ipv6: fix ndisc_is_useropt() handling for PIO
+
+Mark Bloch (1):
+      net/mlx5: Lag, don't use the hardcoded value of the first port
+
+Matthieu Baerts (NGI0) (3):
+      mptcp: sched: check both directions for backup
+      mptcp: distinguish rcv vs sent backup flag in requests
+      mptcp: pm: only set request_bkup flag when sending MP_PRIO
+
+Mavroudis Chatzilazaridis (1):
+      ALSA: hda/realtek: Add quirk for Acer Aspire E5-574G
+
+Michal Kubiak (1):
+      ice: respect netif readiness in AF_XDP ZC related ndo's
+
+Moshe Shemesh (1):
+      net/mlx5: Fix missing lock on sync reset reload
+
+Naohiro Aota (1):
+      btrfs: zoned: fix zone_unusable accounting on making block group read-write again
+
+Nikita Zhandarovich (1):
+      drm/i915: Fix possible int overflow in skl_ddi_calculate_wrpll()
+
+Paolo Abeni (4):
+      mptcp: fix user-space PM announced address accounting
+      mptcp: fix NL PM announced address accounting
+      mptcp: fix bad RCVPRUNED mib accounting
+      mptcp: fix duplicate data handling
+
+Patryk Duda (1):
+      platform/chrome: cros_ec_proto: Lock device when updating MKBP version
+
+Shahar Shitrit (1):
+      net/mlx5e: Add a check for the return value from mlx5_port_set_eth_ptys
+
+Stephan Gerhold (1):
+      cpufreq: qcom-nvmem: Simplify driver data allocation
+
+Suraj Kandpal (1):
+      drm/i915/hdcp: Fix HDCP2_STREAM_STATUS macro
+
+Takashi Iwai (2):
+      ALSA: hda: Conditionally use snooping for AMD HDMI
+      ALSA: usb-audio: Correct surround channels in UAC1 channel map
+
+Tatsunosuke Tobita (1):
+      HID: wacom: Modify pen IDs
+
+Thomas Weißschuh (3):
+      sysctl: treewide: drop unused argument ctl_table_root::set_ownership(table)
+      sysctl: always initialize i_uid/i_gid
+      leds: triggers: Flush pending brightness before activating trigger
+
+Thomas Zimmermann (6):
+      drm/udl: Rename struct udl_drm_connector to struct udl_connector
+      drm/udl: Test pixel limit in mode-config's mode-valid function
+      drm/udl: Use USB timeout constant when reading EDID
+      drm/udl: Various improvements to the connector
+      drm/udl: Move connector to modesetting code
+      drm/udl: Remove DRM_CONNECTOR_POLL_HPD
+
+Will Deacon (1):
+      arm64: jump_label: Ensure patched jump_labels are visible to all CPUs
+
+Yangtao Li (1):
+      cpufreq: qcom-nvmem: Convert to platform remove callback returning void
+
+Zack Rusin (1):
+      drm/vmwgfx: Fix a deadlock in dma buf fence polling
+
+Zhang Yi (4):
+      ext4: refactor ext4_da_map_blocks()
+      ext4: convert to exclusive lock while inserting delalloc extents
+      ext4: factor out a common helper to query extent map
+      ext4: check the extent status again before inserting delalloc block
+
+Zhe Qiao (1):
+      riscv/mm: Add handling for VM_FAULT_SIGSEGV in mm_fault_error()
+
+Zhiguo Niu (1):
+      f2fs: fix to avoid use SSR allocate when do defragment
+
+songxiebing (1):
+      ALSA: hda: conexant: Fix headset auto detect fail in the polling mode
 
 
