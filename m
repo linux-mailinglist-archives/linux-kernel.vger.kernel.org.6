@@ -1,110 +1,202 @@
-Return-Path: <linux-kernel+bounces-282403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFBA94E369
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E681894E36C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B5861F22177
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2659F1C21382
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE0315C13B;
-	Sun, 11 Aug 2024 21:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03DA15C159;
+	Sun, 11 Aug 2024 21:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ks4DpKmr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="MPZ8/K7c"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36902595;
-	Sun, 11 Aug 2024 21:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E072595;
+	Sun, 11 Aug 2024 21:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723412322; cv=none; b=LzrHMp4w4dP1w7ASY0q9VG8BhVLARf3so/fb/Ml0Cc0U/9KOfuEH7JLldx0MGC/QM0PGeEgzvWv1Nc4iKjcQE3ZASSnsPhAmS2tsdFW2e4Mr6kmwba1xDN4TTKmBdQX1oMuf2DXjBkccyYlGyWjqzA324fR8hjpBF6UltnPwEvI=
+	t=1723412365; cv=none; b=WInCTdXUSFg+frJUW4ODEY2J05+SSrs6Pxjp4UuGUsw0Sn3VA1wUUQGnb+wco+RlEBz3up8LNZMAaK90/uSggvmB8n6D81RDHcsbzbyk5wlezAKfSZL7jwtIAElcQrKMjnNul3+5sMbXiUa5YcsVJBBZlF5rKUVxJVMsfUx0iVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723412322; c=relaxed/simple;
-	bh=nYRqkYhwvzUIMkH+7yPtoJmLY3iTCwApFi28rbwdyzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Ynrl71BN2NFCGX8p5cL0HK3u70MQDM9w4EVCZOSGr4SuUcPSez7tzFGNM4t7Hf3vy7thkgyxqIWLSXicY19CvvO17Cq40NFZdms9YkuSlrQwBKzZa7EVg96ZxNeTzKuuXxQSemp4W3jZzo0vvmvQKCua1uwzaKgj/541W0fLF6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ks4DpKmr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723412317;
-	bh=MOW3fcd2wRp6ZYiHUv54+/8CIRziB12fM4ElAFaBiq0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ks4DpKmrCY6cwJhd5zHvXRVEpNcVo1gKvhSEff+Bi+i0avzFEvavTS9HGhKv1ulEa
-	 rFtfZ1TCrIkvCqaOPaRB493repzNPJx56VPdSPaye/qVPJ4p0HKEY44brjxXGxi6z4
-	 lDBjdLz8W5OnJwIcGLGq2bL3aQ7dCWZQibqm8bp2jhT+ZEBxLMEbA/nO9jGmTehdMf
-	 Aq6PGKT4rZK/RqZmgzXyTCWWJWDJntlHg/TaTiMyEWxLVS144G7sFuXEFmZrsehODY
-	 BEVdhI+sSQkrpsWFIotcDpQzkPM9PZ+AOTmXARIbWeJS+XORX1RPK1WlHmjwmuun+Y
-	 KozYRvZW+/yNA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhrcY2F79z4x8C;
-	Mon, 12 Aug 2024 07:38:36 +1000 (AEST)
-Date: Mon, 12 Aug 2024 07:38:36 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>
-Cc: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the pwm tree
-Message-ID: <20240812073836.6b6d1ec3@canb.auug.org.au>
+	s=arc-20240116; t=1723412365; c=relaxed/simple;
+	bh=qU/itABNJeaKFcMZ4doGWHX/sg0T3a0Nim6U+UJTQys=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=PO/wuRALM59UiMHMdD+u5Hu7zlN3bN34rM/CaWR+AItlorUyy5BWjlPy+RoIBwj+exjfzkHUiRGt6aMdpiD4mInyDmD34vsqOAFqeU/mboV+CRW0p7ZMYd9WEp3EeJ63lWvtoZ6yrL/Xr8pfQFZ/76HuUW5jFSYyhx8/2OeLxYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=MPZ8/K7c; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5euZRI0_DwQJJ7Xxsa1pHAv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723412360;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zGqo9g+SoFcjlWadP87QaHf5NGtLpnQnXJR1D/7cuxI=;
+	b=MPZ8/K7cwyh8O1rdyBMHPpJBpUJ3GhleN0lB+wiKtRdfRp0s59rpfwvaNHjxzFttKBiajL
+	eNk5TxDldhTVM1e8zzEXNA42bk0mZVT36cTj/DB+oMVEldppwZofuySef8lFmUyJNiw+EM
+	CTQ21ZlgRn4lEkqPSLZgjhjYoFQ5RFGzEJCzVblUzAydVtlAT8/ilCDFLjs6OYsZpGaTwU
+	Q14hYse8UTv6xeWXCH+zheyyt9s9PBCtIfar+/szkH8cJWiIs/6JLzIZyYCRXLCZhIKtld
+	esCkD5TA3ReMB59NU2lfppJCfhTHfWspyYLF05pD97lR4Dm/nWP1eJEPVwwW/A==
+Date: Sun, 11 Aug 2024 23:39:18 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, Jonas
+ Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>, Andy Yan
+ <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>, Jagan Teki
+ <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>, Celeste Liu
+ <CoelacanthusHex@gmail.com>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+In-Reply-To: <20240811140725.64866-4-ziyao@disroot.org>
+References: <20240811140725.64866-1-ziyao@disroot.org>
+ <20240811140725.64866-4-ziyao@disroot.org>
+Message-ID: <24e2b1d2c970e894afd8849d501bcddd@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
---Sig_/5euZRI0_DwQJJ7Xxsa1pHAv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hello Yao,
 
-Hi all,
+Please see one comment below.
 
-In commit
+On 2024-08-11 16:07, Yao Zi wrote:
+> This initial device tree describes CPU, interrupts and UART on the chip
+> and is able to boot into basic kernel with only UART. Cache information
+> is omitted for now as there is no precise documentation. Support for
+> other features will be added later.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
+>  1 file changed, 182 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> new file mode 100644
+> index 000000000000..0596cdc38737
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -0,0 +1,182 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+> + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +
+> +/ {
+> +	compatible = "rockchip,rk3528";
+> +
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	aliases {
+> +		serial0 = &uart0;
+> +		serial1 = &uart1;
+> +		serial2 = &uart2;
+> +		serial3 = &uart3;
+> +		serial4 = &uart4;
+> +		serial5 = &uart5;
+> +		serial6 = &uart6;
+> +		serial7 = &uart7;
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu-map {
+> +			cluster0 {
+> +				core0 {
+> +					cpu = <&cpu0>;
+> +				};
+> +				core1 {
+> +					cpu = <&cpu1>;
+> +				};
+> +				core2 {
+> +					cpu = <&cpu2>;
+> +				};
+> +				core3 {
+> +					cpu = <&cpu3>;
+> +				};
+> +			};
+> +		};
+> +
+> +		cpu0: cpu@0 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x0>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu1: cpu@1 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x1>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu2: cpu@2 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x2>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +
+> +		cpu3: cpu@3 {
+> +			compatible = "arm,cortex-a53";
+> +			reg = <0x3>;
+> +			device_type = "cpu";
+> +			enable-method = "psci";
+> +		};
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-1.0", "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	timer {
+> +		compatible = "arm,armv8-timer";
+> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) | 
+> IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> +	};
+> +
+> +	xin24m: clk-24m {
 
-  861a4272660a ("pwm: lp3943: Fix an incorrect type in lp3943_pwm_parse_dt(=
-)")
+Please use "xin24m: clock-xin24m { ... }" instead, because that follows
+the recently established revised pattern for clock names.  We should 
+have
+come consistency in the new SoC dtsi additions.
 
-Fixes tag
-
-  Fixes: d6a56f3bb650 ("pwm: lp3943: Use of_property_count_u32_elems() to
-
-has these problem(s):
-
-  - Subject has leading but no trailing quotes
-
-It looks truncated:
-
-Fixes: d6a56f3bb650 ("pwm: lp3943: Use of_property_count_u32_elems() to get=
- property length")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/5euZRI0_DwQJJ7Xxsa1pHAv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5L1wACgkQAVBC80lX
-0GyuOwgAiU3Su2R0i9P2ZjTR49jVHg4qJbdmKJHplhtWv7DcvJT2ETp4l1kgoLVC
-GA7pVWkCrc2YkKN6tGkzrqAiZOF7xN2+uSOL+FQ+e8YwffoILGWSAlqT3aKF49lB
-7kwpe20M4wxN4wkpyzeSypKSQAz/iX9wMPpA2ilTWRDk386rugr5MwcmjK2iZi+Q
-73xEI6AZowHA8gfMfMVZKaG82qAB8FBCK1BOKjA3re2S7Jv+XrqAhuUuxhrK/dA2
-FyZLmRGBNgDVNQVoxuvWxycZbtZ2IQA1Vi1NEBP9sWJOAnWXhOI7nQIYK1OliQlj
-RmQsdDUXUppZ7EIHBu47s/WANw1dLA==
-=2fAZ
------END PGP SIGNATURE-----
-
---Sig_/5euZRI0_DwQJJ7Xxsa1pHAv--
+> +		compatible = "fixed-clock";
+> +		clock-frequency = <24000000>;
+> +		clock-output-names = "xin24m";
+> +		#clock-cells = <0>;
+> +	};
 
