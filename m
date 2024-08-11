@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-282211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C130094E0E0
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:35:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC68B94E0E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 12:40:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F052B2196B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3291F217C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 10:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C183EA83;
-	Sun, 11 Aug 2024 10:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD5A40870;
+	Sun, 11 Aug 2024 10:40:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J7uv8Z8s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="YL49fnmc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N7BvG/K/"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A1828E8
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 10:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E66C8E9;
+	Sun, 11 Aug 2024 10:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723372511; cv=none; b=hNpUSUh+wth4ghDKhqk6s4mCnhAuMyC4gojPEcwLSN6apWoVxA1gw0KMgz4bUaAGy14WYsVUwPPB9myV2K0180nwLMw0uG9qTqKaiJSa11YxH96Y6zxYvrDrr2YGPywBObCUMHqwwdz00BNQoIvqzv4vpKzFu1Ol7vTOQdK3ZzM=
+	t=1723372846; cv=none; b=nEc53SrQGxaz5IbZaF4vh7xPHcaqxVxEiqX2mWI1OTz0Fey1Jy7KjgrSNTGUr+ifHZRcuPPsgCTJqIyQoDQvbQZVk7DvKWiL2298y2Qcg3kGe9bVdJujI745sDZ2IQxNIwytE5IayEpVEr9MqHGhbWwoZ83OaWQzd7GQFxDOdIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723372511; c=relaxed/simple;
-	bh=VJIQmIfB4cDMhKGNa8HmHJlJQgtlHd799QWPQX4eIM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rWA6IzE/6rEsQN64cQjzO6VevDCsByBHBRBCcRbmf87NksZGsWUAz4OdxfGT+lcu8Klcdpp2G5ssxq8i8WIj9Z+hbALBtBS0yypiVBwKsEieay9fn7MEBVdxSdJQXtKbwCiOd1QF3tz9PdJWRMOlxjUkXG6XNto198r7huRGz24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J7uv8Z8s; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723372510; x=1754908510;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=VJIQmIfB4cDMhKGNa8HmHJlJQgtlHd799QWPQX4eIM0=;
-  b=J7uv8Z8sP6gb6chtQuPgz2/SYmohVj4MuJ5+A21d3sT5RdkHqFeGxVeX
-   v/FATV8K5uZmxUONjhh7RPRq11lOfg2JKrxpVTpWB8Z0n8C2rlzVA3gfE
-   EH2LQfruapN9YPSTUczYAjbx7XtmuBPwkiVmp0XXcxKTPWyknshzvwf4B
-   hbawdrA1uoSe3LuKdjiUtwNb79bWYIfVzpIqQU/EDIptVTFsM1cyh/xwK
-   1YPhMrjq9NOrpdLZotEOhurNP8HM62Q0sLruoyp4UO3RvFhvDC0TGgXxq
-   x/ECwmA1933KDZRcFfjL33WqHT+vXHTFEj+INXyXDJLfJHkV5pF1ga1Uf
-   w==;
-X-CSE-ConnectionGUID: BYkTxYyMRomykIhqALXAtQ==
-X-CSE-MsgGUID: Hsw1NQY3QquBc91zVlJoFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="44009930"
-X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
-   d="scan'208";a="44009930"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 03:35:09 -0700
-X-CSE-ConnectionGUID: /4a42Uy3TEWRRW37Gx6n6Q==
-X-CSE-MsgGUID: rVnXM2mTSTqjP4DNuKsI2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
-   d="scan'208";a="57635678"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 11 Aug 2024 03:35:07 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sd5ui-000Alz-2k;
-	Sun, 11 Aug 2024 10:35:04 +0000
-Date: Sun, 11 Aug 2024 18:35:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol
- 'errata_list'; recompile with -fPIC
-Message-ID: <202408111803.JqO5xaZe-lkp@intel.com>
+	s=arc-20240116; t=1723372846; c=relaxed/simple;
+	bh=5BY5GBS2JPVxYDq5Dfnz+Ns5AObLEPgvnHb6asXZvek=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=J+MhFP7I42tnCWyQx64FfZcH2yhcQwcIpWQ/9ZcMDSgUkgW/6cYA8BVGU2iv04R50MJ/Rd7fwbEDivMZGIojMClvW6+ZznGrqQnlhepFOE79dWKrRAh1F/xWz3G0yyEBf4ha0Fq+RoOmrbiQA4+SddvMXSvYv7EiLnMhSRdHEFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=YL49fnmc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N7BvG/K/; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id DAE2C138FCA5;
+	Sun, 11 Aug 2024 06:40:43 -0400 (EDT)
+Received: from imap41 ([10.202.2.91])
+  by compute3.internal (MEProxy); Sun, 11 Aug 2024 06:40:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1723372843;
+	 x=1723459243; bh=u7zYXiocmfhkndQ+rVNAKKdxHzSFNUhXi4QyB95dfnw=; b=
+	YL49fnmcM75sLpdvqAPTNnI8fngCgQAkcmN/e24ipcKKGtp8hQ8glU2kEAMKlHrm
+	/5eMwqi1sjTBsN/Je3MIetysbvpZIRwuFwcI7wfj2lcepYVocLIUo7Oy4g0dertl
+	ae5Yoy6HaRk/GOfjxBJNZBzC/FJv0GoMTAJeFaU5hUIo3gH/x6emVNfWcyCIFLnr
+	9eTNk5c6JxP3ota1+N5prQri/+jHB4oPm4vYstOzVzZ/6KEBGc/ObKIkkWqHe0qe
+	v8hcGJcPv5vjUl+MDKLHCCl+R6wxMHsvdrB40ngCjX34oPuLGMa2jYm5OHQpeXlx
+	zsvvrDoL1NR6dEw7M1fo9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723372843; x=
+	1723459243; bh=u7zYXiocmfhkndQ+rVNAKKdxHzSFNUhXi4QyB95dfnw=; b=N
+	7BvG/K/NnYnML2F/fidHljt/cPV9YQ06wK621Xrkpt8jOlV7+zWYLE8jhNDaCcGe
+	eFKy3Y1a7/y29tk/Rploiw9KdhO5h6TMyb+9LFqUbHGL2lhwk+OmXZ82HvGbyNZ4
+	u6WcpAtfqp01/6VMXKCBBYJBVhfc+iVOK0oDVwItOiEJqa2hgcI9mR4vx7k3Ddwf
+	pNy/yDpO0fBabj+v9xz0XqmlVSgr0mgjBu08WmXLPBAHDYscroxVOnKxAO83JODZ
+	V6twppIe9h6C4sTHRFhGXCAkv0CIVTC+q9txr0C0L0aQB/snCsOIFleQF6mgdsR4
+	nr5q+tV8skqbbQVR0Ln7A==
+X-ME-Sender: <xms:K5W4ZlqItvxzP-wq4RZwtkGuxdOg-k4Vi8be5e3lkBazGs1dmJZsAw>
+    <xme:K5W4ZnoGJ5_gjUxQ-aHPKK083kHSpDPFS5TpR5uI_UutWvGyBFB1jrVmfwvtQyDBw
+    w5Z5lMRF8KcNR3KLNo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleekgdefvdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
+    ucfhrhhomhepfdfnuhhkvgculfhonhgvshdfuceolhhukhgvsehljhhonhgvshdruggvvh
+    eqnecuggftrfgrthhtvghrnhepgfeiffehtdfghfettdeiuddtfeekvdejgfevhefhffev
+    tdfhjeelgeefffekvdevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptghorhgvnhhtihhnrdgthhgrrhihse
+    hgmhgrihhlrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslhhinhhu
+    gidrihhnthgvlhdrtghomhdprhgtphhtthhopehhuggvghhovgguvgesrhgvughhrghtrd
+    gtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhmqdgurhhivhgvrhdqgiekieesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:K5W4ZiO2R4_QSZVhbht20MgRM-T91S_BHzk3r85-P-RuuBmVXGS7YQ>
+    <xmx:K5W4Zg5rU_atzO5rK7P5rBvtZoADO-lr7-AlxK8Fb31et_zbBjahvg>
+    <xmx:K5W4Zk7t3uTf57Xmjhya8rx9NZiYraMxOhH_PYHRy3Oday1dFcAO3w>
+    <xmx:K5W4Zoi67aQ9f8LRp6aol3VDeIB8Ok6QjttI3Km2T7N5Ns0q9Sla9Q>
+    <xmx:K5W4ZinpzzwC0FwQ9wl8wUPQ-wypy1TWIIdCNOKh0HpjHsT_0YFhTreo>
+Feedback-ID: i5ec1447f:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id AC19A2340081; Sun, 11 Aug 2024 06:40:43 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Date: Sun, 11 Aug 2024 22:40:23 +1200
+From: "Luke Jones" <luke@ljones.dev>
+To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ "Hans de Goede" <hdegoede@redhat.com>, corentin.chary@gmail.com
+Message-Id: <e4dced3b-004d-44f8-b8cd-64a4a53965bc@app.fastmail.com>
+In-Reply-To: <bb056dee-508c-6186-324a-d45bbd1c2306@linux.intel.com>
+References: <20240806020747.365042-1-luke@ljones.dev>
+ <20240806020747.365042-3-luke@ljones.dev>
+ <bb056dee-508c-6186-324a-d45bbd1c2306@linux.intel.com>
+Subject: Re: [PATCH v2 2/6] platform/x86: asus-armoury: move existing tunings to
+ asus-armoury module
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   5189dafa4cf950e675f02ee04b577dfbbad0d9b1
-commit: f79dc03fe68c79d388908182e68d702f7f1786bc kconfig: refactor choice value calculation
-date:   4 weeks ago
-config: riscv-randconfig-002-20240811 (https://download.01.org/0day-ci/archive/20240811/202408111803.JqO5xaZe-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project f86594788ce93b696675c94f54016d27a6c21d18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408111803.JqO5xaZe-lkp@intel.com/reproduce)
+> > +{
+> > + return sysfs_emit(buf, "integer\n");
+> 
+> Lukas Wunner might have done something to make emitting constant strings 
+> easier, please check out if that's already in mainline.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408111803.JqO5xaZe-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'errata_list'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:99 (arch/riscv/errata/sifive/errata.c:99)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'errata_list'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str.8'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str.8'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'errata_list'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'errata_list'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:71 (arch/riscv/errata/sifive/errata.c:71)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol '.L.str'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
---
->> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol '.L.str'; recompile with -fPIC
-   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
-   >>> referenced by errata.c:0 (arch/riscv/errata/sifive/errata.c:0)
-   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Found it, DEVICE_STRING_ATTR_RO is what you mean?
 
