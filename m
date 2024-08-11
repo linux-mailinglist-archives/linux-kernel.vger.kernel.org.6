@@ -1,64 +1,61 @@
-Return-Path: <linux-kernel+bounces-282327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BC7894E244
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:32:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A326694E24D
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E657FB20E3B
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:32:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FE60B212D7
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 16:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9001537D6;
-	Sun, 11 Aug 2024 16:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259A11537DB;
+	Sun, 11 Aug 2024 16:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="eDsbkGpn"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LkVZGXG2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BD517552;
-	Sun, 11 Aug 2024 16:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AC81537A7;
+	Sun, 11 Aug 2024 16:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723393964; cv=none; b=ePoReNtWW6CENujg7QQ4VssCYjIFEsNXEDzgVaBOL4lTNqdJiaD3elkuS3h9jyxkarwDYmINKlMUj610vshSJARyUUzPuVpr0mJaWPb1PZarR49o3cUBir+1y2YWt6JtPtqDV3+Rw+OZFOf8nCWsP0+OixPd0OaKjf9r7T5Cd+k=
+	t=1723394149; cv=none; b=htVp3NbKm5WAFaQStYehJCNnty6+tqEc6RMR8Ki3dDjOh5vvoyWb+PFiuqnE17qGG04tVsRQjblzlJ4hd++s1XI2BBpJyqqU6jdMMhRy2RKOBGLsr6bqAI/SslWcRFtuTcpPbhdehwsOcdDIm8JpTUG7RYm/datK5qmK9Ppk2i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723393964; c=relaxed/simple;
-	bh=x4YXLMphLDcbIA5cY+pXEwWpsa/bemTS5Ma4yzWMSX8=;
+	s=arc-20240116; t=1723394149; c=relaxed/simple;
+	bh=JWC3mgdz2ktAtm0H6Q0A+PYoh4dsi333CkWUpefiwTs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+nzJk174mVCyeSXVxbknscxrcU20N1VaQqROaoKsUgM+uxFdaKGVkb76iSGq6R/+2LEEcT/vJ7FYy37J3grI0FXD0FXCDj0LN/2knCejTihTFT04cVImi1UE+IoViVe/x3FpuRzvwF0JV+1elyqvZUkPCEIHCcYWZxJM3K1PlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=eDsbkGpn; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5ggn0KuBiFZ+YkxUXgYc1owEPbUgdAKbCVM6AilzxOM=; b=eDsbkGpn8Ptfpdbo3fFdJZ9qA2
-	C6WwAIeXmcrx7pZ3PG5dR5FZYzQYR5xP7nejzeR2ux85C3stQElY6BMB2o62jV42ZfySPSztAi1YX
-	O8IOThzhZomLfTbsmuffcMWbZnGf889a+1u9lRrzU4NykVVldYjFOvodnPpqfY5DDUPU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sdBUd-004ViW-Rg; Sun, 11 Aug 2024 18:32:31 +0200
-Date: Sun, 11 Aug 2024 18:32:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Marek Vasut <marex@denx.de>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 4/4] net: dsa: microchip: add SGMII port support
- to KSZ9477 switch
-Message-ID: <ede735e5-cbf1-48ea-a93e-1b4f21a48a4c@lunn.ch>
-References: <20240809233840.59953-1-Tristram.Ha@microchip.com>
- <20240809233840.59953-5-Tristram.Ha@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TrAZiW7MoeMQXEx6Zgyk/oUeBTIq7IzxpOfbVDBeURr+6wXyzlT9t8VFhApahvQRx0wF0gBAwlF8uC7NXbwgT97ruB3t7J/ZaajLiWBBQ54eJUdJyLWC7dtKFXJy8u1Mk/8HBhYeQ1XMib01srPvzHeGffki4xsB2pv1385adnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LkVZGXG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30118C4AF0D;
+	Sun, 11 Aug 2024 16:35:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723394148;
+	bh=JWC3mgdz2ktAtm0H6Q0A+PYoh4dsi333CkWUpefiwTs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LkVZGXG2B04KEwhASYe0vn0UbubvJskcdiZ48Fj381Pat/uHAGPW+1QGjUAXyGKai
+	 9HdQ9PTWMNPaFKVmWhvRu5mWX0xT/qyz2f3hrWTdEiRcbsq9ETalzizQdCx7wiKmN3
+	 7Tx3PCNS4p4pOvtlnF3Sp6ONa5s6t4wR4pfiTHNdXOn3hWjdxE90BArYS60SOJte7M
+	 rTZI010lgwijCgyLuBu2w5tNZGjO5PUBlsW/a10DvWiRH7sCNzjF5kDVjOr5dFOcSq
+	 DVbL3MTse1AwAUPExKhC8/As3AJ7PIsygcZ1Y7t1WJszPayTZYRDnTIdawBKhSvJow
+	 goti7KOisr8Gw==
+Date: Sun, 11 Aug 2024 19:33:30 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	kernel@collabora.com, stable@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] selftests: memfd_secret: don't build memfd_secret test
+ on unsupported arches
+Message-ID: <Zrjn2qIcGxPBuSP9@kernel.org>
+References: <20240809075642.403247-1-usama.anjum@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,26 +64,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240809233840.59953-5-Tristram.Ha@microchip.com>
+In-Reply-To: <20240809075642.403247-1-usama.anjum@collabora.com>
 
-On Fri, Aug 09, 2024 at 04:38:40PM -0700, Tristram.Ha@microchip.com wrote:
-> From: Tristram Ha <tristram.ha@microchip.com>
+On Fri, Aug 09, 2024 at 12:56:42PM +0500, Muhammad Usama Anjum wrote:
+> [1] mentions that memfd_secret is only supported on arm64, riscv, x86
+> and x86_64 for now. It doesn't support other architectures. I found the
+> build error on arm and decided to send the fix as it was creating noise
+> on KernelCI. Hence I'm adding condition that memfd_secret should only be
+> compiled on supported architectures.
 > 
-> The SGMII module of KSZ9477 switch can be setup in 3 ways: 0 for direct
-> connect, 1 for 1000BaseT SFP, and 2 for 10/100/1000 SFP.
+> Also check in run_vmtests script if memfd_secret binary is present
+> before executing it.
 > 
-> SFP is typically used so the default is 1.  The driver can detect
-> 10/100/1000 SFP and change the mode to 2.  For direct connect this mode
-> has to be explicitly set to 0 as driver cannot detect that
-> configuration.
+> [1] https://lore.kernel.org/all/20210518072034.31572-7-rppt@kernel.org/
+> Cc: stable@vger.kernel.org
+> Fixes: 76fe17ef588a ("secretmem: test: add basic selftest for memfd_secret(2)")
+> Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
 
-Is 1 actually 1000BaseX? An SFP module using fibre would typically
-want 1000BaseX, and only support one speed. An SFP module using copper
-typically has a PHY in it, it performs auto-neg on the media side, and
-then uses SGMII inband signalling to tell the MAC what data rate,
-symbol duplication to do. And maybe mode 0 has in-band signalling
-turned off, in which case 1000BaseX and SGMII become identical,
-because it is the signalling which is different.
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-	Andrew
+> ---
+>  tools/testing/selftests/mm/Makefile       | 2 ++
+>  tools/testing/selftests/mm/run_vmtests.sh | 3 +++
+>  2 files changed, 5 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+> index 1a83b70e84535..4ea188be0588a 100644
+> --- a/tools/testing/selftests/mm/Makefile
+> +++ b/tools/testing/selftests/mm/Makefile
+> @@ -53,7 +53,9 @@ TEST_GEN_FILES += madv_populate
+>  TEST_GEN_FILES += map_fixed_noreplace
+>  TEST_GEN_FILES += map_hugetlb
+>  TEST_GEN_FILES += map_populate
+> +ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
+>  TEST_GEN_FILES += memfd_secret
+> +endif
+>  TEST_GEN_FILES += migration
+>  TEST_GEN_FILES += mkdirty
+>  TEST_GEN_FILES += mlock-random-test
+> diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+> index 03ac4f2e1cce6..36045edb10dea 100755
+> --- a/tools/testing/selftests/mm/run_vmtests.sh
+> +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> @@ -374,8 +374,11 @@ CATEGORY="hmm" run_test bash ./test_hmm.sh smoke
+>  # MADV_POPULATE_READ and MADV_POPULATE_WRITE tests
+>  CATEGORY="madv_populate" run_test ./madv_populate
+>  
+> +if [ -x ./memfd_secret ]
+> +then
+>  (echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
+>  CATEGORY="memfd_secret" run_test ./memfd_secret
+> +fi
+>  
+>  # KSM KSM_MERGE_TIME_HUGE_PAGES test with size of 100
+>  CATEGORY="ksm" run_test ./ksm_tests -H -s 100
+> -- 
+> 2.39.2
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
