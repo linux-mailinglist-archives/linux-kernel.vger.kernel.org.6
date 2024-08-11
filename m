@@ -1,262 +1,124 @@
-Return-Path: <linux-kernel+bounces-282186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526EA94E09A
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F28F94E09F
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:13:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0382D2816C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472F81F2149A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A11F364D6;
-	Sun, 11 Aug 2024 09:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iqtufsPq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABA8F35280;
+	Sun, 11 Aug 2024 09:13:04 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA6D219FC
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:08:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0EEB64E
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723367313; cv=none; b=QPD2XwmJ/cSIAPWrA/Ge1k0OOXzZKn32nP2xT4vPuQ8K1mzXqrRzoqCDRZWjgEjE+/iEB18gWXLBxT2fk18SyEfYUfTMqTB0ZG3IzNOlhGFZwQQW4CFhr6/kdL9q2kNOxguO5xZZ/m+FE7GPiH5qNMLnDXCMjZvvMj2GkEGLbBU=
+	t=1723367584; cv=none; b=f/5EuoXr0yLgSdLR1yjxi+DOS0tJ87vC8g4tpC51E382mHzegH7uYeSzzwh78NvyZZx6Kn/bmHRfDx7TJGgBa3l9k4jyHeY3CPJR4yDsmsy0y+Ph4hwPyZiUa9r2PjFX72g3eCM6fxY1nIpdTVzyfSh/x8atcqHlaeZu6x93QN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723367313; c=relaxed/simple;
-	bh=DIWvYcVZCOrilRm31WxNep4hll+iGFTbXGqY/U3TSmw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NP7Sr9s6sCBEvpNAf2QPTWCWSnTH3qor4qzUyATibwg0+OY442fTq+WU9RySDDOlOQAgpyhtTMxcpahyl6C22zjz2qaCS2RngDFk+V4/pATv9tMkzf/mvmZntjPJyX3+m+wLoG87j64Sr12KissHnj0bj1TsdRquQoKlisEbk4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iqtufsPq; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723367310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=/BO4276c7I58BMeDMcO4G1/nD1xrRDfJkSrBVd0aYeE=;
-	b=iqtufsPq5A002RZY6iQGBg9JR28LLffN8xvrcbCiHbVoCuy+c24UKSmSDS8yK5KYg20J8Y
-	7+p/IetbYGyOWsU4EyBoz1QrHP9gz5fa37NzkzIvKUhQtwmIyX58yy6Pl+dzCmMAobhFdv
-	tppsPf7MMkOx3ciBj6+U+t3iGdMdaTI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339--M0BFwZoPYiIantUHKS_oQ-1; Sun, 11 Aug 2024 05:08:29 -0400
-X-MC-Unique: -M0BFwZoPYiIantUHKS_oQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3687f4f9fecso2345599f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 02:08:29 -0700 (PDT)
+	s=arc-20240116; t=1723367584; c=relaxed/simple;
+	bh=klbHZfayzumkyR67rDrJLC4y73/9HCFsYNQnIa4igpg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=b8LXvDeNhoOrt3Tzk79jsvegUMySnc16EUQv8qw5OAZXxZHZFYHPXXmCct4MY14qvYb/Ilw6UhRNJ43lRh9aaOYMt0f+ewbSmznHBkCMq+NUZ4v44Xs8qGpRPgU4vWGasjUfQyhiiMLxRAPO1+JkF7BV5tkLIHauph3qnNzcdXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b2938b171so42521885ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 02:13:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723367308; x=1723972108;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/BO4276c7I58BMeDMcO4G1/nD1xrRDfJkSrBVd0aYeE=;
-        b=PUTMNzO/5wCcxRs+waaiYrE9AsgtkWr1NiBgmzX7lIr8hcardOarZM6CXKaNHkQnNW
-         1mR/ZNS82/zonwOzlPGA8jVgSofFNHH7QuGRAT1F+u9Ix/MiOXi09Io7TVzNp+2eBn6s
-         fFtcr2ydS2wrT3lJUDk4wDkUGrXkM8rmqmcgA5Uo5cUeN+B0qMZ7JUreWJoDCYA8Czif
-         lDR5PrYlc6H259Dk555YgE38hnr2R7hB3Q4oRqHhfTZzrcEWI666YvfDdt61hHwyyIMb
-         psWSltuBJV6W97cvmfBGUpc+oqiiUoTgEbl5H2JrASmDYCyQ4A+8JKHKP+SqPXWoHWrN
-         l1+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU6IYDKVRFjfNq0nSl+C9Mh0Ame55E+6fbXYOrNUxmN/ZuBGoRMtHUY4Q/4V7VLJoVwJ4K6MTzanYUCQlgHLK5prbdYR2bcKVoRN2q8
-X-Gm-Message-State: AOJu0Yzto2GAUApu56XM79PmengUZo4GUCAEO9PjGf3jmpup6Tg/KKkx
-	WGcs9GmpJwmXINEIElXStr1DyZZRU7qQ9gis1SJPh8tFpvKdfoWQckmrE2NQ4gvacPhyd4mCK0Y
-	GnFXNxdpRNv85J8NdcR895FmfCmNQ8/TEyhYpCWqMr94K3kT3cYRxUfUKcNfMdg==
-X-Received: by 2002:adf:f451:0:b0:36c:ee8c:a323 with SMTP id ffacd0b85a97d-36d5fd7e9a3mr5063642f8f.44.1723367308043;
-        Sun, 11 Aug 2024 02:08:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGZX0gPPxgnWHSBD3WY4CAFgzeaOC+op4r/wizklP6aMT7VVQuXXIW35LfWV8ZYiJyzmb1ADw==
-X-Received: by 2002:adf:f451:0:b0:36c:ee8c:a323 with SMTP id ffacd0b85a97d-36d5fd7e9a3mr5063599f8f.44.1723367307492;
-        Sun, 11 Aug 2024 02:08:27 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c36bc92sm4365353f8f.15.2024.08.11.02.08.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 02:08:27 -0700 (PDT)
-Message-ID: <04e12698-8f83-4033-91b2-3a402c59c17a@redhat.com>
-Date: Sun, 11 Aug 2024 11:08:24 +0200
+        d=1e100.net; s=20230601; t=1723367582; x=1723972382;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CZmUrBvlWoKmg+GJklyguJkrx1k9BhcFjUkcGW/8OOc=;
+        b=pBpvJErR265o6zxGq8v9am1qRyKR1SwvaEhmYR9Y5sRBcISUjcZ/pPE3RpAPgKRvTb
+         ae28Aiuv6wQXZJfwxYQuf30qzEUkY5Amtd3qY0qWC6Ldky822h5VlLHJVwgpmyvPAnXG
+         3b6K+M0WfT6VxFsZbttXJKruFWDdQ7HltfN3HtK6vzE1qtvq6kQGDuj8+QMCJ1sKVeIs
+         EdMk3i6Lge7Zgiph9lwjMfNAK9Fdl4iKj9XfnUAg65XicH1WhwCFKC5W4LPJgpXpfI6z
+         z53oFWAgzSlvOoHtmVcSWgfBZt60pa43xS+GRnxYZ2s5jYpawwLAbF/huIVWCTiv4r57
+         XQFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXWov21kIrpGtq+/d5XP951h0q5QGnL5YvRsS7/rTIEYzOJreZOTAoovg0Yg1eqfkNIBvRk30NWCvdkurJj4bhU7J1Qrr1m4+wg1wr
+X-Gm-Message-State: AOJu0YySYFBhLYRGsh8uy3g0WE6KAe+U3kVLGh6E+IiCGxTvpzpJE7S3
+	mwdKILwH9rZn3oMbBH/RArkzpm+MVgVf0OUC/CtU+TkrKfToOuppaD6uw9LSo0DHV3zO0Sjsgbg
+	a3Wuta7GNrOKW79F/neyfw+e6tzuza2uZc3HAENC2kivOJDtUaFKOLbI=
+X-Google-Smtp-Source: AGHT+IHCQaEcWice3D1rrm8a/k8V9d5lJfgQyC60JDECvl3PqYfX8j/dPJo+m4L+62oN7cf9nJ4gOjnnXgZvswo5gX1xsrHM0Ssm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-To: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org, shuah@kernel.org,
- willy@infradead.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- osalvador@suse.de, baolin.wang@linux.alibaba.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
- kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
- mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, ying.huang@intel.com
-References: <20240809103129.365029-1-dev.jain@arm.com>
- <20240809103129.365029-2-dev.jain@arm.com>
- <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
- <5a4ae1d3-d753-4261-97a8-926e44d4217a@arm.com>
- <367b0403-7477-4857-9e7c-5a749c723432@redhat.com>
- <ee1b9177-fb12-4bcb-a644-8d5d3d9f16fa@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ee1b9177-fb12-4bcb-a644-8d5d3d9f16fa@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:12ca:b0:376:44f6:a998 with SMTP id
+ e9e14a558f8ab-39b81333bd8mr5401975ab.5.1723367581814; Sun, 11 Aug 2024
+ 02:13:01 -0700 (PDT)
+Date: Sun, 11 Aug 2024 02:13:01 -0700
+In-Reply-To: <tencent_ED33039E0E1BA24BEE1B67250DBA58BBC408@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008820c9061f64c8d0@google.com>
+Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
+From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11.08.24 08:06, Dev Jain wrote:
-> 
-> On 8/11/24 00:22, David Hildenbrand wrote:
->> On 10.08.24 20:42, Dev Jain wrote:
->>>
->>> On 8/9/24 19:17, David Hildenbrand wrote:
->>>> On 09.08.24 12:31, Dev Jain wrote:
->>>>> As already being done in __migrate_folio(), wherein we backoff if the
->>>>> folio refcount is wrong, make this check during the unmapping phase,
->>>>> upon
->>>>> the failure of which, the original state of the PTEs will be restored
->>>>> and
->>>>> the folio lock will be dropped via migrate_folio_undo_src(), any
->>>>> racing
->>>>> thread will make progress and migration will be retried.
->>>>>
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>>     mm/migrate.c | 9 +++++++++
->>>>>     1 file changed, 9 insertions(+)
->>>>>
->>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>> index e7296c0fb5d5..477acf996951 100644
->>>>> --- a/mm/migrate.c
->>>>> +++ b/mm/migrate.c
->>>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t
->>>>> get_new_folio,
->>>>>         }
->>>>>           if (!folio_mapped(src)) {
->>>>> +        /*
->>>>> +         * Someone may have changed the refcount and maybe sleeping
->>>>> +         * on the folio lock. In case of refcount mismatch, bail out,
->>>>> +         * let the system make progress and retry.
->>>>> +         */
->>>>> +        struct address_space *mapping = folio_mapping(src);
->>>>> +
->>>>> +        if (folio_ref_count(src) != folio_expected_refs(mapping,
->>>>> src))
->>>>> +            goto out;
->>>>
->>>> This really seems to be the latest point where we can "easily" back
->>>> off and unlock the source folio -- in this function :)
->>>>
->>>> I wonder if we should be smarter in the migrate_pages_batch() loop
->>>> when we start the actual migrations via migrate_folio_move(): if we
->>>> detect that a folio has unexpected references *and* it has waiters
->>>> (PG_waiters), back off then and retry the folio later. If it only has
->>>> unexpected references, just keep retrying: no waiters -> nobody is
->>>> waiting for the lock to make progress.
->>>
->>>
->>> The patch currently retries migration irrespective of the reason of
->>> refcount change.
->>>
->>> If you are suggesting that, break the retrying according to two
->>> conditions:
->>
->> That's not what I am suggesting ...
->>
->>>
->>>
->>>> This really seems to be the latest point where we can "easily" back
->>>> off and unlock the source folio -- in this function :)
->>>> For example, when migrate_folio_move() fails with -EAGAIN, check if
->>>> there are waiters (PG_waiter?) and undo+unlock to try again later.
->>>
->>>
->>> Currently, on -EAGAIN, migrate_folio_move() returns without undoing src
->>> and dst; even if we were to fall
->>
->> ...
->>
->> I am wondering if we should detect here if there are waiters and undo
->> src+dst.
-> 
-> After undoing src+dst, which restores the PTEs, how are you going to set the
-> 
-> PTEs to migration again? That is being done through migrate_folio_unmap(),
-> 
-> and the loops of _unmap() and _move() are different. Or am I missing
-> something...
+Hello,
 
-Again, no expert on the code, but it would mean that if we detect that 
-there are waiters, we would undo src+dst and add them to ret_folios, 
-similar to what we do in "Cleanup remaining folios" at the end of 
-migrate_pages_batch()?
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in v9fs_begin_writeback
 
-So instead of retrying migration of that folio, just give it up 
-immediately and retry again later.
+ino state: 393351, ino: 1901336, comm: kworker/u32:8, folio: ffffea0000dd71c0, netfs_writepages
+ino: 1901336, v9fs_begin_writeback
+------------[ cut here ]------------
+folio expected an open fid inode->i_ino=1901336
+WARNING: CPU: 2 PID: 1115 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Modules linked in:
+CPU: 2 UID: 0 PID: 1115 Comm: kworker/u32:8 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: writeback wb_workfn (flush-9p-121)
+RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
+Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 a0 a0 8e 8b e8 f5 40 0d fe 90 <0f> 0b 90 90 eb 80 e8 f9 28 a8 fe e9 6f ff ff ff e8 5f 28 a8 fe e9
+RSP: 0018:ffffc90005bd7478 EFLAGS: 00010282
+RAX: 0000000000000000 RBX: ffff88803310cd40 RCX: ffffffff814cc379
+RDX: ffff888022ed4880 RSI: ffffffff814cc386 RDI: 0000000000000001
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff88803310cd40
+R13: dffffc0000000000 R14: ffffc90005bd7840 R15: ffff888045888c58
+FS:  0000000000000000(0000) GS:ffff88806b200000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0014bd000 CR3: 000000000db7c000 CR4: 0000000000350ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ netfs_writepages+0x6ee/0xec0 fs/netfs/write_issue.c:536
+ do_writepages+0x1ae/0x940 mm/page-writeback.c:2683
+ __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
+ writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
+ wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
+ wb_do_writeback fs/fs-writeback.c:2274 [inline]
+ wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
+ process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
+ process_scheduled_works kernel/workqueue.c:3312 [inline]
+ worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-Of course, this means that (without further modifications to that 
-function), we would leave retrying these folios to the caller, such as 
-in migrate_pages_sync(), where we move ret_folios to the tail of 
-"folios" and retry migration.
 
-Maybe one would want to optimize that retry logic with such "temporarily 
-failed because someone else has to make progress for us to make progress 
-and free up a page reference" case. These are different to the typical 
-"speculative" references that we try to handle via the existing retry magic.
+Tested on:
 
-Please let me know if I am missing something fundamental.
-
--- 
-Cheers,
-
-David / dhildenb
+commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=1558e95d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
+dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13aacaf3980000
 
 
