@@ -1,159 +1,255 @@
-Return-Path: <linux-kernel+bounces-282409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2878F94E39F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:05:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A451094E3A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:05:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B69E1C209EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:05:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F2191F21F9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA841607A0;
-	Sun, 11 Aug 2024 22:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39F315FA93;
+	Sun, 11 Aug 2024 22:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="d3uGLSBm"
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="VYgGsPIU"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012054.outbound.protection.outlook.com [52.101.66.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1470B158541
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:04:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723413887; cv=none; b=eRxB0CDo9cST26jpq0637jaUBb2LV+O88TZbCbU/XmtgAmawUctrG5vGTzy52XvZs3TFVflFDZAuDdH9VLBj1/7cTdvWZ+pKx1XYnfL5p4hdZERA1l3qRS8EnhcNCcHQFMukWoJulID7KG1sQa2aoeJX7Ji3xxJqYHoU0QmW5FQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723413887; c=relaxed/simple;
-	bh=mjPzQh3zJdKltirt+QHNSwjQaJ8ZHl0cmjRwRp4LBeY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TTchopfVXfFB1b91sIdx0IC+znbAzdOyVndxhb8RsnQqspcNEG3Y/01BzQMDUGXFOCxFUHYFm8gfqCqZzVAZlKFjtaxNRAr2a/5Ugw+J66H1W8IufC2BooA6xzR0r+DWXFDm8sbyh+QS068mrAmO6Q+Pq9XrCn5ITCRu6eR714o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=d3uGLSBm; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e05e94a979eso3429095276.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723413885; x=1724018685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
-        b=d3uGLSBmkqbWvkR9emtvfFpAd758ZUmUQ6/ghSCxp997M0jUpfsn+vP9WbxS2m6uBx
-         jOThi5s09frpxhZRw3t6gcd8UvLLQrV4Bd6PZzytOF0fBMstmfGyTV1J9/z9d3D/VyAD
-         A0Q/iYXmS50uPLXbEtcsDljSeys9gR72IDxRgxnqoVdUJB3TbVtTdda0pWQGjt0Z6ova
-         YzocJ4ePYwC9zBkmQEAcGnhO++TKa/71wUX+GbdNcfWau0AmzsGSa4NIqorPjINyRHWK
-         /+3JHNZi0KoyVRW6xkkPhtxDlozGS6hER7qlOjOdhPwPTyXtJ1LwteuBBQlo7fmgu+PB
-         q/4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723413885; x=1724018685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8MTvCp16xe4s8tj8cdyJ3RRjmDsFaj02tw+pbvvViL0=;
-        b=UMcqZ/LPxq8W1nCw2/oKdb0FTkg7SoW2s6S2U6vAM306uCua4+hnMx0bWke7Kd8Rtb
-         WytTprMQCOIKc5pPq/dr7JW/gJ/u5+Kvp1FWUXIETZZFw/Qm+WrBI0ruHPDpWNX1xC5D
-         NyDGu2hBGGalQlBndBaLkuCFNfHyrrWywRJ3DRPuf5zHwlGo1eKPVFJfIoAxwxzFo4ui
-         WM+C5wXJHAhlkuQbQvB/LTbkuoiwVZ2blVmbrnrFD0SVwrcmMTxlezsMvwmU1/W0KafD
-         rklOFpaODVNq+IbR/kgvrh6d1j1VLMJilb/sNmbe29fqCB80NQUMwcHZMhCnwuZe5LTC
-         3B3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV0y7y1CbDFLZINZh/0MhKYP0iSEF8qH/vXAV/Am9m6uryQOI8Cmp1YQFwgwo1cWJDZLSdNpFOoOi6USJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztp/I7CoPmlxFyM+0dJ9xDv7EgIJYkwCKvg3qDbQZz6hYIf3gt
-	xYIvf9MWwsOhmN6Mim2VKP70/9MSmK53H3ERkxSkCsC3p29bcHXvA2QSjYM3kzT7ar81BBR8XhR
-	FN6lqM8CQimCRKSBbXp994pbOMJ+v1fGfWos+
-X-Google-Smtp-Source: AGHT+IHyjpnn1PIJQvOaEQGSYhVNf1jkFokG+Mtlcnvj9pmFNQeJBtS+bJqawYBxtJdKf9F1jwGjp9W8zNFTE0mREac=
-X-Received: by 2002:a05:690c:4d05:b0:665:71a4:21ac with SMTP id
- 00721157ae682-69c0e36eab8mr89308447b3.10.1723413885015; Sun, 11 Aug 2024
- 15:04:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9864D41C75;
+	Sun, 11 Aug 2024 22:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723413938; cv=fail; b=D/DoDcEzlojXZ+qRSBhnAVnOXLJD9VYSTeyhBGED4RXJ95IBqo13jZe5/iAkFoe703G6kwrEX8sARx6ADyYjXm9Bu6w9NVGV2buRV1l0tSgwP1LGtWHrIRuucybiLgBcfSF7n0OPvOiWM73HcBeClowHePMLoUOdPBnpD7Cxlkw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723413938; c=relaxed/simple;
+	bh=5mBA6L8+EyxVstPksjT92kz2N+vaODBZgQHQPQ4Kvt8=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=fOK6rfL1cYdSeM1DW+yYkWN5HaTxtbEDFnxDlpPyRLaeyCo3OmRe27cRNVeCwXhvaQDVsmK9Zr1F+mxqreTTX734DNumL4iyp9B3yc41GYE1+6gV9ilgkGKz3ormHZOeKeSfiLcacjcj1G/EaWTTFqJSPoVYS7issMStIG5jEZM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=VYgGsPIU; arc=fail smtp.client-ip=52.101.66.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QMz7+TmG/LavdrUBUqYQwp44mi6r6a+neeBAS7MXOILRxdQ2Bund2ZT4Kl/rAltIxKDXKQYeRTCnB8rLWgkwH2UjgTgdTbUUzK9f16FfL/MTIIlbF4escBky/jda/OMvxl0tssX26aoZrsA9quHOCFYaSHZrbyDMNvxRgDfUHywiigMa+Xl4W2lQdzgyJmbMHvPqOgbJCFXAoxisBl6lV+C7y3IsEH8fIJyE1903urt+pynvBBhq3hGs7CyrY/7eq6/BMJlMV0nHFrPO2/yCheUbyVZVLz17eC04ga55nPb8QdAGvLVT08sRRe9/QSoCTEJpwbwPTXbKdigruvpUzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Z8nsPm4uW1imL13AXpTJtLCRzR9xoCnvwlhTMXGCxtM=;
+ b=Zz+C9/YXjtVHTlaBj7UaEQulGHVs3i7C5IpajWU+A+9VgkDtm69D+Ysm7QKR8dX3NTvWgcITPuHM6X3ujjoszfh7RqJtfjvDcoBg143ATwWoQZDB7acdd7Ys7gI+nGifeFLJSx7y5fLn9errSvrdcJBaAVWjtvNFhYhPWugATcfWIvHRwNOiVBT94sDf56HBgGh44TtDr3X0HSowJ+tto/Fxy6RVE7LtwR/NMsNvXu63VlndQJJIGaG3zRdRiQHIDHVoBP8oGX3fAlRi7caGOZChB2RmxoAaRS8vseCYCfmnqjDcw9Moih3VJZ9c81PDLpKWEgUUUT8vtODpSTK+Gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z8nsPm4uW1imL13AXpTJtLCRzR9xoCnvwlhTMXGCxtM=;
+ b=VYgGsPIU9eXfUfR9SzGVPKoc7AJwD7uJzqNWlt2ajjMnxnjEQb985ppenT/twmy+LNsBQvPTIgK0EbVPgQojM5TjpeDpDftv8tXbOqMxxu2aEau1s5qnKwrWzSGUbKskUZDVhDeyDy8DUlc4d0ozdFyPEItXFuUHPCjvFg6Rvvux0MDpPDtcXlt3GnS3o6lxHjczlNKkPgGZoyq2NO3Drd2XS1HlzWceUKYnPL5b+xN3Bh8wAPmnywfUAUAUegsKk+dsma4oQa8yxQo1ad72r1KmyOQNY5N4T5PE+pxuBEYTjI3m/gpBW66sPoKDrnV2nEKdCak0owLY6jdjnOk4nQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
+ by DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.19; Sun, 11 Aug
+ 2024 22:05:33 +0000
+Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
+ ([fe80::e81:b393:ebc5:bc3d%7]) with mapi id 15.20.7849.018; Sun, 11 Aug 2024
+ 22:05:33 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-watchdog@vger.kernel.org (open list:WATCHDOG DEVICE DRIVERS),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: watchdog: convert ziirave-wdt.txt to yaml
+Date: Sun, 11 Aug 2024 18:05:14 -0400
+Message-Id: <20240811220515.3776756-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR03CA0004.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::9) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
-In-Reply-To: <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 11 Aug 2024 18:04:34 -0400
-Message-ID: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Jann Horn <jannh@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|DU0PR04MB9496:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6cc7c6d7-5c78-49bc-2bcb-08dcba51b7f1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5Timsn5QlgSKrUIB0qYK5vOhhOA+BCbW4FTULxTsD5h0ODrUQDeuYXNZZ7Hz?=
+ =?us-ascii?Q?EVi1zsAvk8Jm6octOdL9O4zx/8z2Ppfc3TicVZyzy8aD/t75OK++SaRDXTnr?=
+ =?us-ascii?Q?hJNPpWHPvE+q34whLEly5VngVs0ShbbPedn3zlK7MEb643xdR4NVABe5dyG7?=
+ =?us-ascii?Q?D3wJfmRenwYWdlrcDyKgPB9p980LvMd9lH8rebyY4UjXRh77uil8CMJSMVEx?=
+ =?us-ascii?Q?Rvng/gozXeIszf3uTXwg+Vp9MaCM0AavRh/aUjz6LyFINk2inmsnDEbUqvUJ?=
+ =?us-ascii?Q?s9NyvWGV8Pwie/TenUtDLOcL31t/gpClxPgaONc3QzEiJq7wwKT0bBe5eTwp?=
+ =?us-ascii?Q?usPQdOf+21jkuHk1pDGmwaZBf6xl8KI6+RzqC0l91Zng5d5Gd7H6AanHLIzx?=
+ =?us-ascii?Q?tvcqy33B6cuo1BsjrGdmDQhT/HenLgKLIL5GQ5uWqslIfUnZSsTdX/jtoD0t?=
+ =?us-ascii?Q?4eLsKzYlXACXwdK+r1X67XFh9xjV4z/0z3q3srHPs+DieMAZqN043VTYEMTw?=
+ =?us-ascii?Q?/oZY3fm0iLRdJ5yS2mHcOifSNNtPJrL6hWoLEgvrNXjADD0McBZFOqD0xZIe?=
+ =?us-ascii?Q?x27+ZgvCEhBZiTdScpd1DLTl1mKhnIFuv6aWK/kSlGSzhYDTKCtx8E9gfiDM?=
+ =?us-ascii?Q?rFVJouVDVS8rEA3bfREjUVM2m1qp+xn7klOvnn/5IlroQIUXlFW2P1I1jj7v?=
+ =?us-ascii?Q?YCgz7+zFh049z26pFtqqzCEtmKQj6jQ1KDzkrSeiZeludMeN3SFQmEVFvR0Q?=
+ =?us-ascii?Q?LIQhD2BqQB5QMaAmWw5mLbGOEMiYVFL8J0a2zaAPNe0BsLPuEMxUbxPV8MS6?=
+ =?us-ascii?Q?e3PgIyFom4opXC71rSp32mbjB0UMzPrk22cej6eMoQNdPRn1inCyQI3UwdTB?=
+ =?us-ascii?Q?61YTZp8NrgyiaTJJgXaT/95Lp/CKFoHENhJ6BIZ/eqPkN1PP0qiLbErLERkg?=
+ =?us-ascii?Q?IFPeiCBKHlt9eMT96Y/oURuQJjQ2olReUAruOtUz5JsaTWp5YHUHiVxfsfK+?=
+ =?us-ascii?Q?Pj4RNy9UPLxzzidLXZb4+S1qPSOdzPjVFmY51eY4Wc8gCNcRM15nQPH5TbWf?=
+ =?us-ascii?Q?k38EIw2fzb5K853DLlVOjP5BygBHyMOW9Tdh0x8A2W0tVMx3yxgv4ncr0uaK?=
+ =?us-ascii?Q?vshM4CxlObzUcyLTKYIWOrOCw4dt+pyBmteMeJHU04sanqAhqnlRd972810B?=
+ =?us-ascii?Q?uzyHO/wI0tMofLyrY1tiOblBoPn30OJMT360hrZ8f2pip92ddSlTL8sPSavv?=
+ =?us-ascii?Q?2eaWdlCOq2cKkrj5ddTCLnmGgNctx7y3hcAbRkbkCwkV97NLLtfB5bQ2S4VN?=
+ =?us-ascii?Q?HfK18pf5GsixxzQReR2MQb5EkYhRqInEi8V0TXqJb/12j+EizyUPKt5onGG1?=
+ =?us-ascii?Q?5M4SPSA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?WRtwEyHyUiqLNw4O4+k93J5yQj/SoTlSCTEVXSvY/b8r3VeNJhtzAxxA2zR1?=
+ =?us-ascii?Q?puDyXgkuzzRRr2jqzzsf/PvLkPuw/VFIjb54+MVuQIwBkarcKKS4nlDgK2ML?=
+ =?us-ascii?Q?2qRuloRjrJ5TAEVoThm3VrjBFmdRieh5a2oe3VT8K6E5rap95g8HfoufgA6p?=
+ =?us-ascii?Q?YbZLIYmFZKfSS+HoQot3c/i6NXeB9tYUM/Dj4koJjjNb283pJrORO+QkvGp5?=
+ =?us-ascii?Q?zZ9PXVCZYXt87onFTYCzqB4L9wQ8WcGRfKjEXbqmWoKHRqQwkXKahxkg61kr?=
+ =?us-ascii?Q?dIJELkMlXJ2gp1TnnlGe/GKOiOOetdSOqIkIhzxDOM13EI57ipFLebjU8MuW?=
+ =?us-ascii?Q?IevPrDhLLcjW/+uyD1VAatAjPCbacUwM68WJkThQM4piICcCx+gxFwy3mwAf?=
+ =?us-ascii?Q?vIppE0qGkT24EFtFnohMEWedcFXoq1FFbFEZSAlMOxaIEmi5j75xR8OpOFWI?=
+ =?us-ascii?Q?066sAmtH+6XCjrcd0KYbytjuYQBtvayecLA/WyXTbVcFyqG5E1RzLjwNf9pi?=
+ =?us-ascii?Q?UKS2oRwZMuFEc3/lEO/d6biMQriKt0/BgZ3a8wUPmZuJtLXN+g/0NM+QdmNl?=
+ =?us-ascii?Q?dWK/vSgSA9skoz2aWXyIJFDmXaLYH8ufBsYl/KAks5CcrjORnxFffXX9xDCc?=
+ =?us-ascii?Q?5M6rwDjcOCmkhX8gehdu+NHC+R+UkL/rWhuvkEp8uOIldrVicfziqOyKZYG5?=
+ =?us-ascii?Q?KjH4Ilmn0GfYz748RYIv6w5C79lFKwx+49puqOGID7uN6f7Naua/MDgcuZ4M?=
+ =?us-ascii?Q?ezRa6ly3PXG7kQJfgN2vvu4B1whn6vQGcyLjc2ukxXmfkAt5/hgVYMGW20sD?=
+ =?us-ascii?Q?w5fJ+0A19j7mfharu5k4NHORQxxsSOg9bYI4N1YHOJe+WyHV+jvd3mvCPYZV?=
+ =?us-ascii?Q?t1qm6ISvcktsmueIt8t+cj0tImFGjbS2phUWCl/cILu+eUrPbnOLdCOFYHcC?=
+ =?us-ascii?Q?ygub+b9eUfAVJwHQ5UZIT/rF0fCrXNu2g4BaG1lX4WxJls/KoiL36/ITPHug?=
+ =?us-ascii?Q?+gY0UuJFdQvlbT4ucRbnV+BAkRjTvOYUtGv/BhbtJc7LVvIu5pACDt4BrLTN?=
+ =?us-ascii?Q?C5SlJw+1PkdXOTRz4Nj0SY5o+7bMWoLeNzrjTYFc7EVia5en6kjnJUr4Xs1J?=
+ =?us-ascii?Q?ltWGn7nPu1PuXsoWHYaXZvUE+lCZ3vyWb2+rg6h0Ir93CY/GUId2dd1SRHM2?=
+ =?us-ascii?Q?+x5gjq045Gwex8G7kenDDPM7tPu9uhQpmzEi9O0rzFe2tFg3mZULuzcnSIX1?=
+ =?us-ascii?Q?vadmpWKBsu7fWFS/VUen3AWr79GHVMqIbRanKaGyrD67eV2yiRy5UQyf4wff?=
+ =?us-ascii?Q?IZ1o6th2nD6IAqV2Ag9NHM0x0pcw7O86MqQr+KClfhk4LPhUepF6OvOsCpE1?=
+ =?us-ascii?Q?PxXo7l5NwfxyZ9NW0nniUQE1Yk0rUxt1tOmza5byyOVFc5C6hRpQ4xWQu2mp?=
+ =?us-ascii?Q?D13uxvhsNsC55oX0yrNBUBvG1rpXnGTNXQp0dYkIj2Q0KMKNYcOHmUBSwm05?=
+ =?us-ascii?Q?0yKq7Fvt+csyayhLglnUk41bdO5N5m93Fxh23dJWJfzlE3DGL4j4P99chZpd?=
+ =?us-ascii?Q?VaCpUBaAlaUEK6KDUEexCjVF9CJGUDzb/HiOqJwx?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6cc7c6d7-5c78-49bc-2bcb-08dcba51b7f1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Aug 2024 22:05:32.9425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: STLLNkyk7hFampntb2OJprReM5dsi/r8S+jjlyAkNWbztulpdOr5TuJ8gqwyxxlH+2htS0JTZK7oogpFyvhvbw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9496
 
-On Fri, Aug 9, 2024 at 10:01=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
-> On Fri, Aug 9, 2024 at 3:18=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
-> > Talking about f_modown() and security_file_set_fowner(), it looks like
-> > there are some issues:
-> >
-> > On Fri, Aug 09, 2024 at 02:44:06PM +0200, Jann Horn wrote:
-> > > On Fri, Aug 9, 2024 at 12:59=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic=
-@digikod.net> wrote:
-> >
-> > [...]
-> >
-> > > > BTW, I don't understand why neither SELinux nor Smack use (explicit=
-)
-> > > > atomic operations nor lock.
-> > >
-> > > Yeah, I think they're sloppy and kinda wrong - but it sorta works in
-> > > practice mostly because they don't have to do any refcounting around
-> > > this?
-> > >
-> > > > And it looks weird that
-> > > > security_file_set_fowner() isn't called by f_modown() with the same
-> > > > locking to avoid races.
-> > >
-> > > True. I imagine maybe the thought behind this design could have been
-> > > that LSMs should have their own locking, and that calling an LSM hook
-> > > with IRQs off is a little weird? But the way the LSMs actually use th=
-e
-> > > hook now, it might make sense to call the LSM with the lock held and
-> > > IRQs off...
-> > >
-> >
-> > Would it be OK (for VFS, SELinux, and Smack maintainers) to move the
-> > security_file_set_fowner() call into f_modown(), especially where
-> > UID/EUID are populated.  That would only call security_file_set_fowner(=
-)
-> > when the fown is actually set, which I think could also fix a bug for
-> > SELinux and Smack.
-> >
-> > Could we replace the uid and euid fields with a pointer to the current
-> > credentials?  This would enables LSMs to not copy the same kind of
-> > credential informations and save some memory, simplify credential
-> > management, and improve consistency.
->
-> To clarify: These two paragraphs are supposed to be two alternative
-> options, right? One option is to call security_file_set_fowner() with
-> the lock held, the other option is to completely rip out the
-> security_file_set_fowner() hook and instead let the VFS provide LSMs
-> with the creds they need for the file_send_sigiotask hook?
+Convert ziirave-wdt.txt to yaml format.
 
-I'm not entirely clear on what is being proposed either.  Some quick
-pseudo code might do wonders here to help clarify things.
+Additional change:
+- Add i2c node in example.
 
-From a LSM perspective I suspect we are always going to need some sort
-of hook in the F_SETOWN code path as the LSM needs to potentially
-capture state/attributes/something-LSM-specific at that
-context/point-in-time.  While I think it is okay if we want to
-consider relocating the security_file_set_fowner() within the F_SETOWN
-call path, I don't think we can remove it, even if we add additional
-LSM security blobs.
+Fix below warning:
+arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/i2c@30a40000/watchdog@38:
+	failed to match any schema with compatible: ['zii,rave-wdt']
 
---=20
-paul-moore.com
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../bindings/watchdog/zii,rave-wdt.yaml       | 47 +++++++++++++++++++
+ .../bindings/watchdog/ziirave-wdt.txt         | 19 --------
+ 2 files changed, 47 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
+ delete mode 100644 Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
+
+diff --git a/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
+new file mode 100644
+index 0000000000000..6c0a16912d7f4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/zii,rave-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Zodiac RAVE Watchdog Timer
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: zii,rave-wdt
++
++  reg:
++    maxItems: 1
++    description: i2c slave address of device, usually 0x38
++
++  timeout-sec:
++    description: Watchdog timeout value in seconds.
++
++  reset-duration-ms:
++    description:
++      Duration of the pulse generated when the watchdog times
++      out. Value in milliseconds.
++
++required:
++  - compatible
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        watchdog@38 {
++            compatible = "zii,rave-wdt";
++            reg = <0x38>;
++            timeout-sec = <30>;
++            reset-duration-ms = <30>;
++        };
++    };
++
+diff --git a/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt b/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
+deleted file mode 100644
+index 3d878184ec3ff..0000000000000
+--- a/Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Zodiac RAVE Watchdog Timer
+-
+-Required properties:
+-- compatible: must be "zii,rave-wdt"
+-- reg: i2c slave address of device, usually 0x38
+-
+-Optional Properties:
+-- timeout-sec: Watchdog timeout value in seconds.
+-- reset-duration-ms: Duration of the pulse generated when the watchdog times
+-  out. Value in milliseconds.
+-
+-Example:
+-
+-	watchdog@38 {
+-		compatible = "zii,rave-wdt";
+-		reg = <0x38>;
+-		timeout-sec = <30>;
+-		reset-duration-ms = <30>;
+-	};
+-- 
+2.34.1
+
 
