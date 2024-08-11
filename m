@@ -1,124 +1,297 @@
-Return-Path: <linux-kernel+bounces-282163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5888294E050
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:35:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E841294E053
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 087B51F215C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CFE61C20EB3
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802D81C6A1;
-	Sun, 11 Aug 2024 06:35:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B4B1C6B4;
+	Sun, 11 Aug 2024 06:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="STkdL8+5"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A3BF4FB
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 06:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47C11CA81
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 06:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723358105; cv=none; b=ZgMWMca676FtYVWI40bu+yuc865HCXDQ6EtKayBoLDuPQgI6SK4veVeJyquhNDdmOAPksFePB4CMUfWTqI4GM6G+CeHyjc2wNODSRocB+4ysnrhK88E8+EQj+QhNewKedWCQ2bd1qpt3200iFrYo1z93fV28K8orfQeNPfZTfoo=
+	t=1723359287; cv=none; b=ZJyP1YrNR3tl+1KIJEGjgsN/8ZhhLLS+VKsq9bzpRNlBulPMOfcpAHcBOrITokV9DFlN8Bx0V52UoOz8fC7QPXD7b/6bqx7XjWWi3FIwr07evC4hvplOgS+v8tMriFowsYmSbTZTDV9UhNRoFrwsO+WI9lVkB5Ir7XspOGpExzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723358105; c=relaxed/simple;
-	bh=5ksxnJRw2hihZmzG0rNSI16YmqD7lh+v4TJ16u5N9jQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=PtnOX7v9Cn5oOCaI9SNBrn2LgYCDTm8rbuaeVgqANaRta3GoGyuFQI9h90bqN7ICY1HR5V94GxXv7RmR/3wqDjePgdqu7zt4xC/QXAhG0ZEyRt5unZ892ryeOZWxXiPVvz+N9nJXIRoArY8E0jI38TsJdEiT49xlLmcar+vUPUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39a143db6c4so34082605ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 23:35:03 -0700 (PDT)
+	s=arc-20240116; t=1723359287; c=relaxed/simple;
+	bh=FqC7fHrcoI0PmekV5gEilqbsC44Qn99WLa99B3AURZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ip5Eq1/uXsBVoMsQH6/2uwxQtDtdYyRkBMCiqEwFlM/7wVt3Ts77ZOc8d9gbAJqeefGPvS7/PN8MeLQ9DdPMkja3sHhSIwXLMwrzBF1xY7R9gqn2vzmsRbdL21rYnTOUp+O7r9//fs3oRP8d0KUKMM76k5jlbDCpPAivj4RUCCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=STkdL8+5; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f6ac477ff4so1954575e0c.3
+        for <linux-kernel@vger.kernel.org>; Sat, 10 Aug 2024 23:54:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723359285; x=1723964085; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CvYfG4NOD4+u+oRm1bZpwNy583HTuo0lhAApM0Sh81U=;
+        b=STkdL8+5/3moBQQ9hacNnzzBcluphHzJ9xlBBP3R9+/zV5Eygcv6rHeF5pSSVsbjW5
+         Frtpu3UbeeX7K8UIep7GQdasTH5EIH937kxv/5vXeMa8c3BVIWZ8YECjKPyfF7mS6qHm
+         UpU2sMXEqPxQspTfP1sqoTaZVdRqI0J26zcbVycCqKO1cZ8rffoBSgV3IO8GyzHRj/sO
+         nkv2D1Jn7hEGI2Wo/7ysRxs42TK8y86bXMcFyzOJWj6L9puPhbgh0UP5BlNMVuL3fK/h
+         STXI/KYfBT7RPlEsCMb+Q7ZPbKHxscUYCmflfN0+JHkZrIRr+8BUxG36tu2Rb8L0wxbe
+         awig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723358102; x=1723962902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g+ll5DL71TSNy1YyuZ1kq5738yHl7+rs43ANIpLjQB8=;
-        b=SLA9uWMhCPTSDBCSfkqhMAuB/2hJdI+6uJ7Ox8Qlm0pEK5IomtkjeYAAkcEQapoXia
-         jidCXP+T38Akmb51KCeATwqiOGe7UypesETCgkHzwVRNAxyRq+9EbK3u2/mOQtOynQj/
-         Ys3d+e9beaTXvfdT4ldVgk567nhq7Wi2Uxr7+hJ1WDQ/D2a5qBnTUeiM1RkfYxGkn6rD
-         FAKCSqabe5Oa92S+1f/wUbsnAp1V3m6s5ed8jmwk/6wwNYAn4GM99G7wMdp8osM4FlrM
-         qXA6WuG2ydVl6jCjGomEVYmza4vgYqq1+FRA8SlRSlxgr4TUotjZrgA8HFISWbLp34FO
-         HVnA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBgvCX4TCUYf3xqiE0JQMxT3XujBEKEg0+GpMXTPz/kbcGSnVXUJVbQJPGo/q0dlS4N5m3pWh2BPotURr67soj1+FBDekZ/4/m1X8x
-X-Gm-Message-State: AOJu0Yzn80SQDQ857mNZJ/g6EfOz9g6t6jHYA6GSt4QbxtW9an9+Qcdr
-	TylnnkkInv1bh4G4uhaXKPARNjJw+kMXQMEfCk8UuCJ8jS8W6PnDRzc9H4dNOOk+HSRfNLtKtld
-	ilSH2wnFmfcRTK5GIt/L9YqlFXe7xWLWx2MS8r9PSFFMv1X56g9DqKTw=
-X-Google-Smtp-Source: AGHT+IF781/wLpHuhGJjCkP+HEuZu2HXXQrPPON3jG/FMXi/xHhRg5o72WOwObwxAK7Fk6h0Lji4ONFiWi5G/RBUZtcDlZ63efed
+        d=1e100.net; s=20230601; t=1723359285; x=1723964085;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CvYfG4NOD4+u+oRm1bZpwNy583HTuo0lhAApM0Sh81U=;
+        b=skLbjtSTLEioLwUTi+7+brb/a6Ib/OrPK9gvsXijNKjblHWW0lzwHhn67AzEd7D6yr
+         AdUbECI0VXH8tVH0lWRdT6OxjgNGyo4uTarB+SPy0o+2ZVbwcBz7CxXKUYBkGiDYQ8SP
+         Ymi/Btw+cdttP+4yyMvJYhU+jh4o7ixN+W//O8pVPu14S/sfYPiCNiQu6Ak5ao0zuZQu
+         FYLROiB7wrP1EdC/1mfeQlFfrCctaqZdurk2Ak2xXoio/YijSt8meqlJR/G2A6CMgw+O
+         3SzU1iBhwiRQ8uc7Anwu9zUD4ikhIXdD8x9F2AqbEjo8t7keKJOw0bl4lXrPsWl2sL0Y
+         e5EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIIvLBriaFjr9+GxbWXixytRTqJPeat94M8Q+9IRVP4h0tKAHKh8y5h2t39HAyV4gfaLUa6jmx5yjj4A4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVXz0aG3fyfvnnqE/Med+P7SspSuRoqMX37/zzTD4Hh5QikP4T
+	D/eZFDpqIZAI/HBvj7b7EZ4XMHfnKXNBb3FW4AbM6QHmVUxObhKlQTYfbahZkfVlorhyU1HAHmC
+	H65ynpuPaFNoNN5VfZu2GuSxNugE=
+X-Google-Smtp-Source: AGHT+IG7BJlAPZsht5CTEkJaVPxxHI+IovbEAhOc29WjktBxephyHnhq91P9aUqgOcQZzaSFz8IIVdSSIPis2Y/SYP8=
+X-Received: by 2002:a05:6122:2784:b0:4ef:4b35:896f with SMTP id
+ 71dfb90a1353d-4f9130394bbmr7039571e0c.7.1723359284615; Sat, 10 Aug 2024
+ 23:54:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0b:b0:396:ec3b:df63 with SMTP id
- e9e14a558f8ab-39b7a846901mr5250415ab.4.1723358102643; Sat, 10 Aug 2024
- 23:35:02 -0700 (PDT)
-Date: Sat, 10 Aug 2024 23:35:02 -0700
-In-Reply-To: <tencent_3CCDF07B166EF42FD96D8C946CE932ED960A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008776a7061f62939d@google.com>
-Subject: Re: [syzbot] [v9fs?] WARNING in v9fs_begin_writeback
-From: syzbot <syzbot+0b74d367d6e80661d6df@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <41b49313-5804-46ba-9e1d-358b079274cd@redhat.com>
+ <20240809070412.33847-1-21cnbao@gmail.com> <62d758b1-595a-4c05-ab89-3fe43d79f1bf@redhat.com>
+ <CAGsJ_4z-bCSSQecYq=L4U1QuoQUCtgY1WXbAX=eCEO9rXv8eNQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4z-bCSSQecYq=L4U1QuoQUCtgY1WXbAX=eCEO9rXv8eNQ@mail.gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Sun, 11 Aug 2024 18:54:33 +1200
+Message-ID: <CAGsJ_4w0SzyA50zNcGAgUc36GOEVr3L6gcZntw4ejBogC9b6+Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] mm: collect the number of anon large folios
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, 
+	chrisl@kernel.org, hanchuanhua@oppo.com, ioworker0@gmail.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, ryan.roberts@arm.com, v-songbaohua@oppo.com, 
+	ziy@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Aug 11, 2024 at 5:20=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Fri, Aug 9, 2024 at 7:22=E2=80=AFPM David Hildenbrand <david@redhat.co=
+m> wrote:
+> >
+> > On 09.08.24 09:04, Barry Song wrote:
+> > >>>> I would appreciate if we leave the rmap out here.
+> > >>>>
+> > >>>> Can't we handle that when actually freeing the folio? folio_test_a=
+non()
+> > >>>> is sticky until freed.
+> > >>>
+> > >>> To be clearer: we increment the counter when we set a folio anon, w=
+hich
+> > >>> should indeed only happen in folio_add_new_anon_rmap(). We'll have =
+to
+> > >>> ignore hugetlb here where we do it in hugetlb_add_new_anon_rmap().
+> > >>>
+> > >>> Then, when we free an anon folio we decrement the counter. (hugetlb
+> > >>> should clear the anon flag when an anon folio gets freed back to it=
+s
+> > >>> allocator -- likely that is already done).
+> > >>>
+> > >>
+> > >> Sorry that I am talking to myself: I'm wondering if we also have to
+> > >> adjust the counter when splitting a large folio to multiple
+> > >> smaller-but-still-large folios.
+> > >
+> > > Hi David,
+> > >
+> > > The conceptual code is shown below. Does this make more
+> > > sense to you? we have a line "mod_mthp_stat(new_order,
+> > > MTHP_STAT_NR_ANON, 1 << (order - new_order));"
+> > >
+> > > @@ -3270,8 +3272,9 @@ int split_huge_page_to_list_to_order(struct pag=
+e *page, struct list_head *list,
+> > >       struct deferred_split *ds_queue =3D get_deferred_split_queue(fo=
+lio);
+> > >       /* reset xarray order to new order after split */
+> > >       XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new=
+_order);
+> > > -     struct anon_vma *anon_vma =3D NULL;
+> > > +     bool is_anon =3D folio_test_anon(folio);
+> > >       struct address_space *mapping =3D NULL;
+> > > +     struct anon_vma *anon_vma =3D NULL;
+> > >       int order =3D folio_order(folio);
+> > >       int extra_pins, ret;
+> > >       pgoff_t end;
+> > > @@ -3283,7 +3286,7 @@ int split_huge_page_to_list_to_order(struct pag=
+e *page, struct list_head *list,
+> > >       if (new_order >=3D folio_order(folio))
+> > >               return -EINVAL;
+> > >
+> > > -     if (folio_test_anon(folio)) {
+> > > +     if (is_anon) {
+> > >               /* order-1 is not supported for anonymous THP. */
+> > >               if (new_order =3D=3D 1) {
+> > >                       VM_WARN_ONCE(1, "Cannot split to order-1 folio"=
+);
+> > > @@ -3323,7 +3326,7 @@ int split_huge_page_to_list_to_order(struct pag=
+e *page, struct list_head *list,
+> > >       if (folio_test_writeback(folio))
+> > >               return -EBUSY;
+> > >
+> > > -     if (folio_test_anon(folio)) {
+> > > +     if (is_anon) {
+> > >               /*
+> > >                * The caller does not necessarily hold an mmap_lock th=
+at would
+> > >                * prevent the anon_vma disappearing so we first we tak=
+e a
+> > > @@ -3437,6 +3440,10 @@ int split_huge_page_to_list_to_order(struct pa=
+ge *page, struct list_head *list,
+> > >                       }
+> > >               }
+> > >
+> > > +             if (is_anon) {
+> > > +                     mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> > > +                     mod_mthp_stat(new_order, MTHP_STAT_NR_ANON, 1 <=
+< (order - new_order));
+> > > +             }
+> > >               __split_huge_page(page, list, end, new_order);
+> > >               ret =3D 0;
+> > >       } else {
+> > > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > > index 408ef3d25cf5..c869d0601614 100644
+> > > --- a/mm/page_alloc.c
+> > > +++ b/mm/page_alloc.c
+> > > @@ -1039,6 +1039,7 @@ __always_inline bool free_pages_prepare(struct =
+page *page,
+> > >       bool skip_kasan_poison =3D should_skip_kasan_poison(page);
+> > >       bool init =3D want_init_on_free();
+> > >       bool compound =3D PageCompound(page);
+> > > +     bool anon =3D PageAnon(page);
+> > >
+> > >       VM_BUG_ON_PAGE(PageTail(page), page);
+> > >
+> > > @@ -1130,6 +1131,9 @@ __always_inline bool free_pages_prepare(struct =
+page *page,
+> > >
+> > >       debug_pagealloc_unmap_pages(page, 1 << order);
+> > >
+> > > +     if (anon && compound)
+> > > +             mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> > > +
+> > >       return true;
+> >
+> > I'd have placed it here, when we are already passed the "PageMappingFla=
+gs" check and
+> > shouldn't have any added overhead for most !anon pages IIRC (mostly onl=
+y anon/ksm pages should
+> > run into that path).
+> >
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 408ef3d25cf5..a11b9dd62964 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -1079,8 +1079,11 @@ __always_inline bool free_pages_prepare(struct p=
+age *page,
+> >                          (page + i)->flags &=3D ~PAGE_FLAGS_CHECK_AT_PR=
+EP;
+> >                  }
+> >          }
+> > -       if (PageMappingFlags(page))
+> > +       if (PageMappingFlags(page)) {
+> > +               if (PageAnon(page) && compound)
+> > +                       mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
+> >                  page->mapping =3D NULL;
+> > +       }
+> >          if (is_check_pages_enabled()) {
+> >                  if (free_page_is_bad(page))
+> >                          bad++;
+> >
+>
+> This looks better, but we're not concerned about the bad pages, correct?
+> For bad pages, we're reducing the count by 1, but they aren't actually
+> freed. We don't need to worry about this since it's already considered
+> a bug, right?
+>
+> > Conceptually LGTM. We account an anon folio as long as it's anon,
+> > even when still GUP-pinned after unmapping it or when temporarily
+> > unmapping+remapping it during migration.
+>
+> right. but migration might be a problem? as the dst folio doesn't
+> call folio_add_new_anon_rmap(), dst->mapping is copied from
+> src. So I suspect we need the below (otherwise, src has been put
+> and got -1, but dst won't get +1),
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 7e1267042a56..11ef11e59036 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1102,6 +1102,8 @@ static void migrate_folio_done(struct folio *src,
+>                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
+>                                     folio_is_file_lru(src),
+> -folio_nr_pages(src));
+>
+> +       mod_mthp_stat(folio_order(src), MTHP_STAT_NR_ANON, 1);
+> +
+>         if (reason !=3D MR_MEMORY_FAILURE)
+>                 /* We release the page in page_handle_poison. */
+>                 folio_put(src);
+>
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in v9fs_begin_writeback
+sorry. wrong place as migrate_folio_done() doesn't necessarily mean
+migration is done. it could be "Folio was freed from under us"
 
-ino state: 393351, ino: 1901337, comm: kworker/u32:0, folio: ffffea0000dc0780, netfs_writepages
-ino: 1901337, v9fs_begin_writeback
-------------[ cut here ]------------
-folio expected an open fid inode->i_ino=1901337
-WARNING: CPU: 1 PID: 11 at fs/9p/vfs_addr.c:40 v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Modules linked in:
-CPU: 1 UID: 0 PID: 11 Comm: kworker/u32:0 Not tainted 6.11.0-rc1-syzkaller-00154-gc0ecd6388360-dirty #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: writeback wb_workfn (flush-9p-97)
-RIP: 0010:v9fs_begin_writeback+0x24c/0x2c0 fs/9p/vfs_addr.c:40
-Code: 00 fc ff df 48 8b 5b 48 48 8d 7b 40 48 89 fa 48 c1 ea 03 80 3c 02 00 75 7a 48 8b 73 40 48 c7 c7 60 9d 8e 8b e8 65 47 0d fe 90 <0f> 0b 90 90 eb 80 e8 49 2b a8 fe e9 6f ff ff ff e8 af 2a a8 fe e9
-RSP: 0018:ffffc900000e7478 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff888044cb0670 RCX: ffffffff814cc379
-RDX: ffff888017ea2440 RSI: ffffffff814cc386 RDI: 0000000000000001
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffff888044cb0670
-R13: dffffc0000000000 R14: ffffc900000e7840 R15: ffff888020f2f018
-FS:  0000000000000000(0000) GS:ffff88806b100000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555815235c8 CR3: 0000000020ffc000 CR4: 0000000000350ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- netfs_writepages+0x6ee/0xec0 fs/netfs/write_issue.c:536
- do_writepages+0x1ae/0x940 mm/page-writeback.c:2683
- __writeback_single_inode+0x163/0xf90 fs/fs-writeback.c:1651
- writeback_sb_inodes+0x611/0x1150 fs/fs-writeback.c:1947
- wb_writeback+0x199/0xb50 fs/fs-writeback.c:2127
- wb_do_writeback fs/fs-writeback.c:2274 [inline]
- wb_workfn+0x28d/0xf40 fs/fs-writeback.c:2314
- process_one_work+0x9c5/0x1b40 kernel/workqueue.c:3231
- process_scheduled_works kernel/workqueue.c:3312 [inline]
- worker_thread+0x6c8/0xf20 kernel/workqueue.c:3390
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+        if (folio_ref_count(src) =3D=3D 1) {
+                /* Folio was freed from under us. So we are done. */
+                folio_clear_active(src);
+                folio_clear_unevictable(src);
+                /* free_pages_prepare() will clear PG_isolated. */
+                list_del(&src->lru);
+                migrate_folio_done(src, reason);
+                return MIGRATEPAGE_SUCCESS;
+        }
 
 
-Tested on:
+the correct place should be:
 
-commit:         c0ecd638 Merge tag 'pci-v6.11-fixes-1' of git://git.ke..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-console output: https://syzkaller.appspot.com/x/log.txt?x=106bbae5980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8da8b059e43c5370
-dashboard link: https://syzkaller.appspot.com/bug?extid=0b74d367d6e80661d6df
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1438d9d3980000
+@@ -1329,6 +1326,10 @@ static int migrate_folio_move(free_folio_t
+put_new_folio, unsigned long private,
+        if (anon_vma)
+                put_anon_vma(anon_vma);
+        folio_unlock(src);
++
++       if (folio_test_anon(src))
++               mod_mthp_stat(folio_order(src), MTHP_STAT_NR_ANON, 1);
++
+        migrate_folio_done(src, reason);
 
+        return rc;
+
+Without this modification in migration code, my tests fail, anon_num can
+become negative.
+
+>
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
+
+Thanks
+Barry
 
