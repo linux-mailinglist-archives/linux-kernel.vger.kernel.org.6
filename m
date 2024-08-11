@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-282346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1675194E293
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:18:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6ADF94E29B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EBA7B20DEC
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:18:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45DB42815A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 18:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BACB16631A;
-	Sun, 11 Aug 2024 18:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA09116B39F;
+	Sun, 11 Aug 2024 18:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e1LRwyq3"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fimxGG0c"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED5A14A4EB
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C11C0165EE0
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723400247; cv=none; b=aVBE6Ipf78RuOFamFMt6AlJeb0AqKPJLjMf6gGOwuraTPn8kXIy3i+KxsiQQgu1DuWQq40E+pLZIE+3M4HUe80YbBh/DuBQjZV/u7rcD++Dw5zJs80L+/5zKcSXfm7TLzg3PHG5KUy3RinV3XCab4If/mmhNyQKFF65dUwlK3EU=
+	t=1723400249; cv=none; b=PKNR6A/dTE+zERHl7wJxxi25HIQQdvgpnsM71Qj3EWG35GUpadscB4L6XgScqQSEOWcwLgUwItz6mABa0HbWiNKu119BlC2UxOJ9pMkOInkjisOgU3GUozellKuuJhBe+phJRmOXIJHSvb9WumTpR1mTPnw9VWKc6q85fAja8MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723400247; c=relaxed/simple;
-	bh=Shykp2EypMXZ/QCtrfeiM+kDiKjZCEK90ANRVRIkFao=;
+	s=arc-20240116; t=1723400249; c=relaxed/simple;
+	bh=mvi7UVUD9P+O/9ZF6mKgCskHov/XbgcktorvQahRWR4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XTmCYNr36mJ8FRHVJgRqXr8kKrlErxlB2SswwmbjA7W+RKV/JVnvODfYq3nH4Rjf+sWcaZTHDNPBUT3SHOvCclD/WDs3q/BJTta7CNfWN8aLU894mX42RPAbb/uJnXX5cHKeN+NTA2nmYMVjq0SHaSbP2ukw4zCHKG7dVeSMvLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e1LRwyq3; arc=none smtp.client-ip=209.85.167.42
+	 In-Reply-To:To:Cc; b=IQzfp3N5IwAiZe1L4I0aMzLbrBWB59HjVe4jMB4H15SZdjBQRcRbamszainPx7dI6RSEjG05clek+wCY58cG29fCHELTeqTMAqCHx7ISGGz/XZB7l8rwEtrG778NnE1hECgrz1Ni0K891898dNzdj6QVy2sZ6h6msXdAZe8DD2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fimxGG0c; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-530e2235688so3911238e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 11:17:25 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5a1c496335aso1659971a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 11:17:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723400244; x=1724005044; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723400246; x=1724005046; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=AGFhjis3vEwUW+zmFS0SHZDoiWLXNXD1jilEiEFaOug=;
-        b=e1LRwyq3DdFgc5rpz9eUvjayBSr85gM/ffkyrlPgYDyYB1iaknuUUx/rke3JKqFb0l
-         /qv1J/QEHBiJeaLteE4vCX7mbKspenYCZGr0h+UwmEnlPM5e86O/b+kJtkII+mXJM1Vd
-         xROHhfYUQs+NncGGWwutO46KPUXR/kZtTH2od+gOC0oCzDNhRed7agoW/kKeRjJ6Bt87
-         DF+swzLQ7M9JxMgc0f2h07IPVrm1GBbtUU39L9aNUGqvn4va7d1aiMxd7XK7QJ/hBvQ5
-         mvY2U15IPHEEzrNI8vMTblw41i8AaiIUYsW7KV1YNE7WZDe1g9tCGV18VnJ4Rl+BjuZU
-         AAgw==
+        bh=gHTvHF3MuIrehZRyYr5ZNOACu8Umul1Ou6KdEhJmaog=;
+        b=fimxGG0cOTw2CoCulc7iZUNj9Jsipez8IdpN4qvLmCTbfNmHRqKm/w56Ycro28KPC3
+         cXPdAT18RgjzbggWV8Y0EW1TRzwvsgQPorhiTiuIywceSK5GVeroM0t1CPkUfBeDIJH8
+         zczAvv3wtPxxxo04NIu1+GJMuChSta0x3QRfIOqxXhVxu+HZgBqtzHW5gX2N3hoM1stT
+         FadIHa6ODugMwkd8g1Wdb0yEhfcAzja1HZMa+/M0TqXEPb49MFy+H9hlyzGjA24+9c3G
+         LcET/1w6KB8aHLSULvCKTUq9jXrUONAMKII9xktPMzfUSeGdUi98WUMCJVH2hk+ZGsYK
+         moAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723400244; x=1724005044;
+        d=1e100.net; s=20230601; t=1723400246; x=1724005046;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AGFhjis3vEwUW+zmFS0SHZDoiWLXNXD1jilEiEFaOug=;
-        b=LEUjo+eTJc4q11yn6LRxNPGL8P6MFIQ3dc32J7BSgd1hILhRt0/QcHvnOBvjg7xMqC
-         uGNDoUEXIpsSn4apCBFY3lmAnGUw/LKRy87ZWVYKOEhgc8XHkUumlRz4JgOKp7rHcnEj
-         3vz0UiCxZq6DSjtaxcwPJ+Jkn7w2+GdwEwvUFqwrKXmU/mz924gxNWo6hXNiRVprt5y2
-         N9byTLtj2t8ZsGk9lgWttuIjQIO4cTavn3yrFMZPG11JQj+/+dhmtHIf7fxcHFuvyhTx
-         qL/oS/RN93ArMUBAXTdf/iOLwSj0zAxQFShAY1pmyAFNUVqqABQmdV5vS4SG3+khYhU/
-         Ladg==
-X-Forwarded-Encrypted: i=1; AJvYcCXxIxVkDpEb/85sqxUzylbfYCTw7zsQipqhge8PYNKFUqB6LJpQ71QHixVuxKPPhGLib0FvR6tpB1tqpo8Gl+uXV2regQzktsvpn+hx
-X-Gm-Message-State: AOJu0YwG8ST8Rj1nYbE6cr9EwV3Bu76+ifFTLu0Ptlt4YMLXSaMAg8J8
-	4+UCKgE3IPqHvilhViQtvBZZtp6C2PmdEFoGaybsTIJ7RJdI1gHAhIfF67Gve0c=
-X-Google-Smtp-Source: AGHT+IF1UTHAP/uCXS+U0LCWoWj6La4p0Jxj1fGCJBYGFjAqz1RV8j1pRFl9F80FQYyJE89hUneeuw==
-X-Received: by 2002:a05:6512:3ca4:b0:52c:d905:9645 with SMTP id 2adb3069b0e04-530ee998c1fmr5849572e87.13.1723400243767;
-        Sun, 11 Aug 2024 11:17:23 -0700 (PDT)
+        bh=gHTvHF3MuIrehZRyYr5ZNOACu8Umul1Ou6KdEhJmaog=;
+        b=ua/duOij7FFDCzMOacqvy6CuA3VOEiQiIfFx9n/J/IOJX87Ztrmxw9f6QgHwTVNHf1
+         X9OlKHmZVeRk/W2wOOyr+u659Vu9fnB2EKF8t4hKLuKXMYts2k6I0CBK1i3gWKxPFMvZ
+         MIzimA8HpvzwnX3nTwVNU7mspZvg06D+8ZgrJWhxbqUPws8Jnr31DotxIN7FuYfnv7qI
+         +G8nZjqXUwa59xnpO7BR8rPknZ0Ff6zfMefsysh0OOAGYPgjV4j+vMAQ6EB7qnsAmU+o
+         8MbI1ZwJFlqNmpiqYvuq13oMwA1brCNscIcfgFtWjrrQ+QdCukI+gsQROwCEERioqsfd
+         qxeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2wUAkpo7rCI76zRO9xfO2t5A3sw4im4uzwuk0xVH4Ksbi93/nZLXjsq2VMx6qLM9CIkXOyKTCJE+ct3GQKPbCUFDQErm/0J2bau+E
+X-Gm-Message-State: AOJu0YxcBxJH/YIlZOvwT/1mfqlrcfz1DA9QU9u5J7N++Gm/VVkUYFWj
+	dOXY/NSVB2WE3+28aGCpQGUAcfdMTqYU/zxgyhDE1eCHo5Y2ATMe6Zf1ReC07hs=
+X-Google-Smtp-Source: AGHT+IEmj+sNFihQ08rrfGWG3a26LT65ynSemEMCSGFHc+3kbvAO24eNC8gMDj/QsltK+PB9TZrL9w==
+X-Received: by 2002:a05:6402:1d4d:b0:5af:5342:c5c0 with SMTP id 4fb4d7f45d1cf-5bd0a61c193mr6401870a12.23.1723400245584;
+        Sun, 11 Aug 2024 11:17:25 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a6032c1sm1610593a12.92.2024.08.11.11.17.22
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a6032c1sm1610593a12.92.2024.08.11.11.17.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 11:17:23 -0700 (PDT)
+        Sun, 11 Aug 2024 11:17:25 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Sun, 11 Aug 2024 20:17:06 +0200
-Subject: [PATCH 3/6] dt-bindings: bluetooth: move Bluetooth bindings to
- dedicated directory
+Date: Sun, 11 Aug 2024 20:17:07 +0200
+Subject: [PATCH 4/6] dt-bindings: gnss: reference
+ serial-peripheral-props.yaml
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240811-dt-bindings-serial-peripheral-props-v1-3-1dba258b7492@linaro.org>
+Message-Id: <20240811-dt-bindings-serial-peripheral-props-v1-4-1dba258b7492@linaro.org>
 References: <20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org>
 In-Reply-To: <20240811-dt-bindings-serial-peripheral-props-v1-0-1dba258b7492@linaro.org>
 To: Rob Herring <robh@kernel.org>, 
@@ -99,131 +99,107 @@ Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5616;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3362;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=Shykp2EypMXZ/QCtrfeiM+kDiKjZCEK90ANRVRIkFao=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmuQAogwO47g5/difzXmXbrkByuY1vS2kO0De2e
- ZKPfbrsPguJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrkAKAAKCRDBN2bmhouD
- 147TD/474Iq37wLRBRyecqclhH0wNzPuifYqBgjZqQHezZmQbpXVDVK1vf0+LCfc/ZtyCR/Sv4m
- jltJ2V8uBF3IPaQHcicV8n9tMtUWybfMJjDr6tnbBhpNS+X2Aa87SO75vBBtCnrSVTfkXK0o8YX
- RSKBy6GOo67UIzbasCmS+HYdpr9ERwy7K+3TNHSmhLRCLRBfVrDMG2w9u4Y7LvIxIgCAiaNOpFP
- o1in1Juq7JrW3qkKdH3xV+H+b72v5vAb6nWM1uVVeSrA2nWNeVrAvV2ckQa6FtHqozXL3RiTV5k
- aKMfLyL0DOT23SbOPUVV7GLTy/B1lKShYkUl4EdD1n49w1IWbKVaCXtDj173oDwdXe+LxVplYGf
- kDZ7F3DsQeriuNXM3nndbXGinKgjOnJWZnp3mQtog++T8upjSSWQP7I0PRhbV1SXYqN1THYDy3G
- vTspwv7Ox5oIvZ9wQiNf1+7xnB9PlIIo4JbdIo7qSyS8XnTcMrS8KmdB0YZGhR7rHeUrx7S4q9f
- 8uVqhBw7RiLUJKjSESXgCS2KLsoQ6KkMHJF0zxjO7oq0N4WyW/awYsXliZazsBLE+ofM2uoB3tq
- G9hVXGUpr8+1AFc4Hzv7DzCM93Dbm7GEJ7FxjCjUF480EyBRObg3LOB12RcecvO90dzdJeG0OhG
- kbLDwaE43Filc8w==
+ bh=mvi7UVUD9P+O/9ZF6mKgCskHov/XbgcktorvQahRWR4=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmuQAph8zdk2rT4gjVTPNarYAGEQtTiGQ+tPDnk
+ z+uS96hib+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZrkAKQAKCRDBN2bmhouD
+ 123oD/sHJtccDxWIKerFfLfEW5rsmWD8qOVMuFTY5l84PnocCY4R8F48r/EZSn68llNA+9ZmLq7
+ 9y4ttt7gyZ1Um1LtQGOU8iMx/qOwFZlok9n7T6s6SNEWutgQ85Xl9pxuwl5nhGZfjbRxmryrU+c
+ Nbb/X57g466nS9vp5O+if35f1HiFvdexj49/cl8NRRhrz/o5rvzThuoTToV7luXIV29oZNzH5qj
+ RPaQGmcInaS3hUxQLNrWSHvzUct8ekruhnD2WjqupAhLCeyHqy0yT0mthXLNwcCl8DWpHr+eCqF
+ x9r5jHVkh64bqoaU4qV97KLjsUmLS45x+MLOERasuGMtosuSTgRbOgTwTeo3SxCBTppolrEU5c4
+ WhioFU3jjWEFUE6EywTduzyjPM0ouHpjcpq+Vt+e6OC2YpD9VJ8uGgm3vHx7tCxd4dOg5Vwojb3
+ Opv7ut5m9kkttwlw5eTtVdHGnM5aUQYUcfottSPuu9X8pbalTs1G2ao64JI+pMXQhr83YYIQie/
+ IsQivDNOtCtYjJBQz0ReqTca1rXa9u/cyxjVCKnoe3ayenxbNDodPnH0cqBFjoqINN369zhGZ/r
+ WW0wPHp7Jk3MNChrIcW0xpivPckAHrPgdsROnoCBU7UGO4EgsRbyY18FTfCmP3l9W6JQ45/LM7c
+ Howv8GVMJJo3Mhw==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Some Bluetooth devices bindings are in net/ and some are in
-net/bluetooth/, so bring some consistency by putting everything in
-net/bluetooth.  Rename few bindings to match preferred naming
-style: "vendor,device".
+The "current-speed" property is not a common property for all GNSS
+devices, but only to these connected with serial.  Drop the property
+from the common GNSS properties schema and instead reference common
+serial properties schema (for children of UART controllers).
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
 
-This patch should probably go via Rob's Devicetree tree.
-This is the dependency for another Bluetooth patch.
+This patch should probably go via Rob's Devicetree tree.  It depends on
+the serial patch adding serial-peripheral-props.yaml.
 ---
- .../net/{broadcom-bluetooth.yaml => bluetooth/brcm,bluetooth.yaml}      | 2 +-
- .../net/{marvell-bluetooth.yaml => bluetooth/marvell,88w8897.yaml}      | 2 +-
- .../net/{mediatek-bluetooth.txt => bluetooth/mediatek,bluetooth.txt}    | 0
- .../net/{nokia-bluetooth.txt => bluetooth/nokia,h4p-bluetooth.txt}      | 0
- .../net/{realtek-bluetooth.yaml => bluetooth/realtek,bluetooth.yaml}    | 2 +-
- Documentation/devicetree/bindings/net/{ => bluetooth}/ti,bluetooth.yaml | 2 +-
- MAINTAINERS                                                             | 2 +-
- 7 files changed, 5 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/gnss/brcm,bcm4751.yaml  | 1 +
+ Documentation/devicetree/bindings/gnss/gnss-common.yaml   | 5 -----
+ Documentation/devicetree/bindings/gnss/mediatek.yaml      | 1 +
+ Documentation/devicetree/bindings/gnss/sirfstar.yaml      | 1 +
+ Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml | 1 +
+ 5 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/brcm,bluetooth.yaml
-similarity index 98%
-rename from Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml
-rename to Documentation/devicetree/bindings/net/bluetooth/brcm,bluetooth.yaml
-index 4a1bfc2b3584..e49e4146736f 100644
---- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/brcm,bluetooth.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/net/broadcom-bluetooth.yaml#
-+$id: http://devicetree.org/schemas/net/bluetooth/brcm,bluetooth.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/gnss/brcm,bcm4751.yaml b/Documentation/devicetree/bindings/gnss/brcm,bcm4751.yaml
+index c21549e0fba6..089166089498 100644
+--- a/Documentation/devicetree/bindings/gnss/brcm,bcm4751.yaml
++++ b/Documentation/devicetree/bindings/gnss/brcm,bcm4751.yaml
+@@ -18,6 +18,7 @@ description:
  
- title: Broadcom Bluetooth Chips
-diff --git a/Documentation/devicetree/bindings/net/marvell-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/marvell,88w8897.yaml
-similarity index 92%
-rename from Documentation/devicetree/bindings/net/marvell-bluetooth.yaml
-rename to Documentation/devicetree/bindings/net/bluetooth/marvell,88w8897.yaml
-index 188a42ca6ceb..60b90cd62013 100644
---- a/Documentation/devicetree/bindings/net/marvell-bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/marvell,88w8897.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/net/marvell-bluetooth.yaml#
-+$id: http://devicetree.org/schemas/net/bluetooth/marvell,88w8897.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+ allOf:
+   - $ref: gnss-common.yaml#
++  - $ref: /schemas/serial/serial-peripheral-props.yaml#
  
- title: Marvell Bluetooth chips
-diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/bluetooth/mediatek,bluetooth.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-rename to Documentation/devicetree/bindings/net/bluetooth/mediatek,bluetooth.txt
-diff --git a/Documentation/devicetree/bindings/net/nokia-bluetooth.txt b/Documentation/devicetree/bindings/net/bluetooth/nokia,h4p-bluetooth.txt
-similarity index 100%
-rename from Documentation/devicetree/bindings/net/nokia-bluetooth.txt
-rename to Documentation/devicetree/bindings/net/bluetooth/nokia,h4p-bluetooth.txt
-diff --git a/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/realtek,bluetooth.yaml
-similarity index 95%
-rename from Documentation/devicetree/bindings/net/realtek-bluetooth.yaml
-rename to Documentation/devicetree/bindings/net/bluetooth/realtek,bluetooth.yaml
-index 043e118c605c..993c607eaa49 100644
---- a/Documentation/devicetree/bindings/net/realtek-bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/realtek,bluetooth.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/net/realtek-bluetooth.yaml#
-+$id: http://devicetree.org/schemas/net/bluetooth/realtek,bluetooth.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/gnss/gnss-common.yaml b/Documentation/devicetree/bindings/gnss/gnss-common.yaml
+index 963b926e30a7..d4430d2d6855 100644
+--- a/Documentation/devicetree/bindings/gnss/gnss-common.yaml
++++ b/Documentation/devicetree/bindings/gnss/gnss-common.yaml
+@@ -35,11 +35,6 @@ properties:
+       GPIO line, this is used.
+     maxItems: 1
  
- title: RTL8723BS/RTL8723CS/RTL8821CS/RTL8822CS Bluetooth
-diff --git a/Documentation/devicetree/bindings/net/ti,bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/ti,bluetooth.yaml
-similarity index 96%
-rename from Documentation/devicetree/bindings/net/ti,bluetooth.yaml
-rename to Documentation/devicetree/bindings/net/bluetooth/ti,bluetooth.yaml
-index 81616f9fb493..1f507ddccc3c 100644
---- a/Documentation/devicetree/bindings/net/ti,bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/ti,bluetooth.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/net/ti,bluetooth.yaml#
-+$id: http://devicetree.org/schemas/net/bluetooth/ti,bluetooth.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+-  current-speed:
+-    description: The baudrate in bits per second of the device as it comes
+-      online, current active speed.
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-
+ additionalProperties: true
  
- title: Texas Instruments Bluetooth Chips
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 494bcb5e6f35..ae9a81df25ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14269,8 +14269,8 @@ M:	Sean Wang <sean.wang@mediatek.com>
- L:	linux-bluetooth@vger.kernel.org
- L:	linux-mediatek@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
-+F:	Documentation/devicetree/bindings/net/bluetooth/mediatek,bluetooth.txt
- F:	Documentation/devicetree/bindings/net/bluetooth/mediatek,mt7921s-bluetooth.yaml
--F:	Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
- F:	drivers/bluetooth/btmtkuart.c
+ examples:
+diff --git a/Documentation/devicetree/bindings/gnss/mediatek.yaml b/Documentation/devicetree/bindings/gnss/mediatek.yaml
+index c0eb35beb2ef..2b9e5be4ebf3 100644
+--- a/Documentation/devicetree/bindings/gnss/mediatek.yaml
++++ b/Documentation/devicetree/bindings/gnss/mediatek.yaml
+@@ -15,6 +15,7 @@ description:
  
- MEDIATEK BOARD LEVEL SHUTDOWN DRIVERS
+ allOf:
+   - $ref: gnss-common.yaml#
++  - $ref: /schemas/serial/serial-peripheral-props.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/gnss/sirfstar.yaml b/Documentation/devicetree/bindings/gnss/sirfstar.yaml
+index 0bbe684d82e1..7e5da89a5ad7 100644
+--- a/Documentation/devicetree/bindings/gnss/sirfstar.yaml
++++ b/Documentation/devicetree/bindings/gnss/sirfstar.yaml
+@@ -21,6 +21,7 @@ description:
+ 
+ allOf:
+   - $ref: gnss-common.yaml#
++  - $ref: /schemas/serial/serial-peripheral-props.yaml#
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+index cd80668182b6..7d4b6d49e5ee 100644
+--- a/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
++++ b/Documentation/devicetree/bindings/gnss/u-blox,neo-6m.yaml
+@@ -8,6 +8,7 @@ title: U-blox GNSS Receiver
+ 
+ allOf:
+   - $ref: gnss-common.yaml#
++  - $ref: /schemas/serial/serial-peripheral-props.yaml#
+ 
+ maintainers:
+   - Johan Hovold <johan@kernel.org>
 
 -- 
 2.43.0
