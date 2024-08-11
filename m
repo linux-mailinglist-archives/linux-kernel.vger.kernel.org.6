@@ -1,108 +1,185 @@
-Return-Path: <linux-kernel+bounces-282415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F7694E3AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCD994E3B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF581F221B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03AFEB21A3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B20A15C150;
-	Sun, 11 Aug 2024 22:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B7C15FCE7;
+	Sun, 11 Aug 2024 22:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="2YRREAa5"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bCVfbeev"
+Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6B1157467
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C880218E06;
+	Sun, 11 Aug 2024 22:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723415488; cv=none; b=O/O3HJQfMtTDJ714xURBaL32vVxMEQ1+W1v/hJ9ic6X5FLzS97RfngUyGu1JPUpJx1MkcOzQFnBhL7ME7PWpHPhNE3/wLxE4XZY3CY3Yd/UVQL9oorbiVBqZXz4E5NcE+NIl3fSZIzHB3zGsDAlxCVHlIpz5nqU1mR1oANJBs7M=
+	t=1723415746; cv=none; b=GGVuzJqhkD/w5Mx3WpjmFzbRa8WINiMwSkyhKRDseIBoTnoaYAkBUeIXeHVaROiYwgb4YAqyWoTXArcLl93g3Yk4/dNmIAf8fh4b810ODSEYVxlkGiILxX0Pu7r5yXrcc1eTHYUF66E58vKv0bfFEn92fYwqlXLkCv8voF52KWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723415488; c=relaxed/simple;
-	bh=+OfdfTWrZamD35pL9yYktI+Dt5/eUQ9Fm82jA9qASaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uYeH7UPgCfuCiE9D7+B0mOtXKdjF5SSU90Yp/62oNY/Tn/dk9jLjXsFcuV8jHifwEIH8qaaScv3jl3CKBrW/sWXscukvWwJ7iTrRIHsyLN73gUoYrSYf7nPWYq21fcAub2mhGsTbgwyzpGv3F9Kc9XZDjibM2XuHT7+BgvPrYs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=2YRREAa5; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb5a947b7dso775634a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:31:26 -0700 (PDT)
+	s=arc-20240116; t=1723415746; c=relaxed/simple;
+	bh=FttgtqDGMzJ1vZLn+vpAUB0gX8obFyHmcj+oGs1HBT4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RGVWqEH5zPaYIUTWmgFmIiA+vwHrsW4VCYWIFmdJBry2y7RcyAJNubOF18o9bcK6f7VxcNMdTEr7MibPk9Gbmm9mfWZwK67djEeGzfNEgNl3Miy0iN1FPnxw0ouAjcaQLCGwiHUuKqqQKFAKMRGberPMcImy6LJ12/saLbCRyco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bCVfbeev; arc=none smtp.client-ip=99.78.197.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723415485; x=1724020285; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7af1Z8J1ZYV7CqYMAIhhKthQdQLBBbwUtlUS/K7Ttwk=;
-        b=2YRREAa5RtGY4ZgkcUy8zXfROXC1nordwhFC6XNUqFrn6cB8ZHtKx+DIYr0UWD/9St
-         FjyajqA2pdPuJXmtMXAY75hAvYvl3yIIVuYEw5QPnteONTTInTWQvM6lPI6DqfiM6vFu
-         7szgxMfnKXaXbU+wO32NPU/lywW966HjMEZbR+nucKB85IulWOc5tGi4eySWAB09lHbs
-         uMtJqsDFWImTKldvxP2Vhfj20OH5yQBJCdNeDefBjkqXV5LahLMkygLwO1Z6Ua6fl/Bb
-         qUYRkDKS+b95dTb0sM0X0I7qp+XNtdOIIqOu8oZ4N0iYQ3saarZ8trw62RTNJw4ED764
-         GfTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723415485; x=1724020285;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7af1Z8J1ZYV7CqYMAIhhKthQdQLBBbwUtlUS/K7Ttwk=;
-        b=c0f4ARd0lI4kpsMdmdks+PFW7uizqdzFZk2a2/FlGoPkEpm0Z/EmTgMywzidY3ycU/
-         9of/JIz27rLvOq030GfnKsxXBJTzu1legPGJ+hwOJJHi//oM5IhDUDRjdwKFTFqRgPFq
-         539KDwb0Q7X38dUkEr3mF54TUbSSxZvqBqtLH6nEDpeUZxp1HnnE0HzQDxZuEN/2oJMs
-         XCLwACE5k8Re1gu1BdpoHElLnD9pmR4kKS+NU8XlcaCFk+p/uCbV7aMNaM38aQrRjp3Y
-         ni5+pUdwQpAC7uPAeD5FgcIDKoTplUy2vAXB6VB5ETcu+snAuKOfVanmnhiRJHkOrQZU
-         DHtw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6LS0hAKVXngTJ9uviNYNhgaQMEUpVEMGvRSPy1ylNAl+11t0YdiXzrP8tSI0gD6+LdjmVTLXov82h7LjFF7NATKj1DBBE94BDp5WM
-X-Gm-Message-State: AOJu0YyqT+cEHkChQbfQT0lvDhn0L6HHpTj9CSZmpl1+7iOISCh2iscg
-	lEW8LWfViWA3cP44E1y3fYoln1QvISsBiWclr0mwlVed0fbjzFL1l80dzavj9LY=
-X-Google-Smtp-Source: AGHT+IF1MMidK6QQRpKC6RqrJWEuJ46WY0ivcHc1VEvrmSGeMYZFhKc5OEo5DEy4elsAcIrheg1QfQ==
-X-Received: by 2002:a17:902:e884:b0:1fd:d740:b1c4 with SMTP id d9443c01a7336-200ae50e1a4mr62708625ad.2.1723415485466;
-        Sun, 11 Aug 2024 15:31:25 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9feaa4sm26429095ad.213.2024.08.11.15.31.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 15:31:24 -0700 (PDT)
-Message-ID: <1207e17b-7a32-42b1-8047-b01e221ab3a9@kernel.dk>
-Date: Sun, 11 Aug 2024 16:31:23 -0600
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1723415744; x=1754951744;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=rjT0U41xgb69Sl2nekH6HKDIz+woH1amleLhBgPEQDc=;
+  b=bCVfbeevQtN2caX93hEYTuDWWUZ3mVAN7u/7VITzOFg9qwCo65grt45V
+   xWUrxjVi4DfYhMVJyJuteu3hRfPdx9yGeRtvTDwfPNDdvGLeivGy3dsll
+   uRywvQwwGPVgUvwkZN/wGScx8DgTYWhA8W4mY8C8NL1CG6fe+x9r5xPkv
+   Q=;
+X-IronPort-AV: E=Sophos;i="6.09,282,1716249600"; 
+   d="scan'208";a="114235216"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:35:42 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:16065]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.45.16:2525] with esmtp (Farcaster)
+ id 19a5de7a-14bd-40e3-afc5-b4964902c6cc; Sun, 11 Aug 2024 22:35:42 +0000 (UTC)
+X-Farcaster-Flow-ID: 19a5de7a-14bd-40e3-afc5-b4964902c6cc
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 11 Aug 2024 22:35:42 +0000
+Received: from 88665a182662.ant.amazon.com (10.187.170.24) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Sun, 11 Aug 2024 22:35:39 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <fw@strlen.de>
+CC: <davem@davemloft.net>, <dsahern@kernel.org>, <edumazet@google.com>,
+	<kuba@kernel.org>, <kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>,
+	<syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com>,
+	<syzkaller-bugs@googlegroups.com>
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
+Date: Sun, 11 Aug 2024 15:35:30 -0700
+Message-ID: <20240811223530.92827-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240811133200.GC13736@breakpoint.cc>
+References: <20240811133200.GC13736@breakpoint.cc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/net: Remove unneeded if check in
- io_net_vec_assign()
-To: Thorsten Blum <thorsten.blum@toblux.com>, asml.silence@gmail.com
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240811222638.24464-2-thorsten.blum@toblux.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240811222638.24464-2-thorsten.blum@toblux.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D031UWA001.ant.amazon.com (10.13.139.88) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 8/11/24 4:26 PM, Thorsten Blum wrote:
-> kfree() already checks if its argument is NULL. Remove the unneeded if
-> check and fix the following Coccinelle/coccicheck warning reported by
-> ifnullfree.cocci:
+From: Florian Westphal <fw@strlen.de>
+Date: Sun, 11 Aug 2024 15:32:00 +0200
+> > > ------------[ cut here ]------------
+> > > refcount_t: decrement hit 0; leaking memory.
+> > > WARNING: CPU: 3 PID: 1396 at lib/refcount.c:31 refcount_warn_saturate+0x1ed/0x210 lib/refcount.c:31
+> > 
+> > Eric, this is the weird report I was talking about at netdevconf :)
+> > 
+> > It seems refcount_dec(&tw->tw_dr->tw_refcount) is somehow done earlier
+> > than refcount_inc().
+> > 
+> > I started to see the same splat at a very low rate after consuming
+> > commit b334b924c9b7 ("net: tcp/dccp: prepare for tw_timer un-pinning").
 > 
->   WARNING: NULL check before some freeing functions is not needed
+> Could you share a splat you saw?
+> 
+> Was it also for the fallback tcp_hashinfo and/or from error
+> unwindinding after a ops->init() failure on netns creation?
+> 
+> I don't think it makes sense following this specific report given
+> b334b924c9b7 made changes in this area, but a post-b334b924c9b7
+> would be more relevant I think.
 
-Yes it's not needed, but the NULL check is done after a function call.
-For the hot path, it's FASTER to check if it's NULL or not.
+Ah, I missed the initial syzbot's report was created before the commit.
 
-I can put a comment on these, but honestly I wish the ifnullfree
-thing would just go away as it's hardly useful for anything. It's
-not like it's a bug to check for NULL first, or that it would find
-something useful.
+Here's splats I saw:
 
--- 
-Jens Axboe
+[ Note both splats were mixed in the log as with the syzbot's report,
+  so two threads were calling tcp_sk_exit_batch() concurrently. ]
 
+---8<---
+refcount_t: decrement hit 0; leaking memory.
+WARNING: CPU: 0 PID: 1760 at lib/refcount.c:31 refcount_warn_saturate (lib/refcount.c:31 (discriminator 3))
+Modules linked in:
+CPU: 0 PID: 1760 Comm: syz-executor.4 Not tainted 6.10.0-rc3-00688-g934c29999b57-dirty #20
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+RIP: 0010:refcount_warn_saturate (lib/refcount.c:31 (discriminator 3))
+Code: 05 cd 8d aa 04 01 e8 48 e4 e9 fe 0f 0b e9 d3 fe ff ff e8 1c 36 1c ff 48 c7 c7 a0 4a 80 85 c6 05 aa 8d aa 04 01 e8 29 e4 e9 fe <0f> 0b e9 b4 fe ff ff 48 89 ef e8 fa 56 69 ff e9 5c fe ff ff 0f 1f
+RSP: 0018:ffffc9000118fa78 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc9000b13b000
+RDX: 0000000000040000 RSI: ffffffff8118dedf RDI: 0000000000000001
+RBP: ffff88800bb59440 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000002d2d2d2d R12: ffff88800bb59440
+R13: ffff88810130f3d0 R14: ffff8881013ee820 R15: ffff888102001198
+FS:  00007f5252dbd640(0000) GS:ffff88811ae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004a6128 CR3: 00000001038b8003 CR4: 0000000000770ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ inet_twsk_kill (./include/linux/refcount.h:336 ./include/linux/refcount.h:351 net/ipv4/inet_timewait_sock.c:70)
+ inet_twsk_deschedule_put (net/ipv4/inet_timewait_sock.c:266)
+ inet_twsk_purge (net/ipv4/inet_timewait_sock.c:349)
+ tcp_twsk_purge (net/ipv4/tcp_minisocks.c:402)
+ tcp_sk_exit_batch (net/ipv4/tcp_ipv4.c:3512)
+ ops_exit_list (net/core/net_namespace.c:179)
+ setup_net (net/core/net_namespace.c:374 (discriminator 3))
+ copy_net_ns (net/core/net_namespace.c:510)
+ create_new_namespaces (kernel/nsproxy.c:110)
+ unshare_nsproxy_namespaces (kernel/nsproxy.c:228 (discriminator 4))
+ ksys_unshare (kernel/fork.c:3325)
+ __x64_sys_unshare (kernel/fork.c:3392)
+ do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83)
+ entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130)
+RIP: 0033:0x7f5253a29e5d
+Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 73 9f 1b 00 f7 d8 64 89 01 48
+RSP: 002b:00007f5252dbcc88 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00000000004d4070 RCX: 00007f5253a29e5d
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000040000000
+RBP: 00000000004d4070 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000006e R14: 00007f5253a8a530 R15: 0000000000000000
+ </TASK>
 
+WARNING: CPU: 1 PID: 671 at net/ipv4/tcp_ipv4.c:3514 tcp_sk_exit_batch (net/ipv4/tcp_ipv4.c:3514)
+Modules linked in:
+CPU: 1 PID: 671 Comm: kworker/u8:15 Not tainted 6.10.0-rc3-00688-g934c29999b57-dirty #20
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.0-0-gd239552ce722-prebuilt.qemu.org 04/01/2014
+Workqueue: netns cleanup_net
+RIP: 0010:tcp_sk_exit_batch (net/ipv4/tcp_ipv4.c:3514)
+Code: 89 ee e8 9f 1b 28 fd 85 ed 0f 88 b3 00 00 00 e8 92 22 28 fd 31 ff 89 ee e8 89 1b 28 fd 85 ed 0f 84 9d 00 00 00 e8 7c 22 28 fd <0f> 0b e8 75 22 28 fd 48 89 df e8 ed 23 02 00 48 8d 7b 28 48 89 f8
+RSP: 0018:ffffc90000ebfc60 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ffff88800bb59140 RCX: ffffffff84230cb7
+RDX: ffff888103871180 RSI: ffffffff84230cc4 RDI: 0000000000000005
+RBP: 0000000000000002 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000002 R11: 00000000000002bd R12: ffff88800bb59440
+R13: dffffc0000000000 R14: ffffc90000ebfd08 R15: fffffbfff0d7fb5c
+FS:  0000000000000000(0000) GS:ffff88811af00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f274114ddf8 CR3: 000000010a11c006 CR4: 0000000000770ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ ops_exit_list (net/core/net_namespace.c:179)
+ cleanup_net (net/core/net_namespace.c:639 (discriminator 3))
+ process_one_work (kernel/workqueue.c:3236)
+ worker_thread (kernel/workqueue.c:3306 kernel/workqueue.c:3393)
+ kthread (kernel/kthread.c:389)
+ ret_from_fork (arch/x86/kernel/process.c:153)
+ ret_from_fork_asm (arch/x86/entry/entry_64.S:257)
+ </TASK>
+---8<---
 
