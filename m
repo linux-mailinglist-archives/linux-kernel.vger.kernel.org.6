@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-282312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A27E94E1F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:48:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E99DE94E1FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:48:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D4501C20B57
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:48:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89BB91F213E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E686514C5A9;
-	Sun, 11 Aug 2024 15:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD8914D2A4;
+	Sun, 11 Aug 2024 15:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="spzugtmD"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="iIhp/jbc"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82D87F6;
-	Sun, 11 Aug 2024 15:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D514B940;
+	Sun, 11 Aug 2024 15:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723391270; cv=none; b=UzvjQf8CdvIY2yvamzkxEjkr3J3nEhGK4zR06doqi5/H4CONgU3IkuBfzwUODMEAtUoxxMwd7M48nBDsFAFpf8kvYtojRo6hbS/JPTKiqhmbjkNiLDZgL+NNBhKvuQ8fMJmk4bpPPTcGEL6cfP/DdQ8/g63YZnmBANzvQ95vNzM=
+	t=1723391321; cv=none; b=tblzEraMB9Yag/tfHDH9ffSx9WIzHWNsSDrAf7EYGn7GfS516zypAYmkgCeJgnX/kzqOxMbMb7gUPZrgXVLrG9Nxk1F4YrZVaOP/upKOJ204fs2u2XeCGCyCrUZwz+BYX13STRnQbDXTfVTUW4XnTq7WSbq5/qoL/157rkEIP7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723391270; c=relaxed/simple;
-	bh=E/SDr4frrJwX24vSZjNxmKMh1Cii2TDKWhbKHvms68s=;
+	s=arc-20240116; t=1723391321; c=relaxed/simple;
+	bh=f43QfyOUX/gXe6JjTPuHVIjHnlhBCoIJAQ9ZAfOUr7s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eEuxK00q0aIdauMoRukLJ1nD6NvuZpPIc+k7hS3bX7D7KxbH/z+NeEaJmOFqJ7rcz020zbaLuW4cJ4Ig0IpsabahEXhXeBTOahq+FATEc3JLGKOrxuY7fXngc1ZrDa8+WG/jjVqNviqZQQWhHew+mXP9yPoAAofqd3WGgEGWGY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=spzugtmD; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=dA7jIOox4Ja1Mr2vjKT3tFBly5yI2kPk9JrovXUu8zzGugXHcSDS2hImp08+Vr25Gd3bYWgoFV0Kze9DmvNbkFZ7GPLLUlU1+djpEwIW/Us0HBfoo+hI3QpLt2vbbWE910gxWkBnKGLvZz8zkZtp9V4v2Hv7ncX7LKeaCjKSAJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=iIhp/jbc; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,13 +35,13 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=TKfoon2hS2GwR6hVHGmvsM1mZM+oTJZ7o3SmTQ+ohQQ=; b=spzugtmD1PU2CFBl2fe7gN+sR5
-	GdQREf/4arMeSCdXtF1nwHd3fq0qgqj5cZ98hEgIp1yIHpAhk7EohGCmEyjk4mtVBPk0aeo3iEXS5
-	bW5wVBdJS1gjSkC3DGUdqO3Ym6oE9wyziTh/q8MlNrKAZQqsr6+srjexNYlYXe6zIzp8=;
+	bh=4zc8D1uVEP2Yeb140sPrV2CXJerxAyIX5yPeMGS2YbM=; b=iIhp/jbcTYxSmTOyyvvDGEqUEV
+	zhg5fxLQ6qN0ji7WAh8GKmAXG/JnjcbMo+b55gePoiHWlFkxyHUDTFTU7G7BJ3qO8zFC0dHeXVoz0
+	6nUcG/ZS43oK748k0xHwyMI/QdQDHgb6l8x5RNu97ZBkUhHae0nsnD3WCLEIPzlUTM50=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1sdAnB-004VSC-IS; Sun, 11 Aug 2024 17:47:37 +0200
-Date: Sun, 11 Aug 2024 17:47:37 +0200
+	id 1sdAo2-004VTK-6g; Sun, 11 Aug 2024 17:48:30 +0200
+Date: Sun, 11 Aug 2024 17:48:30 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
 Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
@@ -59,11 +59,11 @@ Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
 	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
 	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
 	linux@bigler.io
-Subject: Re: [PATCH net-next v5 06/14] net: ethernet: oa_tc6: implement
- internal PHY initialization
-Message-ID: <c1d3e601-80e3-4dd5-9eac-a8305af5b3b3@lunn.ch>
+Subject: Re: [PATCH net-next v5 07/14] net: phy: microchip_t1s: add c45
+ direct access in LAN865x internal PHY
+Message-ID: <c8ec015b-2e25-49c9-a404-820545992909@lunn.ch>
 References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
- <20240730040906.53779-7-Parthiban.Veerasooran@microchip.com>
+ <20240730040906.53779-8-Parthiban.Veerasooran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,16 +72,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730040906.53779-7-Parthiban.Veerasooran@microchip.com>
+In-Reply-To: <20240730040906.53779-8-Parthiban.Veerasooran@microchip.com>
 
-On Tue, Jul 30, 2024 at 09:38:58AM +0530, Parthiban Veerasooran wrote:
-> Internal PHY is initialized as per the PHY register capability supported
-> by the MAC-PHY. Direct PHY Register Access Capability indicates if PHY
-> registers are directly accessible within the SPI register memory space.
-> Indirect PHY Register Access Capability indicates if PHY registers are
-> indirectly accessible through the MDIO/MDC registers MDIOACCn defined in
-> OPEN Alliance specification. Currently the direct register access is only
-> supported.
+On Tue, Jul 30, 2024 at 09:38:59AM +0530, Parthiban Veerasooran wrote:
+> This patch adds c45 registers direct access support in Microchip's
+> LAN865x internal PHY.
+> 
+> OPEN Alliance 10BASE-T1x compliance MAC-PHYs will have both C22 and C45
+> registers space. If the PHY is discovered via C22 bus protocol it assumes
+> it uses C22 protocol and always uses C22 registers indirect access to
+> access C45 registers. This is because, we don't have a clean separation
+> between C22/C45 register space and C22/C45 MDIO bus protocols. Resulting,
+> PHY C45 registers direct access can't be used which can save multiple SPI
+> bus access. To support this feature, set .read_mmd/.write_mmd in the PHY
+> driver to call .read_c45/.write_c45 in the OPEN Alliance framework
+> drivers/net/ethernet/oa_tc6.c
 > 
 > Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
 
