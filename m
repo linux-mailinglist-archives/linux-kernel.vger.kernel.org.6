@@ -1,137 +1,175 @@
-Return-Path: <linux-kernel+bounces-282358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF07094E2C5
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:37:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D09D94E2C7
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4C21C20A81
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:37:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 072111F21A98
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC6415886A;
-	Sun, 11 Aug 2024 19:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B02A158529;
+	Sun, 11 Aug 2024 19:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lrYOPBjq"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eaJGlbXJ"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5EA91F945;
-	Sun, 11 Aug 2024 19:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD701803E;
+	Sun, 11 Aug 2024 19:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723405046; cv=none; b=E8zTlzShB+DGbrTzOQNqpPkyE4U6t3leGPf74oPyFPZ4uJkcQKAiEjcfdd1bbttm6g2+mJHfUra/eVbspi/nsrIVbv5wyw+7TZgrShOQItG4k90BduwfyhEKwwzJbOPDKixvUWjnaQ38eHAxGS8KnnVrGyLrgnXNcPNQGyJwioQ=
+	t=1723405315; cv=none; b=kZmxAtLxQFfrhe5UJIth8gYHL9TSj2XsaN3TiFfbvalP1sJqJOCsDFFxIOzyVqhMmyp+qU+b7v6ZX43Adah0dNbh8xUnRi+xyXLOHdNoueUVv+aoq439YhXu0gjdYIMNa5hwKeyTluRsikHZzOt/W63jyZmGU7eqkfqmhzDwhy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723405046; c=relaxed/simple;
-	bh=ikmiCCPOlqRkEb6DUx1eUYL3/MPw3G/PtfYjQ9vhX8U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KNtDRd4rzowo9mixQqp/qT/ahpiUOChuGz9nT5VxPqImrAFLKLGylQtuTrHUmLl4hIioPEHP0y+8IVH30Rc+SeERSnu9NeNtLlmCNSI8YkGMA5WSntz5XAx6Iwkz6JLhjVcgZ5L+5FzEoel4yIwXxNL/8EMJFHo1tfj66H4cLvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lrYOPBjq; arc=none smtp.client-ip=209.85.210.182
+	s=arc-20240116; t=1723405315; c=relaxed/simple;
+	bh=YyQd/yA86a2aU6mq6hOdKt6lyRtO14DZQVwjCPI74I8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U9iHQROJ4ZQ1l5CgdxBb1oI2hKYH0kQ2gg/H4Nz6sJC3adZKDkJpFDCrHSnxdqvh0XcA/I4+iaTRkIwHgxcbW/2lJeOu2Nrpeif4/++P0CzbYSE/hxokb1GcqRfH7OpZVwG1jmRaN3pYpIqqK+JwWwzHgPlI2mxIYBi/H3HVqOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eaJGlbXJ; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d2b921cd1so3455614b3a.1;
-        Sun, 11 Aug 2024 12:37:23 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-530e2548dfdso3758807e87.1;
+        Sun, 11 Aug 2024 12:41:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723405043; x=1724009843; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FT4xeysPtgZnEED7ZNSpLO1Roz20Xrz/qSgj/gG8LH4=;
-        b=lrYOPBjqvCjAMxCn5IZ+8gHsfm9niYnWyB4CORocjJiU5Nu+GtzW3PFFvFe6WFcpVZ
-         oVNkt0XeElHdIJ9eLDuMEHi0trw9MDWvB/WWf9w4fN+c9DdiW4MpS6uud9DpyQS2Kp+g
-         A8YI4VBBWy0aZV8VmhZo2dBoy/dD89IsdtS0bSXzd+G47j/U1gs8tFkcwO9TTX2udiAL
-         oVgtVeilC8jbLh+NGYJgOlqnbCIn3qjhU4gP0sPbiJDADpMN6E4toO0IVVtnX57lGx2v
-         9NZoMG+Mvgan7wRC0+Sx0AvdJBH70QnszuDNPAMgfb5e6NyAWTv7ty8q/MBR1U+m4lHI
-         lbKw==
+        d=gmail.com; s=20230601; t=1723405312; x=1724010112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14/7lz43ghojpFaVsYu905V4R9qFCjIVkgYPqIp9GLE=;
+        b=eaJGlbXJ+6Y3gfRwrvr4qvPWP8GZS+qnKHACwFXmUJrTEvJFgVKj9uiDv1OIUG8xTZ
+         DTqi2qJcCxsTACYDbAqeCXJaJIo6SJFc5dm6xeRFa3+ABuvHa2FAtVWxo0YH2Kkcln0/
+         oihZoVVzvQgMBKst3QABWAnx3QJuw+6rjiwwUSLnvyrysL1smPTSIuyazlf+Jk3+O7th
+         rSZgE9eHSVdVdW8tjsO9leZNdqpz1KeBkkGxCg3p2LieiIm3q9TTkO7LQbkZIs3XRJ8Z
+         COXEkPuCQoW+jOiYCs/xQOamSBfqHSE2vgkUvE4oaFFHAN4JqErE49cGxCAiWYMCIvfs
+         Ybew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723405043; x=1724009843;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FT4xeysPtgZnEED7ZNSpLO1Roz20Xrz/qSgj/gG8LH4=;
-        b=OsElUovaqwAikmC2quqEuzavHqaDuZbAz0xSos3E6PI1q6pvTocJi92FlYa7ZGNfrL
-         m4p8y7jZnhbS7JxLL5eOnNLn1beadRsq6sHR2lGHs1xTh/UnNTRzUqwUdyqGWbaNgAU8
-         UiwDHLD4eeJbEaDKg8ItvW+DLWQ993HbX6gCyBEgKMiz/VLiWuymHycH/DrkKvZgqLzC
-         wFpe2/RDgs7PH6/RDYNXRQItCmmXESocWVyDhIj7lhC1CxNpCkJGGrAOps6c2D+dZNwU
-         rhRg8xrqcZpu6nyBvS8nHkxHyykjMg7vyj4XvF5M3m67+IWGwLURlwJfNbddTT0+R8dK
-         vGkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8hIFT9KrWS+u4uRvpyX2o3tHkoNkp0unAFjBitdzMs5SHBfGFfrImPCbOlbfIw1uxQ1rL3xXasMRCTCioonW09K68NAkSuSwph8c3XmqMo6ui/ohrSEis6YTfGAcrGX7nm5nqr3R4bOFjIQqF8fT9orsq09oDnAsH1eYUTgqgyA==
-X-Gm-Message-State: AOJu0YyUPlP4tVMrYZkI3vxoG21rWETCGx/qt/xKJkLN9hraHvfbysnu
-	dPMO9s+BRydIWhSCvO+UQWnK+ANjj1KOoLYA4xZ44hLRx/Xrlxhp
-X-Google-Smtp-Source: AGHT+IH6q7CgRJyf1EjyGEzPBy1TOPudwIDMCx/3t0n1OAzxptirUSj6B0BDWeUKJD5hWul1RvfnKA==
-X-Received: by 2002:a05:6a21:3a45:b0:1be:c6a5:5e74 with SMTP id adf61e73a8af0-1c89ff22057mr11146417637.21.1723405043063;
-        Sun, 11 Aug 2024 12:37:23 -0700 (PDT)
-Received: from dev0.. ([2405:201:6803:30b3:6c2e:a6d:389a:e911])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5872b1csm2689564b3a.40.2024.08.11.12.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 12:37:22 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: idryomov@gmail.com,
-	xiubli@redhat.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	ceph-devel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: [PATCH net] libceph: Make the input const as per the TODO
-Date: Mon, 12 Aug 2024 01:06:45 +0530
-Message-Id: <20240811193645.1082042-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1723405312; x=1724010112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=14/7lz43ghojpFaVsYu905V4R9qFCjIVkgYPqIp9GLE=;
+        b=n90DMGxV0ubP8ea16YLz3/rct+B/TmfPk3kR6WXwl8Kz0z/WtkAejJn/m6E7cDfdhi
+         RXRAQuiK0EFo/DEDOpCz+3d9Fzp/OKubfg0rHkdg/PxZzEIm8d7cr68cUU6akOulysy8
+         y50rzuZqB1z9KkOQo6N96a+/rBUdC0TouuE4KMCIQsk2tx60ZnzK2JwAuvOnY+UfQpN6
+         oe7UiT3b0fAS3lFbP9wohKl8u1cULkGeRCVfyGUix7Y1jodTsv23+sY+EJ7gfEvqobe/
+         6wnsrrpoqXqG5tuMcAwu3b3dOXGqqG12wOpR6hs0R38ZUCFHl376kFbacf46WirZl2Nd
+         +P/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVVeGqioY6wFk9UKyLmntgydPAi3ZoI7wZWJgheo46LJVrtS4X6anBUedYG6mVXY+obsxIut6Qcf8+TcQ+6IBl/F3yS4CQ/A2sC58hB
+X-Gm-Message-State: AOJu0YwNF4nq+3JpLPBucS0ZblLIsJD5ce+yyzWXqk3e6TUxhYkW4F0j
+	Psk5UDtuUGbM85OBY/Dlt/B53cvUt19rg4hajMLPed+4lFtzyaTCFakXDMKrMOJnWq1AV5Y+XcY
+	ND3x5x906U7w51o0GEczy/Ft9yiCdCOVB
+X-Google-Smtp-Source: AGHT+IHG1A/8PQZEOXPP2N8wBlJRy3/YRr/GCA+ScfvLOZReFEmVn/Z3uOCFmATrorjThuefzry+F3onEIm+iVcIMlM=
+X-Received: by 2002:a05:6512:2346:b0:52f:368:5018 with SMTP id
+ 2adb3069b0e04-530ee9dcad6mr5392121e87.43.1723405311574; Sun, 11 Aug 2024
+ 12:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
+In-Reply-To: <20240807230742.11151-1-konishi.ryusuke@gmail.com>
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Date: Mon, 12 Aug 2024 04:41:35 +0900
+Message-ID: <CAKFNMomFfeeXmeATyG2jARXqvodms+P89TPmcxF70MWdPz2_wA@mail.gmail.com>
+Subject: Re: [PATCH] nilfs2: fix state management in error path of log writing function
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Modify arguments to const in ceph_crypto_key_decode().
-Modify ceph_key_preparse() in accordance with the changes.
+On Thu, Aug 8, 2024 at 8:07=E2=80=AFAM Ryusuke Konishi wrote:
+>
+> After commit a694291a6211 ("nilfs2: separate wait function from
+> nilfs_segctor_write") was applied, the log writing function
+> nilfs_segctor_do_construct() was able to issue I/O requests
+> continuously even if user data blocks were split into multiple logs
+> across segments, but two potential flaws were introduced in its error
+> handling.
+>
+> First, if nilfs_segctor_begin_construction() fails while creating the
+> second or subsequent logs, the log writing function returns without
+> calling nilfs_segctor_abort_construction(), so the writeback flag set
+> on pages/folios will remain uncleared.  This causes page cache
+> operations to hang waiting for the writeback flag.  For example,
+> truncate_inode_pages_final(), which is called via nilfs_evict_inode()
+> when an inode is evicted from memory, will hang.
+>
+> Second, the NILFS_I_COLLECTED flag set on normal inodes remain
+> uncleared.  As a result, if the next log write involves checkpoint
+> creation, that's fine, but if a partial log write is performed that
+> does not, inodes with NILFS_I_COLLECTED set are erroneously removed
+> from the "sc_dirty_files" list, and their data and b-tree blocks may
+> not be written to the device, corrupting the block mapping.
+>
+> Fix these issues by correcting the jump destination of the error
+> branch in nilfs_segctor_do_construct() and the condition for calling
+> nilfs_redirty_inodes(), which clears the NILFS_I_COLLECTED flag.
+>
+> Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+> Fixes: a694291a6211 ("nilfs2: separate wait function from nilfs_segctor_w=
+rite")
+> Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+> Cc: stable@vger.kernel.org
+> ---
+> Hi Andrew, please apply this as a bug fix.
+>
+> This fixes error path flaws of the log writing function that was
+> discovered during error injection testing, which could lead to a hang
+> due to the writeback flag not being cleared on folios, and potential
+> filesystem corruption due to missing blocks in the log after an error.
+>
+> Thanks,
+> Ryusuke Konishi
 
-Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
----
- net/ceph/crypto.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+Andrew, please stop sending this patch upstream.
 
-diff --git a/net/ceph/crypto.c b/net/ceph/crypto.c
-index 051d22c0e4ad..cfd485d6d3c5 100644
---- a/net/ceph/crypto.c
-+++ b/net/ceph/crypto.c
-@@ -86,7 +86,7 @@ int ceph_crypto_key_encode(struct ceph_crypto_key *key, void **p, void *end)
- 	return 0;
- }
- 
--int ceph_crypto_key_decode(struct ceph_crypto_key *key, void **p, void *end)
-+int ceph_crypto_key_decode(struct ceph_crypto_key *key, const void **p, const void *end)
- {
- 	int ret;
- 
-@@ -300,7 +300,7 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
- 	struct ceph_crypto_key *ckey;
- 	size_t datalen = prep->datalen;
- 	int ret;
--	void *p;
-+	const void *p;
- 
- 	ret = -EINVAL;
- 	if (datalen <= 0 || datalen > 32767 || !prep->data)
-@@ -311,9 +311,8 @@ static int ceph_key_preparse(struct key_preparsed_payload *prep)
- 	if (!ckey)
- 		goto err;
- 
--	/* TODO ceph_crypto_key_decode should really take const input */
--	p = (void *)prep->data;
--	ret = ceph_crypto_key_decode(ckey, &p, (char*)prep->data+datalen);
-+	p = prep->data;
-+	ret = ceph_crypto_key_decode(ckey, &p, (const char *)prep->data + datalen);
- 	if (ret < 0)
- 		goto err_ckey;
- 
--- 
-2.34.1
+I found a problem with changing the error path in this patch in
+another error injection test, so I would like to create a revised
+version.
 
+The other two bug fix patches I have sent will not be affected.
+
+Thanks,
+Ryusuke Konishi
+
+>
+>  fs/nilfs2/segment.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+> index 0ca3110d6386..8b3225bd08ed 100644
+> --- a/fs/nilfs2/segment.c
+> +++ b/fs/nilfs2/segment.c
+> @@ -2056,7 +2056,7 @@ static int nilfs_segctor_do_construct(struct nilfs_=
+sc_info *sci, int mode)
+>
+>                 err =3D nilfs_segctor_begin_construction(sci, nilfs);
+>                 if (unlikely(err))
+> -                       goto out;
+> +                       goto failed;
+>
+>                 /* Update time stamp */
+>                 sci->sc_seg_ctime =3D ktime_get_real_seconds();
+> @@ -2120,10 +2120,9 @@ static int nilfs_segctor_do_construct(struct nilfs=
+_sc_info *sci, int mode)
+>         return err;
+>
+>   failed_to_write:
+> -       if (sci->sc_stage.flags & NILFS_CF_IFILE_STARTED)
+> -               nilfs_redirty_inodes(&sci->sc_dirty_files);
+> -
+>   failed:
+> +       if (mode =3D=3D SC_LSEG_SR && nilfs_sc_cstage_get(sci) >=3D NILFS=
+_ST_IFILE)
+> +               nilfs_redirty_inodes(&sci->sc_dirty_files);
+>         if (nilfs_doing_gc())
+>                 nilfs_redirty_inodes(&sci->sc_gc_inodes);
+>         nilfs_segctor_abort_construction(sci, nilfs, err);
+> --
+> 2.34.1
+>
 
