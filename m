@@ -1,177 +1,162 @@
-Return-Path: <linux-kernel+bounces-282194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F3D94E0AD
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:24:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D60294E0AC
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 11:24:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13088B217D5
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:24:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1594E281AF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 09:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222F93E49D;
-	Sun, 11 Aug 2024 09:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D2038DCC;
+	Sun, 11 Aug 2024 09:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Azq4PAcy"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2yGDnHG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF89A3BBE1
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C401BF24
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 09:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723368263; cv=none; b=OZQtN4M0cqALgMf5r2nZ1r6ESDtQL34qgr7O5iHGs1JLutW8+uqxvRJOj8xbQlrzUwgBOuobBxTRdPsHJFPa1PFbHtR2EQTnKSf31YJ8RH3OHX4gBmDer/+1z43tfwCxoIZXIcNmUIcTg+ndpd87Soe9cYs5kugbyDXsDA7t/Gs=
+	t=1723368258; cv=none; b=mRhB3BL69AFxrxtioUFviC52QhCoKJlmifV12HPnI6BUnBCZNtXGsJni/EB1sNM0ZwAAihQgicd86l2aY6dvN07ZQzKFFF89L2H+s2rw3QDDG2W5d6/FDf7i4arVKibE+RyxQVlP2lq2U6HxiL4fP8grjhY0CvWJ9W6vVOtPBIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723368263; c=relaxed/simple;
-	bh=lqbd0gEhe9HTfdCCKx6zVmuyo0Mpzurg16Zvw3nBpnM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bva+YxwTe9tbElzoSAe3qsvg6gss0fJ9upAHza8OBVHy363vGL58W9csjIRu/7h+T488nP5yXC9bbQ5bhj919UO3OvWpyuxICMxvwE6qtcIsTHfzJrWvzAmBpNcCpKXcUxVTXN8sCYwRaGoDaMj6c3x0pdOLEmP5Xu+dFLufMTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Azq4PAcy; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47B9Mi15068136;
-	Sun, 11 Aug 2024 04:22:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723368164;
-	bh=lqbd0gEhe9HTfdCCKx6zVmuyo0Mpzurg16Zvw3nBpnM=;
-	h=From:To:CC:Subject:Date:References:In-Reply-To;
-	b=Azq4PAcyPwwhU0AGMdEtHLNvzNgyPeQ+WcqGUUPdqs56YE7kOfDpB5IUFrd7Gbzfs
-	 OxxqHruus4XovDBdDfYptkrVe/X85ZggPJnXUZm7aZ2S2OSym0fokwZ+jOc18of6vy
-	 YmGBKHif9nd86v4M9zq3Gygp7AbEkw+9snbZqbZI=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47B9Miq5109962
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Sun, 11 Aug 2024 04:22:44 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 11
- Aug 2024 04:22:44 -0500
-Received: from DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c]) by
- DLEE101.ent.ti.com ([fe80::91ee:60bc:bfb7:851c%18]) with mapi id
- 15.01.2507.023; Sun, 11 Aug 2024 04:22:44 -0500
-From: "Ding, Shenghao" <shenghao-ding@ti.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC: "broonie@kernel.org" <broonie@kernel.org>,
-        "lgirdwood@gmail.com"
-	<lgirdwood@gmail.com>,
-        "perex@perex.cz" <perex@perex.cz>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "13916275206@139.com"
-	<13916275206@139.com>,
-        "zhourui@huaqin.com" <zhourui@huaqin.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "Salazar, Ivan"
-	<i-salazar@ti.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "Chadha, Jasjot Singh" <j-chadha@ti.com>,
-        "liam.r.girdwood@intel.com" <liam.r.girdwood@intel.com>,
-        "Yue, Jaden"
-	<jaden-yue@ti.com>,
-        "yung-chuan.liao@linux.intel.com"
-	<yung-chuan.liao@linux.intel.com>,
-        "Rao, Dipa" <dipa@ti.com>, "yuhsuan@google.com" <yuhsuan@google.com>,
-        "Lo, Henry" <henry.lo@ti.com>, "tiwai@suse.de" <tiwai@suse.de>,
-        "Xu, Baojun" <baojun.xu@ti.com>, "soyer@irl.hu" <soyer@irl.hu>,
-        "Baojun.Xu@fpt.com" <Baojun.Xu@fpt.com>,
-        "judyhsiao@google.com" <judyhsiao@google.com>,
-        "Navada Kanyana, Mukund"
-	<navada@ti.com>,
-        "cujomalainey@google.com" <cujomalainey@google.com>,
-        "Kutty,
- Aanya" <aanya@ti.com>,
-        "Mahmud, Nayeem" <nayeem.mahmud@ti.com>,
-        "savyasanchi.shukla@netradyne.com" <savyasanchi.shukla@netradyne.com>,
-        "flaviopr@microsoft.com" <flaviopr@microsoft.com>,
-        "Ji, Jesse"
-	<jesse-ji@ti.com>,
-        "darren.ye@mediatek.com" <darren.ye@mediatek.com>
-Subject: RE: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add new Kontrol to set
- tas2563 digital gain
-Thread-Topic: [EXTERNAL] Re: [PATCH v1] ASoc: tas2781: Add new Kontrol to set
- tas2563 digital gain
-Thread-Index: AQHayRJMnRw9oGsXb0WgSGGuAFyWU7IfoD+AgAJnaYA=
-Date: Sun, 11 Aug 2024 09:22:43 +0000
-Message-ID: <47d160554aa64aeb952fde980e3d4d0d@ti.com>
-References: <20240628041844.1776-1-shenghao-ding@ti.com>
- <ZrYzGWQRdsTlYxQg@smile.fi.intel.com>
-In-Reply-To: <ZrYzGWQRdsTlYxQg@smile.fi.intel.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-exclaimer-md-config: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1723368258; c=relaxed/simple;
+	bh=IftasLfMYFVzoKpSiNIB89U3qIUsStW56ga/+8RavmE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=C18wBs/aPaUKXu8zvtd/Xk+uyrx7lgddO1B9SVOdj5JrA+kslY9V82gTgsyhNeIUz2vfpxjee+HuEqTuMgSKGIsxCzvDY93uLe8V4ijJ8U4wIa8zoTbE9BzxiBobvhSeifClIvhxkAmPtLO6dtOchRVbjJ1ePsFyZ/Dw5UX6DAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P2yGDnHG; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723368257; x=1754904257;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=IftasLfMYFVzoKpSiNIB89U3qIUsStW56ga/+8RavmE=;
+  b=P2yGDnHGVdX2grW2K03cM/7TXgDv1EKF7dxq9s8mpFyrT2B5gpg4K5r0
+   PMfohDj3h/qzdR/Vc08lKLe64kGyr1cO00T5StVhWSdHE/Wxej/smD+X0
+   OtwZgeY54N3R6py0y3XRNLWvRVSAknkb6+DHJ9aD3qVW6nIzCysBBXOAD
+   yb3NvJmCcVxRVOWicjjoONVkDomYy+6SOYFaVPzErmTwkKjpLjW0CZJCI
+   TCWhpshtOsTlNuv0WHsall1LFQ66LNYsyEEQ1nqXoY5AMZLRir20igdlk
+   +31WxhNIQ4/WVe+ZBQTP9m2xuMvIs0IkH7VZVazRn70xIo/r3i3p8+OMP
+   w==;
+X-CSE-ConnectionGUID: AUOcS/jBR3O1WnhCSXrMBA==
+X-CSE-MsgGUID: aw5iuHK4Q66ELyt6O3X54g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="39000824"
+X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
+   d="scan'208";a="39000824"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 02:24:16 -0700
+X-CSE-ConnectionGUID: dFrHOQ5cTH2szNePL67ezg==
+X-CSE-MsgGUID: INhGgH6lSa66j0mQoWzWFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,281,1716274800"; 
+   d="scan'208";a="57913936"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Aug 2024 02:24:14 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sd4o8-000AiJ-0d;
+	Sun, 11 Aug 2024 09:24:12 +0000
+Date: Sun, 11 Aug 2024 17:23:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>, Alex Shi <alexs@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: drivers/mtd/maps/solutionengine.c:52:39: error: assignment to 'void
+ *' from 'int' makes pointer from integer without a cast
+Message-ID: <202408111733.m4vWMDh3-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-SGkgQW5keQ0KQW5zd2VyIGlubGluZQ0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
-cm9tOiBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4LmludGVsLmNvbT4N
-Cj4gU2VudDogRnJpZGF5LCBBdWd1c3QgOSwgMjAyNCAxMToxOCBQTQ0KPiBUbzogRGluZywgU2hl
-bmdoYW8gPHNoZW5naGFvLWRpbmdAdGkuY29tPg0KPiBDYzogYnJvb25pZUBrZXJuZWwub3JnOyBs
-Z2lyZHdvb2RAZ21haWwuY29tOyBwZXJleEBwZXJleC5jejsgcGllcnJlLQ0KPiBsb3Vpcy5ib3Nz
-YXJ0QGxpbnV4LmludGVsLmNvbTsgMTM5MTYyNzUyMDZAMTM5LmNvbTsgemhvdXJ1aUBodWFxaW4u
-Y29tOw0KPiBhbHNhLWRldmVsQGFsc2EtcHJvamVjdC5vcmc7IFNhbGF6YXIsIEl2YW4gPGktc2Fs
-YXphckB0aS5jb20+OyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgQ2hhZGhhLCBK
-YXNqb3QgU2luZ2ggPGotY2hhZGhhQHRpLmNvbT47DQo+IGxpYW0uci5naXJkd29vZEBpbnRlbC5j
-b207IFl1ZSwgSmFkZW4gPGphZGVuLXl1ZUB0aS5jb20+OyB5dW5nLQ0KPiBjaHVhbi5saWFvQGxp
-bnV4LmludGVsLmNvbTsgUmFvLCBEaXBhIDxkaXBhQHRpLmNvbT47IHl1aHN1YW5AZ29vZ2xlLmNv
-bTsNCj4gTG8sIEhlbnJ5IDxoZW5yeS5sb0B0aS5jb20+OyB0aXdhaUBzdXNlLmRlOyBYdSwgQmFv
-anVuIDxiYW9qdW4ueHVAdGkuY29tPjsNCj4gc295ZXJAaXJsLmh1OyBCYW9qdW4uWHVAZnB0LmNv
-bTsganVkeWhzaWFvQGdvb2dsZS5jb207IE5hdmFkYSBLYW55YW5hLA0KPiBNdWt1bmQgPG5hdmFk
-YUB0aS5jb20+OyBjdWpvbWFsYWluZXlAZ29vZ2xlLmNvbTsgS3V0dHksIEFhbnlhDQo+IDxhYW55
-YUB0aS5jb20+OyBNYWhtdWQsIE5heWVlbSA8bmF5ZWVtLm1haG11ZEB0aS5jb20+Ow0KPiBzYXZ5
-YXNhbmNoaS5zaHVrbGFAbmV0cmFkeW5lLmNvbTsgZmxhdmlvcHJAbWljcm9zb2Z0LmNvbTsgSmks
-IEplc3NlIDxqZXNzZS0NCj4gamlAdGkuY29tPjsgZGFycmVuLnllQG1lZGlhdGVrLmNvbQ0KPiBT
-dWJqZWN0OiBbRVhURVJOQUxdIFJlOiBbUEFUQ0ggdjFdIEFTb2M6IHRhczI3ODE6IEFkZCBuZXcg
-S29udHJvbCB0byBzZXQNCj4gdGFzMjU2MyBkaWdpdGFsIGdhaW4NCj4gDQo+IE9uIEZyaSwgSnVu
-IDI4LCAyMDI0IGF0IDEyOuKAijE4OuKAijQzUE0gKzA4MDAsIFNoZW5naGFvIERpbmcgd3JvdGU6
-ID4NCj4gUmVxdXJpbWVudCBmcm9tIGN1c3RvbWVyIHRvIGFkZCBuZXcga2NvbnRyb2wgdG8gc2V0
-IHRhczI1NjMgZGlnaXRhbCBnYWluID4NCj4gYW5kIHNldCAiU3BlYWtlciBGb3JjZSBGaXJtd2Fy
-ZSBMb2FkIiBhcyB0aGUgY29tbW9uIGtjb250cm9sIGZvciBib3RoID4NCj4gdGFzMjc4NzEgYW5k
-IHRhczI1NjMuIFpqUWNtUVJZRnBmcHRCYW5uZXJTdGFydCBUaGlzIG1lc3NhZ2Ugd2FzIHNlbnQg
-ZnJvbQ0KPiBvdXRzaWRlIG9mIFRleGFzIEluc3RydW1lbnRzLg0KPiBEbyBub3QgY2xpY2sgbGlu
-a3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxlc3MgeW91IHJlY29nbml6ZSB0aGUgc291cmNlIG9m
-IHRoaXMNCj4gZW1haWwgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCj4gPGh0dHBzOi8v
-dXMtcGhpc2hhbGFybS0NCj4gZXd0LnByb29mcG9pbnQuY29tL0VXVC92MS9HM3ZLIXVCZG5WVnFt
-T0lIM0JrenNVRmdPOVFnV0otDQo+IHU5cUZFVktoaGZvMlVicDlKNmQ2cjRzcnZod0dpSFpvWWtL
-aVE1b2Q4M1hBSldxOXNDeWJ1Tjd1NCQ+DQo+IFJlcG9ydCBTdXNwaWNpb3VzDQo+IA0KPiBaalFj
-bVFSWUZwZnB0QmFubmVyRW5kDQo+IE9uIEZyaSwgSnVuIDI4LCAyMDI0IGF0IDEyOjE4OjQzUE0g
-KzA4MDAsIFNoZW5naGFvIERpbmcgd3JvdGU6DQo+ID4gUmVxdXJpbWVudCBmcm9tIGN1c3RvbWVy
-IHRvIGFkZCBuZXcga2NvbnRyb2wgdG8gc2V0IHRhczI1NjMgZGlnaXRhbA0KPiA+IGdhaW4gYW5k
-IHNldCAiU3BlYWtlciBGb3JjZSBGaXJtd2FyZSBMb2FkIiBhcyB0aGUgY29tbW9uIGtjb250cm9s
-IGZvcg0KPiA+IGJvdGgNCj4gPiB0YXMyNzg3MSBhbmQgdGFzMjU2My4NCj4gDQo+IC4uLg0KPiAN
-Cj4gPiAgI2luY2x1ZGUgPHNvdW5kL3RhczI3ODEuaD4NCj4gPiAgI2luY2x1ZGUgPHNvdW5kL3Rs
-di5oPg0KPiA+ICAjaW5jbHVkZSA8c291bmQvdGFzMjc4MS10bHYuaD4NCj4gDQo+ID4gKyNpbmNs
-dWRlIDxhc20vdW5hbGlnbmVkLmg+DQo+IA0KPiBCZWZvcmUgc291bmQgd291bGQgYmUgYmV0dGVy
-LCBidXQgSSdtIG5vdCBpbnNpc3RpbmcuDQpbZGluZ11BcHBseSB0byB0aGUgbmV3IHBhdGNoLg0K
-PiANCj4gLi4uDQo+IA0KPiA+ICsJcmV0ID0gIHRhc2RldmljZV9kZXZfYnVsa19yZWFkKHRhc19k
-ZXYsIDAsIHJlZywgZGF0YSwgNCk7DQo+IA0KPiBUb28gbWFueSBzcGFjZXMuDQo+IA0KPiAuLi4N
-Cj4gDQo+ID4gKwkvKiBmaW5kIG91dCB0aGUgbWVtYmVyIHNhbWUgYXMgb3IgY2xvc2VyIHRvIHRo
-ZSBjdXJyZW50IHZvbHVtZSAqLw0KPiA+ICsJdWNvbnRyb2wtPnZhbHVlLmludGVnZXIudmFsdWVb
-MF0gPQ0KPiA+ICsJCWFicyh0YXJnZXQgLSBhcl9sKSA8PSBhYnModGFyZ2V0IC0gYXJfcikgPyBs
-IDogcjsNCj4gIA0KPiBXaHkgZG8geW91IG5lZWQgdG8gaGF2ZSB0YXJnZXQgdG8gYmUgYXBwbGll
-ZCBoZXJlPyBJSVVDIGFyaXRobWV0aWNzIGNvcnJlY3RseQ0KPiBpdCBtYWtlcyBubyB2YWx1ZSB0
-byB1c2UgdGFyZ2V0IGluIHRoaXMgZXF1YXRpb24uDQpbZGluZ10gdGFyZ2V0IHNhdmUgdGhlIHZv
-bCByZWdpc3RlciB2YWx1ZSwgYW5kIHRoZSBjb2RlIHdpbGwgY2FsY3VsYXRlIHRoZSBjbG9zZXN0
-IHZhbHVlIGluIHRoZSANCnRhczI1NjNfZHZjX3RhYmxlLiBTb21ldGltZXMsIHRoZSB0YXJnZXQg
-dmFsdWUgaXMgbm90IHNhbWUgYXMgdGhlIHZhbHVlIGluIHRoZSB0YWJsZS4gSXQgaXMNCndpc2Ug
-dG8gZmluZCB0aGUgY2xvc2VzdCBvbmUuDQovKiBwb3coMTAsIGRiLzIwKSAqIHBvdygyLDMwKSAq
-Lw0Kc3RhdGljIGNvbnN0IHVuc2lnbmVkIGNoYXIgdGFzMjU2M19kdmNfdGFibGVbXVs0XSA9IHsN
-Cgl7IDBYMDAsIDBYMDAsIDBYMDAsIDBYMDAgfSwgLyogLTEyMS41ZGIgKi8NCgl7IDBYMDAsIDBY
-MDAsIDBYMDMsIDBYQkMgfSwgLyogLTEyMS4wZGIgKi8NCgl7IDBYMDAsIDBYMDAsIDBYMDMsIDBY
-RjUgfSwgLyogLTEyMC41ZGIgKi8NCi4uLg0KPiANCj4gLi4uDQo+IA0KPiA+ICtvdXQ6DQo+ID4g
-KwltdXRleF91bmxvY2soJnRhc19kZXYtPmNvZGVjX2xvY2spOw0KPiANCj4gV2h5IG5vdCB1c2lu
-ZyBjbGVhbnVwLmg/DQpbZGluZ10gQWNjZXB0Lg0KPiANCj4gPiArCXJldHVybiAwOw0KPiANCj4g
-Li4uDQo+IA0KPiBUaGlzIGFsbCByZW1pbmRzIG1lIHRoYXQgSSBhbHJlYWR5IGdhdmUgc2FtZS9z
-aW1pbGFyIGNvbW1lbnRzIGluIHRoZSBwYXN0Li4uDQo+IA0KPiANCj4gLS0NCj4gV2l0aCBCZXN0
-IFJlZ2FyZHMsDQo+IEFuZHkgU2hldmNoZW5rbw0KPiANCg0K
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   5189dafa4cf950e675f02ee04b577dfbbad0d9b1
+commit: e8c07082a810fbb9db303a2b66b66b8d7e588b53 Kbuild: move to -std=gnu11
+date:   2 years, 5 months ago
+config: sh-randconfig-001-20240811 (https://download.01.org/0day-ci/archive/20240811/202408111733.m4vWMDh3-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408111733.m4vWMDh3-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408111733.m4vWMDh3-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/mtd/maps/solutionengine.c: In function 'init_soleng_maps':
+>> drivers/mtd/maps/solutionengine.c:52:39: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      52 |                 soleng_flash_map.virt = P2SEGADDR(0x01000000);
+         |                                       ^
+   drivers/mtd/maps/solutionengine.c:54:39: error: assignment to 'void *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      54 |                 soleng_eprom_map.virt = P1SEGADDR(0);
+         |                                       ^
+
+
+vim +52 drivers/mtd/maps/solutionengine.c
+
+^1da177e4c3f41 Linus Torvalds 2005-04-16  35  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  36  static int __init init_soleng_maps(void)
+^1da177e4c3f41 Linus Torvalds 2005-04-16  37  {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  38  	/* First probe at offset 0 */
+^1da177e4c3f41 Linus Torvalds 2005-04-16  39  	soleng_flash_map.phys = 0;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  40  	soleng_flash_map.virt = (void __iomem *)P2SEGADDR(0);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  41  	soleng_eprom_map.phys = 0x01000000;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  42  	soleng_eprom_map.virt = (void __iomem *)P1SEGADDR(0x01000000);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  43  	simple_map_init(&soleng_eprom_map);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  44  	simple_map_init(&soleng_flash_map);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  45  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  46  	printk(KERN_NOTICE "Probing for flash chips at 0x00000000:\n");
+^1da177e4c3f41 Linus Torvalds 2005-04-16  47  	flash_mtd = do_map_probe("cfi_probe", &soleng_flash_map);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  48  	if (!flash_mtd) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  49  		/* Not there. Try swapping */
+^1da177e4c3f41 Linus Torvalds 2005-04-16  50  		printk(KERN_NOTICE "Probing for flash chips at 0x01000000:\n");
+^1da177e4c3f41 Linus Torvalds 2005-04-16  51  		soleng_flash_map.phys = 0x01000000;
+^1da177e4c3f41 Linus Torvalds 2005-04-16 @52  		soleng_flash_map.virt = P2SEGADDR(0x01000000);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  53  		soleng_eprom_map.phys = 0;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  54  		soleng_eprom_map.virt = P1SEGADDR(0);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  55  		flash_mtd = do_map_probe("cfi_probe", &soleng_flash_map);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  56  		if (!flash_mtd) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  57  			/* Eep. */
+^1da177e4c3f41 Linus Torvalds 2005-04-16  58  			printk(KERN_NOTICE "Flash chips not detected at either possible location.\n");
+^1da177e4c3f41 Linus Torvalds 2005-04-16  59  			return -ENXIO;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  60  		}
+^1da177e4c3f41 Linus Torvalds 2005-04-16  61  	}
+1d25e3eeed1d98 Randy Dunlap   2018-07-24  62  	printk(KERN_NOTICE "Solution Engine: Flash at 0x%pap, EPROM at 0x%pap\n",
+1d25e3eeed1d98 Randy Dunlap   2018-07-24  63  	       &soleng_flash_map.phys,
+1d25e3eeed1d98 Randy Dunlap   2018-07-24  64  	       &soleng_eprom_map.phys);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  65  	flash_mtd->owner = THIS_MODULE;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  66  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  67  	eprom_mtd = do_map_probe("map_rom", &soleng_eprom_map);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  68  	if (eprom_mtd) {
+^1da177e4c3f41 Linus Torvalds 2005-04-16  69  		eprom_mtd->owner = THIS_MODULE;
+ee0e87b174bb41 Jamie Iles     2011-05-23  70  		mtd_device_register(eprom_mtd, NULL, 0);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  71  	}
+^1da177e4c3f41 Linus Torvalds 2005-04-16  72  
+390e9eacf1dcec Paul Bolle     2014-05-23  73  	mtd_device_parse_register(flash_mtd, probes, NULL, NULL, 0);
+^1da177e4c3f41 Linus Torvalds 2005-04-16  74  
+^1da177e4c3f41 Linus Torvalds 2005-04-16  75  	return 0;
+^1da177e4c3f41 Linus Torvalds 2005-04-16  76  }
+^1da177e4c3f41 Linus Torvalds 2005-04-16  77  
+
+:::::: The code at line 52 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
