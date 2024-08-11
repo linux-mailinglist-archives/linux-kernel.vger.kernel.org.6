@@ -1,193 +1,154 @@
-Return-Path: <linux-kernel+bounces-282340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEC294E272
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:37:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 337FD94E274
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 19:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3893C1F215A0
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:37:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F8F1F214A8
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A11621537C7;
-	Sun, 11 Aug 2024 17:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksYAhjEV"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ACF227447
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 17:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498941547CB;
+	Sun, 11 Aug 2024 17:41:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAAD27447;
+	Sun, 11 Aug 2024 17:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723397830; cv=none; b=syofY4BWPSOm9I4h6nGHKRXZYKNj6huBkWCLW01ixTZY4AIzkAj79I+rvzRz8uRztDFkUw9kul6BfJignqyKjxaj867AxlosG9gpS01rF4fQWwdW7+5irFBf1nH6/v0FMfUfn3WpyXtzrRAtfg9tz445fqJkCvVZdlweWxsw2oM=
+	t=1723398104; cv=none; b=GtNX9aDe6PBEJP6ekhjtk+EApcgqGw3rk00+cxHzBzMtMCY/0CEGJLzFTnHdSVmyRUqSGKoJihd0zQPDbC0ZtFxpz7LmE+kCCICxbg+0EuSrIgqRakuQxXAdUaRnvETjqUR5u/3g1epTJIp/KlLO4Ga3C8K26LUoVKZFlDQy9QA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723397830; c=relaxed/simple;
-	bh=1EiGTiROFv4q5u3t6n0EANoPGnoJVFtWZOAMTRSXMqo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i1EDQmiPGGe3HY6bc2e9x5Q53Es9KlKpichaCnGZlYlUdZgdhXReZk+f9gY+HGrhmig4T0n4S4Q7ftvbef+lUVeEgSDKAyA9gkC2qaweZ1wkdUCNlKTNA0s37fR6iKyDonRFgN1KQw+5vkj9aozA3e4XepWfwSQ0QAdb0m+DO6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksYAhjEV; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70d26cb8f71so158980b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 10:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723397829; x=1724002629; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G+PvmKKNVKze4C/QBHRr+qRVJwgBe+Hyuo1w73xp6tI=;
-        b=ksYAhjEVxlamRGRenGWjfJbsHAnBkLbC3cs37jCPQVWosSujvP7KaZ41ge7w3/9RYz
-         ppDqFy+1Am2niLmJS9ljsIc02U1qfMsJYCuZwNwPohmnXN0Lw5SNIoRdXTQV+lyL8dCp
-         oU/7Adn1ihr4ZGa2VYw1vfMwQSNvmp+O83gmd+hQrMQwJ35g4lwpeiPxuI69jTRbZyPa
-         ZApSlQ3Hgr897AYtJbIg7I6rH1QWl2ZVotX7WurtyN5W64HzXmIV6kEpcJ3K1qI/8dLt
-         W6hzp+qgtTf1NlugajTkns0rF3IniYdpwjEGBT541xi9oEFZe2lwk0xqZ/kslGwJc8mS
-         /56w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723397829; x=1724002629;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G+PvmKKNVKze4C/QBHRr+qRVJwgBe+Hyuo1w73xp6tI=;
-        b=ZIQkvWoV7VtqcYcSCNhRgMVSnohhhzI15A/eJz4IB+NUorY7jL8pq/aUXdAP4fqJEA
-         JNfDSzn4DdBXdvKHkIlPXT3LMFkgamoLiegqCacPsl18dYbgYPzfShhz85gCW3zeodWJ
-         BYhIAW5WxUj0/5bIwKCdkJtx+WFfUJs21d1Yx14l8pFOup9g9mmUVTII4BDuGdUvxJcv
-         QlbsPRgGe6pEtR7DVwmBRgTtS82Idiwl9fs8UzRCXs7LJBbqL2N9ayt0ToviX/DNiLt2
-         BzzUeoHuvmpumgHCrOwWt84sQPwncV6gqbeAmWM7DYC/BEYy3NkKRU/mYV9smR7XFplV
-         RV4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcwlnvWVJWNQV9mnIRUeol8DzDRTmAs9+6g9qZf7eussP/bnwhQmuP2UJBLlDnw4PYDx3VO+u43cQMGA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp3Eu2P3iNlvqZZR5EAq5K+fVhHjoXEqNG2EXF+QA5mdD3W9ey
-	nS8WcIxnrq/n+9hcyKukCSLpATlhvYQfXyRRXxtvaI9UhyMYrGa5
-X-Google-Smtp-Source: AGHT+IFFxzoLGtc9WykojPI4wkEztteRifZIbhn9LcZoVF3GGpPwNPBsmGRNdzDA+n4bPmxoVrVj5g==
-X-Received: by 2002:a05:6a00:6f68:b0:70b:705f:8c5e with SMTP id d2e1a72fcca58-710dcb9df65mr4831759b3a.5.1723397828376;
-        Sun, 11 Aug 2024 10:37:08 -0700 (PDT)
-Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:fb13:4730:5b8f:99e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a55c33sm2631611b3a.115.2024.08.11.10.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 10:37:07 -0700 (PDT)
-Date: Mon, 12 Aug 2024 01:37:03 +0800
-From: I Hsin Cheng <richard120310@gmail.com>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: andriy.shevchenko@linux.intel.com, linux@rasmusvillemoes.dk,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpumask: Ensure the visibility of set_nr_cpu_ids
-Message-ID: <Zrj2v4IFbS/1yPnz@vaxr-BM6660-BM6360>
-References: <20240811092501.87653-1-richard120310@gmail.com>
- <ZrjWKV0a37yTO1km@yury-ThinkPad>
+	s=arc-20240116; t=1723398104; c=relaxed/simple;
+	bh=hphTYSkZTnY9Y9aQRf2FyLxh27Y2wAch0ANmN7fhwXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qD7pE/sRWCAAbFCfN5cYXXmT/jNUegbhQrmpokKFt6vManDxY09LobBUpYo35OP07XqCtxO5jISf3EWpkG4I+Qz+mCNtFax39cYKmgduoCXOZaMfa03PgnVnkCA9b0bky0jLt9FVT8Hi/8YJZfV6frixjsxMgUqLp+JE4rv/SZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ADE92FEC;
+	Sun, 11 Aug 2024 10:42:00 -0700 (PDT)
+Received: from [192.168.13.84] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A98D3F71E;
+	Sun, 11 Aug 2024 10:41:14 -0700 (PDT)
+Message-ID: <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
+Date: Sun, 11 Aug 2024 19:41:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrjWKV0a37yTO1km@yury-ThinkPad>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
+ capacities are different"
+To: MANISH PANDEY <quic_mapa@quicinc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Qais Yousef <qyousef@layalina.io>,
+ Christian Loehle <christian.loehle@arm.com>
+Cc: axboe@kernel.dk, mingo@kernel.org, peterz@infradead.org,
+ vincent.guittot@linaro.org, linux-block@vger.kernel.org,
+ sudeep.holla@arm.com, Jaegeuk Kim <jaegeuk@kernel.org>,
+ Christoph Hellwig <hch@infradead.org>, kailash@google.com, tkjos@google.com,
+ dhavale@google.com, bvanassche@google.com, quic_nitirawa@quicinc.com,
+ quic_cang@quicinc.com, quic_rampraka@quicinc.com, quic_narepall@quicinc.com,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
+ <3feb5226-7872-432b-9781-29903979d34a@arm.com>
+ <20240805020748.d2tvt7c757hi24na@airbuntu>
+ <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org>
+ <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
+ <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org>
+ <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 11, 2024 at 08:18:01AM -0700, Yury Norov wrote:
-> On Sun, Aug 11, 2024 at 05:25:01PM +0800, I Hsin Cheng wrote:
-> > The variable "nr_cpu_ids" is a system-wide variable which should be seen
-> > as consistent all the time. For example it's set in one of the kernel
-> > setup procedure "prefill_possible_map", the operations here should
-> > happens before all the code after setup, which means the operations here
-> > should be visible to all the code after setup.
-> > 
-> > set_cpu_possible() ensure it's visibility because it eventually falls
-> > into an atomic instruction, however the function "set_nr_cpu_ids()"
-> > fails to make the guarantee since it only performs a normal write
-> > operations.
-> 
-> Set_cpu_possible() is a completely different thing.
++ linux-kernel@vger.kernel.org
+
+On 08/08/2024 08:05, MANISH PANDEY wrote:
 >  
-> > Adding the macro "WRITE_ONCE()" will prevent the compiler from re-order
-> > the instruction of the write operation for "nr_cpu_ids", so we can
-> > guarantee the operation is visible to all the codes coming after it.
-> > 
-> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
-> 
-> I don't understand this. nr_cpu_ids is initialized at compile time
-> to NR_CPUS, to represent maximum number of bits in cpumasks.
-> 
-> Later on runtime we update nr_cpu_ids with an actual number of possible
-> CPUs in the system. The type of the variable is unsigned int, and it
-> means that threads accessing it will either fetch NR_CPUS, or new value
-> coherently.
-> 
-> Having nr_cpu_ids == NR_CPUS is not an error, it's just a non-optimal
-> value. The only effect of it is that kernel algorithms traverse unused
-> part of cpumasks for the first few microseconds after boot.
-> 
-> Can you explain in details what type of race you're trying to fix?
-> Which architecture? What is the race scenario?
-> 
-> > ---
-> >  include/linux/cpumask.h | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> > index f10fb87d4..3731f5e43 100644
-> > --- a/include/linux/cpumask.h
-> > +++ b/include/linux/cpumask.h
-> > @@ -46,7 +46,7 @@ static inline void set_nr_cpu_ids(unsigned int nr)
-> >  #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
-> >  	WARN_ON(nr != nr_cpu_ids);
-> >  #else
-> > -	nr_cpu_ids = nr;
-> > +	WRITE_ONCE(nr_cpu_ids, nr);
-> 
-> 
-> WRITE_ONCE()? How is that supposed to work? The only possible effect
-> would be reordering of a couple of instructions. How would that help
-> threads running on other CPUs synchronize any better?
-> 
-> Regardless, WRITE_ONCE() should always be paired with READ_ONCE() to
-> make it working. So, if we take this, we should also make every read of
-> nr_cpu_ids by using READ_ONCE(). nr_cpu_ids is used in fast paths in
-> many places, particularly as loop termination condition. Things like
-> this:
-> 
->         while (cpu < READ_ONCE(nr_cpu_ids))
->                 do_something_very_quick();
-> 
-> would definitely hit performance.
-> 
-> Thanks,
-> Yury
-> 
-> >  #endif
-> >  }
-> >  
-> > -- 
-> > 2.34.1
+> On 8/5/2024 11:22 PM, Bart Van Assche wrote:
+>> On 8/5/24 10:35 AM, MANISH PANDEY wrote:
 
-Thanks for the reply and your detailed explanation, I wasn't trying to
-fix any race conditions, I was thinking the same as you mentioned that
-some of the cpumask's operation would traverse more times than it
-actually needs to. I took set_cpu_possible() as an example trying to
-express I think it would be nice for nr_cpu_ids to make synchronized
-guarantees across CPUs, as WRITE_ONCE() would also provide write memory
-barrier.
+[...]
 
-> Regardless, WRITE_ONCE() should always be paired with READ_ONCE() to
-> make it working. So, if we take this, we should also make every read of
-> nr_cpu_ids by using READ_ONCE(). nr_cpu_ids is used in fast paths in
-> many places, particularly as loop termination condition. Things like
-> this:
->
->         while (cpu < READ_ONCE(nr_cpu_ids))
->                 do_something_very_quick();
->
-> would definitely hit performance.
+>> Please use an approach that is supported by the block layer. I don't
+>> think that dynamically changing the IRQ affinity is compatible with the
+>> block layer.
+> 
+> For UFS with MCQ, ESI IRQs are bounded at the time of initialization.
+> so basically i would like to use High Performance cluster CPUs to
+> migrate few completions from Mid clusters and take the advantage of high
+> capacity CPUs. The new change takes away this opportunity from driver.
+> So basically we should be able to use High Performance CPUs like below
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index e3c3c0c21b55..a4a2500c4ef6 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -1164,7 +1164,7 @@ static inline bool blk_mq_complete_need_ipi(struct
+> request *rq)
+>         if (cpu == rq->mq_ctx->cpu ||
+>             (!test_bit(QUEUE_FLAG_SAME_FORCE, &rq->q->queue_flags) &&
+>              cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+> -            cpus_equal_capacity(cpu, rq->mq_ctx->cpu)))
+> +            arch_scale_cpu_capacity(cpu) >=     
+> arch_scale_cpu_capacity(rq->mq_ctx->cpu)))
+>                 return false;
+> 
+> This way driver can use best possible CPUs for it's use case.
 
-Indeed if WRITCE_ONCE() is going to be applied here, every read of
-nr_cpu_ids will have to use READ_ONCE() and it'll harm the fast path's
-performance. I didn't considered this part, thanks for pointing it out.
-Comparing to the number of redundant traversal, I think the performance
-hit introduced by READ_ONCE() in fast path will be larger, so we should
-stick to the same way. I learned alot and should reconsidered many parts
-of my former knowledge about cpumask from your reply.
-Thanks again for your detail explanation and kindly reply !
+So the issue for you with commit af550e4c9682 seems to be that those
+completions don't happen on big CPUs (cpu_capacity = 1024) anymore,
+since the condition in  blk_mq_complete_need_ipi() (1):
 
-Best regards,
-I-Hsin Cheng
+ if (!QUEUE_FLAG_SAME_FORCE && cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
+     cpus_equal_capacity(cpu, rq->mq_ctx->cpu))
+
+is no longer true if 'rq->mq_ctx->cpu != big CPU' so (1) returns true
+and blk_mq_complete_request_remote() sends an ipi to 'rq->mq_ctx->cpu'.
+
+
+I tried to simulate this with a 6 CPUs aarch64 QEMU tri-gear (3
+different cpu_capacity values) system:
+
+cat /sys/devices/system/cpu/online
+0-5
+
+# cat /sys/devices/system/cpu/cpu*/cpu_capacity
+446
+446
+871
+871
+1024
+1024
+
+# grep -i virtio /proc/interrupts | while read a b; do grep -aH .
+/proc/irq/${a%:}/smp_affinity; done
+/proc/irq/15/smp_affinity:3f /* block device */
+/proc/irq/16/smp_affinity:3f /* network device */
+
+So you set the block device irq affine to the big CPUs (0x30).
+
+# echo 30 > /proc/irq/15/smp_affinity
+
+And with the patch, you send ipi's in blk_mq_complete_request_remote()
+in case 'rq->mq_ctx->cpu=[0-4]' whereas w/o the patch or the change to:
+
+ arch_scale_cpu_capacity(cpu) >=
+                            arch_scale_cpu_capacity(rq->mq_ctx->cpu) (2)
+
+you would complete the request locally (i.e. on CPU4/5):
+
+gic_handle_irq() -> ... -> handle_irq_event() -> ... -> vm_interrupt()
+-> ... -> virtblk_done() (callback) -> blk_mq_complete_request() ->
+blk_mq_complete_request_remote(), rq->q->mq_ops->complete(rq)
+
+The patch IMHO was introduced to avoid running local when 'local =
+little CPU'. Since you use system knowledge and set IRQ affinity
+explicitly to big CPU's to run local on them, maybe (2) is the way to
+allow both?
 
