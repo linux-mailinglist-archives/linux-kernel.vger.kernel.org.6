@@ -1,118 +1,121 @@
-Return-Path: <linux-kernel+bounces-282304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C250F94E1DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:34:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C194E1DD
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E7CEB20F1C
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A2991F213E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEB014B94A;
-	Sun, 11 Aug 2024 15:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5646114AD22;
+	Sun, 11 Aug 2024 15:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uP0h/ov2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T0oQ0+vg"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ED01CA85;
-	Sun, 11 Aug 2024 15:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE9AD13634C
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723390473; cv=none; b=B2Je7TN0Dj374QXwFPqjS9F6G/t5FpQ8DCMGj3IpLV/O66bXWbCk6h/SCRhUeug0XmjmY2yfMVueZ326b8h/UdCf7ER2zYpVTH6vb33S6Gmd33nYZ2Uty9XIPb7ny2XItWiTIvTqI84++BOkG9iCJcZ8u2RFzRezXud2COZxHTU=
+	t=1723390486; cv=none; b=GyX7GPvf1Ld05UaHC4Mfpgf8HI+LrY1A/r1+ZXC9PTTGaUImfm4B7Z0MXy2kifjJLZx+XfTuVEM2NLo90BIpLv6ABCYZyNJHrDOqrTWTJPPe6vQr/Yjk/0ljod8m7lLngHD06N7uGUaX4i6N2PsgOyh/JXCTgpzU4/UHIoDnUG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723390473; c=relaxed/simple;
-	bh=YwksnDw8VPXal3P7dd2jgZKdFH8IbM7kCgoHRSJTUYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JgPShqX5j8Hpy8KCi4fBpDrM0EfDJX2Tw7QzlOp/YI2AAWNHR/aoRURQOq3WhyAe/0ipZk8f3eCYg70jKxg8GdnQVNhGXDs/sOJFEDTQEncXP9Z9gsgkPxZ3QA85tlqoyF3/TGf71Afuo472KUrRVq2rayOq+GmuXH4a1yRNWHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uP0h/ov2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47578C4AF0F;
-	Sun, 11 Aug 2024 15:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723390473;
-	bh=YwksnDw8VPXal3P7dd2jgZKdFH8IbM7kCgoHRSJTUYY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=uP0h/ov2VCuj/kvYMNcD36MxjugPyiSj+MHglw0bQ0tA5F8/GSpNRpJJAgiHY86pU
-	 8QxTnuajNui3/AMs27Lv2hMZPz6N+VlvuOERM8EOenyAStEpB12ZFcfIw0zmQCXBVF
-	 k6GOpVD1uw/MsGuWF8o1ROayt3thJLY13Q3pjmkzkDqho+pwt/PfKX+JYyNdUX+66m
-	 CZJOYiDGGq3Uiu7YjD+PepjdsWE13UGnxgma1FHfgoZtXbYO4C139Lkf2wN0qDfKi8
-	 lqEIFp7zVqSFItxiX4T2nwOXDrRq5REMkulNTZd9W3cbIfiCQq+T8enrER5t7qCtVl
-	 dD7+as510aapQ==
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5320d8155b4so13811e87.3;
-        Sun, 11 Aug 2024 08:34:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWYlo7UB8fyCqZd8N5Wd0viLM26RubhkoWxbn9Gwk7Hv2uTrJW59YU4U5kjc+27tCHe5WaIZneBwPn0XckmKTAArH4CF/6zdlxSgG6pE7zqfzWwYtM7zDm7HxMB+9s+L7QJnO3VttFCTXk=
-X-Gm-Message-State: AOJu0YxHWAIY9L1835x1pQ9JiQtLzOxEWoj0jM3NVmCPwZ8UPx8ktCcB
-	Z0jCiTUDGNn1YhPPCoTsaUZuuM+YGKgzqgOkHNM+mDwcO6VVwboq28D/6sgfsppXMyPexQWTrY8
-	F9ISAKjEdgvxIGOtTiuW2lLv02fA=
-X-Google-Smtp-Source: AGHT+IES5W/xGCH2uWWHRv0dGCi0+rtFXcqtmn0Bv5Fx/hX0jdnU/L373uRehGhIcqIZ7MBs+7C0ZG9WFLxHO80NtD0=
-X-Received: by 2002:a05:6512:690:b0:52e:933c:5a18 with SMTP id
- 2adb3069b0e04-530eea5da02mr4470050e87.56.1723390471606; Sun, 11 Aug 2024
- 08:34:31 -0700 (PDT)
+	s=arc-20240116; t=1723390486; c=relaxed/simple;
+	bh=/1IErUjrGRfgokTB7myjq49LMHtkALojTPhMnZQ10TQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kRGQLWXnk5bF0iipmvjRU7Y9j2HyD1V4RjTH6t9sj8QcBTYZnPhu3gALqHC4IVSZ5KVk6bM+LPsuDWhjHjJwqPOBzl79nl+ePqVvibLmW+fJPQFzUqT454F0UB6wWxZCwOkRFmqZL9d6rzZ8vMwlw3GWo7PASP+z7qvFR58kULc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T0oQ0+vg; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso37400491fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 08:34:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723390483; x=1723995283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0DtWhSlXUfATpzkMixs1eIp2TMyzpsmPgL1CzoYoK0=;
+        b=T0oQ0+vgEu4RDxzMMs5HH65Syi9wLRfSF2qHeCgTKNI5uH+wHTMklgxGYWAGAcTmvG
+         XGJSdZ85nQU9B17WGv7PS44hEIpN4LXR7Lf8F5GkGebm/tHRkhcleFraf1JO8uleIBQs
+         0dku3RE3OAneKtiNYnPG4EYMR6XVh91PmkJOr1XOpu9xYjwSiSshMvF+mYtlZGiDzz1L
+         BSFzvWa4ZOiuEfetybXT8/CZC/1TWTbT+tdiMQtnQ5ERod++yRmZPVbTn0qffOV+xbAW
+         xmRqus4QPc8vOwQRBwpE/7sia2Qk2Cyoh7UAHJ9riPRHQ8lNzYe5/RehlwAkJuMIASd4
+         6CQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723390483; x=1723995283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l0DtWhSlXUfATpzkMixs1eIp2TMyzpsmPgL1CzoYoK0=;
+        b=k1ete8DKLmdrHZAbYylDsohUPJTiPCLpz3c7NIiJvCY2aXQACVVz1E9HSd5jMntHuM
+         y1wY50na8XoDgxH+j9pUEazdmq8DFuqoesg1tUTpPCjtrxHJ6htRRkwzP2aekuoy45Xh
+         3IEX5GdhqpIRrtwgCS/YOItLrZqnsIOn4xMj16Uaqx0esTVz2NxcMaZZkojVYVuVVoB2
+         2xC+FBPq4yr7EPhNP2/UUHE+R7LC5m0UFiXsfQ5+aXa9wrmcHH3OUjHEOhzMFkuAIYgB
+         L1UXB9h/U5M4m5j0T17Uj6nBiiEfaRu8YoZK+mgqs5KkG/otypfnbKkh4PvWxk+DBDrp
+         OSrg==
+X-Forwarded-Encrypted: i=1; AJvYcCXizFJ8FNjQbApdZAO8l3VOwkFMKQGzC1dLVMPriPjwypekW3HhyXdJZANeF4EPqkCdGxpuOnFi3o7ISGWYOP8TlRIuLlb4DZN0hqwo
+X-Gm-Message-State: AOJu0YwhcubYQ28SBv0oLBAECf/WUYhHpnO0fiAgMYl3vpNHIQE4QGS2
+	Ug3qpW4wnsUfIi25cQlB0oQXOwNJxVJtGu+3DxhG+vwterstCnCqm2EQT1R1rXk=
+X-Google-Smtp-Source: AGHT+IEjtCXJrQfWFLvuJhoOjMVUW23DEOgZIPInR/kK2N8EKDLphE9zK1Mzzh0T+oYV0DVRW3R/ug==
+X-Received: by 2002:a2e:b88b:0:b0:2ef:2c27:6680 with SMTP id 38308e7fff4ca-2f1a6ce8d4amr44289641fa.12.1723390482614;
+        Sun, 11 Aug 2024 08:34:42 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c9ca1067sm43615145e9.1.2024.08.11.08.34.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 08:34:42 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Ben Levinsky <ben.levinsky@amd.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	linux-remoteproc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: remoteproc: xlnx,zynqmp-r5fss: add missing "additionalProperties" on child nodes
+Date: Sun, 11 Aug 2024 17:34:38 +0200
+Message-ID: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAL3q7H5zfQNS1qy=jAAZa-7w088Q1K-R7+asj-f++6=N8skWzg@mail.gmail.com>
- <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com>
-In-Reply-To: <277314c9-c4aa-4966-9fbe-c5c42feed7ef@gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Sun, 11 Aug 2024 16:33:54 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
-Message-ID: <CAL3q7H4iYRsjG9BvRYh_aB6UN-QFuTCqJdiq6hV_Xh7+U7qJ5A@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: =?UTF-8?Q?Jannik_Gl=C3=BCckert?= <jannik.glueckert@gmail.com>
-Cc: andrea.gelmini@gmail.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mikhail.v.gavrilov@gmail.com, regressions@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Aug 11, 2024 at 9:08=E2=80=AFAM Jannik Gl=C3=BCckert
-<jannik.glueckert@gmail.com> wrote:
->
-> Hello,
->
-> I am still encountering this issue on 6.10.3. As far as I can see this
-> is the last post in the thread, if the discussion continued elsewhere
-> please let me know.
->
-> My workload is a backup via restic, the system is idle otherwise.
-> This is on a Zen4 CPU with a very fast PCIe Gen4 nvme, so perhaps it was
-> fixed for others because they had comparatively slow IO or a smaller
-> workload?
->
-> I have attached the bpftrace run and a graph of the memory PSI. kswapd0
-> is at 100% during the critical sections. dmesg is empty.
-> Important events were e.g. 09:31-09:32 and 09:33-09:34 where the system
-> was completely unresponsive multiple times, for about 5 seconds at a time=
-.
->
-> I did also mention this on the #btrfs IRC channel and there are other
-> users still encountering this on 6.10
+All nodes need an explicit additionalProperties or unevaluatedProperties
+unless a $ref has one that's false.  Add missing additionalProperties
+to fix dt_binding_check warning:
 
-This came to my attention a couple days ago in a bugzilla report here:
+  xlnx,zynqmp-r5fss.yaml: ^r(.*)@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219121
+Fixes: 9e1b2a0757d0 ("dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings")
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml        | 1 +
+ 1 file changed, 1 insertion(+)
 
-There's also 2 other recent threads in the mailing about it.
+diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+index 6f13da11f593..ee63c03949c9 100644
+--- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
++++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+@@ -62,6 +62,7 @@ properties:
+ patternProperties:
+   "^r(.*)@[0-9a-f]+$":
+     type: object
++    additionalProperties: false
+     description: |
+       The RPU is located in the Low Power Domain of the Processor Subsystem.
+       Each processor includes separate L1 instruction and data caches and
+-- 
+2.43.0
 
-There's a fix there in the bugzilla, and I've just sent it to the mailing l=
-ist.
-In case you want to try it:
-
-https://lore.kernel.org/linux-btrfs/d85d72b968a1f7b8538c581eeb8f5baa973dfc9=
-5.1723377230.git.fdmanana@suse.com/
-
-Thanks.
-
-
-
->
-> Best
-> Jannik
 
