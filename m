@@ -1,69 +1,61 @@
-Return-Path: <linux-kernel+bounces-282310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A255E94E1F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:39:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37BEB94E1F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 17:41:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0A0281574
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:39:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E344C1F2122B
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 15:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE6A14B96F;
-	Sun, 11 Aug 2024 15:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B9F14B96F;
+	Sun, 11 Aug 2024 15:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="lqhH2yS+"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="E4YPYUAg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9C722615;
-	Sun, 11 Aug 2024 15:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CF522615;
+	Sun, 11 Aug 2024 15:41:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723390780; cv=none; b=KI9LvC9Py1MSl2NhAHzlAOoPfxBiGaMAC7E9tYa4zrejuEEIIbg+hIB1NiGiC8tuRyBqb9b0I07Y13CjoRwWagH41Q2y5YqDmrlcplJGmX26jaHw5PHiBqpE6puBfpoeJ//iSyU96N3vir0qMjOMxTg6SE7TeL0UVkWmdZukW7s=
+	t=1723390864; cv=none; b=kfp13VoNDO6KqKPfpCHYGmJXu6X4vo+Y8jnMGvqGI/iG8udOOikUj+vbOQFRiRYNAyQSuOkZyPjWQErzjhFI3DnL8IAbBEzwPdVYXxTCz4NPh9ttMUL4/M1oVmSFnd+/IRZ3KsjU2c+XqybpvHFR63h1/47LcIBa/IrEewgFDqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723390780; c=relaxed/simple;
-	bh=jGylAQh+xoaNmDSNK5N0fZAtKMGjeOI63ZspzNLi/vo=;
+	s=arc-20240116; t=1723390864; c=relaxed/simple;
+	bh=fA3nSkQj3+Amcf7/SmOiTUEfmHFc+E4ebSCfBjzYE2A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFVJPHVLPqMwjCw5qLbmbowrcC0ceQE5bZM8luKsHZ3MeZQCVjXo+BMrJA7Wm4249nIgUATR7/oGsMyQhGpz4R8BgpiN4b8JqVapohuQY7/E0Zi8G6J4BhNXRWK4Mx5k1T8kPrIF//cKeoPJ8w7rzYCOzMXClrujAR095dszhYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=lqhH2yS+; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=clz2OS/C9oDAjLDEeArQx9DmNgYsUMobIMcSE1TXVTU=; b=lqhH2yS+UKcTsZyyAOdoRve4P7
-	I0H5Bid7ERgVlXCGb7O5ZvtWrhZtI1vBH8xqNDKzzT7U9qIVV84Yz1OT/kNLJHHnegJkrir5Vf3/q
-	hK42JNpAzC5XVGm/03qgGYqckNu8g54g7xFwcNjyShiNioaU4hlErmF9EB/zbxN9oG0M=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sdAfI-004VQc-G7; Sun, 11 Aug 2024 17:39:28 +0200
-Date: Sun, 11 Aug 2024 17:39:28 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, horms@kernel.org, saeedm@nvidia.com,
-	anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, corbet@lwn.net,
-	linux-doc@vger.kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, horatiu.vultur@microchip.com,
-	ruanjinjie@huawei.com, steen.hegelund@microchip.com,
-	vladimir.oltean@nxp.com, masahiroy@kernel.org,
-	alexanderduyck@fb.com, krzk+dt@kernel.org, robh@kernel.org,
-	rdunlap@infradead.org, hkallweit1@gmail.com, linux@armlinux.org.uk,
-	UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com,
-	Pier.Beruto@onsemi.com, Selvamani.Rajagopal@onsemi.com,
-	Nicolas.Ferre@microchip.com, benjamin.bigler@bernformulastudent.ch,
-	linux@bigler.io
-Subject: Re: [PATCH net-next v5 04/14] net: ethernet: oa_tc6: implement
- software reset
-Message-ID: <46352f42-b099-4c50-a5ef-9248ed021b0a@lunn.ch>
-References: <20240730040906.53779-1-Parthiban.Veerasooran@microchip.com>
- <20240730040906.53779-5-Parthiban.Veerasooran@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3dmUFfe/6Ny/SxGgRruc4ZifiGnQ+6iClC55tvtZxVsC4qbS9tSQCudV+L9huNxtPDN1mE4dt0VjBpoE/AFKpH7AQJW2rG3X7RCb4wMDnPl0NJvQWoTAZr/tg4XzpGWAqmQbg6vDoB36CzHYU/EYxAjDJzcgR18qrh6qr1nX3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=E4YPYUAg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09CB1C32786;
+	Sun, 11 Aug 2024 15:41:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723390863;
+	bh=fA3nSkQj3+Amcf7/SmOiTUEfmHFc+E4ebSCfBjzYE2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E4YPYUAgHYvTK4hXaONxDOHniF4k/U5+GW3TaWEGJXAsi2AXrqtdA9DT91wy50Ktx
+	 G3E4j2Od+q/c/LrCXiEq3CaVKLq75DryL4rBUDZzO+sbOLUVKLjEQb6PuB6NOQeF0U
+	 cebDIl93Oe1xTkPONvNgR8k6ReEZsl3Det66hsxM=
+Date: Sun, 11 Aug 2024 17:40:58 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org,
+	Akemi Yagi <toracat@elrepo.org>,
+	Hardik Garg <hargar@linux.microsoft.com>,
+	Quentin Monnet <qmo@kernel.org>, bpf@vger.kernel.org
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc1 review
+Message-ID: <2024081143-grouped-blah-dd52@gregkh>
+References: <20240807150039.247123516@linuxfoundation.org>
+ <ZrPafx6KUuhZZsci@eldamar.lan>
+ <2024081117-delusion-halved-9e9c@gregkh>
+ <ZrjS0V-tCQ1tGkRu@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,16 +64,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730040906.53779-5-Parthiban.Veerasooran@microchip.com>
+In-Reply-To: <ZrjS0V-tCQ1tGkRu@eldamar.lan>
 
-On Tue, Jul 30, 2024 at 09:38:56AM +0530, Parthiban Veerasooran wrote:
-> Reset complete bit is set when the MAC-PHY reset completes and ready for
-> configuration. Additionally reset complete bit in the STS0 register has
-> to be written by one upon reset complete to clear the interrupt.
+On Sun, Aug 11, 2024 at 05:03:45PM +0200, Salvatore Bonaccorso wrote:
+> Hi Greg,
 > 
-> Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
+> On Sun, Aug 11, 2024 at 12:09:30PM +0200, Greg Kroah-Hartman wrote:
+> > On Wed, Aug 07, 2024 at 10:35:11PM +0200, Salvatore Bonaccorso wrote:
+> > > Hi Greg,
+> > > 
+> > > On Wed, Aug 07, 2024 at 04:59:39PM +0200, Greg Kroah-Hartman wrote:
+> > > > This is the start of the stable review cycle for the 6.1.104 release.
+> > > > There are 86 patches in this series, all will be posted as a response
+> > > > to this one.  If anyone has any issues with these being applied, please
+> > > > let me know.
+> > > > 
+> > > > Responses should be made by Fri, 09 Aug 2024 15:00:24 +0000.
+> > > > Anything received after that time might be too late.
+> > > 
+> > > 6.1.103 had the regression of bpftool not building, due to a missing
+> > > backport:
+> > > 
+> > > https://lore.kernel.org/stable/v8lqgl$15bq$1@ciao.gmane.io/
+> > > 
+> > > The problem is that da5f8fd1f0d3 ("bpftool: Mount bpffs when pinmaps
+> > > path not under the bpffs") was backported to 6.1.103 but there is no
+> > > defintion of create_and_mount_bpffs_dir(). 
+> > > 
+> > > it was suggested to revert the commit completely.
+> > 
+> > Thanks for this, I'll fix it up after this release.
+> 
+> Thanks! Note today Quentin Monnet proposed another solution by
+> cherry-picking two commits:
+> 
+> https://lore.kernel.org/stable/67bfcb8a-e00e-47b2-afe2-970a60e4a173@kernel.org/
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+They don't apply cleanly, so I'll just add a revert...
 
-    Andrew
+thanks,
+
+greg k-h
 
