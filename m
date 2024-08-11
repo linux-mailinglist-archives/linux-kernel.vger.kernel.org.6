@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-282399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38D9594E354
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:23:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0428C94E362
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 23:28:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D33831F220A7
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:23:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 379831C213EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 21:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0487E15C137;
-	Sun, 11 Aug 2024 21:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329E415DBB7;
+	Sun, 11 Aug 2024 21:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjZAefh0"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uMkFClxl"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D5D11CAB;
-	Sun, 11 Aug 2024 21:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327EF11CAB;
+	Sun, 11 Aug 2024 21:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723411401; cv=none; b=TXyizmmqVOJWoZMdHe7SY4fWlAoXour52VHlj9ngeijKljFgTt0h3qjutm1n1g2TKjwV5TJSnRa/ErNuR/yvhAzroHOE3XtzQphqfC3cV2BbyV6UFWWr97mfbyBOPIJXlz5vTRD/rdPaGZWZKRuZJ5T4tkGJWPW2//+Lt9VQrDo=
+	t=1723411688; cv=none; b=XGUCmb0GON68Y8e9Rq9iBrD4G43l5lIYSq2MV1x9JDJMwCjiN6eu+j15eZdf4jPStskLIsjqPQM5w5xA/8NobVEvt9D/AvM5MS0GwWv4mSILdZVYTLoO23aWM2+9sp9iLBo+mzch1A3Au8wCh08dlp7ZLlFc/5WPIgfLt8jAc/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723411401; c=relaxed/simple;
-	bh=6/tog7AijmFSbbOb9Kja2sdd1448VG0rlEkqmCpSCDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XsWTckkYJsMxTCa4X3Y1kIGQEQasRKfQiLfQ9SRU0AcXMhvANuREfxV7taXHg+LA+D3cZnamJKWjPwNz/ELpeTKgkI4suwpO6bPjflnuDjF48hbLErKZ8jOBAAzTWbHf7vepY6tKIN3pIo1T1Pu1Ape8RglyjIHaDtJFFcG2+vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjZAefh0; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso27444145e9.0;
-        Sun, 11 Aug 2024 14:23:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723411398; x=1724016198; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=dmUwrUSfBQFzrajL1iOaEwCXFsL0O8je4zmGdZPIH2c=;
-        b=PjZAefh0bUroSgu5lqRiKADtaSQugX7bIgA58snsSkA/RU7MLKQQCmt4UrYhL08NNr
-         Q3JBjsj9uAUeVZFVMquTaeYONMzBYXMM0UDTkSU35s//k9DJdJ1fuo6v2v5qJRV556FG
-         Sm2VaER9nCNzBAltGyAIp4bKYBXsEEGoTBLMlB2FHaXYX2mfby4xD0tiCCToVqeJcWgg
-         EIjBGG1z1CV2U1TcDuAEL8mJ8ne+pvymq2693OwPSu6dOkJ458pqOZTVqkwHPBvumiDF
-         8tZvSRYodGjm4z0gRRg9PMR+P84FU/R3PWJUKMBsD0mS7F07Z9xpy7O06QXDnV6eHArk
-         uKHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723411398; x=1724016198;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dmUwrUSfBQFzrajL1iOaEwCXFsL0O8je4zmGdZPIH2c=;
-        b=RZUxVtApK2SS3shTI3vSmHbBMzCYEZNnUV45jV04q5+K9sF5sDxWDF8osG8WWuV/YB
-         8gRy99rkO7nv4bM1lD15J98KU5HHxSgQWq6RU3BeYVp5S7NAAemAksZoJT/TM3f8P90e
-         bs2M7YLVfMJLk89SjISodpfS0UZUdO5Gs2m8hqGSHlvQ/ZChPLT7mgeRqkA1idcLNJL+
-         0cpGQWB2UBvBEqXsU9seqV/D0DclgxFWKCurqP+Vehci/FL66KeCtmQIhkYI9yBDewK6
-         8Txzu0X0F6FiCONo8RbMWMX3jurQFwx1bJ769y4o0WQUVLdG5ZU+z4uC0M3sze60kkhs
-         Q5sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUa9l9zL3abQW0s+ouIRg6ER5BHpq5gR14tOm7rs0pgwLQoRT3A0A5ppmpDclXgsz8Dowc2zlKEw9jk3ZzswQKDWHjphYVwFXfJ2u7rF+L9PO8wMY63GHAz/NVtbcbN7EEJAUdfm+At
-X-Gm-Message-State: AOJu0YxW8LsljZyeZFmIG1GMgMh+uGpBUO04yXOf1jcxS1oJiLCxayk2
-	ZTFmYrF9AfDC1ATO3aNGKqOUNXVAazrAubkEAKUFw0+1JJk/R0cY
-X-Google-Smtp-Source: AGHT+IGW0Kze6LJc/d+J5WO+J39Y2BxDIECNkFysAwtV+9+tJFsfxjXFDm9zsFDDcvbd/gcxwbZqHA==
-X-Received: by 2002:a05:600c:4591:b0:428:18d9:9963 with SMTP id 5b1f17b1804b1-429c3a28c24mr52406255e9.22.1723411397653;
-        Sun, 11 Aug 2024 14:23:17 -0700 (PDT)
-Received: from Lappy.lan ([193.223.71.20])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74aa5dsm163846605e9.26.2024.08.11.14.23.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 14:23:17 -0700 (PDT)
-Sender: Ben Whitten <benwhitten@gmail.com>
-From: Ben Whitten <ben.whitten@gmail.com>
-To: Jaehoon Chung <jh80.chung@samsung.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Will Newton <will.newton@imgtec.com>,
-	Thomas Abraham <thomas.abraham@linaro.org>,
-	Abhilash Kesavan <a.kesavan@samsung.com>,
-	Chris Ball <cjb@laptop.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>,
-	Ben Whitten <ben.whitten@gmail.com>,
-	linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: dw_mmc: allow biu and ciu clocks to defer
-Date: Sun, 11 Aug 2024 22:22:11 +0100
-Message-ID: <20240811212212.123255-1-ben.whitten@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723411688; c=relaxed/simple;
+	bh=hK/3+Gzc0DH1gc+/8FerXKv+bLc1g3J/ZqvDYphSfsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TWgEXswOgTyoJ31dQAxGiLf3834+0j0yTsMOIn6cHAlXeF6n+TbkAZxyyasUgtHx0eGsB/bKgWddiHGN6rKtZnObdHAl+y0q1fdY1UzGH4AMEf0hQbpg4FwnUs87ZfWuVAui9fuxpzzp9k18rtVKWKBt2TchALYc/9+wJFFEL40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uMkFClxl; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723411684;
+	bh=ChN2ORLT70fk7/cAt8tujTgHQmbtR4/dTf3dgFUBMS0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=uMkFClxlN703989I6uB3tfgWm7o+SOa4c2pcH6zBOPmC7kH8PztxoKIVgmEuB5AJM
+	 E4omEsfDB6Vds0ubYiguby8zJrZ9A5xBvDbQnVlgoW2E/IRlu7glgrGZz2fRwsTu3K
+	 eIpi3d4FycbhX3O65lEWbRbWm9xqCbLhSmyS88EjSmgAyMnMFQT9ovP/B4mXzxwaLC
+	 n8q+vvZyu0IkiOK/KsatBHV9Z3cjup3qwUysYjDmgDDFHNZosELSeB5u63gZ+GrL3t
+	 THRebQFMfiwAfAiut1DHPSlMG0eRlapQKsoWuxlKGZAEaU//Khk2FnGqLlggZB6IKM
+	 cRwv4vmkidlpQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhrNN0FLXz4x8N;
+	Mon, 12 Aug 2024 07:28:03 +1000 (AEST)
+Date: Mon, 12 Aug 2024 07:28:03 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov
+ <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the bpf-next tree
+Message-ID: <20240812072803.78139fba@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/Legwrp.uHXHP.JzqwQ4dSIl";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Fix a race condition if the clock provider comes up after mmc is probed,
-this causes mmc to fail without retrying.
-When given the DEFER error from the clk source, pass it on up the chain.
+--Sig_/Legwrp.uHXHP.JzqwQ4dSIl
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: f90a0612f0e1 ("mmc: dw_mmc: lookup for optional biu and ciu clocks")
+Hi all,
 
-Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
----
- drivers/mmc/host/dw_mmc.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The following commit is also in Linus Torvalds' tree as a different commit
+(but the same patch):
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 2333ef4893ee..e9f6e4e62290 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -3299,6 +3299,10 @@ int dw_mci_probe(struct dw_mci *host)
- 	host->biu_clk = devm_clk_get(host->dev, "biu");
- 	if (IS_ERR(host->biu_clk)) {
- 		dev_dbg(host->dev, "biu clock not available\n");
-+		ret = PTR_ERR(host->biu_clk);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+
- 	} else {
- 		ret = clk_prepare_enable(host->biu_clk);
- 		if (ret) {
-@@ -3310,6 +3314,10 @@ int dw_mci_probe(struct dw_mci *host)
- 	host->ciu_clk = devm_clk_get(host->dev, "ciu");
- 	if (IS_ERR(host->ciu_clk)) {
- 		dev_dbg(host->dev, "ciu clock not available\n");
-+		ret = PTR_ERR(host->ciu_clk);
-+		if (ret == -EPROBE_DEFER)
-+			goto err_clk_biu;
-+
- 		host->bus_hz = host->pdata->bus_hz;
- 	} else {
- 		ret = clk_prepare_enable(host->ciu_clk);
+  1cbe8143fd2f ("bpf: kprobe: Remove unused declaring of bpf_kprobe_overrid=
+e")
 
-base-commit: 5189dafa4cf950e675f02ee04b577dfbbad0d9b1
--- 
-2.43.0
+This is commit
 
+  0e8b53979ac8 ("bpf: kprobe: remove unused declaring of bpf_kprobe_overrid=
+e")
+
+in Linus' tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Legwrp.uHXHP.JzqwQ4dSIl
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5LOMACgkQAVBC80lX
+0GxfjQf+OXUl2pSD8wBag7YwugkAQNHtBIplXcXpzqis9Cy8IoeRYO5k+slHd6ES
+34XYDpOQDzmTnqQtK1dRhhdFTw0vfZ8rFwKRrDr/nf0LQj2X1TFIfr0viRwVBqAI
+HnIPFCSSRuaFpcHmpHy6Qf8F08ueNtNVtNQzliYaRn2iUjZDygbTHkhqTsRzrAPj
+GWrox/AdocQLRH1mTELulNM+w1biRSpRRRNWtZ3wI81nS4TI9b57Tccob/4iWx5o
+59Ck0FuhyMIup2Vx3/z25wRqj+6Uji8r5hXRrfLQ7P/VIqC8T+vIV2LZFwfX6u0V
+ZjJxFZNH5voFrZ56R+Wy6nvKk3MT1g==
+=dDCl
+-----END PGP SIGNATURE-----
+
+--Sig_/Legwrp.uHXHP.JzqwQ4dSIl--
 
