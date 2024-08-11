@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-282412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C9D794E3A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:27:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8DC94E3AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CFC281694
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9CD281F7D
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D2915FA7A;
-	Sun, 11 Aug 2024 22:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF07B1662FE;
+	Sun, 11 Aug 2024 22:28:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="pXNV2Erl"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="uAlyXlbJ"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D16A158D98
-	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D53715C152
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723415248; cv=none; b=JdcW367qxHfNy9n+gPoGAtiNM4y/Uj8DCUbF4Cr8bBtZZzv/+2GhqYnn3nP9l9RzBccUd/UmnTPYPhTeWZdFKaTn70ZLN0KNwnywzXgbufGewnq3r7sOolYEjjE0q9E0MBWSyOexwRWYU6TfBS60vzMcw9VMtB8deJxYxklRMM0=
+	t=1723415333; cv=none; b=e50jCkzd/8A07Zm86EdunIkoQkeDxx4tU3xx2wSPzI9hwddf9qw63AlnrcJ+6ZYz0yhjtutqs2YsWybcOsf5tqjX5ftk0s9+pT92je/mqgccGKzxKXamdYHLLJRlic4rKdjtR9mnMrTQ18xYEhgzn14sGSXSArDsOsdq2wzwEzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723415248; c=relaxed/simple;
-	bh=SzyJrnQp8Uz830lPa3hcN4gxoi7JSiSAYiOGEnSLnIo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YLhjaO50Ow9rP4vaIQKGEsu43KCD5pP8b3lEIZ7eYMOYAveKydRiVeChpftTEPulPGIODr0mEg3rrGnzQm1upP4l1gOgDkQrVmD15oMqSiLtdhwlq3v0TcGBYOa3Qs68ujPolXF2JHm3i5RmTCM3gaK8EM4fDPN5JaXcEJey9No=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=pXNV2Erl; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1723415333; c=relaxed/simple;
+	bh=SvuBgeyo27tgYl4Mr5AlkANtSM/xC+yG8m8oOENgZv8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DX4sySsFint9Wd2jcoYHEiz9Ol2/0cKhd2VcHfwZcDZ2Vz7J5r8zNqd+e8Odsy/BDzdOVra3Js4Wly04nB8C6Ms4gX94gcf3ksRi7HR464C1PBIBZSt2mCqdzSDVTtF3wqfTjTQ90SEWqNGVqd/hpgG380BTpl2Pm2a5I3+XzJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=uAlyXlbJ; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso5058122a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:27:26 -0700 (PDT)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52efd855adbso4744837e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 15:28:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723415245; x=1724020045; darn=vger.kernel.org;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723415328; x=1724020128; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=e4Zac+A5KLRIfYXaRReKZx0UGyVecnM7nQMC/JMtMM8=;
-        b=pXNV2Erlq6D6aOXOF89sa94GVEfnnzb7eC/BsvlR7N3HYLINXPVZ0JvY3+K9p0vRcR
-         72VTOgjvo2pGDOA34MZ8vFWJlJETQXtD9AZhNeci6e0M7tK0hzSjFTjledfvORL7KuZC
-         pevm0IUE9wXHAA6scPwJiGCCwdwwEDHHBKxm8OhzyIUHzlwEpYwSGBHnsYUBQq8xSw5y
-         9giEFUzSjKFrOfCNYIE2vZKoQkp3cklYnilgi9Te3VH4w3cRbf+k3NlcIlVe2nw5/z0D
-         wwob16L6g5DuhupjpxPfS/+TQMcEPG2615U0jb0e/8gn1uhZq2g1Cu3uc61Zq9UTcNO0
-         EkiQ==
+        bh=9kZmqufziw/U+BnNxjrYdFrOXuxXNNyKWmcKd111XVA=;
+        b=uAlyXlbJc8Kmw1xRFgAaXH8L6C6YOTFcL6tlJRhDSQ3zJNMxdLPjhpxu6lAgXgwa5i
+         hvShzlJFE3a4S72bgezsmUrwVMDXg6nkBezSMo+EaQmgvroCipaMdskz7GGwIma3nklA
+         tIPnyImvXpY1kgL0hoboF4zVL7yG5LSwFQMGti99dW8/5xC6WwTNovTH17r28v5+tuAq
+         zNrZR+V4BKKKKSKLIxhJbEnRsgMMOe8IWe1PvoViPlugc28pUx5Dc7oWkUzgvEfQjY5i
+         4ugGME4zEHW99MOV2UAlBCd7IO4F+3MZrcA5NVGKnrYDZQKGF3yA2K8YeIq+GA2odoPc
+         z8OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723415245; x=1724020045;
+        d=1e100.net; s=20230601; t=1723415328; x=1724020128;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=e4Zac+A5KLRIfYXaRReKZx0UGyVecnM7nQMC/JMtMM8=;
-        b=DFTkP/Bep/Do5C/ZRB8iWR9x8TCuJvCpndXFPEyl8VtW1oUVLAet2PHPXCSxDkKeQs
-         yVdEYVAnV0iHKrim5tXYmz7wQ12cY+rJ3pMN1waNKFntPyY9Ki4WyPf28Y1J8l3OJpbm
-         kS1zcKBLHly83qNslSieZ7JqrT8e0T172Pf2J2R9qcHP5MaKYYM5iyEE41V4HFwm2HBX
-         QPOaqp4Iyq615xCJdGnudIJmuextDSANhwDr4PAHbE8UnsPdrhck2vRU08CkIEp8QC0q
-         AyeCVvD3tDQcM13gCijBxEVlY6H37C9qzVs7T0UzfMcj8K/delqxn+lLXi8RDOZx3sfp
-         EOfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOvaBrP1Ipev4y9Dk2EOn8vs87gJPGRWKE9ZlBtCDfuUaZ0Esy/Y2JqhLoJc9pxc7lvPtFG1D9ZNoWBM0Q/FbvNsodNZUMflsOjtZq
-X-Gm-Message-State: AOJu0Yy2sby//AWrbif5Z8MMxF1T9kwWW6D1hGf58uPGgvX5qdGAXuaS
-	zd8iKyYy77qQXaZdmqpdIdjncXhFkQiyudvvrPpP6Z6+IHXv9tvtqcDAvOJbjdc=
-X-Google-Smtp-Source: AGHT+IFuRotOvb7NG9VaBxjLgw3eDaFGdEzAK/4EBQJP5b+w6dEHIXP2tg92tewHv2u6HT5+eJvTWw==
-X-Received: by 2002:a17:906:d247:b0:a7a:b43e:86cf with SMTP id a640c23a62f3a-a80aa5a6dadmr522707266b.27.1723415244273;
-        Sun, 11 Aug 2024 15:27:24 -0700 (PDT)
+        bh=9kZmqufziw/U+BnNxjrYdFrOXuxXNNyKWmcKd111XVA=;
+        b=Udi7F645c2WxlmirD3pmcKaAY1y64Fo5sU1SZSnSoH/vs3pm368o2If5pdP8LrAzzG
+         S4JzxL5vh801//MuLQyq1b5fyEh6PtlTHbCLXM5/7cMfoPGS85vnSVMwS6PmkLy2jB8a
+         MZRjKlP/0O2shGmbLFycjeYVZN6ppT9Kmxp7MDsYUYTBH9yy8w/cz7vOlEhHMVw9V7+P
+         QsafnXPJCqg+HVDgbklvUZQV3y2BYh7QKZv6+yKHu8awBpGHhmKctLSnJ9xB2zLpKWMX
+         HMdvaDLfpH8BCui8WEudsxiqPHHrjM1q3bI8LN2nbXrAEwwSf8ncxRml/ksZKn/QFZfN
+         32zw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCOcGJ6IIrpQMql7tfFKNuTRAGugcOF6Eh1kr/OWT+fWyVYJcnZSu4AG0rVK1uWJiPC7VIagDKi46IV4Nk9W4Bd+kflwtD4ezCoPsv
+X-Gm-Message-State: AOJu0YyBBLH8wY5MQi1kud7ppWedORQRP9v86K41faFj/pJjQg8b/md5
+	xhzbmC4iCaBOlK/vQTr4SeDpfk9UOxtBlO+MQr57OxYKnBAw5FQEA6Lrs5/wACg=
+X-Google-Smtp-Source: AGHT+IENX86CxS1gvrkgJ3UUqgNCjaYT47MBR3MYQB8KT1yLME4fAVlu2X15Xe16bQ5f2lcEQ4b8hA==
+X-Received: by 2002:a05:6512:2248:b0:52b:bf8e:ffea with SMTP id 2adb3069b0e04-530ee9cf30fmr6123089e87.40.1723415324643;
+        Sun, 11 Aug 2024 15:28:44 -0700 (PDT)
 Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb212e49sm174447566b.160.2024.08.11.15.27.23
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1cce18sm176097366b.124.2024.08.11.15.28.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 15:27:23 -0700 (PDT)
+        Sun, 11 Aug 2024 15:28:44 -0700 (PDT)
 From: Thorsten Blum <thorsten.blum@toblux.com>
 To: axboe@kernel.dk,
 	asml.silence@gmail.com
 Cc: io-uring@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] io_uring/net: Remove unneeded if check in io_net_vec_assign()
-Date: Mon, 12 Aug 2024 00:26:39 +0200
-Message-ID: <20240811222638.24464-2-thorsten.blum@toblux.com>
+Subject: [PATCH] io_uring: Remove unneeded if check in io_free_batch_list()
+Date: Mon, 12 Aug 2024 00:28:18 +0200
+Message-ID: <20240811222817.24610-2-thorsten.blum@toblux.com>
 X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -90,23 +90,23 @@ ifnullfree.cocci:
 
 Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- io_uring/net.c | 3 +--
+ io_uring/io_uring.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/io_uring/net.c b/io_uring/net.c
-index d08abcca89cc..9f35f1eb54cb 100644
---- a/io_uring/net.c
-+++ b/io_uring/net.c
-@@ -189,8 +189,7 @@ static int io_net_vec_assign(struct io_kiocb *req, struct io_async_msghdr *kmsg,
- 	if (iov) {
- 		req->flags |= REQ_F_NEED_CLEANUP;
- 		kmsg->free_iov_nr = kmsg->msg.msg_iter.nr_segs;
--		if (kmsg->free_iov)
--			kfree(kmsg->free_iov);
-+		kfree(kmsg->free_iov);
- 		kmsg->free_iov = iov;
- 	}
- 	return 0;
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 3942db160f18..7597b9dcab28 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -1382,8 +1382,7 @@ static void io_free_batch_list(struct io_ring_ctx *ctx,
+ 			if ((req->flags & REQ_F_POLLED) && req->apoll) {
+ 				struct async_poll *apoll = req->apoll;
+ 
+-				if (apoll->double_poll)
+-					kfree(apoll->double_poll);
++				kfree(apoll->double_poll);
+ 				if (!io_alloc_cache_put(&ctx->apoll_cache, apoll))
+ 					kfree(apoll);
+ 				req->flags &= ~REQ_F_POLLED;
 -- 
 2.46.0
 
