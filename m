@@ -1,39 +1,81 @@
-Return-Path: <linux-kernel+bounces-282155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DAC94E03E
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:07:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A5D94E041
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 08:13:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4E221F214AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:07:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50F10281A08
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 06:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C799E1B949;
-	Sun, 11 Aug 2024 06:07:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D655E11CAB;
-	Sun, 11 Aug 2024 06:06:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70851C69D;
+	Sun, 11 Aug 2024 06:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZhgoSazN"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD5C11CAB;
+	Sun, 11 Aug 2024 06:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723356422; cv=none; b=isuRMe8nIbBIub8sjkpeaVENTlpEdrl/1+2Oelr6rbYB/wdIDtkjREpsKzsfNSMz90uzR228MjZ59brR/tY59Zu2CmpAbDEODT7hXG5fpySrOS3eo2T9W3eQ3b6vEKCgc/VrYfNwQ3HSosLNmdaDsATCSy/0GUgZIdw4tCieElo=
+	t=1723356770; cv=none; b=mI+T9Nv93p0wBVLMMqgDIox6mouQ/PEF8rYqJW6SsxAZmK2Ifkf1PrnLVO9Mo0PuMkWeKe3nh88IdZMMnzBusN4hDsty4zkQN/WpP7jOoPdNhFItrJWtAExnMC0Cl7HoWftJaQYQVSVzgfHuH27y6Ouf1eT/gStsO/Bosn/bjEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723356422; c=relaxed/simple;
-	bh=3cCuEG7omtJUoPB4w0IwnZEfhSej2gjL7C0cbSC5JL0=;
+	s=arc-20240116; t=1723356770; c=relaxed/simple;
+	bh=LjDROF9St23cmhsJGgRvN6jnqfu5Yrr8r2jMcOmvmC8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BPGE0dIZL3HTa6zbrIaYc+94pZJc8zLx00tYk+sibaXrc7lKitoTzXnyT+3g1iT8lMXnEtRjt0JpDn2gI1LAWI04EPxaLJ/czUeuozRBvSbbTT7OPKxzm9N4uE0tt7EBjHob2vDPS23RtXtSjhC1zGMc1ztb6wb+7gkv9dSPwj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DE39FEC;
-	Sat, 10 Aug 2024 23:07:24 -0700 (PDT)
-Received: from [10.163.57.79] (unknown [10.163.57.79])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3DCF63F6A8;
-	Sat, 10 Aug 2024 23:06:48 -0700 (PDT)
-Message-ID: <ee1b9177-fb12-4bcb-a644-8d5d3d9f16fa@arm.com>
-Date: Sun, 11 Aug 2024 11:36:26 +0530
+	 In-Reply-To:Content-Type; b=EULE8PWCrC5PAQcFkTTHbcPowMDd2zCt9vbDPDNDV3vqrFdzMS033ZueAyo0hZRKqTm6I7JpyXEVFh7A3FsiB/602+hF3pK1hk3tgxlrcF6AnMlbFSw5lfaJzdnG3Jr88XxhnEjH6RfNIRCMKzJcg/0Nn/llpxOEfqOTe9S3Vcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZhgoSazN; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47B5CLOF012640;
+	Sun, 11 Aug 2024 06:12:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=J
+	4eUPVlrFRN6f0/1Hfhl0KmppDF+RMmV8TnhMaJ+TTw=; b=ZhgoSazNI70HUZpeC
+	kWE2UJpm1CULOqB6PcLUqmC/sxVWd3ek/3IdRVAD1NdhnMCabfJKIwLG5zXawows
+	y8vN6KBqlAypCLzgQPJ9OyvAxbMNqBZrSLD83PJD/s/Z3uiP+Qxmv0mxreq9PcWF
+	M5524J6qpspH1FOo1j1LEpDotPNg/GqLWCpMh175bj/rPbImI4t4MberslTL3zM8
+	ddkmkc6sk4leiwmEAhN8Ge2wVo3KusJFHQ+jyJk3TjFoed8ddkSihXY9j6xRpkQw
+	Qpc5t2D++/sQ+FFTPyeQuja2Nbz/5IwclziCNXUkAk3zi9h+2G5Wau4IlRCUkxQr
+	Fhk4Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wwm7j73h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 11 Aug 2024 06:12:36 +0000 (GMT)
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47B6CaMp011416;
+	Sun, 11 Aug 2024 06:12:36 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wwm7j73d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 11 Aug 2024 06:12:36 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47B520g0011524;
+	Sun, 11 Aug 2024 06:12:35 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xjhts2e6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 11 Aug 2024 06:12:35 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47B6CVxW33161748
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 11 Aug 2024 06:12:33 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B6CE020043;
+	Sun, 11 Aug 2024 06:12:31 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 12A762004B;
+	Sun, 11 Aug 2024 06:12:31 +0000 (GMT)
+Received: from [9.171.59.108] (unknown [9.171.59.108])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun, 11 Aug 2024 06:12:30 +0000 (GMT)
+Message-ID: <8bf89095-4e5d-4111-8ae3-607e0beedd1e@linux.ibm.com>
+Date: Sun, 11 Aug 2024 08:12:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,110 +83,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
- shuah@kernel.org, willy@infradead.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- osalvador@suse.de, baolin.wang@linux.alibaba.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
- kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
- mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org, ying.huang@intel.com
-References: <20240809103129.365029-1-dev.jain@arm.com>
- <20240809103129.365029-2-dev.jain@arm.com>
- <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
- <5a4ae1d3-d753-4261-97a8-926e44d4217a@arm.com>
- <367b0403-7477-4857-9e7c-5a749c723432@redhat.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <367b0403-7477-4857-9e7c-5a749c723432@redhat.com>
+Subject: Re: [PATCH][next] net/smc: Use static_assert() to check struct sizes
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrVBuiqFHAORpFxE@cute>
+From: Jan Karcher <jaka@linux.ibm.com>
+Organization: IBM - Network Linux on Z
+In-Reply-To: <ZrVBuiqFHAORpFxE@cute>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5DPLcHWIEqLNKMGPjlyYFNMUgkeOygdI
+X-Proofpoint-ORIG-GUID: 4YP5CNWcfWvNZtPpoJP2M5ddbXVvIimN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_04,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 mlxscore=0 clxscore=1011 adultscore=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
+ bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408110046
 
 
-On 8/11/24 00:22, David Hildenbrand wrote:
-> On 10.08.24 20:42, Dev Jain wrote:
->>
->> On 8/9/24 19:17, David Hildenbrand wrote:
->>> On 09.08.24 12:31, Dev Jain wrote:
->>>> As already being done in __migrate_folio(), wherein we backoff if the
->>>> folio refcount is wrong, make this check during the unmapping phase,
->>>> upon
->>>> the failure of which, the original state of the PTEs will be restored
->>>> and
->>>> the folio lock will be dropped via migrate_folio_undo_src(), any 
->>>> racing
->>>> thread will make progress and migration will be retried.
->>>>
->>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>> ---
->>>>    mm/migrate.c | 9 +++++++++
->>>>    1 file changed, 9 insertions(+)
->>>>
->>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>> index e7296c0fb5d5..477acf996951 100644
->>>> --- a/mm/migrate.c
->>>> +++ b/mm/migrate.c
->>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t
->>>> get_new_folio,
->>>>        }
->>>>          if (!folio_mapped(src)) {
->>>> +        /*
->>>> +         * Someone may have changed the refcount and maybe sleeping
->>>> +         * on the folio lock. In case of refcount mismatch, bail out,
->>>> +         * let the system make progress and retry.
->>>> +         */
->>>> +        struct address_space *mapping = folio_mapping(src);
->>>> +
->>>> +        if (folio_ref_count(src) != folio_expected_refs(mapping, 
->>>> src))
->>>> +            goto out;
->>>
->>> This really seems to be the latest point where we can "easily" back
->>> off and unlock the source folio -- in this function :)
->>>
->>> I wonder if we should be smarter in the migrate_pages_batch() loop
->>> when we start the actual migrations via migrate_folio_move(): if we
->>> detect that a folio has unexpected references *and* it has waiters
->>> (PG_waiters), back off then and retry the folio later. If it only has
->>> unexpected references, just keep retrying: no waiters -> nobody is
->>> waiting for the lock to make progress.
->>
->>
->> The patch currently retries migration irrespective of the reason of
->> refcount change.
->>
->> If you are suggesting that, break the retrying according to two 
->> conditions:
->
-> That's not what I am suggesting ...
->
->>
->>
->>> This really seems to be the latest point where we can "easily" back
->>> off and unlock the source folio -- in this function :)
->>> For example, when migrate_folio_move() fails with -EAGAIN, check if
->>> there are waiters (PG_waiter?) and undo+unlock to try again later.
->>
->>
->> Currently, on -EAGAIN, migrate_folio_move() returns without undoing src
->> and dst; even if we were to fall
->
-> ...
->
-> I am wondering if we should detect here if there are waiters and undo 
-> src+dst.
 
-After undoing src+dst, which restores the PTEs, how are you going to set the
+On 09/08/2024 00:07, Gustavo A. R. Silva wrote:
+> Commit 9748dbc9f265 ("net/smc: Avoid -Wflex-array-member-not-at-end
+> warnings") introduced tagged `struct smc_clc_v2_extension_fixed` and
+> `struct smc_clc_smcd_v2_extension_fixed`. We want to ensure that when
+> new members need to be added to the flexible structures, they are
+> always included within these tagged structs.
+> 
+> So, we use `static_assert()` to ensure that the memory layout for
+> both the flexible structure and the tagged struct is the same after
+> any changes.
 
-PTEs to migration again? That is being done through migrate_folio_unmap(),
+Hi Gustavo,
 
-and the loops of _unmap() and _move() are different. Or am I missing 
-something...
+good catch. By reviewing it, it makes sense to me. Please let me give it 
+a run with our test-suite before adding a r-b.
 
->
+Thanks
+- J
+
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   net/smc/smc_clc.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/net/smc/smc_clc.h b/net/smc/smc_clc.h
+> index 467effb50cd6..5625fda2960b 100644
+> --- a/net/smc/smc_clc.h
+> +++ b/net/smc/smc_clc.h
+> @@ -145,6 +145,8 @@ struct smc_clc_v2_extension {
+>   	);
+>   	u8 user_eids[][SMC_MAX_EID_LEN];
+>   };
+> +static_assert(offsetof(struct smc_clc_v2_extension, user_eids) == sizeof(struct smc_clc_v2_extension_fixed),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   struct smc_clc_msg_proposal_prefix {	/* prefix part of clc proposal message*/
+>   	__be32 outgoing_subnet;	/* subnet mask */
+> @@ -169,6 +171,8 @@ struct smc_clc_smcd_v2_extension {
+>   	);
+>   	struct smc_clc_smcd_gid_chid gidchid[];
+>   };
+> +static_assert(offsetof(struct smc_clc_smcd_v2_extension, gidchid) == sizeof(struct smc_clc_smcd_v2_extension_fixed),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   struct smc_clc_msg_proposal {	/* clc proposal message sent by Linux */
+>   	struct smc_clc_msg_hdr hdr;
 
