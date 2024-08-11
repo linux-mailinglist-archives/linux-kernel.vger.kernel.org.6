@@ -1,334 +1,126 @@
-Return-Path: <linux-kernel+bounces-282363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F49494E2E5
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:20:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE65294E2E7
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 22:22:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2211F21347
-	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:20:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A130B207CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 11 Aug 2024 20:22:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20B315854B;
-	Sun, 11 Aug 2024 20:20:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9108A1586D3;
+	Sun, 11 Aug 2024 20:21:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kUjAyuPY"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WGi13W8U"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A0711CAB;
-	Sun, 11 Aug 2024 20:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C211CAB
+	for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 20:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723407635; cv=none; b=BzcCF65hFLbrX0wcli/QqgfmXNIeUeV0H0+8WTwVZh8qPG+gplZ3X3h+fyFAbDbhXyTR7r7SybuGH2nXujmxgg4BeJMpxKyhFlg2dSFdqEbBDFf8Q2Vnklwq5spGzjaKDfLY/0C6eDYIuA//lejq4ajXp1ajuxnDb3nuANDsnUk=
+	t=1723407716; cv=none; b=PW0yxXDfY/5UPXfSzKtjVvsJbbHt6LAaxDc8Vq1D1SL8LptvbsdOO7XR8cjOIgEhl3+GGJq6V9mMUpMmkPJAs7ekq75A8DfBEnnnHljddzLzN6BU7OpggYYUMjsAcIv07SDlc7PlRUI44eg/uszF+3QcWkhEs4h8DE0xUIzb2EM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723407635; c=relaxed/simple;
-	bh=9nrPhqOIli/Sn+PmdftIwr2iEj3WzOG5DRHL3sC9amk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TKhrqzksJ9DPuhpYlg+X9M+ZkJQEPbiUSKBPrqSHXJVOOtPh/WYXqxhHlN2bdxb8OHTTS2RFNFoL0zmcdJwWz6iF0ibn7fkuh0YfL3w8T+5QUxk+M0ducXAIrIpqGCd/sDhsOZbYvz+rEhAT72igv04WzBk9QOLi3/x3HiEn2/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kUjAyuPY; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so2557689a12.1;
-        Sun, 11 Aug 2024 13:20:33 -0700 (PDT)
+	s=arc-20240116; t=1723407716; c=relaxed/simple;
+	bh=iCtO7OAXdN6zw99EYZ2uUFWg7u0Ik1EAWzd+J5nJl8Q=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=hvi4GsdVAad5Fd9ffLqfa0RJw6TLiwKFM35AlM9EHhR2Je7+OY5x3L/HGDUs8nQHmMlVjW27Ef/kS50+xT6Y7B+l5yI+u+QANjnQds9+TMZHsccjNmz0gBDGrwQmluMzj6T56pOtUgZgzFhLBTlBTCoUB3PWkB/FOeoFcoKfZYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WGi13W8U; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fd657c9199so163035ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 13:21:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723407632; x=1724012432; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jdyzGbXOdwkKB4AadqvgplhAks6zXNnOP9aRm8WRn0I=;
-        b=kUjAyuPY8ew5chwJLuHiZZaie4+8nVfe0vi4/j1DGA4gSbyLODuxVKmDM6nZOSUUHt
-         dTBISNAqKF6Z4fAWVVlWk7DUmFUSuXUipYLgwbzwpAa7VRTYn7LPiu3pZ6yd8ThnGYVY
-         MG+/kWsMsYMM4PzZQXZEqLvBrGFO9e+gXuIsHgmj7ETHtOHAK5riudvtA9Zc7ZQagwAi
-         PpMXfi48vMH+ENuLX+7+GGgiBeUbu8HY7AGpj9dacwmO+/wTY8WiPKoXQj9zwmYAHT6F
-         ppvts/zBkdmupO2q9hAqA50In9i2rlONMFlBf3euVmhrAqAcqDG4buYDmvur/IfTIQfx
-         01vg==
+        d=google.com; s=20230601; t=1723407715; x=1724012515; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Y39ocZR3ybGuuhWSwlGuXQ5fKfzXZURWW4sanMk1Rs=;
+        b=WGi13W8U4vqKxYI9WZbNKK3+IvHg14IaKxpvmfYK872zjQmzzarXghyCE75MBQfhGn
+         IWcyIp/wt6PecW5XfpTQ28n0/R9kxcZlV84V4xL4acliL8iZ1+qWd6RV0Kxn82zqErKK
+         kj8H8AoIxsZFiOwEqV9xhlQ/7844GdbcRFV8PS6uPZb1LjfpddQl/Nc7hGCdsGOxRMog
+         oyp4lFzuFX52kQRWhqlMkjUgtgl5WcixnNxPw5KTUQnPCOqXA5Pj7fey5hkMMZhyrwq9
+         qGaYlwMuhxKv6ifm4dm727/LjPAuUCU8ESQIKfraJZ+Dc52b7cMFOpPjfK+O+fXZwuXQ
+         1QuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723407632; x=1724012432;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdyzGbXOdwkKB4AadqvgplhAks6zXNnOP9aRm8WRn0I=;
-        b=iRmUkfUvTjNzaByAk1HTPoIB+DnmPoR3gAZHYFjef4dsceWNR4FF1lFGA+88U305Hj
-         692WzeywxqyrOjKIL+aGoBFKzUErWOCgTyrRvqmFrCqA+UGOXp4SFuQtjL2rQA9G5+p4
-         PR14de3vnfu+O/XRh26xbDmZrc0aGE17sD90E/CkGVFAgAG0Y16fZsbQxrrrg2L7bWi/
-         YQDQ5c1cpvHMxpXz1D+4vKjrhJH0kjUrYty78Jxn7ZgjmaT0IhP5ZPDRL+D9bWd/sxgE
-         /KAITbn6IuExJZtkmO825+ejfNLwFraP3h6x8wc53AfvNitUtBdO9Y7J/q+/cLpSvAIv
-         AhvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvcJ130T9dCToB7KT8BDBodUIYR3Nsn74KiQyGnzmv6rzeomM+8neq05iObJGKLg0ZbtYBgsijtG3J5OxDEXq4nSrGxM4QPylU/rKziEE4m+qdupe7LncGYZYAAqmufExmcK/+h7o1IME=
-X-Gm-Message-State: AOJu0YxK326oGphmolakEatqCkQVCmAvb6TfnkFgR54TWX6rlOstb3S4
-	D+WxDgC8YFIZhQAVU9ytUvUfn7n7OvrlJ/nrllOFt5v2pAQndzPJ
-X-Google-Smtp-Source: AGHT+IHruNPv2D+LHNw+PgNcH96rxSa8LNiyTCMDYpVfEh5uq6kV5kmjYkUl9Rjlhsl1fkqnFJ7iSA==
-X-Received: by 2002:a05:6402:50cc:b0:5bb:8ffd:24b9 with SMTP id 4fb4d7f45d1cf-5bbb399ee28mr10059346a12.0.1723407631701;
-        Sun, 11 Aug 2024 13:20:31 -0700 (PDT)
-Received: from [192.168.1.127] ([151.49.95.13])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd190ad1bcsm1591942a12.30.2024.08.11.13.20.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 13:20:31 -0700 (PDT)
-Message-ID: <f9fc3639-d1ec-4c59-9c84-126561c2b86a@gmail.com>
-Date: Sun, 11 Aug 2024 22:20:28 +0200
+        d=1e100.net; s=20230601; t=1723407715; x=1724012515;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Y39ocZR3ybGuuhWSwlGuXQ5fKfzXZURWW4sanMk1Rs=;
+        b=Yj1/zNXHXwin+msk6S29/D1N4xmPJngetjw2h4qg9WAHX2phNrdv/0JhImPAbW7WCN
+         oXIekb3tadkFRsQAi91CLu/2ZUYzbsLEhjQLmVVW4L2MDBZjtemcvQocAUDe6T2s31iX
+         HgFubLbwTr7MGbIPEc1QqQJX5/z0QMLtkQqqf+lnxdCz1xwXmTbIHphqxrnbt1YGxdB6
+         RjOJVVBE4PbVlwUFDZt0MZzxUmVFTMPMWLMa/7GNBkdmHeeEveJu3wLXGcp1kaf1RJyM
+         b4DW2DB+b03bNipeRy4Z2NQSsZOUmaU6qYlWx1myqmI90L35qNWAbol38GGB6X4NFoj+
+         hbHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcpqz3ETPKix6sGe3boGR5U7ni8sfBWaWQRaAP76JDkcUQ9iOJ5/qbyh2gHSDaAvIEbQWcccHxCv3jq7EwVRlgveBIdei9WiKCbL4S
+X-Gm-Message-State: AOJu0YzTXPfEs9pDWPK3BcQTNNEpYlKqUjDgzQ0dtCKMWP0XbySMxaB+
+	wDLBp0RcgZhHptvUlr1TV1NEiIMQy06xj8Cw4alaPXYc0SpkfqEUP32mphPVDw==
+X-Google-Smtp-Source: AGHT+IEKhuskO4u6WdIOWmXXHKq52K3lHUQHBEitTHtSryDG+qLr7BByebpaZ02yRHU/2ntsB/h0wg==
+X-Received: by 2002:a17:902:ecc3:b0:1fd:d807:b29d with SMTP id d9443c01a7336-200bbe22dcfmr3255445ad.28.1723407714169;
+        Sun, 11 Aug 2024 13:21:54 -0700 (PDT)
+Received: from [2620:0:1008:15:49ba:9fa:21c6:8a73] ([2620:0:1008:15:49ba:9fa:21c6:8a73])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb903b09sm25705365ad.95.2024.08.11.13.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 13:21:53 -0700 (PDT)
+Date: Sun, 11 Aug 2024 13:21:52 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+cc: Axel Rasmussen <axelrasmussen@google.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Christoph Lameter <cl@linux.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, Pekka Enberg <penberg@kernel.org>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, linux-kernel@vger.kernel.org, 
+    linux-mm@kvack.org
+Subject: Re: [PATCH] mm, slub: print CPU id on slab OOM
+In-Reply-To: <a1058e89-7554-475a-9cc1-90af74b90917@suse.cz>
+Message-ID: <6951700d-b6c0-b9b7-6587-1823a9d8c63d@google.com>
+References: <20240806232649.3258741-1-axelrasmussen@google.com> <a1058e89-7554-475a-9cc1-90af74b90917@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hid-asus-ally: Add full gamepad support
-To: Antheas Kapenekakis <lkml@antheas.dev>, Luke Jones <luke@ljones.dev>
-Cc: Benjamin Tissoires <bentiss@kernel.org>, Jiri Kosina <jikos@kernel.org>,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CAGwozwHDwswam-Q40YqXMDJt6oui=UHv-bkjuF+X5fOmT+6PaA@mail.gmail.com>
- <9078b350-27a8-48af-a19d-2adaaaa16f9f@app.fastmail.com>
- <CAGwozwEg2TiQyB27qjHHz1kCHWXJhYsBhqLqq530Z2ZJQjFcRw@mail.gmail.com>
-Content-Language: en-US, it-IT, en-US-large
-From: Denis Benato <benato.denis96@gmail.com>
-In-Reply-To: <CAGwozwEg2TiQyB27qjHHz1kCHWXJhYsBhqLqq530Z2ZJQjFcRw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 11/08/24 18:10, Antheas Kapenekakis wrote:
-> Hi Luke,
-> thank you for taking the time to reply.
-> 
-> And everyone else, thank you for putting up with my broken line spacing,
-> because of Gmail. And perhaps the lack of in-reply-to because of mailto.
-> Hopefully in-reply-to works this time ;).
->> First off, understand that I do not mean to attack your work. I tried to
-> make my response helpful to you. In fact, I took a lot of time in writing it
-> and preemptively saved you a lot of work in testing your patchset so you do
-> not have to spend time reaching the same conclusions that I have had to.
->> Provided you heed my comments of course, which is not clear from your reply.
-> 
-> As I currently represent what is the largest Linux ROG Ally community, I hope
-> it is reasonable that it is in my and my community's best interest that an
-> unstable patch which could affect Linux Ally support should be vetted before
-> it becomes part of the mainline kernel. Once it becomes part of the kernel,
-> workarounds around it will become very hard. We have achieved near perfect
-> controller support through userspace, so I would hate to jeopardize that.
-> 
-Hello,
+On Sun, 11 Aug 2024, Vlastimil Babka wrote:
 
-I'm Denis and I want to say a few things:
-
-first of all I have been following the ROG Ally scene from quite a while now and
-I submitted one of the oldest patches regarding it specifically:
-https://lore.kernel.org/all/20231117011556.13067-1-luke@ljones.dev/
-and in no way I feel represented by you.
-
-We have talked about this matter many times in an open-to-everybody discord server,
-and all the records are still available for whoever wants to read those in the chimeraos
-server.
-
-We all have warned you about taking control of devices from userspace, many and
-many times again. More than nine months ago, you decided to ignore us all and
-write an application you knew it would have played bad with future a driver that would
-have been submitted upstream.
-
-To be clear to readers your application started as a clone of my own application, meant
-as a temporary workaround for a support that we all knew was coming:
-mine: https://github.com/NeroReflex/ROGueENEMY (first commit: 2 Nov 2023)
-yours: https://github.com/hhd-dev/hhd (first commit: 30 Nov 2023)
-plus yours was targeting lenovo hardware specifically and added ROG support
-after some time... Both have been developed in the same discord server, there
-is absolutely no way you could have missed those messages.
-
-The first tool supporting the legion go console was a port of my own tool by another
-user (that I helped) in our server and we all knew it was a very suboptimal (and temporary)
-way of arriving at the final goal of having these handhelds devices in a reliable
-ready-to-game state, including you.
-
-> In my previous email, I gave you my preliminary thoughts without having time
-> to test your patchset. Of course, as I noted in that email, I will be testing
-> and integrating support for your patchset, personally, with an Ally X unit
-> I will be getting access to close to the end of August.
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index c9d8a2497fd6..7148047998de 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -3422,7 +3422,8 @@ slab_out_of_memory(struct kmem_cache *s, gfp_t gfpflags, int nid)
+> >  	if ((gfpflags & __GFP_NOWARN) || !__ratelimit(&slub_oom_rs))
+> >  		return;
+> >  
+> > -	pr_warn("SLUB: Unable to allocate memory on node %d, gfp=%#x(%pGg)\n",
+> > +	pr_warn("SLUB: Unable to allocate memory for CPU %u on node %d, gfp=%#x(%pGg)\n",
 > 
-> I do not think there is value in arguing, therefore I am not happy continuing
-> the discussion under this tone. Hopefully, in a few days you, will have
-> another look at my comments, with a level head, and address them.
-> I still believe that they are valid and that if they are fixed, I am more
-> than happy with your patchset merging into the kernel.
-> 
-> Since you raised some technical points in your response, let me disambiguate.
-> 
->> You're repeating information that has come directly from me.
-> 
-> Indeed, this specific point (XInput being deprecated) came from you.
-> I am just bringing everyone up to speed, since I feel your patch missed
-> some important context.
-> 
->> I have many records from many MCU updates. It doesn't happen. (referring to
->> relying to the endpoint descriptor instead of HID Usages)
-> 
-> In my opinion, using the standard Usage Page and Usage the controller reports
-> remains the proper solution (this is what the Windows driver does).
-> Remember that if there is a breakage due to a firmware update, users will
-> become unable to use their device as they can not update the kernel.
-> 
-> Using `desc.bEndpointAddress` may be appropriate for a userspace tool or an
-> out-of-tree kernel driver, but perhaps not for the mainline kernel.
-> I am happy to be proven wrong.
-> 
->> "Attempted"... I *did*. You've failed to notice that what I've set is
->> what is reported by the HID report.
-> 
-> I am a bit confused here. I thought the purpose of your patch was to convert
-> the HID report into what xpad would export. That means respecting xpad, not
-> a random HID report.
-> 
-> In this case, the absinfo (with `input_set_abs_params`) needs to be set
-> according to what is set by xpad, which is signed and from -32768 to 32767
-> (referencing both the Linux Gamepad Specification and the out-of-tree driver
-> xpadneo which seems to be the prominent driver providing support for
-> controllers similar to Ally X, i.e., Xbox One bluetooth controllers).
-> 
-> I know from experience that Handheld Daemon will have a problem with this.
-> But alas, I was not referring to Handheld Daemon being the problem here:
-> it is simple enough to fix it in there and I will do it when I add
-> support for your patchset (would rather avoid doing it or doing it and having
-> to revert it of course). I was moreso referring to other userspace
-> applications without this privilege.
-> 
-> As for why I have to add support for your patchset, it is simply because
-> it being there changes the controller mappings, so I simply need to add
-> an if statement that uses the standard XInput mappings when it is available.
-> 
-> This is not to say that the end result will be as reliable as without your
-> driver, as Handheld Daemon will then be at the mercy of your kernel driver.
-> So please, do extended testing and I think with e.g., ChimeraOS 46.2 being
-> released yesterday with your patchset, you will get some valuable
-> feedback soon enough.
+> BTW, wouldn't "on CPU" be more correct, as "for CPU" might be misleading
+> that we are somehow constrained to that CPU?
 > 
 
-To be fair, the submitted work has been ongoing for quite some time now,
-and it has been tested on both ally and ally x by at least five developers,
-including me who tested even more scenarios than input, especially regarding s2idle.
-Moreover users of other distributions tested the driver too.
+Agreed.
 
-Our distribution version was released as stable when we felt it was completed in all features
-and we have finished testing what we could have possibly taught of (this happens to be yesterday),
-but anyway I don't believe the release date of a distribution is a valid point of argument for a kernel driver.
+When I suggested this patch, I was trying to ascertain whether something 
+was really wonky based on some logs that we were seeing.
 
-If there are bugs please file an actual bug report them so we can fix them.
+  node 0: slabs: 223, objs: 11819, free: 0
+  node 1: slabs: 951, objs: 50262, free: 218
 
-> I know that I have spent multiple weeks already optimizing my implementation,
-> having released it close to a month ago. Which is also why I am not in a
-> rush to add support for your experimental patchset.
+This is for a NUMA_NO_NODE allocation, so I wanted to know if the cpu was 
+on node 0 or node 1.
+
+Even with the patch, that requires knowing the cpu-to-node mapping.  If we 
+add the CPU output here, we likely also want to print out cpu_to_node().
+
+> > +		preemptible() ? raw_smp_processor_id() : smp_processor_id(),
+> 
+> Also could we just use raw_smp_processor_id() always here? I don't see
+> this has any advantage or am I missing something?
 > 
 
-Again, you were totally aware of what you were doing and what was going on,
-so this is not "unfortunate accident".
-
->> It is a very different story in a kernel driver... (referring to the 80ms
->> delay used for Xbox+A)
-> 
-> Please understand that I have spent weeks of effort debugging and optimizing
-> the Side Menu behavior of Handheld Daemon. In fact, it currently implements
-> three different ways of opening the Steam Side Menu (keyboard, extest through
-> the gamescope X11 socket, and as a last fallback as Xbox + A). When I say
-> 80ms is not enough, I know it is not enough. Otherwise Handheld Daemon would
-> be using 80ms. The rest is conjecture.
-> 
-
-I am not understanding the point here. If your userspace tool was working before all of these
-additions why can't you simply ship a blacklist file for the new driver?
-
-If you are relying in some initialization code done from the driver
-I offer myself in adding a kernel argument to keep only that initialization code.
-
->> It is done on a worker. It is not blocking the kernel....
->> (referring to xbox+a holding a spinlock to send the key combo with msleep)
-> 
-> Repeating myself:
-> 
->>> In addition, you are freezing the kernel **driver** to send those
->>> commands for 240ms which is around 100 reports.
-> 
-> Which in my opinion will become more like 300ms. Freezing the controller for
-> that long is not ideal (I know you are not freezing the kernel).
-> Please revisit this.
-> 
->> Please describe how you think it is broken? (referring to `mcu_powersave`)
-> 
-> Quoting myself:
-> 
->>> This feature remains broken when the device is at low TDPs and unplugged.
-> 
-> e.g., when the Ally is set on its quiet mode and or is below 12W, and is
-> suspended unplugged, with Steam and a game running. In this case,
-> the USB controller of the Ally simply does not wake up and RGB breaks.
-> The occurrence of this given those conditions is around 40% of the time.
-> This includes testing with or without your DMI table patch by the way.
-> 
->> Does not work how? (referring to `ally_mcu_usb_switch`)
-> 
-> Seems like a DMI table always sets it to 0. I do not know why. However I do
-> know that as part of our validation on the distribution Bazzite which took
-> place prior to you submitting your patch, we tested both adding an or for
-> ally x and a dmi table, and the dmi table did not work. Post submitting your
-> patch, there was a 5 day brief period where both the unstable ChimeraOS
-> kernel and the CachyOs kernel integrated your patch before they also
-> integrated the patch I am replying to (which makes Handheld Daemon not work;
-> for now). During this period both the original ally and the ally x regressed
-> when `mcu_powersave` was disabled.
-> 
->> I test, mate. With the default kernel and empty userspace.
-
-MCU powersave is not even part of this driver. It directly affects the device to be
-clear, but nobody can do anything about it: it is how hardware has been designed.
-
-If you need said feature to be disabled you can use an udev rule, that will indeed
-make the device consume more while in s2idle state and is therefore suboptimal,
-otherwise please brings this up where it is relevant.
-
-Again all of this is knowledge that has been around for about a year, and none of
-this comes at a surprise to you.
-
-> 
-> Unfortunately, this is not how users interact with my kernel patches and
-> Handheld Daemon. They usually play games with SteamUI running in the
-> background. Often, this includes setting an aggressively low TDP, and multiple
-> suspends back-to-back while in game. This is the standard I hold myself to.
-> And I would expect no less from a mainline kernel driver.
-> 
-
-The vast majority of users are using a distribution meant for handheld hardware
-because tradition distributions requires having a mouse and keyboard around,
-however we have records in our server of people asking how to have their controllers
-working in archlinux, so what you say is not an absolute truth and there are people who
-actually wants being able to use theirs hardware without any of our userspace tooling:
-"ours" means all of them, my unmaintained proof-of-concept project, your hdd and inputplumber.
-
-Plus you are also talking about TDP here, and this is a totally separate topic from my understanding.
-
-> I hope I replied to all your technical claims. If I missed any, I am
-> happy to clarify and expand where appropriate.
-> 
-> Again, good luck with your patchset. Hopefully, it will merge with 6.12 and
-> Ally X owners will get an acceptable result without the need for userspace
-> tools (albeit without gyro, back buttons, and RGB being part of the
-> controller).
-
-Gyroscope is on a different subsystem on the kernel and there is no way of having it part of
-the input device without userspace drivers. This is true for every OS, including windows.
-
-Back buttons are mappable and can be made part of the controller, and this is even documented:
-it comes with some caveats, but if an user wants to have X and Y buttons mapped on back paddles
-it will now be possible.
-
-RGB support is once again another example of a peripheral that is impossible to be made
-part of an input device, so I am not getting the point:
-the fact that you control leds via the emulated controller because some other user
-space drivers for that specific emulated device can does mean nothing in this context
-and to be fair since you are sending raw hidraw commands to that device it means you are
-already driving the current driver in an inconsistent state (reported state vs hardware state)
-and therefore blacklisting it is what you should have done months ago, when we told you were
-already conflicting with what was upstreamed already, before your work.
-
-> Best regards,
-> Antheas
-
-Best regards,
-Denis
+This matches my understanding as well.
 
