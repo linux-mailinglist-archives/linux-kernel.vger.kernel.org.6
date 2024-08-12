@@ -1,145 +1,114 @@
-Return-Path: <linux-kernel+bounces-283392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA2E94F1E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 146F294F1EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:43:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD90283A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:41:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA918281F27
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D516184548;
-	Mon, 12 Aug 2024 15:41:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6A71862BB;
+	Mon, 12 Aug 2024 15:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+btOPwY"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TzrL3qjd"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6277183CD4;
-	Mon, 12 Aug 2024 15:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19B513E022;
+	Mon, 12 Aug 2024 15:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477306; cv=none; b=hZssj/IRp9c3i2q0/2T74HxQuLWgtUaoA4+MBSkXzOLBtKtsmpJlVczpWUep51mG7bj+JvT8X/bcV6LR6NfLX7VIRPe4n8AsTj1GgpAl+IHKJ79MKigjtnCcwC9nv2BUb5PSm2I895zw6kZW0u60ItMG1Zu9ItOjfIlUgj4ZCgE=
+	t=1723477399; cv=none; b=aKGaSHCqti1JCKR+PKa9LzdbxAgO8tSC46LTjLTZhX5F6bYv69wKXfss1nCUXd1XSNBPbd+sJYCXzX0lbtzLCm0e2fJ+O29SarPTqU4K+4IxWM9dXTod4817Jra+Svxp2iiq328Zg0Adr6ctxMZR4jgetFqy+HYQ+fWBy0KjQuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477306; c=relaxed/simple;
-	bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=IC74X1RgulW2W0zlFhuihJzN5NzLFnZBnWQpoClcmR8QCJH72nFtl+2lAHf5npK7TEzxHpRjM+5+Nzf6pQRrZGFOCBmPlzDuLPMB5+IAUreQ4TYYrr6CU7/Zb9M8zM7DpudoTjQAqbRRoAMVDAbjeXwV8gRqmKiIAWv9j6W+uqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+btOPwY; arc=none smtp.client-ip=209.85.167.51
+	s=arc-20240116; t=1723477399; c=relaxed/simple;
+	bh=2atFC6N/vaLVNHJuH0O5e2noPBaxOUdAzlE9V94AAXg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MgB2qBaSQaeP8aueY/LwHO3cG8UfmNsJ2C5WsDa7XW2XXtloY1tUXT3ITWjBAc+zF6Ow9EmNXG8i1Uj0b63jEqqn1XxRvKieGHQMNrB0dG6JZPWjGzFkG/FUwZl9UF5XG8RZbJOUN2aKxpCjt1NhTnfoLsnwFo1yVu7e/yOpjbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TzrL3qjd; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so5865950e87.1;
-        Mon, 12 Aug 2024 08:41:44 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42808071810so34482875e9.1;
+        Mon, 12 Aug 2024 08:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723477303; x=1724082103; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
-        b=U+btOPwY2+cOKIhAdZzvNOC3q8B0HhR89RBRykA8OVkcpbrBUcIwS4WfLjA19AxMOY
-         J0AzWBlIbO6QPgL0di/dlH8Kw4eKIJ7EW5luOLZlaf/PrVoHYZzX8lOJiy+XZ2/A4hi3
-         sdlwDJMyMGxSRqt6sWXz/TeVD4VGI3CeKcBaGXsvEVS8PWvG8EDVC4JO1d7KWbaJlJYs
-         E5bcPjiTyxYSBn5w9faCFQHFHLzVeodanoyR8h/5wmnUGSJ7pG3JO9h/t60Okpbl0WJU
-         SOpcZL+aNS0O9jxlQR6LSPVV1j5Bh35duU0+DUg8mi0mfwKY42oEM8dosbx8EloGUBoH
-         iaZA==
+        d=gmail.com; s=20230601; t=1723477396; x=1724082196; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=buI9Ko5ZDG8/IEDGLRiJRvZNs9QL9HWCq0F93tw6IHc=;
+        b=TzrL3qjd1qSRA0gjO3CtqDB2EwuOmeV7lD2NDdiE9pGsPxR4JA2EXnoU+Odh1TbIF1
+         3eDVqUWr0/QcsLFxVAuj2aIfyMZp1/TbUVe2ktAC4SbkY6rVLj4VtnzvB0A6deXbRl9P
+         /QbMh96Ztjuh6Y5PHvJgaBSXmNvbTU8Dt3KeKiKUYlh4gsvjRCiYoBR4YrOHXcdrTYyd
+         nTRPE9GiX5ylmkQcEtSfwcIdEyjnWQ5goTKD+MSH0cd65agsyufnzgo9Kg5Ea2ucyXEw
+         CCNhsZya6b+7JS9/e+pwVZ6bGz2IpEYPY+OmiD89A5zD/IAkY/HArilrzSHQAjCbU1Tu
+         QcYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723477303; x=1724082103;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
-        b=TsIDQrdhSDiCvH8g5XpxQnKpcObG+rVO3fsjKNBclJb3EVqXadRViNfEkEBxOBpjFY
-         eX0iXtY0akV6NBopK3u/BptzdyOP2zBClZhEpkwiwiwRx+T8Y6A8B1PMMSO5JK7LrDon
-         PrtWKW8ET6z1o6o0g2JZVrXhRUAqFhqK+zQUZP5B7sH3eo+r/QI/YqePNpgWp5YopaPD
-         XacQIGjE8lQkm2Dn2Xk/MiJKYlUeeQmT4YqfzIUjnoJgvElXPmNT++X5QnWdwwr7NkwP
-         Mx+QoT+cTmxJhzq4oFLzNd84x3PDdbXw09VB28jH3Uz9f6Nn8w2zCoT2cg+fTTtdArSO
-         /F+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVtZNAVIAgpBrUMqgyCuC2DeBkpTaKE79bjh6r0Uu//DuRFkZ5PG8A4oz/VbDKEM3syDENKtjzpTiem+P9rjWg6VqOuwQ9wOhNz7HyA5urgwbh9+XYUhqhz9OYvsQaK2TENMZRic+VGVA==
-X-Gm-Message-State: AOJu0YxHeTkI1qXGnURRqibrt7qFhOlqALeojyD+i7B5WeCRI+9Qrm4J
-	y7T1anbuZnVHc9H1dFVQ6qTTlFkQi6JRfN/+wMYqIOj17QhS7w29
-X-Google-Smtp-Source: AGHT+IHhPDOj1w85n0McFlGpR3+md0Z5T6agj0fCRtNd7sYXOTVF0xidjMjYkDpSUqg4kHNi3fEe3g==
-X-Received: by 2002:a05:6512:3190:b0:52c:e3ad:3fbf with SMTP id 2adb3069b0e04-53213684160mr381665e87.42.1723477302469;
-        Mon, 12 Aug 2024 08:41:42 -0700 (PDT)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4e19sm2184694a12.20.2024.08.12.08.41.40
+        d=1e100.net; s=20230601; t=1723477396; x=1724082196;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=buI9Ko5ZDG8/IEDGLRiJRvZNs9QL9HWCq0F93tw6IHc=;
+        b=Q+KuHJ5eXs1O+VGI1v/efXWO51OzWwf5lKGfBIPooyhu0gbgj8uCcTA7/pZxp8+mkf
+         giOfJBHcrBzsnUOERQkoTh6k3o/NWhd5KHMlWX2WIkFlGoNz1vIBRk3qArQ8fdzPCrvS
+         O+1+3RXk8H+8sMPy4hogHLd1GKfl03nTwXWvRhaNfTCNpXvQR18un/x/WG5uJT5Hk0vF
+         qi99ZASmfSIih7TkJB0cLV8GOwIGhyXph/YrbscnxNrfF76mkRiDWo9swtpwzypmy0Fu
+         82+Gn/8SkwHsXeLaQ6SjFYQH+DJ7Oj3CsxqRBvOQyHrZLKzdsgvBjiEVYgN/yhSdOzFz
+         Zj0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVhfXkQ1r+Y6rY/LDej5fPWdjZ4gmtoc/jJDAGvwj54TIuELMG4D1OrwovS3giKPDmQZ97hWCjcKStlJQjyxvM92jsaoGrlI2vsP40G
+X-Gm-Message-State: AOJu0Yz1z80JaCnkJwle4ZHC80VX8D8y2fM8GXggKP9fStwafMwsCFEk
+	LWl2LgZSw/NrKlcwMu0CZKLvppCN96uh8a9aZ0SSZpBe9ijDcM/+wN0oOQ==
+X-Google-Smtp-Source: AGHT+IGlQTA8XQFSIRQepdrd1h2T8uOH6GkOw0ZjyBZZXoTjSwkUFofJU2xury6YpSC/MrlT2/WM/Q==
+X-Received: by 2002:a05:6000:e0b:b0:366:f469:a8d with SMTP id ffacd0b85a97d-3716cd0115emr490669f8f.35.1723477395662;
+        Mon, 12 Aug 2024 08:43:15 -0700 (PDT)
+Received: from [127.0.1.1] ([213.208.157.67])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51eb47sm7859713f8f.88.2024.08.12.08.43.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 08:41:41 -0700 (PDT)
-Message-ID: <f4de493e53b6d2ea543d10bc07a030b32b1e2107.camel@gmail.com>
-Subject: Re: [PATCH v1] scsi: ufs: core: introduce override_cqe_ocs
-From: Bean Huo <huobean@gmail.com>
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, 
- linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-  bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
- beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com, 
- hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com, 
- junwoo80.lee@samsung.com, wkon.kim@samsung.com
-Date: Mon, 12 Aug 2024 17:41:40 +0200
-In-Reply-To: <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
-References: 
-	<CGME20240812065927epcas2p4ace98e8757a76e62efa3165de719408a@epcas2p4.samsung.com>
-	 <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+        Mon, 12 Aug 2024 08:43:15 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH 0/2] hwmon: chipcap2: small improvements in probe function
+Date: Mon, 12 Aug 2024 17:43:01 +0200
+Message-Id: <20240812-chipcap2-probe-improvements-v1-0-3cdff6d16897@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIUtumYC/x2MQQqAIBAAvxJ7TnDNQ/WV6FC25h4y0YhA+ntLp
+ 2EYmAqFMlOBsamQ6ebCZxTBtgEXlriT4k0cjDZW92iUC5zckoxK+VylHsKbDopXUW6wG9oOPZI
+ HOaRMnp//Ps3v+wHbdcjNbQAAAA==
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723477394; l=688;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=2atFC6N/vaLVNHJuH0O5e2noPBaxOUdAzlE9V94AAXg=;
+ b=+ifSgcyjWO24xuuBIV9BWYqX3BXYnKFe4B3m+cnSExQsqHtTWcnE+8dMhEeoafwQfb3mSTSwU
+ GRKU5Pp+QUFCJi76X6oDi0mAyOjzijAdVOFJMNquEVepb2Q14moO2Qr
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On Mon, 2024-08-12 at 16:01 +0900, Kiwoong Kim wrote:
-> UFSHCI defines OCS values but doesn't specify what exact
-> conditions raise them. E.g. when some commands are nullified
-> or cleaned up, Exynos host reposts OCS_ABORT. Even if
-> an OEM wants to issue them again, not fail, current UFS driver
-> fails them because it set command result to DID_ABORT.
->=20
-> So I think it needs another callback to replace the original OCS
-> value with the value that works the way you want.
->=20
-I'm not clear on OCS was initiated by UFSHCI, but could you explain why
-it can't be altered within UFSHCI?
+These modifications only affect error paths, simplifying a case where
+dev_err_probe() could be returned, and disabling the sensor if getting
+the ready interrupt fails.
 
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Javier Carrasco (2):
+      hwmon: chipcap2: return dev_err_probe if get regulator fails
+      hwmon: chipcap2: disable sensor if request ready irq fails
 
+ drivers/hwmon/chipcap2.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+---
+base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
+change-id: 20240812-chipcap2-probe-improvements-c94d1431f1ef
 
-> Signed-off-by: Kiwoong Kim <kwmad.kim@samsung.com>
-> ---
-> =C2=A0drivers/ufs/core/ufshcd-priv.h | 9 +++++++++
-> =C2=A0drivers/ufs/core/ufshcd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 +++-
-> =C2=A0include/ufs/ufshcd.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 1 +
-> =C2=A03 files changed, 13 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/ufs/core/ufshcd-priv.h
-> b/drivers/ufs/core/ufshcd-priv.h
-> index ce36154..4dec6eb 100644
-> --- a/drivers/ufs/core/ufshcd-priv.h
-> +++ b/drivers/ufs/core/ufshcd-priv.h
-> @@ -275,6 +275,15 @@ static inline int
-> ufshcd_mcq_vops_config_esi(struct ufs_hba *hba)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EOPNOTSUPP;
-> =C2=A0}
-> =C2=A0
-> +static inline enum utp_ocs ufshcd_vops_override_cqe_ocs(struct
-> ufs_hba *hba,
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enum utp_ocs
-> ocs)
-> +{
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (hba->vops && hba->vops->ov=
-erride_cqe_ocs)
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0return hba->vops->override_cqe_ocs(hba);
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-it is useless until you should introudce an usage case.
-
-
-Kind regards,
-Bean
 
