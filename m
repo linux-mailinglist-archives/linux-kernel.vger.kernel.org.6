@@ -1,227 +1,239 @@
-Return-Path: <linux-kernel+bounces-282955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A30094EB3D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:35:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BB8794EB3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B3F2B2130B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7B83280EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A1B170828;
-	Mon, 12 Aug 2024 10:34:49 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051D16FF26;
+	Mon, 12 Aug 2024 10:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aZfNzfcJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB10E16D31C;
-	Mon, 12 Aug 2024 10:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458888; cv=none; b=Yw9aEdkSVLktiwZfBGkiQP3aZ5oKIMH7gcXAIwEbDLiqEfWS9qAaxo5aSwa6eCxYzFQIeW8PCAGwRSzgrLjh7tuC+f4UxuqcV1cusW7XeWIbSiiE9IMagZDbAXJZ1ao6UjAvY+AxSWCEMBJGzYJPk1afNgXZoa/miMXbt+Q5B5c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458888; c=relaxed/simple;
-	bh=a3AQjWPHSuyn2SNOxuFOQEH1yCSPdGp+Gopjd5Bdh/g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyqdBd3gs9LrLWjLhmBzov6jytXMkVpOeq7ZlltZyGDVGj4JSK5g4QwKd2Ur8CfsVZxnhzi5a4Bdfsjx5q9cEd/v1oYGqz5fE7oj16fD3EnqyohJlX+bF35L8m5N7wc77d+SYeoJEEaHxvTwaLwxJYIA/kU+WJiHSDXMDWZwN4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sdSFO-0044zD-0v;
-	Mon, 12 Aug 2024 18:34:40 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Aug 2024 18:34:39 +0800
-Date: Mon, 12 Aug 2024 18:34:39 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev,
-	Linus Torvalds <torvalds@linux-foundation.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [v2 PATCH 1/3] crypto: api - Remove instance larval fulfilment
-Message-ID: <ZrnlP4itTulcIYqP@gondor.apana.org.au>
-References: <ZrbTfOViUr3S4V7X@gondor.apana.org.au>
- <34069b9d-3731-4d0c-b317-bcbc61df7e9d@stanley.mountain>
- <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3074915C159;
+	Mon, 12 Aug 2024 10:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723458904; cv=fail; b=RY7U9pBI1U1cYtLM/uT+wQzYwuK1/zgL0F+C7OP6gmS16f4cMthmGjDVAyJUdyAZPChheSH59+mni3lSsKX8NaWe0yVjsdkcL6Y/WD8MAF2EwJkoST3AClSsKNPN4J8t+NKwNI2/vFNFIBvJ8B3hhTTE0Bqp6ReLqinVxa4N/Kk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723458904; c=relaxed/simple;
+	bh=a6A+dtPWYnYWUkGMVAuFoanm//8d52fXxg9Or7L3PSg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=YHzloIMwyr/BVTar92DT8MiY+GXvWk7nOTHyJ2pu/j3XAkBiKwhJ3v1FWSTWO9KwV6+EwXMq76Lf67PjcOq2RPb7M5MDnh8XaRknwRANAe+oe2ZOQMFs8aS00+NPlxJvdFSePM97LEY5+EysCoxycAm9h+i0dDpuJyYX6IRNXBs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aZfNzfcJ; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723458903; x=1754994903;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=a6A+dtPWYnYWUkGMVAuFoanm//8d52fXxg9Or7L3PSg=;
+  b=aZfNzfcJgj1QujpKXyJvEWzlAhX6DhcORNkzogSOholQVJvC68DyleA9
+   xmOHZ3agp/Os2xuC2nMoF+KM7AnhiTt8s1HqV4K8dw8CPhaenoE0LNi8S
+   yr5A5aEwJ4L3JnAv1KeoEL4UPng6hJVlna13NUvAzjVQnu7Ckw8HpSE/c
+   GUvWZT7TYrjn8gj/KG5IomMc3fj1FWCQH9ZRZieSHao1GxPmgjwu9AqyG
+   AgNbwTPJmGgU2GQ45FYNuGohJfB9oFA38EsMezOyRGZSx1a2917eEtIf6
+   DjLVUTz9vwPnQyQHtgG1la+T3Yw69TBGZQMIFyz/iu2cm1R6IhVF3tCe+
+   A==;
+X-CSE-ConnectionGUID: wp+s8PWLTXCo2DtsEurpaw==
+X-CSE-MsgGUID: ulgjoMEbSVyfS1NHM2g7fQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21440505"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21440505"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:35:02 -0700
+X-CSE-ConnectionGUID: U1MQNmnsQSGPmwCocBChiw==
+X-CSE-MsgGUID: Y3+Tp3dmR8+XS88reWAFMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="89062436"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Aug 2024 03:35:02 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 12 Aug 2024 03:35:01 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 12 Aug 2024 03:35:01 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 12 Aug 2024 03:35:01 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (104.47.73.41) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 12 Aug 2024 03:34:58 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SSCDCslO1i2gop/abiKYQUFOMVDo0bW9vCCbaNduw65iIuXdS95R54hnzwFmMTqk9FJx4QXpIu0r811ztarAjHgHx5TtnFsjAi/f1F+3Yp7lLWtcmlu3ux//a8wHGx15V7POwizt3hz/mM8hniFY10k5UnhJKf+GAYPYZabvkSaGTG8nHVnIEn3Rd+yKPXeoC4GvH3CZJWylEckMwVB+x5FIi7D9yc0KELtFFoHYCbQOs78N+PA17Q3y2f+QLZowUxesAT0PSIXNCeTWH29uwenqvwrjuGqGu685M/E8acuNUNhsHFHiTp+ds88p6qfokKZ5214d9a5qIGyVYUyvFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=a6A+dtPWYnYWUkGMVAuFoanm//8d52fXxg9Or7L3PSg=;
+ b=MJRVQ+lCjFfunNFTjF9O7wti9QZO1k6TInqxBln5g2Fw6FPCFjYIJ1lLrisuqHZNi3TZFDP20bR0fCGITKy/Dsr0ZfJOZzsN/dsGWtxdxSwqZ9fj0tVqsSwz3C9ccR/JSyJTyP2Z17KkjkMymlNwyNhsMnRwE3IKcUKV0kLwI5LjPDCX2gfLIh8EVJf16nZaPvRdVPiMBiJ3CuaKhrj6Me1UDAWfnlZMkFL8KoTATZjxmgQBgo+mxp4JGk+7B6T6ydMtSGiKSytuYop3qF/aBrWDD44zdViJW3kSrXDfMwuRHnPqGn0InbKSIPzwKYkvARD0zgnGQeYBPdquz54dDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by DS0PR11MB8113.namprd11.prod.outlook.com (2603:10b6:8:127::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.23; Mon, 12 Aug
+ 2024 10:34:56 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%7]) with mapi id 15.20.7828.030; Mon, 12 Aug 2024
+ 10:34:55 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Kuvaiskii, Dmitrii" <dmitrii.kuvaiskii@intel.com>
+CC: "linux-sgx@vger.kernel.org" <linux-sgx@vger.kernel.org>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"jarkko@kernel.org" <jarkko@kernel.org>, "Chatre, Reinette"
+	<reinette.chatre@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Qin, Kailun" <kailun.qin@intel.com>,
+	"haitao.huang@linux.intel.com" <haitao.huang@linux.intel.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, "Vij, Mona"
+	<mona.vij@intel.com>
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+Thread-Topic: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data
+ race
+Thread-Index: AQHazrB4mIMKrvC2y0eY2IQtmlLA9bIGxLIAgBgc0wCAAB0PAIAEiEaAgAAiTAA=
+Date: Mon, 12 Aug 2024 10:34:55 +0000
+Message-ID: <f722fd24bef96dc12500eaffb1d1e1f169a6dd9f.camel@intel.com>
+References: <8ab0f2d8aaf80e263796e18010e0fa0a4f0686a3.camel@intel.com>
+	 <20240812083207.3173402-1-dmitrii.kuvaiskii@intel.com>
+In-Reply-To: <20240812083207.3173402-1-dmitrii.kuvaiskii@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|DS0PR11MB8113:EE_
+x-ms-office365-filtering-correlation-id: ea1c10b9-9fd2-4ba7-25dc-08dcbaba684e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?ZXZDUUFEclVCZFdlcXJjRmo2U01NdDd5QXo3a0xRUXBRcFdGamF5SFNOR1RL?=
+ =?utf-8?B?dEVpVmFYZmVGQlBFMmRtZGkxQmhEUUVIa01hMmpkaHROSzV0OWd4WitxRWFD?=
+ =?utf-8?B?SzdVOUs1T2srNVI5L240c1hEZFNhQkR1S1Fpc0l2ZSttNnNIaTU2bXJZQkZG?=
+ =?utf-8?B?ZUc5Q0RqNFpxT3Bua1YvcDQzTmo4bDVIZUdoeVFRdFQvNmFxRzV4ekJvMU5L?=
+ =?utf-8?B?WHVQNkN6MmVnbWNSUE5CRzRZN2daeVoyclhzV1Y0MnFzQkdwL2t2ajc0WDZ3?=
+ =?utf-8?B?aVR1Zk9FZER2emJqOHZIYW5CMVBySzQrVVRQVUtVeFN0UysyUFBDbDN3OFZm?=
+ =?utf-8?B?L1F4T2hRRWxTK2xxN2NSa2NzRXk5dm9Xd3RlclhZSTBmcDZCajdPSEo0NkZJ?=
+ =?utf-8?B?SFNFaWFzcjBoRG5lc01lazJUZTJPOFE5RWpIQ2JmT05hUDdLNXpDNmxRSUVX?=
+ =?utf-8?B?ck5MREtudGU0aXpvejc3cU9TblVjd0RrTVZsVnBIaEpvNVRJRE1tc0hjcWlW?=
+ =?utf-8?B?ZU5URGNOVmJMNVJTUEcxOHVWSFp3ZzZ3a3hjS2d3V1loVDJZZ25pVFpTNzFJ?=
+ =?utf-8?B?M0diQVNVSXhEemdHYWc1VkwvMDUxK2dnWU9MSEN0eUlZUTlXOXl4WjIrVXVL?=
+ =?utf-8?B?czZWS29HWUZ3bFlIWlJBL3VvUEM1bUEvU3A5ZThuZStPU3JJZDJibmJhZllN?=
+ =?utf-8?B?ZlpFREFiaTAzY2JtYUdGVG11YnF1eFNmN2dIOEJpa0ROckFsV2FveXFUcmp2?=
+ =?utf-8?B?WWtubjhrR2RqbkhSUG5OUFM2dlNEU0l0QWhsOGNNaldVd01NUTZ2ZE9hMXdL?=
+ =?utf-8?B?Qzh0blpsNkFxWEMxZUZPTWtESU0yb0NlSFBvaWZ4TTkxSGl4YXJDbWYyZzdP?=
+ =?utf-8?B?elhmOFd0VWhWanFGMnpDUFdXblJqRTE3VGRxMi82VEJub2F1b20xSnZENG5u?=
+ =?utf-8?B?SVllOWlnNmx5TURBbWs0bk8vQTRnTXFRWWViWTFHWndzSWxxWnZQczV6bTNw?=
+ =?utf-8?B?amZ3YUVmZDRXek85dUpYVnJQWVR6d1U1VkpCMitXbVJrMzhRWkRsRjN5aXkv?=
+ =?utf-8?B?ams5U1VDOEdiNllMM2ppSVdXMENYMlRQRkpscldzVCsrMHNjNXRDQW1EQzNl?=
+ =?utf-8?B?d0I3NlJmUFBJV2FtZ3JjcEFwYzM0bjZJMlNURXlKcXFpTlVmdkZCbU5jcXFv?=
+ =?utf-8?B?SzVkMytPRjdzSTBLd2dTUDBKS2lVQlQyTE9Na0tMeCtERFczSXZ0cUtQVDhz?=
+ =?utf-8?B?WTl4cXY4azllQkJyYUJqVlJlSXVPWlNHczNpbXUzMDdqUFVHTWQrYndUMUZT?=
+ =?utf-8?B?cHBJYkxwNU04b3lheUR0MVRpcXF1VWlnQm02Tk14aW9rWVk5UEw1NHZhcWs4?=
+ =?utf-8?B?TkxmcDdKakVndUJvVUtHajRPYmFoQ1FrSWRLSmpuM2hiMWxkZGpqc0hETDlQ?=
+ =?utf-8?B?Z0h3NFB6dUowM2tzSlJ1dWQ5WS83amFJbVV2MnA3b2RCWjVhdDEzR3NGM1BL?=
+ =?utf-8?B?aTJ6RmtuNXFYMmZLdHpOeDRnQkNkb0NLS2JzNlZEbmJRTmh1blYrcEpGZklE?=
+ =?utf-8?B?Zm44L0NnOXBnS2FFUmx5aW5PRWRPd1hiY1VtaXNEc3VvZDE2QVo5MkRRazcz?=
+ =?utf-8?B?eXplMUtRYURJWkUxUjZmakRIeGR0QzROdW5zNEwyRW8xdEt4SW5PQ3ZqeTd4?=
+ =?utf-8?B?ZlNrVzdVVHlQZjJ0UXJNUnBndmxaSXV0NXNldE1zU1RJMGY3RnRtcjFkK3Rj?=
+ =?utf-8?B?YVBuSUMrbXBZQ1pkWjZFQ0FaMzdXUExXSDJabFRqZDZLQU8yU3JYVzM1cGJS?=
+ =?utf-8?B?YW5qc3doYytIQWRjQTNib24xNC90dVRmUXFOYzRlaUJkY3Frd2VnQWpVNDhE?=
+ =?utf-8?B?ZndSNHlkUE5vMURkY25NdFNEN2ZXMVRsQkhZNU02SnFsOWc9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YjdaZ0dLcmhDbEFia2V2OFdVcnV5OUc2cERiZE1mWEZrR1UwSW4wT3NRd2hT?=
+ =?utf-8?B?cityMUU5WWE3NVppTW9kblpzMFNvbWxhSFhZWXZZaHVkY1E0d3pxVXJLOWRY?=
+ =?utf-8?B?SUFDQlFneDhSSnd5c09kUDMvK3Z2NzNpbmY0SDd4aXJINXJySFBCS1Y0bWhO?=
+ =?utf-8?B?dEJmQ1VBaXVLZlV3RElxUzVoanN4c0JrK0lTK3pDakZrcWw5VnRJeDRHLzQy?=
+ =?utf-8?B?WG5LZDdtREtnZm53YXQrSk5FL3pPamEyOCt4SndiVWdGcGphcnp4YWN3WkJY?=
+ =?utf-8?B?bTZVajhtVEJnV1FSK1dnemlVQlBhTlBpWmhXZ1ZxSzJiVVVSU1pnZGpSb1RP?=
+ =?utf-8?B?b0FuMk5kejhZVkhsSUFJWkpIamNiOUF2cjdISWhDaU9aTENrVy9YT3puTDkv?=
+ =?utf-8?B?Z1lCYWJjeHNkRWNSMFduVkhLMW1hQmdtWlhvM2ppUW5MVDd5Qi9XaTNuOWgw?=
+ =?utf-8?B?Tzd2U3djek5yZGNpbThUVyswby9JQUVKV3l4T2RFWkU4T3NaTGt0WjVGY0N4?=
+ =?utf-8?B?cGkweEs2OVJ3dDhJY2poQkxFTDRJL1V5K1F5Sy9GWEZVZ05pZTl4YkVlMWhK?=
+ =?utf-8?B?eHV0dkZuRU1SQ3VPWWJ2eExOY0o1bC9oWFVTbm5KR1Q0R295SktpdEg4Z1JU?=
+ =?utf-8?B?cTd2VjZ2NnJCbFl4NDFYK2Q0M1hHWUlUNy9OM1FoaWpSZ0tVeXpHdE04SG40?=
+ =?utf-8?B?cnZ3V1ZDcEpTRXRBelhBaXRKMUt5RThIa2dVb1kwTnZ6WnpCb05TbGFYSU5r?=
+ =?utf-8?B?Rmc5ckl6UFBmdlVSOFp0eFhuc1VXSFc4cFpUTHR6anQyLzdYUVppVnY1TjF4?=
+ =?utf-8?B?eGNGbnBoSStoV3V6U1duQk8rekR0T0h2WmJ5a0F1YTBOWWFjNnJwaDZXZHda?=
+ =?utf-8?B?R0dhMmJNZzRObmNCUUVOWk9Pc05wemtJWFc3VktYMUZ2dlUzYWhVMmdFWGZ1?=
+ =?utf-8?B?YzU2M0tERm9CWlgzWWdacTArZnVPMTV3KzNnekRzeVMrMU1HaDBkbTVxY2I1?=
+ =?utf-8?B?dEVEMkhTT3M3ZEFJbW1IbkxzY285VmQ4NWZIdTRZNkZra0pEOEhWRE9BQk5Z?=
+ =?utf-8?B?cmtRK0tieEZQL0V4Q0NScTQ5YnBPSHUzVDFnR3Q0QU1VT0IrOE5veFZheXZl?=
+ =?utf-8?B?M0hCMXVGc2ZKRXNkZXNPeVpTSG5xSitIbTM4eStjSDRkN1dHTlltbHBSZFBC?=
+ =?utf-8?B?Q0JWT25yb3FWNXBYeUtWdjRBRDlaTXNKK2FpVVk4WkxVaWpFNVhPcUJDTWh6?=
+ =?utf-8?B?a0ZjZ2d1MDNUS1pJVUNKTmdBaE5VYXlJaHZsTUZzdis3QTBhdldTdTlrZ1dK?=
+ =?utf-8?B?MHZrNkM1aDhtRFpTMVpET1VtSkxuM3JZY1pJSmthNzFEUmEwZmpxZHpqdmZX?=
+ =?utf-8?B?NGxaYTZoZlBodHByUUo5cXZlWEE2aDN0SDFjSlZTL3ltakMzaG4zTFI5dVcw?=
+ =?utf-8?B?MTVHSVNpMGdjck1zOXNwZ1JxSVRlZ05JalczZjFQVXpBUnFPQmo0dzliS2c1?=
+ =?utf-8?B?Q0lIeHZJMWw4bDA2cERTdXBuM2VLdzVBVHlqWTZPTGRndEVkOEFjY1RFelRR?=
+ =?utf-8?B?eUprcGZvWVl5K3R5cHRzTVZGRDZ3YU5Gb0ZwTTR0MkNyUTFMaHczbEFUTlRC?=
+ =?utf-8?B?S1ZKMUN0RXRvOGdiTzU4T04yQXYrUlQ0OWVwdExkaXBXdys1aUJUNHhPTmhT?=
+ =?utf-8?B?alZsNzhUdm96cHVVR2VjQXZHcVlnTnpPd2NISDFJbUsvWDFuM1F4aVIyOWVP?=
+ =?utf-8?B?Z01ZT1BpYVJnL2h1ZzZZcEJUS1BhVXM4bkNVa2pCZi9yRDIrOG0vaXF4K3I2?=
+ =?utf-8?B?VlpINExHMDg5YURZTmZERTE3bDZ3WjJ2WjYrUzh6a05YdHVBbE9ET0hvMWNj?=
+ =?utf-8?B?bTRhWGxQOFRndTlZNWFFV3VoMDR4V0ZLK1Jld0k4NHBXZFZSdW8rNmpkVitC?=
+ =?utf-8?B?czluV0pJclRGQndUUnFHSjhjUGxFQzljRzliRjNTT245TTdkcHJUclVTRVJL?=
+ =?utf-8?B?MENhQVpKeVgyczg4QzljR3Z5WlJDMlErSEFDaXJDbXlkd2FHVGJ0eW9ZVzdP?=
+ =?utf-8?B?YnIrVnErVU9PSmtUN21ZNDhSREEyQU5heEdUdlZTMURGR0t5c1I2SmRUQS82?=
+ =?utf-8?Q?7WMTWUaiA2lGFzH0lgzmX98rH?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A9B5467A3B35AB418170FD213F674AFC@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea1c10b9-9fd2-4ba7-25dc-08dcbaba684e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 10:34:55.6009
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LlwgIyS/t+hT0aQR2nCZ9MCETrZEdAX5+U9ObvJcaKMId4PQyaDvm+s2gOQ5LGtQ5E5Tk0Jc4Xfk3lelClU9bg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB8113
+X-OriginatorOrg: intel.com
 
-In order to allow testing to complete asynchronously after the
-registration process, instance larvals need to complete prior
-to having a test result.  Support this by redoing the lookup for
-instance larvals after completion.   This should locate the pending
-test larval and then repeat the wait on that (if it is still pending).
-
-As the lookup is now repeated there is no longer any need to compute
-the fulfilment status and all that code can be removed.
-
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
----
- crypto/algapi.c | 48 +++---------------------------------------------
- crypto/api.c    | 23 +++++++++++++++++++----
- 2 files changed, 22 insertions(+), 49 deletions(-)
-
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index 122cd910c4e1..d2ccc1289f92 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -235,7 +235,6 @@ void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
- EXPORT_SYMBOL_GPL(crypto_remove_spawns);
- 
- static void crypto_alg_finish_registration(struct crypto_alg *alg,
--					   bool fulfill_requests,
- 					   struct list_head *algs_to_put)
- {
- 	struct crypto_alg *q;
-@@ -247,30 +246,8 @@ static void crypto_alg_finish_registration(struct crypto_alg *alg,
- 		if (crypto_is_moribund(q))
- 			continue;
- 
--		if (crypto_is_larval(q)) {
--			struct crypto_larval *larval = (void *)q;
--
--			/*
--			 * Check to see if either our generic name or
--			 * specific name can satisfy the name requested
--			 * by the larval entry q.
--			 */
--			if (strcmp(alg->cra_name, q->cra_name) &&
--			    strcmp(alg->cra_driver_name, q->cra_name))
--				continue;
--
--			if (larval->adult)
--				continue;
--			if ((q->cra_flags ^ alg->cra_flags) & larval->mask)
--				continue;
--
--			if (fulfill_requests && crypto_mod_get(alg))
--				larval->adult = alg;
--			else
--				larval->adult = ERR_PTR(-EAGAIN);
--
-+		if (crypto_is_larval(q))
- 			continue;
--		}
- 
- 		if (strcmp(alg->cra_name, q->cra_name))
- 			continue;
-@@ -359,7 +336,7 @@ __crypto_register_alg(struct crypto_alg *alg, struct list_head *algs_to_put)
- 		list_add(&larval->alg.cra_list, &crypto_alg_list);
- 	} else {
- 		alg->cra_flags |= CRYPTO_ALG_TESTED;
--		crypto_alg_finish_registration(alg, true, algs_to_put);
-+		crypto_alg_finish_registration(alg, algs_to_put);
- 	}
- 
- out:
-@@ -376,7 +353,6 @@ void crypto_alg_tested(const char *name, int err)
- 	struct crypto_alg *alg;
- 	struct crypto_alg *q;
- 	LIST_HEAD(list);
--	bool best;
- 
- 	down_write(&crypto_alg_sem);
- 	list_for_each_entry(q, &crypto_alg_list, cra_list) {
-@@ -408,25 +384,7 @@ void crypto_alg_tested(const char *name, int err)
- 
- 	alg->cra_flags |= CRYPTO_ALG_TESTED;
- 
--	/*
--	 * If a higher-priority implementation of the same algorithm is
--	 * currently being tested, then don't fulfill request larvals.
--	 */
--	best = true;
--	list_for_each_entry(q, &crypto_alg_list, cra_list) {
--		if (crypto_is_moribund(q) || !crypto_is_larval(q))
--			continue;
--
--		if (strcmp(alg->cra_name, q->cra_name))
--			continue;
--
--		if (q->cra_priority > alg->cra_priority) {
--			best = false;
--			break;
--		}
--	}
--
--	crypto_alg_finish_registration(alg, best, &list);
-+	crypto_alg_finish_registration(alg, &list);
- 
- complete:
- 	complete_all(&test->completion);
-diff --git a/crypto/api.c b/crypto/api.c
-index 22556907b3bc..ffb81aa32725 100644
---- a/crypto/api.c
-+++ b/crypto/api.c
-@@ -37,6 +37,8 @@ DEFINE_STATIC_KEY_FALSE(__crypto_boot_test_finished);
- #endif
- 
- static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg);
-+static struct crypto_alg *crypto_alg_lookup(const char *name, u32 type,
-+					    u32 mask);
- 
- struct crypto_alg *crypto_mod_get(struct crypto_alg *alg)
- {
-@@ -201,9 +203,12 @@ static void crypto_start_test(struct crypto_larval *larval)
- 
- static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
- {
--	struct crypto_larval *larval = (void *)alg;
-+	struct crypto_larval *larval;
- 	long time_left;
- 
-+again:
-+	larval = container_of(alg, struct crypto_larval, alg);
-+
- 	if (!crypto_boot_test_finished())
- 		crypto_start_test(larval);
- 
-@@ -215,9 +220,16 @@ static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
- 		alg = ERR_PTR(-EINTR);
- 	else if (!time_left)
- 		alg = ERR_PTR(-ETIMEDOUT);
--	else if (!alg)
--		alg = ERR_PTR(-ENOENT);
--	else if (IS_ERR(alg))
-+	else if (!alg) {
-+		u32 type;
-+		u32 mask;
-+
-+		alg = &larval->alg;
-+		type = alg->cra_flags & ~(CRYPTO_ALG_LARVAL | CRYPTO_ALG_DEAD);
-+		mask = larval->mask;
-+		alg = crypto_alg_lookup(alg->cra_name, type, mask) ?:
-+		      ERR_PTR(-ENOENT);
-+	} else if (IS_ERR(alg))
- 		;
- 	else if (crypto_is_test_larval(larval) &&
- 		 !(alg->cra_flags & CRYPTO_ALG_TESTED))
-@@ -228,6 +240,9 @@ static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
- 		alg = ERR_PTR(-EAGAIN);
- 	crypto_mod_put(&larval->alg);
- 
-+	if (!IS_ERR(alg) && crypto_is_larval(alg))
-+		goto again;
-+
- 	return alg;
- }
- 
--- 
-2.39.2
-
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+T24gTW9uLCAyMDI0LTA4LTEyIGF0IDAxOjMyIC0wNzAwLCBLdXZhaXNraWksIERtaXRyaWkgd3Jv
+dGU6DQo+IE9uIEZyaSwgQXVnIDA5LCAyMDI0IGF0IDExOjE5OjIyQU0gKzAwMDAsIEh1YW5nLCBL
+YWkgd3JvdGU6DQo+IA0KPiA+ID4gVExEUjogSSBjYW4gYWRkIHNpbWlsYXIgaGFuZGxpbmcgdG8g
+c2d4X2VuY2xhdmVfbW9kaWZ5X3R5cGVzKCkgaWYNCj4gPiA+IHJldmlld2VycyBpbnNpc3QsIGJ1
+dCBJIGRvbid0IHNlZSBob3cgdGhpcyBkYXRhIHJhY2UgY2FuIGV2ZXIgYmUNCj4gPiA+IHRyaWdn
+ZXJlZCBieSBiZW5pZ24gcmVhbC13b3JsZCBTR1ggYXBwbGljYXRpb25zLg0KPiA+IA0KPiA+IFNv
+IGFzIG1lbnRpb25lZCBhYm92ZSwgSSBpbnRlbmQgdG8gc3VnZ2VzdCB0byBhbHNvIGFwcGx5IHRo
+ZSBCVVNZIGZsYWcgaGVyZS4gwqANCj4gPiBBbmQgd2UgY2FuIGhhdmUgYSBjb25zaXN0IHJ1bGUg
+aW4gdGhlIGtlcm5lbDoNCj4gPiANCj4gPiBJZiBhbiBlbmNsYXZlIHBhZ2UgaXMgdW5kZXIgY2Vy
+dGFpbmx5IG9wZXJhdGlvbiBieSB0aGUga2VybmVsIHdpdGggdGhlIG1hcHBpbmcNCj4gPiByZW1v
+dmVkLCBvdGhlciB0aHJlYWRzIHRyeWluZyB0byBhY2Nlc3MgdGhhdCBwYWdlIGFyZSB0ZW1wb3Jh
+cmlseSBibG9ja2VkIGFuZA0KPiA+IHNob3VsZCByZXRyeS4NCj4gDQo+IEkgYWdyZWUgd2l0aCB5
+b3VyIGFzc2Vzc21lbnQgb24gdGhlIGNvbnNlcXVlbmNlcyBvZiBzdWNoIGJ1ZyBpbg0KPiBzZ3hf
+ZW5jbGF2ZV9tb2RpZnlfdHlwZXMoKS4gVG8gbXkgdW5kZXJzdGFuZGluZywgdGhpcyBidWcgY2Fu
+IG9ubHkgYWZmZWN0DQo+IHRoZSBTR1ggZW5jbGF2ZSAoaS5lLiB0aGUgdXNlcnNwYWNlKSAtLSBl
+aXRoZXIgdGhlIFNHWCBlbmNsYXZlIHdpbGwgaGFuZw0KPiBvciB3aWxsIGJlIHRlcm1pbmF0ZWQu
+DQo+IA0KPiBBbnl3YXksIEkgd2lsbCBhcHBseSB0aGUgQlVTWSBmbGFnIGFsc28gaW4gc2d4X2Vu
+Y2xhdmVfbW9kaWZ5X3R5cGVzKCkgaW4NCj4gdGhlIG5leHQgaXRlcmF0aW9uIG9mIHRoaXMgcGF0
+Y2ggc2VyaWVzLg0KPiANCg0KVGhhbmtzLg0K
 
