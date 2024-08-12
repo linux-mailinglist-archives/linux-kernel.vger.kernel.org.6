@@ -1,166 +1,102 @@
-Return-Path: <linux-kernel+bounces-283252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCABA94EF2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B60894EF37
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:11:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77547282DA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:09:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27B65283311
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E54F17D378;
-	Mon, 12 Aug 2024 14:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC6317E455;
+	Mon, 12 Aug 2024 14:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="q/vTtReP"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z8so9v+2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7E317D354;
-	Mon, 12 Aug 2024 14:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491D317D354;
+	Mon, 12 Aug 2024 14:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723471773; cv=none; b=nvnZVLO+uSENP7DjYTSqoSUj97fmaCIE8QxF4dV5wp2e72pWDHjdFrN014g4ikKb+EgfzUct0LjeQuVE8hoKZaUlSYc4GZuDoakbYt3w0E+ljwg8cwgsFA8v0jrsOcpVGm2k/o7d+0oRlosfhS5ZEiW0PVNiCWg6nKRGvFxyW7g=
+	t=1723471903; cv=none; b=cIPSEg+yBVMooeTIIx9JY5rNaIfcgJ80dEpJKB8oa1144Q3k6Lv+BrPr/pb7sWmrYJEpKe6g+znyVL88P1260bBchYAHQvjokAKvNZBu+X8hAeKOdpT57CabcLMpnQzo5+cicTHBKIbOJlh76GAwDnAFS3/zJLdtRafgIl+j8Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723471773; c=relaxed/simple;
-	bh=8LwGkz5sxH7Hm1lIM1/2jbKypKgpB+kFFq4SU3csxz4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pO1XiSEJ9baDapbyCcm97EEPYfh/gNPxbqlA0XO4tRgoMSKjJgRPoEmjj3Xs8YXdTcLjJesrgOFL6gw5o7demcbp5yvs0G/9781UoMXuFfGQASB4lH/Nwf9l8/AWIbQEuJaS/SiPHSW/MaP1eRBzcMsmYm1R+IRiFt5LfvwwBuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=q/vTtReP reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id b9a1835cdea4ecd6; Mon, 12 Aug 2024 16:09:30 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 873526F0D6A;
-	Mon, 12 Aug 2024 16:09:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723471770;
-	bh=8LwGkz5sxH7Hm1lIM1/2jbKypKgpB+kFFq4SU3csxz4=;
-	h=From:Subject:Date;
-	b=q/vTtRePrIWDkYutbP+Xa30ovycTa4nMP2xLzw0ReJweIsL5iZrqO1oswQIsJquBK
-	 igXfckX1deQC824yq9szOePzXYZHT583XHuZnJTVC8CIJx5KK3qAcdHgLzyqP8Z4pt
-	 5ly7J25IMCWM2lJPOxjr4Mm55z+RPXo8cjBGAjU9Cn6LuHuMkEQ0c/LPvDHccPIdKv
-	 +yH1uuDWxCDnkXicNPCjn/q18oWsUrDLXIVck33Jn8PvDPe2rW/XV3xEv40bSL5M3B
-	 k57LQN2T9s8eD36RmXlgjmQg8UEBuSw3CfJ9EPwVua9PkyK/oMStApTej1p6KsO/XW
-	 EL9e+K6TSIJyg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v2 10/17] thermal: core: Unexport thermal_bind_cdev_to_trip() and
- thermal_unbind_cdev_from_trip()
-Date: Mon, 12 Aug 2024 16:09:08 +0200
-Message-ID: <2120480.KlZ2vcFHjT@rjwysocki.net>
-In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
-References: <114901234.nniJfEyVGO@rjwysocki.net>
+	s=arc-20240116; t=1723471903; c=relaxed/simple;
+	bh=gKJvIG9hbJBYPQKEZrJUxeBcBJnzTBvTuXGF+X5/AcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S/w4JUzhr/AUd2c2NyRugniC6uY1Girg5F37YMENJvooY25/j5XNOQsiYGl6+0tPmejtcumiEJO0H2ZckRPImBYW9trFrXOXCLTgisjGKSYWuihNeGhR6rNz+odbBfkNyH0P+y58Ey6Oh5oNA9Z828RLVjV2L8wfeqYGG2oSYzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z8so9v+2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4612FC4AF0D;
+	Mon, 12 Aug 2024 14:11:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723471902;
+	bh=gKJvIG9hbJBYPQKEZrJUxeBcBJnzTBvTuXGF+X5/AcY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=z8so9v+2zqO7LZvSRu33YPAG1N39VT/VdTyRosPCjMk6pycW3bchMHsDXMDeXA+v7
+	 63scewEZ3+2RohR4qF1146VbplLd9R5P10Icj+PjNpXA8+i1TC03kE+D9OMM7eSf3M
+	 Ca7wFNlfPPjEvb8HqYf8vNo+xsHdi74r4iKmyd1g=
+Date: Mon, 12 Aug 2024 16:11:40 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vitaly Chikunov <vt@altlinux.org>
+Cc: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+	=?iso-8859-1?Q?P=E9ter?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+	Linux kernel regressions list <regressions@lists.linux.dev>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
+ corruption
+Message-ID: <2024081227-wrangle-overlabor-cf31@gregkh>
+References: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
+ <14e54a89-5c62-41b2-8205-d69ddf75e7c7@linux.intel.com>
+ <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
+ <210a825d-ace3-4873-ba72-2c15347f9812@linux.intel.com>
+ <2024081225-finally-grandma-011d@gregkh>
+ <20240812103842.p7mcx7iyb5oyj7ly@altlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
- tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240812103842.p7mcx7iyb5oyj7ly@altlinux.org>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Aug 12, 2024 at 01:38:42PM +0300, Vitaly Chikunov wrote:
+> Greg,
+> 
+> On Mon, Aug 12, 2024 at 12:25:54PM +0200, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 12, 2024 at 12:01:48PM +0200, Amadeusz Sławiński wrote:
+> > > I guess that for completeness you need to apply both patches:
+> > > 
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=97ab304ecd95c0b1703ff8c8c3956dc6e2afe8e1
+> > 
+> > This is already in the tree.
+> > 
+> > > was an incorrect fix which was later fixed by:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=0298f51652be47b79780833e0b63194e1231fa34
+> > 
+> > This commit will not apply :(
+> 
+> It depends upon e0e7bc2cbee9 ("ASoC: topology: Clean up route loading"),
+> which was in the same patchset that didn't get applied.
+>   
+>   https://lore.kernel.org/stable/?q=ASoC%3A+topology%3A+Clean+up+route+loading
+> 
+> I see, Mark Brown said it's not suitable material for stable kernels
+> (since it's code cleanup), and Sasha Levin dropped it, and the dependent
+> commit with real fix.
 
-Since thermal_bind_cdev_to_trip() and thermal_unbind_cdev_from_trip()
-are only called locally in the thermal core now, they can be static,
-so change their definitions accordingly and drop their headers from
-the global thermal header file.
+Ok, then someone needs to provide a working backport please...
 
-No intentional functional impact.
+thanks,
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2: No changes
-
----
- drivers/thermal/thermal_core.c |   10 ++++------
- include/linux/thermal.h        |    8 --------
- 2 files changed, 4 insertions(+), 14 deletions(-)
-
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -777,7 +777,7 @@ struct thermal_zone_device *thermal_zone
-  *
-  * Return: 0 on success, the proper error value otherwise.
-  */
--int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
-+static int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
- 				     struct thermal_trip *trip,
- 				     struct thermal_cooling_device *cdev,
- 				     unsigned long upper, unsigned long lower,
-@@ -883,7 +883,6 @@ free_mem:
- 	kfree(dev);
- 	return result;
- }
--EXPORT_SYMBOL_GPL(thermal_bind_cdev_to_trip);
- 
- int thermal_zone_bind_cooling_device(struct thermal_zone_device *tz,
- 				     int trip_index,
-@@ -919,9 +918,9 @@ EXPORT_SYMBOL_GPL(thermal_zone_bind_cool
-  *
-  * Return: 0 on success, the proper error value otherwise.
-  */
--int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
--				  struct thermal_trip *trip,
--				  struct thermal_cooling_device *cdev)
-+static int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
-+					 struct thermal_trip *trip,
-+					 struct thermal_cooling_device *cdev)
- {
- 	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
- 	struct thermal_instance *pos, *next;
-@@ -954,7 +953,6 @@ free:
- 	kfree(pos);
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(thermal_unbind_cdev_from_trip);
- 
- int thermal_zone_unbind_cooling_device(struct thermal_zone_device *tz,
- 				       int trip_index,
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -246,18 +246,10 @@ const char *thermal_zone_device_type(str
- int thermal_zone_device_id(struct thermal_zone_device *tzd);
- struct device *thermal_zone_device(struct thermal_zone_device *tzd);
- 
--int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
--			      struct thermal_trip *trip,
--			      struct thermal_cooling_device *cdev,
--			      unsigned long upper, unsigned long lower,
--			      unsigned int weight);
- int thermal_zone_bind_cooling_device(struct thermal_zone_device *, int,
- 				     struct thermal_cooling_device *,
- 				     unsigned long, unsigned long,
- 				     unsigned int);
--int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
--				  struct thermal_trip *trip,
--				  struct thermal_cooling_device *cdev);
- int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
- 				       struct thermal_cooling_device *);
- void thermal_zone_device_update(struct thermal_zone_device *,
-
-
-
+greg k-h
 
