@@ -1,512 +1,289 @@
-Return-Path: <linux-kernel+bounces-282880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641F594EA01
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B4C194EA03
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 881001C216C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 351641C20984
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0273B16EBFF;
-	Mon, 12 Aug 2024 09:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BCC16D9D4;
+	Mon, 12 Aug 2024 09:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="LCGWG1gk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BtYYtBco"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ZVf/Wa+M";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ZVf/Wa+M"
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2086.outbound.protection.outlook.com [40.107.247.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9838A16E87A;
-	Mon, 12 Aug 2024 09:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455455; cv=none; b=A8u4S3DI5J1y1U/jH1Pfk+56K3kAz9XSM+NEvHUIKkJSaqGD8qLdgjUpudq2aPrnSy1GptShBXlbRDGYkQtHPMTyXDMmqUkYcsntD/awCYbqWOlfo6xS6udGpagyKE3XlcXt2VhkvvCud1rz+IDPKktP9j3rrtdzNihttYFaQ5Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455455; c=relaxed/simple;
-	bh=3l7H3p9zLo1EPln6tiC9rTjTUTU3k6UD3b9C05/yXqE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sueAxxr+xVOIMk91xBd828MK9GVxFWX7pQXTC0zuPKPqhtU9UuGIETdj43K2UBzzExxDkEfAcZb1pU8e1J93gMYsywJIHdEmmaoOFB13RhG2FE0BsaVi9Fwx82ucthcNt5w2dgE7gdY5nv18k2qOfB1tnbpmkAp6YotZhTCkTcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=LCGWG1gk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BtYYtBco; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-02.internal (phl-compute-02.nyi.internal [10.202.2.42])
-	by mailfout.nyi.internal (Postfix) with ESMTP id ABCE4138FD57;
-	Mon, 12 Aug 2024 05:37:32 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Mon, 12 Aug 2024 05:37:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1723455452;
-	 x=1723541852; bh=mDe0E8S0TTs375SvjMg65NszKRRCKN3lxU+hJ3lDft8=; b=
-	LCGWG1gkA9W8oLOCAHD0MY3IkaTVsbS8T8pAmNiQ9bLLo6KN1hfsyNHEJppIJx0H
-	t6uYMrQCVk9rE15VUaqt9Ic9Ej+5VssCXDv7tszBrCjn//3BDBuu6beQ69PdseQh
-	LQ3dpPhgMH2s+YUXahy+EgHaIRH5X7+WyfqCbtQHG+BDIokF2GVn00flJuYGlm3u
-	hDGaWggdBDmZ9vYVGznSUkUBEDgBb0YqMmu0+tcrAM4Aa44LKpl8o2+QvzikTe+I
-	WQSHRyUd9tqnINDxQTzJuSzV9nljWE/dIca3zT51vaBobmJYcjAbjHr/D/fycO2y
-	4/Vbp0IuP9N/5+TKB0StYA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723455452; x=
-	1723541852; bh=mDe0E8S0TTs375SvjMg65NszKRRCKN3lxU+hJ3lDft8=; b=B
-	tYYtBcoCCwwOsoDCWD5wcHK/m9D67EG+TWpCfcdilOXkTsNtU7qERQkH9iyU9a2x
-	0eC8jf3YotMG5OGddSU+J7OneNYG4CeDSqYZfJ4KY4AOzGS0KT8ZzpsQ/brmU4Fz
-	EDLcHISuUno4m9FqhavASUJb/6fcm6budiKbEgeF/oHNY8V/GzGvR/BMGSfDBgw5
-	OsOs2ySyfon51+4awcEttJZlYJdc2l1jrsp8Z0zI8v9Pkp06z6tMydFW82EWFoej
-	nRXLacYEZUnkDSzaPaCtiX3sVrp5S02IMuzi10qdxl3e2V3bA6GX4/wTVm601RFc
-	S6Obd3raXnl89kvXxu0Ww==
-X-ME-Sender: <xms:3Ne5ZmxYqXmfZUCJemGNa-K-KLyv7I95PkYAtuxLWynUarmW5nKGfA>
-    <xme:3Ne5ZiTKEWbG-80hV-5QdGZ0QeKgIvwIJIvnDSTS_yRHPmUUWpo61WXYr-YQaP4KT
-    OFxJdklr5KcA8RcpDU>
-X-ME-Received: <xmr:3Ne5ZoXBv_n4lOjtI3P8k0Uk91lcn8Yx3J-KucCCBJfR4-dIl9dVHYnuZZUBXRCYsQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgudekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephfffufggtgfgkfhfjgfvvefosehtjeertdertdej
-    necuhfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhi
-    hgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepvdekiefhfeevkeeuveetfeelffek
-    gedugefhtdduudeghfeuveegffegudekjeelnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdr
-    tghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
-    eplhhinhhugidqmhhiphhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    tghhvghnhhhurggtrghisehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    grrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtph
-    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepjhhirgiguhhnrdihrghnghesfhhlhihgohgrthdrtghomh
-X-ME-Proxy: <xmx:3Ne5ZshPAqDHDWgBnyU7Bxrius7hVfEbwF7ugWEDw7zjOjh_t2sf5g>
-    <xmx:3Ne5ZoBsTW1aUnV2Pr2DpJVaLLWGT7NNxk6OkUHnyz4QUei-OHMRfA>
-    <xmx:3Ne5ZtLOWKBLIyKsgUj4gpXft9gcGoOvAPMKMIxw-BTJAVRIZCEdAQ>
-    <xmx:3Ne5ZvBM1keF_91a6fOB5yC1la4qbr2NCqYGM4Y22D3keDlnoI5GNA>
-    <xmx:3Ne5Zk0VJrGrKTXjpGbSf5pvTtYmfOmJ8wEafwNPS1QjnhIU6nRIK91S>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 12 Aug 2024 05:37:31 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Mon, 12 Aug 2024 10:37:21 +0100
-Subject: [PATCH v2 7/7] MIPS: Loongson64: Migrate to arch_numa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52E516D9CB;
+	Mon, 12 Aug 2024 09:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.86
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723455500; cv=fail; b=bCn0RHfPT1BArKZoaG/Z3oM29IMpJ6b1rKJJYF2kxUfZinG7gKkEPyKKVum5oF/lLn4Z0F6BJrm7KjpaLR9d2+MbZtRPwv6nTPScpqAikcNhk48Q8quTqdoLNeHadWDNUbwjC3fJvYaLo2XfJXYxHzR3AuUQ46I6n6ZCfrMCYpg=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723455500; c=relaxed/simple;
+	bh=amG1gMKQen1BTVzOT77uDJzB6/YXE0wQxjSkF/IIqk8=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pRw/7U4Iy3sGssNXz9RF2Yex+zCtrI3SupN3zuJwIpcrEfqTZIjlyOZBUZos188nRYVbHEUdUjfnSpnAUNLZUwL8Z/ZbsfFB/FGQCzdasdFGsJkLYq8vx+e7uCC3sQrXw4+DB/AWHhnUiG9vIOZcv3Pu59tKCsfznortuLZDC5w=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ZVf/Wa+M; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ZVf/Wa+M; arc=fail smtp.client-ip=40.107.247.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=qGkoF/KEM7C0pb4VAkv0MR4lV679ELQSeEG3Y4KArvdzSwZRzHBt0/6hzlZiY7ylobYi6XGJIgMgU3ejH3s8kHtudEz3hQGiPg/G/6A+GdMOcMeZXh4ISF6KVIbs3IuNJvzR030Y1CJCrBRPo9JC32lPtRw7vT16DuD73jUEimWVe7n36IpyRELWAJZQ5/urCcPCwyuhotTDD6TE7ZeqSZwd5Noa/F2kaAQFDBP3qnLGZwU9+PuRTlP0EKtDbEDN0r93vncIkImbgRwgpAlXiSLJzL4GntNnIK2ZOeXPXif4ds5+G49JPYsUxwjJsFo52DNVrC8yzYAqWF4EmSbxKQ==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7FYXMpUM3QaCPpL620bRtTDg5MxR1VEbVy1j3KZl2VU=;
+ b=kdAOpKLT3K1VKvgqOc3bPtIr0IW+0YBvc2mDS8vgwHXWXc3bwEZhtmeh5uBiTVmXNEWuDCuaiO2/bvzl6PaW41FoBYTcbcy1EgMAdXWpg35ni4yJ4Jf1Tas7/BcpOltMnmFbqUEbBATwk6lQdYCB4qgLK/XXCM4buvg85cm//EgOBQ9GAmAhnC73w3h/QlbdDKcfhrVFiMmdN3i4+eJHmOBVoGBqTH9HVY+h/Ukkh3SffoeTxfSXq2PrBOj5P/yVffkcRPE4pc/1Ei51YGZOGwVEBig1pow+Svo/8h0lgBZ/KVspfLufQCcIOA0ABxd7xSUjVAodrEzws8wXe9X/3g==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7FYXMpUM3QaCPpL620bRtTDg5MxR1VEbVy1j3KZl2VU=;
+ b=ZVf/Wa+Mbp+UlC/AyKCe0feKm+GoLRG4lAEacq9K1bD35z+nUTqX0ySsi9VGRQJj5nIska5cZvKkdyFWu/8q5XHneFm+g+8KhRdfpW5b3ObWA86+B6j3sydd9T8SsUCcCtxC73A8HKj7YFbmZJ9E9w/ZdiWyUd5o07I7+TMWAV0=
+Received: from AS9PR06CA0383.eurprd06.prod.outlook.com (2603:10a6:20b:460::30)
+ by AS4PR08MB7406.eurprd08.prod.outlook.com (2603:10a6:20b:4e1::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Mon, 12 Aug
+ 2024 09:38:12 +0000
+Received: from AM2PEPF0001C717.eurprd05.prod.outlook.com
+ (2603:10a6:20b:460:cafe::b8) by AS9PR06CA0383.outlook.office365.com
+ (2603:10a6:20b:460::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20 via Frontend
+ Transport; Mon, 12 Aug 2024 09:38:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM2PEPF0001C717.mail.protection.outlook.com (10.167.16.187) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.7849.8
+ via Frontend Transport; Mon, 12 Aug 2024 09:38:12 +0000
+Received: ("Tessian outbound 3d5aa05142a5:v403"); Mon, 12 Aug 2024 09:38:12 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 3be5750f2568c9da
+X-CR-MTA-TID: 64aa7808
+Received: from L0890ec38c744.2
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 0504B807-8536-4E1B-93CE-B513AAAA4A33.1;
+	Mon, 12 Aug 2024 09:38:01 +0000
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L0890ec38c744.2
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Mon, 12 Aug 2024 09:38:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nxBOqefYkBg1jRN7Q/s40Zco2KOY8F4N4mq1VToSrwjet9p8BU+kVthmP4AxtlcewNrJT3nmJncLRftK2MqUnXdhML8847cz/e3esXgWA6NbK9jFpgWYqYThp2zRG3+MvPd/7t1nStxs/jJC77jtmLlFmFK1IvBwXsJFb043MD0r5nRY/l6YIak/s/7toSIgjtixDrgyf//EbH9+Obpmbr0jwJf7+/qoeUDdm6NnvsMDpWoBiYkk/QdfA15ef5zaX/cromFj1lF9wZwVXQJN1zMo4A1nT7gxJFz5gv3vFgl6EPqquyLrF4MvadnBr7F2k0JMTbpp3XRpIDfXvaQHCg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7FYXMpUM3QaCPpL620bRtTDg5MxR1VEbVy1j3KZl2VU=;
+ b=jJtGI/k8j4Z1vzhhaXVi2WsRFwzBqB7lVAFmRb2d/ptSeOJMVKfzy2PfpxGQpnwHJGdEadHwzu5zwIGBnevWKGE2YUtUa+M3OF51zXHU6QKIpigMoeW0uowROqsC+CYJC+RGVRrzjoC+0QJ3A/QCETN4gQTRTsyssN+Ns2gLtlwzQPbESYPypRQyDzyaqlsfjlyKBaZj3VLBMEMwu/bN+AXjqo6EvcZgbPDCDKcouDZn0/fLFuo4qKJUzYpSkIZ8ceXSE21IlW8ERmjOoxoV8Od94L32em1B537CuBW+RvJPwFug1uTS5O0Sb1w7QBgXvaIHDlAw4HEDZv+Z6DPfSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7FYXMpUM3QaCPpL620bRtTDg5MxR1VEbVy1j3KZl2VU=;
+ b=ZVf/Wa+Mbp+UlC/AyKCe0feKm+GoLRG4lAEacq9K1bD35z+nUTqX0ySsi9VGRQJj5nIska5cZvKkdyFWu/8q5XHneFm+g+8KhRdfpW5b3ObWA86+B6j3sydd9T8SsUCcCtxC73A8HKj7YFbmZJ9E9w/ZdiWyUd5o07I7+TMWAV0=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from PAXPR08MB6591.eurprd08.prod.outlook.com (2603:10a6:102:150::13)
+ by AS8PR08MB8633.eurprd08.prod.outlook.com (2603:10a6:20b:565::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Mon, 12 Aug
+ 2024 09:37:57 +0000
+Received: from PAXPR08MB6591.eurprd08.prod.outlook.com
+ ([fe80::9c15:44ce:9335:a5ad]) by PAXPR08MB6591.eurprd08.prod.outlook.com
+ ([fe80::9c15:44ce:9335:a5ad%3]) with mapi id 15.20.7875.012; Mon, 12 Aug 2024
+ 09:37:57 +0000
+Message-ID: <a5015d55-6fa4-4078-8ccb-6a11748099d5@arm.com>
+Date: Mon, 12 Aug 2024 10:37:55 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf docs: Refine the description for the buffer size
+To: James Clark <james.clark@linaro.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Govindarajan.Mohandoss@arm.com
+References: <20240810161540.2282535-1-leo.yan@arm.com>
+ <9b27533e-6dc6-4476-8f0b-4497388efde3@linaro.org>
+Content-Language: en-US
+From: Leo Yan <leo.yan@arm.com>
+In-Reply-To: <9b27533e-6dc6-4476-8f0b-4497388efde3@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0303.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:391::14) To PAXPR08MB6591.eurprd08.prod.outlook.com
+ (2603:10a6:102:150::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-mips-numa-v2-7-fd9bdb2033b9@flygoat.com>
-References: <20240812-mips-numa-v2-0-fd9bdb2033b9@flygoat.com>
-In-Reply-To: <20240812-mips-numa-v2-0-fd9bdb2033b9@flygoat.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Huacai Chen <chenhuacai@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
- linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12463;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=3l7H3p9zLo1EPln6tiC9rTjTUTU3k6UD3b9C05/yXqE=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrSd1y8V9HpMSVq/72m40faS3GlajnMCp0Xyyt7J/lL2s
- GvNrr07O0pZGMS4GGTFFFlCBJT6NjReXHD9QdYfmDmsTCBDGLg4BWAiO8oZGXauF79UmmpX8yq5
- +ttSRo6JxvN+Oei+Et+x/mXq0muKB68x/OEqNV36gNH155zVSZN7G09+0/jSIrTPRWR/bf3O/HU
- xXTwA
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+X-MS-TrafficTypeDiagnostic:
+	PAXPR08MB6591:EE_|AS8PR08MB8633:EE_|AM2PEPF0001C717:EE_|AS4PR08MB7406:EE_
+X-MS-Office365-Filtering-Correlation-Id: 07048a2b-0c13-4a1c-25be-08dcbab27c1c
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?UnNvMnd2dFhUOGVNdE5KVkM3dGZMYWRSQ2JxSXIvTzZpbDJwbitoK3RKdm9Z?=
+ =?utf-8?B?NFRtV3hOblNOQVNuMXZibDM2czdTcjNKQWFQeCtDdXBMdmpwRXFqdVErZVpO?=
+ =?utf-8?B?S00ybjFSa28zLzByeVB1N3VDdDRMcDBlb2Q4Mm1TWDZJQ2lSNFRCYml0blpU?=
+ =?utf-8?B?YWI5SGIvNmE3NWJwdU8rQ2JCOEFld0pSaFpBZFhtRmRIL2lFNjdhVGxOT2Ey?=
+ =?utf-8?B?NmJEdVNXU0V5NTRKamZIcTNkc2t1azZGbG95eGRiSXozQ3JYdWtGbjduYkpu?=
+ =?utf-8?B?MnBHSytEYWVoOW1EYTBIUUM4N3cxbFZGREw0Z3N1bStGblBwb25iZU9SVTlw?=
+ =?utf-8?B?N2FjNTdXWHVUSWF6SGZ4a2xoT24xWndPbTVPaTA0MEhKSjZDUFgyQnlKWThT?=
+ =?utf-8?B?ay9HL2lZWTF0Y0lwLy95SUNmK1FqSnA3dmdWSnhPV21CQXFadDBzK3N5djFt?=
+ =?utf-8?B?d2NrWnVUM0krQWlYdDU1N2ZmMHlvWUdsMTlCTHpBemlwR0Q5S0NJeit6N0xT?=
+ =?utf-8?B?a1BnSHBuSTUxRi9Td1Q5dFVzR3I1bVc2NTJGMjZ6Wk5idC93ZGE3ZndBeGxX?=
+ =?utf-8?B?WHNWQVpySWVJKzhRcnZGNXNXbmRUMUVhTlBOSlpLTThYS3pEU29yRWU5UXg3?=
+ =?utf-8?B?ZGJ1TGJWNW5vZlRJWlQrUm4vS2pBeXZCK0lRTTJ4RUE4cXZtWUFHaU96dko2?=
+ =?utf-8?B?czRyc1NtRSs5YmFPMVR1VGFZUGRUZHFROTRxSnp6SGxwMGFqZG1ETHlZZE9M?=
+ =?utf-8?B?d3duZXRtL3cxVGJ4RnFjNXBUK1hMR3pBTDBKeEl0TktWMjZPYUxRRmRsaHVU?=
+ =?utf-8?B?dUpINjlieXp0andXRDZUb1MvY3dZV0k4WWlsVW1iVXAvbEtXUWNhWmFXMkQ3?=
+ =?utf-8?B?cG92d0hlOGppNlpVTHRSWWJ5eW9peXdGSGFLTEV0NFpGVXFaOUhVTnc4aDZB?=
+ =?utf-8?B?cVI0ZVNWYzV2Sk1RSCsxdkRFa09tcXYzd3lBeGk3bWhlNUNka2lmZU9xWm9v?=
+ =?utf-8?B?bWVDZEVJeEcxYjJSQzd4Q01SUXhqOGczMTB2ZVduemlqTWZvbHZtUmZDazEy?=
+ =?utf-8?B?YlJ2NGF2UndXL1BESnFycG5TekQ0enVSYWFBeWhUa3BkVkM0TmJsRlM2MlMy?=
+ =?utf-8?B?WnhSbEcwYU1neFBiWVRYSnpsajJPQlpFQWp4RlpqcTZTYkNYMTdBekN4SkE4?=
+ =?utf-8?B?NzdYS0ZJbnZlUDFSZGgzaGFLYytLL29KZStkYzllVytqM2wvUnZpLzBuUXpD?=
+ =?utf-8?B?VURkRHMyYlRFZlprQktRaGFTR0w3RlR6OG1rMjBrSnkwSGJ2UC85WjlzREtL?=
+ =?utf-8?B?VnRqZ0VZTDllVWNVbENYbDV5NVlPcWJDSTcvL3ZlY0lrY3dpR2NhcDUwNVhZ?=
+ =?utf-8?B?YmhHajZJMEgxUWpwUnI5RWJ4V0wwZldTWC9HZ2VWdFF0UFZ5NCtTSlI4VWE2?=
+ =?utf-8?B?T3dPeU1zcU5UbFFjL2RPR0wvZHMrazhpWkhCM2dORTV1ZFdubGI5c3pITFlW?=
+ =?utf-8?B?cEhaQkpqakQ0ODdwaENOZnhLYldkTWljdG1IdDNFZDFaT2JjRC80SHFPaWJk?=
+ =?utf-8?B?ZUpYd2htZVFEelJpdk1TdjZWdUZrMnIzOTl3dlV2ZFhhQ2REd0dsNHJKd0Fl?=
+ =?utf-8?B?ckYxV1Q4cm10SW1CVzR0Vmh6UXZwYUJTQStidUlPL2Iyajh6bjVibW9jWUlx?=
+ =?utf-8?B?L3NpSlZvRFlVa010SzdJSW5LZ1hFVUJBWGNiLzlFNy94dUtxcGozelkvYmZ3?=
+ =?utf-8?B?WENTRmtCMnZxUzl2Z3ZMNUZCdTlaTUhDVkF0NnhpbHVwbk9jcnRxbXZoSGI5?=
+ =?utf-8?B?NlU4aFc1S2tlMHFvYTd1QT09?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR08MB6591.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8633
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:102:150::13];domain=PAXPR08MB6591.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM2PEPF0001C717.eurprd05.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	03e4e222-3b44-4d6d-e329-08dcbab2728c
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|35042699022|82310400026|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nm16T1FGd0NWQ3dsT1JSVW4yWkI1MTZ3UCtGbEVFZmNGUnZQaUpQZWVaM2N4?=
+ =?utf-8?B?dGtJU0U3emx5ZTJab24xM3ZZOTJKZFdweHRHNUwrVWljMi9OOU5nZ0E4em54?=
+ =?utf-8?B?MVJwU3QzT3pHQWVwNWlmbjlVNk9XbGNQV1ZEVVR2Q2w2RlRjV3Q5OVBtZzlk?=
+ =?utf-8?B?bW5IUm9BdFJwRkhhV3liM3ZwQjBwT3ZuejJXcE1mbmZYUmZmZjJPbG1ydzZY?=
+ =?utf-8?B?Wlg0NWJyeFpRemhUSThiSStWSWRWc0U2MmpOZ2JhVnRocnNsVmFMam8xUXl2?=
+ =?utf-8?B?TnZQK3I4U3hLTzVydUJFMVJ6WDJiR1kxNENPYXk5OUs0S2FYc3pSTjFIMCsw?=
+ =?utf-8?B?blpIWmxKNUEyYTIyRitrdFhNdlRzSy9PaWR1QnZka2FGcnRhVFN6cDJPWHVZ?=
+ =?utf-8?B?emluNmROU0JMbjFLcFBqMFgyYWlxUStxZW5ZUUNmeVVNSmd4cDYybmRRampQ?=
+ =?utf-8?B?V0dOU0hacTIxREN6RHYwUEpMOGVnSXRvNlJySmJ3dlFkM3U2NncyakR0NW1n?=
+ =?utf-8?B?S1NDaDl2UUM4bWlWMmlBTTZzZG9Mbm05RzV5T0g1UkhqdnNPVlR2UjgzSG12?=
+ =?utf-8?B?aFFCU1M4SGdhTStwaWNna1VwTmJqTW55OWN5OGlPUmorM2lKYkVNYWhicHcy?=
+ =?utf-8?B?aDZOd2xBcTVZL1QzTVdBWDRta0J5LzhvZXpYQXZnR3dISGRDeWdkYmhQZWtX?=
+ =?utf-8?B?SnNmRGx5RVE2aXdzMkRzUDcwWS9RSEF2T0h2WDFsNDVadEt1SXZ6RzBKQTdr?=
+ =?utf-8?B?blo3LzZEbkhMbjJSMkgzQlNSY3k2U1NkYVl6dVk3TVlvSTg5MmxKMktpY3VN?=
+ =?utf-8?B?NzM4ZGxMbFlFVGtzRk50M0U1clJlRnVwdndKMmF2UjlieTIwbWk2QStlcG5P?=
+ =?utf-8?B?bkNhQ0padVRrQmoxakJ1VGxSdWpWeHdOZ08yczBEYUtkR3kzcVUybVlXb0lm?=
+ =?utf-8?B?VFAxdnk2NjRlU1huNnJLT281QXBuQlJ0TTY2TVFUMTI4V1AybFljTCt4ajVs?=
+ =?utf-8?B?N3laanBOSkIvTmhPRyt6dGpHT3Q4YzVPcVpuZ3ljQ3Z2SzRSWGZNbzhNU3Fi?=
+ =?utf-8?B?cXJGWVAwbE0xVlBpaWNmNkdlRlpuelpCejZHd0Vic0ZSNVU1ZWkrWjRsam1r?=
+ =?utf-8?B?ekJvM3BLR2ZTRS9iV2pYUEdhUlVPaFVmQ2NQdHB6UU8xSWxhZ3YxQ2VFUGpT?=
+ =?utf-8?B?NGMvNEpoVGJKWnZVdjV6ZWhDREw2VGhscHVTSzZlYUY4WEo3RTY1L1Mza3VK?=
+ =?utf-8?B?aytQbm5odHc3azFubVpjKzgvOEpRK2wzS1laSUlqZmlkSjU2VjM3V28yTWJG?=
+ =?utf-8?B?Mjk2Y0Vpck0vb2hBaWI1USs0QTVwdUEyVkdEK2YzUjlVbElScGFUS0NYOERt?=
+ =?utf-8?B?Yk9JV1c3alI2dmpWVG9qYy9WZUo5TmFUVXdDVmE4Ym5KMGhPY29tdzdIekVH?=
+ =?utf-8?B?Z2M3dG5YTWVlVm95bEIyNmhTVk1BT2M2RHROc2h3RWVNcEo4YlhmVWdZVzJy?=
+ =?utf-8?B?S3Y1S0hUa3hYcjFZdUtuSUhoYTdDUE85UXJubmoxZUFrL2l0RFR5cVQzaDBo?=
+ =?utf-8?B?RC8xWWtSNmxsQzZLWElSM0pmaE95Q1NONzFQZ2tjbEhVSUIza2JXcmJ4OWIv?=
+ =?utf-8?B?N211ZDNoUWRSYVpMOGxBTE1nUGxjTDY1Nis4SHhFYUczbmJWVzcxMDBoZFEv?=
+ =?utf-8?B?TSs1MUxXUDZab25XNlQ3TnB6WWg3aUxCbENyVDU2UUk4Zk9udjBveDNSNW10?=
+ =?utf-8?B?cWFuMVZmOHNCaVU1U2JiUVZxYWd2RVA5ODZTdWhiZUx1WlI0SW13N2t1YWxC?=
+ =?utf-8?B?UG15QmsrZitpYjhBSzFwdFJ1Slp6WmRzZk85WUhXUm4vaWthQnU5UGRST3ox?=
+ =?utf-8?B?aUlkZHNCL3k3ZENVQkpCVzF3RzNQRmFocTFlYUUyaE9McFo4YlNvUEpxTEU5?=
+ =?utf-8?Q?BTy7vgzvhQv58V0wD8tSb0rr8zJOjIan?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(36860700013)(35042699022)(82310400026)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 09:38:12.8151
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07048a2b-0c13-4a1c-25be-08dcbab27c1c
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM2PEPF0001C717.eurprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR08MB7406
 
-Migrate to generic arch_numa infra to reduce maintenance burden.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/Kconfig                                |   3 +-
- arch/mips/include/asm/mach-loongson64/mmzone.h   |   2 -
- arch/mips/include/asm/mach-loongson64/numa.h     |  22 ----
- arch/mips/include/asm/mach-loongson64/topology.h |  18 ---
- arch/mips/kernel/setup.c                         |   2 +-
- arch/mips/loongson64/init.c                      |  28 ++---
- arch/mips/loongson64/numa.c                      | 153 ++---------------------
- arch/mips/loongson64/smp.c                       |   2 +
- 8 files changed, 26 insertions(+), 204 deletions(-)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 9284a06db2b4..bd042faa4905 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -472,6 +472,7 @@ config MACH_LOONGSON2EF
- config MACH_LOONGSON64
- 	bool "Loongson 64-bit family of machines"
- 	select ARCH_DMA_DEFAULT_COHERENT
-+	select ARCH_PLATFORM_NUMA if NUMA
- 	select ARCH_SPARSEMEM_ENABLE
- 	select ARCH_MIGHT_HAVE_PC_PARPORT
- 	select ARCH_MIGHT_HAVE_PC_SERIO
-@@ -2601,7 +2602,7 @@ config NUMA
- 	bool "NUMA Support"
- 	depends on SYS_SUPPORTS_NUMA
- 	select SMP
--	select GENERIC_ARCH_NUMA if !SGI_IP27 && !MACH_LOONGSON64
-+	select GENERIC_ARCH_NUMA if !SGI_IP27
- 	select HAVE_SETUP_PER_CPU_AREA
- 	select NEED_PER_CPU_EMBED_FIRST_CHUNK
- 	select USE_PERCPU_NUMA_NODE_ID if GENERIC_ARCH_NUMA
-diff --git a/arch/mips/include/asm/mach-loongson64/mmzone.h b/arch/mips/include/asm/mach-loongson64/mmzone.h
-index 8fb70fd3c9c4..f5946e69ad55 100644
---- a/arch/mips/include/asm/mach-loongson64/mmzone.h
-+++ b/arch/mips/include/asm/mach-loongson64/mmzone.h
-@@ -14,6 +14,4 @@
- #define pa_to_nid(addr)  (((addr) & 0xf00000000000) >> NODE_ADDRSPACE_SHIFT)
- #define nid_to_addrbase(nid) ((unsigned long)(nid) << NODE_ADDRSPACE_SHIFT)
- 
--extern void __init prom_init_numa_memory(void);
--
- #endif /* _ASM_MACH_MMZONE_H */
-diff --git a/arch/mips/include/asm/mach-loongson64/numa.h b/arch/mips/include/asm/mach-loongson64/numa.h
-deleted file mode 100644
-index 2fac370d981f..000000000000
---- a/arch/mips/include/asm/mach-loongson64/numa.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/*
-- * Copyright (C) 2024 Jiaxun Yang <jiaxun.yang@flygoat.com>
-- */
--
--#ifndef __ASM_MACH_LOONGSON64_NUMA_H
--#define __ASM_MACH_LOONGSON64_NUMA_H
--
--#ifdef CONFIG_NUMA
--extern unsigned char __node_distances[MAX_NUMNODES][MAX_NUMNODES];
--
--#define node_distance(from, to)	(__node_distances[(from)][(to)])
--#endif
--
--/* Hanlded in platform code */
--static inline void numa_store_cpu_info(unsigned int cpu) { }
--static inline void numa_add_cpu(unsigned int cpu) { }
--static inline void numa_remove_cpu(unsigned int cpu) { }
--static inline void arch_numa_init(void) { }
--static inline void early_map_cpu_to_node(unsigned int cpu, int nid) { }
--
--#endif	/* __ASM_NUMA_H */
-diff --git a/arch/mips/include/asm/mach-loongson64/topology.h b/arch/mips/include/asm/mach-loongson64/topology.h
-deleted file mode 100644
-index ebb086821401..000000000000
---- a/arch/mips/include/asm/mach-loongson64/topology.h
-+++ /dev/null
-@@ -1,18 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--#ifndef _ASM_MACH_TOPOLOGY_H
--#define _ASM_MACH_TOPOLOGY_H
--
--#include <asm/numa.h>
--
--#ifdef CONFIG_NUMA
--#define early_cpu_to_node(cpu)	(cpu_logical_map(cpu) >> 2)
--#define cpu_to_node(cpu)  early_cpu_to_node(cpu)
--
--extern cpumask_t __node_cpumask[];
--#define cpumask_of_node(node)	(&__node_cpumask[node])
--
--#endif
--
--#include <asm-generic/topology.h>
--
--#endif /* _ASM_MACH_TOPOLOGY_H */
-diff --git a/arch/mips/kernel/setup.c b/arch/mips/kernel/setup.c
-index 655391c04477..242945d240c5 100644
---- a/arch/mips/kernel/setup.c
-+++ b/arch/mips/kernel/setup.c
-@@ -252,7 +252,7 @@ static unsigned long __init init_initrd(void)
-  * Initialize the bootmem allocator. It also setup initrd related data
-  * if needed.
-  */
--#if defined(CONFIG_SGI_IP27) || (defined(CONFIG_CPU_LOONGSON64) && defined(CONFIG_NUMA))
-+#if defined(CONFIG_SGI_IP27)
- 
- static void __init bootmem_init(void)
- {
-diff --git a/arch/mips/loongson64/init.c b/arch/mips/loongson64/init.c
-index a35dd7311795..26423d323aa9 100644
---- a/arch/mips/loongson64/init.c
-+++ b/arch/mips/loongson64/init.c
-@@ -10,6 +10,7 @@
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <asm/bootinfo.h>
-+#include <asm/mmzone.h>
- #include <asm/traps.h>
- #include <asm/smp-ops.h>
- #include <asm/cacheflush.h>
-@@ -46,9 +47,9 @@ void virtual_early_config(void)
- 	node_id_offset = 44;
- }
- 
--void __init szmem(unsigned int node)
-+static void __init prom_init_memory(void)
- {
--	u32 i, mem_type;
-+	u32 i, mem_type, max_node_id = 0;
- 	phys_addr_t node_id, mem_start, mem_size;
- 
- 	/* Otherwise come from DTB */
-@@ -58,8 +59,8 @@ void __init szmem(unsigned int node)
- 	/* Parse memory information and activate */
- 	for (i = 0; i < loongson_memmap->nr_map; i++) {
- 		node_id = loongson_memmap->map[i].node_id;
--		if (node_id != node)
--			continue;
-+		if (node_id > max_node_id)
-+			max_node_id = node_id;
- 
- 		mem_type = loongson_memmap->map[i].mem_type;
- 		mem_size = loongson_memmap->map[i].mem_size;
-@@ -78,7 +79,7 @@ void __init szmem(unsigned int node)
- 		case UMA_VIDEO_RAM:
- 			pr_info("Node %d, mem_type:%d\t[%pa], %pa bytes usable\n",
- 				(u32)node_id, mem_type, &mem_start, &mem_size);
--			memblock_add_node(mem_start, mem_size, node,
-+			memblock_add_node(mem_start, mem_size, node_id,
- 					  MEMBLOCK_NONE);
- 			break;
- 		case SYSTEM_RAM_RESERVED:
-@@ -104,16 +105,11 @@ void __init szmem(unsigned int node)
- 		memblock_reserve(virt_to_phys((void *)loongson_sysconf.vgabios_addr),
- 				SZ_256K);
- 	/* set nid for reserved memory */
--	memblock_set_node((u64)node << 44, (u64)(node + 1) << 44,
--			&memblock.reserved, node);
--}
--
--#ifndef CONFIG_NUMA
--static void __init prom_init_memory(void)
--{
--	szmem(0);
-+	for (i = 0; i <= max_node_id; i++) {
-+		memblock_set_node(nid_to_addrbase(i), nid_to_addrbase(i + 1),
-+				  &memblock.reserved, i);
-+	}
- }
--#endif
- 
- void __init prom_init(void)
- {
-@@ -133,11 +129,7 @@ void __init prom_init(void)
- 	if (loongson_sysconf.early_config)
- 		loongson_sysconf.early_config();
- 
--#ifdef CONFIG_NUMA
--	prom_init_numa_memory();
--#else
- 	prom_init_memory();
--#endif
- 
- 	/* Hardcode to CPU UART 0 */
- 	if ((read_c0_prid() & PRID_IMP_MASK) == PRID_IMP_LOONGSON_64R)
-diff --git a/arch/mips/loongson64/numa.c b/arch/mips/loongson64/numa.c
-index d49180562c9f..9431e6e0a082 100644
---- a/arch/mips/loongson64/numa.c
-+++ b/arch/mips/loongson64/numa.c
-@@ -9,45 +9,10 @@
- #include <linux/init.h>
- #include <linux/kernel.h>
- #include <linux/mm.h>
--#include <linux/mmzone.h>
--#include <linux/export.h>
--#include <linux/nodemask.h>
--#include <linux/swap.h>
--#include <linux/memblock.h>
--#include <linux/pfn.h>
--#include <linux/highmem.h>
--#include <asm/page.h>
--#include <asm/pgalloc.h>
--#include <asm/sections.h>
--#include <linux/irq.h>
--#include <asm/bootinfo.h>
--#include <asm/mc146818-time.h>
--#include <asm/time.h>
--#include <asm/wbflush.h>
-+#include <linux/numa_memblks.h>
- #include <boot_param.h>
- #include <loongson.h>
- 
--unsigned char __node_distances[MAX_NUMNODES][MAX_NUMNODES];
--EXPORT_SYMBOL(__node_distances);
--
--cpumask_t __node_cpumask[MAX_NUMNODES];
--EXPORT_SYMBOL(__node_cpumask);
--
--static void cpu_node_probe(void)
--{
--	int i;
--
--	nodes_clear(node_possible_map);
--	nodes_clear(node_online_map);
--	for (i = 0; i < loongson_sysconf.nr_nodes; i++) {
--		node_set_state(num_online_nodes(), N_POSSIBLE);
--		node_set_online(num_online_nodes());
--	}
--
--	pr_info("NUMA: Discovered %d cpus on %d nodes\n",
--		loongson_sysconf.nr_cpus, num_online_nodes());
--}
--
- static int __init compute_node_distance(int row, int col)
- {
- 	int package_row = row * loongson_sysconf.cores_per_node /
-@@ -63,117 +28,21 @@ static int __init compute_node_distance(int row, int col)
- 		return 100;
- }
- 
--static void __init init_topology_matrix(void)
--{
--	int row, col;
--
--	for (row = 0; row < MAX_NUMNODES; row++)
--		for (col = 0; col < MAX_NUMNODES; col++)
--			__node_distances[row][col] = -1;
--
--	for_each_online_node(row) {
--		for_each_online_node(col) {
--			__node_distances[row][col] =
--				compute_node_distance(row, col);
--		}
--	}
--}
--
--static void __init node_mem_init(unsigned int node)
--{
--	unsigned long node_addrspace_offset;
--	unsigned long start_pfn, end_pfn;
--
--	node_addrspace_offset = nid_to_addrbase(node);
--	pr_info("Node%d's addrspace_offset is 0x%lx\n",
--			node, node_addrspace_offset);
--
--	get_pfn_range_for_nid(node, &start_pfn, &end_pfn);
--	pr_info("Node%d: start_pfn=0x%lx, end_pfn=0x%lx\n",
--		node, start_pfn, end_pfn);
--
--	alloc_node_data(node);
--
--	NODE_DATA(node)->node_start_pfn = start_pfn;
--	NODE_DATA(node)->node_spanned_pages = end_pfn - start_pfn;
--
--	if (node == 0) {
--		/* kernel start address */
--		unsigned long kernel_start_pfn = PFN_DOWN(__pa_symbol(&_text));
--
--		/* kernel end address */
--		unsigned long kernel_end_pfn = PFN_UP(__pa_symbol(&_end));
--
--		/* used by finalize_initrd() */
--		max_low_pfn = end_pfn;
--
--		/* Reserve the kernel text/data/bss */
--		memblock_reserve(kernel_start_pfn << PAGE_SHIFT,
--				 ((kernel_end_pfn - kernel_start_pfn) << PAGE_SHIFT));
--
--		/* Reserve 0xfe000000~0xffffffff for RS780E integrated GPU */
--		if (node_end_pfn(0) >= (0xffffffff >> PAGE_SHIFT))
--			memblock_reserve((node_addrspace_offset | 0xfe000000),
--					 32 << 20);
--
--		/* Reserve pfn range 0~node[0]->node_start_pfn */
--		memblock_reserve(0, PAGE_SIZE * start_pfn);
--		/* set nid for reserved memory on node 0 */
--		memblock_set_node(0, 1ULL << 44, &memblock.reserved, 0);
--	}
--}
--
--static __init void prom_meminit(void)
-+int __init arch_platform_numa_init(void)
- {
--	unsigned int node, cpu, active_cpu = 0;
-+	int nr_nodes, nid, row, col;
- 
--	cpu_node_probe();
--	init_topology_matrix();
-+	nr_nodes = loongson_sysconf.nr_nodes;
- 
--	for (node = 0; node < loongson_sysconf.nr_nodes; node++) {
--		if (node_online(node)) {
--			szmem(node);
--			node_mem_init(node);
--			cpumask_clear(&__node_cpumask[node]);
--		}
-+	for (nid = 0; nid < nr_nodes; nid++) {
-+		node_set(nid, numa_nodes_parsed);
-+		numa_add_memblk(nid, nid_to_addrbase(nid), nid_to_addrbase(nid + 1));
- 	}
--	max_low_pfn = PHYS_PFN(memblock_end_of_DRAM());
--
--	for (cpu = 0; cpu < loongson_sysconf.nr_cpus; cpu++) {
--		node = cpu / loongson_sysconf.cores_per_node;
--		if (node >= num_online_nodes())
--			node = 0;
--
--		if (loongson_sysconf.reserved_cpus_mask & (1<<cpu))
--			continue;
- 
--		cpumask_set_cpu(active_cpu, &__node_cpumask[node]);
--		pr_info("NUMA: set cpumask cpu %d on node %d\n", active_cpu, node);
--
--		active_cpu++;
-+	for (row = 0; row < nr_nodes; row++) {
-+		for (col = 0; col < nr_nodes; col++)
-+			numa_set_distance(row, col, compute_node_distance(row, col));
- 	}
--}
--
--void __init paging_init(void)
--{
--	unsigned long zones_size[MAX_NR_ZONES] = {0, };
--
--	pagetable_init();
--	zones_size[ZONE_DMA32] = MAX_DMA32_PFN;
--	zones_size[ZONE_NORMAL] = max_low_pfn;
--	free_area_init(zones_size);
--}
- 
--void __init mem_init(void)
--{
--	high_memory = (void *) __va(get_num_physpages() << PAGE_SHIFT);
--	memblock_free_all();
--	setup_zero_pages();	/* This comes from node 0 */
--}
--
--void __init prom_init_numa_memory(void)
--{
--	pr_info("CP0_Config3: CP0 16.3 (0x%x)\n", read_c0_config3());
--	pr_info("CP0_PageGrain: CP0 5.1 (0x%x)\n", read_c0_pagegrain());
--	prom_meminit();
-+	return 0;
- }
-diff --git a/arch/mips/loongson64/smp.c b/arch/mips/loongson64/smp.c
-index 147acd972a07..417063b8145b 100644
---- a/arch/mips/loongson64/smp.c
-+++ b/arch/mips/loongson64/smp.c
-@@ -464,6 +464,7 @@ static void __init loongson3_smp_setup(void)
- 			set_cpu_possible(num, true);
- 			/* Loongson processors are always grouped by 4 */
- 			cpu_set_cluster(&cpu_data[num], i / 4);
-+			early_map_cpu_to_node(num, i / loongson_sysconf.cores_per_node);
- 			num++;
- 		}
- 		i++;
-@@ -517,6 +518,7 @@ static int loongson3_cpu_disable(void)
- 	unsigned int cpu = smp_processor_id();
- 
- 	set_cpu_online(cpu, false);
-+	numa_remove_cpu(cpu);
- 	calculate_cpu_foreign_map();
- 	local_irq_save(flags);
- 	clear_c0_status(ST0_IM);
+On 8/12/24 10:11, James Clark wrote:
 
--- 
-2.46.0
+[...]
 
+> On 10/08/2024 5:15 pm, Leo Yan wrote:
+>> Current description for the AUX trace buffer size is misleading. When a
+>> user specifies the option '-m,512M', it represents a size value in bytes
+>> (512MiB) but not 512M pages (512M x 4KiB regard to a page of 4KiB).
+>>
+>> Make the document clear that the normal buffer and the AUX tracing
+>> buffer share the same semantics.
+>>
+>> Signed-off-by: Leo Yan <leo.yan@arm.com>
+>> ---
+>>   tools/perf/Documentation/perf-record.txt | 9 +++++----
+>>   1 file changed, 5 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+>> index 41e36b4dc765..242223240a08 100644
+>> --- a/tools/perf/Documentation/perf-record.txt
+>> +++ b/tools/perf/Documentation/perf-record.txt
+>> @@ -273,10 +273,11 @@ OPTIONS
+>>   -m::
+>>   --mmap-pages=::
+>>       Number of mmap data pages (must be a power of two) or size
+>> -     specification with appended unit character - B/K/M/G. The
+>> -     size is rounded up to have nearest pages power of two value.
+>> -     Also, by adding a comma, the number of mmap pages for AUX
+>> -     area tracing can be specified.
+>> +     specification in bytes with appended unit character - B/K/M/G.
+>> +     The size is rounded up to the nearest power-of-two page value.
+>> +     By adding a comma, an additional parameter with the same
+>> +     semantics used for the normal mmap areas can be specified for
+>> +     AUX tracing area.
+>>
+>>   -g::
+>>       Enables call-graph (stack chain/backtrace) recording for both
+> 
+> The same text is repeated on a few tools, probably makes sense to update
+> them all at the same time.
+> 
+> With that change:
+> 
+> Reviewed-by: James Clark <james.clark@linaro.org>
+
+Thanks for review. Sent a new patch with suggestion.
+
+Leo
 
