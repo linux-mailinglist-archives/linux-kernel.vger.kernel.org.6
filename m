@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-283464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2A394F543
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:50:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A514C94F540
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDDB24FBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:50:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D87871C20FB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B621891B9;
-	Mon, 12 Aug 2024 16:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C5518800F;
+	Mon, 12 Aug 2024 16:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jRS48Se6"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BOXNhpXa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328A318754F;
-	Mon, 12 Aug 2024 16:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11D24187563;
+	Mon, 12 Aug 2024 16:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481369; cv=none; b=AOsTXnun3OCN4y8n8JyNO65qbE4vR4i1Itk9/2+/kDXWBX+0DnX/0x8yj4PslUMqeQQCg+Yi7JZ3FeyvbdDkipqOESrzVkuudQbs0XUJFHrdu5cUCGzw1RQd0AhiQaCdd1HYZEqdgbE3IXqORkkyfDWrQxDxVr6I9eVYH+Cjsd0=
+	t=1723481353; cv=none; b=OYJLbPW8Y6iAdbtKl19YqomLqLpyXuKzhWJL7Geotrg8kHsrECOFQ9Cdyv/x+JwqZ//GbC6KN8KqolQPXRtDB1yoFu/SKaef5iA10aN3v1HHCnv4bX/zSbOpsRqGcvGu938t6j7MQ3tOW4nWhnL6HQrB1DFmUcaPyR8tpaPp780=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481369; c=relaxed/simple;
-	bh=gZ71JIUY6ZArmzi4xtfLFI83/0QyzpC82m2h2ix6kPA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f8bUKEGR2jFPWVPxek7tGqSjzpnJKbAx2mpiSugShKwspbTQ9ITCsZYyJhQUKVsVk9lBOfihxrt6PZ9EPsMCWZ6eidCAP/qAOdXauy2fD2TeWkzMMFR2NcyTuSpfVKvleIXqbCkNu3kSydFcmNvUQ759Up2i1ryZxip0stIYUCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jRS48Se6; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a975fb47eso513215466b.3;
-        Mon, 12 Aug 2024 09:49:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723481366; x=1724086166; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9uZeDuPO0pLPh6ITetlZN/9YjMUNqFK4FAQ3VBPba0Q=;
-        b=jRS48Se6tt/CDLr5Lg+Hz/7EfP8Zjs3TKHuUkdRAdcpWOHZMCaE3Yk7IFuGQvvzTqQ
-         wxjQ9NT1ENSbLoSaMBIXb8jn0kR7RLpFkJrlveH7cTM3+pm1SS8dxEbr2G+zq8H7HNQ2
-         0CtiGpYK5Y6PxkUGFNngcRexhZh0bD3DfS8nSMgBk6E2eKmdBFuIH5CBTbTbQWykc0SB
-         rt74Oz+zbEPigwNxNR3t6DCNk9xE1ROTbOlw4ShudbqI6NZEGeN5NxWpbuY+ppHAAcpv
-         rfb7xMGcT85jki1Q4A0KYPfFxng2KVtKBsExGXOyH3UAyjdkm0M49S/w5lcxCWzsQJLY
-         o7rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723481366; x=1724086166;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9uZeDuPO0pLPh6ITetlZN/9YjMUNqFK4FAQ3VBPba0Q=;
-        b=kmL0u9GYfHmXs+Em9wdkU/6fnX6Zs8Uk3sfela99syyj+t0FAiH6wltImCVOlSgEwi
-         WO0/8cCcasBI5P78llT7ZCWb2w5hNhtJEc3r3dwCWsYkeCrkE+wg7Hg6hJf/TgrpBZwo
-         aAlktNGRsiakby8hQlznxTNTMD853qEcun+yO/W/AWckU3IoZPrnqO2B+Og+oty1GeeG
-         rtk6N4FsPREe6h+9NHlaZT1o2c9AsVCeqTOrWbH6ktylKFGZu5UYa5osCxDNkeNAsQJe
-         aMXY/Z4ewHGqsclC3B5zTRuBXGYZx6T27FW0T2t7FRErIbYmFJHQNDJUfoCMCS7NjbZg
-         WIWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb2t1XOM7Q6+NRmIespY3hRD3bNKqVywmkYw6nrcpDjDGrQ6BcEk+RgGHewB6jTqQINkVyarLVGVKSr8vg2iXJYjDH085uhZV8kMDGB09RZHo/I1/O7kmw1TB9RhDHKBZlVEyh2rx3
-X-Gm-Message-State: AOJu0YytxWRGTH0OnQ5J3jeD+9DJY7R3v/RTYMCoAVf68+6Y08qL7ENC
-	75i04NGr6cLepIq+cFHu7YzHOJ+Fi6bxJMOMKuqM3YkuZCRZGpYRg3sE1f+tim+uPbWLALcu6pM
-	0ySso5EWvVxfwB5rGVhQVp3OplAY=
-X-Google-Smtp-Source: AGHT+IETp1u9kozZxrM/pEb5Ga6JdC1ydH2ooYxdgtbe72RB1uSrOXzZBoXZJqJAfxGhl/H6Kyo/lTiGipnefw1tkUU=
-X-Received: by 2002:a17:907:e607:b0:a7a:c256:3cb with SMTP id
- a640c23a62f3a-a80ed25af8cmr67309966b.39.1723481365998; Mon, 12 Aug 2024
- 09:49:25 -0700 (PDT)
+	s=arc-20240116; t=1723481353; c=relaxed/simple;
+	bh=RUNPCTPFaivJGckmyZWk/14TRobhI75SaZumaJuft/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/6uekaCizp22gCus86XBmwOg/ZRbCN+YWAFDvKw/E7YdnB8ycxPsb6eOVCjcSAtEQ8PRCKhTCuoFRbqDyAaKfrxW0ZlKJJZPKWmDo7GwvqTYSxdzZWTt4k6pOz8OyazwDaS5NyEmVQFw5YEYYnDYu42b4+fZe5FPtNDQm4JZq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BOXNhpXa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9556FC4AF0C;
+	Mon, 12 Aug 2024 16:49:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723481352;
+	bh=RUNPCTPFaivJGckmyZWk/14TRobhI75SaZumaJuft/w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BOXNhpXa3EgHPFde5FXP3a5z8AA+a7NAt6iZ3kltJ6zxMDu25lNeCFYE0km7bupOg
+	 VBcUKy0FE+U0PrCkKT/CrkNXxZirVEKCmje+vmsb/GnIaXo3n73KKck/Xa2U8HGasp
+	 5kbvs+P3U0vlMqKcCvMy+uAHvpR6+rtlfKhcq2OVq4sNbpigxtVh4ghcGULxdvHo7R
+	 iqPJtua9fhk62kxJwLRHUhHpcWBFCAesXYxnqF4w80T0p/txZScKuoSwHMQCDswcKc
+	 KedC5Ymq57TiKXpb3+wqfgcIJBCkvI9bQppSRIUjZUwXvrR9h42EZZhInbSGTF3YWf
+	 kcwNP/Be2jWWg==
+Date: Mon, 12 Aug 2024 09:49:12 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 5/6] iomap: don't mark blocks uptodate after partial
+ zeroing
+Message-ID: <20240812164912.GF6043@frogsfrogsfrogs>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725001411.39614-1-technoboy85@gmail.com> <20240725001411.39614-2-technoboy85@gmail.com>
-In-Reply-To: <20240725001411.39614-2-technoboy85@gmail.com>
-From: Matteo Croce <technoboy85@gmail.com>
-Date: Mon, 12 Aug 2024 18:48:47 +0200
-Message-ID: <CAFnufp1jxnjL2apUwxWKkNzS5QKpDXYTWPnVLn-VQyZazFujCg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: enable generic kfuncs for
- BPF_CGROUP_* programs
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Matteo Croce <teknoraver@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
 
-Il giorno gio 25 lug 2024 alle ore 02:14 <technoboy85@gmail.com> ha scritto:
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -3052,6 +3052,12 @@ static int __init kfunc_init(void)
->         ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_XDP, &generic_kfunc_set);
->         ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_OPS, &generic_kfunc_set);
->         ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SKB, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_DEVICE, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK_ADDR, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SYSCTL, &generic_kfunc_set);
-> +       ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCKOPT, &generic_kfunc_set);
->         ret = ret ?: register_btf_id_dtor_kfuncs(generic_dtors,
->                                                   ARRAY_SIZE(generic_dtors),
->                                                   THIS_MODULE);
+On Mon, Aug 12, 2024 at 08:11:58PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> In __iomap_write_begin(), if we unaligned buffered write data to a hole
+> of a regular file, we only zero out the place where aligned to block
+> size that we don't want to write, but mark the whole range uptodate if
+> block size < folio size. This is wrong since the not zeroed part will
+> contains stale data and can be accessed by a concurrent buffered read
+> easily (on the filesystem may not hold inode->i_rwsem) once we mark the
+> range uptodate. Fix this by drop iomap_set_range_uptodate() in the
+> zeroing out branch.
+> 
+> Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Closes: https://lore.kernel.org/all/ZqsN5ouQTEc1KAzV@casper.infradead.org/
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  fs/iomap/buffered-io.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index ac762de9a27f..96600405dbb5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -744,8 +744,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>  					poff, plen, srcmap);
+>  			if (status)
+>  				return status;
+> +			iomap_set_range_uptodate(folio, poff, plen);
+>  		}
+> -		iomap_set_range_uptodate(folio, poff, plen);
 
-This seems not enough, some kfuncs like bpf_cgroup_from_id are still rejected.
-To fix this we need also this chunk:
+Don't we need to iomap_set_range_uptodate for the bytes that we zeroed
+with folio_zero_segments?
 
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -8309,7 +8319,11 @@ static int bpf_prog_type_to_kfunc_hook(enum
-bpf_prog_type prog_type)
-        case BPF_PROG_TYPE_SYSCALL:
-                return BTF_KFUNC_HOOK_SYSCALL;
-        case BPF_PROG_TYPE_CGROUP_SKB:
-+       case BPF_PROG_TYPE_CGROUP_SOCK:
-+       case BPF_PROG_TYPE_CGROUP_DEVICE:
-        case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-+       case BPF_PROG_TYPE_CGROUP_SYSCTL:
-+       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-                return BTF_KFUNC_HOOK_CGROUP_SKB;
-        case BPF_PROG_TYPE_SCHED_ACT:
-                return BTF_KFUNC_HOOK_SCHED_ACT;
+--D
 
-but even with this it won't work, because
-bpf_prog_type_to_kfunc_hook() aliases many program types with a single
-hook, and btf_kfunc_id_set_contains() will fail to check if the kfunc
-is in the set.
-
-One solution could be to extend the btf_kfunc_hook enum with an entry
-for every CGROUP program type, but a thing I wanted to avoid is to let
-this enum proliferate in this way.
-I wish to group all the CGROUP_ program types into a single hook, and
-perhaps drop the "SKB" in "BTF_KFUNC_HOOK_CGROUP_SKB" which will have
-no meaning anymore.
-
-Ideas?
-
--- 
-Matteo Croce
-
-perl -e 'for($t=0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
+>  	} while ((block_start += plen) < block_end);
+>  
+>  	return 0;
+> -- 
+> 2.39.2
+> 
+> 
 
