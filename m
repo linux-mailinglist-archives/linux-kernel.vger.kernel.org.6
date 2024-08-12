@@ -1,85 +1,91 @@
-Return-Path: <linux-kernel+bounces-283029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5733194EC29
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:55:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D35694EC35
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912CC282296
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 598092822C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:00:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A43178CE2;
-	Mon, 12 Aug 2024 11:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF78178373;
+	Mon, 12 Aug 2024 12:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpfBTSkg"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LwKDGtdF"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3171178375;
-	Mon, 12 Aug 2024 11:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCA127457
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:59:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463728; cv=none; b=V+fRq2CNQgp2gvxQ0bJB2OowpjS2cTDJ11IankXv6iAGkHYr65tuLOUieTM2LMnoca7gtrSGYPlga9jEuGJLpOz7vxbZ/rHEBWaMgNXWo2OchQ0VWiNfJyn+ftZBo7N82+DO5ZuaLv/YoyyXKSbA/W0OAzETpu/ZHB8UMmwvoI8=
+	t=1723464002; cv=none; b=aeypB3E11b69GFaBQ0SbNBpBOIvu+o3ARDsB7+9Hdp1Vy4CfoaWWKvg5De65P+vkmEaDNCSqR/e89FUJHFy4TM9jmhHazPJfXb25VsHJsTTkCYL6SzQW7H7M7KKhUPddtCrR23stt0SxyOK5BqnHlpJLelMojgTgq2ukEuplBcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463728; c=relaxed/simple;
-	bh=D+7bmUBmPf9R1lZOFP6pwp2kl3GgyVARNY9iPApW6Wo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s6NvlSZQVGtASQJAy0uibvlreBSeDHCilz29fZsF2dujGQVH6cK7iECbgFaX9JxOZNVZDDh0ivMzo4K5wkh327NAnis9wxRtIQgDVY+y9V7iHtcUkT+kckAgaK+Re8GvqN2heDVpg6F4IJAhLLDiBdm3p984UKm7Yq1IHhuhy94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpfBTSkg; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1723464002; c=relaxed/simple;
+	bh=6T5U5J+76eqPdL/cU/Ax9ZyF3TvyQQsGkmbFRNK4EkM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WVzPs+15cSaj72smHVs0r5Aus0VSxDqeDzG0M+iW8NF4DZgMIuaVIKN0036YfR30SLMXQJwmKJbzmGTmnPep6jv+Z7aAldyt/ew2StumoVb+zn0c7vnO9yIHy4EqHeLdUKr3wCTSJaLkqLMDLvfnq2GpyxYtTB7LY1otRNjfsqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LwKDGtdF; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428141be2ddso31696825e9.2;
-        Mon, 12 Aug 2024 04:55:25 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5ba482282d3so5195946a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:59:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723463724; x=1724068524; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723463998; x=1724068798; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGqwTPLmyEyMz26JbF1oTN1ZIomEQ9CX54wEGKF1mH0=;
-        b=BpfBTSkgkFXs34AsGBWVKXYlJX0uwSwmBqaksrzNwCS7mvNmb3MZ+pvE79mkM7ozfS
-         V+cfJI5zZoh5CS809/fzW1BMtv9XfSC1Fa1umMPvDU8AGy6j1PEmgtHCHWmeF5ZPxkGB
-         WSe30+tBbs1I/z6xioTuIB8qKFlRMSwVVygC8jHSniWDFuTQ2xEPiwwps3O3eF+oB5Ot
-         dJZHtRjIlj42wP4cK+Ghu2yrNkLBDXE1Z/tPbB7Sg1TcGJEhRwUt/PeVEqi+QAfTMo03
-         6ene8ctzSPohirC9ZO5hYJuJsXAb/NYtREIUb4kFlO9q900iaImlfT6eBrMKGXRR77XH
-         quNQ==
+        bh=oRKx9dZX3QjMkF5miIckcLbQZtgikNx/maL4/UrUqR8=;
+        b=LwKDGtdF3OFA1phAMf8CXxt4d1mpv+cwnX7pBhBil3Anm8yjBc7Wj83LMJzwSfmjND
+         1XoG3u9/nkJgOX6xi72DtLQNRgxe/uK4ovLK8uz4JrMN9c8GyYj2uMc12G+1LWwTc08L
+         ofZQxH8EvFf8Bt6RU1Jgpe8k7irlmEXWF8qv65ntusm/jK2GRHEsOztDCr4UKXMSGk0x
+         XtGnTpOS23RT6EHc2NC6KSBRi5Um1Ven8qIVzgcjqXv/O+R94tfPMvLF45eRtPqJy1wT
+         Qgs904PlNQdHvy2DoJi9lMU22uAcDmQINq70Ck+kW4YL67CnpLdohlkMyNBvA+QYbT3A
+         FvYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723463724; x=1724068524;
+        d=1e100.net; s=20230601; t=1723463998; x=1724068798;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=nGqwTPLmyEyMz26JbF1oTN1ZIomEQ9CX54wEGKF1mH0=;
-        b=SC8XSYA1IT3DdJYyaojHlcVk8DAjnW1sCSZh17KvRtOO7RafHvdAasl5SUmdIiFzO4
-         RwL34ymslSKCzoiglIcfBcj2TcTyfvM2fv5pFVCtbxXmEwWUfxrrB6ALSK5BWwtiSgsS
-         7GsRLHJe3RsH8U0+c8dAw6uBBUGgYwHWfL1LGoFgCHJr8TJJeNlG98M0nD0Jfs2RkpHE
-         6M7cXLXgLj+JIKJ9ACDk/hWRcphRp2Z+9n5o28N5w6FRcIKHTscFcMAhzvX1EYDAFUuA
-         1+SDoCb0fLrxftR0tT/1emOFpSia6zPVucjr0Iu/WrlpbMvaJaK4fkDFEffDnAXn2Gv2
-         /dHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUePQeJZsDv/y6IqbiiSeWqQQs3o/vwJ28ZTfKLYQTqfDl+HtJxAZyxzt/pTATPbnnSF83RtqZXQKTeDkZW+svVNUJAqyjIcaY0NLxk2khWEQDI4AUFBw87CkMds5B6lBfqxa0jiHSSxqeIvtdEV7SZl7qdWVrfDJ6jwj06JCJJ
-X-Gm-Message-State: AOJu0YzLzFlHwg3Kiw3Ta/v/ZsF3PtBQP6hgpm/VL3JNggggZl/8qw+x
-	ynzHCr1KiMK6MF+oS5wWD3iKEFevVo6LvhnbVyoi4hEDc/KFenbvwIVS5w==
-X-Google-Smtp-Source: AGHT+IEzjMxUddGepYwSs+gi2qqbMIT/TW4uXG/465a39anmmtS9nzyhnaPu4fhSF0pZShiTU2DVEw==
-X-Received: by 2002:a05:600c:1d21:b0:428:3b5:816b with SMTP id 5b1f17b1804b1-429d47f19ffmr1249145e9.3.1723463723486;
-        Mon, 12 Aug 2024 04:55:23 -0700 (PDT)
-Received: from localhost.localdomain (host-79-52-250-20.retail.telecomitalia.it. [79.52.250.20])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c937b23sm7261602f8f.35.2024.08.12.04.55.22
+        bh=oRKx9dZX3QjMkF5miIckcLbQZtgikNx/maL4/UrUqR8=;
+        b=wI2eTfsrAriT2RO2c8Xz70dL9QRKrrQw0XzYAeBDVNZckmaO2sILBNsL8J/VN9FABR
+         /1oTgpkDqcB8c7G6X9TdJtkaKs3KALvm5Dp6+Z+noRN2N/0rVBtLv5iDLDiivUZc+ZZo
+         3aLT2bSpn8yN/CnOlRle1LHy7Ook5NTl2+aWQacQYdQEUcZOzvNygdGgmIw3zAZS4DGm
+         tn8wESyBAZSsm65ykS9P7xMjIYqtlUZ+WZSpUP1I5MVtefsL2tkao7jEg+5B4nIHSsj+
+         FHbQ1l1IcDMBWKXusNSiefPUAFQSE8puLJGO2OCRBr4nDly7c+8J4ybak5yYGc/fvBx3
+         yORQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9OvOycai0b3ffsuNUCQsYk0RIuMbS0JTz8cOGyzmhFCTUnbYiLYogZ4sb4VwFkJ89uwTr3DwuvY3Vu0dMbRmM1JRu0cYWFu4XUnFb
+X-Gm-Message-State: AOJu0Yxsss7kmYZI9lL4ETR4306/tlgb9y+Uq4nc5l4nyJMNvh9J84lB
+	kteR0M3q0KDIOzWTTfbZTZgoRIkguzrR3KEg7nLz782MgtxYO1Yd
+X-Google-Smtp-Source: AGHT+IHgH1TDpiQShSgpot1VvJxvHAYo32/du5ZSHtZ10/tza/HQdHkI7tdD0Hqt2qPFzIpMIKDXEw==
+X-Received: by 2002:a05:6402:5ca:b0:5a2:abcb:c4d1 with SMTP id 4fb4d7f45d1cf-5bd44c77743mr9130a12.34.1723463997238;
+        Mon, 12 Aug 2024 04:59:57 -0700 (PDT)
+Received: from fedora.iskraemeco.si ([193.77.86.250])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e04aesm2055970a12.76.2024.08.12.04.59.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 04:55:23 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	linux-mmc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-amlogic@lists.infradead.org,
+        Mon, 12 Aug 2024 04:59:56 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mmc: meson-gx: fix wrong conversion of __bf_shf to __ffs
-Date: Mon, 12 Aug 2024 13:55:10 +0200
-Message-ID: <20240812115515.20158-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.2
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Dennis Zhou <dennis@kernel.org>,
+	Tejun Heo <tj@kernel.org>,
+	Christoph Lameter <cl@linux.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Nadav Amit <nadav.amit@gmail.com>,
+	Brian Gerst <brgerst@gmail.com>,
+	Denys Vlasenko <dvlasenk@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Subject: [RFC PATCH v2 0/4] Enable strict percpu address space checks 
+Date: Mon, 12 Aug 2024 13:57:34 +0200
+Message-ID: <20240812115945.484051-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,53 +94,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
-changed __bf_shf to __ffs to fix a compile error on 32bit arch that have
-problems with __ffsdi2. This comes from the fact that __bf_shf use
-__builtin_ffsll and on 32bit __ffsdi2 is missing.
+This patchset enables strict percpu address space checks via x86 named 
+address space qualifiers. Percpu variables are declared in
+__seg_gs/__seg_fs named AS and kept named AS qualified until they
+are dereferenced via percpu accessor. This approach enables various
+compiler checks for cross-namespace variable assignments.
 
-Problem is that __bf_shf is defined as
+Please note that sparse doesn't know anything about __typeof_unqual__()
+operator, so the usage of __typeof_unqual__() breaks sparse checking.
 
-  #define __bf_shf(x) (__builtin_ffsll(x) - 1)
+Cc: Dennis Zhou <dennis@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Christoph Lameter <cl@linux.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Nadav Amit <nadav.amit@gmail.com>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 
-but the patch doesn't account for the - 1.
+Uros Bizjak (4):
+  percpu: Define pcpu_typeof()
+  percpu: Assorted fixes found by strict percpu address space checks
+  percpu: Repurpose __percpu tag as a named address space qualifier
+  percpu/x86: Enable strict percpu checks via named AS qualifiers
 
-Fix this by using the __builtin_ffs and add the - 1 to reflect the
-original implementation.
+ arch/x86/include/asm/percpu.h  | 53 ++++++++++++++++++++++++----------
+ arch/x86/kernel/head64.c       |  3 +-
+ drivers/base/devres.c          |  2 +-
+ fs/aio.c                       |  2 +-
+ include/asm-generic/percpu.h   | 41 +++++++++++++++++---------
+ include/linux/cleanup.h        |  4 +--
+ include/linux/compiler_types.h |  2 +-
+ include/linux/part_stat.h      |  2 +-
+ include/linux/percpu-defs.h    | 39 ++++++++++++++++++++-----
+ include/linux/prandom.h        |  1 +
+ init/Kconfig                   |  3 ++
+ kernel/events/hw_breakpoint.c  |  4 +--
+ kernel/locking/percpu-rwsem.c  |  2 +-
+ kernel/workqueue.c             |  2 +-
+ lib/percpu_counter.c           |  2 +-
+ net/core/dev.c                 |  2 +-
+ 16 files changed, 115 insertions(+), 49 deletions(-)
 
-The commit also converted other entry of __bf_shf in the code but those
-got dropped in later patches.
-
-Fixes: 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-Cc: stable@vger.kernel.org # see patch description, needs adjustements for < 5.2
----
- drivers/mmc/host/meson-gx-mmc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-index c7c067b9415a..8f64083a08fa 100644
---- a/drivers/mmc/host/meson-gx-mmc.c
-+++ b/drivers/mmc/host/meson-gx-mmc.c
-@@ -464,7 +464,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
- 	init.num_parents = MUX_CLK_NUM_PARENTS;
- 
- 	mux->reg = host->regs + SD_EMMC_CLOCK;
--	mux->shift = __ffs(CLK_SRC_MASK);
-+	mux->shift = __builtin_ffs(CLK_SRC_MASK) - 1;
- 	mux->mask = CLK_SRC_MASK >> mux->shift;
- 	mux->hw.init = &init;
- 
-@@ -486,7 +486,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
- 	init.num_parents = 1;
- 
- 	div->reg = host->regs + SD_EMMC_CLOCK;
--	div->shift = __ffs(CLK_DIV_MASK);
-+	div->shift = __builtin_ffs(CLK_DIV_MASK) - 1;
- 	div->width = __builtin_popcountl(CLK_DIV_MASK);
- 	div->hw.init = &init;
- 	div->flags = CLK_DIVIDER_ONE_BASED;
 -- 
-2.45.2
+2.46.0
 
 
