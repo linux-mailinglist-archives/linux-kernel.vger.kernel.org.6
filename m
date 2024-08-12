@@ -1,143 +1,182 @@
-Return-Path: <linux-kernel+bounces-282607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 382F994E662
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:06:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3546994E67F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B0C91C21599
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:06:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85288B21A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7F114EC59;
-	Mon, 12 Aug 2024 06:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IN9jC5um"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C6F14E2F9;
+	Mon, 12 Aug 2024 06:21:01 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324207406D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C504327457
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723442758; cv=none; b=jUxZWI822aGn52pHgHQM1/D/MwQxGQA4AFEOAdoNWljBYI4uRq+ef8O5QFpPBK4zj2OLLGCTGmvDD86k1T/pB6eX91o3bPuzOQdFXoWJSRq0icuDq2qoRcI50tHT3i2/V8mlbbjtquziEjLjLZXFOBXMD/wQV6jmXwHWNVXgx2s=
+	t=1723443661; cv=none; b=h+3yFPxnjt6ArhiB3JxQIXs7NEKQZdRZcHcJ0L8PNHfx3SNcmLBdmouqiDuhn+HQUASdGvwF3JwFlxAYtvQLFV50lkYdILSI5Crgx89iXMWTKbYVV+QAjIhJnXTeEhd6/GheuouAC6/jNYCLSOOC7+MhGbVU52npjtwtSuIvMEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723442758; c=relaxed/simple;
-	bh=Dm/92/bGvdHP5SQ80XUnnaP7TEoYqwtKdS6w2k2Gz4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aUzFOk78LK20imLsuLh0/I77awQbxGMcaMAjBr/kv2nveKQ89VaKlR+uLyV3z4G3zKgdyGmji0TIlf03chwGVTtFF7g1pVSasqBKlA9ElBIAWvHR6C1IFaUA6bNzwnzV1QXZhnxP5tWK0z6SpLweDyDTrxzv2NE+DVkptaEQ73U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IN9jC5um; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723442755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qA4BH06bb7VMDIbOMqT+kOmvZ/O4l65OvWNFedwV4Kk=;
-	b=IN9jC5umn4xvzEtVnQeezCN24uwVZA2T0FikpstSmX0fo75up8M30XUroDNLrIxmWuImnF
-	qtCg3AMhshMHRvgV2FX0tAC3tsV8uwyv9lUMzasmq5YKvYe4DlWh1tm5F3FWs/HMtXty/1
-	8QKE/KBPLtjyn4VlvZXRhzhMOz5jpLU=
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com
- [209.85.216.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-450-K2tMVH5rMU2YZSqw8l1YUQ-1; Mon, 12 Aug 2024 02:05:52 -0400
-X-MC-Unique: K2tMVH5rMU2YZSqw8l1YUQ-1
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-2cb600e1169so4250135a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:05:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723442751; x=1724047551;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qA4BH06bb7VMDIbOMqT+kOmvZ/O4l65OvWNFedwV4Kk=;
-        b=WK2jcUNCx9S1UkPCNia2djk+5kPm8VKyNMWva6X1kcWuiiGbde9MpBWY8DCsyyHKcR
-         nEvQouCPiZXJjlpHAuytLqcUfzGqYjgdtzP3CMoBvdrBTpml+y3mCtEQDC8mnAh3S6kB
-         Uv2HTomdNb8RSCMhq92zgA4/gef/wCeLuJvrKyk9xnis5FPBO6natWVA9y2Y0eEvApN8
-         f5SRIyDaZfZPoAli84tlD6qSjA52FkZgb4wvWF8YSPZ/aGo2rm9UvhXil7tV2zgsjjE5
-         cqBKkMYb24VqiTlxUyJlmMrd9I64Xx/tCwdgI8bzly58d8OdTYX/6aHkNamUuWatheag
-         Ek8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWHa5qQyutCAt0eIknqShJXiNy177KlbRGz7xVpQZsw63kRsN61+8YRkZ/W0zVOrn3G7gC4X1USswYBfTGHROta+7koagomYLOmIVot
-X-Gm-Message-State: AOJu0YzB3V8mebVrpPcXzIiKYH+LQh0YGwWKHLtC0XaFm6khDVaZFD+h
-	Er+WMos5fGsA0BDlCgv2WiMv8pfN+f0j96gKfWjz9EjGz3zCqF5yyD18/kv/mVza7BiUdd8l8fz
-	KbGqKXsNopcmV6emjHxYf7rOfSBjn22SAVZy3bbrtymzPPSnD/Uic0E7a5oWtOu4LUSjH1IxKds
-	FaHp0dT7QMpPMmeJZa6xFkIoGye5aBo0xWcRos
-X-Received: by 2002:a17:90a:e7ca:b0:2cc:f538:7cf0 with SMTP id 98e67ed59e1d1-2d1e7fa3ee1mr6621450a91.4.1723442751222;
-        Sun, 11 Aug 2024 23:05:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEPchhMOprMgdkVva/H94XFQJSN4hrwiz5xzEmRL+mAgQxBDibh8AJMSeiipVWXNAeVB9xnLnBIBB/EeLveqQg=
-X-Received: by 2002:a17:90a:e7ca:b0:2cc:f538:7cf0 with SMTP id
- 98e67ed59e1d1-2d1e7fa3ee1mr6621423a91.4.1723442750662; Sun, 11 Aug 2024
- 23:05:50 -0700 (PDT)
+	s=arc-20240116; t=1723443661; c=relaxed/simple;
+	bh=pBjJTWLkgKyW3moDM7uXpQuSf3iYWWkOvdqOlyhz3w0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=p0AzFD/EMoYNGR/n5ZiXmlM2wKKDUIfZToxuC+6blyH7x09gF1fqBzB/83UTJpjlgPDYg4ySeYgz1XqCnyLrHG799TtNA/8COlo9dYpl3ru2GHP0qmxXQuwP59PQGjLB8QJ0SpcPkFrJcfUUbZEzbYO24rnaK385Ctg+wd67fxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 8713819c587111efa216b1d71e6e1362-20240812
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
+	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SN_TRUSTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
+	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:7c06cd3c-635a-4381-999a-a0fee1d26245,IP:5,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-5
+X-CID-INFO: VERSION:1.1.38,REQID:7c06cd3c-635a-4381-999a-a0fee1d26245,IP:5,URL
+	:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-5
+X-CID-META: VersionHash:82c5f88,CLOUDID:25e9bf6a66f7d4df0b3a813efb7a5a5e,BulkI
+	D:240812141010FH96TZX4,BulkQuantity:0,Recheck:0,SF:17|19|45|66|38|25|102,T
+	C:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil
+	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-UUID: 8713819c587111efa216b1d71e6e1362-20240812
+X-User: yaolu@kylinos.cn
+Received: from localhost.localdomain [(111.48.58.10)] by mailgw.kylinos.cn
+	(envelope-from <yaolu@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 433485791; Mon, 12 Aug 2024 14:10:09 +0800
+From: Lu Yao <yaolu@kylinos.cn>
+To: alexdeucher@gmail.com,
+	ckoenig.leichtzumerken@gmail.com,
+	daniel@ffwll.ch,
+	jfalempe@redhat.com
+Cc: Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	alexander.deucher@amd.com,
+	amd-gfx@lists.freedesktop.org,
+	christian.koenig@amd.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	srinivasan.shanmugam@amd.com,
+	sunil.khatri@amd.com,
+	yaolu@kylinos.cn
+Subject: [PATCH v2] drm/amdgpu: add dce6 drm_panic support
+Date: Mon, 12 Aug 2024 14:09:14 +0800
+Message-Id: <20240812060914.102614-1-yaolu@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240802071752.116541-1-yaolu@kylinos.cn>
+References: <20240802071752.116541-1-yaolu@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAF=yD-JVs3h1PUqHaJAOFGXQQz-c36v_tP4vOiHpfeRhKh-UpA@mail.gmail.com>
- <9C79659E-2CB1-4959-B35C-9D397DF6F399@soulik.info> <66b62df442a85_3bec1229461@willemb.c.googlers.com.notmuch>
-In-Reply-To: <66b62df442a85_3bec1229461@willemb.c.googlers.com.notmuch>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 12 Aug 2024 14:05:39 +0800
-Message-ID: <CACGkMEsw-B5b-Kkx=wfW=obMuj-Si3GPyr_efSeCoZj+FozWmA@mail.gmail.com>
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue index
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: ayaka <ayaka@soulik.info>, netdev@vger.kernel.org, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 9, 2024 at 10:55=E2=80=AFPM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> ayaka wrote:
-> >
-> > Sent from my iPad
->
-> Try to avoid ^^^
->
+Add support for the drm_panic module, which displays a pretty user
+friendly message on the screen when a Linux kernel panic occurs.
 
-[...]
+Signed-off-by: Lu Yao <yaolu@kylinos.cn>
+---
+Changes in v2: 
+1. Drop include "drm_internal.h"
+2. Add disabling DC tiling ops.
+Per suggestion from previous thread:
+https://patchwork.freedesktop.org/patch/606879/?series=136832&rev=1
+---
+ drivers/gpu/drm/amd/amdgpu/dce_v6_0.c | 48 +++++++++++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-> > 2. Does such a hash operation happen to every packet passing through?
->
-> For packets with a local socket, the computation is cached in the
-> socket.
->
-> For these tunnel packets, see tun_automq_select_queue. Specifically,
-> the call to __skb_get_hash_symmetric.
->
-> I'm actually not entirely sure why tun has this, rather than defer
-> to netdev_pick_tx, which call skb_tx_hash.
-
-Not sure I get the question, but it needs to use a consistent hash to
-match the flows stored before.
-
->
-> > 3. Is rxhash based on the flow tracking record in the tun driver?
-> > Those CPU overhead may demolish the benefit of the multiple queues and =
-filters in the kernel solution.
->
-> Keyword is "may". Avoid premature optimization in favor of data.
->
-> > Also the flow tracking has a limited to 4096 or 1024, for a IPv4 /24 su=
-bnet, if everyone opened 16 websites, are we run out of memory before some =
-entries expired?
-> >
-> > I want to  seek there is a modern way to implement VPN in Linux after s=
-o many features has been introduced to Linux. So far, I don=E2=80=99t find =
-a proper way to make any advantage here than other platforms.
-
-I think I need to understand how we could define "modern" here.
-
-Btw, I vaguely remember there are some new vpn projects that try to
-use vhost-net to accelerate.
-
-E.g https://gitlab.com/openconnect/openconnect
-
-Thanks
+diff --git a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+index 05c0df97f01d..ba1b7a36caa3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/dce_v6_0.c
+@@ -28,6 +28,7 @@
+ #include <drm/drm_modeset_helper.h>
+ #include <drm/drm_modeset_helper_vtables.h>
+ #include <drm/drm_vblank.h>
++#include <drm/drm_panic.h>
+ 
+ #include "amdgpu.h"
+ #include "amdgpu_pm.h"
+@@ -2600,6 +2601,52 @@ static const struct drm_crtc_helper_funcs dce_v6_0_crtc_helper_funcs = {
+ 	.get_scanout_position = amdgpu_crtc_get_scanout_position,
+ };
+ 
++static int dce_v6_0_drm_primary_plane_get_scanout_buffer(struct drm_plane *plane,
++							 struct drm_scanout_buffer *sb)
++{
++	struct drm_framebuffer *fb;
++	struct amdgpu_bo *abo;
++	struct amdgpu_crtc *amdgpu_crtc;
++	struct amdgpu_device *adev;
++	uint32_t fb_format;
++
++	if (!plane->fb)
++		return -EINVAL;
++
++	fb = plane->fb;
++
++	abo = gem_to_amdgpu_bo(fb->obj[0]);
++	amdgpu_crtc = to_amdgpu_crtc(plane->crtc);
++	adev = drm_to_adev(fb->dev);
++
++	if (!abo->kmap.virtual &&
++	    ttm_bo_kmap(&abo->tbo, 0, PFN_UP(abo->tbo.base.size), &abo->kmap)) {
++		DRM_WARN("amdgpu bo map failed, panic won't be displayed\n");
++		return -ENOMEM;
++	}
++
++	if (abo->kmap.bo_kmap_type & TTM_BO_MAP_IOMEM_MASK)
++		iosys_map_set_vaddr_iomem(&sb->map[0], abo->kmap.virtual);
++	else
++		iosys_map_set_vaddr(&sb->map[0], abo->kmap.virtual);
++
++	sb->width = fb->width;
++	sb->height = fb->height;
++	sb->format = fb->format;
++	sb->pitch[0] = fb->pitches[0];
++
++	/* Disable DC tiling */
++	fb_format = RREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset);
++	fb_format &= ~GRPH_ARRAY_MODE(0x7);
++	WREG32(mmGRPH_CONTROL + amdgpu_crtc->crtc_offset, fb_format);
++
++	return 0;
++}
++
++static const struct drm_plane_helper_funcs dce_v6_0_drm_primary_plane_helper_funcs = {
++	.get_scanout_buffer = dce_v6_0_drm_primary_plane_get_scanout_buffer
++};
++
+ static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+ {
+ 	struct amdgpu_crtc *amdgpu_crtc;
+@@ -2627,6 +2674,7 @@ static int dce_v6_0_crtc_init(struct amdgpu_device *adev, int index)
+ 	amdgpu_crtc->encoder = NULL;
+ 	amdgpu_crtc->connector = NULL;
+ 	drm_crtc_helper_add(&amdgpu_crtc->base, &dce_v6_0_crtc_helper_funcs);
++	drm_plane_helper_add(amdgpu_crtc->base.primary, &dce_v6_0_drm_primary_plane_helper_funcs);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
 
