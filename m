@@ -1,152 +1,147 @@
-Return-Path: <linux-kernel+bounces-283081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D96194ECE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA8694ED18
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECE05B2131C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:24:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D52B1F22ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD47317A58E;
-	Mon, 12 Aug 2024 12:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5329117ADE5;
+	Mon, 12 Aug 2024 12:32:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K5IAu3Na"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TIetRdCY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246C17997A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45917AE15
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723465434; cv=none; b=OLbhX7If9VMvRGvIBbLGJQILPJClGG9i073xTIuJVR4gowK7TB4QfCMWmfEpVCMpw1sxQbA2791fjJ0Nzd7C7VPIT0MT1lRnan9dfEiq3wb3WJlbf8TR9Zx6omDVlUtvW+Bj/OLjI6K57EVU2eFyklEwCITp7rzShncT8Xrp9cM=
+	t=1723465952; cv=none; b=mYHsma2PfBczNHd1M7SHYDfofIv5Q7hqp9tY4LtrsBTZFbgoZ/nK5yyQgnDuQXjvMiHIAMsC8DkkTc4P+ooRZpzn2PjJY3Hp9mPj6oi7BFVR6NJBehd2UmtKJJGcPpwCHZnzwGMXqdiEDc1y1ZsAKMQW+/2/36AcHEloHfGxrho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723465434; c=relaxed/simple;
-	bh=jGosGmNqg+3CGldQhIO8Q9Yl5xt8JrZV5L5omlJeBwA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cf7a7MgUuU9ld05AJvJYxVRfCuRot9RZj/ML7qJpLRz1lce6CinswNC0ZFS5uwyty63IpugGM3XuYy3m6ExtvfrG1vrIKCVV+wwPqyMxrtCW5dBick6FLrmt0AcN4epuLcL0b1CBn1PbfQFKzi2o0xIpTZu1Op5j3fVKTUmE3aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K5IAu3Na; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-427fc97a88cso32707685e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:23:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723465430; x=1724070230; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XehwAsVHbXNGMp5RdCTcg+jS1mcwWOdOd2oDmc3/TGI=;
-        b=K5IAu3NaZSfFJo/Ug25gkdnHhcrxc6Gf7bVzfcHY37cpY1KVuDPj6Fu1KZBnJXOX6c
-         vaNaZBNtnG7N//fUwFWZIyOcrG4cTvqUu3G9HI8p/y7mC4N6G0dBbyO46KWxVDhkoD6w
-         zY+4WRu5wmPFK3sNEzZlYbcpTBIV6pdjYOLmVgUkH5Tradch/X4MHWypFS2wJNxWoC2t
-         AFNv8e+FJC796/NJAqeW6pAOlKtD/RCSZbgA9DjOkiDGgOmdXdb0XFYuYVmlHQK5vDp+
-         Ekjb6UEOYZot/l9fAovsgIBnMbhIeZdeRH5llcDJqClMGaaJKV2QCMyKDzP5qrIdjoQn
-         NxkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723465430; x=1724070230;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XehwAsVHbXNGMp5RdCTcg+jS1mcwWOdOd2oDmc3/TGI=;
-        b=iZwFO3hRHQUrl2QhxrcMz7WUyDZeiw4voB1VE7Fjqg0hA8HSTi/8uppMrlTzxN+LT5
-         zLS69UDQbtyWiv0YwJvsZNyk+9Zur9KpONgfA1AXnCSdC6hQ17AzJjg05z+cXyBckg0B
-         MCX/fdt6I8hCHvVBLK/ufVF4wPLd1Ykni1fmGBC5bEvZJUB6/Lfa+u28x421cN4oB0f9
-         W8OvYzWN8HUQwpdlnJ7WNCaDdXmjQnLdxGq+YZWDnjIGBrFkPoiTRKX3n9Ud1yCmoivY
-         yS/XprPtKBUwVrsKbYiH8/ljiXLy5SmVrJ4oF4WLUkgBN7e60hoLMpkD6FFJRYofV7nd
-         sAqg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgD28HHFN00BcZlfwD+Vy8b2a+3+yAMVxxaJr+111Z6RqbudHtTM8TzoFLNLSzjzBauQHVWJRsjwIdOFc4X2AFK4TrO22pvytmzuQQ
-X-Gm-Message-State: AOJu0YxyvqmBAwmxqjR4TloYXMrqGPmAjoTiaKlh+eII7OUvmFgQ3QjM
-	Xov4mn5+2fpFDnVggMj4cTkkx8bBz6US9avoQyfoFrHdNZQHGZIzByLpNVmllV0=
-X-Google-Smtp-Source: AGHT+IG8N1oZwbzivFuOXMO8KjI25Y2SXPR/dyyxOki85347hWjVPqJg+oatclhLoGiEpsJJCbZ3lw==
-X-Received: by 2002:a05:600c:468d:b0:426:55a3:71af with SMTP id 5b1f17b1804b1-429d4894febmr1580465e9.33.1723465429768;
-        Mon, 12 Aug 2024 05:23:49 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e555:6809:45b3:2496])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775e0e8sm100690605e9.41.2024.08.12.05.23.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 05:23:49 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,  Neil Armstrong
- <neil.armstrong@linaro.org>,  Kevin Hilman <khilman@baylibre.com>,  Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>,
-  linux-mmc@vger.kernel.org,  linux-arm-kernel@lists.infradead.org,
-  linux-amlogic@lists.infradead.org,  linux-kernel@vger.kernel.org,
-  stable@vger.kernel.org
-Subject: Re: [PATCH] mmc: meson-gx: fix wrong conversion of __bf_shf to __ffs
-In-Reply-To: <20240812115515.20158-1-ansuelsmth@gmail.com> (Christian
-	Marangi's message of "Mon, 12 Aug 2024 13:55:10 +0200")
-References: <20240812115515.20158-1-ansuelsmth@gmail.com>
-Date: Mon, 12 Aug 2024 14:23:48 +0200
-Message-ID: <1j8qx2x73f.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1723465952; c=relaxed/simple;
+	bh=0zIgF8iOZJpkLikhKsG5URaMwMAnL1lizsLIc7IZOz8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iWgGg/PAMuNeFdvQrNzrz2nBEHYR1MxDye+7waTrJ7+o/Y0pncjver7I8bWH3fdJksBXADqE5S5vl5uUeN3vSQaGrufilqUUu3xmXogx1rGpgBbRbMMCwDdTPM1LkxUHAF52KoS5R4IHLLT6AQCAHWxzBPHacBbT9TChv7PrvrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TIetRdCY; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723465949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=4qHHKU0iHbF87h4W4yLqLEg6CsTAei3xO/De8ekDPfQ=;
+	b=TIetRdCYiPkfhQidyEWfUWexg8hDzGik6QI82M3mH1sTCAkntATCXUJY7etPZhEwi8q1fq
+	wqwQjm+pNn4aGzyySQD+Bdy+dLfkskE2iGKWBcVNcHV68jCA6CltGtISm42CTAKRRWuTgj
+	G8/5x+WceNgMc+wt09Yk0s1uDtEhSjQ=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-663--D2dNI0cPfOtaPQyrHG3YQ-1; Mon,
+ 12 Aug 2024 08:32:24 -0400
+X-MC-Unique: -D2dNI0cPfOtaPQyrHG3YQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9449D197766D;
+	Mon, 12 Aug 2024 12:32:21 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.28])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 00DF730001A4;
+	Mon, 12 Aug 2024 12:32:15 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	"Bjorn Roy Baron" <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: [PATCH v6 0/4] drm/panic: Add a QR code panic screen
+Date: Mon, 12 Aug 2024 14:24:17 +0200
+Message-ID: <20240812123147.81356-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Mon 12 Aug 2024 at 13:55, Christian Marangi <ansuelsmth@gmail.com> wrote:
 
-> Commit 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
-> changed __bf_shf to __ffs to fix a compile error on 32bit arch that have
-> problems with __ffsdi2. This comes from the fact that __bf_shf use
-> __builtin_ffsll and on 32bit __ffsdi2 is missing.
->
-> Problem is that __bf_shf is defined as
->
->   #define __bf_shf(x) (__builtin_ffsll(x) - 1)
->
-> but the patch doesn't account for the - 1.
->
-> Fix this by using the __builtin_ffs and add the - 1 to reflect the
-> original implementation.
->
-> The commit also converted other entry of __bf_shf in the code but those
-> got dropped in later patches.
->
-> Fixes: 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+This series adds a new panic screen, with the kmsg data embedded in a QR code.
 
-Hi Christian,
+The main advantage of QR code, is that you can copy/paste the debug data to a bug report.
 
-Are you fixing an actual problem you've seen with the platform and or
-this solely based on the original commit description ?
+The QR code encoder is written in rust, and is very specific to drm panic.
+The reason is that it is called in a panic handler, and thus can't allocate memory, or use locking.
+The rust code uses a few rust core API, and provides only two C entry points.
+There is no particular reason to do it in rust, I just wanted to learn rust, and see if it can work in the kernel.
 
-If I dump the shift values with what we have right now, on sm1 at least
-* Mux shift is 6
-* Div shift is 0
+If you want to see what it looks like, I've put a few screenshots here:
+https://github.com/kdj0c/panic_report/issues/1
 
-This is aligned with the datasheet and has been working for while now.
+v2:
+ * Rewrite the rust comments with Markdown (Alice Ryhl)
+ * Mark drm_panic_qr_generate() as unsafe (Alice Ryhl)
+ * Use CStr directly, and remove the call to as_str_unchecked()
+   (Alice Ryhl)
+ * Add a check for data_len <= data_size (Greg KH)
 
-> Cc: stable@vger.kernel.org # see patch description, needs adjustements for < 5.2
-> ---
->  drivers/mmc/host/meson-gx-mmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
-> index c7c067b9415a..8f64083a08fa 100644
-> --- a/drivers/mmc/host/meson-gx-mmc.c
-> +++ b/drivers/mmc/host/meson-gx-mmc.c
-> @@ -464,7 +464,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
->  	init.num_parents = MUX_CLK_NUM_PARENTS;
->  
->  	mux->reg = host->regs + SD_EMMC_CLOCK;
-> -	mux->shift = __ffs(CLK_SRC_MASK);
-> +	mux->shift = __builtin_ffs(CLK_SRC_MASK) - 1;
->  	mux->mask = CLK_SRC_MASK >> mux->shift;
->  	mux->hw.init = &init;
->  
-> @@ -486,7 +486,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
->  	init.num_parents = 1;
->  
->  	div->reg = host->regs + SD_EMMC_CLOCK;
-> -	div->shift = __ffs(CLK_DIV_MASK);
-> +	div->shift = __builtin_ffs(CLK_DIV_MASK) - 1;
->  	div->width = __builtin_popcountl(CLK_DIV_MASK);
->  	div->hw.init = &init;
->  	div->flags = CLK_DIVIDER_ONE_BASED;
+v3:
+ * Fix all rust comments (typo, punctuation) (Miguel Ojeda)
+ * Change the wording of safety comments (Alice Ryhl)
+ * Add a link to the javascript decoder in the Kconfig (Greg KH)
+ * Fix data_size and tmp_size check in drm_panic_qr_generate()
 
+v4:
+ * Fix the logic to find next line and skip the '\n' (Alic Ryhl)
+ * Remove __LOG_PREFIX as it's not used (Alice Ryhl)
+
+v5:
+ * Move drm_panic_[init|exit]() prototype to drm_crtc_internal.h
+   (Daniel Vetter)
+
+v6:
+ * rebase, and handle conflict with 5d45c01dea6f ("drm/panic: Add panic description")
+ * Fix qr_width should be a signed int, to handle error code.
+
+Jocelyn Falempe (4):
+  drm/panic: Add integer scaling to blit()
+  drm/rect: Add drm_rect_overlap()
+  drm/panic: Simplify logo handling
+  drm/panic: Add a QR code panic screen
+
+ drivers/gpu/drm/Kconfig             |   31 +
+ drivers/gpu/drm/Makefile            |    1 +
+ drivers/gpu/drm/drm_crtc_internal.h |    4 +
+ drivers/gpu/drm/drm_drv.c           |    3 +
+ drivers/gpu/drm/drm_panic.c         |  340 +++++++--
+ drivers/gpu/drm/drm_panic_qr.rs     | 1003 +++++++++++++++++++++++++++
+ include/drm/drm_rect.h              |   15 +
+ 7 files changed, 1357 insertions(+), 40 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_panic_qr.rs
+
+
+base-commit: 5d45c01dea6f9e0f2dbed3ffee02ac2e80579ad4
 -- 
-Jerome
+2.46.0
+
 
