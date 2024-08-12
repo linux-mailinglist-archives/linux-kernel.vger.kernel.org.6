@@ -1,239 +1,107 @@
-Return-Path: <linux-kernel+bounces-283813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB8694F8EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:24:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276FE94F8F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A5F1C2239E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2901F22F3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC11946D0;
-	Mon, 12 Aug 2024 21:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C538194A65;
+	Mon, 12 Aug 2024 21:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="gOl04uim"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="CCVn/uzP"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B718E022
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723497837; cv=pass; b=SLt7pA1yzYYRXxGAz7oSzFW7Cxp2QXrqP23KuaQG0hcatnuz/NURQqt4yOn9NoJ6RH5JDPdbd9WAB2BcB4pfKvMsqzx3vbPbGWJdVD14dYkO5X1nPtTOLJfJeUww23tbV4nTPmyr3AumjpY4U8Fk/KoBKl7bNNH2l6IgRC1kmTw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723497837; c=relaxed/simple;
-	bh=zMnJBeV+rm5O0xXVaPkigIxCAFfinNVns9T2llr/UmU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SuRwBScHth4gqUaP6rt218U7v9rLIkHMC/Wh+4KF7j4ssgFNIIXkJHypE5M3QvflQ84d4waMnYAN0G9ZEz2eBFtU3nFEFemv7jh+PA0OuOJFv7VFcd0fE654dRS+XmZNoXamkYhiSUT+oTRGr2Wv13pZf/UPg4aJYZigRgzyPaM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=gOl04uim; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723497816; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ieHrHpiltkX1UNLyKDtEdDj/Z1hoqspIEcZkNkpS27ZAgnJ6DHhBPFNHFuDF5vwv/db1hafZuqash/5J76L5HkuUs9pWC8IGY45svx4Fen+V1GfjYvn6jBY3GMs/RkOMBV2eJINHiFsyCqV6TtoC4fWnp8ugaORIdLqw4OAyHAg=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723497816; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jlGPm4zay+O+5NxYplC7hIV2VJhkT7SctwvsdxMk7NY=; 
-	b=VtE7wAJYrlCy7RCHrO6mPxHzNNuUQq8uKqPeECo4YI14Ns+TdljUCC48aa3wzbsFWfrhiUkDVm6zKgueURuOrdh8oI/QBocUe6fQFqWIvSkZtwvGJR4D+vqJiMlWPG0IkNDhFH6+08kuk7Xzcp8pAKVMO9VHBUP+JczrqUmlokU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
-	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723497816;
-	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
-	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
-	bh=jlGPm4zay+O+5NxYplC7hIV2VJhkT7SctwvsdxMk7NY=;
-	b=gOl04uimxp4DdUlWr2mNquqMCp6DdN8bNelW/4ZTAJ4bQwFzpYQvg0y3AeMKuMok
-	6wJvnw3SK427wsPDdPv7LyCvR//++EiqESgkD6I1J+WClk4Lg1S3UVQLCuMZwkEM/12
-	eB/hYvAXdAyoKMXW08nmZuR9/C+wF+TnQ3Ts4afA=
-Received: by mx.zohomail.com with SMTPS id 1723497815850467.7307432445673;
-	Mon, 12 Aug 2024 14:23:35 -0700 (PDT)
-From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 13 Aug 2024 00:23:21 +0300
-Subject: [PATCH] drm/bridge: dw-hdmi: Simplify clock handling
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77DF194143;
+	Mon, 12 Aug 2024 21:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723497867; cv=none; b=tW58XNs14QsSuWjVWTWO2fJ6aKBanIIPd6hg2PRe7OFn7h3IPRrEq5c2vdio/CWw47/KtcL7i21y78iANAjJIq8RG2yr3r8wI95cpEQNLai2QzmUqtPfxJqeia0aexiu8IUS0h8oZ3l28wSXcanjdFAPe8dO42Mvr3CNJpZVB5E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723497867; c=relaxed/simple;
+	bh=iH6jnQrISF1BRHO0r67xhOolK0vIIxly8lxvTKgcTBE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aCiTjnlw/tzjW143I/F/6b6cxGqYDwwoniOPhg3xiVnH7s5l+rqc4JxTjuw9JyWH6gBGnhNk1Wa7UBbqjatSM1nT9cAV2LMJsw5JIk70uC25xJ1RjPykhevoNvhbBMhysoJKzyRzCTzwsiYa5t77GSN5tGKxLRvLzXurPnMumtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=CCVn/uzP; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WjSFj2BNKzlgVnF;
+	Mon, 12 Aug 2024 21:24:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1723497862; x=1726089863; bh=QM2YMS1R1duA7Z1hyWX9+78D
+	lYoVOMw+VcSUNBHdoF4=; b=CCVn/uzPix3bzN650Hh4jpTKXLs3fDHgWAAYPsWj
+	W8jgpmEHGOjYwClkwyoWJcj3vLXhhkRFYj2C1GinhmeVsnnYwUpEIPAMO7UnTsbK
+	lYec3xJpX32nNUEpjvjElbds5KEH1f9PLNYbZ2xCWlDHye6xVgw73t0T0w4G+xre
+	rUP/EYPeB2u9BRGIj3QUp0hUKMX/8CpN61jp7avymqN2xEoVl1ymc1IYBfgUEIFW
+	wl3woHyh1JcTVrftD2vjryjV3pJ+7/sJD38mfgHqg4h0yGTInoPHHNaFfHa/gug/
+	pa31V0MHkdj4ScGE6LnZrCzrOPlRGH8lcwTsSArSeHI46g==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id QWMS8g5n8hIO; Mon, 12 Aug 2024 21:24:22 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WjSFf2SHnzlgTGW;
+	Mon, 12 Aug 2024 21:24:22 +0000 (UTC)
+Message-ID: <be2a8462-38fb-4e74-905d-12bc9f678082@acm.org>
+Date: Mon, 12 Aug 2024 14:24:21 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] scsi: sd: retry command SYNC CACHE if format in
+ progress
+To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linuxarm@huawei.com, prime.zeng@huawei.com
+References: <20240810015912.856223-1-liyihang9@huawei.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240810015912.856223-1-liyihang9@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-dw-hdmi-simple-clk-v1-1-78d45cef02a9@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAEh9umYC/x3MywqAIBBA0V+JWTegPejxK9HCcsohtVCoIPr3p
- OVZ3PtApMAUoc8eCHRy5N0nyDyD2Si/ErJOhkIUlWhlifpCox1jZHdYwtluSKqT01ILrUQDKTw
- CLXz/02F83w/fr504ZAAAAA==
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-ZohoMailClient: External
 
-Make use of devm_clk_get_enabled() to replace devm_clk_get() and
-clk_prepare_enable() for isfr and iahb clocks, and drop the now
-unnecessary calls to clk_disable_unprepare().
+On 8/9/24 6:59 PM, Yihang Li wrote:
+> If formatting a suspended disk (such as formatting with different DIF
+> type), the disk will be resuming first, and then the format command will
+> submit to the disk through SG_IO ioctl.
+> 
+> When the disk is processing the format command, the system does not submit
+> other commands to the disk. Therefore, the system attempts to suspend the
+> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+> command will fail because the disk is in the formatting process, which
+> will cause the runtime_status of the disk to error and it is difficult
+> for user to recover it. Error info like:
+> 
+> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
+> 
+> To solve the issue, retry the command until format command is finished.
+> 
+> Signed-off-by: Yihang Li <liyihang9@huawei.com>
 
-Similarly, use devm_clk_get_optional_enabled() helper for cec clock,
-which additionally allows to remove the -ENOENT test.
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 
-Moreover, the clock related members of struct dw_hdmi are not required
-anymore, hence drop them.
+If you want this patch to land in older kernels a "Cc: stable" tag will
+have to be added.
 
-Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
----
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 66 ++++++++-----------------------
- 1 file changed, 16 insertions(+), 50 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 9f2bc932c371..0031f3c54882 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -138,9 +138,6 @@ struct dw_hdmi {
- 	struct platform_device *audio;
- 	struct platform_device *cec;
- 	struct device *dev;
--	struct clk *isfr_clk;
--	struct clk *iahb_clk;
--	struct clk *cec_clk;
- 	struct dw_hdmi_i2c *i2c;
- 
- 	struct hdmi_data_info hdmi_data;
-@@ -3326,6 +3323,7 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 	struct device_node *ddc_node;
- 	struct dw_hdmi_cec_data cec;
- 	struct dw_hdmi *hdmi;
-+	struct clk *clk;
- 	struct resource *iores = NULL;
- 	int irq;
- 	int ret;
-@@ -3405,50 +3403,27 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 		hdmi->regm = plat_data->regm;
- 	}
- 
--	hdmi->isfr_clk = devm_clk_get(hdmi->dev, "isfr");
--	if (IS_ERR(hdmi->isfr_clk)) {
--		ret = PTR_ERR(hdmi->isfr_clk);
-+	clk = devm_clk_get_enabled(hdmi->dev, "isfr");
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
- 		dev_err(hdmi->dev, "Unable to get HDMI isfr clk: %d\n", ret);
- 		goto err_res;
- 	}
- 
--	ret = clk_prepare_enable(hdmi->isfr_clk);
--	if (ret) {
--		dev_err(hdmi->dev, "Cannot enable HDMI isfr clock: %d\n", ret);
--		goto err_res;
--	}
--
--	hdmi->iahb_clk = devm_clk_get(hdmi->dev, "iahb");
--	if (IS_ERR(hdmi->iahb_clk)) {
--		ret = PTR_ERR(hdmi->iahb_clk);
-+	clk = devm_clk_get_enabled(hdmi->dev, "iahb");
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
- 		dev_err(hdmi->dev, "Unable to get HDMI iahb clk: %d\n", ret);
--		goto err_isfr;
--	}
--
--	ret = clk_prepare_enable(hdmi->iahb_clk);
--	if (ret) {
--		dev_err(hdmi->dev, "Cannot enable HDMI iahb clock: %d\n", ret);
--		goto err_isfr;
-+		goto err_res;
- 	}
- 
--	hdmi->cec_clk = devm_clk_get(hdmi->dev, "cec");
--	if (PTR_ERR(hdmi->cec_clk) == -ENOENT) {
--		hdmi->cec_clk = NULL;
--	} else if (IS_ERR(hdmi->cec_clk)) {
--		ret = PTR_ERR(hdmi->cec_clk);
-+	clk = devm_clk_get_optional_enabled(hdmi->dev, "cec");
-+	if (IS_ERR(clk)) {
-+		ret = PTR_ERR(clk);
- 		if (ret != -EPROBE_DEFER)
- 			dev_err(hdmi->dev, "Cannot get HDMI cec clock: %d\n",
- 				ret);
--
--		hdmi->cec_clk = NULL;
--		goto err_iahb;
--	} else {
--		ret = clk_prepare_enable(hdmi->cec_clk);
--		if (ret) {
--			dev_err(hdmi->dev, "Cannot enable HDMI cec clock: %d\n",
--				ret);
--			goto err_iahb;
--		}
-+		goto err_res;
- 	}
- 
- 	/* Product and revision IDs */
-@@ -3462,12 +3437,12 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 		dev_err(dev, "Unsupported HDMI controller (%04x:%02x:%02x)\n",
- 			hdmi->version, prod_id0, prod_id1);
- 		ret = -ENODEV;
--		goto err_iahb;
-+		goto err_res;
- 	}
- 
- 	ret = dw_hdmi_detect_phy(hdmi);
- 	if (ret < 0)
--		goto err_iahb;
-+		goto err_res;
- 
- 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
- 		 hdmi->version >> 12, hdmi->version & 0xfff,
-@@ -3479,14 +3454,14 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 	irq = platform_get_irq(pdev, 0);
- 	if (irq < 0) {
- 		ret = irq;
--		goto err_iahb;
-+		goto err_res;
- 	}
- 
- 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
- 					dw_hdmi_irq, IRQF_SHARED,
- 					dev_name(dev), hdmi);
- 	if (ret)
--		goto err_iahb;
-+		goto err_res;
- 
- 	/*
- 	 * To prevent overflows in HDMI_IH_FC_STAT2, set the clk regenerator
-@@ -3603,11 +3578,6 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
- 
- 	return hdmi;
- 
--err_iahb:
--	clk_disable_unprepare(hdmi->iahb_clk);
--	clk_disable_unprepare(hdmi->cec_clk);
--err_isfr:
--	clk_disable_unprepare(hdmi->isfr_clk);
- err_res:
- 	i2c_put_adapter(hdmi->ddc);
- 
-@@ -3627,10 +3597,6 @@ void dw_hdmi_remove(struct dw_hdmi *hdmi)
- 	/* Disable all interrupts */
- 	hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
- 
--	clk_disable_unprepare(hdmi->iahb_clk);
--	clk_disable_unprepare(hdmi->isfr_clk);
--	clk_disable_unprepare(hdmi->cec_clk);
--
- 	if (hdmi->i2c)
- 		i2c_del_adapter(&hdmi->i2c->adap);
- 	else
-
----
-base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
-change-id: 20240813-dw-hdmi-simple-clk-ea91bf50da07
-
+Bart.
 
