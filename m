@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-283205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CB094EE9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:47:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C9394EEC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57058B21A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:47:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C622B2566C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B40E17C7CE;
-	Mon, 12 Aug 2024 13:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12F717E473;
+	Mon, 12 Aug 2024 13:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly77zGC+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yj2AloPi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7F417A92F;
-	Mon, 12 Aug 2024 13:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF7A17C7D9;
+	Mon, 12 Aug 2024 13:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470384; cv=none; b=rB7algCKk/3ul4B7LBIGzOpLcusq3SzmkR6tE3WczgGIvi74GU4Gy/+YKS5OrJC6CoeB44ZgvJoZVCVUhPLzOlGJOuuSqhBONHmSOiwtc7HryhgyEBM7TYG7uVmBQbZzH/SH1S7HZNxbVPsAngIiErxnGtYb5BDJmpg0ntDmhvs=
+	t=1723470660; cv=none; b=AOFGHiu8o5OatVeDkhFAMHBChlh/pCeV1j574H3XuzxsbdbTdy/vtx6fqdn+QkeJmBmhtoIjPvBQOY8FsYkmauMze/uEnMoSOV+oiiYRoDVTVSCBs6kJuwWMd9DL/pzh44WfD4R2E4YAXcphzvjschPrWMLkpqouUz6XRe+/uyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470384; c=relaxed/simple;
-	bh=RZbrLVmBjMhLipuy8GpOq0fJf7VHPNsfLcYAn3sksuw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iKmiQBKCbmEhl2m838ZFGz60E/ePxSJFVGHsRHG2qeb4UAe5OjPY6uzNfPcswcAXiWT2d3E24sNkymFJnbE1+2SJx4E4jdYrF9+Eqk6hlReKOlgqq0PjYXZyqYX6W4MeQZEsHOvkaxLfO+1Froa3t+BPsJSPf5DB/rujVkSPgs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly77zGC+; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723470383; x=1755006383;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RZbrLVmBjMhLipuy8GpOq0fJf7VHPNsfLcYAn3sksuw=;
-  b=ly77zGC+PpB1BDZk5pA8dPu1QuOL+0D/007ajuIPfs881kWYH8uECe3l
-   g322wj6OjvhNQvEc4a+DWu3enhrvNtDm7qXbsNcjNjQcWMcLnaHx4TY5Y
-   9jUJswIbMUBL/HS4cJ7b3xnshAHhHQBhTCQuhOcniAGBsvmUdyFeLFCbV
-   6RxFCnCk4YwtnTIxzZh/h+7m9sv673UT9kQjeA/rNi9oJjrLu+n7jcT3b
-   5828vku3hDlVtqUUjmJTonEZ7lFrI2iuwwzx/90YMQt1N2S3gp/7/USGL
-   d+Nm5D4xvWCDTZm/064pSkTm9Vcz3MQ2xMCi7MOBADFL0kv/vv5Szl/s/
-   g==;
-X-CSE-ConnectionGUID: HB4buidXSeqmwNpL73jPUw==
-X-CSE-MsgGUID: EUN+m+JoSkC9OOwio8n1Nw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21439215"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="21439215"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:46:22 -0700
-X-CSE-ConnectionGUID: 8glDbEsrSvKWCJ8T2p/bRQ==
-X-CSE-MsgGUID: hWsnEHY6T0ShmeznxdUgsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="62404963"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa003.fm.intel.com with ESMTP; 12 Aug 2024 06:46:18 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: stable@vger.kernel.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Krishneil Singh <krishneil.k.singh@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6.10.y] idpf: fix memleak in vport interrupt configuration
-Date: Mon, 12 Aug 2024 15:44:55 +0200
-Message-ID: <20240812134455.2298021-1-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723470660; c=relaxed/simple;
+	bh=kh/IALq1XQ9m8Te5Ux773w+t6WkY/AsYD0340tkJOZA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=buydWAbAgBbZn3MvQZs7psqtZy/0svOwNPqNQlrhnewdD/Xg+ohCYvYTic4LGAw3haIRVhnYixVQkW8xHTyTzWn7tROjVcXIoOdTNDOL3DhKw8xEUCpOxIkcNUQFMubqeM9pXgvF+4G6EhTEDrR3m2dvAKgs7aASz8MEgKc3CqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yj2AloPi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSTSo021389;
+	Mon, 12 Aug 2024 13:50:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=930aszK0KEsA
+	OOoD/7zM9uY0zZlSEktX16qHqr6eTVM=; b=Yj2AloPi0a1mj0AZyg8rL3m/iH/a
+	wtPvK0CoLzAgyO5Zg8gseJgqeXqsnf4KHKHMI36AlIEqGgTonztFPiRUYxTqvhf2
+	NchuP3rsM16U1Vquyvpt4kHTCW6QCXHE4aX6dWrzt5ninmt1H34z7szb2yTKW4HY
+	+CbHv8fXrRG1aegSiBmq8+VycGyp5YIRyZL/LB3ksS5Jwn31/ayvxgWAr3BcC+0Q
+	44nov4uH71+XEuCHn5rY8f/V1yd9pO/DAn9Kw8orGWLz+3HECTqiyxyqUgSR5kUz
+	gy0H3gyJJuDgtD+oY4tHhrZWf1dRxa7TmrI6BawwzUd0uF8jaUXL2aCjXA==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7vcpf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 13:50:54 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDopkl031196;
+	Mon, 12 Aug 2024 13:50:51 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 40xkmgnukx-1;
+	Mon, 12 Aug 2024 13:50:51 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47CDopmU031190;
+	Mon, 12 Aug 2024 13:50:51 GMT
+Received: from hu-maiyas-hyd.qualcomm.com (hu-vnagar-hyd.qualcomm.com [10.213.105.104])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47CDooES031187;
+	Mon, 12 Aug 2024 13:50:51 +0000
+Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4112864)
+	id F3B915012F0; Mon, 12 Aug 2024 19:20:49 +0530 (+0530)
+From: Vedang Nagar <quic_vnagar@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_dikshita@quicinc.com,
+        quic_vgarodia@quicinc.com, Vedang Nagar <quic_vnagar@quicinc.com>
+Subject: [PATCH] clk: qcom: videocc-sm8550: Use HW_CTRL_TRIGGER flag for video GDSC's
+Date: Mon, 12 Aug 2024 19:17:52 +0530
+Message-Id: <20240812134752.28031-1-quic_vnagar@quicinc.com>
+X-Mailer: git-send-email 2.17.1
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: TywnR619o4-CE0C-BDSKjxqSob3aM0ez
+X-Proofpoint-ORIG-GUID: TywnR619o4-CE0C-BDSKjxqSob3aM0ez
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_04,2024-08-12_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120103
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Michal Kubiak <michal.kubiak@intel.com>
+The video driver will be using the newly introduced
+dev_pm_genpd_set_hwmode() API to switch the video GDSC
+to HW/SW control modes at runtime.
+Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for
+video GDSC's.
 
-commit 3cc88e8405b8d55e0ff035e31971aadd6baee2b6 upstream.
-
-The initialization of vport interrupt consists of two functions:
- 1) idpf_vport_intr_init() where a generic configuration is done
- 2) idpf_vport_intr_req_irq() where the irq for each q_vector is
-   requested.
-
-The first function used to create a base name for each interrupt using
-"kasprintf()" call. Unfortunately, although that call allocated memory
-for a text buffer, that memory was never released.
-
-Fix this by removing creating the interrupt base name in 1).
-Instead, always create a full interrupt name in the function 2), because
-there is no need to create a base name separately, considering that the
-function 2) is never called out of idpf_vport_intr_init() context.
-
-Fixes: d4d558718266 ("idpf: initialize interrupts and enable vport")
-Cc: stable@vger.kernel.org # 6.7
-Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
-Reviewed-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
-Tested-by: Krishneil Singh <krishneil.k.singh@intel.com>
-Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
-Link: https://patch.msgid.link/20240806220923.3359860-3-anthony.l.nguyen@intel.com
-Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
 ---
- drivers/net/ethernet/intel/idpf/idpf_txrx.c | 19 ++++++++-----------
- 1 file changed, 8 insertions(+), 11 deletions(-)
+ drivers/clk/qcom/videocc-sm8550.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-index b023704bbbda..ed68c7baefa3 100644
---- a/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-+++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
-@@ -3636,13 +3636,15 @@ void idpf_vport_intr_update_itr_ena_irq(struct idpf_q_vector *q_vector)
- /**
-  * idpf_vport_intr_req_irq - get MSI-X vectors from the OS for the vport
-  * @vport: main vport structure
-- * @basename: name for the vector
-  */
--static int idpf_vport_intr_req_irq(struct idpf_vport *vport, char *basename)
-+static int idpf_vport_intr_req_irq(struct idpf_vport *vport)
- {
- 	struct idpf_adapter *adapter = vport->adapter;
-+	const char *drv_name, *if_name, *vec_name;
- 	int vector, err, irq_num, vidx;
--	const char *vec_name;
-+
-+	drv_name = dev_driver_string(&adapter->pdev->dev);
-+	if_name = netdev_name(vport->netdev);
+diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
+index 97d150b132a6..7c25a50cfa97 100644
+--- a/drivers/clk/qcom/videocc-sm8550.c
++++ b/drivers/clk/qcom/videocc-sm8550.c
+@@ -449,7 +449,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.parent = &video_cc_mvs0c_gdsc.pd,
+-	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+ };
  
- 	for (vector = 0; vector < vport->num_q_vectors; vector++) {
- 		struct idpf_q_vector *q_vector = &vport->q_vectors[vector];
-@@ -3659,8 +3661,8 @@ static int idpf_vport_intr_req_irq(struct idpf_vport *vport, char *basename)
- 		else
- 			continue;
+ static struct gdsc video_cc_mvs1c_gdsc = {
+@@ -474,7 +474,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.parent = &video_cc_mvs1c_gdsc.pd,
+-	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
++	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+ };
  
--		q_vector->name = kasprintf(GFP_KERNEL, "%s-%s-%d",
--					   basename, vec_name, vidx);
-+		q_vector->name = kasprintf(GFP_KERNEL, "%s-%s-%s-%d", drv_name,
-+					   if_name, vec_name, vidx);
- 
- 		err = request_irq(irq_num, idpf_vport_intr_clean_queues, 0,
- 				  q_vector->name, q_vector);
-@@ -4170,7 +4172,6 @@ int idpf_vport_intr_alloc(struct idpf_vport *vport)
-  */
- int idpf_vport_intr_init(struct idpf_vport *vport)
- {
--	char *int_name;
- 	int err;
- 
- 	err = idpf_vport_intr_init_vec_idx(vport);
-@@ -4184,11 +4185,7 @@ int idpf_vport_intr_init(struct idpf_vport *vport)
- 	if (err)
- 		goto unroll_vectors_alloc;
- 
--	int_name = kasprintf(GFP_KERNEL, "%s-%s",
--			     dev_driver_string(&vport->adapter->pdev->dev),
--			     vport->netdev->name);
--
--	err = idpf_vport_intr_req_irq(vport, int_name);
-+	err = idpf_vport_intr_req_irq(vport);
- 	if (err)
- 		goto unroll_vectors_alloc;
- 
+ static struct clk_regmap *video_cc_sm8550_clocks[] = {
 -- 
-2.46.0
+2.17.1
 
 
