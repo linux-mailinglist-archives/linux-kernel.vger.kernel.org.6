@@ -1,120 +1,296 @@
-Return-Path: <linux-kernel+bounces-282592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F55394E638
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:43:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B03AE94E63A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFA5281CD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7EE28237F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C41414D6F1;
-	Mon, 12 Aug 2024 05:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F349014D6EF;
+	Mon, 12 Aug 2024 05:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hK9xShKS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MlX+eeQb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855F43C0B;
-	Mon, 12 Aug 2024 05:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767051411C8
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723441427; cv=none; b=VWepbMT8h2rbFM362pJPoDmu7OU4UMLnyPQBenCmg5N83G7q1qS3ouy6QOnTzfJBeenCNeujHerf8Rcfs8d4xsJFo7T+B52KyuQj2P2EQPVH8f/ho84rPBZ5b/4J1zL96p9mvU/9+5Nbl3lhYtDrIFFj+wzcW+a4NgJQPfbAOuw=
+	t=1723441559; cv=none; b=fwBGY7XLPevHc/SGqjYA3ZLckGoUYksmQSZ62hzsfm78DfdMprypyI03gfhRgcp5NBLh0vAtVigEWmcdWFCwuLVPnohuGq7W8SWeb+X8+jwsP3yEJrG9L/k4jc0T0c0cawTw8TXW7o7IuqwITeElXHTrDzJX417KWgTBxIfUJWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723441427; c=relaxed/simple;
-	bh=T3bceQXwRmtOpEjDnmHH1SQO2+2ahfvVKrcXfD+52Ao=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a4EXyVC/quuHAb9eVvPxXO+YYoiSIQlJa3yZZnYWrGp16B5FYbfwuD1C26enVVI+4/Es/g5K4F/nYN3/VqI5udKdQIoRtp/bz8e2QociK1DB4/2NbFcXqt8+k9MWQHcc153FKHLlLu/2LN1xothY7XJVx+f5fsr5CncE3nKduoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hK9xShKS; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723441425; x=1754977425;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=T3bceQXwRmtOpEjDnmHH1SQO2+2ahfvVKrcXfD+52Ao=;
-  b=hK9xShKSDcL1fFwZr9wtHehnlxUHt34BoJMZ/49MlYtj2csazBEi4VZv
-   SjEceOjmQirRVumZLZlfcB0gTFMkMFcohnWOLtuFf2yPQYy/U7qfQsD91
-   slv54ncA633J4pvfSCLTguV/UDDS6xos3KEPiwk0eej80KFoPABuK3w1w
-   ggBQiia4TQBogSiU1DvtGkbeXtUv0ke2KyGego7AJ3y1pB+HzfSZrv6F9
-   2Mh2IfpglRvxj78IKc42DJLR8f8Biw6wMVVQyjM8Em2KkZo3VohWgINlc
-   uisb1oe6ssBK/D3LwXMrOYnfbla5LaAo9Hl70DdFksmijxe5a/w59VugI
-   g==;
-X-CSE-ConnectionGUID: jehLFYAiSOeZ9ywlIt+VGQ==
-X-CSE-MsgGUID: Hy6svMerTzeIkBXVXBsH3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32153776"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="32153776"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:43:44 -0700
-X-CSE-ConnectionGUID: uUdWvm/HReGP3Y9eUIrytg==
-X-CSE-MsgGUID: kCjzPuSKQO2kyDGmBwJp8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="62993880"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.232.203]) ([10.124.232.203])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:43:42 -0700
-Message-ID: <5de31aa1-8103-4f73-8134-4efe04a73295@linux.intel.com>
-Date: Mon, 12 Aug 2024 13:43:39 +0800
+	s=arc-20240116; t=1723441559; c=relaxed/simple;
+	bh=SL5T1SjvBy+YUkRIyJhrC7QvCOQBPJyyJ95H75G5H3w=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FNsciDjyeqgTu8P/JY/9uTrgaiOEOeOUCnvIWUyjSCSSJOtX2jFRTYGBZnGGS80puqQMzShEyJcBXr7BxA3LRcnnltgY1EUeuMQzdvH607Gdz/5/QwzXKLxDNF2cwimtiaCIWq7Y47Tb2MY+0Hb89n/CmcF0EbY+8+5gfdVGwe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MlX+eeQb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C3SPcM004225;
+	Mon, 12 Aug 2024 05:45:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	dk45BxEtrcNh/cVkwB3JSlqu9Bo25I7aCPMvBHhgY+4=; b=MlX+eeQbzdw/joO8
+	WzDCt19bKaPxn0yDniLZWxJ5H2KEwxOTp6rJ8xfQ31MS7qv7nmEjsafFCNq5sqjp
+	Yki7jnio1qm2seEkICBC3fvwTsiCXARGnS9WdXCJ70eJpPLkCDNYhTBWZtDWad2G
+	x/RUCEYbrU6gXPBgNewCJyQNkTywIytaxsdPq0aZGxTzBvMblqysWILS+NlsywIj
+	8p0zbDmX+jlI+osUREu3V9242beB0Jo1T3baRhXptu1qrxuc7zQqRWJbSERMkJwF
+	P5UzCBE306f5SBQqhFWlbxwo1un6y4QPo/PkiuMmswYGWHVSafSyYnrmcpZULVDF
+	z15AVw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wy0rkvyk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 05:45:34 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47C5jY5H030966;
+	Mon, 12 Aug 2024 05:45:34 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wy0rkvyh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 05:45:34 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47C3UaQC029698;
+	Mon, 12 Aug 2024 05:45:33 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xmrm4rpt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 05:45:33 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47C5jTCO38732280
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 05:45:31 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CBB2820086;
+	Mon, 12 Aug 2024 05:45:29 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 42A4E2008A;
+	Mon, 12 Aug 2024 05:45:27 +0000 (GMT)
+Received: from [9.43.69.208] (unknown [9.43.69.208])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 Aug 2024 05:45:26 +0000 (GMT)
+Message-ID: <01d935c2-bdb9-4117-841c-3e90f3c3dade@linux.ibm.com>
+Date: Mon, 12 Aug 2024 11:15:25 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] Document/kexec: Generalize crash hotplug description
+To: Petr Tesarik <ptesarik@suse.com>
+Cc: bhe@redhat.com, Hari Bathini <hbathini@linux.ibm.com>,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
+        =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
+References: <20240812041651.703156-1-sourabhjain@linux.ibm.com>
+ <20240812074152.321febe5@mordecai.tesarici.cz>
+Content-Language: en-US
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+In-Reply-To: <20240812074152.321febe5@mordecai.tesarici.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mXkdh4Rh3UDIawpTg5ElUdF1Wa8NuH2C
+X-Proofpoint-GUID: 8_Kxw9uN09fZzBi3SGBhExBZ-ZvTNpFc
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 0/5] Bug fixes on topdown events reordering
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_25,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 spamscore=0
+ suspectscore=0 priorityscore=1501 phishscore=0 mlxscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120033
 
-Hi Ian,
 
-Kindly ping, any comments here? Thanks.
 
-On 7/13/2024 1:03 AM, Dapeng Mi wrote:
-> Changes:
-> v2 -> v3:
->   * Refine arch_is_topdown_metrics() (Kan Liang)
->   * Only move topdown metric events forward when they are not in the
->     group with previous event (Ian)
->   * Check if topdown events is supported before test topown events
->     leader sampling (Kan Liang)
+On 12/08/24 11:11, Petr Tesarik wrote:
+> On Mon, 12 Aug 2024 09:46:51 +0530
+> Sourabh Jain <sourabhjain@linux.ibm.com> wrote:
 >
-> History:
->   v1: https://lore.kernel.org/all/20240702224037.343958-1-dapeng1.mi@linux.intel.com/
->   v2: https://lore.kernel.org/all/20240708144204.839486-1-dapeng1.mi@linux.intel.com/
+>> Commit 79365026f869 ("crash: add a new kexec flag for hotplug support")
+>> generalizes the crash hotplug support to allow architectures to update
+>> multiple kexec segments on CPU/Memory hotplug and not just elfcorehdr.
+>> Therefore, update the relevant kernel documentation to reflect the same.
+>>
+>> No functional change.
+>>
+>> Cc: Petr Tesarik <petr@tesarici.cz>
+>> Cc: Hari Bathini <hbathini@linux.ibm.com>
+>> Cc: kexec@lists.infradead.org
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linuxppc-dev@lists.ozlabs.org
+>> Cc: x86@kernel.org
+>> Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> It's perfect now.
 >
+> Reviewed-by: Petr Tesarik <ptesarik@suse.com>
+
+
+Thank you the review, Petr.
+
+- Sourabh Jain
+
+
+> Petr T
 >
-> Dapeng Mi (5):
->   perf x86/topdown: Complete topdown slots/metrics events check
->   perf x86/topdown: Correct leader selection with sample_read enabled
->   perf x86/topdown: Don't move topdown metric events in group
->   perf tests: Add leader sampling test in record tests
->   perf tests: Add topdown events counting and sampling tests
->
->  tools/perf/arch/x86/util/evlist.c  | 13 +++++--
->  tools/perf/arch/x86/util/evsel.c   |  3 +-
->  tools/perf/arch/x86/util/topdown.c | 62 +++++++++++++++++++++++++++++-
->  tools/perf/arch/x86/util/topdown.h |  2 +
->  tools/perf/tests/shell/record.sh   | 45 ++++++++++++++++++++++
->  tools/perf/tests/shell/stat.sh     |  6 +++
->  6 files changed, 124 insertions(+), 7 deletions(-)
->
->
-> base-commit: 73e931504f8e0d42978bfcda37b323dbbd1afc08
+>> ---
+>>
+>> Changelog:
+>>
+>> Since v1: https://lore.kernel.org/all/20240805050829.297171-1-sourabhjain@linux.ibm.com/
+>>    - Update crash_hotplug sysfs document as suggested by Petr T
+>>    - Update an error message in crash_handle_hotplug_event and
+>>      crash_check_hotplug_support function.
+>>
+>> ---
+>>   .../ABI/testing/sysfs-devices-memory          |  6 ++--
+>>   .../ABI/testing/sysfs-devices-system-cpu      |  6 ++--
+>>   .../admin-guide/mm/memory-hotplug.rst         |  5 +--
+>>   Documentation/core-api/cpu_hotplug.rst        | 10 +++---
+>>   kernel/crash_core.c                           | 33 +++++++++++--------
+>>   5 files changed, 35 insertions(+), 25 deletions(-)
+>>
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-memory b/Documentation/ABI/testing/sysfs-devices-memory
+>> index a95e0f17c35a..cec65827e602 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-memory
+>> +++ b/Documentation/ABI/testing/sysfs-devices-memory
+>> @@ -115,6 +115,6 @@ What:		/sys/devices/system/memory/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for memory hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel updates relevant kexec
+>> +		segments on memory hot un/plug and/or on/offline events, avoiding the
+>> +		need to reload kdump kernel.
+>> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> index 325873385b71..1a31b7c71676 100644
+>> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+>> @@ -703,9 +703,9 @@ What:		/sys/devices/system/cpu/crash_hotplug
+>>   Date:		Aug 2023
+>>   Contact:	Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>   Description:
+>> -		(RO) indicates whether or not the kernel directly supports
+>> -		modifying the crash elfcorehdr for CPU hot un/plug and/or
+>> -		on/offline changes.
+>> +		(RO) indicates whether or not the kernel updates relevant kexec
+>> +		segments on memory hot un/plug and/or on/offline events, avoiding the
+>> +		need to reload kdump kernel.
+>>   
+>>   What:		/sys/devices/system/cpu/enabled
+>>   Date:		Nov 2022
+>> diff --git a/Documentation/admin-guide/mm/memory-hotplug.rst b/Documentation/admin-guide/mm/memory-hotplug.rst
+>> index 098f14d83e99..cb2c080f400c 100644
+>> --- a/Documentation/admin-guide/mm/memory-hotplug.rst
+>> +++ b/Documentation/admin-guide/mm/memory-hotplug.rst
+>> @@ -294,8 +294,9 @@ The following files are currently defined:
+>>   ``crash_hotplug``      read-only: when changes to the system memory map
+>>   		       occur due to hot un/plug of memory, this file contains
+>>   		       '1' if the kernel updates the kdump capture kernel memory
+>> -		       map itself (via elfcorehdr), or '0' if userspace must update
+>> -		       the kdump capture kernel memory map.
+>> +		       map itself (via elfcorehdr and other relevant kexec
+>> +		       segments), or '0' if userspace must update the kdump
+>> +		       capture kernel memory map.
+>>   
+>>   		       Availability depends on the CONFIG_MEMORY_HOTPLUG kernel
+>>   		       configuration option.
+>> diff --git a/Documentation/core-api/cpu_hotplug.rst b/Documentation/core-api/cpu_hotplug.rst
+>> index dcb0e379e5e8..a21dbf261be7 100644
+>> --- a/Documentation/core-api/cpu_hotplug.rst
+>> +++ b/Documentation/core-api/cpu_hotplug.rst
+>> @@ -737,8 +737,9 @@ can process the event further.
+>>   
+>>   When changes to the CPUs in the system occur, the sysfs file
+>>   /sys/devices/system/cpu/crash_hotplug contains '1' if the kernel
+>> -updates the kdump capture kernel list of CPUs itself (via elfcorehdr),
+>> -or '0' if userspace must update the kdump capture kernel list of CPUs.
+>> +updates the kdump capture kernel list of CPUs itself (via elfcorehdr and
+>> +other relevant kexec segment), or '0' if userspace must update the kdump
+>> +capture kernel list of CPUs.
+>>   
+>>   The availability depends on the CONFIG_HOTPLUG_CPU kernel configuration
+>>   option.
+>> @@ -750,8 +751,9 @@ file can be used in a udev rule as follows:
+>>    SUBSYSTEM=="cpu", ATTRS{crash_hotplug}=="1", GOTO="kdump_reload_end"
+>>   
+>>   For a CPU hot un/plug event, if the architecture supports kernel updates
+>> -of the elfcorehdr (which contains the list of CPUs), then the rule skips
+>> -the unload-then-reload of the kdump capture kernel.
+>> +of the elfcorehdr (which contains the list of CPUs) and other relevant
+>> +kexec segments, then the rule skips the unload-then-reload of the kdump
+>> +capture kernel.
+>>   
+>>   Kernel Inline Documentations Reference
+>>   ======================================
+>> diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+>> index 63cf89393c6e..c1048893f4b6 100644
+>> --- a/kernel/crash_core.c
+>> +++ b/kernel/crash_core.c
+>> @@ -505,7 +505,7 @@ int crash_check_hotplug_support(void)
+>>   	crash_hotplug_lock();
+>>   	/* Obtain lock while reading crash information */
+>>   	if (!kexec_trylock()) {
+>> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+>>   		crash_hotplug_unlock();
+>>   		return 0;
+>>   	}
+>> @@ -520,18 +520,25 @@ int crash_check_hotplug_support(void)
+>>   }
+>>   
+>>   /*
+>> - * To accurately reflect hot un/plug changes of cpu and memory resources
+>> - * (including onling and offlining of those resources), the elfcorehdr
+>> - * (which is passed to the crash kernel via the elfcorehdr= parameter)
+>> - * must be updated with the new list of CPUs and memories.
+>> + * To accurately reflect hot un/plug changes of CPU and Memory resources
+>> + * (including onling and offlining of those resources), the relevant
+>> + * kexec segments must be updated with latest CPU and Memory resources.
+>>    *
+>> - * In order to make changes to elfcorehdr, two conditions are needed:
+>> - * First, the segment containing the elfcorehdr must be large enough
+>> - * to permit a growing number of resources; the elfcorehdr memory size
+>> - * is based on NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES.
+>> - * Second, purgatory must explicitly exclude the elfcorehdr from the
+>> - * list of segments it checks (since the elfcorehdr changes and thus
+>> - * would require an update to purgatory itself to update the digest).
+>> + * Architectures must ensure two things for all segments that need
+>> + * updating during hotplug events:
+>> + *
+>> + * 1. Segments must be large enough to accommodate a growing number of
+>> + *    resources.
+>> + * 2. Exclude the segments from SHA verification.
+>> + *
+>> + * For example, on most architectures, the elfcorehdr (which is passed
+>> + * to the crash kernel via the elfcorehdr= parameter) must include the
+>> + * new list of CPUs and memory. To make changes to the elfcorehdr, it
+>> + * should be large enough to permit a growing number of CPU and Memory
+>> + * resources. One can estimate the elfcorehdr memory size based on
+>> + * NR_CPUS_DEFAULT and CRASH_MAX_MEMORY_RANGES. The elfcorehdr is
+>> + * excluded from SHA verification by default if the architecture
+>> + * supports crash hotplug.
+>>    */
+>>   static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu, void *arg)
+>>   {
+>> @@ -540,7 +547,7 @@ static void crash_handle_hotplug_event(unsigned int hp_action, unsigned int cpu,
+>>   	crash_hotplug_lock();
+>>   	/* Obtain lock while changing crash information */
+>>   	if (!kexec_trylock()) {
+>> -		pr_info("kexec_trylock() failed, elfcorehdr may be inaccurate\n");
+>> +		pr_info("kexec_trylock() failed, kdump image may be inaccurate\n");
+>>   		crash_hotplug_unlock();
+>>   		return;
+>>   	}
+
 
