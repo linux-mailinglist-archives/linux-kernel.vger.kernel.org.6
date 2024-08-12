@@ -1,223 +1,115 @@
-Return-Path: <linux-kernel+bounces-283338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946B294F109
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:00:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A915F94F112
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:01:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D30B24911
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:00:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33501C20897
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4578E186298;
-	Mon, 12 Aug 2024 14:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3368183CDD;
+	Mon, 12 Aug 2024 15:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltWsE1OX"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VbEL/7l6"
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94BB1836E2;
-	Mon, 12 Aug 2024 14:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB1217D8A6
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474707; cv=none; b=uvJpJC9fEvzblyTQJ6UVufJZc+RTbCjAZyNBldOsggcSTNCpzniAlSNNDVqwLdpfEH7FIy4PHV/Lua0ycoBpypUaVCznhdMB29LCn9yxIdSuHNLHqcGWDZP8ph2KvHx3OWG4fgyF2QcGUkSi93Cn2DFjouFu64MV2dITmOAzNQs=
+	t=1723474844; cv=none; b=cO3PIDTrJzxlrSskcm5zzAxMdGTa9qW8loSVoNsLBd8nh8EyX0ce5YsHJe4R4SNZzy+0Zkoq9/FFgr5GNlvzVZp5DqTsdzhI1kNpCe3RwqR6J+2Wy7S8OHadSjGqqu/fS9TGCjaPN3WPttIesQDLFYIwacwORTLUY0Oe7N9IOP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474707; c=relaxed/simple;
-	bh=J/SKkwbqqCIp0YH6F0xFAaMllpq7ysx1Q+6O8d4LV3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b4t99qUnioLMwYAur6Q4EjVuG/0PO7FPK5u/jL04wy5o79biKQzbVDalQCLkwLUYpwQBiJUH/THVwy2zIWDpM2tXOLaK+ym/tuQXBzJT+9uo9L7qPZlCBLUmEYG6eZlHcWgCGOPsnFcbravl1b9G1rxzKYmrerYe9Hv24p4zY+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltWsE1OX; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so8066423a12.0;
-        Mon, 12 Aug 2024 07:58:25 -0700 (PDT)
+	s=arc-20240116; t=1723474844; c=relaxed/simple;
+	bh=BdVvw5wi8ulgbL0r425IYgyBXwtsKVJ08h7eG+xL5q4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jEYdVqr0h5N1U87R+06ZXao2cbRksihaXYq8P8n34Yiu7KrtdKj1h+Lx3LTfYKhykIEl9t8rSLTXgl8UqG2Qb+1DjzLsnwGutjAYPGWGTMvOqKai5rNRb8aFq2mfWZzvkSfCZg9NJSqwhZr2ujlEhesAyAV7dctHQoPVP2rEB5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VbEL/7l6; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-4f527c0c959so1271267e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:00:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723474704; x=1724079504; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ur0ADrPuCQVVBSJKRbdnfcSka+CcsO8Z1qyAiYIcm3M=;
-        b=ltWsE1OXNqBJVM3L8LkeOYgWZsR9do3aQjldDJRnMZiz1N7M2fl93yTzWdVM7GIrnC
-         Uad0dbAoYeCSNaqfhtaZRFybWix15bZ/plN4Q59Ivn5aF/UyEyNLbRRBZHV7i3DkrsOm
-         vg1dzyvsrMjpwVlKrLibff5CWSH/EVUts9lWMpqJfMV9eiF3ipzS5KqsxiHd9UZzCnGO
-         qf8hJb7t88/FazTR/2i7VJ4fvLA9RmxjszCxy0qlCE+1sunldECaeLiGhmGQwUFdovsu
-         zrxX2LHO5ZvA0KrvXwoG0Ot3x48iXXWi9oULw6adThrkXIPZXnKH/WQKriNSb5zpQ0VD
-         CIkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723474704; x=1724079504;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1723474840; x=1724079640; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ur0ADrPuCQVVBSJKRbdnfcSka+CcsO8Z1qyAiYIcm3M=;
-        b=EzditTzUEPzsalcGvnTdGdrU9juDn7HcZueI5Tydssk7ihPr6f1b6Or2tT38K34VF1
-         6tyvO5/NqiDeT/pWYRZDJH4Wic/UdSW+uJ9LDrgfa1OuTxNBW+MBwsHS1TH9gtIl88yP
-         wxEs4DDF2Eiy9DWHpPKo/mrPeQPs1F5nur2HNiLXDOMGGD7mJmLk7JJWLiEtVUCqB77T
-         ZacTwZHAj4GmKZBwKoWFGUHpgrP7715DUWdXPE0paQHnewfDVoi2Lry8E2yeEqk3zlUm
-         zyj4o/CJKFp76ahP04vIC7G01MKGgcDWIJIhP55OhtV0UZTY88Z4a9gMPYZjd0zg+glU
-         4Whg==
-X-Forwarded-Encrypted: i=1; AJvYcCULtgEWRHwl1NjcLzQP7gNr4TktabL2cJHBj9K6IFvR61Y2wGRd/BQMeCEiuGO9Jw/Unb2YiDo93nWpczEf1Xt9/WKFIRC8UfgjuS8tgQ2bwqyFMcElnYrvjEeSDsj7/AgXFh35bMMEzrXngBXooHUkEJ0THLn0QTu8c5SZEC4AZhacwuNIoHLg
-X-Gm-Message-State: AOJu0Yx0+LfE0mCyjVT5ChX6jUmSvuskmOXZtTmtaHeC4XOqd0yNV3e8
-	1FzumjM9zrY8P44ThLtWGLrf9oJjXwxJw8FQJq98b6U12R8XSl+TY8iAMQ==
-X-Google-Smtp-Source: AGHT+IFwSb8mQ/alDFgxZCwkDyWEL42yIoafvATNdaXq7p/cs/IwmDazhaaCVG97iMOfKA8tVcoR+Q==
-X-Received: by 2002:a17:907:984:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a80edb93d4emr44533066b.2.1723474703579;
-        Mon, 12 Aug 2024 07:58:23 -0700 (PDT)
-Received: from toolbox (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1cce7bsm240025866b.106.2024.08.12.07.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 07:58:23 -0700 (PDT)
-Date: Mon, 12 Aug 2024 16:58:21 +0200
-From: Max Krummenacher <max.oss.09@gmail.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-kbuild@vger.kernel.org,
-	Max Krummenacher <max.krummenacher@toradex.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH] tty: vt: conmakehash: remove non-portable code printing
- comment header
-Message-ID: <ZrojDUbr1EvlARXK@toolbox>
-References: <20240809160853.1269466-1-masahiroy@kernel.org>
+        bh=E1LfnoSFlT+OLyzx/vYttf9gF0d/fk7KCwIj4mtQAzU=;
+        b=VbEL/7l6zEzAgEpHngOhJU7+vra/3YzhtTeLqHZgiqMm7QnJkuHKUGKoY+jp79NOhw
+         9DMflT36Ig4isIiY0K1UGRZDbT1OzBHxWZlB+sQ/3zBchDoeE+FiK+l3fJ3XAZkhfAlO
+         gupl5pIxZnOsqmdRmKsx/RgncbDZMYiSJ3cX/k0CPZAEWFZDocK2XZXv9Ci3kgI3P4Xg
+         u0835w2YQ8G2tyEJTlqlD56TYpA5AdvIIh7BVyw42Xb41B6mHkHXW8p+uhXgl7AEl+nR
+         D9MPtRn4qWnXN+eHh16gViKwXedb11GXDnMYbrTRRDFhvv2Hr6gJ2+2191WR3P+QYR72
+         NWGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723474840; x=1724079640;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E1LfnoSFlT+OLyzx/vYttf9gF0d/fk7KCwIj4mtQAzU=;
+        b=fkgs0p/hqnGj5pcIvWQYMLfoI4f5midiQBtzWo8XY5WQClVZ9uU+hXIT9t8YVPQpci
+         2Py+7bLT7lamrhcozuYkrWPv+pQbsuK0yCoSqZ5mg4rLKSGDCaA2vjj5hP4f9irZn7a1
+         OQedkKR8p43DCc9AxR77P3znUZbQmYPi1UeNU0+77yWGOclioCW6ei7EFBpm09RGwzxF
+         Y46SDz/C0P2Z/MKSl51d0wuEEa+HsEXhTFBHWKnTZCj6DfRfMAooInUFOgnIWjoAAEjN
+         N/8RkY9RKh5AecPQl7LCRmQd/VnZ8mjZNuxKTJTXwfGMrfdvvJfl9927dACpfViSlT0T
+         kaJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfSuqc0rRLEEoQXkZJ7xkf1D81qMGAJZdzEFA60ewEEfChGGsPHIOz3WA4Pfus8t1KxtM+hkk+g0f3Dg8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+/3lmXa7N7/0L4Ofeb2az/senFEROmmbjMXCJx2j18yOmrHx7
+	srVaBVrHhmSDPfm5kx30Bvepz39XYZLBNQQBZkOlinbmDMdnbqh5l0JH296ceH/pgb9OMfcVmuH
+	Qlx+jcByfNjxUK45xaBV6nTUD0d1+gQ8anBig
+X-Google-Smtp-Source: AGHT+IF0QTAbx41bggszGNeJJztfb6bYw1GrU0MEoge0vOkbY0MKZLCZxdKF6yLUy5pNifp1N3/5Fx2G7TY+Nwqu6lI=
+X-Received: by 2002:a05:6122:2a07:b0:4f2:f1f1:a9f2 with SMTP id
+ 71dfb90a1353d-4fabeef04e5mr797889e0c.4.1723474839871; Mon, 12 Aug 2024
+ 08:00:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809160853.1269466-1-masahiroy@kernel.org>
+References: <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
+ <20240812144936.1616628-1-mic@digikod.net>
+In-Reply-To: <20240812144936.1616628-1-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Aug 2024 11:00:28 -0400
+Message-ID: <CAHC9VhTVO1-KDBisD9sZjG+5mZUiSy6SOE=6c5_rGp5ApoC77A@mail.gmail.com>
+Subject: Re: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 10, 2024 at 01:07:20AM +0900, Masahiro Yamada wrote:
-> Commit 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no
-> longer in env") included <linux/limits.h>, which invoked another
-> (wrong) patch that tried to address a build error on macOS.
-> 
-> According to the specification [1], the correct header to use PATH_MAX
-> is <limits.h>.
-> 
-> The minimal fix would be to replace <linux/limits.h> with <limits.h>.
-I can change that in a v2.
+On Mon, Aug 12, 2024 at 10:49=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 44488b1ab9a9..974bcc1c8f8f 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -196,7 +196,6 @@ LSM_HOOK(int, 0, file_mprotect, struct vm_area_struct=
+ *vma,
+>  LSM_HOOK(int, 0, file_lock, struct file *file, unsigned int cmd)
+>  LSM_HOOK(int, 0, file_fcntl, struct file *file, unsigned int cmd,
+>          unsigned long arg)
+> -LSM_HOOK(void, LSM_RET_VOID, file_set_fowner, struct file *file)
 
-> 
-> However, the following commits seem questionable to me:
-> 
->  - 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path of the input in output")
->  - 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
-> 
-> These commits made too many efforts to cope with a comment header in
-> drivers/tty/vt/consolemap_deftbl.c:
-> 
->   /*
->    * Do not edit this file; it was automatically generated by
->    *
->    * conmakehash drivers/tty/vt/cp437.uni > [this file]
->    *
->    */
+As I mentioned in the other thread, I don't want to see the
+file_set_owner hook removed at this point in time.  I'm open to the
+idea of moving it around, but as of right now I think it is important
+to keep it around.
 
-This is the output you get when keeping the build artifacts within the
-linux source tree.
-However if you keep the artifacts outside the source tree
-(make O=/somepath ...) the output looks like this:
+>  LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
+>          struct fown_struct *fown, int sig)
+>  LSM_HOOK(int, 0, file_receive, struct file *file)
 
-    /*
-     * Do not edit this file; it was automatically generated by
-     *
-     * conmakehash /path-to-kernel-source-tree/drivers/tty/vt/cp437.uni > [this file]
-     *
-     */
-
-i.e. it does keep a reference to where in your filesystem the kernel
-source did reside when building which is against the goal of having a
-reproducable build.
-
-> 
-> With this commit, the header part of the generate C file will be
-> simplified as follows:
-> 
->   /*
->    * Automatically generated file; Do not edit.
->    */
-
-This is not what I observed, for me with this proposed commit the
-comment becomes with or without the 'O=somepath':
-
-    /*
-     * Do not edit this file; it was automatically generated by
-     *
-     * conmakehash cp437.uni > [this file]
-     *
-     */
-
-i.e. it strips the directory path of the chartable source file used.
-
-Regards
-Max
-
-> 
-> BTW, another series of excessive efforts for a comment header can be
-> seen in the following:
-> 
->  - 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path of the script in output")
->  - 2fe29fe94563 ("lib/build_OID_registry: avoid non-destructive substitution for Perl < 5.13.2 compat")
-> 
-> [1]: https://pubs.opengroup.org/onlinepubs/009695399/basedefs/limits.h.html
-> 
-> Fixes: 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
-> Reported-by: Daniel Gomez <da.gomez@samsung.com>
-> Closes: https://lore.kernel.org/all/20240807-macos-build-support-v1-11-4cd1ded85694@samsung.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  drivers/tty/vt/conmakehash.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.c
-> index 82d9db68b2ce..a931fcde7ad9 100644
-> --- a/drivers/tty/vt/conmakehash.c
-> +++ b/drivers/tty/vt/conmakehash.c
-> @@ -11,8 +11,6 @@
->   * Copyright (C) 1995-1997 H. Peter Anvin
->   */
->  
-> -#include <libgen.h>
-> -#include <linux/limits.h>
->  #include <stdio.h>
->  #include <stdlib.h>
->  #include <sysexits.h>
-> @@ -79,7 +77,6 @@ int main(int argc, char *argv[])
->  {
->    FILE *ctbl;
->    const char *tblname;
-> -  char base_tblname[PATH_MAX];
->    char buffer[65536];
->    int fontlen;
->    int i, nuni, nent;
-> @@ -245,20 +242,15 @@ int main(int argc, char *argv[])
->    for ( i = 0 ; i < fontlen ; i++ )
->      nuni += unicount[i];
->  
-> -  strncpy(base_tblname, tblname, PATH_MAX);
-> -  base_tblname[PATH_MAX - 1] = 0;
->    printf("\
->  /*\n\
-> - * Do not edit this file; it was automatically generated by\n\
-> - *\n\
-> - * conmakehash %s > [this file]\n\
-> - *\n\
-> + * Automatically generated file; Do not edit.\n\
->   */\n\
->  \n\
->  #include <linux/types.h>\n\
->  \n\
->  u8 dfont_unicount[%d] = \n\
-> -{\n\t", basename(base_tblname), fontlen);
-> +{\n\t", fontlen);
->  
->    for ( i = 0 ; i < fontlen ; i++ )
->      {
-> -- 
-> 2.43.0
-> 
+--=20
+paul-moore.com
 
