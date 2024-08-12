@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-282668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9628B94E72C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:51:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD91994E72E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 225BFB23D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:51:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A4DB283255
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FBDD1537D2;
-	Mon, 12 Aug 2024 06:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EEZz87ec"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F96C14E2C5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0529F152E1C;
+	Mon, 12 Aug 2024 06:52:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4109314E2C5;
+	Mon, 12 Aug 2024 06:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445499; cv=none; b=mpTd536LQ38jj5dG4x3gMncIpYpFyd8q7czuoLo0I2AchUCZyH/gim+rF04misw4Fp0viWc8/notCv9pqteHh2rmIi+W6rLLCcd1NOJqOhsu9426RG6GTvbPsDcb1uraJCvfBvD6hSjSGD9lr1WKi/q1JLEekUar1A8sZDYROI0=
+	t=1723445537; cv=none; b=jJwLEAn6wKmhU3g4SvlnHmOdafZfo3ypx+SZi6iLYkYtkGKc4ElxXuIDF0txqxn1HwlpEcn9gYdZhCfg3GBS2KepQ5ty0GRxMfNAMUThBOPhTZnTZ/ZZ8UEb5MEtCXWvLwTfdc8kVbSzQJ1tuslMstsITQiGUteadUqbTiDYOLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445499; c=relaxed/simple;
-	bh=NfP47b8rhgr998pR0MP4dgFPvijX8qMvLBCsegVfSKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=i3GLDhy8yCoGPhS+rO33KqbyEFUxPN+T8S4DiEVNCB5Bts02Vgfv2ai4fjZGFVncFq4M0d925Txr8G+eOVgMaGkjzFqG5YWizCvzUFraQjyLuVfcOHj4HQLsOmJ0O7Uli0qm1vsM9KGgvY3cMHuHh8ZPfOXSvZ/GIs5GreweJxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EEZz87ec; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723445497;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=1JSqOjQOoZJPvMdrAEuSnMSUbbXI2WZ76CPXqjhdTnI=;
-	b=EEZz87ecc1Fdog14h2xshr+V1EQ7G6uyhClUHDBsR/ulNUxfZJBNPGnwA5aaXNAmvE+TSf
-	ORPKbJ/DQY7MlK8ctVSbp7USiPnb71/1S16x78WWyGK9d2FRWMoADLxBykZKN+ix8kCWML
-	dHzQ85j9ggZckBlt/6QMLNlR//n4g3s=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-493-KAUrqsgHOtKwJHkJ29eYFg-1; Mon,
- 12 Aug 2024 02:51:34 -0400
-X-MC-Unique: KAUrqsgHOtKwJHkJ29eYFg-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5871218EB226;
-	Mon, 12 Aug 2024 06:51:32 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.45.242.9])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25188197703E;
-	Mon, 12 Aug 2024 06:51:27 +0000 (UTC)
-Date: Mon, 12 Aug 2024 08:51:23 +0200
-From: Eugene Syromiatnikov <esyr@redhat.com>
-To: mptcp@lists.linux.dev
-Cc: Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Davide Caratti <dcaratti@redhat.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] mptcp: correct MPTCP_SUBFLOW_ATTR_SSN_OFFSET
- reserved size
-Message-ID: <20240812065024.GA19719@asgard.redhat.com>
+	s=arc-20240116; t=1723445537; c=relaxed/simple;
+	bh=YBCMrMAPOMjFTUWwn6wPLBEDF03Y/0b6KU/3UWiGgHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m2TU5voysxd5hSCcqXuqpcrRT9G3lczDb8LkRbF6cJ/iaH5wdf2meZUxSxBllS9f0zPBWVIqi1/Sz0C0zIOLkQfQtWL6A778Y28PnpvdYJxzvoBw7ZpEAjcGYtwsYlVTy/aQCXremkMQCC59tT6XefN3Fy9pLYAa1PZCiG1emp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7CFEFEC;
+	Sun, 11 Aug 2024 23:52:39 -0700 (PDT)
+Received: from [10.162.43.141] (e116581.arm.com [10.162.43.141])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BDDEF3F6A8;
+	Sun, 11 Aug 2024 23:52:04 -0700 (PDT)
+Message-ID: <95b72817-5444-4ced-998a-1cb90f42bf49@arm.com>
+Date: Mon, 12 Aug 2024 12:22:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: akpm@linux-foundation.org, shuah@kernel.org, david@redhat.com,
+ willy@infradead.org, ryan.roberts@arm.com, anshuman.khandual@arm.com,
+ catalin.marinas@arm.com, cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com,
+ apopple@nvidia.com, osalvador@suse.de, baolin.wang@linux.alibaba.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
+ kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
+ yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
+ mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org
+References: <20240809103129.365029-1-dev.jain@arm.com>
+ <20240809103129.365029-2-dev.jain@arm.com>
+ <87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <15dbe4ac-a036-4029-ba08-e12a236f448a@arm.com>
+ <87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-ssn_offset field is u32 and is placed into the netlink response with
-nla_put_u32(), but only 2 bytes are reserved for the attribute payload
-in subflow_get_info_size() (even though it makes no difference
-in the end, as it is aligned up to 4 bytes).  Supply the correct
-argument to the relevant nla_total_size() call to make it less
-confusing.
 
-Fixes: 5147dfb50832 ("mptcp: allow dumping subflow context to userspace")
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
----
-v2:
-  - Added prefix to the patch subject
-  - Fixed commit message formatting (line width, "Fixes:" commit hash
-    prefix size)
-v1: https://lore.kernel.org/mptcp/20240809094321.GA8122@asgard.redhat.com/
----
- net/mptcp/diag.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/12/24 11:45, Huang, Ying wrote:
+> Dev Jain <dev.jain@arm.com> writes:
+>
+>> On 8/12/24 11:04, Huang, Ying wrote:
+>>> Hi, Dev,
+>>>
+>>> Dev Jain <dev.jain@arm.com> writes:
+>>>
+>>>> As already being done in __migrate_folio(), wherein we backoff if the
+>>>> folio refcount is wrong, make this check during the unmapping phase, upon
+>>>> the failure of which, the original state of the PTEs will be restored and
+>>>> the folio lock will be dropped via migrate_folio_undo_src(), any racing
+>>>> thread will make progress and migration will be retried.
+>>>>
+>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>> ---
+>>>>    mm/migrate.c | 9 +++++++++
+>>>>    1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>> index e7296c0fb5d5..477acf996951 100644
+>>>> --- a/mm/migrate.c
+>>>> +++ b/mm/migrate.c
+>>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>    	}
+>>>>      	if (!folio_mapped(src)) {
+>>>> +		/*
+>>>> +		 * Someone may have changed the refcount and maybe sleeping
+>>>> +		 * on the folio lock. In case of refcount mismatch, bail out,
+>>>> +		 * let the system make progress and retry.
+>>>> +		 */
+>>>> +		struct address_space *mapping = folio_mapping(src);
+>>>> +
+>>>> +		if (folio_ref_count(src) != folio_expected_refs(mapping, src))
+>>>> +			goto out;
+>>>>    		__migrate_folio_record(dst, old_page_state, anon_vma);
+>>>>    		return MIGRATEPAGE_UNMAP;
+>>>>    	}
+>>> Do you have some test results for this?  For example, after applying the
+>>> patch, the migration success rate increased XX%, etc.
+>> I'll get back to you on this.
+>>
+>>> My understanding for this issue is that the migration success rate can
+>>> increase if we undo all changes before retrying.  This is the current
+>>> behavior for sync migration, but not for async migration.  If so, we can
+>>> use migrate_pages_sync() for async migration too to increase success
+>>> rate?  Of course, we need to change the function name and comments.
+>>
+>> As per my understanding, this is not the current behaviour for sync
+>> migration. After successful unmapping, we fail in migrate_folio_move()
+>> with -EAGAIN, we do not call undo src+dst (rendering the loop around
+>> migrate_folio_move() futile), we do not push the failed folio onto the
+>> ret_folios list, therefore, in _sync(), _batch() is never tried again.
+> In migrate_pages_sync(), migrate_pages_batch(,MIGRATE_ASYNC) will be
+> called first, if failed, the folio will be restored to the original
+> state (unlocked).  Then migrate_pages_batch(,_SYNC*) is called again.
+> So, we unlock once.  If it's necessary, we can unlock more times via
+> another level of loop.
 
-diff --git a/net/mptcp/diag.c b/net/mptcp/diag.c
-index 3ae46b545d2c..2d3efb405437 100644
---- a/net/mptcp/diag.c
-+++ b/net/mptcp/diag.c
-@@ -94,7 +94,7 @@ static size_t subflow_get_info_size(const struct sock *sk)
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_RELWRITE_SEQ */
- 		nla_total_size_64bit(8) +	/* MPTCP_SUBFLOW_ATTR_MAP_SEQ */
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_MAP_SFSEQ */
--		nla_total_size(2) +	/* MPTCP_SUBFLOW_ATTR_SSN_OFFSET */
-+		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_SSN_OFFSET */
- 		nla_total_size(2) +	/* MPTCP_SUBFLOW_ATTR_MAP_DATALEN */
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_FLAGS */
- 		nla_total_size(1) +	/* MPTCP_SUBFLOW_ATTR_ID_REM */
--- 
-2.28.0
+Yes, that's my point. We need to undo src+dst and retry. We will have
+to decide where we want this retrying to be; do we want to change the
+return value, end up in the while loop wrapped around _sync(), and retry
+there by adding another level of loop, or do we want to make use of the
+existing retry loops, one of which is wrapped around _unmap(); the latter
+is my approach. The utility I see for the former approach is that, in case
+of a large number of page migrations (which should usually be the case),
+we are giving more time for the folio to get retried. The latter does not
+give much time and discards the folio if it did not succeed under 7 times.
 
+>
+> --
+> Best Regards,
+> Huang, Ying
 
