@@ -1,49 +1,69 @@
-Return-Path: <linux-kernel+bounces-283154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371D994EDF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:20:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3421894EED1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA76A1F22B70
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D6D61C21B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9735317C219;
-	Mon, 12 Aug 2024 13:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C17183CD9;
+	Mon, 12 Aug 2024 13:52:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRRxEH5d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=grep.be header.i=@grep.be header.b="D9ZrLrho"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA34D1D699;
-	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A2817C7CE;
+	Mon, 12 Aug 2024 13:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468827; cv=none; b=nNtKVCBcVmxWDonb0dwHRVY2OO0WpltCc5djiJnq1H3xhi/PTupsyMYW/FTP+c7AgmZsw/+PgpIEdhSfdivStcvwT2urDhQXxgLRgUhxawwRk8+zn2c4iaCsBFtsPd9Z1ZsMz/JALLunrh/1zzUHM7aEGgEKZgvP5+pwCO2tBXk=
+	t=1723470734; cv=none; b=EaCABNJRYbV4roznV8VRzppQ/6+uX/RX/pBNWEY2OV70zYmPlHfX0ye7Hxug+bEgmn6HUnoMm7von7ZfmOl80tR0nJBseaVWYOBXk2JzX11vgrrKm6uPfLzUe71rSvtbF0X7pSqUtECoqJCslputpqwyImt2xOt5M27/NeVPKnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468827; c=relaxed/simple;
-	bh=Y9rNj4VgWST9LHQuXoXSSHBNGwGl6tL0CsD6uHMMwXg=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cs6zxcjs0CERPVzwGw4zifbH6WnhX7aqgwjD6YPjh7CF/KhltIGfNzPZIx+M6oWe95LunGie5FSEE6Vr3k9uXFjWLXhV5Vo8BDD1TbA5zFe36qw3nnTNVZgW+SDBzS060KTtz5IcIZNCbVxdIk1ohji8n17jRLPYuv/6UBVZDS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRRxEH5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B687C4AF09;
-	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723468827;
-	bh=Y9rNj4VgWST9LHQuXoXSSHBNGwGl6tL0CsD6uHMMwXg=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=VRRxEH5dYuZUxrFr5ib3ZZB1KFJv9trPJwNPiubDsWkvVSqdrLFWIpToUCIyfN96K
-	 Te2KFxVpmDGTk2DpxHGoFstVG5rSYcGvBmdY7mXWFHEkOHHluDrR6iR2E73a5pXosk
-	 gy4zXm90dCE9HNRKiKz6niqYTZOqGipuS2M2G4o+U6uk+67sH9s4wLj58nyMvJ9cf+
-	 EXgC/FEMiCOewO+zExa2VdeL7umv7d6T96fbEu0Lvl59qZoE2wjq0LKbx0pSnDZRTp
-	 Zg4wp05M1tz5vEaWlWKO0xmFbUV9dc1YvoulCw4NZUXnpNkZiL4iCCAM55+CCNWwbg
-	 Fybv5tAD+ArkQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C04382332D;
-	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723470734; c=relaxed/simple;
+	bh=V5ZPDmh43i8l3KEoh21SaPP5tY4BJlAs6+FKR38+K3g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YmgnwdJLUZzdyOyiAS5Ks3f+dE1gVM61k8A3RO1DSy+Ld3nSngBiqYvhWIrUyBjzUfRJmvCGF0cINfeaWJviH5vVlmmmoZVoat56i8Gaheb2Pb2PlL/X2737FlxgI6FdUq1nLShTa2jUpPqB69R6GbTP2JNlY0W2KGa4rehNW1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=grep.be; dkim=fail (0-bit key) header.d=grep.be header.i=@grep.be header.b=D9ZrLrho reason="key not found in DNS"; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grep.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=grep.be;
+	s=2017.latin; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=A+4sBfKWeCfbuDkaZhU1Kf4QCY1Wd5VUFDYqssjztWM=; b=D9ZrLrhogWPSlsuueziK3CCG8L
+	AskBvCoEspbaccPX9fDLjgjNgpCVk1JKlE3spb7r5yH3QvaxpZOcu6ByVGnzSeiku8U/J6Jo5/1XK
+	XB2dBuEgzLtLgMc7wUq+9fVF3EIdqibz2IYzH9aJnP45SRpgTA8mOMuhMbB0Wbr7AzMF3qThNaRvP
+	9Jn5xB7lMin6eQLdgzC+YyZf8CSADkL8WlWLkekSn9cUjSM2q8kG3ZvF3Nr47Ph6yuaC/6CxvR+u8
+	b38W7bHfjPwEGQUX1WQ+Va8CGJj3X2Mq8TYDr3BffWE4djseVHnT/g+lK0S15onfY/rE7OKB+7fRY
+	C633ennw==;
+Received: from vc-gp-n-105-245-229-160.umts.vodacom.co.za ([105.245.229.160] helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <wouter@grep.be>)
+	id 1sdVSv-009Xo8-1x;
+	Mon, 12 Aug 2024 15:52:05 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <wouter@grep.be>)
+	id 1sdV9C-00000000V5W-0Nos;
+	Mon, 12 Aug 2024 15:31:42 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Josef Bacik <josef@toxicpanda.com>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Wouter Verhelst <w@uter.be>,
+	Eric Blake <eblake@redhat.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	linux-block@vger.kernel.org,
+	nbd@other.debian.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] nbd: WRITE_ZEROES and a few fixes
+Date: Mon, 12 Aug 2024 15:20:35 +0200
+Message-ID: <20240812133032.115134-1-w@uter.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,44 +71,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: ethernet: mtk_wed: fix use-after-free panic in
- mtk_wed_setup_tc_block_cb()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172346882628.1022466.3636636409697645083.git-patchwork-notify@kernel.org>
-Date: Mon, 12 Aug 2024 13:20:26 +0000
-References: <tencent_7962673263816B802001C50C5EE77D0DF405@qq.com>
-In-Reply-To: <tencent_7962673263816B802001C50C5EE77D0DF405@qq.com>
-To: None <everything411@qq.com>
-Cc: nbd@nbd.name, netdev@vger.kernel.org, sean.wang@mediatek.com,
- Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-kernel@vger.kernel.org
 
-Hello:
+Implement the WRITE_ZEROES command for the NBD kernel driver. While
+here, add NBD_FLAG_ROTATIONAL to the function that decodes our flags for
+debugfs.
 
-This patch was applied to netdev/net.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Sat, 10 Aug 2024 13:26:51 +0800 you wrote:
-> From: Zheng Zhang <everything411@qq.com>
-> 
-> When there are multiple ap interfaces on one band and with WED on,
-> turning the interface down will cause a kernel panic on MT798X.
-> 
-> Previously, cb_priv was freed in mtk_wed_setup_tc_block() without
-> marking NULL,and mtk_wed_setup_tc_block_cb() didn't check the value, too.
-> 
-> [...]
-
-Here is the summary with links:
-  - net: ethernet: mtk_wed: fix use-after-free panic in mtk_wed_setup_tc_block_cb()
-    https://git.kernel.org/netdev/net/c/db1b4bedb9b9
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+---
+v2: Divide UINT_MAX by blksize for the maximum number of sectors
+supported by trim/discard and write_zeroes commands, as NBD uses 32-bit
+values for byte lengths, and otherwise that wouldn't fit.
+v3: Use the SECTOR_SHIFT value as a right-shift operand, rather than the
+blksize value, to get the correct operand.
+v4: Fix commit messages to use correct style. Thanks, Jens.
+---
+ drivers/block/nbd.c      |   12 +++++++++++-
+ include/uapi/linux/nbd.h |    5 ++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
 
