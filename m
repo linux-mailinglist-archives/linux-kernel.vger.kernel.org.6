@@ -1,69 +1,123 @@
-Return-Path: <linux-kernel+bounces-282663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E34D94E70D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B93194E70F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 615621C21C9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F5E61C21757
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7702152176;
-	Mon, 12 Aug 2024 06:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k4njBcV3"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB051509B0;
+	Mon, 12 Aug 2024 06:45:51 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08292B2DA;
-	Mon, 12 Aug 2024 06:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31454C9F;
+	Mon, 12 Aug 2024 06:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445121; cv=none; b=HTW4xim4EFLD+xWTVGULSKlTCTcA+u/IlZYUzqJ6fpoI2VMts1bW+WQTHP2zAQM02qHjxmQB5oMaiQHN/z3YeOm1QwbRfsUwPlWWjV3vsHJcIzz2DnV4VSRwZwu+DbQt7tDW3LSUoS69IiRupBBTX4sXYitS0Rmaa49GZOKf2kE=
+	t=1723445151; cv=none; b=A/Y1vBdwFo9QmoEOBieRnrq1EsePwtFwLZaZ+0/DYWCGJDaT1yoDAa1bbMiIAhujZtaWowoDRyU9nzLXvxRRNbcA7RAeJ2BHsDZA8td5FP9nHU0m4HbtlALIEH6ZIny5s5wfKnKQvrKYg2pQHYLvA1tTsUZoL8oL8ElQQiXKGIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445121; c=relaxed/simple;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMb+aB8p4Xg8XLHc1o02uF03iGvwMuHKn4W4+yXyweXpjYJirjpCj/SWra4stku6hKYnLbbS4cGtcsasXNs4s3MQb0d/rth/RJXr5ZsaJT+8xQLPdQBsLx/gIVFDNbWPWCg46P1vqkB3rtVFouQ+GpUe47EqlM4dxRQReVfkDzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k4njBcV3; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=k4njBcV3nujtAGkRx9y+bw0zDv
-	UIKNDRp+P6N3zUK3WCe/iczCdc1mwjXt57NAaphC9VtFPV1h8XIbxqq6t+KHiTMp20s5C9v577IhE
-	W4v0wR4ZFDNvJOI5+9YNEqT8bSuXtYnZo0fWz2IO+blUIV5crLdGaT3bT4LC0iv1O+J7VuGu1xpaJ
-	4WmfqwjqJzBYsH97rlBfny0MFuP8vC6yaQcOO+NDw1oHx9PVifhMOaIaa6Wq9L+yLS7K8FFVgQNne
-	M5FLfdPPW6giKt7GkaLG3stuh/2N/WIgc7fIo6T9vWjNQIIvXY9Lzy904uNLxHwiIBZSQrIGr4Rco
-	GxaP7Emg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOnu-0000000H4PC-2unm;
-	Mon, 12 Aug 2024 06:45:18 +0000
-Date: Sun, 11 Aug 2024 23:45:18 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Gabriel Krisman Bertazi <krisman@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] unicode: constify utf8 data table
-Message-ID: <Zrmvfke-kHJmQkKa@infradead.org>
-References: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
+	s=arc-20240116; t=1723445151; c=relaxed/simple;
+	bh=XfmrLFpLWoF1YAkhFvppp/41F3i+9EL8hDu/4B98ISk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DoOvGkUGCwB4J03AWvRKE+4AjxyhdwtbBpl7eR7bSM6mfzG14G380RMq/K1qPw9DfRBvg62sruYhb31MEwR/xL0c2FinBX07351TotIvHBQzcHZIejl9YSDoyMZlJJ5aNxm6iZNmo5RCzM6X1VIXlcTqTRHES2kdfejC4MMx928=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Wj4lJ1QvbzyPDT;
+	Mon, 12 Aug 2024 14:45:16 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C367140132;
+	Mon, 12 Aug 2024 14:45:43 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 12 Aug 2024 14:45:41 +0800
+Message-ID: <d7b9116e-bddc-2ab2-06eb-6191612fe16b@huawei.com>
+Date: Mon, 12 Aug 2024 14:45:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809-unicode-const-v1-1-69968a258092@weissschuh.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] ARM: stacktrace: Add USER_STACKTRACE support
+Content-Language: en-US
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
+	<will@kernel.org>, <arnd@arndb.de>, <afd@ti.com>, <linus.walleij@linaro.org>,
+	<akpm@linux-foundation.org>, <masahiroy@kernel.org>,
+	<eric.devolder@oracle.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-perf-users@vger.kernel.org>
+References: <20240730021532.1752582-1-ruanjinjie@huawei.com>
+ <ZqzHgFB2t+SWy5o9@shell.armlinux.org.uk>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <ZqzHgFB2t+SWy5o9@shell.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Looks good:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 
+On 2024/8/2 19:48, Russell King (Oracle) wrote:
+> On Tue, Jul 30, 2024 at 10:15:32AM +0800, Jinjie Ruan wrote:
+>> Currently, userstacktrace is unsupported for ARM. So use the
+>> perf_callchain_user() code as blueprint to implement the
+>> arch_stack_walk_user() which add userstacktrace support on ARM.
+>> Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
+>> of perf_callchain_user().
+>>
+>> A ftrace test case is shown as below:
+>> 	# cd /sys/kernel/debug/tracing
+>> 	# echo 1 > options/userstacktrace
+>> 	# echo 1 > options/sym-userobj
+>> 	# echo 1 > events/sched/sched_process_fork/enable
+>> 	# cat trace
+>>
+>> 	......
+>> 	              sh-100     [000] .....    51.779261: sched_process_fork: comm=sh pid=100 child_comm=sh child_pid=108
+>> 	              sh-100     [000] .....    51.779285: <user stack trace>
+>> 	 => /lib/libc.so.6[+0xb3c8c]
+>> 	 => /bin/busybox[+0xffb901f1]
+>>
+>> Also a simple perf test is ok as below:
+>> 	# perf record -e cpu-clock --call-graph fp top
+>> 	# perf report --call-graph
+>>
+>> 	.....
+>> 	  [[31m  65.00%[[m     0.00%  top      [kernel.kallsyms]  [k] __ret_fast_syscall
+>>
+>> 	            |
+>> 	            ---__ret_fast_syscall
+>> 	               |
+>> 	               |--[[31m30.00%[[m--__se_sys_getdents64
+>> 	               |          iterate_dir
+>> 	               |          |
+>> 	               |          |--[[31m25.00%[[m--proc_pid_readdir
+>>
+>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> 
+> Do you have a use case for this feature?
+
+To my knowledge, user stack trace is used in both uprobes and ftrace.
+
+> 
+> Given that userspace is free to do whatever it likes with stack frames,
+> I think this is going to be hit and miss whether it works.
+
+To be honest, I referred to the implementation of ARM64. Does anyone
+have suggestions for improvements or modifications?
+
+> 
 
