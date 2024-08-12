@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-283927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A632F94FA81
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:57:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6C9294FA84
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ED141F22139
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:57:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E3BB21535
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:59:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0350219AD87;
-	Mon, 12 Aug 2024 23:57:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3C619A2A8;
+	Mon, 12 Aug 2024 23:59:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yu7jc8ms"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jaUCRFJ7"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DC91804F;
-	Mon, 12 Aug 2024 23:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58FF170A0C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:59:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723507032; cv=none; b=VXDGJ1080Bpq1HoMeJX0aDMLMvh2OEyrLEJPYi6G7+3onaI5edMxkDxIXu+Dl9umfkk9Pp3IeHdSEhpFJG/XteAxQhJ8yy77bl8jtnBuj0RMA3KfpbRO4HfGncf3wHnS1EYCavjkPG/4cw8lolTW6wPXlL3Wz7c8aZF6uyRGuQU=
+	t=1723507184; cv=none; b=A5/tRuk1GLV4vCJINqHI/P/pxfk7nbiEcC9Jatz4aYEcZDYn1mY2wLufrkqgZ2INzT5WwDnNnXPATB2aPiAOKmnCf7kVa8jjAg++Y1p3KLfaNiX8V+H6DhdkORWY8DjqpUIZu3lOYjGhn3aZokgXujVl62W+OwYTKIQ/Gx+J7wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723507032; c=relaxed/simple;
-	bh=Jr9ZiAeKQT2m5eKlEJkFL1K/dVRLIXlbe8RR0cKjDv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XjNnPzye6aB/mJ1Dq+ppTkpeu4jB2DGvY7et1ZbsP2zXYk/8LibtFoCw9xWUf3OjOD6r40yGAB5JD4aWEyPjmwhqZwYBn/ya8+BsyILCKkbg8BV5nXp9pgoCKuxfG8OjrQBQ06JL3qhYuFnAcGOIKC3RbxCa5B7foEl7R9FYl8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yu7jc8ms; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2500C4AF0E;
-	Mon, 12 Aug 2024 23:57:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723507031;
-	bh=Jr9ZiAeKQT2m5eKlEJkFL1K/dVRLIXlbe8RR0cKjDv0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Yu7jc8msljkFCiQiwDF8/zfbezYJqanad92vT7bLx1dIuUShflvBssxWFPxEF/6Tn
-	 Y6qZR26h6davxDADewPqVrDbdDczF8Qcfmj7XUmuNBVgamCljt10Aq6S9lIkNZrlTC
-	 DI1MmuAnHiAfpgm3qDz7e1Bxg9pWMNEsq3xGTfFREDalBFadkOa+tffRzqkA0tT8uP
-	 fY9gXJLt3AIpZK7oFuq6X15n6MRFUxghZeDdZK64myodmq9N2bG7na/OJa4W3FBwc+
-	 VjF7d55qI3ua0l1zhG9f4oRBuranyt4ci5N38sYz5rLuG4RyFeUjSKg0qqpUAjLWuY
-	 q9MRn2l+gjx0g==
-Date: Mon, 12 Aug 2024 16:57:08 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Donald Hunter
- <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
- Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge
- Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, Steffen
- Klassert <steffen.klassert@secunet.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem de
- Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
- Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
- Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem
- memory provider
-Message-ID: <20240812165708.33234ed6@kernel.org>
-In-Reply-To: <a6747b29-ed79-49d4-9ffe-b62074db1e09@gmail.com>
-References: <20240805212536.2172174-1-almasrymina@google.com>
-	<20240805212536.2172174-8-almasrymina@google.com>
-	<20240806135924.5bb65ec7@kernel.org>
-	<CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
-	<20240808192410.37a49724@kernel.org>
-	<CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
-	<fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com>
-	<20240809205236.77c959b0@kernel.org>
-	<CAHS8izOXwZS-8sfvn3DuT1XWhjc--7-ZLjr8rMn1XHr5F+ckbA@mail.gmail.com>
-	<48f3a61f-9e04-4755-b50c-8fae6e6112eb@gmail.com>
-	<20240812105732.5d2845e4@kernel.org>
-	<CAHS8izPb51gvEHGHeQwWTs4YmimLLamau1c4j=Z4KGM8ZJrx5g@mail.gmail.com>
-	<a6747b29-ed79-49d4-9ffe-b62074db1e09@gmail.com>
+	s=arc-20240116; t=1723507184; c=relaxed/simple;
+	bh=g0tyl5PUP+wK9NuBMt6TH2vOO/Fwr+C64cHZyDZ4lDs=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=NQqcbgjmOx2dLL1H9hQ6ln0Jv7hQ7FuRiheOY8EZmlBzYOUBtwdrsIo9eYYLSF7iRNH279arfOL9V71kXICaPrBmKBS3NRmFJAHJBf6LGvUl+zuqEcpco4uCyNhZLcsMWEI32Ch/IVMIrfqEDEcDWhj6fO905tiUGg+Bfq1BfeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jaUCRFJ7; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fc47634e3dso43334365ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:59:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723507182; x=1724111982; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xkVLv7LlrGu9r3Iv9qG0e2Nje3x1aHRRiIR2Xt4n2gc=;
+        b=jaUCRFJ7VnQ4Zh+zkARZDOII52M0Bv3V0vDHmmz7v3GNbyNldjhOlcjTcL42z7rIc3
+         3w9TsaNLkZDSUSAebxqTIKqfQk1ORNnKJ/s8609G/x0zvZVbyA2bD+IZ6C07ovd5+N1B
+         myp9oIOmsHgqIsPYYnjq4qULIH9PrSoOLhiAdL3aNPNlOjeFkB2XPvkZTPGkYvTal1TF
+         1ryqbngTFFYT/JZBCKJ3cpxKSBtYtOssgJAjC/7NhyzzItHfz/pXdK6m+1Hw4mGEDm7S
+         82M8xUJI2TAhgrbrD/8Dp98sgYJ1Kr75eO6p1no59w9I7Zlbw3fCl3VT+m8ceolAPQCH
+         0sTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723507182; x=1724111982;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xkVLv7LlrGu9r3Iv9qG0e2Nje3x1aHRRiIR2Xt4n2gc=;
+        b=RdOv/81G3/QD4DdrvjFzyfRHxCXw9MzN2mmkdJPoLgG0BUujuOqNlB0KqO9bjUeyVZ
+         WkRgidvBV3r3zrxJB77bJk4hIEvQW6Eew5imfj2tdVR8fbPOn0qVxsqql69Q47WxKk1L
+         xcInHAxHnw5/M58MYz9dsFzzXV9ZXroBh/OI6NhikxnMEwCwpKaGG+7B/u85bG/qW/J+
+         v58osScbqiX6AIvpHTQt2NonYi1yuJRfgcKWnyaWa77YmFFcEgp6sQP7zWZbr9XvlKJD
+         Kekf4JlqCe0DMSLkzWA0Cc/6O+cPwo+qfN1uKb8OljfTRPQEgi5etKIgsauEv64pzh/k
+         Szbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOPCqbP7kmeVTxdcWv0m9tjhdpeyDCXc0iTeWn6eVSZ9j/EiiU6qvLBC2p2hok6DA27gH/2ND5HRFvbzMYzNikFXtaxEjj9M/7zM7f
+X-Gm-Message-State: AOJu0YysuJ2r+yV/F3NfXtHX60yk/HAY22X6gGfi/k6ol6DA2NCyOrGu
+	258rgo0n5pEgozTyP0bX7rdYdNDqy2w+2+t+sKrMcH4ncbSvoijgnOfsPXU1zlm4WFqGs7VMWdl
+	Kfg==
+X-Google-Smtp-Source: AGHT+IE54zpvNYRIpauQx2fUW2c4J1ybAMAV0sQcl0g+l007AvifWUKHU2UqnMcCve5fnXfoOaV5cigMM/Y=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:c406:b0:1fd:9d0c:999e with SMTP id
+ d9443c01a7336-201ca19e6e6mr690325ad.9.1723507181791; Mon, 12 Aug 2024
+ 16:59:41 -0700 (PDT)
+Date: Mon, 12 Aug 2024 16:59:40 -0700
+In-Reply-To: <35624750846f564e6789c22801300a542cafa7fb.camel@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <1675732476-14401-1-git-send-email-lirongqing@baidu.com>
+ <87ttg42uju.ffs@tglx> <SN6PR02MB41571AE611E7D249DABFE56DD4B22@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <87o76c2hw2.ffs@tglx> <30eb7680b3c7ae5370dfbf7510e664181f38b80e.camel@infradead.org>
+ <ZqzzVRQYCmUwD0OL@google.com> <35624750846f564e6789c22801300a542cafa7fb.camel@infradead.org>
+Message-ID: <Zrqh7GlPMRVOVtvY@google.com>
+Subject: Re: [PATCH] clockevents/drivers/i8253: Do not zero timer counter in shutdown
+From: Sean Christopherson <seanjc@google.com>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Michael Kelley <mhklinux@outlook.com>, 
+	"lirongqing@baidu.com" <lirongqing@baidu.com>, "kys@microsoft.com" <kys@microsoft.com>, 
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>, 
+	"decui@microsoft.com" <decui@microsoft.com>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 Aug 2024 20:10:39 +0100 Pavel Begunkov wrote:
-> > 1. Drivers need to be able to say "I support unreadable netmem".
-> > Failure to report unreadable netmem support should cause the netlink
-> > API to fail when the user tries to bind dmabuf/io uring memory.
-> > 
-> > 2. Drivers need to be able to say "I want a header pool (with readable
-> > netmem)" or "I want a data pool (potentially with unreadable netmem)".
-> > 
-> > Pavel is suggesting implementing both of these in 2 different flags.
-> > 
-> > Jakub is suggesting implementing both with 1 flag which says "I can
-> > support unreadable netmem for this pool" , and guarding against #1
-> > with a refcount check to detect if a dmabuf pool should have been
-> > created but wasn't.  
-> 
-> That would be iffy IIUC, but I think Jakub just explicitly said
-> that the refcount trick was just for debugging purposes and not
-> for gauging errors like "providers are not supported by the driver".
-> 
-> "Yup, the refcount (now: check of the page pool list) was meant
-> as a WARN_ONCE() to catch bad drivers."
+On Fri, Aug 02, 2024, David Woodhouse wrote:
+> On Fri, 2024-08-02 at 07:55 -0700, Sean Christopherson wrote:
+> > On Fri, Aug 02, 2024, David Woodhouse wrote:
+> > > On Thu, 2024-08-01 at 20:54 +0200, Thomas Gleixner wrote:
+> > > > On Thu, Aug 01 2024 at 16:14, Michael Kelley wrote:
+> > > > > I don't have a convenient way to test my sequence on KVM.
+> > > >=20
+> > > > But still fails in KVM
+> > >=20
+> > > By KVM you mean the in-kernel one that we want to kill because everyo=
+ne
+> > > should be using userspace IRQ chips these days?
+> >=20
+> > What exactly do you want to kill?=C2=A0 In-kernel local APIC obviously =
+needs to stay
+> > for APICv/AVIC.
+>=20
+> The legacy PIT, PIC and I/O APIC.
+>=20
+> > And IMO, encouraging userspace I/O APIC emulation is a net negative for=
+ KVM and
+> > the community as a whole, as the number of VMMs in use these days resul=
+ts in a
+> > decent amount of duplicated work in userspace VMMs, especially when acc=
+ounting
+> > for hardware and software quirks.
+>=20
+> I don't particularly care, but I thought the general trend was towards
+> split irqchip mode, with the local APIC in-kernel but i8259 PIC and I/O
+> APIC (and the i8254 PIT, which was the topic of this discussion) being
+> done in userspace.
 
-Sorry, insufficient caffeine level in the morning.
-We can't WARN_ONCE(), indeed.
+Yeah, that's where most everyone is headed, if not already there.  Letting =
+the
+I/O APIC live in userspace is probably the right direction long term, I jus=
+t don't
+love that every VMM seems to have it's own slightly different version.  But=
+ I think
+the answer to that is to build a library for (legacy?) device emulation so =
+that
+VMMs can link to an implementation instead of copy+pasting from somwhere el=
+se and
+inevitably ending up with code that's frozen in time.
 
