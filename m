@@ -1,233 +1,311 @@
-Return-Path: <linux-kernel+bounces-282545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E72E94E59B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:53:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EE894E5A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0539F2823E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:53:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1387A1C213F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:11:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CD1146D69;
-	Mon, 12 Aug 2024 03:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B44F1494AD;
+	Mon, 12 Aug 2024 04:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r1DVSNA8";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="ChRn52KC"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kIYaV8iV"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDE31C3E;
-	Mon, 12 Aug 2024 03:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723434806; cv=fail; b=VTBfHs1GM/5da41ByKq1oSsLMe57qPCt2zf7P+ZOgyQ/20RytZZ/NpzeI1K76k+E1AEKcGqbEDT8ijQ11VdbAEexilQaRpaTxTXpECz1wtT6AYddun/AvY+qYnKJnIiukf7AD8eV3bJefyF+1MWHsRL91XqLwBdqKBkCLnV59KU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723434806; c=relaxed/simple;
-	bh=xCxXR98gW5l0v3DbG9fu0uPaX4s97pK9kQXdSIPYSIQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZdIBT/hmNL7Wvdh85G6j3VlDTFJoZERNDZZAiRqzpm3R9O8eHJP6ccdT+oNwyzKHUF30eGzR0pfC7YYRtxUiUJQ0a9cXeFyf6nMWvrmAH7kItGtbtzw8/nqkl0d42XMoZA1v5oKqG5Wzj0qCZt1XHal22wz22Y828oqsBqVIndI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=r1DVSNA8; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=ChRn52KC; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 68356776585e11ef9a4e6796c666300c-20240812
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=xCxXR98gW5l0v3DbG9fu0uPaX4s97pK9kQXdSIPYSIQ=;
-	b=r1DVSNA8kRpinCA76JfY/Jizh/G2wcXQ+JUt5SmxUJxBmh5ne4ifUmowr5ObBaSH4HRlniDzymRRq/pJEUYFpP3ZXFTqJklqnuvUJGGs9F511rmyo9UKkEGx2cnh1i8evtkPHp/igK2xR5bGJrnwQWk5zCZyJD7NGt4fcJgGFbA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:9432e4b8-091f-4059-8d8a-93067a36bcef,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:f5d50a3e-6aa5-4057-84d5-0e7d47251781,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 68356776585e11ef9a4e6796c666300c-20240812
-Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw01.mediatek.com
-	(envelope-from <ck.hu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 110174739; Mon, 12 Aug 2024 11:53:17 +0800
-Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 12 Aug 2024 11:53:17 +0800
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 12 Aug 2024 11:53:17 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jy3Ngb05qp/P0AdW9qL3bApsNNxXWB9I0vNihbWCVpgYssh2Lg/MarmnmBO72dOya39RH3KZE7F6N9hadGhEcJsOPwGFQL+1z+ee3olspaQrWkG7MkU4xxaqFTTnBDkAGGODP6SFRNXSewXJ97RXzQik0UKvTK0tRupM7gmRIFqVVH/J2++u3xZR0fDi7dJur9YRthv5rmVFzSUmf/X5C5Kayh2mnBSDEtlBI7/t2sSPQc9PZNo2k9NGnLxabhqcopxuuoVBf3gGpvottYMWGZ0ewc4IflXhH+nCaDu8n+qmpKQx8qmHQscN7nt1UJVUAzs652kU3J6Fspbf2d//oA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xCxXR98gW5l0v3DbG9fu0uPaX4s97pK9kQXdSIPYSIQ=;
- b=JtHStXAxzPcP4h1cwXjbHnErrdhofYHzYEtoBEyNU4BXmlBmeprDqxRnljeaQiX9FYRaYvXhiXC471DR54Cv3lzmWKVvlopqIRrOV6GToooJXCAjH/8hcQFCnOTdAQQMMmDOoGyr46Qhzv7Jh9l8BPgZI76gCHNDuUUWINJj/eSEIufXxYQvdGh5ws3KPoPy/74E8sNh+UQLhgsAiRtCNtmhKACVq3gF1nRVSSuUaH+PVeADmjaFIj3ju+0cHIyw2+blNu25UwcxX5YQBxfpc2SeKqjzPLvG5Wdf4ll6yY9b2vUgD58jaIAF2+nT11F5YXjNqi758b83dmYekiCmOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8411139CFE
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723435861; cv=none; b=rGzzSd4EFsbF27ZXoW2QnALmLQmSZ5BWs2FOXM2daEOpCqiXU2g4Oxys26LDdErxia3g5h3JRXRiL23ZRiEUZNrrEkPMYvpGZFaokYV/Y0wGHIoTen/a1hCmyj5MAmD9ccc6GKfyppFmW4eWqXXNo/RxaEcSvN4YmKLa7WWiH78=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723435861; c=relaxed/simple;
+	bh=qI0bs6rd2DWmdF9ALWTxV+cS9DABMRZx8vBKeOZ3TXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CxejAsoEPU2Be5TBvGzw92bSJssOUC4Pdqzbivhp2AjKfBqtDcQn6COv5+AJLXLWF3ENxojg2hERMCTAEwKlc+h4P31tiohZjGLfnsDhrlkDAQEaa/qIGrExXsEFSUZ/kPBmI+u2SPh6G0UJsEAs65zht15CBezgYH9E5lE8sro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kIYaV8iV; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cd48ad7f0dso3096456a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 21:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xCxXR98gW5l0v3DbG9fu0uPaX4s97pK9kQXdSIPYSIQ=;
- b=ChRn52KCPMf/YHtiqmWXQaZeRnCNqwcVEvc9kT5nYo+YfD2upEEUUxaTZEw8Ffm93qlFp4CsTytSESDc21OptTE1QMdsTPiwIpnfOxSxhB706W1W7yDn++WUqSj2trRodHYbN6EswMKCXaBGDQq65B1rF6O1PPa31TFZZpNjy9w=
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
- by TYZPR03MB7518.apcprd03.prod.outlook.com (2603:1096:400:419::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.19; Mon, 12 Aug
- 2024 03:53:15 +0000
-Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
- ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 03:53:15 +0000
-From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
-To: "javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "airlied@gmail.com" <airlied@gmail.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-	"angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>
-CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH 2/3] drm/mediatek: ovl_adaptor: add missing of_node_put()
-Thread-Topic: [PATCH 2/3] drm/mediatek: ovl_adaptor: add missing of_node_put()
-Thread-Index: AQHaxlXZQLWuiEF5YE+OZYOLHJnSCbIjSaWA
-Date: Mon, 12 Aug 2024 03:53:15 +0000
-Message-ID: <f67899d2567eee74a0a8609a2330b59aab018122.camel@mediatek.com>
-References: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
-	 <20240624-mtk_disp_ovl_adaptor_scoped-v1-2-9fa1e074d881@gmail.com>
-In-Reply-To: <20240624-mtk_disp_ovl_adaptor_scoped-v1-2-9fa1e074d881@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB7518:EE_
-x-ms-office365-filtering-correlation-id: 67cbe02b-545a-42ee-b61f-08dcba824bb2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?eFFOd1FzQWliNWFmSXRpTDBWb0FDNXhTTG5MTW9KL24zcksrYVZXeGhhSVZJ?=
- =?utf-8?B?TGkxWmxqd05QUzBPOUFORXl4YjBLdjYyOGRHVmpuVEVpS29pKzVZazJMbGRJ?=
- =?utf-8?B?RWhNTkFGVWNXcDhUTXkxQmJjNWtickNJUGh5UGlDZ2EwWkppUW1yeHU1bXJR?=
- =?utf-8?B?UlU4VVNYbjdrekoySGRLamNGVFhzUFkzTWxwTTFScmFqWGRHWDBtdEFQdzhZ?=
- =?utf-8?B?ZStPYlMyYkorNUhVV3pXVUx2dmpoZTFWNzU1Y2wrdngxWFFQcW9pWTE2OHV1?=
- =?utf-8?B?YkhJaDVJUURoeTB2dDlJZWluZXpsR2dlNVZnYWFkYzFzYXl6SVZyamcrdHpn?=
- =?utf-8?B?b0xzZ2cvY2hhTmMxSFd3SGFaSU1nR1RkU1V5U3g3SzVhc2RGYW84MmhZTXk4?=
- =?utf-8?B?SzJEbmY2ZkpnQVZvL0ljWXZsN2p6SjJ6a1lFY3FLa2JDRG1RWlRHd2pDclhF?=
- =?utf-8?B?b1hTYjVybnVTVjcrQU9oU3ZmaERzNWl3QmVGajY2M0ZkNWF1c0VVam9wRFox?=
- =?utf-8?B?d2RpUzYrNEUrTCtJckJ1bUFrdzlRS3hvYzhqODRLQ2VYRkRoOC9aWVhFUlov?=
- =?utf-8?B?cXRhQkc0MHZBV1NjYXFBYzFOY2FDV1ZTR01XMDY2L0RGb2Q1cUJldHlFU0p2?=
- =?utf-8?B?b0VMcmphSWxrYkM2YnpUdmtZRUlNVGk3VFZyc2tCdzV4eWhqRDFkVnBuamd2?=
- =?utf-8?B?WlBSdTJOYVZjSjVqV0NhZjRadFdEZHMvTWd1VVBZQmE0NlF4MjZxWTVuMWhs?=
- =?utf-8?B?a2d3U1RnZGdZNldsbHMxYXBqbVRZTXlDRStSTHhTNzBKWVlwZjdueDZ5UndY?=
- =?utf-8?B?Wk13VDdaTFJZeTlBb2gwNkFqNGxjKzNpWHNUWGVmVzRvT2lRbklrcmhoZDdB?=
- =?utf-8?B?NUdHZGd6eXVGSytNUE1JbFRFbEpNY3ZmdDUrZXJNbVQ0NzZHOW1pcUpLcW9i?=
- =?utf-8?B?cU5yMENsbEJKRE1FV3V3Uno4MXhIbjdxY2pWNTlxOGpXMkNuNmhDZjc0ZG5z?=
- =?utf-8?B?dVZNdnAra2hWcFZlTjZtVDAvaHFiVm5ZMDNmK0ZDNTY4YTRNQ1dYak9xdEds?=
- =?utf-8?B?amVSRzE0NHBwOHpnbHF2Nk5xcFVFTHFlYjdCbTBtY1gyek1uMit6ME43Y1Vq?=
- =?utf-8?B?cVEyaXdkY0FGZUFhTkhwZ0xiM3NHNXFTWHJ1SjZoSUFtcGtmOXdWUFc0RXE0?=
- =?utf-8?B?azNCcnU0T3BxYjhidjV4M3lxZXlTeWMrb2MxOTRxQlJaRy9UZndDTzNDb1Qw?=
- =?utf-8?B?dUk5OEE2aW5tbUJtcXVCSkhqMUVQMDRvYmtEem5yUmxlaHJYT0JJKzJwT3F6?=
- =?utf-8?B?Z2pPVzJSbzNyQ2FlV1dxNUlKOCsrTkNKM2RGTGhlMDBHOHM0WmsxK1V2U2JN?=
- =?utf-8?B?UE8xZExQd0dCSU14QXNiMlVxdnhmbndrdWtkWHhiYUJMd2FGbHNUVy9aRUE2?=
- =?utf-8?B?TDMrVWlTZ0tWTHl5WjU1Z1F6Z09tdmhxRzdHQWUwK0ZvQXg2bjJYekFJbE93?=
- =?utf-8?B?NjV5SE9Rc2g5WnV5RnVhYjJ2aUxVY0ZsMzlsRTd0QXRVU3JHMEpncXRIL0tx?=
- =?utf-8?B?RWo2YjYrMEIvS3hOWktQbHh2WUxYYkNjMEFRYjRZVFVjNGFnOU1McDlYVXhv?=
- =?utf-8?B?N0JXaWNmaGJDQmRaNFRZeDdmMGphUE1IMkR0Vnk3Q1hkWDcwd0xsTFRITkxY?=
- =?utf-8?B?YVcwb3JKNXJvemF1SW92Y0UwalFkQkNoekFsU2dvbkZQZWx2aS8rNWFzUE5W?=
- =?utf-8?B?RERvei9sOUJ2OEl3bmVpNDFOem1DM3kzanV0V1FaaFRacUtleXJtWVNrcGZH?=
- =?utf-8?Q?RRBetJEQsn2RhzmBdHzQdez+ANsJi7dSgTjnk=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NVcveSs3TlhNZFhmMXVMVXBrYTZEMEhmdTdwSThWc2NXZUpORlRPT3FRVC9n?=
- =?utf-8?B?eTl5VklpOU5hamRWaDFsUkdhWHI5Z2JwbVJpczhSOTZPTkRTSU1Bb0x1SXRZ?=
- =?utf-8?B?WnNrZGU5ZHFveHdvZjFXOTdCajZaSnQ2QUR1NUY1QWtMY3pDSkdaajRWNzQ4?=
- =?utf-8?B?RlZuL0cyQXFSdDZWK0tWbEpKNU5Oc3g0MytyQmlsRkh6dURZZVJxazBzbndy?=
- =?utf-8?B?czVKbk5RVTVzeUVVZVZQbVI2SWx1TWEveHQ0VlMwbTI2Nzk0czhOWVloU1c4?=
- =?utf-8?B?djhQL2dsUVhFQmtpMms1L1gwREdVeXdobWlueVpOZGdSSmFGOThCbnN1ZFJi?=
- =?utf-8?B?Q0ZDaHpEbGIranhycEtUVEsxdTZVa1ViM1Buam9NZkxISmM2RHczdFp5QUly?=
- =?utf-8?B?RXRhQkRlcUU1d1dmVHUzT2FGdElvY0tpVlU5bUtUUWZZcGcwZzNyRENHZE4z?=
- =?utf-8?B?V0RTZEFZdFUyNldzczB3MVhGdHJxVWJhSnFpaHUrVVUya2ptTE5lTWtaaHlN?=
- =?utf-8?B?TmdkQ0hvTldQMDRrQzNVdXhJUFByVnVmU1R3djYwY29FZ3IwME9rdkkxUHNY?=
- =?utf-8?B?OERHbFFIcWxTY3VFRkIzbTN5UktFeTlVbjBVM0c3ejZQaHhCL1poWHN1TGZQ?=
- =?utf-8?B?WEZ5ZkVhMjk0OHZSdXplWDFWR2MxSUhHbCszTThSZ2VPdGRVMGZMWEIrSU5H?=
- =?utf-8?B?dzFURTdhSXZyd2hDaVlFdzVhb21uaUovMVQrQnRZRE4yWmJEWlNSM0NNT3VN?=
- =?utf-8?B?K0l5UkFDRC95ZVNlTDNZWm9LTnZtcVFzcFFUVlBJb29VSld3SmxaM0tuYnZs?=
- =?utf-8?B?UHZBcnRIa0wwcWNGN1A0blk5emlJTnhFdUY0akpTWFcvaWFlWlVXNnRkVkZD?=
- =?utf-8?B?NUszZVJxTTZJdjBJUXB3cVNQTFRtNFJINzRNcDZMN2hjQjBKMzdLK2Y3V3py?=
- =?utf-8?B?Qnlhdm1wbWZURFNRdFJHbDNuQXlXeDlDSkJ1cW5wR214V1B1dWNhN3dQRWpi?=
- =?utf-8?B?S2NxQzcrOEdjYVpFQ0Fid0d5QmV0Zi9IbVUzaGpGSFZ0Q21OQk5IaXJSVjg2?=
- =?utf-8?B?ZGFLM0VRWm00ODR3dEZ4YnlJblh3UnNIcHJyT2xWVUJWWkdxWW0rSE5BRmdj?=
- =?utf-8?B?TjBXbHMwV1kwUkNWbndXWSs0cmZsUjl0Qk5WV1ptV3BNZ1p4bDBxSnRzMG5S?=
- =?utf-8?B?cjhFaDJXVVVEVFJMNDRUR1RKaUVld3FQdlV4WkpMdHRRenJVdHkxZ2I4SHhX?=
- =?utf-8?B?NTRGdzlxZ2l3c3hxYmZPUUs5MVQ3OXI3TjBQT2tYdHhSdEtQeVNNcnV6ajUz?=
- =?utf-8?B?ZlZWa1M0YlRFODBtbm9yaDV3VUFOblV2Vk02TFRGOS9RTThYZjlGRzl6RFI1?=
- =?utf-8?B?a1hHY0NWRnNaVWNUS1NsMzg2cHFpcDN3bVUrQkNJMnZWNTB2UWRsVkwwd0NK?=
- =?utf-8?B?ZEhhZGpJSENGVkdxSitTQm5seEh5Yzg2S1NnN282YkRoeFh1NWRWcHdNd0Y1?=
- =?utf-8?B?MERVNGRkOEFwTGlXc1g0TjlvWlBnejByazhBVkFPdUR1VUZXZyt3Q2lvbVI1?=
- =?utf-8?B?anJYa1lZNEZRdGxka3Z0Uzk0VVpzZ0ZhVWYzZGVkVlJjRGd5cVIzUnZCNFRY?=
- =?utf-8?B?K2puaTdlNlBPSlFKRlFSNzQ1RDdRdzQvOC8xSHZJZmRuMms4QmhNWmZSQVVv?=
- =?utf-8?B?Mi9nVXhHbVExQzlXOWQvc0FqZkhHRnFURSsyS3E4T21aL3REWEtNaWJqV2N6?=
- =?utf-8?B?cGdnRXViTUttdjgxT1dSQlM1L2JDNzZ1a0Y2VHROSGhTYjBUWVFPbFM1elp3?=
- =?utf-8?B?YWhLQWVVZ0lmZ0hDOGpSejBGcHphMXErUmx3V1ltMktDb1YzWmJLN09MT01N?=
- =?utf-8?B?LytDOE1PWUl4U2RXNU93c2tVa3ZVSjdTTkdIQzlCbWpYZjBPSDZnYkZwWXh0?=
- =?utf-8?B?azlKWGJCaWJhMjloblo4ZW91WmxXazdjYXJEazB2cXFPNkZQY1k4dDZOTm83?=
- =?utf-8?B?RHN1dmpCVzhkcGxLbHlFUGtiemxwaWJHYkYvQWZ1YVJ3aDM2QVUvejVEc2hi?=
- =?utf-8?B?bys1SkRvelB6M3BKeGxRZDRCWmNFWHNLTFJCNUcyS3JiS2lXcmpJSS9Zc3pQ?=
- =?utf-8?Q?kv7g1ej0qmhGWr64qVBRaOZnf?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3A3EB4D1F645A144905764E8D999B465@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google; t=1723435859; x=1724040659; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KLJJ6so+orZFZFeMUnbOliXPJiE9AqEdrrJRM5sonro=;
+        b=kIYaV8iVnycVfKVHutt7KSA9HByAdFSNz61yjx17YsTPOtXe9MP9VTgOBE28sudda7
+         g7ROzEFymlj64A4WKR4ODapcn1NaY/4EEcYOCP5Mb9mncgh0agMFK+j4c8qJ2h+5P+mU
+         e25ho+JnJmhjoWcvtB7aGugGvedifgjUihTHyiCLqpaQbEeictqFBbiywVCwT80vQMvl
+         qg/SwKy4PiphBXMezDQ3nnSSonP7DrCKBNps+LkGmrISGaIMfeTVmvSDVaOQvcDMjK2G
+         Kc8+sOgIGNacm8IAKzTpXkPjTI3y57Qzbxau0KUq5ClT7VzPc9LkKG0ZWJFWKxNKXe6n
+         lD0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723435859; x=1724040659;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KLJJ6so+orZFZFeMUnbOliXPJiE9AqEdrrJRM5sonro=;
+        b=glYYVgJb0iZnU3p9VcqQznWrbc8ZVmPshWHMg8ojv//VXpBoCSwZw8IZoUKC2Ewaqh
+         1SIZs+VplfaSU6j1SkbjVGd8fOnlkcJ0BDeqwC9IYZKEd/Z2kmm5WPY8QzaABLjq0+0d
+         69KnPJ3adfYpk5mLnshW6sm47VQQ46fq2GERRipBlg7JeTVChPxL4YKf6l6Zv4QrG48J
+         uVqyuohI3nR9+eZYanZxhCwVUbEDp08M/bCKc1gujKB7iwrDLsD+bp4VW5PO9ggZ0Zc8
+         wF7kJG21h+911Rj0qYGmxGPeabh5LWrKv+hrxCjUVcQDDYoHExQVrz8FbmtGEDAkTlaz
+         NiMw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8QxeCBE3UetoTvSESVsnw0dDMpi/0J/K75k++nYpso9ipPeLC03HuddgAANSTUgztpIVf3cu9DytIoB3mHp6QQB6TyzUII4tFSAj1
+X-Gm-Message-State: AOJu0YxdYPAMmYjJDNYNloedCVyu9lpOVSn0FzbbPIxDnyGp4ZFE0cji
+	YolcZFflpOSb2hp9P+25wHeVifC7bOYk5RLWCbhHqNO9rzInLkCI0NWh/qd93g==
+X-Google-Smtp-Source: AGHT+IEPC81vW4x96+SZLSLCOeIPTkSbgIYh0EjJcUYkF2idbeM+Vokc34tM9BlI6w/m1L1UpjIOOA==
+X-Received: by 2002:a17:90b:4a81:b0:2c2:f2d6:60d4 with SMTP id 98e67ed59e1d1-2d1e7f96d11mr9474880a91.8.1723435859038;
+        Sun, 11 Aug 2024 21:10:59 -0700 (PDT)
+Received: from thinkpad ([103.244.168.26])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9c82b6asm7130528a91.16.2024.08.11.21.10.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 21:10:58 -0700 (PDT)
+Date: Mon, 12 Aug 2024 09:40:51 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Shawn Lin <shawn.lin@rock-chips.com>
+Cc: Rob Herring <robh+dt@kernel.org>,
+	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Avri Altman <avri.altman@wdc.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	YiFeng Zhao <zyf@rock-chips.com>, Liang Chen <cl@rock-chips.com>,
+	linux-scsi@vger.kernel.org, linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
+Message-ID: <20240812041051.GA2861@thinkpad>
+References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
+ <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+ <20240809062813.GC2826@thinkpad>
+ <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
+ <20240810092817.GA147655@thinkpad>
+ <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67cbe02b-545a-42ee-b61f-08dcba824bb2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 03:53:15.7693
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cKb24aAyXMcJUicxA/3yAF7ShQ8EPBLc0gcFSkh7GNClGN0ztDIznvVOD/UjiSarxtI22jYaf8Q2SsbdOrD17A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7518
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
 
-SGksIEphdmllcjoNCg0KT24gTW9uLCAyMDI0LTA2LTI0IGF0IDE4OjQzICswMjAwLCBKYXZpZXIg
-Q2FycmFzY28gd3JvdGU6DQo+ICAJIA0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3Qg
-Y2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bnRpbCB5b3UgaGF2ZSB2ZXJpZmllZCB0
-aGUgc2VuZGVyIG9yIHRoZSBjb250ZW50Lg0KPiAgRXJyb3IgcGF0aHMgdGhhdCBleGl0IGZvcl9l
-YWNoX2NoaWxkX29mX25vZGUoKSBuZWVkIHRvIGNhbGwNCj4gb2Zfbm9kZV9wdXQoKSB0byBkZWNl
-cmVtZW50IHRoZSBjaGlsZCByZWZjb3VudCBhbmQgYXZvaWQgbWVtb3J5IGxlYWtzLg0KPiANCj4g
-QWRkIHRoZSBtaXNzaW5nIG9mX25vZGVfcHV0KCkuDQoNClJldmlld2VkLWJ5OiBDSyBIdSA8Y2su
-aHVAbWVkaWF0ZWsuY29tPg0KDQo+IA0KPiBDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZw0KPiBG
-aXhlczogNDUzYzMzNjQ2MzJhICgiZHJtL21lZGlhdGVrOiBBZGQgb3ZsX2FkYXB0b3Igc3VwcG9y
-dCBmb3IgTVQ4MTk1IikNCj4gU2lnbmVkLW9mZi1ieTogSmF2aWVyIENhcnJhc2NvIDxqYXZpZXIu
-Y2FycmFzY28uY3J1ekBnbWFpbC5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlh
-dGVrL210a19kaXNwX292bF9hZGFwdG9yLmMgfCA0ICsrKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAz
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Rpc3Bfb3ZsX2FkYXB0b3IuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9tZWRpYXRlay9tdGtfZGlzcF9vdmxfYWRhcHRvci5jDQo+IGluZGV4IDE0MTg5OTIzMTFjNC4u
-M2ZhZjI2YTU1ZTc3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2Rpc3Bfb3ZsX2FkYXB0b3IuYw0KPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
-X2Rpc3Bfb3ZsX2FkYXB0b3IuYw0KPiBAQCAtNTIyLDggKzUyMiwxMCBAQCBzdGF0aWMgaW50IG92
-bF9hZGFwdG9yX2NvbXBfaW5pdChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBjb21wb25lbnRf
-bWF0Y2ggKiptYQ0KPiAgfQ0KPiAgDQo+ICBjb21wX3BkZXYgPSBvZl9maW5kX2RldmljZV9ieV9u
-b2RlKG5vZGUpOw0KPiAtaWYgKCFjb21wX3BkZXYpDQo+ICtpZiAoIWNvbXBfcGRldikgew0KPiAr
-b2Zfbm9kZV9wdXQobm9kZSk7DQo+ICByZXR1cm4gLUVQUk9CRV9ERUZFUjsNCj4gK30NCj4gIA0K
-PiAgcHJpdi0+b3ZsX2FkYXB0b3JfY29tcFtpZF0gPSAmY29tcF9wZGV2LT5kZXY7DQo+ICANCj4g
-DQo+IC0tIA0KPiAyLjQwLjENCj4gDQo+IA0K
+On Mon, Aug 12, 2024 at 09:28:26AM +0800, Shawn Lin wrote:
+> JHi Mani,
+> 
+> 在 2024/8/10 17:28, Manivannan Sadhasivam 写道:
+> > On Fri, Aug 09, 2024 at 04:16:41PM +0800, Shawn Lin wrote:
+> > 
+> > [...]
+> > 
+> > > > > +static int ufs_rockchip_hce_enable_notify(struct ufs_hba *hba,
+> > > > > +					 enum ufs_notify_change_status status)
+> > > > > +{
+> > > > > +	int err = 0;
+> > > > > +
+> > > > > +	if (status == PRE_CHANGE) {
+> > > > > +		int retry_outer = 3;
+> > > > > +		int retry_inner;
+> > > > > +start:
+> > > > > +		if (ufshcd_is_hba_active(hba))
+> > > > > +			/* change controller state to "reset state" */
+> > > > > +			ufshcd_hba_stop(hba);
+> > > > > +
+> > > > > +		/* UniPro link is disabled at this point */
+> > > > > +		ufshcd_set_link_off(hba);
+> > > > > +
+> > > > > +		/* start controller initialization sequence */
+> > > > > +		ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
+> > > > > +
+> > > > > +		usleep_range(100, 200);
+> > > > > +
+> > > > > +		/* wait for the host controller to complete initialization */
+> > > > > +		retry_inner = 50;
+> > > > > +		while (!ufshcd_is_hba_active(hba)) {
+> > > > > +			if (retry_inner) {
+> > > > > +				retry_inner--;
+> > > > > +			} else {
+> > > > > +				dev_err(hba->dev,
+> > > > > +					"Controller enable failed\n");
+> > > > > +				if (retry_outer) {
+> > > > > +					retry_outer--;
+> > > > > +					goto start;
+> > > > > +				}
+> > > > > +				return -EIO;
+> > > > > +			}
+> > > > > +			usleep_range(1000, 1100);
+> > > > > +		}
+> > > > 
+> > > > You just duplicated ufshcd_hba_execute_hce() here. Why? This doesn't make sense.
+> > > 
+> > > Since we set UFSHCI_QUIRK_BROKEN_HCE, and we also need to do someting
+> > > which is very similar to ufshcd_hba_execute_hce(), before calling
+> > > ufshcd_dme_reset(). Similar but not totally the same. I'll try to see if
+> > > we can export ufshcd_hba_execute_hce() to make full use of it.
+> > > 
+> > 
+> > But you are starting the controller using REG_CONTROLLER_ENABLE. Isn't that
+> > supposed to be broken if you set UFSHCI_QUIRK_BROKEN_HCE? Or I am
+> > misunderstanding the quirk?
+> > 
+> 
+> Our controller doesn't work with exiting code, whether setting
+> UFSHCI_QUIRK_BROKEN_HCE or not.
+> 
+
+Okay. Then this means you do not need this quirk at all.
+
+> 
+> For UFSHCI_QUIRK_BROKEN_HCE case, it calls ufshcd_dme_reset（）first,
+> but we need to set REG_CONTROLLER_ENABLE first.
+> 
+> For !UFSHCI_QUIRK_BROKEN_HCE case, namly ufshcd_hba_execute_hce, it
+> sets REG_CONTROLLER_ENABLE  first but never send DMA_RESET and calls
+> ufshcd_dme_enable.
+> 
+
+I don't see where ufshcd_dme_enable() is getting called for
+!UFSHCI_QUIRK_BROKEN_HCE case.
+
+> So the closet code path is to go through UFSHCI_QUIRK_BROKEN_HCE case,
+> and set REG_CONTROLLER_ENABLE by adding hce_enable_notify hook.
+> 
+
+No, that is abusing the quirk. But I'm confused about why your controller wants
+resetting the unipro stack _after_ enabling the controller? Why can't it be
+reset before?
+
+> > > > 
+> > > > > +	} else { /* POST_CHANGE */
+> > > > > +		err = ufshcd_vops_phy_initialization(hba);
+> > > > > +	}
+> > > > > +
+> > > > > +	return err;
+> > > > > +}
+> > > > > +
+
+[...]
+
+> > > > > +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
+> > > > > +	SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_suspend, ufs_rockchip_resume)
+> > > > > +	SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
+> > > > 
+> > > > Why can't you use ufshcd PM ops as like other vendor drivers?
+> > > 
+> > > It doesn't work from the test. We have many use case to power down the
+> > > controller and device, so there is no flow to recovery the link. Only
+> > > when the first accessing to UFS fails, the ufshcd error handle recovery the
+> > > link. This is not what we expect.
+> > > 
+> > 
+> > What tests? The existing UFS controller drivers are used in production devices
+> > and they never had a usecase to invent their own PM callbacks. So if your
+> > controller is special, then you need to justify it more elaborately. If
+> > something is missing in ufshcd callbacks, then we can add them.
+> > 
+> 
+> All the register got lost each time as we power down both controller & PHY
+> and devices in suspend.
+
+Which suspend? runtime or system suspend? I believe system suspend.
+
+> So we have to restore the necessary
+> registers and link. I didn't see where the code recovery the controller
+> settings in ufshcd_resume, except ufshcd_err_handler（）triggers that.
+> Am I missing any thing? 
+
+Can you explain what is causing the powerdown of the controller and PHY?
+Because, ufshcd_suspend() just turns off the clocks and regulators (if
+UFSHCD_CAP_AGGR_POWER_COLLAPSE is set) and spm_lvl 3 set by this driver only
+puts the device in sleep mode and link in hibern8 state.
+
+- Mani
+
+> Below is the dump we get if using
+> SET_SYSTEM_SLEEP_PM_OPS(ufshcd_system_suspend, ufshcd_system_resume).
+> It can work as ufshcd_err_handler () will fix the link, but we have to
+> suffer from getting the error log each time. Moreover, we need to gate
+> 26MHz refclk for device when RPM is called. So our own rpm callback is
+> needed.
+> 
+> [   14.318444] <<GTP-INF>>[gt1x_wakeup_sleep:964] Wakeup by poweron
+> [   14.439723] ufshcd-rockchip 2a2d0000.ufs: Controller not ready to accept
+> UIC commands
+> [   14.439730] ufshcd-rockchip 2a2d0000.ufs: pwr ctrl cmd 0x18 with mode 0x0
+> uic error -5
+> [   14.439736] ufshcd-rockchip 2a2d0000.ufs: UFS Host state=1
+> [   14.439740] ufshcd-rockchip 2a2d0000.ufs: outstanding reqs=0x0 tasks=0x0
+> [   14.439744] ufshcd-rockchip 2a2d0000.ufs: saved_err=0x0,
+> saved_uic_err=0x0
+> [   14.439748] ufshcd-rockchip 2a2d0000.ufs: Device power mode=2, UIC link
+> state=2
+> [   14.439753] ufshcd-rockchip 2a2d0000.ufs: PM in progress=1, sys.
+> suspended=1
+> [   14.439758] ufshcd-rockchip 2a2d0000.ufs: Auto BKOPS=0, Host self-block=0
+> [   14.439762] ufshcd-rockchip 2a2d0000.ufs: Clk gate=1
+> [   14.439766] ufshcd-rockchip 2a2d0000.ufs: last_hibern8_exit_tstamp at 0
+> us, hibern8_exit_cnt=0
+> [   14.439770] ufshcd-rockchip 2a2d0000.ufs: last intr at 10807625 us, last
+> intr status=0x440
+> [   14.439775] ufshcd-rockchip 2a2d0000.ufs: error handling flags=0x0, req.
+> abort count=0
+> [   14.439779] ufshcd-rockchip 2a2d0000.ufs: hba->ufs_version=0x200, Host
+> capabilities=0x187011f, caps=0x48c
+> [   14.439785] ufshcd-rockchip 2a2d0000.ufs: quirks=0x2100, dev. quirks=0xc4
+> [   14.439790] ufshcd-rockchip 2a2d0000.ufs: UFS dev info: SAMSUNG
+> KLUDG2R1DE-B0F1  rev 0100
+> [   14.439796] ufshcd-rockchip 2a2d0000.ufs: clk: core, rate: 50000000
+> [   14.439822] host_regs: 00000000: 0187011f 00000000 00000200 00000000
+> [   14.439827] host_regs: 00000010: 00000000 000005e6 00000000 00000000
+> [   14.439831] host_regs: 00000020: 00000000 00000000 00000000 00000000
+> [   14.439835] host_regs: 00000030: 00000000 00000000 00000000 00000000
+> [   14.439839] host_regs: 00000040: 00000000 00000000 00000000 00000000
+> [   14.439843] host_regs: 00000050: 00000000 00000000 00000000 00000000
+> [   14.439847] host_regs: 00000060: 00000000 00000000 00000000 00000000
+> [   14.439851] host_regs: 00000070: 00000000 00000000 00000000 00000000
+> [   14.439855] host_regs: 00000080: 00000000 00000000 00000000 00000000
+> [   14.439859] host_regs: 00000090: 00000000 00000000 00000000 00000000
+> [   14.439863] ufshcd-rockchip 2a2d0000.ufs: No record of pa_err
+> [   14.439867] ufshcd-rockchip 2a2d0000.ufs: No record of dl_err
+> [   14.439871] ufshcd-rockchip 2a2d0000.ufs: No record of nl_err
+> [   14.439876] ufshcd-rockchip 2a2d0000.ufs: No record of tl_err
+> [   14.439880] ufshcd-rockchip 2a2d0000.ufs: No record of dme_err
+> [   14.439884] ufshcd-rockchip 2a2d0000.ufs: No record of auto_hibern8_err
+> [   14.439888] ufshcd-rockchip 2a2d0000.ufs: No record of fatal_err
+> [   14.439892] ufshcd-rockchip 2a2d0000.ufs: No record of link_startup_fail
+> [   14.439896] ufshcd-rockchip 2a2d0000.ufs: No record of resume_fail
+> [   14.439900] ufshcd-rockchip 2a2d0000.ufs: No record of suspend_fail
+> [   14.439905] ufshcd-rockchip 2a2d0000.ufs: dev_reset[0] = 0x0 at 1418763
+> us
+> [   14.439910] ufshcd-rockchip 2a2d0000.ufs: dev_reset: total cnt=1
+> [   14.439914] ufshcd-rockchip 2a2d0000.ufs: No record of host_reset
+> [   14.439918] ufshcd-rockchip 2a2d0000.ufs: No record of task_abort
+> [   14.439930] ufshcd-rockchip 2a2d0000.ufs: ufshcd_uic_hibern8_exit:
+> hibern8 exit failed. ret = -5
+> [   14.439935] ufshcd-rockchip 2a2d0000.ufs: __ufshcd_wl_resume: hibern8
+> exit failed -5
+> [   14.439944] ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: -5
+> [   14.439950] ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback():
+> scsi_bus_resume+0x0/0xa8 returns -5
+> [   14.440003] ufshcd-rockchip 2a2d0000.ufs: ufshcd_err_handler started; HBA
+> state eh_fatal; powered 1; shutting down 0; saved_err = 0; saved_uic_err =
+> 0; force_reset = 0; link is broken
+> [   14.440017] ufs_device_wlun 0:0:0:49488: PM: failed to resume async:
+> error -5
+> 
+> > - Mani
+> > 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
