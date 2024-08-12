@@ -1,115 +1,141 @@
-Return-Path: <linux-kernel+bounces-283508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142D594F5CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:28:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E3B94F5A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2E8C282EBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:28:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F0FE2832DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B1A1891D6;
-	Mon, 12 Aug 2024 17:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7433187FE9;
+	Mon, 12 Aug 2024 17:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="G9zG2Ark"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CvWnbvwJ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84691804F;
-	Mon, 12 Aug 2024 17:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BFC18756D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723483676; cv=none; b=oPkQpu7W5+l/PWhZuAuhD0mtkgPPFJowtHyhHl/KUAXxn3OQ90wZps22SfM12FnYOBdbIalL986g1VNOF0r7ilhOXmfo3A44tNZap0LneXcPmTY8cOIsd5I2Wbf4g1hpFIDsK3OXpOsLy+RGMVBz+HBSoOAcHw+bZxNgNk8sL5I=
+	t=1723482695; cv=none; b=XxdHwRK7YK2HLINcj9yY2QUkwNoSSioReJ97F1GoSEF3HbmijpoVUspgkv+4KpTMyqc92DpxqQtPigy2ceBM66YI7eP9V2sZnnPQGlq/wY14fsAWypNKOhVE+yNXVFiGJeqxycyT5MmvWhxInwbfmrfJPD4kD3yv5GEcuoKmPWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723483676; c=relaxed/simple;
-	bh=IFMxJ0Br/sftBPuPaohb/P6aDtKUf9rUY46d2ecUm0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJyoOtlToqRAPZWuTvBNyps+tHzGRwJ9HijKVqNHXVK0wLOxDsCNatRJWYLfoFi3MQWDr4MjaWL9/gteIECKuNgR2G6hR3uL4xri79Cpw85xWyy+gHME3oZZwhWWloswZ1gpxy0r6eENfH5p6nPuoOPVYmmGJ2iwgYZnOIB+ZHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=G9zG2Ark; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Message-ID:Date:Subject:Cc:To:From:Sender;
-	bh=IFMxJ0Br/sftBPuPaohb/P6aDtKUf9rUY46d2ecUm0M=; b=G9zG2ArkCRinNETyPwuh+2xCOJ
-	iDgDhrFoVtcvIrsQ5r6F28AViF6ENkdbgVlZS6crklmsR8Bmq8r7CbJ3JVrkQYU9TP1HCPWrdDQ1F
-	yZ+5NLJr0OFq6Ja+pfu/X8WLHV/Pdx+4tT0EeyAm7dsjNwsHczh5SaTogf30Nm70iA7Lw8WEUtVHm
-	a2ljf+HFcN/9LH139tpUE37YNiSPr8kSmW1UV+aRJEzT1Tt0qNQDC4LwrHs5oiQ0p+9QyVuU6Bgmw
-	2yoO7J17rQT6ddUa3XxoCOt78JkFEWf8bEE6tvJlLRNL7YJlCj70d4AiGUxAQF8Br2DOU+aXmKuU0
-	xlbRlNOw==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.localnet)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1sdYYG-008ulR-0n;
-	Mon, 12 Aug 2024 12:09:48 -0500
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Peter Zijlstra <peterz@infradead.org>, wine-devel@winehq.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
- linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
- wine-devel@winehq.org,
- =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
- Wolfram Sang <wsa@kernel.org>, Andy Lutomirski <luto@kernel.org>,
- linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Randy Dunlap <rdunlap@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
- Boqun Feng <boqun.feng@gmail.com>, Elizabeth Figura <zfigura@codeweavers.com>
-Subject: Re: [PATCH v5 00/28] NT synchronization primitive driver
-Date: Mon, 12 Aug 2024 12:09:48 -0500
-Message-ID: <5805970.DvuYhMxLoT@camazotz>
-In-Reply-To: <2325658.ElGaqSPkdT@uriel>
-References:
- <20240519202454.1192826-1-zfigura@codeweavers.com> <2325658.ElGaqSPkdT@uriel>
+	s=arc-20240116; t=1723482695; c=relaxed/simple;
+	bh=P1zWlqma/MYjqN1eJ3463pbdO62vV2dvVfq2ZsWRxOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EI5Dwf5ieNFDXDiwh5sstdwIGgnG3hIjVWyEnCSL6LtKb8xezLRZl1xPApeZ4pEaYizU1JtPdrHZ+5h9E76+xgaiz2WpuYn4rso4JASaaKJEFm1DYYt2Wk8wNEOn1Qg4f1Stko6CLSOOGExqbdlSUJIpauUtf74cn9irL2SmLfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CvWnbvwJ; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc5296e214so43694985ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723482693; x=1724087493; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JLVMznJSLt/JlEkp0OXnrYKaDgBuNrpLyNsFl4Y6DAA=;
+        b=CvWnbvwJpYUD2x461V3NPgEKUfPOVjNZ41I/JvhWvA6n9bJaMcbyUhC0AbysH4ho3k
+         hikJK3R4YpRO1vgxs5dcgnwUnQDyqNbHp3Z9tF1TfQVZxJ4WJPzkDsBBTtauoP/GhwBO
+         c5IJL2xHKpivNrIJj5V2rBmBoBFnayv/+HOuvB5laf/iatuzH+ijmlyXLffETEL8mnZV
+         9xa/H+o/4clrqeHepCW6qIg+ZN6gmgUdyj7gAiD9Zn5hzirFeJN2Ux7Xlx7qdFd2MuSw
+         idvA4kMxaf41L0/b4hdSEPKmIE4wu4SUF7fyIIVxt6Jm0Bg0VMM+zDKu1CijQFFmhHbq
+         U9Mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723482693; x=1724087493;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JLVMznJSLt/JlEkp0OXnrYKaDgBuNrpLyNsFl4Y6DAA=;
+        b=ArfnfF790v9p22oODOkjmMPWUwI43cKrYOM00VFs6jXYZ3SQECEtR+czBEumH9GMYv
+         i6j2OrMTpWv4SgJc4eM3A3ogxLTKcjPF3sEW+EbcCbSS/urK4wk49E5yfcgA3Vf/DoDN
+         mJsRQI+VHHIxFApMJ86W6+McbO5771RoJfWUQ0zskOXTKMzCsn4POwjLw69TGrCKOOGt
+         4ksmz0sX4wCRTdFgrTJXGlHmBSg18YMRxupFl1M0B4aWSlbHn87O9wVXP/KSupT3PCy2
+         Ly3EW+q+0dICVG4N+IqBp4mZQM/VSeBSKKgTKl1PP+y4nDDyqQvI0xMLhPfI6xdK2jxh
+         meOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWU6nsvPtm5CxgFhjTkhdoeOn0TSOi2AsvkY+7xxNhoqm/437XoMxCviqR6HICURVZ8JeUw7FKd9heu6Oc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLWXUuKhEBdDeCLFu/HIvobCMITgwUv0m8azr2q6ctYKtO6RMC
+	DJrTbi3APYyJJOXEA8GX32HcXX40+jwOmBKRzN7wQN3QZ0Zb8IShTII3e35G
+X-Google-Smtp-Source: AGHT+IELEK6p5g611Ie65ft5OPx5Mcq5RXC0yVwYjMfCBbR99xO2ydlSWcoM5PsEkzp0Bznrw0ZmbQ==
+X-Received: by 2002:a17:902:ec86:b0:1fb:779e:4fd0 with SMTP id d9443c01a7336-201ca1a246dmr9679275ad.24.1723482692871;
+        Mon, 12 Aug 2024 10:11:32 -0700 (PDT)
+Received: from embed-PC.. ([122.177.118.36])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bbb3a270sm40264765ad.279.2024.08.12.10.11.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 10:11:32 -0700 (PDT)
+From: Abhishek Tamboli <abhishektamboli9@gmail.com>
+To: neil.armstrong@linaro.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	daniel@ffwll.ch
+Cc: quic_jesszhan@quicinc.com,
+	dri-devel@lists.freedesktop.org,
+	skhan@linuxfoundation.org,
+	rbmarliere@gmail.com,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/panel: ili9341: Add comments for ILI9341 register
+Date: Mon, 12 Aug 2024 22:40:19 +0530
+Message-Id: <20240812171019.561321-1-abhishektamboli9@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Monday, 10 June 2024 11:58:48 CDT Elizabeth Figura wrote:
-> On Sunday, May 19, 2024 3:24:26=E2=80=AFPM CDT Elizabeth Figura wrote:
-> > This patch series implements a new char misc driver, /dev/ntsync, which=
- is
-> > used to implement Windows NT synchronization primitives.
-> >=20
-> > NT synchronization primitives are unique in that the wait functions bot=
-h are
-> > vectored, operate on multiple types of object with different behaviour
-> > (mutex, semaphore, event), and affect the state of the objects they wait
-> > on. This model is not compatible with existing kernel synchronization
-> > objects or interfaces, and therefore the ntsync driver implements its o=
-wn
-> > wait queues and locking.
-> >=20
-> > This patch series is rebased against the "char-misc-next" branch of
-> > gregkh/char-misc.git.
->=20
-> Hi Peter,
->=20
-> Sorry to bother, but now that the Linux merge window is closed could I
-> request a review of this revision of the ntsync patch set, please (or a
-> review from another locking maintainer)?
->=20
-> I believe I've addressed all of the comments from the last review,
-> except those which would have changed the existing userspace API
-> (although since the driver isn't really functional yet, maybe this
-> would have been fine to do anyway?)
+TODO : Add missing comments for ILI9341 register definition.
 
-Hi,
+Signed-off-by: Abhishek Tamboli <abhishektamboli9@gmail.com>
+---
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Gentle ping on this=E2=80=94this series still needs another review.
-
-If I should go ahead and make "breaking" API changes based on the last
-review, please let me know.
-
-Thanks,
-Zeb
-
+diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+index 775d5d5e828c..cba6a6952568 100644
+--- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
++++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+@@ -121,19 +121,19 @@ struct ili9341_config {
+ 	const struct drm_display_mode mode;
+ 	/* ca: TODO: need comments for this register */
+ 	u8 ca[ILI9341_CA_LEN];
+-	/* power_b: TODO: need comments for this register */
++	/* power_b: Power control B (CFh) */
+ 	u8 power_b[ILI9341_POWER_B_LEN];
+-	/* power_seq: TODO: need comments for this register */
++	/* pdtcaower_seq: Power on sequence control (EDh) */
+ 	u8 power_seq[ILI9341_POWER_SEQ_LEN];
+-	/* dtca: TODO: need comments for this register */
++	/* dtca: Driver timing control A (E8h) */
+ 	u8 dtca[ILI9341_DTCA_LEN];
+-	/* dtcb: TODO: need comments for this register */
++	/* dtcb: Driver timing control B (EAh) */
+ 	u8 dtcb[ILI9341_DTCB_LEN];
+-	/* power_a: TODO: need comments for this register */
++	/* power_a: Power control A (CBh) */
+ 	u8 power_a[ILI9341_POWER_A_LEN];
+ 	/* frc: Frame Rate Control (In Normal Mode/Full Colors) (B1h) */
+ 	u8 frc[ILI9341_FRC_LEN];
+-	/* prc: TODO: need comments for this register */
++	/* prc: Pump ratio control (F7h) */
+ 	u8 prc;
+ 	/* dfc_1: B6h DISCTRL (Display Function Control) */
+ 	u8 dfc_1[ILI9341_DFC_1_LEN];
+@@ -147,7 +147,7 @@ struct ili9341_config {
+ 	u8 vcom_2;
+ 	/* address_mode: Memory Access Control (36h) */
+ 	u8 address_mode;
+-	/* g3amma_en: TODO: need comments for this register */
++	/* g3amma_en: Enable 3G (F2h) */
+ 	u8 g3amma_en;
+ 	/* rgb_interface: RGB Interface Signal Control (B0h) */
+ 	u8 rgb_interface;
+--
+2.34.1
 
 
