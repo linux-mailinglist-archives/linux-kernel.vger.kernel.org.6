@@ -1,355 +1,169 @@
-Return-Path: <linux-kernel+bounces-282683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AA9094E75B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:04:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F5BD94E759
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B239B1F231C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:04:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0671F23193
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377531509A8;
-	Mon, 12 Aug 2024 07:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E2815351C;
+	Mon, 12 Aug 2024 07:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eM3+hOtY"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XyePbD2f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fg1ufNhU";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XyePbD2f";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fg1ufNhU"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA13D2B2DA
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2662B2DA;
+	Mon, 12 Aug 2024 07:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723446234; cv=none; b=b4VAnaHbINtYKXvYb+IaJNElyIYN00a8mcY5tn2Ahl+/PDIM+GFTCMAky9m3HWLgImNl+a0xqGPZjkYhFLsOgagKR4UMpGVY9FgTiEcpTMillB7KPzSApjPlwxkcbDjWuOF/9bLdE0PjECM177piJYdxXRvEogWeTrMH+zIPofE=
+	t=1723446206; cv=none; b=TBuHuyj+Iu3b00c/4I0t/veOX9LUj6ii1X2GPS89K+GgTHfA0upW/sCJINKjCnF9nIeVkIC1Li3k3ztYP1Y/QyjQg0IYmg9IY8B82XsBSFf2rBCcR+sZ6lMLhYYjuHtBTSupyGUbVN0icczDDBIrBv3XdF1VR3pWnn27O/sHILk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723446234; c=relaxed/simple;
-	bh=6cXdcbH4LxiSutS5HmidSYF1OsLxL/nPkM+h8pyjEF0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DBhENo39DXI7rnvALYqhuhQP1roj1hCqnNblO/8Bz8F+OGTz2JnpsDJ8zJETPayWDBUWj88HA+IWxS/AbXh9fc9Lk8VH7hv3mDL3Jj+04DIHKohKsl1bP0TXMidpCXVzTzCYNqqB7fAsxcQ/Tjwfb3LqxMhRT2FWrmhdwNaCfME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=eM3+hOtY; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 02cb11ae587911ef87684b57767b52b1-20240812
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=tmQ8JC/tiF04Jp0ZDSBLaUdRT8gGWmVQZ2HyGdg5IFU=;
-	b=eM3+hOtY//hHh5ptqDwrkP8hz5jFSzXoSS1Tnx3iNmEOHKqWkuR4zPS2ibj1JDapDiFtzF0S49DESGyiOt2ffHnABNODKkIeYp4mfapPeBpSrU1m121z/ALt5aSbOoY7jnuQSKS6yhF7TzGOE2HXPN7aNOOL7baNISYasxc6eyg=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:dea789bd-a227-4340-97f1-642b11e32fe8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-30
-X-CID-META: VersionHash:6dc6a47,CLOUDID:ec42043f-6019-4002-9080-12f7f4711092,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,UR
-	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULN,TF_CID_SPAM_SNR
-X-UUID: 02cb11ae587911ef87684b57767b52b1-20240812
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <shuijing.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 492909547; Mon, 12 Aug 2024 15:03:43 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 12 Aug 2024 15:03:43 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 12 Aug 2024 15:03:42 +0800
-From: Shuijing Li <shuijing.li@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Shuijing Li
-	<shuijing.li@mediatek.com>
-Subject: [PATCH v5] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
-Date: Mon, 12 Aug 2024 15:03:13 +0800
-Message-ID: <20240812070341.26053-1-shuijing.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723446206; c=relaxed/simple;
+	bh=zkBXWMV96/rt3Ce6Bg/cPds+d5wyzfo+UX1M6Zt48fE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ArwKpaj0IODMR6VHhPZyhTvxlcShEEbpP8pcb0q2nAch2iFEBTIy7mtOUojGwChS7AfLllRnLV89G9LmHMgaj7I4wZwBf5rPWiZ5+3VxesMLqs+4MbEvmjBQUl1HUP2KsaG17vybYyfZgw34SHd6DuJyHQWlioDxs51Uj540dng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XyePbD2f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fg1ufNhU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XyePbD2f; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fg1ufNhU; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A476D2241A;
+	Mon, 12 Aug 2024 07:03:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723446202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3au8BSiNR/MT5RpLjVZFkYNqL6iE7NfwhlfKk6k+PMU=;
+	b=XyePbD2f268HzRQ6XJa2S8uAOziL5YjnfF7KtIlAsGxLM3dGXguOiNwcEdz0SvNgUI3y+4
+	ezTIs45tp8sDeG0W7qKtFaWUElwrpQI6bYCX5PEX/2SKSJPomIYLhBm39oZaMh3vQA2hiv
+	DOoHZfdvg+f8eoqphQPMQuWPUbmTljk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723446202;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3au8BSiNR/MT5RpLjVZFkYNqL6iE7NfwhlfKk6k+PMU=;
+	b=fg1ufNhUvHZyXbKjS7ekzY70EYLFVm8C/qASAYMYzfSNvmmaHSAtzYhOnfe5wJw/4PQAJQ
+	jmUyRNJ4ICTy/BBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=XyePbD2f;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fg1ufNhU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723446202; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3au8BSiNR/MT5RpLjVZFkYNqL6iE7NfwhlfKk6k+PMU=;
+	b=XyePbD2f268HzRQ6XJa2S8uAOziL5YjnfF7KtIlAsGxLM3dGXguOiNwcEdz0SvNgUI3y+4
+	ezTIs45tp8sDeG0W7qKtFaWUElwrpQI6bYCX5PEX/2SKSJPomIYLhBm39oZaMh3vQA2hiv
+	DOoHZfdvg+f8eoqphQPMQuWPUbmTljk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723446202;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3au8BSiNR/MT5RpLjVZFkYNqL6iE7NfwhlfKk6k+PMU=;
+	b=fg1ufNhUvHZyXbKjS7ekzY70EYLFVm8C/qASAYMYzfSNvmmaHSAtzYhOnfe5wJw/4PQAJQ
+	jmUyRNJ4ICTy/BBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5D6D7137BA;
+	Mon, 12 Aug 2024 07:03:22 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZU+fFbqzuWbPBgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 12 Aug 2024 07:03:22 +0000
+Date: Mon, 12 Aug 2024 09:04:02 +0200
+Message-ID: <87plqe2pel.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>,
+	tiwai@suse.com,
+	mika.westerberg@linux.intel.com,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
+In-Reply-To: <ZrmxYB4zsOpOP2eG@shikoro>
+References: <20240802152215.20831-1-rf@opensource.cirrus.com>
+	<8734njl7my.wl-tiwai@suse.de>
+	<554660e1-01ea-4bb4-877f-fd8deb527ce7@opensource.cirrus.com>
+	<87frrhaofs.wl-tiwai@suse.de>
+	<ZrIJBUJfgiKPCKXv@shikoro>
+	<87bk25anep.wl-tiwai@suse.de>
+	<ZrmxYB4zsOpOP2eG@shikoro>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[renesas];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: A476D2241A
 
-Adding the per-frame lp function of mt8188, which can keep HFP in HS and
-reduce the time required for each line to enter and exit low power.
-Per Frame LP:
-  |<----------One Active Frame-------->|
---______________________________________----___________________
-  ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
+On Mon, 12 Aug 2024 08:53:20 +0200,
+Wolfram Sang wrote:
+> 
+> 
+> > > Yes, you can pull i2c/for-current. Maybe I can also retrofit an
+> > > immutable branch for you. I'd think, though, that it is easiest to wait
+> > > for 6.11-rc3 which will include the I2C part of this series. Or?
+> > 
+> > Yeah, it's fine, I can wait for 6.11-rc3.
+> 
+> Done. Said commit is included in rc3 now. Thanks, guys!
 
-Per Line LP:
-  |<---------------One Active Frame----------->|
---______________--______________--______________----______________
-  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
+Thanks!
 
-Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
----
-Changes in v5:
-Fix code style issue and add per-line-lp function to be symmetrical with per-frame-lp.
-per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.22372-1-shuijing.li@mediatek.com/
-Changes in v4:
-Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hactive *
-dsi_buf_bpp.
-Changes in v3:
-Use function in bitfield.h and get value from phy timing, per suggestion
-from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.22759-1-shuijing.li@mediatek.com/
-Changes in v2:
-Use bitfield macros and add new function for per prame lp and improve
-the format, per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.3315-1-shuijing.li@mediatek.com/
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 158 +++++++++++++++++++++++++----
- 1 file changed, 139 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b6e3c011a12d..027cf719b078 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -88,12 +88,15 @@
- #define DSI_HSA_WC		0x50
- #define DSI_HBP_WC		0x54
- #define DSI_HFP_WC		0x58
-+#define HFP_HS_VB_PS_WC	GENMASK(30, 16)
-+#define HFP_HS_EN		BIT(31)
- 
- #define DSI_CMDQ_SIZE		0x60
- #define CMDQ_SIZE			0x3f
- #define CMDQ_SIZE_SEL		BIT(15)
- 
- #define DSI_HSTX_CKL_WC		0x64
-+#define HSTX_CKL_WC				GENMASK(15, 2)
- 
- #define DSI_RX_DATA0		0x74
- #define DSI_RX_DATA1		0x78
-@@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
- 	bool has_shadow_ctl;
- 	bool has_size_ctl;
- 	bool cmdq_long_packet_ctl;
-+	bool support_per_frame_lp;
- };
- 
- struct mtk_dsi {
-@@ -426,7 +430,112 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, bool config_vact)
- 	writel(ps_val, dsi->regs + DSI_PSCTRL);
- }
- 
--static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
-+{
-+	u32 horizontal_sync_active_byte;
-+	u32 horizontal_backporch_byte;
-+	u32 horizontal_frontporch_byte;
-+	u32 hfp_byte_adjust;
-+	u32 dsi_tmp_buf_bpp;
-+	unsigned int lpx, da_hs_exit, da_hs_prep, da_hs_trail;
-+	unsigned int da_hs_zero, ps_wc, hs_vb_ps_wc;
-+	u32 v_active_roundup, hstx_cklp_wc;
-+	u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
-+	struct videomode *vm = &dsi->vm;
-+
-+	if (dsi->format == MIPI_DSI_FMT_RGB565)
-+		dsi_tmp_buf_bpp = 2;
-+	else
-+		dsi_tmp_buf_bpp = 3;
-+
-+	da_hs_trail = dsi->phy_timing.da_hs_trail;
-+	ps_wc = dsi->vm.hactive * dsi_tmp_buf_bpp;
-+
-+	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-+		horizontal_sync_active_byte =
-+			vm->hsync_len * dsi_tmp_buf_bpp - 10;
-+		horizontal_backporch_byte =
-+			vm->hback_porch * dsi_tmp_buf_bpp - 10;
-+		hfp_byte_adjust = 12;
-+
-+		v_active_roundup = (32 + horizontal_sync_active_byte +
-+			horizontal_backporch_byte + ps_wc +
-+			vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust) % dsi->lanes;
-+		if (v_active_roundup)
-+			horizontal_backporch_byte = horizontal_backporch_byte +
-+				dsi->lanes - v_active_roundup;
-+		hstx_cklp_wc_min = (DIV_ROUND_UP((12 + 2 + 4 +
-+			horizontal_sync_active_byte), dsi->lanes) + da_hs_trail + 1)
-+			* dsi->lanes / 6 - 1;
-+		hstx_cklp_wc_max = (DIV_ROUND_UP((20 + 6 + 4 +
-+			horizontal_sync_active_byte + horizontal_backporch_byte +
-+			ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
-+	} else {
-+		horizontal_sync_active_byte = vm->hsync_len * dsi_tmp_buf_bpp - 4;
-+
-+		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
-+			dsi_tmp_buf_bpp - 10;
-+		hstx_cklp_wc_min = (DIV_ROUND_UP(4, dsi->lanes) + da_hs_trail + 1)
-+			* dsi->lanes / 6 - 1;
-+
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
-+			hfp_byte_adjust = 18;
-+
-+			v_active_roundup = (28 + horizontal_backporch_byte + ps_wc +
-+				vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust) % dsi->lanes;
-+			if (v_active_roundup)
-+				horizontal_backporch_byte = horizontal_backporch_byte +
-+				dsi->lanes - v_active_roundup;
-+
-+			hstx_cklp_wc_max = (DIV_ROUND_UP((12 + 4 + 4 +
-+				horizontal_backporch_byte + ps_wc),
-+				dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
-+		} else {
-+			hfp_byte_adjust = 12;
-+
-+			v_active_roundup = (22 + horizontal_backporch_byte + ps_wc +
-+				vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust) % dsi->lanes;
-+			if (v_active_roundup)
-+				horizontal_backporch_byte = horizontal_backporch_byte +
-+				dsi->lanes - v_active_roundup;
-+
-+			hstx_cklp_wc_max = (DIV_ROUND_UP((12 + 4 + 4 +
-+				horizontal_backporch_byte + ps_wc),
-+				dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
-+		}
-+	}
-+	horizontal_frontporch_byte = vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust;
-+	hstx_cklp_wc = FIELD_GET(HSTX_CKL_WC, readl(dsi->regs + DSI_HSTX_CKL_WC));
-+
-+	if (hstx_cklp_wc <= hstx_cklp_wc_min || hstx_cklp_wc >= hstx_cklp_wc_max) {
-+		hstx_cklp_wc = ((hstx_cklp_wc_min + hstx_cklp_wc_max) / 2);
-+
-+		/* Check if the new setting is valid */
-+		if (hstx_cklp_wc <= hstx_cklp_wc_min ||	hstx_cklp_wc >= hstx_cklp_wc_max)
-+			DRM_WARN("Wrong setting of hstx_ckl_wc\n");
-+
-+		hstx_cklp_wc = FIELD_PREP(HSTX_CKL_WC, hstx_cklp_wc);
-+		writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
-+	}
-+
-+	lpx = dsi->phy_timing.lpx;
-+	da_hs_exit = dsi->phy_timing.da_hs_exit;
-+	da_hs_prep = dsi->phy_timing.da_hs_prepare;
-+	da_hs_zero = dsi->phy_timing.da_hs_zero;
-+
-+	hs_vb_ps_wc = ps_wc -
-+		(lpx + da_hs_exit + da_hs_prep + da_hs_zero + 2)
-+		* dsi->lanes;
-+	horizontal_frontporch_byte = FIELD_PREP(HFP_HS_EN, 1) |
-+		FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_ps_wc) |
-+		horizontal_frontporch_byte;
-+
-+	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
-+	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
-+	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-+}
-+
-+static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
- {
- 	u32 horizontal_sync_active_byte;
- 	u32 horizontal_backporch_byte;
-@@ -436,7 +545,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	u32 dsi_tmp_buf_bpp, data_phy_cycles;
- 	u32 delta;
- 	struct mtk_phy_timing *timing = &dsi->phy_timing;
--
- 	struct videomode *vm = &dsi->vm;
- 
- 	if (dsi->format == MIPI_DSI_FMT_RGB565)
-@@ -444,26 +552,16 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	else
- 		dsi_tmp_buf_bpp = 3;
- 
--	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
--	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
--	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
--	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
--
--	if (dsi->driver_data->has_size_ctl)
--		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
--		       FIELD_PREP(DSI_WIDTH, vm->hactive),
--		       dsi->regs + DSI_SIZE_CON);
--
- 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
- 
- 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
- 		horizontal_backporch_byte = vm->hback_porch * dsi_tmp_buf_bpp - 10;
- 	else
- 		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
--					    dsi_tmp_buf_bpp - 10;
-+						dsi_tmp_buf_bpp - 10;
- 
- 	data_phy_cycles = timing->lpx + timing->da_hs_prepare +
--			  timing->da_hs_zero + timing->da_hs_exit + 3;
-+			timing->da_hs_zero + timing->da_hs_exit + 3;
- 
- 	delta = dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST ? 18 : 12;
- 	delta += dsi->mode_flags & MIPI_DSI_MODE_NO_EOT_PACKET ? 0 : 2;
-@@ -474,18 +572,18 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 
- 	if (horizontal_front_back_byte > data_phy_cycles_byte) {
- 		horizontal_frontporch_byte -= data_phy_cycles_byte *
--					      horizontal_frontporch_byte /
--					      horizontal_front_back_byte;
-+						horizontal_frontporch_byte /
-+						horizontal_front_back_byte;
- 
- 		horizontal_backporch_byte -= data_phy_cycles_byte *
--					     horizontal_backporch_byte /
--					     horizontal_front_back_byte;
-+						horizontal_backporch_byte /
-+						horizontal_front_back_byte;
- 	} else {
- 		DRM_WARN("HFP + HBP less than d-phy, FPS will under 60Hz\n");
- 	}
- 
- 	if ((dsi->mode_flags & MIPI_DSI_HS_PKT_END_ALIGNED) &&
--	    (dsi->lanes == 4)) {
-+		(dsi->lanes == 4)) {
- 		horizontal_sync_active_byte =
- 			roundup(horizontal_sync_active_byte, dsi->lanes) - 2;
- 		horizontal_frontporch_byte =
-@@ -499,6 +597,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
- 	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
- 	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-+}
-+
-+static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+{
-+	struct videomode *vm = &dsi->vm;
-+
-+	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
-+	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
-+	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-+	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-+
-+	if (dsi->driver_data->has_size_ctl)
-+		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
-+			FIELD_PREP(DSI_WIDTH, vm->hactive),
-+			dsi->regs + DSI_SIZE_CON);
-+
-+	if (dsi->driver_data->support_per_frame_lp)
-+		mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
-+	else
-+		mtk_dsi_config_vdo_timing_per_line_lp(dsi);
- 
- 	mtk_dsi_ps_control(dsi, false);
- }
-@@ -1197,6 +1315,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_driver_data = {
- 	.has_shadow_ctl = true,
- 	.has_size_ctl = true,
- 	.cmdq_long_packet_ctl = true,
-+	.support_per_frame_lp = true,
- };
- 
- static const struct of_device_id mtk_dsi_of_match[] = {
--- 
-2.45.2
-
+Takashi
 
