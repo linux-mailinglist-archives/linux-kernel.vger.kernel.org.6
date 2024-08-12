@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-282477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7082994E486
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:41:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C19C194E487
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 268821F21674
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:41:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4185DB210F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 039A554724;
-	Mon, 12 Aug 2024 01:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B03C535D8;
+	Mon, 12 Aug 2024 01:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAn7JBeA"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="UVg+UuwZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TTVVxOuv"
+Received: from fout7-smtp.messagingengine.com (fout7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC58B136A;
-	Mon, 12 Aug 2024 01:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6CD8136A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723426855; cv=none; b=p/kMs21nlq/PEzXtwfWAOxe749SN7nRzKXiLbJ86u3vIj2ee44+uL2+8v6cETeWLBUpMtgWS1IwuAfVR0yVsDs/I4XnluFR4sV+Yj1To8K8rhhZR3OQzYmD6XXRO6Tl7pfCoTC+LTCsHl7PWiGeHoWs3VtCghWHRADeqR5JNUNU=
+	t=1723426979; cv=none; b=r6JM6WI6gbmX5FCfYrJiLaocGI8v/RZ4Pg395NEjn2sU3EGQuAldB/p3qyDc0+E2vre7qEaqXZgEzBZmNc6qfvM+JOPn9st6P0z7knvdnvnHnCLDHcFT0pVAhvYTIIgwZsBxLjc3Rjdj3Zz/byI+z/ufDD/D+q5FrPwl/5j4Ito=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723426855; c=relaxed/simple;
-	bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RYAfahg9q8QTB6nmleTZ+9OXXmEMH9ljH2gEG/UN/NlNQZkoemzRYq0/TEXax6yEhgCBRLbx2okkOhBumK9eFLK4A04s4lriN9xOX4DFSZZ4eCUU5cU5E0vYyAm2286BrHmtbExy84qE/S0kTxC1Bq4opt9CxRHP/EmBfzSMp98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAn7JBeA; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a1e4c75488so234960285a.0;
-        Sun, 11 Aug 2024 18:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723426853; x=1724031653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-        b=KAn7JBeAN8OpraPJbo/ZBWIoyNGKAESGvdHiJ5NsKQEeHIOi/7ucGNe0muBvZNlgLR
-         W/ggsMQeHddJ7gRwxTUSQupZvvNe+7iW5hBiGvZIGj/c/hbW5rTg/bX3MxgbBSLvZqmt
-         eVQ3TJOnxR3QO35fN/BhcBt/BKW7oAz+z+Pkx7BfDgk5kVV7m4Xj1LQj9DaLS8UhYxHv
-         sDHe5sG+8syjme7Mi5DDTQzk5ye1yPG1WK1Cka5BGIBMqNkrUgd94NTB9GZHvZM1PHj/
-         xR6QCeHWd4VRpLJxks1g/WQq5Le1o83PjmVn+LUtfVXghPweelS5Ankndf/mxHsRLE/g
-         AUOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723426853; x=1724031653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fsBFrNLLtzlG49Koe/sc1Hhd8woCXP7D15SVvyauwzU=;
-        b=PuYLKRXqG6yPUokNiajr5iYEEHio9weoFMB+vIZ8mlfnzZRMLfF4tQkXThOGapJMZV
-         N4GOax/Yz7aBCJ7ongmQPWOq+sADR+gFrzXepgs/Pkj6QXlbrUgVBy+e5TbU+mpy7AMO
-         ctk6M4S7rtY/q9uFo9kCCbcdB4Pdn86pTG9Z7HT31f55O1mhoPeEq0HOhmY10qdjmBrZ
-         cIKV90qy11whanihr+BwQgr3jdnBodppFCJihqOPUadyr3O4zfimTMZQD1K3KX1itPLU
-         Zs0Dy0XmouHaYIADnPdSXTqebLFiKpZTD8xndNnkC4GMdZQNigsVVlEJpSeALYalalAT
-         jNgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSurfAW/6ewSmbHhY0Z/EudYkJ49TC7xn6jGUF0h25MyZHIIui39Y5W6vu7t3dHTIMH0OcA5CAGW+rEwjqmbaeDoX6SqN59e22HVVf/kIztN5D3W1nCCp2w9iFITlaQzJw8iLeJq4jSt08HQ==
-X-Gm-Message-State: AOJu0Yw5J2zeJOyd88jLKSsmD97lvy2T7mwnpnEmRWiMP3FrM2IQxpn3
-	j1uYwxjyjJlFKvuAB7Uh8dEVgcGbPYf97Ymw1Y9XgJms4TM9r0myXi7zJAWhj3uJLkPeYVIjmvV
-	vftgn/XS2/fAz6eWcgUY7lWNvjSs=
-X-Google-Smtp-Source: AGHT+IGhruwW8mfWXdXYB6NY1D9uuX+zqq1fu7gnegpSeSaLplC40Y001HBg0OtwsfPG8szz0XRVoPECu9dfBrUoJ0s=
-X-Received: by 2002:a05:620a:4486:b0:7a3:524f:7ef7 with SMTP id
- af79cd13be357-7a4c17920f1mr791178585a.12.1723426852473; Sun, 11 Aug 2024
- 18:40:52 -0700 (PDT)
+	s=arc-20240116; t=1723426979; c=relaxed/simple;
+	bh=iGAVRTv2YBt6rFUVw3sBsDtefydXj6YvB6uHBOGCdX0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L/PKCFKpts6huMZKotXeUo3xfNXbPJhp78ruLge1FMbPpey/Uinrl1D4Yw0QbOjLB/kDtW9SLG4qXcuGtr7mfK58IZM8yECdMdLeh4wecYyUYnC+4pqQF2pVjUecqGvAhkqe1U57aOTL2lNZGmCaR+jmQ1LzQ2ZQGLxHetNvGw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=UVg+UuwZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=TTVVxOuv; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id DA05A13854CF;
+	Sun, 11 Aug 2024 21:42:55 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Sun, 11 Aug 2024 21:42:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1723426975; x=1723513375; bh=ZiDTMdIzAf
+	O3sACDBpZRIVM7mN18dHms2sa6dSgiMJk=; b=UVg+UuwZuYPH7KLqT72kJMuz0X
+	EkgT954BDNgWRN/L1OIsb5MkzvGoU38j9jBRzHT7XDRUUewm5NjQNYKxvkEpB/Gx
+	wWIDtzbjXNE8olB7sMUiE6xBqQRm96kSNxg7zG8r9qU4jGDsD+jeEXqCiXnrP9gJ
+	GA66D+CFFtIuDx9FB9Z1t8Vm2K/Li0l1TojmfljQ+FmiymFjNvTGP37NMdK0YPkY
+	ugB9hPQ5E1AzYQPgr9SxIFgS1Z4DKS+R/eB33/eAWYbULmWwIDWE67xNnFIQ1pgU
+	KBhA0dsrq25JfDRqCXOAuK7EomoxCe6zpCUZ9EKmHkVhU1qHufcPmdmCRVbw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723426975; x=1723513375; bh=ZiDTMdIzAfO3sACDBpZRIVM7mN18
+	dHms2sa6dSgiMJk=; b=TTVVxOuviZoD62rOeHX++ppFYV35hFaEe+D7jreyKTsv
+	Bky0CVDaohhUHoH6KnTVdEqBBH2o/yfMatroiZtzsDEUi3iFIJUyKMT8v3zzWYWO
+	cU4iXUWZ4VHowo4o/0G0hV5gd3QvldLGbZUdlnhov8Vlf21gtM6hSvhC4innFTDu
+	L3e6DOVfA2xzS9o5jrLWCa+QcBV8jpeyuVnAAUkDSoTg9eEwlXHUzKdTmnIbb0a0
+	eLrlflWUAc8eYIdJg7LJblj6mRNMf0dkf0vGjoE35OwZSa+9gxcyS51ZO80tD2H4
+	uuxojAjRw2uH/zHF1bZ/oqThXNg3pvVQ/+bYwH66xw==
+X-ME-Sender: <xms:n2i5ZoDTOcIZ6SaNoqPOHn6ECRrNdMOaq8HN_e5q_7h1YNy-CCVZ5Q>
+    <xme:n2i5Zqgpmuglol0WD1LhGlwKoWDfW6x4ibgsoSKP5IQacW-GUdNVl4RqxwGoNn0Iz
+    n3nIRP3hm_lsB3Lbks>
+X-ME-Received: <xmr:n2i5ZrkEUZnhORYv6ycDUgzKp_xZYfXPN3RsRVhhtE5nc3QSvGbf1fWQU2nobyqYxkHbesl3XY6papvHxd27i2uC5SZuwPvPAeQV52pvf-N6nw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleelgdehudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
+    fkofgggfestdekredtredttdenucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothho
+    uceoohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvg
+    hrnhepffdvueelffevkeduhfetjeduffeghfettdfguedtgfdvgfeufeduheevheevkeek
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqth
+    grkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghrtghpthhtohepvddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidufeelgedquggvvhgvlheslh
+    hishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:n2i5ZuykLB-BEbLasE0oSG5SD2GCn0oW5FV5bjP3TxMp_8I7iUZ_VQ>
+    <xmx:n2i5ZtQEAlARQuZB8P2wGxF2f3j6Y5TL4FlYKmEy4zGJ49Atb_9Vgw>
+    <xmx:n2i5ZpYiia2Nb5wNS1DSzup-9L1PLmSGtCGXPW3G09XyKGP3TAW6Kg>
+    <xmx:n2i5ZmQPXIFVK994kiff7BHOqD36S1GKwOGvK0BMs08l7rDdzDScKQ>
+    <xmx:n2i5ZodYsawScSv4n_GYStBPD1nDceSodU8YgNFtKXM2nIp8JzSZM0N5>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 11 Aug 2024 21:42:54 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] firewire: core: use XArray to maintain firewire device nodes
+Date: Mon, 12 Aug 2024 10:42:49 +0900
+Message-ID: <20240812014251.165492-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808063648.255732-1-dongliang.cui@unisoc.com> <CAKYAXd8U1P_+WYfkPnO4JeTA=_V1ScrfkApJxi7F-iyOw9n-cw@mail.gmail.com>
-In-Reply-To: <CAKYAXd8U1P_+WYfkPnO4JeTA=_V1ScrfkApJxi7F-iyOw9n-cw@mail.gmail.com>
-From: dongliang cui <cuidongliang390@gmail.com>
-Date: Mon, 12 Aug 2024 09:40:41 +0800
-Message-ID: <CAPqOJe1HUgoyQ_wBy00KYnkya2n0hORs5SjU-tHL5KOiqA72gg@mail.gmail.com>
-Subject: Re: [PATCH v4] exfat: check disk status during buffer write
-To: Namjae Jeon <linkinjeon@kernel.org>
-Cc: Dongliang Cui <dongliang.cui@unisoc.com>, sj1557.seo@samsung.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	niuzhiguo84@gmail.com, hao_hao.wang@unisoc.com, ke.wang@unisoc.com, 
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 9, 2024 at 8:57=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.org> =
-wrote:
->
-> 2024=EB=85=84 8=EC=9B=94 8=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 3:40, =
-Dongliang Cui <dongliang.cui@unisoc.com>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=
-=B1:
-> >
-> > We found that when writing a large file through buffer write, if the
-> > disk is inaccessible, exFAT does not return an error normally, which
-> > leads to the writing process not stopping properly.
-> >
-> > To easily reproduce this issue, you can follow the steps below:
-> >
-> > 1. format a device to exFAT and then mount (with a full disk erase)
-> > 2. dd if=3D/dev/zero of=3D/exfat_mount/test.img bs=3D1M count=3D8192
-> > 3. eject the device
-> >
-> > You may find that the dd process does not stop immediately and may
-> > continue for a long time.
-> >
-> > The root cause of this issue is that during buffer write process,
-> > exFAT does not need to access the disk to look up directory entries
-> > or the FAT table (whereas FAT would do) every time data is written.
-> > Instead, exFAT simply marks the buffer as dirty and returns,
-> > delegating the writeback operation to the writeback process.
-> >
-> > If the disk cannot be accessed at this time, the error will only be
-> > returned to the writeback process, and the original process will not
-> > receive the error, so it cannot be returned to the user side.
-> >
-> > When the disk cannot be accessed normally, an error should be returned
-> > to stop the writing process.
-> >
-> > xfstests results:
-> >
-> > Apart from generic/622, all other shutdown-related cases can pass.
-> >
-> > generic/622 fails the test after the shutdown ioctl implementation, but
-> > when it's not implemented, this case will be skipped.
-> >
-> > This case designed to test the lazytime mount option, based on the test
-> > results, it appears that the atime and ctime of files cannot be
-> > synchronized to the disk through interfaces such as sync or fsync.
-> > It seems that it has little to do with the implementation of shutdown
-> > itself.
-> >
-> > If you need detailed information about generic/622, I can upload it.
-> >
-> > Signed-off-by: Dongliang Cui <dongliang.cui@unisoc.com>
-> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
-> You still haven't updated the patch subject and description with
-> shutdown support.
-> I've directly updated it and applied it to #dev.
-> Thanks for your patch:)
-Thank you for your help in updating.
+Hi,
+
+In core function, the instances of fw_device corresponding to firewire device
+node in system are maintained by IDR. As of kernel v6.0, IDR has been
+superseded by XArray and deprecated.
+
+This series of changes is to obsolete the usage of IDR with XArray.
+
+Takashi Sakamoto (2):
+  firewire: core: replace IDR with XArray to maintain fw_device
+  firewire: core: use lock in Xarray instead of local R/W semaphore
+
+ drivers/firewire/core-device.c      | 30 ++++++++++++-----------------
+ drivers/firewire/core-transaction.c |  3 +--
+ drivers/firewire/core.h             |  3 ++-
+ 3 files changed, 15 insertions(+), 21 deletions(-)
+
+-- 
+2.43.0
+
 
