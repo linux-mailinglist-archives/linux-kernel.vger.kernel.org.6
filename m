@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-283655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE18394F761
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:15:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A32394F774
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88CE3286091
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:15:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C38B8B216A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4753190470;
-	Mon, 12 Aug 2024 19:15:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86E21917C9;
+	Mon, 12 Aug 2024 19:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gd8v8IEo"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JurFBh+w"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC83118C908;
-	Mon, 12 Aug 2024 19:15:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872EC18F2F6
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723490138; cv=none; b=cQmu8gupFv2uXcYGjh/yX5wZ+RSUqBBdk4QpQKxC28GZAoG/oFA6vQSHcXBrcXAKnruBdtzg1Yn0oHjgzPNNhm7NolZVHwMO5YfSgMJneYdkwBKZR7zFcm9oBkTCsl0L6SUHohxpBPNrpDb37N36pNDnk4bDU6w/8qZMbOoV5oo=
+	t=1723490675; cv=none; b=Tv8IazMHghpTA535G1wErNWNIjDXcbaJKUjqjSSP1URq7w+knRcWs+3VN8Q3vmX6QfG2KrtoJtSw80AFdk1OArvueQBLe2PVnRPuqkJ5iOCDpC7bXuMFMdfzHYjVksOwgDRhFQMhUZ5gA8q9yiIQMDg0a/gay2Ue7RhRvkVgE0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723490138; c=relaxed/simple;
-	bh=UmTWYIUQTnpOXBLqRWG9+6xg3E7NcE8clCcB/EnsFpg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pmF/ZoFGCfijdgFxcLQ9sefjE3z3y9cXfhEYDELh1EY8gdECYpsIYrZlc7AgxI29kt3h7cYCVMMi8ujTDXFLa9TEdbeDf11yrXF1zAvf8koEgsMA4NMXbON20mygHtmq1M3HAc3LzpneV8zGXUFiLVXxh0WUQqvVk+VPFlrHBQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gd8v8IEo; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc5549788eso42793025ad.1;
-        Mon, 12 Aug 2024 12:15:36 -0700 (PDT)
+	s=arc-20240116; t=1723490675; c=relaxed/simple;
+	bh=NzKwuJoXzmUGF5iSUml9uWF6iwC3BNkDZKU4aU6MD3s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KsPTwQ8cNVPbWNPRVbuA2SriuKFKbMcrniJ1a1HzY6Ke6D7ZVLmT4OX9uYTsyVS4yjYBbYqgvIKNGcdWADmRuQieX8f7AoFKYU1SG+RafDyzPh8zZgT0FxN2f0bXSR/fF5mGaPbGgWwZE9NQ+U1AItUblBzdvW8oskOOMENLsG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JurFBh+w; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0bcd04741fso8099752276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723490136; x=1724094936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nk79S2csfuaGMUVwSv5P8actp0Ubt/VV78w8MEImnvA=;
-        b=gd8v8IEo1pRoqUuEDzrkn5BRZzp0UR0nF0AUMpbadxlili/lTtG5Wa86TxI5WWdpF8
-         lubQS9eyfwYH+Ko0s42EUq2j0L90TlDyNYB6/7o0DF4aMPPIPyNxpSCyT36gPMtXRohz
-         K19Wha9gdKXTsovm1j9bEerIjiAQ6ZFtwZEFDJimOrD/EfIJ6tuptaZKJZL9kv3TcHHF
-         Tks2xpkVbuALU4C/QHT9sGDcPjcwTSAzuzCFLJv6iN/dMuGW9xab7IxBTQoxA2MDYK6M
-         8lMcYD6BOMVWjlSYPsn400hR52lM1MSAd+Y3P7NJIW7aB+B7p10CTfSVR1QcyPP8LrMp
-         c0mg==
+        d=google.com; s=20230601; t=1723490672; x=1724095472; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yWxCowPUnixbfZzlA8QQGBp8dYSP6RfE8f5Q6sz/520=;
+        b=JurFBh+wbtn5uStA7F1sQpTuIri8L1hxWBkk2z30CbjwQOBaGRwbkZ6swnD0kX+YX0
+         b3u81bz47UtvnQobhCeLQIEX/qrGpo0HH4wUCX23sOOq20pSsLuN3zwWsVluV2BLn8X4
+         3b3Umh2ZMtbaES9GzyTirmO6blEw6utV7NlUrj2SFlZf3FJNPsyY54x1Pt4JEdrbZlYA
+         WMQGQ6Z/yKraq0urcVxCQsU93fjnPqfHBR4GSBP2TlBY+A0ICOMHJYxgqq/Y4c1vZOXm
+         PjZNvqibj0+zsSq5kzakTEy95V1IQEzWawJraFggvhjJCTJ/wt0h2vStzOAct+L9RMrj
+         xzCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723490136; x=1724094936;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nk79S2csfuaGMUVwSv5P8actp0Ubt/VV78w8MEImnvA=;
-        b=jrOt2+sTs/ZRBKgnmslvSZeMaQcbQXW/9k12H8g6ruDBVrLvj0acivE9XNRjVgyJMm
-         ISDAlydGr1lxe0jdXGxTipZ+1yZo5FRY2C0A0vEhnIVi+DoayEO6K0Vvg0J2RbL9rz4g
-         9fA9TDRxVQAI1b8Xon3fQ2j53O86wi6fZq5OJG2drKGbzl3Qiszm+mQWgMSVJw0SkHgI
-         UaURYkbVFRMh5MZ6sMBN8rUM23UHg5aqp7mX3ve3ZOqarrFFRmHGS8xIdgsWDpfPTZcx
-         4Q/PAA9PMLgYiUMxmv4yt53AIbamuCyiJtouKEpLlU8B+fND+mLraAc/p6pLwk/N3wz8
-         NmQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUbqm/0ex5b6XaYFmehYmpBvv6iI8dsYMttMK8e7rHv1j6S2EWXp4PMzQ+Y5mwqBuCZfabKbBM0eAckhYDk9kQwlWEpvSOcKRd1ICMAMKgQZ2hU/DNqw1Rg4dqW1pSKd1Xh4xTO3sIFeGPf+FpVg+0r7+N5DP+ORkt0zKtyJ+lWwfv7f0I
-X-Gm-Message-State: AOJu0Yz4z22hS49lzCqX/4E65hspMj6h5eeUbihQ9+XuYEQviktmBPAm
-	5urfZ3PQ2/JiEMTscqKum9rfBRqA/boJWAaZ27OgzXZE4N1toPF2
-X-Google-Smtp-Source: AGHT+IEOkw0ppwgLwQi3tgrw7p6yLI5ISh5J+SBGTG3D2UE1lTpOrggVZCjsgsGEK+sx/l7d+N4F2w==
-X-Received: by 2002:a17:903:2452:b0:1fc:2ee3:d46f with SMTP id d9443c01a7336-201ca18592dmr20334465ad.11.1723490135776;
-        Mon, 12 Aug 2024 12:15:35 -0700 (PDT)
-Received: from dev0.. ([2405:201:6803:30b3:3671:7e47:70c8:c710])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58c7e49sm4468321b3a.93.2024.08.12.12.15.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 12:15:35 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: kuniyu@amazon.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	jain.abhinav177@gmail.com,
-	javier.carrasco.cruz@gmail.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org
-Subject: Re: [PATCH net] selftest: af_unix: Fix kselftest compilation warnings
-Date: Tue, 13 Aug 2024 00:45:30 +0530
-Message-Id: <20240812191530.1093038-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812183944.59844-1-kuniyu@amazon.com>
-References: <20240812183944.59844-1-kuniyu@amazon.com>
+        d=1e100.net; s=20230601; t=1723490672; x=1724095472;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yWxCowPUnixbfZzlA8QQGBp8dYSP6RfE8f5Q6sz/520=;
+        b=YIvlbd/kvDBeWI4m4XR+GnG2QMOMyDf3c78JgR48+In1geFizIR/EGT14muQ3nZVAv
+         cmedruT0tWyWPQPBc5VF0P3AhlQQX/b+FBzjWPAO5eFpgYStZt9rfSzIgpJ3B7eSEIz4
+         ouYWjZeOIuc/W1cl46A+kvBvOW0JLoS4ZiwU/WLTffgOYUss6tUxbvqExKf6vua9Ko3k
+         6s9mLvS6RjshnSudsQnsIRBqvKZr4OfsUAlyOo3NEiyGtnTrbl0zUcbCoJihoQ8fiXkE
+         AdnaRDLlwwfsrXXZNYbTHyQLQLobMpgovfnyLCfjZBWDF7CnJ2D8VvSSVxPK9kP5y0qN
+         dtTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUK6yhtOgK1dcIlVPu6AIoxrXqlugvXh4Ctzke0rZ/1eFJKuw+vhJ7DAy4S9CsTzVpO/IJPtXiCsn+bKWal9flDUqlg83YY261BqJB3
+X-Gm-Message-State: AOJu0YwmzhNnkucu6JyypACPpl9SUmVE66Zz4V823QgsZevKLejoDqvr
+	PXMBl3x9Yz2wwQV1w/Ojz8K7ctE7Cerkq5aS3veKWk0EVIZMLkTLyaS24Xox6MrwmkTfNKr78xw
+	okw==
+X-Google-Smtp-Source: AGHT+IHKisNvsfNZ3HwptFVUwpuAndJrP1cg0JwL0YzNRZLFI3LjSNR5DwFlUuA9GavrzBxidgbOnP1w9Ro=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3912:1e97:a514:421a])
+ (user=surenb job=sendgmr) by 2002:a25:bc06:0:b0:dfb:1c1c:abf9 with SMTP id
+ 3f1490d57ef6-e113cd5ee6fmr74667276.2.1723490672597; Mon, 12 Aug 2024 12:24:32
+ -0700 (PDT)
+Date: Mon, 12 Aug 2024 12:24:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240812192428.151825-1-surenb@google.com>
+Subject: [PATCH v2 1/1] alloc_tag: mark pages reserved during CMA activation
+ as not tagged
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, surenb@google.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 12 Aug 2024 11:39:44 -0700, Kuniyuki Iwashima wrote:
+During CMA activation, pages in CMA area are prepared and then freed
+without being allocated. This triggers warnings when memory allocation
+debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
+by marking these pages not tagged before freeing them.
 
-> Fixes: tag is needed here (no space between SOB tag)
+Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: stable@vger.kernel.org # v6.10
+---
+changes since v1 [1]
+- Added Fixes tag
+- CC'ed stable
 
-Thank you, I have added it in v2 here:
+[1] https://lore.kernel.org/all/20240812184455.86580-1-surenb@google.com/
 
+ mm/mm_init.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-> I don't remember why I defined expected_buf as (void *), but more simple
-> fix would be the following ?
->
-> ---8<---
-> diff --git a/tools/testing/selftests/net/af_unix/msg_oob.c b/tools/testing/selftests/net/af_unix/msg_oob.c
-> index 16d0c172eaeb..535eb2c3d7d1 100644
-> --- a/tools/testing/selftests/net/af_unix/msg_oob.c
-> +++ b/tools/testing/selftests/net/af_unix/msg_oob.c
-> @@ -209,7 +209,7 @@ static void __sendpair(struct __test_metadata *_metadata,
-> 
->  static void __recvpair(struct __test_metadata *_metadata,
->  		       FIXTURE_DATA(msg_oob) *self,
-> -		       const void *expected_buf, int expected_len,
-> +		       const char *expected_buf, int expected_len,
-> 		       int buf_len, int flags)
->  {
-> 	int i, ret[2], recv_errno[2], expected_errno = 0;
-> ---8<---
+diff --git a/mm/mm_init.c b/mm/mm_init.c
+index 75c3bd42799b..ec9324653ad9 100644
+--- a/mm/mm_init.c
++++ b/mm/mm_init.c
+@@ -2245,6 +2245,16 @@ void __init init_cma_reserved_pageblock(struct page *page)
+ 
+ 	set_pageblock_migratetype(page, MIGRATE_CMA);
+ 	set_page_refcounted(page);
++
++	/* pages were reserved and not allocated */
++	if (mem_alloc_profiling_enabled()) {
++		union codetag_ref *ref = get_page_tag_ref(page);
++
++		if (ref) {
++			set_codetag_empty(ref);
++			put_page_tag_ref(ref);
++		}
++	}
+ 	__free_pages(page, pageblock_order);
+ 
+ 	adjust_managed_page_count(page, pageblock_nr_pages);
 
-Yes, I completely missed that. I have sent a v2, please review:
-lore.kernel.org/all/20240812191122.1092806-1-jain.abhinav177@gmail.com
+base-commit: d74da846046aeec9333e802f5918bd3261fb5509
+-- 
+2.46.0.76.ge559c4bf1a-goog
+
 
