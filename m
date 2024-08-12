@@ -1,166 +1,118 @@
-Return-Path: <linux-kernel+bounces-282602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775DF94E64E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:55:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDA294E650
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA281C21611
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A27C61F22303
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A93114E2D4;
-	Mon, 12 Aug 2024 05:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D1914E2C9;
+	Mon, 12 Aug 2024 05:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gl0JoiON"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="M63/iTF2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FipcL2aQ"
+Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8023139CFE
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11F6E4879B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723442097; cv=none; b=WvrVM4qheRQ7DeBwvZAE93NVOkafWhM6tUZcmsD5h+zUrgwDKAsrO40aa8AQBZ2G2t0zSIcNFJHAANqvHwmSjzfzC7THLRF5Hhlm0nvQLJrv65npiChU861E51hgvQVgE9vAtmTlv6pW0QuB7EAiHBMDdnyUHYWRNC4Di5YrQgs=
+	t=1723442185; cv=none; b=IqtAkh2pkrEBG3KL9BpubvnO/xKcTnwrmfdmQaER2dL9wSsFTz2JuVRoMV4G0YDwj+1AkBDm1j0Ok99daq4yN8GQ+z5c4ABYivdE0yMRp7VgRg/sMJK4ssG44mG5mvJcCiRtR3nqtpuMrUIibpC2B2K0kaSeiaNAmMYcsalPMI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723442097; c=relaxed/simple;
-	bh=OWFPyLk9qijbZylrTVEw9W4riew8091W+ugBuLpyJX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WTrsJhTi7VcJgf4d74R6D0Xf107fh+V/a8LUmXQsbqz0L8p9DZ8H9jlNlb/0cWRKeFVGeKkCW0WHHcDIMqjOAV3URAVfEoplzY5IVlxNW3g8211VgujGwFttN8auh8H9pRHDXAefdi4nmfCAtm12R51gGEXD8TJsith6zKHSGUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gl0JoiON; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7aada2358fso751216566b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723442094; x=1724046894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xYo1INLOq156Qw62vGRe5A8jAlkKQVGuSnU9/QE+v7o=;
-        b=gl0JoiON1v9v+nIw8JNCQy4vLykplCIULMoKTkzHMhv+fMjNfkfhPGfz7Q4IzoQVco
-         9lSWmObcE8S60AbfaLgPuPx1OctfH0mSRveqw1rZyJzXnx8mPBeqqRIvWE10kFNk9YEU
-         MG2CYT8C3JRCnn4RfRkHyuSNztBAcu3U6x2OHCZPIxfhAVnB84luzeGY3BuEs1dd7ATZ
-         worLgQvaq/4AX3xDkA5GSI6ncxb/ZSWItQZaYqDvxWypU/blHr3ZwMMXkt1d0goEd38y
-         DY7QrwAGKSXmh3ujrGdOLEtP1+3bTfgsiS4cXqYT6JOOHTpPf+97N7vsGcDuyKvZ2Ghv
-         iivA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723442094; x=1724046894;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xYo1INLOq156Qw62vGRe5A8jAlkKQVGuSnU9/QE+v7o=;
-        b=luvdWwvShASGiDr/gLnV2B+ZvCknP6wgDJ4jyRwIZ4WewKcf+g2vt1oU0m5cUEW9v9
-         9p4+/WB1WdPMc8rtEEbVXFwmi+qoKr2LWsue3IKB62NSdL5QA62DYcWaHpMUmV9CGMWv
-         uAfLTLOFdrZuZIayRIv4XV+kp4LIj5gUlrpGA4vLIDd7hQ2Wz7q53FTpkY01+gVnsi4J
-         6IRhp8ls8VNnDUnIxA8EaVa7MV/VnjSGUZxguWo3EHVYDPLvWt8jMHYyW9JqNrO0Q9Y9
-         Knctl29EgbLai4NbRwUpWheGTAeBo3zBTHGkOgjFGOgWYb2xORv47G4YuWHryWiLWyIG
-         YZWw==
-X-Forwarded-Encrypted: i=1; AJvYcCX53IEmumDf9zg/XMf0IkU42C/xuPNVw9ueXkvgP8OHV7tPbPVPKiD/9LXW9OuG2Cv6hVYSstUiuRbajfiAFNil67zZlxkLCwOWIqW9
-X-Gm-Message-State: AOJu0YxkULTQ+FP4amwZ3aZZOF7DrgdACiCsNvB8qpFqDfI5gnqXiHFa
-	i3MjJStE8UK5oaOUXA03qWtPz0yrnSPDodPNx370DDr9wJ1FYEB5B64aBdT50Bo=
-X-Google-Smtp-Source: AGHT+IEWJlWulwINR2mvPDA0F+GzST96BiyVI1VBUqXaw2VqDuwlnso7Bu+sdLf7W/E58YfrQZmfvQ==
-X-Received: by 2002:a17:906:478a:b0:a73:9037:fdf5 with SMTP id a640c23a62f3a-a80ab75a8d2mr689304566b.6.1723442094028;
-        Sun, 11 Aug 2024 22:54:54 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb243d78sm198422366b.224.2024.08.11.22.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 22:54:53 -0700 (PDT)
-Date: Mon, 12 Aug 2024 07:54:52 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Baruch Siach <baruch@tkos.co.il>
-Cc: Christoph Hellwig <hch@lst.de>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, Ramon Fried <ramon@neureality.ai>, Elad Nachman
- <enachman@marvell.com>, Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-Subject: Re: [PATCH v6 RESED 2/2] arm64: support DMA zone above 4GB
-Message-ID: <20240812075452.4ef3eef5@mordecai.tesarici.cz>
-In-Reply-To: <70d2c447b6dbf472b8e7fec5804deddc12692aab.1723359916.git.baruch@tkos.co.il>
-References: <cover.1723359916.git.baruch@tkos.co.il>
-	<70d2c447b6dbf472b8e7fec5804deddc12692aab.1723359916.git.baruch@tkos.co.il>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1723442185; c=relaxed/simple;
+	bh=XuPV6GbW+jbKtVsfZPkDQad/1OnLNTnaFQZmTgAgXxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cLsVO7/sl0mr9KY5AGnWROoni/Yq03okHLPjiJ3CwZKzKWLbqVcPo2i3U3MjL119A+9IUuyUCxe1fp8ahLC/xXr325vBX2SpJI1N51dHkUQCLDuszCh4cpBPF3mt3UACkM7DC0v1E1f/FaQyZrl3YqjLHehoujDwJPohZKPcDLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=M63/iTF2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FipcL2aQ; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-06.internal (phl-compute-06.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 03B041151B24;
+	Mon, 12 Aug 2024 01:56:22 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Mon, 12 Aug 2024 01:56:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1723442181;
+	 x=1723528581; bh=ZVA4f7AmbmGYpA/IkhbgNFHPlK1W4aI6vT8jJYelqbY=; b=
+	M63/iTF2V7l7GcWHC4PJAc4KVZAtokRKScVw2ZgrCjg+jZ4DYOipuB2SeoOQlesp
+	wOsBpvsF6/C4u31c6/ogYnLD6pxbBYov4sKGx5mcte3NGoz1Cy6+DG6OgntTGwuy
+	ubz3kYp9IJey29irM31Cu80BQLhf/m4I8ebhZjFnrGJWEDqSpgrWpsc4ccSR8/N7
+	A6BJJaiGVIH3ONwWcdPe5GmSlCm3AvqEfkA5Ct1UIWecn3z5W54e5cUyIWxqAX2l
+	uRsUxoh9v8uK4RAs8mKnS2t9HP83yoiMgddfF2689kRQiF2pkx8xyrd58YNnWYvX
+	2DU37RA+PBjfWujz4WptQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723442181; x=
+	1723528581; bh=ZVA4f7AmbmGYpA/IkhbgNFHPlK1W4aI6vT8jJYelqbY=; b=F
+	ipcL2aQ7K3vAkc2GAi7lJEYn2uAhbQtJ30R2o2DzIx94SUF43rg9ayR6yzb2Yngq
+	OaQtwzznnUYADtUOOqeemJfREUbl6Zw8uvp7X5IeQkbtkmqnMb3OhXm+l81UBjdv
+	S/UizHXB0Ua5VG0QcKe21qQGc95sW4jAdvpczDZrljYQchAtBJFiOhBoMg0ksLUN
+	bz2tSnZs+57szMGQ/90OE+FyL/MhTXAm+JeIxEe+IhfAL/kh+alSGi1Dk8VOzd+p
+	gtIdBGJ2q7UZeS9pFPn5RoDvhamP9X8EeI0PJ2b9L9tW+9bfHdlf3hwcC5MW/On6
+	gRPHqX/KNoZYOiiB0u/Uw==
+X-ME-Sender: <xms:BaS5Zs_BQVAo2Tv78sxaQY1csbTxwSxEhWoAWqBUxLHIJtXh1pIQXA>
+    <xme:BaS5Zkub6bRNipc3MEld5e3kQsJtMTAHCdcLnXJ2D-f0qXXdgpdHfsrZQ6ZeBiGsO
+    ghcYep4gS4fIg>
+X-ME-Received: <xmr:BaS5ZiDZgBMiUFZ9aoJrQhk8gZC9Bja1ms5jv5IJJiEDZUBwSSdU7eQ-5-1i2GRe9JC12zKy_Wg1OKeruJ683Z5QtODrPw_2psYNYA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleelgddutddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeejffekleelgeevuedtfedugffgjeegvdetjeelleegjefhieekjeff
+    vdeuheehteenucffohhmrghinhepkhhrohgrhhdrtghomhenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhdp
+    nhgspghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghroh
+    hokhiguhdrtghnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
+    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BaS5ZseeUj9c--pf93QF-oAEBPmVVHtrIYpt9iQUNESskTO5UfprKQ>
+    <xmx:BaS5ZhMpjF5CUOdSDiRFfjgt9b8zVJ-SOHVtOQR0-7wTo_qB-fWQRw>
+    <xmx:BaS5Zmkr_wbBA_uFB8Fn9JndV21tMJqjBsYVRN_gMwBjDjWiknQS8g>
+    <xmx:BaS5ZjtjD8GFC7mXZV9da0wwbk6G6_yMMmIgGzcwrKY1QZh3pBMLAw>
+    <xmx:BaS5Zmr-FcPXbaOGmoiO14trE9CNzARxVgcM7UmstKVFy0qog8HwtTtE>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 12 Aug 2024 01:56:21 -0400 (EDT)
+Date: Mon, 12 Aug 2024 07:56:19 +0200
+From: Greg KH <greg@kroah.com>
+To: =?utf-8?B?6K645pil5YWJ?= <brookxu.cn@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Query about the maintence time of LTS
+Message-ID: <2024081250-mummy-wildcard-0208@gregkh>
+References: <CADtkEecKdWc9t0reu5WCefTaFvW_cuNmZAxjDFL8btN6LmfnPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADtkEecKdWc9t0reu5WCefTaFvW_cuNmZAxjDFL8btN6LmfnPg@mail.gmail.com>
 
-On Sun, 11 Aug 2024 10:09:36 +0300
-Baruch Siach <baruch@tkos.co.il> wrote:
+On Mon, Aug 12, 2024 at 01:29:09PM +0800, 许春光 wrote:
+> Hi :
+> 
+> We are now a little confused about the LTS maintenance time of the
+> LTS. Does the maintenance time of the new LTS is limited to 3 years or
+> 2 years? will it have any chance to extend to 6 years as before?
 
-> From: Catalin Marinas <catalin.marinas@arm.com>
-> 
-> Commit 791ab8b2e3db ("arm64: Ignore any DMA offsets in the
-> max_zone_phys() calculation") made arm64 DMA/DMA32 zones span the entire
-> RAM when RAM starts above 32-bits. This breaks hardware with DMA area
-> that start above 32-bits. But the commit log says that "we haven't
-> noticed any such hardware". It turns out that such hardware does exist.
-> 
-> One such platform has RAM starting at 32GB with an internal bus that has
-> the following DMA limits:
-> 
->   #address-cells = <2>;
->   #size-cells = <2>;
->   dma-ranges = <0x00 0xc0000000 0x08 0x00000000 0x00 0x40000000>;
-> 
-> That is, devices under this bus see 1GB of DMA range between 3GB-4GB in
-> their address space. This range is mapped to CPU memory at 32GB-33GB.
-> With current code DMA allocations for devices under this bus are not
-> limited to DMA area, leading to run-time allocation failure.
-> 
-> This commit reinstates DMA zone at the bottom of RAM. The result is DMA
-> zone that properly reflects the hardware constraints as follows:
-> 
-> [    0.000000] Zone ranges:
-> [    0.000000]   DMA      [mem 0x0000000800000000-0x000000083fffffff]
-> [    0.000000]   DMA32    empty
-> [    0.000000]   Normal   [mem 0x0000000840000000-0x0000000bffffffff]
-> 
-> Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-> [baruch: split off the original patch]
-> Signed-off-by: Baruch Siach <baruch@tkos.co.il>
+Please see:
+   http://www.kroah.com/log/blog/2021/02/03/helping-out-with-lts-kernel-releases/
+for more details and how you can possibly get 6 years if needed.
 
-Note that I'm not an Arm64 maintainer, so the value of my review is
-limited, but AFAICS this change should work as intended.
+thanks,
 
-Reviewed-by: Petr Tesarik <ptesarik@suse.com>
-
-Petr T
-
-> ---
->  arch/arm64/mm/init.c | 12 ------------
->  1 file changed, 12 deletions(-)
-> 
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index c45e2152ca9e..bfb10969cbf0 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -114,20 +114,8 @@ static void __init arch_reserve_crashkernel(void)
->  				    low_size, high);
->  }
->  
-> -/*
-> - * Return the maximum physical address for a zone given its limit.
-> - * If DRAM starts above 32-bit, expand the zone to the maximum
-> - * available memory, otherwise cap it at 32-bit.
-> - */
->  static phys_addr_t __init max_zone_phys(phys_addr_t zone_limit)
->  {
-> -	phys_addr_t phys_start = memblock_start_of_DRAM();
-> -
-> -	if (phys_start > U32_MAX)
-> -		zone_limit = PHYS_ADDR_MAX;
-> -	else if (phys_start > zone_limit)
-> -		zone_limit = U32_MAX;
-> -
->  	return min(zone_limit, memblock_end_of_DRAM() - 1) + 1;
->  }
->  
-
+greg k-h
 
