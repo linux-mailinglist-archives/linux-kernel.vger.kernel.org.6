@@ -1,165 +1,125 @@
-Return-Path: <linux-kernel+bounces-282473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F9C094E47D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:37:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2EC94E47E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52894B20529
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:37:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 249791F214DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2006E4D8CB;
-	Mon, 12 Aug 2024 01:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b="BRrH/ZSJ"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610FA4D8CB;
+	Mon, 12 Aug 2024 01:37:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD571200A0
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B0B136A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723426618; cv=none; b=Rf8w8HhGVW90MwmpquQQJbelwH91Dz12nZCziX2Gp4N7ML8lJCBTXjhqCsIqrzTxG/OVP7nW4uRHpbok1FVPBgvW2fSfwgo31BiLlK/Itg9pXn5eHkNtYYQnHm1Qgk07CMI9RhZnVb6zg3YQCQ/1aqi4IWHhj2GAhC0gfnccQUg=
+	t=1723426626; cv=none; b=ItcnE7ziIijXQY+5avdTpNX1BH3pWh1IqtbFpS0TRlpk15VhEJMACriXPKQn4FSbwlTEHHM/1bZzX/QjE5ndVSwWK4GSM4n7wtk2jsiyMuxm5TOb67D2Cd8yp12h0n2g1DYJTS1LqlodC1EvgIbFygrO9eqWQyX1dDVY1kwDR40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723426618; c=relaxed/simple;
-	bh=04yFoPijqrDz9urRG1Ayj+mvRBPdpsRTHeacBiCuaoA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c5W41F6p63fH/xvvP7ku0q0IiI0tnAaf9COnY1n1xwRY4nVLH1nIqmslrDhp+QfXdmGZuihhi/Cy/77snFoMGiLkor0rTWOnswjtKggryleg+fz61ztoz1JiwMmZ6NckM1dEYBzDui9BrClAAb4+/uzykGfZh0gaJh/65t/7dbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net; spf=pass smtp.mailfrom=darkphysics.net; dkim=pass (2048-bit key) header.d=darkphysics.net header.i=@darkphysics.net header.b=BRrH/ZSJ; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=darkphysics.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=darkphysics.net
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd90c2fc68so25638685ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=darkphysics.net; s=google; t=1723426614; x=1724031414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=64D2428cbRfebktVpMJBEPRgQBO5r6MLybajTnMBw58=;
-        b=BRrH/ZSJPQPN5rQfwvscUA0sHMNa3FPbMjBo72FsDmI5hS1zA1vnwfJci27h3CT813
-         HFQDI4Ejte3fpKdNsZ6eogm0aQ9NhJ2FSZOT1d/4GR59QwIGGokzU+orsSV/bC9zGItx
-         T017/VRucdPqaI+vekTWXmYyVeAmfIh4peCvsZ2Jk3725pvSkYRT6UnIV6A85M+J0cmx
-         CVncaqbdxy+Nrl7nSlJ3P/6VFvNfmyjJY5FKJFAWXW7j1CA7HQRAUu5VwEn9Eg6gPkK3
-         XdWAD9AHA4olMuDDdpvhqtwfCIvoTtOwZX1bn22j7pJbSuQdMTZIuSpQVKaSbJiBla/g
-         IqWQ==
+	s=arc-20240116; t=1723426626; c=relaxed/simple;
+	bh=e4F6cEwTvBdZhuKLq+m8iIOwwpo9fbmBReylRK63nvo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ikD8PGC8L8iPQdsLsYlYUoGq6j2ekX18AISdzjgczrLYPV2Q/G6XqA80O4q84ju32bX0qzJ25GW9+pVMtz+8LbhhKGX7r4/hg0602xMf6RmTMYK/o8HsO0iLkZkVrGdKyk64LofWb9TeaaMWUn6jpIM5FDJOx/FkVkFXia5+Glc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81faf98703eso527261239f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:37:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723426614; x=1724031414;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=64D2428cbRfebktVpMJBEPRgQBO5r6MLybajTnMBw58=;
-        b=tbCxbql+dnnIucX4rL8ChP8e0OHugH3RxtycRyzBh1PryBRd5Xg7Os6VODLjPzw5kO
-         BScmBqzSDxzbYHKTo9QYoB7zQ1ObaU7Me11BzqJm3uHx+0Zfft06v+y9/pVyhLWJXFaZ
-         W6h4Ip39YA/40N6BkEib+zArVjm7kBl2mVwuezYp+xPkt4HFJpQHYQexu8Jbim5zBVLf
-         TCvgUylWudDbX/+NLaWsyopGbWegJAyFkq52r+Fhxir1iau2x9WrIPag1b4ivhvb289P
-         jg19VfOV0BAWZUE8l3I00JuZcBaHtEazLbHjS+9ThWmdkPE6pSEoBis6tunO978XBYDM
-         BTnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVp7Xlyf7/fs9oltcD9ejEke9pxF2mOycepMKIW+0FPc2296q1hCD3wpxD/cs6ZaNCeDWCxPvMdsqykqEvPe70TdbQN7ovCCUDvmR/h
-X-Gm-Message-State: AOJu0YzImrgk3YKMWdVEd6UeiNeYnT+i+AVES1HGwjZlBDJx7MxL3C1f
-	LcrYTOBMu+DspbaSRgn9JuOUhOwl/0b03Faj09CCAHpBikV4t2Ix/0IG1Hj4Pf0=
-X-Google-Smtp-Source: AGHT+IFp+H1zPnrqeYHUYvBm2T2dzS46WIk2T5VoZVCJ7vauhRRsaiH0dgN+Qv2KDltNXzPByqhgsw==
-X-Received: by 2002:a17:903:2288:b0:1fb:67e0:2e0a with SMTP id d9443c01a7336-200ae5d7771mr64457715ad.48.1723426613925;
-        Sun, 11 Aug 2024 18:36:53 -0700 (PDT)
-Received: from lunchbox.darkphysics (c-73-83-183-190.hsd1.wa.comcast.net. [73.83.183.190])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bbb442besm27386925ad.290.2024.08.11.18.36.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 18:36:53 -0700 (PDT)
-From: Tree Davies <tdavies@darkphysics.net>
-To: gregkh@linuxfoundation.org,
-	philipp.g.hortmann@gmail.com,
-	anjan@momi.ca
-Cc: linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tree Davies <tdavies@darkphysics.net>
-Subject: [PATCH] Staging: rtl8192e: Rename variable nSubframe_Length
-Date: Sun, 11 Aug 2024 18:36:50 -0700
-Message-Id: <20240812013650.199675-1-tdavies@darkphysics.net>
-X-Mailer: git-send-email 2.30.2
+        d=1e100.net; s=20230601; t=1723426623; x=1724031423;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DaptOmFV5G2FRU8U/MI3TWc2DFE7uMQTAISbawqmhHA=;
+        b=lZEVqGEW7sjpRZmLnsQ9zIuxBtGzxifWP614+KSEGHd4Ic22WSxO6aUJN0qN5ZH+DB
+         50OAlK3hyn+OdzqcITTXVUUMazIO2LGZioC2fGQ+J6CF0c4cB1iVGXG8iWDIQ5GKS8pz
+         4ve5N/VGSmcSog+hd0QXirCgY9yr6MxTm9+5bKMTD8CaTeSyggkOxzUP8v/4NMc7Efoa
+         WtN4vjZErZZE/CUiZjpQ2/ZAxKhcj/Pdw7FmFWQ2E7Y/L/y8/9rNxJZBcQ8emmRhrgNX
+         TZNfOBawJ08yLKQ3b0ivOvj5FISDX3vD/DeYhsN+cVhDe2BtDc4C+W/o1CkogzS0q+T6
+         r5qQ==
+X-Gm-Message-State: AOJu0Yx8Yz72CDKyQ3CAc8glw8YF0evj12N6GXXoZWGXUM0BnrY9TZcR
+	K5GwsBp9MaUT2XCoTweFLz5/EPlUVt4eXGmajZGO8lngYlnbCcyO0BKKXx4nZbPP/plPNJdU+Fk
+	7wwB1xzHjw36ExmWgeiXYEY1yjTLs3KuD4JWQz2swR2ocAFNaxFFK3ew=
+X-Google-Smtp-Source: AGHT+IEH7uYapg5bC6jsQ4822KVBZ9Pg8YOgbQYBE27bJqRI/al7hqXFOTuEPNznVj7/M0BMG+8MW4OH1JqZlU3mZ+yi7VKq0PdU
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:6bc2:b0:4b9:b122:d07d with SMTP id
+ 8926c6da1cb9f-4ca6edcb974mr233711173.4.1723426623453; Sun, 11 Aug 2024
+ 18:37:03 -0700 (PDT)
+Date: Sun, 11 Aug 2024 18:37:03 -0700
+In-Reply-To: <CAM_iQpV6aNoiXkYejbgfeQQpwL5LsE9rtJdOdjeRrnQyRuR19Q@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b008ae061f7287db@google.com>
+Subject: Re: [syzbot] [net?] [virt?] BUG: stack guard page was hit in vsock_bpf_recvmsg
+From: syzbot <syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Rename variable nSubframe_Length to subframe_len
-to fix checkpatch warning Avoid CamelCase.
+Hello,
 
-Signed-off-by: Tree Davies <tdavies@darkphysics.net>
----
- drivers/staging/rtl8192e/rtllib_rx.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in release_sock
 
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c b/drivers/staging/rtl8192e/rtllib_rx.c
-index 69ad74314260..94dbdaf8da82 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -729,7 +729,7 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 
- 	u16		llc_offset = sizeof(struct ieee80211_hdr_3addr);
- 	bool		is_aggregate_frame = false;
--	u16		nSubframe_Length;
-+	u16		subframe_len;
- 	u8		pad_len = 0;
- 	u16		seq_num = 0;
- 	struct sk_buff *sub_skb;
-@@ -781,20 +781,20 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 	memcpy(rxb->dst, dst, ETH_ALEN);
- 	while (skb->len > ETHERNET_HEADER_SIZE) {
- 		/* Offset 12 denote 2 mac address */
--		nSubframe_Length = *((u16 *)(skb->data + 12));
--		nSubframe_Length = (nSubframe_Length >> 8) +
--				   (nSubframe_Length << 8);
-+		subframe_len = *((u16 *)(skb->data + 12));
-+		subframe_len = (subframe_len >> 8) +
-+				   (subframe_len << 8);
- 
--		if (skb->len < (ETHERNET_HEADER_SIZE + nSubframe_Length)) {
-+		if (skb->len < (ETHERNET_HEADER_SIZE + subframe_len)) {
- 			netdev_info(ieee->dev,
- 				    "%s: A-MSDU parse error!! pRfd->nTotalSubframe : %d\n",
- 				    __func__, rxb->nr_subframes);
- 			netdev_info(ieee->dev,
- 				    "%s: A-MSDU parse error!! Subframe Length: %d\n",
--				    __func__, nSubframe_Length);
-+				    __func__, subframe_len);
- 			netdev_info(ieee->dev,
--				    "nRemain_Length is %d and nSubframe_Length is : %d\n",
--				    skb->len, nSubframe_Length);
-+				    "nRemain_Length is %d and subframe_len is : %d\n",
-+				    skb->len, subframe_len);
- 			netdev_info(ieee->dev,
- 				    "The Packet seq_num is %d\n",
- 				    seq_num);
-@@ -813,11 +813,11 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 		 */
- 
- 		/* Allocate new skb for releasing to upper layer */
--		sub_skb = dev_alloc_skb(nSubframe_Length + 12);
-+		sub_skb = dev_alloc_skb(subframe_len + 12);
- 		if (!sub_skb)
- 			return 0;
- 		skb_reserve(sub_skb, 12);
--		skb_put_data(sub_skb, skb->data, nSubframe_Length);
-+		skb_put_data(sub_skb, skb->data, subframe_len);
- 
- 		sub_skb->dev = ieee->dev;
- 		rxb->subframes[rxb->nr_subframes++] = sub_skb;
-@@ -826,10 +826,10 @@ static u8 parse_subframe(struct rtllib_device *ieee, struct sk_buff *skb,
- 				   "ParseSubframe(): Too many Subframes! Packets dropped!\n");
- 			break;
- 		}
--		skb_pull(skb, nSubframe_Length);
-+		skb_pull(skb, subframe_len);
- 
- 		if (skb->len != 0) {
--			pad_len = 4 - ((nSubframe_Length +
-+			pad_len = 4 - ((subframe_len +
- 					  ETHERNET_HEADER_SIZE) % 4);
- 			if (pad_len == 4)
- 				pad_len = 0;
--- 
-2.30.2
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6092 at include/net/sock.h:1718 sock_release_ownership include/net/sock.h:1718 [inline]
+WARNING: CPU: 1 PID: 6092 at include/net/sock.h:1718 release_sock+0x194/0x1f0 net/core/sock.c:3564
+Modules linked in:
+CPU: 1 UID: 0 PID: 6092 Comm: syz.0.15 Not tainted 6.11.0-rc2-syzkaller-00325-gc4e82c025b3f-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:sock_release_ownership include/net/sock.h:1718 [inline]
+RIP: 0010:release_sock+0x194/0x1f0 net/core/sock.c:3564
+Code: 01 00 00 00 31 c9 e8 7b 73 f2 f7 eb 05 e8 04 0a 19 f8 4c 89 f7 5b 41 5c 41 5d 41 5e 41 5f 5d e9 32 b9 45 02 e8 ed 09 19 f8 90 <0f> 0b 90 e9 67 ff ff ff e8 df 09 19 f8 4c 89 e7 49 89 db 41 ff d3
+RSP: 0018:ffffc9000366fa80 EFLAGS: 00010293
+RAX: ffffffff897a6d93 RBX: 0000000000000000 RCX: ffff88801cb81e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 1ffff11005538250 R08: ffffffff897a6cf6 R09: fffff520006cdf40
+R10: dffffc0000000000 R11: fffff520006cdf40 R12: ffff88802a9c1080
+R13: dffffc0000000000 R14: ffff88802a9c1240 R15: ffff88802a9c1280
+FS:  00007f2597b966c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000040 CR3: 00000000229fe000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ vsock_connectible_recvmsg+0x7f/0xf0 net/vmw_vsock/af_vsock.c:2308
+ sock_recvmsg_nosec net/socket.c:1046 [inline]
+ sock_recvmsg+0x22f/0x280 net/socket.c:1068
+ ____sys_recvmsg+0x1db/0x470 net/socket.c:2816
+ ___sys_recvmsg net/socket.c:2858 [inline]
+ __sys_recvmsg+0x2f0/0x3e0 net/socket.c:2888
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2596d779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2597b96038 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 00007f2596f05f80 RCX: 00007f2596d779f9
+RDX: 0000000000010042 RSI: 00000000200003c0 RDI: 0000000000000005
+RBP: 00007f2596de58ee R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f2596f05f80 R15: 00007fff84f29b48
+ </TASK>
+
+
+Tested on:
+
+commit:         c4e82c02 net: dsa: microchip: ksz9477: split half-dupl..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=166ef55d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+dashboard link: https://syzkaller.appspot.com/bug?extid=bdb4bd87b5e22058e2a4
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=131902ed980000
 
 
