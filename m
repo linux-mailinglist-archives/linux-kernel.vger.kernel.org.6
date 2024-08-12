@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-283233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25FD394EEEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:56:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DE794EF0F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:00:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6DE8282D50
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:56:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11167B2495B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D670F17C7CB;
-	Mon, 12 Aug 2024 13:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41CD17F387;
+	Mon, 12 Aug 2024 13:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="hez2GInC"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="gzDCXpcF"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C319953370;
-	Mon, 12 Aug 2024 13:53:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D88617C7B9;
+	Mon, 12 Aug 2024 13:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470811; cv=none; b=FJHl9L97oYLoaj6BuC7No2JTbDCM5xn4uQ0My4Pv7uKh1Ok+b5jlTgC9MQkZX302CFDxXRNvclrddeyoZddej+j1BZ6VFFrCippfDFUqLUbhpPfQf2SFt1xi5mxP6bY+rRHeV6VCFG5/Zi6QoyQUTLTHcdgpeZrtqI06cmlKwo4=
+	t=1723471182; cv=none; b=W7NfCRP9XGHcfFkkDbbzbJwqcifFwDfv3/jqGet+4fyoixwRIAb5i3kA9u8lFP92S3vP/WMulxkj+B23wieG9wwaZnhtatsr2iwHJCXP6lpd4YDRHtJImffhVuqBlWK0mQbo4DPIhgbURfXki4uvK73IJ9gohGgQ5fPiYoJzNlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470811; c=relaxed/simple;
-	bh=CW+JyWTtYsuhG5Gpiplg7QBsDcC745rTZaDNCynvXBI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p/p7eOwJPfGtS86eL8zOzF5UUvZ2F9GtCk/0FNL1oNhk6GuAIDMQrz/5UoQnLlC9M03NMf5pY1fcltLKA1vInHo+KUK6PLYGhw4No92nsfKuXo5+OHJHgAG6ZH+3Yc6NJKMZQ/UAmSQdUCxDMtADfCFv3nTx6f007DYe258OBFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=hez2GInC; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723470809; x=1755006809;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CW+JyWTtYsuhG5Gpiplg7QBsDcC745rTZaDNCynvXBI=;
-  b=hez2GInCC7nUv2KMw4Esstu1L343BGX7U4PyrfcMjuzEF2nHKuZVZGOT
-   OCzWNcIO3BqDSH0uABFSRhYURFsxZVWGUCsZHa83P5DfftlLo7UhKtNtY
-   e6fzbg+uXnidMlmw7KT6k9yJ/vHYhe3NV0CLz76s6XWYpt8YQwva62g+K
-   28mx4XV4uUt4pnaS7TQczWbDN9uzdhQLoOyNF/dtSy5vC0MoQBCy4Nt3o
-   +yKFFm4y7sSGZKUS4HGkZJH/P5y4QQ7xWBy2bBYgNyS5QiyvlTPw8bbJ1
-   xFjwuKawhx/TC0xEQuR07ZTAHykpTWMwkwjbDm4BVaEv2kFlOPGlBxjEU
-   A==;
-X-CSE-ConnectionGUID: CCa8pu3sRVyU2VrCDEmycQ==
-X-CSE-MsgGUID: y77NAz5oT9qwWlhxjrEBmg==
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="261298128"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Aug 2024 06:53:29 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 12 Aug 2024 06:52:58 -0700
-Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 12 Aug 2024 06:52:56 -0700
-From: Andrei Simion <andrei.simion@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-	<nicolas.ferre@microchip.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<robh@kernel.org>, <alexandre.belloni@bootlin.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>,
-	Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH v2 7/7] ARM: dts: microchip: sama5d29_curiosity: Add reg_5v to supply PMIC nodes
-Date: Mon, 12 Aug 2024 16:52:31 +0300
-Message-ID: <20240812135231.43744-8-andrei.simion@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812135231.43744-1-andrei.simion@microchip.com>
-References: <20240812135231.43744-1-andrei.simion@microchip.com>
+	s=arc-20240116; t=1723471182; c=relaxed/simple;
+	bh=PQZfqROqtpDTEWyeo1BsXJCb+xzrICxEm9yickmYEKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lL4myXs8QFCoBW9a6vf+8gl42z0AxzaeGi6mlWywCkLL2KGm0A075AWEKDq3X3a4iYKd98/cF1ic0mdHjpRCTAvcVM9er6iwHA+KkEdOOQ/qN/jvSyz0fE7bmQg9QSIWpl8DjWZLnbyaE4R5gSa6Yv/XjRcjI930I3/CoXGx2KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=gzDCXpcF reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 02ca37e7f5719184; Mon, 12 Aug 2024 15:59:38 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id C0C136F0D63;
+	Mon, 12 Aug 2024 15:59:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1723471178;
+	bh=PQZfqROqtpDTEWyeo1BsXJCb+xzrICxEm9yickmYEKY=;
+	h=From:Subject:Date;
+	b=gzDCXpcFA1e9jQycMZijghwJ/fy0eVez37+T6OnkOhFogBRMbGkREOn5dCcqHPLF/
+	 Xp3CD+tI5gtHlLSwxU1Xq7YZsl1KbIwiz5z8wAhy/JwDlGH4QJ+HeZso0a4h6VhKNU
+	 UlyLCJ/8ezd4U5inFpJ2Ww8qIKGKzm+l2K+F3ywyQ9dGHrksqTBgbVKK1+qoVJ2ulX
+	 wOarn8jLpNbzZo1Pbyox1Ui5m1IaDGvb3qFHlUzs3ZPWb+wUZqtjl2OIaU3eNvBfDz
+	 gec+cm/Bp/OuBcWvueLT2cbuzlDY+8xQnTXMmLc0qRUQnpXabkcMNslxeKyOXPeosy
+	 zDumjmCpv1acA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v2 02/17] thermal: core: Rearrange checks in
+ thermal_bind_cdev_to_trip()
+Date: Mon, 12 Aug 2024 15:53:06 +0200
+Message-ID: <5491953.Sb9uPGUboI@rjwysocki.net>
+In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
+References: <114901234.nniJfEyVGO@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjeduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
+ tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-Align with the datasheet by adding regulator-5v which
-supplies each node from the regulator using phandle to
-regulator-5v through pvin[1-4]-supply and lvin-supply.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Co-developed-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+It is not necessary to look up the thermal zone and the cooling device
+in the respective global lists to check whether or not they are
+registered.  It is sufficient to check whether or not their respective
+list nodes are empty for this purpose.
+
+Use the above observation to simplify thermal_bind_cdev_to_trip().  In
+addition, eliminate an unnecessary ternary operator from it.
+
+Moreover, add lockdep_assert_held() for thermal_list_lock to it because
+that lock must be held by its callers when it is running.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
-v1 -> v2:
-- drop (lvin|pvin[1-4])-supply from each regulators sub-node
-- add lvin-supply, pvin[1-4]-supply to PMIC node
----
- .../boot/dts/microchip/at91-sama5d29_curiosity.dts  | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts b/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-index 6b02b7bcfd49..951a0c97d3c6 100644
---- a/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-+++ b/arch/arm/boot/dts/microchip/at91-sama5d29_curiosity.dts
-@@ -84,6 +84,14 @@ memory@20000000 {
- 		device_type = "memory";
- 		reg = <0x20000000 0x20000000>;
- 	};
-+
-+	reg_5v: regulator-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "5V_MAIN";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-always-on;
-+	};
- };
+v1 -> v2: No changes
+
+---
+ drivers/thermal/thermal_core.c |   16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -781,25 +781,17 @@ int thermal_bind_cdev_to_trip(struct the
+ {
+ 	struct thermal_instance *dev;
+ 	struct thermal_instance *pos;
+-	struct thermal_zone_device *pos1;
+-	struct thermal_cooling_device *pos2;
+ 	bool upper_no_limit;
+ 	int result;
  
- &adc {
-@@ -144,6 +152,11 @@ &i2c0 {
- 	mcp16502@5b {
- 		compatible = "microchip,mcp16502";
- 		reg = <0x5b>;
-+		lvin-supply = <&reg_5v>;
-+		pvin1-supply = <&reg_5v>;
-+		pvin2-supply = <&reg_5v>;
-+		pvin3-supply = <&reg_5v>;
-+		pvin4-supply = <&reg_5v>;
- 		status = "okay";
- 		lpm-gpios = <&pioBU 0 GPIO_ACTIVE_LOW>;
+-	list_for_each_entry(pos1, &thermal_tz_list, node) {
+-		if (pos1 == tz)
+-			break;
+-	}
+-	list_for_each_entry(pos2, &thermal_cdev_list, node) {
+-		if (pos2 == cdev)
+-			break;
+-	}
++	lockdep_assert_held(&thermal_list_lock);
  
--- 
-2.34.1
+-	if (tz != pos1 || cdev != pos2)
++	if (list_empty(&tz->node) || list_empty(&cdev->node))
+ 		return -EINVAL;
+ 
+ 	/* lower default 0, upper default max_state */
+-	lower = lower == THERMAL_NO_LIMIT ? 0 : lower;
++	if (lower == THERMAL_NO_LIMIT)
++		lower = 0;
+ 
+ 	if (upper == THERMAL_NO_LIMIT) {
+ 		upper = cdev->max_state;
+
+
 
 
