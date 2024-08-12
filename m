@@ -1,146 +1,123 @@
-Return-Path: <linux-kernel+bounces-283303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 538D094EFCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:40:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F04594EF56
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:17:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738871C21FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:40:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA7FAB221D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E29183CA5;
-	Mon, 12 Aug 2024 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB81317DE36;
+	Mon, 12 Aug 2024 14:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="i/KQvLGq"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RUxI22Rk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40511181BA8;
-	Mon, 12 Aug 2024 14:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973CB16B38D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473646; cv=none; b=t9hH//zQTXkAgI1FhcyjgAb//ycAvJPdF3C/nJFnxzU05WIzK3XSVr7/cGxCFYWnUXWDMaaTxv3KqWuDtIRMn4kr0OXJCkuEhF+CM7NFqUmEOqAAeEgi9xTXtSVrBu/dh5pfFAZy3kFlrofUqb2e68hMTb7MuZzu70c6S3isHhY=
+	t=1723472257; cv=none; b=T1+6cdwHMfmCj0E4ynvpLiRkbiuL/pukIIvaV6+iIsBRawqUMAHpYbaU76xwj8iGQU1GtiK2PkIvwOwSdaHI6cvrpTiv5sIr/lUePwOvQR8ZB+g0sW44HvXJUaY3SUBHv2MAeltsGYunmIA7SJr3hfVbQyshM3ciw9swaaATIQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473646; c=relaxed/simple;
-	bh=z7wFoacyox1RtC202GOEeJ8rhjY1r0HItGHJPGiueBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lTKhXBkVZirV7G4TCQebUJ2GiJkmSndrR5Su9l3hAnaSQ9LT3KDqeTZYknSXb+oAoWKVtunIW1lp862/xDgHAZEC9sH2+zV0U+0CpM2PyjC31BgFK9JHFoWorXVj7PuLSbpkeTdhminqLz0U3DEiGbEL5qpJgYUOdv+sft7wPqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=i/KQvLGq reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 77e4510f5f42e765; Mon, 12 Aug 2024 16:40:42 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id DB1676F0D9D;
-	Mon, 12 Aug 2024 16:40:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723473642;
-	bh=z7wFoacyox1RtC202GOEeJ8rhjY1r0HItGHJPGiueBo=;
-	h=From:Subject:Date;
-	b=i/KQvLGqVMWtv4NQsEYIPSTW33FQFFtVBUFRXyK/lY1AS+v4vsV0gQ/mXOqSWq4zF
-	 8WS2hupPJMLwyy0LVGoO898W3PSPuGW1EDfPEYcwlPAZ7tob5i7hvBRTJ4vzZzgoIK
-	 cAbnoZZl95Goqhvua6HfbGQlg6vStBerVssX1ho3jtxIkcjzofZAU+vFEBt9PmVWyX
-	 Y89tQB7zVJZ67G+PyROkSa90+NlruM2AJSzkG3ic2JSJm0Sb9eMWIXu6J3gxPVaF8y
-	 ybFDxGlYw6jEaKraIwOmBz3NIH+2tDfdMp46U81k3W4Z3nylg4/Dp/fQhphIB9OJmx
-	 krG41Cx/QLSmQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, imx@lists.linux.dev
-Subject:
- [PATCH v2 11/17] thermal: imx: Use the .should_bind() thermal zone callback
-Date: Mon, 12 Aug 2024 16:17:06 +0200
-Message-ID: <3273538.AJdgDx1Vlc@rjwysocki.net>
-In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
-References: <114901234.nniJfEyVGO@rjwysocki.net>
+	s=arc-20240116; t=1723472257; c=relaxed/simple;
+	bh=rpWz06RRrjzMyzDbK3jEABkEUALNs+Yma4r11Kmgedc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuAU58RG7ZGpSnWDZxPaRkmvr3jEbWEoSjouRgvPDi2NzUoAmArr/XB0Ga+mGxDaDDnL1+UDsxADiIziCPElXszcneZdw2mCqYv+VliRPfCPm50i0Z+oSTieJPFNXvmnEf2cZBgr00gvwQUufe18ao2Dn3gz1g2J6VqSLvgUOc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RUxI22Rk; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723472255; x=1755008255;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rpWz06RRrjzMyzDbK3jEABkEUALNs+Yma4r11Kmgedc=;
+  b=RUxI22Rk3VFDEd5DZfDXyrxSMmFQDq7bDOVoayciBr4VYth7xOKXi/sB
+   gnRTQW8Rovz2cj/ltsAhY5t+1+mCCYmr9w7yvas8Kz4+igSHU3K+IcYVR
+   JUY+GCkdvqo1p0zHepfyU/GdFDRf4QHEBTDfDgxZ3/YSZYO9iAxmfjzWG
+   OoET+LcZGesbXSeBFWseqXEPYpGvsQNY6IMdPwCIKzuC+O76/AL5QFqFU
+   O6mhvI9khNiwBZxkOFa8AOFyUIWxmfOBUpeOEztEl8srZ1pXbS3gX4oj7
+   fV59HoOR9hwTsx0HKZrM0FdjmYgiGh6pDemAx5qTFkgfevRCRLF7Pg9bx
+   w==;
+X-CSE-ConnectionGUID: T6AR5CCYTva+4fufyNyLgA==
+X-CSE-MsgGUID: +41s7RIdQQyQAKFucyFw0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32735627"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="32735627"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 07:17:35 -0700
+X-CSE-ConnectionGUID: TWvjsrByT9qHBCZaQCdHCw==
+X-CSE-MsgGUID: o3UX7m0QR6qghUMolg3nGQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="81516927"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 07:17:32 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 7913B11F82C;
+	Mon, 12 Aug 2024 17:17:30 +0300 (EEST)
+Date: Mon, 12 Aug 2024 14:17:30 +0000
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH] linux/container_of.h: Remove redundant type cast in
+ container_of_const()
+Message-ID: <ZroZelxS_ddHwH30@kekkonen.localdomain>
+References: <20240802-container_of_const_fix-v1-1-90e7a5b624f9@quicinc.com>
+ <ZrX9G2Ol2jt4o-s7@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepfeduudeutdeugfelffduieegiedtueefledvjeegffdttefhhffhtefhleejgfetnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdr
- lhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrdhhrghuvghrsehpvghnghhuthhrohhnihigrdguvgdprhgtphhtthhopehkvghrnhgvlhesphgvnhhguhhtrhhonhhigidruggv
-X-DCC--Metrics: v370.home.net.pl 1024; Body=50 Fuz1=50 Fuz2=50
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrX9G2Ol2jt4o-s7@smile.fi.intel.com>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Andy, Zijun,
 
-Make the imx_thermal driver use the .should_bind() thermal zone callback
-to provide the thermal core with the information on whether or not to
-bind the given cooling device to the given trip point in the given
-thermal zone.  If it returns 'true', the thermal core will bind the
-cooling device to the trip and the corresponding unbinding will be
-taken care of automatically by the core on the removal of the involved
-thermal zone or cooling device.
+On Fri, Aug 09, 2024 at 02:27:23PM +0300, Andy Shevchenko wrote:
+> On Fri, Aug 02, 2024 at 11:15:15PM +0800, Zijun Hu wrote:
+> > From: Zijun Hu <quic_zijuhu@quicinc.com>
+> > 
+> > Remove redundant (type *) cast for default branch in container_of_const()
+> > since the cast has been done by container_of().
+> 
+> While it might have same effect, the below is explicitly clear about both
+> cases. With your patch it will become inconsistent.
 
-In the imx_thermal case, it only needs to return 'true' for the passive
-trip point and it will match any cooling device passed to it, in
-analogy with the old-style imx_bind() callback function.
+In the const case it's actually required whereas container_of() already
+does exactly the same cast, rendering the cast done below redundant.
+There's nothing inconsistent in removing a needless cast.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
+Removing it is my preference as well.
 
-v1 -> v2: No changes
+> 
+> ...
+> 
+> >  #define container_of_const(ptr, type, member)				\
+> >  	_Generic(ptr,							\
+> >  		const typeof(*(ptr)) *: ((const type *)container_of(ptr, type, member)),\
+> 
+> (see, in the above line the cast is still present / required)
+> 
+> > -		default: ((type *)container_of(ptr, type, member))	\
+> > +		default: container_of(ptr, type, member)	\
+> >  	)
+> 
 
-This patch only depends on patch [08/17] introducing .should_bind():
+-- 
+Kind regards,
 
-https://lore.kernel.org/linux-pm/2696117.X9hSmTKtgW@rjwysocki.net/
-
----
- drivers/thermal/imx_thermal.c |   20 ++++++--------------
- 1 file changed, 6 insertions(+), 14 deletions(-)
-
-Index: linux-pm/drivers/thermal/imx_thermal.c
-===================================================================
---- linux-pm.orig/drivers/thermal/imx_thermal.c
-+++ linux-pm/drivers/thermal/imx_thermal.c
-@@ -353,24 +353,16 @@ static int imx_set_trip_temp(struct ther
- 	return 0;
- }
- 
--static int imx_bind(struct thermal_zone_device *tz,
--		    struct thermal_cooling_device *cdev)
-+static bool imx_should_bind(struct thermal_zone_device *tz,
-+			    const struct thermal_trip *trip,
-+			    struct thermal_cooling_device *cdev,
-+			    struct cooling_spec *c)
- {
--	return thermal_zone_bind_cooling_device(tz, IMX_TRIP_PASSIVE, cdev,
--						THERMAL_NO_LIMIT,
--						THERMAL_NO_LIMIT,
--						THERMAL_WEIGHT_DEFAULT);
--}
--
--static int imx_unbind(struct thermal_zone_device *tz,
--		      struct thermal_cooling_device *cdev)
--{
--	return thermal_zone_unbind_cooling_device(tz, IMX_TRIP_PASSIVE, cdev);
-+	return trip->type == THERMAL_TRIP_PASSIVE;
- }
- 
- static struct thermal_zone_device_ops imx_tz_ops = {
--	.bind = imx_bind,
--	.unbind = imx_unbind,
-+	.should_bind = imx_should_bind,
- 	.get_temp = imx_get_temp,
- 	.change_mode = imx_change_mode,
- 	.set_trip_temp = imx_set_trip_temp,
-
-
-
+Sakari Ailus
 
