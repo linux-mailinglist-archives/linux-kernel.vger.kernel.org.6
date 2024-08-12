@@ -1,218 +1,149 @@
-Return-Path: <linux-kernel+bounces-282892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9384C94EA2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F26FD94EA33
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:46:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47FB21F211FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 232E91C2101A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC96616DECA;
-	Mon, 12 Aug 2024 09:45:20 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C46416DED2;
+	Mon, 12 Aug 2024 09:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc4Jjq6C"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF7D1537BE
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:45:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE531C3E
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455920; cv=none; b=ag0tgjxRdYW3Fq8KxmQAYXNMWDzotjhGy+QHq5ErZlJbuXiKsqNMsPP6HcpFLFpFIN4vuoHkuGwSmmmfDceGQ/FOrpnDWJ5o+K88tGhkH+8RRQPQbJote5vzz4Vdj848oWNfXyitsOkkDNVFr3kbrnpVIOudulHLZth45ZMUYPw=
+	t=1723455964; cv=none; b=R/XbRI5FqEvCnGhZjhoat+dvf2CxrrO4E3cn6miLM6N6mjua9anY6VQfZuW0azZKK5CJGyDUpv87ZZbSZGuh9Yfpx91lOeKXv6wdzfWXY8lOzy89/6P2g2bwG5Dgbcr6qAFeAYqNSdPhtd12sy2gfQ2knkEM+pZEy4DavP3O4f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455920; c=relaxed/simple;
-	bh=Vt8ebfo8aJgePQ5shIVSSqA0HGRanxiF2Y3/eLEHNI4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r9SeIrgdKFOh/B6HiGFVBAwb3Muxhtgs+sPZVd5GIkfGFcezAARdK+vf2ebYHNpPPRz9mkkW2pMlaXzMGCLS2b3iccJ2xEyG+2cLjD3HRA0j95qgWqUqHfPpWUqnrg4Myhc/hF97do7aO4fDnrf1e0CE6eDm2uPONQoSPpKprOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-8223aed779aso530437439f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:45:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723455917; x=1724060717;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1723455964; c=relaxed/simple;
+	bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VobdPXXeayOE453lZqerxWhvCijqx58kQKBS1Khdlbsi88937/QoloZwepb9wkrimW8CRzuzCvyNvN09GmfUEPPf9AHY8l1s83WqMxz+yS39gS4Ac4G3CDM26yklXjM5SdDD5W+kiRP41caQDcxvSC2NgyM6sf2fDGQ4iPnBENg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc4Jjq6C; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so4313754a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723455961; x=1724060761; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=j36PlpWjmdfVbBokcHei3pw+tRIVHo+3I9Y1MdIeud4=;
-        b=dybkEf94X4jFghb5o3wkWrSvCTBA0faHyASkEskftJYDYlafcWXvezc/z9CEgry+jl
-         662wnrxdbP8uEzuADFybElVw/yxmZRO37Ihn8y0kozh2J+ASvAmpDIWLF/cRs2ZIeNEQ
-         jZmTBlNArNUewzgZN0yRaAdRN3SulvCSCSh7YW+7c/sauRvAQ78/5XN0krvG4K2sHH/z
-         eaFCizlFBSMthweS+LDyzK1ayjmXlzoCEpqi1QpQ0dV+RV7OA2gCyC6dRmw2YEePU7SZ
-         v2YKn5enb/5nuy7fy6JL8BAAn4VcnYn2u13aQaIpYmOPO3NmZveC+ZjMltkBn00ePlg+
-         pZAw==
-X-Forwarded-Encrypted: i=1; AJvYcCUozcBpkcCSNF89nbQ9lQwHjtmywjI1xbR3lzRhOp6MwmopTF2iXX84yTmzFpGlbe/JoGXF91s67h+GFo/7X3BQ+y88EYnRbZB+JJZ8
-X-Gm-Message-State: AOJu0Yz7AUpqvZfnm+APzW2nApxSxmcsCy+YXh/7cks0GzodqjjYXwYC
-	xFIcHGoWOh5DEduPSAeaq4SQvwc1hq0qKMUz6vs1ZomNeG0GGKjRwLf/OLLL3YDTOqfgfli301Q
-	eTqGNgYMB2sT5B7T8JVrgHRfAL8mFJUAfsOEcP9x+7G+XGUN43JaoprQ=
-X-Google-Smtp-Source: AGHT+IF/Irxd+FreqzY2G0Dkh05T0EqrUKVeSpieN4l7+L1bMF2orunjg1xCfnAVSsTVq7CRFKRBXpUbg7gDzSqIwLNmIzBWidCb
+        bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
+        b=Mc4Jjq6CfTFem157MsUIbSwlDgogqRFbQP/swk6XmGsMwl4Oa98ZjlZiSS535k22FC
+         Stz7ycnUmt6EcLxVdtsJdpkMkPNiq90j5Mt1jZeT1Yi00wJIYwphhaYIHRf67g5So9d/
+         I+O0pqOh6xyEMmTev2UZgx6AHj5rDgC9eEbygz1EP4EX8Z4Lx7yUH/on3MmPdMkBZ/Fq
+         kUVIZ2GOnS0mbKPpYBbMALQqnJhR1m2roDKY99DzaDyvM3z7sZr6Jw/4gWNUVyioD3rz
+         eDxTYunU1DdIci6k8jVuXIMvUz9MvaL6+63FFzHnT0WsKYPyAMfFoIPLSdXGLbboPph+
+         ebxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723455961; x=1724060761;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
+        b=P340MSseDVNqe7m5XOLr2BVayG9F1vEgrVYdFecbJSEdWuwJbYbuyUSNJZ6AwsFgpk
+         6C3MdIVj0FK8vT0ZR/Xsly0cKxA/K3R7XwmSxI4XBYWWYIHyXZu1sWZlV+6Dag0BGzE+
+         61RqaDgZ9zngHCJkUlVPEB8dAVWaYmw5IpGY3l9fxPzRCZs8aler3JbweYxH1f8FB10U
+         QIY05YCjr6GsMdZ1fOgr8DTm358lN3MWrkzopvyvB6YpVBCU1KtQngO8ilEv292ynyXZ
+         HUQ6vyV3lgySGDpRUbvGLJIZpQeOSLUcxmoVdewCuI97kl0j7qgolNstL+4N5QF9R3iq
+         e83A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Kkko1+64IcsoDj1J+lmDHMbUWvzDC0OcJc/maZoOsVZYhGIrvDrpfk36vdf7YaEqkwxBK9r+CiphbkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZ2k1/OFHBgb+NNcQ3Mbk3wgsCnputYfgWdhBMQIYF+cB3oTKN
+	B9nPkhFvvGAMzUe9MeV26PWCT5fhbyjs3i8GKvvME4TvoeCtBobX//jH9ZrPuKw=
+X-Google-Smtp-Source: AGHT+IGaHEWZkOKxfoZJQYtrgry1CYeTIzGR/wr2t1cep4NpltsL9e4x6ljRA9qjxohlOrRIpWZzRw==
+X-Received: by 2002:a05:6402:2346:b0:5a1:40d9:6a46 with SMTP id 4fb4d7f45d1cf-5bd0a6b4bf9mr6210531a12.36.1723455961053;
+        Mon, 12 Aug 2024 02:46:01 -0700 (PDT)
+Received: from [192.168.0.157] ([82.76.204.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e04e1sm1967189a12.77.2024.08.12.02.45.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 02:46:00 -0700 (PDT)
+Message-ID: <b96f483e-314e-4e47-af58-ddb078dd6df3@linaro.org>
+Date: Mon, 12 Aug 2024 10:45:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0b:b0:398:d1fe:9868 with SMTP id
- e9e14a558f8ab-39b7a75252dmr8277705ab.4.1723455917663; Mon, 12 Aug 2024
- 02:45:17 -0700 (PDT)
-Date: Mon, 12 Aug 2024 02:45:17 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c23d15061f79592d@google.com>
-Subject: [syzbot] [serial?] KMSAN: kernel-infoleak in tty_read
-From: syzbot <syzbot+aa7ddf2352c316bb08d0@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+ "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+Cc: "broonie@kernel.org" <broonie@kernel.org>,
+ "pratyush@kernel.org" <pratyush@kernel.org>, "richard@nod.at"
+ <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
+ "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
+ "lee@kernel.org" <lee@kernel.org>,
+ "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
+ "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
+ "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>,
+ "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "michael@walle.cc" <michael@walle.cc>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
+ "Simek, Michal" <michal.simek@amd.com>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+ "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ "beanhuo@micron.com" <beanhuo@micron.com>
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+ <BN7PR12MB28029EB1A7D09882878499A2DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
+ <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
+ <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
+ <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
+ <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
+ <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
+ <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
+ <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+ <20240812103812.72763f69@xps-13>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20240812103812.72763f69@xps-13>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Hiya,
 
-syzbot found the following issue on:
+Amit, the thread becomes unreadable, better start a new one describing
+what you plan to do.
 
-HEAD commit:    6a0e38264012 Merge tag 'for-6.11-rc2-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1489f27d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=305509ad8eb5f9b8
-dashboard link: https://syzkaller.appspot.com/bug?extid=aa7ddf2352c316bb08d0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/82fdd1f77a94/disk-6a0e3826.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cc02539b71e6/vmlinux-6a0e3826.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5f2caa5e7e58/bzImage-6a0e3826.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aa7ddf2352c316bb08d0@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: kernel-infoleak in instrument_copy_to_user include/linux/instrumented.h:114 [inline]
-BUG: KMSAN: kernel-infoleak in copy_to_user_iter lib/iov_iter.c:24 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_iovec include/linux/iov_iter.h:51 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance2 include/linux/iov_iter.h:247 [inline]
-BUG: KMSAN: kernel-infoleak in iterate_and_advance include/linux/iov_iter.h:271 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x7c7/0x24a0 lib/iov_iter.c:185
- instrument_copy_to_user include/linux/instrumented.h:114 [inline]
- copy_to_user_iter lib/iov_iter.c:24 [inline]
- iterate_iovec include/linux/iov_iter.h:51 [inline]
- iterate_and_advance2 include/linux/iov_iter.h:247 [inline]
- iterate_and_advance include/linux/iov_iter.h:271 [inline]
- _copy_to_iter+0x7c7/0x24a0 lib/iov_iter.c:185
- copy_to_iter include/linux/uio.h:196 [inline]
- iterate_tty_read drivers/tty/tty_io.c:882 [inline]
- tty_read+0x42c/0xe10 drivers/tty/tty_io.c:937
- do_iter_readv_writev+0x8a1/0xa40
- vfs_readv+0x36c/0xef0 fs/read_write.c:932
- do_readv+0x251/0x5c0 fs/read_write.c:994
- __do_sys_readv fs/read_write.c:1085 [inline]
- __se_sys_readv fs/read_write.c:1082 [inline]
- __x64_sys_readv+0x98/0xe0 fs/read_write.c:1082
- x64_sys_call+0x3889/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:20
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- copy_from_read_buf drivers/tty/n_tty.c:1978 [inline]
- n_tty_read+0x2196/0x3260 drivers/tty/n_tty.c:2304
- iterate_tty_read drivers/tty/tty_io.c:862 [inline]
- tty_read+0x327/0xe10 drivers/tty/tty_io.c:937
- do_iter_readv_writev+0x8a1/0xa40
- vfs_readv+0x36c/0xef0 fs/read_write.c:932
- do_readv+0x251/0x5c0 fs/read_write.c:994
- __do_sys_readv fs/read_write.c:1085 [inline]
- __se_sys_readv fs/read_write.c:1082 [inline]
- __x64_sys_readv+0x98/0xe0 fs/read_write.c:1082
- x64_sys_call+0x3889/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:20
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was stored to memory at:
- n_tty_receive_buf_real_raw drivers/tty/n_tty.c:1532 [inline]
- __receive_buf drivers/tty/n_tty.c:1618 [inline]
- n_tty_receive_buf_common+0xe6e/0x2490 drivers/tty/n_tty.c:1739
- n_tty_receive_buf2+0x4c/0x60 drivers/tty/n_tty.c:1785
- tty_ldisc_receive_buf+0xd0/0x290 drivers/tty/tty_buffer.c:387
- tty_port_default_receive_buf+0xdf/0x190 drivers/tty/tty_port.c:37
- receive_buf drivers/tty/tty_buffer.c:445 [inline]
- flush_to_ldisc+0x473/0xdb0 drivers/tty/tty_buffer.c:495
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3312
- worker_thread+0xea5/0x1520 kernel/workqueue.c:3390
- kthread+0x3dd/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:3994 [inline]
- slab_alloc_node mm/slub.c:4037 [inline]
- __do_kmalloc_node mm/slub.c:4157 [inline]
- __kmalloc_noprof+0x661/0xf30 mm/slub.c:4170
- kmalloc_noprof include/linux/slab.h:685 [inline]
- tty_buffer_alloc drivers/tty/tty_buffer.c:180 [inline]
- __tty_buffer_request_room+0x36e/0x6d0 drivers/tty/tty_buffer.c:273
- __tty_insert_flip_string_flags+0x140/0x570 drivers/tty/tty_buffer.c:309
- tty_insert_flip_string_fixed_flag include/linux/tty_flip.h:35 [inline]
- tty_insert_flip_string include/linux/tty_flip.h:83 [inline]
- puts_queue drivers/tty/vt/keyboard.c:333 [inline]
- k_fn+0x154/0x1e0 drivers/tty/vt/keyboard.c:776
- k_pad+0x461/0xc40
- kbd_keycode drivers/tty/vt/keyboard.c:1522 [inline]
- kbd_event+0x5e2c/0x6010 drivers/tty/vt/keyboard.c:1541
- input_handler_events_default+0x128/0x1f0 drivers/input/input.c:2552
- input_pass_values+0x216/0x990 drivers/input/input.c:126
- input_event_dispose+0x552/0x6e0 drivers/input/input.c:352
- input_handle_event+0xf3c/0x1430 drivers/input/input.c:369
- input_event+0xe2/0x120 drivers/input/input.c:398
- hidinput_hid_event+0x256d/0x2960 drivers/hid/hid-input.c:1746
- hid_process_event+0x766/0x930 drivers/hid/hid-core.c:1540
- hid_input_array_field+0x768/0x850 drivers/hid/hid-core.c:1652
- hid_process_report drivers/hid/hid-core.c:1694 [inline]
- hid_report_raw_event+0x1d22/0x2820 drivers/hid/hid-core.c:2015
- __hid_input_report drivers/hid/hid-core.c:2085 [inline]
- hid_input_report+0x5a2/0x610 drivers/hid/hid-core.c:2107
- hid_irq_in+0x737/0xd00 drivers/hid/usbhid/hid-core.c:285
- __usb_hcd_giveback_urb+0x572/0x840 drivers/usb/core/hcd.c:1650
- usb_hcd_giveback_urb+0x157/0x720 drivers/usb/core/hcd.c:1734
- dummy_timer+0xd3f/0x6aa0 drivers/usb/gadget/udc/dummy_hcd.c:1987
- __run_hrtimer kernel/time/hrtimer.c:1689 [inline]
- __hrtimer_run_queues+0x564/0xe40 kernel/time/hrtimer.c:1753
- hrtimer_interrupt+0x3ab/0x1490 kernel/time/hrtimer.c:1815
- local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1032 [inline]
- __sysvec_apic_timer_interrupt+0xa6/0x3a0 arch/x86/kernel/apic/apic.c:1049
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1043 [inline]
- sysvec_apic_timer_interrupt+0x7e/0x90 arch/x86/kernel/apic/apic.c:1043
- asm_sysvec_apic_timer_interrupt+0x1f/0x30 arch/x86/include/asm/idtentry.h:702
-
-Bytes 8-11 of 20 are uninitialized
-Memory access of size 20 starts at ffff88813f5ebb40
-Data copied to user address 0000000020000280
-
-CPU: 1 UID: 0 PID: 6504 Comm: syz.3.387 Not tainted 6.11.0-rc2-syzkaller-00027-g6a0e38264012 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-=====================================================
+On 8/12/24 9:38 AM, Miquel Raynal wrote:
+> For now I don't think you need a totally generic implementation. As
+> long as there is only one controller supporting these modes, I'd say
+> this is not super relevant.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Miquel,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Microchip supports a twin quad mode too, and micron has some flashes
+with similar architecture, see:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+https://lore.kernel.org/linux-mtd/20231125092137.2948-1-amit.kumar-mahapatra@amd.com/T/#mbe999dde1d29371183aa53089ef6f0087d6902a7
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+We shall consider them from the beginning. I guess we need to read
+everything all over again.
 
