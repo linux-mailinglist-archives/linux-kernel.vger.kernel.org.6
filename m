@@ -1,191 +1,91 @@
-Return-Path: <linux-kernel+bounces-283547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B034494F635
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:59:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9982994F638
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6419C2813AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:59:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 401E21F22C6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1203D1898F8;
-	Mon, 12 Aug 2024 17:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A23189509;
+	Mon, 12 Aug 2024 18:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VLSX5kkP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="K9qU1IP3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rs16bbUW"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42613189529;
-	Mon, 12 Aug 2024 17:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC37C156
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723485552; cv=none; b=sUO/ONMEmwL5FpP7K2hzPPxzDRzbKV15qs6L/yNwIGsxRyF9VyFeHFRSauaMB0v6PdsT+hv7MXxgJ7Ic6FFYG5afhOb3zs9rDyXMzdFLPEifJZMtOrAO9Ha2aBfw9EKnahg6TRwr8lGfmJNn//HibWrSdqdNCkW11Vkn2rvH/es=
+	t=1723485651; cv=none; b=eFmrVH+mw/+o7fga9ILDX4aACn4VoqlpjdKlP54iDVmWb2eo7VmysULr6xT4gK6MUySVpyT4p8v46cYVSUisCx/jMrNIPsOPUrd7Z5sNPvFG59MyXLS12aJs7qozB+fvv9QJawapnxhqjpR8vUiM2r5TdhgQTHCV/etGxrdKsXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723485552; c=relaxed/simple;
-	bh=89tBf3JaxrUSUgE4DeBjSLiEkLK6rYWE9SbgQJLHxL8=;
+	s=arc-20240116; t=1723485651; c=relaxed/simple;
+	bh=Ftmp0VQq6tAyMeujMQHlmlkAWv726Lbhnrtn6ZvbNhg=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CMNeUTJBjUkwFtyCuq0N4GnpmyvxL69xM9T5h/PSI9bvTy/8xmuHetbZqK3KUaQx+GV8op6ooaCy4VIbiqkp3UqyKar4eTCaj0U8UnL1ci6da7X4wWHkyThB6RWrw+rpq3pLQjJ6qZMiZo5ebDQZg/87JRN9l3hd7Eab7MmM9W0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VLSX5kkP; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723485550; x=1755021550;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=89tBf3JaxrUSUgE4DeBjSLiEkLK6rYWE9SbgQJLHxL8=;
-  b=VLSX5kkPr4lOWgLGPvQvheoA6kuC8IfB9WlP1QyV/9mbu5vaWS3TK/0R
-   h7P5mQGFMZ7NQ39QnVBMNCq4HWUeP/VxYE9U5KfB12whMbxHM64EgTd/k
-   CX1L9ZiukekvG6+dYv9V0OK/d3eUIvKurDliAM/iCn0KxbYk0ZnXSYQif
-   WO5wTf12Q4ievu1d8YyCijqyOC6ED95nTwTnE3pp/bqTX1KgE3PyfhV/K
-   3ZMw7zwK5S026llJ0auPbFkBxX79CR2srqpeB9ETrxgGqam6TkAAS3vNH
-   Eg9pcsE+ilAuVFAjLTlFIPpj73gZ6QHVCHk3LhrvkVy9U9dVC28MM38yt
-   w==;
-X-CSE-ConnectionGUID: s88eXRiOTDaQReyJ95e6tQ==
-X-CSE-MsgGUID: VxyrW8bhQJCy823or3+FGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32232751"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="32232751"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:59:09 -0700
-X-CSE-ConnectionGUID: lqmqNyJRTvaXvQIVJUa3Qg==
-X-CSE-MsgGUID: VMuQJ5CiTWq71zcqj1hqfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="63201380"
-Received: from unknown (HELO vcostago-mobl3) ([10.241.225.92])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:59:09 -0700
-From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-To: Daiwei Li <daiweili@gmail.com>, Richard Cochran <richardcochran@gmail.com>
-Cc: intel-wired-lan@lists.osuosl.org, sasha.neftin@intel.com,
- kurt@linutronix.de, anthony.l.nguyen@intel.com, netdev@vger.kernel.org,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-net v1] igb: Fix not clearing TimeSync interrupts
- for 82580
-In-Reply-To: <CAN0jFd1CpPtid7TGJcgzajRXQ5oxYN1LjLjLwK7HjQ1piuZ_XQ@mail.gmail.com>
-References: <20240810002302.2054816-1-vinicius.gomes@intel.com>
- <Zrb0wdmIsksG38Uc@hoboy.vegasvil.org>
- <CAN0jFd1CpPtid7TGJcgzajRXQ5oxYN1LjLjLwK7HjQ1piuZ_XQ@mail.gmail.com>
-Date: Mon, 12 Aug 2024 10:59:08 -0700
-Message-ID: <87sev9wrkj.fsf@intel.com>
+	 MIME-Version:Content-Type; b=ER655Ruh07T+rauhFhtijcMUzdmjU+2BcS1VgmYPV2LvFeiCGy4mSS48bK/OVN2JwFOS6h8YF556lEfbCfi3qSpQjlEQL6dKU/U+jtyvkfGjXf6L0zWMw214MMlohSO4SsFJZ8Vm2CvkZVq5rxb+couEIHZBA2hfQ5KAYAGElYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=K9qU1IP3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rs16bbUW; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723485647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQHIn6J1uLdo48+UJl8I9q22z29K2L1zlSzsPTSA4y8=;
+	b=K9qU1IP3APQIk/lR0KajyO90tO1+1fam904Fh9cQXe8XZOODXCAX/zmk7+1FxysNbfEoDh
+	OSIyuPpjALEF4Kz840cth5KUZ9f0EDkBJQG7rfrqc/k2nEb+nn5SGcIuzKTJZFCMTYYjXj
+	yxZ/xFyCr/xrqwnvNr1PsPtpZo8o35TVft4DAtznB7ruU4R7iIdqEZdbGAW3+SIKSnqar7
+	ag6n5SG0gW0sJFHmsUgrYPUUsjiaT7bDFNpKG5cG18AtbGpF60Jp7Z5D0k/J/v9Tk5t8Bg
+	a0Tx+Vqf50fAWl9mnLy7t6Y246pz04vrz+lexkoz12Qe5ZqqYS6KrjFt9lMArw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723485647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yQHIn6J1uLdo48+UJl8I9q22z29K2L1zlSzsPTSA4y8=;
+	b=rs16bbUWveAbVOQsK5ICcV9tr+l3xrc4ImNid9DcmOpGlblMc5BXbhYd61cqWD3uBCdWP6
+	Zj85Gkos/gDjVBCQ==
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: bp@alien8.de, daniel.sneddon@linux.intel.com,
+ dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+ mingo@redhat.com, peterz@infradead.org, thorsten.blum@toblux.com,
+ tony.luck@intel.com, x86@kernel.org, yuntao.wang@linux.dev
+Subject: Re: [PATCH] x86/apic: Fix the issues in x2apic_disable()
+In-Reply-To: <20240812155358.890025-1-yuntao.wang@linux.dev>
+References: <87a5hhsspm.ffs@tglx>
+ <20240812155358.890025-1-yuntao.wang@linux.dev>
+Date: Mon, 12 Aug 2024 20:00:47 +0200
+Message-ID: <877cclsjsg.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi,
+On Mon, Aug 12 2024 at 23:53, Yuntao Wang wrote:
+> On Mon, 12 Aug 2024 16:48:05 +0200, Thomas Gleixner <tglx@linutronix.de> wrote:
+>> There is no point in overwriting the state in case it is < ON, no?
+>
+> Are you saying that we should replace 'goto out' with a return statement?
+>
+> However, when x2apic_disable() is called, it's possible that x2apic_state
+> is X2APIC_OFF. In that case, we should set x2apic_state to X2APIC_DISABLED.
 
-Daiwei Li <daiweili@gmail.com> writes:
+What for? It can't be enabled later on and for the rest of the system it
+does not matter whether the state is OFF or DISABLED. Either case says:
+X2APIC is not enabled.
 
->> @Daiwei Li, I don't have a 82580 handy, please confirm that the patch
-> fixes the issue you are having.
->
-> Thank you for the patch! I can confirm it fixes my issue. Below I offer a
-> patch that also works in response to Paul's feedback.
->
+Thanks,
 
-Your patch looks better than mine. I would suggest for you to go ahead
-and propose yours for inclusion.
+        tglx
 
->> Please also add a description of the test case
->
-> I am running ptp4l to serve PTP to a client device attached to the NIC.
-> To test, I am rebuilding igb.ko and reloading it.
-> Without this patch, I see repeatedly in the output of ptp4l:
->
->> timed out while polling for tx timestamp increasing tx_timestamp_timeout=
- or
->> increasing kworker priority may correct this issue, but a driver bug lik=
-ely
->> causes it
->
-> as well as my client device failing to sync time.
->
->> and maybe the PCI vendor and device code of your network device.
->
-> % lspci -nn | grep Network
-> 17:00.0 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-> Network Connection [8086:150e] (rev 01)
-> 17:00.1 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-> Network Connection [8086:150e] (rev 01)
-> 17:00.2 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-> Network Connection [8086:150e] (rev 01)
-> 17:00.3 Ethernet controller [0200]: Intel Corporation 82580 Gigabit
-> Network Connection [8086:150e] (rev 01)
->
->> Bug, or was it a feature?
->
-> According to https://lore.kernel.org/all/CDCB8BE0.1EC2C%25matthew.vick@in=
-tel.com/
-> it was a bug. It looks like the datasheet was not updated to
-> acknowledge this bug:
-> https://www.intel.com/content/www/us/en/content-details/333167/intel-8258=
-0-eb-82580-db-gbe-controller-datasheet.html
-> (section 8.17.28.1).
->
->> Is there a nicer way to write this, so `ack` is only assigned in case
->> for the 82580?
->
-> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c
-> b/drivers/net/ethernet/intel/igb/igb_main.c
-> index ada42ba63549..87ec1258e22a 100644
-> --- a/drivers/net/ethernet/intel/igb/igb_main.c
-> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> @@ -6986,6 +6986,10 @@ static void igb_tsync_interrupt(struct
-> igb_adapter *adapter)
->         struct e1000_hw *hw =3D &adapter->hw;
->         u32 tsicr =3D rd32(E1000_TSICR);
->         struct ptp_clock_event event;
-> +       const u32 mask =3D (TSINTR_SYS_WRAP | E1000_TSICR_TXTS |
-> +                          TSINTR_TT0 | TSINTR_TT1 |
-> +                          TSINTR_AUTT0 | TSINTR_AUTT1);
-> +
->
->         if (tsicr & TSINTR_SYS_WRAP) {
->                 event.type =3D PTP_CLOCK_PPS;
-> @@ -7009,6 +7013,13 @@ static void igb_tsync_interrupt(struct
-> igb_adapter *adapter)
->
->         if (tsicr & TSINTR_AUTT1)
->                 igb_extts(adapter, 1);
-> +
-> +       if (hw->mac.type =3D=3D e1000_82580) {
-> +               /* 82580 has a hardware bug that requires a explicit
-> +                * write to clear the TimeSync interrupt cause.
-> +                */
-> +               wr32(E1000_TSICR, tsicr & mask);
 
-Yeah, I should have thought about that, that writing '1' into an
-interrupr that is cleared should be fine.
-
-> +       }
->  }
-> On Fri, Aug 9, 2024 at 10:04=E2=80=AFPM Richard Cochran
-> <richardcochran@gmail.com> wrote:
->>
->> On Fri, Aug 09, 2024 at 05:23:02PM -0700, Vinicius Costa Gomes wrote:
->> > It was reported that 82580 NICs have a hardware bug that makes it
->> > necessary to write into the TSICR (TimeSync Interrupt Cause) register
->> > to clear it.
->>
->> Bug, or was it a feature?
->>
->> Or IOW, maybe i210 changed the semantics of the TSICR?
->>
->> And what about the 82576?
->>
->> Thanks,
->> Richard
-
---=20
-Vinicius
 
