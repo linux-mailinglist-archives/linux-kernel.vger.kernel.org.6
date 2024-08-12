@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-282849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2ADE94E96C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3171594E972
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D4B1C21701
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:12:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B947F2858E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FAC16D329;
-	Mon, 12 Aug 2024 09:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1928716D4D4;
+	Mon, 12 Aug 2024 09:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+qcUI6L"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dwZiu2L2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4601586CD
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ADE01586CD;
+	Mon, 12 Aug 2024 09:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723453922; cv=none; b=XOEdg488Qg5sAEtC940Cpj9jKdNT5JBl3Rd2GX0GHMQcW2jMqXe1qA3Apkmji0AVlOWxf/ZVh7UQriNAkLCd9mxOa3pxhxY6K+c4Sc+shatpmKym62TPCGu1ks8ExfaIKFK45SG1yP3euh6U0aErSsp2DVf2GRN5jFjdFmcAj5c=
+	t=1723453948; cv=none; b=u3wOOAEMEVaQ2wwUkxxV5xQr29rjEoV0aenl8ei8hvW8roBoT31rv5PAY7fZuswRfD3OkY5pumHr9ThqAVFmudzCy1NA0nG06CR91TrqHx7SAPlO58oVHpRpYpGv6eD7HGnDSQPepfxvNVAQv4AHincHB/Q4zzuCTiqAjqzzptU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723453922; c=relaxed/simple;
-	bh=u1YwTJ0QN6o1AIAnNP0uRQpK9L26jBSTy2c8zGqytDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=JEuZRISt9Sme1mKq7WMJ3geK3zq+77NM9uvaTW3JZR1ki1lXIU9cMBzG4RhiL0b7UpAa/mAACdueU8zeWxWAzQV3LzhCDDmttVnsh9aB/QB20DFNcJzjDaUK8URPZoAjXgnAZAW6zaTJRYhT0BTnmbZpbLxVdnwvlw/biX6Byf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T+qcUI6L; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so2114330f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723453919; x=1724058719; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=/dkDOzR/LNy1JwPGO+eblLQszpYlL9hjoNFzaxywG4A=;
-        b=T+qcUI6LcG7OBOHpZEcsSTB9/sa8qHLZYyqdRBkk72VoJUawHl4ToH633m1B0kjBvu
-         aYsxa2rA/nLe7t2IxsF6IvRBYw5pJZEBvhX6cMx/V3duEEUc6NMd4hS6lqEBOaI2wJk0
-         6FiUFAqf5dim+5/Mm9jH6wjqzBQkY44VgrPWA+LzHYgzKeKw1yzE/UVokjtgtjt+mQY3
-         h0NxaJ6Oh7IJ/LQCFfj9z3TX6Db//2z2XS7In8ojxGBZcAr7JhyEdfHz5cPEz8Ibv8fg
-         R+7R9JmJ1gK3a4FDHoi8+91UR89psUWvg5AgabcDktyKt1hA+t6pELKALqQD7vPKvypB
-         89vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723453919; x=1724058719;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/dkDOzR/LNy1JwPGO+eblLQszpYlL9hjoNFzaxywG4A=;
-        b=Twm1zi9Tf1Qa1cO7rTT0eBKHh6UrpfJ/maNmYPSjzS5KhtOkzaOlMnoUqN/mAWiwUe
-         gnFUUZxAQQha/mx3gmaAl9ObKqw5rtUUUrcGjft8otvcIveQLTF3Vb9rd5/e17x5cmY2
-         C0e7j/q0N7wWwEhRMq5195ictyTZzVV7b0UFfeyZUQrrl2LNarVrL/rgVzZggpSLWoSV
-         qQAPGpkElC4nfgs6nL+HnkIdk7Pw1XCXrtXrjb0SZbd4zKwxXGdQJaB7WqNpfOcgWi2r
-         r1kBadIhSudDhvAhXlJA9GFkd38Zm+A5/uMgDhhW3pxGNMHi5Fqw2gW/FXFIQFSMBUv/
-         MVxw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWAcrFqNeVYlOXwNDfrBXy2Un76WqTQid41I5EpHJIeZbntqvcOl8nkTUYikHd2DQRg0K3iSWwE+HdDu0voYBNw9ch9Ucp7EXloDF
-X-Gm-Message-State: AOJu0Yx8E240OAhRzp7qVSA3DzcBR75n1Eyt6VVGsCT8T10ODSTtTEEh
-	194msUvmpxzz7FmqhWWtVM3FwVARQTX7E3J+Ei4NvHH1fb4y0CvsvasFyFWZa7o=
-X-Google-Smtp-Source: AGHT+IF5kcpXENxol6rpDJqiXdN3+3deXeOjD5dbPk0vGTABOrF9Nu6EOSCDHs0k0VWKeAyu8WF2WA==
-X-Received: by 2002:a05:6000:4b:b0:36b:c126:fe5e with SMTP id ffacd0b85a97d-36d5eb0429emr6725486f8f.30.1723453918673;
-        Mon, 12 Aug 2024 02:11:58 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd3416sm6895438f8f.100.2024.08.12.02.11.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 02:11:57 -0700 (PDT)
-Message-ID: <9b27533e-6dc6-4476-8f0b-4497388efde3@linaro.org>
-Date: Mon, 12 Aug 2024 10:11:56 +0100
+	s=arc-20240116; t=1723453948; c=relaxed/simple;
+	bh=AHpXAkDP1WOYSED8knHUVOD/Zs18SE8A5sym1YavS1k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YGlMYgstIoOtKj9NeH8vCr6fs1V24UAyBjlRLYMzmHynp/gySNJok+jS+IRMh2FUK8vAzzv+9DRs2aHNPnM+t9R4yLL/jUCTgidquwfu9eku7lGoOqeiXrrGf9ejQ4r5nFYpDdcUqYORegB40GGlHx5Ep+CQ9Qv0vL2uEq2EMo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dwZiu2L2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A6E3C32782;
+	Mon, 12 Aug 2024 09:12:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723453947;
+	bh=AHpXAkDP1WOYSED8knHUVOD/Zs18SE8A5sym1YavS1k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dwZiu2L2qrosCfyV3a2YbYsWIBs39ADt90UptUvF6G8dvCVqehKEfQmgsGLhkwELH
+	 lw9zshioXY1etWuw5E7/VCPvkKp9jnw+Ix0aYWrhngRvN9OPSYx17C/mwIRWQzKCty
+	 kqfDZ1XaDYLD2q/lxAOx6Pnx2H/uY4A+k6eAxkgcAuhO6Ss1efuKyRU/0Vgo6v1r+G
+	 XRJlsEU5em0E6Hoay9NgHr+weOXwawheAdvQiqIv/+NACdqU2EvThF0+bH9oVGDyxa
+	 u4vwqmHKac9maxVsKChRabkyomPHT5JHfGejOPbu9aLKemjMxmXIFAHGcOYYPP1Fql
+	 7xb60X6KYGiYw==
+Message-ID: <1f823600-68c4-418f-b2bf-6d5d64a1ee56@kernel.org>
+Date: Mon, 12 Aug 2024 11:12:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,61 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf docs: Refine the description for the buffer size
-To: Leo Yan <leo.yan@arm.com>
-References: <20240810161540.2282535-1-leo.yan@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: mtd: nuvoton,ma35d1-nand: add new
+ bindings
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+ esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20240812030045.20831-1-hpchen0nvt@gmail.com>
+ <20240812030045.20831-2-hpchen0nvt@gmail.com>
+ <7a8b9bdf-f4df-4da0-83ca-157175817e99@kernel.org>
+ <203578df-11a6-425a-b2be-cc09dae62f8f@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Govindarajan.Mohandoss@arm.com
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20240810161540.2282535-1-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <203578df-11a6-425a-b2be-cc09dae62f8f@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 10/08/2024 5:15 pm, Leo Yan wrote:
-> Current description for the AUX trace buffer size is misleading. When a
-> user specifies the option '-m,512M', it represents a size value in bytes
-> (512MiB) but not 512M pages (512M x 4KiB regard to a page of 4KiB).
+On 12/08/2024 11:02, Hui-Ping Chen wrote:
 > 
-> Make the document clear that the normal buffer and the AUX tracing
-> buffer share the same semantics.
 > 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->   tools/perf/Documentation/perf-record.txt | 9 +++++----
->   1 file changed, 5 insertions(+), 4 deletions(-)
+>>> +
+>>> +      nand-ecc-step-size:
+>>> +        enum: [512, 1024]
+>> No defaults? So is this required?
 > 
-> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-> index 41e36b4dc765..242223240a08 100644
-> --- a/tools/perf/Documentation/perf-record.txt
-> +++ b/tools/perf/Documentation/perf-record.txt
-> @@ -273,10 +273,11 @@ OPTIONS
->   -m::
->   --mmap-pages=::
->   	Number of mmap data pages (must be a power of two) or size
-> -	specification with appended unit character - B/K/M/G. The
-> -	size is rounded up to have nearest pages power of two value.
-> -	Also, by adding a comma, the number of mmap pages for AUX
-> -	area tracing can be specified.
-> +	specification in bytes with appended unit character - B/K/M/G.
-> +	The size is rounded up to the nearest power-of-two page value.
-> +	By adding a comma, an additional parameter with the same
-> +	semantics used for the normal mmap areas can be specified for
-> +	AUX tracing area.
->   
->   -g::
->   	Enables call-graph (stack chain/backtrace) recording for both
+> This is required, but I will also add a default.
 
-The same text is repeated on a few tools, probably makes sense to update 
-them all at the same time.
+If this is required and should be in required: list. Default does not
+make sense then... it contradicts the point of being required.
 
-With that change:
+> 
+> 
+> 
+>>> +
+>>> +      nand-ecc-strength:
+>>> +        enum: [8, 12, 24]
+>> No defaults? So is this required?
+> 
+> This is required, but I will also add a default.
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+Ditto
+
+
+Best regards,
+Krzysztof
+
 
