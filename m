@@ -1,146 +1,93 @@
-Return-Path: <linux-kernel+bounces-283480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E346B94F574
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:58:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B9494F573
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:58:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AEDFB2663C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:58:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DC62B265CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:58:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31A9188CB0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9D4187FEE;
 	Mon, 12 Aug 2024 16:57:42 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kkFVSmwV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD5A184558;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F124317C;
 	Mon, 12 Aug 2024 16:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481862; cv=none; b=GsYJWCpPjnkAyt/O60TptVcAgypdfEpYTqJSdMys9iw5/dTovENFSweeP0AXxGSSoAKkZyxLSXySEOLX0pzvP7DZkStwp8f37UehADcGRrr+Ofci1r2A6zC8Sydl5ELu+X7GwUAmd5cNpeiAMJvj+DYYWfKwJaNu7w1xasfpzMQ=
+	t=1723481861; cv=none; b=GF8JL6pWsqgPFjQBEhr7Q7xhe/XIJHr556LuqWDkLu+Bc+SQ26IpWfEQfHPOpIgJqX9ZaO4tKJ6EEdW61Jz+TyXT0rslfF5S/5Rku2+SaCodfzCmbe3RnI8YnO4tSd90T1hTS14ZFkGlZpmzw5IpjkxAiAYWfzXsZrs0EMU0Sdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481862; c=relaxed/simple;
-	bh=PFOeBR7DEWkdt/jQdta5OhkaVmv7rjz82/c3N9bXu5Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nwKs53HtS0miyN3zdU3hKjZfIDWeWdU7k2grbJLtLijhz9OOY8CTyz9tag/USH0zV/T61ETkN4mI9wBY/REfAO+vj3R05WyPA81asaztyeHdJXvDodSioCVIra3LJs00oM2jvVaNIXVe1PRMiIhUWvZgtC/iNPvyyi9F34+0UGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
+	s=arc-20240116; t=1723481861; c=relaxed/simple;
+	bh=txzhRNbmX6zZAFmH+HTZX0oiIhxSTK3mHHI7oZiES8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G6ZF/6HoM4L7acJolsaXdD0fKZ5XtWJLLrrbnfkBrHs8pFKK3orntwQbMewcKF5a2vPsDgEnVlX7eW31RVj1g+o+Cz9dxksrit/1KR5ltNa5+HHQBT/pW56cUo/2HvjFYvLJ2CNI5iw71ZoEeNEAY+R+FR3E0c8O/WPJqJDOH2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kkFVSmwV; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb4c4de4cbso2925215a91.1;
-        Mon, 12 Aug 2024 09:57:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723481860; x=1724086660;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RBT6GUroxASOGIZcaDGkgoB7aJF/nxAzTjccxRYF0yA=;
-        b=HftjBlctT9vSmeEwXaZX1IkTUMazo3HI0MlTEINiSzIeAxtYVv14eeK4aPwyI/4iEp
-         fKTqQe2ExIVxxsUAdo0aTyI+hJOZoUaKY4AWc8d2aOaNtVZFKtMH1HpAQqNnXB2pF3RV
-         eFPNIe71GyH/QHHamzUJuPwbvkiZq81zVKHnz559ecsT6om26/mru3fRi1zkZEXfnV4C
-         8XOTf4hpyXAKtVYIflsltth/faTGxuBoYFAvX2OiJCAmguYVr43N2mEkLdfOHCxGQM9M
-         qVrd5v7SwiOt8aio9+0KmOSahOA5oaSwt7gyHwCl4Jaom0nNFkXEUn+7S7pMu3h6HT0c
-         /9/A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuQuDlAt597UW7PC8bLs4rwkr8BnxxWeshMl0QqGAnOG+dDh601YDY5Fcz2+r6PD4eKfkxtp/th/dxwIVUw85KzzYmqx1vuerbwfzyLT5bIxi2QvMG8TAkoW51m3Jq1BDCqpbrTebo53oDgaWqiA==
-X-Gm-Message-State: AOJu0YzpcHCQ1YRGbfGLCJgQlu1omD4p0Md1DCr5IxYbwASdJ3G0VXUX
-	NG56sQxsi81Nrb5swnWUgT+me2N09uYlgEdy0oXwa5kpqiyJ1FQ/q5q5zmFrknYpsyoL+tGn2Kk
-	+kpOV7BkH5oPU8ybLwjsM/eKC0d0=
-X-Google-Smtp-Source: AGHT+IHWp42ThEM9dW+KrJQ0c4HyecKzjeMkYed6s9Ndqys32WZ9fNaZLY3ER+aplHGMgQImA7IjNNuaAO89dP+kRog=
-X-Received: by 2002:a17:90a:ea0a:b0:2cb:5654:8367 with SMTP id
- 98e67ed59e1d1-2d3926407bcmr946152a91.26.1723481860169; Mon, 12 Aug 2024
- 09:57:40 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Tc/Gv4mvT00bJfk4/I8PkOr0Zzy+OONb/HA1C3fFiK8=; b=kkFVSmwVEffvXLoCi3EkDCQKnp
+	MLVSW54uOnl2TS2wdx5G3eNMebO2SqmGZUI0rQMKLZ7BxyxTCLvQpTNO7lmJTvP8xA6tPhNiGjG2L
+	ozEQmKezp2iqfe1f+tbT0RXoPPYqNS4Vw6vp1aAl9U17a6rsF0U2auYy5rfUjLRFJgdfWrPRql6tp
+	zfjoH0AwP/BhjZYOwFMQueH9YH2lcRTAYKoSNaF/660fkOjo3ZO6mYokJmwMguFTz14fZjJ2NM+E9
+	5ZL7sF+xFfQ+bzdKANChL4Pg/hyaf8xYwK68y85SlbiDI/UVdxHoZ3GQYhTuWYTwxdlRKa8e2CEUo
+	BidHDa4A==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdYMT-00000000xgw-332D;
+	Mon, 12 Aug 2024 16:57:37 +0000
+Date: Mon, 12 Aug 2024 09:57:37 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Song Liu <song@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+	Nathan Chancellor <nathan@kernel.org>, "KE.LI" <like1@oppo.com>,
+	Padmanabha Srinivasaiah <treasure4paddy@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Fangrui Song <maskray@google.com>
+Cc: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, jpoimboe@kernel.org,
+	jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com,
+	joe.lawrence@redhat.com, morbo@google.com, justinstitt@google.com,
+	thunder.leizhen@huawei.com, kees@kernel.org, kernel-team@meta.com,
+	mmaurer@google.com, mhiramat@kernel.org, rostedt@goodmis.org
+Subject: Re: [PATCH v3 0/2] Fix kallsyms with CONFIG_LTO_CLANG
+Message-ID: <Zro_AeCacGaLL3jq@bombadil.infradead.org>
+References: <20240807220513.3100483-1-song@kernel.org>
+ <CAPhsuW64RyYhHsFeJSj7=+4uHBo7LucWtWY5xOxN20aujxadGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <909abbc8-efca-40df-9876-8c36b6942a83@stanley.mountain>
- <20240810191704.1948365-1-namhyung@kernel.org> <ZrozwIQcB_viRsKt@x1> <Zro90YPyLCB9PsfL@x1>
-In-Reply-To: <Zro90YPyLCB9PsfL@x1>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 12 Aug 2024 09:57:27 -0700
-Message-ID: <CAM9d7ch1ESEhJW-1j0O-0xxr-w1we+opD1xWTs4Eq=u7Gg7unQ@mail.gmail.com>
-Subject: Re: [PATCH] perf lock contention: Change stack_id type to s32
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPhsuW64RyYhHsFeJSj7=+4uHBo7LucWtWY5xOxN20aujxadGg@mail.gmail.com>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Mon, Aug 12, 2024 at 9:52=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Aug 12, 2024 at 01:09:40PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Sat, Aug 10, 2024 at 12:17:04PM -0700, Namhyung Kim wrote:
-> > > The bpf_get_stackid() helper returns a signed type to check whether i=
-t
-> > > failed to get a stacktrace or not.  But it saved the result in u32 an=
-d
-> > > checked if the value is negative.
-> > >
-> > >       376         if (needs_callstack) {
-> > >       377                 pelem->stack_id =3D bpf_get_stackid(ctx, &s=
-tacks,
-> > >       378                                                   BPF_F_FAS=
-T_STACK_CMP | stack_skip);
-> > >   --> 379                 if (pelem->stack_id < 0)
-> > >
-> > >   ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_beg=
-in()
-> > >   warn: unsigned 'pelem->stack_id' is never less than zero.
-> > >
-> > > Let's change the type to s32 instead.
-> > >
-> > > Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for=
- BPF")
-> >
-> > Thanks, applied to perf-tools-next,
->
-> I'll try to fix this later, but now it fails the first 'make -C
-> tools/perf build-test' target, that you can run directly as:
->
-> =E2=AC=A2[acme@toolbox perf-tools-next]$ tools/perf/tests/perf-targz-src-=
-pkg tools/perf
-> <SNIP>
->   CLANG   /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf/util/bpf_skel/.t=
-mp/augmented_raw_syscalls.bpf.o
-> In file included from util/bpf_skel/lock_contention.bpf.c:9:
-> util/bpf_skel/lock_data.h:10:2: error: unknown type name 's32'; did you m=
-ean 'u32'?
->    10 |         s32 stack_id;
->       |         ^~~
->       |         u32
-> util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
->    17 | typedef __u32 u32;
->       |               ^
+On Mon, Aug 12, 2024 at 09:21:02AM -0700, Song Liu wrote:
+> Hi folks,
+> 
+> Do we have more concerns and/or suggestions with this set? If not,
+> what would be the next step for it?
 
-Oops, sorry about this.  There was a kernel test robot report.
-It seems we need 'typedef __s32 s32;' too.
+I'm all for simplifying things, and this does just that, however,
+I'm not the one you need to convince, the folks who added the original
+hacks should provide their Reviewed-by / Tested-by not just for CONFIG_LTO_CLANG
+but also given this provides an alternative fix, don't we want to invert
+the order so we don't regress CONFIG_LTO_CLANG ? And shouldn't the patches
+also have their respective Fixes tag?
 
-Thanks,
-Namhyung
+Provided the commit logs are extended with Fixes and order is maintained
+to be able to bisect correctly:
 
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-> In file included from util/bpf_skel/lock_contention.bpf.c:9:
-> util/bpf_skel/lock_data.h:14:2: error: unknown type name 's32'; did you m=
-ean 'u32'?
->    14 |         s32 stack_id;
->       |         ^~~
->       |         u32
-> util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
->    17 | typedef __u32 u32;
->       |               ^
-> 2 errors generated.
-> make[2]: *** [Makefile.perf:1247: /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/too=
-ls/perf/util/bpf_skel/.tmp/lock_contention.bpf.o] Error 1
-> make[2]: *** Waiting for unfinished jobs....
-> make[1]: *** [Makefile.perf:292: sub-make] Error 2
-> make: *** [Makefile:76: all] Error 2
-> make: Leaving directory '/tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf'
-> =E2=AC=A2[acme@toolbox perf-tools-next]$
+  Luis
 
