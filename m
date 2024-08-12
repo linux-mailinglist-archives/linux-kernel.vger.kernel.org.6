@@ -1,261 +1,158 @@
-Return-Path: <linux-kernel+bounces-283397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD3C694F1F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:45:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91BB294F1F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1BEF8B212F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116FB1F21AD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F709184551;
-	Mon, 12 Aug 2024 15:45:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133F418454C;
+	Mon, 12 Aug 2024 15:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+2CBB42"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K1JJVjGn"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68264206B;
-	Mon, 12 Aug 2024 15:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF28A8121B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477519; cv=none; b=qKbgxFuNnaftN+Dph8z5ZVVo09T/uvFgcR3sW43dVVMvJYpL8yjg9LIp+j0RsGGRy7ED5enVbgJ7edlmiu/HrxD/GX4oWZHsuCaKTGtmkWuNlOmQvZjo6Bhlvh8VWIRpG3p1hymsx3qm33NScTRdr0aj9wsqvkLklJFje6Ngj/8=
+	t=1723477565; cv=none; b=fANJG7PKNGPTIXP+b41xDkByVl1R20MHqr9LN/IuVZn42jhzz24syJWGVWdy7VHTDG70TAuPZlzinDBDlWMBYEDG1LDcLQMhiCTxyQjQSBo2uPOOiL9r68esHx5Ixl6tgCCVwmJs3DB9J9x4BbI8p9LZ6v1o8IXAWDwSVQNVw84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477519; c=relaxed/simple;
-	bh=mHXSpB58S7YsT8Af1/oElcL3Sn0KgMqQ4gINqCVFzdY=;
+	s=arc-20240116; t=1723477565; c=relaxed/simple;
+	bh=PWTnM/TlBV50vGuoHmIWpJag7IVGU1x6R8fvFCPQCsE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mWfiMg/5JJhtm/FVV/X5vXVHGc48rHZQEQGjj7v/0Vjf3Yc9LpPb6HwF89oSkugJPf4kkffRFfM0jG8D6psByos/owAJz2MllDfybh/L7j/V7qT/7dXoFuWtTBbpBxvT15Ro9vy3I9x9kiS4efKIasCCgpeuPnEFvivmHm7xwHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E+2CBB42; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB70C4AF09;
-	Mon, 12 Aug 2024 15:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723477519;
-	bh=mHXSpB58S7YsT8Af1/oElcL3Sn0KgMqQ4gINqCVFzdY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E+2CBB420IyblYc4yo239mIGHuMclN+JNVz2yJqpZnJmx9124lb5JoiFomBRqPraY
-	 pVlPaw+r0gvP7XhEf2Gx90vI2WrsZHZTC65RyvZwoiQZky32puBhoQIbN2/nYj28H3
-	 t7HaD73BPRzYAKWq/UhwXxwNbHv0iIzdBs5wYA/dG3b+m1r6CpnjEy33vESgehNSRN
-	 eqyjEwxPucqpsJbM8dABQ/dALk1pOa08ksuQY3pXifQ8bfcPYANogMIhkkqVvWJBFg
-	 UHZsYpP5ULlndBogV3lmswKOWbLxWWmrchcOzR4BDQn1JdMK1odVS1MWr9LyHIAzPD
-	 Di2u531e4naMw==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef1c12ae23so45573301fa.0;
-        Mon, 12 Aug 2024 08:45:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwVPBkJU5TbDp8Dzt+3PjU67k60AJ6vBNJFP11hElG4aHbUsqMH11fSXQObC/tK4vkkP465ZogMAt+zmlxqZO7t0zGyvRMZuOQd2IQc4vqKYzvxfDGjf9qc1kbR8oU8RRZVTyw97IAEw8ECtO/fwYsmflz7sQlWEmvGFZpDX9Ju06UV18PwwVH
-X-Gm-Message-State: AOJu0YzDft8jjM4ugIpT5gzP7kJEQv16Apm0hVmi/Z1enkVoU7olw8mp
-	LRuqwX1RJRJV/X0oIlkxwfZCgT5j3LgdBSfuG/wwRv+jMvKKXVgK0FmgIVtMDiePzBYUs1/dnGB
-	8Rpcdqu1CH/uNRxwKwl6uTzg0Oqc=
-X-Google-Smtp-Source: AGHT+IG225W60IBtU9xXkPjS62TyaokLc9Jyban5wHsbHnQitINpZxcCKLuWLgwV1BBLwxUTokIHMRQCfwDS6pBD4z4=
-X-Received: by 2002:a2e:9655:0:b0:2ee:4c66:6828 with SMTP id
- 38308e7fff4ca-2f2b7156f5amr3661901fa.24.1723477517805; Mon, 12 Aug 2024
- 08:45:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=JRpuloh/yfmmE/GTQsL3odNzRHv6GCiKrFNQD5TmTczP/Z5NLBihs3ghXbjAfaE0TwcaplRf2KVjBNech6dcd9JCmi8232YLW7GAbKmqkWOwdFd/Xno4P3rEBWTTea9F6ibGtktoJkug3zyQzS4CBPgLVp9blUH44pSoZ6GdN1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=K1JJVjGn; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-690af536546so45649097b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:46:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723477560; x=1724082360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PWTnM/TlBV50vGuoHmIWpJag7IVGU1x6R8fvFCPQCsE=;
+        b=K1JJVjGnvKU8FNNCauOWX1Rk+ztm+yfquSpbc12/9U6bPaM+xFwnVwxOJdyAvEdkwb
+         pUCM3ciE9YQ5eCd+qUNPsnsqZyNtUBdoxVMkkYFKjxPkFI/QIPGgZQpk807NgfDkQskZ
+         dFtK78LM698fVMN+KvcJckCQTD/KHjDj1m/18=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723477560; x=1724082360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PWTnM/TlBV50vGuoHmIWpJag7IVGU1x6R8fvFCPQCsE=;
+        b=luBumtbDQVeHtVUV9DGBacTphnjQg88P4zj+1RYP1FyRaeHP90MEiF4qAEAOgtNXVx
+         v8cMTXPHLsY1pu/NxVx8ljSs0CJY1G34HMcAixmfh4qeFtVqhoHXgg+llzAEVYl8KgjY
+         ZSNPZ+JE294Maow8Gnm4XXXQc0Vu/cEc7bnk2jJbUqgMmnAEBS4rQleY4MwRB6zqBriR
+         CpeuO6pVjUiNTkm65f/K0pHQ3i7vpgXQQqSMLcnI1UU/TEkd2NRAA266AyrEWEggVCdT
+         jws1rOSyIiJtW3qEblN+aUhFZaCyqCZcNzeTG6260gqvq+uP8KSoPbwoZs7J423DCCZu
+         U08w==
+X-Forwarded-Encrypted: i=1; AJvYcCVHnGfouYDu2M2pHXVUdT5bmvZxLmCUpIsGnMdOIQnxsZkVsHOoQKKP07WrEhEMXVA+2bSCp5VzCpoRtSYlHOChYYqXbMQsNvXb9Oeu
+X-Gm-Message-State: AOJu0YxPlanT6+W3p8FedRRoV8MaFNV298csmIVR9TTjDEv6SunkG3ip
+	N5JcQHSLfelWWj/eJ/GDZpekWYgIivB3/eu1BdEuMBnShqnzN6zeGg20UYPEsJyPnO6sJ9LV28E
+	BdQ==
+X-Google-Smtp-Source: AGHT+IEWeIUSLMIfl84yy6hK/QTPq+vF/NYi2ItTvLgB8OfLeZC8we+xYq9XGHPEnXmsu6DiUeWcNw==
+X-Received: by 2002:a05:690c:6e05:b0:650:a1cb:b122 with SMTP id 00721157ae682-6a9730143d4mr8420097b3.27.1723477559834;
+        Mon, 12 Aug 2024 08:45:59 -0700 (PDT)
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6a0a068cec6sm9291467b3.46.2024.08.12.08.45.57
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 08:45:58 -0700 (PDT)
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso4538359276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:45:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUyaHqoK8L1vnMN1aCQvPj7Xc+bhzcVYLBVzAiZNlDwJTj9LX4CKpURuZ2iHIDpBkHSvnLoxNRp8VZomR5PRfWrcIPcr87tRWuHWFFl
+X-Received: by 2002:a05:6902:1542:b0:e0b:e550:4e5c with SMTP id
+ 3f1490d57ef6-e113ced41a7mr1044286276.26.1723477557390; Mon, 12 Aug 2024
+ 08:45:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809160853.1269466-1-masahiroy@kernel.org> <ZrojDUbr1EvlARXK@toolbox>
-In-Reply-To: <ZrojDUbr1EvlARXK@toolbox>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 13 Aug 2024 00:44:40 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARCRQ_K=4vAQxgQiq_w8ss5+uhGnY1L7nre=H3eWeq6zA@mail.gmail.com>
-Message-ID: <CAK7LNARCRQ_K=4vAQxgQiq_w8ss5+uhGnY1L7nre=H3eWeq6zA@mail.gmail.com>
-Subject: Re: [PATCH] tty: vt: conmakehash: remove non-portable code printing
- comment header
-To: Max Krummenacher <max.oss.09@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kbuild@vger.kernel.org, 
-	Max Krummenacher <max.krummenacher@toradex.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Daniel Gomez <da.gomez@samsung.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+References: <20240807100429.13260-1-lvzhaoxiong@huaqin.corp-partner.google.com>
+ <20240807100429.13260-2-lvzhaoxiong@huaqin.corp-partner.google.com> <1518bded-72d8-4ed0-a63f-3dd21473b23b@quicinc.com>
+In-Reply-To: <1518bded-72d8-4ed0-a63f-3dd21473b23b@quicinc.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 12 Aug 2024 08:45:39 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UfE99Q1aQfPk61WzqK+kbMd-htWstjWUqgCvK1fqfWPw@mail.gmail.com>
+Message-ID: <CAD=FV=UfE99Q1aQfPk61WzqK+kbMd-htWstjWUqgCvK1fqfWPw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] drm/panel: jd9365da: Move "exit sleep mode" and
+ "set display on" cmds
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>, neil.armstrong@linaro.org, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	hsinyi@google.com, airlied@gmail.com, daniel@ffwll.ch, jagan@edgeble.ai, 
+	dmitry.baryshkov@linaro.org, jani.nikula@linux.intel.com, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 11:58=E2=80=AFPM Max Krummenacher <max.oss.09@gmail=
+Jessica,
+
+On Thu, Aug 8, 2024 at 3:56=E2=80=AFPM Jessica Zhang <quic_jesszhan@quicinc=
 .com> wrote:
 >
-> On Sat, Aug 10, 2024 at 01:07:20AM +0900, Masahiro Yamada wrote:
-> > Commit 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no
-> > longer in env") included <linux/limits.h>, which invoked another
-> > (wrong) patch that tried to address a build error on macOS.
-> >
-> > According to the specification [1], the correct header to use PATH_MAX
-> > is <limits.h>.
-> >
-> > The minimal fix would be to replace <linux/limits.h> with <limits.h>.
-> I can change that in a v2.
-
-
-You cannot.
-
-Your buggy commit already landed in Linus' tree:
-
-https://github.com/torvalds/linux/commit/6e20753da6bc651e02378a0cdb78f16c42=
-098c88
-
-
-
-
-
-> >
-> > However, the following commits seem questionable to me:
-> >
-> >  - 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path of =
-the input in output")
-> >  - 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer=
- in env")
-> >
-> > These commits made too many efforts to cope with a comment header in
-> > drivers/tty/vt/consolemap_deftbl.c:
-> >
-> >   /*
-> >    * Do not edit this file; it was automatically generated by
-> >    *
-> >    * conmakehash drivers/tty/vt/cp437.uni > [this file]
-> >    *
-> >    */
 >
-> This is the output you get when keeping the build artifacts within the
-> linux source tree.
-> However if you keep the artifacts outside the source tree
-> (make O=3D/somepath ...) the output looks like this:
 >
->     /*
->      * Do not edit this file; it was automatically generated by
->      *
->      * conmakehash /path-to-kernel-source-tree/drivers/tty/vt/cp437.uni >=
- [this file]
->      *
->      */
+> On 8/7/2024 3:04 AM, Zhaoxiong Lv wrote:
+> > Move the "exit sleep mode" and "set display on" command from
+> > enable() to init() function.
+> >
+> > As mentioned in the patch:
+> > https://lore.kernel.org/all/20240624141926.5250-2-lvzhaoxiong@huaqin.co=
+rp-partner.google.com/
+> >
+> > The Mediatek Soc DSI host has different modes in prepare() and
+> > enable() functions, prepare() is in LP mode and enable() is in
+> > HS mode. Since the "exit sleep mode" and "set display on"
+> > command must also be sent in LP mode, so we also move "exit
+> > sleep mode" and "set display on" command to the init() function.
+> >
+> > We have no other actions in the enable() function after moves
+> > "exit sleep mode" and "set display on", and we checked the call
+> > of the enable() function during the "startup" process. It seems
+> > that only one judgment was made in drm_panel_enabel(). If the
+> > panel does not define enable(), the judgment will skip the
+> > enable() and continue execution. This does not seem to have
+> > any other effect, and we found that some drivers also seem
+> > to have no enable() function added, for example:
+> > panel-asus-z00t-tm5p5-n35596 / panel-boe-himax8279d...
+> > In addition, we briefly tested the kingdisplay_kd101ne3 panel and
+> > melfas_lmfbx101117480 panel, and it seems that there is no garbage
+> > on the panel, so we delete enable() function.
+> >
+> > After moving the "exit sleep mode" and "set display on" command
+> > to the init() function, we no longer need additional delay
+> > judgment, so we delete variables "exit_sleep_to_display_on_delay_ms"
+> > and "display_on_delay_ms".
+> >
+> > Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> > Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com=
 >
-> i.e. it does keep a reference to where in your filesystem the kernel
-> source did reside when building which is against the goal of having a
-> reproducable build.
-
-
-
-You do not need to educate me.
-
-It is well described in commit 3bd85c6c97b2d232638594bf828de62083fe3389
-and I know how it works.
-
-
-
-> >
-> > With this commit, the header part of the generate C file will be
-> > simplified as follows:
-> >
-> >   /*
-> >    * Automatically generated file; Do not edit.
-> >    */
 >
-> This is not what I observed, for me with this proposed commit the
-> comment becomes with or without the 'O=3Dsomepath':
->
->     /*
->      * Do not edit this file; it was automatically generated by
->      *
->      * conmakehash cp437.uni > [this file]
->      *
->      */
->
-> i.e. it strips the directory path of the chartable source file used.
+> Acked-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 
+Does this Ack mean you're confident enough about this patch that we
+should go ahead and merge it, or do you think we should wait on
+anything else (like Neil getting a chance to look at it)? As I
+mentioned in my reply to the cover letter [1] the patches look OK to
+me but I still don't consider myself to have a wonderful understanding
+of the intricacies of MIPI DSI. If you think this is OK from a MIPI
+DSI point of view then we can land it...
 
+[1] https://lore.kernel.org/r/CAD=3DFV=3DWCw6pAump-PUFCW0cgbRY+5_2tPNLe=3Dh=
+N3-dnXD=3DB6MA@mail.gmail.com
 
-See my patch closely.
+Thanks!
 
-I deleted the line "* conmakehash %s > [this file]\n\"
-
-
-
-
-
-
-
-
-
-> Regards
-> Max
->
-> >
-> > BTW, another series of excessive efforts for a comment header can be
-> > seen in the following:
-> >
-> >  - 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path o=
-f the script in output")
-> >  - 2fe29fe94563 ("lib/build_OID_registry: avoid non-destructive substit=
-ution for Perl < 5.13.2 compat")
-> >
-> > [1]: https://pubs.opengroup.org/onlinepubs/009695399/basedefs/limits.h.=
-html
-> >
-> > Fixes: 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no lo=
-nger in env")
-> > Reported-by: Daniel Gomez <da.gomez@samsung.com>
-> > Closes: https://lore.kernel.org/all/20240807-macos-build-support-v1-11-=
-4cd1ded85694@samsung.com/
-> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> > ---
-> >
-> >  drivers/tty/vt/conmakehash.c | 12 ++----------
-> >  1 file changed, 2 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.=
-c
-> > index 82d9db68b2ce..a931fcde7ad9 100644
-> > --- a/drivers/tty/vt/conmakehash.c
-> > +++ b/drivers/tty/vt/conmakehash.c
-> > @@ -11,8 +11,6 @@
-> >   * Copyright (C) 1995-1997 H. Peter Anvin
-> >   */
-> >
-> > -#include <libgen.h>
-> > -#include <linux/limits.h>
-> >  #include <stdio.h>
-> >  #include <stdlib.h>
-> >  #include <sysexits.h>
-> > @@ -79,7 +77,6 @@ int main(int argc, char *argv[])
-> >  {
-> >    FILE *ctbl;
-> >    const char *tblname;
-> > -  char base_tblname[PATH_MAX];
-> >    char buffer[65536];
-> >    int fontlen;
-> >    int i, nuni, nent;
-> > @@ -245,20 +242,15 @@ int main(int argc, char *argv[])
-> >    for ( i =3D 0 ; i < fontlen ; i++ )
-> >      nuni +=3D unicount[i];
-> >
-> > -  strncpy(base_tblname, tblname, PATH_MAX);
-> > -  base_tblname[PATH_MAX - 1] =3D 0;
-> >    printf("\
-> >  /*\n\
-> > - * Do not edit this file; it was automatically generated by\n\
-> > - *\n\
-> > - * conmakehash %s > [this file]\n\
-> > - *\n\
-> > + * Automatically generated file; Do not edit.\n\
-> >   */\n\
-> >  \n\
-> >  #include <linux/types.h>\n\
-> >  \n\
-> >  u8 dfont_unicount[%d] =3D \n\
-> > -{\n\t", basename(base_tblname), fontlen);
-> > +{\n\t", fontlen);
-> >
-> >    for ( i =3D 0 ; i < fontlen ; i++ )
-> >      {
-> > --
-> > 2.43.0
-> >
-
-
-
---
-Best Regards
-
-Masahiro Yamada
+-Doug
 
