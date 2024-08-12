@@ -1,203 +1,186 @@
-Return-Path: <linux-kernel+bounces-282487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E46BE94E49F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:06:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAA594E49E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:06:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E3E61C212C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:06:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8534E281B8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928B47C6E6;
-	Mon, 12 Aug 2024 02:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A40354759;
+	Mon, 12 Aug 2024 02:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MsXmt5CT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="lm+yqcAK"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ECC6F06B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E6823B1;
+	Mon, 12 Aug 2024 02:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723428390; cv=none; b=lK2sxHf+UArhCh4mYWuU/siTX//6oz+hxzJm/0GcmnRjbPUZ4AxhnHG8LPo9sqC77aCExVOtKzy8iDNgWwhdsBm1FobbrFqZsqJxSfq7+Lp7hSFTdELySCVmPV0box+wjByO2GCPuxEz33RRymDB9WzoUIOrP1flbI871AotcFs=
+	t=1723428386; cv=none; b=Rq2BGR1CWEKw6Uya1NALUrWG4DOA+fLoMfxpH/4xF9++5+qdUCAYUcXOz+C5eiWzYnZdHYZhJuBXMqrukrx2oxpz0ypt83nncjwlI6Z24rNpIg/0XhGjZroCVywisYnnZwB04gXlbJCM7qlW5u0PIepdrkg17yoLvQGMUcYgYXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723428390; c=relaxed/simple;
-	bh=hzfqJyX+8YdMtXDjY84VZGwFGo0CvWecRoJ16YHmS98=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ou81FNZhRKdJZVB1BfH64wwSSFEZa0XV4KBHasFw/mE9WxO8ddFbNpqCOwGJGGm7RF3sFYVxGFgJTNF+RokKBF7kacBduyMOdCQmiWnlqByl8syTquNjUhUPbjCj6GRgKJ7XtGvFZzrBADeim9vwaBKfdNTEKaybSf0UY/RlYvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MsXmt5CT; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723428388; x=1754964388;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=hzfqJyX+8YdMtXDjY84VZGwFGo0CvWecRoJ16YHmS98=;
-  b=MsXmt5CTZQNMaORYieskc9QodYP3l7NNR1FnpAyz0SSY8C8t5EE+GwJb
-   EiSdyeNDIT5z3JYzZQndvFJ5R663rZEhuiCwMw/6sq5rrXH5lqtA7iq6P
-   2pd9R/TcuPdWETvyc5s5eN8QTIwhjvDD+KSIl8LEB6FHjsjfqxXTKvfN9
-   KWdSDWe3ii8L7hZ9Up+W0Xv5Hq/qATaqSLSCWAtzseJzg8IPoD8tdn8LY
-   dSx32xa1HfKlnu7jFGpz8KK+uPjUwP7ZfclAMh8WL81k7gaG3lJTF8ccD
-   QDl4BW9W6sU8CZuKBuYk8PjF9+cIMljhjrv40z0w6paw1TMMzOeA6ZKPv
-   w==;
-X-CSE-ConnectionGUID: sooJvg/2QwabyQq2nqvukA==
-X-CSE-MsgGUID: klYmigmvQvGcEw2CJgH/vA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21495314"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21495314"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 19:06:27 -0700
-X-CSE-ConnectionGUID: sMauHdXdRsKLa5F1hdOucg==
-X-CSE-MsgGUID: kLcjXqKtRYiz8mg+t6FR8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="95623357"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 11 Aug 2024 19:06:25 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdKRq-000BJM-2p;
-	Mon, 12 Aug 2024 02:06:16 +0000
-Date: Mon, 12 Aug 2024 10:05:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tiezhu Yang <yangtiezhu@loongson.cn>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Jinyang He <hejinyang@loongson.cn>,
-	Youling Tang <tangyouling@loongson.cn>
-Subject: ERROR: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko]
- undefined!
-Message-ID: <202408120955.qls5oNQY-lkp@intel.com>
+	s=arc-20240116; t=1723428386; c=relaxed/simple;
+	bh=vdgLf/JSiQfBHt4gk5w7vi3z0YFcPXNCFPOAQeihJg0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CgNGiv+dzQ1dCBJkI2pPyLw0iKl8mAQk0nBxEbQE7VKELe+sG+SEWPVtCxNsWgu/6imrPy3rXfMP2BcNjz1aBEWQdLnAKx8gPUWypzjQ3FjiTOa+jsC4vpQ8DVKcR9Mx/YaL86y6y1wPqpWJyQ+Lv2vel+kXj29E1i1zQ/Pcs1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=lm+yqcAK; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723428374; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=jBrI4yVJnwaUTH6gqgiPpclXFDrOWFlj5snFBx5tqyo=;
+	b=lm+yqcAKyeCLQRi72pORRAJTdtGb2HUEI4YwWoZv8zrtobVMWxggPmLO28r3NwBPbjCCdEGZERh7YCTySY7I0AJFfbzk2+gEs+HDa3v0F6CG9R2IZe1sJfPJxfty7gugtVcBshiD4xitWW7k1j7Sx7HoszE64wkpwXcrKwB4Xk4=
+Received: from 30.221.101.6(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WCWZQ96_1723428372)
+          by smtp.aliyun-inc.com;
+          Mon, 12 Aug 2024 10:06:13 +0800
+Message-ID: <2d569959-a64d-4437-badf-a1aa3098b5fc@linux.alibaba.com>
+Date: Mon, 12 Aug 2024 10:06:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net/smc: introduce autosplit for smc
+To: Wenjia Zhang <wenjia@linux.ibm.com>, jaka@linux.ibm.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+ guwen@linux.alibaba.com, linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240709160551.40595-1-guangguan.wang@linux.alibaba.com>
+ <cf07ec76-9d48-4bff-99f6-0842b5127c81@linux.ibm.com>
+ <63862dcc-33fd-4757-8daf-e0a018a1c7a3@linux.alibaba.com>
+ <faad0886-9ece-4a1c-a659-461b060ba70b@linux.alibaba.com>
+ <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
+Content-Language: en-US
+From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+In-Reply-To: <0afaeec5-f80a-4d8d-806b-d39c0eb5570e@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7c626ce4bae1ac14f60076d00eafe71af30450ba
-commit: cb8a2ef0848ca80d67d6d56e2df757cfdf6b3355 LoongArch: Add ORC stack unwinder support
-date:   5 months ago
-config: loongarch-randconfig-002-20240812 (https://download.01.org/0day-ci/archive/20240812/202408120955.qls5oNQY-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240812/202408120955.qls5oNQY-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408120955.qls5oNQY-lkp@intel.com/
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+On 2024/8/10 05:07, Wenjia Zhang wrote:
+> 
+> 
+> On 08.08.24 08:26, Guangguan Wang wrote:
+>> On 2024/7/15 10:53, Guangguan Wang wrote:
+>>>
+>>>
+>>> On 2024/7/11 23:57, Wenjia Zhang wrote:
+>>>>
+>>>>
+>>>> On 09.07.24 18:05, Guangguan Wang wrote:
+>>>>> When sending large size data in TCP, the data will be split into
+>>>>> several segments(packets) to transfer due to MTU config. And in
+>>>>> the receive side, application can be woken up to recv data every
+>>>>> packet arrived, the data transmission and data recv copy are
+>>>>> pipelined.
+>>>>>
+>>>>> But for SMC-R, it will transmit as many data as possible in one
+>>>>> RDMA WRITE and a CDC msg follows the RDMA WRITE, in the receive
+>>>>> size, the application only be woken up to recv data when all RDMA
+>>>>> WRITE data and the followed CDC msg arrived. The data transmission
+>>>>> and data recv copy are sequential.
+>>>>>
+>>>>> This patch introduce autosplit for SMC, which can automatic split
+>>>>> data into several segments and every segment transmitted by one RDMA
+>>>>> WRITE when sending large size data in SMC. Because of the split, the
+>>>>> data transmission and data send copy can be pipelined in the send side,
+>>>>> and the data transmission and data recv copy can be pipelined in the
+>>>>> receive side. Thus autosplit helps improving latency performance when
+>>>>> sending large size data. The autosplit also works for SMC-D.
+>>>>>
+>>>>> This patch also introduce a sysctl names autosplit_size for configure
+>>>>> the max size of the split segment, whose default value is 128KiB
+>>>>> (128KiB perform best in my environment).
+>>>>>
+>>>>> The sockperf benchmark shows 17%-28% latency improvement when msgsize
+>>>>>> = 256KB for SMC-R, 15%-32% latency improvement when msgsize >= 256KB
+>>>>> for SMC-D with smc-loopback.
+>>>>>
+>>>>> Test command:
+>>>>> sockperf sr --tcp -m 1048575
+>>>>> sockperf pp --tcp -i <server ip> -m <msgsize> -t 20
+>>>>>
+>>>>> Test config:
+>>>>> sysctl -w net.smc.wmem=524288
+>>>>> sysctl -w net.smc.rmem=524288
+>>>>>
+>>>>> Test results:
+>>>>> SMC-R
+>>>>> msgsize   noautosplit    autosplit
+>>>>> 128KB       55.546 us     55.763 us
+>>>>> 256KB       83.537 us     69.743 us (17% improve)
+>>>>> 512KB      138.306 us    100.313 us (28% improve)
+>>>>> 1MB        273.702 us    197.222 us (28% improve)
+>>>>>
+>>>>> SMC-D with smc-loopback
+>>>>> msgsize   noautosplit    autosplit
+>>>>> 128KB       14.672 us     14.690 us
+>>>>> 256KB       28.277 us     23.958 us (15% improve)
+>>>>> 512KB       63.047 us     45.339 us (28% improve)
+>>>>> 1MB        129.306 us     87.278 us (32% improve)
+>>>>>
+>>>>> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+>>>>> ---
+>>>>>    Documentation/networking/smc-sysctl.rst | 11 +++++++++++
+>>>>>    include/net/netns/smc.h                 |  1 +
+>>>>>    net/smc/smc_sysctl.c                    | 12 ++++++++++++
+>>>>>    net/smc/smc_tx.c                        | 19 ++++++++++++++++++-
+>>>>>    4 files changed, 42 insertions(+), 1 deletion(-)
+>>>>>
+>>>>
+>>>> Hi Guangguan,
+>>>>
+>>>> If I remember correctly, the intention to use one RDMA-write for a possible large data is to reduce possible many partial stores. Since many year has gone, I'm not that sure if it would still be an issue. I need some time to check on it.
+>>>>
+>>>
+>>> Did you mean too many partial stores will result in some issue? What's the issue?
+>>>
+> Forget it, I did verify that the partial stores should not be problem now.
+>>>
+>>>> BTW, I don't really like the idea to use sysctl to set the autosplit_size in any value at will. That makes no sense to improve the performance.
+>>>
+>>> Although 128KB autosplit_size have a good performance in most scenario, I still found some better autosplit_size for some specific network configurations.
+>>> For example, 128KB autosplit_size have a good performance whether the MTU is 1500 or 8500, but for 8500 MTU, 64KB autosplit_size performs better.
+>>>
+>>> Maybe the sysctl is not the best way, but I think it should have a way to set the value of autosplit_size for possible performance tuning.
+>>>
+> mhhh, that could be a good reason to use sysctl.
+>>> Thanks,
+>>> Guangguan Wang
+>>>
+>>
+>> Hi Wenjia,
+>>
+>> Is there any update comment or information about this patch?
+> 
+> Hi Guangguan,
+> 
+> sorry for the delayed answer. In the last time it is really difficult for me to find time to look into it and test it. With more thinking, I'm kind of convinced with this idea. But test is still needed. I'll be in vacation next 3 weeks. I hope it is okay for you that I'll test it as soon as possible when I'm back. If everything is ok, I think we can let it go upstream.
+> 
+> Thanks,
+> Wenjia
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp0.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-cam.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-ipe.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-msdc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-scp_adsp.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-vdec.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-venc.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-mfg.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo0.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo1.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-a31-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a23-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a33-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-de2-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-gate_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-fractional-divider_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/ti/omap-dma.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dma/dmatest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/imx/soc-imx8m.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/soc/mediatek/mtk-cmdq-helper.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/virtio/virtio_dma_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/regulator/tps6286x-regulator.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/8250/8250_pxa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/serial/esp32_uart.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/n_gsm.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/tty/ttynull.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/char/ppdev.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iommu/iova.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_kunit_helpers.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_buddy_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_cmdline_parser_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_connector_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_damage_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_dp_mst_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_exec_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_format_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_framebuffer_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_gem_shmem_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_managed_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_mm_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_modes_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_plane_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_probe_helper_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tests/drm_rect_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/lontium-lt9611.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/bochs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/tiny/cirrus.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/rt4831.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mfd/qcom-pm8008.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/dax/device_dax.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/scsi_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/advansys.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/scsi/atp870u.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/pcs/pcs_xpcs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/pcs/pcs-mtk-lynxi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/net/arcnet/arcnet.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/charlcd.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/auxdisplay/hd44780_common.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/i2c/busses/i2c-ccgx-ucsi.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/media/tuners/tda9887.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/ts4800_wdt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/watchdog/menz69_wdt.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mmc/host/tmio_mmc_core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/blink/leds-bcm63138.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/leds/flash/leds-rt4505.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/coreboot_table.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/framebuffer-coreboot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/memconsole-coreboot.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/cbmem.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firmware/google/vpd-sysfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/crypto/sa2ul.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vhost/vringh.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/mailbox/mtk-cmdq-mailbox.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/rpmsg/rpmsg_char.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_userspace.o
-WARNING: modpost: drivers/memory/emif: section mismatch in reference: emif_driver+0x10 (section: .data) -> emif_remove (section: .exit.text)
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem-apple-efuses.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/nvmem/nvmem_brcm_nvram.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mm-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mq-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/interconnect/imx/imx8mp-interconnect.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/vdpa.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/vdpa/ifcvf/ifcvf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/adc/xilinx-ams.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/iio/buffer/kfifo_buf.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/siox/siox-bus-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in net/ieee802154/6lowpan/ieee802154_6lowpan.o
->> ERROR: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
->> ERROR: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
+Hi Wenjia,
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+It is OK to test the patch after your vacation.
+Have a nice vacation.
+
+Thanks,
+Guangguan Wang.
+
+> 
+> 
+>>
+>>>>
+>>>> Thanks,
+>>>> Wenjia
 
