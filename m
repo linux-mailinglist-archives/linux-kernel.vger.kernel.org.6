@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-283783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179C994F8A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:58:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B71A94F8A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2EAD1F22BF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:58:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87384B22243
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE0719B5BB;
-	Mon, 12 Aug 2024 20:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X50bm0I5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAC719CD03;
+	Mon, 12 Aug 2024 20:54:47 +0000 (UTC)
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8CB197A91;
-	Mon, 12 Aug 2024 20:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03EA18CC0A;
+	Mon, 12 Aug 2024 20:54:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723496070; cv=none; b=uhGiiVI267fY8wbbciFfaqEVauSZeCmObzwLtYddn3Pa5G1eRCUQQ8QpwUj1FtMOTAtkOTzqKr3vdKAydvI9TWnBKmQJpbDVdbsrcLNFm1O4SgMcyukaKjGgO/gi4OkBRuBE0Rp5s+IdSnf76Qe4ySJNzFPZiFzummYY3F+KelE=
+	t=1723496087; cv=none; b=VUSBTLiwDBl0RsAcWzOE9KIPThgW0kQLD5t3Tc/r2P5WbRYIa5Ttw/aqPwXC//aYiUnxzjhj/KwXmG0zMjzLeAwHgJPFyNPfx/+XF7Trwlivw7fHaSqpjDpHGkA/y0PISk7XICtlktIJ3ZV5e8TvHePlFtsOAweburO/SBVkI7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723496070; c=relaxed/simple;
-	bh=Qy4VIkLa9sGuuTjFoaEQ/+gYyGwCBG/jEJbdPLJMEQg=;
+	s=arc-20240116; t=1723496087; c=relaxed/simple;
+	bh=OwsiZnunEauynsbrUTX6Kyfwgir0S0mJwiIuZgkYrZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMdVymnoFyWMHpGgujFAUrdn0zCjLK/nZacyg4vWvzmHQlYwODUgITdqcAXUZge7zg0rMRutBopPaYyJUPW12LLSiZBP2FJtecuU3NE+gSDR7Mcuy0q8iznBWHWUYHvaSsCrIAoGXrJj1IYj17wuN0TZk3y99j/1K8aigCtdRXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X50bm0I5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFC0EC4AF0C;
-	Mon, 12 Aug 2024 20:54:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723496069;
-	bh=Qy4VIkLa9sGuuTjFoaEQ/+gYyGwCBG/jEJbdPLJMEQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X50bm0I5fop78yGav1dkYg1oqqYHBmW9F6E4pNwW4z0ND7Djj+TOpHVdD7JsGra21
-	 cnHMRpTEULbQGEeh2MPegJ5nDs2l+6CnMnwMqtKwCzPqqLEv6/IDjiVHgy4m7DT7Mg
-	 0aG08LZFjddV2EetokUum8R1hg+N+ogHA3Rn2ZoTmB6unRPBC3xhaxYyo0nD1rBAuH
-	 fZ8DJS8+dZy3pnz3OfvenJA1AXIUuNKfdcvZDgLJ1kuQO399sS/LU9HkKXQS4BRbh4
-	 CbkpQ6BFPzPiNXNXllwam21Xn0UNA2Qi4M9j80sFdNQ0yBfqJwc3/YySg1zLLvS8Ei
-	 McEWuVspY0fKQ==
-Date: Mon, 12 Aug 2024 17:54:25 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Casey Chen <cachen@purestorage.com>,
-	Tom Zanussi <tzanussi@gmail.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] perf inject: Inject build ids for entire call chain
-Message-ID: <Zrp2gdY87ZFlmMaW@x1>
-References: <20240801031249.176913-1-irogers@google.com>
- <Zq0kL-lyCqkM3P4G@google.com>
- <CAP-5=fUy6sx5ZMs6L1we2tpaq1iyUz4GW_ps7c7xE1zqjVzvgg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKzIvhK6yJ8AdbRAzy06FjIVGzSeEvMP7PFTdluWfvX4h+omXsASI7agV4h7aY+LQ5vmKrZit1qizOOjyFGZaCrpyHtxAA14SqG639S0slfSD+1ZN7cAAxjlR9VyOaRBzPUzGtXkbixKhWJ7TVhZQbG1Pv97qxBGMG9Gd+3i/rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 642281C0099; Mon, 12 Aug 2024 22:54:44 +0200 (CEST)
+Date: Mon, 12 Aug 2024 22:54:43 +0200
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
+Message-ID: <Zrp2kw3N8Gqn5lBe@duo.ucw.cz>
+References: <20240812160146.517184156@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yEJ+c8NJ5YuClCWC"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fUy6sx5ZMs6L1we2tpaq1iyUz4GW_ps7c7xE1zqjVzvgg@mail.gmail.com>
+In-Reply-To: <20240812160146.517184156@linuxfoundation.org>
 
-On Mon, Aug 12, 2024 at 01:43:59PM -0700, Ian Rogers wrote:
-> On Fri, Aug 2, 2024 at 11:23 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > Hi Ian,
-> >
-> > On Wed, Jul 31, 2024 at 08:12:49PM -0700, Ian Rogers wrote:
-> > > The DSO build id is injected when the dso is first encountered but the
-> > > checking for first encountered only looks at the sample->ip not the
-> > > entire callchain. Use the callchain logic to ensure all build ids are
-> > > inserted.
-> > >
-> > > Add a for_each callback style API to callchain with
-> > > sample__for_each_callchain_node. Possibly in the future such an API
-> > > can avoid the overhead of constructing the call chain list.
-> > >
-> > > Fixes: 454c407ec17a ("perf: add perf-inject builtin")
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> >
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> Ping.
 
-This one isn't applying, maybe a clash with the previous patch or the
-constify series?
+--yEJ+c8NJ5YuClCWC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Please take a look at wat is now in tmp.perf-tools-next
+Hi!
 
-- Arnaldo
+> This is the start of the stable review cycle for the 6.10.5 release.
+> There are 263 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.10.y
+
+6.6 passes our testing, too:
+
+(single reported failure is not kernel problem).
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--yEJ+c8NJ5YuClCWC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZrp2kwAKCRAw5/Bqldv6
+8vquAKC2YjTvxl+c8NEZxuRClG0Ky+0hMwCfbEzpqyWT/46BgBF3kkzELIYp9fQ=
+=uo0M
+-----END PGP SIGNATURE-----
+
+--yEJ+c8NJ5YuClCWC--
 
