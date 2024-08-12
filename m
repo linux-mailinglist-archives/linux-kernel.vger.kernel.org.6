@@ -1,116 +1,115 @@
-Return-Path: <linux-kernel+bounces-283611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD3894F6BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:31:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1195294F6A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E17A0B2381D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:31:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 265BBB227CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:27:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029C319D069;
-	Mon, 12 Aug 2024 18:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7A11946C1;
+	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrewnQXR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E81DuNFU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E1419CCEB;
-	Mon, 12 Aug 2024 18:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273CA1917DB;
+	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487189; cv=none; b=BcEEV1jVVA1PIzMqaMc1YD/daQbRfAxNqNRCQop4az7DFJwtw6tdSG8Zz1JtO6OpzJTVrr6PdNGP1YTPNPvt9aEUjXgR1V8oB6/ZgVWmN7LI66AixKylKhsBUhoHSfdRNtxmITWeQIWqTdIq9mFLYdyBj3pUHn4idwvaBf+XpWA=
+	t=1723487111; cv=none; b=TSkUxaifMsBDVAqJEwIzR0w6GhafbVsCTuA+IRaguGhiuV4OHDlG316SYdCM0tQrkG9cYkCJq+RMlXbtnEhiTtHgL0eLHtjTWmDas2RQ572nNlLgsiHorB7ul1gTiqC+a/5Zu/Sh1/+EZ3koCZtwiOtQuTDpUp05D+Lfdy+ZaKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487189; c=relaxed/simple;
-	bh=pq9p+3MKfusrm9d+dkS4M59Yq++w7zxN0VRikqPFNQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZR4+YSX6jdjbbLRgQCRSasIes2TVrXpQJlvjnwwpywXjQv6U0/NMqQ6Jqo7KZctYDa8XhSIwEsZZOpENU7RzwqsphAizXFdLgiFO7ME3dhS8FqImu8h8wnfxDRik0w36AaoEohpnrue9wKeex5jwwxwG2Zh5KAyeOYrIFgg7OYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrewnQXR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9884C4AF15;
-	Mon, 12 Aug 2024 18:26:23 +0000 (UTC)
+	s=arc-20240116; t=1723487111; c=relaxed/simple;
+	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8zWePti0WWfDov2Pfxvh539W1FVNQSFOEV9qvs6ZM0hRaAInvQEZibieVvAWjK7pVSKC87hUmuxkeG6y/EEd8NceK2GuhUg1XBtVdqtmR5lM8DoQU038bTb61Rw8io2rsLM8bCUn8HN2SPwU0pcmqH4BvihRWS1LvNkhL/1CbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E81DuNFU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2282C32782;
+	Mon, 12 Aug 2024 18:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487188;
-	bh=pq9p+3MKfusrm9d+dkS4M59Yq++w7zxN0VRikqPFNQM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IrewnQXRBh0PBYuwXSIQzmoElmSkGlvcMIqqYkJoje+DqQVUvmpLyAjNKgHZj2XyC
-	 bLeNJWuUkdDY83SrJNoBjfbUX/5YEjdHOr2qvbI08G7Y8m/JJ9C9PWI7gEj7NEdg56
-	 QMfJavksWPUfcD+0yrlxQqeXCHHsLY//EgheijRgeFWVjkW8fiAINf04QtccJXnICd
-	 zX4WVPUZ6XkHAB9nTETApAZM7kDsvWEMYZW0Ds5g9QfWDJtXvff/bLThXq6pF6eTdN
-	 eHpJ9utvJFX4N4z0b7ivpkyafVprJqj/0uvR1l/Hd/U+aH/x++mqll/JMs5mbzrMTI
-	 ImMXMjHnkjaeQ==
-From: Danilo Krummrich <dakr@kernel.org>
-To: ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	wedsonaf@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me,
-	a.hindborg@samsung.com,
-	aliceryhl@google.com,
-	akpm@linux-foundation.org
-Cc: daniel.almeida@collabora.com,
-	faith.ekstrand@collabora.com,
-	boris.brezillon@collabora.com,
-	lina@asahilina.net,
-	mcanal@igalia.com,
-	zhiw@nvidia.com,
-	cjia@nvidia.com,
-	jhubbard@nvidia.com,
-	airlied@redhat.com,
-	ajanulgu@redhat.com,
-	lyude@redhat.com,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-mm@kvack.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v5 26/26] MAINTAINERS: add entry for the Rust `alloc` module
-Date: Mon, 12 Aug 2024 20:23:12 +0200
-Message-ID: <20240812182355.11641-27-dakr@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
-References: <20240812182355.11641-1-dakr@kernel.org>
+	s=k20201202; t=1723487111;
+	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E81DuNFUQBf+Hp0FbT2dTh9FMz6izZjqLPR8pbFkTDHAwRcUSi9U5m4y+b7a5D84S
+	 L4T1X6GfeBl5U02jvjl9KAFPYvCkhlnnu6mzL1APe2tZXOEtBs31xMIYkbdSYXb0uw
+	 OCZ8ZDxNXF7b9OEHsVto4zb2JZ3KhWUgU8eKSa/fkUBVjkpmgRmH38JMJrE/d+keLW
+	 JS9jz+vUKujhhhB11sboKhh4NrSYNASIY94gwq4RxOhzVpA5LDtW+iKVMQnO+sX8+f
+	 uubQ8A9wcfOwIxJzy/nBX9COA4qzl87jmWK/AILzeuT6hD8woAsZ10LokHwHHjv8zw
+	 nSNBePSfzuDjw==
+Date: Mon, 12 Aug 2024 11:25:10 -0700
+From: Kees Cook <kees@kernel.org>
+To: Brian Mak <makb@juniper.net>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
+Message-ID: <202408121123.FBAE8191A3@keescook>
+References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
+ <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
+ <202408121105.E056E92@keescook>
+ <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
 
-Add maintainers entry for the Rust `alloc` module.
+On Mon, Aug 12, 2024 at 06:21:15PM +0000, Brian Mak wrote:
+> On Aug 12, 2024, at 11:05 AM, Kees Cook <kees@kernel.org> wrote
+> 
+> > On Sat, Aug 10, 2024 at 07:28:44AM -0500, Eric W. Biederman wrote:
+> >> Brian Mak <makb@juniper.net> writes:
+> >> 
+> >>> Large cores may be truncated in some scenarios, such as with daemons
+> >>> with stop timeouts that are not large enough or lack of disk space. This
+> >>> impacts debuggability with large core dumps since critical information
+> >>> necessary to form a usable backtrace, such as stacks and shared library
+> >>> information, are omitted.
+> >>> 
+> >>> We attempted to figure out which VMAs are needed to create a useful
+> >>> backtrace, and it turned out to be a non-trivial problem. Instead, we
+> >>> try simply sorting the VMAs by size, which has the intended effect.
+> >>> 
+> >>> By sorting VMAs by dump size and dumping in that order, we have a
+> >>> simple, yet effective heuristic.
+> >> 
+> >> To make finding the history easier I would include:
+> >> v1: https://urldefense.com/v3/__https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0rwhadvc$
+> >> v2: https://urldefense.com/v3/__https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0G7RQv4o$
+> >> 
+> >> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+> >> 
+> >> As Kees has already picked this up this is quite possibly silly.
+> >> But *shrug* that was when I was out.
+> > 
+> > I've updated the trailers. Thanks for the review!
+> 
+> Hi Kees,
+> 
+> Thanks! I think you added it to the wrong commit though.
 
-Currently, this includes the `Allocator` API itself, `Allocator`
-implementations, such as `Kmalloc` or `Vmalloc`, as well as the kernel's
-implementation of the primary memory allocation data structures, `Box`
-and `Vec`.
+Ugh. Time for more coffee. Thanks; fixed. I need to update my "b4" -- it
+was hanging doing the trailers update so I did it myself manually...
+That'll teach me. ;)
 
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+> tests. Since all the other tests pass, I'm just going to leave it at
+> that.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 42decde38320..560516b3aaf4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19925,6 +19925,13 @@ F:	scripts/*rust*
- F:	tools/testing/selftests/rust/
- K:	\b(?i:rust)\b
- 
-+RUST [ALLOC]
-+M:	Danilo Krummrich <dakr@kernel.org>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Maintained
-+F:	rust/kernel/alloc.rs
-+F:	rust/kernel/alloc/
-+
- RXRPC SOCKETS (AF_RXRPC)
- M:	David Howells <dhowells@redhat.com>
- M:	Marc Dionne <marc.dionne@auristor.com>
+Yeah, I think you're good. Thank you for taking the time to test rr!
+
 -- 
-2.45.2
-
+Kees Cook
 
