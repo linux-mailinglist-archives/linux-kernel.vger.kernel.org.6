@@ -1,319 +1,186 @@
-Return-Path: <linux-kernel+bounces-282719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C92C94E7DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:31:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 485C494E7E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED336B22E9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:31:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB111C21AC2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF9CD1684AB;
-	Mon, 12 Aug 2024 07:31:14 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A4515B0E2;
+	Mon, 12 Aug 2024 07:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVHo6GYm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C719163A9B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06C154C02;
+	Mon, 12 Aug 2024 07:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447874; cv=none; b=W1YuBIFJwm8Y1SiMGLjFof1p+tAMz4IZF/G6quBInc6180yma4BR4CUjPbibC2iVmBF+lW0fJb1HWMfYCiGukXPJRkK0jrnWbY59Y1sH94JORvpFu2Rm93JgdVs6mPlJF0hxvpsFOYK6K6oHgaDIvHWWGAWmrep0EW8a0YskgBY=
+	t=1723448114; cv=none; b=aGf3rkQlQyZvA9dNRknUFdw7q/Ba6pVLaAt2keX6tZcodBzPP9JX2+SupbMUe4XYf6Nu5TVS6W0stmMTl7gHv1B8uLnn7o1hM9PxAnd52baYKbeu0oWz3ujsXCUB+ozNq0p3Ujuc0flxL0C15Z3B43VzxPTmtzhwRnxgxwNU+xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447874; c=relaxed/simple;
-	bh=vlbkNoYP2j5e0GPK16xqyatdla3pugrJU/oYKYwjJSo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OYHrnftQ7tkqQAfgZUmGPyK77kYnXmE+poHUZfKU6jg/Vl21alPQMU1XU2KKOsGLpgzDkXotCwVQRAW/YYXb8EsT/5YR+kYT22nNWD7EydumzL9faYR3bI/jKT8XwktI6RkkNryC/yg+RvGtw4khKbxAN+acU3XBjK0DM9HIGA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sdPVx-0003wx-EO; Mon, 12 Aug 2024 09:30:49 +0200
-Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sdPVv-006J0f-L5; Mon, 12 Aug 2024 09:30:47 +0200
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1sdPVv-007FeS-1t;
-	Mon, 12 Aug 2024 09:30:47 +0200
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: [PATCH net-next v5 3/3] net: phy: dp83tg720: Add cable testing support
-Date: Mon, 12 Aug 2024 09:30:46 +0200
-Message-Id: <20240812073046.1728288-3-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240812073046.1728288-1-o.rempel@pengutronix.de>
-References: <20240812073046.1728288-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1723448114; c=relaxed/simple;
+	bh=R3GVRoCsoHiXT0jKKOY18aLaysxVuUJwZl1VJQs3OcA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=DIe5oLXYRHQ0maMNg5nPOR/A698eVIgKd4nr+7hmq7MAmbe7amz3q2t1X77l1U+2CsqjP4HhZvVJ71c5H4VA+AS1vncpPBGa5681S+54yd8SrUP0/itV765tmEQMlJ0E09+wZ0L0hfMk48MWuhk9a+tgXlEKkpNsBU64/9UNn/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVHo6GYm; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723448113; x=1754984113;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=R3GVRoCsoHiXT0jKKOY18aLaysxVuUJwZl1VJQs3OcA=;
+  b=AVHo6GYmFBSNdoCGD7a+XKlWc0zpjZV9URk7wwZQY8Lp47pJGP4kpAnl
+   tXmoZ0fkrM8dyI6Bv6UQpO6+UhAxsuzQuKhLcaPca495fC2LYt25G1m2x
+   wJRGxMaTdc62ebJrj7nSWWDzyQy0eC7/jDYsWXlvtl74ppqfsVyl63PrE
+   0Zwke2SAg2I00ieFCvIeDPvMbec3w5ocdb57VavFgbyRGF661gjIEy9nF
+   oDmT4LXMa/UAA6ndYaA4weDr6RTiEfFkV0SDMO54Rq7GBoEy1bHjZv8al
+   zrfI2zyzEJHhdD7JiA/dZANicybA5tjbZFSxI4sDmtl+jV4e1pQ7AGKCb
+   w==;
+X-CSE-ConnectionGUID: +6LfrzB5Q2a0aCdXUxX0XQ==
+X-CSE-MsgGUID: 8B7dB4hzQdOBuVzITNa30g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="25408925"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="25408925"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:35:12 -0700
+X-CSE-ConnectionGUID: 4VnSE5dyQ6GuS3L+L1HwsA==
+X-CSE-MsgGUID: 9WXqtFFWQtyJ088YmVDxpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="57830132"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:35:06 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: <akpm@linux-foundation.org>,  <shuah@kernel.org>,  <david@redhat.com>,
+  <willy@infradead.org>,  <ryan.roberts@arm.com>,
+  <anshuman.khandual@arm.com>,  <catalin.marinas@arm.com>,
+  <cl@gentwo.org>,  <vbabka@suse.cz>,  <mhocko@suse.com>,
+  <apopple@nvidia.com>,  <osalvador@suse.de>,
+  <baolin.wang@linux.alibaba.com>,  <dave.hansen@linux.intel.com>,
+  <will@kernel.org>,  <baohua@kernel.org>,  <ioworker0@gmail.com>,
+  <gshan@redhat.com>,  <mark.rutland@arm.com>,
+  <kirill.shutemov@linux.intel.com>,  <hughd@google.com>,
+  <aneesh.kumar@kernel.org>,  <yang@os.amperecomputing.com>,
+  <peterx@redhat.com>,  <broonie@kernel.org>,
+  <mgorman@techsingularity.net>,  <linux-arm-kernel@lists.infradead.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+In-Reply-To: <95b72817-5444-4ced-998a-1cb90f42bf49@arm.com> (Dev Jain's
+	message of "Mon, 12 Aug 2024 12:22:01 +0530")
+References: <20240809103129.365029-1-dev.jain@arm.com>
+	<20240809103129.365029-2-dev.jain@arm.com>
+	<87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<15dbe4ac-a036-4029-ba08-e12a236f448a@arm.com>
+	<87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<95b72817-5444-4ced-998a-1cb90f42bf49@arm.com>
+Date: Mon, 12 Aug 2024 15:31:33 +0800
+Message-ID: <8734naurhm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=ascii
 
-Introduce cable testing support for the DP83TG720 PHY. This implementation
-is based on the "DP83TG720S-Q1: Configuring for Open Alliance Specification
-Compliance (Rev. B)" application note.
+Dev Jain <dev.jain@arm.com> writes:
 
-The feature has been tested with cables of various lengths:
-- No cable: 1m till open reported.
-- 5 meter cable: reported properly.
-- 20 meter cable: reported as 19m.
-- 40 meter cable: reported as cable ok.
+> On 8/12/24 11:45, Huang, Ying wrote:
+>> Dev Jain <dev.jain@arm.com> writes:
+>>
+>>> On 8/12/24 11:04, Huang, Ying wrote:
+>>>> Hi, Dev,
+>>>>
+>>>> Dev Jain <dev.jain@arm.com> writes:
+>>>>
+>>>>> As already being done in __migrate_folio(), wherein we backoff if the
+>>>>> folio refcount is wrong, make this check during the unmapping phase, upon
+>>>>> the failure of which, the original state of the PTEs will be restored and
+>>>>> the folio lock will be dropped via migrate_folio_undo_src(), any racing
+>>>>> thread will make progress and migration will be retried.
+>>>>>
+>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>> ---
+>>>>>    mm/migrate.c | 9 +++++++++
+>>>>>    1 file changed, 9 insertions(+)
+>>>>>
+>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>> index e7296c0fb5d5..477acf996951 100644
+>>>>> --- a/mm/migrate.c
+>>>>> +++ b/mm/migrate.c
+>>>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>>>    	}
+>>>>>      	if (!folio_mapped(src)) {
+>>>>> +		/*
+>>>>> +		 * Someone may have changed the refcount and maybe sleeping
+>>>>> +		 * on the folio lock. In case of refcount mismatch, bail out,
+>>>>> +		 * let the system make progress and retry.
+>>>>> +		 */
+>>>>> +		struct address_space *mapping = folio_mapping(src);
+>>>>> +
+>>>>> +		if (folio_ref_count(src) != folio_expected_refs(mapping, src))
+>>>>> +			goto out;
+>>>>>    		__migrate_folio_record(dst, old_page_state, anon_vma);
+>>>>>    		return MIGRATEPAGE_UNMAP;
+>>>>>    	}
+>>>> Do you have some test results for this?  For example, after applying the
+>>>> patch, the migration success rate increased XX%, etc.
+>>> I'll get back to you on this.
+>>>
+>>>> My understanding for this issue is that the migration success rate can
+>>>> increase if we undo all changes before retrying.  This is the current
+>>>> behavior for sync migration, but not for async migration.  If so, we can
+>>>> use migrate_pages_sync() for async migration too to increase success
+>>>> rate?  Of course, we need to change the function name and comments.
+>>>
+>>> As per my understanding, this is not the current behaviour for sync
+>>> migration. After successful unmapping, we fail in migrate_folio_move()
+>>> with -EAGAIN, we do not call undo src+dst (rendering the loop around
+>>> migrate_folio_move() futile), we do not push the failed folio onto the
+>>> ret_folios list, therefore, in _sync(), _batch() is never tried again.
+>> In migrate_pages_sync(), migrate_pages_batch(,MIGRATE_ASYNC) will be
+>> called first, if failed, the folio will be restored to the original
+>> state (unlocked).  Then migrate_pages_batch(,_SYNC*) is called again.
+>> So, we unlock once.  If it's necessary, we can unlock more times via
+>> another level of loop.
+>
+> Yes, that's my point. We need to undo src+dst and retry.
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v3:
-- select OPEN_ALLIANCE_HELPERS
-changes v2:
-- use open alliance specific helpers for the TDR results
----
- drivers/net/phy/Kconfig     |   1 +
- drivers/net/phy/dp83tg720.c | 154 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 155 insertions(+)
+For sync migration, we undo src+dst and retry now, but only once.  You
+have shown that more retrying increases success rate.
 
-diff --git a/drivers/net/phy/Kconfig b/drivers/net/phy/Kconfig
-index 874422e530ff0..f530fcd092fe4 100644
---- a/drivers/net/phy/Kconfig
-+++ b/drivers/net/phy/Kconfig
-@@ -417,6 +417,7 @@ config DP83TD510_PHY
- 
- config DP83TG720_PHY
- 	tristate "Texas Instruments DP83TG720 Ethernet 1000Base-T1 PHY"
-+	select OPEN_ALLIANCE_HELPERS
- 	help
- 	  The DP83TG720S-Q1 is an automotive Ethernet physical layer
- 	  transceiver compliant with IEEE 802.3bp and Open Alliance
-diff --git a/drivers/net/phy/dp83tg720.c b/drivers/net/phy/dp83tg720.c
-index c706429b225a2..0ef4d7dba0656 100644
---- a/drivers/net/phy/dp83tg720.c
-+++ b/drivers/net/phy/dp83tg720.c
-@@ -3,10 +3,13 @@
-  * Copyright (c) 2023 Pengutronix, Oleksij Rempel <kernel@pengutronix.de>
-  */
- #include <linux/bitfield.h>
-+#include <linux/ethtool_netlink.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/phy.h>
- 
-+#include "open_alliance_helpers.h"
-+
- #define DP83TG720S_PHY_ID			0x2000a284
- 
- /* MDIO_MMD_VEND2 registers */
-@@ -14,6 +17,17 @@
- #define DP83TG720S_STS_MII_INT			BIT(7)
- #define DP83TG720S_LINK_STATUS			BIT(0)
- 
-+/* TDR Configuration Register (0x1E) */
-+#define DP83TG720S_TDR_CFG			0x1e
-+/* 1b = TDR start, 0b = No TDR */
-+#define DP83TG720S_TDR_START			BIT(15)
-+/* 1b = TDR auto on link down, 0b = Manual TDR start */
-+#define DP83TG720S_CFG_TDR_AUTO_RUN		BIT(14)
-+/* 1b = TDR done, 0b = TDR in progress */
-+#define DP83TG720S_TDR_DONE			BIT(1)
-+/* 1b = TDR fail, 0b = TDR success */
-+#define DP83TG720S_TDR_FAIL			BIT(0)
-+
- #define DP83TG720S_PHY_RESET			0x1f
- #define DP83TG720S_HW_RESET			BIT(15)
- 
-@@ -22,18 +36,155 @@
- /* Power Mode 0 is Normal mode */
- #define DP83TG720S_LPS_CFG3_PWR_MODE_0		BIT(0)
- 
-+/* Open Aliance 1000BaseT1 compatible HDD.TDR Fault Status Register */
-+#define DP83TG720S_TDR_FAULT_STATUS		0x30f
-+
-+/* Register 0x0301: TDR Configuration 2 */
-+#define DP83TG720S_TDR_CFG2			0x301
-+
-+/* Register 0x0303: TDR Configuration 3 */
-+#define DP83TG720S_TDR_CFG3			0x303
-+
-+/* Register 0x0304: TDR Configuration 4 */
-+#define DP83TG720S_TDR_CFG4			0x304
-+
-+/* Register 0x0405: Unknown Register */
-+#define DP83TG720S_UNKNOWN_0405			0x405
-+
-+/* Register 0x0576: TDR Master Link Down Control */
-+#define DP83TG720S_TDR_MASTER_LINK_DOWN		0x576
-+
- #define DP83TG720S_RGMII_DELAY_CTRL		0x602
- /* In RGMII mode, Enable or disable the internal delay for RXD */
- #define DP83TG720S_RGMII_RX_CLK_SEL		BIT(1)
- /* In RGMII mode, Enable or disable the internal delay for TXD */
- #define DP83TG720S_RGMII_TX_CLK_SEL		BIT(0)
- 
-+/* Register 0x083F: Unknown Register */
-+#define DP83TG720S_UNKNOWN_083F			0x83f
-+
- #define DP83TG720S_SQI_REG_1			0x871
- #define DP83TG720S_SQI_OUT_WORST		GENMASK(7, 5)
- #define DP83TG720S_SQI_OUT			GENMASK(3, 1)
- 
- #define DP83TG720_SQI_MAX			7
- 
-+/**
-+ * dp83tg720_cable_test_start - Start the cable test for the DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ *
-+ * This sequence is based on the documented procedure for the DP83TG720 PHY.
-+ *
-+ * Returns: 0 on success, a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_start(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Initialize the PHY to run the TDR test as described in the
-+	 * "DP83TG720S-Q1: Configuring for Open Alliance Specification
-+	 * Compliance (Rev. B)" application note.
-+	 * Most of the registers are not documented. Some of register names
-+	 * are guessed by comparing the register offsets with the DP83TD510E.
-+	 */
-+
-+	/* Force master link down */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
-+			       DP83TG720S_TDR_MASTER_LINK_DOWN, 0x0400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG2,
-+			    0xa008);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG3,
-+			    0x0928);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG4,
-+			    0x0004);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_0405,
-+			    0x6400);
-+	if (ret)
-+		return ret;
-+
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_UNKNOWN_083F,
-+			    0x3003);
-+	if (ret)
-+		return ret;
-+
-+	/* Start the TDR */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG,
-+			       DP83TG720S_TDR_START);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+/**
-+ * dp83tg720_cable_test_get_status - Get the status of the cable test for the
-+ *                                   DP83TG720 PHY.
-+ * @phydev: Pointer to the phy_device structure.
-+ * @finished: Pointer to a boolean that indicates whether the test is finished.
-+ *
-+ * The function sets the @finished flag to true if the test is complete.
-+ *
-+ * Returns: 0 on success or a negative error code on failure.
-+ */
-+static int dp83tg720_cable_test_get_status(struct phy_device *phydev,
-+					   bool *finished)
-+{
-+	int ret, stat;
-+
-+	*finished = false;
-+
-+	/* Read the TDR status */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND2, DP83TG720S_TDR_CFG);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Check if the TDR test is done */
-+	if (!(ret & DP83TG720S_TDR_DONE))
-+		return 0;
-+
-+	/* Check for TDR test failure */
-+	if (!(ret & DP83TG720S_TDR_FAIL)) {
-+		int location;
-+
-+		/* Read fault status */
-+		ret = phy_read_mmd(phydev, MDIO_MMD_VEND2,
-+				   DP83TG720S_TDR_FAULT_STATUS);
-+		if (ret < 0)
-+			return ret;
-+
-+		/* Get fault type */
-+		stat = oa_1000bt1_get_ethtool_cable_result_code(ret);
-+
-+		/* Determine fault location */
-+		location = oa_1000bt1_get_tdr_distance(ret);
-+		if (location > 0)
-+			ethnl_cable_test_fault_length(phydev,
-+						      ETHTOOL_A_CABLE_PAIR_A,
-+						      location);
-+	} else {
-+		/* Active link partner or other issues */
-+		stat = ETHTOOL_A_CABLE_RESULT_CODE_UNSPEC;
-+	}
-+
-+	*finished = true;
-+
-+	ethnl_cable_test_result(phydev, ETHTOOL_A_CABLE_PAIR_A, stat);
-+
-+	return phy_init_hw(phydev);
-+}
-+
- static int dp83tg720_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
-@@ -195,12 +346,15 @@ static struct phy_driver dp83tg720_driver[] = {
- 	PHY_ID_MATCH_MODEL(DP83TG720S_PHY_ID),
- 	.name		= "TI DP83TG720S",
- 
-+	.flags          = PHY_POLL_CABLE_TEST,
- 	.config_aneg	= dp83tg720_config_aneg,
- 	.read_status	= dp83tg720_read_status,
- 	.get_features	= genphy_c45_pma_read_ext_abilities,
- 	.config_init	= dp83tg720_config_init,
- 	.get_sqi	= dp83tg720_get_sqi,
- 	.get_sqi_max	= dp83tg720_get_sqi_max,
-+	.cable_test_start = dp83tg720_cable_test_start,
-+	.cable_test_get_status = dp83tg720_cable_test_get_status,
- 
- 	.suspend	= genphy_suspend,
- 	.resume		= genphy_resume,
--- 
-2.39.2
+> We will have
+> to decide where we want this retrying to be; do we want to change the
+> return value, end up in the while loop wrapped around _sync(), and retry
+> there by adding another level of loop, or do we want to make use of the
+> existing retry loops, one of which is wrapped around _unmap(); the latter
+> is my approach. The utility I see for the former approach is that, in case
+> of a large number of page migrations (which should usually be the case),
+> we are giving more time for the folio to get retried. The latter does not
+> give much time and discards the folio if it did not succeed under 7 times.
 
+Because it's a race, I guess that most folios will be migrated
+successfully in the first pass.
+
+My concerns of your method are that it deal with just one case
+specially.  While retrying after undoing all appears more general.
+
+If it's really important to retry after undoing all, we can either
+convert two retying loops of migrate_pages_batch() into one loop, or
+remove retry loop in migrate_pages_batch() and retry in its caller
+instead.
+
+--
+Best Regards,
+Huang, Ying
 
