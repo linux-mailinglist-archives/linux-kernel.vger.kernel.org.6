@@ -1,118 +1,186 @@
-Return-Path: <linux-kernel+bounces-283617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D0D94F6D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:40:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1B1A94F6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26C061C2109C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0D6286DB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:42:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1CD718A6DA;
-	Mon, 12 Aug 2024 18:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E8E18C908;
+	Mon, 12 Aug 2024 18:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ld2z0lQ6"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="noSaYr/R"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928FD189526
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E06C5189BA2
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723488028; cv=none; b=qnIVognTLWpdK70Ry5tLlWfGbBVOUuYSuVdGswV1Yi7ArmpDzRwOMOl0s8Gbl/WTr0iWbur9t7hy3+yZM0TCPipcgGf/8AiN21cr0AZv8fxmm3LbrebvkjAUerXNgQlaSTt7hPqg/b6jC2D9S9e6MwfSiErEQlsecOHogPNQ0h8=
+	t=1723488118; cv=none; b=scA9t1r/fLAf65PCCS1KTCaK/ogRPbZuKARRkACOvri3hvLH1JsiBUTlyPxAQSzjdBZdDR//cmxnFv2P2S9fdKH9e4GFRCjwfZHIU39DcJqTEWDdBFrKuS+cTZo7EikMUA/sCsGVYvVsIbuOwPebHBXla9PHFakDj8XYZFJWNus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723488028; c=relaxed/simple;
-	bh=yR2eCKJ/RHBhyH8Cf47wO0mAudZSl9NhHhiDZQiRmtE=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SvD8Pk33TziwAtEEv4IxF6ghpajm/6VbTTzlkmQp6qzg2WdP3KIV+bETsnZ5YpQrEY9msfUc9gnXanJX8U8A97V/PN8kZ89YWSQw3/Ah6et+xEqgvikVnSGjliJFu7JfjgU+0rdz2xXiy4GBdADo4yDhxN5Ii3TNKBI0UWIraZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ld2z0lQ6; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7a1dcba8142so415877885a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:40:26 -0700 (PDT)
+	s=arc-20240116; t=1723488118; c=relaxed/simple;
+	bh=AAhoSUedFQ21Pzt+ZLf5UI+xIte0RYuXGfOPV8lhJkQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=AfY52McciUwgJ+wi99TqwftCF+ZvWHGFoJoR2/CFHVIWzP5FLdI9QKHACMKmGWOqspzam20o5r+6U89IyeaZlRItVjyfR5Ys15UJxm06dfMduxPLWwMG3KY0PJl+JEWbtF3LFccXYIrj0SABz3yTAyA4M4Wy41e3GsylgCAaKFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=noSaYr/R; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-64c3f08ca52so99605437b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723488025; x=1724092825; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ncx0KjsnMUSOlidEu3+KOW8xjiQtkAoEgGIPpLUP9Bg=;
-        b=ld2z0lQ63qds7cIT2dBGqOFuUufyq/2SHFPaFCg5ZRShnLyFJva7YyCWXfnLxzlX8Q
-         bmniBo/uTSQUmf1LnJJXEXOB2XKeOyAz/WlYf9nq1tqAS3NyKugO0DAsFCl5k08y/zUX
-         NnTAnmCzpEeQflSCQTgBPTb/9+0vrlVbFbyYk=
+        d=google.com; s=20230601; t=1723488116; x=1724092916; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nI7HvxsW6/J3qlupAqXzePRp1xg6T40uW8wUoGhn2xg=;
+        b=noSaYr/RV8h//OC8Ml5d4jnyUYR/nfw+dhI8xPmK31/2A2i/3mXf16KeNcgMGkqUCg
+         C45ErjiBkKvQEQjLH1iOKm5bkHu2w8egQe7QfcIaVXFJpL6DdasjtFfc9gsWAvLUFLXd
+         qmB+hhVyfqpsvh+aznlRZbe/qGRYtErOLIYhh2yTGaNk+EHYC+d7W7N1/SmlRfgxpDtX
+         1up9vKqUvrdPMXMMuZQMO0+y8oKdM/28odd3lTz4lm3nQdVQxPzW6zb19B168eRbFf4t
+         s+JGIigQdZP94kPOrPMEDxTJRL0jL3fl+G6Ux1YgHUhJmW0N1sq46PmaPvFMGmKNsg+b
+         zwMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723488025; x=1724092825;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ncx0KjsnMUSOlidEu3+KOW8xjiQtkAoEgGIPpLUP9Bg=;
-        b=Yi65LRuXb0xKcU4s62q+KkHYWRYWggGiM9FGYw+LZHHmRbFTqmzEtbGsHq0MYfBMHr
-         3nxh4Pzidm0pXxw7GQqHc6ScST7a+51UBrVYyloI9IYHlU1ZoSdNqKs73Cr3qHSEbdJp
-         hGW1e4l0RdnVUM0cdA3W+hJST1NcUGNi0pxFiZ6TWmyYHJDBwntY5lCtmQhC+Bp/h0mR
-         oDifiv71DRMipe4HB4NF80aSYhbm7jeYmp+7U1B7sblGxO/zU7NWbIT1uS6GrjtNfE63
-         jMeKvIDhbhgx9rRQeoL3oNbY6MYxiUGIqdU62EE9aeJq6xw9jc1seoLQQFKC6Wx+dI5s
-         r5Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8vdALyG/BUkRlmA6YnIy9NNr5CEFLxf7hz6Nh/f9z2SUWRiw/qYv6VFF9YA/Xcvo5RBpLZf2F1C6S6OpRLrE+3H7r1wyTSkXyoRjA
-X-Gm-Message-State: AOJu0Yy3fCKtm3x2Opz9GpwrER0BKQV8BktuJwGHqcnk3x+2tKk/QO8w
-	XvVed7j2ymha7TMkdB1eVBwr2D0c6/YPP8r4GGh50w3L3jj+AwXEaZ7KZ7+GGPVHsmatyPwzx1P
-	G0EGGnJwEfFYmiHh4MgWqev2w2bUS61bASsLb
-X-Google-Smtp-Source: AGHT+IHU7T7mETTa8o0eIAERX5Q/cpE4El91Q1zKhqhAZWti96HazCD976i3q3JmtZLa+HkARhuwHJyq8saSXRwQcCA=
-X-Received: by 2002:a05:620a:40d2:b0:79c:1178:dc9d with SMTP id
- af79cd13be357-7a4e38410c4mr94180385a.24.1723488025574; Mon, 12 Aug 2024
- 11:40:25 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 12 Aug 2024 11:40:25 -0700
+        d=1e100.net; s=20230601; t=1723488116; x=1724092916;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nI7HvxsW6/J3qlupAqXzePRp1xg6T40uW8wUoGhn2xg=;
+        b=Jp4auQXek9B7jKZJENaf/eDyi+wGxhE9Ow97Pt6+cF6iRzg91+8Sk2dt02GPvL7Qbd
+         W9tIbl2SGczq9VGbcl9YZSbVduHHilifKxkC5qjXyQRJqEAKD2AeOYRfW2GHlXtONsDd
+         5VBnjDIyYUPtSP/WDuvHy5WDpomvpilwoP57sBsb5ypmJU1UPiFTc1g5J8HUrqT4JyNt
+         YEu1lVjOnvH8MaQu9LeflVKUUQtjSeeOMjiwWNXFEFc2JRRP5Hko1z4L8JBMPfVNd5l1
+         9847BiZpNn2LjdBeHEsFleQxQS9oVk2LwV1bAotNevsAjB+vKojBqNPZs8iD0k8SJhsP
+         KF6A==
+X-Gm-Message-State: AOJu0YzBa2v3HUfHGWazn7y0XVCLqjKqm+0Dc09yDx9dJZfKTmmQF9CG
+	aAO7sSHTTuZYYHTdRYiMg5RqHBXU92YmZAA9ciiNzvvKuv3hfDAiVveMxQBBC8aR1JrXxXl31L3
+	p0vGtRRobz3rBsH+rQuohO0q3pTS9l/On3oqLG6Vl6U/yOg2GJgvgBPDerU4OA5TMhFg+rmLgAI
+	RRXFWpe0qewGzmvqhki3o3n5k3O8Pzr9zxOoLdXbHGa99yuBqeSynAF2kA
+X-Google-Smtp-Source: AGHT+IHyX7O3OMhj0SimuYiJ6Gy10rgLPqYfuUi/gIFhYUEZSR1qaftT6St/zesxOuoSti285RBcVCrSUaKbXJo=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a05:690c:d8c:b0:667:8a45:d0f9 with SMTP
+ id 00721157ae682-6a96c03e52dmr114577b3.0.1723488115781; Mon, 12 Aug 2024
+ 11:41:55 -0700 (PDT)
+Date: Mon, 12 Aug 2024 18:41:42 +0000
+In-Reply-To: <935e8c82-3c91-4c9a-8e43-e6045b28279d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20240808235227.2701479-1-quic_abhinavk@quicinc.com>
-References: <20240808235227.2701479-1-quic_abhinavk@quicinc.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Mon, 12 Aug 2024 11:40:25 -0700
-Message-ID: <CAE-0n53qMJVbfb9oXbDexqhOj6qTBq9k5kMj1e6CXadObhBmLg@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: fix the highest_bank_bit for sc7180
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, 
-	dianders@chromium.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Mime-Version: 1.0
+References: <935e8c82-3c91-4c9a-8e43-e6045b28279d@redhat.com>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240812184150.1079924-1-mmaslanka@google.com>
+Subject: [PATCH v6 1/2] clocksource: acpi_pm: Add external callback for suspend/resume
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+	David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Quoting Abhinav Kumar (2024-08-08 16:52:27)
-> sc7180 programs the ubwc settings as 0x1e as that would mean a
-> highest bank bit of 14 which matches what the GPU sets as well.
->
-> However, the highest_bank_bit field of the msm_mdss_data which is
-> being used to program the SSPP's fetch configuration is programmed
-> to a highest bank bit of 16 as 0x3 translates to 16 and not 14.
->
-> Fix the highest bank bit field used for the SSPP to match the mdss
-> and gpu settings.
->
-> Fixes: 6f410b246209 ("drm/msm/mdss: populate missing data")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/msm_mdss.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/msm/msm_mdss.c b/drivers/gpu/drm/msm/msm_mdss.c
-> index d90b9471ba6f..faa88fd6eb4d 100644
-> --- a/drivers/gpu/drm/msm/msm_mdss.c
-> +++ b/drivers/gpu/drm/msm/msm_mdss.c
-> @@ -577,7 +577,7 @@ static const struct msm_mdss_data sc7180_data = {
->         .ubwc_enc_version = UBWC_2_0,
->         .ubwc_dec_version = UBWC_2_0,
->         .ubwc_static = 0x1e,
-> -       .highest_bank_bit = 0x3,
-> +       .highest_bank_bit = 0x1,
+Provides the capability to register an external callback for the ACPI PM
+timer, which is called during the suspend and resume processes.
 
-Usually when I see hex it's because there's a mask. This isn't a mask
-though? Can it just be '1'?
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
+
+---
+Changes in v6:
+- Add the acpi_pmtmr_unregister_suspend_resume_callback function to remove callback
+- Add EXPORT_SYMBOL_GPL to the added functions
+- Link to v5: https://lore.kernel.org/lkml/20240812043741.3434744-1-mmaslanka@google.com/
+---
+---
+ drivers/clocksource/acpi_pm.c | 32 ++++++++++++++++++++++++++++++++
+ include/linux/acpi_pmtmr.h    | 13 +++++++++++++
+ 2 files changed, 45 insertions(+)
+
+diff --git a/drivers/clocksource/acpi_pm.c b/drivers/clocksource/acpi_pm.c
+index 82338773602ca..b4330a01a566b 100644
+--- a/drivers/clocksource/acpi_pm.c
++++ b/drivers/clocksource/acpi_pm.c
+@@ -25,6 +25,10 @@
+ #include <asm/io.h>
+ #include <asm/time.h>
+ 
++static void *suspend_resume_cb_data;
++
++static void (*suspend_resume_callback)(void *data, bool suspend);
++
+ /*
+  * The I/O port the PMTMR resides at.
+  * The location is detected during setup_arch(),
+@@ -58,6 +62,32 @@ u32 acpi_pm_read_verified(void)
+ 	return v2;
+ }
+ 
++void acpi_pmtmr_register_suspend_resume_callback(void (*cb)(void *data, bool suspend), void *data)
++{
++	suspend_resume_callback = cb;
++	suspend_resume_cb_data = data;
++}
++EXPORT_SYMBOL_GPL(acpi_pmtmr_register_suspend_resume_callback);
++
++void acpi_pmtmr_unregister_suspend_resume_callback(void)
++{
++	suspend_resume_callback = NULL;
++	suspend_resume_cb_data = NULL;
++}
++EXPORT_SYMBOL_GPL(acpi_pmtmr_unregister_suspend_resume_callback);
++
++static void acpi_pm_suspend(struct clocksource *cs)
++{
++	if (suspend_resume_callback)
++		suspend_resume_callback(suspend_resume_cb_data, true);
++}
++
++static void acpi_pm_resume(struct clocksource *cs)
++{
++	if (suspend_resume_callback)
++		suspend_resume_callback(suspend_resume_cb_data, false);
++}
++
+ static u64 acpi_pm_read(struct clocksource *cs)
+ {
+ 	return (u64)read_pmtmr();
+@@ -69,6 +99,8 @@ static struct clocksource clocksource_acpi_pm = {
+ 	.read		= acpi_pm_read,
+ 	.mask		= (u64)ACPI_PM_MASK,
+ 	.flags		= CLOCK_SOURCE_IS_CONTINUOUS,
++	.suspend	= acpi_pm_suspend,
++	.resume		= acpi_pm_resume,
+ };
+ 
+ 
+diff --git a/include/linux/acpi_pmtmr.h b/include/linux/acpi_pmtmr.h
+index 50d88bf1498d7..0ded9220d379c 100644
+--- a/include/linux/acpi_pmtmr.h
++++ b/include/linux/acpi_pmtmr.h
+@@ -26,6 +26,19 @@ static inline u32 acpi_pm_read_early(void)
+ 	return acpi_pm_read_verified() & ACPI_PM_MASK;
+ }
+ 
++/**
++ * Register callback for suspend and resume event
++ *
++ * @cb Callback triggered on suspend and resume
++ * @data Data passed with the callback
++ */
++void acpi_pmtmr_register_suspend_resume_callback(void (*cb)(void *data, bool suspend), void *data);
++
++/**
++ * Remove registered callback for suspend and resume event
++ */
++void acpi_pmtmr_unregister_suspend_resume_callback(void);
++
+ #else
+ 
+ static inline u32 acpi_pm_read_early(void)
+-- 
+2.46.0.76.ge559c4bf1a-goog
+
 
