@@ -1,107 +1,74 @@
-Return-Path: <linux-kernel+bounces-283814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 276FE94F8F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:24:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FD494F8F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:25:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF2901F22F3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDFB8283288
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C538194A65;
-	Mon, 12 Aug 2024 21:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F46194A6B;
+	Mon, 12 Aug 2024 21:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="CCVn/uzP"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FuRxgifO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77DF194143;
-	Mon, 12 Aug 2024 21:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BD818E022;
+	Mon, 12 Aug 2024 21:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723497867; cv=none; b=tW58XNs14QsSuWjVWTWO2fJ6aKBanIIPd6hg2PRe7OFn7h3IPRrEq5c2vdio/CWw47/KtcL7i21y78iANAjJIq8RG2yr3r8wI95cpEQNLai2QzmUqtPfxJqeia0aexiu8IUS0h8oZ3l28wSXcanjdFAPe8dO42Mvr3CNJpZVB5E=
+	t=1723497949; cv=none; b=lVfOogDh8z+1ntCpOK+LgTqexaxC3NMZ9+S0L9yX8OHzMAgdCceGZfaQrHJBGD0q+TiuYHlwAFd6K/eOitQj+syMQeM3IrIzw4su6GGPZYIvclVPrMzoOLXty6j2N3N+lNxykQjAwidnY7VkveCezA9eXdjFmm0k9mcFNUFdv+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723497867; c=relaxed/simple;
-	bh=iH6jnQrISF1BRHO0r67xhOolK0vIIxly8lxvTKgcTBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aCiTjnlw/tzjW143I/F/6b6cxGqYDwwoniOPhg3xiVnH7s5l+rqc4JxTjuw9JyWH6gBGnhNk1Wa7UBbqjatSM1nT9cAV2LMJsw5JIk70uC25xJ1RjPykhevoNvhbBMhysoJKzyRzCTzwsiYa5t77GSN5tGKxLRvLzXurPnMumtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=CCVn/uzP; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4WjSFj2BNKzlgVnF;
-	Mon, 12 Aug 2024 21:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1723497862; x=1726089863; bh=QM2YMS1R1duA7Z1hyWX9+78D
-	lYoVOMw+VcSUNBHdoF4=; b=CCVn/uzPix3bzN650Hh4jpTKXLs3fDHgWAAYPsWj
-	W8jgpmEHGOjYwClkwyoWJcj3vLXhhkRFYj2C1GinhmeVsnnYwUpEIPAMO7UnTsbK
-	lYec3xJpX32nNUEpjvjElbds5KEH1f9PLNYbZ2xCWlDHye6xVgw73t0T0w4G+xre
-	rUP/EYPeB2u9BRGIj3QUp0hUKMX/8CpN61jp7avymqN2xEoVl1ymc1IYBfgUEIFW
-	wl3woHyh1JcTVrftD2vjryjV3pJ+7/sJD38mfgHqg4h0yGTInoPHHNaFfHa/gug/
-	pa31V0MHkdj4ScGE6LnZrCzrOPlRGH8lcwTsSArSeHI46g==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id QWMS8g5n8hIO; Mon, 12 Aug 2024 21:24:22 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4WjSFf2SHnzlgTGW;
-	Mon, 12 Aug 2024 21:24:22 +0000 (UTC)
-Message-ID: <be2a8462-38fb-4e74-905d-12bc9f678082@acm.org>
-Date: Mon, 12 Aug 2024 14:24:21 -0700
+	s=arc-20240116; t=1723497949; c=relaxed/simple;
+	bh=rexy9WaQivYqfca+PSQ3sVR2zFfBAUQ1jd1nluQT6Ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pjH+5TWb4Qv3XiDJt3odZQoHmCBF28hd8W5TqSmTpj0gWc2bC2dbNLefxOEYOkxs1E7Qi73IrFPHarpOKEJD2v4RJ1dh2gxy3m8cvMoZQlT9HgnmUlnP6yhji+nd0BJBANIMs7T547zjAdeS93jgrwf/b+iBszxUfoxkx2z6/hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FuRxgifO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D64FC32782;
+	Mon, 12 Aug 2024 21:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723497949;
+	bh=rexy9WaQivYqfca+PSQ3sVR2zFfBAUQ1jd1nluQT6Ow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FuRxgifOjQRM3G5TvBXagL1MdqFA64iuHzAS7Jvw0l9N7koqMdfDJrUWjaCY7aJe7
+	 af0ejeHaKn/8Hk7+01ZOvJ0Czx5oj87RHHRvR9iJUx/+YqoQSM9qCvl307MKCVNjY+
+	 8RAz4HLe3CS66ezfEhlYkEFLf6GTdPtIBtBjdVw56eP8OXuC3gAGrkyDKPwSP5fvMD
+	 ZqP72kT6hsoe+oFU4SBcs+sluehzIOaANe0xXRkAjpshmA4yPUdtHPb5fOfSlrkOZc
+	 2tZLHuo3HQIg/YmlVK4yU2mmG35PMyXWok/kQgREMHVX4hTx74DAqJydAyz2P0Rajd
+	 Ewde6fJ0xmF/w==
+Date: Mon, 12 Aug 2024 14:25:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>, mptcp@lists.linux.dev, Mat
+ Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Davide Caratti <dcaratti@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2] mptcp: correct
+ MPTCP_SUBFLOW_ATTR_SSN_OFFSET reserved size
+Message-ID: <20240812142547.7c048af7@kernel.org>
+In-Reply-To: <df52ac23-5eee-4d17-9e74-237cf49fe4d7@kernel.org>
+References: <20240812065024.GA19719@asgard.redhat.com>
+	<df52ac23-5eee-4d17-9e74-237cf49fe4d7@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi: sd: retry command SYNC CACHE if format in
- progress
-To: Yihang Li <liyihang9@huawei.com>, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linuxarm@huawei.com, prime.zeng@huawei.com
-References: <20240810015912.856223-1-liyihang9@huawei.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240810015912.856223-1-liyihang9@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 8/9/24 6:59 PM, Yihang Li wrote:
-> If formatting a suspended disk (such as formatting with different DIF
-> type), the disk will be resuming first, and then the format command will
-> submit to the disk through SG_IO ioctl.
+On Mon, 12 Aug 2024 09:43:29 +0200 Matthieu Baerts wrote:
+> @Network maintainers: is it OK for you to apply this v2 in "net", not
+> "net-next"? Or is it easier for you to have a v3 with a different prefix?
 > 
-> When the disk is processing the format command, the system does not submit
-> other commands to the disk. Therefore, the system attempts to suspend the
-> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
-> command will fail because the disk is in the formatting process, which
-> will cause the runtime_status of the disk to error and it is difficult
-> for user to recover it. Error info like:
-> 
-> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
-> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
-> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
-> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
-> 
-> To solve the issue, retry the command until format command is finished.
-> 
-> Signed-off-by: Yihang Li <liyihang9@huawei.com>
+> (No conflicts to apply this patch on -net, the code didn't change for 4
+> years.)
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-
-If you want this patch to land in older kernels a "Cc: stable" tag will
-have to be added.
-
-Bart.
+Looks trivial, should be safe to cross-apply, no need for v3.
 
