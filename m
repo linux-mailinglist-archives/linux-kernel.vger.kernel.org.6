@@ -1,76 +1,180 @@
-Return-Path: <linux-kernel+bounces-282467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC89594E470
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B6194E478
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:22:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E76AB213C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E3CD1F21F63
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D824B5AE;
-	Mon, 12 Aug 2024 01:19:09 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0938D51C5A;
+	Mon, 12 Aug 2024 01:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="UvNEosSz"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654014A24
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9501EA8D;
+	Mon, 12 Aug 2024 01:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723425548; cv=none; b=sGXtFvVDykLgW+aLybHI9pzue5TvfXnJT2qhIN1ByVhNuV7UUtofgmedIO0MvqluWENhI7bit4IYrth2+aFCiVN0aWOhjzLAVIsi+2UkHYiCTzzgA6jhT2lycv/6ItMqfiXsQPQpVhXBr90VQNFaattEFTouLl2q4DqMRp8aMys=
+	t=1723425732; cv=none; b=RG+R1Qgdyds7+gFZAeM06lq8RXgX3zF212bA6Iq3nhCkCFFRqAGIXvsBIijnIZXeypKuAWt6umHbz1HJ6d5rBzlfl2K027liLmfjHT6+QhWJTl16MAfVC9efB9sUohH7LxzTo0kdADC/MrxnrqDkgX9UQM4+uSgqSGDH+2HBS0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723425548; c=relaxed/simple;
-	bh=Zh69rWHLJng2lHajM1irZM1c3ZtqHByp5xijl7PI/po=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=AtW9hl3dNVRTyw8rt+o9IMIVy3FtN1TDG/Mg6KEjChqv3JrMhCSbTS1i8jH0T6FBc0vD5RQX19UNce42tGUKV54kmpSpuje3X5QChQOCiVbuozuv0HrAgje5re/SCp+cXnGicCQ8YvGH8FbpylH3A8wpP/W1S4a4ZRZIU3/j4sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39ad7e6b4deso49448845ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:19:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723425546; x=1724030346;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zh69rWHLJng2lHajM1irZM1c3ZtqHByp5xijl7PI/po=;
-        b=nCVNS2h9+iTeBh7n6aczwGhXR1eER2+Hw3aESZCJ3hGosEoCNrZXjX3gkYUbfYY5dN
-         ApckRUqyXx+Qa2oFnwhIHGLIXkIBCq3rDvCMQmoBid6hjnzhFCXK5VVv3dzvPPc0aGum
-         Yy/ik9TzfeWJE1jpz9sKAudTBPwqEf4DHdddXo+yrfKTDBGQVaJSn2ZQW2objSaFQj+O
-         PVLpBtLgjglYoqYHEHs70UpwFPjhrF1QQh6k1a31wvRfWqhTbK56rliF6rrB0n2r5bX2
-         JqsizpZpdzaqNoIP6ey0jMYfHcn6XoHXKC2Q49jn8/6++YmhfTj9ETd4SQ+bPFME/nYe
-         5BNA==
-X-Gm-Message-State: AOJu0YycF5K3I7zqjPST4bvv2Wi+Nif5Tt46Iii/SkS6r1jNOwnAWsJS
-	SMOUQ1moGtay1VVmhsMedDg3ch/0tGibdJUTj9CrzZVoLknEGMTuHCOLqSTFKGg748eHdfu/v0K
-	Ylo8C7Y92OtrMZKnLJbKaf/l8uSWvlNmPA//fQ2j3hOqKTzeWJniF4kY=
-X-Google-Smtp-Source: AGHT+IEwUvG35loDqgshs4ndYvwkfoX7MJanOB8tiEX0ifYY1wynPXOx8iEZJorkXCtAuoDnz6WLgzpebykMdyFQdM3lmap6POKu
+	s=arc-20240116; t=1723425732; c=relaxed/simple;
+	bh=qzYqKKwqyk5y44/gCG1R9OePQRAqQfShNPTLuQoA4kU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=U6S2DGcZklio5+e2m+BwRcuWcK9b1Tg6bZuepRThqrysrD/urv+cqlgoTWx563TQm7CC5Y6nCr2VC99FvM2fJihO/fCcw5rAspJW+Fy7M4tr30nu2APzm1tebbcMYf1fFaDwgjPRrfPPL4Di0xOnGhjETb3tU/syNky+GaL+42I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=UvNEosSz; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:214e:b0:39a:ea89:22e8 with SMTP id
- e9e14a558f8ab-39b813286cdmr8275315ab.2.1723425546482; Sun, 11 Aug 2024
- 18:19:06 -0700 (PDT)
-Date: Sun, 11 Aug 2024 18:19:06 -0700
-In-Reply-To: <0000000000005f5a6d061f43aabe@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000007ec4af061f724751@google.com>
-Subject: Re: [syzbot] BUG: stack guard page was hit in vsock_bpf_recvmsg
-From: syzbot <syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1723425725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A5fSNqHi9NEqILrnhCWCR3tGDVIu+LDzvUUnKDBNWDM=;
+	b=UvNEosSziXo3OIwb8LAWlDOA7gMZRS0gU8LGeBcoAttZl8r13bUVa0J0DAz810IsP4hqEK
+	ihDRwja9yYXx4BqV2Ol0YvRngaUi+hKQB4bEbHrDCxi3c+mBPStcfxHSTYB658B1OJIKEb
+	tqYlNfa0ZrU7b+g97LC1AXT8UjobuoFh1K/wb4OmZ/hhcfCBZGWF6eX9rSpe6H7D0qOCDy
+	YiMlyOGClyet/g00T4Gv/eUub8YLeYVuo3KicN+GEKgux7eYUTjwPO7eD6STdcLnpODw8C
+	v+o1nX5JGpcGzfQrvnBSTyXWB9mQP5uVRCPZcBlU4AacFq9k8m+cJtnHwIBr2A==
+Date: Mon, 12 Aug 2024 03:22:05 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Amit Kucheria
+ <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, Icenowy Zheng
+ <uwu@icenowy.me>, Mark Brown <broonie@kernel.org>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, =?UTF-8?Q?N=C3=ADcolas_F=2E_R=2E_A=2E_Pra?=
+ =?UTF-8?Q?do?= <nfraprado@collabora.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, linux-mediatek@lists.infradead.org, Hsin-Te Yuan
+ <yuanhsinte@chromium.org>
+Subject: Re: [PATCH v2] thermal/of: support thermal zones w/o trips subnode
+In-Reply-To: <20240809070822.2835371-1-wenst@chromium.org>
+References: <20240809070822.2835371-1-wenst@chromium.org>
+Message-ID: <b00273d65dfc4b48cca474784184c62b@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello Chen-Yu,
 
-***
+Thanks for the patch.  Please see one comment below.
 
-Subject: BUG: stack guard page was hit in vsock_bpf_recvmsg
-Author: xiyou.wangcong@gmail.com
+On 2024-08-09 09:08, Chen-Yu Tsai wrote:
+> From: Icenowy Zheng <uwu@icenowy.me>
+> 
+> Although the current device tree binding of thermal zones require the
+> trips subnode, the binding in kernel v5.15 does not require it, and 
+> many
+> device trees shipped with the kernel, for example,
+> allwinner/sun50i-a64.dtsi and mediatek/mt8183-kukui.dtsi in ARM64, 
+> still
+> comply to the old binding and contain no trips subnode.
+> 
+> Allow the code to successfully register thermal zones w/o trips subnode
+> for DT binding compatibility now.
+> 
+> Furtherly, the inconsistency between DTs and bindings should be 
+> resolved
+> by either adding empty trips subnode or dropping the trips subnode
+> requirement.
+> 
+> Fixes: d0c75fa2c17f ("thermal/of: Initialize trip points separately")
+> Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+> Reviewed-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> ---
+> Resurrecting this patch specifically for MediaTek MT8183 Kukui devices.
+> 
+> Changes since v1:
+> - set *ntrips at beginning of thermal_of_trips_init()
+> - Keep goto out_of_node_put in of_get_child_count(trips) == 0 branch
+> - Check return value of thermal_of_trips_init(), if it is -ENXIO, print
+>   warning and clear |trips| pointer
+> - Drop |mask| change, as the variable was removed
+> 
+> I kept Mark's reviewed-by since the changes are more stylish than
+> functional.
+> ---
+>  drivers/thermal/thermal_of.c | 19 ++++++++++++-------
+>  1 file changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/thermal/thermal_of.c 
+> b/drivers/thermal/thermal_of.c
+> index aa34b6e82e26..f237e74c92fc 100644
+> --- a/drivers/thermal/thermal_of.c
+> +++ b/drivers/thermal/thermal_of.c
+> @@ -128,16 +128,17 @@ static struct thermal_trip
+> *thermal_of_trips_init(struct device_node *np, int *n
+>  	struct device_node *trips, *trip;
+>  	int ret, count;
+> 
+> +	*ntrips = 0;
+>  	trips = of_get_child_by_name(np, "trips");
+>  	if (!trips) {
+> -		pr_err("Failed to find 'trips' node\n");
+> -		return ERR_PTR(-EINVAL);
+> +		pr_debug("Failed to find 'trips' node\n");
+> +		return ERR_PTR(-ENXIO);
+>  	}
+> 
+>  	count = of_get_child_count(trips);
+>  	if (!count) {
+> -		pr_err("No trip point defined\n");
+> -		ret = -EINVAL;
+> +		pr_debug("No trip point defined\n");
+> +		ret = -ENXIO;
+>  		goto out_of_node_put;
+>  	}
+> 
+> @@ -162,7 +163,6 @@ static struct thermal_trip
+> *thermal_of_trips_init(struct device_node *np, int *n
+> 
+>  out_kfree:
+>  	kfree(tt);
+> -	*ntrips = 0;
+>  out_of_node_put:
+>  	of_node_put(trips);
 
-#syz test
+It might be a bit cleaner to keep the "*ntrips = 0" assignment
+in the error handling path(s) only, with the positions of the goto
+labels adjusted a bit, and then assign -ENXIO to "ret" and jump
+to the right label when of_get_child_by_name(np, "trips") fails,
+instead of returning from there.
+
+If it's unclear what I'm talking about, please let me know and
+I'll send back the proposed hunk.
+
+> @@ -490,8 +490,13 @@ static struct thermal_zone_device
+> *thermal_of_zone_register(struct device_node *
+> 
+>  	trips = thermal_of_trips_init(np, &ntrips);
+>  	if (IS_ERR(trips)) {
+> -		pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+> -		return ERR_CAST(trips);
+> +		if (PTR_ERR(trips) != -ENXIO) {
+> +			pr_err("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+> +			return ERR_CAST(trips);
+> +		}
+> +
+> +		pr_warn("Failed to find trip points for %pOFn id=%d\n", sensor, id);
+> +		trips = NULL;
+>  	}
+> 
+>  	ret = thermal_of_monitor_init(np, &delay, &pdelay);
 
