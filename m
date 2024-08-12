@@ -1,207 +1,307 @@
-Return-Path: <linux-kernel+bounces-283579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66AB994F68F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:21:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4D1794F67F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDB721F25385
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:21:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D0D1286183
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744BC18EFC8;
-	Mon, 12 Aug 2024 18:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFBD18C33F;
+	Mon, 12 Aug 2024 18:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M80I8SF8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="O9eY7RYJ"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2049.outbound.protection.outlook.com [40.107.95.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0CE18787B;
-	Mon, 12 Aug 2024 18:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723486841; cv=none; b=RWxwSBmV0Qa+Jt9HWhkN8GxfzID7Kpzd9WtWPb8sK5h0Lh70xPEbIkzTHIoKc/qkPNH/3vAFIMhOVeg5e7Y0iLKvqsaMlk7JH9Pt4AlfukImi/POWo59dAaF2OsZfXMFBGIGA4z5hi1ufvAJDo41ArOYXvj8Xk0W7RrsbtznepY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723486841; c=relaxed/simple;
-	bh=ruBxSpaL1zzjfeZ+3uWG5MP0BpemDpvtz6RSGDEOrPY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E9E16EB7A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723486592; cv=fail; b=LDNeofjYTGIm1+1VkujFKDK8YlyiifSemKzb7Ztx2QpdJDGGH9PPXOgp9ZFfdZbkyi1y/wERSyVobKlgdQeF+nnk/32koY6sRjfabSv0q0El2H770GtOCr9qs17gmrNfNQLGoNZWCs2IQx7J7C410VuERnbWvvNfxkRlpKwfijU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723486592; c=relaxed/simple;
+	bh=1t6CC1ypcdnRfJvxrd91EHG9UHSqjc2wg2cynN2vdxQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CdbfyC4UOLnHPdXGJ2JSdlJ91I7QE/LcAckQ5TjqT8ATluK42CDVfUaPqM5bT7hOLvkx+d9IF20/juSF3Ud+OwbV9vlgS8ImacFk56kJXPvWhvTeC/53Whb17rrr3Zkb3FDRHutEPAp4xZ/IglqJsdISzddvKQR4L8/I4BA5dNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M80I8SF8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSbqR017504;
-	Mon, 12 Aug 2024 18:16:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9Nfz751ACTLyecrv87bbUTwqsi6Lp/AjbSXzAYjq7/o=; b=M80I8SF8/nOImR79
-	IPyyEQcbiyhDOvMSishoFSeblQ/6NRZJVMuhir8x4oOKuTSAn2MIxE1z+mFepJRj
-	NiIFSBivBSIvAmFagHS1zl/BXjDacbVC03NlSwBm/J1bOc0x24pnQ9habYAvyf4q
-	ND8MXOAPIdYTXLYHTBOgM1YqSBtAOmMsXMj0xb7j3vKG35EqYbbrsbMq5Ggslzky
-	NEzJ7tydbstkAzqgVWMvviQbCrbze5leUCr16xm8y9H/RFycaoCdnRVYIGMEkihg
-	RmQ5Cek9IeztYxNTRw7CmBk60zZeVeQWIR6MbP+/AZ1adVNw2FU6SxsPZDKolRa/
-	Mc2M6w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1d4d1t1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 18:16:20 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CIGJ8n005714
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 18:16:19 GMT
-Received: from [10.216.3.204] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 12 Aug
- 2024 11:16:12 -0700
-Message-ID: <28c8bc92-4a55-8a07-1ece-333316d78410@quicinc.com>
-Date: Mon, 12 Aug 2024 23:46:08 +0530
+	 In-Reply-To:Content-Type; b=lSEdwqVSIZTYPFi7g+og+NkG877WtKB0whp9klzhmwL2aB0wb4DpWzztxrq/Mfg682wwTOgH85w3PAoiaoDvxZKbQqlYJc87hf8gQFbg7k76aSurT3CaPLxzzaefD2UYxf/1MvGKdKlmYKPvp/LrF5pjV6OGzJ4mq0IILJ9t1RA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=O9eY7RYJ; arc=fail smtp.client-ip=40.107.95.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pXfHWYGByZ8mjBG2ecMR7i+B+xS8U04Wh1chMB26SKxyE2g/MvKvZx1Ocb7ZLX0RM/AMhmptge9+XbSLLObP8v39S2qBnHsoqndoOKfwIjaT+qzcENuM7rRJI7Kv0iCjWYxCqNpit16T2yQxQUbITrigtx4LmoObSr6RIg5yXhuFZWd7hglslN8r3HnelVy+PVvI8MuFL/b2dTWOm+/UvenhUiYteh+S/QNRA/7YWbSxNZKbZn+AdzvVw93DkRH8HrMUWim2g0GLwfWyt2Pk88bfmctrZfA5MBs+stm8qO4UqcKqEt7zmkFXm3Wm7TUwisqDZ8wYj75Ke1YJQ57DXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lI0kpLumx+Yf652RDfMSMXUz/HytFWUr301cQxU2aQg=;
+ b=TFKoEQpnyHdHbYMsjhZX6/QWe/f2IATxhuDXgM/jJxtDYVyk2Gip34T+c1FJWZksDndtv0hsaVzi9+xxrra5Rp+eCEUIOHCNcQ7VXrnkS19C2XpSDuLVbLVYq/FRPN+tQJXx/FEQS/RvmjSwx9rpvKb/+RxetfyIAzB2T0OvWN7mGAZKHN3ZyjoCCrJxp6vrgpAjmxCd30I12UgSyTa8I8qL31l03w9Tgih5KfugsP93XLzDwm2VK1JcJyMr07SxHbi+D/V0J60O90WC+E71+b0RX0F26uYMup6azaBbinGkQQA9f8jK8gVAMZ0MHxEQjIvl62d0uQ10g+Jwnk9TcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lI0kpLumx+Yf652RDfMSMXUz/HytFWUr301cQxU2aQg=;
+ b=O9eY7RYJBpEMeYasxNa3UmmIxY6txbM0cQMFRKTbUFeWY7D1dFG/HdIggvCOYFaRYWZtRwWmENRpwI/N7ez3/BDodYk3lRtZf+VMzxMHnMvp6weGUfMuC6bitR1yzpQPc3tRTGqi/w1U9pwJ4niK6GVqCMaE75oBdjRkO7+FVzw=
+Received: from BN9PR03CA0092.namprd03.prod.outlook.com (2603:10b6:408:fd::7)
+ by MN0PR12MB6078.namprd12.prod.outlook.com (2603:10b6:208:3ca::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 18:16:26 +0000
+Received: from BN2PEPF000044A3.namprd02.prod.outlook.com
+ (2603:10b6:408:fd:cafe::54) by BN9PR03CA0092.outlook.office365.com
+ (2603:10b6:408:fd::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33 via Frontend
+ Transport; Mon, 12 Aug 2024 18:16:26 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF000044A3.mail.protection.outlook.com (10.167.243.154) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Mon, 12 Aug 2024 18:16:26 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 Aug
+ 2024 13:16:21 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 Aug
+ 2024 13:16:21 -0500
+Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Mon, 12 Aug 2024 13:16:20 -0500
+Message-ID: <d7f757e9-ed6e-7be6-89db-3ec9ddbb8050@amd.com>
+Date: Mon, 12 Aug 2024 11:16:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v5 3/4] firmware: psci: Read and use vendor reset types
-To: Elliot Berman <quic_eberman@quicinc.com>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Andy Yan
-	<andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "Bartosz
- Golaszewski" <bartosz.golaszewski@linaro.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_spratap@qucinc.com>
-References: <20240617-arm-psci-system_reset2-vendor-reboots-v5-0-086950f650c8@quicinc.com>
- <20240617-arm-psci-system_reset2-vendor-reboots-v5-3-086950f650c8@quicinc.com>
- <ZrOMjomTTWZ91Uzf@lpieralisi>
- <20240807103245593-0700.eberman@hu-eberman-lv.qualcomm.com>
- <ZrYZ/i1QFhfmv0zi@lpieralisi>
- <20240809090339647-0700.eberman@hu-eberman-lv.qualcomm.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2 00/10] AMD XDNA driver
 Content-Language: en-US
-From: Shivendra Pratap <quic_spratap@quicinc.com>
-In-Reply-To: <20240809090339647-0700.eberman@hu-eberman-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
+To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
+	<sonal.santan@amd.com>, <king.tam@amd.com>
+References: <20240805173959.3181199-1-lizhi.hou@amd.com>
+ <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <292c06d0-b96a-b5b5-5d82-e74b82bbb6de@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ollusWuQeFA-k-mEjm9dK-3rv8W2pqPr
-X-Proofpoint-GUID: ollusWuQeFA-k-mEjm9dK-3rv8W2pqPr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408120135
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A3:EE_|MN0PR12MB6078:EE_
+X-MS-Office365-Filtering-Correlation-Id: fffebeb0-e0a6-4612-808a-08dcbafae162
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?azkvbnZueDZxTlJjTnZWODdWUnhnUmNjUFhnN1ZwZm55d3ZvVGtQU2o4QW9a?=
+ =?utf-8?B?SWdKZHZrdTVqaXhQV2RCOHJOM1RndEFLcU9UUTNOMERKYW5iSjcxUHZtZlVM?=
+ =?utf-8?B?S25LeUpHTVowSGpVcVBqRVZ4eGVPMWlFS1B6MzlBSWswY1lsVERSSlJCNEFE?=
+ =?utf-8?B?cHVtS0tSMGR2SHJveU9JY0FtbHVRbjlBZmk4eWFTSU5zTE5JeTJieCtVVU5B?=
+ =?utf-8?B?ZEF5ZnJFT2RmZ3gzT3pveU5hN2lDWk1WWldiQ09rTkhLSW5ONmdLRExFL3g0?=
+ =?utf-8?B?ZnloMUNoa0tqSVF4M1Nkcm8zSCs1OGU0aDJpWXRHakI4NDBLb2U2emR4R1pn?=
+ =?utf-8?B?ZC9xcCtjdU42Q2c2bmtrRWpFcGJBaE5sR1pPY2tvSWV0aGlSYkIyNXVrOGZX?=
+ =?utf-8?B?dGV5YmNMRE1XUmJJVXFhV2JYdlc2anZ2M3ZsVWM0OGZETlRGc1BBS215Rlp0?=
+ =?utf-8?B?WTZQb0VWaTZwRm51M0RESjNhbWNLc0tIclJQNTJrTTVUQy83S3ltL1lsOGUy?=
+ =?utf-8?B?Ull2UTFQNVpkaFY5RUI1TnoxREFyZGM2OXlTRGN3YzQzUjA5YVlEbDFHcHph?=
+ =?utf-8?B?ZERsbWxxUDdvNHpOcHZIWkV4VWJ2RzNFSDZ6VWVvSXl1aWVrOXFlMVk3dnRL?=
+ =?utf-8?B?QUV2NldISzVsZlowV2RkK3BvamNoMWxERmYzTk1DZW5PMTNnWDVjeEVpUGJ4?=
+ =?utf-8?B?TUNHRzhqUUc4d2x2bEtyTmQ3M3luSmllaHJ5S3N1d054Q04za1hCQkdSWi9v?=
+ =?utf-8?B?ZkRzVVgyaHdWeXpvOUE5QXJ1TVRseW1YbmxGZklvdEU5TU91N01TS244c2s1?=
+ =?utf-8?B?aDdGMEJTTmhmN1FCNXNtcm16SnBEQm5DbEFVVGNjNHpZa004a3YrNi9NRlFT?=
+ =?utf-8?B?SGNVU25CdnZTblBBdjZPZjAvaENsNkdhZkRVQ2pKYkhLZHdtSmxqL0NQbTFD?=
+ =?utf-8?B?UFdXSDJBU3JBRXlzeWZabWM1TCtQYi9Wbm5ZSXJuTUI3T2N4NHpqcDlwUG9r?=
+ =?utf-8?B?TFVKVklUKzh3ZHkzUmR6V29EQ3hXTFIxVUVzQ1dibUQreXk0SldWYjFPemZV?=
+ =?utf-8?B?WmNiMnp0QzZyR3NJbG9hb2xsMThZYmtYTGlkZnMvU1JWVHIxeXhYQjJFM1RR?=
+ =?utf-8?B?MzNWNGprS2QvT3NianVKR3hTVVA3L3o3OExpRTJETUhMemFpSGlHaG5CWHdw?=
+ =?utf-8?B?VDFuQlVtdEIvbm9Da3lxVG5jWjk5ZXU5YklFUEtCeC9uR3RJRmJSVnM5RHN3?=
+ =?utf-8?B?bUFDYUIvTG9EREhmeUNWeFd4bnFLSnEwOHFTVy9KR1luR3J5d0V1T1JnNnky?=
+ =?utf-8?B?NFNHUnV5VUFhYnM0Y01lUjV4UEhYeFVhVjFsczlySUl4ZDV0WlJnNkRSNHpr?=
+ =?utf-8?B?TkxOTWI0clYxMUJXbUxrbDdTelRwSUFZamxaaXJoa0hYOTJEd1VqLzdCY3E5?=
+ =?utf-8?B?WVNUV2JuUjVMcnRMMVlWNVVTdjRMd2lNMXFHblRHM0tFSTBtUllHcFhGZVBK?=
+ =?utf-8?B?QlBaalp6WHhid1hGdzNTMUNIRSs2KzBDTU1NQ29tdVI4QUlOUDAvNmRaOU1q?=
+ =?utf-8?B?VTlrUi96aVFjeWV1eXpVRUoxM0VGeDhvbFl5eHkrSGtjQmJkdTZRVzY1M0dB?=
+ =?utf-8?B?Yi9iNFpMcGN1aHNMalU4Y2YvRmpQZEpyOEZIZmNZbHZOS09hc08wNjJpT2lp?=
+ =?utf-8?B?VGlzTkxtOEhtUnlhT3Bza2dDOGVzbndLUzk2ZGQ2ZVdHdmNQbHhibU94T1R5?=
+ =?utf-8?B?aHhDUjNvNGZCcFRLUlJoM1ppd3BEQ1l4RDZwMVRqOWdhazRDNnV0NlRvQjBp?=
+ =?utf-8?Q?CR3oOx/3yXQqb0bPQKaPCESyCrfwulCfr7J24=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 18:16:26.3968
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fffebeb0-e0a6-4612-808a-08dcbafae162
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A3.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6078
 
 
-
-On 8/9/2024 10:28 PM, Elliot Berman wrote:
-> On Fri, Aug 09, 2024 at 03:30:38PM +0200, Lorenzo Pieralisi wrote:
->> On Wed, Aug 07, 2024 at 11:10:50AM -0700, Elliot Berman wrote:
+On 8/9/24 08:21, Jeffrey Hugo wrote:
+> On 8/5/2024 11:39 AM, Lizhi Hou wrote:
+>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
+>> NPUs.
+>> The driver is based on Linux accel subsystem.
 >>
->> [...]
+>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
+>> into AMD client CPUs. NPU enables efficient execution of Machine 
+>> Learning
+>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+>> architecture [1].
 >>
->>>>> +static void psci_vendor_sys_reset2(unsigned long action, void *data)
->>>>
->>>> 'action' is unused and therefore it is not really needed.
->>>>
->>>>> +{
->>>>> +	const char *cmd = data;
->>>>> +	unsigned long ret;
->>>>> +	size_t i;
->>>>> +
->>>>> +	for (i = 0; i < num_psci_reset_params; i++) {
->>>>> +		if (!strcmp(psci_reset_params[i].mode, cmd)) {
->>>>> +			ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
->>>>> +					     psci_reset_params[i].reset_type,
->>>>> +					     psci_reset_params[i].cookie, 0);
->>>>> +			pr_err("failed to perform reset \"%s\": %ld\n",
->>>>> +				cmd, (long)ret);
->>>>> +		}
->>>>> +	}
->>>>> +}
->>>>> +
->>>>>  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
->>>>>  			  void *data)
->>>>>  {
->>>>> +	if (data && num_psci_reset_params)
->>>>
->>>> So, reboot_mode here is basically ignored; if there is a vendor defined
->>>> reset, we fire it off.
->>>>
->>>> I think Mark mentioned his concerns earlier related to REBOOT_* mode and
->>>> reset type (granted, the context was different):
->>>>
->>>> https://lore.kernel.org/all/20200320120105.GA36658@C02TD0UTHF1T.local/
->>>>
->>>> I would like to understand if this is the right thing to do before
->>>> accepting this patchset.
->>>>
->>>
->>> I don't have any concerns to move this part below checking reboot_mode.
->>> Or, I could add reboot_mode == REBOOT_COLD check.
+>> AMD NPU consists of the following components:
 >>
->> The question is how can we map vendor specific reboot magic to Linux
->> reboot modes sensibly in generic PSCI code - that's by definition
->> vendor specific.
+>>    - Tiled array of AMD AI Engine processors.
+>>    - Micro Controller which runs the NPU Firmware responsible for
+>>      command processing, AIE array configuration, and execution 
+>> management.
+>>    - PCI EP for host control of the NPU device.
+>>    - Interconnect for connecting the NPU components together.
+>>    - SRAM for use by the NPU Firmware.
+>>    - Address translation hardware for protected host memory access by 
+>> the
+>>      NPU.
 >>
-> 
-> I don't think it's a reasonable thing to do. "reboot bootloader" or
-> "reboot edl" don't make sense to the Linux reboot modes.
-> 
-> I believe the Linux reboot modes enum is oriented to perspective of
-> Linux itself and the vendor resets are oriented towards behavior of the
-> SoC.
-> 
-> Thanks,
-> Elliot
-> 
+>> NPU supports multiple concurrent fully isolated contexts. Concurrent
+>> contexts may be bound to AI Engine array spatially and or temporarily.
+>>
+>> The driver is licensed under GPL-2.0 except for UAPI header which is
+>> licensed GPL-2.0 WITH Linux-syscall-note.
+>>
+>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
+>> IREE [3].
+>
+> Is there a special branch with the code?  I don't see any of the uAPI 
+> in either project when searching for the ioctl codes or ioctl structures.
 
-Agree.
+Please see git repo: https://github.com/amd/xdna-driver
 
-from perspective of linux reboot modes, kernel's current implementation in reset path is like:
-__
-#1 If reboot_mode is WARM/SOFT and PSCI_SYSRESET2 is supported 
-    Call PSCI - SYSTEM_RESET2 - ARCH RESET
-#2 ELSE
-    Call PSCI - SYSTEM_RESET COLD RESET
-___
+This contains the out tree driver and shim code which interact with 
+driver. E.g.
 
-ARM SPECS for PSCI SYSTEM_RESET2
-This function extends SYSTEM_RESET. It provides:
-• ARCH RESET: set Bit[31] to 0               = > This is already in place in condition #1.
-• vendor-specific resets: set Bit[31] to 1.  = > current patchset adds this part before kernel's reboot_mode reset at #0.
+https://github.com/amd/xdna-driver/blob/main/src/shim/bo.cpp#L18
+
+>
+>>
+>> The firmware for the NPU is distributed as a closed source binary, 
+>> and has
+>> already been pushed to the DRM firmware repository [4].
+>>
+>> [1] https://www.amd.com/en/technologies/xdna.html
+>> [2] https://github.com/Xilinx/XRT
+>> [3] https://github.com/nod-ai/iree-amd-aie
+>> [4] 
+>> https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
+>>
+>> Changes since v1:
+>> - Remove some inline defines
+>> - Minor changes based code review comments
+>>
+>> Lizhi Hou (10):
+>>    accel/amdxdna: Add a new driver for AMD AI Engine
+>>    accel/amdxdna: Support hardware mailbox
+>>    accel/amdxdna: Add hardware resource solver
+>>    accel/amdxdna: Add hardware context
+>>    accel/amdxdna: Add GEM buffer object management
+>>    accel/amdxdna: Add command execution
+>>    accel/amdxdna: Add suspend and resume
+>>    accel/amdxdna: Add error handling
+>>    accel/amdxdna: Add query functions
+>>    accel/amdxdna: Add firmware debug buffer support
+>>
+>>   MAINTAINERS                                   |   9 +
+>>   drivers/accel/Kconfig                         |   1 +
+>>   drivers/accel/Makefile                        |   1 +
+>>   drivers/accel/amdxdna/Kconfig                 |  15 +
+>>   drivers/accel/amdxdna/Makefile                |  22 +
+>>   drivers/accel/amdxdna/TODO                    |   4 +
+>>   drivers/accel/amdxdna/aie2_ctx.c              | 949 ++++++++++++++++++
+>>   drivers/accel/amdxdna/aie2_error.c            | 349 +++++++
+>>   drivers/accel/amdxdna/aie2_message.c          | 775 ++++++++++++++
+>>   drivers/accel/amdxdna/aie2_msg_priv.h         | 372 +++++++
+>>   drivers/accel/amdxdna/aie2_pci.c              | 756 ++++++++++++++
+>>   drivers/accel/amdxdna/aie2_pci.h              | 264 +++++
+>>   drivers/accel/amdxdna/aie2_psp.c              | 137 +++
+>>   drivers/accel/amdxdna/aie2_smu.c              | 112 +++
+>>   drivers/accel/amdxdna/aie2_solver.c           | 329 ++++++
+>>   drivers/accel/amdxdna/aie2_solver.h           | 156 +++
+>>   drivers/accel/amdxdna/amdxdna_ctx.c           | 597 +++++++++++
+>>   drivers/accel/amdxdna/amdxdna_ctx.h           | 165 +++
+>>   drivers/accel/amdxdna/amdxdna_drm.c           | 172 ++++
+>>   drivers/accel/amdxdna/amdxdna_drm.h           | 114 +++
+>>   drivers/accel/amdxdna/amdxdna_gem.c           | 700 +++++++++++++
+>>   drivers/accel/amdxdna/amdxdna_gem.h           |  73 ++
+>>   drivers/accel/amdxdna/amdxdna_mailbox.c       | 582 +++++++++++
+>>   drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+>>   .../accel/amdxdna/amdxdna_mailbox_helper.c    |  50 +
+>>   .../accel/amdxdna/amdxdna_mailbox_helper.h    |  43 +
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.c       | 234 +++++
+>>   drivers/accel/amdxdna/amdxdna_pci_drv.h       |  31 +
+>>   drivers/accel/amdxdna/amdxdna_sysfs.c         |  58 ++
+>>   drivers/accel/amdxdna/npu1_regs.c             |  94 ++
+>>   drivers/accel/amdxdna/npu2_regs.c             | 111 ++
+>>   drivers/accel/amdxdna/npu4_regs.c             | 111 ++
+>>   drivers/accel/amdxdna/npu5_regs.c             | 111 ++
+>>   include/trace/events/amdxdna.h                | 101 ++
+>>   include/uapi/drm/amdxdna_accel.h              | 456 +++++++++
+>>   35 files changed, 8178 insertions(+)
+>>   create mode 100644 drivers/accel/amdxdna/Kconfig
+>>   create mode 100644 drivers/accel/amdxdna/Makefile
+>>   create mode 100644 drivers/accel/amdxdna/TODO
+>>   create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_error.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_message.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+>>   create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+>>   create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_drm.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+>>   create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+>>   create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+>>   create mode 100644 include/trace/events/amdxdna.h
+>>   create mode 100644 include/uapi/drm/amdxdna_accel.h
+>>
+>
+> No Documentation?
+
+Is it ok to add a work item to TODO and add documentation in later patches?
 
 
-In current patchset, we see a condition added at #0-psci_vendor_reset2 being called before kernel’s current reboot_mode condition and it can take any action only if all below conditions are satisfied.
-- PSCI SYSTEM_RESET2 is supported.
-- psci dt node defines an entry "bootloader" as a reboot-modes.
-- User issues reboot with a command say - (reboot bootloader).
-- If vendor reset fails, default reboot mode will execute as is.
+Thanks,
 
-Don't see if we will skip or break the kernel reboot_mode flow with this patch. 
-Also if user issues reboot <cmd> and <cmd> is supported on SOC vendor reset psci node, should cmd take precedence over kernel reboot mode enum? may be yes? 
+Lizhi
 
 
