@@ -1,116 +1,170 @@
-Return-Path: <linux-kernel+bounces-283687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EF8494F7C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246A294F7C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5E98283D24
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:00:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A51A81F23015
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4F0192B6A;
-	Mon, 12 Aug 2024 20:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509E3193091;
+	Mon, 12 Aug 2024 20:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wvl86XgM"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moAwArip"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C023191F85;
-	Mon, 12 Aug 2024 20:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265C561FFC;
+	Mon, 12 Aug 2024 20:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723492804; cv=none; b=Y69EVtlaZCy7Ht0AqBKxq7Q2v31IY/0u/5Nnz0rfZm5Fuy6mBBkkDLU1n+zdl56H5fYiHmUpgVVcmG1JdnAbJQ0jW5+PVhA2Jd0BhOf5htGKVKqsmwLg40hzwq7HwjFQ2sP+csgiDLh/eLHBoNiuQYkrA3nF5eHHBt5Sv5kvsGI=
+	t=1723492814; cv=none; b=cz1wH0a8zAeOTwpKx1xDfAE8m+wXJrArDFqqAkkY0bU5cxUE2t8VX8q0WmLZas3IcnoUDFmp0a7B5KpLuMlENsrQSqtEUrFZlZiHnNMIJJZ2pRJrDEacuGW7ZJfKzqE1MjraOCFlaF5WxIHd3LXSYiSxbuLsmKmkwd9BTsWxBv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723492804; c=relaxed/simple;
-	bh=avFD1LlUcf1dSl/c1/+dZbZxf3+J/nDqkccuNJZUydQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnw3Wzk8o7AORH24RpTCPtbAEpa/9rhZSpXeqKTL0CjLYE1aBKr/kHWEgz1La7rbgkviVQQUasbuMJOax+HXMa3ywmP54p7CDT2hijKgRm6AKpFPJhYg1Ww+oU9csG4qWo5lycXAneHkQwtbEjioj8tDZkog0Tn60TJbf4BduxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wvl86XgM; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1723492814; c=relaxed/simple;
+	bh=KstVNJ3L2qzscAMgj5Jf9zkpCjcBT4Mr9zo3QRiI65g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uznqG1SAkhkvfGgqGncB0XLN3Ju++AzFJZicmpcojHLP64Fr+AmubyWK/CQI0yHUqv8NBocFsnYpu+PrQi4LXF7DAcJar7BETXMD9Tp2/jLmYOl3z9V12bp5E/lxxI/2x66AvZb0eYcCwsSmc0NhV7/PkRy5B63PFEvF+GOvZak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moAwArip; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-36d2a601c31so2440640f8f.0;
-        Mon, 12 Aug 2024 13:00:02 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so3677552a91.3;
+        Mon, 12 Aug 2024 13:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723492801; x=1724097601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4ao0ZXFLg7v2QvZz434llCl1Nat8PYLcu6tU4rBBTmg=;
-        b=Wvl86XgMV+PgcVcQNZXRYkgHeV0IevnAqGERWbqKThwRW2mXSVuilUZtyUbNCzWbYL
-         nVh0J1s4APqpP+9rLh94RoZETHXkFqIBL0aoeVFVC+yqJ25OJ2aO7Y2jHGniyN4OZBW/
-         98D9TyDZ07Ul59aoPzXS/TJSZeQFgXjRHbMFubNMu2rZbD9E8KenQ27iGThoPLJcTjoF
-         oVibkUvllIWhc3qZPPcrDCS/rJo4WCja/vz/0KFJBvzBa4/dhgkkCLyI1tCBjN9zUsA4
-         HPw1RlNK/ZGOS0QOeOMRcTkfQUpF1EGLrnZihqRi5D1hVaDOkfLrLyQuEPurHNXOJgwg
-         OHkw==
+        d=gmail.com; s=20230601; t=1723492812; x=1724097612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a9w/uBXZ5D6MzP4JJL1EO+fWDE4hnfbBDw04URWpP+U=;
+        b=moAwAripv35LUnMKbwwc1lLYBB71QOCotIDhXbLzNEkt+rYfOQ9tPBUFsx8vdQ9MNx
+         hfoRSJI+xTg4ujksp6HmZsV799Qr0qL0J/aklRPPQ12tqZ5yfSTbSQZ/qwdVB2zRx6Y9
+         gdSHcwF56/QMzmDW4T3YHPEgVn4iJU9mFVH9w3gLr4V39TbqsEnNiYsBXiGHlKzlguHI
+         wmhvmpLke1xJjCWa0hz9Xy0HOaJKs4iLK8KIYeED4n4xKWpqhVTdzTtTZel2C/pgGopJ
+         HskVRWrXEy3OO5zuR2mQzlw2wPUACE6/I7cD3yUvLE35N432f0vvcIc1BduqmUZgtIBK
+         CoCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723492801; x=1724097601;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4ao0ZXFLg7v2QvZz434llCl1Nat8PYLcu6tU4rBBTmg=;
-        b=wD6an6GSnjjRaGSPuFuDJXa3SEPmHHy4rX9Jo1orUEBXx9Yr9B7QCJw2WdBZ0PeG/e
-         b7YjUAfAkVzgKWPU1cods3Bblxtsjj2SjzAL5bwNI/wC6cB/ORBP2W8GqBNIm1N/OYB6
-         EmVpQMevfz+lR6BjoJJT1j8lmkeS1QHM86XwgdY8qyIIKODh+ZsRgn0lPg5sj8iLQ2wK
-         NaPryhRsjZD1I96ZTCKlcS5llmAAQDFov5bcYZZrGasJn4+mMIPQC1WDGDavbIYqd2/E
-         F5Meu4KoFrSRxdF1t7cfF5L+QAQOojAoEGOGTHm1wstVIUO7M9TX+5czW2keIMSzzsMH
-         BamQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUudwlr9MywbiQuI8JS84EvyqTi228p6tGvNCDXvSJQZcG2WVZlqEUIUplm8RF/lIZj8XUpSlSCZ/+uII8sZBy4xvrRAChaS7qZkqyk
-X-Gm-Message-State: AOJu0YxAALlPzbQgDhnqkFJVFll2YCCqhkkFaCxqiSAFM4PyW6mklNQc
-	AKzEww8+7OX4oRo58QOpVs/9g3LTacTOv8vwPXpJXBZXLP0IRV1s
-X-Google-Smtp-Source: AGHT+IGbqZEoLfrQgXObtuQyMnLN8NINsVSBStefN5CaF/7HYlYKpwoWP194Dyl4Kc9MBWjXAc87cw==
-X-Received: by 2002:a5d:4ccf:0:b0:360:7812:6abc with SMTP id ffacd0b85a97d-3716cd2c2bamr945006f8f.60.1723492801109;
-        Mon, 12 Aug 2024 13:00:01 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-37.cable.dynamic.surfer.at. [84.115.213.37])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd330fsm8267251f8f.96.2024.08.12.12.59.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 13:00:00 -0700 (PDT)
-Message-ID: <9659c699-1ce4-4b74-b697-83d926d80b35@gmail.com>
-Date: Mon, 12 Aug 2024 21:59:59 +0200
+        d=1e100.net; s=20230601; t=1723492812; x=1724097612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a9w/uBXZ5D6MzP4JJL1EO+fWDE4hnfbBDw04URWpP+U=;
+        b=houn5Kaxww4+RKbRjpvL5CHzIXPA8jxfJgOHKRRLIPjX3XyXnDCZwXsKpoejnI/ovU
+         8CcvXXpegQ6KhlVE/AOc+p0yxj96uUI7MBkSpqkXEJDbtcdjszANf9jTEQHDfukI4Y5j
+         p+p71VbFH6ReAvhvWRN9aIQN+xWlnEa8CQ+uVn7+lZUec26ZTbJ8mPV1kGG54XeMnSjP
+         myG8y18CgkKcTH57G7wliRSC7cxdhEEFzFbmelECOzWmLeDhI5Allpb6PrdIOVJbmA+6
+         Gzg0oyKxzuRu3rH4pc3gwMRhw8eitQ7o8SvyTEg57JJ0CXg9frfNsd7PUMJPw63UDYXT
+         Ze0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXj58BYvYbCRQ3FdhiwjDpXFS67myWFINKgD0QpomME/AUoOkYez2rX60W488uYHoT2+g+zrqTFj/fU1/NiepM9+/waTJpP2BzlsPneQQksg8advf9gzF7NfAizuKJfoYKrCmOskF2orytObw4HayyPA6/eY7+vNhlb6DZ/QrXLrYV9MrN7eHK5WctjMuqXv60sT5oMXRkJXoCdKwavTOB8VTINRnU3xw==
+X-Gm-Message-State: AOJu0YzogxFm6dz4sKasIZJ3U73DnbCYYXGOy9RiysFj5JXKPfexr0ok
+	FLvE5aYsBKlXqkyz9831j2IoU0MDd7exUHHJFjVrwOQ8R6X1uaNaA6tBbgZ4lNljj63cOfSIKDQ
+	+hejxy1HaAwd3twXClVFk7zr7ojw=
+X-Google-Smtp-Source: AGHT+IFQv65X7h0W+swS6SZWsFIogJb9kuzpuwC+BM97J3qO7vfuuD5CfkZJOLfnuW0vYUsROGAtj1ZcEEQzP4muKUw=
+X-Received: by 2002:a17:90b:33d2:b0:2c9:9fdf:f72e with SMTP id
+ 98e67ed59e1d1-2d3926340bemr1552158a91.26.1723492812304; Mon, 12 Aug 2024
+ 13:00:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] hwmon: chipcap2: disable sensor if request ready irq
- fails
-To: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240812-chipcap2-probe-improvements-v1-0-3cdff6d16897@gmail.com>
- <20240812-chipcap2-probe-improvements-v1-2-3cdff6d16897@gmail.com>
- <9b4f88e8-5fc6-4c4a-b89c-7f96675e81ac@roeck-us.net>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <9b4f88e8-5fc6-4c4a-b89c-7f96675e81ac@roeck-us.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <000000000000382d39061f59f2dd@google.com> <20240811121444.GA30068@redhat.com>
+ <20240811123504.GB30068@redhat.com> <CAEf4Bza8Ptd4eLfhqci2OVgGQZYrFC-bn-250ErFPcsKzQoRXA@mail.gmail.com>
+ <20240812100028.GA11656@redhat.com> <CAEf4BzZ6coCZHY_KMnSQQUyc_-xziKurOQ0j3xaCvHhnDaafuQ@mail.gmail.com>
+ <20240812192405.GD11656@redhat.com>
+In-Reply-To: <20240812192405.GD11656@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 12 Aug 2024 13:00:00 -0700
+Message-ID: <CAEf4BzbW9frgUDE+9mbrAyMj0eshPOoqgLs11ynb91spWkdAzw@mail.gmail.com>
+Subject: Re: [syzbot] [perf?] KASAN: slab-use-after-free Read in __uprobe_unregister
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: syzbot <syzbot+f7a1c2c2711e4a780f19@syzkaller.appspotmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, jolsa@kernel.org, acme@kernel.org, 
+	adrian.hunter@intel.com, alexander.shishkin@linux.intel.com, 
+	irogers@google.com, kan.liang@linux.intel.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mark.rutland@arm.com, mhiramat@kernel.org, mingo@redhat.com, 
+	namhyung@kernel.org, peterz@infradead.org, syzkaller-bugs@googlegroups.com, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/08/2024 18:49, Guenter Roeck wrote:
-> On 8/12/24 08:43, Javier Carrasco wrote:
->> This check is carried out after getting the regulator, and the device
->> can be disabled if an error occurs.
->>
-> 
-> I do not see a possible path for a call to cc2_enable() at this point,
-> meaning the regulator won't ever be enabled. Please provide a better
-> explanation why this patch would be necessary.
-> 
-> Guenter
-> 
+On Mon, Aug 12, 2024 at 12:25=E2=80=AFPM Oleg Nesterov <oleg@redhat.com> wr=
+ote:
+>
+> On 08/12, Andrii Nakryiko wrote:
+> >
+> > adding bpf ML, given it's bpf's code base
+>
+> Thanks,
+>
+> > On Mon, Aug 12, 2024 at 3:00=E2=80=AFAM Oleg Nesterov <oleg@redhat.com>=
+ wrote:
+> > >
+> > > > --- a/kernel/trace/bpf_trace.c
+> > > > +++ b/kernel/trace/bpf_trace.c
+> > > > @@ -3491,8 +3491,10 @@ int bpf_uprobe_multi_link_attach(const union
+> > > > bpf_attr *attr, struct bpf_prog *pr
+> > > >         }
+> > > >
+> > > >         err =3D bpf_link_prime(&link->link, &link_primer);
+> > > > -       if (err)
+> > > > +       if (err) {
+> > > > +               bpf_uprobe_unregister(&path, uprobes, cnt);
+> > >
+> > > I disagree. This code already uses the "goto error_xxx" pattern, why
+> >
+> > Well, if you have strong preferences,
+>
+> Well, YES and NO ;) please see below.
+>
+> > so be it (it's too trivial code
+> > to argue about).
+>
+> Agreed. On a closer look both the code and the problem look very trivial.
+>
+> But note that nobody noticed this trivial problem before. Including me wh=
+o
+> had to change this trivial code to adapt to the recent API changes.
 
-Hi Guenter,
+Yep, error handling problems tend to go unnoticed frequently. The good
+thing is that this is quite unlikely in practice for bpf_link_prime()
+to fail, which is why it was a syzbot that found this.
 
-this patch enforces the state where the dedicated regulator is disabled,
-no matter what the history of the regulator was. If a previous
-regulator_disable() failed, it would still be desirable that the
-regulator gets disabled the next time the driver is probed (i.e. a new
-attempt to disable it on failure).
-cc2_disable() checks first if the regulator is enabled to avoid any
-imbalance.
+>
+> May be this means that we should keep the error handling in this function
+> more consistent ;)
+>
+> > We do have quite a lot of "hybrid" error handling
+>
+> And YES, I don't like this kind of error handling.
+>
+> But, at the same time: NO, I never-never argue with the maintainers when =
+it
+> comes to "cosmetic" issues.
+>
+> My main point was (and you seem to agree) that this simpler patch above w=
+on't
+> simplify the routing. I too thought about the change above initially.
+>
 
-Best regards,
-Javier Carrasco
+Agreed. Just stick to your code, it's fine. Thanks!
+
+> -------------------------------------------------------------------------=
+------
+> > Yep, absolutely, given the bpf_uprobe_unregister() change, I don't see
+> > any problem for it to go together with your refactorings.
+> >
+> > For the fix:
+> >
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+>
+> Thanks! I'll write the changelog and send this patch with your ack includ=
+ed
+> tomorrow.
+>
+> Oleg.
+>
 
