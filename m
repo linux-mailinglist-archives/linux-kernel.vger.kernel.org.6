@@ -1,207 +1,271 @@
-Return-Path: <linux-kernel+bounces-283269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C0C94EF5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:19:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0D994EF61
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E775D1C21881
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:19:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C04151F221F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B11A17E8E5;
-	Mon, 12 Aug 2024 14:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C6B17E455;
+	Mon, 12 Aug 2024 14:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SUpbPw4e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UDvcXxfZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y95j8LCk"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A3B17D375
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2CA16B38D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723472349; cv=none; b=N0KRvwtU0xzT1Z/Uqo3pXTu+JyL7iuOUyO2N71+Dsp61KZ7LqiVx7CCy5YULvKYB1bb863gbxIKe3SYUaM0QMN2WXVSu5/iRYaIQgh3oXr+iXIup9Me4PxEjd/F9QeCrG6mmgqwFLDbSXKJpaCw4yNRIUnw3wKqOmhQci3FzybY=
+	t=1723472392; cv=none; b=gAEkZ7dgmt4IhM60ReK1UwAfSUa8XeAmGXzKTf5cHCQZGplubLiv5FWbwc0b1Dj2qbsLL1Tp5H9+HrxKNEtjFUaajnGvfHsFKZfD+TmRXkxzoySYVq4I4rq9kjTg0d0GnjdSn1i5lq0lCeJWsan+B9JubNMenS0WWo0VzPBmtOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723472349; c=relaxed/simple;
-	bh=20M6iFSz3FZJrXZ15/AGYEgPToHoPbcKY/YpnkCUJII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AxngGtJcvHPyAYukpQ95em81WUavt48xurTQyrxtT8HRVbTVPYTeRS3Jvhd4IdtBl76zARgOb2PUoYq2ixgbHRAiqa5/AuK0XyrxOs38RTpMGUvRe/Gbcd+Y5KL4YvomwWiVxkbgIoUye7lWzQ8j3xSNqANh+U90vQUzlOzkzuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SUpbPw4e; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723472346;
+	s=arc-20240116; t=1723472392; c=relaxed/simple;
+	bh=z7mATyb58JS5DN2gYqXThRA/83NR5+cciFk77ErE+R8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LyE3g8PlXRlvk3iePdqadj6cuQedcEgb0qNHWJXpW+6cdlywBJAFm/fRYpX7uQrOAaS9TtG7gjbhxF6U56lNSbE1fnCVrAieNlAU+5/FgMVElSEAZ9dO5FV+96uFjpt2xJgczF5Cw2gSL5xyPSPk9tgPnWhdcz/xDcoJHVuah5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UDvcXxfZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y95j8LCk; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723472388;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DsZ0n/uAaYy4BF0ruktYY8YrFP/mFKdzXlqcXk7zn70=;
-	b=SUpbPw4ecSB4Hx4Osjmdld+KUd4FtGt7ykEBPnxMQ3lZeCjoZY5RGzcO/Ky9GtkWM6Bamj
-	4cQQnanXg6QUjH+hhUX3Kfr7vJhBBQjdbG3KMbbbwtghWzZNzBrdFmobtv0PgsuT6YLtHX
-	bPT3+VIlEAQTAyCzRJ5PRmf9wMjxROU=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-232-wez2VC8zM8yNQvSOo6M-Cw-1; Mon, 12 Aug 2024 10:19:05 -0400
-X-MC-Unique: wez2VC8zM8yNQvSOo6M-Cw-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280f233115so30150575e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:19:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723472344; x=1724077144;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DsZ0n/uAaYy4BF0ruktYY8YrFP/mFKdzXlqcXk7zn70=;
-        b=vGtJZzg+8WtsstesEgr6EW2cWdDIcTH8y+bsD/x1tUO/LItiJz2QeuSgTKSTBGtyFo
-         UUj1bzfy+TSIzjQBZhRmz8f1qIoi0x/bKbL4foNTwJq49gvZyZ2QHCVdmW7hWq3HKcTv
-         Ofhu/5blvJXQkBn22s6YzRaVkFNq6+X/So/eNq8/bspkrWwONZpf3MsVfrsjlWQSfrek
-         lS7Ykec/B2X88UnZUK97ooZuqFBw1sTmHj5t6QOvX7cgND3cmFLWB0RKr/j4bNOukcsx
-         ZH/qEUNVOh5TjAkU3I2gF+obky0IwPc0TpJTmcbV9XkFotpC3UAaiWgC/jy23vzdiaac
-         XPgg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGPB38rfBJHM2YxGSMICHYRvZVhfneN9x7vZbN7AbutBkx9DULdTpwm9SNciph3bC9rKnczV8dHbdGWdk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBDEQw4QWMpRqojWpXZj2Twr3Vhnr9VyjzWdSTjUWM5DXgnlwD
-	tS+9920zWvzJZ85Inqg/LC7PVdGsz8e7v7NNJkb0FY5imCI+aARzrjp+CVsHFymzxBBWNTw4aoM
-	k5ERidoQKZ2AE+hPC7c6s1tth39+ZH0NdUD1hr1GMFxaro5MroZCjGMoyY7TZCQ==
-X-Received: by 2002:a05:600c:5489:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-429d488047fmr4483255e9.24.1723472343950;
-        Mon, 12 Aug 2024 07:19:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFMYqABa//mMcdpuf59X1dzQmjPKUZRUSfrn2rTiz4JEfPCW7tnP/wiYu6/J9T05f0sM7ifPw==
-X-Received: by 2002:a05:600c:5489:b0:427:d8f7:b718 with SMTP id 5b1f17b1804b1-429d488047fmr4483015e9.24.1723472343486;
-        Mon, 12 Aug 2024 07:19:03 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c79f345sm187090885e9.39.2024.08.12.07.19.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 07:19:03 -0700 (PDT)
-Message-ID: <60e55a9d-70bb-45d1-ac97-e4f6f6ffa9a9@redhat.com>
-Date: Mon, 12 Aug 2024 16:19:01 +0200
+	bh=JxMPsYBXBNIUTSEIC6i3732bTRtL25D8Nj326RVTXFA=;
+	b=UDvcXxfZQH1AzGzvhkt7i7t4yasmAaO7r28YRXC6NqBpphdqSQA+wGcoWaOwuJljvNh8LW
+	aYrKdwGP/Xfq+cTmGfeV413fmrwRopaPwyaXVc/g8QVgZB3UJ1Dz8MkVwAk4OyvJd9RC2J
+	OHWueFcjc7Le5bm4sSxpctV0ZBhGwWSWgcFG15W9ULH3J0QS1k8HsU52YooRx0j4w6zqMb
+	DlU8Pemx+Ja6UQKDeAd+dBQ/QLyCLoCec/8OoVUnWeWrjLUl8jilffEwPiMtEuL7RlQ9k/
+	2c1G+3JI6X4Y9SXnsPpEqZYVfHBP0nwVZElWIgiJWPm72AgYa/eTOCH1z98ucA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723472388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JxMPsYBXBNIUTSEIC6i3732bTRtL25D8Nj326RVTXFA=;
+	b=y95j8LCkl7MgXp633xRFrsrnlhjetWpZnCRtDmJtEoxtNqvH7zt9OqWAyTfpf9ZAorLFdQ
+	IgFGkCwi75gbS3CQ==
+To: =?utf-8?B?5pyx5oG65Lm+?= <zhukaiqian@xiaomi.com>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>,
+ =?utf-8?B?5byg5ZiJ5Lyf?= <zhangjiawei8@xiaomi.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?utf-8?B?546L6Z+s?=
+ <lingyue@xiaomi.com>, =?utf-8?B?54aK5Lqu?= <xiongliang@xiaomi.com>,
+ "isaacmanjarres@google.com" <isaacmanjarres@google.com>, Frederic
+ Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, =?utf-8?B?5qKB5Lyf6bmP?=
+ <weipengliang@xiaomi.com>, =?utf-8?B?57+B6YeR6aOe?=
+ <wengjinfei@xiaomi.com>
+Subject: [PATCH] tick/broadcast: Plug clockevents replacement race
+In-Reply-To: <87frrs8lsg.ffs@tglx>
+References: <042520850d394f0bb0004a226db63d0d@xiaomi.com>
+ <87o77m1v9r.ffs@tglx> <b07f9746a58d46919b1600b22f5dff05@xiaomi.com>
+ <835d5847-1aa0-4852-89c7-6a6996b3eb65@linaro.org>
+ <bc1a086b932f454f9379c49221983675@xiaomi.com> <87o775uh0y.ffs@tglx>
+ <87frrs8lsg.ffs@tglx>
+Date: Mon, 12 Aug 2024 16:19:48 +0200
+Message-ID: <87cymdsu0r.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/4] drm/rect: Add drm_rect_overlap()
-To: Jani Nikula <jani.nikula@linux.intel.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- Bjorn Roy Baron <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
- Danilo Krummrich <dakr@redhat.com>
-References: <20240812123147.81356-1-jfalempe@redhat.com>
- <20240812123147.81356-3-jfalempe@redhat.com> <87sev926na.fsf@intel.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <87sev926na.fsf@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+=E6=9C=B1=E6=81=BA=E4=B9=BE reported and decoded the following race conditi=
+on when a broadcast
+device is replaced:
 
+CPUA					CPUB
+ __tick_broadcast_oneshot_control()
+   bc =3D tick_broadcast_device.evtdev;
+					tick_install_broadcast_device(dev)
+        				clockevents_exchange_device(cur, dev)
+					   shutdown(cur);
+					   detach(cur);
+					   cur->handler =3D noop;
+					   tick_broadcast_device.evtdev =3D dev;
 
-On 12/08/2024 15:49, Jani Nikula wrote:
-> On Mon, 12 Aug 2024, Jocelyn Falempe <jfalempe@redhat.com> wrote:
->> Check if two rectangles overlap.
->> It's a bit similar to drm_rect_intersect() but this won't modify
->> the rectangle.
->> Simplifies a bit drm_panic.
-> 
-> Based on the name, I'd expect drm_rect_overlap() to return true for
-> *any* overlap, while this one seems to mean if one rectangle is
-> completely within another, with no adjacent borders.
+  tick_broadcast_set_event(bc, next_event); <- FAIL: arms a detached device.
 
-It's what I intended, but I may have messed up the formula.
-> 
-> I'd expect a drm_rect_overlap() to return true for this:
-> 
->   +-------+
->   |   +---+---+
->   |   |       |
->   +---+       |
->       |       |
->       +-------+
+If the original broadcast device has a restricted interrupt affinity mask
+and the last CPU in that mask goes offline then the BUG() in
+tick_cleanup_dead_cpu() triggers because the clockevent device is not in
+detached state.
 
-if r1 is the top left rectangle, you've got:
+The reason for this is that tick_install_broadcast_device() is not
+serialized vs. tick broadcast operations.
 
-r1->x2 > r2->x1   => true
-r2->x2 > r1->x1   => true
-r1->y2 > r2->y1   => true
-r2->y2 > r1->y1   => true
+The obvious cure is to serialize tick_install_broadcast_device() with
+tick_broadcast_lock against a concurrent tick broadcast operation.
 
-So they count as overlap.
+That requires to split clockevents_exchange_device() into two parts, one
+which does the exchange, shutdown and detach operation and the other which
+drops the module reference count. This is required because the module
+reference cannot be dropped while holding tick_broadcast_lock.
 
-Checking in stackoverflow, they use the same formula:
-https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
+Let clockevents_exchange_device() do both operations as before, but let the
+broadcast device code take the two step approach and do the device
+exchange under tick_broadcast_lock and drop the module reference count
+after releasing it.
 
-> 
-> While this seems to be required instead:
-> 
->   +-------+
->   | +---+ |
->   | |   | |
->   | +---+ |
->   +-------+
-> 
-> 
-> IOW, I find the name misleading.
-> 
-> BR,
-> Jani.
-> 
-> 
->>
->> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
->> ---
->>   drivers/gpu/drm/drm_panic.c |  3 +--
->>   include/drm/drm_rect.h      | 15 +++++++++++++++
->>   2 files changed, 16 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
->> index 0a047152f88b8..59fba23e5fd7a 100644
->> --- a/drivers/gpu/drm/drm_panic.c
->> +++ b/drivers/gpu/drm/drm_panic.c
->> @@ -529,8 +529,7 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
->>   	/* Fill with the background color, and draw text on top */
->>   	drm_panic_fill(sb, &r_screen, bg_color);
->>   
->> -	if ((r_msg.x1 >= logo_width || r_msg.y1 >= logo_height) &&
->> -	    logo_width <= sb->width && logo_height <= sb->height) {
->> +	if (!drm_rect_overlap(&r_logo, &r_msg)) {
->>   		if (logo_mono)
->>   			drm_panic_blit(sb, &r_logo, logo_mono->data, DIV_ROUND_UP(logo_width, 8),
->>   				       fg_color);
->> diff --git a/include/drm/drm_rect.h b/include/drm/drm_rect.h
->> index 73fcb899a01da..7bafde747d560 100644
->> --- a/include/drm/drm_rect.h
->> +++ b/include/drm/drm_rect.h
->> @@ -238,6 +238,21 @@ static inline void drm_rect_fp_to_int(struct drm_rect *dst,
->>   		      drm_rect_height(src) >> 16);
->>   }
->>   
->> +/**
->> + * drm_rect_overlap - Check if two rectangles overlap
->> + * @r1: first rectangle
->> + * @r2: second rectangle
->> + *
->> + * RETURNS:
->> + * %true if the rectangles overlap, %false otherwise.
->> + */
->> +static inline bool drm_rect_overlap(const struct drm_rect *r1,
->> +				    const struct drm_rect *r2)
->> +{
->> +	return (r1->x2 > r2->x1 && r2->x2 > r1->x1 &&
->> +		r1->y2 > r2->y1 && r2->y2 > r1->y1);
->> +}
->> +
->>   bool drm_rect_intersect(struct drm_rect *r, const struct drm_rect *clip);
->>   bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
->>   			  const struct drm_rect *clip);
-> 
+Fixes: f8381cba04ba ("[PATCH] tick-management: broadcast functionality")
+Reported-by: =E6=9C=B1=E6=81=BA=E4=B9=BE <zhukaiqian@xiaomi.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ kernel/time/clockevents.c    |   33 ++++++++++++++++++++-------------
+ kernel/time/tick-broadcast.c |   36 ++++++++++++++++++++++--------------
+ kernel/time/tick-internal.h  |    2 ++
+ 3 files changed, 44 insertions(+), 27 deletions(-)
 
+--- a/kernel/time/clockevents.c
++++ b/kernel/time/clockevents.c
+@@ -557,34 +557,41 @@ void clockevents_handle_noop(struct cloc
+ {
+ }
+=20
+-/**
+- * clockevents_exchange_device - release and request clock devices
+- * @old:	device to release (can be NULL)
+- * @new:	device to request (can be NULL)
+- *
+- * Called from various tick functions with clockevents_lock held and
+- * interrupts disabled.
+- */
+-void clockevents_exchange_device(struct clock_event_device *old,
+-				 struct clock_event_device *new)
++void __clockevents_exchange_device(struct clock_event_device *old,
++				   struct clock_event_device *new)
+ {
+ 	/*
+ 	 * Caller releases a clock event device. We queue it into the
+ 	 * released list and do a notify add later.
+ 	 */
+ 	if (old) {
+-		module_put(old->owner);
+ 		clockevents_switch_state(old, CLOCK_EVT_STATE_DETACHED);
+ 		list_move(&old->list, &clockevents_released);
+ 	}
+=20
+ 	if (new) {
+-		BUG_ON(!clockevent_state_detached(new));
++		WARN_ON(!clockevent_state_detached(new));
+ 		clockevents_shutdown(new);
+ 	}
+ }
+=20
+ /**
++ * clockevents_exchange_device - release and request clock devices
++ * @old:	device to release (can be NULL)
++ * @new:	device to request (can be NULL)
++ *
++ * Called from various tick functions with clockevents_lock held and
++ * interrupts disabled.
++ */
++void clockevents_exchange_device(struct clock_event_device *old,
++				 struct clock_event_device *new)
++{
++	__clockevents_exchange_device(old, new);
++	if (old)
++		module_put(old->owner);
++}
++
++/**
+  * clockevents_suspend - suspend clock devices
+  */
+ void clockevents_suspend(void)
+@@ -650,7 +657,7 @@ void tick_cleanup_dead_cpu(int cpu)
+ 		if (cpumask_test_cpu(cpu, dev->cpumask) &&
+ 		    cpumask_weight(dev->cpumask) =3D=3D 1 &&
+ 		    !tick_is_broadcast_device(dev)) {
+-			BUG_ON(!clockevent_state_detached(dev));
++			WARN_ON(!clockevent_state_detached(dev));
+ 			list_del(&dev->list);
+ 		}
+ 	}
+--- a/kernel/time/tick-broadcast.c
++++ b/kernel/time/tick-broadcast.c
+@@ -162,23 +162,31 @@ static bool tick_set_oneshot_wakeup_devi
+  */
+ void tick_install_broadcast_device(struct clock_event_device *dev, int cpu)
+ {
+-	struct clock_event_device *cur =3D tick_broadcast_device.evtdev;
++	struct clock_event_device *cur;
+=20
+-	if (tick_set_oneshot_wakeup_device(dev, cpu))
+-		return;
++	scoped_guard(raw_spinlock_irqsave, &tick_broadcast_lock) {
+=20
+-	if (!tick_check_broadcast_device(cur, dev))
+-		return;
++		if (tick_set_oneshot_wakeup_device(dev, cpu))
++			return;
+=20
+-	if (!try_module_get(dev->owner))
+-		return;
++		cur =3D tick_broadcast_device.evtdev;
++		if (!tick_check_broadcast_device(cur, dev))
++			return;
+=20
+-	clockevents_exchange_device(cur, dev);
++		if (!try_module_get(dev->owner))
++			return;
++
++		__clockevents_exchange_device(cur, dev);
++		if (cur)
++			cur->event_handler =3D clockevents_handle_noop;
++		WRITE_ONCE(tick_broadcast_device.evtdev, dev);
++		if (!cpumask_empty(tick_broadcast_mask))
++			tick_broadcast_start_periodic(dev);
++	}
++
++	/* Module release must be outside of the lock */
+ 	if (cur)
+-		cur->event_handler =3D clockevents_handle_noop;
+-	tick_broadcast_device.evtdev =3D dev;
+-	if (!cpumask_empty(tick_broadcast_mask))
+-		tick_broadcast_start_periodic(dev);
++		module_put(cur->owner);
+=20
+ 	if (!(dev->features & CLOCK_EVT_FEAT_ONESHOT))
+ 		return;
+@@ -1209,7 +1217,7 @@ int tick_broadcast_oneshot_active(void)
+  */
+ bool tick_broadcast_oneshot_available(void)
+ {
+-	struct clock_event_device *bc =3D tick_broadcast_device.evtdev;
++	struct clock_event_device *bc =3D READ_ONCE(tick_broadcast_device.evtdev);
+=20
+ 	return bc ? bc->features & CLOCK_EVT_FEAT_ONESHOT : false;
+ }
+@@ -1217,7 +1225,7 @@ bool tick_broadcast_oneshot_available(vo
+ #else
+ int __tick_broadcast_oneshot_control(enum tick_broadcast_state state)
+ {
+-	struct clock_event_device *bc =3D tick_broadcast_device.evtdev;
++	struct clock_event_device *bc =3D READ_ONCE(tick_broadcast_device.evtdev);
+=20
+ 	if (!bc || (bc->features & CLOCK_EVT_FEAT_HRTIMER))
+ 		return -EBUSY;
+--- a/kernel/time/tick-internal.h
++++ b/kernel/time/tick-internal.h
+@@ -53,6 +53,8 @@ static inline void clockevent_set_state(
+ }
+=20
+ extern void clockevents_shutdown(struct clock_event_device *dev);
++extern void __clockevents_exchange_device(struct clock_event_device *old,
++					  struct clock_event_device *new);
+ extern void clockevents_exchange_device(struct clock_event_device *old,
+ 					struct clock_event_device *new);
+ extern void clockevents_switch_state(struct clock_event_device *dev,
 
