@@ -1,203 +1,216 @@
-Return-Path: <linux-kernel+bounces-283848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5B7A94F982
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:18:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32A5B94F98D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C321C22345
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:18:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C4B1B21B65
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86A7197552;
-	Mon, 12 Aug 2024 22:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979C4198850;
+	Mon, 12 Aug 2024 22:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EnljWm1A";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="r3sn6ZpU"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ig4Il0MQ"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEDA14A4DF;
-	Mon, 12 Aug 2024 22:18:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723501095; cv=fail; b=pH7q0nuQ1CdSsykthk3kzLNljIqK2Xai0ZZ6KPYMPMsqYvi8K3EP4MOWQQYzF0N82oGSJRVyzDXzOY4WzXW6QEczf0kSqNZ3UT++qwtOKM78eS53WFKsp+U8xEQ97MvmFLu59S6k0AD32FWxj9tbeEYvxu4T46/93FsKiis5AOk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723501095; c=relaxed/simple;
-	bh=A+/STc8zJs0l0nTnnqeFyFlpjQeYUIJJ/JAMuebUiNc=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=OGM9hslqxZhISEqXzzqR5zXTkd0zb2MyW7b3/6ZsBqb3Whfihmk4JCDbU7pHrzWXOfDivd8st4Gf7kG1RHiYb+87udUVctzZvKj2gYijdMmHtK93sqyI4ZOaDIZR5x4GG8Cb6izydwPdqcLKohQREVYHpcCee7sskIgCHel9qig=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EnljWm1A; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=r3sn6ZpU; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CL7JFX030878;
-	Mon, 12 Aug 2024 22:18:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
-	:cc:subject:from:in-reply-to:message-id:references:date
-	:content-type:mime-version; s=corp-2023-11-20; bh=i08b1WJVYz2YdN
-	+uXjlUI/2p7M5kI9JVUU+trU8Sauc=; b=EnljWm1A4Npyk95klu+vNl5G97TLJo
-	KE1L7xuZt1PH6shmaM1V+CgXOvjBN2H5/+I/i12rnaothm02+6MmSrQ4IXmkiC1i
-	I9TCH2pGi+sJCPS5Hpvzith5dLdUHMVGZ80GTQkfQX7KcPH+X/K9pbdFTip4QbVH
-	JMD+CzvwcMrX0suO62SYV2WXWF640YGT2QgNBiC6sevx1zfSWeIdZh02zMOxxqg1
-	X6IfslxMrJuwikSDzmvVDmq9dWBl3ASP9erE+2cQpyQoLH3gv18RJBvQa5LD/HDl
-	nmn2Auc1dY2BuEQruGUcFGz8xgIbIkFmexOWEblGyksYjqXWFNvC1Jvw==
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxmcvmd5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 22:18:06 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CKJoCv003397;
-	Mon, 12 Aug 2024 22:18:05 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn7qjw8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 22:18:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SrRDzl3ZcKqZiZIoJHKhSRBnXy5BUZUapmSKklrUnxqcvUDpH8NbVay0ze1/djmKU0vRR4Trz1iz9uAa6vltS4JLi0/ZO/+Yf1vXjF5Uv3OzQFymul/+4dnEJhxgV3Bi0w02BtmA5Zq81Y3LFRmjMt2FVmXyttWVXGDIqKhIP781tcmNtrdYprxnNFUxBL9fvn1gKmJrpI6mpi59MNfgVb5ja2dW9DjIRxF1Eq0l+51D/rvNevuN2jtg5JLvuEiknGGuGH0sY1x6ML1WiM0mlWyeAE1j5qm74qf/4QUESukLduf+hI3tevEdBmjWHRooZp2HrcI9gWfK3XlGhn1Wlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i08b1WJVYz2YdN+uXjlUI/2p7M5kI9JVUU+trU8Sauc=;
- b=FqJFvHhEaUy1UG+XfUTb+lnKwIBJj5m8EFEY2sGU1y+rUCMlUQnEq07ADK4zkfG7TfKWoCQVZ+WmaCXZrNhi1HdH5UrRv66KgB9JvfGzsgJ/vUXWZZihbmu6dB5hYB2frrnB10Tw5wf7GnzOYAqvT4TM1V0LN8p5LOgTisxzso3AeCLt7yA8MvuyjjVffmCiwYrItN7Gvv8hrC05jYHotkH7ZNEvcUTIhUheIp7KVwLvQD4iH/vtx+GN21JSUGcp8mnGUAZRnTkNCyLldyNDqD2czEEp6yMsfvQhaKp/vE7MseDWX0s6eS0N1WPbOF8O4pcHcxKkDP7KrpUCkw2lzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B97F195808
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723501631; cv=none; b=iQrZVej2+qx5QP9w2Bnv481F0UtcHRJrRlmidiIF+33+etlzZ9UKi+wvTlvDa52zgMAmoxxhZhVytuuW9hlFi60RYzqAoGEzPIxkyy9dkqY3ysGlFG5dxZhTHRkaJiD+oYDZyY0lBhMyUhSLrtLuVdnoSsqXnulQ9bgG234TWlc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723501631; c=relaxed/simple;
+	bh=dy7yOK5MzrqWEl/2qwfUfcl8WE2x7M7W0zWgkIY9jxo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cqztLke/zhJKE7JtAyFsKrEkueVSTvy7qj2+RD+Mgk5xDmyvES+XYkFmSV0GEXUP7x1y/53SMnQPEQkXwdHMQGBzNd3FCe3lD5eWCnjvzsg/0+PD6rZkaz+Wrsf3s6v67Z/eJFlW/YYaLxRO/pFwSPdBWETQ6fH10S3FrqvFYIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ig4Il0MQ; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e0e76380433so4331687276.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:27:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i08b1WJVYz2YdN+uXjlUI/2p7M5kI9JVUU+trU8Sauc=;
- b=r3sn6ZpU/Snq9aqAE+KtyG8Y9sJYnS9D1jQt1NNd+yl0/mSNemyBzKMOBvZ4Azkag2k90AqjOdqzb/X/FJPBi1kM3w+GsXBiQunXxcEybc74tgyMv3qVID9TWsriikHX3HagOOIk2QKylEknRaMReyD0LeynFnHVEcbrulQQsXQ=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by MN2PR10MB4240.namprd10.prod.outlook.com (2603:10b6:208:1d9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.15; Mon, 12 Aug
- 2024 22:18:03 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7875.015; Mon, 12 Aug 2024
- 22:18:02 +0000
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin
- K. Petersen" <martin.petersen@oracle.com>,
-        Bart Van Assche
- <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] scsi: ufs: ufshcd-pltfrm: Use
- of_property_count_u32_elems() to get property length
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20240808170704.1438658-1-robh@kernel.org> (Rob Herring's message
-	of "Thu, 8 Aug 2024 11:07:03 -0600")
-Organization: Oracle Corporation
-Message-ID: <yq1wmklxu5t.fsf@ca-mkp.ca.oracle.com>
-References: <20240808170704.1438658-1-robh@kernel.org>
-Date: Mon, 12 Aug 2024 18:18:00 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR03CA0031.namprd03.prod.outlook.com
- (2603:10b6:a03:33e::6) To PH0PR10MB4759.namprd10.prod.outlook.com
- (2603:10b6:510:3d::12)
+        d=paul-moore.com; s=google; t=1723501629; x=1724106429; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oGTDaCBmHOMVHiR+ZwnCuo7FNJpxQ7Tx+L0Axwmh5TE=;
+        b=Ig4Il0MQd8YTXQ+EsgnKQ0zp79VBLraVEnqa0FH7vuWWtDbYeuk4jt1iAWcgWp0l2B
+         /SRY2oEOBsepRWJMUklOeIp2UQP1DnNkrUPL/tdfCGw5wsUuhmI8TiEJXnrczmcp6h6i
+         hyyYm6KlZysdVeX6yy6BY4XbvJhq4gCo87nZ6P+AxXll8zN7Iq3w/92en/1B8EMEzOPC
+         pb7IYoDFXumQ0HV/abEfmSpeWlcpV/25iZ0t6ltaqX++O1xKh6YLeSOekvVwhuVN9lTn
+         dYzlKXB3qq0UHoNB2xASJS7DQR9J5sTYwoeryyY5GObGTWVRULZi0dtBN2ohcJzciHzo
+         YXnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723501629; x=1724106429;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oGTDaCBmHOMVHiR+ZwnCuo7FNJpxQ7Tx+L0Axwmh5TE=;
+        b=JW8+Dp79D96mLDZ8DCsdBVYefrHHa2LZSwYheariBx90UkumQzDHtaquoHXyJ+QYQ+
+         xDTqv4cQy2yJEY3+ZSMFtp+XLY0woAWEy4hEY17UGr5ETEzli9/WOZQusu3mrVTqR4Hs
+         No3EY8DXLfTsilJZD5YVmVBQRxkD5M4GiN7sdUoaD37dQd7hSECPJuZ0tNHzb+E499+b
+         6UTAdkoXZ9cZmwRobpfG4a4Fq8/J5Zfx5WgIM0rLonXUjo6XRt8mkj/aTi+L+emnK4k9
+         WrilGvivoF1IErLZH28jybq2movwLgzf8ojGDg19iH5oE0Nme8twnTnv4xENyuQ7zp+A
+         rcQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNdHY4BEAHF8U9kF1ZQVjn+/XGT0qq8+qVvzQlwDXiEVYPWdqO9OZLtKbJRruElgHWGlfGb85JiwlpgF6Cj96mLWlYq+71LF74Xkav
+X-Gm-Message-State: AOJu0YzrU1fvvDINQGYch5UnfDeGsmbGTo2SE1OxSnILpTMPEvtwbMMf
+	zgaEd0q7n3CDE64ckYEBRnd/cYXsdBlz+odh3tZ2UiMup3rx+afjkEUV+/iCNRQl8BMUZqJo3Kl
+	jV7JpyTnfwRaSRfu0X+ACTiGXY+q+qikpUPI/
+X-Google-Smtp-Source: AGHT+IFKS+2caDqbod6lgEZY+lXsHCMzFjTHVsd+WMqpxPo/oYF8GwR074R9hauT/EOenbd7MmFhLQe842tyQml1hds=
+X-Received: by 2002:a05:6902:1883:b0:e0b:26d4:6d1c with SMTP id
+ 3f1490d57ef6-e113cec05f5mr2548017276.26.1723501629050; Mon, 12 Aug 2024
+ 15:27:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|MN2PR10MB4240:EE_
-X-MS-Office365-Filtering-Correlation-Id: 18ccb2b2-3383-4f94-06b8-08dcbb1ca176
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5rjP4weX3J/XzEh7+tbvVQMsTo0smcjwfxsEtq0RGe0qDzQeKkeZeSvmqRG+?=
- =?us-ascii?Q?sQLFNYP/TgeVI9yASVFLe2MyWAp5GMOqgzPNBoaDKBphZl9BgbOGTmgVc66r?=
- =?us-ascii?Q?OIKX/c3TaxiOUPLsZUsCe0uvZPGm8/n+Zc4aj8IHBY7DblvKJQQ1f40F96Lu?=
- =?us-ascii?Q?W77aqv7UcNGWK56rCeVu0oWTfNvwWfhnv5eD4kxeeDprD3PkMUvCd66scXJw?=
- =?us-ascii?Q?MO8/Hid6swv9wWEfWyDnwNcRmdQFEqTorMfRv4CWTThJ+ISxdk/CiAroK5+y?=
- =?us-ascii?Q?rdmHTYn/50ObRh2sJSpg5TfnfDQ1vn865gqQcTlRJ7IR6y/EnjELa06e/l0C?=
- =?us-ascii?Q?Cvh40vaA68lbn4g7X0OMY0GWdDAvIDXAMbderIgykWzRtp9vCwI8mqZPEBq+?=
- =?us-ascii?Q?1Y2CBx2UuEvbzMWcM+7NKwtnFhsoumaQP45vGYhANaKBgvWKuiqHURABHXPS?=
- =?us-ascii?Q?3z1TPh6Fp8EeHhpLiW6Vb6Irc5nntvAEYTv0fN3Y5pOjUxBB8j5yqaCbkNbl?=
- =?us-ascii?Q?wnck6EUz6W1DB5/PfRGGamf2k3Z7HNlRD9m7wbYlduZRc7mrmXqhdGoGMPP9?=
- =?us-ascii?Q?vmyn4m5xgunI/LvgtTMFNJQZZFgbvy5YnlCGJkIX1K6HqN1+EAOeHYXvggXB?=
- =?us-ascii?Q?blctNI+kmPTtUNhggbo0/v777ALS8TCgbyneePwvAfj2ioB2n6sx2AF7eENk?=
- =?us-ascii?Q?9etQfdHuDBhSF6eeiO7kuezH/xUGfu5naGOliZIXWh7BvToKwAuvB82b4fUY?=
- =?us-ascii?Q?Hs9MuALnAgVbZ4O53kTSzmHHqJyie/AN+OWNXG+uLOzTXoZky7If7maiWUFq?=
- =?us-ascii?Q?q0t5QcjGMrzW5ZjpzHSESKvwr/jbw667OPa+E3UN6Q9pB8nct32YseJ+/1hJ?=
- =?us-ascii?Q?+6rR9D7ioEWP8WPscCNgiP1zFNC4qs9b9lf/IYrViOF2ui76IWDoY2XCIYbQ?=
- =?us-ascii?Q?emBTfpGDRILXOGYb27C2Nx4I6GK6mJ+ZUBOtlIYhGVBqblY6T81FoJ10MAvd?=
- =?us-ascii?Q?D3n+A1RtvZ2eTr608O3DLsd8RLqxHiSyo5e7s/st/Zk7WGZr7ZQozncGlnlr?=
- =?us-ascii?Q?x7sBHGc/RfT+mScQlh43Kn0tOwk9nPJpHiZvHJCKQSYiTY1CDegVfDBC0O1j?=
- =?us-ascii?Q?6DmirzylJxGJ+1gX6YIHX48AC6DzNbAqmTJMXfY9Dwt8bZuQxdSLiteLCzTN?=
- =?us-ascii?Q?fW/FIB1l46zx5XlXlkviy0mccrJrlYKQVKAsBmDlH7m555VGFdSuV8d1UvqR?=
- =?us-ascii?Q?TAm2u+oz5rSKCaK2O6D+vBitrWwKCLEjkowGJMAcIYbFflteK6UOg3GtLRW3?=
- =?us-ascii?Q?wBfo/VWobma+BhhJljDLriOypW/ct6W4pdh1jgPt08GfNg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RAplY0FmCn6EYNU5Ns8Gcbct4bGzVLqDbVqiJr1tPa8Y1JXgXVYJbeyZWNoI?=
- =?us-ascii?Q?VSyA/ezMsbGfh0FBTMvgNfyj3mNbGiigwRg4vHEQkZTDVlO4OTUp2PhgbK0D?=
- =?us-ascii?Q?8Ho2LZ/qiPdiKvKte6xGKF4JptRJ0k2Mmv7J516fZDTB104yzDyeZhkN0Vkj?=
- =?us-ascii?Q?2A4t3QiaHYf06UE5nKglkDGBKzzmGJRM1Nubt5zOmTF7/zk9AZxFtFMgq+Ra?=
- =?us-ascii?Q?LyX9XDRJfP6QzvOqxy/vNQ2BlDSnxO6ka87aSE4PP63PDHAt4UgITOopLHxx?=
- =?us-ascii?Q?b/LkJD2eqFmE394foOmJsXDxHjy9pN5nc5ddtdCJlhFyqOVXcxhOki1QbPvQ?=
- =?us-ascii?Q?fI43lbyWYsRAlpWHfi5TEORToQxI4S0Zc+PmyK0WJWFbElRg3buqbPm54k6C?=
- =?us-ascii?Q?KcFoN/J0RGEKTXsUU31vpqL705iP0tSBnhlPvUQSfOTn7eTYJfzbX3Wv2jlL?=
- =?us-ascii?Q?f+3F92GJlNYDUXfleGuXTKOefqTML2nuSyj1kP/aiWhtnFO0L38KdB0dLND0?=
- =?us-ascii?Q?1QUXmFL+aCsKrdUqvZkoaiSXOptELywB7piTcI1TsvhMx9w4wZpf4RHM5syA?=
- =?us-ascii?Q?CJim+4w2O0vQGJ+sS592C0H+nU4gI00MJnZl4tZRD4d1I1lGOGkXWVxuVbjt?=
- =?us-ascii?Q?LNYEaGw2WOw50Ef4kqpxC9jXivjVqNbnld3EwLyeuZin09l3TqfCn7u8MaZv?=
- =?us-ascii?Q?2tG/oEqMj2XmyFXE6ug5x06lKX6li1tI2meX/9gNVzuFyPXIxXEExiabL6YS?=
- =?us-ascii?Q?Xdzw8gJoNGgL7xQ2fIO3pnNm3o0P1ubxqOV+ihzx1zS+DM+gRGsod64AJst2?=
- =?us-ascii?Q?HAEl0n1Hmh5fDldkYaNjcdYXHhmHQYJGC+HsaD5DbzNODAj0bnIBWrC8QVPV?=
- =?us-ascii?Q?Lb6pY+8/4zzT6XSuts4Id8VAWzzsyiJPXpJ3nimGbynuFiFSfPiMGPB8IyGM?=
- =?us-ascii?Q?4Ruk5Ud8peAsveH63/5gjYicOd/n0F/wwUGNNc3jVfeLLTaqDuTGhkVEVYEg?=
- =?us-ascii?Q?IDIvrP9Kdp2P0K75lTlEjz0zXleJRRmU8DvhA07i2LKW4jILauXdw6yokpjL?=
- =?us-ascii?Q?jpXaHu1dBBsNstRT4JeiFwNiMu0tnEgnRP/ddJxk/1InoCzjQ3pETcJz9gUD?=
- =?us-ascii?Q?jUFrtGRqyEZt4RCLkdLMEOgcrGTTGsp0PMUmWUuNZUEdPn04vuIWWfK9R8Sb?=
- =?us-ascii?Q?YdA0J7PIHg2bmWgl1MEAPCzQ9hxFGeecCPX2Tf+L6kQURJUIUGI5eNBLFiIF?=
- =?us-ascii?Q?FbqPLRE4b8K9x+MuNxtWBez6frxywKLHJ8jpP+R+B34EX5z7upyzAoRYhlOf?=
- =?us-ascii?Q?Mkq9sja6Lyrf+u2k0g6YJEfmld72B3FuMr8vi8ci09aJO1T8JPgwhXD/TFdj?=
- =?us-ascii?Q?wtNC4DOd5m2gg35NMHahVd1xWEz3NDgiD10l97vPe85qDBjCUADGQRR1NddS?=
- =?us-ascii?Q?Btguv2z2dcq1BIy8UsJXh6WBJlRekCAkMC6U+MDuFTk2asp8inF6OF1Dq2J6?=
- =?us-ascii?Q?mGF+RUTTqS0bQsre9umT6Ki2DjSt+FUi37fhTUvIfXVKQEbWigt3z1mrFfW2?=
- =?us-ascii?Q?k6d/U+2NdxbFbkAxpQj6FtJrlrvTYPEsKYYFfr9a/QzY2CJEbj36ZYkCBnpS?=
- =?us-ascii?Q?gg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	an7fVSQhCw6jOS7ARtd0G/bqG+UJSpwsN+tQykAzrfhVKDPLkjko9vkrlJUxkt5A+Z4NGqTVmdXVWqsRSzaR2enCyYDFUYA8iwf+3/qeo92QJRcsxHLCtNpupiOOuIXPBWFw8uBGGb56az6639uFwztG+WCixF+a/XNY+EsTCvEBgj4kNpFEUjNeRe+xsrETtbvKtsyg1iu04iFeoCdmv5pH0p2/FI3IvGMQmx5943UxOY98XnpkzdwLTN2WV6rHGTUXx5XN6WpEtT7HSsd88whYzlJ8yx1OcYaxcxgUSgO59gAvi+TlwusW1BxPhwL+UkeamDJm4X5xIHtCi3snD+ffQ2cyiqOTbVG73dRNIxCviN49D4zh6aC9brkGunYBhScHxgbyL7nmTcM40t33nJ/jJ7htfe7gDRL7dLRFhp7SmOV1AIFI5sbY/6bpnZfA+NxM93y+CRMU/ZGVWDPkzQm2y3sOTH9qE7p5cL7SPSYQirItAuzv4suIaWcMyqX4oSwBzHoJeQDHTonNfjW1EItqBxaSR5uovSXUE4F3jrjvglaRHcX6bBz3fdqkKbXfRDoPi89bD0BQSNBffJPZdG8l815tfe72ybqm9DGjv98=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 18ccb2b2-3383-4f94-06b8-08dcbb1ca176
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 22:18:02.3473
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rF/A0PUSBBdG//OFT53gi8nzInIXdoI3DAe6uFwoeBWlsq06NcylBrCyr6DkpS9zRto8x/VuTuTRmhyyVhe1JNAa61ak2ffKPaRGfVHQAVU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR10MB4240
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
- mlxlogscore=844 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408120164
-X-Proofpoint-ORIG-GUID: rf6dR19zVU_dzLL9xfUHRg8nlEV1dr3i
-X-Proofpoint-GUID: rf6dR19zVU_dzLL9xfUHRg8nlEV1dr3i
+References: <20240812174421.1636724-1-mic@digikod.net>
+In-Reply-To: <20240812174421.1636724-1-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Aug 2024 18:26:58 -0400
+Message-ID: <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 12, 2024 at 1:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
+>
+> The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> for the related file descriptor.  Before this change, the
+> file_set_fowner LSM hook was used to store this information.  However,
+> there are three issues with this approach:
+>
+> - Because security_file_set_fowner() only get one argument, all hook
+>   implementations ignore the VFS logic which may not actually change the
+>   process that handles SIGIO (e.g. TUN, TTY, dnotify).
+>
+> - Because security_file_set_fowner() is called before f_modown() without
+>   lock (e.g. f_owner.lock), concurrent F_SETOWN commands could result to
+>   a race condition and inconsistent LSM states (e.g. SELinux's fown_sid)
+>   compared to struct fown_struct's UID/EUID.
+>
+> - Because the current hook implementations does not use explicit atomic
+>   operations, they may create inconsistencies.  It would help to
+>   completely remove this constraint, as well as the requirements of the
+>   RCU read-side critical section for the hook.
+>
+> Fix these issues by replacing f_owner.uid and f_owner.euid with a new
+> f_owner.cred [1].  This also saves memory by removing dedicated LSM
+> blobs, and simplifies code by removing file_set_fowner hook
+> implementations for SELinux and Smack.
+>
+> This changes enables to remove the smack_file_alloc_security
+> implementation, Smack's file blob, and SELinux's
+> file_security_struct->fown_sid field.
+>
+> As for the UID/EUID, f_owner.cred is not always updated.  Move the
+> file_set_fowner hook to align with the VFS semantic.  This hook does not
+> have user anymore [2].
+>
+> Before this change, f_owner's UID/EUID were initialized to zero
+> (i.e. GLOBAL_ROOT_UID), but to simplify code, f_owner's cred is now
+> initialized with the file descriptor creator's credentials (i.e.
+> file->f_cred), which is more consistent and simplifies LSMs logic.  The
+> sigio_perm()'s semantic does not need any change because SIGIO/SIGURG
+> are only sent when a process is explicitly set with __f_setown().
+>
+> Rename f_modown() to __f_setown() to simplify code.
+>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> Link: https://lore.kernel.org/r/20240809-explosionsartig-ablesen-b039dbc6=
+ce82@brauner [1]
+> Link: https://lore.kernel.org/r/CAHC9VhQY+H7n2zCn8ST0Vu672UA=3D_eiUikRDW2=
+sUDSN3c=3DgVQw@mail.gmail.com [2]
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>
+> Changes since v1:
+> https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> - Add back the file_set_fowner hook (but without user) as
+>   requested by Paul, but move it for consistency.
+> ---
+>  fs/fcntl.c                        | 42 +++++++++++++++----------------
+>  fs/file_table.c                   |  3 +++
+>  include/linux/fs.h                |  2 +-
+>  security/security.c               |  5 +++-
+>  security/selinux/hooks.c          | 22 +++-------------
+>  security/selinux/include/objsec.h |  1 -
+>  security/smack/smack.h            |  6 -----
+>  security/smack/smack_lsm.c        | 39 +---------------------------
+>  8 files changed, 33 insertions(+), 87 deletions(-)
+>
+> diff --git a/fs/fcntl.c b/fs/fcntl.c
+> index 300e5d9ad913..4217b66a4e99 100644
+> --- a/fs/fcntl.c
+> +++ b/fs/fcntl.c
+> @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned i=
+nt arg)
+>         return error;
+>  }
+>
+> -static void f_modown(struct file *filp, struct pid *pid, enum pid_type t=
+ype,
+> -                     int force)
+> +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> +               int force)
+>  {
+>         write_lock_irq(&filp->f_owner.lock);
+>         if (force || !filp->f_owner.pid) {
+> @@ -97,20 +97,15 @@ static void f_modown(struct file *filp, struct pid *p=
+id, enum pid_type type,
+>                 filp->f_owner.pid_type =3D type;
+>
+>                 if (pid) {
+> -                       const struct cred *cred =3D current_cred();
+> -                       filp->f_owner.uid =3D cred->uid;
+> -                       filp->f_owner.euid =3D cred->euid;
+> +                       security_file_set_fowner(filp);
+> +                       put_cred(rcu_replace_pointer(
+> +                               filp->f_owner.cred,
+> +                               get_cred_rcu(current_cred()),
+> +                               lockdep_is_held(&filp->f_owner.lock)));
+>                 }
+>         }
+>         write_unlock_irq(&filp->f_owner.lock);
+>  }
 
-Rob,
+Looking at this quickly, why can't we accomplish pretty much the same
+thing by moving the security_file_set_fowner() into f_modown (as
+you've done above) and leveraging the existing file->f_security field
+as Smack and SELinux do today?  I'm seeing a lot of churn to get a
+cred pointer into fown_struct which doesn't seem to offer that much
+additional value.
 
-> Replace of_get_property() with the type specific
-> of_property_count_u32_elems() to get the property length.
+From what I can see this seems really focused on adding a cred
+reference when it isn't clear an additional one is needed.  If a new
+cred reference *is* needed, please provide an explanation as to why;
+reading the commit description this isn't clear.  Of course, if I'm
+mistaken, feel free to correct me, although I'm sure all the people on
+the Internet don't need to be told that ;)
 
-Applied to 6.12/scsi-staging, thanks!
-
--- 
-Martin K. Petersen	Oracle Linux Engineering
+--=20
+paul-moore.com
 
