@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-282495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 913E094E4B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:20:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB0EA94E4B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:21:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3301C211B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96234280EF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BF75588F;
-	Mon, 12 Aug 2024 02:20:01 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774F174040;
+	Mon, 12 Aug 2024 02:21:22 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36D54690
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:19:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4F5F9F5;
+	Mon, 12 Aug 2024 02:21:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723429200; cv=none; b=Kqv0zBWt/Rl/Wr9JN+monAArX/3VDWYQFh+Rq8kaq4pLZY1CYQwPc/Gp5VPlfNtZryWVGzsd3Soks8YK0zlk2JuofzGeiNgBPGbtgjc5O0ySJqlealW2dmkj3f1x/ZZ3CLvh9+YSJJ9rYbEbU7oX9Q3UKB68cPAR6uMWaDTqCSg=
+	t=1723429282; cv=none; b=upLnRpVZuFwGidwafasaSpqC7Kd984fLAn5T6jSxH1rO5KwcPH42IjFn4+OCZckMnXkg+WDpMXPAOTKK2kAD/goVmdyqhBS1JAQAQfKD3iSz+TK0I8fDLUGkkWeHdjniACPnI7YP1h9KO98HxNvebPM1pWlsx3GWKIX5BK7SD/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723429200; c=relaxed/simple;
-	bh=ef0XlytiFM3L4mjh1F0FlAAJ/kSocYpyq7Hu/VIEM14=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ohKjiIZlDDI9EfSPLt/DHvWVDL5w/5k9Pa0EoMLI8IPvu9O7lJ66g+M/tbZEp9bITaTrXGyjDO7IDypIDhkhR0Eb8aiYVHM4rUB78Mr0EUqYQ1P2yZwwDNJg+BNYinGekEd9JxPQ7PWIqummzJbaDq2cEkGbELyzctC1sbAncFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sdKIj-000000005nm-2IQk;
-	Mon, 12 Aug 2024 01:56:49 +0000
-Date: Mon, 12 Aug 2024 02:56:41 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Daniel Golle <daniel@makrotopia.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Chia-Lin Kao <acelan.kao@canonical.com>,
-	Martin Kurbanov <mmkurbanov@salutedevices.com>,
-	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: spinand: set bitflip_threshold to 75% of ECC strength
-Message-ID: <2117e387260b0a96f95b8e1652ff79e0e2d71d53.1723427450.git.daniel@makrotopia.org>
+	s=arc-20240116; t=1723429282; c=relaxed/simple;
+	bh=BdlZO5l8sbl7H0gKrxwN/dhF+Q5IRWfupxidwr/qYxs=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=b6VKf72fxJXe8c8S7CBTI3yfrPS9j8Yx/SI4T//Ot1RXs18t+Ym5AU67WubIyHL4+R9gWAGCoZZnTfN8s96eGYU3LVMPV78NflQ06cHEc5Oz9Bt+ZumUzGF9zwchkcGSRhqnpdD5rOF39+4iMk0nPC9zM5cLeh3Ge7bHeexhZnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 63324200FDD;
+	Mon, 12 Aug 2024 04:21:13 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 295FA200FCA;
+	Mon, 12 Aug 2024 04:21:13 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 377FA183ACAC;
+	Mon, 12 Aug 2024 10:21:11 +0800 (+08)
+From: Richard Zhu <hongxing.zhu@nxp.com>
+To: tj@kernel.org,
+	dlemoal@kernel.org,
+	cassel@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com
+Cc: linux-ide@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	kernel@pengutronix.de
+Subject: [PATCH v6 0/5] Refine i.MX8QM SATA based on generic PHY callbacks
+Date: Mon, 12 Aug 2024 10:00:50 +0800
+Message-Id: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Reporting an unclean read from SPI-NAND only when the maximum number
-of correctable bitflip errors has been hit seems a bit late.
-UBI LEB scrubbing, which depends on the lower MTD device reporting
-correctable bitflips, then only kicks in when it's almost too late.
+V6 main changes:
+- Add Frank's reviewed tag.
+- Drop 32bit DMA limit commit, since the "dma-ranges" of DT can overcome
+  this limitation.
+- Correct the email-lists, incorrect used in v5.
 
-Set bitflip_threshold to 75% of the ECC strength, which is also the
-default for raw NAND.
+V5 main changes:
+Thanks for Niklas' kind help.
+- Drop 32bit DMA limit commit, since the "dma-ranges" of DT can overcome
+  this limitation.
 
-Signed-off-by: Daniel Golle <daniel@makrotopia.org>
----
- drivers/mtd/nand/spi/core.c | 1 +
- 1 file changed, 1 insertion(+)
+V4 main changes:
+Thanks for Niklas' comments.
+- Update the commit message in #2 patch of v4.
+- Split the clean up unrelated codes to #3 and #4 of v4.
+- Remove the Cc: stable@vger.kernel.org and Fixes tag in #5 of v4.
 
-diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-index e0b6715e5dfed..018c854d06193 100644
---- a/drivers/mtd/nand/spi/core.c
-+++ b/drivers/mtd/nand/spi/core.c
-@@ -1287,6 +1287,7 @@ static int spinand_init(struct spinand_device *spinand)
- 	/* Propagate ECC information to mtd_info */
- 	mtd->ecc_strength = nanddev_get_ecc_conf(nand)->strength;
- 	mtd->ecc_step_size = nanddev_get_ecc_conf(nand)->step_size;
-+	mtd->bitflip_threshold = DIV_ROUND_UP(mtd->ecc_strength * 3, 4);
- 
- 	ret = spinand_create_dirmaps(spinand);
- 	if (ret) {
--- 
-2.46.0
+V3 main changes:
+- Use GENMASK() macro to define the _MASK.
+- Refine the macro names.
 
+V2 main changes:
+- Add Rob's reviewed-by in the binding patch.
+- Re-name the error out lables and new RXWM macro more descriptive.
+- In #3 patch, add one fix tag, and CC stable kernel.
+
+Based on i.MX8QM HSIO PHY driver, refine i.MX8QM SATA driver by using PHY
+interface.
+
+[PATCH v6 1/5] dt-bindings: ata: Add i.MX8QM AHCI compatible string
+[PATCH v6 2/5] ata: ahci_imx: Clean up code by using i.MX8Q HSIO PHY
+[PATCH v6 3/5] ata: ahci_imx: AHB clock rate setting is not required
+[PATCH v6 4/5] ata: ahci_imx: Enlarge RX water mark for i.MX8QM SATA
+[PATCH v6 5/5] ata: ahci_imx: Correct the email address
+
+Documentation/devicetree/bindings/ata/imx-sata.yaml |  47 +++++++++++
+drivers/ata/ahci_imx.c                              | 403 +++++++++++++++++++++++------------------------------------------------------------------
+2 files changed, 152 insertions(+), 298 deletions(-)
 
