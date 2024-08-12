@@ -1,62 +1,81 @@
-Return-Path: <linux-kernel+bounces-282483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32A3C94E497
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:00:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FF9794E49A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 638CBB212F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:00:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082552810EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFFB6A33F;
-	Mon, 12 Aug 2024 02:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9057346C;
+	Mon, 12 Aug 2024 02:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="wpIwxb4e"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kZuV2Ji0"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7BA3FD4;
-	Mon, 12 Aug 2024 02:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835C651C5A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723428029; cv=none; b=Bpm4T0Yhha8ARJh+MiTTcanPP1k9ytMfo+6TOasmVOJPI18cwjvs9U+cUU74qj24OuWwpWEOhIop/ofYQOdSEZiwkGzIG2CrllD4/zkad6utbkCYtahby2PJl+s1lm6zZqbLQoyKNzsADj8kNuxuIchBQX1SpO8G2QCclIaYbJo=
+	t=1723428213; cv=none; b=Aroi+ixNeADb0UbRQlK1Q00TDH7fullstChhBRYSc3Gy7+R6pVMplRp0jBFLCzget07EomjR3uKwJYT/7zbsYUECOwxUdXVKY2MDDVK4k5W2UZE3UVn+qUCCfd+OhQ5pZ6IQA40z3GZ0ZhKKYLmPHDwHq7PczdsotNNXk3W6QZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723428029; c=relaxed/simple;
-	bh=LTqswOMYIvuMSo69TxBE4FFx+VdMdKLPpGZu0+5lvU0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ooNXn/Elf9o+j6qdZG750pIwG0G1yJljg5VMWeXF5rTxBqtFAfR7YiMXGdNslHiSBnfnGt6HUZQuVlmHDaU6pLUZkKoy1uN9Bow4+kAmX5wuUYJ2qAbz+XmLHtzc3uhvTidGLy0M/I1IlaY3GyQ8pksK/FZ9bHSQGEJRp7cvo10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=wpIwxb4e; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-From: Dragan Simic <dsimic@manjaro.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1723428025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=RKcmkKHprKaGo3TWBWY608Q1owHtNCcC2SHOqOY293I=;
-	b=wpIwxb4eGG3D+c3GHnXUf2CVr2ZT5w5LkFjXVbn6V+OdSXmxFIYnbfF7h/0LsrPP4zw0lr
-	1ioc2dY0WgyiIUs571TB5lTB0FbbBkluaAwCU+hR3uVzQYRDcbk/xt6Wp1WuGwq5o8fDIC
-	NXZswVRI0U1qFgTCfdGgnsiJ24zqaitL0yMrOLttPSkRLp2DlHkseCGX3WbdNy4GgEwWXW
-	s7YcdmGWaSbZayrdsswAwDQQR8L5TLP7t+gYYlVrpuIsHQ2fNB6GE5tm+Cr7S9RgqRwk9Q
-	D11j34PSBO++joPeH7pImp0P9Zhd6fhzgVZH+SDGwYh29uHZYirse4erlMYR4w==
-To: linux-sunxi@lists.linux.dev
-Cc: wens@csie.org,
-	jernej.skrabec@gmail.com,
-	samuel@sholland.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	uwu@icenowy.me,
-	wenst@chromium.org,
-	broonie@kernel.org
-Subject: [PATCH] arm64: dts: allwinner: Add GPU thermal trips to the SoC dtsi for A64
-Date: Mon, 12 Aug 2024 04:00:20 +0200
-Message-Id: <a17e0df64c5b976b47f19c5a29c02759cd9e5b8c.1723427375.git.dsimic@manjaro.org>
+	s=arc-20240116; t=1723428213; c=relaxed/simple;
+	bh=gzENJ0dQXjSWK0FWn3jiefTLZtVAMIY+wX5WCI8SApI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=mmWI0TMkIj4XjpIu5QXoUO+k6SqXstSaCpH9GPewtATvGpR3F9d0YC+VPPx43gmABBNNk+jWQ5aZ/fZcCBaUw0uYTL2zhqQo3aWGfsIj7awdK+BVQeoERb7WTj3YvfXOj+WOsTAFjvc44W/VnIZOjkyibCCshtk7WimqAb8b4Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kZuV2Ji0; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240812020329epoutp04a40526a12c073dd3c1432c4d06b2746d~q2NNG276Q0762807628epoutp04H
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:03:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240812020329epoutp04a40526a12c073dd3c1432c4d06b2746d~q2NNG276Q0762807628epoutp04H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723428209;
+	bh=lj8I5YKR1TrGVdtwcge9p6tZoG7mhhk0ncplt2OJ2Ls=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=kZuV2Ji0rKw1/O+TvEUEv+AJcHtMHN9KgpmZ+EstCkL/+Wunv4W8zD1KBqhLvWVkU
+	 +A+fje1WCijWfuAVypjG5DpuSbGk/FzUBqDCUa192YhGLIeaymLvPSksoRQ5kaJD9p
+	 G2W/BnIE14ufiEGUDx+otinOxLxS3LwtBPdopYY8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20240812020328epcas5p2597cb14dc89844b7b1a26a14468896c0~q2NMsxlwx0980209802epcas5p2Z;
+	Mon, 12 Aug 2024 02:03:28 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WhyV75Gvnz4x9QC; Mon, 12 Aug
+	2024 02:03:27 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	C0.B6.08855.F6D69B66; Mon, 12 Aug 2024 11:03:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5~q2LoGNsh22355823558epcas5p3I;
+	Mon, 12 Aug 2024 02:01:40 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240812020140epsmtrp2402dbde90fa339be95342955b039daec~q2LoFN70O3237932379epsmtrp2-;
+	Mon, 12 Aug 2024 02:01:40 +0000 (GMT)
+X-AuditID: b6c32a44-15fb870000002297-9c-66b96d6f0bde
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	10.4A.07567.40D69B66; Mon, 12 Aug 2024 11:01:40 +0900 (KST)
+Received: from dev.. (unknown [109.105.118.18]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240812020139epsmtip29bca888632856d039203d0d77bde7989~q2Lm7UxQf0976209762epsmtip2X;
+	Mon, 12 Aug 2024 02:01:39 +0000 (GMT)
+From: Ruyi Zhang <ruyi.zhang@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org, peiwei.li@samsung.com, Ruyi Zhang
+	<ruyi.zhang@samsung.com>
+Subject: [PATCH] io_uring/fdinfo: add timeout_list to fdinfo
+Date: Mon, 12 Aug 2024 02:00:51 +0000
+Message-ID: <20240812020052.8763-1-ruyi.zhang@samsung.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,98 +83,147 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkk+LIzCtJLcpLzFFi42LZdlhTXTc/d2eawcMbShZzVm1jtFh9t5/N
+	4l3rORaLX913GS0u75rDZvFsL6fFl8Pf2S3OTvjA6sDhsXPWXXaPy2dLPfq2rGL0+LxJLoAl
+	KtsmIzUxJbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+gIJYWy
+	xJxSoFBAYnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BSYFecWJucWleul5eaomVoYGBkSlQYUJ2
+	RtOBiywFb8QrZi3tZmpgXCvcxcjJISFgItHSupSli5GLQ0hgN6PErNnf2CCcT4wSTZuOMkI4
+	3xgl/v2eyN7FyAHWsuFoCER8L6NE98VZ7BDOE0aJG39mM4HMZRPQlLg8s4ERxBYREJbY39EK
+	toNZYBKjxMJla1lAEsICNhJTzqxgBbFZBFQlnjQ8A2vmFbCSaOibzQpxoLzE4h3LmSHighIn
+	Zz4B62UGijdvnc0MMlRC4BS7xK8/Z9ggGlwkNi7shGoWlnh1fAs7hC0l8fndXjaIF4olHvbl
+	Q4QbGCW2/a6DsK0l/l3ZwwJSwgz0wPpd+hBhWYmpp9YxQazlk+j9/YQJIs4rsWMejK0i8X7F
+	OyaYTetbd0PZHhJvvjwFu0ZIIFbi6r5NbBMY5Wch+WYWkm9mIWxewMi8ilEytaA4Nz012bTA
+	MC+1HB6xyfm5mxjBaVHLZQfjjfn/9A4xMnEwHmKU4GBWEuFtDt+UJsSbklhZlVqUH19UmpNa
+	fIjRFBjEE5mlRJPzgYk5ryTe0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYO
+	TqkGprCldk9ef8rbfUKVvSb+/PrJ6vyS3pOjvVVneYbKLLnt8Z6xWOqEj+trA9U+u9qMx4m3
+	td8dUfYVEFU6d+WuxZnAWK4i+6vMEyZo8ZuUlFT3/rzl+id9jzT7Mv9d95cxFT9p41r/dMX7
+	SV1OsmZSc/W1Nl9XOx22dunzriCOrMrJC+Rz/8z3PHNAyP294tV0C4tD7lM/fZ4uavF14/eQ
+	GwmPWpcxXzsYI7W/29duc8Sl3a9qE9J/B6k4V6ZVv/13ekc24w4hgSaNT9GecjVLVLiuXWPZ
+	cuvAz6zrCm9/n1hZUnKPs+rz33XLgy4VP9qjsK45dsrKV226eqsnO5lkeLD7pycUT6myaXF9
+	xcbPqMRSnJFoqMVcVJwIACPy8NsUBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNLMWRmVeSWpSXmKPExsWy7bCSvC5L7s40g60XDCzmrNrGaLH6bj+b
+	xbvWcywWv7rvMlpc3jWHzeLZXk6LL4e/s1ucnfCB1YHDY+esu+wel8+WevRtWcXo8XmTXABL
+	FJdNSmpOZllqkb5dAldG04GLLAVvxCtmLe1mamBcK9zFyMEhIWAiseFoCIgpJLCbUeIdcxcj
+	J1BUSuJm0zEmCFtYYuW/5+xdjFxAJY8YJR63XAArYhPQlLg8s4ERxBYBKtrf0coCUsQsMI1R
+	YlPTE7AiYQEbiSlnVrCC2CwCqhJPGp6BTeUVsJJo6JvNCrFBXmLxjuXMEHFBiZMzn7CA2MxA
+	8eats5knMPLNQpKahSS1gJFpFaNkakFxbnpusmGBYV5quV5xYm5xaV66XnJ+7iZGcHhqaexg
+	vDf/n94hRiYOxkOMEhzMSiK8zeGb0oR4UxIrq1KL8uOLSnNSiw8xSnOwKInzGs6YnSIkkJ5Y
+	kpqdmlqQWgSTZeLglGpgilrO87pk5VSV1Rtfnpr1582MjRqK8nm5MvEia6ctCmRuZNwq7bHs
+	/YcNv3gPPWo26H61NvbTzcdrQ59n278VFUlY2flw/s/pRUGqfeqdHVXhv5WmVZ5bz7Lg+Qkx
+	8WhLRoFpjh4/r/BXGDl9Klz5zuX7i9YsFxfGt1Usu7c/4TjqmHnlljbDOxM9vUezV+ewizst
+	/fhIMTRCSe3NJVbG1WGJ3YFnnK8wHL7v9eqx2tXeG5Iv9nktOb52z/0VBm1MHz7WW360O+CR
+	ISMkYfyuY72TUZegg+uPpwduH3m4NrFO+pmOYO6GN16uiQc1JQL+JfV5ZXsFn3RvObLon7/t
+	1pgGbQ7mPV/yJDkORzxapcRSnJFoqMVcVJwIAOAacke+AgAA
+X-CMS-MailID: 20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5
+References: <CGME20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5@epcas5p3.samsung.com>
 
-Add thermal trips for the two GPU thermal sensors found in the Allwinner A64.
-There's only one GPU OPP defined since the commit 1428f0c19f9c ("arm64: dts:
-allwinner: a64: Run GPU at 432 MHz"), so defining only the critical thermal
-trips makes sense for the A64's two GPU thermal zones.
+io_uring fdinfo contains most of the runtime information,
+which is helpful for debugging io_uring applications;
+However, there is currently a lack of timeout-related
+information, and this patch adds timeout_list information.
 
-Having these critical thermal trips defined ensures that no hot spots develop
-inside the SoC die that exceed the maximum junction temperature.  That might
-have been possible before, although quite unlikely, because the CPU and GPU
-portions of the SoC are packed closely inside the SoC, so the overheating GPU
-would inevitably result in the heat soaking into the CPU portion of the SoC,
-causing the CPU thermal sensor to return high readings and trigger the CPU
-critical thermal trips.  However, it's better not to rely on the heat soak
-and have the critical GPU thermal trips properly defined instead.
-
-While there, remove a few spotted comments that are rather redundant, because
-it's pretty much obvious what units are used in those places.
-
-Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+Signed-off-by: Ruyi Zhang <ruyi.zhang@samsung.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 22 ++++++++++++++-----
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ io_uring/fdinfo.c  | 16 ++++++++++++++--
+ io_uring/timeout.c | 12 ------------
+ io_uring/timeout.h | 12 ++++++++++++
+ 3 files changed, 26 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index e868ca5ae753..bc5d3a2e6c98 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -212,7 +212,6 @@ timer {
+diff --git a/io_uring/fdinfo.c b/io_uring/fdinfo.c
+index b1e0e0d85349..33c3efd79f98 100644
+--- a/io_uring/fdinfo.c
++++ b/io_uring/fdinfo.c
+@@ -14,6 +14,7 @@
+ #include "fdinfo.h"
+ #include "cancel.h"
+ #include "rsrc.h"
++#include "timeout.h"
  
- 	thermal-zones {
- 		cpu_thermal: cpu0-thermal {
--			/* milliseconds */
- 			polling-delay-passive = <0>;
- 			polling-delay = <0>;
- 			thermal-sensors = <&ths 0>;
-@@ -236,40 +235,51 @@ map1 {
+ #ifdef CONFIG_PROC_FS
+ static __cold int io_uring_show_cred(struct seq_file *m, unsigned int id,
+@@ -54,6 +55,7 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
+ {
+ 	struct io_ring_ctx *ctx = file->private_data;
+ 	struct io_overflow_cqe *ocqe;
++	struct io_timeout *timeout;
+ 	struct io_rings *r = ctx->rings;
+ 	struct rusage sq_usage;
+ 	unsigned int sq_mask = ctx->sq_entries - 1, cq_mask = ctx->cq_entries - 1;
+@@ -219,9 +221,19 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
  
- 			trips {
- 				cpu_alert0: cpu-alert0 {
--					/* milliCelsius */
- 					temperature = <75000>;
- 					hysteresis = <2000>;
- 					type = "passive";
- 				};
- 
- 				cpu_alert1: cpu-alert1 {
--					/* milliCelsius */
- 					temperature = <90000>;
- 					hysteresis = <2000>;
- 					type = "hot";
- 				};
- 
- 				cpu_crit: cpu-crit {
--					/* milliCelsius */
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
- 		};
- 
- 		gpu0_thermal: gpu0-thermal {
--			/* milliseconds */
- 			polling-delay-passive = <0>;
- 			polling-delay = <0>;
- 			thermal-sensors = <&ths 1>;
+ 		seq_printf(m, "  user_data=%llu, res=%d, flags=%x\n",
+ 			   cqe->user_data, cqe->res, cqe->flags);
+-
+ 	}
+-
+ 	spin_unlock(&ctx->completion_lock);
 +
-+			trips {
-+				gpu0_crit: gpu0-crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
- 		};
- 
- 		gpu1_thermal: gpu1-thermal {
--			/* milliseconds */
- 			polling-delay-passive = <0>;
- 			polling-delay = <0>;
- 			thermal-sensors = <&ths 2>;
++	seq_puts(m, "TimeoutList:\n");
++	spin_lock(&ctx->timeout_lock);
++	list_for_each_entry(timeout, &ctx->timeout_list, list) {
++		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
++		struct io_timeout_data *data = req->async_data;
 +
-+			trips {
-+				gpu1_crit: gpu1-crit {
-+					temperature = <110000>;
-+					hysteresis = <2000>;
-+					type = "critical";
-+				};
-+			};
- 		};
- 	};
++		seq_printf(m, "  off=%d, target_seq=%d, repeats=%x,  ts.tv_sec=%lld, ts.tv_nsec=%ld\n",
++			   timeout->off, timeout->target_seq, timeout->repeats,
++			   data->ts.tv_sec, data->ts.tv_nsec);
++	}
++	spin_unlock(&ctx->timeout_lock);
+ }
+ #endif
+diff --git a/io_uring/timeout.c b/io_uring/timeout.c
+index 9973876d91b0..4449e139e371 100644
+--- a/io_uring/timeout.c
++++ b/io_uring/timeout.c
+@@ -13,18 +13,6 @@
+ #include "cancel.h"
+ #include "timeout.h"
  
+-struct io_timeout {
+-	struct file			*file;
+-	u32				off;
+-	u32				target_seq;
+-	u32				repeats;
+-	struct list_head		list;
+-	/* head of the link, used by linked timeouts only */
+-	struct io_kiocb			*head;
+-	/* for linked completions */
+-	struct io_kiocb			*prev;
+-};
+-
+ struct io_timeout_rem {
+ 	struct file			*file;
+ 	u64				addr;
+diff --git a/io_uring/timeout.h b/io_uring/timeout.h
+index a6939f18313e..befd489a6286 100644
+--- a/io_uring/timeout.h
++++ b/io_uring/timeout.h
+@@ -1,5 +1,17 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++struct io_timeout {
++	struct file			*file;
++	u32				off;
++	u32				target_seq;
++	u32				repeats;
++	struct list_head		list;
++	/* head of the link, used by linked timeouts only */
++	struct io_kiocb			*head;
++	/* for linked completions */
++	struct io_kiocb			*prev;
++};
++
+ struct io_timeout_data {
+ 	struct io_kiocb			*req;
+ 	struct hrtimer			timer;
+-- 
+2.43.0
+
 
