@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-282789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF0A94E8B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:31:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 469AF94E8C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:40:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBAA5B224A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:31:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1ECB1F226E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BC5416B750;
-	Mon, 12 Aug 2024 08:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63FD16BE0D;
+	Mon, 12 Aug 2024 08:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="x8CPpckq"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QdnWj+bK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E007814F9F4;
-	Mon, 12 Aug 2024 08:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2438E4D599;
+	Mon, 12 Aug 2024 08:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451497; cv=none; b=Y8kqKVXS0Qd6iGfK1cjHMQy0n/V1RBz635x53h3Lz15TY1ydYE2G0RHJhftd2+lhk/c90CMhSUOfDSm9PpAUpnQPp99eagTdEIgeKJgT6Ue/fu3zraMS0MusngvmPOJVEZijc3etM4Npi2GvigtszpoEGSY2kmTwj+P44dJi+Fk=
+	t=1723452024; cv=none; b=RE4R7z6e1pgfl0EnYvvRzBAdtb1xW/04QlsrK+JD5Xkuz2lr0n9kz2EA9jHdhJ3QmRKP9L9SikBqpGr/i/PMpSYyWVaIBTwGzU65b919G9TqPM3h9qqB2FTSOgcS2iwtDNmm7FTSZNQ68rjchuohpLDBc7Qe+51kdLUzw9lihUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451497; c=relaxed/simple;
-	bh=gArwq0eGABeef/TNDtuTItU6TBFvrr4tiffxyHFNF3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nfqKUbUDYOmamExVutF8tPcUc7bYIIOly8uI4oi/y7xp3OWw9/qrvOEPVcNIvzehKPY5z3aLTybAHA9cqnfACE3TrGtpKwfAy+NhybTT1Q9UVRQHMA08F78TyXb5fl0Ojd99qeOKr4l2r+6sw1bPynjasz7wLnYNyTs8SHLxgzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=x8CPpckq; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id B2D1B2E0973D;
-	Mon, 12 Aug 2024 11:31:30 +0300 (EEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1723451491;
-	bh=gArwq0eGABeef/TNDtuTItU6TBFvrr4tiffxyHFNF3I=;
-	h=Received:From:Subject:To;
-	b=x8CPpckqrjIWJbfcMuKCMMYZhR5lhixc95s1rD1hVvA/CxVP2lPfkyY3wQSmG/JgE
-	 C57b76Z+5I2MTnPw6VEn8WsPFYsq0QBIskGRuWjJpDV0fsST53TXWAYs1u0rAxGxCw
-	 he0pCZC3XZJPCQoP8Kxd3AU6EsS0ogg0fkYYDH+M=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.208.170) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f170.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f170.google.com with SMTP id
- 38308e7fff4ca-2ef2c56d9dcso46110331fa.2;
-        Mon, 12 Aug 2024 01:31:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1;
- AJvYcCWWdaYa4iigWECKum6oCmEUwA81XHqQN/zgBx4ofOhy7muFrTL+bGV9u5UcjJMgj+podcctIIvEgDZIblkjFP1YXNud8v5cRAzMORqqU46cLXac/SOBdoYCT0RgbRu9kPPhbgGehMy/ctE=
-X-Gm-Message-State: AOJu0YzPFBcFJsui8BhttbvjsKSCgOhtw0TXvErEuRaLR5rQ9wt0kYPu
-	B0huTXvTFpx30nU9FbcItW1Q/aBNP5cY3liRrmswHqDYtxuamyh3IIAC7qva7PxMnFAAIhn6u0c
-	AP+HewVcBx7BfUZ5KRpj/0FRG4TU=
-X-Google-Smtp-Source: 
- AGHT+IGbE3Vccrv2hHGjFPSfPfx2vsvdl9g2LOutDDSjx2DiGdA2mfEZQy1fVWVt/aMf3JHjo5xGU291sPuQIgTa89U=
-X-Received: by 2002:a2e:97d8:0:b0:2ef:3126:390d with SMTP id
- 38308e7fff4ca-2f1a6cf4c85mr62287911fa.42.1723451490063; Mon, 12 Aug 2024
- 01:31:30 -0700 (PDT)
+	s=arc-20240116; t=1723452024; c=relaxed/simple;
+	bh=XGG8unNJdo137wh16BkBQ7L7NU8nK3Nb5MbGuKRbMH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GW8deSRPuQdB2zlpIKFrkzOF/qrNqgKuO65hkpocgoxlo796XVfBvodaeVFwt4q1Ocf1r2mnkOMuUVb/OY97eDO1MxgQrf+8OWEBDRWwyqb5FYxGOYGwzpvMX6s6YghL5JmQQyGZpwyhXOXVX3gUZAgNowuD/WCMIknmbNROt5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QdnWj+bK; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723452022; x=1754988022;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=XGG8unNJdo137wh16BkBQ7L7NU8nK3Nb5MbGuKRbMH8=;
+  b=QdnWj+bK4JZGcQ8JVsCC9CGi1Ss4xHNURtq0OrfB2uTwJfO7BzR/AxKW
+   H8sLqkDKBtR8u09+Z+uLs5FtiTHDD9PVtARimF35zG8VRSEd4TM/WI47v
+   jA1tqP9Q7rCQV5YDRaI2FatVwgV/mZGm4ZZpVkNCHWKipqmG/Dk3XMrLm
+   QUMcGeyX4exaf0ZDaSFdJ4eZ44ky45vh5TWOAKgnibcHNNsAumEBk3hzq
+   p7gt+n8uYLIHzqbfSVPr9dfaRjlgtrpwLGdeEhShGuF9WY+IPNsHeekLE
+   H/MgmttaYlC/LwdRSQJrth7PBJYlEMEM0Nhc/zb6eQv5rIteQaWm4QxFX
+   w==;
+X-CSE-ConnectionGUID: QdVMN4I0TxKdnHXI/8jaow==
+X-CSE-MsgGUID: W6w/hWzfTsqgF+rpE3RBEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21694058"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21694058"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:40:21 -0700
+X-CSE-ConnectionGUID: bJLHTNlvQGWc2LkHuBpeOQ==
+X-CSE-MsgGUID: V/dL+im2RvOeq9UTlC1TiQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="58096158"
+Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:40:21 -0700
+From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
+To: kai.huang@intel.com
+Cc: dave.hansen@linux.intel.com,
+	dmitrii.kuvaiskii@intel.com,
+	haitao.huang@linux.intel.com,
+	jarkko@kernel.org,
+	kailun.qin@intel.com,
+	linux-kernel@vger.kernel.org,
+	linux-sgx@vger.kernel.org,
+	mona.vij@intel.com,
+	reinette.chatre@intel.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data race
+Date: Mon, 12 Aug 2024 01:32:07 -0700
+Message-Id: <20240812083207.3173402-1-dmitrii.kuvaiskii@intel.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <8ab0f2d8aaf80e263796e18010e0fa0a4f0686a3.camel@intel.com>
+References: <8ab0f2d8aaf80e263796e18010e0fa0a4f0686a3.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: 
- <CAGwozwEg2TiQyB27qjHHz1kCHWXJhYsBhqLqq530Z2ZJQjFcRw@mail.gmail.com>
- <20240811231443.43986-1-derekjohn.clark@gmail.com>
-In-Reply-To: <20240811231443.43986-1-derekjohn.clark@gmail.com>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Mon, 12 Aug 2024 11:31:18 +0300
-X-Gmail-Original-Message-ID: 
- <CAGwozwFN6neJf2RGOR_e916KvpPWpsyKJd5pMcE+WoOS+M5o=Q@mail.gmail.com>
-Message-ID: 
- <CAGwozwFN6neJf2RGOR_e916KvpPWpsyKJd5pMcE+WoOS+M5o=Q@mail.gmail.com>
-Subject: Re: Re: [PATCH] hid-asus-ally: Add full gamepad support
-To: "Derek J. Clark" <derekjohn.clark@gmail.com>
-Cc: luke@ljones.dev, bentiss@kernel.org, jikos@kernel.org,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	benato.denis96@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <172345149105.4799.16321279704519321719@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=UTF-8
+Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
+Content-Transfer-Encoding: 8bit
 
-Hi Derek and Denis,
+On Fri, Aug 09, 2024 at 11:19:22AM +0000, Huang, Kai wrote:
 
-Let us be civil. If I could have bug reported you I would have bug reported
-you. However, for some weird coincidence, I do not have access to the
-ShadowBlip bug tracker or the relevant communities. Nevertheless, this is
-not relevant public discussion. Let us refrain from this discussion further,
-including e.g., name-calling.
+> > TLDR: I can add similar handling to sgx_enclave_modify_types() if
+> > reviewers insist, but I don't see how this data race can ever be
+> > triggered by benign real-world SGX applications.
+>
+> So as mentioned above, I intend to suggest to also apply the BUSY flag here.  
+> And we can have a consist rule in the kernel:
+>
+> If an enclave page is under certainly operation by the kernel with the mapping
+> removed, other threads trying to access that page are temporarily blocked and
+> should retry.
 
-The MCU of the Ally is the embedded microcontroller that runs the RGB and the
-controller of the Ally. Therefore, the discussion of the MCU powersave and
-wake is relevant here. What is not proper is that I should also have replied
-to the original patch. I admitted that much in my original email. However,
-since you are now aware of it, I trust that you can block the patch for
-merging until you review it.
+I agree with your assessment on the consequences of such bug in
+sgx_enclave_modify_types(). To my understanding, this bug can only affect
+the SGX enclave (i.e. the userspace) -- either the SGX enclave will hang
+or will be terminated.
 
-If the patch does not function under normal operation, this is relevant here.
-It means this extended patchset is built on reliance of the broken patch,
-which raises questions. Nevertheless, calling the patchset "experimental"
-is hearsay. Therefore, I will refer to it as ambitious from now on :).
+Anyway, I will apply the BUSY flag also in sgx_enclave_modify_types() in
+the next iteration of this patch series.
 
-> This is 100% an issue with your software. I just completed an exhaustive
-> battery of testing at 8w STAPM/FPPT/SPPT on Quiet power profile with only
-> 2 cores active. The tests included using Steam by itself and the kernel
-> implementation, as well as running InputPlumber (which also has an
-> 80ms delay).
-
-Please refrain from name-calling. I was very specific to say that the issue
-here is that under load when in a game, Steam will either let A leak through
-to the game or not respond, sporadically. While in Steam UI the combination
-always works, regardless of TDP. Since you did not test while in a game,
-this renders your test invalid.
-
-To save you some additional invalid testing for the other issues: using
-ryzenadj on the Ally causes misbehavior, especially after suspend, where the
-TDP will reset. In addition, modifying SMP and core parking can freeze the
-Ally during suspend. Therefore, for further testing, I expect you to disable
-your "PowerStation" application and instead use the low-power platform
-profile, which is provided by asus-wmi, and is the vendor specific way for
-setting TDP on the Ally. Or use asusctl, which does the same.
-
-As for using direct HID commands to program RGB, asusctl does the same,
-including many other userspace apps, and prior to this patchset there was
-no way to do different, so I do not see the problem here.
-
-Best,
-Antheas
+--
+Dmitrii Kuvaiskii
 
