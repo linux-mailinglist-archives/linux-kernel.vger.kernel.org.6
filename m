@@ -1,172 +1,233 @@
-Return-Path: <linux-kernel+bounces-283829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CEF94F91E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5D2B94F920
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 958841F232BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6324B1F232F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE83196DA1;
-	Mon, 12 Aug 2024 21:49:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10F31957F8;
+	Mon, 12 Aug 2024 21:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S5dmvrOV"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lNAA0xDr"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8CE170A0F;
-	Mon, 12 Aug 2024 21:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B0C194A57;
+	Mon, 12 Aug 2024 21:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723499353; cv=none; b=jvc/QP1J5+8eLUbv0E3qaPP5KcQ5wbbw8poCjrhnIP8Pwh9AovIYy8n+u7iYiWKjzwAcxwxWgBnCXcUd4k970I4eI250TetfLo8oFYgWW/CWBulQyGD8toJtqUI8Lmh87vDo+IF5HEK6huM3+37d8GE3nujmqyyuogJ+mwIZRxU=
+	t=1723499371; cv=none; b=O41i6b0EoZXUsTPIYaDQAbAluThNBXaJDJXB0rKEuj6nbNJbWydwjdbTUZiIaKkKSgI25VoXlFr7hi4eEzP0935L2NeG2HMTkPTYZHNhEDIopDh3KpmSxVYs0MXamYGX9hiziLUc8t3J18ywZyVboi7Lf6r5aypsd5JbiRRsMGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723499353; c=relaxed/simple;
-	bh=9uVulOEMr9LodJCHTYEdKXXyHout8mwRFuQN+Zhom1o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vq6ic4/Zjko+h4RQz8himtWOaXUVTOwit5WFAZjn6ukD0umtr83N/AxdTzWwvcW/sfTtHDTxIBSD+ZZpGOx2qM+qh8cBJqoBV4AaAkq+p0sYPMIg4YphXA2btZ4RpYNTADBSJxP6J575QxQs+sj56bgL4zRTlMA/co8OgS0rihU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S5dmvrOV; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1723499371; c=relaxed/simple;
+	bh=hiFDacNRvAx6RAGZgYNkIohogQ6jS98j811MjiQEmCg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RSgdYakvAhx4j5z75Wgyf/qlSxBelzfj4RQYbG6V+IFHwntVeAp24lj0PQUBr1KfGNb7z5GOKk54OL+mFoZ0sr3eG1RyhepLABnamvNb1TK9TWd8AuYOAqRG0OAIIa2jE6Us/VeCwa0OKzU9GQ+6aocBeKPz8XwbB6tiixN8jzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lNAA0xDr; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cdadce1a57so3745678a91.2;
-        Mon, 12 Aug 2024 14:49:11 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2cb4c4de4cbso3106607a91.1;
+        Mon, 12 Aug 2024 14:49:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723499351; x=1724104151; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LiqUCLx0Px9nEA6ezZXCyC9UdSf8Ot8v0J1DWNyXIA8=;
-        b=S5dmvrOVAS1F3HCC5KISdaWhT6El1rhBt1rUf0JGp5p3aM2nH3Lg7fyRgB4lWQaEuQ
-         wvLt5iE7ANZBc67eUPz/aFhK/8P6SjCU1x79hZvqg6PrBAGmSoE4AczGvQ6SceYsSYlF
-         7maQcYUZHazWC9zEwgr5dvQNez+GprHXX9jqy3kjkY4tBO6F1aGUoLIJ792uTpzwzQmB
-         q3GzkMEB8VHBogygVIKhCirlbAdxGePo8tJ7A7FFgvdZ0Bwx0ZesL5hjl4znRArAYkEJ
-         1k7GrMUcFk+8Ym/MkgQIGY97l7+g90d7Ad79Uw6bvw+5jDEdYvot1NZp7dnLacwXVdPg
-         r5ww==
+        d=gmail.com; s=20230601; t=1723499369; x=1724104169; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=UFXDQ04x5kB2Iwkc2ou70wPTctsi5xqf7+SwGq1MbDY=;
+        b=lNAA0xDrc0KEsgkkH9rssvUZJ22HBtnoN9ECLFNkNvGgTV+klau0UPAoBQA4ptpAi8
+         Z6FLl6zqGOJfKFeqnyEV5EZewv2IhJUv6ZnBtw9aKPGRpCDw3oVmoTsYXUNtajkDy9LA
+         GHkaCMLlfqs4WjdU+NmsBKemCT6pa4R5vNqtOrtadDwQpJdSqTYTxiVnW+7gyxMFiVEv
+         gzplRqZPCaTfgHkju5UawbcXHfgVeiAtnxLr0lOj71ljbXJqDi/AMs3t8ycC+Q4fx+kP
+         bwg2k6tNQ5tpNV1G/pKKrBRRXLsr7GMlNvT8f3AhjkgQRqrVyQmFhQQZmD07jYAXDDhZ
+         heBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723499351; x=1724104151;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LiqUCLx0Px9nEA6ezZXCyC9UdSf8Ot8v0J1DWNyXIA8=;
-        b=jMze2NfIDY56bbCpL/VwamlPnimjSY4f655W1SDbLwN9+yXK2bhuHHXkOHCD3OWi6A
-         VxOmk5nhyIHJNAF2IQ0Kae61aHbqoKh6kr3VQNpduUQVMueHzFJPL6bKl6Kj57i8n9n7
-         bAXKcvZul73R9W7cycZvt40xw9envGRCtoEMrJLR7VCOxBLD/ny4k11XPrqLk0sThBPk
-         aF/7bXfJ9MZNQuOc4EbjGW59gH2uGNzvMDIROLEAOdtZ0JEiuoNNxO8UMaPBECU7a5cL
-         RoN1gWEoYoNsoBYe6jmURCBhOXdT8VsQJ++Jfg/nkNGdvJRGpYbvyVSh3uraDXQxFhTm
-         ZINw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+8Z0fUeA/0tEfr0wN1XJc3AEQ0nLE/vTCWB8yNPHDAjwcQT/hurY0nyYJPQLswTv1/qqu1NKGWOw1Zru4GpNVVRZz0yLkFA4JMzsJ0iHsVDJ00PvITr12eO/0QglWqqckJTg/vEFxKqpBXmq78cbLWyO1FtgnMrey2GLjpnxM2Ebf32Xk
-X-Gm-Message-State: AOJu0YxULxcerOgALIWL7skuvsWfgx3WVTeaWgZCy8AP8duWAKcICymW
-	iOM9Z13DzwIzjFQ2lptufxbVo2UK4cVDbqOBztKo/9tn646MsZohH5OIcDJ3XFkTiDdCRS61T4c
-	XkLqAdZl0PxyuhMs5lwTAab8MSVU=
-X-Google-Smtp-Source: AGHT+IERh+nGlSMxB2vmGQvEm5TMoeATPxY/+oKBXTHHMWVbIopfiaW0TqWgMQZXDsGcI1qwG70rpZ831Zplc79lJbY=
-X-Received: by 2002:a17:90b:4c12:b0:2c8:538d:95b7 with SMTP id
- 98e67ed59e1d1-2d39263415fmr1690708a91.32.1723499351336; Mon, 12 Aug 2024
- 14:49:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723499369; x=1724104169;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UFXDQ04x5kB2Iwkc2ou70wPTctsi5xqf7+SwGq1MbDY=;
+        b=VgiPGAnroZGpV+JQF5XB50457bfG0ftogR49H06jBNLJvCnFcJMyoTc2Oe3wcVgzQf
+         EHkVCDFE4yX5istCfAEjWRaAJC0eeMiVdq53MufaFhkwW0r4XGL66OoMR+rAc8nUUuiZ
+         +4j1oll3r0egHUEG5Pd1MkfFKQGOVZgBXmbJOK+sPhJpbafRAtqRBKLUd5cUdFir9QzS
+         cwqQ+L9lw9JAmBleWzo8PxNEZn83b0oHzjKjW8R9mPWmBVybA713ZgFB+msAvLkiQt4q
+         VqyZdnseNuqvy3gKtvCZh/MdEli//DdacHfUt+SHdIcUqg80TsDqe9KvXtqsrMnOH9Tt
+         UrnA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhSxuy/ebH06alobZ2icqQv6Pn63FCu8hDOzjXeTgDNryfHLbf3KzjSC1RWISa4g0afJLZKKw/7Xm0+QCfBHkZ1iGIvNP9aMSQYgmZVRUf9j9mZq/L7QLVvzUDswJUTZDJCXZ9
+X-Gm-Message-State: AOJu0YwILrkt9hm6jvXEyNVFzoCLlVTJQ3jtKexyZjq1B6Q9A+ijtau7
+	EZRzecOwgXSDHcLLLh5XKdEEJULp/otWJ1TAG0/qhE9koKQPkIEp
+X-Google-Smtp-Source: AGHT+IFrZ3ShvYu41KPMUmTdk+DlI47Z09xKfIEborZop8ZDdUXfA0N0y563M+Ez0CX7mr9crWoYRA==
+X-Received: by 2002:a17:90b:1b05:b0:2ca:f39c:8d76 with SMTP id 98e67ed59e1d1-2d3926873abmr1776434a91.39.1723499368581;
+        Mon, 12 Aug 2024 14:49:28 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9ca7ca5sm8907446a91.25.2024.08.12.14.49.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 14:49:27 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c65c3c23-c945-4fad-9e39-6e229b979592@roeck-us.net>
+Date: Mon, 12 Aug 2024 14:49:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240725001411.39614-1-technoboy85@gmail.com> <20240725001411.39614-2-technoboy85@gmail.com>
- <CAFnufp1jxnjL2apUwxWKkNzS5QKpDXYTWPnVLn-VQyZazFujCg@mail.gmail.com>
-In-Reply-To: <CAFnufp1jxnjL2apUwxWKkNzS5QKpDXYTWPnVLn-VQyZazFujCg@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 12 Aug 2024 14:48:59 -0700
-Message-ID: <CAEf4BzZCxtUV66LG_1F_v7iFm=_1X-Hs9i9houEvMiQW=hdOTA@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: enable generic kfuncs for
- BPF_CGROUP_* programs
-To: Matteo Croce <technoboy85@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, bpf@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Matteo Croce <teknoraver@meta.com>, Andrii Nakryiko <andrii@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 00/86] 6.1.104-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+References: <20240808091131.014292134@linuxfoundation.org>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240808091131.014292134@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 9:49=E2=80=AFAM Matteo Croce <technoboy85@gmail.com=
-> wrote:
->
-> Il giorno gio 25 lug 2024 alle ore 02:14 <technoboy85@gmail.com> ha scrit=
-to:
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -3052,6 +3052,12 @@ static int __init kfunc_init(void)
-> >         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_XDP, &ge=
-neric_kfunc_set);
-> >         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_STRUCT_O=
-PS, &generic_kfunc_set);
-> >         ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SYSCALL,=
- &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_S=
-KB, &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_S=
-OCK, &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_D=
-EVICE, &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_S=
-OCK_ADDR, &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_S=
-YSCTL, &generic_kfunc_set);
-> > +       ret =3D ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_S=
-OCKOPT, &generic_kfunc_set);
-> >         ret =3D ret ?: register_btf_id_dtor_kfuncs(generic_dtors,
-> >                                                   ARRAY_SIZE(generic_dt=
-ors),
-> >                                                   THIS_MODULE);
->
-> This seems not enough, some kfuncs like bpf_cgroup_from_id are still reje=
-cted.
-> To fix this we need also this chunk:
->
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -8309,7 +8319,11 @@ static int bpf_prog_type_to_kfunc_hook(enum
-> bpf_prog_type prog_type)
->         case BPF_PROG_TYPE_SYSCALL:
->                 return BTF_KFUNC_HOOK_SYSCALL;
->         case BPF_PROG_TYPE_CGROUP_SKB:
-> +       case BPF_PROG_TYPE_CGROUP_SOCK:
-> +       case BPF_PROG_TYPE_CGROUP_DEVICE:
->         case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-> +       case BPF_PROG_TYPE_CGROUP_SYSCTL:
-> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
->                 return BTF_KFUNC_HOOK_CGROUP_SKB;
->         case BPF_PROG_TYPE_SCHED_ACT:
->                 return BTF_KFUNC_HOOK_SCHED_ACT;
->
-> but even with this it won't work, because
-> bpf_prog_type_to_kfunc_hook() aliases many program types with a single
-> hook, and btf_kfunc_id_set_contains() will fail to check if the kfunc
-> is in the set.
->
-> One solution could be to extend the btf_kfunc_hook enum with an entry
-> for every CGROUP program type, but a thing I wanted to avoid is to let
-> this enum proliferate in this way.
-> I wish to group all the CGROUP_ program types into a single hook, and
-> perhaps drop the "SKB" in "BTF_KFUNC_HOOK_CGROUP_SKB" which will have
-> no meaning anymore.
->
-> Ideas?
+Hi,
 
-Given BPF_PROG_TYPE_CGROUP_SKB and BPF_PROG_TYPE_CGROUP_SOCK_ADDR are
-already grouped into the same hook type, and
-bpf_sock_addr_set_sun_path() is meant to be enabled for
-BPF_PROG_TYPE_CGROUP_SOCK_ADDR (but really it's enabled for
-BPF_PROG_TYPE_CGROUP_SKB as well), I guess it's fine to just have one
-CGROUP hook type for all those cgroup-related program types and just
-rely on BTF type matching logic.
+On 8/8/24 02:11, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.104 release.
+> There are 86 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat, 10 Aug 2024 09:11:02 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.104-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+> 
+...
+> Naohiro Aota <naohiro.aota@wdc.com>
+>      btrfs: zoned: fix zone_unusable accounting on making block group read-write again
+> 
 
-I'd say that register_btf_kfunc_id_set() should just accept enum
-bpf_kfunc_hook instead of enum bpf_prog_type (I don't see where we
-remember or use prog_type beyond just translating that to
-bpf_kfunc_hook), but that can be left for follow up clean ups.
+This patch results in a variety of problems with the parisc64 qemu emulation.
+Some examples from various test runs:
 
->
-> --
-> Matteo Croce
->
-> perl -e 'for($t=3D0;;$t++){print chr($t*($t>>8|$t>>13)&255)}' |aplay
+[   10.527204] alg: akcipher: test 1 failed for rsa-generic, err=-22
+[   10.529743] alg: self-tests for rsa using rsa-generic failed (rc=-22)
+[   10.529905] ------------[ cut here ]------------
+[   10.530276] alg: self-tests for rsa using rsa-generic failed (rc=-22)
+[   10.530732] WARNING: CPU: 0 PID: 50 at crypto/testmgr.c:5907 alg_test+0x618/0x688
+
+[    7.420056] ==================================================================
+[    7.420507] BUG: KFENCE: invalid read in walk_stackframe.isra.0+0xb4/0x138
+[    7.420507]
+[    7.420827] Invalid read at 0x0000000042f07000:
+[    7.421037]  walk_stackframe.isra.0+0xb4/0x138
+[    7.421204]  arch_stack_walk+0x38/0x50
+[    7.421338]  stack_trace_save_regs+0x58/0x70
+[    7.421498]  kfence_report_error+0x14c/0x730
+[    7.421649]  kfence_handle_page_fault+0x2c8/0x2d0
+[    7.421996]  handle_interruption+0x9b0/0xb58
+[    7.422168]  intr_check_sig+0x0/0x3c
+
+[    8.891194] =============================================================================
+[    8.891558] BUG sgpool-32 (Tainted: G    B   W        N): Wrong object count. Counter is 3 but counted were 18
+
+[    0.403174] =============================================================================
+[    0.403568] BUG audit_buffer (Not tainted): Wrong object count. Counter is 1 but counted were 34
+
+[    0.505914] =============================================================================
+[    0.506258] BUG skbuff_head_cache (Tainted: G    B             ): Freechain corrupt
+
+[    2.831636] =============================================================================
+[    2.832144] BUG skbuff_head_cache (Tainted: G    B             ): Left Redzone overwritten
+
+Reverting it fixes the problem.
+
+Bisect log is attached for reference.
+
+
+I tried to repeat the test with v6.1.105-rc1, but that fails to compile for parisc64.
+
+/home/groeck/src/linux-stable/include/linux/slab.h:228: warning: "ARCH_KMALLOC_MINALIGN" redefined
+   228 | #define ARCH_KMALLOC_MINALIGN ARCH_DMA_MINALIGN
+
+This is due to commit 96423e23e05b ("parisc: fix a possible DMA corruption").
+After reverting that patch I don't see the above problems anymore in v6.1.105-rc1,
+so it looks like the btrfs patches in v6.1.105-rc1 may have fixed it (or maybe
+there is another hidden bug in the parisc64 qemu emulation).
+
+Guenter
+
+---
+# bad: [36790ef5e00b69ccb92817f95ba1928eea24eebb] Linux 6.1.104
+# good: [48d525b0e4634c487cf46a41c1e2824e9ee258ce] Linux 6.1.103
+git bisect start 'HEAD' 'v6.1.103'
+# good: [d06daf0ad645d9225a3ff6958dd82e1f3988fa64] sched: act_ct: take care of padding in struct zones_ht_key
+git bisect good d06daf0ad645d9225a3ff6958dd82e1f3988fa64
+# good: [ed15fdf30736a255c0e4f5d0263e12cf6636fade] rust: SHADOW_CALL_STACK is incompatible with Rust
+git bisect good ed15fdf30736a255c0e4f5d0263e12cf6636fade
+# bad: [5670466033d14329aaa87e726a481a6c56892eff] drm/i915: Fix possible int overflow in skl_ddi_calculate_wrpll()
+git bisect bad 5670466033d14329aaa87e726a481a6c56892eff
+# bad: [47ab33e1d6a796a82f9b7a70ed95c9649e92d7d2] mptcp: sched: check both directions for backup
+git bisect bad 47ab33e1d6a796a82f9b7a70ed95c9649e92d7d2
+# good: [8bb9cf2edf490e65678f2d57634ac763a778aeb6] HID: wacom: Modify pen IDs
+git bisect good 8bb9cf2edf490e65678f2d57634ac763a778aeb6
+# bad: [5db999fff545b924b24c9afd368ef5c17279b176] protect the fetch of ->fd[fd] in do_dup2() from mispredictions
+git bisect bad 5db999fff545b924b24c9afd368ef5c17279b176
+# bad: [36dac679722e5aa68c9efa822a38a5ea0c107342] btrfs: zoned: fix zone_unusable accounting on making block group read-
+write again
+git bisect bad 36dac679722e5aa68c9efa822a38a5ea0c107342
+# first bad commit: [36dac679722e5aa68c9efa822a38a5ea0c107342] btrfs: zoned: fix zone_unusable accounting on making bloc
+k group read-write again
+
+
 
