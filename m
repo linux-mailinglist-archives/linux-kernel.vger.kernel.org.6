@@ -1,281 +1,101 @@
-Return-Path: <linux-kernel+bounces-283401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 572BB94F202
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:47:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F1194F20A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900CCB22673
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03F31F21973
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92AA187325;
-	Mon, 12 Aug 2024 15:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941F186E34;
+	Mon, 12 Aug 2024 15:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HGtlFBgp"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLtr3Wls"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076C0186E5A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2E3183CD9;
+	Mon, 12 Aug 2024 15:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477611; cv=none; b=RoR8xXQLaRUxrAtCpenh4CBKdUNJLKhELHoZ61jxFc1pZAlC/Mi+vEv5ztg0FA7YNhGwaLE3F4xH86pGmhZCEBflGS98BMA9ox7LhuLjSdsfM8B4TBMSZrrb/DM/clNwc5Q7hR5lQ0X4Xm0F+8UE+V4NZwV0KYagChM59NttRx0=
+	t=1723477748; cv=none; b=hUXPn64xMz8qdupixTNREJfrDrSw7lQFWRr/7JzH9FSkx2j/Jq/Fhh8FbQ8X2+2uxQMBqv8XwpVI8nVw3mPLQwXfW2S9CIpp8D88nBtrYai1EyFy5KRaVGQT8P/0KQpIg38O8Py3I2ilERm9Ip3oE5Uhl8+KBES9cxaJBCtqn2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477611; c=relaxed/simple;
-	bh=TiS0XVOQaveTZWTjTShhgLNz9STX/nh1DiWEt9YJO/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LWblrpPy1wNxNVt8RX3NP/ET6oYKP0+kN21YMAWzi+lnnbUm+MdKJjqq0QJJ6I2NKp5tQ2FSffbk6rGY5aLPHzKo43s2v+WU2BfJFlPqVBb+VLh5V7qS3weQd0TYx6vAec3mDDIk95D4UrQ4b8OX7o9rGE88fdTkGcMK4psk594=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HGtlFBgp; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7d26c2297eso517241866b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723477607; x=1724082407; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ql5fXxiCJkIiTyhtm29TmC99eYPdWjKav8Lrje672xQ=;
-        b=HGtlFBgpgTu/YvrcNJRpFFTO/3194Y7H0xXuOxa5zk/ihJKt4cIAub/2qv1kPYb6bt
-         iQCE16QJ5fv0lkhDZ/91dLm4YiO77VL268JgmU/3tq/FWy32nLlQkAh3v4ljGBo0nQRv
-         8jKyUHX6QVbG/TZq8dl+DRh35JZSqvkxNeI9k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723477607; x=1724082407;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ql5fXxiCJkIiTyhtm29TmC99eYPdWjKav8Lrje672xQ=;
-        b=bLyjdULYu5CpzHkBpTZiFX2S2lVzpvcxOl1DfYAvNQGElJlzz8iyZQwRPvNGXVrmIt
-         zA6Z/T3i0x2AikpGgt0wwA0eRTYjEtuLI+KYMCCVf/DVX0s66d7eve+0hf3Lq3seL82R
-         92fpB1nQRL9JPbQDIKfOwlYbjvU0DQMQt5rJueRgQCGc7UOu9BKTVrkcTQJyN0+jgjre
-         vSkf9e8800903ee43BhmBqvYvOBVANM9ps+vD9nD1RB3fxtjYVvR60wX2vJquKuXPXlV
-         F6rr7AfFbfIShN26E4rDzYFNxcksRzBzR3a/tqWIpM8OI97v8tEkfsdA4cM2rxDu+GL+
-         zZAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGIzxt82Etpt/GAijhaRZqxXl+lWbpq0iL19HrF+JeUgL5hqKjR71MvGDKjtlLjo5VBrAFy+ntX5pAg016ol5kZwWaMLB3HDcyslNf
-X-Gm-Message-State: AOJu0Yy73iPTRVLsuWQ5MXDEQbu4BHq/4WGclWCENKgWBFT0uASDUhkZ
-	Nbot5gp64QrfrzH1mCflZJNtB1nZ1Jjhafv4pKQbTyVgtaaaVAkBCLQbVPhV7ax0oeYaEIKE5kH
-	Di4BpulBgHAYTvf1he0Nue1o5fVQ1F5AtouG1
-X-Google-Smtp-Source: AGHT+IEKYMxDjZpA4ugql0q25haDMG9of3iEjyR/9J5O5gQHUxbbAlTphHF0z0O4yvsgnJiQItnvd4OSHTEmrglB6OI=
-X-Received: by 2002:a17:907:d14:b0:a7a:a5ae:11bd with SMTP id
- a640c23a62f3a-a80ed2d3189mr47121366b.67.1723477607030; Mon, 12 Aug 2024
- 08:46:47 -0700 (PDT)
+	s=arc-20240116; t=1723477748; c=relaxed/simple;
+	bh=yLC9qQqhhWTVpWQnhEgp8s0w6ejSMIbfw0GAFvs1yFY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAqfu5l6Bpt6tDYRc/mNTnHOdv4WDeMPJIbUr0wwIijYPrPeiWixQjbM/32SfsM+uWHrNycVf91nKywecuBcoaV4Yqsu3MRldVN16hddqu9IvsZg/RtXoGbOAzMaW0sWu+p+P6afCOyPPcf4kyY1dQik9WwaXxYypcsNJjDrNME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLtr3Wls; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723477747; x=1755013747;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yLC9qQqhhWTVpWQnhEgp8s0w6ejSMIbfw0GAFvs1yFY=;
+  b=gLtr3Wls0gZwS/Fd72VqZzqQxi8VVBDep5sBZ89e7FPrJWhO+muHDq6o
+   sJuV8Avx/gjk5y7BB4jBIZmKHWT+4G198GP32oYf2wkF/0lJy/5FffV3x
+   ZyvBAjTY10RoazKdBGC0oskYJGyZY/dk7ApjmeqrcAQgx7UGLxstn8EEW
+   nTVs/6fVpDn6ZUeMI0YpGXZ8AgjQvy+SDo/1DnfI8l3rD2pZyFjmshi1j
+   K8mSApDgNeSBv1bov8fhJhqmYcScLU3DGcSnfn859oGiT4HCKCM5By7bq
+   zD2Cc/dDwolsYR7FI2AtZ/0v6G/Z/PDmWqaDst3vkFGhJ3DpA2iuRNvlK
+   g==;
+X-CSE-ConnectionGUID: KlAEuSdRRf2Wvm/hv5x0Yw==
+X-CSE-MsgGUID: ztURLMtKT4CeCQu2//2ISw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21160801"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="21160801"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:49:06 -0700
+X-CSE-ConnectionGUID: onPHd04KQ82aCrN0UZaUGA==
+X-CSE-MsgGUID: vLQqeI/yQvaF4UB119Jliw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="58187003"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 12 Aug 2024 08:49:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id A84C5178; Mon, 12 Aug 2024 18:49:02 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Sunil V L <sunilvl@ventanamicro.com>
+Subject: [PATCH v1 0/7] serial: 8250_platform: refactor and clean up a bit
+Date: Mon, 12 Aug 2024 18:47:02 +0300
+Message-ID: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-5-james.quinlan@broadcom.com> <9c22a495-7b89-4df6-b57b-cb0f39b09c30@suse.de>
-In-Reply-To: <9c22a495-7b89-4df6-b57b-cb0f39b09c30@suse.de>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 12 Aug 2024 11:46:34 -0400
-Message-ID: <CA+-6iNy2f3zNsSZcFBHnEoTSqDHx34+ijZrLWhnC5bfF=S3nQg@mail.gmail.com>
-Subject: Re: [PATCH v5 04/12] PCI: brcmstb: Use bridge reset if available
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="00000000000095c487061f7e6658"
+Content-Transfer-Encoding: 8bit
 
---00000000000095c487061f7e6658
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Recent patch against this driver has been added without my review.
+It was technically my fault, however I was on long vacation.
+So, instead of blaming anyone, this small series to tidy up the things
+as I think would look and be maintainable better.
 
-On Fri, Aug 9, 2024 at 7:16=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.de=
-> wrote:
->
-> Hi Jim,
->
-> On 8/1/24 01:28, Jim Quinlan wrote:
-> > The 7712 SOC has a bridge reset which can be described in the device tr=
-ee.
-> > Use it if present.  Otherwise, continue to use the legacy method to res=
-et
-> > the bridge.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
-> >  1 file changed, 19 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index 7595e7009192..4d68fe318178 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -265,6 +265,7 @@ struct brcm_pcie {
-> >       enum pcie_type          type;
-> >       struct reset_control    *rescal;
-> >       struct reset_control    *perst_reset;
-> > +     struct reset_control    *bridge_reset;
-> >       int                     num_memc;
-> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
-> >       u32                     hw_rev;
-> > @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct=
- pci_bus *bus,
-> >
-> >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pci=
-e, u32 val)
-> >  {
-> > -     u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> > -     u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> > +     if (val)
-> > +             reset_control_assert(pcie->bridge_reset);
-> > +     else
-> > +             reset_control_deassert(pcie->bridge_reset);
-> >
-> > -     tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> > -     tmp =3D (tmp & ~mask) | ((val << shift) & mask);
-> > -     writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> > +     if (!pcie->bridge_reset) {
-> > +             u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
-> > +             u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
-> > +
-> > +             tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> > +             tmp =3D (tmp & ~mask) | ((val << shift) & mask);
-> > +             writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
-> > +     }
-> >  }
-> >
-> >  static void brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, =
-u32 val)
-> > @@ -1621,10 +1629,16 @@ static int brcm_pcie_probe(struct platform_devi=
-ce *pdev)
-> >       if (IS_ERR(pcie->perst_reset))
-> >               return PTR_ERR(pcie->perst_reset);
-> >
-> > +     pcie->bridge_reset =3D devm_reset_control_get_optional_exclusive(=
-&pdev->dev, "bridge");
->
-> Shouldn't this be devm_reset_control_get_optional_shared? See more below.
->
-> > +     if (IS_ERR(pcie->bridge_reset))
-> > +             return PTR_ERR(pcie->bridge_reset);
-> > +
-> >       ret =3D clk_prepare_enable(pcie->clk);
-> >       if (ret)
-> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
-lock\n");
-> >
-> > +     pcie->bridge_sw_init_set(pcie, 0);
->
-> According to reset_control_get_shared description looks like this
-> .deassert is satisfying the requirements for _shared reset-control API
-> variant.
-> Is that the intention to call reset_control_deassert() here?
+Andy Shevchenko (7):
+  serial: 8250_platform: Remove duplicate mapping
+  serial: 8250_platform: Don't shadow error from
+    serial8250_register_8250_port()
+  serial: 8250_platform: Use same check for ACPI in the whole driver
+  serial: 8250_platform: Tidy up ACPI ID table
+  serial: 8250_platform: Switch to use platform_get_mem_or_io()
+  serial: 8250_platform: Refactor serial8250_probe()
+  serial: 8250_platform: Unify comment style
 
-Hi Stan,
-Now I'm not sure I understand you.  All of the resets (bridge, perst,
-swinit) are exclusive, except for the "rescal" reset, which is shared.
+ drivers/tty/serial/8250/8250_platform.c | 107 +++++++++++++-----------
+ 1 file changed, 58 insertions(+), 49 deletions(-)
 
-On the exclusive resets I am using reset_control_assert() and
-reset_control_deasssert().  On the shared reset I am using
-reset_control_rearm() and reset_control_reset().   Why do
-you think the calls I am using are incongruent with the shard/exclusive
-status?
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
-
->
-> > +
-> >       ret =3D reset_control_reset(pcie->rescal);
-> >       if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
-"))
-> >               goto clk_disable_unprepare;
->
-> ~Stan
-
---00000000000095c487061f7e6658
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCLAB2aCM7o9X9EHbztLLa5cLuaaRxR
-B7R8xpE5IbKLSzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTIxNTQ2NDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAapgzgsPC4c7llJ9i8Cz/Rdxyotf8k2VKiS2sbwlKjmuvxfOZ
-FlM5boUgoBdD6pWLjwsQxI+jCYQPMcGloPkFJJmX9UHOADcsdyih6EMdOOL6RzxJQB+ghk+vWtHw
-10qpKCnVcGlOr8JoAqm4ImLxIMzrj95eBDgLIjoKQXoRlfjel3PkxfqY7AftZspSYOi7xnQJQXg5
-hbFeWLwXlqUOVRMeOTo0b5jPdK15TncU2rYSXfBqL3RFyE1Ek+Ysx0KO4F8GHN+PTI4mUfiRLvS+
-rjzOu2KOLUkSIF3AwoZ0vff3uu8vUBoKvu7tNTR023uC1VpYShKDVaWUNxLj1+YYTQ==
---00000000000095c487061f7e6658--
 
