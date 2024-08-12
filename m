@@ -1,118 +1,183 @@
-Return-Path: <linux-kernel+bounces-282872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9002D94E9E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D0D494E9ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21935B221EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:35:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B2F281E7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:37:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C903116D4E6;
-	Mon, 12 Aug 2024 09:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87B3716D9B6;
+	Mon, 12 Aug 2024 09:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qyl1BQTA"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="WX7ZY6UM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PadxE0TY"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DD420323
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CCD120323;
+	Mon, 12 Aug 2024 09:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455332; cv=none; b=GzKkReUmgQaaFroaoSq4jFAewVogbWQ9QbuiMFPskMt6vGVkYsF7B9UxHw9NDt7of0ySzokACs88ti4JxNRpyryNlkMHAZQanht29WpVY4GXoh/QwgY9R1jTTLDFrm8hTC3FQNEyAlJh5ziw3M5hSLQpo/069QLxP2kWIQ7d/Ks=
+	t=1723455447; cv=none; b=HOHJezXDwOY615190Udluyu59gSKjUFBpUfY3pZDscyLn8DssH9rDfT8nSd5p8XD45oynz6czYbmm5emNrkmbl2VnQKMS1xF/T0e9y1ALzEDWFiMcToLzDvI05GLbBDeoBaFjAzJyeNeRfolrl+bbOjffYzBv3QeAOcpU84VSvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455332; c=relaxed/simple;
-	bh=PNupUm463iQE7T43+Zrxo6foOwsAjT1hssbqJKvS1nw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQCTsZABMVgcb5iR2H4q3XtEs8Vfw4HzjTd+IBK+yvt6OoLqMZ4uNZpBgrEyQ5h+r7ZF/nPpveQkhq7HnnqGGy9h6DTu/WKPB4CyX7MIHfabrxT8YOTb7TV/a/DfCx3dDANgTgMx8DrugBltL4eQ47DbKZsANHjKBRsO1vj1xX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qyl1BQTA; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2644f7d0fb2so497089fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:35:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723455329; x=1724060129; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LezxPZ2pblaIeFvj/f40IQFP8Cd13qWLMfSEX26uTrg=;
-        b=Qyl1BQTAHySkQ/pKl3Ih7zqE/4ejNF7mQNvms43yYPNRhHzvqETqUiTEl2rpK17vkq
-         Gcct5H9Njkg9NwOShXwwi6kr0+ygms1u9a+em798UjXcewizt5PnhR7zC4duRE5QTIWc
-         9Go6W5HgCmH7pZeb4OnHIJLK5NY3IoSc77FE8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723455329; x=1724060129;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LezxPZ2pblaIeFvj/f40IQFP8Cd13qWLMfSEX26uTrg=;
-        b=SUxDzO3WsCjD19BaoCbU9waKN0aCgDWpCTJqOxPuHZUeDzyVhwQanDijRfrB+TpdPE
-         JyJ4eP+vDv9qK9geWqHM9pBWIXFZmrQ0FIlQoyKXr2PugdMKSF0CL9LcNHSr/1WDqK2a
-         hbrooVIAR/oMHhhXhWDbErEzNj6ZOFNFEmqzG2V8bIKMHxp5imhufx8ariL+C5FzafzD
-         HPCZG6K11nBiH6dPrdZPUXol1BMuM2KvYegpyOimkX4N7H/I5Fqe7eHa0j1VFKRrLlUY
-         al1HH6i1c2cuzeVENA05LNLVb/kw4UXjJQ5FjjrrEPLd50pQkd619BF4M6WEjEMmCEMn
-         lY6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWyNsXYFSIlc8sOHxM6s1rD0dX85p74EObTwSQ+xIuKJm4N8St+OJ9Xcp2oggXTYyWdvmCrp0nyekrNHvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOw6+hnYhX+zfue+ShRtAksfpEy2GLw0JdLJEZjY5AFIg19RRL
-	C31mSuRNmgHTCzaZIkUMsKUEyBIF8oTVUjQ+lcZpiMf0a+3uF+FPaIXpsU7aVcU=
-X-Google-Smtp-Source: AGHT+IEvaBJ1EAoM7XMitug7a/NQNwZ2GMcuPj+9Pyp+pxqnYpN4Y2JKVJZhBJ6VgvqO4qrwmTDuKQ==
-X-Received: by 2002:a05:6871:3390:b0:261:b94:b0b with SMTP id 586e51a60fabf-26c62c1a506mr5354178fac.1.1723455329347;
-        Mon, 12 Aug 2024 02:35:29 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.122])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a8f22sm3595976b3a.46.2024.08.12.02.35.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 02:35:28 -0700 (PDT)
-Message-ID: <7612504c-cd56-4fcd-a287-d3fbc89162ea@linuxfoundation.org>
-Date: Mon, 12 Aug 2024 03:35:23 -0600
+	s=arc-20240116; t=1723455447; c=relaxed/simple;
+	bh=l3vFiyDfS5OlYid1lRIhy3ppAAY2nz2gB/IJ8Owqvn4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jbqcN/YZlMQ2W3z8DeY8k1YdQtwz+VOVSKVCe65hF7SaZiXyCr3OJCp0XYHB/Dk3QXqoHwr6CDKoGgJJOIvqaDlghcAo7qL4/1cy8kY0AnSQRGidI2AokKWqrpL2NIwTWaA9EeP/Fgm5RvT7Tg7cGHT8EuyaHXDg+j975gbamyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=WX7ZY6UM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PadxE0TY; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
+	by mailfout.nyi.internal (Postfix) with ESMTP id A7C3F1382998;
+	Mon, 12 Aug 2024 05:37:23 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Mon, 12 Aug 2024 05:37:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1723455443; x=1723541843; bh=qE
+	cVq2E1HC4dTQQWILZwFzSh/d6pUjYS7xMcCE3J20A=; b=WX7ZY6UM97GBAzQNRP
+	Alf1qA/S1HnMhMNU4HQKH71f1sqOpA2OGvnU7+VJ7Q/7kIXK+TGjTlZR0CZvZM53
+	El5uxzV4ats+9/LUQg5tQfNAWiesWq8vjxaGwnKqTnIVr+fbLrCkLRShdqNEjqgp
+	VYh0b2dTvy/+mdPvkXf9TaTbXD0DK5CZCyXlPrMlDb2G/izI90EnlK6CAZMpf84P
+	OX6hmrpE6qlGo5UpZ3GG1M/2AHXuS1CD4Ar3aKkT2NmfsAtHUVCRadaPdbly+0uJ
+	HKkEBnqBkID6eAzl5CpItI6tBM5yWwBrFfk6o3EQsAdCdbT7cocrMe1fbETcLI1X
+	T4iA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723455443; x=1723541843; bh=qEcVq2E1HC4dT
+	QQWILZwFzSh/d6pUjYS7xMcCE3J20A=; b=PadxE0TYmRgSgbWIhmE3t9IbtCUD6
+	M+XQw/AbyQ6ClaYKYt5juAuby0gk2M/ipfcZKTYnGB109CloIOzA1CBl+/oznx29
+	VG0H63gI3uKt5mNCNpC+OTC3ib79m6JVAStPqaFwa6SkqE3VuV+g/ZrDpHIbdxjp
+	CluHR7BdXN28jBaOmtPssMhESWW+SW9s6WB/1rOb4SjHEPqIyOyFGKj+fX7viTCk
+	3EXGDLdtcja6jAVy2qiQeTUqDseFK05rnE+0W6td7F28PN0JcAMlPWdE0P6nZhR4
+	5ptyXTpEKB+QfxdV2icBl+HHpIGnaHP1jWz9wIjo1GyodcA+asgAnJd2Q==
+X-ME-Sender: <xms:09e5ZsNdtt5A7cs0gGtYQaQyKQ4hkQM8VDLQjLlX-b7SNPqLSqxAeQ>
+    <xme:09e5Zi86nX3Kd5A-ueeoibdWFyre1pRYfp8NTp2TG93YHGKkzGD934aFr3kF9BUq1
+    OsyUt6I_c9jwmZx7C0>
+X-ME-Received: <xmr:09e5ZjRY7Bp8AojkY6Wl2xrTyT6bzpF9_q3XQ3AbsXVhUC2nrGjnspCoAb6O-dppaA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffufffkgggtgffvvefosehtjeertdertdejnecu
+    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomheqnecuggftrfgrthhtvghrnhepgfevffejteegjeeflefgkeetleekhfeu
+    gfegvdeuueejkeejteekkedvfffffedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
+    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhopeekpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrd
+    horhhgpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    grrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgr
+    rdhfrhgrnhhkvghnrdguvgdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhih
+    ghhorghtrdgtohhm
+X-ME-Proxy: <xmx:09e5Zkuys3pwttnYehfZ5g8hSFjmsiMtk5NKWCRfKnHFZp-yow150g>
+    <xmx:09e5ZkcQGlR5jY6IPoFNw872nbf2MeIsi6PIkmWgBNEEosRD5X4Ciw>
+    <xmx:09e5Zo1UE04hOJ7ii79xoCT1TFHWoc_TDMnpVshaOFVQ-ONVCAKFOQ>
+    <xmx:09e5Zo8_y0YkuyF6Sksp18H19fQlZdp_08p3qTgIYhWeVMVppvr7dA>
+    <xmx:09e5Zry18V0snQUMyckufit3xnK-Kc0ZOsa1sfwGFnmIya6F85QhXeNY>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 12 Aug 2024 05:37:22 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Subject: [PATCH v2 0/7] MIPS: arch_numa enablement
+Date: Mon, 12 Aug 2024 10:37:14 +0100
+Message-Id: <20240812-mips-numa-v2-0-fd9bdb2033b9@flygoat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] kselftest/cgroup: Add missing newline in test_zswap.c
-To: Mohammed Anees <pvmohammedanees2003@gmail.com>, hannes@cmpxchg.org,
- yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
- tj@kernel.org, lizefan.x@bytedance.com, mkoutny@suse.com, shuah@kernel.org
-Cc: linux-mm@kvack.org, cgroups@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240811145900.433711-1-pvmohammedanees2003@gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240811145900.433711-1-pvmohammedanees2003@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMrXuWYC/03MSwqDMBSF4a3IHfeWJPWRdtR9FAeah16oiSRWK
+ pK9NxUKHf6Hw7dDNIFMhFuxQzArRfIuhzgVoMbODQZJ5wbBRMkka3CiOaJ7TR3WSmldSsFL3kP
+ +z8FYeh/Wo809Ulx82A565d/1p1z/lJUjw6qWTcUlu/RW3u1zG3y3nJWfoE0pfQC1NhfhpAAAA
+ A==
+To: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Huacai Chen <chenhuacai@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-mips@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2561;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=l3vFiyDfS5OlYid1lRIhy3ppAAY2nz2gB/IJ8Owqvn4=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrSd1y9N8pynufbOia9fd+u2JegruN3YOu/zPsHesG6Zd
+ StmK7LYd5SyMIhxMciKKbKECCj1bWi8uOD6g6w/MHNYmUCGMHBxCsBE4j0YGXbeTJv0P7Uw4M3U
+ 9hzup15yG0xCtmeduHp73dZd/9a0/5Jh+GfHsSjTX2hu1YdLi3aK3pZV/z/R8NkOiysZzXs99lz
+ YwMsAAA==
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On 8/11/24 08:58, Mohammed Anees wrote:
+Hi all,
 
-Missing change log
+This series enabled arch_numa for generic MIPS machine, and ported
+loongson64 machine to arch_numa infra. SGI IP27 is left untouched
+with legacy NUMA implementation as I don't have access to hardware.
 
-> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
-> ---
->   tools/testing/selftests/cgroup/test_zswap.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
-> index 190096017..7c849d836 100644
-> --- a/tools/testing/selftests/cgroup/test_zswap.c
-> +++ b/tools/testing/selftests/cgroup/test_zswap.c
-> @@ -351,7 +351,7 @@ static int test_zswap_writeback(const char *root, bool wb)
->   		goto out;
->   
->   	if (wb != !!zswpwb_after) {
-> -		ksft_print_msg("zswpwb_after is %ld while wb is %s",
-> +		ksft_print_msg("zswpwb_after is %ld while wb is %s\n",
->   				zswpwb_after, wb ? "enabled" : "disabled");
->   		goto out;
->   	}
+Tested on Loongson64 NUMA system and numa_emu on Boston.
 
-The change looks good to me.
+Please review.
 
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+Thanks
 
-thanks,
--- Shuah
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+Changes in v2:
+- Use Kconfig symbol instead of weak function (Arnd)
+- Link to v1: https://lore.kernel.org/r/20240809-mips-numa-v1-0-568751803bf8@flygoat.com
+
+---
+Jiaxun Yang (7):
+      arch_numa: Provide platform numa init hook
+      MIPS: pci: Unify pcibus_to_node implementation
+      MIPS: Prepare NUMA headers for arch_numa
+      MIPS: mm: init: Prepare for arch_numa
+      MIPS: smp: Process NUMA information
+      MIPS: generic: Make NUMA available
+      MIPS: Loongson64: Migrate to arch_numa
+
+ arch/mips/Kconfig                                |   5 +
+ arch/mips/include/asm/mach-generic/mmzone.h      |  11 ++
+ arch/mips/include/asm/mach-generic/numa.h        |  11 ++
+ arch/mips/include/asm/mach-generic/topology.h    |   7 +
+ arch/mips/include/asm/mach-ip27/numa.h           |  22 ++++
+ arch/mips/include/asm/mach-ip27/topology.h       |  12 +-
+ arch/mips/include/asm/mach-loongson64/mmzone.h   |   2 -
+ arch/mips/include/asm/mach-loongson64/topology.h |  25 ----
+ arch/mips/include/asm/mmzone.h                   |   5 +-
+ arch/mips/include/asm/numa.h                     |  12 ++
+ arch/mips/include/asm/pci.h                      |  12 ++
+ arch/mips/include/asm/smp-ops.h                  |   7 +-
+ arch/mips/kernel/setup.c                         |   3 +-
+ arch/mips/kernel/smp-cps.c                       |   6 +
+ arch/mips/kernel/smp.c                           |  26 ++++
+ arch/mips/loongson64/init.c                      |  28 ++--
+ arch/mips/loongson64/numa.c                      | 158 ++---------------------
+ arch/mips/loongson64/smp.c                       |   2 +
+ arch/mips/mm/init.c                              |  14 +-
+ arch/mips/pci/pci-ip27.c                         |  10 --
+ arch/mips/pci/pci-xtalk-bridge.c                 |   1 +
+ drivers/base/Kconfig                             |   4 +
+ drivers/base/arch_numa.c                         |   9 ++
+ include/asm-generic/numa.h                       |   1 +
+ 24 files changed, 163 insertions(+), 230 deletions(-)
+---
+base-commit: eec5d86d5bac6b3e972eb9c1898af3c08303c52d
+change-id: 20240807-mips-numa-6ccdd482141b
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
+
 
