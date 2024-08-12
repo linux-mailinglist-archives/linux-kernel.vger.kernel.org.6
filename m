@@ -1,154 +1,122 @@
-Return-Path: <linux-kernel+bounces-282616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8F994E67E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1D494E66B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F122B21A8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:20:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF9C1F22265
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1571114EC53;
-	Mon, 12 Aug 2024 06:20:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EA114E2C1;
-	Mon, 12 Aug 2024 06:20:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1578E14F9EF;
+	Mon, 12 Aug 2024 06:13:52 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE01614E2EF;
+	Mon, 12 Aug 2024 06:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723443615; cv=none; b=sahpw+SH8Vj8u9Ti6iQOTLDIjHaD6ffZz4C/afeZR1d3WCT3xOpCe7t5cYBvpWgZnxG3/hI2eaJ7GgIWbJQ+M9duCYD8aE4HEMvSo1ZOKubrRM73QoYETQk3r5edgwNQMtl6M1Telj9xik1rGMoUgmlsTq9bUkXXCBbWwLDFTwA=
+	t=1723443231; cv=none; b=V692/Y+gynSNqo8dgs2PSFlrYG1AAlcGigmBBgbLhT0v+NawNfKkOjrN7g8cuE7LczEW0pdAA1irx+/REmc4u5jCz5wrT568G1pcepaszawKodzb7NglTGlHXuzAv62NW2637C7yy0fbTWoZeiIZhPT+7qJUqg+Oci12JFZVtjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723443615; c=relaxed/simple;
-	bh=PLa+WOKUwAA72SYRTgdsr8wbeHyvzaXOK6rskYHsqzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XAaFoE1p94rtjpDe5A0/16hzLMg0mxtBoEV9JcU8zGVTZFXwuWwra8rDWhRe3miSOU9UimxiSsYGqbG9+MMnp1GArR+lnfINELDWOQKNz5LpD2kSUVrr08rmUoE2G2duGkN7G/QtviMhvlb1b+wquB7w9ZkH5ZAuuXqvtndnoec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 45830FEC;
-	Sun, 11 Aug 2024 23:20:38 -0700 (PDT)
-Received: from [10.162.43.141] (e116581.arm.com [10.162.43.141])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 171353F73B;
-	Sun, 11 Aug 2024 23:20:02 -0700 (PDT)
-Message-ID: <8ca30d9a-ffcf-4ccb-a791-2596b830cc08@arm.com>
-Date: Mon, 12 Aug 2024 11:49:59 +0530
+	s=arc-20240116; t=1723443231; c=relaxed/simple;
+	bh=JxHQkpLX42zbYR/K/LXcoZTUYa6MhYcukw+z5FRgmUk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DiObCjNmG1fqqNYU5J9Khu7iH7I2haG4kXTNwh9PJSd1A3cQYYxGWw6LdWPewvRcJrREElWw52zVOLh278DtoVxl+UzBVF/foZWlz+tXd2Kcy7LD9CMghCe6JKK3SJoANhvL65Gp2swjqdU+luH2eUjklnRT8F/CTwdRmJFonMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wj3xb4K1vzQpcx;
+	Mon, 12 Aug 2024 14:09:07 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9213E1402E2;
+	Mon, 12 Aug 2024 14:13:39 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 12 Aug
+ 2024 14:13:38 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <catalin.marinas@arm.com>, <bhe@redhat.com>, <vgoyal@redhat.com>,
+	<dyoung@redhat.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>, <akpm@linux-foundation.org>,
+	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
+	<linux-riscv@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-arch@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH -next v2] crash: Fix riscv64 crash memory reserve dead loop
+Date: Mon, 12 Aug 2024 14:20:17 +0800
+Message-ID: <20240812062017.2674441-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] selftests/mm: Do not fail test for a single migration
- failure
-To: Shuah Khan <skhan@linuxfoundation.org>, akpm@linux-foundation.org,
- shuah@kernel.org, david@redhat.com, willy@infradead.org
-Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
- cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
- osalvador@suse.de, baolin.wang@linux.alibaba.com,
- dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
- ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
- kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
- yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
- mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20240809103129.365029-1-dev.jain@arm.com>
- <20240809103129.365029-3-dev.jain@arm.com>
- <e3bf3d2b-eb19-4678-916e-7a7f572b2936@linuxfoundation.org>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <e3bf3d2b-eb19-4678-916e-7a7f572b2936@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
+On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
+will cause system stall as below:
 
-On 8/9/24 22:43, Shuah Khan wrote:
-> On 8/9/24 04:31, Dev Jain wrote:
->> Do not fail the test for just a single instance of migration failure,
->> since migration is a best-effort service.
->
-> The cover letter says:
->
-> "Given that migration is a best-effort service, it is wrong to fail the
-> test for just a single failure; hence, fail the test after 100 
-> consecutive
-> failures (where 100 is still a subjective choice)."
->
-> You do want to mention the above here.
+	 Zone ranges:
+	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
+	   Normal   empty
+	 Movable zone start for each node
+	 Early memory node ranges
+	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
+	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
+	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
+	(stall here)
 
+commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
+bug") fix this on 32-bit architecture. However, the problem is not
+completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
+architecture, for example, when system memory is equal to
+CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
 
-Sure, shall update in v2.
+	-> reserve_crashkernel_generic() and high is true
+	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
+	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
+	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
 
+As Catalin suggested, do not remove the ",high" reservation fallback to
+",low" logic which will change arm64's kdump behavior, but fix it by
+skipping the above situation similar to commit d2f32f23190b ("crash: fix
+x86_32 crash memory reserve dead loop").
 
->
-> The reason being, I would like to know what this does to the run-time of
-> this test if migration fails and retried 100 times.
+After this patch, it print:
+	cannot allocate crashkernel (size:0x1f400000)
 
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+---
+v2:
+- Fix it in another way suggested by Catalin.
+- Add Suggested-by.
+---
+ kernel/crash_reserve.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sure; just for the note, it won't affect the execution time of the test 
-since
-that is controlled by a timeout mechanism.
+diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
+index 5387269114f6..aae4a9e998d1 100644
+--- a/kernel/crash_reserve.c
++++ b/kernel/crash_reserve.c
+@@ -427,7 +427,8 @@ void __init reserve_crashkernel_generic(char *cmdline,
+ 		if (high && search_end == CRASH_ADDR_HIGH_MAX) {
+ 			search_end = CRASH_ADDR_LOW_MAX;
+ 			search_base = 0;
+-			goto retry;
++			if (search_end != CRASH_ADDR_HIGH_MAX)
++				goto retry;
+ 		}
+ 		pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
+ 			crash_size);
+-- 
+2.34.1
 
-
->
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> Suggested-by: David Hildenbrand <david@redhat.com>
->> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
->> Tested-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>   tools/testing/selftests/mm/migration.c | 17 +++++++++++------
->>   1 file changed, 11 insertions(+), 6 deletions(-)
->>
->> diff --git a/tools/testing/selftests/mm/migration.c 
->> b/tools/testing/selftests/mm/migration.c
->> index 6908569ef406..64bcbb7151cf 100644
->> --- a/tools/testing/selftests/mm/migration.c
->> +++ b/tools/testing/selftests/mm/migration.c
->> @@ -15,10 +15,10 @@
->>   #include <signal.h>
->>   #include <time.h>
->>   -#define TWOMEG (2<<20)
->> -#define RUNTIME (20)
->> -
->> -#define ALIGN(x, a) (((x) + (a - 1)) & (~((a) - 1)))
->> +#define TWOMEG        (2<<20)
->> +#define RUNTIME        (20)
->> +#define MAX_RETRIES    100
->> +#define ALIGN(x, a)    (((x) + (a - 1)) & (~((a) - 1)))
->>     FIXTURE(migration)
->>   {
->> @@ -65,6 +65,7 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>       int ret, tmp;
->>       int status = 0;
->>       struct timespec ts1, ts2;
->> +    int failures = 0;
->>         if (clock_gettime(CLOCK_MONOTONIC, &ts1))
->>           return -1;
->> @@ -79,13 +80,17 @@ int migrate(uint64_t *ptr, int n1, int n2)
->>           ret = move_pages(0, 1, (void **) &ptr, &n2, &status,
->>                   MPOL_MF_MOVE_ALL);
->>           if (ret) {
->> -            if (ret > 0)
->> +            if (ret > 0) {
->> +                /* Migration is best effort; try again */
->> +                if (++failures < MAX_RETRIES)
->> +                    continue;
->>                   printf("Didn't migrate %d pages\n", ret);
->> +            }
->>               else
->>                   perror("Couldn't migrate pages");
->>               return -2;
->>           }
->> -
->> +        failures = 0;
->>           tmp = n2;
->>           n2 = n1;
->>           n1 = tmp;
->
-> thanks,
-> -- Shuah
 
