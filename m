@@ -1,102 +1,89 @@
-Return-Path: <linux-kernel+bounces-283776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA94B94F892
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF3CD94F896
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:57:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84749281AB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6401F22AE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DF4194C61;
-	Mon, 12 Aug 2024 20:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEAE194C95;
+	Mon, 12 Aug 2024 20:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="fmcmtvCY"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGSU7UPb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD544194AC7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AC19924D;
+	Mon, 12 Aug 2024 20:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495830; cv=none; b=Eh/nudL6/vtcvnmVISi9nis8StqJ/WUvU+V4L3xoMAUFI8+qoh5hezn/hl1CRrQt0iMBT7zmUfzHery3eaYUJOPvZ0WhYKgfIX/ou+dFy6ZK8kZtDCS8rS/X6fdNV/mwudSU2WVIa0pDVb1Hwx7uvILUm023Ds2fsFSF+7I2T5k=
+	t=1723495875; cv=none; b=JzaUBvzYAr/Ia0g/8dMzyX7c43QBVY2nW4uC7bjxXf1fj0CvBCqWD8vXE0slbCvxxrqWEqTWTf9z5C4s+LdCFJK9GXaXBHIFC7/YPJ2Mo29eX5IsxCmCyxybWKqLxuXUYG2OsxdfHP4tksq91PaJZ0MxBUiKLAW+OdhdgNIAh10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495830; c=relaxed/simple;
-	bh=2ZLl7537lw7Lz84DM7nmys56YoOvTK7dPF+qlWQ7XOo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p0DFNiooW/L8VROa3l9IpRARMpgUQUoYsORngM2N0n0eNuECga7dqxW2gu+BTBOZrq4kEcZekvOpb1/4jhTLFdOEpnx3qtZk1v70letz0XAWkGFOBSbU5BlHEHcQSDE6FaQCVLEvK7XKcEYf6PSJMEf0BC+2HqNAG1c/vNE/3l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=fmcmtvCY; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1723495825;
-	bh=2ZLl7537lw7Lz84DM7nmys56YoOvTK7dPF+qlWQ7XOo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fmcmtvCY2wZtZLZ+NfIthQ0wdyxX9CUz2nlO/8ZBG8RfI+2d4ImYyaHrsLBkUiyWR
-	 XdNkLi3Eiv1MJW8VnQeXzSnw6AZPB1Rx3LEuDk15IPtGRId0IKokCZwOdo2mlGORb7
-	 7a95JQE/mPjuJ6L3uAQD32A/pSNuFYPk3xHpSn/U=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Mon, 12 Aug 2024 22:50:19 +0200
-Subject: [PATCH v2 3/3] tools/nolibc: x86_64: use local label in
- memcpy/memmove
+	s=arc-20240116; t=1723495875; c=relaxed/simple;
+	bh=LwT8+9nkgmGlBa4uGsMgfTOWb72fFqWy+MQwcBF6N4E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CKE/z3kKOQ5kd055Ns+V4nrjjzKdFfZeFFsk1KE8/cxlkjCes22LuisaNbyVaKHwQyeUncm73R+c+ceVvugM4F/rLxd4FUjCuUh9WeaXAJ6BbzJnmpGArKqfzLlDby0dzFIWZKmOgLBHBT2Kkqr2h/vQpPi0loIbJEUTqZagrlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGSU7UPb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D47C4AF0E;
+	Mon, 12 Aug 2024 20:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723495875;
+	bh=LwT8+9nkgmGlBa4uGsMgfTOWb72fFqWy+MQwcBF6N4E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bGSU7UPb6V8ldsgnAKljgkdYw/Ms789M9ivxzH7PU94AeVJw34CTcZT8jTTocuJ/B
+	 khLeU1kIHRTlPZTrgUO5bc1ugc08ga2HCt2egd6GrjkbXmNai9oJF/abstKftQ1NX+
+	 2k/ydVrlRYIBA7t8ZAAT4BMOoH+nj+knnLev7A/3pvVwFa7DwllSsyn40tKVUZeJiW
+	 ayMtuJGnFVQrgONTSSg/upbkQ07u5vy40S7BYtPDsrJGjTsBqNlDN/LzwVxov2zC7B
+	 9H+xaWXmXSMnS4kb/xQXK/eGAxSU0qaziBJWldG+PLscC8K5ophNwedH7DYQHINvF5
+	 SaIiteRSbrjZQ==
+Date: Mon, 12 Aug 2024 17:51:11 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
+Subject: Re: [PATCH v1] perf inject: Fix leader sampling inserting additional
+ samples
+Message-ID: <Zrp1vxhQMOSoBQnZ@x1>
+References: <20240729220620.2957754-1-irogers@google.com>
+ <ZqqAkcz4xOto_sK5@google.com>
+ <CAP-5=fXN4y++hD-TzVToobrmH73V_h1fbGq+DuZxmgi=jF5NWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240812-nolibc-lto-v2-3-736af7bbefa8@weissschuh.net>
-References: <20240812-nolibc-lto-v2-0-736af7bbefa8@weissschuh.net>
-In-Reply-To: <20240812-nolibc-lto-v2-0-736af7bbefa8@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723495824; l=1104;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=2ZLl7537lw7Lz84DM7nmys56YoOvTK7dPF+qlWQ7XOo=;
- b=4ZAijgmkXf1uUAE714ImrKHisGPnvNhxxCQ9lMfQApaSk9JKrlMQZhU9Jj3SWQFOfuB/whc1E
- bTEL+9CeqzvAO28Eh6oIzLKIkh7djcAz0anp+u/FL2egz56a1NVdChK
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+In-Reply-To: <CAP-5=fXN4y++hD-TzVToobrmH73V_h1fbGq+DuZxmgi=jF5NWQ@mail.gmail.com>
 
-Compiling arch-x86_64.h with clang and binutils LD yields
-duplicate label errors:
+On Mon, Aug 12, 2024 at 01:37:36PM -0700, Ian Rogers wrote:
+> On Wed, Jul 31, 2024 at 11:21 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > This behavior is incorrect as in the case above perf inject should
+> > > have done nothing. Fix this behavior by disabling separating samples
+> > > for a tool that requests it. Only request this for `perf inject` so as
+> > > to not affect other perf tools. With the patch and the test above
+> > > there are no differences between the orig.txt and new.txt.
 
-.../gcc-13.2.0-nolibc/x86_64-linux/bin/x86_64-linux-ld: error: LLVM gold plugin: <inline asm>:44:1: symbol '.Lbackward_copy' is already defined
-.Lbackward_copy:leaq -1(%rdi, %rcx, 1), %rdi
+> > > Fixes: e4caec0d1af3 ("perf evsel: Add PERF_SAMPLE_READ sample related processing")
+> > > Signed-off-by: Ian Rogers <irogers@google.com>
 
-Instead of a local symbol use a local label which can be defined
-multiple times and therefore avoids the error.
+> > Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
- tools/include/nolibc/arch-x86_64.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Ping.
 
-diff --git a/tools/include/nolibc/arch-x86_64.h b/tools/include/nolibc/arch-x86_64.h
-index 65252c005a30..1e40620a2b33 100644
---- a/tools/include/nolibc/arch-x86_64.h
-+++ b/tools/include/nolibc/arch-x86_64.h
-@@ -193,10 +193,10 @@ __asm__ (
- 	"movq %rdi, %rdx\n\t"
- 	"subq %rsi, %rdx\n\t"
- 	"cmpq %rcx, %rdx\n\t"
--	"jb   .Lbackward_copy\n\t"
-+	"jb   1f\n\t"
- 	"rep movsb\n\t"
- 	"retq\n"
--".Lbackward_copy:"
-+"1:" /* backward copy */
- 	"leaq -1(%rdi, %rcx, 1), %rdi\n\t"
- 	"leaq -1(%rsi, %rcx, 1), %rsi\n\t"
- 	"std\n\t"
+Thanks, applied to perf-tools-next,
 
--- 
-2.46.0
-
+- Arnaldo
 
