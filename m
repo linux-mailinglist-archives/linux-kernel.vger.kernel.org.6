@@ -1,127 +1,154 @@
-Return-Path: <linux-kernel+bounces-283656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A32394F774
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA42794F776
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C38B8B216A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:24:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65CBFB2174E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86E21917C9;
-	Mon, 12 Aug 2024 19:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51928191F64;
+	Mon, 12 Aug 2024 19:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JurFBh+w"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gW2ysif3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872EC18F2F6
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CFB1917E9
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723490675; cv=none; b=Tv8IazMHghpTA535G1wErNWNIjDXcbaJKUjqjSSP1URq7w+knRcWs+3VN8Q3vmX6QfG2KrtoJtSw80AFdk1OArvueQBLe2PVnRPuqkJ5iOCDpC7bXuMFMdfzHYjVksOwgDRhFQMhUZ5gA8q9yiIQMDg0a/gay2Ue7RhRvkVgE0o=
+	t=1723490721; cv=none; b=M900BPxwH9saeCJuf9nSbofopJOmDi0FkadS+NlXTC5KjBwiIXPLAE2gPZvqYpjNB8iQWGVz6fgbwluLvorvZhNuVpWWKHrZAvwM2OQMvcz2VRmw7CTY1dQk5uSnRfo1osnsaICwLzawbVdSaHpAmu+jQ0zSwuCusFw866gPziE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723490675; c=relaxed/simple;
-	bh=NzKwuJoXzmUGF5iSUml9uWF6iwC3BNkDZKU4aU6MD3s=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KsPTwQ8cNVPbWNPRVbuA2SriuKFKbMcrniJ1a1HzY6Ke6D7ZVLmT4OX9uYTsyVS4yjYBbYqgvIKNGcdWADmRuQieX8f7AoFKYU1SG+RafDyzPh8zZgT0FxN2f0bXSR/fF5mGaPbGgWwZE9NQ+U1AItUblBzdvW8oskOOMENLsG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JurFBh+w; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0bcd04741fso8099752276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:24:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723490672; x=1724095472; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yWxCowPUnixbfZzlA8QQGBp8dYSP6RfE8f5Q6sz/520=;
-        b=JurFBh+wbtn5uStA7F1sQpTuIri8L1hxWBkk2z30CbjwQOBaGRwbkZ6swnD0kX+YX0
-         b3u81bz47UtvnQobhCeLQIEX/qrGpo0HH4wUCX23sOOq20pSsLuN3zwWsVluV2BLn8X4
-         3b3Umh2ZMtbaES9GzyTirmO6blEw6utV7NlUrj2SFlZf3FJNPsyY54x1Pt4JEdrbZlYA
-         WMQGQ6Z/yKraq0urcVxCQsU93fjnPqfHBR4GSBP2TlBY+A0ICOMHJYxgqq/Y4c1vZOXm
-         PjZNvqibj0+zsSq5kzakTEy95V1IQEzWawJraFggvhjJCTJ/wt0h2vStzOAct+L9RMrj
-         xzCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723490672; x=1724095472;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yWxCowPUnixbfZzlA8QQGBp8dYSP6RfE8f5Q6sz/520=;
-        b=YIvlbd/kvDBeWI4m4XR+GnG2QMOMyDf3c78JgR48+In1geFizIR/EGT14muQ3nZVAv
-         cmedruT0tWyWPQPBc5VF0P3AhlQQX/b+FBzjWPAO5eFpgYStZt9rfSzIgpJ3B7eSEIz4
-         ouYWjZeOIuc/W1cl46A+kvBvOW0JLoS4ZiwU/WLTffgOYUss6tUxbvqExKf6vua9Ko3k
-         6s9mLvS6RjshnSudsQnsIRBqvKZr4OfsUAlyOo3NEiyGtnTrbl0zUcbCoJihoQ8fiXkE
-         AdnaRDLlwwfsrXXZNYbTHyQLQLobMpgovfnyLCfjZBWDF7CnJ2D8VvSSVxPK9kP5y0qN
-         dtTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK6yhtOgK1dcIlVPu6AIoxrXqlugvXh4Ctzke0rZ/1eFJKuw+vhJ7DAy4S9CsTzVpO/IJPtXiCsn+bKWal9flDUqlg83YY261BqJB3
-X-Gm-Message-State: AOJu0YwmzhNnkucu6JyypACPpl9SUmVE66Zz4V823QgsZevKLejoDqvr
-	PXMBl3x9Yz2wwQV1w/Ojz8K7ctE7Cerkq5aS3veKWk0EVIZMLkTLyaS24Xox6MrwmkTfNKr78xw
-	okw==
-X-Google-Smtp-Source: AGHT+IHKisNvsfNZ3HwptFVUwpuAndJrP1cg0JwL0YzNRZLFI3LjSNR5DwFlUuA9GavrzBxidgbOnP1w9Ro=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3912:1e97:a514:421a])
- (user=surenb job=sendgmr) by 2002:a25:bc06:0:b0:dfb:1c1c:abf9 with SMTP id
- 3f1490d57ef6-e113cd5ee6fmr74667276.2.1723490672597; Mon, 12 Aug 2024 12:24:32
- -0700 (PDT)
-Date: Mon, 12 Aug 2024 12:24:28 -0700
+	s=arc-20240116; t=1723490721; c=relaxed/simple;
+	bh=iaYZkpwvbW8Fxk0F02wbvEY/BH18iaDQKbywqSsY6CM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lFAsUghnZ8F0IyLLi1RoEYmtHxGX6exFwDctcbH+ug5KBjOoBqV7l8f8R9uD+xPy1Xl7SZ81TbtrQJ4V7zBo4gsXGGDMm7aF0RkQGnT6KqNicQ8LeexNjADlnmsu7rFEUJbjtJyu4xtwzcmVkc08J3WK33quwfu7YpiZ/EX4sh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gW2ysif3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723490719;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V0i5d9v7X1l3ubpz0F2qG2g28SR1YyQRgT0SFjyAASI=;
+	b=gW2ysif3LCEGRUtxOCEX8Iwr97flj0C95MBJll9m1mfgMAZpL4Xp5uRKR0Gn5EWr9DQbpA
+	VD0t1dm+SP6vCnfLQsD+b+rG/79y8VDRl2xLCFmjjPfpEb9EdRt0fLbQ3gUC7uS+H1tfPY
+	P99r2jqs7F4b8LreacNr2f4YLNyZuIk=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-128-lA2PaeWKMh2j0Hy6U-uE_Q-1; Mon,
+ 12 Aug 2024 15:25:11 -0400
+X-MC-Unique: lA2PaeWKMh2j0Hy6U-uE_Q-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18AE5188FE4F;
+	Mon, 12 Aug 2024 19:25:01 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.73])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 1CFDE19541B6;
+	Mon, 12 Aug 2024 19:24:35 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 12 Aug 2024 21:24:54 +0200 (CEST)
+Date: Mon, 12 Aug 2024 21:24:31 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: syzbot <syzbot+f7a1c2c2711e4a780f19@syzkaller.appspotmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>, jolsa@kernel.org,
+	acme@kernel.org, adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com, irogers@google.com,
+	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
+	mhiramat@kernel.org, mingo@redhat.com, namhyung@kernel.org,
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com,
+	bpf <bpf@vger.kernel.org>
+Subject: Re: [syzbot] [perf?] KASAN: slab-use-after-free Read in
+ __uprobe_unregister
+Message-ID: <20240812192405.GD11656@redhat.com>
+References: <000000000000382d39061f59f2dd@google.com>
+ <20240811121444.GA30068@redhat.com>
+ <20240811123504.GB30068@redhat.com>
+ <CAEf4Bza8Ptd4eLfhqci2OVgGQZYrFC-bn-250ErFPcsKzQoRXA@mail.gmail.com>
+ <20240812100028.GA11656@redhat.com>
+ <CAEf4BzZ6coCZHY_KMnSQQUyc_-xziKurOQ0j3xaCvHhnDaafuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240812192428.151825-1-surenb@google.com>
-Subject: [PATCH v2 1/1] alloc_tag: mark pages reserved during CMA activation
- as not tagged
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, surenb@google.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzZ6coCZHY_KMnSQQUyc_-xziKurOQ0j3xaCvHhnDaafuQ@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-During CMA activation, pages in CMA area are prepared and then freed
-without being allocated. This triggers warnings when memory allocation
-debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
-by marking these pages not tagged before freeing them.
+On 08/12, Andrii Nakryiko wrote:
+>
+> adding bpf ML, given it's bpf's code base
 
-Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Cc: stable@vger.kernel.org # v6.10
----
-changes since v1 [1]
-- Added Fixes tag
-- CC'ed stable
+Thanks,
 
-[1] https://lore.kernel.org/all/20240812184455.86580-1-surenb@google.com/
+> On Mon, Aug 12, 2024 at 3:00 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > > --- a/kernel/trace/bpf_trace.c
+> > > +++ b/kernel/trace/bpf_trace.c
+> > > @@ -3491,8 +3491,10 @@ int bpf_uprobe_multi_link_attach(const union
+> > > bpf_attr *attr, struct bpf_prog *pr
+> > >         }
+> > >
+> > >         err = bpf_link_prime(&link->link, &link_primer);
+> > > -       if (err)
+> > > +       if (err) {
+> > > +               bpf_uprobe_unregister(&path, uprobes, cnt);
+> >
+> > I disagree. This code already uses the "goto error_xxx" pattern, why
+>
+> Well, if you have strong preferences,
 
- mm/mm_init.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Well, YES and NO ;) please see below.
 
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 75c3bd42799b..ec9324653ad9 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2245,6 +2245,16 @@ void __init init_cma_reserved_pageblock(struct page *page)
- 
- 	set_pageblock_migratetype(page, MIGRATE_CMA);
- 	set_page_refcounted(page);
-+
-+	/* pages were reserved and not allocated */
-+	if (mem_alloc_profiling_enabled()) {
-+		union codetag_ref *ref = get_page_tag_ref(page);
-+
-+		if (ref) {
-+			set_codetag_empty(ref);
-+			put_page_tag_ref(ref);
-+		}
-+	}
- 	__free_pages(page, pageblock_order);
- 
- 	adjust_managed_page_count(page, pageblock_nr_pages);
+> so be it (it's too trivial code
+> to argue about).
 
-base-commit: d74da846046aeec9333e802f5918bd3261fb5509
--- 
-2.46.0.76.ge559c4bf1a-goog
+Agreed. On a closer look both the code and the problem look very trivial.
+
+But note that nobody noticed this trivial problem before. Including me who
+had to change this trivial code to adapt to the recent API changes.
+
+May be this means that we should keep the error handling in this function
+more consistent ;)
+
+> We do have quite a lot of "hybrid" error handling
+
+And YES, I don't like this kind of error handling.
+
+But, at the same time: NO, I never-never argue with the maintainers when it
+comes to "cosmetic" issues.
+
+My main point was (and you seem to agree) that this simpler patch above won't
+simplify the routing. I too thought about the change above initially.
+
+-------------------------------------------------------------------------------
+> Yep, absolutely, given the bpf_uprobe_unregister() change, I don't see
+> any problem for it to go together with your refactorings.
+>
+> For the fix:
+>
+> Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+Thanks! I'll write the changelog and send this patch with your ack included
+tomorrow.
+
+Oleg.
 
 
