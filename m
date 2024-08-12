@@ -1,89 +1,171 @@
-Return-Path: <linux-kernel+bounces-283777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF3CD94F896
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:57:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BD294F897
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A6401F22AE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:57:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346E3B20D25
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EEAE194C95;
-	Mon, 12 Aug 2024 20:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9D19A295;
+	Mon, 12 Aug 2024 20:51:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGSU7UPb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jDSlKxc6"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84AC19924D;
-	Mon, 12 Aug 2024 20:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D51199EAB
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:51:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495875; cv=none; b=JzaUBvzYAr/Ia0g/8dMzyX7c43QBVY2nW4uC7bjxXf1fj0CvBCqWD8vXE0slbCvxxrqWEqTWTf9z5C4s+LdCFJK9GXaXBHIFC7/YPJ2Mo29eX5IsxCmCyxybWKqLxuXUYG2OsxdfHP4tksq91PaJZ0MxBUiKLAW+OdhdgNIAh10=
+	t=1723495880; cv=none; b=COya6RTtfUKysOSOAxVhpkRfXoPAz9+wBy5X084nNcWWSezJep2zBGafjpurSQiqWI+oM32FHlssrBZqLg9fVAC9iqZq3igHhIFCzpwYm7bUwB4NW1DI0aQYlSKiHKCSFaEEgkyy6zpazsFyzv0ODlpZv/Q4ilwkHwgdAmg5P0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495875; c=relaxed/simple;
-	bh=LwT8+9nkgmGlBa4uGsMgfTOWb72fFqWy+MQwcBF6N4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKE/z3kKOQ5kd055Ns+V4nrjjzKdFfZeFFsk1KE8/cxlkjCes22LuisaNbyVaKHwQyeUncm73R+c+ceVvugM4F/rLxd4FUjCuUh9WeaXAJ6BbzJnmpGArKqfzLlDby0dzFIWZKmOgLBHBT2Kkqr2h/vQpPi0loIbJEUTqZagrlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGSU7UPb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2D47C4AF0E;
-	Mon, 12 Aug 2024 20:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723495875;
-	bh=LwT8+9nkgmGlBa4uGsMgfTOWb72fFqWy+MQwcBF6N4E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bGSU7UPb6V8ldsgnAKljgkdYw/Ms789M9ivxzH7PU94AeVJw34CTcZT8jTTocuJ/B
-	 khLeU1kIHRTlPZTrgUO5bc1ugc08ga2HCt2egd6GrjkbXmNai9oJF/abstKftQ1NX+
-	 2k/ydVrlRYIBA7t8ZAAT4BMOoH+nj+knnLev7A/3pvVwFa7DwllSsyn40tKVUZeJiW
-	 ayMtuJGnFVQrgONTSSg/upbkQ07u5vy40S7BYtPDsrJGjTsBqNlDN/LzwVxov2zC7B
-	 9H+xaWXmXSMnS4kb/xQXK/eGAxSU0qaziBJWldG+PLscC8K5ophNwedH7DYQHINvF5
-	 SaIiteRSbrjZQ==
-Date: Mon, 12 Aug 2024 17:51:11 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v1] perf inject: Fix leader sampling inserting additional
- samples
-Message-ID: <Zrp1vxhQMOSoBQnZ@x1>
-References: <20240729220620.2957754-1-irogers@google.com>
- <ZqqAkcz4xOto_sK5@google.com>
- <CAP-5=fXN4y++hD-TzVToobrmH73V_h1fbGq+DuZxmgi=jF5NWQ@mail.gmail.com>
+	s=arc-20240116; t=1723495880; c=relaxed/simple;
+	bh=CP8T+AntS/iHAU01tb8nRV8SXoRPrOlZSp1e8z9fO/I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZT3pCg8s+Z6R4wnqiXTdah85Ulrq96W14FPWWQbC5TAsKP1PWzNI/8vSiD7Dw0jI+ZBLJbN1A53O9yt5W/jxp19nl2QO1oy460/VPfkAO8L1RIzrzCmyiJVN3PEgExB1IWPAeBo49YNEacLHZk/GXZClRfsB8rupyMiV0YJtBcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jDSlKxc6; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fc611a0f8cso34133125ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:51:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723495875; x=1724100675; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx1FcJTrAQENI8ZoNUPdOTApIsFBsETkLUh/9i4pK3o=;
+        b=jDSlKxc6WpMVJOYVcLNahRBdnGA6a4d0oMh0HiG4HBw6gd/nqxMYECf1ycYt71Sfo5
+         FAwViTR8lMnI4h9gv4xEWUlAZTimLRIDVZu8g4kAnhp4MzUAOrL+bRJFmguTNsW7BU+8
+         aUlsMLiuc33k4tv+yKOVINzqP+0JMrdb+eWCWBC+Hp79AZAR0UT9je3a6/G+1cduPoF2
+         OUakezNlarpu69sbb5Od49uNex4mx2lcTrdls24dy4ij5cdKUZsIKxj0qDnJgGvcDVvJ
+         190GI7GStv0YM9NpnCiuWCz/Gxn26O2BtN70Cu9hHF16pN0woOhIKy5Lokyfic5FlA2S
+         vxSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723495875; x=1724100675;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xx1FcJTrAQENI8ZoNUPdOTApIsFBsETkLUh/9i4pK3o=;
+        b=OrV3WKQ2O6sswRV+rwPub1xxahXGXYGTB+6OfqrDNZIScDDtTyN64ofYM9r4Abscxy
+         Akf/zCMwxmH3uOtWuXWlNDkHsMpPyfE3JjMeYFDhWWKapGCmBm7YszUp7VQmpn5MREbk
+         ZYgwqPmkhErZ/zhlNPQyHbbZenJOr6pedVWVc7ofRwOQZBjlr23RrADV5xpcNpHjrZzN
+         Ir5GoOjSV4EiJMEXud03IP1exaZk18oz0miuiZpfsg7JldQdcroQsysuEELPqoNowneL
+         s+M9u7EV8e+gCy+d8LHr2fR/578LNBatw+cdkOJKFk7koCslUO/cW8FaiN6qCePR5Wbz
+         9ZVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXaJRilmptqzSp/ddacJS9wH2Fno1dQ8A+iQSGVyNbuYp8thkNGnR3bzyEW9FzOehpuvFW2+bcGmQOoVvtvBEUKw4ZKpiNFV4LAorTl
+X-Gm-Message-State: AOJu0YwktVsj3dm8MDX/lMKZUUCPSHttxge1CMsvQC1CssWYTfHuQdw3
+	9e9QhpTjqXK3sDXJHeVrOnWpFobPY+3g3c6JMDLGKFfZmm0GKVbZ2t22lKNOiAE=
+X-Google-Smtp-Source: AGHT+IFbHD9miMnGw5xLZgp5D0DQhmARx7myjai4F/lcfBqSv6V+tyrN9MnEHsaMcUosKU0p/4D2Xg==
+X-Received: by 2002:a17:903:2342:b0:1fd:6b87:2147 with SMTP id d9443c01a7336-201ca12aea4mr18355905ad.6.1723495875207;
+        Mon, 12 Aug 2024 13:51:15 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14a6ffsm1059285ad.96.2024.08.12.13.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 13:51:14 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: Dhruva Gole <d-gole@ti.com>, Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh
+ Shilimkar <ssantosh@kernel.org>, Vibhore Vardhan <vibhore@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 4/4] firmware: ti_sci: add CPU latency constraint
+ management
+In-Reply-To: <20240812101148.wpybfhqkd2kponp7@lcpd911>
+References: <20240809135347.2112634-1-msp@baylibre.com>
+ <20240809135347.2112634-5-msp@baylibre.com>
+ <20240812101148.wpybfhqkd2kponp7@lcpd911>
+Date: Mon, 12 Aug 2024 13:51:14 -0700
+Message-ID: <7hfrr9pirh.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fXN4y++hD-TzVToobrmH73V_h1fbGq+DuZxmgi=jF5NWQ@mail.gmail.com>
+Content-Type: text/plain
 
-On Mon, Aug 12, 2024 at 01:37:36PM -0700, Ian Rogers wrote:
-> On Wed, Jul 31, 2024 at 11:21 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> > > This behavior is incorrect as in the case above perf inject should
-> > > have done nothing. Fix this behavior by disabling separating samples
-> > > for a tool that requests it. Only request this for `perf inject` so as
-> > > to not affect other perf tools. With the patch and the test above
-> > > there are no differences between the orig.txt and new.txt.
+Dhruva Gole <d-gole@ti.com> writes:
 
-> > > Fixes: e4caec0d1af3 ("perf evsel: Add PERF_SAMPLE_READ sample related processing")
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
+> Hello,
+>
+> On Aug 09, 2024 at 15:53:47 +0200, Markus Schneider-Pargmann wrote:
+>> From: Kevin Hilman <khilman@baylibre.com>
+>> 
+>> During system-wide suspend, check if any of the CPUs have PM QoS
+>> resume latency constraints set.  If so, set TI SCI constraint.
+>> 
+>> TI SCI has a single system-wide latency constraint, so use the max of
+>> any of the CPU latencies as the system-wide value.
+>> 
+>> Note: DM firmware clears all constraints at resume time, so
+>> constraints need to be checked/updated/sent at each system suspend.
+>> 
+>> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+>> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+>> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+>> Signed-off-by: Dhruva Gole <d-gole@ti.com>
+>> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+>> ---
+>>  drivers/firmware/ti_sci.c | 22 +++++++++++++++++++++-
+>>  1 file changed, 21 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+>> index 5cbeca5df313..481b7649fde1 100644
+>> --- a/drivers/firmware/ti_sci.c
+>> +++ b/drivers/firmware/ti_sci.c
+>> @@ -9,6 +9,7 @@
+>>  #define pr_fmt(fmt) "%s: " fmt, __func__
+>>  
+>>  #include <linux/bitmap.h>
+>> +#include <linux/cpu.h>
+>>  #include <linux/debugfs.h>
+>>  #include <linux/export.h>
+>>  #include <linux/io.h>
+>> @@ -19,6 +20,7 @@
+>>  #include <linux/of.h>
+>>  #include <linux/of_platform.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/pm_qos.h>
+>>  #include <linux/property.h>
+>>  #include <linux/semaphore.h>
+>>  #include <linux/slab.h>
+>> @@ -3639,7 +3641,25 @@ static int ti_sci_prepare_system_suspend(struct ti_sci_info *info)
+>>  static int ti_sci_suspend(struct device *dev)
+>>  {
+>>  	struct ti_sci_info *info = dev_get_drvdata(dev);
+>> -	int ret;
+>> +	struct device *cpu_dev;
+>> +	s32 val, cpu_lat = 0;
+>> +	int i, ret;
+>> +
+>> +	if (info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED) {
+>> +		for_each_possible_cpu(i) {
+>> +			cpu_dev = get_cpu_device(i);
+>> +			val = dev_pm_qos_read_value(cpu_dev, DEV_PM_QOS_RESUME_LATENCY);
+>> +			if (val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT)
+>> +				cpu_lat = max(cpu_lat, val);
+>> +		}
+>> +		if (cpu_lat && cpu_lat != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT) {
+>> +			dev_dbg(cpu_dev, "%s: sending max CPU latency=%u\n", __func__, cpu_lat);
+>
+> An interesting observation was made which caused us to suspect this
+> code, the CPU on which the latency was actually being set was not being
+> printed here. It was always the cpu3
+>
+> cpu cpu3: ti_sci_suspend: sending max CPU latency=100
+>
+> If you look at how this print comes, it's always after all the cpu
+> indices have run, so by then the cpu_dev value will have always become
+> = nproc in the system. This makes debugging it confusing.
 
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
+Good catch.  That's definitely a debug bug.  :)
 
-> Ping.
+Will fix in the next version.
 
-Thanks, applied to perf-tools-next,
+Thanks for the review & testing,
 
-- Arnaldo
+Kevin
+
 
