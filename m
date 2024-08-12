@@ -1,152 +1,146 @@
-Return-Path: <linux-kernel+bounces-283245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B82F94EF14
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:01:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1BD94EEBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 400301C21788
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:01:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDA8B1C203F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8DD17DE0E;
-	Mon, 12 Aug 2024 14:01:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5191017D8A9;
+	Mon, 12 Aug 2024 13:51:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="VDecE5ha"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dd3niisA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9AD7153810;
-	Mon, 12 Aug 2024 14:01:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1BE17A92F;
+	Mon, 12 Aug 2024 13:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723471266; cv=none; b=UvcDFlDGCqNl1JMYzfqIygolsLcQxrcPI5P/AjpB9blAE+O9ozsr7DfAb50SrnpTIKiUgyRBJuGgwmcleqBsHiYNUodKr9hUI14Ebke5Y7BYqzvp+eSon+JTDoBQ5FnIOT3wZzsurFUh+9ghoDWEe0fIOKT/XO6SAazr1nXg5gk=
+	t=1723470659; cv=none; b=byZDgWPCxmlL0xo4TmBWXn7FKEJgcD5GzIwkHQFjBzkjpouPh3nnta1ex9vyeT60E/jGGnnrrkiWFHnIwJiojuVM9QSzhQqkpi63O8pWIJVsRsur4WAvH7l0rwbQXCfiOj4r4Dm2Tu+93ub0ZpgNv+mxtu8AGD4MMPtgVeBdw9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723471266; c=relaxed/simple;
-	bh=SSXMu8X39GKssWyK5Yhq6CP3O+nWOSWLHIjgFXRUNAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KVRjtHPE6/CNs5o4maYBo/VaHxmOcUCXTZqhvKCMXyp9qFrevWcu0a5PJ6BTCmDEGzNmlwitUjt9mChYc7IAe26osur+nSOtkVvXComToIfI+61ENQImKdu4baLnmz8iVSj4hp5AM04O0+dyY2N9N14cBP7m1yDTgf/A3CRVO2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=VDecE5ha reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 7d5e90ff59b1cf15; Mon, 12 Aug 2024 16:01:03 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 85F796F0D6A;
-	Mon, 12 Aug 2024 16:01:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723471263;
-	bh=SSXMu8X39GKssWyK5Yhq6CP3O+nWOSWLHIjgFXRUNAA=;
-	h=From:Subject:Date;
-	b=VDecE5haL/KG3ZfVrGQ6wSuFfugYOM4PpUgYs9dvluUphXxoprq2fAH/ej+I2YNSo
-	 o/vMHGSuVRXGOo8AfSzPKnM2O9mA6d7E7e+MWjzfxIpnzthiVM+ZGjxEuaSkOkFiDv
-	 sSDw+gvC5u/YxeHUbq5uOWYF+72gM4btolvbN8Ac9BAC2jlLsEZyvnvOSf1czgeJKd
-	 MJpUhSxbkABAgHFvgPa+GZfZnB0cI5Y5XHEd+AACctK+AxlcoEnj+DPvP406KSWBKQ
-	 kl/OvbwWQcaz7yvxzKSDn9GMg3SFVPln4ksVRorVsHKdCUyq63IOJz+/5cfHhgyPVU
-	 32/0FqScq9kgw==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v2 00/17] thermal: Rework binding cooling devices to trip points
-Date: Mon, 12 Aug 2024 15:50:15 +0200
-Message-ID: <114901234.nniJfEyVGO@rjwysocki.net>
+	s=arc-20240116; t=1723470659; c=relaxed/simple;
+	bh=iZp5l59CAGjLpHSJneafAUtnEDyDDH25DA7+A9E6wP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lA8GTkbr2orpw2lJxh2ZxOh0PAPBPskzJfwYx2q4qsl5s9BF9h21i0WNTcGBEbx7W/smqX/xakyCsbUgGw9jdCUHl3LOGMmDqLXYF2wV9CdChbswk9T8nS2brl16GwxU6xWdhHisP1lJgLB26NhyiwsOSKFqrpmsIw5QUKk1UbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dd3niisA; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723470658; x=1755006658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=iZp5l59CAGjLpHSJneafAUtnEDyDDH25DA7+A9E6wP8=;
+  b=dd3niisAd0ekOeuqFs9WFTJdztL8Q0aesAkJZTIUY1yrQD8uglqHdMVd
+   ybA/ntgOeJ9oRl7Nm7lSXiGH0YXHxjyzY40oeq6Tx5CCGmYVTXaWGXhHG
+   M2FUMqgzPd3pU3dExgm+GLxSWo7Nb51HkgAIUPH+AD0hK/HaIcs6AWWx/
+   Ukf6bDkyJRdSmlZXW/e0ZVFuark4KCXfXh5XMXmRIHY6Q9iaNifQHvQzv
+   QJ8RuOt1QTeimDItXP7E6K+RjoKkJZshdIt4afyhzzVyIpeKkDadJJ7ML
+   hOwKFIbrwO8Qw2ds3G3qj3hVZf0eQo8wq0JKRQkE3DP3iOYIPYl1cX7wY
+   A==;
+X-CSE-ConnectionGUID: V8fuBa87QpeSbHCULqTbIQ==
+X-CSE-MsgGUID: uZ5juxveTpeOQy3n3f0yjg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="24488318"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="24488318"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:50:57 -0700
+X-CSE-ConnectionGUID: yU49dKNsSOSVTrqEuovdIg==
+X-CSE-MsgGUID: C6k8NsNYRsqMqzjvAcWSuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="58212835"
+Received: from slindbla-desk.ger.corp.intel.com (HELO intel.com) ([10.245.246.165])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:50:50 -0700
+Date: Mon, 12 Aug 2024 15:50:47 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	andriy.shevchenko@linux.intel.com, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, anshuman.gupta@intel.com,
+	badal.nilawar@intel.com, riana.tauro@intel.com,
+	ashutosh.dixit@intel.com, karthik.poosa@intel.com
+Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
+Message-ID: <ZroTN3UudwvIJ7oR@ashyti-mobl2.lan>
+References: <20240812081538.1457396-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeehpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgii
- tggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=15 Fuz1=15 Fuz2=15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812081538.1457396-1-raag.jadav@intel.com>
 
-Hi Everyone,
+Hi Raag,
 
-This is an update of
+> +static int
+> +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> +{
+> +	struct i915_hwmon *hwmon = ddat->hwmon;
+> +	struct hwm_fan_info *fi = &ddat->fi;
+> +	u64 rotations, time_now, time;
+> +	intel_wakeref_t wakeref;
+> +	u32 reg_val, pulses;
+> +	int ret = 0;
+> +
+> +	if (attr != hwmon_fan_input)
+> +		return -EOPNOTSUPP;
+> +
+> +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
+> +	mutex_lock(&hwmon->hwmon_lock);
+> +
+> +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> +	time_now = get_jiffies_64();
+> +
+> +	/* Handle HW register overflow */
+> +	if (reg_val >= fi->reg_val_prev)
+> +		pulses = reg_val - fi->reg_val_prev;
+> +	else
+> +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
+> +
+> +	/*
+> +	 * HW register value is accumulated count of pulses from
+> +	 * PWM fan with the scale of 2 pulses per rotation.
+> +	 */
+> +	rotations = pulses / 2;
+> +
+> +	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
+> +	if (unlikely(!time)) {
+> +		ret = -EAGAIN;
+> +		goto exit;
+> +	}
 
-https://lore.kernel.org/linux-pm/3134863.CbtlEUcBR6@rjwysocki.net/#r
+Can you please add a comment describing how you obtain the speed
+calculation?
 
-the cover letter of which was sent separately by mistake:
+Basically at every read you store the values. Is it possible that
+we don't have reads for a long time and the register resets more
+than once?
 
-https://lore.kernel.org/linux-pm/CAJZ5v0jo5vh2uD5t4GqBnN0qukMBG_ty33PB=NiEqigqxzBcsw@mail.gmail.com/
+Thanks,
+Andi
 
-It addresses several (arguably minor) issues that have been reported by
-robots or found by inspection in the v1 and takes review feedback into
-account.
-
-The first 10 patches in the series are not expected to be controversial,
-even though patch [05/17] requires some extra testing and review (if it
-turns out to be problematic, it can be deferred without too much hassle).
-
-The other 7 patches are driver changes and code simplifications on top of
-them which may require some more time to process.  For this reason, I'm
-considering handling the first 10 patches somewhat faster, with the possible
-exception of patch [05/17].
-
-Below is the original cover letter mishandled previously.
-
-The code for binding cooling devices to trip points (and unbinding them from
-trip point) is one of the murkiest pieces of the thermal subsystem.  It is
-convoluted, bloated with unnecessary code doing questionable things, and it
-works backwards.
-
-The idea is to bind cooling devices to trip points in accordance with some
-information known to the thermal zone owner (thermal driver).  This information
-is not known to the thermal core when the thermal zone is registered, so the
-driver needs to be involved, but instead of just asking the driver whether
-or not the given cooling device should be bound to a given trip point, the
-thermal core expects the driver to carry out all of the binding process
-including calling functions specifically provided by the core for this
-purpose which is cumbersome and counter-intuitive.
-
-Because the driver has no information regarding the representation of the trip
-points at the core level, it is forced to walk them (and it has to avoid some
-locking traps while doing this), or it needs to make questionable assumptions
-regarding the ordering of the trips in the core.  There are drivers doing both
-these things.
-
-But there's more.  The size of the binding/unbinding code can be reduced by
-simply moving some parts of it around.  Some checks in it are overkill or
-redundant.  White space is used inconsistently in it.  Its locking can be
-made more straightforward.
-
-Moreover, overhead can be reduced, especially in governors, if the lists of
-thermal instances representing the bindings between cooling devices and trip
-points are moved from thermal zone objects to trip descriptors.
-
-The first 7 patches in the series deal with the minor issues listed above in
-preparation for a more substantial change which is the introduction of a new
-thermal operation, called .should_bind(), that will allow the core to do
-exactly what it needs: as the driver whether or not the given cooling device
-should be bound to a given trip, in patch [08/17].
-
-Patch [09/17] makes the ACPI thermal driver use .should_bind() instead of
-the .bind() and .unbind() operations which is a substantial simplification.
-
-Patch [10/17] unexports two core functions previously used by the ACPI driver
-that can be static now.
-
-Patches [11-14/17] modify the remaining drivers implementing .bind() and
-.undind() to use .should_bind() instead of them which results in significant
-simplifications of the code.
-
-The remaining 3 patches carry out cleanups that can be done after all of the
-previous changes, resulting if further code size reductions.
-
-Thanks!
-
-
-
+> +	/*
+> +	 * Convert to minutes for calculating RPM.
+> +	 * RPM = number of rotations * msecs per minute / time in msecs
+> +	 */
+> +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
+> +
+> +	fi->reg_val_prev = reg_val;
+> +	fi->time_prev = time_now;
+> +exit:
+> +	mutex_unlock(&hwmon->hwmon_lock);
+> +	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
+> +	return ret;
+> +}
 
