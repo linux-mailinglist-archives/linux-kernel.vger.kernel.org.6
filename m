@@ -1,122 +1,180 @@
-Return-Path: <linux-kernel+bounces-283344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F4E94F125
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:02:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7928294F135
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07677280ECC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22BC1F22AE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D339A186E36;
-	Mon, 12 Aug 2024 15:01:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8A17C7CB;
+	Mon, 12 Aug 2024 15:03:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eImntX/0"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BEkaR623"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCDD41DA26;
-	Mon, 12 Aug 2024 15:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279F11E504;
+	Mon, 12 Aug 2024 15:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474874; cv=none; b=YD2Dru6v5XC1SjySs68vTeV8OqNfYgC25T4tZfvSxqoydWOZz/jJcl2Mg791j5axgrnYDEK82om2EiDI2kW+Ip5veBjCdYVozZCQh1dO9xjcpPamW6JYKo1E0hDaa9YQn2uMPOnEdVrgDXylaoX/hTCK2/JsNx6DJlaIS+ghU+M=
+	t=1723474987; cv=none; b=PZKoZ7u0GDrY8fJK83YA784XQhBDKvZ6YfYxKFAWUEQyPn2YMX4ZhqEzJUoQYLEMjM/M8QnWCt8vRZSxjYQxc1YQnsA8sQr9+NPdsxBQ2sdWojwzlm/n75EIiFe0Oo3DD2fdz4ApWLTiHKfFNxae7ttRpt7exymI0yaKzwMt8v0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474874; c=relaxed/simple;
-	bh=VyonfWlsq1MTm3DXqgxcfIvMNB6opcaxx6uq4IMKHsg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tDsw45P+2jXZ7t1xxNn/lFmk/ZFOw10FC0caWzTr50LFje/94Q9rSz6rB51lhKQGwMZmooQCCmbDjx5fqi2xlFli2/tjOgZhbakEEsku2LfpOZNJ0C4LR0niLrXX672LwNvPt0PJRD4ypkRYgjD+JD+L23ygmQvijAWIRobr4As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eImntX/0; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 8E5E8FF807;
-	Mon, 12 Aug 2024 15:01:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723474869;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qcnVQb/yrvDYJxCY7i392OtDZOwd6IXmcourEZmhOEM=;
-	b=eImntX/09QmFtD+KwtwW/PiFL8FBHh8x6fardUgTSBSQGvgkcg0mvGZwiWIZ7w/PQcZb1g
-	Kvr+ighKlHbB1U2hXlYFC8aTluW8ysYaUIkSprsQvq0/wHQccQh+yxHuTTBj0TnVk6YouR
-	DV1HcDXkm5SHm5Bj6+wGIXajsYOODy2NY1tM1/ZaOknCQYciTuP5Xzuz/s8L7RFn0KtTL/
-	PknVlgJ6TlyNAySg2HUSu4lfucNRkB6uu7CJCPTeTkeH2McnLmDlfISi1jw09O6xZya0Ua
-	vMzEY8bvYHzkR0SA1cFR3snY1zkepdzuKdd+qPiE1Or7MvwwU/GphKMupT/8xA==
-From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Date: Mon, 12 Aug 2024 17:00:57 +0200
-Subject: [PATCH v4 3/3] riscv: dts: sophgo: Add SARADC description for
- Sophgo CV18XX
+	s=arc-20240116; t=1723474987; c=relaxed/simple;
+	bh=Yz6vzlKsg5IFj7gvXAZtzKGs6/KLRUCKPFOZS12iaJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGdC6necSNOcQUHRaO1kM4nhbuGZ85S/iCBetnqgQUNkPabwEit8tkSqdzkvgGZKL+v4dBy0w25NdqY0n5P2Rmw9fVwI82KcaFGwu4O+o8y45KJRWh89EgI8ac7BGVmjNoAojfLE3WDK5HlJPmZayHfjnWUh63pvvqiTpWQxGCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BEkaR623; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1yhxhgCYYOrwxsZ9RN1iHvPLJeTvcqO7DlVfRzQWTsw=; b=BEkaR623v2rziDJGx6ZQEKKpcw
+	6DHbyjk75aeOToNg7g50KeTGLjwLISxXBBCx4Tkxtz9iTDA/riYYrbghBQn+OW3C8cajLFQTa9JBi
+	rkfXBoUWOlaO7SG58iulnLSRUtNpONK+A/rBxhzg9JYvGoMNnKFreUVRY5dndPA1YrWX+LtrG9uog
+	RG8NdLKVjhocOnR52qngGLvgwJ6umNTYlPgdajSc3URdsgO7AQYCcnopQk3o1HXmaC6Zldp/NM0/E
+	iWeQH/O0v+4VnGiO93026j/mX+7BrzR7knvyxCRpQqZogGXauMDNhluRTh5Jkeu1Cy2gUFoev3jyb
+	RJczd7IQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59654)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sdWYp-00046l-0y;
+	Mon, 12 Aug 2024 16:02:15 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sdWYn-0000YY-RA; Mon, 12 Aug 2024 16:02:13 +0100
+Date: Mon, 12 Aug 2024 16:02:13 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, will@kernel.org, arnd@arndb.de,
+	afd@ti.com, linus.walleij@linaro.org, akpm@linux-foundation.org,
+	masahiroy@kernel.org, eric.devolder@oracle.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: stacktrace: Add USER_STACKTRACE support
+Message-ID: <Zroj9aRA/fr33M9I@shell.armlinux.org.uk>
+References: <20240730021532.1752582-1-ruanjinjie@huawei.com>
+ <ZqzHgFB2t+SWy5o9@shell.armlinux.org.uk>
+ <d7b9116e-bddc-2ab2-06eb-6191612fe16b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-sg2002-adc-v4-3-599bdb67592f@bootlin.com>
-References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
-In-Reply-To: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
- Inochi Amaoto <inochiama@outlook.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: thomas.bonnefille@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d7b9116e-bddc-2ab2-06eb-6191612fe16b@huawei.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Adds SARADC nodes for the common Successive Approximation Analog to
-Digital Converter used in Sophgo CV18xx series SoC.
-This patch adds two nodes for the two controllers the board, one in
-the Active domain and the other in the No-Die domain.
+On Mon, Aug 12, 2024 at 02:45:40PM +0800, Jinjie Ruan wrote:
+> 
+> 
+> On 2024/8/2 19:48, Russell King (Oracle) wrote:
+> > On Tue, Jul 30, 2024 at 10:15:32AM +0800, Jinjie Ruan wrote:
+> >> Currently, userstacktrace is unsupported for ARM. So use the
+> >> perf_callchain_user() code as blueprint to implement the
+> >> arch_stack_walk_user() which add userstacktrace support on ARM.
+> >> Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
+> >> of perf_callchain_user().
+> >>
+> >> A ftrace test case is shown as below:
+> >> 	# cd /sys/kernel/debug/tracing
+> >> 	# echo 1 > options/userstacktrace
+> >> 	# echo 1 > options/sym-userobj
+> >> 	# echo 1 > events/sched/sched_process_fork/enable
+> >> 	# cat trace
+> >>
+> >> 	......
+> >> 	              sh-100     [000] .....    51.779261: sched_process_fork: comm=sh pid=100 child_comm=sh child_pid=108
+> >> 	              sh-100     [000] .....    51.779285: <user stack trace>
+> >> 	 => /lib/libc.so.6[+0xb3c8c]
+> >> 	 => /bin/busybox[+0xffb901f1]
+> >>
+> >> Also a simple perf test is ok as below:
+> >> 	# perf record -e cpu-clock --call-graph fp top
+> >> 	# perf report --call-graph
+> >>
+> >> 	.....
+> >> 	  [[31m  65.00%[[m     0.00%  top      [kernel.kallsyms]  [k] __ret_fast_syscall
+> >>
+> >> 	            |
+> >> 	            ---__ret_fast_syscall
+> >> 	               |
+> >> 	               |--[[31m30.00%[[m--__se_sys_getdents64
+> >> 	               |          iterate_dir
+> >> 	               |          |
+> >> 	               |          |--[[31m25.00%[[m--proc_pid_readdir
+> >>
+> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > 
+> > Do you have a use case for this feature?
+> 
+> To my knowledge, user stack trace is used in both uprobes and ftrace.
+> 
+> > 
+> > Given that userspace is free to do whatever it likes with stack frames,
+> > I think this is going to be hit and miss whether it works.
+> 
+> To be honest, I referred to the implementation of ARM64. Does anyone
+> have suggestions for improvements or modifications?
 
-Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
----
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+So you're lifting code from Arm64 and dropping it into Arm32 in the hope
+that it's suitable.
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-index 891932ae470f..71a2618852fa 100644
---- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-@@ -133,6 +133,26 @@ portd: gpio-controller@0 {
- 			};
- 		};
- 
-+		saradc: adc@30f0000 {
-+			compatible = "sophgo,cv1800b-saradc";
-+			reg = <0x030f0000 0x1000>;
-+			clocks = <&clk CLK_SARADC>;
-+			interrupts = <100 IRQ_TYPE_LEVEL_HIGH>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+
-+			channel@0 {
-+				reg = <0>;
-+			};
-+			channel@1 {
-+				reg = <1>;
-+			};
-+			channel@2 {
-+				reg = <2>;
-+			};
-+		};
-+
- 		i2c0: i2c@4000000 {
- 			compatible = "snps,designware-i2c";
- 			reg = <0x04000000 0x10000>;
+Here's a couple of examples - I've just used objdump on Debian Stable's
+/bin/cat which contains functions where the prologue and epilogue are:
+
+    1a2c:       b508            push    {r3, lr}
+    ...
+    1a56:       bd08            pop     {r3, pc}
+
+    1de4:       b570            push    {r4, r5, r6, lr}
+    ...
+    1dea:       b084            sub     sp, #16
+    ...
+    1e18:       b004            add     sp, #16
+    1e1a:       bd70            pop     {r4, r5, r6, pc}
+
+These kinds of stack frames can not be unwound by the kernel - there
+is no frame pointer there, and the only way it can be unwound is with
+unwind information specific to the code objects concerned.
+
+If I look at Arm64, then:
+
+    26b0:       a9be7bfd        stp     x29, x30, [sp, #-32]!
+    26b4:       910003fd        mov     x29, sp
+...
+    26f0:       a8c27bfd        ldp     x29, x30, [sp], #32
+    26f4:       d65f03c0        ret
+
+So, x29 appears to be frame pointer like, creating a linked list of
+stack frames. If this is part of the Arm64 ABI, then yes, the kernel
+can use the guarantee that user programs will have this stack structure
+and thus can walk the stack.
+
+However, as has been shown, this is not true of 32-bit Arm - there is
+no guarantee that userspace has any regular structure to its stack
+frames, and thus there is no guarantee that the stack frames can be
+walked by the kernel.
 
 -- 
-2.46.0
+*** please note that I probably will only be occasionally responsive
+*** for an unknown period of time due to recent eye surgery making
+*** reading quite difficult.
 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
