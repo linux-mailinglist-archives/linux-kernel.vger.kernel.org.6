@@ -1,87 +1,131 @@
-Return-Path: <linux-kernel+bounces-283032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0246194EC30
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D826094EC32
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3521A1C20403
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD461F2261A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC97178370;
-	Mon, 12 Aug 2024 11:59:16 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67557178CE7;
-	Mon, 12 Aug 2024 11:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A905178389;
+	Mon, 12 Aug 2024 11:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L28D7MxH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA61B178378
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463955; cv=none; b=sEs95hIzZ76f2BA220on7wxLUgUZpAwinVIU67hapwPgDSJ2B8NUlPPi2uRzvmRCHmjwKjyWjqmrsDnpCRHSARvdy1EtC+ZzJkhIcLgqMdP8dJuOiPBt3igYygBvllZoC+sz5p6/LhvMKJDwfe6hvsryxckKkJR4T5TwhThleIc=
+	t=1723463967; cv=none; b=ScI7PDsr8BqJgqMFY9GUSmhDmg+/j2i7vJ6+/7R/ipZf6MzAewKpCsDh1ObdUJQUTY83Cw2gfmzlb7e6wWxc/jSKa1Av8V0/svGbynH6Hfz+Eii7aa0Zu4jnS3FbYKwiSGPhlsq9D128oS+WU7WBbNJIIC35DhM0nulTXnF/z1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463955; c=relaxed/simple;
-	bh=CGUVZHA4td1Bf0yOxb/xPJ+40kpIL1S5PJ8nX1gT5fw=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=tRQaL1+yuRS2HwwyG5ptUPrx9ek3B2kuPe06mph2d5TduK5M760sYP4uttnMm5jYruuRroyWf4aYz50HXXEE34BhUNKDKWm40OD6iupzRL0MFkZExCKjxdxUIICv7DCJVZEslZkZjAKnDQ4o+sD1ubT9ffC+LcgMqHGj4fAaFLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id E2B7A92009C; Mon, 12 Aug 2024 13:59:04 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id DCA2692009B;
-	Mon, 12 Aug 2024 12:59:04 +0100 (BST)
-Date: Mon, 12 Aug 2024 12:59:04 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-cc: Bjorn Helgaas <helgaas@kernel.org>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH 1/2] PCI: Clear LBMS on resume to avoid Target Speed
- quirk
-In-Reply-To: <42afa3ee-4429-90e4-9e98-18a0d30c0a3c@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.2408121247580.59022@angie.orcam.me.uk>
-References: <20240129184354.GA470131@bhelgaas> <aa2d1c4e-9961-d54a-00c7-ddf8e858a9b0@linux.intel.com> <alpine.DEB.2.21.2401301537070.15781@angie.orcam.me.uk> <a7ff7695-77c5-cf5a-812a-e24b716c3842@linux.intel.com> <d5f14b8f-f935-5d5e-e098-f2e78a2766c6@linux.intel.com>
- <alpine.DEB.2.21.2402011800320.15781@angie.orcam.me.uk> <d9f6efe3-3e99-0e4b-0d1c-5dc3442c2419@linux.intel.com> <a0b070b7-14ce-7cc5-4e6c-6e15f3fcab75@linux.intel.com> <alpine.DEB.2.21.2408091327390.61955@angie.orcam.me.uk>
- <42afa3ee-4429-90e4-9e98-18a0d30c0a3c@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1723463967; c=relaxed/simple;
+	bh=ZTQKVNT5llOMOqIkBUTETMPYhC9nAw9VreBXFn+pYfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eCWnxgMCW+aSaAwkwDFmcJPXOIb1rsiPTFab7UTRFG76yIE79OjNOh5u8zZ6HSIpAg5QE8fFthVFO0zYxDb0/dz9YjgHrA3pPaTtzFBqTtkjJJDyladvIGgX5VxpDjdHYjWDxFZqMPCqtITZmmpAnWOPirFdK3m2cMQjYJZxR+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L28D7MxH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723463964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IcRpMkf8d+V3G73B4j7uXCdRLIvu4hkKMDZaqMcRk10=;
+	b=L28D7MxHV/Vx78nTFr6R4+4kdh67WNyu07Q8TRCDZcnK4MFLyX13Bq5zsAKIVoB7eV2JsF
+	GJpV3Y2Zh5Kx/zbamRxNlFw8WZeKCK+TugY1J5ptd8N1fRl/Mae/uY9CFUMn6Q+tn+2N9S
+	phLdvD7aKMyHdpvnYc34ELk62Qc21tQ=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-91-Z17j8rw0NgqtzWzJDZZg7Q-1; Mon, 12 Aug 2024 07:59:23 -0400
+X-MC-Unique: Z17j8rw0NgqtzWzJDZZg7Q-1
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2f0276170f9so39387331fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:59:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723463961; x=1724068761;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IcRpMkf8d+V3G73B4j7uXCdRLIvu4hkKMDZaqMcRk10=;
+        b=WG5wMxk6art3VcH2/Z0DRKTxEVPOHOV4SWLXGQlJkMLTJqbJ88nqzf/83TeZfFpG6b
+         qRP8b2WYM1EPtEh9qtJAxwxYQIhinjG/VOUVa7iYkJZxO7OWQQsIXKdK+Uwd2DGSXizg
+         86vhR8DsJTzpesNHaI9BxQkaKU5+yvQ1I5m1zcQHj0gCCzAEHwVQdreUopg6T379cR8U
+         mKzPO2rs3R2ZVvdKHABsTIFU1M99+UqSWRWBZWUHNA1NPZUr93JdI7TQJJRwBSFjQ/tL
+         O4oCqXylbBuDtGYrwSfPdcag7CWUHgXruoUSOweuxlCJMFZNJCoa7J+0HlEQpoR03pPH
+         v3AA==
+X-Forwarded-Encrypted: i=1; AJvYcCX88pvqL4o2G6WCIyauuO7lFgFPcVzQ0646ZthqjRipKOkCEPZztJzGfG/JKS4zc4ky56v8VRXZTuGReCqku5WYxFQ2o6x9a59CS9NJ
+X-Gm-Message-State: AOJu0YyOf8fqNHkqfRIRq68c7b6JyZY3WT1hjg+qzzOahPgPCa4pZIny
+	PUDbY6qORNftiBCuMXeBjoK0Vayqrw/jyB/Suor5LigjN06SNviPFTmT035S98mJoNhut5C5+YC
+	DaW6YSdtF9QsATxNKOhLoq7NUmewOnm5mrKkBVgxscR1wvNsa9AdzMKTCyKavWQ==
+X-Received: by 2002:a2e:b992:0:b0:2ee:7a3e:4721 with SMTP id 38308e7fff4ca-2f1a6cf8bb1mr59401541fa.39.1723463961371;
+        Mon, 12 Aug 2024 04:59:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH1gxZ0XOMvUedijgGYCSz6WeLKsQebFG3XNIdyhjrr6urez/nppwLw3pC3YYwsQSeii5ncVg==
+X-Received: by 2002:a2e:b992:0:b0:2ee:7a3e:4721 with SMTP id 38308e7fff4ca-2f1a6cf8bb1mr59401391fa.39.1723463960789;
+        Mon, 12 Aug 2024 04:59:20 -0700 (PDT)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775fc9csm98520995e9.47.2024.08.12.04.59.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 04:59:20 -0700 (PDT)
+Date: Mon, 12 Aug 2024 13:59:19 +0200
+From: Igor Mammedov <imammedo@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v6 07/10] docs: acpi_hest_ghes: fix documentation for
+ CPER size
+Message-ID: <20240812135919.1b4865c6@imammedo.users.ipa.redhat.com>
+In-Reply-To: <93ae03bd89b47731f6703dab5925ed2f7a9fd426.1723119423.git.mchehab+huawei@kernel.org>
+References: <cover.1723119423.git.mchehab+huawei@kernel.org>
+	<93ae03bd89b47731f6703dab5925ed2f7a9fd426.1723119423.git.mchehab+huawei@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, 9 Aug 2024, Ilpo Järvinen wrote:
+On Thu,  8 Aug 2024 14:26:33 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
 
-> > # setpci -s 02:03.0 CAP_EXP+0x12.W
-> > 5812
-> > # setpci -s 02:03.0 CAP_EXP+0x12.W
-> > 5811
-> > 
-> > As you can see the Link Training bit oscillates as I previously reported 
-> > and noted in the introduction to `pcie_failed_link_retrain', and also the 
-> > Current Link Speed field flips between 2.5GT/s and 5GT/s.
+> While the spec defines a CPER size of 4KiB for each record,
+> currently it is set to 1KiB. Fix the documentation and add
+> a pointer to the macro name there, as this may help to keep
+> it updated.
 > 
-> Okay, thanks for testing. I suppose that test wasn't done in a busy loop 
-> (it might not be easy capture very short link up state if there was any 
-> such period when testing it by manually launching that command a few 
-> times)?
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
- These were just random samples obtained by reissuing `setpci' command at
-a command prompt, as shown.  As I say I haven't ever seen DLLLA going up, 
-or I suppose the dance would have stopped.  Polling for the bit set in a 
-busy loop would require injecting code into `pcie_failed_link_retrain' for 
-such a diagnostic check if at all feasible or fiddling with U-Boot code.  
+Acked-by: Igor Mammedov <imammedo@redhat.com>
 
- I'll see if I can make a suitable change to `pcie_failed_link_retrain' 
-and persuade the kernel not to interfere for the duration of the check 
-(it'll be fine for the kernel to crash afterwards).  If that won't do, 
-then it's straightforward to arrange with U-Boot, but to do it safely it 
-requires physical access to the system as U-Boot is stored on a uSD card 
-with this system, and I'm not on site anymore, so it'll have to wait.
+> ---
+>  docs/specs/acpi_hest_ghes.rst | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
+> index 68f1fbe0a4af..c3e9f8d9a702 100644
+> --- a/docs/specs/acpi_hest_ghes.rst
+> +++ b/docs/specs/acpi_hest_ghes.rst
+> @@ -67,8 +67,10 @@ Design Details
+>  (3) The address registers table contains N Error Block Address entries
+>      and N Read Ack Register entries. The size for each entry is 8-byte.
+>      The Error Status Data Block table contains N Error Status Data Block
+> -    entries. The size for each entry is 4096(0x1000) bytes. The total size
+> -    for the "etc/hardware_errors" fw_cfg blob is (N * 8 * 2 + N * 4096) bytes.
+> +    entries. The size for each entry is defined at the source code as
+> +    ACPI_GHES_MAX_RAW_DATA_LENGTH (currently 1024 bytes). The total size
+> +    for the "etc/hardware_errors" fw_cfg blob is
+> +    (N * 8 * 2 + N * ACPI_GHES_MAX_RAW_DATA_LENGTH) bytes.
+>      N is the number of the kinds of hardware error sources.
+>  
+>  (4) QEMU generates the ACPI linker/loader script for the firmware. The
 
-  Maciej
 
