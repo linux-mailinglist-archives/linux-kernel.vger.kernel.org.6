@@ -1,279 +1,124 @@
-Return-Path: <linux-kernel+bounces-282958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0008094EB45
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6993594EB4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB23F282B0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C79E1C2142C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DDD170828;
-	Mon, 12 Aug 2024 10:36:05 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BC1170836;
+	Mon, 12 Aug 2024 10:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="p9AlzTWV"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E50A15C159;
-	Mon, 12 Aug 2024 10:36:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8AA16FF26
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458964; cv=none; b=j0z2++b4VJTOqmQYPhyaHmUemp9jpr0UtuhjNFpAeLYgiFKUXPsKdvPNta4UfJUN4oDn5ulAkKRmWx6GZbGEHWIFe1qEghV3ffX3ru3RYBB+Ox0UeTmHruYwkj6tbl0VMrAD5J5wjmtiWreLdZB5MLtyQeOx0Qxj7/SxaiZTdwQ=
+	t=1723459021; cv=none; b=APd3JjaUU8wEEblm9aLeQmtfGjjRjgJdWaUhdfj2McsSY7GmwBIXd24P9rQGan7zYRjZINzzToP+oCmieTAd0IIDaRk2tmWCfsoBC2pJz+X0/Ze4ArKVxiP4uC6cRqT8fhWnAfZgfyWJNBCmAxuso03bMN+jMaRdUChtfMW/fFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458964; c=relaxed/simple;
-	bh=9JOixDOMEABm8/KrT/4BKVWnyfC+aB+F26ZuYzAhoTw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oy2j5oLyBTUwCTGUvHOANCXoXMqhJDB2HWbsDtqcJYJgVkPePlUnddlyzjmJk+WoNRViM6W1qspjUFWtWyUN13zEzCzo0PaUdQQTf447HWRmBY+NTHJLF7yeDOz5Ai3Gmc96BeXy2Ej1Hl91IFDubolCeb1NhBzBqvIGUdS5GGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sdSGc-00450E-1D;
-	Mon, 12 Aug 2024 18:35:56 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Aug 2024 18:35:55 +0800
-Date: Mon, 12 Aug 2024 18:35:55 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev,
-	Linus Torvalds <torvalds@linux-foundation.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [v2 PATCH 2/3] crypto: api - Do not wait for tests during
- registration
-Message-ID: <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
-References: <ZrbTfOViUr3S4V7X@gondor.apana.org.au>
- <34069b9d-3731-4d0c-b317-bcbc61df7e9d@stanley.mountain>
- <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
- <ZrnlP4itTulcIYqP@gondor.apana.org.au>
+	s=arc-20240116; t=1723459021; c=relaxed/simple;
+	bh=8+LIWnQdrWxt7ycwt1k5XvF80HXWWgVGtbMU2iI1TG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E98qa1TRq2f62MHAlxd1NMMHFHmJcbRuE1LeO+3WJqu3hB5vMzFsucHW6PkDp2PuSQADEBHht4Ja/KgblhNqoWrGL9Xht+O+yWlKFn2AGVDkyFJYNy+/X+U5Pz/sEh0tQsHVekTNiQPHjrF4WDyJXbEJEjfXBaruGP70ideHVqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=p9AlzTWV; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ef95ec938so4134114e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:37:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723459018; x=1724063818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+NHXPZC38UkK7O5TEx6SvnlkLMGTpM5Jg04F0VTZcmI=;
+        b=p9AlzTWV+bcSvn84piwSb0GmqMCIJsSZl99LRvJfjrfZ7l7a9JqrpT2U/Ol/H/2cUo
+         z1OUx8iAQopfRHe1J5Lb17mzJjVf9BAxRbaN6kUrKe9wccksq2TOrl0dNvVftvwG5de1
+         GUYYdLAQMg/ko6jDTXlq83P1U/wxgiizbkRsIpLLKJ+ekmu8vJqmMizJcDbPtvIlgu/z
+         C9gOtikTLNZ//PdMlPFHcI3liL48XcbFngJJCjJFFecNqs3e9qGAP1EqgMnBSJUC3L0+
+         6cEW/bX3JCFjSFFJgenkZBvnxlbvmZhckvcPGR9vLlbyiIrstFAM3GSQOX0HN7DOOCzI
+         nMeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723459018; x=1724063818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+NHXPZC38UkK7O5TEx6SvnlkLMGTpM5Jg04F0VTZcmI=;
+        b=MBpHb7c17vmT1Av9FypWmkk0pmf8gi+Rwg02AfzZJ0AP0VqBrHQ06kxX6f9tnrU2SV
+         ubHjWrEyVXcrZ85TtYnu6fHCy06ULHBpLym75PrQ6lSOGz8fXIHpiOQZ13fPkgbgzoab
+         p0jXZmd6dvVX/WSntWahRl1EPCxlaE2WS6TiHi3BLPJ/wnFippp/5ZJjtfTpErq0kX6c
+         XNDQxpB1wnvGFeBWYsM3qEE5gBsWvtJ/rKnUo2IaEcwhc45L4gbWW0CKmhFQObVQzjvV
+         Ny+H0yUE1iipmElM01rwxAdPltGeynCKzI2F1QzpA2eHq9JNyfHyWZNZBbGTwE+Vw/EF
+         daGg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9sBJCrnWslwCJNuGB9nuC2bL/vEvLRNBajJG8H4JijQjTeU7yrQlUeA1Bsa/Wv3sqQP2tMxthLaVL9etXSWaEsw88WLu4S9thURmh
+X-Gm-Message-State: AOJu0YwIuEmr3RIzAuedYUqOpMmEIeMJQUMxd0dL/iW6P90GMXhfV/bH
+	W8O3BFJrylTBnr3OSJheHnNJpSeBWYnHEcZWBfVa36wlRJr2XGbc4l5bpVVEGqLt2Nt3YZZ7GE6
+	aldw=
+X-Google-Smtp-Source: AGHT+IGhryedRog1uNgUMvSTTd6FzO5BP4X7rYeAgqKS3aPe96HVq3jG2s3kGS4P92rT09XMfGeoLg==
+X-Received: by 2002:a05:6512:398c:b0:530:daee:cfb0 with SMTP id 2adb3069b0e04-530ee9ee3a3mr6043926e87.52.1723459018211;
+        Mon, 12 Aug 2024 03:36:58 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1cce87sm221661466b.101.2024.08.12.03.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 03:36:57 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] btrfs: Annotate structs with __counted_by()
+Date: Mon, 12 Aug 2024 12:36:20 +0200
+Message-ID: <20240812103619.2720-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrnlP4itTulcIYqP@gondor.apana.org.au>
+Content-Transfer-Encoding: 8bit
 
-As registration is usually carried out during module init, this
-is a context where as little work as possible should be carried
-out.  Testing may trigger module loads of underlying components,
-which could even lead back to the module that is registering at
-the moment.  This may lead to dead-locks outside of the Crypto API.
+Add the __counted_by compiler attribute to the flexible array member
+stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-Avoid this by not waiting for the tests to complete.  They will
-be scheduled but completion will be asynchronous.  Any users will
-still wait for completion.
-
-Reported-by: Russell King <linux@armlinux.org.uk>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- crypto/algapi.c   | 23 ++++++++++++-----------
- crypto/api.c      | 41 +++++++++++++++++++++--------------------
- crypto/internal.h |  3 +--
- 3 files changed, 34 insertions(+), 33 deletions(-)
+ fs/btrfs/volumes.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/crypto/algapi.c b/crypto/algapi.c
-index d2ccc1289f92..74e2261c184c 100644
---- a/crypto/algapi.c
-+++ b/crypto/algapi.c
-@@ -366,7 +366,8 @@ void crypto_alg_tested(const char *name, int err)
- 	}
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index 37a09ebb34dd..f28fa318036b 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -551,7 +551,7 @@ struct btrfs_io_context {
+ 	 * stripes[data_stripes + 1]:	The Q stripe (only for RAID6).
+ 	 */
+ 	u64 full_stripe_logical;
+-	struct btrfs_io_stripe stripes[];
++	struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
+ };
  
- 	pr_err("alg: Unexpected test result for %s: %d\n", name, err);
--	goto unlock;
-+	up_write(&crypto_alg_sem);
-+	return;
+ struct btrfs_device_info {
+@@ -591,7 +591,7 @@ struct btrfs_chunk_map {
+ 	int io_width;
+ 	int num_stripes;
+ 	int sub_stripes;
+-	struct btrfs_io_stripe stripes[];
++	struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
+ };
  
- found:
- 	q->cra_flags |= CRYPTO_ALG_DEAD;
-@@ -387,11 +388,12 @@ void crypto_alg_tested(const char *name, int err)
- 	crypto_alg_finish_registration(alg, &list);
- 
- complete:
-+	list_del_init(&test->alg.cra_list);
- 	complete_all(&test->completion);
- 
--unlock:
- 	up_write(&crypto_alg_sem);
- 
-+	crypto_alg_put(&test->alg);
- 	crypto_remove_final(&list);
- }
- EXPORT_SYMBOL_GPL(crypto_alg_tested);
-@@ -412,7 +414,6 @@ int crypto_register_alg(struct crypto_alg *alg)
- {
- 	struct crypto_larval *larval;
- 	LIST_HEAD(algs_to_put);
--	bool test_started = false;
- 	int err;
- 
- 	alg->cra_flags &= ~CRYPTO_ALG_DEAD;
-@@ -423,15 +424,16 @@ int crypto_register_alg(struct crypto_alg *alg)
- 	down_write(&crypto_alg_sem);
- 	larval = __crypto_register_alg(alg, &algs_to_put);
- 	if (!IS_ERR_OR_NULL(larval)) {
--		test_started = crypto_boot_test_finished();
-+		bool test_started = crypto_boot_test_finished();
-+
- 		larval->test_started = test_started;
-+		if (test_started)
-+			crypto_schedule_test(larval);
- 	}
- 	up_write(&crypto_alg_sem);
- 
- 	if (IS_ERR(larval))
- 		return PTR_ERR(larval);
--	if (test_started)
--		crypto_wait_for_test(larval);
- 	crypto_remove_final(&algs_to_put);
- 	return 0;
- }
-@@ -646,8 +648,10 @@ int crypto_register_instance(struct crypto_template *tmpl,
- 	larval = __crypto_register_alg(&inst->alg, &algs_to_put);
- 	if (IS_ERR(larval))
- 		goto unlock;
--	else if (larval)
-+	else if (larval) {
- 		larval->test_started = true;
-+		crypto_schedule_test(larval);
-+	}
- 
- 	hlist_add_head(&inst->list, &tmpl->instances);
- 	inst->tmpl = tmpl;
-@@ -657,8 +661,6 @@ int crypto_register_instance(struct crypto_template *tmpl,
- 
- 	if (IS_ERR(larval))
- 		return PTR_ERR(larval);
--	if (larval)
--		crypto_wait_for_test(larval);
- 	crypto_remove_final(&algs_to_put);
- 	return 0;
- }
-@@ -1042,6 +1044,7 @@ static void __init crypto_start_tests(void)
- 
- 			l->test_started = true;
- 			larval = l;
-+			crypto_schedule_test(larval);
- 			break;
- 		}
- 
-@@ -1049,8 +1052,6 @@ static void __init crypto_start_tests(void)
- 
- 		if (!larval)
- 			break;
--
--		crypto_wait_for_test(larval);
- 	}
- 
- 	set_crypto_boot_test_finished();
-diff --git a/crypto/api.c b/crypto/api.c
-index ffb81aa32725..bbe29d438815 100644
---- a/crypto/api.c
-+++ b/crypto/api.c
-@@ -154,32 +154,31 @@ static struct crypto_alg *crypto_larval_add(const char *name, u32 type,
- 	return alg;
- }
- 
--void crypto_larval_kill(struct crypto_alg *alg)
-+static void crypto_larval_kill(struct crypto_larval *larval)
- {
--	struct crypto_larval *larval = (void *)alg;
-+	bool unlinked;
- 
- 	down_write(&crypto_alg_sem);
--	list_del(&alg->cra_list);
-+	unlinked = list_empty(&larval->alg.cra_list);
-+	if (!unlinked)
-+		list_del_init(&larval->alg.cra_list);
- 	up_write(&crypto_alg_sem);
--	complete_all(&larval->completion);
--	crypto_alg_put(alg);
--}
--EXPORT_SYMBOL_GPL(crypto_larval_kill);
- 
--void crypto_wait_for_test(struct crypto_larval *larval)
-+	if (unlinked)
-+		return;
-+
-+	complete_all(&larval->completion);
-+	crypto_alg_put(&larval->alg);
-+}
-+
-+void crypto_schedule_test(struct crypto_larval *larval)
- {
- 	int err;
- 
- 	err = crypto_probing_notify(CRYPTO_MSG_ALG_REGISTER, larval->adult);
--	if (WARN_ON_ONCE(err != NOTIFY_STOP))
--		goto out;
--
--	err = wait_for_completion_killable(&larval->completion);
--	WARN_ON(err);
--out:
--	crypto_larval_kill(&larval->alg);
-+	WARN_ON_ONCE(err != NOTIFY_STOP);
- }
--EXPORT_SYMBOL_GPL(crypto_wait_for_test);
-+EXPORT_SYMBOL_GPL(crypto_schedule_test);
- 
- static void crypto_start_test(struct crypto_larval *larval)
- {
-@@ -198,7 +197,7 @@ static void crypto_start_test(struct crypto_larval *larval)
- 	larval->test_started = true;
- 	up_write(&crypto_alg_sem);
- 
--	crypto_wait_for_test(larval);
-+	crypto_schedule_test(larval);
- }
- 
- static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
-@@ -218,9 +217,11 @@ static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
- 	alg = larval->adult;
- 	if (time_left < 0)
- 		alg = ERR_PTR(-EINTR);
--	else if (!time_left)
-+	else if (!time_left) {
-+		if (crypto_is_test_larval(larval))
-+			crypto_larval_kill(larval);
- 		alg = ERR_PTR(-ETIMEDOUT);
--	else if (!alg) {
-+	} else if (!alg) {
- 		u32 type;
- 		u32 mask;
- 
-@@ -355,7 +356,7 @@ struct crypto_alg *crypto_alg_mod_lookup(const char *name, u32 type, u32 mask)
- 		crypto_mod_put(larval);
- 		alg = ERR_PTR(-ENOENT);
- 	}
--	crypto_larval_kill(larval);
-+	crypto_larval_kill(container_of(larval, struct crypto_larval, alg));
- 	return alg;
- }
- EXPORT_SYMBOL_GPL(crypto_alg_mod_lookup);
-diff --git a/crypto/internal.h b/crypto/internal.h
-index aee31319be2e..711a6a5bfa2b 100644
---- a/crypto/internal.h
-+++ b/crypto/internal.h
-@@ -113,8 +113,7 @@ struct crypto_alg *crypto_mod_get(struct crypto_alg *alg);
- struct crypto_alg *crypto_alg_mod_lookup(const char *name, u32 type, u32 mask);
- 
- struct crypto_larval *crypto_larval_alloc(const char *name, u32 type, u32 mask);
--void crypto_larval_kill(struct crypto_alg *alg);
--void crypto_wait_for_test(struct crypto_larval *larval);
-+void crypto_schedule_test(struct crypto_larval *larval);
- void crypto_alg_tested(const char *name, int err);
- 
- void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
+ #define btrfs_chunk_map_size(n) (sizeof(struct btrfs_chunk_map) + \
 -- 
-2.39.2
+2.46.0
 
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
