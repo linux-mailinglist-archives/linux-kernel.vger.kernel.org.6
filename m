@@ -1,61 +1,63 @@
-Return-Path: <linux-kernel+bounces-283703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F3294F7F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:11:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18B194F7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01511F2189B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:11:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B220B20E12
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:12:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B9E9193092;
-	Mon, 12 Aug 2024 20:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6CE194089;
+	Mon, 12 Aug 2024 20:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mzcLWYW6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="zjpHMDcG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC9018E772;
-	Mon, 12 Aug 2024 20:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F295B61FFC;
+	Mon, 12 Aug 2024 20:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723493481; cv=none; b=orAp4OJlASpJ/g6Nn/gJglVRnUJkyWT3cstSaozlfpjjlj8HMrOVrrIk2kZP4oevRyAhRK0lyxhnqXuBUnlveKisBs7NXC26KjfrzIx5ewcecRDueSJn5sb3wMPFg6VxUBsTiTd50IoQcThUOxlQmh5nb6WboAD0aBzStZpZFuI=
+	t=1723493521; cv=none; b=djhbGKOgWY0jjhZRWWi4JbpXtp3IAJvzE9tvmpcywe0d5GsBWU/ueBG3edWQo92X0KFGv4cY2IZpUTqXSgJuE4LWrfrcv17pWk5yAJxmCKv6/oqFrmrte19tCL+eUzer8Nk2TYV+tO7o7ScvDjbffHfleRqNdzxc/nq+UwKVK5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723493481; c=relaxed/simple;
-	bh=2sv1RLCsYO8NmnF1i47t83qVH6otaIIzAtoLunput04=;
+	s=arc-20240116; t=1723493521; c=relaxed/simple;
+	bh=vYmPssGqOqy/ZSQEltkvYmFKGbzhf8ZDF8/bOM42FSY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O4Tf/+5IzYJ50crq6bCXx/svKirPNZOmOj5osamNs/BCssmad532lYAb0tgcvJGg6ApyORaZfS53O248dn+N0+rlwRd1BDjDp2KhVBDYhVnZfmy5BJ+SUHhY6paFzvkf1AQEr8DZ/0O1XfTXPHz/NNqk+MWkkNdjpUoODOSDLq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mzcLWYW6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86A9C32782;
-	Mon, 12 Aug 2024 20:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723493481;
-	bh=2sv1RLCsYO8NmnF1i47t83qVH6otaIIzAtoLunput04=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mzcLWYW6lBfs3XxoY96bphpDyl1yIGsTBmNmEvaysTONIfvBygoMmJkmeH66xImNT
-	 ARVOxSf55/PQCIV1a02hjRQPpO0pHno3/V26GDgzBd/iPuxgsuLzSHLk+owbNoSrkS
-	 F9Vopx+7UUtK9hAzn1pnTagqc4zem4ROLDl+4ujdIb5QFQCKupAbYDzidM/3jXBq1h
-	 6NBkE5D5jwG4t30+zchy5brphS3FQpIslgk/oyy8zGrkUoinfZzKEbcgeyKkax8BEm
-	 LPYL+oulqHdb6tfGlmftSaHCIZWEUoGHeIdc78sHKU83QoBPMtTaGUA1kOigT8gQUF
-	 UuMgsbtr5VTCg==
-Date: Mon, 12 Aug 2024 17:11:18 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Weilin Wang <weilin.wang@intel.com>, Song Liu <song@kernel.org>
-Subject: Re: [PATCH v1] perf vendor events: SKX, CLX, SNR uncore cache event
- fixes
-Message-ID: <ZrpsZmksSJBrOJz7@x1>
-References: <20240811042004.421869-1-irogers@google.com>
- <6947c956-2ba6-4fec-8d8b-79c5bbd3d725@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=euuPo5X4fzI0/Ngv1hhxWUCtLxwyCmbSLZ3s46dSbXNYxCngwefWutNBjRkeVcGKWbfJzW+GgZ7Mmolj8MT9iA25nFkRkOqEPdYtx2WWqpohZHLCAuh/7d6pvCXMmfMq2bpeArVLGaUBpNnqWkcFekVwq0hqnLj4+5/0OMDx1X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=zjpHMDcG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=VGMy3306yIbpFHFkAhMbZO0uaYSmXAMxfy0U/jGaKGw=; b=zjpHMDcGe+zuafgEtDE/2t/RyR
+	koaZAdWeREuSWyVeaY2dDINXIHcdCkFrdG5LRJcl4jIrnAzsjP8xwGqatkM8aDqvz1ag16ThcE823
+	dYHlpc7ZO/KYn5OPFX7IzcHJjTnTLfqSVRAygaas9QPXJD5bk4n6WenZhEl7UY+NJQxw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sdbOE-004c97-0Q; Mon, 12 Aug 2024 22:11:38 +0200
+Date: Mon, 12 Aug 2024 22:11:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sean Anderson <sean.anderson@linux.dev>
+Cc: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	netdev@vger.kernel.org, Simon Horman <horms@kernel.org>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S . Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Michal Simek <michal.simek@amd.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net-next v2 1/2] net: xilinx: axienet: Report RxRject as
+ rx_dropped
+Message-ID: <1a884b22-f73b-43af-9c1e-bb383936620a@lunn.ch>
+References: <20240812174118.3560730-1-sean.anderson@linux.dev>
+ <20240812174118.3560730-2-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,31 +66,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6947c956-2ba6-4fec-8d8b-79c5bbd3d725@linux.intel.com>
+In-Reply-To: <20240812174118.3560730-2-sean.anderson@linux.dev>
 
-On Mon, Aug 12, 2024 at 10:26:36AM -0400, Liang, Kan wrote:
+On Mon, Aug 12, 2024 at 01:41:17PM -0400, Sean Anderson wrote:
+> The Receive Frame Rejected interrupt is asserted whenever there was a
+> receive error (bad FCS, bad length, etc.) or whenever the frame was
+> dropped due to a mismatched address. So this is really a combination of
+> rx_otherhost_dropped, rx_length_errors, rx_frame_errors, and
+> rx_crc_errors. Mismatched addresses are common and aren't really errors
+> at all (much like how fragments are normal on half-duplex links). To
+> avoid confusion, report these events as rx_dropped. This better
+> reflects what's going on: the packet was received by the MAC but dropped
+> before being processed.
 > 
-> 
-> On 2024-08-11 12:20 a.m., Ian Rogers wrote:
-> > Cache home agent (CHA) events were setting the low rather than high
-> > config1 bits. SNR was using CLX CHA events, however its CHA is similar
-> > to ICX so remove the events.
-> > 
-> > Incorporate the updates in:
-> > https://github.com/intel/perfmon/pull/215
-> > https://github.com/intel/perfmon/pull/216
-> > 
-> > Co-authored-by: Weilin Wang <weilin.wang@intel.com>
-> > Reported-by: Song Liu <song@kernel.org>
-> > Closes: https://lore.kernel.org/linux-perf-users/CAPhsuW4nem9XZP+b=sJJ7kqXG-cafz0djZf51HsgjCiwkGBA+A@mail.gmail.com/
-> > Fixes: 4cc49942444e ("perf vendor events: Update cascadelakex events/metrics")
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> 
-> Thanks Ian and Weilin
-> 
-> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
-Thanks, applied to perf-tools-next,
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-- Arnaldo
+    Andrew
 
