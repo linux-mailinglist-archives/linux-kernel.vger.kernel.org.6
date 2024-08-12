@@ -1,183 +1,323 @@
-Return-Path: <linux-kernel+bounces-283709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 144AE94F803
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:14:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10B394F7FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57CD3B223B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:14:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FD11C220B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC690194098;
-	Mon, 12 Aug 2024 20:14:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD70194089;
+	Mon, 12 Aug 2024 20:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kod0WXaY"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DadyEFau"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54C361FFC;
-	Mon, 12 Aug 2024 20:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA5F192B91
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723493672; cv=none; b=c+xLzxUgqojCpXJhn2LWFC5xbqyJE4kwgDycxPH/76ZZ0lpq1LT61O7D7OMgq7YoSiRxKqUNrmZhD8oJ6L00CET+Md5GPu1PbcxRLiejffzJSNCaUpe4pAX8fB0MoF+rMwvc11wSIWzFn6/5SGmNKVkNHPVM0gTpt2tbmejIan4=
+	t=1723493558; cv=none; b=aHtbSNX8RQheHFpCwZtLTME6wdinJPg+hpYegePK4DdICDeVISrgbXTuZ4UbMVmTgfrPoLqAnE7i+1IK919taV5v2dg6+AUAkH3L/4mNqaiJXXg5JemE+PnMobwrB0yiPiOutrvCbugG8rT5YZZcgZ+4x1J2Lp2xNwmpJ+gQuPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723493672; c=relaxed/simple;
-	bh=CGlvoF2IaOy5iNGBKS8l1uRRC2nmhoV8scV0V8UbCI0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RW+7q8+MWT+iavmwZ+9R2rNFCM111AI8s6Yk1WucgvBHMOOv1vEaDVdeFeEK/nvlyFcDfZAzOMUWIPchX30Ch7Nw3QaG/TK7wsNRMdDf9oeJyys6fw7sZlDs89//AsdrbIC21Zp6TZTVmQY6VhH7zLcd0R06yfhZHp1pRbphnjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kod0WXaY; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc4fcbb131so35986035ad.3;
-        Mon, 12 Aug 2024 13:14:30 -0700 (PDT)
+	s=arc-20240116; t=1723493558; c=relaxed/simple;
+	bh=N5/VM3nsUX5/eENP+oRLioybvNGuNF/v3xwWaOv7l20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGK/R/hKYwzT7K+HvTMA13oSNMFoNSo1aj709pb8e1uGIcsAeQ3FwhRMYivpZ1a49lZiKA8jdBWBVtWLL8w8TRInnnt9apjvv3Tw3Rkkc3jRFOpdv7SFLzCCkhvKS/k8IrcZaVJIWb19bDIwGHj6QtsWmXBXgd+Gkj41bk6ALC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DadyEFau; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f15790b472so59807981fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723493670; x=1724098470; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DlLLEz/lGtjtk2D8ppPzr5S99NccdFJC755Ti0pZlOY=;
-        b=Kod0WXaYx6kCgIXrb4C8f8PTPScX0kbFPnSBlleFgam/P9+VO8bs5REXHl+y9bP9EA
-         /jbA3DsUBmYC2odjBJTwRN2DOq47s2RLMN+cV+GhM3kWFL0JLYpQuuH2m5ThPBuQg1dX
-         2H2vpMJyliScHDd5KcXtIQs87Mg8XyOL+slTAMBVmDzL4UeqcQgvSiRu8oVEvFr9+4El
-         qDQ+Gs3/Tovwn5dReKb9yTu1EECY2qyVwbUATa3fhU/Cbi2BSW/cUx0C1qqiKkhNEKZI
-         BVSyYN+V93ULO/AKLXMUWVZHRMTU6g7DvtpPN7nngK0wC1geo6iw2alxlWk33rKLSqcT
-         9kAQ==
+        d=broadcom.com; s=google; t=1723493554; x=1724098354; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SPKfsibnQchhpRMR87GoZejDoRZYPsNMz9VA7/gTmKA=;
+        b=DadyEFauXSyYCjRTgduNioUcZ8PG50c8ppulauU7i5m3EDTcYz3KotmzimtFGsASyL
+         FPZ5s+zblk1cGexfDipYDzlvmFOEQUb8kEQdxBbRyHkNT5pM6VG6CgbRNqvWjuvRCvMA
+         u1Mi0ARUSbU2lQL8KfqUbpy9IL3FE+onz8IE0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723493670; x=1724098470;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DlLLEz/lGtjtk2D8ppPzr5S99NccdFJC755Ti0pZlOY=;
-        b=wPdyjnHt7KwlDxazkxt/huzV+cJeHSrd9GYUwkkgCz293nzZYbyfGAP9lD+9ZA0PrF
-         Ovpj15u6BF4wlTPNrNZBEVQQ3LexWt05C5lZTXj30q1ukrtjojmUY5NV91pSPYIE5ECw
-         V/OAePaxsoZ2aOSzCUvukFbMhgqk1l5kFum2qd7srPma+LDsVBJUJ+DuGupyGgK9BaBQ
-         cmBC80ApxLXg38u0DfeljbDZV+uagYofyIzdBvfq3p2k9BqrGnuqKPUPz2k/e33qNwws
-         +gua2bZfeRWXWtqg6fOnKXJZddu2mssuSdkjV9k/27m2hfEiaPuY3SmmNMmU7dhv2D7c
-         kBow==
-X-Forwarded-Encrypted: i=1; AJvYcCULXPDcLPmUOgVc65wndPHjUSdiAtDK6SScK7T+Go/4K9JSAe4C6hzBCOzLn7dzmkrwiHIOQnvSGH0dThQAKeYORLBAYqb2diU7ldRzKoHu9ikJPv8WBzus50j/bnRiAKpuI7S7DNNjcVc=
-X-Gm-Message-State: AOJu0Yx1KsvlMZNd7ltaSwFBB5joU5otXd1zSRtNU8jihGlTE9vnD/WS
-	zfR9OD9n6kuoGgKM/FxcyF+9Bn0HmKStSxmn0FpLTlKc1K2VD/lQr5NXA3Nn
-X-Google-Smtp-Source: AGHT+IEBqQoMmtaL7YWmcrOUrXjl8QnXospiZk0mOSzFQYMRIh5wRKRCx2jU7LQpt9mkOHWa+mIbkg==
-X-Received: by 2002:a17:902:c94d:b0:1ff:4a11:5f72 with SMTP id d9443c01a7336-201ca139f97mr19370025ad.23.1723493669709;
-        Mon, 12 Aug 2024 13:14:29 -0700 (PDT)
-Received: from localhost.localdomain (108-228-232-20.lightspeed.sndgca.sbcglobal.net. [108.228.232.20])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-201cd14ac10sm808335ad.102.2024.08.12.13.14.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 13:14:29 -0700 (PDT)
-From: "Derek J. Clark" <derekjohn.clark@gmail.com>
-To: lkml@antheas.dev
-Cc: luke@ljones.dev,
-	bentiss@kernel.org,
-	jikos@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Derek J . Clark" <derekjohn.clark@gmail.com>
-Subject: Re: Re: Re: [PATCH] hid-asus-ally: Add full gamepad support
-Date: Mon, 12 Aug 2024 13:12:08 -0700
-Message-ID: <20240812201404.15484-1-derekjohn.clark@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <CAGwozwFN6neJf2RGOR_e916KvpPWpsyKJd5pMcE+WoOS+M5o=Q@mail.gmail.com>
-References: <CAGwozwFN6neJf2RGOR_e916KvpPWpsyKJd5pMcE+WoOS+M5o=Q@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1723493554; x=1724098354;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SPKfsibnQchhpRMR87GoZejDoRZYPsNMz9VA7/gTmKA=;
+        b=uM58mr8g0B1xIvX4CbaVheqGwnIBRoMrl21HH0ci8I4ZmSwfAVNatMBXbMhq1buoVz
+         4LQ37aU2DWn4K/s0BTYQjMdV+UqZEBFQ5k95CwGuo1FKzBDQdP+mfrTjMjeZhtDmpr0Y
+         aiIIgGqY5C6WLi/OSNMBlhf+SEg6N13mI0Q256dNTsjtBUjsI/LKuwzU6xysAyhBARfN
+         1fkQAtQTyeQaZAVBPBX3OC2AeGc3AtF5JF/dZTtAniyWj1Mcw1ZtML8qe9b2DZrqInEe
+         HjJS8PfAP9VDi6ktc/nidXeCfXfsctI1GxExukl/C9/RQZSYlcKC8H3hpKroT8HJDHfF
+         53ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWfoD/ufZ3ba5erQc77D0vFRXF4oAKtDVBaqbylmsVBDBzwiwz+PVkiHMudFcHuZPp0X5QXF5jMhqhSBiHtEgPyEpo8jNXLT2qZs/Nb
+X-Gm-Message-State: AOJu0Yx0tZupEiWntA1Hopsy7IIwPPd2a/S/3ygwJru75rll+aMxQO3G
+	znlNj1jQ4y4r4xGmeITRrHLFsP7HHrXUMT9p5FiXoseIgsZbRlip4iOmDRvGjGiuqTrajMZWelQ
+	eKLT7Etwr7Q2zFuQ4T4I/A02tr+zqDq3vKUVj
+X-Google-Smtp-Source: AGHT+IF2hNEc/qwFaerc0vvpnCV4GfAwoIExYc/qDRomDFxcFCrh2Tnk//YcgWOvaI5f5+aiixp8+L41jv1x4gX6q/Y=
+X-Received: by 2002:a2e:9dc6:0:b0:2ef:25ab:9881 with SMTP id
+ 38308e7fff4ca-2f2b7279a27mr8742281fa.46.1723493553913; Mon, 12 Aug 2024
+ 13:12:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-4-james.quinlan@broadcom.com> <20240807025252.GE3412@thinkpad>
+In-Reply-To: <20240807025252.GE3412@thinkpad>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 12 Aug 2024 16:12:21 -0400
+Message-ID: <CA+-6iNx5cAUZK5JBCd-xHtkgzztbFCZcEQ1yf85JkrpDgH83iQ@mail.gmail.com>
+Subject: Re: [PATCH v5 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000178ffe061f821d66"
 
-> Hi Derek and Denis,
-> 
-> Let us be civil. If I could have bug reported you I would have bug reported
-> you. However, for some weird coincidence, I do not have access to the
-> ShadowBlip bug tracker or the relevant communities. Nevertheless, this is
-> not relevant public discussion. Let us refrain from this discussion further,
-> including e.g., name-calling.
+--000000000000178ffe061f821d66
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I haven't called you any names or levied any personal attacks, so I will
-continue not to. I'll also help you, here is the resource for reporting kernel
-bugs. You will find the ShadowBlip GitHub is notably absent from it, so I'm not
-sure why you brought that up.
-
-https://www.kernel.org/doc/html/v4.19/admin-guide/reporting-bugs.html
-
-> The MCU of the Ally is the embedded microcontroller that runs the RGB and the
-> controller of the Ally. Therefore, the discussion of the MCU powersave and
-> wake is relevant here. What is not proper is that I should also have replied
-> to the original patch. I admitted that much in my original email. However,
-> since you are now aware of it, I trust that you can block the patch for
-> merging until you review it.
+On Tue, Aug 6, 2024 at 10:53=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> If the patch does not function under normal operation, this is relevant here.
-> It means this extended patchset is built on reliance of the broken patch,
-> which raises questions. Nevertheless, calling the patchset "experimental"
-> is hearsay. Therefore, I will refer to it as ambitious from now on :).
-
-It is not relevant to the functionality provided by this patch, and the bug
-exists with or without this patch. The bug cannot be resolved with this patch,
-and it is not exacerbated by this patch. Therefore it follows that there is
-no reason to block this patch because of the mcu_powersave issue. See above
-for how to report the issue properly.
-
-> > This is 100% an issue with your software. I just completed an exhaustive
-> > battery of testing at 8w STAPM/FPPT/SPPT on Quiet power profile with only
-> > 2 cores active. The tests included using Steam by itself and the kernel
-> > implementation, as well as running InputPlumber (which also has an
-> > 80ms delay).
-> 
-> Please refrain from name-calling. I was very specific to say that the issue
-> here is that under load when in a game, Steam will either let A leak through
-> to the game or not respond, sporadically. While in Steam UI the combination
-> always works, regardless of TDP. Since you did not test while in a game,
-> this renders your test invalid.
+> On Wed, Jul 31, 2024 at 06:28:17PM -0400, Jim Quinlan wrote:
+> > o Move the clk_prepare_enable() below the resource allocations.
+> > o Move the clk_prepare_enable() out of __brcm_pcie_remove() but
+> >   add it to the end of brcm_pcie_remove().
+> > o Add a jump target (clk_disable_unprepare) so that a bit of exception
+> >   handling can be better reused at the end of this function implementat=
+ion.
+> > o Use dev_err_probe() where it makes sense.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 34 ++++++++++++---------------
+> >  1 file changed, 15 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index c08683febdd4..7595e7009192 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -1473,7 +1473,6 @@ static void __brcm_pcie_remove(struct brcm_pcie *=
+pcie)
+> >               dev_err(pcie->dev, "Could not stop phy\n");
+> >       if (reset_control_rearm(pcie->rescal))
+> >               dev_err(pcie->dev, "Could not rearm rescal reset\n");
+> > -     clk_disable_unprepare(pcie->clk);
+> >  }
+> >
+> >  static void brcm_pcie_remove(struct platform_device *pdev)
+> > @@ -1484,6 +1483,7 @@ static void brcm_pcie_remove(struct platform_devi=
+ce *pdev)
+> >       pci_stop_root_bus(bridge->bus);
+> >       pci_remove_root_bus(bridge->bus);
+> >       __brcm_pcie_remove(pcie);
+> > +     clk_disable_unprepare(pcie->clk);
+> >  }
+> >
+> >  static const int pcie_offsets[] =3D {
+> > @@ -1613,31 +1613,26 @@ static int brcm_pcie_probe(struct platform_devi=
+ce *pdev)
+> >
+> >       pcie->ssc =3D of_property_read_bool(np, "brcm,enable-ssc");
+> >
+> > -     ret =3D clk_prepare_enable(pcie->clk);
+> > -     if (ret) {
+> > -             dev_err(&pdev->dev, "could not enable clock\n");
+> > -             return ret;
+> > -     }
+> >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev->de=
+v, "rescal");
+> > -     if (IS_ERR(pcie->rescal)) {
+> > -             clk_disable_unprepare(pcie->clk);
+> > +     if (IS_ERR(pcie->rescal))
+> >               return PTR_ERR(pcie->rescal);
+> > -     }
+> > +
+> >       pcie->perst_reset =3D devm_reset_control_get_optional_exclusive(&=
+pdev->dev, "perst");
+> > -     if (IS_ERR(pcie->perst_reset)) {
+> > -             clk_disable_unprepare(pcie->clk);
+> > +     if (IS_ERR(pcie->perst_reset))
+> >               return PTR_ERR(pcie->perst_reset);
+> > -     }
+> >
+> > -     ret =3D reset_control_reset(pcie->rescal);
+> > +     ret =3D clk_prepare_enable(pcie->clk);
+> >       if (ret)
+> > -             dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
+> > +             return dev_err_probe(&pdev->dev, ret, "could not enable c=
+lock\n");
+> > +
+> > +     ret =3D reset_control_reset(pcie->rescal);
+> > +     if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
+"))
+> > +             goto clk_disable_unprepare;
+> >
+> >       ret =3D brcm_phy_start(pcie);
+> >       if (ret) {
+> >               reset_control_rearm(pcie->rescal);
+> > -             clk_disable_unprepare(pcie->clk);
+> > -             return ret;
+> > +             goto clk_disable_unprepare;
+> >       }
+> >
+> >       ret =3D brcm_pcie_setup(pcie);
+> > @@ -1654,10 +1649,8 @@ static int brcm_pcie_probe(struct platform_devic=
+e *pdev)
+> >       msi_np =3D of_parse_phandle(pcie->np, "msi-parent", 0);
+> >       if (pci_msi_enabled() && msi_np =3D=3D pcie->np) {
+> >               ret =3D brcm_pcie_enable_msi(pcie);
+> > -             if (ret) {
+> > -                     dev_err(pcie->dev, "probe of internal MSI failed"=
+);
+> > +             if (dev_err_probe(pcie->dev, ret, "probe of internal MSI =
+failed"))
+> >                       goto fail;
+> > -             }
+> >       }
+> >
+> >       bridge->ops =3D pcie->type =3D=3D BCM7425 ? &brcm7425_pcie_ops : =
+&brcm_pcie_ops;
+> > @@ -1678,6 +1671,9 @@ static int brcm_pcie_probe(struct platform_device=
+ *pdev)
+> >
+> >  fail:
+> >       __brcm_pcie_remove(pcie);
+> > +clk_disable_unprepare:
+> > +     clk_disable_unprepare(pcie->clk);
+> > +
 >
-> To save you some additional invalid testing for the other issues: using
-> ryzenadj on the Ally causes misbehavior, especially after suspend, where the
-> TDP will reset. In addition, modifying SMP and core parking can freeze the
-> Ally during suspend. Therefore, for further testing, I expect you to disable
-> your "PowerStation" application and instead use the low-power platform
-> profile, which is provided by asus-wmi, and is the vendor specific way for
-> setting TDP on the Ally. Or use asusctl, which does the same.
+> TBH, this is not improving the code readability. __brcm_pcie_remove() use=
+d to
+> free all the resources and now you just moved clk_disable_unprepare() out=
+ of it
+> to save 2 lines in probe(). And you ended up calling clk_disable_unprepar=
+e()
+> separately in brcm_pcie_remove().
 
-I should have been more clear about my testing as you have made a lot of
-assumptions about how they were conducted. All of my tests were done multiple
-times in different games. I chose not to list them all for brevity in the LKML.
-PowerStation was disabled for all of tests and I used the sysfs devnodes at
-/sys/class/firmware-attributes/asus-armoury/attributes/ to set STAPM/FPPT/SPPT
-and asusctl to set the "quiet" power profile. ryzenadj -i was used only to
-verify current setting of each PPT before and after sleep to ensure it did not
-reset. Also, I only disabled cores to provide a “worst-case” scenario to ensure 
-that the test was as comprehensive as possible. These tests meet all of the 
-criteria you have specified so thank you for providing a second validation of my 
-methodology.
+Actually it saves more lines than that; the "swinit reset" commit adds
+two more "goto clk_disable_unprepare" instances.
 
-I will point out that the issue of Steam passing events through to a game can
-occur when a user has their settings too low to run the game at a reasonable
-framerate. In such cases it is recommended they lower their settings or adjust
-their power profile to increase performance. Kernel drivers do not need to
-account for misbehavior in userspace, especially when those issues are
-driven by misconfiguration. In any case, this is a bug in Steam so you should
-report it to Valve directly using their SteamForLinux GitHub, rather than on
-unrelated kernel patches.
+Nonetheless I will  make the change
 
-Furthermore, we both know you won't be using the default button combination
-and will instead use the included configuration attributes to set the buttons
-to the F14-F16 keys you already support so you can determine the discrete
-events, just as InputPlumber is doing. This patch will not affect your ability
-to use your multiple fallback methods and only provides a usable default
-without the use of any userspace tools. Within the scope of the patch and its
-purpose there is no issue here as it functions as intended.
 
-> As for using direct HID commands to program RGB, asusctl does the same,
-> including many other userspace apps, and prior to this patchset there was
-> no way to do different, so I do not see the problem here.
+Regards,
+Jim Quinlan
+Broadcom STB/CM
+
+
+
+
 >
-> Best,
-> Antheas
+> So please remove the label and call clk_disable_unprepare() in the error =
+path
+> (just 2 instances) and continue to use __brcm_pcie_remove() to free all
+> resources (I would've preferred to have separate error labels instead of =
+calling
+> __brcm_pcie_remove() though, but not this).
+>
+> - Mani
+>
+> --
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
-R/
-Derek J. Clark
+--000000000000178ffe061f821d66
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDrFV5wBrO4A/Ycu+Xe5h5Fjn2mo2sz
+imXCgSXxXXaMeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MTIyMDEyMzRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAfPNKexvWL/1MjW89YjtWTH5cgMuYv07wOlSzQDvEl8GlxbKr
+UMaIlZuDz2MOAhh7YCYS2hhcYRmEeza5z2rq3IP5APko0tQ/6g9IaHRHC4A5wXDNs9O2aKQKknGc
+gmM8OMm0Am3rBDD6Pau++ldDtv5KUZb7SOCvISbc7EqQkxJwlkcJfBOYpb12SULEJj2Hm5BnXfBO
+gPJTCZQKFyr+P5Z7n9f6Du9QIoTJnMPy2Rw28LkIUuUP+pEl12xj4eSJncqppj7HTHZFI/2EykCO
+oqGhxAHwbMUpeB1VHwWSrPf9foOduFk5o0sVtkGF/9ze1t/COH6AQinKgvfA1Oel+A==
+--000000000000178ffe061f821d66--
 
