@@ -1,375 +1,690 @@
-Return-Path: <linux-kernel+bounces-283568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DBA094F66C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA94294F671
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E46F1F23877
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:14:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDE2B1C21C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2286E192B65;
-	Mon, 12 Aug 2024 18:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F84F189913;
+	Mon, 12 Aug 2024 18:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UEnKrTSo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="NrsAl7JV"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020142.outbound.protection.outlook.com [52.101.61.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C550193063
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723486371; cv=none; b=LLrZfLq6VzyWkOBpVzclvISerdRNAFYEhL2uKSxyzycAw/j6GtnR4QVvQ2JAzkKlJ28fWHsBu9U0wk/a6xenG6kLA8c68nkSnzLrD9MZ+BBb0F7AbkdGxardy65DiXSOOFxNFhoqmdYQv9UHi50k3aSzkuPVe/JZISCOrg15jK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723486371; c=relaxed/simple;
-	bh=egk112t/6BSuiTyKSVUoJ65Hf838PJyUoM/Z74+luwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZEwUr9e2Qxz3tAA15c6TjybyDmBr9sf+y0wp4Jd2NqVaGfb0KpAffrMcab+BeBk9iMLDmJ7JA78wr5uj3SsZ3shKB0ZiyfjFio10gQZbHmoEla8XIRnZu44AsiK/X2lb/mz/acxz8Rh0B+4A8cC+y6QXburJNJSPs7tK24opR/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UEnKrTSo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723486368;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A/6PEtzQTa+drbYKkEnodTZuUMYm4tSA4vStMaJG0Ro=;
-	b=UEnKrTSobfuJJMruYMfG9zUfFX85yzoth4kuyLLKQ07HEMeRx/b97SI2p5SlpRHwU+8QxI
-	VV8I9h8C+l3x3wmY8CISO1QRU179+hw9J1pYTnrbKtPkYwsnOF2EXkFLeXCSRDpxCZDH5k
-	GhDEBI2jap3KQG8peg6v4KHNtZUg5MM=
-Received: from mail-vs1-f70.google.com (mail-vs1-f70.google.com
- [209.85.217.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-282-Gb20Htx1MOilRfxudOpp-w-1; Mon, 12 Aug 2024 14:12:45 -0400
-X-MC-Unique: Gb20Htx1MOilRfxudOpp-w-1
-Received: by mail-vs1-f70.google.com with SMTP id ada2fe7eead31-4928d06cfebso184724137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:12:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723486364; x=1724091164;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A/6PEtzQTa+drbYKkEnodTZuUMYm4tSA4vStMaJG0Ro=;
-        b=TZBSCmRaRopGQoEG7SFmv1xruGDao+Akk8RErfxjX6sQ7js9DCaBI69nJpnQ0F23Dc
-         F3/zfvW9VG4g0fuAuotKvnf0M6TcTjUkCjXK4oYyNtW8zSMJlet1WCMichp8CcZd3KWG
-         UNzhkKb9e/au5HNHh/VMh75X9VYB+XznNqI3RexhtG8Sfi22vI3+ph8yuoxpRl9zlf7b
-         cjZEzWmKMqhKWlqL6NMO5wDZvlSUsdyWeBggvV2LLISpANK0QbNpmODUqHLKgUZ/mhBw
-         yK8oAkXlEySq6EUngcIWLudpCKVO61kvjZ85yMLwfXqAZ2KaYACFuGVhKeu9fyhWOLMC
-         1cIw==
-X-Gm-Message-State: AOJu0YyVXb2osORwr1YwkFjb/nA+hvekijYkxy07bl+eUGsKg5R+ENEV
-	ZdVvZ5b2W35GoPLcp45Ks5z/Qt0iPDpFbemVQaYLb5F3LxvIWne/jyFFzd7kdNdwu7sWibbAvQq
-	qd52zyDrRtBsjblnqDdk6LMKPxINWoNWAS3JuAOPpaGeJcn5KID33tY3sh1+a+sXLquZVvaxf61
-	za0ID6UzeHaINWFuk1XVgdD1C1ygn+T/PEjdlPRgY2tJU=
-X-Received: by 2002:a05:6102:38d1:b0:493:31f9:d14e with SMTP id ada2fe7eead31-4974398cf6amr785279137.2.1723486364510;
-        Mon, 12 Aug 2024 11:12:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEGg++VQElyCH8BIocMaINRG5gLiISp0Xxb9L94RctCtM0eBivu+dVoRsXo8+SybwrNJQcpMw==
-X-Received: by 2002:a05:6102:38d1:b0:493:31f9:d14e with SMTP id ada2fe7eead31-4974398cf6amr785238137.2.1723486364018;
-        Mon, 12 Aug 2024 11:12:44 -0700 (PDT)
-Received: from x1n.redhat.com (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7dee013sm268663985a.84.2024.08.12.11.12.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 11:12:43 -0700 (PDT)
-From: Peter Xu <peterx@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: "Kirill A . Shutemov" <kirill@shutemov.name>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Huang Ying <ying.huang@intel.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@linux.ibm.com>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA31189BB9;
+	Mon, 12 Aug 2024 18:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.142
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723486385; cv=fail; b=VXZ/hrfwfab73URvfb3zOJLWXQJBGaUHJAwX6wMmuo1pVyTZXGfUz0JXHDhjdEQ33XfGy0bnCBo1vVQfgK2dE94BSrbB/ZUpKWFTbFSzZDn4s7CXgjsj95u+yCdHgt90mH8deoiZj92RBHESF3GS+HJi3VSfpWxrAGKQFU5Spp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723486385; c=relaxed/simple;
+	bh=hFyIqRo/G1wetegzFzZyUqSemcRg53aLLkSclPFRvLQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dqHw8P91ac/p6ZTencfJIIKo5IL+RH/717ZCrzayozi4yNCIViE/rOABWLk8RaTg/L7cPSw8i1Fp1jkOw74jz+ewmXOcR3U2+3YVhzQvSQThbgwhXK4EF46A2sOoj8rsiDfcvNq54WinKgJiBe6VrWxBLDSiY4qFY8Mm+4WriZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=NrsAl7JV; arc=fail smtp.client-ip=52.101.61.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pahw+SAhBdevI6Sdb7mEz9upnVMUSBvPim9x013cUToMqir2wdXROdEG/goOwSZMXH6qu76AYheDaMGjT9tVM1fLZdVRFe4xemveH4pKt3HcB0AW17GfPpIRDW7EcvzR/PScqnB8KpmWjRt9AVRsZib0Brw8I17RPlf5V+iZmJI0UfGV/xJRCUcGPmu1EMpjKlFSSUxtv42KKMU5a1sLXl8vz2jvtXGbCcL0hBcL2GuR00UbRpL54D/6kM7lDfIlofFH/ij2q11T4gsCBK45CSkiIS0KhpSthYj0WN2VOe1W2HZv/YXntDsxWivcRPUrjylzVEhkn/gY6sS0OK79Rg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=5VBa+SEIKYozsYohqHAmvD6dKMpfK6jluzkdaIAfajA=;
+ b=KS289loQcfN9PTxk7vK04hEUOJF5JcxFzbORfjgesKKjcHJtRhwZHIMUOwq2lBpcPvgTdvT3Pu5e/2wmB4kQM5YiYIa4tTOc94lP0y/uxwM1jDRrmwD+iTHjz6l2VOLvnwkAXj+IdEnyDcBfjcr5w13FvZUIciZC5KxcRoNzzP0kUtOET3LpdXKLu1OrJ8XL0+0PTcd0E9FJc3ZGnD03xXuXWVJeTiOR+wH5YlPRCw4ThM2KdvxBGThIchpRc62aqlr1I3irLuLccfApmYk0gv9rOKINuE7Bt3GEQfgTkIBv1IWLeNieFKJ51mvRRu7Etz/9IEh0vfohmDx+2LgESQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5VBa+SEIKYozsYohqHAmvD6dKMpfK6jluzkdaIAfajA=;
+ b=NrsAl7JVnx5y8qj/zEyao/AQVhsKCOMwxtbto4rRmE4X7qw7r0S9Jcfdt/tGzmTJWD5Hz8BCxj/KE/XUMmwCAngaR4cbslXkI0N9w1kK51TQkENiykOOmqjRvUPM5/1TPIiZ3QBt2FOZbCM3WiHBwDlxWjdSPrXwTLkIPfbzRn4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
+ BN0PR01MB7133.prod.exchangelabs.com (2603:10b6:408:150::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.22; Mon, 12 Aug 2024 18:12:55 +0000
+Received: from CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
+ ([fe80::3850:9112:f3bf:6460%4]) with mapi id 15.20.7849.021; Mon, 12 Aug 2024
+ 18:12:55 +0000
+From: Yang Shi <yang@os.amperecomputing.com>
+To: gregkh@linuxfoundation.org,
+	sashal@kernel.org,
+	yangge1116@126.com,
+	hch@infradead.org,
+	david@redhat.com,
 	peterx@redhat.com,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Rick P Edgecombe <rick.p.edgecombe@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Rik van Riel <riel@surriel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Mel Gorman <mgorman@techsingularity.net>,
-	x86@kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v5 7/7] mm/mprotect: fix dax pud handlings
-Date: Mon, 12 Aug 2024 14:12:25 -0400
-Message-ID: <20240812181225.1360970-8-peterx@redhat.com>
-X-Mailer: git-send-email 2.45.0
-In-Reply-To: <20240812181225.1360970-1-peterx@redhat.com>
-References: <20240812181225.1360970-1-peterx@redhat.com>
+	akpm@linux-foundation.org
+Cc: yang@os.amperecomputing.com,
+	linux-mm@kvack.org,
+	stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [v2 v6.6-stable PATCH] mm: gup: stop abusing try_grab_folio
+Date: Mon, 12 Aug 2024 11:12:37 -0700
+Message-ID: <20240812181238.1882310-1-yang@os.amperecomputing.com>
+X-Mailer: git-send-email 2.41.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BL1PR13CA0360.namprd13.prod.outlook.com
+ (2603:10b6:208:2c6::35) To CH0PR01MB6873.prod.exchangelabs.com
+ (2603:10b6:610:112::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|BN0PR01MB7133:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70bdaac6-6367-4da9-7e13-08dcbafa631c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?w5pELXQ1Dl+vmFfaFtHxN6PV/uluafwF2mdKi99wKeCADPTOI2KVBZaGtFlK?=
+ =?us-ascii?Q?KTT2PwZ8+41QpqIKrQdt06NvG8xgEMVnh2pJmhOTP0oSHHD2yuBhhWVv7xPu?=
+ =?us-ascii?Q?gYp12M7KPCGXxsEqn/ciBEWepj24KvbLKDQxP5N5Gsv/AemkE9ngpgmrFvy3?=
+ =?us-ascii?Q?aMP7bWrksHBsqSBzHRFKMOm9VsaRa0GNGNjbdaXUTH8gyjSoDQtcvtlZARhH?=
+ =?us-ascii?Q?mz/lZDFxXfBKyieH6+brmMXFkM6pek0v7yoWeSx4xcHoQq06gm0TI0Em+2J0?=
+ =?us-ascii?Q?ANyNhJAE7ly8KZc0bYaO5H1I8aDkEbcWf8XN0CIMvJDudKPeZb7b6cVDxSTq?=
+ =?us-ascii?Q?8jb1Gt4h5oG5fsNAYz+mj8TsUfgJR5XsD0ij80fFswJMLWgurQpaNDL2C30z?=
+ =?us-ascii?Q?Kj10sc7VgUbExpr9mzqhMZZDr+4fV9DqysseT3dvBsX7BXjQtoZ35akt94P/?=
+ =?us-ascii?Q?bGmn0GRfsiErf+mq5fIV2WtxCCFK+X/seyy46jnljtgmTVcBNDTSvurBQH2w?=
+ =?us-ascii?Q?wN7uKtawnvqsszSdtLrK7hoUbcehEfj0FGNcm3tmXm+pAxuraZFcoJ+UagQh?=
+ =?us-ascii?Q?zH76fVjAdaVrj8lNz+lY2bx30vmFnA4Gogh3dIs/ZLkr15eiaa44bs//BQTx?=
+ =?us-ascii?Q?dL2wwH3AA0RDCYxBiKuhCCXrJn4WN5vRJAuabNW2FmiVVYHaTcSEaq+1VNHt?=
+ =?us-ascii?Q?Fsp4oQ0YvhraQT1yxEg1nQCjFOwjecBaSXTCGN6G9YUo+6IU4bfTqZErNHlS?=
+ =?us-ascii?Q?KlVxhgHXLJbFWzHWEkt1xYQQrqzoAO8IguM5ZwDB9MG2ghDE/KwawKQi3cDV?=
+ =?us-ascii?Q?Ws8imFSt8TdKdpwyw9cCsJhg3T4R8KK+YnTr+LLDmFJWV30ub5oKZsgVeAST?=
+ =?us-ascii?Q?Yf25wN4SwQdfuasU2dQYsQW97Zn0A5EECrsYQMB2q5DIqY7+gIKJ7wHr1dAb?=
+ =?us-ascii?Q?istEK4A67nd/wliQE3D+j1MclxwX/hHr35Qpy+v87UGzVEkPxaz1PuQQmnH4?=
+ =?us-ascii?Q?QXnYlbcfqP3uXrbEQXfS1OU1ujAHIY+qMwSx8ynXLRXQXDcVpK7yILxAHtnN?=
+ =?us-ascii?Q?3bwHcN2A/9ER14uw8wTnxhZWFDt5E6mXmWL4fhxbN0y9gWynPnwZwsR9GXSm?=
+ =?us-ascii?Q?/LEKeaEEdCHHzr2p+SHuBLuIMVycM9kfdAZPDmKvQkbfSpz/427KAdFTdyhs?=
+ =?us-ascii?Q?eJsPuwf0mo7/TaDMnmFfJJToOkLJKAvc61GgX1tiw0kiJmOcinIFNis+YPRd?=
+ =?us-ascii?Q?RRkhiM29gMaRDhNsPLSHzHgNHSRI7ruwi0eZ3k3FPWnw16L50ga3cTs6FNIp?=
+ =?us-ascii?Q?s1xtjngm9gkWD+jI57JutbQ/an5t6g0RRURotqXD/llYQ47AtdTZxF9cFz0O?=
+ =?us-ascii?Q?AbfFF9Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pNjKMDFCBEjuh8HDj+b59PqTQui4siYuoXX/RahkIt9jKkaUNFslPGXxJC65?=
+ =?us-ascii?Q?M56VQ2Xl517LOsJ8KunFMBGMHkTIPEu7FOaUDQ1F2F3OeC2PAXqHhYXDKe9k?=
+ =?us-ascii?Q?mOcHVQntUZx5pij/s5IufEYHlxf4VTc97IuTCdOVzbzfaH80ZB4SWkYiQkTj?=
+ =?us-ascii?Q?QUKfM1d2XKfj998DnqhgkfHAvP3qjvd30nUxxasRJ54/DO0Wgrb7eXgH+ViY?=
+ =?us-ascii?Q?Im4f9jg70HVPL1uSA3HgTPMwctel8zPtgmaLw4hOLSnZPttH8D3FUVzreFIK?=
+ =?us-ascii?Q?vtaxOd0Vuj6Wes1sStBxuepM8xX1wRV08RKAJIS5UfzqQ1x3PSCoJJ2ZTpgp?=
+ =?us-ascii?Q?nWAx0HF28L5oSX+fMlsv564al6j7e7fRoqrU1qiWxcPniF65gD+KL2FcNsYE?=
+ =?us-ascii?Q?feQgdzcZe8OumPQuaQP7zVZKfJpDJlmZ5YCXIUZ0JK5qEhF056mv+z6In3Ae?=
+ =?us-ascii?Q?KmdX8ZEk174esGgfXXEegCand6uWEkcYJk7YkRFqnM8hIIzBMs6Mrw8x7adZ?=
+ =?us-ascii?Q?RT0C8of2Xlfq11v4o1x3/pp7UmEb95j+es2P5bpa7MKmqJRx74ag5xSNH1C3?=
+ =?us-ascii?Q?U2sCBK7aZcS11C4xSRfO4DfEr3Y6FVkWkR0Exbm4MFALws7+KXc67s2SqGdC?=
+ =?us-ascii?Q?uLDlQv4tRtkYYimSDW59DQkO/QPfQfOdJxEs01FVY6Z0Lg4HvCVqUJAnCNoR?=
+ =?us-ascii?Q?ZwS27t2toem54lMb6JGwKzC/H45aY81MlbN0OpUF5nkIpHTYdoXRTIATpkdy?=
+ =?us-ascii?Q?C13jlMl8HpdD0HkLA0KMrsWj6JyP4O6SGpSMdll+sDrTA2mUBZzSrG8lwF4T?=
+ =?us-ascii?Q?MKAQ2BqL190dq9Pk81HHljuOrkhoAPOiEpc6tGrYbpi51HBF5s4kPuK3J/ah?=
+ =?us-ascii?Q?NQazjpkO4KjU5t1GKIw6wUyvwUa50c2GCZQZXwjBqY1zKsVpJKkvJpuLUFQ7?=
+ =?us-ascii?Q?iiWOo50lqkSJoHGQ0/TsxWN6pbCrsS+ieuhBwC7PeZIMegr3319jCSvpbx+U?=
+ =?us-ascii?Q?snW3F35rcBlIcozJwkJ0oJvW1Tpc6R5e7G5SrjYDljuGRb9AxBexXjJMLMab?=
+ =?us-ascii?Q?Fjzl9csP16BMszIYiKqGjKnomwjcPrGLxrtuAE3iArKDxMGWtDk9BJXg3ofW?=
+ =?us-ascii?Q?DO8JTobqzqECBERaI0HGVrk7e7VE+PsRHGkoi5SqN4qeD9TXNiAlsgHfDN4Q?=
+ =?us-ascii?Q?y79xBsZl5iE4piIH+2+P+YxNtnDFfbYBmBoxqfrEjjsEMTI23qbGV5+lqTFu?=
+ =?us-ascii?Q?pi6zd8oO3FgfxP26QkPzcf4UoT0P4pyRYBpjQjhHdJe3RzzJ9Cd/VJd5CF30?=
+ =?us-ascii?Q?0Wr2PbPC3vCvBMztgX7gA4x3BMsC/GkjVGleDURkSLD6CMaSTx6Va9Lcxh4Z?=
+ =?us-ascii?Q?Osbn7ziAEDqCTfxmwvYY9mKTtaCmux4dkfqN7OW2cx4btb8mfyBI+jfKpKpo?=
+ =?us-ascii?Q?iCbRVl812d3gp5i6EKA3Sm9yKtnp8nLGw/RXasEHrhEQ6EgeIy5dhwdeRH9L?=
+ =?us-ascii?Q?Uq3SS/AKVltnEuVTnqvvKU6OF9CXaJqDGtdcGLCf9nrD69KKeHiFKoUkDQ1Y?=
+ =?us-ascii?Q?lnK8t+dLmZ7/amoFmQjs/V5YeMgd6VfI3TKwr+fgUENXRPRFzilExD2ELyHk?=
+ =?us-ascii?Q?4cuH2MEizPXTbZ7SS0SNP9E=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70bdaac6-6367-4da9-7e13-08dcbafa631c
+X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 18:12:55.0525
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BlysaCnQ2uPUz5ciF8w89sAuS9TNr5Z4e+A0NxEQcYG+rsJ3zPJE54nXiQNsS+qZGlrzOzFz6Bds00SyH7nmVgRUOw/NBL0Ie+f/5NT31kI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN0PR01MB7133
 
-This is only relevant to the two archs that support PUD dax, aka, x86_64
-and ppc64.  PUD THPs do not yet exist elsewhere, and hugetlb PUDs do not
-count in this case.
+commit f442fa6141379a20b48ae3efabee827a3d260787 upstream
 
-DAX have had PUD mappings for years, but change protection path never
-worked.  When the path is triggered in any form (a simple test program
-would be: call mprotect() on a 1G dev_dax mapping), the kernel will report
-"bad pud".  This patch should fix that.
+A kernel warning was reported when pinning folio in CMA memory when
+launching SEV virtual machine.  The splat looks like:
 
-The new change_huge_pud() tries to keep everything simple.  For example, it
-doesn't optimize write bit as that will need even more PUD helpers.  It's
-not too bad anyway to have one more write fault in the worst case once for
-1G range; may be a bigger thing for each PAGE_SIZE, though.  Neither does
-it support userfault-wp bits, as there isn't such PUD mappings that is
-supported; file mappings always need a split there.
+[  464.325306] WARNING: CPU: 13 PID: 6734 at mm/gup.c:1313 __get_user_pages+0x423/0x520
+[  464.325464] CPU: 13 PID: 6734 Comm: qemu-kvm Kdump: loaded Not tainted 6.6.33+ #6
+[  464.325477] RIP: 0010:__get_user_pages+0x423/0x520
+[  464.325515] Call Trace:
+[  464.325520]  <TASK>
+[  464.325523]  ? __get_user_pages+0x423/0x520
+[  464.325528]  ? __warn+0x81/0x130
+[  464.325536]  ? __get_user_pages+0x423/0x520
+[  464.325541]  ? report_bug+0x171/0x1a0
+[  464.325549]  ? handle_bug+0x3c/0x70
+[  464.325554]  ? exc_invalid_op+0x17/0x70
+[  464.325558]  ? asm_exc_invalid_op+0x1a/0x20
+[  464.325567]  ? __get_user_pages+0x423/0x520
+[  464.325575]  __gup_longterm_locked+0x212/0x7a0
+[  464.325583]  internal_get_user_pages_fast+0xfb/0x190
+[  464.325590]  pin_user_pages_fast+0x47/0x60
+[  464.325598]  sev_pin_memory+0xca/0x170 [kvm_amd]
+[  464.325616]  sev_mem_enc_register_region+0x81/0x130 [kvm_amd]
 
-The same to TLB shootdown: the pmd path (which was for x86 only) has the
-trick of using _ad() version of pmdp_invalidate*() which can avoid one
-redundant TLB, but let's also leave that for later.  Again, the larger the
-mapping, the smaller of such effect.
+Per the analysis done by yangge, when starting the SEV virtual machine, it
+will call pin_user_pages_fast(..., FOLL_LONGTERM, ...) to pin the memory.
+But the page is in CMA area, so fast GUP will fail then fallback to the
+slow path due to the longterm pinnalbe check in try_grab_folio().
 
-There's some difference on handling "retry" for change_huge_pud() (where it
-can return 0): it isn't like change_huge_pmd(), as the pmd version is safe
-with all conditions handled in change_pte_range() later, thanks to Hugh's
-new pte_offset_map_lock().  In short, change_pte_range() is simply smarter.
-For that, change_pud_range() will need proper retry if it races with
-something else when a huge PUD changed from under us.
+The slow path will try to pin the pages then migrate them out of CMA area.
+But the slow path also uses try_grab_folio() to pin the page, it will
+also fail due to the same check then the above warning is triggered.
 
-The last thing to mention is currently the PUD path ignores the huge pte
-numa counter (NUMA_HUGE_PTE_UPDATES), not only because DAX is not
-applicable to NUMA, but also that it's ambiguous on its own to decide how
-to account pud in this case.  In one earlier version of this patchset I
-proposed to remove the counter as it doesn't even look right to do the
-accounting as of now [1], but then a further discussion suggests we can
-leave that for later, as that doesn't block this series if we choose to
-ignore that counter.  That's what this patch does, by ignoring it.
+In addition, the try_grab_folio() is supposed to be used in fast path and
+it elevates folio refcount by using add ref unless zero.  We are guaranteed
+to have at least one stable reference in slow path, so the simple atomic add
+could be used.  The performance difference should be trivial, but the
+misuse may be confusing and misleading.
 
-When at it, touch up the comment in pgtable_split_needed() to make it
-generic to either pmd or pud file THPs.
+Redefined try_grab_folio() to try_grab_folio_fast(), and try_grab_page()
+to try_grab_folio(), and use them in the proper paths.  This solves both
+the abuse and the kernel warning.
 
-[1] https://lore.kernel.org/all/20240715192142.3241557-3-peterx@redhat.com/
-[2] https://lore.kernel.org/r/added2d0-b8be-4108-82ca-1367a388d0b1@redhat.com
+The proper naming makes their usecase more clear and should prevent from
+abusing in the future.
 
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: x86@kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Fixes: a00cc7d9dd93 ("mm, x86: add support for PUD-sized transparent hugepages")
-Fixes: 27af67f35631 ("powerpc/book3s64/mm: enable transparent pud hugepage")
-Signed-off-by: Peter Xu <peterx@redhat.com>
+peterx said:
+
+: The user will see the pin fails, for gpu-slow it further triggers the WARN
+: right below that failure (as in the original report):
+:
+:         folio = try_grab_folio(page, page_increm - 1,
+:                                 foll_flags);
+:         if (WARN_ON_ONCE(!folio)) { <------------------------ here
+:                 /*
+:                         * Release the 1st page ref if the
+:                         * folio is problematic, fail hard.
+:                         */
+:                 gup_put_folio(page_folio(page), 1,
+:                                 foll_flags);
+:                 ret = -EFAULT;
+:                 goto out;
+:         }
+
+[1] https://lore.kernel.org/linux-mm/1719478388-31917-1-git-send-email-yangge1116@126.com/
+
+[shy828301@gmail.com: fix implicit declaration of function try_grab_folio_fast]
+  Link: https://lkml.kernel.org/r/CAHbLzkowMSso-4Nufc9hcMehQsK9PNz3OSu-+eniU-2Mm-xjhA@mail.gmail.com
+Link: https://lkml.kernel.org/r/20240628191458.2605553-1-yang@os.amperecomputing.com
+Fixes: 57edfcfd3419 ("mm/gup: accelerate thp gup even for "pages != NULL"")
+Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
+Reported-by: yangge <yangge1116@126.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: David Hildenbrand <david@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>
+Cc: <stable@vger.kernel.org>	[6.6+]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 ---
- include/linux/huge_mm.h | 24 +++++++++++++++++++
- mm/huge_memory.c        | 52 +++++++++++++++++++++++++++++++++++++++++
- mm/mprotect.c           | 39 ++++++++++++++++++++++++-------
- 3 files changed, 107 insertions(+), 8 deletions(-)
+ mm/gup.c         | 251 ++++++++++++++++++++++++-----------------------
+ mm/huge_memory.c |   6 +-
+ mm/hugetlb.c     |   2 +-
+ mm/internal.h    |   4 +-
+ 4 files changed, 135 insertions(+), 128 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index ce44caa40eed..6370026689e0 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -342,6 +342,17 @@ void split_huge_pmd_address(struct vm_area_struct *vma, unsigned long address,
- void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 		unsigned long address);
+v2: Fixed a build failure
+
+diff --git a/mm/gup.c b/mm/gup.c
+index f50fe2219a13..fdd75384160d 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -97,95 +97,6 @@ static inline struct folio *try_get_folio(struct page *page, int refs)
+ 	return folio;
+ }
  
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+int change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		    pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		    unsigned long cp_flags);
-+#else
-+static inline int
-+change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		unsigned long cp_flags) { return 0; }
-+#endif
-+
- #define split_huge_pud(__vma, __pud, __address)				\
- 	do {								\
- 		pud_t *____pud = (__pud);				\
-@@ -585,6 +596,19 @@ static inline int next_order(unsigned long *orders, int prev)
+-/**
+- * try_grab_folio() - Attempt to get or pin a folio.
+- * @page:  pointer to page to be grabbed
+- * @refs:  the value to (effectively) add to the folio's refcount
+- * @flags: gup flags: these are the FOLL_* flag values.
+- *
+- * "grab" names in this file mean, "look at flags to decide whether to use
+- * FOLL_PIN or FOLL_GET behavior, when incrementing the folio's refcount.
+- *
+- * Either FOLL_PIN or FOLL_GET (or neither) must be set, but not both at the
+- * same time. (That's true throughout the get_user_pages*() and
+- * pin_user_pages*() APIs.) Cases:
+- *
+- *    FOLL_GET: folio's refcount will be incremented by @refs.
+- *
+- *    FOLL_PIN on large folios: folio's refcount will be incremented by
+- *    @refs, and its pincount will be incremented by @refs.
+- *
+- *    FOLL_PIN on single-page folios: folio's refcount will be incremented by
+- *    @refs * GUP_PIN_COUNTING_BIAS.
+- *
+- * Return: The folio containing @page (with refcount appropriately
+- * incremented) for success, or NULL upon failure. If neither FOLL_GET
+- * nor FOLL_PIN was set, that's considered failure, and furthermore,
+- * a likely bug in the caller, so a warning is also emitted.
+- */
+-struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+-{
+-	struct folio *folio;
+-
+-	if (WARN_ON_ONCE((flags & (FOLL_GET | FOLL_PIN)) == 0))
+-		return NULL;
+-
+-	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
+-		return NULL;
+-
+-	if (flags & FOLL_GET)
+-		return try_get_folio(page, refs);
+-
+-	/* FOLL_PIN is set */
+-
+-	/*
+-	 * Don't take a pin on the zero page - it's not going anywhere
+-	 * and it is used in a *lot* of places.
+-	 */
+-	if (is_zero_page(page))
+-		return page_folio(page);
+-
+-	folio = try_get_folio(page, refs);
+-	if (!folio)
+-		return NULL;
+-
+-	/*
+-	 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
+-	 * right zone, so fail and let the caller fall back to the slow
+-	 * path.
+-	 */
+-	if (unlikely((flags & FOLL_LONGTERM) &&
+-		     !folio_is_longterm_pinnable(folio))) {
+-		if (!put_devmap_managed_page_refs(&folio->page, refs))
+-			folio_put_refs(folio, refs);
+-		return NULL;
+-	}
+-
+-	/*
+-	 * When pinning a large folio, use an exact count to track it.
+-	 *
+-	 * However, be sure to *also* increment the normal folio
+-	 * refcount field at least once, so that the folio really
+-	 * is pinned.  That's why the refcount from the earlier
+-	 * try_get_folio() is left intact.
+-	 */
+-	if (folio_test_large(folio))
+-		atomic_add(refs, &folio->_pincount);
+-	else
+-		folio_ref_add(folio,
+-				refs * (GUP_PIN_COUNTING_BIAS - 1));
+-	/*
+-	 * Adjust the pincount before re-checking the PTE for changes.
+-	 * This is essentially a smp_mb() and is paired with a memory
+-	 * barrier in page_try_share_anon_rmap().
+-	 */
+-	smp_mb__after_atomic();
+-
+-	node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
+-
+-	return folio;
+-}
+-
+ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
  {
- 	return 0;
- }
-+
-+static inline void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
-+				    unsigned long address)
-+{
-+}
-+
-+static inline int change_huge_pud(struct mmu_gather *tlb,
-+				  struct vm_area_struct *vma, pud_t *pudp,
-+				  unsigned long addr, pgprot_t newprot,
-+				  unsigned long cp_flags)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
- static inline int split_folio_to_list_to_order(struct folio *folio,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 81c5da0708ed..0aafd26d7a53 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2114,6 +2114,53 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 	return ret;
+ 	if (flags & FOLL_PIN) {
+@@ -203,58 +114,59 @@ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
  }
  
-+/*
-+ * Returns:
+ /**
+- * try_grab_page() - elevate a page's refcount by a flag-dependent amount
+- * @page:    pointer to page to be grabbed
+- * @flags:   gup flags: these are the FOLL_* flag values.
++ * try_grab_folio() - add a folio's refcount by a flag-dependent amount
++ * @folio:    pointer to folio to be grabbed
++ * @refs:     the value to (effectively) add to the folio's refcount
++ * @flags:    gup flags: these are the FOLL_* flag values
+  *
+  * This might not do anything at all, depending on the flags argument.
+  *
+  * "grab" names in this file mean, "look at flags to decide whether to use
+- * FOLL_PIN or FOLL_GET behavior, when incrementing the page's refcount.
++ * FOLL_PIN or FOLL_GET behavior, when incrementing the folio's refcount.
+  *
+  * Either FOLL_PIN or FOLL_GET (or neither) may be set, but not both at the same
+- * time. Cases: please see the try_grab_folio() documentation, with
+- * "refs=1".
++ * time.
+  *
+  * Return: 0 for success, or if no action was required (if neither FOLL_PIN
+  * nor FOLL_GET was set, nothing is done). A negative error code for failure:
+  *
+- *   -ENOMEM		FOLL_GET or FOLL_PIN was set, but the page could not
++ *   -ENOMEM		FOLL_GET or FOLL_PIN was set, but the folio could not
+  *			be grabbed.
 + *
-+ * - 0: if pud leaf changed from under us
-+ * - 1: if pud can be skipped
-+ * - HPAGE_PUD_NR: if pud was successfully processed
++ * It is called when we have a stable reference for the folio, typically in
++ * GUP slow path.
+  */
+-int __must_check try_grab_page(struct page *page, unsigned int flags)
++int __must_check try_grab_folio(struct folio *folio, int refs,
++				unsigned int flags)
+ {
+-	struct folio *folio = page_folio(page);
+-
+ 	if (WARN_ON_ONCE(folio_ref_count(folio) <= 0))
+ 		return -ENOMEM;
+ 
+-	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
++	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(&folio->page)))
+ 		return -EREMOTEIO;
+ 
+ 	if (flags & FOLL_GET)
+-		folio_ref_inc(folio);
++		folio_ref_add(folio, refs);
+ 	else if (flags & FOLL_PIN) {
+ 		/*
+ 		 * Don't take a pin on the zero page - it's not going anywhere
+ 		 * and it is used in a *lot* of places.
+ 		 */
+-		if (is_zero_page(page))
++		if (is_zero_folio(folio))
+ 			return 0;
+ 
+ 		/*
+-		 * Similar to try_grab_folio(): be sure to *also*
+-		 * increment the normal page refcount field at least once,
++		 * Increment the normal page refcount field at least once,
+ 		 * so that the page really is pinned.
+ 		 */
+ 		if (folio_test_large(folio)) {
+-			folio_ref_add(folio, 1);
+-			atomic_add(1, &folio->_pincount);
++			folio_ref_add(folio, refs);
++			atomic_add(refs, &folio->_pincount);
+ 		} else {
+-			folio_ref_add(folio, GUP_PIN_COUNTING_BIAS);
++			folio_ref_add(folio, refs * GUP_PIN_COUNTING_BIAS);
+ 		}
+ 
+-		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, 1);
++		node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
+ 	}
+ 
+ 	return 0;
+@@ -647,8 +559,8 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
+ 	VM_BUG_ON_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
+ 		       !PageAnonExclusive(page), page);
+ 
+-	/* try_grab_page() does nothing unless FOLL_GET or FOLL_PIN is set. */
+-	ret = try_grab_page(page, flags);
++	/* try_grab_folio() does nothing unless FOLL_GET or FOLL_PIN is set. */
++	ret = try_grab_folio(page_folio(page), 1, flags);
+ 	if (unlikely(ret)) {
+ 		page = ERR_PTR(ret);
+ 		goto out;
+@@ -899,7 +811,7 @@ static int get_gate_page(struct mm_struct *mm, unsigned long address,
+ 			goto unmap;
+ 		*page = pte_page(entry);
+ 	}
+-	ret = try_grab_page(*page, gup_flags);
++	ret = try_grab_folio(page_folio(*page), 1, gup_flags);
+ 	if (unlikely(ret))
+ 		goto unmap;
+ out:
+@@ -1302,20 +1214,19 @@ static long __get_user_pages(struct mm_struct *mm,
+ 			 * pages.
+ 			 */
+ 			if (page_increm > 1) {
+-				struct folio *folio;
++				struct folio *folio = page_folio(page);
+ 
+ 				/*
+ 				 * Since we already hold refcount on the
+ 				 * large folio, this should never fail.
+ 				 */
+-				folio = try_grab_folio(page, page_increm - 1,
+-						       foll_flags);
+-				if (WARN_ON_ONCE(!folio)) {
++				if (try_grab_folio(folio, page_increm - 1,
++						       foll_flags)) {
+ 					/*
+ 					 * Release the 1st page ref if the
+ 					 * folio is problematic, fail hard.
+ 					 */
+-					gup_put_folio(page_folio(page), 1,
++					gup_put_folio(folio, 1,
+ 						      foll_flags);
+ 					ret = -EFAULT;
+ 					goto out;
+@@ -2541,6 +2452,102 @@ static void __maybe_unused undo_dev_pagemap(int *nr, int nr_start,
+ 	}
+ }
+ 
++/**
++ * try_grab_folio_fast() - Attempt to get or pin a folio in fast path.
++ * @page:  pointer to page to be grabbed
++ * @refs:  the value to (effectively) add to the folio's refcount
++ * @flags: gup flags: these are the FOLL_* flag values.
++ *
++ * "grab" names in this file mean, "look at flags to decide whether to use
++ * FOLL_PIN or FOLL_GET behavior, when incrementing the folio's refcount.
++ *
++ * Either FOLL_PIN or FOLL_GET (or neither) must be set, but not both at the
++ * same time. (That's true throughout the get_user_pages*() and
++ * pin_user_pages*() APIs.) Cases:
++ *
++ *    FOLL_GET: folio's refcount will be incremented by @refs.
++ *
++ *    FOLL_PIN on large folios: folio's refcount will be incremented by
++ *    @refs, and its pincount will be incremented by @refs.
++ *
++ *    FOLL_PIN on single-page folios: folio's refcount will be incremented by
++ *    @refs * GUP_PIN_COUNTING_BIAS.
++ *
++ * Return: The folio containing @page (with refcount appropriately
++ * incremented) for success, or NULL upon failure. If neither FOLL_GET
++ * nor FOLL_PIN was set, that's considered failure, and furthermore,
++ * a likely bug in the caller, so a warning is also emitted.
++ *
++ * It uses add ref unless zero to elevate the folio refcount and must be called
++ * in fast path only.
 + */
-+#ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
-+int change_huge_pud(struct mmu_gather *tlb, struct vm_area_struct *vma,
-+		    pud_t *pudp, unsigned long addr, pgprot_t newprot,
-+		    unsigned long cp_flags)
++static struct folio *try_grab_folio_fast(struct page *page, int refs,
++					 unsigned int flags)
 +{
-+	struct mm_struct *mm = vma->vm_mm;
-+	pud_t oldpud, entry;
-+	spinlock_t *ptl;
++	struct folio *folio;
 +
-+	tlb_change_page_size(tlb, HPAGE_PUD_SIZE);
++	/* Raise warn if it is not called in fast GUP */
++	VM_WARN_ON_ONCE(!irqs_disabled());
 +
-+	/* NUMA balancing doesn't apply to dax */
-+	if (cp_flags & MM_CP_PROT_NUMA)
-+		return 1;
++	if (WARN_ON_ONCE((flags & (FOLL_GET | FOLL_PIN)) == 0))
++		return NULL;
 +
-+	/*
-+	 * Huge entries on userfault-wp only works with anonymous, while we
-+	 * don't have anonymous PUDs yet.
-+	 */
-+	if (WARN_ON_ONCE(cp_flags & MM_CP_UFFD_WP_ALL))
-+		return 1;
++	if (unlikely(!(flags & FOLL_PCI_P2PDMA) && is_pci_p2pdma_page(page)))
++		return NULL;
 +
-+	ptl = __pud_trans_huge_lock(pudp, vma);
-+	if (!ptl)
-+		return 0;
++	if (flags & FOLL_GET)
++		return try_get_folio(page, refs);
++
++	/* FOLL_PIN is set */
 +
 +	/*
-+	 * Can't clear PUD or it can race with concurrent zapping.  See
-+	 * change_huge_pmd().
++	 * Don't take a pin on the zero page - it's not going anywhere
++	 * and it is used in a *lot* of places.
 +	 */
-+	oldpud = pudp_invalidate(vma, addr, pudp);
-+	entry = pud_modify(oldpud, newprot);
-+	set_pud_at(mm, addr, pudp, entry);
-+	tlb_flush_pud_range(tlb, addr, HPAGE_PUD_SIZE);
++	if (is_zero_page(page))
++		return page_folio(page);
 +
-+	spin_unlock(ptl);
-+	return HPAGE_PUD_NR;
++	folio = try_get_folio(page, refs);
++	if (!folio)
++		return NULL;
++
++	/*
++	 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
++	 * right zone, so fail and let the caller fall back to the slow
++	 * path.
++	 */
++	if (unlikely((flags & FOLL_LONGTERM) &&
++		     !folio_is_longterm_pinnable(folio))) {
++		if (!put_devmap_managed_page_refs(&folio->page, refs))
++			folio_put_refs(folio, refs);
++		return NULL;
++	}
++
++	/*
++	 * When pinning a large folio, use an exact count to track it.
++	 *
++	 * However, be sure to *also* increment the normal folio
++	 * refcount field at least once, so that the folio really
++	 * is pinned.  That's why the refcount from the earlier
++	 * try_get_folio() is left intact.
++	 */
++	if (folio_test_large(folio))
++		atomic_add(refs, &folio->_pincount);
++	else
++		folio_ref_add(folio,
++				refs * (GUP_PIN_COUNTING_BIAS - 1));
++	/*
++	 * Adjust the pincount before re-checking the PTE for changes.
++	 * This is essentially a smp_mb() and is paired with a memory
++	 * barrier in folio_try_share_anon_rmap_*().
++	 */
++	smp_mb__after_atomic();
++
++	node_stat_mod_folio(folio, NR_FOLL_PIN_ACQUIRED, refs);
++
++	return folio;
 +}
-+#endif
 +
- #ifdef CONFIG_USERFAULTFD
+ #ifdef CONFIG_ARCH_HAS_PTE_SPECIAL
  /*
-  * The PT lock for src_pmd and dst_vma/src_vma (for reading) are locked by
-@@ -2344,6 +2391,11 @@ void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
- 	spin_unlock(ptl);
- 	mmu_notifier_invalidate_range_end(&range);
- }
-+#else
-+void __split_huge_pud(struct vm_area_struct *vma, pud_t *pud,
-+		unsigned long address)
-+{
-+}
- #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
+  * Fast-gup relies on pte change detection to avoid concurrent pgtable
+@@ -2605,7 +2612,7 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
+ 		VM_BUG_ON(!pfn_valid(pte_pfn(pte)));
+ 		page = pte_page(pte);
  
- static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index d423080e6509..446f8e5f10d9 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -302,8 +302,9 @@ pgtable_split_needed(struct vm_area_struct *vma, unsigned long cp_flags)
- {
- 	/*
- 	 * pte markers only resides in pte level, if we need pte markers,
--	 * we need to split.  We cannot wr-protect shmem thp because file
--	 * thp is handled differently when split by erasing the pmd so far.
-+	 * we need to split.  For example, we cannot wr-protect a file thp
-+	 * (e.g. 2M shmem) because file thp is handled differently when
-+	 * split by erasing the pmd so far.
- 	 */
- 	return (cp_flags & MM_CP_UFFD_WP) && !vma_is_anonymous(vma);
- }
-@@ -430,31 +431,53 @@ static inline long change_pud_range(struct mmu_gather *tlb,
- 		unsigned long end, pgprot_t newprot, unsigned long cp_flags)
- {
- 	struct mmu_notifier_range range;
--	pud_t *pud;
-+	pud_t *pudp, pud;
- 	unsigned long next;
- 	long pages = 0, ret;
+-		folio = try_grab_folio(page, 1, flags);
++		folio = try_grab_folio_fast(page, 1, flags);
+ 		if (!folio)
+ 			goto pte_unmap;
  
- 	range.start = 0;
+@@ -2699,7 +2706,7 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
  
--	pud = pud_offset(p4d, addr);
-+	pudp = pud_offset(p4d, addr);
- 	do {
-+again:
- 		next = pud_addr_end(addr, end);
--		ret = change_prepare(vma, pud, pmd, addr, cp_flags);
-+		ret = change_prepare(vma, pudp, pmd, addr, cp_flags);
- 		if (ret) {
- 			pages = ret;
+ 		SetPageReferenced(page);
+ 		pages[*nr] = page;
+-		if (unlikely(try_grab_page(page, flags))) {
++		if (unlikely(try_grab_folio(page_folio(page), 1, flags))) {
+ 			undo_dev_pagemap(nr, nr_start, flags, pages);
  			break;
  		}
--		if (pud_none_or_clear_bad(pud))
-+
-+		pud = READ_ONCE(*pudp);
-+		if (pud_none(pud))
- 			continue;
-+
- 		if (!range.start) {
- 			mmu_notifier_range_init(&range,
- 						MMU_NOTIFY_PROTECTION_VMA, 0,
- 						vma->vm_mm, addr, end);
- 			mmu_notifier_invalidate_range_start(&range);
- 		}
--		pages += change_pmd_range(tlb, vma, pud, addr, next, newprot,
-+
-+		if (pud_leaf(pud)) {
-+			if ((next - addr != PUD_SIZE) ||
-+			    pgtable_split_needed(vma, cp_flags)) {
-+				__split_huge_pud(vma, pudp, addr);
-+				goto again;
-+			} else {
-+				ret = change_huge_pud(tlb, vma, pudp,
-+						      addr, newprot, cp_flags);
-+				if (ret == 0)
-+					goto again;
-+				/* huge pud was handled */
-+				if (ret == HPAGE_PUD_NR)
-+					pages += HPAGE_PUD_NR;
-+				continue;
-+			}
-+		}
-+
-+		pages += change_pmd_range(tlb, vma, pudp, addr, next, newprot,
- 					  cp_flags);
--	} while (pud++, addr = next, addr != end);
-+	} while (pudp++, addr = next, addr != end);
+@@ -2808,7 +2815,7 @@ static int gup_hugepte(pte_t *ptep, unsigned long sz, unsigned long addr,
+ 	page = nth_page(pte_page(pte), (addr & (sz - 1)) >> PAGE_SHIFT);
+ 	refs = record_subpages(page, addr, end, pages + *nr);
  
- 	if (range.start)
- 		mmu_notifier_invalidate_range_end(&range);
+-	folio = try_grab_folio(page, refs, flags);
++	folio = try_grab_folio_fast(page, refs, flags);
+ 	if (!folio)
+ 		return 0;
+ 
+@@ -2879,7 +2886,7 @@ static int gup_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
+ 	page = nth_page(pmd_page(orig), (addr & ~PMD_MASK) >> PAGE_SHIFT);
+ 	refs = record_subpages(page, addr, end, pages + *nr);
+ 
+-	folio = try_grab_folio(page, refs, flags);
++	folio = try_grab_folio_fast(page, refs, flags);
+ 	if (!folio)
+ 		return 0;
+ 
+@@ -2923,7 +2930,7 @@ static int gup_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
+ 	page = nth_page(pud_page(orig), (addr & ~PUD_MASK) >> PAGE_SHIFT);
+ 	refs = record_subpages(page, addr, end, pages + *nr);
+ 
+-	folio = try_grab_folio(page, refs, flags);
++	folio = try_grab_folio_fast(page, refs, flags);
+ 	if (!folio)
+ 		return 0;
+ 
+@@ -2963,7 +2970,7 @@ static int gup_huge_pgd(pgd_t orig, pgd_t *pgdp, unsigned long addr,
+ 	page = nth_page(pgd_page(orig), (addr & ~PGDIR_MASK) >> PAGE_SHIFT);
+ 	refs = record_subpages(page, addr, end, pages + *nr);
+ 
+-	folio = try_grab_folio(page, refs, flags);
++	folio = try_grab_folio_fast(page, refs, flags);
+ 	if (!folio)
+ 		return 0;
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 79fbd6ddec49..2e64897168bc 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1052,7 +1052,7 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
+ 	if (!*pgmap)
+ 		return ERR_PTR(-EFAULT);
+ 	page = pfn_to_page(pfn);
+-	ret = try_grab_page(page, flags);
++	ret = try_grab_folio(page_folio(page), 1, flags);
+ 	if (ret)
+ 		page = ERR_PTR(ret);
+ 
+@@ -1210,7 +1210,7 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
+ 		return ERR_PTR(-EFAULT);
+ 	page = pfn_to_page(pfn);
+ 
+-	ret = try_grab_page(page, flags);
++	ret = try_grab_folio(page_folio(page), 1, flags);
+ 	if (ret)
+ 		page = ERR_PTR(ret);
+ 
+@@ -1471,7 +1471,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
+ 	VM_BUG_ON_PAGE((flags & FOLL_PIN) && PageAnon(page) &&
+ 			!PageAnonExclusive(page), page);
+ 
+-	ret = try_grab_page(page, flags);
++	ret = try_grab_folio(page_folio(page), 1, flags);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index a480affd475b..ab040f8d1987 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -6532,7 +6532,7 @@ struct page *hugetlb_follow_page_mask(struct vm_area_struct *vma,
+ 		 * try_grab_page() should always be able to get the page here,
+ 		 * because we hold the ptl lock and have verified pte_present().
+ 		 */
+-		ret = try_grab_page(page, flags);
++		ret = try_grab_folio(page_folio(page), 1, flags);
+ 
+ 		if (WARN_ON_ONCE(ret)) {
+ 			page = ERR_PTR(ret);
+diff --git a/mm/internal.h b/mm/internal.h
+index abed947f784b..ef8d787a510c 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -938,8 +938,8 @@ int migrate_device_coherent_page(struct page *page);
+ /*
+  * mm/gup.c
+  */
+-struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
+-int __must_check try_grab_page(struct page *page, unsigned int flags);
++int __must_check try_grab_folio(struct folio *folio, int refs,
++				unsigned int flags);
+ 
+ /*
+  * mm/huge_memory.c
 -- 
-2.45.0
+2.41.0
 
 
