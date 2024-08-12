@@ -1,195 +1,152 @@
-Return-Path: <linux-kernel+bounces-282709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF8D94E7B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:26:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06DA094E7C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:27:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFDD71C21966
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:26:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7164282BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9E6158203;
-	Mon, 12 Aug 2024 07:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxdPnQJL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tHALmea+";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nxdPnQJL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="tHALmea+"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C991581FC;
+	Mon, 12 Aug 2024 07:27:42 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6AE5FBB7;
-	Mon, 12 Aug 2024 07:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 550DF15098A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447571; cv=none; b=qT1dYI5K5N/kskNUzwIrS9lTdaXRssxsrDlQPqb5qS3akK810phTAOVOdwFzCuArAAeRUaRcn8AonDzffrHojzeVUeDXRFabrCQwJt60nMp90PRoDkov3V8X/jSY7RN2E/Eh/hR7kAwz/BWPaq7tEKGxsc7y45AKP+m53g5EQyU=
+	t=1723447662; cv=none; b=hc7OQ3RqWGISuWUBbozSxcVFifwFB6W0Hv+xJ5XiB+NB0C+ioJO2KU+j/qxytFiqksWT9n3DHCFZhL7Pj8qZC1/hIiA5GivCQDd9osuhxvcPbGCFXMH4yLa7K66tJiaxPqBzLzpJm8p/TUEu70dlCzJmdCpTGeL9jwI7xI2X9BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447571; c=relaxed/simple;
-	bh=e4iG/Rv2hmbafwDzq0zo4JgOtrUeSZzZPoEnbxQKspw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Smm5L76j0LhFrNf9Umku52GAhYjRS4Izq04kYPc65MYvXuNMXGLKaq1t4epb/3hHgjxVm5mc9KC2RrUqVDk+wa3dxCaTlBZYVdt0wKKaf8AJDq56CtqUONa5t9S+SPq/GMA+1JU6z3mQ+t5C/uNlSNvAnqKc/9MJ2a7g6dMJVoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxdPnQJL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tHALmea+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nxdPnQJL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=tHALmea+; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	s=arc-20240116; t=1723447662; c=relaxed/simple;
+	bh=80BpKBUj/6IL2a36Mynw3AbqPtC9KyrQGFqkt56TbeU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bL4IPJvLcIlvrdIxiA3HNWHZu9X2CjHBWewnknHAkv5c1nokbmSnKzpl+X9KgZe+MP26rlrAHQEh9DaYmrLrtv8X7EVLRFlK50XPoccSmunZhk35Mm46uQFHgCqLLhZ7A7KKsmiu6VfGJlIOKExgiEEHq0Vq86/3IowPftrTlzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 2D489A9E3D;
+	Mon, 12 Aug 2024 16:27:38 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id exf96Y1OiL57; Mon, 12 Aug 2024 16:27:38 +0900 (JST)
+Received: from localhost.localdomain (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp [153.220.101.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7CE532022C;
-	Mon, 12 Aug 2024 07:26:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XPo09EObUeV+exTTCamgWy1ozO+qtvAX7oaVDoIEGY=;
-	b=nxdPnQJLeSibhsbzX61UBYq6xMRjEGLrVs1gtqlMODk09dSjOcuqq7ryf0ntum+l+0k0kK
-	4IfuaLGR8uzK+xZ7nGuGgDD0NGyfS0Qr6+AGrsbmG+tOoRI3rMj5rl2iIpT6FpgywPHBvA
-	0MX3h4hMWfGpuyHyn5hPTZowM4JOcyA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447566;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XPo09EObUeV+exTTCamgWy1ozO+qtvAX7oaVDoIEGY=;
-	b=tHALmea+jAACss2DZPv4BPnTKhr3LP5HsbbYZUUUbuxBSXhb3tLaiM4i5sOSjf7zcmusK2
-	TOluQBarsNrqoBBA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nxdPnQJL;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=tHALmea+
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723447566; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XPo09EObUeV+exTTCamgWy1ozO+qtvAX7oaVDoIEGY=;
-	b=nxdPnQJLeSibhsbzX61UBYq6xMRjEGLrVs1gtqlMODk09dSjOcuqq7ryf0ntum+l+0k0kK
-	4IfuaLGR8uzK+xZ7nGuGgDD0NGyfS0Qr6+AGrsbmG+tOoRI3rMj5rl2iIpT6FpgywPHBvA
-	0MX3h4hMWfGpuyHyn5hPTZowM4JOcyA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723447566;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6XPo09EObUeV+exTTCamgWy1ozO+qtvAX7oaVDoIEGY=;
-	b=tHALmea+jAACss2DZPv4BPnTKhr3LP5HsbbYZUUUbuxBSXhb3tLaiM4i5sOSjf7zcmusK2
-	TOluQBarsNrqoBBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1DCD5137BA;
-	Mon, 12 Aug 2024 07:26:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WZcRBg65uWZRDQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 12 Aug 2024 07:26:06 +0000
-Date: Mon, 12 Aug 2024 09:26:46 +0200
-Message-ID: <87frra2ocp.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Jonathan LoBue <jlobue10@gmail.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	shenghao-ding@ti.com,
-	kailang@realtek.com,
-	alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	derekjohn.clark@gmail.com,
-	luke@ljones.dev,
-	benato.denis96@gmail.com,
-	Kyle Gospodnetich <me@kylegospodneti.ch>,
-	Jan Drogehoff <sentrycraft123@gmail.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>,
-	Richard Alvarez <alvarez.richard@gmail.com>,
-	Miles Montierth <cyber_dopamine@intheblackmedia.com>
-Subject: Re: [PATCH] ALSA: hda/realtek: tas2781: Fix ROG ALLY X audio
-In-Reply-To: <20240812045325.47736-1-jlobue10@gmail.com>
-References: <20240812045325.47736-1-jlobue10@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id DAE6FA9E38;
+	Mon, 12 Aug 2024 16:27:37 +0900 (JST)
+From: takakura@valinux.co.jp
+To: pmladek@suse.com,
+	rostedt@goodmis.org,
+	john.ogness@linutronix.de,
+	senozhatsky@chromium.org,
+	akpm@linux-foundation.org,
+	bhe@redhat.com,
+	lukas@wunner.de,
+	wangkefeng.wang@huawei.com,
+	ubizjak@gmail.com,
+	feng.tang@intel.com,
+	j.granados@samsung.com,
+	stephen.s.brennan@oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	nishimura@valinux.co.jp,
+	taka@valinux.co.jp,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: [PATCH v3 1/2] Allow cpu backtraces to be written into ringbuffer during panic
+Date: Mon, 12 Aug 2024 16:27:03 +0900
+Message-Id: <20240812072703.339690-1-takakura@valinux.co.jp>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240812072137.339644-1-takakura@valinux.co.jp>
+References: <20240812072137.339644-1-takakura@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.01 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[perex.cz,suse.com,ti.com,realtek.com,alsa-project.org,vger.kernel.org,gmail.com,ljones.dev,kylegospodneti.ch,antheas.dev,intheblackmedia.com];
-	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TAGGED_RCPT(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -1.01
-X-Rspamd-Queue-Id: 7CE532022C
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 12 Aug 2024 06:53:25 +0200,
-Jonathan LoBue wrote:
-> 
-> This patch enables the TI TAS2781 amplifier SoC for the ASUS ROG ALLY X.
-> This is a design change from the original ASUS ROG ALLY, creating the need
-> for this patch. All other Realtek Codec settings seem to be re-used from
-> the original ROG ALLY design (on the ROG ALLY X). This patch maintains the
-> previous settings for the Realtek codec portion, but enables the I2C
-> binding for the TI TAS2781 amplifier (instead of the Cirrus CS35L41 amp
-> used on the original ASUS ROG ALLY).
-> 
-> One other requirement must be met for audio to work on the ASUS ROG ALLY X.
-> A proper firmware file in the correct location with a proper symlink. We
-> had reached out to TI engineers and confirmed that the firmware found in
-> the Windows' driver package has a GPL license. Bazzite Github is hosting
-> this firmware file for now until proper linux-firmware upstreaming can
-> occur. https://github.com/ublue-os/bazzite
-> 
-> This firmware file should be placed in
-> /usr/lib/firmware/ti/tas2781/TAS2XXX1EB3.bin with a symlink to it from
-> /usr/lib/firmware/TAS2XXX1EB3.bin
-> 
-> Co-developed by: Kyle Gospodnetich <me@kylegospodneti.ch>
-> Signed-off-by: Kyle Gospodnetich <me@kylegospodneti.ch>
-> Co-developed by: Jan Drogehoff <sentrycraft123@gmail.com>
-> Signed-off-by: Jan Drogehoff <sentrycraft123@gmail.com>
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> Tested-by: Richard Alvarez <alvarez.richard@gmail.com>
-> Tested-by: Miles Montierth <cyber_dopamine@intheblackmedia.com>
-> Signed-off-by: Jonathan LoBue <jlobue10@gmail.com>
+From: Ryo Takakura <takakura@valinux.co.jp>
 
-Applied to for-next branch.
+commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
+to ringbuffer") disabled non-panic CPUs to further write messages to
+ringbuffer after panicked.
 
-Meanwhile, could you ask TI guys to include the missing firmware files
-in linux-firmware git tree, too?
+Since the commit, non-panicked CPU's are not allowed to write to
+ring buffer after panicked and CPU backtrace which is triggered
+after panicked to sample non-panicked CPUs' backtrace no longer
+serves its function as it has nothing to print.
 
+Fix the issue by allowing non-panicked CPUs to write into ringbuffer
+while CPU backtrace is in flight.
 
-thanks,
+Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
+Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+---
+ include/linux/panic.h  | 1 +
+ kernel/panic.c         | 8 +++++++-
+ kernel/printk/printk.c | 2 +-
+ 3 files changed, 9 insertions(+), 2 deletions(-)
 
-Takashi
+diff --git a/include/linux/panic.h b/include/linux/panic.h
+index 3130e0b51..54d90b6c5 100644
+--- a/include/linux/panic.h
++++ b/include/linux/panic.h
+@@ -16,6 +16,7 @@ extern void oops_enter(void);
+ extern void oops_exit(void);
+ extern bool oops_may_print(void);
+ 
++extern bool panic_triggering_all_cpu_backtrace;
+ extern int panic_timeout;
+ extern unsigned long panic_print;
+ extern int panic_on_oops;
+diff --git a/kernel/panic.c b/kernel/panic.c
+index f861bedc1..2a0449144 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -64,6 +64,8 @@ unsigned long panic_on_taint;
+ bool panic_on_taint_nousertaint = false;
+ static unsigned int warn_limit __read_mostly;
+ 
++bool panic_triggering_all_cpu_backtrace;
++
+ int panic_timeout = CONFIG_PANIC_TIMEOUT;
+ EXPORT_SYMBOL_GPL(panic_timeout);
+ 
+@@ -253,8 +255,12 @@ void check_panic_on_warn(const char *origin)
+  */
+ static void panic_other_cpus_shutdown(bool crash_kexec)
+ {
+-	if (panic_print & PANIC_PRINT_ALL_CPU_BT)
++	if (panic_print & PANIC_PRINT_ALL_CPU_BT) {
++		/* Temporary allow non-panic CPUs to write their backtraces. */
++		panic_triggering_all_cpu_backtrace = true;
+ 		trigger_all_cpu_backtrace();
++		panic_triggering_all_cpu_backtrace = false;
++	}
+ 
+ 	/*
+ 	 * Note that smp_send_stop() is the usual SMP shutdown function,
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index 054c0e778..c22b07049 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -2316,7 +2316,7 @@ asmlinkage int vprintk_emit(int facility, int level,
+ 	 * non-panic CPUs are generating any messages, they will be
+ 	 * silently dropped.
+ 	 */
+-	if (other_cpu_in_panic())
++	if (other_cpu_in_panic() && !panic_triggering_all_cpu_backtrace)
+ 		return 0;
+ 
+ 	if (level == LOGLEVEL_SCHED) {
+-- 
+2.34.1
+
 
