@@ -1,100 +1,187 @@
-Return-Path: <linux-kernel+bounces-282574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A8794E5F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:11:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9DB94E5F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2357B1C21419
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3F11282230
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1734714B940;
-	Mon, 12 Aug 2024 05:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387A14A0A0;
+	Mon, 12 Aug 2024 05:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BOdQ6Xb+"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="io+kSdIi"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2666A380;
-	Mon, 12 Aug 2024 05:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680C4380
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723439474; cv=none; b=I/0fYT8KOVLJIJI4n5h8AecmsJRJPXeoO5QIXTP6rmsxKdABOl1bHXH6yJoKDP35KQ0tY1hZJzlcy6Er4lS6EF0czITbb7trTwaGpu6l1iuBp5QRN3tT4wk0qjwbbOfe/iK1HgXSLH7/DlqH42vcE20FaRwOpKOxOUlZMcE94NU=
+	t=1723439504; cv=none; b=A43iy1mrCeVyZ/Wp1x0DxJA2xiMX5UVjcOgbdOfCvTd61emAiLm2w8kK0GbpvToHQsA9d8eKIjrf/Ps6ighgiWK2xIM+4GVAmofXGhkba575Q3RrF0U1B6UARECGHe1r74z/oSBIB7JdDNKinrD++o5trvTafrDXtEH8Lm9WPlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723439474; c=relaxed/simple;
-	bh=hMGQnuLjw/QJkAWzcYNfzbpFDw4Yi+89B4oDnbGKOoQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfzndsJQLN4esdbc42GtEZW2pI9Kh9o9hYjIpt+pd9mNRrqdosdsxLSf6Ef8UGvqxJ4qrCu1CbtyWY3U4t3L35eUmJSdvP+olv3rYilHTIusv+nDV+ASwjso5bhRAgs86erdrtVaDgOmW/vaI7qgCaUQ7xrOprQSC/5vydMtTgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BOdQ6Xb+; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47C5B0Sa037613;
-	Mon, 12 Aug 2024 00:11:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1723439460;
-	bh=ICM5BEPN42HtGeNQ/kumXVS9/LZOahJxGvyqIAoP8g8=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=BOdQ6Xb+Jhl/OD337rK7H+O5ykyS3E5W4bb/OGf/8BPYZ2jo8Dn2pTnDgvJw7aDVL
-	 fJoQ9d/ZKHDtyaCTo3C8jGeP7+RgWwXb7bqY/YcKXaGYAtEGMmqhwEMPVshxQnK26J
-	 9vSGpVWALdoJfxvO9wxg88JI5kJ4yaZtXFLtXs7c=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47C5B0sf005961
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 12 Aug 2024 00:11:00 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 12
- Aug 2024 00:11:00 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 12 Aug 2024 00:11:00 -0500
-Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47C5Axe3102109;
-	Mon, 12 Aug 2024 00:11:00 -0500
-Date: Mon, 12 Aug 2024 10:40:58 +0530
-From: Manorit Chawdhry <m-chawdhry@ti.com>
-To: Bhavya Kapoor <b-kapoor@ti.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
-        <vigneshr@ti.com>, <nm@ti.com>, <sinthu.raja@ti.com>,
-        <n-francis@ti.com>
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin
- mux for mmc1
-Message-ID: <20240812051058.ooq7uxd6xdbhgjln@uda0497581>
-References: <20240809072231.2931206-1-b-kapoor@ti.com>
+	s=arc-20240116; t=1723439504; c=relaxed/simple;
+	bh=FXIodPZ7O1ZonWHC8AJuz1DVSwPRK66ICm1hwu3cA+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gh5MpR1o6BOx7HvPi7M9/vQhiW2cBDPY49QRiW/NMjDr8j+gAz6stV1wAxC7J2cZei1QstT8pJu9jEi4fp6YpbTLPzrUwfQXaxcT9bTMdMHFHgMZ9GO6+F8kLL9hytxJMRAOQjjVeH7ZalZHrBjms+06wySX/GkliKzMUS6ZaDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=io+kSdIi; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d2b921cdfso3583443b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ventanamicro.com; s=google; t=1723439503; x=1724044303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VgKeYygUgO+nfcoZ/vUsH9NRmjrQwo4JtOLQQ/9ThGo=;
+        b=io+kSdIinfE7jZWg+JxgPGxPXmEmvKfBX4PAlHaEgLl35xLJs+R4AH2jTmYwZolCLs
+         iQjE25rux2t7qpZCcLQOjfynTVaiTpWXcQLS5X4fASNuhkzCywdNq9bc2F0YmwbpMGwb
+         iTaBAknf23MzPwD5aIlvcQ7ZRlIPcfA9W+VB5wdf7vGyOaD4eiW5NjC4ohc8s9csbaMj
+         6I9RA9asc+nSlFt24HDuJIuqIvXHQAm2u7M9Fj54OLCzh3nEBgEnX3Gwbdme/wGiU5mh
+         DeGqglXhXR8EZwRR5KJcYd5nS70K6ZhGiuG8gdQZf5faVZ/wpDw6f7LLqDoOH/AqYjxW
+         O02g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723439503; x=1724044303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VgKeYygUgO+nfcoZ/vUsH9NRmjrQwo4JtOLQQ/9ThGo=;
+        b=o+qa1v1wuZbVRVsyHS01nwDVfmhaCw/fjRg+X7ZyLTSuAkaWjRsZYjVkYWwCk1efch
+         RIoUJsHmekNylL1a8jQP0CBbJuVv6UNeKNjWJU1izbXDEZmguur8qMjKwkcbsr58fctR
+         P0KzKjfgxV/ilhPZGW4+JwyD4nC3GHm89BsiGm0nHRX9KXUs5CzNCRTE5oO9RNFdO/es
+         ZWDe/6KAzN/V49LjojlhsJ0i7tljKz6bqEqclcHU/oULXaY3+PA2ARvmD5NBdbri8THm
+         36JMg3s3zgo0Y0krptQjTHuM5cM1Hr87bYoEKuQ5FWvMI0m18IrqddrgAuoxId0MCXj8
+         Wacw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkq56lRq6CIjoiu7XSzhSB23IEzC0yqcsSyJ+uKH7VfqAFrcm2mgGwidlEe6q5WQRZvq3DBI7Vhyji/FobCiurQClamzt0xujbP0w6
+X-Gm-Message-State: AOJu0YxT94f2POLSjkd/PN+VuAB8kDrnvuYKsVShyOErrfTVRzQpxarz
+	8rXeSp7cVneSSbfXnD6vG7BrdODfCf+KQ+mv3MRvbciNPafJUrRIe7emW/zukOg=
+X-Google-Smtp-Source: AGHT+IESKPp/hTzr/MBXd/6K0wYQkvlLvgVXKjg1rKzcuauG6Dbx6ZUswDOJmP77PU+pD08aD6H1nw==
+X-Received: by 2002:a05:6a00:855:b0:705:ac9e:1740 with SMTP id d2e1a72fcca58-710dc67fcfamr10279320b3a.10.1723439502489;
+        Sun, 11 Aug 2024 22:11:42 -0700 (PDT)
+Received: from localhost.localdomain ([103.97.165.210])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-710e5873906sm3257555b3a.19.2024.08.11.22.11.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 22:11:42 -0700 (PDT)
+From: Mayuresh Chitale <mchitale@ventanamicro.com>
+To: linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Mayuresh Chitale <mchitale@ventanamicro.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Atish Patra <atishp@atishpatra.org>,
+	Anup Patel <anup@brainfault.org>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v1] perf/riscv-sbi: Add platform specific firmware event handling
+Date: Mon, 12 Aug 2024 05:11:09 +0000
+Message-Id: <20240812051109.6496-1-mchitale@ventanamicro.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240809072231.2931206-1-b-kapoor@ti.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 
-Hi Bhavya,
+The SBI v2.0 specification pointed to by the link below reserves the
+event code 0xffff for platform specific firmware events. Update the driver
+to be able to parse and program such events. The platform specific
+firmware events must now be specified in the perf command as below:
+perf stat -e rCxxx ...
+where bits[63:62] = 0x3 of the event config indicate a platform specific
+firmware event and xxx indicate the actual event code which is passed
+as the event data.
 
-On 12:52-20240809, Bhavya Kapoor wrote:
-> mmc1 is not functional and needs clock loopback so that it can
-> create sampling clock from this for high speed SDIO operations.
-> Thus, add clklb pin mux to get mmc1 working.
-> 
-> Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support for AM68 SK base board")
-> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
-> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
-> ---
-> 
+Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+Link: https://github.com/riscv-non-isa/riscv-sbi-doc/releases/download/v2.0/riscv-sbi.pdf
+---
+ arch/riscv/include/asm/sbi.h |  1 +
+ drivers/perf/riscv_pmu_sbi.c | 31 ++++++++++++++++++++++---------
+ 2 files changed, 23 insertions(+), 9 deletions(-)
 
-R-by already given in v1 [0]
+diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sbi.h
+index 7cffd4ffecd0..4ef8c44b15bb 100644
+--- a/arch/riscv/include/asm/sbi.h
++++ b/arch/riscv/include/asm/sbi.h
+@@ -158,6 +158,7 @@ struct riscv_pmu_snapshot_data {
+ 
+ #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
+ #define RISCV_PMU_RAW_EVENT_IDX 0x20000
++#define RISCV_PLAT_FW_EVENT	0xFFFF
+ 
+ /** General pmu event codes specified in SBI PMU extension */
+ enum sbi_pmu_hw_generic_events_t {
+diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
+index 31a17a56eb3b..e77cbe299ce7 100644
+--- a/drivers/perf/riscv_pmu_sbi.c
++++ b/drivers/perf/riscv_pmu_sbi.c
+@@ -60,7 +60,7 @@ asm volatile(ALTERNATIVE(						\
+ #define PERF_EVENT_FLAG_LEGACY		BIT(SYSCTL_LEGACY)
+ 
+ PMU_FORMAT_ATTR(event, "config:0-47");
+-PMU_FORMAT_ATTR(firmware, "config:63");
++PMU_FORMAT_ATTR(firmware, "config:62-63");
+ 
+ static bool sbi_v2_available;
+ static DEFINE_STATIC_KEY_FALSE(sbi_pmu_snapshot_available);
+@@ -507,7 +507,6 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+ {
+ 	u32 type = event->attr.type;
+ 	u64 config = event->attr.config;
+-	int bSoftware;
+ 	u64 raw_config_val;
+ 	int ret;
+ 
+@@ -528,18 +527,32 @@ static int pmu_sbi_event_map(struct perf_event *event, u64 *econfig)
+ 		break;
+ 	case PERF_TYPE_RAW:
+ 		/*
+-		 * As per SBI specification, the upper 16 bits must be unused for
+-		 * a raw event. Use the MSB (63b) to distinguish between hardware
+-		 * raw event and firmware events.
++		 * As per SBI specification, the upper 16 bits must be unused
++		 * for a raw event.
++		 * Bits 63:62 are used to distinguish between raw events
++		 * 00 - Hardware raw event
++		 * 10 - SBI firmware events
++		 * 11 - Risc-V platform specific firmware event
+ 		 */
+-		bSoftware = config >> 63;
+ 		raw_config_val = config & RISCV_PMU_RAW_EVENT_MASK;
+-		if (bSoftware) {
++		switch (config >> 62) {
++		case 0:
++			ret = RISCV_PMU_RAW_EVENT_IDX;
++			*econfig = raw_config_val;
++			break;
++		case 2:
+ 			ret = (raw_config_val & 0xFFFF) |
+ 				(SBI_PMU_EVENT_TYPE_FW << 16);
+-		} else {
+-			ret = RISCV_PMU_RAW_EVENT_IDX;
++			break;
++		case 3:
++			/*
++			 * For Risc-V platform specific firmware events
++			 * Event code - 0xFFFF
++			 * Event data - raw event encoding
++			 */
++			ret = SBI_PMU_EVENT_TYPE_FW << 16 | RISCV_PLAT_FW_EVENT;
+ 			*econfig = raw_config_val;
++			break;
+ 		}
+ 		break;
+ 	default:
+-- 
+2.34.1
 
-[0]: https://lore.kernel.org/all/20240808050914.4jleprwmlrtv4alb@uda0497581/
-
-Regards,
-Manorit
 
