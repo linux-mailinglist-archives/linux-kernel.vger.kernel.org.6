@@ -1,83 +1,69 @@
-Return-Path: <linux-kernel+bounces-283304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A941C94EFD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC2CF94EFDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 622A7284125
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:41:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14CF2B230B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89869183CD4;
-	Mon, 12 Aug 2024 14:40:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7624A183CCD;
+	Mon, 12 Aug 2024 14:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a1IdOeQw"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2081.outbound.protection.outlook.com [40.107.223.81])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YyMXLI8c"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E48183CC2;
-	Mon, 12 Aug 2024 14:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473650; cv=fail; b=niVy5AF0qCFOadSFtTEFEn176LanS7YSoGkejqMOtYC6kJ1pXZ/oE7j3f3BEYZthbdWv6XTX0otZ6ws7heiVqHJ3/e4/tJdpUeTN0WSqgK7IgFZMOTKNm+RKJRa+fN0rMKTxkf5g3bNjNoYssThxVZHO760tIo23Dn9lQkRRIMA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473650; c=relaxed/simple;
-	bh=2MtEtfiGxaoDyAp46W0KM5srPrBdINyfF17rd1Frooo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J9NH4oDI9dgwQsl36VLBhIDucmS81r1ClUGjQNkWw+ThsLF1k8cC7sxyZQNqEVgmNKeT33t5jJFEZBtneYvNdAOnrWGsaXNzTDT86svJduKC1WOCM31h+787PM4t0k0IqQhN9djEsRImXBWgfFp4gjyLWU+cguFMHWN0wE7xogs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a1IdOeQw; arc=fail smtp.client-ip=40.107.223.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jSghbY/jto2Pc3EMZVF9OYG9K0FGbFNZbhfUtBhn+l3xbDnNEA3UFxDpuJkc9SxKtNkeqWLTfOrJn6xy3KGyyqrQyB+2nECD9w6I4axLz93cXvKDAgt+Efl1xlP2e34e2BxvA8iEyybZ71NhxGR0DJCoFa6LlwuBmUzVnMig7eWu0pTIeE5o0Ic/lRDWXG2znNL09HMAWWEva2FrCqeDyaCuEn18lVyKZhkaQa4Q2vak7yUi5Vi2p+eCBBrmOO4XBjZa4MdACPtCVd4NepsEqlPkcldGfmwtm35BpHMk6yV+vUChcW3zwVkX/mfdhWYCjOxEhsy3gPJlIUo4fr0sPQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hm/ncd9t6TwilhTRFVFX8f/aVxa6AkKSi7ex+Kv/NBA=;
- b=hw9MV7Izy+uLuHXvNM3kNCEn1MWXitIXhJRDpoH9fAJIYRKDiwNMitoADZt2HpAtggr9js434KWLX1qVL693j5dBZcbhUwf/W53CmDrbT5iSHnAEp0rMNvsShOcNJ9umWRvTOWuY0SQiqEyYg6//NyqGmjsskUDdjkCHxqqEleAtIbLpG8syAhiz3UxaV1WEq1YBwVY6jMcAIxDDh1faqPfFRuEJX6eLdq48xA5r44ABZ2M83e2K5K/JmeGf8m1wgQdf4smPgP8DTlKEVuS/dI5VGsJFcQntouFmJVKjqZ8fB4KW/rGmI7oVL2VRpqqewaAa+UuzDYv5UD1OTWicFA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hm/ncd9t6TwilhTRFVFX8f/aVxa6AkKSi7ex+Kv/NBA=;
- b=a1IdOeQw3SsCsgCagX1fGWVFo2HZwqRYlyhnVkgOtiZVZq0k1tDRmWdsTahRu589JxPexaZ6wIhan3aV6lUSefyPvB3l0iGZJVouNm8FFFS0szdzDxKh5PTazVXDiiTdov99GC0jRIDgEda4sZCATMXPFtru1U83V/d2IcXX5Gg=
-Received: from SJ0PR05CA0061.namprd05.prod.outlook.com (2603:10b6:a03:332::6)
- by DS0PR12MB9057.namprd12.prod.outlook.com (2603:10b6:8:c7::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 14:40:46 +0000
-Received: from SJ1PEPF000023CB.namprd02.prod.outlook.com
- (2603:10b6:a03:332:cafe::84) by SJ0PR05CA0061.outlook.office365.com
- (2603:10b6:a03:332::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13 via Frontend
- Transport; Mon, 12 Aug 2024 14:40:46 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000023CB.mail.protection.outlook.com (10.167.244.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Mon, 12 Aug 2024 14:40:46 +0000
-Received: from jatayu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 12 Aug
- 2024 09:40:43 -0500
-From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>, Andy Shevchenko
-	<andriy.shevchenko@linux.intel.com>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Shyam
- Sundar S K" <Shyam-sundar.S-k@amd.com>, Sanket Goswami
-	<Sanket.Goswami@amd.com>
-Subject: [PATCH v2] ACPI: APD: Add AMDI0015 as platform device
-Date: Mon, 12 Aug 2024 20:10:18 +0530
-Message-ID: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com>
-X-Mailer: git-send-email 2.25.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA316153BF6;
+	Mon, 12 Aug 2024 14:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723473719; cv=none; b=hlEwU7NTIlUmpkYpkDZ1DmividLDb0DjtpE5BHXOWWqrW0Do+qwlOI1AuMEZUleEociSvgu68ns4MAg6UcK0QtQsXZSmzRm75/CHOXcC1tA9VSjxFdHKlQ/0M1xEj8dd9tqutrDNxW9rpTzZ0iyxsIEgosyguG8Ggvmc0/hfbew=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723473719; c=relaxed/simple;
+	bh=Rxk0JemXBcDYNJv7+6e+dLXJY3M+IfoeWCRugwCIijg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F18YhcCBGN+ar/lAMjjHbtO5+lcnF4drO7Gb/Xy/4pvcgr/QeVnPEw1yjQhmzgFCVdzcGP5b8N5CSiXWc0m014fhG2kHkXJALdCwiFnlba4DN8mw8jqF4FQSoysPGdULG3navczB/QelEK4/9Tjhd+GaM7RcGzu1ZpOeUNo7fKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YyMXLI8c; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSfOK017593;
+	Mon, 12 Aug 2024 14:41:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=PznSfg8G5Zl3dKjBGewZSK
+	RCZczsR7cBsxyEfY+nzhw=; b=YyMXLI8c9dKvKeCVgB/uASK28H/x6II3/1Gv4R
+	pthKtV1FkO3+QBXCLwnz+iiXv2aOjqtply31b9wLabbYL8Pq3s76rWTDD2D2gAnm
+	sGY6ZGYyI1IhjXHmXPLaGyDWftJ1ED+OV53KGN1w7v4zP/FLea9cfdwSKKbj7vnm
+	iwYZ40cCmJpJJtdNqBeVGTN6pcvxtDMWh53Ccy/Mu44M0VvUiz/2YhBh2IWSjn0T
+	KmUfqHRX9VWsuaZr49Ni9okSyYskhZGIN2vmxwdMtZxNzrXvDVpemAA1/B+Edj9M
+	wY4h3xokOjrEvVNYnX4wVAPow5P3lyILT0R1ZzrEEWigiOnQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1d4cf3d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 14:41:52 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CEfpd7002563
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 14:41:51 GMT
+Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 12 Aug 2024 07:41:46 -0700
+From: Depeng Shao <quic_depengs@quicinc.com>
+To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
+        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel@quicinc.com>, <quic_depengs@quicinc.com>
+Subject: [PATCH v4 00/13] media: qcom: camss: Add sm8550 support
+Date: Mon, 12 Aug 2024 20:11:18 +0530
+Message-ID: <20240812144131.369378-1-quic_depengs@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,93 +72,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CB:EE_|DS0PR12MB9057:EE_
-X-MS-Office365-Filtering-Correlation-Id: 415b96c0-d8f6-4e81-8e59-08dcbadcc097
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YefD5t8hOR7LEMF8PVDpuQathf3NnnwDc+meQe3+2lGixraFB4ja85sv17j6?=
- =?us-ascii?Q?/cXWaJq6uorqhGPNmDTnhmkQQvc6PX9OalhPMOmvfx2E5rtSBgyrJydY2KvF?=
- =?us-ascii?Q?KPPlNIKL6zvhsOR9MV4v8HA/ole53GXDHaOGNJkibubC+LSoGddY/+CzpMvJ?=
- =?us-ascii?Q?YMjAyCFgQ4Mf25e99LcT6Jb1B/JYFIaYCYJ9hFTU+LJsJnmf8SG4w92jsrsH?=
- =?us-ascii?Q?ERe8XvGakEwUQLHmBo3/VK2qpCygfumsuVrjETF2PXZEv1FPllLDK0yjknnU?=
- =?us-ascii?Q?4pivQW0s8JIJShHEWc/OlI8+0I9JU5n44aXmaBpcdu36C9tdRa2/Z83IFxbe?=
- =?us-ascii?Q?/Yf40haFh0S6/ZIK0sp/Fi0iZDsk1zfP5XVh57+A3CzxiBTIzY5kO/juC1CK?=
- =?us-ascii?Q?SR5jzVMFHXqiYwpI90VCjAhDuhFDUrt0ht+nzCFaE3VMw/abqTcGMn+ENDjm?=
- =?us-ascii?Q?c61WmqavxnGXuvx1cgstiQ0tRr/d7B3hxD55NEotS/gtHBRHGWr4NsMA68o+?=
- =?us-ascii?Q?CEyFIqBWB/OCaS4LPaeOC/Fn4sxHiEpGNWilw1vDivBD8f5bDQGjU9pHznLC?=
- =?us-ascii?Q?QORQMIJhV4zch2GNrDyvKCnMayxZLJcKfAXOJcRQtMC940SmPICTjCxzMLMo?=
- =?us-ascii?Q?329A5xaysbjXE2z0Nk+mNVGws4wmUaCkw5dVFa88YAxJIlJ1fbsKiswkK3HQ?=
- =?us-ascii?Q?ooKWLHE/5+RxNx/yjevaEGCc/UuQfZEP/zV1E89XOiKPSr9zeJlt+X5JrYbh?=
- =?us-ascii?Q?uratex2HWUFrZzZcMGWHcJYCuWIgTeOk7tGbXmt2sSxzFpdAI6GE1Y5iJ/vT?=
- =?us-ascii?Q?nmaxXUM0wk4urEpYMlxQGrZfc6U7Hxn5+zCWcGrhS0ePmJPcTdWIx0ehTFCa?=
- =?us-ascii?Q?WdjlSXF62Aq4ujkF/yH02k/vTXWmO1epg+gPZtx4yINpl5jW9bub/QAq/6nj?=
- =?us-ascii?Q?RxE8lBEFIHIPY/7Lh8Lhqj151LsMyTPUB9xtFRuTB6YXY02Jigxi1AOr+YTY?=
- =?us-ascii?Q?pIFKI49hrtoJ3izb3Q0nk0oArs++TXob+hpcaIDc0IvdNEJhaIRQkvxzuDVq?=
- =?us-ascii?Q?IbuOSzsB/L71SxLhzOUat9i7pDgI2qvRAwUIfqs+nfY+BuXTfLAq+u9gRFjZ?=
- =?us-ascii?Q?IYd22xARlNHCAlugM8tG91AsXk8q3Z/tSWsYPFOcrHfITZUZU45jtx8A4x4d?=
- =?us-ascii?Q?z8Q9aRFHmouncOZhVOoIAukI2mlln4SmSUGfoYksdgkwHLJ4/bWwOti/6go9?=
- =?us-ascii?Q?SyM5YyKJsXH4CQw30JkgR8LoAD/5qMUi4/ruWalm7STpjWI9SrygjUg1mB3z?=
- =?us-ascii?Q?ZEqIXInVfkwjPQgPP6UOuVGqNWL8XJmTwV10WFiQ9W7/0Mga2KzLX59NPbsX?=
- =?us-ascii?Q?S2txOO2Erli+3l6o/zYM+A+Ucc02vGm5F+FKfqohnHzuc1v1fE7oIXdAhQ0x?=
- =?us-ascii?Q?7epH5E/5ncEWalZ5VktYIxyNLlYs/+FZ?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 14:40:46.5090
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 415b96c0-d8f6-4e81-8e59-08dcbadcc097
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023CB.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9057
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xDLE2TrfLFBygQ4T4SYGflcYWYAYxoyS
+X-Proofpoint-GUID: xDLE2TrfLFBygQ4T4SYGflcYWYAYxoyS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_04,2024-08-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
+ adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
+ malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120109
 
-Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
-for the I3C device on the latest AMD platforms.
+v4:
+- Update dt-bindings based on comments - Krzysztof, bod, Vladimir
+- Move common code into csid core and vfe core driver - bod
+- Remove *_relaxed in the csid and vfe drivers - Krzysztof
+- Reorganize patches in logical junks, make sure that new added
+structures have users in current patch - Krzysztof
+- Remove notify function  and add new functions in camss for buf done
+and reg update - bod
+- Remove custom code to get csid base - bod
+- Remove ISR function in vfe780 driver since it is never fired - bod
+- Move csid_top_base to camss structure since we only have one csid
+top block, and just need to get base once for csid top
+- Add Vladimir's RB
+- Remove prerequisite-patch-id in the cover letter since the changes
+have been merged
+- Add dtsi patch link for reference - Krzysztof
+https://lore.kernel.org/all/20240807123333.2056518-1-quic_depengs@quicinc.com/
+- Link to v3: https://lore.kernel.org/all/20240709160656.31146-1-quic_depengs@quicinc.com/
 
-Signed-off-by: Sanket Goswami <Sanket.Goswami@amd.com>
-Signed-off-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
----
+v3:
+- Rebased the change based on below change which will be merged firstly.
+"Move camss version related defs in to resources"
+Link: https://lore.kernel.org/all/20240522154659.510-1-quic_grosikop@quicinc.com/
+- Rebased the change based on Bryan's csiphy optimization change and add
+these changes into this series, so that the new csiphy-3ph driver don't
+need to add duplicate code. This has got Bryan's permission to add his
+patches into this series.
+- Refactor some changes based on the comments to move the random code to
+patches where they are used.
+- Remove the vfe780 irq function since it isn't doing the actual work.
+- Add dt-binding for sm8550 camss driver.
+Link to V2: https://lore.kernel.org/all/20240320141136.26827-1-quic_depengs@quicinc.com/
+
 v2:
- - Sort the apci ids
+- Update some commit messages
+Link to V1: https://lore.kernel.org/all/20240320134227.16587-1-quic_depengs@quicinc.com/
 
- drivers/acpi/acpi_apd.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+v1:
+SM8550 is a Qualcomm flagship SoC. This series adds support to
+bring up the CSIPHY, CSID, VFE/RDI interfaces in SM8550.
 
-diff --git a/drivers/acpi/acpi_apd.c b/drivers/acpi/acpi_apd.c
-index 80f945cbec8a..800f97868448 100644
---- a/drivers/acpi/acpi_apd.c
-+++ b/drivers/acpi/acpi_apd.c
-@@ -118,6 +118,11 @@ static const struct apd_device_desc wt_i2c_desc = {
- 	.fixed_clk_rate = 150000000,
- };
- 
-+static const struct apd_device_desc wt_i3c_desc = {
-+	.setup = acpi_apd_setup,
-+	.fixed_clk_rate = 125000000,
-+};
-+
- static struct property_entry uart_properties[] = {
- 	PROPERTY_ENTRY_U32("reg-io-width", 4),
- 	PROPERTY_ENTRY_U32("reg-shift", 2),
-@@ -231,6 +236,7 @@ static const struct acpi_device_id acpi_apd_device_ids[] = {
- 	{ "AMD0030", },
- 	{ "AMD0040", APD_ADDR(fch_misc_desc)},
- 	{ "AMDI0010", APD_ADDR(wt_i2c_desc) },
-+	{ "AMDI0015", APD_ADDR(wt_i3c_desc) },
- 	{ "AMDI0019", APD_ADDR(wt_i2c_desc) },
- 	{ "AMDI0020", APD_ADDR(cz_uart_desc) },
- 	{ "AMDI0022", APD_ADDR(cz_uart_desc) },
+SM8550 provides
+
+- 3 x VFE, 3 RDI per VFE
+- 2 x VFE Lite, 4 RDI per VFE
+- 3 x CSID
+- 2 x CSID Lite
+- 8 x CSI PHY
+
+---
+Bryan O'Donoghue (6):
+  media: qcom: camss: csiphy-3ph: Fix trivial indentation fault in
+    defines
+  media: qcom: camss: csiphy-3ph: Remove redundant PHY init sequence
+    control loop
+  media: qcom: camss: csiphy-3ph: Rename struct
+  media: qcom: camss: csiphy: Add an init callback to CSI PHY devices
+  media: qcom: camss: csiphy-3ph: Move CSIPHY variables to data field
+    inside csiphy struct
+  media: qcom: camss: csiphy-3ph: Use an offset variable to find common
+    control regs
+
+Depeng Shao (7):
+  dt-bindings: media: camss: Add qcom,sm8550-camss binding
+  media: qcom: camss: csid: Move common code into csid core
+  media: qcom: camss: vfe: Move common code into vfe core
+  media: qcom: camss: Add sm8550 compatible
+  media: qcom: camss: csiphy-3ph: Add Gen2 v2.1.2 two-phase MIPI CSI-2
+    DPHY support
+  media: qcom: camss: Add CSID Gen3 support for sm8550
+  media: qcom: camss: Add support for VFE hardware version Titan 780
+
+ .../bindings/media/qcom,sm8550-camss.yaml     | 517 ++++++++++++
+ drivers/media/platform/qcom/camss/Makefile    |   2 +
+ .../platform/qcom/camss/camss-csid-4-1.c      |  19 -
+ .../platform/qcom/camss/camss-csid-4-7.c      |  42 -
+ .../platform/qcom/camss/camss-csid-gen2.c     |  60 --
+ .../platform/qcom/camss/camss-csid-gen3.c     | 339 ++++++++
+ .../platform/qcom/camss/camss-csid-gen3.h     |  26 +
+ .../media/platform/qcom/camss/camss-csid.c    | 123 ++-
+ .../media/platform/qcom/camss/camss-csid.h    |  31 +
+ .../qcom/camss/camss-csiphy-2ph-1-0.c         |   6 +
+ .../qcom/camss/camss-csiphy-3ph-1-0.c         | 796 ++++++++++--------
+ .../media/platform/qcom/camss/camss-csiphy.c  |   4 +
+ .../media/platform/qcom/camss/camss-csiphy.h  |   2 +
+ .../media/platform/qcom/camss/camss-vfe-17x.c | 112 +--
+ .../media/platform/qcom/camss/camss-vfe-4-1.c |   9 -
+ .../media/platform/qcom/camss/camss-vfe-4-7.c |  11 -
+ .../media/platform/qcom/camss/camss-vfe-4-8.c |  11 -
+ .../media/platform/qcom/camss/camss-vfe-480.c | 258 +-----
+ .../media/platform/qcom/camss/camss-vfe-780.c | 148 ++++
+ drivers/media/platform/qcom/camss/camss-vfe.c | 301 ++++++-
+ drivers/media/platform/qcom/camss/camss-vfe.h |  59 +-
+ drivers/media/platform/qcom/camss/camss.c     | 365 ++++++++
+ drivers/media/platform/qcom/camss/camss.h     |   5 +
+ 23 files changed, 2379 insertions(+), 867 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/qcom,sm8550-camss.yaml
+ create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.c
+ create mode 100644 drivers/media/platform/qcom/camss/camss-csid-gen3.h
+ create mode 100644 drivers/media/platform/qcom/camss/camss-vfe-780.c
+
+
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
 -- 
-2.25.1
+2.34.1
 
 
