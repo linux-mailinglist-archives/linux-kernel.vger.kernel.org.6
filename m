@@ -1,217 +1,81 @@
-Return-Path: <linux-kernel+bounces-283790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE6BC94F8B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21B5894F8B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:04:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3A9A1C22320
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:03:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F159B20DA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2F916C684;
-	Mon, 12 Aug 2024 21:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25068167DA8;
+	Mon, 12 Aug 2024 21:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+Llw2Kx"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XkQTPTtX"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA07139597;
-	Mon, 12 Aug 2024 21:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F8016BE0C;
+	Mon, 12 Aug 2024 21:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723496586; cv=none; b=UPFGysDrHtuPljVEpBkbzaC2SeQywebq8e5BlfRmRdjnYgaZUD3A67zPDJ8tNGZ0rs59IymbZ3OyZl5RQIplaDbo2DK1QMxCKjANYkajCVuJfeYY1+5sN0rF6wR/kqXIfaRKe5fOpcF4hNGumx3NOmiv6nesyXiXXamFlfMXERE=
+	t=1723496634; cv=none; b=nZWzQiK2qI135Lk1HF+W28NTImnO6RTVPAPWf0LuflxlZzdegZyqT5QiX7pUGW+u5q7lysGIgERm1j2hoMTi7ttxfgJQwtK7Zm3dj8ei9lwmWiFb1p5fOFWRylmRb6x+nU/owmc1wZoxGntYrW/k64QZlhTdAbtKQvRKHqPP+OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723496586; c=relaxed/simple;
-	bh=r3Y8fYhLCUxDZT78PzQPsphnBBNWdXOoKXPQwzbaauE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQDCbriO+TWxnxXXUcMDq6o1XziZoveI+antfEsFf7I+b+ZBxilLziMMtdLiCjLxhdIy8TRdgeefLJ8wRoKpIY+3N5+gpY6ok8eJQE35JZW2Gqb/F9KkQy9VYsva6PeSVav1Ao2YGwAjO/0QvyOnH9B33Y55abbVcqx43O/w0ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I+Llw2Kx; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d37e5b7b02so760610a91.1;
-        Mon, 12 Aug 2024 14:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723496584; x=1724101384; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wb6gdPq87OqxZCVBjG5F3SsyS4cmABBcSEGd4+uu1lE=;
-        b=I+Llw2KxGmt0usxSiuU1aT/0bfBvfDiBqeu20hRtYzNa4NxqEvUFRHtFljsgm+Fsvb
-         Wh/WPhIXJLpwLSra+3bDg07I7vI6qrh5hH5ouASMg0xrklQR5iti/NZc4ZjcEqsZFJ1T
-         nKiPSCDIo5/ZYFJDnBn+02oDhIp0b6OTMWsV2JuV3/mhjSUoCoFhC8hWlkFNMNgnayvS
-         qSh8moiIMZ+jHmZ7yUYW4tt20zvOIlsW5Cxs5RoGdLMOsHIQdX1qP2ZRfMVGzy402cwL
-         9uyBiHWJvb8JGc8iiVJBWDXWklO/UQpkzN23DsOHD0aZArpQ5ngvTKMFL1rv9hz1zvyb
-         HfoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723496584; x=1724101384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Wb6gdPq87OqxZCVBjG5F3SsyS4cmABBcSEGd4+uu1lE=;
-        b=OIM4oUxTKjnv5aiZhMdxRNAMizMAO6p1cQWSHt4fn89ScXsfrhJVTn4OUf72TgAelP
-         YLH6ttPVSezDv6NC0FCIsoRmoao8VwAJjYXthSVkTCE4RBpfV+6YlauT0iYvhvkcwLG5
-         r8+3k9HDObfX5JWjDqfqHukjCuLpFcjmFn6o+XqaxH6vi1ur/G5qNSsDQypZdVZrzh5k
-         2qgfgLYxmRFcqZB10FmpS2gXMGZ1YMyLNvbhHcoqESjVhVfcv1eX7O/wRizrJ2G/sT5S
-         iIf9zWQyhIbNTq2EgiUNTOzUxE2+scjYr1gmuyf9LtUJrK9aVFZyHBfv41DP2xMt/d2C
-         MQMg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiTNBJGSss5+TxJyw8hEwn+3WEXaWrkiU8/kBN6ORAjukrdNYXjqMuI/u3Z4rKXjF0/5AQ6WmEhOLVRA9iC7A8/i4L9g+ojY80W9Ub1pI3f7pgzt10RyorVVeF3AI9xQII
-X-Gm-Message-State: AOJu0YwM8EB6V8Ht93bOuyq6kka20eeBFPVZ/LXG3wjggOoBasQrxMoc
-	BsvN9UPNO4a+VwuXtgiMrU03KjPuOMWGSMbt1vxTp2xv4LwSR//kUhytG0m82tXHFupgYIphBTr
-	zxqzwI93yv4IjHxWPnRCHv/8xtXI=
-X-Google-Smtp-Source: AGHT+IFOJHZTC8EeRQS5yjjQMVOVEENflZ5CGyDuDMFGkw6oRbApFHiGIDFsiCVCftrrKZ0VZXMLDRNRHM1rzmwcovQ=
-X-Received: by 2002:a17:90a:9f85:b0:2cb:f9e:3bfb with SMTP id
- 98e67ed59e1d1-2d3926236e2mr1551193a91.32.1723496583981; Mon, 12 Aug 2024
- 14:03:03 -0700 (PDT)
+	s=arc-20240116; t=1723496634; c=relaxed/simple;
+	bh=4H1Ysc5LqfnsrhAXsVm6DmlRNAZD3o2T7rofR8TvXFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mwpUGnjmGzTlbqbHs6IXksdiiw4SKwScyduNyll6iKyMD9NEDq8qj/4vMBYtp8JdPmDXWumKlG//RgMWZmNlJjflqXmn6G8CbfqT/QapWL/y61RTVB201KnOunRdtKwdXQ0wmWsecjMIzJ5OmhLfxGG4pdAoKoxuFLFNkOQq988=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XkQTPTtX; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=q5cMPBUHbooxWEGZnv7SZcmMFJ0mj2NafP7388hWDp0=; b=XkQTPTtXEgrHwvnDOGvEf8LaFB
+	lrXnL90X4Oo3xsISqWKKn/CDypY0/9db2fpizaEpd5TWrbd0yG8IGi6g1puvlbJljsJkCJdxircuG
+	lj5iDU1ZjgDdTXGUqwtgjuLxNogq3knv4oQzpaffNc/I07NY/4NpWojQB+SF9pgKOZp8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sdcCd-004cUA-8r; Mon, 12 Aug 2024 23:03:43 +0200
+Date: Mon, 12 Aug 2024 23:03:43 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+	vburru@marvell.com, sedara@marvell.com, srasheed@marvell.com,
+	sburla@marvell.com, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: octeon_ep_vf: use ethtool_sprintf/puts
+Message-ID: <f06cab9a-853f-4ccf-ae4d-40e0e897ea60@lunn.ch>
+References: <20240809044738.4347-1-rosenp@gmail.com>
+ <20240812124224.GA7679@kernel.org>
+ <CAKxU2N-m7SSTxuWQUuMH6E8FnF0RXGUMPepA=DunoZsvzJ-ahg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12cec1262be71de5f1d9eae121b637041a5ae247.1723459079.git.sam@gentoo.org>
- <61cf5568-7a01-4231-8189-006bde4ec0ad@oracle.com>
-In-Reply-To: <61cf5568-7a01-4231-8189-006bde4ec0ad@oracle.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 12 Aug 2024 14:02:51 -0700
-Message-ID: <CAEf4Bza3RH6p=KJu8cm2jb4QwKCHc5ZUskE9cvWTBXyXFUKHuA@mail.gmail.com>
-Subject: Re: [PATCH v3] libbpf: workaround -Wmaybe-uninitialized false positive
-To: Alan Maguire <alan.maguire@oracle.com>
-Cc: Sam James <sam@gentoo.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, "Jose E . Marchesi" <jose.marchesi@oracle.com>, 
-	Andrew Pinski <quic_apinski@quicinc.com>, 
-	=?UTF-8?B?S2FjcGVyIFPFgm9tacWEc2tp?= <kacper.slominski72@gmail.com>, 
-	=?UTF-8?Q?Arsen_Arsenovi=C4=87?= <arsen@gentoo.org>, bpf@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKxU2N-m7SSTxuWQUuMH6E8FnF0RXGUMPepA=DunoZsvzJ-ahg@mail.gmail.com>
 
-On Mon, Aug 12, 2024 at 6:57=E2=80=AFAM Alan Maguire <alan.maguire@oracle.c=
-om> wrote:
->
-> On 12/08/2024 11:37, Sam James wrote:
-> > In `elf_close`, we get this with GCC 15 -O3 (at least):
-> > ```
-> > In function =E2=80=98elf_close=E2=80=99,
-> >     inlined from =E2=80=98elf_close=E2=80=99 at elf.c:53:6,
-> >     inlined from =E2=80=98elf_find_func_offset_from_file=E2=80=99 at el=
-f.c:384:2:
-> > elf.c:57:9: warning: =E2=80=98elf_fd.elf=E2=80=99 may be used uninitial=
-ized [-Wmaybe-uninitialized]
-> >    57 |         elf_end(elf_fd->elf);
-> >       |         ^~~~~~~~~~~~~~~~~~~~
-> > elf.c: In function =E2=80=98elf_find_func_offset_from_file=E2=80=99:
-> > elf.c:377:23: note: =E2=80=98elf_fd.elf=E2=80=99 was declared here
-> >   377 |         struct elf_fd elf_fd;
-> >       |                       ^~~~~~
-> > In function =E2=80=98elf_close=E2=80=99,
-> >     inlined from =E2=80=98elf_close=E2=80=99 at elf.c:53:6,
-> >     inlined from =E2=80=98elf_find_func_offset_from_file=E2=80=99 at el=
-f.c:384:2:
-> > elf.c:58:9: warning: =E2=80=98elf_fd.fd=E2=80=99 may be used uninitiali=
-zed [-Wmaybe-uninitialized]
-> >    58 |         close(elf_fd->fd);
-> >       |         ^~~~~~~~~~~~~~~~~
-> > elf.c: In function =E2=80=98elf_find_func_offset_from_file=E2=80=99:
-> > elf.c:377:23: note: =E2=80=98elf_fd.fd=E2=80=99 was declared here
-> >   377 |         struct elf_fd elf_fd;
-> >       |                       ^~~~~~
-> > ```
-> >
-> > In reality, our use is fine, it's just that GCC doesn't model errno
-> > here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly
-> > by initializing elf_fd.elf to -1.
-> >
-> > I've done this in two other functions as well given it could easily
-> > occur there too (same access/use pattern).
-> >
->
-> hmm, looking at this again - given that there are multiple consumers -
+> > 2. You have posed a number of similar patches.
+> >    To aid review it would be best to group these, say in batches of
+> >    no more than 10.
+> I plan to do a treewide commit with a coccinelle script but would like
+> to manually fix the problematic ones before doing so. Having said that
+> I still need to figure out how to do a cover letter...
 
-yes, I don't like that each caller has to remember to initialize the
-struct that is clearly initialized by elf_open() itself, so see below.
+git format-patch --cover-letter HEAD~42
 
-pw-bot: cr
+I also find `b4 prep` good for managing patchsets, and it will produce
+a cover letter by default if there is more than one patch in the set:
 
-> I suppose another option would perhaps be to
->
-> - have elf_open() to init int fd =3D -1, Elf *elf =3D NULL.
+https://b4.docs.kernel.org/en/latest/contributor/prep.html
 
-I'd do just
-
-elf_fd->elf =3D NULL;
-elf_fd->fd =3D -1;
-
-and do nothing else. This should be enough for compiler to not trigger this=
-.
-
-> - have error paths in elf_open() "goto out"; at out: we set elf_fd->fd,
-> elf_fd->elf to fd, elf
-> - have elf_close() exit it elf_fd < 0 (since 0 is a valid fd), as it
-> will for the error cases
->
-
-Let's not touch anything else, this should be enough.
-
-
-> Might all be bit excessive, and might not even fix the false positive
-> issue here, so
->
-> > Link: https://gcc.gnu.org/PR114952
-> > Signed-off-by: Sam James <sam@gentoo.org>
->
-> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
->
-> > ---
-> > v3: Initialize to -1 instead of using a pragma.
-> >
-> > Range-diff against v2:
-> > 1:  8f5c3b173e4cb < -:  ------------- libbpf: workaround -Wmaybe-uninit=
-ialized false positive
-> > -:  ------------- > 1:  12cec1262be71 libbpf: workaround -Wmaybe-uninit=
-ialized false positive
-> >
-> >  tools/lib/bpf/elf.c | 6 +++---
-> >  1 file changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
-> > index c92e02394159e..00ea3f867bbc8 100644
-> > --- a/tools/lib/bpf/elf.c
-> > +++ b/tools/lib/bpf/elf.c
-> > @@ -374,7 +374,7 @@ long elf_find_func_offset(Elf *elf, const char *bin=
-ary_path, const char *name)
-> >   */
-> >  long elf_find_func_offset_from_file(const char *binary_path, const cha=
-r *name)
-> >  {
-> > -     struct elf_fd elf_fd;
-> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
-> >       long ret =3D -ENOENT;
-> >
-> >       ret =3D elf_open(binary_path, &elf_fd);
-> > @@ -412,7 +412,7 @@ int elf_resolve_syms_offsets(const char *binary_pat=
-h, int cnt,
-> >       int err =3D 0, i, cnt_done =3D 0;
-> >       unsigned long *offsets;
-> >       struct symbol *symbols;
-> > -     struct elf_fd elf_fd;
-> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
-> >
-> >       err =3D elf_open(binary_path, &elf_fd);
-> >       if (err)
-> > @@ -507,7 +507,7 @@ int elf_resolve_pattern_offsets(const char *binary_=
-path, const char *pattern,
-> >       int sh_types[2] =3D { SHT_SYMTAB, SHT_DYNSYM };
-> >       unsigned long *offsets =3D NULL;
-> >       size_t cap =3D 0, cnt =3D 0;
-> > -     struct elf_fd elf_fd;
-> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
-> >       int err =3D 0, i;
-> >
-> >       err =3D elf_open(binary_path, &elf_fd);
+	Andrew
 
