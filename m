@@ -1,67 +1,69 @@
-Return-Path: <linux-kernel+bounces-283768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DF4194F883
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E3E94F886
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:55:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 747EE1C22238
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87C641F211EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:55:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D24198A31;
-	Mon, 12 Aug 2024 20:49:04 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAAB1990D3;
+	Mon, 12 Aug 2024 20:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyOcnWJB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7241E19149E;
-	Mon, 12 Aug 2024 20:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84219149E;
+	Mon, 12 Aug 2024 20:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495744; cv=none; b=bNKxmIbCcO6vLK9suYnCQfeFP6ap/6SD1oAknlOhJ/OtMty6yiGv7YBgNYuxTuH/zrD75D3UgRWKWDSY1C2ttkcE05pJGE1Jzv5jXAPMx/yum4UZPzaTsuRACHk6P7DTNtUcWTVazJOBS7WOyNa/t1mhX8HAsxvbtTlc/sLdSOA=
+	t=1723495746; cv=none; b=E1HVkPB68JdmhjCRVMw6U11EKkl6h8di68NkY3ntJYnYN6y8U9lkk/rfgR0WUcRs52mp/NqFoz2JILlIlnMZhE5yDnPXYnkOjoJR+XATs08+fjt6OZI5nejldTAyE/olm7unrBditZQ9MtQvFZ5TgusorlFVaZDAdsjAPDZxxa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495744; c=relaxed/simple;
-	bh=ED3f/Tb433P02au29syvrev7Ewl+QZYhqLX0p1yePE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fcMEll2AGXO8fGKvos0bfmXU9v8mZaZeiF5whfmyuaOXeLNKyjmWg8T7uADLReDWZZs9+nDePWTztyeDEqBvy7xQ5ULFrOUwo+J/1r7QjH08rWTPQ6IHU/I6WpSO/i5ScOH43PofgaD89iaZPb6nbiJQuFf+obEkS+9Nk9tTRW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1sdbyM-000000001YU-1BFi;
-	Mon, 12 Aug 2024 20:48:58 +0000
-Date: Mon, 12 Aug 2024 21:48:55 +0100
-From: Daniel Golle <daniel@makrotopia.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
-Subject: Re: [PATCH net-next 2/3] net: ag71xx: use devm for
- of_mdiobus_register
-Message-ID: <Zrp1N5Eizm4jkmKW@makrotopia.org>
-References: <20240812190700.14270-1-rosenp@gmail.com>
- <20240812190700.14270-3-rosenp@gmail.com>
+	s=arc-20240116; t=1723495746; c=relaxed/simple;
+	bh=WQ8usZ1RlfOYVFOCxfGa2d4cHIAOC6KI4xcce7W4NzE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=UBg9tui+HAmsjuTkYGkwZW86U1DvqBjuTp/qIZmdJvzE7ysPq0OFrANGG4GbXVsysDXKrzEv9HVYG1o7rUxWxukSteF6VwG1GxqizPpmyPHhEeXg4fRwrp+nOFzZTyKqYuLVooze+qrrCdzu7KlCDlID0PDavTVoJef9fIs4W3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyOcnWJB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393C1C4AF0D;
+	Mon, 12 Aug 2024 20:49:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723495745;
+	bh=WQ8usZ1RlfOYVFOCxfGa2d4cHIAOC6KI4xcce7W4NzE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=KyOcnWJBCgaVHvDkK3BaWnxUfRhGPpSLq0zb+KQfru8ZxaE9JzBvf8NC+ujsnEZlN
+	 veAPZRaIAQ3WYO2tu+qQHgUn3zYIgvf0/j0h6EirItVppuXugUV8yWPJVWMLTMeQFJ
+	 x3dRwX2FxsddRCEIxRgzJr2KofduqW4lDLskPcMfj3w1LBHt3twAv4Djm9BzNuuysQ
+	 mLU/LKU3P058xOsG95kPeSa68IpkcD1pLwCr1Jet0ar/+CSzxaxBCTPw5NNGvN9TJ/
+	 ZrDupOUjaypDnFCJD/iWGD5CqTTafHLX/EA1p52Q18/hNmNZjPsg3RWW2fRs6GeamK
+	 y1dz7GhePXRug==
+Message-ID: <02d5ecf54338564b8ea4b59fe39af395.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812190700.14270-3-rosenp@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240807-dt-mediatek-clk-v1-1-e8d568abfd48@kernel.org>
+References: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org> <20240807-dt-mediatek-clk-v1-1-e8d568abfd48@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: mediatek,apmixedsys: Fix "mediatek,mt6779-apmixed" compatible
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Chun-Jie Chen <chun-jie.chen@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring (Arm) <robh@kernel.org>
+Date: Mon, 12 Aug 2024 13:49:03 -0700
+User-Agent: alot/0.10
 
-On Mon, Aug 12, 2024 at 12:06:52PM -0700, Rosen Penev wrote:
-> Allows removing ag71xx_mdio_remove.
-> 
-> Removed local mii_bus variable and assign struct members directly.
-> Easier to reason about.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+Quoting Rob Herring (Arm) (2024-08-07 09:58:53)
+> "mediatek,mt6779-apmixed" is the compatible string in use already, not
+> "mediatek,mt6779-apmixedsys".
+>=20
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-Reviewed-by: Daniel Golle <daniel@makrotopia.org>
+Applied to clk-next
 
