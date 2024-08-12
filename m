@@ -1,104 +1,94 @@
-Return-Path: <linux-kernel+bounces-283237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9882794EEFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:57:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371D994EDF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:20:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540E7282242
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:57:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA76A1F22B70
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AA17F374;
-	Mon, 12 Aug 2024 13:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9735317C219;
+	Mon, 12 Aug 2024 13:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="muIgzAd7"
-Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRRxEH5d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E27C17C230
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA34D1D699;
+	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470915; cv=none; b=fNSohb19gVFbExOseJnbKC4fQdu6Htx8YuLmbR9rqOUXnmCqZu3XAAqpmCzy6f8f//KrGtg0ftiO7V39zwDgiQUJT/dyjfjXqr0wf7L6rS516+6HA/KfY863ZCwl3HPkl7mfDhtsso1HHrX5Tp+mdEpMaIqISKnMzK8kGbrebmE=
+	t=1723468827; cv=none; b=nNtKVCBcVmxWDonb0dwHRVY2OO0WpltCc5djiJnq1H3xhi/PTupsyMYW/FTP+c7AgmZsw/+PgpIEdhSfdivStcvwT2urDhQXxgLRgUhxawwRk8+zn2c4iaCsBFtsPd9Z1ZsMz/JALLunrh/1zzUHM7aEGgEKZgvP5+pwCO2tBXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470915; c=relaxed/simple;
-	bh=VrDFm2znvH0Xam8Lf4Ov3deiQ8TtNeXvK2GaXRqaEj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkNYLgcf/lkmp/FX3h22jWd6dLFJMi/FoOAkb1dlaQnHMwMPQSqCL4sRS9Z5RyG4HBJ6VE39WhLeI95fyfbhIGc03af9y9hV7gIQhA4R7emhAHi0mXTBnnl6jGdZKu/u36T4//dp2ko+/gYRE9xFSIkbU18GV72whWwjiJg1NBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=muIgzAd7; arc=none smtp.client-ip=144.76.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
-	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=tsOaNUnXsW8E+PfttAxy3/HK27PU6Ot2r+AEqAMuPS0=; b=muIgzAd7z2Rrw4e5+fjQK9d4nq
-	Csa6WTM0ct0M8SFKikpETUDEtg+RZrsERFdS4aPh1CDhygeVDd78aSXZ3eEr8c8BwNr9I+AKKcDsn
-	thLbNmEitzcrxADd+wz42zQ32bYeDeyktXIrdDVQuHMxHR6ILyYXp1aJIqu7G43hbgnT94RXP2S7H
-	TV1tS4dqFcHbXqrtalY1HVsDBeuLvh9+c+8fviS7EOtMZiuUOerZC8XANq6L4Pw2VwPQXSY/98vA1
-	Yjyran9KjtgRtEo0rbrWIKuehyd/6JBUHeUA73nWdMQVly2iq7dRSv+indXCtPvKd+JdS1cDJ8z8Q
-	ZI3L/KRw==;
-Received: from vc-gp-n-105-245-229-160.umts.vodacom.co.za ([105.245.229.160] helo=pc220518)
-	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <w@uter.be>)
-	id 1sdVVw-009ZOe-0f;
-	Mon, 12 Aug 2024 15:55:12 +0200
-Received: from wouter by pc220518 with local (Exim 4.98)
-	(envelope-from <w@uter.be>)
-	id 1sdUyk-00000000Twm-1jVC;
-	Mon, 12 Aug 2024 15:20:54 +0200
-Date: Mon, 12 Aug 2024 15:20:22 +0200
-From: Wouter Verhelst <w@uter.be>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Josef Bacik <josef@toxicpanda.com>, Damien Le Moal <dlemoal@kernel.org>,
-	linux-block@vger.kernel.org, nbd@other.debian.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] nbd: correct the maximum value for discard sectors
-Message-ID: <ZroMFpaP69uUfC14@pc220518.home.grep.be>
-References: <20240803130432.5952-1-w@uter.be>
- <20240808070604.179799-1-w@uter.be>
- <20240808070604.179799-3-w@uter.be>
- <584a1774-0268-4b3c-9a78-0f00073b9d74@kernel.dk>
+	s=arc-20240116; t=1723468827; c=relaxed/simple;
+	bh=Y9rNj4VgWST9LHQuXoXSSHBNGwGl6tL0CsD6uHMMwXg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=cs6zxcjs0CERPVzwGw4zifbH6WnhX7aqgwjD6YPjh7CF/KhltIGfNzPZIx+M6oWe95LunGie5FSEE6Vr3k9uXFjWLXhV5Vo8BDD1TbA5zFe36qw3nnTNVZgW+SDBzS060KTtz5IcIZNCbVxdIk1ohji8n17jRLPYuv/6UBVZDS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRRxEH5d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B687C4AF09;
+	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723468827;
+	bh=Y9rNj4VgWST9LHQuXoXSSHBNGwGl6tL0CsD6uHMMwXg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=VRRxEH5dYuZUxrFr5ib3ZZB1KFJv9trPJwNPiubDsWkvVSqdrLFWIpToUCIyfN96K
+	 Te2KFxVpmDGTk2DpxHGoFstVG5rSYcGvBmdY7mXWFHEkOHHluDrR6iR2E73a5pXosk
+	 gy4zXm90dCE9HNRKiKz6niqYTZOqGipuS2M2G4o+U6uk+67sH9s4wLj58nyMvJ9cf+
+	 EXgC/FEMiCOewO+zExa2VdeL7umv7d6T96fbEu0Lvl59qZoE2wjq0LKbx0pSnDZRTp
+	 Zg4wp05M1tz5vEaWlWKO0xmFbUV9dc1YvoulCw4NZUXnpNkZiL4iCCAM55+CCNWwbg
+	 Fybv5tAD+ArkQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C04382332D;
+	Mon, 12 Aug 2024 13:20:27 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <584a1774-0268-4b3c-9a78-0f00073b9d74@kernel.dk>
-X-Speed: Gates' Law: Every 18 months, the speed of software halves.
-Organization: none
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH] net: ethernet: mtk_wed: fix use-after-free panic in
+ mtk_wed_setup_tc_block_cb()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172346882628.1022466.3636636409697645083.git-patchwork-notify@kernel.org>
+Date: Mon, 12 Aug 2024 13:20:26 +0000
+References: <tencent_7962673263816B802001C50C5EE77D0DF405@qq.com>
+In-Reply-To: <tencent_7962673263816B802001C50C5EE77D0DF405@qq.com>
+To: None <everything411@qq.com>
+Cc: nbd@nbd.name, netdev@vger.kernel.org, sean.wang@mediatek.com,
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ linux-kernel@vger.kernel.org
 
-On Fri, Aug 09, 2024 at 09:34:55AM -0600, Jens Axboe wrote:
-> On 8/8/24 1:06 AM, Wouter Verhelst wrote:
-> > Fixes: 268283244c0f018dec8bf4a9c69ce50684561f46
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Sat, 10 Aug 2024 13:26:51 +0800 you wrote:
+> From: Zheng Zhang <everything411@qq.com>
 > 
-> This isn't the correct way to have a fixes line.
+> When there are multiple ap interfaces on one band and with WED on,
+> turning the interface down will cause a kernel panic on MT798X.
+> 
+> Previously, cb_priv was freed in mtk_wed_setup_tc_block() without
+> marking NULL,and mtk_wed_setup_tc_block_cb() didn't check the value, too.
+> 
+> [...]
 
-Apologies Jens; beginner's mistake.
+Here is the summary with links:
+  - net: ethernet: mtk_wed: fix use-after-free panic in mtk_wed_setup_tc_block_cb()
+    https://git.kernel.org/netdev/net/c/db1b4bedb9b9
 
-> In general, please don't nest next versions under the previous posting,
-> and it's strongly recommended to have a cover letter that includes that
-> changed from version N to N+1. Otherwise we have to guess... So please
-> include that when posting v4.
-
-Right, sorry. "git help send-email" gave an example of how to do
-something like this for a "v2" patch series, which made me assume
-(incorrectly) that this is what would be wanted. I should have checked
-first, I guess.
-
-Will send v4 (hopefully the last one) shortly with those fixes.
-
+You are awesome, thank you!
 -- 
-     w@uter.{be,co.za}
-wouter@{grep.be,fosdem.org,debian.org}
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-I will have a Tin-Actinium-Potassium mixture, thanks.
+
 
