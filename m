@@ -1,175 +1,99 @@
-Return-Path: <linux-kernel+bounces-283170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660F794EE2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:31:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1979994EE2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:32:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC2C283323
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:31:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C29F1C216FC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 894BA17B4E9;
-	Mon, 12 Aug 2024 13:31:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1F117D372;
+	Mon, 12 Aug 2024 13:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vLapCMux";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nhXM7zMI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vLapCMux";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="nhXM7zMI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="WmDWBO9l"
+Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AC2D17C219
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76FC17D354;
+	Mon, 12 Aug 2024 13:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469474; cv=none; b=nL8yOzXmgzFyLF7YDdN9ZrriYUqavj9cgGVj4NnnSyZc2mIclDYMcNsEohW7MEEaRZFckbZQr1qkmlw4s9fuH7scJ+pb466c2hODty5ejC42fle7X7kHHv+GXBr2XUrg2AUm1Da8MzVzUyQvmzszVku/G+RzIpWiCUOj9Q23GNE=
+	t=1723469484; cv=none; b=fWO+vSVaqwwpXQP1SNtljIlZ/YVkATlr8qian423BjyL+SNUNaiQdvAOaC0TJ9F7EvC4caQzRypui9AeJnpWKqEN1po2GiqMVAh3EOxUVCpJ01BmKIzD9KsFkY8FdUwbT0WVpV8xX4ZXybhpQwjXtbemA6XkPj8UE4+HSL0DiZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469474; c=relaxed/simple;
-	bh=Oc6xe+jC2OH32SIXJ7YDiRVD7GSkjYovv0g6BUTo4yo=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dAmLj/LmRQbCjS9BSZXV8Dq9hhfbF75IA4yiMKkwEWX0s2cLuqML4PxgaBmFaK9JjpmILd9G85hloa8GMCajXAHgsaWeJ31N4L1UbEZ20Jic7rzHr3oHW7O1NikbnPv3zV4cohsSbESTI9zxYpjQ7cCz2PfyxoBs8wTH05cAWCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vLapCMux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nhXM7zMI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vLapCMux; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=nhXM7zMI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 93DF820283;
-	Mon, 12 Aug 2024 13:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723469470;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cNa9aNdNEbGZBcz/f1OlDIXuzmlb5DvcgkUkGMyfeQY=;
-	b=vLapCMux471miowY4cMeTfdfFlLfoblA3bYiezPMkVIAamMcVGnoI+4A8is8mWLjnEnjLD
-	bI6nib7PU7d92Td5VzhcQX0/sBbGwK1NV1ReEVKii5do1WWKGj6iIQgKdqqVoQszlnEifD
-	3xcYXzp1iU6B0uMdHFf0yrfcam/xCmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723469470;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cNa9aNdNEbGZBcz/f1OlDIXuzmlb5DvcgkUkGMyfeQY=;
-	b=nhXM7zMIF4j+55a9cd03Eqq58fMbUoVJdwgHAGcBc0/29muD+9P35DseqdXKejLUO2ATTf
-	U+CbKXNnfkRVWEDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vLapCMux;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=nhXM7zMI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723469470;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cNa9aNdNEbGZBcz/f1OlDIXuzmlb5DvcgkUkGMyfeQY=;
-	b=vLapCMux471miowY4cMeTfdfFlLfoblA3bYiezPMkVIAamMcVGnoI+4A8is8mWLjnEnjLD
-	bI6nib7PU7d92Td5VzhcQX0/sBbGwK1NV1ReEVKii5do1WWKGj6iIQgKdqqVoQszlnEifD
-	3xcYXzp1iU6B0uMdHFf0yrfcam/xCmg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723469470;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cNa9aNdNEbGZBcz/f1OlDIXuzmlb5DvcgkUkGMyfeQY=;
-	b=nhXM7zMIF4j+55a9cd03Eqq58fMbUoVJdwgHAGcBc0/29muD+9P35DseqdXKejLUO2ATTf
-	U+CbKXNnfkRVWEDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38E0E137BA;
-	Mon, 12 Aug 2024 13:31:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id LFC1C50OumatfAAAD6G6ig
-	(envelope-from <pvorel@suse.cz>); Mon, 12 Aug 2024 13:31:09 +0000
-Date: Mon, 12 Aug 2024 15:31:03 +0200
-From: Petr Vorel <pvorel@suse.cz>
-To: Jan Stancek <jstancek@redhat.com>, ltp@lists.linux.it,
-	Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: Re: [LTP] [PATCH] syscalls/execve04, creat07: skip for kernels 6.11
- and later
-Message-ID: <20240812133103.GA437233@pevik>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <9a9b743304c2b6ad1a045f26d33304a3350cdf4c.1723458583.git.jstancek@redhat.com>
- <20240812120221.GA195572@pevik>
+	s=arc-20240116; t=1723469484; c=relaxed/simple;
+	bh=rX4ph7FDXyoa+nmXEYzH7RjdqurTlOhvOAg2rhHAoG8=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z2w7iWGtKY3Oc6cCz+dCwftLdUiyGaUV8qIoWKLvGFXa9gRjnU2GlkzFcvRvaxJ+54ondvLXptK6VR3mKjyW+Qcpf3P8dwOtMuHJeE0N3pR1ABjygEWYUNiP/5BCLZDcBzACf5+YK19G79U1sIlpcsc2RW9Eicc2rp3GFFUbSkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=WmDWBO9l; arc=none smtp.client-ip=45.145.95.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
+	t=1723469469; bh=rX4ph7FDXyoa+nmXEYzH7RjdqurTlOhvOAg2rhHAoG8=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=WmDWBO9lXsbpU2zqI3wAtFQCgnFmRgfRijubiYK2IifDEsAahPOahV4GPL3/9O4L6
+	 7KgGufm3X/BLjUyH7nBcpX5aIHQBs7ujBFz9ts+/4RAsUHb6qBlGEPmfzH9nEMnVFE
+	 CvjrlF7iBwP64+Gc7rA+DOcWAXxte6yalL3POSYid2h6BDJjaFMwnXoq8Dicb+FIM4
+	 5NK+2OFKCRTf5bB+xF9Xk17uFamT3W1M8Tz4VGbPfXLo25HQiGYwRiLDH9o8CGssMh
+	 mHOMEFaVfoUQPC6REUrzfzbJSYn/Hb1N5aWAK56aleNaIohU2BFqNFNEPxhAnwOFN5
+	 dMz6Yh6TldzUQ==
+To: syzbot <syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com>,
+ kvalo@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [wireless?] KMSAN: uninit-value in skb_trim (2)
+In-Reply-To: <000000000000d830f0061f503c6a@google.com>
+References: <000000000000d830f0061f503c6a@google.com>
+Date: Mon, 12 Aug 2024 15:31:09 +0200
+X-Clacks-Overhead: GNU Terry Pratchett
+Message-ID: <87ttfpx3z6.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812120221.GA195572@pevik>
-X-Spam-Score: -3.71
-X-Rspamd-Queue-Id: 93DF820283
-X-Spamd-Result: default: False [-3.71 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	HAS_REPLYTO(0.30)[pvorel@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.cz:dkim,suse.cz:email];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.cz:dkim];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	REPLYTO_EQ_FROM(0.00)[]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+Content-Type: text/plain
 
-Hi Jan,
+syzbot <syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com> writes:
 
-> Hi Jan,
+> Hello,
+>
+> syzbot found the following issue on:
+>
+> HEAD commit:    b446a2dae984 Merge tag 'linux_kselftest-fixes-6.11-rc3' of..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13eb467d980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=305509ad8eb5f9b8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=98afa303be379af6cdb2
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>
+> Unfortunately, I don't have any reproducer for this issue yet.
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/49d96e53e1c4/disk-b446a2da.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/f05350d128a7/vmlinux-b446a2da.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/805c7d86a2db/bzImage-b446a2da.xz
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+98afa303be379af6cdb2@syzkaller.appspotmail.com
 
-> > The behaviour is allowed since commit:
-> >   2a010c412853 ("fs: don't block i_writecount during exec")
-> > that landed in 6.11-rc1.
+#syz test
 
-> Thanks for noticing and fixing this!
-
-> It was reported some time ago:
-> https://lore.kernel.org/all/202406141431.2b72ca61-oliver.sang@intel.com/
-> https://lore.kernel.org/ltp/202407162117.7730986d-oliver.sang@intel.com/
-
-I have no idea, if you found it yourself, but let's give them the credit:
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-
-Kind regards,
-Petr
-
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
-
-> Kind regards,
-> Petr
-
-> > Signed-off-by: Jan Stancek <jstancek@redhat.com>
-...
+diff --git a/drivers/net/wireless/ath/ath9k/hif_usb.c b/drivers/net/wireless/ath/ath9k/hif_usb.c
+index 0c7841f95228..f77cb743ca06 100644
+--- a/drivers/net/wireless/ath/ath9k/hif_usb.c
++++ b/drivers/net/wireless/ath/ath9k/hif_usb.c
+@@ -755,7 +755,7 @@ static void ath9k_hif_usb_reg_in_cb(struct urb *urb)
+                goto free_skb;
+        default:
+                skb_reset_tail_pointer(skb);
+-               skb_trim(skb, 0);
++               __skb_trim(skb, 0);
+ 
+                goto resubmit;
+        }
 
