@@ -1,189 +1,313 @@
-Return-Path: <linux-kernel+bounces-282758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6998894E83F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDEDA94E81C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F4C51C20C22
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:07:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E6451C21786
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:53:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1EDD165F07;
-	Mon, 12 Aug 2024 08:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E56C615C155;
+	Mon, 12 Aug 2024 07:53:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="S/2glqmW"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XFU1cdm6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F343F1474D3
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2178225DA;
+	Mon, 12 Aug 2024 07:53:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723450049; cv=none; b=ZDJCPa+eCqVOMXIETuzCS9gP50pSTgl0KcQaOGT1jYhb1Kyl2jKP3eVCviulHf8Lf/24Lb/E/lfFHfFDeQtlE5VRgyHwQkfBcj+jMZ/DAsyTV7cVcFs1arA8JtlfMr16Ws3QLRAUeS/o9DeHXLgSnNtvrk7In80GQog/94pF1jw=
+	t=1723449209; cv=none; b=hTeLqFv8y+wlHJevJz9eImr47ISO8fEb9DweLH5OxaWLXmmVxftsF2i0mfWFzdGmrt2tsVWb6ULs8F1L+qoBiOVwBv+BmIvXJPSlSl/aTUL7vJ30Kroazfh4b+YyH4223sAbOWUV8gsrPwJU83N0ijZSrFiH+lNIdVW7voMW8wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723450049; c=relaxed/simple;
-	bh=7QMaOhjKWz/4uf+ZseTauwr5hcIZO7MW2sI+AmMlfO8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAbeKPyXrq/BC9erZNUaOMtegSke/OINHiL5/r3+Wp/5d8oMwEEh/1mJfFnnsyWDW3HuaB9c9V5uqOS/M24+lc+bjokZA4FXleGnMjCjrHPPKlmXrr+E0QgzrQxzLqj8U/lAwjIa5MOARrRsvUKKcGnIwAcgNrsVSi9Z/A7ANHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=S/2glqmW; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a61386so4701196a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723450045; x=1724054845; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5YFgRF8LFfOau3/MGIyoZIgJMI33380v6d+GDkrcvOw=;
-        b=S/2glqmWp774nMwzqcAK4HyL3kVDUR1bZJyQ0XI0deno7nmB8uetrEncxl1Dy4yYbr
-         Uump+j+u62yNkP+Olq2yiHeNdW0QqAAATuP5AGgEw+jj5GXqwEHh0eKLdScjUDp44opY
-         bqpVuHft4AeLj5WqDrjXO8eYTyhAwf1Xt1qzuIT5o08n8PA7gjvNKNXOYw+fG+VFIkT6
-         CrTGww+zctdolF7+rAiMoE8NM8lC6eL6hMxQGIP9U+0RGHCP9a1dXFykKnM+dJu6Jhmo
-         MZDw3ymiAnTiw2ujeeZorlL7BgpXdoF07K86ddGh/TIfUjszC7ARhDBQuJ1WfoddS+lC
-         ebbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723450045; x=1724054845;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5YFgRF8LFfOau3/MGIyoZIgJMI33380v6d+GDkrcvOw=;
-        b=XO4amDgY9Ni4e194Loakix2Cadv1t/tv7PqBdk6krZPAVKZV9dVHFPit2o8MLYbJjg
-         8in2a0zCpIxj9iSbvy0jNSOTxZ3ThP5lC1oB7Se1hyMx3DRFqo01BLiN2MnktFvHHYP8
-         iD4p8vqZ/0VaZ+wujSsMtN9MkbvkayfLekvbd45djsbpemmMcFBEBViHERAd76pQEkej
-         SYaB+pWHrAdb+ts8y5IjWUmzr5NPfi05IahKC/3ukUmuLRAw6BcMTaJWHDvtAxXiuYpe
-         cmdjd+Lz+39JVMRHWO+TEkwpiJIi+rjtjjrkWBYW3J/bvMQPJ5fR8UhhA5DqqX8N/HDR
-         oVpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYtdpIYXXL1ytMe1OYCIHftZZFPV3bvDhVHPNj0DOrOU9ahYeaoA5FSASyWt8UcVHBzNpsjI16E6HSttP0a/8gHfr7DWeFupke+qK8
-X-Gm-Message-State: AOJu0Yz0pyf5N9XK6Wd9DxHj3GXd7l/1ZkvEhv9g4nvwJmSxwfR1YyIt
-	3f1utpLhzPwtZ5t6j8Z5QH+LBmkqy+spVT8M0wvUhDJWTmKCCXxSQmOfR0xdWJw=
-X-Google-Smtp-Source: AGHT+IGrIoJZ2UjhjzCuoPlILeJ6ErUrFE2kwTpCS1owp14Bcwlj6/O6oJalpWVnT5vj0VKGM+laZA==
-X-Received: by 2002:a05:6402:274c:b0:5b8:d362:3f46 with SMTP id 4fb4d7f45d1cf-5bd0a6e32b8mr5603488a12.35.1723450045156;
-        Mon, 12 Aug 2024 01:07:25 -0700 (PDT)
-Received: from localhost (109-81-83-166.rct.o2.cz. [109.81.83.166])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4fedsm1924275a12.6.2024.08.12.01.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 01:07:24 -0700 (PDT)
-Date: Mon, 12 Aug 2024 10:07:19 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org,
+	s=arc-20240116; t=1723449209; c=relaxed/simple;
+	bh=yER9ECaWC3IMUJdmyfW3eRFZCMGXlQq9Juc1YWzMYPk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=J/H0W4WvVWYw6bahUgBIs4fduqho2gioU1DEXrsT0RqmsOHJtvd4LcNNBi4I9pjIR2gwWWuKZcYl/Xb+XsoF9N9m/6WBJT4oCBFpOd8bAaG6NJH05MPd2s6DOuDGQImJ/i8LQTJwlBSQPjDSJl+Xk5Tj7NdfTZ/AXKVe2wxiTDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XFU1cdm6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723449207; x=1754985207;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=yER9ECaWC3IMUJdmyfW3eRFZCMGXlQq9Juc1YWzMYPk=;
+  b=XFU1cdm64ixw1bsGMO6c8fnBEo8+x4ZCC0hqKQ7REcxEt5F7smuio9NL
+   dSpKHVN6PdTNIaw7jpBZsEYOWszoqDOkHfzeutGLCM1ij2AuKbONOOAqj
+   pjlXEXECgv84DEoVtl6NcLM/CJ3e7hMPAlHPhzR4TxuHhQKqYYPnkw3G6
+   L0VmEkGvBXtSr8HY3cbBS5HVUI91LEwTlXhyg8YqPeoM7PKzmuKSDT/9K
+   IIhGlbgm6mqPE4mSNlRkEb6GZtYzirLcZ8FVjkWIoGrvKCgLntGeydHpN
+   zERj8QYNWAtEiuwvgjiqT9bXwW0XS11E3pd1ALwgzvkji0OXDR8PG4ABt
+   A==;
+X-CSE-ConnectionGUID: IirQhU84RreoXgw4I4zBiw==
+X-CSE-MsgGUID: yG8JddpLRkuen2sS7JA2Tw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="25313286"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="25313286"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:53:26 -0700
+X-CSE-ConnectionGUID: IRtdwPF9RmuiRz84aQ70Xg==
+X-CSE-MsgGUID: ZHNIyP7uR9aqXXCAKHwdpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="58085702"
+Received: from jraag-nuc8i7beh.iind.intel.com ([10.145.169.79])
+  by orviesa009.jf.intel.com with ESMTP; 12 Aug 2024 00:53:19 -0700
+From: Raag Jadav <raag.jadav@intel.com>
+To: jani.nikula@linux.intel.com,
+	joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	tursulin@ursulin.net,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	linux@roeck-us.net,
+	andi.shyti@linux.intel.com,
+	andriy.shevchenko@linux.intel.com
+Cc: intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH] memcg: replace memcg ID idr with xarray
-Message-ID: <ZrnCt_cGOOwQxWn3@tiehlicka>
-References: <20240809172618.2946790-1-shakeel.butt@linux.dev>
+	anshuman.gupta@intel.com,
+	badal.nilawar@intel.com,
+	riana.tauro@intel.com,
+	ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com,
+	Raag Jadav <raag.jadav@intel.com>
+Subject: [PATCH v5] drm/i915/hwmon: expose fan speed
+Date: Mon, 12 Aug 2024 13:45:38 +0530
+Message-Id: <20240812081538.1457396-1-raag.jadav@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809172618.2946790-1-shakeel.butt@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Fri 09-08-24 10:26:18, Shakeel Butt wrote:
-> At the moment memcg IDs are managed through IDR which requires external
-> synchronization mechanisms and makes the allocation code a bit awkward.
-> Let's switch to xarray and make the code simpler.
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Add hwmon support for fan1_input attribute, which will expose fan speed
+in RPM. With this in place we can monitor fan speed using lm-sensors tool.
 
-Neat! I was not aware of this feature of XArray. Is there any actual
-reason for idr to have its own implementation with XArray offering a
-better interface?
+$ sensors
+i915-pci-0300
+Adapter: PCI adapter
+in0:         653.00 mV
+fan1:        3833 RPM
+power1:           N/A  (max =  43.00 W)
+energy1:      32.02 kJ
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+v2: Handle overflow, add mutex protection and ABI documentation
+    Aesthetic adjustments (Riana)
+v3: Declare rotations as "long", change ABI date and version
+    Add commenter name in changelog (Riana)
+v4: Fix wakeref leak
+    Drop switch case and simplify hwm_fan_xx() (Andi)
+v5: Rework time calculation, aesthetic adjustments (Andy)
 
-Thanks!
+Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+Reviewed-by: Riana Tauro <riana.tauro@intel.com>
+---
+ .../ABI/testing/sysfs-driver-intel-i915-hwmon |  8 ++
+ drivers/gpu/drm/i915/gt/intel_gt_regs.h       |  2 +
+ drivers/gpu/drm/i915/i915_hwmon.c             | 85 +++++++++++++++++++
+ 3 files changed, 95 insertions(+)
 
-> ---
->  mm/memcontrol.c | 34 +++++++---------------------------
->  1 file changed, 7 insertions(+), 27 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index e1ffd2950393..b8e6b98485c6 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3363,29 +3363,12 @@ static void memcg_wb_domain_size_changed(struct mem_cgroup *memcg)
->   */
->  
->  #define MEM_CGROUP_ID_MAX	((1UL << MEM_CGROUP_ID_SHIFT) - 1)
-> -static DEFINE_IDR(mem_cgroup_idr);
-> -static DEFINE_SPINLOCK(memcg_idr_lock);
-> -
-> -static int mem_cgroup_alloc_id(void)
-> -{
-> -	int ret;
-> -
-> -	idr_preload(GFP_KERNEL);
-> -	spin_lock(&memcg_idr_lock);
-> -	ret = idr_alloc(&mem_cgroup_idr, NULL, 1, MEM_CGROUP_ID_MAX + 1,
-> -			GFP_NOWAIT);
-> -	spin_unlock(&memcg_idr_lock);
-> -	idr_preload_end();
-> -	return ret;
-> -}
-> +static DEFINE_XARRAY_ALLOC1(mem_cgroup_ids);
->  
->  static void mem_cgroup_id_remove(struct mem_cgroup *memcg)
->  {
->  	if (memcg->id.id > 0) {
-> -		spin_lock(&memcg_idr_lock);
-> -		idr_remove(&mem_cgroup_idr, memcg->id.id);
-> -		spin_unlock(&memcg_idr_lock);
-> -
-> +		xa_erase(&mem_cgroup_ids, memcg->id.id);
->  		memcg->id.id = 0;
->  	}
->  }
-> @@ -3420,7 +3403,7 @@ static inline void mem_cgroup_id_put(struct mem_cgroup *memcg)
->  struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
->  {
->  	WARN_ON_ONCE(!rcu_read_lock_held());
-> -	return idr_find(&mem_cgroup_idr, id);
-> +	return xa_load(&mem_cgroup_ids, id);
->  }
->  
->  #ifdef CONFIG_SHRINKER_DEBUG
-> @@ -3519,11 +3502,10 @@ static struct mem_cgroup *mem_cgroup_alloc(struct mem_cgroup *parent)
->  	if (!memcg)
->  		return ERR_PTR(error);
->  
-> -	memcg->id.id = mem_cgroup_alloc_id();
-> -	if (memcg->id.id < 0) {
-> -		error = memcg->id.id;
-> +	error = xa_alloc(&mem_cgroup_ids, &memcg->id.id, NULL,
-> +			 XA_LIMIT(1, MEM_CGROUP_ID_MAX), GFP_KERNEL);
-> +	if (error)
->  		goto fail;
-> -	}
->  
->  	memcg->vmstats = kzalloc(sizeof(struct memcg_vmstats),
->  				 GFP_KERNEL_ACCOUNT);
-> @@ -3664,9 +3646,7 @@ static int mem_cgroup_css_online(struct cgroup_subsys_state *css)
->  	 * publish it here at the end of onlining. This matches the
->  	 * regular ID destruction during offlining.
->  	 */
-> -	spin_lock(&memcg_idr_lock);
-> -	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
-> -	spin_unlock(&memcg_idr_lock);
-> +	xa_store(&mem_cgroup_ids, memcg->id.id, memcg, GFP_KERNEL);
->  
->  	return 0;
->  offline_kmem:
-> -- 
-> 2.43.5
-> 
-
+diff --git a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+index 92fe7c5c5ac1..be4141a7522f 100644
+--- a/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
++++ b/Documentation/ABI/testing/sysfs-driver-intel-i915-hwmon
+@@ -75,3 +75,11 @@ Description:	RO. Energy input of device or gt in microjoules.
+ 		for the gt.
+ 
+ 		Only supported for particular Intel i915 graphics platforms.
++
++What:		/sys/bus/pci/drivers/i915/.../hwmon/hwmon<i>/fan1_input
++Date:		November 2024
++KernelVersion:	6.12
++Contact:	intel-gfx@lists.freedesktop.org
++Description:	RO. Fan speed of device in RPM.
++
++		Only supported for particular Intel i915 graphics platforms.
+diff --git a/drivers/gpu/drm/i915/gt/intel_gt_regs.h b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+index e42b3a5d4e63..57a3c83d3655 100644
+--- a/drivers/gpu/drm/i915/gt/intel_gt_regs.h
++++ b/drivers/gpu/drm/i915/gt/intel_gt_regs.h
+@@ -1553,6 +1553,8 @@
+ #define VLV_RENDER_C0_COUNT			_MMIO(0x138118)
+ #define VLV_MEDIA_C0_COUNT			_MMIO(0x13811c)
+ 
++#define PCU_PWM_FAN_SPEED			_MMIO(0x138140)
++
+ #define GEN12_RPSTAT1				_MMIO(0x1381b4)
+ #define   GEN12_VOLTAGE_MASK			REG_GENMASK(10, 0)
+ #define   GEN12_CAGF_MASK			REG_GENMASK(19, 11)
+diff --git a/drivers/gpu/drm/i915/i915_hwmon.c b/drivers/gpu/drm/i915/i915_hwmon.c
+index 49db3e09826c..a867b81a0900 100644
+--- a/drivers/gpu/drm/i915/i915_hwmon.c
++++ b/drivers/gpu/drm/i915/i915_hwmon.c
+@@ -5,6 +5,7 @@
+ 
+ #include <linux/hwmon.h>
+ #include <linux/hwmon-sysfs.h>
++#include <linux/jiffies.h>
+ #include <linux/types.h>
+ 
+ #include "i915_drv.h"
+@@ -36,6 +37,7 @@ struct hwm_reg {
+ 	i915_reg_t pkg_rapl_limit;
+ 	i915_reg_t energy_status_all;
+ 	i915_reg_t energy_status_tile;
++	i915_reg_t fan_speed;
+ };
+ 
+ struct hwm_energy_info {
+@@ -43,11 +45,17 @@ struct hwm_energy_info {
+ 	long accum_energy;			/* Accumulated energy for energy1_input */
+ };
+ 
++struct hwm_fan_info {
++	u32 reg_val_prev;
++	u64 time_prev;
++};
++
+ struct hwm_drvdata {
+ 	struct i915_hwmon *hwmon;
+ 	struct intel_uncore *uncore;
+ 	struct device *hwmon_dev;
+ 	struct hwm_energy_info ei;		/*  Energy info for energy1_input */
++	struct hwm_fan_info fi;			/*  Fan info for fan1_input */
+ 	char name[12];
+ 	int gt_n;
+ 	bool reset_in_progress;
+@@ -276,6 +284,7 @@ static const struct hwmon_channel_info * const hwm_info[] = {
+ 	HWMON_CHANNEL_INFO(power, HWMON_P_MAX | HWMON_P_RATED_MAX | HWMON_P_CRIT),
+ 	HWMON_CHANNEL_INFO(energy, HWMON_E_INPUT),
+ 	HWMON_CHANNEL_INFO(curr, HWMON_C_CRIT),
++	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
+ 	NULL
+ };
+ 
+@@ -613,6 +622,66 @@ hwm_curr_write(struct hwm_drvdata *ddat, u32 attr, long val)
+ 	}
+ }
+ 
++static umode_t
++hwm_fan_is_visible(const struct hwm_drvdata *ddat, u32 attr)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++
++	return attr == hwmon_fan_input &&
++	       i915_mmio_reg_valid(hwmon->rg.fan_speed) ? 0444 : 0;
++}
++
++static int
++hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
++{
++	struct i915_hwmon *hwmon = ddat->hwmon;
++	struct hwm_fan_info *fi = &ddat->fi;
++	u64 rotations, time_now, time;
++	intel_wakeref_t wakeref;
++	u32 reg_val, pulses;
++	int ret = 0;
++
++	if (attr != hwmon_fan_input)
++		return -EOPNOTSUPP;
++
++	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
++	mutex_lock(&hwmon->hwmon_lock);
++
++	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
++	time_now = get_jiffies_64();
++
++	/* Handle HW register overflow */
++	if (reg_val >= fi->reg_val_prev)
++		pulses = reg_val - fi->reg_val_prev;
++	else
++		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
++
++	/*
++	 * HW register value is accumulated count of pulses from
++	 * PWM fan with the scale of 2 pulses per rotation.
++	 */
++	rotations = pulses / 2;
++
++	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
++	if (unlikely(!time)) {
++		ret = -EAGAIN;
++		goto exit;
++	}
++
++	/*
++	 * Convert to minutes for calculating RPM.
++	 * RPM = number of rotations * msecs per minute / time in msecs
++	 */
++	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
++
++	fi->reg_val_prev = reg_val;
++	fi->time_prev = time_now;
++exit:
++	mutex_unlock(&hwmon->hwmon_lock);
++	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
++	return ret;
++}
++
+ static umode_t
+ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 	       u32 attr, int channel)
+@@ -628,6 +697,8 @@ hwm_is_visible(const void *drvdata, enum hwmon_sensor_types type,
+ 		return hwm_energy_is_visible(ddat, attr);
+ 	case hwmon_curr:
+ 		return hwm_curr_is_visible(ddat, attr);
++	case hwmon_fan:
++		return hwm_fan_is_visible(ddat, attr);
+ 	default:
+ 		return 0;
+ 	}
+@@ -648,6 +719,8 @@ hwm_read(struct device *dev, enum hwmon_sensor_types type, u32 attr,
+ 		return hwm_energy_read(ddat, attr, val);
+ 	case hwmon_curr:
+ 		return hwm_curr_read(ddat, attr, val);
++	case hwmon_fan:
++		return hwm_fan_read(ddat, attr, val);
+ 	default:
+ 		return -EOPNOTSUPP;
+ 	}
+@@ -739,12 +812,14 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		hwmon->rg.pkg_rapl_limit = PCU_PACKAGE_RAPL_LIMIT;
+ 		hwmon->rg.energy_status_all = PCU_PACKAGE_ENERGY_STATUS;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = PCU_PWM_FAN_SPEED;
+ 	} else {
+ 		hwmon->rg.pkg_power_sku_unit = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_power_sku = INVALID_MMIO_REG;
+ 		hwmon->rg.pkg_rapl_limit = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_all = INVALID_MMIO_REG;
+ 		hwmon->rg.energy_status_tile = INVALID_MMIO_REG;
++		hwmon->rg.fan_speed = INVALID_MMIO_REG;
+ 	}
+ 
+ 	with_intel_runtime_pm(uncore->rpm, wakeref) {
+@@ -755,6 +830,16 @@ hwm_get_preregistration_info(struct drm_i915_private *i915)
+ 		if (i915_mmio_reg_valid(hwmon->rg.pkg_power_sku_unit))
+ 			val_sku_unit = intel_uncore_read(uncore,
+ 							 hwmon->rg.pkg_power_sku_unit);
++
++		/*
++		 * Store the initial fan register value, so that we can use it for
++		 * initial fan speed calculation.
++		 */
++		if (i915_mmio_reg_valid(hwmon->rg.fan_speed)) {
++			ddat->fi.reg_val_prev = intel_uncore_read(uncore,
++								  hwmon->rg.fan_speed);
++			ddat->fi.time_prev = get_jiffies_64();
++		}
+ 	}
+ 
+ 	hwmon->scl_shift_power = REG_FIELD_GET(PKG_PWR_UNIT, val_sku_unit);
 -- 
-Michal Hocko
-SUSE Labs
+2.34.1
+
 
