@@ -1,73 +1,82 @@
-Return-Path: <linux-kernel+bounces-283116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EACDE94ED64
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:51:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EEC194ED6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A114C1F22948
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:51:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B072B22341
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2687817B51B;
-	Mon, 12 Aug 2024 12:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3C817BB30;
+	Mon, 12 Aug 2024 12:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Mesmbd63"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A6jnyaDP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5777D14EC53;
-	Mon, 12 Aug 2024 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443F916E89B;
+	Mon, 12 Aug 2024 12:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723467073; cv=none; b=hlHCPr+YWWqPH0xKf5vHIs0Xds2LiNa3eNgax4R8hcqOyJ+ZpLMgM+dBaHC4rAZF4+S14d8p8/WzXa0qqV+NxP7UnLIt4eJ4ndLLvKCJTY9s91Xd09Pv9r2oz2KlcffpZV9+5HrgxloZA7c9XR+2awvRz4TiinIyeT/QhDDG89U=
+	t=1723467190; cv=none; b=WkE9M8NPkTtWIvYblF4JhdRf/Sg9DzBIMhsiZ+fG2DL+1dF0/fk3V93RPXTEN6c3kseslkNTYSobwXkwuJSrIlenSD+WS1bUArHYF+LSjp07FCs9ONzsI9je1YEsEZkXgnU+yjY4Zw6aDdnNzVXKVjjv2GyXo9B5u4/ZiS0iPe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723467073; c=relaxed/simple;
-	bh=CVNKSbLYEeSmnP+OvcToyXEeMut4bzfxHpnr90eyLe0=;
+	s=arc-20240116; t=1723467190; c=relaxed/simple;
+	bh=Sf7fii3Uk5dXCYdQrY2jiMwoeseQxuJiZtqIZOoSKZ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qHg0gcCM/hm3AH65asrJ/WlEACBeRxbSLMojcrLGPOQQDdRjST41YCyALvFYrRovlRROTYzJnW3er/i8CQ/mT7cp/iJwGSjmumv+lK2rsHrjum5ooZAB+BO4YoH3dno4Tq989LjQhdshSa6QTVxFYQW4XFNJPDMEoNVnXgf3YpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Mesmbd63; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from localhost (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 8A3E041515;
-	Mon, 12 Aug 2024 14:51:06 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
-	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id LMZAk-i2Lzoa; Mon, 12 Aug 2024 14:51:05 +0200 (CEST)
-Date: Mon, 12 Aug 2024 20:50:29 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1723467065; bh=CVNKSbLYEeSmnP+OvcToyXEeMut4bzfxHpnr90eyLe0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=Mesmbd63hEeaQoftBXPQoJynz88NwARw7G72V5f155OtTf9cmFmu0+9037fxZN8YL
-	 uNs/Q+hjRyc1ETLg2ZNVx6tHZ5rLh3VjPexDkgU1pXOTXQcxgttkbUyDX0S9EfUfy+
-	 Myne47pt6dB9DuZGOW2bazzStrDfZpzXdMuMnsBugg1umSrHKeXZGlvMbtYQKbRQG3
-	 a23Cp2XSyevt/fyeqKSad1ZXpl/eN3KSn9Lg0eMysRPG0cpcfHJBpptcCobW4gwkXB
-	 B/HcLx5CpTBYKpr/+lwcfUj9IAu42HO1SHJstRn0MPycJbZdLEd4HO1TvYkSMirumR
-	 V+Mqub8U7NXJQ==
-From: Yao Zi <ziyao@disroot.org>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
-	Celeste Liu <CoelacanthusHex@gmail.com>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
-Message-ID: <ZroDTp6Y6ueODB0g@ziyaolaptop.my.domain>
-References: <20240811140725.64866-1-ziyao@disroot.org>
- <20240811140725.64866-4-ziyao@disroot.org>
- <24e2b1d2c970e894afd8849d501bcddd@manjaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eINwIjNBQEvmAo1mQYIUiBcKxbcYeT7wmGMIA73nu5faQFspuo5V6AtBlihR3qqMYRKIGygk35qZKmsq9RIjtTCVFBchZ7xcK9/S2OxSlX8Y4S/KBus38Bf5mGSkDKHD53ppwFrMPLGmXcb2qG0wV9Tk6kbtovBOlA4gIeYepzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A6jnyaDP; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723467187; x=1755003187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Sf7fii3Uk5dXCYdQrY2jiMwoeseQxuJiZtqIZOoSKZ4=;
+  b=A6jnyaDPxVIXCFQFuv48sUoJCLHIwqKtzBBjyPF7J0vFQdOIMaR58VgX
+   rD5KXnGCAYqSeCAqFPxuxohx2lKGcvBsEJ5m+O2X3gRCBuE6guXlzARKN
+   8RH5Aupy9c8Ns2FvFi4g0darf/7mBvqlBeZDKXKfMpPgOUDJnSLMSpnMz
+   CY2ePnEakbtHjGNNxdfwdCX1pMdXdlckqZSUsCiCAmxHxISNCBNCj3s/K
+   W6pGo9tf1VRLydidgxxleBMqQEf6EuqfWWBNnWgFhexbkyQZ+TSPV6GmI
+   7JECAaKwe4Z+/TT1tFz5Wy+lNTW+KuYghMn8hluCHBJhoFRayqlCMT8h/
+   A==;
+X-CSE-ConnectionGUID: MLCHRjpQQx+DxhdzeqmE/g==
+X-CSE-MsgGUID: liE0mVU5R3CAzMAuTWhggw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21426106"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="21426106"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 05:53:07 -0700
+X-CSE-ConnectionGUID: orTAER7nTNqDVXXYoMVpUA==
+X-CSE-MsgGUID: PxMXHWnoT4aGV9ihNublwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="63089626"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by orviesa003.jf.intel.com with ESMTP; 12 Aug 2024 05:53:02 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdUXk-000Bo3-0Q;
+	Mon, 12 Aug 2024 12:53:00 +0000
+Date: Mon, 12 Aug 2024 20:52:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>, miquel.raynal@bootlin.com,
+	richard@nod.at, vigneshr@ti.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, sumit.semwal@linaro.org,
+	christian.koenig@amd.com, esben@geanix.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: Re: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+Message-ID: <202408122007.quTiDXPR-lkp@intel.com>
+References: <20240812030045.20831-3-hpchen0nvt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,131 +85,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <24e2b1d2c970e894afd8849d501bcddd@manjaro.org>
+In-Reply-To: <20240812030045.20831-3-hpchen0nvt@gmail.com>
 
-On Sun, Aug 11, 2024 at 11:39:18PM +0200, Dragan Simic wrote:
-> Hello Yao,
-> 
-> Please see one comment below.
-> 
-> On 2024-08-11 16:07, Yao Zi wrote:
-> > This initial device tree describes CPU, interrupts and UART on the chip
-> > and is able to boot into basic kernel with only UART. Cache information
-> > is omitted for now as there is no precise documentation. Support for
-> > other features will be added later.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
-> >  1 file changed, 182 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > new file mode 100644
-> > index 000000000000..0596cdc38737
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > @@ -0,0 +1,182 @@
-> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > +/*
-> > + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
-> > + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
-> > + */
-> > +
-> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +
-> > +/ {
-> > +	compatible = "rockchip,rk3528";
-> > +
-> > +	interrupt-parent = <&gic>;
-> > +	#address-cells = <2>;
-> > +	#size-cells = <2>;
-> > +
-> > +	aliases {
-> > +		serial0 = &uart0;
-> > +		serial1 = &uart1;
-> > +		serial2 = &uart2;
-> > +		serial3 = &uart3;
-> > +		serial4 = &uart4;
-> > +		serial5 = &uart5;
-> > +		serial6 = &uart6;
-> > +		serial7 = &uart7;
-> > +	};
-> > +
-> > +	cpus {
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		cpu-map {
-> > +			cluster0 {
-> > +				core0 {
-> > +					cpu = <&cpu0>;
-> > +				};
-> > +				core1 {
-> > +					cpu = <&cpu1>;
-> > +				};
-> > +				core2 {
-> > +					cpu = <&cpu2>;
-> > +				};
-> > +				core3 {
-> > +					cpu = <&cpu3>;
-> > +				};
-> > +			};
-> > +		};
-> > +
-> > +		cpu0: cpu@0 {
-> > +			compatible = "arm,cortex-a53";
-> > +			reg = <0x0>;
-> > +			device_type = "cpu";
-> > +			enable-method = "psci";
-> > +		};
-> > +
-> > +		cpu1: cpu@1 {
-> > +			compatible = "arm,cortex-a53";
-> > +			reg = <0x1>;
-> > +			device_type = "cpu";
-> > +			enable-method = "psci";
-> > +		};
-> > +
-> > +		cpu2: cpu@2 {
-> > +			compatible = "arm,cortex-a53";
-> > +			reg = <0x2>;
-> > +			device_type = "cpu";
-> > +			enable-method = "psci";
-> > +		};
-> > +
-> > +		cpu3: cpu@3 {
-> > +			compatible = "arm,cortex-a53";
-> > +			reg = <0x3>;
-> > +			device_type = "cpu";
-> > +			enable-method = "psci";
-> > +		};
-> > +	};
-> > +
-> > +	psci {
-> > +		compatible = "arm,psci-1.0", "arm,psci-0.2";
-> > +		method = "smc";
-> > +	};
-> > +
-> > +	timer {
-> > +		compatible = "arm,armv8-timer";
-> > +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
-> > IRQ_TYPE_LEVEL_LOW)>,
-> > +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> > +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-> > +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-> > +	};
-> > +
-> > +	xin24m: clk-24m {
-> 
-> Please use "xin24m: clock-xin24m { ... }" instead, because that follows
-> the recently established revised pattern for clock names.  We should have
-> come consistency in the new SoC dtsi additions.
+Hi Hui-Ping,
 
-It's a careless typo, sorry for the noise. Will be fixed in next version.
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Yao Zi
+[auto build test WARNING on mtd/nand/next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240812]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Hui-Ping-Chen/dt-bindings-mtd-nuvoton-ma35d1-nand-add-new-bindings/20240812-110259
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240812030045.20831-3-hpchen0nvt%40gmail.com
+patch subject: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240812/202408122007.quTiDXPR-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240812/202408122007.quTiDXPR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408122007.quTiDXPR-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:991:29: warning: cast from 'irqreturn_t (*)(int, struct ma35_nand_info *)' (aka 'enum irqreturn (*)(int, struct ma35_nand_info *)') to 'irq_handler_t' (aka 'enum irqreturn (*)(int, void *)') converts to incompatible function type [-Wcast-function-type-strict]
+     991 |         if (request_irq(nand->irq, (irq_handler_t)&ma35_nand_irq,
+         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +991 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+
+   921	
+   922	static int ma35_nand_probe(struct platform_device *pdev)
+   923	{
+   924		struct ma35_nand_info *nand;
+   925		struct nand_chip *chip;
+   926		struct mtd_info *mtd;
+   927		int retval = 0;
+   928	
+   929		nand = devm_kzalloc(&pdev->dev, sizeof(struct ma35_nand_info), GFP_KERNEL);
+   930		if (!nand)
+   931			return -ENOMEM;
+   932	
+   933		nand_controller_init(&nand->controller);
+   934	
+   935		nand->regs = devm_platform_ioremap_resource(pdev, 0);
+   936		if (IS_ERR(nand->regs))
+   937			return PTR_ERR(nand->regs);
+   938	
+   939		nand->dev = &pdev->dev;
+   940		chip = &nand->chip;
+   941		mtd = nand_to_mtd(chip);
+   942		nand_set_controller_data(chip, nand);
+   943		nand_set_flash_node(chip, pdev->dev.of_node);
+   944	
+   945		mtd->priv = chip;
+   946		mtd->owner = THIS_MODULE;
+   947		mtd->dev.parent = &pdev->dev;
+   948	
+   949		nand->clk = of_clk_get(pdev->dev.of_node, 0);
+   950		if (IS_ERR(nand->clk))
+   951			return dev_err_probe(&pdev->dev, PTR_ERR(nand->clk),
+   952					     "failed to find nand clock\n");
+   953	
+   954		retval = clk_prepare_enable(nand->clk);
+   955		if (retval < 0) {
+   956			dev_err(&pdev->dev, "Failed to enable clock\n");
+   957			return -ENXIO;
+   958		}
+   959	
+   960		nand->chip.controller    = &nand->controller;
+   961	
+   962		chip->legacy.cmdfunc     = ma35_nand_command;
+   963		chip->legacy.waitfunc    = ma35_waitfunc;
+   964		chip->legacy.read_byte   = ma35_nand_read_byte;
+   965		chip->legacy.select_chip = ma35_nand_select_chip;
+   966		chip->legacy.read_buf    = ma35_read_buf_dma;
+   967		chip->legacy.write_buf   = ma35_write_buf_dma;
+   968		chip->legacy.dev_ready   = ma35_nand_devready;
+   969		chip->legacy.chip_delay  = 25; /* us */
+   970	
+   971		/* Read OOB data first, then HW read page */
+   972		chip->ecc.hwctl      = ma35_nand_enable_hwecc;
+   973		chip->ecc.calculate  = ma35_nand_calculate_ecc;
+   974		chip->ecc.correct    = ma35_nand_correct_data;
+   975		chip->ecc.write_page = ma35_nand_write_page_hwecc;
+   976		chip->ecc.read_page  = ma35_nand_read_page_hwecc_oob_first;
+   977		chip->ecc.read_oob   = ma35_nand_read_oob_hwecc;
+   978		chip->options |= (NAND_NO_SUBPAGE_WRITE | NAND_USES_DMA);
+   979	
+   980		ma35_nand_initialize(nand);
+   981		platform_set_drvdata(pdev, nand);
+   982	
+   983		nand->controller.ops = &ma35_nand_controller_ops;
+   984	
+   985		nand->irq = platform_get_irq(pdev, 0);
+   986		if (nand->irq < 0) {
+   987			dev_err(&pdev->dev, "failed to get platform irq\n");
+   988			return -EINVAL;
+   989		}
+   990	
+ > 991		if (request_irq(nand->irq, (irq_handler_t)&ma35_nand_irq,
+   992				IRQF_TRIGGER_HIGH, "ma35d1-nand", nand)) {
+   993			dev_err(&pdev->dev, "Error requesting NAND IRQ\n");
+   994			return -ENXIO;
+   995		}
+   996	
+   997		retval = nand_scan(chip, 1);
+   998		if (retval)
+   999			return retval;
+  1000	
+  1001		if (mtd_device_register(mtd, nand->parts, nand->nr_parts)) {
+  1002			nand_cleanup(chip);
+  1003			devm_kfree(&pdev->dev, nand);
+  1004			return retval;
+  1005		}
+  1006	
+  1007		pr_info("ma35-nfi: registered successfully! mtdid=%s\n", mtd->name);
+  1008	
+  1009		return retval;
+  1010	}
+  1011	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
