@@ -1,71 +1,75 @@
-Return-Path: <linux-kernel+bounces-283638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217BC94F734
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:06:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCC4B94F735
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:06:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFB171F224F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:06:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3E5B21427
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B38619047C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAC81917EC;
 	Mon, 12 Aug 2024 19:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ybjwyw+R"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="culyO0NO"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A7018EFE0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC6518FC75
 	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723489570; cv=none; b=HZu9GNldIQ87vW9pBV8sMReijX1GohFgf4DNkWSN9BfsOGbEbeWJ2/u+s/HDlq5Gn9hkKLKBjIQ7FTED2Gc7nxJHnpaebA/l/RVuTYZ05yrX9nQlScUdj0YP+pobCL4EXEFsiR2stZCv1YuodS3quEJrdNjh5RnHtDyp4XZIWeY=
+	t=1723489570; cv=none; b=Z/Zf9Bootk0Esh52UpcUe9ss0z9vjWOBMFOyyuC11kZGvtjI23uWDBo7UaNlAnG/gBNitPz8UAh2iNp6cE2I2lE7LDTBe5HvaJUu7LaoYLRQQ064x1iwvJHgEaBZCV9RgziXk8D9V3twfohHHVM8p+yWs+tnnu1KRG5gveyaKyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723489570; c=relaxed/simple;
-	bh=VCJaC4baszSI+pWDZXSkcjGNzE7fmxa8zgCFN9kUHYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aXjT3rfv+7Xt0FSzYe15bKqb+bniinklBa6gMdP2i0vLIbMLEztT4YgNxiW0mLky6AgaTeqs+SmjSlKQRGcRzGajSJTPJk/HdJDnWvlekTlNK6p8HsKQxFegKrTOrgZLtrgcp6Ll5bSUqhNuESoM56cD8NKPqnQwL7Pzgl3Uw/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ybjwyw+R; arc=none smtp.client-ip=205.220.177.32
+	bh=SD3o8t3xpSydQKsCJ4Oo318BGEY3obp3OrU51923D2s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kMeULa7GQ9xlflqZ6DHTVelSVMFTWSWYNBXlxzGkn+rKIijk/Rkus6m0Yiy+h6F9HeRN1rXzXhWgwAn3mSI+tP6b741RXYutpDLX+gbumO6Un/tGpSl5sKfH14cKT3+GoVjxnpZhvKOsjD1ghRWKDiDKajtQfzRQ2lfa0Va2qjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=culyO0NO; arc=none smtp.client-ip=205.220.165.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CHXVMA007029;
-	Mon, 12 Aug 2024 19:05:50 GMT
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CHXnhS018534;
+	Mon, 12 Aug 2024 19:05:51 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=corp-2023-11-20; bh=hzJpDomWqI4XAK
-	H5M6JOzCbongljBXfxlpCrhMR2RbI=; b=Ybjwyw+RMoaTJfi0g6NaelslofkTpP
-	yt7GSIAJN4TuOVEhY2INVgr8SSWDE+ypgAUZbca18RG1gPY3f+RmZN4KcimsX90i
-	fnE75pYtKIvWTKoF3WVvgFKrX4Cz3M9P8PI2j5sgdLt2P0pQ54BswD+DLmGVL+ZX
-	+UfQnLbsA7EvtMKEvHy2psvMZlXXICzMTru15xdOeMGzvRJkWOBz4NHhaikOThj6
-	SzFut2jr+ZVDkuN72s5/6IQ7fyA11dot/aplvfLel2Ik+wCaa70eMXlPY9PYzl0M
-	Tc5cVvjzqIBtZPRi40X8PCwnXKbdaf4SlKI6DwsjR7IvtOEXNiNpo2MA==
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=8
+	QTi9OJ0WYuil/jQ98RXaB1n034ZwVOed6J+lTgWExk=; b=culyO0NOP0oVmsnsn
+	cbPrM9zUWvS1ZtsMK6xES9k8eLzGvfUbwlH9QkQMEe61bf7c5uNw3va2wpfoB0cw
+	pHQrOwNbGwSOO9CtZ28bVk4PuKqhQ+aYqc2TR8HxkdD7F4ulCfYN3aBVzYzgObc4
+	8T3pRh8iunpYJMfNt5WldhuaXasZB0Qj1DuGkezQ79r7CJfBe2JkLaXX8EJkkMMZ
+	uXZMZe0EpzFdBRVY6mS0vlGo9LN8FvDq51MLMJuzcytXPkitPyV3RVwOzQD94fXL
+	5wVB09Pka3B654l4HGcyodrV1nNl0r6VI+c2ZUjFtVEJmz9XY8sz0IkyDP6puEVB
+	mv+Jw==
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxmcud7h-1
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x0393ck9-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
 	Mon, 12 Aug 2024 19:05:50 +0000 (GMT)
 Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CIhSbd017606;
-	Mon, 12 Aug 2024 19:05:49 GMT
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CJ3jNO017630;
+	Mon, 12 Aug 2024 19:05:50 GMT
 Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn8dfcp-1
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn8dfdg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 19:05:48 +0000
+	Mon, 12 Aug 2024 19:05:50 +0000
 Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47CJ22Kf022973;
-	Mon, 12 Aug 2024 19:05:48 GMT
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47CJ22Kh022973;
+	Mon, 12 Aug 2024 19:05:49 GMT
 Received: from sidkumar-mac.us.oracle.com (dhcp-10-65-176-210.vpn.oracle.com [10.65.176.210])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40wxn8dfa3-1;
-	Mon, 12 Aug 2024 19:05:48 +0000
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40wxn8dfa3-2;
+	Mon, 12 Aug 2024 19:05:49 +0000
 From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
 Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
         willy@infradead.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH v2 1/2] maple_tree: reset mas->index and mas->last on write retries
-Date: Mon, 12 Aug 2024 15:05:42 -0400
-Message-ID: <20240812190543.71967-1-sidhartha.kumar@oracle.com>
+Subject: [PATCH v2 2/2] maple_tree: add test to replicate low memory race conditions
+Date: Mon, 12 Aug 2024 15:05:43 -0400
+Message-ID: <20240812190543.71967-2-sidhartha.kumar@oracle.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240812190543.71967-1-sidhartha.kumar@oracle.com>
+References: <20240812190543.71967-1-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,107 +84,192 @@ X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adults
  phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
  definitions=main-2408120141
-X-Proofpoint-ORIG-GUID: 6I9s2c9p3OEU8v8FvF9ViXXLFMoqIjAi
-X-Proofpoint-GUID: 6I9s2c9p3OEU8v8FvF9ViXXLFMoqIjAi
+X-Proofpoint-ORIG-GUID: rAZAEemYjuAn6o_hPAuZF05o8qpaOcbe
+X-Proofpoint-GUID: rAZAEemYjuAn6o_hPAuZF05o8qpaOcbe
 
-The following scenario can result in a race condition:
+Add new callback fields to the userspace implementation of struct
+kmem_cache. This allows for executing callback functions in order to
+further test low memory scenarios where node allocation is retried.
 
-Consider a node with the following indices and values
-
-	a<------->b<----------->c<--------->d
-	    0xA        NULL          0xB
-
-	CPU 1			  CPU 2
-      ---------        		---------
-	mas_set_range(a,b)
-	mas_erase()
-		-> range is expanded (a,c) because of null expansion
-
-	mas_nomem()
-	mas_unlock()
-				mas_store_range(b,c,0xC)
-
-The node now looks like:
-
-	a<------->b<----------->c<--------->d
-	    0xA        0xC          0xB
-
-	mas_lock()
-	mas_erase() <------ range of erase is still (a,c)
-
-The node is now NULL from (a,c) but the write from CPU 2 should have been
-retained and range (b,c) should still have 0xC as its value. We can fix
-this by re-intializing to the original index and last. This does not need
-a cc: Stable as there are no users of the maple tree which use internal
-locking and this condition is only possible with internal locking.
+This callback can help test race conditions by calling a function when a
+low memory event is tested.
 
 Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
 ---
 v1 -> v2:
-        - re-initialize index and last in the mas_nomem() if statement so
-          fast path is not effected in mas_erase().
+        - change test name to check_nomem_writer_race()
+        - move test down in farmer_tests()
+        - remove mas_destroy() from check_nomem_writer_race() as its not
+          needed
+        - remove using mas.index and mas.last directly through
+          mas_set_range() and MA_STATE macros.
+        - remove uneeded mas_reset() in check_nomem_writer_race().
 
-        - use __mas_set_range() rather than set mas->index and mas->last
-          directly.
-
- lib/maple_tree.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ lib/maple_tree.c                 | 13 +++++++
+ tools/testing/radix-tree/maple.c | 63 ++++++++++++++++++++++++++++++++
+ tools/testing/shared/linux.c     | 26 ++++++++++++-
+ 3 files changed, 101 insertions(+), 1 deletion(-)
 
 diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index aa3a5df15b8e..b547ff211ac7 100644
+index b547ff211ac7..14d7864b8d53 100644
 --- a/lib/maple_tree.c
 +++ b/lib/maple_tree.c
-@@ -5451,14 +5451,19 @@ EXPORT_SYMBOL_GPL(mas_store);
-  */
- int mas_store_gfp(struct ma_state *mas, void *entry, gfp_t gfp)
- {
-+	unsigned long index = mas->index;
-+	unsigned long last = mas->last;
- 	MA_WR_STATE(wr_mas, mas, entry);
- 
- 	mas_wr_store_setup(&wr_mas);
- 	trace_ma_write(__func__, mas, 0, entry);
- retry:
- 	mas_wr_store_entry(&wr_mas);
--	if (unlikely(mas_nomem(mas, gfp)))
-+	if (unlikely(mas_nomem(mas, gfp))) {
-+		if (!entry)
-+			__mas_set_range(mas, index, last);
- 		goto retry;
-+	}
- 
- 	if (unlikely(mas_is_err(mas)))
- 		return xa_err(mas->node);
-@@ -6245,23 +6250,26 @@ EXPORT_SYMBOL_GPL(mas_find_range_rev);
- void *mas_erase(struct ma_state *mas)
- {
- 	void *entry;
-+	unsigned long index = mas->index;
- 	MA_WR_STATE(wr_mas, mas, NULL);
- 
- 	if (!mas_is_active(mas) || !mas_is_start(mas))
- 		mas->status = ma_start;
- 
--	/* Retry unnecessary when holding the write lock. */
-+write_retry:
- 	entry = mas_state_walk(mas);
- 	if (!entry)
- 		return NULL;
- 
--write_retry:
- 	/* Must reset to ensure spanning writes of last slot are detected */
- 	mas_reset(mas);
- 	mas_wr_store_setup(&wr_mas);
- 	mas_wr_store_entry(&wr_mas);
--	if (mas_nomem(mas, GFP_KERNEL))
-+	if (mas_nomem(mas, GFP_KERNEL)) {
-+		/* in case the range of entry changed when unlocked */
-+		mas->index = mas->last = index;
- 		goto write_retry;
-+	}
- 
- 	return entry;
+@@ -7005,6 +7005,19 @@ void mt_set_non_kernel(unsigned int val)
+ 	kmem_cache_set_non_kernel(maple_node_cache, val);
  }
+ 
++extern void kmem_cache_set_callback(struct kmem_cache *cachep,
++		void (*callback)(void *));
++void mt_set_callback(void (*callback)(void *))
++{
++	kmem_cache_set_callback(maple_node_cache, callback);
++}
++
++extern void kmem_cache_set_private(struct kmem_cache *cachep, void *private);
++void mt_set_private(void *private)
++{
++	kmem_cache_set_private(maple_node_cache, private);
++}
++
+ extern unsigned long kmem_cache_get_alloc(struct kmem_cache *);
+ unsigned long mt_get_alloc_size(void)
+ {
+diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+index cd1cf05503b4..ef5b83cf94ea 100644
+--- a/tools/testing/radix-tree/maple.c
++++ b/tools/testing/radix-tree/maple.c
+@@ -36224,6 +36224,65 @@ static noinline void __init check_mtree_dup(struct maple_tree *mt)
+ 
+ extern void test_kmem_cache_bulk(void);
+ 
++/* callback function used for check_nomem_writer_race() */
++static void writer2(void *maple_tree)
++{
++	struct maple_tree *mt = (struct maple_tree *)maple_tree;
++	MA_STATE(mas, mt, 6, 10);
++
++	mtree_lock(mas.tree);
++	mas_store(&mas, xa_mk_value(0xC));
++	mas_destroy(&mas);
++	mtree_unlock(mas.tree);
++}
++
++/*
++ * check_nomem_writer_race() - test a possible race in the mas_nomem() path
++ * @mt: The tree to build.
++ *
++ * There is a possible race condition in low memory conditions when mas_nomem()
++ * gives up its lock. A second writer can chagne the entry that the primary
++ * writer executing the mas_nomem() path is modifying. This test recreates this
++ * scenario to ensure we are handling it correctly.
++ */
++static void check_nomem_writer_race(struct maple_tree *mt)
++{
++	MA_STATE(mas, mt, 0, 5);
++
++	mt_set_non_kernel(0);
++	/* setup root with 2 values with NULL in between */
++	mtree_store_range(mt, 0, 5, xa_mk_value(0xA), GFP_KERNEL);
++	mtree_store_range(mt, 6, 10, NULL, GFP_KERNEL);
++	mtree_store_range(mt, 11, 15, xa_mk_value(0xB), GFP_KERNEL);
++
++	/* setup writer 2 that will trigger the race condition */
++	mt_set_private(mt);
++	mt_set_callback(writer2);
++
++	mtree_lock(mt);
++	/* erase 0-5 */
++	mas_erase(&mas);
++
++	/* index 6-10 should retain the value from writer 2 */
++	check_load(mt, 6, xa_mk_value(0xC));
++	mtree_unlock(mt);
++
++	/* test for the same race but with mas_store_gfp() */
++	mtree_store_range(mt, 0, 5, xa_mk_value(0xA), GFP_KERNEL);
++	mtree_store_range(mt, 6, 10, NULL, GFP_KERNEL);
++
++	mas_set_range(&mas, 0, 5);
++	mtree_lock(mt);
++	mas_store_gfp(&mas, NULL, GFP_KERNEL);
++
++	/* ensure write made by writer 2 is retained */
++	check_load(mt, 6, xa_mk_value(0xC));
++
++	mt_set_private(NULL);
++	mt_set_callback(NULL);
++	mtree_unlock(mt);
++}
++
+ void farmer_tests(void)
+ {
+ 	struct maple_node *node;
+@@ -36257,6 +36316,10 @@ void farmer_tests(void)
+ 	check_dfs_preorder(&tree);
+ 	mtree_destroy(&tree);
+ 
++	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
++	check_nomem_writer_race(&tree);
++	mtree_destroy(&tree);
++
+ 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
+ 	check_prealloc(&tree);
+ 	mtree_destroy(&tree);
+diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
+index 4eb442206d01..17263696b5d8 100644
+--- a/tools/testing/shared/linux.c
++++ b/tools/testing/shared/linux.c
+@@ -26,8 +26,21 @@ struct kmem_cache {
+ 	unsigned int non_kernel;
+ 	unsigned long nr_allocated;
+ 	unsigned long nr_tallocated;
++	bool exec_callback;
++	void (*callback)(void *);
++	void *private;
+ };
+ 
++void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *))
++{
++	cachep->callback = callback;
++}
++
++void kmem_cache_set_private(struct kmem_cache *cachep, void *private)
++{
++	cachep->private = private;
++}
++
+ void kmem_cache_set_non_kernel(struct kmem_cache *cachep, unsigned int val)
+ {
+ 	cachep->non_kernel = val;
+@@ -58,9 +71,17 @@ void *kmem_cache_alloc_lru(struct kmem_cache *cachep, struct list_lru *lru,
+ {
+ 	void *p;
+ 
++	if (cachep->exec_callback) {
++		if (cachep->callback)
++			cachep->callback(cachep->private);
++		cachep->exec_callback = false;
++	}
++
+ 	if (!(gfp & __GFP_DIRECT_RECLAIM)) {
+-		if (!cachep->non_kernel)
++		if (!cachep->non_kernel) {
++			cachep->exec_callback = true;
+ 			return NULL;
++		}
+ 
+ 		cachep->non_kernel--;
+ 	}
+@@ -223,6 +244,9 @@ kmem_cache_create(const char *name, unsigned int size, unsigned int align,
+ 	ret->objs = NULL;
+ 	ret->ctor = ctor;
+ 	ret->non_kernel = 0;
++	ret->exec_callback = false;
++	ret->callback = NULL;
++	ret->private = NULL;
+ 	return ret;
+ }
+ 
 -- 
 2.46.0
 
