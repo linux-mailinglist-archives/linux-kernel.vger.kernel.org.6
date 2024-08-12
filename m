@@ -1,204 +1,214 @@
-Return-Path: <linux-kernel+bounces-283794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 578B694F8BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD4C94F8C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE6FB2127C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:07:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852091C22330
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4514F186E37;
-	Mon, 12 Aug 2024 21:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9881219307E;
+	Mon, 12 Aug 2024 21:08:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OMRZMQzF"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYpDFOyF"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041551581EB
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:07:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A671581EB;
+	Mon, 12 Aug 2024 21:08:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723496847; cv=none; b=iRmd+nrD9E0asAMU4jJgFR5+FsS/iDPnrD5sE64XFra6Vo6r34vX4oABzp3RvUL8eoqmdY4ZOJutXJswY/ZAqjd7zoI6No8dakcvsccTwm53iHaMMioVl6TE9IkeyCiu/TUholnjSE209KyHXP/xpI4MQV7RVHbM5HRgsShWOV0=
+	t=1723496904; cv=none; b=h/lMS2Tlq+3cJTcHIQ6JPzn7VciY/CGMp+exr89kRoWlzbHjip/mNpKK07DGSjkNV3O6WHn+OwfVMBRFX48/171l3u8Q3rm+5DxUKmsFIKtTPkKi/tD7rWt0EjYIKDMrCycSNLtnmlOm9OkavE+8A2Ks7hX3CQXuUZBVu52Jhck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723496847; c=relaxed/simple;
-	bh=CJnIpz+BT5KpvUhf82gHS8CYfDD2h7TWLoQzhvwsnoE=;
+	s=arc-20240116; t=1723496904; c=relaxed/simple;
+	bh=TTMb9LEyN7g/Xv9eOcfbpWjri5fcu4h/8eQvO7ZyqH8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hGnXeRjkLAM9xC71KzdzJn3YpJ7Li1W/AYeZh9zDnrJ926K6TUHhOtuO5/JEb6MHLX286WumJPNrUXPlSM14yIUQDvlzSzEIItZ8zWtWhM5IuOE9LeO5ZlDaam16ABLENoMV7SCx/Bo8tVYxuujy/MsVKmHMWzm66FjV9bdEyNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OMRZMQzF; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f01ec08d6so6600130e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:07:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=ssqAP2yLo8tilEHoQNjrqwNIalYKOK44kgX460b9jSp5LLtwr7MczrbIgqcV6807KGONB+wcCD35/2LzatwMgJorL+CF4q01O/Zqe/PMDfBNWrmnbq6iIet1HQPHy/BkvQHizChHrTrj8OOfpiyAoZOlMlnhkrfxYGIiRTv6pPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYpDFOyF; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-69df49d92b8so34476947b3.3;
+        Mon, 12 Aug 2024 14:08:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1723496842; x=1724101642; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+M6sFpemSi2gVT65UI6JVGzP9ICp9Za4S0jkx11wVbg=;
-        b=OMRZMQzFtInJGdF+PXxeiacbGJ/z95HdqVVP0a2d/c80cYFaabxg0kkTUPebnK+kGS
-         6V99ztRfbcZROd55FOq0VR48szpx133m8kUys/z7ZFpUG+ut9PWGzp4a1SXUWdaVlb6z
-         OnsLslpnjTPo9bXsIoO9/zHfaoGtrdeQfALv8=
+        d=gmail.com; s=20230601; t=1723496902; x=1724101702; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ozHPNPADeOeDy1v2q5lPuwLxMRVupqF4qM3cF1jX79Q=;
+        b=gYpDFOyFyFfXgsOAUKnLDgJ4Ju3YzV86qSYg5R291eB7cfv4jcdN0FtLynlq4gGuSI
+         YsaSAaGCACpkTxSeQq6n5JoRqwCgncQ4uYXXQ5Jo6YvRRtugIGg8lNFbWnhLRzDFGK+W
+         OKE3V68uEryt7sTHTZoPikwHnGAObMqbErrVzWDThE//15GjMfo/UJ6QnZ/phsa1VrRx
+         ry9wBaULuPJcdMUvh9jygakY4lyH1iH5nVCT1YLByYQoNH2Paezk57/XByPnYnIvMeW6
+         YuEI8WeM3dlz/WF3DUJ03ho8J3fEwOPXOF6YlOjOzw92hNUDXkYz8rgZC6zqvl8xWKoh
+         gGDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723496842; x=1724101642;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+M6sFpemSi2gVT65UI6JVGzP9ICp9Za4S0jkx11wVbg=;
-        b=YBWOMAEk2sNKIcbSkzY0seYvYtBDbkCgjiC15Xn5MzQHi3qk5UzHoK1XOnv1XuVXkr
-         00u2LcSWhX8I3f7cM22DA5ud+/al8I3XgA62Kh05pzmDfRvatLDnzemjpkZqWpcElnOU
-         /TJc5fPNaEgsGF5ixywpKL/tYfPpV+QVMrX8ht+RADjMtvMPrE/Ko3ZCSTqPGdRcVEXD
-         M0XvajwdDwJLFFvcrV/R2yUf4mIDOH5lynD3vzUtqnCHiSDkhDo5Ji2bg5fAlov5kkla
-         ZbralL52JiQ8EYWmIWkVDG8l0mQxJd7CYdDbGJiNcVfrM9vN9QWToRgcFroycx9ZRMVq
-         gcRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYLih6BZ16hRekK1YzriyeG2IxQc3Sy4d8XavbDFIcOzakKRhRR5D3bt3Lv+a3EqBJaKorrh3ukXVR7U2ZyoLYeToWICkTelHOTa4T
-X-Gm-Message-State: AOJu0Yx8U1Zyel5H2Pi9gwXF/K+osnqK03lxw1WSIz62oFVvrJWKhjVm
-	IvlWw6xxA0igqz7H4LYirefgvp9jLneKQS8/jw6M7URpZZgmAC1B/klgXAYYHV6ou20SrvLtpWO
-	LkYA=
-X-Google-Smtp-Source: AGHT+IGtWgmPiV1bljeJoSA1NdU3Zoe285mrqkaudr+BEJV0weg+4J9Sb8y65iDicKrg4k53OHm6Fg==
-X-Received: by 2002:a05:6512:23a5:b0:52c:deba:7e6e with SMTP id 2adb3069b0e04-5321365cbc8mr1088547e87.29.1723496841626;
-        Mon, 12 Aug 2024 14:07:21 -0700 (PDT)
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414f078sm10055366b.154.2024.08.12.14.07.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 14:07:19 -0700 (PDT)
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so5652690a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:07:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWL0UtgEJKIANSX/YUcbpVq6uM6L0E3H+tYVWCXFaWImXgYFDPPeieFsxIdQO+JDeXou60e0m5P8SOicyHoCQuanNlBL9Q9WPYJJaj4
-X-Received: by 2002:a05:6402:4406:b0:5b4:d025:b9f1 with SMTP id
- 4fb4d7f45d1cf-5bd44c0e794mr1118723a12.6.1723496839459; Mon, 12 Aug 2024
- 14:07:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723496902; x=1724101702;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ozHPNPADeOeDy1v2q5lPuwLxMRVupqF4qM3cF1jX79Q=;
+        b=VwT6Q4WhHzfLmWEGX/NgizppNNkCM2552RI8MKUvPBkgEtgS7503UGsjEi/SKn7MZN
+         Y2RYoTcUalOL0CsgddtniN54r4a/kQc4vejKtQWv22t9wvRJAbt3JOmdU86zK+nWr0Zd
+         58xCl3U65ZPgb0mpSsqcVa4rpcOmyuPOm631fHVVaP7pPIsGqY93ITrAmTRxsDus229e
+         GtaHAqla02LvZdzSWCBrmcNstNOYuXJuwL3rkvsQ6SZsrvzBYg5r/i1lcAN8CijBwprZ
+         1B3A6vZ2QM0ob8iI825irbhrWTJXAMndICibIfz+BorfAv0CogiaUt3n7iBQF/lB/I6Z
+         8Xdg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/jNFiyB+/uihOG2/ft3qGMWAIy2vdnodrrk8DYlc1jZImXldHFvYMZYSgwZjews7H3Mpk9auHQFvs1lvRQ/lLDADreWxJawUKx3Ca
+X-Gm-Message-State: AOJu0YxnUM4CGxQaMIPTRKjs3A7LiAVLWMqOy95ht3I9L/rNvXSKGrIa
+	WN3YOwJG+LB31UaeBdgjuWvenTn4cSsa2nzKrYOBq1ZeM8xdj5u9E1O6G99WQ7d2YcPM87AiLpt
+	PP1TnXLdMfvJewFZc66McfPzAJMbHZTLn
+X-Google-Smtp-Source: AGHT+IFn+cJikIJ4Nrk1LCrt6QexENyZbb3TKxFyeGJ+ELoZ+Uj9Kz1ZQ+YePorKSgiydhpbKplkuGKb3GRuT7OCF4M=
+X-Received: by 2002:a05:690c:4291:b0:643:93dc:731c with SMTP id
+ 00721157ae682-6a971eb6dbbmr18657337b3.17.1723496902023; Mon, 12 Aug 2024
+ 14:08:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240528003521.979836-1-ankur.a.arora@oracle.com>
- <2d6ef6d8-6aef-4703-a9c7-90501537cdc5@linux.ibm.com> <8734pw51he.fsf@oracle.com>
- <71efae1a-6a27-4e1f-adac-19c1b18e0f0c@linux.ibm.com> <bbeca067-ae70-43ff-afab-6d06648c5481@linux.ibm.com>
- <87zfrts1l1.fsf@oracle.com> <17555273-a361-48b8-8543-9f63c2b8856b@linux.ibm.com>
- <e7e2126f-40ca-44af-9287-888f4ec34b35@linux.ibm.com> <871q4td59k.fsf@oracle.com>
- <14d4584d-a087-4674-9e2b-810e96078b3a@linux.ibm.com> <87msn785f0.fsf@oracle.com>
- <87sewzkjy5.fsf@mail.lhotse> <e8efdade-161e-4efe-8bd3-abb12ad45dee@linux.ibm.com>
- <87sewr6o5w.fsf@oracle.com> <1a973dda-c79e-4d95-935b-e4b93eb077b8@linux.ibm.com>
-In-Reply-To: <1a973dda-c79e-4d95-935b-e4b93eb077b8@linux.ibm.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 12 Aug 2024 14:07:02 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi+VFeT7e04kMr7jhoKWb4iKgb1szb7BxXC_-M38_qAKw@mail.gmail.com>
-Message-ID: <CAHk-=wi+VFeT7e04kMr7jhoKWb4iKgb1szb7BxXC_-M38_qAKw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/35] PREEMPT_AUTO: support lazy rescheduling
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Ankur Arora <ankur.a.arora@oracle.com>, Michael Ellerman <mpe@ellerman.id.au>, tglx@linutronix.de, 
-	peterz@infradead.org, paulmck@kernel.org, rostedt@goodmis.org, 
-	mark.rutland@arm.com, juri.lelli@redhat.com, joel@joelfernandes.org, 
-	raghavendra.kt@amd.com, boris.ostrovsky@oracle.com, konrad.wilk@oracle.com, 
-	LKML <linux-kernel@vger.kernel.org>, Nicholas Piggin <npiggin@gmail.com>
+References: <20240812190700.14270-1-rosenp@gmail.com> <20240812190700.14270-2-rosenp@gmail.com>
+In-Reply-To: <20240812190700.14270-2-rosenp@gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 12 Aug 2024 14:08:11 -0700
+Message-ID: <CAKxU2N_nk_H9bHnofqYquSzVfQboayM3ELbPZy4=C=RNvM7Kkg@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] net: ag71xx: use devm_clk_get_enabled
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, 
+	o.rempel@pengutronix.de
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 Aug 2024 at 10:33, Shrikanth Hegde <sshegde@linux.ibm.com> wrote:
+On Mon, Aug 12, 2024 at 12:07=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wro=
+te:
 >
-> top 3 callstacks of __schedule collected with bpftrace.
+> Allows removal of clk_prepare_enable to simplify the code slightly.
 >
->                         preempt=none                                                            preempt=full
+> Tested on a TP-LINK Archer C7v2.
 >
->      __schedule+12                                                                  |@[
->      schedule+64                                                                    |    __schedule+12
->      interrupt_exit_user_prepare_main+600                                           |    preempt_schedule+84
->      interrupt_exit_user_prepare+88                                                 |    _raw_spin_unlock_irqrestore+124
->      interrupt_return_srr_user+8                                                    |    __wake_up_sync_key+108
-> , hackbench]: 482228                                                               |    pipe_write+1772
-> @[                                                                                 |    vfs_write+1052
->      __schedule+12                                                                  |    ksys_write+248
->      schedule+64                                                                    |    system_call_exception+296
->      pipe_write+1452                                                                |    system_call_vectored_common+348
->      vfs_write+940                                                                  |, hackbench]: 538591
->      ksys_write+248                                                                 |@[
->      system_call_exception+292                                                      |    __schedule+12
->      system_call_vectored_common+348                                                |    schedule+76
-> , hackbench]: 1427161                                                              |    schedule_preempt_disabled+52
-> @[                                                                                 |    __mutex_lock.constprop.0+1748
->      __schedule+12                                                                  |    pipe_write+132
->      schedule+64                                                                    |    vfs_write+1052
->      interrupt_exit_user_prepare_main+600                                           |    ksys_write+248
->      syscall_exit_prepare+336                                                       |    system_call_exception+296
->      system_call_vectored_common+360                                                |    system_call_vectored_common+348
-> , hackbench]: 8151309                                                              |, hackbench]: 5388301
-> @[                                                                                 |@[
->      __schedule+12                                                                  |    __schedule+12
->      schedule+64                                                                    |    schedule+76
->      pipe_read+1100                                                                 |    pipe_read+1100
->      vfs_read+716                                                                   |    vfs_read+716
->      ksys_read+252                                                                  |    ksys_read+252
->      system_call_exception+292                                                      |    system_call_exception+296
->      system_call_vectored_common+348                                                |    system_call_vectored_common+348
-> , hackbench]: 18132753                                                             |, hackbench]: 64424110
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/ethernet/atheros/ag71xx.c | 31 ++++++---------------------
+>  1 file changed, 7 insertions(+), 24 deletions(-)
 >
-
-So the pipe performance is very sensitive, partly because the pipe
-overhead is normally very low.
-
-So we've seen it in lots of benchmarks where the benchmark then gets
-wildly different results depending on whether you get the goo "optimal
-pattern".
-
-And I think your "preempt=none" pattern is the one you really want,
-where all the pipe IO scheduling is basically done at exactly the
-(optimized) pipe points, ie where the writer blocks because there is
-no room (if it's a throughput benchmark), and the reader blocks
-because there is no data (for the ping-pong or pipe ring latency
-benchmarks).
-
-And then when you get that "perfect" behavior, you typically also get
-the best performance when all readers and all writers are on the same
-CPU, so you get no unnecessary cache ping-pong either.
-
-And that's a *very* typical pipe benchmark, where there are no costs
-to generating the pipe data and no costs involved with consuming it
-(ie the actual data isn't really *used* by the benchmark).
-
-In real (non-benchmark) loads, you typically want to spread the
-consumer and producer apart on different CPUs, so that the real load
-then uses multiple CPUs on the data. But the benchmark case - having
-no real data load - likes the "stay on the same CPU" thing.
-
-Your traces for "preempt=none" very much look like that "both reader
-and writer sleep synchronously" case, which is the optimal benchmark
-case.
-
-And then with "preempt=full", you see that "oh damn, reader and writer
-actually hit the pipe mutex contention, because they are presumably
-running at the same time on different CPUs, and didn't get into that
-nice serial synchronous pattern. So now you not only have that mutex
-overhead (which doesn't exist in the reader and writer synchronize),
-you also end up with the cost of cache misses *and* the cost of
-scheduling on two different CPU's where both of them basically go into
-idle while waiting for the other end.
-
-I'm not convinced this is solvable, because it really is an effect
-that comes from "benchmarking is doing something odd that we
-*shouldn't* generally optimize for".
-
-I also absolutely detest the pipe mutex - 99% of what it protects
-should be using either just atomic cmpxchg or possibly a spinlock, and
-that's actually what the "use pipes for events" code does. However,
-the actual honest user read()/write() code needs to do user space
-accesses, and so it wants a sleeping lock.
-
-We could - and probably at some point should - split the pipe mutex
-into two: one that protects the writer side, one that protects the
-reader side. Then with the common situation of a single reader and a
-single writer, the mutex would never be contended. Then the rendezvous
-between that "one reader" and "one writer" would be done using
-atomics.
-
-But it would be more complex, and it's already complicated by the
-whole "you can also use pipes for atomic messaging for watch-queues".
-
-Anyeway, preempt=none has always excelled at certain things. This is
-one of them.
-
-               Linus
+> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet=
+/atheros/ag71xx.c
+> index 6fc4996c8131..c22ebd3c1f46 100644
+> --- a/drivers/net/ethernet/atheros/ag71xx.c
+> +++ b/drivers/net/ethernet/atheros/ag71xx.c
+> @@ -691,7 +691,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+>         np =3D dev->of_node;
+>         ag->mii_bus =3D NULL;
+>
+> -       ag->clk_mdio =3D devm_clk_get(dev, "mdio");
+> +       ag->clk_mdio =3D devm_clk_get_enabled(dev, "mdio");
+I forgot to remove the following section. Will do this in v2. I'll
+send tomorrow as rules seem to be no new patches for 24 hours.
+>         if (IS_ERR(ag->clk_mdio)) {
+>                 netif_err(ag, probe, ndev, "Failed to get mdio clk.\n");
+>                 return PTR_ERR(ag->clk_mdio);
+> @@ -704,16 +704,13 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+>         }
+>
+>         mii_bus =3D devm_mdiobus_alloc(dev);
+> -       if (!mii_bus) {
+> -               err =3D -ENOMEM;
+> -               goto mdio_err_put_clk;
+> -       }
+> +       if (!mii_bus)
+> +               return -ENOMEM;
+>
+>         ag->mdio_reset =3D of_reset_control_get_exclusive(np, "mdio");
+>         if (IS_ERR(ag->mdio_reset)) {
+>                 netif_err(ag, probe, ndev, "Failed to get reset mdio.\n")=
+;
+> -               err =3D PTR_ERR(ag->mdio_reset);
+> -               goto mdio_err_put_clk;
+> +               return PTR_ERR(ag->mdio_reset);
+>         }
+>
+>         mii_bus->name =3D "ag71xx_mdio";
+> @@ -735,22 +732,17 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
+>         err =3D of_mdiobus_register(mii_bus, mnp);
+>         of_node_put(mnp);
+>         if (err)
+> -               goto mdio_err_put_clk;
+> +               return err;
+>
+>         ag->mii_bus =3D mii_bus;
+>
+>         return 0;
+> -
+> -mdio_err_put_clk:
+> -       clk_disable_unprepare(ag->clk_mdio);
+> -       return err;
+>  }
+>
+>  static void ag71xx_mdio_remove(struct ag71xx *ag)
+>  {
+>         if (ag->mii_bus)
+>                 mdiobus_unregister(ag->mii_bus);
+> -       clk_disable_unprepare(ag->clk_mdio);
+>  }
+>
+>  static void ag71xx_hw_stop(struct ag71xx *ag)
+> @@ -1845,7 +1837,7 @@ static int ag71xx_probe(struct platform_device *pde=
+v)
+>                 return -EINVAL;
+>         }
+>
+> -       ag->clk_eth =3D devm_clk_get(&pdev->dev, "eth");
+> +       ag->clk_eth =3D devm_clk_get_enabled(&pdev->dev, "eth");
+>         if (IS_ERR(ag->clk_eth)) {
+>                 netif_err(ag, probe, ndev, "Failed to get eth clk.\n");
+>                 return PTR_ERR(ag->clk_eth);
+> @@ -1925,19 +1917,13 @@ static int ag71xx_probe(struct platform_device *p=
+dev)
+>         netif_napi_add_weight(ndev, &ag->napi, ag71xx_poll,
+>                               AG71XX_NAPI_WEIGHT);
+>
+> -       err =3D clk_prepare_enable(ag->clk_eth);
+> -       if (err) {
+> -               netif_err(ag, probe, ndev, "Failed to enable eth clk.\n")=
+;
+> -               return err;
+> -       }
+> -
+>         ag71xx_wr(ag, AG71XX_REG_MAC_CFG1, 0);
+>
+>         ag71xx_hw_init(ag);
+>
+>         err =3D ag71xx_mdio_probe(ag);
+>         if (err)
+> -               goto err_put_clk;
+> +               return err;
+>
+>         platform_set_drvdata(pdev, ndev);
+>
+> @@ -1962,8 +1948,6 @@ static int ag71xx_probe(struct platform_device *pde=
+v)
+>
+>  err_mdio_remove:
+>         ag71xx_mdio_remove(ag);
+> -err_put_clk:
+> -       clk_disable_unprepare(ag->clk_eth);
+>         return err;
+>  }
+>
+> @@ -1978,7 +1962,6 @@ static void ag71xx_remove(struct platform_device *p=
+dev)
+>         ag =3D netdev_priv(ndev);
+>         unregister_netdev(ndev);
+>         ag71xx_mdio_remove(ag);
+> -       clk_disable_unprepare(ag->clk_eth);
+>         platform_set_drvdata(pdev, NULL);
+>  }
+>
+> --
+> 2.46.0
+>
 
