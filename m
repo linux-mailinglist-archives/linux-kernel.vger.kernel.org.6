@@ -1,96 +1,122 @@
-Return-Path: <linux-kernel+bounces-283505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA5694F5C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:24:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A2F94F5C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A08D31C212AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:24:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098AD1F21CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C815188CC0;
-	Mon, 12 Aug 2024 17:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B496188CC0;
+	Mon, 12 Aug 2024 17:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RRauf0Fx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMU+oZ9M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E36A91804F;
-	Mon, 12 Aug 2024 17:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDBD1804F;
+	Mon, 12 Aug 2024 17:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723483481; cv=none; b=CrgHYeCRlf2eT9w5CvHK8ud00TokXYCMVG54h1Nd386LmSINQsJO85Pv3yzoGGScYqz2A79dcfCrF/TjYe+WrJwxi/bP1w/FJCAuG10NXr2z/9t5DlnY7BY+Z+4D/3MJOoMar879LyWmjen4/8ItaGcC+TcC1DkgXS8UjJAmKR4=
+	t=1723483535; cv=none; b=O2J8XhNmnxRkald4f3HUDO6p7xLVq4Qq5jQiVUPN3QSahf5k1ItdZrBlbCXN0/9Lah8q9Su/1hSEgLnlRTWIF54oSJz9JJkfMQCo5+TcLRYrIg1kngUeradMFjmshb3je8PiYu6YoC97bcCdIJhLqqMXPfIh8zQoE0+cJXuHcEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723483481; c=relaxed/simple;
-	bh=muVd1FuJJevJKNII3TSAT6+y02C3te2AdDuHpsHZ0yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VfLEE5+DY4UP9aN8k7yq4yYoXxldJDxW9IAEl3kw/mFRhu3xq84/iy27QAZVIJhqs67/XhcDuzvUQZewOepv15CxS+spnUZWKHaGYOs1U20acPoq0HeqQd+Hxi8PYrcrWBcmIQNi3P1XI1S5L2IkSblFgCy8jJJfTghrjbgGTJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RRauf0Fx; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723483480; x=1755019480;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=muVd1FuJJevJKNII3TSAT6+y02C3te2AdDuHpsHZ0yU=;
-  b=RRauf0FxqqcXtwi75nzt2rfbjkEKffgNnePMeZspw26iucfJFxboDUkY
-   Qddlq/r2JalV9OeutnPPCkkNDxMoEeOW0JaPHDTUGQ/V0T7IKFWMfq07W
-   ykQ5+A2lubBxbjNGjK12hAa6/PP3/w9qBOedyaXyHJs9FT+ghfioGsgbG
-   ltmsXiJ8yR9ZpnJbBoOE9GlaEzitytJQ+M9ieTzPTEtqQ1d0ai3ykfSbb
-   4SnFQV2EqhS7J9R6ERjW6AoxLe472nyrvkvv1vgF/GyhfUMf86y7GD+1o
-   f/smSLXyjL54UtESVp2wBF/ZURm2SbDEJOVADMZPhedghqtMSUw0id0sh
-   A==;
-X-CSE-ConnectionGUID: MXFgJLxKRXiDKv7FOu6iFA==
-X-CSE-MsgGUID: yi00V8XfRReVoZHYTtBZwQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39123457"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="39123457"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:24:39 -0700
-X-CSE-ConnectionGUID: GQBStyC2TcyHGpvGGxlE2g==
-X-CSE-MsgGUID: gJHZXCzHTjmPhzxkhr9RsA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="62990701"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:24:37 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdYmZ-0000000EQZW-1nJS;
-	Mon, 12 Aug 2024 20:24:35 +0300
-Date: Mon, 12 Aug 2024 20:24:35 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sanket Goswami <Sanket.Goswami@amd.com>
-Subject: Re: [PATCH v2] ACPI: APD: Add AMDI0015 as platform device
-Message-ID: <ZrpFU6wFyQDykSlO@smile.fi.intel.com>
-References: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com>
+	s=arc-20240116; t=1723483535; c=relaxed/simple;
+	bh=4QgLVYNSEIKhcZgTiNhe32pMH7y8AEFi57gzonoOC5E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ncWPSTNcBjEoWf3FEqc0OZhEEFks5sHmHQT2KYiVUKlNwYLIXCLU3lt4Z9Xm3Ex3gbOOwwp8NZC8kHEuBGNsnK4hTI7owERCMgpHSj/XeCeoTPikv+8j7dVH8Say42X9L4wpqm/mBsGZ9Z8ydyEoaVoMIiun1sf3LKfEHKq95jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMU+oZ9M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FE8AC32782;
+	Mon, 12 Aug 2024 17:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723483535;
+	bh=4QgLVYNSEIKhcZgTiNhe32pMH7y8AEFi57gzonoOC5E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MMU+oZ9MWxywldvMUt06X5SFaccEP6VVYPvuntlt5KDd8qhPvXdYPyy2/FhlRV75F
+	 TyOXQx1ASZbNZQTLi2HcJftpjYRF/68NGWwZ98qRhFdYCyfe1CnB0kt/zaDPgBUNl8
+	 j8YVayJUkd1s4RfvlBQEbMpfOXENO7srXKPlOV/3l97a1iswTjEv0CPSa46BgadNqq
+	 eNHkSK7J7ligVlv1O/UM3ZhHM8gutsg4oVYB+wrhHz7B6oVh2tSAQSGzg9uXMig2qw
+	 /zDh+CZr1AMfrH9h7VRW18f1HliM1m6XQO5CWVy0SJwNF6suwcGtag5FqZTtwMTYUl
+	 5pZ0zEUfMQyBQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH v2] perf lock contention: Change stack_id type to s32
+Date: Mon, 12 Aug 2024 10:25:33 -0700
+Message-ID: <20240812172533.2015291-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812144018.360847-1-Shyam-sundar.S-k@amd.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 08:10:18PM +0530, Shyam Sundar S K wrote:
-> Add AMDI0015 to the ACPI APD support list to ensure correct clock settings
-> for the I3C device on the latest AMD platforms.
+The bpf_get_stackid() helper returns a signed type to check whether it
+failed to get a stacktrace or not.  But it saved the result in u32 and
+checked if the value is negative.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-from the ACPI ID perspective.
+      376         if (needs_callstack) {
+      377                 pelem->stack_id = bpf_get_stackid(ctx, &stacks,
+      378                                                   BPF_F_FAST_STACK_CMP | stack_skip);
+  --> 379                 if (pelem->stack_id < 0)
 
+  ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_begin()
+  warn: unsigned 'pelem->stack_id' is never less than zero.
+
+Let's change the type to s32 instead.
+
+Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for BPF")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+v2) fix build error for s32
+
+ tools/perf/util/bpf_skel/lock_data.h       | 4 ++--
+ tools/perf/util/bpf_skel/vmlinux/vmlinux.h | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util/bpf_skel/lock_data.h
+index 36af11faad03..de12892f992f 100644
+--- a/tools/perf/util/bpf_skel/lock_data.h
++++ b/tools/perf/util/bpf_skel/lock_data.h
+@@ -7,11 +7,11 @@ struct tstamp_data {
+ 	u64 timestamp;
+ 	u64 lock;
+ 	u32 flags;
+-	u32 stack_id;
++	s32 stack_id;
+ };
+ 
+ struct contention_key {
+-	u32 stack_id;
++	s32 stack_id;
+ 	u32 pid;
+ 	u64 lock_addr_or_cgroup;
+ };
+diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+index e9028235d771..d818e30c5457 100644
+--- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
++++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+@@ -15,6 +15,7 @@
+ 
+ typedef __u8 u8;
+ typedef __u32 u32;
++typedef __s32 s32;
+ typedef __u64 u64;
+ typedef __s64 s64;
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.46.0.76.ge559c4bf1a-goog
 
 
