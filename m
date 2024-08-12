@@ -1,195 +1,191 @@
-Return-Path: <linux-kernel+bounces-283253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEDB94EF2C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EA594EF28
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:09:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84D57B23653
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8F891F2247B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECF2181334;
-	Mon, 12 Aug 2024 14:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780E417DE2D;
+	Mon, 12 Aug 2024 14:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="wJeSEJpf"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oD48RtjR"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2042.outbound.protection.outlook.com [40.107.100.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A945D17D35B;
-	Mon, 12 Aug 2024 14:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723471774; cv=none; b=GjRdxdDvUvwU5XRDwPyJPP9mz1Q0K/utr08tym6oySQyrZaoNxldiOUzs+PgBkFfF064i2iBxyb/J9APn2fMMsXU/b+bAN88ZB74a2Yjmds2C56Otj1KZcpVPxpmOma9M+sZ15C3LKsFc2gEIuBf1pUS4Ignu3SrEGidbEPl1d8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723471774; c=relaxed/simple;
-	bh=ngfwbegOOAi5zRlvypYFOfdhkFW11B85R/xYS9x8cv8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yy4gwyLonGuvkFcc+IvhbvoOrIPfQURI2i+JYiszpvTL5NcwXIwR8WemSvLeRVji1CCScrh4TZ+5ASN5Ij71Ty139H2WDia5zLts0jQi1lurc7bGEVPwXI5pBsZmFPC2eIdNwZpUDfvOhuFIke70Vp2Xzpui6FhTdPY+HkVLuZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=wJeSEJpf reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 46e178e9d4646273; Mon, 12 Aug 2024 16:09:30 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 568A56F0D6A;
-	Mon, 12 Aug 2024 16:09:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723471770;
-	bh=ngfwbegOOAi5zRlvypYFOfdhkFW11B85R/xYS9x8cv8=;
-	h=From:Subject:Date;
-	b=wJeSEJpfodOHfE5MTeJDpa4kGNYk8XGvgQ72lhfOhvyWwX4J3KW/aT7q9lVIZ/3cz
-	 etyRnW/+F4ctpHzagq9IhTReAhWAs5cP8D5x1KQlABaLnVSq3VcUr6zUbKwrTNulE4
-	 U+KP9myEN9Y29lqKnBpGvXFzgelO8F2tt/oTSpaB2W01SXqAI988ngPPJWHt7iERJq
-	 i+AF1Ij0B2uuu8d//afpUb5rQcfpZBFvrvWkppCbzojahA+ru7mSLHLF2TPP+eABJA
-	 MHnw0pRDVGzYuGVaxmsrcUOQCe/AQxltSgInujpxQvLzlqFAowK01qqXYWv+daDYMy
-	 Va0t7yUngPJHA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
-Subject:
- [PATCH v2 09/17] thermal: ACPI: Use the .should_bind() thermal zone callback
-Date: Mon, 12 Aug 2024 16:07:43 +0200
-Message-ID: <13573836.dW097sEU6C@rjwysocki.net>
-In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
-References: <114901234.nniJfEyVGO@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2CAF17D35B;
+	Mon, 12 Aug 2024 14:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723471764; cv=fail; b=eON1hhyY+PGs+eSfG8CpfE5cul/yyQ313dN6yykMeh1SYlwyQwU8fvQ4XJRqf1uu+YRzZXUVx0vX/2uKxkbmpKZLiBbwvrsv3rtNJwBEp7PTqdOn95UY5QeGKGYLGPEkv1vfY0stcx4srJerBvqmzGsD3ZstvCUiGvFE4yF9CYc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723471764; c=relaxed/simple;
+	bh=SMVA/3hrSSMyudeXp7cJDNVybpF2Rs8QT+rGlwN0sGE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ChcprBr/nwfjmyBP++L9y3lpngKBSjr3nkVae6e+49Rm4qWxoI/ajQOdkf84Ent1Q2gDTtIu+ZzC+UgkDoacSBakxOAkxe1ERZRY6pB4t+Td626pY59WwxfM2+VIqP11esC08rEoR1LmXrN9/TuXe3m7BMUlrAr4O0ZLiE5Av40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oD48RtjR; arc=fail smtp.client-ip=40.107.100.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZAxGzC/InzKB6vvVZrXbCUaJE08A00J1nticjIxOX5hUDmWJ0iNP3mhHZ+/DtfT7ujQe3lz1qjTeBC3WI9ZJWoCt8vsooolLpaKeGq6VoZx+XMa7W4Al8EZfQc1wUnDOAUQVAje1A1Mz/n+ygZWRxTqLzaLgHN0woZqWslSt4yd8Dbgh/3IJE+s3qv3QV6kDMqY2/eFAQ43ljwbSXoY3uMzzDFtsQlRF5PihrO6zYt4a7mu6UGYDfw9i7bfwH3QqOZ5JQAuFI2GlxkstQz3l/QWN3P53n1OboCXRT6CCN85DW6DsV0KBecSAxrmuCzVQoalHWHrhs7HqNeu3x+iqZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Oe0yHi+kiDwJQwHjMZwjchEL66WwT9nssvFZSb014vc=;
+ b=pjOHxUsYUrWJ2iyJqZzlrSpy7DEwHajhsI6z18HxcFOmvI33FPARZwWg6PjBTkdauv7R+bJV1dsaQPcLWLTxg+/F9JaQ2pm/2AVuDBhz5IhMW3z6ZRpoQyWZ0zR9lj7JxwCagj1QGzLFOX/ZeGC7G6F6TBS4f8JPv6q8FGKP7zZMosQ/ZB9Hr3b4QtjXBfccuWCUZ7AKx5Q7/0txdbsxvcT0M+dgSzPAL3m1gM1Xkp2Gb8RgptdeeFHVkM7L58UuWMVvlXTgzds/GSCvHtqkNQ1i1RX9m+EgNT/HhKPnZlJ+mkIDHyYnHAMDvka3d7WiWMBtSWbTRE51eT/rmhv22A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Oe0yHi+kiDwJQwHjMZwjchEL66WwT9nssvFZSb014vc=;
+ b=oD48RtjRiS3AUE3J/JVeCEhKB2FahZjdsFMFpwWoh+jL+lc4Bor9pGXWBRROgNobLQ3vbFNVbCa8qbyAIindBMWL6BjEzxnZuGoS5fBC35LmnG07fT3NjpJxF1VLaX75xGigbXc34VL15Hao+Z7On9HQfCYCdUlOcOdSAr4LdOHSvlrQfr76tEqohKXOwJAc/nLr2zYYbOS0kpLA9no6sfS7WaYXg9JTcc3jNIBfafagboww6b+OqE3hmjaHOMqYFYVIeFS4e/BaehqC2OeH4ML0SaFFwish1abzwdGY/KmCichSpiy5dojZK5f00MNsBbvwzRJ6mRl2+Y2Cbb8rDA==
+Received: from CH2PR10CA0013.namprd10.prod.outlook.com (2603:10b6:610:4c::23)
+ by CH0PR12MB8488.namprd12.prod.outlook.com (2603:10b6:610:18d::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Mon, 12 Aug
+ 2024 14:09:18 +0000
+Received: from DS3PEPF0000C37B.namprd04.prod.outlook.com
+ (2603:10b6:610:4c:cafe::82) by CH2PR10CA0013.outlook.office365.com
+ (2603:10b6:610:4c::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20 via Frontend
+ Transport; Mon, 12 Aug 2024 14:09:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ DS3PEPF0000C37B.mail.protection.outlook.com (10.167.23.5) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.8 via Frontend Transport; Mon, 12 Aug 2024 14:09:18 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 12 Aug
+ 2024 07:08:55 -0700
+Received: from dev-r-vrt-156.mtr.labs.mlnx (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 12 Aug 2024 07:08:52 -0700
+From: Danielle Ratson <danieller@nvidia.com>
+To: <netdev@vger.kernel.org>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <idosch@nvidia.com>, <petrm@nvidia.com>,
+	<linux-kernel@vger.kernel.org>, <vmykhaliuk@nvidia.com>,
+	<danieller@nvidia.com>
+Subject: [PATCH net] net: ethtool: Allow write mechanism of LPL and both LPL and EPL
+Date: Mon, 12 Aug 2024 17:08:24 +0300
+Message-ID: <20240812140824.3718826-1-danieller@nvidia.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
- tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37B:EE_|CH0PR12MB8488:EE_
+X-MS-Office365-Filtering-Correlation-Id: 854f8f0d-0c1e-4c4d-6018-08dcbad85b41
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?usMJQQo/hTuUIG/CQgNUkrYU9rORFHAfIjApQqFBXQo0te7TyPuFLnJCEptI?=
+ =?us-ascii?Q?LBZSSdejAYjLa86POqDqqB1Xa3sW0UzDlQ21mO+xbeUfPGUA03l3YkoDPFwQ?=
+ =?us-ascii?Q?4zq1fxyblNIuYmB/5tfzgNkwtFvGhSc19ncHLwW23BkLZVE8qIx3q2ty25Og?=
+ =?us-ascii?Q?dszU9nnhTFQoWLsSE1Id2bNEDVNmnXKtILatyGYtccj4V69SsbsRBPRx6wpO?=
+ =?us-ascii?Q?gHbmYf7m3k1DH4nbCYGxhtlALu4b6pohyjH5TmK91WAafmZnK6wPDOpW5DeP?=
+ =?us-ascii?Q?4yOC/gi1s995gd2zSD95MtRbkaZM8MBlbvkaVlH1TXVIKWA/EPu0w+M6EzEO?=
+ =?us-ascii?Q?3CovMWbnVw6DVR7qy5C2lHKEDbQB+zHxiCDvA8vCbR+6zpQFjFTZmElEdy+Z?=
+ =?us-ascii?Q?+uNjFNx+IZx17g3xUy7KjRLZxFBdzpuALWhOwYUyIQKocOT6bM0wypmK7LeN?=
+ =?us-ascii?Q?NBP3O3aIuhUguvbsEKwRL2OLedWARRZOcQ7aS6R6CTbTpL5JKs8eJJKvJac+?=
+ =?us-ascii?Q?Tfm4nm2mc5/P9h9Bu5V12fV7NBoNWbj7GzTJHhOAuT1euCoW4xhuZkwkf4Lp?=
+ =?us-ascii?Q?O4nW3pcI32ufQp22/7a4S8cjpNpmijKO+RkCgwLjanav37Cw0Aki0eZpoVQE?=
+ =?us-ascii?Q?KJKCsEDjGSxGQm1dZtoFdSETisvbBWPCS8n8VGy4JxOF/socNOf0hJkBeAEw?=
+ =?us-ascii?Q?Z3y8ZCGT8ZW9gL6OJzaBShdEh5l1zmSa2tH0J8DHF9ueIXc+hZTh24i65p/K?=
+ =?us-ascii?Q?qNc61XrPn3VCa+tzz4t3vlhpJrnVchZUTVPLFmDjXenEqr1rq9OOSkmCzkdw?=
+ =?us-ascii?Q?KLG51FFUhFWRd5CM7/xpFd/dKLHBsRGwxpG/S012UoDCKouGnmdgpqJ+f2yS?=
+ =?us-ascii?Q?ml6kfVMRoTy/1R5QfLqvRah3uY5zVDNOzxcOuUCgtZiBR5srCi3Kx7cUk/NF?=
+ =?us-ascii?Q?fv+Hh48URecTEhekEGMuoZCkfiMLIEq/C9wiDKhsE04T1o7tA1PQiFh1CHTg?=
+ =?us-ascii?Q?oVX23eJco+NJMfVxUe93RM5PQxR51fr3tmHmDzLXOaZlLiulbgoJemNZr4GM?=
+ =?us-ascii?Q?Ctaw4qJYeJEMC/rvZIY1teHOtJAVGMDSPaqrqC2f1ll2sFRpDrphMZYxT4Eq?=
+ =?us-ascii?Q?HDWkjG69Q7tLIJE2wXQXtWRORMRF6InNQkSwDoGPIZG7phuXLLJ7Px1lTWBO?=
+ =?us-ascii?Q?r9mf6eI/aqH2AfSLg1J56Vp9AWebXEUOakzc6uvt0zz3PWtFoo532LeNnHeT?=
+ =?us-ascii?Q?q7dJTCuJF1bl/tkS1e8+dqrTo+u7pdAhA0kRauaKpu9GVCvy/O6yBMsi6vpj?=
+ =?us-ascii?Q?7Zz/83tre7UH3HFKYFh/csNjcRGoxO/2rg8kgOZTHzjdDUbdKFXVODUYDPHY?=
+ =?us-ascii?Q?GS6PLPWtXtazGJfqaaZIclROZcWoOsvJJOES93XBrHqzVjSx/aSs5VeEaRX0?=
+ =?us-ascii?Q?3IyvBm345YFef4DwYQpmyrVVdIbQGM9S?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 14:09:18.4449
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 854f8f0d-0c1e-4c4d-6018-08dcbad85b41
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8488
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+CMIS 5.2 standard section 9.4.2 defines four types of firmware update
+supported mechanism: None, only LPL, only EPL, both LPL and EPL.
 
-Make the ACPI thermal zone driver use the .should_bind() thermal zone
-callback to provide the thermal core with the information on whether or
-not to bind the given cooling device to the given trip point in the
-given thermal zone.  If it returns 'true', the thermal core will bind
-the cooling device to the trip and the corresponding unbinding will be
-taken care of automatically by the core on the removal of the involved
-thermal zone or cooling device.
+Currently, only LPL (Local Payload) type of write firmware block is
+supported. However, if the module supports both LPL and EPL the flashing
+process wrongly fails for no supporting LPL.
 
-This replaces the .bind() and .unbind() thermal zone callbacks which
-allows the code to be simplified quite significantly while providing
-the same functionality.
+Fix that, by allowing the write mechanism to be LPL or both LPL and
+EPL.
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Fixes: c4f78134d45c ("ethtool: cmis_fw_update: add a layer for supporting firmware update using CDB")
+Reported-by: Vladyslav Mykhaliuk <vmykhaliuk@nvidia.com>
+Signed-off-by: Danielle Ratson <danieller@nvidia.com>
+Reviewed-by: Petr Machata <petrm@nvidia.com>
 ---
+ net/ethtool/cmis_fw_update.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-v1 -> v2: No changes
-
----
- drivers/acpi/thermal.c |   64 ++++++-------------------------------------------
- 1 file changed, 9 insertions(+), 55 deletions(-)
-
-Index: linux-pm/drivers/acpi/thermal.c
-===================================================================
---- linux-pm.orig/drivers/acpi/thermal.c
-+++ linux-pm/drivers/acpi/thermal.c
-@@ -558,77 +558,31 @@ static void acpi_thermal_zone_device_cri
- 	thermal_zone_device_critical(thermal);
- }
+diff --git a/net/ethtool/cmis_fw_update.c b/net/ethtool/cmis_fw_update.c
+index ae4b4b28a601..655ff5224ffa 100644
+--- a/net/ethtool/cmis_fw_update.c
++++ b/net/ethtool/cmis_fw_update.c
+@@ -35,7 +35,10 @@ struct cmis_cdb_fw_mng_features_rpl {
+ 	__be16	resv7;
+ };
  
--struct acpi_thermal_bind_data {
--	struct thermal_zone_device *thermal;
--	struct thermal_cooling_device *cdev;
--	bool bind;
--};
--
--static int bind_unbind_cdev_cb(struct thermal_trip *trip, void *arg)
-+static bool acpi_thermal_should_bind_cdev(struct thermal_zone_device *thermal,
-+					  const struct thermal_trip *trip,
-+					  struct thermal_cooling_device *cdev,
-+					  struct cooling_spec *c)
- {
- 	struct acpi_thermal_trip *acpi_trip = trip->priv;
--	struct acpi_thermal_bind_data *bd = arg;
--	struct thermal_zone_device *thermal = bd->thermal;
--	struct thermal_cooling_device *cdev = bd->cdev;
- 	struct acpi_device *cdev_adev = cdev->devdata;
- 	int i;
+-#define CMIS_CDB_FW_WRITE_MECHANISM_LPL	0x01
++enum cmis_cdb_fw_write_mechanism {
++	CMIS_CDB_FW_WRITE_MECHANISM_LPL		= 0x01,
++	CMIS_CDB_FW_WRITE_MECHANISM_BOTH	= 0x11,
++};
  
- 	/* Skip critical and hot trips. */
- 	if (!acpi_trip)
--		return 0;
-+		return false;
- 
- 	for (i = 0; i < acpi_trip->devices.count; i++) {
- 		acpi_handle handle = acpi_trip->devices.handles[i];
--		struct acpi_device *adev = acpi_fetch_acpi_dev(handle);
--
--		if (adev != cdev_adev)
--			continue;
- 
--		if (bd->bind) {
--			int ret;
--
--			ret = thermal_bind_cdev_to_trip(thermal, trip, cdev,
--							THERMAL_NO_LIMIT,
--							THERMAL_NO_LIMIT,
--							THERMAL_WEIGHT_DEFAULT);
--			if (ret)
--				return ret;
--		} else {
--			thermal_unbind_cdev_from_trip(thermal, trip, cdev);
--		}
-+		if (acpi_fetch_acpi_dev(handle) == cdev_adev)
-+			return true;
+ static int
+ cmis_fw_update_fw_mng_features_get(struct ethtool_cmis_cdb *cdb,
+@@ -64,7 +67,8 @@ cmis_fw_update_fw_mng_features_get(struct ethtool_cmis_cdb *cdb,
  	}
  
--	return 0;
--}
--
--static int acpi_thermal_bind_unbind_cdev(struct thermal_zone_device *thermal,
--					 struct thermal_cooling_device *cdev,
--					 bool bind)
--{
--	struct acpi_thermal_bind_data bd = {
--		.thermal = thermal, .cdev = cdev, .bind = bind
--	};
--
--	return thermal_zone_for_each_trip(thermal, bind_unbind_cdev_cb, &bd);
--}
--
--static int
--acpi_thermal_bind_cooling_device(struct thermal_zone_device *thermal,
--				 struct thermal_cooling_device *cdev)
--{
--	return acpi_thermal_bind_unbind_cdev(thermal, cdev, true);
--}
--
--static int
--acpi_thermal_unbind_cooling_device(struct thermal_zone_device *thermal,
--				   struct thermal_cooling_device *cdev)
--{
--	return acpi_thermal_bind_unbind_cdev(thermal, cdev, false);
-+	return false;
- }
- 
- static const struct thermal_zone_device_ops acpi_thermal_zone_ops = {
--	.bind = acpi_thermal_bind_cooling_device,
--	.unbind	= acpi_thermal_unbind_cooling_device,
-+	.should_bind = acpi_thermal_should_bind_cdev,
- 	.get_temp = thermal_get_temp,
- 	.get_trend = thermal_get_trend,
- 	.hot = acpi_thermal_zone_device_hot,
-
-
+ 	rpl = (struct cmis_cdb_fw_mng_features_rpl *)args.req.payload;
+-	if (!(rpl->write_mechanism == CMIS_CDB_FW_WRITE_MECHANISM_LPL)) {
++	if (!(rpl->write_mechanism == CMIS_CDB_FW_WRITE_MECHANISM_LPL ||
++	      rpl->write_mechanism == CMIS_CDB_FW_WRITE_MECHANISM_BOTH)) {
+ 		ethnl_module_fw_flash_ntf_err(dev, ntf_params,
+ 					      "Write LPL is not supported",
+ 					      NULL);
+-- 
+2.45.0
 
 
