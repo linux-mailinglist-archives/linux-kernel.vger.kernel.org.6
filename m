@@ -1,249 +1,246 @@
-Return-Path: <linux-kernel+bounces-282678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B13794E74D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:00:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D949D94E74F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B5728300E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A2251C2150E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A88A153BE3;
-	Mon, 12 Aug 2024 07:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9317015F41F;
+	Mon, 12 Aug 2024 07:00:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cyg3kXY7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wRJPCz82"
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D915351C
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F311515C129
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723446000; cv=none; b=aPSeoI6onIs9fNzsDLkR9R+Uq6k7MBPdEacPIQdLke4eEPVK95x3Wj9bc7aVAoXdaqPXdgrFIIyqAyQjq+ph1VyKkFlRZA6b16U5s2TDoIcqlMURT20RbP/eDOlN5PxraPJk7XCKECawpAyltJVl64+FZb9vslXiAHX12O5+32k=
+	t=1723446007; cv=none; b=a2cCa+Lsix7rdCKhi3grfraGED69mwetWLxh2jQUyaAdNuMFcP7CTewrMd982sza6ycR3Om5f8AcpAXz3Oo0gFU5H9o62VnWswUoqjT3hk0DJ1qM/K8LNpxLkd9Oi7FcMuSlgUly7lkWv559eN3uwpjbHrnRbWnUUU81PID4vQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723446000; c=relaxed/simple;
-	bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F6I9/i4Q6ni8MIzAPVFYzCMRdLBaD79zGOxvfWUBoA+/14jMvlXbGGQ18Ubvrz34fKcNpCqoZ2E2sdrAdDt+psm10+6On5FXDjntI5rEd1il5MDU0VfWLHuGcZLN4JdqNhcohViLyblft5kW5GAjQb8oF53VkinerKPqYmO1kH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cyg3kXY7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723445997;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
-	b=Cyg3kXY74me3RNjCvk1YQvRzIgvbTd3LE26lx7A9nduB2kqwWo6qYYLKqUrkojgMcdlrhk
-	FbGS0mgp+9qVsfApEIwkyh9iTHuwpYQoBu5tDZTPhgaaa9ATvWpETGJZfZy1RGm6lLf1us
-	e0NIXA7zO0prSE9Fbq1zVEGLLTPgmi8=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-158-b8_1BDfFMfeq8ul-UTVm-A-1; Mon, 12 Aug 2024 02:59:55 -0400
-X-MC-Unique: b8_1BDfFMfeq8ul-UTVm-A-1
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cf1a80693cso4863129a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:59:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723445994; x=1724050794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
-        b=iuQnyjASU11W044tsBKOn0X+UOFacugRZ01f5lVPRh8KSCcYmWKYm9f1BWyURm+pCQ
-         8hHM0xPfPsYJcU2hhMQ+zR8frNMmWcCReMKJsmOfUXKx1fiXZfqJO4UipAyvb+PgLRyK
-         rf5gwoy3kW8DMGflTT2m+J1rlOiGaqOjgIq8U3kO2pBExQSiDCNUT1vVBSkqDqJHmRDO
-         cq4l4iv0dV5s8zVeTh3nq5GpNZHU4wxVCE+N/ccl1OzvjS5w9VLfaRQqAULyc5m4VUDf
-         /hNMSarNTqw0VScWsp+8mJw3t8GsKP/Bb/2QizBn5lOUvXUMMpC7jVGB209EHp0MA/JK
-         9GMw==
-X-Forwarded-Encrypted: i=1; AJvYcCWS31WQ0lDrpm34FNuqD87+lP2rE80rVtxFMPJwkMeLsCJe3XAPKctP7eq1sYcbGcEwe+ebnJAM0hmEJzKMMyNVp6iZAPSzxSq71T7U
-X-Gm-Message-State: AOJu0YxYjPGVJQU03AUxL+CMPNT+an+jv7Lh19YOnA1jbbC7kUdUTsQJ
-	RWc8edXwxekH4t2bukE+WAkLCLASZNUwEPWjfty+4y9WAcNNrEEILmV82GIW8Olq8fJYRaIcH5b
-	4MQrfrYF80nbTdjO27m/y7vhDaa/W7QAH7oui61IipTJhNfz33neUGWN/EsW3SJiQ4WpnA7uEbu
-	4Ui/2n84bp4Jxq9enJlMBO+FeoFzY9UPuAIv53
-X-Received: by 2002:a17:90a:a892:b0:2cd:2992:e8dc with SMTP id 98e67ed59e1d1-2d1e7f9c914mr9059824a91.5.1723445993954;
-        Sun, 11 Aug 2024 23:59:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEAqMEDFInM0ZXBXhl6GppTaPVIO/zb/2LVAUPlZcsu/vLFxI6LVLxnUbM00uBcPSaRznliuvG3zvK+Z/eoLcI=
-X-Received: by 2002:a17:90a:a892:b0:2cd:2992:e8dc with SMTP id
- 98e67ed59e1d1-2d1e7f9c914mr9059806a91.5.1723445993402; Sun, 11 Aug 2024
- 23:59:53 -0700 (PDT)
+	s=arc-20240116; t=1723446007; c=relaxed/simple;
+	bh=Hl3o28OEHxharHUo5EPEcmIKtXI10Pywg9Bpi+sw9DE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RZWOyK3p4UQz17Is/z9Gp0MJlZpfO8o2tK/w7t4biA9IEMx4ifpUimWr7xo1u+vk5Jr6NertTzTD3sRpXHxM2yK323nxBl+T3wKwjxoLWwWH8EO1Mop0D4ng34ifmytPhcj0ALHyXw0zLz8M3P1EvqCaBitpqDhz4p3wragJfzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wRJPCz82; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1723445996; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=2sB5TDcVkqlobWIVqrnBXmc0iuAglrquanWdPCiDDFo=;
+	b=wRJPCz82B0LAOgJIjLAlwtGWlNx6UJhyKGXE78VBMy1q6xnt728Sd7mzk0LNqHHT/bR6k3z2cIIXtez301jFStsUW7EML+HnMLmyHZEm4esYzPSuHHbnswB4bKVsILJdC66HqFz/4NenkwKnvA64pUYK5l0f8tRAUVPRsG/pRgM=
+Received: from localhost.localdomain(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WCaX4Nj_1723445987)
+          by smtp.aliyun-inc.com;
+          Mon, 12 Aug 2024 14:59:55 +0800
+From: Tianchen Ding <dtcccc@linux.alibaba.com>
+To: linux-kernel@vger.kernel.org
+Cc: Marco Elver <elver@google.com>,
+	Alexander Potapenko <glider@google.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org
+Subject: [PATCH] kfence: Save freeing stack trace at calling time instead of freeing time
+Date: Mon, 12 Aug 2024 14:59:47 +0800
+Message-Id: <20240812065947.6104-1-dtcccc@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240805082106.65847-1-jasowang@redhat.com> <CACGkMEvNyB_+fHV5aAeCQhebA8aF8+9hnjkjeEzt5bgrVgqw5Q@mail.gmail.com>
- <CACycT3sz-OOKKcmH=FgD7gp_Bhi9=nwnkTn0VgRhQBxS2Dp4qw@mail.gmail.com>
- <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
- <CACycT3vYF3nwZ3k5_8G=Zok9c4qRjCcGLVQ7+RfSpK=5PToMuA@mail.gmail.com>
- <CACGkMEue9RU+MMgOC0t4Yuk5wRHfTdnJeZZs38g2h+gyZv+3VQ@mail.gmail.com>
- <CACycT3sHT-izwAKzxAWPbqGFgyf82WxkHHOrp1SjWa+HE01mCg@mail.gmail.com>
- <CACGkMEvsMQS-5Oy7rTyA5a2u1xYRf0beBHbZ16geHJCZTE0jLw@mail.gmail.com>
- <CACycT3sfUhz1PjK3Q=pA7GEm7=fsL0XT16ccwCQ2m2LF+TTD7Q@mail.gmail.com>
- <CACGkMEu+RrD2JdO=F9BySwhVY5uPr6kKWWdkcdG4XX6GN5b=Bg@mail.gmail.com> <CACycT3u-v+XkWzSPq39Mk9sdQftuNZvZqZyzDvhTecH3uyuk8w@mail.gmail.com>
-In-Reply-To: <CACycT3u-v+XkWzSPq39Mk9sdQftuNZvZqZyzDvhTecH3uyuk8w@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 12 Aug 2024 14:59:42 +0800
-Message-ID: <CACGkMEs1EG=1UJNJ9fuN3rpq0ruQE7imhRurq4o_7pjSgvApXQ@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-To: Yongji Xie <xieyongji@bytedance.com>
-Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	"Michael S. Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 21cnbao@gmail.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 8, 2024 at 7:09=E2=80=AFPM Yongji Xie <xieyongji@bytedance.com>=
- wrote:
->
-> On Thu, Aug 8, 2024 at 1:50=E2=80=AFPM Jason Wang <jasowang@redhat.com> w=
-rote:
-> >
-> > On Wed, Aug 7, 2024 at 2:54=E2=80=AFPM Yongji Xie <xieyongji@bytedance.=
-com> wrote:
-> > >
-> > > On Wed, Aug 7, 2024 at 12:38=E2=80=AFPM Jason Wang <jasowang@redhat.c=
-om> wrote:
-> > > >
-> > > > On Wed, Aug 7, 2024 at 11:13=E2=80=AFAM Yongji Xie <xieyongji@byted=
-ance.com> wrote:
-> > > > >
-> > > > > On Wed, Aug 7, 2024 at 10:39=E2=80=AFAM Jason Wang <jasowang@redh=
-at.com> wrote:
-> > > > > >
-> > > > > > On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Yongji Xie <xieyongji@b=
-ytedance.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, Aug 6, 2024 at 10:28=E2=80=AFAM Jason Wang <jasowang@=
-redhat.com> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Aug 5, 2024 at 6:42=E2=80=AFPM Yongji Xie <xieyongj=
-i@bytedance.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Aug 5, 2024 at 4:24=E2=80=AFPM Jason Wang <jasowa=
-ng@redhat.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jaso=
-wang@redhat.com> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > Barry said [1]:
-> > > > > > > > > > >
-> > > > > > > > > > > """
-> > > > > > > > > > > mm doesn't support non-blockable __GFP_NOFAIL allocat=
-ion. Because
-> > > > > > > > > > > __GFP_NOFAIL without direct reclamation may just resu=
-lt in a busy
-> > > > > > > > > > > loop within non-sleepable contexts.
-> > > > > > > > > > > ""=E2=80=9C
-> > > > > > > > > > >
-> > > > > > > > > > > Unfortuantely, we do that under read lock. A possible=
- way to fix that
-> > > > > > > > > > > is to move the pages allocation out of the lock into =
-the caller, but
-> > > > > > > > > > > having to allocate a huge number of pages and auxilia=
-ry page array
-> > > > > > > > > > > seems to be problematic as well per Tetsuon [2]:
-> > > > > > > > > > >
-> > > > > > > > > > > """
-> > > > > > > > > > > You should implement proper error handling instead of=
- using
-> > > > > > > > > > > __GFP_NOFAIL if count can become large.
-> > > > > > > > > > > """
-> > > > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > I think the problem is it's hard to do the error handling=
- in
-> > > > > > > > > fops->release() currently.
-> > > > > > > >
-> > > > > > > > vduse_dev_dereg_umem() should be the same, it's very hard t=
-o allow it to fail.
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > So can we temporarily hold the user page refcount, and re=
-lease it when
-> > > > > > > > > vduse_dev_open()/vduse_domain_release() is executed. The =
-kernel page
-> > > > > > > > > allocation and memcpy can be done in vduse_dev_open() whi=
-ch allows
-> > > > > > > > > some error handling.
-> > > > > > > >
-> > > > > > > > Just to make sure I understand this, the free is probably n=
-ot the big
-> > > > > > > > issue but the allocation itself.
-> > > > > > > >
-> > > > > > >
-> > > > > > > Yes, so defer the allocation might be a solution.
-> > > > > >
-> > > > > > Would you mind posting a patch for this?
-> > > > > >
-> > > > > > >
-> > > > > > > > And if we do the memcpy() in open(), it seems to be a subtl=
-e userspace
-> > > > > > > > noticeable change? (Or I don't get how copying in vduse_dev=
-_open() can
-> > > > > > > > help here).
-> > > > > > > >
-> > > > > > >
-> > > > > > > Maybe we don't need to do the copy in open(). We can hold the=
- user
-> > > > > > > page refcount until the inflight I/O is completed. That means=
- the
-> > > > > > > allocation of new kernel pages can be done in
-> > > > > > > vduse_domain_map_bounce_page() and the release of old user pa=
-ges can
-> > > > > > > be done in vduse_domain_unmap_bounce_page().
-> > > > > >
-> > > > > > This seems to be a subtle userspace noticeable behaviour?
-> > > > > >
-> > > > >
-> > > > > Yes, userspace needs to ensure that it does not reuse the old use=
-r
-> > > > > pages for other purposes before vduse_dev_dereg_umem() returns
-> > > > > successfully. The vduse_dev_dereg_umem() will only return success=
-fully
-> > > > > when there is no inflight I/O which means we don't need to alloca=
-te
-> > > > > extra kernel pages to store data. If we can't accept this, then y=
-our
-> > > > > current patch might be the most suitable.
-> > > >
-> > > > It might be better to not break.
-> > > >
-> > > > Actually during my testing, the read_lock in the do_bounce path slo=
-ws
-> > > > down the performance. Remove read_lock or use rcu_read_lock() to gi=
-ve
-> > > > 20% improvement of PPS.
-> > > >
-> > >
-> > > Looks like rcu_read_lock() should be OK here.
-> >
-> > The tricky part is that we may still end up behaviour changes (or lose
-> > some of the synchronization between kernel and bounce pages):
-> >
-> > RCU allows the read to be executed in parallel with the writer. So
-> > bouncing could be done in parallel with
-> > vduse_domain_add_user_bounce_pages(), there would be a race in two
-> > memcpy.
-> >
->
-> Hmm...this is a problem. We may still need some userspace noticeable
-> behaviour, e.g. only allowing reg_umem/dereg_umem when the device is
-> not started.
+For kmem_cache with SLAB_TYPESAFE_BY_RCU, the freeing trace stack at
+calling kmem_cache_free() is more useful. While the following stack is
+meaningless and provides no help:
+  freed by task 46 on cpu 0 at 656.840729s:
+   rcu_do_batch+0x1ab/0x540
+   nocb_cb_wait+0x8f/0x260
+   rcu_nocb_cb_kthread+0x25/0x80
+   kthread+0xd2/0x100
+   ret_from_fork+0x34/0x50
+   ret_from_fork_asm+0x1a/0x30
 
-Exactly, maybe have a new userspace flag.
+Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+---
+I'm not sure whether we should keep KFENCE_OBJECT_FREED info remained
+(maybe the exact free time can be helpful?). But add a new kfence_track
+will cost more memory, so I prefer to reuse free_track and drop the info
+when when KFENCE_OBJECT_RCU_FREEING -> KFENCE_OBJECT_FREED.
+---
+ mm/kfence/core.c   | 35 ++++++++++++++++++++++++++---------
+ mm/kfence/kfence.h |  1 +
+ mm/kfence/report.c |  7 ++++---
+ 3 files changed, 31 insertions(+), 12 deletions(-)
 
-Thanks
-
->
-> Thanks,
-> Yongji
->
+diff --git a/mm/kfence/core.c b/mm/kfence/core.c
+index c5cb54fc696d..89469d4f2d95 100644
+--- a/mm/kfence/core.c
++++ b/mm/kfence/core.c
+@@ -269,6 +269,13 @@ static inline unsigned long metadata_to_pageaddr(const struct kfence_metadata *m
+ 	return pageaddr;
+ }
+ 
++static bool kfence_obj_inuse(const struct kfence_metadata *meta)
++{
++	enum kfence_object_state state = READ_ONCE(meta->state);
++
++	return state == KFENCE_OBJECT_ALLOCATED || state == KFENCE_OBJECT_RCU_FREEING;
++}
++
+ /*
+  * Update the object's metadata state, including updating the alloc/free stacks
+  * depending on the state transition.
+@@ -278,10 +285,14 @@ metadata_update_state(struct kfence_metadata *meta, enum kfence_object_state nex
+ 		      unsigned long *stack_entries, size_t num_stack_entries)
+ {
+ 	struct kfence_track *track =
+-		next == KFENCE_OBJECT_FREED ? &meta->free_track : &meta->alloc_track;
++		next == KFENCE_OBJECT_ALLOCATED ? &meta->alloc_track : &meta->free_track;
+ 
+ 	lockdep_assert_held(&meta->lock);
+ 
++	/* Stack has been saved when calling rcu, skip. */
++	if (READ_ONCE(meta->state) == KFENCE_OBJECT_RCU_FREEING)
++		goto out;
++
+ 	if (stack_entries) {
+ 		memcpy(track->stack_entries, stack_entries,
+ 		       num_stack_entries * sizeof(stack_entries[0]));
+@@ -297,6 +308,7 @@ metadata_update_state(struct kfence_metadata *meta, enum kfence_object_state nex
+ 	track->cpu = raw_smp_processor_id();
+ 	track->ts_nsec = local_clock(); /* Same source as printk timestamps. */
+ 
++out:
+ 	/*
+ 	 * Pairs with READ_ONCE() in
+ 	 *	kfence_shutdown_cache(),
+@@ -502,7 +514,7 @@ static void kfence_guarded_free(void *addr, struct kfence_metadata *meta, bool z
+ 
+ 	raw_spin_lock_irqsave(&meta->lock, flags);
+ 
+-	if (meta->state != KFENCE_OBJECT_ALLOCATED || meta->addr != (unsigned long)addr) {
++	if (!kfence_obj_inuse(meta) || meta->addr != (unsigned long)addr) {
+ 		/* Invalid or double-free, bail out. */
+ 		atomic_long_inc(&counters[KFENCE_COUNTER_BUGS]);
+ 		kfence_report_error((unsigned long)addr, false, NULL, meta,
+@@ -780,7 +792,7 @@ static void kfence_check_all_canary(void)
+ 	for (i = 0; i < CONFIG_KFENCE_NUM_OBJECTS; i++) {
+ 		struct kfence_metadata *meta = &kfence_metadata[i];
+ 
+-		if (meta->state == KFENCE_OBJECT_ALLOCATED)
++		if (kfence_obj_inuse(meta))
+ 			check_canary(meta);
+ 	}
+ }
+@@ -1006,12 +1018,11 @@ void kfence_shutdown_cache(struct kmem_cache *s)
+ 		 * the lock will not help, as different critical section
+ 		 * serialization will have the same outcome.
+ 		 */
+-		if (READ_ONCE(meta->cache) != s ||
+-		    READ_ONCE(meta->state) != KFENCE_OBJECT_ALLOCATED)
++		if (READ_ONCE(meta->cache) != s || !kfence_obj_inuse(meta))
+ 			continue;
+ 
+ 		raw_spin_lock_irqsave(&meta->lock, flags);
+-		in_use = meta->cache == s && meta->state == KFENCE_OBJECT_ALLOCATED;
++		in_use = meta->cache == s && kfence_obj_inuse(meta);
+ 		raw_spin_unlock_irqrestore(&meta->lock, flags);
+ 
+ 		if (in_use) {
+@@ -1145,6 +1156,7 @@ void *kfence_object_start(const void *addr)
+ void __kfence_free(void *addr)
+ {
+ 	struct kfence_metadata *meta = addr_to_metadata((unsigned long)addr);
++	unsigned long flags;
+ 
+ #ifdef CONFIG_MEMCG
+ 	KFENCE_WARN_ON(meta->obj_exts.objcg);
+@@ -1154,9 +1166,14 @@ void __kfence_free(void *addr)
+ 	 * the object, as the object page may be recycled for other-typed
+ 	 * objects once it has been freed. meta->cache may be NULL if the cache
+ 	 * was destroyed.
++	 * Save the stack trace here. It is more useful.
+ 	 */
+-	if (unlikely(meta->cache && (meta->cache->flags & SLAB_TYPESAFE_BY_RCU)))
++	if (unlikely(meta->cache && (meta->cache->flags & SLAB_TYPESAFE_BY_RCU))) {
++		raw_spin_lock_irqsave(&meta->lock, flags);
++		metadata_update_state(meta, KFENCE_OBJECT_RCU_FREEING, NULL, 0);
++		raw_spin_unlock_irqrestore(&meta->lock, flags);
+ 		call_rcu(&meta->rcu_head, rcu_guarded_free);
++	}
+ 	else
+ 		kfence_guarded_free(addr, meta, false);
+ }
+@@ -1182,14 +1199,14 @@ bool kfence_handle_page_fault(unsigned long addr, bool is_write, struct pt_regs
+ 		int distance = 0;
+ 
+ 		meta = addr_to_metadata(addr - PAGE_SIZE);
+-		if (meta && READ_ONCE(meta->state) == KFENCE_OBJECT_ALLOCATED) {
++		if (meta && kfence_obj_inuse(meta)) {
+ 			to_report = meta;
+ 			/* Data race ok; distance calculation approximate. */
+ 			distance = addr - data_race(meta->addr + meta->size);
+ 		}
+ 
+ 		meta = addr_to_metadata(addr + PAGE_SIZE);
+-		if (meta && READ_ONCE(meta->state) == KFENCE_OBJECT_ALLOCATED) {
++		if (meta && kfence_obj_inuse(meta)) {
+ 			/* Data race ok; distance calculation approximate. */
+ 			if (!to_report || distance > data_race(meta->addr) - addr)
+ 				to_report = meta;
+diff --git a/mm/kfence/kfence.h b/mm/kfence/kfence.h
+index db87a05047bd..dfba5ea06b01 100644
+--- a/mm/kfence/kfence.h
++++ b/mm/kfence/kfence.h
+@@ -38,6 +38,7 @@
+ enum kfence_object_state {
+ 	KFENCE_OBJECT_UNUSED,		/* Object is unused. */
+ 	KFENCE_OBJECT_ALLOCATED,	/* Object is currently allocated. */
++	KFENCE_OBJECT_RCU_FREEING,	/* Object was allocated, and then being freed by rcu. */
+ 	KFENCE_OBJECT_FREED,		/* Object was allocated, and then freed. */
+ };
+ 
+diff --git a/mm/kfence/report.c b/mm/kfence/report.c
+index 73a6fe42845a..451991a3a8f2 100644
+--- a/mm/kfence/report.c
++++ b/mm/kfence/report.c
+@@ -114,7 +114,8 @@ static void kfence_print_stack(struct seq_file *seq, const struct kfence_metadat
+ 
+ 	/* Timestamp matches printk timestamp format. */
+ 	seq_con_printf(seq, "%s by task %d on cpu %d at %lu.%06lus (%lu.%06lus ago):\n",
+-		       show_alloc ? "allocated" : "freed", track->pid,
++		       show_alloc ? "allocated" : meta->state == KFENCE_OBJECT_RCU_FREEING ?
++		       "rcu freeing" : "freed", track->pid,
+ 		       track->cpu, (unsigned long)ts_sec, rem_nsec / 1000,
+ 		       (unsigned long)interval_nsec, rem_interval_nsec / 1000);
+ 
+@@ -149,7 +150,7 @@ void kfence_print_object(struct seq_file *seq, const struct kfence_metadata *met
+ 
+ 	kfence_print_stack(seq, meta, true);
+ 
+-	if (meta->state == KFENCE_OBJECT_FREED) {
++	if (meta->state == KFENCE_OBJECT_FREED || meta->state == KFENCE_OBJECT_RCU_FREEING) {
+ 		seq_con_printf(seq, "\n");
+ 		kfence_print_stack(seq, meta, false);
+ 	}
+@@ -318,7 +319,7 @@ bool __kfence_obj_info(struct kmem_obj_info *kpp, void *object, struct slab *sla
+ 	kpp->kp_slab_cache = meta->cache;
+ 	kpp->kp_objp = (void *)meta->addr;
+ 	kfence_to_kp_stack(&meta->alloc_track, kpp->kp_stack);
+-	if (meta->state == KFENCE_OBJECT_FREED)
++	if (meta->state == KFENCE_OBJECT_FREED || meta->state == KFENCE_OBJECT_RCU_FREEING)
+ 		kfence_to_kp_stack(&meta->free_track, kpp->kp_free_stack);
+ 	/* get_stack_skipnr() ensures the first entry is outside allocator. */
+ 	kpp->kp_ret = kpp->kp_stack[0];
+-- 
+2.39.3
 
 
