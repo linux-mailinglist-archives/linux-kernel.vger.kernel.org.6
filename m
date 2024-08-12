@@ -1,53 +1,64 @@
-Return-Path: <linux-kernel+bounces-283258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9C294EF3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:13:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 189CD94EF3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA862283A24
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84EA1F20F64
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE4217D8A9;
-	Mon, 12 Aug 2024 14:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152E617E477;
+	Mon, 12 Aug 2024 14:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2Nhj3jY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieRbve6g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5693E33C5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CD33C5;
+	Mon, 12 Aug 2024 14:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723471974; cv=none; b=ILSwWoRyu1EY/McyGLyI6dqBwclN1XjmuGT5Pxh1Qzu218y4WmY+aYmRCAMZjq+aQXy0fM55oAOQYB8Bz6giHLrbjdYFwGu1hjF2TPJDrwSQ2ckEd3c3AQg7k2vpainCQXfrFZOuY/RIozZMXk3B7WsFvqYJDSXeEBlNHYa4cig=
+	t=1723472012; cv=none; b=rY/zvISpoYB2Kpstj7YVgcyDPcmVhLBwupjhjwkh9vZX9U/652szBdrrbJrL4q8XvFcu+TF6yIWx7I+1JbHzCoTcRS8eZBczWgM9/9p0J0DP652OSFbBAi/Nj1vhW5e+qgKHVFJh3RTJlL2fUPY1S1KbmRrHq4Nv/PL+8U6Y72g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723471974; c=relaxed/simple;
-	bh=7gSDC/cYVMwFkYxC7WG5mpNOT6P1rABfpHlISArbjQQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p+Vb7Jti6mikmGkHHH72aUN0LKRmfyrzGCF/Sopqzm6Aes4TPXdGCwbJwtimc3RzDvlDyNWXaD1eIzOArUizj5XEQuRhCbrllKCaJI/txMpi7ZQ/NAoP2BwyLy39Vq20H751itZbVIzHCkAJm/N7gPbU8zcrmVxfuh08coDwEvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2Nhj3jY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E1EBC32782;
-	Mon, 12 Aug 2024 14:12:52 +0000 (UTC)
+	s=arc-20240116; t=1723472012; c=relaxed/simple;
+	bh=TC/QMOkYIMtEI0vpiVXPXJAu6ENEaOjWl87P5kFwUvE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VBbzJFb+33xvKJc0mxtSrG7JT/nSoNBEonAKxCOrLp/RXcznkPeEdBkBBReeEibPH385t2Rh3mb7SOZPlEJXJgb/fubQkiua5VqzKCMDKw2F3QeOPm0989toCXFIKcKJLoKIDAkxauPveK6wYt9A6rr5jQRDp4jgM/cFOtNxK4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieRbve6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5F1C4AF09;
+	Mon, 12 Aug 2024 14:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723471973;
-	bh=7gSDC/cYVMwFkYxC7WG5mpNOT6P1rABfpHlISArbjQQ=;
+	s=k20201202; t=1723472011;
+	bh=TC/QMOkYIMtEI0vpiVXPXJAu6ENEaOjWl87P5kFwUvE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=h2Nhj3jY4l1WBltCi6rXWlfN2AIuo1Nr+RsYBAU/6mTIoTTDAUZwWcpy7HF0Cw0tR
-	 PGcw/vZHLFAzLjHoaxfVCzGDfUiG+min1ofn4ehWim4NZ1UmvC+zKdGJVZ+1jAHien
-	 rZwdXE1IENLkJp3fw365NkcU9WxhNnsfKrImxH83n3G1o4JFZTY4JeRokq/yOWZRJN
-	 8355OUaAkmCkvfDBnzU5nq7zMCcZLEhZQg1iAaJ/Y/hRksYx+ox+V0A0qe3ckv/ju2
-	 JmFqtOYEKqnuZx0riNenL0VjxCjNaz702q1p7pKvrTrxOM7OYmrRlgTXnTYCDns05R
-	 IuxqzAx56LAaw==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
+	b=ieRbve6gGbPfvJArfpSKs1Vx00YBFsMuODaQWTRIVvInmuyZ0ULOtXt3eG1GtVArh
+	 A7l77oEztGSzFI7vQQIX+5Y3il1EeVDnPI4yVsEb0QBQ80QULCa6tsDWce46XVSyYr
+	 v3bid7zD5EKbTo2Gg9EMsdObJXsgDBIz8+ZSZ2h5E+qGUL2Ixjoy656s3q5Rx+e2fT
+	 0BT58b8uP8QTk+Tsy0LlZxdKpiKsaL0fKzZk9shjfa9N4MLLZ2AQtpWTKDLKPA94st
+	 xurEDyuHPRQBJWfmXFhSHOb0DIfWOCCAkHas+zQbmjZ3JULQXZKWPb/uKt/X2fZJei
+	 yoV3ghAroVVCA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sdVnd-0032l0-9D;
+	Mon, 12 Aug 2024 15:13:29 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to wait page writeback before setting gcing flag
-Date: Mon, 12 Aug 2024 22:12:42 +0800
-Message-Id: <20240812141242.4159033-1-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
+	netdev@vger.kernel.org
+Cc: Breno Leitao <leitao@debian.org>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] net: thunder_bgx: Fix netdev structure allocation
+Date: Mon, 12 Aug 2024 15:13:22 +0100
+Message-Id: <20240812141322.1742918-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,51 +66,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, leitao@debian.org, sgoutham@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Soft IRQ				Thread
-- f2fs_write_end_io
-					- f2fs_defragment_range
-					 - set_page_private_gcing
- - type = WB_DATA_TYPE(page, false);
- : assign type w/ F2FS_WB_CP_DATA
- due to page_private_gcing() is true
-  - dec_page_count() w/ wrong type
-  - end_page_writeback()
+Commit 94833addfaba ("net: thunderx: Unembed netdev structure") had
+a go at dynamically allocating the netdev structures for the thunderx_bgx
+driver.  This change results in my ThunderX box catching fire (to be fair,
+it is what it does best).
 
-Value of F2FS_WB_CP_DATA reference count may become negative under above
-race condition, the root cause is we missed to wait page writeback before
-setting gcing page private flag, let's fix it.
+The issues with this change are that:
 
-Fixes: 2d1fe8a86bf5 ("f2fs: fix to tag gcing flag on page during file defragment")
-Fixes: 4961acdd65c9 ("f2fs: fix to tag gcing flag on page during block migration")
-Signed-off-by: Chao Yu <chao@kernel.org>
+- bgx_lmac_enable() is called *after* bgx_acpi_register_phy() and
+  bgx_init_of_phy(), both expecting netdev to be a valid pointer.
+
+- bgx_init_of_phy() populates the MAC addresses for *all* LMACs
+  attached to a given BGX instance, and thus needs netdev for each of
+  them to have been allocated.
+
+There is a few things to be said about how the driver mixes LMAC and
+BGX states which leads to this sorry state, but that's beside the point.
+
+To address this, go back to a situation where all netdev structures
+are allocated before the driver starts relying on them, and move the
+freeing of these structures to driver removal. Someone brave enough
+can always go and restructure the driver if they want.
+
+Fixes: 94833addfaba ("net: thunderx: Unembed netdev structure")
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Breno Leitao <leitao@debian.org>
+Cc: Sunil Goutham <sgoutham@marvell.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- fs/f2fs/file.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ .../net/ethernet/cavium/thunder/thunder_bgx.c | 30 +++++++++++++------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index eaa39c50f782..56e27e305600 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -2817,6 +2817,8 @@ static int f2fs_defragment_range(struct f2fs_sb_info *sbi,
- 				goto clear_out;
- 			}
+diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+index a40c266c37f2..608cc6af5af1 100644
+--- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
++++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
+@@ -1054,18 +1054,12 @@ static int phy_interface_mode(u8 lmac_type)
  
-+			f2fs_wait_on_page_writeback(page, DATA, true, true);
-+
- 			set_page_dirty(page);
- 			set_page_private_gcing(page);
- 			f2fs_put_page(page, 1);
-@@ -4217,6 +4219,8 @@ static int redirty_blocks(struct inode *inode, pgoff_t page_idx, int len)
- 		/* It will never fail, when page has pinned above */
- 		f2fs_bug_on(F2FS_I_SB(inode), !page);
+ static int bgx_lmac_enable(struct bgx *bgx, u8 lmacid)
+ {
+-	struct lmac *lmac, **priv;
++	struct lmac *lmac;
+ 	u64 cfg;
  
-+		f2fs_wait_on_page_writeback(page, DATA, true, true);
+ 	lmac = &bgx->lmac[lmacid];
+ 	lmac->bgx = bgx;
+ 
+-	lmac->netdev = alloc_netdev_dummy(sizeof(struct lmac *));
+-	if (!lmac->netdev)
+-		return -ENOMEM;
+-	priv = netdev_priv(lmac->netdev);
+-	*priv = lmac;
+-
+ 	if ((lmac->lmac_type == BGX_MODE_SGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_QSGMII) ||
+ 	    (lmac->lmac_type == BGX_MODE_RGMII)) {
+@@ -1191,7 +1185,6 @@ static void bgx_lmac_disable(struct bgx *bgx, u8 lmacid)
+ 	    (lmac->lmac_type != BGX_MODE_10G_KR) && lmac->phydev)
+ 		phy_disconnect(lmac->phydev);
+ 
+-	free_netdev(lmac->netdev);
+ 	lmac->phydev = NULL;
+ }
+ 
+@@ -1653,6 +1646,23 @@ static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	bgx_get_qlm_mode(bgx);
+ 
++	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
++		struct lmac *lmacp, **priv;
 +
- 		set_page_dirty(page);
- 		set_page_private_gcing(page);
- 		f2fs_put_page(page, 1);
++		lmacp = &bgx->lmac[lmac];
++		lmacp->netdev = alloc_netdev_dummy(sizeof(struct lmac *));
++
++		if (!lmacp->netdev) {
++			for (int i = 0; i < lmac; i++)
++				free_netdev(bgx->lmac[i].netdev);
++			err = -ENOMEM;
++			goto err_enable;
++		}
++
++		priv = netdev_priv(lmacp->netdev);
++		*priv = lmacp;
++	}
++
+ 	err = bgx_init_phy(bgx);
+ 	if (err)
+ 		goto err_enable;
+@@ -1692,8 +1702,10 @@ static void bgx_remove(struct pci_dev *pdev)
+ 	u8 lmac;
+ 
+ 	/* Disable all LMACs */
+-	for (lmac = 0; lmac < bgx->lmac_count; lmac++)
++	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
+ 		bgx_lmac_disable(bgx, lmac);
++		free_netdev(bgx->lmac[lmac].netdev);
++	}
+ 
+ 	pci_free_irq(pdev, GMPX_GMI_TX_INT, bgx);
+ 
 -- 
-2.40.1
+2.39.2
 
 
