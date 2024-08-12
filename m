@@ -1,192 +1,130 @@
-Return-Path: <linux-kernel+bounces-283195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E17CB94EE82
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:42:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C581F94EE83
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992732819B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:42:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70B431F21A5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D3B117C22A;
-	Mon, 12 Aug 2024 13:41:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554517C22A;
+	Mon, 12 Aug 2024 13:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uccGAWSQ"
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3LqS5NP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F9F17C23D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8EF176FBD
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470111; cv=none; b=QOY+MPin8LwtenNEdkVQhfBJugHDH2gFfwi7lO6NAEu/qVoR36Q7X8uGDnnjjD3o13qQ8y/YcQ5d8reQlfOACwPAbMfHOxsQvwL+2DgEiehejieJieDgjJhYIwWzqTpPpjk3L/6phUhZv4RVm06ywhZuQxoSAa04Xqv3e5pwyb8=
+	t=1723470127; cv=none; b=d78L7ZOvTeNaAUiC1kY72m1leUaHR6WNk3Y0TxpZovHmiyGHrYtAaRMtItSqTQsPE/3gRgN/ruTe5FIoRbF0u8zN3XWOuF0N8AfA1VWSdV6F18DhQ9eX+2uzkIh0yxTfMV0J3gqCQakyGumyo9QXwoLsmNl44N3uhEY+4yvInYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470111; c=relaxed/simple;
-	bh=PEyKKukDad7GSVDb0CG3ZU0fM7J0jKqyxUBcbGgzGX4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aev0v3uBT9M1uyn6f3cbTpenof1SblbV6FyWxWt2xdAfkv/h4bb/wogAxg28/XGhZEswT5ghPefzRB7F8IcRhEvU20b/QhFr3183UuxQBWRzCAJ7wEiFjS8Npi//pczhQey0AQ0U4ZEG6StsBuubjwxEf73U4Eg9tEVm3u1JEjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uccGAWSQ; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4928fa870a9so1308673137.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:41:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723470108; x=1724074908; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NZdPiM3eHhS0gXqA59iljos4r3z2B3CpNxMTL6TtBWM=;
-        b=uccGAWSQ5ek9ShKj1pa75/hA7CBc0MhDjGaF6Jx9vTEhEQUDHxNCuOHni/XFi+3asI
-         Y2Pma2fxk6NqejJushapyYUfxzP3owAOHHMC/nvuShxbslofMqdSEOaJEp3o/BgOBItz
-         ZCNnqo7WzaXgfw21j2M27S1ZxLq8zmJx9ImXjxtK5g89aVLLXVzn45MQUeJLuk4V6WNk
-         xNQ800OHV9c83J5YDd1uau7RMWduheEwBymqWG/vGzF8sN4fcuVovMNzWCpfgSHNkQTq
-         8WqAjMGsdq18i35Nj2gHCMUGP/4V/RLNaSoPTVXAPsHi33EZFxwsh8ymXS96N/rtJwcz
-         p64A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723470108; x=1724074908;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NZdPiM3eHhS0gXqA59iljos4r3z2B3CpNxMTL6TtBWM=;
-        b=C3oEAZmblRdZaSRYhpQAE6nHqF2tZC/InCzheQteGR9DNZ9bfa6Y4mu9MYQdOfe/f3
-         xQBdmnQ/zhg3dtjvxr/SPD5fT+DuvYU3yMJrVrpNswSZz8V/E4cmPPtWRCrc31p0XPJA
-         tJfnSItIxGvyPjcKjUjTXNpENpWrm4OVMtZC0mHr3W3sKNlRg0IPA3ZTYAGkHvDexGNl
-         bFXEGo5tLD88Ols8BjJt7rihJ0D8lWLo9Sx54U/c2CYqnnFHABMOTSW62LAE3qDdOq+5
-         4oKIw6ikp8Y6Fh64qWRuRjN+Be8cd6cQdsPh9zcfDitkELtBS7i9gw8YsZF5hD2B6rdC
-         CoHg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGiGdZ/TpulhhjHMArW+vNhcsaUz8G78n6/Ktek7o1q4UXhn5fHeV8nf4MOu/iPZh6zPPFPKOiWaMDvAPbTt99RAzud6rEXT+u8j7c
-X-Gm-Message-State: AOJu0Yxaq5ARBK/KlwZlpsuhMN5ag81kFhQ0VZKhoBpKb7xPstq4rr+l
-	ceES/Ui+StvnjZSH2s/8Uxyfs5p9BmqHyipWIVPs0J/WEgK2lzklqKSr/hhx8BY=
-X-Google-Smtp-Source: AGHT+IEsceJsLwcbe8ZaO6k0uxbmVJqWTyQSzd6+oN/GAqxRjkMASZhkewn/y1mFB5Us3W4ra8JFTg==
-X-Received: by 2002:a05:6102:3587:b0:493:e582:70ce with SMTP id ada2fe7eead31-49743a4d67emr546286137.10.1723470108426;
-        Mon, 12 Aug 2024 06:41:48 -0700 (PDT)
-Received: from [192.168.40.12] (d24-150-219-207.home.cgocable.net. [24.150.219.207])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d65006sm246372685a.1.2024.08.12.06.41.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 06:41:48 -0700 (PDT)
-Message-ID: <f8a7754e-0f6b-4802-985b-d8817892ecbb@baylibre.com>
-Date: Mon, 12 Aug 2024 09:41:46 -0400
+	s=arc-20240116; t=1723470127; c=relaxed/simple;
+	bh=SUDN/6Po80egMnrVOI6BNtVjTOorz0Kb2BQqNcCf52c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GXwPrid2qQ5SKsWgVrLoMqD6dDrLCk1OoffhTfEFCtT2nvh5Zib5bEUdAuQ7AoUmtLibZzQWD2i/FF56bAwrJkt5IboJBhM0XTXqXESf7Mu428TLVEg43HS50i6M2fDAcQkNmgd24xKsf+c2uLoF+OIO8/EXe1YMrzVEWDSnyJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3LqS5NP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B96C32782;
+	Mon, 12 Aug 2024 13:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723470126;
+	bh=SUDN/6Po80egMnrVOI6BNtVjTOorz0Kb2BQqNcCf52c=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Z3LqS5NP/8Y5d0AKFntUt7sBV2O6tn4hSUUpNvaZyclDQcqxTENdWIB7fMwG3RxRa
+	 3IPcVWBZgfdwgNFQ9iuBqBR8fSRx0OjGwRaO2aTAUyi+8Tx/SFa1V4gqBeyO231TkC
+	 K+TBlJKMOa7fuB9/DzQs/UFVN9GqtvHcSEd37WNr7URGOQNFZ2nZTGxFmNstP0cEML
+	 6C/RjrYmWyuvaxDlMrQh2kmFigpywx/24wGKtlJb81uIfOa0rEsvzOh72pUdxdmQd6
+	 UBBUjG4xTfyAFZ4sy6pHP4oIWwvW7U6w9yoPMdWch/DQuTJ/J1v8212837JRun9Vtr
+	 w0W1AtfKL1X/Q==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
+ <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
+  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
+ <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: winbond: add Zetta ZD25Q128C support
+In-Reply-To: <20240804221535.291923-1-mwalle@kernel.org> (Michael Walle's
+	message of "Mon, 5 Aug 2024 00:15:35 +0200")
+References: <20240804221535.291923-1-mwalle@kernel.org>
+Date: Mon, 12 Aug 2024 15:42:04 +0200
+Message-ID: <mafs0v805zwlv.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: iio: adc: add AD762x/AD796x ADCs
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- David Lechner <dlechner@baylibre.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20240809-ad7625_r1-v2-0-f85e7ac83150@baylibre.com>
- <20240809-ad7625_r1-v2-1-f85e7ac83150@baylibre.com>
- <03eca85c-50d7-4ff0-a5b6-83e3322cb04d@kernel.org>
-Content-Language: en-US
-From: Trevor Gamblin <tgamblin@baylibre.com>
-In-Reply-To: <03eca85c-50d7-4ff0-a5b6-83e3322cb04d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+On Mon, Aug 05 2024, Michael Walle wrote:
 
-On 2024-08-10 8:10 a.m., Krzysztof Kozlowski wrote:
-> On 09/08/2024 20:41, Trevor Gamblin wrote:
->> Add a binding specification for the Analog Devices Inc. AD7625,
->> AD7626, AD7960, and AD7961 ADCs.
->>
-> Thank you for your patch. There is something to discuss/improve.
+> Zetta normally uses BAh as its vendor ID. But for the ZD25Q128C they
+> took the one from Winbond and messed up the size parameters in SFDP.
+> Most functions seem compatible with the W25Q128, we just have to fix up
+> the size.
 >
->> +allOf:
->> +  - if:
->> +      required:
->> +        - ref-supply
->> +    then:
->> +      # refin-supply is not needed if ref-supply is given
-> Not needed or not allowed? Schema says the latter.
-Yes, this is poor wording on my part. I will fix it to say "not allowed".
->
->> +      properties:
->> +        refin-supply: false
->> +  - if:
->> +      required:
->> +        - refin-supply
->> +    then:
->> +      # ref-supply is not needed if refin-supply is given
->> +      properties:
->> +        ref-supply: false
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - adi,ad7625
->> +              - adi,ad7626
->> +    then:
->> +      properties:
->> +        en2-gpios: false
->> +        en3-gpios: false
->> +        adi,en2-always-on: false
->> +        adi,en3-always-on: false
->> +
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - adi,ad7960
->> +              - adi,ad7961
->> +    then:
->> +      # ad796x parts must have one of the two supplies
->> +      oneOf:
->> +        - required: [ref-supply]
->> +        - required: [refin-supply]
-> That's duplicating first and second if. And all three - comment, first
-> if:then: and this one here is kind of contradictory so I don't know what
-> you want to achieve.
+> Link: http://www.zettadevice.com/upload/file/20150821/DS_Zetta_25Q128_RevA.pdf
+> Link: https://www.lcsc.com/datasheet/lcsc_datasheet_2312081757_Zetta-ZD25Q128CSIGT_C19626875.pdf
+> Signed-off-by: Michael Walle <mwalle@kernel.org>
+> ---
+[...]
+> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
+> index e065e4fd42a3..9f7ce5763e71 100644
+> --- a/drivers/mtd/spi-nor/winbond.c
+> +++ b/drivers/mtd/spi-nor/winbond.c
+> @@ -17,6 +17,31 @@
+>  		   SPI_MEM_OP_NO_DUMMY,					\
+>  		   SPI_MEM_OP_DATA_OUT(1, buf, 0))
+>  
+> +static int
+> +w25q128_post_bfpt_fixups(struct spi_nor *nor,
+> +			 const struct sfdp_parameter_header *bfpt_header,
+> +			 const struct sfdp_bfpt *bfpt)
+> +{
+> +	/*
+> +	 * Zetta ZD25Q128C is a clone of the Winbond device. But the encoded
+> +	 * size is really wrong. It seems that they confused Mbit with MiB.
+> +	 * Thus the flash is discovered as a 2MiB device.
+> +	 */
+> +	if (bfpt_header->major == SFDP_JESD216_MAJOR &&
+> +	    bfpt_header->minor == SFDP_JESD216_MINOR &&
+> +	    nor->params->size == SZ_2M &&
+> +	    nor->params->erase_map.regions[0].size == SZ_2M) {
+> +		nor->params->size = SZ_16M;
+> +		nor->params->erase_map.regions[0].size = SZ_16M;
+> +	}
 
-It sounds like there's a better way for me to specify this, but I'm not 
-exactly sure how.
+Since the size is 16 MiB for both Zetta and Winbond, why do you have
+these conditions here? Why not just do it unconditionally? What
+situation do you want to protect against?
 
-The AD762x parts can operate without external references, so the intent 
-was that neither REF nor REFIN was required in the bindings, but if one 
-is given then the other can't be.
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct spi_nor_fixups w25q128_fixups = {
+> +	.post_bfpt = w25q128_post_bfpt_fixups,
+> +};
+> +
+>  static int
+>  w25q256_post_bfpt_fixups(struct spi_nor *nor,
+>  			 const struct sfdp_parameter_header *bfpt_header,
+> @@ -108,6 +133,7 @@ static const struct flash_info winbond_nor_parts[] = {
+>  		.size = SZ_16M,
+>  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
+>  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
+> +		.fixups = &w25q128_fixups,
+>  	}, {
+>  		.id = SNOR_ID(0xef, 0x40, 0x19),
+>  		.name = "w25q256",
 
-For the AD796x parts, one of REF or REFIN must be provided, but not 
-both. If REFIN is provided, then REF doesn't need an input because a 
-reference voltage is generated on REF. If REF is provided, then REFIN is 
-tied to ground.
-
-Maybe there's a simpler way for me to specify the whole block?
-
->
->
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    adc {
->> +        compatible = "adi,ad7625";
->> +        vdd1-supply = <&supply_5V>;
->> +        vdd2-supply = <&supply_2_5V>;
->> +        vio-supply = <&supply_2_5V>;
->> +        io-backends = <&axi_adc>;
->> +        clocks = <&ref_clk>;
->> +        pwms = <&axi_pwm_gen 0 0>, <&axi_pwm_gen 1 0>;
->> +        pwm-names = "cnv", "clk_gate";
-> Make example complete - en0 or en1 GPIOs or whatever else is applicable.
-Will do, thank you.
->
->
-> Best regards,
-> Krzysztof
->
+-- 
+Regards,
+Pratyush Yadav
 
