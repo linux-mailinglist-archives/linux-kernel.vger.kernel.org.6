@@ -1,165 +1,279 @@
-Return-Path: <linux-kernel+bounces-282957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C08794EB42
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:35:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0008094EB45
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67CDF1C21779
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB23F282B0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB4A170A19;
-	Mon, 12 Aug 2024 10:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UTaqUW0o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09DDD170828;
+	Mon, 12 Aug 2024 10:36:05 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36B7216FF5F;
-	Mon, 12 Aug 2024 10:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E50A15C159;
+	Mon, 12 Aug 2024 10:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458908; cv=none; b=D35Q/uY1AXASa5D2bEKKd85HRY0kGtV/aIexIaZ5FOLNY84rFx+En+CeW0ft+/gxPAvMbuHk6kpxfwXbB9rh4SKRnMX4QN1u7nXGpixXtuGsAHweU7cal5zmD9sWWc8da2DcQZR09tjVgYC/vu/WKMMnzP949NNPfO5gfDVpKHY=
+	t=1723458964; cv=none; b=j0z2++b4VJTOqmQYPhyaHmUemp9jpr0UtuhjNFpAeLYgiFKUXPsKdvPNta4UfJUN4oDn5ulAkKRmWx6GZbGEHWIFe1qEghV3ffX3ru3RYBB+Ox0UeTmHruYwkj6tbl0VMrAD5J5wjmtiWreLdZB5MLtyQeOx0Qxj7/SxaiZTdwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458908; c=relaxed/simple;
-	bh=Q8lXjJUs/uZZaKW5uW3iaBBYrPMoYSSD8SdzFS0UI3E=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=b9foGOXgg9ge7QxNs01n7D8UX9o93QP/QKn+i91lQcLu9nz8xi88aTlUuaPHPQ1wyRZkWsm7RqupPbO6ZemBBweXxFJq6nyKLi2cUi2peCIF/qOTGYi3tlPQZzM1ssf0V39HCKoMXWfJcrFKHxfZJUvrL/Te3Lo3/Fj/SJv/aBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UTaqUW0o; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723458906; x=1754994906;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Q8lXjJUs/uZZaKW5uW3iaBBYrPMoYSSD8SdzFS0UI3E=;
-  b=UTaqUW0ocMlg9VGGKzbw4M3EFMzdX79ZrvuVk8pIwVQZ16IAokUQlQ1w
-   l3fRc9BD59dKvk5X2Uk+AwadSyUv39wXdKdM3wxR/djAy2yAwq6GTguWE
-   KoAXsnpnXVmkcl2rv7szBv60NLiXsl8BvLMCFCo5B4mv/c9byIsP75lhJ
-   G1oe1+VwVEKvrfrHTULBjVJ+JzOdiH0RDtOjgVM6RAD1fsj+TSs5HFTLe
-   Gwdj8ycpHDQ50p5wV32+u79BKpXM+DGVqVnQVe+gofI0Rx1P73Ky4G6ZN
-   UKYRL3M7pez2+37Uhv+hzsa1qFp3a4LVz9NcjphqO81+5OyfFy9Xd4eTG
-   Q==;
-X-CSE-ConnectionGUID: OU9T1hCtQRWoy1PbyCVg3w==
-X-CSE-MsgGUID: 743hZFp2QbamIbzfekBDHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21730666"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21730666"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:35:05 -0700
-X-CSE-ConnectionGUID: JQLSKFUmQn6KUfQwZy2nFQ==
-X-CSE-MsgGUID: u+qX6CCzSimYeiDzszwpKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="58934886"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:35:03 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 12 Aug 2024 13:35:00 +0300 (EEST)
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>, 
-    Bjorn Helgaas <bhelgaas@google.com>
-cc: Matthew W Carlis <mattc@purestorage.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] PCI: Clear the LBMS bit after a link retrain
-In-Reply-To: <alpine.DEB.2.21.2408091133140.61955@angie.orcam.me.uk>
-Message-ID: <26c94eb5-06b6-8064-acdb-67975bded982@linux.intel.com>
-References: <alpine.DEB.2.21.2408091017050.61955@angie.orcam.me.uk> <alpine.DEB.2.21.2408091133140.61955@angie.orcam.me.uk>
+	s=arc-20240116; t=1723458964; c=relaxed/simple;
+	bh=9JOixDOMEABm8/KrT/4BKVWnyfC+aB+F26ZuYzAhoTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Oy2j5oLyBTUwCTGUvHOANCXoXMqhJDB2HWbsDtqcJYJgVkPePlUnddlyzjmJk+WoNRViM6W1qspjUFWtWyUN13zEzCzo0PaUdQQTf447HWRmBY+NTHJLF7yeDOz5Ai3Gmc96BeXy2Ej1Hl91IFDubolCeb1NhBzBqvIGUdS5GGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sdSGc-00450E-1D;
+	Mon, 12 Aug 2024 18:35:56 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Aug 2024 18:35:55 +0800
+Date: Mon, 12 Aug 2024 18:35:55 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev,
+	Linus Torvalds <torvalds@linux-foundation.org>, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [v2 PATCH 2/3] crypto: api - Do not wait for tests during
+ registration
+Message-ID: <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
+References: <ZrbTfOViUr3S4V7X@gondor.apana.org.au>
+ <34069b9d-3731-4d0c-b317-bcbc61df7e9d@stanley.mountain>
+ <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
+ <ZrnlP4itTulcIYqP@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrnlP4itTulcIYqP@gondor.apana.org.au>
 
-On Fri, 9 Aug 2024, Maciej W. Rozycki wrote:
+As registration is usually carried out during module init, this
+is a context where as little work as possible should be carried
+out.  Testing may trigger module loads of underlying components,
+which could even lead back to the module that is registering at
+the moment.  This may lead to dead-locks outside of the Crypto API.
 
-> The LBMS bit, where implemented, is set by hardware either in response 
-> to the completion of retraining caused by writing 1 to the Retrain Link 
-> bit or whenever hardware has changed the link speed or width in attempt 
-> to correct unreliable link operation.  It is never cleared by hardware 
-> other than by software writing 1 to the bit position in the Link Status 
-> register and we never do such a write.
-> 
-> We currently have two places, namely `apply_bad_link_workaround' and 
-> `pcie_failed_link_retrain' in drivers/pci/controller/dwc/pcie-tegra194.c 
-> and drivers/pci/quirks.c respectively where we check the state of the 
-> LBMS bit and neither is interested in the state of the bit resulting 
-> from the completion of retraining, both check for a link fault.
-> 
-> And in particular `pcie_failed_link_retrain' causes issues consequently, 
-> by trying to retrain a link where there's no downstream device anymore 
-> and the state of 1 in the LBMS bit has been retained from when there was 
-> a device downstream that has since been removed.
-> 
-> Clear the LBMS bit then at the conclusion of `pcie_retrain_link', so 
-> that we have a single place that controls it and that our code can track 
-> link speed or width changes resulting from unreliable link operation.
-> 
-> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-> Reported-by: Matthew W Carlis <mattc@purestorage.com>
-> Link: https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.com/
-> Link: https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.com/
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Cc: stable@vger.kernel.org # v6.5+
-> ---
-> New change in v2.
-> ---
->  drivers/pci/pci.c |   10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
-> 
-> linux-pcie-retrain-link-lbms-clear.diff
-> Index: linux-macro/drivers/pci/pci.c
-> ===================================================================
-> --- linux-macro.orig/drivers/pci/pci.c
-> +++ linux-macro/drivers/pci/pci.c
-> @@ -4718,7 +4718,15 @@ int pcie_retrain_link(struct pci_dev *pd
->  		pcie_capability_clear_word(pdev, PCI_EXP_LNKCTL, PCI_EXP_LNKCTL_RL);
->  	}
->  
-> -	return pcie_wait_for_link_status(pdev, use_lt, !use_lt);
-> +	rc = pcie_wait_for_link_status(pdev, use_lt, !use_lt);
-> +
-> +	/*
-> +	 * Clear LBMS after a manual retrain so that the bit can be used
-> +	 * to track link speed or width changes made by hardware itself
-> +	 * in attempt to correct unreliable link operation.
-> +	 */
-> +	pcie_capability_write_word(pdev, PCI_EXP_LNKSTA, PCI_EXP_LNKSTA_LBMS);
+Avoid this by not waiting for the tests to complete.  They will
+be scheduled but completion will be asynchronous.  Any users will
+still wait for completion.
 
-I see Bjorn already took this series in which is good, it's long overdue 
-we finally fix the bugs addressed by this series. :-)
+Reported-by: Russell King <linux@armlinux.org.uk>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+---
+ crypto/algapi.c   | 23 ++++++++++++-----------
+ crypto/api.c      | 41 +++++++++++++++++++++--------------------
+ crypto/internal.h |  3 +--
+ 3 files changed, 34 insertions(+), 33 deletions(-)
 
-I'm slightly worried this particular change could interfere with the 
-intent of pcie_failed_link_retrain() because LBMS is cleared also in the 
-failure cases.
-
-In the case of your HW, there's retraining loop by HW so LBMS gets set 
-again but if the HW would not retrain in a loop and needs similar gen1 
-bootstrap, it's very non-obvious to me how things will end up interacting 
-with pcie_retrain_link() call from pcie_aspm_configure_common_clock(). 
-That is, this could clear the LBMS indication and another is not going to 
-be asserted (and even in case of with the retraining loop, it would be 
-racy to get LBMS re-asserted soon enough).
-
-My impression is that things seem to work with the current ordering of the 
-code but it seems quite fragile (however, the callchains are quite 
-complicated to track so I might have missed something). Perhaps that won't 
-matter much in the end with the bandwidth controller coming to rework all 
-this anyway but wanted to note this may have caveats.
-
-> +	return rc;
->  }
->  
->  /**
-> 
+diff --git a/crypto/algapi.c b/crypto/algapi.c
+index d2ccc1289f92..74e2261c184c 100644
+--- a/crypto/algapi.c
++++ b/crypto/algapi.c
+@@ -366,7 +366,8 @@ void crypto_alg_tested(const char *name, int err)
+ 	}
+ 
+ 	pr_err("alg: Unexpected test result for %s: %d\n", name, err);
+-	goto unlock;
++	up_write(&crypto_alg_sem);
++	return;
+ 
+ found:
+ 	q->cra_flags |= CRYPTO_ALG_DEAD;
+@@ -387,11 +388,12 @@ void crypto_alg_tested(const char *name, int err)
+ 	crypto_alg_finish_registration(alg, &list);
+ 
+ complete:
++	list_del_init(&test->alg.cra_list);
+ 	complete_all(&test->completion);
+ 
+-unlock:
+ 	up_write(&crypto_alg_sem);
+ 
++	crypto_alg_put(&test->alg);
+ 	crypto_remove_final(&list);
+ }
+ EXPORT_SYMBOL_GPL(crypto_alg_tested);
+@@ -412,7 +414,6 @@ int crypto_register_alg(struct crypto_alg *alg)
+ {
+ 	struct crypto_larval *larval;
+ 	LIST_HEAD(algs_to_put);
+-	bool test_started = false;
+ 	int err;
+ 
+ 	alg->cra_flags &= ~CRYPTO_ALG_DEAD;
+@@ -423,15 +424,16 @@ int crypto_register_alg(struct crypto_alg *alg)
+ 	down_write(&crypto_alg_sem);
+ 	larval = __crypto_register_alg(alg, &algs_to_put);
+ 	if (!IS_ERR_OR_NULL(larval)) {
+-		test_started = crypto_boot_test_finished();
++		bool test_started = crypto_boot_test_finished();
++
+ 		larval->test_started = test_started;
++		if (test_started)
++			crypto_schedule_test(larval);
+ 	}
+ 	up_write(&crypto_alg_sem);
+ 
+ 	if (IS_ERR(larval))
+ 		return PTR_ERR(larval);
+-	if (test_started)
+-		crypto_wait_for_test(larval);
+ 	crypto_remove_final(&algs_to_put);
+ 	return 0;
+ }
+@@ -646,8 +648,10 @@ int crypto_register_instance(struct crypto_template *tmpl,
+ 	larval = __crypto_register_alg(&inst->alg, &algs_to_put);
+ 	if (IS_ERR(larval))
+ 		goto unlock;
+-	else if (larval)
++	else if (larval) {
+ 		larval->test_started = true;
++		crypto_schedule_test(larval);
++	}
+ 
+ 	hlist_add_head(&inst->list, &tmpl->instances);
+ 	inst->tmpl = tmpl;
+@@ -657,8 +661,6 @@ int crypto_register_instance(struct crypto_template *tmpl,
+ 
+ 	if (IS_ERR(larval))
+ 		return PTR_ERR(larval);
+-	if (larval)
+-		crypto_wait_for_test(larval);
+ 	crypto_remove_final(&algs_to_put);
+ 	return 0;
+ }
+@@ -1042,6 +1044,7 @@ static void __init crypto_start_tests(void)
+ 
+ 			l->test_started = true;
+ 			larval = l;
++			crypto_schedule_test(larval);
+ 			break;
+ 		}
+ 
+@@ -1049,8 +1052,6 @@ static void __init crypto_start_tests(void)
+ 
+ 		if (!larval)
+ 			break;
+-
+-		crypto_wait_for_test(larval);
+ 	}
+ 
+ 	set_crypto_boot_test_finished();
+diff --git a/crypto/api.c b/crypto/api.c
+index ffb81aa32725..bbe29d438815 100644
+--- a/crypto/api.c
++++ b/crypto/api.c
+@@ -154,32 +154,31 @@ static struct crypto_alg *crypto_larval_add(const char *name, u32 type,
+ 	return alg;
+ }
+ 
+-void crypto_larval_kill(struct crypto_alg *alg)
++static void crypto_larval_kill(struct crypto_larval *larval)
+ {
+-	struct crypto_larval *larval = (void *)alg;
++	bool unlinked;
+ 
+ 	down_write(&crypto_alg_sem);
+-	list_del(&alg->cra_list);
++	unlinked = list_empty(&larval->alg.cra_list);
++	if (!unlinked)
++		list_del_init(&larval->alg.cra_list);
+ 	up_write(&crypto_alg_sem);
+-	complete_all(&larval->completion);
+-	crypto_alg_put(alg);
+-}
+-EXPORT_SYMBOL_GPL(crypto_larval_kill);
+ 
+-void crypto_wait_for_test(struct crypto_larval *larval)
++	if (unlinked)
++		return;
++
++	complete_all(&larval->completion);
++	crypto_alg_put(&larval->alg);
++}
++
++void crypto_schedule_test(struct crypto_larval *larval)
+ {
+ 	int err;
+ 
+ 	err = crypto_probing_notify(CRYPTO_MSG_ALG_REGISTER, larval->adult);
+-	if (WARN_ON_ONCE(err != NOTIFY_STOP))
+-		goto out;
+-
+-	err = wait_for_completion_killable(&larval->completion);
+-	WARN_ON(err);
+-out:
+-	crypto_larval_kill(&larval->alg);
++	WARN_ON_ONCE(err != NOTIFY_STOP);
+ }
+-EXPORT_SYMBOL_GPL(crypto_wait_for_test);
++EXPORT_SYMBOL_GPL(crypto_schedule_test);
+ 
+ static void crypto_start_test(struct crypto_larval *larval)
+ {
+@@ -198,7 +197,7 @@ static void crypto_start_test(struct crypto_larval *larval)
+ 	larval->test_started = true;
+ 	up_write(&crypto_alg_sem);
+ 
+-	crypto_wait_for_test(larval);
++	crypto_schedule_test(larval);
+ }
+ 
+ static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
+@@ -218,9 +217,11 @@ static struct crypto_alg *crypto_larval_wait(struct crypto_alg *alg)
+ 	alg = larval->adult;
+ 	if (time_left < 0)
+ 		alg = ERR_PTR(-EINTR);
+-	else if (!time_left)
++	else if (!time_left) {
++		if (crypto_is_test_larval(larval))
++			crypto_larval_kill(larval);
+ 		alg = ERR_PTR(-ETIMEDOUT);
+-	else if (!alg) {
++	} else if (!alg) {
+ 		u32 type;
+ 		u32 mask;
+ 
+@@ -355,7 +356,7 @@ struct crypto_alg *crypto_alg_mod_lookup(const char *name, u32 type, u32 mask)
+ 		crypto_mod_put(larval);
+ 		alg = ERR_PTR(-ENOENT);
+ 	}
+-	crypto_larval_kill(larval);
++	crypto_larval_kill(container_of(larval, struct crypto_larval, alg));
+ 	return alg;
+ }
+ EXPORT_SYMBOL_GPL(crypto_alg_mod_lookup);
+diff --git a/crypto/internal.h b/crypto/internal.h
+index aee31319be2e..711a6a5bfa2b 100644
+--- a/crypto/internal.h
++++ b/crypto/internal.h
+@@ -113,8 +113,7 @@ struct crypto_alg *crypto_mod_get(struct crypto_alg *alg);
+ struct crypto_alg *crypto_alg_mod_lookup(const char *name, u32 type, u32 mask);
+ 
+ struct crypto_larval *crypto_larval_alloc(const char *name, u32 type, u32 mask);
+-void crypto_larval_kill(struct crypto_alg *alg);
+-void crypto_wait_for_test(struct crypto_larval *larval);
++void crypto_schedule_test(struct crypto_larval *larval);
+ void crypto_alg_tested(const char *name, int err);
+ 
+ void crypto_remove_spawns(struct crypto_alg *alg, struct list_head *list,
+-- 
+2.39.2
 
 -- 
- i.
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
