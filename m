@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-283802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F07BB94F8D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:16:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526AE94F8D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:17:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD093282458
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9311C21EB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:17:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1D116B3A5;
-	Mon, 12 Aug 2024 21:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9205E194AD7;
+	Mon, 12 Aug 2024 21:16:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="cJTtPUPn"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="YI7Wnarb"
 Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79155136349
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610D618E051
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723497396; cv=pass; b=OSaqrS4AjKxHc7ZRNw2lbVYoeDob4pE/R3Pu39baSnB4ihZN08Mr1jzI9Acy7s1nPbhZZiW5chldyk2TKdQaI8iZpfIS645WT8PD6eQvJR/hU/0FUG1Ooppapp/OSgh0Ja9sg7p4SW+UznGGGAYKcm0Sl3j7B3v5KyOiM8cgeMw=
+	t=1723497404; cv=pass; b=dv1CgXhkiHnkoyk7aWTwc3HcrITae4fWUt3OpD5X4vO52wsnkbZ3MF0WwRfc2viSrw9reHIbrG8YqqzdisTFDObEtld9I398bdyulYL9WniHp5z87ci/biikPjyjtL9Ymx+r+inZzChWYQWgQ7pteWyri5hs6NeiGN4Qw3g2jk8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723497396; c=relaxed/simple;
-	bh=6HXQ7r0zfLvWKBPtaejF3EmiPKb1KCBHXCitnkdjbcQ=;
+	s=arc-20240116; t=1723497404; c=relaxed/simple;
+	bh=Hk1V4sfW0oAAyXBwlBXFbvdY1UybV/+KTk0T/7tf7oc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Tjm+MyrzKWfinJqSsPrmBfi6Go8ZPtJMhKp5ftGYcK7lxejcLEzT7o7j7fk5Fxc8zbDvQgi/fw5okIoEb5sbswq8E7hUxl2ALURlBfIzQEKvfuFD9epYOm6wTFzmetLhqYaI9vZ97pstsGE68l/tj0thToRN0bEwnDL/81ffXTg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=cJTtPUPn; arc=pass smtp.client-ip=136.143.188.12
+	 In-Reply-To:To:Cc; b=WyA2x9xyDduncw9WzoLgCD1GC9pD0xQzKkwqLpwXAhS3RQCDnz2RQ6LrJZSO3CTcncYNs3SwClaFPDsnpo/dGqCj7r/yOk7GlCHon+35snfZGqLanHgVvCI4AWzfFh9cf33FcIKpOcNoEXt6xQLYumrMLrEGgOhbidFOjgLZ4as=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=YI7Wnarb; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Delivered-To: kernel@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723497354; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1723497358; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=Fe5ghwtv51cemKxyVgRl/vXMQod2fpTHlKYIKERrxurZ40OzRQ2i1dozxhBnorzV+3CWGGe3lUPlUz3UZ4xYiWJlV3mKATMZ0A/igzbTmTTglzW58Flo/qSxwNB1c75n/KzWmtDL0JgrNnh33JLqcKLRHVpYtxHYaNIuANlIf+w=
+	b=RSgqYHbpvJn5Wr+j9THLyR6jhT2q71jHY2G1g84dWgEuyksCfJSlmACTjFmzwjlg1NNlgnxDVPt91CWFWHwtNGyEgRodleNdY6i/mpoCwkPjiSAtkgQ5w8BwBbamYiM7MrEqvxzaaJpzkPbF5C8qlRels7EfnKowzrflTK4xWrs=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723497354; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=aHF9Tj4CypcAqmtUd6j+cQ8jXeZOh8MZ6KG/LdEOBBI=; 
-	b=N/m+8J6AsoIV84VpjSuoFqO3XAut/yMuJjL3xpd0063WMl5idiaD1zmZRZxpCYSVmyM15WaxpJ6M+g3IxkYIzNMSMcdfqLjCCewhg6+g8FVchE4szLh0lfoNJG85hwZx+WQ9GjJ9kZx4VsH0sikIxMlViRMtRKxf5/KGO/vrCjI=
+	t=1723497358; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0I1JLzxrV0gVyw2bF2C9h87qd8Pc9eWrEb9tvdjX5cI=; 
+	b=n7TyYd8k3VJU4XZI9I0If5Rjgr09wPlshBiIAVtXAghizbtqMnRNrMHac/BZ+Q5bx/y1+3DuP3VxicdR4dii5je42dhTY2+m7AGyC+oan/psfKV2wI07gwruRtE7/QmBgBwBnm34pOfaYwoCwwZ9Fd2ii/zgHpgRsL6L02fyfe0=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
 	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723497354;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723497358;
 	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
 	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
-	bh=aHF9Tj4CypcAqmtUd6j+cQ8jXeZOh8MZ6KG/LdEOBBI=;
-	b=cJTtPUPnMHFf3/R339ty5HqgZ8C3EuT4TxFeO7Dv9NDG78Sf5szz8LtZrs/3tu17
-	3DaOYvz75UzyAqW5FhbYlhO9EvfsTDEj1dz0ILg3a/8SdmUaDunGOdzsZuNp7+qX2Ud
-	fZucVdRGwySMbU+8Qn3yDas9hbpX54uZ/ewOx8dM=
-Received: by mx.zohomail.com with SMTPS id 1723497352899890.4271470818969;
-	Mon, 12 Aug 2024 14:15:52 -0700 (PDT)
+	bh=0I1JLzxrV0gVyw2bF2C9h87qd8Pc9eWrEb9tvdjX5cI=;
+	b=YI7Wnarb7Jf1A/cQaxHzhlPU1WxIlqg30fl35glMaLRl/u91qwW2ZfePzP0yG8it
+	j5uaqCgPP8hl1i++2+A1UgpMqAyCWoekovvJUwRfNfrDLmwFPCx959IO/qzsOIRyCyN
+	LT6Gpt76B19LVEFGAWSyQEENs6DrXzCrAgNsE5Qs=
+Received: by mx.zohomail.com with SMTPS id 1723497357461825.5740191228684;
+	Mon, 12 Aug 2024 14:15:57 -0700 (PDT)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 13 Aug 2024 00:15:10 +0300
-Subject: [PATCH 3/4] drm/rockchip: dw_hdmi: Use devm_regulator_get_enable()
+Date: Tue, 13 Aug 2024 00:15:11 +0300
+Subject: [PATCH 4/4] drm/rockchip: dw_hdmi: Drop superfluous assignments of
+ mpll_cfg, cur_ctr and phy_config
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,7 +63,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-dw-hdmi-rockchip-cleanup-v1-3-b3e73b5f4fd6@collabora.com>
+Message-Id: <20240813-dw-hdmi-rockchip-cleanup-v1-4-b3e73b5f4fd6@collabora.com>
 References: <20240813-dw-hdmi-rockchip-cleanup-v1-0-b3e73b5f4fd6@collabora.com>
 In-Reply-To: <20240813-dw-hdmi-rockchip-cleanup-v1-0-b3e73b5f4fd6@collabora.com>
 To: Sandy Huang <hjc@rock-chips.com>, 
@@ -77,90 +78,51 @@ Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
 X-Mailer: b4 0.14.1
 X-ZohoMailClient: External
 
-The regulators are only enabled at bind() and disabled at unbind(),
-hence replace the boilerplate code by making use of
-devm_regulator_get_enable() helper.
+The mpll_cfg, cur_ctr and phy_config members in struct dw_hdmi_plat_data
+are only used to configure the Synopsys PHYs supported internally by DW
+HDMI transmitter driver (gpu/drm/bridge/synopsys/dw-hdmi.c), via
+hdmi_phy_configure_dwc_hdmi_3d_tx(), which is further invoked from
+dw_hdmi_phy_init().  This is part of the internal
+dw_hdmi_synopsys_phy_ops struct, managed within dw_hdmi_detect_phy().
+
+To handle vendor PHYs, DW HDMI driver doesn't make use of the internal
+PHY ops and, instead, relies on the glue layer to provide the phy_ops
+and phy_name members of struct dw_hdmi_plat_data.
+
+Drop the unnecessary assignments of DW internal PHY related members from
+structs rk3228_hdmi_drv_data and rk3328_hdmi_drv_data, since both set
+the phy_force_vendor flag and correctly provide the expected vendor PHY
+data.
 
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 34 +++++------------------------
- 1 file changed, 6 insertions(+), 28 deletions(-)
+ drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-index 7d07039ef096..edfd877c98fc 100644
+index edfd877c98fc..ca6728a43159 100644
 --- a/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
 +++ b/drivers/gpu/drm/rockchip/dw_hdmi-rockchip.c
-@@ -77,8 +77,6 @@ struct rockchip_hdmi {
- 	struct clk *ref_clk;
- 	struct clk *grf_clk;
- 	struct dw_hdmi *hdmi;
--	struct regulator *avdd_0v9;
--	struct regulator *avdd_1v8;
- 	struct phy *phy;
- };
+@@ -444,9 +444,6 @@ static struct rockchip_hdmi_chip_data rk3228_chip_data = {
  
-@@ -236,15 +234,13 @@ static int rockchip_hdmi_parse_dt(struct rockchip_hdmi *hdmi)
- 		return ret;
- 	}
+ static const struct dw_hdmi_plat_data rk3228_hdmi_drv_data = {
+ 	.mode_valid = dw_hdmi_rockchip_mode_valid,
+-	.mpll_cfg = rockchip_mpll_cfg,
+-	.cur_ctr = rockchip_cur_ctr,
+-	.phy_config = rockchip_phy_config,
+ 	.phy_data = &rk3228_chip_data,
+ 	.phy_ops = &rk3228_hdmi_phy_ops,
+ 	.phy_name = "inno_dw_hdmi_phy2",
+@@ -481,9 +478,6 @@ static struct rockchip_hdmi_chip_data rk3328_chip_data = {
  
--	hdmi->avdd_0v9 = devm_regulator_get(hdmi->dev, "avdd-0v9");
--	if (IS_ERR(hdmi->avdd_0v9))
--		return PTR_ERR(hdmi->avdd_0v9);
-+	ret = devm_regulator_get_enable(hdmi->dev, "avdd-0v9");
-+	if (ret)
-+		return ret;
- 
--	hdmi->avdd_1v8 = devm_regulator_get(hdmi->dev, "avdd-1v8");
--	if (IS_ERR(hdmi->avdd_1v8))
--		return PTR_ERR(hdmi->avdd_1v8);
-+	ret = devm_regulator_get_enable(hdmi->dev, "avdd-1v8");
- 
--	return 0;
-+	return ret;
- }
- 
- static enum drm_mode_status
-@@ -602,18 +598,6 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 		return ret;
- 	}
- 
--	ret = regulator_enable(hdmi->avdd_0v9);
--	if (ret) {
--		drm_err(hdmi, "failed to enable avdd0v9: %d\n", ret);
--		goto err_avdd_0v9;
--	}
--
--	ret = regulator_enable(hdmi->avdd_1v8);
--	if (ret) {
--		drm_err(hdmi, "failed to enable avdd1v8: %d\n", ret);
--		goto err_avdd_1v8;
--	}
--
- 	if (hdmi->chip_data == &rk3568_chip_data) {
- 		regmap_write(hdmi->regmap, RK3568_GRF_VO_CON1,
- 			     HIWORD_UPDATE(RK3568_HDMI_SDAIN_MSK |
-@@ -642,10 +626,7 @@ static int dw_hdmi_rockchip_bind(struct device *dev, struct device *master,
- 
- err_bind:
- 	drm_encoder_cleanup(encoder);
--	regulator_disable(hdmi->avdd_1v8);
--err_avdd_1v8:
--	regulator_disable(hdmi->avdd_0v9);
--err_avdd_0v9:
-+
- 	return ret;
- }
- 
-@@ -656,9 +637,6 @@ static void dw_hdmi_rockchip_unbind(struct device *dev, struct device *master,
- 
- 	dw_hdmi_unbind(hdmi->hdmi);
- 	drm_encoder_cleanup(&hdmi->encoder.encoder);
--
--	regulator_disable(hdmi->avdd_1v8);
--	regulator_disable(hdmi->avdd_0v9);
- }
- 
- static const struct component_ops dw_hdmi_rockchip_ops = {
+ static const struct dw_hdmi_plat_data rk3328_hdmi_drv_data = {
+ 	.mode_valid = dw_hdmi_rockchip_mode_valid,
+-	.mpll_cfg = rockchip_mpll_cfg,
+-	.cur_ctr = rockchip_cur_ctr,
+-	.phy_config = rockchip_phy_config,
+ 	.phy_data = &rk3328_chip_data,
+ 	.phy_ops = &rk3328_hdmi_phy_ops,
+ 	.phy_name = "inno_dw_hdmi_phy2",
 
 -- 
 2.46.0
