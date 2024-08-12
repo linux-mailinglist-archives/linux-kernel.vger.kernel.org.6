@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-282671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C1BA94E735
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:53:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A7194E737
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CCE1C2157A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:53:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB5E1F22521
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:53:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B831537D5;
-	Mon, 12 Aug 2024 06:53:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9051F153511;
+	Mon, 12 Aug 2024 06:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TOSj3KL8"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2E14E2C5;
-	Mon, 12 Aug 2024 06:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C098152DF5
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445586; cv=none; b=J3t5W+DfNhIRS5s5EzYWB692iUqmXfBVHcgOkKyetFKcp7FY3/eGV9XylShv2fI9PYMEhjpLclTbwLtiiwV5i726/3ymVIvjFKGW4Y0IT9Wc+HRM2mNb3vHFzKa+ciXMKuUmR8Ui4gq/t/9FHqDIaf7rm+PVPrywodzcWarJF68=
+	t=1723445613; cv=none; b=q51QAqYtfMCqaMQCHEIO5NejIHLaY5N+oStZk77mhozPlOxN3cHukFTpThburCY0liizuq6kW584wRSlLRtrp4GFBHJMxaJLh4G4x7pSFEIbhR2+AfFScG3x9T+Vzt7c+z6VQdOEhTJHoqGQhNFgupmGB6kOMIMICe49RKh1zmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445586; c=relaxed/simple;
-	bh=8S2+Hiocf6OFnAmTCfHhOwAah22o+Frgg0sVuxCoESI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U0aE0etTt2scej1uQ+csqSEd0Jm7UjwZFLyJunjy/Kj5Y0obeX4iDrl2730nAMYxHCEx8QyhVpCwR4is1LyDGiQDW74N6rfLFrnZtz2xqng0HS7mF4PjkRUJbBcEVk6Y4tmecTabr3bbKNEsZXA/Zk2r/SsZAgz06WQY1W7gqLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CA2C32782;
-	Mon, 12 Aug 2024 06:53:05 +0000 (UTC)
-Message-ID: <e4f6f76a-0bad-4629-b438-a048ee683123@xs4all.nl>
-Date: Mon, 12 Aug 2024 08:53:03 +0200
+	s=arc-20240116; t=1723445613; c=relaxed/simple;
+	bh=mSFle22zJAezmirEZH6fkQtA1YJrvNYI2iXiEOQwbhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VXbWQXtxiPA+JB/13qeaXnKXtPO/sSvfV1uuk3BL/rdcVJXcOlsPE58HGvh9ePnHCgOCt0n/zAwdi73pxjxFNpMNmhYVtp6wih8gG+2Caj3czK9slaO5joTOvm/SbwG544L+fR79Qu/hM08/wHYgmNwPOmUdfIBBdzt75NT6sDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TOSj3KL8; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=mSFl
+	e22zJAezmirEZH6fkQtA1YJrvNYI2iXiEOQwbhQ=; b=TOSj3KL8YpMybYhlA8Ng
+	gO01v92xPNf1KiGHE1uV4XKY9f2D63KgjBPUsrwhQY7L9ol+SrzqkQdB+hTKz7gR
+	oW/WvSC7E3syHLgKJYioYnm156/5sEMtpXe7uc5BN7ZAyomrgfwKtnPLtzl5ACYr
+	goSpGBXqjV6v+3FDJYlPHI2hJcv+WOsN/DD/nd1jZZSdGnaotraN0rG+jeMvuUq4
+	DIY+MZbI9XLmbgk9r7+HY7kMM36zW6JRy9HBDT1TQofI5SIM87zxtKzPAkdtEyli
+	p1UHl5gGKhNoIxyWFt7DP+PRm4XYnKddyTwqoWZ4WQXof4hBs1JF9Brux0Mm230v
+	pQ==
+Received: (qmail 1277415 invoked from network); 12 Aug 2024 08:53:21 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Aug 2024 08:53:21 +0200
+X-UD-Smtp-Session: l3s3148p1@K+LV8nYf5p4ujnvj
+Date: Mon, 12 Aug 2024 08:53:20 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>, tiwai@suse.com,
+	mika.westerberg@linux.intel.com, linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
+Message-ID: <ZrmxYB4zsOpOP2eG@shikoro>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Takashi Iwai <tiwai@suse.de>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Mark Brown <broonie@kernel.org>, tiwai@suse.com,
+	mika.westerberg@linux.intel.com, linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+References: <20240802152215.20831-1-rf@opensource.cirrus.com>
+ <8734njl7my.wl-tiwai@suse.de>
+ <554660e1-01ea-4bb4-877f-fd8deb527ce7@opensource.cirrus.com>
+ <87frrhaofs.wl-tiwai@suse.de>
+ <ZrIJBUJfgiKPCKXv@shikoro>
+ <87bk25anep.wl-tiwai@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/4 RESEND] media: mgb4: YUV and variable framerate
- support
-To: tumic@gpxsee.org, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Martin_T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
-References: <20240805154054.8633-1-tumic@gpxsee.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20240805154054.8633-1-tumic@gpxsee.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yDi4V8Q0uGeRFZzk"
+Content-Disposition: inline
+In-Reply-To: <87bk25anep.wl-tiwai@suse.de>
 
-Hi Martin,
 
-Before I merge this series, I would like to see the v4l2-compliance output for
-each video device.
+--yDi4V8Q0uGeRFZzk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you reply with that output?
 
-I want to make sure that all the g/s_parm and dv_timings changes are correct
-according to v4l2-compliance. And of course, if it isn't, then please fix
-any reported issue and post a v7.
+> > Yes, you can pull i2c/for-current. Maybe I can also retrofit an
+> > immutable branch for you. I'd think, though, that it is easiest to wait
+> > for 6.11-rc3 which will include the I2C part of this series. Or?
+>=20
+> Yeah, it's fine, I can wait for 6.11-rc3.
 
-Regards,
+Done. Said commit is included in rc3 now. Thanks, guys!
 
-	Hans
 
-On 05/08/2024 17:40, tumic@gpxsee.org wrote:
-> From: Martin Tůma <martin.tuma@digiteqautomotive.com>
-> 
-> Recent mgb4 FW update added support for the YUV image format and variable
-> framerates independent of the signal framerate. The following patches extend
-> the mgb4 driver with support for both features.
-> 
-> Changes in V6:
-> - Properly handle the timings when no signal is present.
-> 
-> Changes in V5:
-> - Removed surplus v4l2_format.type checks.
-> - Improved the patch descriptions.
-> - Splitted the frame rate limit patch into separate code/documentation parts.
-> 
-> Changes in V4:
-> - Splitted the output frame_rate handling fix from the variable frame rate
->   addition patch.
-> 
-> Changes in V3:
-> - Use div_u64() for 64b division (fixes build error on ARM32)
-> 
-> Changes in V2:
-> - Added missing stride limit
-> 
-> Martin Tůma (4):
->   media: mgb4: Add support for YUV image formats
->   media: mgb4: Add support for V4L2_CAP_TIMEPERFRAME
->   media: mgb4: Fixed signal frame rate limit handling
->   media: admin-guide: mgb4: Outputs DV timings documentation update
-> 
->  Documentation/admin-guide/media/mgb4.rst |  23 +-
->  drivers/media/pci/mgb4/mgb4_core.c       |   2 +-
->  drivers/media/pci/mgb4/mgb4_core.h       |   2 +
->  drivers/media/pci/mgb4/mgb4_io.h         |  29 ++-
->  drivers/media/pci/mgb4/mgb4_sysfs_out.c  |   9 +-
->  drivers/media/pci/mgb4/mgb4_vin.c        | 193 +++++++++++---
->  drivers/media/pci/mgb4/mgb4_vin.h        |   3 +-
->  drivers/media/pci/mgb4/mgb4_vout.c       | 309 ++++++++++++++++++++---
->  drivers/media/pci/mgb4/mgb4_vout.h       |   5 +-
->  9 files changed, 482 insertions(+), 93 deletions(-)
-> 
-> 
-> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+--yDi4V8Q0uGeRFZzk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma5sV0ACgkQFA3kzBSg
+Kbbb+w//RAEp9yLwe6ViYFzkpfdFgGrnw3kMDuG2vnzj7HvCKIKHQnbPwPQVI/W6
+LDPR522tlQUOcWBrk359zh0ERVEY1mQV0kL7zdJ/Hz1PaU3QnhlmZa2XZXTWD12h
+Zg4sCwF26/ESwHEOUkODWsE9m6tqVZcJdStA1nG3GJEUJ/KZ1j8L9ZGTEyZASCge
+Nt9MbdqtFMZKiW3jkpyge8J5zpVkxkgoeOPqO5af68wNJZoBvCBO3NgUW6FwfRpJ
+PWGeOhLML0ubuafHnIjHC8oCkC+pwIhXQBuowHwdQwas/G8vU+Sg4/EWtFRCqVD4
+o1N5LLvhJmV/lbNYKeNlikM/wpWXQcvRmmnDXy47Hj7Yk8NdwuSlN6kgPpXLB9DJ
+sxX8te2EACW5h9LTqrTC+Q0Q0dCn3qFTrKwBn0vhivrN5sIPxcLCN9Wdz58kVgMv
+hgzhXeGxbc3TjUmvj5CXknSYHglwCSRUrFkk8gTfylEESzaYuPHqMvC9V26PmSs3
+e0y/EvLfbjKqs7SjV+ShEOeTaKZLmekPv+3/2qB3XT1pGkDjOPsQ2xeF34FocJ1X
+Bzaa9qWaPOf+4VRpeP6VLeSe4UwARu3UG9SSkCd57S+RH7E+/oukoiCZE/iTli66
+lU32n1YefCTO2M1rG4Y+1/mv5q7GuHfL2JzU3SB3GlDxfWO7PaU=
+=nJ+E
+-----END PGP SIGNATURE-----
+
+--yDi4V8Q0uGeRFZzk--
 
