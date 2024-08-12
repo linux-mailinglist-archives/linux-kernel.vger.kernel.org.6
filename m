@@ -1,94 +1,91 @@
-Return-Path: <linux-kernel+bounces-283018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7664394EC0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:48:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0B794EC13
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:49:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 00C82B2211C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:48:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329F828275D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF53178365;
-	Mon, 12 Aug 2024 11:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A39F178370;
+	Mon, 12 Aug 2024 11:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOM2K2I7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502631547EA;
-	Mon, 12 Aug 2024 11:48:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TE/ACCSK"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6153B14EC53;
+	Mon, 12 Aug 2024 11:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463299; cv=none; b=k7nlsyBJrlx3urKz50P3fv8mm1aQzJtglXup6ZVFjQLVimgQrMYR1A422BRagSi058V6yFKf70yrsvzpo5+SLiolpp9yE+0pGOaQKQ63gVHtkr5AH3OMLbNYh9VoJ3c44WHGhts0e6MSD3ROkr4CNnKilU7cjuLnAyxe96Mk9/A=
+	t=1723463348; cv=none; b=qxwujHhG4YexF8p85xwYhPA+ptLkVXJeHeZXi/7OIooARYcZS1/BuxGslaqKriTgIdLzi71bzNaoA5X+L94bz6VxBe7K6XeDbwq0sPcPrj1RaNSlsz+trACUMR8kOyW96bnnLGCXfLuJ3Suuf/Fv7J15EjWF9EwdTHu3kuXqLlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463299; c=relaxed/simple;
-	bh=Napc90aktE/QuypSDHJKVOFzOHDipFwPsvcMXXd1YqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=itYxe5ZIeQ4K6dl6PjSzaJaWC6LINQmTFYuMlfatLbUE7J6nspv8a6ufuFz+rGjzG1VpS+f3MLLHHWgMSnQtXYgQUkJSlrXUi6fjLJRI/WaFitjnSqo+klk9gdW6gvNhWKdpNsNdm8YALZ4a5dNB/HPC0BlgSX7JC6ukGjjLeyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOM2K2I7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10909C4AF0F;
-	Mon, 12 Aug 2024 11:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723463299;
-	bh=Napc90aktE/QuypSDHJKVOFzOHDipFwPsvcMXXd1YqM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rOM2K2I790JrIr456SMxJrgfz2kZ3cEv1I8W0gQtlroZsL5sc3YHtKBHJOdzJRPN8
-	 E1ToZdHSs2UreW0v0wkyHxahjIkTVl/UAN4IUw8B87cuWTTSdr9o2YILGrauhn6kVV
-	 PD+GQbo4YahogMAS8UlhKaOtRHKWsCeQhLeApJh1dYxa5IB5GvAnvIjueD3rVchUSr
-	 DgHnyrRPVl7EyP+iX9xRZeifnLLmfWX5CMhHKVCGKJzJjaY4XcXxj7T4ie5lhrE0pz
-	 cKdOEyV80lD1vUO4FjwHZUOu2kc7n/4qizeQg0pwx1IPxhwaoB3yhnHg1IRwPJbeLc
-	 m9a45m0yUVgzQ==
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-7093e583913so344012a34.2;
-        Mon, 12 Aug 2024 04:48:19 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzFbFaCAh038wzY6uhNzTuVoqdisiM59CFGw4i5G082oNEuozhn
-	hdC2eBnsJSGh6pZx/4dBP4VPi/MUkzXFx4wDPA+KURxVBU46uN5oklmueZkOSe6NfEzZA/IZ+r3
-	ECpt7kTspqmEYuZ4L1vEDHZzNSPI=
-X-Google-Smtp-Source: AGHT+IFIXZr7aG3vnivowVZqpiVqQtOBNWoxXpSdf0tK7uzKA0D60HpySoFGHhj/rE3BYE4vLv95VaxZxlXcT4+WKnE=
-X-Received: by 2002:a4a:e9aa:0:b0:5cd:8f2:5c8d with SMTP id
- 006d021491bc7-5da6897d40fmr60373eaf.2.1723463298367; Mon, 12 Aug 2024
- 04:48:18 -0700 (PDT)
+	s=arc-20240116; t=1723463348; c=relaxed/simple;
+	bh=MU8n8oNR6sTJ4DC5O8p1KYQRyc33ljDSlbHVDD1Z76E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hl0JRlnRepH1s2m+wSdMb2PwLxpOggiIEn//Gt8xURALSxpvpdibqo6JYeHxoUCt+BPu0uuE8jbhxTbO+9Ln731Flh4yrnp/3nshm/SkUUxTfStv/LMUrBhTd1Iz7npvkffhYYD+zt8VKTg2l75U/Pk3Kin0lAqzJ0AICTltfWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TE/ACCSK; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=rR32OfomYnPAod7zuZyAeQ+ekw2kljmsFCxG2kUM+TY=;
+	b=TE/ACCSKW9zHy5P760ILZFKHEACTTXrtntOFRsc/MfkWrsS8THkY2Kstq1Lt+d
+	pvdYqZJ7g8EpE9cLGvEpKJRnYMY5nvXfgcghNnnV7J7DoHgaSbV26B5i+T8+W6vE
+	kkR6gpXW9mwUJa1x+Wdb/koGOXANAGxWcYEQSSR9x5SyU=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgC3H+2U9rlm+ZMQAg--.48176S3;
+	Mon, 12 Aug 2024 19:48:38 +0800 (CST)
+Date: Mon, 12 Aug 2024 19:48:36 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	NXP Linux Team <linux-imx@nxp.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: imx6dl-yapp43: Increase LED current to match
+ the yapp4 HW design
+Message-ID: <Zrn2lL6E1IEBAlYj@dragon>
+References: <20240723142519.134083-1-michal.vokac@ysoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1960840.taCxCBeP46@rjwysocki.net>
-In-Reply-To: <1960840.taCxCBeP46@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 12 Aug 2024 13:48:07 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0h8t1wAYenPPE2vZAerTJSrHnOuY=jqaLAQ+wNooJEduw@mail.gmail.com>
-Message-ID: <CAJZ5v0h8t1wAYenPPE2vZAerTJSrHnOuY=jqaLAQ+wNooJEduw@mail.gmail.com>
-Subject: Re: [PATCH v1 0/3] thermal: sysfs: Get to trip attributes via the
- attribute argument of show/store
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240723142519.134083-1-michal.vokac@ysoft.com>
+X-CM-TRANSID:M88vCgC3H+2U9rlm+ZMQAg--.48176S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKryUZw1DAryfJrW8GFyDJrb_yoWfJrb_WF
+	WxJFyIy397K3W8Ga15Krna934a93yUJF4xtw1Dta9agry0yF48Jw12qr93ZryUZF45Crnx
+	Crs5Ww1xK39I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0rsqJUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgM5ZWa57+IRVwAAsZ
 
-Hi Everyone,
+On Tue, Jul 23, 2024 at 04:25:19PM +0200, Michal Vokáč wrote:
+> On the imx6dl-yapp4 revision based boards, the RGB LED is not driven
+> directly by the LP5562 driver but through FET transistors. Hence the LED
+> current is not determined by the driver but by the LED series resistors.
+> 
+> On the imx6dl-yapp43 revision based boards, we removed the FET transistors
+> to drive the LED directly from the LP5562 but forgot to tune the output
+> current to match the previous HW design.
+> 
+> Set the LED current on imx6dl-yapp43 based boards to the same values
+> measured on the imx6dl-yapp4 boards and limit the maximum current to 20mA.
+> 
+> Fixes: 7da4734751e0 ("ARM: dts: imx6dl-yapp43: Add support for new HW revision of the IOTA board")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
 
-On Mon, Jul 29, 2024 at 6:33=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
-t> wrote:
->
-> Hi Everyone,
->
-> This series reworks the trip point sysfs interface to get to trips via th=
-e
-> attribute argument of show/store instead of using the attribute name to g=
-et
-> a trip ID and look up a trip using it.
->
-> It also adds a small cleanup (the last patch) for a good measure.
+Applied, thanks!
 
-This material should not be controversial (which I also gather from
-the lack of responses) and it is a clear improvement IMV in terms of
-code flow simplifications and the reduction of its size, so I'm going
-to move it to my linux-next branch as 6.12-candidate.
-
-Thanks!
 
