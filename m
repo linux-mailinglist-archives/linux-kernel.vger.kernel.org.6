@@ -1,161 +1,114 @@
-Return-Path: <linux-kernel+bounces-283385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD9094F1D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:34:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9276594F1DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:34:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8EC1C221C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5D01F23694
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F8B186E3B;
-	Mon, 12 Aug 2024 15:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1C218453E;
+	Mon, 12 Aug 2024 15:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw3zSjCA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="Zn2KlEgi"
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E67B184557;
-	Mon, 12 Aug 2024 15:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971AD13C914;
+	Mon, 12 Aug 2024 15:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723476816; cv=none; b=i4tsa7EFcWkVpBT65/uED0QToJBPmBNo2kj/ETaGVy5SFxMkhOd7MhDVAxTS0oAG3OgYV7Ug5/f59B47WUMxV4QlzT98jCLEjmVtPvy0EiF+3cf7T64DLZm67MEk1F2b0blflo7b/qbYQF5EQnXCyF6JFgLprOPpI54jZXsKSdk=
+	t=1723476883; cv=none; b=gr9AMX9yTK59EyCw4OuL+H++WhjuM5QyHwEAE5Pr5qvwMOrteinJS/JnZJ5L3Om0/3i+ozfIiZt12Vgaj89/ypYQkeomSnAoZ6c4u2oB5SFJ60xLqS8OMDwq6VZSmZBLDhgtt8ZkkQhkriGAbzdeqfZHFdJcQOP/zbDsLVjPTnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723476816; c=relaxed/simple;
-	bh=3YcUz/gYUpu/WoU8sGgEivj/OljS8lw6NdxvpOBI6c4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=tLaBQ+GyLzDQXvU3g71+AAOpmn9FMSmsX8ijmkzc6yg1/olsjZqwxGwHmVPe4yuW0wCml1MSDvfzKGY4B3yehbRd/uDjIhpWIXpT7XQcG4K7u4Tw7ejrvnck2Szw+PxPA9frCbiGb5sG7Fg/uFCwaOZXuzQ+b4d5yTDVsMatG8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tw3zSjCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70782C4AF0D;
-	Mon, 12 Aug 2024 15:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723476815;
-	bh=3YcUz/gYUpu/WoU8sGgEivj/OljS8lw6NdxvpOBI6c4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=tw3zSjCATi5KqV5SuRHT7pP4uoa7HN/bCdQqHvlBhRxa86wJ5kv5MKlXJTzdNECuM
-	 knvx+aYVB4uifUIG/ihQIhq84FiZUyLayqmqDlAyOtX6uT2Dywu4qt+44+jOVODk8c
-	 H//dfNqRqI5KSDANF7q31YOfO93xtfxX168nl2wo9S9w3HDAysLGfP9DH1Ea24Qo6/
-	 wWlQi8YGrGgkjo11yoMZy1ndeXfmO7OWk2Nsy3Rja1rosh38RdP2IqcnJbi//wlo+y
-	 yFbmGzKVPKTiXVtEAF1CEc7Vw0LT8FE+J3QGpsphrkqMpv59x5TFZ7GGM456teCMS/
-	 8RkWVniaYObdQ==
-Date: Mon, 12 Aug 2024 09:33:33 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1723476883; c=relaxed/simple;
+	bh=GdRefraexQNdWKxyYPz4UXpyl9StrQkwP48gyf3nT2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IEAUCTo0wqYl7Cn0xoCp5NBTmmggNqg1pwRDzWZu/cSNMjUQprvAe70VnZ1k0GaQdER6c9My/1q14UkDv5aOqmW/tr54l04+9L3Ow6re0583WOXimVWJpOyACMPhqQsjWFeqMqVJqRoEbEMFxVgyHVPrzTiohIy17A+ZsOrQyvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=Zn2KlEgi; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=gGHzFMjmZk1AAjU1QZUzq53YABEAbGGJ5Sn+eE0aAGU=; b=Zn2KlEgiXXkitrGKJ8TSUG+lvt
+	u/upJHso76UhUguoaO1TT3/UXYbAjTx/kEdjpvm9J4rMqMNsdBWUMHrtTRwpgjW5Xv0GVCMepdpVl
+	8KArTJaFysFVNiC+mrJZ/IfU6FFHDyBTjqsX2TkLw66rkhWH7zQVTo9XHRI+LkUvpGjw=;
+Received: from p54ae95e7.dip0.t-ipconnect.de ([84.174.149.231] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1sdX3l-00GTwy-1h;
+	Mon, 12 Aug 2024 17:34:13 +0200
+Message-ID: <b3f2ac81-93e5-4143-a3fe-a5ff1159aaec@nbd.name>
+Date: Mon, 12 Aug 2024 17:34:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andrei Simion <andrei.simion@microchip.com>
-Cc: alexandre.belloni@bootlin.com, krzk+dt@kernel.org, 
- nicolas.ferre@microchip.com, claudiu.beznea@tuxon.dev, broonie@kernel.org, 
- devicetree@vger.kernel.org, conor+dt@kernel.org, 
- linux-kernel@vger.kernel.org, lgirdwood@gmail.com, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240812135231.43744-1-andrei.simion@microchip.com>
-References: <20240812135231.43744-1-andrei.simion@microchip.com>
-Message-Id: <172347672887.922611.11316946762732938797.robh@kernel.org>
-Subject: Re: [PATCH v2 0/7] Add input voltage suppliers for PMIC MCP16502
- regulators
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: fix memory leak in LRO
+ rings release
+To: Elad Yifee <eladwf@gmail.com>
+Cc: daniel@makrotopia.org, Sean Wang <sean.wang@mediatek.com>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Chen Lin <chen45464546@163.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240812152126.14598-1-eladwf@gmail.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <20240812152126.14598-1-eladwf@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Mon, 12 Aug 2024 16:52:24 +0300, Andrei Simion wrote:
-> In this series of patches, support for the *-supply property [1]  is added
-> (correlated with supply_name [2]) from the core regulator.
-> Link [1]: https://github.com/torvalds/linux/blob/master/drivers/regulator/core.c#L471
-> Link [2]: https://github.com/torvalds/linux/blob/master/drivers/regulator/core.c#L2064
+On 12.08.24 17:21, Elad Yifee wrote:
+> For LRO we allocate more than one page, yet 'skb_free_frag' is used
+> to free the buffer, which only frees a single page.
+> Fix it by using 'free_pages' instead.
 > 
-> I modified the mcp16502.c driver and the dts that use this PMIC.
-> We added these improvements to provide a complete description of the board power scheme.
-> 
-> Snippet (as an example) from /sys/kernel/debug/regulator/regulator_summary
-> (for at91-sama7g5ek):
->  # cat regulator_summary
->  regulator                      use open bypass  opmode voltage current     min     max
-> ---------------------------------------------------------------------------------------
->  regulator-dummy                  1    0      0 unknown     0mV     0mA     0mV     0mV
->  5V_MAIN                          6    6      0 unknown  5000mV     0mA  5000mV  5000mV
->     VDD_IO                        5    4      0  normal  3300mV     0mA  3300mV  3300mV
->        e1208000.mmc-vqmmc         1                                 0mA     0mV     0mV
->        e1208000.mmc-vmmc          1                                 0mA  3300mV  3400mV
->        e1204000.mmc-vmmc          1                                 0mA  3300mV  3400mV
->        VDDOUT25                   3    2      0 unknown  2500mV     0mA  2500mV  2500mV
->           e1000000.adc-vref       1                                 0mA     0mV     0mV
->           e1000000.adc-vddana     1                                 0mA     0mV     0mV
->     VDD_DDR                       1    0      0  normal  1350mV     0mA  1350mV  1350mV
->     VDD_CORE                      1    0      0  normal  1150mV     0mA  1150mV  1150mV
->     VDD_OTHER                     2    1      0  normal  1050mV     0mA  1050mV  1250mV
->        cpu0-cpu                   1                                 0mA  1050mV  1225mV
->     LDO1                          2    1      0 unknown  1800mV     0mA  1800mV  1800mV
->        e1204000.mmc-vqmmc         1                                 0mA     0mV     0mV
->     LDO2
-> 
-> -------------------------------------------------------------------------------------------
-> 
-> Changelog:
-> 
-> v1 -> v2:
->  - drop (lvin|pvin[1-4])-supply from each regulators sub-node
->  - add voltage input supply documentation in the yaml schema
->  - add lvin-supply, pvin[1-4]-supply to PMIC node
-> 
-> Andrei Simion (7):
->   regulator: mcp16502: Add supplier for regulators
->   regulator: dt-bindings: microchip,mcp16502: Add voltage input supply
->     documentation
->   ARM: dts: microchip: at91-sama7g5ek: Add reg_5v to supply PMIC nodes
->   ARM: dts: microchip: at91-sama7g54_curiosity: Add reg_5v to supply
->     PMIC nodes
->   ARM: dts: microchip: at91-sama5d2_icp: Add reg_5v to supply PMIC nodes
->   ARM: dts: microchip: at91-sama5d27_wlsom1: Add reg_5v to supply PMIC
->     nodes
->   ARM: dts: microchip: sama5d29_curiosity: Add reg_5v to supply PMIC
->     nodes
-> 
->  .../regulator/microchip,mcp16502.yaml         | 20 +++++++++++++++++++
->  .../dts/microchip/at91-sama5d27_wlsom1.dtsi   | 13 ++++++++++++
->  .../dts/microchip/at91-sama5d29_curiosity.dts | 13 ++++++++++++
->  .../boot/dts/microchip/at91-sama5d2_icp.dts   | 13 ++++++++++++
->  .../dts/microchip/at91-sama7g54_curiosity.dts | 13 ++++++++++++
->  .../arm/boot/dts/microchip/at91-sama7g5ek.dts | 13 ++++++++++++
->  drivers/regulator/mcp16502.c                  | 17 ++++++++--------
->  7 files changed, 94 insertions(+), 8 deletions(-)
-> 
-> 
-> base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
-> --
-> 2.34.1
-> 
-> 
-> 
+> Fixes: 2f2c0d2919a1 ("net: ethernet: mtk_eth_soc: fix misuse of mem alloc interface netdev[napi]_alloc_frag")
+> Signed-off-by: Elad Yifee <eladwf@gmail.com>
 
+Are you sure about this change? From what I can see, the LRO buffer is 
+(or at least should be) allocated as a compound page. Because of that, 
+skb_free_frag should work on it. If it doesn't, wouldn't we run into the 
+same issue when the network stack frees received packets?
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y microchip/at91-sama5d29_curiosity.dtb microchip/at91-sama5d2_icp.dtb microchip/at91-sama7g54_curiosity.dtb microchip/at91-sama7g5ek.dtb' for 20240812135231.43744-1-andrei.simion@microchip.com:
-
-arch/arm/boot/dts/microchip/at91-sama7g5ek.dtb: /soc/chipid@e0020000: failed to match any schema with compatible: ['microchip,sama7g5-chipid']
-arch/arm/boot/dts/microchip/at91-sama7g5ek.dtb: /soc/mmc@e120c000: failed to match any schema with compatible: ['microchip,sama7g5-sdhci', 'microchip,sam9x60-sdhci']
-arch/arm/boot/dts/microchip/at91-sama7g5ek.dtb: /soc/mmc@e120c000: failed to match any schema with compatible: ['microchip,sama7g5-sdhci', 'microchip,sam9x60-sdhci']
-
-
-
-
+- Felix
 
 
