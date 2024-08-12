@@ -1,121 +1,223 @@
-Return-Path: <linux-kernel+bounces-283337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592A894F104
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:00:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946B294F109
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823621C2206F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:00:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0D30B24911
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DA4185606;
-	Mon, 12 Aug 2024 14:57:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4578E186298;
+	Mon, 12 Aug 2024 14:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Mnt2jl/9"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltWsE1OX"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939291836E2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94BB1836E2;
+	Mon, 12 Aug 2024 14:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474671; cv=none; b=j8bBqI7BjzazTXagww1oonYY+um7xfMSBTqhCXaOfgGFEZLr89c4wuTFCnUM9WPvEMWlHBf7IjgmWN6ZSOT1cd6Uk/sDTRQtDC8s/mb+x0Ct570SbFvNIh+fG8hdmRVUcUMTBmQFpb7S9RSmEj+oc4j24JTypAdmBzvVqN+kOKA=
+	t=1723474707; cv=none; b=uvJpJC9fEvzblyTQJ6UVufJZc+RTbCjAZyNBldOsggcSTNCpzniAlSNNDVqwLdpfEH7FIy4PHV/Lua0ycoBpypUaVCznhdMB29LCn9yxIdSuHNLHqcGWDZP8ph2KvHx3OWG4fgyF2QcGUkSi93Cn2DFjouFu64MV2dITmOAzNQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474671; c=relaxed/simple;
-	bh=AQW2+eL2j/iO9+rbNGUv8GlYmVEU+Bv7ULxdXA05ymY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YHaQ15qPKjDfifDQJ7bUoFhVORqU0Ky0dixTu0vzWlRSPz3pReR/c2IZINdHSHSihZItKlwqquWo3AlxeM/N0UHshm+TJD+uxY1NEW7IxQl1XZT/751QRN8V49J4RbwZi0opjU6PyBtXoV9hvFaqkLyEh0F3t4J3ki49HUhe3WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Mnt2jl/9; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-69483a97848so43635397b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:57:49 -0700 (PDT)
+	s=arc-20240116; t=1723474707; c=relaxed/simple;
+	bh=J/SKkwbqqCIp0YH6F0xFAaMllpq7ysx1Q+6O8d4LV3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b4t99qUnioLMwYAur6Q4EjVuG/0PO7FPK5u/jL04wy5o79biKQzbVDalQCLkwLUYpwQBiJUH/THVwy2zIWDpM2tXOLaK+ym/tuQXBzJT+9uo9L7qPZlCBLUmEYG6eZlHcWgCGOPsnFcbravl1b9G1rxzKYmrerYe9Hv24p4zY+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltWsE1OX; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so8066423a12.0;
+        Mon, 12 Aug 2024 07:58:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723474668; x=1724079468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AQW2+eL2j/iO9+rbNGUv8GlYmVEU+Bv7ULxdXA05ymY=;
-        b=Mnt2jl/9ffUiwCkDLRmEPSlXw0eaGvtLqYYOcMsFCd1qewz1vizcqhjLV3oFICUY83
-         Dh/vFge7qOhUIcr+HSNv82FYK02FZ8sD/bUTlaEMTsJJrFd94BolLeN/o/bzUUaP1+ne
-         JZiT8eA896Y4kh57MfSkzZpr9dZZHS0fNLLSz8p7NxqO6z20IHYoZmKjE5Dn0DhtMxAG
-         Belzi8E/QILDp4ulisLicn3aqqG04c1kvdhnRgo3xLayri14ma9tz5XSeFAKq94DqOdt
-         rXXfrQGGjUKOlijsaAE/IVY8ZTfVWcHkfnahuV70nmeXzv42Na/PJRP9bg3/LpE9EIc7
-         I5gg==
+        d=gmail.com; s=20230601; t=1723474704; x=1724079504; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ur0ADrPuCQVVBSJKRbdnfcSka+CcsO8Z1qyAiYIcm3M=;
+        b=ltWsE1OXNqBJVM3L8LkeOYgWZsR9do3aQjldDJRnMZiz1N7M2fl93yTzWdVM7GIrnC
+         Uad0dbAoYeCSNaqfhtaZRFybWix15bZ/plN4Q59Ivn5aF/UyEyNLbRRBZHV7i3DkrsOm
+         vg1dzyvsrMjpwVlKrLibff5CWSH/EVUts9lWMpqJfMV9eiF3ipzS5KqsxiHd9UZzCnGO
+         qf8hJb7t88/FazTR/2i7VJ4fvLA9RmxjszCxy0qlCE+1sunldECaeLiGhmGQwUFdovsu
+         zrxX2LHO5ZvA0KrvXwoG0Ot3x48iXXWi9oULw6adThrkXIPZXnKH/WQKriNSb5zpQ0VD
+         CIkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723474668; x=1724079468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AQW2+eL2j/iO9+rbNGUv8GlYmVEU+Bv7ULxdXA05ymY=;
-        b=Y0uLv79u3hzH/mzw9aF7Q26jpuVTF2q5wshKwqw+GCPi+d9REqx0tAcF9kJUHBNh1p
-         zntoEmDYan/PIyQgKUPkDqpFEJUteQbAHFMXAGpKawWM+WBxgRMM19lpzq/Ja1qdPLYp
-         +uQfx8GgETfWdIrdi86DP0/SzEFbF2eYTGX2EElt1OMj7Eeov/OfU57/nOgB+18/zrue
-         GMO+RynbJZ/6pT00OSrg6U4Q8toVJ/4mB7K+MlIWf/dy+kX7Kx7/bVyKTdlQCkkM+MxO
-         b7rqt43etGd41Oq6Wqbou4+cWhf6kZjWTOOV2NB4Wp5XJsjllM+AEMEt6F8Abdv9tjLd
-         Xtcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTWXVGKIq01j4kv4MHuY3/lsOLqFE4N2h5NVjqTVinvnrrS4OynaeGWZA671HfV+qqC6yKpETjTZohXW8/ZMKThNagviaYDXNTQhE8
-X-Gm-Message-State: AOJu0YxZmg9Xyl4KS73+3FznZyTha82wBtE1X+tnkvTxaDVvPuFifI7I
-	4ts87JPi6KDov6EW6PqjjKkNrD9y6n+HtWeCb1nxfvV7IvMs1gw6sgIoDGh4zuGb6uWC2GMjb5U
-	LOTYI+Hi9+8dyrDzeCwFMaXsfIUxXQXN1MAd3xS5olm7Voys=
-X-Google-Smtp-Source: AGHT+IHCqbGNl28Tb0VvZt0b0wiecP+RTS6ldJ+b4kPJnjFZ9A4wuJPsKq05VeAhVR2yC8XNGLQn7nsqAICsX1IPYAo=
-X-Received: by 2002:a05:690c:2c83:b0:65f:cd49:48e0 with SMTP id
- 00721157ae682-6a9754e6f16mr6868077b3.31.1723474668545; Mon, 12 Aug 2024
- 07:57:48 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723474704; x=1724079504;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ur0ADrPuCQVVBSJKRbdnfcSka+CcsO8Z1qyAiYIcm3M=;
+        b=EzditTzUEPzsalcGvnTdGdrU9juDn7HcZueI5Tydssk7ihPr6f1b6Or2tT38K34VF1
+         6tyvO5/NqiDeT/pWYRZDJH4Wic/UdSW+uJ9LDrgfa1OuTxNBW+MBwsHS1TH9gtIl88yP
+         wxEs4DDF2Eiy9DWHpPKo/mrPeQPs1F5nur2HNiLXDOMGGD7mJmLk7JJWLiEtVUCqB77T
+         ZacTwZHAj4GmKZBwKoWFGUHpgrP7715DUWdXPE0paQHnewfDVoi2Lry8E2yeEqk3zlUm
+         zyj4o/CJKFp76ahP04vIC7G01MKGgcDWIJIhP55OhtV0UZTY88Z4a9gMPYZjd0zg+glU
+         4Whg==
+X-Forwarded-Encrypted: i=1; AJvYcCULtgEWRHwl1NjcLzQP7gNr4TktabL2cJHBj9K6IFvR61Y2wGRd/BQMeCEiuGO9Jw/Unb2YiDo93nWpczEf1Xt9/WKFIRC8UfgjuS8tgQ2bwqyFMcElnYrvjEeSDsj7/AgXFh35bMMEzrXngBXooHUkEJ0THLn0QTu8c5SZEC4AZhacwuNIoHLg
+X-Gm-Message-State: AOJu0Yx0+LfE0mCyjVT5ChX6jUmSvuskmOXZtTmtaHeC4XOqd0yNV3e8
+	1FzumjM9zrY8P44ThLtWGLrf9oJjXwxJw8FQJq98b6U12R8XSl+TY8iAMQ==
+X-Google-Smtp-Source: AGHT+IFwSb8mQ/alDFgxZCwkDyWEL42yIoafvATNdaXq7p/cs/IwmDazhaaCVG97iMOfKA8tVcoR+Q==
+X-Received: by 2002:a17:907:984:b0:a80:c0ed:2145 with SMTP id a640c23a62f3a-a80edb93d4emr44533066b.2.1723474703579;
+        Mon, 12 Aug 2024 07:58:23 -0700 (PDT)
+Received: from toolbox (31-10-206-125.static.upc.ch. [31.10.206.125])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1cce7bsm240025866b.106.2024.08.12.07.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 07:58:23 -0700 (PDT)
+Date: Mon, 12 Aug 2024 16:58:21 +0200
+From: Max Krummenacher <max.oss.09@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kbuild@vger.kernel.org,
+	Max Krummenacher <max.krummenacher@toradex.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH] tty: vt: conmakehash: remove non-portable code printing
+ comment header
+Message-ID: <ZrojDUbr1EvlARXK@toolbox>
+References: <20240809160853.1269466-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
- <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com> <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com>
-In-Reply-To: <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 12 Aug 2024 10:57:37 -0400
-Message-ID: <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Jann Horn <jannh@google.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809160853.1269466-1-masahiroy@kernel.org>
 
-On Mon, Aug 12, 2024 at 9:09=E2=80=AFAM Jann Horn <jannh@google.com> wrote:
-> On Mon, Aug 12, 2024 at 12:04=E2=80=AFAM Paul Moore <paul@paul-moore.com>=
- wrote:
+On Sat, Aug 10, 2024 at 01:07:20AM +0900, Masahiro Yamada wrote:
+> Commit 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no
+> longer in env") included <linux/limits.h>, which invoked another
+> (wrong) patch that tried to address a build error on macOS.
+> 
+> According to the specification [1], the correct header to use PATH_MAX
+> is <limits.h>.
+> 
+> The minimal fix would be to replace <linux/limits.h> with <limits.h>.
+I can change that in a v2.
 
-...
+> 
+> However, the following commits seem questionable to me:
+> 
+>  - 3bd85c6c97b2 ("tty: vt: conmakehash: Don't mention the full path of the input in output")
+>  - 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
+> 
+> These commits made too many efforts to cope with a comment header in
+> drivers/tty/vt/consolemap_deftbl.c:
+> 
+>   /*
+>    * Do not edit this file; it was automatically generated by
+>    *
+>    * conmakehash drivers/tty/vt/cp437.uni > [this file]
+>    *
+>    */
 
-> > From a LSM perspective I suspect we are always going to need some sort
-> > of hook in the F_SETOWN code path as the LSM needs to potentially
-> > capture state/attributes/something-LSM-specific at that
-> > context/point-in-time.
->
-> The only thing LSMs currently do there is capture state from
-> current->cred. So if the VFS takes care of capturing current->cred
-> there, we should be able to rip out all the file_set_fowner stuff.
-> Something like this (totally untested):
+This is the output you get when keeping the build artifacts within the
+linux source tree.
+However if you keep the artifacts outside the source tree
+(make O=/somepath ...) the output looks like this:
 
-I've very hesitant to drop the LSM hook from the F_SETOWN path both
-because it is reasonable that other LSMs may want to do other things
-here, and adding a LSM hook to the kernel, even if it is re-adding a
-hook that was previously removed, is a difficult and painful process
-with an uncertain outcome.
+    /*
+     * Do not edit this file; it was automatically generated by
+     *
+     * conmakehash /path-to-kernel-source-tree/drivers/tty/vt/cp437.uni > [this file]
+     *
+     */
 
---=20
-paul-moore.com
+i.e. it does keep a reference to where in your filesystem the kernel
+source did reside when building which is against the goal of having a
+reproducable build.
+
+> 
+> With this commit, the header part of the generate C file will be
+> simplified as follows:
+> 
+>   /*
+>    * Automatically generated file; Do not edit.
+>    */
+
+This is not what I observed, for me with this proposed commit the
+comment becomes with or without the 'O=somepath':
+
+    /*
+     * Do not edit this file; it was automatically generated by
+     *
+     * conmakehash cp437.uni > [this file]
+     *
+     */
+
+i.e. it strips the directory path of the chartable source file used.
+
+Regards
+Max
+
+> 
+> BTW, another series of excessive efforts for a comment header can be
+> seen in the following:
+> 
+>  - 5ef6dc08cfde ("lib/build_OID_registry: don't mention the full path of the script in output")
+>  - 2fe29fe94563 ("lib/build_OID_registry: avoid non-destructive substitution for Perl < 5.13.2 compat")
+> 
+> [1]: https://pubs.opengroup.org/onlinepubs/009695399/basedefs/limits.h.html
+> 
+> Fixes: 6e20753da6bc ("tty: vt: conmakehash: cope with abs_srctree no longer in env")
+> Reported-by: Daniel Gomez <da.gomez@samsung.com>
+> Closes: https://lore.kernel.org/all/20240807-macos-build-support-v1-11-4cd1ded85694@samsung.com/
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  drivers/tty/vt/conmakehash.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/tty/vt/conmakehash.c b/drivers/tty/vt/conmakehash.c
+> index 82d9db68b2ce..a931fcde7ad9 100644
+> --- a/drivers/tty/vt/conmakehash.c
+> +++ b/drivers/tty/vt/conmakehash.c
+> @@ -11,8 +11,6 @@
+>   * Copyright (C) 1995-1997 H. Peter Anvin
+>   */
+>  
+> -#include <libgen.h>
+> -#include <linux/limits.h>
+>  #include <stdio.h>
+>  #include <stdlib.h>
+>  #include <sysexits.h>
+> @@ -79,7 +77,6 @@ int main(int argc, char *argv[])
+>  {
+>    FILE *ctbl;
+>    const char *tblname;
+> -  char base_tblname[PATH_MAX];
+>    char buffer[65536];
+>    int fontlen;
+>    int i, nuni, nent;
+> @@ -245,20 +242,15 @@ int main(int argc, char *argv[])
+>    for ( i = 0 ; i < fontlen ; i++ )
+>      nuni += unicount[i];
+>  
+> -  strncpy(base_tblname, tblname, PATH_MAX);
+> -  base_tblname[PATH_MAX - 1] = 0;
+>    printf("\
+>  /*\n\
+> - * Do not edit this file; it was automatically generated by\n\
+> - *\n\
+> - * conmakehash %s > [this file]\n\
+> - *\n\
+> + * Automatically generated file; Do not edit.\n\
+>   */\n\
+>  \n\
+>  #include <linux/types.h>\n\
+>  \n\
+>  u8 dfont_unicount[%d] = \n\
+> -{\n\t", basename(base_tblname), fontlen);
+> +{\n\t", fontlen);
+>  
+>    for ( i = 0 ; i < fontlen ; i++ )
+>      {
+> -- 
+> 2.43.0
+> 
 
