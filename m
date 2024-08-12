@@ -1,204 +1,128 @@
-Return-Path: <linux-kernel+bounces-282855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B82794E983
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:17:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E4694E986
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:17:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8C48286B3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:16:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0916B21862
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2DD916D4D4;
-	Mon, 12 Aug 2024 09:16:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717AF16D33B;
+	Mon, 12 Aug 2024 09:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJSYPc2S"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="KAMwVOSS"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2D720323;
-	Mon, 12 Aug 2024 09:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F078D20323
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723454211; cv=none; b=ivarqpDD+mA84tuuwlBMwtX63kPbwzduaX8SN4t24FXY3sCHR/w8038uxmNcVrcLEml6cJ/afDRgwve7u4YLI5PidE0Q0w4Zy1HouSKDQJEhC4+hDHwV/y5PbTT3lkgKM06+fi6s10vlxQQLhRXPjt2JqmyOZMGy/JphBx4Uu4c=
+	t=1723454219; cv=none; b=ez1g3C1cgC3GuMBa3LR6kQEuCbSjTlHMKL0W6OvmswXSwWwjz6fWL8UkipWqUACDoi18tUEnWRfcDA0tjK+fOFFNHMZjJWczV1cse0hin7KvcCGW04pCLVqt2P0hnRCZgClzbIAQti0okyAIleRcx76Ug08xcfsH+P1+pmmDJMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723454211; c=relaxed/simple;
-	bh=pyBF/86LqUiION4qHaLcqi4A/u7vrSsIgInTa7fvoOw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sUknvs+RCdnL+1gtx0DOqKZQmDKL3nM9wFFF1AWrujxdX/bYHXSP52dYi/0HFe+A350saF7FbWCm6lKtQ4RQ36z71GsHGg98003FOPMh5XvQmb00brXIk/uvNOA0hlMc/jKfqZXr61OSReFQwegd2vwsDTD9x1t+AqycVNu/VxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dJSYPc2S; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-4f50d8ce6e0so1507442e0c.0;
-        Mon, 12 Aug 2024 02:16:49 -0700 (PDT)
+	s=arc-20240116; t=1723454219; c=relaxed/simple;
+	bh=PEFhonk+PZwX1LXmFTVPLydUWuGxvjd3R27W1uM5wEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lIR196RgmyhkJUpkZKEjD7QKhrLs+CoYb4hr5GYCizIPQjFQvienw1x6HDTMu/3QQpAY3tONbL8OFY3pFkgoxputc3jO4zU7K6vAKXChItyB5ouhM3ZZJu7OQrBfzD86PoPm/hJKuyP/gDI9Qm8v3jp3K5aMlQWzCNXZTTfL9aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=KAMwVOSS; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f008b40d7so669645e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:16:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723454208; x=1724059008; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pbIWC815KkCQo/Ul1lAf6qnju76j2AciTh0K+Rx8BGA=;
-        b=dJSYPc2S2YTIw9oT1pbq6ILkAQlfwaxLeGeE5lAYouYdeJnEEmYIamwB2A9BG7FbVf
-         6vj8jSv0bFgYjarg8lAnWUtUEvrVSiZMPnP65Vwf792U0DxWRmt7+205KycPS8Wkjh8x
-         EXF+ynTkPihx3fvbVvmZT/Phy+2hewhrANZkbnh0u1DQ/9n4HGdbE/fxcISV5rzjJjXo
-         xfA/DMC20iBCX0KiR/0DYbBX8OImUf8mWT2j9r9QVooDJDh6nXlepqg7zz1d6Wper3Ot
-         mHDkbZsvZrtkQpPXQLJ/tHo//XBFJ1SjPCvcDlqvj0s9IvSlfDJaALssCFdrmKiEKGVA
-         S5Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723454208; x=1724059008;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1723454216; x=1724059016; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pbIWC815KkCQo/Ul1lAf6qnju76j2AciTh0K+Rx8BGA=;
-        b=pN7CI8sFbQxRbNtoEDxFdlhikzfNyf6FsBrRCgVDLSjI6n20OpvdEC8jqV1KkfqnXL
-         9mPVMzh9AvMkSR+AS3J+ZGvIEpXTH58sjea4uvnfnK2hlo3aNsrpkR//dCSOHk/6IIAv
-         TaKInu7EWRsax2DNH/FmEtg6YMziMDxBMskxjmHMayYCyaYK1NgL6FDVeFFya5Stb0h/
-         7eV7VZUF4H35IFmBzthDMhug4+TEN3sVk4nSBKIhAAVBIBRSq/hdArZwAOdwkO3ZeZ+H
-         CXWw7XWC9T+oL1xXFrtOfjenXQ1yuOwUJEAoBribgjkef35hf5Q9QY24s3rPOsbnrI+c
-         /p9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV614OXYa/1XIYmsHJVt6AIlE3h6WssZnHCatOpcMqc8SItfrzBu40Wu0gEw4ZC0uYHKHat62ITjVCmst/Z1Eow/M6FooWttuLnH5oabvpKqDbyt1TULzJ4itv7VJGbhUC4Ish+yjc25F3ZObELGdMeft756ItMj3mO1Xd48MioXt4kwjQC3W8+YQMH
-X-Gm-Message-State: AOJu0YyEiyhVN4wvhwQW9QVHXn9XVmlj1lurNHQmQPAUQdaG1VPyinY7
-	3XODtQWvbBrKq25K3qzj3TsGGvn06LIp7/7kg3hSOlqFdjheKp/IuBjv8BAitUYNXGuKkbbEfTQ
-	W0w/vu4xRUvS3Pl1KJH8kTNdNUdI=
-X-Google-Smtp-Source: AGHT+IHfG3HxVMnVbymhhTBPJnvp2ZhlsObY8YoMYkAFzPeVr8X8rDMGITQ3T+qIIr+vSwcrnrbek7Lskp58T15G1rc=
-X-Received: by 2002:a05:6122:16a5:b0:4f6:ad2d:c867 with SMTP id
- 71dfb90a1353d-4f912ed2be0mr11189370e0c.12.1723454208369; Mon, 12 Aug 2024
- 02:16:48 -0700 (PDT)
+        bh=fozpmkVWWoUxRzczgwDre6X/R/fGJO0cgQAfwJipm1Q=;
+        b=KAMwVOSSyi8oJqn4N/ECzmoMiAfOhjge48fiFl3wQDaYtZDQi3t9Rc7MOSkK44+fIl
+         Kr6XfCt5RlLcHVGGy4cLbLcQtnURNnrPYreSt0fIvFKNBCBVkVjvdh3QOUiyAYxAwCBQ
+         3OYjHeSKjiCRdn9nFCAX55gxxRR9ZmdZtLo0o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723454216; x=1724059016;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fozpmkVWWoUxRzczgwDre6X/R/fGJO0cgQAfwJipm1Q=;
+        b=CfyCgnf/MLfmqNXRBLp7Oj8B/haKeQ7ET5CU97K1kv09sIMDGZcXhFQTkPUefm6Knv
+         smrq9elvOiekVYlFBIWw/NxHZ7ssn9Y01oaUhXdmpPsutXFRDVRWBJrvVlikYtqlR+EL
+         +Qt+Fcbkr6udbHUTLBDsk0aw/mSV6uEnC/3ORvOmdE+b9NyZ1pC5rq0gJVlT8ViMDcbQ
+         JZpVPCWs511zL7rzJHZXGgh2/ZG6Q8BBg5MIG8DgjPozeKsPJglHvzSyI85akesAAku9
+         VEjeEJz8uGUPSIXPOvCDcHv8aiRS3GOWk0Z+igNP1UgbP+Wbya0w4ErTvoVIwPdRyPLZ
+         /kdg==
+X-Forwarded-Encrypted: i=1; AJvYcCU/v/V6ONBGRZPHUwa2FswgRm1yFiA1MYRfI39tivgAw7qMp8RoIK6EzwI+u3Z1rakkiJtDt6fyq2+OkHo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj7SLD9OFIc94qJ4snXP3hQkP2jBuGFFk3bdX5CAgeig0UoIQm
+	bDvLmzTGz20iZ2tu+Eq2zGf8N5+F4749IuCpjFdmACc+AhV1lhAvKwEuZDpOflQ=
+X-Google-Smtp-Source: AGHT+IHKBjjM9DjOVxrp2iTIQMmX+DJ0sYeTd6fdCEHk+BQHbEmoLJVR94CfcpRFMvbYy+bSd0R12Q==
+X-Received: by 2002:a05:6512:3b29:b0:52f:413:30de with SMTP id 2adb3069b0e04-530eea25cc4mr3498999e87.7.1723454215812;
+        Mon, 12 Aug 2024 02:16:55 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb090253sm216583666b.16.2024.08.12.02.16.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 02:16:55 -0700 (PDT)
+Date: Mon, 12 Aug 2024 11:16:53 +0200
+From: Daniel Vetter <daniel.vetter@ffwll.ch>
+To: Mohammed Anees <pvmohammedanees2003@gmail.com>
+Cc: airlied@gmail.com, daniel@ffwll.ch, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm: Add missing documentation for struct
+ drm_plane_size_hint
+Message-ID: <ZrnTBWq0fpKhCvpB@phenom.ffwll.local>
+Mail-Followup-To: Mohammed Anees <pvmohammedanees2003@gmail.com>,
+	airlied@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240811101653.170223-1-pvmohammedanees2003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240811204955.270231-8-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB113466DE7061B60485B3BE97986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB113466DE7061B60485B3BE97986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Mon, 12 Aug 2024 10:16:22 +0100
-Message-ID: <CA+V-a8vioGija2x=eoqn1jZbMpK8PAeLzXQZP52hQn976BKisw@mail.gmail.com>
-Subject: Re: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
- OSTM, I2C, and SDHI
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811101653.170223-1-pvmohammedanees2003@gmail.com>
+X-Operating-System: Linux phenom 6.9.10-amd64 
 
-Hi Biju,
+On Sun, Aug 11, 2024 at 06:16:51AM -0400, Mohammed Anees wrote:
+> This patch takes care of the following warnings during documentation
+> compiling:
+> 
+> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'width' not described in 'drm_plane_size_hint'
+> ./include/uapi/drm/drm_mode.h:869: warning: Function parameter or struct member 'height' not described in 'drm_plane_size_hint'
+> 
+> Signed-off-by: Mohammed Anees <pvmohammedanees2003@gmail.com>
 
-On Mon, Aug 12, 2024 at 8:40=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
->
-> Hi Prabhakar,
->
-> Thanks for the patch.
->
-> > -----Original Message-----
-> > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > Sent: Sunday, August 11, 2024 9:50 PM
-> > Subject: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enabl=
-e OSTM, I2C, and SDHI
-> >
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Enable OSTM0-OSTM7, RIIC{0,1,2,3,6,7,8}, and SDHI1 (available on the SD=
-2
-> > connector) on the RZ/V2H GP-EVK platform.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - New patch
-> > ---
-> >  .../boot/dts/renesas/r9a09g057h44-gp-evk.dts  | 191 ++++++++++++++++++
-> >  1 file changed, 191 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> > b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> > index 593c48181248..11c13c85d278 100644
-> > --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> > +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> > @@ -7,6 +7,8 @@
-> >
-> >  /dts-v1/;
-> >
-> > +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-> > +#include <dt-bindings/gpio/gpio.h>
-> >  #include "r9a09g057.dtsi"
-> >
-> >  / {
-> > @@ -14,6 +16,14 @@ / {
-> >       compatible =3D "renesas,gp-evk", "renesas,r9a09g057h44", "renesas=
-,r9a09g057";
-> >
-> >       aliases {
-> > +             i2c0 =3D &i2c0;
-> > +             i2c1 =3D &i2c1;
-> > +             i2c2 =3D &i2c2;
-> > +             i2c3 =3D &i2c3;
-> > +             i2c6 =3D &i2c6;
-> > +             i2c7 =3D &i2c7;
-> > +             i2c8 =3D &i2c8;
-> > +             mmc1 =3D &sdhi1;
-> >               serial0 =3D &scif;
-> >       };
-> >
-> > @@ -32,17 +42,186 @@ memory@240000000 {
-> >               device_type =3D "memory";
-> >               reg =3D <0x2 0x40000000 0x2 0x00000000>;
-> >       };
-> > +
-> > +     reg_3p3v: regulator1 {
-> > +             compatible =3D "regulator-fixed";
-> > +
-> > +             regulator-name =3D "fixed-3.3V";
-> > +             regulator-min-microvolt =3D <3300000>;
-> > +             regulator-max-microvolt =3D <3300000>;
-> > +             regulator-boot-on;
-> > +             regulator-always-on;
-> > +     };
-> > +
-> > +     vqmmc_sdhi1: regulator-vccq-sdhi1 {
-> > +             compatible =3D "regulator-gpio";
-> > +             regulator-name =3D "SDHI1 VccQ";
-> > +             gpios =3D <&pinctrl RZG2L_GPIO(10, 2) GPIO_ACTIVE_HIGH>;
-> > +             regulator-min-microvolt =3D <1800000>;
-> > +             regulator-max-microvolt =3D <3300000>;
-> > +             gpios-states =3D <0>;
-> > +             states =3D <3300000 0>, <1800000 1>;
-> > +     };
-> >  };
-> >
-> >  &audio_extal_clk {
-> >       clock-frequency =3D <22579200>;
-> >  };
-> >
-> > +&i2c0 {
-> > +     pinctrl-0 =3D <&i2c0_pins>;
-> > +     pinctrl-names =3D "default";
-> > +
-> > +     status =3D "okay";
-> > +};
-> > +
->
-> clock-frequency =3D <100000>; in SoC dtsim
->
-> Why frequency set to 100kHz for all the i2c nodes even though SoC support=
-s
-> Transfer rate up to 1MHz? Is it board limitation restricting to 100kHz?
->
-This is due to driver limitation, once driver support for FM+ gets
-accepted [0] I plan to update the default frequency to !MHz in SoC
-DTSI.
+Applied to drm-misc-next, thanks.
+-sima
 
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/2024071111=
-5207.2843133-9-claudiu.beznea.uj@bp.renesas.com/
+> ---
+>  include/uapi/drm/drm_mode.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/include/uapi/drm/drm_mode.h b/include/uapi/drm/drm_mode.h
+> index d390011b8..c082810c0 100644
+> --- a/include/uapi/drm/drm_mode.h
+> +++ b/include/uapi/drm/drm_mode.h
+> @@ -859,6 +859,8 @@ struct drm_color_lut {
+>  
+>  /**
+>   * struct drm_plane_size_hint - Plane size hints
+> + * @width: The width of the plane in pixel
+> + * @height: The height of the plane in pixel
+>   *
+>   * The plane SIZE_HINTS property blob contains an
+>   * array of struct drm_plane_size_hint.
+> -- 
+> 2.43.0
+> 
 
-Cheers,
-Prabhakar
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
