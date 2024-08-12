@@ -1,201 +1,119 @@
-Return-Path: <linux-kernel+bounces-283916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C92594FA52
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:34:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E9694FA57
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:35:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D721C2228B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 212341C22314
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EF01991AF;
-	Mon, 12 Aug 2024 23:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEF6199EB2;
+	Mon, 12 Aug 2024 23:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jMNfWCYw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdLeW696"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADED13A3F2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE647E0E8;
+	Mon, 12 Aug 2024 23:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723505665; cv=none; b=gnLUnQRBnmt7CL6GJ/fzlNHwFEbGmOlS72fyGEA00+mY1EMDvYiDs9a32N7n5u1mZyCJJRGnJQ6/QO/GDjU0jHo7FP/jUmOhPsf4KiOnnS33gTSLg7EGlnfHUEjabXMOLws6y350IctVpwCWBc7uw7YKsX/PQrsi5VeH6c/+PFQ=
+	t=1723505721; cv=none; b=fvB76osMMlec7/cUnVEqJ8W94Ru7x9ZzuLZFSfGV4g5dcoBJ1zBSU7RlIg8gRkPRe4pTDxDVPw4tNgDaOYXD2y82a4dx2RlINWEGqd/UL+PSIK/XU9P0wCZry2JmEywIOq31LrfNqQ5N0422HW5ZZ9Fjr0wERzDuuhqf32mV+lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723505665; c=relaxed/simple;
-	bh=jvTBjRpRoW78XsIotGEOmlF/dnPKtDcAOdq6tU7Lnuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQFCHpv6+EoUgSlg5mHJgcUBEWKcr+RLg+pkNjLlZAlLtMqvHN8CwrRzzOF95eYTtWPwzc+ehD0SwmD8K5L6rnz6LfOXC50Iul43issA3GqnGaE/MB1srQf61Q1XTmuYNDIS9rUuRPD2joEFb5xnH7OTN1C0YO75yDz/VQUyDJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jMNfWCYw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723505662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xKDbGaTX8EZpcenHgPa8veNn1wKEPpwdIKATGSiYtC4=;
-	b=jMNfWCYw+o8mr1IFKA0NH8ooedJf9A8AmKWpwVoFBnZkOU4T/y9sR2hMF1eUVMZ9evayRp
-	r0/sdt0mdIz+wY7QHtdGidzycQwI037bzgIGKcTw7ZZIpnjb8uyifpvtOd0Odhn7ZzhP/u
-	GPpv6C/QnKK8Iq+YCzp+xDwKFtGjkg4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-367-9hhukabLNNaaRmDZhHsE1w-1; Mon,
- 12 Aug 2024 19:34:18 -0400
-X-MC-Unique: 9hhukabLNNaaRmDZhHsE1w-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E4DC1955F45;
-	Mon, 12 Aug 2024 23:34:16 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.25])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B6CB30001A1;
-	Mon, 12 Aug 2024 23:34:14 +0000 (UTC)
-Date: Tue, 13 Aug 2024 07:34:10 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Will Deacon <will@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-	"Hailong . Liu" <hailong.liu@oppo.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: vmalloc: Ensure vmap_block is initialised before
- adding to queue
-Message-ID: <Zrqb8n3DikE+K+Xm@MiWiFi-R3L-srv>
-References: <20240812171606.17486-1-will@kernel.org>
+	s=arc-20240116; t=1723505721; c=relaxed/simple;
+	bh=w2P4mB9qfIgkYgWcB1VPu+41w5OKZahvx5C47+aTTfM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tw0poDibcTlm6v06N4IG97S2jKdNZIxRrFtFrMiCXkLUZ1GIdL3mKyhoD0KHOQrK9mhFsxiqR7InjuCops/q1UqwjDoUpSSl2gLk8ytx8ORZKpBDztELmo3R0AghCM2jCBhSpjY0rw9OBeuCS2oTQ6WcC4yGoNcY2i5lvrCkZmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cdLeW696; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-66599ca3470so47036287b3.2;
+        Mon, 12 Aug 2024 16:35:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723505719; x=1724110519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZXbxLiY0DFig1x36d2vGcHyedVdpa1QHU4qAQbXaCYU=;
+        b=cdLeW696WuzN3+b/ziSzJ6cvZ61QzvB5vSsjW01g5SJ4eySpnFjP5OjlyvkvROrx9t
+         x6z/spu8ef4InYyY//3Y6L0AllJaEtgNCBgGsixR45xHqQqV7dJryz8hoQL6EfdLC6kJ
+         GPIXmcgvHYt0P3/1cw2aAVhXRSiTlJhbQzQjpogu2mRC56O2/jLxiEx3A8li0OEEl+Fc
+         zMQ3U+KeYear6EL3VUYD7lvSD4m1w1nUdKOLNvoJ+WCoKkPS3wBHDy5CJjAd0BawEjnK
+         ViSxrrLK1tAaP5AK9t3DDkoWqM6u3SazUQLsp+nmfCZdqiiV51I+kk6PqsnF6XkL5CD3
+         TZfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723505719; x=1724110519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZXbxLiY0DFig1x36d2vGcHyedVdpa1QHU4qAQbXaCYU=;
+        b=D3vmv+Q1QktJ3SwQz29/6QcT8Rj+eYY/LHPuvbqTklQMgBl6/CozAebnzhza1LvvW7
+         FZo6/EriXT9c3kw1sR8Y93BdjDIvNo2hAFMSXx0RXcKwu/Ri8ROmHWVtdnFJiNnAoLRK
+         mJtxkDfhIMuChbZRK+f0nUe74ispcUxVq3R1baQ7uOXxKrQY8/6ivhBMwV+d+14aoFKN
+         YA5mZMsfUNnzJPT0yn0H0WQbF9/9EuK8YhaC+Aa4OzDdGz+OZREzahf4okbLhrrsuig+
+         /HsKoQ5rCBgYKxgAPc6zgRI36sItW9y8lsHPThKNsGbmHaJ+XMeqrYjpHOvIJGzuescl
+         AMog==
+X-Forwarded-Encrypted: i=1; AJvYcCWfzbbAwejLQH+D6XkSVK/nCJDFYDY1QkIi0LLhzHU1nQVEKnJGApAL69J2rmFBryDZ9Vlsjamz7inqD4/B1GzhFHwvKF2e16R5mEV6
+X-Gm-Message-State: AOJu0YwX3BG2mEbd77s6GzY0tiH8fabPmB4aqCtLuVgh5h4GxhCRNbSC
+	i3Af88ny8l0Gk9UW3j5AIWyP3X7/jEy1HhLU6Dg+6OW1e8kYAsJTOspThHTePobY02pCI16Tj0Y
+	eJOAox4XEle+2v70E6/vb7JRcCPUDLxgCJG4=
+X-Google-Smtp-Source: AGHT+IHgC1shSW4zl4x4Ao2zQr9xrmAQr0OhC/u4E9RM8FbZSXpXhk6hGMET5EVYAA+JuydiDT5iVuCrpbA+9fjDTFA=
+X-Received: by 2002:a05:690c:4249:b0:61a:d846:9858 with SMTP id
+ 00721157ae682-6a97285f92cmr20936607b3.20.1723505719072; Mon, 12 Aug 2024
+ 16:35:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812171606.17486-1-will@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240812190700.14270-1-rosenp@gmail.com> <20240812190700.14270-3-rosenp@gmail.com>
+ <ae818694-e697-41cc-a731-73cd50dd7d99@lunn.ch> <CAKxU2N9p4DrbREqHuagmVS=evjK48SWE5NM3RbD5zF6D-H93kA@mail.gmail.com>
+In-Reply-To: <CAKxU2N9p4DrbREqHuagmVS=evjK48SWE5NM3RbD5zF6D-H93kA@mail.gmail.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 12 Aug 2024 16:35:08 -0700
+Message-ID: <CAKxU2N-2M_tPK5mJjhgfn8vW5qH6ts5o3sxzrugK3BdVee_XWA@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/3] net: ag71xx: use devm for of_mdiobus_register
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/12/24 at 06:16pm, Will Deacon wrote:
-> Commit 8c61291fd850 ("mm: fix incorrect vbq reference in
-> purge_fragmented_block") extended the 'vmap_block' structure to contain
-> a 'cpu' field which is set at allocation time to the id of the
-> initialising CPU.
-> 
-> When a new 'vmap_block' is being instantiated by new_vmap_block(), the
-> partially initialised structure is added to the local 'vmap_block_queue'
-> xarray before the 'cpu' field has been initialised. If another CPU is
-> concurrently walking the xarray (e.g. via vm_unmap_aliases()), then it
-> may perform an out-of-bounds access to the remote queue thanks to an
-> uninitialised index.
-> 
-> This has been observed as UBSAN errors in Android:
-> 
->  | Internal error: UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
->  |
->  | Call trace:
->  |  purge_fragmented_block+0x204/0x21c
->  |  _vm_unmap_aliases+0x170/0x378
->  |  vm_unmap_aliases+0x1c/0x28
->  |  change_memory_common+0x1dc/0x26c
->  |  set_memory_ro+0x18/0x24
->  |  module_enable_ro+0x98/0x238
->  |  do_init_module+0x1b0/0x310
-> 
-> Move the initialisation of 'vb->cpu' in new_vmap_block() ahead of the
-> addition to the xarray.
-> 
-> Cc: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> Cc: Hailong.Liu <hailong.liu@oppo.com>
-> Cc: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Lorenzo Stoakes <lstoakes@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 8c61291fd850 ("mm: fix incorrect vbq reference in purge_fragmented_block")
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
+On Mon, Aug 12, 2024 at 2:35=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
+e:
+>
+> On Mon, Aug 12, 2024 at 2:28=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrot=
+e:
+> >
+> > On Mon, Aug 12, 2024 at 12:06:52PM -0700, Rosen Penev wrote:
+> > > Allows removing ag71xx_mdio_remove.
+> > >
+> > > Removed local mii_bus variable and assign struct members directly.
+> > > Easier to reason about.
+> >
+> > This mixes up two different things, making the patch harder to
+> > review. Ideally you want lots of little patches, each doing one thing,
+> > and being obviously correct.
+> >
+> > Is ag->mii_bus actually used anywhere, outside of ag71xx_mdio_probe()?
+> > Often swapping to devm_ means the driver does not need to keep hold of
+> > the resources. So i actually think you can remove ag->mii_bus. This
+> > might of been more obvious if you had first swapped to
+> > devm_of_mdiobus_register() without the other changes mixed in.
+> not sure I follow. mdiobus_unregister would need to be called in
+> remove without devm. That would need a private mii_bus of some kind.
+> So with devm this is unneeded?
+Just checked drivers/net/dsa/lantiq_gswip.c
 
-Good catch, this truly could happen and collapse system.
-
-Reviewed-by: Baoquan He <bhe@redhat.com>
-
-> 
-> I _think_ the insertion into the free list is ok, as the vb shouldn't be
-> considered for purging if it's clean. It would be great if somebody more
-> familiar with this code could confirm either way, however.
-
-It's OK, please see below comment.
-
-static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
-{
-......
-        vaddr = vmap_block_vaddr(va->va_start, 0);
-        spin_lock_init(&vb->lock);
-        vb->va = va;
-        /* At least something should be left free */
-        BUG_ON(VMAP_BBMAP_BITS <= (1UL << order));
-        bitmap_zero(vb->used_map, VMAP_BBMAP_BITS);
-        vb->free = VMAP_BBMAP_BITS - (1UL << order);
-         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         Here we have cut away one piece according to vb_alloc() and set vb->free.
-        vb->dirty = 0;
-        vb->dirty_min = VMAP_BBMAP_BITS;
-        vb->dirty_max = 0;
-        bitmap_set(vb->used_map, 0, (1UL << order));
-        INIT_LIST_HEAD(&vb->free_list);
-...
-}
-
-static bool purge_fragmented_block(struct vmap_block *vb,
-                struct list_head *purge_list, bool force_purge)
-{
-        struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, vb->cpu);
-
-        if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ The above setting
-                of vb->free and vb->dirty will fail conditional check here.
-                So it won't be purged. 
-            vb->dirty == VMAP_BBMAP_BITS)
-                return false;
- 
-        /* Don't overeagerly purge usable blocks unless requested */
-        if (!(force_purge || vb->free < VMAP_PURGE_THRESHOLD))
-                return false;
-...
-}
-> 
->  mm/vmalloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 6b783baf12a1..64c0a2c8a73c 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2626,6 +2626,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  	vb->dirty_max = 0;
->  	bitmap_set(vb->used_map, 0, (1UL << order));
->  	INIT_LIST_HEAD(&vb->free_list);
-> +	vb->cpu = raw_smp_processor_id();
->  
->  	xa = addr_to_vb_xa(va->va_start);
->  	vb_idx = addr_to_vb_idx(va->va_start);
-> @@ -2642,7 +2643,6 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  	 * integrity together with list_for_each_rcu from read
->  	 * side.
->  	 */
-> -	vb->cpu = raw_smp_processor_id();
->  	vbq = per_cpu_ptr(&vmap_block_queue, vb->cpu);
->  	spin_lock(&vbq->lock);
->  	list_add_tail_rcu(&vb->free_list, &vbq->free);
-> -- 
-> 2.46.0.76.ge559c4bf1a-goog
-> 
-
+This seems correct. Will make the change for v2.
+> >
+> >     Andrew
+> >
+> > ---
+> > pw-bot: cr
 
