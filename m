@@ -1,160 +1,162 @@
-Return-Path: <linux-kernel+bounces-283141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2944A94EDD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:13:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63BD194EDD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C28C1C21BD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:13:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FFCA28217A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7616917C208;
-	Mon, 12 Aug 2024 13:13:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C14217BB34;
+	Mon, 12 Aug 2024 13:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ohxbVTY1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZKqyhQK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820FA17BB30;
-	Mon, 12 Aug 2024 13:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8706026ADD;
+	Mon, 12 Aug 2024 13:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468399; cv=none; b=ErH4wzuDDDuuqYJrw5mbTbzKknFTmscWnv9H/27L+PkdEKQS+MQikBRQY4fYK4rtp4trXbQfzRQge0+X0c3N1v71bdQePBnLivO31z5cNWPCvmkdIBuMtmezqAjGK+vJZAzxvHF5TNG9fhuptHq2YO7fLbVP9N8hBJBZgYanP5M=
+	t=1723468523; cv=none; b=oiGCWzUXaY5hwnyLT6c1+7Yj9G8ZZMOSTlgQe7hkia7kMOpLCelckgjs12h8dNmoW7EwifWO7jTfqGBW6UpJJ9JWK+lUl2rH0IY3jYevvTadTiubmtPy15aytEfxy7N64AkVjr7D0Z1RzweYqSnb/Ki6kzEGGhpq1vzN9tgk0t0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468399; c=relaxed/simple;
-	bh=zHWG9fUsgFS7BIhZ/fQc30T8uicddZvffvP29o/3yiI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=hP3+RxeQ0VXjKBX2NLNtvkJc5ulNp3AOoJFu/Bmh9d2ColmeuCRUOW3l+/zxwbH3Wtlk74AcMUB3NaOlKVC8kM5MVfaOb4sa3veR0ORqMzJOM0cWlRlwlBBTt8L3svV7PpQ3gyY0bIkreMgQEXWQyf88bt+haymvguVupS8/1e4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ohxbVTY1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E66C32782;
-	Mon, 12 Aug 2024 13:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723468399;
-	bh=zHWG9fUsgFS7BIhZ/fQc30T8uicddZvffvP29o/3yiI=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ohxbVTY1te80hR/df40FrTeJMVaU9NbT91pKVcyq9iSUNPhBXZMO7CwWhrrJSMSDE
-	 5P1gkf7mndin4Pg6m/ekHusE0o5uC4tS6HxH/Ps90aozv1shVBY1ukAT2hNfzKMBd+
-	 spOlXO66H49do+iWOet5ZW/4kQ/U8RTrvjaLRbSsGzAChanyE8mFfUN/li3HKLHNJZ
-	 U7NreEmZEYuzIuQaBk9czmZ9KtPaXM/JMXLEWD7ZnQ5aCVyGLzuNiPV2UbDVkedelz
-	 /4sS61krmqpPRXGVn1zp9VqBhb7GiAvNi1ATXQPD8Wy4dua90OZTLrFHUwqbjT1mpw
-	 jICIeoKR6EImg==
-Message-ID: <426eb8b6-9b2f-4594-9cc3-320ef0cee835@kernel.org>
-Date: Mon, 12 Aug 2024 15:13:11 +0200
+	s=arc-20240116; t=1723468523; c=relaxed/simple;
+	bh=mw28CMZsCYEDai4Uy7oNYa4fhqfTA0xHHE6WVcjY/I0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8jnjNZw38aw9QL3a2G0Nef1eHQqcQLLTxURu+m7wDxzHhUVuZtbIVtEk1JfXpII0hNaaq+qF81mFopHxkpnsPEAWo743fVZn+hLyCUiJ19zLmkzDb5Ao8oGwYDOpHbUqjPfUIaiffJbNRQMUfLlaBX4h2o8UxKDhktSHrV0LBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZKqyhQK; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723468521; x=1755004521;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mw28CMZsCYEDai4Uy7oNYa4fhqfTA0xHHE6WVcjY/I0=;
+  b=XZKqyhQKzwQb0OGAsqb0FUER3Et5BFufCs1OxqoVmAxv8x56fPVLXla4
+   h7dqd/OdV2b2O4tKwzPw1JL64+yooufPJwiSvcay/3a0JdDS8+f/s83kr
+   C48PJhIO8834198GCH7/01t9FAZl2Oyj9nZxKJPk1ESbRE3Nak2AGjb/l
+   4+8EAF7ifoTCnqz425IjD2R0r1akG+EfqAU9o0bUHVkZg31Zw+womXgQX
+   4hgXxkSTeHP0rRadGZfjmINyoOp5DryOMLKY5yMi0a+ifCwckfBU37Ijg
+   lKciImPKWhCBz+4d7YDaiffYBqA8g1UbkWkm5CPfnFJ46fLN9tyk1uVg/
+   w==;
+X-CSE-ConnectionGUID: ub6aXopHRse5LDeWwYPkDA==
+X-CSE-MsgGUID: I20RqlJKQvOkj2etZZDSzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="12963664"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="12963664"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:15:20 -0700
+X-CSE-ConnectionGUID: XLaW1EqfSKeEXNJ7CNVLng==
+X-CSE-MsgGUID: ZxUZsq4MRcKzL5iRWLRWJA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="62393301"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:15:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdUtG-0000000EM1E-1ASo;
+	Mon, 12 Aug 2024 16:15:14 +0300
+Date: Mon, 12 Aug 2024 16:15:14 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
+Message-ID: <ZroK4oSAte9qdnA8@smile.fi.intel.com>
+References: <20240812081538.1457396-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/8] i2c: muxes: add support for tsd,mule-i2c
- multiplexer
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Quentin Schulz <quentin.schulz@cherry.de>,
- Farouk Bouabid <farouk.bouabid@cherry.de>, Andi Shyti
- <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Peter Rosin <peda@axentia.se>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240725-dev-mule-i2c-mux-v6-0-f9f6d7b60fb2@cherry.de>
- <20240725-dev-mule-i2c-mux-v6-2-f9f6d7b60fb2@cherry.de>
- <728a8e06-81f1-4771-8031-ea043b9baf20@cherry.de>
- <3a36e89b-b4e2-4eb8-9197-a7a1d04a7fb6@kernel.org> <ZrnekeUKciV4eAKC@shikoro>
- <f6dfc6cc-365d-4f0a-9a4c-dc34cf4c5b7d@kernel.org> <Zrn-ZkgYKVquarDX@ninjato>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zrn-ZkgYKVquarDX@ninjato>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812081538.1457396-1-raag.jadav@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 12/08/2024 14:21, Wolfram Sang wrote:
+On Mon, Aug 12, 2024 at 01:45:38PM +0530, Raag Jadav wrote:
+> Add hwmon support for fan1_input attribute, which will expose fan speed
+> in RPM. With this in place we can monitor fan speed using lm-sensors tool.
 > 
->> Yep, but to be fair the patchset did not say anything about
->> dependencies. There is absolutely nothing in cover letter, nothing in
->> the patches, so I do not wonder that this mishap happened.
-> 
-> Still, one shouldn't take DT patches (which are even the last ones in
-> this series) until all other patches are at least in -next, or? Yes,
-> mistakes happen, so no big deal, but i2c is not to blame IMHO.
+> $ sensors
+> i915-pci-0300
+> Adapter: PCI adapter
+> in0:         653.00 mV
+> fan1:        3833 RPM
+> power1:           N/A  (max =  43.00 W)
+> energy1:      32.02 kJ
 
-No, it's not. It was just a ping. The issue is here not describing
-dependency, allowing Guenter to take the patch and not even telling him
-that now next has warning. :/ It's like entire weight is on maintainers
-and contributors care only about getting their patch inside. Once it is
-inside, not my problem anymore... :(
+...
+
+> +static int
+> +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> +{
+> +	struct i915_hwmon *hwmon = ddat->hwmon;
+> +	struct hwm_fan_info *fi = &ddat->fi;
+> +	u64 rotations, time_now, time;
+> +	intel_wakeref_t wakeref;
+> +	u32 reg_val, pulses;
+> +	int ret = 0;
+> +
+> +	if (attr != hwmon_fan_input)
+> +		return -EOPNOTSUPP;
+> +
+> +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
+> +	mutex_lock(&hwmon->hwmon_lock);
+> +
+> +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> +	time_now = get_jiffies_64();
+
+> +	/* Handle HW register overflow */
+> +	if (reg_val >= fi->reg_val_prev)
+> +		pulses = reg_val - fi->reg_val_prev;
+> +	else
+> +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
+
+Isn't it the abs_diff() reimplementation?
+
+> +	/*
+> +	 * HW register value is accumulated count of pulses from
+> +	 * PWM fan with the scale of 2 pulses per rotation.
+> +	 */
+> +	rotations = pulses / 2;
+> +
+> +	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
+> +	if (unlikely(!time)) {
+> +		ret = -EAGAIN;
+> +		goto exit;
+> +	}
+> +
+> +	/*
+> +	 * Convert to minutes for calculating RPM.
+> +	 * RPM = number of rotations * msecs per minute / time in msecs
+> +	 */
+> +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
+> +
+> +	fi->reg_val_prev = reg_val;
+> +	fi->time_prev = time_now;
+> +exit:
+> +	mutex_unlock(&hwmon->hwmon_lock);
+> +	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
+> +	return ret;
+> +}
 
 
-> 
->> Depends whether you rely on being CC-ed here. Existing entries do not
-> 
-> I don't rely on CC. I rely on patches being on the i2c list.
-> 
->> include you, thus you are not cc-ed on maintainers. Peter Rosin is, but
->> it seems Peter does not apply patches. It could be intentional, but then
->> I understand that all pings should go to Peter?
-> 
-> Once Peter acks, I apply. He is the maintainer. Yet, he is very busy, so
-> I also apply when someone else I trust does a review. He is fine with
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Sure, that explains, so ping should not really go to you...
-
-> that and might chime in later, if needed. This patch here did not get
-> any review, sadly. As I said, resource problem. That being said, these
-> patches are somewhere on my todo list if nobody else steps up (what I
-> would prefer). But please, don't put pressure on me (or any other
-> potential reviewer) just because DT patches ended up upstream too early.
-
-
-Best regards,
-Krzysztof
 
 
