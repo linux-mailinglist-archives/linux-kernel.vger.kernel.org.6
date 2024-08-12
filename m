@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-283405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C71B94F210
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:49:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3A494F215
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D2361C20D23
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D65BC1F21D6B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AED4187561;
-	Mon, 12 Aug 2024 15:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE1A187FF7;
+	Mon, 12 Aug 2024 15:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X+tA8L6+"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oFQ1+Ats"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4444A18562A;
-	Mon, 12 Aug 2024 15:49:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564C9186E48;
+	Mon, 12 Aug 2024 15:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477749; cv=none; b=IgabhvXV42A+Hwbm2SmA3nAdYyRN8BFXvdoC8xbNQX+AJZ1vEZe/D86XSTzJrKBpsOYb/7UF/WFHPkl8LXhFVzdL2rsAcjcLOOdBABdelTMQJJX8dGVNIWRYbq2nXhtn5Y3FhZ5yDlaQUvlm3I4A9BT7YGoylizkAkQp0OdLpBc=
+	t=1723477750; cv=none; b=SoL0cdJPrZMSydaitKyY305UM2J6sqWq+JiiqhYDf+a7NZ7v8OhFXC5GV17CkDe3A7BBKuV3SglvMYsVNzagLSnGNVpFgbKSDnnfo20Z68RbBGLfRIX6UHCUE767Xc4yP/zTZiPDunY4YBSjlXnNm39qE04OZFtT2BFk2VoOJtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477749; c=relaxed/simple;
-	bh=oEGMPDmJEbbGQUvoEJPDdDF4HFm+Jp4H/O+URWqPCbQ=;
+	s=arc-20240116; t=1723477750; c=relaxed/simple;
+	bh=/uuspCGzw0/Czr7dXMEqBLtRtDHoVsJNY8Ej51BqTjc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Npvk4kOMS/ck9NsNuEJPM55uAs+9WJn94iWr2Wo/VfDmp+0e/FhzG2VvyCgd7xgU/XUgT0dv/vD+WFQA6GkZKL3oWo9lKqx4Y4Ol8qxccDPAlnNFhBbnuxZGS6x/eYRiJ6IoY9ovXWFJlu4NP5Yw7CzuU5Q/8Xc+ugFxlweCWgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X+tA8L6+; arc=none smtp.client-ip=192.198.163.7
+	 MIME-Version; b=ZLuad+53+pT8CZBoDwURfDK/ISg/B1P4B+HxFR8flTbkghFRiQvC5Zqji62A9EaMLWUVjRck0gy4LtY4SL53BXsirrGB53fVAE/xsWpwXMOwDywyS/kQf7BPOX8FyPmLvnIjdlxzdUG97PNB1yI2q4gG5DqafATejB/joO0mdTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oFQ1+Ats; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723477748; x=1755013748;
+  t=1723477750; x=1755013750;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=oEGMPDmJEbbGQUvoEJPDdDF4HFm+Jp4H/O+URWqPCbQ=;
-  b=X+tA8L6+Fw0EIIVCK+0rt7Y6S1YUdLQ+YWDGevVrMS0nHNJHGmmFnNmV
-   u8RRe8IihMUZ6FW22PomEpD62DcUkUZPk7THK8toBJngSEiP2PYYD/4nJ
-   Rhto0fsepV4gVQR5/dDibAAjplxX5RfiFQBPAtEAtVUTTYtqsoGkt8K5b
-   v7zlgUx8TKnpKh47dWXhFGd1/u89uoKtIxQuCGlqfk7Td6P+tQpFvkSNw
-   wt0YcwATbOqM/VL6JlLkgmvfvUTaB5SQbXb9LtB2PwnbcCfrrLi9bLzpW
-   0n5RzFeQgi9VEzWFjUNMrjvn5/OKXdVLTFS6w/qj/f9QdR0MfRBEGSdAj
-   g==;
-X-CSE-ConnectionGUID: MQ1a7/PqRJKJhJ2W639XtA==
-X-CSE-MsgGUID: S7D34IPvQTupwlni+92QKQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46998244"
+  bh=/uuspCGzw0/Czr7dXMEqBLtRtDHoVsJNY8Ej51BqTjc=;
+  b=oFQ1+Atsvx8NP5zmLV8lKNiJ5GB1x1yUDdIlDEJOIeRqTil38McDFU+f
+   /gXcUeRjJYbUciU7r1ACZ6MlaLlmD0Kq8UlRa9o1Hz4LKRVRrbULknUo+
+   Zbr+Ppz6IbnhNF/1727iheuuRIuJzn4shVDLuRnb0eC4NZ2sayZusErmG
+   t6AuRtrCfQAjMDXh4ZjTILXm/8Q59GFba6lN/ivHngcLktGlqgUjdhyD8
+   qRED5AiKrwa9uV2wsqNcHvDjb1ZvCMylIF6E96izMA5Pg5w4tDm/4/hr2
+   CMO6xka3E9OECV2QzaN5PNJ7fS0fWESA0tZh0CJ29yj77ELmav/LPoeBC
+   Q==;
+X-CSE-ConnectionGUID: rUcNXz2ETPOFX9M5p6eCxA==
+X-CSE-MsgGUID: qH8m83SKQdmxXIS4s3wROQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46998250"
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="46998244"
+   d="scan'208";a="46998250"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
   by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:49:06 -0700
-X-CSE-ConnectionGUID: yINk/hUzR5qX8nTFDGrzYw==
-X-CSE-MsgGUID: /X7vflvCT3a6ywGaeHos3g==
+X-CSE-ConnectionGUID: VAVfEBMHTOCHmrP/WpaHPA==
+X-CSE-MsgGUID: 940jORz9T8yoGkFu/w7jCA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="62959170"
+   d="scan'208";a="62959171"
 Received: from black.fi.intel.com ([10.237.72.28])
   by fmviesa004.fm.intel.com with ESMTP; 12 Aug 2024 08:49:04 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id D93783B5; Mon, 12 Aug 2024 18:49:02 +0300 (EEST)
+	id E77E51F8; Mon, 12 Aug 2024 18:49:02 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
@@ -66,9 +66,9 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
 	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v1 3/7] serial: 8250_platform: Use same check for ACPI in the whole driver
-Date: Mon, 12 Aug 2024 18:47:05 +0300
-Message-ID: <20240812154901.1068407-4-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 4/7] serial: 8250_platform: Tidy up ACPI ID table
+Date: Mon, 12 Aug 2024 18:47:06 +0300
+Message-ID: <20240812154901.1068407-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 In-Reply-To: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
 References: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
@@ -80,34 +80,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use has_acpi_companion() as 8250_core does to unify this across
-the driver modules.
+Tidy up ACPI ID table:
+- remove explicit driver_data initializer
+- drop comma in the terminator entry
+- use C comment style
 
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/tty/serial/8250/8250_platform.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/tty/serial/8250/8250_platform.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-index ffa2b7b690d3..937eea3ebdea 100644
+index 937eea3ebdea..38c083e90a7d 100644
 --- a/drivers/tty/serial/8250/8250_platform.c
 +++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -165,14 +165,13 @@ static int serial8250_probe(struct platform_device *dev)
- 	struct plat_serial8250_port *p = dev_get_platdata(&dev->dev);
- 	struct uart_8250_port uart;
- 	int ret, i, irqflag = 0;
--	struct fwnode_handle *fwnode = dev_fwnode(&dev->dev);
+@@ -261,8 +261,8 @@ static int serial8250_resume(struct platform_device *dev)
+ }
  
- 	/*
- 	 * Probe platform UART devices defined using standard hardware
- 	 * discovery mechanism like ACPI or DT. Support only ACPI based
- 	 * serial device for now.
- 	 */
--	if (!p && is_acpi_node(fwnode))
-+	if (!p && has_acpi_companion(&dev->dev))
- 		return serial8250_platform_probe(dev);
+ static const struct acpi_device_id acpi_platform_serial_table[] = {
+-	{ "RSCV0003", 0 }, // RISC-V Generic 16550A UART
+-	{ },
++	{ "RSCV0003" }, /* RISC-V Generic 16550A UART */
++	{ }
+ };
+ MODULE_DEVICE_TABLE(acpi, acpi_platform_serial_table);
  
- 	memset(&uart, 0, sizeof(uart));
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
