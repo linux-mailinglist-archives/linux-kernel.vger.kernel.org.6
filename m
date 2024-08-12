@@ -1,114 +1,218 @@
-Return-Path: <linux-kernel+bounces-283412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5924B94F220
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:52:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B546894F224
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:53:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7092D1C21245
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:52:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7300E283669
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:53:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0AF186E33;
-	Mon, 12 Aug 2024 15:52:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC0B1862B9;
+	Mon, 12 Aug 2024 15:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nvwwVvP6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNvjyIvY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148E3185E7A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F10F74D112;
+	Mon, 12 Aug 2024 15:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477926; cv=none; b=QktXCNMvbCUx25bUAMn0atipK/gXF5OCUvsMCgjuxIvrJOusJ5Iam2ZgLHc0rX3w981HDXVvjTuAhgFNjIcUjNJC1i73Mi8m7Mb2b12KpssHp/IRvHUi5CWuoeoAGf/dmIssbbkr8ve7poxisB4ORyWV2mtYSdiBL+OE9ZilPjw=
+	t=1723477995; cv=none; b=HOywH5Sg6qjvwjVg5WZT537ExyrLfUDZVwlG59vkWb3cPMwV65f3C7CiqQV8A6V2gd3YT6wEEpEO8YMySuBciJzgWmpqQk8XufVP1AaGcgFQjMH/w6LgYv5mmexqPkgqhfWmMMa4Cf+z91nXbotBdK2gC3Ndr6a4//uEQrMAgh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477926; c=relaxed/simple;
-	bh=f6D6KfilWNxqFGG7pta2IfyAR3ZAQv2fXGry/eHPZP8=;
+	s=arc-20240116; t=1723477995; c=relaxed/simple;
+	bh=HlRdvFKn4iFjzvom5J0DF55x13AYDpUEmQpaLh1Gggw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ivqzaF1qQ9Rqr2/Py6kSK21ImI4DIN9axaYQxtFUvwrPNgARjRxeSau4TXArHfENYQwJ38Zw0PkdkGdAeq4QdjxflG5SHQfn+liPkd2H/0/caa5+OJj20vBBmtMs9oJRrjmth5d0uBjLVG+Jdco23s6nzsCPClskhLsP5PLsBPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nvwwVvP6; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723477925; x=1755013925;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f6D6KfilWNxqFGG7pta2IfyAR3ZAQv2fXGry/eHPZP8=;
-  b=nvwwVvP6JZotufN1a+iYL4AdFSlpyW1CPWjIJ+JIYxCB3ZAzGiD84lJQ
-   9OdONTcq90wFGyjmVReUNz08JqAh1zGeXs1mRTVv9Np8UpnQMZhNCWElQ
-   ixT2boFBxjYJjvozLiiu9FViMM2SiRiYiRjgVQaW9WtAuxh9QGRMDXvz+
-   ik85S8NH9Tmh3WAX0dPpV65O1Ub+pnv+IXJ+9BbqPDRF0zUMDCjaWpIRG
-   qMx3DYpHPuweJ1k5EfihFjzI7vkhjKO6HO66aMNft54oK/IRNOUcFIiYZ
-   OkkzTJlteZBo1pq3RIjpDl9avp0PBohQ8fQ2yI6YJgyDSwLIojxQiMYw8
-   Q==;
-X-CSE-ConnectionGUID: PqeubxzfRmuZGcArGVBkUg==
-X-CSE-MsgGUID: GLPEAZtTQSu5i3Evcf65Ag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46998572"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="46998572"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:52:05 -0700
-X-CSE-ConnectionGUID: dF09Li77Si6p46koOzuKYQ==
-X-CSE-MsgGUID: 8XzTmcKZRaeu6Y5GuMy37A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="62959904"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:51:58 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdXKr-0000000EOvB-3Jym;
-	Mon, 12 Aug 2024 18:51:53 +0300
-Date: Mon, 12 Aug 2024 18:51:53 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, jaden-yue@ti.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
-	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
-	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
-	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
-	jesse-ji@ti.com, darren.ye@mediatek.com, antheas.dk@gmail.com,
-	Jerry2.Huang@lcfuturecenter.com
-Subject: Re: [PATCH v1] ASoc: tas2781: Rename dai_driver name to unify the
- name between TAS2563 and TAS2781
-Message-ID: <ZrovmRCPN7pc0n40@smile.fi.intel.com>
-References: <20240803032717.175-1-shenghao-ding@ti.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlJh3FGj/cWTbqMCzx0dHPu92+og9sPBhFTG5KUmAz5XeEU6BXOUnQXfuEsV1JK1ZP5gI9GTmqsoX6sz3SRHFFCLAHSudthwlhmiXWE65cV5POSaEDRS2fj8kXnK+OhuNn/NEZTkrb+7PeSUvwrG1+LRUKBdlmj48+A+zAGbZQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNvjyIvY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 433E9C32782;
+	Mon, 12 Aug 2024 15:53:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723477994;
+	bh=HlRdvFKn4iFjzvom5J0DF55x13AYDpUEmQpaLh1Gggw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HNvjyIvYcUWCRotT7GQXgqUlrr5FSbUa41bF+C4Q8O9FFRsQi7TpfwO2qfPILOHLI
+	 MF+lE2hpeNWcwGvlQSDyLXmIQgwb+YpXMz3VNQLUeGM71j8iMBfuYVcqFGZ+i3Y5wB
+	 Va17H2VYVmfqjGUXSSc3oH4h7MJVVFEC6rm1ygQaF82Iwrre9WyHkpF42zFPXvkF2t
+	 1Eehgat9ol63Z0l6MIrYBwGYslWQzKLWmZIK2TcfQIbJktRs56XmmZgaSa4JYrPb09
+	 pw774D/pCJUrirfRHRn6YHv4Lm6g9p9J51Y5UpqLV9jXTrGhyDYiLT0JLszaRzrIi2
+	 vNiqYIrH2WBTQ==
+Date: Mon, 12 Aug 2024 16:53:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	=?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/3] dt-bindings: iio: adc: sophgo,cv18xx-saradc.yaml:
+ Add Sophgo CV18XX SARADC binding
+Message-ID: <20240812-unwary-mongrel-9f6758bf624c@spud>
+References: <20240812-sg2002-adc-v4-0-599bdb67592f@bootlin.com>
+ <20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IXMbfodZVYjINFLf"
+Content-Disposition: inline
+In-Reply-To: <20240812-sg2002-adc-v4-1-599bdb67592f@bootlin.com>
+
+
+--IXMbfodZVYjINFLf
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240803032717.175-1-shenghao-ding@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 03, 2024 at 11:27:14AM +0800, Shenghao Ding wrote:
-> Rename dai_driver name to unify the name between TAS2563 and
-> TAS2781, remove unnecessary line feed, strscpy replace scnprintf.
+On Mon, Aug 12, 2024 at 05:00:55PM +0200, Thomas Bonnefille wrote:
+> The Sophgo SARADC is a Successive Approximation ADC that can be found in
+> the Sophgo SoC.
+>=20
+> Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> ---
+>  .../bindings/iio/adc/sophgo,cv18xx-saradc.yaml     | 85 ++++++++++++++++=
+++++++
+>  1 file changed, 85 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-sara=
+dc.yaml b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.ya=
+ml
+> new file mode 100644
+> index 000000000000..846590808e5f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/adc/sophgo,cv18xx-saradc.yaml
+> @@ -0,0 +1,85 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/adc/sophgo,cv18xx-saradc.yaml#
 
-...
+Filename matching the compatible please.
 
-> +	strscpy(name, "Speaker Profile Id", SNDRV_CTL_ELEM_ID_NAME_MAXLEN);
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title:
+> +  Sophgo CV18XX SoC series 3 channels Successive Approximation Analog to
+> +  Digital Converters
+> +
+> +maintainers:
+> +  - Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+> +
+> +description:
+> +  Datasheet at https://github.com/sophgo/sophgo-doc/releases
+> +
+> +properties:
+> +  compatible:
+> +    const: sophgo,cv1800b-saradc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  '#address-cells':
+> +    const: 1
+> +
+> +  '#size-cells':
+> +    const: 0
+> +
+> +patternProperties:
+> +  "^channel@[0-3]+$":
+> +    $ref: adc.yaml
+> +
+> +    description: |
 
-> +	strscpy(prog_name, "Speaker Program Id",
-> +		SNDRV_CTL_ELEM_ID_NAME_MAXLEN);
+This | is not required.
 
-> +	strscpy(conf_name, "Speaker Config Id", SNDRV_CTL_ELEM_ID_NAME_MAXLEN);
+> +      Represents the channels of the ADC.
+> +
+> +    properties:
+> +      reg:
+> +        description: |
+> +          The channel number. It can have up to 3 channels numbered from=
+ 0 to 2.
+> +        items:
+> +          - minimum: 0
+> +            maximum: 2
 
-Why not 2-parameter strscpy()?
+Is this sufficient to limit the number of channels to 3? Aren't you relying
+on the unique unit addresses warning in dtc to limit it, rather than
+actually limiting with min/maxItems?
 
--- 
-With Best Regards,
-Andy Shevchenko
+Otherwise, looks fine to me.
 
+Cheers,
+Conor.
 
+> +
+> +    required:
+> +      - reg
+> +
+> +    additionalProperties: false
+> +
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/sophgo,cv1800.h>
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    adc@30f0000 {
+> +        compatible =3D "sophgo,cv1800b-saradc";
+> +        reg =3D <0x030f0000 0x1000>;
+> +        clocks =3D <&clk CLK_SARADC>;
+> +        interrupts =3D <100 IRQ_TYPE_LEVEL_HIGH>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        channel@0 {
+> +            reg =3D <0>;
+> +        };
+> +        channel@1 {
+> +            reg =3D <1>;
+> +        };
+> +        channel@2 {
+> +            reg =3D <2>;
+> +        };
+> +    };
+>=20
+> --=20
+> 2.46.0
+>=20
+
+--IXMbfodZVYjINFLf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrov5QAKCRB4tDGHoIJi
+0oaoAQDMe6NoYEYFRjr7uYTIB7DeEAi2qvZXnWVWHzFxwkkH8QEAw36aA0k+SIZe
+JdTW3mWW5ZLezGEIrXTpuMaHzqoqWwQ=
+=K9Up
+-----END PGP SIGNATURE-----
+
+--IXMbfodZVYjINFLf--
 
