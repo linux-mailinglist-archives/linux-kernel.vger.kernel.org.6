@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-282858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0700694E98B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:17:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDBE94E98D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACBB71F23419
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD4A5283FE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2315B16D4DC;
-	Mon, 12 Aug 2024 09:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8F116D4D9;
+	Mon, 12 Aug 2024 09:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f6moDP/K"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GbqRh4b6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9448816D4D4
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCA220323;
+	Mon, 12 Aug 2024 09:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723454248; cv=none; b=aTh2OEvIuvtjikcoNpvrKMFSYcpwHuWHdZXeNGlA95E9ThxQfPGBRTHFW2PxLoceJP1xm+P/cJEBCJ6t99FXRs+hMjLhBpydWg/DF8QUugRx4Ez1XkwByKLOMIxNBayKsedZg9A3SmDrocPoHhyv8SzOTvx0OcP+Pfrb+5RHs04=
+	t=1723454304; cv=none; b=ODuAlWnd1TgMNXW0DPtCKz5XyUZZssQ+4YNfrqpvRoBCEkQpJ/XarzfpBKfndSMMEH9ta2yn+a2LQSOL3cFBlEwuqeRTIaY541cIotDTdHtOXzYj2KiUmkCPQi9mFYNqfUrUyshA24dkAxuSL7LavwoVfh2ytlbb/RShwFC70hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723454248; c=relaxed/simple;
-	bh=Lz63Dfwp5XIblLwOcTkihhV7G1CgponampdWZ030ARQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JZAnur+Zg83EIjWgrXuaxcH5LlAuZ4sucnsQ1hYseb04Sl8NmAMRcUYN1578fa8c61AigIcqDBvnORJr0FVhQnebxjbW29wg9FcqTve1VKYzceHECTn8o1QFibNoBlbEjWj11mzEZKZehMUGP6qMZY0769LO56yRaCqHStwjwE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f6moDP/K; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723454247; x=1754990247;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Lz63Dfwp5XIblLwOcTkihhV7G1CgponampdWZ030ARQ=;
-  b=f6moDP/KTIj5CXkeqej7I6L1Z7bgqmL1acxBaXrLu7EGlcz41MFhlFlW
-   z4EPtPIHceCpY/HzC6SGvx6UaogpCuLfK7khbm1zubvV967CSeWPcJd6P
-   vnWkhqcxtAYxdp2UxkFfumVWKjLteq8ERXtnCfJQC+BTpWfWuhWUMCBLi
-   tfww2GoUbG/YLkG9VRfdy5veoRTZb43nKEAdb+cgePF6/cANjKuU1ihWQ
-   lRhaSibjOvTDcQb2ZRjvgyIUPA6osKBANMlyJliCtXeqFQFF2OkMh2vAS
-   JDEaIKP0VMFo7g6qPHVD+LuKNa2VJFLH2/yXf4XUup5/2YF+zSo0QuWnp
-   Q==;
-X-CSE-ConnectionGUID: 81OOSkC0Qk+jUV77wBFkqg==
-X-CSE-MsgGUID: H8/ebQZaTQCU/kXsGXUTWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21682923"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21682923"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 02:17:26 -0700
-X-CSE-ConnectionGUID: h4aY31XiTmqfG1wEPsXCVQ==
-X-CSE-MsgGUID: 5fcwkgH5R0uOLnCedJumeA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="95712182"
-Received: from mylly.fi.intel.com (HELO [10.237.72.57]) ([10.237.72.57])
-  by orviesa001.jf.intel.com with ESMTP; 12 Aug 2024 02:17:23 -0700
-Message-ID: <0ae18e57-ef79-4fd8-9e9a-4c57b480b267@linux.intel.com>
-Date: Mon, 12 Aug 2024 12:17:22 +0300
+	s=arc-20240116; t=1723454304; c=relaxed/simple;
+	bh=waG2umAU2bULr6PEMnWoGimBLt6Km0H8zfsaKJVPGYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QHtW8PO14Z9dOwARW0xejWfloX+EF1x5HwwSJ/TgB75hverk4fBU6MW8MVSna+WVa0uUGQDT8sOs8FBVemyX8Ji87raAvFBDL9XmSE578x4ueBDKW+Az0bcEjBvZZ2sDAAIIJzRCBcz41Iw1biSb6MvhV82A/LnK1NhDexh2nCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GbqRh4b6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C2ZnmN019486;
+	Mon, 12 Aug 2024 09:18:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k5Lz/MHwLGfnPyX3bPixTLVVYd1Wkht7f3w49V7ey2o=; b=GbqRh4b67lTmVuvR
+	lOSzf6amH+LZWU7AfWhKRZdmSRD1fzN2qprcMNboiZepqdM9/5yyMcA1Y8bcOJ1O
+	Zhpa1HaJOsIwx6yf6uA6472BiHSh6SPSBQIO5QpKzoN1ubnOaK23guv3CH4MCR/m
+	foY1nywVq3Z6whHmxTokskpXtL2zLq1h/FTaNG3qmVZ6RFLeQjrmzojCcXmGZ5Pi
+	jedIhmXXYZL9ISgTG/qw7jwLmtDyL4Lj2LkYghklb0ITsfwB9iPs2eT/FLjSn7RX
+	HFln6RNuuZ2hIl0RWa4CaAwKI3xO9wFkSuouqfD8SxqiqKJR2yqOvi1ijyNm6StM
+	QCp1ew==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18nbfjh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 09:18:07 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47C9I66b031122
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 09:18:06 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 12 Aug
+ 2024 02:18:03 -0700
+Message-ID: <f2b4555e-5c31-45a2-a6d0-da2689748c41@quicinc.com>
+Date: Mon, 12 Aug 2024 17:18:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +64,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v3 3/6] i3c: mipi-i3c-hci: Add a quirk to set PIO
- mode
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
- Krishnamoorthi M <krishnamoorthi.m@amd.com>, linux-i3c@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
- <20240807052359.290046-4-Shyam-sundar.S-k@amd.com>
- <2a9f6c23-9c7b-496b-9998-ea0afe526b46@linux.intel.com>
- <94e789ab-2e64-4a6e-804f-b5e7b2a952cb@amd.com>
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for
+ TBU driver
+To: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>
+CC: <iommu@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <quic_c_gdjako@quicinc.com>, <dmitry.baryshkov@linaro.org>
+References: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
 Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <94e789ab-2e64-4a6e-804f-b5e7b2a952cb@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wXsXGHPgfypCwq2EHzgj_n3W7rmOrZb_
+X-Proofpoint-ORIG-GUID: wXsXGHPgfypCwq2EHzgj_n3W7rmOrZb_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_25,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 clxscore=1011 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 bulkscore=0 priorityscore=1501
+ mlxlogscore=978 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120069
 
-Hi
+Gentle reminder for review :)
 
-On 8/9/24 6:44 PM, Shyam Sundar S K wrote:
->> I was thinking these quirks can be passed as driver_data more cleanly
->> and be specific only to affected HW if AMD HW would have an unique
->> ACPI ID for each HW version.
->>
->> Above X86_VENDOR_AMD might be too generic if and when quirks are fixed
->> in the future HW :-)
->>
->> So something like:
->>
->> static const struct acpi_device_id i3c_hci_acpi_match[] = {
->>      {"AMDI1234", HCI_QUIRK_PIO_MODE | HCI_QUIRK_OD_PP_TIMING |
->> HCI_QUIRK_RESP_BUF_THLD},
->>      {}
->> };
->>
->> and set them in the i3c_hci_probe() as:
->>
->> hci->quirks = (unsigned long)device_get_match_data(&pdev->dev);
+On 2024/7/30 18:30, Zhenhua Huang wrote:
+> TBU driver has no runtime pm support now, adding pm_runtime_enable()
+> seems to be useless. Remove it.
 > 
-> Nice idea. But only problem is that MSFT wants to have the same ACPI
-> ID present in the specification.
+> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+> ---
+>   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 6 ------
+>   1 file changed, 6 deletions(-)
 > 
-> I have replied to Andy on patch 1/6. Can you please put your remarks
-> there?
-> 
-Well this is implementation detail later in the series and I found it 
-better to focus ACPI ID discussion in 1/6.
-
-> Yeah, agreed that having X86_VENDOR_AMD is too generic, but felt its
-> good to have additional checks only after the HW is fixed, rather than
-> being speculative now.. :-)
-> 
-> What would you advise?
-> Most probably there will be future HW with either exactly same set of 
-quirks, reduced quirks or new quirks and X86_VENDOR_AMD test will work 
-only with the first case :-)
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> index 36c6b36ad4ff..aff2fe1fda13 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+> @@ -566,7 +566,6 @@ static struct acpi_platform_list qcom_acpi_platlist[] = {
+>   
+>   static int qcom_smmu_tbu_probe(struct platform_device *pdev)
+>   {
+> -	struct device *dev = &pdev->dev;
+>   	int ret;
+>   
+>   	if (IS_ENABLED(CONFIG_ARM_SMMU_QCOM_DEBUG)) {
+> @@ -575,11 +574,6 @@ static int qcom_smmu_tbu_probe(struct platform_device *pdev)
+>   			return ret;
+>   	}
+>   
+> -	if (dev->pm_domain) {
+> -		pm_runtime_set_active(dev);
+> -		pm_runtime_enable(dev);
+> -	}
+> -
+>   	return 0;
+>   }
+>   
 
