@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-283607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C745C94F6B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:30:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71ADF94F6B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3553BB23199
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:30:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8916F1C21CB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575CB19AD9B;
-	Mon, 12 Aug 2024 18:26:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 781C619B3C4;
+	Mon, 12 Aug 2024 18:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3GTSs4f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K7jG6z+3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B81B1922DA;
-	Mon, 12 Aug 2024 18:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7401922DA;
+	Mon, 12 Aug 2024 18:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487167; cv=none; b=P2iy3qEkT/ChLgJqhTcZaus+Pc+VZ46aH4RewlASIXW8hLjPkkpKqVBifG7PsykGLUCM307IMEB1Dm4qNnakTutB6KunDK4QPRFXlo1zpUACHHUFmQ0M0FTHmwRyfvQBEQiNDC4JcvPnali8uDSWEWKge5O+/FvosMujaX3qIqY=
+	t=1723487172; cv=none; b=T2W1QiQ7ZvvklgpFyu1sJBfBJFwA1ljLLznmXlzu8VzrPoGUnrJtAC7E1VR3cfnpnuAAL0Je3YsH8xnFxqLD8dTOLovoahl7R46NEjyv1YeH5/abvPsUkzOOcqU5iIuJhxMFzFRf1v/2ZrCV2ov/Y4/rgYMWDr4YBli+dlzUUeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487167; c=relaxed/simple;
-	bh=LmCPyxbPqQaXkN27gPwAem4xdq5E92W3egezxGjW9eU=;
+	s=arc-20240116; t=1723487172; c=relaxed/simple;
+	bh=SxIIf+SSSfq/ByqB+qb2+RtiJyH5BPK+PFBZGcm3qDM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qrhx01adzN0UC/Z4Gv0fvd8K9LL5tM4QYPqS/TPr1bM9bY9kHD0PpgE0MwgwQWIO9O/hIVYXA6ofz2BJ2MkwE1JRwwYQQZJKlXv94NsRfiFID5jxvsuuR4Rx2k+filVW4zldmkA79K7BSnU2RsnC2oSQYlKT3MvbzngJ2l7kBYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3GTSs4f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4597DC4AF09;
-	Mon, 12 Aug 2024 18:26:02 +0000 (UTC)
+	 MIME-Version; b=pZLMtUTa6KsM4VtqL6skSmMmi8Q/tnTD0SqMEWXA6E2iuTVZO2Chk1kfO23PIwFsX+lwmj1Evv544n8g3Z+8R5pYRXSmJhEwzTlgAlb13Xlu47tFOdIxRL/RFMRZxOM3SUe+WD85kC/lz4lcgP+AhEo2r5UwqH8vZsHXA+KGxWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K7jG6z+3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD867C4AF09;
+	Mon, 12 Aug 2024 18:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487167;
-	bh=LmCPyxbPqQaXkN27gPwAem4xdq5E92W3egezxGjW9eU=;
+	s=k20201202; t=1723487172;
+	bh=SxIIf+SSSfq/ByqB+qb2+RtiJyH5BPK+PFBZGcm3qDM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t3GTSs4fGkfZXM4GLdYx9cwZTTgUpoGrI0FQ223qj2qmxXFuUgIMzF4mwsPA9A3yy
-	 BKqXYJAHNzPxxGAjf7IjZg4vgB+VEqDp3cwR26u8qhpueJz5nMUkX4oD5+lJnEUjlo
-	 Trc5yTqDP1rBNSwPP63aaqdyBmLmnuG+/DrA2WGrn25kZ6YYpOLVwaHaCA01tpcGLd
-	 3tZ2/FjPyFZPZLiVItLdCy4hktujV38iB7QGnGR7ZmEjK6oqIlsYfe40y4V6BNrkfR
-	 X7F2nplRpLsGngdaeXX6A6GfmvQD7B4Ijwd4cvNhZi2oqIfdv9xtqgfh5JUIb4zMBh
-	 4CA5NswVVefPA==
+	b=K7jG6z+3m6ZxFsGXWBawNolBPj9HDFiJ+jJbgWgSYU/Bo/BLz6Pp3ReAsC31yciEI
+	 RmHM57eHf3FgMPfF4E0cuk0P3mTZJe1gWJuKYbnyDPUaA04ll0yzwsvXSaCJ3BlBck
+	 WyO81o6zRTQMz831jpTuwtl4Jh9LVcLBhNeAGQfpu9rcJHNTSEEJNYF71Go5BM5bX6
+	 S2y4NTJ1ealfzYlRIIGKlxwSAwRHoeKbSk1QtVAoFmRDWgr7GXsHjl643pPGylZTW3
+	 RFedq47VIXKszDfEcxP1PJkcuDHYtpF7oC2Z4s6hqB/DvMsvDUMO8neVPx1WuCqKbp
+	 g1ggCMovo94Pw==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v5 22/26] rust: alloc: implement `Cmalloc` in module allocator_test
-Date: Mon, 12 Aug 2024 20:23:08 +0200
-Message-ID: <20240812182355.11641-23-dakr@kernel.org>
+Subject: [PATCH v5 23/26] rust: str: test: replace `alloc::format`
+Date: Mon, 12 Aug 2024 20:23:09 +0200
+Message-ID: <20240812182355.11641-24-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
 References: <20240812182355.11641-1-dakr@kernel.org>
@@ -80,221 +80,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-So far the kernel's `Box` and `Vec` types can't be used by userspace
-test cases, since all users of those types (e.g. `CString`) use kernel
-allocators for instantiation.
+The current implementation of tests in str.rs use `format!` to format
+strings for comparison, which, internally, creates a new `String`.
 
-In order to allow userspace test cases to make use of such types as
-well, implement the `Cmalloc` allocator within the allocator_test module
-and type alias all kernel allocators to `Cmalloc`. The `Cmalloc`
-allocator uses libc's realloc() function as allocator backend.
+In order to prepare for getting rid of Rust's alloc crate, we have to
+cut this dependency. Instead, implement `format!` for `CString`.
 
+Note that for userspace tests, `Kmalloc`, which is backing `CString`'s
+memory, is just a type alias to `Cmalloc`.
+
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
-I know, having an `old_size` parameter would indeed help implementing `Cmalloc`.
+ rust/kernel/str.rs | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
 
-However, I really don't want test infrastructure to influence the design of
-kernel internal APIs.
-
-It's on the test infrastructure to find a way to deal with it, even if it's more
-complicated.
----
- rust/kernel/alloc/allocator_test.rs | 175 ++++++++++++++++++++++++++--
- 1 file changed, 168 insertions(+), 7 deletions(-)
-
-diff --git a/rust/kernel/alloc/allocator_test.rs b/rust/kernel/alloc/allocator_test.rs
-index 1b2642c547ec..7a20e64431ea 100644
---- a/rust/kernel/alloc/allocator_test.rs
-+++ b/rust/kernel/alloc/allocator_test.rs
-@@ -2,20 +2,181 @@
- 
- #![allow(missing_docs)]
- 
--use super::{AllocError, Allocator, Flags};
-+use super::{flags::*, AllocError, Allocator, Flags};
- use core::alloc::Layout;
-+use core::cmp;
-+use core::mem;
-+use core::ptr;
- use core::ptr::NonNull;
- 
--pub struct Kmalloc;
-+pub struct Cmalloc;
-+pub type Kmalloc = Cmalloc;
- pub type Vmalloc = Kmalloc;
- pub type KVmalloc = Kmalloc;
- 
--unsafe impl Allocator for Kmalloc {
-+extern "C" {
-+    #[link_name = "aligned_alloc"]
-+    fn libc_aligned_alloc(align: usize, size: usize) -> *mut core::ffi::c_void;
+diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
+index 209ad1bb1a49..726329530338 100644
+--- a/rust/kernel/str.rs
++++ b/rust/kernel/str.rs
+@@ -523,7 +523,28 @@ macro_rules! c_str {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+-    use alloc::format;
 +
-+    #[link_name = "free"]
-+    fn libc_free(ptr: *mut core::ffi::c_void);
-+}
++    struct String(CString);
 +
-+struct CmallocData {
-+    // The actual size as requested through `Cmalloc::alloc` or `Cmalloc::realloc`.
-+    size: usize,
-+    // The offset from the pointer returned to the caller of `Cmalloc::alloc` or `Cmalloc::realloc`
-+    // to the actual base address of the allocation.
-+    offset: usize,
-+}
-+
-+impl Cmalloc {
-+    /// Adjust the size and alignment such that we can additionally store `CmallocData` right
-+    /// before the actual data described by `layout`.
-+    ///
-+    /// Example:
-+    ///
-+    /// For `CmallocData` assume an alignment of 8 and a size of 16.
-+    /// For `layout` assume and alignment of 16 and a size of 64.
-+    ///
-+    /// 0                16               32                                               96
-+    /// |----------------|----------------|------------------------------------------------|
-+    ///        empty         CmallocData                         data
-+    ///
-+    /// For this example the returned `Layout` has an alignment of 32 and a size of 96.
-+    fn layout_adjust(layout: Layout) -> Result<Layout, AllocError> {
-+        let layout = layout.pad_to_align();
-+
-+        // Ensure that `CmallocData` fits into half the alignment. Additionally, this guarantees
-+        // that advancing a pointer aligned to `align` by `align / 2` we still satisfy or exceed
-+        // the alignment requested through `layout`.
-+        let align = cmp::max(
-+            layout.align(),
-+            mem::size_of::<CmallocData>().next_power_of_two(),
-+        ) * 2;
-+
-+        // Add the additional space required for `CmallocData`.
-+        let size = layout.size() + mem::size_of::<CmallocData>();
-+
-+        Ok(Layout::from_size_align(size, align)
-+            .map_err(|_| AllocError)?
-+            .pad_to_align())
-+    }
-+
-+    fn alloc_store_data(layout: Layout) -> Result<NonNull<u8>, AllocError> {
-+        let requested_size = layout.size();
-+
-+        let layout = Self::layout_adjust(layout)?;
-+        let min_align = layout.align() / 2;
-+
-+        // SAFETY: Returns either NULL or a pointer to a memory allocation that satisfies or
-+        // exceeds the given size and alignment requirements.
-+        let raw_ptr = unsafe { libc_aligned_alloc(layout.align(), layout.size()) } as *mut u8;
-+
-+        let priv_ptr = NonNull::new(raw_ptr).ok_or(AllocError)?;
-+
-+        // SAFETY: Advance the pointer by `min_align`. The adjustments from `Self::layout_adjust`
-+        // ensure that after this operation the original size and alignment requirements are still
-+        // satisfied or exceeded.
-+        let ptr = unsafe { priv_ptr.as_ptr().add(min_align) };
-+
-+        // SAFETY: `min_align` is greater than or equal to the size of `CmallocData`, hence we
-+        // don't exceed the allocation boundaries.
-+        let data_ptr: *mut CmallocData = unsafe { ptr.sub(mem::size_of::<CmallocData>()) }.cast();
-+
-+        let data = CmallocData {
-+            size: requested_size,
-+            offset: min_align,
-+        };
-+
-+        // SAFETY: `data_ptr` is properly aligned and within the allocation boundaries reserved for
-+        // `CmallocData`.
-+        unsafe { data_ptr.write(data) };
-+
-+        NonNull::new(ptr).ok_or(AllocError)
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// `ptr` must have been previously allocated with `Self::alloc_store_data`.
-+    unsafe fn data<'a>(ptr: NonNull<u8>) -> &'a CmallocData {
-+        // SAFETY: `Self::alloc_store_data` stores the `CmallocData` right before the address
-+        // returned to callers of `Self::alloc_store_data`.
-+        let data_ptr: *mut CmallocData =
-+            unsafe { ptr.as_ptr().sub(mem::size_of::<CmallocData>()) }.cast();
-+
-+        // SAFETY: The `CmallocData` has been previously stored at this offset with
-+        // `Self::alloc_store_data`.
-+        unsafe { &*data_ptr }
-+    }
-+
-+    /// # Safety
-+    ///
-+    /// This function must not be called more than once for the same allocation.
-+    ///
-+    /// `ptr` must have been previously allocated with `Self::alloc_store_data`.
-+    unsafe fn free_read_data(ptr: NonNull<u8>) {
-+        // SAFETY: `ptr` has been created by `Self::alloc_store_data`.
-+        let data = unsafe { Self::data(ptr) };
-+
-+        // SAFETY: `ptr` has been created by `Self::alloc_store_data`.
-+        let priv_ptr = unsafe { ptr.as_ptr().sub(data.offset) };
-+
-+        // SAFETY: `priv_ptr` has previously been allocatored with this `Allocator`.
-+        unsafe { libc_free(priv_ptr.cast()) };
-+    }
-+}
-+
-+unsafe impl Allocator for Cmalloc {
-+    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, AllocError> {
-+        if layout.size() == 0 {
-+            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
++    impl String {
++        fn from_fmt(args: fmt::Arguments<'_>) -> Self {
++            String(CString::try_from_fmt(args).unwrap())
 +        }
-+
-+        let ptr = Self::alloc_store_data(layout)?;
-+
-+        if flags.contains(__GFP_ZERO) {
-+            // SAFETY: `Self::alloc_store_data` guarantees that `ptr` points to memory of at least
-+            // `layout.size()` bytes.
-+            unsafe { ptr.as_ptr().write_bytes(0, layout.size()) };
-+        }
-+
-+        Ok(NonNull::slice_from_raw_parts(ptr, layout.size()))
 +    }
 +
-     unsafe fn realloc(
--        _ptr: Option<NonNull<u8>>,
--        _layout: Layout,
--        _flags: Flags,
-+        ptr: Option<NonNull<u8>>,
-+        layout: Layout,
-+        flags: Flags,
-     ) -> Result<NonNull<[u8]>, AllocError> {
--        panic!();
-+        let src: NonNull<u8> = if let Some(src) = ptr {
-+            src.cast()
-+        } else {
-+            return Self::alloc(layout, flags);
-+        };
++    impl Deref for String {
++        type Target = str;
 +
-+        if layout.size() == 0 {
-+            // SAFETY: `src` has been created by `Self::alloc_store_data`.
-+            unsafe { Self::free_read_data(src) };
-+
-+            return Ok(NonNull::slice_from_raw_parts(NonNull::dangling(), 0));
++        fn deref(&self) -> &str {
++            self.0.to_str().unwrap()
 +        }
++    }
 +
-+        let dst = Self::alloc(layout, flags)?;
-+
-+        // SAFETY: `src` has been created by `Self::alloc_store_data`.
-+        let data = unsafe { Self::data(src) };
-+
-+        // SAFETY: `src` has previously been allocated with this `Allocator`; `dst` has just been
-+        // newly allocated. Copy up to the smaller of both sizes.
-+        unsafe {
-+            ptr::copy_nonoverlapping(
-+                src.as_ptr(),
-+                dst.as_ptr().cast(),
-+                cmp::min(layout.size(), data.size),
-+            )
-+        };
-+
-+        Ok(dst)
-     }
- }
++    macro_rules! format {
++        ($($f:tt)*) => ({
++            &*String::from_fmt(kernel::fmt!($($f)*))
++        })
++    }
+ 
+     const ALL_ASCII_CHARS: &'static str =
+         "\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08\\x09\\x0a\\x0b\\x0c\\x0d\\x0e\\x0f\
 -- 
 2.45.2
 
