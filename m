@@ -1,82 +1,114 @@
-Return-Path: <linux-kernel+bounces-283683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0438A94F7B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:50:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 757DC94F7B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A251A1F22F6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F0E1C222D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E740318C346;
-	Mon, 12 Aug 2024 19:49:55 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1761917EC;
+	Mon, 12 Aug 2024 19:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XS172KtA"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F22A18E03F;
-	Mon, 12 Aug 2024 19:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA7E142624;
+	Mon, 12 Aug 2024 19:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723492195; cv=none; b=b4sSBRXUOKfT4Dd663QaDeSgsjp/SUvb+RwAIQmvmPR8g0ow79C/6HL71/65wpJ1UV4TsMlknF1dcz0RdS58ZqWeoo//j+zy1Qvfh8Dz+TslGKBHCgpX31MfW2jDmxkzyHhBQ1sh4zyFk/+0RkRLb3k/JGgw9arpv83zvpg3gXk=
+	t=1723492296; cv=none; b=IUMnMYTY7E43UDvzXaOcJWMCKHGPeLhgILAvK+Vv6kWQL6G/IYqCuu3zzxsV8iBtmZ6u4IbU+vwlpufofvLJuB0brpVg+0yBToLOQ641btzfcm193/dhK8lb375bpgqFUCI28tq0Fo2rwakcjg2LXrlCByNqbOoiBjIk87yH1N0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723492195; c=relaxed/simple;
-	bh=0BOuvSSRu8XCinUSUY5a/2kuBisN7G3002X8lUgxHww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=irdHjbYQ3e5Wn3pD4qlZx08YxYyZBAtZFRGL1UbLLJzTOVm0GGLLxbHxeUgKcNWqyJoL6jvXAt7070Hs0SI8VghxuKfBCtRNp0URDx1nFMwdg4/E4GUlGgalcov2kLl4wY+Wd1r8XV/3C87mXyJ1B2/PpD3c0/Xv9hVF63yug/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: czJjokLiTAyFxKhpmK1QYg==
-X-CSE-MsgGUID: w1Cb2MIFRFupMro/kpOogA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="33011188"
-X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="33011188"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:53 -0700
-X-CSE-ConnectionGUID: YMlFUVuVRCancuF5oXQ2zg==
-X-CSE-MsgGUID: YcgO8YgWRvmmxfen4S9sZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="58618672"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1sdb37-0000000ETiX-0Fdh;
-	Mon, 12 Aug 2024 22:49:49 +0300
-Date: Mon, 12 Aug 2024 22:49:48 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>,
-	linux-hardening@vger.kernel.org, cocci@inria.fr,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coccinelle: Add rules to find str_down_up() replacements
-Message-ID: <ZrpnXFzizCG5_nx8@smile.fi.intel.com>
-References: <20240812183637.work.999-kees@kernel.org>
+	s=arc-20240116; t=1723492296; c=relaxed/simple;
+	bh=gP/bpLciLkpKGzlsU8ReLBZJrv7PGYAYC56gE4RpCC4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=REbG6mGhFQxQ1lXquiVEVhqACItmuAGIlm2SSl0KxsFhJw0++AI4BoO9xh55IVvhR/i+ygZmZJ49WJEXBIWfUcTBhwrn/MHu0lUIIs/00xbeS2R8VYMCAvSOr8N3Hq20iRZAkmcPTEzH8G9nJu6qsNhis0n0e8sDNKkogtFGLqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XS172KtA; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-710d0995e21so3002543b3a.1;
+        Mon, 12 Aug 2024 12:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723492295; x=1724097095; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mgYfPRF3ACLx0CsT/FH9HD8nnUJcsRM2/FyE/YVJdNI=;
+        b=XS172KtAGU6vUEFDhr9KXFu6prf3XjL4AFPsis1j8p6XPswYQWKq02YZJvb+TICabB
+         3NOpXs8/m+cFMbsxkLpRI0wHzxciQESYcH517TVzCNh+JsThyI64/b7SEggVRErfzzPZ
+         HOARkz8H6CWuh8bIpJKqhSNsjeTqOI4WkfEA7onYrJR3uKbbmb8kwGOwmtHmGmxwT82E
+         FE8DmOjtw7lvOvg6AKfCkgOOP6OSRDKXoltsQqTi0TvKET+BFvZpAMu9WZvLB9UYmNrv
+         GrQbpGd1tpOWUnJE9u472GF03AfS3hlMZ8dSCpbkD1RSgmUvHsRVuWYJE9xO0JcvYJWU
+         lMaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723492295; x=1724097095;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mgYfPRF3ACLx0CsT/FH9HD8nnUJcsRM2/FyE/YVJdNI=;
+        b=D3ZgeGEwGrLAYXsj2YNbsOAKUqoOO185pj8Jj1o4Vmno2Jz8YPSuOANvV54aKNvh13
+         RiRyZI4iexFtiAGEKOdLpLYqO3nFPuDTLX34TQW+ByoKWETvG+Of0iDPJn/mkxoZRzHB
+         ZIy2KripQlW9wo8WvNkiC5IIBPbhQxNxbzvtFP9e917RkquWWXlB0qkuWc82m1z0u/di
+         E8ljZNIMc0LbGokGK6avXFxPnH3Si8BGHRXzjjPUxoGU6llLN3xSs22+ZPnzBAafM5SU
+         NTprNx9J6v8aOurVV79uKD8jVwCf76b6iwBbTMs05bJT0aJ2Wy29smnYr0PK5R0RO/GJ
+         GZ1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXgiiSU+ECJVfJsVdnOdJhZMtIP18nBa3N5urGQg25+eWCvFKK3CeYbRh5JeWy0tSUjoSHdpUt42LgoUhC7PsDTF3SVlR96tOZrbqmfko504LZidTAFZHOJiztiOauZcmSpf3B4wujZpeSm4XymJHRv7yWjViN8lV4apTqAtXcZ
+X-Gm-Message-State: AOJu0YyfgAYzJOcEfmcx3VceOFkDX093hTPvF7TRe0qpE01Coc3WKBgq
+	XVhj+RTaAFWrdSjRCzglYYdfT3GzG5aOF4F8Bo+L7uMOLUKirc/c
+X-Google-Smtp-Source: AGHT+IHr2FUt5tB5Z8XWeM8c2KYnSWU7w9shzsRAxJkX4+Ub8pDm7QbwkM9TXEr1DXgbHPKFzk2v/g==
+X-Received: by 2002:a17:902:ec8f:b0:1fd:67a8:845f with SMTP id d9443c01a7336-201ca136e0fmr16415265ad.14.1723492294790;
+        Mon, 12 Aug 2024 12:51:34 -0700 (PDT)
+Received: from dev0.. ([2405:201:6803:30b3:3671:7e47:70c8:c710])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a947fsm595505ad.140.2024.08.12.12.51.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 12:51:34 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: gregkh@linuxfoundation.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org
+Cc: jain.abhinav177@gmail.com,
+	leah.rumancik@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot+55fb1b7d909494fd520d@syzkaller.appspotmail.com
+Subject: Re: [PATCH 6.1.y] xfs: remove WARN when dquot cache insertion fails
+Date: Tue, 13 Aug 2024 01:21:28 +0530
+Message-Id: <20240812195128.1095045-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2024081244-emit-starlit-dd23@gregkh>
+References: <2024081244-emit-starlit-dd23@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812183637.work.999-kees@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 11:36:38AM -0700, Kees Cook wrote:
-> As done with str_up_down(), add checks for str_down_up() opportunities.
-> 5 cases currently exist in the tree.
+On Mon, 12 Aug 2024 16:40:13 +0200, Greg K-H wrote:
+> You lost all of the ownership and original signed-off-by attributes for
+> the commit :(
+>
 
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
+I will work on this to understand how to avoid such mistake moving forward.
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Please work with the xfs developers if they wish to see this backported
+> or not, that's up to them.
+>
+> thanks,
+> 
+> greg k-h
 
+I am tagging XFS maintainers so that they can confirm the same. If there
+is a go ahead, only then I will submit a v2 retaining the original
+signed-off-by attributes.
 
+Thanks,
+Abhinav
+---
 
