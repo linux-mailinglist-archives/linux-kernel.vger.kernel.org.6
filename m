@@ -1,160 +1,146 @@
-Return-Path: <linux-kernel+bounces-283064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D616394EC83
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:12:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1ABC94ECA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:17:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91BAA2832B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:12:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ABC71F22826
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34A717AE0B;
-	Mon, 12 Aug 2024 12:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cexxqQju"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B709F17B4E0;
+	Mon, 12 Aug 2024 12:16:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8FFF179972;
-	Mon, 12 Aug 2024 12:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3096816BE3B;
+	Mon, 12 Aug 2024 12:16:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464740; cv=none; b=ZtNk04oKJn3Rjc67bIgLQsni8xgdE59gpAPODMG33Id6loZMW+l6mpdKJ4nwHaXuK6ciclis/xwgej+9efkOsaiMpl1GvDIHtdbglrnPp0Z8xI3rAHbUk7Apyh/QViKKkhOfkpYjsnjnnX7lA+m0ux/NkJq/OSxFyenY3BLAVZM=
+	t=1723464984; cv=none; b=p4GbKcxKloDNGq9XsqYMgHEDg9qyxPbqYqWyJKsUwtgxgUhldbovSWlWVsYP+eZgfHgpMjE/9qXsc2FDd+/3ZBW1H/13EMP5e3pEij5z1yLB1kfRF+e6KfvV9DE3sv6Ol6yLx/HydfsPxYFDIU5NrX3cVehadraxGVuCcljrhfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464740; c=relaxed/simple;
-	bh=bGBpAcRlW6U5yNAPSRT6k29XYKekF8aJKXCyeHD3JIg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=blFyunIu9LXN5iNJqDQKDb9xBGW3O0hKl7yhvbv9X5QDFX1Hr0/Bu/2nJ8rTTuWJqGCn6+MdEjdB5LkUf81jG1q6aZe9YFYdgdlxXuksj+iLJK4zUQQFGSKBP4vZweCpLfmWC3oigNyNMxYO0IcUm5wgLgXgCQMU8zE1booShok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cexxqQju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765E6C4AF0E;
-	Mon, 12 Aug 2024 12:12:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723464739;
-	bh=bGBpAcRlW6U5yNAPSRT6k29XYKekF8aJKXCyeHD3JIg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cexxqQjuanzHsUkplitxbwJ1UTUMuMlG/ni00qIt4GDnY3k5PnjCfULXlHn7XV0D5
-	 jn57cXnEuw9JPDx4ZSfbsNgkIdB9Pg45YbJxkMFegQTkn9yRtr567enPR2CYHVpV4o
-	 /NzkMTFf1sDYazpiIMfzBzOjszvOrLOuZgpEh2s/js0nmR3fFgqgwh8QvEeWiR/Ubq
-	 xDd6E0jW1J+Puhsf/NLfG6eU6JFFYhwjxeypvkX4INfwlFN2aoW6T8dYQFMC9ccbuC
-	 wihV6XkyQvCmcaqcrV0NXgq7jbSK7HOsUkDMJkdeEpoowfZ4VzPac7wokyrn/FPLWb
-	 l1vakZt79zdfQ==
-From: Simon Horman <horms@kernel.org>
-Date: Mon, 12 Aug 2024 13:11:56 +0100
-Subject: [PATCH net-next 2/3] net: ethernet: mtk_eth_soc: Use
- ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+	s=arc-20240116; t=1723464984; c=relaxed/simple;
+	bh=b13qTTePhXsovr+tkZ99PLzauYfJFJPIBeRsrYSKIgQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=b45DLnX2DHiyItgSRMOf1DkMym+q7kW7NfWhAHsuHMk9xMVBXBiGfE2MW5FrBKNfvBCAi+0EuMzDwefVZ56jxZAGqFraRfZIB44K9yvNkQde/n2B4qtVVhsX8AR2vr7LApJgrya7mHfwAqz+/VfOwKuCdeoBuYXwdVdkRbJJ7xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD4t0khnz4f3mHt;
+	Mon, 12 Aug 2024 20:15:58 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id AF1911A144C;
+	Mon, 12 Aug 2024 20:16:12 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S7;
+	Mon, 12 Aug 2024 20:16:12 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	jack@suse.cz,
+	willy@infradead.org,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more than one blocks per folio
+Date: Mon, 12 Aug 2024 20:11:56 +0800
+Message-Id: <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-ipv6_addr-helpers-v1-2-aab5d1f35c40@kernel.org>
-References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
-In-Reply-To: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
- Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Yisen Zhuang <yisen.zhuang@huawei.com>, 
- Salil Mehta <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-X-Mailer: b4 0.14.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S7
+X-Coremail-Antispam: 1UD129KBjvJXoW7urWrWF1DCFyDCrW3AF1UWrg_yoW8Zw4DpF
+	WDKFWqkFWxJr17urnrXas8ZrWj93yYqrWfCay3W3ZxZF1Dtr17Kw4kKa4YyFyxXr97Ar4S
+	vFs0vFy8WF15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
+	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
+	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
+	IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
+	Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kIc2
+	xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWU
+	JVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67
+	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
+	6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42
+	IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIev
+	Ja73UjIFyTuYvjfUF3kuDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Use ipv6_addr_cpu_to_be32 and ipv6_addr_be32_to_cpu helpers to convert
-address, rather than open coding the conversion.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-No functional change intended.
-Compile tested only.
+Now we allocate ifs if i_blocks_per_folio is larger than one when
+writing back dirty folios in iomap_writepage_map(), so we don't attach
+an ifs after buffer write to an entire folio until it starts writing
+back, if we partial truncate that folio, iomap_invalidate_folio() can't
+clear counterpart block's dirty bit as expected. Fix this by advance the
+ifs allocation to __iomap_write_begin().
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Link: https://lore.kernel.org/netdev/c7684349-535c-45a4-9a74-d47479a50020@lunn.ch/
-Signed-off-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- drivers/net/ethernet/mediatek/mtk_ppe.c         | 10 +++++-----
- drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c |  9 +++++----
- 2 files changed, 10 insertions(+), 9 deletions(-)
+ fs/iomap/buffered-io.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe.c b/drivers/net/ethernet/mediatek/mtk_ppe.c
-index 0acee405a749..ada852adc5f7 100644
---- a/drivers/net/ethernet/mediatek/mtk_ppe.c
-+++ b/drivers/net/ethernet/mediatek/mtk_ppe.c
-@@ -8,8 +8,11 @@
- #include <linux/platform_device.h>
- #include <linux/if_ether.h>
- #include <linux/if_vlan.h>
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 763deabe8331..79031b7517e5 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -699,6 +699,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	size_t from = offset_in_folio(folio, pos), to = from + len;
+ 	size_t poff, plen;
+ 
++	if (nr_blocks > 1) {
++		ifs = ifs_alloc(iter->inode, folio, iter->flags);
++		if ((iter->flags & IOMAP_NOWAIT) && !ifs)
++			return -EAGAIN;
++	}
 +
- #include <net/dst_metadata.h>
- #include <net/dsa.h>
-+#include <net/ipv6.h>
-+
- #include "mtk_eth_soc.h"
- #include "mtk_ppe.h"
- #include "mtk_ppe_regs.h"
-@@ -338,7 +341,6 @@ int mtk_foe_entry_set_ipv6_tuple(struct mtk_eth *eth,
- {
- 	int type = mtk_get_ib1_pkt_type(eth, entry->ib1);
- 	u32 *src, *dest;
--	int i;
+ 	/*
+ 	 * If the write or zeroing completely overlaps the current folio, then
+ 	 * entire folio will be dirtied so there is no need for
+@@ -710,10 +716,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	    pos + len >= folio_pos(folio) + folio_size(folio))
+ 		return 0;
  
- 	switch (type) {
- 	case MTK_PPE_PKT_TYPE_IPV4_DSLITE:
-@@ -359,10 +361,8 @@ int mtk_foe_entry_set_ipv6_tuple(struct mtk_eth *eth,
- 		return -EINVAL;
- 	}
+-	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+-	if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+-		return -EAGAIN;
+-
+ 	if (folio_test_uptodate(folio))
+ 		return 0;
  
--	for (i = 0; i < 4; i++)
--		src[i] = be32_to_cpu(src_addr[i]);
--	for (i = 0; i < 4; i++)
--		dest[i] = be32_to_cpu(dest_addr[i]);
-+	ipv6_addr_be32_to_cpu(src, src_addr);
-+	ipv6_addr_be32_to_cpu(dest, dest_addr);
+@@ -1928,7 +1930,12 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+ 	WARN_ON_ONCE(end_pos <= pos);
  
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-index 1a97feca77f2..570ebf91f693 100644
---- a/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-+++ b/drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c
-@@ -3,6 +3,9 @@
- 
- #include <linux/kernel.h>
- #include <linux/debugfs.h>
-+
-+#include <net/ipv6.h>
-+
- #include "mtk_eth_soc.h"
- 
- struct mtk_flow_addr_info
-@@ -47,16 +50,14 @@ static const char *mtk_foe_pkt_type_str(int type)
- static void
- mtk_print_addr(struct seq_file *m, u32 *addr, bool ipv6)
- {
--	__be32 n_addr[4];
--	int i;
-+	__be32 n_addr[IPV6_ADDR_WORDS];
- 
- 	if (!ipv6) {
- 		seq_printf(m, "%pI4h", addr);
- 		return;
- 	}
- 
--	for (i = 0; i < ARRAY_SIZE(n_addr); i++)
--		n_addr[i] = htonl(addr[i]);
-+	ipv6_addr_cpu_to_be32(n_addr, addr);
- 	seq_printf(m, "%pI6", n_addr);
- }
- 
-
+ 	if (i_blocks_per_folio(inode, folio) > 1) {
+-		if (!ifs) {
++		/*
++		 * This should not happen since we always allocate ifs in
++		 * iomap_folio_mkwrite_iter() and there is more than one
++		 * blocks per folio in __iomap_write_begin().
++		 */
++		if (WARN_ON_ONCE(!ifs)) {
+ 			ifs = ifs_alloc(inode, folio, 0);
+ 			iomap_set_range_dirty(folio, 0, end_pos - pos);
+ 		}
 -- 
-2.43.0
+2.39.2
 
 
