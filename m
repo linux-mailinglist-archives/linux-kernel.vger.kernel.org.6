@@ -1,122 +1,156 @@
-Return-Path: <linux-kernel+bounces-282609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA1D494E66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:14:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E12194E685
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DF9C1F22265
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:14:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E612028150F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:24:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1578E14F9EF;
-	Mon, 12 Aug 2024 06:13:52 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DFA14EC5C;
+	Mon, 12 Aug 2024 06:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nAoufx4k"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE01614E2EF;
-	Mon, 12 Aug 2024 06:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480B827457;
+	Mon, 12 Aug 2024 06:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723443231; cv=none; b=V692/Y+gynSNqo8dgs2PSFlrYG1AAlcGigmBBgbLhT0v+NawNfKkOjrN7g8cuE7LczEW0pdAA1irx+/REmc4u5jCz5wrT568G1pcepaszawKodzb7NglTGlHXuzAv62NW2637C7yy0fbTWoZeiIZhPT+7qJUqg+Oci12JFZVtjA=
+	t=1723443851; cv=none; b=HYdGTsVNk2IIaoTaC8Cr9dkFMMsbWJbnLM/RW8jfIS1MNabWNcZekbbDVhUtU/t10CE7PVwQG1N6WRuNRAO9umPL7ES/cmU7c8la7jIXOCtqiuHczrQUekYaHCCFUxmtwkrOau7n9NO9f/zQwdaaItDF/Z7PTSU6rqjrsfVO0SU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723443231; c=relaxed/simple;
-	bh=JxHQkpLX42zbYR/K/LXcoZTUYa6MhYcukw+z5FRgmUk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DiObCjNmG1fqqNYU5J9Khu7iH7I2haG4kXTNwh9PJSd1A3cQYYxGWw6LdWPewvRcJrREElWw52zVOLh278DtoVxl+UzBVF/foZWlz+tXd2Kcy7LD9CMghCe6JKK3SJoANhvL65Gp2swjqdU+luH2eUjklnRT8F/CTwdRmJFonMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Wj3xb4K1vzQpcx;
-	Mon, 12 Aug 2024 14:09:07 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9213E1402E2;
-	Mon, 12 Aug 2024 14:13:39 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
- (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 12 Aug
- 2024 14:13:38 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <catalin.marinas@arm.com>, <bhe@redhat.com>, <vgoyal@redhat.com>,
-	<dyoung@redhat.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-	<aou@eecs.berkeley.edu>, <akpm@linux-foundation.org>,
-	<linux-kernel@vger.kernel.org>, <kexec@lists.infradead.org>,
-	<linux-riscv@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-arch@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH -next v2] crash: Fix riscv64 crash memory reserve dead loop
-Date: Mon, 12 Aug 2024 14:20:17 +0800
-Message-ID: <20240812062017.2674441-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723443851; c=relaxed/simple;
+	bh=wqmmRaJgN7uZL9iEMq97OQg2HcSFnevlr3fm/+ffpLI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ijUY3nJpwez7UvpTHo2qDu2+LJOQBwuYUzA4WrtH8v//DjM9UTBOG/IqzI+oa6nG2tlxkfLA5Pqe1I2EhEmDnjE/PkQniiv+CyaN0t1wbZuaevit3+3CgDrOpLkUe0qZVCa2g4Rns6oPqiQfyoWdNOMzyJftz/8xHH6NIdAwmiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nAoufx4k; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723443850; x=1754979850;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=wqmmRaJgN7uZL9iEMq97OQg2HcSFnevlr3fm/+ffpLI=;
+  b=nAoufx4kBvmmn8+6O+T5KhhF80PIiT8xBj7WNCyOwcWZkYrVlIKcYlyo
+   KKu8yhFQgtfzPeEpIpw9aFaegcY709tBNl0P+cuFGzIuTS2w6Mx63K3Xd
+   SAc5uGrvJ0zQ9dFCIVk0NtAlAsYY0t5FuKy2r1jEYpVmqhryhr3pHE/+b
+   JP5G0435ZfGeUXgQufmJlCEa3R30TM/OK3c6nxwP3PPY8XxkNPLf6Scbf
+   RczjRz31uReTWx8VO9+grL3odyeWmpHeYTZCYwteYD37aWSRwE4KaxA46
+   rOG5hvRyszGmxWRHDdpCx1l3fj3y4EfS92IXZOdqwxmzzqr2aYwqqACvP
+   g==;
+X-CSE-ConnectionGUID: vjgcZKtTSEi9lKrs3/2r1A==
+X-CSE-MsgGUID: bSA9DpQZTc6iTE9Gn/pPRw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32112798"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="32112798"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 23:24:09 -0700
+X-CSE-ConnectionGUID: BNI0Hy1JQv6KVSZrIsIcQw==
+X-CSE-MsgGUID: zMgUwZTYTtSj65Zs3ujsTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="88994412"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 23:24:02 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: <akpm@linux-foundation.org>,  <shuah@kernel.org>,  <david@redhat.com>,
+  <willy@infradead.org>,  <ryan.roberts@arm.com>,
+  <anshuman.khandual@arm.com>,  <catalin.marinas@arm.com>,
+  <cl@gentwo.org>,  <vbabka@suse.cz>,  <mhocko@suse.com>,
+  <apopple@nvidia.com>,  <osalvador@suse.de>,
+  <baolin.wang@linux.alibaba.com>,  <dave.hansen@linux.intel.com>,
+  <will@kernel.org>,  <baohua@kernel.org>,  <ioworker0@gmail.com>,
+  <gshan@redhat.com>,  <mark.rutland@arm.com>,
+  <kirill.shutemov@linux.intel.com>,  <hughd@google.com>,
+  <aneesh.kumar@kernel.org>,  <yang@os.amperecomputing.com>,
+  <peterx@redhat.com>,  <broonie@kernel.org>,
+  <mgorman@techsingularity.net>,  <linux-arm-kernel@lists.infradead.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
+  <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+In-Reply-To: <cc1ababf-cda5-4eaf-9e67-47c26d5d70fe@arm.com> (Dev Jain's
+	message of "Mon, 12 Aug 2024 11:43:43 +0530")
+References: <20240809103129.365029-1-dev.jain@arm.com>
+	<20240809103129.365029-2-dev.jain@arm.com>
+	<87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<cc1ababf-cda5-4eaf-9e67-47c26d5d70fe@arm.com>
+Date: Mon, 12 Aug 2024 14:20:29 +0800
+Message-ID: <877ccmuus2.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=ascii
 
-On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
-will cause system stall as below:
+Dev Jain <dev.jain@arm.com> writes:
 
-	 Zone ranges:
-	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
-	   Normal   empty
-	 Movable zone start for each node
-	 Early memory node ranges
-	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
-	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
-	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
-	(stall here)
+> On 8/12/24 11:04, Huang, Ying wrote:
+>> Hi, Dev,
+>>
+>> Dev Jain <dev.jain@arm.com> writes:
+>>
+>>> As already being done in __migrate_folio(), wherein we backoff if the
+>>> folio refcount is wrong, make this check during the unmapping phase, upon
+>>> the failure of which, the original state of the PTEs will be restored and
+>>> the folio lock will be dropped via migrate_folio_undo_src(), any racing
+>>> thread will make progress and migration will be retried.
+>>>
+>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>> ---
+>>>   mm/migrate.c | 9 +++++++++
+>>>   1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>> index e7296c0fb5d5..477acf996951 100644
+>>> --- a/mm/migrate.c
+>>> +++ b/mm/migrate.c
+>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>>>   	}
+>>>     	if (!folio_mapped(src)) {
+>>> +		/*
+>>> +		 * Someone may have changed the refcount and maybe sleeping
+>>> +		 * on the folio lock. In case of refcount mismatch, bail out,
+>>> +		 * let the system make progress and retry.
+>>> +		 */
+>>> +		struct address_space *mapping = folio_mapping(src);
+>>> +
+>>> +		if (folio_ref_count(src) != folio_expected_refs(mapping, src))
+>>> +			goto out;
+>>>   		__migrate_folio_record(dst, old_page_state, anon_vma);
+>>>   		return MIGRATEPAGE_UNMAP;
+>>>   	}
+>> Do you have some test results for this?  For example, after applying the
+>> patch, the migration success rate increased XX%, etc.
+>
+> Noting that the migration selftest is operating on a single page,
+> before the patch, the test fails on shared-anon mappings on an
+> average of 10 iterations of move_pages(), and after applying the
+> patch it fails on average of 100 iterations, which makes sense
+> because the unmapping() will get retried 3 + 7 = 10 times.
 
-commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
-bug") fix this on 32-bit architecture. However, the problem is not
-completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
-architecture, for example, when system memory is equal to
-CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
+Thanks!  What is the test results for
 
-	-> reserve_crashkernel_generic() and high is true
-	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
-	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
-	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
+https://lore.kernel.org/all/20240801081657.1386743-1-dev.jain@arm.com/
 
-As Catalin suggested, do not remove the ",high" reservation fallback to
-",low" logic which will change arm64's kdump behavior, but fix it by
-skipping the above situation similar to commit d2f32f23190b ("crash: fix
-x86_32 crash memory reserve dead loop").
+?
 
-After this patch, it print:
-	cannot allocate crashkernel (size:0x1f400000)
+>>
+>> My understanding for this issue is that the migration success rate can
+>> increase if we undo all changes before retrying.  This is the current
+>> behavior for sync migration, but not for async migration.  If so, we can
+>> use migrate_pages_sync() for async migration too to increase success
+>> rate?  Of course, we need to change the function name and comments.
 
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
----
-v2:
-- Fix it in another way suggested by Catalin.
-- Add Suggested-by.
----
- kernel/crash_reserve.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/crash_reserve.c b/kernel/crash_reserve.c
-index 5387269114f6..aae4a9e998d1 100644
---- a/kernel/crash_reserve.c
-+++ b/kernel/crash_reserve.c
-@@ -427,7 +427,8 @@ void __init reserve_crashkernel_generic(char *cmdline,
- 		if (high && search_end == CRASH_ADDR_HIGH_MAX) {
- 			search_end = CRASH_ADDR_LOW_MAX;
- 			search_base = 0;
--			goto retry;
-+			if (search_end != CRASH_ADDR_HIGH_MAX)
-+				goto retry;
- 		}
- 		pr_warn("cannot allocate crashkernel (size:0x%llx)\n",
- 			crash_size);
--- 
-2.34.1
-
+--
+Best Regards,
+Huang, Ying
 
