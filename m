@@ -1,204 +1,87 @@
-Return-Path: <linux-kernel+bounces-283202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1EA94EE8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:45:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF80F94ED28
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06250B238F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:45:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C42B28211D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CDC17DE10;
-	Mon, 12 Aug 2024 13:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C885217B4E0;
+	Mon, 12 Aug 2024 12:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="qMKPyIIO"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XechQ9Mo"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0832B17C7D8;
-	Mon, 12 Aug 2024 13:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7701369AE;
+	Mon, 12 Aug 2024 12:37:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470287; cv=none; b=qyBiPJbiw1i+5sUVh5hWpzuL0K87b+dH//26K+jRvrQByQiOe41AsNAYJZ0N/4Hf9AjKMvSTj6SyNleYBUnFqEn5b0Jql+ZXDWWCAOhQUUhgppfbCvax4XdDDGJ4QpRcUEJdNHzE6smahrH1jz6tBZvbTytMsfi8+eyTvN5ITo8=
+	t=1723466279; cv=none; b=hDfnZ1UsAPOPZWg4iBAC3qzGSVwZGGQEQr2CD6BngqTSchbgfQtRUUDWUj1q3W0qqwIqQYBJmuyNQFg0cy/EHbqUfNvWX+Fm8bBmINuSmucKw4HlR0uipCLTtLin+qolXa80r1zRQjlnngzNSnaSmbnphPegxpNFxg3PGWZfvDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470287; c=relaxed/simple;
-	bh=kpd3wxrRKwx58XwylsuukHoarjHENJgXKGxxPxoZ588=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IuS3lzZrCc0/cUPSd0jio/8LvXEynJSk2gRMd4fjZOr96hUV1/ExyAbxqi0DRHKQWM07Pb/3kupyWND937qufEjvWUE7hp5Motppjza5YiOK3Gh6D2ILgY+wD0FmFgvDgEpc2XtSHZvyVAizh+94tOTvF+LpZaU68pwTV9tH3Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=qMKPyIIO; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 520eac09825f50c6; Mon, 12 Aug 2024 14:44:43 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3076B6F0D80;
-	Mon, 12 Aug 2024 14:44:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723466683;
-	bh=kpd3wxrRKwx58XwylsuukHoarjHENJgXKGxxPxoZ588=;
-	h=From:Subject:Date;
-	b=qMKPyIIOV4Qb9GGYxuNoTw7wz0oJ/oeHgw5rCXNUuGvu0WLPwpC8suM2BuRVIkMJ7
-	 hQYSXJmvfYsFlD0hAmHi1tRi+CyLmFOWWPfu+DeeQXwzb7g7zzmps5fY/garJ6HJr4
-	 JdiFmPS42EjYNmDfVjq3z9/fpL+GRuYUm5eO80grCEP7bXR8FtwqR6EPkK5XENc4bD
-	 sLjuJrnWz2qveaxYvey/X2eEl1nzL0YtoJgFmp9CXd0y6/pgu04tDNyMlwNIOCgqFx
-	 Qx/DUsHztfs1qmYJzndzwmcfjPOx7ynBkhzcmVCQG7+Hbt9ZJXsvJq+Xgm8woteLg8
-	 UeDT8k4+x9cIA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Subject: [PATCH v2 1/3] x86/sched: Introduce arch_rebuild_sched_domains()
-Date: Mon, 12 Aug 2024 14:37:02 +0200
-Message-ID: <2335352.ElGaqSPkdT@rjwysocki.net>
-In-Reply-To: <4941491.31r3eYUQgx@rjwysocki.net>
-References: <4941491.31r3eYUQgx@rjwysocki.net>
+	s=arc-20240116; t=1723466279; c=relaxed/simple;
+	bh=ll7rKCvIK5FinevpBDDYACR2NNSA00n20xpIFJ7Pggs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MuJhw7TxGzND5XqCeKuQgDDah1BOdHdOGOTqOLDH9JcY/15COm6ouXAgJ/PbkvDIfbOmrkbkvr8ztQBHLrmtm+PWZ5sgziR7ynRKYbrS3T3E0Mp+sdSDnlk3IqSTM7wNYhkrJq67ZrvlchqsqzefiHlxCN0fOjHTJ6LgZp55uqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=XechQ9Mo; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MlyCx97Vj5xKVHsPK8EMQ/utmeFGM8vhocj6gX7aGmg=; b=XechQ9MoG36ki92DOiEHmm2J6i
+	PXYlL/7crx2dgDAhR7MMIRwEvvCq2+QzUH0rXL19L9UiUzFc/iaVipyStlVVwhicpgJTZAw5h5mUa
+	JB+1vvoiQ33V78qQkQwz5M8suny87XZZlVcKrj5ogzenWSsaqOr+K9tcnfz+fa9gcC1Q=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sdUIq-004Zkw-4k; Mon, 12 Aug 2024 14:37:36 +0200
+Date: Mon, 12 Aug 2024 14:37:36 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Simon Horman <horms@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Yisen Zhuang <yisen.zhuang@huawei.com>,
+	Salil Mehta <salil.mehta@huawei.com>,
+	Jijie Shao <shaojijie@huawei.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net-next 1/3] ipv6: Add
+ ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+Message-ID: <827bbb8a-2d5b-44a4-81a2-258c7713ef59@lunn.ch>
+References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
+ <20240812-ipv6_addr-helpers-v1-1-aab5d1f35c40@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
- rggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrhhmrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812-ipv6_addr-helpers-v1-1-aab5d1f35c40@kernel.org>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Mon, Aug 12, 2024 at 01:11:55PM +0100, Simon Horman wrote:
+> Add helper to convert an ipv6 addr, expressed as an array
+> of words, from cpy to big-endian byte order.
 
-Add arch_rebuild_sched_domains() for rebuilding scheduling domains and
-updating topology on x86 and make the ITMT code use it.
+Hi Simon
 
-First of all, this reduces code duplication somewhat and eliminates
-a need to use an extern variable, but it will also lay the ground for
-future work related to CPU capacity scaling.
+Is cpy supposed to be cpu?
 
-No intentional functional impact.
+Otherwise, please add: Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2: No changes
-
----
- arch/x86/include/asm/topology.h |    6 ++++--
- arch/x86/kernel/itmt.c          |   12 ++++--------
- arch/x86/kernel/smpboot.c       |   10 +++++++++-
- 3 files changed, 17 insertions(+), 11 deletions(-)
-
-Index: linux-pm/arch/x86/include/asm/topology.h
-===================================================================
---- linux-pm.orig/arch/x86/include/asm/topology.h
-+++ linux-pm/arch/x86/include/asm/topology.h
-@@ -235,8 +235,6 @@ struct pci_bus;
- int x86_pci_root_bus_node(int bus);
- void x86_pci_root_bus_resources(int bus, struct list_head *resources);
- 
--extern bool x86_topology_update;
--
- #ifdef CONFIG_SCHED_MC_PRIO
- #include <asm/percpu.h>
- 
-@@ -284,9 +282,13 @@ static inline long arch_scale_freq_capac
- 
- extern void arch_set_max_freq_ratio(bool turbo_disabled);
- extern void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled);
-+
-+void arch_rebuild_sched_domains(void);
- #else
- static inline void arch_set_max_freq_ratio(bool turbo_disabled) { }
- static inline void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled) { }
-+
-+static inline void arch_rebuild_sched_domains(void) { }
- #endif
- 
- extern void arch_scale_freq_tick(void);
-Index: linux-pm/arch/x86/kernel/itmt.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/itmt.c
-+++ linux-pm/arch/x86/kernel/itmt.c
-@@ -54,10 +54,8 @@ static int sched_itmt_update_handler(str
- 	old_sysctl = sysctl_sched_itmt_enabled;
- 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 
--	if (!ret && write && old_sysctl != sysctl_sched_itmt_enabled) {
--		x86_topology_update = true;
--		rebuild_sched_domains();
--	}
-+	if (!ret && write && old_sysctl != sysctl_sched_itmt_enabled)
-+		arch_rebuild_sched_domains();
- 
- 	mutex_unlock(&itmt_update_mutex);
- 
-@@ -114,8 +112,7 @@ int sched_set_itmt_support(void)
- 
- 	sysctl_sched_itmt_enabled = 1;
- 
--	x86_topology_update = true;
--	rebuild_sched_domains();
-+	arch_rebuild_sched_domains();
- 
- 	mutex_unlock(&itmt_update_mutex);
- 
-@@ -150,8 +147,7 @@ void sched_clear_itmt_support(void)
- 	if (sysctl_sched_itmt_enabled) {
- 		/* disable sched_itmt if we are no longer ITMT capable */
- 		sysctl_sched_itmt_enabled = 0;
--		x86_topology_update = true;
--		rebuild_sched_domains();
-+		arch_rebuild_sched_domains();
- 	}
- 
- 	mutex_unlock(&itmt_update_mutex);
-Index: linux-pm/arch/x86/kernel/smpboot.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/smpboot.c
-+++ linux-pm/arch/x86/kernel/smpboot.c
-@@ -39,6 +39,7 @@
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
- 
-+#include <linux/cpuset.h>
- #include <linux/init.h>
- #include <linux/smp.h>
- #include <linux/export.h>
-@@ -125,7 +126,7 @@ static DEFINE_PER_CPU_ALIGNED(struct mwa
- int __read_mostly __max_smt_threads = 1;
- 
- /* Flag to indicate if a complete sched domain rebuild is required */
--bool x86_topology_update;
-+static bool x86_topology_update;
- 
- int arch_update_cpu_topology(void)
- {
-@@ -135,6 +136,13 @@ int arch_update_cpu_topology(void)
- 	return retval;
- }
- 
-+#ifdef CONFIG_X86_64
-+void arch_rebuild_sched_domains(void) {
-+	x86_topology_update = true;
-+	rebuild_sched_domains();
-+}
-+#endif
-+
- static unsigned int smpboot_warm_reset_vector_count;
- 
- static inline void smpboot_setup_warm_reset_vector(unsigned long start_eip)
-
-
-
+    Andrew
 
