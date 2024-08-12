@@ -1,216 +1,114 @@
-Return-Path: <linux-kernel+bounces-283734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58A2A94F85C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:44:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C5E94F85F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00C4C1F21C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:44:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41EDC2851D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14445194A59;
-	Mon, 12 Aug 2024 20:44:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6017B1953BD;
+	Mon, 12 Aug 2024 20:44:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ACWXkZtd"
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WQOMFmz8"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493C318B47C
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC3219413E
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495452; cv=none; b=mHfELd7iU0gLEHcNZu0+AyVqkjMPv/K1JqhgE6UD5yY7T4b+f4Ca0NYMzImpU3pY7ZznIrQH2pRQw1qqI8VVtAOvKpdcy6feX0T1Hp5hIgg88NyGFnGRf1Mz7VCj6nwBN2GWy+pQ89XLrzY4gkUbTJQJPGetysmWgihclTSrMxQ=
+	t=1723495453; cv=none; b=ly5eEKIA8Bv4aHSHUnVOzKpJMmFybzYcA9zsprut5FWAbhRrvETZ8QECK5JNkWMglZoSyp3HGkRLwghmGPkLtw8KT4427JR0itsYSeUaKxdl8UGnIqBZwR92Hp1kKrBHzv4QGnJz62qUyBJdZO1/a/MBGipqVu67s8cjNi6Srig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495452; c=relaxed/simple;
-	bh=z9r1E1n1MkfQblbK869WFtMCFJHi5kCmMD8SiA+v0As=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=X6PY0D4BmpFfRD6aOIkbQtnBNvVmDmDrGtl07dgUiVoNRpACoUQ8AkePjUtJ/bk+XAQqe94Rw/TcFA+YfLHXx3s6GdBa8LGwnsXT0iGQ9V55MVxSBjwhKlytVqAW4yrAQJVHi5LwKqTS/5qbEPEITPqJZAf+VPz/t9Uu4srgwf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ACWXkZtd; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1723495448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=JUGlscjZ9It4yeML5SBXjbq8uMlJLcwt2MQT8BsMieE=;
-	b=ACWXkZtdgHhhKdSYegvJHQyXY5IwIYQFkzV7UIe5Ht+kq31wKayOJ9wOH+Ay/+HCi+RmGe
-	njHNJjEVBCaARwmv8YdpUEKdRk/6f3tB2dxou2XrUB17FVipKmgUKzH2CPauXI/D7xiRPu
-	OtjHqSMqSgkB3AqDHAoP0CH0TtlG2DQ=
-From: Sean Anderson <sean.anderson@linux.dev>
-To: Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	iommu@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org,
-	Sean Anderson <sean.anderson@linux.dev>
-Subject: [PATCH] dma: Trace dma_map/unmap_page
-Date: Mon, 12 Aug 2024 16:43:57 -0400
-Message-Id: <20240812204358.3587730-1-sean.anderson@linux.dev>
+	s=arc-20240116; t=1723495453; c=relaxed/simple;
+	bh=OKt4cWE0ZR9fy32NKqDd7AWgvE7+np3QM+thgHcpW2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dxFNgubkDxyPirGi7kv9xWqRt01ahz80uHjnHANXvWF6P17K7wSg18dYyjudBHRyZIBORyVobwNkRuUaREXjwUUEKZx6stsm0IGF0+puUGkCrESjzK5bmyNNMaOwYeMmphDCSfl4WtZn/DyUAhUWXfDZCY9wlhPDWoHe8usSlzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WQOMFmz8; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd7509397bso27315ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:44:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723495451; x=1724100251; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OKt4cWE0ZR9fy32NKqDd7AWgvE7+np3QM+thgHcpW2c=;
+        b=WQOMFmz8cwW4tHY5eCcAdclqEdF7wQzoppIUtPONNXId1E9gErW1aBa9UIc02s+UDG
+         ps5R97t2pToO8k9OGjSiMAj06zLFdfJCZxRaFuLpeEqL4dm2DRRk8uf/0OE/jzm5kzAU
+         u42U4vWYFcORjWIrr6Wty3jlWkof8xW5oHY7woT3iDYF0IV6LfTmoCCDbaSajuBko+Lk
+         BhjGxvFcmXWcXZWJ2SpGTPTBVwnF5hm3flLV3EXd4lYCl9/Pg/13BJCdb5qWeArGTGa6
+         I5dzYaB1z3yi03h5OAGUjhKl51wQm5yQVatCvPCDemZ/XPke/puI21Pfk75n+7JUTiHV
+         b3tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723495451; x=1724100251;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OKt4cWE0ZR9fy32NKqDd7AWgvE7+np3QM+thgHcpW2c=;
+        b=u4FQ9bYNAQNIjOzoGL4BoGYCiU2y3u7yqcvy1TzRqrA+ZviZoc3DXXXy8TUJW7ZZPH
+         LYOtW95KYygjP/PKNGBIv59KLtVNC627bvwo0Jlm6ZKRmcQYMEgkOChK+Q5bJl1HP0Tj
+         F0AF6VL0XQnqxVvpVTGXbsMvqJjGfD+/dqSB6xGoiAJ/VsoBXFU30k57C9+S5d/9ps32
+         FrIrBqxs2PGec4RQtZt5TADWLz6uGCkXYi1TS6oI50vf6dTbLxWuJb7esc6IdTDQKcMB
+         LWTsL0paJMmfHvEA0lLC7963MKyyCoc2Ije0uizX/rn0oZ5kW3yDeJb8pr8pYUkRrhRm
+         IOxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIK8xg8Wantj8G+eySKNCpo2iSVVT1+/08uieDGXiGwH3vhKgCs+YYQGX/3MLSmEoP7au0IQqnodbCcr3Tl4VJ5v5J28h6hcMBqraG
+X-Gm-Message-State: AOJu0YwVHdNiM+zgKPZJdqzosDi0AKi5VsHPuoDeVl9+luwP5ZDrmJZl
+	aIQd6NeETfdzmBEN8AGgP661mkqcdd/FFcigm+J2faJ7fkX3H/GSTg7CAa+BZlXOSAAHISxVnJy
+	D9T5VINhsbQzAtoDjFUAKy3MgrO0ypaa1OJEi
+X-Google-Smtp-Source: AGHT+IGE5Tl+Gga3w/4KldporNOqhqhFglC+AC11EJZLS4naKh298Ze5RefiDxOY9/Atd5BoSplPlMUPy3fALcvgfUU=
+X-Received: by 2002:a17:903:11cc:b0:1fd:67c2:f982 with SMTP id
+ d9443c01a7336-201ccb368d3mr410965ad.2.1723495451258; Mon, 12 Aug 2024
+ 13:44:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20240801031249.176913-1-irogers@google.com> <Zq0kL-lyCqkM3P4G@google.com>
+In-Reply-To: <Zq0kL-lyCqkM3P4G@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 12 Aug 2024 13:43:59 -0700
+Message-ID: <CAP-5=fUy6sx5ZMs6L1we2tpaq1iyUz4GW_ps7c7xE1zqjVzvgg@mail.gmail.com>
+Subject: Re: [PATCH v1] perf inject: Inject build ids for entire call chain
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Colin Ian King <colin.i.king@gmail.com>, Casey Chen <cachen@purestorage.com>, 
+	Tom Zanussi <tzanussi@gmail.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When debugging drivers, it can often be useful to trace when memory gets
-(un)mapped for DMA (and can be accessed by the device). Add some
-tracepoints for this purpose. While there are many other interesting DMA
-functions, this is a useful start for simpler drivers.
+On Fri, Aug 2, 2024 at 11:23=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Hi Ian,
+>
+> On Wed, Jul 31, 2024 at 08:12:49PM -0700, Ian Rogers wrote:
+> > The DSO build id is injected when the dso is first encountered but the
+> > checking for first encountered only looks at the sample->ip not the
+> > entire callchain. Use the callchain logic to ensure all build ids are
+> > inserted.
+> >
+> > Add a for_each callback style API to callchain with
+> > sample__for_each_callchain_node. Possibly in the future such an API
+> > can avoid the overhead of constructing the call chain list.
+> >
+> > Fixes: 454c407ec17a ("perf: add perf-inject builtin")
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
----
+Ping.
 
- include/trace/events/dma.h | 103 +++++++++++++++++++++++++++++++++++++
- kernel/dma/mapping.c       |   5 ++
- 2 files changed, 108 insertions(+)
- create mode 100644 include/trace/events/dma.h
-
-diff --git a/include/trace/events/dma.h b/include/trace/events/dma.h
-new file mode 100644
-index 000000000000..bc32e4302fde
---- /dev/null
-+++ b/include/trace/events/dma.h
-@@ -0,0 +1,103 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM dma
-+
-+#if !defined(_TRACE_DMA_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_DMA_H
-+
-+#include <linux/tracepoint.h>
-+#include <linux/dma-direction.h>
-+#include <linux/dma-mapping.h>
-+
-+TRACE_DEFINE_ENUM(DMA_BIDIRECTIONAL);
-+TRACE_DEFINE_ENUM(DMA_TO_DEVICE);
-+TRACE_DEFINE_ENUM(DMA_FROM_DEVICE);
-+TRACE_DEFINE_ENUM(DMA_NONE);
-+
-+#define decode_dma_data_direction(dir) \
-+	__print_symbolic(dir, \
-+		{ DMA_BIDIRECTIONAL, "BIDIRECTIONAL" }, \
-+		{ DMA_TO_DEVICE, "TO_DEVICE" }, \
-+		{ DMA_FROM_DEVICE, "FROM_DEVICE" }, \
-+		{ DMA_NONE, "NONE" })
-+
-+#define decode_dma_attrs(attrs) \
-+	__print_flags(attrs, "|", \
-+		{ DMA_ATTR_WEAK_ORDERING, "WEAK_ORDERING" }, \
-+		{ DMA_ATTR_WRITE_COMBINE, "WRITE_COMBINE" }, \
-+		{ DMA_ATTR_NO_KERNEL_MAPPING, "NO_KERNEL_MAPPING" }, \
-+		{ DMA_ATTR_SKIP_CPU_SYNC, "SKIP_CPU_SYNC" }, \
-+		{ DMA_ATTR_FORCE_CONTIGUOUS, "FORCE_CONTIGUOUS" }, \
-+		{ DMA_ATTR_ALLOC_SINGLE_PAGES, "ALLOC_SINGLE_PAGES" }, \
-+		{ DMA_ATTR_NO_WARN, "NO_WARN" }, \
-+		{ DMA_ATTR_PRIVILEGED, "PRIVILEGED" })
-+
-+TRACE_EVENT(dma_map_page,
-+	TP_PROTO(struct device *dev, const struct page *page, size_t offset,
-+		 size_t size, enum dma_data_direction dir, dma_addr_t addr,
-+		 unsigned long attrs),
-+	TP_ARGS(dev, page, offset, size, dir, addr, attrs),
-+
-+	TP_STRUCT__entry(
-+		__string(device, dev_name(dev))
-+		__field(const struct page *, page)
-+		__field(size_t, offset)
-+		__field(size_t, size)
-+		__field(enum dma_data_direction, dir)
-+		__field(dma_addr_t, addr)
-+		__field(unsigned long, attrs)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(device);
-+		__entry->page = page;
-+		__entry->offset = offset;
-+		__entry->size = size;
-+		__entry->dir = dir;
-+		__entry->addr = addr;
-+		__entry->attrs = attrs;
-+	),
-+
-+	TP_printk("%s page=%p offset=%zu size=%zu dir=%s addr=%llx attrs=%s",
-+		__get_str(device),
-+		__entry->page,
-+		__entry->offset,
-+		__entry->size,
-+		decode_dma_data_direction(__entry->dir),
-+		(unsigned long long)__entry->addr,
-+		decode_dma_attrs(__entry->attrs))
-+);
-+
-+TRACE_EVENT(dma_unmap_page,
-+	TP_PROTO(struct device *dev, dma_addr_t addr, size_t size,
-+		 enum dma_data_direction dir, unsigned long attrs),
-+	TP_ARGS(dev, addr, size, dir, attrs),
-+
-+	TP_STRUCT__entry(
-+		__string(device, dev_name(dev))
-+		__field(dma_addr_t, addr)
-+		__field(size_t, size)
-+		__field(enum dma_data_direction, dir)
-+		__field(unsigned long, attrs)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(device);
-+		__entry->addr = addr;
-+		__entry->size = size;
-+		__entry->dir = dir;
-+		__entry->attrs = attrs;
-+	),
-+
-+	TP_printk("%s addr=%llx size=%zu dir=%s attrs=%s",
-+		__get_str(device),
-+		(unsigned long long)__entry->addr,
-+		__entry->size,
-+		decode_dma_data_direction(__entry->dir),
-+		decode_dma_attrs(__entry->attrs))
-+);
-+
-+#endif /*  _TRACE_DMA_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index b1c18058d55f..fb4c77f6f7cc 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -17,6 +17,9 @@
- #include "debug.h"
- #include "direct.h"
- 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/dma.h>
-+
- #if defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_DEVICE) || \
- 	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU) || \
- 	defined(CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL)
-@@ -162,6 +165,7 @@ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
- 	else
- 		addr = ops->map_page(dev, page, offset, size, dir, attrs);
- 	kmsan_handle_dma(page, offset, size, dir);
-+	trace_dma_map_page(dev, page, offset, size, dir, addr, attrs);
- 	debug_dma_map_page(dev, page, offset, size, dir, addr, attrs);
- 
- 	return addr;
-@@ -179,6 +183,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
- 		dma_direct_unmap_page(dev, addr, size, dir, attrs);
- 	else if (ops->unmap_page)
- 		ops->unmap_page(dev, addr, size, dir, attrs);
-+	trace_dma_unmap_page(dev, addr, size, dir, attrs);
- 	debug_dma_unmap_page(dev, addr, size, dir);
- }
- EXPORT_SYMBOL(dma_unmap_page_attrs);
--- 
-2.35.1.1320.gc452695387.dirty
-
+Thanks,
+Ian
 
