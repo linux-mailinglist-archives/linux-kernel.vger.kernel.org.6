@@ -1,116 +1,87 @@
-Return-Path: <linux-kernel+bounces-282900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC69C94EA4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:52:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8F9094EA2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:44:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BD4A1F22340
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:52:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7B728175F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A06416E863;
-	Mon, 12 Aug 2024 09:52:11 +0000 (UTC)
-Received: from mx-8.mail.web4u.cz (smtp7.web4u.cz [81.91.87.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8333516C85D;
-	Mon, 12 Aug 2024 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.91.87.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D845A16DEC3;
+	Mon, 12 Aug 2024 09:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="AcWQh47x"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910D716A948;
+	Mon, 12 Aug 2024 09:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723456331; cv=none; b=FRSvWNG7bo7bTtiVuSMIH+auT9UvM1VdYZ9HWoewvYPA63csN8VQaiQTBhbmgnS1+TkP6M/lxMVeRPYFkdZ40ZzuJ/+XbY2cERgs2gAAhFG3+LzEcqFJoLL9+P2GEKAeIU5uUNICUeUfvXZ96tYYfbZV8f3cusLK5RzlRwFqHag=
+	t=1723455879; cv=none; b=iwpZf2IH/m39FT1prinExOPQ8LdLvVVnxccE69WXml2/UQ9sU7B1TxEk/jaqw8Yf6JCqk0YnEQ+eohHQeqvYc1inqEhXSn1LeQ4Qx/wCj4WUKA1ghGX3xkMZs8BCMg+qI32UdPN8GDrN2AiHPo0VW0+M8Zi7vglF6sOED+cbL/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723456331; c=relaxed/simple;
-	bh=Nr9BWj2ksg27MHMDKcxBvFSPQ/BgmCcwe0oFtlQS7HU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IYaSy03tx3IxeKDvpmWDoxlAHNczo8um0MzF6f0iZCck1p7MzQH3bYRYanjSM2nd1QK+ycUYWpsaMccaYjCBsM0/AHrS+EjiD0zJdW/06tyKZ66mkqLo5yFEzNFNZfgvyTtJgWrBknoBvaXx3us3ebn8+CjCU4LRV0BTkcu2Hfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foxlink.cz; spf=pass smtp.mailfrom=foxlink.cz; arc=none smtp.client-ip=81.91.87.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=foxlink.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxlink.cz
-Received: from mx-8.mail.web4u.cz (localhost [IPv6:::1])
-	by mx-8.mail.web4u.cz (Postfix) with ESMTP id E54561FF3AE;
-	Mon, 12 Aug 2024 11:42:31 +0200 (CEST)
-Received: from [192.168.0.36] (unknown [193.86.188.206])
-	(Authenticated sender: m.liska@foxlink.cz)
-	by mx-8.mail.web4u.cz (Postfix) with ESMTPA id 8320B1FF16A;
-	Mon, 12 Aug 2024 11:42:31 +0200 (CEST)
-Message-ID: <c814c49f-fdd6-46cf-ba89-ca46ff7e64b9@foxlink.cz>
-Date: Mon, 12 Aug 2024 11:42:31 +0200
+	s=arc-20240116; t=1723455879; c=relaxed/simple;
+	bh=P8t2qzTDKtuBQhzPXUYxfC3tFEHNAV85Pec+kdaY5zE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnKJhPpNa7wRqruLVa6QUnZD1zo94u7U5s8FC3uuFN93b7RdekP+rknYLCz7gaq/DDdbgJveZim1TWZieXbwmouc32ooOpON3fuwhudbu/yQup7/E130AjMEpmIujyWux7Qz/0o+a1s13pZG4BVsNpwvFmYMrTqpZQyg4t7emcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=AcWQh47x; arc=none smtp.client-ip=220.197.32.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=8OQDzwap6QK8JuO7jTB4iPv7Bd6WkmI/d68Ki8Wr0Ik=;
+	b=AcWQh47x9pr/Dfjbz1ISPz0mIIAnCslrTImIcAZBaRUfWxpBXF8lKZSN2SPFhK
+	lF5bgxux15pii+5/yBfzpFsNKMM5GWD2N4/YPatm7gTq4KzHA6E3C/Q0Oevs/vAY
+	ESM/PzTsuS6AJ4mdooVhuVErXywKoEq2ry+h7gWpMzcKc=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgD3f8JH2blmcEBWAg--.28001S3;
+	Mon, 12 Aug 2024 17:43:37 +0800 (CST)
+Date: Mon, 12 Aug 2024 17:43:35 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, imx@lists.linux.dev,
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH v1 1/4] arm64: dts: imx8: remove non-existent DACs
+Message-ID: <ZrnZRz4U7D8oqOMK@dragon>
+References: <20240717-anvil-ashy-544e80a1317c@spud>
+ <20240717-alkalize-bouncy-83e748284bc7@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] perf script: add --addr2line option
-To: irogers@google.com
-Cc: acme@kernel.org, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org
-References: <CAP-5=fXPC+pXmJCpvkr5x2Ae1hdKeL7Cd6Uak+7mn+uG+R8yVQ@mail.gmail.com>
- <eadc3e36-029d-4848-9d69-272fe5a83a26@foxlink.cz>
-Content-Language: en-US
-From: =?UTF-8?Q?Martin_Li=C5=A1ka?= <m.liska@foxlink.cz>
-In-Reply-To: <eadc3e36-029d-4848-9d69-272fe5a83a26@foxlink.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-W4U-Auth: b8f49746f1723c8f9d6af6e5d027af853e6509bd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240717-alkalize-bouncy-83e748284bc7@spud>
+X-CM-TRANSID:Ms8vCgD3f8JH2blmcEBWAg--.28001S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUI_OzUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgc5ZWa5z7Yh8gAAss
 
-@acme: May I please ping this patch?
-
-Thanks,
-Martin
-
-On 7/19/24 12:57, Martin Liška wrote:
-> Similarly to other subcommands (like report, top), it would be handy to
-> provide a path for addr2line command.
+On Wed, Jul 17, 2024 at 10:37:53AM +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
 > 
-> Signed-off-by: Martin Liska <martin.liska@hey.com>
-> ---
->  tools/perf/Documentation/perf-script.txt | 3 +++
->  tools/perf/builtin-script.c              | 2 ++
->  tools/perf/util/symbol_conf.h            | 2 +-
->  3 files changed, 6 insertions(+), 1 deletion(-)
+> Neither the imx8dxl-evk or imx8qm-mek have a Rohm DAC on them as far as
+> I can tell from online documentation, and they certainly do not have a
+> dh2228fv, as this device does not actually exist! Remove the DAC nodes
+> from the devicetrees as it is not acceptable to pretend to have a device
+> on a board in order to bind the spidev driver in Linux.
 > 
-> diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-> index ff086ef05a0c..5abb960c4960 100644
-> --- a/tools/perf/Documentation/perf-script.txt
-> +++ b/tools/perf/Documentation/perf-script.txt
-> @@ -369,6 +369,9 @@ OPTIONS
->  --demangle-kernel::
->  	Demangle kernel symbol names to human readable form (for C++ kernels).
->  
-> +--addr2line=<path>::
-> +	Path to addr2line binary.
-> +
->  --header
->  	Show perf.data header.
->  
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index c16224b1fef3..932167b2362b 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -4052,6 +4052,8 @@ int cmd_script(int argc, const char **argv)
->  			"Enable symbol demangling"),
->  	OPT_BOOLEAN(0, "demangle-kernel", &symbol_conf.demangle_kernel,
->  			"Enable kernel symbol demangling"),
-> +	OPT_STRING(0, "addr2line", &symbol_conf.addr2line_path, "path",
-> +			"addr2line binary to use for line numbers"),
->  	OPT_STRING(0, "time", &script.time_str, "str",
->  		   "Time span of interest (start,stop)"),
->  	OPT_BOOLEAN(0, "inline", &symbol_conf.inline_name,
-> diff --git a/tools/perf/util/symbol_conf.h b/tools/perf/util/symbol_conf.h
-> index c114bbceef40..d41b25e10f1b 100644
-> --- a/tools/perf/util/symbol_conf.h
-> +++ b/tools/perf/util/symbol_conf.h
-> @@ -63,7 +63,7 @@ struct symbol_conf {
->  			*sym_list_str,
->  			*col_width_list_str,
->  			*bt_stop_list_str;
-> -	char		*addr2line_path;
-> +	const char		*addr2line_path;
->  	unsigned long	time_quantum;
->         struct strlist	*dso_list,
->  			*comm_list,
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+
+Applied, thanks!
+
 
