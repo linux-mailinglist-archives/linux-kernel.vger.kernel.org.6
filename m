@@ -1,140 +1,93 @@
-Return-Path: <linux-kernel+bounces-283067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC0994EC9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:16:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F0D94EC7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7C5282358
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3845E1C216D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A65417A5B3;
-	Mon, 12 Aug 2024 12:16:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D68817A58B;
+	Mon, 12 Aug 2024 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nR0JxCIv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242513634B;
-	Mon, 12 Aug 2024 12:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD5B417967F;
+	Mon, 12 Aug 2024 12:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464983; cv=none; b=kOPUWj1PyVG97wQKmBwcTg4K6U0bc+N8UIsZgyYHqz+kmIWMEHCQWPHQAghM0ZDTtsuI03ieKtBFIjzJL7wY6TLaHfd722floEsyHnCeXUH9TEtq6rZ1Z9K+raZDu8FhWgwfpIE0xLBYPxnf4WAyO7xm9t1he/qUhVCezesAEvs=
+	t=1723464730; cv=none; b=cSjUPej8C3ghWnZMPJoq2azyJAL8DbPKK3oqBJCobZYwWev9G8G9Hohtfg+I67fIJ57RY94uwfOP6NET5LI6PH6ZUwjJzpULQW+Y1rHJeRr6o+Pm669NQTjgRzzaYgOJ1HaTaCvOYaDvK21G7TsXpvV9HzRIlwW9njTnPWQsuFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464983; c=relaxed/simple;
-	bh=4BYV6v4Hw0CJPWckbUhfullAUNf/TCOxkcGynzSXdtc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V/n8yNqKBZdAQ6xpx4Ox4Glq9Wqx4Jk8kV3VNoDhBd4q/7qclMzYPn+HBrohYHWheJOPn3XNxg4m9+OCSa4tZmBKvNN8RZMuxyX2E6ihek74TkeoRuVvUgTD0RwsKDQCutpNmbjiZWIAcogk2iuZsvNjf1uJlWJ/NrRUOatrznU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD4r4Ddcz4f3mJH;
-	Mon, 12 Aug 2024 20:15:56 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 324951A0359;
-	Mon, 12 Aug 2024 20:16:11 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S4;
-	Mon, 12 Aug 2024 20:16:10 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	jack@suse.cz,
-	willy@infradead.org,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2 0/6] iomap: some minor non-critical fixes and improvements when block size < folio size
-Date: Mon, 12 Aug 2024 20:11:53 +0800
-Message-Id: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1723464730; c=relaxed/simple;
+	bh=qk49YrVSofC+BVzHm+Bp5DXAljOe2s9DkkPbzEpVrcw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QZuZO3NhdqSlPUyqJNj/OphBnsl08gM3Sy24WI84uZuDco9Quk7XIUSz7nvjOunBXFo9b9pZV6U3jlXQjVpRy2XtFVj76jyc/F25RMSWsamPtnKOMvBL6B/9cOjRJCxaPZzhWJ2lVyaNNrv2n+ofMPymSrdTnfe5ti+wjX5ryFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nR0JxCIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75FECC32782;
+	Mon, 12 Aug 2024 12:12:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723464730;
+	bh=qk49YrVSofC+BVzHm+Bp5DXAljOe2s9DkkPbzEpVrcw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=nR0JxCIvZJldbDSANbm7pjQ2vtDxP/pUsoxenEW1sYbA9ZM/TIuxVNpzR5T541zW2
+	 ElLbzeO736JcC7/k++Y1iunzxlWmy19UGlo9pwYSCX96upLnjvdF3BbCMSMMRPEV2B
+	 KCug5r+n7NzYYqwNgNOa+Wc6O6sK4m5U59L3bzQP5Xkxf0Y7w6EUDr3Nwx+eodk4A0
+	 qlMr+c+2cSjqiV3fVH2cgH22uleIIOubglo0ftuYq5wIrrD7HYDA4Pmq5Tw6eiP4JV
+	 FZbFuVnRajVt+PEkDLxDMJv2t0asApMS5Dppf2NoPkwgBtpFA6Lx4b9OA/OP/RN+t/
+	 gKmN/U5eMroHg==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next 0/3] ipv6: Add ipv6_addr_{cpu_to_be32,be32_to_cpu}
+ helpers
+Date: Mon, 12 Aug 2024 13:11:54 +0100
+Message-Id: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S4
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF17Jr4xGw45tF13trW5ZFb_yoW8uFyUpF
-	WfKF98Kr1Dtw1ayas3W3y7Xr1Fvw1FqF15Ga4xGws8AFnxJFyxXF10ga98uay0yr4Skrs0
-	qr1jgFyxWr1DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAr8uWYC/x3MQQqEMBAF0atIr22IIYh6lWEQnfxog8TQERHEu
+ xtm+RZVN2WoINNQ3aQ4JcseC5q6ot86xQUsvpissc50jWVJZztO3iuv2BI0c+i72fUuzAYtlS4
+ pglz/54ciDo64Dvo+zwuPJ57tbQAAAA==
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yisen Zhuang <yisen.zhuang@huawei.com>, 
+ Salil Mehta <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+X-Mailer: b4 0.14.0
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Hi,
 
-Changes since v1:
- - Patch 5 fix a stale data exposure problem pointed out by Willy, drop
-   the setting of uptodate bits after zeroing out unaligned range.
- - As Dave suggested, in order to prevent increasing the complexity of
-   maintain the state_lock, don't just drop all the state_lock in the
-   buffered write path, patch 6 introduce a new helper to set uptodate
-   bit and dirty bits together under the state_lock, reduce one time of
-   locking per write, the benefits of performance optimization do not
-   change too much.
+This series adds and uses some new helpers,
+ipv6_addr_{cpu_to_be32,be32_to_cpu}, which are intended to assist in
+byte order manipulation of IPv6 addresses stored as as arrays.
 
-This series contains some minor non-critical fixes and performance
-improvements on the filesystem with block size < folio size.
+---
+Simon Horman (3):
+      ipv6: Add ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+      net: ethernet: mtk_eth_soc: Use ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+      net: hns3: Use ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
 
-The first 4 patches fix the handling of setting and clearing folio ifs
-dirty bits when mark the folio dirty and when invalidat the folio.
-Although none of these code mistakes caused a real problem now, it's
-still deserve a fix to correct the behavior.
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 79 +++++++++++-----------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 ++-
+ drivers/net/ethernet/mediatek/mtk_ppe.c            | 10 +--
+ drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c    |  9 +--
+ include/net/ipv6.h                                 | 12 ++++
+ 5 files changed, 66 insertions(+), 52 deletions(-)
 
-The second 2 patches drop the unnecessary state_lock in ifs when setting
-and clearing dirty/uptodate bits in the buffered write path, it could
-improve some (~8% on my machine) buffer write performance. I tested it
-through UnixBench on my x86_64 (Xeon Gold 6151) and arm64 (Kunpeng-920)
-virtual machine with 50GB ramdisk and xfs filesystem, the results shows
-below.
-
-UnixBench test cmd:
- ./Run -i 1 -c 1 fstime-w
-
-Before:
-x86    File Write 1024 bufsize 2000 maxblocks       524708.0 KBps
-arm64  File Write 1024 bufsize 2000 maxblocks       801965.0 KBps
-
-After:
-x86    File Write 1024 bufsize 2000 maxblocks       569218.0 KBps
-arm64  File Write 1024 bufsize 2000 maxblocks       871605.0 KBps
-
-Thanks,
-Yi.
-
-Zhang Yi (6):
-  iomap: correct the range of a partial dirty clear
-  iomap: support invalidating partial folios
-  iomap: advance the ifs allocation if we have more than one blocks per
-    folio
-  iomap: correct the dirty length in page mkwrite
-  iomap: don't mark blocks uptodate after partial zeroing
-  iomap: reduce unnecessary state_lock when setting ifs uptodate and
-    dirty bits
-
- fs/iomap/buffered-io.c | 73 ++++++++++++++++++++++++++++++++++--------
- 1 file changed, 60 insertions(+), 13 deletions(-)
-
--- 
-2.39.2
+base-commit: c4e82c025b3f2561823b4ba7c5f112a2005f442b
 
 
