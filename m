@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-282501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F9F94E4C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:22:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 581CA94E4BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:21:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C857280F68
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:22:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD312B216B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:21:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287BF1482F2;
-	Mon, 12 Aug 2024 02:21:28 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1B3136326;
+	Mon, 12 Aug 2024 02:21:24 +0000 (UTC)
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36948130AC8;
-	Mon, 12 Aug 2024 02:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515A87173C;
+	Mon, 12 Aug 2024 02:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723429287; cv=none; b=QZTf+gT+EKiJwMVx5A1hXnxTk5JwLgjVD2jsp1Hgo7I07xAkqkdmcNJvAD+ej9I1bTs2sSXFQjvrcrYU1wFvzKHJWm7WX3MeznRCMjpfoMHzERQeZT12SK+lrgy/yxBkpF5UkZ8z5FAngcfwxU6DJAmXIm6TKwCKcwbqbF9V+hI=
+	t=1723429283; cv=none; b=LgrDYxob/s0AUAIsGy4j5oqvkbDznLEIhNVGL9OjoclJ/jKo3mPl3I0UWUeNmli0Fi7mYdfQuEy0rtNEkIlJDRSny+HnOdh1nqug0jET4GkMlqm2qFg68fggzOgoLK48cXN2qyS868iH+TntDWWu6ewi5cK+JT3qgU2x9Llp2mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723429287; c=relaxed/simple;
-	bh=/JXWBnJlNYEenrxsCG9z297Bgw8dHahHm7dGXp2Z6HA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=NoVK8zRYW3AS88OY4wMbvgTNQNVQ99OlQsV5sJE4l4I/wDjRHopdRN6BDlWBjLb5mO73CdUpeZ+j/BBEAFT6l6SisgMD3FvE27CFrfBJfMqzw7QPHtYvLD3XGxdVKkAhNX+AXVLCL7v8Ye9C6l2XSrJNd1z7vN/tqp9AmcnFizg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+	s=arc-20240116; t=1723429283; c=relaxed/simple;
+	bh=ZVb80+3Oq81PRDmhbU8kSUzYiBenncm5i+GG/eZ+T2U=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=mPMdXKDdPWzYwdAZ+D8FZNLcboQ1MkHDzAs7O6NtbUbZ4vmtWxphuMEGl5ZaI51KETtryCVs4zaNPAFWcNyaBqK+9q6HyHyEjMYtz52zBJK1Abu+Aml7Fai2iC/LbKqXSlB3YdgvAdfk4Ywd77SGFbbrIoS/VHn3T2HPpRwT+t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3C03D1A0FC1;
-	Mon, 12 Aug 2024 04:21:19 +0200 (CEST)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C70852010C4;
+	Mon, 12 Aug 2024 04:21:20 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 033151A07FC;
-	Mon, 12 Aug 2024 04:21:19 +0200 (CEST)
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8D578200FF3;
+	Mon, 12 Aug 2024 04:21:20 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 0F679183AC0B;
-	Mon, 12 Aug 2024 10:21:16 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 8635F183ACAC;
+	Mon, 12 Aug 2024 10:21:18 +0800 (+08)
 From: Richard Zhu <hongxing.zhu@nxp.com>
 To: tj@kernel.org,
 	dlemoal@kernel.org,
@@ -53,9 +53,9 @@ Cc: linux-ide@vger.kernel.org,
 	imx@lists.linux.dev,
 	kernel@pengutronix.de,
 	Richard Zhu <hongxing.zhu@nxp.com>
-Subject: [PATCH v6 4/5] ata: ahci_imx: Enlarge RX water mark for i.MX8QM SATA
-Date: Mon, 12 Aug 2024 10:00:54 +0800
-Message-Id: <1723428055-27021-5-git-send-email-hongxing.zhu@nxp.com>
+Subject: [PATCH v6 5/5] ata: ahci_imx: Correct the email address
+Date: Mon, 12 Aug 2024 10:00:55 +0800
+Message-Id: <1723428055-27021-6-git-send-email-hongxing.zhu@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
 References: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
@@ -66,52 +66,26 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The RXWM(RxWaterMark) sets the minimum number of free location within
-the RX FIFO before the watermark is exceeded which in turn will cause
-the Transport Layer to instruct the Link Layer to transmit HOLDS to the
-transmitting end.
-
-Based on the default RXWM value 0x20, RX FIFO overflow might be observed
-on i.MX8QM MEK board, when some Gen3 SATA disks are used.
-
-The FIFO overflow will result in CRC error, internal error and protocol
-error, then the SATA link is not stable anymore.
-
-To fix this issue, enlarge RX water mark setting from 0x20 to 0x29.
+Correct the email address of driver author.
 
 Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
 ---
- drivers/ata/ahci_imx.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/ata/ahci_imx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/ata/ahci_imx.c b/drivers/ata/ahci_imx.c
-index 4dd98368f8562..627b36cc4b5c1 100644
+index 627b36cc4b5c1..65f98e8fdf07b 100644
 --- a/drivers/ata/ahci_imx.c
 +++ b/drivers/ata/ahci_imx.c
-@@ -45,6 +45,10 @@ enum {
- 	/* Clock Reset Register */
- 	IMX_CLOCK_RESET				= 0x7f3f,
- 	IMX_CLOCK_RESET_RESET			= 1 << 0,
-+	/* IMX8QM SATA specific control registers */
-+	IMX8QM_SATA_AHCI_PTC			= 0xc8,
-+	IMX8QM_SATA_AHCI_PTC_RXWM_MASK		= GENMASK(6, 0),
-+	IMX8QM_SATA_AHCI_PTC_RXWM		= 0x29,
- };
+@@ -1036,6 +1036,6 @@ static struct platform_driver imx_ahci_driver = {
+ module_platform_driver(imx_ahci_driver);
  
- enum ahci_imx_type {
-@@ -466,6 +470,12 @@ static int imx8_sata_enable(struct ahci_host_priv *hpriv)
- 	phy_power_off(imxpriv->cali_phy0);
- 	phy_exit(imxpriv->cali_phy0);
- 
-+	/* RxWaterMark setting */
-+	val = readl(hpriv->mmio + IMX8QM_SATA_AHCI_PTC);
-+	val &= ~IMX8QM_SATA_AHCI_PTC_RXWM_MASK;
-+	val |= IMX8QM_SATA_AHCI_PTC_RXWM;
-+	writel(val, hpriv->mmio + IMX8QM_SATA_AHCI_PTC);
-+
- 	return 0;
- 
- err_sata_phy_exit:
+ MODULE_DESCRIPTION("Freescale i.MX AHCI SATA platform driver");
+-MODULE_AUTHOR("Richard Zhu <Hong-Xing.Zhu@freescale.com>");
++MODULE_AUTHOR("Richard Zhu <hongxing.zhu@nxp.com>");
+ MODULE_LICENSE("GPL");
+ MODULE_ALIAS("platform:" DRV_NAME);
 -- 
 2.37.1
 
