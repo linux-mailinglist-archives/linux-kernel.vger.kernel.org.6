@@ -1,121 +1,100 @@
-Return-Path: <linux-kernel+bounces-282925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B121394EA9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:19:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D9B94EAA2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E9111F2266D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:19:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE2828125E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F270E16EBE4;
-	Mon, 12 Aug 2024 10:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF9116EBE0;
+	Mon, 12 Aug 2024 10:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="N/MU5IFo"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b="WGQC4v9C"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB14433C7;
-	Mon, 12 Aug 2024 10:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12BA33C7
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:21:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723457947; cv=none; b=RwZI7Fe1cnpyUPoz35Ivp0pGmn98S51gZjZt+Qv1alcV0dh3uaD3+hcmNMV7ZiXkyatECdeRWpYwdm6O78wS2ljc0gROhxc/8rMitLkWQpUMT0dlS6SST4usaZUDrU5iZuPa5cgUpTgL9d6M/8Ze+zHNdxvOic8kFTdN40cFPTA=
+	t=1723458107; cv=none; b=uUt+8rR1kT2x1gTk5snCTydKw3jlB+AlsB/aAGOjNgZdt8I/VWMrym2rodZ0nl0/HgF/HajZgEWqibNltqPk8rI4RXPqYakXmC7JprIgA9+gGVL7PCnQSFGO3vnHMc4MTrpiApqrnkS7ar45KfvKLRGjxvZfRClQCgUUbud/+eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723457947; c=relaxed/simple;
-	bh=3NoF2AqIn7ebzgigTO39jqw9ZwcZwkQemgH2i8ieHxk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=nEOll1NhLwPPueRA6MMorbnaVvEG9zuXAy5N6Uqk0JibU7sh+dCdRxd0nsZkHd/akXj5qEC29NYJB3lQf0rBeqC03ub6EzI/28+EODZ5PlPf5JzSfi8kysViAqmCplL5PfGSSjocGdK453nE3E/0m8EkJsb7Cl8hAUnKXaEcZKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=N/MU5IFo; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723457911; x=1724062711; i=markus.elfring@web.de;
-	bh=OnuFW8cTlccnziPEnkWW15zWY/n06Y26fjbsJ66FoW0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	s=arc-20240116; t=1723458107; c=relaxed/simple;
+	bh=1urb7h4FdGSXSqsQXFG2kiMZ8nreKlLBoVe7Io1ozMQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Content-Type; b=faRu1GADQfxtRE/HjxHAHP+bEuGqZJEBdGoQGeNcBH487EEknqT+3rtk2B3+0AsqXeklf96UpAspswVaSyv7Tu8p5FI4Jl+vOHWIUXtiWls+DNAXcutDV+337gTHcfiKo/W1FWlHvaQjY7fD2P4DkCKAWohTvp0SqPOphGspww8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=aros@gmx.com header.b=WGQC4v9C; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1723458098; x=1724062898; i=aros@gmx.com;
+	bh=1urb7h4FdGSXSqsQXFG2kiMZ8nreKlLBoVe7Io1ozMQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
+	 Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=N/MU5IFoaITdhg7Ykab/nxzWrF8YsUQ2fOID5NJQqUPzXvZxU9WGw50XxryzmsrB
-	 t2JVIV9xI/5I4fjMo+nF3Gf0HgppLJB1hvypmuC5zrVn3ZsEBdiBC8X0IrPf8FJjp
-	 OsOlejhgZcUvPLV5Wd80rbp6HGAP/nqAMhcMor/VzsaHL1JNfmwMAL3BP6KqMv+I+
-	 EMk5tRD7qRLwcVS6PpGCbWy++hFUlAJGVohRKuwNY7UzbBgguaGce49D2Uds6G8tH
-	 YwWNboPB29dwbFfDSme2Fr5bu7H/MbF1vg92cgoUtTXdGpkshNJQxK1dINgbXBr3n
-	 LtwJi7YezL+T1foU9Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MWi5i-1sfZhX1sF6-00UF61; Mon, 12
- Aug 2024 12:18:31 +0200
-Message-ID: <7ea59d03-701c-4555-a8e8-5d7272b9381c@web.de>
-Date: Mon, 12 Aug 2024 12:18:17 +0200
+	b=WGQC4v9CAkjBdiFJUUHH6AtdUvFjzdVw5Q2kP90TW/GGmBBGKne+x/eTIdXhF2cP
+	 kZvq+U9v3h16DwRb3rUCRSo3q1DuBRduSEEyW7zaqzMkD1lIEy4fD+3IX/56vVM8b
+	 bB4TFGOmKdVp1uPQo+WWK9uvXDQj+9OC30rLXnfBj7six+M01MVRFiG0WxreLNxkm
+	 lccsC/6iOvQzEzghU9IVJNDUL8aadVZlMBpENP6UyyyJWwhl5FURngBf/2+3Oo8PJ
+	 Pmd8T+MCFVuVprWtpgKQViH+P5qjd2letdOiUo47j7WnJ6wEKFTA2sWsCXCYDsHK9
+	 Hvn1K9eQPXlji17Fng==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.2.110.18] ([98.159.234.3]) by mail.gmx.net (mrgmx105
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MulmF-1sLvIP0h4V-00sl6Z; Mon, 12
+ Aug 2024 12:21:38 +0200
+Message-ID: <c94c72c4-ae86-4560-9ae3-bc6912fbc20b@gmx.com>
+Date: Mon, 12 Aug 2024 10:21:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jinjie Ruan <ruanjinjie@huawei.com>, linux-modules@vger.kernel.org,
- Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240812080658.2791982-1-ruanjinjie@huawei.com>
-Subject: Re: [PATCH] driver core: Fix a null-ptr-deref in module_add_driver()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240812080658.2791982-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+From: "Artem S. Tashkinov" <aros@gmx.com>
+Subject: Kernel modules compression handling
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Sasha Levin <sashal@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:ttizh7fE6o1t4X59ST5zSv3HsJssMJrujZVork77Lb9gOlJW5V6
- O8T79LbSZRIqoMRMdwp5gtUThXWu4qTcM1axqPOzk25Zbfn3l+5A3zoX3V11/yQc5m+ik8G
- k4oIUZG9rGNvUOUefAx3/wAnHxcsX0yk5LnX1S6trvWoJP4gLt4PIvRX/TbDQZLHdJfaicZ
- XqTPUBu2KGXQv33ZYvy4g==
+X-Provags-ID: V03:K1:NegYe9L3IkTR12DtYQy9fip0K4pz6NhA+Kj5J9vVsKmnuFJ9vp3
+ y3eEfx78u6+tQy5Ba00McaavOOvXMo5NTKFntrThdnhGgbxuqvJPpyN1yKGKJ6O1DwVxeef
+ CqYz1oH7KAzaCAJdkQ0aoDLJX9RKb+yJvb4OGCFDaL/kNfHBTMlDfAecPWEZ43wKm9Iyl2b
+ KSQbag0RO4rlRisw+erkg==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+EEF8MPvYN4=;M7UyJRZkaCrJgIDmzZmLCKC0MS+
- Vs3+cRam1gRRSXJS86eTJzXHu4zeuSIFVMST0iuuq4T3WizZ7cZrfAksCqQVKlnM8FfQAjS0U
- YhHZsdMzLDJ9B3kL/F3X8i8PboMcXrYoAJJrbzNyXpxuqkhLgou4Ce7VNs291EjDBUohOYFiM
- uje7omurNdIPQ8q8MoL8vBASwDatQCePXjiFze2q13ggnCmgoXANMh04QqBtZ1x0c4UC+jt5x
- knGpZpsbE0gp+WUWTytajfqSx7Qf3sqYks8t0YP1xPf+0Jv1IWLWgm+ixRxnCCA5zYoP1Tyoz
- BmgJ0uiHmWhxFa4G+HPMC90Cz573whGJ2nw0LdE+rPeHlnifRyqu7IDWDZsuPgndq1ip20y/l
- IaiOFJ3nLrxshm5Btl13D+us15V77jL2/yfgvoHMlKF42xqJqHymoDyYllx6a7lABHyX/c3Rm
- BNa8VdOyJr/z5wF0n+KLLvbQ6Mw5xM9IzXRiNHu0hgqk4BuOqLyqAy1Z3rBlmkCymW/Z8s2mp
- OfbOPteOWYUkbbBW2mHXlRVyiNfOE3+ev3+O0qS536cXUY5b35mCNfyKIkQBMWZb0Vdh5QLUV
- IGouwp15somrHHneadt/TV/6YjigEFxz24ihcNM8GiStgxejS0sgVd0oyIigD4fopR9aPsHR5
- bdTaJFNxOk++R+IETuGGHQgTO+zHAZXM5OV3LKz3lapavWKz4fkg0nsdsWLqz706rBc4edNG7
- Aik3Ub64ud4B90LNea/Yiao1L0SrX1JXOODtn6hYpCsxQL9Zveupc6JnPv88gSX8rjIwzSxmY
- bdW3oXvXHOsXBlteo9wFUTvw==
+UI-OutboundReport: notjunk:1;M01:P0:+vHVPKJw8jU=;CGaMgqo9aMSzEsbt3o7ijdqDNay
+ /8pX+3qSNTWCblZ89wO5+7V43y4iTEXzDlwa7eFrhrqMEAFcEzOXfTZMu2m155LTI6h3as6y+
+ txhY7WA3YxO5q/eBEnkaANUoVpetYuWQvoyPV+D5rvNFUftXJbIpy/SoEZCLlpA8SXKypi6PP
+ bBM8WfzfpuiKliatQDK42Uqgy3mO2YQGl4WxWWrQ6gQxek+hS0jbnFS+RIuq57r4L+4ekCdTW
+ IxarGIPr47N9LoDv51eH5eGD8rLgY6JAZwWuYP24Udxd/Lqih/oeGbkHJ5s5pJ9wEgtJA+bRj
+ TtuW8KdUBXGJgIHkeYGzlYt7xBkKOZGdRzH/2MTmBIIVk8cu0725kmw4urN2tFFxtaHT0+/V0
+ vp5dumeklGt5eYDxhqhvB/SdYmMtHlLif7Jc99jUDcH2Okjyhx81omOfEUkiuYOy6OiQIWXzw
+ YN9/3hnN6B6TkqrGkAwJfugYLAEC88/cBlrUZ3i+4DQVLbowN7GL5P15Ukwcolaqsd3E09FeZ
+ WYmyHWKOTJmFsNUaXTMBKr82PSI20GyrpxYh7MgS3OGoGPyl91GgOgMuefmxEBHl8HlHutbai
+ E9IEB6qE0cJ27t2WW/PbrdEw+13kiVzdfdCGXALbXbDsgcpbUMN0WONbhYySS8mzBFfqLIlHp
+ 3AHi2X7NiW9R6E0w58ICa09hz8kpg52h79HT4rviGWRMmjfyOLQQTu7YDK7nI/kSHvNNMlqaN
+ 3g+KeQOHpqWu7lW3RBh4w/HjFyYlTlfAlx/vWqq+PHm08iKR5LWk1te907m48ap7Mw6FMRhaL
+ 5LU6bD9DLiWi0ljM5TwZbvtA==
 
-> Inject fault while probing of-fpga-region, if kasprintf() fails in
-> module_add_driver(), the second sysfs_remove_link() in exit path will ca=
-use
-> null-ptr-deref as below because kernfs_name_hash() will call strlen() wi=
-th
-> NULL driver_name.
-=E2=80=A6
+Hello,
 
-How do you think about to use the term =E2=80=9Cnull pointer dereference=
-=E2=80=9D
-for the commit message (and summary phrase)?
+Please correct me if I'm wrong but it looks like the way modules
+installation is currently handled in the Linux kernel, first .ko files
+are copied to the destination directory and then the chosen compressor
+is executed on top of them.
+
+I wonder if this could be changed such a way, so that the installation
+script (Makefile?) applied compression on the fly without again copying
+.ko files.
+
+All the three compressors supported by the Linux kernel support piping,
+so it shouldn't be an issue. I'd love to write a patch myself but I'm
+probably too stupid for that.
 
 
-=E2=80=A6
-> +++ b/drivers/base/module.c
-> @@ -66,27 +66,31 @@ int module_add_driver(struct module *mod, const stru=
-ct device_driver *drv)
-=E2=80=A6
->  	sysfs_remove_link(mk->drivers_dir, driver_name);
-> +
-> +out_free_driver_name:
->  	kfree(driver_name);
->
-> +out_remove_kobj:
-> +	sysfs_remove_link(&drv->p->kobj, "module");
-=E2=80=A6
-
-I suggest to omit two blank lines here.
-
-Regards,
-Markus
+Best regards,
+Artem
 
