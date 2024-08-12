@@ -1,368 +1,157 @@
-Return-Path: <linux-kernel+bounces-282588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A814394E630
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:37:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7A594E635
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9541C20D8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:37:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0ACB28162C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:42:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B414D420;
-	Mon, 12 Aug 2024 05:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05CF14D6FC;
+	Mon, 12 Aug 2024 05:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPnYUlA1"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yj2qClw6"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7653C0B
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 567743C0B;
+	Mon, 12 Aug 2024 05:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723441016; cv=none; b=DUq87sbktPgGRyrjISgZNM7p7+Fl2GQYo/eH/z/CD+x8kXAQm5X0lCXBZRF3jWalch5qpKPTK5qxBBbfoHdWJNd+jMk+JRvJ/8zijKwfOYR10CNMfNEhiJKb413ovcY4f1A/aIUCnLbu2ii4ZJrAVb+dv9iX6Cs3V30NUjdXZy8=
+	t=1723441316; cv=none; b=B8x2NovQ0R+INgz8rR2pEhQh3Z+RkOsGKJjDbw5RLnyO4h+uaOD7RVsIgblTKUvxHRwcTUKMnw6zOzKErlg+aH+bvN8+gWIWk0ycrErCHC8MNccJ+FORh/yzcFon+Azlu0GYGjqux5p56SW/YnFbpFwvWaxl4/4l9chV6QPkfzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723441016; c=relaxed/simple;
-	bh=OjtUQVGraMUrucHTdAoAEOxoG0nrrZguKhnESuYTvh4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gO2JmdMYBz+e1GjuIVKMrvQxY783ZbzKY2MUQTOjP0/3ij0kd132IoMnIi2vavN+7r4jeLIp4U/cQ69mtDbzEtZ0u4ceArmiQbD3xDjKD12NbTr9sv4q6op7kZ/baUzAxei9CkHe+KwufIIhTvSspTi7GKsGzT+J1E94iTdGdkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPnYUlA1; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d1e3381cb1so1875963a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:36:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723441014; x=1724045814; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jyZ910m1lZNBWKgHfLt3Qbj6V+WoKDjZ9MkwYi8mfBQ=;
-        b=JPnYUlA1aVPEeXWxX/vk1uZEa7Ioiy9+RJUM5ECb+skibm+/O+t72xqbdc/yLEubtD
-         s6G6wnLSU3gpBwuIbVGTVRDeGOx/czEg+bUoXNUU9w+1OIKExw9dSmgATClj+OMoC3l2
-         VAa4DZj5yZjtHFG3DogEaulenUiqE13CmipWEaDDGAOVnDurkzGb90YKBbYWPchNu6cP
-         EU4/w62Elvnh1iYTHFynhohTrlXF3AvV+4cg/MqwpBDL+8Ukr+HKRGGMcbAwgC95Bsfy
-         cKhs327E7oCbESM/pXpqfrWcOLZapXawF7VEVPOszazCod4W6hSNY/ccfnx7mKl6CnRC
-         JSmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723441014; x=1724045814;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jyZ910m1lZNBWKgHfLt3Qbj6V+WoKDjZ9MkwYi8mfBQ=;
-        b=h3WOnxZKYlT2dplykaDLlRU1XQKgtKSm6Cs36e5uafOcaz0HrgvpaEVY39yZL/A4YR
-         WQgQHo7NSeCFipg1RSlriFZUPsdVhe9O2ZECW0OH2M2UxysHnNykVEKGHNRvGS50wcme
-         BQJwV+IcfFigolks3i3UI4heJ9/JPj4y7jV1I8PXsNzbE76GNg/xPFCTx27+gLCZrRUq
-         NYQP4dndyvdCeb66YST4HiJhFyTJst6dt6+EOtBX86euK+ZGnI+SZ60K9b233gjWGVML
-         2QyzuwgGVHg4GyHnlh/7ZT1eQvNZxR44A9hOX8d9mLLT9TantuGQ0IIg2DS84oCKOXT/
-         tvJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVgWZ/rNFYO8KUJQW3reBLKWlYOmroDc6IGwZco6pNV73K+EeU05mr/x4G/5/Km9b+YRa/SO8F8ZGuF+zU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl82K21HmwIUnYIi/6TSqnOwJ+VjFUNO73s6cdtRZW09/aPqZc
-	MzCZ0XMn9JlfULD846926OCwMReeLFiEBx6sWY7Jq4imuUN7pJ2S
-X-Google-Smtp-Source: AGHT+IESOwZIqsfgv5lhz7MC+AFDRnX7pQbmjVcrgC/2lAPP3zsHjQXKgsTA1XwVZcht6NuI+mabLw==
-X-Received: by 2002:a17:90a:9cb:b0:2ca:8a93:a40b with SMTP id 98e67ed59e1d1-2d1e80512b7mr9080297a91.31.1723441013825;
-        Sun, 11 Aug 2024 22:36:53 -0700 (PDT)
-Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9dc8712sm7242147a91.49.2024.08.11.22.36.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 22:36:53 -0700 (PDT)
-From: Barry Song <21cnbao@gmail.com>
-To: david@redhat.com
-Cc: akpm@linux-foundation.org,
-	baohua@kernel.org,
-	baolin.wang@linux.alibaba.com,
-	corbet@lwn.net,
-	ioworker0@gmail.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryan.roberts@arm.com
-Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
-Date: Mon, 12 Aug 2024 17:36:36 +1200
-Message-Id: <20240812053636.97700-1-21cnbao@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <8258bf4c-ecec-4e06-ada0-da9fb99b1219@redhat.com>
-References: <8258bf4c-ecec-4e06-ada0-da9fb99b1219@redhat.com>
+	s=arc-20240116; t=1723441316; c=relaxed/simple;
+	bh=Iacvar3iFBxePydCl7Gqh1UgF1fVeJOOc1Bb7GnvNFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gXKeNnCvHs/qhsOIp1tUQvOlDTUwhD+KcXp5azv6REEbezk0BT2xy5atRHrj/T+OUXz+Oc8X61C6sDYh5zL6P/2r8+8aIA4jXAzrnRMfbmEaX0pWoX/XIoKTZUtutHPoMpl5hieWrmHI2qTvCj6ySxq3jlXsupD/kdgdEW/dMco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yj2qClw6; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47C5fTrh033207;
+	Mon, 12 Aug 2024 00:41:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723441289;
+	bh=fX2sT+fujKXhtcrZbhOSpfai/+GnliWHwU6DT8LKr/E=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=yj2qClw6EiDOrOvgyUDTHQJ1KbI7qcMay7ksiUN9l6Cqks9UV4jmxr1PNonGPvbCg
+	 VFNAxXjaOMJOqpSRg58uJ/csVDl9A7fDE/G4ykyZpPr2fR5UwlxB8D6ghNsW9E+hel
+	 hUy5taLf/zS+UxFZbbDQYV8Z3IwOTkXQUdCPUsO0=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47C5fT9F006353
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 12 Aug 2024 00:41:29 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 12
+ Aug 2024 00:41:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 12 Aug 2024 00:41:28 -0500
+Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47C5fLb8086750;
+	Mon, 12 Aug 2024 00:41:22 -0500
+Message-ID: <3397a020-195c-4ca3-a524-520171db794b@ti.com>
+Date: Mon, 12 Aug 2024 11:11:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 5/6] net: ti: icss-iep: Move icss_iep structure
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Javier Carrasco
+	<javier.carrasco.cruz@gmail.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>,
+        Jacob
+ Keller <jacob.e.keller@intel.com>,
+        Simon Horman <horms@kernel.org>,
+        Richard
+ Cochran <richardcochran@gmail.com>,
+        Paolo Abeni <pabeni@redhat.com>, Jakub
+ Kicinski <kuba@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S.
+ Miller" <davem@davemloft.net>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros <rogerq@kernel.org>
+References: <20240808110800.1281716-1-danishanwar@ti.com>
+ <20240808110800.1281716-6-danishanwar@ti.com>
+ <6eb3c922-a8c6-4df4-a9ee-ba879e323385@stanley.mountain>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <6eb3c922-a8c6-4df4-a9ee-ba879e323385@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-On Sat, Aug 10, 2024 at 1:15 AM David Hildenbrand <david@redhat.com> wrote:
->
-> >>>>> -You can change the sysfs boot time defaults of Transparent Hugepage
-> >>>>> -Support by passing the parameter ``transparent_hugepage=always`` or
-> >>>>> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
-> >>>>> -to the kernel command line.
-> >>>>> +You can change the sysfs boot time default for the top-level "enabled"
-> >>>>> +control by passing the parameter ``transparent_hugepage=always`` or
-> >>>>> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
-> >>>>> +kernel command line.
-> >>>>> +
-> >>>>> +Alternatively, each supported anonymous THP size can be controlled by
-> >>>>> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
-> >>>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> >>>>> +``inherit``.
-> >>>>> +
-> >>>>> +For example, the following will set 64K THP to ``always``::
-> >>>>> +
-> >>>>> +     thp_anon=64K:always
-> >>>>> +
-> >>>>> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
-> >>>>> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
-> >>>>> +not explicitly configured on the command line are implicitly set to
-> >>>>> +``never``.
-> >>>>
-> >>>> I suggest documenting that "thp_anon=" will not effect the value of
-> >>>> "transparent_hugepage=", or any configured default.
-> >
-> > Did you see the previous conversation with Barry about whether or not to honour
-> > configured defaults when any thp_anon= is provided [1]? Sounds like you also
-> > think we should honour the PMD "inherit" default if not explicitly provided on
-> > the command line? (see link for justification for the approach I'm currently
-> > taking).
->
-> I primarily think that we should document it :)
->
-> What if someone passes "transparent_hugepage=always" and "thp_anon=..."?
-> I would assume that transparent_hugepage would only affect the global
-> toggle then?
->
-> >
-> > [1]
-> > https://lore.kernel.org/linux-mm/CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44gg-Dt7Ewt3ExqTw@mail.gmail.com/
-> >
-> >>>>
-> >>>> Wondering if a syntax like
-> >>>>
-> >>>> thp_anon=16K,32K,64K:always;1048K,2048K:madvise
-> >
-> > Are there examples of that syntax already or have you just made it up? I found
-> > examples with the colon (:) but nothing this fancy. I guess that's not a reason
-> > not to do it though (other than the risk of screwing up the parser in a subtle way).
->
-> I made it up -- mostly ;) I think we are quite flexible on what we can
-> do. As always, maybe we can keep it bit consistent with existing stuff.
->
-> For hugetlb_cma we have things like
->         "<node>:nn[KMGTPE|[,<node>:nn[KMGTPE]]
->
-> "memmap=" options are more ... advanced, including memory ranges. There
-> are a bunch more documented in kernel-parameters.txt that have more
-> elaborate formats.
->
-> Ranges would probably be the most valuable addition. So maybe we should
-> start with:
->
->         thp_anon=16K-64K:always,1048K-2048K:madvise
->
-> So to enable all THPs it would simply be
->
->         thp_anon=16K-2M:always
->
-> Interesting question what would happen if someone passes:
->
->         thp_anon=8K-2M:always
->
-> Likely we simply would apply it to any size in the range, even if
-> start/end is not a THP size.
->
-> But we would want to complain to the user if someone only specifies a
-> single one (or a range does not even select a single one) that does not
-> exist:
->
->         thp_anon=8K:always
+Hi Dan,
 
-How about rejecting settings with any illegal size or policy? 
+On 10/08/24 1:40 am, Dan Carpenter wrote:
+> On Thu, Aug 08, 2024 at 04:37:59PM +0530, MD Danish Anwar wrote:
+>> -	struct ptp_clock *ptp_clock;
+>> -	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+>> -	u32 def_inc;
+>> -	s16 slow_cmp_inc;
+> 
+> [ cut ]
+> 
+>> +	struct ptp_clock *ptp_clock;
+>> +	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+>> +	spinlock_t irq_lock; /* CMP IRQ vs icss_iep_ptp_enable access */
+>         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 
+> The patch adds this new struct member.  When you're moving code around, please
+> just move the code.  Don't fix checkpatch warnings or do any other cleanups.
+> 
 
-I found there are too many corner cases to say "yes" or "no". It seems
-the code could be much cleaner if we simply reject illegal settings.
-On the other hand, we should rely on smart users to provide correct
-settings, shouldn’t we? While working one the code, I felt that
-extracting partial correct settings from incorrect ones and supporting
-them might be a bit of over-design.
+My bad. I didn't notice this new struct member was introduced. I will
+take care of it.
 
-I have tested the below code by
+Also apart from doing the code movement, this patch also does the
+following change. Instead of hardcoding the value 4, the patch uses
+emac->iep->def_inc. Since the iep->def_inc is now accessible from
+drivers/net/ethernet/ti/icssg/icssg_prueth.c
 
-"thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never"
+@@ -384,7 +384,8 @@ static void prueth_iep_settime(void *clockops_data,
+u64 ns)
+ 	sc_desc.cyclecounter0_set = cyclecount & GENMASK(31, 0);
+ 	sc_desc.cyclecounter1_set = (cyclecount & GENMASK(63, 32)) >> 32;
+ 	sc_desc.iepcount_set = ns % cycletime;
+-	sc_desc.CMP0_current = cycletime - 4; //Count from 0 to (cycle time)-4
++	/* Count from 0 to (cycle time) - emac->iep->def_inc */
++	sc_desc.CMP0_current = cycletime - emac->iep->def_inc;
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1a12c011e2df..6a1f54cff7f9 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
- unsigned long huge_anon_orders_always __read_mostly;
- unsigned long huge_anon_orders_madvise __read_mostly;
- unsigned long huge_anon_orders_inherit __read_mostly;
-+static bool anon_orders_configured;
- 
- unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
- 					 unsigned long vm_flags,
-@@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
- 	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
- 	 * constant so we have to do this here.
- 	 */
--	huge_anon_orders_inherit = BIT(PMD_ORDER);
-+	if (!anon_orders_configured) {
-+		huge_anon_orders_inherit = BIT(PMD_ORDER);
-+		anon_orders_configured = true;
-+	}
- 
- 	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
- 	if (unlikely(!*hugepage_kobj)) {
-@@ -922,6 +926,103 @@ static int __init setup_transparent_hugepage(char *str)
- }
- __setup("transparent_hugepage=", setup_transparent_hugepage);
- 
-+static inline int get_order_from_str(const char *size_str)
-+{
-+	unsigned long size;
-+	char *endptr;
-+	int order;
-+
-+	size = memparse(size_str, &endptr);
-+	order = fls(size >> PAGE_SHIFT) - 1;
-+	if (order & ~THP_ORDERS_ALL_ANON) {
-+		pr_err("invalid size in thp_anon= %ld\n", size);
-+		return -EINVAL;
-+	}
-+
-+	return order;
-+}
-+
-+static inline void set_bits(unsigned long *var, int start, int end)
-+{
-+	int i;
-+
-+	for (i = start; i <= end; i++)
-+		set_bit(i, var);
-+}
-+
-+static inline void clear_bits(unsigned long *var, int start, int end)
-+{
-+	int i;
-+
-+	for (i = start; i <= end; i++)
-+		clear_bit(i, var);
-+}
-+
-+static char str_dup[PAGE_SIZE] __meminitdata;
-+static int __init setup_thp_anon(char *str)
-+{
-+	char *token, *range, *policy, *subtoken;
-+	char *start_size, *end_size;
-+	int start, end;
-+	char *p;
-+
-+	if (!str || strlen(str) + 1 > PAGE_SIZE)
-+		goto err;
-+	strcpy(str_dup, str);
-+
-+	p = str_dup;
-+	while ((token = strsep(&p, ";")) != NULL) {
-+		range = strsep(&token, ":");
-+		policy = token;
-+
-+		if (!policy)
-+			goto err;
-+
-+		while ((subtoken = strsep(&range, ",")) != NULL) {
-+			if (strchr(subtoken, '-')) {
-+				start_size = strsep(&subtoken, "-");
-+				end_size = subtoken;
-+
-+				start = get_order_from_str(start_size);
-+				end = get_order_from_str(end_size);
-+			} else {
-+				start = end = get_order_from_str(subtoken);
-+			}
-+
-+			if (start < 0 || end < 0 || start > end)
-+				goto err;
-+
-+			if (!strcmp(policy, "always")) {
-+				set_bits(&huge_anon_orders_always, start, end);
-+				clear_bits(&huge_anon_orders_inherit, start, end);
-+				clear_bits(&huge_anon_orders_madvise, start, end);
-+			} else if (!strcmp(policy, "madvise")) {
-+				set_bits(&huge_anon_orders_madvise, start, end);
-+				clear_bits(&huge_anon_orders_inherit, start, end);
-+				clear_bits(&huge_anon_orders_always, start, end);
-+			} else if (!strcmp(policy, "inherit")) {
-+				set_bits(&huge_anon_orders_inherit, start, end);
-+				clear_bits(&huge_anon_orders_madvise, start, end);
-+				clear_bits(&huge_anon_orders_always, start, end);
-+			} else if (!strcmp(policy, "never")) {
-+				clear_bits(&huge_anon_orders_inherit, start, end);
-+				clear_bits(&huge_anon_orders_madvise, start, end);
-+				clear_bits(&huge_anon_orders_always, start, end);
-+			} else {
-+				goto err;
-+			}
-+		}
-+	}
-+
-+	anon_orders_configured = true;
-+	return 1;
-+
-+err:
-+	pr_warn("thp_anon=%s: cannot parse(invalid size or policy), ignored\n", str);
-+	return 0;
-+}
-+__setup("thp_anon=", setup_thp_anon);
-+
- pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
- {
- 	if (likely(vma->vm_flags & VM_WRITE))
+ 	memcpy_toio(sc_descp, &sc_desc, sizeof(sc_desc));
+
+
+Should I keep the above change as it is or should I split it into a
+separate patch and make this patch strictly for code movement. I kept
+the above change as part of this patch because it is related with the
+code movement. Moving the iep structure from icss_iep.c to icss_iep.h
+makes it accessible to icssg_prueth.c so I thought keeping them together
+will be a better idea.
+
+Please let me know if this is okay.
+
+>> +	u32 def_inc;
+>> +	s16 slow_cmp_inc;
+>> +	u32 slow_cmp_count;
+> 
+> regards,
+> dan carpenter
+
 -- 
-2.34.1
-
-Everything seems to be correct:
-
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled 
-[always] inherit madvise never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/enabled 
-[always] inherit madvise never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled 
-[always] inherit madvise never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-128kB/enabled 
-always [inherit] madvise never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-256kB/enabled 
-always inherit [madvise] never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-512kB/enabled 
-always [inherit] madvise never
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-1024kB/enabled 
-always inherit madvise [never]
-/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled 
-always inherit madvise [never]
-
->
-> >
-> >>>>
-> >>>> (one could also support ranges, like "16K-64K")
-> >>>>
-> >>>> Would be even better. Then, maybe only allow a single instance.
-> >>>>
-> >>>> Maybe consider it if it's not too crazy to parse ;)
-> > I'll take a look. I'm going to be out for 3 weeks from end of Monday though, so
->
-> Oh, lucky you! Enjoy!
->
-> > probably won't get around to that until I'm back. I know Barry is keen to get
-> > this merged, so Barry, if you'd like to take it over that's fine by me (I'm sure
-> > you have enough on your plate though).
->
->
-> --
-> Cheers,
->
-> David / dhildenb
->
-
-Thanks
-Barry
-
+Thanks and Regards,
+Danish
 
