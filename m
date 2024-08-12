@@ -1,132 +1,180 @@
-Return-Path: <linux-kernel+bounces-283732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E8994F859
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:41:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F1494F83F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:36:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843AB284C24
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:41:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C9151C213AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A49A194A53;
-	Mon, 12 Aug 2024 20:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AC319413E;
+	Mon, 12 Aug 2024 20:36:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqIiw/bD"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWvq1RaF"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB57D194143
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FF7214B978
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495271; cv=none; b=Wb+ii/ub9CXsv3xLi3k4dG9U6FCoLWZ4Vb3OS+UIa3545/B8n+gJV2YO+d/c245hY7R8YreYwtZXL3ROSDci7lNhtOXmLMGIzPkBMaNGh7zQAmTU9nq/SEi6H4zyM6IpWrsFUeSeW7kWtygTJxW7IK8o3ZpLkFQ7WCWt0aAJKGE=
+	t=1723494980; cv=none; b=aM/AyHJp9FwV+SjXL4LFyAs2yICKaURdMX6/GWA8f+OKEp5Wl3g4gHd8LLVXdFKGxlmbu4zNEJeJojLwQui33Cd4IEBdvFFBJ730MDEBfI+DCwbjmqujfzK+/8oifFe2huXv9OVIPqycpiO2rkfM6FtJKq2mbq5yhy8oHviD21Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495271; c=relaxed/simple;
-	bh=e4RuxkPU98BkS1X5dHtOt8IxAI09GkTtwErRPfsZxEo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tvfqTpaHM88ZGprfAe7phFB5DjA0Fou3t9lz7za6Q40CFmWNNBI7Smq6g4W5r08s7le89jvinRcHvKlKHO6SnTSch95KgjNGX7Giv9TVC5iSIrsQ5tIKaAqaY4/LNLhd4N6Nl7V493WND+ed5M9+AzklcruPd52bZ2PKG4iBPrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqIiw/bD; arc=none smtp.client-ip=209.85.208.180
+	s=arc-20240116; t=1723494980; c=relaxed/simple;
+	bh=9R+kTf1t7duI2y5VeZMGbgeOcCWdzXiWgtlVjy4GRpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QsB7TBde0ysF1qMj384s4Ml1q96dy4srl7N6bt+8qXuAzAIgTTeOMFcTxCq1AOXIuQemzpqIKxm4VYaOUTjGavJYqinYkhS6p2zxYRoaeWAr2CtLKEoivyKfcmiiryJYnnOjohlF32QiKZCequzfX3HK7OXPMzu10yW0gXAex78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWvq1RaF; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f1870c355cso45558521fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:41:09 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso65504331fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:36:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723495268; x=1724100068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=s9BCvy8coHdl2CucoLZ3iDhHSVmt1fz4/dGA+lhm9/c=;
-        b=gqIiw/bDJQ3Q1iGB0JV7EPqSshfy10xHg6ngGZvAyqSmzvixlC9n1qQA3n9tdwFrwf
-         +qFB/ZN0jt9Zcd6NdSCz2hosBnDEY9xV8CmMzc2Ju6fVZVfRmnw0Gb9/nGtYRNOm+q7b
-         K9T7Qt0rLKhaIrFEM1OSvCP9mYGwPKLylsOqAIoKHN87IoroiMK8yVnBDlKaTGVmcOn5
-         XOsaxOl92TUbk8kH960zt9OEJzUcJHDW88qFaZT/Gg3QsdtzbFbvxf2iwtYyMymjHone
-         cggzzAt5SwQAGVj0WT6hBMCroYaEZNppmpqjUUoiBDzfc94XWFgQPVCkDhIplGYZay5c
-         G9Jg==
+        d=gmail.com; s=20230601; t=1723494977; x=1724099777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Krl4tzyVcLOgEOZk0xyBfeZl1rzZ7k3IomOAOBcy3A=;
+        b=OWvq1RaFfrNPcZA2f+WbwYP8HveX/BRM0bpowP7E21YMOdHcye3M09s5JOGq9B9x8W
+         jnsn55YTtNDb9hLajBJdPSZB94dCsJZC9Ko45w+yMOM+uNrKSiuRKioTeQw9f7XZCz2P
+         QN+Wq4umvpGxjVpEkQqFL7vfgOkP8tJYv48TxNb7W3Jb9zzNybVgZI3HmAFlow147Vhb
+         qeqv1XHMrGFV/QY34XdQX1O8YQKGyY/GoarED92wkDcB1vcuPWW6ZY2Hdy7soEXb8D48
+         5yNap9NXM8HH5x178kAiPd3QYtq2Ksxkgx8dBW76njNMAiknc3Sfv8i9/gtInCMu1g/h
+         mPqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723495268; x=1724100068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s9BCvy8coHdl2CucoLZ3iDhHSVmt1fz4/dGA+lhm9/c=;
-        b=XYTt94W9eX+ANXQnhPwLFlCNc17e94ZCwxw6jmi4HM1iQzbEzvQeT5FlPfDyt8L/Hh
-         0kHQ4j52bcUtGYQYtBcu3I+14/GSFs8gn5zN3gwqhPcDEqRu4m3HYASbTwttlqtcJAlk
-         nzMNfnfQKu/vonMK+JzzVam+n+JiKNllNHHoXF/0+Y01pbQO36zFZSE4HQIIjrU/quwp
-         2zOL3gtzxx1aGfSiRXz4EUOAKg0VjH76JMEH+GtvVReWzhxaCtm0NWbA+X+AGZlgqrma
-         qI/3qZAMyxwQunMCGW8HIyk+KsCkZyV/C2kXPzUHPCNS9iKcAn+3L+MsevO8q+8RMva9
-         /O/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVfLlzxaVZ+3XyyTOHSB1xTKdEmox205zlST+H0z6/aI6+LUqzP3wqT+sxL6QAoZWJCAM8aYvAIuf5qykM0Q5Mr/TQo7riE4cMe1YDV
-X-Gm-Message-State: AOJu0Ywo94bZIdrLwmd1qqdVkN5xDSlKKlJuzhfdlmKp3Q9gabMy9oa6
-	/VScLxc7bJTSSpa7vmJLpA5vAwjMYW36e0G+O3XbvN+Us4GfzUkS
-X-Google-Smtp-Source: AGHT+IFMbNCdiOKmGRBle4jaHfW9+scmP4Pt32W41n7UrzXfvEIl6Z2fg4uSFyP3sNrOPK/hbNzrhQ==
-X-Received: by 2002:a05:651c:199e:b0:2ef:2016:2637 with SMTP id 38308e7fff4ca-2f2b70c9e22mr12025721fa.0.1723495267491;
-        Mon, 12 Aug 2024 13:41:07 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.242.139])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c750379asm113821565e9.10.2024.08.12.13.41.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 13:41:07 -0700 (PDT)
-From: Max Ramanouski <max8rr8@gmail.com>
-To: x86@kernel.org,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	linux-kernel@vger.kernel.org,
-	jniethe@nvidia.com,
-	jhubbard@nvidia.com,
-	linux-mm@kvack.org,
-	tglx@linutronix.de
-Cc: Max Ramanouski <max8rr8@gmail.com>
-Subject: [PATCH v2] x86/ioremap: Use is_ioremap_addr() in iounmap()
-Date: Mon, 12 Aug 2024 23:35:38 +0300
-Message-ID: <20240812203538.82548-1-max8rr8@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1723494977; x=1724099777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Krl4tzyVcLOgEOZk0xyBfeZl1rzZ7k3IomOAOBcy3A=;
+        b=gbPMW6CDRFQ93eb3IOh684wp+bGtTN6Cgl9OqZp/MlOlBjuegFSuP0oWRgR2/nOYD9
+         wt7y0ks+duRJjEkuhMUqoMwNVU+/UpzKivQpDTIm4UAe9OUKHklV9hkLiZyqPoI79NWn
+         6zZb6J4QUgSujvbbux9GxIrp4LkUQJBD48dHSDsyLxUKgcnFu99E6429LmlltBvq7BXJ
+         5eqOcA/P5f/ia26HvKdOu/tLWqbScnOB0h8KQUajgteHFnbhb7U1w4DXFnSsNW8EOOmB
+         zbvhTkMx9jz6LdRxQxPnZfdIi0D97vArp2I96Kr0u3fsBDiaGYhHGm44L2PLxaXu+Tw3
+         AHCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWOiaBVfSp2HR9h9mGrvLz85RcV3MOW0NzxAyc9W+6Vy9PRkR7RnktDaD+xtZaVbVs4FORArtngjRg1KPc97rGSpNzaNlJ7sRpMKBKj
+X-Gm-Message-State: AOJu0YwdqXMX7HdjvUGk5eX0Ee/8S/2aYAMabb/fepfF4tKDWvkbQgEo
+	i02WRJhHcp/9MYqwYftNQei7FklSovPvqCRqB3J2OgWxrhwiH4nqJ4o1tppYb7s59tkG+Tsg0UT
+	6gcbfXXNySTgg2AeUzwvr4sVwfqc=
+X-Google-Smtp-Source: AGHT+IHAnN6iPut17bEYXfYnfLGsXK6sfXzfubPXfbhUS8blTjz17bOTn91JlkDIm7hIKzp3PRjRYFu2wWeBlv0+4lY=
+X-Received: by 2002:a2e:d12:0:b0:2ef:2344:deec with SMTP id
+ 38308e7fff4ca-2f2b72779a8mr8663761fa.45.1723494976878; Mon, 12 Aug 2024
+ 13:36:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240812115945.484051-1-ubizjak@gmail.com> <20240812115945.484051-3-ubizjak@gmail.com>
+ <2EF46123-30B0-4A7E-9414-EE25CBCF255E@gmail.com>
+In-Reply-To: <2EF46123-30B0-4A7E-9414-EE25CBCF255E@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Mon, 12 Aug 2024 22:36:04 +0200
+Message-ID: <CAFULd4YOf0Mz-JbR6LEWxM2M=4GTxqC9m-q_QAZJw8Ws16yrTA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] percpu: Assorted fixes found by strict percpu
+ address space checks
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Dennis Zhou <dennis@kernel.org>, 
+	Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, Andy Lutomirski <luto@kernel.org>, 
+	Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>, 
+	Denys Vlasenko <dvlasenk@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On systems that use HMM (most notably amdgpu driver) high_memory
-can jump over VMALLOC_START due to pages at the end of physical
-space being added with add_pages(), while gap for new pages left
-by KASLR is as small as 10TB. This results in early exit from
-iounmap() leading to leaking, and additional problems with rebinding
-devices to vfio_pci from other drivers with error of conflicting
-memtypes, as memtypes aren't freed in iounmap().
+On Mon, Aug 12, 2024 at 9:09=E2=80=AFPM Nadav Amit <nadav.amit@gmail.com> w=
+rote:
+>
+>
+> > On 12 Aug 2024, at 14:57, Uros Bizjak <ubizjak@gmail.com> wrote:
+> > Assorted fixes to prevent defconfig build failures when
+> > strict percpu address space checks will be enabled.
+> >
+> > These show effeciveness of strict percpu address space checks.
+>
+> [snip]
+>
+> > --- a/drivers/base/devres.c
+> > +++ b/drivers/base/devres.c
+> > @@ -1231,6 +1231,6 @@ void devm_free_percpu(struct device *dev, void __=
+percpu *pdata)
+> >        * devm_free_pages() does.
+> >        */
+> >       WARN_ON(devres_release(dev, devm_percpu_release, devm_percpu_matc=
+h,
+> > -                            (__force void *)pdata));
+> > +                            (__force void *)(uintptr_t)pdata));
+> >
+>
+> Since this pattern of casting appears multiple times (sometimes slightly
+> different), I think it would be best to give a name for this operation
+> and put it behind a macro.
 
-Replace comparison against high_memory with is_ioremap_addr() to
-fix the issue and make x86 iounmap() implementation more similar
-to generic one, it also uses is_ioremap_addr() to validate pointer.
+The macro would not be flexible enough to also cover const qualified
+(const void __percpu *)(const uintptr_t) casts, required in e.g. [1].
 
-Fixes: 41e94a851304 ("add devm_memremap_pages")
-Signed-off-by: Max Ramanouski <max8rr8@gmail.com>
----
- arch/x86/mm/ioremap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+[1] https://lore.kernel.org/lkml/20240811161414.56744-1-ubizjak@gmail.com/
 
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index aa7d27932..464344da4 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -11,6 +11,7 @@
- #include <linux/init.h>
- #include <linux/io.h>
- #include <linux/ioport.h>
-+#include <linux/ioremap.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include <linux/mmiotrace.h>
-@@ -457,7 +458,7 @@ void iounmap(volatile void __iomem *addr)
- {
- 	struct vm_struct *p, *o;
- 
--	if ((void __force *)addr <= high_memory)
-+	if (!is_ioremap_addr(addr))
- 		return;
- 
- 	/*
--- 
-2.45.2
+Also, some casts are decorated with __force. According to sparse
+documentation [2], there is no need to use __force when the
+destination type is uintptr_t or unsigned long, but sparse seems to
+not be consistent with this exception, leading to spurious warnings
+and  fixes like the one in [3].
 
+[2] https://sparse.docs.kernel.org/en/latest/annotations.html#address-space=
+-name
+[3] https://lore.kernel.org/lkml/20240402175058.52649-1-ubizjak@gmail.com/
+
+OTOH, in a full allyesconfig this pattern of casting appears maybe a
+dozen of times (which is a surprisingly small number).
+
+> This would allow both to audit the cases developers move data between
+> address-spaces, and also make them think whether what they do makes
+> sense.
+
+Looking through the fixes required for allyesconfig build, the
+remaining couple of casts are mostly required for ERR_PTR return with
+__percpu return type function, like:
+
+--cut here--
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48d..d82fe78f0658 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -849,7 +849,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *att=
+r,
+
+     cpu_events =3D alloc_percpu(typeof(*cpu_events));
+     if (!cpu_events)
+-        return (void __percpu __force *)ERR_PTR(-ENOMEM);
++        return (void __percpu __force *)(uintptr_t)ERR_PTR(-ENOMEM);
+
+     cpus_read_lock();
+     for_each_online_cpu(cpu) {
+@@ -868,7 +868,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *att=
+r,
+         return cpu_events;
+
+     unregister_wide_hw_breakpoint(cpu_events);
+-    return (void __percpu __force *)ERR_PTR(err);
++    return (void __percpu __force *)(uintptr_t)ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(register_wide_hw_breakpoint);
+
+--cut here--
+
+While the casts are somehow ugly, I think that the number of different
+types (pcpu -> generic and generic -> pcpu casts with possible const
+qualifier and still needed __force sparse attribute) and low number of
+occurrences currently do not warrant a separate macro.
+
+Uros.
 
