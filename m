@@ -1,52 +1,70 @@
-Return-Path: <linux-kernel+bounces-283386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9276594F1DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:34:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804F494F1DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B5D01F23694
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:34:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005861F2235A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1C218453E;
-	Mon, 12 Aug 2024 15:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DE618453E;
+	Mon, 12 Aug 2024 15:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="Zn2KlEgi"
-Received: from nbd.name (nbd.name [46.4.11.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WqQHY6eZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971AD13C914;
-	Mon, 12 Aug 2024 15:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 977AF13C914;
+	Mon, 12 Aug 2024 15:37:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723476883; cv=none; b=gr9AMX9yTK59EyCw4OuL+H++WhjuM5QyHwEAE5Pr5qvwMOrteinJS/JnZJ5L3Om0/3i+ozfIiZt12Vgaj89/ypYQkeomSnAoZ6c4u2oB5SFJ60xLqS8OMDwq6VZSmZBLDhgtt8ZkkQhkriGAbzdeqfZHFdJcQOP/zbDsLVjPTnE=
+	t=1723477068; cv=none; b=aSJOvqG/d109W/7vhpK7y0ieUIlXah/1s/AdYDAjG9fxn7u8OAVdcxwYXiO7NuD8jRQdfgtuaS7hVmbMLqPxikzHskilpmI4dj3cpy+gTsvtzJ5l6vWZdWqD52W5pKCm/DlbPqg4tDOy2kntC15UXoDDg4WFSWscDX282OjHFLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723476883; c=relaxed/simple;
-	bh=GdRefraexQNdWKxyYPz4UXpyl9StrQkwP48gyf3nT2o=;
+	s=arc-20240116; t=1723477068; c=relaxed/simple;
+	bh=8Hjm1/IFZkDKbzzM86qkJ0VVnODcexaFGKfuAN7Ht3E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IEAUCTo0wqYl7Cn0xoCp5NBTmmggNqg1pwRDzWZu/cSNMjUQprvAe70VnZ1k0GaQdER6c9My/1q14UkDv5aOqmW/tr54l04+9L3Ow6re0583WOXimVWJpOyACMPhqQsjWFeqMqVJqRoEbEMFxVgyHVPrzTiohIy17A+ZsOrQyvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=Zn2KlEgi; arc=none smtp.client-ip=46.4.11.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gGHzFMjmZk1AAjU1QZUzq53YABEAbGGJ5Sn+eE0aAGU=; b=Zn2KlEgiXXkitrGKJ8TSUG+lvt
-	u/upJHso76UhUguoaO1TT3/UXYbAjTx/kEdjpvm9J4rMqMNsdBWUMHrtTRwpgjW5Xv0GVCMepdpVl
-	8KArTJaFysFVNiC+mrJZ/IfU6FFHDyBTjqsX2TkLw66rkhWH7zQVTo9XHRI+LkUvpGjw=;
-Received: from p54ae95e7.dip0.t-ipconnect.de ([84.174.149.231] helo=nf.local)
-	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <nbd@nbd.name>)
-	id 1sdX3l-00GTwy-1h;
-	Mon, 12 Aug 2024 17:34:13 +0200
-Message-ID: <b3f2ac81-93e5-4143-a3fe-a5ff1159aaec@nbd.name>
-Date: Mon, 12 Aug 2024 17:34:12 +0200
+	 In-Reply-To:Content-Type; b=NHkDPGBk8+gqPHMR9khacOzu7qDQ6Yp688o/JlZiz6imc1hTYjSfHixf3HhLQmS2NT59SqeXEnFOls9SzoDaUqXaeAVzh6yZvS0lKbrIrva//8DIu2rGs2h7BeNpbgbzIoKF6bQ1NUH01UJdNXeYkjyAsczT95xWxMAg4LlrSis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WqQHY6eZ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723477067; x=1755013067;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=8Hjm1/IFZkDKbzzM86qkJ0VVnODcexaFGKfuAN7Ht3E=;
+  b=WqQHY6eZsjoPoVaFey5fuMMYMQTJXi4fvitUkzTM3k9HO49rLWXSRme4
+   TiZt/0RmlsY2Cipo/z3yMec5QU4Kbq7AU7+2V7NBPJ4AYVpM6hjr3avkv
+   wv4UPp5+1b2srQq9bBkjaPtohN2zb3VgGUrmYMW1eOIl2FNAcQk5R8fE6
+   Ieth95J8HygYqdqWTJImt3+zr64Rrpt0NT7axrzX0ruUJ7XBphLQHnIAq
+   hrNrlhnkwJnFBZXHel4m/s0QXgHVllwpqQPZ+A6FVGABfVYHA5Q9kBQ6i
+   dQAnUmTV/mfgFtyfRiAu9UaioItfKcezzSuTuirn9YoAF1XiIW5SUSBso
+   Q==;
+X-CSE-ConnectionGUID: Gjp1iSNsRgK2Pv7yh+UHbA==
+X-CSE-MsgGUID: 5fMy30FYTzqyJXrdkkAunA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21761507"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="21761507"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:37:46 -0700
+X-CSE-ConnectionGUID: QbZqhkEgQNmTS7pgaanK5A==
+X-CSE-MsgGUID: XWOj6JaXSS2UIf6rNUXJxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="81559746"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:37:45 -0700
+Received: from [10.212.112.28] (kliang2-mobl1.ccr.corp.intel.com [10.212.112.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id C9D1C20CFED6;
+	Mon, 12 Aug 2024 08:37:43 -0700 (PDT)
+Message-ID: <83cfa057-1791-4aab-ace8-fb0ad5a607b7@linux.intel.com>
+Date: Mon, 12 Aug 2024 11:37:42 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,61 +72,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: fix memory leak in LRO
- rings release
-To: Elad Yifee <eladwf@gmail.com>
-Cc: daniel@makrotopia.org, Sean Wang <sean.wang@mediatek.com>,
- Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Chen Lin <chen45464546@163.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240812152126.14598-1-eladwf@gmail.com>
-From: Felix Fietkau <nbd@nbd.name>
+Subject: Re: [Patch v3 3/5] perf x86/topdown: Don't move topdown metric events
+ in group
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
+ <20240712170339.185824-4-dapeng1.mi@linux.intel.com>
 Content-Language: en-US
-Autocrypt: addr=nbd@nbd.name; keydata=
- xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
- cL98efvrjdstUfTCP2pfetyN
-In-Reply-To: <20240812152126.14598-1-eladwf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20240712170339.185824-4-dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12.08.24 17:21, Elad Yifee wrote:
-> For LRO we allocate more than one page, yet 'skb_free_frag' is used
-> to free the buffer, which only frees a single page.
-> Fix it by using 'free_pages' instead.
+
+
+On 2024-07-12 1:03 p.m., Dapeng Mi wrote:
+> when running below perf command, we say error is reported.
 > 
-> Fixes: 2f2c0d2919a1 ("net: ethernet: mtk_eth_soc: fix misuse of mem alloc interface netdev[napi]_alloc_frag")
-> Signed-off-by: Elad Yifee <eladwf@gmail.com>
+> perf record -e "{slots,instructions,topdown-retiring}:S" -vv -C0 sleep 1
+> 
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x400 (slots)
+>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   disabled                         1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x8000 (topdown-retiring)
+>   { sample_period, sample_freq }   4000
+>   sample_type                      IP|TID|TIME|READ|CPU|PERIOD|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   freq                             1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd 5  flags 0x8
+> sys_perf_event_open failed, error -22
+> 
+> Error:
+> The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (topdown-retiring).
+> 
+> The reason of error is that the events are regrouped and
+> topdown-retiring event is moved to closely after the slots event and
+> topdown-retiring event needs to do the sampling, but Intel PMU driver
+> doesn't support to sample topdown metrics events.
+> 
+> For topdown metrics events, it just requires to be in a group which has
+> slots event as leader. It doesn't require topdown metrics event must be
+> closely after slots event. Thus it's a overkill to move topdown metrics
+> event closely after slots event in events regrouping and furtherly cause
+> the above issue.
+> 
+> Thus don't move topdown metrics events forward if they are already in a
+> group.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> ---
+>  tools/perf/arch/x86/util/evlist.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+> index 332e8907f43e..6ae044f21843 100644
+> --- a/tools/perf/arch/x86/util/evlist.c
+> +++ b/tools/perf/arch/x86/util/evlist.c
+> @@ -85,7 +85,12 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>  		/* Followed by topdown events. */
+>  		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>  			return -1;
+> -		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+> +		/*
+> +		 * Move topdown events forward only when topdown events
+> +		 * are not in same group with previous event.
+> +		 */
 
-Are you sure about this change? From what I can see, the LRO buffer is 
-(or at least should be) allocated as a compound page. Because of that, 
-skb_free_frag should work on it. If it doesn't, wouldn't we run into the 
-same issue when the network stack frees received packets?
+Do you mean this case?
 
-- Felix
+perf stat -e '{slots,branches},topdown-retiring' -C0 sleep 1
+WARNING: events were regrouped to match PMUs
 
+ Performance counter stats for 'CPU(s) 0':
+
+        22,568,316      slots
+           569,904      branches
+         3,805,637      topdown-retiring
+
+
+But if I add one more event before topdown-retiring, it seems break again.
+
+perf stat -e '{slots,branches},cycles,topdown-retiring' -C0 sleep 1
+
+ Performance counter stats for 'CPU(s) 0':
+
+        25,218,108      slots
+           647,598      branches
+         4,345,121      cycles
+   <not supported>      topdown-retiring
+
+I'm not asking to support all the above cases. I just try to understand
+which cases you plan to support.
+
+Can you please add some comments or update the document to clearly show
+which format is supported, which format will be automatically adjusted
+by the tool, and which format will be error out?
+
+We should also need test cases for all the supported formats, not just
+the standard one.
+
+Thanks,
+Kan
+
+> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
+> +		    lhs->core.leader != rhs->core.leader)
+>  			return 1;
+>  	}
+>  
 
