@@ -1,306 +1,177 @@
-Return-Path: <linux-kernel+bounces-282959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5738594EB47
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E865994EB49
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A471F223A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77EF61F22A98
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F019F170822;
-	Mon, 12 Aug 2024 10:36:31 +0000 (UTC)
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BEE170836;
+	Mon, 12 Aug 2024 10:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2JcfTjP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8A816F8E9;
-	Mon, 12 Aug 2024 10:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215A516F0E3;
+	Mon, 12 Aug 2024 10:36:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458991; cv=none; b=Y9kNMTAVnmHXwv4YAFlbVE8cNfHTabkB6A5TtvWE5VF8VIm8l22yP/BRfU9uGIKRe1NchncSSl3BEsebDHuOWifC2wo9TqN3LYhkk3soCdGKZtv+gsjQESQQQXD+iDTDe/81aPB0W9mu4m6IH4A/WVihLNcMbCj2ytqZtKMTSx8=
+	t=1723459003; cv=none; b=QzLYSPJeKsf0pVQbPDWMEvC4yh69iZWYU5D6tBWq6Rpf3rzs/pfzeiXqtnj+jGd2xsFnL5c53owOJXwHngkrFM4ikAUYXCfABXQgn4/BAxsRwoNt6L8AcFw31pAEiqVRJhLctYCdncYmbBG0Qv4kbMR8hCBeHSZqNhQThbFXQoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458991; c=relaxed/simple;
-	bh=U6KmWj1sf2bum8Hw3Zb764ky/hS9zMtl6zxZs1LpOMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RM9h3VKje2UuJXw9QRC/GtbfU4+7nSi3Wfw32RlIu4Dr7cCTM3jhVdfnpZLGOkpeCQN2+40TspeBNxdZAJdArCsM8NwhIPyi9RuKZAXSQtH6fG17684Ypn1F/AyY3ttvLFFeClHi+2dtdD4qpgFhfYlFmryr/DAkih0fG5r/VwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1sdSH3-00450n-1y;
-	Mon, 12 Aug 2024 18:36:23 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Aug 2024 18:36:22 +0800
-Date: Mon, 12 Aug 2024 18:36:22 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev,
-	Linus Torvalds <torvalds@linux-foundation.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [v2 PATCH 3/3] crypto: simd - Do not call crypto_alloc_tfm during
- registration
-Message-ID: <Zrnlpl3JfTNTRBNa@gondor.apana.org.au>
-References: <ZrbTfOViUr3S4V7X@gondor.apana.org.au>
- <34069b9d-3731-4d0c-b317-bcbc61df7e9d@stanley.mountain>
- <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
- <ZrnlP4itTulcIYqP@gondor.apana.org.au>
- <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
+	s=arc-20240116; t=1723459003; c=relaxed/simple;
+	bh=Qb6jAUhVjK8W6QarbFw1RfFPANuHV8vfIMDQdFdwoc0=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=qpLEHnA2VNytUO3rVM3MGwCCx8VO85LoI6bQ/bpKYZplFTZIY6DwlKuW6NdrFw/Pk57/gTZVUMIRY8CsrD52484R1HCGSY7W8RxvdQUpFoN2nqFT4k/8cJCdA3BMhbNJOFyWLf+JXBZ/gyOCkXkYYPM+v8HLZ+8pgKlb3yOmziM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2JcfTjP; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723459002; x=1754995002;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Qb6jAUhVjK8W6QarbFw1RfFPANuHV8vfIMDQdFdwoc0=;
+  b=T2JcfTjPzOWshwt8+kKHExUVuYOHMh1AoRf6TfLYeqRUnLa5yI/eJmGQ
+   4Oh5rThFMenKKashXzG3RljP5jn/VqFVQsDuq76WaVBN/GP818BzHNV5D
+   2aIGU5FAXjJQkarIktoyib1zZVcvvOn+wRA1J3VzXkcJWomsJCasNT2Cc
+   krr+r51gpM9To3QWfq58z/G88k8UVQ209q5pkS6HjIKTeUau/RjhwCeOP
+   esLcRcvahZEJsqPgBiMmZnBvJh0wWT0o5GL7gn7ASVX7GTjhO/gf4NyPl
+   6ly3ZtCdd+QSf+N6+VvoksML0HSojpA6XmbnInOkitEqKxb8IupeH9LJs
+   Q==;
+X-CSE-ConnectionGUID: mP1Z5jtMQh+dnvtDaqKRIg==
+X-CSE-MsgGUID: e5bqMv+RQ+qP5bnct++/bQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32138253"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="32138253"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:36:40 -0700
+X-CSE-ConnectionGUID: MKR8R4EvS4+eZ/HCfqXS0w==
+X-CSE-MsgGUID: bu/JthxeQUiR02FtOSI8mg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="62617183"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:36:38 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 12 Aug 2024 13:36:36 +0300 (EEST)
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+cc: Matthew W Carlis <mattc@purestorage.com>, 
+    Bjorn Helgaas <bhelgaas@google.com>, 
+    Mika Westerberg <mika.westerberg@linux.intel.com>, 
+    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] PCI: Revert to the original speed after PCIe
+ failed link retraining
+In-Reply-To: <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
+Message-ID: <d2110cf7-7dd1-73b3-d139-746588b2967f@linux.intel.com>
+References: <alpine.DEB.2.21.2408091017050.61955@angie.orcam.me.uk> <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
+Content-Type: multipart/mixed; boundary="8323328-1136569245-1723458996=:1039"
 
-Algorithm registration is usually carried out during module init,
-where as little work as possible should be carried out.  The SIMD
-code violated this rule by allocating a tfm, this then triggers a
-full test of the algorithm which may dead-lock in certain cases.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-SIMD is only allocating the tfm to get at the alg object, which is
-in fact already available as it is what we are registering.  Use
-that directly and remove the crypto_alloc_tfm call.
+--8323328-1136569245-1723458996=:1039
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Also remove some obsolete and unused SIMD API.
+On Fri, 9 Aug 2024, Maciej W. Rozycki wrote:
 
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
----
- arch/arm/crypto/aes-ce-glue.c     |  2 +-
- arch/arm/crypto/aes-neonbs-glue.c |  2 +-
- crypto/simd.c                     | 76 ++++++-------------------------
- include/crypto/internal/simd.h    | 12 +----
- 4 files changed, 19 insertions(+), 73 deletions(-)
+> When `pcie_failed_link_retrain' has failed to retrain the link by hand=20
+> it leaves the link speed restricted to 2.5GT/s, which will then affect=20
+> any device that has been plugged in later on, which may not suffer from=
+=20
+> the problem that caused the speed restriction to have been attempted. =20
+> Consequently such a downstream device will suffer from an unnecessary=20
+> communication throughput limitation and therefore performance loss.
+>=20
+> Remove the speed restriction then and revert the Link Control 2 register=
+=20
+> to its original state if link retraining with the speed restriction in=20
+> place has failed.  Retrain the link again afterwards to remove any=20
+> residual state, ignoring the result as it's supposed to fail anyway.
+>=20
+> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
+> Reported-by: Matthew W Carlis <mattc@purestorage.com>
+> Link: https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.=
+com/
+> Link: https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.=
+com/
+> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
+> Cc: stable@vger.kernel.org # v6.5+
+> ---
+> New change in v2.
+> ---
+>  drivers/pci/quirks.c |   11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>=20
+> linux-pcie-failed-link-retrain-fail-unclamp.diff
+> Index: linux-macro/drivers/pci/quirks.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-macro.orig/drivers/pci/quirks.c
+> +++ linux-macro/drivers/pci/quirks.c
+> @@ -66,7 +66,7 @@
+>   * apply this erratum workaround to any downstream ports as long as they
+>   * support Link Active reporting and have the Link Control 2 register.
+>   * Restrict the speed to 2.5GT/s then with the Target Link Speed field,
+> - * request a retrain and wait 200ms for the data link to go up.
+> + * request a retrain and check the result.
+>   *
+>   * If this turns out successful and we know by the Vendor:Device ID it i=
+s
+>   * safe to do so, then lift the restriction, letting the devices negotia=
+te
+> @@ -74,6 +74,10 @@
+>   * firmware may have already arranged and lift it with ports that alread=
+y
+>   * report their data link being up.
+>   *
+> + * Otherwise revert the speed to the original setting and request a retr=
+ain
+> + * again to remove any residual state, ignoring the result as it's suppo=
+sed
+> + * to fail anyway.
+> + *
+>   * Return TRUE if the link has been successfully retrained, otherwise FA=
+LSE.
+>   */
+>  bool pcie_failed_link_retrain(struct pci_dev *dev)
+> @@ -92,6 +96,8 @@ bool pcie_failed_link_retrain(struct pci
+>  =09pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
+>  =09if ((lnksta & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_DLLLA)) =3D=3D
+>  =09    PCI_EXP_LNKSTA_LBMS) {
+> +=09=09u16 oldlnkctl2 =3D lnkctl2;
+> +
+>  =09=09pci_info(dev, "broken device, retraining non-functional downstream=
+ link at 2.5GT/s\n");
+> =20
+>  =09=09lnkctl2 &=3D ~PCI_EXP_LNKCTL2_TLS;
+> @@ -100,6 +106,9 @@ bool pcie_failed_link_retrain(struct pci
+> =20
+>  =09=09if (pcie_retrain_link(dev, false)) {
+>  =09=09=09pci_info(dev, "retraining failed\n");
+> +=09=09=09pcie_capability_write_word(dev, PCI_EXP_LNKCTL2,
+> +=09=09=09=09=09=09   oldlnkctl2);
+> +=09=09=09pcie_retrain_link(dev, false);
+>  =09=09=09return false;
+>  =09=09}
 
-diff --git a/arch/arm/crypto/aes-ce-glue.c b/arch/arm/crypto/aes-ce-glue.c
-index b668c97663ec..f5b66f4cf45d 100644
---- a/arch/arm/crypto/aes-ce-glue.c
-+++ b/arch/arm/crypto/aes-ce-glue.c
-@@ -711,7 +711,7 @@ static int __init aes_init(void)
- 		algname = aes_algs[i].base.cra_name + 2;
- 		drvname = aes_algs[i].base.cra_driver_name + 2;
- 		basename = aes_algs[i].base.cra_driver_name;
--		simd = simd_skcipher_create_compat(algname, drvname, basename);
-+		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
- 		err = PTR_ERR(simd);
- 		if (IS_ERR(simd))
- 			goto unregister_simds;
-diff --git a/arch/arm/crypto/aes-neonbs-glue.c b/arch/arm/crypto/aes-neonbs-glue.c
-index 201eb35dde37..735a2441ad48 100644
---- a/arch/arm/crypto/aes-neonbs-glue.c
-+++ b/arch/arm/crypto/aes-neonbs-glue.c
-@@ -540,7 +540,7 @@ static int __init aes_init(void)
- 		algname = aes_algs[i].base.cra_name + 2;
- 		drvname = aes_algs[i].base.cra_driver_name + 2;
- 		basename = aes_algs[i].base.cra_driver_name;
--		simd = simd_skcipher_create_compat(algname, drvname, basename);
-+		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
- 		err = PTR_ERR(simd);
- 		if (IS_ERR(simd))
- 			goto unregister_simds;
-diff --git a/crypto/simd.c b/crypto/simd.c
-index 2aa4f72e224f..b07721d1f3f6 100644
---- a/crypto/simd.c
-+++ b/crypto/simd.c
-@@ -136,27 +136,19 @@ static int simd_skcipher_init(struct crypto_skcipher *tfm)
- 	return 0;
- }
- 
--struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
-+struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
-+						      const char *algname,
- 						      const char *drvname,
- 						      const char *basename)
- {
- 	struct simd_skcipher_alg *salg;
--	struct crypto_skcipher *tfm;
--	struct skcipher_alg *ialg;
- 	struct skcipher_alg *alg;
- 	int err;
- 
--	tfm = crypto_alloc_skcipher(basename, CRYPTO_ALG_INTERNAL,
--				    CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
--	if (IS_ERR(tfm))
--		return ERR_CAST(tfm);
--
--	ialg = crypto_skcipher_alg(tfm);
--
- 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
- 	if (!salg) {
- 		salg = ERR_PTR(-ENOMEM);
--		goto out_put_tfm;
-+		goto out;
- 	}
- 
- 	salg->ialg_name = basename;
-@@ -195,30 +187,16 @@ struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
- 	if (err)
- 		goto out_free_salg;
- 
--out_put_tfm:
--	crypto_free_skcipher(tfm);
-+out:
- 	return salg;
- 
- out_free_salg:
- 	kfree(salg);
- 	salg = ERR_PTR(err);
--	goto out_put_tfm;
-+	goto out;
- }
- EXPORT_SYMBOL_GPL(simd_skcipher_create_compat);
- 
--struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
--					       const char *basename)
--{
--	char drvname[CRYPTO_MAX_ALG_NAME];
--
--	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
--	    CRYPTO_MAX_ALG_NAME)
--		return ERR_PTR(-ENAMETOOLONG);
--
--	return simd_skcipher_create_compat(algname, drvname, basename);
--}
--EXPORT_SYMBOL_GPL(simd_skcipher_create);
--
- void simd_skcipher_free(struct simd_skcipher_alg *salg)
- {
- 	crypto_unregister_skcipher(&salg->alg);
-@@ -246,7 +224,7 @@ int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
- 		algname = algs[i].base.cra_name + 2;
- 		drvname = algs[i].base.cra_driver_name + 2;
- 		basename = algs[i].base.cra_driver_name;
--		simd = simd_skcipher_create_compat(algname, drvname, basename);
-+		simd = simd_skcipher_create_compat(algs + i, algname, drvname, basename);
- 		err = PTR_ERR(simd);
- 		if (IS_ERR(simd))
- 			goto err_unregister;
-@@ -383,27 +361,19 @@ static int simd_aead_init(struct crypto_aead *tfm)
- 	return 0;
- }
- 
--struct simd_aead_alg *simd_aead_create_compat(const char *algname,
--					      const char *drvname,
--					      const char *basename)
-+static struct simd_aead_alg *simd_aead_create_compat(struct aead_alg *ialg,
-+						     const char *algname,
-+						     const char *drvname,
-+						     const char *basename)
- {
- 	struct simd_aead_alg *salg;
--	struct crypto_aead *tfm;
--	struct aead_alg *ialg;
- 	struct aead_alg *alg;
- 	int err;
- 
--	tfm = crypto_alloc_aead(basename, CRYPTO_ALG_INTERNAL,
--				CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
--	if (IS_ERR(tfm))
--		return ERR_CAST(tfm);
--
--	ialg = crypto_aead_alg(tfm);
--
- 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
- 	if (!salg) {
- 		salg = ERR_PTR(-ENOMEM);
--		goto out_put_tfm;
-+		goto out;
- 	}
- 
- 	salg->ialg_name = basename;
-@@ -442,36 +412,20 @@ struct simd_aead_alg *simd_aead_create_compat(const char *algname,
- 	if (err)
- 		goto out_free_salg;
- 
--out_put_tfm:
--	crypto_free_aead(tfm);
-+out:
- 	return salg;
- 
- out_free_salg:
- 	kfree(salg);
- 	salg = ERR_PTR(err);
--	goto out_put_tfm;
-+	goto out;
- }
--EXPORT_SYMBOL_GPL(simd_aead_create_compat);
- 
--struct simd_aead_alg *simd_aead_create(const char *algname,
--				       const char *basename)
--{
--	char drvname[CRYPTO_MAX_ALG_NAME];
--
--	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
--	    CRYPTO_MAX_ALG_NAME)
--		return ERR_PTR(-ENAMETOOLONG);
--
--	return simd_aead_create_compat(algname, drvname, basename);
--}
--EXPORT_SYMBOL_GPL(simd_aead_create);
--
--void simd_aead_free(struct simd_aead_alg *salg)
-+static void simd_aead_free(struct simd_aead_alg *salg)
- {
- 	crypto_unregister_aead(&salg->alg);
- 	kfree(salg);
- }
--EXPORT_SYMBOL_GPL(simd_aead_free);
- 
- int simd_register_aeads_compat(struct aead_alg *algs, int count,
- 			       struct simd_aead_alg **simd_algs)
-@@ -493,7 +447,7 @@ int simd_register_aeads_compat(struct aead_alg *algs, int count,
- 		algname = algs[i].base.cra_name + 2;
- 		drvname = algs[i].base.cra_driver_name + 2;
- 		basename = algs[i].base.cra_driver_name;
--		simd = simd_aead_create_compat(algname, drvname, basename);
-+		simd = simd_aead_create_compat(algs + i, algname, drvname, basename);
- 		err = PTR_ERR(simd);
- 		if (IS_ERR(simd))
- 			goto err_unregister;
-diff --git a/include/crypto/internal/simd.h b/include/crypto/internal/simd.h
-index d2316242a988..be97b97a75dd 100644
---- a/include/crypto/internal/simd.h
-+++ b/include/crypto/internal/simd.h
-@@ -14,11 +14,10 @@
- struct simd_skcipher_alg;
- struct skcipher_alg;
- 
--struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
-+struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
-+						      const char *algname,
- 						      const char *drvname,
- 						      const char *basename);
--struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
--					       const char *basename);
- void simd_skcipher_free(struct simd_skcipher_alg *alg);
- 
- int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
-@@ -32,13 +31,6 @@ void simd_unregister_skciphers(struct skcipher_alg *algs, int count,
- struct simd_aead_alg;
- struct aead_alg;
- 
--struct simd_aead_alg *simd_aead_create_compat(const char *algname,
--					      const char *drvname,
--					      const char *basename);
--struct simd_aead_alg *simd_aead_create(const char *algname,
--				       const char *basename);
--void simd_aead_free(struct simd_aead_alg *alg);
--
- int simd_register_aeads_compat(struct aead_alg *algs, int count,
- 			       struct simd_aead_alg **simd_algs);
- 
--- 
-2.39.2
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
 
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--=20
+ i.
+
+--8323328-1136569245-1723458996=:1039--
 
