@@ -1,67 +1,76 @@
-Return-Path: <linux-kernel+bounces-282651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B02994E6E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB0B94E6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D676E1F22B4E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDD0F2837B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F1161936;
-	Mon, 12 Aug 2024 06:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5858215C12B;
+	Mon, 12 Aug 2024 06:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="22/7aOa7"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="laXWViRi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 702981537D2;
-	Mon, 12 Aug 2024 06:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEED0152199
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:39:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444764; cv=none; b=X1dJveiLUSrSv67x1NhN3nCMRnr32nddKyrGABZCfHqEaOY4S0mS6XU+0JWYvF9+6DRUYYASVBzIfBrkJ/YSfbc7HVisThc56jfpF2zoB2V20Xtb1yC8BjG0UjZ8erfvHc8vSqQfcTegFfVZWD7akdVOmzG3CAFMHEzfyJl4HD4=
+	t=1723444798; cv=none; b=oHvwPf7q+ILhi9A9nxXYIbywIvMr+QaWymrdPRQpS4i3fpoCQ/l0YXBxbvP4yaDCsLPzM6rwBDepmTpPoJVB0wL/ctxw3j6PmtRAb0ppyxVXnausDwyzShmIR6jwfiDnq91Is/HhRL4KV06zfa1Ou7kEDmrGsSYTmJWXV8Qp0To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444764; c=relaxed/simple;
-	bh=t1qB8Z8O9uwrtkXdQUpxH+qyN2Od430SoZbTNpVeoQI=;
+	s=arc-20240116; t=1723444798; c=relaxed/simple;
+	bh=UOuFB5eh/iaMWzI/UeZaKQ7ZMMjmM4pqc2zT4gMg6zg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMIOj5tL5g+MY+tFwf3halJt271ihCfvaHsQjVaWi4mpfQWQcYnAjWDeAEaxxDiZmFHvPQIrGNW7wgYFJ3UUXVka3+MvSIAj/Y1YDhTz2f30QuEo+dhWRxEae/VAM9YhIJPMDkV5dkhOTACEbn4FFkXrzhAP25ps+XYEdra3gXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=22/7aOa7; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=6OTqWssiccizAG7tMDe551ZY70fKMpPAPHsb0vYPfZ4=; b=22/7aOa797+qdtRS2hfct6+uw0
-	QMVxtGItMeUkhcgqWzJHMDpAUVAL/9PvFcjmFbp6rz44yQKPoUtnx+KURp3j2lQddd66ghy/BV5hw
-	tmDmXJ6UIMMQ5fbNVW677cTFXd0hq5oiKK+XaLIW7OwY0zcSyiHm7HdE+nwlTbkati88vi1uRytaV
-	+Qp8be1ljua+T8g0TfuJX0/VUGFecv25AC+UtMwiKzMm9BkwsqsNknDqMQjcMJj8DU9w50qKG5Mb0
-	2Zf8792xMjpVTly2Ad+xEQUGF8YxNSFFReqnb2FbZRS8XTKJMMiljynXdH5PpBNH9RrZvDhThYmVJ
-	77gQLM1w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOiA-0000000H396-2BLl;
-	Mon, 12 Aug 2024 06:39:22 +0000
-Date: Sun, 11 Aug 2024 23:39:22 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Martin Oliveira <martin.oliveira@eideticom.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
-Message-ID: <ZrmuGrDaJTZFrKrc@infradead.org>
-References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
- <20240808183340.483468-4-martin.oliveira@eideticom.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uMdI9CwVF7n1RKCF7+24c3BzGkYOXcweHurY5oZFNJkE6B1cyRJk8/qa763CMgIH1tcbOMkKKlYGb9idPK5ELiRPpuHDob32OhLlXheW1BvXac9RY7i+d/2eiahX6lP+vOzCwJBgJDdppKMkgSq9yRc7TOnH/iypS45axGibB1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=laXWViRi; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723444797; x=1754980797;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UOuFB5eh/iaMWzI/UeZaKQ7ZMMjmM4pqc2zT4gMg6zg=;
+  b=laXWViRipxUId2GCJ882UYxLFYiPcBsNIq6oNSI2j4d0llaZziFEdI7a
+   pKbwOCNMgs+q8mh3/Ob804/WaqBtjKjzRg5C7CB9zx9B/LlKrg8X+b1jY
+   MQZ0qVFCW0mCXTc70QE6Ubl1shMS76z/oFbCrRfR3o9x7sNYVomuDuq9g
+   Gy9FO/eGtZY0EbDBKvqmTFgr5Wkz3wxUESjhdHntUeQYiPSzJuoMuHaJ8
+   /Lp7zLDZklky5nCYeqWkUlDrErDz0mnQCl5jLRQQ6m5nas/LCK8T+Elek
+   xh6FFrK58u3BAJXRiyRRjvo+lxeCZxnAtL4YSqZGywHeieVSe8ibE4M9Q
+   A==;
+X-CSE-ConnectionGUID: u3W9JCeKSbCbDioNte9rUw==
+X-CSE-MsgGUID: yPAjfoOIRZGNsvQh80Li9w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32211197"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="32211197"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 23:39:56 -0700
+X-CSE-ConnectionGUID: 3++LnOBFQKa4joaI92Baxw==
+X-CSE-MsgGUID: dSJGNwtaRciH+Mhnymhtzg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="58721949"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 11 Aug 2024 23:39:54 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 7E35F1F8; Mon, 12 Aug 2024 09:39:51 +0300 (EEST)
+Date: Mon, 12 Aug 2024 09:39:51 +0300
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: x86@kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mm: remove unused CR3_HW_ASID_BITS
+Message-ID: <kyuxup4aoeuewrisn4smwaw2gmi7zupgcjgj2vhm4t6pxbbalo@y26e7sdih3zq>
+References: <20240425215951.2310105-1-yosryahmed@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,24 +79,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240808183340.483468-4-martin.oliveira@eideticom.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20240425215951.2310105-1-yosryahmed@google.com>
 
-On Thu, Aug 08, 2024 at 12:33:39PM -0600, Martin Oliveira wrote:
-> This check existed originally due to concerns that P2PDMA needed to copy
-> fsdax until pgmap refcounts were fixed (see [1]).
+On Thu, Apr 25, 2024 at 09:59:51PM +0000, Yosry Ahmed wrote:
+> Commit 6fd166aae78c ("x86/mm: Use/Fix PCID to optimize user/kernel
+> switches") removed the last usage of CR3_HW_ASID_BITS and opted to use
+> X86_CR3_PCID_BITS instead. Remove CR3_HW_ASID_BITS.
 > 
-> The P2PDMA infrastructure will only call unmap_mapping_range() when the
-> underlying device is unbound, and immediately after unmapping it waits
-> for the reference of all ZONE_DEVICE pages to be released before
-> continuing. This does not allow for a page to be reused and no user
-> access fault is therefore possible. It does not have the same problem as
-> fsdax.
-> 
-> The one minor concern with FOLL_LONGTERM pins is they will block device
-> unbind until userspace releases them all.
+> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 
-This is unfortunately not really minor unless we have a well documented
-way to force this :(
+Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
