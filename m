@@ -1,183 +1,201 @@
-Return-Path: <linux-kernel+bounces-283286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3296D94EF96
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:31:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CAB94EFA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30EE8B23B13
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:31:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27C31F231B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4170181337;
-	Mon, 12 Aug 2024 14:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37BCB1836ED;
+	Mon, 12 Aug 2024 14:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVpM3Bw9"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YI7p0Bx/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BB016B38D;
-	Mon, 12 Aug 2024 14:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534AE180A81;
+	Mon, 12 Aug 2024 14:32:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473065; cv=none; b=dCQNE2bZxCXoxtFtWURFWCHhIpckWsJ0DKXnlIh4ZENHYqKHWerivIDMbWorXANBAyXr/YFbeJD5hOvZVBkNusCTWYSI9o5CI4zfqFgjAUrBhJrYUx0wxS/RNsQ/a3DLS4phG/ihZFNHVCNWPNKiBFt7F0rybur4NMtBhwjpjeQ=
+	t=1723473148; cv=none; b=GLV12ywYqbIBm6ctGufP/YmyhdmOKQlKNTgeFCE8+LJkzuteXVW5DTVCGMMm79jTDsnY6lPDHXZi6vBXi8jqyw9F1Ps3QJinAlyKgv8SITQo1SLNW3BNXi2kJ6nj9eEUYVC3PMBhKa9uL5hX0lSdE9GKsT1ANImRiCsy4agCnk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473065; c=relaxed/simple;
-	bh=+lGB1nUEVVA7esqNPkyaO/r3t9LgW0p3dWFyGVV0s2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/wqjW/qa239YsDnLBg87WkZm3lq0mSMWSGhJUHCHawXMuQkUHy0PGIg3M4eWypF1yx4LC/qcGK+N48bsbsF4cd57/db+IQlPR8MLv8938x0+Lu/69B2X/1RN7BGt1wQ5utZS+i82Sm8C5l9xJGm4DXzGG60qw42YVEEBfePPJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVpM3Bw9; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39b4f847a5eso14469995ab.1;
-        Mon, 12 Aug 2024 07:31:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723473063; x=1724077863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xw3acn4+txaoOaW/DAlL/mFLwqYjsFnhae1GSCFNUDQ=;
-        b=nVpM3Bw9Mdp8nmBn7TAIDkMtmAB2pZ0suvrHuMJzhQx7w8705zEDkqv5rDC+qcVqfW
-         0iCR74ptoiHXAxLMPAyC2M02OmgDpnCknMEz+l/KlQnjEmuKgLvPyes02WZ8niqoOxw6
-         WeqZZ5qy2mTM78CGchp3UzxwspKrp6g9WhyryyJpM14KhX8RepwKy7uEPrRGZAa3nLVp
-         gK6Lu4gfCeJsCNYqHxbxhaCaGSxTWeA4jZK8wse+M9CjEhXB9jjg9R5T9+O8f3f2Cm9P
-         uHdt6GX/IVFkCP32aPDOGMFKav+3LkJEL0ucQxMWqmbhILNATqx5TEA2J9CslBf24+TH
-         GBXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723473063; x=1724077863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xw3acn4+txaoOaW/DAlL/mFLwqYjsFnhae1GSCFNUDQ=;
-        b=JIS2oQt6w9efeDHbeehOPrAlUagGEvV4TGI+0rhTaPs/6um8n3XU/5TpjYGI3flA9Q
-         kxOgABg0twTECfS/9hQqyAeVMhc8MFlu8T6AhE1tpY8+Tud7NyZZjyeTjlF5cvtlEp/r
-         x6FCqJv8eTIjZG4BChami7D1VoNZZ5Z5WToPLgEZTG6VZM1g3QGpsE9HkXZK49xapjzN
-         wFOUGOA2RarLmDA0iBsi5y5jm9pm/cpJkMR0p+wx7dHkY/C+YlhTUdWGdQ+VZoKY5CvU
-         wzSfP0t2lGJ/F4JNxIr5dVnXAUKHMSnza//7rs7cX252Ma3rCw2jxwyf4va6DjWTR6VF
-         i0Pg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSfJfDzs0+J4ReU42iPlME+EmoXKVVHJ8Rn/+mRFdLXBryuD5STjVeggHcZqMcqKDVTG88J6RYUn7ok4tPU7bPhqqtPUhEb8MZfRidaorfLQKZxgSX7CBqhnzmLbPCG+hHNNbv
-X-Gm-Message-State: AOJu0YxFpzROdGUz9cxemrlAODJBLh77yeFq0RailBbIYcMqBtyB9gGr
-	QlfeHQVIRY4HtRuaMMcTFp+AP6O8WZ1jDi9ouV2KMa41O4hyiQGcc5oSknChcB3U4y6HT6HyEHP
-	O/DNGbUZ11/KotJX6I3GPJjv5WIY=
-X-Google-Smtp-Source: AGHT+IFmkWXRBl7Fab7EdpXLwMBcn31kV/W3d53R7TPKcOM148k86Xl2b9dA7ZouZl1oNu8z3rcr0dfJy4YHR0guHSE=
-X-Received: by 2002:a05:6e02:20e9:b0:39a:e86b:a76a with SMTP id
- e9e14a558f8ab-39c4791c13dmr4162065ab.26.1723473062593; Mon, 12 Aug 2024
- 07:31:02 -0700 (PDT)
+	s=arc-20240116; t=1723473148; c=relaxed/simple;
+	bh=UgrI/Tu5szy4NI0yyxPR1sc5ru7dZ5lT8+iLir7HTo0=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=NrYJ0fdyNNyOc1xsFDiBdo4+Kr2i9fLjBkHlZW2c4HgljOv+iJC4kixdht69obJKnXKnmFkiesuXYVGLq1PScFgYt7kwd+2lMxSTLXae5160WhM4x6dG36KNWl3eFkbWBieH62TsawRRy+hXhcK2Mm39h+8ozZbRYsZEnG2WcBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YI7p0Bx/; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723473147; x=1755009147;
+  h=from:to:subject:in-reply-to:references:date:message-id:
+   mime-version;
+  bh=UgrI/Tu5szy4NI0yyxPR1sc5ru7dZ5lT8+iLir7HTo0=;
+  b=YI7p0Bx/Ku0ecoGeyPNDHwBTyk+AXxXUGKpkC9udmxWZnZadX7Q0PNgx
+   r9IAvwWTsT+yUc6ToJIUu4q5TCE5otWa55KhkzrYhmNjd9a1ugsyggE3s
+   QQLZZovHWYb70bwFslloewt+8/OrUEQNxWfkUf7CWIYZqDN7YcjsUnYKK
+   laPsbnb5qaEEAO+ddukc9Fe3wqigHkOB8Y2kyEcDKRv5iwzrMqZI4iI/d
+   oYOdqNlZRJJ6G4Tnj7sys0DX268C80+kSLH/84a9mwY7eVxpne5yiuCki
+   evYQyMaVtgeidoD09BT67EzP6v4kTtKL0MRp2QAl1o9MMuS906mL2T+V8
+   Q==;
+X-CSE-ConnectionGUID: yo6oo5E0QTGYqHyt6GqSrg==
+X-CSE-MsgGUID: 1DOCe/JPQ3uV+Zp6u0TEJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32976811"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="32976811"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 07:32:26 -0700
+X-CSE-ConnectionGUID: sYak2+WAQQeJzE7aS7VfYQ==
+X-CSE-MsgGUID: P8+FzJIkRTGi4z6PYy0mCQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="89113324"
+Received: from iklimasz-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.117])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 07:32:20 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Bjorn Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, Danilo
+ Krummrich <dakr@redhat.com>
+Subject: Re: [PATCH v6 2/4] drm/rect: Add drm_rect_overlap()
+In-Reply-To: <60e55a9d-70bb-45d1-ac97-e4f6f6ffa9a9@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240812123147.81356-1-jfalempe@redhat.com>
+ <20240812123147.81356-3-jfalempe@redhat.com> <87sev926na.fsf@intel.com>
+ <60e55a9d-70bb-45d1-ac97-e4f6f6ffa9a9@redhat.com>
+Date: Mon, 12 Aug 2024 17:32:16 +0300
+Message-ID: <87frr924nj.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240811230029.95258-1-kuniyu@amazon.com> <20240811230836.95914-1-kuniyu@amazon.com>
- <20240812140104.GA21559@breakpoint.cc>
-In-Reply-To: <20240812140104.GA21559@breakpoint.cc>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Mon, 12 Aug 2024 22:30:26 +0800
-Message-ID: <CAL+tcoCyq4Xra97sEhxGQBB8PVtKa5qGj0wW7wM=a9tu-fOumw@mail.gmail.com>
-Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
-To: Florian Westphal <fw@strlen.de>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net, dsahern@kernel.org, 
-	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hello Florian,
+On Mon, 12 Aug 2024, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> On 12/08/2024 15:49, Jani Nikula wrote:
+>> On Mon, 12 Aug 2024, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+>>> Check if two rectangles overlap.
+>>> It's a bit similar to drm_rect_intersect() but this won't modify
+>>> the rectangle.
+>>> Simplifies a bit drm_panic.
+>> 
+>> Based on the name, I'd expect drm_rect_overlap() to return true for
+>> *any* overlap, while this one seems to mean if one rectangle is
+>> completely within another, with no adjacent borders.
+>
+> It's what I intended, but I may have messed up the formula.
 
-On Mon, Aug 12, 2024 at 10:02=E2=80=AFPM Florian Westphal <fw@strlen.de> wr=
-ote:
->
-> Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
-> > From: Kuniyuki Iwashima <kuniyu@amazon.com>
-> > Date: Sun, 11 Aug 2024 16:00:29 -0700
-> > > From: Florian Westphal <fw@strlen.de>
-> > > Date: Sun, 11 Aug 2024 18:28:50 +0200
-> > > > Florian Westphal <fw@strlen.de> wrote:
-> > > > > https://syzkaller.appspot.com/x/log.txt?x=3D117f3182980000
-> > > > >
-> > > > > ... shows at two cores racing:
-> > > > >
-> > > > > [ 3127.234402][ T1396] CPU: 3 PID: 1396 Comm: syz-executor.3 Not
-> > > > > and
-> > > > > [ 3127.257864][   T13] CPU: 1 PID: 13 Comm: kworker/u32:1 Not tai=
-nted 6.9.0-syzkalle (netns cleanup net).
-> > > > >
-> > > > >
-> > > > > first splat backtrace shows invocation of tcp_sk_exit_batch() fro=
-m
-> > > > > netns error unwinding code.
-> > > > >
-> > > > > Second one lacks backtrace, but its also in tcp_sk_exit_batch(),
-> > > >
-> > > > ... which doesn't work.  Does this look like a plausible
-> > > > theory/exlanation?
-> > >
-> > > Yes!  The problem here is that inet_twsk_purge() operates on twsk
-> > > not in net_exit_list, but I think such a check is overkill and we
-> > > can work around it in another way.
->
-> I'm not so sure.  Once 'other' inet_twsk_purge() found the twsk and
-> called inet_twsk_kill(), 'our' task has to wait for that to complete.
->
-> We need to force proper ordering so that all twsk found
->
-> static void __net_exit tcp_sk_exit_batch(struct list_head *net_exit_list)
-> {
->         struct net *net;
->
-> /*HERE*/tcp_twsk_purge(net_exit_list);
->
->         list_for_each_entry(net, net_exit_list, exit_list) {
->                 inet_pernet_hashinfo_free(net->ipv4.tcp_death_row.hashinf=
-o);
->
-> .... have gone through inet_twsk_kill() so tw_refcount managed to
-> drop back to 1 before doing
->                 WARN_ON_ONCE(!refcount_dec_and_test(&net->ipv4.tcp_death_=
-row.tw_refcount));
-> .
->
-> > > We need to sync two inet_twsk_kill(), so maybe give up one
-> > > if twsk is not hashed ?
->
-> Not sure, afaiu only one thread enters inet_twsk_kill()
-> (the one that manages to deactivate the timer).
->
-> > > ---8<---
-> > > diff --git a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_s=
-ock.c
-> > > index 337390ba85b4..51889567274b 100644
-> > > --- a/net/ipv4/inet_timewait_sock.c
-> > > +++ b/net/ipv4/inet_timewait_sock.c
-> > > @@ -52,7 +52,10 @@ static void inet_twsk_kill(struct inet_timewait_so=
-ck *tw)
-> > >     struct inet_bind_hashbucket *bhead, *bhead2;
-> > >
-> > >     spin_lock(lock);
-> > > -   sk_nulls_del_node_init_rcu((struct sock *)tw);
-> > > +   if (!sk_nulls_del_node_init_rcu((struct sock *)tw)) {
-> > > +           spin_unlock(lock);
-> > > +           return false;
-> >
-> > forgot to remove false, just return :)
->
-> I don't see how this helps, we need to wait until 'stolen' twsk
-> has gone through inet_twsk_kill() and decremented tw_refcount.
-> Obviously It would be a bit simpler if we had a reliable reproducer :-)
+Hmm, then I may have messed up the review. :)
 
-Allow me to say something irrelevant to this bug report.
+Gotta run now, but I'll get back.
 
-Do you think that Kuniyuki's patch can solve the race between two
-'killers' calling inet_twsk_deschedule_put()->inet_twsk_kill()
-concurrently at two cores, say, inet_twsk_purge() and tcp_abort()?
+BR,
+Jani.
 
-It at least does help avoid decrementing tw_refcount twice in the
-above case if I understand correctly.
 
-Thanks,
-Jason
+
+>> 
+>> I'd expect a drm_rect_overlap() to return true for this:
+>> 
+>>   +-------+
+>>   |   +---+---+
+>>   |   |       |
+>>   +---+       |
+>>       |       |
+>>       +-------+
+>
+> if r1 is the top left rectangle, you've got:
+>
+> r1->x2 > r2->x1   => true
+> r2->x2 > r1->x1   => true
+> r1->y2 > r2->y1   => true
+> r2->y2 > r1->y1   => true
+>
+> So they count as overlap.
+>
+> Checking in stackoverflow, they use the same formula:
+> https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other
+>
+>> 
+>> While this seems to be required instead:
+>> 
+>>   +-------+
+>>   | +---+ |
+>>   | |   | |
+>>   | +---+ |
+>>   +-------+
+>> 
+>> 
+>> IOW, I find the name misleading.
+>> 
+>> BR,
+>> Jani.
+>> 
+>> 
+>>>
+>>> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+>>> ---
+>>>   drivers/gpu/drm/drm_panic.c |  3 +--
+>>>   include/drm/drm_rect.h      | 15 +++++++++++++++
+>>>   2 files changed, 16 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+>>> index 0a047152f88b8..59fba23e5fd7a 100644
+>>> --- a/drivers/gpu/drm/drm_panic.c
+>>> +++ b/drivers/gpu/drm/drm_panic.c
+>>> @@ -529,8 +529,7 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
+>>>   	/* Fill with the background color, and draw text on top */
+>>>   	drm_panic_fill(sb, &r_screen, bg_color);
+>>>   
+>>> -	if ((r_msg.x1 >= logo_width || r_msg.y1 >= logo_height) &&
+>>> -	    logo_width <= sb->width && logo_height <= sb->height) {
+>>> +	if (!drm_rect_overlap(&r_logo, &r_msg)) {
+>>>   		if (logo_mono)
+>>>   			drm_panic_blit(sb, &r_logo, logo_mono->data, DIV_ROUND_UP(logo_width, 8),
+>>>   				       fg_color);
+>>> diff --git a/include/drm/drm_rect.h b/include/drm/drm_rect.h
+>>> index 73fcb899a01da..7bafde747d560 100644
+>>> --- a/include/drm/drm_rect.h
+>>> +++ b/include/drm/drm_rect.h
+>>> @@ -238,6 +238,21 @@ static inline void drm_rect_fp_to_int(struct drm_rect *dst,
+>>>   		      drm_rect_height(src) >> 16);
+>>>   }
+>>>   
+>>> +/**
+>>> + * drm_rect_overlap - Check if two rectangles overlap
+>>> + * @r1: first rectangle
+>>> + * @r2: second rectangle
+>>> + *
+>>> + * RETURNS:
+>>> + * %true if the rectangles overlap, %false otherwise.
+>>> + */
+>>> +static inline bool drm_rect_overlap(const struct drm_rect *r1,
+>>> +				    const struct drm_rect *r2)
+>>> +{
+>>> +	return (r1->x2 > r2->x1 && r2->x2 > r1->x1 &&
+>>> +		r1->y2 > r2->y1 && r2->y2 > r1->y1);
+>>> +}
+>>> +
+>>>   bool drm_rect_intersect(struct drm_rect *r, const struct drm_rect *clip);
+>>>   bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>>>   			  const struct drm_rect *clip);
+>> 
+>
+
+-- 
+Jani Nikula, Intel
 
