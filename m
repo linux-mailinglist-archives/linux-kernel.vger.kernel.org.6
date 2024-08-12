@@ -1,273 +1,205 @@
-Return-Path: <linux-kernel+bounces-283846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A6594F97C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:17:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CACE94F97F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:17:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A821C2239C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:17:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CAD282CC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBE19883C;
-	Mon, 12 Aug 2024 22:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07617197A61;
+	Mon, 12 Aug 2024 22:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XwHr5U6H"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QzHCiVh2";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GlclS++X"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE44414A4DF;
-	Mon, 12 Aug 2024 22:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723501018; cv=none; b=j1XCDErj1VgZEuCWgrTUtvo4URvLqmGHRveEIedxu2f0NF2eM52FLHDABekZKyvRcbTFFbKWzdsJTqW4XR/CXRCXF3YRWMEhVM4l7THmCIbi5MkW7QsScSTrOA4UrJyvFZJS3Qicy/lZv+PjZ1g8iPpjWi6Wj4kx6rLhIxYD1Dw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723501018; c=relaxed/simple;
-	bh=+ncDPARUwx6p23qdb8i7srs3SW1uDHyV+GGvWZdk5sE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UmEpP856wzbIgiPkJZj8kOWmHoF67NmeXfd9tY9MhdjUxQn2ltKdlwR9VDTLDe6d0mXd7c/8SPXIa+viTlQSOn2DwCiu6hn0/jYWJqUCBZTTfsmqn87jAEet/IlDsGEVDRDmyOEdiJ7Kcyi5nqxRbTFm3SxrMPtG1fhFXZ6GwBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XwHr5U6H; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSZuM021499;
-	Mon, 12 Aug 2024 22:16:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=QNIE3yAdiYLgDXjZr4W4bENb
-	pXioQ42veMrNJMx0qhg=; b=XwHr5U6HrZSGJSDxnWnzrCrrO1wxvDXQRTzfgqNi
-	If/QRHr3z79y6k+bo4fvgsKZqWRewO5bO4ZA7jrDEoXwwvKcNx7eaX9T6UHSqdAE
-	Dn4YX5+90XBuLdJpOPVX1fu7JXb8I5OM8e/LNbwxn6zBN45qsnOTssBygdFhb3uI
-	hD3d/368FnJ8KCz5nOPNAP3QZvJDbhNqzeM2OXaG/qtQ964DZsj2ITXELL0Hh6/q
-	7eLNGHLPrQF/tbPhwPmHxmDtjL6csUF+FGoAojXG5xBODXTp11EKFKT9AXeWCGhf
-	5Lchgy24m12iaw41TdeOCdc0eCtcW5ok3D5ZUblP+PfHNQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7wks1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 22:16:45 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CMGiCF021972
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 22:16:44 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 12 Aug 2024 15:16:43 -0700
-Date: Mon, 12 Aug 2024 15:16:42 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Rob Herring <robh@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Wesley
- Cheng <quic_wcheng@quicinc.com>,
-        Saravana Kannan <saravanak@google.com>,
-        "Thinh Nguyen" <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v2 6/7] usb: dwc3: qcom: Transition to flattened model
-Message-ID: <ZrqJyh4UPJ5xBhq2@hu-bjorande-lv.qualcomm.com>
-References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
- <20240811-dwc3-refactor-v2-6-91f370d61ad2@quicinc.com>
- <20240812212139.GA1797954-robh@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E7B18953F;
+	Mon, 12 Aug 2024 22:17:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723501052; cv=fail; b=YltwV1fhcQbGqjCzvJjtV4859jZArQ/pXlnFuRx997xXlzdUjFOCXMUHGm0eHEAOoxY4Vw3F58eYQ0nenLhYkXO4szT9FHLeCVFcgXZ6tiBIc1JzDz2h50yynXUuMNAuhS83BnH0rvzm+UV1L+PluuxrFAwU9F81GkhYAwkCE5s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723501052; c=relaxed/simple;
+	bh=UAxZ/Ms4hGQdZGqlOMic3yfBmDVgsxAWrGdFPJvrOB8=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=XxqfyZxYI3ni5JVnk3zcxVyiC3Qnr2tRgHdVNHdkupIVOwQljetEYjIdaTLLt4pwGJ2X9ocZ+4DtSgNNCoX6IstvBo7zkYWOOGzq3aQlBJGhuAG3cIRuH9vQnorinrpNs7l3E12CCtRfMnehtsal+UXghX9C3Qq95WVMKKuXroE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QzHCiVh2; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GlclS++X; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CL7Kul030958;
+	Mon, 12 Aug 2024 22:17:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=roVYq7FISukD9I
+	xJIVyL1nvmRlgGT5qX6EC+wyr2rKU=; b=QzHCiVh2v3O1mkaFpefW1IJNccWkV4
+	DECy19uymdVBGUCSeeqtLEGkAr0vHNbjgi6lNuLmaxPpw/aaKSqrRxoqBWdbrEn8
+	xyzoRiF1Ckt/SsAK+zPnXfPn4gqU1W3AibhXj9+5SJspB+zgWALzraxheYKOMFv4
+	/dxfseYX02v0UuYKMH7GMuebrJO3qYb/KWVqA+bGNHTis2Ppc84Hv8D1aNJ7l8SG
+	IQ/D9rhwZQvy4KJ3tKOJj8sSqYeBw3EMnfQ203aKdulGC4t9nuuDCgPuviK7x3of
+	uT8A0nFYbo86zJhLxERMeBclqEF/Zj5pXnh+3j12blUMzCPdoEZfiA5g==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxmcvmc5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 22:17:22 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CKTqcC003335;
+	Mon, 12 Aug 2024 22:17:21 GMT
+Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2177.outbound.protection.outlook.com [104.47.58.177])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn7qjkp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 22:17:21 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ximMuKViJx3MwhtNhmrCuiFPa+GDJzCJI8cOmXsHS5yNW7ygQVEye9a5tvXMfrdFdkXvlGiyg24cCTfBgzoayJe+UyEm4YHRuUh9IF1d1KaGjyRpW427MC1BapX+I/lpNy0HmQ2aX8nrCJ+lN1oCSc/3cuC/ntH+/ohT8XZ9lDtHEV/uSL6fJtqqqex5PDlP51Hi/rwH61YsCt6DUDx3DBMO9bIyyTGzApxUYNI2cmKVFgRS8vxL+NZ+A9HTpWAAov08QqfHq1yl+EneWRKy9uMwU+863JPx5UONfHomx8zLGNUq+J0aAot41EHFLtjz4LuPmLcpbXAwFuDRrO8Gcw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=roVYq7FISukD9IxJIVyL1nvmRlgGT5qX6EC+wyr2rKU=;
+ b=u7SJUbluGTopHSWCCcVv1rUB4NGR9lc5ArdPVyAjFgQd0JC3dwV6g29unIgAp54PkJhPDRciI7qMV7EkWHi6hz6KcfteRNKdJgNsttbAYHRSoJddnfx2hvX4E52PHEsL2g7MNUT+hwdzH039pqW9EFKU3rmavXZ0FkvEBdP4EjMMxd6PXpYQe7Ew5pGEVK9KOOprIOLGwWW4b1SLTri2bu2JJve6zxG7dgyZ/cg2ziEh2hvVoc887OtIRS+8N4Apy/0IVlv9Y2vX0WoiN2I1BKOs9d3R0OL4A/00qna821qk4zummJQq9/CldDusdaMoTy4nuihUTU2k+OCbiURsHw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=roVYq7FISukD9IxJIVyL1nvmRlgGT5qX6EC+wyr2rKU=;
+ b=GlclS++X7jSsC2wHrLYU57hdZIv2GGWOQJ5e5qKutnG1NmIgMRvtKj28zyRFSxe60I8BmETB+O62/zj9JrpEIFuWDaUh9MsjKjSzZRh+5W7GhASVLXHfevGOdYibzYriOzzthfqP7yO2iStejxAoUnmrfd57WpS7DjvG31tL2JQ=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by CH3PR10MB7807.namprd10.prod.outlook.com (2603:10b6:610:1bd::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.15; Mon, 12 Aug
+ 2024 22:17:16 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7875.015; Mon, 12 Aug 2024
+ 22:17:16 +0000
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+        "Martin
+ K. Petersen" <martin.petersen@oracle.com>,
+        Bart Van Assche
+ <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] scsi: ufs: ufshcd-pltfrm: Use of_property_present()
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240808170644.1436991-1-robh@kernel.org> (Rob Herring's message
+	of "Thu, 8 Aug 2024 11:06:44 -0600")
+Organization: Oracle Corporation
+Message-ID: <yq134n9z8s4.fsf@ca-mkp.ca.oracle.com>
+References: <20240808170644.1436991-1-robh@kernel.org>
+Date: Mon, 12 Aug 2024 18:17:14 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: BN0PR04CA0199.namprd04.prod.outlook.com
+ (2603:10b6:408:e9::24) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240812212139.GA1797954-robh@kernel.org>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XdqdRzcO9BWaJRLGOI6TBGoKgepnYOmU
-X-Proofpoint-ORIG-GUID: XdqdRzcO9BWaJRLGOI6TBGoKgepnYOmU
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CH3PR10MB7807:EE_
+X-MS-Office365-Filtering-Correlation-Id: 435f21ba-2c72-4abe-3f13-08dcbb1c8652
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0QQWUWqjky6Y6aJpEuzqb2hRt6eyfJnqDxvVOCI61ZPHAHTqhWH1eKz8bucF?=
+ =?us-ascii?Q?yDUFEOGRzvLCLKTHjQURN+UFBamHzbbx+dmJ2Cj6gdOgge+P0SARxbR4ecvf?=
+ =?us-ascii?Q?NhRKmm4lDrMu9P5HmsUk2/EicgSWG2IMtU483wli30YHeElZ/otgc70dQ3nV?=
+ =?us-ascii?Q?/pjyb2FD2pZyytTbzpMe2S7Ev4QgwIQPYKQnGrvEx145373t1DeKXfB2rRvV?=
+ =?us-ascii?Q?eOiHd7yPn5+hHP6L3np8W0MdX3zAroXzj7I5JMKV/cFU46cOYNb2gcNUk7Ux?=
+ =?us-ascii?Q?1NInm4IpZzjwa27oe8n9snm4W+zS205tk4cZGGvuDElg5ev1QGqgu84Lc96+?=
+ =?us-ascii?Q?i0wsRqmMlJuvHe5o2NGqM7bHpdW+OKJ1fqouh0nIOIdMYmLmUuFnGt2rwfaD?=
+ =?us-ascii?Q?z50Yd+tZfZ0LmdmVk4Zkkn8Z6Z1CIB6WsKaGM6Vhvwu+pN1gJHzack8eMMGY?=
+ =?us-ascii?Q?uUAtHrh5UHjeukTKXdodLDriFa673NbXgpAfk+vNUtqDF0hcYopazGu0BLNu?=
+ =?us-ascii?Q?wkBDf0O2gPymbFIJn5pacfNMr0kvlS3tZH6g6UzRmvBSeBZbeZWJufrVFe/A?=
+ =?us-ascii?Q?+D2q/hgN2hvASpSimZn6PgqA6fI9UDnXhDUbsA5AcEAfK0hB6+HR9gd+6iuP?=
+ =?us-ascii?Q?1YeQ4wqU9/EAuAWY6LDLpEzr2NQ6jqkNrsxreiGYbgtt2yVosHnAgI3dL2FH?=
+ =?us-ascii?Q?XZO+XDv14VDl3EE4Au04cPKy17wC4cKJcCzrTXB//iYEMHWmxf7NTltw22tT?=
+ =?us-ascii?Q?M4Wbqhk9SN2yK5b5MMCIAUqNG3Mx6iDWgnEEwdGthsrrmpngUVHBm2M3YyIz?=
+ =?us-ascii?Q?hmnI/SMGmfBczHEDvOXLaKxUj62YtxZA0XI5XXEDMcJ1AFm9eAWylZp7mubR?=
+ =?us-ascii?Q?GrteczyqtXJVRPOu9fvtUyY8Hx5eLtJvpDtCwSpZZJWGOT9p7CwYqLNjMC08?=
+ =?us-ascii?Q?VFKaoPJ/ehlwUOv4hSSZ6Uor2SYm3XavXndj8ElCawL/CzRIurTbcCj5jvqK?=
+ =?us-ascii?Q?0wMCS6UgYxYe7HcabtO6Iql0jNoNdG5NX218HKmttYiyEOXpVXbEFdBkVFOe?=
+ =?us-ascii?Q?KVHKHtHIPBmWrGt8pwOKz3nW7CBKph0di0LUbm8+66oRk4u+TOydjV/p0F03?=
+ =?us-ascii?Q?sNtqZ5W/yZJyBRWkWFW73TGvF/Bmgppp0tm7wpgmH352AHe7kgDQCSxpGHNN?=
+ =?us-ascii?Q?vm0rE2qiDfcR5ZlDCQyNRZ3EVXHluMN6J9RoM2TFJl4ppSuEGjVDpDUi6O1j?=
+ =?us-ascii?Q?uN+OPMjv/ogjhqbqLfX4NQIVD/QFRIqtVEj4xyJmLfLpybGTS4AWOiypU8KH?=
+ =?us-ascii?Q?30yogwTWkZl8G6gXg1D7D+vkGptPsqxwWcXWxfs1l1+tVw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TEdf39YYPr9HcEhpagPd87NH5ivdlI3s/0Rbju/2vkKAqsP+kZ5zEGq0ITND?=
+ =?us-ascii?Q?D5/66UA4F2i3QywVIog77ixY7FyKHSpYnORPKaCmYcK7YB8kSYHM6G+bbVvG?=
+ =?us-ascii?Q?odAc8LUD1E+sqR/mnOQSQ+OxpmzpOHslG9MTdfIIUyW6VR97OIpTQsg2jaqP?=
+ =?us-ascii?Q?wYVyYBqpW4+LH7SxT4UbkpVhcoXmlIzmKOHeNTtslHxpI7PO1oNWzihXvT85?=
+ =?us-ascii?Q?AFgdnQOv0pu3LrxWehEY91saB52lS8fD1oYN/5+2nWCAXJU2SfdRT2RhX2+/?=
+ =?us-ascii?Q?9lX5LCYaCp8OMBj9Eq/KAftqkS4cuAsqy/Ov3TP+17yIAlONJN+jbIdZskiK?=
+ =?us-ascii?Q?C3DaHqRDCZzuZwu1lhvRL4I0jhpMMbdIS7xb/xpCAl9M3GHR6sa46ygnFWbR?=
+ =?us-ascii?Q?YZBfPGrViKD9gB5M6zOcj9o/0kM7qLwhHplZmiyPwMa7PlRieuFAmOqeznv7?=
+ =?us-ascii?Q?pH6xhgR+S7DxklLMW9hthxO9iuEwxusmvAt3cQ9459lnJqe2DkmnJWNp+gK+?=
+ =?us-ascii?Q?4smZ86iyBUfEK3/COsq2U4TbEv90sa0RXgAseYNwdMd4DulVLo+ZmEWXQIfI?=
+ =?us-ascii?Q?dppkAgPnGaOpnYlGJ4nuz0oQ+j+L7AKetoGeyr/smubqp9cFaOrlSIm70sHw?=
+ =?us-ascii?Q?JUw0+GcH1jKEwniLv7khIhtkTU1p66eLx23BNPhGx0eTq9XuQ1L+sLF6RzgJ?=
+ =?us-ascii?Q?5EIgh90qz3fXFAsG7AVMEOu7Zd4mYIIl/olMxWGDCG8T2C7vv5JymhDTEgFC?=
+ =?us-ascii?Q?HgJEm+6cgY7GS9voP27uWgiGrLvY0bJ8J/RQcSi8GXgLpKx0ocI+CdOI6za+?=
+ =?us-ascii?Q?XjO4dFp39CjaP/1Ao8mYR+1ft+iuwDJrtvmfdSFwbqx4EqWhIiXvXaJW3ONN?=
+ =?us-ascii?Q?Q8xd1FKhZYL8jgVjCBekAsDjAnYOfcFvxGE7V+KXThtHGELY4kFYO/kLjEbw?=
+ =?us-ascii?Q?WEQ5P7XORifcNm/twblyPizsuS0OLNiJX7T0Cia87/YVkaY4Ydr79/QWjckr?=
+ =?us-ascii?Q?223eMeCiRV5pyWmiU0KBZ8OIoGdCdYzfxRW/8gj7qkGw5j4mP/rg+Z0zlZvW?=
+ =?us-ascii?Q?h4cz4bObWgnxBtzVwM4d2L9+ufoQsQc4JNBovq4FZnHFFLDEo0ZWKa1/+TO1?=
+ =?us-ascii?Q?vVj4qiHkfhY2s3kT/iO0+wpzEAZ4JtFTdHRgFue+0DDM0HKsUGRa3SVU0bv8?=
+ =?us-ascii?Q?gfdiT+1K0mhwMlI5lZ/JVW4TCW9OgTX40pjDOL8g7/7Ldxe+VT5TqGzDCwUl?=
+ =?us-ascii?Q?2q01Z98mixa9T3m/jV02lhY0pNbictsouOzp1dXtEOJyW+ZNDnor+nWnjI4y?=
+ =?us-ascii?Q?vNc1ViaR4FGp5cXjUV0nFScjRoeHtXG6OlO81HDRzTGbWRp/+WkdA2sUWCfF?=
+ =?us-ascii?Q?WjGDasyGo0p6vvXNoecX/uHPI4v+FpnBsAo4KXGty2MkKlXpz89QH6alLlfP?=
+ =?us-ascii?Q?kivzY5/aifpn0ds9SzoVXCjfTWF9L3vib07jrcqrKF6PyJimWztSpqyDnbvT?=
+ =?us-ascii?Q?ds+HwUjLJJLRYOojX/m5XOzOvbBdAfFyKcpGN9o0y0b+/pxe/aiw90atAkg0?=
+ =?us-ascii?Q?52YZWXxCzNl37qe2NjT9NF9XBNqoBL8q34Uwo3ngKLuHFwIszg9IlmwDB5aE?=
+ =?us-ascii?Q?NA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	OUiyaHsCHP7zXFFQUSUwFnZRWgtb2WeQMJeeIqCuDHyvOuCyeLZj++JqJrW25v0qu4Iba5FLmFLnPLDAkG7APXd6KK3fr9NDekSdZlfgUsc6kLnY/sTAOPzTpUPi4v/bBPDNXG3/gRNvzDQGfPlEWKGG1UKBVuoVonslBAKVn/L8+NGPaxUpTlA0uOysfNStn53bPzp+GthRKWV39BSPGwQJNj7D4op14dxtEcgdV6ezYRiHWmejy1QHYgQhzItkLo9sCzXoAKZwKkibpk3PainNB59WNCcaDfxhWpRzN+UG8Qm3QMmA2JMWurN/pfu4vO/ieXZVL00S9yKfOC4UV01z/v9mB7rq0A2t2+XPtxkz+mDkNaX1aToN/ZnSBvIKh6zC0O+vJ+p7tDhTlwoST9HJC0EAf30gT4Vr1seomFAJTR1OobVUKj2D9SNyB/sUpTthFSJUOiFcsJzmIaRVWBukRFkYxiBD/RKAUcat66qxyj36kPvlhrf2ZI2TfysVsi0atQ2JVbL1EndCByCBlUK7GyOni7iDMy2xjK/GUpMOM6dc5VG48QEsvDSlMadp/ywPjp24s9aNenzaZMm7To0WoSmm6yzgss7L9gskqlU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 435f21ba-2c72-4abe-3f13-08dcbb1c8652
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 22:17:16.7562
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZJRhru5JBnY6QmHY+03pJW/BuL7Q7vyOfZs+FfHa1pCJ988RnnnynBCDegcdUUQAmV639YIV+rs2Avo1IOq/YHMrD4MdIjbV6H1QpxNVrRg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7807
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
- suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408120164
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ mlxlogscore=887 phishscore=0 bulkscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2407110000 definitions=main-2408120164
+X-Proofpoint-ORIG-GUID: qmMmnloW8F2OIKQj890z9wAyi9Bvx7Yr
+X-Proofpoint-GUID: qmMmnloW8F2OIKQj890z9wAyi9Bvx7Yr
 
-On Mon, Aug 12, 2024 at 03:21:39PM -0600, Rob Herring wrote:
-> On Sun, Aug 11, 2024 at 08:12:03PM -0700, Bjorn Andersson wrote:
-> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > 
-> > The USB IP-block found in most Qualcomm platforms is modelled in the
-> > Linux kernel as 3 different independent device drivers, but as shown by
-> > the already existing layering violations in the Qualcomm glue driver
-> > they can not be operated independently.
-> > 
-> > With the current implementation, the glue driver registers the core and
-> > has no way to know when this is done. As a result, e.g. the suspend
-> > callbacks needs to guard against NULL pointer dereferences when trying
-> > to peek into the struct dwc3 found in the drvdata of the child.
-> > Even with these checks, there are no way to fully protect ourselves from
-> > the race conditions that occur if the DWC3 is unbound.
-> > 
-> > Missing from the upstream Qualcomm USB support is handling of role
-> > switching, in which the glue needs to be notified upon DRD mode changes.
-> > Several attempts has been made through the years to register callbacks
-> > etc, but they always fall short when it comes to handling of the core's
-> > probe deferral on resources etc.
-> > 
-> > Moving to a model where the DWC3 core is instantiated in a synchronous
-> > fashion avoids above described race conditions.
-> > 
-> > It is however not feasible to do so without also flattening the
-> > DeviceTree binding, as assumptions are made in the DWC3 core and
-> > frameworks used that the device's associated of_node will the that of
-> > the core. Furthermore, the DeviceTree binding is a direct
-> > representation of the Linux driver model, and doesn't necessarily
-> > describe "the USB IP-block".
-> > 
-> > The Qualcomm DWC3 glue driver is therefor transitioned to initialize and
-> > operate the DWC3 within the one device context, in synchronous fashion.
-> > 
-> > To handle backwards compatibility, and to remove the two-device model,
-> > of_nodes of the old compatible are converted to the new one, early
-> > during probe.
-> > 
-> > This happens in the event that a DWC3 core child node is present, the
-> > content of the reg and interrupt properties of this node are merged into
-> > the shared properties, all remaining properties are copied and the core
-> > node is dropped. Effectively transitioning the node from qcom,dwc3 to
-> > qcom,snps-dwc3.
-> 
-> In the past we've done this old binding to new binding with an overlay 
-> embedded in the kernel. The overlay would just be the .dts change you've 
-> made (we should have a tool that takes 2 DTs and generates an overlay as 
-> the diff). I suppose it's a few platforms here, but then it is just data 
-> and easily deleted when no longer needed (I think the cases I'm 
-> remembering did just that because they are gone now. It was TI display 
-> and Renesas media stuff IIRC). 
-> 
 
-Where and how do you apply this overlay?
+Rob,
 
-If I can avoid doing the dynamic translation, I'd be happy to do so.
+> Use of_property_present() to test for property presence rather than
+> of_find_property(). This is part of a larger effort to remove callers
+> of of_find_property() and similar functions. of_find_property() leaks
+> the DT struct property and data pointers which is a problem for
+> dynamically allocated nodes which may be freed.
 
-> 
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >  drivers/usb/dwc3/dwc3-qcom.c | 310 +++++++++++++++++++++++++++++++++++--------
-> >  1 file changed, 251 insertions(+), 59 deletions(-)
-> > 
-> > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
-[..]
-> > -static int dwc3_qcom_of_register_core(struct dwc3_qcom *qcom, struct platform_device *pdev)
-> > +static struct property *dwc3_qcom_legacy_prop_concat(const char *name,
-> > +						     const void *a, size_t a_len,
-> > +						     const void *b, size_t b_len)
-> >  {
-> > -	struct device_node	*np = pdev->dev.of_node, *dwc3_np;
-> > -	struct device		*dev = &pdev->dev;
-> > -	int			ret;
-> > +	size_t len = a_len + b_len;
-> >  
-> > -	dwc3_np = of_get_compatible_child(np, "snps,dwc3");
-> > -	if (!dwc3_np) {
-> > -		dev_err(dev, "failed to find dwc3 core child\n");
-> > -		return -ENODEV;
-> > -	}
-> > +	struct property *prop __free(kfree) = kzalloc(sizeof(*prop), GFP_KERNEL);
-> > +	char *prop_name __free(kfree) = kstrdup(name, GFP_KERNEL);
-> > +	void *value __free(kfree) = kzalloc(len, GFP_KERNEL);
-> > +	if (!prop || !prop_name || !value)
-> > +		return NULL;
-> >  
-> > -	ret = of_platform_populate(np, NULL, NULL, dev);
-> > -	if (ret) {
-> > -		dev_err(dev, "failed to register dwc3 core - %d\n", ret);
-> > -		goto node_put;
-> > +	prop->name = no_free_ptr(prop_name);
-> > +	prop->value = no_free_ptr(value);
-> > +	prop->length = len;
-> 
-> We're trying to make struct property opaque or even internal to DT core. 
-> Exposing it leaks pointers and then we can't ever free things. This is 
-> not helping. The changeset API avoids mucking with struct property.
-> 
+Applied to 6.12/scsi-staging, thanks!
 
-I will review the changeset API!
-
-> > +
-> > +	memcpy(prop->value, a, a_len);
-> > +	memcpy(prop->value + a_len, b, b_len);
-> > +
-> > +	return_ptr(prop);
-> > +}
-> > +
-> > +/* Replace reg property with base address from dwc3 node and fixed length */
-> > +static int dwc3_qcom_legacy_update_reg(struct device_node *qcom,
-> > +				       struct device_node *dwc3)
-> > +{
-> > +	int addr_cells;
-> > +	int size_cells;
-> > +	u64 dwc3_addr;
-> > +	int ret;
-> > +
-> > +	ret = of_property_read_reg(dwc3, 0, &dwc3_addr, NULL);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	addr_cells = of_n_addr_cells(qcom);
-> > +	size_cells = of_n_addr_cells(qcom);
-> > +
-> > +	__be32 *reg __free(kfree) = kcalloc(addr_cells + size_cells, sizeof(__be32), GFP_KERNEL);
-> > +	if (!reg)
-> > +		return -ENOMEM;
-> > +
-> > +	reg[addr_cells - 1] = cpu_to_be32(dwc3_addr);
-> 
-> Assuming dwc3_addr fits in 32-bit or that the upper 32-bits matches?
-> 
-
-The core resides in the lower 32 bits on all existing targets, and I
-expect any new targets that possibly changes that assumption would not
-take the path through this translation (or would need to correct my
-assumption).
-
-> > +	reg[addr_cells + size_cells - 1] = cpu_to_be32(SDM845_QSCRATCH_BASE_OFFSET + SDM845_QSCRATCH_SIZE);
-> > +
-[..]
-> > @@ -773,10 +937,14 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
-> >  		goto reset_assert;
-> >  	}
-> >  
-> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	ret = of_address_to_resource(np, 0, &res);
-> 
-> So we just leave the platform device resources stale? The right solution 
-> is probably to make platform_get_resource() work on demand.
-
-I did consider updating the resource, only in the case that we rewrite
-the information, as it would be slightly cleaner not to leave that
-dangling. But this was cleaner code wise.
-
-> That's what 
-> we did for IRQ resources years ago (since those had irqchip driver 
-> dependencies).
-> 
-
-Right, for platform_get_irq(), but I presume for platform_get_resource()
-we would end up with the union of the different resource-specific lookup
-mechanisms?
-
-Regards,
-Bjorn
-
-> Rob
-> 
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
