@@ -1,204 +1,290 @@
-Return-Path: <linux-kernel+bounces-283901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9171294FA21
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:04:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FFD194FA26
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBDA4B22150
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:04:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2A128294E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF06919AD71;
-	Mon, 12 Aug 2024 23:04:02 +0000 (UTC)
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FFE21991AF;
+	Mon, 12 Aug 2024 23:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="kERYL9r7"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2073.outbound.protection.outlook.com [40.107.105.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D5F14D28F;
-	Mon, 12 Aug 2024 23:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723503842; cv=none; b=dMbnKKC1Wa2co67bCqNU/GygTfh4zlljHvFApSTnHdkGd4otggKxZbGtz4scyJEPMoKX0LdLey+Rcgxb4fLaFF4LWgTWnv5MttbBt7nNJc3NQ1n5uMY8F7ZWQ6AL2LjjUVC5gL0h1YvxaIfkP1x14+jMfAE6zSdodCcDi76kPz4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723503842; c=relaxed/simple;
-	bh=ds6XhzAxTvpBuKXG5ylnye1N6tiRlGk42WCdUlS7Wyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrWJHVJUPs4pMaUxcaOVp8vI7AUfdbV2dP3SIeZeB6rF+zUdwhIPFGsyyvW3aAPiujti4+xf3CMNIO/EOLmSbfWvJfIo0RZYk0gt7q21FQQVg7kvgIjsPD+ZPRr7wvDIzGwX72IqhVCvEhgkP0s6wKuSBsbwxROLK0YHnsq8fZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso4424147b3a.0;
-        Mon, 12 Aug 2024 16:04:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723503840; x=1724108640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HMPNmqSprQ9BGPKYJ0Av2N0L3vCPc9pHL4KvpAQBBLU=;
-        b=IrGwL5MTUyhc6VIICFQzHuoBPBcJhIIADYwpxLTTbDP4LV8apyPDQMW76FcoOj/8ba
-         YWX54xNWlQczLpaTphxE+zJp8mgEiDB9H5jo9toBlF3+sAhyZXM48rvSOquJT6UbmvJU
-         rp9MDqbvJvx85Te6AJsdw1aw979mwxARoOTcT8tIwuBKcKXoCgricRQNswNgwhct0fri
-         meUKIoRH2V6me0KRxY1PO/B1EWkmSPXAOkv70A/tfLWG4qMeHofSfE4mum6LEcZCwilP
-         MefC+ZdgivjGMqSKLBXjRvnTUnR0izWiT3T1V5BprQhZGWh78W7h1Qh56KpL0mmqk4+l
-         7jRw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZO0JdZImj0nOJkMZzHh/0RzCH67bb3mEB3Lw95p891sKI+zjVyHRrOVyGlPUTZRh5Js2AOP3aW1qJGoaLN1QmEoqZZv/d33O/1VLeALd3n9B+6vrBuRpS1g6ajevL2xpoMhDQ0yJW+nSXvhdla8xDGP3paoyfJ+QTNrdnAuiAHtGWWJ4IMg==
-X-Gm-Message-State: AOJu0YwF4G2iznPhBtxEz9jhHFtuJQWLY1WONJwJUIb6ozkoQsBptXhf
-	Bj3jxlunhrgIX4pWD0BwessoBz7DQP5RQbnkhxy62OwOq8m9kkc=
-X-Google-Smtp-Source: AGHT+IGT7B592X3aZghDBftVvGia/mFsMB5B5+0hXM6/dxPfRUn5SPge6WimDhuUYM2WEBButJx9uQ==
-X-Received: by 2002:a05:6a21:8cc4:b0:1c4:d0d9:50aa with SMTP id adf61e73a8af0-1c8d74916c7mr2334155637.20.1723503839504;
-        Mon, 12 Aug 2024 16:03:59 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c697a549d8sm164253a12.67.2024.08.12.16.03.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 16:03:59 -0700 (PDT)
-Date: Mon, 12 Aug 2024 16:03:58 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Martin Karsten <mkarsten@uwaterloo.ca>
-Cc: netdev@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Breno Leitao <leitao@debian.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-Message-ID: <ZrqU3kYgL4-OI-qj@mini-arch>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <ZrpuWMoXHxzPvvhL@mini-arch>
- <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3741E1487F9;
+	Mon, 12 Aug 2024 23:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723504304; cv=fail; b=kE4z+wIr9ndNDRj4UA872cJWlcrJKIdn/uvQcNCfklT+0dVInxmxQmVSRfdto1F6acDFMD8n0cDwroaKGsJ33RVVIDWr7VrEps0FcZ9O0CIgov/2J2D9KQ/Dvx9Ah1gjbG0z4/dc9Cl1n19l8pZ4PEPlplJy9TPr9JZqLHMVHrk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723504304; c=relaxed/simple;
+	bh=KqDKxnqd/2X4PXEedaMv6gkGp3Fs35mKX9UGZShDhdA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Ld3UEjPDSW80gO0llEGVoAqxFsuXykeu6m3pxRINRuDk19PrADp0jF9hGlLQuwhVaySQDqGvKCgcDKL0TEmHi8p8Wn7pfSsIeWmU9OsouPvpThjq3VpV92KUSkkypfIgHtqNSySbCJExRBbJf5kyXI4fghu4EHCoomz+o+q/Tec=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=kERYL9r7; arc=fail smtp.client-ip=40.107.105.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ull44/Nk+Unhh3yla2pJvaJUK47MiAkFJr/INq56ZW5iClksr8DsX3jtWeq+ZUQKUocV/L5FGD/FYLm/ReNGL8huX+pfRKSLHrDNx4Gg6yJlpnCbEiqHXx9igRXLjP0qiBjtbS5jmzF42l/xruS9cf0lbV7/3oijD7nj+FkIM3uS/rKVhjBC35Ufs0Rl56KjGlnYU3AXqwiAT2EBZkP1OiM2/JV9anVTbvd31xQsq12Yba85K41/H3DxT1vfDL907auLt1E5jKCM25cMnk0mAxuV15/19NefJkPK3eoXMgEUZYWt1cEbUVwnkd+np94CnJ/T88bk5xPEaXIJneGDVw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zTPlkEuFQW1uFIvbSPmuip3Z7+MB/9szTpdUDNbS38M=;
+ b=ME9kYM4nr5AZDzfsrw7OcbQQSxiLMqLMaRxhHD2fC+rOctU8meKzQhL74FyWmgLLXs1cyQP/L1hLbmeE8LWwWHraPC5HIDbVq51qmE36CGjEvwLbOtE+5CU0OK8cu/tsgElpBKfZJCi59eLR8FzYNV+MGZ6GtCARJDWYr/K72GQUFKawCUbi1j/uYsN7j5l+2ZS7L3WJqhZYma81HvN+2UBZscljmrxG4m8lHG4lTPNBjNRwmjbiAOoGlOPc2FysGrdUdnsRVBIhgZ1bFLlVVu3dmOvQGSxBYazMW5f+hibRgoYX+k/uFdZF6t48pOENVN/4mn3mtBUrcM9ukyWvZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zTPlkEuFQW1uFIvbSPmuip3Z7+MB/9szTpdUDNbS38M=;
+ b=kERYL9r7Vn69EbKst8jH0kpiGUwBo7zyNb26WFaBv8dFiKPtOvdEBN49jMLssBdBHAHE3hqAP0MNpG4wjpEdCpej/sozXOBV6Lz7AhGg9wMWWjOzzUVgHt07/i/P9CDblI9oZKwZsHReZ8sHg/7vH+UFh35hpQkfka8xbA7ZrDaZ1E9BCrT50OS+TVjTEtPyOVGtLBHW3VuQuLgSYcjyJvucFgsmpw7+Y6HrzQugQbZiPPN2/84G9UT1n1cJM6LPrWwn8nZ6OjsHD5KL+2Ktxtfz5pjA0/JQxg6pR65IxfsZbV7w3RbH4v1R4x+M3NJWI9zRcviX+f/OmB7y0aeSRg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB11017.eurprd04.prod.outlook.com (2603:10a6:150:21c::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 23:11:39 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 23:11:38 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)...),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: input: touchscreen: convert colibri-vf50-ts.txt to yaml
+Date: Mon, 12 Aug 2024 19:11:19 -0400
+Message-Id: <20240812231123.3838058-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BYAPR07CA0104.namprd07.prod.outlook.com
+ (2603:10b6:a03:12b::45) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB11017:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc46e603-cfd2-44a4-c901-08dcbb241e9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?9YOXU0kNHqtKkO1/jasWpHhKTr8ddc1+UbRCork+NwKmBq6SsHKbag9x3yey?=
+ =?us-ascii?Q?Z92e20bQQdnMSgn706Qz7Sieyi5I/ySgloxotbwfEv+KdWKdU9AXob3Khdi2?=
+ =?us-ascii?Q?ioSfuCi+w/x1cqHmmmbnWHkP1JiKxWaBWyj61qmk+wjlePY9EpTbDyLeBrev?=
+ =?us-ascii?Q?Lc7vNPWFp3QzCX8xslJ7tsKAr55+oNJDUSStIMvchIA48moNPAOHNf2F/q7P?=
+ =?us-ascii?Q?3/gdFduTYMvU2fem1EZBk4bl80Kh8eRGUK8ZnIGkZK3rtD37xW3zoe1b8JcG?=
+ =?us-ascii?Q?45dx+uoKex8Q8ozcg/HHwFNAM7aN44wN4fFspZopV6yo2gudgRBWyauMiavZ?=
+ =?us-ascii?Q?TESZsHgJBc3mL+wIeX/1QGYEV1iue0PEKfaL2VqN6ZtFnBhhNLIHXljKHyJ6?=
+ =?us-ascii?Q?35ojbHQXna965yO3XunFqmWYR7k3qLtgxNy0oMA6AKxGfgDgTtjt5DwlphOI?=
+ =?us-ascii?Q?jiOGUGuOBZXkcw6WhfNGXe8UvkU5n8937W/MZNhvYxI2RxX94qTdI9DQfToj?=
+ =?us-ascii?Q?iwWN6MrPbwfVbkSEslo0K7aIj8eu+IEaF1pRCpG6w/Z5nh2uDDuZVlw6N2lf?=
+ =?us-ascii?Q?RobIzC85dX3mB3sq+mPs5fzBE4O6C8aOdAXIz4hcS6hhewgvA2WwFt23BRSE?=
+ =?us-ascii?Q?oUL09RmpPC6+N5NeYmTIk3UAmFm5CW0BslaOFWgazzxsGeXX7fifppK1qso8?=
+ =?us-ascii?Q?DJGkX7yFZBwX12QwCtrRSIqQnIQYSLPRo/5RXKd5urBc/QvNJrxD7AMxF0iZ?=
+ =?us-ascii?Q?lE49uI93opcj1A5gS7qb7WH2W7nVWGxQuO2g+WzsUu4cIy3mys0UqbUrIbp/?=
+ =?us-ascii?Q?pqGPSONSHaUpgvUnWbMCcb8ZWNd8jD5R2wa8m0otUkrpHRsLt7J6MUWWcGG+?=
+ =?us-ascii?Q?GdZo/CPDgjU9GEcyv2+WCrtWVa/zWBObN9Xr/A03V+n3nUbuYw+xay7QrRGA?=
+ =?us-ascii?Q?JjA45yMLdvWtsUBjl7j5xv8JbZ/WWXWuyPDi3wZbaEduPOb/+p7dAZiY2WQX?=
+ =?us-ascii?Q?CBFQQXkAujjUR6KxmZLnvnQpAkWXplOx1wAYpX/JAJxXdTOYwZuSSwhJLaGR?=
+ =?us-ascii?Q?GS3ELzu0FJpYqAZUgItNuVlfYJxAR2uxen2jzzyicjDlvp/rWY3dHsTRKCM/?=
+ =?us-ascii?Q?oUK1C/dy5bFGPgKHolfvURRyyIOeks1zEbMJv0RPMJfSVgd0XZJohnBvQwXf?=
+ =?us-ascii?Q?+mo89uetpiC6UfxTzqodS3vjueJxBls4Kc7r5RIhKIFT1kTBD+x7RoTE0aQj?=
+ =?us-ascii?Q?fVkEDp3xUjWrqdonxEi9G8GUss4u44IE5sqcLaVVUCotvOYZGdL9l+pwiIHc?=
+ =?us-ascii?Q?+Cn9vtttgrB9SLZgYFBkS4j5Yft/ZCwTJYwiNBcc5Q0pvNQc5+ubACR/auLG?=
+ =?us-ascii?Q?aoewguk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?SD+d9aAVkQYBeHVr6nW7mX7ezBfzkhuHQ5H+isceXFsMbmceDPOsu9aj7Sca?=
+ =?us-ascii?Q?dqyORXwCnyFlpyACfXPJwDqBqsYX0Ypgn1Pk/O2xeIsbbpxZuxVTkBTN1vdE?=
+ =?us-ascii?Q?gTxLgeAv51niYJ2lnCD6qm7zRJERTgHbVBliwsmxaO8VZW4sWUUTAX3S5Teh?=
+ =?us-ascii?Q?B613d9IhwmakggW43opeiZB+1M5EtI6B1y5vKduLZ+LrAYU8JONYmYymBClD?=
+ =?us-ascii?Q?hyHV6wS+EOJ3XVOKXK4aQ34itaOc8OZgZZ3xbhIeUBYwui/qDZO0QLp88qqS?=
+ =?us-ascii?Q?tn1g60jaxnT7jJWMyHkJsLh4vVy7jt0shL1cLlgO7YG6lVGfxyQ/OCXDbvGE?=
+ =?us-ascii?Q?CyRn/Aiiwwgd/DBWrs10V7LcGjf7TzdJ62aI1NiVJkHT6SMDxAPG3SgjmY7c?=
+ =?us-ascii?Q?AVzDefgTXhFFYhNKTHH2hhl9JuDYE+HblKfyg/w+XHvRBypQGQi0drKg+dFP?=
+ =?us-ascii?Q?ge9OuE75Zhymvn7kGLkEgp+kAZFYtmU18ww+s7ZNn2ZBj9O3pnVowxeJBf5j?=
+ =?us-ascii?Q?6RqDH7+NFvNvTXHo4pXlQcDEWca0o+JFQPbqLvmhL7nRDOfijNpMHr35L0Nl?=
+ =?us-ascii?Q?qj+VUOWdlEiT/dMWfFWh0/S9vrjxSzjuxOn1uSzYOnbHAb3haz2owTS6JGn9?=
+ =?us-ascii?Q?bAwO+Yz3j0gJbHo3Yt4pq43CQ39bR2jvdcSXjoJAnMD+BmYFEXUvMKPjEvHL?=
+ =?us-ascii?Q?cKEj46FeBETxF1cNK4Et789sQLt6ToOulyF0w8iHeQySaaQZ5JM5w2tuR8Iu?=
+ =?us-ascii?Q?leBTz2jog7BSRP9owT8EuxokCWd7b2Z45qd2fa0kkLJaJ0FHNp/4Hqk4gW8L?=
+ =?us-ascii?Q?I6SXdOPNC0D4eOJmSnXuNuj6ZdlwkzBPb9LQJTKEK3xI36WLUFug8PPGBkpA?=
+ =?us-ascii?Q?Jpl5U+vl+0W9qwqWR7beUpLC+8irVulmveXj6oVIyYYnfr0LDPvKVa/JXiwR?=
+ =?us-ascii?Q?3cJfhMsksb7B7y9QRXarwIvkYTlzTyfJYczXmWjm+MzMyhGhwa6W4jPDTxbu?=
+ =?us-ascii?Q?2yxut3ysTlIOL/9F71wrQmOSaqO5nOuevLzB1eGnybPrgGCIcZAMnUF18RCJ?=
+ =?us-ascii?Q?QLdU3bJm7+Wd/CV4ou+ADQ10RheOo0g5/8x8e1iKHOqSZYwnjEU4hQnEb759?=
+ =?us-ascii?Q?6ZMu3iBx1UAzFzby/uYogDNhngb3FcQvCn7YwvJnhx+PJtcNkiH1Od7Jf0c4?=
+ =?us-ascii?Q?rdW45jrmMLUsVgUReFhSExCD/GFysTjp1Bq5gB0C91WazAx+7wcMFGD7PeEO?=
+ =?us-ascii?Q?8MSVTlXS0g/v97KbutvNoSmTbnpjjanTwp6YqiqtJvbU1PSsTFsPKgUsAx50?=
+ =?us-ascii?Q?fYbUHmWo/iXbXddgCvkuSes7nozei6suMAXWxfTEV0JWJD++pwR/hz98CO30?=
+ =?us-ascii?Q?K/mCKms5gYgbpH2L74AS7cLOq8EX/SJZIEsB2dN9UbegbGCyrWaXI69vWG1Z?=
+ =?us-ascii?Q?Dgg0ryVy2mNaoVsJvguRfhmPu4cVHdNrVK5519k13H4YKA+pVM98fzDzQjJT?=
+ =?us-ascii?Q?zKs8kH4ikB6zq2MW4aDzgggBuE7hdki0QwNo7qOGO93o///6GM0PISmKNhO9?=
+ =?us-ascii?Q?/H9XZneqa9WptJ7sbM42pbi9Aj+ouTSso9Ma3i+X?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc46e603-cfd2-44a4-c901-08dcbb241e9d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 23:11:38.8303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: L5sBEhOEZgKTPc9y+5NqXWHvPpvKhw4pHAZ2L8SN64aOPm/Zdw4R58HGP6bQkIEHE8Mktw6WqrCkkP89zKqrnA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB11017
 
-On 08/12, Martin Karsten wrote:
-> On 2024-08-12 16:19, Stanislav Fomichev wrote:
-> > On 08/12, Joe Damato wrote:
-> > > Greetings:
-> > > 
-> > > Martin Karsten (CC'd) and I have been collaborating on some ideas about
-> > > ways of reducing tail latency when using epoll-based busy poll and we'd
-> > > love to get feedback from the list on the code in this series. This is
-> > > the idea I mentioned at netdev conf, for those who were there. Barring
-> > > any major issues, we hope to submit this officially shortly after RFC.
-> > > 
-> > > The basic idea for suspending IRQs in this manner was described in an
-> > > earlier paper presented at Sigmetrics 2024 [1].
-> > 
-> > Let me explicitly call out the paper. Very nice analysis!
-> 
-> Thank you!
-> 
-> [snip]
-> 
-> > > Here's how it is intended to work:
-> > >    - An administrator sets the existing sysfs parameters for
-> > >      defer_hard_irqs and gro_flush_timeout to enable IRQ deferral.
-> > > 
-> > >    - An administrator sets the new sysfs parameter irq_suspend_timeout
-> > >      to a larger value than gro-timeout to enable IRQ suspension.
-> > 
-> > Can you expand more on what's the problem with the existing gro_flush_timeout?
-> > Is it defer_hard_irqs_count? Or you want a separate timeout only for the
-> > perfer_busy_poll case(why?)? Because looking at the first two patches,
-> > you essentially replace all usages of gro_flush_timeout with a new variable
-> > and I don't see how it helps.
-> 
-> gro-flush-timeout (in combination with defer-hard-irqs) is the default irq
-> deferral mechanism and as such, always active when configured. Its static
-> periodic softirq processing leads to a situation where:
-> 
-> - A long gro-flush-timeout causes high latencies when load is sufficiently
-> below capacity, or
-> 
-> - a short gro-flush-timeout causes overhead when softirq execution
-> asynchronously competes with application processing at high load.
-> 
-> The shortcomings of this are documented (to some extent) by our experiments.
-> See defer20 working well at low load, but having problems at high load,
-> while defer200 having higher latency at low load.
-> 
-> irq-suspend-timeout is only active when an application uses
-> prefer-busy-polling and in that case, produces a nice alternating pattern of
-> application processing and networking processing (similar to what we
-> describe in the paper). This then works well with both low and high load.
+Convert binding doc colibri-vf50-ts.txt to yaml.
+Additional change:
+- add ref touchscreen.yaml.
+- remove standard pinctrl properties.
 
-So you only want it for the prefer-busy-pollingc case, makes sense. I was
-a bit confused by the difference between defer200 and suspend200,
-but now I see that defer200 does not enable busypoll.
+Fix below warning:
+arch/arm64/boot/dts/freescale/imx8qm-apalis-eval.dtb: /touchscreen:
+  failed to match any schema with compatible: ['toradex,vf50-touchscreen']
 
-I'm assuming that if you enable busypool in defer200 case, the numbers
-should be similar to suspend200 (ignoring potentially affecting
-non-busypolling queues due to higher gro_flush_timeout).
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../input/touchscreen/colibri-vf50-ts.txt     | 34 ----------
+ .../input/touchscreen/toradex,vf50.yaml       | 68 +++++++++++++++++++
+ 2 files changed, 68 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
 
-> > Maybe expand more on what code paths are we trying to improve? Existing
-> > busy polling code is not super readable, so would be nice to simplify
-> > it a bit in the process (if possible) instead of adding one more tunable.
-> 
-> There are essentially three possible loops for network processing:
-> 
-> 1) hardirq -> softirq -> napi poll; this is the baseline functionality
-> 
-> 2) timer -> softirq -> napi poll; this is deferred irq processing scheme
-> with the shortcomings described above
-> 
-> 3) epoll -> busy-poll -> napi poll
-> 
-> If a system is configured for 1), not much can be done, as it is difficult
-> to interject anything into this loop without adding state and side effects.
-> This is what we tried for the paper, but it ended up being a hack.
-> 
-> If however the system is configured for irq deferral, Loops 2) and 3)
-> "wrestle" with each other for control. Injecting the larger
-> irq-suspend-timeout for 'timer' in Loop 2) essentially tilts this in favour
-> of Loop 3) and creates the nice pattern describe above.
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt b/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
+deleted file mode 100644
+index ca304357c374a..0000000000000
+--- a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts.txt
++++ /dev/null
+@@ -1,34 +0,0 @@
+-* Toradex Colibri VF50 Touchscreen driver
+-
+-Required Properties:
+-- compatible must be toradex,vf50-touchscreen
+-- io-channels: adc channels being used by the Colibri VF50 module
+-    IIO ADC for Y-, X-, Y+, X+ connections
+-- xp-gpios: FET gate driver for input of X+
+-- xm-gpios: FET gate driver for input of X-
+-- yp-gpios: FET gate driver for input of Y+
+-- ym-gpios: FET gate driver for input of Y-
+-- interrupts: pen irq interrupt for touch detection, signal from X plate
+-- pinctrl-names: "idle", "default"
+-- pinctrl-0: pinctrl node for pen/touch detection, pinctrl must provide
+-    pull-up resistor on X+, X-.
+-- pinctrl-1: pinctrl node for X/Y and pressure measurement (ADC) state pinmux
+-- vf50-ts-min-pressure: pressure level at which to stop measuring X/Y values
+-
+-Example:
+-
+-	touchctrl: vf50_touchctrl {
+-		compatible = "toradex,vf50-touchscreen";
+-		io-channels = <&adc1 0>,<&adc0 0>,
+-				<&adc0 1>,<&adc1 2>;
+-		xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+-		xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
+-		yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
+-		ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+-		interrupt-parent = <&gpio0>;
+-		interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
+-		pinctrl-names = "idle","default";
+-		pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
+-		pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
+-		vf50-ts-min-pressure = <200>;
+-	};
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
+new file mode 100644
+index 0000000000000..6ff3ad1f9edfd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.yaml
+@@ -0,0 +1,68 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/input/touchscreen/toradex,vf50.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Toradex Colibri VF50 Touchscreen
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++properties:
++  compatible:
++    const: toradex,vf50-touchscreen
++
++  interrupts:
++    maxItems: 1
++
++  io-channels:
++    maxItems: 4
++    description:
++      adc channels being used by the Colibri VF50 module
++      IIO ADC for Y-, X-, Y+, X+ connections
++
++  xp-gpios:
++    description: FET gate driver for input of X+
++
++  xm-gpios:
++    description: FET gate driver for input of X-
++
++  yp-gpios:
++    description: FET gate driver for input of Y+
++
++  ym-gpios:
++    description: FET gate driver for input of Y-
++
++  vf50-ts-min-pressure:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: pressure level at which to stop measuring X/Y values
++
++required:
++  - compatible
++
++allOf:
++  - $ref: touchscreen.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    touchscreen {
++        compatible = "toradex,vf50-touchscreen";
++        interrupt-parent = <&gpio0>;
++        interrupts = <8 IRQ_TYPE_LEVEL_LOW>;
++        io-channels = <&adc1 0>,<&adc0 0>, <&adc0 1>,<&adc1 2>;
++        xp-gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
++        xm-gpios = <&gpio2 29 GPIO_ACTIVE_HIGH>;
++        yp-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
++        ym-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
++        pinctrl-names = "idle", "default";
++        pinctrl-0 = <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
++        pinctrl-1 = <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
++        vf50-ts-min-pressure = <200>;
++    };
++
+-- 
+2.34.1
 
-And you hit (2) when the epoll goes to sleep and/or when the userspace
-isn't fast enough to keep up with the timer, presumably? I wonder
-if need to use this opportunity and do proper API as Joe hints in the
-cover letter. Something over netlink to say "I'm gonna busy-poll on
-this queue / napi_id and with this timeout". And then we can essentially make
-gro_flush_timeout per queue (and avoid
-napi_resume_irqs/napi_suspend_irqs). Existing gro_flush_timeout feels
-too hacky already :-(
-
-> [snip]
-> 
-> > >    - suspendX:
-> > >      - set defer_hard_irqs to 100
-> > >      - set gro_flush_timeout to X,000
-> > >      - set irq_suspend_timeout to 20,000,000
-> > >      - enable busy poll via the existing ioctl (busy_poll_usecs = 0,
-> > >        busy_poll_budget = 64, prefer_busy_poll = true)
-> > 
-> > What's the intention of `busy_poll_usecs = 0` here? Presumably we fallback
-> > to busy_poll sysctl value?
-> 
-> Before this patch set, ep_poll only calls napi_busy_poll, if busy_poll
-> (sysctl) or busy_poll_usecs is nonzero. However, this might lead to
-> busy-polling even when the application does not actually need or want it.
-> Only one iteration through the busy loop is needed to make the new scheme
-> work. Additional napi busy polling over and above is optional.
-
-Ack, thanks, was trying to understand why not stay with
-busy_poll_usecs=64 for consistency. But I guess you were just
-trying to show that patch 4/5 works.
 
