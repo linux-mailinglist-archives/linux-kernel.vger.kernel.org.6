@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-283391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F2B94F1E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:40:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA2E94F1E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:41:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE46F1C22266
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BD90283A24
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68039184546;
-	Mon, 12 Aug 2024 15:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D516184548;
+	Mon, 12 Aug 2024 15:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SDa6xcHs"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+btOPwY"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143C5183CD7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6277183CD4;
+	Mon, 12 Aug 2024 15:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477222; cv=none; b=m8L5LK9FdPxmIEMiDMbecBScBtp89alT3XYJcCxONMjhZcxJxt/r4diybGu/7ZgKKiyhvONUWYFLE3TJO0uQLgQ5c2G3LW9f/UpRgVjaTZw8A9HwFRfhuqJGL8L8DGVYgN490D0d59WElE3oKhQ5NseWGyhmURTNukFErh5C+CE=
+	t=1723477306; cv=none; b=hZssj/IRp9c3i2q0/2T74HxQuLWgtUaoA4+MBSkXzOLBtKtsmpJlVczpWUep51mG7bj+JvT8X/bcV6LR6NfLX7VIRPe4n8AsTj1GgpAl+IHKJ79MKigjtnCcwC9nv2BUb5PSm2I895zw6kZW0u60ItMG1Zu9ItOjfIlUgj4ZCgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477222; c=relaxed/simple;
-	bh=0OYeQ2fZ3PWhJcSem+khrvGeqAFHfT8q/YAWv+E7EUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oaC0X/iKRAGIcO/HybzRccMneMV96baQKjY2pPEbIEymBQvk0lecnGgqNvfJ3IL8nH/Qr8B0sHw27jkT9N1T6fIySIq/q3znpgBkwsgwCjD151/dxXouvbSZ4hbH5iq37IzTe0NePWul9dnQ0i1//+umLf4qSiKl30qX8cvh86k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SDa6xcHs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723477220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IsDajGJ5npBRUKxZy3yJy39+Yw8rcRxs978LRc3+/7c=;
-	b=SDa6xcHsBVTJtoFfkRmGTPgReWVatUD57Jhg2mBvAtYl9g8IoySj4PAfJi4rKW5RA0zP5E
-	+ZzLJNcTegq7M7E5OG9zvOyvQznU4egw75JtMhzV7zTTExjR/Ioh/i9rnDNtxUqHA0cXxg
-	i3n5/auDsZpmWu1JSFpf1cL9nCoqznA=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-l0fBOLTbNuKX58nnIY7PBg-1; Mon, 12 Aug 2024 11:40:16 -0400
-X-MC-Unique: l0fBOLTbNuKX58nnIY7PBg-1
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-52f0108a53dso5909844e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:40:16 -0700 (PDT)
+	s=arc-20240116; t=1723477306; c=relaxed/simple;
+	bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=IC74X1RgulW2W0zlFhuihJzN5NzLFnZBnWQpoClcmR8QCJH72nFtl+2lAHf5npK7TEzxHpRjM+5+Nzf6pQRrZGFOCBmPlzDuLPMB5+IAUreQ4TYYrr6CU7/Zb9M8zM7DpudoTjQAqbRRoAMVDAbjeXwV8gRqmKiIAWv9j6W+uqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U+btOPwY; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so5865950e87.1;
+        Mon, 12 Aug 2024 08:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723477303; x=1724082103; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
+        b=U+btOPwY2+cOKIhAdZzvNOC3q8B0HhR89RBRykA8OVkcpbrBUcIwS4WfLjA19AxMOY
+         J0AzWBlIbO6QPgL0di/dlH8Kw4eKIJ7EW5luOLZlaf/PrVoHYZzX8lOJiy+XZ2/A4hi3
+         sdlwDJMyMGxSRqt6sWXz/TeVD4VGI3CeKcBaGXsvEVS8PWvG8EDVC4JO1d7KWbaJlJYs
+         E5bcPjiTyxYSBn5w9faCFQHFHLzVeodanoyR8h/5wmnUGSJ7pG3JO9h/t60Okpbl0WJU
+         SOpcZL+aNS0O9jxlQR6LSPVV1j5Bh35duU0+DUg8mi0mfwKY42oEM8dosbx8EloGUBoH
+         iaZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723477215; x=1724082015;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IsDajGJ5npBRUKxZy3yJy39+Yw8rcRxs978LRc3+/7c=;
-        b=HYvf4y45XVLyVPBB7kIfxE08x9Lr+FplCJ5PFcMME0073NxtUMhb4WHGIW5RF9FX03
-         SR2LlhVZ8utTmk1Se+fvKxeXYVGh13g6ZVVRJKIggNMhIyX1OFYcsZLdAxRLGp+q4eWv
-         mQUGf/D30tcxYey7VtTZhmoXE1bQ9m+e/fZnOJe2t14osWibbtzV5e/UT+9lbils2xXa
-         je9UsUw5fFukaD702vHMSzC7YpJKWAxk1fpcGx8aBU3/X/0hIDe5w5Hb+3FHs/OGeGeH
-         5tL64Q3lW/tyXBhjinjesftMEqEsuIJWzErprQq+SauK4bEp9CjW316p/Qbu5erzLI5u
-         iHig==
-X-Forwarded-Encrypted: i=1; AJvYcCWpXbI+CMH/bTz0INNYT/BUmY6mXKoNnfqjJDv9DAv9vsVdD4yCfyVdifng9aQdXD0YudzKyUNLYdhRTUGk3FCvrGyTCmfnLzYyfELr
-X-Gm-Message-State: AOJu0Yyp0OI1JrDbg3P+bax3EucY8VwhXkQziMIrtf6SXxq99ztmk+Tv
-	T9LInB8zQUlkhtTvt2X/GF++b79GKcuQcs1WT8UeibeX6jzEbV877ZdypjcFRdB7H8q630qq8zc
-	pyOgS39WfRDngnFJps9IzcvF8h870RTApR0Efb2Pm3UZw3vqmqE+FNDn4LJD7LQ==
-X-Received: by 2002:a05:6512:3b87:b0:52e:7448:e137 with SMTP id 2adb3069b0e04-5321364ba0dmr418509e87.6.1723477215103;
-        Mon, 12 Aug 2024 08:40:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHqTTm4i3yqoXwWcafjzWggvBAabRk27LvUse2Kqz/vx+0uXL/DvRLAZpeNUfxBVdHPwqM8g==
-X-Received: by 2002:a05:6512:3b87:b0:52e:7448:e137 with SMTP id 2adb3069b0e04-5321364ba0dmr418486e87.6.1723477214491;
-        Mon, 12 Aug 2024 08:40:14 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd190ac8b9sm2235220a12.23.2024.08.12.08.40.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 08:40:13 -0700 (PDT)
-Message-ID: <4efba0de-bf41-4e53-899a-19a27f565249@redhat.com>
-Date: Mon, 12 Aug 2024 17:40:13 +0200
+        d=1e100.net; s=20230601; t=1723477303; x=1724082103;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=arsBk47r35SMOp52SqQFyYG+SAqKjNHI+0xwr4ON+z4=;
+        b=TsIDQrdhSDiCvH8g5XpxQnKpcObG+rVO3fsjKNBclJb3EVqXadRViNfEkEBxOBpjFY
+         eX0iXtY0akV6NBopK3u/BptzdyOP2zBClZhEpkwiwiwRx+T8Y6A8B1PMMSO5JK7LrDon
+         PrtWKW8ET6z1o6o0g2JZVrXhRUAqFhqK+zQUZP5B7sH3eo+r/QI/YqePNpgWp5YopaPD
+         XacQIGjE8lQkm2Dn2Xk/MiJKYlUeeQmT4YqfzIUjnoJgvElXPmNT++X5QnWdwwr7NkwP
+         Mx+QoT+cTmxJhzq4oFLzNd84x3PDdbXw09VB28jH3Uz9f6Nn8w2zCoT2cg+fTTtdArSO
+         /F+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVtZNAVIAgpBrUMqgyCuC2DeBkpTaKE79bjh6r0Uu//DuRFkZ5PG8A4oz/VbDKEM3syDENKtjzpTiem+P9rjWg6VqOuwQ9wOhNz7HyA5urgwbh9+XYUhqhz9OYvsQaK2TENMZRic+VGVA==
+X-Gm-Message-State: AOJu0YxHeTkI1qXGnURRqibrt7qFhOlqALeojyD+i7B5WeCRI+9Qrm4J
+	y7T1anbuZnVHc9H1dFVQ6qTTlFkQi6JRfN/+wMYqIOj17QhS7w29
+X-Google-Smtp-Source: AGHT+IHhPDOj1w85n0McFlGpR3+md0Z5T6agj0fCRtNd7sYXOTVF0xidjMjYkDpSUqg4kHNi3fEe3g==
+X-Received: by 2002:a05:6512:3190:b0:52c:e3ad:3fbf with SMTP id 2adb3069b0e04-53213684160mr381665e87.42.1723477302469;
+        Mon, 12 Aug 2024 08:41:42 -0700 (PDT)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4e19sm2184694a12.20.2024.08.12.08.41.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 08:41:41 -0700 (PDT)
+Message-ID: <f4de493e53b6d2ea543d10bc07a030b32b1e2107.camel@gmail.com>
+Subject: Re: [PATCH v1] scsi: ufs: core: introduce override_cqe_ocs
+From: Bean Huo <huobean@gmail.com>
+To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
+  bvanassche@acm.org, jejb@linux.ibm.com, martin.petersen@oracle.com, 
+ beanhuo@micron.com, adrian.hunter@intel.com, h10.kim@samsung.com, 
+ hy50.seo@samsung.com, sh425.lee@samsung.com, kwangwon.min@samsung.com, 
+ junwoo80.lee@samsung.com, wkon.kim@samsung.com
+Date: Mon, 12 Aug 2024 17:41:40 +0200
+In-Reply-To: <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
+References: 
+	<CGME20240812065927epcas2p4ace98e8757a76e62efa3165de719408a@epcas2p4.samsung.com>
+	 <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/4] Add SBAF test to IFS
-To: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Jithu Joseph <jithu.joseph@intel.com>,
- Ilpo Jarvinen <ilpo.jarvinen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Ashok Raj <ashok.raj@intel.com>,
- Tony Luck <tony.luck@intel.com>, linux-trace-kernel@vger.kernel.org,
- platform-driver-x86@vger.kernel.org,
- Shankar Ravi V <ravi.v.shankar@intel.com>, linux-kernel@vger.kernel.org
-References: <20240801051814.1935149-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240801051814.1935149-1-sathyanarayanan.kuppuswamy@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 8/1/24 7:18 AM, Kuppuswamy Sathyanarayanan wrote:
-> This patch series adds support for Structural Based Functional Test at
-> Field (SBAF) in the IFS driver. SBAF is a new type of testing that
-> provides comprehensive core test coverage, complementing existing IFS
-> tests like Scan at Field (SAF) and ArrayBist. Granite Rapids (GNR) is
-> the first platform that supports SBAF.
-> 
-> SBAF mimics the manufacturing screening environment and leverages the
-> same test suite. It makes use of Design For Test (DFT) observation
-> sites and features to maximize coverage in minimum time.
-> 
-> Similar to the SAF test, SBAF isolates the core under test from the
-> rest of the system during execution. Upon completion, the core
-> seamlessly resets to its pre-test state and resumes normal operation.
-> Any machine checks or hangs encountered during the test are confined to
-> the isolated core, preventing disruption to the overall system. Like
-> SAF test, the SBAF test is also divided into multiple batches, and each
-> batch test can take hundreds of milliseconds (100-200 ms) to complete.
-> If such a lengthy interruption is undesirable, it is recommended to
-> relocate the time-sensitive applications to other cores for the
-> duration of the test.
-
-Thank you for your patch-series, I've applied the series to my
-review-hans branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-Once I've run some tests on this branch the patches there will be
-added to the platform-drivers-x86/for-next branch and eventually
-will be included in the pdx86 pull-request to Linus for the next
-merge-window.
-
-Regards,
-
-Hans
-
-
-> 
-> Patch Details:
-> 
-> Patch 1/4: Refactors MSR usage in IFS image loading code to share the
->            code between SBAF and SAF tests.
-> Patch 2/4: Leverages SAF image loading logic and adds SBAF image loading support.
-> Patch 3/4: Adds support for user to trigger SBAF test.
-> Patch 4/4: Adds trace support for SBAF tests.
-> 
-> This series is originally authored by Jithu Joseph. I have made cleanups
-> related to code reuse between the SBAF and SAF tests and resubmitting it for
-> review.
+On Mon, 2024-08-12 at 16:01 +0900, Kiwoong Kim wrote:
+> UFSHCI defines OCS values but doesn't specify what exact
+> conditions raise them. E.g. when some commands are nullified
+> or cleaned up, Exynos host reposts OCS_ABORT. Even if
+> an OEM wants to issue them again, not fail, current UFS driver
+> fails them because it set command result to DID_ABORT.
+>=20
+> So I think it needs another callback to replace the original OCS
+> value with the value that works the way you want.
+>=20
+I'm not clear on OCS was initiated by UFSHCI, but could you explain why
+it can't be altered within UFSHCI?
 
 
 
-> 
-> Changes since v3:
->  * Rebased on top of v6.11-rc1
->  * Added missing error return value in validate_ifs_metadata().
-> 
-> Changes since v2:
->  * Added Reviewed-by tags from Ilpo and Steven.
->  * Fixed minor issues raised by Ilpo.
-> 
-> Changes since v1:
->  * Addressed trace struct hole issue (Steven)
->  * Fixed initialization issue in ifs_sbaf_test_core() (Ilpo)
-> 
-> Jithu Joseph (3):
->   platform/x86/intel/ifs: Add SBAF test image loading support
->   platform/x86/intel/ifs: Add SBAF test support
->   trace: platform/x86/intel/ifs: Add SBAF trace support
-> 
-> Kuppuswamy Sathyanarayanan (1):
->   platform/x86/intel/ifs: Refactor MSR usage in IFS test code
-> 
->  arch/x86/include/asm/msr-index.h         |   2 +
->  drivers/platform/x86/intel/ifs/ifs.h     |  92 ++++++++-
->  include/trace/events/intel_ifs.h         |  27 +++
->  drivers/platform/x86/intel/ifs/core.c    |  33 ++++
->  drivers/platform/x86/intel/ifs/load.c    |  40 ++--
->  drivers/platform/x86/intel/ifs/runtest.c | 233 +++++++++++++++++++++++
->  6 files changed, 412 insertions(+), 15 deletions(-)
-> 
+> Signed-off-by: Kiwoong Kim <kwmad.kim@samsung.com>
+> ---
+> =C2=A0drivers/ufs/core/ufshcd-priv.h | 9 +++++++++
+> =C2=A0drivers/ufs/core/ufshcd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 4 +++-
+> =C2=A0include/ufs/ufshcd.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 1 +
+> =C2=A03 files changed, 13 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/ufs/core/ufshcd-priv.h
+> b/drivers/ufs/core/ufshcd-priv.h
+> index ce36154..4dec6eb 100644
+> --- a/drivers/ufs/core/ufshcd-priv.h
+> +++ b/drivers/ufs/core/ufshcd-priv.h
+> @@ -275,6 +275,15 @@ static inline int
+> ufshcd_mcq_vops_config_esi(struct ufs_hba *hba)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0return -EOPNOTSUPP;
+> =C2=A0}
+> =C2=A0
+> +static inline enum utp_ocs ufshcd_vops_override_cqe_ocs(struct
+> ufs_hba *hba,
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0enum utp_ocs
+> ocs)
+> +{
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (hba->vops && hba->vops->ov=
+erride_cqe_ocs)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0return hba->vops->override_cqe_ocs(hba);
 
+it is useless until you should introudce an usage case.
+
+
+Kind regards,
+Bean
 
