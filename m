@@ -1,91 +1,90 @@
-Return-Path: <linux-kernel+bounces-283019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0B794EC13
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:49:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFE094EC16
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329F828275D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA357282AE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A39F178370;
-	Mon, 12 Aug 2024 11:49:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFD3178380;
+	Mon, 12 Aug 2024 11:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="TE/ACCSK"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6153B14EC53;
-	Mon, 12 Aug 2024 11:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rGnbADwP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CCC0178372;
+	Mon, 12 Aug 2024 11:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463348; cv=none; b=qxwujHhG4YexF8p85xwYhPA+ptLkVXJeHeZXi/7OIooARYcZS1/BuxGslaqKriTgIdLzi71bzNaoA5X+L94bz6VxBe7K6XeDbwq0sPcPrj1RaNSlsz+trACUMR8kOyW96bnnLGCXfLuJ3Suuf/Fv7J15EjWF9EwdTHu3kuXqLlY=
+	t=1723463429; cv=none; b=cFZlwWinV/TyxX5wvj3REJdbVylqwGqhlhP/N9+pvZvKnVeejPBLGfJDgiVut0Fger5Yh7BP8Eh9BQv3aD0qtK3Ce/lLJ071a0InKw4lPR4gcxjBwUTfwtrPlVcg/OtqRPfyampmU3HFvAWudXX9GbEpvWpGTJpRKOWw6Yoxvhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463348; c=relaxed/simple;
-	bh=MU8n8oNR6sTJ4DC5O8p1KYQRyc33ljDSlbHVDD1Z76E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hl0JRlnRepH1s2m+wSdMb2PwLxpOggiIEn//Gt8xURALSxpvpdibqo6JYeHxoUCt+BPu0uuE8jbhxTbO+9Ln731Flh4yrnp/3nshm/SkUUxTfStv/LMUrBhTd1Iz7npvkffhYYD+zt8VKTg2l75U/Pk3Kin0lAqzJ0AICTltfWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=TE/ACCSK; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=rR32OfomYnPAod7zuZyAeQ+ekw2kljmsFCxG2kUM+TY=;
-	b=TE/ACCSKW9zHy5P760ILZFKHEACTTXrtntOFRsc/MfkWrsS8THkY2Kstq1Lt+d
-	pvdYqZJ7g8EpE9cLGvEpKJRnYMY5nvXfgcghNnnV7J7DoHgaSbV26B5i+T8+W6vE
-	kkR6gpXW9mwUJa1x+Wdb/koGOXANAGxWcYEQSSR9x5SyU=
-Received: from dragon (unknown [117.62.10.86])
-	by gzsmtp3 (Coremail) with SMTP id M88vCgC3H+2U9rlm+ZMQAg--.48176S3;
-	Mon, 12 Aug 2024 19:48:38 +0800 (CST)
-Date: Mon, 12 Aug 2024 19:48:36 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	NXP Linux Team <linux-imx@nxp.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: imx6dl-yapp43: Increase LED current to match
- the yapp4 HW design
-Message-ID: <Zrn2lL6E1IEBAlYj@dragon>
-References: <20240723142519.134083-1-michal.vokac@ysoft.com>
+	s=arc-20240116; t=1723463429; c=relaxed/simple;
+	bh=OQWIwP9PhXAySimWeo7mKueNK2l0AjWu9fXY62Xe7kE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DnsWN9zGPWU3pXBz6M2hYVuBJyXCIz3vtWKITZ+i36dtDH3reL1iuV3ltoZSPcu3L6EiViyXaRKQli/9UTH4Gob+afx3X5i8lI6YT6UcqApXYurEZx0BLjMN+zejwmW3XNz+toLbLT4/cNid1CXamivVFeDnfjufF+iGS6E17iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rGnbADwP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0E11C32782;
+	Mon, 12 Aug 2024 11:50:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723463428;
+	bh=OQWIwP9PhXAySimWeo7mKueNK2l0AjWu9fXY62Xe7kE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rGnbADwPUkeV3UN3bFXFF3s8qVL/upNiwAH42lmSrKKoF1z1lP0DxYvUbYvfMaOM+
+	 ik53hQtCgfOfNmLOVoZeL+QuaD19tr3WCYFghs8YUTi8hGSWNRBb2+8p6xMHU+RPfu
+	 xR15eUXU0MWVpR2ChaHBSl89sGfwDc9eRugnaZLysoCuO5fbn9b1FdDI14pR6Q7RFW
+	 MpoaCTn/7uIqM00n3bmTOD3Nvro0yrioj41iALes7difeIQbJWdf5Z23TPs0XQ9WQq
+	 KQEqJQQ0cFoAbblmgOQewMYTMLGWNykdROzuIbgxU2USwEPSI2wU1weu+cIWxHq2RA
+	 MqT5RSozOwwaw==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH 1/3] kconfig: remove dummy assignments to cur_{filename,lineno}
+Date: Mon, 12 Aug 2024 20:49:45 +0900
+Message-ID: <20240812115023.2101419-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240723142519.134083-1-michal.vokac@ysoft.com>
-X-CM-TRANSID:M88vCgC3H+2U9rlm+ZMQAg--.48176S3
-X-Coremail-Antispam: 1Uf129KBjvdXoWrKryUZw1DAryfJrW8GFyDJrb_yoWfJrb_WF
-	WxJFyIy397K3W8Ga15Krna934a93yUJF4xtw1Dta9agry0yF48Jw12qr93ZryUZF45Crnx
-	Crs5Ww1xK39I9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0rsqJUUUUU==
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEgM5ZWa57+IRVwAAsZ
 
-On Tue, Jul 23, 2024 at 04:25:19PM +0200, Michal Vokáč wrote:
-> On the imx6dl-yapp4 revision based boards, the RGB LED is not driven
-> directly by the LP5562 driver but through FET transistors. Hence the LED
-> current is not determined by the driver but by the LED series resistors.
-> 
-> On the imx6dl-yapp43 revision based boards, we removed the FET transistors
-> to drive the LED directly from the LP5562 but forgot to tune the output
-> current to match the previous HW design.
-> 
-> Set the LED current on imx6dl-yapp43 based boards to the same values
-> measured on the imx6dl-yapp4 boards and limit the maximum current to 20mA.
-> 
-> Fixes: 7da4734751e0 ("ARM: dts: imx6dl-yapp43: Add support for new HW revision of the IOTA board")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Michal Vokáč <michal.vokac@ysoft.com>
+Since commit ca4c74ba306e ("kconfig: remove P_CHOICE property"),
+menu_finalize() no longer calls menu_add_symbol(). No function
+references cur_filename or cur_lineno after yyparse().
 
-Applied, thanks!
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/kconfig/parser.y | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/scripts/kconfig/parser.y b/scripts/kconfig/parser.y
+index 61900feb4254..e03731184840 100644
+--- a/scripts/kconfig/parser.y
++++ b/scripts/kconfig/parser.y
+@@ -530,14 +530,6 @@ void conf_parse(const char *name)
+ 		yydebug = 1;
+ 	yyparse();
+ 
+-	/*
+-	 * FIXME:
+-	 * cur_filename and cur_lineno are used even after yyparse();
+-	 * menu_finalize() calls menu_add_symbol(). This should be fixed.
+-	 */
+-	cur_filename = "<none>";
+-	cur_lineno = 0;
+-
+ 	str_printf(&autoconf_cmd,
+ 		   "\n"
+ 		   "$(autoconfig): $(deps_config)\n"
+-- 
+2.43.0
 
 
