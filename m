@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-283182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1479A94EE53
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:35:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A671294EE57
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE2D282401
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB9321C21F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B110217C7C2;
-	Mon, 12 Aug 2024 13:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8C7181B86;
+	Mon, 12 Aug 2024 13:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/RlCLib"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T42yi9ZR"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0349F17C7B2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B5B17F4EE
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469662; cv=none; b=u4dbb0ElS3zq4shMEnYRWO+fY7H5KS28MfPKnMNHNAKEvSPQ57y6bpVAIVGDpW3uxjKso9WM3On9+ElL76BhhbLhA8gkPQxOCcXmCLHK30XT5UUsBtcBtlqw57sxC7Su4PLoCzCDaIHCW96ARF7eR2MCTx0TSfhSvRjih4WEzKI=
+	t=1723469664; cv=none; b=ZfaY2z8pQLr/EOzTgTnLYl0eBMklBL8Pru/zOBNoeLnVAHg1+2MaMLRNIgO8A7o0OaPRfWMKwb9Nbhaj7bQbQZD2eTpF8p5NQpXiLiCTBzTn+BJNyvEsaUUkeQtifwKgkugoG9BfwW3bFyt1lYBFfcLQ8uT0R5imvkiZR4jS5VY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469662; c=relaxed/simple;
-	bh=H8kaYJ2UVmG5D5geD0TuiFhX+chgtcGynCXf+srDSxY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kX+sInMKu/03p2ij5U51/HOs3w88coMun9ATT54DUV/khcT0N4LJ859tUocc6HBT4hyQ1z6oA+0Xa0qE9134pVr73thVDzgA+oIeAFVl7LeVa+CLkxrBT6nUd22HJ3GFQ8CuLh5kH4hR83QL3gWsq6wxoxmUUvAHlmEjdNfvU1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/RlCLib; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1723469664; c=relaxed/simple;
+	bh=xgfyKZmDDIbZTBcHgkC4HQRuoKCVphYVJo2Oqeoz2yg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=EJcrC24liIoso1lPSPL2480nea+2fdZKh8+kMG1/5Fg007cyYfpIHWjRZkRHbUA9sS/CfLr/RlMD5vd7hevSmSMEDvjxi0/MiMuffwJdRYKNAGE+KNfGruuXaVxOmHvVuN5U3JTBovFIMoFRwuHon7FXRAK7B8SlAF/rYuoKq3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T42yi9ZR; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4280bbdad3dso32914345e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2eeb1ba040aso59034701fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:34:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723469659; x=1724074459; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ9EsAfNWCNGsBTp/zuUJbg/d9ugsX/M8WUijMQTUKU=;
-        b=B/RlCLiboOa05eYGpMv10D6TmWYyR22SBQSOC2IWMGDOZ2rCPRfYfiFTHKXDhRTa4A
-         wK8ImB5PkIS9QPCP9GMM1iJRJH/TQs8GgqDpXsvqphLZLO8URFhMgmEfE+Y3dLEQMDTY
-         hRxIVugkoOrsn+j0WRUq6ImeC8o70+akTRZUkV8//JcIu0ry8xR1RHcqe7fXoZfWTwRG
-         FR0AsICtzAKe8/Fo/EBGc6yX1plOG06/Woou+Q2G3GsIyjICy9uHnMWRgNl3ojyjpR1D
-         xmJm0GV+dujkuMKiH5Q07A6hpNPQnoEqPC+VCUr7VOx3CR3J34lAuPYgxQR8m5L3Rouy
-         MThg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723469659; x=1724074459;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1723469661; x=1724074461; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=hQ9EsAfNWCNGsBTp/zuUJbg/d9ugsX/M8WUijMQTUKU=;
-        b=YOjm7sBtl1qSG+tYUexmoZd45DLX8eu3nnkwfowqlQMSNgKFkpzijhT0zFgTYwYlW8
-         WuN7tuKnFPt515FeyIPDGT0Sniav+4sdItSgsl+M7SOODKtISx4ag4cZauINFIi0pOAo
-         qbmJleYzHr5ePKrpnoayUYn/5TVH9mpkyi8TxlRQstKFg5zurvgvKj1KbcUit4pHUtuC
-         PFnDtux3BmrAyLFtPAI3hZhxHoO26TyAQyAkl9GX0436xsfDTQkJBtfC3NTmwUNDIMZ7
-         SMsia3EfK3xMVGffdw0IqUquhT/XBq3KP0asOxrpLcJaoDXFf2asi6jU4eG970mCKEUW
-         AYng==
-X-Gm-Message-State: AOJu0Yy0I+y7yg40plFGnojg2+MgRwBVZHtKMlhfkwZYuCpbrbIrotdg
-	WrwOL7O6wiYMwVGOvdxXwnfqupz3wRsIzBjPN+cjXBR5t8egjsEbY9KO2GIkD1I=
-X-Google-Smtp-Source: AGHT+IE1KeUxZr45wg8GO4bkox3rQPd8HA1lfti7444qmFnozdlwHtMIevcYiwqGJFzIO6QVhDVBxg==
-X-Received: by 2002:a05:600c:4584:b0:426:6379:3b4f with SMTP id 5b1f17b1804b1-429d4893818mr3637485e9.31.1723469659100;
-        Mon, 12 Aug 2024 06:34:19 -0700 (PDT)
+        bh=uOJ0Ss5PZ4IloZXXvkJRBvwO+cKYa9b2eKV5tMzUF90=;
+        b=T42yi9ZRQi7mcGBQuq95A4B9nSNoH6e+zy8IVONQZIDamNg1WFLsDZVrym/ZyuqxdN
+         GXvByXue2HhXSiOvnL3pmqLNr6Ob85zhSLvhJyOPyIOZqkI5uvo9rtcPPpLxXWyqDlW7
+         i7IK5xiEgie2TIt0fcHdYObLU8g6uONoO+ahPnGuRre8OvPhG+FY7ixt4JPZBdRbNSEf
+         gT4ZbgPNm25HXGebuZp0lBMBvFEaBnscMmrPft2nuuO7fdfQZNQASuAeLp/wgaog+Fac
+         V3hAbqdZNal56taQ3bMuZGYt7T7PdM8Gi9rYbOCDCex7iP0buZFe+iEyarsHCzpFPFFo
+         oNtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723469661; x=1724074461;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uOJ0Ss5PZ4IloZXXvkJRBvwO+cKYa9b2eKV5tMzUF90=;
+        b=JguWuhtAPzoWIDv/FOhiQkFBuhyX7A9E7ClT7idqAJN0PYblkrx56Wr0yrWwz65pJ6
+         GeqtCcKwbPo0GPtGOHXNwAYal6ksMG0vHqe8DqNK1KMrYaeA/HvEQisVhT3bJVnIxMIP
+         LkK3N58Y5P65dm8YPCWW4PzYwOzP+opVm3YYl3+RVuBGh/EhE0mdcp5sndRaX2TZyM97
+         pJhBYuAMIjJzH8mEQd/LnLZ+jPGO/X4OSxDq0Wjati8MnsPdMp15p3gJs6weseoKb9nx
+         eWmefCFzeCyG2ltCN9YB76hFZ5RFa6Ff9cRmBXHVjjXc1n061AligIZFGtqaBPpyylSO
+         1mGA==
+X-Gm-Message-State: AOJu0YyMCdl8F46SNZZfwUv5PBWMA9P9HsXD3NZQ0BgBxlRtzLkCBHgY
+	qGWQElbZ9++h5KH9sABSoa6O40J4ZTletxReIH/tR6MXFTT7AHqEk8J5XKvpls0=
+X-Google-Smtp-Source: AGHT+IHQihxBmTwZO+gpopSrog1h4Zwo6nfMe5CMTYHEB+GBFOYD57QnlF7TYHYQZ5mGOjHQLKtWjw==
+X-Received: by 2002:a2e:9985:0:b0:2f2:9c23:3412 with SMTP id 38308e7fff4ca-2f2b7156ee5mr2174791fa.23.1723469660887;
+        Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:34:18 -0700 (PDT)
+        Mon, 12 Aug 2024 06:34:20 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 0/9] memory: simplify with scoped/cleanup.h for device
- nodes
-Date: Mon, 12 Aug 2024 15:33:54 +0200
-Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+Date: Mon, 12 Aug 2024 15:33:55 +0200
+Subject: [PATCH 1/9] memory: atmel-ebi: use scoped device node handling to
+ simplify error paths
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +77,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAEIPumYC/x3MQQqDMBAF0KvIrDtggtjqVaQLdb51oCYh0VIR7
- 25w+TbvoISoSNQWB0X8NKl3GeZR0Dj37gNWySZb2qp8GcvjF73bAs/sJ3ZewGFbecHi484itcA
- MjW3Mk3IRIib93333Ps8Lb52N/24AAAA=
+Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-1-5065a8f361d2@linaro.org>
+References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
+In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Nicolas Ferre <nicolas.ferre@microchip.com>, 
  Alexandre Belloni <alexandre.belloni@bootlin.com>, 
@@ -94,57 +95,105 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1576;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2456;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=H8kaYJ2UVmG5D5geD0TuiFhX+chgtcGynCXf+srDSxY=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9Og7Sl9/SIc/9Vq1Ixg2W4m32wK6q+8y6zQ
- qEYeFt7MrWJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPTgAKCRDBN2bmhouD
- 102+D/9BLrZ01YnrGcAHBZt6bd8l0wpghqUDKqb9lER9jW5q0eqdTUBYaEZqhXWLrhZz04wW8V5
- 2PvdATezI856kVuXZ1VeKecXXA08oXa/3aDd74af9fkb29HcPi9nI8siB8e3pvF3JmpJ6CEsvdW
- HYxvlI6TDyB+SbKbBwCHcNa4y5nRFoOGL95+dqqyLOA7c+G4GfT3UOjHLgHLWVJn/AV58Al3ich
- Mskup0lPkDu8E+E9knsiT79x9k3yInyo3RdLYJUvcogoSo0kUTvc/EgkcE3ZlfZ2MngHqI/xS4m
- N+4HpTRy6fTKNzfFC4ZfjfMxDG1/0cEUoHQbkg9FTRhQ9gfnoASVNByBYrK/x9IL7t0ephvaZzX
- xNec+GhbAUCJrt5QJ+nhnbUm2vvy7Cpp25r1rQdHd79LOz26GrAt+BuAyn7tWl/nYeXhE4B0/g1
- cu0KLmKDs5LnZZEeNOn9kCMMAiFXcg/Qto8KT/LgVMJfFHsYp5qwHOdsVs3YPEPsLLKg2JUj4iB
- KLxYPUjJ2YYp7kNh47gDwIi0ffiHZlW+tv74fd6NdwJgC9J2W20sQZlwbqAM+Sno19sJ/N8jHsJ
- NS67XppXifcWhqGsVg7elPMvkGNQ85Pc4GM1kI0Kv47VZ+0RfbiFlrd4R0lRHelSBcTp1CHLZ6k
- 3tWtClDb4DnY3oA==
+ bh=xgfyKZmDDIbZTBcHgkC4HQRuoKCVphYVJo2Oqeoz2yg=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9RWiZUzjyUB45cY5GRGscQmhk2n/JWQ8eCU
+ OV6qDjUvVSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPUQAKCRDBN2bmhouD
+ 1xyXD/4zIloc9i56JR/7avOvWMonHwPMgxrw6eW1Ql3uMGbouCHddr07MRZROHf7FHGtaDBNSzW
+ mxhzYldkGPh7W1K5fj9UFeZ2zvkfrn+rQdUhG83d4r5ihSPYCQzBxKNTUvwKDDrn2jZ/DWAjmfh
+ TxjAUuNnwbSkd43KLCkjRjmKHg1bCsuc/NromW6Jla20roeAfx6ousA8KIh8deLOJvUSd9IjoTP
+ vhWCOrq414zR2AtAX4vd2IsPJM2zqwKIUt/ZXVvpV6IA6I5emax215uBPI/tq0XEaLTbW5dH/v8
+ JpZBGwkHxrkWhFaXEUS01fvJMEE2G+rqeMxi9GJGQSITpOae42sKZXL7jCxwsDsQ5zgfRwWGvJ5
+ veNYQdH4lAPRjl8MUL3h1K42k3GfVx4S1i+6PqIyC7vk7MOfuUV2WBitHAcxMyjcQMbj8XsjyvB
+ iMMGFF8VDH2oE6eJ4aaUv+Co83vS2sYyoIH7BWNGxvSW2ajjcesSADyFhNMcoelmhpGZTckxESl
+ 82l1O1qvrtFb0986Is0vJ6OhgHDX/Eja/dCxlk9T+SvRzZha67Ecrv1oWVyttwKxwqIrlMjdM0L
+ b7iludiktLPGaXEtTrzpL2Xl3GZiWkzR9es+685yu7ltUGzpJVSzqu8GN4yqwd4riFxIzLgCaj2
+ TMtGaSenJiohE3g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Make code a bit simpler and smaller by using cleanup.h when handling
-device nodes.
+Obtain the device node reference with scoped/cleanup.h to reduce error
+handling and make the code a bit simpler.
 
-Best regards,
-Krzysztof
-
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
-Krzysztof Kozlowski (9):
-      memory: atmel-ebi: use scoped device node handling to simplify error paths
-      memory: atmel-ebi: simplify with scoped for each OF child loop
-      memory: samsung: exynos5422-dmc: use scoped device node handling to simplify error paths
-      memory: stm32-fmc2-ebi: simplify with scoped for each OF child loop
-      memory: tegra-mc: simplify with scoped for each OF child loop
-      memory: tegra124-emc: simplify with scoped for each OF child loop
-      memory: tegra20-emc: simplify with scoped for each OF child loop
-      memory: tegra30-emc: simplify with scoped for each OF child loop
-      memory: ti-aemif: simplify with scoped for each OF child loop
+ drivers/memory/atmel-ebi.c | 29 ++++++++++-------------------
+ 1 file changed, 10 insertions(+), 19 deletions(-)
 
- drivers/memory/atmel-ebi.c              | 35 +++++++++++----------------------
- drivers/memory/samsung/exynos5422-dmc.c | 31 +++++++++++------------------
- drivers/memory/stm32-fmc2-ebi.c         |  8 +-------
- drivers/memory/tegra/mc.c               | 11 +++--------
- drivers/memory/tegra/tegra124-emc.c     |  7 ++-----
- drivers/memory/tegra/tegra20-emc.c      |  7 ++-----
- drivers/memory/tegra/tegra30-emc.c      |  7 ++-----
- drivers/memory/ti-aemif.c               | 13 ++++--------
- 8 files changed, 37 insertions(+), 82 deletions(-)
----
-base-commit: cf4d89333014d387065aa296160aaec5cec04cc5
-change-id: 20240812-cleanup-h-of-node-put-memory-dd6de1b92917
+diff --git a/drivers/memory/atmel-ebi.c b/drivers/memory/atmel-ebi.c
+index e8bb5f37f5cb..fcbfc2655d8d 100644
+--- a/drivers/memory/atmel-ebi.c
++++ b/drivers/memory/atmel-ebi.c
+@@ -6,6 +6,7 @@
+  * Copyright (C) 2013 Jean-Jacques Hiblot <jjhiblot@traphandler.com>
+  */
+ 
++#include <linux/cleanup.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/mfd/syscon.h>
+@@ -517,7 +518,7 @@ static int atmel_ebi_dev_disable(struct atmel_ebi *ebi, struct device_node *np)
+ static int atmel_ebi_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+-	struct device_node *child, *np = dev->of_node, *smc_np;
++	struct device_node *child, *np = dev->of_node;
+ 	struct atmel_ebi *ebi;
+ 	int ret, reg_cells;
+ 	struct clk *clk;
+@@ -541,30 +542,24 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+ 
+ 	ebi->clk = clk;
+ 
+-	smc_np = of_parse_phandle(dev->of_node, "atmel,smc", 0);
++	struct device_node *smc_np __free(device_node) = of_parse_phandle(dev->of_node,
++									  "atmel,smc", 0);
+ 
+ 	ebi->smc.regmap = syscon_node_to_regmap(smc_np);
+-	if (IS_ERR(ebi->smc.regmap)) {
+-		ret = PTR_ERR(ebi->smc.regmap);
+-		goto put_node;
+-	}
++	if (IS_ERR(ebi->smc.regmap))
++		return PTR_ERR(ebi->smc.regmap);
+ 
+ 	ebi->smc.layout = atmel_hsmc_get_reg_layout(smc_np);
+-	if (IS_ERR(ebi->smc.layout)) {
+-		ret = PTR_ERR(ebi->smc.layout);
+-		goto put_node;
+-	}
++	if (IS_ERR(ebi->smc.layout))
++		return PTR_ERR(ebi->smc.layout);
+ 
+ 	ebi->smc.clk = of_clk_get(smc_np, 0);
+ 	if (IS_ERR(ebi->smc.clk)) {
+-		if (PTR_ERR(ebi->smc.clk) != -ENOENT) {
+-			ret = PTR_ERR(ebi->smc.clk);
+-			goto put_node;
+-		}
++		if (PTR_ERR(ebi->smc.clk) != -ENOENT)
++			return PTR_ERR(ebi->smc.clk);
+ 
+ 		ebi->smc.clk = NULL;
+ 	}
+-	of_node_put(smc_np);
+ 	ret = clk_prepare_enable(ebi->smc.clk);
+ 	if (ret)
+ 		return ret;
+@@ -615,10 +610,6 @@ static int atmel_ebi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	return of_platform_populate(np, NULL, NULL, dev);
+-
+-put_node:
+-	of_node_put(smc_np);
+-	return ret;
+ }
+ 
+ static __maybe_unused int atmel_ebi_resume(struct device *dev)
 
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
