@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-283416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FBE894F22D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:57:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040FD94F232
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C314DB24C0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6726128293D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 497CE186E20;
-	Mon, 12 Aug 2024 15:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D0186E34;
+	Mon, 12 Aug 2024 15:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vKnVNvPb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWYeOvfc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C59F4D112;
-	Mon, 12 Aug 2024 15:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25D6C4D112;
+	Mon, 12 Aug 2024 15:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723478210; cv=none; b=jCxZSWALQnBJUXztPtXXFUzjk3BlI+tf1Zt8Xlc2XCU8jmVLj2/DwOhzOigi2hCG5DvQb7zqa1/+VLYqcR/E9vi/MByStYnt6tgjOa/CJOg4FlwG7dKTAlju+TdCV8ig8VOFCAA+EqskLoyC7dI/g07gVNfO08j1jDVbXivVyI0=
+	t=1723478252; cv=none; b=olmBHnOphJ5u0xNGRxmhuHbGBsd8f6HkG9I5uPAIR/ZvadhgxmwMtHt/1uHl0mVFwoKiuRKB+hjj5nQcnRqb/JO4oJtSMN7eMnEZeCBfhON+tzl1w/WuNbABZ+f9ORozzQSf4LatoB2jACiY5k5IJBa3omDKtwrtYlFkCVz/Llg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723478210; c=relaxed/simple;
-	bh=4e6n6x92NqR9MazOboeLoHPGK4lVmsG86VhQltVlHWA=;
+	s=arc-20240116; t=1723478252; c=relaxed/simple;
+	bh=1jY8JH1fwPEsXZDvtF095Z8nEO4cx3OboyXPTVEElpc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Agz/yzIGuLxXBNtDry0PnH32eE/5UV0FsB6b3xG8SPcg5aJVPsovwrfaHy1jdzpyfzS97F/d4L3HyO06V70Mu9rfHvgzTFrCYWkxIpoLl3+eFmP0SAd7AA0FdlEqT3Rq9kJS1mHbqVrrcSONgDzQfvNQcTNbaA43K9RLEYKpOPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vKnVNvPb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 025E0C32782;
-	Mon, 12 Aug 2024 15:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723478210;
-	bh=4e6n6x92NqR9MazOboeLoHPGK4lVmsG86VhQltVlHWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vKnVNvPbsccKLigIcSzPDPIcxRbt14nNxS0R8oPjsUpRSOyH3dFuExFnz2wBg8Xob
-	 KwK3j8pUKfJp95jaPS5zVNnhb5idDgyLDsjMVmM5XHeq5Hu1lewLpywzwTumyCeVJ5
-	 gwjAYzyNCZi7hebQpqq1PDbjEwZPx+LTY5hZyr4NyKIwrmM2jwdm654gbe9zN369XN
-	 TQaEYWvaXU6O2HVaHILIzd2XBDe/ZefkVmvS6dVyAB17sgrqJDQXM7MyNG8HRYe6Sp
-	 EeHc8R4GAnwGDbFPZoAmAHdlzXkKi2ONO0LnxeCKl41/Yf5lPBYn+0dcYlvFf+MK3i
-	 DWOdhCpbikSuA==
-Date: Mon, 12 Aug 2024 16:56:41 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Jesse Taube <jesse@rivosinc.com>,
-	linux-riscv@lists.infradead.org, Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Evan Green <evan@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Xiao Wang <xiao.w.wang@intel.com>, Andy Chiu <andy.chiu@sifive.com>,
-	Eric Biggers <ebiggers@google.com>,
-	Greentime Hu <greentime.hu@sifive.com>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Anup Patel <apatel@ventanamicro.com>,
-	Zong Li <zong.li@sifive.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Erick Archer <erick.archer@gmx.com>,
-	Joel Granados <j.granados@samsung.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: Re: [PATCH 2/2] dt-bindings: riscv: Add Zicclsm ISA extension
- description.
-Message-ID: <20240812-rogue-enable-9194afe10621@spud>
-References: <20240809162240.1842373-1-jesse@rivosinc.com>
- <20240809162240.1842373-3-jesse@rivosinc.com>
- <20240809181536.GA976083-robh@kernel.org>
- <ZrZmTvJgyQ5nB70H@ghost>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eHf0RI2hPcvqRNEXLsYuW6hpMp5WOujO41uIBuhaDhD6Gv6SzzWoFSMjlx/VqzaM31/hbZiMfm2TyWyqLDVS2YH07r360MsaTZKHmc7pTRrZi6yEcU8/ZiRApat9pLt602NnO7CmO4MCCUFwL8ckNzTlt2zFsZJf/h1ymvq9nZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWYeOvfc; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723478251; x=1755014251;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1jY8JH1fwPEsXZDvtF095Z8nEO4cx3OboyXPTVEElpc=;
+  b=FWYeOvfco2x9jdkfnz1SPksE3GYHi0meQv9dCRe6dtnVjRyTIn6RC2dK
+   HLIeKoo+HQWEefFXbKhiaH+89I+383UJoMJzuLdkFQ07LqB3hdkFPG5rQ
+   MkCy/71TFlQhZvA/c1vxCqHI0NB4oFssoWcjXMTu/5Pe3zHwhliIP0OUP
+   dz8sR8dX71SZhgtuPFtksRpJ9M5Qy21f8MWupUzk8c0AuFylNPoaZPTj6
+   GTqZRMtsvhLzvUeDFgpCoFU07DdcLVvSLMVBCB1Ti0w58AIgCbxN/Dh95
+   J2WDqRKAx9NhVInTSFawRPQElN5c6Uen1AY+4t0nirQ4Pif5h+DBA/dph
+   A==;
+X-CSE-ConnectionGUID: IvtU40hGTKSINbWbNSXNsg==
+X-CSE-MsgGUID: vKRj3uKcSeG+wH8B8LrIog==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39050272"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="39050272"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:57:30 -0700
+X-CSE-ConnectionGUID: McHd87mUTm2WpZAKFI1cEA==
+X-CSE-MsgGUID: a4xXCGiXS7y7C8xvK+qjfA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="88946016"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:57:28 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdXQC-0000000EOzu-0scM;
+	Mon, 12 Aug 2024 18:57:24 +0300
+Date: Mon, 12 Aug 2024 18:57:23 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 04/10] crypto: marvell - replace deprecated PCI
+ functions
+Message-ID: <Zrow42L9dYC6tSZr@smile.fi.intel.com>
+References: <20240805080150.9739-2-pstanner@redhat.com>
+ <20240805080150.9739-6-pstanner@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5oUgzud46N4jhbzw"
-Content-Disposition: inline
-In-Reply-To: <ZrZmTvJgyQ5nB70H@ghost>
-
-
---5oUgzud46N4jhbzw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240805080150.9739-6-pstanner@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Aug 09, 2024 at 11:56:14AM -0700, Charlie Jenkins wrote:
-> On Fri, Aug 09, 2024 at 12:15:36PM -0600, Rob Herring wrote:
-> > On Fri, Aug 09, 2024 at 12:22:40PM -0400, Jesse Taube wrote:
-> > > Add description for Zicclsm ISA extension.
-> > >=20
-> > > Signed-off-by: Jesse Taube <jesse@rivosinc.com>
-> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > ---
-> > > V1 -> V2:
-> > >  - New patch
-> > > V2 -> V3:
-> > >  - No changes
-> > > V3 -> V4:
-> > >  - No changes
-> > > V4 -> V5:
-> > >  - No changes
-> > > V5 -> V6:
-> > >  - No changes
-> > > V6 -> V7:
-> > >  - No changes
-> > > V7 -> V8:
-> > >  - Rebase onto 2d1f51d8a4b0 (palmer/for-next)
-> >=20
-> > Please also put the version in the subject. '-vN' is the git-send-email=
-=20
-> > option to do it for you.
-> >=20
-> > Rob
-> >=20
->=20
-> These patches were originally part of a different series [1] but are no
-> longer related to that series so I had asked Jesse to spin these off into=
- a
-> different series. These version tags probably should not have been left
-> on here when made into this new series though.
+(Reduced Cc list a lot)
 
-I dunno, I disagree. I think the versioning should continue on being
-split - especially when there's been tags provided on earlier versions.
+On Mon, Aug 05, 2024 at 10:01:31AM +0200, Philipp Stanner wrote:
+> pcim_iomap_table() and pcim_iomap_regions_request_all() have been
+> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> 
+> Replace these functions with their successors, pcim_iomap() and
+> pcim_request_all_regions()
 
---5oUgzud46N4jhbzw
-Content-Type: application/pgp-signature; name="signature.asc"
+Missing period at the end.
 
------BEGIN PGP SIGNATURE-----
+...
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrowuQAKCRB4tDGHoIJi
-0jq+AQCp+/d4fJsH+1tFW/4KT0Q0ZRrPKVNCwnFEAIbB7uO4+AD8DA2HB1PxjGsW
-KBrdfSC7D857tJ/2h3QaZbYOyeNjAQ4=
-=sOnO
------END PGP SIGNATURE-----
+> -	/* Map PF's configuration registers */
+> -	err = pcim_iomap_regions_request_all(pdev, 1 << PCI_PF_REG_BAR_NUM,
+> -					     OTX2_CPT_DRV_NAME);
+> +	err = pcim_request_all_regions(pdev, OTX2_CPT_DRV_NAME);
+>  	if (err) {
+> -		dev_err(dev, "Couldn't get PCI resources 0x%x\n", err);
+> +		dev_err(dev, "Couldn't request PCI resources 0x%x\n", err);
+>  		goto clear_drvdata;
+>  	}
 
---5oUgzud46N4jhbzw--
+I haven't looked at the implementation differences of those two, but would it
+be really an equivalent change now?
+
+Note, the resource may be requested, OR mapped, OR both. In accordance with the
+naming above I assume that this is not equivalent change with potential
+breakages.
+
+
+> -	cptpf->reg_base = pcim_iomap_table(pdev)[PCI_PF_REG_BAR_NUM];
+> +	/* Map PF's configuration registers */
+> +	cptpf->reg_base = pcim_iomap(pdev, PCI_PF_REG_BAR_NUM, 0);
+> +	if (!cptpf->reg_base) {
+> +		err = -ENOMEM;
+> +		dev_err(dev, "Couldn't ioremap PCI resource 0x%x\n", err);
+> +		goto clear_drvdata;
+> +	}
+
+(Yes, I see this).
+
+...
+
+> --- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+> +++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+
+Ditto. here.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
