@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-282635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED08F94E6B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:33:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4CA94E6A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:31:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80ACF282C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:33:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0AE71C2141C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D89F166F2C;
-	Mon, 12 Aug 2024 06:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB73B14EC61;
+	Mon, 12 Aug 2024 06:31:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="v8dCCDjM"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLPYIMoq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64CD165EFF;
-	Mon, 12 Aug 2024 06:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB14D432;
+	Mon, 12 Aug 2024 06:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444317; cv=none; b=AHmb4Dfbj3EHJ4SN3M1uQz7OPsl0ZVwcStrr8YgSETjw/GcS8pe07ZBYwdk4gT+p5CXfbMtABLsLs8ICGvI8sw8F7dc+Hb4wLa4aj4GMQELNvLbhz2HNnf1RHHhBGavAh4giZTO9A1/p/Wqo9pwyC6c3U5clOIZVSMiuLKP1KQ4=
+	t=1723444296; cv=none; b=F9L7zAlpPnz4E8XGyfg8H1EfbrXhaoMG5JevuYN1pRh6jnZ6ENpHwav0sDpn/RkN09Xe0GSUYCxW++CxjbUVdI3m0FdxsHpDmtoHvtyOvsvl1p1p2uZ3okDXTKgccHwqRcX8v5MSCXingKfos5zVGS5/cDKNsCeALFZ2vg9y/kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444317; c=relaxed/simple;
-	bh=Z2rKMDvRnVUsDNHEJGouG/LnRfw084gmu32pKKx+v3E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tSf4ERaJTrGTP4hqBuRSlv3munu8Cr9z0agBGjMTUYe9iM5JgOO9EVyrYAb2fanWiVhQPxIbEO+UJ3MOsgus+8/ie3swxIuNfH3byrnYYTxmRlj+GGeGZw8ekQA2BqWKW95YIVJtXomcLvV7BEmBigWN3kf38L/j0Ry8qq97858=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=v8dCCDjM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=1Mf47dsmFdXaLM/5Uz2vFkWWSorSPzCT+SfcQvDKnl4=; b=v8dCCDjMy85t9lz4dQD1eOiMk+
-	OZqfIxBSgcM1Caa/Uxqx165Mzst6gpmHn9QrkHaRrZMCwDbL6RBuqDiMqimtgThJEtiCdhvnY16VF
-	drd9NUn3Or/qOPcfiwz5bqhFNo5rjGxiLhiRjAGSOcrEwbzrwZ4rB8pBjX0tk7GDvDMBVFbKKwQbm
-	25W7VwB4yiJVCUi3qKsHAuRf9ClwpGUsSbQG1EvEo8Fh0G8d7XNki8wV1RrPcov9CAuxj2dxl5hFs
-	FHapcKp5TgB8kffCpfeR0dS0U7lC92VeChSl0N3BUOyqI3k+5E70RgkrOWs1xebEsV/RUzBDb7r+k
-	fLA8AbKA==;
-Received: from 2a02-8389-2341-5b80-ee60-2eea-6f8f-8d7f.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:ee60:2eea:6f8f:8d7f] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOaw-0000000H1Me-13e8;
-	Mon, 12 Aug 2024 06:31:54 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 3/3] xfs: use kfree_rcu_mightsleep to free the perag structures
-Date: Mon, 12 Aug 2024 08:31:02 +0200
-Message-ID: <20240812063143.3806677-4-hch@lst.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240812063143.3806677-1-hch@lst.de>
-References: <20240812063143.3806677-1-hch@lst.de>
+	s=arc-20240116; t=1723444296; c=relaxed/simple;
+	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MH+Ql4zMf3h2fvQzwX1tYCpkyzLN5zcfW59XawuB3fGf2dVgXUss2TYPGrfVwxgKN8HN1Khq2fDym3TP/2XBXjv+wHqdJzBRKihSxOZ9mmJjmRWkIjx/PtesA0FG/aPXDiQI7RCqGSeKHJlCBmsKBXQlVJcfTmu9d8olooIHkC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLPYIMoq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE6FC32782;
+	Mon, 12 Aug 2024 06:31:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723444295;
+	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CLPYIMoqxc1NGyyezYOT7hZ7diUUyv9L4D4BNDgcXR/y5SwCRvxiZiDLoHWqC/yQl
+	 YhVqBH+v5tUPfxe8FIoTuAygdPU4yp5md3QTkVG6xtezirmVwxVohXnF8VhgNmwMzB
+	 Cx5AP+vlXYFWD6NuCSN3lbvT1+/rT/ygwM6UrQ70aFORTnHdZE/qwblBHp3CunVW+4
+	 TV+nFwFwUO38zR40Z4B7cE18BQFZUrl13xdZeiB/DNozpaxRH0NBpTeyNzU5c0IO98
+	 MmeaTnxsckiAGHLMe+JvCMA3m5brsDvnzW0B4hKLIdF24Q8/6W3e1AfgnsCf3LgEGs
+	 cSIm9dKYGeLPg==
+Message-ID: <c6ff2c78-df8a-446d-a87a-6e5349e43195@kernel.org>
+Date: Mon, 12 Aug 2024 08:31:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+To: Alim Akhtar <alim.akhtar@samsung.com>,
+ 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>,
+ 'Conor Dooley' <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
+ <CGME20240730071227epcas2p278017961013950cd75c4266eda45c236@epcas2p2.samsung.com>
+ <20240730071221.2590284-2-sunyeal.hong@samsung.com>
+ <db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
+ <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Using the kfree_rcu_mightsleep is simpler and removes the need for a
-rcu_head in the perag structure.
+On 11/08/2024 18:54, Alim Akhtar wrote:
+> Hi Krzysztof
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Wednesday, July 31, 2024 2:57 PM
+>> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Sylwester Nawrocki
+> [snip]
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - samsung,exynosautov920-cmu-top
+>>> +      - samsung,exynosautov920-cmu-peric0
+>>
+>> Maybe I misinterpreted previous discussion, but I had impression that
+>> binding was incomplete and you wanted to add more devices?
+>>
+> There are other CMU controller blocks likes any other Exynos SoC. 
+> Are you suggesting to add all of them? 
+> In the above case cmu_top provides clocks to cmu_peric0. 
+> And I think the subject patch Intension is to add binding for this clock tree. 
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- fs/xfs/libxfs/xfs_ag.c | 12 +-----------
- fs/xfs/libxfs/xfs_ag.h |  3 ---
- 2 files changed, 1 insertion(+), 14 deletions(-)
+I want the bindings to be complete, because previous review indicated
+there are more devices.
 
-diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
-index 5efb1e8b4107a9..55cf41be04d145 100644
---- a/fs/xfs/libxfs/xfs_ag.c
-+++ b/fs/xfs/libxfs/xfs_ag.c
-@@ -185,16 +185,6 @@ xfs_initialize_perag_data(
- 	return error;
- }
- 
--STATIC void
--__xfs_free_perag(
--	struct rcu_head	*head)
--{
--	struct xfs_perag *pag = container_of(head, struct xfs_perag, rcu_head);
--
--	ASSERT(!delayed_work_pending(&pag->pag_blockgc_work));
--	kfree(pag);
--}
--
- /*
-  * Free up the per-ag resources associated with the mount structure.
-  */
-@@ -218,7 +208,7 @@ xfs_free_perag(
- 		xfs_perag_rele(pag);
- 		XFS_IS_CORRUPT(pag->pag_mount,
- 				atomic_read(&pag->pag_active_ref) != 0);
--		call_rcu(&pag->rcu_head, __xfs_free_perag);
-+		kfree_rcu_mightsleep(pag);
- 	}
- }
- 
-diff --git a/fs/xfs/libxfs/xfs_ag.h b/fs/xfs/libxfs/xfs_ag.h
-index b5eee2c787b6b7..d9cccd093b60e0 100644
---- a/fs/xfs/libxfs/xfs_ag.h
-+++ b/fs/xfs/libxfs/xfs_ag.h
-@@ -63,9 +63,6 @@ struct xfs_perag {
- 	/* Blocks reserved for the reverse mapping btree. */
- 	struct xfs_ag_resv	pag_rmapbt_resv;
- 
--	/* for rcu-safe freeing */
--	struct rcu_head	rcu_head;
--
- 	/* Precalculated geometry info */
- 	xfs_agblock_t		block_count;
- 	xfs_agblock_t		min_block;
--- 
-2.43.0
+Best regards,
+Krzysztof
 
 
