@@ -1,144 +1,259 @@
-Return-Path: <linux-kernel+bounces-282445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C3D994E41C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:55:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74C094E442
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:59:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F9A1F21E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:55:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9054C281E6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA754A32;
-	Mon, 12 Aug 2024 00:55:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550665227;
+	Mon, 12 Aug 2024 00:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QcO3RWIy"
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="dNeTuGyK"
+Received: from mail-ot1-f67.google.com (mail-ot1-f67.google.com [209.85.210.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E47193
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 00:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B204A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 00:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723424150; cv=none; b=ZJJIujovLO4+Y73+NVuHIdXqAZUU8wajgnh7FSTIXVBk9RqqRRf3c3ekV6yVzUfkvTOb5SHRTuIHi48vy6zmPBPvFaCKRC1T1VN8QDcvPkLt8nw1LNiVUCPolT62B1QfcDap/2XyFu4YAftELpr1CKHM2zmoOrbk/ALu+R18aE8=
+	t=1723424385; cv=none; b=lj3fkGKaO+ZmHUCx1FOPNB+Evj2Y5se5cULAC+6s4Tmt61JarkcAFylV3zthbS6Jl0LJWd3AYkwZyzd4snTOwp4bcWgEltc24taNQ1v/6n51mzVpDxJ2nCSScNsemXOEVAEFrDJBMoTpc46ZHPFJFguszL/VlR2BT8l+SYtwkn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723424150; c=relaxed/simple;
-	bh=5am0jIIL0wjoxX56gKELDhDdWpcBb6Ij4l84QXiSECI=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=awZBd2UszQ0FIXq1+dGzRrm7Wm/OuLHQ3zs26/+Zz2xWFeYUWTJD6cochl7qWhpF9fL5H18SbjJJPAVaZpwm9tsW7KzVL2dsMdD9RzR1Mybys5UB+WFgmpH8QSEGiN5MJXuJq5uiM3E+uBfPc4e3l/gNL3HEmZcMWK7p6uq8dTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QcO3RWIy; arc=none smtp.client-ip=209.85.166.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39c3bf0584cso92885ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 17:55:48 -0700 (PDT)
+	s=arc-20240116; t=1723424385; c=relaxed/simple;
+	bh=JGKUKC6ddll/HQbcX29Sm7QYBwZDAAanOpcgaEl4Qts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nieYPaI4XseUTbW7HiJdGoYbyHoirLId9S7LUBxiLtcBeAsSJbChHOksEPttKqSrx1c9WiFh/cvJxc7DMKMnZYRGwfXAkRV0Wy5eBzGgb/lb6a5ookW3LvxUMJ1IaFv3KfuebKgyeUhYK2kgbG3N1e2YnEISwnjkjUqyiE0wLyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=dNeTuGyK; arc=none smtp.client-ip=209.85.210.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-ot1-f67.google.com with SMTP id 46e09a7af769-70943b07c2cso2471558a34.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 17:59:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723424148; x=1724028948; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P1wZscBRBmINP9lOLmPC6SYu14+hz1L8Prsr/p/rIDU=;
-        b=QcO3RWIyqwguD9JD8KRNAiuUzH3rz790aVWTcJsXSN4+ituY7IhgpAjkW0afkAEsVd
-         pa84cAz+anNq2gzfFFq9xxGnfD7NLNbmW2W2ya0HXfv1cmz8Z9FIOuCkvcUTEFbxIPeR
-         OtwfumIC/t/zQF5rcuHMoOamKqbGYMQBip8JEmcwUHVQ94JdA1c+g3+iD/8ItEm5mhF9
-         oedmdi40LkDJmvVPNFEjs4VjLDCBLvSjNpI68QuuBYMd3KN9P5EfDYK8n0GSZ/xlK97l
-         whejkBnlZaF7kQuZOioRaeYH01YgVVcoIDcoptmxvkxKJm34vzQ1lrXlS+wh117ZvhIJ
-         Xu9A==
+        d=ventanamicro.com; s=google; t=1723424382; x=1724029182; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1t+DOBtWVw6p1QzV6tpA79/Z/soEYYlKfO1cj75JM4=;
+        b=dNeTuGyK5kX14qG9KNXzzrtPy7+fevMHTlV487CwixLUx/6B+DWOBCyn9qQc8YnVRp
+         BaKUZvcRQmIvwxGDGNPJhzgchnVhufKIKSzgs6ft5FmHJfPhcQ+FA83snh53ZTZawyFN
+         uIwyrws8GfhcEvfM0/rRQA8VwVrak/E4C2uWTnPlgZ3jBAEV6XRf035t5NslY56w6lTC
+         kiLrrA38K4UIBjmqdeB3QLLOApZKnDzqqJyPzfzh+VPoVYKgThcGx/FoPOkq0bqxeKPH
+         xtixTKR1iR5zx4EMA7kTZDFavA2fmY4YJzyV1me26ikoypIp5yD6MBbAUqgAmeCYDt4s
+         msKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723424148; x=1724028948;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=P1wZscBRBmINP9lOLmPC6SYu14+hz1L8Prsr/p/rIDU=;
-        b=EorgG4Kr1nNiJCfmWCLlV/7RW4tYafI/7Mgk0iL0SQYMQnNQifgzvSIYxN/UlHpWP3
-         fBi2vMXRhQb6ddzmJsM457h/SFoMBT1QgpUzMlXQdxW402KoRTeCN/djG4FKx5aPLCl8
-         Izuin7Yn4NbxOmEGCniNMThsgBb6xX3bVs3TXS4mbT+6beNx4gP6yyAeUMLkQx1Rknij
-         tNl85RBC4+KAJl0uk8lEVIhAmzvZ2UfChDX7Vfi4u1nSPsO4uYwETFxh5t6skCp0fmEV
-         kWPr57BUv4bewMe1YpzyeDZc1AdOJqWUq8zpp6KWoNhzZK8Q0vW3dpHAZYQA7Ht0WcqK
-         l0WA==
-X-Forwarded-Encrypted: i=1; AJvYcCVvLypQ8py9/DAsRta684m1Ts83y1azn8OaW+E8Q4qd17/nvNnGnS0c6ZD+w5Cb3H5HYK5tGvSM74IOLlLG+gG0xRjAvef7/JJboNm3
-X-Gm-Message-State: AOJu0Yyx/KAQWfYdEzyosBe0UsGZhiFuwRQbGfWMoF+IGeQBqDdkqg/n
-	+4KyZQlVgYV/H4hqm0TYJFdZJ1WZ8tyHMK99BDBTBjMMVjcpjSrgjmsSRWQ6KA==
-X-Google-Smtp-Source: AGHT+IGDAqzpM79bpYGMVHChZ1fIFHVGw/q8RR1gcs+2AbudhGZaWMHnJ08MS+Oct5ZK3MfQ23NTJA==
-X-Received: by 2002:a05:6e02:1aa9:b0:39b:968:85fc with SMTP id e9e14a558f8ab-39c3146c1b9mr3187825ab.9.1723424147543;
-        Sun, 11 Aug 2024 17:55:47 -0700 (PDT)
-Received: from [2620:0:1008:15:49ba:9fa:21c6:8a73] ([2620:0:1008:15:49ba:9fa:21c6:8a73])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbe12fc8sm2630204a12.21.2024.08.11.17.55.46
+        d=1e100.net; s=20230601; t=1723424382; x=1724029182;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u1t+DOBtWVw6p1QzV6tpA79/Z/soEYYlKfO1cj75JM4=;
+        b=ozfesmZjLYEhp4P0nYshpXC2Nm+ucxlSiQsxqp9Ki2WoDPxhObEXNUUy0r0DFtoj/p
+         7E7isTBPLQ/HqIz44zM0B/j5PlKQn716Gq/0JTGFvSmb2zrtgXiTLbDG4oiDgyREhHbI
+         rUiBh+f0l/B3wzU2vszGX0N5pj9Whb0m6qmkQaCy/J7p+FLKitTRMm2h00QhLv78SGEC
+         1mxe7JEG5oEphjSrM15Q5H6+OST6TlnMIXmMhpvzizh7aGuslO0uqGypYpMpPneB7/4f
+         gWYmjYdJB1W21RropsQ6QU0PvuniX8xLdXahZwA8k8DWdCNG3oPppFhDXWtEtvEYrtTW
+         MhZw==
+X-Gm-Message-State: AOJu0YwS3PkFp0Fxd+hNyjvxnmyyFv0UFVo+nVNCWoTq5azl0FuxkLnJ
+	quzX3AQltxwKItodlqpvr+dZQkNWbG/BTjO/4pdPhQFqb2NMettheI4Xoi/gRqF1FEHVHR9y8wQ
+	6pb18RDrB
+X-Google-Smtp-Source: AGHT+IFvFD40j/75g0OMKTR99Jntdlb7KnjOCvOc/WzAwYbyCYwYB5yIZakN6YXoCdPddNyZ+Lnt1Q==
+X-Received: by 2002:a05:6830:6f04:b0:709:488f:b632 with SMTP id 46e09a7af769-70b74862b47mr12731861a34.25.1723424381262;
+        Sun, 11 Aug 2024 17:59:41 -0700 (PDT)
+Received: from sunil-pc.tail07344b.ts.net ([106.51.198.16])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbe8cbdcsm3074062a12.61.2024.08.11.17.59.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 17:55:46 -0700 (PDT)
-Date: Sun, 11 Aug 2024 17:55:46 -0700 (PDT)
-From: David Rientjes <rientjes@google.com>
-To: Pedro Falcato <pedro.falcato@gmail.com>
-cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Roman Gushchin <roman.gushchin@linux.dev>, 
-    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
-In-Reply-To: <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
-Message-ID: <aab45188-d34c-93c6-cfab-3c0cd1326a53@google.com>
-References: <20240807090746.2146479-1-pedro.falcato@gmail.com> <cdfc5a08-c0ee-30a3-d6c5-22d4cfddc3a4@google.com> <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
+        Sun, 11 Aug 2024 17:59:40 -0700 (PDT)
+From: Sunil V L <sunilvl@ventanamicro.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Cc: Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Anup Patel <anup@brainfault.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Samuel Holland <samuel.holland@sifive.com>,
+	Robert Moore <robert.moore@intel.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Haibo Xu <haibo1.xu@intel.com>,
+	Andrew Jones <ajones@ventanamicro.com>,
+	Atish Kumar Patra <atishp@rivosinc.com>,
+	Drew Fustini <dfustini@tenstorrent.com>,
+	Sunil V L <sunilvl@ventanamicro.com>
+Subject: [PATCH v8 00/17] RISC-V: ACPI: Add external interrupt controller support
+Date: Mon, 12 Aug 2024 06:29:12 +0530
+Message-ID: <20240812005929.113499-1-sunilvl@ventanamicro.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sun, 11 Aug 2024, Pedro Falcato wrote:
+This series adds support for the below ECR approved by ASWG.
+1) MADT - https://drive.google.com/file/d/1oMGPyOD58JaPgMl1pKasT-VKsIKia7zR/view?usp=sharing
 
-> > > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > > index 40b582a014b..1abe6a577d5 100644
-> > > --- a/mm/slab_common.c
-> > > +++ b/mm/slab_common.c
-> > > @@ -88,6 +88,19 @@ unsigned int kmem_cache_size(struct kmem_cache *s)
-> > >  EXPORT_SYMBOL(kmem_cache_size);
-> > >
-> > >  #ifdef CONFIG_DEBUG_VM
-> > > +
-> > > +static bool kmem_cache_is_duplicate_name(const char *name)
-> > > +{
-> > > +     struct kmem_cache *s;
-> > > +
-> > > +     list_for_each_entry(s, &slab_caches, list) {
-> > > +             if (!strcmp(s->name, name))
-> > > +                     return true;
-> > > +     }
-> > > +
-> > > +     return false;
-> > > +}
-> > > +
-> > >  static int kmem_cache_sanity_check(const char *name, unsigned int size)
-> > >  {
-> > >       if (!name || in_interrupt() || size > KMALLOC_MAX_SIZE) {
-> > > @@ -95,6 +108,11 @@ static int kmem_cache_sanity_check(const char *name, unsigned int size)
-> > >               return -EINVAL;
-> > >       }
-> > >
-> > > +     if (kmem_cache_is_duplicate_name(name)) {
-> > > +             /* Duplicate names will confuse slabtop, et al */
-> > > +             pr_warn("%s: name %s already exists as a cache\n", __func__, name);
-> >
-> >
-> > Shouldn't this be a full WARN_ON() instead of pr_warn()?  I assume we'll
-> > be interested in who is adding the cache when the name already exists.
-> 
-> panic_on_warn? :)
-> 
+The series primarily enables irqchip drivers for RISC-V ACPI based
+platforms.
 
-Would get the problem fixed up pretty fast, no? :)
+The series can be broadly categorized like below. 
 
-> Personally I don't have anything against WARN_ON, but we've seen that
-> panic_on_warn is a real thing on real systems, and DEBUG_VM is also
-> set on real prod configs (like Fedora does/used to do). I've sent out
-> one or two loose patches for problems I did find in my own testing
-> around, but there may be many more (e.g some drivers may call
-> kmem_cache_create repeatedly in some sort of callback, like 9pfs was
-> doing when mounting; this is not greppable). And I'd guess grepping
-> for cache names tends to be easy enough?
-> 
+1) PCI ACPI related functions are migrated from arm64 to common file so
+that we don't need to duplicate them for RISC-V.
 
-Can we add a dump_stack() to make this way easier instead of hiding who is 
-creating the duplicate name?
+2) Added support for re-ordering the probe of interrupt controllers when
+IRQCHIP_ACPI_DECLARE is used.
+
+3) To ensure probe order between interrupt controllers and devices,
+implicit dependency is created similar to when _DEP is present.
+
+4) ACPI support added in RISC-V interrupt controller drivers.
+
+Changes since v7:
+	1) Updated commit messages as per feedback from Bjorn on patches 2, 3 and 8.
+	2) Addressed Anup Patel's comments.
+	3) Added Tested-by tag from Björn Töpe which I missed to add in previous version.
+	4) Rebased to 6.11-rc3 and updated the RB tags from Anup.
+
+Changes since v6:
+	1) Update to commit message/code comments as per feedback from Bjorn.
+	2) Rebased to 6.11-rc1.
+
+Changes since v5:
+	1) Addressed feedback from Thomas.
+	2) Created separate patch for refactoring DT code in IMSIC
+	3) Separated a fix in riscv-intc irqchip driver and sent
+	   separately. This series depends on that patch [1].
+	4) Dropped serial driver patch since it depends on Andy's
+	   refactoring series [2]. RISC-V patches will be sent
+	   separately later once Andy series get accepted.
+	5) Rebased to v6.10-rc1 which has AIA DT patches.
+	6) Updated tags.
+
+Changes since RFC v4:
+	1) Removed RFC tag as the RFCv4 design looked reasonable.
+	2) Dropped PCI patch needed to avoid warning when there is no MSI
+	   controller. This will be sent later separately after the
+	   current series.
+	3) Dropped PNP handling of _DEP since there is new ACPI ID for
+	   generic 16550 UART. Added the serial driver patch instead.
+	4) Rebased to latest linux-next.
+	5) Reordered/squashed patches in the series
+
+Changes since RFC v3:
+	1) Moved to _DEP method instead of fw_devlink.
+	2) PLIC/APLIC driver probe using namespace devices.
+	3) Handling PNP devices as part of clearing dependency.
+	4) Rebased to latest linux-next to get AIA DT drivers.
+
+Changes since RFC v2:
+	1) Introduced fw_devlink for ACPI nodes for IRQ dependency.
+	2) Dropped patches in drivers which are not required due to
+	   fw_devlink support.
+	3) Dropped pci_set_msi() patch and added a patch in
+	   pci_create_root_bus().
+	4) Updated pnp_irq() patch so that none of the actual PNP
+	   drivers need to change.
+
+Changes since RFC v1:
+	1) Abandoned swnode approach as per Marc's feedback.
+	2) To cope up with AIA series changes which changed irqchip driver
+	   probe from core_initcall() to platform_driver, added patches
+	   to support deferred probing.
+	3) Rebased on top of Anup's AIA v11 and added tags.
+
+To test the series,
+
+1) qemu should be built using the latest master branch.
+
+2) EDK2 should be built using the instructions at:
+https://github.com/tianocore/edk2/blob/master/OvmfPkg/RiscVVirt/README.md
+
+NOTE: One should be able to use u-boot as well as per instructions from Björn.
+https://lore.kernel.org/lkml/87a5lqsrvh.fsf@all.your.base.are.belong.to.us/
+
+3) Build Linux using this series (+ serial driver patches which are already in linux-next).
+aia_b2_v8 branch in https://github.com/vlsunil/linux.git all these patches.
+
+Run Qemu:
+qemu-system-riscv64 \
+ -M virt,pflash0=pflash0,pflash1=pflash1,aia=aplic-imsic \
+ -m 2G -smp 8 \
+ -serial mon:stdio \
+ -device virtio-gpu-pci -full-screen \
+ -device qemu-xhci \
+ -device usb-kbd \
+ -blockdev node-name=pflash0,driver=file,read-only=on,filename=RISCV_VIRT_CODE.fd \
+ -blockdev node-name=pflash1,driver=file,filename=RISCV_VIRT_VARS.fd \
+ -netdev user,id=net0 -device virtio-net-pci,netdev=net0 \
+ -kernel arch/riscv/boot/Image \
+ -initrd rootfs.cpio \
+ -append "root=/dev/ram ro console=ttyS0 rootwait earlycon=sbi"
+
+To boot with APLIC only, use aia=aplic.
+To boot with PLIC, remove aia= option.
+
+Sunil V L (17):
+  arm64: PCI: Migrate ACPI related functions to pci-acpi.c
+  ACPI: scan: Add a weak arch_sort_irqchip_probe() to order the IRQCHIP
+    probe
+  ACPI: bus: Add acpi_riscv_init() function
+  ACPI: scan: Refactor dependency creation
+  ACPI: scan: Add RISC-V interrupt controllers to honor list
+  ACPI: scan: Define weak function to populate dependencies
+  ACPI: bus: Add RINTC IRQ model for RISC-V
+  ACPI: pci_link: Clear the dependencies after probe
+  ACPI: RISC-V: Implement PCI related functionality
+  ACPI: RISC-V: Implement function to reorder irqchip probe entries
+  ACPI: RISC-V: Initialize GSI mapping structures
+  ACPI: RISC-V: Implement function to add implicit dependencies
+  irqchip/riscv-intc: Add ACPI support for AIA
+  irqchip/riscv-imsic-state: Create separate function for DT
+  irqchip/riscv-imsic: Add ACPI support
+  irqchip/riscv-aplic: Add ACPI support
+  irqchip/sifive-plic: Add ACPI support
+
+ arch/arm64/kernel/pci.c                    | 191 ------------
+ arch/riscv/Kconfig                         |   2 +
+ arch/riscv/include/asm/irq.h               |  55 ++++
+ arch/riscv/kernel/acpi.c                   |  33 +-
+ drivers/acpi/bus.c                         |   4 +
+ drivers/acpi/pci_link.c                    |   2 +
+ drivers/acpi/riscv/Makefile                |   2 +-
+ drivers/acpi/riscv/init.c                  |  13 +
+ drivers/acpi/riscv/init.h                  |   4 +
+ drivers/acpi/riscv/irq.c                   | 335 +++++++++++++++++++++
+ drivers/acpi/scan.c                        | 103 ++++---
+ drivers/irqchip/irq-riscv-aplic-direct.c   |  22 +-
+ drivers/irqchip/irq-riscv-aplic-main.c     |  69 +++--
+ drivers/irqchip/irq-riscv-aplic-main.h     |   1 +
+ drivers/irqchip/irq-riscv-aplic-msi.c      |   9 +-
+ drivers/irqchip/irq-riscv-imsic-early.c    |  64 +++-
+ drivers/irqchip/irq-riscv-imsic-platform.c |  32 +-
+ drivers/irqchip/irq-riscv-imsic-state.c    | 160 +++++-----
+ drivers/irqchip/irq-riscv-imsic-state.h    |   2 +-
+ drivers/irqchip/irq-riscv-intc.c           |  90 ++++++
+ drivers/irqchip/irq-sifive-plic.c          |  95 ++++--
+ drivers/pci/pci-acpi.c                     | 182 +++++++++++
+ include/acpi/acpi_bus.h                    |   2 +
+ include/linux/acpi.h                       |   9 +
+ include/linux/irqchip/riscv-imsic.h        |   9 +
+ 25 files changed, 1113 insertions(+), 377 deletions(-)
+ create mode 100644 drivers/acpi/riscv/init.c
+ create mode 100644 drivers/acpi/riscv/init.h
+ create mode 100644 drivers/acpi/riscv/irq.c
+
+-- 
+2.43.0
+
 
