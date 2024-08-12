@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-283836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA8C94F92F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:59:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B88094F94A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCDEB283524
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:59:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B019B20D94
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F6F195808;
-	Mon, 12 Aug 2024 21:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3784418F2FF;
+	Mon, 12 Aug 2024 22:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CnWqPKo/"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2OqgoTE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926B11537C8
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714DB74BE1
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723499957; cv=none; b=CGnXTNVDBXMeFZ/gJy0BBNreO60/EmenUVVvrP7Tst2xkMYXPmVKxjZ0uiD6BbqyHTfzgPCsODQ5MSTltoj9pzxRZylY3X05kmqqtWBGRroXheFZDdIDjFL4RlSPyJHqdxs7dfFz4i1/9QTeDfQv1+rNa3uFbiExPuZvPe/hOYE=
+	t=1723500175; cv=none; b=MgkIvH3X7woNwI1reycLfpLMNPQtiXoUMymLe476Foz5lKm/J87xZi7Q+apJreuwQrh3SAVcxB+x6Xpa75yZM8sFs6gTbxwzh3YClXbX2LLI1oYlSYlEllUqJi9X+wVn4XjlyQX5hdHgUO5ceiJunKCKmAUxq7kpz3+IGpBngFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723499957; c=relaxed/simple;
-	bh=eaEm1/G9eIZ0Ax/mETbWHt8Rk/ajLxiS3U/lBhO6fr8=;
+	s=arc-20240116; t=1723500175; c=relaxed/simple;
+	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GQYaHQIQw0yqpcu6FSqQFVZeJubwUfeyOqYWjuKfJXlBXqSm4KQAqo6T/reEWWjriXvKpUvRPPu6wbt9Pu+sbAVODWsOuJEee/mftA5Cv51DidOIvrW0rbHS8Glan9b3hwZp2jHz/N+txhaG4OhD3O2Osrl+eezcakKT0B7PWoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CnWqPKo/; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42808071810so36943165e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:59:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723499954; x=1724104754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=32AKu6esuiq7RMdqH+zKe95PkUgMqLZi/1g6Bq3g66I=;
-        b=CnWqPKo/lWWpGiwDnYV/zyNjUcI+LwUyunJkI9R+K7v6P99fskHtR/NYR2h59z9o7d
-         ufpZueXApsfxaetR9X/ASIk67RjVySVkPwcUCjHKNbiHRXqeXkosYVbMm5n3TQGrLDYD
-         80wOajMfZB2jxB2ip7tMTnUNDAaw8J8jM2oLNOp2Fw+hYmPmgbHS5DU+dLuz4AYpxq5h
-         fOkoQU/841bXk2V0s0QCuUPJ1PS1/LnxhWoFOF5m3FnZD4LP/3AXxii2gKC1pbsIfrzu
-         80DtRPEbLwnbi4FTGyTFNGq6B9NQqlwNAZ8tRUXxDImeiIr8x7HOHY32gbD2RvDEkzxl
-         W9/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723499954; x=1724104754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=32AKu6esuiq7RMdqH+zKe95PkUgMqLZi/1g6Bq3g66I=;
-        b=VKmD7zf8SW/PRl/fJTlVYiwJKO1Y7FVlAA+FKN8PqicIyl85WkpW3mGx2spdOep24I
-         50E+gf/t1N9hQDqjfNZTZe25BMZN/efIH6mVRmTCJZtXtzYCHKWfFWK1tvSQNHeSaNPz
-         N8TAKrZ1fUOqcJsjhiY5qYCgPM1mRJrLu8JhOav5hfi6ULp3gML8+8nXNQSLZXDmxv+E
-         zoS78fyr17gQeklmvi1diC4kveZQx9iPJiocXcchumlrB15C4rULVxJxCy853U+1b2K2
-         Mv1pYGjx5fizHV0BoaniwL1933UasU4bjGv4nW+dFiet7Bmx/aMVavn8uq0/qFVdKzUB
-         iKfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0J/+AYnO4NMjdGrKghKiZG4daPg6gayf1ameKvwxUgF2Y27YQYcwlkpBAr1rjnWBHGsAbetTIpcohS8diR5/M8izlWOHB11bQrms8
-X-Gm-Message-State: AOJu0Yw+QK7tUsXkTEl1coW6BeqslfDWQNLXsr9szNPxmKrMK21nFPdv
-	ue3hul10c2it3X0OXbbXbNT+1yulrUjoxq+H3wpXNnf4E4ImsDw24dM9ZOZFhtqL45oeHt0CeHX
-	PnOY9RrBnrxMcxrpZ3eLxAEP3noM0NzSw/Bd7
-X-Google-Smtp-Source: AGHT+IGpQR4kIRSOioBB8aRbn1/lCXeqn51RFDvtwpsOfR0VW8YdEmHVWS2iLr5ZLie1AWw0fBCU3Rz+Gpvuy8h0Fn8=
-X-Received: by 2002:a05:600c:4f46:b0:426:50e1:ea6e with SMTP id
- 5b1f17b1804b1-429d4818767mr14511085e9.18.1723499953689; Mon, 12 Aug 2024
- 14:59:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=OC+ObOzi96B7w0vIF42/idqZpckEL9BiuP1ykidlfTq9vlQWUdgzCzXEK+3Lr5+tjwrCuUaihGgfg8+pRyDSdJ1Rf37teVHhNZOprcHZZRPdwfnRQBrsgJc0FGvtj841y3Gf7PtMwPRBe0a9ubmedjn0T+KkFmwfp+PZ3EFC5ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2OqgoTE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BF1C4AF12
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723500175;
+	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=l2OqgoTEKp4NmGqFi458SRI4gluNCiXgM5dmYMINAdYh45ZPFYi2YPTg77/DXLfOb
+	 TzMngkSl+ud3CEk45VUZ4O5r0dqDJ7LtURp5tFfT9x1rx89OWI9hTx8AUD9E+kBZJU
+	 8Dw9oiD6NZ0RGGoIKYvjqUXqs6LhhzxkR7tCNBT9M5I5WR98UAkQBO6LmRhghCHgWp
+	 ZFp0O0gSSu5tT0cGpUL9EA1WDm4Ip8ZFJkut+EaIlaDDR60NpSJIxmokx3ySWZr7uq
+	 vDIGYLQylAENq5wWntWBsi5jLQ9a/1dkkUflnmseHAt9vOE3G3s357s3vf1b+8QZrZ
+	 vbru6yR6etjkw==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1133419a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:02:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW6ic2l7fHqj8y9vxrAID8vt30YYQFPUZNSh0T2efF9HiWTZShN4k0/yj4TNCSF5rhUtMZ+I/nTRJs85efXd+MrBfx+Pr+1bN7D2dr5
+X-Gm-Message-State: AOJu0YxTwr2165srBcCwSB3qvMcWBw3LOBGDc5MSqx0SrcF/Un20CuNZ
+	fLXpUwUTT+I/mL379clFVfT5VVQfjPA8CEJfayIrrNnOj5NSioZECEtGWNVk9rwWERM73QZgOLs
+	imPNEylS6Gk734nXgMIDUpakzjHu6ZVU8a6qL
+X-Google-Smtp-Source: AGHT+IGEzzK8lUbL2BKdbvhUGvMXkJafhinn84c+jnXZlrrZX4BZDnaa33VL18lOtCdmW7PtFGbbrSPRhGW/DlgOw44=
+X-Received: by 2002:a05:6402:190e:b0:58b:bb69:763e with SMTP id
+ 4fb4d7f45d1cf-5bd4619735amr970724a12.7.1723500173628; Mon, 12 Aug 2024
+ 15:02:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-15-seanjc@google.com>
- <CALzav=cYv4ZqD5q6-hP=WN8gYFxt7xYKCTm8dLaGtjk-kmCy=w@mail.gmail.com>
-In-Reply-To: <CALzav=cYv4ZqD5q6-hP=WN8gYFxt7xYKCTm8dLaGtjk-kmCy=w@mail.gmail.com>
-From: David Matlack <dmatlack@google.com>
-Date: Mon, 12 Aug 2024 14:58:47 -0700
-Message-ID: <CALzav=fPS3Q43tq74Le754EvxboCvW--TMKWES3e2z=kjV+0cg@mail.gmail.com>
-Subject: Re: [PATCH 14/22] KVM: x86/mmu: Morph kvm_handle_gfn_range() into an
- aging specific helper
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>, 
-	James Houghton <jthoughton@google.com>
+References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
+ <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+ <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+ <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
+ <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
+ <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com> <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
+In-Reply-To: <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 13 Aug 2024 00:02:42 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
+Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Paul Moore <paul@paul-moore.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 2:53=E2=80=AFPM David Matlack <dmatlack@google.com>=
+On Mon, Aug 12, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Mon, Aug 12, 2024 at 5:14=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
  wrote:
->
-> On Fri, Aug 9, 2024 at 12:48=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
+> > > >
+> > > > JFYI, I synced with Guenter and all arch seem to pass and alpha doe=
+s
+> > > > not work due to a reason that I am unable to debug. I will try doin=
+g
+> > > > more debugging but I will need more alpha help here (Added the
+> > > > maintainers to this thread).
+> > >
+> > > Thanks for the update; I was hoping that we might have a resolution
+> > > for the Alpha failure by now but it doesn't look like we're that
+> > > lucky.  Hopefully the Alpha devs will be able to help resolve this
+> > > without too much trouble.
+> > >
+> > > Unfortunately, this does mean that I'm going to drop the static call
+> > > patches from the lsm/dev branch so that we can continue merging other
+> > > things.  Of course this doesn't mean the static call patches can't
+> > > come back in later during this dev cycle once everything is solved if
+> > > there is still time, and worst case there is always the next dev
+> > > cycle.
+> > >
 > >
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index 0a33857d668a..88b656a1453d 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > +static bool kvm_rmap_age_gfn_range(struct kvm *kvm,
-> > +                                  struct kvm_gfn_range *range, bool te=
-st_only)
-> > +{
-> > +       struct slot_rmap_walk_iterator iterator;
-> > +       struct rmap_iterator iter;
-> > +       bool young =3D false;
-> > +       u64 *sptep;
-> > +
-> > +       for_each_slot_rmap_range(range->slot, PG_LEVEL_4K, KVM_MAX_HUGE=
-PAGE_LEVEL,
-> > +                                range->start, range->end - 1, &iterato=
-r) {
-> > +               for_each_rmap_spte(iterator.rmap, &iter, sptep) {
-> > +                       if (test_only && is_accessed_spte(*sptep))
-> > +                               return true;
-> > +
-> > +                       young =3D mmu_spte_age(sptep);
+> > Do we really want to drop them for alpha? I would rather disable
+> > CONFIG_SECURITY for alpha and if people really care for alpha we can
+> > enable it. Alpha folks, what do you think?
 >
-> It's jarring to see that mmu_spte_age() can get called in the
-> test_only case, even though I think the code is technically correct
-> (it will only be called if !is_accessed_spte() in which case
-> mmu_spte_age() will do nothing).
+> Seriously?  I realize Alpha is an older, lesser used arch, but it is
+> still a supported arch and we are not going to cause a regression for
+> the sake of a new feature.  As I mentioned earlier, once the problem
+> is resolved we can bring the patchset back into lsm/dev; if it gets
+> resolved soon enough we can even do it during this dev cycle.
+>
 
-Nevermind, I see this is cleaned up in the following patch.
+Okay, more data for the alpha folks, when I moved trap_init() before
+early_security_init() everything seemed to work, I think we might need
+to call trap_init() from setup_arch and this would fix the issue. As
+to why? I don't know :)
+
+Would alpha folks be okay with this patch:
+
+kpsingh@kpsingh:~/projects/linux$ git diff
+diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+index bebdffafaee8..53909c1be4cf 100644
+--- a/arch/alpha/kernel/setup.c
++++ b/arch/alpha/kernel/setup.c
+@@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
+        setup_smp();
+ #endif
+        paging_init();
++       trap_init();
+ }
+
+
+and provide me some reason as to why this works, it would be great for
+a patch description
+
+- KP
+
+
+
+
+
+> --
+> paul-moore.com
 
