@@ -1,254 +1,245 @@
-Return-Path: <linux-kernel+bounces-283022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3035094EC19
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:50:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6ACD94EC1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:51:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557941C20EA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:50:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34E07B22399
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDA517967C;
-	Mon, 12 Aug 2024 11:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1C617A5AD;
+	Mon, 12 Aug 2024 11:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oMvyt/2i"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2074.outbound.protection.outlook.com [40.107.102.74])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="aU0CuDXX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EOh3JZi3"
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8196914EC53;
-	Mon, 12 Aug 2024 11:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463430; cv=fail; b=dNz0gzHrq15+4PKLPfSgZ1dT2PP5kJxbVhD0ZczphxzilnLTFQVa2oweMVK5IgqxOr2cd65v9HIzwHW/D+Olyzu8MCktZ5/hIu4yKzbzh40jajV/ESJUUx/RDorNq2EpiVc50OP8BguPbP92Rk0A8LK8L4jAgQZFgk0l9NZx5OM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463430; c=relaxed/simple;
-	bh=3dwTB7wM+VX7mV3IclSzXOwzCAiiEnVd8m5sd1U+3rY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=RQm23k8/EOfEttUc4CPpdCFdiM8aVl0JWRNbjpzpHn5rNG7qkGFVqyUpLZH1Mt5YNur80g1CQWzMK7R+GVpiU8fmo9C/IuzlOglATU0wIMCNTxvq1/FlhuMJACVGUcDl1+xEOMWZKEa4UjeSO+UAHwnH6OKkgoJbasdKReUl248=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oMvyt/2i; arc=fail smtp.client-ip=40.107.102.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pYki1mDkTlmwNWZ0IItjK80b0xrkWivqNLgAtzYo7wq+QfUKlRIe3Tye8M4qBITdwvnASKWgjX+gT8g1L2jYBG5ib4FC+L+IkipqrtpzF/WO734B/WYFoDJPVHbte1hsNUdmcaZeLvNmktpct+Wy/GjAFA97ft/Db4UyrxeJISpc2ddT9Iy7mrl3xN24SJwuIsmF35nVM+plwnFEXqMC5gPzjMEPtLpMtuX/Oi/dSZH88/A4DWGLXZbKtydj5xKR+BOAAonycga+Ld0K+OLgU3XAg1B+3cXrWzWwmxWID20d9+/N05lBrRfenKk0x4i49MiyCsvUT8KGmyjxEUXB5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cLPmGXIy53zBtUH8lfpJ1fBtRvWrHqdv3ew9XDXD+E4=;
- b=yExDvCKGVUFjsM3iVhxmq1PZ3gKHZz1s4IpuRN2XkJJCa0S4QKGAiSc+TjiSIRGAN64IGRIA/1NO/IjoRhE/zi3Os3C2AUhpY8QxWqwVbP06RGsXRI2kGw47j4pWWG4UCJphAy6dZuizyg8pL2BpkbVkf1Z0T99N4x0rhuivfiUEZcdxg6s1LuSHPnDrmj+OgVGkIdTs6fdwkJNtrilwBnrIRS/nqYlPosx7j5IiyrD4g3/s2DqPeMDHUlK3THb3OwDcJABOi8llF5Gpcv2F0tdLpzvM7KCAn/aBF9zUdFWWluFrCDEYVBbNQRZ3ZASZbEz6b7ZQ1QQSH47sq7BVKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cLPmGXIy53zBtUH8lfpJ1fBtRvWrHqdv3ew9XDXD+E4=;
- b=oMvyt/2i08TMJDGapbIEucA2aefvIAtx1DC4q5cGbiTupIweb6fpJ/hX2AhAQXpgpX2ntFr53mJZ2LXfIO9lpHky4pMHr4nJgWFbelL5LDdUkkPySRzVYweL5kAGMjlG5lYgjOxA1kWpv7fVR8FII22TayH23Pn08lqOP7eAmzE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
- by DS0PR12MB6440.namprd12.prod.outlook.com (2603:10b6:8:c8::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 11:50:26 +0000
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 11:50:26 +0000
-Message-ID: <01ca9abf-45b0-90c1-d503-5e53eb4904c4@amd.com>
-Date: Mon, 12 Aug 2024 12:50:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 3/3] cxl: Avoid to create dax regions for type2
- accelerators
-Content-Language: en-US
-To: "Huang, Ying" <ying.huang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang
- <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
-References: <20240729084611.502889-1-ying.huang@intel.com>
- <20240729084611.502889-4-ying.huang@intel.com>
- <20240804173813.00001018@Huawei.com>
- <87v80e9p0m.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <87v80e9p0m.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P123CA0486.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a8::23) To DM6PR12MB4202.namprd12.prod.outlook.com
- (2603:10b6:5:219::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9A3178387;
+	Mon, 12 Aug 2024 11:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723463432; cv=none; b=Ikk8Hg/L7vwL0oNjzGyI/6aPrfCaoBnOuMuaXKimS55+pVAmbu8NTDgZKcKSpswsMTE5whSdfGXfTL+ZKPCNcbnTRMUobG43UtMs8i/X08OyaLY3Mu/esySoc0BIu0qWkFGfe2uqAR3ILqSW3b1nSQRrc1HVhCrkT23mGlaqdus=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723463432; c=relaxed/simple;
+	bh=Sf9vrU9Uopkb5XY1U1x57/msh+c/P44Y/DKqhKtj6Cw=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=T17yJ4Vz3LzTKcyOyfas0LmcWcrZ6QcCHLOS3d0UccoBbkucULhiGKm3Zm07Nv55iC0sQTxZCgCoxDiyqwsrWq0WoEQg3T/1DIj2YLsf3X+zmkedmUjPMDtV9uFf2Pcer5rwLndab43Ec6LoarruNActfI9xt8uj4HvIolb78AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=aU0CuDXX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=EOh3JZi3; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 94382138FCC6;
+	Mon, 12 Aug 2024 07:50:28 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by phl-compute-04.internal (MEProxy); Mon, 12 Aug 2024 07:50:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1723463428;
+	 x=1723549828; bh=SMZ3gJ+tqxtINCi1Pl0/NWqgm/TSqtQaQQAterG233E=; b=
+	aU0CuDXX+tYk+wQ1jfxfFUZYfyAKFG3lwHQaTD2m2HT9haXT9dT0ru62CX9YU9E3
+	ICrFkSCv/DvYurde4fV5GGaFNkSYkxqOj+manXKWAxIgzH9Z96/gLnCd2q5w1BF+
+	pb29SGqdtqlQRaVYBAm9jByosMmNjVjVb3FKVlhU0PWKqruk6Njm/b/rOEXUzMU+
+	FAQn3D/DwEMNgZ1aKusEePVVFGT3rTRGNfA+HQo0qHKxN8UHoaY5fX9DKmPpcByX
+	P+6Gj78qvcizoxsKhsa6hqxZhKzmjpiFAJQQgrKbcob1n9GGGvAUoes71botUvc+
+	6zMJ1ZwnE5EHC82GqgnhTw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723463428; x=
+	1723549828; bh=SMZ3gJ+tqxtINCi1Pl0/NWqgm/TSqtQaQQAterG233E=; b=E
+	Oh3JZi3NEsYBqpSJaBxaeHBjr3b7SotIWXg/dy+/9A3ia5+JuNFZe4tZnbJKdlKE
+	kcrrZVE7Fo6aUyyYMtcwTThY8cNcoh54m0teXcC+Fh1kWB7GEpSUL4yd78n17S23
+	n9ouJLEVdQCQ5Jy4FWESmQ0D5HpRgVpF7DAErxR3C2+Ue6GOkQve4tg52FGpeOur
+	Tk7QWumrH78qH3za6haoMg+CKNCjSao135NBOUd6BwEO4uy00XkInAd/UbSBVBvW
+	mrsXD+E+38bkOcCkEFHC/DjA4MEXVjnViETMw+8SC/HIuQpCvx1OnpLY45oOJ2E6
+	DQ6+OSDfWgBjMTdBxvQEg==
+X-ME-Sender: <xms:A_e5Zn9C2bfBDH-lShLgd62KalyMcgDxhwburmJuun2Xk7x5bLVg3g>
+    <xme:A_e5ZjuGSTAvSdiWVMny1g5ViJFlVP8wkE3qV_xO8wDfzAqMPwlU2JwxUpeMqg2UT
+    LCjsEXMlh0mXdZg1FE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddggeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
+    oheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmh
+    gvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhes
+    sghoohhtlhhinhdrtghomhdprhgtphhtthhopehfrghntggvrhdrlhgrnhgtvghrsehgmh
+    grihhlrdgtohhmpdhrtghpthhtohepkhgvghhurghnghdriihhrghnghesghhmrghilhdr
+    tghomhdprhgtphhtthhopegthhgvnhhhuhgrtggriheskhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtoheprghkphhm
+    sehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
+X-ME-Proxy: <xmx:BPe5ZlCBq306_0dgS_Buj8KxjHcEAQTuSVG3ib1Sul6bOJprntZDjg>
+    <xmx:BPe5Zjdb13LUvHUSbfarV0FSRDJIKvPuR7gKZ8g6mYatUqdxiqNtyA>
+    <xmx:BPe5ZsMEnWY2zTYg8JpYRKqapGEKX4GkGQmQw2Qz1HM0ZmnvITjI-Q>
+    <xmx:BPe5ZlnVzMHhH5MLOBV69lTbC8OaihxlmwauO0J6TwhWkHB7gPVOtw>
+    <xmx:BPe5ZonPCirCX8PFSCtqLOQEMrsyMqL_jFuxHEvuXe5HGZ12Ozf4CA2w>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id E618619C0089; Mon, 12 Aug 2024 07:50:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|DS0PR12MB6440:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b1400ab-2300-4f46-884e-08dcbac4f492
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WHhvTXpOandRRlJXMVMrWGs2Qzl1Uk5lTEwzZlpaSS9JeHNUMWdtaGJ1aHhH?=
- =?utf-8?B?YXk3YXV1MGtaeTVXYW9kZEM1UkFHYmhnbk9XM1IzWTVhSjcreGdEejQ2VjJr?=
- =?utf-8?B?UEJseWxtWUZ2UjR1amlZc29FU1VZMGUrS1I0UElzTG5odzJ5YmJRWVZUNkIr?=
- =?utf-8?B?QVRaUzhLajdYalRRTEJFQXp4UEpPcXR3M3ZPVnlkVlcwUW5xK1hjTTJVcmRE?=
- =?utf-8?B?TG1QM2dDZkpDS29pMjlVNUZkTUxYUitTbHFSMzhzYllRMi9xRCtqdHVZOTZv?=
- =?utf-8?B?ZU5rYnl2OGlvZWtIYWFxSmpqZCtRcW55YUo5UGJ1MVphbnlWRUNBUU85SlY2?=
- =?utf-8?B?bW96UElxT2lsZnhyWDd6VnhSWEFFbjVqenN4eWllSEdCbVJkcGc2M1FXN0RR?=
- =?utf-8?B?aEZYUEJNSnVMc282c3pRdkxoNmdpeXJHUGdKTGRoQUZDcHZHa2M4ZjJMRWpC?=
- =?utf-8?B?aXV6RkEzbWNYeUZheDVud3NwYzNncW9CaVlBTEF4ZXhIZDNiSi9VbHhQcUsx?=
- =?utf-8?B?a0xVNFpiRUkvZUxGZFI4ZHBZRzNvcktRcWVEdStYRWNWS2x5clFlUW8xalZH?=
- =?utf-8?B?bm81NXF2bHFzcVNrN0c4amczbklzSHQ4NUF6MG9BSW5QeENsSTljY1pncU1O?=
- =?utf-8?B?T1NlM2QrQk1zeWF5dTBlTUVNeUdnQ3ZWMWZnY0NOSzZ5NjIrWjhsYnJqY21q?=
- =?utf-8?B?UVdsOEZJdXpFMmxJS1pvNmxOb0ZobCtaZC9tMVExUGRPenNGYjJQay9RSk1C?=
- =?utf-8?B?T2hzS2x0RHA2TUpXUGVlOXkwanhoVUp0WnNLbGZBMDZlcXpjaEFhMjdBT1Vo?=
- =?utf-8?B?b0ZrS1RxVnpDb1ZNRUJ6UXBmNTlSWllIWVlHT3JGd3pTcGxpbkh1V2NyK2FK?=
- =?utf-8?B?OXA4ejRwdGRGblBQQzVZb3poYVhrVElWLzBEWWRkZno2aDl5UHRBaG5jNFMw?=
- =?utf-8?B?NmZpL0tnc29ZRVkyRXlhdERCc1VtSHhYVVlqRDE2VU9FNW1JQXJRck55Q2hU?=
- =?utf-8?B?bnhTT05lR1VpL3ZyWmliY0ducHdlamdvUXQ0ZXN4ZytobFgwYldXUGUySVdF?=
- =?utf-8?B?ekMvdlYxeXpPRkxxak9Jb1pud2JrK2RJaisxQ2Z3b3l4YU1JcTZXZlpEazcy?=
- =?utf-8?B?VTZ4SzJPN1NwVnI4dmhhN2l0YWVHM055c01SUW5oQnNzb3FwaUIzeFVncFJ2?=
- =?utf-8?B?c3FzN0d5YXlJVytOaUd4NDNXV251bDRBd0pZR3dESGE3SWxXUnBYTHRGTWtl?=
- =?utf-8?B?MWZmdFFCRXBQVFlOSmtpZ1dHUEtocm5ZU29ITnJEUXNMRm5MVTJkMWIwS0tO?=
- =?utf-8?B?dTFoanhIZ01EMi9Td29kVFppNjdDeEdLcFNiakhxR0htbjRmeGw2TGFyOGMv?=
- =?utf-8?B?b0xiZ1lkZVNadjQ5Zjc2aUlYMXVtZWkxUlQvbHVxRyttUnpBcm9hQVlzalJC?=
- =?utf-8?B?V0JRRlZGNEszUm9NNmZNWUFWZnBySWlIY2JSVWVRMmcwR2JDcEpSZDNUSFZr?=
- =?utf-8?B?azh4bnhGRklYSmxwdCtHYzhqUVVjLysxVGVlVkR6TVEwb0pCMDNJNmpJVVNW?=
- =?utf-8?B?RjJDM1B3UTdZSUEzYnlLcmtFcWxqQzNPcmpOQldJemtGWEJmQloxOWZlTERs?=
- =?utf-8?B?Y0x4eGJ1VjMvMXpUdTIyK1F4U2x1WHNNbWpqaWdZQkxxTkZiand3c1BMUVhS?=
- =?utf-8?B?RHl0eVpHWko1cVJDT0xHWkhHVGh5dFBvK0x5eUVvYnpPZXZvWFZZcFdQM2hD?=
- =?utf-8?Q?YyjjWSwbuMtFsqEUr61XcVlJFxU+d6k9dIo1U7I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dlFVVU5pQlV1SlduckI0bGxXTUxPU3VxZGNBOTFKMTl0bDY0SE0rSE5Ba0Rh?=
- =?utf-8?B?U2dQNlRTZ3c2MHVrSlJOeCtRR2dKRjl5UHVRSHhrNXY1N2VUWkwwQmlYVjZm?=
- =?utf-8?B?SGludVBYakxKa1c2M1lUUnFSNEUzbS84TW1aSG9IN0dJMTRUekxQODV3S0li?=
- =?utf-8?B?dFg1YWtMSEphaGFLVGVqcjZhOFYzWXBJbi9ObHg2M2wvUWdEd01KWEg1QWtw?=
- =?utf-8?B?NTAwbzhVK2hBTUVpbS9CN3ZLTlMycjR4ZjZYbG5kbXBHUUJUbTgyU2lNV1Z3?=
- =?utf-8?B?UlJHWFl5Y09yV1ZESXlpWkJadWo4YmV4dzlNcDVxUTJGN0lEZWFLSVhJMDdD?=
- =?utf-8?B?eTZYblZ0WGZObks1dDJVN1RzNHNscEo3RjZtYVhDK21xZWUzZXRHY3pidDI4?=
- =?utf-8?B?VzIwRHIrNFczcTJHMXJqNy93WFArQUQ3a1RFZC9hWHhicnN3cmlYQjJCV3JB?=
- =?utf-8?B?Q1pJajBNZzhHdTJSajRaNWFVMVp2UGVRMDZHQUdiMGp1TFdDOU5KN2xqQjR3?=
- =?utf-8?B?czhySXRwbVhxTGJDNjRKKzdhdVNFajRPaVlhN1dwRWQxYnU1M2lpZ2NpM2tJ?=
- =?utf-8?B?cE1pdzNLUlVGckJXRXkreSt2NGFHNjFHYjE4YkF2WDhHOXhxSHdUSkYzWjlw?=
- =?utf-8?B?Wm5Db2MrQUlOWm9MNXl0WlYvSXRRdE9sMDg3Q016RFhvSk16ZU50bllKODdN?=
- =?utf-8?B?M2xmWWgxcHEvSGxKNlA5WERPV2NxRUxTN3IvQklOVHJ4aDVuRmVkbWVxTnZD?=
- =?utf-8?B?V1RoeGpuMzltQjhqS25sVlBvTm5TaVJtdmsraW5OL2dJMVY5STFPRjcwS2Nj?=
- =?utf-8?B?b3RhenZ4U2QrcnBrakhUV1BTeDNOTjR1QWlaZFNlcWJMOUhtSzY0WUFqMDJJ?=
- =?utf-8?B?UEowdFBPRjV5SDBZanBLTjVXbmFYOWx4T1pBRnFMRjNMR1BTUWNJa2IxRmZI?=
- =?utf-8?B?NWRKb1p5TWdjMnV4TmVOOHFIU2F1YkxLdXpNaEN0ZGoxNVZWanpDaER1bUdL?=
- =?utf-8?B?ZTZuTnlwdEMzeHIxd25kck42NUpaYldqankxWlNDaFB6c09keEdVS3FwUWtH?=
- =?utf-8?B?YStIRDM4WWEreHJIaTgwVjZoaVhnL0ovQVJkSCt4VG4zZWNTUVcvam9uSGYy?=
- =?utf-8?B?L2U4YkR4QWwzRzV5TUxDUVo2VlFpblc4cGgvWjd2eGphQ3Z3YzFMcmN0WUM2?=
- =?utf-8?B?UGtGa0ZoVG1PK1ZlRWVjN1o5eVA0ckdMUVo4M0Ntc0svZTB4NCtIZHdnV2Ft?=
- =?utf-8?B?M3VyM0srcUJ6QU8zamNTajE0RndYVzNRN0gyYmRKNGFQc2VhdU5mRDlMY25t?=
- =?utf-8?B?NTU3Q0VOWTArMWszRHRnOVl1NmxiNFFXZ3U2NFVBTlkwSmVnZTJjL0U5OURu?=
- =?utf-8?B?ejB2TDc3THpqQkJZQmNpUHlOWWxKRnc5RERVa29vSDlTMVU4UnpEclhkYnlz?=
- =?utf-8?B?dktEM3VTWndualpwdmRDRGFWcHJ2MnRxSG1qbGRrQktNZGhGVnRmQzJlTFcv?=
- =?utf-8?B?VzBZdHVpdyt5TUIrZWdNbVZIdXJKd1BHMGdWaXJJQi9VS0pId2JFaTYxY0tj?=
- =?utf-8?B?QmtyanBWVm5mM1BJUVBuRFVxaXVpRDdnL3FheE5VL0NvdzFmMy9VNWxDLzln?=
- =?utf-8?B?eStFbjdKM293dmFTYlVsTURxR0s0RkVXK3RFNWwrQzc2akkzOHlRUk9EMENy?=
- =?utf-8?B?QXJab0R1TXhScTFkdStadXN4UmJjWDVBL0UyT05aVTRubjZxSE1IQm8wTnhD?=
- =?utf-8?B?NEFnNmphdW9hbXl5WDJUVWpRa1dodnJqVzhLK1IyeFNONGdMR0svQk83ay8y?=
- =?utf-8?B?Mi9QRXJsSGxHN2N5enFMR0ZJUmltTzcxY214TVNpUnYxdDZPMncwL3RHV2R6?=
- =?utf-8?B?cGhYZm5DQ0J0eUFZY3dxbFBHKzZmMFE5ZFk2bjNSazZxb0NnL2hXczdGNGpm?=
- =?utf-8?B?Nkt2MHZFWWF4a055NXIyNk1jNVRUR0JMT01QT2JUVFR4bXBnRjQxWUVMNmFD?=
- =?utf-8?B?K0J1Z0RJV0xvQmNwRGtlNWMxcjdBNHk2NXFIMHo5K3V5SjZ5clk2Yk1vS3Ro?=
- =?utf-8?B?L1JORFI5eVhBT0VOZWJQdVVDdERIa0JhTjkyNlhjeVEybXNRNHpDdVJlL1pv?=
- =?utf-8?Q?mB1jCC8L7lgJEuiiw1gzGgWt7?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b1400ab-2300-4f46-884e-08dcbac4f492
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 11:50:26.1210
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vQnhByN+y4R4KiKndKx5TB8+aPXy74q/ziQhBJd6kDEm0GBc4nqeqoA8wFygy42gy6OsdAORwTD0JlpEIN36Tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6440
-
-I do not understand why you took this change from my patchset.
-
-Maybe the other two patches have a pass, but this should not be removed 
-from my patchset, not at least after discussing it publicly.
-
-The reason you mentioned for doing it was for making things easier for 
-the other changes in my larger patchset, but again, you should have 
-discussed this first publicly, and second, I do not remember other large 
-patchsets, far larger than mine, being partially picked up  by someone 
-else but the patchset submitter, and sending those picked changes in 
-another patchset.
+Date: Mon, 12 Aug 2024 12:50:07 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Serge Semin" <fancer.lancer@gmail.com>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Andrew Morton" <akpm@linux-foundation.org>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Kelvin Cheung" <keguang.zhang@gmail.com>,
+ "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Tawfik Bayouk" <tawfik.bayouk@mobileye.com>,
+ "Huacai Chen" <chenhuacai@kernel.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <01050429-94e8-4576-a51b-11b11cb8a562@app.fastmail.com>
+In-Reply-To: 
+ <utfmb7mxm6emxditrq7fwalatnhszzcztu4gnqs5mf44umvfwa@k4i7gamaj5mw>
+References: <6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k>
+ <8d875eb0-d236-46f3-a417-08bff3c0087d@app.fastmail.com>
+ <utfmb7mxm6emxditrq7fwalatnhszzcztu4gnqs5mf44umvfwa@k4i7gamaj5mw>
+Subject: Re: [RFC] MIPS: smp: Sleeping func called from start_secondary()
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
 
-On 8/6/24 06:52, Huang, Ying wrote:
-> Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
+
+=E5=9C=A82024=E5=B9=B48=E6=9C=882=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8A=E5=
+=8D=8810:53=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
+> Hi Jiaxun
 >
->> On Mon, 29 Jul 2024 16:46:11 +0800
->> Huang Ying <ying.huang@intel.com> wrote:
->>
->>> The memory range of a type2 accelerator should be managed by the type2
->>> accelerator specific driver instead of the common dax region drivers,
->>> as discussed in [1].
->>>
->>> [1] https://lore.kernel.org/linux-cxl/66469ff1b8fbc_2c2629427@dwillia2-xfh.jf.intel.com.notmuch/
->>>
->>> So, in this patch, we skip dax regions creation for type2 accelerator
->>> device memory regions.
->>>
->>> Based on: https://lore.kernel.org/linux-cxl/168592159835.1948938.1647215579839222774.stgit@dwillia2-xfh.jf.intel.com/
->>>
->>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->>> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
->>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->>> Cc: Davidlohr Bueso <dave@stgolabs.net>
->>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->>> Cc: Dave Jiang <dave.jiang@intel.com>
->>> Cc: Alison Schofield <alison.schofield@intel.com>
->>> Cc: Vishal Verma <vishal.l.verma@intel.com>
->>> Cc: Ira Weiny <ira.weiny@intel.com>
->>> Cc: Alejandro Lucero <alucerop@amd.com>
->>> ---
->>>   drivers/cxl/core/region.c | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->>> index 9a483c8a32fd..b37e12bb4a35 100644
->>> --- a/drivers/cxl/core/region.c
->>> +++ b/drivers/cxl/core/region.c
->>> @@ -3435,6 +3435,14 @@ static int cxl_region_probe(struct device *dev)
->>>   					p->res->start, p->res->end, cxlr,
->>>   					is_system_ram) > 0)
->>>   			return 0;
->>> +		/*
->>> +		 * HDM-D[B] (device-memory) regions have accelerator
->>> +		 * specific usage, skip device-dax registration.
->>> +		 */
->>> +		if (cxlr->type == CXL_DECODER_DEVMEM)
->>> +			return 0;
->> As in previous need to be careful as that may not mean it's
->> an accelerator.
-> Yes.  We need some other way to identify type2 devices.
+> On Fri, Aug 02, 2024 at 05:43:45PM +0800, Jiaxun Yang wrote:
+>>=20
+>>=20
+>> =E5=9C=A82024=E5=B9=B48=E6=9C=882=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=
+=E5=8D=884:45=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
+>> > Hi folks,
+>> >
+>> > To debug some another problem I recently enabled the
+>> > CONFIG_DEBUG_ATOMIC_SLEEP config for my SoC based on the 2xP5600 co=
+res
+>> > with MIPS GIC as IRQ-controller. That caused the next BUG backtrace
+>> > started being printed to the system log during the device boot-up:
+>>=20
+>> Hi Serge,
+>>=20
+>> Thanks for reporting the problem!
+>>=20
+>> I actually have a patch lying around somewhere to convert cevt-r4k to=
+ use CPUHP
+>> interface and avoid requesting interrupt on secondary CPUs.
+>>=20
+>> Will post after getting more platform tests.
 >
->> However, we do need to deal with BI setup for HDM-DB type 3 devices
->> etc and to check the HDM Decoder capability registers to make sure
->> Supported Coherence model is appropriate. (e.g. 11 for host only or
->> device coherency - HDM-H/HDM-DB)
-> Yes.  We need to check BI configuration too.
+> Great! Thanks. I'll test it out upon submission.
 >
->>> +
->>> +		/* HDM-H routes to device-dax */
->>>   		return devm_cxl_add_dax_region(cxlr);
->>>   	default:
->>>   		dev_dbg(&cxlr->dev, "unsupported region mode: %d\n",
-> --
-> Best Regards,
-> Huang, Ying
+> * Although I doubt that such (presumably) complicated change might be
+> considered as a backportable fix. But at least it shall fix the proble=
+m for the
+> mainline kernel.
+
+It's actually harder than I expected, as managing it with percpu interru=
+pt API would
+break system sharing PCI with TI.
+
+Maybe we need to come up a driver handle IRQ MUX.
+
+Avoid calling get_c0_compare_int on secondary CPU init is easy, will pos=
+t a patch.
+
+Thanks
+
+>
+> Thanks,
+> -Serge(y)
+>
+>>=20
+>> Thanks
+>> - Jiaxun
+>>=20
+>> >
+>> > [    0.118053] BUG: sleeping function called from invalid context a=
+t=20
+>> > kernel/locking/mutex.c:283
+>> > [    0.118062] in_atomic(): 1, irqs_disabled(): 1, non_block: 0, pi=
+d:=20
+>> > 0, name: swapper/1
+>> > [    0.118069] preempt_count: 1, expected: 0
+>> > [    0.118074] RCU nest depth: 0, expected: 0
+>> > [    0.118078] Preemption disabled at:
+>> > [    0.118082] [<80105040>] arch_dup_task_struct+0x20/0x118
+>> > [    0.118116] CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted=20
+>> > 6.11.0-rc1-bt1-00312-gca6f9469050c-dirty #2460
+>> > [    0.118134] Stack : 816d0000 801b89bc 81870000 00000004 a02d0c08=20
+>> > 00000000 84ae7dcc 801b84c0
+>> > [    0.118167]         00000000 00000002 00000000 00000000 00000000=20
+>> > 00000001 84ae7d70 84aaf200
+>> > [    0.118195]         00000000 00000000 81115acc 00000000 00000059=20
+>> > 84ae7bec 00000000 00000000
+>> > [    0.118222]         00000000 ffffffff ffffffea 00000020 816d0000=20
+>> > 00000000 81115acc 00000002
+>> > [    0.118250]         00000000 04240021 a02d0c08 00000000 00000000=20
+>> > 00000000 30400000 ac24242a
+>> > [    0.118277]         ...
+>> > [    0.118286] Call Trace:
+>> > [    0.118289] [<8010af2c>] show_stack+0x88/0x120
+>> > [    0.118309] [<80f09dfc>] dump_stack_lvl+0x78/0xb0
+>> > [    0.118323] [<801778d0>] __might_resched+0x190/0x1f0
+>> > [    0.118349] [<80f10f80>] mutex_lock+0x20/0x74
+>> > [    0.118365] [<801c8590>] irq_create_mapping_affinity+0x48/0x104
+>> > [    0.118390] [<801121ec>] r4k_clockevent_init+0x58/0x38c
+>> > [    0.118402] [<80116658>] start_secondary+0x34/0x134
+>> > [    0.118411] [<80f0b1e4>] smp_bootstrap+0x68/0x98
+>> > [    0.118424]=20
+>> >
+>> > I managed to investigate the problem a bit and the reason turned ou=
+t to be
+>> > in the irq_create_mapping() method eventually invoked in the framew=
+ork of the
+>> > secondary CPU start-up procedure. The more detailed calls chain is:
+>> > start_secondary()
+>> > +-> mips_clockevent_init()
+>> >     +-> r4k_clockevent_init()
+>> >         +-> get_c0_compare_int()
+>> >             +-> gic_get_c0_compare_int()
+>> >                 +-> irq_create_mapping()
+>> >                     +-> irq_create_mapping_affinity()
+>> >                         +-> mutex_lock()
+>> >                             +-> might_sleep()
+>> >                                 +-> might_resched()
+>> >                                     +-> __might_resched()
+>> >                                         +-> Print the log above
+>> >
+>> > I currently lack of free time for further investigation in an attem=
+pt to
+>> > find a reasonable solution. So here is just a report and a short su=
+mmary
+>> > of the problem. Should you have any idea of how to fix the problem =
+I'll be
+>> > very glad to test it out on a short notice.
+>> >
+>> > -Serge(y)
+>>=20
+>> --=20
+>> - Jiaxun
+
+--=20
+- Jiaxun
 
