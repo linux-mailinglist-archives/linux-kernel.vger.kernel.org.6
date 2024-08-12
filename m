@@ -1,181 +1,99 @@
-Return-Path: <linux-kernel+bounces-283264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC5F94EF4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:15:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22BA94EF79
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB01B21D9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:15:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D54001C217CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464E017E455;
-	Mon, 12 Aug 2024 14:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0CF183094;
+	Mon, 12 Aug 2024 14:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h92mLzSG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="hLKWZiAs"
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCEA4D8D1;
-	Mon, 12 Aug 2024 14:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622AC17F4E5
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723472144; cv=none; b=bGkf9kjg5EvVfQE8JFaK+RYV71A9ZMWRyYNOAWi9+21r23DmckTKAm9QRiWEfYhTKhGD/fz6U3MyohvUzPinmSM7WVUbpaGQAcs29OZsk+eJzjLo6d8xpgzAPJ2TAOOeB3fToRhsnjG2OUTWruhbS/3hUYlN6q+rVsWopasxkcE=
+	t=1723472774; cv=none; b=SfGPOjVlhDzm5Pypb5nYw39Pqc8DBDRo0iWCGinQaVfcXirav/wwtJ5jEUx1PruSp9McLnL3WSAcZpoJWgoXbJSHG97sh9YSMcUn1BU4HokfxcxcHkynBvpCZC5FF3oJQsNIWDfiUBepnP93tHFDtcPw2j6C/ep4pR7Xx/jbpuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723472144; c=relaxed/simple;
-	bh=BGRlCIKuiTa0XsHIzgvyQx8GF3ZnAv0GUuP0rAeXyCU=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=coiSBMqoQyzBmIq5pOYpXiHeQKpHMgbnXb/dufDsfSFOVsg4bhJGRbvO961ymSSXnXwGrhFW+lXQuGVDmTSKxy3AgdCBz0O8HHLZupUQ9LEgqkneHOXQoBz0sGUvZuEqFVNOuHQTLNTs2CWIZnsJytb8vomHVAIq1CLcrJxdAYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h92mLzSG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E281FC32782;
-	Mon, 12 Aug 2024 14:15:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723472143;
-	bh=BGRlCIKuiTa0XsHIzgvyQx8GF3ZnAv0GUuP0rAeXyCU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h92mLzSGxYNshbdDjnHt4dZzxeI4oQDUywM7ziZFFk66puOjtqnEM+7k/VomXLjWW
-	 cfMLqMBvuZdWU12nWRhbrUJzXv+uPPuIwHZOP9rZYzB3+xI5yLf2vNgUbfzqXq7xNR
-	 Xb9V7k6bZGYZNUdxkShOGLhhVVwYxFkjcOjeFNwxhQcClrf00dkHUK/IxeiKNUUIp2
-	 BuIxmopuQDjVsgk+zHAbz54nqRscAWpvCZjCYyk7IV76H06RgfIzjCwg289/7mgGRs
-	 F/LIYoDOL5i9Q683+C0OLNP3rFM1xpGOM6TSdyhCi7aOlZsekQguaEEOcFJCxFRYGN
-	 rNOYryGQ5hpPg==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sdVpl-0032oI-Rk;
-	Mon, 12 Aug 2024 15:15:42 +0100
-Date: Mon, 12 Aug 2024 15:15:41 +0100
-Message-ID: <864j7p25f6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: kuba@kernel.org,
-	Sunil Goutham <sgoutham@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	horms@kernel.org,
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/CAVIUM THUNDER NETWORK DRIVER),
-	netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCH net-next v2] net: thunderx: Unembed netdev structure
-In-Reply-To: <20240626173503.87636-1-leitao@debian.org>
-References: <20240626173503.87636-1-leitao@debian.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1723472774; c=relaxed/simple;
+	bh=V/XN2IJlnRlLKosTXmH+9S6EEI//usQMCIJ8qs/hozw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XhR2eLQvomV4xuwbbeBlqs/I6QBczH18WwDr8Blr3SsHbSuIaFuyA2zO6bm/1Dcm9dLLjfRD5/4qew6dumUYZjFAOpOzFnduOTCktn5eMR7N6Z0t3olxYiyfJPkHh53YJb75wFcCjZ26fqezrjr1F3891nBtZj4AVNhXQloyD4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=hLKWZiAs; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20240812141554b49d59cb063aced410
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 12 Aug 2024 16:15:54 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=pd/VpIRV516pqsgMsPuysNVtHzsHKVyjXVwp6LAdEi8=;
+ b=hLKWZiAse5JNnpzONR2N3Qr9k8QD8eToGyE3sS7yIaom9QuW26iJLSAEPUN9l4vChF14QR
+ dz+JHQEAFK9bAgoTPOmcPAuIdkxfoLYUnCyeGt5AQ5yfpA9Hz7xHleTa83DWuKniD4N8Xglf
+ 2dHWVqUfhK+aX689K19w3COLiqcwp4/0qVTUotmoYy5q4vgzIVp2b6tVKF78ZRgwb4RJuKH1
+ WyEzRMC9bagza537JMGkVnCoL6EYw09geoQJn68qwqw8lrYbmOY5F1QCUpkca7OtrJbfZ8Jf
+ Dl0XkV+BGZmyTK3sQTHI63gpUtiFu47ah+9OYuKw0If2nW6JX+QqRDwg==;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Minda Chen <minda.chen@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 0/3] riscv: jh7110: Fix configuration for on-chip USB 2.0 support
+Date: Mon, 12 Aug 2024 16:15:50 +0200
+Message-ID: <cover.1723472153.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: leitao@debian.org, kuba@kernel.org, sgoutham@marvell.com, davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, horms@kernel.org, linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-On Wed, 26 Jun 2024 18:35:02 +0100,
-Breno Leitao <leitao@debian.org> wrote:
-> 
-> Embedding net_device into structures prohibits the usage of flexible
-> arrays in the net_device structure. For more details, see the discussion
-> at [1].
-> 
-> Un-embed the net_devices from struct lmac by converting them
-> into pointers, and allocating them dynamically. Use the leverage
-> alloc_netdev() to allocate the net_device object at
-> bgx_lmac_enable().
-> 
-> The free of the device occurs at bgx_lmac_disable().
-> 
->  Do not free_netdevice() if bgx_lmac_enable() fails after lmac->netdev
-> is allocated, since bgx_lmac_disable() is called if bgx_lmac_enable()
-> fails, and lmac->netdev will be freed there (similarly to lmac->dmacs).
-> 
-> Link: https://lore.kernel.org/all/20240229225910.79e224cf@kernel.org/ [1]
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> Changelog:
-> 
-> v2:
-> 	* Fixed a wrong dereference in netdev_priv (Jakub)
-> 
->  .../net/ethernet/cavium/thunder/thunder_bgx.c | 21 +++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
+While mainline has support for the USB controller of the JH7110 since 6.5,
+this never really worked, even not with latest downstream kernels by Starfive -
+unless you were also using an old downstream U-Boot version. The reason for
+that was a missing syscon setting that prevented the connection between USB
+2.0 PHY and the controller. This series finally fixes the issue.
 
-This patch causes my ThunderX box to explode badly:
+Changes in v2:
+ - fix copy&paste mistake in error patch found by kernel test robot and Dan Carpenter
 
-[   10.022118] thunder_bgx, ver 1.0
-[   10.022594] libata version 3.00 loaded.
-[   10.023226] mdio_thunder 0000:01:01.3: Added bus at 87e005003800
-[   10.023757] mdio_thunder 0000:01:01.3: Added bus at 87e005003880
-[   10.035431] thunder_bgx 0000:01:10.0: BGX0 QLM mode: XFI
-[   10.045225] Unable to handle kernel NULL pointer dereference at virtual address 00000000000005e8
-[   10.069901] Mem abort info:
-[   10.085236]   ESR = 0x0000000096000044
-[   10.109767]   EC = 0x25: DABT (current EL), IL = 32 bits
-[   10.145191]   SET = 0, FnV = 0
-[   10.148272]   EA = 0, S1PTW = 0
-[   10.151422]   FSC = 0x04: level 0 translation fault
-[   10.156309] Data abort info:
-[   10.159196]   ISV = 0, ISS = 0x00000044, ISS2 = 0x00000000
-[   10.164689]   CM = 0, WnR = 1, TnD = 0, TagAccess = 0
-[   10.169752]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-[   10.175076] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000111b43000
-[   10.181533] [00000000000005e8] pgd=0000000000000000, p4d=0000000000000000
-[   10.188328] Internal error: Oops: 0000000096000044 [#1] PREEMPT SMP
-[   10.194585] Modules linked in: libahci(E) nvme(E) nvme_core(E) t10_pi(E) mdio_thunder(E) thunder_bgx(E+) libata(E) mdio_devres(E) crc64_rocksoft(E) scsi_mod(E) igb(E+) thunder_xcv(E) mdio_cavium(E) crc64(E) i2c_algo_bit(E) gpio_keys(E) usbhid(E) scsi_common(E) of_mdio(E) fixed_phy(E) fwnode_mdio(E) i2c_thunderx(E) libphy(E)
-[   10.223291] CPU: 0 PID: 341 Comm: kworker/0:4 Tainted: G            E      6.10.0-rc5-01073-g94833addfaba #3309
-[   10.233368] Hardware name: GIGABYTE MT30-GS0/MT30-GS0, BIOS F02 08/06/2019
-[   10.240231] Workqueue: events work_for_cpu_fn
-[   10.244588] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   10.251540] pc : bgx_probe+0x44c/0x640 [thunder_bgx]
-[   10.256502] lr : bgx_probe+0x410/0x640 [thunder_bgx]
-[   10.261460] sp : ffff800084dd3c80
-[   10.264876] x29: ffff800084dd3c80 x28: 0000000000000000 x27: ffff000ff6772a70
-[   10.272006] x26: ffff00010cb02480 x25: 0000000000000000 x24: ffff80007a325700
-[   10.279136] x23: ffff00010c0e60c8 x22: ffff80008100a3d8 x21: ffff000ff6772a88
-[   10.286266] x20: ffff00010c0e6000 x19: ffff00010cb02480 x18: ffffffffffffffff
-[   10.293396] x17: 000000004b2d2331 x16: 00000000b606f3da x15: 0000000000000006
-[   10.300526] x14: 0000000000000000 x13: 3030383330303530 x12: 3065373820746120
-[   10.307656] x11: 7375622064656464 x10: ffff800081e158e8 x9 : ffff800080aa9a30
-[   10.314786] x8 : 0101010101010101 x7 : 0000000000000000 x6 : ffff00010c0e60c8
-[   10.321916] x5 : ffff800084dd3cf8 x4 : 0000000000000000 x3 : 0000000000000000
-[   10.329046] x2 : 0000000000000000 x1 : ffff80007a3296d0 x0 : ffff000ff6772a70
-[   10.336176] Call trace:
-[   10.338613]  bgx_probe+0x44c/0x640 [thunder_bgx]
-[   10.343225]  local_pci_probe+0x48/0xb8
-[   10.346966]  work_for_cpu_fn+0x24/0x40
-[   10.350706]  process_one_work+0x170/0x400
-[   10.354707]  worker_thread+0x26c/0x388
-[   10.358446]  kthread+0xfc/0x110
-[   10.361580]  ret_from_fork+0x10/0x20
-[   10.365150] Code: 52800004 52800003 d2800002 f9401f47 (f902f4e6) 
-[   10.371232] ---[ end trace 0000000000000000 ]---
+Jan
 
-and I've confirmed that reverting this patch on top of -rc3 restores
-normal behaviour.
+CC: Conor Dooley <conor+dt@kernel.org>
+CC: Emil Renner Berthing <kernel@esmil.dk>
+CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+CC: Rob Herring <robh@kernel.org>
 
-There are two issues with this change:
+Jan Kiszka (3):
+  dt-bindings: phy: jh7110-usb-phy: Add sys-syscon property
+  riscv: dts: starfive: jh7110: Add sys-syscon property to usbphy0
+  phy: starfive: jh7110-usb: Fix link configuration to controller
 
-- bgx_lmac_enable() is called *after* bgx_acpi_register_phy() and
-  bgx_init_of_phy(), both expecting netdev to be a valid pointer.
-
-- bgx_init_of_phy() populates the MAC addresses for *all* LMACs
-  attached to a given BGX instance, and thus needs netdev for each of
-  them to have been allocated.
-
-I have posted a potential fix at [1].
-
-Thanks,
-
-	M.
-
-[1] https://lore.kernel.org/r/20240812141322.1742918-1-maz@kernel.org
+ .../bindings/phy/starfive,jh7110-usb-phy.yaml | 11 ++++++++++
+ arch/riscv/boot/dts/starfive/jh7110.dtsi      |  1 +
+ drivers/phy/starfive/phy-jh7110-usb.c         | 20 +++++++++++++++++++
+ 3 files changed, 32 insertions(+)
 
 -- 
-Without deviation from the norm, progress is not possible.
+2.43.0
+
 
