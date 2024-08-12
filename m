@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-283596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1195294F6A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:27:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9824594F6BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 265BBB227CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:27:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BC92860B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7A11946C1;
-	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6F318C33F;
+	Mon, 12 Aug 2024 18:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E81DuNFU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrKq9J2L"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273CA1917DB;
-	Mon, 12 Aug 2024 18:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44240189B87;
+	Mon, 12 Aug 2024 18:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487111; cv=none; b=TSkUxaifMsBDVAqJEwIzR0w6GhafbVsCTuA+IRaguGhiuV4OHDlG316SYdCM0tQrkG9cYkCJq+RMlXbtnEhiTtHgL0eLHtjTWmDas2RQ572nNlLgsiHorB7ul1gTiqC+a/5Zu/Sh1/+EZ3koCZtwiOtQuTDpUp05D+Lfdy+ZaKs=
+	t=1723487382; cv=none; b=ImOSFYTLReuhcN+QO4Cs4YgxZMHhz1vDUQVc6UmvlkXXwkZVqLrB4VSGLQgmT3OVOvtg6JoRRyDpVcO1NtXajbQ5hYjFKsyCmqix0ZWFM1ylAe9GVRVFK+f9sw1xY2D77Z7cFW5ZFNyz2gItqyT6S0D1/8yJ1/FCO+5CTPLeKjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487111; c=relaxed/simple;
-	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b8zWePti0WWfDov2Pfxvh539W1FVNQSFOEV9qvs6ZM0hRaAInvQEZibieVvAWjK7pVSKC87hUmuxkeG6y/EEd8NceK2GuhUg1XBtVdqtmR5lM8DoQU038bTb61Rw8io2rsLM8bCUn8HN2SPwU0pcmqH4BvihRWS1LvNkhL/1CbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E81DuNFU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2282C32782;
-	Mon, 12 Aug 2024 18:25:10 +0000 (UTC)
+	s=arc-20240116; t=1723487382; c=relaxed/simple;
+	bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OEpVwki8xLABs0mg0dqPDP1qB5rDPsq2bn6CSlfBijmbjqxoCMl7coZDLU2CNhS0ID7sqiTwJEf1KQt983ltCv/KQHaEXVJDtjlRDuDzGFJsiRtHUulnM3HUGb7OyW8maNpa7jUuGZxPxaxMhw6DNYHyUtNqEl2EbbEHNwt1UWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrKq9J2L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B679AC32782;
+	Mon, 12 Aug 2024 18:29:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487111;
-	bh=b9XMtJBDz1eS9eHtLGMNWgjburbqn9Im8RPbrEwodd0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E81DuNFUQBf+Hp0FbT2dTh9FMz6izZjqLPR8pbFkTDHAwRcUSi9U5m4y+b7a5D84S
-	 L4T1X6GfeBl5U02jvjl9KAFPYvCkhlnnu6mzL1APe2tZXOEtBs31xMIYkbdSYXb0uw
-	 OCZ8ZDxNXF7b9OEHsVto4zb2JZ3KhWUgU8eKSa/fkUBVjkpmgRmH38JMJrE/d+keLW
-	 JS9jz+vUKujhhhB11sboKhh4NrSYNASIY94gwq4RxOhzVpA5LDtW+iKVMQnO+sX8+f
-	 uubQ8A9wcfOwIxJzy/nBX9COA4qzl87jmWK/AILzeuT6hD8woAsZ10LokHwHHjv8zw
-	 nSNBePSfzuDjw==
-Date: Mon, 12 Aug 2024 11:25:10 -0700
+	s=k20201202; t=1723487381;
+	bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=OrKq9J2LRxbHJ2rpZM0H8R1UsAaB0zW1vBnhb6z/Gc37ZCZHXvkeRo7mJibj7isZj
+	 48Kvgasu2kWgw9zcq2srDFV5h8zTnA34t0Y9tXNMEZwQMlirzCWEIiV5+RTuDKrnod
+	 v4WEZ4lU8PKfV48Rt2I7nUKCPiDymbYQbbOKDmkwXs/tdKzTBZHZKPC/T1a5XOBfN3
+	 D3bVGAzmfzfMFgBXUNTsNO+FChECBZ7ZLxwzOFuKe4EXp5PqWRL6TEBG6IiDILwg6M
+	 2Uu5YE0pCW1uh/cGtDtF9faWieC817On7iMyxUfRhYN3frjhAgMF2XetcaEVGFItZX
+	 tP9KRVs2bj0fA==
 From: Kees Cook <kees@kernel.org>
-To: Brian Mak <makb@juniper.net>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3] binfmt_elf: Dump smaller VMAs first in ELF cores
-Message-ID: <202408121123.FBAE8191A3@keescook>
-References: <036CD6AE-C560-4FC7-9B02-ADD08E380DC9@juniper.net>
- <87ttfs1s03.fsf@email.froward.int.ebiederm.org>
- <202408121105.E056E92@keescook>
- <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] string_choices: Add wrapper for str_down_up()
+Date: Mon, 12 Aug 2024 11:29:40 -0700
+Message-Id: <20240812182939.work.424-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <713A0ABD-531D-4186-822A-4555906FD7EC@juniper.net>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=890; i=kees@kernel.org; h=from:subject:message-id; bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=; b=owGbwMvMwCVmps19z/KJym7G02pJDGm7QqacOqh4Y8u8yW6XPu0qW7peW8bY/kZV/JYdDdtPn zZce+xmb0cpC4MYF4OsmCJLkJ17nIvH2/Zw97mKMHNYmUCGMHBxCsBE9l1kZPj7qYfvf5/JNc9w 1l2FXxs5znHvO7kz3KT8nciM1IU/PjAzMqyMsF5muYTJqtlf1/ll52Pe1p+tRqGnu9rr8qae/OW 6hQcA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 06:21:15PM +0000, Brian Mak wrote:
-> On Aug 12, 2024, at 11:05 AM, Kees Cook <kees@kernel.org> wrote
-> 
-> > On Sat, Aug 10, 2024 at 07:28:44AM -0500, Eric W. Biederman wrote:
-> >> Brian Mak <makb@juniper.net> writes:
-> >> 
-> >>> Large cores may be truncated in some scenarios, such as with daemons
-> >>> with stop timeouts that are not large enough or lack of disk space. This
-> >>> impacts debuggability with large core dumps since critical information
-> >>> necessary to form a usable backtrace, such as stacks and shared library
-> >>> information, are omitted.
-> >>> 
-> >>> We attempted to figure out which VMAs are needed to create a useful
-> >>> backtrace, and it turned out to be a non-trivial problem. Instead, we
-> >>> try simply sorting the VMAs by size, which has the intended effect.
-> >>> 
-> >>> By sorting VMAs by dump size and dumping in that order, we have a
-> >>> simple, yet effective heuristic.
-> >> 
-> >> To make finding the history easier I would include:
-> >> v1: https://urldefense.com/v3/__https://lkml.kernel.org/r/CB8195AE-518D-44C9-9841-B2694A5C4002@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0rwhadvc$
-> >> v2: https://urldefense.com/v3/__https://lkml.kernel.org/r/C21B229F-D1E6-4E44-B506-A5ED4019A9DE@juniper.net__;!!NEt6yMaO-gk!DavIB4o54KGrCPK44iq9_nJrOpKMJxUAlazBVF6lfKwmMCgLD_NviY088SQXriD19pS0G7RQv4o$
-> >> 
-> >> Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> >> 
-> >> As Kees has already picked this up this is quite possibly silly.
-> >> But *shrug* that was when I was out.
-> > 
-> > I've updated the trailers. Thanks for the review!
-> 
-> Hi Kees,
-> 
-> Thanks! I think you added it to the wrong commit though.
+The string choice functions which are not clearly true/false synonyms
+also have inverted wrappers. Add this for str_down_up() as well.
 
-Ugh. Time for more coffee. Thanks; fixed. I need to update my "b4" -- it
-was hanging doing the trailers update so I did it myself manually...
-That'll teach me. ;)
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Cc: linux-hardening@vger.kernel.org
+---
+ include/linux/string_choices.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-> tests. Since all the other tests pass, I'm just going to leave it at
-> that.
-
-Yeah, I think you're good. Thank you for taking the time to test rr!
-
+diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
+index bcde3c9cff81..1320bcdcb89c 100644
+--- a/include/linux/string_choices.h
++++ b/include/linux/string_choices.h
+@@ -46,6 +46,7 @@ static inline const char *str_up_down(bool v)
+ {
+ 	return v ? "up" : "down";
+ }
++#define str_down_up(v)		str_up_down(!(v))
+ 
+ /**
+  * str_plural - Return the simple pluralization based on English counts
 -- 
-Kees Cook
+2.34.1
+
 
