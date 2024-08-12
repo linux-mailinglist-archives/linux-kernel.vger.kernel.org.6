@@ -1,76 +1,101 @@
-Return-Path: <linux-kernel+bounces-283008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A38C94EBD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:30:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88AA894EBD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D879AB20AFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5822824A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F7C175D3D;
-	Mon, 12 Aug 2024 11:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FF175D3C;
+	Mon, 12 Aug 2024 11:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jJRBHqDc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dyMVcG+L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7kP6X5rJ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dyMVcG+L";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7kP6X5rJ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7CD175D29
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086D83C0B;
+	Mon, 12 Aug 2024 11:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723462197; cv=none; b=h5hUB32jrstY6+KfEyb7dg8u85utnBrvOZBbEuaq4jfoNOInbLWCvmcy9GPpKhm7OawEzYvkdz9TIsetGayySzJ/+y6R0/ZWhXiIbEuZDTDzNZuumRnJoGUbLcPX8NNyzhZCERpHyOPxrRghGWYFsp6QI9NyYi1nRVvflUI6vLM=
+	t=1723462275; cv=none; b=BuFnXHfrf29g6GqFqAkU1RhNNLi0V5PvrQhdVmAOS8zgC4OgzLjOyuZlGNWOqbu1w2Lp2C+d2IakzcMS58w6jFmc+ImMDk6nbgLOLIVHKfkiSC2y4ugS+4DUTNXrBGAy1TvTgS3lHLVZWQkdIoA2kc6t4IL/12mzzgzkHR6i83E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723462197; c=relaxed/simple;
-	bh=BcS7e5OSUdegHmPBjuOnztz2GWyLnhPJwGxbx8iNC9A=;
+	s=arc-20240116; t=1723462275; c=relaxed/simple;
+	bh=3+CJyFJLjoj48HvzCItu+Gv0H77IGYQqfEAS0cyyUuU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBGdHPf3BAnoPqjWZr98ELpAlxPHTNX2rlhGw86R6ypFhLagS85SnE4Lx8zocxs3kx7lMcZ9Ytirr4xLxJSJuabXwSYLdkxZbqBryqb+juPlpHlW8+9NkbGTjdh7DAHALqOTnaJFVU8jf0wFAF0BR/ibZJ0adfoZx/EBfCCmmeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jJRBHqDc; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723462194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dOjdqADSWC8inLVd6ovXTdUwFoHmzNkQ2gTz2o2Yt4Y=;
-	b=jJRBHqDcs9jGfi+ClExKESlVDoM+NRVWepYyaDpo/YTR/gguoGKkcVKF4+ciLtK0ehCmYd
-	riFWraSUsV/E+hsZbW5/LY9Lcfh+vBpK5KI2nqxu2RSp02fwRE/2wwqHQPoOM5lzxtwbDM
-	yhh3RL0c8szPJXNmofDVMXZ023TRDsA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-m5cnWKV1PdS9PLq1WPeyZg-1; Mon,
- 12 Aug 2024 07:29:49 -0400
-X-MC-Unique: m5cnWKV1PdS9PLq1WPeyZg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	 Content-Type:Content-Disposition:In-Reply-To; b=sxObA11sfI143E5MdYo8m3beKueJCprjnYV2fJntilOXtsCOCZJFSexYWrGw8zqviBh0bUuAnFV89T0dFTmqWqvADECg2YJ8D5JSJQrgOJb7ZhMlSrgVc8sMBSPnIgKlcE9LKPFgFifnGeddosdUzfZe52sF2iaAIV22isYMMq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dyMVcG+L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7kP6X5rJ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dyMVcG+L; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7kP6X5rJ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9924A1953961;
-	Mon, 12 Aug 2024 11:29:46 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.102])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 86E9C19560A3;
-	Mon, 12 Aug 2024 11:29:38 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 12 Aug 2024 13:29:43 +0200 (CEST)
-Date: Mon, 12 Aug 2024 13:29:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, andrii@kernel.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] uprobes: Remove the spinlock within
- handle_singlestep()
-Message-ID: <20240812112929.GB11656@redhat.com>
-References: <20240809061004.2112369-1-liaochang1@huawei.com>
- <20240809061004.2112369-3-liaochang1@huawei.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1165920268;
+	Mon, 12 Aug 2024 11:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723462272;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96EUmExynSb2mVUwXqoNk5b4rhcR95sKR8ipS/TtSM4=;
+	b=dyMVcG+Lmr2O2jHkLermQPV7/4oOxALt18XgN4JNkvp+4B6Ho1nWU5p3C4v0gtNgl98G9j
+	Ujj9j/FQcuMemw4frEA+FECc6KrJPkm36J5sqwprL0fA7XCv+bsSQ6B69yTBz6FSVj0CTe
+	20dsURmjEnkaDt5bV96s9XvSrozGI2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723462272;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96EUmExynSb2mVUwXqoNk5b4rhcR95sKR8ipS/TtSM4=;
+	b=7kP6X5rJ8NnFfLBeNABY0HHRv7JxhuA8dYva58mIB4mCHHfWpOR8IBEif1U559MXvVwuby
+	cyYHD8VwzTe6JJCw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dyMVcG+L;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=7kP6X5rJ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1723462272;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96EUmExynSb2mVUwXqoNk5b4rhcR95sKR8ipS/TtSM4=;
+	b=dyMVcG+Lmr2O2jHkLermQPV7/4oOxALt18XgN4JNkvp+4B6Ho1nWU5p3C4v0gtNgl98G9j
+	Ujj9j/FQcuMemw4frEA+FECc6KrJPkm36J5sqwprL0fA7XCv+bsSQ6B69yTBz6FSVj0CTe
+	20dsURmjEnkaDt5bV96s9XvSrozGI2M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1723462272;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=96EUmExynSb2mVUwXqoNk5b4rhcR95sKR8ipS/TtSM4=;
+	b=7kP6X5rJ8NnFfLBeNABY0HHRv7JxhuA8dYva58mIB4mCHHfWpOR8IBEif1U559MXvVwuby
+	cyYHD8VwzTe6JJCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3853137BA;
+	Mon, 12 Aug 2024 11:31:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id clhSN3/yuWZJVgAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Mon, 12 Aug 2024 11:31:11 +0000
+Date: Mon, 12 Aug 2024 13:31:02 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, kees@kernel.org,
+	gustavoars@kernel.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] btrfs: Annotate structs with __counted_by()
+Message-ID: <20240812113102.GG25962@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240812103619.2720-2-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,67 +104,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240809061004.2112369-3-liaochang1@huawei.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20240812103619.2720-2-thorsten.blum@toblux.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: 1165920268
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 08/09, Liao Chang wrote:
->
-> --- a/include/linux/uprobes.h
-> +++ b/include/linux/uprobes.h
-> @@ -75,6 +75,7 @@ struct uprobe_task {
->  
->  	struct uprobe			*active_uprobe;
->  	unsigned long			xol_vaddr;
-> +	bool				deny_signal;
-
-Ack, but... I can't believe I am arguing with the naming ;)
-Can we have a better name for this flag?
-
-	utask->signal_denied ?
-	utask->restore_sigpending ?
-
-or just
-
-	utask->sigpending ?
-
-utask->deny_signal looks as if handle_singlestep/whatever should
-"deny" the pending signal cleared by uprobe_deny_signal(), while
-it fact it should restore TIF_SIGPENDING.
-
-Oleg.
-
->  
->  	struct return_instance		*return_instances;
->  	unsigned int			depth;
-> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-> index 76a51a1f51e2..77934fbd1370 100644
-> --- a/kernel/events/uprobes.c
-> +++ b/kernel/events/uprobes.c
-> @@ -1979,6 +1979,7 @@ bool uprobe_deny_signal(void)
->  	WARN_ON_ONCE(utask->state != UTASK_SSTEP);
->  
->  	if (task_sigpending(t)) {
-> +		utask->deny_signal = true;
->  		clear_tsk_thread_flag(t, TIF_SIGPENDING);
->  
->  		if (__fatal_signal_pending(t) || arch_uprobe_xol_was_trapped(t)) {
-> @@ -2288,9 +2289,10 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
->  	utask->state = UTASK_RUNNING;
->  	xol_free_insn_slot(current);
->  
-> -	spin_lock_irq(&current->sighand->siglock);
-> -	recalc_sigpending(); /* see uprobe_deny_signal() */
-> -	spin_unlock_irq(&current->sighand->siglock);
-> +	if (utask->deny_signal) {
-> +		set_thread_flag(TIF_SIGPENDING);
-> +		utask->deny_signal = false;
-> +	}
->  
->  	if (unlikely(err)) {
->  		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
-> -- 
-> 2.34.1
+On Mon, Aug 12, 2024 at 12:36:20PM +0200, Thorsten Blum wrote:
+> Add the __counted_by compiler attribute to the flexible array member
+> stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
 > 
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 
+Reviewed-by: David Sterba <dsterba@suse.com>
 
