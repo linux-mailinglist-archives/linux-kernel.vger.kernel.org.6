@@ -1,270 +1,436 @@
-Return-Path: <linux-kernel+bounces-283359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E784594F174
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:14:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFA3094F17A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76EFC1F230B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A441C21C4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:16:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D0E184537;
-	Mon, 12 Aug 2024 15:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3652B183CBF;
+	Mon, 12 Aug 2024 15:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OgUUk1fn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9qIxnwc"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C44317E8EA;
-	Mon, 12 Aug 2024 15:14:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723475655; cv=fail; b=i7FBTOqzWJu4bOFq9m/IfaxESvybAqUcO+l9CE1H0QdcSJzlTqm0TjvPdoD5dGNa2QF0vQqSlL+42LAovKywFLN9pTb+yGiN2Wr8rV6FbP19E/J1awB46Z3CvIEvZvmqcftEfBW8qzjpPR1AAaOp5rGGbwwVTvaUYx0+/s7TSi4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723475655; c=relaxed/simple;
-	bh=+mQGCV3MLoSaZnFcYkCRJvQ+7/2usTaLZjS/doG6d6w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=eH31i0TuLcvlpD1TDpFIlkGLZ7SYPR1pcthJIEgAo2jV0HAUvMLrXSey/fePjGbchAu8blsIOro9RPxgm6wh2oHboMI8jW3EDVsok64OdyqYlp3bT005AUMA+24sWRnA2aCTG+hWHBvlHtz+UU0MD4Y38c/foi502YS0YrNWQIg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OgUUk1fn; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723475653; x=1755011653;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=+mQGCV3MLoSaZnFcYkCRJvQ+7/2usTaLZjS/doG6d6w=;
-  b=OgUUk1fnB631SexyOhOJrV0qCrA0YwiGXhn28tASBQtQ48tnrHa3xocs
-   mykKtUDp8xZDAlhQ5tYd/7v3KEB0f0AfrcNIMLIkk6jYYvjGZ4WViSePH
-   JwHCy71Kozzbwc3omUKyqjXUm3hpiA0UZhPEi3rx0tQJXDdPYSE6J84bf
-   W6JycGF+vNPezbhO9UJilGbHDou0bPC+vBXcaqy0f5/wIiLzSJ52CfGnw
-   bcCDpcmurzUqGOyD+7I6xwLA+LN6gOKuufgAdZa9OMjQ9FTjaWQ1HPKr6
-   ketLlvL2Ag1vh4qZzzIjAyURNGMAwq+xu+SKPjX/ww5BS1DrtWTQXth6V
-   A==;
-X-CSE-ConnectionGUID: 7C+Vb2eiRW+DrSNS0VCeNA==
-X-CSE-MsgGUID: tgeh7UOiR1SP17wJVlo27A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32996026"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="32996026"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:14:11 -0700
-X-CSE-ConnectionGUID: X9gAJXVaSw+ILoCtKC5dfw==
-X-CSE-MsgGUID: C8gm2j3jTf6hpfBpNoXQtg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="58175734"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Aug 2024 08:14:10 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 12 Aug 2024 08:14:09 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 12 Aug 2024 08:14:08 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.170)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 12 Aug 2024 08:14:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZqJpHhs270VhwtcD0AvC3g7CIcu+oAcIeI326sDRKszSYNByLkHH6ORtUwSg4/B4iPp1XtIA6XebOSQj5EhdLT1Z2fDL5wa4GPexErpw+JGw8Vu6oNgfjEaASDsYcerYGxKjf8x6zWyCTL0vUXNuOKq8enUjyx+Tp8zTPEAPWruL8RFYvKpdZOqpGhplWPU5gOV/tcCFhR2jVH6LHtSjj53B7KOBAGxmOJAupOwXNg3M/gr0UyO5bAQu94obDlT0sGeOe1aqcNsmilOLbrtSClW7WP9Vr3HnGM2dBjBx8oQ9pTLt1EyEcWcsGXoVBJwjO9AeV6pmy0uSY2MLS/NxaA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=98YmvEyTaYPz6Ao/4aH6xHIukel7x+2QhVP6Eu4MMW0=;
- b=JejYIoa1nP+DnP1GnK5xUHjGfFNqE6TFMRbaEHAd3+r5UFDILHz64VMj7FAoxr+SzxP7btbvMeGP/1oms4HzCblgYQW+9gN0dFOEQQ1GxXsNTvLJl7Br9Iy6d21uf6iLw9ZEZ0EH41mYs6kJSdM76bkg8Xi7uiqvorM6N8W6rHRpU00p1E6flLfH1GI89E6uNgBbLG/ICJFz8bMjQjdXcalpswSvFJaE7WXhLnKRKO70A2yLcX0b2Iw9jLUKtw3vg81Oyojk5F4haN6kpAly1fDcv7N6GVrO1LsVlfnTIwfuL/BRR8dEUznhWAEGZp13SdXMKWU+7QTY5PN204oeVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com (2603:10b6:806:340::7)
- by DS0PR11MB7926.namprd11.prod.outlook.com (2603:10b6:8:f9::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33; Mon, 12 Aug
- 2024 15:14:03 +0000
-Received: from SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29]) by SN7PR11MB7540.namprd11.prod.outlook.com
- ([fe80::399f:ff7c:adb2:8d29%4]) with mapi id 15.20.7828.030; Mon, 12 Aug 2024
- 15:14:02 +0000
-Date: Mon, 12 Aug 2024 17:13:50 +0200
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, "David S. Miller" <davem@davemloft.net>, "Jacob
- Keller" <jacob.e.keller@intel.com>, Eric Dumazet <edumazet@google.com>,
-	"Jakub Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<magnus.karlsson@intel.com>, Michal Kubiak <michal.kubiak@intel.com>,
-	Wojciech Drewek <wojciech.drewek@intel.com>, Amritha Nambiar
-	<amritha.nambiar@intel.com>
-Subject: Re: [PATCH iwl-net v2 3/6] ice: check for XDP rings instead of bpf
- program when unconfiguring
-Message-ID: <ZromrjCGGWn5FcbU@lzaremba-mobl.ger.corp.intel.com>
-References: <20240724164840.2536605-1-larysa.zaremba@intel.com>
- <20240724164840.2536605-4-larysa.zaremba@intel.com>
- <ZroG2LxHn2Rt+Txx@boxer>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZroG2LxHn2Rt+Txx@boxer>
-X-ClientProxiedBy: TL2P290CA0024.ISRP290.PROD.OUTLOOK.COM (2603:1096:950:3::8)
- To SN7PR11MB7540.namprd11.prod.outlook.com (2603:10b6:806:340::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DC6450F2;
+	Mon, 12 Aug 2024 15:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723475775; cv=none; b=rVE3qAkKnF42NwjoSSEKUt17FoRXaT35AqrB8wyYSaLKLWYbc2WKmNDOfPI/6DkLgIzWDFA8BeLUbwkMUs467VLEIEJ5ku3kmW/4Bkvww/xr5IXBvatgbDimZMol0aAXAyphU6ZaaI9gbKoTn3FZe1h7ifsAJFNiyaKcOc+yezM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723475775; c=relaxed/simple;
+	bh=BtvWqiM7SzvAw0Emf4u4FDyWez3s59F5VLJ5IkrEXEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XlZotG62sCkhl0w3xAdqBMrDM8ihsx1vHeIqtDJmQQTKDoV5q9mBD/af7cCAo3Ke9n43CX6zoeEoGmz1RZYKf0Q9JTqvy8YyCWJdqt9ajA3zDlkGVAYeiwESVd643r8MLlz1oIxzG3FjGBDpcDkORvmqaL312SWmrGz3DEjLZdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9qIxnwc; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a8553db90so538040666b.2;
+        Mon, 12 Aug 2024 08:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723475771; x=1724080571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAb1+Zu/NWkbyLJ5jLNMxxkvJ/aPU9MFIMXTO7SfrPk=;
+        b=g9qIxnwcr8KOplS71uihK4n1KgAZrPQUal7ipkTO0FQFOUYyObIp/RSQxf5UpzlgSf
+         DA9mWoDMAELgSmR36e3kgxrmSi0B7KKprdzLbtjejxFurKddYT+lVOQtzWN67m7CauXu
+         HkfI8CC9kq0N36b4+KsXq8gl6IidqqZSViNZ5168KN2UE0ZW/1OEi5fUPPKXUadd4diV
+         pfgoyjedHRbrmKVKLvTBiTJJdJMDuogF+o4hxzjPCMyUE/ZSCRlUhVPT3jLJJgYA8iI3
+         eHj1feSaGGtVQEfSlyQfMlyfJyGPyo5D9Fm56YqwBtyxO8mhN7YbaGWEQrARITwDkNGf
+         pG8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723475771; x=1724080571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XAb1+Zu/NWkbyLJ5jLNMxxkvJ/aPU9MFIMXTO7SfrPk=;
+        b=V5FHb0n1ObWmb4N+n3WM6MbSjSqqKSKD2ZYU7p8AJmGbTjnYVXiVafX0Kg+ogyomvx
+         APh4w3BGjKLA23FsqxjLaEXffCtbLglxjZ9oI8Sp21TySJjCCrJVLbsgLejTwL6/u/Ii
+         +nzGwZZfnSr9F5iAaSEYHybI5qXy62zcZiiTqFSoRXHdQ+VQtuzpI1N4cyTikoX7mqaE
+         /sPeluvbY8+YS5Om/yJ57P5VI6+nh2txhvtVuSIQBYltzCW5TULKFS0STSBS4pY7SBe3
+         kDeQZqtD3NgCSQW/TLWBi87Ys5RVNJfy3EiXL110UCUzZfqyo/BZjKSJFed+XAMVjCzg
+         j54A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhv31D1JO+QlvytoRuiWF5L+2aG0UqbzoXnhGu1gxN24OkkF/EXHepOtZxFB0QoO8hmkjazdt3e5CDVQTf2rI6Wu8Mmu8oJpMxvleCe2UIHN9SLromc1Z70ptycbuBqPV0rAz+BSjwcBgVd+uFzm7bFA9F7jyjb4K1yTKCzl+RXbTysmHcjA==
+X-Gm-Message-State: AOJu0YyjE+UcvxocuI3YF/0tEW98i3wQajJEZLnxCFMl+KEmTAmgc/NL
+	yXfHbNA/tfybWQ4eWvxNekiPo06upLj95isn+AHPnrXT8Tr0i1R3
+X-Google-Smtp-Source: AGHT+IFDH46Q9I0CzR0qYReHmQlH666BZOMvRVpudVGjQFuLf2kjMfdk13QHF1B9Cgs6nQABqcXbww==
+X-Received: by 2002:a17:906:794d:b0:a72:5598:f03d with SMTP id a640c23a62f3a-a80ed2d4733mr41323166b.59.1723475771404;
+        Mon, 12 Aug 2024 08:16:11 -0700 (PDT)
+Received: from debian.localdomain ([178.127.68.169])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a80bb23c250sm237340966b.189.2024.08.12.08.16.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 08:16:11 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dsankouski@gmail.com,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org (open list:QUALCOMM CLOCK DRIVERS),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Date: Mon, 12 Aug 2024 18:16:06 +0300
+Message-Id: <20240812151606.1996198-1-dsankouski@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <n7gvt4e6kt33lpnfivv4t2waro2t4qi4evkrfot3j2en7ubffb@gpzwolihwemr>
+References: <n7gvt4e6kt33lpnfivv4t2waro2t4qi4evkrfot3j2en7ubffb@gpzwolihwemr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR11MB7540:EE_|DS0PR11MB7926:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8760c4ef-b808-407a-e1f8-08dcbae16646
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?7soEtN716r2ofn6vsmzKzP7ESN5SdEcK7wmg2wGYptGZTsrmYGr9dO/UJX4Y?=
- =?us-ascii?Q?/MaRy4xLwqO9304bHNobALDH1b2AN0G0EcuBvisONMaMh1TqKV7Gjn303u/U?=
- =?us-ascii?Q?nJAPYMs5f10jd0dcAK6jWtfIfJNOXZC5Xz+O3g4Gh3GASHLTqovz4qrbZF+K?=
- =?us-ascii?Q?LD0Y8Y8enaba3EcTdcz0lzWDsaKmGH/ODJIMizhAZyEBPCB7ZqkhHRBmCsa0?=
- =?us-ascii?Q?EyVIEn3ljLkxOAVtSgZTHI4yQ04w4/U7VoNBBkBhF4FT5BHyAszy5GppL7Wz?=
- =?us-ascii?Q?tPaCnayaYX5ap6yeTTK3xsCv3rlGSlxzPkrJtWWWa1C4rj36we135ZSc6XFJ?=
- =?us-ascii?Q?9c2NDEklOmJ7I6R8Xz6aSFo0KbspYjy9yo1ETiJGOSXnkb6JadVBd2GY7Odc?=
- =?us-ascii?Q?itYp+DyMHsbayeI62bO5DyKkk6/WwSovSFp10JaL88MYTywi2sYspdvJNpDY?=
- =?us-ascii?Q?UtOfKvBMVtXLFFM7MmYQweHPDoI6ZY54sQ7VGg9ZJFbwsjAjcyhMEdW3Y896?=
- =?us-ascii?Q?zCaSb751wcy7gAehMdhUYBVCKXgTtCjMmT3NpdQiWIbWE3DAAjT3GX8pdQHT?=
- =?us-ascii?Q?Tgp9F9Qh5qfeFMvkS+LRNp2tjb/YhijPlgJFHRxDnqV2XzQONgtVv78HH+4w?=
- =?us-ascii?Q?facLjuQCzC4a3DcuKSfAGnOTMFgT8lEv/D/QQ+wBYtocMK+UVTx7K5MNEPb3?=
- =?us-ascii?Q?tEHaQRT+k6eWZFnRU2WruDjFe3vQhLHg1MpqraObZZUAmpPPNZmxYZXpBss4?=
- =?us-ascii?Q?qbO+g9kGnIcHo0ojk2XSDENoCIqDKHshAy0sN0SvgKAkUjT93xp6VGKLlbjq?=
- =?us-ascii?Q?vfuX1Mqr3d7X4PlLn8ElKsoIRzZGUhP+FLZHVWLif7MVwnT8ZXZjo3I20TuT?=
- =?us-ascii?Q?a1hngdJYTW5RVfOPpB8k522tg3w2UnL8tOTVQNEX6Matp85TTXvU6SUEOHtZ?=
- =?us-ascii?Q?jDNxcY5xO6YL76BB6R8JTpQJgrQa91EY0/AM9XwmxcSlyuyHa021azkGbkhy?=
- =?us-ascii?Q?qYkNRZxFdJREHmlyiqUR3nT/j1bQ36Q62EcMlrnOT2KJMg1VQXwQZQ1jINKF?=
- =?us-ascii?Q?ipcm2c1RDMnulgNN99neBMHCeZc0eMaepWawCaVckAZfC54RY/nsYzA1Utht?=
- =?us-ascii?Q?R/2Vy2n4xnjwplNF99eTZm02hj8JYezX+CoTQIuxMHCsrVEIPdwStuDA2+we?=
- =?us-ascii?Q?s/eCuyARcSl0V2bo2pW4nHHSzYNIdwaoftzFSPzTsvePMH1YnAMQYp7idkRd?=
- =?us-ascii?Q?qWCfg0NC4swqlhYhlACPx6FJAgD9AKnMk/wpgcQHisN5qyTpEUWJdxVnXTYx?=
- =?us-ascii?Q?iTT5ChEYdWq7uZ/fVbr0LIaXda98yoLdzY1Xf6ePtvhNYQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR11MB7540.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?UMcKd3PoexZ56ZZ6xMPQ2wr7OGGnhLF/FYI0s6bSuwF0kB/wMD00VcuCU4cV?=
- =?us-ascii?Q?/0b94PEgNgBDLDykZTTaN8rQVutCiRzLFG07Avo4pypQKrm49SZ/ZYKX+Faa?=
- =?us-ascii?Q?w8lXhIj+Z3ydym/5kwKSdVw6JZJyWnSeq74vWmHxwIyf94h32Vi1aFUSqw+x?=
- =?us-ascii?Q?SvccllbsG5SFwmS8mNfeOGoJYxPGdu5DxifkOFRt8XwoF1uXDO4yq3aozobe?=
- =?us-ascii?Q?eReZY/wO3cjWNBYuztAfMDuf7vVUSJEtbf5RZGwbmqhClY1/iQ/dpaLWzuCa?=
- =?us-ascii?Q?Z3wzD6tRGt/NJSEiJ2+A2+vQbMumAL4KNM3ZJZK3UHoFuEc6E3a14MHyLDCm?=
- =?us-ascii?Q?FMC+sl0uU6lEgNp0/g+cp4dA6z7fsC94RFeoxHLPRRIMKFMIlZBPJ/BHWP9B?=
- =?us-ascii?Q?a5klQjkbO4Taimf8GLl4Dg4jKqHYSrTj6qwUxN/bWcqkqRGw1Hww+3kAWVF/?=
- =?us-ascii?Q?WXvJnyU615nrA1g9MmpTQ9qI5DbAwE/zJqnhnSdzaXT0gjOvhAmtzxYTF9Vo?=
- =?us-ascii?Q?5gFjzYvUMPz9FBVyGO1/JsugxwbuqM3v8zDBCpBHT14RQ0FRJIUG0EJTVVL9?=
- =?us-ascii?Q?9ZdWQJfG0cZHDQUymHNLOSNdnadcK9waUSuJs1XU0Rh/n5fOYI0wdIHi0KeX?=
- =?us-ascii?Q?0UpBuI1J3xi9YDTGT/UdxMqqqurV0F2eHwRazZq8Wzal7yLAkNGDTlBqwbth?=
- =?us-ascii?Q?j/KKsJZLHy2ccxKAG7Qd+wKIM/M7oGERVPxEwSJIUUZEy5U73yLarcL1jTsO?=
- =?us-ascii?Q?WzJV6NE5kowRZlTc0w2NrCuLOZ9Bb7H2xfqzJlV1zQJacxJLchm5sc5TadxH?=
- =?us-ascii?Q?aKWe3SHN77EIPZsymwkqjKvEAB13F4aEH4ewfVsZGktm7OkIzZA0vb6xlRIh?=
- =?us-ascii?Q?IW6Au5pt/CvVBPsWbbu73vXGRodPkirMv4qJx3YPToBQMUOAQWa1ZsGLgK4H?=
- =?us-ascii?Q?2FRsnznng7vqXIfyVscrYkXM75OauYTuLiFaMqUpLPxnv3SriQ8AwFa91Awp?=
- =?us-ascii?Q?J46eWB0kZkssLtN9uBGrR3FXDSxWRCrb3sxlFLtTW91ylv89OANp0AuFmSCf?=
- =?us-ascii?Q?ECdQf9SOwcTlLPbHQQbhBWXhqaOujBSKclBYrzz91CSZ8MEKUqsbEZi0z1Kg?=
- =?us-ascii?Q?FQueNTHImuFucfC0xCcV1EuCawrKsCbr0Ge07BUD9Rcjivw7droYttr1o1hw?=
- =?us-ascii?Q?REMdJqgZfx67UF1xQdr17qTIN01fDW8IbCw3BA1IqzO6ScU3IuzFS4a6ynEe?=
- =?us-ascii?Q?aYfEwsA5KiK3AyUZ977RAQ+R8JhbvxqCZkg9JcLioKDeyzBWPxOFeNVesgQT?=
- =?us-ascii?Q?eY59RvjNfRWPNog2IGj4UoTHfJfeREVwP7FE9WVswvzi9/pdQxse5cb4IABm?=
- =?us-ascii?Q?387n+Hgv0mkyXiBGsXlSAZdSoJ1H3V8ImcGR8wLugKCktvgrB+i6hRFh/qI0?=
- =?us-ascii?Q?f4Gbps3nBmdJd1n9pacLsf3nTb34hHk0n4uB2EZ4X0Q9ZHSoqy37sDHv+gww?=
- =?us-ascii?Q?0YMo2QH3GLW04NfCJo4CJ/nKrqBzBs62tBx6vMU/RszlEBdnjJe85EcZpuMC?=
- =?us-ascii?Q?7/sg66rsv9MSma2n9ko5zdlTNd6fdF/bnr6cZfri?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8760c4ef-b808-407a-e1f8-08dcbae16646
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR11MB7540.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 15:14:02.7625
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cjljEr7F6pHEZz9z7Yhl2IlxUc1Nwff5OTIdeuj+wou021xaO0cWVHbntBqSxT7ycY9nI1zONId+XIXktg3xeNYtsGF6QJWFn3WVl9/wDpk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7926
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 02:58:00PM +0200, Maciej Fijalkowski wrote:
-> On Wed, Jul 24, 2024 at 06:48:34PM +0200, Larysa Zaremba wrote:
-> > If VSI rebuild is pending, .ndo_bpf() can attach/detach the XDP program on
-> > VSI without applying new ring configuration. When unconfiguring the VSI, we
-> > can encounter the state in which there is an XDP program but no XDP rings
-> > to destroy or there will be XDP rings that need to be destroyed, but no XDP
-> > program to indicate their presence.
-> > 
-> > When unconfiguring, rely on the presence of XDP rings rather then XDP
-> > program, as they better represent the current state that has to be
-> > destroyed.
-> > 
-> 
-> No Fixes: tag?
->
+This is Proof-of-concept for general purpose clock ops. It's purpose is to
+eliminate the need of freq_tbl for general purpose clock, by runtime
+m/n/hid_div(pre-divisor) calculation. The calculation done as follows:
+- upon determine rate request, we calculate m/n/hid_div as follows:
+  - find parent(from our client's assigned-clock-parent) rate
+  - find requested rate - parent rate highest common factor
+  - find scaled rates by dividing rates on highest common factor
+  - assign requested scaled rate to m
+  - factorize scaled parent rate, put even multipliers to hid_div,
+    odd to n (to maintain approximately same hid_div and n width)
+- validate calculated values with *_width:
+  - if doesn't fit, shift right accordingly
+- return determined rate
 
-This is basically a fixup for a previous patch. The need to replace program 
-check with a ring check emerges from the existence of an in-between state that 
-my synchronization introduces. So it does not fix anything from a referencable 
-patch. I have separated this because it was seriously getting in the way when 
-trying to read the synchronization logic.
+In this POC, pwm-clk driver requests assigned-clock-parent with the call of
+assigned-clock-parent function, so GP clocks don't need to configure parent.
+__clk_rcg2_configure is therefore divided to __clk_rcg2_configure_parent
+and __clk_rcg2_configure_mnd to reuse code.
 
-> > Reviewed-by: Wojciech Drewek <wojciech.drewek@intel.com>
-> > Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
-> > ---
-> >  drivers/net/ethernet/intel/ice/ice_lib.c  | 4 ++--
-> >  drivers/net/ethernet/intel/ice/ice_main.c | 4 ++--
-> >  drivers/net/ethernet/intel/ice/ice_xsk.c  | 6 +++---
-> >  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> [...]
-> 
-> > diff --git a/drivers/net/ethernet/intel/ice/ice_xsk.c b/drivers/net/ethernet/intel/ice/ice_xsk.c
-> > index 2c1a843ba200..5dd50a2866cc 100644
-> > --- a/drivers/net/ethernet/intel/ice/ice_xsk.c
-> > +++ b/drivers/net/ethernet/intel/ice/ice_xsk.c
-> > @@ -39,7 +39,7 @@ static void ice_qp_reset_stats(struct ice_vsi *vsi, u16 q_idx)
-> >  	       sizeof(vsi_stat->rx_ring_stats[q_idx]->rx_stats));
-> >  	memset(&vsi_stat->tx_ring_stats[q_idx]->stats, 0,
-> >  	       sizeof(vsi_stat->tx_ring_stats[q_idx]->stats));
-> > -	if (ice_is_xdp_ena_vsi(vsi))
-> > +	if (vsi->xdp_rings)
-> >  		memset(&vsi->xdp_rings[q_idx]->ring_stats->stats, 0,
-> >  		       sizeof(vsi->xdp_rings[q_idx]->ring_stats->stats));
-> >  }
-> > @@ -52,7 +52,7 @@ static void ice_qp_reset_stats(struct ice_vsi *vsi, u16 q_idx)
-> >  static void ice_qp_clean_rings(struct ice_vsi *vsi, u16 q_idx)
-> >  {
-> >  	ice_clean_tx_ring(vsi->tx_rings[q_idx]);
-> > -	if (ice_is_xdp_ena_vsi(vsi)) {
-> > +	if (vsi->xdp_rings) {
-> >  		synchronize_rcu();
-> >  		ice_clean_tx_ring(vsi->xdp_rings[q_idx]);
-> >  	}
-> > @@ -189,7 +189,7 @@ static int ice_qp_dis(struct ice_vsi *vsi, u16 q_idx)
-> >  	err = ice_vsi_stop_tx_ring(vsi, ICE_NO_RESET, 0, tx_ring, &txq_meta);
-> >  	if (err)
-> >  		return err;
-> > -	if (ice_is_xdp_ena_vsi(vsi)) {
-> > +	if (vsi->xdp_rings) {
-> 
-> From XSK POV these checks are false positive and I will be sending a patch
-> that gets rid of it (I had this on my tree when working on timeout issues
-> but I pulled this out as it was not a -net candidate IMHO).
-> 
-> Just a heads up, this can go as-is currently.
->
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
 
-Ok, thanks.
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
 
-> >  		struct ice_tx_ring *xdp_ring = vsi->xdp_rings[q_idx];
-> >  
-> >  		memset(&txq_meta, 0, sizeof(txq_meta));
-> > -- 
-> > 2.43.0
-> > 
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate.
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gcc-sdm845.c |  12 ++-
+ drivers/pwm/pwm-clk.c         |   5 ++
+ 4 files changed, 167 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index d7414361e432..5bd86bce0c4d 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
+ 	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
+ 
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_gp_ops;
+ extern const struct clk_ops clk_rcg2_floor_ops;
+ extern const struct clk_ops clk_rcg2_fm_ops;
+ extern const struct clk_ops clk_rcg2_mux_closest_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 30b19bd39d08..44b257481556 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -32,6 +32,7 @@
+ 
+ #define CFG_REG			0x4
+ #define CFG_SRC_DIV_SHIFT	0
++#define CFG_SRC_DIV_LENGTH	8
+ #define CFG_SRC_SEL_SHIFT	8
+ #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
+ #define CFG_MODE_SHIFT		12
+@@ -393,16 +394,103 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
+ 	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
+ }
+ 
+-static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+-				u32 *_cfg)
++static inline u64 find_hcf(u64 a, u64 b)
++{
++	while (a != 0 && b != 0) {
++		if (a > b)
++			a %= b;
++		else
++			b %= a;
++	}
++	return a + b;
++}
++
++static int clk_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f)
++{
++	u64 hcf;
++	u64 hid_div = 1, n = 1;
++	int i = 2, count = 0;
++
++	hcf = find_hcf(parent_rate, rate);
++	u64 scaled_rate = rate / hcf;
++	u64 scaled_parent_rate = parent_rate / hcf;
++
++	while (scaled_parent_rate > 1) {
++		while (scaled_parent_rate % i == 0) {
++			scaled_parent_rate /= i;
++			if (count % 2 == 0)
++				hid_div *= i;
++			else
++				n *= i;
++		}
++		i++;
++		count++;
++	}
++
++	f->m = scaled_rate;
++	f->n = n;
++	f->pre_div = hid_div;
++
++	return 0;
++}
++
++static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++	int src = clk_rcg2_get_parent(hw);
++	int mnd_max = BIT(rcg->mnd_width) - 1;
++	int hid_max = BIT(rcg->hid_width) - 1;
++	u64 parent_rate;
++	int ret;
++
++	parent_rate = rcg->freq_tbl[src].freq;
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(f), GFP_KERNEL);
++
++	if (!f)
++		return 0;
++
++	ret = clk_calc_mnd(parent_rate, req->rate, f);
++	if (ret)
++		return 0;
++
++
++	while (f->n - f->m >= mnd_max) {
++		f->m = f->m >> 1;
++		f->n = f->n >> 1;
++	}
++	while (f->pre_div >= hid_max) {
++		f->pre_div = f->pre_div >> 1;
++		f->m = f->m >> 1;
++	}
++
++	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, int src, u32 *_cfg)
+ {
+-	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+-	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	u32 mask = CFG_SRC_SEL_MASK;
++	int index = qcom_find_src_index(hw, rcg->parent_map, src);
+ 
+ 	if (index < 0)
+ 		return index;
+ 
++	*_cfg &= ~mask;
++	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	u32 cfg, mask, d_val, not2d_val, n_minus_m;
++	int ret;
++
+ 	if (rcg->mnd_width && f->n) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+@@ -431,9 +519,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	}
+ 
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
++	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+-	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+ 	if (rcg->hw_clk_ctrl)
+@@ -445,6 +532,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	return 0;
+ }
+ 
++static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	int ret;
++
++	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ {
+ 	u32 cfg;
+@@ -465,6 +568,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	return update_config(rcg);
+ }
+ 
++static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
++{
++	u32 cfg;
++	int ret;
++
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
+ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       enum freq_policy policy)
+ {
+@@ -518,6 +641,22 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return __clk_rcg2_set_rate(hw, rate, CEIL);
+ }
+ 
++static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(*f), GFP_KERNEL);
++
++	if (!f)
++		return -ENOMEM;
++
++	clk_calc_mnd(parent_rate, rate, f);
++
++	return clk_rcg2_configure_gp(rcg, f);
++}
++
+ static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+ {
+@@ -645,6 +784,17 @@ const struct clk_ops clk_rcg2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++const struct clk_ops clk_rcg2_gp_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.determine_rate = clk_rcg2_determine_gp_rate,
++	.set_rate = clk_rcg2_set_gp_rate,
++	.get_duty_cycle = clk_rcg2_get_duty_cycle,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
++
+ const struct clk_ops clk_rcg2_floor_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index dc3aa7014c3e..4567f405683b 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -285,10 +285,8 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+ 
+ static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+-	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+-	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+-	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+-	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
++	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
++	F(600000000, P_GPLL0_OUT_MAIN, 1, 0, 0),
+ 	{ }
+ };
+ 
+@@ -302,7 +300,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+ 		.name = "gcc_gp1_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+@@ -316,7 +314,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+ 		.name = "gcc_gp2_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+@@ -330,7 +328,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+ 		.name = "gcc_gp3_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/pwm/pwm-clk.c b/drivers/pwm/pwm-clk.c
+index c19a482d7e28..1bfc7870e3aa 100644
+--- a/drivers/pwm/pwm-clk.c
++++ b/drivers/pwm/pwm-clk.c
+@@ -25,6 +25,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/clk/clk-conf.h>
+ #include <linux/pwm.h>
+ 
+ struct pwm_clk_chip {
+@@ -87,6 +88,10 @@ static int pwm_clk_probe(struct platform_device *pdev)
+ 	struct pwm_clk_chip *pcchip;
+ 	int ret;
+ 
++	ret = of_clk_set_defaults(pdev->dev.of_node, false);
++	if (ret < 0)
++		return -EINVAL;
++
+ 	chip = devm_pwmchip_alloc(&pdev->dev, 1, sizeof(*pcchip));
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+-- 
+2.39.2
+
 
