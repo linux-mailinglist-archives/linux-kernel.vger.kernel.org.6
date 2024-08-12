@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-283605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8DF94F6B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:29:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CC094F6B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA991C21D92
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F131C218CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825B7194A53;
-	Mon, 12 Aug 2024 18:25:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9E019AD6A;
+	Mon, 12 Aug 2024 18:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6j+mJpZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fE8d51Uy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56F519414A;
-	Mon, 12 Aug 2024 18:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B40F194A75;
+	Mon, 12 Aug 2024 18:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487156; cv=none; b=aA83sOuroVU2wab47mbF64Yp+RxovU4aIV4VzuXFiDfi48tARw3NxgN/XSTv7gTtPvQd29nuhYBsN1oNK6sKV8Zz7pzcIHCzrdKBuPheXcD7U+6EfTspLBw9G9D0luC31d4ZgUVGYB+oliPtiAtVMKUy8DrWp2eV02EaTv/zA8Q=
+	t=1723487162; cv=none; b=Qy+PhNtkDNmL8y3GFSBIVANLUvo3qWViHgZ1aBUKgPoXWfI/ZQdT8n2+ewW59UJTl3uCacl1IYDOYxmPRjjnjpy15LPDd156mCIQAmK/pKxK6A9Kd74jCEGn7phjWr+mzqUxEaN9O/HLEhMPXEfOtcGANQ6w/3tPEeFetp7jq7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487156; c=relaxed/simple;
-	bh=2F6Eq8ZEErgwGsu4sxTQuCutTP6qKEaQ1vvV8Sy7t1I=;
+	s=arc-20240116; t=1723487162; c=relaxed/simple;
+	bh=tl80HVK20EtCGNYhPnG7N36D8g8ociS1KN//HywX5k4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NfKS5vrz+nLJ/WcqmGhxT1y/jtE+I8ww+p12aKPbsd/dF/f02Oz1qJ2KXpF6cyUro4rb/ChTnoICq4PPWyz0c6zuJcBHcTdvn6ETxtbRFvVQyOYdMgzgb4sAFWad7dC9Fp9Svugwa5jAN5xBT7HF4xGKPhBbH6PRAna0roQjti4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6j+mJpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5DDC4AF09;
-	Mon, 12 Aug 2024 18:25:51 +0000 (UTC)
+	 MIME-Version; b=KfesOG/kfwG82XZ6QsVckvHsr+JevRe3njBy8mclQlIk1J7sQF/u0xIuNauyrVix/k5GPSVCOwmprW1dzrAFc7BpcBc+UnJBUMcDjTTQ2aj+fdtRZkEIIfXy1/bDyINlr/KNDnoelvJQkOjHswNReeu6hw1BLKVG8miXrzHW8v4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fE8d51Uy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAB24C32782;
+	Mon, 12 Aug 2024 18:25:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487156;
-	bh=2F6Eq8ZEErgwGsu4sxTQuCutTP6qKEaQ1vvV8Sy7t1I=;
+	s=k20201202; t=1723487161;
+	bh=tl80HVK20EtCGNYhPnG7N36D8g8ociS1KN//HywX5k4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p6j+mJpZtX+GQyemhh1YN3z+WuLKkO07HkID9hB60cEgOmMMs5DJr4cHKl1pgGPeR
-	 2zIpFnJHzziufgeTVg+xA5uce22bQeLWbfLDPV5oiSEq+SNKklaaVdlEROb6c81rIQ
-	 Q8CDN418goWJaq0ttWBuLX4VyQ7c24iY7eQ9d+3oJ7Gp9lREGXADM9jAIKJ3qTMJq4
-	 eV4yUFZsIj6KTKDzj/3ZaX3CItDMBhnlUIwrWi7BQ819hVr6+KgPLw13G5v6DLQ6K8
-	 tTVj59KMhsXhTZd8JhgIDl+XQxhKQiN4I+WuM2Eg0yLzJBA4rY+drE+cbFM0avdu4N
-	 sSJ85j4Uw23OQ==
+	b=fE8d51Uywi9gQkO5aVDXQS6bCB1Esv9I/pGSi59+t323AQL2pLKex1YwXjRRlx6d5
+	 /eMp8maDX8Z24YUglnm+TSz8p7tRMIXY6wA+hBLiVjTzJB8Z8UI4V7rfMUIySu8X05
+	 NbpWU0BEcdDgCiWUCEJnk3RlTEtUoBjFYUZ8WYduUgOgZvaMJuvH5NX8w8Gb1L7yJN
+	 UOC7iLtJy1PUyPNFyWha7v5bQqsNZqK1J4V/j69V+bjeeiTqX8Fh8BY5ogM0CUP9H0
+	 XS038gpPB6uo1XOmJhNY4JDsPmsllDzyaQFHv2n1Vfa6YQEuYH9rcE9xx7NjVAw0lk
+	 iaDfSWN3spO5A==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v5 20/26] rust: error: check for config `test` in `Error::name`
-Date: Mon, 12 Aug 2024 20:23:06 +0200
-Message-ID: <20240812182355.11641-21-dakr@kernel.org>
+Subject: [PATCH v5 21/26] rust: alloc: implement `contains` for `Flags`
+Date: Mon, 12 Aug 2024 20:23:07 +0200
+Message-ID: <20240812182355.11641-22-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
 References: <20240812182355.11641-1-dakr@kernel.org>
@@ -80,38 +80,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Additional to `testlib` also check for `test` in `Error::name`. This is
-required by a subsequent patch that (indirectly) uses `Error` in test
-cases.
+Provide a simple helper function to check whether given flags do
+contain one or multiple other flags.
+
+This is used by a subsequent patch implementing the Cmalloc `Allocator`
+to check for __GFP_ZERO.
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/error.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ rust/kernel/alloc.rs | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-index 2d012cc3881a..7adf889b9526 100644
---- a/rust/kernel/error.rs
-+++ b/rust/kernel/error.rs
-@@ -140,7 +140,7 @@ pub(crate) fn to_ptr<T>(self) -> *mut T {
-     }
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index 820ef6072e02..be2bd0f1e74a 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -34,7 +34,7 @@
+ /// They can be combined with the operators `|`, `&`, and `!`.
+ ///
+ /// Values can be used from the [`flags`] module.
+-#[derive(Clone, Copy)]
++#[derive(Clone, Copy, PartialEq)]
+ pub struct Flags(u32);
  
-     /// Returns a string representing the error, if one exists.
--    #[cfg(not(testlib))]
-+    #[cfg(not(any(test, testlib)))]
-     pub fn name(&self) -> Option<&'static CStr> {
-         // SAFETY: Just an FFI call, there are no extra safety requirements.
-         let ptr = unsafe { bindings::errname(-self.0) };
-@@ -157,7 +157,7 @@ pub fn name(&self) -> Option<&'static CStr> {
-     /// When `testlib` is configured, this always returns `None` to avoid the dependency on a
-     /// kernel function so that tests that use this (e.g., by calling [`Result::unwrap`]) can still
-     /// run in userspace.
--    #[cfg(testlib)]
-+    #[cfg(any(test, testlib))]
-     pub fn name(&self) -> Option<&'static CStr> {
-         None
+ impl Flags {
+@@ -42,6 +42,11 @@ impl Flags {
+     pub(crate) fn as_raw(self) -> u32 {
+         self.0
      }
++
++    /// Check whether `flags` is contained in `self`.
++    pub fn contains(self, flags: Flags) -> bool {
++        (self & flags) == flags
++    }
+ }
+ 
+ impl core::ops::BitOr for Flags {
 -- 
 2.45.2
 
