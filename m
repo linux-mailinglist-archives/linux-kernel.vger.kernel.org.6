@@ -1,135 +1,108 @@
-Return-Path: <linux-kernel+bounces-282945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F079094EB0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:31:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34C0494EB33
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F50F1C21623
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA051F2113A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDCBB17B4EC;
-	Mon, 12 Aug 2024 10:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B897016F907;
+	Mon, 12 Aug 2024 10:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tlm1HdE3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MS531Hdv"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D35317ADFB;
-	Mon, 12 Aug 2024 10:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F75175D26
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458547; cv=none; b=lzemaQgWND9OnhBRDNS6KR6eTEUlNKQ4Ffrn9v4Ef/C0Ujp1bg+ftjoyBZpkPToU90X4aUOju/0KxLbbEF4Pnc5XrcFV1yW4cSfb8JQpm0SbvdnZNqAkP+l07GdwvAKNS8BJwx2atlK+lcEABJQza1IyayZo9yBQ7VUDkp/0eG8=
+	t=1723458793; cv=none; b=HZxDEDL4ucbcxRljO/YqMNZueGJoxOvrkNDowpcUsiAkjj/GYq5UfZ6rdeLuEue1N4HnncE0X6xmuVLcGzkcRvMz54tLd/mccqV1yEOzdyN5sP5hNoxGNTGbUvZF/wtEFKZhUS2pmb4RTDJ97IXtMz3WSJCelPbfw3EFsB9MiT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458547; c=relaxed/simple;
-	bh=CLyWWOYt22DzrQD3+24twqwW5p6ENAk4u846K2Y3tgY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=muKEakVWqMo0H2ZEWE/0tYrTBmFTVyEoTnzu+ceUArfIrzt6RcwRHf3u+JXkGnbMHCFoP0jyGSNtPz5aI4tD+J0y+HIdhEo0QlOiRNh1PpMYf32an801rI9jQ1Ez6U6t4U74MUA0LmOEs+c/MANFo+mUVBDWFp3b3oKntFN8Lng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tlm1HdE3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBE4FC32782;
-	Mon, 12 Aug 2024 10:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723458546;
-	bh=CLyWWOYt22DzrQD3+24twqwW5p6ENAk4u846K2Y3tgY=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=tlm1HdE3fmkzZ2c1IYHfNI8S+derlQvbNjunFM/xdndnI/+jhR7T9sgDY4Ob/b2p2
-	 YzS7B08GDPfVQtqT1PZWOPmy6TDc+wS5Cr0XJkmYiNjBZk0iDmousNuCYkmiwo7pol
-	 7rexniM57Arc4rhM6QHJOfwHHm/IrlseprByDx59xfIltKOg3wkydE7bQLSXRYk6lF
-	 7YaqNxzCMGRviC4EImuc9AdC8tIQ5BoS3Fe5A/QEEd+G0Cj8ZSGihzmjxu8yoYLgqX
-	 PtGGCijV5lPyWcsetb3Z36/UUbmD0/L8HpqaDuYfBQoPqfNtJjRMQWT56m7fKWSgzN
-	 nrgsT5EbI+z2g==
-From: Kalle Valo <kvalo@kernel.org>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Felix Fietkau <nbd@nbd.name>,  Sean Wang <sean.wang@kernel.org>,
-  deren.wu@mediatek.com,  linux-mediatek@lists.infradead.org,
-  linux-wireless@vger.kernel.org,  lorenzo.bianconi@redhat.com,
-  mingyen.hsieh@mediatek.com,  sean.wang@mediatek.com,
-  linux-kernel@vger.kernel.org
-Subject: Re: patch 46/47 causes NULL pointer deref on mt7921
-References: <20240711175156.4465-1-spasswolf@web.de>
-	<CAGp9LzoXMoAW6dVZjTf-JcD_wiU4yXpGwkLaVyWXTkaV2MOKwg@mail.gmail.com>
-	<adb192a59c44aa8708e80df30a6a47816a03e50f.camel@web.de>
-	<4e943a62736f955af5d9cd1aff7e2b9c084c8885.camel@web.de>
-	<2599b886-9c63-4989-a08a-7feab28f7c49@nbd.name>
-	<65621cad9a22df881745e9333a5c3696bdbb8df3.camel@web.de>
-	<87frrqkkpm.fsf@kernel.org>
-	<e32ab97963e850b4425e4f5c45d2c502d50be480.camel@web.de>
-	<62226273aaafafda1a4f3abc0f8c95220407b3a7.camel@web.de>
-Date: Mon, 12 Aug 2024 13:29:01 +0300
-In-Reply-To: <62226273aaafafda1a4f3abc0f8c95220407b3a7.camel@web.de> (Bert
-	Karwatzki's message of "Mon, 12 Aug 2024 10:57:31 +0200")
-Message-ID: <87y15211ci.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1723458793; c=relaxed/simple;
+	bh=EGnlU3srb2PH2cn+2rBzVIhPw/GkZ2+RBbqJk77lmxY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=u6ecSMbjdOhxcbN0rtxCr9oXs3vRo7Hr1GVPxeVA2yuN+7DwKFDY+KDEMSZJwSVjXL2kFjKm/Ap3CSYpjBIekDNIIg9mwG1F1FjKdvP+zpzvWjr9dhja1xUA9PvgpPPaFgddxOD3bWB0izmJSnSLjvGKBqMXZZisgf1Pk/eeIBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MS531Hdv; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f189a2a841so40182641fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:33:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723458789; x=1724063589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+O2jEU7VQzCCDwlDvaDxOPZOWf256RVxVkJq/bzZGgg=;
+        b=MS531HdvqQFIWNIYKM1YSftn59dYY1UlfdINwc/BYbkJc/gJsMJx6Y3GAT+YijhwFd
+         rTliO99e3zUsMjCe++mFl6mHnTUdQIM5xkULidnNczc0cAVKUOHcAUW3/AfgufrAwWTM
+         R//Sz1oWZCZyezE/EvF/hSr+m441SwEj5bMnCZryeLZbVeQSUv0jgJ6eEmXeDtBPBTwO
+         chtQ1nYBEtFn/PUg3FzkKpnjF9645Q/AMlzgQi/CwShXD+466DrUZvv/wg7y00+3Spcb
+         K+DL3K+y52ZFNlidrQM5OrZiKtHZZZzjUQOABS3p8PeDHHFrA1GHs4U6X3V05G6svwFx
+         TJrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723458789; x=1724063589;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+O2jEU7VQzCCDwlDvaDxOPZOWf256RVxVkJq/bzZGgg=;
+        b=qXxU5XiL93eQcollXu6lhJt78ecgcyHoI3CUBuR5AU+PayPGw2Jdo7gVn3mKY1LXnQ
+         GiV5ZY2da8HhLBMoJFTlKVREIX3r81JiptwcYBgz9y6wj3o3KRDfrsXMXBDdoeTm0VnY
+         v5ty4LY2Z3G0U7T9msDBA9vz1mVDCg2Un/SgvoZdqZcu13exEYbwKmMLRinjOlJWOdx6
+         PGmXTrbFwQUKNg+H13GwonjeXevwA+SQ4TUUwsNTkauNgj6PuDDVJep0IWPAsmuE4/JH
+         RWP34GsdG+yJ2e9zHP2vKQOZx6x/qr/9Ur47EkbascNuG3vzBvvKrSHnzSO0Aw8xunUV
+         ABDQ==
+X-Gm-Message-State: AOJu0YxdotOzOf6h87DlVxD5AmHL3BBV3lbjftjuP8WwFW8SOqanlnn9
+	SYVY34It/LGS3roMLduH50UheeWAl9bYOeKPTtAHHo73cf6swbZgiO6qDsWrpbE=
+X-Google-Smtp-Source: AGHT+IGy5a46Y1wcO4SwOLwsNuPEhnEij8flfsYPhHBigT+Y+o7JsnRnPuko/G7HeykoRII3zMWL+w==
+X-Received: by 2002:a2e:b5ca:0:b0:2ee:494c:c3d3 with SMTP id 38308e7fff4ca-2f1a6d04600mr55015031fa.43.1723458789351;
+        Mon, 12 Aug 2024 03:33:09 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7bf87fsm184437065e9.48.2024.08.12.03.33.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 03:33:08 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Santosh Shilimkar <ssantosh@kernel.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+In-Reply-To: <20240809-ti-aemif-v1-0-27b1e5001390@linaro.org>
+References: <20240809-ti-aemif-v1-0-27b1e5001390@linaro.org>
+Subject: Re: [PATCH 0/3] memory: ti-aemif: code shrink
+Message-Id: <172345878844.106150.5555548130271543132.b4-ty@linaro.org>
+Date: Mon, 12 Aug 2024 12:33:08 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-Bert Karwatzki <spasswolf@web.de> writes:
 
-> Am Dienstag, dem 06.08.2024 um 13:22 +0200 schrieb Bert Karwatzki:
->> Am Mittwoch, dem 31.07.2024 um 11:51 +0300 schrieb Kalle Valo:
->> > Bert Karwatzki <spasswolf@web.de> writes:
->> >
->> > > Am Mittwoch, dem 17.07.2024 um 17:25 +0200 schrieb Felix Fietkau:
->> > >
->> > > > On 17.07.24 16:38, Bert Karwatzki wrote:
->> > > >
->> > > > > So mvif->phy can be NULL at the start of mt7921_ipv6_addr_change. The early
->> > > > > return in that case avoids the NULL pointer and mvif->phy
->> > > > > has its usual value
->> > > > > again on the next call to mt7921_ipv6_addr_change so Wifi is
->> > > > > working again. I
->> > > > > don't know how this could happen but perhaps you have an idea.
->> > > >
->> > > > This change should fix it: https://nbd.name/p/0747f54f
->> > > > Please test.
->> > >
->> > > The BUG is still present in linux-6.11-rc1.
->> >
->> > I'm not sure what's the status with this. There's one mt76 patch going
->> > to v6.11-rc2:
->> >
->> > https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git/commit/?id=6557a28f3e3a54cff4f0dcdd1dfa649b26557ab3
->> >
->> > But that looks to be a fix for a different problem, right? Felix, are
->> > you planning to submit that 0747f54f as a proper patch? I could then
->> > take it to wireless tree.
->> >
->> The Bug is still present in linux-6.11-rc2 and linux-next-20240806. Also the
->> mvif->phy NULL check in the original patch is not neccessary (and feels a little
->> out of place as mvif->phy is not needed anymore). This patch is sufficient to
->> fix the NULL pointer dereference:
->> diff --git a/drivers/net/wireless/mediatek/mt76/mt7921/main.c
->> b/drivers/net/wireless/mediatek/mt76/mt7921/main.c
->> index 1bab93d049df..23b228804289 100644
->> --- a/drivers/net/wireless/mediatek/mt76/mt7921/main.c
->> +++ b/drivers/net/wireless/mediatek/mt76/mt7921/main.c
->> @@ -1183,7 +1183,7 @@ static void mt7921_ipv6_addr_change(struct ieee80211_hw
->> *hw,
->>                                     struct inet6_dev *idev)
->>  {
->>         struct mt792x_vif *mvif = (struct mt792x_vif *)vif->drv_priv;
->> -       struct mt792x_dev *dev = mvif->phy->dev;
->> +       struct mt792x_dev *dev = mt792x_hw_dev(hw);
->>         struct inet6_ifaddr *ifa;
->>         struct in6_addr ns_addrs[IEEE80211_BSS_ARP_ADDR_LIST_LEN];
->>         struct sk_buff *skb;
->>
->> Bert Karwatzki
->
-> This error is still present in v6.11-rc3.
+On Fri, 09 Aug 2024 16:15:53 +0200, Bartosz Golaszewski wrote:
+> Here are a couple updates for the aemif driver that result in a significant
+> code shrink.
+> 
+> 
 
-Bert, can you send your fix as a proper patch? More information in the
-wiki below and please mark it for wireless tree.
+Applied, thanks!
 
+[1/3] memory: ti-aemif: remove platform data support
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/8c38617722bdf57a90e6c77ed9ee5ebb60958d2a
+[2/3] memory: ti-aemif: use devm_clk_get_enabled() and shrink the code
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/f6ae541cc3355fe872d4c942dc47d67877951d17
+[3/3] memory: ti-aemif: don't needlessly iterate over child nodes
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/23a641d5c2bce4c723fff9118a5d865ee6b9d05a
+
+Best regards,
 -- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
