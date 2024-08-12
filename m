@@ -1,167 +1,112 @@
-Return-Path: <linux-kernel+bounces-282917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1032294EA84
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:10:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E22594EA87
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD56A280F3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:10:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6061F2267F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4AC16EB7B;
-	Mon, 12 Aug 2024 10:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF3B816EB79;
+	Mon, 12 Aug 2024 10:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMjUARPS"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="af64i5iL"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2619E1876;
-	Mon, 12 Aug 2024 10:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8236616EB56
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723457408; cv=none; b=VVqeAq+U4V/Oi3KowG6LrG9YDXri16GySalBO74PPMbf+m0PHexuKukBQ3bG6pOVWBb1TPirI4djTgK4l18yXaXg6oC/DOI1PaO5JOcVu7Ro54/b9kHDP/00fcAyLCARLR9EfJ8FoGv7YOcIpOWMci7kSl5E1Te37wPZpan2Tx0=
+	t=1723457504; cv=none; b=Q8r5zhWa1CB+5cB+ehdp48GvVGSXNFN1r1AkzVIuqqJCJZza6oWp/UdTJWwuQinzpOcquB0HFb5MHzvJO1QwXnzv2LFn2/iteocGR1jpFOfdJ1cFiyXddzMtYrWks10ahAo3KurX6MC4jnqmeGP3WjTPendl/yd4+rF1jkP/OAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723457408; c=relaxed/simple;
-	bh=CE81XtTRxGKyG4QdnMPfqDkITk7nkHR3vviOoGqo0FE=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D9+lTqqnke3L1Dlb/nXsmFx6hkphyvNfwQtlEZM2b0nqJZcv+IjyI3nGCNS9qnRM7Y85Uvd5QW4Ap9YJQ6N70oZE9Y/y0zK4+s5HIqV2vke0wXgDOPuBrwuRONDXK2xh43ecl9LT8qqtgbswvaGx5ofdVRbzr17pk26McGBuSuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMjUARPS; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f00ad303aso5584402e87.2;
-        Mon, 12 Aug 2024 03:10:06 -0700 (PDT)
+	s=arc-20240116; t=1723457504; c=relaxed/simple;
+	bh=m9iltBGyT0Bi16sfkw4PReJR9Nd8fQjFWqWUcM6Edwo=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LZ0xl5dH32rIiX/hiqI024mnUSFkNMuvrn+dwVCIGCRcc3DC3VcZZ7aXgx1WgIpqiO95no+znvuyJ4YUV/kUOFkNl2BiCJ8vms59V/gX9gZUyFVJqMeEstXZDs7KA1JUvIRNbSadYuUEBgCJeObMPw6+04pQfHSIfjtmy8a8Pws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=af64i5iL; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-368526b1333so3058458f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723457405; x=1724062205; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=6AGDbHeUwy43L7QOiWatnM3/EWv9Db1La7THgNc4U5U=;
-        b=bMjUARPSjLnz2P1y1p3RL2Qmp6i2gEMJNgXrNHm4dXqxWHa1JcLmNHDvI8UupEK/A2
-         B82XjbsFT8zdigG8Q8xDpwybhG5cxc1FPRWzb0voftRx7e0h+6evkUzCz51GoFRODKR/
-         Smyrzbytqt0V7QkJv6ESwfDRFubO9i06v3Gl2Ax07ai/180MSIHT3L3UPXCQeDQAL4u0
-         JRdvjeW7kqXeqnHMTqo6/RtCV070JVsbgnN06DxQg/pRGjymhcdoA3h9niUqF3V8c45l
-         dIHFu0lwYw5KHH6H6HVAAv81YtudRXYb1HgOy8pvrYs2T8p/35++2PbDOxdypMfQ0sKO
-         anKw==
+        d=linaro.org; s=google; t=1723457501; x=1724062301; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LT4OWBWJDMSw8Klzf2pbHQrTca4RQG7pLzuzOgwkSto=;
+        b=af64i5iLHkRVIvoFdYShSd4Dp2sF9VN2T9mKd7IvnYXAGqFfA7fJoav+jrpeSn4gq2
+         j4UqImA1lFDMrvLXxJsFmJ5JXmchW2gT+t0wr3EO97q/6oLHH1SsFtiNoD8Y/WyFk3/P
+         0jEELf1R1NYyreXVpT1/aeCZg5hkCXQV5YMaLlIJ6bLyDYffwsCK8G5vFxWlhWCa7dok
+         R9gjT4rDewpYPsFk9CRhNna2oRLPIzcqZ/GjO9Trj0Ga/JDRhsnmQXSqaXOCj86ak6b5
+         xGPS61Agih19kLm6oRLQHL0aYUw+YiErz9jR4QOKnbxwuHC2ztn/WuPl3cYI3WR0nQt9
+         w+UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723457405; x=1724062205;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6AGDbHeUwy43L7QOiWatnM3/EWv9Db1La7THgNc4U5U=;
-        b=C6FjdCW/FaLJeKsA8hAiVQMvktkSs/XSGUMIwsU5f+23+seuCDda9HjaoUN7qHGF1s
-         kTqYJ3IT7uyQOT2XnBBux0E0IHobeJ6jIC8ETkKkaMpMNICpXBW+R1K4OUTYui/DhXYd
-         cUK/rRtF619VNWgTEUEHcTG3P/tMtOeHKNge8MWMlh+eH9V1qsVGTfjzcUdqPJggQNG5
-         5Axyer/BzEx6TaYgWs4rgM8CtQ2u+MgtJ9MIGIyYXBzVFV0ayZl1VmqzzU+CIits78ZM
-         lG3P6tNkaQ3PdK1UCYnVIbo5AG/Cch6xCuU0DGejoKKAzKhgi84lKnCAyQ4CDIjJJgcD
-         KyBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV74rz1n4A/EkwyqTMsYYzI5eCgjVnjfoFNOJs0UkQGYuBWUlIzeg4OW7UgXJirlGlc7MimSaZMeBsie03ufW5+xVgfojYrqEVzJX5jtel894WulpYAJtLngmMWW9la/3ip/44dxm9jfjQ7uySzG+Nnf/YYPBc2D/+yCKmwfsvUU+74Jw==
-X-Gm-Message-State: AOJu0Yx5rSQXksuCrdQa33keVtfBCBIH+VeRN3WTMygLyK36q4umjm5A
-	kb6wxDy8ps1zjNep+kRvlsA8mBmwS5YWQoQuWRAhJ07toXp/nZVu
-X-Google-Smtp-Source: AGHT+IF7gXVzTH4CvkvVbJhZb4UZN3i53JvW8K9dJlvL2BXg7c8PPh33br3AXeB8LmLX5nWpLcfQ6g==
-X-Received: by 2002:a2e:602:0:b0:2ef:2c20:e064 with SMTP id 38308e7fff4ca-2f1a6d0c988mr58328141fa.12.1723457404706;
-        Mon, 12 Aug 2024 03:10:04 -0700 (PDT)
-Received: from Ansuel-XPS. (host-79-52-250-20.retail.telecomitalia.it. [79.52.250.20])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a698sm184004695e9.21.2024.08.12.03.10.02
+        d=1e100.net; s=20230601; t=1723457501; x=1724062301;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LT4OWBWJDMSw8Klzf2pbHQrTca4RQG7pLzuzOgwkSto=;
+        b=DSHE8161tCd8n524V9mw3J/NaICL1kmzjHETcEAgJHzIOV7fpDK2AGVRDdYuYfXmY0
+         HlvD56cghD2t3t34yaw9783SPzJFPD1FY+YezN7mRweWMrhEZf3YS7UgCQ7MsjwB09zK
+         BeoIMtSlwubGcxR8JExYQ4GAj4T15dk50YQ91jQhTCis/jM6XBnD2jNAbft/b07mE1XV
+         FV0yEFdiKqF/YUIEDZNoGzECiAXRfPSvdp00M99/ukC5z8/ebG8x5uStfs6YRWhnxS15
+         bhvcBqVTcpTb5LsazBmdSx3nRCrJVaefrlU9UVihGXeKQnpWbmJZUhUKPw8pFSZmX7w5
+         gakg==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmree4GnmzY4oMAhdXx+5YshOYXFG8mwoQn0iBKZZfuOmrpD2OEca/L9vdd1PkbHo2mQ+ExXUdoYZ3XFTM1Rlm6bgDen+DEIkEUCM
+X-Gm-Message-State: AOJu0Yyv4Y9Fb/5Elux/Ao8yEWjJPB83o6rDD7dfLqLacqWS4tb3iSax
+	Cc7X494w9Hz9xUR5i3yxkBrN6g9SKJQIUPUKSptRjdwuQ2zf16RFlo2hk4X7Fj8=
+X-Google-Smtp-Source: AGHT+IHxZwuhRnfMslbBFvqQ+342n8qFMtlsUgRIRzxAiFZ11aptWLFXKvHcAy2U8Cw5QOUN2k71FA==
+X-Received: by 2002:a05:6000:459a:b0:367:895f:619e with SMTP id ffacd0b85a97d-36d2810977fmr8945155f8f.11.1723457500669;
+        Mon, 12 Aug 2024 03:11:40 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.215.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd2accsm7054591f8f.90.2024.08.12.03.11.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 03:10:04 -0700 (PDT)
-Message-ID: <66b9df7c.050a0220.3574aa.d5bb@mx.google.com>
-X-Google-Original-Message-ID: <Zrnfe21jJLJ310O_@Ansuel-XPS.>
-Date: Mon, 12 Aug 2024 12:10:03 +0200
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Mon, 12 Aug 2024 03:11:40 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Saravana Kannan <saravanak@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 0/7] mtd: improve block2mtd + airoha parser
-References: <20240809172106.25892-1-ansuelsmth@gmail.com>
- <20240812104954.1e8d55f7@xps-13>
+	openbmc@lists.ozlabs.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node name with bindings
+Date: Mon, 12 Aug 2024 12:11:30 +0200
+Message-ID: <172345744176.104566.11404449092805003253.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240701164915.577068-1-krzysztof.kozlowski@linaro.org>
+References: <20240701164915.577068-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812104954.1e8d55f7@xps-13>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 10:49:54AM +0200, Miquel Raynal wrote:
-> Hi Christian,
+
+On Mon, 01 Jul 2024 18:49:15 +0200, Krzysztof Kozlowski wrote:
+> Bindings expect the LED and GPIO keys node names to follow certain
+> pattern, see dtbs_check warnings:
 > 
-> ansuelsmth@gmail.com wrote on Fri,  9 Aug 2024 19:20:58 +0200:
+>   nuvoton-wpcm450-supermicro-x9sci-ln4f.dtb: gpio-keys: 'uid' does not match any of the regexes: '^(button|event|key|switch|(button|event|key|switch)...
 > 
-> > This small series handle 2 problems.
-> > 
-> > It does try to ""standardize"" the usage of block2mtd module with
-> > MTD OF nodes.
-> > 
-> > It is very easy to add support for MTD parser by just adding an
-> > OF node to the mtd created for block2mtd.
-> > 
-> > This apply only if the root block is used for block2mtd to allow
-> > scenario where the full eMMC or an NVME is used for MTD and it doesn't
-> > have any partition table.
-> > 
-> > To also support NVME, similar to how it's done with eMMC, we introduce
-> > a subnode to the NVME controller that needs to have the "nvme-card"
-> > compatible where a dev can define fixed-paritions for MTD parser usage.
-> > 
-> > This series also add support for the Airoha partition table where
-> > the last partition is always ART and is placed at the end of the flash.
-> > 
-> > This require dynamic calculation of the offset as some dedicated
-> > driver for bad block management might be used that reserve some space
-> > at the end of the flash for block accounting.
-> 
-> Who is reserving this space? And this is not reflected anywhere in the
-> partition table?
->
-
-To be more precise Mediatek use a custom way to handle bad blocks called
-BMT where they reserve and store data at the end of the nand. This is
-loaded before the flash driver controller so when MTD is init, the size
-is already reduced. The reserved space can change and it really depends
-on the tuned values hence it may change.
-
-> > New aarch64 Airoha SoC make use of this partition table and use block2mtd
-> > for eMMC to treat them as MTD with custom bad block management and block
-> > tracking.
-> 
-> I am sorry, I am not used to such use cases, and I really fail getting
-> why you would like to use mtd with an eMMC. Can you explain a little
-> bit more what is not available in the block world that you really need
-> from mtd?
-
-Since vendor needs more space and doesn't want to adapt to block world,
-they are starting to use eMMC or block devices in general unpartitioned
-and raw and using block2mtd to simulate it. They don't care about the
-performance penalities as it's something read at boot time and only new
-firmware or some config files are written.
-
-Is it more clear now?
-
-> 
-> Also, did you consider nvmem layouts instead to detect and define the
-> ART area? (just asking).
 > 
 
-They still need a MTD partition and most of the time userspace tool are
-used on the ART partition. Using block2mtd and DT support will permit
-the use of nvmem cell as a side effect (and that is a missive bonus
-point of this honestly)
+No one took this patch and it waits on the list for very long.
 
+Applied, thanks!
+
+[1/1] ARM: dts: nuvoton: wpcm450: align LED and GPIO keys node name with bindings
+      https://git.kernel.org/krzk/linux-dt/c/c7b44ed960ddecb3604d1e273494a932f00f384b
+
+Best regards,
 -- 
-	Ansuel
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
