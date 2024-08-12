@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-283104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E3494ED40
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:42:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282D194ED46
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D3DB2232D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:42:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF8C1C21844
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD3517B4FD;
-	Mon, 12 Aug 2024 12:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA34717B4FE;
+	Mon, 12 Aug 2024 12:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c0jsvWeA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STjZT7/A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB516F0E6;
-	Mon, 12 Aug 2024 12:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E4F148837;
+	Mon, 12 Aug 2024 12:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723466535; cv=none; b=MYrgbZ+TK37I3/Z+15QMHNGYF9989LODGier5vBy+8Vup1GW09dph+qrU5jb3Z4DKxXzbp3E40Kc3dhKijf16Ih6X1BsOZirtzE9/aiN08EbPUFBpyyy3Y0PhnOdwunLEI6wnctYWBAyql9X3mv2zeiQwd43WV1PGdzrod21qys=
+	t=1723466637; cv=none; b=UBDC2SPcQyhA4ey0nqIIBFA4Kcd9bybGjbjPE6hFwsiW8me79QJF7iegXbdnFf5nFTbHctgwBdoKzPnx17UhE3lilxrv6CQLfeGRSMYKMHXSmhsWx7vHDnm4RZQbAnSexcR4sq2AVplw4/LpnOwDHXbnYhLO02m8DwiL3HGAwc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723466535; c=relaxed/simple;
-	bh=xiYozym11rlBjc/daSc9DA/XWQH2VVg2UBUkV1MHm1w=;
+	s=arc-20240116; t=1723466637; c=relaxed/simple;
+	bh=JgbF432Pmvij/pc9wq3llWqB9hFHm9hSuTcR5c7Ng2w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YKeFETioU0dLc5izrsDdRwW/XQ+ktlJGDFqsyxjghtH1gT8aW9edV9+A6DRIQhD69NGcDV0UhjrxkpuPRUrkpKNREUZpFzAXY/6Xod6FCDiPg/GvGsaefLWHzETui6KNgCukmFdVNShIW3+RlchWd88ABLu84kcjz+IBfcgrOvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c0jsvWeA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8216EC32782;
-	Mon, 12 Aug 2024 12:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723466531;
-	bh=xiYozym11rlBjc/daSc9DA/XWQH2VVg2UBUkV1MHm1w=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=FwPF/QSE4XkQa27SLpLZKkCeCHz40pBC0c+WlbZTWo7wEimijVAUsS+4WDSCrmhaag53Kby/Pa9BqkLoihYMh6j3fps4HGR4Z4azvfJtb50CTCuB9a7sqf0Q6lgFGtPvDqagB4AdHwFjujuUYLB0F/ujdyRkBQLDADQzEhY1zZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STjZT7/A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB47DC32782;
+	Mon, 12 Aug 2024 12:43:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723466636;
+	bh=JgbF432Pmvij/pc9wq3llWqB9hFHm9hSuTcR5c7Ng2w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c0jsvWeA84+D38Vp+03s7j8vU17DqyCMRi8kNYkaryM2SmSLp9Iq+Hpj9uGVF7C3/
-	 c9JaWo//BkXHqIo+LkSO9Qf8xOCHnFF+6NN8wVcJcHufDXhSNFXEKDt/TvUOduvTsh
-	 zcqTYum4i2zEV7jOZ3d6DsxSwCCIpFHS5c8x+JZY=
-Date: Mon, 12 Aug 2024 14:42:08 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, stable@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	vincent.guittot@linaro.org, qyousef@layalina.io,
-	peterz@infradead.org, daniel.lezcano@linaro.org,
-	ulf.hansson@linaro.org, anna-maria@linutronix.de,
-	dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com
-Subject: Re: [PATCH 6.1.y] cpuidle: teo: Remove recent intercepts metric
-Message-ID: <2024081236-entourage-matter-37c6@gregkh>
-References: <20240628095955.34096-1-christian.loehle@arm.com>
- <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
- <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
- <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
+	b=STjZT7/AiSoJOb96Itm0opcpfqr46dawL+QAUda6bxaIC/XKV4snmxO5voO4SpioA
+	 11VqrwPO5UjnJZR1yogc84snIoe132w4wpY7RLVmWTy+lvt4raYLJ85B0V5DAmuy3P
+	 HjfwcEJsqB0p8izKStLaaI10cIiw7o58G9oae60vAQ+D6PAxdYJL4JMHQohqNJax0z
+	 lEf/Uf+xtPrw3/7L2UUnECe7+R4dD3GXedyj9v20sDjSKdSDba2cdhWHZi+2IeAyN4
+	 mMlAbIz3oQaHCZiYsIpnifsLTbxkKyJRgFqUc/D/x3ewftpCQ1+/u9+XW2wo86dwfQ
+	 4mmDwuLOZVvHg==
+Date: Mon, 12 Aug 2024 13:42:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, vburru@marvell.com, sedara@marvell.com,
+	srasheed@marvell.com, sburla@marvell.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] net: octeon_ep_vf: use ethtool_sprintf/puts
+Message-ID: <20240812124224.GA7679@kernel.org>
+References: <20240809044738.4347-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,41 +58,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
+In-Reply-To: <20240809044738.4347-1-rosenp@gmail.com>
 
-On Mon, Aug 05, 2024 at 03:58:09PM +0100, Christian Loehle wrote:
-> commit 449914398083148f93d070a8aace04f9ec296ce3 upstream.
+On Thu, Aug 08, 2024 at 09:47:27PM -0700, Rosen Penev wrote:
+> Simplifies the function and avoids manual pointer manipulation.
 > 
-> The logic for recent intercepts didn't work, there is an underflow
-> of the 'recent' value that can be observed during boot already, which
-> teo usually doesn't recover from, making the entire logic pointless.
-> Furthermore the recent intercepts also were never reset, thus not
-> actually being very 'recent'.
-> 
-> Having underflowed 'recent' values lead to teo always acting as if
-> we were in a scenario were expected sleep length based on timers is
-> too high and it therefore unnecessarily selecting shallower states.
-> 
-> Experiments show that the remaining 'intercept' logic is enough to
-> quickly react to scenarios in which teo cannot rely on the timer
-> expected sleep length.
-> 
-> See also here:
-> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
-> 
-> Fixes: 77577558f25d ("cpuidle: teo: Rework most recent idle duration values treatment")
-> Link: https://patch.msgid.link/20240628095955.34096-3-christian.loehle@arm.com
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/teo.c | 79 ++++++---------------------------
->  1 file changed, 14 insertions(+), 65 deletions(-)
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-We can't just take a 6.1.y backport without newer kernels also having
-this fix.  Can you resend this as backports for all relevant kernels
-please?
+Thanks,
 
-thanks,
+The code changes look good to me and my local testing shows that it compiles.
+So, from that point of view:
 
-greg k-h
+Reviewed-by: Simon Horman <horms@kernel.org>
+
+But I do have a few points about process, which I hope you will
+give due consideration:
+
+1. It would be good if the patch description was a bit more verbose.
+   And indicated how you found this problem (by inspection?)
+   and how it was tested (compile tested only?).
+
+   This helps set expectations for reviewers of this patch,
+   both now and in the future.
+
+2. You have posed a number of similar patches.
+   To aid review it would be best to group these, say in batches of
+   no more than 10.
+
+   F.e. Point 1, above, doesn't just apply to this patch.
+
+3. Please do review the Networking subsystem process document
+
+   https://docs.kernel.org/process/maintainer-netdev.html
+
+...
 
