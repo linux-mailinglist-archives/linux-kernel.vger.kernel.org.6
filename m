@@ -1,125 +1,80 @@
-Return-Path: <linux-kernel+bounces-282841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D14894E94A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:07:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AEFD794E948
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:07:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4E31C21B83
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:07:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21E21C21DAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AC616D33B;
-	Mon, 12 Aug 2024 09:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TG0bjKo8"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272CD16D9A0;
+	Mon, 12 Aug 2024 09:07:07 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F6516B39A;
-	Mon, 12 Aug 2024 09:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E18016D336;
+	Mon, 12 Aug 2024 09:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723453635; cv=none; b=rysmBTklhlZN10FeBGge8k4k0U+K5WH/QpeIDdKXvcO+7M3c/amC9iRuzr4cIh/MpscBzNoC4zbC15FfXNg55rUoINdwGXhM6mrcDbtU+51TEjX3bSVQGLtyLP067pWIXVDQ5t6aRv5dL/fZ4PyZFpw+VjxTXjvXfVjbweJgbo8=
+	t=1723453626; cv=none; b=dqegpn2pR9DEDuMBPR+hTfhHL9fE0u2HzrEZ6o5qSd/OpZVlz9j/AAMSJDgYB8fTeV1tJagNGJmd7AeyqVIFpit57rWUwHRpaLoTXaDpjUOwAtENDP0MmES4E/+ZunXmElWMQDON87bN/UFBuf+ruS1R/nUQc3Ysownap6prFi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723453635; c=relaxed/simple;
-	bh=3xzkQpRdJW5ritYBA77n0R4J9VBAnnrxCxLGCtkyTSM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E2ce0SEpFwnm9OOwnBusRJIrPeXkvPCmbwea4ndjvlg50zjsr3tt5Jvzvateu0xM/Zh9ul1AkXubX3EhXmQUpqOlstCpUbi7H7SwAmgMiJk52XpVO2KPhD3043XoE12E8XjpnQ/cm7x280SYVlE+vjaoBHak6KwHNF1TfMy3+ik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TG0bjKo8; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aa086b077so357725166b.0;
-        Mon, 12 Aug 2024 02:07:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723453632; x=1724058432; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xu5ei+WeKMB1ugZ/0HFgyqZDv7eZM8KwgWsYvwxkaj8=;
-        b=TG0bjKo8h/+oo5uY27GBKO4rQM6pjSITl+M9n93ywGa6a/cDkrk4knsGFXECr+j/0O
-         InicVA8rpYzn6F9yspm+anM8W9efcraG6DtqZKAwSZz9bbvrDuxdBUafzGygMu7pTXBB
-         93esEQYCIVORivh26u0LU46HTndedm44UW3JGmEBhnIKfNdR+dEnbGvStBm1Tkrw6LOF
-         nEWZZLZDJ3hg7VyGJi0b9PHB+vJMp85nKwLRP5pQuxXRNrUFblE3KLWI6ACJ7ld0jcDY
-         tiSIKzFzPlwfBBtVy8xkU+IDNvssmYXarw9xUKAnL7RhS5TIrMyKSLSsATKkchS8J2Jn
-         /KpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723453632; x=1724058432;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xu5ei+WeKMB1ugZ/0HFgyqZDv7eZM8KwgWsYvwxkaj8=;
-        b=HYD09YfoHxiLKhUbH3Tgzs5hpSaNBPLtGrM8FvNDXbslQLIlyxcPTS4aL7DaDGC3g5
-         zfUTmVDcc9cg74Vy3aarIddP2OaCzB5BGkSX76H0XTNz/5aOTqlcfWw11o1u9IKVoTlL
-         EehQjQGYQEijfZenEkG1BkLqoskGRvtXV6R52bTuHILfq38BOUPvAUUYAcKnmEZVaGTg
-         ZFV2RJnnzJQRbcLAiRLflY63iiWTy2tg0YjwegfoK3VsjfJqZnJE3UM0dGRG2K3VWveJ
-         J3J72knc4Xe8BLcnxCYqES3iAZ3up6twCaJMa5EBL16MgL6Lsa08DrM+PNftRugxdn7j
-         mMpw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8IEO2bl0Qlf/FauKaSZrOR8M6i9h5JJzPIDR3m99K0BEN1cy22Wa8G03Bbevu70gjj+/vVzq2wJrg44Td5mL9Kep5VV3AI1LOvdA/F6HwiTw6okZ/2b5cBYaYZBusNskt2JYV
-X-Gm-Message-State: AOJu0YyoMYbd3yegydr3I2oaJbYGJPyWX45Ygfq9PFDi//PC5ldjaPpL
-	BRUqgkZdDelw/yPj3DZBHMRNuK6IU23mGtn1EYCTxY2oUrifk/NP
-X-Google-Smtp-Source: AGHT+IFtyfr93btSOunBPQWY4ea21EnjGnxGFf0hrJY8KdZM0n2j0FjBHM3/y++llhXsiXZLRbbFCw==
-X-Received: by 2002:a17:906:d25a:b0:a7a:9a78:4b5a with SMTP id a640c23a62f3a-a80aa6600f1mr599087866b.52.1723453631959;
-        Mon, 12 Aug 2024 02:07:11 -0700 (PDT)
-Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb21314esm212265166b.152.2024.08.12.02.07.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 02:07:11 -0700 (PDT)
-From: vtpieter@gmail.com
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Pieter Van Trappen <pieter.van.trappen@cern.ch>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 1/1] net: macb: increase max_mtu for oversized frames
-Date: Mon, 12 Aug 2024 11:06:55 +0200
-Message-ID: <20240812090657.583821-1-vtpieter@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723453626; c=relaxed/simple;
+	bh=xCVIybzFXtO90Va28ZXPh+hDyytpysKWwTzTspdhcSw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XchvYKNYiShqF1M/Vo6EMblmYeNf5CV5BgzhioII0KzRyorbIBXpwRTsmfs5dkaojPRq2ednryokP264Xw4CMVVum0uM9Z3GS12698C0g2539nvguSHKp5SBz4/IZp45HGuw21PEEImrWuE2uyVjNVsx+94RRkMtJS5UYopLnYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 53914227A8E; Mon, 12 Aug 2024 11:07:02 +0200 (CEST)
+Date: Mon, 12 Aug 2024 11:07:02 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Daniel Wagner <dwagner@suse.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Christoph Hellwig <hch@lst.de>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	John Garry <john.g.garry@oracle.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
+	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
+	Nilesh Javali <njavali@marvell.com>,
+	GR-QLogic-Storage-Upstream@marvell.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
+	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
+	"brookxu.cn" <brookxu.cn@gmail.com>, Ming Lei <ming.lei@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com,
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com,
+	storagedev@microchip.com, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 06/15] virtio: blk/scs: replace
+ blk_mq_virtio_map_queues with blk_mq_dev_map_queues
+Message-ID: <20240812090701.GG5497@lst.de>
+References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de> <20240806-isolcpus-io-queues-v3-6-da0eecfeaf8b@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240806-isolcpus-io-queues-v3-6-da0eecfeaf8b@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+What is blk/scs supposed to mean?
 
-Increase max_mtu from 1500 to 1518 bytes when not configured for jumbo
-frames. Use 1536 as a starting point as documented in macb.h for
-oversized (big) frames, which is the configuration applied in case
-jumbo frames capability is not configured; ref. macb_main.c.
-
-Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
----
- drivers/net/ethernet/cadence/macb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-index 95e8742dce1d..c46fce4a9175 100644
---- a/drivers/net/ethernet/cadence/macb_main.c
-+++ b/drivers/net/ethernet/cadence/macb_main.c
-@@ -5119,12 +5119,12 @@ static int macb_probe(struct platform_device *pdev)
- 		goto err_out_free_netdev;
- 	}
- 
--	/* MTU range: 68 - 1500 or 10240 */
-+	/* MTU range: 68 - 1518 or 10240 */
- 	dev->min_mtu = GEM_MTU_MIN_SIZE;
- 	if ((bp->caps & MACB_CAPS_JUMBO) && bp->jumbo_max_len)
- 		dev->max_mtu = bp->jumbo_max_len - ETH_HLEN - ETH_FCS_LEN;
- 	else
--		dev->max_mtu = ETH_DATA_LEN;
-+		dev->max_mtu = 1536 - ETH_HLEN - ETH_FCS_LEN;
- 
- 	if (bp->caps & MACB_CAPS_BD_RD_PREFETCH) {
- 		val = GEM_BFEXT(RXBD_RDBUFF, gem_readl(bp, DCFG10));
-
-base-commit: c4e82c025b3f2561823b4ba7c5f112a2005f442b
--- 
-2.43.0
-
+The code changes themselves look fine to me.
 
