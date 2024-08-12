@@ -1,153 +1,128 @@
-Return-Path: <linux-kernel+bounces-283470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09E7E94F553
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:54:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA04D94F55B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:55:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A954A1F2180A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63791C21070
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12B1187844;
-	Mon, 12 Aug 2024 16:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDFF1891AE;
+	Mon, 12 Aug 2024 16:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWaIZji1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QpbGMEBF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7902B9B5;
-	Mon, 12 Aug 2024 16:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343DB188CA5;
+	Mon, 12 Aug 2024 16:55:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481686; cv=none; b=R71aZhnFiLF8lDvq5zwdW/9QFnPzCLlp99ABBZZ+D7M8G1ydwJy/YwQpAyySwZVyYy4ZJjN1QwXLtyeyl5vjsx5SEVZyAyJ87LYEVzwDf30sRJTT/kuMwQO3zl2b25lkXoHhg9oSPpF5fcoFQAzSzTwlN00855LWOv8H8FqpDgU=
+	t=1723481703; cv=none; b=NstfUL4JZY6c7EeDVcKf6lvVrm6mnQy1OfSN7WdfdWNu+5hMadYXE1gq17C7bZRrU1u8fXTy99qaEiupEFGEjNwKOoFgkyLZ+n17Q2GIE8oAHi5JvmTpH94wLXw8bDLva9GdenjoMiZYcTnFT2u6l24pr2WBjDxUQ4tCVH0eak8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481686; c=relaxed/simple;
-	bh=VhKsm6Vvx9GssifaWoj9lqaR48p4bcYf72vm8qwKck8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jXP+tZFzt+9TNhFhXaeTolsWZBNtJoHi3KAauV70g0rYJshUbe5/REMYhwF1mh8AxYowGlqSPLj9ZK/9grFqlPJkQq4dY7yqktE+zWtHUstwiRMjd286OA8/Bg9zZjMCgnFNL6yXwI5euXbVF+YBh0j9zNOpwVI2JNGTuwrmqMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWaIZji1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80480C32782;
-	Mon, 12 Aug 2024 16:54:45 +0000 (UTC)
+	s=arc-20240116; t=1723481703; c=relaxed/simple;
+	bh=BcApFvUj//KPJagmmhD/JklSjUpgx9UQ+W1crS2LIFw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bdvObXJESuvV0BKS/LRE9fRuMsA2yKqSsNimF3wJ3rJuAmpcoAKL5Ok8CiTo6YJfjsXkcx7361mUWfS5hib27lYJ1saFx/QYcsQwGzhg78h4nDc5023e71jKBu2Axzu1+BX5CbTJzN3ktmCjpKpEj2+OmlxgfFuPvV17Wg+62Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QpbGMEBF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB89C32782;
+	Mon, 12 Aug 2024 16:55:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723481685;
-	bh=VhKsm6Vvx9GssifaWoj9lqaR48p4bcYf72vm8qwKck8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nWaIZji1k1bSAWOOoAumyC+EtoNJhcQIPakTZeaPeVE3QFwZqE5g0brYO6/GBdHvs
-	 20qzPWQShgm3EqGv7uGJ1p54kSIg3HUFhfmuviSHLFJINrkJQbFz7sKge6Q04/53X3
-	 +x5tS+K+aaF+P27VPGPtNTvoVzrDAB932UAmaU6Pv3NrOXMvWiXVmgk9gYyIt2WrNA
-	 /yskT6YPoV1+Pe5bq0nRwbywU783nmsWkImn5z+EmEvKG0lNY/nb/B9AInAfzj+5Mk
-	 i+cmdayoSWBujPHokGqVD/EclQhj3uG0WwYD9d8Z/n2vdRl1Dn1sR8072jxS9ANXhR
-	 61YZKYZNVfKQQ==
-Date: Mon, 12 Aug 2024 09:54:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 6/6] iomap: reduce unnecessary state_lock when setting
- ifs uptodate and dirty bits
-Message-ID: <20240812165444.GG6043@frogsfrogsfrogs>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-7-yi.zhang@huaweicloud.com>
+	s=k20201202; t=1723481702;
+	bh=BcApFvUj//KPJagmmhD/JklSjUpgx9UQ+W1crS2LIFw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QpbGMEBFQKGNGYES9bD95v09aXcNFmgnfSdq6rqupidg0e0nM3x7MDVAf48sp3Qm7
+	 y6aQzp6zMqJT7XPEaAT64lwwgcEy7VFI5X17uy0+eZUt5+eX8bLRCJ3/jN/C9S2201
+	 ZTD/agNojgrH5CMOwiQ5l9/qVavoJgkbQQnFgKVi4ymySNC63ztV+ao3JLzJMYumhh
+	 sk437sLGivMXH9Qln/3RpZLEl0TYqY6PizL2dHFlCCcL/9sbFz7cWkgCkG69t0e1cn
+	 XrvgcDYfk+EgdGeczHMpIj7vZ0hQUBiKPHeBEmWPQnOz0RLdFUf1V92/FmRLPgRAs9
+	 cvhvJqGN74RPg==
+From: Masahiro Yamada <masahiroy@kernel.org>
+To: linux-kbuild@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: [PATCH] modpost: improve the section mismatch warning format
+Date: Tue, 13 Aug 2024 01:54:51 +0900
+Message-ID: <20240812165455.2156964-1-masahiroy@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812121159.3775074-7-yi.zhang@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 08:11:59PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When doing buffered write, we set uptodate and drity bits of the written
-> range separately, it holds the ifs->state_lock twice when blocksize <
-> folio size, which is redundant. After large folio is supported, the
-> spinlock could affect more about the performance, merge them could
-> reduce some unnecessary locking overhead and gets some performance gain.
-> 
-> Suggested-by: Dave Chinner <david@fromorbit.com>
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+This commit improves the section mismatch warning format when there is
+no suitable symbol name to print.
 
-Seems reasonable to me
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+The section mismatch warning prints the reference source in the form
+of <symbol_name>+<offset> and the reference destination in the form
+of <symbol_name>.
 
---D
+However, there are some corner cases where <symbol_name> becomes
+"(unknown)", as reported in commit 23dfd914d2bf ("modpost: fix null
+pointer dereference").
 
-> ---
->  fs/iomap/buffered-io.c | 38 +++++++++++++++++++++++++++++++++++---
->  1 file changed, 35 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 96600405dbb5..67d7c1c22c98 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -182,6 +182,37 @@ static void iomap_set_range_dirty(struct folio *folio, size_t off, size_t len)
->  		ifs_set_range_dirty(folio, ifs, off, len);
->  }
->  
-> +static void ifs_set_range_dirty_uptodate(struct folio *folio,
-> +		struct iomap_folio_state *ifs, size_t off, size_t len)
-> +{
-> +	struct inode *inode = folio->mapping->host;
-> +	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-> +	unsigned int first_blk = (off >> inode->i_blkbits);
-> +	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-> +	unsigned int nr_blks = last_blk - first_blk + 1;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&ifs->state_lock, flags);
-> +	bitmap_set(ifs->state, first_blk, nr_blks);
-> +	if (ifs_is_fully_uptodate(folio, ifs))
-> +		folio_mark_uptodate(folio);
-> +	bitmap_set(ifs->state, first_blk + blks_per_folio, nr_blks);
-> +	spin_unlock_irqrestore(&ifs->state_lock, flags);
-> +}
-> +
-> +static void iomap_set_range_dirty_uptodate(struct folio *folio,
-> +		size_t off, size_t len)
-> +{
-> +	struct iomap_folio_state *ifs = folio->private;
-> +
-> +	if (ifs)
-> +		ifs_set_range_dirty_uptodate(folio, ifs, off, len);
-> +	else
-> +		folio_mark_uptodate(folio);
-> +
-> +	filemap_dirty_folio(folio->mapping, folio);
-> +}
-> +
->  static struct iomap_folio_state *ifs_alloc(struct inode *inode,
->  		struct folio *folio, unsigned int flags)
->  {
-> @@ -851,6 +882,8 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
->  		size_t copied, struct folio *folio)
->  {
-> +	size_t from = offset_in_folio(folio, pos);
-> +
->  	flush_dcache_folio(folio);
->  
->  	/*
-> @@ -866,9 +899,8 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
->  	 */
->  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
->  		return false;
-> -	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
-> -	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
-> -	filemap_dirty_folio(inode->i_mapping, folio);
-> +
-> +	iomap_set_range_dirty_uptodate(folio, from, copied);
->  	return true;
->  }
->  
-> -- 
-> 2.39.2
-> 
-> 
+In such cases, it is better to print the symbol address.
+
+Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+---
+
+ scripts/mod/modpost.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
+
+diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+index d0f138803207..3e474291258c 100644
+--- a/scripts/mod/modpost.c
++++ b/scripts/mod/modpost.c
+@@ -705,10 +705,7 @@ static char *get_modinfo(struct elf_info *info, const char *tag)
+ 
+ static const char *sym_name(struct elf_info *elf, Elf_Sym *sym)
+ {
+-	if (sym)
+-		return elf->strtab + sym->st_name;
+-	else
+-		return "(unknown)";
++	return sym ? elf->strtab + sym->st_name : "";
+ }
+ 
+ /*
+@@ -1021,6 +1018,7 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+ 	Elf_Sym *from;
+ 	const char *tosym;
+ 	const char *fromsym;
++	char taddr_str[16];
+ 
+ 	from = find_fromsym(elf, faddr, fsecndx);
+ 	fromsym = sym_name(elf, from);
+@@ -1034,10 +1032,17 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
+ 
+ 	sec_mismatch_count++;
+ 
+-	warn("%s: section mismatch in reference: %s+0x%x (section: %s) -> %s (section: %s)\n",
+-	     modname, fromsym,
+-	     (unsigned int)(faddr - (from ? from->st_value : 0)),
+-	     fromsec, tosym, tosec);
++	if (!tosym[0])
++		snprintf(taddr_str, sizeof(taddr_str), "0x%x", (unsigned int)taddr);
++
++	/*
++	 * The format for the reference source:      <symbol_name>+<offset> or <address>
++	 * The format for the reference destination: <symbol_name>          or <address>
++	 */
++	warn("%s: section mismatch in reference: %s%s0x%x (section: %s) -> %s (section: %s)\n",
++	     modname, fromsym, fromsym[0] ? "+" : "",
++	     (unsigned int)(faddr - (fromsym[0] ? from->st_value : 0)),
++	     fromsec, tosym[0] ? tosym : taddr_str, tosec);
+ 
+ 	if (mismatch->mismatch == EXTABLE_TO_NON_TEXT) {
+ 		if (match(tosec, mismatch->bad_tosec))
+-- 
+2.43.0
+
 
