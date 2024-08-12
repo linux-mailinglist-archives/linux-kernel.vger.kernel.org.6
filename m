@@ -1,120 +1,121 @@
-Return-Path: <linux-kernel+bounces-283486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2353C94F58B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:02:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 768EC94F58E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:03:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56A841C2126A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:02:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 940191C213AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A153187550;
-	Mon, 12 Aug 2024 17:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552C5187874;
+	Mon, 12 Aug 2024 17:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V25tjlB7"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="i+yFibpp"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB64153810
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC0117C21B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:03:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482157; cv=none; b=X6uC7VnPDQubOOvwS3CLk9omoGEFggjg6kBZOF1GgC7pIDj7khNo/AQ7cdpB+5QSwUd0IuJTuK90A0gtAgjqWFlhsQw4/ihxTkZO1DopcDz3OOx30DYn2S4H+vXyjRaH8glVdsHx44B2muJuW5/fRzns+7gJvqXItbazXp/0W/8=
+	t=1723482196; cv=none; b=YoBoyTIs07ihPL4o5lLR6oLihjVx8FSG8p5IsH11n60AMHasIEG52sFk3cynqCTFy2DIfNRYO04FuTVqzvoyExlmkzFf2H4aJlCtez3u1I+H+r0AkRfy6kJ+gGxfusK8d7oJSy+cMhDwGLSaxlSS3dLt0c2iRsjnHRtsmUAPJ3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482157; c=relaxed/simple;
-	bh=ExezfkMNjyJwnWQP4jzUzm5nlE4GG+8hNfjIZ0yccuU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oh9vxEWMyOu+/doYm4kqpwdUQsP/bSoRdnvF+y5x/j3LNGhcUeU0pxODKDpwZ0heNC5X+Bb0nZ1ONiR8fTsVmzlxzFa2cvYsYikxPnklnzB75AGe/TL+ZKNjjqF4Jl+uf1jmxjqvSFldMrpdj4Uc90ZJNzeYF16IfkuLQHPsBbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V25tjlB7; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb4e1dca7aso914711a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:02:36 -0700 (PDT)
+	s=arc-20240116; t=1723482196; c=relaxed/simple;
+	bh=IGwPcOdKLneQrDz3TxBBsgsLiAnDxtF3rxB3ridlEaE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cKAws4+S1VH78TCvRw+SD0eHYNd3eB/dPMOMOd5IWJK1oHQGxmXQOtGvy7NI9ZsOjNmR/m/b/67IjLWuMuMGXIMfeONhUW7kYN0Xeyrrmpfp7MfDyxGIQKF7fBCYnwygvJPgLsMjQlHC0QKr3m1xbGuD6QTTq+/D2O4nN/pNK/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=i+yFibpp; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5d5f9d68805so2603446eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723482155; x=1724086955; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jUuJ7R4KZSbJs2nsJpX44i3SY8Pc9QeqzYnFkJ5u9lQ=;
-        b=V25tjlB7B/ar7dcXGPfYqaaSCoGH6GSDjwyNNPkK1oqc/rhykGVxIzvJdX7K20uyrQ
-         bCmiMrmhFxwbYyF+QspgD+TodToCxIAkisYSDYijI8tTq7yOivt0UvrlckMh5txOAqCP
-         8WA+c50TFUQ3OHpj96GdGYq3MP4WWJLUwYWobb8TmOAE6OBUuXJ/ViXarZopnA7Ut3it
-         UnDMEmPyTBALjXQd3ga7P0N2M62/8EhFvyLXbmZDzIYT08qQgSg61SHESAMK8E99b7IM
-         TUIzXN7DNzOjRbn/s7LPaWmXsiBOWkYFEhld3dVeDmTJ1QaC4Rl8lksVkbTN5/cstuHB
-         4Rrw==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723482193; x=1724086993; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bExiDSnFO33yD2L8BFcmTWpVw+fpt4LMBVVZpDIXrdw=;
+        b=i+yFibppxIwoiUoZWODocUR1eUXFcM3AVJCovt+ax0M4iq4pmm+3aigJXzGemOEh/y
+         DVOW+aPvtAFDJsQqu4aHxbZffQ0Osi9GS/NTUiI0v076g3sXmAHYvsHUCZukUTgBLA+L
+         vEhCLLy92LbqZWucIK31H4Mpy16GHlGAP1Nc7azbqn9YUZ2888NqMzorsU4SBkNMk6Yo
+         MM1XalKU5GqWgLMmE2Rp7wjer/avmVmtPrvCoXGUIbBXkL0g52NHu/jusT7mmzm7xKrS
+         Yy8NmIml3JOcioRraZUBV8LxUzNHwCu3q4A4k8UxmjkG4dcBU3DuJ7rQ7NLbzmnMUEau
+         92ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723482155; x=1724086955;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jUuJ7R4KZSbJs2nsJpX44i3SY8Pc9QeqzYnFkJ5u9lQ=;
-        b=v06fkW3bXG90tfJn7VhRfeuODR0ZkJAkLFGtd4Bl5nJVDFCafk/srxR4iEYjRYq8ni
-         VLFDk9UtVI9nve8F8C3ntTen5ZDYiWSfZTaqIUn/R08ax++Dl9LaEOqy/2gpuz1eq24t
-         R2jTVsQqnilti3PTTpGBB3KocYB5FxdQq6HrSC7xacQtcxJdFnLOxrIrtcuqK0pSkMSe
-         MBDk0yGPlKx8fpZ7M+srpKojWnZbjP4jf91bRj2uXt4JvNdvZ/eFwS23G+NdV/h3ioRD
-         u5p0DCxGzL8J6oWp7KoiB9YKeSWk3G4M8soPU738ux3df8HVDorFOhbNvj/o+IpTj94r
-         DqVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfQCK+OiCXINdwuWHSOQJmuzKgugDjbaXE27L1XZ0stGmaogdUta1F1j7pBHiWW9CMtneK/FGG8ufCDDEgqCdLDsI0RYSUGnmlbIY/
-X-Gm-Message-State: AOJu0YzDNH4YV/FryvU7nnqltuf+ejsVxQSkmzCtHrsxNhXRQnR5ejP6
-	vsXSIApR5WRyCSZovXp7rrmhxWIHwyHA+COEoMVE6e9ze3amQK/VyQgWpw==
-X-Google-Smtp-Source: AGHT+IEDElqLIojFGm8i5TBtrkfdQq9DIEW7SoV/zbfLfLa//AIYUHRjQouxp1ivmNzzACQGIFIHaw==
-X-Received: by 2002:a17:90a:6043:b0:2cf:e075:1222 with SMTP id 98e67ed59e1d1-2d39273c614mr523259a91.6.1723482155277;
-        Mon, 12 Aug 2024 10:02:35 -0700 (PDT)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9dceed4sm8618816a91.57.2024.08.12.10.02.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 10:02:34 -0700 (PDT)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: akpm@linux-foundation.org
-Cc: jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] lib/bcd: Optimize _bin2bcd() for improved performance
-Date: Tue, 13 Aug 2024 01:02:29 +0800
-Message-Id: <20240812170229.229380-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1723482193; x=1724086993;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bExiDSnFO33yD2L8BFcmTWpVw+fpt4LMBVVZpDIXrdw=;
+        b=iNiZQ5+hSGGtgjH43HDg0dtZhovrdFVqqvb9GxUUBTK7uIDXpWIXxNHetzZaRdSL49
+         woEjJmwyc+81/qEK3bqz7rXmyHro+9hu+ezLxBl9fGHIgrldiXGGFJ+jfNnTMy175cIr
+         VYT8sYET8Xf+TLGsNEJqsEDWKQKTawC/ujBQrrAdZq/iITEizF5YemSiKSh98obj0+2i
+         MMqIHLlpD6QWkO5W6dZHoHqlB4Soa62HpDM01BwddB5Sx9xR8Ds3Z9sGQtqfSNJUTH93
+         IVQx+4FVrszGmqDX2f6cA4j882JQBl5Y2KsEjE0BBBBkOSvoXXzQNak5v6aqBmmL3FvW
+         jPUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwAdjyk8GPiwJe4II4283DfSTEoweGBA19JGe3zTPIBY8W6ZJAHiVt2BFznN+ViZz4ecyAwPR3zDX6tiz8Mwh17IHs8Gj7hfI6p9Q
+X-Gm-Message-State: AOJu0YwqjRZITcLwqiSI8pNCqItiud6SIOYZE/cg3DX4maJkqUoCF4eu
+	BvQO5M3Uu9YsPC7YegCnP6/deO0a93Io0rtDIfsEfRgoJOWzQiYD3OqqaOTRl40=
+X-Google-Smtp-Source: AGHT+IG/8cvwJl1su2L5alxvVPwGc2ZZozy1KozsXjsObxlu0fil/+H5vX6dIr/MUHIJ+7YaXv9Bpg==
+X-Received: by 2002:a05:6820:169e:b0:5c4:68b8:e27f with SMTP id 006d021491bc7-5da68a0e743mr1122735eaf.6.1723482193390;
+        Mon, 12 Aug 2024 10:03:13 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5da3e286b09sm1319918eaf.0.2024.08.12.10.03.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 10:03:12 -0700 (PDT)
+Message-ID: <4bdb10c2-057f-4254-864b-99bb7ac1509d@baylibre.com>
+Date: Mon, 12 Aug 2024 12:03:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] iio: adc: ad4695: implement triggered buffer
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20240807-iio-adc-ad4695-buffered-read-v1-0-bdafc39b2283@baylibre.com>
+ <20240807-iio-adc-ad4695-buffered-read-v1-1-bdafc39b2283@baylibre.com>
+ <20240810103540.03e758a5@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20240810103540.03e758a5@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The original _bin2bcd() function used / 10 and % 10 operations for
-conversion. Although GCC optimizes these operations and does not
-generate division or modulus instructions, the new implementation
-reduces the number of mov instructions in the generated code for both
-x86-64 and ARM architectures.
+On 8/10/24 4:35 AM, Jonathan Cameron wrote:
+> On Wed,  7 Aug 2024 15:02:10 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> This implements buffered reads for the ad4695 driver using the typical
+>> triggered buffer implementation, including adding a soft timestamp
+>> channel.
+>>
+>> The chip has 4 different modes for doing conversions. The driver is
+>> using the advanced sequencer mode since that is the only mode that
+>> allows individual configuration of all aspects each channel (e.g.
+>> bipolar config currently and oversampling to be added in the future).
+>>
+>> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> 
+> Main thing in here is I think you can use available_scan_masks
+> to avoid the need for the error path on just the temperature channel
+> being enabled.
+> 
+I had not thought about doing it that way, but now that I am
+thinking about it, it seems like we would need to have a scan
+mask in the list for every possible combination of channels.
+This would be 10s of thousands of possible scan masks for 16
+channel chips so that doesn't seem like the best way to go.
 
-This optimization calculates the tens digit using (val * 103) >> 10,
-which is accurate for values of 'val' in the range [0, 178]. Given that
-the valid input range is [0, 99], this method ensures correctness while
-simplifying the generated code.
-
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
-Use a unit test to confirm that the new implementation produces the
-same results as the old one for values in the range [0, 99].
-
- lib/bcd.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/lib/bcd.c b/lib/bcd.c
-index 7e4750b6e801..c5e79ba9cd7b 100644
---- a/lib/bcd.c
-+++ b/lib/bcd.c
-@@ -10,6 +10,8 @@ EXPORT_SYMBOL(_bcd2bin);
- 
- unsigned char _bin2bcd(unsigned val)
- {
--	return ((val / 10) << 4) + val % 10;
-+	const unsigned int t = (val * 103) >> 10;
-+
-+	return (t << 4) | (val - t * 10);
- }
- EXPORT_SYMBOL(_bin2bcd);
--- 
-2.34.1
+But adding some special handling to make the temperature
+channel just work should be easy enough to add.
 
 
