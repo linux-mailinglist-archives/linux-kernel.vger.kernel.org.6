@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-283722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C44FC94F82A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:23:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A541294F82D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:24:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040D41C21E1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:23:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F4F11F215EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D52194139;
-	Mon, 12 Aug 2024 20:23:30 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E494C1946AA;
+	Mon, 12 Aug 2024 20:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TDWIz29g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 109F5186E30;
-	Mon, 12 Aug 2024 20:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F71183CA5;
+	Mon, 12 Aug 2024 20:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723494210; cv=none; b=Y3n5ek6T0d/3V83vABgHJ7RbK2lrQLOmuCu10z6R5l4lxZCpUxN9SW96wX3LoTiEEZQtH6OtPZXtwiW0pSFeBGmXrTPvK1XOnk6oY9bSWZP7zaeybS/2P7EbOQEuqbeX6yMJkVb2MxQR3Nsjo6kY40kmwafYGJFtzSssEqhu3hs=
+	t=1723494277; cv=none; b=jiFI9gm/r7/IkaC6ySfIP9FTGOV43qB15I5QX6q9Hx5859luJP+FnAjg5TYQKNkF11tKL9fuELh0Fpetln6NCrT2kIiejmkZqG/hW6RFwOGwwMu8LyEbdETqZ2OAYVwSbiobxD6zcenB1HCxD3FWyW2lSysUsx7zdsKCXbxeQTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723494210; c=relaxed/simple;
-	bh=xcyXqGp/vIPm25gwoTB8fN3iLEkpf3lzBI9z6lRi3ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jtXIitnOTMo5ZZNBgaJA23XHwLUESWyzDqy+FuvcdABSWKTy9gQCpLQVOQe2Z7xjnMSihAAJ35iJP3/ZCdhfeG+hHCC0pX+3wf5bKKB/YAlbbtScOOFWVeLhIBV4n89qDjxeMcfWaRFIYMBBOr3INihL18+my77vlmpiLcyOgTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fd6ed7688cso41238905ad.3;
-        Mon, 12 Aug 2024 13:23:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723494208; x=1724099008;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7pREe9g6ybdZ+2HTF9XCEyGKYgxlP5j2neTstGZLyss=;
-        b=nnRZnYXnGmNbIinNIlkVi9E0XVPnrLpQGqvFxu4FFonbs3PVcw5xWWPkSWLDCtjf+d
-         OW5MkUni1Jm5aFM2viCKcAHGtFvkWOUmaWVQS4wukqGBYTHbbju9mswYKoqrFT/2K7iM
-         VCft+h1FvacWmII3CYI5KMeTT2d7hVHiOckritS+M6sgPamwcNX2vGdpZgHxPXq4MZi0
-         oMBu7xuiDWni8mmUOk3Wt1Ev5yEpcZLEzz0l4Ble5ye6OpEc8yjgA+QeWNPwRpgP7t2Z
-         yjFSgU9YrCl/VvSuTpPcivUFGXUIK5yst6cOIPFnqrfheCI98BA7bpqGbzbSZArnLabh
-         o93g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3NsGG9ZuGpENjQDZIoT6l5oF/yURrpu5cwg4jePeDsv3MxMPp6kLLjpT6qdAQlTKVcX2HesMoCHykVc4oU54/5ao4SOjgV1sPSHeQ
-X-Gm-Message-State: AOJu0Yy1XjdkqUavkEa25zp6Z2JYNo6Yl7UGW0ourHDzwhmgGGj2ihMV
-	V1+lW/ToOAWy8a7NDtk9hqVsKTRMkLa5nRcQNqJn7wzQ9nim9CM=
-X-Google-Smtp-Source: AGHT+IFnjyk/sUKXIY4GZBM6SjohiGVLx0AHHXAV1CjTPxshYNK0r8Tqxafx2HBUJziuPQ3y/YBdDg==
-X-Received: by 2002:a17:902:f64a:b0:1fd:6529:7447 with SMTP id d9443c01a7336-201ca143f34mr13460875ad.29.1723494208115;
-        Mon, 12 Aug 2024 13:23:28 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1c9b92sm802795ad.277.2024.08.12.13.23.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 13:23:27 -0700 (PDT)
-Date: Mon, 12 Aug 2024 13:23:27 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 1/6] netdevice: Add napi_affinity_no_change
-Message-ID: <ZrpvP_QSYkJM9Mqw@mini-arch>
-References: <20240812145633.52911-1-jdamato@fastly.com>
- <20240812145633.52911-2-jdamato@fastly.com>
+	s=arc-20240116; t=1723494277; c=relaxed/simple;
+	bh=qeVfUIcoWdhpUtM/u3eGhXh18DwBT5NJk6teiyVCXc4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hAHU5s3ooE55jwgOeC3PDu+V0Nvd5P994+pnU9LylAwyAGW9LkuvkShWAjt+yI5kP+Frwnx/T8h0D+doi3xIvxIDHPBxvWxV30EWZ6xHqDQGgO6wOpLgRRWa3OXOoaydQFLbXs7sFb8uCDVZ8CA30kzaloAHJBkvaOY2OajNBg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TDWIz29g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0F0C4AF0C;
+	Mon, 12 Aug 2024 20:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723494276;
+	bh=qeVfUIcoWdhpUtM/u3eGhXh18DwBT5NJk6teiyVCXc4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=TDWIz29gbxn0i5R6I7puBRaIoL3mzVtHfge3jmD7Bsdl3aA5lfTapvLI3sMAXGPEw
+	 PI4GsEzrPlM8Ns4P6qianppIkWh8+Dw53KpogQqRp0GiPxLV0wz9bfmaiyGK9aeA4J
+	 0wHmRyxqpjUkviQ79xQxWgVBAivlwnOLyoFAbdh6TyxV3Cj6TFdRrpUktNYK0ZPfKv
+	 QR5KHRgCrwSTozdRPZkaDW8ury1FcURRHSZNCQF1XCKrLdonefIRnCOxRMorqS5IgT
+	 z+WDAExPR+Ot+WgS1SvmZHOXxiDCppd7b0bcPVOGBzfFILVpwkV0toG2ewbkBOPzyy
+	 HI805Zb1oYUtQ==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso51768011fa.3;
+        Mon, 12 Aug 2024 13:24:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXhHdw7hH3qr99YE6yqC8o16OcwZZJ+oHgx3GFRPHDsi7f/UyIlBePUtrOHhCVtCJTT49OT5fTrwGpvTPB2KFiL8gnodji/jIAesK270n4WpZYeIU+96AThWww/BH4XJbpeByQgprBOVn7uv3l+8tWnMht475O87d+0zr4zQXGR6oRgjmS1RFfMeifD1ApWtYg1Yoi6oT4kXiCF1SObmflP06g=
+X-Gm-Message-State: AOJu0Yx3guwvjllQ8cxW8aVScWDq476AQm+t76ilfXJ+KBCakBAmpDWX
+	YfHNTLNKka0giVs0Is+r5TLGYVpCTFQ3b7Bxw7euZLG17XrNY1O8i2N9peO7fDXcJAGV70tOJYs
+	sSvf7UP8MoVss/fU6Fwe8eSgyjg==
+X-Google-Smtp-Source: AGHT+IHjxVfCOndn+b47XGHH72cKUiyoILGnoGfWC8XZdmZexSAAw/YL/bL1WxJ+jTMixEgHzL/lZim6CTMEs11wsSY=
+X-Received: by 2002:a2e:461a:0:b0:2ef:22e6:233f with SMTP id
+ 38308e7fff4ca-2f2b7155856mr8169011fa.21.1723494274886; Mon, 12 Aug 2024
+ 13:24:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240812145633.52911-2-jdamato@fastly.com>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com> <20240811-dwc3-refactor-v2-3-91f370d61ad2@quicinc.com>
+In-Reply-To: <20240811-dwc3-refactor-v2-3-91f370d61ad2@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 12 Aug 2024 14:24:21 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+0pX7P70OE8suhCpSsffPcqQffLEUqc3+LSX7ocf-iXg@mail.gmail.com>
+Message-ID: <CAL_Jsq+0pX7P70OE8suhCpSsffPcqQffLEUqc3+LSX7ocf-iXg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] of: dynamic: Don't discard children upon node attach
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Saravana Kannan <saravanak@google.com>, 
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-usb@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, Bjorn Andersson <quic_bjorande@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/12, Joe Damato wrote:
-> Several drivers have their own, very similar, implementations of
-> determining if IRQ affinity has changed. Create napi_affinity_no_change
-> to centralize this logic in the core.
-> 
-> This will be used in following commits for various drivers to eliminate
-> duplicated code.
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
+On Sun, Aug 11, 2024 at 9:07=E2=80=AFPM Bjorn Andersson <andersson@kernel.o=
+rg> wrote:
+>
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+>
+> When dynamically modifying DeviceTree it's useful to be able to reparent
+> nodes, but of_attach_node() clear the child pointer and hence discards
+> any child nodes.
+
+of_attach_node() is kind of the legacy API. You should be using
+changeset API. But I guess you really mean __of_attach_node() here
+which both use.
+
+> Retain the child pointer upon attach, so that the client code doesn't
+> need to manually rebuild the tree.
+>
+> Current users of of_attach_node() either avoids attaching nodes with
+> children or explicitly attaches nodes without children, so no impact is
+> expected to current users.
+>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 > ---
->  include/linux/netdevice.h |  8 ++++++++
->  net/core/dev.c            | 14 ++++++++++++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index 0ef3eaa23f4b..dc714a04b90a 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -464,6 +464,14 @@ enum rx_handler_result {
->  typedef enum rx_handler_result rx_handler_result_t;
->  typedef rx_handler_result_t rx_handler_func_t(struct sk_buff **pskb);
->  
-> +/**
-> + * napi_affinity_no_change - determine if CPU affinity changed
-> + * @irq: the IRQ whose affinity may have changed
-> + *
-> + * Return true if the CPU affinity has NOT changed, false otherwise.
-> + */
-> +bool napi_affinity_no_change(unsigned int irq);
-> +
->  void __napi_schedule(struct napi_struct *n);
->  void __napi_schedule_irqoff(struct napi_struct *n);
->  
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 751d9b70e6ad..9c56ad49490c 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -89,6 +89,7 @@
->  #include <linux/errno.h>
->  #include <linux/interrupt.h>
->  #include <linux/if_ether.h>
-> +#include <linux/irq.h>
->  #include <linux/netdevice.h>
->  #include <linux/etherdevice.h>
->  #include <linux/ethtool.h>
-> @@ -6210,6 +6211,19 @@ void __napi_schedule_irqoff(struct napi_struct *n)
->  }
->  EXPORT_SYMBOL(__napi_schedule_irqoff);
->  
-> +bool napi_affinity_no_change(unsigned int irq)
-> +{
-> +	int cpu_curr = smp_processor_id();
-> +	const struct cpumask *aff_mask;
-> +
+>  drivers/of/dynamic.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
+> index 110104a936d9..32e1dffd9f96 100644
+> --- a/drivers/of/dynamic.c
+> +++ b/drivers/of/dynamic.c
+> @@ -221,7 +221,6 @@ static void __of_attach_node(struct device_node *np)
+>                         np->phandle =3D 0;
+>         }
+>
+> -       np->child =3D NULL;
+>         np->sibling =3D np->parent->child;
+>         np->parent->child =3D np;
+>         of_node_clear_flag(np, OF_DETACHED);
 
-[..]
+Before OF_DETACHED had a clear meaning. Now, are child nodes detached
+or not? If it means not attached to the root tree, then it is
+redundant having it per node. If it means parent and sibling aren't
+set, then what's the point as we can just check for NULL ptrs.
 
-> +	aff_mask = irq_get_effective_affinity_mask(irq);
+This all seems fragile on top of what's already fragile.
 
-Most drivers don't seem to call this on every napi_poll (and
-cache the aff_mask somewhere instead). Should we try to keep this
-out of the past path as well?
+Rob
 
