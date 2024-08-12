@@ -1,153 +1,190 @@
-Return-Path: <linux-kernel+bounces-283271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EECF94EF64
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:20:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EB294EF67
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:21:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B0C3283983
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D221F22450
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8D117F391;
-	Mon, 12 Aug 2024 14:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F9D17E47A;
+	Mon, 12 Aug 2024 14:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Jgbil5AK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YoVpxfTN"
-Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="Uf6CeqtJ";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="mf/3373t"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423F16B38D;
-	Mon, 12 Aug 2024 14:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3D4174EEB;
+	Mon, 12 Aug 2024 14:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723472406; cv=none; b=GAdZe57T8+RTc4//imnP3/eDA8OVUXDwA1faspArni69w7BzaGGNJG6O58QSrWnGOSTKyekla4GOZePr6FHHTlFaYwdLZxemAyByd+oimmY7PTCWyqyKwIJq1hVXsHNOVg7x+Ny7qnTgaFUMnvt2AM6pdX7eYYBoLwp+ERx2/Ac=
+	t=1723472461; cv=none; b=aFs0McZ/Z9gmLz4sXeRBHCMOnCPq/QX/dhc88L/slkKJU/j84kPxIuj/WCjANkTtmNGrkgAOp7PQFwMy47Oy3rdQBeFEb887RXtlqJeH1dGrJ5bXnLmSB5bCWzDLg/Kmx900ma0+q5NU/WoCHQxRqAwbd5fHj25abZDqvZbr/lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723472406; c=relaxed/simple;
-	bh=cVkHBiwDL71VAbFCe3luGFmIFIgP7wC1OfFcmy9JLoo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQ3G8h9Rj0GlGZUU943AVidmspsCuEBYAgnaq1/k4Pd4k3LV3k7Te2mztcJU+cbqeu2JOuygfXFCNffLt4NCfT00k988pi04ixVmqQjCTuX75kG4DOZj907WKTot66d3qZkxGWXjnf1ydQUxCBSxflYoPoBNdB3dHsRchLzxqjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=Jgbil5AK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YoVpxfTN; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-01.internal (phl-compute-01.nyi.internal [10.202.2.41])
-	by mailflow.nyi.internal (Postfix) with ESMTP id A9969200DE8;
-	Mon, 12 Aug 2024 10:20:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Mon, 12 Aug 2024 10:20:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1723472403; x=1723479603; bh=uCDj2ND5nE
-	8inw/UhtR4NteFMYiUan8kp+SXKAFbsaQ=; b=Jgbil5AKeanZIvWttmxLqpKCsG
-	cesbBek8ICenp01vbRpzfnsqvCEeqYZDrJFOGmG4pyUGj8ycXV278ntTSqpCYfj+
-	CT8mV9XiUNoZJXSI2E0gI5eWrDDMPq3amAq6JVPK99glkO718BJvjEtqdwLV8/d0
-	aXX0nAulrrgPlE1uWsdyJyXFrHieiEnRfE96SJRQhvhxUPcKbPyosTyJe6BnQniF
-	uBfkae4CprmvGdqvRNUslYuZzWV8KN0sSPuEJZOaOdLRUg8sX/Btn33nk1si8JWu
-	BwaqA9R1Rp8yYoK6gZOIv1rVHIY2N82u2NWrDBs+siwcqSxL9Yg7mh5gh67g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723472403; x=1723479603; bh=uCDj2ND5nE8inw/UhtR4NteFMYiU
-	an8kp+SXKAFbsaQ=; b=YoVpxfTN+n/d3TpfgC2wVhmVD01+o/XbiBE+IjP5hfZU
-	LawS8HVlgD9HbX6Y0ZVfYbgMdSpuh6jqcuDIe2nArfz8tR+jM4q+oGkLdB6MaFHV
-	PaYFhq4TEN/Ge6nm+xerlm6USso7J/EdCiOB2kq9KpgAfI2O16tNEWjNbTqM0Gr6
-	ZNubXp7L65W9gsuDjWi9Ww32m2JiWP0MXmpdfMrwXfYjXaX6m2iXQRXqsVcLSXup
-	WbSkBzFWq8h0JtI2n9s2jnsutu8TDCTffV+yJEgMSJyUkG6wrs+8IU+4IWEmx1hK
-	JRlz2B773b4Hwub2EfGGht4DduJvUVHWsVS/KI9hcQ==
-X-ME-Sender: <xms:Exq6ZgCsslAOYbRYLyk4RFsaAA_5noMhx7QlvMfy9lP9IQ25BicfMQ>
-    <xme:Exq6ZihYkboEyO7RB17bKCXc-PCd42161nfETWrJP6i8aNPgUjuLZW4gzzfislGzz
-    PWhHiFgXBQKsg>
-X-ME-Received: <xmr:Exq6ZjnRVvHGeGII-0PWSXqBeaCWn2mSC6OPVh-An03T6IlwKYokAQ7YI7hQYfp5HExQxU65BTHV1WBjMErQfDRJQEkyLcIwXue_Wg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjeegucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepjeetueehteekuefhleehkeffffeiffeftedtieegkedviefggfefueff
-    kefgueffnecuffhomhgrihhnpehmshhgihgurdhlihhnkhenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhdp
-    nhgspghrtghpthhtohepvdegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrlh
-    gvkhhsrghnuggvrhdrlhhosggrkhhinhesihhnthgvlhdrtghomhdprhgtphhtthhopehs
-    thgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmihgthhgrlh
-    drkhhusghirghksehinhhtvghlrdgtohhmpdhrtghpthhtohepphgrvhgrnhdrkhhumhgr
-    rhdrlhhinhhgrgesihhnthgvlhdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnh
-    gvlhdrohhrghdprhgtphhtthhopehkrhhishhhnhgvihhlrdhkrdhsihhnghhhsehinhht
-    vghlrdgtohhmpdhrtghpthhtoheprghnthhhohhnhidrlhdrnhhguhihvghnsehinhhtvg
-    hlrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehnvgigrdhsfidrnhgtihhsrdhoshguthdrihhtphdruhhpshhtrhgvrghmihhnghesih
-    hnthgvlhdrtghomh
-X-ME-Proxy: <xmx:Exq6Zmy3X1VnAW_1lPaiJxzKQ-UP_SiNDCExMkCxvjtafQVM-Qy8qw>
-    <xmx:Exq6ZlTlX1TOeDFFsO7iMjQYzkLxbH5blhS932bNWzcR7C63qMuzsg>
-    <xmx:Exq6Zha5NNeI5JszU0ddiZ7Bn4EaEDipsqK9z6bmGCyRTyUw-8Qx5w>
-    <xmx:Exq6ZuQjoiZOpsLnOrJtUKKcC-WEM0Y4MdPzuEJTiKai0QmqdSNnUw>
-    <xmx:Exq6ZhLc_69r2TVkE3UXEtNW4rS_XWSYOgbz5EkrZbJJQNQRneNUUaEP>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 12 Aug 2024 10:20:02 -0400 (EDT)
-Date: Mon, 12 Aug 2024 16:20:00 +0200
-From: Greg KH <greg@kroah.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: stable@vger.kernel.org, Michal Kubiak <michal.kubiak@intel.com>,
-	Pavan Kumar Linga <pavan.kumar.linga@intel.com>,
-	Simon Horman <horms@kernel.org>,
-	Krishneil Singh <krishneil.k.singh@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+	s=arc-20240116; t=1723472461; c=relaxed/simple;
+	bh=+MbbcfrMLqxGuRzQ4dcWA1k4c9SrYKs271WzS35qTX4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FD+TQ8EXYWjtBf0NoeSLo0FozQ5JkjFgCkV/6J3fg6e7jonX9OF5QPO+YzpIExioflZqfqlrt90cFGFGwZ7sdTQw5QirDc+uPTYi9NO9Ww+J2LjYWw9BG1Ypa8u1uuYOBuLEcPbGAAIC89PvAA4Hg9BUWKp6q3BXE/bwy6+Z0lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=Uf6CeqtJ; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=mf/3373t; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4WjGry4BYVz9sGk;
+	Mon, 12 Aug 2024 16:20:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1723472450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xxdGD0QtojEv+8rigNDDQghjl+1l/EvJu5EhLkkyQMg=;
+	b=Uf6CeqtJkIbCvTUVXtV8n63a1f6aKENwgUc7ZUTSzbBrEWI3BKpiq/+nsjcQva4wFIdkD2
+	XJBZlcvqp7KR1zQhXxTkIaJng5JMGf06mmqWzu+x4ffIhY9PBvRPxCqF0sdN2BNuHSrqfV
+	OBDW2WpQUNvwx7y3R7vJ/QvyaYrMD698iga+4o06zh2x0Nv3mp6sqShdKVoHwA3U+LXGz+
+	6Srnm5vG3lZ89nSbf+GG7rmGtj+6e0Qp8iDxZPDOER/LHXV1vmQV9UQcWNvjWjqnXaDF6t
+	eqSRscUyjVf5ZmPlO+Sm409C/2qKKYsi3pNmLY5oKzuXU2SnoMsGn7MHssnNsA==
+From: Zeno Endemann <zeno.endemann@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1723472448;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=xxdGD0QtojEv+8rigNDDQghjl+1l/EvJu5EhLkkyQMg=;
+	b=mf/3373tIOn0Y0H8K9ZBqVHS8AW/369eARDLWjvuCTBQHK+2XSQ0FpPWfE1cpbY6A1oYIR
+	GU2OzOurZSWLJo+0e8QPgHC28qGp/71J3NB9NBuJ2NmINy8eNWRmox3KAG0e9bkK8nT6aM
+	pO4Uc66IwEY2b2P/06DOaaQaBSxW6GLvsyd3wVsQoayKmzK6Lh9OWdfs0ODN+Zgk9cNcft
+	PnrM7H/MxIyPOE42BpjqPgUcpE8wYpGOA4GfRUTcuBxHJaWpraCAbUohRAUuMVNA2khTat
+	FZ+EKmH0qjNjdFRqG6czGoq7TB4LJ669db5WEH+tQumRUfjfO/ATSv3S9MzJBQ==
+To: linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6.10.y] idpf: fix memleak in vport interrupt configuration
-Message-ID: <2024081251-eggshell-down-d665@gregkh>
-References: <20240812134455.2298021-1-aleksander.lobakin@intel.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Pavel Hofman <pavel.hofman@ivitera.com>,
+	David Howells <dhowells@redhat.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+	Liam Girdwood <liam.r.girdwood@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Zeno Endemann <zeno.endemann@mailbox.org>
+Subject: [PATCH] ALSA: core: Remove trigger_tstamp_latched
+Date: Mon, 12 Aug 2024 16:20:29 +0200
+Message-ID: <20240812142029.46608-1-zeno.endemann@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812134455.2298021-1-aleksander.lobakin@intel.com>
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: j3ju3hp3jo5mzypasahn9bz3drinxo6y
+X-MBO-RS-ID: 2a011dac8191284ba64
 
-On Mon, Aug 12, 2024 at 03:44:55PM +0200, Alexander Lobakin wrote:
-> From: Michal Kubiak <michal.kubiak@intel.com>
-> 
-> commit 3cc88e8405b8d55e0ff035e31971aadd6baee2b6 upstream.
-> 
-> The initialization of vport interrupt consists of two functions:
->  1) idpf_vport_intr_init() where a generic configuration is done
->  2) idpf_vport_intr_req_irq() where the irq for each q_vector is
->    requested.
-> 
-> The first function used to create a base name for each interrupt using
-> "kasprintf()" call. Unfortunately, although that call allocated memory
-> for a text buffer, that memory was never released.
-> 
-> Fix this by removing creating the interrupt base name in 1).
-> Instead, always create a full interrupt name in the function 2), because
-> there is no need to create a base name separately, considering that the
-> function 2) is never called out of idpf_vport_intr_init() context.
-> 
-> Fixes: d4d558718266 ("idpf: initialize interrupts and enable vport")
-> Cc: stable@vger.kernel.org # 6.7
-> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
-> Reviewed-by: Pavan Kumar Linga <pavan.kumar.linga@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> Tested-by: Krishneil Singh <krishneil.k.singh@intel.com>
-> Signed-off-by: Tony Nguyen <anthony.l.nguyen@intel.com>
-> Link: https://patch.msgid.link/20240806220923.3359860-3-anthony.l.nguyen@intel.com
-> Signed-off-by: Jakub Kicinski <kuba@kernel.org>
-> ---
->  drivers/net/ethernet/intel/idpf/idpf_txrx.c | 19 ++++++++-----------
->  1 file changed, 8 insertions(+), 11 deletions(-)
-> 
+The trigger_tstamp_latched hook was introduced to allow drivers to
+provide their own trigger timestamp instead of the default generated
+one for higher accuracy. This makes sense in theory, but in practice
+the only place that uses this is the hda core, and:
 
-Now queued up, thanks.
+* The custom timestamp there does not seem to be a meaningful
+  improvement over the default one; There is virtually no code in
+  between them, so I measured only a difference of around 300ns in a
+  KVM VM with ich9-intel-hda device.
+* It is also bugged as it does not set a timestamp when the stream
+  stops.
+* It creates a pitfall for hda driver writers; Calling
+  snd_hdac_stream_timecounter_init implicitly makes them responsible
+  for generating these timestamps.
 
-greg k-h
+Since there is no real good use of this facility, I propose to remove
+it.
+
+I reported the bug initially on github (see below), there one can also
+find a reproducer userspace app, as well as some other potential ways
+to fix this issue, in case this removal is not accepted.
+
+Cc'ing the Intel ASoC maintainers, as the skl-pcm.c is using the
+snd_hdac_stream_timecounter_init function this patch modifies.
+
+Closes: https://github.com/alsa-project/alsa-lib/issues/387
+Signed-off-by: Zeno Endemann <zeno.endemann@mailbox.org>
+---
+ include/sound/pcm.h     | 1 -
+ sound/core/pcm_native.c | 4 +---
+ sound/hda/hdac_stream.c | 6 ------
+ 3 files changed, 1 insertion(+), 10 deletions(-)
+
+diff --git a/include/sound/pcm.h b/include/sound/pcm.h
+index ac8f3aef9205..3539af9f733e 100644
+--- a/include/sound/pcm.h
++++ b/include/sound/pcm.h
+@@ -361,7 +361,6 @@ struct snd_pcm_runtime {
+ 	snd_pcm_state_t suspended_state; /* suspended stream state */
+ 	struct snd_pcm_substream *trigger_master;
+ 	struct timespec64 trigger_tstamp;	/* trigger timestamp */
+-	bool trigger_tstamp_latched;     /* trigger timestamp latched in low-level driver/hardware */
+ 	int overrange;
+ 	snd_pcm_uframes_t avail_max;
+ 	snd_pcm_uframes_t hw_ptr_base;	/* Position at buffer restart */
+diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+index 4057f9f10aee..ced5bd2d7ebb 100644
+--- a/sound/core/pcm_native.c
++++ b/sound/core/pcm_native.c
+@@ -1194,8 +1194,7 @@ static void snd_pcm_trigger_tstamp(struct snd_pcm_substream *substream)
+ 	if (runtime->trigger_master == NULL)
+ 		return;
+ 	if (runtime->trigger_master == substream) {
+-		if (!runtime->trigger_tstamp_latched)
+-			snd_pcm_gettime(runtime, &runtime->trigger_tstamp);
++		snd_pcm_gettime(runtime, &runtime->trigger_tstamp);
+ 	} else {
+ 		snd_pcm_trigger_tstamp(runtime->trigger_master);
+ 		runtime->trigger_tstamp = runtime->trigger_master->runtime->trigger_tstamp;
+@@ -1422,7 +1421,6 @@ static int snd_pcm_pre_start(struct snd_pcm_substream *substream,
+ 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK &&
+ 	    !snd_pcm_playback_data(substream))
+ 		return -EPIPE;
+-	runtime->trigger_tstamp_latched = false;
+ 	runtime->trigger_master = substream;
+ 	return 0;
+ }
+diff --git a/sound/hda/hdac_stream.c b/sound/hda/hdac_stream.c
+index b53de020309f..271d42b765fc 100644
+--- a/sound/hda/hdac_stream.c
++++ b/sound/hda/hdac_stream.c
+@@ -660,14 +660,11 @@ static void azx_timecounter_init(struct hdac_stream *azx_dev,
+  *
+  * Initializes the time counter of streams marked by the bit flags (each
+  * bit corresponds to the stream index).
+- * The trigger timestamp of PCM substream assigned to the given stream is
+- * updated accordingly, too.
+  */
+ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+ 				      unsigned int streams)
+ {
+ 	struct hdac_bus *bus = azx_dev->bus;
+-	struct snd_pcm_runtime *runtime = azx_dev->substream->runtime;
+ 	struct hdac_stream *s;
+ 	bool inited = false;
+ 	u64 cycle_last = 0;
+@@ -681,9 +678,6 @@ void snd_hdac_stream_timecounter_init(struct hdac_stream *azx_dev,
+ 			}
+ 		}
+ 	}
+-
+-	snd_pcm_gettime(runtime, &runtime->trigger_tstamp);
+-	runtime->trigger_tstamp_latched = true;
+ }
+ EXPORT_SYMBOL_GPL(snd_hdac_stream_timecounter_init);
+ 
+-- 
+2.46.0
+
 
