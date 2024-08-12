@@ -1,150 +1,126 @@
-Return-Path: <linux-kernel+bounces-282693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 652C794E777
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:10:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3745494E788
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231C1282872
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:10:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96ECF2830B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCDB15CD78;
-	Mon, 12 Aug 2024 07:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EC1157467;
+	Mon, 12 Aug 2024 07:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XNYtOtTM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R56Zd5iG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D7115381C;
-	Mon, 12 Aug 2024 07:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD82514C5BA;
+	Mon, 12 Aug 2024 07:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723446613; cv=none; b=FTagMCA/OCj4pj8+Vh8i2l8ERBHgTgdj+BZnvB+PypmFbPKCIvwQIMBvNvuWdhOkDeLN8I0ur/t3V/dF1xUho0UoSpcFY/KbnkK6lxzBD88l/YMk+4oKJNNlcl9A4mOAa+RlrezmjbaBDdeMIulzTVckD3IeZVavNgVRfDg+nLw=
+	t=1723446854; cv=none; b=tczw5ZT99zaEdfS2l9xrA1oEl4EcPvN09x4XBmBAHpSLxnM6x9+wL6fBUkRbfBlWZGYauEstQHmieSvim3TqFMC8I+qpCB0BuPZNLpOev2YeQcn3Uet83Z5uhISDN1m+L8d9ESp2UNP1qjvQCArn5fPYJvD0sx8TeDyOkEJaI6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723446613; c=relaxed/simple;
-	bh=fYltnFmEiOiKgfSB6EHkrcCpM17ixHxAaRtD3gsQQTM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrxOJsUBjm/CNdS+iibPuR6SZRciGDfkvIF7ZK9mA/udqm5zBXO8hS2rNWhu1KrZmBgD2scvmy/7BhqEm6083vfL5yxZxBk3dA25qx9j5Ly4hB3JL6HOgRR0vOCiwF63fxEhknyvZjskIArWSl/sfAGLV6AkhFMJgQrJ8VK5oYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XNYtOtTM; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1723446854; c=relaxed/simple;
+	bh=2W/be8VISRZC7fVoJ9VGu3iMrIsNaD0YF4i34a1dFE4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hi1jiEp482Y8fczYkru+oS53uT45E9M0clsiPrzeHgcB9Zv9Md52v8KcEGcC5NUFvM0loIA9M14dYhijbEQdfz82dS3/jBF+BVbin9VM/6l7vkgDHyaZwpp4pPfeuBmM3K/0inovoLjBYCXRHdPI4Nx7KT5B2UOB1VYLbasMIQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R56Zd5iG; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723446612; x=1754982612;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=fYltnFmEiOiKgfSB6EHkrcCpM17ixHxAaRtD3gsQQTM=;
-  b=XNYtOtTMD2E6IG5748Z95bC3VrRxPF09LaZIMPLyIHP1H1ml3LjoM896
-   O6whQZVBfYBCosYOnxaLQO68lN2AtVbYGoiQgPpjopdDYrXLBC6BJZ/Xb
-   I1i3nK2FKURoLhLMM0ukq4u0tmyFsgUblhSLsCeTwwQoHKHciBdJaV0EW
-   NwCS50Eam0/5NAoqiPa0UANnbw1phPb8JLbZQBp+rIFNDKMepOndeOSNV
-   zeAMfyS1sTGXzmrk405H2PNE03nkQ5yd8pu0nQJyLp0RGgM3vgN98uMX5
-   EgriOp4drGFKtwwxJG/IQK+xU5E8v6HXtVfTSC0TyM+h5f59WsN2s3Tlj
-   g==;
-X-CSE-ConnectionGUID: vieX0jQdQlGFcDsRU7ettw==
-X-CSE-MsgGUID: O9OvklItSUyf4JjkaoUYrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32215199"
+  t=1723446853; x=1754982853;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=2W/be8VISRZC7fVoJ9VGu3iMrIsNaD0YF4i34a1dFE4=;
+  b=R56Zd5iGKYcoDTzZpVbxZJRuAhRSHaMpGDDN01Na6WgPSaRoYAPmvlQZ
+   hp1gmqFluhh4EgSio8eXNYSy0eViq1dCJVVZtI1/nRcdgSCj0PI7nxfSx
+   OWGm8F0FXJ75cFLdtgPYzAYBFMqpA/tchRfDGGFrFFZnNVbUz8ls+SYqj
+   F3k/pLWMgXCUgMAqF3i9p9nNTl8LM+NcK7daxTQVcmjceXMF6sFe8LzQT
+   DClw8M4qlW6sWjY8xiy9fsyf2HuvMym+CdxLsX3I5fQsVCwq1jdzO2285
+   RWUtZRlRu1z5bbCRpTIKQSMYYPGiw7YGyujqKBTzZzbFK/t6NsBil4tY4
+   A==;
+X-CSE-ConnectionGUID: BrTaaed6Sm6RLhOkk3hKHA==
+X-CSE-MsgGUID: 4oz61V0CSPK3EtY/FlRQ3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21711537"
 X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="32215199"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:10:11 -0700
-X-CSE-ConnectionGUID: NhLA91O6T8O6vY/mCcDL3w==
-X-CSE-MsgGUID: gcvM4RpCRna69SxJqqn3Sg==
+   d="scan'208";a="21711537"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:14:11 -0700
+X-CSE-ConnectionGUID: OLEmc47wRB6veAq2mjcdLw==
+X-CSE-MsgGUID: r/FxCR4NT760l1EVOg/r5A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="81406658"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 12 Aug 2024 00:10:07 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdPBt-000BTf-1M;
-	Mon, 12 Aug 2024 07:10:05 +0000
-Date: Mon, 12 Aug 2024 15:09:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Elad Yifee <eladwf@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, eladwf@gmail.com, daniel@makrotopia.org,
-	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen Lin <chen45464546@163.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net] net: ethernet: mtk_eth_soc: fix memory leak in LRO
- rings release
-Message-ID: <202408121439.06IztS3Y-lkp@intel.com>
-References: <20240811184949.2799-1-eladwf@gmail.com>
+   d="scan'208";a="57823793"
+Received: from allen-box.sh.intel.com ([10.239.159.127])
+  by fmviesa007.fm.intel.com with ESMTP; 12 Aug 2024 00:14:06 -0700
+From: Lu Baolu <baolu.lu@linux.intel.com>
+To: Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kevin Tian <kevin.tian@intel.com>
+Cc: dri-devel@lists.freedesktop.org,
+	nouveau@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-media@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Lu Baolu <baolu.lu@linux.intel.com>
+Subject: [PATCH 1/3] drm/nouveau/tegra: Use iommu_paging_domain_alloc()
+Date: Mon, 12 Aug 2024 15:10:32 +0800
+Message-Id: <20240812071034.9443-1-baolu.lu@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811184949.2799-1-eladwf@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Elad,
+In nvkm_device_tegra_probe_iommu(), a paging domain is allocated for @dev
+and attached to it on success. Use iommu_paging_domain_alloc() to make it
+explicit.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Link: https://lore.kernel.org/r/20240610085555.88197-7-baolu.lu@linux.intel.com
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[auto build test ERROR on net/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Elad-Yifee/net-ethernet-mtk_eth_soc-fix-memory-leak-in-LRO-rings-release/20240812-025108
-base:   net/main
-patch link:    https://lore.kernel.org/r/20240811184949.2799-1-eladwf%40gmail.com
-patch subject: [PATCH net] net: ethernet: mtk_eth_soc: fix memory leak in LRO rings release
-config: s390-allyesconfig (https://download.01.org/0day-ci/archive/20240812/202408121439.06IztS3Y-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240812/202408121439.06IztS3Y-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408121439.06IztS3Y-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/net/ethernet/mediatek/mtk_eth_soc.c: In function 'mtk_rx_put_buff':
->> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:28: error: passing argument 1 of 'free_pages' makes integer from pointer without a cast [-Wint-conversion]
-    1768 |                 free_pages(data, get_order(mtk_max_frag_size(ring->frag_size)));
-         |                            ^~~~
-         |                            |
-         |                            void *
-   In file included from include/linux/xarray.h:16,
-                    from include/linux/radix-tree.h:21,
-                    from include/linux/idr.h:15,
-                    from include/linux/kernfs.h:12,
-                    from include/linux/sysfs.h:16,
-                    from include/linux/kobject.h:20,
-                    from include/linux/of.h:18,
-                    from drivers/net/ethernet/mediatek/mtk_eth_soc.c:9:
-   include/linux/gfp.h:372:38: note: expected 'long unsigned int' but argument is of type 'void *'
-     372 | extern void free_pages(unsigned long addr, unsigned int order);
-         |                        ~~~~~~~~~~~~~~^~~~
-
-
-vim +/free_pages +1768 drivers/net/ethernet/mediatek/mtk_eth_soc.c
-
-  1759	
-  1760	static void mtk_rx_put_buff(struct mtk_rx_ring *ring, void *data, bool napi)
-  1761	{
-  1762		if (ring->page_pool)
-  1763			page_pool_put_full_page(ring->page_pool,
-  1764						virt_to_head_page(data), napi);
-  1765		else if (ring->frag_size <= PAGE_SIZE)
-  1766			skb_free_frag(data);
-  1767		else
-> 1768			free_pages(data, get_order(mtk_max_frag_size(ring->frag_size)));
-  1769	}
-  1770	
-
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 87caa4a72921..763c4c2925f9 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -120,8 +120,8 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
+ 	mutex_init(&tdev->iommu.mutex);
+ 
+ 	if (device_iommu_mapped(dev)) {
+-		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
+-		if (!tdev->iommu.domain)
++		tdev->iommu.domain = iommu_paging_domain_alloc(dev);
++		if (IS_ERR(tdev->iommu.domain))
+ 			goto error;
+ 
+ 		/*
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
