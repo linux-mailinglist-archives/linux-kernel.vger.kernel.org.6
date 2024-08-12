@@ -1,75 +1,45 @@
-Return-Path: <linux-kernel+bounces-283155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 002CC94EDFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:21:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076C894EDFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2564C1C218EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BFED1C21282
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C50017C21E;
-	Mon, 12 Aug 2024 13:21:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q1HeSgrk"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07F917C224;
+	Mon, 12 Aug 2024 13:21:34 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F9D817BB38;
-	Mon, 12 Aug 2024 13:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECB517BB3D;
+	Mon, 12 Aug 2024 13:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468880; cv=none; b=XwZkvSnFXC29i4XvsrH4PvUyn/nvrsIjkULWVhvxWY/Q6fepy5tUQ7WcCMke+reO2cAFgGImQnNRfeCI76a0KaseHVGuOn0B4nAlH9NpHvKnJbcuRXgRijRoZdWkLA2Lt5str+Wx3rjtmm3JW0Omzg4NoaBHPU3YRc7rjvRQNdU=
+	t=1723468894; cv=none; b=oO7wGjbCciK1/aQ+BebkxGAtb0+t7LWTN5uDnMQzx2pqFQ4QU1tFROi1UCC0nXy2r6QWdis5EINXdjYUatVeiiq1oQAMJEwnsimZh5IVSGESY8IQLiudE3NV4VwJxyXmmk5cClIdJ6PSJfzLE56w9iVmQ8i8rGM71tXwLEciCRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468880; c=relaxed/simple;
-	bh=qeTCCR8EchJ36r9dzttNzJbzKMZxPzEe4KVSUDMaaEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tnchZn/umFpx9NErZhcov1sikVJpmZWpYrEwU5gvEHB6eCDEpcvQFG8SxTtpyIPZOqkwy1Oue9VitV3/ZbBJ9waWzxTy6c0HqEsiFx/kepe7hOir6FIaI7PgyNOxqVCj+0IeOgHLFBuKECnHONJXVKHvpe7QplECLced2Iti/IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q1HeSgrk; arc=none smtp.client-ip=209.85.167.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3dd16257b7bso306845b6e.1;
-        Mon, 12 Aug 2024 06:21:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723468878; x=1724073678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=0Tmhzkuw6qsmA7+63wGwSz8F//va2twzg7YBJsGrfeg=;
-        b=Q1HeSgrkTXzfsWgzqw4KYmjB1uoPGnX1mecM/CCKh8xVCVRdFTpfbEr3ZclO64M+nv
-         k11xUd4nuVEWx7LQfu37oTqtbHVAio3r9zhMpowdUBvhGWe0Mxzg9zzwGLFDkmd20rv4
-         1oeW3AZTpwKbUI1+PJP2bJhdM0RZRYu8U9Mo3YQ/2JwNAR9cgNz/xF1aY01bWbXNwCi/
-         Tok8dL+zHgUXgD6omuiM/EUP6dWPIm4P9DEsMLzOuwRmfsi0DA9GD7nQio32DoxZQ+3w
-         v29SLaDZKREDX7/djL/h50TPKBkFiUE3CTk5AHvc9wBP87kr061yoqkisDFz4t1HzjKX
-         WeSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723468878; x=1724073678;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0Tmhzkuw6qsmA7+63wGwSz8F//va2twzg7YBJsGrfeg=;
-        b=WD8lf1TGh2ZztfZlKT7iCohr9OzAiiira8Jb0lHds7vWhN4eSZxAoJT5MH0/qquSWU
-         B0RgrPGEX7IFULCn+V0an8duITrPe47yEbaDg85zeEyVeKYQdGIQ/d36a+Ce21J6xFf8
-         tj+6G1q/GEClddn8PvFQ63ebMrBwhL9CYvIdS3i9+VUWlUtBTE5sg7zcn/V5yIPWOSJm
-         Xu2A8o2nEkJYekynsM8AUb74mWDne2K2FXDBLXgtInNHXCaT9H5uxF2xLvHb5DOlaY4x
-         alGP6MXUa+nYcTCpeseebqx1PXz1WNigHcisObH0i8OWv2q+QS8pfqGklxal2n7xZWy8
-         Y4aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuQgJLVFqLtYKTUYuTLKeSzdKGucPOFeAKOom8ELWdFilqKV8AjtwwZpzdo2hab572pB2zNY2ztmzBFcNqGrToBn1MClr7Q2AB4LxYP05znyRzRmArpl760W0HSKIT6zdwKIZ7LblEfLGR9IsfjQLRIfpZKIQQlHHyWBE3fbU6kNJIIbCg/0FWfrJG+cea9xc+jHcZnKslpO8/tVW/od1X
-X-Gm-Message-State: AOJu0YzxqwOaDED+ljRw45kHxFDfKpV/D/CPlX5b7b/VnPmMzO0vjpc4
-	uV7qGgM3JfnUXkm8eKTl1hbkReBLNl0Zo/dRguI8MKO9BmuUB2jC
-X-Google-Smtp-Source: AGHT+IFAiEJhBSmIMytQn74JGcURa9wm/PTkeCi62feFEMk+7DsJzoWvvr+8xT0TLzcOKMffZ5lD6A==
-X-Received: by 2002:a05:6870:2195:b0:254:c512:88c6 with SMTP id 586e51a60fabf-26fcb8d0143mr56523fac.51.1723468877980;
-        Mon, 12 Aug 2024 06:21:17 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbe134a1sm3662525a12.31.2024.08.12.06.21.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 06:21:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <46493cf7-6885-4c30-965b-29c158599c58@roeck-us.net>
-Date: Mon, 12 Aug 2024 06:21:14 -0700
+	s=arc-20240116; t=1723468894; c=relaxed/simple;
+	bh=nELmBUuP7NtMv0h6+VzLfrRVT5C86LvicW6YXx1SDaI=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MuIDa0BIZjsJlDa2ofb9JvBNntgXYOvPrF1icxFEniynVrVYYLv+Sx8pfZHDrY5VneO2VXKhqKrdNVrIsQ60ADy7v2RCGPKO4Qd38+ZRzuKMAD3NE+3pAlpYMVI0c0P6Pm1oSIIlRt0cQDvzJwoMjPeRxtJEuR+AW5ip1iU2m58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WjFRC4jPlzQpf0;
+	Mon, 12 Aug 2024 21:16:55 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id EBCAC180102;
+	Mon, 12 Aug 2024 21:21:27 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 12 Aug 2024 21:21:26 +0800
+Message-ID: <88382c22-a45b-4cd6-8313-4db1350d8e7c@huawei.com>
+Date: Mon, 12 Aug 2024 21:21:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,103 +47,226 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 4/8] hwmon: (amc6821) add support for tsd,mule
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Farouk Bouabid <farouk.bouabid@cherry.de>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Quentin Schulz <quentin.schulz@cherry.de>,
- Peter Rosin <peda@axentia.se>, Jean Delvare <jdelvare@suse.com>,
- Heiko Stuebner <heiko@sntech.de>, linux-i2c@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-References: <20240725-dev-mule-i2c-mux-v6-0-f9f6d7b60fb2@cherry.de>
- <20240725-dev-mule-i2c-mux-v6-4-f9f6d7b60fb2@cherry.de>
- <5d5c44cd-6320-4fcd-9409-f3fc97bc5389@roeck-us.net>
- <40ff0c23-f037-454c-9d79-05dd72655052@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <40ff0c23-f037-454c-9d79-05dd72655052@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+CC: <shaojijie@huawei.com>, "David S. Miller" <davem@davemloft.net>, David
+ Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Felix Fietkau
+	<nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Mark Lee
+	<Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Matthias
+ Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Yisen Zhuang
+	<yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
+Subject: Re: [PATCH net-next 3/3] net: hns3: Use
+ ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+To: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
+ <20240812-ipv6_addr-helpers-v1-3-aab5d1f35c40@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20240812-ipv6_addr-helpers-v1-3-aab5d1f35c40@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On 8/12/24 04:38, Krzysztof Kozlowski wrote:
-> On 31/07/2024 17:12, Guenter Roeck wrote:
->> On Thu, Jul 25, 2024 at 03:27:50PM +0200, Farouk Bouabid wrote:
->>> Theobroma Systems Mule is an MCU that emulates a set of I2C devices,
->>> among which is an amc6821 and other devices that are reachable through
->>> an I2C-mux.
->>>
->>> The devices on the mux can be selected by writing the appropriate device
->>> number to an I2C config register (amc6821: reg 0xff)
->>>
->>> Implement "tsd,mule" compatible to instantiate the I2C-mux platform device
->>> when probing the amc6821.
->>>
->>> Signed-off-by: Farouk Bouabid <farouk.bouabid@cherry.de>
->>> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
->>
->> Applied.
-> 
-> Eh, there is undocumented dependency on I2C here. Next has warning
-> because of this.
-> 
-> Farouk, please *always mention* the dependencies between patches.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-Sorry, I wasn't aware that all bindings have to be in the tree before I apply
-patches, and I somehow had the apparently wrong impression that the bindings
-were approved. I'll drop the two patches (this one and the DT patch for
-amc6821). Someone may need to remind me to re-apply them after all
-pre-dependencies are in the tree.
+Reviewed-by: Jijie Shao <shaojijie@huawei.com>
 
-Guenter
-
+on 2024/8/12 20:11, Simon Horman wrote:
+> Use new ipv6_addr_cpu_to_be32 and ipv6_addr_be32_to_cpu helper,
+> and IPV6_ADDR_WORDS. This is arguably slightly nicer.
+>
+> No functional change intended.
+> Compile tested only.
+>
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Link: https://lore.kernel.org/netdev/c7684349-535c-45a4-9a74-d47479a50020@lunn.ch/
+> Signed-off-by: Simon Horman <horms@kernel.org>
+> ---
+>   .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 79 +++++++++++-----------
+>   .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 ++-
+>   2 files changed, 44 insertions(+), 43 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> index 82574ce0194f..ce629cbc5d01 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> @@ -13,8 +13,9 @@
+>   #include <linux/platform_device.h>
+>   #include <linux/if_vlan.h>
+>   #include <linux/crash_dump.h>
+> -#include <net/ipv6.h>
+> +
+>   #include <net/rtnetlink.h>
+> +
+>   #include "hclge_cmd.h"
+>   #include "hclge_dcb.h"
+>   #include "hclge_main.h"
+> @@ -6278,15 +6279,15 @@ static void hclge_fd_get_ip4_tuple(struct ethtool_rx_flow_spec *fs,
+>   static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
+>   				      struct hclge_fd_rule *rule, u8 ip_proto)
+>   {
+> -	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.tcp_ip6_spec.ip6src,
+> -			  IPV6_SIZE);
+> -	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.tcp_ip6_spec.ip6src,
+> -			  IPV6_SIZE);
+> +	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
+> +			      fs->h_u.tcp_ip6_spec.ip6src);
+> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
+> +			      fs->m_u.tcp_ip6_spec.ip6src);
+>   
+> -	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.tcp_ip6_spec.ip6dst,
+> -			  IPV6_SIZE);
+> -	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.tcp_ip6_spec.ip6dst,
+> -			  IPV6_SIZE);
+> +	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
+> +			      fs->h_u.tcp_ip6_spec.ip6dst);
+> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
+> +			      fs->m_u.tcp_ip6_spec.ip6dst);
+>   
+>   	rule->tuples.src_port = be16_to_cpu(fs->h_u.tcp_ip6_spec.psrc);
+>   	rule->tuples_mask.src_port = be16_to_cpu(fs->m_u.tcp_ip6_spec.psrc);
+> @@ -6307,15 +6308,15 @@ static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
+>   static void hclge_fd_get_ip6_tuple(struct ethtool_rx_flow_spec *fs,
+>   				   struct hclge_fd_rule *rule)
+>   {
+> -	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.usr_ip6_spec.ip6src,
+> -			  IPV6_SIZE);
+> -	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.usr_ip6_spec.ip6src,
+> -			  IPV6_SIZE);
+> +	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
+> +			      fs->h_u.usr_ip6_spec.ip6src);
+> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
+> +			      fs->m_u.usr_ip6_spec.ip6src);
+>   
+> -	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.usr_ip6_spec.ip6dst,
+> -			  IPV6_SIZE);
+> -	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.usr_ip6_spec.ip6dst,
+> -			  IPV6_SIZE);
+> +	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
+> +			      fs->h_u.usr_ip6_spec.ip6dst);
+> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
+> +			      fs->m_u.usr_ip6_spec.ip6dst);
+>   
+>   	rule->tuples.ip_proto = fs->h_u.usr_ip6_spec.l4_proto;
+>   	rule->tuples_mask.ip_proto = fs->m_u.usr_ip6_spec.l4_proto;
+> @@ -6744,21 +6745,19 @@ static void hclge_fd_get_tcpip6_info(struct hclge_fd_rule *rule,
+>   				     struct ethtool_tcpip6_spec *spec,
+>   				     struct ethtool_tcpip6_spec *spec_mask)
+>   {
+> -	cpu_to_be32_array(spec->ip6src,
+> -			  rule->tuples.src_ip, IPV6_SIZE);
+> -	cpu_to_be32_array(spec->ip6dst,
+> -			  rule->tuples.dst_ip, IPV6_SIZE);
+> +	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
+> +	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
+>   	if (rule->unused_tuple & BIT(INNER_SRC_IP))
+>   		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
+>   	else
+> -		cpu_to_be32_array(spec_mask->ip6src, rule->tuples_mask.src_ip,
+> -				  IPV6_SIZE);
+> +		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
+> +				      rule->tuples_mask.src_ip);
+>   
+>   	if (rule->unused_tuple & BIT(INNER_DST_IP))
+>   		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
+>   	else
+> -		cpu_to_be32_array(spec_mask->ip6dst, rule->tuples_mask.dst_ip,
+> -				  IPV6_SIZE);
+> +		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
+> +				      rule->tuples_mask.dst_ip);
+>   
+>   	spec->tclass = rule->tuples.ip_tos;
+>   	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
+> @@ -6777,19 +6776,19 @@ static void hclge_fd_get_ip6_info(struct hclge_fd_rule *rule,
+>   				  struct ethtool_usrip6_spec *spec,
+>   				  struct ethtool_usrip6_spec *spec_mask)
+>   {
+> -	cpu_to_be32_array(spec->ip6src, rule->tuples.src_ip, IPV6_SIZE);
+> -	cpu_to_be32_array(spec->ip6dst, rule->tuples.dst_ip, IPV6_SIZE);
+> +	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
+> +	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
+>   	if (rule->unused_tuple & BIT(INNER_SRC_IP))
+>   		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
+>   	else
+> -		cpu_to_be32_array(spec_mask->ip6src,
+> -				  rule->tuples_mask.src_ip, IPV6_SIZE);
+> +		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
+> +				      rule->tuples_mask.src_ip);
+>   
+>   	if (rule->unused_tuple & BIT(INNER_DST_IP))
+>   		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
+>   	else
+> -		cpu_to_be32_array(spec_mask->ip6dst,
+> -				  rule->tuples_mask.dst_ip, IPV6_SIZE);
+> +		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
+> +				      rule->tuples_mask.dst_ip);
+>   
+>   	spec->tclass = rule->tuples.ip_tos;
+>   	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
+> @@ -7007,7 +7006,7 @@ static void hclge_fd_get_flow_tuples(const struct flow_keys *fkeys,
+>   	} else {
+>   		int i;
+>   
+> -		for (i = 0; i < IPV6_SIZE; i++) {
+> +		for (i = 0; i < IPV6_ADDR_WORDS; i++) {
+>   			tuples->src_ip[i] = be32_to_cpu(flow_ip6_src[i]);
+>   			tuples->dst_ip[i] = be32_to_cpu(flow_ip6_dst[i]);
+>   		}
+> @@ -7262,14 +7261,14 @@ static int hclge_get_cls_key_ip(const struct flow_rule *flow,
+>   		struct flow_match_ipv6_addrs match;
+>   
+>   		flow_rule_match_ipv6_addrs(flow, &match);
+> -		be32_to_cpu_array(rule->tuples.src_ip, match.key->src.s6_addr32,
+> -				  IPV6_SIZE);
+> -		be32_to_cpu_array(rule->tuples_mask.src_ip,
+> -				  match.mask->src.s6_addr32, IPV6_SIZE);
+> -		be32_to_cpu_array(rule->tuples.dst_ip, match.key->dst.s6_addr32,
+> -				  IPV6_SIZE);
+> -		be32_to_cpu_array(rule->tuples_mask.dst_ip,
+> -				  match.mask->dst.s6_addr32, IPV6_SIZE);
+> +		ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
+> +				      match.key->src.s6_addr32);
+> +		ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
+> +				      match.mask->src.s6_addr32);
+> +		ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
+> +				      match.key->dst.s6_addr32);
+> +		ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
+> +				      match.mask->dst.s6_addr32);
+>   	} else {
+>   		rule->unused_tuple |= BIT(INNER_SRC_IP);
+>   		rule->unused_tuple |= BIT(INNER_DST_IP);
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+> index b5178b0f88b3..b9fc719880bb 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
+> @@ -8,7 +8,9 @@
+>   #include <linux/phy.h>
+>   #include <linux/if_vlan.h>
+>   #include <linux/kfifo.h>
+> +
+>   #include <net/devlink.h>
+> +#include <net/ipv6.h>
+>   
+>   #include "hclge_cmd.h"
+>   #include "hclge_ptp.h"
+> @@ -718,15 +720,15 @@ struct hclge_fd_cfg {
+>   };
+>   
+>   #define IPV4_INDEX	3
+> -#define IPV6_SIZE	4
+> +
+>   struct hclge_fd_rule_tuples {
+>   	u8 src_mac[ETH_ALEN];
+>   	u8 dst_mac[ETH_ALEN];
+>   	/* Be compatible for ip address of both ipv4 and ipv6.
+>   	 * For ipv4 address, we store it in src/dst_ip[3].
+>   	 */
+> -	u32 src_ip[IPV6_SIZE];
+> -	u32 dst_ip[IPV6_SIZE];
+> +	u32 src_ip[IPV6_ADDR_WORDS];
+> +	u32 dst_ip[IPV6_ADDR_WORDS];
+>   	u16 src_port;
+>   	u16 dst_port;
+>   	u16 vlan_tag1;
+>
 
