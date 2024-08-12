@@ -1,859 +1,1323 @@
-Return-Path: <linux-kernel+bounces-282808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6522594E8D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:49:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 119BE94E8DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208DF28304A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD21F2830C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085FF16BE2B;
-	Mon, 12 Aug 2024 08:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3F715B117;
+	Mon, 12 Aug 2024 08:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fwZR+oqw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OKq+9DI2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4523152E17
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7572415572D;
+	Mon, 12 Aug 2024 08:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723452558; cv=none; b=oAGqBRrYzNVzC567ApW09oV5cpMMw8RDLWso62G81LuzBlwMAqE7iGv+a1V2ZjDGz18UJYdDmtmVdeyX8GzoYwRxAeITX9hHHLNjANrF2tcwrblTSngDsEnxnfuS628ffMHZMwbRfqJB8CJx7SCuXek5ogkMvMRnX8utq2X/Utg=
+	t=1723452574; cv=none; b=XGUHTIxtAuNTScUvg8QhWnAXhWaU0r5tIVV0Bi2iTSyfEMBtHrEOQoIwQLBWf4GEFJRsSMaq3h8kmN4o87zwTGs3v+x22bKkjbRMMlbz0cQGQkjie6arw/I9iCrRgaekdu8PzYwBlbPUuOWLjGZ+3UW2UWR3oGjoLkG8IAeT/f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723452558; c=relaxed/simple;
-	bh=naa3UQ62lEngE/Oljw0xCf0QeCQfkZFPlntUl04iHRs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qCpTJWJcyF+4XfOEoZv/yFlXQZ+TO1JGYhTubuGJQ1msvaQlfSNEyHKT38PsRYgf5ORGOsfsrJaePXZWVHi1hhBLN/60iZNUpuKFt/kTlp5yjKpINGQ3amPdYRS9VOG2ZSf/uAGFwKVBRAzI8W2gAmYbvZWSxJYH3lcWidGY36Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fwZR+oqw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723452554;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OwC4nte0loPWoH63C4xjwOSwmBjnEoY6MDdlc6Wu5Pg=;
-	b=fwZR+oqwVEMeCSucKMYR3UiSs6WZptuaIKV0clprRVc6neYfJSNCqmyVvALRh9LWKqGRPI
-	1OCJpXxakuKwfS1/8h5ITlnxr43XeKN2JdQ7rB6In7GXMUsLvaiuG8LeS22TRKdrxrjG1X
-	NfG9AoTeZ5ImBrxbBoeHOe2VPt7fA/k=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-102-5D8U4R8GMQKMKSNPeF0byg-1; Mon, 12 Aug 2024 04:49:11 -0400
-X-MC-Unique: 5D8U4R8GMQKMKSNPeF0byg-1
-Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-2ef3119461bso3905421fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:49:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723452549; x=1724057349;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OwC4nte0loPWoH63C4xjwOSwmBjnEoY6MDdlc6Wu5Pg=;
-        b=CqMzXEuOx0PNbxlVVNQ55r/2E1XQE/jXJMxdIkTf7/8h7rA52Hkqz1CeSR3h+7zmrD
-         PNGV9FBUROGlLeCesSTTMFEmacBscoFJt2HdAIeaaA271NLrU6k2rysOKinMGsFloIvb
-         ZQe9XYi9gykxQaEMnVD2nxgfRs43rUrnS2/eSdeBTT6zKw6NIi8TfZUsLAHoKqF/7CO8
-         4rqZ9ywZVC1y3PnaH/LxAfG5JVIQ8nAFZf9PNnmUFNaFg0AMbSNtuXGVi5sc5nGNRfkA
-         Ta2S1wsFgES/tJm0oYjImhoD4ownXAj4KT5iT3+wqDDQUhSJoMnzoRfei/+pXeS46Y5c
-         /Zag==
-X-Forwarded-Encrypted: i=1; AJvYcCUEZo5SsSpMUTOU4flo3atmI++0Cv4uhU16FW8HviEA6DVE5kuEFyzSb8ONcZWp82UGy9B+H9ULch0sMA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoUUtuUHu30gwfRXF81nfrvbEUZYGjjTON6cUkUObVanKgaLMR
-	zXQAY3Wxcc/USEkGgUdYxhER2G50tCz0Dza31jIiINWaOZ4JJEyfCp+aNHkhYB2KpNp5YqN+iLb
-	i6B3BGgit+j/IHxVdWzhJuVqzLCq4RuVB5h/snMd4lPRDm5UAVuUJmVxJ0OtxKw==
-X-Received: by 2002:a05:651c:211f:b0:2ef:2b6e:f8c2 with SMTP id 38308e7fff4ca-2f1a6cf274dmr36734201fa.6.1723452548697;
-        Mon, 12 Aug 2024 01:49:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFtg0UnRsq6/C+acuJPdFrws4/jgE8uY/bhz2Utn2VvCua2/5tUPpRIYaSV8z50btB64U10CQ==
-X-Received: by 2002:a05:651c:211f:b0:2ef:2b6e:f8c2 with SMTP id 38308e7fff4ca-2f1a6cf274dmr36734121fa.6.1723452547937;
-        Mon, 12 Aug 2024 01:49:07 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74ff9fsm180051485e9.28.2024.08.12.01.49.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 01:49:07 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	Mikael Pettersson <mikpelinux@gmail.com>
-Cc: linux-ide@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH] ata: Replace deprecated PCI devres functions
-Date: Mon, 12 Aug 2024 10:48:40 +0200
-Message-ID: <20240812084839.37580-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723452574; c=relaxed/simple;
+	bh=5uPRPN5eheGNqixwz13eCeIergYusE//EuMJ8tqGM+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ryoY+q6jiKIHkA8ufND6SyYfJve8i/v0/ZQelR5F0b/cZlgfCDzKXXyvUT6r+ZhPekZjbkYWh7byqeWUQ6/AC1cl8whVbPQpzRrjUXotE3TIUZGaZX+SUVODGO3oJWCbM4dUHHlpa0+PYZ3wWkr5erFy9Hp0/OPMWSAYSSsShBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OKq+9DI2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8DF8C4AF10;
+	Mon, 12 Aug 2024 08:49:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723452573;
+	bh=5uPRPN5eheGNqixwz13eCeIergYusE//EuMJ8tqGM+8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OKq+9DI22iO1gY+rAMSeXKMk3IXjj4LRTk9vFfBdJK+YCvwXj44pYWGnWPixAQF4Q
+	 FG1Tb/Mz99X3mCEJH/2PL8Czmfjt1Et2Oz98WUWX8hr1btq6cNkA5vd0EXGtfmN/Ed
+	 2A7u6yNJ2sZprMQCZevFfg77juz1CNWSrbRrSXuaP4EnmkgsDhPfsFO71Gtsq6p28K
+	 1CQfkrcS+Dp0nUxB1fkScSnqAs74QwnaHpgoaqjLHAkSv5xLE+Aqa+16J1aKTFjY3C
+	 RE4fsW6js4C9VzQcHNPTTHhL2K4HPWAVvVARZUm1QwCU9KSyh0W7ikkZRwNw+a/D7F
+	 bwYX91oKZqYcA==
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f1798eaee6so38773271fa.0;
+        Mon, 12 Aug 2024 01:49:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXWERMqbjW7nvD3srFS9H1Fl8XijPWl7w8LQeiExVTyLUtGWsvAGxuMmzf5kTA458jAY5iY7i1eCnkIdglLTxuQYUST9fKcB8nsnd9m
+X-Gm-Message-State: AOJu0Yw6h2tTZ/hy95KGvttWMSkWayePGS8ulpmTPSs7BYGc//qqib+e
+	tDrNHRjsZogtbOMX4oFlSes0Gu3KJbO0iKVfKMyw7YzSi4B8qWmfMFEEpDH+8TfRuia++PLoYER
+	htVmyT9U4Jz72kvRRlM5kTbM4VTE=
+X-Google-Smtp-Source: AGHT+IEu1I/euXckkb0M1wKhTAggZvIuXmpoYeEt2oHvrt45hAFQfW3epouCbnnBLzG+Krmv3XTtQ67iq3plycmuEQs=
+X-Received: by 2002:a2e:be9d:0:b0:2ef:2dfd:15e3 with SMTP id
+ 38308e7fff4ca-2f1a6cf2727mr75760691fa.19.1723452572139; Mon, 12 Aug 2024
+ 01:49:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240710065255.10338-1-ole0811sch@gmail.com> <20240710065255.10338-10-ole0811sch@gmail.com>
+In-Reply-To: <20240710065255.10338-10-ole0811sch@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 12 Aug 2024 17:48:55 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQca===4A_nzYw7o-BkbRwg9G0YBDmBMJPkvpqt9-eQCg@mail.gmail.com>
+Message-ID: <CAK7LNAQca===4A_nzYw7o-BkbRwg9G0YBDmBMJPkvpqt9-eQCg@mail.gmail.com>
+Subject: Re: [PATCH v4 09/12] kconfig: Add files with utility functions
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, jude.gyimah@rub.de, thorsten.berger@rub.de, 
+	deltaone@debian.org, jan.sollmann@rub.de, mcgrof@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The ata subsystem uses the PCI devres functions pcim_iomap_table() and
-pcim_request_regions(), which have been deprecated in commit e354bb84a4c1
-("PCI: Deprecate pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On Wed, Jul 10, 2024 at 3:54=E2=80=AFPM Ole Schuerks <ole0811sch@gmail.com>=
+ wrote:
+>
+> This commit contains various helper functions used in the project.
+>
+> Co-developed-by: Patrick Franz <deltaone@debian.org>
+> Signed-off-by: Patrick Franz <deltaone@debian.org>
+> Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
+> Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
+> Suggested-by: Sarah Nadi <nadi@ualberta.ca>
+> Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
+> Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
+> Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
+> ---
+>  scripts/kconfig/cf_utils.c | 1031 ++++++++++++++++++++++++++++++++++++
+>  scripts/kconfig/cf_utils.h |  115 ++++
+>  2 files changed, 1146 insertions(+)
+>  create mode 100644 scripts/kconfig/cf_utils.c
+>  create mode 100644 scripts/kconfig/cf_utils.h
+>
+> diff --git a/scripts/kconfig/cf_utils.c b/scripts/kconfig/cf_utils.c
+> new file mode 100644
+> index 000000000000..bcffd0a4fc1b
+> --- /dev/null
+> +++ b/scripts/kconfig/cf_utils.c
+> @@ -0,0 +1,1031 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2023 Patrick Franz <deltaone@debian.org>
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <assert.h>
+> +#include <locale.h>
+> +#include <stdarg.h>
+> +#include <stdbool.h>
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <string.h>
+> +#include <time.h>
+> +#include <unistd.h>
+> +#include <ctype.h>
+> +
+> +#include "configfix.h"
+> +#include "internal.h"
+> +
+> +#define SATMAP_INIT_SIZE 2
+> +
+> +static PicoSAT *pico;
+> +
+> +static void unfold_cnf_clause(struct pexpr *e);
+> +static void build_cnf_tseytin(struct pexpr *e, struct cfdata *data);
+> +
+> +static void build_cnf_tseytin_top_and(struct pexpr *e, struct cfdata *da=
+ta);
+> +static void build_cnf_tseytin_top_or(struct pexpr *e, struct cfdata *dat=
+a);
+> +
+> +static void build_cnf_tseytin_tmp(struct pexpr *e, struct fexpr *t, stru=
+ct cfdata *data);
+> +static void build_cnf_tseytin_and(struct pexpr *e, struct fexpr *t, stru=
+ct cfdata *data);
+> +static void build_cnf_tseytin_or(struct pexpr *e, struct fexpr *t, struc=
+t cfdata *data);
+> +static int pexpr_satval(struct pexpr *e);
+> +
+> +/*
+> + * parse Kconfig-file and read .config
+> + */
+> +void init_config(const char *Kconfig_file)
+> +{
+> +       conf_parse(Kconfig_file);
+> +       conf_read(NULL);
+> +}
+> +
+> +/*
+> + * initialize satmap
+> + */
+> +void init_data(struct cfdata *data)
+> +{
+> +       /* create hashtable with all fexpr */
+> +       data->satmap =3D xcalloc(SATMAP_INIT_SIZE, sizeof(**data->satmap)=
+);
+> +       data->satmap_size =3D SATMAP_INIT_SIZE;
 
-These functions internally already use their successors, notably
-pcim_request_region(), so they are quite trivial to replace.
 
-However, one thing special about ata is that it stores the iomap table
-provided by pcim_iomap_table() in struct ata_host. This can be replaced
-with a __iomem pointer table, statically allocated with size
-PCI_STD_NUM_BARS so it can house the maximum number of PCI BARs. The
-only further modification then necessary is to explicitly fill that
-table, whereas before it was filled implicitly by
-pcim_request_regions().
+This is a bug.
 
-Modify the iomap table in struct ata_host.
+xcalloc() allocated much bigger memory than used.
 
-Replace all calls to pcim_request_region() with ones to
-pcim_request_region().
 
-Remove all calls to pcim_iomap_table().
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
-Alright, so the most important thing first:
-Why is this patch so large?
-I do have it in form of a series consisting of 21 patches. Unfortunately
-with that, providing a series where each commit is buildable is a bit
-hacky because host->iomap contains a 'const'. So I'd have to create
-separate non-const table and then phase out the const-version at the
-end.
 
-I could do that, but wanted to probe the ata subsystem first to see if
-you'd like this version, too ;-)
+> +       printd("done.\n");
+> +}
+> +
+> +/*
+> + * create SAT-variables for all fexpr
+> + */
+> +void create_sat_variables(struct cfdata *data)
+> +{
+> +       struct symbol *sym;
+> +
+> +       printd("Creating SAT-variables...");
+> +
+> +       for_all_symbols(sym) {
+> +               sym->constraints =3D pexpr_list_init();
+> +               sym_create_fexpr(sym, data);
+> +       }
+> +
+> +       printd("done.\n");
+> +}
+> +
+> +/*
+> + * create various constants
+> + */
+> +void create_constants(struct cfdata *data)
+> +{
+> +       printd("Creating constants...");
+> +
+> +       /* create TRUE and FALSE constants */
+> +       data->constants->const_false =3D fexpr_create(data->sat_variable_=
+nr++, FE_FALSE, "False");
+> +       // const_false =3D fexpr_create(sat_variable_nr++, FE_FALSE, "Fal=
+se");
+> +       fexpr_add_to_satmap(data->constants->const_false, data);
+> +
+> +       data->constants->const_true =3D fexpr_create(data->sat_variable_n=
+r++, FE_TRUE, "True");
+> +       fexpr_add_to_satmap(data->constants->const_true, data);
+> +
+> +       /* add fexpr of constants to tristate constants */
+> +       symbol_yes.fexpr_y =3D data->constants->const_true;
+> +       symbol_yes.fexpr_m =3D data->constants->const_false;
+> +
+> +       symbol_mod.fexpr_y =3D data->constants->const_false;
+> +       symbol_mod.fexpr_m =3D data->constants->const_true;
+> +
+> +       symbol_no.fexpr_y =3D data->constants->const_false;
+> +       symbol_no.fexpr_m =3D data->constants->const_false;
+> +
+> +       /* create symbols yes/mod/no as fexpr */
+> +       data->constants->symbol_yes_fexpr =3D fexpr_create(0, FE_SYMBOL, =
+"y");
+> +       data->constants->symbol_yes_fexpr->sym =3D &symbol_yes;
+> +       data->constants->symbol_yes_fexpr->tri =3D yes;
+> +
+> +       data->constants->symbol_mod_fexpr =3D fexpr_create(0, FE_SYMBOL, =
+"m");
+> +       data->constants->symbol_mod_fexpr->sym =3D &symbol_mod;
+> +       data->constants->symbol_mod_fexpr->tri =3D mod;
+> +
+> +       data->constants->symbol_no_fexpr =3D fexpr_create(0, FE_SYMBOL, "=
+n");
+> +       data->constants->symbol_no_fexpr->sym =3D &symbol_no;
+> +       data->constants->symbol_no_fexpr->tri =3D no;
+> +
+> +       printd("done.\n");
+> +}
+> +
+> +/*
+> + * create a temporary SAT-variable
+> + */
+> +struct fexpr *create_tmpsatvar(struct cfdata *data)
+> +{
+> +       char *name =3D get_tmp_var_as_char(data->tmp_variable_nr);
+> +       struct fexpr *t =3D fexpr_create(data->sat_variable_nr++, FE_TMPS=
+ATVAR, name);
+> +
+> +       ++data->tmp_variable_nr;
+> +       fexpr_add_to_satmap(t, data);
+> +
+> +       free(name);
+> +       return t;
+> +}
+> +
+> +/*
+> + * return a temporary SAT variable as string
+> + */
+> +char *get_tmp_var_as_char(int i)
+> +{
+> +       char *val =3D malloc(sizeof(char) * 18);
+> +
+> +       snprintf(val, 18, "T_%d", i);
+> +       return val;
+> +}
+> +
+> +/*
+> + * return a tristate value as a char *
+> + */
+> +char *tristate_get_char(tristate val)
+> +{
+> +       switch (val) {
+> +       case yes:
+> +               return "yes";
+> +       case mod:
+> +               return "mod";
+> +       case no:
+> +               return "no";
+> +       default:
+> +               return "";
+> +       }
+> +}
+> +
+> +/*
+> + *check whether an expr can evaluate to mod
+> + */
+> +bool expr_can_evaluate_to_mod(struct expr *e)
+> +{
+> +       if (!e)
+> +               return false;
+> +
+> +       switch (e->type) {
+> +       case E_SYMBOL:
+> +               return e->left.sym =3D=3D &symbol_mod || e->left.sym->typ=
+e =3D=3D S_TRISTATE ? true : false;
+> +       case E_AND:
+> +       case E_OR:
+> +               return expr_can_evaluate_to_mod(e->left.expr) ||
+> +                      expr_can_evaluate_to_mod(e->right.expr);
+> +       case E_NOT:
+> +               return expr_can_evaluate_to_mod(e->left.expr);
+> +       default:
+> +               return false;
+> +       }
+> +}
+> +
+> +/*
+> + * check whether an expr is a non-Boolean constant
+> + */
+> +bool expr_is_nonbool_constant(struct expr *e)
+> +{
+> +       if (e->type !=3D E_SYMBOL)
+> +               return false;
+> +       if (e->left.sym->type !=3D S_UNKNOWN)
+> +               return false;
+> +
+> +       if (e->left.sym->flags & SYMBOL_CONST)
+> +               return true;
+> +
+> +       return string_is_number(e->left.sym->name) || string_is_hex(e->le=
+ft.sym->name);
+> +}
+> +
+> +/*
+> + * check whether a symbol is a non-Boolean constant
+> + */
+> +bool sym_is_nonbool_constant(struct symbol *sym)
+> +{
+> +       if (sym->type !=3D S_UNKNOWN)
+> +               return false;
+> +
+> +       if (sym->flags & SYMBOL_CONST)
+> +               return true;
+> +
+> +       return string_is_number(sym->name) || string_is_hex(sym->name);
+> +}
+> +
+> +/*
+> + * print an expr
+> + */
+> +static void print_expr_util(struct expr *e, int prevtoken)
+> +{
+> +       if (!e)
+> +               return;
+> +
+> +       switch (e->type) {
+> +       case E_SYMBOL:
+> +               if (sym_get_name(e->left.sym) !=3D NULL)
+> +                       printf("%s", sym_get_name(e->left.sym));
+> +               else
+> +                       printf("left was null\n");
+> +               break;
+> +       case E_NOT:
+> +               printf("!");
+> +               print_expr_util(e->left.expr, E_NOT);
+> +               break;
+> +       case E_AND:
+> +               if (prevtoken !=3D E_AND && prevtoken !=3D 0)
+> +                       printf("(");
+> +               print_expr_util(e->left.expr, E_AND);
+> +               printf(" && ");
+> +               print_expr_util(e->right.expr, E_AND);
+> +               if (prevtoken !=3D E_AND && prevtoken !=3D 0)
+> +                       printf(")");
+> +               break;
+> +       case E_OR:
+> +               if (prevtoken !=3D E_OR && prevtoken !=3D 0)
+> +                       printf("(");
+> +               print_expr_util(e->left.expr, E_OR);
+> +               printf(" || ");
+> +               print_expr_util(e->right.expr, E_OR);
+> +               if (prevtoken !=3D E_OR && prevtoken !=3D 0)
+> +                       printf(")");
+> +               break;
+> +       case E_EQUAL:
+> +       case E_UNEQUAL:
+> +               if (e->left.sym->name)
+> +                       printf("%s", e->left.sym->name);
+> +               else
+> +                       printf("left was null\n");
+> +               printf("%s", e->type =3D=3D E_EQUAL ? "=3D" : "!=3D");
+> +               printf("%s", e->right.sym->name);
+> +               break;
+> +       case E_LEQ:
+> +       case E_LTH:
+> +               if (e->left.sym->name)
+> +                       printf("%s", e->left.sym->name);
+> +               else
+> +                       printf("left was null\n");
+> +               printf("%s", e->type =3D=3D E_LEQ ? "<=3D" : "<");
+> +               printf("%s", e->right.sym->name);
+> +               break;
+> +       case E_GEQ:
+> +       case E_GTH:
+> +               if (e->left.sym->name)
+> +                       printf("%s", e->left.sym->name);
+> +               else
+> +                       printf("left was null\n");
+> +               printf("%s", e->type =3D=3D E_GEQ ? ">=3D" : ">");
+> +               printf("%s", e->right.sym->name);
+> +               break;
+> +       case E_RANGE:
+> +               printf("[");
+> +               printf("%s", e->left.sym->name);
+> +               printf(" ");
+> +               printf("%s", e->right.sym->name);
+> +               printf("]");
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +}
+> +void print_expr(char *tag, struct expr *e, int prevtoken)
+> +{
+> +       printf("%s ", tag);
+> +       print_expr_util(e, prevtoken);
+> +       printf("\n");
+> +}
+> +
 
-That being said, I think the most critical parts of this patch are the
-changes to:
-  - sata_via.c (bitmask 0x3f -> 6 ones set == PCI_STD_NUM_BARS) and
-  - libata-sff.c, which does some very.. clever.. bitmask magic. Took me
-    a while to even figure out what it is supposed to do.
 
-So I suggest to review these parts especially carefully.
+This is the same as the existing expr_fprint() except that
+it prints the 'tag'.
 
-This series depends on pcim_iomap_region() being public, which has been
-approved by Bjorn in this series for v6.12:
-https://lore.kernel.org/all/20240807083018.8734-2-pstanner@redhat.com/
 
-Let me know what you think. If you prefer a separate patches version, I
-can provide that at some point in the future probably.
+If you need this, presumably you need to do code refactoring.
 
-P.
----
- drivers/ata/ata_piix.c      |  7 +++---
- drivers/ata/libata-sff.c    | 50 ++++++++++++++++++++++++++++++-------
- drivers/ata/pata_atp867x.c  | 13 ++++++----
- drivers/ata/pata_hpt3x3.c   |  8 +++---
- drivers/ata/pata_ninja32.c  | 10 ++++----
- drivers/ata/pata_pdc2027x.c | 11 ++++----
- drivers/ata/pata_sil680.c   | 11 ++++----
- drivers/ata/pdc_adma.c      |  9 +++----
- drivers/ata/sata_inic162x.c | 10 +++-----
- drivers/ata/sata_mv.c       |  8 +++---
- drivers/ata/sata_nv.c       |  8 +++---
- drivers/ata/sata_promise.c  |  7 +++---
- drivers/ata/sata_qstor.c    |  7 +++---
- drivers/ata/sata_sil.c      |  7 +++---
- drivers/ata/sata_sil24.c    | 20 ++++++++-------
- drivers/ata/sata_sis.c      |  8 +++---
- drivers/ata/sata_svw.c      |  9 ++++---
- drivers/ata/sata_sx4.c      | 17 ++++++++++---
- drivers/ata/sata_via.c      | 31 ++++++++++++++---------
- drivers/ata/sata_vsc.c      |  7 +++---
- include/linux/libata.h      |  7 +++++-
- 21 files changed, 163 insertions(+), 102 deletions(-)
 
-diff --git a/drivers/ata/ata_piix.c b/drivers/ata/ata_piix.c
-index ec3c5bd1f813..c1071ca01ba4 100644
---- a/drivers/ata/ata_piix.c
-+++ b/drivers/ata/ata_piix.c
-@@ -1457,10 +1457,9 @@ static int piix_init_sidpr(struct ata_host *host)
- 	    pci_resource_len(pdev, PIIX_SIDPR_BAR) != PIIX_SIDPR_LEN)
- 		return 0;
- 
--	if (pcim_iomap_regions(pdev, 1 << PIIX_SIDPR_BAR, DRV_NAME))
--		return 0;
--
--	hpriv->sidpr = pcim_iomap_table(pdev)[PIIX_SIDPR_BAR];
-+	hpriv->sidpr = pcim_iomap_region(pdev, PIIX_SIDPR_BAR, DRV_NAME);
-+	if (IS_ERR(hpriv->sidpr))
-+		return PTR_ERR(hpriv->sidpr);
- 
- 	/* SCR access via SIDPR doesn't work on some configurations.
- 	 * Give it a test drive by inhibiting power save modes which
-diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-index 250f7dae05fd..d58db8226436 100644
---- a/drivers/ata/libata-sff.c
-+++ b/drivers/ata/libata-sff.c
-@@ -2153,12 +2153,13 @@ int ata_pci_sff_init_host(struct ata_host *host)
- 	struct pci_dev *pdev = to_pci_dev(gdev);
- 	unsigned int mask = 0;
- 	int i, rc;
-+	const char *drv_name = dev_driver_string(gdev);
- 
- 	/* request, iomap BARs and init port addresses accordingly */
- 	for (i = 0; i < 2; i++) {
- 		struct ata_port *ap = host->ports[i];
- 		int base = i * 2;
--		void __iomem * const *iomap;
-+		void __iomem *io_tmp;
- 
- 		if (ata_port_is_dummy(ap))
- 			continue;
-@@ -2172,8 +2173,41 @@ int ata_pci_sff_init_host(struct ata_host *host)
- 			continue;
- 		}
- 
--		rc = pcim_iomap_regions(pdev, 0x3 << base,
--					dev_driver_string(gdev));
-+		/*
-+		 * In a first loop run, we want to get BARs 0 and 1.
-+		 * In a second run, we want BARs 2 and 3.
-+		 */
-+		if (i == 0) {
-+			io_tmp = pcim_iomap_region(pdev, 0, drv_name);
-+			if (IS_ERR(io_tmp)) {
-+				rc = PTR_ERR(io_tmp);
-+				goto err;
-+			}
-+			host->iomap[0] = io_tmp;
-+
-+			io_tmp = pcim_iomap_region(pdev, 1, drv_name);
-+			if (IS_ERR(io_tmp)) {
-+				rc = PTR_ERR(io_tmp);
-+				goto err;
-+			}
-+			host->iomap[1] = io_tmp;
-+		} else {
-+			io_tmp = pcim_iomap_region(pdev, 2, drv_name);
-+			if (IS_ERR(io_tmp)) {
-+				rc = PTR_ERR(io_tmp);
-+				goto err;
-+			}
-+			host->iomap[2] = io_tmp;
-+
-+			io_tmp = pcim_iomap_region(pdev, 3, drv_name);
-+			if (IS_ERR(io_tmp)) {
-+				rc = PTR_ERR(io_tmp);
-+				goto err;
-+			}
-+			host->iomap[3] = io_tmp;
-+		}
-+
-+err:
- 		if (rc) {
- 			dev_warn(gdev,
- 				 "failed to request/iomap BARs for port %d (errno=%d)\n",
-@@ -2183,12 +2217,11 @@ int ata_pci_sff_init_host(struct ata_host *host)
- 			ap->ops = &ata_dummy_port_ops;
- 			continue;
- 		}
--		host->iomap = iomap = pcim_iomap_table(pdev);
- 
--		ap->ioaddr.cmd_addr = iomap[base];
-+		ap->ioaddr.cmd_addr = host->iomap[base];
- 		ap->ioaddr.altstatus_addr =
- 		ap->ioaddr.ctl_addr = (void __iomem *)
--			((unsigned long)iomap[base + 1] | ATA_PCI_CTL_OFS);
-+			((unsigned long)host->iomap[base + 1] | ATA_PCI_CTL_OFS);
- 		ata_sff_std_ports(&ap->ioaddr);
- 
- 		ata_port_desc(ap, "cmd 0x%llx ctl 0x%llx",
-@@ -3095,12 +3128,11 @@ void ata_pci_bmdma_init(struct ata_host *host)
- 		ata_bmdma_nodma(host, "failed to set dma mask");
- 
- 	/* request and iomap DMA region */
--	rc = pcim_iomap_regions(pdev, 1 << 4, dev_driver_string(gdev));
--	if (rc) {
-+	host->iomap[4] = pcim_iomap_region(pdev, 4, dev_driver_string(gdev));
-+	if (IS_ERR(host->iomap[4])) {
- 		ata_bmdma_nodma(host, "failed to request/iomap BAR4");
- 		return;
- 	}
--	host->iomap = pcim_iomap_table(pdev);
- 
- 	for (i = 0; i < 2; i++) {
- 		struct ata_port *ap = host->ports[i];
-diff --git a/drivers/ata/pata_atp867x.c b/drivers/ata/pata_atp867x.c
-index aaef5924f636..4b47cb92cbe6 100644
---- a/drivers/ata/pata_atp867x.c
-+++ b/drivers/ata/pata_atp867x.c
-@@ -405,17 +405,20 @@ static int atp867x_ata_pci_sff_init_host(struct ata_host *host)
- 	struct device *gdev = host->dev;
- 	struct pci_dev *pdev = to_pci_dev(gdev);
- 	unsigned int mask = 0;
-+	void __iomem *iomem;
- 	int i, rc;
- 
- 	/*
- 	 * do not map rombase
- 	 */
--	rc = pcim_iomap_regions(pdev, 1 << ATP867X_BAR_IOBASE, DRV_NAME);
--	if (rc == -EBUSY)
--		pcim_pin_device(pdev);
--	if (rc)
-+	iomem = pcim_iomap_region(pdev, ATP867X_BAR_IOBASE, DRV_NAME);
-+	if (IS_ERR(iomem)) {
-+		rc = PTR_ERR(iomem);
-+		if (rc == -EBUSY)
-+			pcim_pin_device(pdev);
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
-+	}
-+	host->iomap[ATP867X_BAR_IOBASE] = iomem;
- 
- 	atp867x_check_res(pdev);
- 
-diff --git a/drivers/ata/pata_hpt3x3.c b/drivers/ata/pata_hpt3x3.c
-index d65c586b5ad0..7291d66a6682 100644
---- a/drivers/ata/pata_hpt3x3.c
-+++ b/drivers/ata/pata_hpt3x3.c
-@@ -215,17 +215,19 @@ static int hpt3x3_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return rc;
- 
- 	/* Everything is relative to BAR4 if we set up this way */
--	rc = pcim_iomap_regions(pdev, 1 << 4, DRV_NAME);
-+	base = pcim_iomap_region(pdev, 4, DRV_NAME);
-+	if (IS_ERR(base))
-+		rc = PTR_ERR(base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
-+
- 	rc = dma_set_mask_and_coherent(&pdev->dev, ATA_DMA_MASK);
- 	if (rc)
- 		return rc;
- 
--	base = host->iomap[4];	/* Bus mastering base */
-+	host->iomap[4] = base;	/* Bus mastering base */
- 
- 	for (i = 0; i < host->n_ports; i++) {
- 		struct ata_port *ap = host->ports[i];
-diff --git a/drivers/ata/pata_ninja32.c b/drivers/ata/pata_ninja32.c
-index 76a91013d27d..8769e5bb4819 100644
---- a/drivers/ata/pata_ninja32.c
-+++ b/drivers/ata/pata_ninja32.c
-@@ -116,13 +116,15 @@ static int ninja32_init_one(struct pci_dev *dev, const struct pci_device_id *id)
- 	rc = pcim_enable_device(dev);
- 	if (rc)
- 		return rc;
--	rc = pcim_iomap_regions(dev, 1 << 0, DRV_NAME);
-+
-+	base = pcim_iomap_region(dev, 0, DRV_NAME);
-+	if (IS_ERR(base))
-+		rc = PTR_ERR(base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(dev);
- 	if (rc)
- 		return rc;
- 
--	host->iomap = pcim_iomap_table(dev);
- 	rc = dma_set_mask_and_coherent(&dev->dev, ATA_DMA_MASK);
- 	if (rc)
- 		return rc;
-@@ -130,9 +132,7 @@ static int ninja32_init_one(struct pci_dev *dev, const struct pci_device_id *id)
- 
- 	/* Set up the register mappings. We use the I/O mapping as only the
- 	   older chips also have MMIO on BAR 1 */
--	base = host->iomap[0];
--	if (!base)
--		return -ENOMEM;
-+	host->iomap[0] = base;
- 	ap->ops = &ninja32_port_ops;
- 	ap->pio_mask = ATA_PIO4;
- 	ap->flags |= ATA_FLAG_SLAVE_POSS;
-diff --git a/drivers/ata/pata_pdc2027x.c b/drivers/ata/pata_pdc2027x.c
-index 6820c5597b14..360b8d7e08bf 100644
---- a/drivers/ata/pata_pdc2027x.c
-+++ b/drivers/ata/pata_pdc2027x.c
-@@ -702,17 +702,16 @@ static int pdc2027x_init_one(struct pci_dev *pdev,
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev, 1 << PDC_MMIO_BAR, DRV_NAME);
--	if (rc)
--		return rc;
--	host->iomap = pcim_iomap_table(pdev);
-+	mmio_base = pcim_iomap_region(pdev, PDC_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(mmio_base))
-+		return PTR_ERR(mmio_base);
-+
-+	host->iomap[PDC_MMIO_BAR] = mmio_base;
- 
- 	rc = dma_set_mask_and_coherent(&pdev->dev, ATA_DMA_MASK);
- 	if (rc)
- 		return rc;
- 
--	mmio_base = host->iomap[PDC_MMIO_BAR];
--
- 	for (i = 0; i < 2; i++) {
- 		struct ata_port *ap = host->ports[i];
- 
-diff --git a/drivers/ata/pata_sil680.c b/drivers/ata/pata_sil680.c
-index abe64b5f83cf..8a17df73412e 100644
---- a/drivers/ata/pata_sil680.c
-+++ b/drivers/ata/pata_sil680.c
-@@ -360,15 +360,16 @@ static int sil680_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 	/* Try to acquire MMIO resources and fallback to PIO if
- 	 * that fails
- 	 */
--	rc = pcim_iomap_regions(pdev, 1 << SIL680_MMIO_BAR, DRV_NAME);
--	if (rc)
-+	mmio_base = pcim_iomap_region(pdev, SIL680_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(mmio_base)) {
-+		rc = PTR_ERR(mmio_base);
- 		goto use_ioports;
-+	}
- 
- 	/* Allocate host and set it up */
- 	host = ata_host_alloc_pinfo(&pdev->dev, ppi, 2);
- 	if (!host)
- 		return -ENOMEM;
--	host->iomap = pcim_iomap_table(pdev);
- 
- 	/* Setup DMA masks */
- 	rc = dma_set_mask_and_coherent(&pdev->dev, ATA_DMA_MASK);
-@@ -376,8 +377,8 @@ static int sil680_init_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return rc;
- 	pci_set_master(pdev);
- 
--	/* Get MMIO base and initialize port addresses */
--	mmio_base = host->iomap[SIL680_MMIO_BAR];
-+	/* Set MMIO base in table and initialize port addresses */
-+	host->iomap[SIL680_MMIO_BAR] = mmio_base;
- 	host->ports[0]->ioaddr.bmdma_addr = mmio_base + 0x00;
- 	host->ports[0]->ioaddr.cmd_addr = mmio_base + 0x80;
- 	host->ports[0]->ioaddr.ctl_addr = mmio_base + 0x8a;
-diff --git a/drivers/ata/pdc_adma.c b/drivers/ata/pdc_adma.c
-index 8e6b2599f0d5..f6fe0645c4b8 100644
---- a/drivers/ata/pdc_adma.c
-+++ b/drivers/ata/pdc_adma.c
-@@ -568,11 +568,10 @@ static int adma_ata_init_one(struct pci_dev *pdev,
- 	if ((pci_resource_flags(pdev, 4) & IORESOURCE_MEM) == 0)
- 		return -ENODEV;
- 
--	rc = pcim_iomap_regions(pdev, 1 << ADMA_MMIO_BAR, DRV_NAME);
--	if (rc)
--		return rc;
--	host->iomap = pcim_iomap_table(pdev);
--	mmio_base = host->iomap[ADMA_MMIO_BAR];
-+	mmio_base = pcim_iomap_region(pdev, ADMA_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(mmio_base))
-+		return PTR_ERR(mmio_base);
-+	host->iomap[ADMA_MMIO_BAR] = mmio_base;
- 
- 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
- 	if (rc) {
-diff --git a/drivers/ata/sata_inic162x.c b/drivers/ata/sata_inic162x.c
-index db9c255dc9f2..9512c920e4f6 100644
---- a/drivers/ata/sata_inic162x.c
-+++ b/drivers/ata/sata_inic162x.c
-@@ -817,7 +817,6 @@ static int inic_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	const struct ata_port_info *ppi[] = { &inic_port_info, NULL };
- 	struct ata_host *host;
- 	struct inic_host_priv *hpriv;
--	void __iomem * const *iomap;
- 	int mmio_bar;
- 	int i, rc;
- 
-@@ -845,11 +844,10 @@ static int inic_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	else
- 		mmio_bar = MMIO_BAR_CARDBUS;
- 
--	rc = pcim_iomap_regions(pdev, 1 << mmio_bar, DRV_NAME);
--	if (rc)
--		return rc;
--	host->iomap = iomap = pcim_iomap_table(pdev);
--	hpriv->mmio_base = iomap[mmio_bar];
-+	hpriv->mmio_base = pcim_iomap_region(pdev, mmio_bar, DRV_NAME);
-+	if (IS_ERR(hpriv->mmio_base))
-+		return PTR_ERR(hpriv->mmio_base);
-+	host->iomap[mmio_bar] = hpriv->mmio_base;
- 	hpriv->cached_hctl = readw(hpriv->mmio_base + HOST_CTL);
- 
- 	for (i = 0; i < NR_PORTS; i++) {
-diff --git a/drivers/ata/sata_mv.c b/drivers/ata/sata_mv.c
-index 05c905827dc5..6844654fb154 100644
---- a/drivers/ata/sata_mv.c
-+++ b/drivers/ata/sata_mv.c
-@@ -4083,7 +4083,6 @@ static int mv_platform_probe(struct platform_device *pdev)
- 	host->private_data = hpriv;
- 	hpriv->board_idx = chip_soc;
- 
--	host->iomap = NULL;
- 	hpriv->base = devm_ioremap(&pdev->dev, res->start,
- 				   resource_size(res));
- 	if (!hpriv->base)
-@@ -4392,13 +4391,14 @@ static int mv_pci_init_one(struct pci_dev *pdev,
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev, 1 << MV_PRIMARY_BAR, DRV_NAME);
-+	hpriv->base = pcim_iomap_region(pdev, MV_PRIMARY_BAR, DRV_NAME);
-+	if (IS_ERR(hpriv->base))
-+		rc = PTR_ERR(hpriv->base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
--	hpriv->base = host->iomap[MV_PRIMARY_BAR];
-+	host->iomap[MV_PRIMARY_BAR] = hpriv->base;
- 
- 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
- 	if (rc) {
-diff --git a/drivers/ata/sata_nv.c b/drivers/ata/sata_nv.c
-index 36d99043ef50..771f73452670 100644
---- a/drivers/ata/sata_nv.c
-+++ b/drivers/ata/sata_nv.c
-@@ -2353,12 +2353,12 @@ static int nv_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	host->private_data = hpriv;
- 
- 	/* request and iomap NV_MMIO_BAR */
--	rc = pcim_iomap_regions(pdev, 1 << NV_MMIO_BAR, DRV_NAME);
--	if (rc)
--		return rc;
-+	base = pcim_iomap_region(pdev, NV_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	/* configure SCR access */
--	base = host->iomap[NV_MMIO_BAR];
-+	host->iomap[NV_MMIO_BAR] = base;
- 	host->ports[0]->ioaddr.scr_addr = base + NV_PORT0_SCR_REG_OFFSET;
- 	host->ports[1]->ioaddr.scr_addr = base + NV_PORT1_SCR_REG_OFFSET;
- 
-diff --git a/drivers/ata/sata_promise.c b/drivers/ata/sata_promise.c
-index 2df1a070b25a..b53bdd7712b3 100644
---- a/drivers/ata/sata_promise.c
-+++ b/drivers/ata/sata_promise.c
-@@ -1163,12 +1163,13 @@ static int pdc_ata_init_one(struct pci_dev *pdev,
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev, 1 << PDC_MMIO_BAR, DRV_NAME);
-+	host_mmio = pcim_iomap_region(pdev, PDC_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(host_mmio))
-+		rc = PTR_ERR(host_mmio);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host_mmio = pcim_iomap_table(pdev)[PDC_MMIO_BAR];
- 
- 	/* determine port configuration and setup host */
- 	n_ports = 2;
-@@ -1193,7 +1194,7 @@ static int pdc_ata_init_one(struct pci_dev *pdev,
- 		return -ENOMEM;
- 	spin_lock_init(&hpriv->hard_reset_lock);
- 	host->private_data = hpriv;
--	host->iomap = pcim_iomap_table(pdev);
-+	host->iomap[PDC_MMIO_BAR] = host_mmio;
- 
- 	is_sataii_tx4 = pdc_is_sataii_tx4(pi->flags);
- 	for (i = 0; i < host->n_ports; i++) {
-diff --git a/drivers/ata/sata_qstor.c b/drivers/ata/sata_qstor.c
-index 8a6286159044..2b645404687b 100644
---- a/drivers/ata/sata_qstor.c
-+++ b/drivers/ata/sata_qstor.c
-@@ -560,10 +560,9 @@ static int qs_ata_init_one(struct pci_dev *pdev,
- 	if ((pci_resource_flags(pdev, QS_MMIO_BAR) & IORESOURCE_MEM) == 0)
- 		return -ENODEV;
- 
--	rc = pcim_iomap_regions(pdev, 1 << QS_MMIO_BAR, DRV_NAME);
--	if (rc)
--		return rc;
--	host->iomap = pcim_iomap_table(pdev);
-+	host->iomap[QS_MMIO_BAR] = pcim_iomap_region(pdev, QS_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(host->iomap[QS_MMIO_BAR]))
-+		return PTR_ERR(host->iomap[QS_MMIO_BAR]);
- 
- 	rc = qs_set_dma_masks(pdev, host->iomap[QS_MMIO_BAR]);
- 	if (rc)
-diff --git a/drivers/ata/sata_sil.c b/drivers/ata/sata_sil.c
-index cc77c0248284..a6983b92f935 100644
---- a/drivers/ata/sata_sil.c
-+++ b/drivers/ata/sata_sil.c
-@@ -751,18 +751,19 @@ static int sil_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev, 1 << SIL_MMIO_BAR, DRV_NAME);
-+	mmio_base = pcim_iomap_region(pdev, SIL_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(mmio_base))
-+		rc = PTR_ERR(mmio_base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
- 
- 	rc = dma_set_mask_and_coherent(&pdev->dev, ATA_DMA_MASK);
- 	if (rc)
- 		return rc;
- 
--	mmio_base = host->iomap[SIL_MMIO_BAR];
-+	host->iomap[SIL_MMIO_BAR] = mmio_base;
- 
- 	for (i = 0; i < host->n_ports; i++) {
- 		struct ata_port *ap = host->ports[i];
-diff --git a/drivers/ata/sata_sil24.c b/drivers/ata/sata_sil24.c
-index 72c03cbdaff4..fc6e7c42ad23 100644
---- a/drivers/ata/sata_sil24.c
-+++ b/drivers/ata/sata_sil24.c
-@@ -1261,7 +1261,7 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	extern int __MARKER__sil24_cmd_block_is_sized_wrongly;
- 	struct ata_port_info pi = sil24_port_info[ent->driver_data];
- 	const struct ata_port_info *ppi[] = { &pi, NULL };
--	void __iomem * const *iomap;
-+	void __iomem *host_iomem, *port_iomem;
- 	struct ata_host *host;
- 	int rc;
- 	u32 tmp;
-@@ -1277,16 +1277,17 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev,
--				(1 << SIL24_HOST_BAR) | (1 << SIL24_PORT_BAR),
--				DRV_NAME);
--	if (rc)
--		return rc;
--	iomap = pcim_iomap_table(pdev);
-+	host_iomem = pcim_iomap_region(pdev, SIL24_HOST_BAR, DRV_NAME);
-+	if (IS_ERR(host_iomem))
-+		return PTR_ERR(host_iomem);
-+
-+	port_iomem = pcim_iomap_region(pdev, SIL24_PORT_BAR, DRV_NAME);
-+	if (IS_ERR(port_iomem))
-+		return PTR_ERR(port_iomem);
- 
- 	/* apply workaround for completion IRQ loss on PCI-X errata */
- 	if (pi.flags & SIL24_FLAG_PCIX_IRQ_WOC) {
--		tmp = readl(iomap[SIL24_HOST_BAR] + HOST_CTRL);
-+		tmp = readl(host_iomem + HOST_CTRL);
- 		if (tmp & (HOST_CTRL_TRDY | HOST_CTRL_STOP | HOST_CTRL_DEVSEL))
- 			dev_info(&pdev->dev,
- 				 "Applying completion IRQ loss on PCI-X errata fix\n");
-@@ -1299,7 +1300,8 @@ static int sil24_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 				    SIL24_FLAG2NPORTS(ppi[0]->flags));
- 	if (!host)
- 		return -ENOMEM;
--	host->iomap = iomap;
-+	host->iomap[SIL24_HOST_BAR] = host_iomem;
-+	host->iomap[SIL24_PORT_BAR] = port_iomem;
- 
- 	/* configure and activate the device */
- 	rc = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
-diff --git a/drivers/ata/sata_sis.c b/drivers/ata/sata_sis.c
-index ef8724986de3..45e4ae8c8996 100644
---- a/drivers/ata/sata_sis.c
-+++ b/drivers/ata/sata_sis.c
-@@ -280,10 +280,10 @@ static int sis_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	if (!(pi.flags & SIS_FLAG_CFGSCR)) {
- 		void __iomem *mmio;
- 
--		rc = pcim_iomap_regions(pdev, 1 << SIS_SCR_PCI_BAR, DRV_NAME);
--		if (rc)
--			return rc;
--		mmio = host->iomap[SIS_SCR_PCI_BAR];
-+		mmio = pcim_iomap_region(pdev, SIS_SCR_PCI_BAR, DRV_NAME);
-+		if (IS_ERR(mmio))
-+			return PTR_ERR(mmio);
-+		host->iomap[SIS_SCR_PCI_BAR] = mmio;
- 
- 		host->ports[0]->ioaddr.scr_addr = mmio;
- 		host->ports[1]->ioaddr.scr_addr = mmio + port2_start;
-diff --git a/drivers/ata/sata_svw.c b/drivers/ata/sata_svw.c
-index 598a872f6a08..21f68de6480d 100644
---- a/drivers/ata/sata_svw.c
-+++ b/drivers/ata/sata_svw.c
-@@ -451,14 +451,15 @@ static int k2_sata_init_one(struct pci_dev *pdev, const struct pci_device_id *en
- 		return -ENODEV;
- 	}
- 
--	/* Request and iomap PCI regions */
--	rc = pcim_iomap_regions(pdev, 1 << bar_pos, DRV_NAME);
-+	/* Request and iomap PCI region */
-+	mmio_base = pcim_iomap_region(pdev, bar_pos, DRV_NAME);
-+	if (IS_ERR(mmio_base))
-+		rc = PTR_ERR(mmio_base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
--	mmio_base = host->iomap[bar_pos];
-+	host->iomap[bar_pos] = mmio_base;
- 
- 	/* different controllers have different number of ports - currently 4 or 8 */
- 	/* All ports are on the same function. Multi-function device is no
-diff --git a/drivers/ata/sata_sx4.c b/drivers/ata/sata_sx4.c
-index a482741eb181..d115f6f66974 100644
---- a/drivers/ata/sata_sx4.c
-+++ b/drivers/ata/sata_sx4.c
-@@ -1390,6 +1390,7 @@ static int pdc_sata_init_one(struct pci_dev *pdev,
- 	struct ata_host *host;
- 	struct pdc_host_priv *hpriv;
- 	int i, rc;
-+	void __iomem *io_tmp;
- 
- 	ata_print_version_once(&pdev->dev, DRV_VERSION);
- 
-@@ -1406,13 +1407,23 @@ static int pdc_sata_init_one(struct pci_dev *pdev,
- 	if (rc)
- 		return rc;
- 
--	rc = pcim_iomap_regions(pdev, (1 << PDC_MMIO_BAR) | (1 << PDC_DIMM_BAR),
--				DRV_NAME);
-+	io_tmp = pcim_iomap_region(pdev, PDC_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(io_tmp))
-+		rc = PTR_ERR(io_tmp);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
-+	host->iomap[PDC_MMIO_BAR] = io_tmp;
-+
-+	io_tmp = pcim_iomap_region(pdev, PDC_DIMM_BAR, DRV_NAME);
-+	if (IS_ERR(io_tmp))
-+		rc = PTR_ERR(io_tmp);
-+	if (rc == -EBUSY)
-+		pcim_pin_device(pdev);
-+	if (rc)
-+		return rc;
-+	host->iomap[PDC_DIMM_BAR] = io_tmp;
- 
- 	for (i = 0; i < 4; i++) {
- 		struct ata_port *ap = host->ports[i];
-diff --git a/drivers/ata/sata_via.c b/drivers/ata/sata_via.c
-index 57cbf2cef618..73b78834fa3f 100644
---- a/drivers/ata/sata_via.c
-+++ b/drivers/ata/sata_via.c
-@@ -457,6 +457,7 @@ static int vt6420_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
- {
- 	const struct ata_port_info *ppi[] = { &vt6420_port_info, NULL };
- 	struct ata_host *host;
-+	void __iomem *iomem;
- 	int rc;
- 
- 	if (vt6420_hotplug) {
-@@ -469,11 +470,12 @@ static int vt6420_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
- 		return rc;
- 	*r_host = host;
- 
--	rc = pcim_iomap_regions(pdev, 1 << 5, DRV_NAME);
--	if (rc) {
-+	iomem = pcim_iomap_region(pdev, 5, DRV_NAME);
-+	if (IS_ERR(iomem)) {
- 		dev_err(&pdev->dev, "failed to iomap PCI BAR 5\n");
--		return rc;
-+		return PTR_ERR(iomem);
- 	}
-+	host->iomap[5] = iomem;
- 
- 	host->ports[0]->ioaddr.scr_addr = svia_scr_addr(host->iomap[5], 0);
- 	host->ports[1]->ioaddr.scr_addr = svia_scr_addr(host->iomap[5], 1);
-@@ -486,6 +488,7 @@ static int vt6421_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
- 	const struct ata_port_info *ppi[] =
- 		{ &vt6421_sport_info, &vt6421_sport_info, &vt6421_pport_info };
- 	struct ata_host *host;
-+	void __iomem *iomem;
- 	int i, rc;
- 
- 	*r_host = host = ata_host_alloc_pinfo(&pdev->dev, ppi, ARRAY_SIZE(ppi));
-@@ -494,13 +497,17 @@ static int vt6421_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
- 		return -ENOMEM;
- 	}
- 
--	rc = pcim_iomap_regions(pdev, 0x3f, DRV_NAME);
--	if (rc) {
--		dev_err(&pdev->dev, "failed to request/iomap PCI BARs (errno=%d)\n",
--			rc);
--		return rc;
-+	/* Request and ioremap _all_ PCI BARs. */
-+	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-+		iomem = pcim_iomap_region(pdev, i, DRV_NAME);
-+		if (IS_ERR(iomem)) {
-+			rc = PTR_ERR(iomem);
-+			dev_err(&pdev->dev, "failed to request/iomap PCI BARs (errno=%d)\n",
-+				rc);
-+			return rc;
-+		}
-+		host->iomap[i] = iomem;
- 	}
--	host->iomap = pcim_iomap_table(pdev);
- 
- 	for (i = 0; i < host->n_ports; i++)
- 		vt6421_init_addrs(host->ports[i]);
-@@ -519,10 +526,10 @@ static int vt8251_prepare_host(struct pci_dev *pdev, struct ata_host **r_host)
- 		return rc;
- 	*r_host = host;
- 
--	rc = pcim_iomap_regions(pdev, 1 << 5, DRV_NAME);
--	if (rc) {
-+	host->iomap[5] = pcim_iomap_region(pdev, 5, DRV_NAME);
-+	if (IS_ERR(host->iomap[5])) {
- 		dev_err(&pdev->dev, "failed to iomap PCI BAR 5\n");
--		return rc;
-+		return PTR_ERR(host->iomap[5]);
- 	}
- 
- 	/* 8251 hosts four sata ports as M/S of the two channels */
-diff --git a/drivers/ata/sata_vsc.c b/drivers/ata/sata_vsc.c
-index d39b87537168..df6aee088809 100644
---- a/drivers/ata/sata_vsc.c
-+++ b/drivers/ata/sata_vsc.c
-@@ -349,14 +349,15 @@ static int vsc_sata_init_one(struct pci_dev *pdev,
- 		return -ENODEV;
- 
- 	/* map IO regions and initialize host accordingly */
--	rc = pcim_iomap_regions(pdev, 1 << VSC_MMIO_BAR, DRV_NAME);
-+	mmio_base = pcim_iomap_region(pdev, VSC_MMIO_BAR, DRV_NAME);
-+	if (IS_ERR(mmio_base))
-+		rc = PTR_ERR(mmio_base);
- 	if (rc == -EBUSY)
- 		pcim_pin_device(pdev);
- 	if (rc)
- 		return rc;
--	host->iomap = pcim_iomap_table(pdev);
- 
--	mmio_base = host->iomap[VSC_MMIO_BAR];
-+	host->iomap[VSC_MMIO_BAR] = mmio_base;
- 
- 	for (i = 0; i < host->n_ports; i++) {
- 		struct ata_port *ap = host->ports[i];
-diff --git a/include/linux/libata.h b/include/linux/libata.h
-index 17394098bee9..80e8cdc1ed27 100644
---- a/include/linux/libata.h
-+++ b/include/linux/libata.h
-@@ -23,6 +23,9 @@
- #include <linux/cdrom.h>
- #include <linux/sched.h>
- #include <linux/async.h>
-+#ifdef CONFIG_PCI
-+#include <linux/pci_regs.h> /* for PCI_STD_NUM_BARS */
-+#endif /* CONFIG_PCI */
- 
- /*
-  * Define if arch has non-standard setup.  This is a _PCI_ standard
-@@ -577,7 +580,9 @@ struct ata_ioports {
- struct ata_host {
- 	spinlock_t		lock;
- 	struct device 		*dev;
--	void __iomem * const	*iomap;
-+#ifdef CONFIG_PCI
-+	void __iomem		*iomap[PCI_STD_NUM_BARS];
-+#endif /* CONFIG_PCI */
- 	unsigned int		n_ports;
- 	unsigned int		n_tags;			/* nr of NCQ tags */
- 	void			*private_data;
--- 
-2.45.2
 
+
+
+
+
+> +/*
+> + * check, if the symbol is a tristate-constant
+> + */
+> +bool sym_is_tristate_constant(struct symbol *sym)
+> +{
+> +       return sym =3D=3D &symbol_yes || sym =3D=3D &symbol_mod || sym =
+=3D=3D &symbol_no;
+> +}
+> +
+> +/*
+> + * check, if a symbol is of type boolean or tristate
+> + */
+> +bool sym_is_boolean(struct symbol *sym)
+> +{
+> +       return sym->type =3D=3D S_BOOLEAN || sym->type =3D=3D S_TRISTATE;
+> +}
+> +
+> +/*
+> + * check, if a symbol is a boolean/tristate or a tristate constant
+> + */
+> +bool sym_is_bool_or_triconst(struct symbol *sym)
+> +{
+> +       return sym_is_tristate_constant(sym) || sym_is_boolean(sym);
+> +}
+> +
+> +/*
+> + * check, if a symbol is of type int, hex, or string
+> + */
+> +bool sym_is_nonboolean(struct symbol *sym)
+> +{
+> +       return sym->type =3D=3D S_INT || sym->type =3D=3D S_HEX || sym->t=
+ype =3D=3D S_STRING;
+> +}
+> +
+> +/*
+> + * check, if a symbol has a prompt
+> + */
+> +bool sym_has_prompt(struct symbol *sym)
+> +{
+> +       struct property *prop;
+> +
+> +       for_all_prompts(sym, prop)
+> +               return true;
+> +
+> +       return false;
+> +}
+> +
+> +/*
+> + * return the prompt of the symbol if there is one, NULL otherwise
+> + */
+> +struct property *sym_get_prompt(struct symbol *sym)
+> +{
+> +       struct property *prop;
+> +
+> +       for_all_prompts(sym, prop)
+> +               return prop;
+> +
+> +       return NULL;
+> +}
+> +
+> +/*
+> + * return the condition for the property, NULL if there is none. To be p=
+expr_put
+> + * by caller.
+> + */
+> +struct pexpr *prop_get_condition(struct property *prop, struct cfdata *d=
+ata)
+> +{
+> +       if (prop =3D=3D NULL)
+> +               return NULL;
+> +
+> +       /* if there is no condition, return True */
+> +       if (!prop->visible.expr)
+> +               return pexf(data->constants->const_true);
+> +
+> +       return expr_calculate_pexpr_both(prop->visible.expr, data);
+> +}
+> +
+> +/*
+> + * return the default property, NULL if none exists or can be satisfied
+> + */
+> +struct property *sym_get_default_prop(struct symbol *sym)
+> +{
+> +       struct property *prop;
+> +
+> +       for_all_defaults(sym, prop) {
+> +               prop->visible.tri =3D expr_calc_value(prop->visible.expr)=
+;
+> +               if (prop->visible.tri !=3D no)
+> +                       return prop;
+> +       }
+> +       return NULL;
+> +}
+> +
+> +/*
+> + * check whether a non-boolean symbol has a value set
+> + */
+> +bool sym_nonbool_has_value_set(struct symbol *sym)
+> +{
+> +       /*
+> +        * The built constraints make the following constraints:
+> +        *
+> +        * visible -> not 'n'
+> +        * sym->dir_dep not fulfilled -> 'n'
+> +        * invisible -> (no default's condition is fulfilled <-> 'n')
+> +        */
+> +       struct property *prompt;
+> +       struct property *p;
+> +
+> +       if (!sym_is_nonboolean(sym))
+> +               return false;
+> +
+> +       /* cannot have a value with unmet dependencies */
+> +       if (sym->dir_dep.expr && sym->dir_dep.tri =3D=3D no)
+> +               return false;
+> +
+> +       /* visible prompt =3D> value set */
+> +       prompt =3D sym_get_prompt(sym);
+> +       if (prompt !=3D NULL && prompt->visible.tri !=3D no)
+> +               return true;
+> +
+> +       /* invisible prompt =3D> must get value from default value */
+> +       p =3D sym_get_default_prop(sym);
+> +       return p !=3D NULL;
+> +}
+> +
+> +/*
+> + * return pointer to the name of the symbol or the current prompt-text, =
+if it
+> + * is a choice symbol
+> + */
+> +const char *sym_get_name(struct symbol *sym)
+> +{
+> +       if (sym_is_choice(sym)) {
+> +               struct property *prompt =3D sym_get_prompt(sym);
+> +
+> +               if (prompt =3D=3D NULL)
+> +                       return "";
+> +
+> +               return prompt->text;
+> +       } else {
+> +               return sym->name;
+> +       }
+> +}
+> +
+> +/*
+> + * check whether symbol is to be changed
+> + */
+> +bool sym_is_sdv(struct sdv_list *list, struct symbol *sym)
+> +{
+> +       struct sdv_node *node;
+> +
+> +       sdv_list_for_each(node, list)
+> +               if (sym =3D=3D node->elem->sym)
+> +                       return true;
+> +
+> +       return false;
+> +}
+> +
+> +/*
+> + * print a symbol's name
+> + */
+> +void print_sym_name(struct symbol *sym)
+> +{
+> +       printf("Symbol: ");
+> +       if (sym_is_choice(sym)) {
+> +               struct property *prompt =3D sym_get_prompt(sym);
+> +
+> +               printf("(Choice) %s", prompt->text);
+> +       } else  {
+> +               printf("%s", sym->name);
+> +       }
+> +       printf("\n");
+> +}
+> +
+> +/*
+> + * print all constraints for a symbol
+> + */
+> +void print_sym_constraint(struct symbol *sym)
+> +{
+> +       struct pexpr_node *node;
+> +
+> +       pexpr_list_for_each(node, sym->constraints)
+> +               pexpr_print("::", node->elem, -1);
+> +}
+> +
+> +/*
+> + * print a default map
+> + */
+> +void print_default_map(struct defm_list *map)
+> +{
+> +       struct default_map *entry;
+> +       struct defm_node *node;
+> +
+> +       defm_list_for_each(node, map) {
+> +               struct gstr s =3D str_new();
+> +
+> +               entry =3D node->elem;
+> +
+> +               str_append(&s, "\t");
+> +               str_append(&s, str_get(&entry->val->name));
+> +               str_append(&s, " ->");
+> +               pexpr_print(strdup(str_get(&s)), entry->e, -1);
+> +               str_free(&s);
+> +       }
+> +}
+> +
+> +/*
+> + * check whether a string is a number
+> + */
+> +bool string_is_number(char *s)
+> +{
+> +       int len =3D strlen(s);
+> +       int i =3D 0;
+> +
+> +       while (i < len) {
+> +               if (!isdigit(s[i]))
+> +                       return false;
+> +               i++;
+> +       }
+> +
+> +       return true;
+> +}
+> +
+> +/*
+> + * check whether a string is a hexadecimal number
+> + */
+> +bool string_is_hex(char *s)
+> +{
+> +       int len =3D strlen(s);
+> +       int i =3D 2;
+> +
+> +       if (len >=3D 3 && s[0] =3D=3D '0' && s[1] =3D=3D 'x') {
+> +               while (i < len) {
+> +                       if (!isxdigit(s[i]))
+> +                               return false;
+> +                       i++;
+> +               }
+> +               return true;
+> +       } else {
+> +               return false;
+> +       }
+> +}
+> +
+> +/*
+> + * initialize PicoSAT
+> + */
+> +PicoSAT *initialize_picosat(void)
+> +{
+> +       PicoSAT *pico;
+> +
+> +       printd("\nInitializing PicoSAT...");
+> +       pico =3D picosat_init();
+> +       picosat_enable_trace_generation(pico);
+> +       printd("done.\n");
+> +
+> +       return pico;
+> +}
+> +
+> +/*
+> + * construct the CNF-clauses from the constraints
+> + */
+> +void construct_cnf_clauses(PicoSAT *p, struct cfdata *data)
+> +{
+> +       struct symbol *sym;
+> +
+> +       pico =3D p;
+> +
+> +       /* adding unit-clauses for constants */
+> +       sat_add_clause(2, pico, -(data->constants->const_false->satval));
+> +       sat_add_clause(2, pico, data->constants->const_true->satval);
+> +
+> +       for_all_symbols(sym) {
+> +               struct pexpr_node *node;
+> +
+> +               if (sym->type =3D=3D S_UNKNOWN)
+> +                       continue;
+> +
+> +               pexpr_list_for_each(node, sym->constraints) {
+> +                       if (pexpr_is_cnf(node->elem)) {
+> +                               unfold_cnf_clause(node->elem);
+> +                               picosat_add(pico, 0);
+> +                       } else {
+> +                               build_cnf_tseytin(node->elem, data);
+> +                       }
+> +
+> +               }
+> +       }
+> +}
+> +
+> +/*
+> + * helper function to add an expression to a CNF-clause
+> + */
+> +static void unfold_cnf_clause(struct pexpr *e)
+> +{
+> +       switch (e->type) {
+> +       case PE_SYMBOL:
+> +               picosat_add(pico, e->left.fexpr->satval);
+> +               break;
+> +       case PE_OR:
+> +               unfold_cnf_clause(e->left.pexpr);
+> +               unfold_cnf_clause(e->right.pexpr);
+> +               break;
+> +       case PE_NOT:
+> +               picosat_add(pico, -(e->left.pexpr->left.fexpr->satval));
+> +               break;
+> +       default:
+> +               perror("Not in CNF, FE_EQUALS.");
+> +       }
+> +}
+> +
+> +/*
+> + * build CNF-clauses for a pexpr not in CNF
+> + */
+> +static void build_cnf_tseytin(struct pexpr *e, struct cfdata *data)
+> +{
+> +       switch (e->type) {
+> +       case PE_AND:
+> +               build_cnf_tseytin_top_and(e, data);
+> +               break;
+> +       case PE_OR:
+> +               build_cnf_tseytin_top_or(e, data);
+> +               break;
+> +       default:
+> +               perror("Expression not a propositional logic formula. roo=
+t.");
+> +       }
+> +}
+> +
+> +/*
+> + * split up a pexpr of type AND as both sides must be satisfied
+> + */
+> +static void build_cnf_tseytin_top_and(struct pexpr *e, struct cfdata *da=
+ta)
+> +{
+> +       if (pexpr_is_cnf(e->left.pexpr))
+> +               unfold_cnf_clause(e->left.pexpr);
+> +       else
+> +               build_cnf_tseytin(e->left.pexpr, data);
+> +
+> +       if (pexpr_is_cnf(e->right.pexpr))
+> +               unfold_cnf_clause(e->right.pexpr);
+> +       else
+> +               build_cnf_tseytin(e->right.pexpr, data);
+> +
+> +}
+> +
+> +static void build_cnf_tseytin_top_or(struct pexpr *e, struct cfdata *dat=
+a)
+> +{
+> +       struct fexpr *t1 =3D NULL, *t2 =3D NULL;
+> +       int a, b;
+> +
+> +       /* set left side */
+> +       if (pexpr_is_symbol(e->left.pexpr)) {
+> +               a =3D pexpr_satval(e->left.pexpr);
+> +       } else {
+> +               t1 =3D create_tmpsatvar(data);
+> +               a =3D t1->satval;
+> +       }
+> +
+> +       /* set right side */
+> +       if (pexpr_is_symbol(e->right.pexpr)) {
+> +               b =3D pexpr_satval(e->right.pexpr);
+> +       } else {
+> +               t2 =3D create_tmpsatvar(data);
+> +               b =3D t2->satval;
+> +       }
+> +
+> +       /* A v B */
+> +       sat_add_clause(3, pico, a, b);
+> +
+> +       /* traverse down the tree to build more constraints if needed */
+> +       if (!pexpr_is_symbol(e->left.pexpr)) {
+> +               if (t1 =3D=3D NULL)
+> +                       perror("t1 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->left.pexpr, t1, data);
+> +       }
+> +
+> +       if (!pexpr_is_symbol(e->right.pexpr)) {
+> +               if (t2 =3D=3D NULL)
+> +                       perror("t2 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->right.pexpr, t2, data);
+> +       }
+> +}
+> +
+> +/*
+> + * build the sub-expressions
+> + */
+> +static void build_cnf_tseytin_tmp(struct pexpr *e, struct fexpr *t, stru=
+ct cfdata *data)
+> +{
+> +       switch (e->type) {
+> +       case PE_AND:
+> +               build_cnf_tseytin_and(e, t, data);
+> +               break;
+> +       case PE_OR:
+> +               build_cnf_tseytin_or(e, t, data);
+> +               break;
+> +       default:
+> +               perror("Expression not a propositional logic formula. roo=
+t.");
+> +       }
+> +}
+> +
+> +/*
+> + * build the Tseytin sub-expressions for a pexpr of type AND
+> + */
+> +static void build_cnf_tseytin_and(struct pexpr *e, struct fexpr *t, stru=
+ct cfdata *data)
+> +{
+> +       struct fexpr *t1 =3D NULL, *t2 =3D NULL;
+> +       int a, b, c;
+> +
+> +       assert(t !=3D NULL);
+> +
+> +       /* set left side */
+> +       if (pexpr_is_symbol(e->left.pexpr)) {
+> +               a =3D pexpr_satval(e->left.pexpr);
+> +       } else {
+> +               t1 =3D create_tmpsatvar(data);
+> +               a =3D t1->satval;
+> +       }
+> +
+> +       /* set right side */
+> +       if (pexpr_is_symbol(e->right.pexpr)) {
+> +               b =3D pexpr_satval(e->right.pexpr);
+> +       } else {
+> +               t2 =3D create_tmpsatvar(data);
+> +               b =3D t2->satval;
+> +       }
+> +
+> +       c =3D t->satval;
+> +
+> +       /* -A v -B v C */
+> +       sat_add_clause(4, pico, -a, -b, c);
+> +       /* A v -C */
+> +       sat_add_clause(3, pico, a, -c);
+> +       /* B v -C */
+> +       sat_add_clause(3, pico, b, -c);
+> +
+> +       /* traverse down the tree to build more constraints if needed */
+> +       if (!pexpr_is_symbol(e->left.pexpr)) {
+> +               if (t1 =3D=3D NULL)
+> +                       perror("t1 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->left.pexpr, t1, data);
+> +       }
+> +       if (!pexpr_is_symbol(e->right.pexpr)) {
+> +               if (t2 =3D=3D NULL)
+> +                       perror("t2 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->right.pexpr, t2, data);
+> +       }
+> +}
+> +
+> +/*
+> + * build the Tseytin sub-expressions for a pexpr of type
+> + */
+> +static void build_cnf_tseytin_or(struct pexpr *e, struct fexpr *t, struc=
+t cfdata *data)
+> +{
+> +       struct fexpr *t1 =3D NULL, *t2 =3D NULL;
+> +       int a, b, c;
+> +
+> +       assert(t !=3D NULL);
+> +
+> +       /* set left side */
+> +       if (pexpr_is_symbol(e->left.pexpr)) {
+> +               a =3D pexpr_satval(e->left.pexpr);
+> +       } else {
+> +               t1 =3D create_tmpsatvar(data);
+> +               a =3D t1->satval;
+> +       }
+> +
+> +       /* set right side */
+> +       if (pexpr_is_symbol(e->right.pexpr)) {
+> +               b =3D pexpr_satval(e->right.pexpr);
+> +       } else {
+> +               t2 =3D create_tmpsatvar(data);
+> +               b =3D t2->satval;
+> +       }
+> +
+> +       c =3D t->satval;
+> +
+> +       /* A v B v -C */
+> +       sat_add_clause(4, pico, a, b, -c);
+> +       /* -A v C */;
+> +       sat_add_clause(3, pico, -a, c);
+> +       /* -B v C */
+> +       sat_add_clause(3, pico, -b, c);
+> +
+> +       /* traverse down the tree to build more constraints if needed */
+> +       if (!pexpr_is_symbol(e->left.pexpr)) {
+> +               if (t1 =3D=3D NULL)
+> +                       perror("t1 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->left.pexpr, t1, data);
+> +       }
+> +       if (!pexpr_is_symbol(e->right.pexpr)) {
+> +               if (t2 =3D=3D NULL)
+> +                       perror("t2 is NULL.");
+> +
+> +               build_cnf_tseytin_tmp(e->right.pexpr, t2, data);
+> +       }
+> +}
+> +
+> +/*
+> + * add a clause to PicoSAT
+> + * First argument must be the SAT solver
+> + */
+> +void sat_add_clause(int num, ...)
+> +{
+> +       va_list valist;
+> +       int lit;
+> +       PicoSAT *pico;
+> +
+> +       if (num <=3D 1)
+> +               return;
+> +
+> +       va_start(valist, num);
+> +
+> +       pico =3D va_arg(valist, PicoSAT *);
+> +
+> +       /* access all the arguments assigned to valist */
+> +       for (int i =3D 1; i < num; i++) {
+> +               lit =3D va_arg(valist, int);
+> +               picosat_add(pico, lit);
+> +       }
+> +       picosat_add(pico, 0);
+> +
+> +       va_end(valist);
+> +}
+> +
+> +/*
+> + * return the SAT-variable for a pexpr that is a symbol
+> + */
+> +static int pexpr_satval(struct pexpr *e)
+> +{
+> +       if (!pexpr_is_symbol(e)) {
+> +               perror("pexpr is not a symbol.");
+> +               return -1;
+> +       }
+> +
+> +       switch (e->type) {
+> +       case PE_SYMBOL:
+> +               return e->left.fexpr->satval;
+> +       case PE_NOT:
+> +               return -(e->left.pexpr->left.fexpr->satval);
+> +       default:
+> +               perror("Not a symbol.");
+> +       }
+> +
+> +       return -1;
+> +}
+> +
+> +/*
+> + * start PicoSAT
+> + */
+> +void picosat_solve(PicoSAT *pico, struct cfdata *data)
+> +{
+> +       clock_t start, end;
+> +       double time;
+> +       int res;
+> +
+> +       printd("Solving SAT-problem...");
+> +
+> +       start =3D clock();
+> +       res =3D picosat_sat(pico, -1);
+> +       end =3D clock();
+> +
+> +       time =3D ((double) (end - start)) / CLOCKS_PER_SEC;
+> +       printd("done. (%.6f secs.)\n\n", time);
+> +
+> +       if (res =3D=3D PICOSAT_SATISFIABLE) {
+> +               printd("=3D=3D=3D> PROBLEM IS SATISFIABLE <=3D=3D=3D\n");
+> +
+> +       } else if (res =3D=3D PICOSAT_UNSATISFIABLE) {
+> +               struct fexpr *e;
+> +               int lit;
+> +               const int *i;
+> +
+> +               printd("=3D=3D=3D> PROBLEM IS UNSATISFIABLE <=3D=3D=3D\n"=
+);
+> +
+> +               /* print unsat core */
+> +               printd("\nPrinting unsatisfiable core:\n");
+> +
+> +               i =3D picosat_failed_assumptions(pico);
+> +               lit =3D abs(*i++);
+> +
+> +               while (lit !=3D 0) {
+> +                       e =3D data->satmap[lit];
+> +
+> +                       printd("(%d) %s <%d>\n", lit, str_get(&e->name), =
+e->assumption);
+> +                       lit =3D abs(*i++);
+> +               }
+> +       } else {
+> +               printd("Unknown if satisfiable.\n");
+> +       }
+> +}
+> +
+> +/*
+> + * add assumption for a symbol to the SAT-solver
+> + */
+> +void sym_add_assumption(PicoSAT *pico, struct symbol *sym)
+> +{
+> +       if (sym_is_boolean(sym)) {
+> +               int tri_val =3D sym_get_tristate_value(sym);
+> +
+> +               sym_add_assumption_tri(pico, sym, tri_val);
+> +               return;
+> +       }
+> +
+> +       if (sym_is_nonboolean(sym)) {
+> +               struct fexpr *e =3D sym->nb_vals->head->elem;
+> +               struct fexpr_node *node;
+> +
+> +               const char *string_val =3D sym_get_string_value(sym);
+> +
+> +               if (sym->type =3D=3D S_STRING && !strcmp(string_val, ""))
+> +                       return;
+> +
+> +               /* symbol does not have a value */
+> +               if (!sym_nonbool_has_value_set(sym)) {
+> +                       /* set value for sym=3Dn */
+> +                       picosat_assume(pico, e->satval);
+> +                       e->assumption =3D true;
+> +
+> +                       for (node =3D sym->nb_vals->head->next; node !=3D=
+ NULL; node =3D node->next) {
+> +                               picosat_assume(pico, -(node->elem->satval=
+));
+> +                               node->elem->assumption =3D false;
+> +                       }
+> +
+> +                       return;
+> +               }
+> +
+> +               /* symbol does have a value set */
+> +
+> +               /* set value for sym=3Dn */
+> +               picosat_assume(pico, -(e->satval));
+> +               e->assumption =3D false;
+> +
+> +               /* set value for all other fexpr */
+> +               fexpr_list_for_each(node, sym->nb_vals) {
+> +                       if (node->prev =3D=3D NULL)
+> +                               continue;
+> +
+> +                       if (strcmp(str_get(&node->elem->nb_val), string_v=
+al) =3D=3D 0) {
+> +                               picosat_assume(pico, node->elem->satval);
+> +                               node->elem->assumption =3D true;
+> +                       } else {
+> +                               picosat_assume(pico, -(node->elem->satval=
+));
+> +                               node->elem->assumption =3D false;
+> +                       }
+> +               }
+> +       }
+> +}
+> +
+> +/*
+> + * add assumption for a boolean symbol to the SAT-solver
+> + */
+> +void sym_add_assumption_tri(PicoSAT *pico, struct symbol *sym, tristate =
+tri_val)
+> +{
+> +       if (sym->type =3D=3D S_BOOLEAN) {
+> +               int a =3D sym->fexpr_y->satval;
+> +
+> +               switch (tri_val) {
+> +               case no:
+> +                       picosat_assume(pico, -a);
+> +                       sym->fexpr_y->assumption =3D false;
+> +                       break;
+> +               case mod:
+> +                       perror("Should not happen. Boolean symbol is set =
+to mod.\n");
+> +                       break;
+> +               case yes:
+> +
+> +                       picosat_assume(pico, a);
+> +                       sym->fexpr_y->assumption =3D true;
+> +                       break;
+> +               }
+> +       }
+> +       if (sym->type =3D=3D S_TRISTATE) {
+> +               int a =3D sym->fexpr_y->satval;
+> +               int a_m =3D sym->fexpr_m->satval;
+> +
+> +               switch (tri_val) {
+> +               case no:
+> +                       picosat_assume(pico, -a);
+> +                       picosat_assume(pico, -a_m);
+> +                       sym->fexpr_y->assumption =3D false;
+> +                       sym->fexpr_m->assumption =3D false;
+> +                       break;
+> +               case mod:
+> +                       picosat_assume(pico, -a);
+> +                       picosat_assume(pico, a_m);
+> +                       sym->fexpr_y->assumption =3D false;
+> +                       sym->fexpr_m->assumption =3D true;
+> +                       break;
+> +               case yes:
+> +                       picosat_assume(pico, a);
+> +                       picosat_assume(pico, -a_m);
+> +                       sym->fexpr_y->assumption =3D true;
+> +                       sym->fexpr_m->assumption =3D false;
+> +                       break;
+> +               }
+> +       }
+> +}
+> +
+> +/*
+> + * add assumptions for the symbols to be changed to the SAT solver
+> + */
+> +void sym_add_assumption_sdv(PicoSAT *pico, struct sdv_list *list)
+> +{
+> +       struct symbol_dvalue *sdv;
+> +       struct sdv_node *node;
+> +       int lit_y, lit_m;
+> +
+> +       sdv_list_for_each(node, list) {
+> +               sdv =3D node->elem;
+> +               lit_y =3D sdv->sym->fexpr_y->satval;
+> +
+> +               if (sdv->sym->type =3D=3D S_BOOLEAN) {
+> +                       switch (sdv->tri) {
+> +                       case yes:
+> +                               picosat_assume(pico, lit_y);
+> +                               break;
+> +                       case no:
+> +                               picosat_assume(pico, -lit_y);
+> +                               break;
+> +                       case mod:
+> +                               perror("Should not happen.\n");
+> +                       }
+> +               } else if (sdv->sym->type =3D=3D S_TRISTATE) {
+> +                       lit_m =3D sdv->sym->fexpr_m->satval;
+> +
+> +                       switch (sdv->tri) {
+> +                       case yes:
+> +                               picosat_assume(pico, lit_y);
+> +                               picosat_assume(pico, -lit_m);
+> +                               break;
+> +                       case mod:
+> +                               picosat_assume(pico, -lit_y);
+> +                               picosat_assume(pico, lit_m);
+> +                               break;
+> +                       case no:
+> +                               picosat_assume(pico, -lit_y);
+> +                               picosat_assume(pico, -lit_m);
+> +                       }
+> +               }
+> +       }
+> +}
+> diff --git a/scripts/kconfig/cf_utils.h b/scripts/kconfig/cf_utils.h
+> new file mode 100644
+> index 000000000000..b71c8731a8ff
+> --- /dev/null
+> +++ b/scripts/kconfig/cf_utils.h
+> @@ -0,0 +1,115 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2023 Patrick Franz <deltaone@debian.org>
+> + */
+> +
+> +#ifndef CF_UTILS_H
+> +#define CF_UTILS_H
+> +
+> +#include "expr.h"
+> +#include "cf_defs.h"
+> +#include "picosat.h"
+> +
+> +/* parse Kconfig-file and read .config */
+> +void init_config(const char *Kconfig_file);
+> +
+> +/* initialize satmap and cnf_clauses */
+> +void init_data(struct cfdata *data);
+> +
+> +/* assign SAT-variables to all fexpr and create the sat_map */
+> +void create_sat_variables(struct cfdata *data);
+> +
+> +/* create True/False constants */
+> +void create_constants(struct cfdata *data);
+> +
+> +/* create a temporary SAT-variable */
+> +struct fexpr *create_tmpsatvar(struct cfdata *data);
+> +
+> +/* return a temporary SAT variable as string */
+> +char *get_tmp_var_as_char(int i);
+> +
+> +/* return a tristate value as a char * */
+> +char *tristate_get_char(tristate val);
+> +
+> +/* check whether an expr can evaluate to mod */
+> +bool expr_can_evaluate_to_mod(struct expr *e);
+> +
+> +/* check whether an expr is a non-Boolean constant */
+> +bool expr_is_nonbool_constant(struct expr *e);
+> +
+> +/* check whether a symbol is a non-Boolean constant */
+> +bool sym_is_nonbool_constant(struct symbol *sym);
+> +
+> +/* print an expr */
+> +void print_expr(char *tag, struct expr *e, int prevtoken);
+> +
+> +/* check, if the symbol is a tristate-constant */
+> +bool sym_is_tristate_constant(struct symbol *sym);
+> +
+> +/* check, if a symbol is of type boolean or tristate */
+> +bool sym_is_boolean(struct symbol *sym);
+> +
+> +/* check, if a symbol is a boolean/tristate or a tristate constant */
+> +bool sym_is_bool_or_triconst(struct symbol *sym);
+> +
+> +/* check, if a symbol is of type int, hex, or string */
+> +bool sym_is_nonboolean(struct symbol *sym);
+> +
+> +/* check, if a symbol has a prompt */
+> +bool sym_has_prompt(struct symbol *sym);
+> +
+> +/* return the prompt of the symbol, if there is one */
+> +struct property *sym_get_prompt(struct symbol *sym);
+> +
+> +/* return the condition for the property, True if there is none */
+> +struct pexpr *prop_get_condition(struct property *prop, struct cfdata *d=
+ata);
+> +
+> +/* return the default property, NULL if none exists or can be satisfied =
+*/
+> +struct property *sym_get_default_prop(struct symbol *sym);
+> +
+> +/* check whether a non-boolean symbol has a value set */
+> +bool sym_nonbool_has_value_set(struct symbol *sym);
+> +
+> +/* return the name of the symbol */
+> +const char *sym_get_name(struct symbol *sym);
+> +
+> +/* check whether symbol is to be changed */
+> +bool sym_is_sdv(struct sdv_list *list, struct symbol *sym);
+> +
+> +/* print a symbol's name */
+> +void print_sym_name(struct symbol *sym);
+> +
+> +/* print all constraints for a symbol */
+> +void print_sym_constraint(struct symbol *sym);
+> +
+> +/* print a default map */
+> +void print_default_map(struct defm_list *map);
+> +
+> +/* check whether a string is a number */
+> +bool string_is_number(char *s);
+> +
+> +/* check whether a string is a hexadecimal number */
+> +bool string_is_hex(char *s);
+> +
+> +/* initialize PicoSAT */
+> +PicoSAT *initialize_picosat(void);
+> +
+> +/* construct the CNF-clauses from the constraints */
+> +void construct_cnf_clauses(PicoSAT *pico, struct cfdata *data);
+> +
+> +/* add a clause to PicoSAT */
+> +void sat_add_clause(int num, ...);
+> +
+> +/* start PicoSAT */
+> +void picosat_solve(PicoSAT *pico, struct cfdata *data);
+> +
+> +/* add assumption for a symbol to the SAT-solver */
+> +void sym_add_assumption(PicoSAT *pico, struct symbol *sym);
+> +
+> +/* add assumption for a boolean symbol to the SAT-solver */
+> +void sym_add_assumption_tri(PicoSAT *pico, struct symbol *sym, tristate =
+tri_val);
+> +
+> +/* add assumptions for the symbols to be changed to the SAT solver */
+> +void sym_add_assumption_sdv(PicoSAT *pico, struct sdv_list *list);
+> +
+> +#endif
+> --
+> 2.39.2
+>
+
+
+--
+Best Regards
+
+Masahiro Yamada
 
