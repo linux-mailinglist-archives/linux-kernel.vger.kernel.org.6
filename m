@@ -1,157 +1,86 @@
-Return-Path: <linux-kernel+bounces-283719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB51594F823
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:21:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F9794F824
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:21:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E915B2115B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:21:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C0D7B21215
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD8119414A;
-	Mon, 12 Aug 2024 20:20:53 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28819194098;
+	Mon, 12 Aug 2024 20:21:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464C1191F80;
-	Mon, 12 Aug 2024 20:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56903191F80
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723494052; cv=none; b=YRUTuU+iXtkQsT4YuhGalLNrI39yIlHfbjId4kaZZfI/5yyUykVzUZ+orXWufN0TrqhVGk5sJdggarSJohbRdEvop97kAVVCT6DWUygFUjR4V88/MgrKa0EfbGdxzKWIxZzc0RrToFbuVsNA7Ci6pf/J19uCJWheV8r8ZDOcLGQ=
+	t=1723494065; cv=none; b=kbOPKa7QlqOgZUo7dFNqQJU+1P+UZK0A044xsvdSQubpxABM6xc8Xu40/67LhgNHlA71FNkbobHiXBiPzqPWooX40rBzTZ3X3J1QasWoZJ9/so5nbi9yywZzbrOSFpa5mKhw+AO14HOhtb0e90JE89Gk5EYRHnAMvUcfW7F0IaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723494052; c=relaxed/simple;
-	bh=kInFWNpWiwM+iiF50l6b901Z5qcRDLx5S8leRBXplFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRAc27u2Tng2E8niHn8NbsonDmNGKqxdcjQMlXnQ9FUhm0QHPEovaQkoB6bC2B2m4Yj5OwrCoQ58y5sV43m9GkHN1pKHYoeT2sL/rJ/N0n5F9neBT8W5al4hTHRrUOhYHYUa5LSedxZ+H0pbh4GxM6doFs1ZfQFlIy0ABavWeyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc52394c92so44077845ad.1;
-        Mon, 12 Aug 2024 13:20:51 -0700 (PDT)
+	s=arc-20240116; t=1723494065; c=relaxed/simple;
+	bh=UbmbfC7e36OTI4cYk1OKjlF5GdQ5iHnM5dvLpU9Frbk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nEmfUNMJnTOzkAEXzEixzNNDMIlR3QOo/h5A8ebl3qQDKnz9GY1ebd9o0bOTPTZVDohzOKVREmMAK++WoQybfDhQvL/G05kP5EaylMapChg91zc32r8eeRTedD5H39KdiKix19thntnn7WPKEr3YB0hJzxBaC5xiJKQLH8TrQ9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-397e0efded3so71827235ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:21:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723494050; x=1724098850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktYSPZAgGje2ea+VDHWGA24RZOqecMJEdUlJC7G5nVI=;
-        b=qTjgKMIaF/YtcSqRdvvlfwOFsC8Z0b3LRiCaZnwrzln/xyT024w9JbU/uWWVDB36hk
-         DPJ3lPYJ8FvPAx/F0/urzv2uL22+8d3cbEm1emyOXJgouqd9qtuPexBvVkmqPJ3qegOv
-         ejXfHLj4vK+C/z3bGeTPo6pm5f8AcoNjFVh5NepkWiEjFh8+rdrVkVnqdJm/NlEqyr72
-         nk4KpEmVkS35h1JjKi+5tG7W8g543xzn7rkVi2pz+eexqm0k3BmFqPKKVRm1xbujvr/K
-         /RpiVwRhxbYaV63BvUAhAdkrK8a9221iUFiVK9R/VifTMmaL6Xdo3PdaMlS5egjBBTzh
-         /rsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5wlJrwDPuY1G3TOAt0dTf+Us5OpBM9FFciGQ4I7LxCXvvTyD9H4lw/60ciiyKCbC87PN6WT531ksE+NPNfM+m/QDiWYFChq6eYh8sPkjgog2DzD3+xRI+w4ekmutO/EC7wXKx8vFbkou7dA==
-X-Gm-Message-State: AOJu0Yzm88y/N7WdONDSRHiJT+ZjHca/CNh04J0a33EnrxzkflsLo4Ob
-	B/87R2UrS/iIbZgkyOuiN8IiaVoVbqz25KJ8iq9/cpoCv6TSlEc=
-X-Google-Smtp-Source: AGHT+IE/1pxRmNn4lGz7smnMnw64zQr4fbBrZhmlAusRlv6NQ4ab6SeK2qAMh+mu7f1m/myArraxUw==
-X-Received: by 2002:a17:902:e88d:b0:1fc:6c23:8a3b with SMTP id d9443c01a7336-201ca13dabbmr19909705ad.17.1723494050386;
-        Mon, 12 Aug 2024 13:20:50 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:73b6:7410:eb24:cba4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1bba6bsm796875ad.225.2024.08.12.13.20.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 13:20:50 -0700 (PDT)
-Date: Mon, 12 Aug 2024 13:20:49 -0700
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 5/5] eventpoll: Control irq suspension for
- prefer_busy_poll
-Message-ID: <ZrpuodWa6cKh0sPk@mini-arch>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <20240812125717.413108-6-jdamato@fastly.com>
+        d=1e100.net; s=20230601; t=1723494063; x=1724098863;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhX0NUR56YcJKqQmUDiMRdL3O8rX3/tbBH1Xo/h81SQ=;
+        b=iQcif0dBf2Lbgrchd4pns2pETHeqC5jPuORYVjL+4M/7zpYx5I72R+/O+dLbJ4o3Cm
+         +hE9M0ntAr/jY9IbqWpFtnx4fP50QQ86+ml2AeLhx6zuaKyew/SW3URtMNYcbSlO1TGH
+         8qxGUP1Xlr1YlWQ0OxXrpZbx5VNVWymi12qsCvMd6b9M+mmIFSIX+57ZbRUN1kqUl2M0
+         UtmeUoFX/BaGN4P8cU7KSy26Cx1/pht8j8f+i8THh5C8Q+KtTarm6amlaFH75FMBRIDu
+         tmwwtvcc9w9zewjcXBbKmapFRH5vIXgp1k2RKHKVguYul2Rt2Sj8aL46o1O3G7j+d8IG
+         ncrg==
+X-Gm-Message-State: AOJu0Yyyap2CtpbfqD/Ggnoif6UDOO9NpzUd57jtbKPaph1VEB5spLXS
+	nJUg3Mr88Gq7WiZESQmPv5N6qggA1pPVnnIJ4Lb6GK3g9usS3BM8gOfk5vmzhFeFmvGO1VBtzhP
+	bCd2oZg8oBj1+m2l+eudUFjDuZCguqrHq/ltBILUuc8VeLRxHKlbwp7M=
+X-Google-Smtp-Source: AGHT+IGz/rVqYloft7OZjYCuAu6ZH0jb/UqSoy886Zzdm/kmpYqyHDxUGSLbEoXJsD/qttMmEKtQqKm69F9jNGLchci0r1P+TWxt
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240812125717.413108-6-jdamato@fastly.com>
+X-Received: by 2002:a05:6e02:2183:b0:39a:e91e:38e0 with SMTP id
+ e9e14a558f8ab-39c479311b3mr830265ab.6.1723494063083; Mon, 12 Aug 2024
+ 13:21:03 -0700 (PDT)
+Date: Mon, 12 Aug 2024 13:21:03 -0700
+In-Reply-To: <CACzwLxh3b6tBYOsdMF_QqGDrBPE2qULgg86ToJt-OGQ142Hneg@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006728af061f823b83@google.com>
+Subject: Re: [syzbot] [usb?] possible deadlock in __flush_workqueue (2)
+From: syzbot <syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, snovitoll@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08/12, Joe Damato wrote:
-> From: Martin Karsten <mkarsten@uwaterloo.ca>
-> 
-> When events are reported to userland and prefer_busy_poll is set, irqs are
-> temporarily suspended using napi_suspend_irqs.
-> 
-> If no events are found and ep_poll would go to sleep, irq suspension is
-> cancelled using napi_resume_irqs.
-> 
-> Signed-off-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> Co-developed-by: Joe Damato <jdamato@fastly.com>
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> Tested-by: Joe Damato <jdamato@fastly.com>
-> Tested-by: Martin Karsten <mkarsten@uwaterloo.ca>
-> ---
->  fs/eventpoll.c | 22 +++++++++++++++++++++-
->  1 file changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index cc47f72005ed..d74b5b9c1f51 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -457,6 +457,8 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
->  		 * it back in when we have moved a socket with a valid NAPI
->  		 * ID onto the ready list.
->  		 */
-> +		if (prefer_busy_poll)
-> +			napi_resume_irqs(napi_id);
->  		ep->napi_id = 0;
->  		return false;
->  	}
-> @@ -540,6 +542,14 @@ static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
->  	}
->  }
->  
-> +static void ep_suspend_napi_irqs(struct eventpoll *ep)
-> +{
-> +	unsigned int napi_id = READ_ONCE(ep->napi_id);
-> +
-> +	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
-> +		napi_suspend_irqs(napi_id);
-> +}
-> +
->  #else
->  
->  static inline bool ep_busy_loop(struct eventpoll *ep, int nonblock)
-> @@ -557,6 +567,10 @@ static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
->  	return -EOPNOTSUPP;
->  }
->  
-> +static void ep_suspend_napi_irqs(struct eventpoll *ep)
-> +{
-> +}
-> +
->  #endif /* CONFIG_NET_RX_BUSY_POLL */
->  
->  /*
-> @@ -788,6 +802,10 @@ static bool ep_refcount_dec_and_test(struct eventpoll *ep)
->  
->  static void ep_free(struct eventpoll *ep)
->  {
-> +	unsigned int napi_id = READ_ONCE(ep->napi_id);
-> +
-> +	if (napi_id >= MIN_NAPI_ID && READ_ONCE(ep->prefer_busy_poll))
-> +		napi_resume_irqs(napi_id);
->  	mutex_destroy(&ep->mtx);
->  	free_uid(ep->user);
->  	wakeup_source_unregister(ep->ws);
-> @@ -2005,8 +2023,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  			 * trying again in search of more luck.
->  			 */
->  			res = ep_send_events(ep, events, maxevents);
-> -			if (res)
-> +			if (res) {
-> +				ep_suspend_napi_irqs(ep);
+Hello,
 
-Aren't we already doing defer in the busy_poll_stop? (or in napi_poll
-when it's complete/done). Why do we need another rearming here?
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com
+Tested-by: syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         4c278153 drivers/xillybus: fix deadlock upon cleanup_dev
+git tree:       https://linux.googlesource.com/linux/kernel/git/torvalds/linux refs/changes/82/25482/1
+console output: https://syzkaller.appspot.com/x/log.txt?x=16dee405980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=801d05d1ea4be1b8
+dashboard link: https://syzkaller.appspot.com/bug?extid=e528c9aad0fb5383ec83
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Note: no patches were applied.
+Note: testing is done by a robot and is best-effort only.
 
