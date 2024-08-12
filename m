@@ -1,162 +1,353 @@
-Return-Path: <linux-kernel+bounces-283075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EC694ECBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:18:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A39794ECBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D154B1F23440
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED8C1C21BA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:19:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA3217B40F;
-	Mon, 12 Aug 2024 12:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C3B178378;
+	Mon, 12 Aug 2024 12:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0wLuF2T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NsJTb3NF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D50817A93D;
-	Mon, 12 Aug 2024 12:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CCC1E488;
+	Mon, 12 Aug 2024 12:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723465071; cv=none; b=tqsxuXEGfXdg92E4T7B1en9ivAUNsZ8ZPemb26C0EsDPhpyIszVxKKnU7Z7utTukOVd3JtVTTvYYHbmIEv26vf3zukRXXoM31FlfGBS72pA9cLtuNy44EsyVWFckEwn+8yBdYP52qugxm4SsmLM03KLszVa0NpL6RAIPigDpYQ4=
+	t=1723465171; cv=none; b=u1a4lsxLuyNWpoci69p9cI3Y8hDHgDW6bLfBHtZmoqPAyP1h9/xkbRPnY3wj3mbbt2sL1h65tDmosB6bx6K5xhc85+uzXgI0FKjhCFsLWppZUUdmiN5SrqxEk2ersD6b2rUYdxYOdXYWHPOLz+k9qsyGLIoO0HzAH1vDdvKh/oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723465071; c=relaxed/simple;
-	bh=S2P4a8gs63oxTnfbDDSN0RqKQwu01VpNGQhGFsGLgg0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DFPjuEilWkhyk86OjO2wkEBRv5lRRSoEctyh4MRnQ/goESw6YPDxcyuxTsXiz6p3fILAEGrwkRrps2mP4o64U/nJc79VuJ42rFgnsGse1qpl3UHs1kAoTwCoWF+npEDuvVXiarpFsZrUkwJe2ati3MZV4H7edg53ASaB8MhbvWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K0wLuF2T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1C91C4AF0D;
-	Mon, 12 Aug 2024 12:17:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723465071;
-	bh=S2P4a8gs63oxTnfbDDSN0RqKQwu01VpNGQhGFsGLgg0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=K0wLuF2TPqJDcAdCieO7kWBStu/rZPi7YZWyWamFvukjA8CBQqauKMAsf8BoUHLHs
-	 ntN4SNPMCTl4A60aWqpx9CDOhrC5A9WN8xtpMsECfjHd/lUmwCj1+LNdQF7HNiED2w
-	 ttxd1blZdjaEJ3qWQg2ar3pKtzXZfah/94owgFt9Y2cfptVaIIlO13B1UlYe+duliS
-	 xVMNPunwsOQtMUchvCZTg61ihYafnssE9+06SJstZItEzv0pqseLJZyvmNkW7Joi8W
-	 +2AB3QT4UXEepkpimKWnarO4kbkpEOiAq7sKZxD7Ur+h6I7dv+iqcXgGg+WdHfwU+c
-	 uj0zsZGOzjY6g==
-Message-ID: <323f5038-f9d5-459a-a5e2-f1e4dbd4c386@kernel.org>
-Date: Mon, 12 Aug 2024 14:17:45 +0200
+	s=arc-20240116; t=1723465171; c=relaxed/simple;
+	bh=FDgfGSoDP9XMfPf7vo5ecBOQ5J/89MCzalVm2yaUwHA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=rpgqTBb3xQ8DDBxDHIDDlw2FJHpCnJR4ChKNH597S4Fi3i4zNSYnaK7Q9aYE2RP3lgQGClKU5m6dOyvVrarMgD6Qc2qeER6Pnp0UW5CtesShc7es6n1Kc4DEHcdZ77Lon0iN4KY0hQzRgLi3jaBLQwnbNbObGcgPTspLmdprp/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NsJTb3NF; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723465169; x=1755001169;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=FDgfGSoDP9XMfPf7vo5ecBOQ5J/89MCzalVm2yaUwHA=;
+  b=NsJTb3NFO2e83XVPwjL8nwtOsCVXixwxZWqouX3dZVrhGBtCgc3rcvPF
+   Kb7y6B52OQnjkmcimTAe1drrskieahDb/O4X2incdPbD3dUYJa86/pbyh
+   rspJyA81iXo6bfiPZG3DfwjunTmnQTFQV6RsTElj5gSd7jEaOlQtOCu7i
+   gu64HuI3wPArN+kM5W9ShYoZ9uUt7g02rhOs0Eth9TTig5LIbu9geth6r
+   YpZVgbu/BSU04+22lqsCWe/ESX4JDI5hnh1VmfpXe7/kcaC5IAbNqpK4L
+   /jQ8AP6+Rk3RvRzcCXK6KxKIb/AED8z2LVGnmG061FdOFsCgw6oOJ7VNu
+   Q==;
+X-CSE-ConnectionGUID: ICB265S4T0ab+LdypxzdRg==
+X-CSE-MsgGUID: KKDMthP8RoeSIM3U+tgeDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46971249"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="46971249"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 05:19:29 -0700
+X-CSE-ConnectionGUID: lbwKucxKQsmZ8QTreqWMAA==
+X-CSE-MsgGUID: vljc+7UpSZWcAoNTLpjLVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="63096360"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 05:19:26 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 12 Aug 2024 15:19:23 +0300 (EEST)
+To: Armin Wolf <W_Armin@gmx.de>
+cc: matan@svgalib.org, ghostwind@gmail.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: lg-laptop: Add operation region support
+In-Reply-To: <20240809175211.5962-1-W_Armin@gmx.de>
+Message-ID: <4cbf5396-37e5-5e66-e26f-c43186e285da@linux.intel.com>
+References: <20240809175211.5962-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] media: aspeed: Allow to capture from SoC display (GFX)
-To: Jammy Huang <jammy_huang@aspeedtech.com>, eajames@linux.ibm.com,
- mchehab@kernel.org, joel@jms.id.au, andrew@aj.id.au, pmenzel@molgen.mpg.de
-Cc: linux-media@vger.kernel.org, openbmc@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20240812091656.2617664-1-jammy_huang@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240812091656.2617664-1-jammy_huang@aspeedtech.com>
+Content-Type: multipart/mixed; boundary="8323328-2042051820-1723465163=:1039"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323328-2042051820-1723465163=:1039
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-On 12/08/2024 11:16, Jammy Huang wrote:
-> ASPEED BMC IC has 2 different display engines. Please find AST2600's
-> datasheet to get detailed information.
-> 
-> 1. VGA on PCIe
-> 2. SoC Display (GFX)
+On Fri, 9 Aug 2024, Armin Wolf wrote:
 
-...
+> The LEGX0820 ACPI device is expected to provide a custom operation
+> region:
+>=20
+> =09OperationRegion (XIN1, 0x8F, Zero, 0x04B0)
+>         Field (XIN1, AnyAcc, Lock, Preserve)
+>         {
+>             DMSG,   8,
+>             HDAP,   8,
+>             Offset (0x03),
+>             AFNM,   8,
+>             Offset (0x10),
+>             P80B,   8,
+>             P81B,   8,
+>             P82B,   8,
+>             P83B,   8,
+>             P84B,   8,
+>             P85B,   8,
+>             P86B,   8,
+>             P87B,   8,
+>             Offset (0x20),
+>             DTTM,   8,
+>             TMP1,   8,
+>             LTP1,   8,
+>             HTP1,   8,
+>             TMP2,   8,
+>             LTP2,   8,
+>             HTP2,   8,
+>             Offset (0x3E8),
+>             PMSG,   1600
+>         }
+>=20
+> The PMSG field is used by AML code to log debug messages when DMSG is
+> true. Since those debug messages are already logged using the standard
+> ACPI Debug object, we set DMSG unconditionally to 0x00 and ignore any
+> writes to PMSG.
+>=20
+> The TMPx, LTPx, HTPx and AFNM fields are used to inform the driver when
+> the temperature/(presumably) trip points/fan mode changes. This only
+> happens when the DTTM flag is set.
+>=20
+> Unfortunately we have to implement support for this operation region
+> because the AML codes uses code constructs like this one:
+>=20
+> =09If (((\_SB.XINI.PLAV !=3D Zero) && (\_SB.XINI.DTTM !=3D Zero)))
+>=20
+> The PLAV field gets set to 1 when the driver registers its address space
+> handler, so by default XIN1 should not be accessed.
+>=20
+> However ACPI does not use short-circuit evaluation when evaluating
+> logical conditions. This causes the DTTM field to be accessed even
+> when PLAV is 0, which results in an ACPI error.
+> Since this check happens inside various thermal-related ACPI control
+> methods, various thermal zone become unusable since any attempts to
 
->  
-> +/*
-> + * Get regmap without checking res, such as clk/reset, that could lead to
-> + * conflict.
-> + */
-> +static struct regmap *aspeed_regmap_lookup(struct device_node *np, const char *property)
+attempt
+
+> read their temperature results in an ACPI error.
+>=20
+> Fix this by providing support for this operation region. I suspect
+> that the problem does not happen under Windows (which seemingly does
+> not use short-circuit evaluation either) because the necessary driver
+> comes preinstalled with the machine.
+>=20
+> Tested-by: Chris <ghostwind@gmail.com>
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/lg-laptop.c | 128 +++++++++++++++++++++++++++++++
+>  1 file changed, 128 insertions(+)
+>=20
+> diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-l=
+aptop.c
+> index 9c7857842caf..6310a23f808c 100644
+> --- a/drivers/platform/x86/lg-laptop.c
+> +++ b/drivers/platform/x86/lg-laptop.c
+> @@ -8,6 +8,8 @@
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>=20
+>  #include <linux/acpi.h>
+> +#include <linux/device.h>
+> +#include <linux/dev_printk.h>
+>  #include <linux/dmi.h>
+>  #include <linux/input.h>
+>  #include <linux/input/sparse-keymap.h>
+> @@ -31,6 +33,25 @@ MODULE_AUTHOR("Matan Ziv-Av");
+>  MODULE_DESCRIPTION("LG WMI Hotkey Driver");
+>  MODULE_LICENSE("GPL");
+>=20
+> +static bool fw_debug;
+> +module_param(fw_debug, bool, 0);
+> +MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages")=
+;
+> +
+> +#define LG_ADDRESS_SPACE_ID=09=09=090x8F
+> +
+> +#define LG_ADDRESS_SPACE_DEBUG_FLAG_ADR=09=090x00
+> +#define LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR=090x3E8
+> +#define LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR=090x5E8
+> +
+> +#define LG_ADDRESS_SPACE_DTTM_FLAG_ADR=09=090x20
+> +#define LG_ADDRESS_SPACE_FAN_MODE_ADR=09=090x03
+
+Any particular reason why there are not in numerical order?
+
+> +#define LG_ADDRESS_SPACE_CPU_TEMP_ADR=09=090x21
+> +#define LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR=090x22
+> +#define LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR=090x23
+> +#define LG_ADDRESS_SPACE_MB_TEMP_ADR=09=090x24
+> +#define LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR=090x25
+> +#define LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR=090x26
+> +
+>  #define WMI_EVENT_GUID0=09"E4FB94F9-7F2B-4173-AD1A-CD1D95086248"
+>  #define WMI_EVENT_GUID1=09"023B133E-49D1-4E10-B313-698220140DC2"
+>  #define WMI_EVENT_GUID2=09"37BE1AC0-C3F2-4B1F-BFBE-8FDEAF2814D6"
+> @@ -646,6 +667,101 @@ static struct platform_driver pf_driver =3D {
+>  =09}
+>  };
+>=20
+> +static acpi_status lg_laptop_address_space_write(struct device *dev, acp=
+i_physical_address address,
+> +=09=09=09=09=09=09 size_t size, u64 *value)
+
+Why is this write function taking u64 _pointer_?
+
 > +{
-> +	struct device_node *syscon_np;
-> +	struct regmap *regmap;
-
-Drop...
-
+> +=09u8 byte;
 > +
-> +	syscon_np = of_parse_phandle(np, property, 0);
-
-This joins first line and then use scoped/cleanup to make everything
-simpler.
-
-> +	if (!syscon_np)
-> +		return ERR_PTR(-ENODEV);
+> +=09/* Ignore any debug messages */
+> +=09if (address >=3D LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR &&
+> +=09    address <=3D LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR)
+> +=09=09return AE_OK;
 > +
-> +	regmap = device_node_to_regmap(syscon_np);
-> +	of_node_put(syscon_np);
+> +=09if (size !=3D sizeof(byte))
+> +=09=09return AE_BAD_PARAMETER;
 > +
-> +	return regmap;
+> +=09byte =3D *value & 0xFF;
+> +
+> +=09switch (address) {
+> +=09case LG_ADDRESS_SPACE_FAN_MODE_ADR:
+> +=09=09dev_dbg(dev, "Fan mode set to mode %u\n", byte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_CPU_TEMP_ADR:
+> +=09=09dev_dbg(dev, "CPU temperature is %u =C2=B0C\n", byte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR:
+> +=09=09dev_dbg(dev, "CPU lower trip point set to %u =C2=B0C\n", byte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR:
+> +=09=09dev_dbg(dev, "CPU higher trip point set to %u =C2=B0C\n", byte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_MB_TEMP_ADR:
+> +=09=09dev_dbg(dev, "Motherboard temperature is %u =C2=B0C\n", byte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR:
+> +=09=09dev_dbg(dev, "Motherboard lower trip point set to %u =C2=B0C\n", b=
+yte);
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR:
+> +=09=09dev_dbg(dev, "Motherboard higher trip point set to %u =C2=B0C\n", =
+byte);
+> +=09=09return AE_OK;
+> +=09default:
+> +=09=09dev_notice_ratelimited(dev, "Ignoring write to unknown opregion ad=
+dress %llu\n",
+> +=09=09=09=09       address);
+> +=09=09return AE_OK;
+> +=09}
 > +}
 > +
->  static int aspeed_video_init(struct aspeed_video *video)
+> +static acpi_status lg_laptop_address_space_read(struct device *dev, acpi=
+_physical_address address,
+> +=09=09=09=09=09=09size_t size, u64 *value)
+> +{
+> +=09if (size !=3D 1)
+> +=09=09return AE_BAD_PARAMETER;
+> +
+> +=09switch (address) {
+> +=09case LG_ADDRESS_SPACE_DEBUG_FLAG_ADR:
+> +=09=09/* Debug messages are already printed using the standard ACPI Debu=
+g object */
+> +=09=09*value =3D 0x00;
+> +=09=09return AE_OK;
+> +=09case LG_ADDRESS_SPACE_DTTM_FLAG_ADR:
+> +=09=09*value =3D fw_debug;
+> +=09=09return AE_OK;
+> +=09default:
+> +=09=09dev_notice_ratelimited(dev, "Attempt to read unknown opregion addr=
+ess %llu\n",
+> +=09=09=09=09       address);
+> +=09=09return AE_BAD_PARAMETER;
+> +=09}
+> +}
+> +
+> +static acpi_status lg_laptop_address_space_handler(u32 function, acpi_ph=
+ysical_address address,
+> +=09=09=09=09=09=09   u32 bits, u64 *value, void *handler_context,
+> +=09=09=09=09=09=09   void *region_context)
+> +{
+> +=09struct device *dev =3D handler_context;
+> +=09size_t size;
+> +
+> +=09if (bits % 8)
+> +=09=09return AE_BAD_PARAMETER;
+> +
+> +=09size =3D bits / 8;
+
+BITS_PER_BYTE x2
+
+--=20
+ i.
+
+> +
+> +=09switch (function) {
+> +=09case ACPI_READ:
+> +=09=09return lg_laptop_address_space_read(dev, address, size, value);
+> +=09case ACPI_WRITE:
+> +=09=09return lg_laptop_address_space_write(dev, address, size, value);
+> +=09default:
+> +=09=09return AE_BAD_PARAMETER;
+> +=09}
+> +}
+> +
+> +static void lg_laptop_remove_address_space_handler(void *data)
+> +{
+> +=09struct acpi_device *device =3D data;
+> +
+> +=09acpi_remove_address_space_handler(device->handle, LG_ADDRESS_SPACE_ID=
+,
+> +=09=09=09=09=09  &lg_laptop_address_space_handler);
+> +}
+> +
+>  static int acpi_add(struct acpi_device *device)
 >  {
->  	int irq;
->  	int rc;
->  	struct device *dev = video->dev;
->  
-> +	video->scu = aspeed_regmap_lookup(dev->of_node, "aspeed,scu");
-> +	video->gfx = aspeed_regmap_lookup(dev->of_node, "aspeed,gfx");
+>  =09struct platform_device_info pdev_info =3D {
+> @@ -653,6 +769,7 @@ static int acpi_add(struct acpi_device *device)
+>  =09=09.name =3D PLATFORM_NAME,
+>  =09=09.id =3D PLATFORM_DEVID_NONE,
+>  =09};
+> +=09acpi_status status;
+>  =09int ret;
+>  =09const char *product;
+>  =09int year =3D 2017;
+> @@ -660,6 +777,17 @@ static int acpi_add(struct acpi_device *device)
+>  =09if (pf_device)
+>  =09=09return 0;
+>=20
+> +=09status =3D acpi_install_address_space_handler(device->handle, LG_ADDR=
+ESS_SPACE_ID,
+> +=09=09=09=09=09=09    &lg_laptop_address_space_handler,
+> +=09=09=09=09=09=09    NULL, &device->dev);
+> +=09if (ACPI_FAILURE(status))
+> +=09=09return -ENODEV;
+> +
+> +=09ret =3D devm_add_action_or_reset(&device->dev, lg_laptop_remove_addre=
+ss_space_handler,
+> +=09=09=09=09       device);
+> +=09if (ret < 0)
+> +=09=09return ret;
+> +
+>  =09ret =3D platform_driver_register(&pf_driver);
+>  =09if (ret)
+>  =09=09return ret;
+> --
+> 2.39.2
+>=20
 
-This looks undocumented.
-
-You will need to convert the bindings to DT Schema first.
-
-Anyway, you miss here error checking.
-
-Best regards,
-Krzysztof
-
+--8323328-2042051820-1723465163=:1039--
 
