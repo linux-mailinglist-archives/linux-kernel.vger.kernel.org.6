@@ -1,174 +1,239 @@
-Return-Path: <linux-kernel+bounces-283812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F02294F8ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:23:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EB8694F8EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:24:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 363FE1F22C89
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3A5F1C2239E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA350194A49;
-	Mon, 12 Aug 2024 21:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AC11946D0;
+	Mon, 12 Aug 2024 21:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/UaLXr8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b="gOl04uim"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1392418E022;
-	Mon, 12 Aug 2024 21:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723497779; cv=none; b=HgxYKxdA0dn+FEgiByMOSf38pkxyl/RC+7MlVQWsYsYhIGAFGDZGncg6la3jmLX0PFL7UzBMX9j3xxrGW5Mcobn+jIh9PaV5Ei9/HaINt2+KvK6syfBkEWylb/9lptslUoX6ZYnM2tFAyQf2hF5EvmXMlYTj1ZCNMAH3m5csb6M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723497779; c=relaxed/simple;
-	bh=qcCp9jeZiU3lTpiRVYh4I1XVj9Y/08xHuLt7L7IjYyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q3YeqjSUNsiSjDu/JKVPIsedGxudQXS276g7oSCu0rP2J3MHqUdkmaXnhke/X3X0VWkFmbWY+eaZxQelTqKOAhOx2U6E0bjOi3kHIdZ6TXmYEC25eSjMlmfZNOS25MZTGKrJJiqXgpuZeQC4IoNWysjk4hzhsfGYYzR/Z8n3CpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/UaLXr8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA45C32782;
-	Mon, 12 Aug 2024 21:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723497778;
-	bh=qcCp9jeZiU3lTpiRVYh4I1XVj9Y/08xHuLt7L7IjYyE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d/UaLXr8Fmk87PSsZnZqfOvz3CQmxATpET1ejxQhJkOq0C2QZGV35S+7gPRJFJ4Ie
-	 x02DMbpQCFfVp6fPFb5GsRJSJ6OfdxhQopjfklXQaP+9co4ZCxQnyC5WewuoShZra1
-	 IGFXPnPJjXJyU1T46drXsRs/AvzlUZ0xwnQwaN7E8wQh9kYhDoTv6v3k2JpluQw9tL
-	 iFPW415n5MYvo9KAc4X1D3apmAchzboiniAzcYNnXnx9CPKmJBMDd/uextFGcwMOCk
-	 9rKZO9mCd225DL/gc6ygo43sV9KGNnHW6FtPaNj3k7E5CeujlV3CZqV3EBF5xaWqKi
-	 UKKLKHd38N3KA==
-Date: Mon, 12 Aug 2024 14:22:56 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] modpost: simplify modpost_log()
-Message-ID: <20240812212256.GA3675407@thelio-3990X>
-References: <20240812144542.2121342-1-masahiroy@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340B718E022
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723497837; cv=pass; b=SLt7pA1yzYYRXxGAz7oSzFW7Cxp2QXrqP23KuaQG0hcatnuz/NURQqt4yOn9NoJ6RH5JDPdbd9WAB2BcB4pfKvMsqzx3vbPbGWJdVD14dYkO5X1nPtTOLJfJeUww23tbV4nTPmyr3AumjpY4U8Fk/KoBKl7bNNH2l6IgRC1kmTw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723497837; c=relaxed/simple;
+	bh=zMnJBeV+rm5O0xXVaPkigIxCAFfinNVns9T2llr/UmU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SuRwBScHth4gqUaP6rt218U7v9rLIkHMC/Wh+4KF7j4ssgFNIIXkJHypE5M3QvflQ84d4waMnYAN0G9ZEz2eBFtU3nFEFemv7jh+PA0OuOJFv7VFcd0fE654dRS+XmZNoXamkYhiSUT+oTRGr2Wv13pZf/UPg4aJYZigRgzyPaM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=cristian.ciocaltea@collabora.com header.b=gOl04uim; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723497816; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ieHrHpiltkX1UNLyKDtEdDj/Z1hoqspIEcZkNkpS27ZAgnJ6DHhBPFNHFuDF5vwv/db1hafZuqash/5J76L5HkuUs9pWC8IGY45svx4Fen+V1GfjYvn6jBY3GMs/RkOMBV2eJINHiFsyCqV6TtoC4fWnp8ugaORIdLqw4OAyHAg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723497816; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=jlGPm4zay+O+5NxYplC7hIV2VJhkT7SctwvsdxMk7NY=; 
+	b=VtE7wAJYrlCy7RCHrO6mPxHzNNuUQq8uKqPeECo4YI14Ns+TdljUCC48aa3wzbsFWfrhiUkDVm6zKgueURuOrdh8oI/QBocUe6fQFqWIvSkZtwvGJR4D+vqJiMlWPG0IkNDhFH6+08kuk7Xzcp8pAKVMO9VHBUP+JczrqUmlokU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=cristian.ciocaltea@collabora.com;
+	dmarc=pass header.from=<cristian.ciocaltea@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723497816;
+	s=zohomail; d=collabora.com; i=cristian.ciocaltea@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=jlGPm4zay+O+5NxYplC7hIV2VJhkT7SctwvsdxMk7NY=;
+	b=gOl04uimxp4DdUlWr2mNquqMCp6DdN8bNelW/4ZTAJ4bQwFzpYQvg0y3AeMKuMok
+	6wJvnw3SK427wsPDdPv7LyCvR//++EiqESgkD6I1J+WClk4Lg1S3UVQLCuMZwkEM/12
+	eB/hYvAXdAyoKMXW08nmZuR9/C+wF+TnQ3Ts4afA=
+Received: by mx.zohomail.com with SMTPS id 1723497815850467.7307432445673;
+	Mon, 12 Aug 2024 14:23:35 -0700 (PDT)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Tue, 13 Aug 2024 00:23:21 +0300
+Subject: [PATCH] drm/bridge: dw-hdmi: Simplify clock handling
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812144542.2121342-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240813-dw-hdmi-simple-clk-v1-1-78d45cef02a9@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAEh9umYC/x3MywqAIBBA0V+JWTegPejxK9HCcsohtVCoIPr3p
+ OVZ3PtApMAUoc8eCHRy5N0nyDyD2Si/ErJOhkIUlWhlifpCox1jZHdYwtluSKqT01ILrUQDKTw
+ CLXz/02F83w/fr504ZAAAAA==
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.1
+X-ZohoMailClient: External
 
-Hi Masahiro,
+Make use of devm_clk_get_enabled() to replace devm_clk_get() and
+clk_prepare_enable() for isfr and iahb clocks, and drop the now
+unnecessary calls to clk_disable_unprepare().
 
-On Mon, Aug 12, 2024 at 11:45:39PM +0900, Masahiro Yamada wrote:
-> With commit cda5f94e88b4 ("modpost: avoid using the alias attribute"),
-> only two log levels remain: LOG_WARN and LOG_ERROR. Simplify this by
-> making it a boolean variable.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/mod/modpost.c | 17 ++++++-----------
->  scripts/mod/modpost.h | 11 +++--------
->  2 files changed, 9 insertions(+), 19 deletions(-)
-> 
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index d0f138803207..c896872862dc 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -67,20 +67,15 @@ static unsigned int nr_unresolved;
->  
->  #define MODULE_NAME_LEN (64 - sizeof(Elf_Addr))
->  
-> -void modpost_log(enum loglevel loglevel, const char *fmt, ...)
-> +void modpost_log(bool is_error, const char *fmt, ...)
->  {
->  	va_list arglist;
->  
-> -	switch (loglevel) {
-> -	case LOG_WARN:
-> -		fprintf(stderr, "WARNING: ");
-> -		break;
-> -	case LOG_ERROR:
-> +	if (is_error) {
->  		fprintf(stderr, "ERROR: ");
->  		error_occurred = true;
-> -		break;
-> -	default: /* invalid loglevel, ignore */
-> -		break;
-> +	} else {
-> +		fprintf(stderr, "WARNING: ");
->  	}
->  
->  	fprintf(stderr, "modpost: ");
-> @@ -1692,7 +1687,7 @@ static void check_exports(struct module *mod)
->  		exp = find_symbol(s->name);
->  		if (!exp) {
->  			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS)
-> -				modpost_log(warn_unresolved ? LOG_WARN : LOG_ERROR,
-> +				modpost_log(warn_unresolved,
+Similarly, use devm_clk_get_optional_enabled() helper for cec clock,
+which additionally allows to remove the -ENOENT test.
 
-I think the logic is reversed here? If warn_unresolved was true before,
-LOG_WARN would be used but I think warn_unresolved being true with this
-change would trigger the behavior of LOG_ERROR. Should it be
-'!warn_unresolved'?
+Moreover, the clock related members of struct dw_hdmi are not required
+anymore, hence drop them.
 
->  					    "\"%s\" [%s.ko] undefined!\n",
->  					    s->name, mod->name);
->  			continue;
-> @@ -1715,7 +1710,7 @@ static void check_exports(struct module *mod)
->  			basename = mod->name;
->  
->  		if (!contains_namespace(&mod->imported_namespaces, exp->namespace)) {
-> -			modpost_log(allow_missing_ns_imports ? LOG_WARN : LOG_ERROR,
-> +			modpost_log(allow_missing_ns_imports,
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 66 ++++++++-----------------------
+ 1 file changed, 16 insertions(+), 50 deletions(-)
 
-Same thing here?
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index 9f2bc932c371..0031f3c54882 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -138,9 +138,6 @@ struct dw_hdmi {
+ 	struct platform_device *audio;
+ 	struct platform_device *cec;
+ 	struct device *dev;
+-	struct clk *isfr_clk;
+-	struct clk *iahb_clk;
+-	struct clk *cec_clk;
+ 	struct dw_hdmi_i2c *i2c;
+ 
+ 	struct hdmi_data_info hdmi_data;
+@@ -3326,6 +3323,7 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 	struct device_node *ddc_node;
+ 	struct dw_hdmi_cec_data cec;
+ 	struct dw_hdmi *hdmi;
++	struct clk *clk;
+ 	struct resource *iores = NULL;
+ 	int irq;
+ 	int ret;
+@@ -3405,50 +3403,27 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 		hdmi->regm = plat_data->regm;
+ 	}
+ 
+-	hdmi->isfr_clk = devm_clk_get(hdmi->dev, "isfr");
+-	if (IS_ERR(hdmi->isfr_clk)) {
+-		ret = PTR_ERR(hdmi->isfr_clk);
++	clk = devm_clk_get_enabled(hdmi->dev, "isfr");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
+ 		dev_err(hdmi->dev, "Unable to get HDMI isfr clk: %d\n", ret);
+ 		goto err_res;
+ 	}
+ 
+-	ret = clk_prepare_enable(hdmi->isfr_clk);
+-	if (ret) {
+-		dev_err(hdmi->dev, "Cannot enable HDMI isfr clock: %d\n", ret);
+-		goto err_res;
+-	}
+-
+-	hdmi->iahb_clk = devm_clk_get(hdmi->dev, "iahb");
+-	if (IS_ERR(hdmi->iahb_clk)) {
+-		ret = PTR_ERR(hdmi->iahb_clk);
++	clk = devm_clk_get_enabled(hdmi->dev, "iahb");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
+ 		dev_err(hdmi->dev, "Unable to get HDMI iahb clk: %d\n", ret);
+-		goto err_isfr;
+-	}
+-
+-	ret = clk_prepare_enable(hdmi->iahb_clk);
+-	if (ret) {
+-		dev_err(hdmi->dev, "Cannot enable HDMI iahb clock: %d\n", ret);
+-		goto err_isfr;
++		goto err_res;
+ 	}
+ 
+-	hdmi->cec_clk = devm_clk_get(hdmi->dev, "cec");
+-	if (PTR_ERR(hdmi->cec_clk) == -ENOENT) {
+-		hdmi->cec_clk = NULL;
+-	} else if (IS_ERR(hdmi->cec_clk)) {
+-		ret = PTR_ERR(hdmi->cec_clk);
++	clk = devm_clk_get_optional_enabled(hdmi->dev, "cec");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
+ 		if (ret != -EPROBE_DEFER)
+ 			dev_err(hdmi->dev, "Cannot get HDMI cec clock: %d\n",
+ 				ret);
+-
+-		hdmi->cec_clk = NULL;
+-		goto err_iahb;
+-	} else {
+-		ret = clk_prepare_enable(hdmi->cec_clk);
+-		if (ret) {
+-			dev_err(hdmi->dev, "Cannot enable HDMI cec clock: %d\n",
+-				ret);
+-			goto err_iahb;
+-		}
++		goto err_res;
+ 	}
+ 
+ 	/* Product and revision IDs */
+@@ -3462,12 +3437,12 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 		dev_err(dev, "Unsupported HDMI controller (%04x:%02x:%02x)\n",
+ 			hdmi->version, prod_id0, prod_id1);
+ 		ret = -ENODEV;
+-		goto err_iahb;
++		goto err_res;
+ 	}
+ 
+ 	ret = dw_hdmi_detect_phy(hdmi);
+ 	if (ret < 0)
+-		goto err_iahb;
++		goto err_res;
+ 
+ 	dev_info(dev, "Detected HDMI TX controller v%x.%03x %s HDCP (%s)\n",
+ 		 hdmi->version >> 12, hdmi->version & 0xfff,
+@@ -3479,14 +3454,14 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		ret = irq;
+-		goto err_iahb;
++		goto err_res;
+ 	}
+ 
+ 	ret = devm_request_threaded_irq(dev, irq, dw_hdmi_hardirq,
+ 					dw_hdmi_irq, IRQF_SHARED,
+ 					dev_name(dev), hdmi);
+ 	if (ret)
+-		goto err_iahb;
++		goto err_res;
+ 
+ 	/*
+ 	 * To prevent overflows in HDMI_IH_FC_STAT2, set the clk regenerator
+@@ -3603,11 +3578,6 @@ struct dw_hdmi *dw_hdmi_probe(struct platform_device *pdev,
+ 
+ 	return hdmi;
+ 
+-err_iahb:
+-	clk_disable_unprepare(hdmi->iahb_clk);
+-	clk_disable_unprepare(hdmi->cec_clk);
+-err_isfr:
+-	clk_disable_unprepare(hdmi->isfr_clk);
+ err_res:
+ 	i2c_put_adapter(hdmi->ddc);
+ 
+@@ -3627,10 +3597,6 @@ void dw_hdmi_remove(struct dw_hdmi *hdmi)
+ 	/* Disable all interrupts */
+ 	hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
+ 
+-	clk_disable_unprepare(hdmi->iahb_clk);
+-	clk_disable_unprepare(hdmi->isfr_clk);
+-	clk_disable_unprepare(hdmi->cec_clk);
+-
+ 	if (hdmi->i2c)
+ 		i2c_del_adapter(&hdmi->i2c->adap);
+ 	else
 
-Alternatively, I suppose the logic could be reversed in modpost_log()
-and is_error could be turned into no_error or something?
+---
+base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
+change-id: 20240813-dw-hdmi-simple-clk-ea91bf50da07
 
->  				    "module %s uses symbol %s from namespace %s, but does not import it.\n",
->  				    basename, exp->name, exp->namespace);
->  			add_namespace(&mod->missing_namespaces, exp->namespace);
-> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
-> index f756e6578b9e..6f418f0afd04 100644
-> --- a/scripts/mod/modpost.h
-> +++ b/scripts/mod/modpost.h
-> @@ -184,13 +184,8 @@ char *read_text_file(const char *filename);
->  char *get_line(char **stringp);
->  void *sym_get_data(const struct elf_info *info, const Elf_Sym *sym);
->  
-> -enum loglevel {
-> -	LOG_WARN,
-> -	LOG_ERROR,
-> -};
-> -
->  void __attribute__((format(printf, 2, 3)))
-> -modpost_log(enum loglevel loglevel, const char *fmt, ...);
-> +modpost_log(bool is_error, const char *fmt, ...);
->  
->  /*
->   * warn - show the given message, then let modpost continue running, still
-> @@ -205,6 +200,6 @@ modpost_log(enum loglevel loglevel, const char *fmt, ...);
->   * fatal - show the given message, and bail out immediately. This should be
->   *         used when there is no point to continue running modpost.
->   */
-> -#define warn(fmt, args...)	modpost_log(LOG_WARN, fmt, ##args)
-> -#define error(fmt, args...)	modpost_log(LOG_ERROR, fmt, ##args)
-> +#define warn(fmt, args...)	modpost_log(false, fmt, ##args)
-> +#define error(fmt, args...)	modpost_log(true, fmt, ##args)
-
-I suppose the declaration of modpost_log() is close enough to see what
-the true/false argument means but maybe something like
-
-  modpost_log(/* is_error = */ false, ...)
-
-could be nice? No strong opinion here though, feel free to just ignore
-this whole comment entirely if you disagree!
-
->  #define fatal(fmt, args...)	do { error(fmt, ##args); exit(1); } while (1)
-> -- 
-> 2.43.0
-> 
 
