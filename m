@@ -1,110 +1,155 @@
-Return-Path: <linux-kernel+bounces-282670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC2AB94E732
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:52:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1BA94E735
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C0B61C215E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81CCE1C2157A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AFA71537D6;
-	Mon, 12 Aug 2024 06:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lLIaLthJ"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55B831537D5;
+	Mon, 12 Aug 2024 06:53:07 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD031509BF
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7B2E14E2C5;
+	Mon, 12 Aug 2024 06:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445549; cv=none; b=eFp4pKA7L7MeNCT2YnKa3UZTNZP1Je+CDCvpaYa/d0S0KD5OwmL326GxAkglUkw53a8B+G4lHGd6GZTgwl+QCAKn5W7DiJgzFlml4eyxOR/rUE9JWcKgsgZR900Q2ev1h6fm8QxNbKAdevsAey1kNU+M1S3VAdqZY+AqZefj1AE=
+	t=1723445586; cv=none; b=J3t5W+DfNhIRS5s5EzYWB692iUqmXfBVHcgOkKyetFKcp7FY3/eGV9XylShv2fI9PYMEhjpLclTbwLtiiwV5i726/3ymVIvjFKGW4Y0IT9Wc+HRM2mNb3vHFzKa+ciXMKuUmR8Ui4gq/t/9FHqDIaf7rm+PVPrywodzcWarJF68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445549; c=relaxed/simple;
-	bh=pSAXbYgoPyhOzoWZQq1jxIxbA5US0Ij9CvyBq+u9Tk4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LtufKDC0b87O/8ESZPrKE8zTWyjzDcnxSlIorTZ5rpsOi2OAWpJSY8qtHcQ9/JPcJlIOTTO5zhY8IrL/cfKV31vEKhpNuBmmMJynLYybV52SEDc5ITD6ttRvIQxmsO97QXyRkUhMrjlapDSCXyGkVbfd/Pr0HPme6tmDkcUaUjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lLIaLthJ; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-530d0882370so3871768e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:52:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723445546; x=1724050346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vYvutISkLRUGH6JLFpRcjOxTE3aMRs9JKjHJPpsTDJM=;
-        b=lLIaLthJpbEBlDNDTy7Ag0xmsPD3sgBIAk9GlZLqO0Y8rKw0EfW2WdtouMaOh03Ljc
-         dR/FYCw1qBJKoPn7ptw5UKusWtoX+O4mVCk89iq+lICTeBUpuaYf+4rzD9EJhSoIZbh1
-         83j2FdroZRHvUumXX4WYwsEJu4aD0ePCUbzyTnjT1ql/jtdcwBx63nd82jM0ead3KcLh
-         J6g7wJk2keAbPVaWNSuww4EqxN68XPRXIjBCoRyaSSlS+MN00sb8WZ+RiaXvwoPEfcfQ
-         fN3PvxfHOKEBCuLugaqgSP4Duy97pmpsGVhppKF5MaI+F0VeFYlHQdXptVZlRHecsJjr
-         Fubw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723445546; x=1724050346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vYvutISkLRUGH6JLFpRcjOxTE3aMRs9JKjHJPpsTDJM=;
-        b=U5qGlFOC3c0Lfv9yittSbz9vsjO2N++CiFJs08DaS5Ysuoek8XF3t8KvKK3Yj128V4
-         +Ah8E7jJlSMm/dAdS4qKxcNL/AM6mbaMj5v0Z9bp8sLkd9muO3cajbLKhhqRpwuKjVLg
-         RJPgwd1HoQniMBcyFmpovUZcrI0vQ0TA71/udhSS5o6ISEiq8jBV5GUmQsMhlTSj7yeK
-         OQTqQdeQCTWSFfZ7b5fRAFfY3Dqqjk90LnfMeS7/rYI2tavmf63eml6ZGrB8NK/2KyL1
-         3brHIdDgfhRyOUikc3QyLgFMH223nrl/INTnrZ60sV76wzebDXd1NIKslN98q668byN/
-         Q6uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8FyVwwIR1Rc4iocpXUAQrmL7XTQHWyRjEKCTc1qWiWYKpNe0aQbDw0aj2mwG+AZpSAtdQEg5ume2zDcDzWOkG8dxFqPU3ZfxAjUFE
-X-Gm-Message-State: AOJu0Ywe2Oxo/Uth29G28igUNReAdnH+UBM2fEpM/eUwUaKLRw6mCuzl
-	HK2QPGGcDTYCjOfTd718fMptJoEtPOcMU4xhbf6lPI8SwRkZ7edpDE+ECGOCqwU=
-X-Google-Smtp-Source: AGHT+IEhleIQEZN/9JGTRhxG1EPnf++IP7O/xu5A3Y0gWPhqCZnhmQaXR3vNN1OTOTN5uX1Y1o4fGQ==
-X-Received: by 2002:a05:6512:b02:b0:52c:adc4:137c with SMTP id 2adb3069b0e04-530ee984de9mr5848753e87.20.1723445545776;
-        Sun, 11 Aug 2024 23:52:25 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a602220sm2012351a12.82.2024.08.11.23.52.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 23:52:25 -0700 (PDT)
-Date: Mon, 12 Aug 2024 09:52:21 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-Message-ID: <989ba8b4-19b4-4053-bb00-ccced42a8829@stanley.mountain>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
+	s=arc-20240116; t=1723445586; c=relaxed/simple;
+	bh=8S2+Hiocf6OFnAmTCfHhOwAah22o+Frgg0sVuxCoESI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U0aE0etTt2scej1uQ+csqSEd0Jm7UjwZFLyJunjy/Kj5Y0obeX4iDrl2730nAMYxHCEx8QyhVpCwR4is1LyDGiQDW74N6rfLFrnZtz2xqng0HS7mF4PjkRUJbBcEVk6Y4tmecTabr3bbKNEsZXA/Zk2r/SsZAgz06WQY1W7gqLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71CA2C32782;
+	Mon, 12 Aug 2024 06:53:05 +0000 (UTC)
+Message-ID: <e4f6f76a-0bad-4629-b438-a048ee683123@xs4all.nl>
+Date: Mon, 12 Aug 2024 08:53:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/4 RESEND] media: mgb4: YUV and variable framerate
+ support
+To: tumic@gpxsee.org, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Martin_T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+References: <20240805154054.8633-1-tumic@gpxsee.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20240805154054.8633-1-tumic@gpxsee.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 09:42:53AM +0300, Dan Carpenter wrote:
-> This code has an issue because it loops until "i" is set to UINT_MAX but
-> the test for failure assumes that "i" is set to zero.  The result is that
-> it will only print an error message if we succeed on the very last try.
-> Reformat the loop to count forwards instead of backwards.
+Hi Martin,
+
+Before I merge this series, I would like to see the v4l2-compliance output for
+each video device.
+
+Can you reply with that output?
+
+I want to make sure that all the g/s_parm and dv_timings changes are correct
+according to v4l2-compliance. And of course, if it isn't, then please fix
+any reported issue and post a v7.
+
+Regards,
+
+	Hans
+
+On 05/08/2024 17:40, tumic@gpxsee.org wrote:
+> From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 > 
-> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: In version one, I introduced a bug where it would msleep(100) after failure
->     and that is a pointless thing to do.  Also change the loop to a for loop.
-
-I mean this version also sleeps on the last failed iteration but at least there
-isn't always true if statement to try prevent optimize away the last sleep.
-I'm okay with a sleep on the slow path but not with pointless if statements. ;)
-
-regards,
-dan carpenter
+> Recent mgb4 FW update added support for the YUV image format and variable
+> framerates independent of the signal framerate. The following patches extend
+> the mgb4 driver with support for both features.
+> 
+> Changes in V6:
+> - Properly handle the timings when no signal is present.
+> 
+> Changes in V5:
+> - Removed surplus v4l2_format.type checks.
+> - Improved the patch descriptions.
+> - Splitted the frame rate limit patch into separate code/documentation parts.
+> 
+> Changes in V4:
+> - Splitted the output frame_rate handling fix from the variable frame rate
+>   addition patch.
+> 
+> Changes in V3:
+> - Use div_u64() for 64b division (fixes build error on ARM32)
+> 
+> Changes in V2:
+> - Added missing stride limit
+> 
+> Martin Tůma (4):
+>   media: mgb4: Add support for YUV image formats
+>   media: mgb4: Add support for V4L2_CAP_TIMEPERFRAME
+>   media: mgb4: Fixed signal frame rate limit handling
+>   media: admin-guide: mgb4: Outputs DV timings documentation update
+> 
+>  Documentation/admin-guide/media/mgb4.rst |  23 +-
+>  drivers/media/pci/mgb4/mgb4_core.c       |   2 +-
+>  drivers/media/pci/mgb4/mgb4_core.h       |   2 +
+>  drivers/media/pci/mgb4/mgb4_io.h         |  29 ++-
+>  drivers/media/pci/mgb4/mgb4_sysfs_out.c  |   9 +-
+>  drivers/media/pci/mgb4/mgb4_vin.c        | 193 +++++++++++---
+>  drivers/media/pci/mgb4/mgb4_vin.h        |   3 +-
+>  drivers/media/pci/mgb4/mgb4_vout.c       | 309 ++++++++++++++++++++---
+>  drivers/media/pci/mgb4/mgb4_vout.h       |   5 +-
+>  9 files changed, 482 insertions(+), 93 deletions(-)
+> 
+> 
+> base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
 
 
