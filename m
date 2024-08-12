@@ -1,257 +1,368 @@
-Return-Path: <linux-kernel+bounces-282587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3962F94E62F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:35:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A814394E630
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D2ED1C213C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD9541C20D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:37:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB9D14D428;
-	Mon, 12 Aug 2024 05:35:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620B414D420;
+	Mon, 12 Aug 2024 05:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OHzpRjo9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JPnYUlA1"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352D214C5BA
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723440944; cv=fail; b=nrb33vJO3qqS1xL0KQNM8J8jkt18D6j9PB9evWiK5sOa3rrwgdfih+vbIFnucqh52sPyDxqU5cWm2DnzzEgWsfgVQyqDcM9qul9cQrrbkk+Xqw0564xUBkhCDbzR+bxiPbtZweEN15BhtuqXQc01hu2zUYyAW7YC8j83lBCY7bA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723440944; c=relaxed/simple;
-	bh=ZYxcse81JILLxsl0u+HShzMM5IN31gHT1WgnzZmbDSM=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FOOSblkVv/JUKd+JWiKsjrx07GtElEpLlmZ0RNjhqs7MqGzTJ2b79kRXiI/Zz08lxjGZierl6z66E9HHAf0C74Q5eutZ3RTilk1bQtoNZSiZS//akJjueCXe6QtIFFE1KFNjMmAJeoj+OH20RfLobgUckNyKeywWmIbnvgIIGFo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OHzpRjo9; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723440942; x=1754976942;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ZYxcse81JILLxsl0u+HShzMM5IN31gHT1WgnzZmbDSM=;
-  b=OHzpRjo9NjZjOF3TcyALAR14C2Z+ti5eUk7ccPwo6/37tqtBL3ubpr5b
-   tve4ogW+Ii5L0fWUof7AnaBgOWiw0gJAJM6ESCmJ1/2qgZ6tGyLJRpHLn
-   5Xc//A7PA9XdiLJ6/7uwl5Agdy7FM8cDEyST1lDeP+3k41tL9aKCw5JQJ
-   CDJ1lv3hf+B4IHsOwyfiEbyXuzqM/WEDy1mK3GKhf3Vg20OMo/A7hyyEW
-   wxN7wFScBI/fn5A0FCVeXgwq419Crl7bhO9MS+u9bZCxkgzjxdDgsL226
-   /A3c7Kbh/Wy5Cr7DcUizSmoXNLwRBu6QVDP/ep1rLdqKBl1Ia8d5sPjbg
-   w==;
-X-CSE-ConnectionGUID: CDcPy0a+TvKt9iDFGplBGg==
-X-CSE-MsgGUID: eQ4VFT0lSne+4DEqy0iy9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="25398294"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="25398294"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:35:42 -0700
-X-CSE-ConnectionGUID: iVCPoCPPT0SzKpfdMCyoug==
-X-CSE-MsgGUID: OSUQJ9E3Qdq3H8GR+Q+faQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="58050397"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Aug 2024 22:35:41 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 11 Aug 2024 22:35:40 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 11 Aug 2024 22:35:40 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 11 Aug 2024 22:35:40 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VDmq1lmHDY4CUsTzl2EqwJVRkfBd3KCeqpPhs1trdV8q+l+eScMnJrCnXA1MoDpeP3kxNwSTxnGjMTNiR9bP8rVH6uI/eJmllasVaHJ25YlfATRY602C+RreA9vQAzZOCjtPErPZprJDK5yDaQo1sJt23Lm5GH5xbFPHh/3qMOh+xGG1OexMDB+TksIdcQKiKxj8RAToKKuDcGnwF6rLnf7JgBKoYmp9iVQcCMnqHeMII/ksb65BI+R7y76N9LSxuMGU3g/ul3aQvOkAYJUTkk+8kRz2JV3El+h7OPqfTbx974BXXa6hYuVLYYsu8cq46VH898g28xqLjatLj0m+Lg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ELo/UqUFvJ8pTP4uPRV9yiNARqSBXvmrTCl7v8WNC3Y=;
- b=R3GDbGgEbUCa7pzk7CW2vN/KmvpTxfD8z0q+lcqv34PvyIM2kcByADrahAIEwf9eyn/3K1ykqJoY0oXMo+sHF9+jb6U+VdEiI8Hfcd27+LDHcVqedadsdK+3Gg59I1GZP3nA2oHFElaO+vUeSSw7GHu22GpX2ccwuyq5ztVyBP5bo+xwS8s4K5WY41jg4BBQ1UhkO8K+99BNvLLTPzvRdOQHVRUSasr2KzEGJPTQCHvOqex9MWWJJDwssOHAfedn/N/kt1VkaHXhW2CMM3nc4BJM9C4pV2VnSp8mFnkm/miCMPjbUcVdkG7SeKvz/Athi5EPPX7YvqAMlpZvxcW6Vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MW4PR11MB7056.namprd11.prod.outlook.com (2603:10b6:303:21a::12)
- by CY8PR11MB7108.namprd11.prod.outlook.com (2603:10b6:930:50::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33; Mon, 12 Aug
- 2024 05:35:38 +0000
-Received: from MW4PR11MB7056.namprd11.prod.outlook.com
- ([fe80::c4d8:5a0b:cf67:99c5]) by MW4PR11MB7056.namprd11.prod.outlook.com
- ([fe80::c4d8:5a0b:cf67:99c5%6]) with mapi id 15.20.7828.031; Mon, 12 Aug 2024
- 05:35:38 +0000
-Message-ID: <8b9928cc-dce9-4cfd-b1a9-0112266d60df@intel.com>
-Date: Mon, 12 Aug 2024 11:05:31 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] drm/sched: Use drm sched lockdep map for submit_wq
-To: Matthew Brost <matthew.brost@intel.com>, <intel-xe@lists.freedesktop.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-CC: <tj@kernel.org>, <jiangshanlai@gmail.com>, <christian.koenig@amd.com>,
-	<ltuikov89@gmail.com>, <daniel@ffwll.ch>
-References: <20240809222827.3211998-1-matthew.brost@intel.com>
- <20240809222827.3211998-5-matthew.brost@intel.com>
-Content-Language: en-US
-From: "Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
-In-Reply-To: <20240809222827.3211998-5-matthew.brost@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0026.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:b8::14) To MW4PR11MB7056.namprd11.prod.outlook.com
- (2603:10b6:303:21a::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB7653C0B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723441016; cv=none; b=DUq87sbktPgGRyrjISgZNM7p7+Fl2GQYo/eH/z/CD+x8kXAQm5X0lCXBZRF3jWalch5qpKPTK5qxBBbfoHdWJNd+jMk+JRvJ/8zijKwfOYR10CNMfNEhiJKb413ovcY4f1A/aIUCnLbu2ii4ZJrAVb+dv9iX6Cs3V30NUjdXZy8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723441016; c=relaxed/simple;
+	bh=OjtUQVGraMUrucHTdAoAEOxoG0nrrZguKhnESuYTvh4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gO2JmdMYBz+e1GjuIVKMrvQxY783ZbzKY2MUQTOjP0/3ij0kd132IoMnIi2vavN+7r4jeLIp4U/cQ69mtDbzEtZ0u4ceArmiQbD3xDjKD12NbTr9sv4q6op7kZ/baUzAxei9CkHe+KwufIIhTvSspTi7GKsGzT+J1E94iTdGdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JPnYUlA1; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2d1e3381cb1so1875963a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723441014; x=1724045814; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jyZ910m1lZNBWKgHfLt3Qbj6V+WoKDjZ9MkwYi8mfBQ=;
+        b=JPnYUlA1aVPEeXWxX/vk1uZEa7Ioiy9+RJUM5ECb+skibm+/O+t72xqbdc/yLEubtD
+         s6G6wnLSU3gpBwuIbVGTVRDeGOx/czEg+bUoXNUU9w+1OIKExw9dSmgATClj+OMoC3l2
+         VAa4DZj5yZjtHFG3DogEaulenUiqE13CmipWEaDDGAOVnDurkzGb90YKBbYWPchNu6cP
+         EU4/w62Elvnh1iYTHFynhohTrlXF3AvV+4cg/MqwpBDL+8Ukr+HKRGGMcbAwgC95Bsfy
+         cKhs327E7oCbESM/pXpqfrWcOLZapXawF7VEVPOszazCod4W6hSNY/ccfnx7mKl6CnRC
+         JSmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723441014; x=1724045814;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jyZ910m1lZNBWKgHfLt3Qbj6V+WoKDjZ9MkwYi8mfBQ=;
+        b=h3WOnxZKYlT2dplykaDLlRU1XQKgtKSm6Cs36e5uafOcaz0HrgvpaEVY39yZL/A4YR
+         WQgQHo7NSeCFipg1RSlriFZUPsdVhe9O2ZECW0OH2M2UxysHnNykVEKGHNRvGS50wcme
+         BQJwV+IcfFigolks3i3UI4heJ9/JPj4y7jV1I8PXsNzbE76GNg/xPFCTx27+gLCZrRUq
+         NYQP4dndyvdCeb66YST4HiJhFyTJst6dt6+EOtBX86euK+ZGnI+SZ60K9b233gjWGVML
+         2QyzuwgGVHg4GyHnlh/7ZT1eQvNZxR44A9hOX8d9mLLT9TantuGQ0IIg2DS84oCKOXT/
+         tvJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgWZ/rNFYO8KUJQW3reBLKWlYOmroDc6IGwZco6pNV73K+EeU05mr/x4G/5/Km9b+YRa/SO8F8ZGuF+zU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzl82K21HmwIUnYIi/6TSqnOwJ+VjFUNO73s6cdtRZW09/aPqZc
+	MzCZ0XMn9JlfULD846926OCwMReeLFiEBx6sWY7Jq4imuUN7pJ2S
+X-Google-Smtp-Source: AGHT+IESOwZIqsfgv5lhz7MC+AFDRnX7pQbmjVcrgC/2lAPP3zsHjQXKgsTA1XwVZcht6NuI+mabLw==
+X-Received: by 2002:a17:90a:9cb:b0:2ca:8a93:a40b with SMTP id 98e67ed59e1d1-2d1e80512b7mr9080297a91.31.1723441013825;
+        Sun, 11 Aug 2024 22:36:53 -0700 (PDT)
+Received: from localhost.localdomain ([2407:7000:8942:5500:aaa1:59ff:fe57:eb97])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9dc8712sm7242147a91.49.2024.08.11.22.36.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 22:36:53 -0700 (PDT)
+From: Barry Song <21cnbao@gmail.com>
+To: david@redhat.com
+Cc: akpm@linux-foundation.org,
+	baohua@kernel.org,
+	baolin.wang@linux.alibaba.com,
+	corbet@lwn.net,
+	ioworker0@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryan.roberts@arm.com
+Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
+Date: Mon, 12 Aug 2024 17:36:36 +1200
+Message-Id: <20240812053636.97700-1-21cnbao@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <8258bf4c-ecec-4e06-ada0-da9fb99b1219@redhat.com>
+References: <8258bf4c-ecec-4e06-ada0-da9fb99b1219@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR11MB7056:EE_|CY8PR11MB7108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71cc07b4-4a5f-4ec0-af6e-08dcba909915
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?ajhwVVRPN293M3VnQ0o5Q2JOTlR3R0VzZkJBY1ovcDBBUzdkNTlzMGZBTmd3?=
- =?utf-8?B?Tm9zc3I4ZG9HYzUvSUg0a1pNbWNLQ2xmTnAyRGx2cllsY1VLSHlBTkd1SmYz?=
- =?utf-8?B?czhkTUxvc2FaM3VqSHc2eFdBYVkydzgreExFQjZKbXB1WWZsN2QvUUZWUGdq?=
- =?utf-8?B?TnNHelVLSGVGUFZSNy9YSHRZSnlBdE5qRzRsUDhHcXZza255QVFzOHdMdGZr?=
- =?utf-8?B?SmVaR1NYdmVERFRsY3B0RnlqaWJ3MjFKRms2Z240bmZCY3E1VHhiYnNrN0Zm?=
- =?utf-8?B?NzBPTWRSVHdhaFE4OWNGWDB2V0RDS3I0bjVNaEl5OHFQMERrNzBMM1JGQ1FC?=
- =?utf-8?B?ZEFManY1ZEtVM0ZCbHVKZmsxaDlOamtONlpaQVBUL3ozMXBzbjFpZkgzN0wy?=
- =?utf-8?B?emt3am9rajU5WlFyL3BFM0RYd2pWaGQwb1psQ2NjWWdFcUc3aFUrYmpiSHNz?=
- =?utf-8?B?ekVINjNXSmxzNEtKeWR5RnpSSm1tNFVSUC9ZU1BLdmZ6eGphRm1DcHNZOFVq?=
- =?utf-8?B?elcwWE1EckxJampJdUUyV0RDcE1tcXNDTURuWG1RTXprb1dZU3dqakcyaXR2?=
- =?utf-8?B?clpsbkJTM3NmUkdZY0hxRE1YcVRIa2NXbzhLN2hzUlVEaUlQeGg3eG9EWWlC?=
- =?utf-8?B?MUswVVZ4SEtsUVZqb09wNk1YTU85a3kzdWY1UWgvR0RCVFlnYXpiOXRGMzZW?=
- =?utf-8?B?OGdIYVR5VW9nVzNqZFVaVDJYUnZ3RGhXWDFMeUwxN3JhMXczM01teDQ2cTNY?=
- =?utf-8?B?UWtvdUJwMEZaQW8wZlBvdVRUcHVzQ05rd0pFSWl4QUtLTXNyZlhiZkFRcGRx?=
- =?utf-8?B?ajJnZ0ViUGV1cExyeVBKZlR4ZlJySVpkaGd4ekQrdG0xbzRDWThlVnMwbWhX?=
- =?utf-8?B?SzdUN1hJLzl1MTNEWjhJRGhRWE1acVc0NFpsV0lnMHJOOEdHRWRxdSthVGc5?=
- =?utf-8?B?ak8ramx2eG9hWjZxYUxObTB0ZXZrOE5XMXFIdXhYcWU0UDg4YnZMdjJRa0Zo?=
- =?utf-8?B?RWw4WEowdlc0TWlDMzVvMVdkSDQ3aThzOVF5T0dleERTMHV3eTJ5SldLbFpF?=
- =?utf-8?B?TDR1dVZ1SFdTWVhZeGM3MFNiaEloMm9uQk51VGN2c1pXWU5mVUVEeEQwS1Mz?=
- =?utf-8?B?bTdDT0tMK3pZZTlOT2JKTE4zdjN5K1N5cDBkamxqYWhTVDJFVHZTSjREN3hh?=
- =?utf-8?B?bFd2RmtGY3orc0ViSDBvd2xuelFtUFZrM2F2S2o5eGI4RGF0ZXV1ZlVUTjc2?=
- =?utf-8?B?UU5WQUZWSDV6eUN5N2ZsY3RXNDhuRWVkdkJ6bnd2M0JxUUdRaFp2dlJmNGdq?=
- =?utf-8?B?aW1hZ1lKUVJLWjN1K1BmL083Z0dZbTNNVnNvemwzS0xVRGc5MUV5SEdYMGZk?=
- =?utf-8?B?OEdNWFZJVjc0anozeUpsL3Y5NzJIaFluQmNackRwNnQxZ2ZQQ3c4dFF6NnND?=
- =?utf-8?B?eGRZWkorL3FyS3F3YmpkcHBpK2pWcDFZN0VjSlFTeHJ2MWVIYUp2L3oweEdu?=
- =?utf-8?B?dGM3aDAvd0NZMjV4eEl3UjhLc1FNRHhRVTZ5K0VCaUJCY1pTaDNneEdmZUlN?=
- =?utf-8?B?Qm1ZaEF0N3hNbFI4TDJ4UkxXdmNySmN3TzRjY0d1aVduVllHTmlrYy9PRDdI?=
- =?utf-8?B?aHU4ZjJsTWtJRUVOSmRRMVNzbVRTS0dQY3luWlBaaUZSdXRpWU0rcWRkektu?=
- =?utf-8?B?TUJmT1U5RGdOSk54VlBSbm5pQ1NRZ1NmWW4wcVBnajdkUmV5SG1IZ3NvcWZ0?=
- =?utf-8?B?V1MvWDdKZWhSbGpiRmlvL3M5NnZOUWdGcmxHN0FkUnVRQUVId1E5RGRvZ0RL?=
- =?utf-8?B?dGFvT1ZZdmM2ZGtJSXBvQT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB7056.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?M3UyekpMa2o4THpaTVdjczNrcUp2NVBzR0p1OUtZNUVsRlppb29WRnphOTZ5?=
- =?utf-8?B?SXpORmo2cFYxRVYyQzZIajhVRVl1bWlsVEltNUxLYUtsTVcwdDBHaVV0ZWRk?=
- =?utf-8?B?VDNEK1M4VGxCcDQ3d1BKdjZVQ01ZVFNFdEZNSVlTZ3h1RzErUmtNTEl6ZUNK?=
- =?utf-8?B?c1RwSzZrb3l5UWRLbXNRano5UzhYbU1Yc2cvd2dCMmsrdk0xQk41b0tKTE1i?=
- =?utf-8?B?Y2FNbzVXZjRJbXZLN21TVGpZY25KNDlGanZ2NTcyMmZiRUgzbGpzdU5KMGpX?=
- =?utf-8?B?YTZKYVVBcWZnTG9XNGM1UWdCd2pFSTd1R2h0Qm9TME9NV2NFNHptODZlakRR?=
- =?utf-8?B?RDJSbXByWnkwNjFQbUdNUHd2MXBNWVVlMnZQOW5KUnlYUHJDbFdqL2w0ditt?=
- =?utf-8?B?Lzh0YzBaLzlvNERmNEJ0VDg2emlMYmw4WDFyaUdZUkM5VVJncWREZktsOU9C?=
- =?utf-8?B?dy8vQ3RsTUMvam5nTERtQjBydWM1U2RNQkl1UVVxSUFVNVROeWgrQ2tuRU9h?=
- =?utf-8?B?RFJXMmdVV3Bubmhqc2hIZUFUcDRMM0pnc0ROTElpaERmUmp0bHUrN2d6VGxR?=
- =?utf-8?B?MTNjNWhwSWs5aXBXeWd1cGYxRzNCb3R4UTZ4MTdkbVVYS1dIUWNleXZyS1Fj?=
- =?utf-8?B?SVZPdEZ4WDI3TXBld084M1dIdTV1ZXJGZjVnenB0UWxrUzN1blhmMTdkNHVy?=
- =?utf-8?B?U0VqV3QwNnN5U2MrTlFrVm5OeDVYNWpDTG5vTU1NSFpieFh4T3JjZzRKKzB3?=
- =?utf-8?B?cXZ3bFdyQm5EcEZHSXlKaCtvMHJzYm5VT1ZoN1RUTW5FWFN3Z08yUUd3eERI?=
- =?utf-8?B?Ly9xSkJpUWlYN2ZtVUhmSiswd0UxRHBrM29iZXdwcUNSWGVDZkVMNzE4QWl5?=
- =?utf-8?B?WXBzTW05RUd4SXhLM2t5YXZYZTg2clJ2RlRoNGY3eGM4c292ZmkvYzJpU1NJ?=
- =?utf-8?B?UFlEb29YZ3hIQ3VCeWx4Q1ZWVmMwYkcrR3Z5ZnhsMVRJanVSRGhBKzh3NEdR?=
- =?utf-8?B?N1lpd2tUZnI5dzkxajhoL000YndDalRuanVWUDlKd2lyVDFJSENNYVEzZkl4?=
- =?utf-8?B?NjNuSlRHQkQ0ZjBXOE5mMU81MnFoU2YydnRseDF2Y01WdThSWUxSUVdMUC8w?=
- =?utf-8?B?RUVsWnB1dUtWSCthVWxJdmdpM1QwTktqbmo3Z2VscVZzTFBZWkcxQmo1bzV4?=
- =?utf-8?B?MUtYblNlRUwzeE9WbEZpZFRVRXhPNEVDem9kQ0JRK2JzOVpXOEpyd21lbU1R?=
- =?utf-8?B?cVAzOHBvT241QmNDb2NxcTBBZWlXOGQvU2NGVURYQ2xCMDhUT2R5bFd6ZEx6?=
- =?utf-8?B?RkN6QlNKeWFEVHZCSm8yOG5NS05VcG5yOXNXNVYwVmQ5TGhWeEVWNUpVeU1z?=
- =?utf-8?B?QVYzb25tS3p1S3ppS2ZIbEZpUU5YNmNIWjVKblUzRkNLS1pyV1NlTE1VeC9s?=
- =?utf-8?B?STU2NTVqK1Y2ai80cXJMS1NsUTNoQ01kMVV4bTAvS2xTdC9WZDBRM3ZtZ1FD?=
- =?utf-8?B?TFMwU01NQ2dveFV2Sk1jeGQrTjMwRGlvQmVVa1hoVXJBRUppSkQvaXFwUk9V?=
- =?utf-8?B?TkZMbXBvZnZibU9hWUtHYis1Yy82WU1vYkpRM2U4bi83THo5L3JaWUxYQmxW?=
- =?utf-8?B?eFZmaTZzeDNocHRMSElWRmM2MkhTNnNwZk9na3ZSVkcvQTIzMkJXNVJ6RWFv?=
- =?utf-8?B?S0hJczN6RmRGUGZTc0pucnkxZDB3TXZMUlpuR0p4QXdTWDZIbzVueitDRmVy?=
- =?utf-8?B?ZzZKazc0dDBvbnkvek1xNGhaL051dUZMMk9FaytZQUFwdUFEeVE4a0pySUVj?=
- =?utf-8?B?TWVMQWdWOEFYN3pCSEtic09GcE9DYURGRlJ2OHRRc1hYU1dJRndJaW5TTVdB?=
- =?utf-8?B?NzZDNUhQaUxnMnN5RzZuMmZqL2FweUdoQTU0M2hlUWdvZlkxNndCeU1jWUk2?=
- =?utf-8?B?MG1LWFkxZ3pGS0J6WVdTWm1tR0FDSW9EaU95dWY4Q2RhWUZDVHBrMnlpbU12?=
- =?utf-8?B?cjBiSnd5ZERlMmZrcjEvZ0ZNUDlZajJybkpMbzVzZE9ieE0zd25DR2NncGM0?=
- =?utf-8?B?a0poVlBvU0JIYVkyRlprU3JSUXV4YmE5a2czcFNabW1mOEhiQjhzWkErMG9W?=
- =?utf-8?B?RVBLeDlkcDNvWmI5a1RnYjZFU21VcnJDYWlKY2QrVUw3YzM0U09kM1BsKzF6?=
- =?utf-8?Q?p1r2Hkv7tAb/h96RTsIqiLY=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71cc07b4-4a5f-4ec0-af6e-08dcba909915
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB7056.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 05:35:38.8815
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: n/5Mwck2fWby0yKvXSIVovIpe78lFbnGGjGHnuPtV6B8rgNLWizyb9GIFWPTFLT7gnRNFNiENfPNzsKFKc8Ezqm2tOpiC+7xQSyGdCkJ52U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7108
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Sat, Aug 10, 2024 at 1:15 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> >>>>> -You can change the sysfs boot time defaults of Transparent Hugepage
+> >>>>> -Support by passing the parameter ``transparent_hugepage=always`` or
+> >>>>> -``transparent_hugepage=madvise`` or ``transparent_hugepage=never``
+> >>>>> -to the kernel command line.
+> >>>>> +You can change the sysfs boot time default for the top-level "enabled"
+> >>>>> +control by passing the parameter ``transparent_hugepage=always`` or
+> >>>>> +``transparent_hugepage=madvise`` or ``transparent_hugepage=never`` to the
+> >>>>> +kernel command line.
+> >>>>> +
+> >>>>> +Alternatively, each supported anonymous THP size can be controlled by
+> >>>>> +passing ``thp_anon=<size>[KMG]:<state>``, where ``<size>`` is the THP size
+> >>>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
+> >>>>> +``inherit``.
+> >>>>> +
+> >>>>> +For example, the following will set 64K THP to ``always``::
+> >>>>> +
+> >>>>> +     thp_anon=64K:always
+> >>>>> +
+> >>>>> +``thp_anon=`` may be specified multiple times to configure all THP sizes as
+> >>>>> +required. If ``thp_anon=`` is specified at least once, any anon THP sizes
+> >>>>> +not explicitly configured on the command line are implicitly set to
+> >>>>> +``never``.
+> >>>>
+> >>>> I suggest documenting that "thp_anon=" will not effect the value of
+> >>>> "transparent_hugepage=", or any configured default.
+> >
+> > Did you see the previous conversation with Barry about whether or not to honour
+> > configured defaults when any thp_anon= is provided [1]? Sounds like you also
+> > think we should honour the PMD "inherit" default if not explicitly provided on
+> > the command line? (see link for justification for the approach I'm currently
+> > taking).
+>
+> I primarily think that we should document it :)
+>
+> What if someone passes "transparent_hugepage=always" and "thp_anon=..."?
+> I would assume that transparent_hugepage would only affect the global
+> toggle then?
+>
+> >
+> > [1]
+> > https://lore.kernel.org/linux-mm/CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44gg-Dt7Ewt3ExqTw@mail.gmail.com/
+> >
+> >>>>
+> >>>> Wondering if a syntax like
+> >>>>
+> >>>> thp_anon=16K,32K,64K:always;1048K,2048K:madvise
+> >
+> > Are there examples of that syntax already or have you just made it up? I found
+> > examples with the colon (:) but nothing this fancy. I guess that's not a reason
+> > not to do it though (other than the risk of screwing up the parser in a subtle way).
+>
+> I made it up -- mostly ;) I think we are quite flexible on what we can
+> do. As always, maybe we can keep it bit consistent with existing stuff.
+>
+> For hugetlb_cma we have things like
+>         "<node>:nn[KMGTPE|[,<node>:nn[KMGTPE]]
+>
+> "memmap=" options are more ... advanced, including memory ranges. There
+> are a bunch more documented in kernel-parameters.txt that have more
+> elaborate formats.
+>
+> Ranges would probably be the most valuable addition. So maybe we should
+> start with:
+>
+>         thp_anon=16K-64K:always,1048K-2048K:madvise
+>
+> So to enable all THPs it would simply be
+>
+>         thp_anon=16K-2M:always
+>
+> Interesting question what would happen if someone passes:
+>
+>         thp_anon=8K-2M:always
+>
+> Likely we simply would apply it to any size in the range, even if
+> start/end is not a THP size.
+>
+> But we would want to complain to the user if someone only specifies a
+> single one (or a range does not even select a single one) that does not
+> exist:
+>
+>         thp_anon=8K:always
 
+How about rejecting settings with any illegal size or policy? 
 
-On 10-08-2024 03:58, Matthew Brost wrote:
-> Avoid leaking a lockdep map on each drm sched creation and destruction
-> by using a single lockdep map for all drm sched allocated submit_wq.
-> 
-> v2:
->   - Use alloc_ordered_workqueue_lockdep_map (Tejun)
-> 
-> Cc: Luben Tuikov <ltuikov89@gmail.com>
-> Cc: Christian König <christian.koenig@amd.com>
-> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> ---
->   drivers/gpu/drm/scheduler/sched_main.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index ab53ab486fe6..cf79d348cb32 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -87,6 +87,12 @@
->   #define CREATE_TRACE_POINTS
->   #include "gpu_scheduler_trace.h"
->   
-> +#ifdef CONFIG_LOCKDEP
-> +static struct lockdep_map drm_sched_lockdep_map = {
-> +	.name = "drm_sched_lockdep_map"
-> +};
+I found there are too many corner cases to say "yes" or "no". It seems
+the code could be much cleaner if we simply reject illegal settings.
+On the other hand, we should rely on smart users to provide correct
+settings, shouldn’t we? While working one the code, I felt that
+extracting partial correct settings from incorrect ones and supporting
+them might be a bit of over-design.
 
+I have tested the below code by
 
-will it be better to use STATIC_LOCKDEP_MAP_INIT ? Initializing key here 
-instead of while registering the class ?
+"thp_anon=16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never"
 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 1a12c011e2df..6a1f54cff7f9 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -81,6 +81,7 @@ unsigned long huge_zero_pfn __read_mostly = ~0UL;
+ unsigned long huge_anon_orders_always __read_mostly;
+ unsigned long huge_anon_orders_madvise __read_mostly;
+ unsigned long huge_anon_orders_inherit __read_mostly;
++static bool anon_orders_configured;
+ 
+ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 					 unsigned long vm_flags,
+@@ -737,7 +738,10 @@ static int __init hugepage_init_sysfs(struct kobject **hugepage_kobj)
+ 	 * disable all other sizes. powerpc's PMD_ORDER isn't a compile-time
+ 	 * constant so we have to do this here.
+ 	 */
+-	huge_anon_orders_inherit = BIT(PMD_ORDER);
++	if (!anon_orders_configured) {
++		huge_anon_orders_inherit = BIT(PMD_ORDER);
++		anon_orders_configured = true;
++	}
+ 
+ 	*hugepage_kobj = kobject_create_and_add("transparent_hugepage", mm_kobj);
+ 	if (unlikely(!*hugepage_kobj)) {
+@@ -922,6 +926,103 @@ static int __init setup_transparent_hugepage(char *str)
+ }
+ __setup("transparent_hugepage=", setup_transparent_hugepage);
+ 
++static inline int get_order_from_str(const char *size_str)
++{
++	unsigned long size;
++	char *endptr;
++	int order;
++
++	size = memparse(size_str, &endptr);
++	order = fls(size >> PAGE_SHIFT) - 1;
++	if (order & ~THP_ORDERS_ALL_ANON) {
++		pr_err("invalid size in thp_anon= %ld\n", size);
++		return -EINVAL;
++	}
++
++	return order;
++}
++
++static inline void set_bits(unsigned long *var, int start, int end)
++{
++	int i;
++
++	for (i = start; i <= end; i++)
++		set_bit(i, var);
++}
++
++static inline void clear_bits(unsigned long *var, int start, int end)
++{
++	int i;
++
++	for (i = start; i <= end; i++)
++		clear_bit(i, var);
++}
++
++static char str_dup[PAGE_SIZE] __meminitdata;
++static int __init setup_thp_anon(char *str)
++{
++	char *token, *range, *policy, *subtoken;
++	char *start_size, *end_size;
++	int start, end;
++	char *p;
++
++	if (!str || strlen(str) + 1 > PAGE_SIZE)
++		goto err;
++	strcpy(str_dup, str);
++
++	p = str_dup;
++	while ((token = strsep(&p, ";")) != NULL) {
++		range = strsep(&token, ":");
++		policy = token;
++
++		if (!policy)
++			goto err;
++
++		while ((subtoken = strsep(&range, ",")) != NULL) {
++			if (strchr(subtoken, '-')) {
++				start_size = strsep(&subtoken, "-");
++				end_size = subtoken;
++
++				start = get_order_from_str(start_size);
++				end = get_order_from_str(end_size);
++			} else {
++				start = end = get_order_from_str(subtoken);
++			}
++
++			if (start < 0 || end < 0 || start > end)
++				goto err;
++
++			if (!strcmp(policy, "always")) {
++				set_bits(&huge_anon_orders_always, start, end);
++				clear_bits(&huge_anon_orders_inherit, start, end);
++				clear_bits(&huge_anon_orders_madvise, start, end);
++			} else if (!strcmp(policy, "madvise")) {
++				set_bits(&huge_anon_orders_madvise, start, end);
++				clear_bits(&huge_anon_orders_inherit, start, end);
++				clear_bits(&huge_anon_orders_always, start, end);
++			} else if (!strcmp(policy, "inherit")) {
++				set_bits(&huge_anon_orders_inherit, start, end);
++				clear_bits(&huge_anon_orders_madvise, start, end);
++				clear_bits(&huge_anon_orders_always, start, end);
++			} else if (!strcmp(policy, "never")) {
++				clear_bits(&huge_anon_orders_inherit, start, end);
++				clear_bits(&huge_anon_orders_madvise, start, end);
++				clear_bits(&huge_anon_orders_always, start, end);
++			} else {
++				goto err;
++			}
++		}
++	}
++
++	anon_orders_configured = true;
++	return 1;
++
++err:
++	pr_warn("thp_anon=%s: cannot parse(invalid size or policy), ignored\n", str);
++	return 0;
++}
++__setup("thp_anon=", setup_thp_anon);
++
+ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+ {
+ 	if (likely(vma->vm_flags & VM_WRITE))
+-- 
+2.34.1
 
-> +#endif
-> +
->   #define to_drm_sched_job(sched_job)		\
->   		container_of((sched_job), struct drm_sched_job, queue_node)
->   
-> @@ -1272,7 +1278,12 @@ int drm_sched_init(struct drm_gpu_scheduler *sched,
->   		sched->submit_wq = submit_wq;
->   		sched->own_submit_wq = false;
->   	} else {
-> +#ifdef CONFIG_LOCKDEP
-> +		sched->submit_wq = alloc_ordered_workqueue_lockdep_map(name, 0,
-> +								       &drm_sched_lockdep_map);
-> +#else
->   		sched->submit_wq = alloc_ordered_workqueue(name, 0);
-> +#endif
->   		if (!sched->submit_wq)
->   			return -ENOMEM;
->   
+Everything seems to be correct:
+
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-16kB/enabled 
+[always] inherit madvise never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-32kB/enabled 
+[always] inherit madvise never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-64kB/enabled 
+[always] inherit madvise never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-128kB/enabled 
+always [inherit] madvise never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-256kB/enabled 
+always inherit [madvise] never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-512kB/enabled 
+always [inherit] madvise never
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-1024kB/enabled 
+always inherit madvise [never]
+/ # cat /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/enabled 
+always inherit madvise [never]
+
+>
+> >
+> >>>>
+> >>>> (one could also support ranges, like "16K-64K")
+> >>>>
+> >>>> Would be even better. Then, maybe only allow a single instance.
+> >>>>
+> >>>> Maybe consider it if it's not too crazy to parse ;)
+> > I'll take a look. I'm going to be out for 3 weeks from end of Monday though, so
+>
+> Oh, lucky you! Enjoy!
+>
+> > probably won't get around to that until I'm back. I know Barry is keen to get
+> > this merged, so Barry, if you'd like to take it over that's fine by me (I'm sure
+> > you have enough on your plate though).
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
+
+Thanks
+Barry
+
 
