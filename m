@@ -1,186 +1,119 @@
-Return-Path: <linux-kernel+bounces-282722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 485C494E7E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:35:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ABCB94E7E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB111C21AC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:35:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32011F239BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A4515B0E2;
-	Mon, 12 Aug 2024 07:35:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D32D15886B;
+	Mon, 12 Aug 2024 07:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVHo6GYm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Q8VticFr"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06C154C02;
-	Mon, 12 Aug 2024 07:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEF314F138;
+	Mon, 12 Aug 2024 07:34:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723448114; cv=none; b=aGf3rkQlQyZvA9dNRknUFdw7q/Ba6pVLaAt2keX6tZcodBzPP9JX2+SupbMUe4XYf6Nu5TVS6W0stmMTl7gHv1B8uLnn7o1hM9PxAnd52baYKbeu0oWz3ujsXCUB+ozNq0p3Ujuc0flxL0C15Z3B43VzxPTmtzhwRnxgxwNU+xk=
+	t=1723448087; cv=none; b=EITxEQTm0cFWqPAd6w79ZIKuNpwvE8FMd1Cqr9NZx+nXR8i+2WwTZfDlLRGdvcmQcbvFVrtndbRbXcoEfVfnZu2+W0wyDSHySwa4T254CVB5wFqct/IyaYeSD/Q1DDwRZpldYPCuXjwT1Yf6abMljHaq0Xu570yv7q4YJRoDW4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723448114; c=relaxed/simple;
-	bh=R3GVRoCsoHiXT0jKKOY18aLaysxVuUJwZl1VJQs3OcA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DIe5oLXYRHQ0maMNg5nPOR/A698eVIgKd4nr+7hmq7MAmbe7amz3q2t1X77l1U+2CsqjP4HhZvVJ71c5H4VA+AS1vncpPBGa5681S+54yd8SrUP0/itV765tmEQMlJ0E09+wZ0L0hfMk48MWuhk9a+tgXlEKkpNsBU64/9UNn/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVHo6GYm; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723448113; x=1754984113;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=R3GVRoCsoHiXT0jKKOY18aLaysxVuUJwZl1VJQs3OcA=;
-  b=AVHo6GYmFBSNdoCGD7a+XKlWc0zpjZV9URk7wwZQY8Lp47pJGP4kpAnl
-   tXmoZ0fkrM8dyI6Bv6UQpO6+UhAxsuzQuKhLcaPca495fC2LYt25G1m2x
-   wJRGxMaTdc62ebJrj7nSWWDzyQy0eC7/jDYsWXlvtl74ppqfsVyl63PrE
-   0Zwke2SAg2I00ieFCvIeDPvMbec3w5ocdb57VavFgbyRGF661gjIEy9nF
-   oDmT4LXMa/UAA6ndYaA4weDr6RTiEfFkV0SDMO54Rq7GBoEy1bHjZv8al
-   zrfI2zyzEJHhdD7JiA/dZANicybA5tjbZFSxI4sDmtl+jV4e1pQ7AGKCb
-   w==;
-X-CSE-ConnectionGUID: +6LfrzB5Q2a0aCdXUxX0XQ==
-X-CSE-MsgGUID: 8B7dB4hzQdOBuVzITNa30g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="25408925"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="25408925"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:35:12 -0700
-X-CSE-ConnectionGUID: 4VnSE5dyQ6GuS3L+L1HwsA==
-X-CSE-MsgGUID: 9WXqtFFWQtyJ088YmVDxpw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="57830132"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:35:06 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Dev Jain <dev.jain@arm.com>
-Cc: <akpm@linux-foundation.org>,  <shuah@kernel.org>,  <david@redhat.com>,
-  <willy@infradead.org>,  <ryan.roberts@arm.com>,
-  <anshuman.khandual@arm.com>,  <catalin.marinas@arm.com>,
-  <cl@gentwo.org>,  <vbabka@suse.cz>,  <mhocko@suse.com>,
-  <apopple@nvidia.com>,  <osalvador@suse.de>,
-  <baolin.wang@linux.alibaba.com>,  <dave.hansen@linux.intel.com>,
-  <will@kernel.org>,  <baohua@kernel.org>,  <ioworker0@gmail.com>,
-  <gshan@redhat.com>,  <mark.rutland@arm.com>,
-  <kirill.shutemov@linux.intel.com>,  <hughd@google.com>,
-  <aneesh.kumar@kernel.org>,  <yang@os.amperecomputing.com>,
-  <peterx@redhat.com>,  <broonie@kernel.org>,
-  <mgorman@techsingularity.net>,  <linux-arm-kernel@lists.infradead.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-mm@kvack.org>,
-  <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
-In-Reply-To: <95b72817-5444-4ced-998a-1cb90f42bf49@arm.com> (Dev Jain's
-	message of "Mon, 12 Aug 2024 12:22:01 +0530")
-References: <20240809103129.365029-1-dev.jain@arm.com>
-	<20240809103129.365029-2-dev.jain@arm.com>
-	<87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<15dbe4ac-a036-4029-ba08-e12a236f448a@arm.com>
-	<87bk1yuuzu.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<95b72817-5444-4ced-998a-1cb90f42bf49@arm.com>
-Date: Mon, 12 Aug 2024 15:31:33 +0800
-Message-ID: <8734naurhm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723448087; c=relaxed/simple;
+	bh=igp2yX5tzVVG0xxkLs3tedpyhHunjPdjwnvcAFbVgj4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfSjtwfS/K+4VpyArfJ1+IeSRnK2faYpYNOoIrtNeGBbJY7jyPbuPEpxiIjyIAp73XC0igPGLcWEeGT4DxIumhOIRQTXBF247HNtyE3L9bqbjuxRjVAhFjLl4pW/zLVWLhXznibmNDrN8DvfF84YAiaoQua464Of+0AmxArlpeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Q8VticFr; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47C7YcmZ077759;
+	Mon, 12 Aug 2024 02:34:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723448078;
+	bh=JvE3NbYhhdYAjYYAv//x8xzNUxqRDHrsqwEjZmLTLrM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=Q8VticFr1yOtygyd0XSbcdIvG272Ul9EGD/4Mt3uKCdbr8m8AWPKX9E7Yw75Hc4tv
+	 EBKY0TriPGhbfpntbY6GrmgvwFwyHv6W+ulPZsq94X6PqabpeOwM/JXYpeqLZ+yW5L
+	 S1lpSC8LWO22NhAFiT9MJpt6N+hnvCcAeR3eXT7g=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47C7Yc88107193
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 12 Aug 2024 02:34:38 -0500
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 12
+ Aug 2024 02:34:38 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 12 Aug 2024 02:34:38 -0500
+Received: from localhost (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47C7Ybc9087472;
+	Mon, 12 Aug 2024 02:34:38 -0500
+Date: Mon, 12 Aug 2024 13:04:37 +0530
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+To: Bhavya Kapoor <b-kapoor@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <vigneshr@ti.com>, <nm@ti.com>, <sinthu.raja@ti.com>,
+        <n-francis@ti.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin
+ mux for mmc1
+Message-ID: <20240812073437.l7prhefqnryajat3@uda0497581>
+References: <20240809072231.2931206-1-b-kapoor@ti.com>
+ <20240812051058.ooq7uxd6xdbhgjln@uda0497581>
+ <413dc315-e8d0-4971-af23-ba21833eb855@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <413dc315-e8d0-4971-af23-ba21833eb855@ti.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Dev Jain <dev.jain@arm.com> writes:
+Hi Bhavya,
 
-> On 8/12/24 11:45, Huang, Ying wrote:
->> Dev Jain <dev.jain@arm.com> writes:
->>
->>> On 8/12/24 11:04, Huang, Ying wrote:
->>>> Hi, Dev,
->>>>
->>>> Dev Jain <dev.jain@arm.com> writes:
->>>>
->>>>> As already being done in __migrate_folio(), wherein we backoff if the
->>>>> folio refcount is wrong, make this check during the unmapping phase, upon
->>>>> the failure of which, the original state of the PTEs will be restored and
->>>>> the folio lock will be dropped via migrate_folio_undo_src(), any racing
->>>>> thread will make progress and migration will be retried.
->>>>>
->>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
->>>>> ---
->>>>>    mm/migrate.c | 9 +++++++++
->>>>>    1 file changed, 9 insertions(+)
->>>>>
->>>>> diff --git a/mm/migrate.c b/mm/migrate.c
->>>>> index e7296c0fb5d5..477acf996951 100644
->>>>> --- a/mm/migrate.c
->>>>> +++ b/mm/migrate.c
->>>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
->>>>>    	}
->>>>>      	if (!folio_mapped(src)) {
->>>>> +		/*
->>>>> +		 * Someone may have changed the refcount and maybe sleeping
->>>>> +		 * on the folio lock. In case of refcount mismatch, bail out,
->>>>> +		 * let the system make progress and retry.
->>>>> +		 */
->>>>> +		struct address_space *mapping = folio_mapping(src);
->>>>> +
->>>>> +		if (folio_ref_count(src) != folio_expected_refs(mapping, src))
->>>>> +			goto out;
->>>>>    		__migrate_folio_record(dst, old_page_state, anon_vma);
->>>>>    		return MIGRATEPAGE_UNMAP;
->>>>>    	}
->>>> Do you have some test results for this?  For example, after applying the
->>>> patch, the migration success rate increased XX%, etc.
->>> I'll get back to you on this.
->>>
->>>> My understanding for this issue is that the migration success rate can
->>>> increase if we undo all changes before retrying.  This is the current
->>>> behavior for sync migration, but not for async migration.  If so, we can
->>>> use migrate_pages_sync() for async migration too to increase success
->>>> rate?  Of course, we need to change the function name and comments.
->>>
->>> As per my understanding, this is not the current behaviour for sync
->>> migration. After successful unmapping, we fail in migrate_folio_move()
->>> with -EAGAIN, we do not call undo src+dst (rendering the loop around
->>> migrate_folio_move() futile), we do not push the failed folio onto the
->>> ret_folios list, therefore, in _sync(), _batch() is never tried again.
->> In migrate_pages_sync(), migrate_pages_batch(,MIGRATE_ASYNC) will be
->> called first, if failed, the folio will be restored to the original
->> state (unlocked).  Then migrate_pages_batch(,_SYNC*) is called again.
->> So, we unlock once.  If it's necessary, we can unlock more times via
->> another level of loop.
+On 12:23-20240812, Bhavya Kapoor wrote:
+> HI Manorit, please review again for the limitation you found in the v1.
+
+What I meant is that my R-by stands but I can understand the confusion..
+
+> 
+> Thanks and Regards
+> 
+> On 12/08/24 10:40, Manorit Chawdhry wrote:
+> > Hi Bhavya,
+> > 
+> > On 12:52-20240809, Bhavya Kapoor wrote:
+> > > mmc1 is not functional and needs clock loopback so that it can
+> > > create sampling clock from this for high speed SDIO operations.
+> > > Thus, add clklb pin mux to get mmc1 working.
+> > > 
+> > > Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support for AM68 SK base board")
+> > > Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+> > > Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+> > > ---
+> > > 
+> > R-by already given in v1 [0]
+> > 
+> > [0]: https://lore.kernel.org/all/20240808050914.4jleprwmlrtv4alb@uda0497581/
 >
-> Yes, that's my point. We need to undo src+dst and retry.
 
-For sync migration, we undo src+dst and retry now, but only once.  You
-have shown that more retrying increases success rate.
+Reviewed-by: Manorit Chawdhry <m-chawdhry@ti.com>
 
-> We will have
-> to decide where we want this retrying to be; do we want to change the
-> return value, end up in the while loop wrapped around _sync(), and retry
-> there by adding another level of loop, or do we want to make use of the
-> existing retry loops, one of which is wrapped around _unmap(); the latter
-> is my approach. The utility I see for the former approach is that, in case
-> of a large number of page migrations (which should usually be the case),
-> we are giving more time for the folio to get retried. The latter does not
-> give much time and discards the folio if it did not succeed under 7 times.
+Regards,
+Manorit
 
-Because it's a race, I guess that most folios will be migrated
-successfully in the first pass.
-
-My concerns of your method are that it deal with just one case
-specially.  While retrying after undoing all appears more general.
-
-If it's really important to retry after undoing all, we can either
-convert two retying loops of migrate_pages_batch() into one loop, or
-remove retry loop in migrate_pages_batch() and retry in its caller
-instead.
-
---
-Best Regards,
-Huang, Ying
+ > 
+> > Regards,
+> > Manorit
 
