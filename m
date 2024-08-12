@@ -1,78 +1,82 @@
-Return-Path: <linux-kernel+bounces-283779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67AD994F89C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:57:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061F794F89D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:57:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AAE91C2233A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:57:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39F531C2196D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:57:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E615D168488;
-	Mon, 12 Aug 2024 20:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9688319AD8D;
+	Mon, 12 Aug 2024 20:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VjUMPZje"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qi1Jjn4F"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24CA14D70A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B1719AD6A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495991; cv=none; b=CQjN8Vz5FYYJVU2uB8flSMhnhApe3v38iCes+NF9FxUezeoTZg3AI0NNMBVq9aj4ly+F5oyV2FeAbV8DXKdVJ3sLWU8/ldMcB/pCAVpbYyLmjOiaRvkZ5nTmAt4EOQarTErnxCYoLGMowlKIlJDZLs1fwKXdnWtTKndiJeRCr70=
+	t=1723495994; cv=none; b=ol9PpMngapH3RuZRrVC+SRFhJF3oJJLlERXKju/jifLgsc/NceIkX9aJPUjbIY3k+tugirgVkx9YocBN6Z3JmekcyTlJ3alZqG3TO+9Ycy8CDEfdg3B4j+eeDFLKS8LGBzYNT3oAWxCF42LE7TyDQ98dgaPAOWqg0kMFTaidqrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495991; c=relaxed/simple;
-	bh=nIOrVokjny/dHg7RBav1tg1ajJ6o6gO3zIt0EtRORw8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=q+hdGPYjLzSzqq5qUjVsDeA/PXyr+H0FEirZUlCX+6hq81kaWQrDefgqyg2TJ/XrlevGHR09bu6+8vqMbVpfbloVwoPMdBWETw5jDz3a2yocxEGThYhQ6wMggpsYtnJAB76CpnOp9j+aMGpaQCJRyUBXY9qGhSMEpJPPBDPk3e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VjUMPZje; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1723495994; c=relaxed/simple;
+	bh=AO7ZaM0rV8gCeZFa0CDgjrQUyGvXxJgF5ZrE/xJh6Xk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZQnpy2++q2AUdw7svpFVXFjDZeWUu1MvOKDSFmSfoOvur4dBHzu25GGPXoerSlV0ybaZ1DSciN6yUqn8H88sY19jfhjCcl24vrSdQFOoCEyOkoLrVjLTn1I+5j6+z/QbNbxDJ9wk39il6R9KYDrrFMu7X3W2Y9qJrfkm8rXStb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qi1Jjn4F; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0b3d35ccfbso6913563276.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:53:09 -0700 (PDT)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-42817980766so32319665e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:53:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723495989; x=1724100789; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=88bVHoRsxbRrvGL5pbopsa/PY4mJcz4Ns16/n4GjTEM=;
-        b=VjUMPZjeNR58BcVLgahMVm3uufCMLTKOdcOhdqp26ZUKbGBqs7xs/J0S29dw5TSmN2
-         sTrKu8xTpcN+y5WT9kvhm2a2g3qyQaCe0FmIUPypiaAisyzjO+DFaGoS7UdLTphpWL5X
-         V2WHEpXXuE1vMidVUDU4GQ32jaT0ixWHOotBaQqOKFdnXQpuOOlKgw9kbu33/AJLWazV
-         bkT4lBQtmMjzh5GJr5Oq4BIXg2Foh9r381PrhEkc//ACLSZKJuIf4e1ED6onp2vEmBID
-         62+lk0qH/o2O5VJyQG2ejYl7p+etjNOyTISR4KUatZFH0QGVyPsWqy/c884bCBBqCUC0
-         jTrg==
+        d=google.com; s=20230601; t=1723495992; x=1724100792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6XoN+HaFS5yfD0CNRqQpWijMjbiOviXEPumC1NW+kKU=;
+        b=Qi1Jjn4Fms/+3D0r3zpT4LgYg3AlLQx3k2MpVzwJ4fVPRdrwmroo3t0cAntx5Yj4cT
+         iXoWnzymncgwccqSFZq54B900xpW83y/k/rKD8Mw8kOAy8jHN9p0S/rLqCqAQVS+tKjt
+         N8FrrKQOlg54tES0xN3ervSesaoHIFM78XlV1O//cyZE2nxXC9U0ikwr80x73n5Q9WSq
+         J9rXkaz+Fmh04jo4i17OUwOQD6/QdM5xdbfGl4FG4m99ZpOpDNA9jwjQ8ZL3RDbBya45
+         HJyaQYPTjIALz0U3+MDUh/OKcbKVHTGMVXWRGijL6BB7jQP7DnWw6DUAG9mjNci2SeRS
+         dwdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723495989; x=1724100789;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=88bVHoRsxbRrvGL5pbopsa/PY4mJcz4Ns16/n4GjTEM=;
-        b=OMnfBeVZhmoivjNqKrkQDFZCoQ/AqKN0thx115v9X2By+xR8gVdsj3JiuG/pGoeLKx
-         p72KIBuXoRmk2Wiz54bwrwIi6Gv1S+asFCgr8jZuye8n8xRNyOoebnsYATNfHNFWWI2D
-         ggFaSKnzD7qHWSiw+0eAjcX3T3lPW8WIUARkTqufxWNg9U6jPExSbPVCmadVVQso9Vys
-         dG+yPzih22xCeWiMhB5bp9OU7a2eDkivXNt7RSwuD0TU9oYeViSWUk4QUCOgiw8itmqR
-         wMjwRxiDb0iVzelkY6meuzCmLbdLMAeD9ZXnwUiunjncKO51NXva9uCkYVYWlZhhETVP
-         pR9Q==
-X-Gm-Message-State: AOJu0YzRUQ3r1caZSQ60xZrdjHTDXfXkG66hjgEOaRZW4bOezHhTT4Es
-	Ptu5fIV3xNi+I6sRrOc+6wvE7Qh1XwNmYOEb0ynaUQDV4A4prK3Wt9vZkmc494XsKkkcuMQqrPg
-	/8JfHZRjJoptDQ0JdqPn1MaraKvswcnyGymyYq2aTK8Y0g6CF7ZrbGvVyjRbl84+3XfYw+alLHZ
-	FEssbI/UHYToWap9yevYO4hyBtdBscdLanpaQhaK3Qf9gSxeaSAuQ=
-X-Google-Smtp-Source: AGHT+IE+M3ZD7kW5OEAx0JM3HgxM7/yZxSBsb3zBQBn1c1T3spqqB7uD0VloVa5DqUJLt3JAncTwC2KgNLBnow==
+        d=1e100.net; s=20230601; t=1723495992; x=1724100792;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6XoN+HaFS5yfD0CNRqQpWijMjbiOviXEPumC1NW+kKU=;
+        b=XQkp5o1loHPf2WjUnfk2/cMiU8qiZqPS1eEywBGwD+hH3ynHKJJo1FiHovuFV84OwZ
+         884GZgMtfAehcRPNY+0Wyd02lq/gWSqyxU1gKrVSwiJWO7JAgEKMxoup6SR7lUd/opPU
+         BAOiIhNzfE91GKoyNsZSegEFOXofRgTY/niSvEg0W/+7/JmOVxnJnxRd4YbfFmt3qBLP
+         B9EtzCkNUcrHQhS7C9BwunL53bNp+NNF6sH90DlWIyCEN5fu+1aodDlqBo78p3QkUuA2
+         MFOufTpdNGIq2KgjcZJIMQpvRaPKxEKSr5C9FbhisYgU/VzL49zrqU4S+8FY+lBmlUV/
+         +mGg==
+X-Gm-Message-State: AOJu0YwNBxDdA5QFmNrtVY7jZeOpvZEChGQCUTy0V/PunN8xyjd0fqIb
+	hI7y4sAqdPahCfeMzidrhrWVw4gCtK+yOIaIR7QjZjJVXZ88GS270zf4Upi3Gdv4ieeMoT7MOH0
+	5+sHIaFuRMiUKpLJGth5fJjF4OuQWnktAZv20EQ+uXSfJwmUvKQU9SXFisqdD+T2lSVAj0TbyRO
+	MRiWFKmjtzaqHk1JDmQHfrMU0ToBJd67oYs0M2lpAjMiiOrmMMwUM=
+X-Google-Smtp-Source: AGHT+IFttRPjHqcCMA/MGAc53YWP+S1ssedfHB7twOrXF8ji7+KWw2xkkyaVB0s2fmulVPed+0z3LTjiheg2UQ==
 X-Received: from mostafa.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:333c])
- (user=smostafa job=sendgmr) by 2002:a5b:483:0:b0:e0b:f69b:da0a with SMTP id
- 3f1490d57ef6-e113d2c151bmr2350276.12.1723495987868; Mon, 12 Aug 2024 13:53:07
+ (user=smostafa job=sendgmr) by 2002:a7b:c304:0:b0:426:59d7:dcc4 with SMTP id
+ 5b1f17b1804b1-429d48b0061mr30705e9.7.1723495991252; Mon, 12 Aug 2024 13:53:11
  -0700 (PDT)
-Date: Mon, 12 Aug 2024 20:52:53 +0000
+Date: Mon, 12 Aug 2024 20:52:54 +0000
+In-Reply-To: <20240812205255.97781-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240812205255.97781-1-smostafa@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240812205255.97781-1-smostafa@google.com>
-Subject: [PATCH 0/2] Fix handling of S2 stalls
+Message-ID: <20240812205255.97781-2-smostafa@google.com>
+Subject: [PATCH 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
 From: Mostafa Saleh <smostafa@google.com>
 To: linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
 	linux-arm-kernel@lists.infradead.org, will@kernel.org, robin.murphy@arm.com, 
@@ -82,26 +86,53 @@ Cc: jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-While debugging something else, I spent hours looking at hexdumps of
-STEs, CDs and commands while comparing them against the arch specs,
-where I noticed a minor violation in the driver regarding handling of
-S2S bit in the STE.
+S2S must be set when stall model is forced "ARM_SMMU_FEAT_STALL_FORCE".
+But at the moment the driver ignores that, instead of doing the minimum
+and only set S2S for =E2=80=9CARM_SMMU_FEAT_STALL_FORCE=E2=80=9D we can jus=
+t match what
+S1 does which also set it for =E2=80=9CARM_SMMU_FEAT_STALL=E2=80=9D and the=
+ master
+has requested stalls.
+This makes the driver more consistent when running on different SMMU
+instances with different supported stages.
 
-This has been there for ages, so it=E2=80=99s highly unlikely that any HW (=
-if
-it exists with such features) running Linux is affected.
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
+---
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 5 +++++
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-I don=E2=80=99t have access to HW with stalls so I just tested normal usage
-and (terminated) translation fault events.
-
-Mostafa Saleh (2):
-  iommu/arm-smmu-v3: Match Stall behaviour for S2
-  iommu/arm-smmu-v3: Report stalled S2 events
-
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 23 ++++++++++++++++-----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  3 +++
- 2 files changed, 21 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/ar=
+m/arm-smmu-v3/arm-smmu-v3.c
+index a31460f9f3d4..8d573d9ca93c 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+@@ -1562,6 +1562,11 @@ void arm_smmu_make_cdtable_ste(struct arm_smmu_ste *=
+target,
+ 		(cd_table->cdtab_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
+ 		FIELD_PREP(STRTAB_STE_0_S1CDMAX, cd_table->s1cdmax));
+=20
++	/* S2S is ignored if stage-2 exists but not enabled. */
++	if (master->stall_enabled &&
++	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
++		target->data[0] |=3D FIELD_PREP(STRTAB_STE_2_S2S, 1);
++
+ 	target->data[1] =3D cpu_to_le64(
+ 		FIELD_PREP(STRTAB_STE_1_S1DSS, s1dss) |
+ 		FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/ar=
+m/arm-smmu-v3/arm-smmu-v3.h
+index 14bca41a981b..0dc7ad43c64c 100644
+--- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
++++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+@@ -267,6 +267,7 @@ struct arm_smmu_ste {
+ #define STRTAB_STE_2_S2AA64		(1UL << 51)
+ #define STRTAB_STE_2_S2ENDI		(1UL << 52)
+ #define STRTAB_STE_2_S2PTW		(1UL << 54)
++#define STRTAB_STE_2_S2S		(1UL << 57)
+ #define STRTAB_STE_2_S2R		(1UL << 58)
+=20
+ #define STRTAB_STE_3_S2TTB_MASK		GENMASK_ULL(51, 4)
 --=20
 2.46.0.76.ge559c4bf1a-goog
 
