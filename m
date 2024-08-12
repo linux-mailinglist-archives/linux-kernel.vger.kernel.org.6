@@ -1,582 +1,107 @@
-Return-Path: <linux-kernel+bounces-282518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E005294E53B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B052C94E53F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953C028134F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:50:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB452814A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0109149C5E;
-	Mon, 12 Aug 2024 02:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA24136E37;
+	Mon, 12 Aug 2024 02:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="HsAXe/Ax"
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2040.outbound.protection.outlook.com [40.107.255.40])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qDAu68Hr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A679613A261;
-	Mon, 12 Aug 2024 02:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723430999; cv=fail; b=JLAIk5EdKrxqe6wkMfQSKh9gJ1BKhNmMvrhzuUtBhYuDj2AjejR1EZdSyDhkvMiYcpJJ9tg4CVdvjMYsupoYctRd0LEaBzcmYLH+rTaYcMyaQiXvPcIApCpH/mf3BNBP2HzBT5CfHpLQvs0/c4pHv8s4jQtHL6CODYThfRBZdzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723430999; c=relaxed/simple;
-	bh=Rn6QG6mxKe8mU5w+5V7aba6afvAdhmvu/OK8lzfE7ww=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EB0DagJMAWvoqB6vRWRTQbpRmDlwDP1rovmWnIE/TX9NzybWG6SnrdzusEXgOYIC9mFtPdLoPwTdFeKPEZm86eRkdIB9VM/PQZMwrEK93DNYjLmNrWkI4jaYg5qcvtAL+Yh5xtRzTnb4atPaOYZipBJ19RBQ9cjweLNSd1hlON0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=HsAXe/Ax; arc=fail smtp.client-ip=40.107.255.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mlEvsVUvU0FrS0BHWJva6jLv1zNP/5aKrtRbLZvsNsUAsdFzTRYArK4CB26cXJFkPeUuBVuDPMa29VnmdK+FOt78VkyXkp26CLFCt43pPkfEnzejE4l8hCpYTURbu20Rci0JBerN5Co0+0GZtjB5xnh0CJHOGZZ1t++3AX1MQkWo4XAUzvJugCsRdE5OczsMwzyUU693Zz3ROIRwlS9s7RDbzwbMl/z+HRN1RrCvhg0wKdtdieFpkfcwEGxiu+PKq7iryFJa7xF9sFGfTl/c5lTiUxaZ063FElc7WxDxpJjRci8qwqNe5oJ5O01Q6E2/ybJQorSqmr1YOkuIGn9HhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jkA9ZMhJX7B5kIy8GK6ReUi9hqvPWy1G+Wddl7tgVhE=;
- b=e6LGTFAN3eb2MpQVuA5ohMpX6GdsGhjhbynWR9hdu4kGizsYo4OEGLjfFNCzL9lxZrYIiCUkpFCm4dABYD9u8gsBJyKdLooQA8t+w4mh1AnIFpgwlyBCe6hY2GWnB6TUAL+wrtVurUHCgK7yP9yzos9ANk8m8Ze0xYCrQ0N/kVSOM4AHNeM0xm4yAWja/KxXoy/f9mor3Hjo7lqCswBmEHnF5isDYBMX1Q++kmjOwzeo0l8HvssF4C4yuObGjTjAq2F7/1GiVIfhIy6690cS5G3PaOUG7C6/2A7+owOUmxfkBHtY9QgxpPKz/pVMC961QzborOZsrQhvU5GdCG3Ypw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jkA9ZMhJX7B5kIy8GK6ReUi9hqvPWy1G+Wddl7tgVhE=;
- b=HsAXe/Ax+otpPF1xwOIKd+QfQeVGXx+YZ423BbTvnOheD7M07R+45jfrVURY3BbIdzL0K6gVuZciZo4qLBpGN4oQ8rHPGd8ck6CZWdoT5YlyRCPSf09y3ShEssBftykmER6owK8Ge1AWrLQQG52ZOHBUN4S7rxigDGJpNScq/fICxwH93h1pfLvbVz60OYdeEXXEeHhMeLiMWCwTCs58hxG2Eub/MrHJMXa89KWayh34yuwoJY4hQSMUqUpx+j+r3oiFHpFwjJUsG2WMl/fgZqsNCey1SSn5U4nvsX9jjeT2B7ZTGPhHQr1hIEu8bAPilJ8hn3SSSU+t2LbKsK/mFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
- by KL1PR06MB6687.apcprd06.prod.outlook.com (2603:1096:820:fd::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 02:49:52 +0000
-Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
- ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 02:49:51 +0000
-Message-ID: <6beb93ba-3e9b-44e8-badf-7258a7619d28@vivo.com>
-Date: Mon, 12 Aug 2024 10:49:46 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] udmabuf: remove folio unpin list
-To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
- Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
-References: <20240805032550.3912454-1-link@vivo.com>
- <20240805032550.3912454-5-link@vivo.com>
- <IA0PR11MB7185115BF4B741E9229D0E68F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
-From: Huan Yang <link@vivo.com>
-In-Reply-To: <IA0PR11MB7185115BF4B741E9229D0E68F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR02CA0031.apcprd02.prod.outlook.com
- (2603:1096:4:195::16) To PUZPR06MB5676.apcprd06.prod.outlook.com
- (2603:1096:301:f8::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00D828EC;
+	Mon, 12 Aug 2024 02:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723431090; cv=none; b=J771PfU7eqT4W+nR5QVxCKY1j3kTBk27K6ujv1kIz6zIXSaYV07IYbT/ooL6sMkVVkROKLuweAozeXS1Vg86F0jsIo9JSNJG5egMKaIdejfZC7XXVxoeUhBF+qSRgvXHKotlDOYuK9/OfIld8vj94vZX4ZqMnG1brW8MeHkhVwo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723431090; c=relaxed/simple;
+	bh=Ezv00exa+liaJcb22809FVOaTfG475NLsmcHDQW45Vw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LVrIfFbXWP8E7SIhIWOqMY5wYiw2fnHDJUqc5TTOXu7V8cXPKLZPc5cxiNcp9qfZ9mRfxxXjwMJHVy/0aY0rLsk8Y/KlI5VXY86x8i5rAbvFcqNZSTKhjH7apJpOa58IMQpsNR4S504x4rnqR9VuooIHdtv7tTpBbzWeDcCHSr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qDAu68Hr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723431087;
+	bh=0ZkDG4pf+7r/4VnCSZJrNDgV8dKL0EdYhljfIAH8mIo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qDAu68HrA0TEmliCldmQ90+3ykzRCjJhOEnFYd0+hYqC0CLWILW1LHrx7CFpn75iv
+	 WEu2X9HPesLAQ176zcLw8sfYaVYgiRVfa6BAoegD3gXLC86qVFo8gFavQEFFPhtAjs
+	 UHH3KlzLOvEs9wvpSrJH45EOTU7CT6pS13qu8hwPAYR1xuMPxAGGkSyrTOJaZ1qRS8
+	 gC4FYFFDFUjsL+Z7AyrsS+B1ZKWZXEA8XcoEvwuZ23njcn41wxClP+qLEdvwm2BuFe
+	 BCrQyM7KT2g8KMBZBDYCq+oZfnMks31h1ojOmZWmu9Xb9wvlrEQ7Wu5BY1LtOJBGJ1
+	 MEQnBrZNKThow==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhzYT6p6wz4x8N;
+	Mon, 12 Aug 2024 12:51:25 +1000 (AEST)
+Date: Mon, 12 Aug 2024 12:51:25 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
+ Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter
+ Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the rcu tree
+Message-ID: <20240812125125.3ac8cd68@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|KL1PR06MB6687:EE_
-X-MS-Office365-Filtering-Correlation-Id: e62b852f-8a12-41af-f400-08dcba797045
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MGFvY1FXYmpKUkRJME9ZOWFyc0RMNWtyenpxQUZoM2tlRHllRmZnN1dXOW9Y?=
- =?utf-8?B?dkg1QlZwVW5idnExdUF0blF0c2xveU1sSFNNRU5hWHc3TzhyZnV1U0lmV3k5?=
- =?utf-8?B?TzRnR01CWHNxRHJzZ3V0ajRxN3ExSnU2UHdZY3F0SGdrNVp2endKNkJSM2da?=
- =?utf-8?B?TE1MTjJZYjNNdzU5VmtxbTkycmpycDZSNHZNMVRGSms0ZFcxa0w1VGpCS3V2?=
- =?utf-8?B?S21VT3ZMTm5WNnNZYTU1MnMvYmdoajFxMzBheUZZcU1FOE5aS3lYaWxKZ1li?=
- =?utf-8?B?dmZlSjZLSEtmUnNCNTUrTzNZaGVnQTE1RkYrWFBQdzJUZWdTaVRBTHFsNnVS?=
- =?utf-8?B?N1dDOVpjaXY5Rm1lWTBjckFVMDBCVjlCRXROSkFsdGdSYVEzSTQxeGV4em1O?=
- =?utf-8?B?aXlWZWpoclBPajFKOUNmd1Fkc3RiNnYrMll6QXlKYk9ZZ1V1em9ZN0dnWitW?=
- =?utf-8?B?YUhjMjdjN0pIOXJEa2R5SzBWajkyYm5FN0l1alFYVlk0eEFGK3RKL1RSSm5O?=
- =?utf-8?B?SUtVUkpzODQ5cklBYloyK1dOSVN4TVljVW50UHo1bXBpTnZWbVZmWUNBNWdP?=
- =?utf-8?B?cEZ3NTlYZGtIdlFuN1pVS0RhZEh5ZG5uN3kwTWhnUzJnY1FPWjZLWnZmamZq?=
- =?utf-8?B?V2ZQc3ZSMzNxQmtoVEZWaC9sZ3RMMENvNElHdCt3REg0eWVkUndFMG1haFFH?=
- =?utf-8?B?dUgxbkpwdjJIZVNwdzhTTE9VTVFvelZIUFpYMlcvUWVPKzdXc3NpNExsZmRx?=
- =?utf-8?B?bDM3a3pwMDc0YWI5NnByRFI5YUU4WGUrVjlpTlgwL2paeFdnM08vZ0R4NXBt?=
- =?utf-8?B?M3lVZjRiTnBmUXc1eEVuMzNEaUVrUVdRUi9yNkxuVlREbFRjSnZVVFZVUnhI?=
- =?utf-8?B?RXZvZkJhUVJPZ1ZVT1F1eW5iQVZQaERlcmFWWW5FVW1HZmZMaVlNTW5DbTFo?=
- =?utf-8?B?YVZyYWVoSy8yTHd0QUE1Qm1rUGtoVk1SZjkxYnFOTkM5WjRxSmkxanNWR3J6?=
- =?utf-8?B?TVBaN1pkck55RjB5Q01HVm1NR1FBQk5TSU50dVpKc0ZKcDVPNnJzRXgwVkV2?=
- =?utf-8?B?V1JEa1BmS1gycUNVbHFoVlU3MGlTQk9LdXd5UmZ5VXBCaFFVWE1JL2YyL21R?=
- =?utf-8?B?SmlPeWpJdTdKMVdGL3Z4SmZ3Z2NDV2N3SG05L1pqWTJMK1B3TE1Ob3cybjJk?=
- =?utf-8?B?UHZDVmFvQzhoeFZkZEZ6ZVV4L0M3Z0FVdmhCcFk2a1E4TForaFcxYVdMUjdE?=
- =?utf-8?B?ZTJHZEQ4SWlrdHZaejRRU0xQNW83VzBBdVE2UWVRR0VjaS8xZjdxY0VtcVlX?=
- =?utf-8?B?NE1vOUVvYTg4UGtSM05pNWk3WFRFU2Q0Z3ZIelpWQzdORTFTOUN1RjU3NFc3?=
- =?utf-8?B?NGpUTklyUk1qb1R1TS9xbVZFa24rbkJNQm56V0VjMmJpc2dBb2k2REExQjE0?=
- =?utf-8?B?YnU4ZVc2dGJ3dEFaWW9vaUZvQ0FaSHNMTHhibWZVR3BDQUVYVVc0Zm5PMTdQ?=
- =?utf-8?B?cmFLeE14aXIyOGZvdzFMejQvQnNTL2pNVUhxZ3k5bWsxL3Zuby9JbW5pTWJj?=
- =?utf-8?B?ZFgzb2V5b0FSY0RsUDF4NGJzcjFzdlU1aTJOVlFuVmJOMEYyOHZMaEhEUVdl?=
- =?utf-8?B?TTZCeWRGdG42NlpBdVdTZTI0TndqS1ArSGdXNDVRd1VOZUFUY2lFNm1PZWkz?=
- =?utf-8?B?UkJtTnY4Q0w4UzZHN0xsVlUybENrZDNKbTVzRG5GUUVCd3NaT2lNaU1nU3NZ?=
- =?utf-8?B?MGtHN2FoWHdsTVppbFEwcTlCUmFoNDUzbHplOTBpcGVKbDJvUmxkaHVYM1dJ?=
- =?utf-8?B?WFl1azJpTjRYbVVuNEZjUzlrM2J0TDdudm9zR21zbWY5Q2ZYUmZJOHgvZFY1?=
- =?utf-8?B?azVlc0tDUm1odkc5cFUySW9MejhSNDRkVXkvZ290enUzOVE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c2dnUjRnZ0pGYkZpcTVzbnV2aUlXVDcwYXJZWUxJRG1kYmZlREkrVGJURFVW?=
- =?utf-8?B?aUpEbW51d1dVa0l4cGgzNUhLdjBMZGVmQ0RPWURXbVBubEdIOXBuemdMUG9o?=
- =?utf-8?B?NjlxUUwxRXNqRkw5WFhUSENmbWdsODNiUGw2Mk5lWnRPZ25TMlo4N1BqbS9R?=
- =?utf-8?B?Mlo5ZiszVXh2QmdBa0NhM0ltMzg0MG5BL2xGR3ltWjRNSXg5UWpBczVqL2lx?=
- =?utf-8?B?STdCaGp0OXJDb0NpL2c1anQyeW1oNkdJMUJQNVpIS3VlZnRYWWVKSnVGK29F?=
- =?utf-8?B?UmkwelNRUUtRT3dUZUNYbC85Skxwelc2WnZkVk1sWGF0djNuZFRKTGpNN2tz?=
- =?utf-8?B?SFBUT2hidE1oMWF1QUN1bkpScGpGTDB1bmdLNk9FV1l2OGR1Q1V6c2FKQzJu?=
- =?utf-8?B?dmZ0a2JlSkcyMysvRjdyWjZkUEJnVXNUUmlFT2F0WHQ1NGtBS2F6REptTzR2?=
- =?utf-8?B?dWJTUmRLcTJJTG05V3V3S0pZdUIwb0YxVTk1UHBud2xiUTFJckkzcGFwb0Va?=
- =?utf-8?B?dXVmQXFKYzRBbkhVQ3gvOXlDZDk1WXIzY00xZXBlYkNVUnBoTjAzdUJ5enhX?=
- =?utf-8?B?MndOeWp6aEVWVy8rZFBDcUliK21GMDB3UXpmZEhOVXo2MEdFOUJGNDF4R3dz?=
- =?utf-8?B?MUQvbUQyc0IwenBIbUxDOGVMOXVDOGtpeGhUOWJaRzlabDRWTi9nTjZkV2M3?=
- =?utf-8?B?TUN5U2VpRW5rS0paV2k3N21CSE54ZkpXMVdtUDA5NGM5bGVJSnorVFRyaHEy?=
- =?utf-8?B?VFpXc3BVQStJVWRtblpWSkVuR3lhU3NpYjVZWEo5UUorUC9jMzJmV1JXSXZJ?=
- =?utf-8?B?RDk0aGUxTUR6Q1czc25sVStLOUZFdGI3OVNLdTMvbTFOb1BqMkhEUnUvRjdz?=
- =?utf-8?B?dnMvRmJHV1llN01nZzlnNFFUcWVVM29mcURrd0drc1RlUU9CS0txZlVPM0JY?=
- =?utf-8?B?SHYreVJJcW41NDYwejVDa0RCYzFCMVo1RzVheU9RUjd2VWIrSVRGSGk2MUNR?=
- =?utf-8?B?VGFoLzBPVTZTeEY2U0ZSNWhMLzFrV1pvdVhVMlNha0lIVG5ZS0IwNjlValdW?=
- =?utf-8?B?MHZVRzFFUko0aWdZL3F5cHZyM2hVVXZBNlc2Y3MwaEt0YjQ5TmdwTmpheXJh?=
- =?utf-8?B?SUlFb2htcHJvL3l2TFY3T21JTTVnMHhnWlBSNThTMUtyZklHVStrMlRHbWRw?=
- =?utf-8?B?YnN1VE1QZEdLODcyM0Q5RXp2TWpISUhORHdJMGFyS3g1OHJleksrdDgyZ2du?=
- =?utf-8?B?ZXFuMmpKWE1RNGwxZ2h4Q1BISnBGL0ZhcVJGRlhsak9VZndNdURRdEtqNk9Y?=
- =?utf-8?B?S2JXMExaY3ZIQnNwQ0x0eHczS0NJUFpZL0xrYXdpTnpEdGRaR000UFJsWUZq?=
- =?utf-8?B?ZVF2UWlpV0dwSjJHaHNCZ1lVeEhILzVPM0dpQng4dk5vRVJLK1VWSWhIbTJB?=
- =?utf-8?B?NXczVG9yZkpwRm9uSG9UNkV1SGdtSW0rU0VxY0pHU3daTkRoN1REdjNSamZX?=
- =?utf-8?B?UWUzM2RkUExORkVLckJORUQwMllZcmhZOWRIemphL0tZNm5PSzI3dDdzS2hr?=
- =?utf-8?B?Snh0SDNCNUlQZGNYaDVidEJWRzJ4MXF1eWs4dVM5VjVZRzZDLzJqMElJSEtr?=
- =?utf-8?B?cFF1SUN2R21iODR6YkNPcTFFVkVOVjRUaTllY0hTTEtzcm9HSjEzWWYxckY2?=
- =?utf-8?B?WFRDRyt0L0UyR3U4QSsxdFYxTVFRVm1kODVFUGphTTFtSks2OFpCR0RIQkdQ?=
- =?utf-8?B?akFYemNuVFVUNHdvTmRKLzJMaXZ5a3JlcVZqSm5QbkhkalhHSEMzaFdub1J1?=
- =?utf-8?B?b1pTaS9WY2lYQW5hbU5ZT2gwOFVTVVdqT3dDdmhUQ0xnbWdPV0I5aDlveGVy?=
- =?utf-8?B?SUo3L3NTOVgrSDNZT3FmWEp2c0RxQU02RVZZRXhXNlluWCs0ZDdrdGQySG5Z?=
- =?utf-8?B?ZVVzd0N5K2tORlFUUXZOQkE4ZXpySTZDV3YxRldVL0dkWjNDZmVHbHN5eGZx?=
- =?utf-8?B?dis3VnA2R3U2dHJJTkp0VnE5Q2tVUm1HcmJ2TDF5elZ3UlFQb0dCN2JNWTVK?=
- =?utf-8?B?aTVjMTJWM0owcXhPdndLQlgvcGUwL2FhSVpKdU8yQjB3dHkzVXdBOSs4YWFs?=
- =?utf-8?Q?O79ylyS97DzHDE3EhCyOu+9yw?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e62b852f-8a12-41af-f400-08dcba797045
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 02:49:51.9119
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /b1AdPtm1bfr4C1aZA7Ow1fXFD9OmVe3px649x/wIysUBcDC/M/BUihtGe+hGjrwI3c6p3n+q8hBcwhCgPtAgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6687
+Content-Type: multipart/signed; boundary="Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-在 2024/8/10 10:52, Kasireddy, Vivek 写道:
-> [Some people who received this message don't often get email from vivek.kasireddy@intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
->
-> Hi Huan,
->
->> Currently, udmabuf handles folio by creating an unpin list to record
->> each folio obtained from the list and unpinning them when released. To
->> maintain this approach, many data structures have been established.
->>
->> However, maintaining this type of data structure requires a significant
->> amount of memory and traversing the list is a substantial overhead,
-> Have you tried to quantify this overhead?
+Hi all,
 
-Sorry, no, my viewpoint is just a thought experiment.
+The following commit is also in the tip tree as a different commit
+(but the same patch):
 
-udmabuf_folios is 24bytes, if each folio just 4KB, the additional memory 
-occupied will be very high, far exceeding the size of the page pointer.
+  23311aca56d9 ("lockdep: Fix deadlock issue between lockdep and rcu")
 
-"list_head" is a linked list, and accessing it is not CPU 
-cache-friendly, making prefetching difficult.
+This is commit
 
-On the other hand, "page array" is a cache-friendly data structure.
+  a6f88ac32c6e ("lockdep: fix deadlock issue between lockdep and rcu")
 
->
->> which is not friendly to the CPU cache, TLB, and so on.
->>
->> Therefore, this patch removes the relationship between the folio and its
->> offset in the linear address mapping.
->>
->> As an alternative, udmabuf both maintain the folio array and page array,
->> folio array use to unpin, and the page array is used as before to handle
->> the requirements for the page.
-> Using pages is a step backwards, given the trend towards embracing folios.
-Agree.
-> Moreover, the feedback from the former hugetlb maintainer (Mike Kravetz)
-> was to not use subpages (or tail pages) of a hugetlb folio directly in udmabuf
-> driver as it would cause problems, particularly when hugetlb vmemmap
-> optimization (HVO) is enabled. AFAIU, if HVO is enabled by default, a tail page's
-> struct page pointer may not be available (as it may very well be freed to
-> save memory). Given all of this, it made sense to convert the udmabuf driver
-> to only use the head pages of a folio along with the offsets of tail pages.
-I haven't considered that HVO would have an impact on this.
+from the tip tree.
 
-If so, does it mean that we cannot guarantee the correct reference to 
-all Pages under the folio?
-I see vmap and sgt based on page, I HVO already freed all sub page's 
-struct, These uses will all become unreasonable.
+--=20
+Cheers,
+Stephen Rothwell
 
-BTW, if page struct can't relyable, can we just save pfn array? Hmm, but 
-many of they just rely on page.
+--Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
->
->> So, udmabuf's folios only save the folio struct, foliocount point
->> the size of array. pages save page in folios, number offset given by
->> create list, pagecount point the size of array.
->>
->> Even if we restore the pages structure, its memory usage should be
->> smaller than the combined memory usage of offsets(8 bytes in 64bit
->> machine)
->> and udmabuf_folio structures(24 bytes in 64bit machine).
->>
->> By doing this, we can accept the overhead of the udmabuf_folio structure
->> and the performance loss of traversing the list during unpinning.
-> Does your use-case involve frequent pinning/unpinning operations? Note
+-----BEGIN PGP SIGNATURE-----
 
-My only use case at the moment is to read large files (around 3GB) using 
-udmabuf in direct I/O mode.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5eK0ACgkQAVBC80lX
+0GwYdAgAjmmw9LO5UThsUn/RReH8ErAVnsJvJvVMHB2jFxQsxbKN8U0JzNOn9DSx
+U8NmCeEMH2Gf1C9xJf7fkQge2YyDgxVBUPvYkj3F8+RTXMzQACjAl+tlpjO8t44u
+u3P3mXqk+SEWEk1AbLSyi7nSkjyg7bRBldBz96V/71rrUD/2P7TimstxFnTHj8cs
+RNQNSMFNKJZu8CwQWAQFnK1h7AYatdsWOZxOAeutr5NYKP3AwZ0v1ybpedeBsvlW
+qV5WJE535uOEKPfN2AWcmXgyTOkVxOq1qx95TmS+RRksTuVgFZir97o1gS+TxSqL
+Q+hfIOYrU8R1skWWmi21fVsNVwL0kw==
+=spik
+-----END PGP SIGNATURE-----
 
-This means that if HUGETLB is not used, the udmabuf_folio structure will 
-be particularly large.(((3 << 30) >> 12) * 24) 18MB
-
-And the list when pin(add), unpin(del), may cost a bit.
-
-> that this would be considered "shortterm" pin, which is different from the
-> the way the folios are currently pinned in udmabuf driver, which is considered
-Could you please describe it in detail? I didn't understand.
-
-> "longterm" pin.
->
-> However, one optimization I can think of, for memfds backed by shmem, is
-> to not use unpin_list completely. This way you can probably avoid creating
-> udmabuf_folio objects and having to traverse the list. But this would require
-> differentiating udmabufs backed by shmem vs hugetlb folios, which is not
-> great in my opinion and may not work if THP is enabled.
-
-Considering the existence of HVO, I also feel the need to find further 
-optimization methods.
-
-Thanks.
-
->
-> Thanks,
-> Vivek
->
->> Signed-off-by: Huan Yang <link@vivo.com>
->> ---
->>   drivers/dma-buf/udmabuf.c | 167 ++++++++++++++------------------------
->>   1 file changed, 61 insertions(+), 106 deletions(-)
->>
->> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
->> index 9737f063b6b3..442ed99d8b33 100644
->> --- a/drivers/dma-buf/udmabuf.c
->> +++ b/drivers/dma-buf/udmabuf.c
->> @@ -25,17 +25,24 @@ module_param(size_limit_mb, int, 0644);
->>   MODULE_PARM_DESC(size_limit_mb, "Max size of a dmabuf, in megabytes.
->> Default is 64.");
->>
->>   struct udmabuf {
->> +     /**
->> +      * Each page used by udmabuf in the folio. When obtaining a page
->> from a
->> +      * folio, it does not necessarily begin from the head page. This is
->> +      * determined by the offset of the memfd when udmabuf created.
->> +      */
->>        pgoff_t pagecount;
->> +     struct page **pages;
->> +
->> +     /**
->> +      * Each folio in memfd, when a udmabuf is created, it is pinned to
->> +      * ensure that the folio is not moved or reclaimed.
->> +      * folio array used to unpin all when releasing.
->> +      */
->> +     pgoff_t foliocount;
->>        struct folio **folios;
->> +
->>        struct sg_table *sg;
->>        struct miscdevice *device;
->> -     pgoff_t *offsets;
->> -     struct list_head unpin_list;
->> -};
->> -
->> -struct udmabuf_folio {
->> -     struct folio *folio;
->> -     struct list_head list;
->>   };
->>
->>   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
->> *vma)
->> @@ -51,9 +58,7 @@ static int mmap_udmabuf(struct dma_buf *buf, struct
->> vm_area_struct *vma)
->>
->>        for (pgoff = vma->vm_pgoff, end = vma->vm_end, addr = vma-
->>> vm_start;
->>             addr < end; pgoff++, addr += PAGE_SIZE) {
->> -             struct page *page =
->> -                     folio_page(ubuf->folios[pgoff],
->> -                                ubuf->offsets[pgoff] >> PAGE_SHIFT);
->> +             struct page *page = ubuf->pages[pgoff];
->>
->>                ret = remap_pfn_range(vma, addr, page_to_pfn(page),
->> PAGE_SIZE,
->>                                      vma->vm_page_prot);
->> @@ -67,22 +72,11 @@ static int mmap_udmabuf(struct dma_buf *buf,
->> struct vm_area_struct *vma)
->>   static int vmap_udmabuf(struct dma_buf *buf, struct iosys_map *map)
->>   {
->>        struct udmabuf *ubuf = buf->priv;
->> -     struct page **pages;
->>        void *vaddr;
->> -     pgoff_t pg;
->>
->>        dma_resv_assert_held(buf->resv);
->>
->> -     pages = kvmalloc_array(ubuf->pagecount, sizeof(*pages),
->> GFP_KERNEL);
->> -     if (!pages)
->> -             return -ENOMEM;
->> -
->> -     for (pg = 0; pg < ubuf->pagecount; pg++)
->> -             pages[pg] = folio_page(ubuf->folios[pg],
->> -                                    ubuf->offsets[pg] >> PAGE_SHIFT);
->> -
->> -     vaddr = vm_map_ram(pages, ubuf->pagecount, -1);
->> -     kvfree(pages);
->> +     vaddr = vm_map_ram(ubuf->pages, ubuf->pagecount, -1);
->>        if (!vaddr)
->>                return -EINVAL;
->>
->> @@ -104,30 +98,25 @@ static struct sg_table *get_sg_table(struct device
->> *dev, struct dma_buf *buf,
->>   {
->>        struct udmabuf *ubuf = buf->priv;
->>        struct sg_table *sg;
->> -     struct scatterlist *sgl;
->> -     unsigned int i = 0;
->>        int ret;
->>
->>        sg = kzalloc(sizeof(*sg), GFP_KERNEL);
->>        if (!sg)
->>                return ERR_PTR(-ENOMEM);
->>
->> -     ret = sg_alloc_table(sg, ubuf->pagecount, GFP_KERNEL);
->> +     ret = sg_alloc_table_from_pages(sg, ubuf->pages, ubuf->pagecount,
->> +                                     0, ubuf->pagecount << PAGE_SHIFT,
->> +                                     GFP_KERNEL);
->>        if (ret < 0)
->> -             goto err_alloc;
->> -
->> -     for_each_sg(sg->sgl, sgl, ubuf->pagecount, i)
->> -             sg_set_folio(sgl, ubuf->folios[i], PAGE_SIZE,
->> -                          ubuf->offsets[i]);
->> +             goto err;
->>
->>        ret = dma_map_sgtable(dev, sg, direction, 0);
->>        if (ret < 0)
->> -             goto err_map;
->> +             goto err;
->>        return sg;
->>
->> -err_map:
->> +err:
->>        sg_free_table(sg);
->> -err_alloc:
->>        kfree(sg);
->>        return ERR_PTR(ret);
->>   }
->> @@ -153,34 +142,6 @@ static void unmap_udmabuf(struct
->> dma_buf_attachment *at,
->>        return put_sg_table(at->dev, sg, direction);
->>   }
->>
->> -static void unpin_all_folios(struct list_head *unpin_list)
->> -{
->> -     struct udmabuf_folio *ubuf_folio;
->> -
->> -     while (!list_empty(unpin_list)) {
->> -             ubuf_folio = list_first_entry(unpin_list,
->> -                                           struct udmabuf_folio, list);
->> -             unpin_folio(ubuf_folio->folio);
->> -
->> -             list_del(&ubuf_folio->list);
->> -             kfree(ubuf_folio);
->> -     }
->> -}
->> -
->> -static int add_to_unpin_list(struct list_head *unpin_list,
->> -                          struct folio *folio)
->> -{
->> -     struct udmabuf_folio *ubuf_folio;
->> -
->> -     ubuf_folio = kzalloc(sizeof(*ubuf_folio), GFP_KERNEL);
->> -     if (!ubuf_folio)
->> -             return -ENOMEM;
->> -
->> -     ubuf_folio->folio = folio;
->> -     list_add_tail(&ubuf_folio->list, unpin_list);
->> -     return 0;
->> -}
->> -
->>   static void release_udmabuf(struct dma_buf *buf)
->>   {
->>        struct udmabuf *ubuf = buf->priv;
->> @@ -189,9 +150,9 @@ static void release_udmabuf(struct dma_buf *buf)
->>        if (ubuf->sg)
->>                put_sg_table(dev, ubuf->sg, DMA_BIDIRECTIONAL);
->>
->> -     unpin_all_folios(&ubuf->unpin_list);
->> -     kvfree(ubuf->offsets);
->> +     unpin_folios(ubuf->folios, ubuf->foliocount);
->>        kvfree(ubuf->folios);
->> +     kvfree(ubuf->pages);
->>        kfree(ubuf);
->>   }
->>
->> @@ -289,19 +250,18 @@ static long udmabuf_create(struct miscdevice
->> *device,
->>                           struct udmabuf_create_list *head,
->>                           struct udmabuf_create_item *list)
->>   {
->> -     pgoff_t pgoff, pgcnt, pglimit, pgbuf = 0;
->> -     long nr_folios, ret = -EINVAL;
->> +     pgoff_t pgoff, pgcnt, pglimit, nr_pages;
->> +     long nr_folios = 0, ret = -EINVAL;
->>        struct file *memfd = NULL;
->>        struct folio **folios;
->>        struct udmabuf *ubuf;
->> -     u32 i, j, k, flags;
->> +     u32 i, flags;
->>        loff_t end;
->>
->>        ubuf = kzalloc(sizeof(*ubuf), GFP_KERNEL);
->>        if (!ubuf)
->>                return -ENOMEM;
->>
->> -     INIT_LIST_HEAD(&ubuf->unpin_list);
->>        pglimit = (size_limit_mb * 1024 * 1024) >> PAGE_SHIFT;
->>        for (i = 0; i < head->count; i++) {
->>                if (!IS_ALIGNED(list[i].offset, PAGE_SIZE))
->> @@ -322,64 +282,58 @@ static long udmabuf_create(struct miscdevice
->> *device,
->>                ret = -ENOMEM;
->>                goto err;
->>        }
->> -     ubuf->offsets =
->> -             kvcalloc(ubuf->pagecount, sizeof(*ubuf->offsets),
->> GFP_KERNEL);
->> -     if (!ubuf->offsets) {
->> +     folios = ubuf->folios;
->> +
->> +     ubuf->pages = kvmalloc_array(ubuf->pagecount, sizeof(*ubuf-
->>> pages),
->> +                                  GFP_KERNEL);
->> +     if (!ubuf->pages) {
->>                ret = -ENOMEM;
->>                goto err;
->>        }
->>
->> -     pgbuf = 0;
->> -     for (i = 0; i < head->count; i++) {
->> +     for (i = 0, nr_pages = 0; i < head->count; i++) {
->> +             u32 j, pg;
->> +
->>                memfd = fget(list[i].memfd);
->>                ret = check_memfd_seals(memfd);
->>                if (ret < 0)
->>                        goto err;
->>
->>                pgcnt = list[i].size >> PAGE_SHIFT;
->> -             folios = kvmalloc_array(pgcnt, sizeof(*folios), GFP_KERNEL);
->> -             if (!folios) {
->> -                     ret = -ENOMEM;
->> -                     goto err;
->> -             }
->>
->>                end = list[i].offset + (pgcnt << PAGE_SHIFT) - 1;
->> -             ret = memfd_pin_folios(memfd, list[i].offset, end,
->> -                                    folios, pgcnt, &pgoff);
->> +             ret = memfd_pin_folios(memfd, list[i].offset, end, folios,
->> +                                    pgcnt, &pgoff);
->>                if (ret <= 0) {
->> -                     kvfree(folios);
->> -                     if (!ret)
->> -                             ret = -EINVAL;
->> +                     ret = ret ?: -EINVAL;
->>                        goto err;
->>                }
->>
->> -             nr_folios = ret;
->> -             pgoff >>= PAGE_SHIFT;
->> -             for (j = 0, k = 0; j < pgcnt; j++) {
->> -                     ubuf->folios[pgbuf] = folios[k];
->> -                     ubuf->offsets[pgbuf] = pgoff << PAGE_SHIFT;
->> -
->> -                     if (j == 0 || ubuf->folios[pgbuf-1] != folios[k]) {
->> -                             ret = add_to_unpin_list(&ubuf->unpin_list,
->> -                                                     folios[k]);
->> -                             if (ret < 0) {
->> -                                     kfree(folios);
->> -                                     goto err;
->> -                             }
->> -                     }
->> -
->> -                     pgbuf++;
->> -                     if (++pgoff == folio_nr_pages(folios[k])) {
->> -                             pgoff = 0;
->> -                             if (++k == nr_folios)
->> -                                     break;
->> +             /**
->> +              * Iter the pinned folios and record them for later unpin
->> +              * when releasing.
->> +              * memfd may start from any offset, so we need check it
->> +              * carefully at first.
->> +              */
->> +             for (j = 0, pgoff >>= PAGE_SHIFT, pg = 0; j < ret;
->> +                  ++j, pgoff = 0) {
->> +                     pgoff_t k;
->> +                     struct folio *folio = folios[j];
->> +
->> +                     for (k = pgoff; k < folio_nr_pages(folio); ++k) {
->> +                             ubuf->pages[nr_pages++] = folio_page(folio,
->> k);
->> +
->> +                             if (++pg >= pgcnt)
->> +                                     goto end;
->>                        }
->>                }
->> -
->> -             kvfree(folios);
->> +end:
->> +             folios += ret;
->> +             nr_folios += ret;
->>                fput(memfd);
->>                memfd = NULL;
->>        }
->> +     ubuf->foliocount = nr_folios;
->>
->>        flags = head->flags & UDMABUF_FLAGS_CLOEXEC ? O_CLOEXEC : 0;
->>        ret = export_udmabuf(ubuf, device, flags);
->> @@ -391,8 +345,9 @@ static long udmabuf_create(struct miscdevice
->> *device,
->>   err:
->>        if (memfd)
->>                fput(memfd);
->> -     unpin_all_folios(&ubuf->unpin_list);
->> -     kvfree(ubuf->offsets);
->> +     if (nr_folios)
->> +             unpin_folios(ubuf->folios, nr_folios);
->> +     kvfree(ubuf->pages);
->>        kvfree(ubuf->folios);
->>        kfree(ubuf);
->>        return ret;
->> --
->> 2.45.2
+--Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD--
 
