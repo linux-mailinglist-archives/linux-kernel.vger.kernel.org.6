@@ -1,189 +1,145 @@
-Return-Path: <linux-kernel+bounces-283007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA11594EBCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A38C94EBD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:30:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AFD81C20E67
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D879AB20AFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA432175D24;
-	Mon, 12 Aug 2024 11:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F7C175D3D;
+	Mon, 12 Aug 2024 11:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ClsX1e90"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jJRBHqDc"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F6214D6FE
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE7CD175D29
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:29:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723462131; cv=none; b=kFNbo4aLDDj2AvG6NVfT1eGuN7Dd8FLOVDo5gwseoEUNIy+Wf+N7nbfHyk4Y9RBB/V+VAxgBjh1fH0xSqpErcfl44/6WsKH9yekYcJfU3Pb2N0C3oo3E0BwkQ+nwMx2uOent2S81i2SZvzv0uRMVzAVpfIjjC4M9ai7WaeJjhJo=
+	t=1723462197; cv=none; b=h5hUB32jrstY6+KfEyb7dg8u85utnBrvOZBbEuaq4jfoNOInbLWCvmcy9GPpKhm7OawEzYvkdz9TIsetGayySzJ/+y6R0/ZWhXiIbEuZDTDzNZuumRnJoGUbLcPX8NNyzhZCERpHyOPxrRghGWYFsp6QI9NyYi1nRVvflUI6vLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723462131; c=relaxed/simple;
-	bh=uS8f+x0cKqtRZriiu58H+cvsvDje/eEoou5/IvvJUQs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=frnE0QZeRDq8/rRiYJa/MIE2nXclc7xmGddimixmwi51qHGuq0pZqPgy+NVyw/TLUHHfZILoTUGdkYEgVEWjABjmldXmV6/J2by/v1Z9/icEiRb+Xio30PP5jKmfwaxXhjjx65x+L9Iheth8ryvc0cP6R7Twhl2yqA3a7Jyfcis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ClsX1e90; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1723462197; c=relaxed/simple;
+	bh=BcS7e5OSUdegHmPBjuOnztz2GWyLnhPJwGxbx8iNC9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBGdHPf3BAnoPqjWZr98ELpAlxPHTNX2rlhGw86R6ypFhLagS85SnE4Lx8zocxs3kx7lMcZ9Ytirr4xLxJSJuabXwSYLdkxZbqBryqb+juPlpHlW8+9NkbGTjdh7DAHALqOTnaJFVU8jf0wFAF0BR/ibZJ0adfoZx/EBfCCmmeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jJRBHqDc; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723462128;
+	s=mimecast20190719; t=1723462194;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DzMz3TZb/4STKd1zC5JgrVRXvARW6dC5kvx3z4x0yLA=;
-	b=ClsX1e90Dx0cKNRhkVyTy3/8DaAYkbgE3Kw5uVJgAUwzvRnuvATehBInYG+1svfusH7Zkg
-	XQZl9QHq1IZ+MZQfn/xVVLxLdS2vF8ADGAD8Y4yH6h0eaOeiy/H0PKj6iWw9q+vx/Q7J+u
-	OjjGcuuqp8lHHmYxInmYgUH1gg24XZ0=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-292-1dmgEYzoO1GajpNMd0GSuQ-1; Mon, 12 Aug 2024 07:28:47 -0400
-X-MC-Unique: 1dmgEYzoO1GajpNMd0GSuQ-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-36865706f5eso2177946f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:28:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723462126; x=1724066926;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DzMz3TZb/4STKd1zC5JgrVRXvARW6dC5kvx3z4x0yLA=;
-        b=I7P45Ln1iJT2oL9ZXAGj619rYsIC7Ae3ZvHKpSHlo+cv/7L3kcqGDYfbHmEDM71pn1
-         ZYrUKPpvL7YUc5y76uA44KOW2F3CeHzg87GLAr3b30Xir4CkFW13Zc5vKLsVF6RNlua9
-         e2wiHCyDAsfF4CiDva6F7eJGw3JqC7vHS7X77PWS0wXrfujC/46/kcxq48HlE1Qaa+Ak
-         +Uxtb67gpCxMd3NYDvJgyCi9L0SabgM71HLxugttfC8BNbOprh9Yc4OudT0GE7SbkR1f
-         +URpQOTw7wGfnOHrpa8Kc2s2tEU14mlbz2nyKMO9T5wYDMbbwGiJpX6tkmzAZVGVm8NX
-         j/hw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoHMPj7QD/d5qlzM3xSKAYU4+eMpcPPaxYs5289atNu+IWwguIkkR8guNcSc/HMQte22zcEz9Ab8ywXiNEbaebPt17s8NoovrxSpeh
-X-Gm-Message-State: AOJu0YwYxevIHbpbIghYwvSyZA5US7lc0USg5GIyl7OAkPXwGKR2HAEq
-	jVnUpevO4MOUUOPvwhkhqJrrbgTA50V7+iKSgCVn5OJcbTRxYgMNbr+78Wg0FeRpm6csYG8ce9W
-	I6bfV2c8cuPwDjWVD1U+Ik9UKfQVbtr7cA3qoQ+4o5Y56gbpHLQY6sRvaK96WbA==
-X-Received: by 2002:a05:6000:d2:b0:368:669c:3bd3 with SMTP id ffacd0b85a97d-36d60ef85b9mr4936744f8f.48.1723462125905;
-        Mon, 12 Aug 2024 04:28:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/9JYbDBo4AKSZo1vV2wWmLWk1n2QGqfs8ws+B+ZbyAv3Twi0sB3J3zuY5yY+R8tzUT5/nuw==
-X-Received: by 2002:a05:6000:d2:b0:368:669c:3bd3 with SMTP id ffacd0b85a97d-36d60ef85b9mr4936720f8f.48.1723462125308;
-        Mon, 12 Aug 2024 04:28:45 -0700 (PDT)
-Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd33ffsm7203275f8f.99.2024.08.12.04.28.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 04:28:44 -0700 (PDT)
-Date: Mon, 12 Aug 2024 13:28:44 +0200
-From: Igor Mammedov <imammedo@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
- <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
- <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
- linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, qemu-devel@nongnu.org
-Subject: Re: [PATCH v6 03/10] acpi/ghes: Add support for GED error device
-Message-ID: <20240812132844.1328937b@imammedo.users.ipa.redhat.com>
-In-Reply-To: <909c4b6c1b90be284f1e5b653e075db7156b00cd.1723119423.git.mchehab+huawei@kernel.org>
-References: <cover.1723119423.git.mchehab+huawei@kernel.org>
-	<909c4b6c1b90be284f1e5b653e075db7156b00cd.1723119423.git.mchehab+huawei@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	bh=dOjdqADSWC8inLVd6ovXTdUwFoHmzNkQ2gTz2o2Yt4Y=;
+	b=jJRBHqDcs9jGfi+ClExKESlVDoM+NRVWepYyaDpo/YTR/gguoGKkcVKF4+ciLtK0ehCmYd
+	riFWraSUsV/E+hsZbW5/LY9Lcfh+vBpK5KI2nqxu2RSp02fwRE/2wwqHQPoOM5lzxtwbDM
+	yhh3RL0c8szPJXNmofDVMXZ023TRDsA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-675-m5cnWKV1PdS9PLq1WPeyZg-1; Mon,
+ 12 Aug 2024 07:29:49 -0400
+X-MC-Unique: m5cnWKV1PdS9PLq1WPeyZg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9924A1953961;
+	Mon, 12 Aug 2024 11:29:46 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.102])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 86E9C19560A3;
+	Mon, 12 Aug 2024 11:29:38 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 12 Aug 2024 13:29:43 +0200 (CEST)
+Date: Mon, 12 Aug 2024 13:29:29 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Liao Chang <liaochang1@huawei.com>
+Cc: mhiramat@kernel.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, andrii@kernel.org, rostedt@goodmis.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] uprobes: Remove the spinlock within
+ handle_singlestep()
+Message-ID: <20240812112929.GB11656@redhat.com>
+References: <20240809061004.2112369-1-liaochang1@huawei.com>
+ <20240809061004.2112369-3-liaochang1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809061004.2112369-3-liaochang1@huawei.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Thu,  8 Aug 2024 14:26:29 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+On 08/09, Liao Chang wrote:
+>
+> --- a/include/linux/uprobes.h
+> +++ b/include/linux/uprobes.h
+> @@ -75,6 +75,7 @@ struct uprobe_task {
+>  
+>  	struct uprobe			*active_uprobe;
+>  	unsigned long			xol_vaddr;
+> +	bool				deny_signal;
 
-> From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> 
-> As a GED error device is now defined, add another type
-> of notification.
-> 
-> Add error notification to GHES v2 using a GED error device GED
-> triggered via interrupt.
-> 
-> [mchehab: do some cleanups at ACPI_HEST_SRC_ID_* checks and
->  rename HEST event to better identify GED interrupt OSPM]
-> 
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Ack, but... I can't believe I am arguing with the naming ;)
+Can we have a better name for this flag?
 
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
+	utask->signal_denied ?
+	utask->restore_sigpending ?
 
-> ---
->  hw/acpi/ghes.c         | 12 +++++++++---
->  include/hw/acpi/ghes.h |  3 ++-
->  2 files changed, 11 insertions(+), 4 deletions(-)
+or just
+
+	utask->sigpending ?
+
+utask->deny_signal looks as if handle_singlestep/whatever should
+"deny" the pending signal cleared by uprobe_deny_signal(), while
+it fact it should restore TIF_SIGPENDING.
+
+Oleg.
+
+>  
+>  	struct return_instance		*return_instances;
+>  	unsigned int			depth;
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 76a51a1f51e2..77934fbd1370 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -1979,6 +1979,7 @@ bool uprobe_deny_signal(void)
+>  	WARN_ON_ONCE(utask->state != UTASK_SSTEP);
+>  
+>  	if (task_sigpending(t)) {
+> +		utask->deny_signal = true;
+>  		clear_tsk_thread_flag(t, TIF_SIGPENDING);
+>  
+>  		if (__fatal_signal_pending(t) || arch_uprobe_xol_was_trapped(t)) {
+> @@ -2288,9 +2289,10 @@ static void handle_singlestep(struct uprobe_task *utask, struct pt_regs *regs)
+>  	utask->state = UTASK_RUNNING;
+>  	xol_free_insn_slot(current);
+>  
+> -	spin_lock_irq(&current->sighand->siglock);
+> -	recalc_sigpending(); /* see uprobe_deny_signal() */
+> -	spin_unlock_irq(&current->sighand->siglock);
+> +	if (utask->deny_signal) {
+> +		set_thread_flag(TIF_SIGPENDING);
+> +		utask->deny_signal = false;
+> +	}
+>  
+>  	if (unlikely(err)) {
+>  		uprobe_warn(current, "execute the probed insn, sending SIGILL.");
+> -- 
+> 2.34.1
 > 
-> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> index 13b105c5d02d..d6cbeed6e3d5 100644
-> --- a/hw/acpi/ghes.c
-> +++ b/hw/acpi/ghes.c
-> @@ -34,8 +34,8 @@
->  /* The max size in bytes for one error block */
->  #define ACPI_GHES_MAX_RAW_DATA_LENGTH   (1 * KiB)
->  
-> -/* Now only support ARMv8 SEA notification type error source */
-> -#define ACPI_GHES_ERROR_SOURCE_COUNT        1
-> +/* Support ARMv8 SEA notification type error source and GPIO interrupt. */
-> +#define ACPI_GHES_ERROR_SOURCE_COUNT        2
->  
->  /* Generic Hardware Error Source version 2 */
->  #define ACPI_GHES_SOURCE_GENERIC_ERROR_V2   10
-> @@ -290,6 +290,9 @@ void build_ghes_error_table(GArray *hardware_errors, BIOSLinker *linker)
->  static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->  {
->      uint64_t address_offset;
-> +
-> +    assert(source_id < ACPI_HEST_SRC_ID_RESERVED);
-> +
->      /*
->       * Type:
->       * Generic Hardware Error Source version 2(GHESv2 - Type 10)
-> @@ -327,6 +330,9 @@ static void build_ghes_v2(GArray *table_data, int source_id, BIOSLinker *linker)
->           */
->          build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_SEA);
->          break;
-> +    case ACPI_HEST_NOTIFY_EXTERNAL:
-> +        build_ghes_hw_error_notification(table_data, ACPI_GHES_NOTIFY_GPIO);
-> +        break;
->      default:
->          error_report("Not support this error source");
->          abort();
-> @@ -370,6 +376,7 @@ void acpi_build_hest(GArray *table_data, BIOSLinker *linker,
->      /* Error Source Count */
->      build_append_int_noprefix(table_data, ACPI_GHES_ERROR_SOURCE_COUNT, 4);
->      build_ghes_v2(table_data, ACPI_HEST_SRC_ID_SEA, linker);
-> +    build_ghes_v2(table_data, ACPI_HEST_NOTIFY_EXTERNAL, linker);
->  
->      acpi_table_end(linker, &table);
->  }
-> @@ -406,7 +413,6 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
->      start_addr = le64_to_cpu(ags->ghes_addr_le);
->  
->      if (physical_address) {
-> -
->          if (source_id < ACPI_HEST_SRC_ID_RESERVED) {
->              start_addr += source_id * sizeof(uint64_t);
->          }
-> diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-> index fb80897e7eac..ce6f82a1155a 100644
-> --- a/include/hw/acpi/ghes.h
-> +++ b/include/hw/acpi/ghes.h
-> @@ -59,9 +59,10 @@ enum AcpiGhesNotifyType {
->      ACPI_GHES_NOTIFY_RESERVED = 12
->  };
->  
-> +/* Those are used as table indexes when building GHES tables */
->  enum {
->      ACPI_HEST_SRC_ID_SEA = 0,
-> -    /* future ids go here */
-> +    ACPI_HEST_NOTIFY_EXTERNAL,
->      ACPI_HEST_SRC_ID_RESERVED,
->  };
->  
 
 
