@@ -1,272 +1,202 @@
-Return-Path: <linux-kernel+bounces-283156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076C894EDFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:21:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E52E94EDFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BFED1C21282
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:21:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D051E2842CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07F917C224;
-	Mon, 12 Aug 2024 13:21:34 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6302F17C9E7;
+	Mon, 12 Aug 2024 13:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EPpmrtk2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AECB517BB3D;
-	Mon, 12 Aug 2024 13:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F90517C7C4;
+	Mon, 12 Aug 2024 13:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468894; cv=none; b=oO7wGjbCciK1/aQ+BebkxGAtb0+t7LWTN5uDnMQzx2pqFQ4QU1tFROi1UCC0nXy2r6QWdis5EINXdjYUatVeiiq1oQAMJEwnsimZh5IVSGESY8IQLiudE3NV4VwJxyXmmk5cClIdJ6PSJfzLE56w9iVmQ8i8rGM71tXwLEciCRA=
+	t=1723468896; cv=none; b=PaSwSo9yf16XX2BcVhFVPCvU2IhtpmflgdmyyQihxSZZnqU36Moo2bd9KuHySUw4GSad6BHAs4puxApXJCMf8l2u6Omto4SfPXpoO8UMfOgfSB70zG1Yh+evUkiv+Uc9ioXRjxvhNE9t4XBWLHKhs/IMP8IC9nX6ICkK4ldTaLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468894; c=relaxed/simple;
-	bh=nELmBUuP7NtMv0h6+VzLfrRVT5C86LvicW6YXx1SDaI=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MuIDa0BIZjsJlDa2ofb9JvBNntgXYOvPrF1icxFEniynVrVYYLv+Sx8pfZHDrY5VneO2VXKhqKrdNVrIsQ60ADy7v2RCGPKO4Qd38+ZRzuKMAD3NE+3pAlpYMVI0c0P6Pm1oSIIlRt0cQDvzJwoMjPeRxtJEuR+AW5ip1iU2m58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4WjFRC4jPlzQpf0;
-	Mon, 12 Aug 2024 21:16:55 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id EBCAC180102;
-	Mon, 12 Aug 2024 21:21:27 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 12 Aug 2024 21:21:26 +0800
-Message-ID: <88382c22-a45b-4cd6-8313-4db1350d8e7c@huawei.com>
-Date: Mon, 12 Aug 2024 21:21:25 +0800
+	s=arc-20240116; t=1723468896; c=relaxed/simple;
+	bh=YXdQQVRX9iCPihChy5jHJsCCXjCOLQlReWghD978IR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zlo9qlH+snub04D52zpaGvYt4QwMo930aCnr0S0yCeQHBsH6QjKIlGo/PyT+AfkLxQphOZ7kGrWUCAswyFlLdIBzFj52OTdYhiqAdG8htKXgc7OsKncXOGoMaM9Z+eSVTKS7bZPzn4Ozz35dUO7FMM5V0JLO6Dlz+gJ8q0KbAfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EPpmrtk2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 828F5C4AF15;
+	Mon, 12 Aug 2024 13:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723468896;
+	bh=YXdQQVRX9iCPihChy5jHJsCCXjCOLQlReWghD978IR0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EPpmrtk2aBn0Iu4dRbjrWUUVo9RyLAGJ4l9IIe1KBQfcWmcj3Q3HhbHv1LJhjrjTh
+	 1iEiekO9ilUAze8On+j2i/UIvR4qbw1OkaA8GjBHuyMEBF44DfxEueryYDZdXx66nz
+	 +NvT+OPFS57f9G7aqPij4CVumoTZ2dGiuk7B3fd+IisbgzOsmfTWF813U+t7m3pAoa
+	 zh/+tEA1fAiI9bqz+dwY0XffnvLbJlax9VZDU+n26MkCtsiAl/nI/BqpiAn1+bZXUu
+	 GLjz7VqMTGMmEi4XS7Jmw7XXFIB9lWu6mWRm9T1zLu2HArg9rJxy7VZ/rzzjqbF1Ot
+	 ER3xyWz6lnPMg==
+Date: Mon, 12 Aug 2024 10:21:32 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: vmolnaro@redhat.com
+Cc: Michael Petlan <mpetlan@redhat.com>, linux-perf-users@vger.kernel.org,
+	acme@redhat.com, Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf test record.sh: Raise limit of open file
+ descriptors
+Message-ID: <ZroMXJoNXCsh2ghd@x1>
+References: <ZiqoWj3f-P3ChlWa@x1>
+ <20240429085721.10122-1-vmolnaro@redhat.com>
+ <alpine.LRH.2.20.2405211127360.4040@Diego>
+ <ZroLGg6W9DKsexpp@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, "David S. Miller" <davem@davemloft.net>, David
- Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Felix Fietkau
-	<nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, Mark Lee
-	<Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Yisen Zhuang
-	<yisen.zhuang@huawei.com>, Salil Mehta <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>
-Subject: Re: [PATCH net-next 3/3] net: hns3: Use
- ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
-To: Simon Horman <horms@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
- <20240812-ipv6_addr-helpers-v1-3-aab5d1f35c40@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20240812-ipv6_addr-helpers-v1-3-aab5d1f35c40@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZroLGg6W9DKsexpp@x1>
 
-Reviewed-by: Jijie Shao <shaojijie@huawei.com>
+On Mon, Aug 12, 2024 at 10:16:10AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Tue, May 21, 2024 at 11:27:56AM +0200, Michael Petlan wrote:
+> > On Mon, 29 Apr 2024, vmolnaro@redhat.com wrote:
+> > > From: Veronika Molnarova <vmolnaro@redhat.com>
+> > > 
+> > > Subtest for system-wide record with '--threads=cpu' option fails due
+> > > to a limit of open file descriptors on systems with 128 or more CPUs
+> > > as the default limit is set to 1024.
+> > > 
+> > > The number of open file descriptors should be slightly above
+> > > nmb_events*nmb_cpus + nmb_cpus(for perf.data.n) + 4*nmb_cpus(for pipes),
+> > > which equals 8*nmb_cpus. Therefore, temporarily raise the limit to
+> > > 16*nmb_cpus for the test.
+> > > 
+> > > Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
+> > 
+> > Acked-by: Michael Petlan <mpetlan@redhat.com>
+> 
+> b4 got confused, I'll pick the rigth version manually...
 
-on 2024/8/12 20:11, Simon Horman wrote:
-> Use new ipv6_addr_cpu_to_be32 and ipv6_addr_be32_to_cpu helper,
-> and IPV6_ADDR_WORDS. This is arguably slightly nicer.
->
-> No functional change intended.
-> Compile tested only.
->
-> Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> Link: https://lore.kernel.org/netdev/c7684349-535c-45a4-9a74-d47479a50020@lunn.ch/
-> Signed-off-by: Simon Horman <horms@kernel.org>
+And you forgot to add the perf tools reviewers, as listed in
+MAINTAINERS, you can get the list of people who should be on the Cc
+using:
+
+⬢[acme@toolbox perf-tools-next]$ scripts/get_maintainer.pl tools/perf/tests/shell/record.sh
+Peter Zijlstra <peterz@infradead.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM)
+Ingo Molnar <mingo@redhat.com> (supporter:PERFORMANCE EVENTS SUBSYSTEM)
+Arnaldo Carvalho de Melo <acme@kernel.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:3/4=75%)
+Namhyung Kim <namhyung@kernel.org> (supporter:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:1/4=25%)
+Mark Rutland <mark.rutland@arm.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+Alexander Shishkin <alexander.shishkin@linux.intel.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+Jiri Olsa <jolsa@kernel.org> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+Ian Rogers <irogers@google.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM)
+Adrian Hunter <adrian.hunter@intel.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:1/4=25%,authored:1/4=25%,added_lines:7/55=13%,removed_lines:1/1=100%)
+"Liang, Kan" <kan.liang@linux.intel.com> (reviewer:PERFORMANCE EVENTS SUBSYSTEM,commit_signer:1/4=25%,authored:1/4=25%,added_lines:30/55=55%)
+Athira Rajeev <atrajeev@linux.vnet.ibm.com> (commit_signer:1/4=25%,authored:1/4=25%)
+Veronika Molnarova <vmolnaro@redhat.com> (authored:1/4=25%,added_lines:17/55=31%)
+linux-perf-users@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+linux-kernel@vger.kernel.org (open list:PERFORMANCE EVENTS SUBSYSTEM)
+⬢[acme@toolbox perf-tools-next]$
+
+
+ 
+> ⬢[acme@toolbox perf-tools-next]$ b4 am -ctsl --cc-trailers 20240429085721.10122-1-vmolnaro@redhat.com
+> Grabbing thread from lore.kernel.org/all/20240429085721.10122-1-vmolnaro@redhat.com/t.mbox.gz
+> Checking for newer revisions
+> Grabbing search results from lore.kernel.org
+> Analyzing 7 messages in the thread
+> WARNING: duplicate messages found at index 1
+>    Subject 1: perf test record.sh: Raise limit of open file descriptors
+>    Subject 2: perf test record.sh: Raise limit of open file descriptors
+>   2 is not a reply... assume additional patch
+> Looking for additional code-review trailers on lore.kernel.org
+> Will use the latest revision: v2
+> You can pick other revisions using the -vN flag
+> Checking attestation on all messages, may take a moment...
 > ---
->   .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 79 +++++++++++-----------
->   .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 ++-
->   2 files changed, 44 insertions(+), 43 deletions(-)
->
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> index 82574ce0194f..ce629cbc5d01 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> @@ -13,8 +13,9 @@
->   #include <linux/platform_device.h>
->   #include <linux/if_vlan.h>
->   #include <linux/crash_dump.h>
-> -#include <net/ipv6.h>
-> +
->   #include <net/rtnetlink.h>
-> +
->   #include "hclge_cmd.h"
->   #include "hclge_dcb.h"
->   #include "hclge_main.h"
-> @@ -6278,15 +6279,15 @@ static void hclge_fd_get_ip4_tuple(struct ethtool_rx_flow_spec *fs,
->   static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
->   				      struct hclge_fd_rule *rule, u8 ip_proto)
->   {
-> -	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.tcp_ip6_spec.ip6src,
-> -			  IPV6_SIZE);
-> -	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.tcp_ip6_spec.ip6src,
-> -			  IPV6_SIZE);
-> +	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-> +			      fs->h_u.tcp_ip6_spec.ip6src);
-> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-> +			      fs->m_u.tcp_ip6_spec.ip6src);
->   
-> -	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.tcp_ip6_spec.ip6dst,
-> -			  IPV6_SIZE);
-> -	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.tcp_ip6_spec.ip6dst,
-> -			  IPV6_SIZE);
-> +	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-> +			      fs->h_u.tcp_ip6_spec.ip6dst);
-> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-> +			      fs->m_u.tcp_ip6_spec.ip6dst);
->   
->   	rule->tuples.src_port = be16_to_cpu(fs->h_u.tcp_ip6_spec.psrc);
->   	rule->tuples_mask.src_port = be16_to_cpu(fs->m_u.tcp_ip6_spec.psrc);
-> @@ -6307,15 +6308,15 @@ static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
->   static void hclge_fd_get_ip6_tuple(struct ethtool_rx_flow_spec *fs,
->   				   struct hclge_fd_rule *rule)
->   {
-> -	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.usr_ip6_spec.ip6src,
-> -			  IPV6_SIZE);
-> -	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.usr_ip6_spec.ip6src,
-> -			  IPV6_SIZE);
-> +	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-> +			      fs->h_u.usr_ip6_spec.ip6src);
-> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-> +			      fs->m_u.usr_ip6_spec.ip6src);
->   
-> -	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.usr_ip6_spec.ip6dst,
-> -			  IPV6_SIZE);
-> -	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.usr_ip6_spec.ip6dst,
-> -			  IPV6_SIZE);
-> +	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-> +			      fs->h_u.usr_ip6_spec.ip6dst);
-> +	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-> +			      fs->m_u.usr_ip6_spec.ip6dst);
->   
->   	rule->tuples.ip_proto = fs->h_u.usr_ip6_spec.l4_proto;
->   	rule->tuples_mask.ip_proto = fs->m_u.usr_ip6_spec.l4_proto;
-> @@ -6744,21 +6745,19 @@ static void hclge_fd_get_tcpip6_info(struct hclge_fd_rule *rule,
->   				     struct ethtool_tcpip6_spec *spec,
->   				     struct ethtool_tcpip6_spec *spec_mask)
->   {
-> -	cpu_to_be32_array(spec->ip6src,
-> -			  rule->tuples.src_ip, IPV6_SIZE);
-> -	cpu_to_be32_array(spec->ip6dst,
-> -			  rule->tuples.dst_ip, IPV6_SIZE);
-> +	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
-> +	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
->   	if (rule->unused_tuple & BIT(INNER_SRC_IP))
->   		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
->   	else
-> -		cpu_to_be32_array(spec_mask->ip6src, rule->tuples_mask.src_ip,
-> -				  IPV6_SIZE);
-> +		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
-> +				      rule->tuples_mask.src_ip);
->   
->   	if (rule->unused_tuple & BIT(INNER_DST_IP))
->   		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
->   	else
-> -		cpu_to_be32_array(spec_mask->ip6dst, rule->tuples_mask.dst_ip,
-> -				  IPV6_SIZE);
-> +		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
-> +				      rule->tuples_mask.dst_ip);
->   
->   	spec->tclass = rule->tuples.ip_tos;
->   	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
-> @@ -6777,19 +6776,19 @@ static void hclge_fd_get_ip6_info(struct hclge_fd_rule *rule,
->   				  struct ethtool_usrip6_spec *spec,
->   				  struct ethtool_usrip6_spec *spec_mask)
->   {
-> -	cpu_to_be32_array(spec->ip6src, rule->tuples.src_ip, IPV6_SIZE);
-> -	cpu_to_be32_array(spec->ip6dst, rule->tuples.dst_ip, IPV6_SIZE);
-> +	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
-> +	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
->   	if (rule->unused_tuple & BIT(INNER_SRC_IP))
->   		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
->   	else
-> -		cpu_to_be32_array(spec_mask->ip6src,
-> -				  rule->tuples_mask.src_ip, IPV6_SIZE);
-> +		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
-> +				      rule->tuples_mask.src_ip);
->   
->   	if (rule->unused_tuple & BIT(INNER_DST_IP))
->   		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
->   	else
-> -		cpu_to_be32_array(spec_mask->ip6dst,
-> -				  rule->tuples_mask.dst_ip, IPV6_SIZE);
-> +		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
-> +				      rule->tuples_mask.dst_ip);
->   
->   	spec->tclass = rule->tuples.ip_tos;
->   	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
-> @@ -7007,7 +7006,7 @@ static void hclge_fd_get_flow_tuples(const struct flow_keys *fkeys,
->   	} else {
->   		int i;
->   
-> -		for (i = 0; i < IPV6_SIZE; i++) {
-> +		for (i = 0; i < IPV6_ADDR_WORDS; i++) {
->   			tuples->src_ip[i] = be32_to_cpu(flow_ip6_src[i]);
->   			tuples->dst_ip[i] = be32_to_cpu(flow_ip6_dst[i]);
->   		}
-> @@ -7262,14 +7261,14 @@ static int hclge_get_cls_key_ip(const struct flow_rule *flow,
->   		struct flow_match_ipv6_addrs match;
->   
->   		flow_rule_match_ipv6_addrs(flow, &match);
-> -		be32_to_cpu_array(rule->tuples.src_ip, match.key->src.s6_addr32,
-> -				  IPV6_SIZE);
-> -		be32_to_cpu_array(rule->tuples_mask.src_ip,
-> -				  match.mask->src.s6_addr32, IPV6_SIZE);
-> -		be32_to_cpu_array(rule->tuples.dst_ip, match.key->dst.s6_addr32,
-> -				  IPV6_SIZE);
-> -		be32_to_cpu_array(rule->tuples_mask.dst_ip,
-> -				  match.mask->dst.s6_addr32, IPV6_SIZE);
-> +		ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-> +				      match.key->src.s6_addr32);
-> +		ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-> +				      match.mask->src.s6_addr32);
-> +		ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-> +				      match.key->dst.s6_addr32);
-> +		ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-> +				      match.mask->dst.s6_addr32);
->   	} else {
->   		rule->unused_tuple |= BIT(INNER_SRC_IP);
->   		rule->unused_tuple |= BIT(INNER_DST_IP);
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> index b5178b0f88b3..b9fc719880bb 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-> @@ -8,7 +8,9 @@
->   #include <linux/phy.h>
->   #include <linux/if_vlan.h>
->   #include <linux/kfifo.h>
-> +
->   #include <net/devlink.h>
-> +#include <net/ipv6.h>
->   
->   #include "hclge_cmd.h"
->   #include "hclge_ptp.h"
-> @@ -718,15 +720,15 @@ struct hclge_fd_cfg {
->   };
->   
->   #define IPV4_INDEX	3
-> -#define IPV6_SIZE	4
-> +
->   struct hclge_fd_rule_tuples {
->   	u8 src_mac[ETH_ALEN];
->   	u8 dst_mac[ETH_ALEN];
->   	/* Be compatible for ip address of both ipv4 and ipv6.
->   	 * For ipv4 address, we store it in src/dst_ip[3].
->   	 */
-> -	u32 src_ip[IPV6_SIZE];
-> -	u32 dst_ip[IPV6_SIZE];
-> +	u32 src_ip[IPV6_ADDR_WORDS];
-> +	u32 dst_ip[IPV6_ADDR_WORDS];
->   	u16 src_port;
->   	u16 dst_port;
->   	u16 vlan_tag1;
->
+>   ✓ [PATCH v2] perf test record.sh: Raise limit of open file descriptors
+>     + Link: https://lore.kernel.org/r/20240311081127.7652-1-vmolnaro@redhat.com (✓ DKIM/kernel.org)
+>     + Acked-by: Michael Petlan <mpetlan@redhat.com> (✓ DKIM/redhat.com)
+>     + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>   ✓ [PATCH v2] perf test record.sh: Raise limit of open file descriptors
+>     + Acked-by: Michael Petlan <mpetlan@redhat.com> (✓ DKIM/redhat.com)
+>     + Link: https://lore.kernel.org/r/20240429085721.10122-1-vmolnaro@redhat.com
+>     + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>   ---
+>   ✓ Signed: DKIM/redhat.com
+> ---
+> Total patches: 2
+> ---
+>  Link: https://lore.kernel.org/r/20240311081127.7652-1-vmolnaro@redhat.com
+>  Base: not specified
+>        git am ./v2_20240311_vmolnaro_perf_test_record_sh_raise_limit_of_open_file_descriptors.mbx
+> ⬢[acme@toolbox perf-tools-next]$
+> 
+> > > ---
+> > > Reworked the patch as the testfile has already changed since the patch
+> > > was sent causing the applying to fail, now applying upstream without
+> > > problems.
+> > >  tools/perf/tests/shell/record.sh | 17 +++++++++++++++++
+> > >  1 file changed, 17 insertions(+)
+> > > 
+> > > diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+> > > index 3d1a7759a7b2..344c0e40ebe8 100755
+> > > --- a/tools/perf/tests/shell/record.sh
+> > > +++ b/tools/perf/tests/shell/record.sh
+> > > @@ -21,6 +21,15 @@ testprog="perf test -w thloop"
+> > >  cpu_pmu_dir="/sys/bus/event_source/devices/cpu*"
+> > >  br_cntr_file="/caps/branch_counter_nr"
+> > >  br_cntr_output="branch stack counters"
+> > > +default_fd_limit=$(ulimit -n)
+> > > +# With option --threads=cpu the number of open file descriptors should be
+> > > +# equal to sum of:    nmb_cpus * nmb_events (2+dummy),
+> > > +#                     nmb_threads for perf.data.n (equal to nmb_cpus) and
+> > > +#                     2*nmb_cpus of pipes = 4*nmb_cpus (each pipe has 2 ends)
+> > > +# All together it needs 8*nmb_cpus file descriptors plus some are also used
+> > > +# outside of testing, thus raising the limit to 16*nmb_cpus
+> > > +min_fd_limit=$(($(getconf _NPROCESSORS_ONLN) * 16))
+> > > +
+> > >  
+> > >  cleanup() {
+> > >    rm -rf "${perfdata}"
+> > > @@ -190,11 +199,19 @@ test_branch_counter() {
+> > >    echo "Basic branch counter test [Success]"
+> > >  }
+> > >  
+> > > +# raise the limit of file descriptors to minimum
+> > > +if [[ $default_fd_limit -lt $min_fd_limit ]]; then
+> > > +       ulimit -n $min_fd_limit
+> > > +fi
+> > > +
+> > >  test_per_thread
+> > >  test_register_capture
+> > >  test_system_wide
+> > >  test_workload
+> > >  test_branch_counter
+> > >  
+> > > +# restore the default value
+> > > +ulimit -n $default_fd_limit
+> > > +
+> > >  cleanup
+> > >  exit $err
+> > > -- 
+> > > 2.43.0
+> > > 
+> > > 
+> > 
 
