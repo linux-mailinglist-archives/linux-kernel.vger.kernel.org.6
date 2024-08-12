@@ -1,77 +1,103 @@
-Return-Path: <linux-kernel+bounces-282539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F04294E588
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:24:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9A894E58A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A563CB21206
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:24:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E41BFB21244
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324BE13DDD0;
-	Mon, 12 Aug 2024 03:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF17013DDD0;
+	Mon, 12 Aug 2024 03:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bM3szqdf"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.19])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8431C3E;
-	Mon, 12 Aug 2024 03:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.19
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PCl+6xf7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B47C91C3E;
+	Mon, 12 Aug 2024 03:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723433038; cv=none; b=Wb8jGp3UtFY1iGKf3mbLWl05gllMVGP0A+NALU1KJZ85ujoVzWlDVlJSLXu+8HIDQ6M23d5POPFA95zYY171dHGzSece+X0DW5vDKIdY2xM4S9t9ZsVjlrXu6EbBn8Md3/TptQFvaN0qT3wFCLPRNOgUDLj4D+hbDyprm8ULDRk=
+	t=1723433065; cv=none; b=FekOsDplfayYvjPwd4p0POXesVaYlw2sF+2/4CHs6tZAOlRmSYb87OtGBKQqasjMh3u3NkK/5WMQvM36izk3VNifCgNvROP9xztl1liHjI5zTNYmKBeD5hWtU849yso2y2YhbyLkMHuUy+BICYQHjoKjc7FaBrkrDEyK3ILzmRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723433038; c=relaxed/simple;
-	bh=xfpCQhn3U0gxPZTtAwQMWr9rme+W8I7i7rnG4+guxgI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xuqt8Yj+nip/EbncxLbc5Y+wovjUj//pZKuSO/VqSh2oldOQFeMtdkELZ0HZMQIdR/LaVjy5THoro6IDICkGgILs7zUtGLZe8LdMxHDCaochq/JPPYuS9jM5M8SKC3XyQaYMXaAkMWM6pnYIRhGJ53DAGv7mG8wwSyaQBD9IxBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bM3szqdf; arc=none smtp.client-ip=220.197.32.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=r2fqcbW4eowzfLw53eCIKo5ZYNSqw+1v/v/btK3jwZk=;
-	b=bM3szqdf2M3h71w5VEPCDhNxx1MAv+ULK0aCATLldDxvMKi7WagJoaGtfJ1zG9
-	dytQNVKcNv3VN00z9x1nWRgTBmCc6M0PgLa5e3cG/N/CtPL65ASmjw/mwcsg+lFx
-	KHyOpdOOsFKuKgU/2IPRB8wXndWV+2P/V4JpqPAA9c98M=
-Received: from dragon (unknown [117.62.10.86])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgC3X4QQgLlmaW9SAg--.33944S3;
-	Mon, 12 Aug 2024 11:22:58 +0800 (CST)
-Date: Mon, 12 Aug 2024 11:22:56 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Benjamin Hahn <B.Hahn@phytec.de>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@lists.phytec.de
-Subject: Re: [PATCH v3] arm64: dts: freescale: imx8mp-phycore: Add no-eth
- overlay
-Message-ID: <ZrmAECbFwAVSUg5M@dragon>
-References: <20240710-bspimx8m-3180-v3-1-8ef55381172c@phytec.de>
+	s=arc-20240116; t=1723433065; c=relaxed/simple;
+	bh=njG9B89npw5WwsL/z4bYU7Z/ql30hfLcbx+xXdBNNOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A9/6kWSuq5SsCPSmloq1UifQVPQHGmoVlhbuZ8PbVNetbcqd6Y317em1/sHBgbrHZCT2F24kRDZoppKeB2FWTWYa7H55TmIJgwcsuXAubBAZyCceEu2aYdblbPH20fjdwCx/aVxLlJnUA3ZRG5/pp87vlpf6G83aTwEBAYlHs6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PCl+6xf7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1723433059;
+	bh=VAKuMdF1LiUYtUYh3JDUU9uZLogF5+q8peQRBluW6Os=;
+	h=Date:From:To:Cc:Subject:From;
+	b=PCl+6xf71gFY49zglq/hdHlLx/s3sI0Tc9eGZh3KRVvpLuv1/vcvTUT7KyM10y1gl
+	 kFoM15vllhjSKxygQkU/lCYYJ1vN8GM2L89omufSUiaQjQVEQ95neAAfBZFz5YCazq
+	 lOGaWfyDUDok3cPhQySzpEq6UIXkNPd7Cmd9/vpCEiWK3bFBttoNXvDIhrdDNfM6Xr
+	 ybNsUPbsvtXssge1vr9c+79DukpNXyQz7tizoPRFBB+azB585oxyUCEn7AlyellHGG
+	 jUN7iMBuUm657GOrb3iusZR98zeulhq8JzTeYSBKz1G1A46bqf5KU5a2RG7mLk3xiy
+	 yjzKhYTeZtgzQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wj0HR1lDrz4wnx;
+	Mon, 12 Aug 2024 13:24:19 +1000 (AEST)
+Date: Mon, 12 Aug 2024 13:24:18 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Kaiyang Zhao <kaiyang2@cs.cmu.edu>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm tree
+Message-ID: <20240812132418.3349ecd3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240710-bspimx8m-3180-v3-1-8ef55381172c@phytec.de>
-X-CM-TRANSID:Ms8vCgC3X4QQgLlmaW9SAg--.33944S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxtxhDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgM4ZWa4nhcbtAABsl
+Content-Type: multipart/signed; boundary="Sig_/hEek0Y2xCx8qF3xAvrr+lbu";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Jul 10, 2024 at 11:48:54AM +0200, Benjamin Hahn wrote:
-> Add a devicetree overlay to disable ethernet for boards where it is not
-> populated.
-> 
-> Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+--Sig_/hEek0Y2xCx8qF3xAvrr+lbu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied, thanks!
+Hi all,
 
+After merging the mm tree, today's linux-next build (htmldocs) produced
+this warning:
+
+mm/memcontrol.c:993: warning: Function parameter or struct member 'folio' n=
+ot described in 'get_mem_cgroup_from_folio'
+
+Introduced by commit
+
+  75747a26eec1 ("mm,memcg: provide per-cgroup counters for NUMA balancing o=
+perations")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/hEek0Y2xCx8qF3xAvrr+lbu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5gGIACgkQAVBC80lX
+0GxUVAf7BCa0KASAnC257CGrle+jhZ/XmxTQJUPNOpy0jKCBUQNyYdRAb4rM2m2u
+59G9tjqo2BDw0FOSDswq3vjbrU07BaSjtCtmRVLiQhLAWarZDLMIDsplLaFnXaqi
+F+2YHAlEv5BHb3NYiveuq2cNZkcrZmk5/aO2LoqrIBaM2iYd3lZSwomK3jk2jiSk
+fQIkAkUH92fuLGZexJtTiJ6075Bmn4G1C03cX4qX0Elz087F40IAxGY67X+3kUYD
+xjGDG4NNeuThJGEqJGY2lSj2mC1JViM3hspWxNXWBQXG/wmcQkV7R0dbPzZtpRae
+YCP1aQB8HyvyC/q4H7hRfoRCI4R+Wg==
+=jJ6O
+-----END PGP SIGNATURE-----
+
+--Sig_/hEek0Y2xCx8qF3xAvrr+lbu--
 
