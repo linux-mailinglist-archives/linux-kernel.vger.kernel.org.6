@@ -1,170 +1,134 @@
-Return-Path: <linux-kernel+bounces-282776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E309394E878
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:23:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EE9494E86D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A107428259B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:23:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE8AD1C217AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1052C16BE34;
-	Mon, 12 Aug 2024 08:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EB0168497;
+	Mon, 12 Aug 2024 08:22:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ogw8llGF"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="l2z15q/6"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925CC16B3B7;
-	Mon, 12 Aug 2024 08:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460A415443B
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723450997; cv=none; b=ucc46X6rEowY1POn4eRcedBwgKaAEGhjWtGgAi1Ms8hDfUD5pZW7mRHEW6Ufrb4UJ/MpLIFGF2CklsrQ1RVGHT8KTX/0RJgNW79IzqeRlqhqQ/lvsKdRFsavdhGyT60FLY+H62sEsapnL5jhDRdkC/p+PWch1t0e6lkC51oeNPg=
+	t=1723450972; cv=none; b=PKUL54wWeJ46MSBIXEHTHhujCoYGmDWUuFEeRuVdgzUnGYnQrICsDx2QR1WLlvMr6mFt+jUziu76XAdHYJCIaMhX4Q3Upx6xTI+LpNdnNdrpF2vOX09jYeSCrjBqMyCsjUjRmjUZRAJzSFfjSvt5CwjpeSp5WHQ/NSiZxiQn5Kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723450997; c=relaxed/simple;
-	bh=7V/LcjxHai5IZGt9D/pz1Iuf1LhK5rh5vii8+emDDk0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=apb7B53qf+bULhKSIL3IaSCcAZuAp7vnGX3DDYBU8pMiKm4TOvVg8bF9tSdTwfSArgqmGBrDYapWSIDgKHg/wIShvl0zEMB8s3iONFn5nHgHuwNwHoDe23z8wn9V8XTd5nxwuY+xxAhXTBLQtrwLtpCHinEmgtqK7iS+gVakpuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ogw8llGF; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42816ca797fso29842865e9.2;
-        Mon, 12 Aug 2024 01:23:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723450994; x=1724055794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rBwWNO9iayreLx98+XZuJ20vJFaxD9sssPnU6v8Prpo=;
-        b=Ogw8llGFh9Pmtb/F4EuJcf8Ac2bTSxHaR66pPSwonoSDcDde4F2b4LIDr6yvSZYuto
-         PQvk1DLa0bwH3Az2l19CJ9zRd1nfgFNUaOPDuUo2QbXf4KS/oeKxy1mY0gV4gBOESYGH
-         UZzV1jVk7KT1A3QwI/NXtbb8dftW4f3po7KrmBNPp4XX/k/E3dn6HU1sXi3hVX+20ekB
-         TmAoxj+tXegRHpq55ZSnJT9xTCAUq22Tx8mAsqTqhh0exsP+Wg80RrK5B/OUtyJMBORI
-         fixC1lQUGrs04v3g2JAnjJvL+TyByzsVFG0QIlr4M+fwQdIPYQnerYqfXtoxAGxrFsYJ
-         hH7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723450994; x=1724055794;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rBwWNO9iayreLx98+XZuJ20vJFaxD9sssPnU6v8Prpo=;
-        b=Ro5fMUVoTv8cwok4ugHHlAweTQ11PQkNrZ1XfEqOZ+3gzB7joqB8sCUjCWzy3pEUdC
-         ZSwlHzXI60jen/fzvaKHMEqmfEJr/EmUpoLrG4vTeN8Xp6ngjaT6DUV4LDGJBWIaXxaI
-         Pc9kXv3xh9waQm58lYRtam51dEqTotvPvwVluxo2UXKd60xJFNalZamKcanFG0bAnAnF
-         krp3Y4eNBzFKIarZdT9LD6uw4jCrNTCANb/ES8z5MK87t5RWXh6nLizdKB+liwUQMAe8
-         jo8cAgdAKczzVaXo5I8W2sY2nuN7SMOVA2D3B/MMKAxGQq7QKeAvlc5Mn6wccpcpaVzt
-         tQEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjH8jxeoFrnybpPTOrsQesKs2mRxHZUCspN5Vnn1IJXnL6q6L1PmgwqqrNZcHjJtGhBS6zAvmCes4nO+6OVW1uHXlZZ8WLf9sxU9oGDyLRDSX0Zl0CI3/OLI7t7vZPsu8v7dz5iy2n+RHicYLapbFt8WB6iki6XTKicGGVC6/xMw==
-X-Gm-Message-State: AOJu0YxU/GcFBZuzj0tpb1tL88E/4fzRPCMqouxX46JTTVZPGFybiUlF
-	NkAKteRUzyfKfcsRnQlwvE8rKydzNPbd/Le0gErf29zzWHNIdckq
-X-Google-Smtp-Source: AGHT+IGxLFFMuY6S+LaXEdo9PeyyCTui7wn3DnbZbtoZnAuiC4L9PAYYmEV6X4Oxm/lRc7G2HrZiqw==
-X-Received: by 2002:a05:600c:46c5:b0:427:9a8f:9717 with SMTP id 5b1f17b1804b1-429c39c4341mr67067125e9.0.1723450993541;
-        Mon, 12 Aug 2024 01:23:13 -0700 (PDT)
-Received: from macminim1.retailmedia.com ([2a01:e0a:b14:c1f0:617b:c61e:d65f:861e])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm92979055e9.31.2024.08.12.01.23.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 01:23:12 -0700 (PDT)
-From: Erwan Velu <erwanaliasr1@gmail.com>
-X-Google-Original-From: Erwan Velu <e.velu@criteo.com>
-To: 
-Cc: Erwan Velu <e.velu@criteo.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] net/mlx5: Use cpumask_local_spread() instead of custom code
-Date: Mon, 12 Aug 2024 10:22:42 +0200
-Message-ID: <20240812082244.22810-1-e.velu@criteo.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723450972; c=relaxed/simple;
+	bh=TIyR7/yHqlM+QmqYZM+XQ5vodg9KzjfP4uRk2V69hZY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZtiFLefnPYyxuCgsZrvCAMnfWtYnp6VqGjrcg+OjH0VyLo529mqCcf9+p0dB5Mvo97gYUNvWc1oTR7YWcG9E7B6Ij9nBOvSLeUjcvcQE1zRSfdrkAaHyweTfn8fmahvtKVb5PBXD+dJT8Ke0FYcb2/V+fID0j+uR+/56El4sW5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=l2z15q/6; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723450965;
+	bh=lcfw1inZiY26WkBE9vW1bZ+oBgq6g2b1SX0NRq4RAIE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=l2z15q/6MFaiN0srlNMCE+8oGe2oMoZxzhwu17NbZzqlb9LzO32+7q8FVs3jtv6V7
+	 wMwKAMOM+md3aLWgR+0Rmnv55SnfOGDLDIMihj38Wbw84k65JXgNA+osN3HLkRU8xd
+	 L67JYhVuK/ns6TwdyVghnDEocBLaqlBrT4MJapqAe0Uz17CbhjMl3rejRVje/GPmE/
+	 rizyHwP1C0jeaxfQeglc7DWeVSTnl7HrLoK2dNz5L0/DGgZUIxrgi+TJnw5o+qw6tl
+	 xTgafWQHN2xedeLcPf5KTMOnt+kKDBMGTXoGWEqBMdWa9ewfomKv7GJuB+bWS3+ier
+	 gNKnC24MbmKiQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wj6vm6nX4z4x8M;
+	Mon, 12 Aug 2024 18:22:44 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, linuxppc-dev@lists.ozlabs.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ christophe.leroy@csgroup.eu, jeffxu@chromium.org, jeffxu@google.com,
+ linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com,
+ pedro.falcato@gmail.com
+Subject: Re: [PATCH 1/4] mm: Add optional close() to struct vm_special_mapping
+In-Reply-To: <shiq5v3jrmyi6ncwke7wgl76ojysgbhrchsk32q4lbx2hadqqc@kzyy2igem256>
+References: <20240807124103.85644-1-mpe@ellerman.id.au>
+ <shiq5v3jrmyi6ncwke7wgl76ojysgbhrchsk32q4lbx2hadqqc@kzyy2igem256>
+Date: Mon, 12 Aug 2024 18:22:44 +1000
+Message-ID: <87jzgm8817.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Commit 2acda57736de ("net/mlx5e: Improve remote NUMA preferences used for the IRQ affinity hints")
-removed the usage of cpumask_local_spread().
+"Liam R. Howlett" <Liam.Howlett@oracle.com> writes:
+> * Michael Ellerman <mpe@ellerman.id.au> [240807 08:41]:
+>> Add an optional close() callback to struct vm_special_mapping. It will
+>> be used, by powerpc at least, to handle unmapping of the VDSO.
+>> 
+>> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+>> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+>> ---
+>>  include/linux/mm_types.h | 2 ++
+>>  mm/mmap.c                | 3 +++
+>>  2 files changed, 5 insertions(+)
+>> 
+>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>> index 485424979254..ef32d87a3adc 100644
+>> --- a/include/linux/mm_types.h
+>> +++ b/include/linux/mm_types.h
+>> @@ -1313,6 +1313,8 @@ struct vm_special_mapping {
+>>  
+>>  	int (*mremap)(const struct vm_special_mapping *sm,
+>>  		     struct vm_area_struct *new_vma);
+>
+> nit: missing new line?
 
-The issue explained in this commit was fixed by
-commit 406d394abfcd ("cpumask: improve on cpumask_local_spread() locality").
+Ack.
 
-Since this commit, mlx5_cpumask_default_spread() is having the same
-behavior as cpumask_local_spread().
+>> +	void (*close)(const struct vm_special_mapping *sm,
+>> +		      struct vm_area_struct *vma);
+>>  };
+>>  
+>>  enum tlb_flush_reason {
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index d0dfc85b209b..24bd6aa9155c 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -3624,6 +3624,9 @@ static vm_fault_t special_mapping_fault(struct vm_fault *vmf);
+>>   */
+>
+> The above comment should probably be expanded to explain what this is
+> about, or removed.
 
-This commit is about :
-- removing the specific logic and use cpumask_local_spread() instead
-- passing mlx5_core_dev as argument to more flexibility
+I expanded it slightly, happy for others to wordsmith it further.
 
-mlx5_cpumask_default_spread() is kept as it could be useful for some
-future specific quirks.
+>>  static void special_mapping_close(struct vm_area_struct *vma)
+>>  {
+>> +	const struct vm_special_mapping *sm = vma->vm_private_data;
+>> +	if (sm->close)
+>> +		sm->close(sm, vma);
+>
+> Right now we have the same sort of situation for mremap calls on
+> special: we have a call to the specific vma mremap() function.
+> ...
+> So, are we missing an opportunity to avoid every arch having the same
+> implementation here (that will evolve into random bugs existing in some
+> archs for years before someone realises the cloned code wasn't fixed)?
+> Do we already have a fix in ppc for the size checking that doesn't exist
+> in the other archs in the case of mremap?
 
-Signed-off-by: Erwan Velu <e.velu@criteo.com>
----
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 27 +++-----------------
- 1 file changed, 4 insertions(+), 23 deletions(-)
+I took this as more of a meta comment/rant :)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index cb7e7e4104af..f15ecaef1331 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -835,28 +835,9 @@ static void comp_irq_release_pci(struct mlx5_core_dev *dev, u16 vecidx)
- 	mlx5_irq_release_vector(irq);
- }
- 
--static int mlx5_cpumask_default_spread(int numa_node, int index)
-+static int mlx5_cpumask_default_spread(struct mlx5_core_dev *dev, int index)
- {
--	const struct cpumask *prev = cpu_none_mask;
--	const struct cpumask *mask;
--	int found_cpu = 0;
--	int i = 0;
--	int cpu;
--
--	rcu_read_lock();
--	for_each_numa_hop_mask(mask, numa_node) {
--		for_each_cpu_andnot(cpu, mask, prev) {
--			if (i++ == index) {
--				found_cpu = cpu;
--				goto spread_done;
--			}
--		}
--		prev = mask;
--	}
--
--spread_done:
--	rcu_read_unlock();
--	return found_cpu;
-+	return cpumask_local_spread(index, dev->priv.numa_node);
- }
- 
- static struct cpu_rmap *mlx5_eq_table_get_pci_rmap(struct mlx5_core_dev *dev)
-@@ -880,7 +861,7 @@ static int comp_irq_request_pci(struct mlx5_core_dev *dev, u16 vecidx)
- 	int cpu;
- 
- 	rmap = mlx5_eq_table_get_pci_rmap(dev);
--	cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vecidx);
-+	cpu = mlx5_cpumask_default_spread(dev, vecidx);
- 	irq = mlx5_irq_request_vector(dev, cpu, vecidx, &rmap);
- 	if (IS_ERR(irq))
- 		return PTR_ERR(irq);
-@@ -1145,7 +1126,7 @@ int mlx5_comp_vector_get_cpu(struct mlx5_core_dev *dev, int vector)
- 	if (mask)
- 		cpu = cpumask_first(mask);
- 	else
--		cpu = mlx5_cpumask_default_spread(dev->priv.numa_node, vector);
-+		cpu = mlx5_cpumask_default_spread(dev, vector);
- 
- 	return cpu;
- }
--- 
-2.46.0
+Yes I agree the implementation should eventually be generic, but this series
+is just about moving the existing powerpc behaviour from arch_unmap()
+into this hook. 
 
+cheers
 
