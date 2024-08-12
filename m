@@ -1,80 +1,136 @@
-Return-Path: <linux-kernel+bounces-283786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E045994F8AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:59:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88AD94F8AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 968C61F21918
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:59:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88821C21D2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD936198822;
-	Mon, 12 Aug 2024 20:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BAFF18A6B0;
+	Mon, 12 Aug 2024 20:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="REOfW6ms"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZ8dy8y8"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C643136349;
-	Mon, 12 Aug 2024 20:58:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B664317C;
+	Mon, 12 Aug 2024 20:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723496334; cv=none; b=QBhgg5lNLf3VVTyLwuWyNoNhIqh90tyMAK+ntLQ6Sw9oWymNvbKroB1yOfBiCcuSMk3IOQNZ0O+3s5HjDm2WLGFkH4bX8M5vJQU9jmRi1tcrYrBWHED6ktX0ZxDWpg6wYaBPgRU8t+y/njrrsg4XvLPGO3nfviNQSNx66E8Udow=
+	t=1723496398; cv=none; b=uxNoHu3ozerlbXqo/LJPyzehXc8LTkqbq2zsqOElbhWD2OTol0+aSIkVbyspu4Aj8KiKb4jlc/vwYUCGnMosNEMuqubSPKmzYyuHdunOoBx/ZIFjm+BPyC+skwh8EWamMIyQXkuBSHFbC6p0mNoidrBmRgiRngzopxaTM2zpkwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723496334; c=relaxed/simple;
-	bh=vz+39rjKUM9q403si214Cohvqxo4sz177rPScX+K2V0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PAzpgYzbD3THE4kZWBlEUd3U5IEfuZu/u5hquR5aO8EOP7fRwP5nfJijgSDmwGZ59vK6WqG5JiJPbh2MT30dhNzda3ChGRNedxpCv/hMOq1FyjDsinp8xIMdJbqiojL+x3p+U1NxpusFWvpTJdyXSNmOayYmP29ZF4dmO7mAdS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=REOfW6ms; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=GvB+Z09Tk6MAdTET7p9iKM8bkuIPaBr8WJ3nZCC5ECA=; b=RE
-	OfW6ms+Vmwjb8LbL1OuWf2o52EBz3tw0Xdll7MnUXdXXSdZlDpnwDvwpREJqOgnrB2ODj7J+fLwcD
-	sbMiQhOWFrzADiFib2ihwKyyYHbkj0Qm2UBeq3/QcaGtoo/+K2hfnC18zhJU4FnzrgFR8kIK7BYyn
-	l/jT5uTXL7d/lMU=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sdc7u-004cPT-Ar; Mon, 12 Aug 2024 22:58:50 +0200
-Date: Mon, 12 Aug 2024 22:58:50 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
-Cc: imx@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	Wei Fang <wei.fang@nxp.com>, Shenwei Wang <shenwei.wang@nxp.com>,
-	Clark Wang <xiaoning.wang@nxp.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Richard Cochran <richardcochran@gmail.com>
-Subject: Re: [PATCH v3 net-next 2/2] net: fec: Remove duplicated code
-Message-ID: <6e0f958f-b48e-4933-914e-cdf66f353ee9@lunn.ch>
-References: <20240812094713.2883476-1-csokas.bence@prolan.hu>
- <20240812094713.2883476-2-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1723496398; c=relaxed/simple;
+	bh=ZZY9L6mDJKyULQtLc3eUqFJKAOAzm0Uy8TZQUnDIkF0=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IyfQfSzFAEYpq/awzkmOgEI3kMbn1d9vqOZYzNbg5R3MhLywBkDbk8YxUG1ZDpSXE0lEg9TPWhwiIroBhyjFGbskRWxyhXQLznjR9g9CuBuKU4XL3dKIjkmGhXIIr+Al4kFRgr7+UhO7TYYJh6/GPnQgrJ03AvXZsOIKYAQJByU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZ8dy8y8; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e0bf9602db6so4626150276.1;
+        Mon, 12 Aug 2024 13:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723496396; x=1724101196; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5fnaMf391Fpz4xRHQ8kba7KvsYQNRSauNWK6kJhMao=;
+        b=eZ8dy8y8IEaR0HTq1colBi//Uh4QWr+0ZyMI4bUVfWwqnIADN7QOq+LiBc/kEdkhA1
+         55RTYODdFRogk9Ty2uAQZMFJlbXl6m26jJFt2NhAFkPDL/xoqh9QQhuEoOydEBh/TTkA
+         lKvjgl32oPZ5bCpgOkjcfbIiaY6TPJW2B1xFhMHAZ/rQLggk9vFwpScmlLArGnmsga+i
+         1KjCBh6heCGm8YMXx964pqiU4KFdMhukw83hmaVQ7sehu1hPIZzr9QfDVEhrrov0iFJ8
+         pygE6p13vw98854eG3xTxTkpF4dyOh4D8giQff311wReQY5WbYAYoZfpSzK7zvIlV7AD
+         3xTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723496396; x=1724101196;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D5fnaMf391Fpz4xRHQ8kba7KvsYQNRSauNWK6kJhMao=;
+        b=AakouukQojW2lU2tYU8NDHcINMuqIhy+MJ1wrZB9adDt+kKpjuSilDw0nMevuKeC6m
+         2M3Z++N6Rpzuf673nMgPzej/zjLOh0XRD+KkUrbUahffTvh5On/Y33DcizuDm3GTpFNq
+         uN5oZTWoSMlZ/ssYZr4tRpltfB6gqp7rsfkhxiGLU+CYbxtWFRcWgdugV+xG4WLB9kNB
+         fzvyYT3pFe4W6Q8Jk1Ja8KkecG174i4LAKjPlXBQ+3QitblcmlUr1MhDKNIJ4wreYqdv
+         e05zQbsmw+9uOFJOFq0qoMOGCdlpAX81EqYh6RCLz1svdYM/HWnSXwJfzb2OGmQRaHTG
+         PLow==
+X-Forwarded-Encrypted: i=1; AJvYcCXsg4mY7nuZKklQi02uDBYSd+WA/xYeMRL8XTRkX5rjI3dhkwIafWn/SzzFuxlDk+wLBex/8C2hSJBmGoYmwbUhyVnE1GWaJ+IIAdFCcunJ/nwoHO+NKfsJj3l014PZL7ofDi3v4tbo
+X-Gm-Message-State: AOJu0YwARENqfp8BiNP7YsTtoFnJ7m1XLx/ERbirw+rC0Oxdt8HxnwKW
+	vj5U1AHTN8nXOv3MU7PAm77VgjfyGvduQDdEjXmUBIzexh04a2KK
+X-Google-Smtp-Source: AGHT+IHznrVOhF2lXDkThTht/dG8KZpY2MPF58XvF0vs97HEUaAH8iMGdnVVzoCIBkpUSQtUzbKIRQ==
+X-Received: by 2002:a05:6902:1243:b0:e0b:c402:b03f with SMTP id 3f1490d57ef6-e113cec1fa7mr1528924276.27.1723496395751;
+        Mon, 12 Aug 2024 13:59:55 -0700 (PDT)
+Received: from fan ([50.205.20.42])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6a0a15eaf6dsm10190397b3.67.2024.08.12.13.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 13:59:55 -0700 (PDT)
+From: Fan Ni <nifan.cxl@gmail.com>
+X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
+Date: Mon, 12 Aug 2024 13:59:48 -0700
+To: Huang Ying <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Alejandro Lucero <alucerop@amd.com>
+Subject: Re: [PATCH 1/3] cxl: Set target type of root decoder based on CFMWS
+ restrictions
+Message-ID: <Zrp3pZQ11kqdHjUl@fan>
+References: <20240729084611.502889-1-ying.huang@intel.com>
+ <20240729084611.502889-2-ying.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240812094713.2883476-2-csokas.bence@prolan.hu>
+In-Reply-To: <20240729084611.502889-2-ying.huang@intel.com>
 
-On Mon, Aug 12, 2024 at 11:47:15AM +0200, Csókás, Bence wrote:
-> `fec_ptp_pps_perout()` reimplements logic already
-> in `fec_ptp_read()`. Replace with function call.
+On Mon, Jul 29, 2024 at 04:46:09PM +0800, Huang Ying wrote:
+> Now, the target type of root decoder is hard-coded to HOSTONLYMEM,
+> because only type3 expanders are supported.  To support type2
+> accelerators, set the target type of root decoder based on the
+> window restrictions field of CFMWS entry.
 > 
-> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Cc: Davidlohr Bueso <dave@stgolabs.net>
+> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Alison Schofield <alison.schofield@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: Alejandro Lucero <alucerop@amd.com>
+> ---
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
 
-    Andrew
+>  drivers/cxl/acpi.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 82b78e331d8e..40c92ad29122 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -382,7 +382,10 @@ static int __cxl_parse_cfmws(struct acpi_cedt_cfmws *cfmws,
+>  
+>  	cxld = &cxlrd->cxlsd.cxld;
+>  	cxld->flags = cfmws_to_decoder_flags(cfmws->restrictions);
+> -	cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+> +	if (cxld->flags & CXL_DECODER_F_TYPE2)
+> +		cxld->target_type = CXL_DECODER_DEVMEM;
+> +	else
+> +		cxld->target_type = CXL_DECODER_HOSTONLYMEM;
+>  	cxld->hpa_range = (struct range) {
+>  		.start = cfmws->base_hpa,
+>  		.end = cfmws->base_hpa + cfmws->window_size - 1,
+> -- 
+> 2.39.2
+> 
 
