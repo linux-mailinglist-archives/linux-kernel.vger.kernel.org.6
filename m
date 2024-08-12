@@ -1,130 +1,115 @@
-Return-Path: <linux-kernel+bounces-283707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C30A94F800
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:13:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7608F94F801
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461DA1C21655
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4291F21AED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66001940AA;
-	Mon, 12 Aug 2024 20:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CAB1940A2;
+	Mon, 12 Aug 2024 20:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KTShQkic"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWmmZSkZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BA3186E5C;
-	Mon, 12 Aug 2024 20:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C81619307B;
+	Mon, 12 Aug 2024 20:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723493609; cv=none; b=GWPnufTpBuHOrOsZ07k6B1zAipDW2gaLKR5/s2ETxU42M0OOvCcjp3NCphQRC2QXN4E+j8sr4Y3RFIhy2u0IWEO+xj02OBlqNDVm4fSOZYB3pAtdKCaY01/BsoEHYuSILe4fjobO07d7dkCgABASqVK7DeKOWFHiCI3Fj/tWFI0=
+	t=1723493631; cv=none; b=lqnaSBTXraJBr1tt2Q6FkCt71WU+xn8/aykgW/t+nr7P2LS5wW3XPuQ0pBkf98q8teFXpMj9cpxScS8gFcn0ncjf7tSVZzIdy+uhyfyM9RtRfUqa4/cuaLVIM+rBJ7H0dEiaG7z6CyaSmBzJxcvA9ZK2HuttPkwYzS3NMXibbXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723493609; c=relaxed/simple;
-	bh=ryRIWMCMOIf7AI2hLWpZSWxhpmfeK5FKuJP+6ERD7J0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YouDx+PsxkPJvah9t9Ba4o1NXw2pFVsE9t7/Ln26Vs+0Jbhl++H5EHyGdaGSJ/WobQozrOgxCyMlPI1x82GuEsCRbQ7fMI6iQCvZFl3qqeja0MAyOCH7XY0FreptdN40y8EkanASsbZIuEaj+j+pQ6SLTvzxzMKlWOwAJVgwSRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KTShQkic; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723493607; x=1755029607;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=s3dYEvupaKjUrQXVsYWre/xbQJlOysr0E/ytP1MYS+c=;
-  b=KTShQkiczXDiKDPS/O6rcqArViTJyZ0NerWWDbZFLcAeAXByDkIgQy0T
-   3FmNOxmLB13a8jKduOpHtLGchszyl3R6lu2+9P31TPNxv+BBisqbiHSJ/
-   eU8BShc2OmNfxOB0QNdLC2TBgli0CYjwtye52JyeDtCC7TCrLbw4CBNVV
-   4=;
-X-IronPort-AV: E=Sophos;i="6.09,284,1716249600"; 
-   d="scan'208";a="224908182"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 20:13:25 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:54559]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.82:2525] with esmtp (Farcaster)
- id 50319a02-cdfd-4706-a685-282106658347; Mon, 12 Aug 2024 20:13:24 +0000 (UTC)
-X-Farcaster-Flow-ID: 50319a02-cdfd-4706-a685-282106658347
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 12 Aug 2024 20:13:24 +0000
-Received: from 88665a182662.ant.amazon.com (10.142.139.164) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 12 Aug 2024 20:13:21 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <jain.abhinav177@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>,
-	<javier.carrasco.cruz@gmail.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>,
-	<skhan@linuxfoundation.org>, <kuniyu@amazon.com>
-Subject: Re: [PATCH net v2] selftest: af_unix: Fix kselftest compilation warnings
-Date: Mon, 12 Aug 2024 13:13:06 -0700
-Message-ID: <20240812201306.70769-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
-References: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723493631; c=relaxed/simple;
+	bh=nxgNnAm/Blyyo3y22sssUeR5HGVuPjk/8p0TU1NRykU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hpwoI68BFrjqIvDNQrzE7bxbuGJTm0IpOy3rcz0oPsPjinG3yjvykpSXacJj/B8Mq96BxPSrk+nE1wxdFXY2FzODAtBvQqeOPa1953l7OGPJuVAyWLrRDHgi45j5QJPFthU/WM4Ep7ZKw5vUlpnD3PaG6NJ8cdi5RnfX2HG+U98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWmmZSkZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03C7BC32782;
+	Mon, 12 Aug 2024 20:13:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723493630;
+	bh=nxgNnAm/Blyyo3y22sssUeR5HGVuPjk/8p0TU1NRykU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KWmmZSkZBDwpdMYqZP1OkvctzLY2BDU1DcmQ/75/DepGKaYOHtYaqghDZ1occwmlJ
+	 C3k4ahrqVCDTbY0rkYZt4oqOtbagTvf0DZa9r4zj9875cclGtB9654Fi/674DCteqc
+	 Mk1sY2VO61WeewT8Tpv1Um2HpFpslglIMF3J9jL9LYWt6HnOd2Cx9jvU6uaQ/vNHqi
+	 315j3ptsbz1JkQ2V1p+vVdiK88cfnX5YO73TspHWxu+L5Mwo50i4hLAMCOgMoqAIir
+	 qulW7Zwf7agxATa3M2vAH/A443l3UCclZnV8BPJ7MCQe+owrbfWXNNI7K0B48NARcz
+	 IucEri8V2QXQw==
+Date: Mon, 12 Aug 2024 17:13:47 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: kan.liang@linux.intel.com, irogers@google.com, peterz@infradead.org,
+	mingo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, adrian.hunter@intel.com,
+	ak@linux.intel.com, eranian@google.com
+Subject: Re: [PATCH V2 0/9] Support branch counters in block annotation
+Message-ID: <Zrps-_ajW_zfze66@x1>
+References: <20240808193324.2027665-1-kan.liang@linux.intel.com>
+ <Zrpk5a2GQl5i5APD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+In-Reply-To: <Zrpk5a2GQl5i5APD@google.com>
 
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-Date: Tue, 13 Aug 2024 00:41:22 +0530
-> Change the parameter expected_buf from (const void *) to (const char *)
-> in the function __recvpair() as per the feedback in v1.
-> Add Fixes tag as per feedback in v1.
+On Mon, Aug 12, 2024 at 12:39:17PM -0700, Namhyung Kim wrote:
+> On Thu, Aug 08, 2024 at 12:33:15PM -0700, kan.liang@linux.intel.com wrote:
+> > From: Kan Liang <kan.liang@linux.intel.com>
+> > Kan Liang (9):
+> >   perf report: Fix --total-cycles --stdio output error
+> >   perf report: Remove the first overflow check for branch counters
+> >   perf evlist: Save branch counters information
+> >   perf annotate: Save branch counters for each block
+> >   perf evsel: Assign abbr name for the branch counter events
+> >   perf report: Display the branch counter histogram
+> >   perf annotate: Display the branch counter histogram
+> >   perf script: Add branch counters
+> >   perf test: Add new test cases for the branch counter feature
 > 
-> This change fixes the below warnings during test compilation:
-> 
-> ```
-> In file included from msg_oob.c:14:
-> msg_oob.c: In function ‘__recvpair’:
-> 
-> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument
-> of type ‘char *’,but argument 6 has type ‘const void *’ [-Wformat=]
-> 
-> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
-> msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
-> 
-> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument
-> of type ‘char *’,but argument 6 has type ‘const void *’ [-Wformat=]
-> 
-> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
-> msg_oob.c:259:25: note: in expansion of macro ‘TH_LOG’
-> ```
-> 
-> v1:
-> lore.kernel.org/netdev/20240810134037.669765-1-jain.abhinav177@gmail.com
-> 
-> Fixes: d098d77232c3 ("selftest: af_unix: Add msg_oob.c.")
-> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-No need to respin, but a minor comment below for the future patches.
+Clashed with something here, can you please take a look and rebase to
+what is in perf-tools-next/perf-tools-next?
 
-Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+- Arnaldo
 
-> ---
-
-You can put changelog between revisions after "---" so that it will
-disappear during merge.
-
-And, it would be easy to jump to v1 if it has https:// .
-
-Here's a nice example:
-
-https://docs.kernel.org/process/maintainer-netdev.html#changes-requested
-
-Thanks!
+  ✓ [PATCH v2 9/9] perf test: Add new test cases for the branch counter feature
+    + Acked-by: Namhyung Kim <namhyung@kernel.org> (✓ DKIM/kernel.org)
+    + Reviewed-by: Andi Kleen <ak@linux.intel.com> (✓ DKIM/intel.com)
+    + Link: https://lore.kernel.org/r/20240808193324.2027665-10-kan.liang@linux.intel.com
+    + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+  ---
+  ✓ Signed: DKIM/intel.com (From: kan.liang@linux.intel.com)
+---
+Total patches: 9
+---
+Cover: ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.cover
+ Link: https://lore.kernel.org/r/20240808193324.2027665-1-kan.liang@linux.intel.com
+ Base: not specified
+       git am ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.mbx
+⬢[acme@toolbox perf-tools-next]$        git am ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.mbx
+Applying: perf report: Fix --total-cycles --stdio output error
+Applying: perf report: Remove the first overflow check for branch counters
+Applying: perf evlist: Save branch counters information
+Applying: perf annotate: Save branch counters for each block
+Applying: perf evsel: Assign abbr name for the branch counter events
+Applying: perf report: Display the branch counter histogram
+error: patch failed: tools/perf/util/annotate.h:551
+error: tools/perf/util/annotate.h: patch does not apply
+Patch failed at 0006 perf report: Display the branch counter histogram
+hint: Use 'git am --show-current-patch=diff' to see the failed patch
+When you have resolved this problem, run "git am --continue".
+If you prefer to skip this patch, run "git am --skip" instead.
+To restore the original branch and stop patching, run "git am --abort".
+⬢[acme@toolbox perf-tools-next]$
 
