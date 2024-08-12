@@ -1,83 +1,138 @@
-Return-Path: <linux-kernel+bounces-282584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6010794E628
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A151094E633
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:38:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DDD1F2202F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:29:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 589B51F220CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E27514D2A4;
-	Mon, 12 Aug 2024 05:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9896414D446;
+	Mon, 12 Aug 2024 05:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjrp4V3g"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C7v9bl/W"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637B643AA1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:29:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6843C0B;
+	Mon, 12 Aug 2024 05:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723440566; cv=none; b=R0X7CVd36aaovNUJ+6XBRvjRDmkNCaRAeo6V0Amm+aol+qWO3LhJQl0vb5+nrIzgPqbeObMNsGqtv8yY8H3ov7TFMub1UlhZzAhjjR/IMUYdcUylTZRBubK5fqlWcrCqln0LTvX9i5+VmRWdBDLMOdMDisEmWFJtvQ12x6YfmiM=
+	t=1723441086; cv=none; b=nVT8uvuMUfF0dRUZhodpPOOAkDNuA1T9ymIw9p5ABqHemQI+wQT6rAZoyLwdIBh2U+fqkOFrE/exyJ92Ne86vYD4ITzMx4/9179VzHwy0uHaHx1tlLcRMXB0EexaPwWs34Vaann9Jfty9oudW3PVhnTPUKIWceht86HFHD/d3Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723440566; c=relaxed/simple;
-	bh=DZd5uNs6UOMTvmxGNDjkddt+74otlfFDKdBy1Jo1lns=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=JTtdXPghk+s8I3neMRw5EADX3ktM4wbW4c8YGXrnnVj/MOFk7sgDM0V6TyCe2dfrt2lcUakwAu4ptNKgrYPZ0kw9YxkOsNlSnEUeFXH4dAHz/VrR1TGaRoIMmGBfg0Xs31aX4VDcVPDdbJORVpo4ewNLcO48zoWXkB0SyHFLD3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjrp4V3g; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f029e9c9cfso60819621fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 22:29:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723440562; x=1724045362; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DZd5uNs6UOMTvmxGNDjkddt+74otlfFDKdBy1Jo1lns=;
-        b=gjrp4V3ghCmSheOKC7G9IqljJ7bl1wA0xqcZYUWbSCxrQw21GhQ9eYTRFG3uDtx1Cg
-         7ziTvkvC3fbB8krLzgJE3ciQdAipfiWdgL6yLY/c6APWT8EPT4mHjp+jdh/1PUdVWlf9
-         l1vPisTRqOUp2Bhqaa5NSdovLo6JtZOaoEa+zI8N3X85/xtLiH+BgCEv57yFya6ctpQm
-         8Eqw0VGFQ7VzJh3Ih1MVM8Poo5lWN3NFb5Usu8hB1xjmDM6hRy7gu5+vIgKYpRVdzfIf
-         y108lo+TWU9GRc54Qy8In+CBSMyahcTb40eHGmYyWkNzB6MJVHDyChqeuzQDlO+ZoELY
-         WGrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723440562; x=1724045362;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DZd5uNs6UOMTvmxGNDjkddt+74otlfFDKdBy1Jo1lns=;
-        b=twL4LwA2dmgIkAfq6wE08HnqDQe1fo+dRuKw1s6ErHH2BJ9V5j64IgvQYsdxvLXsK0
-         2/HMD25YUUnj5upeKu/39k5BfFR5dF9ZNuJ78qKOaDXMzdPKWm5uVKWk3nz8Ui9VbmRe
-         65Zp96S0EfraHWkcU//Ej7SwwVN+k8+qFVSFTlB7kgC9oPVsqA/UvEFg75lV9Ly3/Ha3
-         bAuZFI++iDMOqCWlC9ABWzyiRroTVcTALMrY0pWvcF2HrdM5xct/FuGKeiO/sekOhy6t
-         gGlhMW/RY+z8zk5WOSz9YOcW9cPtyZBgiaDNmm9AeydjFrx+2eNg4iseM0MsbFaWvfFI
-         Ny/Q==
-X-Gm-Message-State: AOJu0Ywt76haxeCPBZuMrxKU3+ZOHmNyJSVoYoUB7lf93rrwA6CF93nW
-	3QRCtQMkpuSrehFaM8oFPx3+IzKgBTqFh9nblY7Yl7Xq7GnIsare/Un9Mm7MM9rZ7EqpPUFUdMM
-	1oJLCF7sqJaIoVu/5/hM6ai+omMdMAcoI
-X-Google-Smtp-Source: AGHT+IFXxNlsBa9tGDcVQLKJCeddTmbVCYqAYXmcLnB8Ym/lreZCiKWc6thH88fyl3TM6fmmJUQZs2Ay9gq0nUa3AAg=
-X-Received: by 2002:a2e:b88a:0:b0:2ef:2c86:4d49 with SMTP id
- 38308e7fff4ca-2f1a6c6cf9bmr72940691fa.22.1723440561599; Sun, 11 Aug 2024
- 22:29:21 -0700 (PDT)
+	s=arc-20240116; t=1723441086; c=relaxed/simple;
+	bh=OtNOl0fu+2Jf+rCsZgmd6Tb1x6JBNKxJW+QUDFkv8XQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HsOp+w2M25H31+49kKceyhDb4hiWfv9nVbGM6SMSGF0WezqO61OqxPN1CtbLIbhfGy90oWnp9MaK6yqRviZIgB6bzOQaPuS29ET0MuMhuUcKdv3ZWbsDpnJYNu9xhvOAN8LCk6sOsUI7ZBrpSsjuvJAqfNf/fNyTzYlILiUZGwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C7v9bl/W; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723441085; x=1754977085;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=OtNOl0fu+2Jf+rCsZgmd6Tb1x6JBNKxJW+QUDFkv8XQ=;
+  b=C7v9bl/WlHl1M8dF6727IV2M0DbwvslawsZWC4JteM60MiSyJXUE7hln
+   lxawqIFBndTJSXvmn5lek62Cn3edUUbumDNn8CcxCtKcJrzPVnoegz71c
+   LQd87Bj0SdkmU1cd9mDnIIg2pneimHkdOR/dImsZJZVHlEIQHtpfj3jfs
+   hdaxcOJcZqbjBvX/O3pA1/qZVUcPJIZWaE7UCMm7oZwpGjuAMUluFPZe8
+   W9jXfTUkO70ZJvKHBUL5hHNlD3SBiFJdeU7U2U3Lh0os2kCSEANabVLIV
+   P6HIbt3YPezjl00sUFO5a9mynraNu/ngGoOfVXwXbNwmu8ifQNDliZcNK
+   A==;
+X-CSE-ConnectionGUID: Zgq18pUrRuulQSz6dV0Scw==
+X-CSE-MsgGUID: bB+Ujh2oRwyaWI+qzie3Ig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21411205"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21411205"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:38:04 -0700
+X-CSE-ConnectionGUID: wV2CeHnBRbqr8vl/NfZdUg==
+X-CSE-MsgGUID: 3VG6m94dT5CYRhcl1sAzZQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="58710648"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:37:58 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: akpm@linux-foundation.org,  shuah@kernel.org,  david@redhat.com,
+  willy@infradead.org,  ryan.roberts@arm.com,  anshuman.khandual@arm.com,
+  catalin.marinas@arm.com,  cl@gentwo.org,  vbabka@suse.cz,
+  mhocko@suse.com,  apopple@nvidia.com,  osalvador@suse.de,
+  baolin.wang@linux.alibaba.com,  dave.hansen@linux.intel.com,
+  will@kernel.org,  baohua@kernel.org,  ioworker0@gmail.com,
+  gshan@redhat.com,  mark.rutland@arm.com,
+  kirill.shutemov@linux.intel.com,  hughd@google.com,
+  aneesh.kumar@kernel.org,  yang@os.amperecomputing.com,
+  peterx@redhat.com,  broonie@kernel.org,  mgorman@techsingularity.net,
+  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+In-Reply-To: <20240809103129.365029-2-dev.jain@arm.com> (Dev Jain's message of
+	"Fri, 9 Aug 2024 16:01:28 +0530")
+References: <20240809103129.365029-1-dev.jain@arm.com>
+	<20240809103129.365029-2-dev.jain@arm.com>
+Date: Mon, 12 Aug 2024 13:34:24 +0800
+Message-ID: <87frrauwwv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: =?UTF-8?B?6K645pil5YWJ?= <brookxu.cn@gmail.com>
-Date: Mon, 12 Aug 2024 13:29:09 +0800
-Message-ID: <CADtkEecKdWc9t0reu5WCefTaFvW_cuNmZAxjDFL8btN6LmfnPg@mail.gmail.com>
-Subject: Query about the maintence time of LTS
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Greg KH <greg@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-Hi :
+Hi, Dev,
 
-We are now a little confused about the LTS maintenance time of the
-LTS. Does the maintenance time of the new LTS is limited to 3 years or
-2 years? will it have any chance to extend to 6 years as before?
+Dev Jain <dev.jain@arm.com> writes:
 
-Thanks
+> As already being done in __migrate_folio(), wherein we backoff if the
+> folio refcount is wrong, make this check during the unmapping phase, upon
+> the failure of which, the original state of the PTEs will be restored and
+> the folio lock will be dropped via migrate_folio_undo_src(), any racing
+> thread will make progress and migration will be retried.
+>
+> Signed-off-by: Dev Jain <dev.jain@arm.com>
+> ---
+>  mm/migrate.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index e7296c0fb5d5..477acf996951 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t get_new_folio,
+>  	}
+>  
+>  	if (!folio_mapped(src)) {
+> +		/*
+> +		 * Someone may have changed the refcount and maybe sleeping
+> +		 * on the folio lock. In case of refcount mismatch, bail out,
+> +		 * let the system make progress and retry.
+> +		 */
+> +		struct address_space *mapping = folio_mapping(src);
+> +
+> +		if (folio_ref_count(src) != folio_expected_refs(mapping, src))
+> +			goto out;
+>  		__migrate_folio_record(dst, old_page_state, anon_vma);
+>  		return MIGRATEPAGE_UNMAP;
+>  	}
+
+Do you have some test results for this?  For example, after applying the
+patch, the migration success rate increased XX%, etc.
+
+My understanding for this issue is that the migration success rate can
+increase if we undo all changes before retrying.  This is the current
+behavior for sync migration, but not for async migration.  If so, we can
+use migrate_pages_sync() for async migration too to increase success
+rate?  Of course, we need to change the function name and comments.
+
+--
+Best Regards,
+Huang, Ying
 
