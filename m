@@ -1,144 +1,147 @@
-Return-Path: <linux-kernel+bounces-283526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762FF94F5ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:38:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0973494F5F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1581F23DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01D71F241BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D19188CB0;
-	Mon, 12 Aug 2024 17:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8QaqPoL"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C4FA191
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F223C188CB0;
+	Mon, 12 Aug 2024 17:40:46 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EAB191;
+	Mon, 12 Aug 2024 17:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723484332; cv=none; b=LfqLRzRLa1XvH4m8uM4KksBUxBAbUHZRXL/FeYyjKCfPy3YWKqiEd2YKsZVgb+f78DYfMQZugTZEy6dFvW/eI1+DJ93TlmeeFFxZEumH4XIrbhiMjB8kd9szch/6bsZmYbKXA1j978tJZ+8guGdirKTAG9eiSpsSdlwVQj6Az1I=
+	t=1723484446; cv=none; b=XqkSPEvhE9YWf4DBIvjKRrU4eQGWecSVVex+smQoyRlxSNY0vXuEvf1pAbDluwxIFmjXmkhgtAHcF/XF70KkqwbiAedg0GuqRfQfpVo6I6L8dpTz8Tns9l8d1CP44zSaKl89GfecmMvtA25ucAD7GjGnt6TSH+tQNTyNdaW9gW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723484332; c=relaxed/simple;
-	bh=XWK4WpVW0Cuc1CBrzMjdCojonJY9yaR5KHBWBOXOfA4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I7rGYbS9YMVv0ic2NOHvIwfzaReo5EUcLGFl/nACdP38xmTssMr7dwx7GXOC0LBCPYYi1YCcVT84Q4Hola0xdMkSiCve3j8Ifgz47mm97G67pL2x95D+Vvcwq/MJ3g55vhCbkTUrSI2GXmsJ+DFhY1W190t6CU4Xnh+p9vuaEbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8QaqPoL; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7b0c9bbddb4so3089949a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723484330; x=1724089130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UCcUv37+5u+4JJZrsFb/7pw4tBFELLMTnMEqEoQVdH4=;
-        b=m8QaqPoLTv/BYzzxLQ+03LXyN227be4LTFTkwtKsfeeynFy+bOLUV9TXDLPrs6U6/a
-         +lTWTm4ZihSogFmK3NIzGDTYXI+W7HgJ6PN51weuPYb2c/3zXdOpPt3Z2EgAE/i+eQNX
-         xYDQGxDvDKBUYMzRthcFdu5ewjqG7elsmpewqARQTuo9SAuwq5k9w614adNY26RYBF+X
-         3b7nVtfouOh3IG7s7E6ZFDtzN0SXAXQvpXWO1JGpnO6J82HViAh07vtzpakWXl+DIagJ
-         qCGHTil7AZ5f7r+g5dpGcnKM01fGi9Myy+ass6R/Yh9Hu7n+HNLzjQmE1nXN7xA6r77u
-         0yWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723484330; x=1724089130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UCcUv37+5u+4JJZrsFb/7pw4tBFELLMTnMEqEoQVdH4=;
-        b=PCfvl26AeobstFBYY7E+BE1iflBnlIUYE7u5UdF+QGhDWYgNuxmetq6g9nQ/BP3rXU
-         UaRQWV/L+NXqMqxvLTI7jz/yR4dcEHBj/1zVGoGtX7cLUrtfGP2OTCmEx6JFukg6Y1Ul
-         BFr4i2JT+j7IyuNhePuOCuoD/+L3Vv+lujfkS1q5/D81i4CjUJKYHn+OXS1ZR62k2TX2
-         GZ29yXn+JG7sX0j/CdHqxGf4Qu68wWjaTKeXzjZLHFMoKhP4r/CJgyB7TTmqnTubUG2r
-         tLbD8SqPrGvMqBk8ezxMVkNwfekCebbsMTwGgwORrEjqfG+3ExWVooUymVVL5p7t0WUS
-         uugg==
-X-Forwarded-Encrypted: i=1; AJvYcCXlg1aYoYvZnF8cyB0W7fc3RgGepyCt/e9RDIuPwvQaoXiVnAPDDlNBd6UPedVsSfBapmQPI6UOpILPn2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6ePYDjlVnyzjCGZ6yS0McSTY9GoOpIHH3Eeuqs33ASuxe0vYL
-	rkAYsLQDOI4nVAgVHbTYUYUtUXXbIb4CtWT3P35+2gY+lNVn16PoalJ15EWursaEALe7Vl5wM+T
-	3NZdDszXnFAiCO5RDnMtcYhv11Cc=
-X-Google-Smtp-Source: AGHT+IEETFkUFMiB+Heqo+VnA9kEyVCdmT5SYzP1RMkK/lQejNf3TtG0pnwU6umMb5g1gdhmWhPw4mAGOdVf0T4Okj4=
-X-Received: by 2002:a17:90a:d794:b0:2c7:ab00:f605 with SMTP id
- 98e67ed59e1d1-2d39254ebe9mr1008725a91.20.1723484330316; Mon, 12 Aug 2024
- 10:38:50 -0700 (PDT)
+	s=arc-20240116; t=1723484446; c=relaxed/simple;
+	bh=ifiv6ZN/OKPFuzPIv0KPI5CMbS3tRHi3Ny2Y5QiF2nU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mRHfbYnER3CNWJEFTfKKgnxzYY/Cs1gQBzKuqj2lo8vYGZ4p1YEuiB1WM3akwvSIFUUPs3kmyaZeqSxzhknHtPUs2PjYxHJliSSUrZ262lPrxiG9QgzvtEUtptwkdxPHV/EJpJ1dgmnqL6jkEJbZk/dpwo3UkFHnJC2yn1+xk+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 58787FEC;
+	Mon, 12 Aug 2024 10:41:10 -0700 (PDT)
+Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B6453F40C;
+	Mon, 12 Aug 2024 10:40:43 -0700 (PDT)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH] firmware: arm_scmi: Update various protocols versions
+Date: Mon, 12 Aug 2024 18:40:27 +0100
+Message-ID: <20240812174027.3931160-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230724211428.3831636-1-michal.winiarski@intel.com>
-In-Reply-To: <20230724211428.3831636-1-michal.winiarski@intel.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 12 Aug 2024 13:38:38 -0400
-Message-ID: <CADnq5_NwDn5DXPadzZtegUJ=y=LfVHykO7kG3edmiqRTTCxMNQ@mail.gmail.com>
-Subject: Re: [PATCH v6 0/4] drm: Use full allocated minor range for DRM
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, 
-	Pekka Paalanen <pekka.paalanen@collabora.com>, David Airlie <airlied@linux.ie>, 
-	Oded Gabbay <ogabbay@kernel.org>, Maxime Ripard <mripard@kernel.org>, 
-	Emil Velikov <emil.l.velikov@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, James Zhu <James.Zhu@amd.com>, 
-	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Are there any objections to this series?  We have been running into
-this limit as a problem for a while now on big servers.
+A few protocol versions had been increased with SCMI v3.2.
+Update accordingly the supported version define in the kernel stack, since
+all the mandatory Base commands are indeed already supported.
 
-Alex
+Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+---
+ drivers/firmware/arm_scmi/base.c    | 2 +-
+ drivers/firmware/arm_scmi/power.c   | 2 +-
+ drivers/firmware/arm_scmi/reset.c   | 2 +-
+ drivers/firmware/arm_scmi/sensors.c | 2 +-
+ drivers/firmware/arm_scmi/system.c  | 2 +-
+ drivers/firmware/arm_scmi/voltage.c | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-On Mon, Jul 24, 2023 at 5:15=E2=80=AFPM Micha=C5=82 Winiarski
-<michal.winiarski@intel.com> wrote:
->
-> 64 DRM device nodes is not enough for everyone.
-> Upgrade it to ~512K (which definitely is more than enough).
->
-> To allow testing userspace support for >64 devices, add additional DRM
-> modparam (force_extended_minors) which causes DRM to skip allocating mino=
-rs
-> in 0-192 range.
-> Additionally - convert minors to use XArray instead of IDR to simplify th=
-e
-> locking.
->
-> v1 -> v2:
-> Don't touch DRM_MINOR_CONTROL and its range (Simon Ser)
->
-> v2 -> v3:
-> Don't use legacy scheme for >=3D192 minor range (Dave Airlie)
-> Add modparam for testing (Dave Airlie)
-> Add lockdep annotation for IDR (Daniel Vetter)
->
-> v3 -> v4:
-> Convert from IDR to XArray (Matthew Wilcox)
->
-> v4 -> v5:
-> Fixup IDR to XArray conversion (Matthew Wilcox)
->
-> v5 -> v6:
-> Also convert Accel to XArray
-> Rename skip_legacy_minors to force_extended_minors
->
-> Micha=C5=82 Winiarski (4):
->   drm: Use XArray instead of IDR for minors
->   accel: Use XArray instead of IDR for minors
->   drm: Expand max DRM device number to full MINORBITS
->   drm: Introduce force_extended_minors modparam
->
->  drivers/accel/drm_accel.c      | 110 +++------------------------------
->  drivers/gpu/drm/drm_drv.c      | 105 ++++++++++++++++---------------
->  drivers/gpu/drm/drm_file.c     |   2 +-
->  drivers/gpu/drm/drm_internal.h |   4 --
->  include/drm/drm_accel.h        |  18 +-----
->  include/drm/drm_file.h         |   5 ++
->  6 files changed, 69 insertions(+), 175 deletions(-)
->
-> --
-> 2.41.0
->
+diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
+index 97254de35ab0..9939b1d84b7a 100644
+--- a/drivers/firmware/arm_scmi/base.c
++++ b/drivers/firmware/arm_scmi/base.c
+@@ -14,7 +14,7 @@
+ #include "notify.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20001
+ 
+ #define SCMI_BASE_NUM_SOURCES		1
+ #define SCMI_BASE_MAX_CMD_ERR_COUNT	1024
+diff --git a/drivers/firmware/arm_scmi/power.c b/drivers/firmware/arm_scmi/power.c
+index 49666bd1d8ac..59aa16444c64 100644
+--- a/drivers/firmware/arm_scmi/power.c
++++ b/drivers/firmware/arm_scmi/power.c
+@@ -14,7 +14,7 @@
+ #include "notify.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30001
+ 
+ enum scmi_power_protocol_cmd {
+ 	POWER_DOMAIN_ATTRIBUTES = 0x3,
+diff --git a/drivers/firmware/arm_scmi/reset.c b/drivers/firmware/arm_scmi/reset.c
+index 1b318316535e..0aa82b96f41b 100644
+--- a/drivers/firmware/arm_scmi/reset.c
++++ b/drivers/firmware/arm_scmi/reset.c
+@@ -14,7 +14,7 @@
+ #include "notify.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30001
+ 
+ enum scmi_reset_protocol_cmd {
+ 	RESET_DOMAIN_ATTRIBUTES = 0x3,
+diff --git a/drivers/firmware/arm_scmi/sensors.c b/drivers/firmware/arm_scmi/sensors.c
+index 7fc5535ca34c..791efd0f82d7 100644
+--- a/drivers/firmware/arm_scmi/sensors.c
++++ b/drivers/firmware/arm_scmi/sensors.c
+@@ -15,7 +15,7 @@
+ #include "notify.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x30001
+ 
+ #define SCMI_MAX_NUM_SENSOR_AXIS	63
+ #define	SCMIv2_SENSOR_PROTOCOL		0x10000
+diff --git a/drivers/firmware/arm_scmi/system.c b/drivers/firmware/arm_scmi/system.c
+index b6358c155f7f..ec3d355d1772 100644
+--- a/drivers/firmware/arm_scmi/system.c
++++ b/drivers/firmware/arm_scmi/system.c
+@@ -14,7 +14,7 @@
+ #include "notify.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20001
+ 
+ #define SCMI_SYSTEM_NUM_SOURCES		1
+ 
+diff --git a/drivers/firmware/arm_scmi/voltage.c b/drivers/firmware/arm_scmi/voltage.c
+index f1a7c04ae820..fda6a1573609 100644
+--- a/drivers/firmware/arm_scmi/voltage.c
++++ b/drivers/firmware/arm_scmi/voltage.c
+@@ -11,7 +11,7 @@
+ #include "protocols.h"
+ 
+ /* Updated only after ALL the mandatory features for that version are merged */
+-#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20000
++#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20001
+ 
+ #define VOLTAGE_DOMS_NUM_MASK		GENMASK(15, 0)
+ #define REMAINING_LEVELS_MASK		GENMASK(31, 16)
+-- 
+2.45.2
+
 
