@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-282520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B052C94E53F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:51:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3279294E549
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:01:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB452814A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D841C214B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA24136E37;
-	Mon, 12 Aug 2024 02:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0E513A242;
+	Mon, 12 Aug 2024 03:00:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qDAu68Hr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e/lXT19F"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00D828EC;
-	Mon, 12 Aug 2024 02:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D7231DA22;
+	Mon, 12 Aug 2024 03:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723431090; cv=none; b=J771PfU7eqT4W+nR5QVxCKY1j3kTBk27K6ujv1kIz6zIXSaYV07IYbT/ooL6sMkVVkROKLuweAozeXS1Vg86F0jsIo9JSNJG5egMKaIdejfZC7XXVxoeUhBF+qSRgvXHKotlDOYuK9/OfIld8vj94vZX4ZqMnG1brW8MeHkhVwo=
+	t=1723431652; cv=none; b=Px6DinTo93QRildDE2pB59VDiF2wOjtrseToAqMRxrieEBz9xCOrnVS/erL9Y8BV8FtFjKvio9DgNlONuIe+vbLCzjqE2wKAjE01RXTO3m1u+oKHIjlBYnIo8DoP+JGPt79isD3yao5aJvazA0uklQ236HvfFKx1YaPkME3mUes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723431090; c=relaxed/simple;
-	bh=Ezv00exa+liaJcb22809FVOaTfG475NLsmcHDQW45Vw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LVrIfFbXWP8E7SIhIWOqMY5wYiw2fnHDJUqc5TTOXu7V8cXPKLZPc5cxiNcp9qfZ9mRfxxXjwMJHVy/0aY0rLsk8Y/KlI5VXY86x8i5rAbvFcqNZSTKhjH7apJpOa58IMQpsNR4S504x4rnqR9VuooIHdtv7tTpBbzWeDcCHSr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=qDAu68Hr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723431087;
-	bh=0ZkDG4pf+7r/4VnCSZJrNDgV8dKL0EdYhljfIAH8mIo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qDAu68HrA0TEmliCldmQ90+3ykzRCjJhOEnFYd0+hYqC0CLWILW1LHrx7CFpn75iv
-	 WEu2X9HPesLAQ176zcLw8sfYaVYgiRVfa6BAoegD3gXLC86qVFo8gFavQEFFPhtAjs
-	 UHH3KlzLOvEs9wvpSrJH45EOTU7CT6pS13qu8hwPAYR1xuMPxAGGkSyrTOJaZ1qRS8
-	 gC4FYFFDFUjsL+Z7AyrsS+B1ZKWZXEA8XcoEvwuZ23njcn41wxClP+qLEdvwm2BuFe
-	 BCrQyM7KT2g8KMBZBDYCq+oZfnMks31h1ojOmZWmu9Xb9wvlrEQ7Wu5BY1LtOJBGJ1
-	 MEQnBrZNKThow==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhzYT6p6wz4x8N;
-	Mon, 12 Aug 2024 12:51:25 +1000 (AEST)
-Date: Mon, 12 Aug 2024 12:51:25 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Boqun
- Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter
- Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the rcu tree
-Message-ID: <20240812125125.3ac8cd68@canb.auug.org.au>
+	s=arc-20240116; t=1723431652; c=relaxed/simple;
+	bh=ATD46ttZWb0tBzHd3NAq4Sl04kWhE2U1G1BnLmQHe/c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iBsJqwHdWqgM6E7Cbu3hx2Czn9rycGAm7Xqf7IHz8CUsPKZ4glEz0SW7iiSgF+wJgy7/iz1eHa4c71eYi2pB9GBQWUw+fX/ZZSGieyQesa1964W/2pK6Pdg+ZLhAZZGqMVdrtrrWz5d4LO35tymQ0nWwKGJ/qLZ7IF3P37pmGFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e/lXT19F; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1ff4568676eso37358705ad.0;
+        Sun, 11 Aug 2024 20:00:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723431650; x=1724036450; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xvNI9UxKH6qoTzl3xKSTSvJHZCm2/riYJHczBzxBPJo=;
+        b=e/lXT19FdXb77AGAb7+IOESAWTVAo78zaID8GtjKcu5XPRmYVSSMj/9TCCsSdLDUW6
+         nabdcpO8rEsGbOe4JNBmNQSLajkkYvc1FmiYOQr6K5sK9YHNG9NivD9JKGoZGzk5twED
+         AOzpgAYCVM/tYZxJhD8l5WD6C/XJYYvNtwA1IhAdgILbqAfouWTOrk//ydd3RDVwfUN+
+         KHQa8t3dDi3J+oAobDq7J+17G6IulB3Pnpam6S5kJBPWv3AAjRI4xaugLCjKnVmY/dlM
+         NGT6NkHVlSbTwfjO2J2s7CmGW2QixCKsvzpkmp7DpizEC2Yy4Uw9cwsVs3BvUbMgAgD3
+         sKDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723431650; x=1724036450;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xvNI9UxKH6qoTzl3xKSTSvJHZCm2/riYJHczBzxBPJo=;
+        b=dFcFc65d17pJ7WbGFBbUtmwmDJLPTNuGAiMDPkx8MsZy6I6w3aCjovokApHXE8Oh+5
+         r0mIOcZlx/gzkrxvad1Dys/aV+Va9/2nUN+hiCk2XwTuD9j4dEMHd/JpRLHHq3a0/DxX
+         unMnrQTfr71WRaO0WAGw07ZrZUXpP9Yu2+m5uWsYVgAWvxgQLrC5iTI44MG3v45NlBKs
+         0TOkwgXcKMAXeUF0ZYG1BZkzeUnRlwVAtgC4UduJGhjfqwygk2yyd5k4ztoSYS3M9A2p
+         0lfCBud/CxE37DstC2ks//PgxZKTYbexVrxoZiJr4r4HW/FcS18DGN/CCEqy4UGBS6W3
+         OcJw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSL95ohRzo6I3y7hyEjxY2/1meT6AeLfoB5dyHdi3qO+7RKrYRIyz5DY6+TH2Rup6by61kXGnYWNfzM4W4y7Z/LQIC2QwKFD+Bn5LYsswKlguQS5P7ZNsY85320ZyszCJtr40UT5LKv+oLisfA8tqFBC4M7UlBd7D1snBs01h7wRio4U0B
+X-Gm-Message-State: AOJu0Ywvb5+TvAWqo659OZM+v4Yo5N5jAMyHVwkxUSI8I6I3cb14hTXE
+	KWDX6xk6b1ojBgjf8hchfG8y1Ydmi4MvFkm0l17GYaTkrdi7brOw
+X-Google-Smtp-Source: AGHT+IEJ8WTy8J8fye8zaROoWmQq6+cN0Kjc/PExZ7qxH8LD7+eVyHDYBQi9qAS7vBp9rMYvHruCaA==
+X-Received: by 2002:a17:902:ea08:b0:1fd:9420:1044 with SMTP id d9443c01a7336-200ae4fa836mr117585105ad.16.1723431650367;
+        Sun, 11 Aug 2024 20:00:50 -0700 (PDT)
+Received: from localhost.localdomain (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bba00f73sm28047105ad.201.2024.08.11.20.00.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 20:00:49 -0700 (PDT)
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	sumit.semwal@linaro.org,
+	christian.koenig@amd.com,
+	esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: [PATCH 0/2] Add support for nuvoton ma35 nand controller
+Date: Mon, 12 Aug 2024 03:00:43 +0000
+Message-Id: <20240812030045.20831-1-hpchen0nvt@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+This patch series adds the mtd nand driver for the nuvoton ma35 ARMv8 SoC.
+It includes DT binding documentation and the ma35 mtd nand driver.
 
-Hi all,
 
-The following commit is also in the tip tree as a different commit
-(but the same patch):
+Hui-Ping Chen (2):
+  dt-bindings: mtd: nuvoton,ma35d1-nand: add new bindings
+  mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
 
-  23311aca56d9 ("lockdep: Fix deadlock issue between lockdep and rcu")
+ .../bindings/mtd/nuvoton,ma35d1-nand.yaml     |   97 ++
+ drivers/mtd/nand/raw/Kconfig                  |    8 +
+ drivers/mtd/nand/raw/Makefile                 |    1 +
+ drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c    | 1109 +++++++++++++++++
+ 4 files changed, 1215 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+ create mode 100644 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
 
-This is commit
+-- 
+2.25.1
 
-  a6f88ac32c6e ("lockdep: fix deadlock issue between lockdep and rcu")
-
-from the tip tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5eK0ACgkQAVBC80lX
-0GwYdAgAjmmw9LO5UThsUn/RReH8ErAVnsJvJvVMHB2jFxQsxbKN8U0JzNOn9DSx
-U8NmCeEMH2Gf1C9xJf7fkQge2YyDgxVBUPvYkj3F8+RTXMzQACjAl+tlpjO8t44u
-u3P3mXqk+SEWEk1AbLSyi7nSkjyg7bRBldBz96V/71rrUD/2P7TimstxFnTHj8cs
-RNQNSMFNKJZu8CwQWAQFnK1h7AYatdsWOZxOAeutr5NYKP3AwZ0v1ybpedeBsvlW
-qV5WJE535uOEKPfN2AWcmXgyTOkVxOq1qx95TmS+RRksTuVgFZir97o1gS+TxSqL
-Q+hfIOYrU8R1skWWmi21fVsNVwL0kw==
-=spik
------END PGP SIGNATURE-----
-
---Sig_/Wq5ZwO0d9BLj=KSyQl2MMJD--
 
