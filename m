@@ -1,263 +1,273 @@
-Return-Path: <linux-kernel+bounces-283200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AEB594EE8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8755A94ED43
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:42:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 801841C21BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:45:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCA0282A87
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FC917D35B;
-	Mon, 12 Aug 2024 13:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADC717B4FE;
+	Mon, 12 Aug 2024 12:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="PQ6R2FIh"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="uZ/k9f9E"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011004.outbound.protection.outlook.com [52.101.125.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BB517C7B9;
-	Mon, 12 Aug 2024 13:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470285; cv=none; b=nyfTzmFLtZzJk3RqhtdeqNngWFQVcarphjFGBWZU6G4mew8c2qzfVEn7RZCzh3Fxt3D2h6kB8hHiBr5ba+DtEDFxEC+ARHft4e+up5zBBbRT92Ih5elxdnpvFlEn+YmabjsFw1YsRRQFQYvEzbIJbgW8Y34ZorjpIiEvesD+SK4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470285; c=relaxed/simple;
-	bh=iIufjcgGtpUjJVRP7Ol9ZIuMvVSgYnQutX7gorMPP7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mD2bL9xvn+qVNs8a6SC3N6qwe5P/0Lkm3m5+JbuLQlpa52d99hgGwvupiDKmXwIEMpUnw1eLgpjTrkmBBlbVykJ5RYzOKFe7+sgCdBJHGd8gdEQ1jHuAhUyXrsgrVBQvOOqRO6h9VBWA86kzGaJHMqi7sJz8bXJqPIxeymt5qBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=PQ6R2FIh; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 5a12cf236ae3d380; Mon, 12 Aug 2024 14:44:42 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 47A386F0D80;
-	Mon, 12 Aug 2024 14:44:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723466682;
-	bh=iIufjcgGtpUjJVRP7Ol9ZIuMvVSgYnQutX7gorMPP7k=;
-	h=From:Subject:Date;
-	b=PQ6R2FIhkIP4vEfEfJMHDJsOaXRmbv5A+nsMbOAMgIS8g4j7hFczZSRpAQPdGXSca
-	 XiwkPz2+M1pYNrfbL6b7mkJl+JkifahSYfvIu1KlIPHDppzMzbCtAc/rTIjAjwmjya
-	 49HluW3o3Muq7Jw4RbCuPBpd9VVivMm/CYjmVIlmUlSN1Ch4YNKPdnTWu+WDBXA/Oq
-	 ozZBFcsA+YMUOdTjg8buhziGbQ4ue+vHwacK3pUdlM2/jO348vML5aAfM0Lq27V5yi
-	 jKCaMfB77xeDq/9TA33ngUYnMWLNgb12dsIkJmEiFqItw9VTgf2tFrAPoZRf0oCXdN
-	 JUodnnvV60tbA==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: x86 Maintainers <x86@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Subject: [PATCH v2 2/3] x86/sched: Add basic support for CPU capacity scaling
-Date: Mon, 12 Aug 2024 14:42:26 +0200
-Message-ID: <13573795.uLZWGnKmhe@rjwysocki.net>
-In-Reply-To: <4941491.31r3eYUQgx@rjwysocki.net>
-References: <4941491.31r3eYUQgx@rjwysocki.net>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB7148837;
+	Mon, 12 Aug 2024 12:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723466565; cv=fail; b=cpXHyAg1c+x8Jxv49U1iZi1qdlSet1ktyxVq71alVk9F4I96A+5zwlFSzmpWvuHIG68hwMhM6Pr/RJaoSA/M8mQCzz3mshBBmUIpZHTCxZhQvIB7VA7Xz3wynj2NFm0HPc3yv6NS7eCnIMCZCrLPu0ztNo7JtyuSb2agVMsESSo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723466565; c=relaxed/simple;
+	bh=UCaFlvz7ZSomBmNuTw35dKEQRFENegFhlEfZC9PPAzI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jDYun9egPSNTBm5kUV2GRzOzCnd+HWmvPNabySFEFLMb1glyHUwlwTUF0A1qrYtb1ehtls+kjHmCHTHxrLQHg36k9UawHOA3oeo8WlFDmXJT0w87/87/D8gdrszmsHyxevtGYVfVqutc1DXA0o++LqeB9/GOwoMfY2RJLUSSc/o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=uZ/k9f9E; arc=fail smtp.client-ip=52.101.125.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B8Gbyw9MIMY21HehDAOHt+137T6uY6J9QZAjAQ/naCM73eqpr2dfve5W8cwQ/9w6p0mq0VZ4JbdjBN/kLzg/vPdC79h8M/cfgLCHcVwHsW5sWRN4cf4bRiHrJagpLkkymhz/qmf/7l14I1cwd2IkHt+BRa7MFeDDwLTKVjNHX1pZ3C3mXFPRvJxqSAd7cR3QvcGbujnn1rl2Alsa5938sIBPz6p1QMvSoVMgq1oEAUXh9zXPjH4sle/+wcMlsiBl7hOpePoj4+HjMW2b5ZXeOSXFT6FD7DYouUw4z88bNhrFhOJOwPKMqe5daEpMUuEpKLu68e79eFNv0S36Y8CCAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UCaFlvz7ZSomBmNuTw35dKEQRFENegFhlEfZC9PPAzI=;
+ b=KhCY/vu0U2LoAnEcj/BxYw+4Ota2lCGt623mpAoqdLO8jtgMcH4ppDqyHEpGiel7JcDMlB+U7K8fIlnB0Xd4ceMSI81BUTYSbTkXqOzIKxGp5aXkJOtudzAz5vAlriBfrZjDZDlvN2VOHLRfnOKXNavbjGBmxbjGKAELEV8F0uMfq6zjn8xGJMYBwKbw4Z3gL5EFzmwvsLwCeeSVqGddO9qNOpgtnkboAM2YXbwwuIok/MnodpCWK6Tif9sJ+EumZmjH28PL+5qqEdOgQqplGbCgYdW5HZS4pVS/V/l5bLwKA+UahBRNEu3T4V1cp/ci2U5gwi2S7gD9BWw8ocEh6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UCaFlvz7ZSomBmNuTw35dKEQRFENegFhlEfZC9PPAzI=;
+ b=uZ/k9f9EG19ANSA5o4/9Ii9KDMSheQYvr/GAW4BzwfgUXMEBLq8LdshwCvfbpx5HQZYpPQI1LI+uvfVEntfjCvzwDUL3uUk5g4PR2G+mFywhRh2RUSdNz8QhdR9QrzulIrM7vMfCMRpLFXHSd0IS+qNlB+LVZQ/83DQn0zMK/0c=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYCPR01MB11054.jpnprd01.prod.outlook.com (2603:1096:400:3ab::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Mon, 12 Aug
+ 2024 12:42:39 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 12:42:39 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+CC: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+	<magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabrizio
+ Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v2 6/8] arm64: dts: renesas: r9a09g057: Add WDT0-WDT3
+ nodes
+Thread-Topic: [PATCH v2 6/8] arm64: dts: renesas: r9a09g057: Add WDT0-WDT3
+ nodes
+Thread-Index: AQHa7DAWZaR6TcoD6kuFkcWuXXMxB7IjjJ6ggAACQACAAAHTIIAAARKQ
+Date: Mon, 12 Aug 2024 12:42:39 +0000
+Message-ID:
+ <TY3PR01MB11346B20A0C4249DC23F0587586852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240811204955.270231-7-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB11346E95ED1171818488EFEFA86852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8sR1Lu1FYMQbDXzzi19ShF-RLkwirF-51aWp1bjwG8LXw@mail.gmail.com>
+ <TY3PR01MB11346C6066762B81C1B19848A86852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To:
+ <TY3PR01MB11346C6066762B81C1B19848A86852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB11054:EE_
+x-ms-office365-filtering-correlation-id: 7c971d8c-cdc5-48fb-43f1-08dcbacc4049
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?YWlpVm1VMzRWWHBtM2VvK2pEUVh1T2FzSGRmU1gxaDFXRG1peEROL2MyRDZa?=
+ =?utf-8?B?a1hLNVZtMDFvQUhicVBPMUZJWFZ4YXNkbnZpZVZCR1p2aWNqalBxcGNXS3lK?=
+ =?utf-8?B?TFpyNWJtUkFaSWlKWEFzNGNJcDVlcWpNeHhtKy8wYTZPL3E3ejkzTmN4U1JT?=
+ =?utf-8?B?Wkt3Y2FDcmk2d1pzNnowNnpIVkVnTU9aalpDaVhEb0VoUFJBakgxLy9PMUJY?=
+ =?utf-8?B?alJNWjV2KzhRWlo2RlJ5QzZiem9DWTVlc0V0VVdGdURxbDZwZEZOOHR6d3lY?=
+ =?utf-8?B?WkNMOXJSNzg0NzBQbWJteGxtZm45RDMzOU5MSitZNFRXRTRoR0lzVjF4ZTBw?=
+ =?utf-8?B?TEFiUHkzcHhWckc2T0VZQzVDNTFBMTBjM1BpWWdEVjdaQ29xcVpLd3pFeFc4?=
+ =?utf-8?B?Q21WT05DaEU1amJ5dTJxM3dZZUo4cUZyNE9iWVYwZGZpVkppeVgwUE5LKys3?=
+ =?utf-8?B?SkFkN01HRU1kYTlFRTdBUDgvVDltbGxmWDhKdm81RndhbGoxQUFRQUhtanNp?=
+ =?utf-8?B?dVBTRTBHQm5Td04yL2Y2TnUyTEhNM3Q2dVBkWXEyREtTTG00RW5udVY2VkhP?=
+ =?utf-8?B?TndsTE9xNUozamFSZ0dLZTh3OGhmSTMwdC9BUjFnSjMweDZtc0Qrc2JhblVH?=
+ =?utf-8?B?UnZMdElWZEgwQnJ0L1hlckg4cXJWZjZmY0NXRGFCQlQxWjVSODZDZWNVZWVK?=
+ =?utf-8?B?blRlQW1NbENzMTNLTEw1S2FGOWdmNUI2TmFuai9JY0tRekZiS3NDTU5RUDNj?=
+ =?utf-8?B?NE5iVTI5eWMwZWZWd0Z1S1UzN2VUZ3hPY21nalI0VlRVNG9QYkh2QzYxU212?=
+ =?utf-8?B?dVpWMElzTHRXZ253U3ZZSytPWmpNNk5tMitJS0tvMmNjLzc5cGEzc1FYM3c5?=
+ =?utf-8?B?SThQRHhMQXFmVU96ckREQVlXb1J0RXI3bG1ha1RBZzd0SmJzZzVGMW1hOWFG?=
+ =?utf-8?B?azFodVlZM243R0Jqb0tWRUFXVlpTV2R3ZExrTHVuMmxQb0U2TzNCbU43cTNR?=
+ =?utf-8?B?ODc5T1I5cktxaVZlaU9pa3BQN0p6VkdJWW0zOEN5TXBYZmY5Z1dIaFkzeFgr?=
+ =?utf-8?B?Z1BBTkhCVGsrSGVNUHhUVGVpcFQ4TjNuamg4QTMxajdvNlhKbndBU01OSVEw?=
+ =?utf-8?B?UzlUTlJuczVOMlIreHJUTjJTempsOXU5NzdWK2lBd0w4RWRzOW1YVi9EVVQz?=
+ =?utf-8?B?dW5LRUsxbGNIQ1ZmZTZQN1RrdTY3eFRmSGhsb3ZpaUt2Rm9nZTBRdXdKR1l6?=
+ =?utf-8?B?M0ZIeHBWQzdBUXVXSmhUMk0xcWIweHArNHhtUXV3WmY2NlZlZk1rTnplcHJ0?=
+ =?utf-8?B?cFRHakhGWjRraXdiRWQvU1JYVmVCQkM3WnBMQ2g5N1o5N1VXZlhxTnZvU3Jt?=
+ =?utf-8?B?L2dJZS9OOUxFcjByWTVON2pyT09NYWMrdXhwNHdSQlByUWdLaDRoVjZZemNY?=
+ =?utf-8?B?VFZ0RVFrekllczNHdngva3hwd3BaTUE3OU5ZZ1pwV2Y2NFRSQURydkRKQ0RO?=
+ =?utf-8?B?aEZoR083TjhsUHdxcUgzRjlzUEVMZ1JpeWgrT0RvbTRTVHBpeWxueURMVzZq?=
+ =?utf-8?B?NEs0TEwwd3gwT3pPMmRHRTVNQnZoZ0ZtbWJFT21CZFpadUdOdkp0cC9WUk9C?=
+ =?utf-8?B?YXgvMHR3UjNOckxkdVQwUmw4NWlWdmlaVGFGQ0N4b25KMENmakNQWmNtRUor?=
+ =?utf-8?B?MStVclpCYmF2OHd4bHU1ZHpYajU1cDMvR2FDUkJBZTVqQnpFcm4ranY5a3lx?=
+ =?utf-8?B?a0UxZlJBVFgwZ2FJTi9sZ25wejJjNUtaanNaS0xCaVlkRXVKZlAzTkdsRWJ5?=
+ =?utf-8?Q?TQJtqiIofDTlTu4jvtejn0y7eeyPzzDDYA7m8=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MDZHWjI2ME5ObkRHWlRvME1TYjRIdnZCN2pNcERZN3BhQmZZNlNwUENKc0h5?=
+ =?utf-8?B?czRkZmtKNGhyaWRWeG5GNFlOQm5XUVBRelFuM3NuMSsrV3RwVlRBTW5uUlJJ?=
+ =?utf-8?B?MWp3UEFiODREZWZJY3d5alpDQVQzMVRLTDJFSnMvWkVETU0wcVVZOW4vUGdn?=
+ =?utf-8?B?MHg0T296YlBsTlBtOEs3dXhzd2hKMVZtVXNMY0RiSEtnTDdKWlgzZnIwOG91?=
+ =?utf-8?B?WUdqNVVydDRlNnRGcW4zalg3SWJGdzJ1YmQ2TlgwNWdJd3M4bzU3MEpuektr?=
+ =?utf-8?B?TUV6ejFBV1hkZW16TGhsWEdESUlKZGpYdnUxMGl0S3JMV2RoWXNaWnYzWWZj?=
+ =?utf-8?B?UGF1Y2dkWHc0K1N3WlJ1azF5ZjNSNllsc1JpTzNFczlYY3hnQWhPcnlPaG9z?=
+ =?utf-8?B?K082WnFVREhZV0cybDBJRmM3ekhFU2RFZVpDcEJYSGtFNXg4Mkp5dVFYNzhY?=
+ =?utf-8?B?ejE5OGFVR2lKeDhjMXoyNnFPSXJhZ0Z0U3Zsa3FSSTg5NzF6UHhXMlN6LzBw?=
+ =?utf-8?B?N3d2R1JJdWx3Y2FnMjBLQ3hhdEExQTd3YnR6WXB6SFlkVmt1MXMxNGZhWi94?=
+ =?utf-8?B?OWxGOUdXOGk4VGJOUkxhcFFXSUl5MlJwWmE3UVR0SnNlMFFBR0wxTG5QelNW?=
+ =?utf-8?B?aUZDK05aNnUrSnRWekFYSGhIZldEWktFQy82KzRubkM1NkpXTzd5MzI5OEds?=
+ =?utf-8?B?VjRKK2NOQ0F5Q2lscjJXMUFmdFpZVDdxVHZ1c0ZDVjBweWhuNmlQNHRtTmQ4?=
+ =?utf-8?B?SS9pc1VMeWJQZzBoZ2d4RXlUNEVLRS8xWFhVckZCR3lhRXNwYUY2TGQ4MmZm?=
+ =?utf-8?B?elkwekJtUlQ4REdMWkx3b0ZLRWtKdFRLZkszTHNYNGZIbERBWHd5dzFKalVQ?=
+ =?utf-8?B?Zmt4NEp2RkpsWk5VREFEMkwwTzhINFcrbktzY0E1aHBSWStIdEszN09JOUVO?=
+ =?utf-8?B?ZDdvOUFJQzdxV3NJeURRb0hySU5EdnNIckU5Um1sWVh3WGlRNHZIZkNOemhK?=
+ =?utf-8?B?WUY4dk9Cd2xJdTN3UThnYitvWkc2ZEJpckgzWjNtRGVxSlhhc240OVZzdUlw?=
+ =?utf-8?B?MHM3cXJ3aFFxU2Mwc3JXbDBmbm9aUXNlblpiTmtiYk4zUmJ1dXRFcUtoZnQ2?=
+ =?utf-8?B?SHRqclZSMTNKajVRUmJRZVlOdXY0dmxKK1FBUllNRzhpbkdnd1hZbERSUCtR?=
+ =?utf-8?B?Nk14cFdBTzJ6ZHBibER6U0lqMU5JbldjNzI1c2phSFVweVBPaVZFS3VUNmNZ?=
+ =?utf-8?B?bjBPOERid3EyL295RU82VHBSQTBUNkdLc3lwV0tYUzhtTnJFUzVvWERMRXor?=
+ =?utf-8?B?QllEdlpSYmpwSXY2ZUluTTVNY1lnOWhpTWZuKzdIeUx6K1ZjM0svYmJBbUJq?=
+ =?utf-8?B?SzZjKzlxT1FjR0JySDE5WVQ3dXdtNUZJSDZaUzR2aWRYQWsvc0ZGT2xwVHVI?=
+ =?utf-8?B?M2tIdThpMjQyMklNTXFXaDlhY2pRV281QVEyLzh2NGxBSmNIZm9JeERJZTRW?=
+ =?utf-8?B?emdzenJuZ1p5TUl4aldpWUxPZzMvSGJNcW1rTlRLYUxpWC9XYjVUWnVvUlRq?=
+ =?utf-8?B?UGZDWk03TEdrRUNteFdNb3Q0ZDczSTB2ZmE0WDFBdW1kR0Z3UlVUWFRNR1Ju?=
+ =?utf-8?B?djBkTHBFWUJ4Rk5ybTBsQnFkTjNJZm8rN3J0eHQvekV3b2V6eEo1ckpaTzdR?=
+ =?utf-8?B?cGNJZXRlV1FIKzdZWXh6L24xd3UwUzQvRWFNck5qdmJZZ2VFcUlkUUx5RStL?=
+ =?utf-8?B?czUvTzZSbkJOUERoV3VhdUdxS0VTeFNMc203dzMwZ1Q4U3dFQktSY1FLbzJY?=
+ =?utf-8?B?b1U3cVRZVTI4U0s4YWRhcDF1ZXNNRG5UTkZVWDJSZ1JFMFVONm5sbzRucmh3?=
+ =?utf-8?B?S3V1Q2JjYUc4U2tuYlptSXlwcmVHeTN1U2tUR25kZzB5cVMzZXo2Wi9qWmdF?=
+ =?utf-8?B?cmtJdWExSGtZbFFLWjdQYURTMGxDdU1MTlpucEU5d1piNlZGcDdCeTE4eHVj?=
+ =?utf-8?B?VW5VZTFNUmU3Mm55VXZzc0hPOGNZOFp0RXMvczVvYUpUODVvQytlK01rWHR1?=
+ =?utf-8?B?ZXlSOGE3d1A4UStFb0JuTDlQZFVYM2VaaTZWbHFvT2c4UjVxdTdWWlFFYU56?=
+ =?utf-8?B?RDRWOS91WmtaSFF1a0xGNVRZSndRQlp4N1hGS1VPQ09uRDEwSmVQaTRQUFZF?=
+ =?utf-8?B?NGc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgheehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepuddtpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggv
- rggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdhprghnughruhhvrggurgeslhhinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughivghtmhgrrhdrvghgghgvmhgrnhhnsegrrhhmrdgtohhm
-X-DCC--Metrics: v370.home.net.pl 1024; Body=10 Fuz1=10 Fuz2=10
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c971d8c-cdc5-48fb-43f1-08dcbacc4049
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 12:42:39.3162
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Cs95aVt3H7VrvT1uLt7jxctu1awXNqn+PsKtxpxmaSLRBm3ptA03y8AWLgBtPvMEYSgtG9UUaCKUXdvFO/nUDt+lwblsuoSarmY81Ziqjak=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11054
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-In order be able to compute the sizes of tasks consistently across all
-CPUs in a hybrid system, it is necessary to provide CPU capacity scaling
-information to the scheduler via arch_scale_cpu_capacity().  Moreover,
-the value returned by arch_scale_freq_capacity() for the given CPU must
-correspond to the arch_scale_cpu_capacity() return value for it, or
-utilization computations will be inaccurate.
-
-Add support for it through per-CPU variables holding the capacity and
-maximum-to-base frequency ratio (times SCHED_CAPACITY_SCALE) that will
-be returned by arch_scale_cpu_capacity() and used by scale_freq_tick()
-to compute arch_freq_scale for the current CPU, respectively.
-
-In order to avoid adding measurable overhead for non-hybrid x86 systems,
-which are the vast majority in the field, whether or not the new hybrid
-CPU capacity scaling will be in effect is controlled by a static key.
-This static key is set by calling arch_enable_hybrid_capacity_scale()
-which also allocates memory for the per-CPU data and initializes it.
-Next, arch_set_cpu_capacity() is used to set the per-CPU variables
-mentioned above for each CPU and arch_rebuild_sched_domains() needs
-to be called for the scheduler to realize that capacity-aware
-scheduling can be used going forward.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
-
-v1 -> v2:
-   * Allow arch_enable_hybrid_capacity_scale() to succeed when frequency-
-     invariance is not enabled and do not disable capacity scaling in
-     disable_freq_invariance_workfn() (it is not really necessary to do
-     so and the code is simpler without doing that).  Having done that,
-     move arch_hybrid_cap_scale_key definition closer to the code using it.
-   * Replace WARN_ON_ONCE() with WARN_ONCE() (2 places).
-   * Fix arch_enable_hybrid_capacity_scale() return value when hybrid
-     capacity scaling is already enabled.
-   * Fix arch_set_cpu_capacity() kerneldoc comment.
-
----
- arch/x86/include/asm/topology.h  |   13 +++++
- arch/x86/kernel/cpu/aperfmperf.c |   87 ++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 99 insertions(+), 1 deletion(-)
-
-Index: linux-pm/arch/x86/include/asm/topology.h
-===================================================================
---- linux-pm.orig/arch/x86/include/asm/topology.h
-+++ linux-pm/arch/x86/include/asm/topology.h
-@@ -280,11 +280,24 @@ static inline long arch_scale_freq_capac
- }
- #define arch_scale_freq_capacity arch_scale_freq_capacity
- 
-+bool arch_enable_hybrid_capacity_scale(void);
-+void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long base_cap,
-+			   unsigned long max_freq, unsigned long base_freq);
-+
-+unsigned long arch_scale_cpu_capacity(int cpu);
-+#define arch_scale_cpu_capacity arch_scale_cpu_capacity
-+
- extern void arch_set_max_freq_ratio(bool turbo_disabled);
- extern void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled);
- 
- void arch_rebuild_sched_domains(void);
- #else
-+static inline bool arch_enable_hybrid_capacity_scale(void) { return false; }
-+static inline void arch_set_cpu_capacity(int cpu, unsigned long cap,
-+					 unsigned long base_cap,
-+					 unsigned long max_freq,
-+					 unsigned long base_freq) { }
-+
- static inline void arch_set_max_freq_ratio(bool turbo_disabled) { }
- static inline void freq_invariance_set_perf_ratio(u64 ratio, bool turbo_disabled) { }
- 
-Index: linux-pm/arch/x86/kernel/cpu/aperfmperf.c
-===================================================================
---- linux-pm.orig/arch/x86/kernel/cpu/aperfmperf.c
-+++ linux-pm/arch/x86/kernel/cpu/aperfmperf.c
-@@ -349,9 +349,89 @@ static DECLARE_WORK(disable_freq_invaria
- DEFINE_PER_CPU(unsigned long, arch_freq_scale) = SCHED_CAPACITY_SCALE;
- EXPORT_PER_CPU_SYMBOL_GPL(arch_freq_scale);
- 
-+static DEFINE_STATIC_KEY_FALSE(arch_hybrid_cap_scale_key);
-+
-+struct arch_hybrid_cpu_scale {
-+	unsigned long capacity;
-+	unsigned long freq_ratio;
-+};
-+
-+static struct arch_hybrid_cpu_scale __percpu *arch_cpu_scale;
-+
-+/**
-+ * arch_enable_hybrid_capacity_scale - Enable hybrid CPU capacity scaling
-+ *
-+ * Allocate memory for per-CPU data used by hybrid CPU capacity scaling,
-+ * initialize it and set the static key controlling its code paths.
-+ *
-+ * Must be called before arch_set_cpu_capacity().
-+ */
-+bool arch_enable_hybrid_capacity_scale(void)
-+{
-+	int cpu;
-+
-+	if (static_branch_unlikely(&arch_hybrid_cap_scale_key)) {
-+		WARN_ONCE(1, "Hybrid CPU capacity scaling already enabled");
-+		return true;
-+	}
-+	arch_cpu_scale = alloc_percpu(struct arch_hybrid_cpu_scale);
-+	if (!arch_cpu_scale)
-+		return false;
-+
-+	for_each_possible_cpu(cpu) {
-+		per_cpu_ptr(arch_cpu_scale, cpu)->capacity = SCHED_CAPACITY_SCALE;
-+		per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio = arch_max_freq_ratio;
-+	}
-+
-+	static_branch_enable(&arch_hybrid_cap_scale_key);
-+
-+	pr_info("Hybrid CPU capacity scaling enabled\n");
-+
-+	return true;
-+}
-+
-+/**
-+ * arch_set_cpu_capacity - Set scale-invariance parameters for a CPU
-+ * @cpu: Target CPU.
-+ * @cap: Capacity of @cpu, relative to @base_cap, at its maximum frequency.
-+ * @base_cap: System-wide maximum CPU capacity.
-+ * @max_freq: Frequency of @cpu corresponding to @cap.
-+ * @base_freq: Frequency of @cpu at which MPERF counts.
-+ *
-+ * The units in which @cap and @base_cap are expressed do not matter, so long
-+ * as they are consistent, because the former is effectively divided by the
-+ * latter.  Analogously for @max_freq and @base_freq.
-+ *
-+ * After calling this function for all CPUs, call arch_rebuild_sched_domains()
-+ * to let the scheduler know that capacity-aware scheduling can be used going
-+ * forward.
-+ */
-+void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long base_cap,
-+			   unsigned long max_freq, unsigned long base_freq)
-+{
-+	if (static_branch_likely(&arch_hybrid_cap_scale_key)) {
-+		WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
-+			   div_u64(cap << SCHED_CAPACITY_SHIFT, base_cap));
-+		WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
-+			   div_u64(max_freq << SCHED_CAPACITY_SHIFT, base_freq));
-+	} else {
-+		WARN_ONCE(1, "Hybrid CPU capacity scaling not enabled");
-+	}
-+}
-+
-+unsigned long arch_scale_cpu_capacity(int cpu)
-+{
-+	if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
-+		return READ_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity);
-+
-+	return SCHED_CAPACITY_SCALE;
-+}
-+EXPORT_SYMBOL_GPL(arch_scale_cpu_capacity);
-+
- static void scale_freq_tick(u64 acnt, u64 mcnt)
- {
- 	u64 freq_scale;
-+	u64 freq_ratio;
- 
- 	if (!arch_scale_freq_invariant())
- 		return;
-@@ -359,7 +439,12 @@ static void scale_freq_tick(u64 acnt, u6
- 	if (check_shl_overflow(acnt, 2*SCHED_CAPACITY_SHIFT, &acnt))
- 		goto error;
- 
--	if (check_mul_overflow(mcnt, arch_max_freq_ratio, &mcnt) || !mcnt)
-+	if (static_branch_unlikely(&arch_hybrid_cap_scale_key))
-+		freq_ratio = READ_ONCE(this_cpu_ptr(arch_cpu_scale)->freq_ratio);
-+	else
-+		freq_ratio = arch_max_freq_ratio;
-+
-+	if (check_mul_overflow(mcnt, freq_ratio, &mcnt) || !mcnt)
- 		goto error;
- 
- 	freq_scale = div64_u64(acnt, mcnt);
-
-
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmlqdSBEYXMNCj4gU2Vu
+dDogTW9uZGF5LCBBdWd1c3QgMTIsIDIwMjQgMTo0MCBQTQ0KPiBUbzogTGFkLCBQcmFiaGFrYXIg
+PHByYWJoYWthci5jc2VuZ2dAZ21haWwuY29tPg0KPiBDYzogR2VlcnQgVXl0dGVyaG9ldmVuIDxn
+ZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1hZ251cyBEYW1tIDxtYWdudXMuZGFtbUBnbWFpbC5j
+b20+OyBSb2IgSGVycmluZw0KPiA8cm9iaEBrZXJuZWwub3JnPjsgS3J6eXN6dG9mIEtvemxvd3Nr
+aSA8a3J6aytkdEBrZXJuZWwub3JnPjsgQ29ub3IgRG9vbGV5IDxjb25vcitkdEBrZXJuZWwub3Jn
+PjsNCj4gbGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3JnOyBkZXZpY2V0cmVlQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgRmFicml6aW8NCj4gQ2Fz
+dHJvIDxmYWJyaXppby5jYXN0cm8uanpAcmVuZXNhcy5jb20+OyBQcmFiaGFrYXIgTWFoYWRldiBM
+YWQgPHByYWJoYWthci5tYWhhZGV2LQ0KPiBsYWQucmpAYnAucmVuZXNhcy5jb20+DQo+IFN1Ympl
+Y3Q6IFJFOiBbUEFUQ0ggdjIgNi84XSBhcm02NDogZHRzOiByZW5lc2FzOiByOWEwOWcwNTc6IEFk
+ZCBXRFQwLVdEVDMgbm9kZXMNCj4gDQo+IA0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KPiA+IEZyb206IExhZCwgUHJhYmhha2FyIDxwcmFiaGFrYXIuY3NlbmdnQGdtYWlsLmNv
+bT4NCj4gPiBTZW50OiBNb25kYXksIEF1Z3VzdCAxMiwgMjAyNCAxOjMyIFBNDQo+ID4gVG86IEJp
+anUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4NCj4gPiBDYzogR2VlcnQgVXl0dGVy
+aG9ldmVuIDxnZWVydCtyZW5lc2FzQGdsaWRlci5iZT47IE1hZ251cyBEYW1tDQo+ID4gPG1hZ251
+cy5kYW1tQGdtYWlsLmNvbT47IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+OyBLcnp5c3p0
+b2YNCj4gPiBLb3psb3dza2kgPGtyemsrZHRAa2VybmVsLm9yZz47IENvbm9yIERvb2xleSA8Y29u
+b3IrZHRAa2VybmVsLm9yZz47DQo+ID4gbGludXgtcmVuZXNhcy1zb2NAdmdlci5rZXJuZWwub3Jn
+OyBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9yZzsNCj4gPiBsaW51eC1rZXJuZWxAdmdlci5rZXJu
+ZWwub3JnOyBGYWJyaXppbyBDYXN0cm8NCj4gPiA8ZmFicml6aW8uY2FzdHJvLmp6QHJlbmVzYXMu
+Y29tPjsgUHJhYmhha2FyIE1haGFkZXYgTGFkDQo+ID4gPHByYWJoYWthci5tYWhhZGV2LSBsYWQu
+cmpAYnAucmVuZXNhcy5jb20+DQo+ID4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiA2LzhdIGFybTY0
+OiBkdHM6IHJlbmVzYXM6IHI5YTA5ZzA1NzogQWRkDQo+ID4gV0RUMC1XRFQzIG5vZGVzDQo+ID4N
+Cj4gPiBIaSBCaWp1LA0KPiA+DQo+ID4gT24gTW9uLCBBdWcgMTIsIDIwMjQgYXQgMToyNeKAr1BN
+IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4gd3JvdGU6DQo+ID4gPg0KPiA+
+ID4gSGkgUHJhYmhha2FyLA0KPiA+ID4NCj4gPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gPiA+ID4gRnJvbTogUHJhYmhha2FyIDxwcmFiaGFrYXIuY3NlbmdnQGdtYWlsLmNvbT4N
+Cj4gPiA+ID4gU2VudDogU3VuZGF5LCBBdWd1c3QgMTEsIDIwMjQgOTo1MCBQTQ0KPiA+ID4gPiBT
+dWJqZWN0OiBbUEFUQ0ggdjIgNi84XSBhcm02NDogZHRzOiByZW5lc2FzOiByOWEwOWcwNTc6IEFk
+ZA0KPiA+ID4gPiBXRFQwLVdEVDMgbm9kZXMNCj4gPiA+ID4NCj4gPiA+ID4gRnJvbTogTGFkIFBy
+YWJoYWthciA8cHJhYmhha2FyLm1haGFkZXYtbGFkLnJqQGJwLnJlbmVzYXMuY29tPg0KPiA+ID4g
+Pg0KPiA+ID4gPiBBZGQgV0RUMC1XRFQzIG5vZGVzIHRvIFJaL1YySChQKSAoIlI5QTA5RzA1NyIp
+IFNvQyBEVFNJLg0KPiA+ID4gPg0KPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBMYWQgUHJhYmhha2Fy
+DQo+ID4gPiA+IDxwcmFiaGFrYXIubWFoYWRldi1sYWQucmpAYnAucmVuZXNhcy5jb20+DQo+ID4g
+PiA+IC0tLQ0KPiA+ID4gPiB2MS0+djINCj4gPiA+ID4gLSBOZXcgcGF0Y2gNCj4gPiA+ID4gLS0t
+DQo+ID4gPiA+ICBhcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjlhMDlnMDU3LmR0c2kgfCA0
+NA0KPiA+ID4gPiArKysrKysrKysrKysrKysrKysrKysrDQo+ID4gPiA+ICAxIGZpbGUgY2hhbmdl
+ZCwgNDQgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPg0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvYXJjaC9h
+cm02NC9ib290L2R0cy9yZW5lc2FzL3I5YTA5ZzA1Ny5kdHNpDQo+ID4gPiA+IGIvYXJjaC9hcm02
+NC9ib290L2R0cy9yZW5lc2FzL3I5YTA5ZzA1Ny5kdHNpDQo+ID4gPiA+IGluZGV4IDQzNWIxZjRl
+N2QzOC4uN2Y0ZThhZDliMGE1IDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3Qv
+ZHRzL3JlbmVzYXMvcjlhMDlnMDU3LmR0c2kNCj4gPiA+ID4gKysrIGIvYXJjaC9hcm02NC9ib290
+L2R0cy9yZW5lc2FzL3I5YTA5ZzA1Ny5kdHNpDQo+ID4gPiA+IEBAIC0xODQsNiArMTg0LDE3IEBA
+IHNjaWY6IHNlcmlhbEAxMWMwMTQwMCB7DQo+ID4gPiA+ICAgICAgICAgICAgICAgICAgICAgICBz
+dGF0dXMgPSAiZGlzYWJsZWQiOw0KPiA+ID4gPiAgICAgICAgICAgICAgIH07DQo+ID4gPiA+DQo+
+ID4gPiA+ICsgICAgICAgICAgICAgd2R0MDogd2F0Y2hkb2dAMTFjMDA0MDAgew0KPiA+ID4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJyZW5lc2FzLHI5YTA5ZzA1Ny13ZHQi
+Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgcmVnID0gPDAgMHgxMWMwMDQwMCAwIDB4
+NDAwPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIGNsb2NrcyA9IDwmY3BnIENQR19N
+T0QgNzU+LA0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgPCZjcGcgQ1BH
+X01PRCA3Nj47DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICBjbG9jay1uYW1lcyA9ICJw
+Y2xrIiwgIm9zY2NsayI7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICByZXNldHMgPSA8
+JmNwZyAxMTc+Ow0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgcG93ZXItZG9tYWlucyA9
+IDwmY3BnPjsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxl
+ZCI7DQo+ID4gPiA+ICsgICAgICAgICAgICAgfTsNCj4gPiA+ID4gKw0KPiA+ID4gPiAgICAgICAg
+ICAgICAgIG9zdG00OiB0aW1lckAxMmMwMDAwMCB7DQo+ID4gPiA+ICAgICAgICAgICAgICAgICAg
+ICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscjlhMDlnMDU3LW9zdG0iLCAicmVuZXNhcyxvc3Rt
+IjsNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgIHJlZyA9IDwweDAgMHgxMmMwMDAwMCAw
+eDAgMHgxMDAwPjsgQEAgLTIyNCw2DQo+ID4gPiA+ICsyMzUsMjggQEAgb3N0bTc6IHRpbWVyQDEy
+YzAzMDAwIHsNCj4gPiA+ID4gICAgICAgICAgICAgICAgICAgICAgIHN0YXR1cyA9ICJkaXNhYmxl
+ZCI7DQo+ID4gPiA+ICAgICAgICAgICAgICAgfTsNCj4gPiA+ID4NCj4gPiA+ID4gKyAgICAgICAg
+ICAgICB3ZHQyOiB3YXRjaGRvZ0AxMzAwMDAwMCB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAg
+ICAgICBjb21wYXRpYmxlID0gInJlbmVzYXMscjlhMDlnMDU3LXdkdCI7DQo+ID4gPiA+ICsgICAg
+ICAgICAgICAgICAgICAgICByZWcgPSA8MCAweDEzMDAwMDAwIDAgMHg0MDA+Ow0KPiA+ID4gPiAr
+ICAgICAgICAgICAgICAgICAgICAgY2xvY2tzID0gPCZjcGcgQ1BHX01PRCA3OT4sDQo+ID4gPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA8JmNwZyBDUEdfTU9EIDgwPjsNCj4gPiA+
+ID4gKyAgICAgICAgICAgICAgICAgICAgIGNsb2NrLW5hbWVzID0gInBjbGsiLCAib3NjY2xrIjsN
+Cj4gPiA+ID4gKyAgICAgICAgICAgICAgICAgICAgIHJlc2V0cyA9IDwmY3BnIDExOT47DQo+ID4g
+PiA+ICsgICAgICAgICAgICAgICAgICAgICBwb3dlci1kb21haW5zID0gPCZjcGc+Ow0KPiA+ID4g
+PiArICAgICAgICAgICAgICAgICAgICAgc3RhdHVzID0gImRpc2FibGVkIjsNCj4gPiA+ID4gKyAg
+ICAgICAgICAgICB9Ow0KPiA+ID4NCj4gPiA+IEkgZ3Vlc3Mgc2FtZSBncm91cChhbGwgd2R0IHRv
+Z2V0aGVyKSBhcnJhbmdlZCB0b2dldGhlcj8/IE5vdCBzdXJlLg0KPiA+ID4NCj4gPiBJIHRoaW5r
+IEdlZXJ0IHByZWZlcnMgaXQgdG8gYmUgc29ydGVkIGJhc2VkIG9uIHVuaXQgYWRkcmVzcy4gU28g
+SSdsbA0KPiA+IGxldCBHZWVydCBtYWtlIGEgZGVjaXNpb24gb24gdGhpcyAoYW5kIHRoZSByZXN0
+IG9mIHRoZSBzaW1pbGFyIHBhdGNoZXMNCj4gPiB3aGVyZSBub2RlcyBhcmUgc29ydGVkIGJhc2Vk
+IG9uIHVuaXQgYWRkcmVzcyBhbmQgbm90IGdyb3VwZWQgYmFzZWQgb24gSVApLg0KPiANCj4gSSBh
+Z3JlZS4gSWYgdGhhdCBpcyB0aGUgY2FzZSB3ZSBuZWVkIHRvIGZpeCBbMV0gWzFdDQo+IGh0dHBz
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L25leHQvbGludXgtDQo+
+IG5leHQuZ2l0L3RyZWUvYXJjaC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3I4YTc3NGExLmR0c2k/
+aD1uZXh0LTIwMjQwODEyI241ODQNCj4gaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xp
+bnV4L2tlcm5lbC9naXQvbmV4dC9saW51eC0NCj4gbmV4dC5naXQvdHJlZS9hcmNoL2FybTY0L2Jv
+b3QvZHRzL3JlbmVzYXMvcjhhNzc5NjAuZHRzaT9oPW5leHQtMjAyNDA4MTIjbjYzMw0KDQpTaW1p
+bGFybHkgDQoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0
+L25leHQvbGludXgtbmV4dC5naXQvdHJlZS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcjhh
+Nzc5NjAuZHRzaT9oPW5leHQtMjAyNDA4MTIjbjc2Mg0KDQpDaGVlcnMsDQpCaWp1DQo=
 
