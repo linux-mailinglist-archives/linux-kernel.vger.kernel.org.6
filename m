@@ -1,104 +1,194 @@
-Return-Path: <linux-kernel+bounces-282777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF2C94E879
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:23:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A834994E87F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:25:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 925181C217C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6586E2826BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC63316C85E;
-	Mon, 12 Aug 2024 08:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B62D216B39F;
+	Mon, 12 Aug 2024 08:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="GLLPI1hd"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eKBDnbIb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0022416C84D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:23:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C989455896;
+	Mon, 12 Aug 2024 08:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451001; cv=none; b=DtZkol/uF0u15z88jWOGqp2CS6lAvMPKNpP04d3FEc5f+/f4zHlqRWxoDhzSR9NMisahvgPKThXVkAW/iW/nionpsrh9zqkWkJSV9rzejFZoKChoPeA7vfkYuQhwDs8VQhAad1c2Cfta5XpOifOVtCVI5MitrxKJFibFoWI63Oo=
+	t=1723451146; cv=none; b=Z/iHOjaz9A01KqiphFBR8XjFH4FlES0z9tFWlG+TTgmH7gUsrWGyMKfdCy4PVp3IbMilGQH3LIjtH2WohoYNdTJpLUy+bNg9TCPThxpTwER9v8s90lbVmh9NDDMogoyhPHO3/BCddHil3mQ1HYxd3fF9ti0OWnlBPc0VSOtpG38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451001; c=relaxed/simple;
-	bh=aY0KQUuA6Pmd/5AZE/dDtIa4VZMCD57YXtBTpddeWwg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PKjQivvFTZQ9pa3+BxXT9V8ytgoUlt1N0PgakJbMWylA+qavyqd+2KWOCDUCNkWcC07h3GjroJtDZLeAW8lhGaydbQAqV1RSPoYO7AhNv+sUYbFJMlB92kLjf2JPA64F1YumsSP7qyklZXXOmDahRMOT1N/KpixY2blr/yrPHAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=GLLPI1hd; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723450997;
-	bh=SjGutqBaqZgjd7wqw4U0lQPoWxYx0nIAM9EvIIKTQn0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GLLPI1hdFzEgX6nkjZVe0VO4bsQo5bRJxASR4AK5UZ78M88a8/LssElM6PKMmC3FK
-	 3FHQdyReAjWheTxnqGT7t23bQ0IBRdlmv3TBpQ5DDHq933iufgF1u6FN/ZQi/IJb0k
-	 ZriXOcGwHS/ejpyF93YpxnyuPukCO5sKBRmscjuW1gUsHB3jNWQ8Ci7RQcAJlxli5b
-	 FhqIqopot8q2+bt3mhtybarzrcFDpJHuovtkTSIESV0VBicL5JyqQ/SNWk6LBn6nEy
-	 DRQi1jZIQQfXwfvWWRqP6SHKC/92pw7L6xPhGF3AmFbQTsrtjzZqJytysn/t714aRR
-	 k4UxPTtzp1goQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wj6wP2FB2z4x8M;
-	Mon, 12 Aug 2024 18:23:17 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linuxppc-dev@lists.ozlabs.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, christophe.leroy@csgroup.eu,
- jeffxu@chromium.org, jeffxu@google.com, Liam.Howlett@oracle.com,
- linux-kernel@vger.kernel.org, npiggin@gmail.com, oliver.sang@intel.com,
- pedro.falcato@gmail.com
-Subject: Re: [PATCH 1/4] mm: Add optional close() to struct vm_special_mapping
-In-Reply-To: <1b0e07fb-33fb-4397-b03e-65698601bc70@redhat.com>
-References: <20240807124103.85644-1-mpe@ellerman.id.au>
- <1b0e07fb-33fb-4397-b03e-65698601bc70@redhat.com>
-Date: Mon, 12 Aug 2024 18:23:16 +1000
-Message-ID: <87h6bq880b.fsf@mail.lhotse>
+	s=arc-20240116; t=1723451146; c=relaxed/simple;
+	bh=h88e09whIaPiL5jpWjAI7j4v8VLyNwz8TEsRjnQeQLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lwdL1xnLJu0SQIr2va7YLOBpswoVPfJM3AKa9NoGVFecSHHA9ET5KkUBXvOioYi5gIsooIVtg5aCQHBPgyFobjS/c9cucCo1ErbPK2QuWToxKWnYKAlcsGpjGxhxomGwoSPjw88kAkki2kfuBiPnGN9CjSe7DxqweIyVukmWhaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eKBDnbIb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DBF8C4AF0E;
+	Mon, 12 Aug 2024 08:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723451146;
+	bh=h88e09whIaPiL5jpWjAI7j4v8VLyNwz8TEsRjnQeQLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=eKBDnbIbLufgKKt+kH7APS9iAhG/DHelfvBiy+VxEW5iFmQBAd8RKXq7xVwhka3s3
+	 zGFUo0L59eew79qCFPdYrH4bVgsN644rEHVX3yQq1IfvOmn5ZpFRg+F55v+raBDC1W
+	 OXP8SO51sOb5mUFUCk617uienQ0NKq34jeGp1PuszdUuvLKiRviP8mWgfgSi1Xhod6
+	 /8msEixdGqPNR+Y4TeROKu9Gv1NCk2L3t3RqKM24IVCtAC0XL2pLN1KGFrU7id1ISs
+	 qhq9xjGaAmoWQPz8ZO5lNWBnHx3pA70z/9LamL1XMxi3ex0DAg8ertmtWdstrGQuPh
+	 FGtdNKxRjO6fg==
+Message-ID: <d9d76a4a-1552-462b-b946-6475645c6f59@kernel.org>
+Date: Mon, 12 Aug 2024 10:25:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: serial: Add Loongson UART controller
+To: =?UTF-8?B?6YOR6LGq5aiB?= <zhenghaowei@loongson.cn>,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, chenhuacai@kernel.org,
+ kernel@xen0n.name, p.zabel@pengutronix.de, zhuyinbo <zhuyinbo@loongson.cn>,
+ Jianmin Lv <lvjianmin@loongson.cn>, Liu Peibao <liupeibao@loongson.cn>,
+ wanghongliang <wanghongliang@loongson.cn>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, loongarch@lists.linux.dev
+References: <20240804063834.70022-1-zhenghaowei@loongson.cn>
+ <4d1f2426-b43c-4727-8387-f18edf937163@kernel.org>
+ <f31609c4-1e47-49bc-9231-5b0353d35dc9@loongson.cn>
+ <601adbfd-fbb6-48c6-b755-da1b5d321d6b@kernel.org>
+ <89e71573-9365-2e61-bb38-759363df1b8b@loongson.cn>
+ <5fdf6810-f729-42bf-a5fd-a2de02d0a894@kernel.org>
+ <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <32ff2c9b-1d34-4637-80ff-e8eefe253a95@loongson.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-David Hildenbrand <david@redhat.com> writes:
-> On 07.08.24 14:41, Michael Ellerman wrote:
->> Add an optional close() callback to struct vm_special_mapping. It will
->> be used, by powerpc at least, to handle unmapping of the VDSO.
->> 
->> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
->> ---
->>   include/linux/mm_types.h | 2 ++
->>   mm/mmap.c                | 3 +++
->>   2 files changed, 5 insertions(+)
->> 
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index d0dfc85b209b..24bd6aa9155c 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -3624,6 +3624,9 @@ static vm_fault_t special_mapping_fault(struct vm_fault *vmf);
->>    */
->>   static void special_mapping_close(struct vm_area_struct *vma)
->>   {
->> +	const struct vm_special_mapping *sm = vma->vm_private_data;
->
-> I'm old-fashioned, I enjoy an empty line here ;)
+On 12/08/2024 10:09, 郑豪威 wrote:
+> 
+> 在 2024/8/9 18:05, Krzysztof Kozlowski 写道:
+>> On 09/08/2024 11:55, 郑豪威 wrote:
+>>>>>>> +    description: Enables fractional-N division. Currently,
+>>>>>>> +      only LS2K1500 and LS2K2000 support this feature.
+>>>>>>> +
+>>>>>>> +  rts-invert:
+>>>>>>> +    description: Inverts the RTS value in the MCR register.
+>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>> +
+>>>>>>> +  dtr-invert:
+>>>>>>> +    description: Inverts the DTR value in the MCR register.
+>>>>>>> +      This should be used on Loongson-3 series CPUs, Loongson-2K
+>>>>>>> +      series CPUs, and Loongson LS7A bridge chips.
+>>>>>>> +
+>>>>>>> +  cts-invert:
+>>>>>>> +    description: Inverts the CTS value in the MSR register.
+>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>> +      and Loongson LS7A bridge chips.
+>>>>>>> +
+>>>>>>> +  dsr-invert:
+>>>>>>> +    description: Inverts the DSR value in the MSR register.
+>>>>>>> +      This should be used on Loongson-2K0500, Loongson-2K1000,
+>>>>>>> +      and Loongson LS7A bridge chips.
+>>>> Same questions for all these. Why choosing invert is a board level
+>>>> decision? If it "should be used" then why it is not used always?
+>>>>
+>>> Because these features are not applicable to all chips, such as
+>>> 'fractional-division',
+>> Hm?
+>>
+>>> which is currently supported only by 2K1500 and 2K2000, and for
+>>> Loongson-3 series
+>> These are SoCs. Compatible defines that. Please align with your
+>> colleagues, because *we talked about this* already.
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> I consulted with my colleagues and would like to confirm with you. For 
+> the five
+> 
+> properties provided, fractional-division is offered as a new feature,  
+> supported by
+> 
+> 2K1500 and 2K2000. As for the invert property, it is due to a bug in our 
+> controller,
+> 
+> and its usage may vary across different chips. Should we add different 
+> compatible
+> 
+> values to address these issues for different chips, whether they are new 
+> features or
+> 
+> controller bugs?
 
-Ack.
+How did you align? We had already talks with you about this problem -
+you need specific compatibles. How you explain above properties, all of
+them are deducible from the compatible, so drop them.
 
->> +	if (sm->close)
->> +		sm->close(sm, vma);
->
-> Reviewed-by: David Hildenbrand <david@redhat.com>
+Your entire argument above does not address at all my concerns, so
+before you respond repeating the same, really talk with your colleagues.
 
-Thanks.
+One of many previous discussions:
+https://lore.kernel.org/linux-devicetree/25c30964-6bd3-c7eb-640a-ba1f513b7675@linaro.org/
 
-cheers
+https://lore.kernel.org/linux-devicetree/20230526-dolly-reheat-06c4d5658415@wendy/
+
+I wish we do not have to keep repeating the same to Loongson. Please
+STORE the feedback for any future submissions, so you will not repeat
+the same mistakes over and over.
+
+Best regards,
+Krzysztof
+
 
