@@ -1,311 +1,555 @@
-Return-Path: <linux-kernel+bounces-283239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FF594EF05
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:57:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E895B94EF0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:00:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7802283BA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:57:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 783081F22FD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:00:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E6A17C7CE;
-	Mon, 12 Aug 2024 13:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF7717D8A9;
+	Mon, 12 Aug 2024 13:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OJNtrrCR";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xaOcv1S+"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="udcu4bC1"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E178549647;
-	Mon, 12 Aug 2024 13:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723471033; cv=fail; b=PaIOVcuHQzUS6Sug9mPaWa5F2lMkN/R0XV1Xa2u0X0yNCrm3rBPhxaGMXz2AR7riy3+HcFegTSi+dnBSTll8Z+dpXznT6wTid0bsQ0KN7t8JWQdLh7dCuC8/xJCVtngtGlJ8tTHwDJYFKDj0eHmmIb9tLanvoqHCy/mlqVBGv2s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723471033; c=relaxed/simple;
-	bh=dN7hocZVOW0tUVIpELFOP1iujjL/9fPLZJSE0bwQGfg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eYAIOhplbi3gPrVRKlBmN23KjKlpLvCYs1HEra30XZTWOdVXJ4qPnz4vfgYTEvPlr0cVIW5Pn5xlwiPGznP6yEAMbQng2XXwRYNiuVbAYj/aXeWPdWRmZi1lLXLe08cOm3Ugpv+OC0PzI+7bG47IbYbYyhp6fOc8F7HvQbwlQuM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OJNtrrCR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xaOcv1S+; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C8wkoS032350;
-	Mon, 12 Aug 2024 13:56:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=
-	corp-2023-11-20; bh=neoPRDOVT6JThUzKBQAPxd3gtMAvp5KG1Xrhl8vmbM0=; b=
-	OJNtrrCRcDIZJPTlmlPv9ZLAjn5RVsKJvXCGUgwZyVKW9glsFEuaKXrp+RxGi9AD
-	XsZ89z/W2j2LciXyJQCUKubbA0x/zZYptdcAjzSzgT/Zlc81MDlAkwFewat3VJjo
-	xCcC+AtN/9t9uxHa5RUxQITVJGBJWzTFIEM1fmlN9McKQQtKhftBw3NQgOSxp+tr
-	mVOFvlpf2MJzmHYNIqHe4Z4rfXGcaqJMvU0aRCpz/2ya4LzfRPlg3iCfQ8W9HTJO
-	qtC2VMdZ3woU/z6TAkgb4GG/NuanbkZHOHh9vkl8GCZmyL8DDfY1q09f2dBIYZrl
-	ErSCIXki+71rS1FgbZXQ1w==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wxt0tpd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 13:56:43 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CDJ6vi010740;
-	Mon, 12 Aug 2024 13:56:41 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn75sjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 13:56:41 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ety6wnHupScglfxTJlVjv3UDCwWEScILV1ZcxGMYOSvJ2otCZDxTKozVVclvY7KTvgxhyr0OV8PiHTRwIEnKt20TLV+u023yY4dNbncDVuJ4CT2N3Hq77ldTE5EChQnIyvw9kx1Sai9D2F64iRasJy6N/IBe9sn3dPxknQLkaH0KRa2QAatwwDUh4ui74zwmhOIxOMiD5LOdkJ2NyOxkGcPY0ZRspjQzUC0DGJCRSjlJ/BqV1hIl71bKpnb+NFbfCVUWvitDQAmPvaSYsG53luOq5lqPSdH3DiaGKWUvojWnylvfJW8uJSu7dczQDPSPgBn8HyQtwAvcFngmhcEoNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=neoPRDOVT6JThUzKBQAPxd3gtMAvp5KG1Xrhl8vmbM0=;
- b=uraZbJbb1MXo6pz+BDe86TRNiIylGJWcLGsFlHlVGw8ELMWxRrUHmn8Uk6F+Fk2COhAZfEJQoWs/DVTTQRP/g4POCtZk1TQFgWUugQ0A00/f1vh1YS7V/alaIJyXVzRFJWiQYRVRtZWPG6Y3pass2UYFAnbds8YWlcdPm3E7kWS438ml+nOt6XOLCrvRW2NyhKCIYCkhgVS2kBzWjmqFfbCNjOFVyle6/0JtyYVB/NmCFFpNjVgbX5wdoVA4FVCh7sDsON3Ej51FXC45kpcWl8nwtyXAd49PxqAKTITKg34CnG22kwK5gYfLZxvY5+TC7OEBizsRBdVZ+1n4pkUN6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=neoPRDOVT6JThUzKBQAPxd3gtMAvp5KG1Xrhl8vmbM0=;
- b=xaOcv1S+admU2+VNtFduSNQvyWbJHwe/D46j6EivTTZsfeBG9LjLQpEiS9miSIFOiutcHVeyfJeNVz8vXO/LDAQ4SaeX+Ah8h9faEMIEb0I721t68lff/liu/4qDPIMhr8K0PUcQ7Kg2ELM4YfKAAFOqtfl2pZPRLHpqvNBoQsc=
-Received: from BLAPR10MB5267.namprd10.prod.outlook.com (2603:10b6:208:30e::22)
- by DM6PR10MB4329.namprd10.prod.outlook.com (2603:10b6:5:219::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Mon, 12 Aug
- 2024 13:56:38 +0000
-Received: from BLAPR10MB5267.namprd10.prod.outlook.com
- ([fe80::682b:c879:9f97:a34f]) by BLAPR10MB5267.namprd10.prod.outlook.com
- ([fe80::682b:c879:9f97:a34f%7]) with mapi id 15.20.7849.013; Mon, 12 Aug 2024
- 13:56:38 +0000
-Message-ID: <61cf5568-7a01-4231-8189-006bde4ec0ad@oracle.com>
-Date: Mon, 12 Aug 2024 14:56:32 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] libbpf: workaround -Wmaybe-uninitialized false
- positive
-To: Sam James <sam@gentoo.org>, Andrii Nakryiko <andrii@kernel.org>,
-        Eduard Zingerman <eddyz87@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
-Cc: "Jose E . Marchesi" <jose.marchesi@oracle.com>,
-        Andrew Pinski <quic_apinski@quicinc.com>,
-        =?UTF-8?B?S2FjcGVyIFPFgm9tacWEc2tp?= <kacper.slominski72@gmail.com>,
-        =?UTF-8?Q?Arsen_Arsenovi=C4=87?= <arsen@gentoo.org>,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <12cec1262be71de5f1d9eae121b637041a5ae247.1723459079.git.sam@gentoo.org>
-Content-Language: en-GB
-From: Alan Maguire <alan.maguire@oracle.com>
-In-Reply-To: <12cec1262be71de5f1d9eae121b637041a5ae247.1723459079.git.sam@gentoo.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: LO4P265CA0260.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:37c::11) To BLAPR10MB5267.namprd10.prod.outlook.com
- (2603:10b6:208:30e::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A1853370;
+	Mon, 12 Aug 2024 13:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723471180; cv=none; b=C1zBS7eULKdfWK8PFZUWeVHHonRXUp1jqnZlth7MA8g+V0fVNTE0p6crtEWbJPOvWdjOh7Nigh6hgUJB9Vwe2sKj0ZNwGS5X+m6+HCrrWN3Q/jmhyVPKkjP3dPcgmtkhMOkjG953KBkhc2Kf+LZmnIcz+4OQRygvpt3N07nfEZM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723471180; c=relaxed/simple;
+	bh=be02wNLge2e81Ebkc7I/FYYHGdi53PRnzeF6kZu+KvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=B+82dvwZQQ0aksfojUN1IFQopdveiEo9J2MaeX9hPFKd9t3BRAw3ST70P1TQxh2iAKMneBsP4HqCXAi0O0w8CmqDP41v8epwGSIK+YKc4rCeUdCx4KAKJmKX2rDFilndMb0lWJur+w+tCI3mu6fagp/WZsezjbUPYJpSgu4KdPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=udcu4bC1 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id d02df626233d17d3; Mon, 12 Aug 2024 15:59:35 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 5050B6F0D6A;
+	Mon, 12 Aug 2024 15:59:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1723471175;
+	bh=be02wNLge2e81Ebkc7I/FYYHGdi53PRnzeF6kZu+KvE=;
+	h=From:Subject:Date;
+	b=udcu4bC17/7/Ahk9GaVzowX2hUVXBoJS67PlZ1fKmNQullDa6ogJzVTMppVA9DZzH
+	 n7NzQ3i6J51yVY1Hk6NNeAUAlqFrHbBKtBT9B9aRL22m8m3J5EDAVvCzgrf84YuNQc
+	 a7woftomhKLR74dZehhZPzKSk3Aw/CtTDr/UMQyTbaaWC7tw9RcYdhI5PGuu3AXJ5h
+	 P4VyYNLV/Wp//z6jbUkeGmaxHfpascIrh88y7yg2AiTOP2PzCxg8Ii/JUoYjk4o/0J
+	 pMlekI+ACOuKdE9qF+wdZmwz0mfHSnyYW5pjULA3jE4LndWrUTfCQ/jJUL4W2ksB4e
+	 6Bgbpbw8v3YRA==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>
+Subject:
+ [PATCH v2 05/17] thermal: core: Move lists of thermal instances to trip
+ descriptors
+Date: Mon, 12 Aug 2024 15:59:15 +0200
+Message-ID: <2691915.BddDVKsqQX@rjwysocki.net>
+In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
+References: <114901234.nniJfEyVGO@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BLAPR10MB5267:EE_|DM6PR10MB4329:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba96f2b6-58bf-400e-0d9e-08dcbad6963b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YUJNWkF0OXVVVmtSUHBTSTRBVEV3b3M2WXFhaFNCbkpkdXJEcVlFQnFuWE1R?=
- =?utf-8?B?ZmlFQzRwMlMxY1N0WENPTUU5enYvcWl6VDhCVWo0VmNpVU9FM2FyZTRVSExZ?=
- =?utf-8?B?RnlPU1dXQmtJbW13ZDN5K2dyNE1odkFVU05RL1RlbmJiUERmZC84R2hIczJa?=
- =?utf-8?B?dURHWUhyNElQUms1OU0vdVF4dTdhT2NUVC93Tm81YVY2UUNkRnR6ZlhyYkhM?=
- =?utf-8?B?N0pzUUd4akxTeENaUUpENFhWTkU2NDZzMEg5bGFIQTV3aWsxempheTVzWStK?=
- =?utf-8?B?VnI0TnBnLzdyZjZGemdKc3FBT3dRWVl3aEpDVnlRcjh2OTAyOFk5NHVXaEwr?=
- =?utf-8?B?UWc2ck9BL215MWhFT2pDTlA2NGpiWWp0OERzS3hEd2pnYnZ1WlRsdi9pQ3pV?=
- =?utf-8?B?aTJsa2c5ZGtjYXFVb3EwTS9nMXJtd2hkM1Z1TTNFQTNRVysxbGJIYWgvbVlX?=
- =?utf-8?B?b3pVQ3NuYk8zVlpLTW9ha0Vwdjk2QUtOWjNJVk8xTHZZT3ZDYWFoMlNxMmdz?=
- =?utf-8?B?Ty9SV2Y0TXNrSm9TTFlMMUYzMDZDOHZtQ0VVd2tZeGgwaUZwbU92WFFqdW16?=
- =?utf-8?B?dlYxaVVLRzZzdmVjdjNwY1YybUpmNTByOXRFaC9IS0llblF6SEZiWEplZzFl?=
- =?utf-8?B?SjJyTkZiNWM0b1ArWThMbDdIREdCVHkwOE1kYnFTRmVxbWxSS1FCM05EK0V1?=
- =?utf-8?B?aDBXK2g3MWdLeURJYUhldkFJYWlvRFVRQVZxdVVuU1dHVnZoaVVVZXBjREp3?=
- =?utf-8?B?M2hnbzF0OWduYnl0RWVDNXF1R0xpbGZ5VUdFRHZKbExnMDVNbUg5byttdFBH?=
- =?utf-8?B?ci9OUUJIek1wbzMwS2lZeXNQOEU0WStYSmRuWkJLU09VQ3dxWjh3b3hocGZU?=
- =?utf-8?B?L0FSWmZyMGJuakJEa1Z6bFVWMXl4WGRWYXA1SUtmSFVXdG8wTUsvM0U0akxL?=
- =?utf-8?B?a2p1aHM4MjVBSU9DNWJzdHlqQ1BKZ0Z6M0NMUTVhS3kyVE14Zk1INDJvbzRm?=
- =?utf-8?B?a3BhVjZDWUFoRlVsTEZTdithNkQrWGFST1lCVURmN1RQOE1Ma3M2cnNEUU1U?=
- =?utf-8?B?dno2VVBJemI5THFjenhFdUMwOGF2NzJUcVVnQkhSaWsxUmlqR0xuNjYvZFNo?=
- =?utf-8?B?RlBrNFJMVWxWc3RqWXg0elpsR0NUTFRLME1VQ25SWmNQQWtYeGo5cUs5Yno0?=
- =?utf-8?B?UXVObUp5M1M5NmcxSmVZS1lydUpGZEFidkVyYk1LdWU2cW93ZGd0SVNoMkFZ?=
- =?utf-8?B?bFdHT3d4RG5KYTMwRWpvVHIxS3VFWTZOU0hLN3k5N1hId2pBMlQvRVl6MWFk?=
- =?utf-8?B?Q2kwVTNGbm9jMVpWNng0QmRJcWpvaEtIa2F1S2VsdVJSN3J2Mlg2Sks2MjRO?=
- =?utf-8?B?dUNFOWNQQ2Z2cWRIZTY5cTJkbXYvSm5pWTNid1YzZENaSkNWby8yVTNNUklM?=
- =?utf-8?B?bTdEcS9iT1JvcUgyeVJ6dzRkbkFZOVpzT292dFc0WnZHVk83aFJTZE83RlI0?=
- =?utf-8?B?VldkZWFmU1NXQ3BBTDFaRWlnTDVkVjVucHFsY0MwVWlrVXcrTXRBSUJZNmt3?=
- =?utf-8?B?NGFHNjNtRUE4d1dMb3BqQmF6V0JZWTNSSzFVNTZxejlKQ25YNHdDL2NaTExO?=
- =?utf-8?B?empEOWJNbCtLd2dNTk1wdkE5czU4WUFwZ3RQb0VCS0VPRmJSYnI1K3hVOWRW?=
- =?utf-8?B?VzRUVU5pdVQ2UlFBRVZYTUhubWNRN21HeWhCNFdjZ1htbk9vR3poTllCZ2VH?=
- =?utf-8?B?OGFic3Z2NEJKSmlhM0cxWTB3ZVV4UXpFWVk2SHE1TUw0Q2VDenpMMW9vZGFM?=
- =?utf-8?B?bkZ2UUF1QXdmY05VbUhoUT09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BLAPR10MB5267.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c1BXVVFGUWx3YzRGRUVHNDYyME1wQVNIKzlzSzY3QXdoUmFVY2p4N3JoNjBD?=
- =?utf-8?B?bDk2dEwzTXlpMVB3MjR1L2pLTUt0UzY5Tms3M1kzdUVFVElBbU1lWTdWcWpC?=
- =?utf-8?B?M3YvVU43L2xUWlBCUUFvbFlVNFRaT0NWc0ZCeVFKMHNpRUx4Q283TVNrUnlu?=
- =?utf-8?B?cHlTR0dtT0NrRkpWY1I4WjR3cDNMUmJaVlNiRjAwclFSdnJQNnFzeXUyeW9B?=
- =?utf-8?B?aUlQNkUyMDhMRjB3UlR6QVZkNExvTGRNcXEwMU8wTjJDSWNGSzRKN1JGaGFX?=
- =?utf-8?B?Vm5IRit0LzBUTnByT2xpTndLNmhmM1IvQ09TSWVqT0dURmRuNVkvNFVCaTVj?=
- =?utf-8?B?UzI5RVUyRTVhcEZ5ODhFaWp3WURRNlhrRTJtQW4rakhuNWFYZi9LbXlCRDlF?=
- =?utf-8?B?Ym5maC9udXBXOXNIWXRQc1dIc2dxNm9zdlFia2ZPeDMwSnBPdUhZSEZVYk9U?=
- =?utf-8?B?b0JYVGtnR0VPczgzaHRTYWl5bmgrQVN0bm1Ceks2bTNGc3JzNzNEM1lXdkJT?=
- =?utf-8?B?TnNOaVgyd2Zubm95RVdwVXV6ejdmWDFjclNPUzFBNFVUaWswcUxjalU4UHJC?=
- =?utf-8?B?QjVoZlhQVFAyakk5OUUzVWtaYVdEc3FTaHJyUVRwUmxsaGUzU0tXYjdXVERW?=
- =?utf-8?B?bkNYQUM4YzFLdjlSY0pZMXAxRVMyOWhrbjFxWmp5TUVxVFRxaEUwZDVoYzhK?=
- =?utf-8?B?YURYYW9nYzFzeW11cmdBU0VNcExmYndnc1I1UVVYTSt1b3NaSXhLYndYVzRI?=
- =?utf-8?B?RmREN3hjMUh6TjluZk9BQjhsVHNmcE5aQThLSkM1S1ZDTURwWkMvT1dmNG9o?=
- =?utf-8?B?c2hWY25OQ3JNd1BUVzJLSGZiMEhpTlF1bi9aNFZ6blo5TFRTSWVvMTAxVlJp?=
- =?utf-8?B?T0wwNVdCajlrVjZDSzRlNWFYZUdKTmozN3NscjRWQ0lEcGNQZDRSUDcxLzVs?=
- =?utf-8?B?eVdGRDdkZUZ5dXdSQTR4bUZyVSs4dnpQZHpIRjBJMEtJc0pXQXZqOFpRZHRV?=
- =?utf-8?B?SHY0ZEt3QmdTcmZPVnBCZWxpaFA2STFjSUZ2OGkwTXFJekdMZXRxSjJUK1VN?=
- =?utf-8?B?ZEtIVU5icG1uM3V5aU4vTzdKKy80TjQ3Yzh1V0VoVnRWeWNoK2tnWnpOOXRM?=
- =?utf-8?B?bFpmVnlIZTBReWZLdCtpcHFwR3owZXNMTjRlTS9sNGpMZjRBa25KMkFSZWl4?=
- =?utf-8?B?WXltUzJvWGtiVWtJNis0c1ZEUzlIWmpzc1JGWnFhczhXaUNoamQ5US80MS9Y?=
- =?utf-8?B?Wk1nb0xUem1POHFjSkdHZmVmSmh3bkYrRGdweWRXV0phQ3A3WU5GNjBNeVFM?=
- =?utf-8?B?RFg5MUJjTXJmTXk0cUhSQVFnMVlRcmlrS2Nwa1R5OHVEOU5ILzJWaXlVR0Uw?=
- =?utf-8?B?Um43a3dVUlFLNzg5bTc3NloyWmtXV09xK0RnQVJkR0Nod1BXbDFZSE1NTGZR?=
- =?utf-8?B?MlYvRzV5YndSSjBJaXAyNXBVUk1iVzEwNXQvMW8wZTVoaHVPdHBxbkc5eCtG?=
- =?utf-8?B?NGJyOGVuc3BKYVVjWmlwdEtGYjRqZEdSamJ4eW5uNElrUVFBSkdTOWpVUTNo?=
- =?utf-8?B?bnhrK2Z0QWNoTkVpbmFvbVhrbXNKOUN6Y3phdXBrZkRtTGRLU05zOGh2OTlW?=
- =?utf-8?B?N3FsUDlhcG9xdkhoNXU1TVdka1ZZU3UydnhESklzZENxM1BKL3NyTm9Hbmtz?=
- =?utf-8?B?SWw4OUhxMzNEWlR5dUIxclFuSFBNazZreTBvZFQ4UWxHK0VqYk1sc2s0VUtq?=
- =?utf-8?B?czFoczRFUGVKQXdFRVlrQnozc3A4cFlJdUNmakg4Wm9DL2tiU2JsSmtqVXIz?=
- =?utf-8?B?MHNpbktLUGtxVDAycjY3UHRXMmh4V00yNVhZUjVFc2ZKcnlGMTRhR0UrODJG?=
- =?utf-8?B?ekYrQW5UeXdBMEpYSHpqSU1RTENqaWs1UjVWMHhTc2R5S0hST1I0aUg3cTNv?=
- =?utf-8?B?K2FubE1TS0J0dWl0K3BlU0toazQzSTJEMHVQVXNUdlhoV0VsM2JTVTZLRVg3?=
- =?utf-8?B?cUpzRmVyOTlTdFZVVVMvdEdCSFNHNFhlbHY3MGgrY2phMmZZR1dwWXRSTGxt?=
- =?utf-8?B?c3BQb2ZCS0w1K1lpdVp3eS9lNVNBcDhqZUNzU2g4bXlCMVdxeUU1R0lMbmhJ?=
- =?utf-8?B?bTluKzBBMHJRczlEaWhWYis0c2VYRUpFeG9MbVNrNjRZRy9VN2E5alZxdTBH?=
- =?utf-8?Q?exXhl1gFYcCkHekAWoQK/uI=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	iBczBZYWuriZIZaXI2syYDiZORVCbAhtiSocnXzUiUqnC7GRl5k6ZEtscBcscqBNDT1DPcWwVuSY+Y7uZw++XjiHPbYLtHeIoUMh9ZWJXIT+0nejOBkUvkIpvGEsTpnW24X1QkvEao0jpN0R7xmm7FA8+Ca2jbP8FvAkdkG0eKF4MYxYrp6qJlTPQw17PPVSZVBI28fDVMq6NvGE7Nc5j+Ud1hvLmdnsn1r/bxHIZ62lPTIYXdBM0qoX9CnJyVOQEkr1c0PfhHjhy61QOTYvtx/VxUOWtnBDwSu3VtK86w1H24VA/1iW5S3SZj9NGOkuWTYNXV03Kbw7zx6fWKq7KX7ZNq5V5ECBnUhn2bDnLFhw2QBtB8MFYBP/N29O3sd+wxnQlQ+3r7crYC+vF8sq6eZtrCRzX0fUOcufUQ3Hkt0fJrXIJzmXgTJuHvilyx7x7181b25CEMJz5V8B0EGwvPDb00OqTekeO6z8CwiO80RGHWI4NTKORXhW2AQOW08kZDgX4fepx7NXrnaTdt21lLw4gbliiKnu0l0bH2AWwZenh/uTcxPWewO2168RuStkl5W+/du9c5AuoJUlnjaCk1gjD8av73QD9SkoDDfKcTM=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba96f2b6-58bf-400e-0d9e-08dcbad6963b
-X-MS-Exchange-CrossTenant-AuthSource: BLAPR10MB5267.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 13:56:38.7739
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 61I6T2lHR8pcFyj/8sNgLXGqNGGwkJ6nRvo46xSoTMseq5dxhm2jo4BzpBSUa7JhXMTGVF+u/iVNRdE/ea2IWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4329
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_04,2024-08-12_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 bulkscore=0
- adultscore=0 suspectscore=0 mlxlogscore=999 phishscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408120103
-X-Proofpoint-GUID: ymOjrZeUvUAGPYFIRmcmvSLWMGdjhneB
-X-Proofpoint-ORIG-GUID: ymOjrZeUvUAGPYFIRmcmvSLWMGdjhneB
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddttddgjedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohephedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhr
+ tghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhm
+X-DCC--Metrics: v370.home.net.pl 1024; Body=5 Fuz1=5 Fuz2=5
 
-On 12/08/2024 11:37, Sam James wrote:
-> In `elf_close`, we get this with GCC 15 -O3 (at least):
-> ```
-> In function ‘elf_close’,
->     inlined from ‘elf_close’ at elf.c:53:6,
->     inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-> elf.c:57:9: warning: ‘elf_fd.elf’ may be used uninitialized [-Wmaybe-uninitialized]
->    57 |         elf_end(elf_fd->elf);
->       |         ^~~~~~~~~~~~~~~~~~~~
-> elf.c: In function ‘elf_find_func_offset_from_file’:
-> elf.c:377:23: note: ‘elf_fd.elf’ was declared here
->   377 |         struct elf_fd elf_fd;
->       |                       ^~~~~~
-> In function ‘elf_close’,
->     inlined from ‘elf_close’ at elf.c:53:6,
->     inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-> elf.c:58:9: warning: ‘elf_fd.fd’ may be used uninitialized [-Wmaybe-uninitialized]
->    58 |         close(elf_fd->fd);
->       |         ^~~~~~~~~~~~~~~~~
-> elf.c: In function ‘elf_find_func_offset_from_file’:
-> elf.c:377:23: note: ‘elf_fd.fd’ was declared here
->   377 |         struct elf_fd elf_fd;
->       |                       ^~~~~~
-> ```
-> 
-> In reality, our use is fine, it's just that GCC doesn't model errno
-> here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly
-> by initializing elf_fd.elf to -1.
-> 
-> I've done this in two other functions as well given it could easily
-> occur there too (same access/use pattern).
->
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-hmm, looking at this again - given that there are multiple consumers -
-I suppose another option would perhaps be to
+In almost all places where a thermal zone's list of thermal instances
+is walked, there is a check to match a specific trip point and it is
+walked in vain whenever there are no cooling devices associated with
+the given trip.
 
-- have elf_open() to init int fd = -1, Elf *elf = NULL.
-- have error paths in elf_open() "goto out"; at out: we set elf_fd->fd,
-elf_fd->elf to fd, elf
-- have elf_close() exit it elf_fd < 0 (since 0 is a valid fd), as it
-will for the error cases
+To address this, store the lists of thermal instances in trip point
+descriptors instead of storing them in thermal zones and adjust all
+code using those lists accordingly.
 
-Might all be bit excessive, and might not even fix the false positive
-issue here, so
+No intentional functional impact.
 
-> Link: https://gcc.gnu.org/PR114952
-> Signed-off-by: Sam James <sam@gentoo.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
+v1 -> v2: No changes
 
-> ---
-> v3: Initialize to -1 instead of using a pragma.
-> 
-> Range-diff against v2:
-> 1:  8f5c3b173e4cb < -:  ------------- libbpf: workaround -Wmaybe-uninitialized false positive
-> -:  ------------- > 1:  12cec1262be71 libbpf: workaround -Wmaybe-uninitialized false positive
-> 
->  tools/lib/bpf/elf.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
-> index c92e02394159e..00ea3f867bbc8 100644
-> --- a/tools/lib/bpf/elf.c
-> +++ b/tools/lib/bpf/elf.c
-> @@ -374,7 +374,7 @@ long elf_find_func_offset(Elf *elf, const char *binary_path, const char *name)
->   */
->  long elf_find_func_offset_from_file(const char *binary_path, const char *name)
->  {
-> -	struct elf_fd elf_fd;
-> +	struct elf_fd elf_fd = { .fd = -1 };
->  	long ret = -ENOENT;
->  
->  	ret = elf_open(binary_path, &elf_fd);
-> @@ -412,7 +412,7 @@ int elf_resolve_syms_offsets(const char *binary_path, int cnt,
->  	int err = 0, i, cnt_done = 0;
->  	unsigned long *offsets;
->  	struct symbol *symbols;
-> -	struct elf_fd elf_fd;
-> +	struct elf_fd elf_fd = { .fd = -1 };
->  
->  	err = elf_open(binary_path, &elf_fd);
->  	if (err)
-> @@ -507,7 +507,7 @@ int elf_resolve_pattern_offsets(const char *binary_path, const char *pattern,
->  	int sh_types[2] = { SHT_SYMTAB, SHT_DYNSYM };
->  	unsigned long *offsets = NULL;
->  	size_t cap = 0, cnt = 0;
-> -	struct elf_fd elf_fd;
-> +	struct elf_fd elf_fd = { .fd = -1 };
->  	int err = 0, i;
->  
->  	err = elf_open(binary_path, &elf_fd);
+---
+ drivers/thermal/gov_bang_bang.c       |    8 ++----
+ drivers/thermal/gov_fair_share.c      |   16 ++++---------
+ drivers/thermal/gov_power_allocator.c |   41 ++++++++++++++--------------------
+ drivers/thermal/gov_step_wise.c       |   16 ++++++-------
+ drivers/thermal/thermal_core.c        |   33 +++++++++++++++------------
+ drivers/thermal/thermal_core.h        |    5 +---
+ drivers/thermal/thermal_helpers.c     |    5 ++--
+ include/linux/thermal.h               |    4 +--
+ 8 files changed, 60 insertions(+), 68 deletions(-)
+
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -491,7 +491,7 @@ static void thermal_zone_device_check(st
+ 
+ static void thermal_zone_device_init(struct thermal_zone_device *tz)
+ {
+-	struct thermal_instance *pos;
++	struct thermal_trip_desc *td;
+ 
+ 	INIT_DELAYED_WORK(&tz->poll_queue, thermal_zone_device_check);
+ 
+@@ -499,8 +499,12 @@ static void thermal_zone_device_init(str
+ 	tz->passive = 0;
+ 	tz->prev_low_trip = -INT_MAX;
+ 	tz->prev_high_trip = INT_MAX;
+-	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
+-		pos->initialized = false;
++	for_each_trip_desc(tz, td) {
++		struct thermal_instance *instance;
++
++		list_for_each_entry(instance, &td->thermal_instances, trip_node)
++			instance->initialized = false;
++	}
+ }
+ 
+ static void thermal_governor_trip_crossed(struct thermal_governor *governor,
+@@ -774,13 +778,13 @@ struct thermal_zone_device *thermal_zone
+  * Return: 0 on success, the proper error value otherwise.
+  */
+ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+-				     const struct thermal_trip *trip,
++				     struct thermal_trip *trip,
+ 				     struct thermal_cooling_device *cdev,
+ 				     unsigned long upper, unsigned long lower,
+ 				     unsigned int weight)
+ {
+-	struct thermal_instance *dev;
+-	struct thermal_instance *pos;
++	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
++	struct thermal_instance *dev, *instance;
+ 	bool upper_no_limit;
+ 	int result;
+ 
+@@ -850,14 +854,14 @@ int thermal_bind_cdev_to_trip(struct the
+ 	mutex_lock(&tz->lock);
+ 	mutex_lock(&cdev->lock);
+ 
+-	list_for_each_entry(pos, &tz->thermal_instances, tz_node) {
+-		if (pos->trip == trip && pos->cdev == cdev) {
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
++		if (instance->cdev == cdev) {
+ 			result = -EEXIST;
+ 			goto remove_weight_file;
+ 		}
+ 	}
+ 
+-	list_add_tail(&dev->tz_node, &tz->thermal_instances);
++	list_add_tail(&dev->trip_node, &td->thermal_instances);
+ 	list_add_tail(&dev->cdev_node, &cdev->thermal_instances);
+ 	atomic_set(&tz->need_update, 1);
+ 
+@@ -909,17 +913,18 @@ EXPORT_SYMBOL_GPL(thermal_zone_bind_cool
+  * Return: 0 on success, the proper error value otherwise.
+  */
+ int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
+-				  const struct thermal_trip *trip,
++				  struct thermal_trip *trip,
+ 				  struct thermal_cooling_device *cdev)
+ {
++	struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *pos, *next;
+ 
+ 	mutex_lock(&tz->lock);
+ 	mutex_lock(&cdev->lock);
+ 
+-	list_for_each_entry_safe(pos, next, &tz->thermal_instances, tz_node) {
+-		if (pos->trip == trip && pos->cdev == cdev) {
+-			list_del(&pos->tz_node);
++	list_for_each_entry_safe(pos, next, &td->thermal_instances, trip_node) {
++		if (pos->cdev == cdev) {
++			list_del(&pos->trip_node);
+ 			list_del(&pos->cdev_node);
+ 
+ 			thermal_governor_update_tz(tz, THERMAL_TZ_UNBIND_CDEV);
+@@ -1446,7 +1451,6 @@ thermal_zone_device_register_with_trips(
+ 		}
+ 	}
+ 
+-	INIT_LIST_HEAD(&tz->thermal_instances);
+ 	INIT_LIST_HEAD(&tz->node);
+ 	ida_init(&tz->ida);
+ 	mutex_init(&tz->lock);
+@@ -1470,6 +1474,7 @@ thermal_zone_device_register_with_trips(
+ 	tz->num_trips = num_trips;
+ 	for_each_trip_desc(tz, td) {
+ 		td->trip = *trip++;
++		INIT_LIST_HEAD(&td->thermal_instances);
+ 		/*
+ 		 * Mark all thresholds as invalid to start with even though
+ 		 * this only matters for the trips that start as invalid and
+Index: linux-pm/drivers/thermal/thermal_core.h
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.h
++++ linux-pm/drivers/thermal/thermal_core.h
+@@ -30,6 +30,7 @@ struct thermal_trip_desc {
+ 	struct thermal_trip trip;
+ 	struct thermal_trip_attrs trip_attrs;
+ 	struct list_head notify_list_node;
++	struct list_head thermal_instances;
+ 	int notify_temp;
+ 	int threshold;
+ };
+@@ -93,7 +94,6 @@ struct thermal_governor {
+  * @tzp:	thermal zone parameters
+  * @governor:	pointer to the governor for this thermal zone
+  * @governor_data:	private pointer for governor data
+- * @thermal_instances:	list of &struct thermal_instance of this thermal zone
+  * @ida:	&struct ida to generate unique id for this zone's cooling
+  *		devices
+  * @lock:	lock to protect thermal_instances list
+@@ -128,7 +128,6 @@ struct thermal_zone_device {
+ 	struct thermal_zone_params *tzp;
+ 	struct thermal_governor *governor;
+ 	void *governor_data;
+-	struct list_head thermal_instances;
+ 	struct ida ida;
+ 	struct mutex lock;
+ 	struct list_head node;
+@@ -224,7 +223,7 @@ struct thermal_instance {
+ 	struct device_attribute attr;
+ 	char weight_attr_name[THERMAL_NAME_LENGTH];
+ 	struct device_attribute weight_attr;
+-	struct list_head tz_node; /* node in tz->thermal_instances */
++	struct list_head trip_node; /* node in trip->thermal_instances */
+ 	struct list_head cdev_node; /* node in cdev->thermal_instances */
+ 	unsigned int weight; /* The weight of the cooling device */
+ 	bool upper_no_limit;
+Index: linux-pm/drivers/thermal/gov_bang_bang.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_bang_bang.c
++++ linux-pm/drivers/thermal/gov_bang_bang.c
+@@ -45,6 +45,7 @@ static void bang_bang_control(struct the
+ 			      const struct thermal_trip *trip,
+ 			      bool crossed_up)
+ {
++	const struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *instance;
+ 
+ 	lockdep_assert_held(&tz->lock);
+@@ -53,10 +54,7 @@ static void bang_bang_control(struct the
+ 		thermal_zone_trip_id(tz, trip), trip->temperature,
+ 		tz->temperature, trip->hysteresis);
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+-		if (instance->trip != trip)
+-			continue;
+-
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		if (instance->target != 0 && instance->target != 1 &&
+ 		    instance->target != THERMAL_NO_TARGET)
+ 			pr_debug("Unexpected state %ld of thermal instance %s in bang-bang\n",
+@@ -75,7 +73,7 @@ static void bang_bang_control(struct the
+ 		mutex_unlock(&instance->cdev->lock);
+ 	}
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node)
++	list_for_each_entry(instance, &td->thermal_instances, trip_node)
+ 		thermal_cdev_update(instance->cdev);
+ }
+ 
+Index: linux-pm/drivers/thermal/gov_fair_share.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_fair_share.c
++++ linux-pm/drivers/thermal/gov_fair_share.c
+@@ -44,7 +44,7 @@ static int get_trip_level(struct thermal
+ /**
+  * fair_share_throttle - throttles devices associated with the given zone
+  * @tz: thermal_zone_device
+- * @trip: trip point
++ * @td: trip point descriptor
+  * @trip_level: number of trips crossed by the zone temperature
+  *
+  * Throttling Logic: This uses three parameters to calculate the new
+@@ -61,29 +61,23 @@ static int get_trip_level(struct thermal
+  * new_state of cooling device = P3 * P2 * P1
+  */
+ static void fair_share_throttle(struct thermal_zone_device *tz,
+-				const struct thermal_trip *trip,
++				const struct thermal_trip_desc *td,
+ 				int trip_level)
+ {
+ 	struct thermal_instance *instance;
+ 	int total_weight = 0;
+ 	int nr_instances = 0;
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+-		if (instance->trip != trip)
+-			continue;
+-
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		total_weight += instance->weight;
+ 		nr_instances++;
+ 	}
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		struct thermal_cooling_device *cdev = instance->cdev;
+ 		u64 dividend;
+ 		u32 divisor;
+ 
+-		if (instance->trip != trip)
+-			continue;
+-
+ 		dividend = trip_level;
+ 		dividend *= cdev->max_state;
+ 		divisor = tz->num_trips;
+@@ -116,7 +110,7 @@ static void fair_share_manage(struct the
+ 		    trip->type == THERMAL_TRIP_HOT)
+ 			continue;
+ 
+-		fair_share_throttle(tz, trip, trip_level);
++		fair_share_throttle(tz, td, trip_level);
+ 	}
+ }
+ 
+Index: linux-pm/drivers/thermal/gov_power_allocator.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_power_allocator.c
++++ linux-pm/drivers/thermal/gov_power_allocator.c
+@@ -97,13 +97,6 @@ struct power_allocator_params {
+ 	struct power_actor *power;
+ };
+ 
+-static bool power_actor_is_valid(struct power_allocator_params *params,
+-				 struct thermal_instance *instance)
+-{
+-	return (instance->trip == params->trip_max &&
+-		 cdev_is_power_actor(instance->cdev));
+-}
+-
+ /**
+  * estimate_sustainable_power() - Estimate the sustainable power of a thermal zone
+  * @tz: thermal zone we are operating in
+@@ -118,13 +111,14 @@ static bool power_actor_is_valid(struct
+ static u32 estimate_sustainable_power(struct thermal_zone_device *tz)
+ {
+ 	struct power_allocator_params *params = tz->governor_data;
++	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+ 	struct thermal_cooling_device *cdev;
+ 	struct thermal_instance *instance;
+ 	u32 sustainable_power = 0;
+ 	u32 min_power;
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+-		if (!power_actor_is_valid(params, instance))
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
++		if (!cdev_is_power_actor(instance->cdev))
+ 			continue;
+ 
+ 		cdev = instance->cdev;
+@@ -400,6 +394,7 @@ static void divvy_up_power(struct power_
+ static void allocate_power(struct thermal_zone_device *tz, int control_temp)
+ {
+ 	struct power_allocator_params *params = tz->governor_data;
++	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+ 	unsigned int num_actors = params->num_actors;
+ 	struct power_actor *power = params->power;
+ 	struct thermal_cooling_device *cdev;
+@@ -417,10 +412,10 @@ static void allocate_power(struct therma
+ 	/* Clean all buffers for new power estimations */
+ 	memset(power, 0, params->buffer_size);
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		struct power_actor *pa = &power[i];
+ 
+-		if (!power_actor_is_valid(params, instance))
++		if (!cdev_is_power_actor(instance->cdev))
+ 			continue;
+ 
+ 		cdev = instance->cdev;
+@@ -454,10 +449,10 @@ static void allocate_power(struct therma
+ 		       power_range);
+ 
+ 	i = 0;
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		struct power_actor *pa = &power[i];
+ 
+-		if (!power_actor_is_valid(params, instance))
++		if (!cdev_is_power_actor(instance->cdev))
+ 			continue;
+ 
+ 		power_actor_set_power(instance->cdev, instance,
+@@ -538,12 +533,13 @@ static void reset_pid_controller(struct
+ static void allow_maximum_power(struct thermal_zone_device *tz)
+ {
+ 	struct power_allocator_params *params = tz->governor_data;
++	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+ 	struct thermal_cooling_device *cdev;
+ 	struct thermal_instance *instance;
+ 	u32 req_power;
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+-		if (!power_actor_is_valid(params, instance))
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
++		if (!cdev_is_power_actor(instance->cdev))
+ 			continue;
+ 
+ 		cdev = instance->cdev;
+@@ -581,13 +577,11 @@ static void allow_maximum_power(struct t
+ static int check_power_actors(struct thermal_zone_device *tz,
+ 			      struct power_allocator_params *params)
+ {
++	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+ 	struct thermal_instance *instance;
+ 	int ret = 0;
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
+-		if (instance->trip != params->trip_max)
+-			continue;
+-
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		if (!cdev_is_power_actor(instance->cdev)) {
+ 			dev_warn(&tz->device, "power_allocator: %s is not a power actor\n",
+ 				 instance->cdev->type);
+@@ -635,14 +629,15 @@ static void power_allocator_update_tz(st
+ 				      enum thermal_notify_event reason)
+ {
+ 	struct power_allocator_params *params = tz->governor_data;
++	const struct thermal_trip_desc *td = trip_to_trip_desc(params->trip_max);
+ 	struct thermal_instance *instance;
+ 	int num_actors = 0;
+ 
+ 	switch (reason) {
+ 	case THERMAL_TZ_BIND_CDEV:
+ 	case THERMAL_TZ_UNBIND_CDEV:
+-		list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+-			if (power_actor_is_valid(params, instance))
++		list_for_each_entry(instance, &td->thermal_instances, trip_node)
++			if (cdev_is_power_actor(instance->cdev))
+ 				num_actors++;
+ 
+ 		if (num_actors == params->num_actors)
+@@ -652,8 +647,8 @@ static void power_allocator_update_tz(st
+ 		break;
+ 	case THERMAL_INSTANCE_WEIGHT_CHANGED:
+ 		params->total_weight = 0;
+-		list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+-			if (power_actor_is_valid(params, instance))
++		list_for_each_entry(instance, &td->thermal_instances, trip_node)
++			if (cdev_is_power_actor(instance->cdev))
+ 				params->total_weight += instance->weight;
+ 		break;
+ 	default:
+Index: linux-pm/drivers/thermal/gov_step_wise.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_step_wise.c
++++ linux-pm/drivers/thermal/gov_step_wise.c
+@@ -66,9 +66,10 @@ static unsigned long get_target_state(st
+ }
+ 
+ static void thermal_zone_trip_update(struct thermal_zone_device *tz,
+-				     const struct thermal_trip *trip,
++				     const struct thermal_trip_desc *td,
+ 				     int trip_threshold)
+ {
++	const struct thermal_trip *trip = &td->trip;
+ 	enum thermal_trend trend = get_tz_trend(tz, trip);
+ 	int trip_id = thermal_zone_trip_id(tz, trip);
+ 	struct thermal_instance *instance;
+@@ -82,12 +83,9 @@ static void thermal_zone_trip_update(str
+ 	dev_dbg(&tz->device, "Trip%d[type=%d,temp=%d]:trend=%d,throttle=%d\n",
+ 		trip_id, trip->type, trip_threshold, trend, throttle);
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node) {
++	list_for_each_entry(instance, &td->thermal_instances, trip_node) {
+ 		int old_target;
+ 
+-		if (instance->trip != trip)
+-			continue;
+-
+ 		old_target = instance->target;
+ 		instance->target = get_target_state(instance, trend, throttle);
+ 
+@@ -127,11 +125,13 @@ static void step_wise_manage(struct ther
+ 		    trip->type == THERMAL_TRIP_HOT)
+ 			continue;
+ 
+-		thermal_zone_trip_update(tz, trip, td->threshold);
++		thermal_zone_trip_update(tz, td, td->threshold);
+ 	}
+ 
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+-		thermal_cdev_update(instance->cdev);
++	for_each_trip_desc(tz, td) {
++		list_for_each_entry(instance, &td->thermal_instances, trip_node)
++			thermal_cdev_update(instance->cdev);
++	}
+ }
+ 
+ static struct thermal_governor thermal_gov_step_wise = {
+Index: linux-pm/drivers/thermal/thermal_helpers.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_helpers.c
++++ linux-pm/drivers/thermal/thermal_helpers.c
+@@ -43,10 +43,11 @@ static bool thermal_instance_present(str
+ 				     struct thermal_cooling_device *cdev,
+ 				     const struct thermal_trip *trip)
+ {
++	const struct thermal_trip_desc *td = trip_to_trip_desc(trip);
+ 	struct thermal_instance *ti;
+ 
+-	list_for_each_entry(ti, &tz->thermal_instances, tz_node) {
+-		if (ti->trip == trip && ti->cdev == cdev)
++	list_for_each_entry(ti, &td->thermal_instances, trip_node) {
++		if (ti->cdev == cdev)
+ 			return true;
+ 	}
+ 
+Index: linux-pm/include/linux/thermal.h
+===================================================================
+--- linux-pm.orig/include/linux/thermal.h
++++ linux-pm/include/linux/thermal.h
+@@ -237,7 +237,7 @@ int thermal_zone_device_id(struct therma
+ struct device *thermal_zone_device(struct thermal_zone_device *tzd);
+ 
+ int thermal_bind_cdev_to_trip(struct thermal_zone_device *tz,
+-			      const struct thermal_trip *trip,
++			      struct thermal_trip *trip,
+ 			      struct thermal_cooling_device *cdev,
+ 			      unsigned long upper, unsigned long lower,
+ 			      unsigned int weight);
+@@ -246,7 +246,7 @@ int thermal_zone_bind_cooling_device(str
+ 				     unsigned long, unsigned long,
+ 				     unsigned int);
+ int thermal_unbind_cdev_from_trip(struct thermal_zone_device *tz,
+-				  const struct thermal_trip *trip,
++				  struct thermal_trip *trip,
+ 				  struct thermal_cooling_device *cdev);
+ int thermal_zone_unbind_cooling_device(struct thermal_zone_device *, int,
+ 				       struct thermal_cooling_device *);
+
+
+
 
