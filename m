@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-283920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27BF94FA64
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:44:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95C994FA6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315FB1C221D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017751C21DEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 551EA19A2AC;
-	Mon, 12 Aug 2024 23:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A05C19A2A3;
+	Mon, 12 Aug 2024 23:52:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x737uPt3"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="HtmNKE5q";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Pf6vvk7r"
+Received: from fhigh8-smtp.messagingengine.com (fhigh8-smtp.messagingengine.com [103.168.172.159])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4104A16B39A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739B01804F
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723506283; cv=none; b=Vm2QjJiW4QxBF9YauUJyjRcoBgNQB1Y/BOKBlXCn2QaM5RWFYgaATZUhYswNBnbrAPF39AdwdkDPLuTceiPNn5L9WiaetaaOcCcR1OVf+7FIiN8isDkmLOShH3Qxko2HDaB8MG/IcmaVf2gB3zTl40BFk+8nCSmGt3Z+9uglIOk=
+	t=1723506736; cv=none; b=mARlBMb7DD6AhY4LpvKEucKrJGfpMONOpHPH0VOAtxUc9evWMk7FBO1jjqEX1wW0blB6O6S59UmF53ysexoGW18AEhIOcBmtLEx640nWxHImdfvWjbvK3SkMfqka0NJ+oypyQwk/EGedDAORC3LBdapAS2z7RwdCCoZUwXUeIeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723506283; c=relaxed/simple;
-	bh=og2jGoSIaOvN+vgjl3Gnk8vzLJN9Kbs7eJ5weuEalGw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=MR0lVY7zVEZbAFZS3v7dv38t95B2JAGPBDXFk7Of4iq23crwQSmOKEEsPoo63fXvEHBaf4HmEdRGZowSSkOGYg/URANf9sJ8oJaUo5nbZWXGBdJT0mEnfbIL24b+nYzZBlsHqonaVXenHUmQ5pJZPkxiPkJpcjIGo17Y/2zng8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x737uPt3; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-70e97ac260eso4346290b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:44:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723506281; x=1724111081; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UrUY3rIeJYoBe0Ouux9HKw4xsjRgOYNubTcynFZwH0s=;
-        b=x737uPt3x3hICgl3+t4q7oTYK/GhWhPGpqv7T+NFC65QvS7Jdp8eAOHfHy2rLEXBbB
-         nnUUneKmjViRDc8LkCjjXpMzqQX5Vaisa5twteOkgEeIPZ+6wbr15ozGIhLpglCgFdcY
-         iP6mym4h1ZjUhw/GIUbk5s8hFvL69ItFrccNDEEALs+SOPY94JHrxS/HReZjkJ48gqCl
-         qThKthuD/YJ1CpcfabmgqdkOlLd+ojelTMhaGyUrLhZeywZ10ZtZFow2IpJJqmtqzZQe
-         SWDlKRWyQ5z56Nmw3WkPLjGBphfIL038JiQIWuOb09BRp+V7duOe2Z9qpP74CtXelUlU
-         rM2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723506281; x=1724111081;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UrUY3rIeJYoBe0Ouux9HKw4xsjRgOYNubTcynFZwH0s=;
-        b=WsNhD9moD6eTO3LHT8Ki7z6RgEUCBwbQjTV5Aeix7wtXCLnq+ppe4y3WYNXpkAPcTF
-         ssmd8MSbmvMpcX6m5ZoexFBQNGnAi8eDK1m4XdI+2FAIV83O/jwFDzOHf2F0btG+8Mb9
-         QNa+KjT/SWft90rYl+BUx22oQcuklR1FPX3GMn4ZBrdTevbglchvt1ErB5zD3FIO/zDA
-         AhB8lN3V+YhvOTaResbfGGyWOisezc+DhGPQd6KOtS4LCxYbMF2Ode+8lz3TeQ+j33EB
-         8KrhwtdZ9GSt/QvSlYjKF+14vr6TL01R25bKkzt+kKQbJo2f4X+LAIyEORG9cLpllry0
-         P1Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCV5G42d8CvE12mUV51Z6eBZqrmSPrSLCgSuPH4JRedULJTcX8IZ/IDvqgdABMZsEVH3j0zeOTJnyYGYbmSe2DEr2Bm8b/2CpEKvRRHK
-X-Gm-Message-State: AOJu0Yw59omfOeC8bKMM+4kO9yD93OJ/4VM5atNc5X8TwD09OKyElzO7
-	1i58fHkQmLbpReDcizCCt5dX6EuPlWyUEFj7wVkbOOoPgwq5HM01kCwDBngFu3Dtc49WhFkj4Mc
-	GJw==
-X-Google-Smtp-Source: AGHT+IGdc2rxTHl1QtaSN9GH/Q9+wvgi/0cyWFA0UrSnLq1lqIiESyoGNp3cjAk7IHs7Im6Tod87VUtigrY=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:66e8:b0:710:4d94:f9aa with SMTP id
- d2e1a72fcca58-712552c0336mr7070b3a.6.1723506281370; Mon, 12 Aug 2024 16:44:41
- -0700 (PDT)
-Date: Mon, 12 Aug 2024 16:44:40 -0700
-In-Reply-To: <CAJHvVchObsUVW2QFroA8pexyXUgKR178knLoaEacMTL6iLoHNQ@mail.gmail.com>
+	s=arc-20240116; t=1723506736; c=relaxed/simple;
+	bh=r7UBLwfQC9CsT1AaRfuw3P34LzpglgWCJsKhrTVWkTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S7f/15PY5c3aCCU7E31Ku/O9hspnHyg6zHfIJ9E5RlWjj3IZi1/e67HNAANjnwwMmdA0XoAd2tth+OQTtt8CJUqnHETo6ocW1JmcN6Yvn4O+bOyovXV7MBOnR1dU3hAYD/DcI+t5fiBxKUgfP17yy3MUiQCfrnUJ1KnPTNT/Z+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=HtmNKE5q; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Pf6vvk7r; arc=none smtp.client-ip=103.168.172.159
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 5B1331151B5D;
+	Mon, 12 Aug 2024 19:52:13 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 12 Aug 2024 19:52:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1723506733; x=1723593133; bh=OvwBSx5ssw
+	pPM9gzQtgAIKFWJVfBWE1PlVCsQqD/Reg=; b=HtmNKE5qTaBWJRcCj6ZNiI0SRA
+	fF8I0JM6hLMhUZ+O5CSku2XdaR7h/rA+FeB0mgFY/RTzXPuZIsRMTwH/So/oJcxY
+	Qiy0PRj4uNFQf8zaVGHuveytbqcp2LTQ7q+t+gCIzaO7sb+Fp9j1W65+L8Irhfdp
+	owGOzVWZOJhDzYwqz2T6Dy8I/LAGysfaQ39BKnUJAeemza9kC8RKBb1Z9S7cENoV
+	ZithkHeqPjSR0TTeMdeBscd1FKW8EDD3WwDX630nHIdc7xVP7ZzBabYYTOFS7TJ7
+	aY+qSsEIyuiALN/6wbyuwzPojPj7poLYqTeSh1qHQ3nihSQBQWhLHDtO8V4Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723506733; x=1723593133; bh=OvwBSx5sswpPM9gzQtgAIKFWJVfB
+	WE1PlVCsQqD/Reg=; b=Pf6vvk7rAVQVesmiKLfeVkEQATbnXRtGmI9PYEI7Cjzm
+	CFgs8HOUPw+TtOuFv/g5WUe0brFWv/Riwuy1SrsMpz0vXwn66bzYaCV45dEvOq+f
+	uCbQ26MI4JwWHktXnhPlh1AVg4Tr/75T2Tn5NYZOQVQFS+lsN2tAGn1zK6zynaJb
+	pEBspgB3pf1W6hm7CMAsdERMjrXBsc2EajLJdFB1JqCCP2XA2xmQ6PKz4xa0K3+4
+	aosikhOq8ttWpd4SIje6rJmdtMxfJmv8fvuOO7ZFlrS+GoNDGO6+rAm5SV63xiD3
+	JmPqtzgERgPT/lwTfK5h7CwEKfdHyDbvyvF7r+oMWg==
+X-ME-Sender: <xms:LaC6ZoYDBQsm_xp8XH4mcKopUgeZz1lLmneSJdbglg3ibEWmGxiDxQ>
+    <xme:LaC6ZjYAy-3CI37epV1z41CkMxh1LfxUkdrWMMPJDJDb7PS6xj_uy12kVG3_5YMy2
+    rm5ic5GUImYuZann9k>
+X-ME-Received: <xmr:LaC6Zi_zx55UklXXhi-EqZ3sP_zUXelh9cM4MdKpnvv0OiMgxWawGVhacDahTL1kwlG1H5NUwLkIFZRzMu436f2zdwr7L2JCrXZZfwRq1RaP0g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtuddgvdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevuf
+    ffkffoggfgsedtkeertdertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohht
+    ohcuoehoqdhtrghkrghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtth
+    gvrhhnpeffvdeuleffveekudfhteejudffgefhtedtgfeutdfgvdfgueefudehveehveek
+    keenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqd
+    htrghkrghshhhisehsrghkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhm
+    ohguvgepshhmthhpohhuthdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlse
+    hlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:LaC6Ziox1nX68_NypP-_0RLFhndSKcOxtot3nifI7570mzbVYdkbjQ>
+    <xmx:LaC6ZjpvWpeX60o94SmVE6KvTsF6EBCC5z2kCrSq931ZTD2T3F-uAw>
+    <xmx:LaC6ZgQUzgc9m_WhiaLXcWn4nBMciZ511Egw3jdEtH9fwI9QPOe5pg>
+    <xmx:LaC6ZjqvB9f2RvoQOXgp7hQZdv0GwXFKyrO2rC4cdt1zN_AOEByaZg>
+    <xmx:LaC6Zq1p6oMPcE59j4BvA7y7BWl69Md4oWIJDrfq_4ou15ED3cgGsvYE>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 12 Aug 2024 19:52:12 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5]  firewire: core: use XArray to maintain client resources
+Date: Tue, 13 Aug 2024 08:52:05 +0900
+Message-ID: <20240812235210.28458-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240809160909.1023470-1-peterx@redhat.com> <20240809160909.1023470-11-peterx@redhat.com>
- <CAJHvVciF4riGPQBhyBwNeSWHq8m+7Zag7ewEWgLJk=VsaqKNPQ@mail.gmail.com>
- <ZrpbP9Ow9EcpQtCF@x1n> <CAJHvVchObsUVW2QFroA8pexyXUgKR178knLoaEacMTL6iLoHNQ@mail.gmail.com>
-Message-ID: <ZrqeaN2zeF8Gw-ye@google.com>
-Subject: Re: [PATCH 10/19] KVM: Use follow_pfnmap API
-From: Sean Christopherson <seanjc@google.com>
-To: Axel Rasmussen <axelrasmussen@google.com>
-Cc: Peter Xu <peterx@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Oscar Salvador <osalvador@suse.de>, Jason Gunthorpe <jgg@nvidia.com>, linux-arm-kernel@lists.infradead.org, 
-	x86@kernel.org, Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Alistair Popple <apopple@nvidia.com>, Borislav Petkov <bp@alien8.de>, 
-	David Hildenbrand <david@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Alex Williamson <alex.williamson@redhat.com>, 
-	Yan Zhao <yan.y.zhao@intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024, Axel Rasmussen wrote:
-> On Mon, Aug 12, 2024 at 11:58=E2=80=AFAM Peter Xu <peterx@redhat.com> wro=
-te:
-> >
-> > On Fri, Aug 09, 2024 at 10:23:20AM -0700, Axel Rasmussen wrote:
-> > > On Fri, Aug 9, 2024 at 9:09=E2=80=AFAM Peter Xu <peterx@redhat.com> w=
-rote:
-> > > >
-> > > > Use the new pfnmap API to allow huge MMIO mappings for VMs.  The re=
-st work
-> > > > is done perfectly on the other side (host_pfn_mapping_level()).
-> > >
-> > > I don't think it has to be done in this series, but a future
-> > > optimization to consider is having follow_pfnmap just tell the caller
-> > > about the mapping level directly. It already found this information a=
-s
-> > > part of its walk. I think there's a possibility to simplify KVM /
-> > > avoid it having to do its own walk again later.
-> >
-> > AFAIU pfnmap isn't special in this case, as we do the "walk pgtable twi=
-ce"
-> > idea also to a generic page here, so probably not directly relevant to =
-this
-> > patch alone.
+Hi,
 
-Ya.  My original hope was that KVM could simply walk the host page tables a=
-nd get
-whatever PFN+size it found, i.e. that KVM wouldn't care about pfn-mapped ve=
-rsus
-regular pages.  That might be feasible after dropping all of KVM's refcount=
-ing
-shenanigans[*]?  Not sure, haven't thought too much about it, precisely bec=
-ause
-I too think it won't provide any meaningful performance boost.
+In core function, the instances of several types of client resources
+are maintained by IDR, and the index value of each resource is passed to
+user space application as handle. As of kernel v6.0, IDR has been
+superseded by XArray and deprecated.
 
-> > But I agree with you, sounds like something we can consider trying.  I
-> > would be curious on whether the perf difference would be measurable in =
-this
-> > specific case, though.  I mean, this first walk will heat up all the
-> > things, so I'd expect the 2nd walk (which is lockless) later be pretty =
-fast
-> > normally.
->=20
-> Agreed, the main benefit is probably just code simplification.
+This series of changes is to obsolete the usage of IDR with XArray.
 
-+1.  I wouldn't spend much time, if any, trying to plumb the size back out.
-Unless we can convert regular pages as well, it'd probably be more confusin=
-g to
-have separate ways of getting the mapping size.
+Takashi Sakamoto (5):
+  firewire: core: minor code refactoring to release client resource
+  firewire: core: add helper functions to convert to parent resource
+    structure
+  firewire: core: add helper function to detect data of iso resource
+    structure
+  firewire: core: code refactoring to use idr_for_each_entry() macro
+    instead of idr_for_each() function
+  firewire: core: use xarray instead of idr to maintain client resource
+
+ drivers/firewire/core-cdev.c | 170 +++++++++++++++++++----------------
+ drivers/firewire/core.h      |   1 -
+ 2 files changed, 94 insertions(+), 77 deletions(-)
+
+-- 
+2.43.0
+
 
