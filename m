@@ -1,283 +1,78 @@
-Return-Path: <linux-kernel+bounces-282991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6483C94EB93
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:06:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C123F94EB92
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:06:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C12128151D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:06:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CCF1B21DB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C478175D42;
-	Mon, 12 Aug 2024 11:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="LdmUU2Xm"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2042.outbound.protection.outlook.com [40.107.236.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D470172BAE;
+	Mon, 12 Aug 2024 11:06:08 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6698175D43;
-	Mon, 12 Aug 2024 11:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723460772; cv=fail; b=Vi8G7Uxru5LWh0d365gEdyrzzsM59hZW9SdGEV45M1eb1LHRDDjVUuUf1Fbjw7rHoneSTJtA0LzUXKuciyVAn7H2OxSa8xHY8zP/RfEYOH1uLH1Nf7Gotb3Y1ylx3mTXfxEN0Gw5BqSlLlIMvXHAtLZQlhobpldI+HtzVZ5GQjE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723460772; c=relaxed/simple;
-	bh=3XUo9c9DE1GNLO11yxvjkWOwbfYRmg5q6qFtaJ81+TQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SuMNtdnjIMYvecOlcFx9f0bVH1QMDLsQSDfgwYxYU1i2qBMqHzyNRh9hRgudT+/VN7jiSQq+KwkNoqhgiYPl2Mnn9zR7649rMR+Z6J8cOLRp9EtCRM/By81xn4kMgFNbzPhR4LnhJQTDfJYierQzyxOySb4pJJclGcqr1NwiQBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=LdmUU2Xm; arc=fail smtp.client-ip=40.107.236.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CdeH8txaf76rqVCkmmDlOUEH3Q64pd20DDSgPtn4BSbPnKtcsIHTxh4nvm14gPkBv7365MtjdHtcnvTRNfpXc25fFI/roNlLosW8We6a447YMFFmIzw3xodwCeh1dK0jLTouHIPaF77jPij7vNGQwLvVVOF/2L7EX20pqjDuuO4Nweq4VqMNSLs4JJr6vHfuzv8Su8j08NSTp1o2xv1YNzrDFfEA1EtGi+pODa8yjq+NBKe8BQag/DKG0libO+6gxEbmHX86R4ubr4OeQVWqIWsogByJMUDSj9krqtA0UyTQuG8S+BoOe1sg3FKddaeprOdCk6+TFJIAkxtqbO4QGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RcmkoqsNd4nWwkCnm67ZOYyd3mri0Gh9VEU8tq4p73g=;
- b=xFWEq+q72htE8s0+/2CjTb8W/CBOI7ue36NYCoXOMn84B9A71FE8InpR16CSVnq0dAKwydE7hDWaAVC/X9+wse/6HW6loJjgMmWhuLYIJUifRiQ+vTn6eJ4hMOFHYoo1oShp1ooQEJeNRZ/tpxjl95oigAqerbsE1HnD9eYHwa/trGP1zQbcnopjMae4F+qcnZsNlsgC1+/VDZhLRA8hv0oViaUvSz1/f3ys9gqa9SXAuOC8Yl+ig9cBEV19XqZbRA12P8v2y2OAfawBcoXSOnUwZPBDiZl452OrNBMUSHzqRGhWe5xVe//KZJ7KVsXD8aF5lj8Pu9TPgmoJy5nNDw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RcmkoqsNd4nWwkCnm67ZOYyd3mri0Gh9VEU8tq4p73g=;
- b=LdmUU2Xm7xgyThKS7/N3q0+wY12WwtBeKz9Ytt1FVSqXcIJFXhKZN+3qxhP+sw+pHy8IoCy/MIlgFFpAx//zKFYys04K3Oqt1N24Xb+zXkGBOxDINgHgaDbfS0+CX8TwSfEKxeuf3bFPi0wLG8WNQjOuotZ5WNNkQvC/WMl2haA=
-Received: from DM6PR07CA0043.namprd07.prod.outlook.com (2603:10b6:5:74::20) by
- LV2PR12MB5920.namprd12.prod.outlook.com (2603:10b6:408:172::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 11:06:05 +0000
-Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
- (2603:10b6:5:74:cafe::4b) by DM6PR07CA0043.outlook.office365.com
- (2603:10b6:5:74::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
- Transport; Mon, 12 Aug 2024 11:06:05 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7849.8 via Frontend Transport; Mon, 12 Aug 2024 11:06:05 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 12 Aug 2024 06:05:58 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <Sunil-kumar.Dommati@amd.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <venkataprasad.potturu@amd.com>,
-	<pierre-louis.bossart@linux.intel.com>, <lgirdwood@gmail.com>,
-	<yung-chuan.liao@linux.intel.com>, <peter.ujfalusi@linux.intel.com>,
-	<ranjani.sridharan@linux.intel.com>, <perex@perex.cz>, <tiwai@suse.com>,
-	<cristian.ciocaltea@collabora.com>, <sound-open-firmware@alsa-project.org>,
-	<linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<kai.vehmanen@linux.intel.com>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Rander Wang <rander.wang@intel.com>
-Subject: [PATCH 2/2] ASoC: SOF: amd: Fix for incorrect acp error register offsets
-Date: Mon, 12 Aug 2024 16:35:10 +0530
-Message-ID: <20240812110514.2683056-2-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812110514.2683056-1-Vijendar.Mukunda@amd.com>
-References: <20240812110514.2683056-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C94380;
+	Mon, 12 Aug 2024 11:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723460767; cv=none; b=eISUsstyaJ9OwB1BpFjWbGLT73k1GNU7S8wJbCEBiU7m14tjUmyiENkFSBH0PhyS7cNi8aA8j4loiF9e78g8QgZkDHTVa8ZYdBAsAGe7BDNfW9wHbeYSz9Z7PkPNSNdg7gjpPPazQOYAaoetpMtjWlk9KfURg9s4gnQIXn97/xY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723460767; c=relaxed/simple;
+	bh=5msWubFUrC7JH/hdT6tuEQlfTvrJRBDt3jfOM4r1dPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oA6sc7SJCX9WuxYLP2Y51ylstbrdB7hI+MswpH0d9bfyEqjKMVtaqSsjEOEhDApDzunSssipn3PntcDda78fdYOYtO6mCiIep/2tiNlknX/GZMFqVVwkzfDPUs+XxvB8rPt+dbrmmLyqfHyeb4BKYLUSuTFlL2MbpNk4rp9Sn6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 74AC768AA6; Mon, 12 Aug 2024 13:06:00 +0200 (CEST)
+Date: Mon, 12 Aug 2024 13:06:00 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Sagi Grimberg <sagi@grimberg.me>
+Cc: Christoph Hellwig <hch@lst.de>, Tariq Toukan <ttoukan.linux@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Anna Schumaker <Anna.Schumaker@Netapp.com>,
+	Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org,
+	Boris Pismenny <borisp@nvidia.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Maxim Mikityanskiy <maxtram95@gmail.com>,
+	Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+	Networking <netdev@vger.kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
+Subject: Re: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
+Message-ID: <20240812110600.GB14300@lst.de>
+References: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com> <77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me> <4f42fac4-2a4e-426a-be86-1f4bb79987b4@gmail.com> <3e08421f-91ac-4bd1-9886-3d5ecf9afa04@grimberg.me> <8683155c-79ad-4090-9aff-fc8d765b096b@gmail.com> <20240812090215.GA5497@lst.de> <06a66824-cc2e-4f6d-8776-c2bd415c06f9@grimberg.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|LV2PR12MB5920:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5cf0a03b-5357-40cb-96d4-08dcbabec2db
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/o0NeJ7QUkuYFvs5EwEnt1fuSVtQ/KDd6P0we0KVElIeoYLmMpw80lGeZzHf?=
- =?us-ascii?Q?HvX3rkldZJgVRpok+sAJbvMQNDIh+mOD5w83bzIUAGn4k7+2y22HfnBgWREI?=
- =?us-ascii?Q?kd11IIY1tKNxFvYKakLcsOGyJPni/qO9IepokyNNCghFZbDQk6vnMV6aBtBj?=
- =?us-ascii?Q?kuNk0o3lmUhk9hCb97+M6dALplPZiyFbTIXkrw9BLeFCpOIOjbpFGylA3nIq?=
- =?us-ascii?Q?Dzm0Y3O9eNycN8HwjPAF2zXHOnCORKmrjqzQ14RKixamH9WPVpEF+NyYax72?=
- =?us-ascii?Q?lVtZNcyGqu4bpft6leyn4/P1rzP6D9kM84DFaFeYqUhNT3+eUkm29DVanD9e?=
- =?us-ascii?Q?a40pWxP3n/WHU1jlo/e7NWDSgKTzAgmXrExtP7cWzxS3fzjDKhoCDOdp0htv?=
- =?us-ascii?Q?/J+cIi4iGNR+9uAD8zm/nFQ2UoxKIPxeRYoqfrKPRYoffCiIHgGW6HUBy4lU?=
- =?us-ascii?Q?7fZm0d1Jl1XcG17T/IJrml83fviopk4pbz63ch7G4jHnXuELDAPBg3TUGLRj?=
- =?us-ascii?Q?2Hdqw63F+kd3ssOr6WByJL+Xplfi6uJRgoQe9BFzQSkOE5p6e1u31dY4cCPU?=
- =?us-ascii?Q?zEfMGhloF9CkKzOCfPrAx3XiIIA1x2+/R1IR6WaipZf5w0AzftP14q88jW7w?=
- =?us-ascii?Q?8Xy/wNhPi3eqKNWP+b+XFPVUgmzpDtEYavhLAImtNIA506MIFdvpWdNLRvkQ?=
- =?us-ascii?Q?g6jWr/umx89gKJjPvYFO2y3D1Y6fHlX3OhwWS8xpiFA5Iyg+FdsSoGvPy8ni?=
- =?us-ascii?Q?9ewVJtcm2y/UBbIwA+8UqBSiyJ1PZ5L5vxM/Ca/VrYgs0t9w8y0urz8ztkPZ?=
- =?us-ascii?Q?D4mA6JkWZE5kIKqdpcDkJTIpeZXpjvFJUnYukLRkbcVCFL4nlXCqanH7WQwj?=
- =?us-ascii?Q?kJIriKaK2+3AKbpE6uWlZty8OvrYjkJUM/AWyWH5rPfsvhp8gDOFIA7zZQcH?=
- =?us-ascii?Q?PvtuAJuxPlnNd+tlncVAc3G7VRppD5phCI7lhnTn5Dq01u/v45E45eiOeFe+?=
- =?us-ascii?Q?PHdw//FwJ+bq5hPmNRjqLfvuT2o/+uETXSwldqO2LhVRYadi9KOzlOM4aTpH?=
- =?us-ascii?Q?T5fLrMSnGG+IQFZqv7T6zwsTNhLHbdOZ/VnwVSahkCGl9d3DTJGRB6JcN3lE?=
- =?us-ascii?Q?7iasZfED4meMk+wBbjx4FYa8lEYSeIxkfcJc2/F96KNkX8bz2lhnm6KDK9Ih?=
- =?us-ascii?Q?yYQFHGBV8JrfJns6aOCCHhanbcXYYTn1S3bT8fB07jvzussoKhYpNhdlKDWi?=
- =?us-ascii?Q?fWkvSD3aUPALSOIlg+/yx5mkM9uMjs2TaqKoUUIvgsz9kJkHoS6CPEqvoFYE?=
- =?us-ascii?Q?WfmJZxkwr7nsasEVQ9aUltWiq60SFKw3VIC/WrWTuBSykPwJlPrE4I7kZaN0?=
- =?us-ascii?Q?WCMJn44IirL0Pu48KEAQ4kUnVvZ2qCwXW2/qKjqN2uNUlzKvcqNGhXnYfw9h?=
- =?us-ascii?Q?pPl6j0V9aKGOe/qukgDoVa5a9Pn0hWKf?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 11:06:05.4397
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5cf0a03b-5357-40cb-96d4-08dcbabec2db
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF0001709B.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5920
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <06a66824-cc2e-4f6d-8776-c2bd415c06f9@grimberg.me>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Adding 'dsp_intr_base' to ACP error status register offset in irq handler
-points to wrong register offset. ACP error status register offset got
-changed from ACP 6.0 onwards. Add 'acp_error_stat' descriptor field and
-update the value based on the ACP variant.
+On Mon, Aug 12, 2024 at 12:13:51PM +0300, Sagi Grimberg wrote:
+>
+>
+>
+> On 12/08/2024 12:02, Christoph Hellwig wrote:
+>> On Tue, Aug 06, 2024 at 01:07:47PM +0300, Tariq Toukan wrote:
+>>> Adding Maxim Mikityanskiy, he might have some insights.
+>> I think the important part to find out is if the in-kernel TLS API
+>> has a limitation to PAGE_SIZE buffer segments, or not.
+>
+> I don't see why it should. Also note that sw tls does not suffer from
+> this. Maybe Jakub can add more light here in case something was missed?
 
-Fix the incorrect register offsets for acp error reason registers.
-Add 'acp_sw0_i2s_err_reason' as register field in acp descriptor structure
-and update the value based on the acp variant.
-ACP_SW1_ERROR_REASON register was added from Rembrandt platform onwards.
-Add conditional check for the same.
-
-Fixes: 96eb81851012 ("ASoC: SOF: amd: add interrupt handling for SoundWire manager devices")
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
- sound/soc/sof/amd/acp-dsp-offset.h |  6 ++++--
- sound/soc/sof/amd/acp.c            | 11 +++++++----
- sound/soc/sof/amd/acp.h            |  2 ++
- sound/soc/sof/amd/pci-acp63.c      |  2 ++
- sound/soc/sof/amd/pci-rmb.c        |  2 ++
- sound/soc/sof/amd/pci-rn.c         |  2 ++
- 6 files changed, 19 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/sof/amd/acp-dsp-offset.h b/sound/soc/sof/amd/acp-dsp-offset.h
-index 59afbe2e0f42..072b703f9b3f 100644
---- a/sound/soc/sof/amd/acp-dsp-offset.h
-+++ b/sound/soc/sof/amd/acp-dsp-offset.h
-@@ -76,13 +76,15 @@
- #define DSP_SW_INTR_CNTL_OFFSET			0x0
- #define DSP_SW_INTR_STAT_OFFSET			0x4
- #define DSP_SW_INTR_TRIG_OFFSET			0x8
--#define ACP_ERROR_STATUS			0x18C4
-+#define ACP3X_ERROR_STATUS			0x18C4
-+#define ACP6X_ERROR_STATUS			0x1A4C
- #define ACP3X_AXI2DAGB_SEM_0			0x1880
- #define ACP5X_AXI2DAGB_SEM_0			0x1884
- #define ACP6X_AXI2DAGB_SEM_0			0x1874
- 
- /* ACP common registers to report errors related to I2S & SoundWire interfaces */
--#define ACP_SW0_I2S_ERROR_REASON		0x18B4
-+#define ACP3X_SW_I2S_ERROR_REASON		0x18C8
-+#define ACP6X_SW0_I2S_ERROR_REASON		0x18B4
- #define ACP_SW1_I2S_ERROR_REASON		0x1A50
- 
- /* Registers from ACP_SHA block */
-diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
-index b8d4f986f89d..35e56d22930f 100644
---- a/sound/soc/sof/amd/acp.c
-+++ b/sound/soc/sof/amd/acp.c
-@@ -92,6 +92,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
- 			      unsigned int idx, unsigned int dscr_count)
- {
- 	struct snd_sof_dev *sdev = adata->dev;
-+	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
- 	unsigned int val, status;
- 	int ret;
- 
-@@ -102,7 +103,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
- 					    val & (1 << ch), ACP_REG_POLL_INTERVAL,
- 					    ACP_REG_POLL_TIMEOUT_US);
- 	if (ret < 0) {
--		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_ERROR_STATUS);
-+		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, desc->acp_error_stat);
- 		val = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_DMA_ERR_STS_0 + ch * sizeof(u32));
- 
- 		dev_err(sdev->dev, "ACP_DMA_ERR_STS :0x%x ACP_ERROR_STATUS :0x%x\n", val, status);
-@@ -402,9 +403,11 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
- 
- 	if (val & ACP_ERROR_IRQ_MASK) {
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->ext_intr_stat, ACP_ERROR_IRQ_MASK);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW0_I2S_ERROR_REASON, 0);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW1_I2S_ERROR_REASON, 0);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_ERROR_STATUS, 0);
-+		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_sw0_i2s_err_reason, 0);
-+		/* ACP_SW1_I2S_ERROR_REASON is newly added register from rmb platform onwards */
-+		if (desc->rev >= 6)
-+			snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SW1_I2S_ERROR_REASON, 0);
-+		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_error_stat, 0);
- 		irq_flag = 1;
- 	}
- 
-diff --git a/sound/soc/sof/amd/acp.h b/sound/soc/sof/amd/acp.h
-index ec9170b3f068..f6f0fcfeb691 100644
---- a/sound/soc/sof/amd/acp.h
-+++ b/sound/soc/sof/amd/acp.h
-@@ -203,6 +203,8 @@ struct sof_amd_acp_desc {
- 	u32 probe_reg_offset;
- 	u32 reg_start_addr;
- 	u32 reg_end_addr;
-+	u32 acp_error_stat;
-+	u32 acp_sw0_i2s_err_reason;
- 	u32 sdw_max_link_count;
- 	u64 sdw_acpi_dev_addr;
- };
-diff --git a/sound/soc/sof/amd/pci-acp63.c b/sound/soc/sof/amd/pci-acp63.c
-index 54d42f83ce9e..e90658ba2bd7 100644
---- a/sound/soc/sof/amd/pci-acp63.c
-+++ b/sound/soc/sof/amd/pci-acp63.c
-@@ -35,6 +35,8 @@ static const struct sof_amd_acp_desc acp63_chip_info = {
- 	.ext_intr_cntl = ACP6X_EXTERNAL_INTR_CNTL,
- 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
- 	.ext_intr_stat1	= ACP6X_EXT_INTR_STAT1,
-+	.acp_error_stat = ACP6X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP6X_SW0_I2S_ERROR_REASON,
- 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
- 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
-diff --git a/sound/soc/sof/amd/pci-rmb.c b/sound/soc/sof/amd/pci-rmb.c
-index 4bc30951f8b0..a366f904e6f3 100644
---- a/sound/soc/sof/amd/pci-rmb.c
-+++ b/sound/soc/sof/amd/pci-rmb.c
-@@ -33,6 +33,8 @@ static const struct sof_amd_acp_desc rembrandt_chip_info = {
- 	.pgfsm_base	= ACP6X_PGFSM_BASE,
- 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
- 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
-+	.acp_error_stat = ACP6X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP6X_SW0_I2S_ERROR_REASON,
- 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
- 	.fusion_dsp_offset = ACP6X_DSP_FUSION_RUNSTALL,
-diff --git a/sound/soc/sof/amd/pci-rn.c b/sound/soc/sof/amd/pci-rn.c
-index e08875bdfa8b..2b7c53470ce8 100644
---- a/sound/soc/sof/amd/pci-rn.c
-+++ b/sound/soc/sof/amd/pci-rn.c
-@@ -33,6 +33,8 @@ static const struct sof_amd_acp_desc renoir_chip_info = {
- 	.pgfsm_base	= ACP3X_PGFSM_BASE,
- 	.ext_intr_stat	= ACP3X_EXT_INTR_STAT,
- 	.dsp_intr_base	= ACP3X_DSP_SW_INTR_BASE,
-+	.acp_error_stat = ACP3X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP3X_SW_I2S_ERROR_REASON,
- 	.sram_pte_offset = ACP3X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP3X_AXI2DAGB_SEM_0,
- 	.acp_clkmux_sel	= ACP3X_CLKMUX_SEL,
--- 
-2.34.1
-
+I don't see why it should either, but instead of assuming we should
+make it clear what the assumptions are before going further.
 
