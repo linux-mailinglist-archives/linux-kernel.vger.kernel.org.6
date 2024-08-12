@@ -1,112 +1,348 @@
-Return-Path: <linux-kernel+bounces-282571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8051494E5EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:54:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A4E194E5EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:03:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFE8282243
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E24672822B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B233714D28E;
-	Mon, 12 Aug 2024 04:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83E014884E;
+	Mon, 12 Aug 2024 05:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="loQXyudo"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i0Qz0H8F"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178B1494B8
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723438486; cv=none; b=AnSdVdSUEp0m8hD6bc/qbEEIbS+WhXoZu0aFsnsi62mE5CBZ31E279gMjx6gXq2LM2S6ZyM/ovyijsZ0jWub9E5+Q/7XUs5bLB4nxLwgcJgsugNlcwlYzpGoayetbVrCLKbVNQXbTpIWtsvRuySGcQFZ3Ncv2ZnPldGxgkAgrrQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723438486; c=relaxed/simple;
-	bh=/7JNJRSA6Qai8rSOw/cLVCEzVurU5rT/F+Aq6+y0Oe8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iw6C7/W7xCH/OHG+M99sE/NrH1kNNAh3naOSjP5zakIvL/piKJaaXn4jL3P5qz/lADi7LqIy8vjHczx/7zusJzFyIE84CJRTqpfO85Otjoskya40nI1x9qnBzAH7BrYO7Bfi0XbSs0f/j5p7WNSmawpmKmO+EPrimaoebFV7+UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=loQXyudo; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fd69e44596so26480475ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 21:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723438483; x=1724043283; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mM8hIk0Il1OoNYTiO69SEs09clvslubSlLyTOMarmXI=;
-        b=loQXyudoUtfD1nXJou73uJficJgn8I8omRJAndOy6PwHV+dtrNDKPbGsRecVxB3idJ
-         nlmdfD0xIQPlfYvwaoKprJmBITljBAR24FCZZ9boyQV2v0kT1H6SwD59HstOyIeFwO4D
-         Zzv3kTRx/bervfrv6DyTzS2oO3aGLIJla4o+kNLn8yhYw/ZoQWSY0Jhx4QCrPWORlrOP
-         7+fC6WSaMXl0BQbDsRn4O2BOE/FcV2l/fDQFmv8jIFhj4nNM08lnZrkyalTrUx+0To8I
-         c+s+1EoW4rYbVzcW8ShzDNQ5k4lL+K1pIskPsT6fJhsaKX9wJYmQEJEcLCzHNqydJhjl
-         Qtyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723438483; x=1724043283;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mM8hIk0Il1OoNYTiO69SEs09clvslubSlLyTOMarmXI=;
-        b=drwDcb9kAQUaFM8gxEzdrgyLlbzsGB/0Ldl+aK6zvCpTPGSsjZhGpAPECXA6+lK6/x
-         Qx/t6I1WGy7ZUFa8w1L60vzkGqezk2NPWfO10A2g0fqX9qf2ZpVttVubCDZ184KfsFU2
-         ApT7njw/8keVwwMDt3tqjfQ6A1B0yKJH/FLYQDRgfWH98YUAsblZBV2nGt36ienYIxLg
-         DPa8i+DUdms51uJwMa738V//C6W83cQDsHbWbQChgcsqF80YVvaoG7vs3GInQIVq7+18
-         OOARENCNVelQkHMlv45Zq+ILgfFaamLX/rI0uWW+qBm4Y7SpIA6GZ8pHbGYduUSmWwkI
-         lQPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlrMBijmmNr3pST4qslV5Wc0QS0ykMnLz8z1lVX/GfycbndsROCOv0wr1yah2lWLt11b2V0TTiCAkEJi9MwD0MvhCuTzRAAoFhGbOE
-X-Gm-Message-State: AOJu0YzWbZUJvK7YhTcY+mPonV9JtCAeu4R2jrEY0/tpuU3KYSfg/qTD
-	FQE4Vos2PLOQxXnO+U7d/A51T2BwwAN0rIJJfWjzY3LOv6zk5lkRG5Bm/P4atnc=
-X-Google-Smtp-Source: AGHT+IG9Hm7mz2IYGlrpM4SuzTL62Qbzr6jN0CUn18M/7AjFxPVmd28eUBvkwj+lz/oTj1+27nZaOg==
-X-Received: by 2002:a17:902:e845:b0:1f9:e2c0:d962 with SMTP id d9443c01a7336-20096baa066mr174277115ad.31.1723438482987;
-        Sun, 11 Aug 2024 21:54:42 -0700 (PDT)
-Received: from localhost ([122.172.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9fd0dfsm29338335ad.202.2024.08.11.21.54.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 21:54:41 -0700 (PDT)
-Date: Mon, 12 Aug 2024 10:24:39 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	kernel test robot <lkp@intel.com>, asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] cpufreq: Fix warning on unused of_device_id tables for
- !CONFIG_OF
-Message-ID: <20240812045439.tbdsbdwcxntoafdh@vireshk-i7>
-References: <20240809172439.908092-1-robh@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F79D136A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723438998; cv=fail; b=O5Dx55C+40NV8OX3UhnQRPv2suV/S9+H0T0E480VWYvpnfZvtUcXKnTNy2tNO7g0jiouLYuWVEGzOsN/08uZRxNp8jrJyv15ceL1ZVOmdvp/giCFwLY7Tk1qtJUHJDiZq/oVoCbqOz6Q2Ds4eUGvp13iJjaLygpeeaXnkGpCeq0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723438998; c=relaxed/simple;
+	bh=gmT0zVxHj1hHzWDzA8yRj8guKKlCaRigh2W//S8Q59E=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=qRlrup1F/Ti8edl7nlJqqZYvW2TsL/dQiEV13k5/u3goABKdcF9irkZX8TviAA0RIML6cKweEiuM9kNgDL50h64zCsvBHN+wOEBiwFv9Bl/DY7BqA1eIX0Qz04bN4j/7BQLx1kESMjB8fayGMYUu+dzZxj49TnmEHwN2IHVHCH0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i0Qz0H8F; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723438997; x=1754974997;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=gmT0zVxHj1hHzWDzA8yRj8guKKlCaRigh2W//S8Q59E=;
+  b=i0Qz0H8FMXr8GyLGqAWfA0Fu50IOXDqSloycvTAd4+baivllSlcwDHhp
+   0BOdCzh3ERv6rDTvMVfAbF4jOEBuv5hY4bd4XEW/HDP6GKL1jK2L+I1p9
+   4PPiWo/LGhzAqT//nPgcLWY60J0nvaPQJEv++cSjZ+em64CMpT/n01z2O
+   TdGehsOGPQAIp4mq/I5g6fJ16TiMdElEQzfLKrl+O00hh7ZNgj5H+SqK3
+   QKniE9NmG3q6NXRBGGm/RbGxkEyZarg0+0slFRWPNperl/7+0JrJtH7ji
+   FobybvPfq6AXSmQZZvXFj3atoO2+UGGdy8kA99mz9AY42alElJjoSvmI3
+   w==;
+X-CSE-ConnectionGUID: sGr61pUfRsyiRKRBs+LHUg==
+X-CSE-MsgGUID: pmbl6hquSWGWejeCjal1Kw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21504232"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21504232"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Aug 2024 22:03:16 -0700
+X-CSE-ConnectionGUID: XEzeNYOQQQe+pMf7p5pGLA==
+X-CSE-MsgGUID: I3tBB9HIRx6G3PgjheAo1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="58704675"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Aug 2024 22:03:16 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 11 Aug 2024 22:03:14 -0700
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 11 Aug 2024 22:03:14 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sun, 11 Aug 2024 22:03:14 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 11 Aug 2024 22:03:14 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QWw1GMjaTxk3lh4W8phqrFVmazeNPuwLjL1JCYJTc15ausqk3+Je7nBNMoO7cNgmI7K7IFc75pSqN5ArBaVKpupA/X25tVeb8EsWqglhX0uRAqjk3IZcQ5wXvFBYpcRLntLMDvesoXzF6Sax7ypl/KqhwtxXjTIOttZkBu7oYn4znLsl4hJeU6g4g1D7uTw/lJEdjljtg5arN/zQZBF7IlA6MmFvW/qiElAaJhrR9/2DEMRIjuKD1bkvue8OQHBX3cXjmBtcU6hWgaK7vRXmuoGjLstBFbYJV23yL3autDFEl9G5Y7RUqAmLmAP7aRxjta5yx9GaQO7ybeM/0GILaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2YxEcLRnblQqKaLqSaFAbWIH5YtT3CorkoebCKLagrs=;
+ b=djx+b8p9jvC0KFusle4RGySR2EYcBhNMAcMK80PmNaWhJF6VSJqGsZhvW5fle04/yNnyw2xL2rxbRXJy9YQUZpity9Ds99H0IWHT3d5uhAmdm/6q7Af3Xl2ns/mVEQvXaIs2khwbQwwpWhuSMp2H/1Ovf4CnWrurp+xy2Pbt2yS9S2iafGu+qnN4MTQsGYA+Zpgz++OzEb9+QwSgIvsjxIv8wwLAajfCfwmIgXYFYiUp34NMldUiwGbmCiyAvMxZHpuyHb8BLkwSVaragmKUUtvPUt4vPeMC/l11N2DsQXrlUUatzmbll4KLjcKIvz+NSfcmDcg4hl0RRwb6Hfc/Hw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MW4PR11MB7056.namprd11.prod.outlook.com (2603:10b6:303:21a::12)
+ by DM4PR11MB6453.namprd11.prod.outlook.com (2603:10b6:8:b6::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.29; Mon, 12 Aug
+ 2024 05:03:12 +0000
+Received: from MW4PR11MB7056.namprd11.prod.outlook.com
+ ([fe80::c4d8:5a0b:cf67:99c5]) by MW4PR11MB7056.namprd11.prod.outlook.com
+ ([fe80::c4d8:5a0b:cf67:99c5%6]) with mapi id 15.20.7828.031; Mon, 12 Aug 2024
+ 05:03:12 +0000
+Message-ID: <afcb3f75-5b72-4097-98b5-262a508160e7@intel.com>
+Date: Mon, 12 Aug 2024 10:33:04 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] workqueue: Add interface for user-defined
+ workqueue lockdep map
+To: Matthew Brost <matthew.brost@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+CC: <tj@kernel.org>, <jiangshanlai@gmail.com>, <christian.koenig@amd.com>,
+	<ltuikov89@gmail.com>, <daniel@ffwll.ch>
+References: <20240809222827.3211998-1-matthew.brost@intel.com>
+ <20240809222827.3211998-4-matthew.brost@intel.com>
+Content-Language: en-US
+From: "Ghimiray, Himal Prasad" <himal.prasad.ghimiray@intel.com>
+In-Reply-To: <20240809222827.3211998-4-matthew.brost@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MA0PR01CA0028.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a01:b8::16) To MW4PR11MB7056.namprd11.prod.outlook.com
+ (2603:10b6:303:21a::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809172439.908092-1-robh@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR11MB7056:EE_|DM4PR11MB6453:EE_
+X-MS-Office365-Filtering-Correlation-Id: db19427e-4ab8-45ee-405f-08dcba8c10fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?aStNZzB4TXpHUkNyMktLYkVxYXpUTVlabTd6R3cwQU1OTUhnY1M2UUg1azlJ?=
+ =?utf-8?B?NHVaTDNqMG9nLzFSQyswU2V4V2ZXVHhDVWx4OFh6VU1nakY4LzZ0NjY5TU1E?=
+ =?utf-8?B?K1ZiWjJwY3N4azFkakNRcGxHa2RxT1RiVnB0ME5nVU1PMUgxcWw5SUdRb3BF?=
+ =?utf-8?B?ZzNwVTg5R21lT3ZiQzluWmtvdm9IMmFnclFnWWs4eld4RndwNTBJbGtzOW1V?=
+ =?utf-8?B?SU8vK2dXYTlFK3kxL29mUXkzN05FRG9jdW4rb3J1WGRpWlhvOUduTk5XNlhp?=
+ =?utf-8?B?b3Y2VXBLSTJPc0s4aFlSTWszZHVGSW5Fd0FmN3VlN1hjYWFmSTRiSEExTEF1?=
+ =?utf-8?B?d1dGdlc2aGZHNmU3R3AwczlrQ1Bzd1U1bGozZ2dJNklNK2tTRjhrRTNGdEVi?=
+ =?utf-8?B?V0NpOFo0d0V1Q3RDTzhJbXFNR3dvS0xYTmpxMkQ1VUJNZnBuaFl1VkloVzR1?=
+ =?utf-8?B?S2JLV0JGWStreXFjeWdnUWJaS0l0bzFBMFNUeGs5RjZGbmNQdCtLZEpRM3pC?=
+ =?utf-8?B?b1ZPNGVjbklodGpZVXo5VjAybnhIOW5DSjZxYlEyMDQ2b29XRFo5akF3Wnpw?=
+ =?utf-8?B?TjEzS2E5a1kxdm9weFp1TjJNVFJJZEFNeWJTVzN6QnpuVzh4cFQ4RTJXTlYw?=
+ =?utf-8?B?eWdVRXNnRWpTdDFzZXFuTVl3YVdOVlRoRi9FdTlTekRKUE1wZENGMHdVZUZN?=
+ =?utf-8?B?UDRJUmFISFl4N3pTTmNzZDYvUVZPZnlvZjlWRmplMFZ3RGVLUVV2VVl1dGsw?=
+ =?utf-8?B?cGswUEgxQ1R6KzNiaWZOR2FKSkNYL29iQi9BUHFmUXo1WXJKVms2dkpsbzJs?=
+ =?utf-8?B?cnpubmpFWTkxQUFWTHR2UUFlQ0hmL3ZUSDVFMjkvcVc2dXlHQzZ1TitQODJS?=
+ =?utf-8?B?Z0hvZmxuVmQzNkVpRVRyY0RQZk5uV0FvZ3lFaGYxdVRiYXUrTVMzeDZWbkFk?=
+ =?utf-8?B?MTN3b3o1RzRncHg5RE5iM3JId0FGVVlUQS95Uk54K1VVYVdnaDkvQTdEYTBU?=
+ =?utf-8?B?Vk5nK0txWmcyWTZ3cEUxTkIwbjJKQXF4cGZza2ZLREI2NEFFeTU3RzJTMkpD?=
+ =?utf-8?B?NEx0b1o4TmVaTmdrWVArNHVFdkNkczRwWURjSXRNY1NZZmROUTcxQW9ScHhU?=
+ =?utf-8?B?SVRzM0U2YkNXczFCQkVhU2JKNUtGQnc4am5GR3FtMFJGY0lKbmlaa3NOQnph?=
+ =?utf-8?B?WVVhdXR4SlpYaWkxcW14RFVNMzNIWk9IbG9aajF4aEp0MklUSVljcm9nQTRF?=
+ =?utf-8?B?Um03UlpLeHVJY0lyQmljc2Urb0s2UjdpeGNjNkFvNkJsaVhXSzhxMDA3TGto?=
+ =?utf-8?B?M3VhaVkvMEd0amxiOThBMDNQKzY2V2RDSjdSdTZaQmNoeUhNd1lBK1Z3Qm5Z?=
+ =?utf-8?B?OXphM0NCWUMzbndWWkpZNTZteXYxRW9vMm9KeUs0RU5sZWFQbmNoU3RCSkRt?=
+ =?utf-8?B?OHhVbysxK1NjN2Y5L2hiVFVsY0ppSE5LbE5lM3NqQmVlTEJPK1c3NVo0c1oy?=
+ =?utf-8?B?K1ErVzFsenowWU9vMmx3TEplcXNKa2NWSStJNUZpTmZFQnJ3SDdHQ2t5eG5z?=
+ =?utf-8?B?a3UrdUxZMWZqeWVJd2xnOWEwY1YvOWVRbjY3NTUwU1BrRGZSOU8wVlMvK1ZY?=
+ =?utf-8?B?R2dOWHZRYXBXZEZBVW5hTUk2L0JnM1ZEeEY5ekQzTEFTbFhwdm5mYkxnL2px?=
+ =?utf-8?B?UEdHSjlBaGRFaGc1K0xiamFITlppT0dHR1laS3R2TDBvS09ySCt1U0hBeFJM?=
+ =?utf-8?B?ZUV0THl0SHRzdlRrSTkzUHI3UTZWcUptalNUSVhKMDZUY29lMFV4R1NZN1pX?=
+ =?utf-8?B?WGU0Q0JiQlA4NmRtWFdTQT09?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR11MB7056.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SDNaUUNYOVhnNFN1ckxtaHVRQzJLdU04SVgxcjJqcE1EaDZLQlBTZmhGUUFa?=
+ =?utf-8?B?U0U4M09pb3dBazZxQXoydFBTWUF5cW1MVTZkS3llNmZJNFBnd3FtOWRmYWQx?=
+ =?utf-8?B?dGlQRXhtNmZQM2wvY0E5RkN0K2hoY013eEVXNmpLaHQyQkt5SWlIOGhSWVpx?=
+ =?utf-8?B?bHVicXlLdHU0VG54Nno5dExGK2dJaURpaFhEb0JFby9UUnZ4TUg1QU0rUlpw?=
+ =?utf-8?B?dXNWMFNjc2FJTVlQZ0VIQ2haN0RsdTBSOHZhRFhtdythaW9XQ1JQTXpJMXdn?=
+ =?utf-8?B?K01iM1NLS2ZjWXArY1h4NldKWkQ3TnZYeDFMRGpOMzJ3MUJKdlZLQ0RSUE9T?=
+ =?utf-8?B?RWJBNG5oQ29XbzdUVEVDUmNtQkg3bThJNEpDZStLbFdXYzlLV29VZ1dFR0lY?=
+ =?utf-8?B?VzBueHV0cEJ3SDkxcGhBZTlic0F2MjR3Y21kdlVPWmVTZXAvVCt5V0VwY0Fk?=
+ =?utf-8?B?TG5zOUZDQ2Y2LzB4TGEzRnFVM1BBY2llWFNtWHpZRU9wS1pmdG9Ud29wR1Bu?=
+ =?utf-8?B?dkMxcGMxb0p4aGxQNldSTHllYXBCVTNHODhNL0VRSGtNNEhPMExGNWhCc2ZL?=
+ =?utf-8?B?S0hjeVlOS0cyQUxhZzZlbGZCUEZ2bHdHUzVjUm4zNXM2ZW1QWnVNVVUwMDNZ?=
+ =?utf-8?B?TVQrMlIrTi95NEFEUVJaOFdlU1A5REs2R2hxRGk1dk5kMlFFRjNlbEJ1S2lU?=
+ =?utf-8?B?R25yclNSWEcxRGt6ZVY1N1RydXJ6SUorR01oS3hYeGk1VHE2UkdYNG5DUkQv?=
+ =?utf-8?B?MEVIc2hON2YyMVU5Wnk3RDlkeWJFNi9BR3pmQXRiZCtDR2libENEWXdoOU90?=
+ =?utf-8?B?L2I4SnVlWG5GalR1eGp5eFRpU1BHdUdOQ2dVL2xIV3hCUXBMWnFNelVWRk9G?=
+ =?utf-8?B?dmpoZjBNQ2VJMjJqQmhQajNXWlo3cDVGc2ljY0xjbk51b2dyNjc2Zkl0T3k0?=
+ =?utf-8?B?R2tTREd6Z3FKTXI5bWZSMFZyUXhkTGgwQmIvUnkyQnkrcUlxOUJSOWZGMVVI?=
+ =?utf-8?B?eXUvd0lHUHdXdEhTTHlHNDByZFltMUs3Y3dJbDVvMkEvY3M1RXZHYThIeWpI?=
+ =?utf-8?B?bklxS0xhWGxQb1o1bGNQeStwNm11M1c2Z0psUEI3WDkxUmdOQ3V2VDh3NENV?=
+ =?utf-8?B?SEZKNEh2Zzd4UUN0UXN0azBGTFRVNnlMSnVjK2hFUitOQzdOQmJIc3BEclFx?=
+ =?utf-8?B?c1kwTldEcWNDeUZ2d3FFR20wL3BZWmFRc1RMVTFiVWllemxlckE5bkpQdnI2?=
+ =?utf-8?B?SFg4eVJ3VXJjQ3VpZ25QazlNMTUrWVBNUk1ldW01cVhNVC9sOWlpMk0zMXpP?=
+ =?utf-8?B?Q1lyRGNWTWs2K0RaUVowc3FqNW83TW1xTnB1TjUxOWh5YlA1cXJyRTUvSVBH?=
+ =?utf-8?B?UnIzOS9IeTYxczduOWxaUmo4YXMvYXpJSm1Ubm81NzNIQm04SXgzc2o4MUpM?=
+ =?utf-8?B?V21pR2NTMXc3emNpVkVGN3ZTS1BDdUMrRENPRlVPQmpJWTRUOG9BM3dlTEFK?=
+ =?utf-8?B?MWhnR2VmdWNKNDJjUFpNcTJ5dW93ajRlc0FGeENiUUpzUmN6SWVSakZPUk1S?=
+ =?utf-8?B?YXNpUXRJMnZNeDVmZVVsSFJWN2V0NmM5S0NhL0tVV1dpblRORlM5MEt5eGdC?=
+ =?utf-8?B?UnEwODlNa2lGNFRyakxFaWRuQWNvdmd3SkhkNGc3cUdWZTV3RzMvSU5pTTFt?=
+ =?utf-8?B?ZFFYY1dNd0dDTG5WcndYR1YzRitDdS8xQVFxUmhnVDhhclV1L0NMU0pLdGl5?=
+ =?utf-8?B?cUh6Q2pma00yaGNUOEVuaXk0OWgzS2d5anhqT2VsN2JiMWY1R21vd3hXVVlF?=
+ =?utf-8?B?OGQ2LzR3RCs5aWNOVEFpcmZ6YkdMQTFVMHpJeXc4a3YrMjM0dm5QM1dIRlcw?=
+ =?utf-8?B?VE9aV2lyVWJwb0dsbDE4Lzh4VnB0TEUyQkx5Q3M1ZlZ0WTE4SnhQamRHY2cr?=
+ =?utf-8?B?aTNtTjFacTU3REZRcGhEeXk0V21tK2xUNlZ2YTRzMzZTalBjL1FJM2l1eVNB?=
+ =?utf-8?B?ZFF0Z0JMUWhvU2xtVG1XMldzeFBUSVkrMGt1dUJVVDVQOWxFUGZqdWdTVG5T?=
+ =?utf-8?B?WitGeVlaTWVWekh5YUxkQXloSEtrYkxmK0o3Zm5ORE9OV2ZLeFY5bmtkZEp3?=
+ =?utf-8?B?KzQ4TUJOWVFkSjZkTmJpSXc4YUUzeEhHMk8xS1B4OGQ2S0t3cnBVOEdyaURD?=
+ =?utf-8?Q?ZnhTU9cgS1fxUxlSTv3A4p8=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: db19427e-4ab8-45ee-405f-08dcba8c10fb
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB7056.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 05:03:12.5646
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JORrtwWpNvRjWzghPzca2stcd53xMMgS0kBPhWXxOEA8J0v2aVHIuJka7ONQZSsesPTy/mU+zmSbXiNlLK60kxABtuwXxQezP8hWGJChbsY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6453
+X-OriginatorOrg: intel.com
 
-On 09-08-24, 11:24, Rob Herring (Arm) wrote:
-> !CONFIG_OF builds cause warnings on unused of_device_id tables. This is
-> due to of_match_node() being a macro rather than static inline function.
-> Add a __maybe_unused annotation to the of_device_id tables.
+
+
+On 10-08-2024 03:58, Matthew Brost wrote:
+> Add an interface for a user-defined workqueue lockdep map, which is
+> helpful when multiple workqueues are created for the same purpose. This
+> also helps avoid leaking lockdep maps on each workqueue creation.
 > 
-> Fixes: c7582ec85342 ("cpufreq: Drop CONFIG_ARM and CONFIG_ARM64 dependency on Arm drivers")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202408090714.wcrqU6Pk-lkp@intel.com/
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> v2:
+>   - Add alloc_workqueue_lockdep_map (Tejun)
+> v3:
+>   - Drop __WQ_USER_OWNED_LOCKDEP (Tejun)
+>   - static inline alloc_ordered_workqueue_lockdep_map (Tejun)
+> 
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
 > ---
-> Note that 0-day only reported 1 warning, but x86 W=1 build gave me these
-> 4.
+>   include/linux/workqueue.h | 52 +++++++++++++++++++++++++++++++++++++++
+>   kernel/workqueue.c        | 28 +++++++++++++++++++++
+>   2 files changed, 80 insertions(+)
+> 
+> diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
+> index 4eb8f9563136..8ccbf510880b 100644
+> --- a/include/linux/workqueue.h
+> +++ b/include/linux/workqueue.h
+> @@ -507,6 +507,58 @@ void workqueue_softirq_dead(unsigned int cpu);
+>   __printf(1, 4) struct workqueue_struct *
+>   alloc_workqueue(const char *fmt, unsigned int flags, int max_active, ...);
+>   
+> +#ifdef CONFIG_LOCKDEP
+> +/**
+> + * alloc_workqueue_lockdep_map - allocate a workqueue with user-defined lockdep_map
+> + * @fmt: printf format for the name of the workqueue
+> + * @flags: WQ_* flags
+> + * @max_active: max in-flight work items, 0 for default
+> + * @lockdep_map: user-defined lockdep_map
+> + * @...: args for @fmt
+> + *
+> + * Same as alloc_workqueue but with the a user-define lockdep_map. Useful for
+> + * workqueues created with the same purpose and to avoid leaking a lockdep_map
+> + * on each workqueue creation.
+> + *
+> + * RETURNS:
+> + * Pointer to the allocated workqueue on success, %NULL on failure.
+> + */
+> +__printf(1, 5) struct workqueue_struct *
+> +alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags, int max_active,
+> +			    struct lockdep_map *lockdep_map, ...);
+> +
+> +/**
+> + * alloc_ordered_workqueue_lockdep_map - allocate an ordered workqueue with
+> + * user-defined lockdep_map
+> + *
+> + * @fmt: printf format for the name of the workqueue
+> + * @flags: WQ_* flags (only WQ_FREEZABLE and WQ_MEM_RECLAIM are meaningful)
+> + * @lockdep_map: user-defined lockdep_map
+> + * @args: args for @fmt
+> + *
+> + * Same as alloc_ordered_workqueue but with the a user-define lockdep_map.
+> + * Useful for workqueues created with the same purpose and to avoid leaking a
+> + * lockdep_map on each workqueue creation.
+> + *
+> + * RETURNS:
+> + * Pointer to the allocated workqueue on success, %NULL on failure.
+> + */
+> +__printf(1, 4) static inline struct workqueue_struct *
+> +alloc_ordered_workqueue_lockdep_map(const char *fmt, unsigned int flags,
+> +				    struct lockdep_map *lockdep_map, ...)
+> +{
+> +	struct workqueue_struct *wq;
+> +	va_list args;
+> +
+> +	va_start(args, lockdep_map);
+> +	wq = alloc_workqueue_lockdep_map(fmt, WQ_UNBOUND | __WQ_ORDERED | flags,
+> +					 1, lockdep_map, args);
+> +	va_end(args);
+> +
+> +	return wq;
+> +}
+> +#endif
+> +
+>   /**
+>    * alloc_ordered_workqueue - allocate an ordered workqueue
+>    * @fmt: printf format for the name of the workqueue
+> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+> index 24df85589dc0..f4b50a995e99 100644
+> --- a/kernel/workqueue.c
+> +++ b/kernel/workqueue.c
+> @@ -4775,11 +4775,17 @@ static void wq_init_lockdep(struct workqueue_struct *wq)
+>   
+>   static void wq_unregister_lockdep(struct workqueue_struct *wq)
+>   {
+> +	if (wq->lockdep_map != &wq->__lockdep_map)
+> +		return;
+> +
+>   	lockdep_unregister_key(&wq->key);
+>   }
+>   
+>   static void wq_free_lockdep(struct workqueue_struct *wq)
+>   {
+> +	if (wq->lockdep_map != &wq->__lockdep_map)
+> +		return;
+> +
+>   	if (wq->lock_name != wq->name)
+>   		kfree(wq->lock_name);
+>   }
+> @@ -5756,6 +5762,28 @@ struct workqueue_struct *alloc_workqueue(const char *fmt,
+>   }
+>   EXPORT_SYMBOL_GPL(alloc_workqueue);
+>   
+> +#ifdef CONFIG_LOCKDEP
+> +__printf(1, 5)
+> +struct workqueue_struct *
+> +alloc_workqueue_lockdep_map(const char *fmt, unsigned int flags,
+> +			    int max_active, struct lockdep_map *lockdep_map, ...)
+> +{
+> +	struct workqueue_struct *wq;
+> +	va_list args;
+> +
+> +	va_start(args, lockdep_map);
+> +	wq = __alloc_workqueue(fmt, flags, max_active, args);
+> +	va_end(args);
+> +	if (!wq)
+> +		return NULL;
+> +
+> +	wq->lockdep_map = lockdep_map;
 
-Applied. Thanks.
+How about NULL check and fallback to dynamic allocation, just to be safe   ?
 
--- 
-viresh
+> +
+> +	return wq;
+> +}
+> +EXPORT_SYMBOL_GPL(alloc_workqueue_lockdep_map);
+> +#endif
+> +
+>   static bool pwq_busy(struct pool_workqueue *pwq)
+>   {
+>   	int i;
 
