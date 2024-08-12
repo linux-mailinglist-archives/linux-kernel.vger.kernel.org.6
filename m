@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-282994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 811C694EBA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:14:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2545094EBAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392281F223C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5781F2246A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E59172BD5;
-	Mon, 12 Aug 2024 11:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0851741FA;
+	Mon, 12 Aug 2024 11:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQBEatZR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bW9gQ9Ks"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5C516CD08;
-	Mon, 12 Aug 2024 11:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CA1166F2D;
+	Mon, 12 Aug 2024 11:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723461238; cv=none; b=aFUOLFJEk06bhi0LIm4lKdLSleW6Fa+EnFbEUM7oFh1ErHpdJ2CvW6/bVMz2fw9l/kt0QYZPOb7PS6426LXif4QasEyHQ28sB8ZCpxy0poaoI7GYfzuw3DodSvezBs1qh/UYy8NNnMCz1Gx6RjKS6h0+yKjIz4dUgEkK8K15G7s=
+	t=1723461415; cv=none; b=DcUNK3vnyX1ELqOZYUMF2l/PRf8y7QBhKUwLJlPp1or/tG0h+k1+BCB8s+EmA5regAD6aA75crwDEGdruXzl+s1xiYyh/JZsShBts3CyETZaEnmFw+G+8Yv/8t5aBypaLknA0jKd3pAhcTfCoM9ZFLLWBw+yFzH4GB1hmGDnKdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723461238; c=relaxed/simple;
-	bh=ZJVcMsZ+9XIIYs9Wp/RvwLQ8tTBR0KO2oTkBhcPhit8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Je798hJRy7a99BNnsnFt3zLpd+whEajM3JH5pJcr40h/bhpjeXga0hTto7PAqYWRkpQBzxn3Ik0O8F/V8sX/toFybsueBn3BrAy6VkamOwA3S1pDdLcDDolhdc5e3AThicOo384LM+sVnWGqxttqojJs8XXDLbiA3ES5rMXhoAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQBEatZR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40E3FC32782;
-	Mon, 12 Aug 2024 11:13:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723461237;
-	bh=ZJVcMsZ+9XIIYs9Wp/RvwLQ8tTBR0KO2oTkBhcPhit8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQBEatZRD/h9p5VNDNIjdYneQ6jvxI8t1wiqPId0SSpWZm3nZCNJuWqlBCMz1Q7mK
-	 HOAsfRYoUOom2aaA9wK9ptoYvefJ1VaebZgEkuRr/uJigfg80/QRiZDzwndTip9Djb
-	 nRUoDUCsBIIbmUcDaWPrlK7ACc8iclGlRgrq+i2PCk305mHlZ8lvVC2C3DZkMRqKt1
-	 7aXRkXmphq1B5UeiFjfYF2o13ELS0ODxCGO1+P/hbAKfKX3EOyk73gsl25Ygq07PgP
-	 LTdPQShs6EuXA6Yi83Xd0I9IPreOhE+fyZ/i7ZovREOxFpkb7aVruTytOHFo6ugLfF
-	 KxT84KQCqO/3g==
-Date: Mon, 12 Aug 2024 13:13:54 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>
-Cc: "qiang.zhang1211@gmail.com" <qiang.zhang1211@gmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"neeraj.upadhyay@amd.com" <neeraj.upadhyay@amd.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
-	"boqun.feng@gmail.com" <boqun.feng@gmail.com>,
-	"urezki@gmail.com" <urezki@gmail.com>,
-	"joel@joelfernandes.org" <joel@joelfernandes.org>,
-	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
-Subject: Re: [PATCH 2/3] rcu: Defer RCU kthreads wakeup when CPU is dying
-Message-ID: <ZrnuctZQS4DTSb0q@localhost.localdomain>
-References: <20231218231916.11719-1-frederic@kernel.org>
- <20231218231916.11719-3-frederic@kernel.org>
- <CALm+0cVv4cnbDPi=9oCYE_5s+DfuzQcB1fz=M1T8Hyp9D9sbXw@mail.gmail.com>
- <ZYMElDsPLTJDdco3@localhost.localdomain>
- <65b6b97a6f61f80c5f1ea1f245eea392a0de5523.camel@mediatek.com>
+	s=arc-20240116; t=1723461415; c=relaxed/simple;
+	bh=7YxXuZF6kvLDCv2XMBaLGRznts0EST5DjEdKKHbhj7E=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=maYM3r2rAMUtEC7l+V8D2/dTPEKrsP4/etklCke48z8r+Op6TYzgx5IuzaRs/usSuU+UKlHEVwY4WMOSsinLepzZSNeMygJ/QUlUNPyMOE0dX23RCzWOM7MmoKfkJD7SrS50RWTy+1jhFeQWAclTF7s6ULEIqlhshgAwNhONhXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bW9gQ9Ks; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723461414; x=1754997414;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=7YxXuZF6kvLDCv2XMBaLGRznts0EST5DjEdKKHbhj7E=;
+  b=bW9gQ9KsJGTTq7DYI9SIl6Dbr0kYJwQjAXFT71aEUdD6tofAJWyRNSQM
+   DgJV5PIvptyLOnBYwPcp034xHKxv8MUTyMZlwVW31xj1iGyPaVe9szWJF
+   CiGCespgdirLbEebpqrhehV2dxVApWHluRDH7xA528XGss9e1hbjrYYmI
+   L/0xa+014WZpUE4BmP7x6ZbV6BnkTzvMkBDYMt/EGojr62FYk/kM+qb8J
+   +YswbumtzKhJXYsDYC9IXVkKcTXXDYlvEBmBSl8C91m6rGGgAbOtxuVG4
+   rFM01oQMENclRBksSDbVWNt5vW1aYIdwyZZjJ4DG9LCK9GYw6p4VdqBcb
+   g==;
+X-CSE-ConnectionGUID: 1aL89uJeSaCP6xcjsGwO3g==
+X-CSE-MsgGUID: OpOm1jlPQAakDRW/ZH4yTA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21694692"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21694692"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 04:16:53 -0700
+X-CSE-ConnectionGUID: +VjV+JLuSWu8xLgHEwfIqw==
+X-CSE-MsgGUID: BN3ZDA6+T1mLrO6xwE5sDw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="95747911"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 04:16:49 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 12 Aug 2024 14:16:46 +0300 (EEST)
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86/intel-uncore-freq: Do not present separate
+ package-die domain
+In-Reply-To: <20240731185756.1853197-1-srinivas.pandruvada@linux.intel.com>
+Message-ID: <cd7cc6b8-4993-937b-072b-8fbc1e309a4d@linux.intel.com>
+References: <20240731185756.1853197-1-srinivas.pandruvada@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <65b6b97a6f61f80c5f1ea1f245eea392a0de5523.camel@mediatek.com>
+Content-Type: text/plain; charset=US-ASCII
 
-Le Mon, Aug 12, 2024 at 09:10:56AM +0000, Cheng-Jui Wang (王正睿) a écrit :
-> On Wed, 2023-12-20 at 16:13 +0100, Frederic Weisbecker wrote:
-> > Le Wed, Dec 20, 2023 at 04:24:35PM +0800, Z qiang a écrit :
-> > > > 
-> > > 
-> > > In the rcutree_report_cpu_dead(), the rcuog kthreads may also be
-> > > wakeup in
-> > > do_nocb_deferred_wakeup(), if the rcuog kthreads is rt-fifo and
-> > > wakeup happen,
-> > > the rt_period_active is set 1 and enqueue hrtimer to offline CPU in
-> > > do_start_rt_bandwidth(),
-> > > after that, we invoke swake_up_one_online() send ipi to online CPU,
-> > > due to the
-> > > rt_period_active is 1, the rt-bandwith hrtimer will not enqueue to
-> > > online CPU.
-> > > any thoughts?
-> > 
-> > Duh, you're right, that one too. How many more? This hrtimer
-> > situation is scary...
-> > 
-> > Thanks.
+On Wed, 31 Jul 2024, Srinivas Pandruvada wrote:
+
+> The scope of uncore control is per power domain in a package and die.
+> A package-die can have multiple power domains on some processors. In this
+> case package-die domain (root domain) aggregates all information from
+> power domains in it.
 > 
-> I encountered the issue pointed out by Z Qiang on kernel-6.6, which
-> cause RT tasks on the CPU to never be scheduled, leading to a system
-> reboot. It triggered the WARN_ON_ONCE(!base->cpu_base->online)
-> introduced in [PATCH 1/3]. Below is the call trace:
+> On some processors, CPUID enumerates the die number same as power domain
+> ID. In this case there is one to one relationship between package-die and
+> power domain ID. There is no use of aggregating information from all
+> power domain IDs as the information will be duplicate and confusing. In
+> this case do not create separate package-die domain.
+
+Hi Srinivas,
+
+I got confused by this changelog because its order is quite illogical.
+
+First paragraph talks about case A. When you say "all information" 
+is "aggregated", I immediately make the assumption that the aggregated 
+information is what is wanted because, well, you normally want "all 
+information" and nothing else is being told here.
+
+Second paragraph starts to talk about case B and then suddenly switches to 
+talk what should have been done in case A (that aggregated information is 
+useless/confusing).
+
+So I think some reorganization of the sentences would be useful to not 
+jump between cases mid-paragraph without any hints.
+
+(I hope my explanation is enough to highlight why it was hard to follow).
+
+When I finally understood what the changelog was saying, I found out the 
+code change is fine too but it first looked like it was doing exactly the 
+opposite to my expectations/reasonale given in the changelog.
+
+-- 
+ i.
+
+
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> ---
+>  .../x86/intel/uncore-frequency/uncore-frequency-tpmi.c     | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
->  Call trace:
->   enqueue_hrtimer+0x7c/0xf8
->   hrtimer_start_range_ns+0x2b8/0x300
->   enqueue_task_rt+0x298/0x3f0
->   enqueue_task+0x94/0x188
->   ttwu_do_activate+0xb4/0x27c
->   try_to_wake_up+0x2d8/0x79c
->   wake_up_process+0x18/0x28
->   __wake_nocb_gp+0x80/0x1a0
->   do_nocb_deferred_wakeup_common+0x3c/0xcc
->   rcu_report_dead+0x68/0x1ac
->   cpuhp_report_idle_dead+0x48/0x9c
->   do_idle+0x288/0x294
->   cpu_startup_entry+0x34/0x3c
->   secondary_start_kernel+0x138/0x158
-
-This means you are setting rcuo kthreads as real time
-tasks. I would be curious about your usecase.
-
-Anyway I'm working on a fix. Thanks!
+> diff --git a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> index 9fa3037c03d1..6c2e607968f2 100644
+> --- a/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> +++ b/drivers/platform/x86/intel/uncore-frequency/uncore-frequency-tpmi.c
+> @@ -427,6 +427,9 @@ static int uncore_probe(struct auxiliary_device *auxdev, const struct auxiliary_
+>  
+>  	auxiliary_set_drvdata(auxdev, tpmi_uncore);
+>  
+> +	if (topology_max_dies_per_package() > 1)
+> +		return 0;
+> +
+>  	tpmi_uncore->root_cluster.root_domain = true;
+>  	tpmi_uncore->root_cluster.uncore_root = tpmi_uncore;
+>  
+> @@ -450,7 +453,9 @@ static void uncore_remove(struct auxiliary_device *auxdev)
+>  {
+>  	struct tpmi_uncore_struct *tpmi_uncore = auxiliary_get_drvdata(auxdev);
+>  
+> -	uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
+> +	if (tpmi_uncore->root_cluster.root_domain)
+> +		uncore_freq_remove_die_entry(&tpmi_uncore->root_cluster.uncore_data);
+> +
+>  	remove_cluster_entries(tpmi_uncore);
+>  
+>  	uncore_freq_common_exit();
+> 
 
