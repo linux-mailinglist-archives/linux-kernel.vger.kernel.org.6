@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-283066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5442894EC99
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:16:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF2C94EC81
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 874BB1C2157C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:16:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578C91C2174A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613BE17A5B0;
-	Mon, 12 Aug 2024 12:16:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BCA17A93F;
+	Mon, 12 Aug 2024 12:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tgZS0vd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02466158860;
-	Mon, 12 Aug 2024 12:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 367B3179972;
+	Mon, 12 Aug 2024 12:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464982; cv=none; b=LwFLMNMXEnbVUtTQ2SFjtLr/lhHZvGNke1QP96ZDO7fEc14nwuvL3nnHfKPVOM9AR8f3xZAqAMp9WPTHTT1nU23xyTRAqv4v6AVxpNQw53vY0W6gQ/EGCYLB78aol5xjrDUVvxmW+N0y1SN245gOBzJBiTn8bMJAybx+kNLKVzM=
+	t=1723464735; cv=none; b=llazJr9aBwYMww6EoBlXiunLrtG3raV3BEqEdtjgCjShXq80jw086Pb+FYhqmh7vIi1lsngj/hxBY6T9v0V314sO17H5xUtGPvJVHFrM9YYkaR62s88IwWFxbXvFFLeQEzuMYvoEXcrBFXunI63FkMD18EzS+f/Noc/8D/pnvC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464982; c=relaxed/simple;
-	bh=wQyajU4ub9vwuhQUmYUbY4TRRoLVYByoH8L7XYPIi2Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lrcFVHmH70TKgPLecc/SdmXk//TwK2WQKL4Ddm7ydhvYKyagmgwQ6PNuFb2fB1gvQkNdWUwcwVHMcjoI60kuzkCUGYu/yodbB/SFXHq8Zd2NZIwV8HRH3YRji0ziLgFaumzkYzXa8OBA/kHsuFSGUCc1GEfvatag5tlBdKa+2a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD4s4JlMz4f3mJ3;
-	Mon, 12 Aug 2024 20:15:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 34D1C1A0568;
-	Mon, 12 Aug 2024 20:16:12 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S6;
-	Mon, 12 Aug 2024 20:16:12 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	djwong@kernel.org,
-	hch@infradead.org,
-	brauner@kernel.org,
-	david@fromorbit.com,
-	jack@suse.cz,
-	willy@infradead.org,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	chengzhihao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [PATCH v2 2/6] iomap: support invalidating partial folios
-Date: Mon, 12 Aug 2024 20:11:55 +0800
-Message-Id: <20240812121159.3775074-3-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1723464735; c=relaxed/simple;
+	bh=feMZ11amsOB5MfZgo8CW/vk5lh85VqxPxLLtSo9jxdA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=P/Iqoy0LnXCiJxfJlLqowZ9NWSdFM4bj6iNY73qIDmG8Qh2xjiY7W2XEkPbQpBPzab4rZTopDafQwdZ4qP3res62dNN+7dXOS9N0Yd52f5PDopxvYZLg+HqGz8zRDGxMar+3SEzolx1/KNPj3nPu4ARuVWEasAJrSp6gOWxBkMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tgZS0vd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D65CFC32782;
+	Mon, 12 Aug 2024 12:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723464734;
+	bh=feMZ11amsOB5MfZgo8CW/vk5lh85VqxPxLLtSo9jxdA=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=tgZS0vd2E/r60+JfFvuAq+1P0K0KF3X9jMjOvMu84AUncArQ4UWB6TmYk95FDQ+p9
+	 To8wc/6GzDVxex1ZNSyn90kXE8XVM35zel2l4oayqWpzJo8BMu8M8lEejxQSfpV8Ce
+	 G1WCdmA9RGSbmy8mX+tYEja9avN1o/YDeriSLvaC5EV7qxNFvj5aBFDpUOF+qqP5S0
+	 QzTU5rRf3uBSXZP+/GwCByy22Te7xkMzf/dIoybccO32uBEuASi+9ZYHuZThPpK3EW
+	 3RRlD9Q7KDaLwkkV5jxmMcB8nv2vjFyF86xLtU7vRrzK0Sc5iISWkrM6//uFNYxNcf
+	 AyEu5vG0dMmQA==
+From: Simon Horman <horms@kernel.org>
+Date: Mon, 12 Aug 2024 13:11:55 +0100
+Subject: [PATCH net-next 1/3] ipv6: Add ipv6_addr_{cpu_to_be32,be32_to_cpu}
+ helpers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S6
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFWxGFW7Jr43Zry5tw13Arb_yoWkJwc_Z3
-	4kWw1kXr1rG3WftF1xAFWayr1v934rCr18uFy8tF9Yk34DJas5Jr1vkFnagF1UJa17GFZx
-	Jan5ur45Zry29jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbkxFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXwA2048vs2IY02
-	0Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-	wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j
-	6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
-	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
-	2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
-	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kfnx
-	nUUI43ZEXa7VU1c18PUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240812-ipv6_addr-helpers-v1-1-aab5d1f35c40@kernel.org>
+References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
+In-Reply-To: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yisen Zhuang <yisen.zhuang@huawei.com>, 
+ Salil Mehta <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+X-Mailer: b4 0.14.0
 
-From: Zhang Yi <yi.zhang@huawei.com>
+Add helper to convert an ipv6 addr, expressed as an array
+of words, from cpy to big-endian byte order.
 
-Current iomap_invalidate_folio() could only invalidate an entire folio,
-if we truncate a partial folio on a filesystem with blocksize < folio
-size, it will left over the dirty bits of truncated/punched blocks, and
-the write back process will try to map the invalid hole range, but
-fortunately it hasn't trigger any real problems now since ->map_blocks()
-will fix the length. Fix this by supporting invalidating partial folios.
+No functional change intended.
+Compile tested only.
 
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
+Link: https://lore.kernel.org/netdev/c7684349-535c-45a4-9a74-d47479a50020@lunn.ch/
+Signed-off-by: Simon Horman <horms@kernel.org>
 ---
- fs/iomap/buffered-io.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/net/ipv6.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 4da453394aaf..763deabe8331 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -644,6 +644,8 @@ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len)
- 		WARN_ON_ONCE(folio_test_writeback(folio));
- 		folio_cancel_dirty(folio);
- 		ifs_free(folio);
-+	} else {
-+		iomap_clear_range_dirty(folio, offset, len);
- 	}
+diff --git a/include/net/ipv6.h b/include/net/ipv6.h
+index 88a8e554f7a1..e7113855a10f 100644
+--- a/include/net/ipv6.h
++++ b/include/net/ipv6.h
+@@ -1365,4 +1365,16 @@ static inline void ip6_sock_set_recvpktinfo(struct sock *sk)
+ 	release_sock(sk);
  }
- EXPORT_SYMBOL_GPL(iomap_invalidate_folio);
+ 
++#define IPV6_ADDR_WORDS 4
++
++static inline void ipv6_addr_cpu_to_be32(__be32 *dst, const u32 *src)
++{
++	cpu_to_be32_array(dst, src, IPV6_ADDR_WORDS);
++}
++
++static inline void ipv6_addr_be32_to_cpu(u32 *dst, const __be32 *src)
++{
++	be32_to_cpu_array(dst, src, IPV6_ADDR_WORDS);
++}
++
+ #endif /* _NET_IPV6_H */
+
 -- 
-2.39.2
+2.43.0
 
 
