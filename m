@@ -1,1756 +1,230 @@
-Return-Path: <linux-kernel+bounces-283084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C9BF94ECF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A7994ECFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 559E7B21D20
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:28:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 749EEB221D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DAC17A5B8;
-	Mon, 12 Aug 2024 12:28:27 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0207C17A593;
+	Mon, 12 Aug 2024 12:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdzqkFi9"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF74317A58F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC7517A594;
+	Mon, 12 Aug 2024 12:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723465704; cv=none; b=eiVdIj/pO1Zzlh1pqZ2TTIRpNcWrnTiadfBe8YXIx/QiIMsU6TBrAhcQ9OtukoT5pkmDvDDMb95tgYY1MJVrBOIF6WQNBIh5ho6Y2LNzgFf+/M8DdzknQdrVOsWEr8kwxYUAZNUL7TsJJ0HsA2pr4iPxE1HspvyappUKBLZWdW8=
+	t=1723465741; cv=none; b=LxN3CMR+QVe1MU/6VEixk5kGGlXN1a+ekgzu8yShUT9vN/dfVplcJKFIsZy4RgJBoXdztXHiLa0X9fgrvLw27+LZzylyRYUbitb20xFld2Epw0EyhNs9fU8+bhDt0jigYAuDIg6/FpWGaZ4g82ElkKSykpafI/lQPn1u0FRpmb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723465704; c=relaxed/simple;
-	bh=jjpY8aHN9kvsgEL5LmnDusvgECiDCTW4/x8mJFgZ6hE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jSK2ABuvxHPi4gf2eV7Dm3yzE9edNCpwzcWqRQhKKZDqqC9y6K6F3rgJdZYMKf7JO4EDzeKuogicGBOu3a0KB2blSnJgwctn72FFQL+mYRSIWtyu9TKVbnZvzfq4QN4N2ArCimVTTfxI9h0kwyTsnUZjtUd3GqnBWvWKzxYpLMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-81f87635cc1so547048839f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:28:20 -0700 (PDT)
+	s=arc-20240116; t=1723465741; c=relaxed/simple;
+	bh=OOzAyQ03ZtMeF7A2FRx7abj8ps+nT7X2VrI2X2HcBSg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AK6rj/c6uBLyVYsunHxToywYKB/LQeqhwtp2UBp9JP775EqOO+ROh6A/QncGYwdpaV9WClaEcePlx11gpGvgT6Fnk25uE8wqimjBPkn31ApqEGaQgvEnXZRIuzdlHagLLL6NMk7z+GQQQMvNAcX6Y9zm0B+hZaRLUzpyFftlRdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XdzqkFi9; arc=none smtp.client-ip=209.85.222.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-82c30468266so1394953241.0;
+        Mon, 12 Aug 2024 05:28:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723465737; x=1724070537; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dmvUcZJslqDH1zmxDHmponIrktodaIlrZefDJgoVFQI=;
+        b=XdzqkFi9JmlbOMaK6mSAuRm5v4WKMo81y3vPpClK/2LDQSYHGgVKYoNJqEFMbOtSQc
+         YW8BMLPf0KqV7KO40spE+cYi+9H7UT+gYCZYvvMGlNQz5EK1vmLWadpCVtdznVhOCKnJ
+         fW9L3xxTSpD00E0bRC+4G09KHbF8feXm6oQSYXNi/a+JVR/EAUIWw1X2M6RKNTBgwR67
+         eS7bh68k5GrDM4YBTwy0AVRCSA2LQCIsUNcbGS2mgduZD/63qLGQjpJivmHWdRrQ1LVQ
+         dPxnjz/KdvDE9PJg2vBjBkj9a3zHmpOc14g3BqKKis7nJ/KHm2rGGRxRCqmyDMJA9Z61
+         /x+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723465700; x=1724070500;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G5H41VKOYUwLXWtYTsIiH0kfMyCSrT3yk+UUUAWgo8Y=;
-        b=A9Pnz8mu5666+h6yOjkeSLv+3WBCuH9E5LoD/MWFudX4VfLsWC6jW4jmD7Z8yw2pbP
-         VVot8a/Ici0vxe0RkTN8VShtOv+HZC5lG7ixXdJ7QEBbr/hSuHqVCq9sRooS/4DXPLr3
-         8B8PnJMbcLhCCk08oyIHgdmHh1aoIPNSpUs/btHJU5UElTjFjzhmCzXG2o70YZjdii7G
-         GAIUuKqTvor64OTNuwdfpIGKtsaOrf95Oo6sNhz2pKDaEG4Z3qhwys0rFADUlFRDq1A5
-         GHwLvZzWUr31yHX3XOPwhbfqI/5dUlHTXnZ6Yk2SGi91KBVW0jNjeM/Z0VAMWGB9Cqr3
-         XDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVq4MH5CsI9WCiBuKT236djnF3m2naJ64w2Zspu4rwgAmrB6QlF0YdPVOzc7LaOy4Nw0DZ0F//H89vsKGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzaaY26+sJmIUdMjwKRV11FSyd2I7LGE6LUdXZxmlUNnNEZjdw
-	J/G9siGxtqxzpyt7MdSWouQ7MhNeQ8+B/eZBt8AqcasItAMh5d2lgq07Xo6ZKwdUzkdnyaMDO3T
-	qIuoB4oVR/pnhlDstJ4U9KVoi1Cq40HhaFl4WU0ky4aXfEKwgDWp5XS4=
-X-Google-Smtp-Source: AGHT+IGIYnNZJm9p5PJbX2lIOKRqvx1bvQXr160EdsLbASUxFp9cHm/ejskudL1TxTQX6SdWsRlTUe3D3WSIoD89Q4jX868+OaAb
+        d=1e100.net; s=20230601; t=1723465737; x=1724070537;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dmvUcZJslqDH1zmxDHmponIrktodaIlrZefDJgoVFQI=;
+        b=TC4IGR0tNG8izeUVJ0Jdx/yXgPr6Mini40MabZX8c4e/04ogSMyOmpjrFgmK88bgrQ
+         UQ9apLZbwIsmfrh1qZtCg2LTpmavVbNNkV22mXvyd0INZwN8Fp6eHt00RzbzicqpSXYT
+         YX/PF8OlXhW398ZfvcROkCLvT5ckwlW1DzNWAosP9NiYQi8APRy7NMX2+SU+jkD6kgJJ
+         NcOeotSAZrMmwn7HiLXLiJxtwvXXQ3nVrZv+6Vw8KwnYq0nITXw1XTPwqA3bO/MVQGM0
+         ySi0LqlNljseJ92sWbWJIcYHz8MqTztqHmiAQP8Mye5atQRU5VDS23SfcL0ORozS0y/N
+         cAdw==
+X-Forwarded-Encrypted: i=1; AJvYcCW9/LmTkQjTZMGLjeEKipENmSblkpEm5KJrLo+zO8iA8BNRgguDR8UQOJCqx+hXW283or0XVRxN4BTEYRABIMuN5cGKqOGHW8q0SGFjyuocJaEeQYVpND4QruLbZLACnL5i3upvexj4bMIqsAyGvNWAErW2kmyn5w9bRsLrohxftupLn+gT+prw7ufN
+X-Gm-Message-State: AOJu0YxvyBTZLZhXWf4zlB9AF+oDXFDyMASTdhkK2EbRKvbuY8ffzAel
+	tvE13GhHcYboyNLJI6IE5PwP3NCF/kGrsrRLvrMCCsrD9X5rghQmtOEcH2j8fjCpULl780Hjr6x
+	rBajIP/9u05jhswh/b6zZS/Q+8hI=
+X-Google-Smtp-Source: AGHT+IFcpmMlKKZ8LojBXNqkfLSl9I+A1+MW5ID7EFAtliPkUzAfxVkLSFAtMSkohwdlMYWYPecUzU/j16xI442Rxyc=
+X-Received: by 2002:a05:6122:2523:b0:4f6:b240:4af8 with SMTP id
+ 71dfb90a1353d-4fabf08eff5mr277744e0c.11.1723465737297; Mon, 12 Aug 2024
+ 05:28:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:3fca:b0:7f6:1e9c:d6f4 with SMTP id
- ca18e2360f4ac-824c9a59883mr438939f.3.1723465699989; Mon, 12 Aug 2024 05:28:19
- -0700 (PDT)
-Date: Mon, 12 Aug 2024 05:28:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d4b1ac061f7ba006@google.com>
-Subject: [syzbot] [mm?] INFO: rcu detected stall in kcov_close
-From: syzbot <syzbot+894cac40ce97c83618bb@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240811204955.270231-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB113466DE7061B60485B3BE97986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8vioGija2x=eoqn1jZbMpK8PAeLzXQZP52hQn976BKisw@mail.gmail.com> <TY3PR01MB1134680204C824F1B567B21B986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB1134680204C824F1B567B21B986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 12 Aug 2024 13:28:31 +0100
+Message-ID: <CA+V-a8toz3xpKSyBj39L-M0iOkbgTRse5jPTocspBrmDzZLUzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
+ OSTM, I2C, and SDHI
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+Hi Biju,
 
-syzbot found the following issue on:
+On Mon, Aug 12, 2024 at 11:02=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+>
+> Hi Prabhakar,
+>
+> > -----Original Message-----
+> > From: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> > Sent: Monday, August 12, 2024 10:16 AM
+> > Subject: Re: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: E=
+nable OSTM, I2C, and SDHI
+> >
+> > Hi Biju,
+> >
+> > On Mon, Aug 12, 2024 at 8:40=E2=80=AFAM Biju Das <biju.das.jz@bp.renesa=
+s.com> wrote:
+> > >
+> > > Hi Prabhakar,
+> > >
+> > > Thanks for the patch.
+> > >
+> > > > -----Original Message-----
+> > > > From: Prabhakar <prabhakar.csengg@gmail.com>
+> > > > Sent: Sunday, August 11, 2024 9:50 PM
+> > > > Subject: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk:
+> > > > Enable OSTM, I2C, and SDHI
+> > > >
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > Enable OSTM0-OSTM7, RIIC{0,1,2,3,6,7,8}, and SDHI1 (available on th=
+e
+> > > > SD2
+> > > > connector) on the RZ/V2H GP-EVK platform.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar
+> > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > ---
+> > > > v1->v2
+> > > > - New patch
+> > > > ---
+> > > >  .../boot/dts/renesas/r9a09g057h44-gp-evk.dts  | 191
+> > > > ++++++++++++++++++
+> > > >  1 file changed, 191 insertions(+)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+> > > > b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+> > > > index 593c48181248..11c13c85d278 100644
+> > > > --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+> > > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
+> > > > @@ -7,6 +7,8 @@
+> > > >
+> > > >  /dts-v1/;
+> > > >
+> > > > +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+> > > > +#include <dt-bindings/gpio/gpio.h>
+> > > >  #include "r9a09g057.dtsi"
+> > > >
+> > > >  / {
+> > > > @@ -14,6 +16,14 @@ / {
+> > > >       compatible =3D "renesas,gp-evk", "renesas,r9a09g057h44",
+> > > > "renesas,r9a09g057";
+> > > >
+> > > >       aliases {
+> > > > +             i2c0 =3D &i2c0;
+> > > > +             i2c1 =3D &i2c1;
+> > > > +             i2c2 =3D &i2c2;
+> > > > +             i2c3 =3D &i2c3;
+> > > > +             i2c6 =3D &i2c6;
+> > > > +             i2c7 =3D &i2c7;
+> > > > +             i2c8 =3D &i2c8;
+> > > > +             mmc1 =3D &sdhi1;
+> > > >               serial0 =3D &scif;
+> > > >       };
+> > > >
+> > > > @@ -32,17 +42,186 @@ memory@240000000 {
+> > > >               device_type =3D "memory";
+> > > >               reg =3D <0x2 0x40000000 0x2 0x00000000>;
+> > > >       };
+> > > > +
+> > > > +     reg_3p3v: regulator1 {
+> > > > +             compatible =3D "regulator-fixed";
+> > > > +
+> > > > +             regulator-name =3D "fixed-3.3V";
+> > > > +             regulator-min-microvolt =3D <3300000>;
+> > > > +             regulator-max-microvolt =3D <3300000>;
+> > > > +             regulator-boot-on;
+> > > > +             regulator-always-on;
+> > > > +     };
+> > > > +
+> > > > +     vqmmc_sdhi1: regulator-vccq-sdhi1 {
+> > > > +             compatible =3D "regulator-gpio";
+> > > > +             regulator-name =3D "SDHI1 VccQ";
+> > > > +             gpios =3D <&pinctrl RZG2L_GPIO(10, 2) GPIO_ACTIVE_HIG=
+H>;
+> > > > +             regulator-min-microvolt =3D <1800000>;
+> > > > +             regulator-max-microvolt =3D <3300000>;
+> > > > +             gpios-states =3D <0>;
+> > > > +             states =3D <3300000 0>, <1800000 1>;
+> > > > +     };
+> > > >  };
+> > > >
+> > > >  &audio_extal_clk {
+> > > >       clock-frequency =3D <22579200>;
+> > > >  };
+> > > >
+> > > > +&i2c0 {
+> > > > +     pinctrl-0 =3D <&i2c0_pins>;
+> > > > +     pinctrl-names =3D "default";
+> > > > +
+> > > > +     status =3D "okay";
+> > > > +};
+> > > > +
+> > >
+> > > clock-frequency =3D <100000>; in SoC dtsim
+> > >
+> > > Why frequency set to 100kHz for all the i2c nodes even though SoC
+> > > supports Transfer rate up to 1MHz? Is it board limitation restricting=
+ to 100kHz?
+> > >
+> > This is due to driver limitation, once driver support for FM+ gets acce=
+pted [0] I plan to update the
+> > default frequency to !MHz in SoC DTSI.
+>
+> If there os no board limitation, please update to 400kHz, that is the nex=
+t best frequency.
+>
+I'll let Geert take a call on this as anyway the once the patch [0]
+will be merged we will update frequency to 1MHz.
 
-HEAD commit:    6a0e38264012 Merge tag 'for-6.11-rc2-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=111d1ed3980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505ed4a1dd93463a
-dashboard link: https://syzkaller.appspot.com/bug?extid=894cac40ce97c83618bb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/6875709f7701/disk-6a0e3826.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4d93350d7839/vmlinux-6a0e3826.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f8b3e9aa472d/bzImage-6a0e3826.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+894cac40ce97c83618bb@syzkaller.appspotmail.com
-
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P18349/1:b..l
-rcu: 	(detected by 1, t=10502 jiffies, g=157161, q=1095 ncpus=2)
-task:syz.0.2623      state:R  running task     stack:26592 pid:18349 tgid:18344 ppid:17434  flags:0x00004002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0xe37/0x5490 kernel/sched/core.c:6529
- preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:6851
- irqentry_exit+0x36/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:unwind_next_frame+0x76/0x23a0 arch/x86/kernel/unwind_orc.c:470
-Code: e8 0f 9e 4d 00 89 d8 48 83 c4 40 5b 5d 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc e8 f5 9d 4d 00 48 8d 43 48 48 89 c2 48 89 04 24 <48> b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 40 1d
-RSP: 0018:ffffc9000338f6c0 EFLAGS: 00000293
-RAX: ffffc9000338f788 RBX: ffffc9000338f740 RCX: ffffffff813cdf46
-RDX: ffffc9000338f788 RSI: ffffffff813cdf6b RDI: 0000000000000005
-RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000000 R12: ffffc9000338f740
-R13: ffffffff817613b0 R14: ffffc9000338f800 R15: ffff88807de29e00
- arch_stack_walk+0x100/0x170 arch/x86/kernel/stacktrace.c:25
- stack_trace_save+0x95/0xd0 kernel/stacktrace.c:122
- save_stack+0x162/0x1f0 mm/page_owner.c:156
- __reset_page_owner+0x8d/0x400 mm/page_owner.c:297
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1094 [inline]
- free_unref_page+0x64a/0xe40 mm/page_alloc.c:2612
- vfree+0x181/0x7a0 mm/vmalloc.c:3364
- kcov_put kernel/kcov.c:429 [inline]
- kcov_put+0x2a/0x40 kernel/kcov.c:425
- kcov_close+0x10/0x20 kernel/kcov.c:525
- __fput+0x408/0xbb0 fs/file_table.c:422
- task_work_run+0x14e/0x250 kernel/task_work.c:228
- exit_task_work include/linux/task_work.h:40 [inline]
- do_exit+0xaa3/0x2bb0 kernel/exit.c:882
- do_group_exit+0xd3/0x2a0 kernel/exit.c:1031
- get_signal+0x25fd/0x2770 kernel/signal.c:2917
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd64ed779f9
-RSP: 002b:00007fd64fa98038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
-RAX: 0000000000019000 RBX: 00007fd64ef06058 RCX: 00007fd64ed779f9
-RDX: 0000000000019000 RSI: 0000000020000300 RDI: 0000000000000007
-RBP: 00007fd64ede58ee R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fd64ef06058 R15: 00007ffcd44dcb08
- </TASK>
-rcu: rcu_preempt kthread starved for 10363 jiffies! g157161 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=0
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:27680 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5188 [inline]
- __schedule+0xe37/0x5490 kernel/sched/core.c:6529
- __schedule_loop kernel/sched/core.c:6606 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6621
- schedule_timeout+0x136/0x2a0 kernel/time/timer.c:2581
- rcu_gp_fqs_loop+0x1eb/0xb00 kernel/rcu/tree.c:2034
- rcu_gp_kthread+0x271/0x380 kernel/rcu/tree.c:2236
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
-NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
-NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x1a/0x20 drivers/acpi/processor_idle.c:111
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0: Stall on int endpoint
-cdc_wdm 2-1:1.0
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> > [0] https://patchwork.kernel.org/project/linux-renesas-soc/patch/202407=
+11115207.2843133-9-
+> > claudiu.beznea.uj@bp.renesas.com/
+> >
+Cheers,
+Prabhakar
 
