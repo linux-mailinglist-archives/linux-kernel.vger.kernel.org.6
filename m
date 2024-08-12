@@ -1,130 +1,157 @@
-Return-Path: <linux-kernel+bounces-283196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C581F94EE83
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:42:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 429F694EE84
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70B431F21A5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6871B1C217AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1554517C22A;
-	Mon, 12 Aug 2024 13:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F005E17C7BE;
+	Mon, 12 Aug 2024 13:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3LqS5NP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FAHRKvd4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D8EF176FBD
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA45170A0D;
+	Mon, 12 Aug 2024 13:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470127; cv=none; b=d78L7ZOvTeNaAUiC1kY72m1leUaHR6WNk3Y0TxpZovHmiyGHrYtAaRMtItSqTQsPE/3gRgN/ruTe5FIoRbF0u8zN3XWOuF0N8AfA1VWSdV6F18DhQ9eX+2uzkIh0yxTfMV0J3gqCQakyGumyo9QXwoLsmNl44N3uhEY+4yvInYk=
+	t=1723470178; cv=none; b=bHKIoiO6BP0dtNyNaREdEw7oCs+I8gPvbNoNcXfsZFGscxC5jzGyoZ2FYzOtOzzqCrAbbYMJdg4VD6961XX/kSol6RHhd+A/egxih3+tLuQ1Uvb7cKvEtOL1WpXPDvsDtMMj87ybqIWdB+DX/hmq+crOwr/ZkuZIYjKaqvDkl5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470127; c=relaxed/simple;
-	bh=SUDN/6Po80egMnrVOI6BNtVjTOorz0Kb2BQqNcCf52c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GXwPrid2qQ5SKsWgVrLoMqD6dDrLCk1OoffhTfEFCtT2nvh5Zib5bEUdAuQ7AoUmtLibZzQWD2i/FF56bAwrJkt5IboJBhM0XTXqXESf7Mu428TLVEg43HS50i6M2fDAcQkNmgd24xKsf+c2uLoF+OIO8/EXe1YMrzVEWDSnyJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3LqS5NP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6B96C32782;
-	Mon, 12 Aug 2024 13:42:05 +0000 (UTC)
+	s=arc-20240116; t=1723470178; c=relaxed/simple;
+	bh=cOYjPpWnnivPZapU6kTtloNV6yoFphgKCrYVyQy2DIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QFE3sOtObJzMH3+k9C9VPoGLFRK+JLGCkCFBpRdVIcNYH+lBEAZFiitVIj8RlxM06lGRahezva3qi7ElfDW2UmbBFWsLn1Pi/5J17MDBd7anDI5ftxohmm6ZloPhJ7KOkiofYiSQ+u8AD9lg4nF2JRdhVWlJCMYxINg9oFL4bwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FAHRKvd4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 269E0C32782;
+	Mon, 12 Aug 2024 13:42:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723470126;
-	bh=SUDN/6Po80egMnrVOI6BNtVjTOorz0Kb2BQqNcCf52c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Z3LqS5NP/8Y5d0AKFntUt7sBV2O6tn4hSUUpNvaZyclDQcqxTENdWIB7fMwG3RxRa
-	 3IPcVWBZgfdwgNFQ9iuBqBR8fSRx0OjGwRaO2aTAUyi+8Tx/SFa1V4gqBeyO231TkC
-	 K+TBlJKMOa7fuB9/DzQs/UFVN9GqtvHcSEd37WNr7URGOQNFZ2nZTGxFmNstP0cEML
-	 6C/RjrYmWyuvaxDlMrQh2kmFigpywx/24wGKtlJb81uIfOa0rEsvzOh72pUdxdmQd6
-	 UBBUjG4xTfyAFZ4sy6pHP4oIWwvW7U6w9yoPMdWch/DQuTJ/J1v8212837JRun9Vtr
-	 w0W1AtfKL1X/Q==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,  Pratyush Yadav
- <pratyush@kernel.org>,  Miquel Raynal <miquel.raynal@bootlin.com>,
-  Richard Weinberger <richard@nod.at>,  Vignesh Raghavendra
- <vigneshr@ti.com>,  linux-mtd@lists.infradead.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spi-nor: winbond: add Zetta ZD25Q128C support
-In-Reply-To: <20240804221535.291923-1-mwalle@kernel.org> (Michael Walle's
-	message of "Mon, 5 Aug 2024 00:15:35 +0200")
-References: <20240804221535.291923-1-mwalle@kernel.org>
-Date: Mon, 12 Aug 2024 15:42:04 +0200
-Message-ID: <mafs0v805zwlv.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1723470177;
+	bh=cOYjPpWnnivPZapU6kTtloNV6yoFphgKCrYVyQy2DIc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FAHRKvd4R4CU94sZEEQaHzgHsf6aEeRrBUnBn3hWaRi833jo3loWqesoo5c2r/MTg
+	 oOGTMHgCkU89l/kS1BYXRg754FbplerxOzjgncLb8H/hAhUV5gsyOpZgxiTiiZOPUS
+	 zno6CjaeVegBCugJ/FkJfeUveifjGNLB0bWxs/o4gxziaqUv+Azsa40R8CcqGBXxUg
+	 ElgUSoj1SVpkT3Sy8UhrRCLEJoAYxRqcjOo41JV+62fV794suHY2COS2iwzokFnWXC
+	 frgpwkKJOPp0X3YCtNxDiY4sAIQNq+fAyXul/jWDWWAaPduSQJCQBhVM5tllK6rcl2
+	 HXX8HizrhWucw==
+Date: Mon, 12 Aug 2024 10:42:53 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Kan Liang <kan.liang@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
+Subject: Re: [Patch v3 2/5] perf x86/topdown: Correct leader selection with
+ sample_read enabled
+Message-ID: <ZroRXXlV-ePkj-On@x1>
+References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
+ <20240712170339.185824-3-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240712170339.185824-3-dapeng1.mi@linux.intel.com>
 
-On Mon, Aug 05 2024, Michael Walle wrote:
+On Fri, Jul 12, 2024 at 05:03:36PM +0000, Dapeng Mi wrote:
+> Addresses an issue where, in the absence of a topdown metrics event
+> within a sampling group, the slots event was incorrectly bypassed as
+> the sampling leader when sample_read was enabled.
+> 
+> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
 
-> Zetta normally uses BAh as its vendor ID. But for the ZD25Q128C they
-> took the one from Winbond and messed up the size parameters in SFDP.
-> Most functions seem compatible with the W25Q128, we just have to fix up
-> the size.
->
-> Link: http://www.zettadevice.com/upload/file/20150821/DS_Zetta_25Q128_RevA.pdf
-> Link: https://www.lcsc.com/datasheet/lcsc_datasheet_2312081757_Zetta-ZD25Q128CSIGT_C19626875.pdf
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
+Kan, can you please take a look at this patch and the others in this
+series?
+
+Thanks,
+
+- Arnaldo
+ 
+> In this case, the slots event should be sampled as leader but the
+> branches event is sampled in fact like the verbose output shows.
+> 
+> perf_event_attr:
+>   type                             4 (cpu)
+>   size                             168
+>   config                           0x400 (slots)
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   disabled                         1
+>   sample_id_all                    1
+>   exclude_guest                    1
+> ------------------------------------------------------------
+> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
+> ------------------------------------------------------------
+> perf_event_attr:
+>   type                             0 (PERF_TYPE_HARDWARE)
+>   size                             168
+>   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
+>   { sample_period, sample_freq }   10000
+>   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
+>   read_format                      ID|GROUP|LOST
+>   sample_id_all                    1
+>   exclude_guest                    1
+> 
+> The sample period of slots event instead of branches event is reset to
+> 0.
+> 
+> This fix ensures the slots event remains the leader under these
+> conditions.
+> 
+> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 > ---
-[...]
-> diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-> index e065e4fd42a3..9f7ce5763e71 100644
-> --- a/drivers/mtd/spi-nor/winbond.c
-> +++ b/drivers/mtd/spi-nor/winbond.c
-> @@ -17,6 +17,31 @@
->  		   SPI_MEM_OP_NO_DUMMY,					\
->  		   SPI_MEM_OP_DATA_OUT(1, buf, 0))
+>  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+> index 49f25d67ed77..857e00cf579f 100644
+> --- a/tools/perf/arch/x86/util/topdown.c
+> +++ b/tools/perf/arch/x86/util/topdown.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  #include "api/fs/fs.h"
+>  #include "util/evsel.h"
+> +#include "util/evlist.h"
+>  #include "util/pmu.h"
+>  #include "util/pmus.h"
+>  #include "util/topdown.h"
+> @@ -87,11 +88,22 @@ bool arch_is_topdown_metrics(const struct evsel *evsel)
+>   */
+>  bool arch_topdown_sample_read(struct evsel *leader)
+>  {
+> +	struct evsel *evsel;
+> +
+>  	if (!evsel__sys_has_perf_metrics(leader))
+>  		return false;
 >  
-> +static int
-> +w25q128_post_bfpt_fixups(struct spi_nor *nor,
-> +			 const struct sfdp_parameter_header *bfpt_header,
-> +			 const struct sfdp_bfpt *bfpt)
-> +{
+> -	if (arch_is_topdown_slots(leader))
+> -		return true;
+> +	if (!arch_is_topdown_slots(leader))
+> +		return false;
+> +
 > +	/*
-> +	 * Zetta ZD25Q128C is a clone of the Winbond device. But the encoded
-> +	 * size is really wrong. It seems that they confused Mbit with MiB.
-> +	 * Thus the flash is discovered as a 2MiB device.
+> +	 * If slots event as leader event but no topdown metric events
+> +	 * in group, slots event should still sample as leader.
 > +	 */
-> +	if (bfpt_header->major == SFDP_JESD216_MAJOR &&
-> +	    bfpt_header->minor == SFDP_JESD216_MINOR &&
-> +	    nor->params->size == SZ_2M &&
-> +	    nor->params->erase_map.regions[0].size == SZ_2M) {
-> +		nor->params->size = SZ_16M;
-> +		nor->params->erase_map.regions[0].size = SZ_16M;
+> +	evlist__for_each_entry(leader->evlist, evsel) {
+> +		if (evsel != leader && arch_is_topdown_metrics(evsel))
+> +			return true;
 > +	}
-
-Since the size is 16 MiB for both Zetta and Winbond, why do you have
-these conditions here? Why not just do it unconditionally? What
-situation do you want to protect against?
-
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct spi_nor_fixups w25q128_fixups = {
-> +	.post_bfpt = w25q128_post_bfpt_fixups,
-> +};
-> +
->  static int
->  w25q256_post_bfpt_fixups(struct spi_nor *nor,
->  			 const struct sfdp_parameter_header *bfpt_header,
-> @@ -108,6 +133,7 @@ static const struct flash_info winbond_nor_parts[] = {
->  		.size = SZ_16M,
->  		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
->  		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-> +		.fixups = &w25q128_fixups,
->  	}, {
->  		.id = SNOR_ID(0xef, 0x40, 0x19),
->  		.name = "w25q256",
-
--- 
-Regards,
-Pratyush Yadav
+>  
+>  	return false;
+>  }
+> -- 
+> 2.40.1
 
