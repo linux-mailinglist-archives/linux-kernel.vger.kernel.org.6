@@ -1,174 +1,167 @@
-Return-Path: <linux-kernel+bounces-283492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D64094F59A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:07:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0C6C94F5A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EFC0285D96
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:07:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68C56283131
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4558187FE6;
-	Mon, 12 Aug 2024 17:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635A71891B9;
+	Mon, 12 Aug 2024 17:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q245Ildo"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHaE/tvI"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B675187343;
-	Mon, 12 Aug 2024 17:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA1B187343;
+	Mon, 12 Aug 2024 17:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482431; cv=none; b=jzZaBN/k3uaFUHvVSn0vESZS8muG5mnqa4Oq8IxP0N/co9LN6RTZyLqot7q7EPJhZnXY0w3F+31lCKxpVuyy3K0DXN99R5v4VWJu0z+LHzgBKWSufc54Co1ZdAEV53Nwo+ko3EYyx81CdLVanK5F2Wf3oqXB3N5XWHTuMEDqLKw=
+	t=1723482561; cv=none; b=ZNx2z7+3WXbomgHfBpMFYA18pjITNQJBOeLJItyvPEM2che3BnJGYFTbTqnKzBDZ+RaFLpsHMssfgDtSFkAJ2/n7djDLrPoFYVf9BOYTgwZ0t2TMiIc1XW7F0Wz/Q6pL/qxGNMFnrIVfzpJPsYOWogRsLM5Eipva8jYCk6vqe60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482431; c=relaxed/simple;
-	bh=6lRO8qSXCjnwyUAfZ6a2KoGyMWIMnvTpUaO7MDFEurs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AsKdDwC3u7eMjSf+cZMWdQYLnMgTgHXa2Bj93Lii0foRPGXpKzZhya7ZZFkoKqhL2hxCsvQjT6YiiGJUztOVuoXX+3ic8uJiBS9suJ2rnXhJUB2hKDQ2e9MZQSefPboXOsgAE6/S8nRnvuhS7A8ukLlNJ41C+JAouzXkIXtqYGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q245Ildo; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1723482561; c=relaxed/simple;
+	bh=0MQX7ArPk4mAV4iN9yEqbL0u20EthjGUcGLNVJxyVtU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=awGnEprKftSfSh3h1oBE+oL6ccsU6QKGI+m5KfKl7YZiMQOdZ4UhKEZnwyu4SPTV+ZK3tT81DPpD4lMAVg2mhhlQVdd4XZnLwEKyQCyvXy9AERqM1725vqJR2fmKGSQBPmDTlBk3HTGODyJ1qW6QP7PHqaUHceYvjxwR3rFjXeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHaE/tvI; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39b3ffc570bso21301325ab.3;
-        Mon, 12 Aug 2024 10:07:09 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d1c655141so3275274b3a.1;
+        Mon, 12 Aug 2024 10:09:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723482428; x=1724087228; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=xjxMScf/umzBfKjEzS4Da/J1mKHJM/1WWdAzOpqreok=;
-        b=Q245IldoMoj7wThzK7OJc/mBCxKtvFItWkJev4jsTe3s3Di3aKFiD6PEVVqTFBwOFq
-         hmW5QDMF2p17G6H6Z4v9+POnYqVAdJd5i98kKkX3XYLELqHX0SL7/cIG8f2mWVNHwOQV
-         kbPCBGWyt5NKtq4E1G4qxDlYF0bWTf8LWd3hdD4CxZS7l184gbpmPwxHrkKtHSUCACfH
-         IS4jPLv50ls+xdjUwNtqWTn0TFsT9bVJmTJF5FkgrY96glaQUagWJRh+wLrS/qcTWvsO
-         h1eQONoYp9G9LdRMEUBY8SNcNBIw2mQYTkpvk62y4syekBlW1PPnSF2bXnGFwCW7p8Tw
-         U0yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723482428; x=1724087228;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723482559; x=1724087359; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xjxMScf/umzBfKjEzS4Da/J1mKHJM/1WWdAzOpqreok=;
-        b=Us0jhZlHMy+W3TJ/rnk2H3G/2nkrvDnw8fjs8iThQBGKJcXua05TE1XuC3wfksHnCn
-         1vnJDmJ0hQ8sulJ/AUPEr3EBjgtQwLsuRN+L02SBvKqyiGnOsW1ErRAB8lE+UKqQrt6a
-         EaW0isF1a2AvtbhsplQby7Qy8k0S4PCMrNoQwLXnd+VNcU9SyqHs2360pWDLYKaxMtPR
-         4l10aTm3ziK9x9wEqqsnByjyiqISmFOvZls7UGyffmU2/ZXPq8Jzp7IjHGAs3GYSI7it
-         KQRr3GCDRFwL7OtI4Jy/KjtWmb58i28tpWpbTTxvvAQdi/YVIZKdXf6Py4bT/4pNMbhF
-         03yA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBMCok/Eg+CT4geU4D0FhNaNXiH9ZpHr7vUEF17YPXe9p6LoKpuMFynJwUnL2zwjm4q0D2Jj2lOeaMFFbAZ5MjmDeFnibe4V7aJfrZt+XHMiGljJv2wY0vWATcZuXR+u1FLYXNl/rXpI65s8Irz2HubBYc
-X-Gm-Message-State: AOJu0Yxuvj8cxAUNfP32ENqCd/E7ndGp5SG55U5T2LS7YhZvZppPrH0v
-	1iN40YwAniH0UICODfnv6lFma2FdUhjRcykEpYOVrxculed91PDt
-X-Google-Smtp-Source: AGHT+IFHtxwQg4KjFaCR69gG/M/hFE3E1BVFokmm5lOicfbs9m/PAJe6vx8PiX04p70ehl7YT4WShA==
-X-Received: by 2002:a05:6e02:1d18:b0:375:9dd4:d693 with SMTP id e9e14a558f8ab-39c477b6319mr9903085ab.3.1723482428544;
-        Mon, 12 Aug 2024 10:07:08 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58ad960sm4267570b3a.78.2024.08.12.10.07.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 10:07:08 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <90a90f45-cd24-4d98-868e-ac30317badfe@roeck-us.net>
-Date: Mon, 12 Aug 2024 10:07:06 -0700
+        bh=t05NaBT7bFxhrNH1lXOVprHE6cItR2aJz1lL9AZNeks=;
+        b=KHaE/tvIpXHFuJmzla6vrHJTZMag9bApJpduxx/sdUZuH5z0LNJnPF9Syw+JtGzNiS
+         qLtWjMFr2DLaZ/zWAw7jzDHf6EB2LKmOltATEtjvPP3CF/lh0gcr2C8JLwjrpqNPfY9t
+         OalFXNUUMCIc34EuJq6EY5N3Xg+l5Mzv6K12Tzj09Qy0N7G4t5DMO/ViQO7Rdmf+D3p/
+         PXER3LvPFIQKwyzLPMnikoGlzijyoSIcsmF/wCxzTebDb5jsAOCpdNT6eje+fs8W2MNj
+         jqg1yTnDzUo6GAXi1NJpAtNZDi0sLePal2mEz+gyqBndlkzQtu6RxtcBRhxWZut4GtmY
+         KARg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723482559; x=1724087359;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t05NaBT7bFxhrNH1lXOVprHE6cItR2aJz1lL9AZNeks=;
+        b=nvjl0FsmSCBDxwvNEG1U3RmFR03xZDHi50l/ObbZj32eBzDTub9DRLpMt3bnuDP7tB
+         7YGfcR98rfYGdm+FMyf4X6C5FNchQWBqX5TqHgu2ON/tWEGhHlWiVPRsFbb0LzhCQiwL
+         4X2quVFxfTtmCzL5pMqQWreQQjalh4cFozq1w7N95G8g0zpii25umk/RFgaqLvSZC17j
+         VsORP7fX/NjYX2ft/p9g3vQQScFfPA+AsM8wwRtnaLTzWgQUEfr/A8DKpy0GMX6Ly3Dj
+         MdUhDrjcGjHfzrnvdT5fhmiyQcEm4MxwUajfmmwvw0QhionMU5WOk92x2AlHWzj1NhLA
+         PwKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUonXD8IshBbtpq0fOyxYsCcr+/P0TqOTQkL8+HmdvQUIaIhIhwzU987/udCxViOPYDXLNbgMtKu03ayyjOF9/aIpP+h5LCsUMO/gwur/4VjHH0lsiBWCoo9ZeszHzpslpLyL9u2ibkx2xGIyu5w9kusUtiaz64y1BedMkFSO4Z
+X-Gm-Message-State: AOJu0YwPFmM8VaPMczHj6e1SlfTJZls68LfTWMK3wJD44EV+J9U2OPl2
+	P/s/dDkht1lnis8ueV1ch/Z/unnpJOlXLhCr980uYNN2PqVU9ASm
+X-Google-Smtp-Source: AGHT+IFdGC6guWLvF4TTcjvzGJhWOlSp6tMM3/62nMpRD4XNdu5tUKIiuxEY4mXAiijdjKX7ZB7kxw==
+X-Received: by 2002:a17:902:da85:b0:1fa:2401:be7d with SMTP id d9443c01a7336-201ca122751mr12138855ad.8.1723482559480;
+        Mon, 12 Aug 2024 10:09:19 -0700 (PDT)
+Received: from localhost.localdomain (2001-b400-e4d9-f7d4-34a5-a177-48aa-18c9.emome-ip6.hinet.net. [2001:b400:e4d9:f7d4:34a5:a177:48aa:18c9])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bbb5b004sm40341425ad.304.2024.08.12.10.09.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 10:09:19 -0700 (PDT)
+From: Jing-Ping Jan <zoo868e@gmail.com>
+To: horms@kernel.org
+Cc: corbet@lwn.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	pabeni@redhat.com,
+	skhan@linuxfoundation.org,
+	zoo868e@gmail.com
+Subject: [PATCH v2] Documentation: networking: correct spelling
+Date: Tue, 13 Aug 2024 01:09:10 +0800
+Message-Id: <20240812170910.5760-1-zoo868e@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240811134453.GJ1951@kernel.org>
+References: <20240811134453.GJ1951@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: fix policy_unpack_test on big endian systems
-To: John Johansen <john.johansen@canonical.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Brendan Higgins <brendanhiggins@google.com>,
- Kees Cook <keescook@chromium.org>
-References: <20240808155931.1290349-1-linux@roeck-us.net>
- <6a0c69d4-f614-4348-a28f-0d4a6fe08df8@canonical.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <6a0c69d4-f614-4348-a28f-0d4a6fe08df8@canonical.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/12/24 09:55, John Johansen wrote:
-> On 8/8/24 08:59, Guenter Roeck wrote:
->> policy_unpack_test fails on big endian systems because data byte order
->> is expected to be little endian but is generated in host byte order.
->> This results in test failures such as:
->>
->>   # policy_unpack_test_unpack_array_with_null_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:150
->>      Expected array_size == (u16)16, but
->>          array_size == 4096 (0x1000)
->>          (u16)16 == 16 (0x10)
->>      # policy_unpack_test_unpack_array_with_null_name: pass:0 fail:1 skip:0 total:1
->>      not ok 3 policy_unpack_test_unpack_array_with_null_name
->>      # policy_unpack_test_unpack_array_with_name: EXPECTATION FAILED at security/apparmor/policy_unpack_test.c:164
->>      Expected array_size == (u16)16, but
->>          array_size == 4096 (0x1000)
->>          (u16)16 == 16 (0x10)
->>      # policy_unpack_test_unpack_array_with_name: pass:0 fail:1 skip:0 total:1
->>
->> Add the missing endianness conversions when generating test data.
->>
->> Fixes: 4d944bcd4e73 ("apparmor: add AppArmor KUnit tests for policy unpack")
->> Cc: Brendan Higgins <brendanhiggins@google.com>
->> Cc: Kees Cook <keescook@chromium.org>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> Looks good
-> 
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> 
-> I will pull this into my tree
-> 
+Correct spelling problems for Documentation/networking/ as reported
+by ispell.
 
-Thanks!
+Signed-off-by: Jing-Ping Jan <zoo868e@gmail.com>
+---
+Thank you Simon, for the review.
+Changes in v2: corrected the grammer and added the missing spaces before
+each '('.
 
-Guenter
+ Documentation/networking/ethtool-netlink.rst | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+index d5f246aceb9f..4acde99e405e 100644
+--- a/Documentation/networking/ethtool-netlink.rst
++++ b/Documentation/networking/ethtool-netlink.rst
+@@ -934,18 +934,18 @@ Request contents:
+   ====================================  ======  ===========================
+ 
+ Kernel checks that requested ring sizes do not exceed limits reported by
+-driver. Driver may impose additional constraints and may not suspport all
++driver. Driver may impose additional constraints and may not support all
+ attributes.
+ 
+ 
+ ``ETHTOOL_A_RINGS_CQE_SIZE`` specifies the completion queue event size.
+-Completion queue events(CQE) are the events posted by NIC to indicate the
+-completion status of a packet when the packet is sent(like send success or
+-error) or received(like pointers to packet fragments). The CQE size parameter
++Completion queue events (CQE) are the events posted by NIC to indicate the
++completion status of a packet when the packet is sent (like send success or
++error) or received (like pointers to packet fragments). The CQE size parameter
+ enables to modify the CQE size other than default size if NIC supports it.
+-A bigger CQE can have more receive buffer pointers inturn NIC can transfer
+-a bigger frame from wire. Based on the NIC hardware, the overall completion
+-queue size can be adjusted in the driver if CQE size is modified.
++A bigger CQE can have more receive buffer pointers, and in turn the NIC can
++transfer a bigger frame from wire. Based on the NIC hardware, the overall
++completion queue size can be adjusted in the driver if CQE size is modified.
+ 
+ CHANNELS_GET
+ ============
+@@ -989,7 +989,7 @@ Request contents:
+   =====================================  ======  ==========================
+ 
+ Kernel checks that requested channel counts do not exceed limits reported by
+-driver. Driver may impose additional constraints and may not suspport all
++driver. Driver may impose additional constraints and may not support all
+ attributes.
+ 
+ 
+@@ -1927,7 +1927,7 @@ When set, the optional ``ETHTOOL_A_PLCA_VERSION`` attribute indicates which
+ standard and version the PLCA management interface complies to. When not set,
+ the interface is vendor-specific and (possibly) supplied by the driver.
+ The OPEN Alliance SIG specifies a standard register map for 10BASE-T1S PHYs
+-embedding the PLCA Reconcialiation Sublayer. See "10BASE-T1S PLCA Management
++embedding the PLCA Reconciliation Sublayer. See "10BASE-T1S PLCA Management
+ Registers" at https://www.opensig.org/about/specifications/.
+ 
+ When set, the optional ``ETHTOOL_A_PLCA_ENABLED`` attribute indicates the
+@@ -1989,7 +1989,7 @@ Request contents:
+   ``ETHTOOL_A_PLCA_ENABLED``              u8      PLCA Admin State
+   ``ETHTOOL_A_PLCA_NODE_ID``              u8      PLCA unique local node ID
+   ``ETHTOOL_A_PLCA_NODE_CNT``             u8      Number of PLCA nodes on the
+-                                                  netkork, including the
++                                                  network, including the
+                                                   coordinator
+   ``ETHTOOL_A_PLCA_TO_TMR``               u8      Transmit Opportunity Timer
+                                                   value in bit-times (BT)
+-- 
+2.25.1
 
 
