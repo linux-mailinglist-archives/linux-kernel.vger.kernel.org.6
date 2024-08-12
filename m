@@ -1,108 +1,93 @@
-Return-Path: <linux-kernel+bounces-283454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F25294F527
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:45:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84CA794F529
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:46:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BF41C20EBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:45:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41575281B48
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:46:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061818754E;
-	Mon, 12 Aug 2024 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81E7187346;
+	Mon, 12 Aug 2024 16:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8+ASycA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2juMjDy1"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281B44317C;
-	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9975A15C127
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481137; cv=none; b=P3TNBal3gvfvuiIAAH1QQWyKmZWxgvdmV9FWlzFYlaiCMJv3iy7rlIU4Wmy1VxEyr3KotnlD+SEtYo+VCr1Ms0+dmqmHm7BRN2G7Ut640oxfVDbvAfcSXgnhLv4XB/sl6d9GCA1F8AokphAJz2W7dPSH0jlMKx1BdXnO1m/lPTo=
+	t=1723481182; cv=none; b=Vcg/9tszO1fb1cVeeXumM0dQ56zitbCz4XQWFdKvB2BNblRkAWxeajkHkf7KnXWMKJ0nfF66OiEfVQXniw978/wp4xZiWub9p5uR7sXlrX28otkrdZA2S1M823CSr9DozHkj3vzMp9M9nQu3up7zojUGaYWqpAELYnV6gEGJhIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481137; c=relaxed/simple;
-	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aVeWpUFdl0vjvMAmNtgil+dHtQZGwNYraMApLKQksyqC+qZ81JepnhYaSUJ4uRtMc9o3nDe2U/Ipv5CDkq2P5ImWWaNvFDag2n5Lp3S+1khTCOp8LeIoE10JhFWiw5aCtkMhiHu0tut1OJ5OC1IhYF74uDnng0fubv0S2IgE0Os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8+ASycA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAFCC32782;
-	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723481136;
-	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=E8+ASycALNsiF2BhYXKB6kjgfZ3w0ym6uo6Unsy4YGHsIajhych9ZRoTk1MZxYCGs
-	 KaYpm3tzTLyPQVsdDMmUcVKeRBHZoGLqJg+jvMB7kibTsxk3gVxEGnbgxnMGUxesJh
-	 eZd5izfSA/m2+rMXJRv7e4dTdHJNSotDSznNNEKHuBGf3+78712MqwWNgsQSUrR1o5
-	 7yiiRl774k/FQORrZBQRbivYa/cGuBXLzhYXmPisIKXJOL5yms7YEtl1DzrX/k9CvK
-	 4uH0tPBrWU8YxfjzOryWq6euyTe4uG38sKiSXse1x+C5UOdE5AZxLv/hNjOYstzHKf
-	 iMUq/1ng0tZrQ==
-Date: Mon, 12 Aug 2024 09:45:36 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
-Message-ID: <20240812164536.GE6043@frogsfrogsfrogs>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1723481182; c=relaxed/simple;
+	bh=M3z6WNgR0vo7LI2PJMO34phIbD2sqqEUOgx8234LZjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZRimjfoECqCGq/ydreCjry8tqPsj8P5UmVGEU3QtWDIYiPKeHAmn7/Z5fevOrfz2HGfSimR4rzhzdIw1tpsUIjfuzChNbnWju2e/1mTnkffpPcIBKG5LdqzjBzf/L+06i/iKVGY4ULJili3aLzlbGDQc96zfgmLA+e2X/lv6kd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2juMjDy1; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5a79df5af51so8246964a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:46:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723481179; x=1724085979; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tMl2h2APrDXrRsd54ATUVhJ1PFBmj4VZhJws35hfiaI=;
+        b=2juMjDy1w4je+LWsDLroqI8mksgT/hJxAxhbCBZdF44F795kdQ6Gb1pGfZ2e5z8rnA
+         vdyvkiiUYUP6vUVcG6ovXh2Pz43yALXYaKlucEGiwFSaw0rRhD6GXyYcu2FniCGg7WmP
+         W9Sg6M6vr5riVCSC3WLCLfutJcXX7USEDPRZ4yh/hB2J75GW/jFymkvvIlS9ws0cKJ/3
+         JCxInK0cvgM4PTXfaJLWm0aJerg+4L5Ey8CtAgiCIxO7X9PpazFbEJkcf9K8Xt8cXwBE
+         6TQAjGd68eWh46K0ozbZqqDm54p85bZbGi/TL+GdhWlT/9OtxHVeB27kJiQN8GD7SNkw
+         T7qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723481179; x=1724085979;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tMl2h2APrDXrRsd54ATUVhJ1PFBmj4VZhJws35hfiaI=;
+        b=Dbnzx3c6hMkgdEj4+LS44qsRFd1pMIxt9FqwjfOYia5DRJ/aJuWWcfNmyTQxkvRQP8
+         pohHlqnLirqDf1a6ilGq07l21mvTd+lY/DTkYR94sjDh7tUy9diWkuL7xvmM49kdLiZY
+         49pGfbRrk9fSFte62JHys0BaPq/lRaIHGhaUCVSYkitD5GzFMyaW23Uz2ciYb8SefhF1
+         gwDLfd6Su5AwFXPrwZVHOJhR/xUZ48s246Y/Lx46Sd0odno/qmtymBwRKoO7dpcXWve2
+         0OQZo9QbAryugoh5u/1BzKNPFxdp4qucAT1frYYBUcZjwz/KpA2TGqlSFb6kmxfBlyks
+         zdTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnU21XkOccwKI5EHNyem6ruOtYkJ6wfL8iX5i2V2UH6xJxt3i2Ghel4Gw0fIENoe9s/QalxfCu9hVrkpSqMokeVB05fyc/QO+HeMYy
+X-Gm-Message-State: AOJu0YzwGFhJSfAJD/JLqpKGHRwJPV8ggTpU2DT7pQkXMgNmMRne11WM
+	gs1Ui7ug2ryBw/kbAdCD0nU8h+PIi3Wtvf6QpsMoalEgV0xTOsInAPOfS4i2hFKaRdvjV0SGMKl
+	VVmtDE11OuNGuplat+jql5aHeeqVJnKB9g1J7oVjPSKs8HSkqLw==
+X-Google-Smtp-Source: AGHT+IErXfwiaED0+uNIcxVdV3hRK93+KUYrGzUzTEqPiKHU188LSxGEfoMREZR7DooTohUCAwFxrLXqRq49aFc9eNM=
+X-Received: by 2002:a17:907:c7d2:b0:a72:66d5:892c with SMTP id
+ a640c23a62f3a-a80f0b2f797mr21895766b.18.1723481178181; Mon, 12 Aug 2024
+ 09:46:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
+References: <20240810005911.684644-1-yosryahmed@google.com> <20240812083218.GA3493@lst.de>
+In-Reply-To: <20240812083218.GA3493@lst.de>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 12 Aug 2024 09:45:40 -0700
+Message-ID: <CAJD7tkY-JNgGXMGEcQFCfzqSNcmCZj=yNV6O1GMnOQFR4KEx=w@mail.gmail.com>
+Subject: Re: [PATCH] dma-mapping: use bit masking to check VM_DMA_COHERENT
+To: Christoph Hellwig <hch@lst.de>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Robin Murphy <robin.murphy@arm.com>, 
+	iommu@lists.linux.dev, Reiji Watanabe <reijiw@google.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
-> 
-> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
-> folio by folio_mark_dirty() even the map length is shorter than one
-> folio. However, on the filesystem with more than one blocks per folio,
-> we'd better to only set counterpart block's dirty bit according to
-> iomap_length(), so open code folio_mark_dirty() and pass the correct
-> length.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/iomap/buffered-io.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 79031b7517e5..ac762de9a27f 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1492,7 +1492,10 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
->  		block_commit_write(&folio->page, 0, length);
->  	} else {
->  		WARN_ON_ONCE(!folio_test_uptodate(folio));
-> -		folio_mark_dirty(folio);
-> +
-> +		ifs_alloc(iter->inode, folio, 0);
-> +		iomap_set_range_dirty(folio, 0, length);
-> +		filemap_dirty_folio(iter->inode->i_mapping, folio);
+On Mon, Aug 12, 2024 at 1:32=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> Thanks Yosry, this looks good to me.  I don't see a real urgency here,
+> so I plan to add it to the dma-mapping tree for 6.12.
+>
 
-Is it correct to be doing a lot more work by changing folio_mark_dirty
-to filemap_dirty_folio?  Now pagefaults call __mark_inode_dirty which
-they did not before.  Also, the folio itself must be marked dirty if any
-of the ifs bitmap is marked dirty, so I don't understand the change
-here.
-
---D
-
->  	}
->  
->  	return length;
-> -- 
-> 2.39.2
-> 
-> 
+Yeah no urgency here, thanks for the swift response, Cristoph!
 
