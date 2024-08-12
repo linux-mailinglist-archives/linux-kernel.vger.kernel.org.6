@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-282860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F6A294E993
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79AC894E99A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73D4D1C215A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2633C282D4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16B016D4E2;
-	Mon, 12 Aug 2024 09:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F65016D325;
+	Mon, 12 Aug 2024 09:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fOIj76qq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOSK8WWC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E041916CD33;
-	Mon, 12 Aug 2024 09:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B361316C695;
+	Mon, 12 Aug 2024 09:22:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723454533; cv=none; b=JJ72ftBq6gMBV7NomFuu1E7bILXaxy6/RmhrvdzwFHCrZSXDdLXyXyYZailQc+/AWEFwkdgTgeRManng+CZ9Z23TYSuJyMouZpVotxPZK5UX/oZb6gcxc4eH71q/G/NI9VaakWOkorm8YCf9cdCwXStbao8IAA3Uj/KvGQSsOWU=
+	t=1723454571; cv=none; b=Z7UJ8vStcfTtE2hf56FKd2AWYi2RjLHDK2RbdZ/3AyP+uWP6xGje0bBZDKFpQeX4nXxL/l3dVJcrJLQlHjVRtzaXK8YgANq2dQXP0AW6a0JEaWQ/65LQd9Evk1JWNDdPtXCHRDfPs8Xd5tCC69EJ6NDkWCeTueWGWSbqO192JN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723454533; c=relaxed/simple;
-	bh=AFtaXIG6cntZM4IaP9+stRGMhXhXGD3zVYUqHm2F3fo=;
+	s=arc-20240116; t=1723454571; c=relaxed/simple;
+	bh=XY4t9FJLi+cd6M2zXXfMwmr516ek5BBEpf7/gOkRrfk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uca6PVMBqi/m4ojirNoFtlWmJfE37F48b7FBDLV+MLf1QL+BeKDHsQOZMx4FkkaqGCY6ziMCxrRHZ5Ar66FdypSnHNJYB3lTnQoUhdKUYj2WUIstj81DC0G5sPauICA5pP6Yxzp7PrVccL3JxOds+QqUk9tUX5io/vKKX+AQ+xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fOIj76qq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 536B2C32782;
-	Mon, 12 Aug 2024 09:22:09 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Hm6YfOQpprFVzksZJ+558/MteDijqooiR53EWGpumVsWDjmRplKvqprAS39kFKz7izK/ytEKt0G/etcgLEkRXv4bL+nCSe12edDjh00HhpTVJdzgaxx5XhA4WgHCBWHKR3px4UOMZ+SJeh3iUp87ov8kw1nUyaJPeSOaT8lNj4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOSK8WWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13610C32782;
+	Mon, 12 Aug 2024 09:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723454532;
-	bh=AFtaXIG6cntZM4IaP9+stRGMhXhXGD3zVYUqHm2F3fo=;
+	s=k20201202; t=1723454571;
+	bh=XY4t9FJLi+cd6M2zXXfMwmr516ek5BBEpf7/gOkRrfk=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fOIj76qq1S2iBe7kqiMyJsR0QaoJH4VPiw+ooTZpwv8AaQcQiUzrkiOY3pH6y+anG
-	 I+tNbYVbWuqRQQEX4kM/U+wpQWopQGrWDUidZKi9dOEWVhW4Xxa770SckDqFZQ2sFP
-	 D76qmVZT2Xsi2EbwWG0XXDKWUj87wWg6mW8HwdRUToasOgyxthoVJO542oDpOGxxAf
-	 7cejIU+89r+kI7oeVecWZsYpsYkZ/5fMxtbLJ8mdwBqe4lU6gFgSYRRwUkl6X0BuDk
-	 IMiVyrPnXmDEBGtvm61opelT1ENlF1xP57ggv7622up4k3PlxVM60s+5pEB3ELfJhP
-	 ltRvWQc3mRbCg==
-Message-ID: <8b51075e-6a04-4c7a-816b-c590e5a3c526@kernel.org>
-Date: Mon, 12 Aug 2024 11:22:07 +0200
+	b=LOSK8WWC8sZxoWG0kptzyZuo38pLfvSJ7pV/ZVQhUqgdHtMzDvYZdlaZU3LWWW+qM
+	 D7lwf0kEL8/95sefis0BB6/IYCJndChL9AaG0K3ase3RsKpwx86EuScCcAEUVsyyqf
+	 wDl2sezf/RfrdFwFBicDEdc5wm7UOh36FbDyHSn4TzhZMuyg9Zi4U7rkgs15YB6YTn
+	 N9RYvAf/v11Bxr04Q80dg6HUBDVulWXHaG8ezfngufcybL+0/t0R7G5ax7tDsHTm1i
+	 vxklI1y00pTLjfKsV7IYKxSTnrY5qTJt9BY5zfc6Rzl66p4Q7t71Zl4F7wv69UDKvT
+	 t/YBUsOqXSSkQ==
+Message-ID: <de4c1538-162e-4604-8e6e-17521f24413e@kernel.org>
+Date: Mon, 12 Aug 2024 11:22:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: watchdog: convert ziirave-wdt.txt to
- yaml
-To: Frank Li <Frank.Li@nxp.com>, Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v3 1/1] dt-bindings: net: fsl,qoriq-mc-dpmac: using
+ unevaluatedProperties
+To: Frank Li <Frank.Li@nxp.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>,
- "open list:WATCHDOG DEVICE DRIVERS" <linux-watchdog@vger.kernel.org>,
+ <conor+dt@kernel.org>, Ioana Ciornei <ioana.ciornei@nxp.com>,
+ "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
  "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
  <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 Cc: imx@lists.linux.dev
-References: <20240811220515.3776756-1-Frank.Li@nxp.com>
+References: <20240811184049.3759195-1-Frank.Li@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,74 +106,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240811220515.3776756-1-Frank.Li@nxp.com>
+In-Reply-To: <20240811184049.3759195-1-Frank.Li@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 12/08/2024 00:05, Frank Li wrote:
-> Convert ziirave-wdt.txt to yaml format.
+On 11/08/2024 20:40, Frank Li wrote:
+> Replace additionalProperties with unevaluatedProperties because it have
+> allOf: $ref: ethernet-controller.yaml#.
 > 
-> Additional change:
-> - Add i2c node in example.
+> Remove all properties, which already defined in ethernet-controller.yaml.
 > 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mq-zii-ultra-rmb3.dtb: /soc@0/bus@30800000/i2c@30a40000/watchdog@38:
-> 	failed to match any schema with compatible: ['zii,rave-wdt']
+> Fixed below CHECK_DTBS warnings:
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
+>    fsl-mc@80c000000: dpmacs:ethernet@11: 'fixed-link' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/misc/fsl,qoriq-mc.yaml#
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../bindings/watchdog/zii,rave-wdt.yaml       | 47 +++++++++++++++++++
->  .../bindings/watchdog/ziirave-wdt.txt         | 19 --------
->  2 files changed, 47 insertions(+), 19 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/ziirave-wdt.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
-> new file mode 100644
-> index 0000000000000..6c0a16912d7f4
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/watchdog/zii,rave-wdt.yaml
-> @@ -0,0 +1,47 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/watchdog/zii,rave-wdt.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Zodiac RAVE Watchdog Timer
-> +
-> +maintainers:
-> +  - Frank Li <Frank.Li@nxp.com>
-> +
 
-Missing $ref to watchdog
-
-> +properties:
-> +  compatible:
-> +    const: zii,rave-wdt
-> +
-> +  reg:
-> +    maxItems: 1
-> +    description: i2c slave address of device, usually 0x38
-> +
-> +  timeout-sec:
-> +    description: Watchdog timeout value in seconds.
-
-Drop property
-
-> +
-> +  reset-duration-ms:
-> +    description:
-> +      Duration of the pulse generated when the watchdog times
-> +      out. Value in milliseconds.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-
-and this becomes unevaluatedProperties: false
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
