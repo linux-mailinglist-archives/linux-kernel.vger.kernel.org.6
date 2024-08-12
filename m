@@ -1,134 +1,143 @@
-Return-Path: <linux-kernel+bounces-283073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EAE94ECB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:18:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213D694ECB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0F4B1F23179
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525C31C21BB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B07F17A58F;
-	Mon, 12 Aug 2024 12:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B9A17ADEB;
+	Mon, 12 Aug 2024 12:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="louG5wne"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nn5nPnVg"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F15A8176FBD;
-	Mon, 12 Aug 2024 12:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517E517A93D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723465056; cv=none; b=ZNqcfnmeCKffXNYpkIRG7dtGv/R3rIeYNICGjUs/7WqF8QLngOfKPIE2ZwfwPvLxpl1WTaTVSdffq/P1ycGVXOJotlPTt1E86HyE1Ds4dCxAJa/AR7pVwIzJsZN+CLuleajzAnGWyM00TV3EY1fcW27b131Wa7DIYiUbu6vCRjA=
+	t=1723465067; cv=none; b=tFTXcqX0jCjllo/onunWJJUIjpUL2dnhJpXHXItezvanlXiAYmr1vCQLLB5PpOeb63bewnEt4iW9cab8JTM9kIl83oW8eL/plw5diPSliZRgwHDWOIsQLys4sc0rx4JRtZMVdfzuU8lpukPFqhHOlBPVlp82HS/giBofdldD+1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723465056; c=relaxed/simple;
-	bh=pTiLvX6dgRw/lbpMcbvul78nttHoBA2ug0btunkVO8c=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=a1OfEb2f+A2ZVDM4bsrvrrjzJ/QRpnq9rP5b8HLwRyHZfRowioEWfUWpYdoshGwx/G4tgYsMNzHbZDduuxVWpVrJwa1QbKv8NLR0h6kLJVg8Ehi/L0w1ot+fbmMzrsugKL/SzzcFCLpL9J+YpqWaseX859RwAkkiBN2/cin0KMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=louG5wne; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7a94aa5080so501935166b.3;
-        Mon, 12 Aug 2024 05:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723465053; x=1724069853; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q2MT7CpoVbgtNAFPvwIvM+rcDNcVzre2hq92xi/BU9g=;
-        b=louG5wneHQtxvjJQqPXm88+oEUJLKLVmwX92MvVFwbLk4hPEO22AV1oWTZvXzFwLrd
-         QH0iIcDEUtE9zXcv0oNfmlpR8SvLkVh1op7oNpstR0Ir5yOeUR6YdjVlS5E01Qktrj9q
-         5hGMGLyMmxO4Xm9Vwc4ly6tv0zGvB4fvVhswv8hcIu+TjVjbWyI6Aiv5jr3+2mbcU4+m
-         B1Iti3IG+y9lZhWHDs9/lmv8Alqd8tyjCgNBWED9thFg4lxDmnc+4IfV8wkxPGpSbmkK
-         mvd8If5a4Uca/yRcBKxrGv3zbiNPGN8n3sB0wjb0ULOrnW5xC9V8VURVatFAv3Mm/im4
-         h1FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723465053; x=1724069853;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q2MT7CpoVbgtNAFPvwIvM+rcDNcVzre2hq92xi/BU9g=;
-        b=mceC5opIVq6PCCOgwTDDAUvK2ZF8xDOf/aJlQRfa36lQRHJKvzy9kB9AQcZm9XzqXV
-         XGFwW6D75DR/V3khteQ5VDdqJChHpt1X99PExrfE+BcR42C1ZYH7K0LesJcehyZocp7t
-         y6vN138pn3zxTt8aK56EDhvz1eFEglT5cGs+yaW2hyTHrP6vFCLhaPE3QLfVRp5qKXI6
-         j7sCauFK+0JuUK7XCyVmmh6niY09+ZHNMv3ahnzLDcGJKoT12umAFiSNZe1BzjcsXg7n
-         WT4hZf+hd7UvHCEXKiRj8wVTtBpih4hyYBCNtK+6KHoe7GaK5lwSghmIwwFXoe9GAu4x
-         Si8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWO7jLLqLQjsErAN7TDcWNMHM/sBQHpBAEhAdKCRyvePUlFRNbanTYeh6iQTTiihEcTYljBhDF3NlhAN97M@vger.kernel.org, AJvYcCWWjK5egA8TrlVgpHu4U6iAtMzA+MveUOCa69Jo0g6CsVb3/SZ79KTD4rL4EZ3CJ6pPlmmpgg7V7xc=@vger.kernel.org, AJvYcCX8BDFEMbH30zECifVIUjYhJpmQSeln6kHg2oEWORkTXGflIe2Wfb5txBq10SJtSpHkia3FnMrHc6ehr9tN@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0gm3c4SRr8mabHDhhUTcDDugR6lwr/jlbD8cZpE9yV9knk7h+
-	/9dS7bSk8CdqYSLkGBsu+2wVkqBxXkpxPBYhilBUd0btAcBL6dY3
-X-Google-Smtp-Source: AGHT+IHuioC1eMHhDjPqzvdRQcGw1i3us/v/rw8S6D6YDwM5A3GZum2Wq897dettoU7QQJkhYpvLHQ==
-X-Received: by 2002:a17:907:6092:b0:a7a:c083:8571 with SMTP id a640c23a62f3a-a80ed2cfebbmr5491866b.52.1723465052896;
-        Mon, 12 Aug 2024 05:17:32 -0700 (PDT)
-Received: from [127.0.1.1] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0e1981sm225737366b.72.2024.08.12.05.17.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 05:17:32 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 12 Aug 2024 14:17:21 +0200
-Subject: [PATCH] Documentation/llvm: turn make command for ccache into code
- block
+	s=arc-20240116; t=1723465067; c=relaxed/simple;
+	bh=zVrE1ziOBDm89ZZUuFAl8nfIqMixay1u8ld1OLeodv0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZxLNEa2G5KvyAHn8FzQ27Bgh5IBr9FmZsndUXrLEXfVbmDy+6SkMwOcXRSKXMSl6x7MdB5Vrqp0cGhyLD+hf3Sg6AafOv+S8kRdgXXJSpP0FtANvT84PDelaqwOqXr71V/rbKluR2GSpfCci3/ghVSEkZs5Fp7dNo97LVRSPRGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nn5nPnVg; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723465066; x=1755001066;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zVrE1ziOBDm89ZZUuFAl8nfIqMixay1u8ld1OLeodv0=;
+  b=nn5nPnVgKDtgwwllY2fH/nygwBvCE7IUZ3+fgb+j521D/Nkv9IyGnsGw
+   Op+uJXGnkqf9QE+f8xeG4XUpMRZKkfKL7DhoWYkDsiv3FnlDRcspihFCp
+   Wvts6q7rDpMoh8Kd+YG7ND8gQWfmEt08JbJbEy3w9wU/h/0YjLfhBn/W4
+   hwNUjKb5JoG84SdOadB3CttAQtWxfPd1awrbCsRaIGHjzBegOdmK2NnYY
+   nIzbw0isLZ1iXVj1KvStQxbx7YKMoisERYQt9EYgL+/FTmqu9oh5b3zs9
+   wNIXhb7oMdFCXx4+zga2lzLkI6vk5VsCu4xIHfSeciTGyver/pxE3yKrJ
+   Q==;
+X-CSE-ConnectionGUID: cQnCucCaR1iUA+PE+WjH3Q==
+X-CSE-MsgGUID: pVPcU3cLTtmOIxCK6sjX+A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21720290"
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="21720290"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 05:17:45 -0700
+X-CSE-ConnectionGUID: 57/tv0/BTxaAFt7q5/9cNA==
+X-CSE-MsgGUID: fSWgTmkJQVeSD94EkS4KXw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
+   d="scan'208";a="88898350"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 05:17:43 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdTzY-0000000EKru-32P6;
+	Mon, 12 Aug 2024 15:17:40 +0300
+Date: Mon, 12 Aug 2024 15:17:40 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Guruvendra Punugupati <Guruvendra.Punugupati@amd.com>,
+	Krishnamoorthi M <krishnamoorthi.m@amd.com>,
+	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH RESEND v3 1/6] i3c: mipi-i3c-hci: Add MIPI0100 ACPI ID to
+ the I3C Support List
+Message-ID: <Zrn9ZLEMVGm2e1Db@smile.fi.intel.com>
+References: <20240807052359.290046-1-Shyam-sundar.S-k@amd.com>
+ <20240807052359.290046-2-Shyam-sundar.S-k@amd.com>
+ <e94efd42-bc3f-4003-8ad8-2da6500f0f13@linux.intel.com>
+ <ZrYlNOjFQE9dHsVV@smile.fi.intel.com>
+ <c6ef0253-9f32-46d6-a658-295e39c926b2@amd.com>
+ <ZrY8UOIsud8-NM_F@smile.fi.intel.com>
+ <20240809183940461e3838@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-ccache-literal-code-block-v1-1-4f09de978667@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFD9uWYC/x3MQQqDMBBG4avIrB1IQpDoVaSLOP6tQ4MpiZSCe
- HdDl9/ivZMqiqLS1J1U8NWqeW+wfUeyxf0F1rWZnHHeBOtYJMoGTnqgxMSSV/CSsrw5+MEN1mO
- 0GKn1n4Kn/v7v+XFdN68FKyJrAAAA
-To: Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
- Jonathan Corbet <corbet@lwn.net>
-Cc: llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723465051; l=1223;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=pTiLvX6dgRw/lbpMcbvul78nttHoBA2ug0btunkVO8c=;
- b=SDOJxpOKGH39hPR8hykQodZxeGYZ7NMFfdKU5mLg3BkVQmrFVkc43IOOtxTJqPHJhco8fE7iL
- 8TIjOkDlvTCCJASXzC44OzeodS2DWLWJZlPEF1QRTm1Zg7BPa9waOfK
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809183940461e3838@mail.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The command provided to use ccache with clang is not a literal code
-block. Once built, the documentation displays the '' symbols as a "
-character, which is wrong, and the command can not be applied as
-provided.
+On Fri, Aug 09, 2024 at 08:39:40PM +0200, Alexandre Belloni wrote:
+> On 09/08/2024 18:57:04+0300, Andy Shevchenko wrote:
+> > > Please refer to the MIPI HCI I3C DisCo specification
+> > > (https://members.mipi.org/wg/All-Members/document/previewpdf/89465)
+> > > section 5.4. The ASL looks the same in case of AMD.
+> > > 
+> > > MSFT says that they want to use MIPI0100 as mentioned in the
+> > > specification.
+> > 
+> > MIPI doesn't know how to assign the ACPI ID correctly. But again, what I put in
+> > the above is the correct way of approaching.
+> > 
+> > > What would you advise?
+> > 
+> > Since my intuition and experience tells me that the two devices even based on
+> > the same IP are not the same (see word 'quirk' or '.driver_data' or alike in
+> > the kernel sources) the generic ID may not be used for the specific vendor
+> > unless it's _the only_ vendor for the certain IP.
+> 
+> Just to be clear, the HCI defines the register interface to the IP but
+> not the IP itself, this is just like the various USB and SD HCIs.
 
-Turn the command into a literal code block.
+Thank you for this elaboration, it's a crucial aspect!
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- Documentation/kbuild/llvm.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> So we will definitively see quirks as implementers will interpret the
+> interface differently
 
-diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rst
-index bb5c44f8bd1c..6dc66b4f31a7 100644
---- a/Documentation/kbuild/llvm.rst
-+++ b/Documentation/kbuild/llvm.rst
-@@ -126,7 +126,7 @@ Ccache
- 
- ``ccache`` can be used with ``clang`` to improve subsequent builds, (though
- KBUILD_BUILD_TIMESTAMP_ should be set to a deterministic value between builds
--in order to avoid 100% cache misses, see Reproducible_builds_ for more info):
-+in order to avoid 100% cache misses, see Reproducible_builds_ for more info)::
- 
- 	KBUILD_BUILD_TIMESTAMP='' make LLVM=1 CC="ccache clang"
- 
+With the above remark this makes a lot of sense.
 
----
-base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
-change-id: 20240812-ccache-literal-code-block-8462614e91e9
+> (and so I agree with everything that was said ;) )
 
-Best regards,
+> > So, please do as I suggested above. And file a error report (and correction
+> > proposal) to the MIPI, so in "5.1 I3C Host Controller ACPI Hardware ID (_HID)"
+> > they should use _CID instead of _HID and add some text like
+> > "Each vendor should dedicate it's own _HID for the platform in question. The
+> > same _HID as _CID may be used if and only if vendor guarantees that there 100%
+> > compatibility with MIPI as described in this and other related documents."
+> > 
+> > I.o.w. do you 100% guarantee that MIPI HCI I3C DisCo covers all necessary
+> > properties that you need for _your_ hardware? If not, use my approach, if yes,
+> > use the same _HID *and* _CID.
+> > 
+> > Microsoft should know this as well and much better than MIPI.
+
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
+With Best Regards,
+Andy Shevchenko
+
 
 
