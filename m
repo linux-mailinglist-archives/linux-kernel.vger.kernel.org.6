@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-283775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4633294F893
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:56:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F6E94F88F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CD92826E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:56:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 046551F22BE2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8FCE199246;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C88319922C;
 	Mon, 12 Aug 2024 20:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="KTTMvf4Y"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="JFngCM9k"
 Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B56194A68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959491946C7
 	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723495830; cv=none; b=Y8MITJNH5hLiIxFnVqylP12GjFzuEWj+S6MOlfnT0G7pYLNDb+aJFeAMxKbVLEcsFhHbup/OPoUEseGqC5sOTjW13kxKEnsnlU3HHmdlcm4NupZWV7YK964kN9dcrTr3CPP2WhlN0D7Xqhj2eG2rdY7RmczHQvXqStZU0LJSNcw=
+	t=1723495829; cv=none; b=gL/1NnLF/uZdsP1K052fCGiYxN1J0hbJFrcrnVXe8QhXsETTu/Y2/8KXKtk9jf+rbdPQyLgm6H2N/ULMuihQrkO43jN1imMwkELRO/WjEW4TU7owuEtrLQQMWacP4++JyoUZrgJ1xyWU12xbymH0F984K0znPZuDm4LFCYPJE94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723495830; c=relaxed/simple;
-	bh=PXBSGyJ2lJkOBODV+E+wW90W/9DAyUDr/2f7Jxi0Zr4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=j26j2cDza3JCwYCtPWEo78lTE5BPDeDsJvwcr4XX7bnCDUqZKyhFNeovLVamBQfDjgDypMqCbbtgo8NMOT+A3J5hfIhl4v0MnwZ7I/GbodCapvo6qxipQCB6KN3YKqAAVoeezwnJmURp2uZFiCtyzWuJw52xzz+mFnzK/yx0YSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=KTTMvf4Y; arc=none smtp.client-ip=159.69.126.157
+	s=arc-20240116; t=1723495829; c=relaxed/simple;
+	bh=ZNeFBu2r+MPt0NFXyubnSviQFodwSXA7ecOazzdipzI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=mE9DAAwe28OMR5DjYMYfeEuqcyoTmZ9m+e/ououiPYiDArgS/dVk0cSdspMntMeToe6w8y37GQXJPbfAFVN8nf5R/Rcptt1LHAP2fT6IizZ9ApNr2QIcAJ+QePvDaT8dd2RSk0Y5Ys3Gq6J8ls5k9PBBwm6Mro5J1BF+TOR9t5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=JFngCM9k; arc=none smtp.client-ip=159.69.126.157
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
 	s=mail; t=1723495825;
-	bh=PXBSGyJ2lJkOBODV+E+wW90W/9DAyUDr/2f7Jxi0Zr4=;
-	h=From:Subject:Date:To:Cc:From;
-	b=KTTMvf4Y8KJeM3nudqlNqMx7g4fxWr0PW0wvMe/BHg6Hku84B+aporKI+0A2p5NHK
-	 98EonBwxfTQdFoSQpYw6WKXp2a3AbAFIIR4ZNMaJqOpcjrI06iiu2eWJUfjEmxwV9P
-	 dNAvPbr18Jb8BQVoV9lWqXyZAeq34uh3jKEMs0eE=
+	bh=ZNeFBu2r+MPt0NFXyubnSviQFodwSXA7ecOazzdipzI=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=JFngCM9kl6nySRjgm5DallTnL2GSYHDADB8arPNiLVbi23HQApOyI8TO9KehskfK/
+	 Z5GOOSrMNVhzeaKl+eOSbiHh1W5yooMD0ZorTcuvF/rRdK3clrz/TyHM7uvu0J0QFE
+	 ayj7OadDb0cniWvDvF7ZoRom5zOBlFAbiRYu2pU4=
 From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Subject: [PATCH v2 0/3] tools/nolibc: clang LTO compatibility
-Date: Mon, 12 Aug 2024 22:50:16 +0200
-Message-Id: <20240812-nolibc-lto-v2-0-736af7bbefa8@weissschuh.net>
+Date: Mon, 12 Aug 2024 22:50:17 +0200
+Subject: [PATCH v2 1/3] tools/nolibc: crt: mark _start_c() as used
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,66 +48,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIAIh1umYC/03MQQ6CMBCF4auQWVvTKSiNK+9hWNA62ElIazqIG
- sLdrbhx+b/kfQsIZSaBU7VAppmFUyxhdhX40McbKb6WBqNNo1tjVUwjO6/GKam6Rou1a02vHZT
- DPdPArw27dKUDy5Tye7Nn/K4/xqL+Z2ZUWvX2SAdsfDt4PD+JRcSHR9hHmqBb1/UDh3CO46kAA
- AA=
+Message-Id: <20240812-nolibc-lto-v2-1-736af7bbefa8@weissschuh.net>
+References: <20240812-nolibc-lto-v2-0-736af7bbefa8@weissschuh.net>
+In-Reply-To: <20240812-nolibc-lto-v2-0-736af7bbefa8@weissschuh.net>
 To: Willy Tarreau <w@1wt.eu>
 Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723495824; l=2136;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723495824; l=912;
  i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=PXBSGyJ2lJkOBODV+E+wW90W/9DAyUDr/2f7Jxi0Zr4=;
- b=uMJStOCxHqDWYd4Px6kHueLvZjsWBNpwiySdZEAnuhq7rYT1MMj00fxfM6AT8H/HGgsHCxhVn
- n0He3nEaEcjDiniyU7X1ZrnesN08rREvIxK2kEBavt+sGGlVd429nKH
+ bh=ZNeFBu2r+MPt0NFXyubnSviQFodwSXA7ecOazzdipzI=;
+ b=P2xx4qaKTCNzu9ebCHiJR1m5SdUzV/UC7fKa728DAjj7geenVVmJgtYa1FPzTvN9OgMaqRhlf
+ mkSJzXIbuy3CFc/Zo/17qVdSGplWEXlq9jGW0cJqzfR0Y9wQ610j+jw
 X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
  pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-A few tiny bugfixes and refactoring to provide compatibility with
-clangs -flto.
-
-$ CFLAGS_EXTRA=-flto ./run-tests.sh -m user -l       
-i386:          195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-x86_64:        195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-arm64:         195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-arm:           195 test(s): 193 passed,   2 skipped,   0 failed => status: warning
-mips32le:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-mips32be:      195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-ppc:           195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-ppc64:         195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-ppc64le:       195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-riscv:         195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-s390:          195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-loongarch:     195 test(s): 192 passed,   3 skipped,   0 failed => status: warning
-
-GCC is not supported, for details read the discussion in v1 of the
-series.
+During LTO the reference from the asm startup code to the _start_c()
+function is not visible and _start_c() is removed.
+This will then lead to errors during linking.
+As _start_c() is indeed always used, mark it as such.
 
 Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
 ---
-Changes in v2:
-- Drop GCC support
-- arch-x86_64.h: Don't try to wrap the asm functions in C functions,
-  Instead just replace the local symbol with a local label.
-- Link to v1: https://lore.kernel.org/r/20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net
+ tools/include/nolibc/crt.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
----
-Thomas Weißschuh (3):
-      tools/nolibc: crt: mark _start_c() as used
-      tools/nolibc: stackprotector: mark implicitly used symbols as used
-      tools/nolibc: x86_64: use local label in memcpy/memmove
+diff --git a/tools/include/nolibc/crt.h b/tools/include/nolibc/crt.h
+index ac291574f6c0..bbcd5fd09806 100644
+--- a/tools/include/nolibc/crt.h
++++ b/tools/include/nolibc/crt.h
+@@ -22,7 +22,7 @@ extern void (*const __init_array_end[])(int, char **, char**) __attribute__((wea
+ extern void (*const __fini_array_start[])(void) __attribute__((weak));
+ extern void (*const __fini_array_end[])(void) __attribute__((weak));
+ 
+-__attribute__((weak))
++__attribute__((weak,used))
+ void _start_c(long *sp)
+ {
+ 	long argc;
 
- tools/include/nolibc/arch-x86_64.h    | 4 ++--
- tools/include/nolibc/crt.h            | 2 +-
- tools/include/nolibc/stackprotector.h | 4 ++--
- 3 files changed, 5 insertions(+), 5 deletions(-)
----
-base-commit: 22ba81c50a49468d80055674d8d6f78afb1c92c4
-change-id: 20240728-nolibc-lto-331813b72a0b
-
-Best regards,
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+2.46.0
 
 
