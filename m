@@ -1,182 +1,195 @@
-Return-Path: <linux-kernel+bounces-282681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B892494E752
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:00:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45DAE94E748
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7532B283031
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:00:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AF1D1C216D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BEE15351C;
-	Mon, 12 Aug 2024 07:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FF915443B;
+	Mon, 12 Aug 2024 06:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F5wiESlb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="M2oPp0+s"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0815413E40F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D215F153511
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723446026; cv=none; b=n1vOGC6aOxg/oyshookoiOHhHU9WNB8usHBVsu/w2nVH54INzvExPRmcnGmAxfNcvtplR1dPgGoapYFq/8bWGfx3ZiNkfLqM1gpZS+d1rxisNztaD1SDSVCRBSfvrGfwAQoikR4Z4e6QahBk9nvUDn8r/e1mMB/LmF3blUgvmTU=
+	t=1723445976; cv=none; b=p0dl3xW0IB+ljdUSK2BA8rZwq61/0K4al+L5xG3gfK9EDuxh2kmCKAc1dGLYZdCtQd6YcswT09gHX1rXl5LTmyFJyW2fSvdbPC1Fa7BwvyDlKB3zW0r8f5LfrMUOrJm2JDAlhwoJoJEaaAjFrOK6n4VxwT7gBC3e+6vrx0zzcLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723446026; c=relaxed/simple;
-	bh=S0zPhso4B/BX7cFCElhUVcufYJsv494XwmqIF2Y/yxA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e1myukfwVf3OOBbNCM4HksXERgZbBqEs5Z9Bf/RQTUqelHvNDqSIk+TkzyCF63L5qGLni0UY4McCmeGJT8eI8FxI0M62N8FDxaGBanL7+AuaIWjy/D8abGOoBpXcxoxjloylJtjevQavvVZpoNSSkUZ3QSbbmFsZgtHv+otwsgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F5wiESlb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723446022;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oSsSzksoUZv3/VShmqUKFIu+S4eeg5+mXA9YiUlfHtE=;
-	b=F5wiESlbC6hDQO26Ko2MEfjt6bJTZW9p4DCsMBlo/JCOf3COqYyHxkGRMXT1PFg4F/FkfS
-	6JnB2aFAPEeQAHrR9fV9+UINVTBrZNsJLZ5qHJeHIav3t6BuExol4oWz8QM8/F+uHcj3Jm
-	Qkkc4PBbObOVzJSIqQBDP5UXBQ81eLA=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-463-V-lNkq_nPkqXfq5v7Zs1VQ-1; Mon, 12 Aug 2024 03:00:21 -0400
-X-MC-Unique: V-lNkq_nPkqXfq5v7Zs1VQ-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2cb6f2b965dso5520623a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 00:00:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723446020; x=1724050820;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oSsSzksoUZv3/VShmqUKFIu+S4eeg5+mXA9YiUlfHtE=;
-        b=r3D59SKh1KsMcjSG+WXODZwCUnnfuU/gECtzHwAB7lJXqk02BTEGt9gBP6yumIZY0T
-         p1iHzCAxb5KQrzgP7KMxabNgGV0gHBy1IjThoEz4wftWwgXp5IgXK9IgW1evoENYHbX9
-         cF6rnDDFdiUG+wo8HFDVusl0fwyjfPmbglGDLM4B6gOXmAesq7SXdqv432fT2ZqlhNWB
-         /wDQoXFszRlJ7B724Zpbqa5dM5apKwIlxdUZWsgHDyIZcPkA3dE5ax3u3fW4CGYB/WOr
-         HGs6xD7Je35d5ytcmWzGTPhgcABPjHI4T91/NMYyc3+hMyQEM7mAJ2TfGLZq+n+z1Y6q
-         s8eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTDp222EyCFYHb49Lu5N3tKb2oyKwGf2BmHbGAvll7xFESauWqvyofuHrpHuHU3zA/KOCb+A0bx8XYZpkrI0VgOZP1f697MvGtIpfZ
-X-Gm-Message-State: AOJu0Ywfca5kLWbJp5aMWNl53iMy9g5g/+ef1+ICSJgPvfGeMnB0bPLs
-	jl409YSb8iw5b0b5N9W7PDqG15mBHM7hMIzOqZ4QVKaZm96bba0IKIggi6jyoRXMmNN+dzAgS1n
-	WA3U9Jf05dJJbevcwFyjYb2V6ylIyk5O+VcA4zP/oWKw0AwMXEhdKXVOuRjtOat/mr9vw1APGHq
-	VsmtbbvGc78SnX30cw+BGszvVNmspz5nczjlp+
-X-Received: by 2002:a17:90b:4f8a:b0:2c9:e0e3:e507 with SMTP id 98e67ed59e1d1-2d1e7c5e412mr9009106a91.0.1723446020284;
-        Mon, 12 Aug 2024 00:00:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHpbWsbXYgU8ce3mzCHOLbVvxlpYnUfy/J6VF+x38GwFCbri9IY+Rpchg44Neo2WJoxq/aQmGduo7dzNVi0jm4=
-X-Received: by 2002:a17:90b:4f8a:b0:2c9:e0e3:e507 with SMTP id
- 98e67ed59e1d1-2d1e7c5e412mr9009053a91.0.1723446019049; Mon, 12 Aug 2024
- 00:00:19 -0700 (PDT)
+	s=arc-20240116; t=1723445976; c=relaxed/simple;
+	bh=fMAI++h32t//AHmfL0D2mFSDVyXgFqjlo5mDlA1l0a4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=XjvYtRJEeAdHazGxZFfdxu3Cg50Im72GN9LUDjhhwG0Tl7rRBAz+g6hkY0HVJta1SEKJGfbSQ1Z0iY0tEd+k3EoTpluWFVZBcZs5RbT2ePTWztZGJyh9Ob5AIHGaBMBmDAAIThHA6+LDy6PWFuLJIB3YSAoAwi3DVlISPLl7T2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=M2oPp0+s; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240812065929epoutp01196fd4d6029e8f8b91cc870ecfaa7a44~q6PpinuuV0516305163epoutp01u
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:59:29 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240812065929epoutp01196fd4d6029e8f8b91cc870ecfaa7a44~q6PpinuuV0516305163epoutp01u
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1723445969;
+	bh=13jWM+ktnj23ePQEANAQnniiN1iteNNHMSBYRkHFQIs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=M2oPp0+sriV1B8Y+eaFjTnLK3gzMEk7KFoR4bWX3o2bz1zhC7rPCS9fc/kD7N0RvF
+	 1z5yASNZF8BDQfje77jDHuaNUODTP8FVBGFt9m5qGmOVqRQoO/c+TmAKXWEeZTdgSb
+	 J5D7jERTYkz+HJmlM9JMmhmYN9X0F/j+dwwVgSpY=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240812065928epcas2p1a575f8f10a5e2d350e7c3fee3baf5381~q6PpCyKu62045720457epcas2p1i;
+	Mon, 12 Aug 2024 06:59:28 +0000 (GMT)
+Received: from epsmges2p1.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Wj53h18K9z4x9QK; Mon, 12 Aug
+	2024 06:59:28 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	63.64.10431.FC2B9B66; Mon, 12 Aug 2024 15:59:27 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240812065927epcas2p4ace98e8757a76e62efa3165de719408a~q6PnY3gSf1343513435epcas2p4y;
+	Mon, 12 Aug 2024 06:59:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240812065927epsmtrp29378d4b286448f662bb202b94e16e000~q6PnX9HwX0739007390epsmtrp2L;
+	Mon, 12 Aug 2024 06:59:27 +0000 (GMT)
+X-AuditID: b6c32a45-ffffa700000028bf-af-66b9b2cfb133
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8E.B4.08964.FC2B9B66; Mon, 12 Aug 2024 15:59:27 +0900 (KST)
+Received: from ubuntu.dsn.sec.samsung.com (unknown [10.229.95.128]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240812065926epsmtip1eae8822f53896c39f200df8f5b082ab4~q6PnJ6ZDM0410504105epsmtip1a;
+	Mon, 12 Aug 2024 06:59:26 +0000 (GMT)
+From: Kiwoong Kim <kwmad.kim@samsung.com>
+To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, beanhuo@micron.com,
+	adrian.hunter@intel.com, h10.kim@samsung.com, hy50.seo@samsung.com,
+	sh425.lee@samsung.com, kwangwon.min@samsung.com, junwoo80.lee@samsung.com,
+	wkon.kim@samsung.com
+Cc: Kiwoong Kim <kwmad.kim@samsung.com>
+Subject: [PATCH v1] scsi: ufs: core: introduce override_cqe_ocs
+Date: Mon, 12 Aug 2024 16:01:54 +0900
+Message-Id: <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupgk+LIzCtJLcpLzFFi42LZdljTVPf8pp1pBg+fW1ucfLKGzeLBvG1s
+	Fi9/XmWzOPiwk8Vi2oefzBZ/b19ktVi9+AGLxaIb25gsdv1tZrLYemMni8XNLUdZLC7vmsNm
+	0X19B5vF8uP/mCyW/nvLYrH50jcWBwGPy1e8PRbvecnkMWHRAUaP7+s72Dw+Pr3F4tG3ZRWj
+	x+dNch7tB7qZAjiism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVc
+	fAJ03TJzgD5QUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+Wl
+	llgZGhgYmQIVJmRnLF2+mL1gnWBF28M3rA2MM/i6GDk5JARMJPYdOcUCYgsJ7GCUmL6Jq4uR
+	C8j+xCjxduY6ZojEN0aJe1tCuhg5wBqOXfaHqNnLKLHl9UZWCOcHo8Sl3S+YQBrYBDQlnt6c
+	ygSSEBH4yCSxef42dpAEs4C6xK4JJ5hAJgkL2Essm2oJEmYRUJW4f3whI4jNK+Am8XT3HGaI
+	6+Qkbp7rZAaZIyHQySHRvGYTC0TCReLMyq9QRcISr45vYYewpSQ+v9vLBmEXS6zdcZUJormB
+	UWL1q9NQRcYSs561M4IcwQx06fpd+hCfKUscucUCcSafRMfhv+wQYV6JjjYhiEZliV+TJjNC
+	2JISM2/egRroIbFrySJWSFjFSuw8sIFxAqPsLIT5CxgZVzGKpRYU56anFhsVGMKjKDk/dxMj
+	OElque5gnPz2g94hRiYOxkOMEhzMSiK8zeGb0oR4UxIrq1KL8uOLSnNSiw8xmgLDayKzlGhy
+	PjBN55XEG5pYGpiYmRmaG5kamCuJ895rnZsiJJCeWJKanZpakFoE08fEwSnVwLQvaW/3/3yV
+	23P3rZ7YlxqbN/3YwVXfpESPleqxp8379i9005HkX093aPquuj21Z9s53ZMJ1mov3rYsmH/i
+	Srr/rf5EwaKSY99uOK7bP2VdSciERUyRJ+pyfKIqzBk6Js41feFTZ35wv0nrtYd+6SuL3Eom
+	Ljn5bL/Fzv0S2x6y3dj0bbNWwFVncSe9Z29896w7OLHAN7/p0/MgkWKWR84iSydrvOJa73qv
+	xPv5lCzfx1tE77aWdHjVr+qx0Pos85w7rGzFx+iLszqrMrMSL81OVNideGRfBodadO3z2wrW
+	3ceYf73uvVWkEC/6VHuy7PKzMTyPN0z8N2HZd4OVwdwaZx4oLONIu71Idu6XAnN7JZbijERD
+	Leai4kQAVvdgvBsEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrBLMWRmVeSWpSXmKPExsWy7bCSnO75TTvTDDZcZbU4+WQNm8WDedvY
+	LF7+vMpmcfBhJ4vFtA8/mS3+3r7IarF68QMWi0U3tjFZ7PrbzGSx9cZOFoubW46yWFzeNYfN
+	ovv6DjaL5cf/MVks/feWxWLzpW8sDgIel694eyze85LJY8KiA4we39d3sHl8fHqLxaNvyypG
+	j8+b5DzaD3QzBXBEcdmkpOZklqUW6dslcGUsXb6YvWCdYEXbwzesDYwz+LoYOTgkBEwkjl32
+	72Lk4hAS2M0o8efxLNYuRk6guKTEiZ3PGSFsYYn7LUdYIYq+MUocWroLrIhNQFPi6c2pTCC2
+	iEAzs0Rfkz2IzSygLrFrwgkmkAXCAvYSy6ZagoRZBFQl7h9fCDaTV8BN4unuOcwQ8+Ukbp7r
+	ZJ7AyLOAkWEVo2RqQXFuem6xYYFhXmq5XnFibnFpXrpecn7uJkZw4Gpp7mDcvuqD3iFGJg7G
+	Q4wSHMxKIrzN4ZvShHhTEiurUovy44tKc1KLDzFKc7AoifOKv+hNERJITyxJzU5NLUgtgsky
+	cXBKNTB57m3eE8a37F8w/++E+fan8tYy8XXPnT3vwr+Mfx9ls1sXPI/a/sLCuGuy/MmNHAZh
+	/gvSm588Wt66JnPyQVfuj7dufovbVR5qOcHd9PGkXxp5SzuDJnRfvXfKM5Ojnrk71sE1mM+j
+	5R7Te4d5+7q/b/JSW8aT9rN71rUN+y4/vsm6sfX+FdYJGvYPzzpo+IR9yhBbtq7C/6ZaWfqh
+	O1O/W2ivZWfN6Zq+YfqLzee8KkRUnkgI3hJMOnKiS/Fj77LIn0rXPQW0ck1fcXpFLG/KDPKw
+	C/S88CYr3mHOjKWzvjns8O3qls2pyLo6L1eDS+vaiq2X9op02C5Q/t7w0vbNZcazVQw8eb/8
+	2NavU69RYinOSDTUYi4qTgQARQY9UcsCAAA=
+X-CMS-MailID: 20240812065927epcas2p4ace98e8757a76e62efa3165de719408a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240812065927epcas2p4ace98e8757a76e62efa3165de719408a
+References: <CGME20240812065927epcas2p4ace98e8757a76e62efa3165de719408a@epcas2p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240805082106.65847-1-jasowang@redhat.com> <CACycT3uM1jSdqFT0LGqy1zXZkWF8BNQN=8EMKYMoyP_wjRtsng@mail.gmail.com>
- <CACGkMEtYE1OY+okxHAj=cVfW-Qz45an28oO=Wv15yOtpD6UqdQ@mail.gmail.com> <CACycT3vAv1K0yBKgc_8GBLpEPwASTCCPZYAxMyUROQsyntQdOw@mail.gmail.com>
-In-Reply-To: <CACycT3vAv1K0yBKgc_8GBLpEPwASTCCPZYAxMyUROQsyntQdOw@mail.gmail.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Mon, 12 Aug 2024 15:00:08 +0800
-Message-ID: <CACGkMEsYRrzSzNHgN490TDCWFm3EG1ic_-f4F+mu9CNz4uY=iw@mail.gmail.com>
-Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
-To: Yongji Xie <xieyongji@bytedance.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	Eugenio Perez Martin <eperezma@redhat.com>, Maxime Coquelin <maxime.coquelin@redhat.com>, 
-	virtualization@lists.linux.dev, linux-kernel <linux-kernel@vger.kernel.org>, 
-	21cnbao@gmail.com, penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 6:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.com>=
- wrote:
->
-> On Thu, Aug 8, 2024 at 10:58=E2=80=AFAM Jason Wang <jasowang@redhat.com> =
-wrote:
-> >
-> > On Wed, Aug 7, 2024 at 2:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.=
-com> wrote:
-> > >
-> > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jasowang@redhat.co=
-m> wrote:
-> > > >
-> > > > Barry said [1]:
-> > > >
-> > > > """
-> > > > mm doesn't support non-blockable __GFP_NOFAIL allocation. Because
-> > > > __GFP_NOFAIL without direct reclamation may just result in a busy
-> > > > loop within non-sleepable contexts.
-> > > > ""=E2=80=9C
-> > > >
-> > > > Unfortuantely, we do that under read lock. A possible way to fix th=
-at
-> > > > is to move the pages allocation out of the lock into the caller, bu=
-t
-> > > > having to allocate a huge number of pages and auxiliary page array
-> > > > seems to be problematic as well per Tetsuon [2]:
-> > > >
-> > > > """
-> > > > You should implement proper error handling instead of using
-> > > > __GFP_NOFAIL if count can become large.
-> > > > """
-> > > >
-> > > > So I choose another way, which does not release kernel bounce pages
-> > > > when user tries to register usersapce bounce pages. Then we don't n=
-eed
-> > > > to do allocation in the path which is not expected to be fail (e.g =
-in
-> > > > the release). We pay this for more memory usage but further
-> > > > optimizations could be done on top.
-> > > >
-> > > > [1] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq=
-8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m3caef86a66ea6318ef94f9976ddb3a0ccfe6fcf=
-8
-> > > > [2] https://lore.kernel.org/all/CACGkMEtcOJAA96SF9B8m-nZ1X04-XZr+nq=
-8ZQ2saLnUdfOGOLg@mail.gmail.com/T/#m7ad10eaba48ade5abf2d572f24e185d9fb14648=
-0
-> > > >
-> > > > Fixes: 6c77ed22880d ("vduse: Support using userspace pages as bounc=
-e buffer")
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > ---
-> > >
-> > > Reviewed-by: Xie Yongji <xieyongji@bytedance.com>
-> > > Tested-by: Xie Yongji <xieyongji@bytedance.com>
-> >
-> > Thanks.
-> >
-> > >
-> > > Have tested it with qemu-storage-daemon [1]:
-> > >
-> > > $ qemu-storage-daemon \
-> > >     --chardev socket,id=3Dcharmonitor,path=3D/tmp/qmp.sock,server=3Do=
-n,wait=3Doff \
-> > >     --monitor chardev=3Dcharmonitor \
-> > >     --blockdev driver=3Dhost_device,cache.direct=3Don,aio=3Dnative,fi=
-lename=3D/dev/nullb0,node-name=3Ddisk0
-> > > \
-> > >     --export type=3Dvduse-blk,id=3Dvduse-test,name=3Dvduse-test,node-=
-name=3Ddisk0,writable=3Don
-> > >
-> > > [1] https://github.com/bytedance/qemu/tree/vduse-umem
-> >
-> > Great, would you want to post them to the Qemu?
-> >
->
-> Looks like qemu-storage-daemon would not benefit from this feature
-> which is designed for some hugepage users such as SPDK/DPDK.
+UFSHCI defines OCS values but doesn't specify what exact
+conditions raise them. E.g. when some commands are nullified
+or cleaned up, Exynos host reposts OCS_ABORT. Even if
+an OEM wants to issue them again, not fail, current UFS driver
+fails them because it set command result to DID_ABORT.
 
-Yes, but maybe for testing purposes like here?
+So I think it needs another callback to replace the original OCS
+value with the value that works the way you want.
 
-Thanks
+Signed-off-by: Kiwoong Kim <kwmad.kim@samsung.com>
+---
+ drivers/ufs/core/ufshcd-priv.h | 9 +++++++++
+ drivers/ufs/core/ufshcd.c      | 4 +++-
+ include/ufs/ufshcd.h           | 1 +
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
->
-> Thanks,
-> Yongji
->
+diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+index ce36154..4dec6eb 100644
+--- a/drivers/ufs/core/ufshcd-priv.h
++++ b/drivers/ufs/core/ufshcd-priv.h
+@@ -275,6 +275,15 @@ static inline int ufshcd_mcq_vops_config_esi(struct ufs_hba *hba)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline enum utp_ocs ufshcd_vops_override_cqe_ocs(struct ufs_hba *hba,
++							enum utp_ocs ocs)
++{
++	if (hba->vops && hba->vops->override_cqe_ocs)
++		return hba->vops->override_cqe_ocs(hba);
++
++	return ocs;
++}
++
+ extern const struct ufs_pm_lvl_states ufs_pm_lvl_states[];
+ 
+ /**
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 0dd2605..83a1870 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -825,7 +825,9 @@ static enum utp_ocs ufshcd_get_tr_ocs(struct ufshcd_lrb *lrbp,
+ 				      struct cq_entry *cqe)
+ {
+ 	if (cqe)
+-		return le32_to_cpu(cqe->status) & MASK_OCS;
++		return ufshcd_vops_override_cqe_ocs(hba,
++						    le32_to_cpu(cqe->status) &
++						    MASK_OCS);
+ 
+ 	return lrbp->utr_descriptor_ptr->header.ocs & MASK_OCS;
+ }
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index a43b142..64444fb 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -382,6 +382,7 @@ struct ufs_hba_variant_ops {
+ 	int	(*get_outstanding_cqs)(struct ufs_hba *hba,
+ 				       unsigned long *ocqs);
+ 	int	(*config_esi)(struct ufs_hba *hba);
++	enum utp_ocs	(*override_cqe_ocs)(struct ufs_hba *hba, enum utp_ocs);
+ };
+ 
+ /* clock gating state  */
+-- 
+2.7.4
 
 
