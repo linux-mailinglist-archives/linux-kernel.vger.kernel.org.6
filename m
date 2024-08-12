@@ -1,304 +1,229 @@
-Return-Path: <linux-kernel+bounces-282546-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B701294E59D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0105394E50E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4C328230A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:01:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4BC281055
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29721482F2;
-	Mon, 12 Aug 2024 04:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4FC0136338;
+	Mon, 12 Aug 2024 02:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b="KM6GIGvL"
-Received: from omr001.pc5.atmailcloud.com (omr001.pc5.atmailcloud.com [103.150.252.1])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CAbRnvHm"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013025.outbound.protection.outlook.com [52.101.67.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E242F2C;
-	Mon, 12 Aug 2024 04:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723435297; cv=none; b=m8xTGmMB46/NLN8j3W+vDqEneGS0HU8YiCFfAXmt6NaWNDwU7lyBhDGB1eAcUs9CWd9vtyunNTOqUhVdewNQTnPPugueKNs7VhThgJCx0CfwLEwoGAi9GqWpbzTmBxOm9USjNbN7LX8XaiZm4oB5fIvBrxUAdaYN9l2JkTWCDEs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723435297; c=relaxed/simple;
-	bh=zX7panmrDQ3wh2nggk6+Tsrbim9BO2Xc/Wm6mDNP31Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WtbbQMTVgRu4tEvojql4EOjCkfjviTCCCP+nb6qYUhshI0v/kWF3ucFtCbQuKVeaoSgbzqYBZe8Rgzx3Nrg1yjxo5CIj0n9Srno+5mESdpdPd3b9n2D60Ct5+H9gBKAp6OpHkky3QddQkQazntWzEL+x1pWJx0wpy/nwTT4zXMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au; spf=pass smtp.mailfrom=westnet.com.au; dkim=pass (2048-bit key) header.d=westnet.com.au header.i=@westnet.com.au header.b=KM6GIGvL; arc=none smtp.client-ip=103.150.252.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=westnet.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=westnet.com.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=westnet.com.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=M4HFryxWKe0qeZYXB6YRpgflRXAYZpHEa3EbGsxpmxA=; b=KM6GIGvLRpWzSB
-	RmHc2aPRzxA91UruObNsKI7vAsEnDopFYUbwF6tzY9R+LzJFI4Uvz9U0+6jgmwTdSlYjQe+cERUXT
-	CKs3D/kqT5HifWVNEEOGcWmVDEXEoi66e+FJBOsy7h/2Kt0nQw7WLB+vcY2GRu2YtQaiwpuMFPjNS
-	+SgfgdXO+WoxRGv4qPXQ5uM9fYda1qZ0nyynkY0Q8HcnX0vvwPoa4r9g5ZP0dE3HGNvNsGz58QniS
-	yMkAce01E4OAqqZxTCutQobEZZZmW4mXbuMlFfzdJpNCWWogKjYUrsQUIH1BGPbqNYB9P5FkTA9UM
-	G6AD0uF5HDRDX4OgXVyA==;
-Received: from CMR-KAKADU04.i-058615fd6484c2476
-	 by OMR.i-0e5869b43dfedcea0 with esmtps
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdKlC-0008AJ-0t;
-	Mon, 12 Aug 2024 02:26:14 +0000
-Received: from [27.33.250.67] (helo=[192.168.0.22])
-	 by CMR-KAKADU04.i-058615fd6484c2476 with esmtpsa
-	(envelope-from <gregungerer@westnet.com.au>)
-	id 1sdKlB-00045F-11;
-	Mon, 12 Aug 2024 02:26:13 +0000
-Message-ID: <5b51975f-6d0b-413c-8b38-39a6a45e8821@westnet.com.au>
-Date: Mon, 12 Aug 2024 12:26:09 +1000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDDDEAF9;
+	Mon, 12 Aug 2024 02:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723430265; cv=fail; b=BZhaTt4dgbpld/vVeF7owvpEg8qt+cndmipkIkCiBnhqiz9VLRG3JV99U27ZCXpLyXQmmJgFUKVlJM42s1z6ggHy1g6thZX8Xj2crtCRrI+3Fa4rS39a3sMMRaiLyeTO1p849mxfEyRFMAqZQIIR8CK/9gprM9/tOvqKwweZlzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723430265; c=relaxed/simple;
+	bh=Pys53PswyRk491krh2eNngrSe/VRIxbmO2f4ZbxULTU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EgY/GMNpOR4MxQLcbbM78MZz8IHNUkAa/2Og84IwHLPes+xaogNy0LMqV2zw3HjrxPoetuVftWIZeP4D1lKrl/UIFlCQXTtcyBwOdzGVBbrbZLvAur8yUU5v+lyDCgQhNEA588TH6FlndppMNm2MD75vCPCoMvYbsTk/VBPpCEE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CAbRnvHm; arc=fail smtp.client-ip=52.101.67.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UZ8osfKom1PbYLbN5uKydnM9zXnpsxLmqPnam+ymhL/mFU+MQaWEnXhlxegh+XaQ2WwutH2QT7T7ZyIycFWfQa5X7nutRv06afiDQP+uxbqwpDCcr6ZDMyMJVSiu72UV8qkAEammBPMoy6w9F0cFf4XQaHZgDckl3Hv3jqlrRsQymGuXEfZs6Hoewmej24w7il0L7dOOC9UqVlHkkvJqM3MLmkLP70ycPMHZaSS84FUfdPhR7XAWOtwh4XORbJWpvghfjweGC7wvvNl5iRDf5So9xSXCGIigBae2yUOwKEhlkT2BNlqdvs/SgY4L66ex9S8yBTuoCM551gB4fIeYvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Pys53PswyRk491krh2eNngrSe/VRIxbmO2f4ZbxULTU=;
+ b=mekqfi59qmLDu5EpzIQRgThAiI5xsRG+GXyaybF4B5Hpsg51GQa9FMh3LLTEwo5xF8Rzi8SF0RXyJtQQu4HrAjwGIHkNa2VFXuF9dCuRUBiYNED3il4bamBqWBfD4Rtiv93cRr9ag8ktyVBhhrBKP0izO7EtUtk4MBVolsTBbm6UOWVZG2dJngFE3sP794sRUvwDf2A79HJEUCJBarz4DzAoP+wsf1iuVWa6qQB6M4kENvsjbJvcDz2Hkr6yA7AcRlDysT3p0HkneQvDnHQ7RMiczJmsM6uOIm3rrouXo7TVstiqxfU2vw87kgeDzKVZS42YHoLkBpPSp7BAw73smA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Pys53PswyRk491krh2eNngrSe/VRIxbmO2f4ZbxULTU=;
+ b=CAbRnvHmLNuRMGAKN8zV0Ezh7c05yAMJO5fudf9+82NVy0uDECCPpWN94FZBDCEfkFJhyFGd9ZRTGzJTGtAsVP0CKcarKEVa0zIhHFJkgq+Ov7Pbb1rDVBNx+Wnht45f4l6UOQqV5kBNUWyDYHeCW1MifWf6l1vzjZjNz+c7VStqJiP2s3CGw0QwyT22wsRQCJs7eIIiAan/G9+HGVc+BJMCB5xx8D4NYubwAeph0BUAwyWvtH/zhVyxSzt00yV3WRlgiRsa5MG4cKO9YZIMxaEKjqf8VNRmshEmtxzfatnjLldGtv9FQ5SZF6oEmSsZ2v8lkjWO32LGDsJsBk3fcg==
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by AM0PR04MB6769.eurprd04.prod.outlook.com (2603:10a6:208:17f::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 02:37:40 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%6]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 02:37:40 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Francesco Dolcini <francesco@dolcini.it>, Shenwei Wang
+	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
+	<richardcochran@gmail.com>
+CC: Francesco Dolcini <francesco.dolcini@toradex.com>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Frank Li
+	<frank.li@nxp.com>, Rafael Beims <rafael.beims@toradex.com>
+Subject: RE: [PATCH net-next v3 3/3] net: fec: make PPS channel configurable
+Thread-Topic: [PATCH net-next v3 3/3] net: fec: make PPS channel configurable
+Thread-Index: AQHa6kFAi4gL5hsrEkeoi5LiVHboYbIi7Fgg
+Date: Mon, 12 Aug 2024 02:37:40 +0000
+Message-ID:
+ <PAXPR04MB8510516B636E2935AA2FCDAC88852@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20240809094804.391441-1-francesco@dolcini.it>
+ <20240809094804.391441-4-francesco@dolcini.it>
+In-Reply-To: <20240809094804.391441-4-francesco@dolcini.it>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|AM0PR04MB6769:EE_
+x-ms-office365-filtering-correlation-id: 222cefd1-b352-4266-2046-08dcba77bc5f
+x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?aXJxb2dkZWU3SUJaUXZQQTMyRDlBSXNscWxMTGRuSWVEUXdGdDRlNmNUNWsv?=
+ =?gb2312?B?ejFmSlMvVVNEVVZVTGpLaGVzT1NpcmdNV0loak9sOWd3REJib3dBZ3Y3bVZ4?=
+ =?gb2312?B?aHhpWmI0b3dNTCtZaUc0d2NYN2h0OENkV2RyTUVwRklFbHpTU0FHSzI2cW9S?=
+ =?gb2312?B?U3hnNEhYaDZRWFU3QmtUbVordkJtZjkrVWZmSzhndTVIRHhKMktoa0FBditL?=
+ =?gb2312?B?SjNDMnkvQzZ2S3F0ZFE0UnlSZXJQajZXMndOVmptZVhlM1p5aTdHRkZtaWFJ?=
+ =?gb2312?B?WlYvdlllUFJMSnU1RHhscXRhM0QvcGFXaVBvdlkzbmphdmtRejVuMkJUWnV6?=
+ =?gb2312?B?WCtvMW96ekVmdHkydUo4NUxSRWptTUdmMjVGTFpCZThrdUhkRHpXc0UxOFN4?=
+ =?gb2312?B?R1dyZmVCOU9qSGk3Zkg3OFRwendyNjNGb2x2L0lvSm1Yc2RTOWZpNkVmbW1Q?=
+ =?gb2312?B?aTZ1TmdQc3YxL1phUTJTbUNpY3l5TDlrNGpvS1dWK0Z3SVY5ajh1TVgxbW44?=
+ =?gb2312?B?R3g3bjZaNEJ4MWw2V0QyYndvR3pNQnAwM1kzNGRYM2JZREVNMU1QUGpWb05C?=
+ =?gb2312?B?VVlIM2I2N2lnOG85TUpmK3dERjVUMjQ4THExa2d2cWs5RUF6YXErYUZCbmxW?=
+ =?gb2312?B?Z2lLbk9HaVd5eGtZUWxNV0xFZGc2RDZaN1hhNTBKRXdwZW04U1VoWnZxeWRP?=
+ =?gb2312?B?ZGU3TS9wdjdscnVmNkJKRnA1VFRzSHNuNEtrZUJFazN4RUYvTjlva09tS0ZL?=
+ =?gb2312?B?WC9YaUFlOUdVdm83QTdVcVBGb1dRZjdjbmF1Y1g2aDErM0NkUmtHeER5UVNP?=
+ =?gb2312?B?RmRBTWRkVE1TTTNRZS9McUpzaWpnNGdtM0w2R2g5VlRJWVI4Ym1yUTU1QndX?=
+ =?gb2312?B?ZHhJSVNaZEwvZittTUdqS2cwSnBtRUFpNC9JdTRtUlNCMU16ZnRhbU5MUzk5?=
+ =?gb2312?B?MFVIRUM3ZG95MFJRaFB2MWNtSTdSV2dsZ0l6TFNCSzNqUDZMVUFqM0VCSGRE?=
+ =?gb2312?B?aER1R0FJMFBvTTA5MEt6ZGtIb3BEbDYwYk1WUmtXWG9uTVlGV0VoeTgwYWRE?=
+ =?gb2312?B?ZzhRb1JyL2FwdUNMUDlzeXZMZUs0TS9nWk8vck5ESFVKdGl1Zmh4ejVEN1F2?=
+ =?gb2312?B?aVVyMXNEVlJnb2xCU2prNkRPR3l3UEJLMkhuM3M3WlBtb0dSdlIvUzFNbjNT?=
+ =?gb2312?B?M25rMm5uTndWY2RYcmQ2TzRuU3QrTEthaW1vc1Q2RVlGcTdGdXlVa3hSK1Ay?=
+ =?gb2312?B?SFFKbGptN2VSNTk1WVpaTzNST3FyeENoVTFINDRuNVpFVFRHMHFmUHgvRGc2?=
+ =?gb2312?B?bHdKZHM0OVltWTdUdWwvamhiU2RuY0JMK1ZOcWgwSVZHb1pVVWwzYldyeTBM?=
+ =?gb2312?B?dFFVblBnNmM1NlhSR1NPL29tbEVldmcvNHg2cGkzWDZzcEY0ZW5qdjVsQWhE?=
+ =?gb2312?B?Qk9TM1hESVZBb05iWXdTM05rYnZrZEkrZVgzOW9mSHFGRTA0ZEJHc2JwK3RI?=
+ =?gb2312?B?OXlGaXprbjNQV2ttL0g5UEZjMDdWaUVGbFQzcXJNd0I5cDRBVUFybTViaVdr?=
+ =?gb2312?B?OFVFbzlSV2l1MDRwbCsycEU3cEFpL1dyOFFWT0wxZytGSks5N3JnK1d2dE1S?=
+ =?gb2312?B?eS9BQ3ZuQ1E3dXNhc3R3d3ZQNUFmRjI3M3A0TXJ2aytiY3ZEN3RWZ0dRUStk?=
+ =?gb2312?B?ZjhHNFF6WWZtcmpsU25BRGdaMTd5NGUrRDRrYlkzTktNWHN4R1VQV05iWGV1?=
+ =?gb2312?B?dWI4Y29YV3pJRDRZanFkRnNmUVN6cU1PelNZSkZNZEIyMFRoUVRwZW5RWjBD?=
+ =?gb2312?B?Rk4rMkJ2cW9yRUtUb3k0ZCsxb2ZvVjNmR25jSGFGNjhCK1BSL0dYb3J3Tm9x?=
+ =?gb2312?B?azhXL0RkTmhXd0lEQkJpU1pnenM3RllPUS9TMmpYSzJ6TFE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?dTBTRXhyb0g3dmtUc29zNmF3Y3BteDh6YWNJRVBGMSthb0NEVEV1anFQTWhr?=
+ =?gb2312?B?dkg2emZHTU9ydHVJU3ZUVXpyeVRjTmtpMlVLK29wZGNFZlc4ME5lVFVyZkhU?=
+ =?gb2312?B?eE9CYmpLNXU3NmNEUVBkL1RtaURxSFNyREhlWmlJREluMWJIdlNLVmhFb2lu?=
+ =?gb2312?B?NHBWM1ovRjdwSDA4Zm1iMkZ5WjR4S1IyWXhicGhPQi9ERUtmVHFTeXQwU1E2?=
+ =?gb2312?B?dnd0YkYvZ25SZXBjSUFwazFoVnhIZWNKdGFYOWF2ZTNucEw5dEM4MWdMTUNU?=
+ =?gb2312?B?ZWR5dFliT2JCVU45eUg1VWVGaStVbVJ6dUZFL0IyKy9WZ0xBbHNwM0x6bVpq?=
+ =?gb2312?B?SXN5dWhkek5Ca0ppandWL25EcnNxc0g0aTRFVlhDaFNLa2E4OWhOYkg5clhI?=
+ =?gb2312?B?dkd5MFMwdUQ4azMvWnB4citPc2lXWkppZnRGSG9Kby9qRU9UYytyWlRRZ1Vq?=
+ =?gb2312?B?MWJpNlEra3FuSUJhT0ord2VMQ1ExSGxIdzdpVGpLMGd4UVJpWmNHUWN4VVhY?=
+ =?gb2312?B?SjRLN1MzNW43V1hNcmo4dGRpTXFuWlFpZ3JZZ2NJQ0F3ckc5ME1hUnJFM1hT?=
+ =?gb2312?B?MzZhZWw5REVKSUtQQXBrd3RzcWZRNnRFclVzZktCRG5YcnV1SEpkbkNBZjRp?=
+ =?gb2312?B?bXRnSURKK2V3M0UxampUSTRBM2loYVVQQ3hBT2tUU082emoxSFpDSHE4ZlNW?=
+ =?gb2312?B?UVdNelBlT1ZvbnErNWpVKzhtY0huMFMrNGxxWEJhWG5JcUtSc1g5SURmNENQ?=
+ =?gb2312?B?R2s1ZkQyRlh4Qk5YYklkUnMrMmUxQWkvWlJLQjkrWG40MEZLcVZ1ZmNUQVV4?=
+ =?gb2312?B?TzlBSzcwKzJYNWVWTHhaNDZ6a2NjYjVKdnpMeklkK2FlbVFrUUdKNFFCREdh?=
+ =?gb2312?B?Z0FJVkdTSGo3RXpPQnFoZlZ3UUczeEorQ05rZzBIMWJKWE52eTJIRkk3UzJX?=
+ =?gb2312?B?cW5ERU1MY3RPWFVsb1pMVDVZVHRPYXpsTHFyQkJaNmkrNEpzR3JwTzZIbVNI?=
+ =?gb2312?B?djhQajI4K1grVHV1ejNCZXdVYWl2ZjFHTEY0Ty8yQlZGcHRMM3VlUnNBTWJr?=
+ =?gb2312?B?ZEd5bEFpVDg2QWR2Z3Q5TTRLS2FRdEQrYXM3REJISzFiaG1YSDIxYks0L3Zx?=
+ =?gb2312?B?R0h6dWJwNjVOeXJZOEFyU3NmY0ZhT0s3VGpNTzZLekZLcll1RWFVWFhyTkZu?=
+ =?gb2312?B?WGg0NWdHUlZscU1IRTVtYXRUQ1AwNVFWQzJMUkRFSkVQTTF4cGpoNUUvdmdm?=
+ =?gb2312?B?WGxBT3pmSTlsUzM1N05zVzdiUmU1R2E3alpqVlFsbVplcDl2bFMyS0dVZWlw?=
+ =?gb2312?B?dFVCK29ubUQvR3ZNcE52ZXBGc0E3bEE5dTRRWURhc1ZTa2x0cTRzbm93N3l0?=
+ =?gb2312?B?VzJ0dzA0aW42OW5LcjF4UjBuQkdRek5wV0ZMeFVFTEUxR3Y3cUlUUlVDcTFi?=
+ =?gb2312?B?NElINWpjcU9pSVh1a1BMY09jMkUyaFFtQnZreUQ4Z0d6bzFZbE9KSWJiU2NR?=
+ =?gb2312?B?RzczWUN1bkpxcjNWQ284VEc4MkZTTXRHakprbmphdDQ5ckRvV0ZMWmpIcTly?=
+ =?gb2312?B?SnZkV1ZuSFpDL3NHZDVkdnNpdEFheFFmeGRDbTFyUlNLMVNDb0lxQU1JMWw5?=
+ =?gb2312?B?d3loN2ovZ083ZURwUSsvK1ZlbzNrTHUySDVPTzQvWURUSTFQZ1dUQzA3cCtH?=
+ =?gb2312?B?d3JpeUF5ZkwrYlZFSkYvb2phSXFEaFMwdUJsaHljS2FpbWc3UXRZUnExVlRK?=
+ =?gb2312?B?RlNBcGZhUmk1cDFoWDczM2Q2NG5FYjdJRENNSkVLbklIbE95S0lkcWtaN0Ri?=
+ =?gb2312?B?cW1BTXVKSy8zdm8zSVhEQ01DUVRoeEt5K0k0cVYrRHhJU2I2SHk4ajdkUS91?=
+ =?gb2312?B?NWZrY09tc2xWNkxrUmFpbXJNU2tXSDBoc0FxcU83aWNPOEpyZTBzaEY3amJN?=
+ =?gb2312?B?dng1Rko0RkhFQzVJNXAwTHJlTzYrL1pobTQxRlJBSndpc3hmRE1nZm5oWjlx?=
+ =?gb2312?B?V0NrNnA4SkNYQk5QVGtWbWV3RWh3K3NhaGEzMzJiNENlbTM2WGhRVzJ0Sk91?=
+ =?gb2312?B?RS9paEI2cWYrVFpIOFgybEI4Uzc5eU91L293VzlIaS8xbklkS0RCRi82ZFpM?=
+ =?gb2312?Q?dzM8=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix /proc/<pid>/auxv
-To: Max Filippov <jcmvbkbc@gmail.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- Eric Biederman <ebiederm@xmission.com>, Kees Cook <keescook@chromium.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-References: <20240322195418.2160164-1-jcmvbkbc@gmail.com>
-Content-Language: en-US
-From: Greg Ungerer <gregungerer@westnet.com.au>
-In-Reply-To: <20240322195418.2160164-1-jcmvbkbc@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Atmail-Id: gregungerer@westnet.com.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=dZSG32Xe c=1 sm=1 tr=0 ts=66b972c5 a=Pz+tuLbDt1M46b9uk18y4g==:117 a=Pz+tuLbDt1M46b9uk18y4g==:17 a=IkcTkHD0fZMA:10 a=yoJbH4e0A30A:10 a=80-xaVIC0AIA:10 a=x7bEGLp0ZPQA:10 a=pGLkceISAAAA:8 a=Vz-taIwyhSfJWuoW5SAA:9 a=QEXdDO2ut3YA:10
-X-Cm-Envelope: MS4xfHJia8hp2f7HuldQ4ed3pxkWtkI0xiK5j3mNFVhm9bKbIw1qVcDQr9TfHiuzH8PWkUHrEox/GJ0w+kbi05GsMRXnCgZLOFST7wxRxcMe/24FlqAYTqCk 3mF5biqqW0xiFPqdBZAIYddSBmyhrwcWwvlmbnBfqVPDtNlaZT99VwhgJqEYRMzZoVTkZofAdkVzyA==
-X-atmailcloud-route: unknown
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 222cefd1-b352-4266-2046-08dcba77bc5f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 02:37:40.3564
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: lScMKilbrug+uxgFAdphvGYocV7IAsAgSguJ7YkFmIY5m1PJROjW+uEqPh3XWolmnZmK39YPgCkPAhNhZiiTAw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6769
 
-Hi Max,
-
-On 23/3/24 05:54, Max Filippov wrote:
-> Althought FDPIC linux kernel provides /proc/<pid>/auxv files they are
-> empty because there's no code that initializes mm->saved_auxv in the
-> FDPIC ELF loader.
-> 
-> Synchronize FDPIC ELF aux vector setup with ELF. Replace entry-by-entry
-> aux vector copying to userspace with initialization of mm->saved_auxv
-> first and then copying it to userspace as a whole.
-> 
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-
-This is breaking ARM nommu builds supporting fdpic and elf binaries for me.
-
-Tests I have for m68k and riscv nommu setups running elf binaries
-don't show any problems - I am only seeing this on ARM.
-
-
-...
-Freeing unused kernel image (initmem) memory: 472K
-This architecture does not have kernel memory protection.
-Run /init as init process
-Internal error: Oops - undefined instruction: 0 [#1] ARM
-Modules linked in:
-CPU: 0 PID: 1 Comm: init Not tainted 6.10.0 #1
-Hardware name: ARM-Versatile (Device Tree Support)
-PC is at load_elf_fdpic_binary+0xb34/0xb80
-LR is at 0x0
-pc : [<00109ce8>]    lr : [<00000000>]    psr: 80000153
-sp : 00823e40  ip : 00000000  fp : 00b8fee4
-r10: 009c9b80  r9 : 00b8ff80  r8 : 009ee800
-r7 : 00000000  r6 : 009f7e80  r5 : 00b8fedc  r4 : 00b87000
-r3 : 00b8fed8  r2 : 00b8fee0  r1 : 00b87128  r0 : 00b8fef0
-Flags: Nzcv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
-Control: 00091176  Table: 00000000  DAC: 00000000
-Register r0 information: non-slab/vmalloc memory
-Register r1 information: slab/vmalloc mm_struct start 00b87000 pointer offset 296 size 428
-Register r2 information: non-slab/vmalloc memory
-Register r3 information: non-slab/vmalloc memory
-Register r4 information: slab/vmalloc mm_struct start 00b87000 pointer offset 0 size 428
-Register r5 information: non-slab/vmalloc memory
-Register r6 information: slab/vmalloc kmalloc-32 start 009f7e80 pointer offset 0 size 32
-Register r7 information: non-slab/vmalloc memory
-Register r8 information: slab/vmalloc kmalloc-512 start 009ee800 pointer offset 0 size 512
-Register r9 information: non-slab/vmalloc memory
-Register r10 information: slab/vmalloc kmalloc-128 start 009c9b80 pointer offset 0 size 128
-Register r11 information: non-slab/vmalloc memory
-Register r12 information: non-slab/vmalloc memory
-Process init (pid: 1, stack limit = 0x(ptrval))
-Stack: (0x00823e40 to 0x00824000)
-3e40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3e60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3e80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3ea0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3ec0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3ee0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3f00: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3f20: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3f40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3f60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3f80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3fa0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3fe0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-Call trace:
-  load_elf_fdpic_binary from bprm_execve+0x1b4/0x488
-  bprm_execve from kernel_execve+0x154/0x1e4
-  kernel_execve from kernel_init+0x4c/0x108
-  kernel_init from ret_from_fork+0x14/0x38
-Exception stack(0x00823fb0 to 0x00823ff8)
-3fa0:                                     ???????? ???????? ???????? ????????
-3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ????????
-3fe0: ???????? ???????? ???????? ???????? ???????? ????????
-Code: bad PC value
----[ end trace 0000000000000000 ]---
-note: init[1] exited with irqs disabled
-Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b
----[ end Kernel panic - not syncing: Attempted to kill init! exitcode=0x0000000b ]---
-
-
-The code around that PC is:
-
-   109cd0:       e2833ff1        add     r3, r3, #964    @ 0x3c4
-   109cd4:       e5933000        ldr     r3, [r3]
-   109cd8:       e5933328        ldr     r3, [r3, #808]  @ 0x328
-   109cdc:       e5933084        ldr     r3, [r3, #132]  @ 0x84
-   109ce0:       e5843034        str     r3, [r4, #52]   @ 0x34
-   109ce4:       eafffdbc        b       1093dc <load_elf_fdpic_binary+0x228>
-   109ce8:       e7f001f2        .word   0xe7f001f2
-   109cec:       eb09471d        bl      35b968 <__stack_chk_fail>
-   109cf0:       e59f0038        ldr     r0, [pc, #56]   @ 109d30 <load_elf_fdpic_binary+0xb7c>
-   109cf4:       eb092f03        bl      355908 <_printk>
-   109cf8:       eafffdb7        b       1093dc <load_elf_fdpic_binary+0x228>
-
-
-Reverting just this change gets it working again.
-
-Any idea what might be going on?
-
-Regards
-Greg
-
-
-> ---
->   fs/binfmt_elf_fdpic.c | 88 +++++++++++++++++++++----------------------
->   1 file changed, 42 insertions(+), 46 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index fefc642541cb..7b4542a0cbe3 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -505,8 +505,9 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->   	char *k_platform, *k_base_platform;
->   	char __user *u_platform, *u_base_platform, *p;
->   	int loop;
-> -	int nr;	/* reset for each csp adjustment */
->   	unsigned long flags = 0;
-> +	int ei_index;
-> +	elf_addr_t *elf_info;
->   
->   #ifdef CONFIG_MMU
->   	/* In some cases (e.g. Hyper-Threading), we want to avoid L1 evictions
-> @@ -601,44 +602,24 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->   	csp -= sp & 15UL;
->   	sp -= sp & 15UL;
->   
-> -	/* put the ELF interpreter info on the stack */
-> -#define NEW_AUX_ENT(id, val)						\
-> -	do {								\
-> -		struct { unsigned long _id, _val; } __user *ent, v;	\
-> -									\
-> -		ent = (void __user *) csp;				\
-> -		v._id = (id);						\
-> -		v._val = (val);						\
-> -		if (copy_to_user(ent + nr, &v, sizeof(v)))		\
-> -			return -EFAULT;					\
-> -		nr++;							\
-> +	/* Create the ELF interpreter info */
-> +	elf_info = (elf_addr_t *)mm->saved_auxv;
-> +	/* update AT_VECTOR_SIZE_BASE if the number of NEW_AUX_ENT() changes */
-> +#define NEW_AUX_ENT(id, val) \
-> +	do { \
-> +		*elf_info++ = id; \
-> +		*elf_info++ = val; \
->   	} while (0)
->   
-> -	nr = 0;
-> -	csp -= 2 * sizeof(unsigned long);
-> -	NEW_AUX_ENT(AT_NULL, 0);
-> -	if (k_platform) {
-> -		nr = 0;
-> -		csp -= 2 * sizeof(unsigned long);
-> -		NEW_AUX_ENT(AT_PLATFORM,
-> -			    (elf_addr_t) (unsigned long) u_platform);
-> -	}
-> -
-> -	if (k_base_platform) {
-> -		nr = 0;
-> -		csp -= 2 * sizeof(unsigned long);
-> -		NEW_AUX_ENT(AT_BASE_PLATFORM,
-> -			    (elf_addr_t) (unsigned long) u_base_platform);
-> -	}
-> -
-> -	if (bprm->have_execfd) {
-> -		nr = 0;
-> -		csp -= 2 * sizeof(unsigned long);
-> -		NEW_AUX_ENT(AT_EXECFD, bprm->execfd);
-> -	}
-> -
-> -	nr = 0;
-> -	csp -= DLINFO_ITEMS * 2 * sizeof(unsigned long);
-> +#ifdef ARCH_DLINFO
-> +	/*
-> +	 * ARCH_DLINFO must come first so PPC can do its special alignment of
-> +	 * AUXV.
-> +	 * update AT_VECTOR_SIZE_ARCH if the number of NEW_AUX_ENT() in
-> +	 * ARCH_DLINFO changes
-> +	 */
-> +	ARCH_DLINFO;
-> +#endif
->   	NEW_AUX_ENT(AT_HWCAP,	ELF_HWCAP);
->   #ifdef ELF_HWCAP2
->   	NEW_AUX_ENT(AT_HWCAP2,	ELF_HWCAP2);
-> @@ -659,17 +640,32 @@ static int create_elf_fdpic_tables(struct linux_binprm *bprm,
->   	NEW_AUX_ENT(AT_EGID,	(elf_addr_t) from_kgid_munged(cred->user_ns, cred->egid));
->   	NEW_AUX_ENT(AT_SECURE,	bprm->secureexec);
->   	NEW_AUX_ENT(AT_EXECFN,	bprm->exec);
-> +	if (k_platform) {
-> +		NEW_AUX_ENT(AT_PLATFORM,
-> +			    (elf_addr_t)(unsigned long)u_platform);
-> +	}
-> +	if (k_base_platform) {
-> +		NEW_AUX_ENT(AT_BASE_PLATFORM,
-> +			    (elf_addr_t)(unsigned long)u_base_platform);
-> +	}
-> +	if (bprm->have_execfd) {
-> +		NEW_AUX_ENT(AT_EXECFD, bprm->execfd);
-> +	}
-> +#undef NEW_AUX_ENT
-> +	/* AT_NULL is zero; clear the rest too */
-> +	memset(elf_info, 0, (char *)mm->saved_auxv +
-> +	       sizeof(mm->saved_auxv) - (char *)elf_info);
->   
-> -#ifdef ARCH_DLINFO
-> -	nr = 0;
-> -	csp -= AT_VECTOR_SIZE_ARCH * 2 * sizeof(unsigned long);
-> +	/* And advance past the AT_NULL entry.  */
-> +	elf_info += 2;
->   
-> -	/* ARCH_DLINFO must come last so platform specific code can enforce
-> -	 * special alignment requirements on the AUXV if necessary (eg. PPC).
-> -	 */
-> -	ARCH_DLINFO;
-> -#endif
-> -#undef NEW_AUX_ENT
-> +	ei_index = elf_info - (elf_addr_t *)mm->saved_auxv;
-> +	csp -= ei_index * sizeof(elf_addr_t);
-> +
-> +	/* Put the elf_info on the stack in the right place.  */
-> +	if (copy_to_user((void __user *)csp, mm->saved_auxv,
-> +			 ei_index * sizeof(elf_addr_t)))
-> +		return -EFAULT;
->   
->   	/* allocate room for argv[] and envv[] */
->   	csp -= (bprm->envc + 1) * sizeof(elf_caddr_t);
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBGcmFuY2VzY28gRG9sY2luaSA8
+ZnJhbmNlc2NvQGRvbGNpbmkuaXQ+DQo+IFNlbnQ6IDIwMjTE6jjUwjnI1SAxNzo0OA0KPiBUbzog
+V2VpIEZhbmcgPHdlaS5mYW5nQG54cC5jb20+OyBTaGVud2VpIFdhbmcNCj4gPHNoZW53ZWkud2Fu
+Z0BueHAuY29tPjsgQ2xhcmsgV2FuZyA8eGlhb25pbmcud2FuZ0BueHAuY29tPjsgRGF2aWQgUy4N
+Cj4gTWlsbGVyIDxkYXZlbUBkYXZlbWxvZnQubmV0PjsgRXJpYyBEdW1hemV0IDxlZHVtYXpldEBn
+b29nbGUuY29tPjsNCj4gSmFrdWIgS2ljaW5za2kgPGt1YmFAa2VybmVsLm9yZz47IFBhb2xvIEFi
+ZW5pIDxwYWJlbmlAcmVkaGF0LmNvbT47DQo+IFJpY2hhcmQgQ29jaHJhbiA8cmljaGFyZGNvY2hy
+YW5AZ21haWwuY29tPg0KPiBDYzogRnJhbmNlc2NvIERvbGNpbmkgPGZyYW5jZXNjby5kb2xjaW5p
+QHRvcmFkZXguY29tPjsgaW14QGxpc3RzLmxpbnV4LmRldjsNCj4gbmV0ZGV2QHZnZXIua2VybmVs
+Lm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgRnJhbmsgTGkNCj4gPGZyYW5rLmxp
+QG54cC5jb20+OyBSYWZhZWwgQmVpbXMgPHJhZmFlbC5iZWltc0B0b3JhZGV4LmNvbT4NCj4gU3Vi
+amVjdDogW1BBVENIIG5ldC1uZXh0IHYzIDMvM10gbmV0OiBmZWM6IG1ha2UgUFBTIGNoYW5uZWwg
+Y29uZmlndXJhYmxlDQo+IA0KPiBGcm9tOiBGcmFuY2VzY28gRG9sY2luaSA8ZnJhbmNlc2NvLmRv
+bGNpbmlAdG9yYWRleC5jb20+DQo+IA0KPiBEZXBlbmRpbmcgb24gdGhlIFNvQyB3aGVyZSB0aGUg
+RkVDIGlzIGludGVncmF0ZWQgaW50byB0aGUgUFBTIGNoYW5uZWwgbWlnaHQNCj4gYmUgcm91dGVk
+IHRvIGRpZmZlcmVudCB0aW1lciBpbnN0YW5jZXMuIE1ha2UgdGhpcyBjb25maWd1cmFibGUgZnJv
+bSB0aGUNCj4gZGV2aWNldHJlZS4NCj4gDQo+IFdoZW4gdGhlIHJlbGF0ZWQgRFQgcHJvcGVydHkg
+aXMgbm90IHByZXNlbnQgZmFsbGJhY2sgdG8gdGhlIHByZXZpb3VzIGRlZmF1bHQNCj4gYW5kIHVz
+ZSBjaGFubmVsIDAuDQo+IA0KPiBSZXZpZXdlZC1ieTogRnJhbmsgTGkgPEZyYW5rLkxpQG54cC5j
+b20+DQo+IFRlc3RlZC1ieTogUmFmYWVsIEJlaW1zIDxyYWZhZWwuYmVpbXNAdG9yYWRleC5jb20+
+DQo+IFNpZ25lZC1vZmYtYnk6IEZyYW5jZXNjbyBEb2xjaW5pIDxmcmFuY2VzY28uZG9sY2luaUB0
+b3JhZGV4LmNvbT4NCj4gLS0tDQo+IHYzOiBhZGRlZCBuZXQtbmV4dCBzdWJqZWN0IHByZWZpeA0K
+PiB2MjogYWRkIFJldmlld2VkfFRlc3RlZC1ieQ0KPiAtLS0NCj4gIGRyaXZlcnMvbmV0L2V0aGVy
+bmV0L2ZyZWVzY2FsZS9mZWNfcHRwLmMgfCA2ICsrKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDQg
+aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX3B0cC5jDQo+IGIvZHJpdmVycy9uZXQvZXRoZXJu
+ZXQvZnJlZXNjYWxlL2ZlY19wdHAuYw0KPiBpbmRleCAyNWY5ODhiOWM3Y2YuLjJlMDUwODNjYmYy
+OSAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZXQvZXRoZXJuZXQvZnJlZXNjYWxlL2ZlY19wdHAu
+Yw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9mcmVlc2NhbGUvZmVjX3B0cC5jDQo+IEBA
+IC01MjksOCArNTI5LDYgQEAgc3RhdGljIGludCBmZWNfcHRwX2VuYWJsZShzdHJ1Y3QgcHRwX2Ns
+b2NrX2luZm8gKnB0cCwNCj4gIAl1bnNpZ25lZCBsb25nIGZsYWdzOw0KPiAgCWludCByZXQgPSAw
+Ow0KPiANCj4gLQlmZXAtPnBwc19jaGFubmVsID0gREVGQVVMVF9QUFNfQ0hBTk5FTDsNCj4gLQ0K
+PiAgCWlmIChycS0+dHlwZSA9PSBQVFBfQ0xLX1JFUV9QUFMpIHsNCj4gIAkJZmVwLT5yZWxvYWRf
+cGVyaW9kID0gUFBTX09VUFVUX1JFTE9BRF9QRVJJT0Q7DQo+IA0KPiBAQCAtNzEyLDEyICs3MTAs
+MTYgQEAgdm9pZCBmZWNfcHRwX2luaXQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldiwgaW50
+DQo+IGlycV9pZHgpICB7DQo+ICAJc3RydWN0IG5ldF9kZXZpY2UgKm5kZXYgPSBwbGF0Zm9ybV9n
+ZXRfZHJ2ZGF0YShwZGV2KTsNCj4gIAlzdHJ1Y3QgZmVjX2VuZXRfcHJpdmF0ZSAqZmVwID0gbmV0
+ZGV2X3ByaXYobmRldik7DQo+ICsJc3RydWN0IGRldmljZV9ub2RlICpucCA9IGZlcC0+cGRldi0+
+ZGV2Lm9mX25vZGU7DQpuaXQNCnN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAgPSBwZGV2LT5kZXYub2Zf
+bm9kZTsNCg0KPiAgCWludCBpcnE7DQo+ICAJaW50IHJldDsNCj4gDQo+ICAJZmVwLT5wdHBfY2Fw
+cy5vd25lciA9IFRISVNfTU9EVUxFOw0KPiAgCXN0cnNjcHkoZmVwLT5wdHBfY2Fwcy5uYW1lLCAi
+ZmVjIHB0cCIsIHNpemVvZihmZXAtPnB0cF9jYXBzLm5hbWUpKTsNCj4gDQo+ICsJZmVwLT5wcHNf
+Y2hhbm5lbCA9IERFRkFVTFRfUFBTX0NIQU5ORUw7DQo+ICsJb2ZfcHJvcGVydHlfcmVhZF91MzIo
+bnAsICJmc2wscHBzLWNoYW5uZWwiLCAmZmVwLT5wcHNfY2hhbm5lbCk7DQo+ICsNCj4gIAlmZXAt
+PnB0cF9jYXBzLm1heF9hZGogPSAyNTAwMDAwMDA7DQo+ICAJZmVwLT5wdHBfY2Fwcy5uX2FsYXJt
+ID0gMDsNCj4gIAlmZXAtPnB0cF9jYXBzLm5fZXh0X3RzID0gMDsNCj4gLS0NCj4gMi4zOS4yDQoN
+Cg==
 
