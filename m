@@ -1,104 +1,114 @@
-Return-Path: <linux-kernel+bounces-283430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BFE94F2BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594A194F2BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:10:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66BD61F211FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18270281C09
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A3CB187FF4;
-	Mon, 12 Aug 2024 16:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8D718785C;
+	Mon, 12 Aug 2024 16:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0pj/Hrl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvOSN8IN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EE4187868;
-	Mon, 12 Aug 2024 16:09:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E2184551;
+	Mon, 12 Aug 2024 16:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723478981; cv=none; b=gQj/pf/QmMTyvobkWCgWue7mPUe/gP5S9x3ToJmV9XOnUqVxEK47UkndypAHZyxMJZgHYVIBbRuBiwMmsWGu2xpAHoWthP4Ni5jjKJsclQI3KCYKepcTaJ0m2hcXAU/jBrXKessujK8umigkvwOeBVSxCEe+aGJ89j0AEEOWutQ=
+	t=1723478980; cv=none; b=dYVzPkOE9h+KJqN4daCHLIkRmJXDEH9pO6KukCEMKT7lM55ep9K7iQLmIntrEJpK2v/Z+xKg+oqVVkWUfCfMcSMYE2WD+8Rgx35+DIelkUkqUPAylvcj8cDDM2IU4TzuDUbi0xbyhRLexdxbtdw3EW3KmOvtORQOhgsoSw7f2ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723478981; c=relaxed/simple;
-	bh=3Svd3WfttCoDPIdU5P1nIEjvO5M5AcTlMkgRnjhK89g=;
+	s=arc-20240116; t=1723478980; c=relaxed/simple;
+	bh=XEQFdZn0JcBv7lziDHtuupzEEgUzEa0OPsdy8jUBTSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWPSF9dNLJ9Tk55szxVFAEom6cu/a2kluVVTxdUWeooPsmdoR/LiYRpcrE/y3VaTDdLB2pHxvM1d0B+H56Bvw8athvFx7ZJ8aPa4XdOgjSkQtRSiq+8SkwDUIpuFDeWeMRQZRpBup7ouOUcRWa07KnMsPIHe6Sb4EC5UVuTeuak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0pj/Hrl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8947FC32782;
-	Mon, 12 Aug 2024 16:09:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MVJ+tR60bTI3HNeCJbFoaYb6eimO1Er2g+embY8acO5n4iEcZYqyuZWcyG1eBUCdutgy/VQ9aFdlMu3yi2hDSuHmMqEzZMShjFAzrAuRgjfUuWubR0W4U8IBTKPVM3XCSZ09RJin3MflPmaxT8QfvS3uZLdTTsd4MZDX3enRHrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvOSN8IN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AC1C4AF09;
+	Mon, 12 Aug 2024 16:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723478981;
-	bh=3Svd3WfttCoDPIdU5P1nIEjvO5M5AcTlMkgRnjhK89g=;
+	s=k20201202; t=1723478979;
+	bh=XEQFdZn0JcBv7lziDHtuupzEEgUzEa0OPsdy8jUBTSM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y0pj/HrlrJovaqTOHnuSxB8GPDImP+gwkOG9tRCjeNlMyv7A3A6uiNpGVX1RuKPQF
-	 KaxKa9qMn5vXADHf4fC7KwHBs7zWwICe6r39ewgfkhReNeR9fUSRnPPUcr8gHshRcD
-	 Cos8rQOVd0lEvT0enV6Pr3Bcyiy6W2EPS7CwWmncZcAyV10OZXzHIyHfGIi8QzOm+X
-	 weT80dz6jwYcTuw5SnwbmRit9P7dkufxmR418fa9rHSfo2Uh52eRhKHgy2Hq+/x0i/
-	 pS7+HDZ33H7PNdhq34Xm0yDvVz/j80qDYvOV0r2Je8jVfSbeoyAoY73KJK2pmqfgzJ
-	 wlxcHCpxcpdqA==
-Date: Mon, 12 Aug 2024 17:09:36 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@outlook.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v11 1/3] dt-bindings: dmaengine: Add dma multiplexer for
- CV18XX/SG200X series SoC
-Message-ID: <20240812-herbicide-altitude-93ea45b7c79d@spud>
-References: <IA1PR20MB495324F3EF7517562CB4CACFBB842@IA1PR20MB4953.namprd20.prod.outlook.com>
- <IA1PR20MB4953C5A099A0F99FA12B98F1BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
+	b=nvOSN8INE8dDYhypKFxDz1CqaVB2ZiqdiXe6+qpZijdlzK78wRUyShZhbrAdN88pJ
+	 DM8A4aTStnQFIq8GSeGb//g5SStVZ2vdVCRVcjB4+dkoWyODi7SWYh0evb6/fSxEFs
+	 KpCrh2LUuqrrw0+mmaoLMjqssIsLCm/xD9bppgU9DHmPeZC3gRLnuLGcbWqKgQ387V
+	 Emq9Bzqae+wlNktq/PQlT7bwaL1QDnAf2j6H2QhZWF4eKQDQ69ymJh4GPUl4ty6bBd
+	 8qsqHa7ccoAZOQEBvSct/zpZcyZwOOxlmE3+ETgwznLkOeU0birpdOnn6btBlH8k6+
+	 8lOS8puX+WiXg==
+Date: Mon, 12 Aug 2024 13:09:36 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] perf lock contention: Change stack_id type to s32
+Message-ID: <ZrozwIQcB_viRsKt@x1>
+References: <909abbc8-efca-40df-9876-8c36b6942a83@stanley.mountain>
+ <20240810191704.1948365-1-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="t1SEqS2W3FwKupq5"
-Content-Disposition: inline
-In-Reply-To: <IA1PR20MB4953C5A099A0F99FA12B98F1BB842@IA1PR20MB4953.namprd20.prod.outlook.com>
-
-
---t1SEqS2W3FwKupq5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240810191704.1948365-1-namhyung@kernel.org>
 
-On Sun, Aug 11, 2024 at 01:16:37PM +0800, Inochi Amaoto wrote:
-> The DMA IP of Sophgo CV18XX/SG200X is based on a DW AXI CORE, with
-> an additional channel remap register located in the top system control
-> area. The DMA channel is exclusive to each core.
->=20
-> In addition, the DMA multiplexer is a subdevice of system controller,
-> so this binding only contains necessary properties for the multiplexer
-> itself.
->=20
-> Add the dmamux binding for CV18XX/SG200X series SoC.
->=20
-> Signed-off-by: Inochi Amaoto <inochiama@outlook.com>
+On Sat, Aug 10, 2024 at 12:17:04PM -0700, Namhyung Kim wrote:
+> The bpf_get_stackid() helper returns a signed type to check whether it
+> failed to get a stacktrace or not.  But it saved the result in u32 and
+> checked if the value is negative.
+> 
+>       376         if (needs_callstack) {
+>       377                 pelem->stack_id = bpf_get_stackid(ctx, &stacks,
+>       378                                                   BPF_F_FAST_STACK_CMP | stack_skip);
+>   --> 379                 if (pelem->stack_id < 0)
+> 
+>   ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_begin()
+>   warn: unsigned 'pelem->stack_id' is never less than zero.
+> 
+> Let's change the type to s32 instead.
+> 
+> Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for BPF")
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks, applied to perf-tools-next,
 
---t1SEqS2W3FwKupq5
-Content-Type: application/pgp-signature; name="signature.asc"
+- Arnaldo
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrozwAAKCRB4tDGHoIJi
-0isCAPwKylWrtHOQHoGnqGn92rLYykjnmDlsYxP3Yxl2EFSwhgEAjjTpA+CzP0xU
-wq7RdzhPndaEZkg6RVLpxtxiq8bDrgQ=
-=LzEz
------END PGP SIGNATURE-----
-
---t1SEqS2W3FwKupq5--
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/bpf_skel/lock_data.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util/bpf_skel/lock_data.h
+> index 36af11faad03..de12892f992f 100644
+> --- a/tools/perf/util/bpf_skel/lock_data.h
+> +++ b/tools/perf/util/bpf_skel/lock_data.h
+> @@ -7,11 +7,11 @@ struct tstamp_data {
+>  	u64 timestamp;
+>  	u64 lock;
+>  	u32 flags;
+> -	u32 stack_id;
+> +	s32 stack_id;
+>  };
+>  
+>  struct contention_key {
+> -	u32 stack_id;
+> +	s32 stack_id;
+>  	u32 pid;
+>  	u64 lock_addr_or_cgroup;
+>  };
+> -- 
+> 2.46.0.76.ge559c4bf1a-goog
 
