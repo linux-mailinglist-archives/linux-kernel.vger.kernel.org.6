@@ -1,93 +1,140 @@
-Return-Path: <linux-kernel+bounces-283061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296F494EC7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:12:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC0994EC9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC151C20AED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:11:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC7C5282358
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA29F17A586;
-	Mon, 12 Aug 2024 12:11:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MMju6fgu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A65417A5B3;
+	Mon, 12 Aug 2024 12:16:23 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB09178378;
-	Mon, 12 Aug 2024 12:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242513634B;
+	Mon, 12 Aug 2024 12:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464713; cv=none; b=H2WbcR1ob5VEga2U6GcsRu/Hf3w1biHeUpxrpZPpUKfwb2Bok6Rz85GR2vPbr0gALu4asMQ7GmiocgDSF1F0wm86h7LMa8BKj4XZSEMVvocEQUTP5JV/FRlCfygl6Hw5F2Lo2+tritct3MeaY2ct4kaX+d5KbSn776gG3yKy2SM=
+	t=1723464983; cv=none; b=kOPUWj1PyVG97wQKmBwcTg4K6U0bc+N8UIsZgyYHqz+kmIWMEHCQWPHQAghM0ZDTtsuI03ieKtBFIjzJL7wY6TLaHfd722floEsyHnCeXUH9TEtq6rZ1Z9K+raZDu8FhWgwfpIE0xLBYPxnf4WAyO7xm9t1he/qUhVCezesAEvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464713; c=relaxed/simple;
-	bh=U3BJflhY7WPD1IxSWU1W91AcK1N2c18oHaTsBoI6ENQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bp8CGA5zK/fGvYwuAaX6ShUsUBQnNmBjFM4IDdxbz1098DsqA4LS1gByKOrIA1ywRb81okk/z3X9bBTL70LmjQbOz33DCJ+DMN9JbyCynWrH+xTLl2Yh9rl4gX3kIqcNmeWjlVttuEMR7WR80wxExzRwRyfeqtw4BVcch3rwh68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MMju6fgu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 708ACC32782;
-	Mon, 12 Aug 2024 12:11:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723464712;
-	bh=U3BJflhY7WPD1IxSWU1W91AcK1N2c18oHaTsBoI6ENQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MMju6fgunQZUV2NyRavTOI12WQBuPbckj0+mY+pqqfM3LqsIP8RwmWeYVGeeGSiuz
-	 Z95B8in+1IxnoQZ/M0I/MO4OMTMKLEfo/E0BzJnw7UgDSmO/cQUXLzODjc5Z9v7/hc
-	 gcOG7oYYEAT7EpAyuJfZoLwxE+F2gMAkLxbm2fR8=
-Date: Mon, 12 Aug 2024 14:11:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Thorsten Leemhuis <regressions@leemhuis.info>
-Cc: Thomas Lindroth <thomas.lindroth@gmail.com>, stable@vger.kernel.org,
-	tony.luck@intel.com, Dave Hansen <dave.hansen@linux.intel.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux kernel regressions list <regressions@lists.linux.dev>
-Subject: Re: [STABLE REGRESSION] Possible missing backport of x86_match_cpu()
- change in v6.1.96
-Message-ID: <2024081217-putt-conform-4b53@gregkh>
-References: <eb709d67-2a8d-412f-905d-f3777d897bfa@gmail.com>
- <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
+	s=arc-20240116; t=1723464983; c=relaxed/simple;
+	bh=4BYV6v4Hw0CJPWckbUhfullAUNf/TCOxkcGynzSXdtc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V/n8yNqKBZdAQ6xpx4Ox4Glq9Wqx4Jk8kV3VNoDhBd4q/7qclMzYPn+HBrohYHWheJOPn3XNxg4m9+OCSa4tZmBKvNN8RZMuxyX2E6ihek74TkeoRuVvUgTD0RwsKDQCutpNmbjiZWIAcogk2iuZsvNjf1uJlWJ/NrRUOatrznU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjD4r4Ddcz4f3mJH;
+	Mon, 12 Aug 2024 20:15:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 324951A0359;
+	Mon, 12 Aug 2024 20:16:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHeLcD_blmHhy7BQ--.21435S4;
+	Mon, 12 Aug 2024 20:16:10 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	djwong@kernel.org,
+	hch@infradead.org,
+	brauner@kernel.org,
+	david@fromorbit.com,
+	jack@suse.cz,
+	willy@infradead.org,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com
+Subject: [PATCH v2 0/6] iomap: some minor non-critical fixes and improvements when block size < folio size
+Date: Mon, 12 Aug 2024 20:11:53 +0800
+Message-Id: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a79fa3cc-73ef-4546-b110-1f448480e3e6@leemhuis.info>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_Ch0CgDHeLcD_blmHhy7BQ--.21435S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF17Jr4xGw45tF13trW5ZFb_yoW8uFyUpF
+	WfKF98Kr1Dtw1ayas3W3y7Xr1Fvw1FqF15Ga4xGws8AFnxJFyxXF10ga98uay0yr4Skrs0
+	qr1jgFyxWr1DAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUFg4SDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, Aug 07, 2024 at 10:15:23AM +0200, Thorsten Leemhuis wrote:
-> [CCing the x86 folks, Greg, and the regressions list]
-> 
-> Hi, Thorsten here, the Linux kernel's regression tracker.
-> 
-> On 30.07.24 18:41, Thomas Lindroth wrote:
-> > I upgraded from kernel 6.1.94 to 6.1.99 on one of my machines and
-> > noticed that
-> > the dmesg line "Incomplete global flushes, disabling PCID" had
-> > disappeared from
-> > the log.
-> 
-> Thomas, thx for the report. FWIW, mainline developers like the x86 folks
-> or Tony are free to focus on mainline and leave stable/longterm series
-> to other people -- some nevertheless help out regularly or occasionally.
-> So with a bit of luck this mail will make one of them care enough to
-> provide a 6.1 version of what you afaics called the "existing fix" in
-> mainline (2eda374e883ad2 ("x86/mm: Switch to new Intel CPU model
-> defines") [v6.10-rc1]) that seems to be missing in 6.1.y. But if not I
-> suspect it might be up to you to prepare and submit a 6.1.y variant of
-> that fix, as you seem to care and are able to test the patch.
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Needs to go to 6.6.y first, right?  But even then, it does not apply to
-6.1.y cleanly, so someone needs to send a backported (and tested) series
-to us at stable@vger.kernel.org and we will be glad to queue them up
-then.
+Changes since v1:
+ - Patch 5 fix a stale data exposure problem pointed out by Willy, drop
+   the setting of uptodate bits after zeroing out unaligned range.
+ - As Dave suggested, in order to prevent increasing the complexity of
+   maintain the state_lock, don't just drop all the state_lock in the
+   buffered write path, patch 6 introduce a new helper to set uptodate
+   bit and dirty bits together under the state_lock, reduce one time of
+   locking per write, the benefits of performance optimization do not
+   change too much.
 
-thanks,
+This series contains some minor non-critical fixes and performance
+improvements on the filesystem with block size < folio size.
 
-greg k-h
+The first 4 patches fix the handling of setting and clearing folio ifs
+dirty bits when mark the folio dirty and when invalidat the folio.
+Although none of these code mistakes caused a real problem now, it's
+still deserve a fix to correct the behavior.
+
+The second 2 patches drop the unnecessary state_lock in ifs when setting
+and clearing dirty/uptodate bits in the buffered write path, it could
+improve some (~8% on my machine) buffer write performance. I tested it
+through UnixBench on my x86_64 (Xeon Gold 6151) and arm64 (Kunpeng-920)
+virtual machine with 50GB ramdisk and xfs filesystem, the results shows
+below.
+
+UnixBench test cmd:
+ ./Run -i 1 -c 1 fstime-w
+
+Before:
+x86    File Write 1024 bufsize 2000 maxblocks       524708.0 KBps
+arm64  File Write 1024 bufsize 2000 maxblocks       801965.0 KBps
+
+After:
+x86    File Write 1024 bufsize 2000 maxblocks       569218.0 KBps
+arm64  File Write 1024 bufsize 2000 maxblocks       871605.0 KBps
+
+Thanks,
+Yi.
+
+Zhang Yi (6):
+  iomap: correct the range of a partial dirty clear
+  iomap: support invalidating partial folios
+  iomap: advance the ifs allocation if we have more than one blocks per
+    folio
+  iomap: correct the dirty length in page mkwrite
+  iomap: don't mark blocks uptodate after partial zeroing
+  iomap: reduce unnecessary state_lock when setting ifs uptodate and
+    dirty bits
+
+ fs/iomap/buffered-io.c | 73 ++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 60 insertions(+), 13 deletions(-)
+
+-- 
+2.39.2
+
 
