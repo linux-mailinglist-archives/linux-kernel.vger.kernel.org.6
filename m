@@ -1,242 +1,140 @@
-Return-Path: <linux-kernel+bounces-282761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C214D94E847
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:13:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8F194E850
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D524282008
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:13:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66CF21C20A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64942166314;
-	Mon, 12 Aug 2024 08:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB83E16B3B9;
+	Mon, 12 Aug 2024 08:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QNoyHL4W"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vD+NAi09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF29E55896
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE84165F03;
+	Mon, 12 Aug 2024 08:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723450377; cv=none; b=qg5mOYeKn0IRZxVf/sqVFcIC3V5C8sbtr7MxSR/gjzQiS3wlVd4mts3anInRO6IHjf7hW3/43kGdD2L0vXwIOCTyHZSX/8fCkqglV+G+d4CTvpuSImivmcbezW3J8N+wUpaeCt81Jwor4fKdOpiQ9zE012LsOoXbCRFAwbLwDMg=
+	t=1723450397; cv=none; b=NGE3qsdBaLc2s+8Mh5YlrT7/WhH3Yf2IJ/QE/cm7QJumlLGhAt0eCUGZNAVPv4jfwHsgroVVwzLSnvDyDxy4GTMNLGSn6mSqrosr+/rcBuW4QYmX4GXxB0Y+6HRaHhwOJ/OcTa2BXTmPkt+OUJYKaoDganSR3uY/eeaYkbYuKKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723450377; c=relaxed/simple;
-	bh=dz0V9NTqFz4sCd1B4mGAfWC+Mya5ZLb4ZlISM9Ufunk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YiRrGPy5FTWewaZ3Ih45lrYsGvo0H92oebiW2DRFbM5/PwyQqMll2tvNWOMpDBIQYaq0QE7ixk2okZUuLQvoqZtA8eXGglZA2EDfzEJgmr1IgD3g+FHxtyR2U6a7QHa8bzHhUw8AcZN0ceabOEgyXo1zTLQouFdDLnGYz3edFWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QNoyHL4W; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723450374;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9/O94cIOAubUcCnH22HxzTXBVG3wCdY9CNBpRnC+1gc=;
-	b=QNoyHL4WIZ95uFnyStdQYn0/e3tDjDpaDttDDYrKJO0rAAuc7ugwv+dFZYNQb6q810/pxN
-	tcwWJ0Fupboy1c6ZFF2Clze9rlf2rAdPeFHva708XwZJY1qOp3zYDEiV1cbKSK+j3Id23d
-	wX1f6d2qt98L4lQmsuxgPQq2XmbucL4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-M63MMd6UNYWGV2wEx6NWpA-1; Mon, 12 Aug 2024 04:12:52 -0400
-X-MC-Unique: M63MMd6UNYWGV2wEx6NWpA-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4281d0d1c57so23655175e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:12:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723450371; x=1724055171;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9/O94cIOAubUcCnH22HxzTXBVG3wCdY9CNBpRnC+1gc=;
-        b=uRFx1/Jp5mEQv5PhrjYoMzoGFKR+FuX3efUGAeU4rvHS4EpX42icFxK3QyDVwDoj5V
-         1zEuiTSDNN3D9q4G1mrVgHBMiQQ9uWwbLlT6+a9pi4Xk2RELRxwBmdsx93wuXe0uwCdC
-         JlcMrJeeNufNVpnjNqe4slh+iLaMUWXihFCj+l6LBYa8H/0lBZ/5pWhf1nTZR0RYaNQT
-         Mi4aWSmRwPRzSu1QvrC4h+7l0BpJCXv/K2e+3eZczrVdoZ+DtOvZVKShy3UeC2FEAh9L
-         9H2XdgVZxUzvmD/BkBtY75YMUAgZ8PsR/ZWKAb1yRk4LpMQI8VE8djuMvrS3Us1a+yvO
-         R1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCWqoVo+Uy6ohKy6NM2ijnmgcV1OY2vVf0oshEuYQDXvvC3Gm//SPaprPWFmoPoWPE1RCh66FjI9QXU2uN5NwOMS3Z3XVdoNBEVxwfcV
-X-Gm-Message-State: AOJu0YxZxexfWunbRNW74bb50YerKpwmn5PKi5D/SBzW+uQUzfO4kcMN
-	4WveSnsLtfEgQ/dlnTYouSSqrh1xg12v16QFkclFffPlnYFMdykSrDxCktpYD4xmd9xq7Bso+yb
-	B7khYFsABr5XJJrgZcSIf6aFrSdUmAQjZfXh4YSTBaBcCIqj5YlnfAMov7RiNow==
-X-Received: by 2002:a05:600c:511e:b0:426:5b19:d2b3 with SMTP id 5b1f17b1804b1-4290b8ac120mr100753935e9.14.1723450371449;
-        Mon, 12 Aug 2024 01:12:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFd3yKp/oTOh03eeBsVmUJqgm6/TVCyV/bHHfaZTKDIWPgHeZDHDYWlPuryu+8SyGv4Uop/sw==
-X-Received: by 2002:a05:600c:511e:b0:426:5b19:d2b3 with SMTP id 5b1f17b1804b1-4290b8ac120mr100753625e9.14.1723450370951;
-        Mon, 12 Aug 2024 01:12:50 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c74ffb1esm92390395e9.5.2024.08.12.01.12.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 01:12:50 -0700 (PDT)
-Message-ID: <66c4fcc5-47f6-438c-a73a-3af6e19c3200@redhat.com>
-Date: Mon, 12 Aug 2024 10:12:49 +0200
+	s=arc-20240116; t=1723450397; c=relaxed/simple;
+	bh=l2cMsMW6WjSVkxY7LiRh1xYBXXYUhNx5oNMkZpw0QAc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=LxHFV+uSG1A/ZPEDpvmmpST9+RvzOkpqnIYRxIuysYTs3apN5fGXdWb0MwJFhgj1FkRWQiWk7pjObglVVhQjMd01ACfuT56l74bqs+RWcRJxLjgrdSxJNqr1LSJZAIlA3+ZVcYNbDyYzLhq6hcCdGR523EqAaDKTInWZurw+BJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vD+NAi09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 79B6AC32782;
+	Mon, 12 Aug 2024 08:13:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723450396;
+	bh=l2cMsMW6WjSVkxY7LiRh1xYBXXYUhNx5oNMkZpw0QAc=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=vD+NAi095Gv177RzLA7qhHmLkQKUhEND5IZ8mch/fwpbjCxdRM+yU38jIoUbnhyTl
+	 H3dQ0n9ezfm3de4n73UwDVDjHt37jQKURP3UfPl0H89TaPb64OBJSLLJJaCb8ddR0s
+	 lbsrpXmWQaEjhOMD5RdwPZEmqP3PfoP5Tu05xrCL3H3USPQvw6HfHl0R4mqH9UExoU
+	 JVFq5etSZnoLuLnA3UOsOhc40VEn9EE/JVMj4lL5yjvNe5MLGYRXQjmy67kr6oBV2B
+	 2UnIJuWazxqjgzrEQ54LH39kDr84uSxmDzQfD/IFVKTnlPD92x7g2003b8KS5oP/X7
+	 fn26jkigf25lQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 642E0C52D7C;
+	Mon, 12 Aug 2024 08:13:16 +0000 (UTC)
+From: Dumitru Ceclan via B4 Relay <devnull+dumitru.ceclan.analog.com@kernel.org>
+Subject: [PATCH v3 0/3] Add support for AD4113
+Date: Mon, 12 Aug 2024 11:13:13 +0300
+Message-Id: <20240812-ad4113-v3-0-046e785dd253@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linus:master] [mm] c0bff412e6: stress-ng.clone.ops_per_sec -2.9%
- regression
-To: Mateusz Guzik <mjguzik@gmail.com>, Yin Fengwei <fengwei.yin@intel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, Peter Xu <peterx@redhat.com>,
- oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Huacai Chen <chenhuacai@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
- Matthew Wilcox <willy@infradead.org>, Nathan Chancellor <nathan@kernel.org>,
- Ryan Roberts <ryan.roberts@arm.com>, WANG Xuerui <kernel@xen0n.name>,
- linux-mm@kvack.org, ying.huang@intel.com, feng.tang@intel.com
-References: <202407301049.5051dc19-oliver.sang@intel.com>
- <193e302c-4401-4756-a552-9f1e07ecedcf@redhat.com>
- <439265d8-e71e-41db-8a46-55366fdd334e@intel.com>
- <90477952-fde2-41d7-8ff4-2102c45e341d@redhat.com>
- <6uxnuf2gysgabyai2r77xrqegb7t7cc2dlzjz6upwsgwrnfk3x@cjj6on3wqm4x>
- <5a67c103-1d9d-440d-8bed-bbfa7d3ecf71@redhat.com>
- <CAGudoHH4NGgPdTe2yL33TNNFriPM9mVM=0_iuh5dLuesZXQMAQ@mail.gmail.com>
- <5c0979a2-9a56-4284-82d2-42da62bda4a5@redhat.com>
- <c7e0d029-0a64-4b27-bd62-cf9a3577d7ff@intel.com>
- <wbbieqyyjqy7ulbta6muzepxwxi6galwvhjdxpqaqbeljzpcer@dpeoqrbkl5p2>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <wbbieqyyjqy7ulbta6muzepxwxi6galwvhjdxpqaqbeljzpcer@dpeoqrbkl5p2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABnEuWYC/1WMwQ7CIBAFf8VwFrMsVFpP/ofxsKXQkmgxYIim6
+ b9LazR6nJc3M7Fko7eJHTYTizb75MNYQG43zAw09pb7rjBDQAUaK06dEkLylmgvnWsaVBUr51u
+ 0zj/W0OlcePDpHuJz7WaxrO9EDfqTyIIDx07K2mlAo9sjjXQJ/c6EK1saGX+95uvh4pEGI0CQc
+ OrPm+f5BVsPcCvVAAAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: mitrutzceclan@gmail.com, linux-iio@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dumitru Ceclan <dumitru.ceclan@analog.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, Nuno Sa <nuno.sa@analog.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723450395; l=1967;
+ i=dumitru.ceclan@analog.com; s=20240313; h=from:subject:message-id;
+ bh=l2cMsMW6WjSVkxY7LiRh1xYBXXYUhNx5oNMkZpw0QAc=;
+ b=Qqh+HVkYK5/X4HNJyiP/mC68JLfIhLLtXLvFwceSn08y87V6PWDUqBFIVj3GQcWCdZoZkfmsh
+ FlvUvCKSp/4Bf75fAjsV1tM5M0wH6AX1juyG6DVyPDGgNUJLipkgo93
+X-Developer-Key: i=dumitru.ceclan@analog.com; a=ed25519;
+ pk=HdqMlVyrcazwoiai7oN6ghU+Bj1pusGUFRl30jhS7Bo=
+X-Endpoint-Received: by B4 Relay for dumitru.ceclan@analog.com/20240313
+ with auth_id=140
+X-Original-From: Dumitru Ceclan <dumitru.ceclan@analog.com>
+Reply-To: dumitru.ceclan@analog.com
 
-On 12.08.24 06:49, Mateusz Guzik wrote:
-> On Mon, Aug 12, 2024 at 12:43:08PM +0800, Yin Fengwei wrote:
->> Hi David,
->>
->> On 8/1/24 09:44, David Hildenbrand wrote:
->>> On 01.08.24 15:37, Mateusz Guzik wrote:
->>>> On Thu, Aug 1, 2024 at 3:34 PM David Hildenbrand <david@redhat.com>
->>>> wrote:
->>>>>
->>>>> On 01.08.24 15:30, Mateusz Guzik wrote:
->>>>>> On Thu, Aug 01, 2024 at 08:49:27AM +0200, David Hildenbrand wrote:
->>>>>>> Yes indeed. fork() can be extremely sensitive to each
->>>>>>> added instruction.
->>>>>>>
->>>>>>> I even pointed out to Peter why I didn't add the
->>>>>>> PageHuge check in there
->>>>>>> originally [1].
->>>>>>>
->>>>>>> "Well, and I didn't want to have runtime-hugetlb checks in
->>>>>>> PageAnonExclusive code called on certainly-not-hugetlb code paths."
->>>>>>>
->>>>>>>
->>>>>>> We now have to do a page_folio(page) and then test for hugetlb.
->>>>>>>
->>>>>>>        return folio_test_hugetlb(page_folio(page));
->>>>>>>
->>>>>>> Nowadays, folio_test_hugetlb() will be faster than at
->>>>>>> c0bff412e6 times, so
->>>>>>> maybe at least part of the overhead is gone.
->>>>>>>
->>>>>>
->>>>>> I'll note page_folio expands to a call to _compound_head.
->>>>>>
->>>>>> While _compound_head is declared as an inline, it ends up being big
->>>>>> enough that the compiler decides to emit a real function instead and
->>>>>> real func calls are not particularly cheap.
->>>>>>
->>>>>> I had a brief look with a profiler myself and for single-threaded usage
->>>>>> the func is quite high up there, while it manages to get out with the
->>>>>> first branch -- that is to say there is definitely performance lost for
->>>>>> having a func call instead of an inlined branch.
->>>>>>
->>>>>> The routine is deinlined because of a call to page_fixed_fake_head,
->>>>>> which itself is annotated with always_inline.
->>>>>>
->>>>>> This is of course patchable with minor shoveling.
->>>>>>
->>>>>> I did not go for it because stress-ng results were too unstable for me
->>>>>> to confidently state win/loss.
->>>>>>
->>>>>> But should you want to whack the regression, this is what I would look
->>>>>> into.
->>>>>>
->>>>>
->>>>> This might improve it, at least for small folios I guess:
->> Do you want us to test this change? Or you have further optimization
->> ongoing? Thanks.
-> 
-> I verified the thing below boots, I have no idea about performance. If
-> it helps it can be massaged later from style perspective.
+This patch series adds support for the AD4113 ADC within the existing
+AD7173 driver.
 
-As quite a lot of setups already run with the vmemmap optimization enabled, I
-wonder how effective this would be (might need more fine tuning, did not look
-at the generated code):
+The AD4113 is a low power, low noise, 16-bit, Σ-Δ analog-to-digital
+converter (ADC) that integrates an analog front end (AFE) for four
+fully differential or eight single-ended inputs.
 
+The part is not released yet and the documentation is not public.
+Register map is identical to AD4114 besides the lower width data
+register and the GPIO register.
 
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 085dd8dcbea2..7ddcdbd712ec 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -233,7 +233,7 @@ static __always_inline int page_is_fake_head(const struct page *page)
-         return page_fixed_fake_head(page) != page;
-  }
-  
--static inline unsigned long _compound_head(const struct page *page)
-+static __always_inline unsigned long _compound_head(const struct page *page)
-  {
-         unsigned long head = READ_ONCE(page->compound_head);
-  
+Particularities of this model:
+- 16 bit data register
+- no temperature sensor
+- no current inputs
+- input buffers
+- internal reference
+- external reference REF-/REF+
+- no second external reference REF2-/REF2+
+- no AVDD2 supply
+- 2 GPIO pins with config bits starting at a higher position in register
+- 8 VINx inputs with voltage divider
+- 16 channel registers and 8 setup registers
 
+Signed-off-by: Dumitru Ceclan <dumitru.ceclan@analog.com>
+---
+Changes in v3:
+- lowercase chip ID
+- add patch to correctly order chip IDs defines
+- picked up RB and ACK tags
+- Link to v2: https://lore.kernel.org/r/20240809-ad4113-v2-0-2a70c101a1f4@analog.com
 
+Changes in v2:
+- correctly set realbits and storagebits to 16 in iio_chan_spec
+- describe bindings restrictions in commit message due to lack of
+  sufficient diff context
+- describe model differences better in cover letter
+- Link to v1: https://lore.kernel.org/r/20240807-ad4113-v1-0-2d338f702c7b@analog.com
+
+---
+Dumitru Ceclan (3):
+      dt-bindings: adc: ad7173: add support for ad4113
+      iio: adc: ad7173: order chipID by value
+      iio: adc: ad7173: add support for ad4113
+
+ .../devicetree/bindings/iio/adc/adi,ad7173.yaml    |  3 ++
+ drivers/iio/adc/ad7173.c                           | 38 ++++++++++++++++++++--
+ 2 files changed, 39 insertions(+), 2 deletions(-)
+---
+base-commit: 1c61e13d7dc9003662bd7fd6064dfea67e64b014
+change-id: 20240725-ad4113-baa63ff99245
+
+Best regards,
 -- 
-Cheers,
+Dumitru Ceclan <dumitru.ceclan@analog.com>
 
-David / dhildenb
 
 
