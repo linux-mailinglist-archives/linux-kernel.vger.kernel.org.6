@@ -1,71 +1,70 @@
-Return-Path: <linux-kernel+bounces-282950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCE994EB2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:33:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF6D94EB31
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:33:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9819E2829D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EA1E1C21773
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF17170A04;
-	Mon, 12 Aug 2024 10:32:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EF83170A3E;
+	Mon, 12 Aug 2024 10:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+yGHRoU"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YFneBiXq"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CC916DEB2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB97170A1C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:32:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458766; cv=none; b=l/kRtK+XGQs0aVMvPDSSSGCcXvlilKBic4eWhQahX074gpjmoZ6tffG5Xay6O6JZmx5arGVZTJnu9VDxaBWxvKfknCJdm+jZ8XS6mzmAfW5jTBZV588TALL3fICh9ibwKhEc82wmTYtzhuIFCzm/oLQt7ymFT3rIz1kSFS3ist4=
+	t=1723458770; cv=none; b=cmPVqyoxE6SFEviWllNnRLm9E+/Eb/YwzCsPyZ7N+b+A8eMI08f8sUJpg3BEK6IJr3Zz/a+qZOUjqbWgbweLQ1fKP0D9YR4cZPUQjubcpGvbVxNMhdlksFubXO5DwGnDJ8WSIykljszS/NvIue1vCd/UPB1nUHk3SSENxPiGacQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458766; c=relaxed/simple;
-	bh=Ht62vOhMcZrjLamlCSfxgzc4eTH3YSmA1P+CsJkd/PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WvG0eEvbNEE81TcAZ9/JS79VBiSYIpdFExBWpbbspMSmqB18jMO/AUELGAXOH3GXlGWZ769/k5O/Wa4MdzZr5V5HZgFikLDNzxPYZDqM8RZnHh1Q4Y/3lv6LHP6et3joS598OX/DSGV5V0fuw/k1SaqCmpkhG4IT9jzX/l0AoCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+yGHRoU; arc=none smtp.client-ip=209.85.208.50
+	s=arc-20240116; t=1723458770; c=relaxed/simple;
+	bh=rSCBaIXJPRajVS8xJXyFx6JrCeK2HqadPitU/xd6N7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CeDL3jB2nompQ9bkKsTuEF3Kq/6vrmJCpDAWpOuwRC1Yzng7dY1IYnrfpws1sQTHFZjdvQxYi1pDJGtzZ+kuObSeOCobRJqRq8GvxBsf1FqjTOt4IsbVd1X5FstT+8mJkrW0iZ8C3nkZgXYu4ehllRxmR1HrNvbHYyy3xlrqXPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YFneBiXq; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5bb477e3a6dso4007839a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:32:44 -0700 (PDT)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52efa16aad9so5351870e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:32:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723458763; x=1724063563; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MuMB18ettI0lvCVPN8Uzf34Q8sUnJqKE6aKvTS+gZPo=;
-        b=o+yGHRoUa7A0ybLAocXtnlhsBWvoQoHQ3UlgBzFInvRuKb9Uiu9DkFEgidAxxlidO/
-         wBxiS0xG9wyggxuZVMo27dtTS7SDPscaJ9rcqdpHVHd0ZumNxOF0XnxF0JdKj0Wnf1Lt
-         vliyxUS7Hmu8w5Li0resm7r4JHqvK3z4IbT4nVk9DdblrRmUSE5Dtc67d3e6FY6Bh2wY
-         tY4awBcWV7q1FmG/2y5m2afrL59zl3rFszn274hxjoaeKTTo3JKvR9QCg0PgQtfTqyrh
-         9WYaOgkZXuEgkDGZcbOTEJPvTs3TgjtM+ibPdTwItmN3mU8bs5aVcqQ218vTfoZGTgTU
-         WI9A==
+        d=linaro.org; s=google; t=1723458767; x=1724063567; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=i1IfJ9u3yUX0iZ4jMFGItrUi/pvd+46Zvfr+ViX5sCk=;
+        b=YFneBiXqyMRD4q8pRqG5qxENFcul71xLC1DuNdGfKSUE9TsZkOrRUhuP4jHuD2x3Y6
+         x0NRGs97rn9D5TrV7p29oUoMHFyGShc1H+y32pIiJwbqxzkRIgTUEjmjPpXPylKAl2/F
+         A0zyV8p3ywc/ZPGB3geyFi+V4N4j94L8znNc5tZxfzH3bkO/Hp4c4ytCyu0Y2WtBhL8j
+         V1AwEIp5h4kRGb2h8dwbktmEKwYTKQ4oUVKqXD1d7wiB7aRNUxZg4YyUB+baG2ZWplfc
+         bj6cBbu5nBF3R+d4KPchJAtQ5jMb300PGLB8QeVbZ731DL4xt8hgdVo2PSAGkyQISpBZ
+         FfXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723458763; x=1724063563;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MuMB18ettI0lvCVPN8Uzf34Q8sUnJqKE6aKvTS+gZPo=;
-        b=hj1MIBkz4MuaWHL511SR70q1kcTT7gQXYcWYn/52HppqZ/LLIMz/mZEIRKMPg7whX8
-         4FTkHH+vAalIYfyBZjQd6oRdXOlYk9MkT0YxmhPx146JgvmjXcDpDpA5p2zb0WcFXyk/
-         eEZcjntjSp7NhzS55EfE+0uqO3SD+nZAR530Cz3UrViPnAAtkQtvEZ93f+MUAG9LW5ij
-         tAYW35/ykIcOEcvwdnLn8oqOxLRfS0z8UKeCafP75Eqy11vw7LRFL48HJQf1JCXrXsjo
-         14v6JOWsjP9YjxNqmZen05tDJFFaWq7jz74Cxp55mLKPxHTKzlee0vtB5A5lRCm5YhJd
-         m/eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvDOUmmYWIc306TymlI6SZENhSkiyxEF5rgAOxWqfWKkNkZkcai7N+tWPt4TEQbFdANaRYP5X1up91l4PfEynsUUCzD0cgxeQyqKlh
-X-Gm-Message-State: AOJu0YxNhMapSgagIroqgwxlSQuJoxxh/MNxdeK/ZfLb7JF348OZ1yIp
-	5ppsb4tYj0qoeVmRA8ao9JAfPuwolTb02RzdK/Cu+H0k0ENZT9xHgLiMbq7JLAE=
-X-Google-Smtp-Source: AGHT+IGTb0RPGjV/HCXKGAbFBigJr9D3mcpwdhEQ4rq2EtnP9756Nqrz7UcEH7QHfheStLdcF/BGHQ==
-X-Received: by 2002:a17:907:97c3:b0:a7a:abd8:77a5 with SMTP id a640c23a62f3a-a80aa654862mr717740566b.43.1723458762661;
-        Mon, 12 Aug 2024 03:32:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723458767; x=1724063567;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=i1IfJ9u3yUX0iZ4jMFGItrUi/pvd+46Zvfr+ViX5sCk=;
+        b=MzZCcppmaRvh+goz7uTEaIY2WKtIYY4/nzM9thJFfs9leMziDfIJxu9WGTcNEnrFdA
+         4e8mMtTq2rlrEKnyt+vTMsSI0Lg3oB36S/ySUaH+UcuCzl689M2yt/LeMl2XELpAfKjf
+         9cYkNOCrKr40FIfFW7wa6YszF3Iyw/XUHmTkmmQwQrGvJe0mASiEVov6x7sLhmHowuqJ
+         7ezGypHVz3qVIp8/5o1HIyzssTChPGqMxMo2GVzD0/LAc5Y95HFQvZMWE+Uf7agd3Hm+
+         ITlDM4XGKU+ueSxPv58ju2xI6BZG5c7NYWMSDeBC7hJ8qXFQ9Sep0IJpc1pYlleDXnpD
+         M33Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVnYclAd2iMmSXp95Rb8iXDhTlUYE5CBC/e9UihWty0ZutbHRuwnfIWbFwrA3jfRLup7u9dPHIID/eC1tH6sBadfRNM59EEYWbYz28l
+X-Gm-Message-State: AOJu0YycGMaERNCQ70CH7Ava7fEpyncj+agI9bkFBvQEbVlfez2UeLso
+	TR9xCEnidWD8X5NTmSAmLn+1RYJfW+CyiJ2OKYmnOr+auJBihhIt0a1JBb7iKLU=
+X-Google-Smtp-Source: AGHT+IHzgJxlWNmlpbcyADFmPoi5Gdg+YYXbOVyXdQhr3/VvVj6WyK6nEwaJnWhwJoNlT7DEw3b1qw==
+X-Received: by 2002:a05:6512:ea5:b0:530:da95:b54c with SMTP id 2adb3069b0e04-530ee985dfdmr5817998e87.23.1723458766440;
+        Mon, 12 Aug 2024 03:32:46 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb11a5c3sm218864266b.92.2024.08.12.03.32.41
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a602da2sm2158926a12.93.2024.08.12.03.32.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 03:32:42 -0700 (PDT)
-Date: Mon, 12 Aug 2024 11:24:40 +0300
+        Mon, 12 Aug 2024 03:32:46 -0700 (PDT)
+Date: Mon, 12 Aug 2024 11:29:38 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
 To: Thomas Zimmermann <tzimmermann@suse.de>
 Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
@@ -73,14 +72,9 @@ Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-Message-ID: <4b5923f3-27c2-4f7f-b3b0-542a62032b64@stanley.mountain>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
- <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
- <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
- <2af277bf-f07d-421b-8ffd-25c9761e3eed@suse.de>
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH v3] drm/ast: astdp: fix loop timeout check
+Message-ID: <1ba8da25-2d09-4924-a4ff-c0714bfbb192@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,19 +83,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2af277bf-f07d-421b-8ffd-25c9761e3eed@suse.de>
+X-Mailer: git-send-email haha only kidding
 
-On Mon, Aug 12, 2024 at 09:30:00AM +0200, Thomas Zimmermann wrote:
-> > I feel like if we really hit this failure path then we won't care about the
-> > tenth msleep().  I can resend if you want, but I'd prefer to just leave it.
-> 
-> Please resend. Even if the link training ultimately fails, the rest of DRM
-> keeps running. 100 msec is not so short to shrug it off IMHO.
-> 
+This code has an issue because it loops until "i" is set to UINT_MAX but
+the test for failure assumes that "i" is set to zero.  The result is that
+it will only print an error message if we succeed on the very last try.
+Reformat the loop to count forwards instead of backwards.
 
-Sure.  No problem.
+Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+v3: V2 had the same bug but just without the always true if (i) statement.
+    Remove the final sleep.
+v2: In V1, I introduced a bug where it would msleep(100) after failure
+    and that is a pointless thing to do.  Also change the loop to a for loop.
+---
+ drivers/gpu/drm/ast/ast_dp.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-regards,
-dan carpenter
+diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
+index 5d07678b502c..ca022c287785 100644
+--- a/drivers/gpu/drm/ast/ast_dp.c
++++ b/drivers/gpu/drm/ast/ast_dp.c
+@@ -146,18 +146,19 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
+ void ast_dp_link_training(struct ast_device *ast)
+ {
+ 	struct drm_device *dev = &ast->base;
+-	unsigned int i = 10;
++	int i;
+ 
+-	while (i--) {
+-		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
++	for (i = 0; i < 10; i++) {
++		u8 vgacrdc;
+ 
+-		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
+-			break;
+ 		if (i)
+ 			msleep(100);
++
++		vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
++		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
++			return;
+ 	}
+-	if (!i)
+-		drm_err(dev, "Link training failed\n");
++	drm_err(dev, "Link training failed\n");
+ }
+ 
+ void ast_dp_set_on_off(struct drm_device *dev, bool on)
+-- 
+2.43.0
 
 
