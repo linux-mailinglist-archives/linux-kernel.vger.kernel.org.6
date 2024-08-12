@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-283665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9606494F789
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:37:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C4EE94F78C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFDC283A27
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1701C21CF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B601917DA;
-	Mon, 12 Aug 2024 19:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F3564UlK"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BA418E05A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661C61917CD;
+	Mon, 12 Aug 2024 19:38:41 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3D217A5B5
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723491444; cv=none; b=DgZCpYbK48yqgMR6uObSTHqCHsIG2c/Jsc3GgDG6qXZ9FsqXykOth4BmczI8nlTphy/jb7zelOxzI7hrlBaLi55DMkGubcvQ99MsyI6jNRL2jdJhMMWtGaS65DiYDi3mMl2C+KjghWQZ0ElgESeRjQE4Nb5u74lcYylf1E6uV+U=
+	t=1723491521; cv=none; b=Tay9rWslyCoO4+nSBOMqhFCqgpfRKXreYz9VzbuYVYIBXem1LjwRX+5Aj1E9h++6saavMJam3Kxiglw3cU8AJaFwWgfuzP0Zm1v55P0ydcWH7Z6h9hmUEmxGu7e7CwQnr7+H1a64ELLzrAHyn8KSP2otB7ouEINK3POMw8YS+ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723491444; c=relaxed/simple;
-	bh=Rxx+DMoKnMaSXPEAm9seNFSlpcb7ZMKSV/nNzg3wsb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gLX+K2I1Va+Jvb43QMeyfIFy18lLMjoygurtS6tr1oYgJCc8f48tMuQZYzc+0aIztWQrspxyNx8eX/oDjBZcGQ8ZiOZQwjAEOQ3jd7DqgtZ+LliKYRgd8qN+GJqpYrcHHcYGWpFIr3oimIjeeBXgt2RSUohR7RLp6YJvIV98j4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F3564UlK; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fc52394c92so43763945ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:37:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723491441; x=1724096241; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rxx+DMoKnMaSXPEAm9seNFSlpcb7ZMKSV/nNzg3wsb8=;
-        b=F3564UlKG8bQl5TPE4VC4UpmwPH5CUK0CessBd0ixrtOdql8rCWogkw78HB10XdnmQ
-         bjj7yAwuEDVU7c51VLV0EyoQmCD0rYS+tKlGNvAXNFX+NKf4XB68p3YqMdV2GrIH99Ki
-         ziiH9cnSjWgqDzUDuDlV+RNuamFE3zp14pBFvTgWdVR9gRppR+9YD8Sjq0/9Ql00FYwb
-         lSY8KUufSoW+NmEBiTaMxXli+xF9x9+sTLoDdh3RKt/I94GTEE0pY2rpEYCy0iEWYAZi
-         6xMW6veEgkp1oGeDVagETmWjEt7N9veA3hWQygIuDa2jWuy6j4WViKpl9K8lXmG4v+k7
-         /Y1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723491441; x=1724096241;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rxx+DMoKnMaSXPEAm9seNFSlpcb7ZMKSV/nNzg3wsb8=;
-        b=oPLC6CkGuq8LDWRaX/0gPzuuG3CbAfFv1uBlIxbycHeW9l05Q2vElw7ZHmPQ+TrDkN
-         BQ/YDPfsdLLh0+AgnfrjDohR9YQZ8r/NZi3f0w8NSlhAtTG2rccXsQnf1I8JpRUsjbZ2
-         r6Nb8mA2pn5kYg0sdlUXsyGbm6yi90RBUMzZL9BA1DfneBnHW6vVhz38Z1mS5KsVYepj
-         LhmURGjfjBqxL3LdR/XI6cnOcJ/9SBZLmybLO4yMFh0XO2Cu/FDYnUXFyJGjt2LtYzwW
-         bKN6GXl+6BgY9hV+OkmcSFHm/v9k6R6kg2YMDEd9SzA9DBpT6ytFpdXKUWh4bVhepyZt
-         By+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV0QqvZ1oSSkoz0zCjr91aaGmpvXe0HrrnFGovivILojfWcU2635NTe7t1V+uPDcAP+BZLqMdTykge0zPFTV57aqvKOM0KXr17DTZ+5
-X-Gm-Message-State: AOJu0YymIXEW8/hutMepCMboF+0Ygcfa9Wg9K/P7uh/3gzhJni2u9vR1
-	7kumKrBTAq+KiwK86gV+sEvSKnyUODQ1EwEL9kUofqPjaVuZhUGB
-X-Google-Smtp-Source: AGHT+IFIyrmDNlSikdo054BBiVyTFfoxQOYL77pyuRHcWQTEILqG0SAYU1sUxlIh6LQiJIzM/kDYDg==
-X-Received: by 2002:a17:902:c949:b0:1fc:2ee3:d45a with SMTP id d9443c01a7336-201ca12a60dmr15961945ad.8.1723491441309;
-        Mon, 12 Aug 2024 12:37:21 -0700 (PDT)
-Received: from dev0.. ([2405:201:6803:30b3:3671:7e47:70c8:c710])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a939fsm488965ad.169.2024.08.12.12.37.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 12:37:20 -0700 (PDT)
-From: Abhinav Jain <jain.abhinav177@gmail.com>
-To: jain.abhinav177@gmail.com
-Cc: airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	javier.carrasco.cruz@gmail.com,
-	julia.lawall@inria.fr,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	skhan@linuxfoundation.org
-Subject: [PATCH v2] gpu: ipu-v3: Add cleanup attribute for prg_node for auto cleanup
-Date: Tue, 13 Aug 2024 01:07:14 +0530
-Message-Id: <20240812193714.1094339-1-jain.abhinav177@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240704132142.1003887-1-jain.abhinav177@gmail.com>
-References: <20240704132142.1003887-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723491521; c=relaxed/simple;
+	bh=s/A5uX7yfaaDfrgHpeQ+Gmfl+MK0xIzRFPutyIkEPuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMh+X+uNHYcphIDgqkap6DlHttrQmhSFwC2+5QSM02h1mvppOzKbBqniYDao6hIgmbWaTsXrc6Fpo715ZgNZMiH/g3FjwA9Q7FPdRuUhEyGH20OqE7zrmwFHAVDc3ro+F5Yg9Hlultg34EiXBikxdmtx3q6w5fWVTFO8Ji0SnIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by mail.home.local (8.17.1/8.17.1/Submit) id 47CJcQFq025695;
+	Mon, 12 Aug 2024 21:38:26 +0200
+Date: Mon, 12 Aug 2024 21:38:26 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
+Message-ID: <Zrpksrnrbykx+IML@1wt.eu>
+References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
+ <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
+ <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
+ <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
+ <20240810143556.GA9168@1wt.eu>
+ <384a1d29-13ca-4e4b-b4b7-2a99e3fdb01b@t-8ch.de>
+ <17ed9bf5-64da-418e-b40e-6e3d40c67769@t-8ch.de>
+ <20240810170030.GA4461@1wt.eu>
+ <65cf1965-841b-4fb1-9222-913c6bd9ccd4@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <65cf1965-841b-4fb1-9222-913c6bd9ccd4@t-8ch.de>
 
-Hello,
-Can this be kindly reviewed? Thanks.
+Hi Thomas,
+
+On Mon, Aug 12, 2024 at 07:01:26PM +0200, Thomas Weißschuh wrote:
+> > > The memcpy / memmove combination could be split up into one real
+> > > function and one C inline wrapper and then the same pattern would apply.
+> > > 
+> > > But to be honest I'd be fine with not supporting -flto on GCC.
+> > 
+> > That could also be a reasonable solution. The primary goal of nolibc
+> > is to make it easy for developers to develop tests, and for those who
+> > want to create pre-boot code to do so. By nature this code is prone to
+> > bugs. If it becomes totally unreadable for very unlikely cases, it will
+> > cause issues that are hard to debug by the users themselves. It's sure
+> > that supporting a variety of compilers and setups is great, but we should
+> > keep in mind the maintainability goal when thinking about this. I think
+> > that LTO will mostly be used for testing, and in this case I think it's
+> > totally reasonable to restrict the choice of compatible compilers.
+> 
+> IMO LTO is useful for nolibc to reduce the size of the generated binaries.
+> For example the custom function sections that then can be combined with
+> --gc-sections to get rid of unused functions is all implicit in LTO.
+> And on top of that it can perform other size optimizations.
+
+Well, probably, but my experience of it till now has been quite negative,
+between stuff that doesn't build and stuff that takes ages to link on a
+single core, for most of the time tiny to no gain at all :-/  But I admit
+that in our case here at least we shouldn't witness long link times.
+
+> But the complications for GCC are not worth it.
+> And there seem general with LTO on GCC anyways as evidenced by the
+> constructor and duplicate-asm bugs.
+
+Yes, and the trouble it will cause will result in a lot of head-scratching
+for those affected.
+
+> After this discussion I think we should also change the __nolibc_naked
+> attribute back to __nolibc_entrypoint as it was before.
+> It is indeed not a replacement for a proper "naked".
+
+Indeed, it sort of emulates it but does not have the exact same properties
+as we've seen.
+
+> What do you think about me rewriting the existing commits on nolibc-next
+> to fix this up?
+
+I'm obviously fine with this :-)
+
+Thank you!
+Willy
 
