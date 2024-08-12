@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-282850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66A194E96E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:12:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2ADE94E96C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719A11F2458D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:12:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D4B1C21701
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9B516D31C;
-	Mon, 12 Aug 2024 09:12:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FAC16D329;
+	Mon, 12 Aug 2024 09:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="D+WUqsf7";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="s4hCdMiD"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+qcUI6L"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EE816CD19;
-	Mon, 12 Aug 2024 09:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4601586CD
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723453926; cv=none; b=dwj8lpv97KE1TE4g6UsmTWOGTtI/HnvFDJ+qLqAvVirpRx7A8gjN7UM34Z0VnRuXl3+EHJnYMkVnPs3pTF1oTwJlCt9P/THmeEcLne7x/KMBKhcfuBAremz5mNdhMGCnlAxzQaMeBwEhZ36QtFb+z9WziiYFxEwLBKKOPKieodg=
+	t=1723453922; cv=none; b=XOEdg488Qg5sAEtC940Cpj9jKdNT5JBl3Rd2GX0GHMQcW2jMqXe1qA3Apkmji0AVlOWxf/ZVh7UQriNAkLCd9mxOa3pxhxY6K+c4Sc+shatpmKym62TPCGu1ks8ExfaIKFK45SG1yP3euh6U0aErSsp2DVf2GRN5jFjdFmcAj5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723453926; c=relaxed/simple;
-	bh=iVGhNQ7r+GgMdXvKda908eL/Y5A0YBwZsNL00pSOsYY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QcwiGtbmxGhP6VamEznWwhQXtw2wB4su3I6+ZVZdxj5omsvf86emWwmKq7mj9Y0adlZaYbziGa0WoOw17IVPFCkJ4YrIKLrCYAEUdUl34n/zW6k5SNXspVfOkke+6iOMiQc6Yunvl/RsGeOEQkM+XWimH0zUwmkiqWghwPXQ3AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=D+WUqsf7; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=s4hCdMiD reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1723453922; c=relaxed/simple;
+	bh=u1YwTJ0QN6o1AIAnNP0uRQpK9L26jBSTy2c8zGqytDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=JEuZRISt9Sme1mKq7WMJ3geK3zq+77NM9uvaTW3JZR1ki1lXIU9cMBzG4RhiL0b7UpAa/mAACdueU8zeWxWAzQV3LzhCDDmttVnsh9aB/QB20DFNcJzjDaUK8URPZoAjXgnAZAW6zaTJRYhT0BTnmbZpbLxVdnwvlw/biX6Byf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T+qcUI6L; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3687f8fcab5so2114330f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:12:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723453922; x=1754989922;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=iVGhNQ7r+GgMdXvKda908eL/Y5A0YBwZsNL00pSOsYY=;
-  b=D+WUqsf78qQ0nPUuXA6hw6GQsuOI2WRmkEZu5XVWHnmmYjZ80dW+aOVs
-   KBGd2A2nTBXKZhbTZ2xYpdNpDL2T11+N8l10YkvXSzvTVJiR4FV6B2ISQ
-   QsQ1mK/rJ9JrhO4WoGKGpn9Xv86+kb/rGgVehfgBJTjYTpH+Ntm3r3hBX
-   2LwasiykPDuqhBBnGcoqU5TXlaf/uUjw3IjKVkr6eahAHN8yCrAPWH0kZ
-   w5RwFlhIUDImSlRq+bgEpKp4Zxd6UWqYLvUj45jIFrMvAKbAyvUP5qzpE
-   Ml5pKm/3gDlkLZFDZ2gNcnn3YSh2HJk4IVTKlUu7oIRC7rXjNAT96th8L
-   A==;
-X-CSE-ConnectionGUID: PdjH/twxTq+pzhusnqFE3w==
-X-CSE-MsgGUID: abvoOSaXTKCeZz4+6fNkHg==
-X-IronPort-AV: E=Sophos;i="6.09,282,1716242400"; 
-   d="scan'208";a="38357923"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 12 Aug 2024 11:11:53 +0200
-X-CheckPoint: {66B9D1D9-14-186E37A7-E5B59163}
-X-MAIL-CPID: 62D091DA502B8843C2B26626E6D08F41_2
-X-Control-Analysis: str=0001.0A782F1C.66B9D1D9.0176,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 94E64160FD1;
-	Mon, 12 Aug 2024 11:11:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723453909;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=iVGhNQ7r+GgMdXvKda908eL/Y5A0YBwZsNL00pSOsYY=;
-	b=s4hCdMiDs717XI3VbNv9Nf+/6xFK6FMANH3wvGCvCemENUybutJh2nG75BBSmlamBOXyGY
-	l/UpvQRqa74ePjO65Prn0E5GCvm9mwu4Uyga163H9DvP/XPoJXD2FAfannSHppYIu4EtB6
-	Kebeq5n/97quOq4MqpeRzfM/7OBXQ0dr76RvrrXhghYIi51b9pKr7Xaq9jkJ9x1EzcMxfs
-	aZwRjBoOdNo0/z2cwUK9vm7nprLaMW9HJ50D0TkywgdApXcCzf/U8jb+j7t+Q9Jvt6jXhY
-	GVVzB4K4cr6ZCAQL8JT5nQoCdPSbOVshWMxRaMRIoX8zJ8XjwcuZuAOyqhicYQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Peng Fan <peng.fan@nxp.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8-ss-vpu: Fix imx8qm VPU IRQs
-Date: Mon, 12 Aug 2024 11:11:51 +0200
-Message-ID: <4944000.31r3eYUQgx@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <PAXPR04MB8459C55F49C08A6B6A0239E988852@PAXPR04MB8459.eurprd04.prod.outlook.com>
-References: <20240808090326.425296-1-alexander.stein@ew.tq-group.com> <PAXPR04MB8459C55F49C08A6B6A0239E988852@PAXPR04MB8459.eurprd04.prod.outlook.com>
+        d=linaro.org; s=google; t=1723453919; x=1724058719; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=/dkDOzR/LNy1JwPGO+eblLQszpYlL9hjoNFzaxywG4A=;
+        b=T+qcUI6LcG7OBOHpZEcsSTB9/sa8qHLZYyqdRBkk72VoJUawHl4ToH633m1B0kjBvu
+         aYsxa2rA/nLe7t2IxsF6IvRBYw5pJZEBvhX6cMx/V3duEEUc6NMd4hS6lqEBOaI2wJk0
+         6FiUFAqf5dim+5/Mm9jH6wjqzBQkY44VgrPWA+LzHYgzKeKw1yzE/UVokjtgtjt+mQY3
+         h0NxaJ6Oh7IJ/LQCFfj9z3TX6Db//2z2XS7In8ojxGBZcAr7JhyEdfHz5cPEz8Ibv8fg
+         R+7R9JmJ1gK3a4FDHoi8+91UR89psUWvg5AgabcDktyKt1hA+t6pELKALqQD7vPKvypB
+         89vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723453919; x=1724058719;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dkDOzR/LNy1JwPGO+eblLQszpYlL9hjoNFzaxywG4A=;
+        b=Twm1zi9Tf1Qa1cO7rTT0eBKHh6UrpfJ/maNmYPSjzS5KhtOkzaOlMnoUqN/mAWiwUe
+         gnFUUZxAQQha/mx3gmaAl9ObKqw5rtUUUrcGjft8otvcIveQLTF3Vb9rd5/e17x5cmY2
+         C0e7j/q0N7wWwEhRMq5195ictyTZzVV7b0UFfeyZUQrrl2LNarVrL/rgVzZggpSLWoSV
+         qQAPGpkElC4nfgs6nL+HnkIdk7Pw1XCXrtXrjb0SZbd4zKwxXGdQJaB7WqNpfOcgWi2r
+         r1kBadIhSudDhvAhXlJA9GFkd38Zm+A5/uMgDhhW3pxGNMHi5Fqw2gW/FXFIQFSMBUv/
+         MVxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbWAcrFqNeVYlOXwNDfrBXy2Un76WqTQid41I5EpHJIeZbntqvcOl8nkTUYikHd2DQRg0K3iSWwE+HdDu0voYBNw9ch9Ucp7EXloDF
+X-Gm-Message-State: AOJu0Yx8E240OAhRzp7qVSA3DzcBR75n1Eyt6VVGsCT8T10ODSTtTEEh
+	194msUvmpxzz7FmqhWWtVM3FwVARQTX7E3J+Ei4NvHH1fb4y0CvsvasFyFWZa7o=
+X-Google-Smtp-Source: AGHT+IF5kcpXENxol6rpDJqiXdN3+3deXeOjD5dbPk0vGTABOrF9Nu6EOSCDHs0k0VWKeAyu8WF2WA==
+X-Received: by 2002:a05:6000:4b:b0:36b:c126:fe5e with SMTP id ffacd0b85a97d-36d5eb0429emr6725486f8f.30.1723453918673;
+        Mon, 12 Aug 2024 02:11:58 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd3416sm6895438f8f.100.2024.08.12.02.11.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 02:11:57 -0700 (PDT)
+Message-ID: <9b27533e-6dc6-4476-8f0b-4497388efde3@linaro.org>
+Date: Mon, 12 Aug 2024 10:11:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
-
-Am Montag, 12. August 2024, 10:45:54 CEST schrieb Peng Fan:
-> > Subject: [PATCH 1/1] arm64: dts: imx8-ss-vpu: Fix imx8qm VPU IRQs
-> >=20
-> > imx8-ss-vpu only contained imx8qxp IRQ numbers, only mu2_m0 uses
-> > the correct imx8qm IRQ number, as imx8qxp lacks this MU.
-> > Fix this by providing imx8qm IRQ numbers in the main imx8-ss-vpu.dtsi
-> > and override the IRQ numbers in SoC-specific imx8qxp-ss-vpu.dtsi,
-> > similar to reg property for VPU core devices.
-> >=20
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> > I did not include a Fixes tag as adding support for imx8qxp and imx8qm
-> > is split into several commits. It's at lease the combination of the
-> > following commits:
-> >=20
-> > 0d9968d98467d ("arm64: dts: freescale: imx8q: add imx vpu codec
-> > entries") b4efce453f0ca ("arm64: dts: imx8qm: add vpu decoder and
-> > encoder")
->=20
-> If you are using one patch to try to fix upper two commits, I think
-> it would be better to separate the patch to fix the error of
-> each upper commit and include Fixes tag.
-
-Commit 0d9968d98467d ("arm64: dts: freescale: imx8q: add imx vpu codec
-entries") is talking about imx8q. This is most probably i.MX8 family, while
-I confused imx8q with imx8qxp, which is i.MX8X family...
-The naming scheme is so confusing :(
-
-=46or that reason I'll just add a Fixes for 0d9968d98467d.
-
-Best regards,
-Alexander
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf docs: Refine the description for the buffer size
+To: Leo Yan <leo.yan@arm.com>
+References: <20240810161540.2282535-1-leo.yan@arm.com>
+Content-Language: en-US
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Govindarajan.Mohandoss@arm.com
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20240810161540.2282535-1-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
+
+On 10/08/2024 5:15 pm, Leo Yan wrote:
+> Current description for the AUX trace buffer size is misleading. When a
+> user specifies the option '-m,512M', it represents a size value in bytes
+> (512MiB) but not 512M pages (512M x 4KiB regard to a page of 4KiB).
+> 
+> Make the document clear that the normal buffer and the AUX tracing
+> buffer share the same semantics.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>   tools/perf/Documentation/perf-record.txt | 9 +++++----
+>   1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
+> index 41e36b4dc765..242223240a08 100644
+> --- a/tools/perf/Documentation/perf-record.txt
+> +++ b/tools/perf/Documentation/perf-record.txt
+> @@ -273,10 +273,11 @@ OPTIONS
+>   -m::
+>   --mmap-pages=::
+>   	Number of mmap data pages (must be a power of two) or size
+> -	specification with appended unit character - B/K/M/G. The
+> -	size is rounded up to have nearest pages power of two value.
+> -	Also, by adding a comma, the number of mmap pages for AUX
+> -	area tracing can be specified.
+> +	specification in bytes with appended unit character - B/K/M/G.
+> +	The size is rounded up to the nearest power-of-two page value.
+> +	By adding a comma, an additional parameter with the same
+> +	semantics used for the normal mmap areas can be specified for
+> +	AUX tracing area.
+>   
+>   -g::
+>   	Enables call-graph (stack chain/backtrace) recording for both
+
+The same text is repeated on a few tools, probably makes sense to update 
+them all at the same time.
+
+With that change:
+
+Reviewed-by: James Clark <james.clark@linaro.org>
 
