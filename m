@@ -1,102 +1,81 @@
-Return-Path: <linux-kernel+bounces-282962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983C194EB4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:39:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED9B94EB63
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:42:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 229A5B2227A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:39:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66ABCB21DB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031B7170849;
-	Mon, 12 Aug 2024 10:38:53 +0000 (UTC)
-Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CD416DC2C;
-	Mon, 12 Aug 2024 10:38:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F61171092;
+	Mon, 12 Aug 2024 10:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4EH8gHBq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5GyCFvaE"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27CC916F271
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723459132; cv=none; b=afMmSkJ+8MLFrcsyFd2YMtnR7RAHer3ltAFq8azqiz+Wz3cdzsVLmrz9lfI+yQC0E3G2YgAzDMyelp1WUDBgH9O9juwzuT4ScnT4eVhW+bIusg+euURNAKzph/L92tWsviLPXRa+YM9cdaiXs1Tth0wHPZTD8o+oF8HVmZ7308w=
+	t=1723459330; cv=none; b=ALwo3MUqhnw7MmlxekLp9J2qnEAnnd5CDfliPQyIEskhKsUr76a5k9XcIdik4cXRaOxL/C6koGqia0K0VOFxTSqArqx52zWtFjWJ4gdGrdcGorHcnPjDwdZYc44fMGTtQrenVpsAUHncQFKAOFmRci+OzEoUy83cfdbZMzfyCzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723459132; c=relaxed/simple;
-	bh=4UYDJVRe6KgTAVzMjSOYGd2NkpVsSHKygr+86n9S3QE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8Ft9Nnwei7bpfH9paArwGIvxh8x988Nczjis7G5WSJkyR9hLqaASS20f0KinxkndA/5MGhlI07clW6FbMb9VRUI0ffyZNRhaJoMvk80RDrFsY3fTZDnWmxnOO/OViqPKzzQ6/1cuEcjYchFamo90Q9c6+dXADxEv90HZ2jIeyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-	by vmicros1.altlinux.org (Postfix) with ESMTP id 88ABE72C8CC;
-	Mon, 12 Aug 2024 13:38:42 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-	by imap.altlinux.org (Postfix) with ESMTPSA id 78B4836D0246;
-	Mon, 12 Aug 2024 13:38:42 +0300 (MSK)
-Date: Mon, 12 Aug 2024 13:38:42 +0300
-From: Vitaly Chikunov <vt@altlinux.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-	Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-	=?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-	perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
-	Linux kernel regressions list <regressions@lists.linux.dev>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.9 17/40] ASoC: topology: Fix route memory
- corruption
-Message-ID: <20240812103842.p7mcx7iyb5oyj7ly@altlinux.org>
-References: <czx7na7qfoacihuxcalowdosncubkqatf7gkd3snrb63wvpsdb@mncryvo4iiep>
- <14e54a89-5c62-41b2-8205-d69ddf75e7c7@linux.intel.com>
- <e95a876a-b4b4-4a9d-9608-ec27a9db3e0c@leemhuis.info>
- <210a825d-ace3-4873-ba72-2c15347f9812@linux.intel.com>
- <2024081225-finally-grandma-011d@gregkh>
+	s=arc-20240116; t=1723459330; c=relaxed/simple;
+	bh=r3xcYBncwli2Ed8eDaXSnPMpWyt2xGCwawvgvs2fCTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vvw5gEJ9KokTypaAOzBGK6+QeeSoPbWa8A3R5Rc4tagVDX1KqFlxjO5SR19MDVSmjG9ghdswNlUyxclybdv4Ma+oHHKhYFkNlSOO0l7ph318VW+N7JanAhacat5MWOEUjdZIy15ChK+4CAg/7m/z2/F4xVHhSMlIA7aE5QG2JWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4EH8gHBq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5GyCFvaE; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723459327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r3xcYBncwli2Ed8eDaXSnPMpWyt2xGCwawvgvs2fCTI=;
+	b=4EH8gHBqDtvTuE9kRKMbzlPZ3ohVKIJ1/FiBzoGmupl5FGo4OVSTTujC5tLbt0HXIu0ONY
+	pVtZsAQ3N+kll+tl/MrKtMZOBQTX8JbZvUojBaz4Emh2/014IP0Aa1Qvu2PuQOqT+TIwhD
+	Hb2f2mkXjncEs2TOYJFWEQgL1VGylYrDa7siEkGbVg1cebY6haqC6aGqybDh210vRnMwME
+	5OEjdCAo3WXjsO9wkbvRrcfCwImPoM8XJiDZHSaSDowT5gIrctxaHEJunDc81R2hQiQsHT
+	TBEJ4ocPpRNfjrHQQT/2mIUrIuHvxjJ3OenfQHIa7Wa3KXvrq/FAGs5EqE0Krg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723459327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r3xcYBncwli2Ed8eDaXSnPMpWyt2xGCwawvgvs2fCTI=;
+	b=5GyCFvaEiAaGphIjbOCIHU457HXyzu2WJtvWVPuys20Gp+lg+spcyGJDbBqYcYvbVbZFoH
+	V+V9XXjBH26HUsDg==
+To: linux-kernel@vger.kernel.org
+Cc: tglx@linutronix.de,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>
+Subject: [PATCH 0/4] locking/rt: Add sparse annotation PREEMPT_RT's locking.
+Date: Mon, 12 Aug 2024 12:39:01 +0200
+Message-ID: <20240812104200.2239232-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024081225-finally-grandma-011d@gregkh>
+Content-Transfer-Encoding: quoted-printable
 
-Greg,
+Hi,
 
-On Mon, Aug 12, 2024 at 12:25:54PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Aug 12, 2024 at 12:01:48PM +0200, Amadeusz Sławiński wrote:
-> > I guess that for completeness you need to apply both patches:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=97ab304ecd95c0b1703ff8c8c3956dc6e2afe8e1
-> 
-> This is already in the tree.
-> 
-> > was an incorrect fix which was later fixed by:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/soc/soc-topology.c?id=0298f51652be47b79780833e0b63194e1231fa34
-> 
-> This commit will not apply :(
+the series adds sparse annotation to PREEMPT_RT's locking which
+substitutes spinlock_t and rwlock_t.
+The way local_lock_t is implemented, sparse annotation works for
+PREEMPT_RT due its spinlock_t usage but not for !PREEMPT_RT because it
+is just preempt_disable().
 
-It depends upon e0e7bc2cbee9 ("ASoC: topology: Clean up route loading"),
-which was in the same patchset that didn't get applied.
-  
-  https://lore.kernel.org/stable/?q=ASoC%3A+topology%3A+Clean+up+route+loading
+Sebastian
 
-I see, Mark Brown said it's not suitable material for stable kernels
-(since it's code cleanup), and Sasha Levin dropped it, and the dependent
-commit with real fix.
-
-Thanks,
-
-> 
-> > Applying just first one will result in runtime problems, while applying just
-> > second one will result in missing NULL checks on allocation.
-> 
-> The second patch can not apply to the stable trees, so we need a
-> backported version please.
-> 
-> thanks,
-> 
-> greg k-h
 
