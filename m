@@ -1,156 +1,122 @@
-Return-Path: <linux-kernel+bounces-283365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DD9394F18A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:22:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A0894F18B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:22:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEA71F2364B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB841F23641
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B13184520;
-	Mon, 12 Aug 2024 15:22:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50673184520;
+	Mon, 12 Aug 2024 15:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W7wzhPds"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iYSxQH1O"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8BA130AC8;
-	Mon, 12 Aug 2024 15:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A56130AC8
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723476122; cv=none; b=k8l++Bh33F8n/+ZLtH3LScn2rTS0iyNbRafhdzVBoYdehG0B/kWo/9A59EUw053GOmODZ9e6SAkWVKNJKRgUlklq4H+f4PhmnZ0yi21WNF7mViYglja3Z4C7qHmYuYX/aPrb5UHgaKbzz1Fotv9BQpz9IfH0F/3xhuas9SgVSNY=
+	t=1723476134; cv=none; b=TvF95qYm121pE2pysrDbGF+Hdsf2/rwFoaPLsXphqaDayc/F4Chs8Lbh3XP5gkysvcGaCMuKxVtwVUoRFWBR0lvJodHDYxL3XYa++sqd6Ae/lH67AfKMWz1IGGU0Vg1Y1I8hmaJiQ582m8m8xNE119D9DDKHaJSdh+o5QP4MVFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723476122; c=relaxed/simple;
-	bh=BdRss7HScnqpUPSGPbn5kRX0iD7ZVa9shtJAAuZFFgU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LfVuYR3FPnpOhWChDv9ACnO2tU193zNqS1Uq6ODn/fkjAyJVUzPyOAzcoipitfsSDj3h6yAyTg7rNiTgXyaiCUurv93WQ/KjZOTZUAybriylN3GlJtY2N5EfFCVWzTuDJFtg2KWjaEvedO79A73X7dUfQGiL4A12KpxiKzULuds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W7wzhPds; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3684407b2deso2449107f8f.1;
-        Mon, 12 Aug 2024 08:22:00 -0700 (PDT)
+	s=arc-20240116; t=1723476134; c=relaxed/simple;
+	bh=b21qcrm+S8sKxvBwdpqDyjaS7WouOqGHZknEh+zAIjg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=iwznU2LXOV724pa7/r0zQqyV2pz5+kY+sESIbJG2z9usqVnR9iTIIdjYgZPw/mvu/AifooXX0wMZFwnBFxrT35p6WiUwv6N9J4vEYmAeRd7twRCtUCkkDHSduWajUw15LCOSJoBY+2LSCvOSxmX6TO3aBk4/tTRxuyT9g+TbeOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iYSxQH1O; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2cf1a80693cso5200203a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:22:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723476119; x=1724080919; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PPD8gJ9cV6O2k5z5drN4BDffP3RH4AxPBal9IAvehBg=;
-        b=W7wzhPdsKygIpuvfBQ7cO4rEiAzHGHMYkCDbTf0Pejf5xVKvT+hQmgslRd5Ve+kKtG
-         1Td1eIRIrchejO0JkeANtwQXgqHqNex2UjpxePNTY8uj3sb7oHls1lzRwmgxLswQV9Ej
-         vM9c8mq+Wd7Twi2jUYGX7C5JTksVslQg9JJw/6QxEbRXhCYaPoADDAHnvZzXuTu0pjvg
-         JMQKCP+6FCcpiQ8pYRMwy/0Jja/J2/IaIOMNdyTTWiqGZ0TmL8vn+q0i3764d6BZWQGL
-         sacc1t13XDAeJI3qsWHa8IfGZKNft9PLtMgm+bYIH0F5m13vm7mRRnBveGkK31xmtJzW
-         LdFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723476119; x=1724080919;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1723476132; x=1724080932; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PPD8gJ9cV6O2k5z5drN4BDffP3RH4AxPBal9IAvehBg=;
-        b=QdxC1/9XJJ9JCfYq8e3j1ZyoAbN8m/8dZH+22KC5UB1OBIGRlfkCH5sB8mZ8ZLtOhj
-         2WYWZxsa/sHQkDnpWfAAJFUj8kYtUmgBnCEPHgEuAhJvYN1C68suc/9SUtdXUf5vjy+T
-         5J3CI98uaPvh0FHL32yZNOg9mIUoAWMjFl7Hs1jI4EeysHTZdBK9F57hhlMwf97xkhwC
-         rFo/w0FcYYGnZjxHFJNYWZ5oOfUqiXFRNAlpXWouv65/wEzhKmGVOK60z6OCg6Fe/xSx
-         zwR7lA4J3l3BdQrpdQOi+sFlM6LQbOxnxI6/eZbMItj/JyhkvtnoCEVFt5LpPqCJaf3G
-         ReQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXcmgqO0+bUOtH/R2D+5Aoa4UKHL5BbGGvU5POEtzuZ9eNjEWMsfJKKuuF9VlsSDbGrJPtPrSX8wjECSwD0JPdle3TYSltENIuo9yp/4lyBUxjZY6CI9rYnjSd/IFIDd2uNDILB
-X-Gm-Message-State: AOJu0YyZngX5FytqE3/s/IQmZ4zPbbMNgd9PQZnxrGpR0kLybgjakT6a
-	s9hJsmkJA+L0DbFc0T6uCWEhaeptYOatXpvHQaAgChY8xAg4bzH1
-X-Google-Smtp-Source: AGHT+IG5B4/73W1aLnLgYfjQ+u1fYxYYhA6rdRE3eEvzEhcHKfoxCgLH5sWm8jJSTeIvBvUOSmXxlA==
-X-Received: by 2002:adf:fc47:0:b0:367:993e:874f with SMTP id ffacd0b85a97d-3716ccfecc3mr461173f8f.34.1723476118929;
-        Mon, 12 Aug 2024 08:21:58 -0700 (PDT)
-Received: from yifee.lan ([176.230.105.233])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeedc8sm7860752f8f.55.2024.08.12.08.21.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 08:21:58 -0700 (PDT)
-From: Elad Yifee <eladwf@gmail.com>
-To: 
-Cc: eladwf@gmail.com,
-	daniel@makrotopia.org,
-	Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chen Lin <chen45464546@163.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH net v2] net: ethernet: mtk_eth_soc: fix memory leak in LRO rings release
-Date: Mon, 12 Aug 2024 18:21:19 +0300
-Message-ID: <20240812152126.14598-1-eladwf@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        bh=AH2ao2IGJbmgrkvcFBA8i8xzxhOUQFYAwmt8A+nqcs8=;
+        b=iYSxQH1OY7qoXCeNKQKanDnqa9laBBWPlGloXGvSvWt9pJHdQk3hihHuxC10FDYqFM
+         5IVggsOAA4Cjghx1VgGv5vKiDsW25iDqzOsV0rR0+TTG2TwxvvK2tMYxqe+5l5JYxi+N
+         nxPP2wXpKopRMAUWNnNhKEIl0GK+dwXlj/l6B25ph7brtlLcj1CubgohRiccvfmj0005
+         E/nf+SYgTynHvHnmfxvDeS6xrYVyJcpRSPrAu/pEBfIWkv1kDYjx2xWU6bAGiLUmSP1E
+         mmPsbJCgplyBjuisUcnh0GcF4E3cuMfcSjZr3yKN2zcI5gMvtsaEDdnjRnYwVVNOrX1p
+         uR5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723476132; x=1724080932;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AH2ao2IGJbmgrkvcFBA8i8xzxhOUQFYAwmt8A+nqcs8=;
+        b=nKNEF8ET8+JX6qBECYVN5OaPzPlH5ytn7DMOD3JcB5TR4vyiimYeayNdoVyrwSYn1F
+         56fIJI7bKg6vYN0CrL5SaT+DBbt4wCaahEEGaENY1vT5HqEF1bcTyVLB2DbdZFu+o5Cn
+         pOgFylPSwxGHDBWW4lc2FkQxE+z3plNWFFOIiw/2DFqPknAm3ma5m2LR50o2qMbhAPwc
+         cQCv6BvoAQ4SSGzSsP8mVW45ERP6SkgAHRKMpXCRj4rd45aCRJ9/GUPQsYc544rQ4Yzb
+         j+yupYvwEBntJDOEh78q1x8jAZmX9mp79acGVtAU0f7l8SHLigwWMCyotBv1fgGIyACM
+         fEMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWg89YfQNsBbxE/zeN/E6WjcIQS0vreqbhhBVMyDjH+SgmivI8g5UusYB/PkIqAZgoCv7Cix/vNfkF60/eTubmbVRTODKyjicaGlX+y
+X-Gm-Message-State: AOJu0YxHmexdDPeWMiKy084s2Q7IlaGYYKTPYSKjCspli5XJuUB2lcA8
+	eADKRlFD0tTTEeohh0WUpXBIjibdtfwINUzch0BTBmMJmY7aqlUIV8lL7V2YrTZC1XJSFqNB605
+	jcw==
+X-Google-Smtp-Source: AGHT+IF5TxICpEgJNNaxPl2At7Hpo2uBQDuQJeY4CGfqjHedHjuOWEpukoYm6rVl8rxhvO9f6W4tfL2aE8M=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:f2d5:b0:2c8:55e9:7874 with SMTP id
+ 98e67ed59e1d1-2d392214b22mr1604a91.0.1723476132491; Mon, 12 Aug 2024 08:22:12
+ -0700 (PDT)
+Date: Mon, 12 Aug 2024 08:22:11 -0700
+In-Reply-To: <CAJhGHyDjsmQOQQoU52vA95sddWtzg1wh139jpPYBT1miUAgj6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
+ <CAJhGHyDjsmQOQQoU52vA95sddWtzg1wh139jpPYBT1miUAgj6Q@mail.gmail.com>
+Message-ID: <ZrooozABEWSnwzxh@google.com>
+Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
+ rmaps outside of mmu_lock
+From: Sean Christopherson <seanjc@google.com>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-For LRO we allocate more than one page, yet 'skb_free_frag' is used
-to free the buffer, which only frees a single page.
-Fix it by using 'free_pages' instead.
+On Mon, Aug 12, 2024, Lai Jiangshan wrote:
+> On Sat, Aug 10, 2024 at 3:49=E2=80=AFAM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+>=20
+> > +
+> > +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
+> > +{
+> > +       unsigned long old_val, new_val;
+> > +
+> > +       old_val =3D READ_ONCE(rmap_head->val);
+> > +       if (!old_val)
+> > +               return 0;
+> > +
+> > +       do {
+> > +               /*
+> > +                * If the rmap is locked, wait for it to be unlocked be=
+fore
+> > +                * trying acquire the lock, e.g. to bounce the cache li=
+ne.
+> > +                */
+> > +               while (old_val & KVM_RMAP_LOCKED) {
+> > +                       old_val =3D READ_ONCE(rmap_head->val);
+> > +                       cpu_relax();
+>=20
+> The sequence of these two lines of code can be improved.
 
-Fixes: 2f2c0d2919a1 ("net: ethernet: mtk_eth_soc: fix misuse of mem alloc interface netdev[napi]_alloc_frag")
-Signed-off-by: Elad Yifee <eladwf@gmail.com>
----
-v2: fixed compilation warnings
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Oh yeah, duh, re-read after PAUSE, not before.
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 16ca427cf4c3..e25b552d70f7 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -1762,8 +1762,10 @@ static void mtk_rx_put_buff(struct mtk_rx_ring *ring, void *data, bool napi)
- 	if (ring->page_pool)
- 		page_pool_put_full_page(ring->page_pool,
- 					virt_to_head_page(data), napi);
--	else
-+	else if (ring->frag_size <= PAGE_SIZE)
- 		skb_free_frag(data);
-+	else
-+		free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
- }
- 
- static int mtk_xdp_frame_map(struct mtk_eth *eth, struct net_device *dev,
-@@ -2132,7 +2134,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
- 				ring->buf_size, DMA_FROM_DEVICE);
- 			if (unlikely(dma_mapping_error(eth->dma_dev,
- 						       dma_addr))) {
--				skb_free_frag(new_data);
-+				mtk_rx_put_buff(ring, new_data, true);
- 				netdev->stats.rx_dropped++;
- 				goto release_desc;
- 			}
-@@ -2146,7 +2148,7 @@ static int mtk_poll_rx(struct napi_struct *napi, int budget,
- 			skb = build_skb(data, ring->frag_size);
- 			if (unlikely(!skb)) {
- 				netdev->stats.rx_dropped++;
--				skb_free_frag(data);
-+				mtk_rx_put_buff(ring, data, true);
- 				goto skip_rx;
- 			}
- 
-@@ -2691,7 +2693,7 @@ static int mtk_rx_alloc(struct mtk_eth *eth, int ring_no, int rx_flag)
- 				ring->buf_size, DMA_FROM_DEVICE);
- 			if (unlikely(dma_mapping_error(eth->dma_dev,
- 						       dma_addr))) {
--				skb_free_frag(data);
-+				mtk_rx_put_buff(ring, data, false);
- 				return -ENOMEM;
- 			}
- 		}
--- 
-2.45.2
-
+Definitely holler if you have any alternative ideas for walking rmaps witho=
+ut
+taking mmu_lock, I guarantee you've spent more time than me thinking about =
+the
+shadow MMU :-)
 
