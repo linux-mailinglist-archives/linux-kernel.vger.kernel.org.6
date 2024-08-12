@@ -1,92 +1,101 @@
-Return-Path: <linux-kernel+bounces-283103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BDCB94ED3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:40:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E3494ED40
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6EC21F23579
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:40:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6D3DB2232D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3083D17B4FF;
-	Mon, 12 Aug 2024 12:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD3517B4FD;
+	Mon, 12 Aug 2024 12:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zx0oOMga"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="c0jsvWeA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AA217B428;
-	Mon, 12 Aug 2024 12:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB516F0E6;
+	Mon, 12 Aug 2024 12:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723466427; cv=none; b=cyS0cpx3lPaoWYpK5STBpv//QSoOQVYPL38z5OVa4rL6uJgBJPd7/P35MiVuNGwzl/Xte/rDMUM3B4RhYzs5OH7O5JsP9B2Vdi96oDSz3LjLbT8J/tBfFTHM59qcxYYLl9vJhpvATSyIje/LI+tGf9BHdgFzTbXRpQM+UHdre4E=
+	t=1723466535; cv=none; b=MYrgbZ+TK37I3/Z+15QMHNGYF9989LODGier5vBy+8Vup1GW09dph+qrU5jb3Z4DKxXzbp3E40Kc3dhKijf16Ih6X1BsOZirtzE9/aiN08EbPUFBpyyy3Y0PhnOdwunLEI6wnctYWBAyql9X3mv2zeiQwd43WV1PGdzrod21qys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723466427; c=relaxed/simple;
-	bh=hxvENyo07WG1H0d4ud5FRdEjMpjzeHc9iWhjWsTNLeA=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=PMnlBxikBm1/ilKC8FMsRIDh0vaQBy3cPeJ9EUe2gHxlUJkDOb+fUJZ0mmH3lbqO/HAdNK9eeL33r76eWZymzhZu1ykFB6KqtIJPi4dymP8qqdReDSnM28jeAL0VTxs/JD6DT8SJaArtEiQrAir4gso1m0XYFJLShONxrUW204s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zx0oOMga; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB78C32782;
-	Mon, 12 Aug 2024 12:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723466427;
-	bh=hxvENyo07WG1H0d4ud5FRdEjMpjzeHc9iWhjWsTNLeA=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Zx0oOMga236f0TjlUyQY/cFFDFAHyss5bMXmW6fBXrH6tNs5TaM1xcSqmSmYzYIur
-	 xqgNLJa/hUBW3ldHa0mxFLWHM28kSLhJYxMLEU8ojSn4AiTrFZRI/AGtU5KOcJm5hi
-	 /0ndwHeE6LgFyPDt/NRmDmiPr7+U537CGPKcY5HR7srng9GCk6QO8q0c6s/KsSJccl
-	 6Z5f+9IxOJ0r5+Md8qsDEkcW6+6W9LxUrmjXTTGBPyO1qtXTBHmwtYVDKsW9HQq8UK
-	 KdPa+kUoCIeyOHxeLiRaIrcHSJ9rWKZw8P/v82fcTXyAXrErf4oPEderu4xpJzn+VX
-	 87ozoD79gr6sQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70D42382332D;
-	Mon, 12 Aug 2024 12:40:27 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723466535; c=relaxed/simple;
+	bh=xiYozym11rlBjc/daSc9DA/XWQH2VVg2UBUkV1MHm1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YKeFETioU0dLc5izrsDdRwW/XQ+ktlJGDFqsyxjghtH1gT8aW9edV9+A6DRIQhD69NGcDV0UhjrxkpuPRUrkpKNREUZpFzAXY/6Xod6FCDiPg/GvGsaefLWHzETui6KNgCukmFdVNShIW3+RlchWd88ABLu84kcjz+IBfcgrOvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=c0jsvWeA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8216EC32782;
+	Mon, 12 Aug 2024 12:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723466531;
+	bh=xiYozym11rlBjc/daSc9DA/XWQH2VVg2UBUkV1MHm1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c0jsvWeA84+D38Vp+03s7j8vU17DqyCMRi8kNYkaryM2SmSLp9Iq+Hpj9uGVF7C3/
+	 c9JaWo//BkXHqIo+LkSO9Qf8xOCHnFF+6NN8wVcJcHufDXhSNFXEKDt/TvUOduvTsh
+	 zcqTYum4i2zEV7jOZ3d6DsxSwCCIpFHS5c8x+JZY=
+Date: Mon, 12 Aug 2024 14:42:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, stable@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	vincent.guittot@linaro.org, qyousef@layalina.io,
+	peterz@infradead.org, daniel.lezcano@linaro.org,
+	ulf.hansson@linaro.org, anna-maria@linutronix.de,
+	dsmythies@telus.net, kajetan.puchalski@arm.com, lukasz.luba@arm.com,
+	dietmar.eggemann@arm.com
+Subject: Re: [PATCH 6.1.y] cpuidle: teo: Remove recent intercepts metric
+Message-ID: <2024081236-entourage-matter-37c6@gregkh>
+References: <20240628095955.34096-1-christian.loehle@arm.com>
+ <CAJZ5v0jPyy0HgtQcSt=7ZO-khSGex2uAxL1x6HZFkFbvpbxcmA@mail.gmail.com>
+ <9bbf6989-f41f-4533-a7c8-b274744663cd@arm.com>
+ <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] net: vxlan: remove duplicated initialization in
- vxlan_xmit
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172346642625.1012384.4914709823946390896.git-patchwork-notify@kernel.org>
-Date: Mon, 12 Aug 2024 12:40:26 +0000
-References: <20240810020632.367019-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20240810020632.367019-1-dongml2@chinatelecom.cn>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, idosch@nvidia.com, amcohen@nvidia.com, gnault@redhat.com,
- dongml2@chinatelecom.cn, b.galvani@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <181bb5c2-5790-41bf-9ed8-3d3164b8697d@arm.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
-
-On Sat, 10 Aug 2024 10:06:32 +0800 you wrote:
-> The variable "did_rsc" is initialized twice, which is unnecessary. Just
-> remove one of them.
+On Mon, Aug 05, 2024 at 03:58:09PM +0100, Christian Loehle wrote:
+> commit 449914398083148f93d070a8aace04f9ec296ce3 upstream.
 > 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> The logic for recent intercepts didn't work, there is an underflow
+> of the 'recent' value that can be observed during boot already, which
+> teo usually doesn't recover from, making the entire logic pointless.
+> Furthermore the recent intercepts also were never reset, thus not
+> actually being very 'recent'.
+> 
+> Having underflowed 'recent' values lead to teo always acting as if
+> we were in a scenario were expected sleep length based on timers is
+> too high and it therefore unnecessarily selecting shallower states.
+> 
+> Experiments show that the remaining 'intercept' logic is enough to
+> quickly react to scenarios in which teo cannot rely on the timer
+> expected sleep length.
+> 
+> See also here:
+> https://lore.kernel.org/lkml/0ce2d536-1125-4df8-9a5b-0d5e389cd8af@arm.com/
+> 
+> Fixes: 77577558f25d ("cpuidle: teo: Rework most recent idle duration values treatment")
+> Link: https://patch.msgid.link/20240628095955.34096-3-christian.loehle@arm.com
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->  drivers/net/vxlan/vxlan_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cpuidle/governors/teo.c | 79 ++++++---------------------------
+>  1 file changed, 14 insertions(+), 65 deletions(-)
 
-Here is the summary with links:
-  - [net-next] net: vxlan: remove duplicated initialization in vxlan_xmit
-    https://git.kernel.org/netdev/net-next/c/6b8a024d25eb
+We can't just take a 6.1.y backport without newer kernels also having
+this fix.  Can you resend this as backports for all relevant kernels
+please?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+thanks,
 
-
+greg k-h
 
