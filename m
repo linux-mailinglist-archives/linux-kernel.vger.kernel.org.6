@@ -1,123 +1,114 @@
-Return-Path: <linux-kernel+bounces-283437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A02494F3BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AD7A94F3F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36083281360
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:21:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE5702836A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB12B18732E;
-	Mon, 12 Aug 2024 16:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9756818734F;
+	Mon, 12 Aug 2024 16:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O918mw9a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GUzD7k2T"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAFE186E47;
-	Mon, 12 Aug 2024 16:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C16C134AC;
+	Mon, 12 Aug 2024 16:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723479680; cv=none; b=NG0TW+wR6MAMwhh0aFjfVbgq4GG6dOAb0f5jWZ0IIAnq6zVeMoBvOiem1lez3ZLipeSnfBy6l2vd6B6Wk9fTfuwDwEnMUWM6judit/IysMx4lxhNm5QG8mHNWPwkXFD6S5Fxe6BgVjZLRF4krbnSDRFtw8HF8bxWTdAxArb+0c8=
+	t=1723479866; cv=none; b=Jri1iz6nuukdfKvQ6viXt6fjwyLEWc6PRW1Swt32qzY/ff2x+aE79KwmWhgCxk4Um5FxTmnwVP2P8cm4csd4apRHl1nc8ZoYSuvlKlftREFPCg2wOFn3e4kIKnDRA7Gn6qXD6JDxTqEHECyF7rL6zKWy1Eg34yj/KHhC281prKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723479680; c=relaxed/simple;
-	bh=q7lywxpr/YZ3ic0N8DxjmCMjT3WvmnXYK46+bK4R9go=;
+	s=arc-20240116; t=1723479866; c=relaxed/simple;
+	bh=Xb8NKU5ZkzC22+LAMYn3KWK3B7FtrDPWAeLxD550pFI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TfpjF9zHHQePrpBang0VbmuEBfhjVAJXqKctrRmxjbOnxrDRFJZ0y0r846OghRDjwT3wPsqLCgvIRzLmNCRh2OCJFnk9jfASeNv9x9HP6x8jKAgZypkGXfFkw6m640GYjFstyfaRXdae0AOxjvxzs48s7XP2SaS2tTXiym0du8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O918mw9a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE251C4AF12;
-	Mon, 12 Aug 2024 16:21:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723479679;
-	bh=q7lywxpr/YZ3ic0N8DxjmCMjT3WvmnXYK46+bK4R9go=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O918mw9aIyuiBomP4feC+9/Wnr+K2CisAuy1PgFAyVbBx5QqEUfvLfg0KHQmdB6OF
-	 ttUPPUlsHMg2vwq6QwZ+wdS01YfbqC7Mvxy3FpWApNoig524rRxshzqnbTtIJFXLT1
-	 Wb2deaeoHYrZW1+Y3RIcHMyBnnkI6GSfjDD/KOFUsO5TBVvypZq4Wd+ttHL5XGPmBp
-	 E5Pw6IBHo9xQHuxmDrnq0sP44MDA5EiqeFLzCFrqTyxVzPLqhKMYzXp6vpmUX5kXJq
-	 7ToqX6sSTPw8Lw1J/HXl/YllVYERFMSCJUWH5BaSYOdiS4H8v9i7MBqMrHmboqC4G4
-	 Rt9XT7cam69VQ==
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fd640a6454so34297495ad.3;
-        Mon, 12 Aug 2024 09:21:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX55DK++VckUj902vRrhopLoAYHxXnuXp8bXjJnL4Zw8jknW4HQI1H/86Wdc/wOIolBmEvBDFZuaxUotredEtniCiyTist/L7TUNe7qrOx9hjnuqEG+lWj3eDzZC/BtUvDzHgynfqfFBcHn6T+lWxhr
-X-Gm-Message-State: AOJu0YyXEcEZ3g1IWHWmFeJ5jVmZEYlqsaLoVvMmdR8/Sz8lMnWmeaiz
-	O+GTMNjlllKyUcOKhGicj2ZHO0BM0WNSK8Cw2Ph2LYKzImEgOfmeD0MuaWHVqNO8L1/SGA3ToOo
-	UjkPjVtkmJ5IbR4g2cgnGC/yTalg=
-X-Google-Smtp-Source: AGHT+IHUTx3hyWNDBJhh0g6ZhitS14bpeovi83lfWg7B2UHoE6zydimWrZIbCpyNnoDUmQCDL6eLpW+4E5PVbElB62I=
-X-Received: by 2002:a17:902:e5c8:b0:1fb:bd7:f232 with SMTP id
- d9443c01a7336-201ca13c388mr9784015ad.23.1723479679221; Mon, 12 Aug 2024
- 09:21:19 -0700 (PDT)
+	 To:Cc:Content-Type; b=oC81hDcVRMa00udK781+8ydmZIyKbYJ18I1kk1UEgfa1LOvIcdBuuWUMAM0wHCiTVNWK/D6CP+wCrM7egp2G3RGDdMgFH80oDPDxIw9oDnT0ExcUZpNz5H9pSum0B3NAktspvtF8OTP33vhZi+JbU+I7wkRUD1xyioJx/eX020g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GUzD7k2T; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e01a6e5da1fso760299276.0;
+        Mon, 12 Aug 2024 09:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723479864; x=1724084664; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m2ut7bEWUwzYOwruzGQ3u23dJf0ifAFUWb+wcbI3n14=;
+        b=GUzD7k2TUOF67BS55RzlOmO1OKbWU+RyfxH/+QjrUn48CN86kQnqGMwj2eaQRolo58
+         cVCRpI/YEI0TokI1/JxcBQw6y3ZIyzYlnuK8+XsdhPyP9tyY+espgwNtgZXkCE/aVvBa
+         6RZPl2Or9K2oO7sCCJ8EUF/rtpDxmo56Qy8ikh2c1mZo7lxYE4ne+or0Ci08ZVe/cYUV
+         aJvSSDFCkfTg7IoPptS3/oiFfTNZ713buUG7+klEwjYlgLD7QsMjDJdpaXRKM0OiPc9B
+         VYSdEJf815iDpQaEs7wK6v0HYbddKZDPQlMQUal+is1mZMUEfPsnqA+1pUKK8YmiX1MG
+         W79A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723479864; x=1724084664;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m2ut7bEWUwzYOwruzGQ3u23dJf0ifAFUWb+wcbI3n14=;
+        b=RlsHI8DYcH9kF93B2piMLAZYhsvMzC9RO8+gOCcPDPy6Ka4xjdzbQ7PDuYnOe6xrTR
+         VKP86rc4/a7AXoROoBinotDxW8uQ2qtRPdraMHuznEkdXmO8qMXZfDophMR4HZ7laPQ1
+         1+Gw+gHaYaWkE/Nter13Dh6Ijlo63VP5pTBOqRbn6/W5F0tAXfeSnV6lPbfojcUpKabb
+         kM2o/nNZyDRGbZ1r7e4x24K2JCtmt6kl+wbcQetaSHOTuNSQZt8F6sdQWlz+LQGYv+8P
+         SaJDYMb1cAZ+PWYsMOX/uIyNthJFEXdefreT17h23LYF2NggGRLcx0S+TQxrcTAAssQi
+         QHaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOAfR/a73kE8KudLHPqloeo/uOtQmYMyxf92qfz1uJePG9C/f1B/vAQKhRJ52GgjQVHF1LWYsTpqgv/fo=@vger.kernel.org, AJvYcCVw8SyalQi0RRzXvZ4m6RzJziFEBsUj8D0tHkRjd1NTsnCxizIxQmmLvcgRNNdPiw8geWvQCuhNBJmdXw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLFu2ZsFeiYMfWKIDlLfTZ+H4K0YErvko5f1eLGDmQhtSqGaZH
+	iQ9NpH3C6NkX2rKuspuOxUjsKCN7UiTa19RiGuuug68IfEfJQSieBErLDP5dn7zCvMM5BzzFTDC
+	G87+qS1U4EpHogfL3rAZTEpPoR6gHJWAA
+X-Google-Smtp-Source: AGHT+IGlUO6df2magGL4Skd5fMDLo8MTD0PlHJ+eAK/NLhxpw9cvZS3pSySJ9AS8IIQitOb1hy3wQFerEAymGHhDfPA=
+X-Received: by 2002:a05:6902:1b0f:b0:e0b:3a7d:928d with SMTP id
+ 3f1490d57ef6-e113ce79b87mr546665276.1.1723479864290; Mon, 12 Aug 2024
+ 09:24:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807220513.3100483-1-song@kernel.org>
-In-Reply-To: <20240807220513.3100483-1-song@kernel.org>
-From: Song Liu <song@kernel.org>
-Date: Mon, 12 Aug 2024 09:21:02 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW64RyYhHsFeJSj7=+4uHBo7LucWtWY5xOxN20aujxadGg@mail.gmail.com>
-Message-ID: <CAPhsuW64RyYhHsFeJSj7=+4uHBo7LucWtWY5xOxN20aujxadGg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/2] Fix kallsyms with CONFIG_LTO_CLANG
-To: live-patching@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org
-Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz, pmladek@suse.com, 
-	joe.lawrence@redhat.com, nathan@kernel.org, morbo@google.com, 
-	justinstitt@google.com, mcgrof@kernel.org, thunder.leizhen@huawei.com, 
-	kees@kernel.org, kernel-team@meta.com, mmaurer@google.com, 
-	samitolvanen@google.com, mhiramat@kernel.org, rostedt@goodmis.org
+References: <20240810112307.175333-1-kdipendra88@gmail.com>
+In-Reply-To: <20240810112307.175333-1-kdipendra88@gmail.com>
+From: Justin Tee <justintee8345@gmail.com>
+Date: Mon, 12 Aug 2024 09:24:12 -0700
+Message-ID: <CABPRKS9qUmWgTcg3vXEb7JxFCx1n5O7MeeU73LJZAZ0DhGRTaw@mail.gmail.com>
+Subject: Re: [PATCH] staging: drivers: scsi: lpfc: Fix warning: Using plain
+ integer as NULL pointer in lpfc_init.c
+To: Dipendra Khadka <kdipendra88@gmail.com>
+Cc: Justin Tee <justin.tee@broadcom.com>, james.smart@broadcom.com, 
+	dick.kennedy@broadcom.com, martin.petersen@oracle.com, 
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi folks,
+Hi Dipendra,
 
-Do we have more concerns and/or suggestions with this set? If not,
-what would be the next step for it?
+Perhaps the branch being referred to is out of date?
 
-Thanks,
-Song
+This has already been addressed in the following commit.
 
-On Wed, Aug 7, 2024 at 3:05=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> With CONFIG_LTO_CLANG, the compiler/linker adds .llvm.<hash> suffix to
-> local symbols to avoid duplications. Existing scripts/kallsyms sorts
-> symbols without .llvm.<hash> suffix. However, this causes quite some
-> issues later on. Some users of kallsyms, such as livepatch, have to match
-> symbols exactly.
->
-> Address this by sorting full symbols at build time, and let kallsyms
-> lookup APIs to match the symbols exactly.
->
-> Changes v2 =3D> v3:
-> 1. Remove the _without_suffix APIs, as kprobe will not use them.
->    (Masami Hiramatsu)
->
-> v2: https://lore.kernel.org/live-patching/20240802210836.2210140-1-song@k=
-ernel.org/T/#u
->
-> Changes v1 =3D> v2:
-> 1. Update the APIs to remove all .XXX suffixes (v1 only removes .llvm.*).
-> 2. Rename the APIs as *_without_suffix. (Masami Hiramatsu)
-> 3. Fix another user from kprobe. (Masami Hiramatsu)
-> 4. Add tests for the new APIs in kallsyms_selftests.
->
-> v1: https://lore.kernel.org/live-patching/20240730005433.3559731-1-song@k=
-ernel.org/T/#u
->
-> Song Liu (2):
->   kallsyms: Do not cleanup .llvm.<hash> suffix before sorting symbols
->   kallsyms: Match symbols exactly with CONFIG_LTO_CLANG
->
->  kernel/kallsyms.c          | 55 +++++---------------------------------
->  kernel/kallsyms_selftest.c | 22 +--------------
->  scripts/kallsyms.c         | 31 ++-------------------
->  scripts/link-vmlinux.sh    |  4 ---
->  4 files changed, 9 insertions(+), 103 deletions(-)
->
-> --
-> 2.43.5
+commit 5860d9fb5622ecd79913ac981403c612f6c8a2d8
+Author: Colin Ian King <colin.i.king@gmail.com>
+Date:   Sat Sep 25 23:41:13 2021 +0100
+
+    scsi: lpfc: Return NULL rather than a plain 0 integer
+
+    Function lpfc_sli4_perform_vport_cvl() returns a pointer to struct
+    lpfc_nodelist so returning a plain 0 integer isn't good practice.  Fix =
+this
+    by returning a NULL instead.
+
+    Link: https://lore.kernel.org/r/20210925224113.183040-1-colin.king@cano=
+nical.com
+    Signed-off-by: Colin Ian King <colin.king@canonical.com>
+    Signed-off-by: Martin K. Petersen martin.petersen@oracle.com
+
+
+And, the routine called lpfc_enable_node doesn=E2=80=99t exist anymore.
+
+Regards,
+Justin Tee
 
