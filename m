@@ -1,170 +1,108 @@
-Return-Path: <linux-kernel+bounces-283453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CE494F523
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:45:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F25294F527
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:45:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745BE1C20DF7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:45:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60BF41C20EBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4078B187561;
-	Mon, 12 Aug 2024 16:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E061818754E;
+	Mon, 12 Aug 2024 16:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lGn2GEoG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8+ASycA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB8F183CCC;
-	Mon, 12 Aug 2024 16:44:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281B44317C;
+	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481096; cv=none; b=iwivcKSaJiy5n/11d/EBZTI0D9gglP6xv43qdQXQ4ktOiwyG6jt31FzVPxvYethQuWON8NAGHXrOBCpE5GqhRhEtDC01g9MiOgMxSnj+a3KganayPYg0S6Kny6nMv2MEciaaCvVRDV+dkA9N4JyHSBK5GD/ItrJi6QRuzdXmQf0=
+	t=1723481137; cv=none; b=P3TNBal3gvfvuiIAAH1QQWyKmZWxgvdmV9FWlzFYlaiCMJv3iy7rlIU4Wmy1VxEyr3KotnlD+SEtYo+VCr1Ms0+dmqmHm7BRN2G7Ut640oxfVDbvAfcSXgnhLv4XB/sl6d9GCA1F8AokphAJz2W7dPSH0jlMKx1BdXnO1m/lPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481096; c=relaxed/simple;
-	bh=2KKDirWRCLyFGNIflIjMwFeB3i+VBV6GbkGbJa2X+XU=;
+	s=arc-20240116; t=1723481137; c=relaxed/simple;
+	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pVpkWNtO3oJMqZtkHdHlkTQf6MzE6AhmWnoGuF+KdDmzb0WaWHyuzXsceAGoiWzDhyQmcrileYXFkTImyshAb3T4Dxq/TZU6otq0foqlWzKsKvRCpZtS3wBOY5ZLbzwiwL/3YRa0nXjdwYLeVZtKzpIOtG3YqSHT3M+P0G5c4hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lGn2GEoG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2668C32782;
-	Mon, 12 Aug 2024 16:44:52 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=aVeWpUFdl0vjvMAmNtgil+dHtQZGwNYraMApLKQksyqC+qZ81JepnhYaSUJ4uRtMc9o3nDe2U/Ipv5CDkq2P5ImWWaNvFDag2n5Lp3S+1khTCOp8LeIoE10JhFWiw5aCtkMhiHu0tut1OJ5OC1IhYF74uDnng0fubv0S2IgE0Os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8+ASycA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CAFCC32782;
+	Mon, 12 Aug 2024 16:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723481096;
-	bh=2KKDirWRCLyFGNIflIjMwFeB3i+VBV6GbkGbJa2X+XU=;
+	s=k20201202; t=1723481136;
+	bh=fKYlJwy9loPmywPAiGijdAnHNQS3azjgKPmKvKK6vnc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lGn2GEoG5+mMZA6QMhnL2IR7dBH0NUBSZi3bg+1jeuINBMa6I86ttRzuUWko8B+Ll
-	 mIBTWIBpP1GxeiRHtRa8MqbcdmJQJrJD5Y1CCfYNl5sS/6Q4EZy2lHrzjUZDbSTyhz
-	 arzrSO/R0NDL2spChAAeh9tgWu2C9E5sgzkCgKBLrBESuJ4CZ0MMKvP8pqvVpuezYV
-	 pfxrNcR45pOCKjpHlRxEIfURxNTEpKsAYNIFMgtf8RS9sGndg4q01D+j3Qex/8B2zY
-	 j7Poiq8lGTJ4kAMQmB6WAq7glpxS4JErniRdU5pGrb6CqLcT7XoFuMmm1M0YWa2fSP
-	 iAXbQTOf1PZqw==
-Date: Mon, 12 Aug 2024 17:44:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	"open list:ETHERNET PHY LIBRARY" <netdev@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: net: mdio: Add negative patten match
- for child node
-Message-ID: <20240812-unmoving-viscosity-5f03dfd87f1f@spud>
-References: <20240812031114.3798487-1-Frank.Li@nxp.com>
+	b=E8+ASycALNsiF2BhYXKB6kjgfZ3w0ym6uo6Unsy4YGHsIajhych9ZRoTk1MZxYCGs
+	 KaYpm3tzTLyPQVsdDMmUcVKeRBHZoGLqJg+jvMB7kibTsxk3gVxEGnbgxnMGUxesJh
+	 eZd5izfSA/m2+rMXJRv7e4dTdHJNSotDSznNNEKHuBGf3+78712MqwWNgsQSUrR1o5
+	 7yiiRl774k/FQORrZBQRbivYa/cGuBXLzhYXmPisIKXJOL5yms7YEtl1DzrX/k9CvK
+	 4uH0tPBrWU8YxfjzOryWq6euyTe4uG38sKiSXse1x+C5UOdE5AZxLv/hNjOYstzHKf
+	 iMUq/1ng0tZrQ==
+Date: Mon, 12 Aug 2024 09:45:36 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
+	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
+Message-ID: <20240812164536.GE6043@frogsfrogsfrogs>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="kH+ai/ND89N9wHWS"
-Content-Disposition: inline
-In-Reply-To: <20240812031114.3798487-1-Frank.Li@nxp.com>
-
-
---kH+ai/ND89N9wHWS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
 
-On Sun, Aug 11, 2024 at 11:11:14PM -0400, Frank Li wrote:
-> mdio.yaml wrong parser mdio controller's address instead phy's address wh=
-en
-> mdio-mux exist.
->=20
-> For example:
-> mdio-mux-emi1@54 {
-> 	compatible =3D "mdio-mux-mmioreg", "mdio-mux";
->=20
->         mdio@20 {
-> 		reg =3D <0x20>;
-> 		       ^^^ This is mdio controller register
->=20
-> 		ethernet-phy@2 {
-> 			reg =3D <0x2>;
->                               ^^^ This phy's address
-> 		};
-> 	};
-> };
-
-I don't understand MDIO well enough to know the answer - does this
-actually solve the problem? It seems to me that the problem is that
-mdio.yaml is applied to the mdio-mux node because it matches the pattern
-"^mdio(@.*)?" that applies the binding based on node-names. If the
-properties in mdio.yaml do not apply to mdio muxes, then the binding
-should not be applied and the patch here is only treating a symptom
-rather than the actual problem.
-
-=46rom a quick check, I don't see any of the mdio-mux-mmioreg nodes using
-the properties from mdio.yaml, so should the binding be applied to them
-at all?
-
-Cheers,
-Conor.
-
-
-FWIW, adding a $ after the ? in the pattern I linked would stop the
-binding being applied to the mdio-mux nodes, but if something like that
-were done, all mdio nodes would need to be checked to ensure they match
-the new pattern...
-
-
->=20
-> Only phy's address is limited to 31 because MDIO bus defination.
->=20
-> But CHECK_DTBS report below warning:
->=20
-> arch/arm64/boot/dts/freescale/fsl-ls1043a-qds.dtb: mdio-mux-emi1@54:
-> 	mdio@20:reg:0:0: 32 is greater than the maximum of 31
->=20
-> The reason is that "mdio@20" match "patternProperties: '@[0-9a-f]+$'" in
-> mdio.yaml.
->=20
-> Change to '^(?!mdio@).*@[0-9a-f]+$' to avoid match parent's mdio
-> controller's address.
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
+> 
+> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
+> folio by folio_mark_dirty() even the map length is shorter than one
+> folio. However, on the filesystem with more than one blocks per folio,
+> we'd better to only set counterpart block's dirty bit according to
+> iomap_length(), so open code folio_mark_dirty() and pass the correct
+> length.
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
->  Documentation/devicetree/bindings/net/mdio.yaml | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/mdio.yaml b/Documentat=
-ion/devicetree/bindings/net/mdio.yaml
-> index a266ade918ca7..a7def3eb4674d 100644
-> --- a/Documentation/devicetree/bindings/net/mdio.yaml
-> +++ b/Documentation/devicetree/bindings/net/mdio.yaml
-> @@ -59,7 +59,7 @@ properties:
->      type: boolean
-> =20
->  patternProperties:
-> -  '@[0-9a-f]+$':
-> +  '^(?!mdio@).*@[0-9a-f]+$':
->      type: object
-> =20
->      properties:
-> --=20
-> 2.34.1
->=20
+>  fs/iomap/buffered-io.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 79031b7517e5..ac762de9a27f 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1492,7 +1492,10 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
+>  		block_commit_write(&folio->page, 0, length);
+>  	} else {
+>  		WARN_ON_ONCE(!folio_test_uptodate(folio));
+> -		folio_mark_dirty(folio);
+> +
+> +		ifs_alloc(iter->inode, folio, 0);
+> +		iomap_set_range_dirty(folio, 0, length);
+> +		filemap_dirty_folio(iter->inode->i_mapping, folio);
 
---kH+ai/ND89N9wHWS
-Content-Type: application/pgp-signature; name="signature.asc"
+Is it correct to be doing a lot more work by changing folio_mark_dirty
+to filemap_dirty_folio?  Now pagefaults call __mark_inode_dirty which
+they did not before.  Also, the folio itself must be marked dirty if any
+of the ifs bitmap is marked dirty, so I don't understand the change
+here.
 
------BEGIN PGP SIGNATURE-----
+--D
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZro8AgAKCRB4tDGHoIJi
-0mPgAP901yLmgljlIK02ytzDSbo3W7Tr4fIWkLT+81cA1NMr3QD+KIz3cHhvDZ3I
-JllrKy8z3fObL8klZ02PBpDvChhibQI=
-=nO2U
------END PGP SIGNATURE-----
-
---kH+ai/ND89N9wHWS--
+>  	}
+>  
+>  	return length;
+> -- 
+> 2.39.2
+> 
+> 
 
