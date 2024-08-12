@@ -1,146 +1,156 @@
-Return-Path: <linux-kernel+bounces-283511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623D294F5D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:30:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDF994F5D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:30:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156E01F22002
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:30:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A02E1F21EC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA01B189507;
-	Mon, 12 Aug 2024 17:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7637D1891B9;
+	Mon, 12 Aug 2024 17:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZE6loB4V"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dj4B7ErO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2806F1891AB;
-	Mon, 12 Aug 2024 17:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA14A1804F;
+	Mon, 12 Aug 2024 17:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723483809; cv=none; b=QRubxwgWTSz21nBKgf7b0sK8hqYqwzC2lWjClqaonqodzZgaaMwGnQJDpPdDb+J4Inel6SZl/F6Wamh+ByLVAjkOOaUuefXLkHfu8Mf5dprEiKgyCQJogzNY8Hc+Jz6BW8mzfEgJ3B7ktjdCNDD0Sl5JbLGaHk81u0pgEmgW1Tc=
+	t=1723483793; cv=none; b=hm+kjNVcpPLY3MJr4uwQWQnOhL9qxzsUwe3HgwJyV8KA4O8As1Ic0dvO3S6F1P/60ispZ/sn9ZrRENufly3vWh6MN/N4FRr2pjbqNksZlsK4VAjGFUuQb+Wq5FS/VJlKQor0SwfFzzIgcPUwY0TKpaqTQ00YbEBK5RSWsyLT+hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723483809; c=relaxed/simple;
-	bh=Dj8PYH9oW7aGY1KsFlL/zhO2sek/0nRBJ/6Rbz/3Jgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZoNRjVHvg25bMktv1aMU3HZdaUsOV/g9wlLB2AKayn9lgAqeqpti6+644JuWd3clVFNpFQea/2GMH9yXGFgURxC+0oHjqHolZDeLOPGgM2PoNLhwTH34MIr1TVEztH6WHj93BTyRtRAHnShqFi4qJfEnXJzjvTTBZR9oG5rOBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZE6loB4V; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723483808; x=1755019808;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Dj8PYH9oW7aGY1KsFlL/zhO2sek/0nRBJ/6Rbz/3Jgk=;
-  b=ZE6loB4VxlM3nVmC7eM/p0OwZuPGgk1IoCrzS2m/msjFeZrUFre4HrRM
-   YQxLfrSOzasirGd4zu24IH9OxltjlHomNQLHIEP7lEPQbl7156HSyks9+
-   fc8TaYmOkCOYB2JNwOJzp/KQYCtaLVGVadPhZ04KEZVwy+bHJ/yclM/mj
-   sWVO605W1CgDbkVfq/PX4G2bat/i/SfxAsrA/yuFdVj9SMJOuzWNcMn2+
-   qldd5bAL/np4nbDiyQe9yVAu1zMWh3ChNVaP7BDq1YIp04Fp2zOGX4OTs
-   SeOw2gWP/sp/Jqn+DgINU6/OKiEsV6zpbLeLH1lBFzdKUyUudKMFg3Qdk
-   Q==;
-X-CSE-ConnectionGUID: kPHuG11vR5OahATFyTc/jA==
-X-CSE-MsgGUID: dkzULwGXTx+M9MHCzGte6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39123945"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="39123945"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:30:07 -0700
-X-CSE-ConnectionGUID: wb8C8qAhSEyNNp8BIl9PKQ==
-X-CSE-MsgGUID: haAF1XmMRz+SJZTrb56Wug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="62991831"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Aug 2024 10:30:01 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdYrm-000C14-0K;
-	Mon, 12 Aug 2024 17:29:58 +0000
-Date: Tue, 13 Aug 2024 01:29:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Kiwoong Kim <kwmad.kim@samsung.com>, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alim.akhtar@samsung.com,
-	avri.altman@wdc.com, bvanassche@acm.org, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, beanhuo@micron.com,
-	adrian.hunter@intel.com, h10.kim@samsung.com, hy50.seo@samsung.com,
-	sh425.lee@samsung.com, kwangwon.min@samsung.com,
-	junwoo80.lee@samsung.com, wkon.kim@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, Kiwoong Kim <kwmad.kim@samsung.com>
-Subject: Re: [PATCH v1] scsi: ufs: core: introduce override_cqe_ocs
-Message-ID: <202408122344.dvhCpFj0-lkp@intel.com>
-References: <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
+	s=arc-20240116; t=1723483793; c=relaxed/simple;
+	bh=ZMRNbjL+wxtlYnhgMC1O+M2KBcMWEJ4sd49/ahmx+Wc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OgminkO2rSRIzDSqgKe3JTM52gQSn4KRbTuKWeKS6ZfTQxT/3F0Qcmx2f9AACHZTi1tLacnHkYQJcNgzFH7PSByTnLJu8T04e03PM7wSWzQIbpa00EEulMOZMh0tD8TXHnLfSebhy+ZyBhBU8LMi3hKIODDk2twueC82A5mVpRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dj4B7ErO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A316C4AF0F;
+	Mon, 12 Aug 2024 17:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723483793;
+	bh=ZMRNbjL+wxtlYnhgMC1O+M2KBcMWEJ4sd49/ahmx+Wc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Dj4B7ErO/CP6ZLdD536O+BA6aLuIyPIfsgR1Gi5jpzdsrUNydzLsFM1hTgeTNNJDQ
+	 QhkS9M8zyYg9YiZZA3gNI4GQtVOQdrIIGv53+egr0WRYmqm0jK3UhbbIOud2X4o5u2
+	 /X99Uwy9XH1y/9SHCn0LBaisV/HvNIdg5uRGs5d/3DbD7RRstL5qUjXSKsvsPx6Gl3
+	 T31zoIJWA7Pf8Rur3ZbcEfns6XDaaQk3veMxfRESCy39mXz1ECygNh+nSig5ZkMBEu
+	 askEcqSawLJ9NcfNiHiWLMJ7SJbzNzffPUZIK2hVBQcGG4a1ixvAyCk3BZNpb3AOxL
+	 /hma3ZiwBmT+g==
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d5so36323491fa.3;
+        Mon, 12 Aug 2024 10:29:53 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW/jG1I1k2lR/5397JVXQUhEDtgGxgkmT7D5A8ktSZfBpawS1Vmg+wpehWPG+ZhVxGEqB59S2HP9N6aJ39i@vger.kernel.org, AJvYcCWS7cgNWC663AzZb9niWZ02RP5S8vvbCS0J6B5p8kNwVIl+BYCK+TF7E+w5bcr2aZMtVDwUpBicsty5@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqchwPam46D49rz7QNGm5sl0qDBlED7agGmU50baTTPVXlqguV
+	cD1vNpNv8zho2TY46vkcg2h2QHHwed8NCwOO5feD/iTepx4YZr3jouLeu2zXNUGlYJeEBFdIMiR
+	3UzinQrB1p+yEcic/6jNAWfKUrw==
+X-Google-Smtp-Source: AGHT+IE9wc5/vzAjDKeN2XhVueDGhex+PvvstDZfZq09zwIkHu1hg7cHE20vFxpTUw1TOpUPaqzN59nU/oMrltfDIoU=
+X-Received: by 2002:a2e:851:0:b0:2ef:307a:9988 with SMTP id
+ 38308e7fff4ca-2f2b7178816mr6174081fa.35.1723483791791; Mon, 12 Aug 2024
+ 10:29:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1723446114-153235-1-git-send-email-kwmad.kim@samsung.com>
+References: <20240808153120.3305203-1-Frank.Li@nxp.com> <20240808-frosted-voicing-883f4f728527@spud>
+ <ZrTphsdTZVsbiGo/@lizhi-Precision-Tower-5810> <20240808-linoleum-evasion-ad7111a2afc4@spud>
+ <ZrTvB/3GGIhEOItT@lizhi-Precision-Tower-5810> <20240809-freewill-compactor-4f441a4a60bb@spud>
+ <ZrZNzqDKUaOqzl7k@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZrZNzqDKUaOqzl7k@lizhi-Precision-Tower-5810>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 12 Aug 2024 11:29:38 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLzvEpXbTk0XjPuErz2nRaTXX1DP9WG8yshULcVv0bS-Q@mail.gmail.com>
+Message-ID: <CAL_JsqLzvEpXbTk0XjPuErz2nRaTXX1DP9WG8yshULcVv0bS-Q@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm64: dts: lx2160a: Change PCIe compatible string to fsl,ls2088a-pcie
+To: Frank Li <Frank.li@nxp.com>
+Cc: Conor Dooley <conor@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kiwoong,
+On Fri, Aug 9, 2024 at 11:11=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Fri, Aug 09, 2024 at 04:07:25PM +0100, Conor Dooley wrote:
+> > On Thu, Aug 08, 2024 at 12:15:03PM -0400, Frank Li wrote:
+> > > On Thu, Aug 08, 2024 at 04:55:14PM +0100, Conor Dooley wrote:
+> > > > On Thu, Aug 08, 2024 at 11:51:34AM -0400, Frank Li wrote:
+> > > > > On Thu, Aug 08, 2024 at 04:34:32PM +0100, Conor Dooley wrote:
+> > > > > > On Thu, Aug 08, 2024 at 11:31:20AM -0400, Frank Li wrote:
+> > > > > > > The mass production lx2160 rev2 use designware PCIe Controlle=
+r. Old Rev1
+> > > > > > > which use mobivel PCIe controller was not supported. Although=
+ uboot
+> > > > > > > fixup can change compatible string fsl,lx2160a-pcie to fsl,ls=
+2088a-pcie
+> > > > > > > since 2019, it is quite confused and should correctly reflect=
+ hardware
+> > > > > > > status in fsl-lx2160a.dtsi.
+> > > > > >
+> > > > > > This does not begin to explain why removing the soc-specific co=
+mpatible,
+> > > > > > and instead putting the compatible for another soc is the right=
+ fix.
+> > > > > > Come up with a new compatible for this device, that perhaps fal=
+ls back
+> > > > > > to the ls2088a, but this change doesn't seem right to me.
+> > > > >
+> > > > > It can't fallback to fsl,ls2088a-pcie if fsl,lx2160a-pcie exist, =
+which are
+> > > > > totally imcompatible between fsl,ls2088a-pcie and fsl,lx2160a-pci=
+e.
+> > > > >
+> > > > > Previous dtb can work just because uboot dynamtic change fsl,lx21=
+60a-pcie
+> > > > > to fsl,ls2088a-pcie when boot kernel.
+> > > > >
+> > > > > fsl,lx2160a-pcie should be removed because Rev1 have not mass pro=
+ductioned.
+> > > >
+> > > > Please re-read what I wrote. I said to come up with a new compatibl=
+e for
+> > > > this device, not fall back from the existing fsl,lx2160a-pcie to
+> > > > fsl,ls2088a-pcie.
+> > >
+> > > According to my understand, It needn't add new compatible string if n=
+othing
+> > > difference. for example, it use fsl,vf610-i2c for all i2c without add
+> > > new soc-specific fsl,lx2160-i2c.
+> >
+> > No, you should have soc-specific compatibles regardless. Just because
+> > you got away with it once, doesn't mean I'm not going to complain about
+> > it here!
+>
+> Rob:
+>         What's current policy for this? Not only for this one. If new SOC
+> appear such as iMX10 (maybe many derived chip i.MX101, i.MX102...), there
+> are bunch of IPs, Do we need add fsl,imx10* for everyone, which most part
+> is exactly the same as old one and bloat binding doc.
 
-kernel test robot noticed the following build errors:
+Yes, you do. Do you really know that something in the design hasn't
+changed? Have you compared the RTL between the versions? The only way
+to deal with quirks without changing the DT everytime is by having
+specific compatibles *upfront*.
 
-[auto build test ERROR on jejb-scsi/for-next]
-[also build test ERROR on mkp-scsi/for-next linus/master v6.11-rc3 next-20240812]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The "bloat" is never that much because the IP really always changes.
+QCom wanted to (and did) use IP version numbers for the same reasons.
+Guess what, the IP version number changed on almost every SoC.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Kiwoong-Kim/scsi-ufs-core-introduce-override_cqe_ocs/20240812-151156
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
-patch link:    https://lore.kernel.org/r/1723446114-153235-1-git-send-email-kwmad.kim%40samsung.com
-patch subject: [PATCH v1] scsi: ufs: core: introduce override_cqe_ocs
-config: arc-randconfig-002-20240812 (https://download.01.org/0day-ci/archive/20240812/202408122344.dvhCpFj0-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240812/202408122344.dvhCpFj0-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408122344.dvhCpFj0-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/ufs/core/ufshcd.c:31:
-   drivers/ufs/core/ufshcd-priv.h: In function 'ufshcd_vops_override_cqe_ocs':
->> drivers/ufs/core/ufshcd-priv.h:282:24: error: too few arguments to function 'hba->vops->override_cqe_ocs'
-     282 |                 return hba->vops->override_cqe_ocs(hba);
-         |                        ^~~
-   drivers/ufs/core/ufshcd.c: In function 'ufshcd_get_tr_ocs':
->> drivers/ufs/core/ufshcd.c:828:53: error: 'hba' undeclared (first use in this function)
-     828 |                 return ufshcd_vops_override_cqe_ocs(hba,
-         |                                                     ^~~
-   drivers/ufs/core/ufshcd.c:828:53: note: each undeclared identifier is reported only once for each function it appears in
---
-   In file included from drivers/ufs/core/ufs_bsg.c:14:
-   drivers/ufs/core/ufshcd-priv.h: In function 'ufshcd_vops_override_cqe_ocs':
->> drivers/ufs/core/ufshcd-priv.h:282:24: error: too few arguments to function 'hba->vops->override_cqe_ocs'
-     282 |                 return hba->vops->override_cqe_ocs(hba);
-         |                        ^~~
+The exceptions are really if different SoCs are just different
+packaging or fusing.
 
 
-vim +282 drivers/ufs/core/ufshcd-priv.h
+In this case, I'm inclined to say just match what u-boot creates, but
+please make that abundantly clear with a comment in the .dts file and
+explain the situation in the commit message. OTOH, just adding a new
+"fsl,lx2160a-dw-pcie" compatible with "fsl,ls2088a-pcie" fallback
+doesn't hurt, and we can just move on from creating a special case.
 
-   277	
-   278	static inline enum utp_ocs ufshcd_vops_override_cqe_ocs(struct ufs_hba *hba,
-   279								enum utp_ocs ocs)
-   280	{
-   281		if (hba->vops && hba->vops->override_cqe_ocs)
- > 282			return hba->vops->override_cqe_ocs(hba);
-   283	
-   284		return ocs;
-   285	}
-   286	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
