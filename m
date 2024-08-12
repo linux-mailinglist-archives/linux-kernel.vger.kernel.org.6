@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-282496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0EA94E4B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:21:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAEFA94E4BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96234280EF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:21:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36308B21461
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774F174040;
-	Mon, 12 Aug 2024 02:21:22 +0000 (UTC)
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB4813632B;
+	Mon, 12 Aug 2024 02:21:24 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4F5F9F5;
-	Mon, 12 Aug 2024 02:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE3E6F06B;
+	Mon, 12 Aug 2024 02:21:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723429282; cv=none; b=upLnRpVZuFwGidwafasaSpqC7Kd984fLAn5T6jSxH1rO5KwcPH42IjFn4+OCZckMnXkg+WDpMXPAOTKK2kAD/goVmdyqhBS1JAQAQfKD3iSz+TK0I8fDLUGkkWeHdjniACPnI7YP1h9KO98HxNvebPM1pWlsx3GWKIX5BK7SD/8=
+	t=1723429284; cv=none; b=PH54wPizBWpXbgMSzNdu6AIQ+u6Enk6CzloPTcYOJutbHsczIr5XStxl+kdDt+YG/Bjrmz8hSgberplCpOZxXLAyY7IzJGsese57T3seEXl5ik/1O9ud15VM9/Eo5Tcjmppu6Ppt6tfFp2XjioJV8DdSX1rrevNAw7eDiK5BMCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723429282; c=relaxed/simple;
-	bh=BdlZO5l8sbl7H0gKrxwN/dhF+Q5IRWfupxidwr/qYxs=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=b6VKf72fxJXe8c8S7CBTI3yfrPS9j8Yx/SI4T//Ot1RXs18t+Ym5AU67WubIyHL4+R9gWAGCoZZnTfN8s96eGYU3LVMPV78NflQ06cHEc5Oz9Bt+ZumUzGF9zwchkcGSRhqnpdD5rOF39+4iMk0nPC9zM5cLeh3Ge7bHeexhZnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+	s=arc-20240116; t=1723429284; c=relaxed/simple;
+	bh=FD+kpNuvs0DJ52QaBiBfDos+fKOwCJAWGQLbcUPtY4c=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=TbU/iyN4VS1fBFnkq12aJbblFH9gGCyIswbERNioOoxYHfxGw/B73ry7XvlLaRjohMsCPR4xSUiA4QE47ztuZ71/9KisnjeZ6n2Osqnwj3LMQ5JCIVvdl5Es3y2vz4wr/gnux/Lk9G/x2TtShpL9kWJBJAu/AN5Kh5KPWn/Y8Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 63324200FDD;
-	Mon, 12 Aug 2024 04:21:13 +0200 (CEST)
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CF4B61A0FBE;
+	Mon, 12 Aug 2024 04:21:14 +0200 (CEST)
 Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 295FA200FCA;
-	Mon, 12 Aug 2024 04:21:13 +0200 (CEST)
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 976A01A0FB1;
+	Mon, 12 Aug 2024 04:21:14 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 377FA183ACAC;
-	Mon, 12 Aug 2024 10:21:11 +0800 (+08)
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id A98E9183AD45;
+	Mon, 12 Aug 2024 10:21:12 +0800 (+08)
 From: Richard Zhu <hongxing.zhu@nxp.com>
 To: tj@kernel.org,
 	dlemoal@kernel.org,
@@ -51,11 +51,14 @@ Cc: linux-ide@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	imx@lists.linux.dev,
-	kernel@pengutronix.de
-Subject: [PATCH v6 0/5] Refine i.MX8QM SATA based on generic PHY callbacks
-Date: Mon, 12 Aug 2024 10:00:50 +0800
-Message-Id: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
+	kernel@pengutronix.de,
+	Richard Zhu <hongxing.zhu@nxp.com>
+Subject: [PATCH v6 1/5] dt-bindings: ata: Add i.MX8QM AHCI compatible string
+Date: Mon, 12 Aug 2024 10:00:51 +0800
+Message-Id: <1723428055-27021-2-git-send-email-hongxing.zhu@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
+References: <1723428055-27021-1-git-send-email-hongxing.zhu@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,42 +66,106 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-V6 main changes:
-- Add Frank's reviewed tag.
-- Drop 32bit DMA limit commit, since the "dma-ranges" of DT can overcome
-  this limitation.
-- Correct the email-lists, incorrect used in v5.
+Add i.MX8QM AHCI "fsl,imx8qm-ahci" compatible strings.
 
-V5 main changes:
-Thanks for Niklas' kind help.
-- Drop 32bit DMA limit commit, since the "dma-ranges" of DT can overcome
-  this limitation.
+i.MX8QM AHCI SATA doesn't require AHB clock rate to set the vendor
+specified TIMER1MS register. ahb clock is not required by i.MX8QM AHCI.
 
-V4 main changes:
-Thanks for Niklas' comments.
-- Update the commit message in #2 patch of v4.
-- Split the clean up unrelated codes to #3 and #4 of v4.
-- Remove the Cc: stable@vger.kernel.org and Fixes tag in #5 of v4.
+Update the description of clocks in the dt-binding accordingly.
 
-V3 main changes:
-- Use GENMASK() macro to define the _MASK.
-- Refine the macro names.
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../devicetree/bindings/ata/imx-sata.yaml     | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-V2 main changes:
-- Add Rob's reviewed-by in the binding patch.
-- Re-name the error out lables and new RXWM macro more descriptive.
-- In #3 patch, add one fix tag, and CC stable kernel.
+diff --git a/Documentation/devicetree/bindings/ata/imx-sata.yaml b/Documentation/devicetree/bindings/ata/imx-sata.yaml
+index 68ffb97ddc9b2..f4eb3550a0960 100644
+--- a/Documentation/devicetree/bindings/ata/imx-sata.yaml
++++ b/Documentation/devicetree/bindings/ata/imx-sata.yaml
+@@ -19,6 +19,7 @@ properties:
+       - fsl,imx53-ahci
+       - fsl,imx6q-ahci
+       - fsl,imx6qp-ahci
++      - fsl,imx8qm-ahci
+ 
+   reg:
+     maxItems: 1
+@@ -27,12 +28,14 @@ properties:
+     maxItems: 1
+ 
+   clocks:
++    minItems: 2
+     items:
+       - description: sata clock
+       - description: sata reference clock
+       - description: ahb clock
+ 
+   clock-names:
++    minItems: 2
+     items:
+       - const: sata
+       - const: sata_ref
+@@ -58,6 +61,25 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/flag
+     description: if present, disable spread-spectrum clocking on the SATA link.
+ 
++  phys:
++    items:
++      - description: phandle to SATA PHY.
++          Since "REXT" pin is only present for first lane of i.MX8QM PHY, it's
++          calibration result will be stored, passed through second lane, and
++          shared with all three lanes PHY. The first two lanes PHY are used as
++          calibration PHYs, although only the third lane PHY is used by SATA.
++      - description: phandle to the first lane PHY of i.MX8QM.
++      - description: phandle to the second lane PHY of i.MX8QM.
++
++  phy-names:
++    items:
++      - const: sata-phy
++      - const: cali-phy0
++      - const: cali-phy1
++
++  power-domains:
++    maxItems: 1
++
+ required:
+   - compatible
+   - reg
+@@ -65,6 +87,31 @@ required:
+   - clocks
+   - clock-names
+ 
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - fsl,imx53-ahci
++              - fsl,imx6q-ahci
++              - fsl,imx6qp-ahci
++    then:
++      properties:
++        clock-names:
++          minItems: 3
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - fsl,imx8qm-ahci
++    then:
++      properties:
++        clock-names:
++          minItems: 2
++
+ additionalProperties: false
+ 
+ examples:
+-- 
+2.37.1
 
-Based on i.MX8QM HSIO PHY driver, refine i.MX8QM SATA driver by using PHY
-interface.
-
-[PATCH v6 1/5] dt-bindings: ata: Add i.MX8QM AHCI compatible string
-[PATCH v6 2/5] ata: ahci_imx: Clean up code by using i.MX8Q HSIO PHY
-[PATCH v6 3/5] ata: ahci_imx: AHB clock rate setting is not required
-[PATCH v6 4/5] ata: ahci_imx: Enlarge RX water mark for i.MX8QM SATA
-[PATCH v6 5/5] ata: ahci_imx: Correct the email address
-
-Documentation/devicetree/bindings/ata/imx-sata.yaml |  47 +++++++++++
-drivers/ata/ahci_imx.c                              | 403 +++++++++++++++++++++++------------------------------------------------------------------
-2 files changed, 152 insertions(+), 298 deletions(-)
 
