@@ -1,214 +1,113 @@
-Return-Path: <linux-kernel+bounces-283370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3816194F19B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 210BC94F1A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:27:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F0A1C22133
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D198C283217
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF5318454E;
-	Mon, 12 Aug 2024 15:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D4D18453F;
+	Mon, 12 Aug 2024 15:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NAx0TMae"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i+j0HDcj"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5390C130AC8;
-	Mon, 12 Aug 2024 15:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623E8130AC8;
+	Mon, 12 Aug 2024 15:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723476388; cv=none; b=DXfRu8BrfWThBSNPMd20B338gUGcVFJ7eGSszcQIpIa7QAXCD2rX8VqTq0wVh/B99s3+kfPvOAvCD3lYUsEEINcfbSpk2PRM2Ggoq4pmMu6GCC6NZEG1faLEJKzd4VH/CnNYWJI5N75bXu/bVPXe9Bp1CdmXz+O4Ix5IqPJdtDk=
+	t=1723476442; cv=none; b=mmzKAkqPdoTCFNTQyOP53k1LruheQ1Njk8nwxYwDEBFV8LeWga7OV7wOuVtrOpKSSSL51nx3V0e9THuPe6ftKa8Nz4TPuBolS98afgO0hzsWsJd+roNsaArrEh5BrHmDJ1Ny+3zkb/cTz6i4N5wCbZRnEMixfSh1/AGVxTix/l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723476388; c=relaxed/simple;
-	bh=/5Q7hIRwnumtY9BP1FRcNsUSu1rhP1Gnj/W74MxICEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pWOHMpf6+nV8U95YbLQ6j10gl36h/Mb0hPf1qtSpOorEg7IukSDdnki8+6Py8i7TSd5I6LvgTu7+zRD3pzPPsYGG0/p6Aekh5mx9bCEscFjAldiZyN2z7aeTeC3DTzteqTNwc1UCVufWRhVG6v4Ya1xWl0UlGOD1i8ysxAqJSic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NAx0TMae; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723476386; x=1755012386;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/5Q7hIRwnumtY9BP1FRcNsUSu1rhP1Gnj/W74MxICEE=;
-  b=NAx0TMaeBaWPstmGEUwcuEZN1/j5szdwPMePfeljGHDmb38St7b5iU6L
-   sntkCsVJVMKxRfGg0cXrUHlw1X1IW6S+CNdjR3t4PvKpAP2iiytnpPckI
-   I42Je4pKEOTNGJkHo8Osi6UmnVt7nQIE5Vdz30ol6mWXPZrlmiHUmB19B
-   47I9d+ZjPehhVT5gIXwRjIsVij7crwG+eH4WGRPDh+esqwMad+ggZkeS3
-   AKNLL0WZT+0GotQX4gzAnCF8OldYVe6JEGM+5WKwDhMfiMI9Sc1upy/o7
-   gz+5IjIcEe3RjWcGfyyXB8tqskczghkT7TAPRhbV7JXc5B6hVYdxEg56c
-   w==;
-X-CSE-ConnectionGUID: 3NeN6YIQQmeEfvVJQs0SNw==
-X-CSE-MsgGUID: xcWlyVv+RFCNhbSnSv/6MQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21759964"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="21759964"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:26:26 -0700
-X-CSE-ConnectionGUID: aUrhFayOTZmCwUGFN8xRDw==
-X-CSE-MsgGUID: lETieQJJSFmuVa2DeduxzQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="58250576"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 12 Aug 2024 08:26:23 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdWw8-000Bw5-1S;
-	Mon, 12 Aug 2024 15:26:20 +0000
-Date: Mon, 12 Aug 2024 23:26:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Abhinav Jain <jain.abhinav177@gmail.com>, idryomov@gmail.com,
-	xiubli@redhat.com, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, ceph-devel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com,
-	Abhinav Jain <jain.abhinav177@gmail.com>
-Subject: Re: [PATCH net v2] libceph: Make the arguments const as per the TODO
-Message-ID: <202408121938.QL7KtnzW-lkp@intel.com>
-References: <20240811205509.1089027-1-jain.abhinav177@gmail.com>
+	s=arc-20240116; t=1723476442; c=relaxed/simple;
+	bh=SJOT4u2AOnoFTV6NcHUtZJgEsVCS7Ps8uAl3BZ5rzRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VMRirwtv9bLeJG8iEqw2LsJ1aJ+Qwu1N8FXiM3jeTbarZrzVccf0IL0LMQ4muWJ3PlGnpe8eNFnsUUDUGOzs8bNx0VkgoGILQ/YPb1aR3jiISoaciM+FLepKIZBztn3JEkz0cHKndpevh2id0GF97VObZgxqEFMTeCRVZdeuT0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i+j0HDcj; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso5323163a12.1;
+        Mon, 12 Aug 2024 08:27:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723476440; x=1724081240; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PbQh4JaQElNnZSJflbJl8EURMl30t+auDTJhns6YUQ0=;
+        b=i+j0HDcje/0Ugf/0u1gCeRhcisLELoJcTCiGt7ElPgWNjBE8Tz4ZYCXMYH2p03r53C
+         hZGqUs9nAzGU4H8JGDJ0aRuHysI8Qt3xqqRgeRF4gBu5jKqX3qAjaT9jkFz1QcIygOBO
+         O/cw47QXipNADqB81pvTDunbrISyEK5GhGv3u7uxXQAF9vrSke1JBWV6xWRUyZeBHG+A
+         aVzv7THI5Fws2UZwcjByH/kizJKOkKtVmDB00Jmhyq4vuKgL9Rn/Oc0+BK9qEn9j7E7z
+         jjGLjK2zWMZ9S4UrYsvSVJVIHoA4ju0fY4FYxDcQh020pKdhWkKaG9CO17653fn1H7DE
+         WjnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723476440; x=1724081240;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PbQh4JaQElNnZSJflbJl8EURMl30t+auDTJhns6YUQ0=;
+        b=wA2WGnf4Ptmtw7m4thsQvkVIWoqOETBsRonQRvrL4lTePaOb9Wo04crXFSLdRXU2i1
+         1hFY0Jp0kCbIyrsBc/ZjizaV31QZOx89LkrfAs92fvlGoxueV1z1yrg+mk/cqcAntrsj
+         0vlB725YSqryrujIS+QH+8F8EGE/rq3g6VTmZuc4KchPfQM7JiXq0cgYU/RxuHLdvv7u
+         JIhCELCc1zbjQYnElslw49SSrq9VCw/xpZ8ZgHRLw+XcInQCanZ+MBZRy3Ie6KcnugGa
+         zaxm84ZUg0Zkj0nR2V0/HT6G6gzQ/DeESCx6vqPKrPejwNM6TvFCymbNAECm8TKRqpah
+         uELg==
+X-Forwarded-Encrypted: i=1; AJvYcCVWhbVh92+23hNogZyp3M8RyEIZIBxzjeotOA5KlOYXm2A2Ti0WX/zrqGklqTIM+5s9phGUnq2VYFZiVMpt0zOSer4lPcurnR5CWelXQGuwA+8U9bi+RI0w1uScSEhBk2p77JCAoQ//6wE=
+X-Gm-Message-State: AOJu0YySiNk9H3OoZ2UOJH7PVvPkae21i/f8E+Y/4dsZgQvvrO3FMYWM
+	RG9xvb+a6vxUxpDBKVgM6r8E3xoHOn8gtguOJA4qVdpSSoLOA2QD
+X-Google-Smtp-Source: AGHT+IGTq/JhAuFfdEry9aYhhGTitZfc0b1DLfoiMUaC/HKUYquk1iU502prvA9tvKyVKql/7LeUEg==
+X-Received: by 2002:a17:907:f7a8:b0:a6f:d990:338c with SMTP id a640c23a62f3a-a80ed1efea2mr52466366b.20.1723476439263;
+        Mon, 12 Aug 2024 08:27:19 -0700 (PDT)
+Received: from localhost.localdomain ([46.211.27.200])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a80bb213171sm240568866b.145.2024.08.12.08.27.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 08:27:18 -0700 (PDT)
+From: Denis Pauk <pauk.denis@gmail.com>
+To: pauk.denis@gmail.com
+Cc: jdelvare@suse.com,
+	linux@roeck-us.net,
+	linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	attila@fulop.one
+Subject: [PATCH] hwmon: (nct6775) add G15CF to ASUS WMI monitoring list
+Date: Mon, 12 Aug 2024 18:26:38 +0300
+Message-ID: <20240812152652.1303-1-pauk.denis@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811205509.1089027-1-jain.abhinav177@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Abhinav,
+Boards G15CF has got a nct6775 chip, but by default there's no use of it
+because of resource conflict with WMI method.
 
-kernel test robot noticed the following build errors:
+This commit adds such board to the WMI monitoring list.
 
-[auto build test ERROR on net/main]
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=204807
+Signed-off-by: Denis Pauk <pauk.denis@gmail.com>
+Tested-by: Attila <attila@fulop.one>
+---
+ drivers/hwmon/nct6775-platform.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Abhinav-Jain/libceph-Make-the-arguments-const-as-per-the-TODO/20240812-045647
-base:   net/main
-patch link:    https://lore.kernel.org/r/20240811205509.1089027-1-jain.abhinav177%40gmail.com
-patch subject: [PATCH net v2] libceph: Make the arguments const as per the TODO
-config: i386-buildonly-randconfig-002-20240812 (https://download.01.org/0day-ci/archive/20240812/202408121938.QL7KtnzW-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240812/202408121938.QL7KtnzW-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408121938.QL7KtnzW-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> net/ceph/crypto.c:93:19: error: passing 'const void **' to parameter of type 'void **' discards qualifiers in nested pointer types [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      93 |         ceph_decode_need(p, end, 2*sizeof(u16) + sizeof(key->created), bad);
-         |                          ^
-   include/linux/ceph/decode.h:59:29: note: expanded from macro 'ceph_decode_need'
-      59 |                 if (!likely(ceph_has_room(p, end, n)))          \
-         |                                           ^
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   include/linux/ceph/decode.h:52:41: note: passing argument to parameter 'p' here
-      52 | static inline bool ceph_has_room(void **p, void *end, size_t n)
-         |                                         ^
->> net/ceph/crypto.c:93:22: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      93 |         ceph_decode_need(p, end, 2*sizeof(u16) + sizeof(key->created), bad);
-         |                             ^~~
-   include/linux/ceph/decode.h:59:32: note: expanded from macro 'ceph_decode_need'
-      59 |                 if (!likely(ceph_has_room(p, end, n)))          \
-         |                                              ^~~
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   include/linux/ceph/decode.h:52:50: note: passing argument to parameter 'end' here
-      52 | static inline bool ceph_has_room(void **p, void *end, size_t n)
-         |                                                  ^
-   net/ceph/crypto.c:94:29: error: passing 'const void **' to parameter of type 'void **' discards qualifiers in nested pointer types [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      94 |         key->type = ceph_decode_16(p);
-         |                                    ^
-   include/linux/ceph/decode.h:31:41: note: passing argument to parameter 'p' here
-      31 | static inline u16 ceph_decode_16(void **p)
-         |                                         ^
-   net/ceph/crypto.c:95:19: error: passing 'const void **' to parameter of type 'void **' discards qualifiers in nested pointer types [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      95 |         ceph_decode_copy(p, &key->created, sizeof(key->created));
-         |                          ^
-   include/linux/ceph/decode.h:43:44: note: passing argument to parameter 'p' here
-      43 | static inline void ceph_decode_copy(void **p, void *pv, size_t n)
-         |                                            ^
-   net/ceph/crypto.c:96:28: error: passing 'const void **' to parameter of type 'void **' discards qualifiers in nested pointer types [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      96 |         key->len = ceph_decode_16(p);
-         |                                   ^
-   include/linux/ceph/decode.h:31:41: note: passing argument to parameter 'p' here
-      31 | static inline u16 ceph_decode_16(void **p)
-         |                                         ^
-   net/ceph/crypto.c:97:19: error: passing 'const void **' to parameter of type 'void **' discards qualifiers in nested pointer types [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      97 |         ceph_decode_need(p, end, key->len, bad);
-         |                          ^
-   include/linux/ceph/decode.h:59:29: note: expanded from macro 'ceph_decode_need'
-      59 |                 if (!likely(ceph_has_room(p, end, n)))          \
-         |                                           ^
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   include/linux/ceph/decode.h:52:41: note: passing argument to parameter 'p' here
-      52 | static inline bool ceph_has_room(void **p, void *end, size_t n)
-         |                                         ^
-   net/ceph/crypto.c:97:22: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      97 |         ceph_decode_need(p, end, key->len, bad);
-         |                             ^~~
-   include/linux/ceph/decode.h:59:32: note: expanded from macro 'ceph_decode_need'
-      59 |                 if (!likely(ceph_has_room(p, end, n)))          \
-         |                                              ^~~
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   include/linux/ceph/decode.h:52:50: note: passing argument to parameter 'end' here
-      52 | static inline bool ceph_has_room(void **p, void *end, size_t n)
-         |                                                  ^
-   net/ceph/crypto.c:98:24: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      98 |         ret = set_secret(key, *p);
-         |                               ^~
-   net/ceph/crypto.c:23:58: note: passing argument to parameter 'buf' here
-      23 | static int set_secret(struct ceph_crypto_key *key, void *buf)
-         |                                                          ^
-   net/ceph/crypto.c:99:19: error: passing 'const void *' to parameter of type 'void *' discards qualifiers [-Werror,-Wincompatible-pointer-types-discards-qualifiers]
-      99 |         memzero_explicit(*p, key->len);
-         |                          ^~
-   include/linux/string.h:356:43: note: passing argument to parameter 's' here
-     356 | static inline void memzero_explicit(void *s, size_t count)
-         |                                           ^
-   9 errors generated.
-
-
-vim +93 net/ceph/crypto.c
-
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   88  
-19c7b44529ef1b net/ceph/crypto.c Abhinav Jain 2024-08-12   89  int ceph_crypto_key_decode(struct ceph_crypto_key *key, const void **p, const void *end)
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   90  {
-7af3ea189a9a13 net/ceph/crypto.c Ilya Dryomov 2016-12-02   91  	int ret;
-7af3ea189a9a13 net/ceph/crypto.c Ilya Dryomov 2016-12-02   92  
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  @93  	ceph_decode_need(p, end, 2*sizeof(u16) + sizeof(key->created), bad);
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   94  	key->type = ceph_decode_16(p);
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   95  	ceph_decode_copy(p, &key->created, sizeof(key->created));
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   96  	key->len = ceph_decode_16(p);
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02   97  	ceph_decode_need(p, end, key->len, bad);
-7af3ea189a9a13 net/ceph/crypto.c Ilya Dryomov 2016-12-02   98  	ret = set_secret(key, *p);
-10f42b3e648377 net/ceph/crypto.c Ilya Dryomov 2020-12-22   99  	memzero_explicit(*p, key->len);
-7af3ea189a9a13 net/ceph/crypto.c Ilya Dryomov 2016-12-02  100  	*p += key->len;
-7af3ea189a9a13 net/ceph/crypto.c Ilya Dryomov 2016-12-02  101  	return ret;
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  102  
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  103  bad:
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  104  	dout("failed to decode crypto key\n");
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  105  	return -EINVAL;
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  106  }
-8b6e4f2d8b21c2 fs/ceph/crypto.c  Sage Weil    2010-02-02  107  
-
+diff --git a/drivers/hwmon/nct6775-platform.c b/drivers/hwmon/nct6775-platform.c
+index 9aa4dcf4a6f3..096f1daa8f2b 100644
+--- a/drivers/hwmon/nct6775-platform.c
++++ b/drivers/hwmon/nct6775-platform.c
+@@ -1269,6 +1269,7 @@ static const char * const asus_msi_boards[] = {
+ 	"EX-B760M-V5 D4",
+ 	"EX-H510M-V3",
+ 	"EX-H610M-V3 D4",
++	"G15CF",
+ 	"PRIME A620M-A",
+ 	"PRIME B560-PLUS",
+ 	"PRIME B560-PLUS AC-HES",
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
