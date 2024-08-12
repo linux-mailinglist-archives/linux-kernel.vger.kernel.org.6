@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-283429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594A194F2BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:10:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3521094F2E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18270281C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A697A1F210B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:12:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8D718785C;
-	Mon, 12 Aug 2024 16:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47234187FFD;
+	Mon, 12 Aug 2024 16:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nvOSN8IN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YiOYfU1I"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0E2184551;
-	Mon, 12 Aug 2024 16:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3E4186E47;
+	Mon, 12 Aug 2024 16:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723478980; cv=none; b=dYVzPkOE9h+KJqN4daCHLIkRmJXDEH9pO6KukCEMKT7lM55ep9K7iQLmIntrEJpK2v/Z+xKg+oqVVkWUfCfMcSMYE2WD+8Rgx35+DIelkUkqUPAylvcj8cDDM2IU4TzuDUbi0xbyhRLexdxbtdw3EW3KmOvtORQOhgsoSw7f2ac=
+	t=1723479080; cv=none; b=Tu6eIa+1UWv/UAP+axYRUM4m6dhomPnYHgOiQ1LxZczeTJTMWqIfxuOW7RGbnhIz9t+p4+J9ugW0AqljEfm4XoFweQzbrbWrDZC0aj8W4J7evgTmjmFdNVQoQgw4d8zUVDdtBMEiJCTY+jCUDmZDi92vYv44+QtRq8NQhjG/PBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723478980; c=relaxed/simple;
-	bh=XEQFdZn0JcBv7lziDHtuupzEEgUzEa0OPsdy8jUBTSM=;
+	s=arc-20240116; t=1723479080; c=relaxed/simple;
+	bh=4LGlDYfh9hnYMFH9HallVbetIIWElNY/SAddpwGbcKE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MVJ+tR60bTI3HNeCJbFoaYb6eimO1Er2g+embY8acO5n4iEcZYqyuZWcyG1eBUCdutgy/VQ9aFdlMu3yi2hDSuHmMqEzZMShjFAzrAuRgjfUuWubR0W4U8IBTKPVM3XCSZ09RJin3MflPmaxT8QfvS3uZLdTTsd4MZDX3enRHrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nvOSN8IN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54AC1C4AF09;
-	Mon, 12 Aug 2024 16:09:39 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYR1klyy74eGu4gvGGm3jXyQkYsCrPhy+5IDfVAdIebX1xqvR7dPqbFlGdzv3poz99WDrNc8MOVu8cpJgUszwe8IvPIzMfN6qqYEqsDq1GPFwK2p/wiEVggZQXgT5Aw5gHag9PAlMAECLipx6cimoDenaSGOZGJhiXzJQTqqvGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YiOYfU1I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 004B2C32782;
+	Mon, 12 Aug 2024 16:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723478979;
-	bh=XEQFdZn0JcBv7lziDHtuupzEEgUzEa0OPsdy8jUBTSM=;
+	s=k20201202; t=1723479080;
+	bh=4LGlDYfh9hnYMFH9HallVbetIIWElNY/SAddpwGbcKE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nvOSN8INE8dDYhypKFxDz1CqaVB2ZiqdiXe6+qpZijdlzK78wRUyShZhbrAdN88pJ
-	 DM8A4aTStnQFIq8GSeGb//g5SStVZ2vdVCRVcjB4+dkoWyODi7SWYh0evb6/fSxEFs
-	 KpCrh2LUuqrrw0+mmaoLMjqssIsLCm/xD9bppgU9DHmPeZC3gRLnuLGcbWqKgQ387V
-	 Emq9Bzqae+wlNktq/PQlT7bwaL1QDnAf2j6H2QhZWF4eKQDQ69ymJh4GPUl4ty6bBd
-	 8qsqHa7ccoAZOQEBvSct/zpZcyZwOOxlmE3+ETgwznLkOeU0birpdOnn6btBlH8k6+
-	 8lOS8puX+WiXg==
-Date: Mon, 12 Aug 2024 13:09:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] perf lock contention: Change stack_id type to s32
-Message-ID: <ZrozwIQcB_viRsKt@x1>
-References: <909abbc8-efca-40df-9876-8c36b6942a83@stanley.mountain>
- <20240810191704.1948365-1-namhyung@kernel.org>
+	b=YiOYfU1Ij/i1jdXyGc8m98/EA7WtwNA41DwzsHqDSmtiyyPFtOzgwusn/AaHBqVmc
+	 8MLwIv5/W9AnfLXql3jEa5B0C2CIcmS12uUwsXjbX+9R4rS7v/rSJyvmHgSnLhwLXt
+	 tB0lGpaETVDV2vYQDbzIhRJksBIL4klb1d6EgAvh7ZXFU0PDxGvtwyHKB2NBLC+N+C
+	 HV7yoKzZPj/aVYBHdejEG+YayVBKOmT9lKioYyWHfqQ+Vts4gl0PVXSM15ii/5opJQ
+	 xX04n6Bu6aFCof+MOrkTBS1peejbyaSfRce56Q0Jx0xL7A1eQKaX+a/x6o+WUPrcZh
+	 gCOlGR5gTEsbA==
+Date: Mon, 12 Aug 2024 17:11:14 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: lee@kernel.org, jdelvare@suse.com, linux@roeck-us.net,
+	dmitry.torokhov@gmail.com, pavel@ucw.cz, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, ukleinek@debian.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-hwmon@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v4 1/7] dt-bindings: mfd: add binding for qnap,ts433-mcu
+ devices
+Message-ID: <20240812-unlisted-cussed-ffa50b07a82d@spud>
+References: <20240810184743.277248-1-heiko@sntech.de>
+ <20240810184743.277248-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="cHN7OHm8jMQ3S5kz"
+Content-Disposition: inline
+In-Reply-To: <20240810184743.277248-2-heiko@sntech.de>
+
+
+--cHN7OHm8jMQ3S5kz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240810191704.1948365-1-namhyung@kernel.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 10, 2024 at 12:17:04PM -0700, Namhyung Kim wrote:
-> The bpf_get_stackid() helper returns a signed type to check whether it
-> failed to get a stacktrace or not.  But it saved the result in u32 and
-> checked if the value is negative.
-> 
->       376         if (needs_callstack) {
->       377                 pelem->stack_id = bpf_get_stackid(ctx, &stacks,
->       378                                                   BPF_F_FAST_STACK_CMP | stack_skip);
->   --> 379                 if (pelem->stack_id < 0)
-> 
->   ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_begin()
->   warn: unsigned 'pelem->stack_id' is never less than zero.
-> 
-> Let's change the type to s32 instead.
-> 
-> Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for BPF")
+On Sat, Aug 10, 2024 at 08:47:37PM +0200, Heiko Stuebner wrote:
+> These MCUs can be found in network attached storage devices made by QNAP.
+> They are connected to a serial port of the host device and provide
+> functionality like LEDs, power-control and temperature monitoring.
+>=20
+> LEDs, buttons, etc are all elements of the MCU firmware itself, so don't
+> need devicetree input, though the fan gets its cooling settings from
+> a fan-0 subnode.
+>=20
+> A binding for the LEDs for setting the linux-default-trigger may come
+> later, once all the LEDs are understood and ATA controllers actually
+> can address individual port-LEDs, but are really optional.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks, applied to perf-tools-next,
+--cHN7OHm8jMQ3S5kz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-- Arnaldo
+-----BEGIN PGP SIGNATURE-----
 
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/util/bpf_skel/lock_data.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util/bpf_skel/lock_data.h
-> index 36af11faad03..de12892f992f 100644
-> --- a/tools/perf/util/bpf_skel/lock_data.h
-> +++ b/tools/perf/util/bpf_skel/lock_data.h
-> @@ -7,11 +7,11 @@ struct tstamp_data {
->  	u64 timestamp;
->  	u64 lock;
->  	u32 flags;
-> -	u32 stack_id;
-> +	s32 stack_id;
->  };
->  
->  struct contention_key {
-> -	u32 stack_id;
-> +	s32 stack_id;
->  	u32 pid;
->  	u64 lock_addr_or_cgroup;
->  };
-> -- 
-> 2.46.0.76.ge559c4bf1a-goog
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZro0IgAKCRB4tDGHoIJi
+0tg7AQCS2xWrPC2UUU1meYRX0JcteDszsR77WU6wV+xQhG4KEwEAlYF2R80DyuEq
+tvLDLFquMfbB3h6dMgWWxA51/UKOdQY=
+=E5pg
+-----END PGP SIGNATURE-----
+
+--cHN7OHm8jMQ3S5kz--
 
