@@ -1,109 +1,165 @@
-Return-Path: <linux-kernel+bounces-283497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C32F694F5A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8417694F5AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E9B228329E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CBE1F21F75
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DA7187FEE;
-	Mon, 12 Aug 2024 17:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C460E188007;
+	Mon, 12 Aug 2024 17:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ji8BeUJL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfesSTZw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7381C18784F
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09278187FE1
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482738; cv=none; b=eD8VvpOuqMGMfpZfW5MsWWY0Qn5QPpVYYQhGfETppTsqfqaZLiThZWag1U5dcY78HLWrm5Q6oPDBQGt39uNqaYD4rWuJiXXYQAwoYy/X2f3ZXy3D5Cqkt1jNmjeUhRrKJwzwbdky0UF89cuxpbsH+1mHzuzF9HUY9LyZGU66m6w=
+	t=1723482750; cv=none; b=fcQ8FMGNON4PV43w3HM0/6bD1ckJy8HEI4tJqN2hheRRaVj01gQ0UgWy7O6rm59IS5Hu1SV6AjWciYJW1vErKL87jOHcmEHo+WD+IAAKfNdnx8CCQXX2WCDuqp+OSstXH2ll08tu7Y7F9CFEk0ME/8z69pPx/aoF2Uq1v/2Wr8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482738; c=relaxed/simple;
-	bh=aL4DOc2Na+/OPEQw8CVeC4lC8QebtBc1CYlW3Jh60kE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sF3YxlgXsPGRFPsp4uD4AWV2fCcPT1PEHkUSbE5cpCoycGghYbbuiNWGi7pOVbN+WvTyT6Xlu+18DjG1gd1zeBB4LfmTmXIbgkZweUFwXkyRDcEZiEbWRjYR/YsedKmpuPpbKzgQTbH3IXyhrFhGJFRwCh9T1/7tyK7BrGEQzK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ji8BeUJL; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723482736; x=1755018736;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aL4DOc2Na+/OPEQw8CVeC4lC8QebtBc1CYlW3Jh60kE=;
-  b=Ji8BeUJLWFN2LVlQCD8aRYnsgqebe75RP1wN8j/Hgx3rTpyMO0Aj6Tv8
-   o7DfN2BtnryqR1Zqnmx3YwQ4DafWYgMpOsmZY1QDKJD9a+IeWLwJNTUb3
-   7r1moUadsFugbxhH56H3Rg1mWfH+vW+FSpN0VG9rJM6b8c47GPEVOuMGj
-   puLA883mTYkW6fGpQgnJZBbd1pvriIZnGujWHRXsGiYJsYKUmgfmU8AgA
-   4k664pS+ix0KXV5mjlTAPUq93AJ44+Np0PNRjTQnZ4GGiI+B9vH/XdpU4
-   uB1Z8V1MfBDyroMOBhXpI9NF96xWBvTT+EQ9hSbPvwmokgxd24gDtZL0n
-   g==;
-X-CSE-ConnectionGUID: AMtq6didRMmvAM2LaSBw6A==
-X-CSE-MsgGUID: pRbLxRLORievVBJZWL8U9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21772321"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="21772321"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:12:15 -0700
-X-CSE-ConnectionGUID: 4tHKUzgKQ4O7C28hz8LUuQ==
-X-CSE-MsgGUID: DU89H2vBR2i1FPoEZlh9Jg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="81584021"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 10:12:09 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdYaT-0000000EQMB-1R2S;
-	Mon, 12 Aug 2024 20:12:05 +0300
-Date: Mon, 12 Aug 2024 20:12:05 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Shenghao Ding <shenghao-ding@ti.com>
-Cc: broonie@kernel.org, lgirdwood@gmail.com, perex@perex.cz,
-	pierre-louis.bossart@linux.intel.com, 13916275206@139.com,
-	zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com,
-	linux-kernel@vger.kernel.org, j-chadha@ti.com,
-	liam.r.girdwood@intel.com, jaden-yue@ti.com,
-	yung-chuan.liao@linux.intel.com, dipa@ti.com, yuhsuan@google.com,
-	henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, soyer@irl.hu,
-	Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com,
-	cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com,
-	savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com,
-	jesse-ji@ti.com, darren.ye@mediatek.com, antheas.dk@gmail.com,
-	Jerry2.Huang@lcfuturecenter.com
-Subject: Re: [PATCH] ASoc: tas2781: Rename dai_driver name to unify the name
- between TAS2563 and TAS2781
-Message-ID: <ZrpCZfuNOdBhRMh4@smile.fi.intel.com>
-References: <20240806041719.1477-1-shenghao-ding@ti.com>
+	s=arc-20240116; t=1723482750; c=relaxed/simple;
+	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iNzOEPX1O4iHHWvne5u+r/KVosfl2pfBfzBGheZrnjPnFOdv1xETcQJ53jvFV3JK7xM9IMO42lyrN8Uf7qDxRBmocqNJX5+8G/pMUSW426trklGF3GPbtkVA/gDUbDnLdMAuTWEztsF68MLjkRr2lalR6tu9Kv+aJ8zLJYV0YlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfesSTZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82D1C4AF11
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723482749;
+	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=kfesSTZwHTrBiFaLuPDwvr27ASE5jekpBUPczFc5xSc18MS6m12L6U+74J1wTa8Ad
+	 L1dMIYAYkmdVCEQc3FYCB0jvOPHFbfJIcJsTflp52ekfrNzVKsDm1e8eg9sim5Ddg7
+	 lEFHlL6kCYE+3z02avS6Pt1cZszNSdnkhICxc+Thglr5x3QlJKCJo6HmKoh7qI62zj
+	 e/Og6B+nLsfU9tis91h/ETCYyoW9+hqK+qVU/44xn7W7LhZ/W+4EWcCZ+DBDRrrtw4
+	 bn+P4k9WNwRRroI/Z83HjEVU+cLOfZfGOE4luWaUdAYzvrgnMqKUiQr+qfY34iG41U
+	 OLXcmSlxo/yVA==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d5so36079361fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:12:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW++a+8DXpYMY0tc0hNPo/YvCOh0zaY1xG99efYJDJdXHy6bbPlZaXoxtWarMBF1iOBcg/dnMNokJkkSRS8y6LiAGdzNxDPavyFd1OK
+X-Gm-Message-State: AOJu0YzCje98wRS1JAWidla+3R7bCBxR+S6xxHmm1vB41R15HIMaYQNv
+	/7/89stUR/rEed/DcTzGxEuxnvi08XaC1Lpz9+uKcFJrYzaC8XIkjmdKjGSGYohmna8gTXbGqdd
+	jg1JHFb3142OqJbT3LIZwG7B1S2uqwGbqQmqE
+X-Google-Smtp-Source: AGHT+IEi4x2lKyzSlBdDqyzNvP1WkxgKGyo1LKUTYnu8D717dYjlPG7KYanK/LSOMd8pZXkQOcvI64ymMk//DOzcflQ=
+X-Received: by 2002:a2e:a550:0:b0:2ef:2c87:3bd7 with SMTP id
+ 38308e7fff4ca-2f2b7178548mr8639581fa.37.1723482747964; Mon, 12 Aug 2024
+ 10:12:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806041719.1477-1-shenghao-ding@ti.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
+ <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+ <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+In-Reply-To: <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+From: KP Singh <kpsingh@kernel.org>
+Date: Mon, 12 Aug 2024 19:12:16 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
+Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Paul Moore <paul@paul-moore.com>
+Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 06, 2024 at 12:17:17PM +0800, Shenghao Ding wrote:
-> Rename dai_driver name to unify the name between TAS2563 and
-> TAS2781.
+On Thu, Aug 8, 2024 at 10:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Thu, Aug 8, 2024 at 2:00=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
+ wrote:
+> > On Thu, Aug 08, 2024 at 01:32:37PM -0400, Paul Moore wrote:
+> > > On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us=
+.net> wrote:
+> > > >
+> > > > Also, there is a backtrace on ppc (also see below), but that is unr=
+elated
+> > > > to your patches and only seen now because I enabled the security mo=
+dules
+> > > > on that architecture. I'll bring that up with ppc maintainers.
+> > >
+> > > Thanks for all your help testing this Guenter.  I see you've also
+> > > already submitted an AppArmor fix for the endian issue, that's very
+> > > helpful and I'm sure John will be happy to see it.
+> > >
+> > > Beyond this work testing the static call patches from KP, would you b=
+e
+> > > willing to add a LSM configuration to your normal testing?  While mos=
+t
+> > > of the LSM subsystem should be architecture agnostic, there are
+> > > definitely bits and pieces that can vary (as you've seen), and I thin=
+k
+> > > it would be great to get more testing across a broad range of
+> > > supported arches, even if it is just some simple "does it boot" tests=
+.
+> > >
+> >
+> > That really depends. I already enabled some of the kernel security modu=
+les.
+> >
+> > CONFIG_SECURITY=3Dy
+> > CONFIG_SECURITY_APPARMOR=3Dy
+> > CONFIG_SECURITY_APPARMOR_KUNIT_TEST=3Dy
+> > CONFIG_SECURITY_LANDLOCK=3Dy
+> > CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=3Dy
+> > CONFIG_SECURITY_LOCKDOWN_LSM=3Dy
+> > CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=3Dy
+> > CONFIG_SECURITY_YAMA=3Dy
+> > CONFIG_SECURITY_LOADPIN=3Dy
+> > CONFIG_SECURITY_SAFESETID=3Dy
+> > CONFIG_BPF_LSM=3Dy
+> > CONFIG_LSM=3D"landlock,lockdown,yama,loadpin,safesetid,bpf"
+> >
+> > I can easily add more if you tell me what else I should enable.
+>
+> Thanks, I just added a todo item to send you a list.  I appreciate the he=
+lp.
+>
+> > Userspace is more difficult. My root file systems are generated using
+> > buildroot. I run some basic tests, such as network interface tests
+> > and TPM tests, but those are just simple scripts utilizing packages
+> > provided by buildroot. I can add more, but I would need to know what
+> > exactly to add and how to execute it.
+>
+> Of course.  As far as I'm concerned, simply enabling the LSMs and
+> making sure the various arches boot without additional faults would be
+> a nice boost in testing.
+>
+> > > Out of curiosity, do you have your test setup documented anywhere?  I=
+t
+> > > sounds fairly impressive and I'd be curious to learn more about it.
+> >
+> > Not really. The code is at https://github.com/groeck/linux-build-test.
+> > My clone of buildroot is at https://github.com/groeck/buildroot (look
+> > for local- branches to see my changes). Please feel free to have a look=
+,
+> > but documentation is seriously lacking (and README is completely out
+> > of date).
+>
 
-I am not sure this is a good change. Theoretically one with the platform that
-has a certain codec may connect the other one. How that will be distinguished?
-
-If there is no issue for such configurations, please mention this fact in the
-commit message.
-
--- 
-With Best Regards,
-Andy Shevchenko
+JFYI, I synced with Guenter and all arch seem to pass and alpha does
+not work due to a reason that I am unable to debug. I will try doing
+more debugging but I will need more alpha help here (Added the
+maintainers to this thread).
 
 
+
+> Thanks for the pointers.
+>
+> --
+> paul-moore.com
 
