@@ -1,94 +1,126 @@
-Return-Path: <linux-kernel+bounces-283324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8343894F049
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:49:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2288694F05E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:49:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F46CB267B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:49:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2031F211FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49FB183CC1;
-	Mon, 12 Aug 2024 14:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B13FE183CD7;
+	Mon, 12 Aug 2024 14:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WpQflbtO";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="+8xUFdCS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCmY3C/j"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAF0183084
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153E75336D;
+	Mon, 12 Aug 2024 14:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474090; cv=none; b=j3AIRStKALpPz1cFBLgmUSCy6vv3/JnXQprrksySmqNoCCNd6ICt2vOG0Ies2aaGe7eRcNj5V6COPYpTRreDsjN1QinCr/bNkjDA+FBgefUBZXcAfhPG5271s3mQ3py47uD73UyAfWIK98eg42loI9DlqCa8nysX58pawYvPnl8=
+	t=1723474152; cv=none; b=MbMdWva4BviiyOS3F3IqFdcZmqcVhrVSkk8vXldKBUevT76nP3GSOIrVMTqP7t8QPKQEAb/rVl1t56Qi7ZVnNgEi6NV723EAjJJGZlGp6JUKtn5LBMZrtUhZmY0QvvvJbbmqhH/MDSsZKyCD5G8oJFtGZWn6ezzXYzv/gi4WWRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474090; c=relaxed/simple;
-	bh=sjRWkMFtgOrI6DSoimkWFAC6VMdD00qV51LWcbTpxi4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=DgW5HXNyPxvPiyGSRJknTRKDKWqFwVQQlUowTnOXbiErU+z/pemV/o6/VTHm4tFGxxGMl73z1dIChJUWQS5DVXwJDlrymbSj8m4u0d1eiovSC5tbbX7mMDVeq+WhIqBbJcNIe5j/lnftNHnH4PPAWPLIPNfinP8HaAbkiTJssSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WpQflbtO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=+8xUFdCS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723474085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgPz1/lnN9hiYM4TGQkGzZ9lzKLBrzylrC1Cvn5YOWA=;
-	b=WpQflbtOqd9VUZZsa8Lgtfka4Mt1N7YX+w37vjkxJcNStqodCiZl/6+jpS9JzpINS7tfpx
-	jwGBUeBrHUn1nbfmO5/aCVCLspRsHJTCTq0qfiejKdhjodqvijYPcjNPXl63rlds0JMlU2
-	rMDtR+9ehLuz+saMlwucc5eFFyuZ6XBH2LE6sFXeHOHTkPqBCBYbTLDRvYut4zc0ypLXNU
-	krBbQis1/z1NUT9jtLpTo7V2RG6VdRJZQc/J9g/DJdloyKHP+iT/4UQq2HR7tPSMgYIxzP
-	hXXKOsz/61ogLEpEHaDa4+OCLsswOntVV925WN2PIZb3+QS/f54mkiKSjheAsA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723474085;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IgPz1/lnN9hiYM4TGQkGzZ9lzKLBrzylrC1Cvn5YOWA=;
-	b=+8xUFdCS9dfKQfIRB8Xdxgcae6+TmHWphRtVe/6M+XL6eHW2mEqjv0YAQWiDf9/zK/cfuV
-	qjl5yMkRCJ4MmnAA==
-To: Yuntao Wang <yuntao.wang@linux.dev>, linux-kernel@vger.kernel.org,
- x86@kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, Thorsten Blum
- <thorsten.blum@toblux.com>, Tony Luck <tony.luck@intel.com>, Daniel
- Sneddon <daniel.sneddon@linux.intel.com>, Yuntao Wang
- <yuntao.wang@linux.dev>
-Subject: Re: [PATCH] x86/apic: Fix the issues in x2apic_disable()
-In-Reply-To: <20240812100819.870513-1-yuntao.wang@linux.dev>
-References: <20240812100819.870513-1-yuntao.wang@linux.dev>
-Date: Mon, 12 Aug 2024 16:48:05 +0200
-Message-ID: <87a5hhsspm.ffs@tglx>
+	s=arc-20240116; t=1723474152; c=relaxed/simple;
+	bh=3YHqQtytKnWfaRgX1e6PxdHqxsAwo6yex8Xz+1qPIJI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WLcnHOjwspa628glUSvyscflF3LpibVEjFaFbc+vkKCZ9puXPnYftcMOGq63nFLu/qjKggqURZziXBNgf8gsq3v6PBp6uTVxLj3jVCMAHdxn5pmmat+TcIoYs7HecZFp0MqFQVyXgUbL8y+qOo1TOZ1W5SumZspOnk1yxHwRuTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCmY3C/j; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f0dfdc9e16so52647841fa.2;
+        Mon, 12 Aug 2024 07:49:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723474148; x=1724078948; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sT4ZxonCbYWzpgFog0M5IWFMz1arCxSNVkzEqPlqcnY=;
+        b=CCmY3C/jh0tjTSuPTP8iah9sRPoyU8O6fkaoP6hCKoi87ZaHCDV7VPPxMHNvMMy+rf
+         h4Sk49Ti51zbt5eJ1+lk8cXgXlIgIC5h+vRbv6X6CYM9l3q667sQGREAsJPAFYskYO2H
+         afQWH54lAqK8HE1iKldY//iMBZbSztb+NS0hTWFQNSx9Kh0n43lREw1CnKAd5Hmcdl63
+         J7h0no3Z0oqqDXuuAQ8yykpuwpVqahGQfz9CCMnrUlgRgvIuSl9WDFmAQwltbSXVTlVo
+         vk3cwSpEYhbzHMXKHjC/uMLPexxGfo/tUw9BDSYPDIugY8YxXpaWVhrtcPdgmbWF14Ea
+         ss8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723474148; x=1724078948;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sT4ZxonCbYWzpgFog0M5IWFMz1arCxSNVkzEqPlqcnY=;
+        b=mg9oQebSOpaDSVKWThsa+FqYg58U0u7OhpqkXhFF/fNqc2N6hN8d88NEFMykk8W68G
+         RfAxJ2jwvRKkwURq+ZdYmTfLaojOjoFbMA2GzlvC+7oYuRVLhESfA3x9TuYlSC0k2kWz
+         uUmW5Ad9OCZrqSHA858GjdkwdbmdnIaC8nMPm8yVXi6Nuyp2nvYcigkJVU6tncGp1tev
+         Z08KGUK3SeqiaESYBDD+kSSqd5HgTm+E8iYaLbJkD60dS0MIn0+U5tbOAf4OFijHzJwc
+         dW3+QBdYIGgQjNE2eLriQMWPlo4ZXLBOegm6pVsHWrInrCRazQEYTViyx1LyQmR5fxs0
+         714Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7o0K1YFnnHFhgSSdNuAdSU2K0UD/PmxDFQM1Op6wt0+lxXaDVa6XvIotvAmUGl7Anml/vGWeZp3mp1QUPDXg3BbHOuzBlv5pqfuEPSrQSCKhnVsDcEUnenhPq53To2IcMjSeZ+uA+RQ==
+X-Gm-Message-State: AOJu0Yy2mOQ+jNY01UuEvPSdnybJrfTrMm8XTE4cqAw/5F1qBR/QbPB7
+	tQ/1HgRuS8oTA51PQZNmx9cj6z+jvcG1pXwBGdOMRecLXDhz5Tus
+X-Google-Smtp-Source: AGHT+IG7Z+dew1+Lz89SyYi/nXsRanYmQRi5NC94ZQy1HZC6uyZdPTQqgPkW6UvMuolXWkKB3ezb+w==
+X-Received: by 2002:a2e:a99f:0:b0:2ef:2eb6:e3ed with SMTP id 38308e7fff4ca-2f2b712cc81mr4564561fa.4.1723474147051;
+        Mon, 12 Aug 2024 07:49:07 -0700 (PDT)
+Received: from debian.local ([2a0a:ef40:885:ed01:895f:a056:3282:b682])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c928908esm69670245e9.0.2024.08.12.07.49.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 07:49:06 -0700 (PDT)
+Date: Mon, 12 Aug 2024 15:49:04 +0100
+From: Chris Bainbridge <chris.bainbridge@gmail.com>
+To: fengli@smartx.com, hch@lst.de, martin.petersen@oracle.com
+Cc: axboe@kernel.dk, linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [REGRESSION] critical target error, bisected
+Message-ID: <Zrog4DYXrirhJE7P@debian.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Aug 12 2024 at 18:08, Yuntao Wang wrote:
->  static __init void x2apic_disable(void)
->  {
-> -	u32 x2apic_id, state = x2apic_state;
-> +	u32 x2apic_id;
->  
-> -	x2apic_mode = 0;
-> -	x2apic_state = X2APIC_DISABLED;
-> -
-> -	if (state != X2APIC_ON)
-> -		return;
-> +	if (x2apic_state < X2APIC_ON)
-> +		goto out;
+Hello,
 
-There is no point in overwriting the state in case it is < ON, no?
-  
-Thanks,
+Machine is HP Aero 13 laptop. The following error appears in 6.11-rc3
+when booted from USB drive:
 
-        tglx
+[  195.647081] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_OK cmd_age=0s
+[  195.647093] sd 0:0:0:0: [sda] tag#0 Sense Key : Illegal Request [current]
+[  195.647096] sd 0:0:0:0: [sda] tag#0 Add. Sense: Invalid command operation code
+[  195.647099] sd 0:0:0:0: [sda] tag#0 CDB: Write same(16) 93 08 00 00 00 00 04 dd 42 f8 00 00 2d 48 00 00
+[  195.647101] critical target error, dev sda, sector 81609464 op 0x3:(DISCARD) flags 0x800 phys_seg 1 prio class 0
+
+This error appears on two different laptops with different USB drives.
+
+
+Bisect result:
+
+f874d7210d882cb1c58a8e3da66f61cdc63cd4b4 is the first bad commit
+commit f874d7210d882cb1c58a8e3da66f61cdc63cd4b4
+Author: Li Feng <fengli@smartx.com>
+Date:   Thu Jul 18 16:07:22 2024 +0800
+
+    scsi: sd: Keep the discard mode stable
+
+    There is a scenario where a large number of discard commands are issued
+    when the iscsi initiator connects to the target and then performs a session
+    rescan operation. There is a time window, most of the commands are in UNMAP
+    mode, and some discard commands become WRITE SAME with UNMAP.
+
+    The discard mode has been negotiated during the SCSI probe. If the mode is
+    temporarily changed from UNMAP to WRITE SAME with UNMAP, an I/O ERROR may
+    occur because the target may not implement WRITE SAME with UNMAP. Keep the
+    discard mode stable to fix this issue.
+
+    Signed-off-by: Li Feng <fengli@smartx.com>
+    Link: https://lore.kernel.org/r/20240718080751.313102-2-fengli@smartx.com
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+    Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+
+ drivers/scsi/sd.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+#regzbot introduced: f874d7210d882cb1c58a8e3da66f61cdc63cd4b4
 
