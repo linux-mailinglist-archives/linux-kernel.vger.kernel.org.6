@@ -1,138 +1,169 @@
-Return-Path: <linux-kernel+bounces-283046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D64994EC4B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:04:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7066494EE7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63F9FB220CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E611F221D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DBBD14B95B;
-	Mon, 12 Aug 2024 12:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="oFNIYytW"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2475417C7AF;
+	Mon, 12 Aug 2024 13:38:30 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2125.outbound.protection.partner.outlook.cn [139.219.146.125])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355041366
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464239; cv=none; b=SCWQd34PNNM0HUe1OY/3pejgIido9wc8bPg8Q+hj14sJJH9osDO57wBEtj5ZJAJ7r3kgR6M3jrnLxd28WmjZAre5/1cOZKPNt0X861etoG/m6x4JaHL3ay0PGAJb266+vbrKNbh1EpyVYVfIH62vqlbtXPRILcPk1o3ynoGxJzo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464239; c=relaxed/simple;
-	bh=1CtL2wEPGtNYkmup9JH4Pxu3lkJZ8+OVRCzNog3I1d4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=E8S+kfyGPGvHjCrhF8NDkV2AgKomNMQQmDiWtXJffJN0CUqfO0jsJqxN5l9xA9ER5/E0XyXsbnOPZG/iDGxwmWGM0kAIXZJFocTjjnToPDDYhUHPHPICNAdvMARLGZ2TFlLn/C0wX1ya7nZa/CPw3r6dv5GfEBEd6t+4ejYlWfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=oFNIYytW; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efbb55d24so7311450e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723464236; x=1724069036; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OHB6Syh0cqRJ7/Goc9rsKVI9ZgMN8/vxCzgWlnm4/aQ=;
-        b=oFNIYytWby3cQscxiJwBblsWqyiBMnJsbJ93DyHRAENd0KCevt7wHF7IoruhKLfztI
-         dmR6tHi8FthiTfY/aW7Tl5ZmmJQ8fqYiemzPICCvdQ8nE0exbrTlFgn16um+immxokRO
-         fLuJv7I5GmR4EnIaQqjvq3kM7P03hqYynNLJ9LwqGVwGUXVGEi8Vt0ZusEcjDOxDGtNV
-         u5Updn8l+XlhWDECorL9KDwLkE3pafB7kzvZb4TKTLaX2UPFtJaB/qAfLaTyEQ6p/O2K
-         97xu8E0pUlX8FsE5AqaPaH9ZMgX3pnGCx4tknszJXgYJ1HtuSTiBNlqPXXQ/jCy4q/9b
-         pwcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723464236; x=1724069036;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OHB6Syh0cqRJ7/Goc9rsKVI9ZgMN8/vxCzgWlnm4/aQ=;
-        b=kmN9TiuMhJD272JZvyoggZZwbm4DgF2RIUXzoIEZBYpf3UkAi8fP1ejOriGPomAYJR
-         tLs3ZF9g1y0wsV9UTiicJdGx8T5M3V8PqpUiFayp3988+PiXtJO8Co8pymskGifwY1aa
-         TD5eGvOnpM20j5xjBZIvLdGWUWCcaICNLR5jpYFVurUvXlHrMrSWGaGXgeaGYVNkz+IP
-         25Q9eAj3kT48uTZ6g1gYvv3wPKQOaigZ4Co//F1cvQX871zonBUR7hlWuwyDgJjzKP84
-         RxG+RYcPy4qjfZxnzZDd+XCyWM0L28Y949OdIcxHiAcXEA/sbvEHRS6ojuDSJtEQZZZ6
-         ji7g==
-X-Forwarded-Encrypted: i=1; AJvYcCUJNkZrWKUbsWMoUGeu0KCqZsD0IaYNO0cNn4oIKtFX2S+9SKlYF+P9yri6dR2UalHRCQv5ycfnjYDsA9GGgNLo0V3rieSSAoZ59qVx
-X-Gm-Message-State: AOJu0YyXHuYXd+viYvpT1axy5sTQYL2tW6HyhM70JcUFC1GTPklkHA5/
-	qaDJk8Fdi+NJD5xwlxOzj72mE9DVwD2lJeL4eOwaFdck6EPZjr4E6Vdnl6n1eQs=
-X-Google-Smtp-Source: AGHT+IEIBPq7k8bmmrdas9+km1vcCguP3K6w3+cBirOZrHyHEm53RRwXodm5mM+x7Jxa8GnLAChUbg==
-X-Received: by 2002:a05:6512:6ca:b0:52c:e17c:cd7b with SMTP id 2adb3069b0e04-530ee98e033mr7616121e87.22.1723464236247;
-        Mon, 12 Aug 2024 05:03:56 -0700 (PDT)
-Received: from smtpclient.apple ([2001:a61:a92:ee01:d9c2:3add:a642:dbcb])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb08fe69sm225021466b.43.2024.08.12.05.03.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Aug 2024 05:03:55 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE628176FBD;
+	Mon, 12 Aug 2024 13:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723469909; cv=fail; b=DD+HdRW7fofUANXa3zWJU2ZaksxI3qzPRNS5MPskc4ctdUmAYCmtA6PpkY7afYU1VsRT4YTOR6KHPJIG8luorQxFHyF8w2/ate1xGQUAMrgzGuMUHCCDYPCbJV8GLEtojBr/pdlYYB69oQu1CjCd9MnK2XxIKA4mra4JwKmptu0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723469909; c=relaxed/simple;
+	bh=+iFBzz2G0Syy8uQjZfVwHKKi5kmxZS9YRTdJhsqnADU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=C1MMItIVLAHRec3Rnb/3hdGlnm+WVGHcKqSmd69Zcmfk5sg1RA+Oxq/LleaKyiSPfj7UbcROqeraL2bxWdaFJpg5N1k8iXncEcQAKTLPK2IXrhLhupN0nMGzeAcgyZgFwZcK1o3izIUkuMMKzFu2mM2NhhNCLfZRZ7Wj7ftU0Tc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i+mSAANc5UV0PuQuplwgfUqhj7wZKIEPsNaOtzeZpnAAkOMnF79zlEFaCrusSn8FhAuipxNzob+f39yyAXvu9wLa0acG/i1qSXH8K5TkT6QJ5py6+3TEn+Yp0YMkyLCaX7g2eZA0ytU6SH4atuwsjavrDek3ivB89EkrFNcv8F2qXaqd4RCrA/oMRGOLKU6qJpMhwCBtt9TAD2TZWGIA7BqVmOQM+zZknVrSgtnbIpMem7NdGU3pD1/VHwj68CBn3EMdHlmlrICwNSFInZPbAuW6aLm42k6F2rRiBKU77XxkQdaqR3tIjiZ/lz/7RW7XEgTEhX/zRRHK1BfYG9fckg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dtTX+siQG+eMTSarMDHELnA25W+WyNzHpnayrRNzufo=;
+ b=ZufD12j+BoEW+meD1nbBQ78xhV7yV4BCjzVdCN+UdLftk2kWcJ9CxzEWpetedyYXhbsjtuQvn499oK5lWkufAsvWYmhIMqWloty/mek3TfFpT5A0M0GjNZBCPmOLkfpomEs/KcYoI18ZldkXZhdfvAI8Hjnhx32mUTNjKnXhEt2yfw2jEFgkGJDfnJXRke/hTjz1V5uKLxVDMiOIwC6ypfyN3tfjfeSDAA3Cd03M9cyK5b4BA7/3LKfoSJk+ACT98dScMP6Vj7rYRM738VzkT/NMYuA2dFrsPrmCbLLsIbVOr7WSjgHLqQIbxJKmAqY9LvC57JC12W7hiOB6H4fNTA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14) by ZQ2PR01MB1323.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.33; Mon, 12 Aug
+ 2024 07:02:31 +0000
+Received: from ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ ([fe80::5a83:8682:b030:e46b]) by
+ ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn ([fe80::5a83:8682:b030:e46b%3])
+ with mapi id 15.20.7784.035; Mon, 12 Aug 2024 07:02:31 +0000
+From: Hal Feng <hal.feng@starfivetech.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Conor Dooley <conor@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jianlong Huang <jianlong.huang@starfivetech.com>,
+	Hal Feng <hal.feng@starfivetech.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] pinctrl: starfive: jh7110: Correct the level trigger configuration of iev register
+Date: Mon, 12 Aug 2024 15:01:08 +0800
+Message-ID: <20240812070108.100923-1-hal.feng@starfivetech.com>
+X-Mailer: git-send-email 2.43.2
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: NT0PR01CA0015.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510::9) To ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:7::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
-Subject: Re: [PATCH] btrfs: Annotate structs with __counted_by()
-From: Thorsten Blum <thorsten.blum@toblux.com>
-In-Reply-To: <e7cbec5f-269a-410c-bb5a-e00de15078f6@wdc.com>
-Date: Mon, 12 Aug 2024 14:03:44 +0200
-Cc: "clm@fb.com" <clm@fb.com>,
- "josef@toxicpanda.com" <josef@toxicpanda.com>,
- "dsterba@suse.com" <dsterba@suse.com>,
- "kees@kernel.org" <kees@kernel.org>,
- "gustavoars@kernel.org" <gustavoars@kernel.org>,
- "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <106F3A42-A7CF-402E-B7F7-05AA506C5B7D@toblux.com>
-References: <20240812103619.2720-2-thorsten.blum@toblux.com>
- <e7cbec5f-269a-410c-bb5a-e00de15078f6@wdc.com>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-X-Mailer: Apple Mail (2.3774.600.62)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: ZQ2PR01MB1307:EE_|ZQ2PR01MB1323:EE_
+X-MS-Office365-Filtering-Correlation-Id: 17d43eae-d7e7-4e39-54f0-08dcba9cbbe2
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|52116014|41320700013|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	N5dz4bRrH7QMjmQAJAXPKNxCa0x0qsk141m+zitGDtWGKWENEghpsxO+w2ZodsqgKbvSvdpUIXeBtkhPoa2xO1ENApJL66R+UU3+mTs5tKmqLddv5on8imPQfKFXhNVwi3O+lwUNtCCgQvB0hP8QNX6Xb55hU2qetS3b3xCrz4KaJ+QEWaI6WrnlgqFDhvS1ZnrJHYGsJCPN1dxqLMAXkfabHv3Ici4CS0dpcsZ3uc/JLnD6gqQ+LYDB/4U/7SP7o0kxluJ9JUIxgzCl3D55BnOv2+vNC2M5u4D6xXt5uMKIxyBydEEXMw1LhK1qFN2mTuwo2Ddr4k9717uwpV7nqNIdfNUMTcl54l8N2RJjvnwoeuTcTh0bebiy2YCkcKotFFiK+r80ICUgJDE3c+peenKJc6oXRpx5b46iaj42EuZRRuNeFRQbZXOHwkTdjFeELorJ2Z/7YtCUbN660xCiXccytztIVfi2iyRRJPaFPUeO9yYXJ6fOEM+KTBVwqCBVrKcNZ3Ds1vXl0hGNcitbifRDO99Cv01cRXpJq4D+seIagxVOO9VfGbdUDQvI6uG3XkicjWWhh/PjE6ASp8q0jS235bc7MMgI1lC2EH3TiRdW+L9lHz9M6WhOD6tGQl+2
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(41320700013)(366016)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?H0n8zKCtNT/2UUFHYePJWpG/F8awqMPkBwjgBpRSBiL6FD+bDhbOHDlVXxCI?=
+ =?us-ascii?Q?TMNz0fxL2t4pltnCZrOVwUH/LM8NDZZ1jTf/vTh4ttBUQYAYqscQxnsQEb9V?=
+ =?us-ascii?Q?hceIxLcKrqjmKXxuk+Y2QxhpNyRQnlMwcQLg23fJ3MWaKhxQyqE5GVZNdA6M?=
+ =?us-ascii?Q?bcF4sc9t94XEGZuYK9/AchnjZwIYEWfYTXmmEsDwY59Co1E4D31cBHtxt1Nk?=
+ =?us-ascii?Q?7fY8a6zp1/aOuDlbAKvMOgmoemwH5j5EgCwEqAe9VxGT50jFyldy+eIxfb9H?=
+ =?us-ascii?Q?F9PsnSylxa3Qa6eUZjEgqkAmicDW+Kbo54EXK5EeW7BPk388xYtNa8uuxvNs?=
+ =?us-ascii?Q?0oEDlOln/YTuQsOKnFKB6TqmaYhBV7FdjoNNBgnQUTuaQVr0ZFqHTiFN7dnT?=
+ =?us-ascii?Q?pTRUdlKwiLt7bUEe6+y6sjlCRk8IeNoz6NCGydmEP5nsO6z4zs+xaCVup721?=
+ =?us-ascii?Q?uDxMRsZD8E4rMEbRl+TKnloq6oRe97utfjRJUOltG0rBFf/kFGdlfhZrLCmb?=
+ =?us-ascii?Q?laaf01I7JdfM1uY8SkE6Ai9oJHXroTCWAGJVmwuxlwwGwz8pXp3TVhaeWjUG?=
+ =?us-ascii?Q?df0Y7wtmKtJZQFy/3QJcS09IKp4W/OTLroNhbAOFg48r99wR0YM0yiR3PIrd?=
+ =?us-ascii?Q?a/NSHeTekpsjmYTvaqqfUZB6d908XZ7lY/sulT9llbnuzPbCuGq0ZuCkR9Vl?=
+ =?us-ascii?Q?Xd7dAfw+nMa3TnvLRHqltXjPJLNSt+RmM8W71LfCD2lvO3JJK5ueZN1m+ooY?=
+ =?us-ascii?Q?4x8/F1wBpokjMPNwTJzZlmgbbNrsaE7B6kilHzV5nfQKMbM9M2yIrT4p+UCY?=
+ =?us-ascii?Q?WuWWuE0aNw24rqO52+qLJZhLtIUVPWYxa3gv2too2EVgD7K08F3fxSJrTWNF?=
+ =?us-ascii?Q?RogHY4V2uT4zEFwVlctkA1VaJQLUyiWbcbzRbVPKNXEIqkP+C6hD2euvC2No?=
+ =?us-ascii?Q?Xzhs603jopBWdnay+/nsZS9xUDW8PiLyKmqUF6X7m11kv0VtYKfQRUpVsHTf?=
+ =?us-ascii?Q?CvspyaX3xhXcLOu/TNQOw5w15fgIPCm2LOvQc6K37RV7VG7AfU+3mOEXwV32?=
+ =?us-ascii?Q?lipxCJokkxcuCPJxf1tiV8C4nxJm2/S/ZojZ6b+jrTvSt1Cm4ZUh/XWk97EG?=
+ =?us-ascii?Q?d201of5hPDeIOX0m6Fz1Ttm3dUe1bgnev46G0N14aE9ftAjmm1F0csU1uzX7?=
+ =?us-ascii?Q?0rxh6zSqW1sEY+1ZCdyePKO+/fENl+JvvxqFSuNfNMY+L5PsJrj44g5ktNIZ?=
+ =?us-ascii?Q?IisWgnDNZbNUHvHXLoG2lpolqR+8uO4VfkQvpZJ0cZXpo2PQaFDAONb+ypSr?=
+ =?us-ascii?Q?Mh4ciPHC6mMECdF7U1TNmJ0QvU2lRnz57+BDtYCQd75rqwsH7OaE20UBm62t?=
+ =?us-ascii?Q?uD07/6+7HeRKqvnyUXyhxUqQCB7DlM8IR4y41vSQwtpOZETkNo4sc9JMJXXv?=
+ =?us-ascii?Q?o9nkmdM6Akb7TihsydFwtbJsJ7chL0Dpv6ZUTW0fpmXIOfvbkpLnzdWae2oI?=
+ =?us-ascii?Q?9QMjVqYazhPz30EWF2zKC91+iq+Ay+3a+rEs96Hssav8xoiXK47DOE7fR+nY?=
+ =?us-ascii?Q?MXfetS8eDJew00POufSvTgmPZOP+NgwGoHvzYA/fQmtqVywOuJckbQh/Indy?=
+ =?us-ascii?Q?bA=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 17d43eae-d7e7-4e39-54f0-08dcba9cbbe2
+X-MS-Exchange-CrossTenant-AuthSource: ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 07:02:31.0822
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3Cp35fVcGtJW7pePR6ssLIndHhZ2YOxttgFaaZDMUNY+ixMGUAmHeOKmjZD2mPYYSOqJf+M7N1j70ZgQiIEJDk18++zQseBx+xmru092mX4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ2PR01MB1323
 
-On 12. Aug 2024, at 12:54, Johannes Thumshirn =
-<Johannes.Thumshirn@wdc.com> wrote:
-> On 12.08.24 12:37, Thorsten Blum wrote:
->> Add the __counted_by compiler attribute to the flexible array member
->> stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
->> CONFIG_FORTIFY_SOURCE.
->>=20
->> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
->> ---
->>  fs/btrfs/volumes.h | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
->> index 37a09ebb34dd..f28fa318036b 100644
->> --- a/fs/btrfs/volumes.h
->> +++ b/fs/btrfs/volumes.h
->> @@ -551,7 +551,7 @@ struct btrfs_io_context {
->>   * stripes[data_stripes + 1]: The Q stripe (only for RAID6).
->>   */
->>   u64 full_stripe_logical;
->> - struct btrfs_io_stripe stripes[];
->> + struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
->>  };
->>=20
->>  struct btrfs_device_info {
->> @@ -591,7 +591,7 @@ struct btrfs_chunk_map {
->>   int io_width;
->>   int num_stripes;
->>   int sub_stripes;
->> - struct btrfs_io_stripe stripes[];
->> + struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
->>  };
->>=20
->>  #define btrfs_chunk_map_size(n) (sizeof(struct btrfs_chunk_map) + \
->=20
-> Looks good to me,
-> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->=20
-> Out of curiosity, have you encountered any issues with this patch =
-applied?
+A mistake was made in level trigger register configuration. Correct it.
 
-I only compile-tested it.=
+Fixes: 447976ab62c5 ("pinctrl: starfive: Add StarFive JH7110 sys controller driver")
+Signed-off-by: Hal Feng <hal.feng@starfivetech.com>
+---
+
+Hi,
+
+When we tested some modules that use gpio level trigger, we found
+the current level trigger register configuration was set wrong.
+Submit this patch to correct.
+
+Best regards,
+Hal
+
+---
+ drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+index 4ce080caa233..1d0d6c224c10 100644
+--- a/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
++++ b/drivers/pinctrl/starfive/pinctrl-starfive-jh7110.c
+@@ -793,12 +793,12 @@ static int jh7110_irq_set_type(struct irq_data *d, unsigned int trigger)
+ 	case IRQ_TYPE_LEVEL_HIGH:
+ 		irq_type  = 0;    /* 0: level triggered */
+ 		edge_both = 0;    /* 0: ignored */
+-		polarity  = mask; /* 1: high level */
++		polarity  = 0;    /* 0: high level */
+ 		break;
+ 	case IRQ_TYPE_LEVEL_LOW:
+ 		irq_type  = 0;    /* 0: level triggered */
+ 		edge_both = 0;    /* 0: ignored */
+-		polarity  = 0;    /* 0: low level */
++		polarity  = mask; /* 1: low level */
+ 		break;
+ 	default:
+ 		return -EINVAL;
+
+base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+-- 
+2.43.2
+
 
