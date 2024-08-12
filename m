@@ -1,156 +1,76 @@
-Return-Path: <linux-kernel+bounces-282470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F5994E476
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:19:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC89594E470
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06618281EBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:19:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E76AB213C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 01:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD6B54759;
-	Mon, 12 Aug 2024 01:19:22 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D824B5AE;
+	Mon, 12 Aug 2024 01:19:09 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8780D51C5A;
-	Mon, 12 Aug 2024 01:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654014A24
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723425561; cv=none; b=RAqkKjAZ2EjlI/rNjYqJM7HiUNgHDrzy3d9I582QGkGclarKoIxhjMqIS7H6hH7BSdjOgTzknhZOq6IpvRgHL9phg3DI3bcHmbiIFCKWGczYaI/yKMhJM9QbxpAFX9rKf5s/CR32+vA5H0nknpmzAKPbEsN/3zqUGW0zPKkr9tE=
+	t=1723425548; cv=none; b=sGXtFvVDykLgW+aLybHI9pzue5TvfXnJT2qhIN1ByVhNuV7UUtofgmedIO0MvqluWENhI7bit4IYrth2+aFCiVN0aWOhjzLAVIsi+2UkHYiCTzzgA6jhT2lycv/6ItMqfiXsQPQpVhXBr90VQNFaattEFTouLl2q4DqMRp8aMys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723425561; c=relaxed/simple;
-	bh=7WKuSrhhuMjx6s68LT+l8FZy8h58s+1PKUkmG3wmLTA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kom0yUmN8jTIq5QFqTkFGkxywUgu2765LAy4VDaBgDkZ8VXY0/JSppY1c+5L6MAdmtJgKOAYozIvY+Vf1kUxONwzl4MbdIhoWIlaBB/aTFX66xntPBwaGGS3UAGBe5CYNKEHKSfIrYc/0oR2QbQw+BMBfnlCco8/KxWpm5H44iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4WhxVX6MRjzyPBr;
-	Mon, 12 Aug 2024 09:18:44 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id BC32B1402D0;
-	Mon, 12 Aug 2024 09:19:11 +0800 (CST)
-Received: from localhost.localdomain (10.175.104.67) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 12 Aug 2024 09:19:10 +0800
-From: Zizhi Wo <wozizhi@huawei.com>
-To: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
-	<osandov@fb.com>, <john.g.garry@oracle.com>
-CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wozizhi@huawei.com>, <yangerkun@huawei.com>
-Subject: [PATCH V3 2/2] xfs: Fix missing interval for missing_owner in xfs fsmap
-Date: Mon, 12 Aug 2024 09:15:05 +0800
-Message-ID: <20240812011505.1414130-3-wozizhi@huawei.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240812011505.1414130-1-wozizhi@huawei.com>
-References: <20240812011505.1414130-1-wozizhi@huawei.com>
+	s=arc-20240116; t=1723425548; c=relaxed/simple;
+	bh=Zh69rWHLJng2lHajM1irZM1c3ZtqHByp5xijl7PI/po=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AtW9hl3dNVRTyw8rt+o9IMIVy3FtN1TDG/Mg6KEjChqv3JrMhCSbTS1i8jH0T6FBc0vD5RQX19UNce42tGUKV54kmpSpuje3X5QChQOCiVbuozuv0HrAgje5re/SCp+cXnGicCQ8YvGH8FbpylH3A8wpP/W1S4a4ZRZIU3/j4sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-39ad7e6b4deso49448845ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 18:19:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723425546; x=1724030346;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zh69rWHLJng2lHajM1irZM1c3ZtqHByp5xijl7PI/po=;
+        b=nCVNS2h9+iTeBh7n6aczwGhXR1eER2+Hw3aESZCJ3hGosEoCNrZXjX3gkYUbfYY5dN
+         ApckRUqyXx+Qa2oFnwhIHGLIXkIBCq3rDvCMQmoBid6hjnzhFCXK5VVv3dzvPPc0aGum
+         Yy/ik9TzfeWJE1jpz9sKAudTBPwqEf4DHdddXo+yrfKTDBGQVaJSn2ZQW2objSaFQj+O
+         PVLpBtLgjglYoqYHEHs70UpwFPjhrF1QQh6k1a31wvRfWqhTbK56rliF6rrB0n2r5bX2
+         JqsizpZpdzaqNoIP6ey0jMYfHcn6XoHXKC2Q49jn8/6++YmhfTj9ETd4SQ+bPFME/nYe
+         5BNA==
+X-Gm-Message-State: AOJu0YycF5K3I7zqjPST4bvv2Wi+Nif5Tt46Iii/SkS6r1jNOwnAWsJS
+	SMOUQ1moGtay1VVmhsMedDg3ch/0tGibdJUTj9CrzZVoLknEGMTuHCOLqSTFKGg748eHdfu/v0K
+	Ylo8C7Y92OtrMZKnLJbKaf/l8uSWvlNmPA//fQ2j3hOqKTzeWJniF4kY=
+X-Google-Smtp-Source: AGHT+IEwUvG35loDqgshs4ndYvwkfoX7MJanOB8tiEX0ifYY1wynPXOx8iEZJorkXCtAuoDnz6WLgzpebykMdyFQdM3lmap6POKu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+X-Received: by 2002:a05:6e02:214e:b0:39a:ea89:22e8 with SMTP id
+ e9e14a558f8ab-39b813286cdmr8275315ab.2.1723425546482; Sun, 11 Aug 2024
+ 18:19:06 -0700 (PDT)
+Date: Sun, 11 Aug 2024 18:19:06 -0700
+In-Reply-To: <0000000000005f5a6d061f43aabe@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007ec4af061f724751@google.com>
+Subject: Re: [syzbot] BUG: stack guard page was hit in vsock_bpf_recvmsg
+From: syzbot <syzbot+bdb4bd87b5e22058e2a4@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In the fsmap query of xfs, there is an interval missing problem:
-[root@fedora ~]# xfs_io -c 'fsmap -vvvv' /mnt
- EXT: DEV    BLOCK-RANGE           OWNER              FILE-OFFSET      AG AG-OFFSET             TOTAL
-   0: 253:16 [0..7]:               static fs metadata                  0  (0..7)                    8
-   1: 253:16 [8..23]:              per-AG metadata                     0  (8..23)                  16
-   2: 253:16 [24..39]:             inode btree                         0  (24..39)                 16
-   3: 253:16 [40..47]:             per-AG metadata                     0  (40..47)                  8
-   4: 253:16 [48..55]:             refcount btree                      0  (48..55)                  8
-   5: 253:16 [56..103]:            per-AG metadata                     0  (56..103)                48
-   6: 253:16 [104..127]:           free space                          0  (104..127)               24
-   ......
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-BUG:
-[root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
-[root@fedora ~]#
-Normally, we should be able to get [104, 107), but we got nothing.
+***
 
-The problem is caused by shifting. The query for the problem-triggered
-scenario is for the missing_owner interval (e.g. freespace in rmapbt/
-unknown space in bnobt), which is obtained by subtraction (gap). For this
-scenario, the interval is obtained by info->last. However, rec_daddr is
-calculated based on the start_block recorded in key[1], which is converted
-by calling XFS_BB_TO_FSBT. Then if rec_daddr does not exceed
-info->next_daddr, which means keys[1].fmr_physical >> (mp)->m_blkbb_log
-<= info->next_daddr, no records will be displayed. In the above example,
-104 >> (mp)->m_blkbb_log = 12 and 107 >> (mp)->m_blkbb_log = 12, so the two
-are reduced to 0 and the gap is ignored:
+Subject: BUG: stack guard page was hit in vsock_bpf_recvmsg
+Author: xiyou.wangcong@gmail.com
 
- before calculate ----------------> after shifting
- 104(st)  107(ed)		      12(st/ed)
-  |---------|				  |
-  sector size			      block size
-
-Resolve this issue by introducing the "end_daddr" field in
-xfs_getfsmap_info. This records |key[1].fmr_physical + key[1].length| at
-the granularity of sector. If the current query is the last, the rec_daddr
-is end_daddr to prevent missing interval problems caused by shifting. We
-only need to focus on the last query, because xfs disks are internally
-aligned with disk blocksize that are powers of two and minimum 512, so
-there is no problem with shifting in previous queries.
-
-After applying this patch, the above problem have been solved:
-[root@fedora ~]# xfs_io -c 'fsmap -vvvv -d 104 107' /mnt
- EXT: DEV    BLOCK-RANGE      OWNER            FILE-OFFSET      AG AG-OFFSET        TOTAL
-   0: 253:16 [104..106]:      free space                        0  (104..106)           3
-
-Fixes: e89c041338ed ("xfs: implement the GETFSMAP ioctl")
-Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
----
- fs/xfs/xfs_fsmap.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
-
-diff --git a/fs/xfs/xfs_fsmap.c b/fs/xfs/xfs_fsmap.c
-index d346acff7725..4ae273b54129 100644
---- a/fs/xfs/xfs_fsmap.c
-+++ b/fs/xfs/xfs_fsmap.c
-@@ -162,6 +162,7 @@ struct xfs_getfsmap_info {
- 	xfs_daddr_t		next_daddr;	/* next daddr we expect */
- 	/* daddr of low fsmap key when we're using the rtbitmap */
- 	xfs_daddr_t		low_daddr;
-+	xfs_daddr_t		end_daddr;	/* daddr of high fsmap key */
- 	u64			missing_owner;	/* owner of holes */
- 	u32			dev;		/* device id */
- 	/*
-@@ -294,6 +295,13 @@ xfs_getfsmap_helper(
- 		return 0;
- 	}
- 
-+	/*
-+	 * To prevent missing intervals in the last query, consider using
-+	 * sectors as the granularity.
-+	 */
-+	if (info->last && info->end_daddr)
-+		rec_daddr = info->end_daddr;
-+
- 	/* Are we just counting mappings? */
- 	if (info->head->fmh_count == 0) {
- 		if (info->head->fmh_entries == UINT_MAX)
-@@ -973,8 +981,10 @@ xfs_getfsmap(
- 		 * low key, zero out the low key so that we get
- 		 * everything from the beginning.
- 		 */
--		if (handlers[i].dev == head->fmh_keys[1].fmr_device)
-+		if (handlers[i].dev == head->fmh_keys[1].fmr_device) {
- 			dkeys[1] = head->fmh_keys[1];
-+			info.end_daddr = dkeys[1].fmr_physical + dkeys[1].fmr_length;
-+		}
- 		if (handlers[i].dev > head->fmh_keys[0].fmr_device)
- 			memset(&dkeys[0], 0, sizeof(struct xfs_fsmap));
- 
--- 
-2.39.2
-
+#syz test
 
