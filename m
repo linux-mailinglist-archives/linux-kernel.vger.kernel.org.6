@@ -1,188 +1,98 @@
-Return-Path: <linux-kernel+bounces-282506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152A794E515
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:41:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF9794E513
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D3A9B214D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:41:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8525F1F21301
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00B3A13633B;
-	Mon, 12 Aug 2024 02:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5784E136337;
+	Mon, 12 Aug 2024 02:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="c/KcvIuC"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BikFb0wJ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B9130AC8;
-	Mon, 12 Aug 2024 02:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723430475; cv=pass; b=ERK5MdZAxqZ3JT3MlTl/F6THz9irh2SR+OUkOtShvhNiwAfyOOjOzzIjL41Gsc61Bk//co9a3KfURYYrLbBLw4I5HpDHZ4hmOdJbwYkPMb4pK5C33sjFfD61H6BFrAGWwE6tjTLH/ETDiIghkG1+IRCNSNdQYwwic+8YPG4jVEs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723430475; c=relaxed/simple;
-	bh=65+gWY9EaBD21v5ldSx+W3zF2jB76wR9xWNxIiSuVw8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aqkGXqtt7IEdhTU19eUsjD84C3ji8c+LGNHVffE10sXo/wJyIMD3PHGlcSXx6qwc5LuwzJuQyPOi+GXB6wym2TMSeESOsQZpl/4XqDp4jbDxEKPZoHTGpSTzYLE+aEf1PrM4hMgzLLvLILJfiILA9DWeCQymGF4swzCFta70VwA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=c/KcvIuC; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1723430443; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=J3/5FwIt0MpGBF2Jxn2ffOLjlnvHB9SUSo7ydgazZzlM06/TknaU/+UANeQSQc/aJJDFrQWtAQK/stIxbfPe9c4gH7YoLcBMe6VdEp9978FjrGc/aWQxWp30gNx8ZxKaLhGyEeln+nzjqHdl62026iJWjkA+KjfyDaoVISVhgH4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723430443; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=65+gWY9EaBD21v5ldSx+W3zF2jB76wR9xWNxIiSuVw8=; 
-	b=jaUUQhnjSquaygpMWmmAewpIXn3poZojehL4z4e62fxWX8AXtaJkBg/gj+xA2M3RcjqzCfW1dXAe4tMNXlBPoj1BBSF7w7WMACSzlBiorJ35YcbafWq2g1/2/Va96bw6msAi0OFmeI4PYv3C2+akg+Ef2554ONJH49mf4QaS51I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723430443;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=65+gWY9EaBD21v5ldSx+W3zF2jB76wR9xWNxIiSuVw8=;
-	b=c/KcvIuCZ7DsC+p+a+/ujkETPRTlWO7p9FPlUxgFEVxgzdp//7eRpi7wjAMSt8G4
-	YXOq7vWpXi/syERxn5Yqm8aDetTkHbqgzzOy114O4tmurFqeq94/k5vTncWE+sswB1H
-	tr5hzHv+SlJSXGhhwCUyoCWobVtvBeQMVgE8hI0bEHCjV71y44kT/uoMbTnE0U86mps
-	Wis52kDJdxSu08h7GiOP8YK21HSDqsz3bB0i4XtDOMR6+QqoltW5B7trKj2w76D+EVY
-	4JFeuwTMGTD6mUUfoLA5E2oe/4flOdy32C6PQPVtFd4m0DAL5wSUMkoquP4lDEhtNJU
-	3Cl8235zhg==
-Received: by mx.zohomail.com with SMTPS id 1723430442527283.9672861832379;
-	Sun, 11 Aug 2024 19:40:42 -0700 (PDT)
-Message-ID: <24406e36f6facd93e798113303e22925b0a2dcc1.camel@icenowy.me>
-Subject: Re: [PATCH] arm64: dts: allwinner: Add GPU thermal trips to the SoC
- dtsi for A64
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Dragan Simic <dsimic@manjaro.org>, linux-sunxi@lists.linux.dev
-Cc: wens@csie.org, jernej.skrabec@gmail.com, samuel@sholland.org, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-kernel@vger.kernel.org, wenst@chromium.org, broonie@kernel.org
-Date: Mon, 12 Aug 2024 10:40:36 +0800
-In-Reply-To: <a17e0df64c5b976b47f19c5a29c02759cd9e5b8c.1723427375.git.dsimic@manjaro.org>
-References: 
-	<a17e0df64c5b976b47f19c5a29c02759cd9e5b8c.1723427375.git.dsimic@manjaro.org>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B3912C486;
+	Mon, 12 Aug 2024 02:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723430452; cv=none; b=cHD8Zks7+gNghk5XtyFbIioXG5N4FshDQ4zB96e0/GAPl52O2U/C9ojSvjq2+MwaBCr6XdszmNvjuOo3dAllrkFk6pIVz/MOk+ThhKvSp9/vb7JNuBNxeULkxQxEAsJ+iAbawXE4V0STcK03rwNHVdIooq6RlLeu28GV1kITvfY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723430452; c=relaxed/simple;
+	bh=T9Yld2q72WF/ECrqdIH1NemhWrlLZZCEYX8teec6w+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B1BRzVVLQIwgV/9GKMOqIs/5nxQTadZwGaPEBcgw7aXc/qd0hZ+nyjs1tO5OyWdz+gFdaYNAdEw/UVR4eb/84o5O1qFsTAlKTYjldf4acXIyKg9haqbXqht7QD7/xFEOJk3cpS3EJkPCmnnR9bbqpIu1YavOcc6uZVvXFvXcrxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BikFb0wJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pgEtrVlv/kMeVCF2Dckbik9jinBIaKG6z7DYc+o7tA0=; b=BikFb0wJzI7QGfvQ7U+WjUOj0F
+	DTCU6hR2MVlPl9mYLkM9LnjjnmyjBnq+BkpbFfu4KAymljFCn470jRmj3jwuh+S6Yw0TYnyEtKV/H
+	GscMO7INLg4945eIBZ3vvn0qrc18D+f6Sn3laNS6ziz++XT8LTudAqxhfpQKGG8sKsKJhNQRyKwcG
+	6Cy/vUNXhHIHqMz1olckuoNXKjzZu3c0+QmJB2YUW4yW65rCFSFvgfvGrAD8tyVZzietf617lrZr3
+	fLOtbyo/vs7/pFBh1yseYX4iwmrNQVwK53yLwr9mJlp85dN1b5PWcwXW2eKoru3PmMNAdJA+ieO8U
+	6s/eUz7Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1sdKzE-00000000xdX-0SEF;
+	Mon, 12 Aug 2024 02:40:44 +0000
+Date: Mon, 12 Aug 2024 03:40:44 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Ma, Yu" <yu.ma@intel.com>
+Cc: Christian Brauner <brauner@kernel.org>, jack@suse.cz, mjguzik@gmail.com,
+	edumazet@google.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pan.deng@intel.com,
+	tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v5 0/3] fs/file.c: optimize the critical section of
+ file_lock in
+Message-ID: <20240812024044.GF13701@ZenIV>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240717145018.3972922-1-yu.ma@intel.com>
+ <20240722-geliebt-feiern-9b2ab7126d85@brauner>
+ <20240801191304.GR5334@ZenIV>
+ <20240802-bewachsen-einpacken-343b843869f9@brauner>
+ <20240802142248.GV5334@ZenIV>
+ <20240805-gesaugt-crashtest-705884058a28@brauner>
+ <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5210f83c-d2d9-4df6-b3eb-3311da128dae@intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-5ZyoIDIwMjQtMDgtMTLmmJ/mnJ/kuIDnmoQgMDQ6MDAgKzAyMDDvvIxEcmFnYW4gU2ltaWPlhpnp
-gZPvvJoKPiBBZGQgdGhlcm1hbCB0cmlwcyBmb3IgdGhlIHR3byBHUFUgdGhlcm1hbCBzZW5zb3Jz
-IGZvdW5kIGluIHRoZQo+IEFsbHdpbm5lciBBNjQuCj4gVGhlcmUncyBvbmx5IG9uZSBHUFUgT1BQ
-IGRlZmluZWQgc2luY2UgdGhlIGNvbW1pdCAxNDI4ZjBjMTlmOWMKPiAoImFybTY0OiBkdHM6Cj4g
-YWxsd2lubmVyOiBhNjQ6IFJ1biBHUFUgYXQgNDMyIE1IeiIpLCBzbyBkZWZpbmluZyBvbmx5IHRo
-ZSBjcml0aWNhbAo+IHRoZXJtYWwKPiB0cmlwcyBtYWtlcyBzZW5zZSBmb3IgdGhlIEE2NCdzIHR3
-byBHUFUgdGhlcm1hbCB6b25lcy4KPiAKPiBIYXZpbmcgdGhlc2UgY3JpdGljYWwgdGhlcm1hbCB0
-cmlwcyBkZWZpbmVkIGVuc3VyZXMgdGhhdCBubyBob3Qgc3BvdHMKPiBkZXZlbG9wCj4gaW5zaWRl
-IHRoZSBTb0MgZGllIHRoYXQgZXhjZWVkIHRoZSBtYXhpbXVtIGp1bmN0aW9uIHRlbXBlcmF0dXJl
-LsKgCj4gVGhhdCBtaWdodAo+IGhhdmUgYmVlbiBwb3NzaWJsZSBiZWZvcmUsIGFsdGhvdWdoIHF1
-aXRlIHVubGlrZWx5LCBiZWNhdXNlIHRoZSBDUFUKPiBhbmQgR1BVCj4gcG9ydGlvbnMgb2YgdGhl
-IFNvQyBhcmUgcGFja2VkIGNsb3NlbHkgaW5zaWRlIHRoZSBTb0MsIHNvIHRoZQo+IG92ZXJoZWF0
-aW5nIEdQVQo+IHdvdWxkIGluZXZpdGFibHkgcmVzdWx0IGluIHRoZSBoZWF0IHNvYWtpbmcgaW50
-byB0aGUgQ1BVIHBvcnRpb24gb2YKPiB0aGUgU29DLAo+IGNhdXNpbmcgdGhlIENQVSB0aGVybWFs
-IHNlbnNvciB0byByZXR1cm4gaGlnaCByZWFkaW5ncyBhbmQgdHJpZ2dlcgo+IHRoZSBDUFUKPiBj
-cml0aWNhbCB0aGVybWFsIHRyaXBzLsKgIEhvd2V2ZXIsIGl0J3MgYmV0dGVyIG5vdCB0byByZWx5
-IG9uIHRoZSBoZWF0Cj4gc29hawo+IGFuZCBoYXZlIHRoZSBjcml0aWNhbCBHUFUgdGhlcm1hbCB0
-cmlwcyBwcm9wZXJseSBkZWZpbmVkIGluc3RlYWQuCj4gCj4gV2hpbGUgdGhlcmUsIHJlbW92ZSBh
-IGZldyBzcG90dGVkIGNvbW1lbnRzIHRoYXQgYXJlIHJhdGhlciByZWR1bmRhbnQsCj4gYmVjYXVz
-ZQo+IGl0J3MgcHJldHR5IG11Y2ggb2J2aW91cyB3aGF0IHVuaXRzIGFyZSB1c2VkIGluIHRob3Nl
-IHBsYWNlcy4KClRoaXMgc2hvdWxkIGJlIGFub3RoZXIgaW5kaXZpZHVhbCBwYXRjaCwgSSB0aGlu
-ay4KCj4gCj4gU2lnbmVkLW9mZi1ieTogRHJhZ2FuIFNpbWljIDxkc2ltaWNAbWFuamFyby5vcmc+
-Cj4gLS0tCj4gwqBhcmNoL2FybTY0L2Jvb3QvZHRzL2FsbHdpbm5lci9zdW41MGktYTY0LmR0c2kg
-fCAyMiArKysrKysrKysrKysrKy0tLQo+IC0tCj4gwqAxIGZpbGUgY2hhbmdlZCwgMTYgaW5zZXJ0
-aW9ucygrKSwgNiBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290
-L2R0cy9hbGx3aW5uZXIvc3VuNTBpLWE2NC5kdHNpCj4gYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2Fs
-bHdpbm5lci9zdW41MGktYTY0LmR0c2kKPiBpbmRleCBlODY4Y2E1YWU3NTMuLmJjNWQzYTJlNmM5
-OCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybTY0L2Jvb3QvZHRzL2FsbHdpbm5lci9zdW41MGktYTY0
-LmR0c2kKPiArKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL2FsbHdpbm5lci9zdW41MGktYTY0LmR0
-c2kKPiBAQCAtMjEyLDcgKzIxMiw2IEBAIHRpbWVyIHsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqB0
-aGVybWFsLXpvbmVzIHsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNwdV90aGVy
-bWFsOiBjcHUwLXRoZXJtYWwgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgLyogbWlsbGlzZWNvbmRzICovCgpUaGUgdW5pdCBvZiBhIDAgaXNuJ3Qgbm90
-IHNvIG9idmlvdXMgSSB0aGluaywgc28gSSBzdWdnZXN0IHRvIGtlZXAKdGhpcy4KCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcG9sbGluZy1kZWxheS1w
-YXNzaXZlID0gPDA+Owo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoHBvbGxpbmctZGVsYXkgPSA8MD47Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgdGhlcm1hbC1zZW5zb3JzID0gPCZ0aHMgMD47Cj4gQEAgLTIz
-Niw0MCArMjM1LDUxIEBAIG1hcDEgewo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgdHJpcHMgewo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjcHVfYWxlcnQwOiBjcHUtYWxl
-cnQwIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyogbWlsbGlDZWxzaXVzICovCj4gwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqB0ZW1wZXJhdHVyZSA9IDw3NTAwMD47Cj4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqBoeXN0ZXJlc2lzID0gPDIwMDA+Owo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdHlw
-ZSA9ICJwYXNzaXZlIjsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBjcHVfYWxlcnQxOiBjcHUt
-YWxlcnQxIHsKPiAtwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLyogbWlsbGlDZWxzaXVzICovCj4gwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqB0ZW1wZXJhdHVyZSA9IDw5MDAwMD47Cj4gwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqBoeXN0ZXJlc2lzID0gPDIwMDA+Owo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-dHlwZSA9ICJob3QiOwo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGNwdV9jcml0OiBjcHUtY3Jp
-dCB7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoC8qIG1pbGxpQ2Vsc2l1cyAqLwo+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgdGVtcGVyYXR1cmUgPSA8MTEwMDAwPjsKPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoGh5c3RlcmVzaXMgPSA8MjAwMD47Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB0eXBl
-ID0gImNyaXRpY2FsIjsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-fTsKPiDCoAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ3B1MF90aGVybWFsOiBn
-cHUwLXRoZXJtYWwgewo+IC3CoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgLyogbWlsbGlzZWNvbmRzICovCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgcG9sbGluZy1kZWxheS1wYXNzaXZlID0gPDA+Owo+IMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHBvbGxpbmctZGVsYXkgPSA8
-MD47Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdGhl
-cm1hbC1zZW5zb3JzID0gPCZ0aHMgMT47Cj4gKwo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgdHJpcHMgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoGdwdTBfY3JpdDogZ3B1MC1jcml0
-IHsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgdGVtcGVyYXR1cmUgPSA8MTEwMDAwPjsKPiArwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgaHlzdGVyZXNpcyA9IDwyMDAwPjsKPiArwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgdHlwZSA9ICJjcml0aWNhbCI7Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiArwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoH07Cj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqB9Owo+IMKgCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBncHUxX3Ro
-ZXJtYWw6IGdwdTEtdGhlcm1hbCB7Cj4gLcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAvKiBtaWxsaXNlY29uZHMgKi8KPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBwb2xsaW5nLWRlbGF5LXBhc3NpdmUgPSA8MD47Cj4g
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcG9sbGluZy1k
-ZWxheSA9IDwwPjsKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqB0aGVybWFsLXNlbnNvcnMgPSA8JnRocyAyPjsKPiArCj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB0cmlwcyB7Cj4gK8KgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgZ3B1MV9jcml0OiBn
-cHUxLWNyaXQgewo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB0ZW1wZXJhdHVyZSA9IDwxMTAwMDA+
-Owo+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBoeXN0ZXJlc2lzID0gPDIwMDA+Owo+ICvCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqB0eXBlID0gImNyaXRpY2FsIjsKPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqB9Owo+ICvCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfTsKPiDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoH07Cj4gwqDCoMKgwqDCoMKgwqDCoH07Cj4gwqAKCg==
+On Mon, Aug 12, 2024 at 09:31:17AM +0800, Ma, Yu wrote:
+> 
+> On 8/5/2024 2:56 PM, Christian Brauner wrote:
+> > On Fri, Aug 02, 2024 at 03:22:48PM GMT, Al Viro wrote:
+> > > On Fri, Aug 02, 2024 at 01:04:44PM +0200, Christian Brauner wrote:
+> > > > > Hmm...   Something fishy's going on - those are not reachable by any branches.
+> > > > Hm, they probably got dropped when rebasing to v6.11-rc1 and I did have
+> > > > to play around with --onto.
+> > > > 
+> > > > > I'm putting together (in viro/vfs.git) a branch for that area (#work.fdtable)
+> > > > > and I'm going to apply those 3 unless anyone objects.
+> > > > Fine since they aren't in that branch. Otherwise I generally prefer to
+> > > > just merge a common branch.
+> > > If it's going to be rebased anyway, I don't see much difference from cherry-pick,
+> > > TBH...
+> > Yeah, but I generally don't rebase after -rc1 anymore unles there's
+> > really annoying conflicts.
+> 
+> Thanks Christian and Al for your time and efforts. I'm not familiar with the
+> merging process, may i know about when these patches could be seen in master
 
+It's in work.fdtable in my tree, will post that series tonight and add to #for-next
 
