@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-283468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2775494F54D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:51:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D7794F54F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D184C1F21BDE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:51:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BC7CB220F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397EB18785C;
-	Mon, 12 Aug 2024 16:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1512718756E;
+	Mon, 12 Aug 2024 16:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bivMigPw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JzPs7Cj6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A8C1836E2;
-	Mon, 12 Aug 2024 16:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561042B9B5;
+	Mon, 12 Aug 2024 16:52:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481489; cv=none; b=LbXgzjenSLC9BXY6OihMpL8ApbHwTuM61a0EUdOmcm1BgRt70K98iw2jVTGtdbpzd6qHlQ+aPyJYZNqK7zqmD1M0HcNrQYNBXEUNv0/DgqQ6dK62+87QFZtL5k/2hX2uVbyTrQ/aYHXX96TeKRj3TfR8DQWge8AqjImE0kXPoQE=
+	t=1723481557; cv=none; b=Y2ScAw5jZOWhqhl22C84oI7avq16rRCAf8OHGIk31rxuuWEb+L91hFO603m1zZQGNXgXvUbm/AZiglhP4L/0iYl5HfD7A9cdqSQEBEAyeA3vS31eL2xy8OZ0vkY56HBuljaPZfzB1/vrHorzw3/yzNbTNCA8MidOj/R6l1bHrnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481489; c=relaxed/simple;
-	bh=LGTlsEWy9JCGyazAemGTJCuuwrCAe2BvnYB/olyIPXU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GNDOc2uNYUgs4HVApBQiIOh2UBJ9Dk3VzL1EJy0/SGpBwy2y32u4WNV7NFlgDGuw0w/WdfDG3JtlxYy5iBa0Ik/Ul9gAdtDVVzsLWgXsNAvz8VT8pbn5FzINWD51xToAaxHaX6Y9DzGOfArCY28NuYreJOtnqH1USJqS2Lxj0tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bivMigPw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28675C32782;
-	Mon, 12 Aug 2024 16:51:28 +0000 (UTC)
+	s=arc-20240116; t=1723481557; c=relaxed/simple;
+	bh=3qgWsQdcGADenlHvP4FzflqDdjCwLUTzchk8IpLtHEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X1EnDXPmZ9cfoATDbTMlbGxx0Sb+TVI+QhF7zsJB5g1HWjMUmrhutp9OgPG/B+0XGB1kTiO1OXOpMeTzlIvmok/b0DFpqeuYciqKPserJux3B1Lp9SAcbYNf/H1qVTD5eJNkdyqesSW8rqf36P+Dv36mtXXKahyY4YwCsTJE1Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JzPs7Cj6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4ABC32782;
+	Mon, 12 Aug 2024 16:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723481489;
-	bh=LGTlsEWy9JCGyazAemGTJCuuwrCAe2BvnYB/olyIPXU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bivMigPwThXLkTGwe6eS7CAyYRKGSG8saGAE2CUUHcNuiJqIv+JXbLGyTMhKpBl3l
-	 +Z2jAX9lLzuvjlUWQyRjfqsHneXKrP3VJX+IiObEcORL+wCZdZ1ZYwW9AbQSwmZSIQ
-	 B9AMXMH2vMnDvZLP4BxGQ1GvBMTKI5IznbuDIfUwqR+Dnqn8bxnK2fB1EGSyewHcdj
-	 q4oUaAB8RtV7HHdcHogbbl6+S87CVooVAeE61XzqDxcMDsAqTZEcodwylKhuBbOlnf
-	 V7G7BFgpvSgQqeDBBV9yIDcn5YxxuG+5YRAY+chc0EnsO0Xcvpsaf0wICjlc0LQ0w3
-	 pGuB3qZmJn8Og==
-Message-ID: <c0a0266cbb46694318e5eeb5248216779cb68442.camel@kernel.org>
-Subject: Re: [PATCH] btrfs: update target inode's ctime on unlink
-From: Jeff Layton <jlayton@kernel.org>
-To: dsterba@suse.cz
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David
- Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
- linux-kernel@vger.kernel.org,  bpf@vger.kernel.org
-Date: Mon, 12 Aug 2024 12:51:21 -0400
-In-Reply-To: <20240812164220.GK25962@twin.jikos.cz>
-References: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
-	 <20240812164220.GK25962@twin.jikos.cz>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
- n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
- egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
- T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
- 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
- YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
- VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
- cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
- CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
- LZH+yWr9LQZEwARAQABtCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIg
- UCWe8u6AIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1
- oJVAE37uW308UpVSD2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOT
- tmOdz4ZN2tdvNgozzuxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+
- 9eiVUNpxF4SiU4i9JDfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPc
- og7xvR5ENPH19ojRDCHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/
- WprhsIM7U9pse1f1gYy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EB
- ny71CZrOgD6kJwPVVAaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9
- KXE6fF7HzKxKuZMJOaEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTi
- CThbqsB20VrbMjlhpf8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XR
- MJBAB/UYb6FyC7S+mQZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=k20201202; t=1723481556;
+	bh=3qgWsQdcGADenlHvP4FzflqDdjCwLUTzchk8IpLtHEE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JzPs7Cj69J7IapWJHuXuddKKRI/y4kI7wkwxIH2RkzApfZgenHAtTB+i7YQn8g7/6
+	 BNa21TjkCtpg3ilPqdmGrWtAc7T2YYdgGG1xYX8gao+rkWH2ZJbMl6HA59kDH6J8NY
+	 7t2rXEs5B/SpEPNrrJlK7CxTtdzR0KzHfKCiDu6h5EMWkyfQTQOGqaro4uKR/j0d/2
+	 z10WZUgEbUpsbsKnXN98A25Kc0fCVPuVn4RLDHkwN4S0gJ78+bsaahae6LZ7238DqP
+	 YsFELV6gpzLkljOd2xmPY+Gg1h87kiyenYFrZQXsIkTmGQGfq2La7uLNCMgrv4wEtb
+	 AXRJwcPTUq+Cw==
+Date: Mon, 12 Aug 2024 13:52:33 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH] perf lock contention: Change stack_id type to s32
+Message-ID: <Zro90YPyLCB9PsfL@x1>
+References: <909abbc8-efca-40df-9876-8c36b6942a83@stanley.mountain>
+ <20240810191704.1948365-1-namhyung@kernel.org>
+ <ZrozwIQcB_viRsKt@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZrozwIQcB_viRsKt@x1>
 
-On Mon, 2024-08-12 at 18:42 +0200, David Sterba wrote:
-> On Mon, Aug 12, 2024 at 12:30:52PM -0400, Jeff Layton wrote:
-> > Unlink changes the link count on the target inode. POSIX mandates that
-> > the ctime must also change when this occurs.
->=20
-> Right, thanks. According to https://pubs.opengroup.org/onlinepubs/9699919=
-799/functions/unlink.html:
->=20
-> Upon successful completion, unlink() shall mark for update the last data
-> modification and last file status change timestamps of the parent
-> directory. Also, if the file's link count is not 0, the last file status
-> change timestamp of the file shall be marked for update.
->=20
+On Mon, Aug 12, 2024 at 01:09:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Sat, Aug 10, 2024 at 12:17:04PM -0700, Namhyung Kim wrote:
+> > The bpf_get_stackid() helper returns a signed type to check whether it
+> > failed to get a stacktrace or not.  But it saved the result in u32 and
+> > checked if the value is negative.
+> > 
+> >       376         if (needs_callstack) {
+> >       377                 pelem->stack_id = bpf_get_stackid(ctx, &stacks,
+> >       378                                                   BPF_F_FAST_STACK_CMP | stack_skip);
+> >   --> 379                 if (pelem->stack_id < 0)
+> > 
+> >   ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_begin()
+> >   warn: unsigned 'pelem->stack_id' is never less than zero.
+> > 
+> > Let's change the type to s32 instead.
+> > 
+> > Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for BPF")
+> 
+> Thanks, applied to perf-tools-next,
 
-Weird way to phrase to that. IMO, we still want to stamp the inode's
-ctime even if the link count goes to 0. That's what Linux generally
-does, anyway. Oh well..
-=20
->=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Reviewed-by: David Sterba <dsterba@suse.com>
+I'll try to fix this later, but now it fails the first 'make -C
+tools/perf build-test' target, that you can run directly as:
 
-
-FWIW, this should probably go in via the btrfs tree.=20
---=20
-Jeff Layton <jlayton@kernel.org>
+⬢[acme@toolbox perf-tools-next]$ tools/perf/tests/perf-targz-src-pkg tools/perf
+<SNIP>
+  CLANG   /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf/util/bpf_skel/.tmp/augmented_raw_syscalls.bpf.o
+In file included from util/bpf_skel/lock_contention.bpf.c:9:
+util/bpf_skel/lock_data.h:10:2: error: unknown type name 's32'; did you mean 'u32'?
+   10 |         s32 stack_id;
+      |         ^~~
+      |         u32
+util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
+   17 | typedef __u32 u32;
+      |               ^
+In file included from util/bpf_skel/lock_contention.bpf.c:9:
+util/bpf_skel/lock_data.h:14:2: error: unknown type name 's32'; did you mean 'u32'?
+   14 |         s32 stack_id;
+      |         ^~~
+      |         u32
+util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
+   17 | typedef __u32 u32;
+      |               ^
+2 errors generated.
+make[2]: *** [Makefile.perf:1247: /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf/util/bpf_skel/.tmp/lock_contention.bpf.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [Makefile.perf:292: sub-make] Error 2
+make: *** [Makefile:76: all] Error 2
+make: Leaving directory '/tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf'
+⬢[acme@toolbox perf-tools-next]$
 
