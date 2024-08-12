@@ -1,83 +1,147 @@
-Return-Path: <linux-kernel+bounces-282611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40DA394E66E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:15:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43DC94E674
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 745F21C214F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C970E1C21649
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D24413632B;
-	Mon, 12 Aug 2024 06:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909F414EC4C;
+	Mon, 12 Aug 2024 06:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gLzEqPXO"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="YDW8AKyK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDB014E2F1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723443304; cv=none; b=NmJVr0ow0hEv1f4GZAFvbR8TffX0bMV+dgqrDCkjQ9JZFxpJfImAsgFJwNRzE0NCBEhwcm6IGjjP5Ye0iRMRzTigwefYWVQv/RhQR/YqwX71e98qgBdE1EKvUGH7rgkFP8tGbW95SvCnKqTBoRF7myYUAW+REcBP9/M218RfKJ8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723443304; c=relaxed/simple;
-	bh=a8sxPKJB2KEzpHj9VFKrm0DUNbhiAtM2HYSAkQ+gBs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AypNNusREuns0wnNlKfKMNUI3ocW5OmmK60IparARjvx9/p36eRrQ35nxdaI/IUoXFCt66OxZhW0rrgdCyiPG9V4YhVbQVLUQGbwIayEhFjuGrtsUpQKApslLHOIKIqsF0XibQscAMSOMucPWeGjxA0+TbX3FvCTY2iI98Ay7lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gLzEqPXO; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xg7KmYffqZBLpF30epvwg0Mu05bAAH+x/ZEjiAYXFjo=; b=gLzEqPXOi98HdUP3XYk+tpLNJE
-	3qSsOiFZezC5a6NrAzXgY0Il4il3ryTNfS64dAFOuy71pwRtYmWcwj8gs+9Qd4cqvklH0h+35heBO
-	fhCacW3DFketHD0mdqs5gCb980cI/Vr0wNsSa/1CIqvtJs2Qp1r3a/hRhiWMRlKasWaNc0RhsVU8q
-	ZpK65kgwSH0hxTrxyWy0ktGkJCHHICUs/NqAke7KzVeme55R6/q+cOfrRZmu//sJJ1YxHr3b+vly0
-	u/rtp7OleHvaRVGemr1emVnfR0CiBOnQqaCJnl+RNZe7smkZ6R96QnMFpGJgrOr6c2U/PH0H1/Crx
-	7YbNTN+A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdOKa-0000000GyyG-284i;
-	Mon, 12 Aug 2024 06:15:00 +0000
-Date: Sun, 11 Aug 2024 23:15:00 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Alistair Popple <apopple@nvidia.com>
-Cc: Max Ramanouski <max8rr8@gmail.com>, x86@kernel.org,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	linux-kernel@vger.kernel.org, jniethe@nvidia.com,
-	jhubbard@nvidia.com, linux-mm@kvack.org, tglx@linutronix.de
-Subject: Re: [PATCH 1/1] x86/ioremap: Use is_vmalloc_addr in iounmap
-Message-ID: <ZrmoZKI1UHRRln7j@infradead.org>
-References: <20230810100011.14552-1-max8rr8@gmail.com>
- <87wmkr4jgj.fsf@nvdebian.thelocal>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C681843;
+	Mon, 12 Aug 2024 06:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723443361; cv=pass; b=IesX6QGnoKJ2nlTPtqpvrupf1+Nrer/IKqtmYB+SdXVKQSzrTgvZ1djjBrZWZ/xKlQ1umB9VnFSuer0DRrBrRis/OvXdtvopLWfav5c6ov0ISkD3oggMfuOzdFd2N+SBotZtqL9xGlHhg4ji6PKzNI9ZHZuQ/ZEvNcoz1jVDwN8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723443361; c=relaxed/simple;
+	bh=f/eYtRVlvtArZufnNLipBAYpBhT9L1xyeL7LqObEKNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=syJAO1pSV/otsPwHl7gI1cwyuO77Fc057p4TMkESFH/YTnJzYFaCkx7FBV1RGPqBIMBjtfeyOcyazNip8+16oLZuJZZxQHUxUcc19IB+11xhxK3mIbcMtOTZpGQQ57rP3ssx35THRrkhmoQvxARqv4p5qYE9kV84CEaeYzAGEUA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=YDW8AKyK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: usama.anjum@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723443340; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SHyNfYppBl/+V0ObUII2nRZCKWvu6876axI196r1vH8Jbb5OLLXK3OgOY68BU6XSpeE9mhEsBytXDQZUEkIbZ8ruL5RtqnWlxFjL9I/K/FVnKHI0/69T2FI/5aunQWfS7P6/TZ4lgU/WVFGeuQddUmESRRV+nBONHByqIiv0Wmk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723443340; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=LBR+TP/pJVKC9tpDa3zweS1u2fInPYeCnYBagTK31PI=; 
+	b=bQS0HSDAotKeUXo1MhYtwkqxkDSVEdU/QKiPZS387fKDohKJl3mbluKnKh3RR5FWL+lVeZXG1ks+MB1FuV/ZAvkRIY5LFANMWRUrqiYhRidBsC3TUisxkh6/bCG2LtB2kxviV1gRCGBPd6LCsatd6SzCWWtZqEorL8CE6cOFSIc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
+	dmarc=pass header.from=<usama.anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723443340;
+	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Transfer-Encoding:Reply-To;
+	bh=LBR+TP/pJVKC9tpDa3zweS1u2fInPYeCnYBagTK31PI=;
+	b=YDW8AKyKZ5UF/sQ7Ty/MR2YXXNUzW0al3MnD3Rg72PRa4RiMnQBU73N7xRlTIkSb
+	7Gfm3WC2UhQNwyXPUhV+jEE9+an7z5xo7iGXZyAOsI8mr1zlFaIeLt+X7k1n3+/xDyW
+	9jUv9PrQKoXs1+sZkCGLKcMFyHlO+CMB17k9nSI4=
+Received: by mx.zohomail.com with SMTPS id 1723443338838423.1852483816655;
+	Sun, 11 Aug 2024 23:15:38 -0700 (PDT)
+From: Muhammad Usama Anjum <usama.anjum@collabora.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Mike Rapoport <rppt@kernel.org>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
+	kernel@collabora.com,
+	stable@vger.kernel.org,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2] selftests: memfd_secret: don't build memfd_secret test on unsupported arches
+Date: Mon, 12 Aug 2024 11:15:22 +0500
+Message-Id: <20240812061522.1933054-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmkr4jgj.fsf@nvdebian.thelocal>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-(Somehow I can't find the original in my inbox, so replying here).
+[1] mentions that memfd_secret is only supported on arm64, riscv, x86
+and x86_64 for now. It doesn't support other architectures. I found the
+build error on arm and decided to send the fix as it was creating noise
+on KernelCI:
 
-The correct helper to use is is_ioremap_addr, as in the generic
-iounmap implementation.  This won't matter for x86 currently, but
-it clearly documents what the code is doing.
+memfd_secret.c: In function 'memfd_secret':
+memfd_secret.c:42:24: error: '__NR_memfd_secret' undeclared (first use in this function);
+did you mean 'memfd_secret'?
+   42 |         return syscall(__NR_memfd_secret, flags);
+      |                        ^~~~~~~~~~~~~~~~~
+      |                        memfd_secret
 
-More long term, but I really hate how x86 is not using more of the
-generic ioremap code.  kmsan_iounmap_page_range should really move
-to generic_iounmap, as should memtype_free after adding a properly
-stubbed out API for it.
+Hence I'm adding condition that memfd_secret should only be compiled on
+supported architectures.
 
-With that x86 iounmap would just contain a hook for the magic
-ISA region, the mmio trace call and then call into generic_ioremap
-and we'd get rid of these open coded checks.
+Also check in run_vmtests script if memfd_secret binary is present
+before executing it.
+
+[1] https://lore.kernel.org/all/20210518072034.31572-7-rppt@kernel.org/
+Cc: stable@vger.kernel.org
+Fixes: 76fe17ef588a ("secretmem: test: add basic selftest for memfd_secret(2)")
+Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Changes since v1:
+- Add error message to the patch and reviewed-by tags
+---
+ tools/testing/selftests/mm/Makefile       | 2 ++
+ tools/testing/selftests/mm/run_vmtests.sh | 3 +++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selftests/mm/Makefile
+index 1a83b70e84535..4ea188be0588a 100644
+--- a/tools/testing/selftests/mm/Makefile
++++ b/tools/testing/selftests/mm/Makefile
+@@ -53,7 +53,9 @@ TEST_GEN_FILES += madv_populate
+ TEST_GEN_FILES += map_fixed_noreplace
+ TEST_GEN_FILES += map_hugetlb
+ TEST_GEN_FILES += map_populate
++ifneq (,$(filter $(ARCH),arm64 riscv riscv64 x86 x86_64))
+ TEST_GEN_FILES += memfd_secret
++endif
+ TEST_GEN_FILES += migration
+ TEST_GEN_FILES += mkdirty
+ TEST_GEN_FILES += mlock-random-test
+diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/selftests/mm/run_vmtests.sh
+index 03ac4f2e1cce6..36045edb10dea 100755
+--- a/tools/testing/selftests/mm/run_vmtests.sh
++++ b/tools/testing/selftests/mm/run_vmtests.sh
+@@ -374,8 +374,11 @@ CATEGORY="hmm" run_test bash ./test_hmm.sh smoke
+ # MADV_POPULATE_READ and MADV_POPULATE_WRITE tests
+ CATEGORY="madv_populate" run_test ./madv_populate
+ 
++if [ -x ./memfd_secret ]
++then
+ (echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope 2>&1) | tap_prefix
+ CATEGORY="memfd_secret" run_test ./memfd_secret
++fi
+ 
+ # KSM KSM_MERGE_TIME_HUGE_PAGES test with size of 100
+ CATEGORY="ksm" run_test ./ksm_tests -H -s 100
+-- 
+2.39.2
 
 
