@@ -1,59 +1,62 @@
-Return-Path: <linux-kernel+bounces-283682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9003C94F7B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:49:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0438A94F7B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 915551C2240C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:49:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A251A1F22F6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9490018C346;
-	Mon, 12 Aug 2024 19:49:32 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E740318C346;
+	Mon, 12 Aug 2024 19:49:55 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9535F1917D0;
-	Mon, 12 Aug 2024 19:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F22A18E03F;
+	Mon, 12 Aug 2024 19:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723492172; cv=none; b=euCsWPc1FEEv8MxmtqBS2oTHfE1mY9VF57AgjWQT6UWm39WQwPGrxphtWdbfaoKb601yPsVderMFHi+eWfHtEXGX5ia3ZWRb1nasbSLy2Pt904P3wMV5B82EbtfH4iZs16m0iW9PeFw6ppnqKJNWAzDBOhiOn0cDCBu9WZYJ9WA=
+	t=1723492195; cv=none; b=b4sSBRXUOKfT4Dd663QaDeSgsjp/SUvb+RwAIQmvmPR8g0ow79C/6HL71/65wpJ1UV4TsMlknF1dcz0RdS58ZqWeoo//j+zy1Qvfh8Dz+TslGKBHCgpX31MfW2jDmxkzyHhBQ1sh4zyFk/+0RkRLb3k/JGgw9arpv83zvpg3gXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723492172; c=relaxed/simple;
-	bh=rEkC2p3/hDYrdI2cqSHQc6pq99mJv0GMpnWt8CrxSzY=;
+	s=arc-20240116; t=1723492195; c=relaxed/simple;
+	bh=0BOuvSSRu8XCinUSUY5a/2kuBisN7G3002X8lUgxHww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BlhhA8P60vTtWD6p/XZsTp25JIvKK0odmTVJYPEMgr8mMcNN7U27m4qwTr2IZAOA3qFxwuXgDK51TsoGERBZCxqbb2TCEgiLJMfjk26gJjx5sZi6JkujRp3MEcc1fl3npQj0lpNRW5oY6Ipatp7iJup5S8IdmrUbfazrPFVBVm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.16
+	 Content-Type:Content-Disposition:In-Reply-To; b=irdHjbYQ3e5Wn3pD4qlZx08YxYyZBAtZFRGL1UbLLJzTOVm0GGLLxbHxeUgKcNWqyJoL6jvXAt7070Hs0SI8VghxuKfBCtRNp0URDx1nFMwdg4/E4GUlGgalcov2kLl4wY+Wd1r8XV/3C87mXyJ1B2/PpD3c0/Xv9hVF63yug/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: n3Wf+aoYQWmAV5Nv2pqtrg==
-X-CSE-MsgGUID: +IPjiDHBSeWc6VpepDDfMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="12968499"
+X-CSE-ConnectionGUID: czJjokLiTAyFxKhpmK1QYg==
+X-CSE-MsgGUID: w1Cb2MIFRFupMro/kpOogA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="33011188"
 X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="12968499"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:30 -0700
-X-CSE-ConnectionGUID: knuB3U8nTuWCZguycpF7VA==
-X-CSE-MsgGUID: jmIeVavnQxOPUiPIpAaUgQ==
+   d="scan'208";a="33011188"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:53 -0700
+X-CSE-ConnectionGUID: YMlFUVuVRCancuF5oXQ2zg==
+X-CSE-MsgGUID: YcgO8YgWRvmmxfen4S9sZg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="58031053"
+   d="scan'208";a="58618672"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:28 -0700
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 12:49:52 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andy@kernel.org>)
-	id 1sdb2k-0000000ETiB-2qxg;
-	Mon, 12 Aug 2024 22:49:26 +0300
-Date: Mon, 12 Aug 2024 22:49:26 +0300
+	id 1sdb37-0000000ETiX-0Fdh;
+	Mon, 12 Aug 2024 22:49:49 +0300
+Date: Mon, 12 Aug 2024 22:49:48 +0300
 From: Andy Shevchenko <andy@kernel.org>
 To: Kees Cook <kees@kernel.org>
 Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] string_choices: Add wrapper for str_down_up()
-Message-ID: <ZrpnRgdCaXFM1sju@smile.fi.intel.com>
-References: <20240812182939.work.424-kees@kernel.org>
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	linux-hardening@vger.kernel.org, cocci@inria.fr,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] coccinelle: Add rules to find str_down_up() replacements
+Message-ID: <ZrpnXFzizCG5_nx8@smile.fi.intel.com>
+References: <20240812183637.work.999-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,12 +65,12 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812182939.work.424-kees@kernel.org>
+In-Reply-To: <20240812183637.work.999-kees@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Aug 12, 2024 at 11:29:40AM -0700, Kees Cook wrote:
-> The string choice functions which are not clearly true/false synonyms
-> also have inverted wrappers. Add this for str_down_up() as well.
+On Mon, Aug 12, 2024 at 11:36:38AM -0700, Kees Cook wrote:
+> As done with str_up_down(), add checks for str_down_up() opportunities.
+> 5 cases currently exist in the tree.
 
 Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
