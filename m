@@ -1,119 +1,128 @@
-Return-Path: <linux-kernel+bounces-283621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C43094F6DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:45:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BFB94F6E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC41C1F21CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD9B1F21D07
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C323018E74C;
-	Mon, 12 Aug 2024 18:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E1718DF6C;
+	Mon, 12 Aug 2024 18:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W7JmqtcY"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="feUxoO/M"
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37D12B9B7
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693E2B9B7;
+	Mon, 12 Aug 2024 18:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723488301; cv=none; b=ZKyiHGJJ6bP4gQS47lzXtL6VZ4qF6Bz2QuMRDppJgeA0/uqF0/5bHl3KzzJsASHRgMN6wnIe+EodMciqTr8T2twh7mLgzqjyZcMkByZszVNNA7cWHHCGWw4jZnGmhGdiXbMn9NBeQcBNZHbP3QdNANIRmfgyWLKch5MEVIqS06g=
+	t=1723488356; cv=none; b=tu6HsFIYwXZqWMwiHUYQRBUEGwBFuphZrtjbb56XIugrcygGvREaCPpdQUpy+cwswqAp7Rtf4WSiK8puGqUPquTMvXtAsbKGXbB7GyRT683cRWbf57JwIZS1W58sDAW8H9/kkgPGBo/SLwcCgsEvn6ME2u02u9UeqbT1qu5tmCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723488301; c=relaxed/simple;
-	bh=zbPEjCRYI897M87PSVTeeSpNQCMqx1QUDxQjO5OMTdE=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TKuglTcA+WvuKFCAVtCp2s0rFUyXzBS0cb+NJKzur252CTwzjDn1ELaot74ITbsCb9DB/q1Jnj5qDOo0xJ8VjXwnD+aH2M2SCYcC1Bf/lJvPuLPDs7Sz8gi/Q+2oh87DuFnbF0gbeSp4wKhDvgMejjKqH/9kFQuuA1eV3J075kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W7JmqtcY; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6688c44060fso109902267b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:44:59 -0700 (PDT)
+	s=arc-20240116; t=1723488356; c=relaxed/simple;
+	bh=TR9nm8qypj66rgyu/7tTWyN3lIGveJ1wdSlfjYIj1uw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BZS9bsWyz2ht5jcwv+TCEmsrtW1EN9hJMJ5ZxMjdThDCY8rD4sI8zUz7on8M2vJ52bjRQkwCkZzsBRtR9GPutRkvAxumKiTrQPo4syim/uju/M2KfpDLejCrMfE7HVjjJCwrYRn1RU7e6385zKdcuieAb91F7KFRKTYqfC4VrUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=feUxoO/M; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723488298; x=1724093098; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8xfjsLS0qWmUfrN2bGiDc953k4XM6QAa2JwY+lrUcSM=;
-        b=W7JmqtcYk5fGEHHPGEqQ/bPDankoHzQCc3H84qcePGOswiukVYu5xkhGdUu97FFuvi
-         EFs34j7TG2b4/H1v8lCV6Pt8QT5/2pdI2PFMTwfs3hk5YIDPipSMVs/gmE0IQBm0YLyH
-         +lhy8iF6UQZnb/zHctRL3KUvVxmor0NaNrw4Whq39BisxHEtnh4VBi1jJfHc8KmsToVV
-         rbvBSiXCkQVFFikfxW4AsKb7UWjjO3+/jTd6PlAj+5TzjG6Y30MlZgQ4/MaRBcwlZvrO
-         5ElpoYfashD25xXRNnd6CFv6YQ3dgp+R38Tpzr/ZwtmCtA6jT8M0/kNKh1DstmXOgplw
-         p70w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723488298; x=1724093098;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8xfjsLS0qWmUfrN2bGiDc953k4XM6QAa2JwY+lrUcSM=;
-        b=itFgWuTxND8TzlDrWPjhmrQkVTovkkCEideEVkP7vXUq18wD374nG0KEjACsFFa473
-         VFS8jIhSiH/f4tUe4dEA1jRYHqIYCvNo4p02veTJ85XXaUBdc4/3M1TLh0EoSz9wUFmz
-         NzviFY6jZYIgzgusZkKLYnz1WwJsLphdmV4zFpN+IhXxFAeLpa1iAtv3n4HbSpyz2Vok
-         udPXpjZQ5ZmdWKkMeSQq5vjP5QMwEZiZEtgkJ+uYUnIqz/wOOL1TGVyyQb/IsgvKFv78
-         50n+P5O7Pa7aUjBRajUVyTqFtZUK7U7r/HnvoHtudujdsHJycbWGVLs6sdzVAw2Uf3K1
-         BQtg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2O5Y22ayV0S65YMeiFP2rvWSisBFpGZdLhufeAsCqEy1Xn/PJtnnAo/muIFAYYjKHk2BQm1tzYWH1oLLk0TB1IxIhUiZ4dLfFAKGz
-X-Gm-Message-State: AOJu0YwO0THO/9EF4wkvxzDe6z9EBd13jn7XVPGgG2Sq1ii/+QPpnNiq
-	Lx625Tby6DMeKuDqUP15niUPdpMzTS9lAqs4KZZNO2OFWiGfoO2jAo3b7HwuVmSaDnL3i2CEzf1
-	n9Q==
-X-Google-Smtp-Source: AGHT+IE01xHH4pviDkRute4+F54n9w40B7TDMBtndwx7WiSzaMMX3jLH0he1cbHjQL8t5nUEOC5H3JdOvf8=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3912:1e97:a514:421a])
- (user=surenb job=sendgmr) by 2002:a81:b40c:0:b0:69f:9a89:4ba5 with SMTP id
- 00721157ae682-6a9718f32b3mr24227b3.2.1723488298676; Mon, 12 Aug 2024 11:44:58
- -0700 (PDT)
-Date: Mon, 12 Aug 2024 11:44:55 -0700
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1723488356; x=1755024356;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=vZiDuPYpb58bPwU+I9LWgQyOBzqpwIr01DUBTsMb5eo=;
+  b=feUxoO/MY7kYHZug1NVXsKV50V97+LTLHllB/TQZxEBu95KGuVbwZjqo
+   IThY8IXdSdOPCsRsnfFo3vL0DCFGp7x1PZA55m+R5p4I0UFEM7jBXMtNa
+   Jk4lSnXYzg69AWtC2FBgDO67LmCPYqqG7AS0LRlODTuvyzzXCJd+ij/7W
+   Y=;
+X-IronPort-AV: E=Sophos;i="6.09,283,1716249600"; 
+   d="scan'208";a="673462861"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 18:45:52 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:50457]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.236:2525] with esmtp (Farcaster)
+ id c93f32e9-5893-4d1e-b1f8-7cefa3a997c6; Mon, 12 Aug 2024 18:45:51 +0000 (UTC)
+X-Farcaster-Flow-ID: c93f32e9-5893-4d1e-b1f8-7cefa3a997c6
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 12 Aug 2024 18:45:50 +0000
+Received: from 88665a182662.ant.amazon.com (10.142.139.164) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 12 Aug 2024 18:45:48 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <mtodorovac69@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<pabeni@redhat.com>, <shuah@kernel.org>, <jain.abhinav177@gmail.com>
+Subject: Re: [PATCH v1 1/1] selftests: net: af_unix: cast void* to char* in call to macro TH_LOG()
+Date: Mon, 12 Aug 2024 11:45:40 -0700
+Message-ID: <20240812184540.60174-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240812002257.23447-2-mtodorovac69@gmail.com>
+References: <20240812002257.23447-2-mtodorovac69@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240812184455.86580-1-surenb@google.com>
-Subject: [PATCH 1/1] alloc_tag: mark pages reserved during CMA activation as
- not tagged
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, hch@infradead.org, vbabka@suse.cz, 
-	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, surenb@google.com
+MIME-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D037UWC002.ant.amazon.com (10.13.139.250) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-During CMA activation, pages in CMA area are prepared and then freed
-without being allocated. This triggers warnings when memory allocation
-debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
-by marking these pages not tagged before freeing them.
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+Date: Mon, 12 Aug 2024 02:22:58 +0200
+> GCC 13.2.0 reported warning about (void *) beeing used as a param where (char *) is expected:
+> 
+> In file included from msg_oob.c:14:
+> msg_oob.c: In function ‘__recvpair’:
+> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’,
+> 							but argument 6 has type ‘const void *’ [-Wformat=]
+>   106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
+>       |                                        ^~~~~~~~~~~~~
+> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+>   101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
+>       |                 ^~~~~~~~
+> msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
+>   235 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
+>       |                 ^~~~~~
+> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’,
+> 							but argument 6 has type ‘const void *’ [-Wformat=]
+>   106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
+>       |                                        ^~~~~~~~~~~~~
+> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+>   101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
+>       |                 ^~~~~~~~
+> msg_oob.c:259:25: note: in expansion of macro ‘TH_LOG’
+>   259 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
+>       |                 ^~~~~~
+> 
+> Casting param to (char *) silences the warning.
+> 
+> Fixes: d098d77232c37 ("selftest: af_unix: Add msg_oob.c.")
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Eric Dumazet <edumazet@google.com>
+> Cc: Jakub Kicinski <kuba@kernel.org>
+> Cc: Paolo Abeni <pabeni@redhat.com>
+> Cc: Shuah Khan <shuah@kernel.org>
+> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Cc: netdev@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- mm/mm_init.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks for the patch!
 
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 75c3bd42799b..ec9324653ad9 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2245,6 +2245,16 @@ void __init init_cma_reserved_pageblock(struct page *page)
- 
- 	set_pageblock_migratetype(page, MIGRATE_CMA);
- 	set_page_refcounted(page);
-+
-+	/* pages were reserved and not allocated */
-+	if (mem_alloc_profiling_enabled()) {
-+		union codetag_ref *ref = get_page_tag_ref(page);
-+
-+		if (ref) {
-+			set_codetag_empty(ref);
-+			put_page_tag_ref(ref);
-+		}
-+	}
- 	__free_pages(page, pageblock_order);
- 
- 	adjust_managed_page_count(page, pageblock_nr_pages);
+but I found the same patch posted a bit earlier here,
+and Abhinav will post v2.
 
-base-commit: d74da846046aeec9333e802f5918bd3261fb5509
--- 
-2.46.0.76.ge559c4bf1a-goog
-
+https://lore.kernel.org/netdev/20240810134037.669765-1-jain.abhinav177@gmail.com/
 
