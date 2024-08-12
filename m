@@ -1,124 +1,306 @@
-Return-Path: <linux-kernel+bounces-282961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6993594EB4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5738594EB47
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C79E1C2142C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9A471F223A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BC1170836;
-	Mon, 12 Aug 2024 10:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="p9AlzTWV"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F019F170822;
+	Mon, 12 Aug 2024 10:36:31 +0000 (UTC)
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8AA16FF26
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8A816F8E9;
+	Mon, 12 Aug 2024 10:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723459021; cv=none; b=APd3JjaUU8wEEblm9aLeQmtfGjjRjgJdWaUhdfj2McsSY7GmwBIXd24P9rQGan7zYRjZINzzToP+oCmieTAd0IIDaRk2tmWCfsoBC2pJz+X0/Ze4ArKVxiP4uC6cRqT8fhWnAfZgfyWJNBCmAxuso03bMN+jMaRdUChtfMW/fFY=
+	t=1723458991; cv=none; b=Y9kNMTAVnmHXwv4YAFlbVE8cNfHTabkB6A5TtvWE5VF8VIm8l22yP/BRfU9uGIKRe1NchncSSl3BEsebDHuOWifC2wo9TqN3LYhkk3soCdGKZtv+gsjQESQQQXD+iDTDe/81aPB0W9mu4m6IH4A/WVihLNcMbCj2ytqZtKMTSx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723459021; c=relaxed/simple;
-	bh=8+LIWnQdrWxt7ycwt1k5XvF80HXWWgVGtbMU2iI1TG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E98qa1TRq2f62MHAlxd1NMMHFHmJcbRuE1LeO+3WJqu3hB5vMzFsucHW6PkDp2PuSQADEBHht4Ja/KgblhNqoWrGL9Xht+O+yWlKFn2AGVDkyFJYNy+/X+U5Pz/sEh0tQsHVekTNiQPHjrF4WDyJXbEJEjfXBaruGP70ideHVqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=p9AlzTWV; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ef95ec938so4134114e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 03:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723459018; x=1724063818; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+NHXPZC38UkK7O5TEx6SvnlkLMGTpM5Jg04F0VTZcmI=;
-        b=p9AlzTWV+bcSvn84piwSb0GmqMCIJsSZl99LRvJfjrfZ7l7a9JqrpT2U/Ol/H/2cUo
-         z1OUx8iAQopfRHe1J5Lb17mzJjVf9BAxRbaN6kUrKe9wccksq2TOrl0dNvVftvwG5de1
-         GUYYdLAQMg/ko6jDTXlq83P1U/wxgiizbkRsIpLLKJ+ekmu8vJqmMizJcDbPtvIlgu/z
-         C9gOtikTLNZ//PdMlPFHcI3liL48XcbFngJJCjJFFecNqs3e9qGAP1EqgMnBSJUC3L0+
-         6cEW/bX3JCFjSFFJgenkZBvnxlbvmZhckvcPGR9vLlbyiIrstFAM3GSQOX0HN7DOOCzI
-         nMeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723459018; x=1724063818;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+NHXPZC38UkK7O5TEx6SvnlkLMGTpM5Jg04F0VTZcmI=;
-        b=MBpHb7c17vmT1Av9FypWmkk0pmf8gi+Rwg02AfzZJ0AP0VqBrHQ06kxX6f9tnrU2SV
-         ubHjWrEyVXcrZ85TtYnu6fHCy06ULHBpLym75PrQ6lSOGz8fXIHpiOQZ13fPkgbgzoab
-         p0jXZmd6dvVX/WSntWahRl1EPCxlaE2WS6TiHi3BLPJ/wnFippp/5ZJjtfTpErq0kX6c
-         XNDQxpB1wnvGFeBWYsM3qEE5gBsWvtJ/rKnUo2IaEcwhc45L4gbWW0CKmhFQObVQzjvV
-         Ny+H0yUE1iipmElM01rwxAdPltGeynCKzI2F1QzpA2eHq9JNyfHyWZNZBbGTwE+Vw/EF
-         daGg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9sBJCrnWslwCJNuGB9nuC2bL/vEvLRNBajJG8H4JijQjTeU7yrQlUeA1Bsa/Wv3sqQP2tMxthLaVL9etXSWaEsw88WLu4S9thURmh
-X-Gm-Message-State: AOJu0YwIuEmr3RIzAuedYUqOpMmEIeMJQUMxd0dL/iW6P90GMXhfV/bH
-	W8O3BFJrylTBnr3OSJheHnNJpSeBWYnHEcZWBfVa36wlRJr2XGbc4l5bpVVEGqLt2Nt3YZZ7GE6
-	aldw=
-X-Google-Smtp-Source: AGHT+IGhryedRog1uNgUMvSTTd6FzO5BP4X7rYeAgqKS3aPe96HVq3jG2s3kGS4P92rT09XMfGeoLg==
-X-Received: by 2002:a05:6512:398c:b0:530:daee:cfb0 with SMTP id 2adb3069b0e04-530ee9ee3a3mr6043926e87.52.1723459018211;
-        Mon, 12 Aug 2024 03:36:58 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb1cce87sm221661466b.101.2024.08.12.03.36.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 03:36:57 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] btrfs: Annotate structs with __counted_by()
-Date: Mon, 12 Aug 2024 12:36:20 +0200
-Message-ID: <20240812103619.2720-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723458991; c=relaxed/simple;
+	bh=U6KmWj1sf2bum8Hw3Zb764ky/hS9zMtl6zxZs1LpOMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RM9h3VKje2UuJXw9QRC/GtbfU4+7nSi3Wfw32RlIu4Dr7cCTM3jhVdfnpZLGOkpeCQN2+40TspeBNxdZAJdArCsM8NwhIPyi9RuKZAXSQtH6fG17684Ypn1F/AyY3ttvLFFeClHi+2dtdD4qpgFhfYlFmryr/DAkih0fG5r/VwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1sdSH3-00450n-1y;
+	Mon, 12 Aug 2024 18:36:23 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 12 Aug 2024 18:36:22 +0800
+Date: Mon, 12 Aug 2024 18:36:22 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: oe-kbuild@lists.linux.dev,
+	Linus Torvalds <torvalds@linux-foundation.org>, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [v2 PATCH 3/3] crypto: simd - Do not call crypto_alloc_tfm during
+ registration
+Message-ID: <Zrnlpl3JfTNTRBNa@gondor.apana.org.au>
+References: <ZrbTfOViUr3S4V7X@gondor.apana.org.au>
+ <34069b9d-3731-4d0c-b317-bcbc61df7e9d@stanley.mountain>
+ <Zrnk6Y8IDxmN99kG@gondor.apana.org.au>
+ <ZrnlP4itTulcIYqP@gondor.apana.org.au>
+ <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrnli9nQXxGvPV7D@gondor.apana.org.au>
 
-Add the __counted_by compiler attribute to the flexible array member
-stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+Algorithm registration is usually carried out during module init,
+where as little work as possible should be carried out.  The SIMD
+code violated this rule by allocating a tfm, this then triggers a
+full test of the algorithm which may dead-lock in certain cases.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+SIMD is only allocating the tfm to get at the alg object, which is
+in fact already available as it is what we are registering.  Use
+that directly and remove the crypto_alloc_tfm call.
+
+Also remove some obsolete and unused SIMD API.
+
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 ---
- fs/btrfs/volumes.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/crypto/aes-ce-glue.c     |  2 +-
+ arch/arm/crypto/aes-neonbs-glue.c |  2 +-
+ crypto/simd.c                     | 76 ++++++-------------------------
+ include/crypto/internal/simd.h    | 12 +----
+ 4 files changed, 19 insertions(+), 73 deletions(-)
 
-diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-index 37a09ebb34dd..f28fa318036b 100644
---- a/fs/btrfs/volumes.h
-+++ b/fs/btrfs/volumes.h
-@@ -551,7 +551,7 @@ struct btrfs_io_context {
- 	 * stripes[data_stripes + 1]:	The Q stripe (only for RAID6).
- 	 */
- 	u64 full_stripe_logical;
--	struct btrfs_io_stripe stripes[];
-+	struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
- };
+diff --git a/arch/arm/crypto/aes-ce-glue.c b/arch/arm/crypto/aes-ce-glue.c
+index b668c97663ec..f5b66f4cf45d 100644
+--- a/arch/arm/crypto/aes-ce-glue.c
++++ b/arch/arm/crypto/aes-ce-glue.c
+@@ -711,7 +711,7 @@ static int __init aes_init(void)
+ 		algname = aes_algs[i].base.cra_name + 2;
+ 		drvname = aes_algs[i].base.cra_driver_name + 2;
+ 		basename = aes_algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto unregister_simds;
+diff --git a/arch/arm/crypto/aes-neonbs-glue.c b/arch/arm/crypto/aes-neonbs-glue.c
+index 201eb35dde37..735a2441ad48 100644
+--- a/arch/arm/crypto/aes-neonbs-glue.c
++++ b/arch/arm/crypto/aes-neonbs-glue.c
+@@ -540,7 +540,7 @@ static int __init aes_init(void)
+ 		algname = aes_algs[i].base.cra_name + 2;
+ 		drvname = aes_algs[i].base.cra_driver_name + 2;
+ 		basename = aes_algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(aes_algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto unregister_simds;
+diff --git a/crypto/simd.c b/crypto/simd.c
+index 2aa4f72e224f..b07721d1f3f6 100644
+--- a/crypto/simd.c
++++ b/crypto/simd.c
+@@ -136,27 +136,19 @@ static int simd_skcipher_init(struct crypto_skcipher *tfm)
+ 	return 0;
+ }
  
- struct btrfs_device_info {
-@@ -591,7 +591,7 @@ struct btrfs_chunk_map {
- 	int io_width;
- 	int num_stripes;
- 	int sub_stripes;
--	struct btrfs_io_stripe stripes[];
-+	struct btrfs_io_stripe stripes[] __counted_by(num_stripes);
- };
+-struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
++struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
++						      const char *algname,
+ 						      const char *drvname,
+ 						      const char *basename)
+ {
+ 	struct simd_skcipher_alg *salg;
+-	struct crypto_skcipher *tfm;
+-	struct skcipher_alg *ialg;
+ 	struct skcipher_alg *alg;
+ 	int err;
  
- #define btrfs_chunk_map_size(n) (sizeof(struct btrfs_chunk_map) + \
+-	tfm = crypto_alloc_skcipher(basename, CRYPTO_ALG_INTERNAL,
+-				    CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(tfm))
+-		return ERR_CAST(tfm);
+-
+-	ialg = crypto_skcipher_alg(tfm);
+-
+ 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
+ 	if (!salg) {
+ 		salg = ERR_PTR(-ENOMEM);
+-		goto out_put_tfm;
++		goto out;
+ 	}
+ 
+ 	salg->ialg_name = basename;
+@@ -195,30 +187,16 @@ struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
+ 	if (err)
+ 		goto out_free_salg;
+ 
+-out_put_tfm:
+-	crypto_free_skcipher(tfm);
++out:
+ 	return salg;
+ 
+ out_free_salg:
+ 	kfree(salg);
+ 	salg = ERR_PTR(err);
+-	goto out_put_tfm;
++	goto out;
+ }
+ EXPORT_SYMBOL_GPL(simd_skcipher_create_compat);
+ 
+-struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
+-					       const char *basename)
+-{
+-	char drvname[CRYPTO_MAX_ALG_NAME];
+-
+-	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
+-	    CRYPTO_MAX_ALG_NAME)
+-		return ERR_PTR(-ENAMETOOLONG);
+-
+-	return simd_skcipher_create_compat(algname, drvname, basename);
+-}
+-EXPORT_SYMBOL_GPL(simd_skcipher_create);
+-
+ void simd_skcipher_free(struct simd_skcipher_alg *salg)
+ {
+ 	crypto_unregister_skcipher(&salg->alg);
+@@ -246,7 +224,7 @@ int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
+ 		algname = algs[i].base.cra_name + 2;
+ 		drvname = algs[i].base.cra_driver_name + 2;
+ 		basename = algs[i].base.cra_driver_name;
+-		simd = simd_skcipher_create_compat(algname, drvname, basename);
++		simd = simd_skcipher_create_compat(algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto err_unregister;
+@@ -383,27 +361,19 @@ static int simd_aead_init(struct crypto_aead *tfm)
+ 	return 0;
+ }
+ 
+-struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+-					      const char *drvname,
+-					      const char *basename)
++static struct simd_aead_alg *simd_aead_create_compat(struct aead_alg *ialg,
++						     const char *algname,
++						     const char *drvname,
++						     const char *basename)
+ {
+ 	struct simd_aead_alg *salg;
+-	struct crypto_aead *tfm;
+-	struct aead_alg *ialg;
+ 	struct aead_alg *alg;
+ 	int err;
+ 
+-	tfm = crypto_alloc_aead(basename, CRYPTO_ALG_INTERNAL,
+-				CRYPTO_ALG_INTERNAL | CRYPTO_ALG_ASYNC);
+-	if (IS_ERR(tfm))
+-		return ERR_CAST(tfm);
+-
+-	ialg = crypto_aead_alg(tfm);
+-
+ 	salg = kzalloc(sizeof(*salg), GFP_KERNEL);
+ 	if (!salg) {
+ 		salg = ERR_PTR(-ENOMEM);
+-		goto out_put_tfm;
++		goto out;
+ 	}
+ 
+ 	salg->ialg_name = basename;
+@@ -442,36 +412,20 @@ struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+ 	if (err)
+ 		goto out_free_salg;
+ 
+-out_put_tfm:
+-	crypto_free_aead(tfm);
++out:
+ 	return salg;
+ 
+ out_free_salg:
+ 	kfree(salg);
+ 	salg = ERR_PTR(err);
+-	goto out_put_tfm;
++	goto out;
+ }
+-EXPORT_SYMBOL_GPL(simd_aead_create_compat);
+ 
+-struct simd_aead_alg *simd_aead_create(const char *algname,
+-				       const char *basename)
+-{
+-	char drvname[CRYPTO_MAX_ALG_NAME];
+-
+-	if (snprintf(drvname, CRYPTO_MAX_ALG_NAME, "simd-%s", basename) >=
+-	    CRYPTO_MAX_ALG_NAME)
+-		return ERR_PTR(-ENAMETOOLONG);
+-
+-	return simd_aead_create_compat(algname, drvname, basename);
+-}
+-EXPORT_SYMBOL_GPL(simd_aead_create);
+-
+-void simd_aead_free(struct simd_aead_alg *salg)
++static void simd_aead_free(struct simd_aead_alg *salg)
+ {
+ 	crypto_unregister_aead(&salg->alg);
+ 	kfree(salg);
+ }
+-EXPORT_SYMBOL_GPL(simd_aead_free);
+ 
+ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 			       struct simd_aead_alg **simd_algs)
+@@ -493,7 +447,7 @@ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 		algname = algs[i].base.cra_name + 2;
+ 		drvname = algs[i].base.cra_driver_name + 2;
+ 		basename = algs[i].base.cra_driver_name;
+-		simd = simd_aead_create_compat(algname, drvname, basename);
++		simd = simd_aead_create_compat(algs + i, algname, drvname, basename);
+ 		err = PTR_ERR(simd);
+ 		if (IS_ERR(simd))
+ 			goto err_unregister;
+diff --git a/include/crypto/internal/simd.h b/include/crypto/internal/simd.h
+index d2316242a988..be97b97a75dd 100644
+--- a/include/crypto/internal/simd.h
++++ b/include/crypto/internal/simd.h
+@@ -14,11 +14,10 @@
+ struct simd_skcipher_alg;
+ struct skcipher_alg;
+ 
+-struct simd_skcipher_alg *simd_skcipher_create_compat(const char *algname,
++struct simd_skcipher_alg *simd_skcipher_create_compat(struct skcipher_alg *ialg,
++						      const char *algname,
+ 						      const char *drvname,
+ 						      const char *basename);
+-struct simd_skcipher_alg *simd_skcipher_create(const char *algname,
+-					       const char *basename);
+ void simd_skcipher_free(struct simd_skcipher_alg *alg);
+ 
+ int simd_register_skciphers_compat(struct skcipher_alg *algs, int count,
+@@ -32,13 +31,6 @@ void simd_unregister_skciphers(struct skcipher_alg *algs, int count,
+ struct simd_aead_alg;
+ struct aead_alg;
+ 
+-struct simd_aead_alg *simd_aead_create_compat(const char *algname,
+-					      const char *drvname,
+-					      const char *basename);
+-struct simd_aead_alg *simd_aead_create(const char *algname,
+-				       const char *basename);
+-void simd_aead_free(struct simd_aead_alg *alg);
+-
+ int simd_register_aeads_compat(struct aead_alg *algs, int count,
+ 			       struct simd_aead_alg **simd_algs);
+ 
 -- 
-2.46.0
+2.39.2
 
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
