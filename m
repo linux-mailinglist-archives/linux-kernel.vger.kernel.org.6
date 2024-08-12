@@ -1,144 +1,177 @@
-Return-Path: <linux-kernel+bounces-282698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 515A594E799
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:18:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD5994E79D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BC41F23944
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:18:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759FFB2246C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEE815445E;
-	Mon, 12 Aug 2024 07:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F84155A32;
+	Mon, 12 Aug 2024 07:19:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLA4ni7C"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TDmw3Bhn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TbsAkVDi";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TDmw3Bhn";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="TbsAkVDi"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFCF45C0B;
-	Mon, 12 Aug 2024 07:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDB1B45C0B;
+	Mon, 12 Aug 2024 07:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447075; cv=none; b=DoWoDDIKs1MaM0o3gmqcyVuA8czH6gKrxXtdUldie2vWjflQNrTCCfbqZ4W7K/GCngtohRz2E974mYFGboTdreyHVHwcgURnkKJ2D8Ro/OnCGnWxqIyiKKbLRBsgxx79dVwQcFUaWihp3QSg5EWUtdHUMkhgeU0vFYVNfkvJ3fY=
+	t=1723447162; cv=none; b=Z7AUUh9ihH9ol1RXtpO12OHpcdMZaJ/r/beGwOxTL45HFsuzuP01HB84dWTvuzbv9l36oumlX1Me8Q3uPMLslYYxUihMaeRMoB/F/gToigYeiTyqRcQA9YKqu6ORpSCOmTXy78kiiEh5+YjLU3rV2zoo79Jr+j4W3kqnStaOwqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447075; c=relaxed/simple;
-	bh=RBFZ13Jlu3xi/HYtrOWhQNQ6rvqTzFKmMM4PC1OWUdQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Io2YVWq9e4yFWfgvh3GY1JAeqVf6BR6bBA/PzmehXHqW6bxz0KOWobj+XYAXq8D609CwOE1+3R7quLSClRGOS2roxisUovBBJeOH868GE4JWnpFSFgruvwSJ/+e1avyEofy8MJaHZ/zXzlwuql4J0mRWqJ4ipYxgUEqQvqsOJ60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLA4ni7C; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723447075; x=1754983075;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=RBFZ13Jlu3xi/HYtrOWhQNQ6rvqTzFKmMM4PC1OWUdQ=;
-  b=bLA4ni7CjmRaoaUJCY+1nqQbh+3j0GjRqROUjiKfY8dza/ti3xrq1YXU
-   x3XM1QoAQA5hnYWoxJeGCMcqFPF5SNin4d61YQWCW1rJzP3/EULOk392a
-   R5cSyuwTijwr9NihssBoY9MOntU6IerVqpSE/Bnip0zToeZiI9OSCOxtF
-   efhdBVC3TknDKxjSH7XzbRDLWfo9D7ANezNk5hNUUSS+eAHvth3Jwhje2
-   tqKoaIOZc0swVz3xfEaso2Bdh3yloIuk/8OLD+6GOxVCKOY0LWPRyCJSc
-   NIdFGIdjsUA4Tkw/isDj+48tnuP52AaFhy/M7z4lApfyX0Tw7G2k7U6lX
-   Q==;
-X-CSE-ConnectionGUID: K4gbUppbRRaVAJFa7mLD7g==
-X-CSE-MsgGUID: uRVrhkIgTESHgtPT/EHSvg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21685538"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21685538"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:17:54 -0700
-X-CSE-ConnectionGUID: 9mfSvlwDT7OdKoNE6UCeog==
-X-CSE-MsgGUID: hDdSFnpoTryLXFOwaIkF1Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="58892978"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:17:51 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 12 Aug 2024 10:17:48 +0300 (EEST)
-To: Matthias Fetzer <kontakt@matthias-fetzer.de>
-cc: hmh@hmh.eng.br, Hans de Goede <hdegoede@redhat.com>, 
-    ibm-acpi-devel@lists.sourceforge.net, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86: thinkpad_acpi: Add Thinkpad Edge E531 fan
- support
-In-Reply-To: <5a22f1ff-44e9-4e1a-bdbe-cc168f718693@matthias-fetzer.de>
-Message-ID: <456fea75-b6d2-4150-86db-ce385e2860b1@linux.intel.com>
-References: <20240714165054.2261305-1-kontakt@matthias-fetzer.de> <ee9624b2-5b24-9976-4746-c622fcba21a6@linux.intel.com> <5a22f1ff-44e9-4e1a-bdbe-cc168f718693@matthias-fetzer.de>
+	s=arc-20240116; t=1723447162; c=relaxed/simple;
+	bh=sRUXMwjSmi1GkAra9w2iwkY9tk6v4iLnR2fzKyJxasc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZLxJtnNm/CM5ZIdqKGEP46uqKltHfw1ACtJ9QzFH0H65XlfBuqB6TrY4MJs0u1DQpNYMjTF4kspFcGq1kU6QKL8zPYmPV6NmHzJ9GLGTXcoAdkzqYEhj+7imu/cOvfYx15nTThRdoVOf2yMcP3RX/UV+kUgEXGmauP/2fiyI3Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TDmw3Bhn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TbsAkVDi; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TDmw3Bhn; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=TbsAkVDi; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2D57722495;
+	Mon, 12 Aug 2024 07:19:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723447159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BV21c6aJPFZaXXV+r6TlWq1+Q933CkTAH8jiaaihV5U=;
+	b=TDmw3Bhn6g9gITzgODfixa23LNOoUEgHoglLP9p5xxoTWkrifJrtgDsb+tTfx2F3Pi8KLY
+	Mb/nm8zH/7l/V19aU4lHkc+XHfBIuN7WY+oqC5XPiI234ALp7k747qrSx65YRkmG9U5vU0
+	BKbELgI7uuHK5QDbGILpFp7/srT04+Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723447159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BV21c6aJPFZaXXV+r6TlWq1+Q933CkTAH8jiaaihV5U=;
+	b=TbsAkVDiEsfhPIrS6kJmpwQBbJ3anhhHpyJhqvkFC4K8+k59jEJDBzj7YK3XoJu9U4xYRf
+	9fRBIyGW3MXY2ABg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723447159; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BV21c6aJPFZaXXV+r6TlWq1+Q933CkTAH8jiaaihV5U=;
+	b=TDmw3Bhn6g9gITzgODfixa23LNOoUEgHoglLP9p5xxoTWkrifJrtgDsb+tTfx2F3Pi8KLY
+	Mb/nm8zH/7l/V19aU4lHkc+XHfBIuN7WY+oqC5XPiI234ALp7k747qrSx65YRkmG9U5vU0
+	BKbELgI7uuHK5QDbGILpFp7/srT04+Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723447159;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BV21c6aJPFZaXXV+r6TlWq1+Q933CkTAH8jiaaihV5U=;
+	b=TbsAkVDiEsfhPIrS6kJmpwQBbJ3anhhHpyJhqvkFC4K8+k59jEJDBzj7YK3XoJu9U4xYRf
+	9fRBIyGW3MXY2ABg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D78EC137BA;
+	Mon, 12 Aug 2024 07:19:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MEfqMna3uWY6CwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Mon, 12 Aug 2024 07:19:18 +0000
+Date: Mon, 12 Aug 2024 09:19:59 +0200
+Message-ID: <87le122oo0.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Mark Brown <broonie@kernel.org>
+Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
+	tiwai@suse.com,
+	wsa+renesas@sang-engineering.com,
+	mika.westerberg@linux.intel.com,
+	linux-sound@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com
+Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
+In-Reply-To: <c2dafdd5-64c5-4184-9b19-da4988993195@sirena.org.uk>
+References: <20240802152215.20831-1-rf@opensource.cirrus.com>
+	<c2dafdd5-64c5-4184-9b19-da4988993195@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1821906680-1723447068=:1039"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: *
+X-Spamd-Result: default: False [1.20 / 50.00];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[renesas];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: 1.20
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, 05 Aug 2024 21:40:05 +0200,
+Mark Brown wrote:
+> 
+> On Fri, Aug 02, 2024 at 04:22:12PM +0100, Richard Fitzgerald wrote:
+> > Add support for HP G12 laptops that use CS35L54 or CS35L56 amplifiers
+> > with Realtek HDA codecs. Some of these use the same SSID for models with
+> > CS35L54 and models with CS35L56 so the ACPI entries are examined to
+> > determine which amp is present.
+> 
+> The following changes since commit a0c04bd55a467aee3eb647555343ad6971106e86:
+> 
+>   Merge tag 'kbuild-fixes-v6.11' of git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild (2024-07-28 14:02:48 -0700)
+> 
+> are available in the Git repository at:
+> 
+>   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-acpi-lookup-dummy
+> 
+> for you to fetch changes up to 90ec3a8a7fd0d43026fcca979713e077d4883b56:
+> 
+>   spi: Add empty versions of ACPI functions (2024-08-02 18:51:59 +0100)
+> 
+> ----------------------------------------------------------------
+> spi: Add empty versions of ACPI lookup functions
+> 
+> A patch from Richard Fitzgerald adding dummy versions of the ACPI lookup
+> functions for SPI:
+> 
+>     Provide empty versions of acpi_spi_count_resources(),
+>     acpi_spi_device_alloc() and acpi_spi_find_controller_by_adev()
+>     if the real functions are not being built.
+> 
+>     This commit fixes two problems with the original definitions:
+> 
+>     1) There wasn't an empty version of these functions
+>     2) The #if only depended on CONFIG_ACPI. But the functions are implemented
+>        in the core spi.c so CONFIG_SPI_MASTER must also be enabled for the real
+>        functions to exist.
 
---8323328-1821906680-1723447068=:1039
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Pulled now.  Thanks.
 
-On Fri, 9 Aug 2024, Matthias Fetzer wrote:
->
-> Thanks for the review!
->=20
-> Am 08.08.24 um 15:14 schrieb Ilpo J=C3=A4rvinen:
-> > On Sun, 14 Jul 2024, Matthias Fetzer wrote:
-> >=20
-> > > Fan control on the E531 is done using the ACPI methods FANG and
-> > > FANW. The correct parameters and register values were found by
-> > > analyzing EC firmware as well as DSDT. This has been tested on
-> > > my Thinkpad Edge E531 (6885CTO, BIOS HEET52WW 1.33).
-> > >=20
-> > > Signed-off-by: Matthias Fetzer <kontakt@matthias-fetzer.de>
 
-> > > @@ -8157,6 +8213,7 @@ static int fan2_get_speed(unsigned int *speed)
-> > >     static int fan_set_level(int level)
-> > >   {
-> > > +=09int rc;
-> > >   =09if (!fan_control_allowed)
-> > >   =09=09return -EPERM;
-> > >   @@ -8206,6 +8263,36 @@ static int fan_set_level(int level)
-> > >   =09=09=09tp_features.fan_ctrl_status_undef =3D 0;
-> > >   =09=09break;
-> > >   +=09case TPACPI_FAN_WR_ACPI_FANW:
-> > > +=09=09if ((!(level & TP_EC_FAN_AUTO) &&
-> > > +=09=09    ((level < 0) || (level > 7))) ||
-> > > +=09=09    (level & TP_EC_FAN_FULLSPEED))
-> > > +=09=09=09return -EINVAL;
-> >=20
-> > I'd split this into two to make it more readable:
-> >=20
-> > =09=09if (!(level & TP_EC_FAN_AUTO) && (level < 0 || level > 7))
-> > =09=09=09return -EINVAL;
-> > =09=09if (level & TP_EC_FAN_FULLSPEED)
-> > =09=09=09return -EINVAL;
->=20
-> This is much better, thanks.
->=20
-> >=20
-> > I'm not sure if -EINVAL is really the right code to return though in th=
-ese
-> > cases.
-> >=20
->=20
-> I thought that since those are invalid values/parameters the return code =
-of
-> -EINVAL
-> would be a good choice. What do you suggest to use instead?
-
-Actually, now that I look into it more carefully, forget what I said.
-I think -EINVAL is correct to return in these cases because the input=20
-value is invalid (I previously assumed something else based on the=20
-define names).
-
---=20
- i.
-
---8323328-1821906680-1723447068=:1039--
+Takashi
 
