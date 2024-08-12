@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-283035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE1894EC36
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:00:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8705394EC37
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3375328248D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:00:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0930A1F2272C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E177B16BE24;
-	Mon, 12 Aug 2024 12:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1547917276D;
+	Mon, 12 Aug 2024 12:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZmUl+6oA"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IoxvuOy8"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1491779A4
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DEA41779BB
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723464002; cv=none; b=m5uonxafi6oIAN7e9brGodY/aznuO+dB/W0j698fW0mIcgXNqB8MVHqFYQu9pIEuFPLIRIgcSICLKqe0MqbGDoeXUpHVfx1Wsz7vVFI7VjK0MgymsQi6fZV/a/1whC5dpW4Huo4Jd+CtAogKNkX257F2A4bVLPtc17TlXTlTwG4=
+	t=1723464003; cv=none; b=nTEM6WZheVyHjfSV/F8oEfca38uhG7ZC2KtjgIjeULDLNa4x0XuVmNv8FeFtPcEtfGDrxg805cZEIpmfPEIWcFFM+T40OU3Th71btrVY26EI9yXPtmqSztJnnh/3uUsaaZ3pZkoGMvkHmHDaiOEOuD9Vp1FqzHxY/crDbYrYMYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723464002; c=relaxed/simple;
-	bh=vmXxu2Bpkktda/zGB5IUkhfiITUIErTtQ92h56iIjHg=;
+	s=arc-20240116; t=1723464003; c=relaxed/simple;
+	bh=A23uUvQ7BdMbF5zWE+OLndw2Turmi86y1ZGhT+Okjbk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QtME0UEpGeTSes5cKjUNeVO/PK+p+0OZJFYhgQdedR+7SYBfqmzfawlHUIHlFuFuG1Xz42qGoMN3w32ZO/PVWWNfZLpxZd154MOSmT2kJ7ntuAT1zyOk9ss9Nec19JJ1LGSDBFocyX8N5aSZBCsw7y0o3rvlST7k7OQpj48U35w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZmUl+6oA; arc=none smtp.client-ip=209.85.208.48
+	 MIME-Version; b=FJ20COOMSGYHA1ed29KagNvBPmdQN49IiNd7J/eFgiyr54g5hdtiLxb0z0JvydZXW529KoXvJD/HHJGkMagKnRED3i6Yyiw16Kg3Z3SDek89ZVkMBs5ffrBLUX69LnTqGSshbtl5oJwBRO9ls3ImSoZN6Bht1O6e78gm4nJB/As=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IoxvuOy8; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso5736229a12.1
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7ab63a388bso139963266b.1
         for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 05:00:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1723463999; x=1724068799; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fruDKXqvLpvOHXHlfsYMBztoBLfQBCYZJcuGnYhVG7c=;
-        b=ZmUl+6oAMaGLE2SYliqbyz1VAh22PH7JbiS5UbmS9obXt2/cCLAdVCeQB2lxSTdFCr
-         hjoIENIObrPl4bvretAa6pFjY89WH7qIIOR6aIEMkdQtj6WMAvaQVG6MWg+SLRj7ZnQE
-         i9rrvugObayrVAd0E3q8idxUX/v4ZQ9OQuWSUqFTeS9iA/9qxTM/bx7D1WEKutOxDjhz
-         HDkx6wKSAvrqAnz8od5GYQtm7n9gPKJb4rQ0edseCdqaySRNMWLmsylOJJ1EqNbHjRU8
-         9vnNDYanc8oIRWzsY7ZrDl74oE0XIoAztw6iFqJcIE0eFeKqdYliIUSkj8L6tVstq+En
-         nQKg==
+        bh=efqfVk4wKUu5y2Eyqs3KUsdZhsPQcKGa1y+niD5IcF0=;
+        b=IoxvuOy8kF2cVguoCm/uSh6VbbikzIvbpW9avQPfnSR03J57klWKCl0OuheIqdc58M
+         w9O9f1LGukXaI1c9c6URP/TV9ESkNMgp1v1LUu049slhoQSmFrY75dCxHdFDANWOcfpL
+         H6nXvZxfeTtHvtUBAvqrRt9h9PIAjeSJzt295aqbY9Oj5wWQCdoZcefgRpK5fWxZxHR4
+         EmbbEYQK6n6ghbZfDbiQsdOhB1AXnRHBQDBiCNfJxkGZzkhaVTK/Oqjn2h/8S1usewck
+         aX09ifZq8BUuhZpNsUGg3zWpO6z85QQuvz1y77/KAOo6gdGBgGYhPqtvTM7urI14xSGL
+         Eldg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723463999; x=1724068799;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fruDKXqvLpvOHXHlfsYMBztoBLfQBCYZJcuGnYhVG7c=;
-        b=k3d8x5Vy8vYnac0UtBLv2fBR3tzCOK9ddZs51qr1RC6GWd2vZYD6l1m05g+f+yHNhJ
-         FRp6n0G3vt1fX4gEe1T8A9ZZxUkzq6++6BlsCAPmJykfr/wOv1BMza5kd6fOQhXC/R5x
-         VR2SXY8DaXDxG6cT8T3OUwBei/4IEYqAp3liINDlBEbsDKtar87Id2SL+DQ93zdxxs//
-         IHv4uZtsr2b31IOj2tmpBozMi1SyUvScQeUTiVybajymSNuYW4Y0dH873sS7AxF4UNKG
-         u7oipFcmX2wuQqFWD11igo3iGb/z9v9lxQtBzdjvop5SBoahqn8wHpgKkyoow9t2Sxrf
-         c6rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWW6EfOaVgnD4ZA8ddSZ4gPxU13MMp+bWtPpqzePjQWhSRuYKC76TYkblfgh71n5bnuYFCeH/VTJQ6HkKofAFMfDQqiaekrAhwqsqQ5
-X-Gm-Message-State: AOJu0YwGI2ZrhpRYI8jgqVquGn11yA6ICUqhhMgo9G1HFiBoSJPDXf3o
-	ENHaAgsMfngIHksRqA3lbZoHT0W25y37D+h36YxVMAueztOjPDutoVYX4v63EKY=
-X-Google-Smtp-Source: AGHT+IHuOkc+I/HRzwKiheSTIvJj3Z6nmuPXhvaWwBFb6EcIiM2K0UMjtS7f0OP9qPL7ja6c4c3zXg==
-X-Received: by 2002:a05:6402:27d0:b0:57c:7471:a0dd with SMTP id 4fb4d7f45d1cf-5bd44c2fb29mr21508a12.12.1723463998274;
-        Mon, 12 Aug 2024 04:59:58 -0700 (PDT)
+        bh=efqfVk4wKUu5y2Eyqs3KUsdZhsPQcKGa1y+niD5IcF0=;
+        b=hJJNiURg6VxEDIq1r0UG/RTJXEecjCPr7gl5SmpBP5LoFj28xKqTMOBlMTgGYOeMew
+         FgIvhzW4YdpZq9jG44JydUVJEtlFjQo1KopJB95yvuY737UesJ4LGAITJaOUsSnqJ7JC
+         +BrWFK+OFjq7xS48r+qX2WBkzZRWfvy2aUunm2715TiHy8XlVma0gkwwIkbvrgBzFWQb
+         FCxrQHOlVNKGIhqw0mPgHvigtNwL3eemiJxx5fDfLsl3X2hCIF2IG6QPq29AUo+q1coR
+         HySebR0ig8QuCyACPDV20juAgzO6V8JM088GZ+zwep3TkfyEFA1OOruuQbkAaQRGrllI
+         DaJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwdUxZbZh1R9JEgP2NMCkvN5oaG/G2gIGzLvZQPCVi3Ut14qUyiqD9XnlzaTnm6owT9fZtAQ7IKyq6m1xy8m2TBJlNhAd/DGUCPjaI
+X-Gm-Message-State: AOJu0YyGg/RXnf/keLJ65F91CWWHojdml5L/kwrcyloQuW/tD7AKIyvD
+	xv9cJTTRrpXFBA0wh9/zSN03BJxI6je1RuQwqIYjq4o6OihhLxDVzuEFOYzUdP8=
+X-Google-Smtp-Source: AGHT+IGiz6BT46LDWsI4Kfhh8bbjUUZbNV/Nqu7ImfCdRuAQ78vk+RWaGtts3dHDU6gbsnhG/C8MMg==
+X-Received: by 2002:a05:6402:2347:b0:57d:669:caf2 with SMTP id 4fb4d7f45d1cf-5bd44c66b08mr14452a12.25.1723463999358;
+        Mon, 12 Aug 2024 04:59:59 -0700 (PDT)
 Received: from fedora.iskraemeco.si ([193.77.86.250])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e04aesm2055970a12.76.2024.08.12.04.59.57
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e04aesm2055970a12.76.2024.08.12.04.59.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 04:59:57 -0700 (PDT)
+        Mon, 12 Aug 2024 04:59:58 -0700 (PDT)
 From: Uros Bizjak <ubizjak@gmail.com>
 To: linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org
@@ -84,9 +84,9 @@ Cc: Uros Bizjak <ubizjak@gmail.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Borislav Petkov <bp@alien8.de>,
 	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Subject: [RFC PATCH v2 1/4] percpu: Define pcpu_typeof()
-Date: Mon, 12 Aug 2024 13:57:35 +0200
-Message-ID: <20240812115945.484051-2-ubizjak@gmail.com>
+Subject: [RFC PATCH v2 2/4] percpu: Assorted fixes found by strict percpu address space checks
+Date: Mon, 12 Aug 2024 13:57:36 +0200
+Message-ID: <20240812115945.484051-3-ubizjak@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240812115945.484051-1-ubizjak@gmail.com>
 References: <20240812115945.484051-1-ubizjak@gmail.com>
@@ -98,13 +98,10 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Define pcpu_typeof() to use __typeof_unqual__() as typeof operator
-when available, to return unqualified type of the expression.
+Assorted fixes to prevent defconfig build failures when
+strict percpu address space checks will be enabled.
 
-If an arch defines __percpu variables in their own named address
-space, then pcpu_typeof() returns unqualified type of the
-expression without named address space quialifier when
-CONFIG_CC_HAS_TYPEOF_UNQUAL is defined.
+These show effeciveness of strict percpu address space checks.
 
 Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
 Cc: Dennis Zhou <dennis@kernel.org>
@@ -122,369 +119,153 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Borislav Petkov <bp@alien8.de>
 Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
 ---
- arch/x86/include/asm/percpu.h | 38 ++++++++++++++++++++++------------
- include/asm-generic/percpu.h  | 26 +++++++++++------------
- include/linux/part_stat.h     |  2 +-
- include/linux/percpu-defs.h   | 39 ++++++++++++++++++++++++++++-------
- init/Kconfig                  |  3 +++
- kernel/locking/percpu-rwsem.c |  2 +-
- 6 files changed, 75 insertions(+), 35 deletions(-)
+ arch/x86/kernel/head64.c      | 3 ++-
+ drivers/base/devres.c         | 2 +-
+ fs/aio.c                      | 2 +-
+ include/linux/cleanup.h       | 4 ++--
+ include/linux/prandom.h       | 1 +
+ kernel/events/hw_breakpoint.c | 4 ++--
+ kernel/workqueue.c            | 2 +-
+ lib/percpu_counter.c          | 2 +-
+ net/core/dev.c                | 2 +-
+ 9 files changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/include/asm/percpu.h b/arch/x86/include/asm/percpu.h
-index c55a79d5feae..4ab4ad60d767 100644
---- a/arch/x86/include/asm/percpu.h
-+++ b/arch/x86/include/asm/percpu.h
-@@ -73,10 +73,14 @@
- 	unsigned long tcp_ptr__ = raw_cpu_read_long(this_cpu_off);	\
+diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+index a817ed0724d1..f5d6ad351cc4 100644
+--- a/arch/x86/kernel/head64.c
++++ b/arch/x86/kernel/head64.c
+@@ -560,9 +560,10 @@ void early_setup_idt(void)
+ void __head startup_64_setup_gdt_idt(void)
+ {
+ 	void *handler = NULL;
++	struct desc_struct *gdt = (struct desc_struct *)(uintptr_t)init_per_cpu_var(gdt_page.gdt);
+ 
+ 	struct desc_ptr startup_gdt_descr = {
+-		.address = (unsigned long)&RIP_REL_REF(init_per_cpu_var(gdt_page.gdt)),
++		.address = (unsigned long)&RIP_REL_REF(*gdt),
+ 		.size    = GDT_SIZE - 1,
+ 	};
+ 
+diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+index a2ce0ead06a6..894f5a1e6d18 100644
+--- a/drivers/base/devres.c
++++ b/drivers/base/devres.c
+@@ -1231,6 +1231,6 @@ void devm_free_percpu(struct device *dev, void __percpu *pdata)
+ 	 * devm_free_pages() does.
+ 	 */
+ 	WARN_ON(devres_release(dev, devm_percpu_release, devm_percpu_match,
+-			       (__force void *)pdata));
++			       (__force void *)(uintptr_t)pdata));
+ }
+ EXPORT_SYMBOL_GPL(devm_free_percpu);
+diff --git a/fs/aio.c b/fs/aio.c
+index 6066f64967b3..e8920178b50f 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -100,7 +100,7 @@ struct kioctx {
+ 
+ 	unsigned long		user_id;
+ 
+-	struct __percpu kioctx_cpu *cpu;
++	struct kioctx_cpu __percpu *cpu;
+ 
+ 	/*
+ 	 * For percpu reqs_available, number of slots we move to/from global
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index d9e613803df1..f7e1158cbacf 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -154,7 +154,7 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+ #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
+ 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
+ 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+-	{ return *_T; }
++	{ return (void *)(uintptr_t)*_T; }
+ 
+ #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
+ 	EXTEND_CLASS(_name, _ext, \
+@@ -211,7 +211,7 @@ static inline void class_##_name##_destructor(class_##_name##_t *_T)	\
  									\
- 	tcp_ptr__ += (__force unsigned long)(_ptr);			\
--	(typeof(*(_ptr)) __kernel __force *)tcp_ptr__;			\
-+	(pcpu_typeof(*(_ptr)) __kernel __force *)tcp_ptr__;		\
- })
- #else
--#define arch_raw_cpu_ptr(_ptr) ({ BUILD_BUG(); (typeof(_ptr))0; })
-+#define arch_raw_cpu_ptr(_ptr)						\
-+({									\
-+	BUILD_BUG();							\
-+	(pcpu_typeof(*(_ptr)) __kernel __force *)0;			\
-+})
+ static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
+ {									\
+-	return _T->lock;						\
++	return (void *)(uintptr_t)_T->lock;				\
+ }
+ 
+ 
+diff --git a/include/linux/prandom.h b/include/linux/prandom.h
+index f7f1e5251c67..f2ed5b72b3d6 100644
+--- a/include/linux/prandom.h
++++ b/include/linux/prandom.h
+@@ -10,6 +10,7 @@
+ 
+ #include <linux/types.h>
+ #include <linux/once.h>
++#include <linux/percpu.h>
+ #include <linux/random.h>
+ 
+ struct rnd_state {
+diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
+index 6c2cb4e4f48d..d82fe78f0658 100644
+--- a/kernel/events/hw_breakpoint.c
++++ b/kernel/events/hw_breakpoint.c
+@@ -849,7 +849,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
+ 
+ 	cpu_events = alloc_percpu(typeof(*cpu_events));
+ 	if (!cpu_events)
+-		return (void __percpu __force *)ERR_PTR(-ENOMEM);
++		return (void __percpu __force *)(uintptr_t)ERR_PTR(-ENOMEM);
+ 
+ 	cpus_read_lock();
+ 	for_each_online_cpu(cpu) {
+@@ -868,7 +868,7 @@ register_wide_hw_breakpoint(struct perf_event_attr *attr,
+ 		return cpu_events;
+ 
+ 	unregister_wide_hw_breakpoint(cpu_events);
+-	return (void __percpu __force *)ERR_PTR(err);
++	return (void __percpu __force *)(uintptr_t)ERR_PTR(err);
+ }
+ EXPORT_SYMBOL_GPL(register_wide_hw_breakpoint);
+ 
+diff --git a/kernel/workqueue.c b/kernel/workqueue.c
+index 1745ca788ede..32729a2e93af 100644
+--- a/kernel/workqueue.c
++++ b/kernel/workqueue.c
+@@ -377,7 +377,7 @@ struct workqueue_struct {
+ 
+ 	/* hot fields used during command issue, aligned to cacheline */
+ 	unsigned int		flags ____cacheline_aligned; /* WQ: WQ_* flags */
+-	struct pool_workqueue __percpu __rcu **cpu_pwq; /* I: per-cpu pwqs */
++	struct pool_workqueue __rcu * __percpu *cpu_pwq; /* I: per-cpu pwqs */
+ 	struct wq_node_nr_active *node_nr_active[]; /* I: per-node nr_active */
+ };
+ 
+diff --git a/lib/percpu_counter.c b/lib/percpu_counter.c
+index 51bc5246986d..3d0613ac7e73 100644
+--- a/lib/percpu_counter.c
++++ b/lib/percpu_counter.c
+@@ -209,7 +209,7 @@ int __percpu_counter_init_many(struct percpu_counter *fbc, s64 amount,
+ 		INIT_LIST_HEAD(&fbc[i].list);
  #endif
+ 		fbc[i].count = amount;
+-		fbc[i].counters = (void *)counters + (i * counter_size);
++		fbc[i].counters = (void __percpu *)counters + (i * counter_size);
  
- #define PER_CPU_VAR(var)	%__percpu_seg:(var)__percpu_rel
-@@ -172,7 +176,7 @@ do {									\
- 	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
- 	    : [var] "m" (__my_cpu_var(_var)));				\
- 									\
--	(typeof(_var))(unsigned long) pfo_val__;			\
-+	(pcpu_typeof(_var))(unsigned long) pfo_val__;			\
- })
+ 		debug_percpu_counter_activate(&fbc[i]);
+ 	}
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 751d9b70e6ad..5cad88cf029c 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -10860,7 +10860,7 @@ noinline void netdev_core_stats_inc(struct net_device *dev, u32 offset)
+ 			return;
+ 	}
  
- #define __raw_cpu_write(size, qual, _var, _val)				\
-@@ -180,7 +184,7 @@ do {									\
- 	__pcpu_type_##size pto_val__ = __pcpu_cast_##size(_val);	\
- 									\
- 	if (0) {		                                        \
--		typeof(_var) pto_tmp__;					\
-+		pcpu_typeof(_var) pto_tmp__;				\
- 		pto_tmp__ = (_val);					\
- 		(void)pto_tmp__;					\
- 	}								\
-@@ -193,7 +197,11 @@ do {									\
-  * The generic per-CPU infrastrucutre is not suitable for
-  * reading const-qualified variables.
-  */
--#define __raw_cpu_read_const(pcp)	({ BUILD_BUG(); (typeof(pcp))0; })
-+#define __raw_cpu_read_const(pcp)					\
-+({									\
-+	BUILD_BUG();							\
-+	(pcpu_typeof(pcp))0;						\
-+})
- 
- #endif /* CONFIG_USE_X86_SEG_SUPPORT */
- 
-@@ -205,7 +213,7 @@ do {									\
- 	    : [val] __pcpu_reg_##size("=", pfo_val__)			\
- 	    : [var] "i" (&(_var)));					\
- 									\
--	(typeof(_var))(unsigned long) pfo_val__;			\
-+	(pcpu_typeof(_var))(unsigned long) pfo_val__;			\
- })
- 
- #define percpu_unary_op(size, qual, op, _var)				\
-@@ -219,7 +227,7 @@ do {									\
- 	__pcpu_type_##size pto_val__ = __pcpu_cast_##size(_val);	\
- 									\
- 	if (0) {		                                        \
--		typeof(_var) pto_tmp__;					\
-+		pcpu_typeof(_var) pto_tmp__;				\
- 		pto_tmp__ = (_val);					\
- 		(void)pto_tmp__;					\
- 	}								\
-@@ -239,7 +247,7 @@ do {									\
- 				(int)(val) : 0;				\
- 									\
- 	if (0) {							\
--		typeof(var) pao_tmp__;					\
-+		pcpu_typeof(var) pao_tmp__;				\
- 		pao_tmp__ = (val);					\
- 		(void)pao_tmp__;					\
- 	}								\
-@@ -263,7 +271,7 @@ do {									\
- 		  : [tmp] __pcpu_reg_##size("+", paro_tmp__),		\
- 		    [var] "+m" (__my_cpu_var(_var))			\
- 		  : : "memory");					\
--	(typeof(_var))(unsigned long) (paro_tmp__ + _val);		\
-+	(pcpu_typeof(_var))(unsigned long) (paro_tmp__ + _val);		\
- })
- 
- /*
-@@ -272,7 +280,7 @@ do {									\
-  */
- #define raw_percpu_xchg_op(_var, _nval)					\
- ({									\
--	typeof(_var) pxo_old__ = raw_cpu_read(_var);			\
-+	pcpu_typeof(_var) pxo_old__ = raw_cpu_read(_var);		\
- 									\
- 	raw_cpu_write(_var, _nval);					\
- 									\
-@@ -286,7 +294,7 @@ do {									\
-  */
- #define this_percpu_xchg_op(_var, _nval)				\
- ({									\
--	typeof(_var) pxo_old__ = this_cpu_read(_var);			\
-+	pcpu_typeof(_var) pxo_old__ = this_cpu_read(_var);		\
- 									\
- 	do { } while (!this_cpu_try_cmpxchg(_var, &pxo_old__, _nval));	\
- 									\
-@@ -309,7 +317,7 @@ do {									\
- 		  : [nval] __pcpu_reg_##size(, pco_new__)		\
- 		  : "memory");						\
- 									\
--	(typeof(_var))(unsigned long) pco_old__;			\
-+	(pcpu_typeof(_var))(unsigned long) pco_old__;			\
- })
- 
- #define percpu_try_cmpxchg_op(size, qual, _var, _ovalp, _nval)		\
-@@ -568,7 +576,11 @@ do {									\
- #else /* !CONFIG_X86_64: */
- 
- /* There is no generic 64-bit read stable operation for 32-bit targets. */
--#define this_cpu_read_stable_8(pcp)			({ BUILD_BUG(); (typeof(pcp))0; })
-+#define this_cpu_read_stable_8(pcp)					\
-+({									\
-+	BUILD_BUG();							\
-+	(pcpu_typeof(pcp))0;						\
-+})
- 
- #define raw_cpu_read_long(pcp)				raw_cpu_read_4(pcp)
- 
-diff --git a/include/asm-generic/percpu.h b/include/asm-generic/percpu.h
-index 94cbd50cc870..c091e09046c5 100644
---- a/include/asm-generic/percpu.h
-+++ b/include/asm-generic/percpu.h
-@@ -74,7 +74,7 @@ do {									\
- 
- #define raw_cpu_generic_add_return(pcp, val)				\
- ({									\
--	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
-+	pcpu_typeof(pcp) *__p = raw_cpu_ptr(&(pcp));			\
- 									\
- 	*__p += val;							\
- 	*__p;								\
-@@ -82,8 +82,8 @@ do {									\
- 
- #define raw_cpu_generic_xchg(pcp, nval)					\
- ({									\
--	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
--	typeof(pcp) __ret;						\
-+	pcpu_typeof(pcp) *__p = raw_cpu_ptr(&(pcp));			\
-+	pcpu_typeof(pcp) __ret;						\
- 	__ret = *__p;							\
- 	*__p = nval;							\
- 	__ret;								\
-@@ -91,7 +91,7 @@ do {									\
- 
- #define __cpu_fallback_try_cmpxchg(pcp, ovalp, nval, _cmpxchg)		\
- ({									\
--	typeof(pcp) __val, __old = *(ovalp);				\
-+	pcpu_typeof(pcp) __val, __old = *(ovalp);			\
- 	__val = _cmpxchg(pcp, __old, nval);				\
- 	if (__val != __old)						\
- 		*(ovalp) = __val;					\
-@@ -100,8 +100,8 @@ do {									\
- 
- #define raw_cpu_generic_try_cmpxchg(pcp, ovalp, nval)			\
- ({									\
--	typeof(pcp) *__p = raw_cpu_ptr(&(pcp));				\
--	typeof(pcp) __val = *__p, ___old = *(ovalp);			\
-+	pcpu_typeof(pcp) *__p = raw_cpu_ptr(&(pcp));			\
-+	pcpu_typeof(pcp) __val = *__p, ___old = *(ovalp);		\
- 	bool __ret;							\
- 	if (__val == ___old) {						\
- 		*__p = nval;						\
-@@ -115,14 +115,14 @@ do {									\
- 
- #define raw_cpu_generic_cmpxchg(pcp, oval, nval)			\
- ({									\
--	typeof(pcp) __old = (oval);					\
-+	pcpu_typeof(pcp) __old = (oval);				\
- 	raw_cpu_generic_try_cmpxchg(pcp, &__old, nval);			\
- 	__old;								\
- })
- 
- #define __this_cpu_generic_read_nopreempt(pcp)				\
- ({									\
--	typeof(pcp) ___ret;						\
-+	pcpu_typeof(pcp) ___ret;					\
- 	preempt_disable_notrace();					\
- 	___ret = READ_ONCE(*raw_cpu_ptr(&(pcp)));			\
- 	preempt_enable_notrace();					\
-@@ -131,7 +131,7 @@ do {									\
- 
- #define __this_cpu_generic_read_noirq(pcp)				\
- ({									\
--	typeof(pcp) ___ret;						\
-+	pcpu_typeof(pcp) ___ret;					\
- 	unsigned long ___flags;						\
- 	raw_local_irq_save(___flags);					\
- 	___ret = raw_cpu_generic_read(pcp);				\
-@@ -141,7 +141,7 @@ do {									\
- 
- #define this_cpu_generic_read(pcp)					\
- ({									\
--	typeof(pcp) __ret;						\
-+	pcpu_typeof(pcp) __ret;						\
- 	if (__native_word(pcp))						\
- 		__ret = __this_cpu_generic_read_nopreempt(pcp);		\
- 	else								\
-@@ -160,7 +160,7 @@ do {									\
- 
- #define this_cpu_generic_add_return(pcp, val)				\
- ({									\
--	typeof(pcp) __ret;						\
-+	pcpu_typeof(pcp) __ret;						\
- 	unsigned long __flags;						\
- 	raw_local_irq_save(__flags);					\
- 	__ret = raw_cpu_generic_add_return(pcp, val);			\
-@@ -170,7 +170,7 @@ do {									\
- 
- #define this_cpu_generic_xchg(pcp, nval)				\
- ({									\
--	typeof(pcp) __ret;						\
-+	pcpu_typeof(pcp) __ret;						\
- 	unsigned long __flags;						\
- 	raw_local_irq_save(__flags);					\
- 	__ret = raw_cpu_generic_xchg(pcp, nval);			\
-@@ -190,7 +190,7 @@ do {									\
- 
- #define this_cpu_generic_cmpxchg(pcp, oval, nval)			\
- ({									\
--	typeof(pcp) __ret;						\
-+	pcpu_typeof(pcp) __ret;						\
- 	unsigned long __flags;						\
- 	raw_local_irq_save(__flags);					\
- 	__ret = raw_cpu_generic_cmpxchg(pcp, oval, nval);		\
-diff --git a/include/linux/part_stat.h b/include/linux/part_stat.h
-index ac8c44dd8237..e228e1087f0c 100644
---- a/include/linux/part_stat.h
-+++ b/include/linux/part_stat.h
-@@ -33,7 +33,7 @@ struct disk_stats {
- 
- #define part_stat_read(part, field)					\
- ({									\
--	typeof((part)->bd_stats->field) res = 0;			\
-+	pcpu_typeof((part)->bd_stats->field) res = 0;			\
- 	unsigned int _cpu;						\
- 	for_each_possible_cpu(_cpu)					\
- 		res += per_cpu_ptr((part)->bd_stats, _cpu)->field; \
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index 8efce7414fad..aa824c6edb82 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -220,6 +220,21 @@ do {									\
- 	(void)__vpp_verify;						\
- } while (0)
- 
-+/*
-+ * Define percpu_typeof() to use __typeof_unqual__() as typeof
-+ * operator when available, to return unqualified type of the exp.
-+ *
-+ * If an arch defines __percpu variables in their own named address
-+ * space, then pcpu_typeof() returns unqualified type of the
-+ * expression without named address space qualifier when
-+ * CONFIG_CC_HAS_TYPEOF_UNQUAL is defined.
-+ */
-+#ifdef CONFIG_CC_HAS_TYPEOF_UNQUAL
-+#define pcpu_typeof(exp) __typeof_unqual__(exp)
-+#else
-+#define pcpu_typeof(exp) __typeof__(exp)
-+#endif
-+
- #ifdef CONFIG_SMP
- 
- /*
-@@ -228,7 +243,10 @@ do {									\
-  * pointer value.  The weird cast keeps both GCC and sparse happy.
-  */
- #define SHIFT_PERCPU_PTR(__p, __offset)					\
--	RELOC_HIDE((typeof(*(__p)) __kernel __force *)(__p), (__offset))
-+	uintptr_t ptr__ = (__force uintptr_t)(__p);			\
-+									\
-+	RELOC_HIDE((pcpu_typeof(*(__p)) __kernel __force *)(ptr__),	\
-+		   (__offset))
- 
- #define per_cpu_ptr(ptr, cpu)						\
- ({									\
-@@ -254,13 +272,20 @@ do {									\
- 
- #else	/* CONFIG_SMP */
- 
--#define VERIFY_PERCPU_PTR(__p)						\
-+#define PERCPU_PTR(__p)							\
- ({									\
--	__verify_pcpu_ptr(__p);						\
--	(typeof(*(__p)) __kernel __force *)(__p);			\
-+	uintptr_t ptr__ = (__force uintptr_t)(__p);			\
-+									\
-+	(pcpu_typeof(*(__p)) __kernel __force *)(ptr__);		\
-+})
-+
-+#define per_cpu_ptr(ptr, cpu)						\
-+({									\
-+	__verify_pcpu_ptr(ptr);						\
-+	(void)(cpu);							\
-+	PERCPU_PTR(ptr);						\
- })
- 
--#define per_cpu_ptr(ptr, cpu)	({ (void)(cpu); VERIFY_PERCPU_PTR(ptr); })
- #define raw_cpu_ptr(ptr)	per_cpu_ptr(ptr, 0)
- #define this_cpu_ptr(ptr)	raw_cpu_ptr(ptr)
- 
-@@ -315,7 +340,7 @@ static __always_inline void __this_cpu_preempt_check(const char *op) { }
- 
- #define __pcpu_size_call_return(stem, variable)				\
- ({									\
--	typeof(variable) pscr_ret__;					\
-+	pcpu_typeof(variable) pscr_ret__;				\
- 	__verify_pcpu_ptr(&(variable));					\
- 	switch(sizeof(variable)) {					\
- 	case 1: pscr_ret__ = stem##1(variable); break;			\
-@@ -330,7 +355,7 @@ static __always_inline void __this_cpu_preempt_check(const char *op) { }
- 
- #define __pcpu_size_call_return2(stem, variable, ...)			\
- ({									\
--	typeof(variable) pscr2_ret__;					\
-+	pcpu_typeof(variable) pscr2_ret__;				\
- 	__verify_pcpu_ptr(&(variable));					\
- 	switch(sizeof(variable)) {					\
- 	case 1: pscr2_ret__ = stem##1(variable, __VA_ARGS__); break;	\
-diff --git a/init/Kconfig b/init/Kconfig
-index 37260d17267e..a9a04d0683b6 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -873,6 +873,9 @@ config ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- config CC_HAS_INT128
- 	def_bool !$(cc-option,$(m64-flag) -D__SIZEOF_INT128__=0) && 64BIT
- 
-+config CC_HAS_TYPEOF_UNQUAL
-+	def_bool $(success,echo 'int foo (int a) { __typeof_unqual__(a) b = a; return b; }' | $(CC) -x c - -S -o /dev/null)
-+
- config CC_IMPLICIT_FALLTHROUGH
- 	string
- 	default "-Wimplicit-fallthrough=5" if CC_IS_GCC && $(cc-option,-Wimplicit-fallthrough=5)
-diff --git a/kernel/locking/percpu-rwsem.c b/kernel/locking/percpu-rwsem.c
-index 6083883c4fe0..8345238ba428 100644
---- a/kernel/locking/percpu-rwsem.c
-+++ b/kernel/locking/percpu-rwsem.c
-@@ -184,7 +184,7 @@ EXPORT_SYMBOL_GPL(__percpu_down_read);
- 
- #define per_cpu_sum(var)						\
- ({									\
--	typeof(var) __sum = 0;						\
-+	pcpu_typeof(var) __sum = 0;					\
- 	int cpu;							\
- 	compiletime_assert_atomic_type(__sum);				\
- 	for_each_possible_cpu(cpu)					\
+-	field = (__force unsigned long __percpu *)((__force void *)p + offset);
++	field = (unsigned long __percpu *)(void __percpu *)(p + offset);
+ 	this_cpu_inc(*field);
+ }
+ EXPORT_SYMBOL_GPL(netdev_core_stats_inc);
 -- 
 2.46.0
 
