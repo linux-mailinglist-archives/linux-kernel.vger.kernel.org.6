@@ -1,180 +1,82 @@
-Return-Path: <linux-kernel+bounces-283149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EF4C94EDE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF2294EDF1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C236284227
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50C02841A8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D48817C217;
-	Mon, 12 Aug 2024 13:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BA217C21C;
+	Mon, 12 Aug 2024 13:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T1DGM4+f"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PKyggy+8"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839261D699;
-	Mon, 12 Aug 2024 13:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CF01D699;
+	Mon, 12 Aug 2024 13:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468682; cv=none; b=AKTqgzUPzmMeHyFktSRAagmuz37fZ6YFvYDVc+h/hCB954v7y+uao88AQcQg9OP3icn4GHksRN12ar/ZiWTntJ+jP5AHvoOihfuEQfJxTyxQleokJgvo5S9S2U2YS6WUn1IG2w7FsWhrW4d1q7DvJBRqnR3x3+Sp1wryB2CmSmo=
+	t=1723468780; cv=none; b=gw3FRpjcJwAkPqExKhgBiJj3aGr+hYlRZVOFDcct5rOkF2FdA0l60latPV5iYUiX81t+YGVjXFK+Voiy2e3luA71qLB8BuD/YsSyhWohdfHy6lZUGoxJ6p3AHrie0qViWCFO/uxdlP3h3NPiidIpWjyEeSYCCyt0oFzefUgDspw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468682; c=relaxed/simple;
-	bh=aoEG7LVugUDhTzLFYA5r9vLpssJzwnJp6xpB5GyAH0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qWXTZiIh+wmlUjrPiiTMaAnUAPmOWjXJx22aKk908i7oOd0yEUcNruVN3Nroq0ueuSoxQaTnSjRG9kpbRko0ELwzDn9addDMU08ZTvzToGJdySTkEqEv/d3nVnrcZSPjwPwkxi5ECVWr5WiiZLJFK6w2RNnwn41/ZlEgpdj50as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T1DGM4+f; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 41E7620002;
-	Mon, 12 Aug 2024 13:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723468677;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JdcV2kRk9M7GFAK/D+USec3altBfiWngrF1bMZJR0h0=;
-	b=T1DGM4+ftpehFe4HTk9kRVwPAVKw3AXm0nD1T1JMZhEdelkbXoOfgy4NgYAKj95rVaLvIp
-	nZnomFB1XkmKUg7BHzwy2Zpp7FfDaMYjbRXKCK5jVbxGkA4HSJ1kb6ERXFei+u8THVVKQK
-	AB7ydR869hd6hCgePz3L2ncJBB48RgAJbw3nqvRXWZ2bnwmJrOyzsbOyD1LgGLVygbOXe1
-	h2sXickvc/8OCgBUceYdm1WA7UmkQX6+A8msWci8Mu3YNPv7JKtz5mpXi+/Z91kCss8Pbp
-	noYDmTyhdrsEflAz5id8Ax4oD5XfbGH/ORmkMLDhKex9GquwQMFbGoeyrW6ljA==
-Date: Mon, 12 Aug 2024 15:17:55 +0200
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Richard Weinberger <richard@nod.at>, Vignesh
- Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, Keith
- Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
- <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan
- <saravanak@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>, Florian Fainelli
- <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 0/7] mtd: improve block2mtd + airoha parser
-Message-ID: <20240812151755.0feab4b2@xps-13>
-In-Reply-To: <66b9df7c.050a0220.3574aa.d5bb@mx.google.com>
-References: <20240809172106.25892-1-ansuelsmth@gmail.com>
-	<20240812104954.1e8d55f7@xps-13>
-	<66b9df7c.050a0220.3574aa.d5bb@mx.google.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723468780; c=relaxed/simple;
+	bh=tAYfad6m/QeYh9wozED8pIbFdS8uv/7ktFfHPVd044k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IS9+QD/oYCv/H6HPyx1I1Nt0k+zSGZwGkJrH4j1WjomZhTh8+XyjZyX68xF1YjlwfudMhFiui6wv4FSo+gIa/lPXTwPfzjcWzyDuQe+VpcJBikA6mXPxQhQchnjuXHZgmDYhQL08lfUJtiE4wB28A4Ei+woekc9Hoh2LmdYAwnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PKyggy+8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QtzF86IieQVZ4A3zDxLwj+KhIu3XfMiZ65Q7/sKZtkU=; b=PKyggy+8sSN9+J+Ar2V75ZlCd7
+	RnYjItWwTid5ou3LVSEXYYedsgt9wRjnGSI7LppwGYsOkZk272wVukB1iDseGxBEuouilBlESCQFO
+	ntXsQZ+MdpWcHCkSjxNUgG2MYqs0mAZLx/Dfp7iACbnhT4NDGMZiJvkVrazNMjrPl810lWVwD/1PA
+	hAw5tqDGs7xqdWMH9NOsOWfc0Dmyr3KGWb3GuRXtkL21QN35s10Rg++rkPVXIHBh0xrtIPkgQdMg0
+	Rpd3dFhyGRKpsQwqPo4MmlMmC+sKRgnJ4ElFwYd0KH8eULJRL0tklONUnsH9JWPRh1h96tOap0S+l
+	ydN9dwew==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdUxT-00000000O9f-3sC7;
+	Mon, 12 Aug 2024 13:19:35 +0000
+Date: Mon, 12 Aug 2024 06:19:35 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 4/5] eventpoll: Trigger napi_busy_loop, if
+ prefer_busy_poll is set
+Message-ID: <ZroL54bAzdR-Vr4d@infradead.org>
+References: <20240812125717.413108-1-jdamato@fastly.com>
+ <20240812125717.413108-5-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812125717.413108-5-jdamato@fastly.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Christian,
+On Mon, Aug 12, 2024 at 12:57:07PM +0000, Joe Damato wrote:
+> From: Martin Karsten <mkarsten@uwaterloo.ca>
+> 
+> Setting prefer_busy_poll now leads to an effectively nonblocking
+> iteration though napi_busy_loop, even when busy_poll_usecs is 0.
 
-ansuelsmth@gmail.com wrote on Mon, 12 Aug 2024 12:10:03 +0200:
+Hardcoding calls to the networking code from VFS code seems like
+a bad idea.   Not that I disagree with the concept of disabling
+interrupts during busy polling, but this needs a proper abstraction
+through file_operations.
 
-> On Mon, Aug 12, 2024 at 10:49:54AM +0200, Miquel Raynal wrote:
-> > Hi Christian,
-> >=20
-> > ansuelsmth@gmail.com wrote on Fri,  9 Aug 2024 19:20:58 +0200:
-> >  =20
-> > > This small series handle 2 problems.
-> > >=20
-> > > It does try to ""standardize"" the usage of block2mtd module with
-> > > MTD OF nodes.
-> > >=20
-> > > It is very easy to add support for MTD parser by just adding an
-> > > OF node to the mtd created for block2mtd.
-> > >=20
-> > > This apply only if the root block is used for block2mtd to allow
-> > > scenario where the full eMMC or an NVME is used for MTD and it doesn't
-> > > have any partition table.
-> > >=20
-> > > To also support NVME, similar to how it's done with eMMC, we introduce
-> > > a subnode to the NVME controller that needs to have the "nvme-card"
-> > > compatible where a dev can define fixed-paritions for MTD parser usag=
-e.
-> > >=20
-> > > This series also add support for the Airoha partition table where
-> > > the last partition is always ART and is placed at the end of the flas=
-h.
-> > >=20
-> > > This require dynamic calculation of the offset as some dedicated
-> > > driver for bad block management might be used that reserve some space
-> > > at the end of the flash for block accounting. =20
-> >=20
-> > Who is reserving this space? And this is not reflected anywhere in the
-> > partition table?
-> > =20
->=20
-> To be more precise Mediatek use a custom way to handle bad blocks called
-> BMT where they reserve and store data at the end of the nand. This is
-> loaded before the flash driver controller so when MTD is init, the size
-> is already reduced. The reserved space can change and it really depends
-> on the tuned values hence it may change.
-
-Is this supported in mainline Linux? MTD handles the bad blocks and the
-bad block tables, so I don't understand how this hardware feature can
-live together with MTD.
-
-Anyway, you are talking about MMCs, I don't understand why there are
-bad blocks, nor what is checking them and when. This is all still very
-fuzzy to me, I'm sorry.
-
-> > > New aarch64 Airoha SoC make use of this partition table and use block=
-2mtd
-> > > for eMMC to treat them as MTD with custom bad block management and bl=
-ock
-> > > tracking. =20
-> >=20
-> > I am sorry, I am not used to such use cases, and I really fail getting
-> > why you would like to use mtd with an eMMC. Can you explain a little
-> > bit more what is not available in the block world that you really need
-> > from mtd? =20
->=20
-> Since vendor needs more space and doesn't want to adapt to block world,
-> they are starting to use eMMC or block devices in general unpartitioned
-> and raw=20
-
-Okay, why not, it's easier for ROMs to access it I guess.
-
-> and using block2mtd to simulate it.
-
-This is what I don't understand. You can very well access your block
-device by offset, why do you need the mtd interface at all?
-
-> They don't care about the
-> performance penalities as it's something read at boot time and only new
-> firmware or some config files are written.
->=20
-> Is it more clear now?
-
-I still don't understand the need for going through MTD tbh.
-
-> > Also, did you consider nvmem layouts instead to detect and define the
-> > ART area? (just asking).
-> >  =20
->=20
-> They still need a MTD partition
-
-Why?
-
-> and most of the time userspace tool are
-> used on the ART partition. Using block2mtd and DT support will permit
-> the use of nvmem cell as a side effect (and that is a missive bonus
-> point of this honestly)
-
-MTD also registers into NVMEM, so this is nice if you need both, but if
-what you need is some NVMEM area derived dynamically and you register
-into MTD for that, then no, I'm sorry, that's not the correct approach.
-
-Thanks,
-Miqu=C3=A8l
 
