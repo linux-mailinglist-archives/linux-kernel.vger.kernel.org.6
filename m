@@ -1,62 +1,69 @@
-Return-Path: <linux-kernel+bounces-283153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF2294EDF1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9882794EEFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C50C02841A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:19:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540E7282242
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:57:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BA217C21C;
-	Mon, 12 Aug 2024 13:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39AA17F374;
+	Mon, 12 Aug 2024 13:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PKyggy+8"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=uter.be header.i=@uter.be header.b="muIgzAd7"
+Received: from lounge.grep.be (lounge.grep.be [144.76.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55CF01D699;
-	Mon, 12 Aug 2024 13:19:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E27C17C230
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468780; cv=none; b=gw3FRpjcJwAkPqExKhgBiJj3aGr+hYlRZVOFDcct5rOkF2FdA0l60latPV5iYUiX81t+YGVjXFK+Voiy2e3luA71qLB8BuD/YsSyhWohdfHy6lZUGoxJ6p3AHrie0qViWCFO/uxdlP3h3NPiidIpWjyEeSYCCyt0oFzefUgDspw=
+	t=1723470915; cv=none; b=fNSohb19gVFbExOseJnbKC4fQdu6Htx8YuLmbR9rqOUXnmCqZu3XAAqpmCzy6f8f//KrGtg0ftiO7V39zwDgiQUJT/dyjfjXqr0wf7L6rS516+6HA/KfY863ZCwl3HPkl7mfDhtsso1HHrX5Tp+mdEpMaIqISKnMzK8kGbrebmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468780; c=relaxed/simple;
-	bh=tAYfad6m/QeYh9wozED8pIbFdS8uv/7ktFfHPVd044k=;
+	s=arc-20240116; t=1723470915; c=relaxed/simple;
+	bh=VrDFm2znvH0Xam8Lf4Ov3deiQ8TtNeXvK2GaXRqaEj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IS9+QD/oYCv/H6HPyx1I1Nt0k+zSGZwGkJrH4j1WjomZhTh8+XyjZyX68xF1YjlwfudMhFiui6wv4FSo+gIa/lPXTwPfzjcWzyDuQe+VpcJBikA6mXPxQhQchnjuXHZgmDYhQL08lfUJtiE4wB28A4Ei+woekc9Hoh2LmdYAwnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PKyggy+8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QtzF86IieQVZ4A3zDxLwj+KhIu3XfMiZ65Q7/sKZtkU=; b=PKyggy+8sSN9+J+Ar2V75ZlCd7
-	RnYjItWwTid5ou3LVSEXYYedsgt9wRjnGSI7LppwGYsOkZk272wVukB1iDseGxBEuouilBlESCQFO
-	ntXsQZ+MdpWcHCkSjxNUgG2MYqs0mAZLx/Dfp7iACbnhT4NDGMZiJvkVrazNMjrPl810lWVwD/1PA
-	hAw5tqDGs7xqdWMH9NOsOWfc0Dmyr3KGWb3GuRXtkL21QN35s10Rg++rkPVXIHBh0xrtIPkgQdMg0
-	Rpd3dFhyGRKpsQwqPo4MmlMmC+sKRgnJ4ElFwYd0KH8eULJRL0tklONUnsH9JWPRh1h96tOap0S+l
-	ydN9dwew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdUxT-00000000O9f-3sC7;
-	Mon, 12 Aug 2024 13:19:35 +0000
-Date: Mon, 12 Aug 2024 06:19:35 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
-	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
-	sdf@fomichev.me, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 4/5] eventpoll: Trigger napi_busy_loop, if
- prefer_busy_poll is set
-Message-ID: <ZroL54bAzdR-Vr4d@infradead.org>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <20240812125717.413108-5-jdamato@fastly.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qkNYLgcf/lkmp/FX3h22jWd6dLFJMi/FoOAkb1dlaQnHMwMPQSqCL4sRS9Z5RyG4HBJ6VE39WhLeI95fyfbhIGc03af9y9hV7gIQhA4R7emhAHi0mXTBnnl6jGdZKu/u36T4//dp2ko+/gYRE9xFSIkbU18GV72whWwjiJg1NBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be; spf=pass smtp.mailfrom=uter.be; dkim=pass (2048-bit key) header.d=uter.be header.i=@uter.be header.b=muIgzAd7; arc=none smtp.client-ip=144.76.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uter.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uter.be
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=uter.be;
+	s=2021.lounge; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=tsOaNUnXsW8E+PfttAxy3/HK27PU6Ot2r+AEqAMuPS0=; b=muIgzAd7z2Rrw4e5+fjQK9d4nq
+	Csa6WTM0ct0M8SFKikpETUDEtg+RZrsERFdS4aPh1CDhygeVDd78aSXZ3eEr8c8BwNr9I+AKKcDsn
+	thLbNmEitzcrxADd+wz42zQ32bYeDeyktXIrdDVQuHMxHR6ILyYXp1aJIqu7G43hbgnT94RXP2S7H
+	TV1tS4dqFcHbXqrtalY1HVsDBeuLvh9+c+8fviS7EOtMZiuUOerZC8XANq6L4Pw2VwPQXSY/98vA1
+	Yjyran9KjtgRtEo0rbrWIKuehyd/6JBUHeUA73nWdMQVly2iq7dRSv+indXCtPvKd+JdS1cDJ8z8Q
+	ZI3L/KRw==;
+Received: from vc-gp-n-105-245-229-160.umts.vodacom.co.za ([105.245.229.160] helo=pc220518)
+	by lounge.grep.be with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <w@uter.be>)
+	id 1sdVVw-009ZOe-0f;
+	Mon, 12 Aug 2024 15:55:12 +0200
+Received: from wouter by pc220518 with local (Exim 4.98)
+	(envelope-from <w@uter.be>)
+	id 1sdUyk-00000000Twm-1jVC;
+	Mon, 12 Aug 2024 15:20:54 +0200
+Date: Mon, 12 Aug 2024 15:20:22 +0200
+From: Wouter Verhelst <w@uter.be>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Josef Bacik <josef@toxicpanda.com>, Damien Le Moal <dlemoal@kernel.org>,
+	linux-block@vger.kernel.org, nbd@other.debian.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] nbd: correct the maximum value for discard sectors
+Message-ID: <ZroMFpaP69uUfC14@pc220518.home.grep.be>
+References: <20240803130432.5952-1-w@uter.be>
+ <20240808070604.179799-1-w@uter.be>
+ <20240808070604.179799-3-w@uter.be>
+ <584a1774-0268-4b3c-9a78-0f00073b9d74@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,18 +72,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812125717.413108-5-jdamato@fastly.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <584a1774-0268-4b3c-9a78-0f00073b9d74@kernel.dk>
+X-Speed: Gates' Law: Every 18 months, the speed of software halves.
+Organization: none
 
-On Mon, Aug 12, 2024 at 12:57:07PM +0000, Joe Damato wrote:
-> From: Martin Karsten <mkarsten@uwaterloo.ca>
+On Fri, Aug 09, 2024 at 09:34:55AM -0600, Jens Axboe wrote:
+> On 8/8/24 1:06 AM, Wouter Verhelst wrote:
+> > Fixes: 268283244c0f018dec8bf4a9c69ce50684561f46
 > 
-> Setting prefer_busy_poll now leads to an effectively nonblocking
-> iteration though napi_busy_loop, even when busy_poll_usecs is 0.
+> This isn't the correct way to have a fixes line.
 
-Hardcoding calls to the networking code from VFS code seems like
-a bad idea.   Not that I disagree with the concept of disabling
-interrupts during busy polling, but this needs a proper abstraction
-through file_operations.
+Apologies Jens; beginner's mistake.
 
+> In general, please don't nest next versions under the previous posting,
+> and it's strongly recommended to have a cover letter that includes that
+> changed from version N to N+1. Otherwise we have to guess... So please
+> include that when posting v4.
+
+Right, sorry. "git help send-email" gave an example of how to do
+something like this for a "v2" patch series, which made me assume
+(incorrectly) that this is what would be wanted. I should have checked
+first, I guess.
+
+Will send v4 (hopefully the last one) shortly with those fixes.
+
+-- 
+     w@uter.{be,co.za}
+wouter@{grep.be,fosdem.org,debian.org}
+
+I will have a Tin-Actinium-Potassium mixture, thanks.
 
