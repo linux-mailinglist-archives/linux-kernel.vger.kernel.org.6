@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-282672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A7194E737
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:53:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F1694E73A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECB5E1F22521
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:53:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0032CB2484F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:53:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9051F153511;
-	Mon, 12 Aug 2024 06:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2C21537D6;
+	Mon, 12 Aug 2024 06:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TOSj3KL8"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ikSFscPO"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C098152DF5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01391152DF5;
+	Mon, 12 Aug 2024 06:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445613; cv=none; b=q51QAqYtfMCqaMQCHEIO5NejIHLaY5N+oStZk77mhozPlOxN3cHukFTpThburCY0liizuq6kW584wRSlLRtrp4GFBHJMxaJLh4G4x7pSFEIbhR2+AfFScG3x9T+Vzt7c+z6VQdOEhTJHoqGQhNFgupmGB6kOMIMICe49RKh1zmA=
+	t=1723445622; cv=none; b=sSTaiRLQ5xIakA67EGeDkLVEYOxHZ77sczV1AowFNn4bcuDoPAX9SZYjXW6wMyBwbE9kSP8Yb3oBMplfwDAWiAy9ogRjwOBsLJLw7fQ7dcMN1o5PQDSlQjiOUIcs+oVw2kL9Osh/Yf/+5e9n3LZDO6N90qGU5ghNV4K2F9raXek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445613; c=relaxed/simple;
-	bh=mSFle22zJAezmirEZH6fkQtA1YJrvNYI2iXiEOQwbhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VXbWQXtxiPA+JB/13qeaXnKXtPO/sSvfV1uuk3BL/rdcVJXcOlsPE58HGvh9ePnHCgOCt0n/zAwdi73pxjxFNpMNmhYVtp6wih8gG+2Caj3czK9slaO5joTOvm/SbwG544L+fR79Qu/hM08/wHYgmNwPOmUdfIBBdzt75NT6sDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TOSj3KL8; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=mSFl
-	e22zJAezmirEZH6fkQtA1YJrvNYI2iXiEOQwbhQ=; b=TOSj3KL8YpMybYhlA8Ng
-	gO01v92xPNf1KiGHE1uV4XKY9f2D63KgjBPUsrwhQY7L9ol+SrzqkQdB+hTKz7gR
-	oW/WvSC7E3syHLgKJYioYnm156/5sEMtpXe7uc5BN7ZAyomrgfwKtnPLtzl5ACYr
-	goSpGBXqjV6v+3FDJYlPHI2hJcv+WOsN/DD/nd1jZZSdGnaotraN0rG+jeMvuUq4
-	DIY+MZbI9XLmbgk9r7+HY7kMM36zW6JRy9HBDT1TQofI5SIM87zxtKzPAkdtEyli
-	p1UHl5gGKhNoIxyWFt7DP+PRm4XYnKddyTwqoWZ4WQXof4hBs1JF9Brux0Mm230v
-	pQ==
-Received: (qmail 1277415 invoked from network); 12 Aug 2024 08:53:21 +0200
-Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 12 Aug 2024 08:53:21 +0200
-X-UD-Smtp-Session: l3s3148p1@K+LV8nYf5p4ujnvj
-Date: Mon, 12 Aug 2024 08:53:20 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Mark Brown <broonie@kernel.org>, tiwai@suse.com,
-	mika.westerberg@linux.intel.com, linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v2 0/3] ALSA: Add support for new HP G12 laptops
-Message-ID: <ZrmxYB4zsOpOP2eG@shikoro>
-Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Takashi Iwai <tiwai@suse.de>,
-	Richard Fitzgerald <rf@opensource.cirrus.com>,
-	Mark Brown <broonie@kernel.org>, tiwai@suse.com,
-	mika.westerberg@linux.intel.com, linux-sound@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-References: <20240802152215.20831-1-rf@opensource.cirrus.com>
- <8734njl7my.wl-tiwai@suse.de>
- <554660e1-01ea-4bb4-877f-fd8deb527ce7@opensource.cirrus.com>
- <87frrhaofs.wl-tiwai@suse.de>
- <ZrIJBUJfgiKPCKXv@shikoro>
- <87bk25anep.wl-tiwai@suse.de>
+	s=arc-20240116; t=1723445622; c=relaxed/simple;
+	bh=NATnWUQWBSRGhjg8ncxKP6s/TcNs4Jved++zg33TLLI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dq+DUatcGn+Vvm8K56/9VJE2a3RaLoz29gysp0flafvE4XcR6SWJ633GI4090BTkEsjjIkl8VJmHyRjb/eFJwEnbM4eWKiOnywaKZtQe/4jSnUhRUDnXzh3i+Mci+nWNK0mn4gkWuYUJXzDVlobjiY6aPRCWVY5GcIYQWhybjxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ikSFscPO; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47C6rWCi064172;
+	Mon, 12 Aug 2024 01:53:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723445612;
+	bh=NATnWUQWBSRGhjg8ncxKP6s/TcNs4Jved++zg33TLLI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=ikSFscPOmh1jJrUUx+CHxV96c8/lxBoEoZkISNJonKXU9Q3F3ur3lqTcrZJDA5v94
+	 xDWUnMfuPv/DsfxyFyctgOnn7b1c+2t98Wj4lgUQXwuVOK6yW3pnfCbE7uHbMOOui2
+	 4EkfLaAX0ScOxRPmLAcsDdH6GkvonAenoifeqYFs=
+Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47C6rWws004625
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 12 Aug 2024 01:53:32 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 12
+ Aug 2024 01:53:32 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 12 Aug 2024 01:53:32 -0500
+Received: from [10.249.128.135] ([10.249.128.135])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47C6rQqg068667;
+	Mon, 12 Aug 2024 01:53:27 -0500
+Message-ID: <413dc315-e8d0-4971-af23-ba21833eb855@ti.com>
+Date: Mon, 12 Aug 2024 12:23:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yDi4V8Q0uGeRFZzk"
-Content-Disposition: inline
-In-Reply-To: <87bk25anep.wl-tiwai@suse.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-am68-sk-base-board: Add clklb pin
+ mux for mmc1
+To: Manorit Chawdhry <m-chawdhry@ti.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <conor+dt@kernel.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>, <kristo@kernel.org>,
+        <vigneshr@ti.com>, <nm@ti.com>, <sinthu.raja@ti.com>,
+        <n-francis@ti.com>
+References: <20240809072231.2931206-1-b-kapoor@ti.com>
+ <20240812051058.ooq7uxd6xdbhgjln@uda0497581>
+Content-Language: en-US
+From: Bhavya Kapoor <b-kapoor@ti.com>
+In-Reply-To: <20240812051058.ooq7uxd6xdbhgjln@uda0497581>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+HI Manorit, please review again for the limitation you found in the v1.
 
---yDi4V8Q0uGeRFZzk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks and Regards
 
-
-> > Yes, you can pull i2c/for-current. Maybe I can also retrofit an
-> > immutable branch for you. I'd think, though, that it is easiest to wait
-> > for 6.11-rc3 which will include the I2C part of this series. Or?
->=20
-> Yeah, it's fine, I can wait for 6.11-rc3.
-
-Done. Said commit is included in rc3 now. Thanks, guys!
-
-
---yDi4V8Q0uGeRFZzk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAma5sV0ACgkQFA3kzBSg
-Kbbb+w//RAEp9yLwe6ViYFzkpfdFgGrnw3kMDuG2vnzj7HvCKIKHQnbPwPQVI/W6
-LDPR522tlQUOcWBrk359zh0ERVEY1mQV0kL7zdJ/Hz1PaU3QnhlmZa2XZXTWD12h
-Zg4sCwF26/ESwHEOUkODWsE9m6tqVZcJdStA1nG3GJEUJ/KZ1j8L9ZGTEyZASCge
-Nt9MbdqtFMZKiW3jkpyge8J5zpVkxkgoeOPqO5af68wNJZoBvCBO3NgUW6FwfRpJ
-PWGeOhLML0ubuafHnIjHC8oCkC+pwIhXQBuowHwdQwas/G8vU+Sg4/EWtFRCqVD4
-o1N5LLvhJmV/lbNYKeNlikM/wpWXQcvRmmnDXy47Hj7Yk8NdwuSlN6kgPpXLB9DJ
-sxX8te2EACW5h9LTqrTC+Q0Q0dCn3qFTrKwBn0vhivrN5sIPxcLCN9Wdz58kVgMv
-hgzhXeGxbc3TjUmvj5CXknSYHglwCSRUrFkk8gTfylEESzaYuPHqMvC9V26PmSs3
-e0y/EvLfbjKqs7SjV+ShEOeTaKZLmekPv+3/2qB3XT1pGkDjOPsQ2xeF34FocJ1X
-Bzaa9qWaPOf+4VRpeP6VLeSe4UwARu3UG9SSkCd57S+RH7E+/oukoiCZE/iTli66
-lU32n1YefCTO2M1rG4Y+1/mv5q7GuHfL2JzU3SB3GlDxfWO7PaU=
-=nJ+E
------END PGP SIGNATURE-----
-
---yDi4V8Q0uGeRFZzk--
+On 12/08/24 10:40, Manorit Chawdhry wrote:
+> Hi Bhavya,
+>
+> On 12:52-20240809, Bhavya Kapoor wrote:
+>> mmc1 is not functional and needs clock loopback so that it can
+>> create sampling clock from this for high speed SDIO operations.
+>> Thus, add clklb pin mux to get mmc1 working.
+>>
+>> Fixes: a266c180b398 ("arm64: dts: ti: k3-am68-sk: Add support for AM68 SK base board")
+>> Signed-off-by: Bhavya Kapoor <b-kapoor@ti.com>
+>> Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
+>> ---
+>>
+> R-by already given in v1 [0]
+>
+> [0]: https://lore.kernel.org/all/20240808050914.4jleprwmlrtv4alb@uda0497581/
+>
+> Regards,
+> Manorit
 
