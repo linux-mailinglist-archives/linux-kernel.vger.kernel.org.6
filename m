@@ -1,185 +1,95 @@
-Return-Path: <linux-kernel+bounces-283363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E51894F182
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:18:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332FF94F187
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:20:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8BA0281328
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:18:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35B3282B01
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3670183CC1;
-	Mon, 12 Aug 2024 15:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4F4183CCD;
+	Mon, 12 Aug 2024 15:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fOzbFKbM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGSJCj+x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 478DF130AC8;
-	Mon, 12 Aug 2024 15:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5946C130AC8;
+	Mon, 12 Aug 2024 15:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723475911; cv=none; b=oxpKEwr0/QGLPwhNsu6wAKVuX6+S6kb8n660KzD5UnUOB2jsbWA6pxBYsvqQ5tuLdmwajIr05R/7DA7dc0id36bILhGxnWccK+zotku7C310MVgG6FZ5ravar/w6FE/7FSIKv4TqgPHdpNXuM+8MODaUybuw/DChatxM5AFFf+8=
+	t=1723476050; cv=none; b=Xoxo6YzOurdmRtsW3Z/uTEjd/HuF01tsF6AztjB4DXECFaWcXGGjn6uwyvS4j5dG8u9JYHDpNtZm7qStBcjm00PMtlBZwEW0qTqBm2dq3IDAS3de2Wr0bSNwWq2StTnlymCKMMB1Q1fAEjEGfwTRaDv5IgpXoGueEbJFbStJOiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723475911; c=relaxed/simple;
-	bh=L+S8wUs38FK7FjSSmrWhkS4nFZyIzpYU7kJGEaQBflc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jQv6D1Khfx9QC1F9RYFN63bz/yfA1qExz/eYrzUkf5AD/djWchURbLWi6PTANMp/Jokg+I5Etzpudh3so3VdUfjWE4snEoYJ/3IoPR1wQKUIzD5YmPJbLgUj5Lh96EvmSSLyVBtvqKc1k16G0bp92hNcKDDndfp8/XHs9aBzCKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fOzbFKbM; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723475909; x=1755011909;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=L+S8wUs38FK7FjSSmrWhkS4nFZyIzpYU7kJGEaQBflc=;
-  b=fOzbFKbMHaTlUJF5gSjCNQ1pklLBgf0Qdy1b3Il1btCW4kvNoRS0QVdx
-   AiXDTTql9IOiN2pHw0yImmO+/wnRw5IfBfGJb1TxrPhu2P0s+xiIEYjyg
-   D5btGjHEUO+GjBq3lWkvZtjSjDRZvLU24ax0IXfmvBc9EZlvtQgUoq4Cx
-   My8+D+TdORWe6RLmZSVgwp+ElF0BZl/H8BW9tOElFJF4aDMS1NIPkpKV3
-   9Dm7gLu+ypmBtlqOcXEm+F+I2aH4I9wMembMmhulC089SuuPpANs7SbKf
-   D0e14mWtRtFMtinpJS0Cm2+Rexns5rnTdJYZZX8NI8x8LUQREtghwpUeg
-   A==;
-X-CSE-ConnectionGUID: jGAgvNFsRIuB/ZdlrMy7BA==
-X-CSE-MsgGUID: VzwfiviWTr+BFj7BPC5uWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46994629"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="46994629"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:18:28 -0700
-X-CSE-ConnectionGUID: uxy9Spg9Q0a5wAVnlz6HQw==
-X-CSE-MsgGUID: XW8upg89SLyrXMFUngqBCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="59004473"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:18:28 -0700
-Received: from [10.212.112.28] (kliang2-mobl1.ccr.corp.intel.com [10.212.112.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by linux.intel.com (Postfix) with ESMTPS id E46D520CFED0;
-	Mon, 12 Aug 2024 08:18:26 -0700 (PDT)
-Message-ID: <ab4e2929-a9f7-445d-9eb0-547556799a57@linux.intel.com>
-Date: Mon, 12 Aug 2024 11:18:25 -0400
+	s=arc-20240116; t=1723476050; c=relaxed/simple;
+	bh=VnLGDmiaS2Z5tkjkWIn8CfimR/QHZ7JqU5+27LaswZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ns4mTA1ZLCy7f6TmjIxNV/pgk/DVHV/RAwtAmP5CSEYpcGOHI8Bn2wvqW87YNPm7hV303Th58ibcLB6+aTVwYVNwBYcnEfeSco+s09NGbK7qi7ixxlgeMA/eQ/Rz+CIly2acnLB5tR5IPKH1ZC4vFrqss+1/QV9gaeP+7ImsTHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGSJCj+x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E8AC32782;
+	Mon, 12 Aug 2024 15:20:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723476049;
+	bh=VnLGDmiaS2Z5tkjkWIn8CfimR/QHZ7JqU5+27LaswZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PGSJCj+xyE8GhlEPNNPT6Z8/M2R+2J0KBUK78fhmm0QDMf+McYucSTLqbxkeOs43i
+	 LzDaM79Eh6+GBcdURLwNB05moUu9GvoHYg7ahOFshYExHJIou/761s7K8Ues8sYFVS
+	 S9GvRps8jicURswrHPm3YB7bLZTnVhvMl7vl0LmYnx7BOSsXe4caUAmakorg+hEtwc
+	 QLKB12/zdCNxmKC27fMQcBKqLTdFCSg3OToHxBSuTLlHgHlYwY6swLRKkDRfLgc+dQ
+	 ohqSCphktXWOuO+CTUbEjU0kE8BffKSDXYwUqbEDgfrdVdMsW9CluNaMjGew/si9by
+	 YmJQ8/A19HrIA==
+Date: Mon, 12 Aug 2024 09:20:48 -0600
+From: Rob Herring <robh@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: kishon@kernel.org, fabrice.gasnier@foss.st.com,
+	linux-stm32@st-md-mailman.stormreply.com,
+	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
+	vkoul@kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, mcoquelin.stm32@gmail.com,
+	linux-phy@lists.infradead.org
+Subject: Re: [PATCH 2/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
+Message-ID: <20240812152048.GA593866-robh@kernel.org>
+References: <20240812120529.3564390-1-christian.bruel@foss.st.com>
+ <20240812120529.3564390-3-christian.bruel@foss.st.com>
+ <172346965242.493337.13574697496053856.robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 2/5] perf x86/topdown: Correct leader selection with
- sample_read enabled
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yongwei Ma <yongwei.ma@intel.com>, Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
- <20240712170339.185824-3-dapeng1.mi@linux.intel.com>
-Content-Language: en-US
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-In-Reply-To: <20240712170339.185824-3-dapeng1.mi@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <172346965242.493337.13574697496053856.robh@kernel.org>
 
+On Mon, Aug 12, 2024 at 07:34:12AM -0600, Rob Herring (Arm) wrote:
+> 
+> On Mon, 12 Aug 2024 14:05:26 +0200, Christian Bruel wrote:
+> > Document the bindings for STM32 COMBOPHY interface, used to support
+> > the PCIe and USB3 stm32mp25 drivers.
+> > Following entries can be used to tune caracterisation parameters
+> >  - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
+> > to tune the impedance and voltage swing using discrete simulation results
+> >  - st, phy_rx0_eq register to set the internal rx equalizer filter value.
+> > 
+> > Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> > ---
+> >  .../bindings/phy/st,stm32-combophy.yaml       | 178 ++++++++++++++++++
+> >  1 file changed, 178 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
+> > 
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml: access-controllers: missing type definition
 
+Ignore this. It's a problem with the build.
 
-On 2024-07-12 1:03 p.m., Dapeng Mi wrote:
-> Addresses an issue where, in the absence of a topdown metrics event
-> within a sampling group, the slots event was incorrectly bypassed as
-> the sampling leader when sample_read was enabled.
-> 
-> perf record -e '{slots,branches}:S' -c 10000 -vv sleep 1
-> 
-> In this case, the slots event should be sampled as leader but the
-> branches event is sampled in fact like the verbose output shows.
-> 
-> perf_event_attr:
->   type                             4 (cpu)
->   size                             168
->   config                           0x400 (slots)
->   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->   read_format                      ID|GROUP|LOST
->   disabled                         1
->   sample_id_all                    1
->   exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid -1  cpu 0  group_fd -1  flags 0x8 = 5
-> ------------------------------------------------------------
-> perf_event_attr:
->   type                             0 (PERF_TYPE_HARDWARE)
->   size                             168
->   config                           0x4 (PERF_COUNT_HW_BRANCH_INSTRUCTIONS)
->   { sample_period, sample_freq }   10000
->   sample_type                      IP|TID|TIME|READ|CPU|IDENTIFIER
->   read_format                      ID|GROUP|LOST
->   sample_id_all                    1
->   exclude_guest                    1
-> 
-> The sample period of slots event instead of branches event is reset to
-> 0.
-> 
-> This fix ensures the slots event remains the leader under these
-> conditions.
-> 
-> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> ---
->  tools/perf/arch/x86/util/topdown.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
-> index 49f25d67ed77..857e00cf579f 100644
-> --- a/tools/perf/arch/x86/util/topdown.c
-> +++ b/tools/perf/arch/x86/util/topdown.c
-> @@ -1,6 +1,7 @@
->  // SPDX-License-Identifier: GPL-2.0
->  #include "api/fs/fs.h"
->  #include "util/evsel.h"
-> +#include "util/evlist.h"
->  #include "util/pmu.h"
->  #include "util/pmus.h"
->  #include "util/topdown.h"
-> @@ -87,11 +88,22 @@ bool arch_is_topdown_metrics(const struct evsel *evsel)
->   */
->  bool arch_topdown_sample_read(struct evsel *leader)
->  {
-> +	struct evsel *evsel;
-> +
->  	if (!evsel__sys_has_perf_metrics(leader))
->  		return false;
->  
-> -	if (arch_is_topdown_slots(leader))
-> -		return true;
-> +	if (!arch_is_topdown_slots(leader))
-> +		return false;
-> +
-> +	/*
-> +	 * If slots event as leader event but no topdown metric events
-> +	 * in group, slots event should still sample as leader.
-> +	 */
-> +	evlist__for_each_entry(leader->evlist, evsel) {
-		evsel = leader->leader;
-		evlist__for_each_entry_continue(leader->evlist, evsel)
-			if (evsel->leader != leader->leader)
-				return false;
-
-Maybe we should limit the check in a group, rather than the entire
-evlist. Something as above (not tested)?
-
-Thanks,
-Kan
-> +		if (evsel != leader && arch_is_topdown_metrics(evsel))
-> +			return true;
-> +	}
->  
->  	return false;
->  }
+Rob
 
