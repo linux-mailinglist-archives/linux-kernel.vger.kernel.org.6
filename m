@@ -1,106 +1,82 @@
-Return-Path: <linux-kernel+bounces-282542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905B794E58E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:30:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C843A94E594
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15A4BB216EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:30:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 631ABB210F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 03:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD6A2C9D;
-	Mon, 12 Aug 2024 03:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A7F146D69;
+	Mon, 12 Aug 2024 03:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LGo+iq+d"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38FBA146D69;
-	Mon, 12 Aug 2024 03:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="PwOtRoJv"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B702C9D;
+	Mon, 12 Aug 2024 03:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723433406; cv=none; b=IuP2DY/KG4jVMeVGJCuz6lo6LD2/YPHdKseVTmtOx9xfThgVsilrPc5pux0JD+lKvTjqON9Wga7gsK1KHONKqeBhM50HHhmmkUGkg+Qa2Gde3ttPwQpFRi9DmZdR+ZKy6+jbyhzxUTftfCRk9RywW5SJBHot5jB5SRN0oKh1n9g=
+	t=1723433837; cv=none; b=DXDi/qfxtYrmt43bYOm+f8r93ZWRPgIePtirPI+wqBw6Qa0JoGbM9JZCXThjQZ1QhD5/jVy4UvorTRo9cAuHPUQQyEJCabDlGf/OJjmd8XhkU7R3icdfO1Ih5BDiKTqAQa9U03RzDHYUwMIxYh6zHnrA30lLQC4DHoxVPVhrowI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723433406; c=relaxed/simple;
-	bh=Dj3vu2UWwT8uVcLAkZiuE0gyy0nJV9mSuK0SOznWXxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=hNxR/tDYIlnCYL5NKqzDxBXaPMpA1qJvDHcH1tDA9NgJuJb4Ub+Uqfbl94lrMMA69p8ARcwrTNGVEQSmgAJtIkDkYKyvocbB7XEbKt2heJYhGzGFEGjkGETILW8Iiu26hIpJFKL9RtNf0oVhkbIxlx82HnOGJWhrNsaSW2uYOIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=LGo+iq+d; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723433401;
-	bh=qGKr37Vn3DO2r+jbTDhnxMHbku9+PiGerDKDRY2zcUc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LGo+iq+dg1WhGEhSs7wQ3ABzqwRg75oS8mKH8mUVjRkCkgyakDgiY+lF412qauK9q
-	 uA4e4K4KSPOA44RpxnBraTuoNaP3LbRzM6njKxwfb/Zx/O+iJO/jFmc8gsJlxeL3rJ
-	 vfobWpJQMPn2FEBwjGxwY+ocNJ2ql8d6uN51RknK1S8tS7DqlnXXZcPN9qsMV8QhpA
-	 VzKTODDZFK9EuOawqR3SyOY7cOQKYqQeY9lvCBwQVgxWfl0eYysITTPnT1XxPdHJn5
-	 jD7k3cG3W+kWj+BvnDp2eIb1WL6FGEmZbbk2BU0jcGmcZ52FOrSO/BzzaJqOj9dHu6
-	 zOxTOhETSs9yg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wj0Q11TNBz4x8M;
-	Mon, 12 Aug 2024 13:30:01 +1000 (AEST)
-Date: Mon, 12 Aug 2024 13:30:00 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Saurabh Sengar <ssengar@linux.microsoft.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mm tree
-Message-ID: <20240812133000.59660575@canb.auug.org.au>
+	s=arc-20240116; t=1723433837; c=relaxed/simple;
+	bh=uXuyobOjTnWyOJ8C5OkVOf6A7H0lhKaylh2nIX33f6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jUm2ha8tJj61o+Za3LQc1Ed5Z/jjR2P8ui0qxXiGIuhYKKilxMfm5CoYglzu44PPCfkrJPrZplc4vG9/ZYwJtRjF3ue+U1f379PK1Gh2SwAqZYpA8Ac2fl0ZCxTFOqzTAqwRTWnrB2x0jUPZtKSSbWZ3yfpcMFYaLJuoqsL7jxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=PwOtRoJv; arc=none smtp.client-ip=220.197.32.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=9+5V5XfOCCt35FGY5jqK51yX030o8KZnQmkWpmCbG8E=;
+	b=PwOtRoJvrAsqpqvTW/akyrNUhxam7EFnZ0wcC/LHC+RMfdqN8sndUgT0VtQMHx
+	YubP5roAcFqBNZt1sLHSSIslqe93N4iDHcr/sJR4DrzNGgGbv6qoyZk56gS8i5pj
+	N/r35UYVbSEX3mfVTVKYR+hhLtrJ4yN5A13NTKHhY/dRM=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgBHTbdCg7lmvdsLAg--.59373S3;
+	Mon, 12 Aug 2024 11:36:36 +0800 (CST)
+Date: Mon, 12 Aug 2024 11:36:34 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Adam Ford <aford173@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, aford@beaconembedded.com,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Lucas Stach <l.stach@pengutronix.de>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: imx8mp-beacon-kit: Fix Stereo Audio on WM8962
+Message-ID: <ZrmDQgU03tf8n91p@dragon>
+References: <20240714172017.422811-1-aford173@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kQpeuhBgs58np4sDpxN44Ri";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240714172017.422811-1-aford173@gmail.com>
+X-CM-TRANSID:M88vCgBHTbdCg7lmvdsLAg--.59373S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUcb18DUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxI5ZWa5gcwF+QAAsr
 
---Sig_/kQpeuhBgs58np4sDpxN44Ri
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Jul 14, 2024 at 12:20:17PM -0500, Adam Ford wrote:
+> The L/R clock needs to be controlled by the SAI3 instead of the
+> CODEC to properly achieve stereo sound. Doing this allows removes
+> the need for unnecessary clock manipulation to try to get the
+> CODEC's clock in sync with the SAI3 clock, since the CODEC can cope
+> with a wide variety of clock inputs.
+> 
+> Fixes: 161af16c18f3 ("arm64: dts: imx8mp-beacon-kit: Fix audio_pll2 clock")
+> Fixes: 69e2f37a6ddc ("arm64: dts: imx8mp-beacon-kit: Enable WM8962 Audio CODEC")
+> Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Hi all,
+Applied, thanks!
 
-After merging the mm tree, today's linux-next build (x86_64 allnoconfig
-and various other configs) produced this warning:
-
-mm/vmstat.c:34:12: warning: 'vmstat_late_init_done' defined but not used [-=
-Wunused-variable]
-   34 | static int vmstat_late_init_done;
-      |            ^~~~~~~~~~~~~~~~~~~~~
-
-Introduced by commit
-
-  ef534a0d5198 ("mm/vmstat: defer the refresh_zone_stat_thresholds after al=
-l CPUs bringup")
-
-from the mm-unstable branch of the mm tree.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kQpeuhBgs58np4sDpxN44Ri
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5gbgACgkQAVBC80lX
-0Gxqagf+O+hpQp485n/SyYpYKV1ayOWJFqKpPP3irUO/Te96cKihPFfton+EyWW9
-aOn8z24CVpmQyWeetfoi+MP+gDF1LLRPNeEUrJ1hQIJZqeS/blFfTHSGFZSTl2Sw
-JYZ5RkfVAAx3OFAf8eZcuu4nF79N9zssjvg2hAFDgYOzeE5zS1ZMoeKT4gBxQUir
-qWDyphTkEihjM81xXFM/uXViYlG5aDi4uJfvN2peSRzryaUDU+Ve7JmPkv+wOdrS
-Nv82k1zp0vjgyDGu7eMdnu3Wm5hRmPT3fY772XpbgwFP68p06RMjf7XPrcUE6kxu
-JHSm6Sc/IMs80cxi61y3AA0WLN8e+A==
-=c16i
------END PGP SIGNATURE-----
-
---Sig_/kQpeuhBgs58np4sDpxN44Ri--
 
