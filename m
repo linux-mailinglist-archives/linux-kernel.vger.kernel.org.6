@@ -1,157 +1,147 @@
-Return-Path: <linux-kernel+bounces-283909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94B9D94FA3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D5CF94FA45
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1351F22BD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA76A28173D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3284919A28B;
-	Mon, 12 Aug 2024 23:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D002419A295;
+	Mon, 12 Aug 2024 23:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RxfDjdGS"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nI++Z9P0"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79719170A22
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B33198858
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723505234; cv=none; b=aL3cOu+Q1VTWvD58+sk+euUo8hcZe6gC+j7w0DvI2AvkEXH1M+dLEsiPN7X/yMFmiRQE+cB4T5fLdPnawR4zdHE5qwJ75bFpv6FJJ1Owh3XF1P32WAFUyK6HhKeLnM4mkhoCUfEROUHgNUBQFeqzQC5EqAVXM82CXTdt2cBXcu4=
+	t=1723505360; cv=none; b=ZwtofjXkN2tv9iz2VthBW4gbLFKUzHc2g/Zg0GmR4BhsfyWfM8oj2uJ2UZ/ZFA2QqlC4N2vOQnafjwfdwXHvculrBFNZ3/XS+NMbXhhX/5fAOEgsxVVtBXR8cxG7K+YxHC01QvT31TpqOrhlGDHkvS983Vn5qJYTlqhsO/rTrV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723505234; c=relaxed/simple;
-	bh=tvqcMueI8bhXuiqM6AK7srDyvkZ4Cq75Q/GFz5bTpX8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PDwq65iOnNr4vSeCV182e9p75/6UeVRpho38sV/dP9MYkDWQ6abVunDUB47nXQUXkOwt9h2/rEHFzyjXe1RsDR7KUF74BzqE4z5ymYxn/3fivOWIymg7pzLgVMaj1AW51ZOZEPjdcBXbSluCg0gwbQwluzq1iiDsx6t+FKnHQoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RxfDjdGS; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3684e8220f9so2724748f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:27:12 -0700 (PDT)
+	s=arc-20240116; t=1723505360; c=relaxed/simple;
+	bh=WNJRbJEWl/JK8Az8ghGCXWH3fm68Jwe8K6UK0+dCVTQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=C0FgDvGZdWaZgy8kQFImTKH7yPTSzK5jvecljMEHiyeMPs4I0mE13q5GfJSW8RkJcbN21a5lfhBQIpyPDJxVawZKp1IbPStOJGxIijypCgetBhw6/F5mDs+z8HrPDH5TEWJzEUK5MCdUfrCxs0yAOLLK2uzeZnymrmDRgwlgs+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nI++Z9P0; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-664fc7c4e51so101180387b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723505231; x=1724110031; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YD7cg+9/vEjihVTfP6GdSKzC4qTymdlhkccRC+5Gbok=;
-        b=RxfDjdGSa3K+ujRxXnkcYKnsGfqygd+qRDiQThH1rOyn5mV+71MVllpiaehPL4AMF2
-         u1xQ0TPuZ3wr8f5K3y/Cj7GKSTu5w7A8QMvpKwPHLsFEOmsp1oPkCzVa3KehxnMjFJay
-         QnwaGMNVzmy5Jzr7P37hJP51gYHJoZNjS84x40pC5P3yLDp7p+MaYhe4EqtS74zSyjOJ
-         a/Mkdj/5Y3IHEjeWjQjyTWO9Yv3EnQKTCblQMXLCk6bkYQJT8q7I7P8UdmMsFLJkTgh4
-         XmKX7C2ALyQsJv9fjoJRe7eAKaTFva3GWKV5/Jt/pN0D/iO/Eq35BtZO8G8gy4FeAF+k
-         4kIQ==
+        d=google.com; s=20230601; t=1723505357; x=1724110157; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7N7Zf7M9w/vAcr3WmdKFD5NuAFU2ocCw/qlD1RHyGfQ=;
+        b=nI++Z9P0Hbtgv6lZRMacQqBuLNhX/D9QUqU0JgQ/McFHvX75Mi9UKlyVfZ/pCERJ+T
+         nZjivdKRBO0qIuLWfznqWg7H3ee31ctoIjGH1Men+tiN+WoAkzReKLwJUlBF8mH7jb+2
+         v62bjSR6LGhGsY7CvoDYeUXwPq/ZtxaGR4u4+WdhUdOMhnCJzVKwzmFzO0AlnlWZw6Gz
+         c014NdptgSHwl50dIrfPB7k76dMvcagTp/MR+nEUnyR+WQxJUtBTkckEIGvsg+12Sp3Q
+         AQZKclb2jhdwPztccN6+xKeSiFiqf6+UqwZ989tgKHxkk/m+HeXf4GUbe6yWNII9XWK2
+         hxsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723505231; x=1724110031;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YD7cg+9/vEjihVTfP6GdSKzC4qTymdlhkccRC+5Gbok=;
-        b=MmQuwA+Ah1GyaXn18MhZUN2Kyo7UMG5uDlILimwTt97RAjzm8N1F8ID0S4sA93n3pM
-         nC+7wnp8ddOto8jSNunm16htYUmKntCCpp7SqYYn380jl60kv9KnTDfnnEcRhGu3NYQo
-         cpK93FIsSyQX97fswK6waFPm08/B+u+WSJFPdmXZ8Vaclps4QzrAyReNk3cpMmCDGjeu
-         nDeTA7K5omFIq8sWhwILlWjIBndj0+UYu8dhxNBW8VD730kWuw/ASwQqxvAhJXAFmhSI
-         ed5NtvkWI5RVOiTPUkGBAzBSAax7Vq40X0fU58iKpAf+v/G34tY5L2/vKD5UYjv4FSDP
-         cVjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3nftKfoKv9Z3ZzIcqeGok9eJyMod4jTu76OgLU9w1DB70F7/QCwaiZoGOwCvDqzR/ER6N5Hf3v6Q8SpKDuYZd0r8KsPx9bGiDshRz
-X-Gm-Message-State: AOJu0YyczUiI3c7khpjgqmUpvHb95RZabJUn9NYoLtGB1tqdD3sBfNxC
-	IcAvaBF7LGaagBRlVGAmTf5tIIGqcAtdlt/wUteVGHhhWKNIC+V5V88BOsSUU/s=
-X-Google-Smtp-Source: AGHT+IG6CXy2Pt1GGArovitwUEAUTVVp2pZrsNj7gQT7hvcVDqW1OA2/mPl3SeDPLn1DldH7lvDWlA==
-X-Received: by 2002:adf:ef42:0:b0:362:23d5:3928 with SMTP id ffacd0b85a97d-3716e42b973mr806943f8f.17.1723505230255;
-        Mon, 12 Aug 2024 16:27:10 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a99efsm4521191b3a.82.2024.08.12.16.27.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 16:27:09 -0700 (PDT)
-Message-ID: <cd06772c-b4be-4416-9f0f-6d849146ffe0@suse.com>
-Date: Tue, 13 Aug 2024 08:57:04 +0930
+        d=1e100.net; s=20230601; t=1723505357; x=1724110157;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7N7Zf7M9w/vAcr3WmdKFD5NuAFU2ocCw/qlD1RHyGfQ=;
+        b=lc2YoghE0N5EFFDV7BSH2WZDEl6E0UzuNXO24RaYScucETaMfHa6WfoqVH8YiuL7Fy
+         tNKJTrsftj1nBBlnBWD/bUU7chsma/UCUmHgdp4Kb7/dQcfweMdPybpbFWvzbub40vYt
+         ZTAVsNisHITv5PbW+89+Bcb9SvOycXpifoAjebirgZBWaalpsRZjdULSpjYnC9Vfo1+F
+         MW2wx2iACwWDZMfC8AVajoXgiQLZBKjQESHOcnxohR4g9Yrx1nwoPclwVEptZPL+PJrp
+         eEe8pBkbDEphJjFv1mpoPCRKpvG95YCy/5uQE0YTDiwarkqsy4kYPLwUh/8f9/TAcySp
+         VH4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0XWbC8ALsqk7pAoXzv43MjTEuWa1MrCFQeM7vsJteubzFm97g9UNFShc2N5s5fi0mOUYx+jwXxeJHRSiX5aOj4yfHpsk9IZXPZJVw
+X-Gm-Message-State: AOJu0YxjBp9/fE0GcjTkqRQ5lx8am+QwOHv6JQnlk1tJ2pj0Zv3NZS1q
+	kIbQ//VZz/UtYtIr+UAU2hrO1QlCB38hvHOhbfiVq/1EGogELzSIPNrhNbB7zN2FgfxSpbBddnP
+	G4+wn5A==
+X-Google-Smtp-Source: AGHT+IGRZ7bB9Rd9wSfHyVUbB3/tTwK9kGhukQq3NaerqGLW14qddIs8Na8NhFcz/b5szJZ/mPTFY0ftUxja
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a0d:e943:0:b0:68f:dfc2:98ee with SMTP id
+ 00721157ae682-6a9755e3147mr733687b3.5.1723505357680; Mon, 12 Aug 2024
+ 16:29:17 -0700 (PDT)
+Date: Mon, 12 Aug 2024 23:29:01 +0000
+In-Reply-To: <20240812232910.2026387-1-mmaurer@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: update target inode's ctime on unlink
-To: Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
-Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
- Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
- p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
- ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
- dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
- RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
- rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
- 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
- bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
- AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
- ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
-In-Reply-To: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240812232910.2026387-1-mmaurer@google.com>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240812232910.2026387-2-mmaurer@google.com>
+Subject: [PATCH v2 1/3] kbuild: rust: Define probing macros for rustc
+From: Matthew Maurer <mmaurer@google.com>
+To: dvyukov@google.com, ojeda@kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Nathan Chancellor <nathan@kernel.org>
+Cc: aliceryhl@google.com, samitolvanen@google.com, 
+	Matthew Maurer <mmaurer@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+Creates flag probe macro variants for `rustc`. These are helpful
+because:
 
+1. `rustc` support will soon be a minimum rather than a pinned version.
+2. We already support multiple LLVMs linked into `rustc`, and these are
+   needed to probe what LLVM parameters `rustc` will accept.
 
-在 2024/8/13 02:00, Jeff Layton 写道:
-> Unlink changes the link count on the target inode. POSIX mandates that
-> the ctime must also change when this occurs.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+ scripts/Kconfig.include   |  8 ++++++++
+ scripts/Makefile.compiler | 15 +++++++++++++++
+ 2 files changed, 23 insertions(+)
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
+diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+index 3500a3d62f0d..becad3d0b1fd 100644
+--- a/scripts/Kconfig.include
++++ b/scripts/Kconfig.include
+@@ -64,3 +64,11 @@ ld-version := $(shell,set -- $(ld-info) && echo $2)
+ cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$(1))
+ m32-flag := $(cc-option-bit,-m32)
+ m64-flag := $(cc-option-bit,-m64)
++
++# $(rustc-option,<flag>)
++# Return y if the Rust compiler supports <flag>, n otherwise
++# Calls to this should be guarded so that they are not evaluated if
++# CONFIG_HAVE_RUST is not set.
++# If you are testing for unstable features, consider `rustc-min-version`
++# instead, as features may have different completeness while available.
++rustc-option = $(success,trap "rm -rf .tmp_$$" EXIT; mkdir .tmp_$$; $(RUSTC) $(1) --crate-type=rlib /dev/null -o .tmp_$$/tmp.rlib)
+diff --git a/scripts/Makefile.compiler b/scripts/Makefile.compiler
+index 92be0c9a13ee..485d66768a32 100644
+--- a/scripts/Makefile.compiler
++++ b/scripts/Makefile.compiler
+@@ -72,3 +72,18 @@ clang-min-version = $(call test-ge, $(CONFIG_CLANG_VERSION), $1)
+ # ld-option
+ # Usage: KBUILD_LDFLAGS += $(call ld-option, -X, -Y)
+ ld-option = $(call try-run, $(LD) $(KBUILD_LDFLAGS) $(1) -v,$(1),$(2),$(3))
++
++# __rustc-option
++# Usage: MY_RUSTFLAGS += $(call __rustc-option,$(RUSTC),$(MY_RUSTFLAGS),-Cinstrument-coverage,-Zinstrument-coverage)
++__rustc-option = $(call try-run,\
++	$(1) $(2) $(3) --crate-type=rlib /dev/null -o "$$TMP",$(3),$(4))
++
++# rustc-option
++# Usage: rustflags-y += $(call rustc-option,-Cinstrument-coverage,-Zinstrument-coverage)
++rustc-option = $(call __rustc-option, $(RUSTC),\
++	$(KBUILD_RUSTFLAGS),$(1),$(2))
++
++# rustc-option-yn
++# Usage: flag := $(call rustc-option-yn,-Cinstrument-coverage)
++rustc-option-yn = $(call try-run,\
++	$(RUSTC) $(KBUILD_RUSTFLAGS) $(1) --crate-type=rlib /dev/null -o "$$TMP",y,n)
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
-And since we decreased the nlink of the target inode already, updating 
-the timestamp will not cause extra COW overhead.
-
-So this won't cause any extra performance penalty.
-
-Thanks,
-Qu
-
-> ---
-> Found using the nfstest_posix testsuite with knfsd exporting btrfs.
-> ---
->   fs/btrfs/inode.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> index 333b0e8587a2..b1b6564ab68f 100644
-> --- a/fs/btrfs/inode.c
-> +++ b/fs/btrfs/inode.c
-> @@ -4195,6 +4195,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
->   
->   	btrfs_i_size_write(dir, dir->vfs_inode.i_size - name->len * 2);
->   	inode_inc_iversion(&inode->vfs_inode);
-> +	inode_set_ctime_current(&inode->vfs_inode);
->   	inode_inc_iversion(&dir->vfs_inode);
->    	inode_set_mtime_to_ts(&dir->vfs_inode, inode_set_ctime_current(&dir->vfs_inode));
->   	ret = btrfs_update_inode(trans, dir);
-> 
-> ---
-> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-> change-id: 20240812-btrfs-unlink-77293421e416
-> 
-> Best regards,
 
