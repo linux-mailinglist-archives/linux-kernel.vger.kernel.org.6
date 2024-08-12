@@ -1,240 +1,160 @@
-Return-Path: <linux-kernel+bounces-282665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A4594E71D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:48:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 811F994E71F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7065F1C214FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:48:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64BC1C21574
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7A5152DF5;
-	Mon, 12 Aug 2024 06:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22BF1537D2;
+	Mon, 12 Aug 2024 06:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xWPAdWqO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B9xM38CI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xWPAdWqO";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="B9xM38CI"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yYQeI79b"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A3A24C9F;
-	Mon, 12 Aug 2024 06:48:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3049F14F9C9
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445306; cv=none; b=htMojUtvmT590EwpKWqCAIJ+IDCWk4DOPgPM6xgZg1rmbI0Q5vroN0ddcPcIDjg2FoP5xfDwM+8C0vQqJ/SPj0eRR9Zv6HF+m3gyRollKocVNUEBTozXDDwE+oCILdBzIW0SidYE3wbS8+YclAaiohayYINIWqUdSzwN+sSiIlQ=
+	t=1723445331; cv=none; b=sJ2YlJlHBmEDJvXgUGje48oaBhVIJWSZjbyHP3aR1bsGRxvnGaEXiFFIF/VkEszzNEZdzsic+zyQCsRtletdCAm1bPgyM6Ub8NrffsFSVG0d8ju+iLUqTZYv2mSC2Oe5fhou27KiYz1MfkZXPBa70gW/RxOgwHppq1M/hiYovmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445306; c=relaxed/simple;
-	bh=WTEpCvsk0zvycrfL9zrCB8w6fv4WWviIMd880Dbtjd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QnZCGDIX+0SqxCqd3rcjb48D6BImq6ExPM9wKFytBv6SB5ElNBDUeie2CICLrK788ApqmMvKWIc6KBHViqp41BBPpHO1f2duoh9siEtRsxE2p5pX2VCmeMp7A+BGwwFJmppDjj6596lCiNBIhrTHF+cIbi6C7B7JS+XktsNKdr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xWPAdWqO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B9xM38CI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xWPAdWqO; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=B9xM38CI; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5EA31224B1;
-	Mon, 12 Aug 2024 06:48:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723445297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m+9KZKaXMpJvCr8IEHfjQVejHnTOFoCaWzXhCnaJWQs=;
-	b=xWPAdWqOZUAWtKa0UexY0x6QHSZFXR25Z7ghzu5QVpxsrZJQVuQLChB+chSMR+RsUiLzOL
-	0iSjAYZbS1OK5ZNAlrDvXOib/0pgfTut9vu7/sboGcfkk/fVTEAy88I7UWabqL0Ja39I8N
-	bMFj2wzTE81hwSclgOBs95HXl+74YvM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723445297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m+9KZKaXMpJvCr8IEHfjQVejHnTOFoCaWzXhCnaJWQs=;
-	b=B9xM38CIxcQ9QH/X5nhz4isLK/tmNM9GmaQb//Cs2MBvtN+/qbRDKbGq2DfwSImOhSO12Z
-	FGLv1kRECu4enwAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xWPAdWqO;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=B9xM38CI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723445297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m+9KZKaXMpJvCr8IEHfjQVejHnTOFoCaWzXhCnaJWQs=;
-	b=xWPAdWqOZUAWtKa0UexY0x6QHSZFXR25Z7ghzu5QVpxsrZJQVuQLChB+chSMR+RsUiLzOL
-	0iSjAYZbS1OK5ZNAlrDvXOib/0pgfTut9vu7/sboGcfkk/fVTEAy88I7UWabqL0Ja39I8N
-	bMFj2wzTE81hwSclgOBs95HXl+74YvM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723445297;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=m+9KZKaXMpJvCr8IEHfjQVejHnTOFoCaWzXhCnaJWQs=;
-	b=B9xM38CIxcQ9QH/X5nhz4isLK/tmNM9GmaQb//Cs2MBvtN+/qbRDKbGq2DfwSImOhSO12Z
-	FGLv1kRECu4enwAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0EA2D137BA;
-	Mon, 12 Aug 2024 06:48:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 76pnATGwuWYXAgAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 12 Aug 2024 06:48:17 +0000
-Message-ID: <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
-Date: Mon, 12 Aug 2024 08:48:16 +0200
+	s=arc-20240116; t=1723445331; c=relaxed/simple;
+	bh=dNX4pv0bFcGKYSiBvf6FyvfFPE83R0SaRt9P5rQTGKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JH0GruDBep/grJDaVKAu72QsfyWzK9BtvcUXOvN+ZSJBN+omMSf4FS6Vo2HZyGtw1L3b4oWEDiOjNn4+AyEHiaP56P80Ky1AT+Crvc8zro3xQhCCrzfMa2v7lJ8caSa5aGJvsbjSC/b3hKWJtteCpr9VPppHOyYNqqDR34Y17tM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yYQeI79b; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a91cdcc78so114948766b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723445327; x=1724050127; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XPaDsB4mgKNtTycoeHnN1LPcfwBltjPwwAHmSUlQ7GM=;
+        b=yYQeI79bVfPRuAzv1WyuMFrQO9+1/NWbmxvXov5IBWe+yQjQPmCqJbbiSKtDPvaIUu
+         yHvP346oAW3kD7/DJSv+a353DKNaK9+he6tSwKDzdEFQYdMdQ5Q+atCmsNxKgLZ8Y15L
+         tlwFBs09VU+zeZEOLAh3eHMuL1ZcxKWHC0DUJy1YIkXBt3hFaWB3CCdbXWwprTcN9WEb
+         49GXAP1yJ7tbWTnO6F5pCug6I9e/9MZ/RwkF1RCoDnlylH5AXoISGF8oQURMzQs1vNk8
+         /jtyeWof7IqijqJ+l8SsyEG5iIdTUMXL0yt8+ilW+XHFBDcGmA2blYlIcnsrvXBz3gec
+         /Y6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723445327; x=1724050127;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XPaDsB4mgKNtTycoeHnN1LPcfwBltjPwwAHmSUlQ7GM=;
+        b=QTz9z3UWZno3yXbaWPWkm9PTPgjtw4uMYPwFy5gQrRWn2dEH/u+oFSRMQgfSArTgdV
+         +xs34YHJB6KM7nPkuVrBpoRZgzfRU/AFzhP6wCNQ06Z8bfqN6zjYHi71jxLcHLc28eww
+         9JxIR+unsTFfdvB/Fp3yFQPBvKlH07qx9luJJ4zApPp6V+z5O/EU5tgqCEi6UF+TCMn4
+         NxwgmP/wthZeifuLu60L5dBLQEUTPi6RY3R4V8XDtkA5mJum2IBfNsg47n3n4LA2HUbu
+         9P74aP+oO+oRCaYMEHk55j0AlyjO04tSlzdGUmfiSc7lYdeE0XzR3zMthbu5VHSH9XjB
+         UheQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWRm2AUCJTXXCRusC+csb15U5RPUK3pBZedHvZKg3tCg3rKJTy0ftLsQpkyA1VuqqXPbhVY63Rg9mce2KXJ87sZGo64iGkr4QlvVavE
+X-Gm-Message-State: AOJu0YxyOcdZa7MUP7yCR39oOX42qgZlz6LqVF9ulgqLdCqT2Vkqz/Bv
+	OnRSFmLvwzBMngNb0dgvbYEw8PmJXMGzKLjtSmXCuK6Xo0YDJLaYl4wPWoj57Y4=
+X-Google-Smtp-Source: AGHT+IG/hs6hri9F4rxByDFsrSBLvCmLFxDpiqpwrHt7cc+98+r7zdjaPv6vGfE3xIllakw/1bm6BQ==
+X-Received: by 2002:a05:6402:2711:b0:5a1:a08a:e08 with SMTP id 4fb4d7f45d1cf-5bd0a53a598mr8325229a12.11.1723445327342;
+        Sun, 11 Aug 2024 23:48:47 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb11b5e6sm204485466b.95.2024.08.11.23.48.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 23:48:46 -0700 (PDT)
+Date: Mon, 12 Aug 2024 09:48:38 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>, Andrew Lunn <andrew@lunn.ch>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next 5/6] net: ti: icss-iep: Move icss_iep structure
+Message-ID: <7a65afda-814b-4ff3-9f12-f07efc97b234@stanley.mountain>
+References: <20240808110800.1281716-1-danishanwar@ti.com>
+ <20240808110800.1281716-6-danishanwar@ti.com>
+ <6eb3c922-a8c6-4df4-a9ee-ba879e323385@stanley.mountain>
+ <3397a020-195c-4ca3-a524-520171db794b@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Jani Nikula <jani.nikula@linux.intel.com>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.50 / 50.00];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	MX_GOOD(-0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -3.50
-X-Rspamd-Queue-Id: 5EA31224B1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3397a020-195c-4ca3-a524-520171db794b@ti.com>
 
-Hi
+On Mon, Aug 12, 2024 at 11:11:21AM +0530, MD Danish Anwar wrote:
+> Hi Dan,
+> 
+> On 10/08/24 1:40 am, Dan Carpenter wrote:
+> > On Thu, Aug 08, 2024 at 04:37:59PM +0530, MD Danish Anwar wrote:
+> >> -	struct ptp_clock *ptp_clock;
+> >> -	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+> >> -	u32 def_inc;
+> >> -	s16 slow_cmp_inc;
+> > 
+> > [ cut ]
+> > 
+> >> +	struct ptp_clock *ptp_clock;
+> >> +	struct mutex ptp_clk_mutex;	/* PHC access serializer */
+> >> +	spinlock_t irq_lock; /* CMP IRQ vs icss_iep_ptp_enable access */
+> >         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > 
+> > The patch adds this new struct member.  When you're moving code around, please
+> > just move the code.  Don't fix checkpatch warnings or do any other cleanups.
+> > 
+> 
+> My bad. I didn't notice this new struct member was introduced. I will
+> take care of it.
+> 
+> Also apart from doing the code movement, this patch also does the
+> following change. Instead of hardcoding the value 4, the patch uses
+> emac->iep->def_inc. Since the iep->def_inc is now accessible from
+> drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> 
+> @@ -384,7 +384,8 @@ static void prueth_iep_settime(void *clockops_data,
+> u64 ns)
+>  	sc_desc.cyclecounter0_set = cyclecount & GENMASK(31, 0);
+>  	sc_desc.cyclecounter1_set = (cyclecount & GENMASK(63, 32)) >> 32;
+>  	sc_desc.iepcount_set = ns % cycletime;
+> -	sc_desc.CMP0_current = cycletime - 4; //Count from 0 to (cycle time)-4
+> +	/* Count from 0 to (cycle time) - emac->iep->def_inc */
+> +	sc_desc.CMP0_current = cycletime - emac->iep->def_inc;
+> 
+>  	memcpy_toio(sc_descp, &sc_desc, sizeof(sc_desc));
+> 
+> 
+> Should I keep the above change as it is or should I split it into a
+> separate patch and make this patch strictly for code movement. I kept
+> the above change as part of this patch because it is related with the
+> code movement. Moving the iep structure from icss_iep.c to icss_iep.h
+> makes it accessible to icssg_prueth.c so I thought keeping them together
+> will be a better idea.
+> 
+> Please let me know if this is okay.
+> 
 
-Am 12.08.24 um 08:42 schrieb Dan Carpenter:
-> This code has an issue because it loops until "i" is set to UINT_MAX but
-> the test for failure assumes that "i" is set to zero.  The result is that
-> it will only print an error message if we succeed on the very last try.
-> Reformat the loop to count forwards instead of backwards.
->
-> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
-> v2: In version one, I introduced a bug where it would msleep(100) after failure
->      and that is a pointless thing to do.  Also change the loop to a for loop.
-> ---
->   drivers/gpu/drm/ast/ast_dp.c | 12 +++++-------
->   1 file changed, 5 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
-> index 5d07678b502c..9bc21dd6a54d 100644
-> --- a/drivers/gpu/drm/ast/ast_dp.c
-> +++ b/drivers/gpu/drm/ast/ast_dp.c
-> @@ -146,18 +146,16 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
->   void ast_dp_link_training(struct ast_device *ast)
->   {
->   	struct drm_device *dev = &ast->base;
-> -	unsigned int i = 10;
-> +	int i;
->   
-> -	while (i--) {
-> +	for (i = 0; i < 10; i++) {
->   		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
->   
->   		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
-> -			break;
-> -		if (i)
-> -			msleep(100);
-> +			return;
-> +		msleep(100);
+Huh, I saw that the comment had changed but I assumed that was because
+checkpatch had complained.  I didn't notice that the 4 changed to
+emac->iep->def_inc.  That's the kind of change that we do really want to notice.
 
-But we don't want to wait during the final iteration of this loop. If 
-you want to use the for loop, it should be something like
+Yep.  Please, could you split that out into a separate patch.
 
-for (i= 0; i < 10; ++i) {
-
-     if (i)
-       msleep(100)
-
-     // now test vgacrdc
-}
-
-Best regards
-Thomas
-
->   	}
-> -	if (!i)
-> -		drm_err(dev, "Link training failed\n");
-> +	drm_err(dev, "Link training failed\n");
->   }
->   
->   void ast_dp_set_on_off(struct drm_device *dev, bool on)
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+regards,
+dan carpenter
 
 
