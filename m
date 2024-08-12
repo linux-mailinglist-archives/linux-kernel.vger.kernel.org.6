@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-283534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DE9F94F606
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:45:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9BF94F607
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04DF62833CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B5041F22781
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDE0189536;
-	Mon, 12 Aug 2024 17:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB05188018;
+	Mon, 12 Aug 2024 17:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b="SmC2XXRl"
+	dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b="rm9lbJ5M"
 Received: from read.uberspace.de (read.uberspace.de [185.26.156.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3B7187FFC
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93980191
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.26.156.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723484727; cv=none; b=WoAcYV4eMmefXv7cAhQXyF0PQEGPATMlUsHTS3wxg8zvdoeEMRMbpgnyT2M433f4g8RaYV+YBwX6K7RrDLHGJLwL4HVU1kfaapaBSO38MXQpVH5mQTg/FdF0qA+MCZrEnBDndMCVMpdWbkMPqykkKJQulxaw0KYusrN1v7IUrHQ=
+	t=1723484730; cv=none; b=a/ZMZiwth7dTIsn/tgQtLmYaElQhHV5xEktLXosgVRVZECRH/4WUDCuBj6JBswMQ2WqRenuhTU9fSHdvBABqchoCX6IlB75tQGuQFbn7W6r9WQjUsSjpGf4v3MNmswljfRrO2GQhVBEQ/R2PWSa5GjsbDF1G7T1RNuxGa+iPmoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723484727; c=relaxed/simple;
-	bh=8RV+PP8sYQd1tMJEbzZNDRlelpeGUX71LiVKe+Q840c=;
+	s=arc-20240116; t=1723484730; c=relaxed/simple;
+	bh=83ni0oxgvU7wO3TGJK4AznLbgJf+G+hKoJ+YstNEvTc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qXgyZTndtVMLmj61vFirl+IVJ18UU8BiTns0S81sFcmjiG3Az2VLMCcs+1MrxJpSilwTmOYhQRjwDRILqdTB6eqfyU571ri5SrLSBCR44dQPEYZN3ZWhznGpMtc5fKsd1/FQ4CZ80JybEbngiCMCsd8RMkAWdSHC2edkTyeBQjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de; spf=pass smtp.mailfrom=florommel.de; dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b=SmC2XXRl; arc=none smtp.client-ip=185.26.156.133
+	 MIME-Version; b=J5xEeXss/Tum3ibH2Wo6yRJowGqAYrwyoPM2i1YTKxNw+UVaQZJJIRqrn0vsJXREDxRRZ35aRyI+XODgcyNDrOx6+zeO/Lk6nKlAJUk4YuvzEuvFJiLd+EMvAtuzaqLflerVT3wfatHws+hJ7IJaM8mm+q17nGYU3xceBOFW50Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de; spf=pass smtp.mailfrom=florommel.de; dkim=pass (4096-bit key) header.d=florommel.de header.i=@florommel.de header.b=rm9lbJ5M; arc=none smtp.client-ip=185.26.156.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=florommel.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=florommel.de
-Received: (qmail 19575 invoked by uid 990); 12 Aug 2024 17:45:21 -0000
+Received: (qmail 19654 invoked by uid 990); 12 Aug 2024 17:45:25 -0000
 Authentication-Results: read.uberspace.de;
 	auth=pass (plain)
 Received: from unknown (HELO unkown) (::1)
-	by read.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 12 Aug 2024 19:45:21 +0200
+	by read.uberspace.de (Haraka/3.0.1) with ESMTPSA; Mon, 12 Aug 2024 19:45:25 +0200
 From: Florian Rommel <mail@florommel.de>
 To: Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
@@ -57,9 +57,9 @@ To: Thomas Gleixner <tglx@linutronix.de>,
 	x86@kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Florian Rommel <mail@florommel.de>
-Subject: [PATCH v2 1/2] x86/kgdb: convert early breakpoints to poke breakpoints
-Date: Mon, 12 Aug 2024 19:43:36 +0200
-Message-ID: <20240812174338.363838-2-mail@florommel.de>
+Subject: [PATCH v2 2/2] x86/kgdb: fix hang on failed breakpoint removal
+Date: Mon, 12 Aug 2024 19:43:37 +0200
+Message-ID: <20240812174338.363838-3-mail@florommel.de>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240812174338.363838-1-mail@florommel.de>
 References: <20240812174338.363838-1-mail@florommel.de>
@@ -71,148 +71,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Rspamd-Bar: ----
-X-Rspamd-Report: REPLY(-4) SUSPICIOUS_RECIPS(1.5) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) BAYES_HAM(-2.999751) R_MISSING_CHARSET(0.5)
-X-Rspamd-Score: -4.099751
+X-Rspamd-Report: REPLY(-4) SUSPICIOUS_RECIPS(1.5) MID_CONTAINS_FROM(1) MIME_GOOD(-0.1) BAYES_HAM(-2.956524) R_MISSING_CHARSET(0.5)
+X-Rspamd-Score: -4.056524
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
 	d=florommel.de; s=uberspace;
 	h=from:to:cc:subject:date;
-	bh=8RV+PP8sYQd1tMJEbzZNDRlelpeGUX71LiVKe+Q840c=;
-	b=SmC2XXRlE1cZrd+LZ9TdwYeiZCDUanumd9YD8C9amP0Zrn2hUOEX1NH1jT+2PxcTp4P8ptLpCt
-	Ij4dsfkHLO5W3+MUp0P8+Tg1OLEE2FIIasA7R7XH/AmcYIMBarmk8CYSHqRUi8pctsWBSgugpkOE
-	KMKVZiiZ9jXG2lNRvHoiRIDq8ACeaioisxL8x/EeXcRxsuKOGafRopZlLEdjOdc5KPQo0Cufu3xv
-	Xo5M5W6iGmTPQ2o62QqgLICRdtw8ymFzDYt1dLwwxG/4X3ZQIq5aTaBi0ujCjK8XZwkqE/eEn+VS
-	k950OJknORvBbwpeiwrX4vU5BKFYgxSwiLh3hgsyZKSiTFbH8DcKPLPiEeAqDxyS6xyGpwKrsUoD
-	IuPWoSqkPw2smC2itKUm7YT/OqRwcs+hHGRw6ss5TzTpyepZuaOKBUf0JSxpKWysP/eb2vlhWHow
-	20yQa4lDOhTDvGmczb9RiwRB/QIIGhl8koccWH4eM6D6E64g4SWEaMfSGJckuzRvcZhBUP6ZDaJj
-	fqaNgE7CThokVoAnZkAYk8ixoAYbyMft3qQ4rAHAOq3B6uH27zgBfKIpMRMiksfFCAvVa192IYZ4
-	Q4dyai0NlHP9Gpqw30Izf6y50jedikoqoo4TV4Z7QScwuZGF9vemGQqwkTprpk42KL2opjh0Ukk3
-	U=
+	bh=83ni0oxgvU7wO3TGJK4AznLbgJf+G+hKoJ+YstNEvTc=;
+	b=rm9lbJ5McaCPuNfKtT2SiDAwQtqhDensizQBTK8IZxXKNzhsvDR/nBh63pG+uyFHOdMHIJknS3
+	Sijwsb/BAYu7ijxQVG7ny486hiZZFsvPMtPWSjDTH20PXkowK47mBvh2ZSnw3mEZFqR1Xenu5DIW
+	YV7FhD9fS+opIE/IGc7CQjOi4pY5WrHtuYL9E1kbuhcXgKP39MwfZDHfhuA6GHlZWOFU8ulHvlYn
+	cWF1w2ONqBpQNpr11MHYS/pz1O9Wnqgt2ZhcxLIjr1BxcRqJ1CDQzFimXvY8+fISusDyTjN6HSOd
+	iCqaD1UFuxLe1xAgPxHAs2N990HvSELBJ+4UQjISDNdWwK/l0ecohrPmLXXlCWiOCx0FO8bIQFYM
+	8xpnqsxLqkgwVpQVAlBlPcctS7bRTn1AvWRtjxH2At1BdHZJ7zrcfBn0dG8BuaGnCPxpGPGcvsvT
+	gtAdilX9gBD51XnWPin18glsYKWKJy+VPefuZFz6g5Oj66i1UeOkGQFRt/pIEG4x/ah5PEfhrsfP
+	WsIpMLaG8h9v+Qmr1UShV9bWcE340x396QjAgBVXsmNGHPboOYWBGFTH/bCXUAH4ahb/LQ0kg7+c
+	CUUPaN5KNeZ9TmnbMgW94riLE9iAVoWOCffORZaNRX4oacrNxlKp3aRmUAft6XM/bOmsx1zutUpI
+	I=
 
-On x86, after booting, the kernel text is read-only.  Then, KGDB has to
-use the text_poke mechanism to install software breakpoints.  KGDB
-uses a special (x86-specific) breakpoint type for these kinds of
-breakpoints (BP_POKE_BREAKPOINT).  When removing a breakpoint, KGDB
-always adheres to the breakpoint's original installment method, which is
-determined by its type.
+On x86, occasionally, the removal of a breakpoint (i.e., removal of
+the int3 instruction) fails because the text_mutex is taken by another
+CPU (mainly due to the static_key mechanism, I think).  The function
+kgdb_skipexception catches exceptions from these spurious int3
+instructions, bails out of KGDB, and continues execution from the
+previous PC address.
 
-Before this fix, early (non-"poke") breakpoints could not be removed
-after the kernel text was set as read-only since the original code
-patching mechanism was no longer allowed to remove the breakpoints.
-Eventually, this even caused the kernel to hang (loop between int3
-instruction and the function kgdb_skipexception).
+However, this led to an endless loop between the int3 instruction and
+kgdb_skipexception since the int3 instruction (being still present)
+triggered again.  This effectively caused the system to hang.
 
-With this patch, we convert early breakpoints to "poke" breakpoints
-after the kernel text has been made read-only.  This makes them
-removable later.
+With this patch, we try to remove the concerned spurious int3
+instruction in kgdb_skipexception before continuing execution.  This
+may take a few attempts until the concurrent holders of the text_mutex
+have released it, but eventually succeeds and the kernel can continue.
 
 Signed-off-by: Florian Rommel <mail@florommel.de>
 ---
-v2: Add missing stub implementation for kgdb_after_mark_readonly
-
-A patch for this problem has already been proposed by Stefan Saecherl
-and Lorena Kretzschmar [1].  Their solution is different from the one
-I suggest here (it fixes the problem on removal, not "in advance").
-Unfortunately, Lorena and Stefan's patch has not been accepted / the
-conversation has fallen asleep.  One point of criticism concerned
-possible problems with reused init code pages.  This should not be a
-problem with my patch.
-[1] https://lore.kernel.org/all/20201214141314.5717-1-stefan.saecherl@fau.de/
-
- arch/x86/kernel/kgdb.c    | 14 ++++++++++++++
- include/linux/kgdb.h      |  4 ++++
- init/main.c               |  1 +
- kernel/debug/debug_core.c |  7 ++++++-
- 4 files changed, 25 insertions(+), 1 deletion(-)
+ arch/x86/kernel/kgdb.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/x86/kernel/kgdb.c b/arch/x86/kernel/kgdb.c
-index 9c9faa1634fb..64c332151af7 100644
+index 64c332151af7..585a7a72af74 100644
 --- a/arch/x86/kernel/kgdb.c
 +++ b/arch/x86/kernel/kgdb.c
-@@ -623,6 +623,20 @@ int kgdb_arch_init(void)
- 	return retval;
- }
- 
-+void kgdb_after_mark_readonly(void)
-+{
-+	int i;
+@@ -723,7 +723,31 @@ void kgdb_arch_exit(void)
+ int kgdb_skipexception(int exception, struct pt_regs *regs)
+ {
+ 	if (exception == 3 && kgdb_isremovedbreak(regs->ip - 1)) {
++		struct kgdb_bkpt *bpt;
++		int i, error;
 +
-+	/* Convert all breakpoints in rodata to BP_POKE_BREAKPOINT. */
-+	for (i = 0; i < KGDB_MAX_BREAKPOINTS; i++) {
-+		if (kgdb_break[i].state != BP_UNDEFINED &&
-+		    kgdb_break[i].type == BP_BREAKPOINT &&
-+		    is_kernel_text(kgdb_break[i].bpt_addr)) {
-+			kgdb_break[i].type = BP_POKE_BREAKPOINT;
+ 		regs->ip -= 1;
++
++		/*
++		 * Try to remove the spurious int3 instruction.
++		 * These int3s can result from failed breakpoint removals
++		 * in kgdb_arch_remove_breakpoint.
++		 */
++		for (bpt = NULL, i = 0; i < KGDB_MAX_BREAKPOINTS; i++) {
++			if (kgdb_break[i].bpt_addr == regs->ip &&
++			    kgdb_break[i].state == BP_REMOVED &&
++			    (kgdb_break[i].type == BP_BREAKPOINT ||
++			     kgdb_break[i].type == BP_POKE_BREAKPOINT)) {
++				bpt = &kgdb_break[i];
++				break;
++			}
 +		}
-+	}
-+}
-+
- static void kgdb_hw_overflow_handler(struct perf_event *event,
- 		struct perf_sample_data *data, struct pt_regs *regs)
- {
-diff --git a/include/linux/kgdb.h b/include/linux/kgdb.h
-index 76e891ee9e37..903bf833dca1 100644
---- a/include/linux/kgdb.h
-+++ b/include/linux/kgdb.h
-@@ -98,6 +98,8 @@ extern int dbg_set_reg(int regno, void *mem, struct pt_regs *regs);
- # define KGDB_MAX_BREAKPOINTS	1000
- #endif
- 
-+extern struct kgdb_bkpt kgdb_break[KGDB_MAX_BREAKPOINTS];
-+
- #define KGDB_HW_BREAKPOINT	1
- 
- /*
-@@ -360,11 +362,13 @@ extern bool dbg_is_early;
- extern void __init dbg_late_init(void);
- extern void kgdb_panic(const char *msg);
- extern void kgdb_free_init_mem(void);
-+extern void kgdb_after_mark_readonly(void);
- #else /* ! CONFIG_KGDB */
- #define in_dbg_master() (0)
- #define dbg_late_init()
- static inline void kgdb_panic(const char *msg) {}
- static inline void kgdb_free_init_mem(void) { }
-+static inline void kgdb_after_mark_readonly(void) {}
- static inline int kgdb_nmicallback(int cpu, void *regs) { return 1; }
- #endif /* ! CONFIG_KGDB */
- #endif /* _KGDB_H_ */
-diff --git a/init/main.c b/init/main.c
-index 206acdde51f5..33b6e092fed3 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -1441,6 +1441,7 @@ static void mark_readonly(void)
- 		mark_rodata_ro();
- 		debug_checkwx();
- 		rodata_test();
-+		kgdb_after_mark_readonly();
- 	} else if (IS_ENABLED(CONFIG_STRICT_KERNEL_RWX)) {
- 		pr_info("Kernel memory protection disabled.\n");
- 	} else if (IS_ENABLED(CONFIG_ARCH_HAS_STRICT_KERNEL_RWX)) {
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index ce1bb2301c06..9dd6b69f1679 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -98,7 +98,7 @@ module_param(kgdbreboot, int, 0644);
-  * Holds information about breakpoints in a kernel. These breakpoints are
-  * added and removed by gdb.
-  */
--static struct kgdb_bkpt		kgdb_break[KGDB_MAX_BREAKPOINTS] = {
-+struct kgdb_bkpt		kgdb_break[KGDB_MAX_BREAKPOINTS] = {
- 	[0 ... KGDB_MAX_BREAKPOINTS-1] = { .state = BP_UNDEFINED }
- };
- 
-@@ -452,6 +452,11 @@ void kgdb_free_init_mem(void)
++		if (!bpt)
++			return 1;
++		error = kgdb_arch_remove_breakpoint(bpt);
++		if (error)
++			pr_err("skipexception: breakpoint remove failed: %lx\n",
++			       bpt->bpt_addr);
+ 		return 1;
  	}
- }
- 
-+void __weak kgdb_after_mark_readonly(void)
-+{
-+	/* Weak implementation, may be overridden by arch code */
-+}
-+
- #ifdef CONFIG_KGDB_KDB
- void kdb_dump_stack_on_cpu(int cpu)
- {
+ 	return 0;
 -- 
 2.46.0
 
