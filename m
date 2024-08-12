@@ -1,102 +1,176 @@
-Return-Path: <linux-kernel+bounces-282757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844C594E83C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:07:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCE394E829
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B72F91C21033
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 164301F22E74
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8EF6165EEE;
-	Mon, 12 Aug 2024 08:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="iXmSZ46R"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C965B167DB7;
+	Mon, 12 Aug 2024 08:00:29 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130C355896
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679791662FE;
+	Mon, 12 Aug 2024 08:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723450014; cv=none; b=jKV1ptfBUWC5hMc2P+hm+VYDfUWSimxtLsNIJKWXYurbNrlhYTFZVCCJMXlAPcHdkb88fzvrqGmt8MD/mceAJZj0TM89HxQmJfkk0lTGdEkqOMFtjQXxCzeWq42TBbBAta79YM/cymN5gtoQgaq20ui49hhd5nSE7q/ELtwoE80=
+	t=1723449629; cv=none; b=KoqAoJKcCq7d+Ekfdq4nldp/PENZpy6hUUoxFzCpnEWQoobR+FIYfne5pwOSURUQEcRXzzgGSmU2H6jZ1crDAOyCH0C46DyPPg/b8HcUYSiUMJaxaXZWc08XLvINw6TctlUU3NDJUYuHyum4S4L28VUlIG4QYOnxxfR67CXMtuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723450014; c=relaxed/simple;
-	bh=DOoOQx4Z+F4cPNHsoNoRm9Q1WHZ02gSqCQeTrV7Rd9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I0lJMknDXosrJr8lB6Evu975E8mZ5BPBpS1QpvvfSx3hpnCPRTCqvbde7mkBfqXuGDSUsyPC718NlFR6UlRiTSbDTwKyEP6IH7oBAM0IOy5sgkhfgCWtPBxeYpN5L6ex2MyuFFqpG5g4FJ3+/53yRgdd9CIfhXIx9P3QbT1buAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=iXmSZ46R; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so8089436e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:06:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1723450009; x=1724054809; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DOoOQx4Z+F4cPNHsoNoRm9Q1WHZ02gSqCQeTrV7Rd9I=;
-        b=iXmSZ46RKXEI/Cg9w0xE2WMaWxeNqMtY49jbO2eyV/Y0BmzS9+JBFuY2hGsi7O79Pw
-         8nBDpkZMSjK7PD3jHVqv8dp9rAUVBppCgAbFQnbwEFl0pAL8vYgJMgr+ZUk2ii8stO9d
-         T62FH7nXzupP6aTDX56zZJOw9NWwlFEMezfQbdNkfpeegbdwKVLN+eYFh2GtbS+7M62p
-         +vD9tLVhq6+5C4mqy1K+AW02+ECjdyQk5br1SlEzo7gYYBZbMoI6ztlEuubtGbXouHUF
-         QbkCu4N4cfHGVZ094SmTtOSK73RidbCyQitLgB+yEjq4x1M07tQzD3fz5f9nucOkZXyt
-         BGng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723450009; x=1724054809;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DOoOQx4Z+F4cPNHsoNoRm9Q1WHZ02gSqCQeTrV7Rd9I=;
-        b=D9yrBO55v+duCW7LKVdPjaOJVeBJdhgpaHkZ4sqyj7hZ79cXNz2JUwOhweZ6vS7V1b
-         qWmx6Ut4P8PVltApCIxq5PUmYWarxFte1YD3mrfMMGxQR6wMPfRxm2rq2hAa1FMPWbxG
-         oi4UaDmqIaQpuatnTrSIxdFV5A86anhQn7qyf6KR/TYbmHYIDB1Vyy7r3QIPsfl7D299
-         qXyQCAwvCPcuasbsw+m2qQwGZcO/o9ccpUHbubyZvbqOZg87HBJK+q9q0fm5h+MHxgFQ
-         6ppWp56qDlBW9Dh/5ic4RMX+rG26OMkbExm5qsx/zGVhG5M1kyPiAhoWcZ1ryaOOS/Ti
-         E9tA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdM24DlRjRSjoEkG4F5k5Exw88XYoUlsoH3j6bpII0lXDiQywJ7peZNVDqHoJyHHsNivhjsv6yJ8pzFF7153IGwQOAQu/240ZPVP8l
-X-Gm-Message-State: AOJu0Yyfc7mL5PFICz2vmkyfHE5jety1UILBpNCA5BObepuSu3HHQVsX
-	Dpz0JcoYpDCdlH6OTzjJrodXjqnYDkHykDZOQqLSLbDWhDApwKST2M0Gxt8/EuCANAnJiRqE25e
-	w0cnHBxh5zCamUVBAh+yBmctj2oYNBvJwnEj5rmqHRZOrgSSz
-X-Google-Smtp-Source: AGHT+IEcSrvOCxR2Io0IaG3hiKNApuVnlc4YuE8loAyRtTekAMet03uPGmSaboXnXPb2sNrJZ5cuB5z3bCg9KXmGZnQ=
-X-Received: by 2002:a05:6512:1251:b0:52b:be6b:d16a with SMTP id
- 2adb3069b0e04-530ee999edfmr5980685e87.31.1723450008881; Mon, 12 Aug 2024
- 01:06:48 -0700 (PDT)
+	s=arc-20240116; t=1723449629; c=relaxed/simple;
+	bh=eHo6ZbEwA5kpHQeeMYJmSvhriv2ycj1r+X+HkOTZrJE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mpe01w9SMetgJVnOW9yrMJEIXsRRmmjuBHl8Z0lemufD7iaTwKBcopZYGOp6hHf1qa98zmIxQ2cXoQFZoRfIM9KEva75GhVrgY20G6Y1PVyf1z+2pPsnC8XxjaMsL4pyOxpyr3wS68aApAsiVz6JjlneVTz2AZoO8WgIBkzH1M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wj6NS2fJkzpTRm;
+	Mon, 12 Aug 2024 15:59:04 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id DBE5614037E;
+	Mon, 12 Aug 2024 16:00:21 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 12 Aug
+ 2024 16:00:21 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <arnd@arndb.de>,
+	<mcgrof@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-modules@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] driver core: Fix a null-ptr-deref in module_add_driver()
+Date: Mon, 12 Aug 2024 16:06:58 +0800
+Message-ID: <20240812080658.2791982-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+8cD2CBcaerhwC0i7e0O4LU9oQg1w3J5RsV6qcZMEr2Uw@mail.gmail.com>
- <CAJuCfpGa55gpKHBE_0mwRPsf0f1Wp5UK7+w6N7yZi-7v31vNzw@mail.gmail.com>
- <CAKPOu+-DdwTCFDjW+ykKM5Da5wmLW3gSx5=x+fsSdaMEwUuvJw@mail.gmail.com> <CAJuCfpGDw7LLs2dTa+9F4J8ZaSV2YMq=-LPgOmNgrgL4P84V_Q@mail.gmail.com>
-In-Reply-To: <CAJuCfpGDw7LLs2dTa+9F4J8ZaSV2YMq=-LPgOmNgrgL4P84V_Q@mail.gmail.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 12 Aug 2024 10:06:37 +0200
-Message-ID: <CAKPOu+-8DXbCSj1OiWbS6+MuGPN9-kgsFkWn=hvr2cFwaDEEqA@mail.gmail.com>
-Subject: Re: Bad psi_group_cpu.tasks[NR_MEMSTALL] counter
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Peter Zijlstra <peterz@infradead.org>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-On Tue, Aug 6, 2024 at 5:56=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
-> Hmm. The original scenario I was thinking about when I proposed this
-> WARN_ON() was deemed impossible, so I think the only other possibility
-> is that the task being killed somehow skipped psi_memstall_leave()
-> before its death... Did you have the instrumentation I suggested to
-> track imbalance between psi_memstall_enter()/psi_memstall_leave() and
-> to record the _RET_IP_? If so, did it trigger at all?
+Inject fault while probing of-fpga-region, if kasprintf() fails in
+module_add_driver(), the second sysfs_remove_link() in exit path will cause
+null-ptr-deref as below because kernfs_name_hash() will call strlen() with
+NULL driver_name.
 
-No, unfortunately I did not have the instrumentation because I don't
-know how this works (and didn't have the time to find out). If you
-have a patch for me, I can merge it into our kernel fork so we have
-the data next time it occurs.
+Fix it by releasing resources based on the exit path sequence.
 
-Max
+	 KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+	 Mem abort info:
+	   ESR = 0x0000000096000005
+	   EC = 0x25: DABT (current EL), IL = 32 bits
+	   SET = 0, FnV = 0
+	   EA = 0, S1PTW = 0
+	   FSC = 0x05: level 1 translation fault
+	 Data abort info:
+	   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
+	   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+	   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+	 [dfffffc000000000] address between user and kernel address ranges
+	 Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+	 Dumping ftrace buffer:
+	    (ftrace buffer empty)
+	 Modules linked in: of_fpga_region(+) fpga_region fpga_bridge cfg80211 rfkill 8021q garp mrp stp llc ipv6 [last unloaded: of_fpga_region]
+	 CPU: 2 UID: 0 PID: 2036 Comm: modprobe Not tainted 6.11.0-rc2-g6a0e38264012 #295
+	 Hardware name: linux,dummy-virt (DT)
+	 pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	 pc : strlen+0x24/0xb0
+	 lr : kernfs_name_hash+0x1c/0xc4
+	 sp : ffffffc081f97380
+	 x29: ffffffc081f97380 x28: ffffffc081f97b90 x27: ffffff80c821c2a0
+	 x26: ffffffedac0be418 x25: 0000000000000000 x24: ffffff80c09d2000
+	 x23: 0000000000000000 x22: 0000000000000000 x21: 0000000000000000
+	 x20: 0000000000000000 x19: 0000000000000000 x18: 0000000000001840
+	 x17: 0000000000000000 x16: 0000000000000000 x15: 1ffffff8103f2e42
+	 x14: 00000000f1f1f1f1 x13: 0000000000000004 x12: ffffffb01812d61d
+	 x11: 1ffffff01812d61c x10: ffffffb01812d61c x9 : dfffffc000000000
+	 x8 : 0000004fe7ed29e4 x7 : ffffff80c096b0e7 x6 : 0000000000000001
+	 x5 : ffffff80c096b0e0 x4 : 1ffffffdb990efa2 x3 : 0000000000000000
+	 x2 : 0000000000000000 x1 : dfffffc000000000 x0 : 0000000000000000
+	 Call trace:
+	  strlen+0x24/0xb0
+	  kernfs_name_hash+0x1c/0xc4
+	  kernfs_find_ns+0x118/0x2e8
+	  kernfs_remove_by_name_ns+0x80/0x100
+	  sysfs_remove_link+0x74/0xa8
+	  module_add_driver+0x278/0x394
+	  bus_add_driver+0x1f0/0x43c
+	  driver_register+0xf4/0x3c0
+	  __platform_driver_register+0x60/0x88
+	  of_fpga_region_init+0x20/0x1000 [of_fpga_region]
+	  do_one_initcall+0x110/0x788
+	  do_init_module+0x1dc/0x5c8
+	  load_module+0x3c38/0x4cac
+	  init_module_from_file+0xd4/0x128
+	  idempotent_init_module+0x2cc/0x528
+	  __arm64_sys_finit_module+0xac/0x100
+	  invoke_syscall+0x6c/0x258
+	  el0_svc_common.constprop.0+0x160/0x22c
+	  do_el0_svc+0x44/0x5c
+	  el0_svc+0x48/0xb8
+	  el0t_64_sync_handler+0x13c/0x158
+	  el0t_64_sync+0x190/0x194
+	 Code: f2fbffe1 a90157f4 12000802 aa0003f5 (38e16861)
+	 ---[ end trace 0000000000000000 ]---
+	 Kernel panic - not syncing: Oops: Fatal exception
+
+Fixes: 85d2b0aa1703 ("module: don't ignore sysfs_create_link() failures")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/base/module.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/base/module.c b/drivers/base/module.c
+index f742ad2a21da..c4eaa1158d54 100644
+--- a/drivers/base/module.c
++++ b/drivers/base/module.c
+@@ -66,27 +66,31 @@ int module_add_driver(struct module *mod, const struct device_driver *drv)
+ 	driver_name = make_driver_name(drv);
+ 	if (!driver_name) {
+ 		ret = -ENOMEM;
+-		goto out;
++		goto out_remove_kobj;
+ 	}
+ 
+ 	module_create_drivers_dir(mk);
+ 	if (!mk->drivers_dir) {
+ 		ret = -EINVAL;
+-		goto out;
++		goto out_free_driver_name;
+ 	}
+ 
+ 	ret = sysfs_create_link(mk->drivers_dir, &drv->p->kobj, driver_name);
+ 	if (ret)
+-		goto out;
++		goto out_remove_drivers_dir;
+ 
+ 	kfree(driver_name);
+ 
+ 	return 0;
+-out:
+-	sysfs_remove_link(&drv->p->kobj, "module");
++
++out_remove_drivers_dir:
+ 	sysfs_remove_link(mk->drivers_dir, driver_name);
++
++out_free_driver_name:
+ 	kfree(driver_name);
+ 
++out_remove_kobj:
++	sysfs_remove_link(&drv->p->kobj, "module");
+ 	return ret;
+ }
+ 
+-- 
+2.34.1
+
 
