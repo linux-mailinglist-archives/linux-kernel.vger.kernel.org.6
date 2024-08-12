@@ -1,207 +1,249 @@
-Return-Path: <linux-kernel+bounces-282676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E491E94E746
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:59:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B13794E74D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:00:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1E9A283004
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B5728300E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CDBA15C143;
-	Mon, 12 Aug 2024 06:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A88A153BE3;
+	Mon, 12 Aug 2024 07:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="MI2NcDIF"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2065.outbound.protection.outlook.com [40.107.94.65])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cyg3kXY7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1A8152790;
-	Mon, 12 Aug 2024 06:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445954; cv=fail; b=BY96YwydkKHdUy0/WVZTAOmcJgpnCgJbJ5zYp5EMtyTrKs6hjQpxJL6HnHmKkjKHdIcFi90In6c+AvQzbR/FGp8LqvUpsnXKY75nBE8DEj5GYGVtFZrgf78+Xncy5XdYglg1JcQcH3floz/CqEJZQg+YgzJcFb5u9MuDmuHdLYs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445954; c=relaxed/simple;
-	bh=Dmowx2c0bXCdeWJUcVNHWwAZENBfnHosC85gomICYJE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=P9GF7IK0x0uLUoniLAsa1F8WNaBmePiCMIWsmXsEI14TxX0EfUbaRb/Xi3OkbwpnzXhxXq+jOaS7+/wT9Rkw+iGYejmmDFF0Bl2LYLc+9adjSlhWT/zSk9t/QzuG6ScA1ZWj9e9rE+CNHi8BvImyiShIzZUtPgNuqRpsZL6ioW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=MI2NcDIF; arc=fail smtp.client-ip=40.107.94.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YHsFyttYYpBCoCLXzfC2Wgtgr/1hSHoKv4/UuascllG58XUrEQZJuBoE2LrdZDjZs8g99PHjBRAPlSckxXRJCuLGvV8m6NziEvLNiMx9VKiXp2mKftXiTY7amot7eIHj3R0hGj3hh1KQ2KDpI0BvQRfgRnP2tidmm/a+qvIN6xS5BYtmW7yRIJO3inqAVOQFiDuCsPwlzu5SDPooj1KW2R0UFoqLVDJDUpsY0wJvyB/bGoak84lzQD873Z9g/3b/NyUfQ5p717VKyUNJu938OQcW4QKMweGvsalyUPs3Udath3RRjcZSQ7TyPEIzKh1MM5QRi131JCvq6ap5H6AjIA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Af4PqS+dbLbEx8Jo2fAQubjDxlKXKm9160iy+AK2FcU=;
- b=JrrhIbey9R1G4BQ8XtqsqHG9f04ntibkqKEIGS+neo6KluXz0D2Th9ORH8zQmfvDyW6/VyK95rFFEzrGYpw8PxW4TeslpowCAPqflmkwrshSZWM/hlh7KPZBd2DubctsOqp4OxkF0S7ne5B1Zl79T9/KF2O8AMYu9cB4uYcdqwMUXpAPJwqxGpeaRI0/DmaztraypmZWJybE3vGRYB5n8Ehs60Ttch1ZqPjVDkotlzXAj8B+1Bsy1BaeeYNv6DfvQrwUfQFgCfv81vbKikfKxB2aBja6SSJAp1iUY3LAPpJumZjwc2WLt5WGH4+YsrBS0RTR2Drdg3DBZTwrACt4HA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Af4PqS+dbLbEx8Jo2fAQubjDxlKXKm9160iy+AK2FcU=;
- b=MI2NcDIFZ+gWe/9PmGwGNBH5zVnMufP8ZeRG22SmGvOXpV9H9sBGusYXPD/wSaPUuHaSNgVZr/G4+28+EeEQp0axCjZOGlmX2RwQwia8PHDluaR9SBQGh4eV/eEaSODa36EWYTbgteOD9QzSYIzM5VtYQbdpvu36HJLudXwFg5A=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
- by SN7PR12MB6863.namprd12.prod.outlook.com (2603:10b6:806:264::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 06:59:10 +0000
-Received: from DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
- ([fe80::512d:6caa:552a:7ebf%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 06:59:10 +0000
-Message-ID: <7ea677c7-cbf6-49ca-8483-95d5a2242337@amd.com>
-Date: Mon, 12 Aug 2024 12:29:01 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND 0/8] AMD SOF stack fixes and improvements
-Content-Language: en-US
-To: broonie@kernel.org
-Cc: alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
- pierre-louis.bossart@linux.intel.com, yung-chuan.liao@linux.intel.com,
- ranjani.sridharan@linux.intel.com, perex@perex.cz, tiwai@suse.com,
- lgirdwood@gmail.com, kai.vehmanen@linux.intel.com, daniel.baluta@nxp.com,
- Basavaraj.Hiregoudar@amd.com, Sunil-kumar.Dommati@amd.com,
- venkataprasad.potturu@amd.com, cristian.ciocaltea@collabora.com
-References: <20240808165753.3414464-1-Vijendar.Mukunda@amd.com>
-From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
-In-Reply-To: <20240808165753.3414464-1-Vijendar.Mukunda@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN2PR01CA0133.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:6::18) To DM6PR12MB4123.namprd12.prod.outlook.com
- (2603:10b6:5:21f::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D915351C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723446000; cv=none; b=aPSeoI6onIs9fNzsDLkR9R+Uq6k7MBPdEacPIQdLke4eEPVK95x3Wj9bc7aVAoXdaqPXdgrFIIyqAyQjq+ph1VyKkFlRZA6b16U5s2TDoIcqlMURT20RbP/eDOlN5PxraPJk7XCKECawpAyltJVl64+FZb9vslXiAHX12O5+32k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723446000; c=relaxed/simple;
+	bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F6I9/i4Q6ni8MIzAPVFYzCMRdLBaD79zGOxvfWUBoA+/14jMvlXbGGQ18Ubvrz34fKcNpCqoZ2E2sdrAdDt+psm10+6On5FXDjntI5rEd1il5MDU0VfWLHuGcZLN4JdqNhcohViLyblft5kW5GAjQb8oF53VkinerKPqYmO1kH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cyg3kXY7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723445997;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
+	b=Cyg3kXY74me3RNjCvk1YQvRzIgvbTd3LE26lx7A9nduB2kqwWo6qYYLKqUrkojgMcdlrhk
+	FbGS0mgp+9qVsfApEIwkyh9iTHuwpYQoBu5tDZTPhgaaa9ATvWpETGJZfZy1RGm6lLf1us
+	e0NIXA7zO0prSE9Fbq1zVEGLLTPgmi8=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-158-b8_1BDfFMfeq8ul-UTVm-A-1; Mon, 12 Aug 2024 02:59:55 -0400
+X-MC-Unique: b8_1BDfFMfeq8ul-UTVm-A-1
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2cf1a80693cso4863129a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:59:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723445994; x=1724050794;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HnD7jw0Bt4ZgIPCQPfN1keNyfXuampWgJ5FBB2TKuvs=;
+        b=iuQnyjASU11W044tsBKOn0X+UOFacugRZ01f5lVPRh8KSCcYmWKYm9f1BWyURm+pCQ
+         8hHM0xPfPsYJcU2hhMQ+zR8frNMmWcCReMKJsmOfUXKx1fiXZfqJO4UipAyvb+PgLRyK
+         rf5gwoy3kW8DMGflTT2m+J1rlOiGaqOjgIq8U3kO2pBExQSiDCNUT1vVBSkqDqJHmRDO
+         cq4l4iv0dV5s8zVeTh3nq5GpNZHU4wxVCE+N/ccl1OzvjS5w9VLfaRQqAULyc5m4VUDf
+         /hNMSarNTqw0VScWsp+8mJw3t8GsKP/Bb/2QizBn5lOUvXUMMpC7jVGB209EHp0MA/JK
+         9GMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS31WQ0lDrpm34FNuqD87+lP2rE80rVtxFMPJwkMeLsCJe3XAPKctP7eq1sYcbGcEwe+ebnJAM0hmEJzKMMyNVp6iZAPSzxSq71T7U
+X-Gm-Message-State: AOJu0YxYjPGVJQU03AUxL+CMPNT+an+jv7Lh19YOnA1jbbC7kUdUTsQJ
+	RWc8edXwxekH4t2bukE+WAkLCLASZNUwEPWjfty+4y9WAcNNrEEILmV82GIW8Olq8fJYRaIcH5b
+	4MQrfrYF80nbTdjO27m/y7vhDaa/W7QAH7oui61IipTJhNfz33neUGWN/EsW3SJiQ4WpnA7uEbu
+	4Ui/2n84bp4Jxq9enJlMBO+FeoFzY9UPuAIv53
+X-Received: by 2002:a17:90a:a892:b0:2cd:2992:e8dc with SMTP id 98e67ed59e1d1-2d1e7f9c914mr9059824a91.5.1723445993954;
+        Sun, 11 Aug 2024 23:59:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEAqMEDFInM0ZXBXhl6GppTaPVIO/zb/2LVAUPlZcsu/vLFxI6LVLxnUbM00uBcPSaRznliuvG3zvK+Z/eoLcI=
+X-Received: by 2002:a17:90a:a892:b0:2cd:2992:e8dc with SMTP id
+ 98e67ed59e1d1-2d1e7f9c914mr9059806a91.5.1723445993402; Sun, 11 Aug 2024
+ 23:59:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|SN7PR12MB6863:EE_
-X-MS-Office365-Filtering-Correlation-Id: f48899fa-76e2-4d60-91ca-08dcba9c441d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?REpnRVZoTjdqTmpzVjBYckxqa2NPd2NEd1pFYzVCdnQ1Vlo0U0wrU2RlZS9q?=
- =?utf-8?B?bWE0WU1zQmRlYzlxaHE0d2hnM2R0UGNVSVNqYVVNNTBlTW9sSTJJaFY5Ny9l?=
- =?utf-8?B?WndsZjdDbko3RGdnOXNEVzVuWGdjaE1GeWo2Z2xEcHBxMTFPWEwyZWp5bjRT?=
- =?utf-8?B?QWVNMHVnaHlvZGpOVEFiVEFTb1BYTG5aL1AxbWxsdGVLOFQvYmp5YzJjSFlx?=
- =?utf-8?B?dU9oT3VDY1NLNzRWTTBkWFhFZTZYNWxqVlg3WStxN3EwWjZDR2xqZjJQN2xG?=
- =?utf-8?B?RnpkKy9BdnJnOG5hWkRwbjhRcTliaTFyWGJ2Si9EK1JWSXhYK0VzemlONlRu?=
- =?utf-8?B?TDdXUkFBNEI1aHRoOVJ3SU0yY0QwdGVFVHhlakFtQUk1Q05zWHdsMGNvT21s?=
- =?utf-8?B?Z0xSdGxkRlJQTHo2dU1MUjcrWHFVaVFNZDhQbWJBTFZlWXRPQW9Qb01yL1Y2?=
- =?utf-8?B?ZEZVWkVvM1hiT1dzNnR5SDhzaHMxWHU1dnV5YmV1OU9zekttYytLeUZTekk3?=
- =?utf-8?B?SzNRUWs1OEsvOXY2eUVSU3NMU3liUVZDRjhyM2Eyc0kzR0c4NEJUWGRLeWY3?=
- =?utf-8?B?TFVKOHM2ZEF3cnJraGFTMDBRU1VRbmV3ekw3T1NsZEkyM2tkOWZaUEpXQ0wy?=
- =?utf-8?B?Q0VsZEpELzZ2ZlBDQkhJY0k3OGI3eGpNTWh4UDlPWXJxcittMk5TOTdZem5s?=
- =?utf-8?B?K0svSmxzZ3p0MmZEMERWVUF1M3BjMlJ4Z29ETWFLR1FtYjljWkJXa1NFZVRK?=
- =?utf-8?B?aVNVb0x5M2h2ME94R3lZNUcxT2ZIUzQ3dFh4b2hPbVREQkQ4dGpTVEMvYzJC?=
- =?utf-8?B?YjNlRG1ZUE16cWsrUGVPZVpKZzNWUSthUGIweVloNE5UVFNqYlBIVnEzbmVx?=
- =?utf-8?B?WTFkM3FZR3FYSEVvcnNJRHB6akprY0ZxVjdRSjB3Mk5GQkhkNHYydnZ6ajF1?=
- =?utf-8?B?R00weTRTanVXS3B6TUhjZzQ3M2hJMlJmY0RCMnhEc3ljbmxTcHhUaHY5ZEUv?=
- =?utf-8?B?M0hkMUF5WkNxTy9mWmtjQUFIZ3ZJMC9lV0NNNGVhREFvamxFbDV6WHd1SFpB?=
- =?utf-8?B?eFl1UStzYlNYTDRiMFhRQWlhSmk2ZXYxaEdrM2hqUHBqeElzdW1RcFRjRnVJ?=
- =?utf-8?B?dnVwdHRjU3BSTVlDQWN5OUdQc0xxVjl6Mm1RMlBTeXZOR3lxZ2hiTkRiVmRJ?=
- =?utf-8?B?ZWhLZTZQNUljc3BvQTUxWStMUzdyRjM4TEc3YXdSTnFOQVRUUDFYU1FCS0pT?=
- =?utf-8?B?SjBnQm9RcWJSbVlMUHIvZTJtdTBPVmNjTy9tK0t2QVdqTlZtWlhld1NQUEdk?=
- =?utf-8?B?RVN6dWRITy93T1UvTTJyOG1oNHJNeS9PTTMwdm1ydWozc2VMT1NTcnlnalQ4?=
- =?utf-8?B?dzh2NUdIckgvcysrN0hRazNpWWxTY0t2Yy9uZCtuWmRUN3NSbkhKc2hPWURC?=
- =?utf-8?B?Z1huOTBuSm4zRjZwVndFRDkrTXlsRm5heS9RcE1NbHV4bmFiZWR0UVh5T2NL?=
- =?utf-8?B?a0R2dmxSdW1JdHlsVHZ3Z2J2RDhCWXc5SkRLYnQwdGlMVFhZbklXcmVIelBw?=
- =?utf-8?B?MGlyMWxjYzU4R3ZoSnVjbGtYdGtSUWJwQzhMRlhTSXgrYXVBNElmVmQ2MCtm?=
- =?utf-8?B?anozclZOOE1sekF6ZFVUQmlxZjl2KzZhZUtpL2Y4SUY4S2ZTKzhEUitqazd0?=
- =?utf-8?Q?qk4KdOIx2J2plC7wZHLr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MTI3SjNMV2swalRTOGZBUGsvUkJJWE1Ha2tiWW5zU3o2akFGcUhEVGtMRVgw?=
- =?utf-8?B?R3hRekF2VENzbmRmU3orTjBQeDJRU3pCTkdaVWpRajlLTTZpUmRBT3pLckh4?=
- =?utf-8?B?U2JpdFpkdlFxWHZXNE1DY1I1eXpFQlM5Y1E5cnVYL2lvSDY1N0dFeStJNVdv?=
- =?utf-8?B?Ym90b0VlVTg2UFJydTlxUldaMTFWaUFpajY0aDVuOERGUUpaajdGQzBGVDZa?=
- =?utf-8?B?LzArMkxibkhEQ2FyRUJkaEFDNkZqUkxLZUtxNEh2bFdJc1dNUWxvN3lFNEdO?=
- =?utf-8?B?MGhiNW9NM3hvN3lDbVdJeGFzd21TdmFNSzhkT1pMVHFIZ0U5bTFiUDNUVk0v?=
- =?utf-8?B?b204TU8vWFhnWllVWmhjbkNZZXBXSlF0VVJoUkd3TGZsSVZTckJzZnZMODhx?=
- =?utf-8?B?Ym5ibkhJSEFIcXhQQk5MT1loVUl4cnpaZHNrTUwrYlU5QTgzUHVPVmppU2ZS?=
- =?utf-8?B?YXBhSkJKbnBSMmJGb2MxNEFGT0JLbUh3QlNsVHI5ei9nUkY0MUdFNng1MDJU?=
- =?utf-8?B?VGF4ZFZ5TXdwYmZqMitNYnVRK2FCMUUwQzhtb2s1Sk1Rd1ZlMXd4R1lrd0F2?=
- =?utf-8?B?aTgyd09ORmV5Z0Z0RWErL3NBbFJTQjJEd29VTlkxcG16OTBlaHFoNVUveVB1?=
- =?utf-8?B?Y3UxTnpaNGtETzd3bHoxMmxSaUlvbTJZaFZjQnFEczJHamVTZEVpY0l2bEcy?=
- =?utf-8?B?akdmUGtqTjdJaVpiemZEaXlaMWIwTGRXajlYck9BRGlKN1N2NEdwNmpoaC8y?=
- =?utf-8?B?VzFkeS9yZ2pJdVREb3V2L2RFcVBlQmNHVnYxWWZ1ckljQjlKb1RmN2w2UHZB?=
- =?utf-8?B?UHBObWRJSXg4eUtsdmJhNEo4U2ltK0ZNVklpaTBaZks3bSt4SkU4ZnN3d1Iw?=
- =?utf-8?B?eWgxZEFUZnkwM20wVlFVekpsNEtkYlZ0ZjAxVVA3eVFTOHdYck4rTzNKdEhq?=
- =?utf-8?B?Q2NQbkdxYS9VNnJodTBKZmpub29vMVVDS3hxOWh1dWo5NVVLdVJrM3N3UEwz?=
- =?utf-8?B?ek43OWkvdWc3VXhaL0FVbW1HdXVxZGFkekxTMmZGYklmNWptbU0vMHdFd29h?=
- =?utf-8?B?bGlub3J6NEE0M1NGWGNXY1l0L3IxcWlZNzhaV0ZxWGh5UW55dkl5UDBKcXRF?=
- =?utf-8?B?dGhaWVNvWU9xR1dhOC9raDVPWlo3c2RMeHNIWElzamxsSVlkNTA0TzVyUHF1?=
- =?utf-8?B?bHNuemxDc2xpZisxU2duWFBuV2FKc3poWnpDbEQ0UnZBcUdLU3VyTDk1WWxJ?=
- =?utf-8?B?eGo3QTh5Z0FtcnVUS2NkQ25CTFRzLzJWaW52cFl3blVaNktxTlpaSG1aR1JH?=
- =?utf-8?B?L3B6SjR1SjcyUFV6K0U1czR4M0VQQjRmWGswM2FQTXVBWWlSVUc3bGVIZ3Ez?=
- =?utf-8?B?eHBEcSs2TEMrWS9wY1JMejVzZGozcnR0OTR0eHJUY0pLRFI2WVVXWHYvNHFh?=
- =?utf-8?B?ejlDN2VEZi83SGZDUXNqRUZWT1pyeGF2aHhmUndXaTMzSWpMWnhSV0NNOWtT?=
- =?utf-8?B?WlFmNnl2V0EzQ3cvZU1kM3BBTitDZTVKT3VMYng5NlF6WDZWaG9JU1lwRUtU?=
- =?utf-8?B?Z0s5T28vSG9OOS9QOXVJZ1VFd2dhYnpLaXlud3JuM3dNbEJyM21DNUNMS0Jp?=
- =?utf-8?B?MUJET0Q5eFZyY0ZOQUJCcUF0NHFrTCswUGhOYms5cUg1a1FReGluVzFkUGZB?=
- =?utf-8?B?RTVuc1pDNjBNSFdlcFhIOHhxb29CSUErbmdZUUR6OTgvTHoxTnBZeUFxVExa?=
- =?utf-8?B?TlY3UlkrUStPU05NRXhNQ01XTG92cStxVlNPV3dEeFcwdnR5aUpKcmttZGRX?=
- =?utf-8?B?SVdsbFptVkdtWFFsbWJKazY5dFVMRzZMclNFZEJrRElicUlBQXp1N1FCV0l4?=
- =?utf-8?B?NWRIUmdMWVZIb0Jhb3lzUXhCaWdBdm56NHhESUVqRVdvRWNCYzN6ellyN3dm?=
- =?utf-8?B?QmxHOS9EZzVIYXRnd1NqbTRtYzEyL0RTeDFQOURCblB3dm96LzdwMlV4N0JX?=
- =?utf-8?B?MWhvRWViTlM2WnFSNTFTcU9qTEc1Zk0rZjNzYWNmY254ejdCYzVpUDFock43?=
- =?utf-8?B?YlZpWHFySVp5MjRqS1BXRTJkZHl0T29CT0FWSXRSU0NXek12L0ZGVWQyRzVN?=
- =?utf-8?Q?ffnL32PhurSahsJVsfmCELEvS?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f48899fa-76e2-4d60-91ca-08dcba9c441d
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 06:59:10.5202
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5n8+Szcdoa+TJriq39s9TQqodEdT7QKqrsIBKIsAPxE0nwCPGX+FwbP0nimVU37tpdRGhKQFltHqWZhgjOT+HQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6863
+References: <20240805082106.65847-1-jasowang@redhat.com> <CACGkMEvNyB_+fHV5aAeCQhebA8aF8+9hnjkjeEzt5bgrVgqw5Q@mail.gmail.com>
+ <CACycT3sz-OOKKcmH=FgD7gp_Bhi9=nwnkTn0VgRhQBxS2Dp4qw@mail.gmail.com>
+ <CACGkMEs4YWr5zu0_nVCvqLSFBG9U_A_mw+7AdkMwrPo_6X-gOA@mail.gmail.com>
+ <CACycT3vYF3nwZ3k5_8G=Zok9c4qRjCcGLVQ7+RfSpK=5PToMuA@mail.gmail.com>
+ <CACGkMEue9RU+MMgOC0t4Yuk5wRHfTdnJeZZs38g2h+gyZv+3VQ@mail.gmail.com>
+ <CACycT3sHT-izwAKzxAWPbqGFgyf82WxkHHOrp1SjWa+HE01mCg@mail.gmail.com>
+ <CACGkMEvsMQS-5Oy7rTyA5a2u1xYRf0beBHbZ16geHJCZTE0jLw@mail.gmail.com>
+ <CACycT3sfUhz1PjK3Q=pA7GEm7=fsL0XT16ccwCQ2m2LF+TTD7Q@mail.gmail.com>
+ <CACGkMEu+RrD2JdO=F9BySwhVY5uPr6kKWWdkcdG4XX6GN5b=Bg@mail.gmail.com> <CACycT3u-v+XkWzSPq39Mk9sdQftuNZvZqZyzDvhTecH3uyuk8w@mail.gmail.com>
+In-Reply-To: <CACycT3u-v+XkWzSPq39Mk9sdQftuNZvZqZyzDvhTecH3uyuk8w@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 12 Aug 2024 14:59:42 +0800
+Message-ID: <CACGkMEs1EG=1UJNJ9fuN3rpq0ruQE7imhRurq4o_7pjSgvApXQ@mail.gmail.com>
+Subject: Re: Re: [PATCH] vduse: avoid using __GFP_NOFAIL
+To: Yongji Xie <xieyongji@bytedance.com>
+Cc: Maxime Coquelin <maxime.coquelin@redhat.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 21cnbao@gmail.com, 
+	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/08/24 22:27, Vijendar Mukunda wrote:
-> This patch series consists of few fixes and improvments for AMD SOF
-> stack.
+On Thu, Aug 8, 2024 at 7:09=E2=80=AFPM Yongji Xie <xieyongji@bytedance.com>=
+ wrote:
 >
-> Link: https://github.com/thesofproject/linux/pull/5103
-> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-> Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> On Thu, Aug 8, 2024 at 1:50=E2=80=AFPM Jason Wang <jasowang@redhat.com> w=
+rote:
+> >
+> > On Wed, Aug 7, 2024 at 2:54=E2=80=AFPM Yongji Xie <xieyongji@bytedance.=
+com> wrote:
+> > >
+> > > On Wed, Aug 7, 2024 at 12:38=E2=80=AFPM Jason Wang <jasowang@redhat.c=
+om> wrote:
+> > > >
+> > > > On Wed, Aug 7, 2024 at 11:13=E2=80=AFAM Yongji Xie <xieyongji@byted=
+ance.com> wrote:
+> > > > >
+> > > > > On Wed, Aug 7, 2024 at 10:39=E2=80=AFAM Jason Wang <jasowang@redh=
+at.com> wrote:
+> > > > > >
+> > > > > > On Tue, Aug 6, 2024 at 11:10=E2=80=AFAM Yongji Xie <xieyongji@b=
+ytedance.com> wrote:
+> > > > > > >
+> > > > > > > On Tue, Aug 6, 2024 at 10:28=E2=80=AFAM Jason Wang <jasowang@=
+redhat.com> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Aug 5, 2024 at 6:42=E2=80=AFPM Yongji Xie <xieyongj=
+i@bytedance.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Mon, Aug 5, 2024 at 4:24=E2=80=AFPM Jason Wang <jasowa=
+ng@redhat.com> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Mon, Aug 5, 2024 at 4:21=E2=80=AFPM Jason Wang <jaso=
+wang@redhat.com> wrote:
+> > > > > > > > > > >
+> > > > > > > > > > > Barry said [1]:
+> > > > > > > > > > >
+> > > > > > > > > > > """
+> > > > > > > > > > > mm doesn't support non-blockable __GFP_NOFAIL allocat=
+ion. Because
+> > > > > > > > > > > __GFP_NOFAIL without direct reclamation may just resu=
+lt in a busy
+> > > > > > > > > > > loop within non-sleepable contexts.
+> > > > > > > > > > > ""=E2=80=9C
+> > > > > > > > > > >
+> > > > > > > > > > > Unfortuantely, we do that under read lock. A possible=
+ way to fix that
+> > > > > > > > > > > is to move the pages allocation out of the lock into =
+the caller, but
+> > > > > > > > > > > having to allocate a huge number of pages and auxilia=
+ry page array
+> > > > > > > > > > > seems to be problematic as well per Tetsuon [2]:
+> > > > > > > > > > >
+> > > > > > > > > > > """
+> > > > > > > > > > > You should implement proper error handling instead of=
+ using
+> > > > > > > > > > > __GFP_NOFAIL if count can become large.
+> > > > > > > > > > > """
+> > > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > I think the problem is it's hard to do the error handling=
+ in
+> > > > > > > > > fops->release() currently.
+> > > > > > > >
+> > > > > > > > vduse_dev_dereg_umem() should be the same, it's very hard t=
+o allow it to fail.
+> > > > > > > >
+> > > > > > > > >
+> > > > > > > > > So can we temporarily hold the user page refcount, and re=
+lease it when
+> > > > > > > > > vduse_dev_open()/vduse_domain_release() is executed. The =
+kernel page
+> > > > > > > > > allocation and memcpy can be done in vduse_dev_open() whi=
+ch allows
+> > > > > > > > > some error handling.
+> > > > > > > >
+> > > > > > > > Just to make sure I understand this, the free is probably n=
+ot the big
+> > > > > > > > issue but the allocation itself.
+> > > > > > > >
+> > > > > > >
+> > > > > > > Yes, so defer the allocation might be a solution.
+> > > > > >
+> > > > > > Would you mind posting a patch for this?
+> > > > > >
+> > > > > > >
+> > > > > > > > And if we do the memcpy() in open(), it seems to be a subtl=
+e userspace
+> > > > > > > > noticeable change? (Or I don't get how copying in vduse_dev=
+_open() can
+> > > > > > > > help here).
+> > > > > > > >
+> > > > > > >
+> > > > > > > Maybe we don't need to do the copy in open(). We can hold the=
+ user
+> > > > > > > page refcount until the inflight I/O is completed. That means=
+ the
+> > > > > > > allocation of new kernel pages can be done in
+> > > > > > > vduse_domain_map_bounce_page() and the release of old user pa=
+ges can
+> > > > > > > be done in vduse_domain_unmap_bounce_page().
+> > > > > >
+> > > > > > This seems to be a subtle userspace noticeable behaviour?
+> > > > > >
+> > > > >
+> > > > > Yes, userspace needs to ensure that it does not reuse the old use=
+r
+> > > > > pages for other purposes before vduse_dev_dereg_umem() returns
+> > > > > successfully. The vduse_dev_dereg_umem() will only return success=
+fully
+> > > > > when there is no inflight I/O which means we don't need to alloca=
+te
+> > > > > extra kernel pages to store data. If we can't accept this, then y=
+our
+> > > > > current patch might be the most suitable.
+> > > >
+> > > > It might be better to not break.
+> > > >
+> > > > Actually during my testing, the read_lock in the do_bounce path slo=
+ws
+> > > > down the performance. Remove read_lock or use rcu_read_lock() to gi=
+ve
+> > > > 20% improvement of PPS.
+> > > >
+> > >
+> > > Looks like rcu_read_lock() should be OK here.
+> >
+> > The tricky part is that we may still end up behaviour changes (or lose
+> > some of the synchronization between kernel and bounce pages):
+> >
+> > RCU allows the read to be executed in parallel with the writer. So
+> > bouncing could be done in parallel with
+> > vduse_domain_add_user_bounce_pages(), there would be a race in two
+> > memcpy.
+> >
+>
+> Hmm...this is a problem. We may still need some userspace noticeable
+> behaviour, e.g. only allowing reg_umem/dereg_umem when the device is
+> not started.
 
-Please ignore this patch series. Will split out fixes and refactoring
-patches (which has patch dependencies) and will send it
-separately.
+Exactly, maybe have a new userspace flag.
+
+Thanks
+
 >
-> Vijendar Mukunda (8):
->   ASoC: SOF: amd: Fix for incorrect acp error satus register offset
->   ASoC: SOF: amd: fix for acp error reason registers wrong offset
->   ASoC: SOF: amd: move iram-dram fence register programming sequence
->   ASoC: SOF: amd: fix for acp init sequence
->   ASoC: SOF: amd: update conditional check for cache register update
->   ASoC: SOF: amd: modify psp send command conditional checks
->   ASoC: SOF: amd: remove unused variable from sof_amd_acp_desc structure
->   ASoC: amd: acp: Convert comma to semicolon
->
->  sound/soc/amd/acp/acp-sdw-sof-mach.c |  6 +--
->  sound/soc/sof/amd/acp-dsp-offset.h   |  6 ++-
->  sound/soc/sof/amd/acp-loader.c       |  2 +-
->  sound/soc/sof/amd/acp.c              | 59 ++++++++++++++++++----------
->  sound/soc/sof/amd/acp.h              | 10 +++--
->  sound/soc/sof/amd/pci-acp63.c        |  3 +-
->  sound/soc/sof/amd/pci-rmb.c          |  3 +-
->  sound/soc/sof/amd/pci-rn.c           |  3 +-
->  sound/soc/sof/amd/pci-vangogh.c      |  1 -
->  9 files changed, 60 insertions(+), 33 deletions(-)
+> Thanks,
+> Yongji
 >
 
 
