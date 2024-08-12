@@ -1,258 +1,158 @@
-Return-Path: <linux-kernel+bounces-283477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719DA94F56C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:57:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C43694F56A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E8F1C20CCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:57:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26AEF1F21A58
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF979187FFC;
-	Mon, 12 Aug 2024 16:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D596618784F;
+	Mon, 12 Aug 2024 16:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="G+yRwvId"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KpJ9Zv09"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979F187571
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF79187348
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481834; cv=none; b=Gut/rNhonajaEoWmp+Vq4lFtntI3eudMdeQki06MwVuXjXZCcAoP2WB/3aVqLmLXKkfi29rOZ1TYO8yuVHBMKOfMk6vlk2gULldA82SoWooblu3ZGGN0sX1RVodhJjkVjtQtT4tjXZn1lMVdg3Ts3vQdEa7ryBg8jVfdiS65ehc=
+	t=1723481833; cv=none; b=KmWnd+lFcabnvNgYpdJV/4Q6AyB+tm5w6csogbJaEtVKkATMpM1xYzObtGUEx9nanTtFSyzdTyBbr2qiTglVv/EIsiHBmu0vRlQzwfLH0xr61b0+QIZu1W5PhlGPYU4Jh4m8jMwn5SY8iiFn2qGgUMoNWw2rdsNxjtvCh1zQIrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481834; c=relaxed/simple;
-	bh=c61g+eokL94Qx6PmzIigqTzXiW/8xkkklC7HZgSgM7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=VTErV1Lka8djWV1TeAP4Vu5mlKGMwvbt95rHgExVFRrhC7ShDioXnM92tuLC3ZXgD8rHKOQXgeVcRqSpE8wppDdPYExeJZ2Lxye2PjHs+/JiUd3fGZTT9DgX2jpgcbuAu3pQVydQaI5SYXIWigCjiumK067cGI5RbgVSJMVLYA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=G+yRwvId; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723481831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=T0qjEw70ZHVOEFltGvRQMTUfl+Sufy34ZqZlbYPxUE8=;
-	b=G+yRwvIdA1UIdMCL6F15WEDIpVInEiEmpXg1CGYHQti3r3o6t2VWYU1OUkEdGfNZakGmPB
-	WkskalSEsLLwrTGspsHbkwyf67zwwRCR9tx/RPmuV4exobCt7rZ04rw52WQ/uhaoupDKnO
-	dWYXRg9bKPl/qMLdmapLA0BbFQg/52M=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-67-MFje33fIN-i5JGz0tdODdQ-1; Mon,
- 12 Aug 2024 12:57:07 -0400
-X-MC-Unique: MFje33fIN-i5JGz0tdODdQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 694CE1944EBC;
-	Mon, 12 Aug 2024 16:57:03 +0000 (UTC)
-Received: from asgard.redhat.com (unknown [10.45.242.9])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 097CB1955BCB;
-	Mon, 12 Aug 2024 16:56:53 +0000 (UTC)
-Date: Mon, 12 Aug 2024 18:56:50 +0200
-From: Eugene Syromiatnikov <esyr@redhat.com>
-To: linux-kselftest@vger.kernel.org
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Mark Brown <broonie@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Mykola Lysenko <mykolal@fb.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: [PATCH v2] selftests: fix relative rpath usage
-Message-ID: <20240812165650.GA5102@asgard.redhat.com>
+	s=arc-20240116; t=1723481833; c=relaxed/simple;
+	bh=I3PbSbhqM8tw/YEOUjLgoOFNH+BhvQvBlDcawx+EcVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gIPBo+cVqJ8ntXySyJOPXdz+B/WF3rIB7UbDD7WJdy1KI20w+GjZr/IFlxI+s3bqj5wq0hDzNiLFNJpaAi0IxrV6voZpMCNG6tNeJv1Ur/n0l1g1m1ipsZl8P8gPHFzpYLYr3tkIwKf7KCuTE6R3lxuEbCUgrlW7I5WwVZHSeOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KpJ9Zv09; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b5b67d0024so5268626a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:57:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723481829; x=1724086629; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iVYLXb9RliMChYBxq0LP5GT895BADWaNcwomfRKtbpc=;
+        b=KpJ9Zv09wDc2n3U+IjwqXCBJiUD036/K2oewIx3KK8fiiEgu+8kHOz7DdCcgI93dG1
+         ssUwaHG6kSDrChwFtORq1cxJl0iUKvvHVhUES4Q1wjGuGGPXJGppkQuinGlmSwcKE5yG
+         zPCL0qEQx4cCVX42ggAfu0aI2BDJmOBz56ouvHtafbz8WfRH5D/E1SuR0GZfnBcVWnhk
+         as3kOuzukcx4DfRvAneAknw0MhAyQgcrPMdjqcZmv8KCf89y0h+qrq1kkG+w0H7uZ6J7
+         vhCzhoAoN4wWUSkyshO+z+cJ/KSrugO6AWj7ZUg5TEsieZRT4M4GW1SL/uDxRLkGl6KY
+         I4QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723481829; x=1724086629;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iVYLXb9RliMChYBxq0LP5GT895BADWaNcwomfRKtbpc=;
+        b=SuxXxIUmxvyfTODu1dUWjIcSfCTipx3wrSdcbTbrdWOccNECCrVsYP8d7KoxotylzW
+         X77dt1iDYTu8nr/OtK9QoCOGjKwFYjGIUhVbZt3kuk6S87PgZ7X7jqttvHjlDnWSn/77
+         TuSI/LZoQiefpRm0/c19yY5WYg69oH0puF0BleTNiOSQkbEx7+g7xTWG3RzfXBJB0AE6
+         KGyPa+j1HWrK4Qg8r0XXvfpvIVvdSIE0rbfI+UZ38V0mjH6yeXWa1nGPojE5ycx5IrLm
+         owncWSczG2Z7oHImjWoxT5p/jcckUtlc0dikyYRx01IFwKKw5UUk2blSLMTh80V6VAsb
+         bg8w==
+X-Forwarded-Encrypted: i=1; AJvYcCXk+0b3Lo0sJAvqqpIPSd41aFqdGl3qa3PGPwGFOPL8yZbZG5bxRbsAtqDXUU17yQaI1m2Qvo1UooG62WiUK/w5IHoHpdwaTn5yuAHU
+X-Gm-Message-State: AOJu0YxzhoLkp2nqx1zsV4Ya+tRxFKdumd/j9NFYcZTO9Mxw9EGdaz/n
+	ET+5Okm+hs0VKlwdwve8dL2C/7/7DT7hQExPp5/vUT9Ab56xgf12pSXPT7tvpPY=
+X-Google-Smtp-Source: AGHT+IH1wE+EieCsVj3bS5oVu25LGc5Vs2kGbUgy673UugOlOpIl0rLAjfqASSz/4VvlLf1a3EUKcQ==
+X-Received: by 2002:a05:6402:2708:b0:5a0:e61c:edfd with SMTP id 4fb4d7f45d1cf-5bd44c31822mr688756a12.14.1723481829376;
+        Mon, 12 Aug 2024 09:57:09 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f306fsm2249580a12.1.2024.08.12.09.57.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 09:57:08 -0700 (PDT)
+Date: Mon, 12 Aug 2024 18:57:06 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Chen Ridong <chenridong@huawei.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	longman@redhat.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 2/2] cgroup: Disallow delegatee to write all
+ interfaces outsize of cgroup ns
+Message-ID: <ex5gnhcoobbw74se4uchhqj2lsrcjx5bsh6m5lva2xmujv7uae@34vwukkwhkbc>
+References: <20240812073746.3070616-1-chenridong@huawei.com>
+ <20240812073746.3070616-3-chenridong@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h4mii6pqtpg374fr"
+Content-Disposition: inline
+In-Reply-To: <20240812073746.3070616-3-chenridong@huawei.com>
+
+
+--h4mii6pqtpg374fr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-The relative RPATH ("./") supplied to linker options in CFLAGS is resolved
-relative to current working directory and not the executable directory,
-which will lead in incorrect resolution when the test executables are run
-from elsewhere.  Changing it to $ORIGIN makes it resolve relative
-to the directory in which the executables reside, which is supposedly
-the desired behaviour.  This patch also moves these CFLAGS to lib.mk,
-so the RPATH is provided for all selftest binaries, which is arguably
-a useful default.
+Hello.
 
-Comparison of
+On Mon, Aug 12, 2024 at 07:37:46AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
+> cd /sys/fs/cgroup
+> echo '+pids' > cgroup.subtree_control
+> mkdir dlgt_grp_ns
+> echo '+pids' > dlgt_grp_ns/cgroup.subtree_control
+> mkdir dlgt_grp_ns/dlgt_grp_ns1
+> echo $$ > dlgt_grp_ns/dlgt_grp_ns1/cgroup.procs
+> echo 200 > dlgt_grp_ns/dlgt_grp_ns1/pids.max
+> unshare -Cm /bin/bash
+> echo max > /dlgt_grp_ns1/pids.max // Permission denied
+> echo -pids > dlgt_grp_ns/cgroup.subtree_control // pids was unlimited now
 
-    find -type f -perm /111 -print0 | sort -z | xargs -0 ldd 2>&1 | sed 's/([^)]*)//'
+You could also have increased the ancestral limit (if there was any)
+echo max > dlgt_grp_ns/pids.max // similarly allowed
 
-output before and after the change shows that only the binaries that
-previously used RPATH of "," are affected and that the linker now able
-to find the used dynamic libraries when the executable invoked outside
-directory it resides in:
+If you're a root (or otherwise have sufficient permissions) and you can
+_see_ an ancestral cgroup, you can write to its attributes according to
+permissions. Thus the delegation works via cgroup ns (in)visibility but
+cgroup ns root is visible on both sides of the boundary hence the extra
+check.
 
-    $ diff -U 0 old_ldd new_ldd
-    --- old_ldd     2024-08-12 08:00:16.093535910 -0400
-    +++ new_ldd     2024-08-09 09:58:22.657883491 -0400
-    @@ -10 +10 @@
-    -       libatest.so => not found
-    +       libatest.so => /home/build/linux/tools/testing/selftests/./alsa/libatest.so
-    @@ -17 +17 @@
-    -       libatest.so => not found
-    +       libatest.so => /home/build/linux/tools/testing/selftests/./alsa/libatest.so
-    @@ -24 +24 @@
-    -       libatest.so => not found
-    +       libatest.so => /home/build/linux/tools/testing/selftests/./alsa/libatest.so
-    @@ -119 +119 @@
-    -       liburandom_read.so => not found
-    +       liburandom_read.so => /home/build/linux/tools/testing/selftests/./bpf/no_alu32/liburandom_read.so
-    @@ -445 +445 @@
-    -       liburandom_read.so => not found
-    +       liburandom_read.so => /home/build/linux/tools/testing/selftests/./bpf/liburandom_read.so
-    @@ -3321 +3321 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3326 +3326 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3331 +3331 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3340 +3340 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3345 +3345 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3350 +3350 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3355 +3355 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3360 +3360 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
-    @@ -3365 +3365 @@
-    -       librseq.so => not found
-    +       librseq.so => /home/build/linux/tools/testing/selftests/./rseq/librseq.so
+I can imagine that a container runtime process could enter the target
+cgroup ns while keeping visibility to the original cgroup ns and do some
+tuning on it before it drops any pointers to the original cgroup ns and
+exec's delegatee's workload. (But it's only my imagination to illustrate
+that this may be a breaking change.)
 
-Some minimal testing is done to verify that it does not affect the
-tests: alsa, rseq, and sched (which also had the RPATH tag but didn't
-actually link against any locally built libraries) selftests are run
-successfully before and after the change;  for the rest
-of the selftests, there was no regression observed as well.
+OTOH, I can see why this would be consistent with the migration rules
+that exist between sides of cgroup ns, so this could work if it was
+hidden behind (another) mount option like 'nsdelegate2' :-p
 
-Discovered by the check-rpaths script[1][2] that checks for insecure
-RPATH/RUNPATH[3], such as relative directories, during an attempt
-to package BPF selftests for later use in CI:
 
-    ERROR   0004: file '/usr/libexec/kselftests/bpf/urandom_read' contains an insecure runpath '.' in [.]
+> @@ -4134,8 +4134,10 @@ static ssize_t cgroup_file_write(struct kernfs_open_file *of, char *buf,
+>  	 * cgroup.procs, cgroup.threads and cgroup.subtree_control.
+>  	 */
+>  	if ((cgrp->root->flags & CGRP_ROOT_NS_DELEGATE) &&
+> -	    !(cft->flags & CFTYPE_NS_DELEGATABLE) &&
+> -	    ctx->ns != &init_cgroup_ns && ctx->ns->root_cset->dfl_cgrp == cgrp)
+> +		ctx->ns != &init_cgroup_ns &&
+> +		(!cgroup_is_descendant(cgrp, ctx->ns->root_cset->dfl_cgrp) ||
+> +			(!(cft->flags & CFTYPE_NS_DELEGATABLE) &&
+> +			ctx->ns->root_cset->dfl_cgrp == cgrp)))
+>  		return -EPERM;
 
-[1] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths
-[2] https://github.com/rpm-software-management/rpm/blob/master/scripts/check-rpaths-worker
-[3] https://cwe.mitre.org/data/definitions/426.html
+Could you please also update the comment above, to describe the boundary
+vs subtree delegation?
 
-Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
----
-v2:
-  - Consolidated the updated -L/-Wl,-rpath setting into lib.mk
-  - Described the testing done in the commit message
-v1: https://lore.kernel.org/lkml/20240808145639.GA20510@asgard.redhat.com/
-    https://lore.kernel.org/lkml/20240808151335.GA5495@asgard.redhat.com/
-    https://lore.kernel.org/lkml/20240808151621.GA10025@asgard.redhat.com/
-    https://lore.kernel.org/lkml/20240808151621.GA10025@asgard.redhat.com/
----
- tools/testing/selftests/alsa/Makefile  | 1 -
- tools/testing/selftests/bpf/Makefile   | 5 ++---
- tools/testing/selftests/lib.mk         | 3 +++
- tools/testing/selftests/rseq/Makefile  | 2 +-
- tools/testing/selftests/sched/Makefile | 3 +--
- 5 files changed, 7 insertions(+), 7 deletions(-)
+Thanks,
+Michal
 
-diff --git a/tools/testing/selftests/alsa/Makefile b/tools/testing/selftests/alsa/Makefile
-index c1ce39874e2b..68a1651360e5 100644
---- a/tools/testing/selftests/alsa/Makefile
-+++ b/tools/testing/selftests/alsa/Makefile
-@@ -6,7 +6,6 @@ LDLIBS += $(shell pkg-config --libs alsa)
- ifeq ($(LDLIBS),)
- LDLIBS += -lasound
- endif
--CFLAGS += -L$(OUTPUT) -Wl,-rpath=./
- 
- LDLIBS+=-lpthread
- 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 81d4757ecd4c..a152c12b8a3b 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -239,9 +239,8 @@ $(OUTPUT)/urandom_read: urandom_read.c urandom_read_aux.c $(OUTPUT)/liburandom_r
- 	$(call msg,BINARY,,$@)
- 	$(Q)$(CLANG) $(CLANG_TARGET_ARCH) \
- 		     $(filter-out -static,$(CFLAGS) $(LDFLAGS)) $(filter %.c,$^) \
--		     -lurandom_read $(filter-out -static,$(LDLIBS)) -L$(OUTPUT) \
--		     -fuse-ld=$(LLD) -Wl,-znoseparate-code -Wl,--build-id=sha1 \
--		     -Wl,-rpath=. -o $@
-+		     -lurandom_read $(filter-out -static,$(LDLIBS)) \
-+		     -fuse-ld=$(LLD) -Wl,-znoseparate-code -Wl,--build-id=sha1 -o $@
- 
- $(OUTPUT)/sign-file: ../../../../scripts/sign-file.c
- 	$(call msg,SIGN-FILE,,$@)
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index d6edcfcb5be8..d75a20bb569c 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -199,6 +199,9 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
- # Build with _GNU_SOURCE by default
- CFLAGS += -D_GNU_SOURCE=
- 
-+# Simplify usage of libraries built alongside the test executables
-+CFLAGS += -L$(OUTPUT) -Wl,-rpath=\$$ORIGIN/
-+
- # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
- # make USERCFLAGS=-Werror USERLDFLAGS=-static
- CFLAGS += $(USERCFLAGS)
-diff --git a/tools/testing/selftests/rseq/Makefile b/tools/testing/selftests/rseq/Makefile
-index 5a3432fceb58..887b45d4a675 100644
---- a/tools/testing/selftests/rseq/Makefile
-+++ b/tools/testing/selftests/rseq/Makefile
-@@ -6,7 +6,7 @@ endif
- 
- top_srcdir = ../../../..
- 
--CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -L$(OUTPUT) -Wl,-rpath=./ \
-+CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) \
- 	  $(CLANG_FLAGS) -I$(top_srcdir)/tools/include
- LDLIBS += -lpthread -ldl
- 
-diff --git a/tools/testing/selftests/sched/Makefile b/tools/testing/selftests/sched/Makefile
-index 099ee9213557..0e4581ded9d6 100644
---- a/tools/testing/selftests/sched/Makefile
-+++ b/tools/testing/selftests/sched/Makefile
-@@ -4,8 +4,7 @@ ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
- CLANG_FLAGS += -no-integrated-as
- endif
- 
--CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) -Wl,-rpath=./ \
--	  $(CLANG_FLAGS)
-+CFLAGS += -O2 -Wall -g -I./ $(KHDR_INCLUDES) $(CLANG_FLAGS)
- LDLIBS += -lpthread
- 
- TEST_GEN_FILES := cs_prctl_test
--- 
-2.28.0
+--h4mii6pqtpg374fr
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZro+4AAKCRAt3Wney77B
+Sd24AQCtYyNoghU23S2UhGQkLlhFQwtvcPbBgGyUFV3KGPv71QEAmQF4G1iz9mVD
+jzSjEHNoK1ZkG6P/rFyevQ4p6kUDMQg=
+=vF/P
+-----END PGP SIGNATURE-----
+
+--h4mii6pqtpg374fr--
 
