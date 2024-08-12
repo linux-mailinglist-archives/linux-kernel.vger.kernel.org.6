@@ -1,161 +1,140 @@
-Return-Path: <linux-kernel+bounces-282554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC3194E5C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8736894E5C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:31:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36FD0281DD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:30:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49088281CED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:31:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178EC1494BA;
-	Mon, 12 Aug 2024 04:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF571494BA;
+	Mon, 12 Aug 2024 04:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lcdjGIDV"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UxMNyTDl"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4AC1304B0
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF9B37B;
+	Mon, 12 Aug 2024 04:31:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723436995; cv=none; b=cCjLrbbCaBXWv09C/LO9+6Z2gxOXrev1Uji56tcsKURHbm5zY7tOR0f+zz8Kcvpn5zoQcmymKsOIfoB422EctmqTafRXoFqCCUlgCUs8kOdhnoba9bGSYiy7T+Lz3R1+0oFXcrn6MGydgLtzcLhOf7mbeyAwSuMPMaNnRadhgj0=
+	t=1723437075; cv=none; b=D3PEtZ8Fd/XPgCQur/ebJIb0IbPCpPvmZgGAWxFR54g4byn2G+hSK1JCwFyg3MyQDdKa7Z/WsxjSNooI1ugA69uIpw/uz7lC7e2xbV1ZJEZM8CratO7eRIpzRfQ7ZE9/4zNvnVVv6IIPUFKMBU7fp3kLxYnr80SYm+ZLDo9aSj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723436995; c=relaxed/simple;
-	bh=64JaR5glgbGvah++UUZGWDLKuW0lxhhqjAh+LpOGo7U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fifKSb2uxqQKqLujioslYM8Ed8etw3PGwl41Dvocd4X33pLf1pPY/3l7kJyzlo9n5ejHXVl4nfrX4EhBM61ocuZm/kVVj2GBBSk6PmEKqSKZ7HFiAVvFPysFzG+mGt2p3EBDdMHmAZoZsGHy0FXg8aNZiDut7LzJ970GCc1hnLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lcdjGIDV; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so4465687a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 21:29:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723436992; x=1724041792; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iNMyygeVNgEAwx9iJlCggUVVUh6pFJu2DlL4gUoLISM=;
-        b=lcdjGIDV7hTG9m1BoIc6SMFdtbGfbkqskshJN6z8gWuE2174P6xm32+gDniViO4Zul
-         PDrsbbi+8uv/MehS/KHE745GHUGJ90ReBtAqns9mj6XcJOSsweyPvGProQlp+qDn4q4z
-         PPrvzW5wN6dJAzJ7WSfEJBDhy5cFE/WVaDS9UUi+TiZpgxQJe5YVCYE0KaLK9B7stTAG
-         6F4xIIdU9BfUpr5sHqxqUKKKhuuughTDxH92K1nP+SCEp6vH7ZAJjNerB02sw4Kd/Dmy
-         nICmqRFxH755e9twszFIXvylcT44NNUQkYu9SeHbuHElKQVxfPT/x9zmSY/F/AgExgEz
-         NUUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723436992; x=1724041792;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iNMyygeVNgEAwx9iJlCggUVVUh6pFJu2DlL4gUoLISM=;
-        b=pD03eoND4gvs+SOm5pTGdkY8nOOfEE9M3wIQLfUpvWIiSNH9NMuvgiPbF+N3SwunAd
-         AyC3Yz7wQaHYalSxG+2uu+lu9LeKmUUBgzB05IX3l+8DovBvjqMV8jyDr5C9uEgeEdNC
-         LrqxdzvBD22AzfSKVi0Inda2yWdWF8qsDtZnoPrZx7L4lEtm88dx6hCOLkhHOqyTFwnl
-         MCfPRwYdImqUh1pyE7w9yVeeagJLuPHDd+qfFr4ZExwRI9/lcGmSAqiLXlfTXsQquXqO
-         PgZlxbviJFDm3pb8PWLiae5ZYH2qR71KRgTsW7s1eXExM5muf0vHrOGpf7L373rPEtTD
-         l12A==
-X-Forwarded-Encrypted: i=1; AJvYcCUrPoWvW6VJ1NK9XwRGSiKVFN537vOV3UBQ6YLUmnANJVIewUhYM7apDBrYg+3k2WiKT36Dr4rzbdBvB+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlUWB3Bz4nqxSJxugjlkR1YdZOE/AYn2Of/EuElhsvUFKwwcdj
-	aqAYqTchDzYDniUXtMMstqNS+3Fyl/D3dQiFmqfeoJAl0+xTqqXaMdcPaZinsHDSZtxzciAmUoH
-	nVUUuASih+fGCl66kmMYVXlTDBxk=
-X-Google-Smtp-Source: AGHT+IHZ/UQ0l7NCmkXYTApz/zNg7ux6+r5p94v9JKh/7y/3DhGUrfnzSVtGwaD9JtUj5ZRlXmPT8tZezMNQFLkDpB4=
-X-Received: by 2002:a17:907:1c2a:b0:a77:b054:ba7d with SMTP id
- a640c23a62f3a-a80aa65a401mr488737966b.46.1723436991580; Sun, 11 Aug 2024
- 21:29:51 -0700 (PDT)
+	s=arc-20240116; t=1723437075; c=relaxed/simple;
+	bh=4EXmUsFo8b2xhR1P7lQQvnCd0Xtbmq9kHad9mhdzlz8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aSaAVuMK9ShjbCTEOq/oiBmWMrmpwDRwwOcLD6eE4xD3QWR7DAgU6r8G5/OAXcjJ13sRCAIix6UJKfmtp52KElLj5U7dE5FnqNTTYU7ZabdzQDuQl0l9D2hqziluLxxyUr5Ki3zK0ROo6jl4hM3lAzU1zK/b9mG9AcVqU7ePs7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UxMNyTDl; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C2ZuqM014292;
+	Mon, 12 Aug 2024 04:31:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IeGrfFSUKNXY/SQdHsLOXN
+	+RZ1hfsllv4M0nMVD7vZM=; b=UxMNyTDlSZ908fHolb2WlitweTUxGYgeiLoMVz
+	prxtXr+S1kBvBuMjUxbgbmRVq7A7+cd4Y6S7U5ZQlipzci8JhyQBARB9oEquc6gO
+	hgT1OFBXtlSEA+ieV2gyYmSP2xgYi1i2IUoEEX8X0qNfBSxEHetydxill0grb2Yr
+	F6eknD9lc9PS8B37REp2XumK6tdxI/fo36Rjw1A/G6mgmUBR9gCI9x+Bf1Uzxgfd
+	7eDhGXViHxI4MJ6RPUaQlFGtSL60YUlFTVZBHv1EFDRYhAszgK/ci6owzNqYyTnZ
+	+9wBtjbaRbGARLR0aq5eS9H7nN9//6ZbUujxPoaJV8iG/CpA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18xtu9b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 04:31:05 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47C4V3YL020811
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 04:31:03 GMT
+Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 11 Aug 2024 21:31:00 -0700
+From: Jie Gan <quic_jiegan@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin
+	<alexander.shishkin@linux.intel.com>,
+        Mike Leach <mike.leach@linaro.org>
+CC: Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Yuanfang Zhang
+	<quic_yuanfang@quicinc.com>,
+        Tao Zhang <quic_taozha@quicinc.com>,
+        Song Chai
+	<quic_songchai@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: [PATCH v2 RESEND] Coresight: Set correct cs_mode for TPDM to fix disable issue
+Date: Mon, 12 Aug 2024 12:30:43 +0800
+Message-ID: <20240812043043.2890694-1-quic_jiegan@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808185949.1094891-1-mjguzik@gmail.com> <CAJuCfpEsYi77cuUhvQrFOazFX1OK0vp0PyevKqZsi0f1DeT3NA@mail.gmail.com>
- <CAGudoHHHOH=+ka=xw6cy51EYaGsUZEaC=LXYFvnXgFT+co9mKQ@mail.gmail.com>
- <CAJuCfpFXdx40UGRsXUYFgFGvEy-nM02f+TQ9nOPPepw6gbykmA@mail.gmail.com>
- <CAJuCfpH36sXvCaYL88nzi_8-Yr1tpxHuaLfCMqCac-zN6QHWmg@mail.gmail.com>
- <be0be869-4daf-4530-b90d-6dd6c27c8736@suse.cz> <CAJuCfpEMyRATp+6Xhe_XX-8hPKzONKonWbt_Jnkyp-wOJkN9ng@mail.gmail.com>
- <CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com>
-In-Reply-To: <CAJuCfpEisU8Lfe96AYJDZ+OM4NoPmnw9bP53cT_kbfP_pR+-2g@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 12 Aug 2024 06:29:38 +0200
-Message-ID: <CAGudoHF=oPXU1RaCn3G0Scqw8+yr_0-Mj4ENZSYMyyGwc5Cgcg@mail.gmail.com>
-Subject: Re: [RFC PATCH] vm: align vma allocation and move the lock back into
- the struct
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Liam.Howlett@oracle.com, pedro.falcato@gmail.com, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: eBUZWovCI_mdj7PdZ2BQX_x5oBlsHJx9
+X-Proofpoint-ORIG-GUID: eBUZWovCI_mdj7PdZ2BQX_x5oBlsHJx9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_25,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120033
 
-On Mon, Aug 12, 2024 at 12:50=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
-> Ok, disabling adjacent cacheline prefetching seems to do the trick (or
-> at least cuts down the regression drastically):
->
-> Hmean     faults/cpu-1    470577.6434 (   0.00%)   470745.2649 *   0.04%*
-> Hmean     faults/cpu-4    445862.9701 (   0.00%)   445572.2252 *  -0.07%*
-> Hmean     faults/cpu-7    422516.4002 (   0.00%)   422677.5591 *   0.04%*
-> Hmean     faults/cpu-12   344483.7047 (   0.00%)   330476.7911 *  -4.07%*
-> Hmean     faults/cpu-21   192836.0188 (   0.00%)   195266.8071 *   1.26%*
-> Hmean     faults/cpu-30   140745.9472 (   0.00%)   140655.0459 *  -0.06%*
-> Hmean     faults/cpu-48   110507.4310 (   0.00%)   103802.1839 *  -6.07%*
-> Hmean     faults/cpu-56    93507.7919 (   0.00%)    95105.1875 *   1.71%*
-> Hmean     faults/sec-1    470232.3887 (   0.00%)   470404.6525 *   0.04%*
-> Hmean     faults/sec-4   1757368.9266 (   0.00%)  1752852.8697 *  -0.26%*
-> Hmean     faults/sec-7   2909554.8150 (   0.00%)  2915885.8739 *   0.22%*
-> Hmean     faults/sec-12  4033840.8719 (   0.00%)  3845165.3277 *  -4.68%*
-> Hmean     faults/sec-21  3845857.7079 (   0.00%)  3890316.8799 *   1.16%*
-> Hmean     faults/sec-30  3838607.4530 (   0.00%)  3838861.8142 *   0.01%*
-> Hmean     faults/sec-48  4882118.9701 (   0.00%)  4608985.0530 *  -5.59%*
-> Hmean     faults/sec-56  4933535.7567 (   0.00%)  5004208.3329 *   1.43%*
->
-> Now, how do we disable prefetching extra cachelines for vm_area_structs o=
-nly?
+The coresight_disable_source_sysfs function should verify the
+mode of the coresight device before disabling the source.
 
-I'm unaware of any mechanism of the sort.
+However, the mode for the TPDM device is always set to
+CS_MODE_DISABLED, resulting in the check consistently failing.
+As a result, TPDM cannot be properly disabled.
 
-The good news is that Broadwell is an old yeller and if memory serves
-right the impact is not anywhere near this bad on newer
-microarchitectures, making "merely" 64 alignment (used all over in the
-kernel for amd64) a practical choice (not just for vma).
+Configure CS_MODE_SYSFS/CS_MODE_PERF during the enablement.
+Configure CS_MODE_DISABLED during the disablement.
 
-Also note that in your setup you are losing out on performance in
-other multithreaded cases, unrelated to anything vma.
+Fixes: b3c71626a933 ("Coresight: Add coresight TPDM source driver")
+Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+---
+ drivers/hwtracing/coresight/coresight-tpdm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-That aside as I mentioned earlier the dedicated vma lock cache results
-in false sharing between separate vmas, except this particular
-benchmark does not test for it (which in your setup should be visible
-even if the cache grows the  SLAB_HWCACHE_ALIGN flag).
+diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+index a9708ab0d488..90a5105f6199 100644
+--- a/drivers/hwtracing/coresight/coresight-tpdm.c
++++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+@@ -449,6 +449,11 @@ static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
+ 		return -EBUSY;
+ 	}
+ 
++	if (!coresight_take_mode(csdev, mode)) {
++		spin_unlock(&drvdata->spinlock);
++		return -EBUSY;
++	}
++
+ 	__tpdm_enable(drvdata);
+ 	drvdata->enable = true;
+ 	spin_unlock(&drvdata->spinlock);
+@@ -506,6 +511,7 @@ static void tpdm_disable(struct coresight_device *csdev,
+ 	}
+ 
+ 	__tpdm_disable(drvdata);
++	coresight_set_mode(csdev, CS_MODE_DISABLED);
+ 	drvdata->enable = false;
+ 	spin_unlock(&drvdata->spinlock);
+ 
+-- 
+2.34.1
 
-I think the thing to do here is to bench on other cpus and ignore the
-Broadwell + adjacent cache line prefetcher result if they come back
-fine -- the code should not be held hostage by an old yeller.
-
-To that end I think it would be best to ask the LKP folks at Intel.
-They are very approachable so there should be no problem arranging it
-provided they have some spare capacity. I believe grabbing the From
-person and the cc list from this thread will do it:
-https://lore.kernel.org/oe-lkp/ZriCbCPF6I0JnbKi@xsang-OptiPlex-9020/ .
-By default they would run their own suite, which presumably has some
-overlap with this particular benchmark in terms of generated workload
-(but I don't think they run *this* particular benchmark itself,
-perhaps it would make sense to ask them to add it?). It's your call
-here.
-
-If there are still problems and the lock needs to remain separate, the
-bare minimum damage-controlling measure would be to hwalign the vma
-lock cache -- it wont affect the pts benchmark, but it should help
-others.
-
-Should the decision be to bring the lock back into the struct, I'll
-note my patch is merely slapped together to a state where it can be
-benchmarked and I have no interest in beating it into a committable
-shape. You stated you already had an equivalent (modulo keeping
-something in a space previously occupied by the pointer to the vma
-lock), so as far as I'm concerned you can submit that with your
-authorship.
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
