@@ -1,181 +1,172 @@
-Return-Path: <linux-kernel+bounces-283216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FC994EEB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:51:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F70394EEB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580F81C20E0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:51:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A32EAB251F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:51:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B91118454D;
-	Mon, 12 Aug 2024 13:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBE17C7BE;
+	Mon, 12 Aug 2024 13:49:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KOQ/6FEf"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Npg2uDff"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3090617C7CE;
-	Mon, 12 Aug 2024 13:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF75183CC4;
+	Mon, 12 Aug 2024 13:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470575; cv=none; b=cmJZV30WkvcA1SnXV3dFg35JVaPvuKm2O6alyfvSw8IwRWVaAy0XaLDT2OJDf/FxqlD1M9gzz3TTMaxaBtOwqLyunGQdT+HRqg1uuNHDS5KJoKbKZmNTPedh78E+0iJnk71OObmMrSOID0laMEtKmAKr7EewbhVR50YGB8fehQU=
+	t=1723470565; cv=none; b=YEqWTVqeFfqt+grUBfjVDjZZVtu4rc2MD9RGRmOIMZRu5Up/imXqYnZaiTiS3a8CC99DDvDD6XvZlWheMdg/n90oDaBgncvwvEAWfkx8omWFcXICheZ5XDPrrbrSvM5y1qfLW2IsdpPofS+FU2/rNtfxfDkH57g6P7Bj/DI0TiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470575; c=relaxed/simple;
-	bh=FU2s2IazRvyJuJ6eR3DYyCxYE4wFwIzeJ3sKgDBVtog=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npOdOtVXKEckGHqvdoTEODSJkAlzYUMqTo6/zlRRqHRqMQJbFnERZQc/og7af0nNZ6TfnFmJW3vxolUMvRspDbJpPVRD4Gh7/Z4Kl4yeqxkjOJhzTGaPRFCwiazIsDCH7tqTPJGGIuAWjFxkaF0B4TTGJJAkQZqfLjHy9zCZpVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=KOQ/6FEf; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1723470565; c=relaxed/simple;
+	bh=FSNWWOfBczRimX/OeuXzsO1eWAUfUC6SsCaOC3eStWg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lMC7j9EUpukukJirku3Pck2XzWETVIvQ8vPREBCJbrRtEYnd8MIKQfp8skzKJNh01QqOdthnA24jpei9/nN9A39BQXNaqfNLCki83wuUGgW+Q/K6Fnu6hrg/kXW6ktPz1qPDe2QLnodTAdTFNs4MtQBRf0JQHh1OqVrc1RW40t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Npg2uDff; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723470575; x=1755006575;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=FU2s2IazRvyJuJ6eR3DYyCxYE4wFwIzeJ3sKgDBVtog=;
-  b=KOQ/6FEfIZGC2KBR9L8nRV+Pjv2+K+rGLYhD3ZnUMGExcwv4/2GNHstS
-   qFxqKXJgZRZKjsLCWQHSjLYw7Q7mlOjew+fBCVbFcg/ZRyzDtYu9H95Ao
-   MTOqKTq8Urninp8GlNkjzhIESZwbYCKmtrw765wjJ6d8VA7UJKuptzlJP
-   ZQxYTwey8su+ORDFeAj1Ct3PECfid8ldocB9cMAgCU1dOuiJTM3IWkcX/
-   xMDOgwGYqjtTfhnvKWw7nl5vF+PWuikWKB04swNx1cUmtUO8BwK3JYLOm
-   Ocwf+DhvQC8lqyzpCZsBjjkA47FA04uJDLT0MEvB+Epdbp78hT1a0dTr/
-   w==;
-X-CSE-ConnectionGUID: GDl39qpbSLqy7FTWHp5h+g==
-X-CSE-MsgGUID: lFyZJumvQ+6MDTga/JWinw==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723470564; x=1755006564;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=FSNWWOfBczRimX/OeuXzsO1eWAUfUC6SsCaOC3eStWg=;
+  b=Npg2uDffdN47fkdKLx4gmAt+1S3LPAWnYjUSlnfLJHbHTrOWIbZzj8R6
+   vftbRF/jlJNfAIPwnuunwcU1iFgVWfPxCaV7D+cewBAzCidv3hyj1AJAy
+   HT++j1oQzuiG30O2Hk9/Ec591rwBo9hXkcuydPhpKUX3F0yiQyq3TSio5
+   Vr9xeX/lNwDHSxsTZcXBnEbN+10U95rOX9/7W2CfF+uljVvxR3k/DzyCG
+   VCmm7krt8CtQu9KBVyDWsgjM/ecaUD8NgplPGDTfMMe+6gtAneJeSnZnG
+   n8RKENfjHUkrVol/9roaueg3MRd1Ycw61BP3bxywHZC4YEEzGnirKNdDQ
+   Q==;
+X-CSE-ConnectionGUID: B8oe9XTQTZeZ5+Ryw/RyJQ==
+X-CSE-MsgGUID: 5q/F8kwoS/2oaFaEinhYDQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21439640"
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="261297837"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Aug 2024 06:49:34 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 12 Aug 2024 06:49:17 -0700
-Received: from che-ll-i17164.microchip.com (10.10.85.11) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 12 Aug 2024 06:49:13 -0700
-From: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <ramon.nordin.rodriguez@ferroamp.se>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<parthiban.veerasooran@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<Thorsten.Kummermehr@microchip.com>, Parthiban Veerasooran
-	<Parthiban.Veerasooran@microchip.com>
-Subject: [PATCH net-next 7/7] net: phy: microchip_t1s: configure collision detection based on PLCA mode
-Date: Mon, 12 Aug 2024 19:18:16 +0530
-Message-ID: <20240812134816.380688-8-Parthiban.Veerasooran@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812134816.380688-1-Parthiban.Veerasooran@microchip.com>
-References: <20240812134816.380688-1-Parthiban.Veerasooran@microchip.com>
+   d="scan'208";a="21439640"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:49:23 -0700
+X-CSE-ConnectionGUID: GbxiNnPvS7+EFc2K0UIztg==
+X-CSE-MsgGUID: 1stcQ3ScQ3yZPV0Li/laiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="81512475"
+Received: from iklimasz-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.117])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:49:16 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Jocelyn Falempe <jfalempe@redhat.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, Bjorn Roy
+ Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, Danilo
+ Krummrich <dakr@redhat.com>
+Cc: Jocelyn Falempe <jfalempe@redhat.com>
+Subject: Re: [PATCH v6 2/4] drm/rect: Add drm_rect_overlap()
+In-Reply-To: <20240812123147.81356-3-jfalempe@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20240812123147.81356-1-jfalempe@redhat.com>
+ <20240812123147.81356-3-jfalempe@redhat.com>
+Date: Mon, 12 Aug 2024 16:49:13 +0300
+Message-ID: <87sev926na.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024))
-and LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)),
-under normal operation, the device should be operated in PLCA mode.
-Disabling collision detection is recommended to allow the device to
-operate in noisy environments or when reflections and other inherent
-transmission line distortion cause poor signal quality. Collision
-detection must be re-enabled if the device is configured to operate in
-CSMA/CD mode.
+On Mon, 12 Aug 2024, Jocelyn Falempe <jfalempe@redhat.com> wrote:
+> Check if two rectangles overlap.
+> It's a bit similar to drm_rect_intersect() but this won't modify
+> the rectangle.
+> Simplifies a bit drm_panic.
 
-Signed-off-by: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
----
- drivers/net/phy/microchip_t1s.c | 42 ++++++++++++++++++++++++++++++---
- 1 file changed, 39 insertions(+), 3 deletions(-)
+Based on the name, I'd expect drm_rect_overlap() to return true for
+*any* overlap, while this one seems to mean if one rectangle is
+completely within another, with no adjacent borders.
 
-diff --git a/drivers/net/phy/microchip_t1s.c b/drivers/net/phy/microchip_t1s.c
-index bd0c768df0af..a0565508d7d2 100644
---- a/drivers/net/phy/microchip_t1s.c
-+++ b/drivers/net/phy/microchip_t1s.c
-@@ -26,6 +26,12 @@
- #define LAN865X_REG_CFGPARAM_CTRL 0x00DA
- #define LAN865X_REG_STS2 0x0019
- 
-+/* Collision Detector Control 0 Register */
-+#define LAN86XX_REG_COL_DET_CTRL0	0x0087
-+#define COL_DET_CTRL0_ENABLE_BIT_MASK	BIT(15)
-+#define COL_DET_ENABLE			BIT(15)
-+#define COL_DET_DISABLE			0x0000
-+
- #define LAN865X_CFGPARAM_READ_ENABLE BIT(1)
- 
- /* The arrays below are pulled from the following table from AN1699
-@@ -370,6 +376,36 @@ static int lan867x_revb1_config_init(struct phy_device *phydev)
- 	return 0;
- }
- 
-+/* As per LAN8650/1 Rev.B0/B1 AN1760 (Revision F (DS60001760G - June 2024)) and
-+ * LAN8670/1/2 Rev.C1/C2 AN1699 (Revision E (DS60001699F - June 2024)), under
-+ * normal operation, the device should be operated in PLCA mode. Disabling
-+ * collision detection is recommended to allow the device to operate in noisy
-+ * environments or when reflections and other inherent transmission line
-+ * distortion cause poor signal quality. Collision detection must be re-enabled
-+ * if the device is configured to operate in CSMA/CD mode.
-+ *
-+ * AN1760: https://www.microchip.com/en-us/application-notes/an1760
-+ * AN1699: https://www.microchip.com/en-us/application-notes/an1699
-+ */
-+static int lan86xx_plca_set_cfg(struct phy_device *phydev,
-+				const struct phy_plca_cfg *plca_cfg)
-+{
-+	int ret;
-+
-+	ret = genphy_c45_plca_set_cfg(phydev, plca_cfg);
-+	if (ret)
-+		return ret;
-+
-+	if (plca_cfg->enabled)
-+		return phy_modify_mmd(phydev, MDIO_MMD_VEND2,
-+				      LAN86XX_REG_COL_DET_CTRL0,
-+				      COL_DET_CTRL0_ENABLE_BIT_MASK,
-+				      COL_DET_DISABLE);
-+
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND2, LAN86XX_REG_COL_DET_CTRL0,
-+			      COL_DET_CTRL0_ENABLE_BIT_MASK, COL_DET_ENABLE);
-+}
-+
- static int lan86xx_read_status(struct phy_device *phydev)
- {
- 	/* The phy has some limitations, namely:
-@@ -403,7 +439,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -413,7 +449,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan867x_revc_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- 	{
-@@ -423,7 +459,7 @@ static struct phy_driver microchip_t1s_driver[] = {
- 		.config_init        = lan865x_revb_config_init,
- 		.read_status        = lan86xx_read_status,
- 		.get_plca_cfg	    = genphy_c45_plca_get_cfg,
--		.set_plca_cfg	    = genphy_c45_plca_set_cfg,
-+		.set_plca_cfg	    = lan86xx_plca_set_cfg,
- 		.get_plca_status    = genphy_c45_plca_get_status,
- 	},
- };
+I'd expect a drm_rect_overlap() to return true for this:
+
+ +-------+
+ |   +---+---+
+ |   |       |
+ +---+       |
+     |       |
+     +-------+
+
+While this seems to be required instead:
+
+ +-------+
+ | +---+ |
+ | |   | |
+ | +---+ |
+ +-------+
+
+
+IOW, I find the name misleading.
+
+BR,
+Jani.
+
+
+>
+> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+> ---
+>  drivers/gpu/drm/drm_panic.c |  3 +--
+>  include/drm/drm_rect.h      | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/drm_panic.c b/drivers/gpu/drm/drm_panic.c
+> index 0a047152f88b8..59fba23e5fd7a 100644
+> --- a/drivers/gpu/drm/drm_panic.c
+> +++ b/drivers/gpu/drm/drm_panic.c
+> @@ -529,8 +529,7 @@ static void draw_panic_static_user(struct drm_scanout_buffer *sb)
+>  	/* Fill with the background color, and draw text on top */
+>  	drm_panic_fill(sb, &r_screen, bg_color);
+>  
+> -	if ((r_msg.x1 >= logo_width || r_msg.y1 >= logo_height) &&
+> -	    logo_width <= sb->width && logo_height <= sb->height) {
+> +	if (!drm_rect_overlap(&r_logo, &r_msg)) {
+>  		if (logo_mono)
+>  			drm_panic_blit(sb, &r_logo, logo_mono->data, DIV_ROUND_UP(logo_width, 8),
+>  				       fg_color);
+> diff --git a/include/drm/drm_rect.h b/include/drm/drm_rect.h
+> index 73fcb899a01da..7bafde747d560 100644
+> --- a/include/drm/drm_rect.h
+> +++ b/include/drm/drm_rect.h
+> @@ -238,6 +238,21 @@ static inline void drm_rect_fp_to_int(struct drm_rect *dst,
+>  		      drm_rect_height(src) >> 16);
+>  }
+>  
+> +/**
+> + * drm_rect_overlap - Check if two rectangles overlap
+> + * @r1: first rectangle
+> + * @r2: second rectangle
+> + *
+> + * RETURNS:
+> + * %true if the rectangles overlap, %false otherwise.
+> + */
+> +static inline bool drm_rect_overlap(const struct drm_rect *r1,
+> +				    const struct drm_rect *r2)
+> +{
+> +	return (r1->x2 > r2->x1 && r2->x2 > r1->x1 &&
+> +		r1->y2 > r2->y1 && r2->y2 > r1->y1);
+> +}
+> +
+>  bool drm_rect_intersect(struct drm_rect *r, const struct drm_rect *clip);
+>  bool drm_rect_clip_scaled(struct drm_rect *src, struct drm_rect *dst,
+>  			  const struct drm_rect *clip);
+
 -- 
-2.34.1
-
+Jani Nikula, Intel
 
