@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-283447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9879194F4BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:33:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDF694F4D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:35:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9671F217EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8551C20F4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC43018784E;
-	Mon, 12 Aug 2024 16:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9D9187345;
+	Mon, 12 Aug 2024 16:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8FLyvqw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgguJnHC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6221186E33;
-	Mon, 12 Aug 2024 16:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E9F183CD4;
+	Mon, 12 Aug 2024 16:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723480421; cv=none; b=R+4B3aDCZF3qG2j7BOv5dPQXbxKdhaJ38DzI670iTWcmoODyqUhQAiwLFS1Q+mtK76zPyEYEv2o22441O+4oimwX9/1deHHf/FXFTw1KWfmpIYB7E858gaUpqL6c/NkbP+oeZ1r7rUNWk57P1NepwS1jUSU+ZsUi8N3/b2msnUA=
+	t=1723480521; cv=none; b=LTCgqEH/zEKqj29lnHgqKJfmuOdHeY9BUwDFW1sf+IWgi7SJdOOzvAwewrdd3tGekceKOpFYBnPA8tCyw3eBpdybmIoXP/UPC0gH6i+B7sG4h3Y89pZlvI21BTcg6lj20ge71+8px+3af+KljAnoavXWSvK0A3VTnYTZdWTW6ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723480421; c=relaxed/simple;
-	bh=WmL869a4ewwYi7s/OKKxovTDNlv44X8vvMJuu+PGBJc=;
+	s=arc-20240116; t=1723480521; c=relaxed/simple;
+	bh=NyaFbORqzBAgAvTSW78fZAxNKl09IffJ6EdbJBvboGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJqUSugXqdMa3HURuSQXPMTI77ei3LVhom3kuzwMNiE0bWWZpaFAK1Golu+Q0AEX+1GZ0ukRnxlwN5nj4EWC2xHD2uYjajMV0J2JSRouxh+bBn9kVPgTwaXh1g3E+2jAM8yFxaVcWxXIAp47Q9MN1eKWFxtI5cr6nK9bvCX1v+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8FLyvqw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7277BC4AF0D;
-	Mon, 12 Aug 2024 16:33:40 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mj9j0sUpVnu6LfMvTuZiEIyouAZ0HtOW84its2J0A/Y8/RUjzthJG9jHG+0Hjl54roxcJnZZIRZ07gGEouZqZDKAWCoxM9xgqnbpph+Sd4B4/+EfugS7wu+uXQLkK9jrkIBi5EdWQD7CdmBcfW0Ld/dAjKn3c/U7RCkMVtBK9Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgguJnHC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79C3C4AF09;
+	Mon, 12 Aug 2024 16:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723480420;
-	bh=WmL869a4ewwYi7s/OKKxovTDNlv44X8vvMJuu+PGBJc=;
+	s=k20201202; t=1723480521;
+	bh=NyaFbORqzBAgAvTSW78fZAxNKl09IffJ6EdbJBvboGE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=k8FLyvqwISb5t1RJ8XaY2JruX6rtvrjBaAkRMM2ACtEgJpq/xFWJw1vZHqrxLq+Zo
-	 5hBl7ZkOWMqmkgeGFnILGWM5/AoojduIYKc/B2BFKKpFN1qf+8R9vnrJpuP+gxK8ir
-	 8mmT5SsdfzI/utJ3Jf+yN0ojBKxEOsZDYsqdgeWtNAye/9qgiIiJu8PvfTqhaFBAVv
-	 O1tZr2tVRkMGkTWbVjuvZbTCqW8F1t4ezCUJMMRkhZq5yFsSEn+tu5OItYcO3e3GO+
-	 weHyinGtCDDpqST5Oteu5MkJN6g1/9xzmtyucF+EF9Kzane8WVphXGjGm6/tqBtFah
-	 9argB4ZYitjiQ==
-Date: Mon, 12 Aug 2024 09:33:39 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
-	david@fromorbit.com, jack@suse.cz, willy@infradead.org,
-	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-Subject: Re: [PATCH v2 1/6] iomap: correct the range of a partial dirty clear
-Message-ID: <20240812163339.GD6043@frogsfrogsfrogs>
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-2-yi.zhang@huaweicloud.com>
+	b=WgguJnHCBzfOgFebel30g7EN9MC98XxSFL0XgMv/QMWoW2hXKpfZZxmORLPytvxLj
+	 BjP6/mqKSult1mWTckknrbBAZe8xf9LLlwb7i++cKtApIrF2GL1PImO1dkD4FagvdG
+	 b602whZfKBVlIFiWoslnpgiZUhsWEX8PxBmyPCYVWE0c1Ti1KHc6hOF2A50cUEogU9
+	 zKq7JnyU28psmj8//rBG0+qEkEjVOtaAQ+Wysxnojnb0jVhL6Ggs/OwJE0AHWN7NON
+	 iZc4TMrTGudWxsmnK1WVXFKReCpUExY+wGTIvIyD6yDSSsAd6mXDeZ5bdQryFXNh7/
+	 4Uczcz3skP1jQ==
+Date: Mon, 12 Aug 2024 13:35:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, weilin.wang@intel.com,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Perry Taylor <perry.taylor@intel.com>,
+	Samantha Alt <samantha.alt@intel.com>,
+	Caleb Biggers <caleb.biggers@intel.com>
+Subject: Re: [RFC PATCH v18 0/8] TPEBS counting mode support
+Message-ID: <Zro5xt05JaqJvQZe@x1>
+References: <20240720062102.444578-1-weilin.wang@intel.com>
+ <CAM9d7cgoTyf3Zjt=+2yZi5Pat4UrxKxN=rkLHmyUWZqwZk8_Kw@mail.gmail.com>
+ <CAP-5=fWr2Qna9ikzUCFavo3OTUDSP3ztr=i6E=R962CXCdHckg@mail.gmail.com>
+ <ZrEpJxtm5zlp5rbo@x1>
+ <CAP-5=fVTaHdiF8G2Dn=vnguvoapa_+ZKsQ7Wy3z51K9nDZQUtg@mail.gmail.com>
+ <ZrIl8NCHkIVHQVt2@x1>
+ <CAP-5=fUVcBw4GBT8tcOWS1MV1C6zbfbovon1pCqk7gmfMN=J_Q@mail.gmail.com>
+ <CAP-5=fXtDeddhfB8UQcjSAoWPSMo=ve1Xfr2-2K7L1LsMOQenQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240812121159.3775074-2-yi.zhang@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fXtDeddhfB8UQcjSAoWPSMo=ve1Xfr2-2K7L1LsMOQenQ@mail.gmail.com>
 
-On Mon, Aug 12, 2024 at 08:11:54PM +0800, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Mon, Aug 12, 2024 at 08:38:06AM -0700, Ian Rogers wrote:
+> On Tue, Aug 6, 2024 at 7:35 AM Ian Rogers <irogers@google.com> wrote:
+> > On Tue, Aug 6, 2024 at 6:32 AM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+> > > For now I'm removing the whole series from perf-tools-next.
+> >
+> > Ugh.
 > 
-> The block range calculation in ifs_clear_range_dirty() is incorrect when
-> partial clear a range in a folio. We can't clear the dirty bit of the
-> first block or the last block if the start or end offset is blocksize
-> unaligned, this has not yet caused any issue since we always clear a
-> whole folio in iomap_writepage_map()->iomap_clear_range_dirty(). Fix
-> this by round up the first block and round down the last block and
-> correct the calculation of nr_blks.
-> 
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-> ---
->  fs/iomap/buffered-io.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index f420c53d86ac..4da453394aaf 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -138,11 +138,14 @@ static void ifs_clear_range_dirty(struct folio *folio,
->  {
->  	struct inode *inode = folio->mapping->host;
->  	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
-> -	unsigned int first_blk = (off >> inode->i_blkbits);
-> -	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
-> -	unsigned int nr_blks = last_blk - first_blk + 1;
-> +	unsigned int first_blk = DIV_ROUND_UP(off, i_blocksize(inode));
+> Hi, what's the plan here? The topdown (aka TMA) metrics on recent
+> Intel CPUs (client and server) are dependent on timed PEBS. I think we
+> should land this series and move forward from there.
 
-Is there a round up macro that doesn't involve integer division?
+I'm taking this as an Acked-by, merged the 3rd and 4th patches to keep
+bisectability and constified the process_sample_event() perf_tool
+pointer, test building with containers now.
 
---D
+Will push to tmp.perf-tools-next while that runs.
 
-> +	unsigned int last_blk = (off + len) >> inode->i_blkbits;
-> +	unsigned int nr_blks = last_blk - first_blk;
->  	unsigned long flags;
->  
-> +	if (!nr_blks)
-> +		return;
-> +
->  	spin_lock_irqsave(&ifs->state_lock, flags);
->  	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
->  	spin_unlock_irqrestore(&ifs->state_lock, flags);
-> -- 
-> 2.39.2
-> 
-> 
+- Arnaldo
 
