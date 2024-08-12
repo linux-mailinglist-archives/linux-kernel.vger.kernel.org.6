@@ -1,131 +1,299 @@
-Return-Path: <linux-kernel+bounces-282515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1788094E530
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F2094E538
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:50:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4B711F2112A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:48:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EFE1281497
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E74136E09;
-	Mon, 12 Aug 2024 02:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08D413E02D;
+	Mon, 12 Aug 2024 02:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="dHY44vcZ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="p4xHB02K"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2079.outbound.protection.outlook.com [40.107.117.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459E128EC;
-	Mon, 12 Aug 2024 02:47:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723430877; cv=none; b=d8aJBLHr6N4Aq6uiE2Cnk9s5mWxrQB2hmegD97dfpUKrokCp17uU8L+pyS7LQ2SDFv//FX3aCGaCja9Y70g30MA2KLihI+g2hDYyAgW3Z1YeJ9cBVZmAsenuDlepPXWypVq6qfUKjSLOjEa+YJPlRLbsk0FEwiMzUGXq+5wiGQo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723430877; c=relaxed/simple;
-	bh=RcIzZh/a6R/99IvA8xmkei1i4+I1J1uvS+/n1srxg+k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rLG+ggKp1H05S+C7KiA8n/6+OvAkJ3KK3o0sAQT22iWF6YgHcL4Ej6iKstQjARk2Qh3BhBr1SCa1sB+5IjZ45K1ujB7pkpqUXSESzfENvRFD/rdqwVnp7PA4YGzmXHk53CBo1TbEXh+W3hOYoZj53mc4yXyo31/aw7PGF29WSAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=dHY44vcZ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1723430871;
-	bh=jOFaRQpkex9bBK95cEfT7pluIQ5qYspy0/5tqTrdPw0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dHY44vcZjje2rNPMcN2bLhhfW1te9JcvikBJJDtWDbGAV8TzMa4oeXerDloVLgRoM
-	 +4mrp+tHdsOb973rF2r0+8LHRGawjvw3IGwBgFRu6mAHkpDFn9dtM6GPmJ9B4a/FZ9
-	 aUgkJxRIDfz+9rtD/nu3/QZO4t17CgRe6J8nbgsq/IgDOMN091zT7+Iakl29RmTOGW
-	 VoA8xjLn2H3kClZPHk0fk+mCOrfzmC5qlkqfqssv/Cow5ZgKq2DtL+ohHNtOgxe9T+
-	 y3FDZ5srFgBnkSOAAflLAC1dDHkLGD2TWiDPVqhGBT3T8wEEWg/Seb1ql7cfEJeLMd
-	 Puch9wJq/m1Gg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WhzTL4tk2z4wp0;
-	Mon, 12 Aug 2024 12:47:50 +1000 (AEST)
-Date: Mon, 12 Aug 2024 12:47:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Vlastimil Babka <vbabka@suse.cz>, "Paul E. McKenney"
- <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, Neeraj
- Upadhyay <neeraj.upadhyay@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Waiman Long <longman@redhat.com>
-Subject: linux-next: manual merge of the slab tree with the rcu tree
-Message-ID: <20240812124748.3725011b@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5713632B;
+	Mon, 12 Aug 2024 02:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723430998; cv=fail; b=NjRE2VvVM7RreuBrp/HSp2qZmo/cPjtWS/UlWzeB+ShFoLx6R9vdkPeqMfQqZv390fr0d6gptKA8iG7cb1IUJhZIc+yEeFF1/u3EziezuogA9DjAUEwDuaDKwFq+N14GaVuFGtmUkqEFQ/ishd73EQf3O3NFm40Vdzp27h4tcpI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723430998; c=relaxed/simple;
+	bh=WguGjsKLsT+PEgyxkQHgMvxumekw011yYszjw0kKI5Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RasA8tX8xHOJHeN+zX5UwnDXk+5Eo/fynDSv7axcY0GKP63fxDvdYf6IGvG973+oG8XXEb1ozenleqL/5pBwWtuGqaCm4O3635uKWSH4UStbf2crvcOAo5ZoLrLLAMSZAlDP3YQT9kwMOsllHFeAF3svubgsHAK4QGIn6kQ4M7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=p4xHB02K; arc=fail smtp.client-ip=40.107.117.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lQxE9ocSV3nSIqk+tlYYtLZh8cW6QmJDY+FsKFPaJrQIkFZhWtuzkAWXnylrc79VldhmokeB6kefKkR8X/vQux1l1E0OLFUv/dK7LmyBNguwkCcnWo4yrxshUJV09rZsL0qjgF+BXaPKEW6ZivhsdTbJFC5AGyM6k++lPjjad8NFu2xQG0SMY/mBnEPAg6sSAR16dofXZVz+azOyU3uSesned5zxzb5wmOlvfIAXI2FUR7d1IkY0ZKGUidc9h3MqxI5vhkLbfkNlvSoE+An9B5u3/MmD5gy3c7fLVt604R5FkU8CZdtPdnfxV0DaCY8ytXjKhH11qFW7jdZx4RBs+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3HHRxYVdpDhvm918AdUdWiqbp2vwtq5ucJv8SZ6NsM4=;
+ b=CalBWmvZfCixhAb2hu+dFwLOuy4RFTzpRCuPfJRBNzZuuWtlO4TTkX4go5J0cj1gh0mlS+zdumLSAKHy/LRfULhqPG3jYOXI3uvbcRjEAFxXsiNJcb0lBmQUZxNBp29+TZcxEE8d2tagbtuD8K3FwMrfcaFyfiRAfsjlS5qtyU9GcUkDW3JLidQ9ffZFoBOOz07G1WH0vnkgj2UhSFVHQTf4hGn7SYz/GwwnXEWPwnhBkhyyN4eFDO6pi//adalxqQ/u2oNUQKo7l8Yc11Bs19sDx/nQjY7iSGL86E3EPob4TGZhh3wJxgjyhMEj9cVZdJ67IkahzQxlhmkAUdKM0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3HHRxYVdpDhvm918AdUdWiqbp2vwtq5ucJv8SZ6NsM4=;
+ b=p4xHB02Kn5Y8w6KyYSFRcGPNCSdw3LPjckRs3rCeyWAnROCE72w7apv8e2D8RVb+eZW10i47dK+qk6j1ttxSGZQpcIZb9DKKu6Mo3qZwXT1I3SMHitJnS+4vB3dWBqJW5UYI3IZTviDo0NSJQUPZrmcEcrV4QYljIct85yE+t4Ct5s6ryvZiagNMoeDHnoCdumy15R5Ss1oPSalBbH/dLIJFP9gbuAG+z9w7MRC9Zj3rxyBEDw41ospRyy96vBfDCZzyeAt19rvH9kHm5NdsjqoP3KIWrJ78NPueTATh3tYlkAu/qnBRFkQKX9gMDaFlAlIz+5jSwpDlssTjJEexDg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com (2603:1096:301:f8::10)
+ by JH0PR06MB6477.apcprd06.prod.outlook.com (2603:1096:990:33::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 02:49:47 +0000
+Received: from PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f]) by PUZPR06MB5676.apcprd06.prod.outlook.com
+ ([fe80::a00b:f422:ac44:636f%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 02:49:45 +0000
+Message-ID: <de3f3cc4-5e0a-4524-902f-4913addba227@vivo.com>
+Date: Mon, 12 Aug 2024 10:49:40 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] udmabuf: cancel mmap page fault, direct map it
+To: "Kasireddy, Vivek" <vivek.kasireddy@intel.com>,
+ Gerd Hoffmann <kraxel@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "opensource.kernel@vivo.com" <opensource.kernel@vivo.com>
+References: <20240805032550.3912454-1-link@vivo.com>
+ <20240805032550.3912454-2-link@vivo.com>
+ <IA0PR11MB718542BA11A38A5BD40ECB00F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+From: Huan Yang <link@vivo.com>
+In-Reply-To: <IA0PR11MB718542BA11A38A5BD40ECB00F8BB2@IA0PR11MB7185.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI2PR02CA0031.apcprd02.prod.outlook.com
+ (2603:1096:4:195::16) To PUZPR06MB5676.apcprd06.prod.outlook.com
+ (2603:1096:301:f8::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LTIQjka=PZ6KsjzNSBPSkAH";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PUZPR06MB5676:EE_|JH0PR06MB6477:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5f8f8be2-f20d-42e3-bb4f-08dcba796c8a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UHl0ODFLMHZOTkJPMGZNNUptcWFDYVl0TE5wb0U5VUdwaCt0Z3FzTXJ4V3h1?=
+ =?utf-8?B?UW1jNXpuZFhoYkkxcFFjTWJzV0JXZDE3YU1OZkI1WlgvY3l1VGhrWlhnWWlv?=
+ =?utf-8?B?Q1QzQUc3OGQyYmZreGlZd0ovTUlyRk5zM0dXaTdSbTNxTjYzMnpTZUoxa1N0?=
+ =?utf-8?B?MkR2dWpIUlNzeksvVHVVYlcveUxnYlg2YTk5c2ZTanpLZlpYNWh3Zk9LUUlF?=
+ =?utf-8?B?NzFnSFN1bTUvbFh4bjg4dm5HV0RXa2JNdDIvdk5ybVNMTTJzcHdnV29mZzdE?=
+ =?utf-8?B?c0JET1BjZE8yOVV4SytEa1Q0aVpuQXBzWWRjOTdJY2RmbWpiRkVpZEliTHNV?=
+ =?utf-8?B?eEdKWm1MOVlyb0lrdmlGdTBpU2hoZzFWZkNrZnh6MUtYem5MWFJDS1JOeHU5?=
+ =?utf-8?B?d2Myc3I1MmhJT2dTR293NEFLeFgraDhMVTBxSnp1K09Ta1lBOGN3K2VEbnl1?=
+ =?utf-8?B?MjJjZGZxMFlkQVRMMmxtRm1lemF0UVIwNXlwVEY0MkI5bmpkRnpsZmdFRGlS?=
+ =?utf-8?B?UmhYMlg0ck92T2VnSGdIM3loc2xobjdqUnJ5S0RFdEIxdWtEcytBWE9QZXJw?=
+ =?utf-8?B?cU05M0hib3V4bWttT1dCbGZ0QXhZeWl1RXhURUNpLytBRytEYkE2T2RYay9q?=
+ =?utf-8?B?Vk84VDNpUDZsYlF6TjM1aXgzbDMwL2Q1N0I2MmlLV2dSck9TRi94b1IrNjgw?=
+ =?utf-8?B?Mlg0OGdDNkFodkJrRGRSNVBnQnVwTTZrODBkb3pIYXRGYUd6QVFjVmxPbG9m?=
+ =?utf-8?B?VlIxWWRLR21lMHRkcXpuUnpnTnE3N1hia0lNYy9iL2g1WlF3eWJSTW1RNEJk?=
+ =?utf-8?B?NnZ3UWd5dzVKYzU2OFhjem4rSWtJQlNPYnFnT2tjZnF2ZEN4ZFBBVkorSlZX?=
+ =?utf-8?B?QkhRMFVsZ2x2d1dGa3F1RVJucTI0UFFQMEVpaHJVelFucGRZSEVDZXZvS09u?=
+ =?utf-8?B?VDBrSDg0OGpydGNzTENCUzU4RDFZa25oSENubDlVVzZpbmg3UEVxRC9jTFAv?=
+ =?utf-8?B?QUUxdVNVcHBXZTFPSUhZdnRXYzRDNXVaRGxKOE5ZUEc3cWxqbTVpc1oyVU1R?=
+ =?utf-8?B?bko5TXBXZXBNTklWcDdnaUxHNkhmdDU0RUVnUWl0V1VqL0NoMkh0Vjk0NXE2?=
+ =?utf-8?B?NVJWaURPNmE1UFZlOVJIV0pGOWFLcVB0SzI3c3dLdXZpbGRpYzcyY1I3Smwz?=
+ =?utf-8?B?cTJBM1UxWkdTcTlENjMwUlZST0xBTURVb1JCeElpSUk2RFM1SkN2elQ0M2FG?=
+ =?utf-8?B?U1J5ZmhwWGwzS09OSkk5TjBpRGVReDNoWDdaVlVhcHA5cGNWTTJGTFFOMG9D?=
+ =?utf-8?B?VmI3QVZpNmtNWXM3Zm8rSVVLbC9leVQyZnJPTk9WejBxQWMxSmEyb2VTZThL?=
+ =?utf-8?B?Vy94ZUhSRU5tVGljek9mMk9iSGR6SXBESnhtWkFEczM0czFqK0JGbEs1eHI5?=
+ =?utf-8?B?T2xtM3RDREEwdGpaNEVqcXh2RFJvODVYZ1Z2bmd5YXRTTGRxMHdmS2RPUXIz?=
+ =?utf-8?B?ajYxS1ZqYnVNVFhoRTc3elpES3JtYVYwbTdNYnU5OU11UWFvaWVPdmR2RERj?=
+ =?utf-8?B?dnAyR1ZTSnI1dTIwVkZCN0hUbXArTUlSODFhYkpBcDVUVHBvTmxaVXM2TThM?=
+ =?utf-8?B?WTZ6TVdmSUZPTnYzK3hPcWVPSDBiVWQ2NTI1ai81TXhhVTg3ZkVZdWhLY2JP?=
+ =?utf-8?B?Qkp1RTR5V2lhTnFERTJWS3p4eU9yUGZ0OHJPTWVaNVBIM3V6UzZKaHZQWkQ0?=
+ =?utf-8?B?QWc1TmFZQ3I4MnFUTjZWUmJMTnZXa2pyd0kxNXFYM2tsNWN0S0M5NXFsZGUw?=
+ =?utf-8?B?VCtsOFR3R1ovMVRSTmtOaGkrOHZKNThwNVRlVlg4RjUrMGVva3ZHb0RPTnll?=
+ =?utf-8?B?YnFyNXM0c2lEQWZTNEhTSFlPNmxhR0N0aVIxdHU0ajF1Ymc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR06MB5676.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tmwza0tDRk5pK1NJL0k5Yks0Y2hPU1BUd3VtMUltUXhnNVNFSnNBOTRPY090?=
+ =?utf-8?B?RjQyR1o2UTgrMStjMlBQWjd0UFpZbVZhNzNONkxQS2t1YmtYMVhWSk9mcVIw?=
+ =?utf-8?B?Y1FYVnBQVW1ZaEUvem5LbmtTM1NJUGR6dGl0Z2xBeWswYzYvY0Mxb08yMVE2?=
+ =?utf-8?B?alFFZVpjWE0zOTZwYjBVc0dCakpEdkpPUTNmaDFNTkc3SXhkOFU1dXpkWWli?=
+ =?utf-8?B?RGpOYTRYcnRxNWVYa2ZCOCtISk96cEZmS2c3dldzdndaNEpDWFRiQkd1S3pG?=
+ =?utf-8?B?b1lQM2VOUGpnTWtuT25IclBlbGVOR0FFREpDZkRBVlpuRzhjdXFRY25ZcmRE?=
+ =?utf-8?B?eHN1QUM1bG90WFNYK1ZPTTl3Z0g2ZDZZS3doeU9yVFByYUFQK0wxSjY5NlR4?=
+ =?utf-8?B?WjIvdDIyekhieHhYVGY5ZC8wNVV1VUtLbFBmOE5MNWQzYjVuTzB1VTUzU1dU?=
+ =?utf-8?B?V2ROMlhiRm1ReUx6WGpUUTNtYStsSEhHRGFhWGRxRnQ3TVRNblZxQWZrWDMy?=
+ =?utf-8?B?SWhqMkhBc3VWeGUweGdHbVFYM0ZnT0dlOHdaQ2pCZEY0NWFaZ0I1ZnRTS2ov?=
+ =?utf-8?B?Nnh3U085ckhIUzNlY2tzQm1JY05VYnZBcFJENXBPL0JzcVczd1VHVXl1Ukll?=
+ =?utf-8?B?Yi9lQ24rcGZWcGUwSklIWFdlSmV2dkxkN3RnYXhSbzArUkNXUWlDYWFSMUVQ?=
+ =?utf-8?B?c1d2ZzJZdStJOG9PenFwdVBZMjlVT0NhaEtOMzdpNEFRLzhXNmRMSUZWS2NE?=
+ =?utf-8?B?aU9tK0QwYzF0QXBLVnlkNzVyZXZVWUZVTzNaK2NHWC9LbHltUEVMVVBzNG1E?=
+ =?utf-8?B?RE9FaWZoc2htU3hjZFNwQ09McHVERVJaL3ZTdEZPdklTV3VPVTBkZU1WRlpE?=
+ =?utf-8?B?RmN2a3k0Y1Ixdk1HRGZHVHRnWVR5OGRGeU9CMTMyRGt0NCsyNi9EdGVPSXhH?=
+ =?utf-8?B?cXMrWE1BL0FzMm9SZVF6YjRIeU5mUkFORjFqeWg5OElPbGVEQnJvVUlsSUYz?=
+ =?utf-8?B?QXJJRXlmR2ZyZ2JZK2FnUXI1Q2ZRNEQ3aEcvNEgvUDBsc2dMVlBWUGpuY1lQ?=
+ =?utf-8?B?YkdtQ0hCYk5Fclg2bjV4TlV6U1hiNCtmWlFySEVVNk9Xb1Bqd2Y2aWFwUHhI?=
+ =?utf-8?B?dVlSZmFocjV3SFNXQytndjdHMlFIRk5nYVhGdG5jZFhzUU9SN01tblJKTHVO?=
+ =?utf-8?B?eFRQcFlkTTBxbkVBUzBIQ3lBNFdoUmFEelNpYWlTTGdvTC9SMSttNlIxMUE4?=
+ =?utf-8?B?czdXZXJGRWw4RjE4WnA5Y3FSRUY1OFMyTDRJQnV1SkxCK2FnSVNMUGRVQlJs?=
+ =?utf-8?B?RGhQTDdyMG4vTmVGVVFzbmxXNmVBeTl3V2dhK2E0eEhEbFJNdmlIdXZ5NFJp?=
+ =?utf-8?B?SzVvcjNvTS9FVGlMVTZjQmxsVkFuTUxTTEsxS25lUGREeDd6eEhRRzA2TWF2?=
+ =?utf-8?B?RUxuVHJKM3R4a1Bqc2RPWStJZWx4RFVzWFE3TlVDMVVsbWdQa2RnUGZ3SmlJ?=
+ =?utf-8?B?WEZRc1hvZXU2TElXNVJYQlZ6TkZmam14NFVGNDZLd0h1azM3ck42bGxOeE81?=
+ =?utf-8?B?SWhYYmMrZFJQWWtBQThJVjh0OHc2U3pCekNXOEZ2aXJURG1BZmdpMlk5bFZQ?=
+ =?utf-8?B?Z1ppcHdZNTlObWJYbm05S3FBY2hzRGk1SXBKTjJrM2d3TVlwbTMyKzhidnpP?=
+ =?utf-8?B?R2YrcnZMMFBBL2xFR2x4Qzd5c3FKQ0RwcG5uZXc3SVpaem1iTkV3dW4xUG1H?=
+ =?utf-8?B?Q3FqWk9DUGJoWkxlUHh2T2hhUmxQWHpWMmZ6YkdyK3F4T3ZSelljaG0yS3Rt?=
+ =?utf-8?B?TVdLN3NOTG05M2k5RWdWSU9zdUVpMGl2bmlEdXc5dksremxwNmhWK2tiRXVW?=
+ =?utf-8?B?MjBFdUlvbTFSYm45OTcyNVdhNnFXREdIMDVKKzFtenhveE1LeTE4TDlmbE1u?=
+ =?utf-8?B?S2NNMnJFRzFSc21PMXc5WDUwUDNxNnZRUFdYWlo5ZUlzTFVJOFlYZWJFUkNL?=
+ =?utf-8?B?L24vZUxwQXF6a0ZnbkN2bWhnQWIxK2oyWWFzYnlOL2phNkZzZWsvM1plWnpJ?=
+ =?utf-8?B?anJWUC9vTlBJMEFIN2o0QThRS0xmTlJRYVRFNEpZcHJLckJkTUl1RWZGZVN4?=
+ =?utf-8?Q?qf9QZ1eSdJPUFdOoravvX7ycj?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f8f8be2-f20d-42e3-bb4f-08dcba796c8a
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR06MB5676.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 02:49:45.6677
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: in/Evp8SsCpuYsV9qDFhNzXfZ1fSKdwPiHujC9kAujs+VmDKSn15Dn8HT7hHxaLBnlgQVdcaCsjykQKr8GoK5w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6477
 
---Sig_/LTIQjka=PZ6KsjzNSBPSkAH
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+在 2024/8/10 9:28, Kasireddy, Vivek 写道:
+> [Some people who received this message don't often get email from vivek.kasireddy@intel.com. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+>
+> Hi Huan,
+>
+>> The current udmabuf mmap uses a page fault mechanism to populate the
+>> vma.
+>>
+>> However, the current udmabuf has already obtained and pinned the folio
+>> upon completion of the creation.This means that the physical memory has
+>> already been acquired, rather than being accessed dynamically. The
+>> current page fault method only saves some page table memory.
+>>
+>> As a result, the page fault mechanism has lost its purpose as a demanding
+>> page. Due to the fact that page fault requires trapping into kernel mode
+>> and filling in when accessing the corresponding virtual address in mmap,
+>> this means that user mode access to virtual addresses needs to trap into
+>> kernel mode.
+>>
+>> Therefore, when creating a large size udmabuf, this represents a
+>> considerable overhead.
+>>
+>> The current patch removes the page fault method of mmap and
+>> instead fills it directly when mmap is triggered.
+> I think it makes sense to populate the vma when the first fault is triggered
+> instead of doing it during mmap. This is because the userspace may call
+> mmap but does not actually use the data. Qemu works this way depending on
+Yes, the idea of this is also related to the concept of page fault.
 
-Today's linux-next merge of the slab tree got a conflict in:
+However, the folio has already been pinned during creation. I think 
+using the page fault
 
-  kernel/rcu/tree.c
+again is theoretically sound, but it may not save memory, only increase 
+context switch overhead.
 
-between commit:
 
-  8c5f6f00c015 ("rcu: Use system_unbound_wq to avoid disturbing isolated CP=
-Us")
+> whether opengl is available in the environment or not.
+>
+>> Signed-off-by: Huan Yang <link@vivo.com>
+>> ---
+>>   drivers/dma-buf/udmabuf.c | 39 ++++++++++++++++-----------------------
+>>   1 file changed, 16 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
+>> index 047c3cd2ceff..475268d4ebb1 100644
+>> --- a/drivers/dma-buf/udmabuf.c
+>> +++ b/drivers/dma-buf/udmabuf.c
+>> @@ -38,36 +38,29 @@ struct udmabuf_folio {
+>>        struct list_head list;
+>>   };
+>>
+>> -static vm_fault_t udmabuf_vm_fault(struct vm_fault *vmf)
+>> -{
+>> -     struct vm_area_struct *vma = vmf->vma;
+>> -     struct udmabuf *ubuf = vma->vm_private_data;
+>> -     pgoff_t pgoff = vmf->pgoff;
+>> -     unsigned long pfn;
+>> -
+>> -     if (pgoff >= ubuf->pagecount)
+>> -             return VM_FAULT_SIGBUS;
+>> -
+>> -     pfn = folio_pfn(ubuf->folios[pgoff]);
+>> -     pfn += ubuf->offsets[pgoff] >> PAGE_SHIFT;
+>> -
+>> -     return vmf_insert_pfn(vma, vmf->address, pfn);
+>> -}
+>> -
+>> -static const struct vm_operations_struct udmabuf_vm_ops = {
+>> -     .fault = udmabuf_vm_fault,
+>> -};
+>> -
+>>   static int mmap_udmabuf(struct dma_buf *buf, struct vm_area_struct
+>> *vma)
+>>   {
+>>        struct udmabuf *ubuf = buf->priv;
+>> +     unsigned long addr;
+>> +     unsigned long end;
+>> +     unsigned long pgoff;
+>> +     int ret;
+>>
+>>        if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
+>>                return -EINVAL;
+>>
+>> -     vma->vm_ops = &udmabuf_vm_ops;
+>> -     vma->vm_private_data = ubuf;
+>> -     vm_flags_set(vma, VM_PFNMAP | VM_DONTEXPAND |
+>> VM_DONTDUMP);
+>> +     for (pgoff = vma->vm_pgoff, end = vma->vm_end, addr = vma-
+>>> vm_start;
+>> +          addr < end; pgoff++, addr += PAGE_SIZE) {
+>> +             struct page *page =
+>> +                     folio_page(ubuf->folios[pgoff],
+>> +                                ubuf->offsets[pgoff] >> PAGE_SHIFT);
+> Please don't use struct page pointers, given the recent conversion to use
+> only folios in udmabuf driver. I think what you are trying to do above can
+> be done using only folios.
+Yes, just use pfn. Consider of HVO, must use this.
+>
+>> +
+>> +             ret = remap_pfn_range(vma, addr, page_to_pfn(page),
+>> PAGE_SIZE,
+>> +                                   vma->vm_page_prot);
+> Could you please retain the use of vmf_insert_pfn() here, given the simplicity,
+> among other reasons?
+I will make the correction.
 
-from the rcu tree and commit:
-
-  bf0d8d2996ff ("rcu/kvfree: Add kvfree_rcu_barrier() API")
-
-from the slab tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc kernel/rcu/tree.c
-index 0c8b56c4ee88,ebcfed9b570e..000000000000
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@@ -3614,7 -3631,7 +3611,7 @@@ kvfree_rcu_queue_batch(struct kfree_rcu
-  			// be that the work is in the pending state when
-  			// channels have been detached following by each
-  			// other.
-- 			queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
- -			queued =3D queue_rcu_work(system_wq, &krwp->rcu_work);
-++			queued =3D queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
-  		}
-  	}
- =20
-
---Sig_/LTIQjka=PZ6KsjzNSBPSkAH
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAma5d9QACgkQAVBC80lX
-0Gw5Owf/eROXqYBFtEwMSohm3b1f0B4TfHRvHJEWcwXvOFXjOreE7nIaJmynjQby
-sgeGhiBW355DWoGEzEoulgY+ktEp4tG3+VmssFrFxAdvpcEqPLpYSyR72VUI7vfa
-k48oKlbFxELUOiT2QANEz0RhVgX/l362+ABWoroJChn8y9dMu1oIsxaLKqB36dZ+
-uN5Mt+TfPSssBDWzc/OiJdmH13GDBtkiTV2n8NQ1a5Z3cYCr8cTRHWYixiNbZKsl
-zIoWRZUyDNtLzI+BKxVhBnta/vfq066KUwOjACRgjRnRvJr00+EssO5iz/k8RwnU
-njyVy/KeWCfUb7DB6tazyQpV3/aMHA==
-=MWAR
------END PGP SIGNATURE-----
-
---Sig_/LTIQjka=PZ6KsjzNSBPSkAH--
+Thanks.
+>
+> Thanks,
+> Vivek
+>
+>> +             if (ret)
+>> +                     return ret;
+>> +     }
+>> +
+>>        return 0;
+>>   }
+>>
+>> --
+>> 2.45.2
 
