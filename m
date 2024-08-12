@@ -1,156 +1,204 @@
-Return-Path: <linux-kernel+bounces-283573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFE194F67A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:16:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33FA594F67E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:16:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE13E1C2131A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:16:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A741F24991
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CA3189BB9;
-	Mon, 12 Aug 2024 18:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A537D189BA2;
+	Mon, 12 Aug 2024 18:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wgIVJmsG"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E09VxtXW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E57116EB7A
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:16:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A23416EB7A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723486568; cv=none; b=GwACVH4wU4wM5q3OWWD85w8O89/8sMgygggaHaJd/mZwNVX9spElethfwMBcyMrJJdxVLgQmJQEnEEoJcs7MD4G4UbrjhQhpFvDygahQrxG57tq+clIiRvjQjJV4KzYsCYOEXJkz/kzrsKzxlkFhuFm3V3W2qvvuA0V9DkF6+os=
+	t=1723486578; cv=none; b=jdQZzIGUWve2rwxWRmLN/Q5W+0MRCNkc4Ue0Sj5q59jwHQIVHCqbe/yLkO0oB7hChFdXVdFpxUoVE8ZFt8/5yoSgbMQcwa3iatUjrE8OAg7pKfEpbAGxM6TE1DAgOsDe5X2AeLiNHPi+9sp3b4vVQqwMZiuMleI6Ma+do3FHaS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723486568; c=relaxed/simple;
-	bh=6JmLbnbx+OUTQCZBrk0Fxg5GM2wldZociS56hBj+viI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u7P4s/0To0lZ2U6ek7nMxxKTqnhNGdDpP8kNNO3DJWTZKhJyr9sYms9TUq9oXGKDsR5lhJGVFB9pJHtKhBbaH5u3I4fcCjKGolLaYhXdYwbCQTwkcTxiPV4sdQdJGAth+3aqz3Bnxp51Z8N2YdglsMFqKMnvOCTA+9CrAVg7dfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wgIVJmsG; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4281ca54fd3so35565615e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:16:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723486565; x=1724091365; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=W+8MbPRCb0YozGx78yHpevgqK7LlyJSrraSWxDfDgOM=;
-        b=wgIVJmsGbgiBYdUW0JRO15Vbq8hNwoEOIiVIfZYClC5e2/HBy2RusePdcRVFaS9LiW
-         KzqaKchBL6JNw8bvXiyR3s8+iBTFlXOKADZk3xPdtAHnsjjaXeGb9rb9HeP1KM3+NV3B
-         4H3csn47TZfpPfOUV2Q1TWHHdO+E8sGfTpS0t3OWc2cjypVqbAZCMWTQGk8cCiN3+VOT
-         HZXVdmUlgVEXG1g4Y7Ff/CfaiY563AZru5AMQkPtmgNMyzgufUjMIFbvQpOlGVnMdYN/
-         YnY/ShG8rG/fLHmalhJLofc4I06yhH5qC5YiI2T2CxKFm2IbVQqAaUB7uxl44ssn/PPR
-         LbIg==
+	s=arc-20240116; t=1723486578; c=relaxed/simple;
+	bh=w4mmnkbUQyC+3Ff/oXNqR2TgwvhhjDG3ND1sxdUTW2Y=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DaH2GSYAoycCpoDlBkGKFFJ7F1teHmxIGi66k+Gz/gGfm0F2B6W9AK/I0DRdlGFeLAkXBHnz4fhP6eVHAkmfE83V0XyCRhVNdeS4NbuahlPl1wpx/0xDsL/O0jB3cuw7qSs9rArgL4Zgz3WAZzz5TsmUJ5QqNKyPCuOvvCxB5LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E09VxtXW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723486576;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SdkF0C2zVbB066Bu4nbcfORzCEZVZFrzFyLmGHaFIHU=;
+	b=E09VxtXWVAlUB18WkHRbP/FP0ma+0aOoOOI1OmVKxwyXbaAXJ1iXQxFD7JGHa06LcGkiQX
+	Wtd+TjsPxfd9rmL6FhJMVIosZuuohW/E34D8DxGiWS2kixszbkvWDVuZQ5+xkgCFpsy4dN
+	Xwnh2E5kl41Kfq1apl9XqOBcClgp9vM=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-YjE62a6VNmeLalEc4yy2DA-1; Mon, 12 Aug 2024 14:16:11 -0400
+X-MC-Unique: YjE62a6VNmeLalEc4yy2DA-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42818ae1a68so8923255e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:16:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723486565; x=1724091365;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W+8MbPRCb0YozGx78yHpevgqK7LlyJSrraSWxDfDgOM=;
-        b=PqCA8fTgir+coqLVunLXTo0oJJdhSCekGZzg0i466QioCtjWXdb4/nrj1btHZYMd8F
-         GDYUni1JYIJwAbAz2jI5ooBvhT6PWgkwb2HukZEkCDK5Fdrx4FER4lg9toBJuesb+3wX
-         WpnlzEdezaBfYgenW0xF1TMjCV8FhA2HTCbn6cmbcXaXsR4XBVFw+7I7VKyCPfUOHVad
-         FMyg8HHXEWiyJSUFVBzamXfNe7w5SRgOv3GpMQDu/SMNA+sXBlqdMmJ4FV9wtgQkPmZ0
-         A1vqv7gAQZPYkYo9RhN8CHpB10hmYtaZ6+73L6QF1g8YOoEXlyiodtTnykv+2rIz6+U9
-         DZrA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2v+iaD25JwVTfO6Gx5YVrzNSaFOeTJhszLgEy4mpNzMGKX/yQUp4SqmZHxL4+D6vZVYn5ywgU9JtJvHeaVscVCXMmSPZNz3luD1kA
-X-Gm-Message-State: AOJu0YzXq3x9GgZ09lNkfYD6VUFZCPJ7Qt3Q5Zk/rRKpuhThda9fspYW
-	znlGm3C5nm7Go91tgLe2bjeMg81V8pGwiiYCi+mmSRk542emOzwNuqVKrU4X04xC2ggLHhX8Ekj
-	unvEQTPS4aNbhkd9R+VUTHPR5sI7ykCrCg+oR
-X-Google-Smtp-Source: AGHT+IExKlU1NFFrFQYmtgcScdYfbBmkxO/ooNiafkX9LH+DZEKBJ9sd9KmyHU56XLEJx2YRHqMLA6HPRgVez8rVI2k=
-X-Received: by 2002:a05:600c:3147:b0:426:6f81:d235 with SMTP id
- 5b1f17b1804b1-429d480c135mr10690545e9.15.1723486564807; Mon, 12 Aug 2024
- 11:16:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723486570; x=1724091370;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SdkF0C2zVbB066Bu4nbcfORzCEZVZFrzFyLmGHaFIHU=;
+        b=HJssXIvPkfkBanGeqJLN05a4XHn0pqG1rHExQQ0an72XEI30zkJdVzNp6jCo5ioPTY
+         UoMS9GdyrXe3nUny0wpyJePD7dBsJ/i7VN2CFxAfJO5e3feUs32KEI1v/w82a9QQhr0E
+         cXSkJc5V77OiF0rEEqTBGqsy/Qrje2XRcGTUIARhPRwrtC+JTFLqKKsaMMPro19o4/Um
+         N451JTquuPyK4lNp+m3QJx1d7D4+UI4hlTA2WWUK4Kz67Xq+LQ/I6bFoQeZZ4/c3IAIX
+         CEzT/P2lKzo+lPAqCdNcbyJxyKaIKFLh2CdOpZgbkD/Gu1vyTMdcF2Gi4XLNqsj02X+g
+         8cBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8uohE0HTvTBIUti+8JLgDTOvL65YjF4fUc/AX0Xwr+xVAZaw7ltL+Y+qOYFxkvYFPx7vBVvTKdXeP/cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyLz2NznhpQZgH6LNVbV1fRSRvZHHIQ9H49XW/KhMTsLwdEGiD
+	8qjNwHK8a8EXiiOvZlPeBi2sgWeifoNB5dDQMkv4C7dlJlnmnvsmCGS0VkGH+NhgAu6cWzcpfgy
+	biHx4jGCLocNc9Ywr9RoxNBCKy3wZHOyxWvK/U4UVjF/v+e+UdGrBrfuOKuSScVwu24hbdg==
+X-Received: by 2002:a05:6000:1f89:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3716ccd6d04mr588785f8f.2.1723486570225;
+        Mon, 12 Aug 2024 11:16:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEk4syqNza/9kyyQE6dwwthidXy5tZvgm37dWORCESuvttYgk7Yi7KbYqY7kGz7zl7a7deUuQ==
+X-Received: by 2002:a05:6000:1f89:b0:35f:2584:76e9 with SMTP id ffacd0b85a97d-3716ccd6d04mr588770f8f.2.1723486569679;
+        Mon, 12 Aug 2024 11:16:09 -0700 (PDT)
+Received: from ?IPv6:2001:16b8:2d02:8a00:2d28:15cf:9c1d:ae3d? (200116b82d028a002d2815cf9c1dae3d.dip.versatel-1u1.de. [2001:16b8:2d02:8a00:2d28:15cf:9c1d:ae3d])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c750393asm111238125e9.1.2024.08.12.11.16.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 11:16:09 -0700 (PDT)
+Message-ID: <70a70c74be9ba1a6ae6297ac646fa82600d9296c.camel@redhat.com>
+Subject: Re: [PATCH v2 04/10] crypto: marvell - replace deprecated PCI
+ functions
+From: Philipp Stanner <pstanner@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>,  Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
+ <u.kleine-koenig@pengutronix.de>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>,  Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, linux-kernel@vger.kernel.org, 
+ linux-crypto@vger.kernel.org, linux-pci@vger.kernel.org
+Date: Mon, 12 Aug 2024 20:16:07 +0200
+In-Reply-To: <Zrow42L9dYC6tSZr@smile.fi.intel.com>
+References: <20240805080150.9739-2-pstanner@redhat.com>
+	 <20240805080150.9739-6-pstanner@redhat.com>
+	 <Zrow42L9dYC6tSZr@smile.fi.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <10c7f773-7afd-4409-b392-5d987a4024e4@quicinc.com>
- <3feb5226-7872-432b-9781-29903979d34a@arm.com> <20240805020748.d2tvt7c757hi24na@airbuntu>
- <25909f08-12a5-4625-839d-9e31df4c9c72@acm.org> <1d9c27b2-77c7-462f-bde9-1207f931ea9f@quicinc.com>
- <17bf99ad-d64d-40ef-864f-ce266d3024c7@acm.org> <e2c19f3a-13b0-4e88-ba44-7674f3a1ea87@quicinc.com>
- <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
-In-Reply-To: <c151b6d5-7e02-48ee-951f-c23594f6be6f@arm.com>
-From: Sandeep Dhavale <dhavale@google.com>
-Date: Mon, 12 Aug 2024 11:15:52 -0700
-Message-ID: <CAB=BE-RHwqmSRt-RbmuJ4j1bOFqv1DrYD9m-E1H99hYRnTiXLw@mail.gmail.com>
-Subject: Re: Regarding patch "block/blk-mq: Don't complete locally if
- capacities are different"
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: MANISH PANDEY <quic_mapa@quicinc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	Qais Yousef <qyousef@layalina.io>, Christian Loehle <christian.loehle@arm.com>, axboe@kernel.dk, 
-	mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org, 
-	linux-block@vger.kernel.org, sudeep.holla@arm.com, 
-	Jaegeuk Kim <jaegeuk@kernel.org>, Christoph Hellwig <hch@infradead.org>, kailash@google.com, 
-	tkjos@google.com, bvanassche@google.com, quic_nitirawa@quicinc.com, 
-	quic_cang@quicinc.com, quic_rampraka@quicinc.com, quic_narepall@quicinc.com, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Hi Dietmar,
-[..]
->
-> So the issue for you with commit af550e4c9682 seems to be that those
-> completions don't happen on big CPUs (cpu_capacity = 1024) anymore,
-> since the condition in  blk_mq_complete_need_ipi() (1):
->
->  if (!QUEUE_FLAG_SAME_FORCE && cpus_share_cache(cpu, rq->mq_ctx->cpu) &&
->      cpus_equal_capacity(cpu, rq->mq_ctx->cpu))
->
-> is no longer true if 'rq->mq_ctx->cpu != big CPU' so (1) returns true
-> and blk_mq_complete_request_remote() sends an ipi to 'rq->mq_ctx->cpu'.
->
->
-> I tried to simulate this with a 6 CPUs aarch64 QEMU tri-gear (3
-> different cpu_capacity values) system:
->
-> cat /sys/devices/system/cpu/online
-> 0-5
->
-> # cat /sys/devices/system/cpu/cpu*/cpu_capacity
-> 446
-> 446
-> 871
-> 871
-> 1024
-> 1024
->
-> # grep -i virtio /proc/interrupts | while read a b; do grep -aH .
-> /proc/irq/${a%:}/smp_affinity; done
-> /proc/irq/15/smp_affinity:3f /* block device */
-> /proc/irq/16/smp_affinity:3f /* network device */
->
-> So you set the block device irq affine to the big CPUs (0x30).
->
-> # echo 30 > /proc/irq/15/smp_affinity
->
-> And with the patch, you send ipi's in blk_mq_complete_request_remote()
-> in case 'rq->mq_ctx->cpu=[0-4]' whereas w/o the patch or the change to:
->
->  arch_scale_cpu_capacity(cpu) >=
->                             arch_scale_cpu_capacity(rq->mq_ctx->cpu) (2)
->
-> you would complete the request locally (i.e. on CPU4/5):
->
-> gic_handle_irq() -> ... -> handle_irq_event() -> ... -> vm_interrupt()
-> -> ... -> virtblk_done() (callback) -> blk_mq_complete_request() ->
-> blk_mq_complete_request_remote(), rq->q->mq_ops->complete(rq)
->
-> The patch IMHO was introduced to avoid running local when 'local =
-> little CPU'. Since you use system knowledge and set IRQ affinity
-> explicitly to big CPU's to run local on them, maybe (2) is the way to
-> allow both?
+Yo Andy!
 
-Thank you for doing the experiment.
-I agree that changing cpus_equal_capacity() with greater than equal
-check (this is what Qais had in his v1 patch [1] ) will allow both.
+On Mon, 2024-08-12 at 18:57 +0300, Andy Shevchenko wrote:
+> (Reduced Cc list a lot)
+>=20
+> On Mon, Aug 05, 2024 at 10:01:31AM +0200, Philipp Stanner wrote:
+> > pcim_iomap_table() and pcim_iomap_regions_request_all() have been
+> > deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI:
+> > Deprecate
+> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
+> >=20
+> > Replace these functions with their successors, pcim_iomap() and
+> > pcim_request_all_regions()
+>=20
+> Missing period at the end.
 
-[1] https://lore.kernel.org/all/20240122224220.1206234-1-qyousef@layalina.io/
+ACK
 
-Thanks,
-Sandeep
+>=20
+> ...
+>=20
+> > - /* Map PF's configuration registers */
+> > - err =3D pcim_iomap_regions_request_all(pdev, 1 <<
+> > PCI_PF_REG_BAR_NUM,
+> > - =C2=A0=C2=A0=C2=A0=C2=A0 OTX2_CPT_DRV_NAME);
+> > + err =3D pcim_request_all_regions(pdev, OTX2_CPT_DRV_NAME);
+> > =C2=A0 if (err) {
+> > - dev_err(dev, "Couldn't get PCI resources 0x%x\n", err);
+> > + dev_err(dev, "Couldn't request PCI resources 0x%x\n", err);
+> > =C2=A0 goto clear_drvdata;
+> > =C2=A0 }
+>=20
+> I haven't looked at the implementation differences of those two, but
+> would it
+> be really an equivalent change now?
+
+Well, if I weren't convinced that it's 100% equivalent I weren't
+posting it :)
+
+pcim_iomap_regions_request_all() already uses
+pcim_request_all_regions() internally.
+
+The lines you quote here are not equivalent to the old version, but in
+combination with the following lines the functionality is identical:
+   1. Request all regions
+   2. ioremap BAR OTX2_CPT_BAR_NUM
+
+>=20
+> Note, the resource may be requested, OR mapped, OR both.
+
+Negative, that is not how pcim_iomap_regions_request_all() works. That
+overengineered function requests *all* PCI BARs and ioremap()s those
+specified in the bit mask.
+
+If you don't set a bit, you'll request all regions and ioremap() none.
+However you choose to use it, it will always request all regions and
+map between 0 and PCI_STD_NUM_BARS.
+
+
+> In accordance with the
+> naming above I assume that this is not equivalent change with
+> potential
+> breakages.
+
+The nasty thing of us in PCI is that you more or less already use the
+code above anyways, because in v6.11 I reworked most of
+drivers/pci/devres.c, so pcim_iomap_regions_request_all() uses both
+pcim_request_all_regions() and pcim_iomap() in precisely that order
+already.
+
+The only hypothetical breakages which are not already in v6.11 anyways
+I could imagine are:
+ * Someone complaining about changed error codes in case of failure
+ * Someone racing between the calls to pcim_request_all_regions() and
+   pcim_iomap(). But that's why the region request is actually there in
+   the first place, to block off drivers competing for the same
+   resource. And AFAIU probe() functions don't race anyways.
+
+Anything I might have overlooked?
+
+P.
+
+>=20
+>=20
+> > - cptpf->reg_base =3D pcim_iomap_table(pdev)[PCI_PF_REG_BAR_NUM];
+> > + /* Map PF's configuration registers */
+> > + cptpf->reg_base =3D pcim_iomap(pdev, PCI_PF_REG_BAR_NUM, 0);
+> > + if (!cptpf->reg_base) {
+> > + err =3D -ENOMEM;
+> > + dev_err(dev, "Couldn't ioremap PCI resource 0x%x\n", err);
+> > + goto clear_drvdata;
+> > + }
+>=20
+> (Yes, I see this).
+>=20
+> ...
+>=20
+> > --- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+> > +++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c
+>=20
+> Ditto. here.
+>=20
+
 
