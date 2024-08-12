@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-282801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28BE894E8CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:44:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7CE94E8CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF08828322D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:44:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA9681C215FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A1416BE28;
-	Mon, 12 Aug 2024 08:43:54 +0000 (UTC)
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D66A16BE2A;
+	Mon, 12 Aug 2024 08:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jP9cw5gt"
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A4316B39A;
-	Mon, 12 Aug 2024 08:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC103165F07
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723452233; cv=none; b=bNFg45n0V5A8n/XSboAOnGqT/K2NvXfX7//BJTd5LfiqdNEIg+Kh1nGMytLGEWFYs2Z9Qa6ti4KZclt/jZoypu9Pitxc6PAiGQxod2XFc1Vk/JbxmtVapc90e/IX/LqhV+6wIXIugUABnDZ3N6IIxTZ6wMRorHfD09I8uEeGmI0=
+	t=1723452260; cv=none; b=J3f1zKaqTgJgBf7KFlloxp/f2dLuA9MutlWKTOlFoEKVbxnuq7tctbUCtt1KAjDv2+h6e1vZQ1F/riOutSmodT90MzjYORrUhenFGbGFQpB4iAnOJn9cvLMe6lWBAVgyBG+IkX+TgeJOLUoMNNYw4I4imnxLD+xXwoRVDXkzcTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723452233; c=relaxed/simple;
-	bh=ANv8AQEsfkvQj/u7AkhLBUOvAjn+a+00KnO6aHlPegU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EfftNwmO81NI066ej9qqUMfA2XeAXBJwAr8Rue7qIwkVWe5R2rhdSZMIHXeZj5f2VzlEiBPqqJSfJen8vSg3p2izRrMkWrMW0z0agYtlQwB1HJMsZlrA23gVot1VSXt6ZwyWoWA1xQpULKABAOk2LHoRvhkbpp99ZQygX/N6l40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from localhost.localdomain (217.23.186.16) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Mon, 12 Aug
- 2024 11:43:32 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, Breno Leitao <leitao@debian.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Karina Yankevich <k.yankevich@omp.ru>, Sergey
- Shtylyov <s.shtylyov@omp.ru>, <lvc-project@linuxtesting.org>
-Subject: [PATCH] drivers: net: bsd_comp: fix integer overflow in bsd_decompress()
-Date: Mon, 12 Aug 2024 11:43:11 +0300
-Message-ID: <20240812084312.14127-1-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723452260; c=relaxed/simple;
+	bh=+MDz533arRQ4FiZnuLqG6SznrLjh6n5EpX/WXYQ9n6Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=a1JGP5BzBy0UwC7n2laoXYucqpSth3WZp8kJ9mFeIkxMJpkZeCcvSpYoilY12i4Fjot1rh8LK9PDEBXOXgmh7oh3LTQVbDeFXxVxynJd1q9eDqe1mt/2jXkjudtzvHG63NdGuu472SxhuoBx1iAk9a9E7+698q28RrJCrAW8Wak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jP9cw5gt; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-49296011b52so2784575137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:44:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723452258; x=1724057058; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=knkrczQAhRb/IxHIPRJ3R7wY+Q/UorYUp4t6C9yZVAw=;
+        b=jP9cw5gteyclEku5xRAI2jf92gLurcGFbIPAPsvd1NIGaPWwlbB7qFlt68ERANLnt5
+         lGE67OV2ql8DXtoFWgIBMBIvNnDiPuhZWQftcoyJR0QDMcbVSnv+EXJPP+ph247zwrd9
+         QfOnq9xTGgpSpKQ1guVbz2z2dO3VhbV4xxL+c8oJtD/aOEn/dXXyjz//xb2z8C7lWxqK
+         iUZJWbYkmp4TrnvLBpFhov2Pk41scVqRrE5E5A8rTFVZVx2c9rjCiwvAiXyld0l4pI6q
+         /m+yI9rMcKuFVkjpOFZQu0C8gx5eXyLLb/1gIjUW49iabMWQc39cP2kfHXmKuX77yXkZ
+         5iaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723452258; x=1724057058;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=knkrczQAhRb/IxHIPRJ3R7wY+Q/UorYUp4t6C9yZVAw=;
+        b=bOTEWQM5fjpzMVov/AtTRnUz316p1AzrURthXH/z8LauPhVU2Qhy9Y/Ge9b5bqYXv7
+         e5zC2ZUmG7NDjUmA+SLYMZ3f9GHyfoZRu3/XALIS1CVW4W4jXhs8HlxwQds7ay27xi14
+         o6bgGMty0711WmVJU06bMzCebvXziP6p+D49g7xOVpYI7BSfRV16c4BfRQOY+v8UDRNg
+         tE+xjHSwcE0deEHsTKHTEif9QgRXA80oW0klk8xfk5ZpHHbUw1MCwpHH2J6gSRpCvxRs
+         8YmPuw4b5JDSBsYLMUmYqibgT2qAGn2G8YsnIN338NQYh3bwM6pAxZrZuXYQnue0Ek21
+         h+yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgie2QgUf085NtOBaPCqsmW12R/3Ondi0k51xDjqn7bER93rp0+OVlN4GqKYr3m08XjXiO5K1BJY5ey4gUkH4YbW/GPvyq5CuJbSIW
+X-Gm-Message-State: AOJu0YydQ5kHmA6jGoH7fPwrBk75hFKnnQDxr1EBY+wJx1uylXsQ56Tx
+	XkZrDJWyLCf8SkqzBBukoYnJOX8QmFo3RT9VWARiPuYBVpBEiRtlGHiAQGrlSbPjiYDjeZWp/2v
+	/R9BoZWhBF5q78hp62e1GK2Ss7Dg=
+X-Google-Smtp-Source: AGHT+IHXcVJWsufgQu/YERKLpcZQ8yoTBJ6yZbXDYsNP2YUkdxsIKSp42+5n4mDwyD6UycltXNv3bjxEmMiv8pGCbxA=
+X-Received: by 2002:a05:6102:32cc:b0:493:d940:2ab8 with SMTP id
+ ada2fe7eead31-495d8e30a9emr4424042137.14.1723452257309; Mon, 12 Aug 2024
+ 01:44:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 08/12/2024 08:23:14
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 19
-X-KSE-AntiSpam-Info: Lua profiles 186990 [Aug 12 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.4
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 24 0.3.24
- 186c4d603b899ccfd4883d230c53f273b80e467f
-X-KSE-AntiSpam-Info: {rep_avail}
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info: {SMTP from is not routable}
-X-KSE-AntiSpam-Info: {Found in DNSBL: 217.23.186.16 in (user)
- b.barracudacentral.org}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: ApMailHostAddress: 217.23.186.16
-X-KSE-AntiSpam-Info: {DNS response errors}
-X-KSE-AntiSpam-Info: Rate: 19
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
- smtp.mailfrom=omp.ru;dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 08/12/2024 08:27:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 8/12/2024 4:43:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+References: <20240726094618.401593-1-21cnbao@gmail.com> <20240726094618.401593-5-21cnbao@gmail.com>
+ <ZqcR_oZmVpi2TrHO@casper.infradead.org> <Zqe_Nab-Df1CN7iW@infradead.org>
+ <CAGsJ_4wfWYGZVouK4JTj9DBDNPKTX_zrfU45iivaUy-Nq-P1bA@mail.gmail.com>
+ <ZqkVMpbl5pH35uOq@infradead.org> <CACePvbV9DZJcYL17MyYrEjRehqfj1LQtj3TwrKuP913NAP4sZA@mail.gmail.com>
+ <ZrnHerW7VV0YKZh1@infradead.org>
+In-Reply-To: <ZrnHerW7VV0YKZh1@infradead.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Mon, 12 Aug 2024 20:44:06 +1200
+Message-ID: <CAGsJ_4wr618sSA1dytqTXkpW-X8ujGhDUvsW5Xs=2uivhKB9cg@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] mm: Introduce per-thpsize swapin control policy
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Chris Li <chrisl@kernel.org>, Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, ying.huang@intel.com, baolin.wang@linux.alibaba.com, 
+	david@redhat.com, hannes@cmpxchg.org, hughd@google.com, 
+	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
+	mhocko@suse.com, minchan@kernel.org, nphamcs@gmail.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, shy828301@gmail.com, 
+	surenb@google.com, v-songbaohua@oppo.com, xiang@kernel.org, 
+	yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The result of a bit shift has type int. If ibuf is greater than or
-equal to 128, a sign switch will occur. After that, the higher 32
-bits in accm will be set to 1.
+On Mon, Aug 12, 2024 at 8:27=E2=80=AFPM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Thu, Aug 01, 2024 at 01:55:51PM -0700, Chris Li wrote:
+> > Currently Android uses zram and it needs to be the Android team's
+> > decision to move from zram to something else. I don't see that
+> > happening any time soon. There are practical limitations.
+>
+> No one can tell anyone to stop using things.  But we can stop adding
+> new hacks for this, and especially user facing controls.
 
-Cast the result of the expression to unsigned long.
+Well, this user-facing control has absolutely nothing to do with zram-relat=
+ed
+hacks.  It's meant to address a general issue, mainly concerning slow-speed
+swap devices like SSDs, as suggested in Ying's comment on v4.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
----
- drivers/net/ppp/bsd_comp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ppp/bsd_comp.c b/drivers/net/ppp/bsd_comp.c
-index 55954594e157..078fe8c9bee8 100644
---- a/drivers/net/ppp/bsd_comp.c
-+++ b/drivers/net/ppp/bsd_comp.c
-@@ -918,7 +918,7 @@ static int bsd_decompress (void *state, unsigned char *ibuf, int isize,
- 	 */
- 
- 	bitno -= 8;
--	accm  |= *ibuf++ << bitno;
-+	accm  |= (unsigned long)(*ibuf++) << bitno;
- 	if (tgtbitno < bitno)
- 	  {
- 	    continue;
--- 
-2.43.0
-
+Thanks
+Barry
 
