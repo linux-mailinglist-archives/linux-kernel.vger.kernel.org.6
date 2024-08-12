@@ -1,68 +1,73 @@
-Return-Path: <linux-kernel+bounces-283115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D7194ED5F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EACDE94ED64
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A5C1C21833
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:50:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A114C1F22948
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A8F17B519;
-	Mon, 12 Aug 2024 12:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2687817B51B;
+	Mon, 12 Aug 2024 12:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWVEH93T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Mesmbd63"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4761E17B4FC;
-	Mon, 12 Aug 2024 12:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5777D14EC53;
+	Mon, 12 Aug 2024 12:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723467015; cv=none; b=tXU4mCEmpX7GtRPtE1FAArY/Dsv88l5l48m1jEIWV9SFDm6NU2WUi0Wxyn8jZPMFdoLQchNaUt0ALGdbRwbnr8b/SfHL/Ikw+GBb99fjJHmtHTitGV4QhJoppQlZKoNljwaegtHG7w3I6lBlhUXFyyghZ4Aw5zdf/51tZFneq1s=
+	t=1723467073; cv=none; b=hlHCPr+YWWqPH0xKf5vHIs0Xds2LiNa3eNgax4R8hcqOyJ+ZpLMgM+dBaHC4rAZF4+S14d8p8/WzXa0qqV+NxP7UnLIt4eJ4ndLLvKCJTY9s91Xd09Pv9r2oz2KlcffpZV9+5HrgxloZA7c9XR+2awvRz4TiinIyeT/QhDDG89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723467015; c=relaxed/simple;
-	bh=e1KaX42oZAJAJMbEl7Hl/Uf9FVrBnvs4EClAfrvP4mw=;
+	s=arc-20240116; t=1723467073; c=relaxed/simple;
+	bh=CVNKSbLYEeSmnP+OvcToyXEeMut4bzfxHpnr90eyLe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIWxiFbzyenIwJkV9C23KH1jAL1oF86Eh/SvdLIQyXkYS29pqHjppxfmz4tNY+zScweDhGviepwHiMcqGy4hnMbJzR8ux+kAv27HXQs+30WBdG8/O8aNhKb+qKdQsI36lYrGmBm19UrBILw+96enVOsXMRfam9c4NGp5CwzSLa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZWVEH93T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95DB6C32782;
-	Mon, 12 Aug 2024 12:50:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723467014;
-	bh=e1KaX42oZAJAJMbEl7Hl/Uf9FVrBnvs4EClAfrvP4mw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZWVEH93TW+5hMhHZgdD60lTMGr0rBnl7IiqNahYPGoT7V2NgWTbs0Fi/djoIJjfPn
-	 hsOMBgYHPrMb20FsAhQr9i3CkvOHteVPylFgY417l4FPsrEIhrq/mlB9qFO4jY3+lY
-	 2VjgdelpEJJ1SOyd6IEx/KLWFraVTYrAcEpPHcQvQ2vy3hHwhNqXba4Vm/8HSpamIa
-	 tXVpWxkgtU51QOo5RCMLmEKyv5QGj53M92q+iktRHq6Qc5uJ9dXFHPTODFhj0jXSNc
-	 B24M+WlAA2WCUy6njtFeIRz4y7h4IwgyYh0x/zjhB8Cd3nlgJoZ1DfO5wLsPq2U+DJ
-	 csUH3h2g3fm2w==
-Date: Mon, 12 Aug 2024 13:50:08 +0100
-From: Simon Horman <horms@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	Jijie Shao <shaojijie@huawei.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH net-next 1/3] ipv6: Add
- ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
-Message-ID: <20240812125008.GB7679@kernel.org>
-References: <20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org>
- <20240812-ipv6_addr-helpers-v1-1-aab5d1f35c40@kernel.org>
- <827bbb8a-2d5b-44a4-81a2-258c7713ef59@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHg0gcCM/hm3AH65asrJ/WlEACBeRxbSLMojcrLGPOQQDdRjST41YCyALvFYrRovlRROTYzJnW3er/i8CQ/mT7cp/iJwGSjmumv+lK2rsHrjum5ooZAB+BO4YoH3dno4Tq989LjQhdshSa6QTVxFYQW4XFNJPDMEoNVnXgf3YpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Mesmbd63; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from localhost (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8A3E041515;
+	Mon, 12 Aug 2024 14:51:06 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+	by localhost (disroot.org [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id LMZAk-i2Lzoa; Mon, 12 Aug 2024 14:51:05 +0200 (CEST)
+Date: Mon, 12 Aug 2024 20:50:29 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1723467065; bh=CVNKSbLYEeSmnP+OvcToyXEeMut4bzfxHpnr90eyLe0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Mesmbd63hEeaQoftBXPQoJynz88NwARw7G72V5f155OtTf9cmFmu0+9037fxZN8YL
+	 uNs/Q+hjRyc1ETLg2ZNVx6tHZ5rLh3VjPexDkgU1pXOTXQcxgttkbUyDX0S9EfUfy+
+	 Myne47pt6dB9DuZGOW2bazzStrDfZpzXdMuMnsBugg1umSrHKeXZGlvMbtYQKbRQG3
+	 a23Cp2XSyevt/fyeqKSad1ZXpl/eN3KSn9Lg0eMysRPG0cpcfHJBpptcCobW4gwkXB
+	 B/HcLx5CpTBYKpr/+lwcfUj9IAu42HO1SHJstRn0MPycJbZdLEd4HO1TvYkSMirumR
+	 V+Mqub8U7NXJQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+	Andy Yan <andyshrk@163.com>,
+	Muhammed Efe Cetin <efectn@protonmail.com>,
+	Jagan Teki <jagan@edgeble.ai>, Ondrej Jirman <megi@xff.cz>,
+	Celeste Liu <CoelacanthusHex@gmail.com>, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+Message-ID: <ZroDTp6Y6ueODB0g@ziyaolaptop.my.domain>
+References: <20240811140725.64866-1-ziyao@disroot.org>
+ <20240811140725.64866-4-ziyao@disroot.org>
+ <24e2b1d2c970e894afd8849d501bcddd@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,22 +76,131 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <827bbb8a-2d5b-44a4-81a2-258c7713ef59@lunn.ch>
+In-Reply-To: <24e2b1d2c970e894afd8849d501bcddd@manjaro.org>
 
-On Mon, Aug 12, 2024 at 02:37:36PM +0200, Andrew Lunn wrote:
-> On Mon, Aug 12, 2024 at 01:11:55PM +0100, Simon Horman wrote:
-> > Add helper to convert an ipv6 addr, expressed as an array
-> > of words, from cpy to big-endian byte order.
+On Sun, Aug 11, 2024 at 11:39:18PM +0200, Dragan Simic wrote:
+> Hello Yao,
 > 
-> Hi Simon
+> Please see one comment below.
 > 
-> Is cpy supposed to be cpu?
+> On 2024-08-11 16:07, Yao Zi wrote:
+> > This initial device tree describes CPU, interrupts and UART on the chip
+> > and is able to boot into basic kernel with only UART. Cache information
+> > is omitted for now as there is no precise documentation. Support for
+> > other features will be added later.
+> > 
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 182 +++++++++++++++++++++++
+> >  1 file changed, 182 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > new file mode 100644
+> > index 000000000000..0596cdc38737
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > @@ -0,0 +1,182 @@
+> > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > +/*
+> > + * Copyright (c) 2022 Rockchip Electronics Co., Ltd.
+> > + * Copyright (c) 2024 Yao Zi <ziyao@disroot.org>
+> > + */
+> > +
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +
+> > +/ {
+> > +	compatible = "rockchip,rk3528";
+> > +
+> > +	interrupt-parent = <&gic>;
+> > +	#address-cells = <2>;
+> > +	#size-cells = <2>;
+> > +
+> > +	aliases {
+> > +		serial0 = &uart0;
+> > +		serial1 = &uart1;
+> > +		serial2 = &uart2;
+> > +		serial3 = &uart3;
+> > +		serial4 = &uart4;
+> > +		serial5 = &uart5;
+> > +		serial6 = &uart6;
+> > +		serial7 = &uart7;
+> > +	};
+> > +
+> > +	cpus {
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		cpu-map {
+> > +			cluster0 {
+> > +				core0 {
+> > +					cpu = <&cpu0>;
+> > +				};
+> > +				core1 {
+> > +					cpu = <&cpu1>;
+> > +				};
+> > +				core2 {
+> > +					cpu = <&cpu2>;
+> > +				};
+> > +				core3 {
+> > +					cpu = <&cpu3>;
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		cpu0: cpu@0 {
+> > +			compatible = "arm,cortex-a53";
+> > +			reg = <0x0>;
+> > +			device_type = "cpu";
+> > +			enable-method = "psci";
+> > +		};
+> > +
+> > +		cpu1: cpu@1 {
+> > +			compatible = "arm,cortex-a53";
+> > +			reg = <0x1>;
+> > +			device_type = "cpu";
+> > +			enable-method = "psci";
+> > +		};
+> > +
+> > +		cpu2: cpu@2 {
+> > +			compatible = "arm,cortex-a53";
+> > +			reg = <0x2>;
+> > +			device_type = "cpu";
+> > +			enable-method = "psci";
+> > +		};
+> > +
+> > +		cpu3: cpu@3 {
+> > +			compatible = "arm,cortex-a53";
+> > +			reg = <0x3>;
+> > +			device_type = "cpu";
+> > +			enable-method = "psci";
+> > +		};
+> > +	};
+> > +
+> > +	psci {
+> > +		compatible = "arm,psci-1.0", "arm,psci-0.2";
+> > +		method = "smc";
+> > +	};
+> > +
+> > +	timer {
+> > +		compatible = "arm,armv8-timer";
+> > +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(4) |
+> > IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
+> > +			     <GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
+> > +	};
+> > +
+> > +	xin24m: clk-24m {
+> 
+> Please use "xin24m: clock-xin24m { ... }" instead, because that follows
+> the recently established revised pattern for clock names.  We should have
+> come consistency in the new SoC dtsi additions.
 
-Yes, sorry about that.
+It's a careless typo, sorry for the noise. Will be fixed in next version.
 
-> 
-> Otherwise, please add: Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> 
->     Andrew
-> 
+Best regards,
+Yao Zi
 
