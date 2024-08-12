@@ -1,177 +1,140 @@
-Return-Path: <linux-kernel+bounces-282960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E865994EB49
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:36:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120A994EB52
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77EF61F22A98
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C26FD282730
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BEE170836;
-	Mon, 12 Aug 2024 10:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T2JcfTjP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AEB170A3D;
+	Mon, 12 Aug 2024 10:40:02 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215A516F0E3;
-	Mon, 12 Aug 2024 10:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B922170A10;
+	Mon, 12 Aug 2024 10:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723459003; cv=none; b=QzLYSPJeKsf0pVQbPDWMEvC4yh69iZWYU5D6tBWq6Rpf3rzs/pfzeiXqtnj+jGd2xsFnL5c53owOJXwHngkrFM4ikAUYXCfABXQgn4/BAxsRwoNt6L8AcFw31pAEiqVRJhLctYCdncYmbBG0Qv4kbMR8hCBeHSZqNhQThbFXQoU=
+	t=1723459201; cv=none; b=s5V6aae5FvoiEu7QU5ZuibiOdgm043yG9V32eU8MR7etP1E8+yxWFGYVjPo839Y81bbGq+RPLF4L4Xm9VzPiGygLKVbUOP5cDYwo+U3Uvj5TuTxFZSJe1a3c3c6zplpLqjiz7B7LKK9qQAtOZoxusKMcuA+IiMzUFMyBJgAiODs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723459003; c=relaxed/simple;
-	bh=Qb6jAUhVjK8W6QarbFw1RfFPANuHV8vfIMDQdFdwoc0=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=qpLEHnA2VNytUO3rVM3MGwCCx8VO85LoI6bQ/bpKYZplFTZIY6DwlKuW6NdrFw/Pk57/gTZVUMIRY8CsrD52484R1HCGSY7W8RxvdQUpFoN2nqFT4k/8cJCdA3BMhbNJOFyWLf+JXBZ/gyOCkXkYYPM+v8HLZ+8pgKlb3yOmziM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T2JcfTjP; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723459002; x=1754995002;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Qb6jAUhVjK8W6QarbFw1RfFPANuHV8vfIMDQdFdwoc0=;
-  b=T2JcfTjPzOWshwt8+kKHExUVuYOHMh1AoRf6TfLYeqRUnLa5yI/eJmGQ
-   4Oh5rThFMenKKashXzG3RljP5jn/VqFVQsDuq76WaVBN/GP818BzHNV5D
-   2aIGU5FAXjJQkarIktoyib1zZVcvvOn+wRA1J3VzXkcJWomsJCasNT2Cc
-   krr+r51gpM9To3QWfq58z/G88k8UVQ209q5pkS6HjIKTeUau/RjhwCeOP
-   esLcRcvahZEJsqPgBiMmZnBvJh0wWT0o5GL7gn7ASVX7GTjhO/gf4NyPl
-   6ly3ZtCdd+QSf+N6+VvoksML0HSojpA6XmbnInOkitEqKxb8IupeH9LJs
-   Q==;
-X-CSE-ConnectionGUID: mP1Z5jtMQh+dnvtDaqKRIg==
-X-CSE-MsgGUID: e5bqMv+RQ+qP5bnct++/bQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="32138253"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="32138253"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:36:40 -0700
-X-CSE-ConnectionGUID: MKR8R4EvS4+eZ/HCfqXS0w==
-X-CSE-MsgGUID: bu/JthxeQUiR02FtOSI8mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="62617183"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.25])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 03:36:38 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 12 Aug 2024 13:36:36 +0300 (EEST)
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-cc: Matthew W Carlis <mattc@purestorage.com>, 
-    Bjorn Helgaas <bhelgaas@google.com>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Oliver O'Halloran <oohall@gmail.com>, linux-pci@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/4] PCI: Revert to the original speed after PCIe
- failed link retraining
-In-Reply-To: <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
-Message-ID: <d2110cf7-7dd1-73b3-d139-746588b2967f@linux.intel.com>
-References: <alpine.DEB.2.21.2408091017050.61955@angie.orcam.me.uk> <alpine.DEB.2.21.2408091204580.61955@angie.orcam.me.uk>
+	s=arc-20240116; t=1723459201; c=relaxed/simple;
+	bh=xCsYDVX1SIMmI3WsGtCGKeTYuTPXPlKecf6vZhRK6yU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fEpNtgYpXRBsRHvFe2GcJzBG0TRe31yX7uUOXg6vvM96ajpzUVSousW3aNUFjLzEj5Glh+0VycofddwOkb9G96fmjkQJfPAcPFZbi57MJ8vbNkVep9Q/iOzhsD88pVHdCSY6aUYs5HVzSwpY9qUfUzJbrBtcQ9OVkGg9Puh1QMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Cc: "Jose E . Marchesi" <jose.marchesi@oracle.com>,
+	Andrew Pinski <quic_apinski@quicinc.com>,
+	=?UTF-8?q?Kacper=20S=C5=82omi=C5=84ski?= <kacper.slominski72@gmail.com>,
+	=?UTF-8?q?Arsen=20Arsenovi=C4=87?= <arsen@gentoo.org>,
+	Sam James <sam@gentoo.org>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] libbpf: workaround -Wmaybe-uninitialized false positive
+Date: Mon, 12 Aug 2024 11:37:59 +0100
+Message-ID: <12cec1262be71de5f1d9eae121b637041a5ae247.1723459079.git.sam@gentoo.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-1136569245-1723458996=:1039"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+In `elf_close`, we get this with GCC 15 -O3 (at least):
+```
+In function ‘elf_close’,
+    inlined from ‘elf_close’ at elf.c:53:6,
+    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
+elf.c:57:9: warning: ‘elf_fd.elf’ may be used uninitialized [-Wmaybe-uninitialized]
+   57 |         elf_end(elf_fd->elf);
+      |         ^~~~~~~~~~~~~~~~~~~~
+elf.c: In function ‘elf_find_func_offset_from_file’:
+elf.c:377:23: note: ‘elf_fd.elf’ was declared here
+  377 |         struct elf_fd elf_fd;
+      |                       ^~~~~~
+In function ‘elf_close’,
+    inlined from ‘elf_close’ at elf.c:53:6,
+    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
+elf.c:58:9: warning: ‘elf_fd.fd’ may be used uninitialized [-Wmaybe-uninitialized]
+   58 |         close(elf_fd->fd);
+      |         ^~~~~~~~~~~~~~~~~
+elf.c: In function ‘elf_find_func_offset_from_file’:
+elf.c:377:23: note: ‘elf_fd.fd’ was declared here
+  377 |         struct elf_fd elf_fd;
+      |                       ^~~~~~
+```
 
---8323328-1136569245-1723458996=:1039
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+In reality, our use is fine, it's just that GCC doesn't model errno
+here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly
+by initializing elf_fd.elf to -1.
 
-On Fri, 9 Aug 2024, Maciej W. Rozycki wrote:
+I've done this in two other functions as well given it could easily
+occur there too (same access/use pattern).
 
-> When `pcie_failed_link_retrain' has failed to retrain the link by hand=20
-> it leaves the link speed restricted to 2.5GT/s, which will then affect=20
-> any device that has been plugged in later on, which may not suffer from=
-=20
-> the problem that caused the speed restriction to have been attempted. =20
-> Consequently such a downstream device will suffer from an unnecessary=20
-> communication throughput limitation and therefore performance loss.
->=20
-> Remove the speed restriction then and revert the Link Control 2 register=
-=20
-> to its original state if link retraining with the speed restriction in=20
-> place has failed.  Retrain the link again afterwards to remove any=20
-> residual state, ignoring the result as it's supposed to fail anyway.
->=20
-> Fixes: a89c82249c37 ("PCI: Work around PCIe link training failures")
-> Reported-by: Matthew W Carlis <mattc@purestorage.com>
-> Link: https://lore.kernel.org/r/20240806000659.30859-1-mattc@purestorage.=
-com/
-> Link: https://lore.kernel.org/r/20240722193407.23255-1-mattc@purestorage.=
-com/
-> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
-> Cc: stable@vger.kernel.org # v6.5+
-> ---
-> New change in v2.
-> ---
->  drivers/pci/quirks.c |   11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> linux-pcie-failed-link-retrain-fail-unclamp.diff
-> Index: linux-macro/drivers/pci/quirks.c
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> --- linux-macro.orig/drivers/pci/quirks.c
-> +++ linux-macro/drivers/pci/quirks.c
-> @@ -66,7 +66,7 @@
->   * apply this erratum workaround to any downstream ports as long as they
->   * support Link Active reporting and have the Link Control 2 register.
->   * Restrict the speed to 2.5GT/s then with the Target Link Speed field,
-> - * request a retrain and wait 200ms for the data link to go up.
-> + * request a retrain and check the result.
->   *
->   * If this turns out successful and we know by the Vendor:Device ID it i=
-s
->   * safe to do so, then lift the restriction, letting the devices negotia=
-te
-> @@ -74,6 +74,10 @@
->   * firmware may have already arranged and lift it with ports that alread=
-y
->   * report their data link being up.
->   *
-> + * Otherwise revert the speed to the original setting and request a retr=
-ain
-> + * again to remove any residual state, ignoring the result as it's suppo=
-sed
-> + * to fail anyway.
-> + *
->   * Return TRUE if the link has been successfully retrained, otherwise FA=
-LSE.
->   */
->  bool pcie_failed_link_retrain(struct pci_dev *dev)
-> @@ -92,6 +96,8 @@ bool pcie_failed_link_retrain(struct pci
->  =09pcie_capability_read_word(dev, PCI_EXP_LNKSTA, &lnksta);
->  =09if ((lnksta & (PCI_EXP_LNKSTA_LBMS | PCI_EXP_LNKSTA_DLLLA)) =3D=3D
->  =09    PCI_EXP_LNKSTA_LBMS) {
-> +=09=09u16 oldlnkctl2 =3D lnkctl2;
-> +
->  =09=09pci_info(dev, "broken device, retraining non-functional downstream=
- link at 2.5GT/s\n");
-> =20
->  =09=09lnkctl2 &=3D ~PCI_EXP_LNKCTL2_TLS;
-> @@ -100,6 +106,9 @@ bool pcie_failed_link_retrain(struct pci
-> =20
->  =09=09if (pcie_retrain_link(dev, false)) {
->  =09=09=09pci_info(dev, "retraining failed\n");
-> +=09=09=09pcie_capability_write_word(dev, PCI_EXP_LNKCTL2,
-> +=09=09=09=09=09=09   oldlnkctl2);
-> +=09=09=09pcie_retrain_link(dev, false);
->  =09=09=09return false;
->  =09=09}
+Link: https://gcc.gnu.org/PR114952
+Signed-off-by: Sam James <sam@gentoo.org>
+---
+v3: Initialize to -1 instead of using a pragma.
 
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+Range-diff against v2:
+1:  8f5c3b173e4cb < -:  ------------- libbpf: workaround -Wmaybe-uninitialized false positive
+-:  ------------- > 1:  12cec1262be71 libbpf: workaround -Wmaybe-uninitialized false positive
 
---=20
- i.
+ tools/lib/bpf/elf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---8323328-1136569245-1723458996=:1039--
+diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
+index c92e02394159e..00ea3f867bbc8 100644
+--- a/tools/lib/bpf/elf.c
++++ b/tools/lib/bpf/elf.c
+@@ -374,7 +374,7 @@ long elf_find_func_offset(Elf *elf, const char *binary_path, const char *name)
+  */
+ long elf_find_func_offset_from_file(const char *binary_path, const char *name)
+ {
+-	struct elf_fd elf_fd;
++	struct elf_fd elf_fd = { .fd = -1 };
+ 	long ret = -ENOENT;
+ 
+ 	ret = elf_open(binary_path, &elf_fd);
+@@ -412,7 +412,7 @@ int elf_resolve_syms_offsets(const char *binary_path, int cnt,
+ 	int err = 0, i, cnt_done = 0;
+ 	unsigned long *offsets;
+ 	struct symbol *symbols;
+-	struct elf_fd elf_fd;
++	struct elf_fd elf_fd = { .fd = -1 };
+ 
+ 	err = elf_open(binary_path, &elf_fd);
+ 	if (err)
+@@ -507,7 +507,7 @@ int elf_resolve_pattern_offsets(const char *binary_path, const char *pattern,
+ 	int sh_types[2] = { SHT_SYMTAB, SHT_DYNSYM };
+ 	unsigned long *offsets = NULL;
+ 	size_t cap = 0, cnt = 0;
+-	struct elf_fd elf_fd;
++	struct elf_fd elf_fd = { .fd = -1 };
+ 	int err = 0, i;
+ 
+ 	err = elf_open(binary_path, &elf_fd);
+-- 
+2.45.2
+
 
