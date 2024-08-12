@@ -1,228 +1,115 @@
-Return-Path: <linux-kernel+bounces-283842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB79F94F95C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:08:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDA294F96C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:13:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9F4AB21ED0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:08:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716531F230B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FF9189BB7;
-	Mon, 12 Aug 2024 22:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38591957E9;
+	Mon, 12 Aug 2024 22:13:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eWh6mMt1"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzgd/zIy"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7EC18F2FF
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461E41514E4
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:13:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723500491; cv=none; b=sHlmbO8ORAWjUnceNEheTgAeFY4RtOuI9KQu8Wc31AKs2VdwtNZ2OA6ME/tAFvmEpffPp1c5P+yHmk3i/nmKWMpCwYrGuQeHVOxArdE4iIAJdqaVOIA090PknZ5J/Mg5rhl7NFaBWO1rjpzCjlehTXgKlO7LM8Sq4zpeRu7/WhM=
+	t=1723500786; cv=none; b=Qw1R5Il63q0DWWU+5/C/8UEE94wzIUIRCZqWgrojxhcQgrwqUX4MyDvIK7rXLdtBu3ZP+vINL/WLYsmyaA+jXw+H7pczakvAIX2rWr/44CYZ9elvmyUcjXOfVsHTl6L9q9+V6W8Vh29Rly5+5Ryw86ZRdjngKlLWHLElzS7k+1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723500491; c=relaxed/simple;
-	bh=hS4PFzGGmRHQ91HzYiGio9LNDlTJW/eeSBjH4jFJR1c=;
+	s=arc-20240116; t=1723500786; c=relaxed/simple;
+	bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uQpDa+pOeQ3b/K7pfys0jHccACVHzQiOE5XkJ/ouVz8A4TH6lysrCt4qXHrUWkTnCxJAHxTE2d81zAsURDU4EjfFDCe9V+hWvXtuIPlSVySfJ6qBYDnX1FGglok4pWf/rEU9cgsR0IqFTh3IH0Li8HirMNKj5QqyjmUJ1hh75Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eWh6mMt1; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ef7fef3ccfso50504101fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:08:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=ErDWgFsEafO7bf89Ve++F35UaTQrVM2OhIdNgxvPMx4KeTCMwQyx6Jni4JtgFqysyzGuzKK9KT57MwKY4CvEUwk+9BuXSSna8QT25AC1XJB6HagJX18PTHqWLjHWHViDdFyeR5Q7/RtdHIWAYQpBqqTzQwCBpzC1ytdwcc7V+ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzgd/zIy; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b7b23793c1so28978126d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:13:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723500487; x=1724105287; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wJD+K6HF+uy1E1iBXbp3RF7k00PzvLXeRvZKU5PRmD0=;
-        b=eWh6mMt1pzE4exdrttjhliHyr+m9X+/rbAqoSQu8NyB2Uuv55Kq19UKbTTMyDjt8ul
-         uy6dR+cOPlctyru8KrCm5XQr3vx7l+K+HW+uGbemFgISzyE3tfeLvI5asuL9sX/b19/J
-         XZ6NW7OuI3GojIrO4Vp+DZnP0zb6xTkcR6hxw=
+        d=google.com; s=20230601; t=1723500783; x=1724105583; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
+        b=vzgd/zIy/a8CtrKn+aMa6+W6QV9pflfnj1q3DWNiRj50Ln/3Yzj5mYSiu+5crxGChr
+         vo2Gp/GbQFllVDbaaiJ3+TcGCjQ1c+vFPcPRod+9qK1vCM05C62H4PlPu9LpDggB1bkS
+         qaPpBwf2N/nllYKnWJFUHKR+4DPb5Jz0EflzpxvzAKZSnOQ4bOPj01efO+VW8i0OIiQB
+         7LpgID7pv/XnQxFrh5a2htHHAUcrom4dr4CrXjdwqiaGKOQipsdU303WLLe28ssigvrP
+         MzDi4oCWXNLGYZOjYxGzYITusEh/9fplhLt4iHeAVp0GCrU3Snx6Nxp5Iew5UCWfaXel
+         k8sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723500487; x=1724105287;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wJD+K6HF+uy1E1iBXbp3RF7k00PzvLXeRvZKU5PRmD0=;
-        b=AKwaFa/WUzOQeCB+vFYgYL57Q2WLAUSn4k6PvP6l/FRgDvzsJ9CkmcIMwfCndI/Kjx
-         Lvy//EyhHhQr/Q3S4di9yvRLlCiz4ah5TvUYDPQw1lZeqI0y7KRHE+Pxt52KQTPzqcoL
-         KbO1/v21vJQPTEm9kp+JrUQtjhvQNpdNBPFM3CzWHHfblyDW598lxuq3uOReJo2fcxNS
-         Mre3QGQQiws1bD+rPAwe5ZsnonwvJgkUtztedfy/dzUSDbwX7tqvGGxifm09c4KCgPnA
-         1PJsiYoNTkiLS3aMuhwjQqUgoIdEeytLANTHhbtlNJzoYAp0GHCoc7q4SKlG68t8fWd9
-         Z0aw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8MiI59PepuDFqWtqQq09gKr0QlpAnz+vZalS/CnbTmqLX/XTzTCr1iENgd6+1M5EJ3ntCKoJ/8SoqK+DmbbaZhxtjCxKj/wcLI8lR
-X-Gm-Message-State: AOJu0YwIkvkMZ97yC4DmYjGz8GtQm+gGf81X7Y+RYD5Kq2uzyhBe22R7
-	G1ItiYUZqyOYtqI9l2ks/02mwGIIbsnOMgW8lvUiH6wfBrwFNPwvIMoSql/QF/JVPGKoByT/p8C
-	+w7oJUg/ySstjox5zhVZnxAX9JZ8SF8OFyKB3
-X-Google-Smtp-Source: AGHT+IFAx7sGDDlGwr1hndA0m2QaJuZJVM0kLVythRX71pDJgHYrbFgJ/Kelfwto6TakZ8DWZumnlHd8nFOe9+aU//Y=
-X-Received: by 2002:a2e:a99f:0:b0:2ef:2eb6:e3ed with SMTP id
- 38308e7fff4ca-2f2b712cc81mr13371061fa.4.1723500487184; Mon, 12 Aug 2024
- 15:08:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723500783; x=1724105583;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
+        b=UBcYYvstW/ucaBqdG7q973k0ww0lKHt4mY2xjsTLMesClGrBxyj22sydw/KPsQatyx
+         bVLxUaSN1bs2zmbPFuZwB1fGHpxGlLymTyMlEf/fYoygN1AtQZhh9aIVhKLKI9paKKaC
+         s9CSxfI1lUz6IMeGiwCdhYVQhinSJlo2a3UNQBhr7kTRA76p6MXXbRETZC34kI2QhsjR
+         UzKHViHNbAaHF4+OlVYh3IzJlFKIm/nmFFg9+JLE+5KughRkztos+54Bno/w0ansQyaB
+         odWK4jxic1mi/4FNvLrcTdg2g3OKJXudw1+YHws6CmZn8qQjlrpzTb0836auvmDUpy3q
+         9xUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXPI9IH13GXs+Y78/jlxQya+PY/oQVHujlsRMiri0iF7kLDzWstGc+WT3q7JdKARaZJokaUFHa03PwVyWAgDlaxW02JLIpdOlCJKzO
+X-Gm-Message-State: AOJu0YxNQl8/a73ZdpCsmKexIy9XB5sFoCLw47D5NuH74KmvSgM7jvRz
+	256TSqaRweSaXJva3AFCMVgs6ZVPeUQBdY2l1XlwBTgVHi78zM/2f6fgCDn2TdHifvNIeHJOT/5
+	seyYhUyTjZ45q9vp1GeSsmQreDi7utrdpLAdx
+X-Google-Smtp-Source: AGHT+IEoO+b9pY7C5DoqMaKmNrfWrx3T3pQDUYneGHRDOHmrDXK+WYRUv2ZXVfLXYFWMQ9tgg2yWFX1PctT326bWJv4=
+X-Received: by 2002:a05:6214:3a03:b0:6b9:5cf1:65a3 with SMTP id
+ 6a1803df08f44-6bf4f84c149mr17036116d6.43.1723500782966; Mon, 12 Aug 2024
+ 15:13:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-2-james.quinlan@broadcom.com> <e1002187-fca0-455c-840c-32489e5eadb4@kernel.org>
-In-Reply-To: <e1002187-fca0-455c-840c-32489e5eadb4@kernel.org>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 12 Aug 2024 18:07:54 -0400
-Message-ID: <CA+-6iNzDcF3pA1T3FuGNS4NPn1RrjHxxAVStN6t++xDsx-wUXQ@mail.gmail.com>
-Subject: Re: [PATCH v5 01/12] dt-bindings: PCI: Cleanup of brcmstb YAML and
- add 7712 SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000569e68061f83bad7"
-
---000000000000569e68061f83bad7
+References: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com> <20240809114854.3745464-2-kirill.shutemov@linux.intel.com>
+In-Reply-To: <20240809114854.3745464-2-kirill.shutemov@linux.intel.com>
+From: Jianxiong Gao <jxgao@google.com>
+Date: Mon, 12 Aug 2024 15:12:50 -0700
+Message-ID: <CAMGD6P0ckHzobW1j2GvqqZ3mNUHCBfP9xM-15s8B6yOfdv8MPg@mail.gmail.com>
+Subject: Re: [PATCHv2 1/8] mm: Fix endless reclaim on machines with unaccepted memory
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Mike Rapoport <rppt@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 2, 2024 at 2:43=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.org=
-> wrote:
+On Fri, Aug 9, 2024 at 4:49=E2=80=AFAM Kirill A. Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
 >
-> On 01/08/2024 00:28, Jim Quinlan wrote:
-> > o Change order of the compatible strings to be alphabetical
-> > o Use "maxItems" where needed.
+> Unaccepted memory is considered unusable free memory, which is not
+> counted as free on the zone watermark check. This causes
+> get_page_from_freelist() to accept more memory to hit the high
+> watermark, but it creates problems in the reclaim path.
 >
-> I asked at v3 and then in v4 about splitting this. You never responded
-> to that comment, so sorry I won't be repeating the same thing in v5.
-
-I'm sorry Krzyszof, but I just reviewed your responses in V3 and V4
-and I can't find you saying anything about splitting off the above two
-bullet points.  Perhaps I am somehow losing email responses but all I
-see is this in V3 is the following, where you ask me to do a squash,
-not a commit:
-
-    [JQ] o Change order of the compatible strings to be alphabetical
-    []KK] That's a cleanup. You can squash it with a previous patch.
-
-Now you did say in V3
-
-    [JQ] o Describe resets/reset-names before using them in rules
-    [KK] That's a new commit.
-
-but this bullet item does not relate to the bullet points you have
-highlighted in this email.    As for your responses to V4, I don't see
-anything about splitting anything.  Again, perhaps I have somehow
-missed an email.
-
-Rather than do more round trips of email, can you confirm that this is
-what you want:
-
-A new "dt bindings" commit that only includes the changes of
-    o Change order of the compatible strings to be alphabetical
-    o Use "maxItems" where needed.
-
-If the above is not what you want, please tell me unequivocally what
-you would like changed, even if you think you are repeating yourself.
-
-Regards and thanks,
-Jim Quinlan
-Broadcom STB/CM
-
-
-
+> The reclaim path encounters a failed zone watermark check and attempts
+> to reclaim memory. This is usually successful, but if there is little or
+> no reclaimable memory, it can result in endless reclaim with little to
+> no progress. This can occur early in the boot process, just after start
+> of the init process when the only reclaimable memory is the page cache
+> of the init executable and its libraries.
 >
-> NAK.
+> Make unaccepted memory free from watermark check point of view. This way
+> unaccepted memory will never be the trigger of memory reclaim.
+> Accept more memory in the get_page_from_freelist() if needed.
 >
-> Best regards,
-> Krzysztof
->
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reported-by: Jianxiong Gao <jxgao@google.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
+> Cc: stable@vger.kernel.org # v6.5+
 
---000000000000569e68061f83bad7
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDMHoSyYhOvFwf7z973BfdIXRtYKN3M
-y22VNzsp1ePTNzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTIyMjA4MDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAifrUFyNLcvXhQcuDO3rRNy9lDCgQ7MUwj0V0otBJxiO8XI+9
-FHpxtEIRpHZbsmmzwxQLa3LNTQUgsIHmBZ0mOugufGgK7VhBkUUz0ta7STLc+4QbsH3eZT26S2RB
-gdW+R4myNc1dbkN+4s/CUaFboOO6RepZkVqtLXS0DjBp1xMZv0SlpO9jx7khpu+VLhH4jgxK4e2c
-1wBsTMvfNz5mkPICeZuRhiwhYEospf7bjgMyT1jCJXkgn8tCgpBXp2sseXfvjh5oNUN5dJYXAdmd
-15u3rvDlyv+YP20u3rVLuVcJXojBPfVVUVmUOcyDwkF28KbMbB8efcv16uEs6D/5pg==
---000000000000569e68061f83bad7--
+Tested-by: Jianxiong Gao <jxgao@google.com>
+I have verified that the patch fixes the systemd issue reported.
 
