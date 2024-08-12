@@ -1,92 +1,73 @@
-Return-Path: <linux-kernel+bounces-282963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 305A794EB50
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7171D94EB59
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:41:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05562B22476
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D4D8282F2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:41:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B842170828;
-	Mon, 12 Aug 2024 10:39:59 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E576170A08;
+	Mon, 12 Aug 2024 10:41:08 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2EF116F0F0;
-	Mon, 12 Aug 2024 10:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B140816DEAD;
+	Mon, 12 Aug 2024 10:41:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723459198; cv=none; b=L1wXPyRQLOC7qMgYwqbrI6VU35Y4yhyffiefZaEWbavf2NDiAJyaUMI6GgukOJKBEpb4yl4Z2/xYk5+NWmSayLYjozCK4fwErPg+jCi4YhomDJooIlNpwP20faH+p9/gG0Hh4poH3mEDO6LkLlvzmI7CfLifaPGJoAiV+u2heXA=
+	t=1723459268; cv=none; b=ZMq88xbuPruWq9rE2NAYBW9HIBEfJdcObShHEqfwXKFNvMQhV8MEpGEGcp21cNPCmvMnkLNIXfC8BLzrMq8eQ/9tQXvK9p0pa0Pr0U/sIXITlXW//QOywfCsiL+YyxfQXJbVvBMhLMyo9jEHungW3O0iuvE5q1dRRfVRM56o8ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723459198; c=relaxed/simple;
-	bh=7yshrb7EAQvkzk5Q9ETU2xj918YJqk3szZ2wdaNW8S0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcWINXp1HJM3up8stBzbAJ7vE/A4AOr3QW4leznZDAWVACvI2OEZE7REQwIKlgl57LFU3t396z6i80KJiCaNu1UcZa8SrFG3upbRLgUtrKRHS9E+E5mPE7/uLJyCuK/lJmF/+dwZ6vq/r25G+EtKeg7UdiytZlltlsBXLIIbNe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5A66C32782;
-	Mon, 12 Aug 2024 10:39:54 +0000 (UTC)
-Date: Mon, 12 Aug 2024 11:39:52 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: bhe@redhat.com, vgoyal@redhat.com, dyoung@redhat.com,
-	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-	kexec@lists.infradead.org, linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH -next v2] crash: Fix riscv64 crash memory reserve dead
- loop
-Message-ID: <ZrnmeKCgHc1XgUdU@arm.com>
-References: <20240812062017.2674441-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1723459268; c=relaxed/simple;
+	bh=mrKMVI6736FaMlR2FwpVoV8uktYgiiLL5X46u7/zEVs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=M1mmVMlWfNVPvOFZYzDRLKAJr9ve+3iYAEQ9p0OEJYDcA8NKz8s3us4zCnwoyy8dWcIjJuxaMQjLdeUJ8qv7gvKohicjOvTMkb+60YSeDv/aMXThsK528sUeg16+Bp3iU2+Tp6JTpGlqpo09InI8L5a4x6hHL4KdzJBiGu/PdNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+From: Sam James <sam@gentoo.org>
+To: Alan Maguire <alan.maguire@oracle.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,  Daniel Borkmann
+ <daniel@iogearbox.net>,  Andrii Nakryiko <andrii@kernel.org>,  Martin
+ KaFai Lau <martin.lau@linux.dev>,  Eduard Zingerman <eddyz87@gmail.com>,
+  Song Liu <song@kernel.org>,  Yonghong Song <yonghong.song@linux.dev>,
+  John Fastabend <john.fastabend@gmail.com>,  KP Singh
+ <kpsingh@kernel.org>,  Stanislav Fomichev <sdf@fomichev.me>,  Hao Luo
+ <haoluo@google.com>,  Jiri Olsa <jolsa@kernel.org>,  Nathan Chancellor
+ <nathan@kernel.org>,  Nick Desaulniers <ndesaulniers@google.com>,  Bill
+ Wendling <morbo@google.com>,  Justin Stitt <justinstitt@google.com>,
+  "Jose E . Marchesi" <jose.marchesi@oracle.com>,  Andrew Pinski
+ <quic_apinski@quicinc.com>,  Kacper =?utf-8?B?U8WCb21pxYRza2k=?=
+ <kacper.slominski72@gmail.com>,  Arsen =?utf-8?Q?Arsenovi=C4=87?=
+ <arsen@gentoo.org>,
+  bpf@vger.kernel.org,  linux-kernel@vger.kernel.org,  llvm@lists.linux.dev
+Subject: Re: [PATCH v2] libbpf: workaround -Wmaybe-uninitialized false positive
+In-Reply-To: <3c9e6cbe-f768-48b1-9e37-779971fd1146@oracle.com> (Alan Maguire's
+	message of "Fri, 9 Aug 2024 18:48:32 +0100")
+Organization: Gentoo
+References: <8f5c3b173e4cb216322ae19ade2766940c6fbebb.1723224401.git.sam@gentoo.org>
+	<3c9e6cbe-f768-48b1-9e37-779971fd1146@oracle.com>
+Date: Mon, 12 Aug 2024 11:40:58 +0100
+Message-ID: <87mslija6d.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812062017.2674441-1-ruanjinjie@huawei.com>
+Content-Type: text/plain
 
-On Mon, Aug 12, 2024 at 02:20:17PM +0800, Jinjie Ruan wrote:
-> On RISCV64 Qemu machine with 512MB memory, cmdline "crashkernel=500M,high"
-> will cause system stall as below:
-> 
-> 	 Zone ranges:
-> 	   DMA32    [mem 0x0000000080000000-0x000000009fffffff]
-> 	   Normal   empty
-> 	 Movable zone start for each node
-> 	 Early memory node ranges
-> 	   node   0: [mem 0x0000000080000000-0x000000008005ffff]
-> 	   node   0: [mem 0x0000000080060000-0x000000009fffffff]
-> 	 Initmem setup node 0 [mem 0x0000000080000000-0x000000009fffffff]
-> 	(stall here)
-> 
-> commit 5d99cadf1568 ("crash: fix x86_32 crash memory reserve dead loop
-> bug") fix this on 32-bit architecture. However, the problem is not
-> completely solved. If `CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX` on 64-bit
-> architecture, for example, when system memory is equal to
-> CRASH_ADDR_LOW_MAX on RISCV64, the following infinite loop will also occur:
-> 
-> 	-> reserve_crashkernel_generic() and high is true
-> 	   -> alloc at [CRASH_ADDR_LOW_MAX, CRASH_ADDR_HIGH_MAX] fail
-> 	      -> alloc at [0, CRASH_ADDR_LOW_MAX] fail and repeatedly
-> 	         (because CRASH_ADDR_LOW_MAX = CRASH_ADDR_HIGH_MAX).
-> 
-> As Catalin suggested, do not remove the ",high" reservation fallback to
-> ",low" logic which will change arm64's kdump behavior, but fix it by
-> skipping the above situation similar to commit d2f32f23190b ("crash: fix
-> x86_32 crash memory reserve dead loop").
-> 
-> After this patch, it print:
-> 	cannot allocate crashkernel (size:0x1f400000)
-> 
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
+Alan Maguire <alan.maguire@oracle.com> writes:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> On 09/08/2024 18:26, Sam James wrote:
+>> In `elf_close`, we get this with GCC 15 -O3 (at least):
+> [...]
+>
+> Would just initializing struct elf_fd be enough to silence the error
+> perhaps, i.e.
 
-Thanks.
+Yeah, that WFM. Thanks, sent v3.
 
