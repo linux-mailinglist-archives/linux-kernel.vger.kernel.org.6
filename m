@@ -1,109 +1,79 @@
-Return-Path: <linux-kernel+bounces-282927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E136094EAA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:22:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99B3B94EAAD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC1FB21342
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:22:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCA8A1C214A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FA716EBED;
-	Mon, 12 Aug 2024 10:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60ECB16EC17;
+	Mon, 12 Aug 2024 10:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PFOQ8hqq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CzrQVGUu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F91116EB76;
-	Mon, 12 Aug 2024 10:22:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA9616EB79;
+	Mon, 12 Aug 2024 10:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723458126; cv=none; b=pIa3Teub9np0tQ/k786KKahPJ2niQOf9KTBiq9+EIFdKthrXW+Ff8PPfz9DH0/gctEa7LhbWs/mB4uhYLNhBiebbkQPzXrkzOtcAYKDd9oHWiyc1+u3OyXnjEk+n3qS3ZY3F6gGRj4R918/7cAWrjMk/9WICGpQK0SyhLGtVVKY=
+	t=1723458146; cv=none; b=i6M4q5BD315D4gfLOcpq3X8nIFEMxS4fRwiACSgah/PbUY3mD2GuVp68i1zT5+EvL8IxLxHYt2wmAFCAP84H263E9wNyOjDMadW/a5h3v/wJF/b1UJ+Edg86hkpzE2BE6Mxp21UkOFEsfczCGVLhT6d2Xia9trYRhUbLwoRQY4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723458126; c=relaxed/simple;
-	bh=mXVVIu4+qZY7l0BsfOFXqRGQkdyYfMDlSfr8awgwSnY=;
+	s=arc-20240116; t=1723458146; c=relaxed/simple;
+	bh=BzOa45nizXmPfTNw2HBpcKGNcVahtK9fFG2WEryxV2k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E5Em//T/YIelS6+ZSWZrmf0N95pKIx1fFSZh0Bvtp/D3L7QFODysO29QPA0vF7cwf7c+MvuwYnU5O9lUBVbjZLYnWfDzLDF2HZZ8HpDBb3PrQ7XOF2R8E/VSdbViMN3iZXrfiN8zBFRRu8QItrs7Ty5nG0951zqwGmKkh56YrIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PFOQ8hqq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94BD7C32782;
-	Mon, 12 Aug 2024 10:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723458126;
-	bh=mXVVIu4+qZY7l0BsfOFXqRGQkdyYfMDlSfr8awgwSnY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLTJMMYd3aTVQsKH4YFbUmyjM4P/J/0ogF/NSb1h190YpXDVMFEriZGiGF4L6vVbeLF5RGWUc53pgcek2M2qAwuUVSrASefxOpnkOm8P+el2uXz4/FSnth5JcdW0Od84MUWTEt5lAmJ5QmPV0hqotAib28CHkH4xHkPYvV6YhcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CzrQVGUu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 827A4C32782;
+	Mon, 12 Aug 2024 10:22:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723458146;
+	bh=BzOa45nizXmPfTNw2HBpcKGNcVahtK9fFG2WEryxV2k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PFOQ8hqqSdEC6pLGqQ2vqFxnwTftAmHj6Q2/tVMdc96ouS3zG2lxA58cdXEwH+QFY
-	 FnteX2xntHa6zxWAUrQGss6qkApJAIN6pnSp03Yn2ggwX7CtCQsCzGzButh9/VtsCQ
-	 iz6qcrROkeFNvHVjrpUEMegCVljI9tJoWbWasAa0=
-Date: Mon, 12 Aug 2024 12:22:03 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: Jinjie Ruan <ruanjinjie@huawei.com>, linux-modules@vger.kernel.org,
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] driver core: Fix a null-ptr-deref in module_add_driver()
-Message-ID: <2024081255-yearly-unaligned-f2ed@gregkh>
-References: <20240812080658.2791982-1-ruanjinjie@huawei.com>
- <7ea59d03-701c-4555-a8e8-5d7272b9381c@web.de>
+	b=CzrQVGUuIj4MyJAeuzCGhfyrfxylp2nwWmoPtpDVEzPvRsKJGW2JOJ2hn+0xEGZWI
+	 kPWROC1FLY6qR+6mTp6ZM1U3FFjWIosXnMhPQLi6YIq22x/XnbLB1a0ch+AfXBj5HC
+	 Zb2HihvIiwjbGxHOlxdHyziJgwdBfO/oMXoHMRMnGnOAXw2Uqgxu5WSAQn4pDpDW51
+	 hyhl7aphS8dtwfokWdsht7+LHAaOYo+bLJh0D2z91qygdumSPb+A4HM0eF1Sr4dsF3
+	 znXqMYmhmZQ2elIaWxdGnluCkNQdECNXACyl8XfTZKBqjYEPdONpGMGQ5AWlPFb1sG
+	 4i8CSE0iEkvsg==
+Date: Mon, 12 Aug 2024 11:22:20 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Louis Peens <louis.peens@corigine.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH][next] nfp: Use static_assert() to check struct sizes
+Message-ID: <20240812102220.GA468359@kernel.org>
+References: <ZrVB43Hen0H5WQFP@cute>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7ea59d03-701c-4555-a8e8-5d7272b9381c@web.de>
+In-Reply-To: <ZrVB43Hen0H5WQFP@cute>
 
-On Mon, Aug 12, 2024 at 12:18:17PM +0200, Markus Elfring wrote:
-> > Inject fault while probing of-fpga-region, if kasprintf() fails in
-> > module_add_driver(), the second sysfs_remove_link() in exit path will cause
-> > null-ptr-deref as below because kernfs_name_hash() will call strlen() with
-> > NULL driver_name.
-> …
+On Thu, Aug 08, 2024 at 04:08:35PM -0600, Gustavo A. R. Silva wrote:
+> Commit d88cabfd9abc ("nfp: Avoid -Wflex-array-member-not-at-end
+> warnings") introduced tagged `struct nfp_dump_tl_hdr`. We want
+> to ensure that when new members need to be added to the flexible
+> structure, they are always included within this tagged struct.
 > 
-> How do you think about to use the term “null pointer dereference”
-> for the commit message (and summary phrase)?
+> So, we use `static_assert()` to ensure that the memory layout for
+> both the flexible structure and the tagged struct is the same after
+> any changes.
 > 
-> 
-> …
-> > +++ b/drivers/base/module.c
-> > @@ -66,27 +66,31 @@ int module_add_driver(struct module *mod, const struct device_driver *drv)
-> …
-> >  	sysfs_remove_link(mk->drivers_dir, driver_name);
-> > +
-> > +out_free_driver_name:
-> >  	kfree(driver_name);
-> >
-> > +out_remove_kobj:
-> > +	sysfs_remove_link(&drv->p->kobj, "module");
-> …
-> 
-> I suggest to omit two blank lines here.
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Hi,
-
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Markus, you seem to have sent a nonsensical or otherwise pointless
-review comment to a patch submission on a Linux kernel developer mailing
-list.  I strongly suggest that you not do this anymore.  Please do not
-bother developers who are actively working to produce patches and
-features with comments that, in the end, are a waste of time.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
 
