@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-283351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C5994F155
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C592194F15A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED2BB21E30
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:09:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF3DC282501
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90453183CBD;
-	Mon, 12 Aug 2024 15:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC141849CB;
+	Mon, 12 Aug 2024 15:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAIzYEwF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J3lVdB02"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CBA29CA;
-	Mon, 12 Aug 2024 15:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E3F184522;
+	Mon, 12 Aug 2024 15:09:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723475374; cv=none; b=Wj6QmZGfCSkYDN1TSffD1dtS0NyaMW+NqwkqNvZxqH0485ovlxc9JgM2yFxU/tWKbi0K7/RneyPL0XUMRj6kfY9Uzi14RVZkTzgZQun2CWIylh1BnfA8geURhnpv3/0AyG8XFz39M+eNFhcf87e5i570lTT0VDY2+30nPKlJK98=
+	t=1723475377; cv=none; b=jLf1FLiLcAftSAgRwjwYfETpgJXj2ybQE9DaeWPjZNZ46H4U8QVoDtlqf95P3yIvpY3YgRGKXD1jGqbHZg4b2wyxOLc5fgESX61+xEXRUWLwm5FuiENJai4EQyA5kdtE2neqm59l/oEEuutl/SYRoW3cHgUjxDXg6rZOvfbTcaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723475374; c=relaxed/simple;
-	bh=deWuRDJPCT5foWSV44HA7CYL8GYl7vdMf1Zpapv5XKo=;
+	s=arc-20240116; t=1723475377; c=relaxed/simple;
+	bh=1kn+z+7q1wqdtmh9jhZK4uR69KYAI+zlgxdG0wzM5t8=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=rbGlj56bEHeKm+2PNyoqvxuDxrvUEk1OuCO5mHAVx6uPumvVOg+3Hlhnre7BYQzXreuds0dhe3ShOws9ZmTkbhd8gxY2PRqNsglP9x6oLHO0b1GHy/umrlP4uTXyoRZSo/B62ceCDGNwuc17zo7hr81MKHnnSh3ZYzwaqjkxUvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAIzYEwF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED03C32782;
-	Mon, 12 Aug 2024 15:09:33 +0000 (UTC)
+	 Message-Id:Subject; b=hJhT/wn/nrlvALEqVlrjwRyS6qx4/ArfwqJSkTftOE/HzK2Hdp+D2XSacOkDx9w/MVdO3aWWqhowElm2Y2JgRzUm6YRpuYWis1M3wdaCP1lBmc+HnXED0htVDVwDElAcfg/AT1umAx7YgB/Wuo5WGdB8Rz9xWl0lZ31lZsrDj2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J3lVdB02; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADA2C32782;
+	Mon, 12 Aug 2024 15:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723475374;
-	bh=deWuRDJPCT5foWSV44HA7CYL8GYl7vdMf1Zpapv5XKo=;
+	s=k20201202; t=1723475376;
+	bh=1kn+z+7q1wqdtmh9jhZK4uR69KYAI+zlgxdG0wzM5t8=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=AAIzYEwFnviJyUy/yD9Tw3CxmOF45cdw3/aF/vhW8GEyHCcIZBPuhVpzhJXB2Vsta
-	 9XbecjNGYw8q5pyqkdiR3ucGZ0wUSLmQLR69dC+IMBMIaJHxFWOFaSvQRCKISrrtNQ
-	 xiIlnoL2pBFsWohKL16xDtEf7nB8i+Qkac53bhyaER4+qi9z3bfP1iJuJ4KbTRRdDx
-	 o7M8/+jU1G1NxD4lZ/34RxQenx3jaw3jyLlkfk5KZshHzXL8eefGnXzUuhjsGCfO0A
-	 J41i+sV0lntGANeqwnlMfv6xWzFy68z0av4EJq8pqDIaWGwI6T/PWBh0Ew2Kov3uV4
-	 TnKaogwXhIdqQ==
-Date: Mon, 12 Aug 2024 09:09:32 -0600
+	b=J3lVdB02cWIw6yUSBBVFDD+VhQetYXljueChfbOWpbqVQzbTgwWzqjNSmJKocc+OM
+	 58hFATKCgslm9D97NFjjduOSg17c1G+bpuqm2ll7RbHJBxtAjYM/h9GKEQ5S9YAVi8
+	 6/VBFBrgu8PUoVxO6nq7mtNLurpHVeGz5GgKMuHQRKZN4Q3JwWQQz0A7NV1DsRZ6Mi
+	 9nbdpuhvBtj4phXGqJ48LJZwKRbhAEjXkEpfnTzm2sVVN9etDmkwcti5vNXzmz514v
+	 0IPAAAhJiI0z0cZ6ZHLU7aFvpoJbDaYWtGc1qM0f1Z3BWl7IRhIgIMksYZteuSi3c7
+	 Xi/LSWVu5EHUQ==
+Date: Mon, 12 Aug 2024 09:09:35 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,57 +50,122 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
- Alexey Charkov <alchark@gmail.com>, linux-iio@vger.kernel.org, 
- Sebastian Reichel <sebastian.reichel@collabora.com>, 
- linux-serial@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, linux-i2c@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
- Dragan Simic <dsimic@manjaro.org>, Jagan Teki <jagan@edgeble.ai>, 
- Yifeng Zhao <yifeng.zhao@rock-chips.com>, Tim Lunn <tim@feathertop.org>, 
- Elaine Zhang <zhangqing@rock-chips.com>, Andi Shyti <andi.shyti@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Heiko Stuebner <heiko@sntech.de>, Jonathan Cameron <jic23@kernel.org>, 
- Muhammed Efe Cetin <efectn@protonmail.com>, devicetree@vger.kernel.org, 
- Finley Xiao <finley.xiao@rock-chips.com>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Shresth Prasad <shresthprasad7@gmail.com>, linux-kernel@vger.kernel.org, 
- Ondrej Jirman <megi@xff.cz>, Liang Chen <cl@rock-chips.com>, 
- Weizhao Ouyang <weizhao.ouyang@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
- Jimmy Hon <honyuenkwun@gmail.com>, linux-arm-kernel@lists.infradead.org, 
- kernel@collabora.com, linux-rockchip@lists.infradead.org, 
- Chris Morgan <macromorgan@hotmail.com>, Andy Yan <andyshrk@163.com>, 
- Lee Jones <lee@kernel.org>
-In-Reply-To: <20240802214612.434179-10-detlev.casanova@collabora.com>
-References: <20240802214612.434179-1-detlev.casanova@collabora.com>
- <20240802214612.434179-10-detlev.casanova@collabora.com>
-Message-Id: <172347513683.603014.1210944906291860196.robh@kernel.org>
-Subject: Re: [PATCH 09/10] arm64: dts: rockchip: Add rk3576 SoC base DT
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: neil.armstrong@linaro.org, ulf.hansson@linaro.org, 
+ linux-hardening@vger.kernel.org, dmitry.baryshkov@linaro.org, 
+ linux-kernel@vger.kernel.org, kees@kernel.org, krzk+dt@kernel.org, 
+ heiko.stuebner@cherry.de, devicetree@vger.kernel.org, 
+ macromorgan@hotmail.com, linux-pm@vger.kernel.org, viresh.kumar@linaro.org, 
+ lpieralisi@kernel.org, quic_rjendra@quicinc.com, kuba@kernel.org, 
+ linux-arm-msm@vger.kernel.org, pabeni@redhat.com, fekz115@gmail.com, 
+ linux@mainlining.org, andre.przywara@arm.com, conor+dt@kernel.org, 
+ konradybcio@kernel.org, gpiccoli@igalia.com, andersson@kernel.org, 
+ rafael@kernel.org, netdev@vger.kernel.org, rafal@milecki.pl, 
+ tony.luck@intel.com, davidwronek@gmail.com, linus.walleij@linaro.org, 
+ edumazet@google.com, davem@davemloft.net
+In-Reply-To: <20240808184048.63030-1-danila@jiaxyga.com>
+References: <20240808184048.63030-1-danila@jiaxyga.com>
+Message-Id: <172347513874.603162.8901170126444753598.robh@kernel.org>
+Subject: Re: [PATCH v2 00/11] Add Nothing Phone (1) support
 
 
-On Fri, 02 Aug 2024 17:45:36 -0400, Detlev Casanova wrote:
-> This device tree contains all devices necessary for booting from network
-> or SD Card.
+On Thu, 08 Aug 2024 21:40:14 +0300, Danila Tikhonov wrote:
+> This series of patches adds support for the Nothing Phone (1), identified
+> as nothing,spacewar. The Nothing Phone (1) is built on the Qualcomm
+> Snapdragon 778G+ (SM7325-AE, also known as yupik).
 > 
-> It supports CPU, CRU, PM domains, dma, interrupts, timers, UART and
-> SDHCI (everything necessary to boot Linux on this system on chip) as
-> well as Ethernet, I2C, SPI and OTP.
+> SM7325 is identical to SC7280 just as SM7125 is identical to SC7180, so
+> SM7325 devicetree imports SC7280 devicetree as a base.
 > 
-> Also add the necessary DT bindings for the SoC.
+> All of these patches are essential for the integration of the Nothing
+> Phone (1) into the kernel. The inclusion of SoC IDs is particularly
+> important, as I encounter crash dumps if the device tree lacks msm and
+> board id information.
 > 
-> Signed-off-by: Liang Chen <cl@rock-chips.com>
-> Signed-off-by: Finley Xiao <finley.xiao@rock-chips.com>
-> Signed-off-by: Yifeng Zhao <yifeng.zhao@rock-chips.com>
-> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> [rebase, squash and reword commit message]
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> ---
->  .../boot/dts/rockchip/rk3576-pinctrl.dtsi     | 5775 +++++++++++++++++
->  arch/arm64/boot/dts/rockchip/rk3576.dtsi      | 1635 +++++
->  2 files changed, 7410 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/rockchip/rk3576.dtsi
+> Changes in v2:
+> - Add Krzysztof's R-b tag (patches no. 1, 2, 10)
+> - Add Dmitry's R-b tag (patches no. 3, 4, 8)
+> - Document SM7325 as fallback to QCM6490 (patch no. 5)
+> - Drop patch no. 6 from v1
+> - Document PN553 NFC IC as fallback to nxp-nci-i2c (patch no. 6)
+> - Add Krzysztof's A-b tag (patches no. 7, 9)
+> - Switch nl.nothing.tech/nothing.tech in commit msg (patch no. 9)
+> - Add fallback compatibility for NFC (patch no. 10)
+> - Fix interrupt type for NFC (patch no. 10)
+> Note: Rob's A-b tag (patch no. 5) was not added because the patch was
+> fixed. Please look at it again.
+> - Link to v1:
+> https://lore.kernel.org/all/20240729201843.142918-1-danila@jiaxyga.com/
+> 
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Konrad Dybcio <konradybcio@kernel.org>
+> To: "David S. Miller" <davem@davemloft.net>
+> To: Eric Dumazet <edumazet@google.com>
+> To: Jakub Kicinski <kuba@kernel.org>
+> To: Paolo Abeni <pabeni@redhat.com>
+> To: "Rafael J. Wysocki" <rafael@kernel.org>
+> To: Viresh Kumar <viresh.kumar@linaro.org>
+> To: Kees Cook <kees@kernel.org>
+> To: Tony Luck <tony.luck@intel.com>
+> To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+> To: Ulf Hansson <ulf.hansson@linaro.org>
+> To: Andre Przywara <andre.przywara@arm.com>
+> To: Rajendra Nayak <quic_rjendra@quicinc.com>
+> To: David Wronek <davidwronek@gmail.com>
+> To: Neil Armstrong <neil.armstrong@linaro.org>
+> To: Heiko Stuebner <heiko.stuebner@cherry.de>
+> To: "Rafał Miłecki" <rafal@milecki.pl>
+> To: Chris Morgan <macromorgan@hotmail.com>
+> To: Linus Walleij <linus.walleij@linaro.org>
+> To: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> To: Eugene Lepshy <fekz115@gmail.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-hardening@vger.kernel.org
+> Cc: linux@mainlining.org
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> 
+> Danila Tikhonov (9):
+>   dt-bindings: arm: qcom,ids: Add IDs for SM7325 family
+>   soc: qcom: socinfo: Add Soc IDs for SM7325 family
+>   cpufreq: Add SM7325 to cpufreq-dt-platdev blocklist
+>   soc: qcom: pd_mapper: Add SM7325 compatible
+>   dt-bindings: soc: qcom: qcom,pmic-glink: Document SM7325 compatible
+>   dt-bindings: nfc: nxp,nci: Document PN553 compatible
+>   dt-bindings: arm: cpus: Add qcom kryo670 compatible
+>   dt-bindings: vendor-prefixes: Add Nothing Technology Limited
+>   dt-bindings: arm: qcom: Add SM7325 Nothing Phone 1
+> 
+> Eugene Lepshy (2):
+>   arm64: dts: qcom: Add SM7325 device tree
+>   arm64: dts: qcom: sm7325: Add device-tree for Nothing Phone 1
+> 
+>  .../devicetree/bindings/arm/cpus.yaml         |    1 +
+>  .../devicetree/bindings/arm/qcom.yaml         |    6 +
+>  .../devicetree/bindings/net/nfc/nxp,nci.yaml  |    1 +
+>  .../bindings/soc/qcom/qcom,pmic-glink.yaml    |    5 +
+>  .../devicetree/bindings/vendor-prefixes.yaml  |    2 +
+>  arch/arm64/boot/dts/qcom/Makefile             |    1 +
+>  .../boot/dts/qcom/sm7325-nothing-spacewar.dts | 1263 +++++++++++++++++
+>  arch/arm64/boot/dts/qcom/sm7325.dtsi          |   17 +
+>  drivers/cpufreq/cpufreq-dt-platdev.c          |    1 +
+>  drivers/soc/qcom/qcom_pd_mapper.c             |    1 +
+>  drivers/soc/qcom/socinfo.c                    |    2 +
+>  include/dt-bindings/arm/qcom,ids.h            |    2 +
+>  12 files changed, 1302 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm7325.dtsi
+> 
+> --
+> 2.45.2
+> 
 > 
 
 
@@ -118,19 +183,22 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y rockchip/rk3576-armsom-sige5.dtb' for 20240802214612.434179-10-detlev.casanova@collabora.com:
+New warnings running 'make CHECK_DTBS=y qcom/sm7325-nothing-spacewar.dtb' for 20240808184048.63030-1-danila@jiaxyga.com:
 
-In file included from arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dts:14:
-arch/arm64/boot/dts/rockchip/rk3576.dtsi:6:10: fatal error: dt-bindings/clock/rockchip,rk3576-cru.h: No such file or directory
-    6 | #include <dt-bindings/clock/rockchip,rk3576-cru.h>
-      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[3]: *** [scripts/Makefile.lib:434: arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb] Error 1
-make[2]: *** [scripts/Makefile.build:485: arch/arm64/boot/dts/rockchip] Error 2
-make[2]: Target 'arch/arm64/boot/dts/rockchip/rk3576-armsom-sige5.dtb' not remade because of errors.
-make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1389: rockchip/rk3576-armsom-sige5.dtb] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-make: Target 'rockchip/rk3576-armsom-sige5.dtb' not remade because of errors.
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: /: qcom,board-id: False schema does not allow [[65547, 0]]
+	from schema $id: http://devicetree.org/schemas/arm/qcom.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: /: qcom,msm-id: False schema does not allow [[475, 65536]]
+	from schema $id: http://devicetree.org/schemas/arm/qcom.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: pcie@1c08000: interrupts: [[0, 307, 4], [0, 308, 4], [0, 309, 4], [0, 312, 4], [0, 313, 4], [0, 314, 4], [0, 374, 4], [0, 375, 4]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: pcie@1c08000: interrupt-names:0: 'msi' was expected
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: pcie@1c08000: interrupt-names: ['msi0', 'msi1', 'msi2', 'msi3', 'msi4', 'msi5', 'msi6', 'msi7'] is too long
+	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-sc7280.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: usb@8cf8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/sm7325-nothing-spacewar.dtb: video-codec@aa00000: iommus: [[68, 8576, 32]] is too short
+	from schema $id: http://devicetree.org/schemas/media/qcom,sc7280-venus.yaml#
 
 
 
