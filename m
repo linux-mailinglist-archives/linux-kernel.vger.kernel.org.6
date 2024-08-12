@@ -1,435 +1,360 @@
-Return-Path: <linux-kernel+bounces-282726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41BA94E7F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:40:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2DF94E7F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 533D4B23A0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE3E028409A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234F515C150;
-	Mon, 12 Aug 2024 07:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AED815B0E2;
+	Mon, 12 Aug 2024 07:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="VddUFjby"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011060.outbound.protection.outlook.com [52.101.125.60])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oM43PCZe"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B81B1474D3;
-	Mon, 12 Aug 2024 07:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.60
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2C71474D3
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723448408; cv=fail; b=GluHCxfjFnfvXJ8ogrSDKeif1PbpBibIc88sWL6god2xbQTFjywi5/3zgtsIyNNMebipBsMqWz8ZwfiyHELQ15ArjOmlvQ6pbHiArT0TYXRKX7C7ud8F985Q0ewso98W49nKpY/Z6tdBDqpec0htBYhrabD6Vci+04nAdMlg/uQ=
+	t=1723448488; cv=fail; b=dNqdjQmMSk+Hhc7sMUElKHB3Civ1Z0v/YqwLRVuoO3LTULpDRAi/Z7C2dcStk8cOzcFBbK2PVw+S/7lAH+Sd6dIQUEVBv+6E8STSx1AvuEf5XWLpsR0MsNZX5X8IZ+kPQQE/UZ7KXfEAHsnwN5YgUt86yVzS30LCwOACBWWEN6g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723448408; c=relaxed/simple;
-	bh=wDDcPZ8SNLg/fRjDi4IX3ysG1E9rKwpN0qkaY5wbMY0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eHDe0Oy2N/fNYh3F/c6rh8uAJ1wZYsdqZXv0ypfqjX8K+03cuXT9xG+cYILLf23qA362C6Zvvj7/oQEeKceXXNiOUZSPFqaosT7wA06RFdsistXDtdfMB5BJwsw8s3hLQy/D4X00GhxBXiolXCcb/SG8ZwgmchJO1gEPdpfK+p8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=VddUFjby; arc=fail smtp.client-ip=52.101.125.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+	s=arc-20240116; t=1723448488; c=relaxed/simple;
+	bh=gZtIeS0Shq9oNy4mTVtOtsyGBcLBi5SrHY1aDK6v5zw=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 Content-Type:MIME-Version; b=EgsNN3XgOew5Iazu0nZ5r1dQdssdDH19t2d/b7+uaQXd4KXF+w3sCqWNExYVwJajnCijVibpjyWJKKDJyXTEMWUi+UTHZ4V2ZR+7uQ+37/AfsvACUHQUoa0uarMxe6/A1DRR4+nCawpnRA1K+WEKdHGyhSVb5KljE2jDRgTpkYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oM43PCZe; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fYx9KeSVPkTikGkPWy13aQQUsQim49e9164DvsMmpHxyTvMQQZ0v6khYmPdlrZQ78iW/06jpN1e2veDdXegwoKbQ6Dmm0Sxnb/WH7nmVIFA5WkhqOyRbp4bI7qy0FRPMdd53NBWq2mL4H79n5FeGxwILCCBKylKs8h5Tndqj4nHxkXfAbTeURpW0EgR2ARfU9pDcV8iA7X0TgoLhXmVbXeWcoiW8dtNbPbo5QlQ5E0j/e8y4eAI4LLRSy7JZ7FYZruJYxusNXXcellca6JM+jk6LtJ07XHDjx07J0E8fSG413qLEI+io+/x0iPPBu1zZyMCANIoNejV261eMjnbOog==
+ b=WU/W58F7d2plIJkpVeqeoE4X4C09UEXnH3ze+HW8Zw1EzDTQO35W7MJmFX1Ok2HanQDBWDsC9rv5ocmP6wylJ3cAJCSxS7xRQH+8VPP0jvkbGbzz50oxPyKKwHrwklWZEfXpB7qxc7lPIBFxL4rg/fKkvINCxq8RslKrzuEUXTTldCNM5yjaeLXLFjiqDv3EkO60ZKUxv03ov+IYJzbWFcocUwA1B/UIU/a4HT4TBKJQhzDGkNpWRXH0mgRmKSYluBiiRdzNBEEXv4BQePzSOaZJEUycQqUdtDo0aGtke0zaIKdmGawJTZ2ROKbOyQ82KCGJ/tlkVzkXavGArwffKA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kWoriLjWJxW9TkSL9gSqVNHOswoB5tQChniNSeMqvgA=;
- b=cYCrUmJ/smYmniec8AH7MeWWHgLgTx/p0w4beZC1sSf/nrY3CdS1BXHe0RV5YLeelv+JzbHswXO5jmUFR0hNOl4cSiLeewDrXAXGCvhlgU/KLBazqx6ghfyXeZ1TQQtHmu4PHTsQvV/Bbl0MhstHe0JB3EUM7ZCoAOqWazNnLY8liJ9fmKM5tCNQK2cJ9y3UV4e/1vSYrkdjenZ7xWknon/dBqgH0TLIKxSO0FJjRcK3j1+wA0a3m3Q+UB7cTmZu0tAZTAVV3dLX60h4oufJke1K3yu6C3UQu7EPP5FwPRzdrSkhMTCnjUxKv3zEZkWZfvzYowlu6BGa8IlRHLkdQg==
+ bh=cDvAH+XQChKr368lRPvbYweEKu90NVqPaZWamve6WVY=;
+ b=f6SmkdZ0J/Pnb1LcbOC0t3FdFhdb3akPcafDvPTLZV1yJHSqF4FloteFJW+Dwph8T2SxaaVJ0qecidEu3tHpEe4YjJaaoGOPu8lBltnPKOTh+rv/e5/wqy4IOT3T0wu/CnZ1ESHymTw4HC2cmeJF9ZgA/sorOyV5p2Ub8lWTlR9nOlMrEx+/YDSvXmrKFnzGBHW7oJOlGxF19E/pCgTgkjKxKmAzeZFUlGRH1EdUef9ufRlT48MvTMkkhwZHKT5gtqERruV5uziEQyFLb5CMZkLc6JMG91DRdHStBlZlDF79IbO79JnHNDIDXVeusSQdRPB5GnwFlyT1CzucZlMO4Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kWoriLjWJxW9TkSL9gSqVNHOswoB5tQChniNSeMqvgA=;
- b=VddUFjbyYFv90xVw5mLViXwLLaRXrNRvSlgPZuO1BZtemH949Zp79J63sVCftac6cylSknmimsohX0LLMZgj2Ry9C/Yxzlq3Nehy1cGzRnorSgeE+oYJVsryQVec8BODrzUJ+VpRmWcdBQfvLOOeWhY/g65G26oTAPKGxrw5KH4=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS7PR01MB11976.jpnprd01.prod.outlook.com (2603:1096:604:236::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 07:40:00 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%5]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 07:40:00 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
- OSTM, I2C, and SDHI
-Thread-Topic: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable
- OSTM, I2C, and SDHI
-Thread-Index: AQHa7DAXCupFvrqDHkWsJaJo6V49crIjPC6w
-Date: Mon, 12 Aug 2024 07:40:00 +0000
-Message-ID:
- <TY3PR01MB113466DE7061B60485B3BE97986852@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20240811204955.270231-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240811204955.270231-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240811204955.270231-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS7PR01MB11976:EE_
-x-ms-office365-filtering-correlation-id: ebb220da-948d-4fcd-70f9-08dcbaa1f8d4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?kZYbtkqZfXv4JKobZ7te5e54oQZiulko9c9eGMsxUFVXQabfXFtR9/JvLPWP?=
- =?us-ascii?Q?dG7fxbITAsjiYktcgnyFShlWmTiakmmZwhM14eG3kgbceJpZrR2df0sLXUoR?=
- =?us-ascii?Q?a0HQgHOn5uEEykNfrXTq7yKvnopqoKmsgE6iBK1JRaZA6ZAWhJYjd2vV3OTN?=
- =?us-ascii?Q?EkVO9JjC//jwEOIVM/jbtNgAH5jrrJHyKR20PDIJmg6AWcYR6vUD+AIKWOtT?=
- =?us-ascii?Q?0UJzcMQ5Yav6msSgb+vjHxHb63G4a0i5Ay2FXqohxzYl4iXMuXoVATohzqYO?=
- =?us-ascii?Q?i1OLL+tNzCfZGWsWYvXYsveXZW9aMo/YHfSnK9XJMmakG8vujn/4bA2iKK3Z?=
- =?us-ascii?Q?6XOD1YBvfFa4XC0UCw1pbxUQG7iHPvfCggINXnhXYaBmuzOWTm0oktbj1KHT?=
- =?us-ascii?Q?j8af3pdGskdtAtAZvcPkltxqnbl6zzddljXNhpSNSfUnNr4a4o0LnpT0rPoQ?=
- =?us-ascii?Q?hGmjYrzZ2+geNcOpN9TFndpFCBmdE/7kZ4/PvaDY2OOaNPGEmPOCHEDxbt58?=
- =?us-ascii?Q?tpU7CwRDvnKBUk4kFQB9kWGNpJS+uYuHkD1CW1yn5tHe9Z+0x+Vl7+e/NI3H?=
- =?us-ascii?Q?fGs5KoGRYTDF4w/2igeuGUpaA+F3OZDzy0kQC1k774TdKQe9MEuCLOTpPDut?=
- =?us-ascii?Q?0Jw5XHmRi49W/TCNSm1nFxasVnulmmmeUGdPEyQ2K2XIaaoupZDdMqB7u8Er?=
- =?us-ascii?Q?4K0Juib1wGkmhQhMoMBW4LXUJJVFcGadC+ERhcRkXBhmlnwUZxTdEV3PrFPT?=
- =?us-ascii?Q?4O3Z+yNVPILCmGN4yp/T987bh0gZjmLq+W4IItz3HNAqFjWFotip8/tmjfHy?=
- =?us-ascii?Q?QV9QPGmYeMET3pRh3zsp3bki0V1IfZIOa/1KJ+s1i+VMCz8W83IMoBVTzK3g?=
- =?us-ascii?Q?R1p29OahnfG71QK+pXUMBDAauYnlXbfQgRylA3WMTh32a6UTZxRM5oLNl+Hi?=
- =?us-ascii?Q?psJ5ItYtWGOQ0KaCuKkaGYcybRfD9SbPXm6/kZlKqXHxVugGhZpRcsCLVILs?=
- =?us-ascii?Q?VQF/NzumacXUlyjFLqjr6AwWQGokeLYRPtRwEUExnX3DmmmgJNjRC+pbao0k?=
- =?us-ascii?Q?4hyP9FrxY1BAXE1Ii35RgnwQADUnbFhjmpVVgIw5XCAI4DH3eCrbyUg/ljRt?=
- =?us-ascii?Q?2Z2i/I3jOmpr0PR8zrj9guV+MuQUr/PsdSM6ks1OYdtHlWGfi0l34PKVM7WY?=
- =?us-ascii?Q?0TTyTA6xospCzLGE3579VyPdHm/SaYXFxXhxEEdYtsnexEmm4p+EzIesde8j?=
- =?us-ascii?Q?lMiQ1msboc3QS2D3bA5WHaXgfvxIjqzKppSeo4mT3p9HmkzOVPUtLiSMZNmD?=
- =?us-ascii?Q?J9sJ+FwNFWl0lAsyYsZPbn2eDf/te/GcYImwbzuK35shJjHV56C5+EAVkpCd?=
- =?us-ascii?Q?QWYj6WiQKtlfR4W9ep+EgOYnbQk2CGCOmGpzyHr8OuMkfhWVzg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?fiLeYIcBPJZ2CI6o7OzqwWScKqkNR9KwxkySkp8FX3iZ7rX4G+lTSVQAH7zI?=
- =?us-ascii?Q?sNiGF52iWVuW4RNweH+k/BxKreMNAkDsxpDclh4kOVi3kOB1SgHVnl3x7CyK?=
- =?us-ascii?Q?6UgZ/RIBHd4zUKuL5BUuhFVwmyW5E4q1JBiGkoyZLEigWI+LZVCXxIsnrFN6?=
- =?us-ascii?Q?LM0j9BwVQ5okzC05gJoBg60nP+D8xx6oc7atyM0jK7DOqJphoQTB+7fEVLoj?=
- =?us-ascii?Q?vgp8hB3hlhX3Hw5gvAq7aIJnusSVw6UY2vuNDSdU/NzqtFwa5IsME0BhfYGF?=
- =?us-ascii?Q?BqUh4sTmLXg8rpTQbW3qju60ITtuuFfMw1RXx3W4z1bAyhsOnzYTjhj2arlt?=
- =?us-ascii?Q?YTYlu35geCKv8VsG9frbLEfCm6Uabv0Steac5J7VWydoVrEN1YJizXDeAg7o?=
- =?us-ascii?Q?crUvk3dN6YmNz17gSSg/vOxbCTe9Dl528xYoKrMePc8/VtOQzCDPEXiktDHW?=
- =?us-ascii?Q?q97JsBDHjSo32cxw6qHJYURSo8eBwlZyNlMCqGjg3ln2VC5nHAZ+gS4V8wba?=
- =?us-ascii?Q?jWqOJK997aKqf7kVeObfedtxXW3Lt/9pmjJqJ4+UWz4U+13UTzI2It61RUSy?=
- =?us-ascii?Q?k2GacnAkR1qP6iRJYBZZM891jN1EMEPoJAkUD7cm66XlPuWp/SQVJcuSotoj?=
- =?us-ascii?Q?fjfWh68oYHllwgnEnQf9LpSEO4IB7Hm1f5v8/iV1mRxxB+koW0pjC8hY1Tlw?=
- =?us-ascii?Q?jbhnyWWoKJ/EmMI9X1ceM/vk+R0JqRPvv2PhsblwVOvATp7Wv7rkE0OPcxWs?=
- =?us-ascii?Q?kIBAo3rzDbSAqsGQ6OpLToH/qUxCvyTm02o9/UvzsF1hYwDS5WgiuON5D2ve?=
- =?us-ascii?Q?XBRMvUtsi+2DX2gYAFuAvuD9kQdtWjpNWaFQE8ddICCRnxErd0rVcfHw2hyc?=
- =?us-ascii?Q?dTdV0giR3c5yAA7+IzqCaZC1JkxkT6la/vsTmrniTAVirHExYsAFjEvsv8M/?=
- =?us-ascii?Q?boL+XhQjZOEFcRwmzfy2CD/GIJhoJswag6LPxLFJCuVJv/nj4BdjQO8V8XiY?=
- =?us-ascii?Q?o5tkBA8u+JKtUdhD7VGOU2sudlEbIhpFDQ+rzFYl7O1P4kXMbCa1d38C9rER?=
- =?us-ascii?Q?Nj9zhim8s/jngy7ELM12h9Bb2HZyNIqRlpfFkxxcX5Sa/QoxqycywocFIiRB?=
- =?us-ascii?Q?fkXGuIwQFvW8NdEMcu+zVmG/2vslD9eQGhxFTM4gzZyNMsnFjHdS7Gla9gzA?=
- =?us-ascii?Q?EMNSu90qBGzPsoSQwdNldJEYsCjzSgjHKLdoeESQ6zpFKl+5MHLyESzH7VrI?=
- =?us-ascii?Q?hCQ6jVHpZ8QshEEYxyb4FbpHr5SwGJQniyN/swCQVS9jQOxFI68N3iS2qQZk?=
- =?us-ascii?Q?0V/NT9u2JLzqANzUiDH55dyQg84Ws0Y4zSItr7nYvRPwoQXW5wRA1CPfsSVC?=
- =?us-ascii?Q?iAG2Cccw4WgMazvymPmlH8GDzYGOVBfB165JPfhLHu+bK1/wqNCdsm4f6D5+?=
- =?us-ascii?Q?bfSGT7tiCJ6+IB61K504xkf0+aMiN8+F0/mBREgnuwWS3SV8rQOyRa6xWL8e?=
- =?us-ascii?Q?bQk9wfbwrhAU7xmShwczYStk3e4ZoFV5UI0Z5qTE/raGpAnJd1+3CCdDtzaj?=
- =?us-ascii?Q?RjsduMaZO1X6DReMKBjYvZYOfgMUVZKjY0H1IB1I?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=cDvAH+XQChKr368lRPvbYweEKu90NVqPaZWamve6WVY=;
+ b=oM43PCZedX8JwXNM5aFT2Y+uIqCMrYftNcthmc1kDvmCRR+nPwdYoYCfoO8R2aLHpbw4N8VsxyCGEs04ppoEzJppaAM+f2kVPBX6wbd/vQ5daZFfo71bnpFRYQ+vXGlHHopg267TgkmRljLXRs+mPZALJ6ahE5a8cIBiJCXDdhTDwQfqZiY7IIbxvY1rdaKSmFA6ibknrSzHlQ70d9/5+K67rp8BX7f/K9/CQuE9mxQJxeWLiffHq4syCto7xgj7GLg6QtK4aZkxETQWrz4MpVJpl1EHfXdUUaoMCPrllOCSmzZF0SIvX+eG/Lgu7ynmdJDfEaWMwCEJsIwIC69SUg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
+ MN0PR12MB5714.namprd12.prod.outlook.com (2603:10b6:208:371::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7849.22; Mon, 12 Aug 2024 07:41:22 +0000
+Received: from DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
+ ([fe80::953f:2f80:90c5:67fe%2]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 07:41:22 +0000
+References: <20230810100011.14552-1-max8rr8@gmail.com> <87le17yu5y.ffs@tglx>
+ <66b4eb2a62f6_c1448294b0@dwillia2-xfh.jf.intel.com.notmuch>
+ <877ccryor7.ffs@tglx>
+ <66b4f305eb227_c144829443@dwillia2-xfh.jf.intel.com.notmuch>
+ <66b4f4a522508_c1448294f2@dwillia2-xfh.jf.intel.com.notmuch>
+ <87zfpmyhvr.ffs@tglx>
+ <66b523ac448e2_c1448294ec@dwillia2-xfh.jf.intel.com.notmuch>
+ <87seve4e37.fsf@nvdebian.thelocal>
+ <66b59314b3d4_c1448294d3@dwillia2-xfh.jf.intel.com.notmuch>
+ <87zfpks23v.ffs@tglx>
+User-agent: mu4e 1.10.8; emacs 29.1
+From: Alistair Popple <apopple@nvidia.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dan Williams <dan.j.williams@intel.com>, dave.hansen@linux.intel.com,
+ luto@kernel.org, peterz@infradead.org, max8rr8@gmail.com,
+ linux-kernel@vger.kernel.org, x86@kernel.org, jhubbard@nvidia.com, Kees
+ Cook <keescook@chromium.org>
+Subject: Re: [PATCH 1/1] x86/ioremap: Use is_vmalloc_addr in iounmap
+Date: Mon, 12 Aug 2024 17:41:52 +1000
+In-reply-to: <87zfpks23v.ffs@tglx>
+Message-ID: <87o75y428z.fsf@nvdebian.thelocal>
+Content-Type: text/plain
+X-ClientProxiedBy: SY5P300CA0006.AUSP300.PROD.OUTLOOK.COM
+ (2603:10c6:10:1fb::15) To DS0PR12MB7726.namprd12.prod.outlook.com
+ (2603:10b6:8:130::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MN0PR12MB5714:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9dd4a45d-d57e-4c44-e277-08dcbaa2296b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?K8oysvCkC1zeEAPJjJVfLMhbsW9PJ1vV9ru2EPsAj2ujPFzijGt3jP0HmDAK?=
+ =?us-ascii?Q?bIsRaH8/9z05NNFU6XgYVu69hOpXuuVQCO5A4blotxPInR4cgGPn3vcjPG1E?=
+ =?us-ascii?Q?OyiBsugtFRqD0bShDb7Ns24N44gOGfstA5OUl+wSM5WFNTXrpjkEcFgr4hfb?=
+ =?us-ascii?Q?FkwQPKLk5FeVUDN1FxM/o6LSBx3QnAKFUqRzIKKl4NxoFYsknz0nnmPqM8Fs?=
+ =?us-ascii?Q?RWK256qKjJhrvWasjEyt6BnyizKA9OWQYNnz2AFXKXmSajo4OKImkBWXi3HQ?=
+ =?us-ascii?Q?ajyPfwDZmP9LsyEaHZmgs1kw9XXd7OwB0RhPwoRCIUs5K3oRTPOI87V2OP3c?=
+ =?us-ascii?Q?7Rnjz31n83kyihTGmDocCNg3FH+sMpm8+u85SchiEzMrB8KbsJ0MFppvSxFj?=
+ =?us-ascii?Q?vJUpSME6sXheeFd9w69/X0WZ7PLF795unDh/u1m1GE2pjuM2Mht3JyQ/zGQS?=
+ =?us-ascii?Q?ggo5IVPPDzUJumhFHceGJ4Xs52G+gQyDmtif2TQcULQgtei/j30SPYlTogkD?=
+ =?us-ascii?Q?sywaCnsynvc++HNzqry7MLi1wP2G3bKrk2U4SRw9UJaLbXVxp8XgZbhP/RNQ?=
+ =?us-ascii?Q?yqavJ2fmsTPTE5Oft8EZC4H28lTUuvVQIswIxhmmzCN1OHos9A2BF2wE6czQ?=
+ =?us-ascii?Q?Dw2KZcLpFIB4qoJHv2vTmvaDAjXySM8FeveOd4OF7rDLojeHIhybtRfHZTr0?=
+ =?us-ascii?Q?Z3jykVzNBpqC6hRDLzOHyRAggizOD6W1UDO2bvEd7QKXIjqDTUE3K1+iNo7L?=
+ =?us-ascii?Q?EXYCsDyxS/bUFtctwsU9ydv+EBWJe/JzYO4cK29KuynUchiNwXafU6/Izbjr?=
+ =?us-ascii?Q?3b0p2DNb/SrdfEOJlbuOVAZ/c3DjtxyeROIb1GT3nbO/LnxmAzKIo03GOEtX?=
+ =?us-ascii?Q?kjI+Lw5w/ooGQQ/3Bz0aPW/xBCdHFMFXiEitUc8ogaxovksPv4C6cTA9g3SJ?=
+ =?us-ascii?Q?668b5mYhzjHP9BO1MI3iTH9/z6uBIaSB5c26ZXlNQWYqXHTJc7sBtVBo7PlW?=
+ =?us-ascii?Q?uunCT+DkEiyz1mOzJoJWuKR5kH+27ZlrnAgxBSotaUgutZk+BHegilUhewlp?=
+ =?us-ascii?Q?W0RXVPoA1zye6zWsxQpL6VGS+e+GJYIxvi3ZGk3dP3xK8vrIm1Zx8c8WQHX4?=
+ =?us-ascii?Q?WVqQmilYQOS8dI1X0FJvmV6hAWpM7Klcm2igdXN2lm9L31GzMmN+f8Z4uS8t?=
+ =?us-ascii?Q?CxOZCyYMvfRoc3VJsh5lsJ5vk9lAUltmplkcZYpNAvp27Q597AJ6uXqXRuYp?=
+ =?us-ascii?Q?+AbnwJRUS484w2lJRldzzK/fYdSmfGl0cUGfFF0fs8xRLzeVTywAMp55eic5?=
+ =?us-ascii?Q?vcA8T+171Cc3qZD6jr8V7INq?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rmJQy+CuE849j8mg8gprcGOF1tdvAcDZ7uraFGdDdUV6QzWzsz1jp3Nse1L+?=
+ =?us-ascii?Q?5EMKJVQiZvIKwpFrFSiMe0W4DaHm7exxXn22AlQ0FbaalVs8fDtq8JAlBLZB?=
+ =?us-ascii?Q?JgtQWHL8WlmRPRQ1jL5hsqbeE1tZoMdVHJVKk5YVzCogpox3qV8tCx90OJQ9?=
+ =?us-ascii?Q?KFzZWkfX0F9m40NIUulh8Pq2GV8/wH5zd5zT1/tOfLcN3o7L/88oPjdhAJ+d?=
+ =?us-ascii?Q?Xl52TvXentQf2xmBUFk2Sw9bwmlwcLKdcGHYnKi905q3R+SaG5/qlEN3l/aw?=
+ =?us-ascii?Q?5tHximmSDDLgJTWc3Alb/z3OwjmWenymmclMognNSEd43EDpDdxFSh8wasnr?=
+ =?us-ascii?Q?aH/LtAtcICsTfA5usksPPmoTa2OnwneU+I98SuQfahsCVz9ImcGn06E1d/gk?=
+ =?us-ascii?Q?mjmAXok4GRit2iC2txlUnSnaM9lyK9lki/SIXOybQOi7Fp/Z6/RrKON8MU2K?=
+ =?us-ascii?Q?tNGmiwm1mTS1GibYh3/dqFdIBXaB2D/Nk88VyM8FO02opLeOk0IvRWh5R7Fl?=
+ =?us-ascii?Q?Vatdi1hka3+O5y7JK8Z7Th7cDiFDlfF0N9zNooT737SIG25L/5RvgIaUO8Jz?=
+ =?us-ascii?Q?ch9denZRcxeDwO9rdsb5/nP2SnZejUCszNhsmTNKegR4+0U41vKIPYZWtekl?=
+ =?us-ascii?Q?se1sFyKujkJF/+vqUlsPjsaNRvp5mk5ggMQLQLEPslngIDvlvn1zbi5sHhIP?=
+ =?us-ascii?Q?4BBIjHw9PKCAiokMQXicO9Vm6I52tWhZGC01Jjk/9vtk3hEsweuAB9kgNb9j?=
+ =?us-ascii?Q?VUMLW6nLFFsomuL44TLDoVUY6zt2tANEZOB2tjk7AtvkxCad48A6iwmBbel4?=
+ =?us-ascii?Q?FnI4WPcq0NHI3p5ynBBZTJo3PKdv7wxR/KQ0ku3Vh1gonMBPDV3+3iYJsNoC?=
+ =?us-ascii?Q?OaeL7j0zqrFgalYLYJCajpK7vXEDButVB8veThYuAEWAGqTG9Okye8j5sLtH?=
+ =?us-ascii?Q?5sn71yL2u+XdIEuiiKe+dAc2v5g2Oj0QoCZiFDR/hfTY3EbDr2DJzI0lqMDV?=
+ =?us-ascii?Q?W4bBeruqQ4IGQK+XMascPuQL2bccGqd54l+xNz5lLQmiLvqipaoGwtt3Z/a6?=
+ =?us-ascii?Q?5g8l2CvyyTY122vV+HFyTlCk8StA2vrEBLQO30GqBjPOJtiI/V7QYp2z51fI?=
+ =?us-ascii?Q?+lPKpTq4JDJpDPb429XlxEP5XoRE8RSnE8Bf+DfSCAHZ95OpuopYQt5H98RB?=
+ =?us-ascii?Q?MsilzB8VfKj19GuWOYzm6CsQGgzMGDzbH1GslVPuVsYr917T8JbcZzb+P7Ix?=
+ =?us-ascii?Q?asZazxtxSNcYxLAfy6909GczkOl7GGEjGfrYrS1FnvKXiqh0I1T80Xn54g7c?=
+ =?us-ascii?Q?dtGwUJLjl6l8EP+lJXpjV1LxAHwMxUfWB4z+TKcqMzAESuAhS2r7a2C/FEcj?=
+ =?us-ascii?Q?+DcAa79Rt/E/9Yvqy221xLg1YSXSeVg6rV3YtvQfGFpi8eL2F0lcN+a3Vs0W?=
+ =?us-ascii?Q?BdC1kRRMYsZNt8A1qMszCMx5v3iX8W93BkgwtNiMnhGx7Lu44UevzqhmlKuK?=
+ =?us-ascii?Q?pofkLir2sOR795zmwj0ZXhTsfYt9cOdHI/KmZQdKXsi5H3C6QuNkYSnvxVMH?=
+ =?us-ascii?Q?if50Vi1gfQP9gwZ3j2WiHkUHi/MvVcnYNoBt13Gg?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9dd4a45d-d57e-4c44-e277-08dcbaa2296b
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebb220da-948d-4fcd-70f9-08dcbaa1f8d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 07:40:00.6868
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 07:41:22.5202
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /KcXb7uqRjepBqceLbr+O5Zk0dCtrUyqARWtrxCj6cQk7yjoKu1rr8tUR+cJj7asmryqF/vYht4a4LIGxfcDgPqLIDbGgalGL6OreHv5CdE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11976
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o/lspf1S1bkAcy9IlvAkWb/g0uJCfcUnCE+9KTGH2pmd+mirg9CcQf1lP5778C+vObvo6ASB9hkb2vrRK5VN7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB5714
 
-Hi Prabhakar,
 
-Thanks for the patch.
+Thomas Gleixner <tglx@linutronix.de> writes:
 
-> -----Original Message-----
-> From: Prabhakar <prabhakar.csengg@gmail.com>
-> Sent: Sunday, August 11, 2024 9:50 PM
-> Subject: [PATCH v2 7/8] arm64: dts: renesas: r9a09g057h44-gp-evk: Enable =
-OSTM, I2C, and SDHI
->=20
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> Enable OSTM0-OSTM7, RIIC{0,1,2,3,6,7,8}, and SDHI1 (available on the SD2
-> connector) on the RZ/V2H GP-EVK platform.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> On Thu, Aug 08 2024 at 20:55, Dan Williams wrote:
+>> Alistair Popple wrote:
+>>> Dan Williams <dan.j.williams@intel.com> writes:
+>>> > Thomas Gleixner wrote:
+>>> >> Wait. MAX_PHYSMEM_BITS is either 46 (4-level) or 52 (5-level), which is
+>>> >> fully covered by the identity map space.
+>>> >> 
+>>> >> So even if the search starts from top of that space, how do we end up
+>>> >> with high_memory > VMALLOC_START?
+>>> >> 
+>>> >> That does not make any sense at all
+>>> >
+>>> > Max, or Alistair can you provide more details of how private memory spills over
+>>> > into the VMALLOC space on these platforms?
+>>> 
+>>> Well I was hoping pleading ignorance on x86 memory maps would get me out
+>>> of having to look too deeply :-) But alas...
+>>> 
+>>> It appears the problem originates in KASLR which can cause the VMALLOC
+>>> region to overlap with the top of the linear map.
+>>> 
+>>> > I too would have thought that MAX_PHYSMEM_BITS protects against this?
+>>> 
+>>> Me too, until about an hour ago. As noted above
+>>> request_free_mem_region() allocates from (1 << MAX_PHYSMEM_BITS) - 1
+>>> down. Therefore VMALLOC_START needs to be greater than PAGE_OFFSET + (1
+>>> << MAX_PHYSMEM_BITS) - 1.  However the default configuration for KASLR
+>>> as set by RANDOMIZE_MEMORY_PHYSICAL_PADDING is to only provide 10TB
+>>> above what max_pfn is set to at boot time (and even then only if
+>>> CONFIG_MEMORY_HOTPLUG is enabled).
+>
+> Duh.
+>
+>>> Obviously ZONE_DEVICE memory ends up being way above that and crosses
+>>> into the VMALLOC region.
+>
+> So we need to go through all usage sites of MAX_PHYSMEM_BITS and fix
+> them up...
+>
+>>> 	@@ -2277,6 +2277,7 @@ config RANDOMIZE_MEMORY_PHYSICAL_PADDING
+>>> 		depends on RANDOMIZE_MEMORY
+>>> 		default "0xa" if MEMORY_HOTPLUG
+>>> 		default "0x0"
+>>> 	+       range 0x40 0x40 if GET_FREE_REGION
+>>> 		range 0x1 0x40 if MEMORY_HOTPLUG
+>>> 		range 0x0 0x40
+>>> 		help
+>
+> That reduces the entropy to the minimum and papers over the problem with
+> 4-level paging, but it won't solve the problem on systems with 5-level
+> paging.
+
+Actually I've never observed this problem on systems with 5-level page
+tables, although I haven't tested extensively there. I don't know of any
+reason we wouldn't though, so I guess with the increased entropy I've
+just been lucky.
+
+> There the 64T of padding are just not cutting it. MAX_PHYSMEM_BITS is 52
+> for 5 level ....
+>
+>> 	 @@ -1824,10 +1824,11 @@ static resource_size_t gfr_start(struct resource *base, resource_size_t size,
+>> 					  resource_size_t align, unsigned long flags)
+>> 	  {
+>> 		 if (flags & GFR_DESCENDING) {
+>> 	 +               u64 kaslr_pad = CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING << 40;
+>> 			 resource_size_t end;
+>> 
+>> 			 end = min_t(resource_size_t, base->end,
+>> 	 -                           (1ULL << MAX_PHYSMEM_BITS) - 1);
+>> 	 +                           (1ULL << MAX_PHYSMEM_BITS) - kaslr_pad - 1);
+>> 			 return end - size + 1;
+>> 		 }
+>
+> This needs a fixup of gfr_continue() too, but it does not work at
+> all. The size of the direct map is calculated as:
+>
+>        memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+>                 CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+>
+> That size is used to calculate the address above which the vmalloc area
+> is placed.
+>
+> So assume 6T RAM installed + 10T space for hotplug memory. That means
+> the vmalloc area can start right above 16T. But 64T - 10T = 54T which is
+> slightly larger than 16T :)
+>
+> I came up with the uncompiled below. I fixed up the obvious places, but
+> did not go through all usage sites of MAX_PHYSMEM_BITS yet.
+
+I looked at more of the MAX_PHYSMEM_BITS usage today but nothing else
+stood out as obviously wrong.
+
+> Thanks,
+>
+>         tglx
 > ---
-> v1->v2
-> - New patch
-> ---
->  .../boot/dts/renesas/r9a09g057h44-gp-evk.dts  | 191 ++++++++++++++++++
->  1 file changed, 191 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> index 593c48181248..11c13c85d278 100644
-> --- a/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> +++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-gp-evk.dts
-> @@ -7,6 +7,8 @@
->=20
->  /dts-v1/;
->=20
-> +#include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  #include "r9a09g057.dtsi"
->=20
->  / {
-> @@ -14,6 +16,14 @@ / {
->  	compatible =3D "renesas,gp-evk", "renesas,r9a09g057h44", "renesas,r9a09=
-g057";
->=20
->  	aliases {
-> +		i2c0 =3D &i2c0;
-> +		i2c1 =3D &i2c1;
-> +		i2c2 =3D &i2c2;
-> +		i2c3 =3D &i2c3;
-> +		i2c6 =3D &i2c6;
-> +		i2c7 =3D &i2c7;
-> +		i2c8 =3D &i2c8;
-> +		mmc1 =3D &sdhi1;
->  		serial0 =3D &scif;
->  	};
->=20
-> @@ -32,17 +42,186 @@ memory@240000000 {
->  		device_type =3D "memory";
->  		reg =3D <0x2 0x40000000 0x2 0x00000000>;
->  	};
-> +
-> +	reg_3p3v: regulator1 {
-> +		compatible =3D "regulator-fixed";
-> +
-> +		regulator-name =3D "fixed-3.3V";
-> +		regulator-min-microvolt =3D <3300000>;
-> +		regulator-max-microvolt =3D <3300000>;
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
-> +	vqmmc_sdhi1: regulator-vccq-sdhi1 {
-> +		compatible =3D "regulator-gpio";
-> +		regulator-name =3D "SDHI1 VccQ";
-> +		gpios =3D <&pinctrl RZG2L_GPIO(10, 2) GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt =3D <1800000>;
-> +		regulator-max-microvolt =3D <3300000>;
-> +		gpios-states =3D <0>;
-> +		states =3D <3300000 0>, <1800000 1>;
-> +	};
->  };
->=20
->  &audio_extal_clk {
->  	clock-frequency =3D <22579200>;
->  };
->=20
-> +&i2c0 {
-> +	pinctrl-0 =3D <&i2c0_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
+> --- a/arch/x86/include/asm/pgtable_64_types.h
+> +++ b/arch/x86/include/asm/pgtable_64_types.h
+> @@ -187,6 +187,8 @@ extern unsigned int ptrs_per_p4d;
+>  #define KMSAN_MODULES_ORIGIN_START	(KMSAN_MODULES_SHADOW_START + MODULES_LEN)
+>  #endif /* CONFIG_KMSAN */
+>  
+> +#define DIRECT_MAP_END		(VMALLOC_START - 1)
 
-clock-frequency =3D <100000>; in SoC dtsim
+If I'm understanding the KASLR implementation correctly then this
+doesn't seem quite right - the entropy means there is a hole from the
+end of the direct map (ie. the range PAGE_OFFSET to
+PAGE_OFFSET+kaslr_regions[0].size_tb) and VMALLOC_START which shouldn't
+be used.
 
-Why frequency set to 100kHz for all the i2c nodes even though SoC supports
-Transfer rate up to 1MHz? Is it board limitation restricting to 100kHz?=20
+In practice hotplugging memory into that range probably works, but it
+seems like it would set us up for future bugs. It also means memory
+hotplug could fail intermittently based on the per-boot entropy.
 
-Cheers,
-Biju
+For example with CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING set to 10T one
+could imagine hotplugging 16T would mostly work except on some system
+boots if KASLR happens to randomly place VMALLOC_START close to the end
+of the direct map.
 
+Therefore to keep memory hotplug deterministic I think it would be
+better to define DIRECT_MAP_END as a variable that KASLR sets/updates.
 
-> +&i2c1 {
-> +	pinctrl-0 =3D <&i2c1_pins>;
-> +	pinctrl-names =3D "default";
 > +
-> +	status =3D "okay";
-> +};
+>  #define MODULES_VADDR		(__START_KERNEL_map + KERNEL_IMAGE_SIZE)
+>  /* The module sections ends with the start of the fixmap */
+>  #ifndef CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -97,6 +97,10 @@ extern const int mmap_rnd_compat_bits_ma
+>  extern int mmap_rnd_compat_bits __read_mostly;
+>  #endif
+>  
+> +#ifndef DIRECT_MAP_END
+> +# define DIRECT_MAP_END	((1UL << (MAX_PHYSMEM_BITS-PAGE_SHIFT)) - 1)
+> +#endif
 > +
-> +&i2c2 {
-> +	pinctrl-0 =3D <&i2c2_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c3 {
-> +	pinctrl-0 =3D <&i2c3_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c6 {
-> +	pinctrl-0 =3D <&i2c6_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c7 {
-> +	pinctrl-0 =3D <&i2c7_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
-> +&i2c8 {
-> +	pinctrl-0 =3D <&i2c8_pins>;
-> +	pinctrl-names =3D "default";
-> +
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm0 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm1 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm2 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm3 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm4 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm5 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm6 {
-> +	status =3D "okay";
-> +};
-> +
-> +&ostm7 {
-> +	status =3D "okay";
-> +};
-> +
->  &pinctrl {
-> +	i2c0_pins: i2c0 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(3, 0, 1)>, /* I2C0_SDA */
-> +			 <RZG2L_PORT_PINMUX(3, 1, 1)>; /* I2C0_SCL */
-> +	};
-> +
-> +	i2c1_pins: i2c1 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(3, 2, 1)>, /* I2C1_SDA */
-> +			 <RZG2L_PORT_PINMUX(3, 3, 1)>; /* I2C1_SCL */
-> +	};
-> +
-> +	i2c2_pins: i2c2 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(2, 0, 4)>, /* I2C2_SDA */
-> +			 <RZG2L_PORT_PINMUX(2, 1, 4)>; /* I2C2_SCL */
-> +	};
-> +
-> +	i2c3_pins: i2c3 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(3, 6, 1)>, /* I2C3_SDA */
-> +			 <RZG2L_PORT_PINMUX(3, 7, 1)>; /* I2C3_SCL */
-> +	};
-> +
-> +	i2c6_pins: i2c6 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(4, 4, 1)>, /* I2C6_SDA */
-> +			 <RZG2L_PORT_PINMUX(4, 5, 1)>; /* I2C6_SCL */
-> +	};
-> +
-> +	i2c7_pins: i2c7 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(4, 6, 1)>, /* I2C7_SDA */
-> +			 <RZG2L_PORT_PINMUX(4, 7, 1)>; /* I2C7_SCL */
-> +	};
-> +
-> +	i2c8_pins: i2c8 {
-> +		pinmux =3D <RZG2L_PORT_PINMUX(0, 6, 1)>, /* I2C8_SDA */
-> +			 <RZG2L_PORT_PINMUX(0, 7, 1)>; /* I2C8_SCL */
-> +	};
-> +
->  	scif_pins: scif {
->  		pins =3D "SCIF_TXD", "SCIF_RXD";
->  		renesas,output-impedance =3D <1>;
->  	};
-> +
-> +	sd1-pwr-en-hog {
-> +		gpio-hog;
-> +		gpios =3D <RZG2L_GPIO(10, 3) GPIO_ACTIVE_HIGH>;
-> +		output-high;
-> +		line-name =3D "sd1_pwr_en";
-> +	};
-> +
-> +	sdhi1_pins: sd1 {
-> +		sd1_data {
-> +			pins =3D "SD1DAT0", "SD1DAT1", "SD1DAT2", "SD1DAT3";
-> +			input-enable;
-> +			renesas,output-impedance =3D <3>;
-> +			slew-rate =3D <1>;
-> +		};
-> +
-> +		sd1_cmd {
-> +			pins =3D "SD1CMD";
-> +			input-enable;
-> +			renesas,output-impedance =3D <3>;
-> +			slew-rate =3D <1>;
-> +		};
-> +
-> +		sd1_clk {
-> +			pins =3D "SD1CLK";
-> +			renesas,output-impedance =3D <3>;
-> +			slew-rate =3D <1>;
-> +		};
-> +
-> +		sd1_cd {
-> +			pinmux =3D <RZG2L_PORT_PINMUX(9, 4, 14)>; /* SD1_CD */
-> +		};
-> +	};
->  };
->=20
->  &qextal_clk {
-> @@ -59,3 +238,15 @@ &scif {
->=20
->  	status =3D "okay";
->  };
-> +
-> +&sdhi1 {
-> +	pinctrl-0 =3D <&sdhi1_pins>;
-> +	pinctrl-1 =3D <&sdhi1_pins>;
-> +	pinctrl-names =3D "default", "state_uhs";
-> +	vmmc-supply =3D <&reg_3p3v>;
-> +	vqmmc-supply =3D <&vqmmc_sdhi1>;
-> +	bus-width =3D <4>;
-> +	sd-uhs-sdr50;
-> +	sd-uhs-sdr104;
-> +	status =3D "okay";
-> +};
-> --
-> 2.34.1
+>  #include <asm/page.h>
+>  #include <asm/processor.h>
+>  
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -1826,8 +1826,7 @@ static resource_size_t gfr_start(struct
+>  	if (flags & GFR_DESCENDING) {
+>  		resource_size_t end;
+>  
+> -		end = min_t(resource_size_t, base->end,
+> -			    (1ULL << MAX_PHYSMEM_BITS) - 1);
+> +		end = min_t(resource_size_t, base->end, DIRECT_MAP_END);
+
+This does not look right to me - isn't DIRECT_MAP_END a virtual address
+where as the resource ranges are physical addresses? Ie. I think this
+should be:
+
++		end = min_t(resource_size_t, base->end, __pa(DIRECT_MAP_END));
+
+The same applies to the rest of the DIRECT_MAP_END users here. Perhaps
+it would be better to define this as DIRECT_MAP_SIZE and calculate this
+based off PAGE_OFFSET instead?
+
+>  		return end - size + 1;
+>  	}
+>  
+> @@ -1844,8 +1843,7 @@ static bool gfr_continue(struct resource
+>  	 * @size did not wrap 0.
+>  	 */
+>  	return addr > addr - size &&
+> -	       addr <= min_t(resource_size_t, base->end,
+> -			     (1ULL << MAX_PHYSMEM_BITS) - 1);
+> +	       addr <= min_t(resource_size_t, base->end, DIRECT_MAP_END);
+>  }
+>  
+>  static resource_size_t gfr_next(resource_size_t addr, resource_size_t size,
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -1681,7 +1681,7 @@ struct range __weak arch_get_mappable_ra
+>  
+>  struct range mhp_get_pluggable_range(bool need_mapping)
+>  {
+> -	const u64 max_phys = (1ULL << MAX_PHYSMEM_BITS) - 1;
+> +	const u64 max_phys = DIRECT_MAP_END;
+>  	struct range mhp_range;
+>  
+>  	if (need_mapping) {
+> --- a/mm/sparse.c
+> +++ b/mm/sparse.c
+> @@ -129,7 +129,7 @@ static inline int sparse_early_nid(struc
+>  static void __meminit mminit_validate_memmodel_limits(unsigned long *start_pfn,
+>  						unsigned long *end_pfn)
+>  {
+> -	unsigned long max_sparsemem_pfn = 1UL << (MAX_PHYSMEM_BITS-PAGE_SHIFT);
+> +	unsigned long max_sparsemem_pfn = (DIRECT_MAP_END + 1) >> PAGE_SHIFT;
+>  
+>  	/*
+>  	 * Sanity checks - do not allow an architecture to pass
 
 
