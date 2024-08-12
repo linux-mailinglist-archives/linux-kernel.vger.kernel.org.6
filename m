@@ -1,47 +1,59 @@
-Return-Path: <linux-kernel+bounces-282853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7B5894E97C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:14:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E6FD94E97F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EAB21F233C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BCC286BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2FAC16D4E5;
-	Mon, 12 Aug 2024 09:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/+5L8vN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42BA616D9CB;
+	Mon, 12 Aug 2024 09:13:58 +0000 (UTC)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2240214C5A4;
-	Mon, 12 Aug 2024 09:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305EF16D4E9;
+	Mon, 12 Aug 2024 09:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723454035; cv=none; b=ppJJ6AhG1nh0kFPIPDIzs6En2SWVRkOHVc0M9ZLj89xXizx488+5fgeBIIhBJD8+rOXsBbBe/L0cVw8j65Hzy9BqfBgyqPluhi1bjmcZlXcA92oT0R7r7xk/xOyFOgU6IE9fgdFTtj4IrVi12ZwuOsQzXHNgjnIT9lrjQ1CAVPs=
+	t=1723454037; cv=none; b=CvP0qzJRmPx9MPm19nK3enE1DoDnVdIi/XVT+Ao4brtRPfub09/l8WYqDIU/aMJFwYwSt6WGAkw3wo0m5aJBUZKGv337JB39q61UxV/tYuTGN7F3P78eU24ZKneGgyFd6NnB/khGEVju61WwjjgJjYDmDfY+P0O6/WbqHFeqJ2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723454035; c=relaxed/simple;
-	bh=49cb+KN9og7h4py/ImFy9HdNnL09UTPkZvB/QwOgiKs=;
+	s=arc-20240116; t=1723454037; c=relaxed/simple;
+	bh=kGVM0R3MSfaQvPyDEpPR3xekX2J3ZsY/4TtRQY7lmgQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jHHcnJdxQ+NQmkdfXHO28zJ4QpsSOWIsVHKHMJQAkcUOp5L5IrBJS7KYMEgGH8fnm35ffrAfgmiL7Jcbl5nytjzbZHNBg+YzNZog66ECAfs2+v2X7CLD3I6ofHK/EkmkcoDy8g+NB2FRE8yCPp5GfQXCSlSInIA7KoOeuBqw7eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/+5L8vN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8104C32782;
-	Mon, 12 Aug 2024 09:13:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723454034;
-	bh=49cb+KN9og7h4py/ImFy9HdNnL09UTPkZvB/QwOgiKs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B/+5L8vNZuErYIeftIT+43oZoJ1FE3n3CC4tQ02MrKWNjTCpfkbml+lvVrmYI8fH5
-	 nARsGbSOkZM4Ypn52YpXqpygbWG4LV8QsfD0LZnvHMVpqZ4nXuLwz8/SaF5QWTvM0u
-	 lb1twb1NkW1z1sdD6Lr0Beot0iSsANQ1tPdyqh+hPPk/M0boo4RVLI7DOVs4lfloup
-	 q2XDjoQCKlveMcgR46xhREUygMxnYufUpWJHbTHeh+GVhY9JyRj29q9Sod4ye2ojnh
-	 rkbIrauEYapoMl7+5PvdsTg1S5GCBIcUBIge2IJGcxIiIsTFFp3B1akk6FCSTDgLDu
-	 /rNLw1XXuT5Ow==
-Message-ID: <33ae3c93-81cb-491c-a5b3-239c7c413eb3@kernel.org>
-Date: Mon, 12 Aug 2024 11:13:47 +0200
+	 In-Reply-To:Content-Type; b=qlZqQ3TO8kavOnTiZDWbPYOKQwG4vPX/MUGobBFC57WKf/MvM0vXhxYK1GZi1d5aUHsFBF7kDY/uXDb7xAqxolHAJPYLeiBJ/ohyPcQI6m0F97UcvOoxEinqnQ5GSjgq4zEVUm1CrUDNINDTR9thdcjt/uz96c6J202o+DMlsuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ef302f5dbbso3353051fa.2;
+        Mon, 12 Aug 2024 02:13:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723454034; x=1724058834;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kGVM0R3MSfaQvPyDEpPR3xekX2J3ZsY/4TtRQY7lmgQ=;
+        b=eDqGVFLzWQwQu2LFfLiElLVGvZjxfSH34DCnhPTErIYFuwS5k/NlXEnhOhyvvsntOm
+         Y7tXusajepMJvanLY7yx8BF58pY/gmtRORpugtp97TKfhgX/0RK9eh9Xn/Q3M9RzFc66
+         Jl/S+e4ZY+UJhU8p+SspkJE5PEhfin60G+Szo4KTMvYRBsgK4e+ZXUVMGO89W92MJsNe
+         RCTfums+PQTLIdO5pPe/VSSYU8dFkDzq0MI4pgAQk6yail9HFg4PQYAH7q2UXy/gJRaZ
+         Gfs3OSvCGZmX47BT2X/Vmfk1LI79jDVB1mr0pXsciydeJRvjPQZaJEdQ8v4oIUsatAs9
+         Z5jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUg17E/Ee+6oWcYla430LE3rpSu4AARGgvlaywwGdy+U3ddZsh4yToEP5tQkcP1fkA+UtnGDUnaWwe+qBUpUJDMRyYdze+hpTafTKvLwcFiP6u/askLA8e0Gaf+i3QTJgWTAnQFgGMs+RmlobUZfnOqNmbV8mdGlnrLqwqOusS9
+X-Gm-Message-State: AOJu0YwXrJR2eAh9HI1EpNJW87KnV+kOULvL/IwqzynoD08nRPXYqzT/
+	e++CQdSccL+2pPvefE0DeGIu2oJ6RmsUKHwRB8znIjzoI+IDX1wf
+X-Google-Smtp-Source: AGHT+IFRxvHIfMILpxaS5we6c7ycl5+/GgPt+eEKN/RHRY3BKOm+fjwMG5FpnZabhCamATDvqYu2Gw==
+X-Received: by 2002:a05:651c:b29:b0:2ef:307d:17 with SMTP id 38308e7fff4ca-2f1a6cfc5b6mr33905021fa.1.1723454033887;
+        Mon, 12 Aug 2024 02:13:53 -0700 (PDT)
+Received: from [10.50.4.202] (bzq-84-110-32-226.static-ip.bezeqint.net. [84.110.32.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c74ffb1esm94373275e9.5.2024.08.12.02.13.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 02:13:53 -0700 (PDT)
+Message-ID: <06a66824-cc2e-4f6d-8776-c2bd415c06f9@grimberg.me>
+Date: Mon, 12 Aug 2024 12:13:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,105 +61,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the Nuvoton
- MA35 SoC
-To: Hui-Ping Chen <hpchen0nvt@gmail.com>, miquel.raynal@bootlin.com,
- richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
- esben@geanix.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org
-References: <20240812030045.20831-1-hpchen0nvt@gmail.com>
- <20240812030045.20831-3-hpchen0nvt@gmail.com>
- <06d627d5-947c-4da4-826a-76033386b575@kernel.org>
- <3b7b629e-0085-4821-932c-e89faad15c1a@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
+To: Christoph Hellwig <hch@lst.de>, Tariq Toukan <ttoukan.linux@gmail.com>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Anna Schumaker <Anna.Schumaker@Netapp.com>,
+ Trond Myklebust <trondmy@kernel.org>, linux-nfs@vger.kernel.org,
+ Boris Pismenny <borisp@nvidia.com>, John Fastabend
+ <john.fastabend@gmail.com>, Jakub Kicinski <kuba@kernel.org>,
+ Maxim Mikityanskiy <maxtram95@gmail.com>, Saeed Mahameed
+ <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+ Networking <netdev@vger.kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Eric Dumazet <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Leon Romanovsky <leon@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
+References: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com>
+ <77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me>
+ <4f42fac4-2a4e-426a-be86-1f4bb79987b4@gmail.com>
+ <3e08421f-91ac-4bd1-9886-3d5ecf9afa04@grimberg.me>
+ <8683155c-79ad-4090-9aff-fc8d765b096b@gmail.com>
+ <20240812090215.GA5497@lst.de>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <3b7b629e-0085-4821-932c-e89faad15c1a@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20240812090215.GA5497@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/08/2024 11:10, Hui-Ping Chen wrote:
->>> +
->>> +/* NAND-type Flash BCH Error Data Registers */
->>> +#define MA35_NFI_REG_NANDECCED0	(0x960)
->>> +#define MA35_NFI_REG_NANDECCED1	(0x964)
->>> +#define MA35_NFI_REG_NANDECCED2	(0x968)
->>> +#define MA35_NFI_REG_NANDECCED3	(0x96C)
->>> +#define MA35_NFI_REG_NANDECCED4	(0x970)
->>> +#define MA35_NFI_REG_NANDECCED5	(0x974)
->>> +
->>> +/* NAND-type Flash Redundant Area Registers */
->>> +#define MA35_NFI_REG_NANDRA0		(0xA00)
->>> +#define MA35_NFI_REG_NANDRA1		(0xA04)
->>> +
->>> +#define SKIP_SPARE_BYTES	4
->>> +
->>> +/* BCH algorithm related constants and variables */
->>> +enum {
->>> +	eBCH_NONE = 0,
->>> +	eBCH_T8,
->>> +	eBCH_T12,
->>> +	eBCH_T24,
->>> +	eBCH_CNT
->>> +} E_BCHALGORITHM;
->>> +
->>> +static const int g_i32BCHAlgoIdx[eBCH_CNT] = {BCH_T8, BCH_T8, BCH_T12, BCH_T24};
->>> +static struct nand_ecclayout_user ma35_nand_oob;
->> Why this is file-scope?
-> 
-> I will remove the `static`.
-
-No, why this cannot be instance dependent? Quick looks says it could.
-And should.
 
 
-Best regards,
-Krzysztof
 
+On 12/08/2024 12:02, Christoph Hellwig wrote:
+> On Tue, Aug 06, 2024 at 01:07:47PM +0300, Tariq Toukan wrote:
+>> Adding Maxim Mikityanskiy, he might have some insights.
+> I think the important part to find out is if the in-kernel TLS API
+> has a limitation to PAGE_SIZE buffer segments, or not.
+
+I don't see why it should. Also note that sw tls does not suffer from
+this. Maybe Jakub can add more light here in case something was missed?
 
