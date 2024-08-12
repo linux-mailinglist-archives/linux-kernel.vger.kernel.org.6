@@ -1,108 +1,102 @@
-Return-Path: <linux-kernel+bounces-282976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C51D94EB73
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:48:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B09894EB77
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154EF1F22818
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:48:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C28282011
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81129170A24;
-	Mon, 12 Aug 2024 10:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B94D170A27;
+	Mon, 12 Aug 2024 10:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYQA7LNY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxfNMwh3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C3516E866;
-	Mon, 12 Aug 2024 10:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44F716E866;
+	Mon, 12 Aug 2024 10:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723459677; cv=none; b=DSCLJcdfM9+jvRevqSmJNSNZHHB9bduZmEKll8/jtAEI58k1ijEema0HUrYsVNnw5OV8KNG8Jl76h+x+1nQLDWEj39XSi01LLb5JiGPdLK6Lne3ICm9AGW0Ci9yZ/OQbiEcNvLOwwXH9fcWdaXDa1yaXSw1MkKS5BMssDHHso/U=
+	t=1723459829; cv=none; b=O7X+b4bM5TeEU/4gt+Z4A1E9DpBU7r2TXQaYzb6wAr0ARL57lkLrfH/gb71l88AzDHt5LchBBrD351DIuF9DvRmjkSP9SLQxNq6SBuDuqJ7upXwUqMEIjFOCeAGPg4eRbDGbN7ze9ZDBjhTxTnlMGtsOakk/F2igCzqgg6tPtm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723459677; c=relaxed/simple;
-	bh=+eZwHjXG9/YRGWedIAHEi2SgF8XJyQypv3ioCyuK2gs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XIF90RH9aS0YGX3KqBJFPrgG0IJtTVZdfIsG+dlVvaobBBOpxcGdOUxdXD4psvNnY+YCZfP8eSq9Ijqyp/On27NYwCOqlzKTnFUEndtkggCJFZH73WGotEHGps4ocJ/eoMSf84ZIziCTnnV8cntVozkzR4moBofZ8TNxKVShEnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYQA7LNY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AB0C32782;
-	Mon, 12 Aug 2024 10:47:55 +0000 (UTC)
+	s=arc-20240116; t=1723459829; c=relaxed/simple;
+	bh=chTj+jP0wy6W9bqLQZo870rZ+nHwTloxyw7wRsodaew=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=NLwLcetRA8Rz7Ofe50/jcJdQzVSlb76ivZJKZ2KCo5K7Bf7wgKmXkt4l+0Z1REPI7yL3FftE/ffZ3+e7XEYBSyBmUDFrUNV5YqBpcM+zXXlmdDHLsK0K1WfFQBfJU4j7S/aRAQTnqC1KZUgGtl+B8jQX8IH6XI3iupaEf2m7aCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxfNMwh3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38CB7C4AF0E;
+	Mon, 12 Aug 2024 10:50:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723459677;
-	bh=+eZwHjXG9/YRGWedIAHEi2SgF8XJyQypv3ioCyuK2gs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pYQA7LNYx1WExe7n+HCY0CAID7RoXv1wVcw7clWW63Pc7VGPbjlshx345kZHqTGc3
-	 6BZ3wUHh6xl2Y4aw1I6lPd86rC/tUX8yWc9D+NJevchaYmHedVssyj8FNcUwY55r3j
-	 Q2RFP9UVWHEYSDotFoCe+pv6ISUfLSDyxJ8msyDQW1NqMHoBCMgi3X1X1kIuJmbxw/
-	 SOti1zKJfi0V4X+yfRiYYbd3iuaNNxtjrrZtsHxepCG8O84A7EWXwoz51gUDSodqtH
-	 e2HekE6pHEQAAdd8Iz4C2Y9tEwBAJKrB7t9ada/of13q7NX9m9n/0WBsSgjoZzBpw+
-	 /RwcvxDCXNd0Q==
-Date: Mon, 12 Aug 2024 11:47:52 +0100
-From: Simon Horman <horms@kernel.org>
-To: Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: ethernet: dlink: replace deprecated macro
-Message-ID: <20240812104752.GC468359@kernel.org>
-References: <20240810141502.175877-1-yyyynoom@gmail.com>
+	s=k20201202; t=1723459829;
+	bh=chTj+jP0wy6W9bqLQZo870rZ+nHwTloxyw7wRsodaew=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DxfNMwh3KMl3qdu1FaHbJ4hbNqh0gdB2AQGzx1ZKbFpe0ruHkR8aicFrMW9qlTVWB
+	 oDGS0DM/8emM4XeKOj9MGmxb2J8bx9ZAjhj6I9Nu/luIhTZdVf6u1LIXtkp2sXlsn7
+	 QvEpr080xSbK7LbHW8A5kR5x7HIQ2QvJYBadTA94fX2Um+b54iV4syHOS1r2llPwv9
+	 9/tdyzqswgXf24Fh3pRafOoCp9k2IygAxRhYXneeENcs9W5cF05EvEKCjAA3hXkYHZ
+	 BgRWNWT2fYRBM3yfPjgCzDOSWZCT6Cp9zKMqkCFhHuWQDW9Mm5EQ5iSkqMHG6W9Hi4
+	 mR7ng6FPodbNQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70DCF382332D;
+	Mon, 12 Aug 2024 10:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240810141502.175877-1-yyyynoom@gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v3 0/5] net: dsa: vsc73xx: fix MDIO bus access and PHY
+ operations
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172345982827.985786.6202904232752741486.git-patchwork-notify@kernel.org>
+Date: Mon, 12 Aug 2024 10:50:28 +0000
+References: <20240809193807.2221897-1-paweldembicki@gmail.com>
+In-Reply-To: <20240809193807.2221897-1-paweldembicki@gmail.com>
+To: Pawel Dembicki <paweldembicki@gmail.com>
+Cc: netdev@vger.kernel.org, andrew@lunn.ch, f.fainelli@gmail.com,
+ olteanv@gmail.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, hkallweit1@gmail.com, linux@armlinux.org.uk,
+ linus.walleij@linaro.org, linux-kernel@vger.kernel.org
 
-On Sat, Aug 10, 2024 at 11:15:02PM +0900, Moon Yeounsu wrote:
-> Macro `SIMPLE_DEV_PM_OPS()` is deprecated.
-> This patch replaces `SIMPLE_DEV_PM_OPS()` with
-> `DEFINE_SIMPLE_DEV_PM_OPS()` currently used.
+Hello:
+
+This series was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
+
+On Fri,  9 Aug 2024 21:38:01 +0200 you wrote:
+> This series are extracted patches from net-next series [0].
 > 
-> Expanded results are the same since remaining
-> member is initialized as zero (NULL):
+> The VSC73xx driver has issues with PHY configuration. This patch series
+> fixes most of them.
 > 
-> static SIMPLE_DEV_PM_OPS(rio_pm_ops, rio_suspend, rio_resume);
-> Expanded to:
-> static const struct dev_pm_ops __attribute__((__unused__)) rio_pm_ops = {
-> 	.suspend = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.resume = ((1) ? ((rio_resume)) : ((void *)0)),
-> 	.freeze = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.thaw = ((1) ? ((rio_resume)) : ((void *)0)),
-> 	.poweroff = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.restore = ((1) ? ((rio_resume)) : ((void *)0)),
-> };
+> The first patch synchronizes the register configuration routine with the
+> datasheet recommendations.
 > 
-> static DEFINE_SIMPLE_DEV_PM_OPS(rio_pm_ops, rio_suspend, rio_resume);
-> Expanded to:
-> static const struct dev_pm_ops rio_pm_ops = {
-> 	.suspend = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.resume = ((1) ? ((rio_resume)) : ((void *)0)),
-> 	.freeze = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.thaw = ((1) ? ((rio_resume)) : ((void *)0)),
-> 	.poweroff = ((1) ? ((rio_suspend)) : ((void *)0)),
-> 	.restore = ((1) ? ((rio_resume)) : ((void *)0)),
-> 	.runtime_suspend = ((void *)0),
-> 	.runtime_resume = ((void *)0),
-> 	.runtime_idle = ((void *)0),
-> };
-> 
-> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
+> [...]
 
-Hi,
+Here is the summary with links:
+  - [net,v3,1/5] net: dsa: vsc73xx: fix port MAC configuration in full duplex mode
+    https://git.kernel.org/netdev/net/c/63796bc2e97c
+  - [net,v3,2/5] net: dsa: vsc73xx: pass value in phy_write operation
+    https://git.kernel.org/netdev/net/c/5b9eebc2c7a5
+  - [net,v3,3/5] net: dsa: vsc73xx: check busy flag in MDIO operations
+    https://git.kernel.org/netdev/net/c/fa63c6434b6f
+  - [net,v3,4/5] net: dsa: vsc73xx: allow phy resetting
+    https://git.kernel.org/netdev/net/c/9f9a72654622
+  - [net,v3,5/5] net: phy: vitesse: repair vsc73xx autonegotiation
+    https://git.kernel.org/netdev/net/c/de7a670f8def
 
-I don't think that there is a need to repost because of this.  But in
-future, please consider explicitly targeting Networking patches at net-next
-(or at net for bug fixes).
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-	Subject: [net-next] ...
 
-That notwithstanding, this looks good to me.
-
-Reviewed-by: Simon Horman <horms@kernel.org>
 
