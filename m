@@ -1,183 +1,271 @@
-Return-Path: <linux-kernel+bounces-283199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B1E94EE88
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:44:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D25EE94EE87
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:44:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6F64B2322B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:44:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EF05B229F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7682E17C7C9;
-	Mon, 12 Aug 2024 13:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB3017C7C2;
+	Mon, 12 Aug 2024 13:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P0gFmOok"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="iNJPqDlN"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E907817A92F;
-	Mon, 12 Aug 2024 13:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B0817C22A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470283; cv=none; b=bWP0bKUXsTMq3njO/p0Z/+sp2iHO970LJapyfwH2qb3fICHHtkrmPEFV9WZxZyHvT2OoMajBTssvd34wY4khp1tp4Phzf3m1XP9n2EFRUI9vYqiToG2/83+J480x5gsL0aUEaQv82xacbzueUOvdNHLpWHVhK3yR4vrTAoyeiuI=
+	t=1723470243; cv=none; b=RHGzvQXca8GNv5f2E4VSSaKSOS4OANjfxhvq9WndEo0SCdapd0UoMgla8uJzovS6bPJddYpBqSSyy4p53LZF2Bw/aTfpdWmA/mMUkXtXdZPwrYVeg69pkQrFgyRtdg9io3sEJVAbdWRr+lx+Ij/mwaCd7sk8JJ9spkvMbJQmY9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470283; c=relaxed/simple;
-	bh=/RjqGAxXdDn5eYnASyKXGIi+4WtLzhr+cDrkdx8Rpxs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IonfSC8pevHsTaNIfJ53CADxWPY/D027JsEvstR/lQjOUMd/jnQoTLPruoaiDlPrJDC7q5oLUQlktpMj2nR/65okhyeZ/5M5mTd5TqPBAOEXAiY6mBXzVHoBIitOsy4i5Ok/3Grm7F0cHyRJPMpCQ2C/cQGkK1M1QqjVTIPFKF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P0gFmOok; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723470282; x=1755006282;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=/RjqGAxXdDn5eYnASyKXGIi+4WtLzhr+cDrkdx8Rpxs=;
-  b=P0gFmOokFMUjenZYLFjjwGttwuOJSHfqJj9vya0FA8iR8jNS3jFRgZyf
-   Blu1HGzs0QmelBqJtGUw6cgzQp+jvbYZPvhi4TC+hKCMpEVpKX3GAZvDB
-   VON6Gk8lqO9zW6TKyV9t0ExJcFZrA8BaTeGeItVGcV7x8oewaJLJbyIXJ
-   8qymPlognPB47hmeR5JmFWJHXaESqRKfVXATKioDSN8ETWjTesQoSC9nC
-   sslMQrE5LrXQbA4Ixn4d6/5Uxi78a3vMmQGkyvM8U4S3YjeSG2yxHWAFr
-   dYwIHhzU4zRAkLnmXBANwUCp0cpC7I0QpuiwF7m72jYzveexr45AGsJz8
-   g==;
-X-CSE-ConnectionGUID: 9eyjZd7zRV6X1VPg9KmauA==
-X-CSE-MsgGUID: SSbXXa5kS6SRpCFZz/0ADw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25444663"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="25444663"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:43:12 -0700
-X-CSE-ConnectionGUID: LhzXRniDSz68H7GhGTzgEQ==
-X-CSE-MsgGUID: H21YVEE1T46GE24AgW31Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="57925733"
-Received: from cpetruta-mobl1.ger.corp.intel.com (HELO [10.245.246.115]) ([10.245.246.115])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 06:43:07 -0700
-Message-ID: <7dc039db-ecce-4650-8eb7-96d0cfde09a2@linux.intel.com>
-Date: Mon, 12 Aug 2024 15:43:05 +0200
+	s=arc-20240116; t=1723470243; c=relaxed/simple;
+	bh=Rh/+TnUsVyyD1bT88Q7ljEMEjx68lr4yEFFjuw1/r7k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nDUF6Fl1PpXR0jTmwEKYj6E04Ioc4pegvp1h+Sr9KQOvVyxec3mXiPWWalcgdAXuOHjvfLt/4S0/Xsc1Cvn2RnCmdcRrPs3NKpxUHibkJY7EBIbDuZ1BveH9zI3h44z3Lje1H1PBZq6HBtxteN3rZGKVB60eKAHQaaDAarYmnH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=iNJPqDlN; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2f040733086so40667681fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:44:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723470239; x=1724075039; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7iSz7t3+Imyd7HRuAR7oOBmbgV42Qjorbf/TigrRMuk=;
+        b=iNJPqDlNmoNYXN1Px15yAGUoRZn65jb0g1SbCTZLyr9CzxFYs/0Rym1GOBbTFO3svE
+         9HgZnk4W1a+DxNIm5zxGKGJmXZpDoAR2SwQCiC+5kMSNtM5yjrG5PZSCQFDlZidkwdcB
+         MGUjUHQenj0vvtytVR1cSjacfRfWH/sSyhFvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723470239; x=1724075039;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7iSz7t3+Imyd7HRuAR7oOBmbgV42Qjorbf/TigrRMuk=;
+        b=Nd9DBtbEyFDPCKoDvLKQPBkCJop+A7Tasv/RnfpbgtmHHbGK90xh7MbW0Hp2EH/+Qy
+         fNQVarP1i9jhiuEXEzbZpI/zcHr8d4vfDw4j3Y2/Fol0eWyqy4ES82B/naHExCDuNEwd
+         f0pEn/RemfcG75K+Vcp18RBjIdUJ/IQNR0lP51FVWhbzPFCOvatw8hf6j+OKeqC9M7eB
+         0P5qSFsXfpjgeAGGiGrs3dwzAj+YEhaxluuejhQqg92p36WJtbUpq3sOmW3EkidFlUbl
+         s3Oh/SS01jOgCo48ZzgT8XcM+oDgRRcRP2qA1PjIbcmEzzdcP2FJjJEqg3Yo0m9qOJsG
+         ePuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXNh40OcTezRSBbOa26Si59RYhxqSj9MyetjigVZVvn9smi6VIXcnBYawC5VVC9pxeSueKby4YJZ2C1lJ0XdK7s6ynaWgjZCAssTt2
+X-Gm-Message-State: AOJu0Yz0/d7W5cl3A+pK2orgWztSbfltgHcA5OBosd2xhJwsWyIXjjhl
+	6sBq1omCkAWqhR6LkbDaMj6lGe62nN2j1Tex1UvgAvyhFeq4o1OJkmzFbrYac08IzBhK2N7Jd45
+	/Y4oQEDai2ERrPpOceataLol0b+mqpHy+jz+5
+X-Google-Smtp-Source: AGHT+IFEDaxGmHckxf11hocjZwl56wyHApr0+8GbPBZpHIYlwi6qSKp6NVxj3XeElCy5N1jBcw8TZ3rY4fNgJgN+o1M=
+X-Received: by 2002:a05:651c:543:b0:2f0:1ead:b72d with SMTP id
+ 38308e7fff4ca-2f2b714bd25mr2431051fa.12.1723470239336; Mon, 12 Aug 2024
+ 06:43:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] ALSA: compress: add Sample Rate Converter codec
- support
-To: Jaroslav Kysela <perex@perex.cz>, Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, vkoul@kernel.org, tiwai@suse.com,
- alsa-devel@alsa-project.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, Xiubo.Lee@gmail.com, festevam@gmail.com,
- nicoleotsuka@gmail.com, lgirdwood@gmail.com, broonie@kernel.org,
- linuxppc-dev@lists.ozlabs.org
-References: <1722940003-20126-1-git-send-email-shengjiu.wang@nxp.com>
- <1722940003-20126-2-git-send-email-shengjiu.wang@nxp.com>
- <e89a56bf-c377-43d8-bba8-6a09e571ed64@linux.intel.com>
- <CAA+D8AN9JXJr-BZf8aY7d4rB6M60pXS_DG=qv=P6=2r1A18ATA@mail.gmail.com>
- <ffa85004-8d86-4168-b278-afd24d79f9d8@linux.intel.com>
- <116041ee-7139-4b77-89be-3a68f699c01b@perex.cz>
- <930bb152-860a-4ec5-9ef0-1c96f554f365@linux.intel.com>
- <c9039808-cd04-452d-9f6c-f91811088456@perex.cz>
- <ed1192e0-00e7-4739-a687-c96dc2d62898@linux.intel.com>
- <CAA+D8AMOh=G7W5-dYw_=Xx-s0PqEu2suKYorscoWku86Rn-=+A@mail.gmail.com>
- <542d47c5-7ce3-4c17-8c0a-3a2b2a9e6c6a@linux.intel.com>
- <c3b8f7b8-fc5e-4285-bee8-7edd448a405d@perex.cz>
- <CAA+D8ANg7C7vuxU44mAG8EnmcZjB_te5N_=4M4v_-Q9ZyPZ49g@mail.gmail.com>
- <2be4303e-58e1-4ad7-92cf-f06fa6fa0f08@perex.cz>
-Content-Language: en-US
-From: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-In-Reply-To: <2be4303e-58e1-4ad7-92cf-f06fa6fa0f08@perex.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-6-james.quinlan@broadcom.com> <57f11aff-95f8-41fd-b35e-a9e5a85c68e3@suse.de>
+In-Reply-To: <57f11aff-95f8-41fd-b35e-a9e5a85c68e3@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 12 Aug 2024 09:43:46 -0400
+Message-ID: <CA+-6iNxd2txYOoeww3yPTPHRvZE_tVT+37Htkq=NUzbtzLkMRA@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] PCI: brcmstb: Use swinit reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000006e3970061f7cafad"
 
+--0000000000006e3970061f7cafad
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Aug 9, 2024 at 5:53=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.de=
+> wrote:
+>
+> Hi Jim,
+>
+> On 8/1/24 01:28, Jim Quinlan wrote:
+> > The 7712 SOC adds a software init reset device for the PCIe HW.
+> > If found in the DT node, use it.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
+> >
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index 4d68fe318178..948fd4d176bc 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -266,6 +266,7 @@ struct brcm_pcie {
+> >       struct reset_control    *rescal;
+> >       struct reset_control    *perst_reset;
+> >       struct reset_control    *bridge_reset;
+> > +     struct reset_control    *swinit_reset;
+> >       int                     num_memc;
+> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> >       u32                     hw_rev;
+> > @@ -1633,12 +1634,30 @@ static int brcm_pcie_probe(struct platform_devi=
+ce *pdev)
+> >       if (IS_ERR(pcie->bridge_reset))
+> >               return PTR_ERR(pcie->bridge_reset);
+> >
+> > +     pcie->swinit_reset =3D devm_reset_control_get_optional_exclusive(=
+&pdev->dev, "swinit");
+> > +     if (IS_ERR(pcie->swinit_reset))
+> > +             return PTR_ERR(pcie->swinit_reset);
+> > +
+> >       ret =3D clk_prepare_enable(pcie->clk);
+> >       if (ret)
+> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
+lock\n");
+> >
+> >       pcie->bridge_sw_init_set(pcie, 0);
+> >
+> > +     if (pcie->swinit_reset) {
+> > +             ret =3D reset_control_assert(pcie->swinit_reset);
+> > +             if (dev_err_probe(&pdev->dev, ret, "could not assert rese=
+t 'swinit'\n"))
+> > +                     goto clk_disable_unprepare;
+> > +
+> > +             /* HW team recommends 1us for proper sync and propagation=
+ of reset */
+> > +             udelay(1);
+>
+> Hmm, shouldn't this delay be part of .assert/.deassert reset_control
+> driver?  I think this detail is reset-control hw specific and the
+> consumers does not need to know it.
 
-On 8/12/24 15:31, Jaroslav Kysela wrote:
-> On 12. 08. 24 12:24, Shengjiu Wang wrote:
->> On Fri, Aug 9, 2024 at 10:01 PM Jaroslav Kysela <perex@perex.cz> wrote:
->>>
->>> On 09. 08. 24 14:52, Pierre-Louis Bossart wrote:
->>>
->>>>> And metadata
->>>>> ioctl can be called many times which can meet the ratio modifier
->>>>> requirement (ratio may be drift on the fly)
->>>>
->>>> Interesting, that's yet another way of handling the drift with
->>>> userspace
->>>> modifying the ratio dynamically. That's different to what I've seen
->>>> before.
->>>
->>> Note that the "timing" is managed by the user space with this scheme.
->>>
->>>>> And compress API uses codec as the unit for capability query and
->>>>> parameter setting,  So I think need to define "SND_AUDIOCODEC_SRC'
->>>>> and 'struct snd_dec_src',  for the 'snd_dec_src' just defined output
->>>>> format and output rate, channels definition just reuse the
->>>>> snd_codec.ch_in.
->>>>
->>>> The capability query is an interesting point as well, it's not clear
->>>> how
->>>> to expose to userspace what this specific implementation can do, while
->>>> at the same time *requiring* userpace to update the ratio dynamically.
->>>> For something like this to work, userspace needs to have pre-existing
->>>> information on how the SRC works.
->>>
->>> Yes, it's about abstraction. The user space wants to push data, read
->>> data back
->>> converted to the target rate and eventually modify the drift using a
->>> control
->>> managing clocks using own way. We can eventually assume, that if this
->>> control
->>> does not exist, the drift cannot be controlled. Also, nice thing is
->>> that the
->>> control has min and max values (range), so driver can specify the
->>> drift range,
->>> too.
->>>
->>> And again, look to "PCM Rate Shift 100000" control implementation in
->>> sound/drivers/aloop.c. It would be nice to have the base offset for the
->>> shift/drift/pitch value standardized.
->>
->> Thanks.
->>
->> But the ASRC driver I implemented is different, I just register one sound
->> card, one device/subdevice.  but the ASRC hardware support 4 instances
->> together, so user can open the card device 4 times to create 4 instances
->> then the controls can only bind with compress streams.
-> 
-> It's just a reason to add the subdevice code for the compress offload
-> layer like we have in other APIs for overall consistency. I'll try to
-> work on this.
+This was discussed previously.  I pointed out that we use a reset
+provider that governs dozens of devices.  The only thing that the
+provider could do is to employ a  worst case delay used for all
+resets.  This is unacceptable; we have certain devices that may have
+to invoke
+reset often and require timely action, and we do not want them having
+to wait the same amount of worst case delay as for example, a UART device r=
+eset.
 
-I thought this was supported already? I remember there was a request to
-enable more than one compressed stream for enhanced cross-fade support
-with different formats? That isn't supported with the single-device +
-PARTIAL_DRAIN method.
+Further, if I do a "grep reset_control_assert -A 10 drivers"  I see
+plenty of existing drivers that use usleep/msleep/udelay after the call to
+reset_control_assert, just as I am doing now.
 
-Vinod?
+As far as my opinion goes (FWIW) I think the delay is more apt to
+be present in the consumer driver and not the provider driver.  To
+ascertain this specific delay I had to consult with the PCIe HW team,
+not the HW team that implemented the reset controller.
 
->> I think I can remove the 'SNDRV_COMPRESS_SRC_RATIO_MOD',
-> 
-> Yes.
-> 
->> Only define a private type for driver,  which means only the ASRC driver
->> and its user application know the type.
-> 
-> The control API should be used for this IMHO.
+Regards,
+Jim Quinlan
+Broadcom
 
-Agree, this would be a 'clean' split where the compress API is used for
-the data parts and the control parts used otherwise to alter the ratio
-or whatever else is needed.
+>
+> > +
+> > +             ret =3D reset_control_deassert(pcie->swinit_reset);
+> > +             if (dev_err_probe(&pdev->dev, ret,
+> > +                               "could not de-assert reset 'swinit' aft=
+er asserting\n"))
+> > +                     goto clk_disable_unprepare;
+> > +     }
+> > +
+> >       ret =3D reset_control_reset(pcie->rescal);
+> >       if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
+"))
+> >               goto clk_disable_unprepare;
+>
+> ~Stan
 
->> For the change in 'include/uapi/sound/compress_params.h",  should I
->> keep them,  is there any other suggestion for them?
+--0000000000006e3970061f7cafad
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-You can add the SRC type but if you use a control for the parameters you
-don't need to add anything for the encoder options, do you?
-
-
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCbQIJba+jA6RGOiiLWnJImZSeuC2XJ
+iuttGLXomlso3zAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MTIxMzQzNTlaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAmW081eUAcJdkDqGHHLU/Rif1ahwp4WT1zDi39KAbvR6gIAZR
+dOqHxZqVy6bHvEmGJiVrLVHj8tbvfVwP6xEWTnb6+kk6PPP5OqfC7AJwOdvPjnbNOihytQ6pUPW/
+Sy3uSE8lEh4iHbDHco25CgTHEPiPgsrvQW248dT10IY156D9TSl4G/dYPWNYsArl8hTA6yQgWryi
+XM1JecEMesxIw9ky0m+4TrPngzdz51OhmhpWpInQ1Ajg9llLqsGFUa8vbvnMvaPeQIllmH2qQKov
+3H3lMwRnIx51WBBz/KuOKHreTZux54grRHPA15/0MWZaK9wlVORsoX04/956Su65uQ==
+--0000000000006e3970061f7cafad--
 
