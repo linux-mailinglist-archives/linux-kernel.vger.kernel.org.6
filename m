@@ -1,130 +1,103 @@
-Return-Path: <linux-kernel+bounces-283640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2351B94F736
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:07:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2627D94F738
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3CD41F21FA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5887D1C21461
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636DB18E772;
-	Mon, 12 Aug 2024 19:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED032191F6E;
+	Mon, 12 Aug 2024 19:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qyL4738N"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBS6IPgT"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233E818EFC5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E342B1917CE;
+	Mon, 12 Aug 2024 19:07:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723489620; cv=none; b=V7YLeiNkcI3kkblM6vHemd9tFNKN92lmeJJGEfCtTc0Axqir6LBSvMT4MZoh/JMVHNh5GcrLFJ+YDjCKCcDfGF5XnhaghkD2n7S4g+98WSwwOztP9hOxmA+Pfp2Iyzrvz2hc0DIoS+HOTi//k3BKWmNXIRMV0uMem2Aiet52ceo=
+	t=1723489625; cv=none; b=fLlsBjkyojt+OAqe2zEtzkieu++0lK0i+uvPAu1TMypEw1gWJDPk+eq4eFW/BBErRdzpJkGQTLtBv25qwtOKGQDGIWduemk3ud9VyqCB5oEoyuJzYSt05ulZepzlsiBgbwqutsC2nOxK7msOSLD1W1TOuCsqxwWSvPVkeBgzM7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723489620; c=relaxed/simple;
-	bh=Iol1CFVoy+gFeVCbnyPayZ3JKGKO3O3as7Xw6sIc61Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qTC7Ve/zRuPqo/CH8uYfu4uHBexUCFaQRjAZXotb0qqGj/NIEsu+AZHu2keMvP81HsN51g/B5QhePte3Ccv1d8f42FreWdGhOJAv4yY8bySSGkQcVbg0YJ43DGz64flZjTf3FN/RcNUdy6M0vSnPYJztxd8qBjVaomAe8U3AhDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qyL4738N; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4929992a5e2so1221135137.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:06:58 -0700 (PDT)
+	s=arc-20240116; t=1723489625; c=relaxed/simple;
+	bh=rJ+QuycrY1hJ9dMQrHVutnZn7hr1KoDa3nJRnl5fAo8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BgbBmv8LmHk/Qlm1IJDhpWv94+fkFSJg5tepXxZPBzCzfjtYuGPjTw2T+V5tmKOz8rN3bpqHM3Hsw4kR9FjiWaScS7l4wu1pDVzutYGWRadsJHLzvPSsuqGFPfyknBazXj75kot+J4bc7d2V4xG/ftCLXbXpT05VztHOLZWrQQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBS6IPgT; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-81f905eb19cso235425239f.3;
+        Mon, 12 Aug 2024 12:07:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723489618; x=1724094418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xB6GgYIvbyBy6I8JWqaCez1V6H7Bqdmk//8NtSPBKqA=;
-        b=qyL4738NJ2cdKz8hALheUyxxSytxIdEHAwjTKkxEyaD/vd8/YxmrHUZqlUsU012fNQ
-         oNfoEBGFNxYWEMCGiXIG6Wki1zK0kHOoBcZ1rfCBaSBDLxSzuo0DbmFLK3OiPsO+StOH
-         ESvkvJj0ZCXcs4j2Y8CWaBUqAvBz5dcHyzWD1jmVdIpm1X7HBTl/PLmVoWj4ZAOFJXlD
-         ruuuhSMfNlQnf8Tij8WoXJ39S0zEJ4TKX6PtKHu9+XZZo1dAoOyugAHHoQME/pUz8mqE
-         LUPJgZZJVu3XeATaeaVqhsvWeFmu3ZDjojUOOjticPXsoZrNf18l7FXMSToqPu6U36Oa
-         N3Dw==
+        d=gmail.com; s=20230601; t=1723489623; x=1724094423; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ujEXrLD6iO+Ri/Pr2XRp4rd1UPKLMSXQeTMeA9+ZOL8=;
+        b=KBS6IPgT5oXcxzDBJB9n6dMkMYaZZ6qY3VA8eJuz5pmb0KfFIK59rL3vYpH1QFLTpx
+         3YvWZ4C46YUOJkDdb2iC1QRE8b+5qYfduaXLpldlH+gJPy7KAEBrAeFYTQm+VA4sFe1G
+         wluwwLgOCoYC/nYwlwkLSF+cC+9RAV7yMx+YlybSoG1pbshKj+Z9yZzyrG3HRmrygEEK
+         bxdgfTqNl2ZpHQ8XCQML9xWRBPAkPpRIcJE4OQnSYVyqnaA/Rxo5kKZ/EQQj3H+RAw6A
+         kp/1xZaFs6Xp55esR8vUl9xYyRVk+QqOW33zupQfFHLthFHLipLUV4IQVl1Ai96HQugV
+         vvVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723489618; x=1724094418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xB6GgYIvbyBy6I8JWqaCez1V6H7Bqdmk//8NtSPBKqA=;
-        b=tnJ/XAnk+xk3zm6bVa31GaudCXpbrr9eEx1zVwMZal4Vd/kEghF9QrY5Upv4slaCAS
-         LLrR9DacUUd/dBy8X3pGSEtzPi5jzkbNoKn5NfCQdYLS981jo2ZegPZsrDLPuBrviFHn
-         iKidC8etDiNKVvLCDwThfp1pTo4iZb14aMIQZTpKwE10z9SmGglS2Eby+bkDmiiG5h7G
-         loAgQtORc+7RUo1vwYnyBoORPmjb74uPSJT3++n8xWf6xHMyMn5hOm1xx/ccEPvGVNXZ
-         rBxFF5gn068FXq02ysT+JV8ovFSFh0Mo2AHfMzpFye4XZxQ+bgL9Svyo76VvHWGTDD9V
-         Esxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSFlAtxT8Pt5cPhiT3j6ACM6PStShgwHyxWx/NyHwMNwQrhWq5gg+XDSKVYn/H8wi3BxEjOplUyNQyo4CFIX7vvw1kMMFGQKN/Zfv9
-X-Gm-Message-State: AOJu0YzZXeYS8j1WCAEeBQBzOAaUeowjgTlBE9yi2E3Q0O8go2zPl/sT
-	64dpZkhV4JDHe63g7rZTvgYDY5jR7Au/n6fYLT6iwYWAjNhWhdi5mV9N3uVd14TxSn6DNHaB1b2
-	Uw5CLfZCwArKTsBMVVQYODbafmNYxwY8RvBc9
-X-Google-Smtp-Source: AGHT+IGBu3SSdfMtnwvh5jc4QS+hZY4FzeoQfYO9cSrQ8tLL9oSnrAbTSuf/hm/n5/hVymVbKWDhCL8v1oazbCATSYk=
-X-Received: by 2002:a05:6102:b13:b0:492:aa19:dcf9 with SMTP id
- ada2fe7eead31-49743942f38mr1644540137.6.1723489617727; Mon, 12 Aug 2024
- 12:06:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723489623; x=1724094423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ujEXrLD6iO+Ri/Pr2XRp4rd1UPKLMSXQeTMeA9+ZOL8=;
+        b=KjWaN4e+Ucv9z1kiXhIXA/BflE0PJ4lE6kjPDDc5LAsoYVz3gKHLTgttPU/DkfSyWI
+         8ZCbaUWqVOv64xf+/+UTsRK49V+ZKhaszp7iM9ZcbWI1/q5ld21oxzuqxuR73SZQCRDX
+         c7p5BHGNTaMTlgvVrtLGsmEuJLGvgCNzColOXzDtBM5i3oqz1x1p9qw6/RaGOAD2oExP
+         WAlvWqlPvcQJi7T+7dME57GD0+g5dro9+1llICEfjvCQ4wJDftv0Y6vbBn/ougG5gvlE
+         rpLQndhz4Dd6BmdTnVkbTFclsLgK8rDppjfgMPUNiMUsQTLZCp/yM2PkrCnA144J/wPh
+         oipg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeUt/4ORikqFNS2v/KmBa08H+kKZ9BTDxmdLabZZllSNB5AtIlffnpO1kikScFuykGcSXsxULtq6LXMvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNzQApuAxtdpK48yRem1nDzLiw1zreLSrzoauJ7lsGXWGDPZDQ
+	S32mqj+TnMOzpBn8NlGNbdrhIe8dknoFRFPyj0GZ+R+thHyUZht5HDigL67G
+X-Google-Smtp-Source: AGHT+IEx7Z7SjEKvdw98nSK4KbvEUlwgObEAPEWnt/ec6q+UmiwZQJX9Oar3vuAj/iQWHponnIPdcQ==
+X-Received: by 2002:a05:6e02:180b:b0:399:4535:b66e with SMTP id e9e14a558f8ab-39c47837ed8mr15009825ab.9.1723489622883;
+        Mon, 12 Aug 2024 12:07:02 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a7facsm4334495b3a.59.2024.08.12.12.07.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 12:07:02 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org,
+	o.rempel@pengutronix.de
+Subject: [PATCH net-next 0/3] use more devm
+Date: Mon, 12 Aug 2024 12:06:50 -0700
+Message-ID: <20240812190700.14270-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1723461718-5503-1-git-send-email-yangge1116@126.com>
-In-Reply-To: <1723461718-5503-1-git-send-email-yangge1116@126.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Mon, 12 Aug 2024 13:06:19 -0600
-Message-ID: <CAOUHufY2=p=UA_S3ZmNGUER=p-ZTU3mfHtwDqBNRbPGY0-AuSg@mail.gmail.com>
-Subject: Re: [PATCH V2] mm/swap: take folio refcount after testing the LRU flag
-To: yangge1116@126.com
-Cc: akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, 21cnbao@gmail.com, david@redhat.com, 
-	baolin.wang@linux.alibaba.com, liuzixing@hygon.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 12, 2024 at 5:22=E2=80=AFAM <yangge1116@126.com> wrote:
->
-> From: yangge <yangge1116@126.com>
->
-> Whoever passes a folio to __folio_batch_add_and_move() must hold
-> a reference, otherwise something else would already be messed up.
-> If the folio is referenced, it will not be freed elsewhere, so we
-> can safely clear the folio's lru flag. As discussed with David
-> in [1], we should take the reference after testing the LRU flag,
-> not before.
->
-> Link: https://lore.kernel.org/lkml/d41865b4-d6fa-49ba-890a-921eefad27dd@r=
-edhat.com/ [1]
-> Signed-off-by: yangge <yangge1116@126.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> ---
->  mm/swap.c | 9 ++++-----
->  1 file changed, 4 insertions(+), 5 deletions(-)
->
-> V2:
->    Add sanity check suggested by David
->
-> diff --git a/mm/swap.c b/mm/swap.c
-> index 67a2467..c048659 100644
-> --- a/mm/swap.c
-> +++ b/mm/swap.c
-> @@ -226,12 +226,11 @@ static void __folio_batch_add_and_move(struct folio=
-_batch __percpu *fbatch,
->  {
->         unsigned long flags;
->
-> -       folio_get(folio);
-> -
-> -       if (on_lru && !folio_test_clear_lru(folio)) {
-> -               folio_put(folio);
-> +       if (on_lru && !folio_test_clear_lru(folio))
->                 return;
-> -       }
-> +
-> +       VM_WARN_ON_ONCE(!folio_ref_count(folio));
-> +       folio_get(folio);
+Some of these were introduced after the driver got introduced. In any
+case, using more devm allows removal of the remove function and overall
+simplifies the code. All of these were tested on a TP-LINK Archer C7v2.
 
-No need to check folio_ref_count() here, because folio_get() already
-does it with a better check folio_ref_zero_or_close_to_overflow().
+Rosen Penev (3):
+  net: ag71xx: use devm_clk_get_enabled
+  net: ag71xx: use devm for of_mdiobus_register
+  net: ag71xx: use devm for register_netdev
+
+ drivers/net/ethernet/atheros/ag71xx.c | 84 ++++++---------------------
+ 1 file changed, 19 insertions(+), 65 deletions(-)
+
+-- 
+2.46.0
+
 
