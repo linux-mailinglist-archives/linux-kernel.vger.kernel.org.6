@@ -1,323 +1,130 @@
-Return-Path: <linux-kernel+bounces-283706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10B394F7FC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:12:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C30A94F800
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:13:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5FD11C220B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:12:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 461DA1C21655
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DD70194089;
-	Mon, 12 Aug 2024 20:12:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66001940AA;
+	Mon, 12 Aug 2024 20:13:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DadyEFau"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KTShQkic"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA5F192B91
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BA3186E5C;
+	Mon, 12 Aug 2024 20:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723493558; cv=none; b=aHtbSNX8RQheHFpCwZtLTME6wdinJPg+hpYegePK4DdICDeVISrgbXTuZ4UbMVmTgfrPoLqAnE7i+1IK919taV5v2dg6+AUAkH3L/4mNqaiJXXg5JemE+PnMobwrB0yiPiOutrvCbugG8rT5YZZcgZ+4x1J2Lp2xNwmpJ+gQuPU=
+	t=1723493609; cv=none; b=GWPnufTpBuHOrOsZ07k6B1zAipDW2gaLKR5/s2ETxU42M0OOvCcjp3NCphQRC2QXN4E+j8sr4Y3RFIhy2u0IWEO+xj02OBlqNDVm4fSOZYB3pAtdKCaY01/BsoEHYuSILe4fjobO07d7dkCgABASqVK7DeKOWFHiCI3Fj/tWFI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723493558; c=relaxed/simple;
-	bh=N5/VM3nsUX5/eENP+oRLioybvNGuNF/v3xwWaOv7l20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGK/R/hKYwzT7K+HvTMA13oSNMFoNSo1aj709pb8e1uGIcsAeQ3FwhRMYivpZ1a49lZiKA8jdBWBVtWLL8w8TRInnnt9apjvv3Tw3Rkkc3jRFOpdv7SFLzCCkhvKS/k8IrcZaVJIWb19bDIwGHj6QtsWmXBXgd+Gkj41bk6ALC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DadyEFau; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2f15790b472so59807981fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:12:35 -0700 (PDT)
+	s=arc-20240116; t=1723493609; c=relaxed/simple;
+	bh=ryRIWMCMOIf7AI2hLWpZSWxhpmfeK5FKuJP+6ERD7J0=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YouDx+PsxkPJvah9t9Ba4o1NXw2pFVsE9t7/Ln26Vs+0Jbhl++H5EHyGdaGSJ/WobQozrOgxCyMlPI1x82GuEsCRbQ7fMI6iQCvZFl3qqeja0MAyOCH7XY0FreptdN40y8EkanASsbZIuEaj+j+pQ6SLTvzxzMKlWOwAJVgwSRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KTShQkic; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723493554; x=1724098354; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPKfsibnQchhpRMR87GoZejDoRZYPsNMz9VA7/gTmKA=;
-        b=DadyEFauXSyYCjRTgduNioUcZ8PG50c8ppulauU7i5m3EDTcYz3KotmzimtFGsASyL
-         FPZ5s+zblk1cGexfDipYDzlvmFOEQUb8kEQdxBbRyHkNT5pM6VG6CgbRNqvWjuvRCvMA
-         u1Mi0ARUSbU2lQL8KfqUbpy9IL3FE+onz8IE0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723493554; x=1724098354;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SPKfsibnQchhpRMR87GoZejDoRZYPsNMz9VA7/gTmKA=;
-        b=uM58mr8g0B1xIvX4CbaVheqGwnIBRoMrl21HH0ci8I4ZmSwfAVNatMBXbMhq1buoVz
-         4LQ37aU2DWn4K/s0BTYQjMdV+UqZEBFQ5k95CwGuo1FKzBDQdP+mfrTjMjeZhtDmpr0Y
-         aiIIgGqY5C6WLi/OSNMBlhf+SEg6N13mI0Q256dNTsjtBUjsI/LKuwzU6xysAyhBARfN
-         1fkQAtQTyeQaZAVBPBX3OC2AeGc3AtF5JF/dZTtAniyWj1Mcw1ZtML8qe9b2DZrqInEe
-         HjJS8PfAP9VDi6ktc/nidXeCfXfsctI1GxExukl/C9/RQZSYlcKC8H3hpKroT8HJDHfF
-         53ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWfoD/ufZ3ba5erQc77D0vFRXF4oAKtDVBaqbylmsVBDBzwiwz+PVkiHMudFcHuZPp0X5QXF5jMhqhSBiHtEgPyEpo8jNXLT2qZs/Nb
-X-Gm-Message-State: AOJu0Yx0tZupEiWntA1Hopsy7IIwPPd2a/S/3ygwJru75rll+aMxQO3G
-	znlNj1jQ4y4r4xGmeITRrHLFsP7HHrXUMT9p5FiXoseIgsZbRlip4iOmDRvGjGiuqTrajMZWelQ
-	eKLT7Etwr7Q2zFuQ4T4I/A02tr+zqDq3vKUVj
-X-Google-Smtp-Source: AGHT+IF2hNEc/qwFaerc0vvpnCV4GfAwoIExYc/qDRomDFxcFCrh2Tnk//YcgWOvaI5f5+aiixp8+L41jv1x4gX6q/Y=
-X-Received: by 2002:a2e:9dc6:0:b0:2ef:25ab:9881 with SMTP id
- 38308e7fff4ca-2f2b7279a27mr8742281fa.46.1723493553913; Mon, 12 Aug 2024
- 13:12:33 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1723493607; x=1755029607;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=s3dYEvupaKjUrQXVsYWre/xbQJlOysr0E/ytP1MYS+c=;
+  b=KTShQkiczXDiKDPS/O6rcqArViTJyZ0NerWWDbZFLcAeAXByDkIgQy0T
+   3FmNOxmLB13a8jKduOpHtLGchszyl3R6lu2+9P31TPNxv+BBisqbiHSJ/
+   eU8BShc2OmNfxOB0QNdLC2TBgli0CYjwtye52JyeDtCC7TCrLbw4CBNVV
+   4=;
+X-IronPort-AV: E=Sophos;i="6.09,284,1716249600"; 
+   d="scan'208";a="224908182"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 20:13:25 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:54559]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.17.82:2525] with esmtp (Farcaster)
+ id 50319a02-cdfd-4706-a685-282106658347; Mon, 12 Aug 2024 20:13:24 +0000 (UTC)
+X-Farcaster-Flow-ID: 50319a02-cdfd-4706-a685-282106658347
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 12 Aug 2024 20:13:24 +0000
+Received: from 88665a182662.ant.amazon.com (10.142.139.164) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Mon, 12 Aug 2024 20:13:21 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jain.abhinav177@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>,
+	<javier.carrasco.cruz@gmail.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>,
+	<skhan@linuxfoundation.org>, <kuniyu@amazon.com>
+Subject: Re: [PATCH net v2] selftest: af_unix: Fix kselftest compilation warnings
+Date: Mon, 12 Aug 2024 13:13:06 -0700
+Message-ID: <20240812201306.70769-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
+References: <20240812191122.1092806-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-4-james.quinlan@broadcom.com> <20240807025252.GE3412@thinkpad>
-In-Reply-To: <20240807025252.GE3412@thinkpad>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 12 Aug 2024 16:12:21 -0400
-Message-ID: <CA+-6iNx5cAUZK5JBCd-xHtkgzztbFCZcEQ1yf85JkrpDgH83iQ@mail.gmail.com>
-Subject: Re: [PATCH v5 03/12] PCI: brcmstb: Use common error handling code in brcm_pcie_probe()
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000178ffe061f821d66"
-
---000000000000178ffe061f821d66
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tue, Aug 6, 2024 at 10:53=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Wed, Jul 31, 2024 at 06:28:17PM -0400, Jim Quinlan wrote:
-> > o Move the clk_prepare_enable() below the resource allocations.
-> > o Move the clk_prepare_enable() out of __brcm_pcie_remove() but
-> >   add it to the end of brcm_pcie_remove().
-> > o Add a jump target (clk_disable_unprepare) so that a bit of exception
-> >   handling can be better reused at the end of this function implementat=
-ion.
-> > o Use dev_err_probe() where it makes sense.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 34 ++++++++++++---------------
-> >  1 file changed, 15 insertions(+), 19 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index c08683febdd4..7595e7009192 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -1473,7 +1473,6 @@ static void __brcm_pcie_remove(struct brcm_pcie *=
-pcie)
-> >               dev_err(pcie->dev, "Could not stop phy\n");
-> >       if (reset_control_rearm(pcie->rescal))
-> >               dev_err(pcie->dev, "Could not rearm rescal reset\n");
-> > -     clk_disable_unprepare(pcie->clk);
-> >  }
-> >
-> >  static void brcm_pcie_remove(struct platform_device *pdev)
-> > @@ -1484,6 +1483,7 @@ static void brcm_pcie_remove(struct platform_devi=
-ce *pdev)
-> >       pci_stop_root_bus(bridge->bus);
-> >       pci_remove_root_bus(bridge->bus);
-> >       __brcm_pcie_remove(pcie);
-> > +     clk_disable_unprepare(pcie->clk);
-> >  }
-> >
-> >  static const int pcie_offsets[] =3D {
-> > @@ -1613,31 +1613,26 @@ static int brcm_pcie_probe(struct platform_devi=
-ce *pdev)
-> >
-> >       pcie->ssc =3D of_property_read_bool(np, "brcm,enable-ssc");
-> >
-> > -     ret =3D clk_prepare_enable(pcie->clk);
-> > -     if (ret) {
-> > -             dev_err(&pdev->dev, "could not enable clock\n");
-> > -             return ret;
-> > -     }
-> >       pcie->rescal =3D devm_reset_control_get_optional_shared(&pdev->de=
-v, "rescal");
-> > -     if (IS_ERR(pcie->rescal)) {
-> > -             clk_disable_unprepare(pcie->clk);
-> > +     if (IS_ERR(pcie->rescal))
-> >               return PTR_ERR(pcie->rescal);
-> > -     }
-> > +
-> >       pcie->perst_reset =3D devm_reset_control_get_optional_exclusive(&=
-pdev->dev, "perst");
-> > -     if (IS_ERR(pcie->perst_reset)) {
-> > -             clk_disable_unprepare(pcie->clk);
-> > +     if (IS_ERR(pcie->perst_reset))
-> >               return PTR_ERR(pcie->perst_reset);
-> > -     }
-> >
-> > -     ret =3D reset_control_reset(pcie->rescal);
-> > +     ret =3D clk_prepare_enable(pcie->clk);
-> >       if (ret)
-> > -             dev_err(&pdev->dev, "failed to deassert 'rescal'\n");
-> > +             return dev_err_probe(&pdev->dev, ret, "could not enable c=
-lock\n");
-> > +
-> > +     ret =3D reset_control_reset(pcie->rescal);
-> > +     if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
-"))
-> > +             goto clk_disable_unprepare;
-> >
-> >       ret =3D brcm_phy_start(pcie);
-> >       if (ret) {
-> >               reset_control_rearm(pcie->rescal);
-> > -             clk_disable_unprepare(pcie->clk);
-> > -             return ret;
-> > +             goto clk_disable_unprepare;
-> >       }
-> >
-> >       ret =3D brcm_pcie_setup(pcie);
-> > @@ -1654,10 +1649,8 @@ static int brcm_pcie_probe(struct platform_devic=
-e *pdev)
-> >       msi_np =3D of_parse_phandle(pcie->np, "msi-parent", 0);
-> >       if (pci_msi_enabled() && msi_np =3D=3D pcie->np) {
-> >               ret =3D brcm_pcie_enable_msi(pcie);
-> > -             if (ret) {
-> > -                     dev_err(pcie->dev, "probe of internal MSI failed"=
-);
-> > +             if (dev_err_probe(pcie->dev, ret, "probe of internal MSI =
-failed"))
-> >                       goto fail;
-> > -             }
-> >       }
-> >
-> >       bridge->ops =3D pcie->type =3D=3D BCM7425 ? &brcm7425_pcie_ops : =
-&brcm_pcie_ops;
-> > @@ -1678,6 +1671,9 @@ static int brcm_pcie_probe(struct platform_device=
- *pdev)
-> >
-> >  fail:
-> >       __brcm_pcie_remove(pcie);
-> > +clk_disable_unprepare:
-> > +     clk_disable_unprepare(pcie->clk);
-> > +
->
-> TBH, this is not improving the code readability. __brcm_pcie_remove() use=
-d to
-> free all the resources and now you just moved clk_disable_unprepare() out=
- of it
-> to save 2 lines in probe(). And you ended up calling clk_disable_unprepar=
-e()
-> separately in brcm_pcie_remove().
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+Date: Tue, 13 Aug 2024 00:41:22 +0530
+> Change the parameter expected_buf from (const void *) to (const char *)
+> in the function __recvpair() as per the feedback in v1.
+> Add Fixes tag as per feedback in v1.
+> 
+> This change fixes the below warnings during test compilation:
+> 
+> ```
+> In file included from msg_oob.c:14:
+> msg_oob.c: In function ‘__recvpair’:
+> 
+> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument
+> of type ‘char *’,but argument 6 has type ‘const void *’ [-Wformat=]
+> 
+> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+> msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
+> 
+> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument
+> of type ‘char *’,but argument 6 has type ‘const void *’ [-Wformat=]
+> 
+> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+> msg_oob.c:259:25: note: in expansion of macro ‘TH_LOG’
+> ```
+> 
+> v1:
+> lore.kernel.org/netdev/20240810134037.669765-1-jain.abhinav177@gmail.com
+> 
+> Fixes: d098d77232c3 ("selftest: af_unix: Add msg_oob.c.")
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 
-Actually it saves more lines than that; the "swinit reset" commit adds
-two more "goto clk_disable_unprepare" instances.
+No need to respin, but a minor comment below for the future patches.
 
-Nonetheless I will  make the change
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
+> ---
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
+You can put changelog between revisions after "---" so that it will
+disappear during merge.
 
+And, it would be easy to jump to v1 if it has https:// .
 
+Here's a nice example:
 
+https://docs.kernel.org/process/maintainer-netdev.html#changes-requested
 
->
-> So please remove the label and call clk_disable_unprepare() in the error =
-path
-> (just 2 instances) and continue to use __brcm_pcie_remove() to free all
-> resources (I would've preferred to have separate error labels instead of =
-calling
-> __brcm_pcie_remove() though, but not this).
->
-> - Mani
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
-
---000000000000178ffe061f821d66
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCDrFV5wBrO4A/Ycu+Xe5h5Fjn2mo2sz
-imXCgSXxXXaMeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTIyMDEyMzRaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAfPNKexvWL/1MjW89YjtWTH5cgMuYv07wOlSzQDvEl8GlxbKr
-UMaIlZuDz2MOAhh7YCYS2hhcYRmEeza5z2rq3IP5APko0tQ/6g9IaHRHC4A5wXDNs9O2aKQKknGc
-gmM8OMm0Am3rBDD6Pau++ldDtv5KUZb7SOCvISbc7EqQkxJwlkcJfBOYpb12SULEJj2Hm5BnXfBO
-gPJTCZQKFyr+P5Z7n9f6Du9QIoTJnMPy2Rw28LkIUuUP+pEl12xj4eSJncqppj7HTHZFI/2EykCO
-oqGhxAHwbMUpeB1VHwWSrPf9foOduFk5o0sVtkGF/9ze1t/COH6AQinKgvfA1Oel+A==
---000000000000178ffe061f821d66--
+Thanks!
 
