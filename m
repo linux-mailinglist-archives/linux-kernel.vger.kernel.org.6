@@ -1,251 +1,140 @@
-Return-Path: <linux-kernel+bounces-283028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EA9494EC26
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:55:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5733194EC29
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB3F1B21B84
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912CC282296
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1446C1779BB;
-	Mon, 12 Aug 2024 11:55:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A43178CE2;
+	Mon, 12 Aug 2024 11:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ZznnO1I7"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpfBTSkg"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AA214EC53;
-	Mon, 12 Aug 2024 11:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723463724; cv=fail; b=YNEx0I6bh8N3HxvbpqjnP8DkLbu5agkbDE28KqGIeqeG9da18O8H+SOiwGKZ0fGVG0941NKxyhazq64RY004UW9YytA7PQq5rKbu6JmJCJDesbOUY1tV8Ha3sH50uM2H+Xo4ZNm6c81WoPFNSoY4IKVKUF6HloqBRQRDLQ4gesU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723463724; c=relaxed/simple;
-	bh=+YCYjaX5glB70OmnyBAgeyQdQpVdkfdzVlBZ58cWrz8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FI5rYbQ07DP2P8mExKuPE0zzTdLAwD96iROeOuf1OAqqZptwCGNFK0yn30pr42Km/1lm7nq4npRvsCWPqlRkEfPp/T+GxMxxlCmCl3V3Zx4PgLrS0+SjEr3WrYrcq+5ZBwevrr1EGB5KXQQciRbUsyz7ynTMOBAmh+OAths6/Oc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ZznnO1I7; arc=fail smtp.client-ip=40.107.92.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Og8PuOkZAE90w/QMMWOMak6xPD/Jhx9VlHtGobGMizD5HwNtUd302ACrGPwNfY+j7+UnpbJo4jbm2i+h2hY1jBc5WgmPn2ps2thL/bH9DMNadUXytLPVscdg9lC6OA2iO2+5pv+DlnUWBJMfKwGlVhNseZbuvHqltsBrIDW03DJyTP1ThpmCO6NS4sU6ggzeOqTubUAncou/teZE/kboP20wrUDgiM/fZOSMH16UYk2JzrUZ2J2/4R+fkHMT+0nxc/djVDyQJvLBDWPkyi2ZXOyHbi1dcxUyj1h7aTeqjEDFDojLAo2KfDn1tspIaMlXlPTeRorLGuY8SDAkHCuMPg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UPONueUWUrgRV8tw3sOmvCymank2fgC75/MMIGzBTVw=;
- b=DaFfmpizBknCS71GU3u7Xu2gXObaDe30usOHaimzoP53wtcgoJLvV/x7UYrsY8pN5gz0iJR6RLkeUrxu3hdsDyiufIO4ZwjDZkU/ggx5Z4rXNnuptD7yj/xPISkgtx2s+6uynUfKed9FH1R7VEtaAaHNOqhU2htrM4bs7rFxNyXaBCmhyZqdjeMjtYF5UN97OBH4j3blGnBhdJfePA+bZ13VQ/+DiQBjzsy3PeDdtiB0Dco5iALwY5ZHZb64wfH+PKDXQmGO08oABDMoLc86WESOCEY9FRV8pZ+CnXHdCXw6ddUAOoDf/WgBV6BO5VllAe6CIJHVJLGKLhSReQhnbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UPONueUWUrgRV8tw3sOmvCymank2fgC75/MMIGzBTVw=;
- b=ZznnO1I7pwVeyagT0wsI4lMoyXLN1SIw/QnGLTmFNJpbY94B4qqRs7gC3g9cy7EYK/TaZp7dVwxmdBnvrdBWAHXZbXOE5tJ35/jWaGkQ8UXPJx5fKmPV9Y5nRZEBDc6zQn9KZ2wRfg5zhmeh04kHfeogKoIT3SrCJCztDqF2+FI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22)
- by DS0PR12MB8564.namprd12.prod.outlook.com (2603:10b6:8:167::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
- 2024 11:55:19 +0000
-Received: from DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79]) by DM6PR12MB4202.namprd12.prod.outlook.com
- ([fe80::f943:600c:2558:af79%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 11:55:19 +0000
-Message-ID: <cba1752a-0b0d-0df0-8526-aed25d81ed3a@amd.com>
-Date: Mon, 12 Aug 2024 12:54:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH 3/3] cxl: Avoid to create dax regions for type2
- accelerators
-Content-Language: en-US
-To: "Huang, Ying" <ying.huang@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Dave Jiang
- <dave.jiang@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Davidlohr Bueso <dave@stgolabs.net>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>
-References: <20240729084611.502889-1-ying.huang@intel.com>
- <20240729084611.502889-4-ying.huang@intel.com>
- <20240804173813.00001018@Huawei.com>
- <87v80e9p0m.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Alejandro Lucero Palau <alucerop@amd.com>
-In-Reply-To: <87v80e9p0m.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0645.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:296::16) To DM6PR12MB4202.namprd12.prod.outlook.com
- (2603:10b6:5:219::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3171178375;
+	Mon, 12 Aug 2024 11:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723463728; cv=none; b=V+fRq2CNQgp2gvxQ0bJB2OowpjS2cTDJ11IankXv6iAGkHYr65tuLOUieTM2LMnoca7gtrSGYPlga9jEuGJLpOz7vxbZ/rHEBWaMgNXWo2OchQ0VWiNfJyn+ftZBo7N82+DO5ZuaLv/YoyyXKSbA/W0OAzETpu/ZHB8UMmwvoI8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723463728; c=relaxed/simple;
+	bh=D+7bmUBmPf9R1lZOFP6pwp2kl3GgyVARNY9iPApW6Wo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s6NvlSZQVGtASQJAy0uibvlreBSeDHCilz29fZsF2dujGQVH6cK7iECbgFaX9JxOZNVZDDh0ivMzo4K5wkh327NAnis9wxRtIQgDVY+y9V7iHtcUkT+kckAgaK+Re8GvqN2heDVpg6F4IJAhLLDiBdm3p984UKm7Yq1IHhuhy94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BpfBTSkg; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-428141be2ddso31696825e9.2;
+        Mon, 12 Aug 2024 04:55:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723463724; x=1724068524; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nGqwTPLmyEyMz26JbF1oTN1ZIomEQ9CX54wEGKF1mH0=;
+        b=BpfBTSkgkFXs34AsGBWVKXYlJX0uwSwmBqaksrzNwCS7mvNmb3MZ+pvE79mkM7ozfS
+         V+cfJI5zZoh5CS809/fzW1BMtv9XfSC1Fa1umMPvDU8AGy6j1PEmgtHCHWmeF5ZPxkGB
+         WSe30+tBbs1I/z6xioTuIB8qKFlRMSwVVygC8jHSniWDFuTQ2xEPiwwps3O3eF+oB5Ot
+         dJZHtRjIlj42wP4cK+Ghu2yrNkLBDXE1Z/tPbB7Sg1TcGJEhRwUt/PeVEqi+QAfTMo03
+         6ene8ctzSPohirC9ZO5hYJuJsXAb/NYtREIUb4kFlO9q900iaImlfT6eBrMKGXRR77XH
+         quNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723463724; x=1724068524;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nGqwTPLmyEyMz26JbF1oTN1ZIomEQ9CX54wEGKF1mH0=;
+        b=SC8XSYA1IT3DdJYyaojHlcVk8DAjnW1sCSZh17KvRtOO7RafHvdAasl5SUmdIiFzO4
+         RwL34ymslSKCzoiglIcfBcj2TcTyfvM2fv5pFVCtbxXmEwWUfxrrB6ALSK5BWwtiSgsS
+         7GsRLHJe3RsH8U0+c8dAw6uBBUGgYwHWfL1LGoFgCHJr8TJJeNlG98M0nD0Jfs2RkpHE
+         6M7cXLXgLj+JIKJ9ACDk/hWRcphRp2Z+9n5o28N5w6FRcIKHTscFcMAhzvX1EYDAFUuA
+         1+SDoCb0fLrxftR0tT/1emOFpSia6zPVucjr0Iu/WrlpbMvaJaK4fkDFEffDnAXn2Gv2
+         /dHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUePQeJZsDv/y6IqbiiSeWqQQs3o/vwJ28ZTfKLYQTqfDl+HtJxAZyxzt/pTATPbnnSF83RtqZXQKTeDkZW+svVNUJAqyjIcaY0NLxk2khWEQDI4AUFBw87CkMds5B6lBfqxa0jiHSSxqeIvtdEV7SZl7qdWVrfDJ6jwj06JCJJ
+X-Gm-Message-State: AOJu0YzLzFlHwg3Kiw3Ta/v/ZsF3PtBQP6hgpm/VL3JNggggZl/8qw+x
+	ynzHCr1KiMK6MF+oS5wWD3iKEFevVo6LvhnbVyoi4hEDc/KFenbvwIVS5w==
+X-Google-Smtp-Source: AGHT+IEzjMxUddGepYwSs+gi2qqbMIT/TW4uXG/465a39anmmtS9nzyhnaPu4fhSF0pZShiTU2DVEw==
+X-Received: by 2002:a05:600c:1d21:b0:428:3b5:816b with SMTP id 5b1f17b1804b1-429d47f19ffmr1249145e9.3.1723463723486;
+        Mon, 12 Aug 2024 04:55:23 -0700 (PDT)
+Received: from localhost.localdomain (host-79-52-250-20.retail.telecomitalia.it. [79.52.250.20])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36e4c937b23sm7261602f8f.35.2024.08.12.04.55.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 04:55:23 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-mmc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-amlogic@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] mmc: meson-gx: fix wrong conversion of __bf_shf to __ffs
+Date: Mon, 12 Aug 2024 13:55:10 +0200
+Message-ID: <20240812115515.20158-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB4202:EE_|DS0PR12MB8564:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3d8555b8-c6d6-4651-14fd-08dcbac5a333
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVVDbzh2M0drQ0tmT01XekFQYUR3MEN4WWN3b2RxSXVFSHJUVmFYM05SUVNT?=
- =?utf-8?B?amwyTkFXY2hMV0Z6L0xaeGxVWXJtVEdFS045cStxOTRCR05rZE5odVp3SVlU?=
- =?utf-8?B?eTNPaTlJZWhncjdPNGFTRmdtdmc0OWhqZUNFc0lsSWtkNHVRUVdyUzlBVkU1?=
- =?utf-8?B?SXR6MUQwek5QTWc1TVVkYlNqQ01CRWpiTUtMOGV5aWluN0FWQ0pKNSsvVUpE?=
- =?utf-8?B?OVpweDdMZHZxNjdMdFFsZEEzc2tHbThBZ1Q3WXdWUXQwSmRNK0w1bGROTkVh?=
- =?utf-8?B?MC8rVHMxd3BEekJIeFRDcG14KzZkOTVCMnpyUlNkMkFMRThnWjQ1dEJkbmNL?=
- =?utf-8?B?ajZOUW1qWmdhV1hUc2piWk4wYStjQlJYT2loc2lKSzRUR3JzUG4rckJGV3hm?=
- =?utf-8?B?OXUyMmdHUlkvVjUyTXd1bnRPUGE1Z09RemdTMFc4ZlpyeEY1azNUUlgvNnNJ?=
- =?utf-8?B?SFQ5MXRuNmlZQTZ1c3BXZFR5NzJtamIrNU9PRGV2MDVaOHJpK21FZFJsa2dG?=
- =?utf-8?B?TitkbVNtTTZMZzR1NDRGNFZEVHE0RlltSzBnS09UaHFTTUQyOXZyVlIwTDBH?=
- =?utf-8?B?dVQ5NnpqeVlid090K01DNC9KN1BmQWloVFZhM0lBNHpPNTNBZVhFclltVFlZ?=
- =?utf-8?B?eS9XUDE1MVdaSnI2eGphbEsyRHI5WG5vdlBRZEx4M2JwRGtuL0FIYk5lc2lN?=
- =?utf-8?B?RXdMb29QNmR0QlJzSU4xa2dMcEV1eXVsQ1NERTdPbDA1VmdNYUo4bWJIejlK?=
- =?utf-8?B?d2k5a3NNaVY4aG00UkVDemJlMUFoSUQvK3F1OG0wOFArK1FIdm9Na3c4Kysw?=
- =?utf-8?B?Rll1TjBDUWcxZVl0QjFuU1JUcjBiNlZQTUtzb3BkK3dNejU2Z0Y2MjZBTTNL?=
- =?utf-8?B?czhwbENiSVprUGxFWE1TVngxYlNxUGI3K0NUb1VwV1JHQWQxRk5weFZ5d21Y?=
- =?utf-8?B?SkJOVVdQRHRDOVJnMGRZUXBleCtzcXlKTU4ydUdKV25yRDVTcUpYcXp6bENp?=
- =?utf-8?B?d2pKb0pUWThwVDEwU3RjeTdIZElxMCs1RUd6QW13cmpLLzVjbmJVbWIwSHg2?=
- =?utf-8?B?SloyYlBKZUhJVkdTZTlramsvdVU5djRuWG1NVW44Y1NMY2VjRTV5aTRVUVJM?=
- =?utf-8?B?Rm9QT0FFVUVaQ3JHdjlxbjhtR25sQjh2ZTdBVTNzT2krTVMyTXIwTWZNd1d2?=
- =?utf-8?B?cWUxZXNNZGtldTdBOVA3b2NzeUlpS3RYbDNKQUhlNzQ2MW1WMkxzWWYxenRX?=
- =?utf-8?B?ZXAxR1p1T3ZsUDJCQ1lFYzZxQ1p5TmNiSXN4Z2lsZmdNcE04WmFrYmhtNUZL?=
- =?utf-8?B?em5IQUtlZnJVcUtnWmU0N0sxVUoxRUFWWkpMOWlDREJ5ZUdDMEpETmtjMHp0?=
- =?utf-8?B?ZlY4bTNGbEcvKzAwMHZGLzd5d2FJQkNwMnFndUhPMmFSaGJ3WGJCTjFLQXM2?=
- =?utf-8?B?MjczREt6VG5GWE43c1l1NXdwTW5XeGxSTDIrdTZYRkJYdEkrb0Vha1VQVFhY?=
- =?utf-8?B?WWdpclN4RFFlRExHemhoMUtaekMzbHExRi83WlBaZ045Q0dwRjdTWkZ5alpL?=
- =?utf-8?B?S0RQYTBBcnN2RW15Q3FoRkV2UnhxbE5zYWhYaG9VMm13K1Y4NDMzaWNCZ2lO?=
- =?utf-8?B?eUV4REp6R0pIejBueHg0N0JqenZiK1Q1OG4zLzJ0d3FnRUFnUEhxTSttNEpx?=
- =?utf-8?B?MkZRSHpubFI1ZzQzaTd0WHpFZTkya1puS1JmaEovMVVPcnhUTkxER3dZem00?=
- =?utf-8?Q?Oi72KeS5+z89biR6Ts=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4202.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UG56YVRMa2VGbkFWbnljdGJ3ME91WHNiY1ExdHZZb2d2NXhWMHRSR2x5d3Ax?=
- =?utf-8?B?S2NFMnU5a0pBUkl4cGtHY2ZER1NHQ3I2SURmODhSY1NwcWI1RVZRd0tGR2pm?=
- =?utf-8?B?RUwrVHdqR3Rya2FESDJCaVdrdXIrME9SL3ZnWkhzMXMxVk95bWhCVWhFcWZo?=
- =?utf-8?B?L0Z2bFN1dVlYRFJKQThDWDJaeUhrQzRHWWRrZUhhWnJ3Q2FwUXdjU0hXWUtC?=
- =?utf-8?B?TWNyeFRCRlgzZ0tzTmJsamZiUU95aitmTGxFS3NmNXVrMWdBZ3lMTTJhNGNM?=
- =?utf-8?B?MkFGZytWY2xIdUVBMjZlelBRSmwyMUxtekROSmxWbFhFODd2YkJrZTFQV1dh?=
- =?utf-8?B?RytrZWwwaTE2dmNncE95UEIrTjUzSmIxaVUrSDZYSGphNVR0alFZcW1UeFFI?=
- =?utf-8?B?RHJJNGNvTXBWaVZxUlhKSVh2dlphWWJZemhjK09jTGdWdmZCeEkwc3M3NjE0?=
- =?utf-8?B?enF3cFhDNW05Q1l3VDlya2g1WVJpNnlyUkwrOStxUTlxOFFmdjZEZ0h2WGFY?=
- =?utf-8?B?T0tRTnA3YVpzQUZOSDRydXRrTllCOWNFYjlpNW13ZTQ4cEJJK3ZaMXZKenZt?=
- =?utf-8?B?YzFSR0FNTUtFUHNJblNpQ0NNSnB2MHdMZzVKL2hCeUl3WldQbE82L3YzK0RI?=
- =?utf-8?B?cWVGUGZHaXJMOE9HYXpoOFBXYjVDckQ5ZUlDNDdpZXB4WGgyUURMZ01zeHk0?=
- =?utf-8?B?bitycXp1N21uZ2JiYlFXL2tFcGZLR0hWTHhXRkJMNnYxOUJ1ZjVYNlQrM2ZX?=
- =?utf-8?B?Rkg4RVlCOHEwVi83TGg2UUF3MHNpbHpYZzVLNUFSYk1ZS2FJTTdIV1h1OHBI?=
- =?utf-8?B?YldadkM0WmUxdGJqeEJtVFZkQ1h3dU9EeE9kQktJNFcwbExmdXBmdnYrS0xC?=
- =?utf-8?B?c1Y4UFpPcm0zZk9XalNOU1FvaHdFaEtWUGd5QlBxM3VVMXNDWk5lMTFRUFNL?=
- =?utf-8?B?TTFmcllmUGdQOG9Ud0RjYVptekVueHk1a250TkdJdGUxUzFSZm5Ic2N0TlNu?=
- =?utf-8?B?UUJBUTNaRjcya3B5aHZsdGtodzFwMmp5OW1TUDU2bFF5bkh4Y1dyRno4RGll?=
- =?utf-8?B?ZU1Ta293dHdNNFhubFpTbWpRZW1JdVRCZ3lwb2xqYVNNeFNXdjhsYkcyaGx6?=
- =?utf-8?B?OU0zajlsdkRHeTEzNnZLeUs2bENzK0hZSGpSQ09XS2p5Wng4cHgrdHZHZFBX?=
- =?utf-8?B?WEhzQS9iR05EQWNxMFJJSFd6YUVXWGE1bWd0amRnTEgrdFNJWld1Q0NZbzhC?=
- =?utf-8?B?ZS9sZG5yd2g5YTFQSHdtZ1hxWWJwVzM4d05mQndvbHJOUzQ2TlgxNmN2czhO?=
- =?utf-8?B?OXN1THdwRzREbzZPZnp1TEw4ZWt5V0JONWYrL04yeCtPNVN3RHFFUTNaYzhO?=
- =?utf-8?B?ZVM1NlY5UjNhSjk2ZGowYUw0Y0hWa2duV1BuMnBRU0JTbCtCb1g0YjFJVVh6?=
- =?utf-8?B?TkpZZzVLekVZaGRncnlrNFdydUpPNG5uNWZUZjRnSjF6S2g1K203WWVaYm9w?=
- =?utf-8?B?czl0bzJ2S2lReG9KZXFobWQ0bWJPRDFJdFNpYlhUdjhQaEtqWVVQTWRwdzVF?=
- =?utf-8?B?dWRBQUYrWWRRZ2xXWkUxcUR1K3dLYkFxbEE1UklwQWgyelRXc0VKc0xhOGk4?=
- =?utf-8?B?cjJRYVNVQkg3a1dweURaQVJqdzhHdTJlSzVjbEF3Um1pUUdBZnRURThrMUl4?=
- =?utf-8?B?U3hZTEgvRFlkTzUvaVBsMVpvTTdLeGpHUUFwdXBLR0VJYkRtbCtCYzdQYWE5?=
- =?utf-8?B?WnF0NXlXaFRnWEQ3OVZadnk5Z1h3S3dZbUlUVGV3c3VSenpwaXBkNnoyc2c3?=
- =?utf-8?B?bWJSMTlySnZiT2wwV3dmRHNKUTlkbnlFakxpM0lqNG1xMGtJUlZLQVV3NW9U?=
- =?utf-8?B?WER5SEVjaHJuUXREQVpEeGcra1pUcHhBbERqRWpsdEh1TnUwWGFCN2NVSk45?=
- =?utf-8?B?U2MzV0cvS2oxWEpBRWk4b1lXTjFGaVpkYkJrRm1YUHg1STNYVkMyNHBBU2VD?=
- =?utf-8?B?SHVsandiMlVMR0FSNW55VHJXQXY3K05Cd2FiSUg0UzVxSlREcVMvbnIvUVd3?=
- =?utf-8?B?YkRLYk9NczhWR2xQcU5DeDk0REI4ZStEd2phNmFnT3krQmVUWUZmSWxFVGtT?=
- =?utf-8?Q?+C8BW+dscJf+yaXCtq+InlP6+?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3d8555b8-c6d6-4651-14fd-08dcbac5a333
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4202.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 11:55:19.1074
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: I80Mqblh3Q4V4m9fw19CKItpvXwSmkmLa0HIN0hytJB/eADoUPfLVidcFf537UfgRo7e9VBHApdRaYefuryxXw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8564
+Content-Transfer-Encoding: 8bit
 
+Commit 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
+changed __bf_shf to __ffs to fix a compile error on 32bit arch that have
+problems with __ffsdi2. This comes from the fact that __bf_shf use
+__builtin_ffsll and on 32bit __ffsdi2 is missing.
 
-On 8/6/24 06:52, Huang, Ying wrote:
-> Jonathan Cameron <Jonathan.Cameron@Huawei.com> writes:
->
->> On Mon, 29 Jul 2024 16:46:11 +0800
->> Huang Ying <ying.huang@intel.com> wrote:
->>
->>> The memory range of a type2 accelerator should be managed by the type2
->>> accelerator specific driver instead of the common dax region drivers,
->>> as discussed in [1].
->>>
->>> [1] https://lore.kernel.org/linux-cxl/66469ff1b8fbc_2c2629427@dwillia2-xfh.jf.intel.com.notmuch/
->>>
->>> So, in this patch, we skip dax regions creation for type2 accelerator
->>> device memory regions.
->>>
->>> Based on: https://lore.kernel.org/linux-cxl/168592159835.1948938.1647215579839222774.stgit@dwillia2-xfh.jf.intel.com/
->>>
->>> Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
->>> Co-developed-by: Dan Williams <dan.j.williams@intel.com>
->>> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->>> Cc: Davidlohr Bueso <dave@stgolabs.net>
->>> Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
->>> Cc: Dave Jiang <dave.jiang@intel.com>
->>> Cc: Alison Schofield <alison.schofield@intel.com>
->>> Cc: Vishal Verma <vishal.l.verma@intel.com>
->>> Cc: Ira Weiny <ira.weiny@intel.com>
->>> Cc: Alejandro Lucero <alucerop@amd.com>
->>> ---
->>>   drivers/cxl/core/region.c | 8 ++++++++
->>>   1 file changed, 8 insertions(+)
->>>
->>> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
->>> index 9a483c8a32fd..b37e12bb4a35 100644
->>> --- a/drivers/cxl/core/region.c
->>> +++ b/drivers/cxl/core/region.c
->>> @@ -3435,6 +3435,14 @@ static int cxl_region_probe(struct device *dev)
->>>   					p->res->start, p->res->end, cxlr,
->>>   					is_system_ram) > 0)
->>>   			return 0;
->>> +		/*
->>> +		 * HDM-D[B] (device-memory) regions have accelerator
->>> +		 * specific usage, skip device-dax registration.
->>> +		 */
->>> +		if (cxlr->type == CXL_DECODER_DEVMEM)
->>> +			return 0;
->> As in previous need to be careful as that may not mean it's
->> an accelerator.
-> Yes.  We need some other way to identify type2 devices.
+Problem is that __bf_shf is defined as
 
+  #define __bf_shf(x) (__builtin_ffsll(x) - 1)
 
-Maybe the easier option is the accel driver specifying if DAX should be 
-used.
+but the patch doesn't account for the - 1.
 
-We are adding mailbox and hdm as optional for accel/type2, with the 
-driver specifying what is supported. Another optional param could be 
-this DAX usage.
+Fix this by using the __builtin_ffs and add the - 1 to reflect the
+original implementation.
 
+The commit also converted other entry of __bf_shf in the code but those
+got dropped in later patches.
 
->> However, we do need to deal with BI setup for HDM-DB type 3 devices
->> etc and to check the HDM Decoder capability registers to make sure
->> Supported Coherence model is appropriate. (e.g. 11 for host only or
->> device coherency - HDM-H/HDM-DB)
-> Yes.  We need to check BI configuration too.
->
->>> +
->>> +		/* HDM-H routes to device-dax */
->>>   		return devm_cxl_add_dax_region(cxlr);
->>>   	default:
->>>   		dev_dbg(&cxlr->dev, "unsupported region mode: %d\n",
-> --
-> Best Regards,
-> Huang, Ying
+Fixes: 795c633f6093 ("mmc: meson-gx: fix __ffsdi2 undefined on arm32")
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Cc: stable@vger.kernel.org # see patch description, needs adjustements for < 5.2
+---
+ drivers/mmc/host/meson-gx-mmc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/meson-gx-mmc.c b/drivers/mmc/host/meson-gx-mmc.c
+index c7c067b9415a..8f64083a08fa 100644
+--- a/drivers/mmc/host/meson-gx-mmc.c
++++ b/drivers/mmc/host/meson-gx-mmc.c
+@@ -464,7 +464,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
+ 	init.num_parents = MUX_CLK_NUM_PARENTS;
+ 
+ 	mux->reg = host->regs + SD_EMMC_CLOCK;
+-	mux->shift = __ffs(CLK_SRC_MASK);
++	mux->shift = __builtin_ffs(CLK_SRC_MASK) - 1;
+ 	mux->mask = CLK_SRC_MASK >> mux->shift;
+ 	mux->hw.init = &init;
+ 
+@@ -486,7 +486,7 @@ static int meson_mmc_clk_init(struct meson_host *host)
+ 	init.num_parents = 1;
+ 
+ 	div->reg = host->regs + SD_EMMC_CLOCK;
+-	div->shift = __ffs(CLK_DIV_MASK);
++	div->shift = __builtin_ffs(CLK_DIV_MASK) - 1;
+ 	div->width = __builtin_popcountl(CLK_DIV_MASK);
+ 	div->hw.init = &init;
+ 	div->flags = CLK_DIVIDER_ONE_BASED;
+-- 
+2.45.2
+
 
