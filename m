@@ -1,187 +1,174 @@
-Return-Path: <linux-kernel+bounces-283811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256CD94F8EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:22:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F02294F8ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3EB51F22F5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 363FE1F22C89
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54314194AD6;
-	Mon, 12 Aug 2024 21:22:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA350194A49;
+	Mon, 12 Aug 2024 21:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="poZMgg6X"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/UaLXr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F0618E022;
-	Mon, 12 Aug 2024 21:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1392418E022;
+	Mon, 12 Aug 2024 21:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723497735; cv=none; b=NAAhiLN8H5A8k84ypO9hvtH+nX+NnJNMy6CQzDq4D4pL2q05tM+ofn+i+9EqV7DG8RsvjlzMg08XhrnbJeNbRQ2KoEKwy3ez0hwTtdaWyOluRTtU+hejSmBTkJsmP/r9nmF749s+K8oF7L0TI0mtQLTVTcqj05H6B1fMW+Aos4g=
+	t=1723497779; cv=none; b=HgxYKxdA0dn+FEgiByMOSf38pkxyl/RC+7MlVQWsYsYhIGAFGDZGncg6la3jmLX0PFL7UzBMX9j3xxrGW5Mcobn+jIh9PaV5Ei9/HaINt2+KvK6syfBkEWylb/9lptslUoX6ZYnM2tFAyQf2hF5EvmXMlYTj1ZCNMAH3m5csb6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723497735; c=relaxed/simple;
-	bh=8zuYJDj8cGzoiBk0h+FKjFFJcGPFsUazacaKzL2g8nc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IiFyO/XBmjPukslVD7poVDIy3ikBa9HtgDW/Su9UV43WH2snjyut6boGzobpUJ9hTXzFo6u0GFl1dUciWdKePEgGAzlFoakzC4DhJowOPnrWFYpCf6PcfjkOpNMVc+8eRL/uAR3odC8ePPMSJyKkpFsNuH978rTq3FXE1BROvZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=poZMgg6X; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSXCG017465;
-	Mon, 12 Aug 2024 21:22:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8FAlLOeojXj0MnxpAxPHUG0VjVJDJ05pa+uyH9jzmfk=; b=poZMgg6Xi9VY/w8l
-	E8nghQQZaNBGLRnjoq1UrVFyV7QgS6Hg7c29rUthzKkUz0QBUwg0oCLY5msa1m8G
-	JefxHlTEkjjHtmRZlpS/y28eVhP8PQwVuvedEcvo+o8lrXVCjYZvq1zX4CMNvNyp
-	+WlE/Az6vUcKCIxp/482S7qIoGdHb0kGQYHKlOVPy9RjetT3CgnRmf6KC9q4Kak0
-	8PfMIa05BArv8tDJhFuM6SIPZMrtKgddsJ4zwoLtDfhSrIA0wO0HocfSDhjueIF9
-	mFaBthORu0efCT5b8hIIwer5ELMJ2j2DGg+AC+53i3fQo8Wpx+4i+0tnk1OsDnbk
-	FMJ4TA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1d4dcqv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 21:22:01 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CLM014023372
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 21:22:00 GMT
-Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 12 Aug 2024 14:21:59 -0700
-Date: Mon, 12 Aug 2024 14:21:58 -0700
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
-To: Rob Herring <robh@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor Dooley" <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Wesley
- Cheng <quic_wcheng@quicinc.com>,
-        Saravana Kannan <saravanak@google.com>,
-        "Thinh Nguyen" <Thinh.Nguyen@synopsys.com>,
-        Philipp Zabel
-	<p.zabel@pengutronix.de>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v2 3/7] of: dynamic: Don't discard children upon node
- attach
-Message-ID: <Zrp89mKNvTn+PdmG@hu-bjorande-lv.qualcomm.com>
-References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
- <20240811-dwc3-refactor-v2-3-91f370d61ad2@quicinc.com>
- <CAL_Jsq+0pX7P70OE8suhCpSsffPcqQffLEUqc3+LSX7ocf-iXg@mail.gmail.com>
+	s=arc-20240116; t=1723497779; c=relaxed/simple;
+	bh=qcCp9jeZiU3lTpiRVYh4I1XVj9Y/08xHuLt7L7IjYyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q3YeqjSUNsiSjDu/JKVPIsedGxudQXS276g7oSCu0rP2J3MHqUdkmaXnhke/X3X0VWkFmbWY+eaZxQelTqKOAhOx2U6E0bjOi3kHIdZ6TXmYEC25eSjMlmfZNOS25MZTGKrJJiqXgpuZeQC4IoNWysjk4hzhsfGYYzR/Z8n3CpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/UaLXr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FA45C32782;
+	Mon, 12 Aug 2024 21:22:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723497778;
+	bh=qcCp9jeZiU3lTpiRVYh4I1XVj9Y/08xHuLt7L7IjYyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d/UaLXr8Fmk87PSsZnZqfOvz3CQmxATpET1ejxQhJkOq0C2QZGV35S+7gPRJFJ4Ie
+	 x02DMbpQCFfVp6fPFb5GsRJSJ6OfdxhQopjfklXQaP+9co4ZCxQnyC5WewuoShZra1
+	 IGFXPnPJjXJyU1T46drXsRs/AvzlUZ0xwnQwaN7E8wQh9kYhDoTv6v3k2JpluQw9tL
+	 iFPW415n5MYvo9KAc4X1D3apmAchzboiniAzcYNnXnx9CPKmJBMDd/uextFGcwMOCk
+	 9rKZO9mCd225DL/gc6ygo43sV9KGNnHW6FtPaNj3k7E5CeujlV3CZqV3EBF5xaWqKi
+	 UKKLKHd38N3KA==
+Date: Mon, 12 Aug 2024 14:22:56 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH] modpost: simplify modpost_log()
+Message-ID: <20240812212256.GA3675407@thelio-3990X>
+References: <20240812144542.2121342-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+0pX7P70OE8suhCpSsffPcqQffLEUqc3+LSX7ocf-iXg@mail.gmail.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v4M0rjK44hIaNTtl7TuhFOeO8mtBvgDS
-X-Proofpoint-GUID: v4M0rjK44hIaNTtl7TuhFOeO8mtBvgDS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- adultscore=0 phishscore=0 suspectscore=0 mlxscore=0 mlxlogscore=999
- malwarescore=0 bulkscore=0 priorityscore=1501 clxscore=1011
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408120157
+In-Reply-To: <20240812144542.2121342-1-masahiroy@kernel.org>
 
-On Mon, Aug 12, 2024 at 02:24:21PM -0600, Rob Herring wrote:
-> On Sun, Aug 11, 2024 at 9:07 PM Bjorn Andersson <andersson@kernel.org> wrote:
-> >
-> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
-> >
-> > When dynamically modifying DeviceTree it's useful to be able to reparent
-> > nodes, but of_attach_node() clear the child pointer and hence discards
-> > any child nodes.
+Hi Masahiro,
+
+On Mon, Aug 12, 2024 at 11:45:39PM +0900, Masahiro Yamada wrote:
+> With commit cda5f94e88b4 ("modpost: avoid using the alias attribute"),
+> only two log levels remain: LOG_WARN and LOG_ERROR. Simplify this by
+> making it a boolean variable.
 > 
-> of_attach_node() is kind of the legacy API. You should be using
-> changeset API. But I guess you really mean __of_attach_node() here
-> which both use.
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
 > 
-
-I failed to spot the changeset part of the API, that does indeed look
-like a more robust solution. I will look into this, thanks.
-
-> > Retain the child pointer upon attach, so that the client code doesn't
-> > need to manually rebuild the tree.
-> >
-> > Current users of of_attach_node() either avoids attaching nodes with
-> > children or explicitly attaches nodes without children, so no impact is
-> > expected to current users.
-> >
-> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> > ---
-> >  drivers/of/dynamic.c | 1 -
-> >  1 file changed, 1 deletion(-)
-> >
-> > diff --git a/drivers/of/dynamic.c b/drivers/of/dynamic.c
-> > index 110104a936d9..32e1dffd9f96 100644
-> > --- a/drivers/of/dynamic.c
-> > +++ b/drivers/of/dynamic.c
-> > @@ -221,7 +221,6 @@ static void __of_attach_node(struct device_node *np)
-> >                         np->phandle = 0;
-> >         }
-> >
-> > -       np->child = NULL;
-> >         np->sibling = np->parent->child;
-> >         np->parent->child = np;
-> >         of_node_clear_flag(np, OF_DETACHED);
+>  scripts/mod/modpost.c | 17 ++++++-----------
+>  scripts/mod/modpost.h | 11 +++--------
+>  2 files changed, 9 insertions(+), 19 deletions(-)
 > 
-> Before OF_DETACHED had a clear meaning. Now, are child nodes detached
-> or not?
+> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
+> index d0f138803207..c896872862dc 100644
+> --- a/scripts/mod/modpost.c
+> +++ b/scripts/mod/modpost.c
+> @@ -67,20 +67,15 @@ static unsigned int nr_unresolved;
+>  
+>  #define MODULE_NAME_LEN (64 - sizeof(Elf_Addr))
+>  
+> -void modpost_log(enum loglevel loglevel, const char *fmt, ...)
+> +void modpost_log(bool is_error, const char *fmt, ...)
+>  {
+>  	va_list arglist;
+>  
+> -	switch (loglevel) {
+> -	case LOG_WARN:
+> -		fprintf(stderr, "WARNING: ");
+> -		break;
+> -	case LOG_ERROR:
+> +	if (is_error) {
+>  		fprintf(stderr, "ERROR: ");
+>  		error_occurred = true;
+> -		break;
+> -	default: /* invalid loglevel, ignore */
+> -		break;
+> +	} else {
+> +		fprintf(stderr, "WARNING: ");
+>  	}
+>  
+>  	fprintf(stderr, "modpost: ");
+> @@ -1692,7 +1687,7 @@ static void check_exports(struct module *mod)
+>  		exp = find_symbol(s->name);
+>  		if (!exp) {
+>  			if (!s->weak && nr_unresolved++ < MAX_UNRESOLVED_REPORTS)
+> -				modpost_log(warn_unresolved ? LOG_WARN : LOG_ERROR,
+> +				modpost_log(warn_unresolved,
 
-As far as I understood, the detached node will have children and as I
-re-attach it, those children will just be leaked. The current (few)
-clients are then making sure not to detach nodes with cihldren.
+I think the logic is reversed here? If warn_unresolved was true before,
+LOG_WARN would be used but I think warn_unresolved being true with this
+change would trigger the behavior of LOG_ERROR. Should it be
+'!warn_unresolved'?
 
-Perhaps the expectation is that the client will have traversed and
-detached the children, and will then reattach them here?
+>  					    "\"%s\" [%s.ko] undefined!\n",
+>  					    s->name, mod->name);
+>  			continue;
+> @@ -1715,7 +1710,7 @@ static void check_exports(struct module *mod)
+>  			basename = mod->name;
+>  
+>  		if (!contains_namespace(&mod->imported_namespaces, exp->namespace)) {
+> -			modpost_log(allow_missing_ns_imports ? LOG_WARN : LOG_ERROR,
+> +			modpost_log(allow_missing_ns_imports,
 
-Or perhaps the intention was to never allow detaching and reattaching a
-node with children?
+Same thing here?
 
-> If it means not attached to the root tree, then it is
-> redundant having it per node. If it means parent and sibling aren't
-> set, then what's the point as we can just check for NULL ptrs.
+Alternatively, I suppose the logic could be reversed in modpost_log()
+and is_error could be turned into no_error or something?
+
+>  				    "module %s uses symbol %s from namespace %s, but does not import it.\n",
+>  				    basename, exp->name, exp->namespace);
+>  			add_namespace(&mod->missing_namespaces, exp->namespace);
+> diff --git a/scripts/mod/modpost.h b/scripts/mod/modpost.h
+> index f756e6578b9e..6f418f0afd04 100644
+> --- a/scripts/mod/modpost.h
+> +++ b/scripts/mod/modpost.h
+> @@ -184,13 +184,8 @@ char *read_text_file(const char *filename);
+>  char *get_line(char **stringp);
+>  void *sym_get_data(const struct elf_info *info, const Elf_Sym *sym);
+>  
+> -enum loglevel {
+> -	LOG_WARN,
+> -	LOG_ERROR,
+> -};
+> -
+>  void __attribute__((format(printf, 2, 3)))
+> -modpost_log(enum loglevel loglevel, const char *fmt, ...);
+> +modpost_log(bool is_error, const char *fmt, ...);
+>  
+>  /*
+>   * warn - show the given message, then let modpost continue running, still
+> @@ -205,6 +200,6 @@ modpost_log(enum loglevel loglevel, const char *fmt, ...);
+>   * fatal - show the given message, and bail out immediately. This should be
+>   *         used when there is no point to continue running modpost.
+>   */
+> -#define warn(fmt, args...)	modpost_log(LOG_WARN, fmt, ##args)
+> -#define error(fmt, args...)	modpost_log(LOG_ERROR, fmt, ##args)
+> +#define warn(fmt, args...)	modpost_log(false, fmt, ##args)
+> +#define error(fmt, args...)	modpost_log(true, fmt, ##args)
+
+I suppose the declaration of modpost_log() is close enough to see what
+the true/false argument means but maybe something like
+
+  modpost_log(/* is_error = */ false, ...)
+
+could be nice? No strong opinion here though, feel free to just ignore
+this whole comment entirely if you disagree!
+
+>  #define fatal(fmt, args...)	do { error(fmt, ##args); exit(1); } while (1)
+> -- 
+> 2.43.0
 > 
-
-In practice, my goal is to detach the "ports" node from one parent and
-attach it to another node, without breaking the graph.
-
-In patch 6 this is used as:
-
-  of_node_detach(child);
-  child->parent = new;
-  of_node_attach(child);
-
-> This all seems fragile on top of what's already fragile.
-> 
-
-No concerns with that statement, I will start investigate the changeset
-API.
-
-I appreciate any guidance related to reparenting my graph node.
-
-> Rob
-
-Thank you,
-Bjorn
 
