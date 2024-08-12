@@ -1,84 +1,52 @@
-Return-Path: <linux-kernel+bounces-282749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA8794E821
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:57:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB40A94E835
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00A151F226A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79633282641
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA0DC163A9B;
-	Mon, 12 Aug 2024 07:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NLAxAHZr"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9357165EF0;
+	Mon, 12 Aug 2024 08:05:53 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D7715443B;
-	Mon, 12 Aug 2024 07:57:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB2D15C150
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723449434; cv=none; b=sElzzmtjkRm6rTqGe1U3vebOhMOCMl7T5lzniDazQ81AtxZG7olCUVt7LVIOiCMj1XTvdNfy9KxDCxbcJn83FHimd3s87J/3PnpfMMQY8jo+QWVqgsQ6N7Z2Xdq1q79xku7E8Q0FtnXxh4rX+mnB7vUwYMY3aBcCzv3CTVbxeRY=
+	t=1723449953; cv=none; b=ZkEovIqrRacXJyxKbxhpki6TYv6MY6IfVaG4/uf36MuBtzLF7ZZVujFXANlpNGX+/6CfueBWmVl5aInHIA7jO0p849U7TNnGlc+UzHYWryQJhkcJ7gBiaNC+WtdoZp4AjK4rHD1I1RY9KVwOwpWkrWchN2RHflk1knkFJiVms84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723449434; c=relaxed/simple;
-	bh=t8lC8DlFUS6Wm89+wt8jl4yxaIZoAgXtH6rTQS8a4go=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pp5tKZ8Ddq893uRTxPe8AszF2+OwmuQeiJrFYpYRvtezOcx2SYrXl+j6BOTSEhjsTwRKGLrLk4rrbE2ulklhf3paVmaTt5YXI5VnNC99gvi0vpcLw/d6lYUr3eDuXp1pp/ZJkzXbNNkcZBLFwpriR9wsyHq3Zut+cRTuQ8wgFws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NLAxAHZr; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so501477666b.1;
-        Mon, 12 Aug 2024 00:57:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723449431; x=1724054231; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lpHFKOA3+VSmgmP7qbAiCZWFl/wO/RVQXZM/gWknRxA=;
-        b=NLAxAHZroo6azEZJQz6dj4U4FmLLpDAf00LM8jJYdHgjVnj4tPsvDq3LXiXSMKp0/T
-         fq80wagvj62zfGbufIaNq+SjcR+gueCgGD1VknCJE1iA8S3JQ50Pph4ILGzSyDCSAq0f
-         JzMOK7NpuGQE/v8TYoe5NwyQfn8N+6CBjvaAMjVUF+dl7GxW1PXbwz1YX7gXs0OtfWvR
-         5FovcivzZ5e8VT6ceeRNfoShqLuPEfHlQeZXD+2bZpFZB57ZpCVa6gVjPjYl1xi3CRNR
-         /keX+QqTahUjyqVJOJVzqDl+gHn1znvK1e5L4+J2hzSzSjUPgmSEY7XG6ZrIkdg7k82f
-         ysdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723449431; x=1724054231;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lpHFKOA3+VSmgmP7qbAiCZWFl/wO/RVQXZM/gWknRxA=;
-        b=HM7BNeNKas9H3mCbiJwX/HdqI6LX6f/abnPmBsTtRKBQS8RgAT5DTGBjjD7IZN0v/y
-         xnb97/lYe0PLQEvqLkp2xBVFX5AiYkyiWOvtSI5E4FLeJYfao3GzQ0Xx1+QDajz8ku9g
-         cizf/UAZVfsh00ykzQLhp0NWMjoZDBnDil1jl8Vvb17Vwa0WmwH9ul790h1Q4Y8Ja+Y6
-         caCQduhGx4OrA98TMI30GrNqX+UhXQubUbwQbM2e9/WoApmT6ggWoNH+7ujGnSVoeWtf
-         TiVxf6uZVgm8ge3/4E7PAA8uyZ4pG+MldQ9TMdpEgVpimJDbtx/hhXlMDJnKUKZVdsOE
-         fF2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUwCiL0aQV4TSX9gWG8tFPWYW/ubBoTuwLlBVA64Ye5XQhJew3pl7WS6tW8EgWsdGeF9wJ5Qah1KToSwNqW9M37VOja6XASfgLEtYwhMWRZ7qicM0RYFsYFkyKYIJ0ABmD95AJSaM8hzoEl/w==
-X-Gm-Message-State: AOJu0YzkgsRRqnpKJQEfjyu491rgY/9CvWoxtps6fkELtfmQ9rS70z6E
-	oWwupRWbO+WJZoI2Cb4lHRHc+37kYXbk+rbfKY1hlpPJw18FDcEs
-X-Google-Smtp-Source: AGHT+IGZQ5jztRS8FRL19cLL3yCfXOsQB6OjbNxKAtxOuU0133wDifhKBJ/E3So5fxHU5Eb+tf4xAA==
-X-Received: by 2002:a17:907:c8a7:b0:a7a:9447:3e8c with SMTP id a640c23a62f3a-a80aa55253cmr577948866b.3.1723449430345;
-        Mon, 12 Aug 2024 00:57:10 -0700 (PDT)
-Received: from f.. (cst-prg-72-52.cust.vodafone.cz. [46.135.72.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb08fbd7sm206988766b.26.2024.08.12.00.57.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 00:57:09 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH] close_files(): reimplement based on do_close_on_exec()
-Date: Mon, 12 Aug 2024 09:56:58 +0200
-Message-ID: <20240812075659.1399447-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240812064427.240190-3-viro@zeniv.linux.org.uk>
-References: <20240812064427.240190-3-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1723449953; c=relaxed/simple;
+	bh=MLi1utGB0qJgfWKuS9YfyIw8SZmmrip3Wo/QGBMUuJQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XxIX/GsuNmAm14PL1zIAKxgWKZmFC6nN+ZuHczqiIRIbV4K5yK7cvyT1U1ful2+8pa64DlpIhgXNsTlG8DfyVB10nQKA5H/Xr+lkXI8jZUsKXZ0+F+cVFcwTiIy/lPFM+AwWB0hlN8eKzw9m7o/oO4gLEFFX0L9YHvvf6peV7o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Wj6V62d81zpTS2;
+	Mon, 12 Aug 2024 16:03:58 +0800 (CST)
+Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id DCDB5180101;
+	Mon, 12 Aug 2024 16:05:15 +0800 (CST)
+Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
+ (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 12 Aug
+ 2024 16:05:15 +0800
+From: Yuntao Liu <liuyuntao12@huawei.com>
+To: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <linux@armlinux.org.uk>, <arnd@arndb.de>, <mail2hgg@gmail.com>,
+	<afd@ti.com>, <rmk+kernel@armlinux.org.uk>, <linus.walleij@linaro.org>,
+	<akpm@linux-foundation.org>, <eric.devolder@oracle.com>,
+	<masahiroy@kernel.org>, <liuyuntao12@huawei.com>
+Subject: [PATCH] arm: Fix build issue with LD_DEAD_CODE_DATA_ELIMINATION
+Date: Mon, 12 Aug 2024 07:57:50 +0000
+Message-ID: <20240812075750.711240-1-liuyuntao12@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,83 +54,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg500010.china.huawei.com (7.202.181.71)
 
-While here take more advantage of the fact nobody should be messing with
-the table anymore and don't clear the fd slot.
+There is a build issue with LD segmentation fault, while
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled, as bellow.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+scripts/link-vmlinux.sh: line 49:  3796 Segmentation fault
+ (core dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-archive
+ ${objs} ${wl}--no-whole-archive ${wl}--start-group
+ ${libs} ${wl}--end-group ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
+
+The error occurs in older versions of the GNU ld with version earlier
+than 2.36. It makes most sense to have a minimum LD version as
+a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION and eliminate
+the impact of ".reloc  .text, R_ARM_NONE, ." when
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled.
+
+Fixes: ed0f94102251 ("ARM: 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION")
+Reported-by: Harith George <mail2hgg@gmail.com>
+Tested-by: Harith George <mail2hgg@gmail.com>
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+Link: https://lore.kernel.org/all/14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com/
 ---
+ arch/arm/Kconfig             |  2 +-
+ arch/arm/kernel/entry-armv.S | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 4 deletions(-)
 
-how about this instead, I think it's a nicer clean up.
-
-It's literally do_close_on_exec except locking and put fd are deleted.
-
-boots & does not blow up, but admittedly I did not bother with ltp or
-any serious testing
-
- fs/file.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/fs/file.c b/fs/file.c
-index 74d7ad676579..3ff2e8265156 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -389,33 +389,38 @@ struct files_struct *dup_fd(struct files_struct *oldf, unsigned int max_fds)
- 	return newf;
- }
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 54b2bb817a7f..173159e93c99 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -117,7 +117,7 @@ config ARM
+ 	select HAVE_KERNEL_XZ
+ 	select HAVE_KPROBES if !XIP_KERNEL && !CPU_ENDIAN_BE32 && !CPU_V7M
+ 	select HAVE_KRETPROBES if HAVE_KPROBES
+-	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION
++	select HAVE_LD_DEAD_CODE_DATA_ELIMINATION if (LD_VERSION >= 23600 || LD_IS_LLD)
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select HAVE_NMI
+ 	select HAVE_OPTPROBES if !THUMB2_KERNEL
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index f01d23a220e6..cd443faf8645 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -29,6 +29,12 @@
+ #include "entry-header.S"
+ #include <asm/probes.h>
  
--static struct fdtable *close_files(struct files_struct * files)
-+static struct fdtable *close_files(struct files_struct *files)
- {
- 	/*
- 	 * It is safe to dereference the fd table without RCU or
- 	 * ->file_lock because this is the last reference to the
- 	 * files structure.
-+	 *
-+	 * For the same reason we can skip locking.
- 	 */
- 	struct fdtable *fdt = rcu_dereference_raw(files->fdt);
--	unsigned int i, j = 0;
-+	unsigned i;
- 
--	for (;;) {
-+	for (i = 0; ; i++) {
- 		unsigned long set;
--		i = j * BITS_PER_LONG;
--		if (i >= fdt->max_fds)
-+		unsigned fd = i * BITS_PER_LONG;
-+		fdt = files_fdtable(files);
-+		if (fd >= fdt->max_fds)
- 			break;
--		set = fdt->open_fds[j++];
--		while (set) {
--			if (set & 1) {
--				struct file * file = xchg(&fdt->fd[i], NULL);
--				if (file) {
--					filp_close(file, files);
--					cond_resched();
--				}
--			}
--			i++;
--			set >>= 1;
-+		set = fdt->open_fds[i];
-+		if (!set)
-+			continue;
-+		for ( ; set ; fd++, set >>= 1) {
-+			struct file *file;
-+			if (!(set & 1))
-+				continue;
-+			file = fdt->fd[fd];
-+			if (!file)
-+				continue;
-+			filp_close(file, files);
-+			cond_resched();
- 		}
++#ifdef CONFIG_HAVE_LD_DEAD_CODE_DATA_ELIMINATION
++#define RELOC_TEXT_NONE (.reloc  .text, R_ARM_NONE, .)
++#else
++#define RELOC_TEXT_NONE
++#endif
 +
- 	}
+ /*
+  * Interrupt handling.
+  */
+@@ -1065,7 +1071,7 @@ vector_addrexcptn:
+ 	.globl	vector_fiq
  
- 	return fdt;
+ 	.section .vectors, "ax", %progbits
+-	.reloc  .text, R_ARM_NONE, .
++	RELOC_TEXT_NONE
+ 	W(b)	vector_rst
+ 	W(b)	vector_und
+ ARM(	.reloc	., R_ARM_LDR_PC_G0, .L__vector_swi		)
+@@ -1079,7 +1085,7 @@ THUMB(	.reloc	., R_ARM_THM_PC12, .L__vector_swi		)
+ 
+ #ifdef CONFIG_HARDEN_BRANCH_HISTORY
+ 	.section .vectors.bhb.loop8, "ax", %progbits
+-	.reloc  .text, R_ARM_NONE, .
++	RELOC_TEXT_NONE
+ 	W(b)	vector_rst
+ 	W(b)	vector_bhb_loop8_und
+ ARM(	.reloc	., R_ARM_LDR_PC_G0, .L__vector_bhb_loop8_swi	)
+@@ -1092,7 +1098,7 @@ THUMB(	.reloc	., R_ARM_THM_PC12, .L__vector_bhb_loop8_swi	)
+ 	W(b)	vector_bhb_loop8_fiq
+ 
+ 	.section .vectors.bhb.bpiall, "ax", %progbits
+-	.reloc  .text, R_ARM_NONE, .
++	RELOC_TEXT_NONE
+ 	W(b)	vector_rst
+ 	W(b)	vector_bhb_bpiall_und
+ ARM(	.reloc	., R_ARM_LDR_PC_G0, .L__vector_bhb_bpiall_swi	)
 -- 
-2.43.0
+2.34.1
 
 
