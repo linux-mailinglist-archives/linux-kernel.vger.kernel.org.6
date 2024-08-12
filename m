@@ -1,73 +1,51 @@
-Return-Path: <linux-kernel+bounces-283345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7928294F135
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81C894F13C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:04:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22BC1F22AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:03:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A0C9B25C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB8A17C7CB;
-	Mon, 12 Aug 2024 15:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BEkaR623"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25B16183CBD;
+	Mon, 12 Aug 2024 15:03:52 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279F11E504;
-	Mon, 12 Aug 2024 15:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7763E17BB35;
+	Mon, 12 Aug 2024 15:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723474987; cv=none; b=PZKoZ7u0GDrY8fJK83YA784XQhBDKvZ6YfYxKFAWUEQyPn2YMX4ZhqEzJUoQYLEMjM/M8QnWCt8vRZSxjYQxc1YQnsA8sQr9+NPdsxBQ2sdWojwzlm/n75EIiFe0Oo3DD2fdz4ApWLTiHKfFNxae7ttRpt7exymI0yaKzwMt8v0=
+	t=1723475031; cv=none; b=lQbi0Wuurl62c6+EZ3Y/TOXuS8Z8L9UKtR940dqaqLVz2yBbt8RUTd6FhuzHPJdA51kJLYidmfam29iaiTQ+Fh8khBvX0L+yTAbyN9RfsRUeRCDV/rHwkCND1wHZV0kSxjAdl304mYSTxLkK9vBH56C2qYq9adUOP5rIakAxxik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723474987; c=relaxed/simple;
-	bh=Yz6vzlKsg5IFj7gvXAZtzKGs6/KLRUCKPFOZS12iaJY=;
+	s=arc-20240116; t=1723475031; c=relaxed/simple;
+	bh=DIJOK9rrqKHSF2uIzk1Fwb+JCxXRyYFwDFSbyBFYc7Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MGdC6necSNOcQUHRaO1kM4nhbuGZ85S/iCBetnqgQUNkPabwEit8tkSqdzkvgGZKL+v4dBy0w25NdqY0n5P2Rmw9fVwI82KcaFGwu4O+o8y45KJRWh89EgI8ac7BGVmjNoAojfLE3WDK5HlJPmZayHfjnWUh63pvvqiTpWQxGCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BEkaR623; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1yhxhgCYYOrwxsZ9RN1iHvPLJeTvcqO7DlVfRzQWTsw=; b=BEkaR623v2rziDJGx6ZQEKKpcw
-	6DHbyjk75aeOToNg7g50KeTGLjwLISxXBBCx4Tkxtz9iTDA/riYYrbghBQn+OW3C8cajLFQTa9JBi
-	rkfXBoUWOlaO7SG58iulnLSRUtNpONK+A/rBxhzg9JYvGoMNnKFreUVRY5dndPA1YrWX+LtrG9uog
-	RG8NdLKVjhocOnR52qngGLvgwJ6umNTYlPgdajSc3URdsgO7AQYCcnopQk3o1HXmaC6Zldp/NM0/E
-	iWeQH/O0v+4VnGiO93026j/mX+7BrzR7knvyxCRpQqZogGXauMDNhluRTh5Jkeu1Cy2gUFoev3jyb
-	RJczd7IQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59654)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sdWYp-00046l-0y;
-	Mon, 12 Aug 2024 16:02:15 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sdWYn-0000YY-RA; Mon, 12 Aug 2024 16:02:13 +0100
-Date: Mon, 12 Aug 2024 16:02:13 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, will@kernel.org, arnd@arndb.de,
-	afd@ti.com, linus.walleij@linaro.org, akpm@linux-foundation.org,
-	masahiroy@kernel.org, eric.devolder@oracle.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v2] ARM: stacktrace: Add USER_STACKTRACE support
-Message-ID: <Zroj9aRA/fr33M9I@shell.armlinux.org.uk>
-References: <20240730021532.1752582-1-ruanjinjie@huawei.com>
- <ZqzHgFB2t+SWy5o9@shell.armlinux.org.uk>
- <d7b9116e-bddc-2ab2-06eb-6191612fe16b@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=epvcenuIiIy8lpvM5lE5yuXdB9W3mvnyTvXn+GCE8UKjTnlzj3n02Xcg8PfKxdAqaUrbFyVcrrBSZPTUEL/grAzrL4YRuXTrvVrWOw6TuMZXcu0nwZFooxkEoonHEp4DyIFoaYuktsp2uq2Di1YsgbMlPidDxRo8vMW6UyMvvOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1sdWaA-0006p7-VF; Mon, 12 Aug 2024 17:03:38 +0200
+Date: Mon, 12 Aug 2024 17:03:38 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Jason Xing <kerneljasonxing@gmail.com>
+Cc: Florian Westphal <fw@strlen.de>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+	davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
+Message-ID: <20240812150338.GA25936@breakpoint.cc>
+References: <20240811230029.95258-1-kuniyu@amazon.com>
+ <20240811230836.95914-1-kuniyu@amazon.com>
+ <20240812140104.GA21559@breakpoint.cc>
+ <CAL+tcoCyq4Xra97sEhxGQBB8PVtKa5qGj0wW7wM=a9tu-fOumw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,105 +54,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d7b9116e-bddc-2ab2-06eb-6191612fe16b@huawei.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CAL+tcoCyq4Xra97sEhxGQBB8PVtKa5qGj0wW7wM=a9tu-fOumw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Aug 12, 2024 at 02:45:40PM +0800, Jinjie Ruan wrote:
+Jason Xing <kerneljasonxing@gmail.com> wrote:
+> > I don't see how this helps, we need to wait until 'stolen' twsk
+> > has gone through inet_twsk_kill() and decremented tw_refcount.
+> > Obviously It would be a bit simpler if we had a reliable reproducer :-)
 > 
+> Allow me to say something irrelevant to this bug report.
 > 
-> On 2024/8/2 19:48, Russell King (Oracle) wrote:
-> > On Tue, Jul 30, 2024 at 10:15:32AM +0800, Jinjie Ruan wrote:
-> >> Currently, userstacktrace is unsupported for ARM. So use the
-> >> perf_callchain_user() code as blueprint to implement the
-> >> arch_stack_walk_user() which add userstacktrace support on ARM.
-> >> Meanwhile, we can use arch_stack_walk_user() to simplify the implementation
-> >> of perf_callchain_user().
-> >>
-> >> A ftrace test case is shown as below:
-> >> 	# cd /sys/kernel/debug/tracing
-> >> 	# echo 1 > options/userstacktrace
-> >> 	# echo 1 > options/sym-userobj
-> >> 	# echo 1 > events/sched/sched_process_fork/enable
-> >> 	# cat trace
-> >>
-> >> 	......
-> >> 	              sh-100     [000] .....    51.779261: sched_process_fork: comm=sh pid=100 child_comm=sh child_pid=108
-> >> 	              sh-100     [000] .....    51.779285: <user stack trace>
-> >> 	 => /lib/libc.so.6[+0xb3c8c]
-> >> 	 => /bin/busybox[+0xffb901f1]
-> >>
-> >> Also a simple perf test is ok as below:
-> >> 	# perf record -e cpu-clock --call-graph fp top
-> >> 	# perf report --call-graph
-> >>
-> >> 	.....
-> >> 	  [[31m  65.00%[[m     0.00%  top      [kernel.kallsyms]  [k] __ret_fast_syscall
-> >>
-> >> 	            |
-> >> 	            ---__ret_fast_syscall
-> >> 	               |
-> >> 	               |--[[31m30.00%[[m--__se_sys_getdents64
-> >> 	               |          iterate_dir
-> >> 	               |          |
-> >> 	               |          |--[[31m25.00%[[m--proc_pid_readdir
-> >>
-> >> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > 
-> > Do you have a use case for this feature?
-> 
-> To my knowledge, user stack trace is used in both uprobes and ftrace.
-> 
-> > 
-> > Given that userspace is free to do whatever it likes with stack frames,
-> > I think this is going to be hit and miss whether it works.
-> 
-> To be honest, I referred to the implementation of ARM64. Does anyone
-> have suggestions for improvements or modifications?
+> Do you think that Kuniyuki's patch can solve the race between two
+> 'killers' calling inet_twsk_deschedule_put()->inet_twsk_kill()
+> concurrently at two cores, say, inet_twsk_purge() and tcp_abort()?
 
-So you're lifting code from Arm64 and dropping it into Arm32 in the hope
-that it's suitable.
+I don't think its possible, tcp_abort() calls inet_twsk_deschedule_put,
+which does:
 
-Here's a couple of examples - I've just used objdump on Debian Stable's
-/bin/cat which contains functions where the prologue and epilogue are:
+        if (timer_shutdown_sync(&tw->tw_timer))
+                inet_twsk_kill(tw);
 
-    1a2c:       b508            push    {r3, lr}
-    ...
-    1a56:       bd08            pop     {r3, pc}
+So I don't see how two concurrent callers, working on same tw address,
+would both be able to shut down the timer.
 
-    1de4:       b570            push    {r4, r5, r6, lr}
-    ...
-    1dea:       b084            sub     sp, #16
-    ...
-    1e18:       b004            add     sp, #16
-    1e1a:       bd70            pop     {r4, r5, r6, pc}
+One will shut it down and calls inet_twsk_kill(), other will wait until
+the callback has completed, but it doesn't call inet_twsk_kill().
 
-These kinds of stack frames can not be unwound by the kernel - there
-is no frame pointer there, and the only way it can be unwound is with
-unwind information specific to the code objects concerned.
+> It at least does help avoid decrementing tw_refcount twice in the
+> above case if I understand correctly.
 
-If I look at Arm64, then:
+I don't think the refcount is decremented twice.
 
-    26b0:       a9be7bfd        stp     x29, x30, [sp, #-32]!
-    26b4:       910003fd        mov     x29, sp
-...
-    26f0:       a8c27bfd        ldp     x29, x30, [sp], #32
-    26f4:       d65f03c0        ret
+Problem is one thread is already at the 'final' decrement of
+ WARN_ON_ONCE(!refcount_dec_and_test(&net->ipv4.tcp_death_row.tw_refcount));
 
-So, x29 appears to be frame pointer like, creating a linked list of
-stack frames. If this is part of the Arm64 ABI, then yes, the kernel
-can use the guarantee that user programs will have this stack structure
-and thus can walk the stack.
+in tcp_sk_exit_batch(), while other thread has not yet called
+refcount_dec() on it (inet_twsk_kill still executing).
 
-However, as has been shown, this is not true of 32-bit Arm - there is
-no guarantee that userspace has any regular structure to its stack
-frames, and thus there is no guarantee that the stack frames can be
-walked by the kernel.
-
--- 
-*** please note that I probably will only be occasionally responsive
-*** for an unknown period of time due to recent eye surgery making
-*** reading quite difficult.
-
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+So we get two splats, refcount_dec_and_test() returns 1 not expected 0
+and refcount_dec() coming right afterwards from other task observes the
+transition to 0, while it should have dropped down to 1.
 
