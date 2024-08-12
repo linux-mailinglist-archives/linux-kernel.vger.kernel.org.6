@@ -1,152 +1,117 @@
-Return-Path: <linux-kernel+bounces-282674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5243394E73D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:54:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7274494E73E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 145F1280CED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:54:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D26CB217E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CD115381C;
-	Mon, 12 Aug 2024 06:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D6A51537C8;
+	Mon, 12 Aug 2024 06:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u5qB7oU8"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="rMfNtv2b"
+Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD1E1509BF
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 983BE14A4E0
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723445689; cv=none; b=WbXCsFf14rATRQSYe/7LJIlqGwwvQFiy+M5wWTZczYB79Kpa+rUxqHgYIj3pBQ57MAFm+Q+UBO0NvMOt+5I6dc+26ppZQZzeG2RLJGCa57qtWTJrbr0oM5AdsNffSFY5rvW393N5eZRbdn5fPmp3GHRC2LpbqB23PCQJibcWi2k=
+	t=1723445777; cv=none; b=fCm0PFtsoST+tNCyen1jaUz3AZi8+xMyx14I8u0b8jVbLXtOkXhOp1g4FNqNOgW84tEwDL8goPMUYCq5OIJzCWFOrKV5V4EDDQh4urRPWbfAnfAoqIOwVR/lFkntsf4kSkO9Xic2jA8eWdJLKUdIFKk5gP8PaKdTuOtWAjRaLIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723445689; c=relaxed/simple;
-	bh=NEQn/jklUKMpYiGlzYQqyXfeUdJDYoPjcB5z+lJTciI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ho+gqa3r9cjV78T5GK/Bgi6+gmDHwQaX/lQ7GQApvSfwhZBj+Qox0SHGY9QtZn32+vJ3OLCaZEvAmWW0n3HgXLb+I0Wq38YXDoZq1s986QcYtIyYZt3OnGi3qAGvE6Q3MFcpn/4d/72vBnqp9ArXy4ib0wRwA+7sk3fUJ6ED68A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u5qB7oU8; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5bba25c1e15so4758972a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:54:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723445686; x=1724050486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=0fQcBx/yhtEJalnoutc2Qp0GWGGUElulCgKYdofD76A=;
-        b=u5qB7oU87ldICzdHds6+R4lchb02w7PSjsxqnaYrkglv3YH8VANoczuTsXBAoHrEA0
-         XClOvSObYXuD+xbmsy2dx7IRxlHkYRvoedldQHLjW4pzyTIBOo6W6xKDVKC/+zeUGXGX
-         GPcUHTwj7FedtrsXB8kkjNEo0XBBW5h/fQVRrQKJDmTMcyGwOgpQuK3p9VTya0YG/TiW
-         aODRUjzQ1pI/Xfv6KdtgBQiP1wHGu+ixPEGS5WHleCob91/wgcGCZ7cWjkJE9+MDMEql
-         Ra88HnL8+MC1c0s7s5yNLyqlB68bW2TkYaPy5VU6S+tjD8t2knAt6iA8LRSoUQ6Vmnjb
-         5ztw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723445686; x=1724050486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0fQcBx/yhtEJalnoutc2Qp0GWGGUElulCgKYdofD76A=;
-        b=JPohOjDsm/v6oS0yc9gaMcfSxk4o4p8CYgrf0ZHM+MmTpm3n/7mVhcCGHHZJOClx5R
-         NJ4g/uHnKu+3sFgoZuZfY2sRNFAIzi9cLMPGjBh7s0W2d9toFxYLIHeaMjl5qPGUSbC1
-         yUQzTR0o89Ga42MVZRE40zCv3DiGSVUjvQNOYz3AxFHMdhVcMkiJ3IX6NBaUECkqpSjB
-         2K1rdpNKOCygibxjSH1cI8QvZXC3Vq5ElEyWXWZUrpwWAWXxHrt0rrj/s74t8mudMQ3B
-         ZiamCSnUucVGhWCy2dYUR3Ic1BDTn+vFJJgseyIX4IIdwI48pAp/MW4jSVpf76uGRxrv
-         CHag==
-X-Forwarded-Encrypted: i=1; AJvYcCVCqAxjWrdNlsPRKy3z34ej2eXQLrvHBnHRkT3VkVVm9t4vE6yVUgPIff8q/FMdQ46sZvfgS33aqphnRGZr7CqmvLt1EUXBxn5ARbXr
-X-Gm-Message-State: AOJu0YyAqH/oGm4DF5I3PLWfGAb4pdxTOZduaref+KbjTBktGcU5N99w
-	Kvc8hmYC9FsD5MP+1m6Y+ClozJgToa5c6OCp2J2J0wIzAVQhKGy8mgLFSWiXDGU=
-X-Google-Smtp-Source: AGHT+IHqItAaYkq1CnYLYCG46rQAAVYiJweMtHCZU5ynOtcYUTt5FmVrj2hFnIpnEigVtDeRa1vwUg==
-X-Received: by 2002:a17:907:72d0:b0:a7a:9226:6511 with SMTP id a640c23a62f3a-a80aa5d9ae5mr688705066b.31.1723445685533;
-        Sun, 11 Aug 2024 23:54:45 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb0904f5sm207822166b.18.2024.08.11.23.54.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 23:54:45 -0700 (PDT)
-Date: Mon, 12 Aug 2024 09:54:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH v2] drm/ast: astdp: fix loop timeout check
-Message-ID: <10624c71-d134-441f-a7e6-d757b60f54f8@stanley.mountain>
-References: <9dbd4d2c-0757-4d5f-aa11-7d9e665e7633@stanley.mountain>
- <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
+	s=arc-20240116; t=1723445777; c=relaxed/simple;
+	bh=QzsSh3ktq3UpJh1HnSNSrph3wkq7SkEV1BWUvk416dI=;
+	h=To:Cc:Message-Id:From:Subject:Date; b=ACYbCvcnJm7Or7g7L2T5d3evThz1CT8tk53vlvyHISrNxCkM6dl/mCkKM1U/5IJadzvaAMCRNTH7HxxItAX7Ixig+ZBTnLT/GhbjUQemRu5Eanpi0+/pRw+SZ4gqQn1RByVIvC8aafWsnyNAdenHWRhcXwz/Qr+Pjhzzj6Mgw48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=rMfNtv2b; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-04.internal (phl-compute-04.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B1434138FD1F;
+	Mon, 12 Aug 2024 02:56:13 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 12 Aug 2024 02:56:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723445773; x=1723532173; bh=wgdcpDta7uviF
+	pHOi0oLjz9iumO7bO5FMcWnq7HSJsI=; b=rMfNtv2b59YtdaOgDNLMvvrOOOOZy
+	NzpP2mKTcV2ykL9ceilzJtEn4lv1OvHw0ypgnmGNGRPMhCWziVl3Xq4EU52qBE3t
+	8s/ioU9GhHM65o+eGTE0I4c5YYkYeLJmopfUoWTRNCcD7NiZ5v6gV/uNIBKUS31w
+	sSVeHsFFZKwRn9vXlSUK09odqywMHHHYT2ny8CWJvGBCDbHo3omIzdiiHhE/K6tj
+	YcLyEWRFUs5qfTaSPjWrdvKXR/xIpKOq0GQ/3gPaBwE4nJtaULBz+bZdj1Lvlr4/
+	1UY3pt9jGJtjwVVHifshWFHi7Lhf+PCPH5mJV5yOTfqCivtQHDbpxkH5w==
+X-ME-Sender: <xms:DbK5ZqqQ9xHXyMfwJYdHCFnKUz-Nv6vOA5Hs0TmV1nCrYRr9v19HhQ>
+    <xme:DbK5ZopwDyO1QRp7Zv-JpKWYZAG3JOacUePJ3cLwL0Ss0bKHXn_hS0Bd6NGzDHaeW
+    QRuRH8iQx6WR5zApk4>
+X-ME-Received: <xmr:DbK5ZvM-Ry97YyZwtd2TUzmkeJqipoQQYkbyRSlbjFKuhyJB1fu-FsJJ7mSCn0IPAP6ow6fgS-nQYl0dUeEMNhCzRBItw4PkcO8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrleelgdduudegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhrohhm
+    pefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqe
+    enucggtffrrghtthgvrhhnpeehfffggeefveegvedtiefffeevuedtgefhueehieetffej
+    fefggeevfeeuvdduleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrih
+    hlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphht
+    thhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrhhtsehlihhnuh
+    igqdhmieekkhdrohhrghdprhgtphhtthhopehfuhhnrghhohesjhhurhgrihdrohhrghdp
+    rhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtoheplhhinh
+    hugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthho
+    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:DbK5Zp6Lyyq8kwwZnMbAjDHcMmotg8OU3MZlwAeR4fKd2IEsdA_pwg>
+    <xmx:DbK5Zp4qBg4JDpR-gnN6FZkSV6dC-gLg59na9oWij11exThk61zjaA>
+    <xmx:DbK5Zpi1eFE73oP6TMA69CrPnjkGabzmBPeuWe-q_G8ffwQ3cY5cTw>
+    <xmx:DbK5Zj5zSc4sj3zk7Or7jNZGuTtBtr_ega_hM-NFRg3lLerrRNmLEQ>
+    <xmx:DbK5Zs3r8rTj8-ug71LGFHLParvaBTfNxAlLIHf9bpx17WpmNQ0Fd8ZH>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 12 Aug 2024 02:56:10 -0400 (EDT)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Joshua Thompson <funaho@jurai.org>,
+    Stan Johnson <userm57@yahoo.com>,
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+Message-Id: <3633d85c51d2133622708e5b0e07cfea96fc295b.1723445731.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH] m68k/mac: Revise PowerBook 500 series model name
+Date: Mon, 12 Aug 2024 16:55:31 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8c1ad0a1-bbc5-4274-bdf5-fcf2e043a869@suse.de>
 
-On Mon, Aug 12, 2024 at 08:48:16AM +0200, Thomas Zimmermann wrote:
-> Hi
-> 
-> Am 12.08.24 um 08:42 schrieb Dan Carpenter:
-> > This code has an issue because it loops until "i" is set to UINT_MAX but
-> > the test for failure assumes that "i" is set to zero.  The result is that
-> > it will only print an error message if we succeed on the very last try.
-> > Reformat the loop to count forwards instead of backwards.
-> > 
-> > Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
-> > Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > ---
-> > v2: In version one, I introduced a bug where it would msleep(100) after failure
-> >      and that is a pointless thing to do.  Also change the loop to a for loop.
-> > ---
-> >   drivers/gpu/drm/ast/ast_dp.c | 12 +++++-------
-> >   1 file changed, 5 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
-> > index 5d07678b502c..9bc21dd6a54d 100644
-> > --- a/drivers/gpu/drm/ast/ast_dp.c
-> > +++ b/drivers/gpu/drm/ast/ast_dp.c
-> > @@ -146,18 +146,16 @@ void ast_dp_power_on_off(struct drm_device *dev, bool on)
-> >   void ast_dp_link_training(struct ast_device *ast)
-> >   {
-> >   	struct drm_device *dev = &ast->base;
-> > -	unsigned int i = 10;
-> > +	int i;
-> > -	while (i--) {
-> > +	for (i = 0; i < 10; i++) {
-> >   		u8 vgacrdc = ast_get_index_reg(ast, AST_IO_VGACRI, 0xdc);
-> >   		if (vgacrdc & AST_IO_VGACRDC_LINK_SUCCESS)
-> > -			break;
-> > -		if (i)
-> > -			msleep(100);
-> > +			return;
-> > +		msleep(100);
-> 
-> But we don't want to wait during the final iteration of this loop. If you
-> want to use the for loop, it should be something like
-> 
-> for (i= 0; i < 10; ++i) {
-> 
->     if (i)
->       msleep(100)
-> 
->     // now test vgacrdc
-> }
-> 
-> Best regards
-> Thomas
+The PowerBook 520, 540 and 550 all have macintosh_config->ident == 72
+because that's their gestalt ID in MacOS. Hence, Linux describes them all
+as "Powerbook 520". Change that to "Powerbook 500 series", which is more
+accurate.
 
-I feel like if we really hit this failure path then we won't care about the
-tenth msleep().  I can resend if you want, but I'd prefer to just leave it.
+Cc: Joshua Thompson <funaho@jurai.org>
+Cc: Stan Johnson <userm57@yahoo.com>
+Reported-by: Stan Johnson <userm57@yahoo.com>
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+---
+ arch/m68k/mac/config.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-regards,
-dan carpenter
+diff --git a/arch/m68k/mac/config.c b/arch/m68k/mac/config.c
+index e324410ef239..6a74a3fecbc9 100644
+--- a/arch/m68k/mac/config.c
++++ b/arch/m68k/mac/config.c
+@@ -677,7 +677,7 @@ static struct mac_model mac_data_table[] = {
+ 		.floppy_type	= MAC_FLOPPY_OLD, /* SWIM 2 */
+ 	}, {
+ 		.ident		= MAC_MODEL_PB520,
+-		.name		= "PowerBook 520",
++		.name		= "PowerBook 500 series",
+ 		.adb_type	= MAC_ADB_PB2,
+ 		.via_type	= MAC_VIA_QUADRA,
+ 		.scsi_type	= MAC_SCSI_OLD,
+-- 
+2.39.5
 
 
