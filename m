@@ -1,432 +1,368 @@
-Return-Path: <linux-kernel+bounces-283315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31F494EFFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:45:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D7A894EFD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578701F24EDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:45:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0956A1F22A8F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4D2189537;
-	Mon, 12 Aug 2024 14:42:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99825183CA3;
+	Mon, 12 Aug 2024 14:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TRx6dJTH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDt991gA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5D5183CD8;
-	Mon, 12 Aug 2024 14:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 927AD14C5A4;
+	Mon, 12 Aug 2024 14:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473744; cv=none; b=lYFcts3wInQ9+sWw8RMtmZ+GzuKD1eY6xZRcPIwc1kmTLMkMBIo4jQ6H5eiMdbZ0yKTHyWQB9j6NCvLnBRnJZS/M0yLOmTjya2q6OuzZ+S+iNkqlsS7ORlPyrvnxnBI1hHPpwjPsyVzhWAt0ZR3+8BP739ui85K9doku2cXDLN4=
+	t=1723473690; cv=none; b=KmiKss/xgRJN7wjBuNI2Wut7KubdVy9cFHygVauk9OcB3JFDB6+ht3Vy997Zs65zjFeisUAJiitwNIV+t353Unt0j3z5ZoZjUl/QYkth49reJNzF8GMzwHdAhzmjJf6YDXIZJQ3/eplH2yFKXad8nkt0tjQkoEWF3tv8W9t6KrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473744; c=relaxed/simple;
-	bh=18AFqD+nfR7WDef06XaCDkkHZFTKwF2+vPFNrPfeJFE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QFmlBil2g/bEKMm6PZ0spkKk4AAWWK20Qi9fvruPb3K2DclykHcII0moZLoyNGD7PvPJ2EhuUVsdUZXACt2bztw4jfgmyATlj3bkKmzj1H0SWNUOPb3Ws+SUUjvgsEw5s/5zC0ubIOs4xO5wADeN8CaViG3e/eLWh5sKXbYypZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TRx6dJTH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDT3Jj020716;
-	Mon, 12 Aug 2024 14:42:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Q4ur1RJ0BPmgPbf24O9VBGwI5rYc3xJQnfs4G3/cZZc=; b=TRx6dJTHDxCfQS/F
-	V37wD0sIJ/eVFJe1DHi0enR3f7+amsg+yaAT5yFThMwI2RuenIF54QlBF6zSUe3L
-	rKMUJkTZmnoGZ0D+MA6aDOMOMTlkZ1tCAzn+RAR4sTuiPUldywRVz6vdwq/rOCkC
-	NHOT/nf7/R37MRjWhJg/6HHy4v15IWN2M63QIQMLv84yonBd/PuJn0XeFuR5W7fQ
-	0F0zhFfn39ckw+BwtQAPIDyNxdOmTamXlq2OT4oGG8Iiu2h9Q+iQaSdDnMhnnKNq
-	LCL96B9ar7Sdkz+3Egct72+e/EYacjOEi6UB+OeQBNhGGR8Vy7n4G5Q/mgH/RYS/
-	u8Fo2w==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18dcjd5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 14:42:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CEgGkp031795
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 14:42:16 GMT
-Received: from hu-depengs-sha.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 12 Aug 2024 07:42:10 -0700
-From: Depeng Shao <quic_depengs@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>, <quic_depengs@quicinc.com>
-Subject: [PATCH 08/13] media: qcom: camss: csid: Move common code into csid core
-Date: Mon, 12 Aug 2024 20:11:26 +0530
-Message-ID: <20240812144131.369378-9-quic_depengs@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812144131.369378-1-quic_depengs@quicinc.com>
-References: <20240812144131.369378-1-quic_depengs@quicinc.com>
+	s=arc-20240116; t=1723473690; c=relaxed/simple;
+	bh=6kRnKXC8ZWBXeu1SrJ69LeK8v5L7MzOYhhDtPffcaFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TFz5bSgW/D71WTtAnEfYKEbz3IgzXCLGYYEMft0MxvxBONcesdO2i+MIegtpphErwprxbRyMDsbZkBazzc6Lw6J3Bq9U3Nj98JBVnJHTZAsPRfhHyGLFPheDtga9EJ8MrCctbX4F4L7kHXS/t2aso+FBhZKZzTSly1/c9q9KWOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDt991gA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43511C32782;
+	Mon, 12 Aug 2024 14:41:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723473690;
+	bh=6kRnKXC8ZWBXeu1SrJ69LeK8v5L7MzOYhhDtPffcaFw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PDt991gAdhARwtSG028BsrlJ10WbrEQwNhss/mxR1yBr6l/a+Z8m34Fo7RKfDs5tR
+	 KhZr7qEVVvPQS/Y1WX0PTpPYszdJzKRKfaG0wkdoV+pxda4btL/PKDPpA51GRYeWPY
+	 OmCi3VKWtjE1Mp/SSg1fo8wYDah+NlB7R2+8tycy5rxHbX/Nga9L6FdZ8/QAB8w8pZ
+	 151xQ+g0I8dit3yMiiwjyNjY9OASAn/yoFQZQPLbPnb0B4rXJ1fGeUqeoKKtcJVxxR
+	 DTimYohOdxEGGcCx6dr/tJXqSqqoSw+lhVp/MTjyXuenGmwQqSf77abvDVU9UNvdbn
+	 vk2KRlG1CXgVw==
+Message-ID: <693177aa-16f0-432a-baa4-3b862dee48c9@kernel.org>
+Date: Mon, 12 Aug 2024 16:41:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Fq56ueEJy_Dl8qQN8LehiBif582DBfGh
-X-Proofpoint-ORIG-GUID: Fq56ueEJy_Dl8qQN8LehiBif582DBfGh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_04,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 phishscore=0 clxscore=1015 adultscore=0 spamscore=0
- priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2407110000 definitions=main-2408120109
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 1/2] cgroup/rstat: Avoid flushing if there is an
+ ongoing overlapping flush
+To: tj@kernel.org, cgroups@vger.kernel.org, yosryahmed@google.com,
+ shakeel.butt@linux.dev
+Cc: hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com,
+ kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <172245504313.3147408.12138439169548255896.stgit@firesoul>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <172245504313.3147408.12138439169548255896.stgit@firesoul>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The get hw version and src pad code functions can be common code in csid
-core file, then the csid driver of different hw version can reuse them,
-rather than adding duplicate code in csid driver for each version.
 
-Suggested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
----
- .../platform/qcom/camss/camss-csid-4-1.c      | 19 -----
- .../platform/qcom/camss/camss-csid-4-7.c      | 42 ----------
- .../platform/qcom/camss/camss-csid-gen2.c     | 60 ---------------
- .../media/platform/qcom/camss/camss-csid.c    | 77 +++++++++++++++++++
- .../media/platform/qcom/camss/camss-csid.h    | 21 +++++
- 5 files changed, 98 insertions(+), 121 deletions(-)
 
-diff --git a/drivers/media/platform/qcom/camss/camss-csid-4-1.c b/drivers/media/platform/qcom/camss/camss-csid-4-1.c
-index c95861420502..6998e1c52895 100644
---- a/drivers/media/platform/qcom/camss/camss-csid-4-1.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid-4-1.c
-@@ -17,7 +17,6 @@
- #include "camss-csid-gen1.h"
- #include "camss.h"
- 
--#define CAMSS_CSID_HW_VERSION		0x0
- #define CAMSS_CSID_CORE_CTRL_0		0x004
- #define CAMSS_CSID_CORE_CTRL_1		0x008
- #define CAMSS_CSID_RST_CMD		0x00c
-@@ -139,15 +138,6 @@ static int csid_configure_testgen_pattern(struct csid_device *csid, s32 val)
- 	return 0;
- }
- 
--static u32 csid_hw_version(struct csid_device *csid)
--{
--	u32 hw_version = readl_relaxed(csid->base + CAMSS_CSID_HW_VERSION);
--
--	dev_dbg(csid->camss->dev, "CSID HW Version = 0x%08x\n", hw_version);
--
--	return hw_version;
--}
--
- static irqreturn_t csid_isr(int irq, void *dev)
- {
- 	struct csid_device *csid = dev;
-@@ -180,15 +170,6 @@ static int csid_reset(struct csid_device *csid)
- 	return 0;
- }
- 
--static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
--			     unsigned int match_format_idx, u32 match_code)
--{
--	if (match_format_idx > 0)
--		return 0;
--
--	return sink_code;
--}
--
- static void csid_subdev_init(struct csid_device *csid)
- {
- 	csid->testgen.modes = csid_testgen_modes;
-diff --git a/drivers/media/platform/qcom/camss/camss-csid-4-7.c b/drivers/media/platform/qcom/camss/camss-csid-4-7.c
-index 08578a143688..66054d4872e6 100644
---- a/drivers/media/platform/qcom/camss/camss-csid-4-7.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid-4-7.c
-@@ -16,7 +16,6 @@
- #include "camss-csid-gen1.h"
- #include "camss.h"
- 
--#define CAMSS_CSID_HW_VERSION		0x0
- #define CAMSS_CSID_CORE_CTRL_0		0x004
- #define CAMSS_CSID_CORE_CTRL_1		0x008
- #define CAMSS_CSID_RST_CMD		0x010
-@@ -151,15 +150,6 @@ static int csid_configure_testgen_pattern(struct csid_device *csid, s32 val)
- 	return 0;
- }
- 
--static u32 csid_hw_version(struct csid_device *csid)
--{
--	u32 hw_version = readl_relaxed(csid->base + CAMSS_CSID_HW_VERSION);
--
--	dev_dbg(csid->camss->dev, "CSID HW Version = 0x%08x\n", hw_version);
--
--	return hw_version;
--}
--
- /*
-  * isr - CSID module interrupt service routine
-  * @irq: Interrupt line
-@@ -205,38 +195,6 @@ static int csid_reset(struct csid_device *csid)
- 	return 0;
- }
- 
--static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
--			     unsigned int match_format_idx, u32 match_code)
--{
--	switch (sink_code) {
--	case MEDIA_BUS_FMT_SBGGR10_1X10:
--	{
--		u32 src_code[] = {
--			MEDIA_BUS_FMT_SBGGR10_1X10,
--			MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
--		};
--
--		return csid_find_code(src_code, ARRAY_SIZE(src_code),
--				      match_format_idx, match_code);
--	}
--	case MEDIA_BUS_FMT_Y10_1X10:
--	{
--		u32 src_code[] = {
--			MEDIA_BUS_FMT_Y10_1X10,
--			MEDIA_BUS_FMT_Y10_2X8_PADHI_LE,
--		};
--
--		return csid_find_code(src_code, ARRAY_SIZE(src_code),
--				      match_format_idx, match_code);
--	}
--	default:
--		if (match_format_idx > 0)
--			return 0;
--
--		return sink_code;
--	}
--}
--
- static void csid_subdev_init(struct csid_device *csid)
- {
- 	csid->testgen.modes = csid_testgen_modes;
-diff --git a/drivers/media/platform/qcom/camss/camss-csid-gen2.c b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-index e1c757933e27..2a1746dcc1c5 100644
---- a/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid-gen2.c
-@@ -22,11 +22,6 @@
-  * alternate register layout.
-  */
- 
--#define CSID_HW_VERSION		0x0
--#define		HW_VERSION_STEPPING	0
--#define		HW_VERSION_REVISION	16
--#define		HW_VERSION_GENERATION	28
--
- #define CSID_RST_STROBES	0x10
- #define		RST_STROBES	0
- 
-@@ -351,29 +346,6 @@ static int csid_configure_testgen_pattern(struct csid_device *csid, s32 val)
- 	return 0;
- }
- 
--/*
-- * csid_hw_version - CSID hardware version query
-- * @csid: CSID device
-- *
-- * Return HW version or error
-- */
--static u32 csid_hw_version(struct csid_device *csid)
--{
--	u32 hw_version;
--	u32 hw_gen;
--	u32 hw_rev;
--	u32 hw_step;
--
--	hw_version = readl_relaxed(csid->base + CSID_HW_VERSION);
--	hw_gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
--	hw_rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
--	hw_step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
--	dev_dbg(csid->camss->dev, "CSID HW Version = %u.%u.%u\n",
--		hw_gen, hw_rev, hw_step);
--
--	return hw_version;
--}
--
- /*
-  * csid_isr - CSID module interrupt service routine
-  * @irq: Interrupt line
-@@ -443,38 +415,6 @@ static int csid_reset(struct csid_device *csid)
- 	return 0;
- }
- 
--static u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
--			     unsigned int match_format_idx, u32 match_code)
--{
--	switch (sink_code) {
--	case MEDIA_BUS_FMT_SBGGR10_1X10:
--	{
--		u32 src_code[] = {
--			MEDIA_BUS_FMT_SBGGR10_1X10,
--			MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
--		};
--
--		return csid_find_code(src_code, ARRAY_SIZE(src_code),
--				      match_format_idx, match_code);
--	}
--	case MEDIA_BUS_FMT_Y10_1X10:
--	{
--		u32 src_code[] = {
--			MEDIA_BUS_FMT_Y10_1X10,
--			MEDIA_BUS_FMT_Y10_2X8_PADHI_LE,
--		};
--
--		return csid_find_code(src_code, ARRAY_SIZE(src_code),
--				      match_format_idx, match_code);
--	}
--	default:
--		if (match_format_idx > 0)
--			return 0;
--
--		return sink_code;
--	}
--}
--
- static void csid_subdev_init(struct csid_device *csid)
- {
- 	csid->testgen.modes = csid_testgen_modes;
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/media/platform/qcom/camss/camss-csid.c
-index 858db5d4ca75..5806df7e7a7c 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.c
-+++ b/drivers/media/platform/qcom/camss/camss-csid.c
-@@ -29,6 +29,11 @@
- #define VFE_480_CSID_OFFSET 0x1200
- #define VFE_480_LITE_CSID_OFFSET 0x200
- 
-+#define CSID_HW_VERSION		0x0
-+#define		HW_VERSION_STEPPING	0
-+#define		HW_VERSION_REVISION	16
-+#define		HW_VERSION_GENERATION	28
-+
- #define MSM_CSID_NAME "msm_csid"
- 
- const char * const csid_testgen_modes[] = {
-@@ -590,6 +595,78 @@ static int csid_set_clock_rates(struct csid_device *csid)
- 	return 0;
- }
- 
-+/*
-+ * csid_hw_version - CSID hardware version query
-+ * @csid: CSID device
-+ *
-+ * Return HW version or error
-+ */
-+u32 csid_hw_version(struct csid_device *csid)
-+{
-+	u32 hw_version;
-+	u32 hw_gen;
-+	u32 hw_rev;
-+	u32 hw_step;
-+
-+	hw_version = readl_relaxed(csid->base + CSID_HW_VERSION);
-+	hw_gen = (hw_version >> HW_VERSION_GENERATION) & 0xF;
-+	hw_rev = (hw_version >> HW_VERSION_REVISION) & 0xFFF;
-+	hw_step = (hw_version >> HW_VERSION_STEPPING) & 0xFFFF;
-+	dev_info(csid->camss->dev, "CSID:%d HW Version = %u.%u.%u\n",
-+		csid->id, hw_gen, hw_rev, hw_step);
-+
-+	return hw_version;
-+}
-+
-+/*
-+ * csid_src_pad_code - Pick an output/src format based on the input/sink format
-+ * @csid: CSID device
-+ * @sink_code: The sink format of the input
-+ * @match_format_idx: Request preferred index, as defined by subdevice csid
-+ *                    format. Set @match_code to 0 if used.
-+ * @match_code: Request preferred code, set @match_format_idx to 0 if used
-+ *
-+ * Return 0 on failure or src format code otherwise
-+ */
-+u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
-+		      unsigned int match_format_idx, u32 match_code)
-+{
-+	if (csid->camss->res->version == CAMSS_8x16) {
-+		if (match_format_idx > 0)
-+			return 0;
-+
-+		return sink_code;
-+	}
-+
-+	switch (sink_code) {
-+	case MEDIA_BUS_FMT_SBGGR10_1X10:
-+	{
-+		u32 src_code[] = {
-+			MEDIA_BUS_FMT_SBGGR10_1X10,
-+			MEDIA_BUS_FMT_SBGGR10_2X8_PADHI_LE,
-+		};
-+
-+		return csid_find_code(src_code, ARRAY_SIZE(src_code),
-+				      match_format_idx, match_code);
-+	}
-+	case MEDIA_BUS_FMT_Y10_1X10:
-+	{
-+		u32 src_code[] = {
-+			MEDIA_BUS_FMT_Y10_1X10,
-+			MEDIA_BUS_FMT_Y10_2X8_PADHI_LE,
-+		};
-+
-+		return csid_find_code(src_code, ARRAY_SIZE(src_code),
-+				      match_format_idx, match_code);
-+	}
-+	default:
-+		if (match_format_idx > 0)
-+			return 0;
-+
-+		return sink_code;
-+	}
-+}
-+
- /*
-  * csid_set_power - Power on/off CSID module
-  * @sd: CSID V4L2 subdevice
-diff --git a/drivers/media/platform/qcom/camss/camss-csid.h b/drivers/media/platform/qcom/camss/camss-csid.h
-index 8cdae98e4dca..f52209b96583 100644
---- a/drivers/media/platform/qcom/camss/camss-csid.h
-+++ b/drivers/media/platform/qcom/camss/camss-csid.h
-@@ -237,4 +237,25 @@ extern const struct csid_hw_ops csid_ops_gen2;
-  */
- bool csid_is_lite(struct csid_device *csid);
- 
-+/*
-+ * csid_hw_version - CSID hardware version query
-+ * @csid: CSID device
-+ *
-+ * Return HW version or error
-+ */
-+u32 csid_hw_version(struct csid_device *csid);
-+
-+/*
-+ * csid_src_pad_code - Pick an output/src format based on the input/sink format
-+ * @csid: CSID device
-+ * @sink_code: The sink format of the input
-+ * @match_format_idx: Request preferred index, as defined by subdevice csid
-+ *                    format. Set @match_code to 0 if used.
-+ * @match_code: Request preferred code, set @match_format_idx to 0 if used
-+ *
-+ * Return 0 on failure or src format code otherwise
-+ */
-+u32 csid_src_pad_code(struct csid_device *csid, u32 sink_code,
-+		      unsigned int match_format_idx, u32 match_code);
-+
- #endif /* QC_MSM_CAMSS_CSID_H */
--- 
-2.34.1
+On 31/07/2024 21.47, Jesper Dangaard Brouer wrote:
+> This patch reintroduces and generalizes the "stats_flush_ongoing" concept
+> to avoid redundant flushes if there is an ongoing flush, addressing lock
+> contention issues on the global cgroup rstat lock.
+> 
+> At Cloudflare, we observed significant performance degradation due to
+> lock contention on the rstat lock, primarily caused by kswapd. The
+> specific mem_cgroup_flush_stats() call inlined in shrink_node, which
+> takes the rstat lock, is particularly problematic.
+> 
+> On our 12 NUMA node machines, each with a kswapd kthread per NUMA node, we
+> noted severe lock contention on the rstat lock, causing 12 CPUs to waste
+> cycles spinning every time kswapd runs. Fleet-wide stats (/proc/N/schedstat)
+> for kthreads revealed that we are burning an average of 20,000 CPU cores
+> fleet-wide on kswapd, primarily due to spinning on the rstat lock.
+> 
+> Here's a brief overview of the issue:
+> - __alloc_pages_slowpath calls wake_all_kswapds, causing all kswapdN threads
+>    to wake up simultaneously.
+> - The kswapd thread invokes shrink_node (via balance_pgdat), triggering the
+>    cgroup rstat flush operation as part of its work.
+> - balance_pgdat() has a NULL value in target_mem_cgroup, causing
+>    mem_cgroup_flush_stats() to flush with root_mem_cgroup.
+> 
+> The kernel previously addressed this with a "stats_flush_ongoing" concept,
+> which was removed in commit 7d7ef0a4686a ("mm: memcg: restore subtree stats
+> flushing"). This patch reintroduces and generalizes the concept to apply to
+> all users of cgroup rstat, not just memcg.
+> 
+> If there is an ongoing rstat flush and the current cgroup is a descendant, a
+> new flush is unnecessary. To ensure callers still receive updated stats,
+> they wait for the ongoing flush to complete before returning, but with a
+> timeout, as stats may already be inaccurate due to continuous updates.
+> 
+> Lock yielding causes complications for ongoing flushers. Therefore, we limit
+> which cgroup can become ongoing flusher to top-level, as lock yielding
+> allows others to obtain the lock without being the ongoing flusher, leading
+> to a situation where a cgroup that isn't a descendant obtains the lock via
+> yielding. Thus, we prefer an ongoing flusher with many descendants. If and
+> when the lock yielding is removed, such as when changing this to a mutex,
+> we can simplify this code.
+> 
+> This change significantly reduces lock contention, especially in
+> environments with multiple NUMA nodes, thereby improving overall system
+> performance.
+> 
+> Fixes: 7d7ef0a4686a ("mm: memcg: restore subtree stats flushing").
+> Signed-off-by: Jesper Dangaard Brouer <hawk@kernel.org>
+> ---
+> V9:
+>   - Fix logic for 'already_contended'
+>   - Didn't address the refcnt suggestion, need more input from experts
+>   - I'll deploy this ASAP to my production experiment hosts and report back
+> 
+> V8: https://lore.kernel.org/all/172139415725.3084888.13770938453137383953.stgit@firesoul
+> V7: https://lore.kernel.org/all/172070450139.2992819.13210624094367257881.stgit@firesoul
+> V6: https://lore.kernel.org/all/172052399087.2357901.4955042377343593447.stgit@firesoul/
+> V5: https://lore.kernel.org/all/171956951930.1897969.8709279863947931285.stgit@firesoul/
+> V4: https://lore.kernel.org/all/171952312320.1810550.13209360603489797077.stgit@firesoul/
+> V3: https://lore.kernel.org/all/171943668946.1638606.1320095353103578332.stgit@firesoul/
+> V2: https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
+> V1: https://lore.kernel.org/all/171898037079.1222367.13467317484793748519.stgit@firesoul/
+> RFC: https://lore.kernel.org/all/171895533185.1084853.3033751561302228252.stgit@firesoul/
+> 
+> 
+>   include/linux/cgroup-defs.h |    2 +
+>   kernel/cgroup/rstat.c       |  113 ++++++++++++++++++++++++++++++++++++++-----
+>   2 files changed, 103 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> index b36690ca0d3f..a33b37514c29 100644
+> --- a/include/linux/cgroup-defs.h
+> +++ b/include/linux/cgroup-defs.h
+> @@ -548,6 +548,8 @@ struct cgroup {
+>   #ifdef CONFIG_BPF_SYSCALL
+>   	struct bpf_local_storage __rcu  *bpf_cgrp_storage;
+>   #endif
+> +	/* completion queue for cgrp_rstat_ongoing_flusher */
+> +	struct completion flush_done;
+>   
+>   	/* All ancestors including self */
+>   	struct cgroup *ancestors[];
+> diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+> index fb8b49437573..463f9807ec7e 100644
+> --- a/kernel/cgroup/rstat.c
+> +++ b/kernel/cgroup/rstat.c
+> @@ -2,6 +2,7 @@
+>   #include "cgroup-internal.h"
+>   
+>   #include <linux/sched/cputime.h>
+> +#include <linux/completion.h>
+>   
+>   #include <linux/bpf.h>
+>   #include <linux/btf.h>
+> @@ -11,6 +12,7 @@
+>   
+>   static DEFINE_SPINLOCK(cgroup_rstat_lock);
+>   static DEFINE_PER_CPU(raw_spinlock_t, cgroup_rstat_cpu_lock);
+> +static struct cgroup *cgrp_rstat_ongoing_flusher = NULL;
+>   
+>   static void cgroup_base_stat_flush(struct cgroup *cgrp, int cpu);
+>   
+> @@ -279,17 +281,32 @@ __bpf_hook_end();
+>    * value -1 is used when obtaining the main lock else this is the CPU
+>    * number processed last.
+>    */
+> -static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop)
+> +static inline bool __cgroup_rstat_trylock(struct cgroup *cgrp, int cpu_in_loop)
+> +{
+> +	bool locked;
+> +
+> +	locked = spin_trylock_irq(&cgroup_rstat_lock);
+> +	if (!locked)
+> +		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, true);
+> +	else
+> +		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, false);
+> +
+> +	return locked;
+> +}
+> +
+> +static inline void __cgroup_rstat_lock(struct cgroup *cgrp, int cpu_in_loop,
+> +				       bool already_contended)
+>   	__acquires(&cgroup_rstat_lock)
+>   {
+> -	bool contended;
+> +	bool locked = false;
+>   
+> -	contended = !spin_trylock_irq(&cgroup_rstat_lock);
+> -	if (contended) {
+> -		trace_cgroup_rstat_lock_contended(cgrp, cpu_in_loop, contended);
+> +	if (!already_contended) /* Skip trylock if already contended */
+> +		locked = __cgroup_rstat_trylock(cgrp, cpu_in_loop);
+> +
+> +	if (!locked) {
+>   		spin_lock_irq(&cgroup_rstat_lock);
+> +		trace_cgroup_rstat_locked(cgrp, cpu_in_loop, true);
+>   	}
+> -	trace_cgroup_rstat_locked(cgrp, cpu_in_loop, contended);
+>   }
+>   
+>   static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+> @@ -299,6 +316,71 @@ static inline void __cgroup_rstat_unlock(struct cgroup *cgrp, int cpu_in_loop)
+>   	spin_unlock_irq(&cgroup_rstat_lock);
+>   }
+>   
+> +#define MAX_WAIT	msecs_to_jiffies(100)
+> +/**
+> + * cgroup_rstat_trylock_flusher - Trylock that checks for on ongoing flusher
+> + * @cgrp: target cgroup
+> + *
+> + * Function return value follow trylock semantics. Returning true when lock is
+> + * obtained. Returning false when not locked and it detected flushing can be
+> + * skipped as another ongoing flusher took care of the flush.
+> + */
+> +static bool cgroup_rstat_trylock_flusher(struct cgroup *cgrp)
+> +{
+> +	struct cgroup *ongoing;
+> +	bool locked;
+> +
+> +	/*
+> +	 * Check if ongoing flusher is already taking care of this, if
+> +	 * we are a descendant skip work, but wait for ongoing flusher
+> +	 * to complete work.
+> +	 */
+> +retry:
+> +	ongoing = READ_ONCE(cgrp_rstat_ongoing_flusher);
+> +	if (ongoing && cgroup_is_descendant(cgrp, ongoing)) {
+> +		wait_for_completion_interruptible_timeout(
+> +			&ongoing->flush_done, MAX_WAIT);
+> +		/* TODO: Add tracepoint here */
+> +		return false;
+> +	}
+> +
+> +	locked = __cgroup_rstat_trylock(cgrp, -1);
 
+State "A": Obtaining lock here.
+
+(Remember that userspace can attach a tracepoint program to the locked 
+event.)
+
+> +	if (!locked) {
+> +		/* Contended: Handle losing race for ongoing flusher */
+
+State "B": Seeing lock was held by someone else.
+
+> +		if (!ongoing && READ_ONCE(cgrp_rstat_ongoing_flusher))
+> +			goto retry;
+> +
+
+This race handling code isn't good enough.
+
+> +		__cgroup_rstat_lock(cgrp, -1, true);
+> +	}
+> +	/*
+> +	 * Obtained lock, record this cgrp as the ongoing flusher.
+> +	 * Due to lock yielding, we might obtain lock while another
+> +	 * ongoing flusher (that isn't a parent) owns ongoing_flusher.
+> +	 */
+> +	if (!READ_ONCE(cgrp_rstat_ongoing_flusher)) {
+> +		/*
+> +		 * Limit to top-level as lock yielding allows others to obtain
+> +		 * lock without being ongoing_flusher. Leading to cgroup that
+> +		 * isn't descendant to obtain lock via yielding. So, prefer
+> +		 * ongoing_flusher with many descendants.
+> +		 */
+> +		if (cgrp->level < 2) {
+> +			reinit_completion(&cgrp->flush_done);
+> +			WRITE_ONCE(cgrp_rstat_ongoing_flusher, cgrp);
+
+Time between State "A" and writing cgrp_rstat_ongoing_flusher, can be
+easily be affected by loading BPF tracepoint programs.
+
+E.g. when I in production load a bpftrace prog on tracepoint
+cgroup_rstat_locked then the kswapd thundering herd problem comes back,
+because BPF-prog delay State "A" updating ongoing, then State "B"
+observe cgrp_rstat_ongoing_flusher is unset in race check.
+(Note, due to lock yield, it is possible that no ongoing_flusher is set
+and locked is held, so we cannot always goto retry when we observe lock
+is held but no ongoing is set).
+
+In [V2] we had a race free implementation that used cmpxchg().
+I will go back to the drawing board with V2 as the inspiration.
+
+
+[V2] 
+https://lore.kernel.org/all/171923011608.1500238.3591002573732683639.stgit@firesoul/
+
+> +		}
+> +	}
+> +	return true;
+> +}
+> +
+> +static void cgroup_rstat_unlock_flusher(struct cgroup *cgrp)
+> +{
+> +	if (cgrp == READ_ONCE(cgrp_rstat_ongoing_flusher)) {
+> +		WRITE_ONCE(cgrp_rstat_ongoing_flusher, NULL);
+> +		complete_all(&cgrp->flush_done);
+> +	}
+> +	__cgroup_rstat_unlock(cgrp, -1);
+> +}
+> +
+>   /* see cgroup_rstat_flush() */
+>   static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+>   	__releases(&cgroup_rstat_lock) __acquires(&cgroup_rstat_lock)
+> @@ -328,7 +410,7 @@ static void cgroup_rstat_flush_locked(struct cgroup *cgrp)
+>   			__cgroup_rstat_unlock(cgrp, cpu);
+>   			if (!cond_resched())
+>   				cpu_relax();
+> -			__cgroup_rstat_lock(cgrp, cpu);
+> +			__cgroup_rstat_lock(cgrp, cpu, false);
+>   		}
+>   	}
+>   }
+> @@ -350,9 +432,11 @@ __bpf_kfunc void cgroup_rstat_flush(struct cgroup *cgrp)
+>   {
+>   	might_sleep();
+>   
+> -	__cgroup_rstat_lock(cgrp, -1);
+> +	if (!cgroup_rstat_trylock_flusher(cgrp))
+> +		return;
+> +
+>   	cgroup_rstat_flush_locked(cgrp);
+> -	__cgroup_rstat_unlock(cgrp, -1);
+> +	cgroup_rstat_unlock_flusher(cgrp);
+>   }
+>   
+>   /**
+> @@ -368,8 +452,11 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+>   	__acquires(&cgroup_rstat_lock)
+>   {
+>   	might_sleep();
+> -	__cgroup_rstat_lock(cgrp, -1);
+> -	cgroup_rstat_flush_locked(cgrp);
+> +
+> +	if (cgroup_rstat_trylock_flusher(cgrp))
+> +		cgroup_rstat_flush_locked(cgrp);
+> +	else
+> +		__cgroup_rstat_lock(cgrp, -1, false);
+>   }
+>   
+>   /**
+> @@ -379,7 +466,7 @@ void cgroup_rstat_flush_hold(struct cgroup *cgrp)
+>   void cgroup_rstat_flush_release(struct cgroup *cgrp)
+>   	__releases(&cgroup_rstat_lock)
+>   {
+> -	__cgroup_rstat_unlock(cgrp, -1);
+> +	cgroup_rstat_unlock_flusher(cgrp);
+>   }
+>   
+>   int cgroup_rstat_init(struct cgroup *cgrp)
+> @@ -401,6 +488,8 @@ int cgroup_rstat_init(struct cgroup *cgrp)
+>   		u64_stats_init(&rstatc->bsync);
+>   	}
+>   
+> +	init_completion(&cgrp->flush_done);
+> +
+>   	return 0;
+>   }
+>   
+> 
+> 
 
