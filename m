@@ -1,214 +1,324 @@
-Return-Path: <linux-kernel+bounces-282560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD91F94E5D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:40:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2055F94E5D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27E211F221F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:40:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93BE31F22227
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 04:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEAB14A601;
-	Mon, 12 Aug 2024 04:40:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D8C14A601;
+	Mon, 12 Aug 2024 04:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H2zEc4QZ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q/aiaaba"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999E91494C2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70291494BA
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723437601; cv=none; b=lHe5I8mSfYFvGalzYBBe9815mpbLXs3Ah2eRwcxF7NBl4tJMw9Ae//iW//5ZIonrDFMFuPP7/FTK9PgnspUQ9PXWSy3dAy7BJLJiUHQ6e8HI6aLIbU4Tb/YpdDaGKrS8lKldsPwwP81YBZZbjT/vT/IlYan/8WtUJH0OTOk6bsk=
+	t=1723437645; cv=none; b=s5J7I+mchm1CT4MqE0cd+o3kmvrBGMCF0HH8Itvuc0mE4cTjcSUNuwR5LjdP6IVWSW4wLM4zZD64ZU0ZjkEGF0qwLffjtZzH6AmcqrK5CrIC8zcEHnBiTlQ5+Qo8k1/4OGS1yeuBhjIn+kCwzE/uxDsm18/peQGSg5kTdlLbl3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723437601; c=relaxed/simple;
-	bh=OcUBdBhOPJXpF1ZhDWGg+EuTx0n6CXN14Gm4pjBxdqk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=t5Xe5XTTRnfWXRLT1Yrlz+/GTxfLbcKGcKje0N+weO4gESKx+CpJVEfyJ4sbhAoWDoWWQTO7iLYDTGv4X7xtscGfWVzH/WLfU6MFjmVyu0jOAp3LScfO6sAX/TMFscLtCrN8Q+yVCfqWDJNrWDxOUSSFQlm2D3E+dgzHI/pIidE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H2zEc4QZ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240812043955epoutp0478d732d5947b054a44b24baef00af555~q4Vye0moo2046520465epoutp04T
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 04:39:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240812043955epoutp0478d732d5947b054a44b24baef00af555~q4Vye0moo2046520465epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723437595;
-	bh=ej7ujlPKRdvgCSrnmr/Prz0FplA5pHp++OQEMqJ3mzA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=H2zEc4QZTDEyrzMgWrbv3FHzbddeuJjbznebKhz950d9kKOYaTWVrlnaxOIHLkyLg
-	 HBXhU6yacI1rJ3/X+oG1LA07xsSQb7fe7PUvIwdxFn6XGTGuiBdb3FMyh0QN2GABzY
-	 zpnp7tcBMLIqWoj6R3TT9zSYJ2U4ELei0MNGG+Es=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240812043954epcas1p1844c1cfe6fe7b1538fad2ddb921b21cc~q4Vx_AGl72424824248epcas1p1P;
-	Mon, 12 Aug 2024 04:39:54 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.144]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wj1yd6gdVz4x9QJ; Mon, 12 Aug
-	2024 04:39:53 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	61.C4.08992.91299B66; Mon, 12 Aug 2024 13:39:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240812043953epcas1p44d4eb166f073de2f610bade4d9b96db9~q4VwmObvh1423814238epcas1p4Z;
-	Mon, 12 Aug 2024 04:39:53 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240812043953epsmtrp12116e3ba70db40e37f622995e82baf58~q4VwlR2v-2452324523epsmtrp1h;
-	Mon, 12 Aug 2024 04:39:53 +0000 (GMT)
-X-AuditID: b6c32a33-96dfa70000002320-fd-66b99219bab0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9F.A8.07567.91299B66; Mon, 12 Aug 2024 13:39:53 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240812043952epsmtip29ae53b3f2d98404a36d27fe69041ba31~q4VwRbZBn0281202812epsmtip2e;
-	Mon, 12 Aug 2024 04:39:52 +0000 (GMT)
-Message-ID: <58dfae564a4a624e464c7803a309f1f07b5ae83d.camel@samsung.com>
-Subject: Re: [PATCH v5 4/4] clk: samsung: add top clock support for
- ExynosAuto v920 SoC
-From: Kwanghoon Son <k.son@samsung.com>
-To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 12 Aug 2024 13:39:47 +0900
-In-Reply-To: <20240730071221.2590284-5-sunyeal.hong@samsung.com>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1723437645; c=relaxed/simple;
+	bh=QNHPrpxL+0sgE/AyG37tJ3Bz2m+41t/dYw/Gsq55ehM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dQbnceFyTDAY/vfSjYj2BIpL4B9Lk4n9dTg0UgG/4i4+x7dVxFaXCr2mcBICj26H9fGpLJXtGa4XtN032+8fin3E0RMQ3xKTSZYrCUZKjrWkSc+5UF75WFq6/nqpNp2VJGJ6TGu/87GA57d2YDQqoVicURwjAs2SDJXYLs9M7S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q/aiaaba; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaslanka.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-68f95e37bbfso100125947b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 21:40:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723437643; x=1724042443; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=H7zTpz2DMvimTNNLr+qMsA7Dd9v4fiwi/bdtdNpJM3k=;
+        b=q/aiaabapIHc5IlVnVTjW+4nglAXnVdTqjLKD/3kSSEcKbWA2T+9FywW+XIzVkv8eM
+         fRKY5t0azn0N7Xpa1acLsVwIVNxtTm68NEv93yNQwxm2xvtWjeGWw5jMQtGeBDfMI37w
+         gpDvcn2Q/1B4TCAPFGvk4WGYX6yzzKk2tp8PFgwsaoO6b385MtIgnMb5MNRXv/PmQlcn
+         iqBcg22eGBwdKjYD0xggaZNycLV617J7zuCEuP471phDbmbVomc8MUVBpaxQuEVT3oO0
+         oLCrPjXSDJN64ntZuEfshZJpYWQuk2vRuZCPg4o8TFOS17/BeQap5zNBwD9yDOWQGVJN
+         TFNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723437643; x=1724042443;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=H7zTpz2DMvimTNNLr+qMsA7Dd9v4fiwi/bdtdNpJM3k=;
+        b=iv7OKPrktNM1XTk8siljIqOAOH3MLo3VFWGDCvv3JxFJtV0ZfvAIi1onZ6tLyCdQxx
+         2d5wjXG7CXAgkXJ7vOaj9RTpVts6SlaE978itIVjDIf0sUjLRDMPKuI2g6wr3lfPhoNq
+         6I0Hj7I6V/s6eM7gGkWuL7H0w3/xxofLpaJHvz+2pRsgd2bOPVmg0dEM1H51RF9acqCR
+         S11Sak/3rZowIdZf8FukAAIehCm4/6ZedELwMXUZgRx+VFSNmQYV7IWOgwYAK9jS4a52
+         6vVPs6T3HlpY4SwaleBUvMLBlrahuzO5N6y4QQEdjmpw7YzhBIVGch+wPEpI8ToHqUiv
+         jS4w==
+X-Gm-Message-State: AOJu0Ywa9GrS0kD0ZDa5rko+tYu5MD5p/5LdsatPSyn9PffYw5Kxnoip
+	q96UPhcNWonJYSYhxWngKRrQyZGISQk16dnDh7vkcM+PRuUGmCJX8eNRzgzLC+xJjLQ1ZwFHPVq
+	KCq8TnZqItyiKTF2uP0baRO3O9cFrYBsmjWRjWfNRMGFfXlA1a5RZrSy23v3i4B+aEWS++tH4gE
+	BRS2k1SohqNomthwtMDVieFeACoLXXyRij0GH1TbUJl1ur0y25dHLepO3n
+X-Google-Smtp-Source: AGHT+IF/SFG1go6c+EX5iNA+YPCcacRoHMoHjkk2tzq7SuIw188amey35LllQMrreFvbpA3jmWcZqONK3c0AdEg=
+X-Received: from mmaslanka2.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:b8d])
+ (user=mmaslanka job=sendgmr) by 2002:a81:be0d:0:b0:622:cd7d:fec4 with SMTP id
+ 00721157ae682-69ec9a11e0dmr6654427b3.9.1723437642380; Sun, 11 Aug 2024
+ 21:40:42 -0700 (PDT)
+Date: Mon, 12 Aug 2024 04:40:20 +0000
+In-Reply-To: <87h6bttzzh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmga7kpJ1pBlPfmlo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0MDAyBSpMyM74M3chW8EfoYrpM1+wNDCe
-	5u9i5OCQEDCR6LoU08XIySEksINRon0LUxcjF5D9iVFi/pbNUM43RonLR68wgVSBNHx48IkF
-	omMvo8S3G/4QRe8ZJU6f/wZWxCvgIXHmxlcmkA3CApES7WfLQcJsAuoSS9rWsoPUiwg8Y5I4
-	9egTK4jDLLCUUWLSlWtsIFUsAqoSOy6sYQaxOQUcJLbv/8YIYjMLaEssW/gaLC4qIC/R8PAE
-	M8QyQYmTM5+wgAySEFjLIfFy60lWiFNdJCZemM4IYQtLvDq+hR3ClpJ42d8GZWdLHP24lw3C
-	LpG4PmsRVK+xxP6lk8E+YBbQlFi/Sx/iBj6Jd197WCFBxyvR0SYEYcpL3Oosh2gUlTjz9CMb
-	RNhD4svqYEjwnGSUaPp0jWkCo/wsJM/MQvLALIRdCxiZVzGKpRYU56anJhsWGMKjNDk/dxMj
-	OKFqGe9gvDz/n94hRiYOxkOMEhzMSiK8zeGb0oR4UxIrq1KL8uOLSnNSiw8xmgKDdCKzlGhy
-	PjCl55XEG5pYGpiYGRmbWBiaGSqJ8565UpYqJJCeWJKanZpakFoE08fEwSnVwMSnJ/Zvg1US
-	r1uuSaae24wYjvsfrOb23X1tHntw/arUtyVX+3hXPuxbsqB7+eb6q2fZuA/fiXj48gnHSt+6
-	JVekeFn2/fNUvs2d8TVlVeefvBS2yn9vrRYaBlqrvb29a+F+vbnqDyZozH3EtrVzjYXrIX/e
-	VI+FXYU585ga1d40e9Q3L5A3X7Cm9MDtl0lrLs4yea6WdHqt9run/dtePr0h1TxDfMt2i41G
-	h5xXBy7N9lE8tH/F5cMPT90NP1IqlPSCeXLI0tumBrJLUk7/8nigc13vgQzz8sPZD3sups+/
-	IJKwkftUYnDXk32PkhUnv5/xPvZRjlLR4RJvN/fLKqvvOzx2f1k7v4Dvj7Grf+hUJZbijERD
-	Leai4kQAdR1AnDEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSvK7kpJ1pBg3POC0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Ml7t
-	mMBSsEOoYtr8tWwNjN38XYycHBICJhIfHnxi6WLk4hAS2M0o0f7hMSNEQlSi43IjkM0BZAtL
-	HD5cDBIWEnjLKPHiShqIzSvgIXHmxlcmkBJhgUiJ9rPlIGE2AXWJJW1r2UFGigi8YJL4/2QZ
-	K0iCWWAZo8Ti+ywgNouAqsSOC2uYQWxOAQeJ7fu/MULccJpR4l3zQRaIBk2J1u2/2SFsbYll
-	C1+DNYgKyEs0PDzBDHGEoMTJmU9YJjAKzkLSMgtJyywkZQsYmVcxSqYWFOem5yYbFhjmpZbr
-	FSfmFpfmpesl5+duYgTHkZbGDsZ78//pHWJk4mA8xCjBwawkwtscvilNiDclsbIqtSg/vqg0
-	J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6pBiZ3s6qwaftWbfzMGLW9qtji9irr
-	87znRHpvMmWJssjO5T+0j1U3yoizPLHs1Zzi1aF3OpLE1Lhu83qG+aYusk8yvWVmzOVWUv2x
-	qIXbY3vWfbXvDB7XfENdfFa9NhT52PtlWkBaRVOh+keDL4acnc7++p9ZbzI5xMyczL2ogFH2
-	w//ZPqKHJ9887OoZweT9zDH77hrVSbI9P9RfnNjil32pUnx2eFJuyrmktS6xVf96O4vEJnyf
-	dOGCua77m0WXNPueG659Hv/D4bV72uPlkuW1h1v7A14bnEzqClXQv37gv8Kn9nc5Gt/PPhPM
-	z9pa9i6v4v0ehzU5QebJL6crpO6O2fwwpvlwcIvqTNevSizFGYmGWsxFxYkALHPv9xIDAAA=
-X-CMS-MailID: 20240812043953epcas1p44d4eb166f073de2f610bade4d9b96db9
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730071228epcas2p1923fbb513190816d7bd9afaf0a4f5066
-References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
-	<CGME20240730071228epcas2p1923fbb513190816d7bd9afaf0a4f5066@epcas2p1.samsung.com>
-	<20240730071221.2590284-5-sunyeal.hong@samsung.com>
+Mime-Version: 1.0
+References: <87h6bttzzh.ffs@tglx>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240812044028.3439329-1-mmaslanka@google.com>
+Subject: [PATCH v5 2/2] platform/x86:intel/pmc: Enable the ACPI PM Timer to be
+ turned off when suspended
+From: Marek Maslanka <mmaslanka@google.com>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Marek Maslanka <mmaslanka@google.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, 
+	David E Box <david.e.box@intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	"=?UTF-8?q?Ilpo=20J=C3=A4rvinen?=" <ilpo.jarvinen@linux.intel.com>, platform-driver-x86@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-07-30 at 16:12 +0900, Sunyeal Hong wrote:
-> This adds support for CMU_TOP which generates clocks for all the
-> function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
-> CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
-> and they will generate bus clocks.
->=20
-> Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> ---
->  drivers/clk/samsung/Makefile             =7C    1 +
->  drivers/clk/samsung/clk-exynosautov920.c =7C 1173 ++++++++++++++++++++++
->  2 files changed, 1174 insertions(+)
->  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
->=20
+Allow to disable ACPI PM Timer on suspend and enable on resume. A
+disabled timer helps optimise power consumption when the system is
+suspended. On resume the timer is only reactivated if it was activated
+prior to suspend, so unless the ACPI PM timer is enabled in the BIOS,
+this won't change anything.
 
-=5Bsnip=5D
+The ACPI PM timer is used by Intel's iTCO/wdat_wdt watchdog to drive the
+watchdog, so it doesn't need to run during suspend.
 
-> +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D =7B
-> +	.mux_clks		=3D peric0_mux_clks,
-> +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
-> +	.div_clks		=3D peric0_div_clks,
-> +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
-> +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
-> +	.clk_regs		=3D peric0_clk_regs,
-> +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
-> +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
+Signed-off-by: Marek Maslanka <mmaslanka@google.com>
 
-Maybe silly question, (I'm really new to this cmu).
-Isn't it should be =22noc=22?
+---
+Changes in v5:
+- Use renamed acpi_pmtmr_register_suspend_resume_callback instead of
+  acpi_pm_register_suspend_resume_callback
+- Link to v4: https://lore.kernel.org/lkml/20240809131343.1173369-2-mmaslanka@google.com/
+---
+---
+ drivers/platform/x86/intel/pmc/adl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/cnp.c  |  2 ++
+ drivers/platform/x86/intel/pmc/core.c | 49 +++++++++++++++++++++++++++
+ drivers/platform/x86/intel/pmc/core.h |  8 +++++
+ drivers/platform/x86/intel/pmc/icl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/mtl.c  |  2 ++
+ drivers/platform/x86/intel/pmc/spt.c  |  2 ++
+ drivers/platform/x86/intel/pmc/tgl.c  |  2 ++
+ 8 files changed, 69 insertions(+)
 
-I thought this name is from dt binding.
-(drivers/clk/samsung/clk-exynos-arm64.c)
-
-
-		parent_clk =3D clk_get(dev, cmu->clk_name);
-		data =3D dev_get_drvdata(dev);
-
-That's why GS101, and my recent v9 patch name like =22bus=22.
-
-Best regards,
-kwang.
-
-> +=7D;
-> +
-> +static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
-> +=7B
-> +	const struct samsung_cmu_info *info;
-> +	struct device *dev =3D &pdev->dev;
-> +
-> +	info =3D of_device_get_match_data(dev);
-> +	exynos_arm64_register_cmu(dev, dev->of_node, info);
-> +
-> +	return 0;
-> +=7D
-> +
-> +static const struct of_device_id exynosautov920_cmu_of_match=5B=5D =3D =
-=7B
-> +	=7B
-> +		.compatible =3D =22samsung,exynosautov920-cmu-peric0=22,
-> +		.data =3D &peric0_cmu_info,
-> +	=7D,
-> +=7D;
-> +
-> +static struct platform_driver exynosautov920_cmu_driver __refdata =3D =
-=7B
-> +	.driver =3D =7B
-> +		.name =3D =22exynosautov920-cmu=22,
-> +		.of_match_table =3D exynosautov920_cmu_of_match,
-> +		.suppress_bind_attrs =3D true,
-> +	=7D,
-> +	.probe =3D exynosautov920_cmu_probe,
-> +=7D;
-> +
-> +static int __init exynosautov920_cmu_init(void)
-> +=7B
-> +	return platform_driver_register(&exynosautov920_cmu_driver);
-> +=7D
-> +core_initcall(exynosautov920_cmu_init);
+diff --git a/drivers/platform/x86/intel/pmc/adl.c b/drivers/platform/x86/intel/pmc/adl.c
+index e7878558fd909..9d9c07f44ff61 100644
+--- a/drivers/platform/x86/intel/pmc/adl.c
++++ b/drivers/platform/x86/intel/pmc/adl.c
+@@ -295,6 +295,8 @@ const struct pmc_reg_map adl_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = ADL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_modes = ADL_LPM_NUM_MODES,
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/intel/pmc/cnp.c
+index dd72974bf71e2..513c02670c5aa 100644
+--- a/drivers/platform/x86/intel/pmc/cnp.c
++++ b/drivers/platform/x86/intel/pmc/cnp.c
+@@ -200,6 +200,8 @@ const struct pmc_reg_map cnp_reg_map = {
+ 	.ppfear_buckets = CNP_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = CNP_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
+index 10c96c1a850af..d65e3e77ec2ca 100644
+--- a/drivers/platform/x86/intel/pmc/core.c
++++ b/drivers/platform/x86/intel/pmc/core.c
+@@ -11,6 +11,7 @@
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+ 
++#include <linux/acpi_pmtmr.h>
+ #include <linux/bitfield.h>
+ #include <linux/debugfs.h>
+ #include <linux/delay.h>
+@@ -1171,6 +1172,42 @@ static bool pmc_core_is_pson_residency_enabled(struct pmc_dev *pmcdev)
+ 	return val == 1;
+ }
+ 
++/**
++ * Enable or disable ACPI PM Timer
++ *
++ * This function is intended to be a callback for ACPI PM suspend/resume event.
++ * The ACPI PM Timer is enabled on resume only if it was enabled during suspend.
++ */
++static void pmc_core_acpi_pm_timer_suspend_resume(void *data, bool suspend)
++{
++	struct pmc_dev *pmcdev = data;
++	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
++	const struct pmc_reg_map *map = pmc->map;
++	bool enabled;
++	u32 reg;
++
++	if (!map->acpi_pm_tmr_ctl_offset)
++		return;
++
++	mutex_lock(&pmcdev->lock);
++
++	if (!suspend && !pmcdev->enable_acpi_pm_timer_on_resume) {
++		mutex_unlock(&pmcdev->lock);
++		return;
++	}
++
++	reg = pmc_core_reg_read(pmc, map->acpi_pm_tmr_ctl_offset);
++	enabled = !(reg & map->acpi_pm_tmr_disable_bit);
++	if (suspend)
++		reg |= map->acpi_pm_tmr_disable_bit;
++	else
++		reg &= ~map->acpi_pm_tmr_disable_bit;
++	pmc_core_reg_write(pmc, map->acpi_pm_tmr_ctl_offset, reg);
++
++	pmcdev->enable_acpi_pm_timer_on_resume = suspend && enabled;
++
++	mutex_unlock(&pmcdev->lock);
++}
+ 
+ static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+ {
+@@ -1362,6 +1399,7 @@ static int pmc_core_probe(struct platform_device *pdev)
+ 	struct pmc_dev *pmcdev;
+ 	const struct x86_cpu_id *cpu_id;
+ 	int (*core_init)(struct pmc_dev *pmcdev);
++	const struct pmc_reg_map *map;
+ 	struct pmc *primary_pmc;
+ 	int ret;
+ 
+@@ -1420,6 +1458,11 @@ static int pmc_core_probe(struct platform_device *pdev)
+ 	pm_report_max_hw_sleep(FIELD_MAX(SLP_S0_RES_COUNTER_MASK) *
+ 			       pmc_core_adjust_slp_s0_step(primary_pmc, 1));
+ 
++	map = primary_pmc->map;
++	if (map->acpi_pm_tmr_ctl_offset)
++		acpi_pmtmr_register_suspend_resume_callback(pmc_core_acpi_pm_timer_suspend_resume,
++							 pmcdev);
++
+ 	device_initialized = true;
+ 	dev_info(&pdev->dev, " initialized\n");
+ 
+@@ -1429,6 +1472,12 @@ static int pmc_core_probe(struct platform_device *pdev)
+ static void pmc_core_remove(struct platform_device *pdev)
+ {
+ 	struct pmc_dev *pmcdev = platform_get_drvdata(pdev);
++	const struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
++	const struct pmc_reg_map *map = pmc->map;
++
++	if (map->acpi_pm_tmr_ctl_offset)
++		acpi_pmtmr_register_suspend_resume_callback(NULL, NULL);
++
+ 	pmc_core_dbgfs_unregister(pmcdev);
+ 	pmc_core_clean_structure(pdev);
+ }
+diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+index 83504c49a0e31..fe1a94f693b63 100644
+--- a/drivers/platform/x86/intel/pmc/core.h
++++ b/drivers/platform/x86/intel/pmc/core.h
+@@ -67,6 +67,8 @@ struct telem_endpoint;
+ #define SPT_PMC_LTR_SCC				0x3A0
+ #define SPT_PMC_LTR_ISH				0x3A4
+ 
++#define SPT_PMC_ACPI_PM_TMR_CTL_OFFSET		0x18FC
++
+ /* Sunrise Point: PGD PFET Enable Ack Status Registers */
+ enum ppfear_regs {
+ 	SPT_PMC_XRAM_PPFEAR0A = 0x590,
+@@ -147,6 +149,8 @@ enum ppfear_regs {
+ #define SPT_PMC_VRIC1_SLPS0LVEN			BIT(13)
+ #define SPT_PMC_VRIC1_XTALSDQDIS		BIT(22)
+ 
++#define SPT_PMC_BIT_ACPI_PM_TMR_DISABLE		BIT(1)
++
+ /* Cannonlake Power Management Controller register offsets */
+ #define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+ #define CNP_PMC_PM_CFG_OFFSET			0x1818
+@@ -344,6 +348,8 @@ struct pmc_reg_map {
+ 	const u8  *lpm_reg_index;
+ 	const u32 pson_residency_offset;
+ 	const u32 pson_residency_counter_step;
++	const u32 acpi_pm_tmr_ctl_offset;
++	const u32 acpi_pm_tmr_disable_bit;
+ };
+ 
+ /**
+@@ -417,6 +423,8 @@ struct pmc_dev {
+ 	u32 die_c6_offset;
+ 	struct telem_endpoint *punit_ep;
+ 	struct pmc_info *regmap_list;
++
++	bool enable_acpi_pm_timer_on_resume;
+ };
+ 
+ enum pmc_index {
+diff --git a/drivers/platform/x86/intel/pmc/icl.c b/drivers/platform/x86/intel/pmc/icl.c
+index 71b0fd6cb7d84..cbbd440544688 100644
+--- a/drivers/platform/x86/intel/pmc/icl.c
++++ b/drivers/platform/x86/intel/pmc/icl.c
+@@ -46,6 +46,8 @@ const struct pmc_reg_map icl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = ICL_NUM_IP_IGN_ALLOWED,
+ 	.etr3_offset = ETR3_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/mtl.c b/drivers/platform/x86/intel/pmc/mtl.c
+index c7d15d864039d..91f2fa728f5c8 100644
+--- a/drivers/platform/x86/intel/pmc/mtl.c
++++ b/drivers/platform/x86/intel/pmc/mtl.c
+@@ -462,6 +462,8 @@ const struct pmc_reg_map mtl_socm_reg_map = {
+ 	.ppfear_buckets = MTL_SOCM_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.lpm_num_maps = ADL_LPM_NUM_MAPS,
+ 	.ltr_ignore_max = MTL_SOCM_NUM_IP_IGN_ALLOWED,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+diff --git a/drivers/platform/x86/intel/pmc/spt.c b/drivers/platform/x86/intel/pmc/spt.c
+index ab993a69e33ee..2cd2b3c68e468 100644
+--- a/drivers/platform/x86/intel/pmc/spt.c
++++ b/drivers/platform/x86/intel/pmc/spt.c
+@@ -130,6 +130,8 @@ const struct pmc_reg_map spt_reg_map = {
+ 	.ppfear_buckets = SPT_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
+ 	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
+ };
+diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
+index e0580de180773..371b4e30f1426 100644
+--- a/drivers/platform/x86/intel/pmc/tgl.c
++++ b/drivers/platform/x86/intel/pmc/tgl.c
+@@ -197,6 +197,8 @@ const struct pmc_reg_map tgl_reg_map = {
+ 	.ppfear_buckets = ICL_PPFEAR_NUM_ENTRIES,
+ 	.pm_cfg_offset = CNP_PMC_PM_CFG_OFFSET,
+ 	.pm_read_disable_bit = CNP_PMC_READ_DISABLE_BIT,
++	.acpi_pm_tmr_ctl_offset = SPT_PMC_ACPI_PM_TMR_CTL_OFFSET,
++	.acpi_pm_tmr_disable_bit = SPT_PMC_BIT_ACPI_PM_TMR_DISABLE,
+ 	.ltr_ignore_max = TGL_NUM_IP_IGN_ALLOWED,
+ 	.lpm_num_maps = TGL_LPM_NUM_MAPS,
+ 	.lpm_res_counter_step_x2 = TGL_PMC_LPM_RES_COUNTER_STEP_X2,
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
 
