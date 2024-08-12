@@ -1,63 +1,64 @@
-Return-Path: <linux-kernel+bounces-283403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F1194F20A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:49:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0345094F208
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:49:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E03F31F21973
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B1C01F21915
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E941F186E34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AA4186295;
 	Mon, 12 Aug 2024 15:49:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gLtr3Wls"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MR7KRmL8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2E3183CD9;
-	Mon, 12 Aug 2024 15:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E231474C3;
+	Mon, 12 Aug 2024 15:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477748; cv=none; b=hUXPn64xMz8qdupixTNREJfrDrSw7lQFWRr/7JzH9FSkx2j/Jq/Fhh8FbQ8X2+2uxQMBqv8XwpVI8nVw3mPLQwXfW2S9CIpp8D88nBtrYai1EyFy5KRaVGQT8P/0KQpIg38O8Py3I2ilERm9Ip3oE5Uhl8+KBES9cxaJBCtqn2E=
+	t=1723477747; cv=none; b=CC98rkvobU+5haxstl0PE1MwkfYBK1bZnUdEBMT47gbDzK9VPH5t8vJta2QwjSu7iVQHC/etK40D4cC4en+0FWYak84eN9kcQ/ef5FmNNKf0osYL1XYZ/Z/64EFhbat9c6aARI5ohXXIcSzFBHS6WwcXxBqA6pNmczRcolBUHYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477748; c=relaxed/simple;
-	bh=yLC9qQqhhWTVpWQnhEgp8s0w6ejSMIbfw0GAFvs1yFY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HAqfu5l6Bpt6tDYRc/mNTnHOdv4WDeMPJIbUr0wwIijYPrPeiWixQjbM/32SfsM+uWHrNycVf91nKywecuBcoaV4Yqsu3MRldVN16hddqu9IvsZg/RtXoGbOAzMaW0sWu+p+P6afCOyPPcf4kyY1dQik9WwaXxYypcsNJjDrNME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gLtr3Wls; arc=none smtp.client-ip=192.198.163.18
+	s=arc-20240116; t=1723477747; c=relaxed/simple;
+	bh=QLYD+X6576Kj5K4QL4b16JOYtspAfRDomvmS6wFuHdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=nVs2JgtzmuZH9q+j1rbEjIutLByAwfifC4W5pl/P2JyJK2C6P9WVOBHq4kdF6iE6qgHVIrd1rFiBIsnvs+XXd2peq6EmQms/lqK3QWNrHJPtLTGEtwpFpEz7gy5ZlblxNQ7BlYjT/OVu2f5PPEpsrkrPhFy3e+xMXf/Y3l0Emdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MR7KRmL8; arc=none smtp.client-ip=192.198.163.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723477747; x=1755013747;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yLC9qQqhhWTVpWQnhEgp8s0w6ejSMIbfw0GAFvs1yFY=;
-  b=gLtr3Wls0gZwS/Fd72VqZzqQxi8VVBDep5sBZ89e7FPrJWhO+muHDq6o
-   sJuV8Avx/gjk5y7BB4jBIZmKHWT+4G198GP32oYf2wkF/0lJy/5FffV3x
-   ZyvBAjTY10RoazKdBGC0oskYJGyZY/dk7ApjmeqrcAQgx7UGLxstn8EEW
-   nTVs/6fVpDn6ZUeMI0YpGXZ8AgjQvy+SDo/1DnfI8l3rD2pZyFjmshi1j
-   K8mSApDgNeSBv1bov8fhJhqmYcScLU3DGcSnfn859oGiT4HCKCM5By7bq
-   zD2Cc/dDwolsYR7FI2AtZ/0v6G/Z/PDmWqaDst3vkFGhJ3DpA2iuRNvlK
+  t=1723477746; x=1755013746;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QLYD+X6576Kj5K4QL4b16JOYtspAfRDomvmS6wFuHdk=;
+  b=MR7KRmL8LyeFsKDieiHATVvavsKjFodRWABFS78IU6v5uAASuHYzwc4P
+   Gs46IfpI81vubofOPz4fYs7tUxRTCMxfUWWDJrmVYqcwCVL6rPkiYOaTF
+   V+YzS6BA789UPd7qVfn6wXBSys+w/dMw3/kmZfyvo2xgrDnWNrrPwxA9Q
+   sevsiCxE/lR5fre/GiIVp99JaEM2OLlN763vE420FynY67sgSFayZfT7x
+   f2MFoFN7IL06xj82JvOZTvz1ev7EVLhv2vSRCnWzn2eUtVh0/Ix3b+6Ki
+   /hmt6NuuqJktBzxf97KThMz+F6nmmg3gqi8q6We6ggt4kigBGAn0siYaM
    g==;
-X-CSE-ConnectionGUID: KlAEuSdRRf2Wvm/hv5x0Yw==
-X-CSE-MsgGUID: ztURLMtKT4CeCQu2//2ISw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21160801"
+X-CSE-ConnectionGUID: 5JsgLmSlSsKETnDUG3p+Jg==
+X-CSE-MsgGUID: ClZhDoiZTtysz3J88WWW2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="46998236"
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="21160801"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:49:06 -0700
-X-CSE-ConnectionGUID: onPHd04KQ82aCrN0UZaUGA==
-X-CSE-MsgGUID: vLQqeI/yQvaF4UB119Jliw==
+   d="scan'208";a="46998236"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:49:06 -0700
+X-CSE-ConnectionGUID: wu/d1wQQTSi3QFwEC2sPpw==
+X-CSE-MsgGUID: 59tjK9wqQWe6sHcKnjtDBw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="58187003"
+   d="scan'208";a="62959168"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 12 Aug 2024 08:49:04 -0700
+  by fmviesa004.fm.intel.com with ESMTP; 12 Aug 2024 08:49:03 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A84C5178; Mon, 12 Aug 2024 18:49:02 +0300 (EEST)
+	id B698F15B; Mon, 12 Aug 2024 18:49:02 +0300 (EEST)
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
@@ -65,10 +66,12 @@ To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Jiri Slaby <jirislaby@kernel.org>,
 	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v1 0/7] serial: 8250_platform: refactor and clean up a bit
-Date: Mon, 12 Aug 2024 18:47:02 +0300
-Message-ID: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/7] serial: 8250_platform: Remove duplicate mapping
+Date: Mon, 12 Aug 2024 18:47:03 +0300
+Message-ID: <20240812154901.1068407-2-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+In-Reply-To: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
+References: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,24 +80,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Recent patch against this driver has been added without my review.
-It was technically my fault, however I was on long vacation.
-So, instead of blaming anyone, this small series to tidy up the things
-as I think would look and be maintainable better.
+UPF_IOREMAP is for serial core to map the resource on behalf of the
+driver. No need to perform this explicitly in the driver.
 
-Andy Shevchenko (7):
-  serial: 8250_platform: Remove duplicate mapping
-  serial: 8250_platform: Don't shadow error from
-    serial8250_register_8250_port()
-  serial: 8250_platform: Use same check for ACPI in the whole driver
-  serial: 8250_platform: Tidy up ACPI ID table
-  serial: 8250_platform: Switch to use platform_get_mem_or_io()
-  serial: 8250_platform: Refactor serial8250_probe()
-  serial: 8250_platform: Unify comment style
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/tty/serial/8250/8250_platform.c | 6 ------
+ 1 file changed, 6 deletions(-)
 
- drivers/tty/serial/8250/8250_platform.c | 107 +++++++++++++-----------
- 1 file changed, 58 insertions(+), 49 deletions(-)
-
+diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
+index 73002faaae4b..a0e71b03015a 100644
+--- a/drivers/tty/serial/8250/8250_platform.c
++++ b/drivers/tty/serial/8250/8250_platform.c
+@@ -142,12 +142,6 @@ static int serial8250_platform_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (uart.port.mapbase) {
+-		uart.port.membase = devm_ioremap(dev, uart.port.mapbase, uart.port.mapsize);
+-		if (!uart.port.membase)
+-			return -ENOMEM;
+-	}
+-
+ 	/*
+ 	 * The previous call may not set iotype correctly when reg-io-width
+ 	 * property is absent and it doesn't support IO port resource.
 -- 
 2.43.0.rc1.1336.g36b5255a03ac
 
