@@ -1,64 +1,84 @@
-Return-Path: <linux-kernel+bounces-283259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189CD94EF3E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB49C94EF47
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:14:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B84EA1F20F64
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 559901F224DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152E617E477;
-	Mon, 12 Aug 2024 14:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA2017E46E;
+	Mon, 12 Aug 2024 14:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieRbve6g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nIwz4k7L";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="TxdeIOwL"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565CD33C5;
-	Mon, 12 Aug 2024 14:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E3A17CA0A;
+	Mon, 12 Aug 2024 14:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723472012; cv=none; b=rY/zvISpoYB2Kpstj7YVgcyDPcmVhLBwupjhjwkh9vZX9U/652szBdrrbJrL4q8XvFcu+TF6yIWx7I+1JbHzCoTcRS8eZBczWgM9/9p0J0DP652OSFbBAi/Nj1vhW5e+qgKHVFJh3RTJlL2fUPY1S1KbmRrHq4Nv/PL+8U6Y72g=
+	t=1723472091; cv=none; b=HB/fVyB63Gk7sfa6AQ1CsCOE2FDvR7bl5JSp1ueQUeZXm3BHvH8CK4CUcuzZyPmE8XvcZC2BAPqsnmxMKWkoqM2dbnfCJ5T7hZSeGdsle6Vwv4FSx+UW4+nAv/0IBQERQSjvludQmqKWuxfX9e416FEXvUHTZBVmqkGQN77wntw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723472012; c=relaxed/simple;
-	bh=TC/QMOkYIMtEI0vpiVXPXJAu6ENEaOjWl87P5kFwUvE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VBbzJFb+33xvKJc0mxtSrG7JT/nSoNBEonAKxCOrLp/RXcznkPeEdBkBBReeEibPH385t2Rh3mb7SOZPlEJXJgb/fubQkiua5VqzKCMDKw2F3QeOPm0989toCXFIKcKJLoKIDAkxauPveK6wYt9A6rr5jQRDp4jgM/cFOtNxK4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieRbve6g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D5F1C4AF09;
-	Mon, 12 Aug 2024 14:13:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723472011;
-	bh=TC/QMOkYIMtEI0vpiVXPXJAu6ENEaOjWl87P5kFwUvE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ieRbve6gGbPfvJArfpSKs1Vx00YBFsMuODaQWTRIVvInmuyZ0ULOtXt3eG1GtVArh
-	 A7l77oEztGSzFI7vQQIX+5Y3il1EeVDnPI4yVsEb0QBQ80QULCa6tsDWce46XVSyYr
-	 v3bid7zD5EKbTo2Gg9EMsdObJXsgDBIz8+ZSZ2h5E+qGUL2Ixjoy656s3q5Rx+e2fT
-	 0BT58b8uP8QTk+Tsy0LlZxdKpiKsaL0fKzZk9shjfa9N4MLLZ2AQtpWTKDLKPA94st
-	 xurEDyuHPRQBJWfmXFhSHOb0DIfWOCCAkHas+zQbmjZ3JULQXZKWPb/uKt/X2fZJei
-	 yoV3ghAroVVCA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sdVnd-0032l0-9D;
-	Mon, 12 Aug 2024 15:13:29 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1723472091; c=relaxed/simple;
+	bh=Eo03XpHG4JjMF6MVNNFsrWZetjP/U/TwDfvhf6VCQ0I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iWHuQWMs9xEE2KYO+FDd7ZUxmPxjW6F35OZvI/gJkJM7GIYxcUuh7TLNAE8DEyDKQsD01kGvG4M54GYtSyq+/mEAEb8yGN6hwJUNj3aCqHrUYAL/U2YGYWGyl6KE3kDOXFU3pbPxrAODN7EJHxNlb3aNWn+6ied7TDoB8gDdhaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nIwz4k7L; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=TxdeIOwL reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723472087; x=1755008087;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=J7pblquAUvkPr2wiJ3RQohZqntz7DSfWBf0S2wbAQ/A=;
+  b=nIwz4k7LRc+jnSwcYGHEStZG2WaUUOo2GAU+TjF3MhWLJuMIyu9CIu7f
+   az3+cTftavRHxLVwTP6YJFvbHc9rZXdhC58gPf+pD+0aONzDtPva4RoIQ
+   30t5fbuKTb0+EIldJGxz4pY+F28EgxToM2yri+kRrL7mLLHrHiWf0hLx8
+   61Y+yjGA6nblfQLRelmeC6GoWniNsjuQQEESN/FFCCxTj7cq9cYAPwwZ4
+   1e3cLVHt94DMtH76TzJOgrtw6a/NoHjWHHsiOaYuRXRV7APgvuQ7TZUUJ
+   Zv2+ZjdsUN6SUp6apWozeB/mLb0rmX0jSs1IRpjRv9Jb8JSnq1Smt98TK
+   w==;
+X-CSE-ConnectionGUID: grz1XfrWTBSFP/uWm6GT7A==
+X-CSE-MsgGUID: rh8dHD0aTp6Yvox2hP8j4A==
+X-IronPort-AV: E=Sophos;i="6.09,283,1716242400"; 
+   d="scan'208";a="38365457"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 12 Aug 2024 16:14:44 +0200
+X-CheckPoint: {66BA18D4-2B-82DA89EF-D38C983A}
+X-MAIL-CPID: F628DFE928542C9A54B2CD547C2C3C48_5
+X-Control-Analysis: str=0001.0A782F1C.66BA18D4.018D,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2EDC160A8F;
+	Mon, 12 Aug 2024 16:14:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723472080; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=J7pblquAUvkPr2wiJ3RQohZqntz7DSfWBf0S2wbAQ/A=;
+	b=TxdeIOwLdgIjelL1mC3UCR934fyEMG9/Hg50J8h8BcqInFzapztZ6kO6udhIvCEe8OgBqw
+	YSPSlGLFJUa/DaIJCqTJUyaj5ISUzm9bAYT2eI7yMh7zoTnAZWUsbe2smzhGY3MJqL8zvu
+	UX08Z5ytbea0EIjrfruH8tdd/Gbp73t6CgRPM5aN8F5qyCYGNOc7uD14IRhzDBw48iPXhU
+	7MecIgXoF6wqsbt49K/luWcbE1TKxCc65N31rso1r3BbGD19B2Uc+vsK5LOJlG7xbqm3PI
+	+Iztj88+zdqSK91stonlsZkkSWB8siHc6eR/tpWn0Bammss8Xzqan3RzAzht3Q==
+From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Cc: Breno Leitao <leitao@debian.org>,
-	Sunil Goutham <sgoutham@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH net] net: thunder_bgx: Fix netdev structure allocation
-Date: Mon, 12 Aug 2024 15:13:22 +0100
-Message-Id: <20240812141322.1742918-1-maz@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	linux@ew.tq-group.com,
+	Markus Niebel <Markus.Niebel@ew.tq-group.com>
+Subject: [PATCH 0/2] TQMa7x / MBa7x DT improvements
+Date: Mon, 12 Aug 2024 16:14:12 +0200
+Message-Id: <20240812141414.96334-1-Markus.Niebel@ew.tq-group.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,114 +86,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, leitao@debian.org, sgoutham@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+X-Last-TLS-Session-Version: TLSv1.3
 
-Commit 94833addfaba ("net: thunderx: Unembed netdev structure") had
-a go at dynamically allocating the netdev structures for the thunderx_bgx
-driver.  This change results in my ThunderX box catching fire (to be fair,
-it is what it does best).
+This series brings two improvements: supporting the i.MX7 ADC paired
+with HWMON support and using a more specific compatible for the
+mainboard temperature sensor.
 
-The issues with this change are that:
+Markus Niebel (2):
+  arm: dts: imx7-mba7: add iio-hwmon support
+  arm: dts: imx7-mba7: improve compatible for LM75 temp sensor
 
-- bgx_lmac_enable() is called *after* bgx_acpi_register_phy() and
-  bgx_init_of_phy(), both expecting netdev to be a valid pointer.
+ arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-- bgx_init_of_phy() populates the MAC addresses for *all* LMACs
-  attached to a given BGX instance, and thus needs netdev for each of
-  them to have been allocated.
-
-There is a few things to be said about how the driver mixes LMAC and
-BGX states which leads to this sorry state, but that's beside the point.
-
-To address this, go back to a situation where all netdev structures
-are allocated before the driver starts relying on them, and move the
-freeing of these structures to driver removal. Someone brave enough
-can always go and restructure the driver if they want.
-
-Fixes: 94833addfaba ("net: thunderx: Unembed netdev structure")
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Cc: Breno Leitao <leitao@debian.org>
-Cc: Sunil Goutham <sgoutham@marvell.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>
----
- .../net/ethernet/cavium/thunder/thunder_bgx.c | 30 +++++++++++++------
- 1 file changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-index a40c266c37f2..608cc6af5af1 100644
---- a/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-+++ b/drivers/net/ethernet/cavium/thunder/thunder_bgx.c
-@@ -1054,18 +1054,12 @@ static int phy_interface_mode(u8 lmac_type)
- 
- static int bgx_lmac_enable(struct bgx *bgx, u8 lmacid)
- {
--	struct lmac *lmac, **priv;
-+	struct lmac *lmac;
- 	u64 cfg;
- 
- 	lmac = &bgx->lmac[lmacid];
- 	lmac->bgx = bgx;
- 
--	lmac->netdev = alloc_netdev_dummy(sizeof(struct lmac *));
--	if (!lmac->netdev)
--		return -ENOMEM;
--	priv = netdev_priv(lmac->netdev);
--	*priv = lmac;
--
- 	if ((lmac->lmac_type == BGX_MODE_SGMII) ||
- 	    (lmac->lmac_type == BGX_MODE_QSGMII) ||
- 	    (lmac->lmac_type == BGX_MODE_RGMII)) {
-@@ -1191,7 +1185,6 @@ static void bgx_lmac_disable(struct bgx *bgx, u8 lmacid)
- 	    (lmac->lmac_type != BGX_MODE_10G_KR) && lmac->phydev)
- 		phy_disconnect(lmac->phydev);
- 
--	free_netdev(lmac->netdev);
- 	lmac->phydev = NULL;
- }
- 
-@@ -1653,6 +1646,23 @@ static int bgx_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	bgx_get_qlm_mode(bgx);
- 
-+	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
-+		struct lmac *lmacp, **priv;
-+
-+		lmacp = &bgx->lmac[lmac];
-+		lmacp->netdev = alloc_netdev_dummy(sizeof(struct lmac *));
-+
-+		if (!lmacp->netdev) {
-+			for (int i = 0; i < lmac; i++)
-+				free_netdev(bgx->lmac[i].netdev);
-+			err = -ENOMEM;
-+			goto err_enable;
-+		}
-+
-+		priv = netdev_priv(lmacp->netdev);
-+		*priv = lmacp;
-+	}
-+
- 	err = bgx_init_phy(bgx);
- 	if (err)
- 		goto err_enable;
-@@ -1692,8 +1702,10 @@ static void bgx_remove(struct pci_dev *pdev)
- 	u8 lmac;
- 
- 	/* Disable all LMACs */
--	for (lmac = 0; lmac < bgx->lmac_count; lmac++)
-+	for (lmac = 0; lmac < bgx->lmac_count; lmac++) {
- 		bgx_lmac_disable(bgx, lmac);
-+		free_netdev(bgx->lmac[lmac].netdev);
-+	}
- 
- 	pci_free_irq(pdev, GMPX_GMI_TX_INT, bgx);
- 
 -- 
-2.39.2
+2.34.1
 
 
