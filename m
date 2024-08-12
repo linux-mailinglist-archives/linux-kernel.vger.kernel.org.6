@@ -1,133 +1,155 @@
-Return-Path: <linux-kernel+bounces-283456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140A594F52B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:47:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C35694F530
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5901281EBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:47:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB37FB22B1A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10891187348;
-	Mon, 12 Aug 2024 16:47:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5ED3187552;
+	Mon, 12 Aug 2024 16:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlJnWMhX"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="GQUCKUGK"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6841130E27;
-	Mon, 12 Aug 2024 16:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853E9130E27
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481220; cv=none; b=OBeuQHepW6Eiqax5JoGycM/mMrmW29ftv3bjCz2fF7rbVfELNSnakptIhxqeyj2C94uzOYECrg/oU0bh/uD9nnh4nQAYNAGYgTNTDbVbt0TXIoU/mUcu/lY8abK8fV91AKB7l5DVCO4O8wIN5LoE5pqh7zYzYEJ2NahpmvEoKO4=
+	t=1723481266; cv=none; b=myg2rzR3jMU9ryMkY5BNwEpqxECeh+weSfEMXWhWuR/e2VS7RCrBIXQ3ZAN61lxt9uPBtxgs2NWY5RNRzcHBXz8AWr5JNTrtqiTVwGnfM7e1kmKNj1RlKAgLHhsID2jT+EZLZdM9F50+juVAHvPJl7Z2IVTj5LTClRqe3DRw5/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481220; c=relaxed/simple;
-	bh=s6vDzpdyj1kaf2RCIORy8HKnudLqeD/U0PkwfPHu9xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R3sz1ZbCTUcrCm92V93Irw8/zHZylwvsgS5MM2AI5DP/Z5sV+zH/LHBR4f46ZNj/KcrpWscA6mqVvUzNzcgWkW2RWTi/VLxaISq20YdvcFMkh+RU5+JKvGknH2gZMB+BiWPbmMaIxq5R378B4dWASARvsnRMy0IaZnFOagm9+tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GlJnWMhX; arc=none smtp.client-ip=209.85.161.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5d5ed6f51cfso3088791eaf.0;
-        Mon, 12 Aug 2024 09:46:58 -0700 (PDT)
+	s=arc-20240116; t=1723481266; c=relaxed/simple;
+	bh=dvVG0rsyTzj5mqsxi11/XWlFc+7NA1zur2Arrxl7HdI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kU7O11QS67uluqjmYUmIxzA5qMBDkCtgSzoemq4njgrs7ogHZGbnJZoJ8F2+B2W5mKF3tomn5ZdPuE/HLz3xc+Q3VIKhNMX+HHULVsCc4INMHha/QdbgWJyAGIv1GZ+2qFYYjeKGKeXo+dzAVmsjTfeQGc9OmFSkXMRFphvPL2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=GQUCKUGK; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fd6ed7688cso39173745ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:47:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723481218; x=1724086018; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+sdxd3RJ6cYc1xTCNB+pQD30MwFIoG/sMhDILuZx+8I=;
-        b=GlJnWMhXmM6LLxjy2P+wf8vp8no87sM4lmQy/roTh5vMwM2CFU/ppZjgkGhX+ovPcq
-         g/X9FP7EXQFKbbHEOowTLWmja9QBVramAnRGV6asfg8tlc86JcLeEhTpwYdYmChtZoNX
-         +DtOFi0JxMGW4p+jVqpgH54C4YCTxAyDRgMc9aPDMnktm86nPhSDF2RvkDrfZqjJHRBt
-         bm+/xT09L3xgKg3mCckwAdNT3iZRPAoYFAz7DcE6mt45v1nv/xOTM/SN6dltHHt78Glk
-         RID5Na4QHLdBKhCuVvwYZZm5Nvqcc4VOOs6LpA9lIznMJfpVMUraoozhVgrH5WXA9g/c
-         txzw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723481263; x=1724086063; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C1gGdvqcddohTVFT8kQob0xd7CgQ7ZF2Hz/Ht3G6YiU=;
+        b=GQUCKUGK1UkE6dGYTSe4HwO96ytgn7Psgcz/r+u38ndSdQIXkdn63K27EsG78sOa0M
+         tgCwQQGWY2k+OVZXLCse9Xo4ROVA3PPGDMHcWkZZUHhqkJDfRCNCgS+W4o83avB3OLmy
+         ys8y0vkS8Y3r4tsp6JngAQ6KS0v2ymIdWbBYoEZOYZYBLsp3vgRqQMXHhV0eq6Su3K2w
+         I3UqCyqlpAGwa5ZGD8bal2XH2Rs/+ND93onbs+PHx1u38W37DDpH2Vt04R+h4HBNDNf8
+         /rr2s7Yfc9ZsqM2vregNZ/5Jt+PF9hJJZuqsLVckFdk2OjanN5+yVB058WjqL+j4vL6w
+         Q1AA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723481218; x=1724086018;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+sdxd3RJ6cYc1xTCNB+pQD30MwFIoG/sMhDILuZx+8I=;
-        b=PDNs2VCXlA1LU2rheP/DihyxNdLs8wgWHIfoeBUT2B/XZHJ9QL2PIpZ8QiDWBx8KRh
-         CptH/45PRy+lQcTuIfZazNK3U4P8PTfAakWRl6qLPfIvcJcziGMB+eCVawudPy58Y9GV
-         WIeHR9PWp5x/k5/yirWfok8OGDRhE7NQBFqWjDOWfoOC87Qfqh3DKnkcCuAzI/hf47RO
-         BQeT7uI02oCPm3bpjPJEsjiMhcVYmuV3/vPoH+uv1Du/ZHBHKugbFdNGkqgFy5UlQiMs
-         bIhzRIfmy1MrWXpVBI8by5HldOzUlPgaS7FSem8XAaPLTD/k5XeElpjzaQy7CyHAOLf7
-         x7Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCVAoIMQPGX4M8qSKOpErSLZXHxA6Eq9dFI7nuzvzpPLqsG6TrQa52gjD8prlh9D56TVcOyMxd0PYyQjq9fQ4s/tzciQKK7SQ59rq5lV
-X-Gm-Message-State: AOJu0YxRl3d75vTZl4DTBK2hvKoptmeWVQqOL9VYnulx3km8xH+4koaV
-	QnzLlE1gmGogudzRR9tCBRa81sUqBdbxhYSmMNCWqDpnHc6KS9/S
-X-Google-Smtp-Source: AGHT+IFX1Bc/MZ8kTVn1mWM9fv8YIQybjzrAlBntH7k3WsvYhrrNJUmzUE+6wmNaRfgwpWY+M+o9/w==
-X-Received: by 2002:a05:6870:e314:b0:254:affe:5a05 with SMTP id 586e51a60fabf-26fcb6ca3ecmr880564fac.21.1723481217802;
-        Mon, 12 Aug 2024 09:46:57 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:53c5:10b0:cfab:3972])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a80dfsm4207501b3a.52.2024.08.12.09.46.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 09:46:57 -0700 (PDT)
-Date: Mon, 12 Aug 2024 09:46:54 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: "Maciej W. Rozycki" <macro@orcam.me.uk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vojtech Pavlik <vojtech@ucw.cz>, Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [RFC PATCH 0/5] Removal of a few obsolete input drivers
-Message-ID: <Zro8fpgvqa74aki4@google.com>
-References: <20240808172733.1194442-1-dmitry.torokhov@gmail.com>
- <alpine.DEB.2.21.2408090122060.61955@angie.orcam.me.uk>
- <ZrmUnaLJ5Ft0_tst@google.com>
- <alpine.DEB.2.21.2408121448250.59022@angie.orcam.me.uk>
+        d=1e100.net; s=20230601; t=1723481263; x=1724086063;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1gGdvqcddohTVFT8kQob0xd7CgQ7ZF2Hz/Ht3G6YiU=;
+        b=dpxb6OQK8tIcDboqbH7f2Yx/PzboC7aqS+e3gDjrwD3eAbnvG8DXeWGYMYgNJdx4GE
+         gdYTgYgH35kB8+YHzaCRPaAt6DwwAzshAxnoSKjAfoa2Iwx8xicFkgXNpoRssndvIgxT
+         EZFcG7oNwAf2h61KEFIoQ9i/K+a3tixE8QXitWdDk3/rddNSsyGFb+svsiItU4+TPOx3
+         8tUIkC8KFoFI3ASXeXg3ETa99+yAY8TIZUc9uGwPYY1ZOKb4ncxBzUwAlB98URWIX/gP
+         UQoFwbjDcWlY/j7oSA7NtI+yX43TjA/iT1txzE0/CGXd+HKx00qOakRAJKHrdczV7/Jd
+         KCkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSMsMjPq2jWtdU/d7k/cVh1UL0B8U235/fzCsf6YZ9FMCBGm4kXTUzS2LlBre3Kjv31YQ8rxWrX7R28guYLh2Zkq7K7rFt6QrQ2lIQ
+X-Gm-Message-State: AOJu0Yw7JlVtil+JUw4xnlcJmG2fvLmPuvFdRxQ5xH27Em+r1ROOA6zM
+	g7bbOlIQeeCVVEr3c9haow91IxlTVTqvG93N/5jlNEFLyJRnT6AmyWiCe129gAs=
+X-Google-Smtp-Source: AGHT+IE87fk8grq8YxzQ9ZqK4uANOdymebfW6zNzfLJz+Z6OjMVTMLP9gdbfzi43oiHSHopfRLN5Zg==
+X-Received: by 2002:a17:902:e80a:b0:1fc:2e38:d3de with SMTP id d9443c01a7336-201ca120563mr9639125ad.7.1723481262725;
+        Mon, 12 Aug 2024 09:47:42 -0700 (PDT)
+Received: from [10.4.10.38] (pool-108-26-179-17.bstnma.fios.verizon.net. [108.26.179.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bbb3b2easm40030505ad.284.2024.08.12.09.47.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 09:47:42 -0700 (PDT)
+Message-ID: <72e49c54-6473-413b-a4b4-4d0d67a41923@rivosinc.com>
+Date: Mon, 12 Aug 2024 12:47:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.2408121448250.59022@angie.orcam.me.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: riscv: Add Zicclsm ISA extension
+ description.
+To: Conor Dooley <conor@kernel.org>, Charlie Jenkins <charlie@rivosinc.com>
+Cc: Rob Herring <robh@kernel.org>, linux-riscv@lists.infradead.org,
+ Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?=
+ <cleger@rivosinc.com>, Evan Green <evan@rivosinc.com>,
+ Andrew Jones <ajones@ventanamicro.com>, Xiao Wang <xiao.w.wang@intel.com>,
+ Andy Chiu <andy.chiu@sifive.com>, Eric Biggers <ebiggers@google.com>,
+ Greentime Hu <greentime.hu@sifive.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Heiko Stuebner <heiko@sntech.de>,
+ Costa Shulyupin <costa.shul@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+ Anup Patel <apatel@ventanamicro.com>, Zong Li <zong.li@sifive.com>,
+ Sami Tolvanen <samitolvanen@google.com>,
+ Ben Dooks <ben.dooks@codethink.co.uk>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Erick Archer <erick.archer@gmx.com>, Joel Granados <j.granados@samsung.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+References: <20240809162240.1842373-1-jesse@rivosinc.com>
+ <20240809162240.1842373-3-jesse@rivosinc.com>
+ <20240809181536.GA976083-robh@kernel.org> <ZrZmTvJgyQ5nB70H@ghost>
+ <20240812-rogue-enable-9194afe10621@spud>
+Content-Language: en-US
+From: Jesse Taube <jesse@rivosinc.com>
+In-Reply-To: <20240812-rogue-enable-9194afe10621@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 12, 2024 at 02:53:30PM +0100, Maciej W. Rozycki wrote:
-> On Sun, 11 Aug 2024, Dmitry Torokhov wrote:
+
+
+On 8/12/24 11:56, Conor Dooley wrote:
+> On Fri, Aug 09, 2024 at 11:56:14AM -0700, Charlie Jenkins wrote:
+>> On Fri, Aug 09, 2024 at 12:15:36PM -0600, Rob Herring wrote:
+>>> On Fri, Aug 09, 2024 at 12:22:40PM -0400, Jesse Taube wrote:
+>>>> Add description for Zicclsm ISA extension.
+>>>>
+>>>> Signed-off-by: Jesse Taube <jesse@rivosinc.com>
+>>>> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+>>>> ---
+>>>> V1 -> V2:
+>>>>   - New patch
+>>>> V2 -> V3:
+>>>>   - No changes
+>>>> V3 -> V4:
+>>>>   - No changes
+>>>> V4 -> V5:
+>>>>   - No changes
+>>>> V5 -> V6:
+>>>>   - No changes
+>>>> V6 -> V7:
+>>>>   - No changes
+>>>> V7 -> V8:
+>>>>   - Rebase onto 2d1f51d8a4b0 (palmer/for-next)
+>>>
+>>> Please also put the version in the subject. '-vN' is the git-send-email
+>>> option to do it for you.
+>>>
+>>> Rob
+>>>
+>>
+>> These patches were originally part of a different series [1] but are no
+>> longer related to that series so I had asked Jesse to spin these off into a
+>> different series. These version tags probably should not have been left
+>> on here when made into this new series though.
 > 
-> > > > I am wondering if it is not the time to retire bus mice drivers since
-> > > > they have been out of favor for close to 30 years, as well as 3 drivers
-> > > > for portables from late '90s to early 2000.
-> > > 
-> > >  Are these drivers broken, e.g. fail to compile or crash the system?  
-> > 
-> > I have no idea because I doubt that anyone has tested them since
-> > forever.
-> 
->  What's the rationale for your conclusion?  How do you know nobody uses 
-> them?
+> I dunno, I disagree. I think the versioning should continue on being
+> split - especially when there's been tags provided on earlier versions.
 
-Because they are either require ISA add-on cards and it is quite hard to
-find devices that still work, and are supported by the current kernel,
-or internal peripherals in devices that are no longer useful. Do you
-expect anyone using "Gateway AOL Connected Touchpad" in the year of our
-Lord 2024?
+Good to know I should keep the version number when splinting a set.
 
-> 
-> > > Otherwise what's the gain from removal?
-> > 
-> > The same gain that we get from removing obsolete boards and
-> > architectures - less maintenance burden, less work when we need to
-> > change some APIs, less energy burnt by 0-day and other bots, CI systems,
-> > etc, compiling useless drivers over and over and over.
-> 
->  Well, you don't have do do anything about these drivers, do you?  They 
-> don't scream for food.  And as to the energy, well I doubt this really 
-> matters, the amount is noise lost in the overall consumption.
-
-I kind of do even if they did not require much involvement.
-
-Let me ask this: why do you want to keep them? Do you know of a large
-(or small) userbase of bus mice enthusiasts? Note that it would be very
-easy to "git revert" the removal if someone actually needs this.
-
-Thanks.
-
--- 
-Dmitry
+Thanks,
+Jesse
 
