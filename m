@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-282896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA16594EA3F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:48:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E515794EA45
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:50:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64B11F22291
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:48:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A305C28250C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF6F16E89B;
-	Mon, 12 Aug 2024 09:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D3716E882;
+	Mon, 12 Aug 2024 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="ENkrjTQF"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBH/2iao"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1316D4E6;
-	Mon, 12 Aug 2024 09:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDA31C3E;
+	Mon, 12 Aug 2024 09:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723456073; cv=none; b=QSlzZM8HP5FPZS3BJe9eKnwOidDCO2t6EyQzDQvbT8m6bjtloJ5T4LfXsDIx1UdzkPvB8PO1amYGMAlLe62w+9WUhWRtevk/hUramMPjFv5LMdVvxyZkUpK3BceFLjC91pLywa+YmNRZZCADdulX1FOSyDRqxQX8AeW2UKQa4YI=
+	t=1723456229; cv=none; b=ubcixqUyMtWfL9qJKath+bxqxj8zBRwGiXhfdqVZ7XcXEdloDiDxmVPrfxw5i+lqcol+9ARxSwZYDkSom4HeIbfGasEVK6o5IuCYjc+wmcWosJ2qQKQ4S9xj7TN2/iMxiwhkDSMySwrTBm1joKRUu/MH3Gs7oJc85fGDpsrLqTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723456073; c=relaxed/simple;
-	bh=mHrx7jeCvf7liAzUhEblv0bq8nC2O0YGczC8eAhv6IA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KtVvoCRswgn+LQ7ZQ+imvIWFl06kIYjNmsrAgCsqaFvsdnc1MAgVfvYw2PBaGprQ7V2cfsERRxwlUvGHJJa9Pr+PgFKw7ZJF8dHSFY6VRdJ+AnQ5yiRcbGsuk4eCsWrHzutCMnt4FjyO7RAImA+0lOxkk/zWydAGxTsJTwZNtgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=ENkrjTQF; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id EC6ACA03FB;
-	Mon, 12 Aug 2024 11:47:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=3wbtoEoxYVroU1JNp7eB
-	tK/67fGjW/Y+nxaKV9kolHw=; b=ENkrjTQFSqjD6EHY++oag+wCwJmWCbXDKTvc
-	PZfxhJ2ATAkjrUKmj4UHidExkfVaBDVneFetjVgRQOOQRYo6L3g+euhILh/ZvxgU
-	+j0E4fQ6PVpu6NwaNRXyOcnmLkv6Utb4FM3bK/CybN5kGjdX9vpDzuCLj3+gPwrw
-	nRSq/D6UQT0zqZWIo2u9EgTQVVbdcOfii76pjMwyrlTYWD9Pjk0FhdsAIqkVMCaN
-	F+7zago67KtZ0obS9XnXvlAlWGlnOFRdYeROUblNDDtAKYVLZDP/VA/b5zLFisRH
-	3d3pcH0rqePo0ouLoctamnsTnHMFB0u2yI+61GdZ+5ug3VxV2cNzd6cl+gkF1nuz
-	uYM8nFAU0ZDAktuZScYyYrso4kLj0FM9UZSFd2mqeFHRyksQaLFk9x+K6G/sbumZ
-	6iE8zbjAP220nVf+ezBKZ6Gsf0qFPifrKcLwfekJCLQexkUneTXi82dFWiFxjtxP
-	5QTAMOvufnhab5jt/mOrG4cTkQzVx6Yw7qa+Tcm8Vrcv3OuiQh3rdOxE06sC8Xmh
-	66SzTnih6T5NuOJt8U1TLlPlwz8IHyotsrfqP3SSr/ZbMWZA1xQg4qe4nr65F1XG
-	nwSnC3K4g3vJmx7GRDZXehs/exsW4JpVugxRAKJg5TXljkrEnBTA9d84TSYKoYUm
-	Q164IuE=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <imx@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Simon
- Horman" <horms@kernel.org>, Wei Fang <wei.fang@nxp.com>, Shenwei Wang
-	<shenwei.wang@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Richard Cochran
-	<richardcochran@gmail.com>
-Subject: [PATCH v3 net-next 2/2] net: fec: Remove duplicated code
-Date: Mon, 12 Aug 2024 11:47:15 +0200
-Message-ID: <20240812094713.2883476-2-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812094713.2883476-1-csokas.bence@prolan.hu>
-References: <20240812094713.2883476-1-csokas.bence@prolan.hu>
+	s=arc-20240116; t=1723456229; c=relaxed/simple;
+	bh=MYBtALNqE1+wtCiCgWVaHfF+79nSGs92HIGmmIMgdsE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=Q097ukfuLpRxv4vXBE30ulAf4g4ENXJSl4YEvRR7ojrYMDN5pRDuZ531ajGIsSiUeY6C1G7JFaz1JNwnvX757FCiOvAViHkTVm7UZwJ7c6dfryva/n6WDcKyw3tU2cXh+kH1jtSYvuAk7t6VRYno4/xycvD8QEd5aA2bjg8N92E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBH/2iao; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7638EC32782;
+	Mon, 12 Aug 2024 09:50:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723456229;
+	bh=MYBtALNqE1+wtCiCgWVaHfF+79nSGs92HIGmmIMgdsE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=dBH/2iaoLQs8571mOYBnm/TUPVLkQ/LRwrXL+xbj+UCxms9782o6RXvSjqdPnSOVg
+	 9HR5mVU2N4oMP5R8fGKgIYsBKWMkBAjNyjIn87cpGTOON1hQHplpIlhNj4Om9RAY2U
+	 67CYyHaDUSN57VQjavQyxwZFqHBhM4jmiqP800d0J03NzP+uI4yjxVUrjhKUmrTWMz
+	 Gj+GCS47j9PMbgREZPbVGDAgl5MKK8zOwQspYOKep53XMBxIXtln+voyhf/BkNLa9L
+	 Vv5sJX+dRODukotJiFWRNy1PC9O3TalvDbzRZ0eigecOiSSSFoJxV4dYML99anJfI5
+	 8yVsEkt2cVXLw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AF39E382332D;
+	Mon, 12 Aug 2024 09:50:29 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1723456068;VERSION=7976;MC=3472913282;ID=645971;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29ACD94854617367
+Subject: Re: [PATCH net v2] net: axienet: Fix register defines comment description
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172345622824.970779.7153126498272358936.git-patchwork-notify@kernel.org>
+Date: Mon, 12 Aug 2024 09:50:28 +0000
+References: <1723184769-3558498-1-git-send-email-radhey.shyam.pandey@amd.com>
+In-Reply-To: <1723184769-3558498-1-git-send-email-radhey.shyam.pandey@amd.com>
+To: Pandey@codeaurora.org, Radhey Shyam <radhey.shyam.pandey@amd.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, michal.simek@amd.com, ariane.keller@tik.ee.ethz.ch,
+ daniel@iogearbox.net, andrew@lunn.ch, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ git@amd.com
 
-`fec_ptp_pps_perout()` reimplements logic already
-in `fec_ptp_read()`. Replace with function call.
+Hello:
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/net/ethernet/freescale/fec_ptp.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+This patch was applied to netdev/net.git (main)
+by David S. Miller <davem@davemloft.net>:
 
-diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/ethernet/freescale/fec_ptp.c
-index 4ed790cb6be4..c97a0e4e7d89 100644
---- a/drivers/net/ethernet/freescale/fec_ptp.c
-+++ b/drivers/net/ethernet/freescale/fec_ptp.c
-@@ -235,13 +235,7 @@ static int fec_ptp_pps_perout(struct fec_enet_private *fep)
- 	timecounter_read(&fep->tc);
- 
- 	/* Get the current ptp hardware time counter */
--	temp_val = readl(fep->hwp + FEC_ATIME_CTRL);
--	temp_val |= FEC_T_CTRL_CAPTURE;
--	writel(temp_val, fep->hwp + FEC_ATIME_CTRL);
--	if (fep->quirks & FEC_QUIRK_BUG_CAPTURE)
--		udelay(1);
--
--	ptp_hc = readl(fep->hwp + FEC_ATIME);
-+	ptp_hc = fec_ptp_read(&fep->cc);
- 
- 	/* Convert the ptp local counter to 1588 timestamp */
- 	curr_time = timecounter_cyc2time(&fep->tc, ptp_hc);
+On Fri, 9 Aug 2024 11:56:09 +0530 you wrote:
+> In axiethernet header fix register defines comment description to be
+> inline with IP documentation. It updates MAC configuration register,
+> MDIO configuration register and frame filter control description.
+> 
+> Fixes: 8a3b7a252dca ("drivers/net/ethernet/xilinx: added Xilinx AXI Ethernet driver")
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>
+> 
+> [...]
+
+Here is the summary with links:
+  - [net,v2] net: axienet: Fix register defines comment description
+    https://git.kernel.org/netdev/net/c/9ff2f816e2aa
+
+You are awesome, thank you!
 -- 
-2.34.1
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
 
