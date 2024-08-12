@@ -1,128 +1,140 @@
-Return-Path: <linux-kernel+bounces-282796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79D5394E8BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EFB94E8BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:40:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB152829B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:39:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE615282CD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A3B16BE16;
-	Mon, 12 Aug 2024 08:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB8216BE16;
+	Mon, 12 Aug 2024 08:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqVOzP9o"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ne2p68+A"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18034D599;
-	Mon, 12 Aug 2024 08:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9736A16BE0C;
+	Mon, 12 Aug 2024 08:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451976; cv=none; b=sRvS0mzjkHNf4th4EAXsVT1Ir4k6ENKimlkh2Q/BhMiOUp2zbHo8gJ74IzNXl/CdF8T5EmF6LWSKwfroh+ij2E0uucYQtYejD9+VQ8Gyxj7/+WxojjUJnB5WQH1/3pM/R4k329mo8fnuBEfIRdsBxtsL9AhvtUhpx5J+kahvLcQ=
+	t=1723452011; cv=none; b=u+avRWsW2eWYiwZqNxVvF3kq2ykFj7q/0PnTVNwuJrH7syMwb1GiLqXPSMA/0psz9tiv9O0wxsdp+0zqcuqKYitweZY43bKofxZcZrMNVaWIn0zqLNwIHyjStpR6PTs7cpUxAh76m+BUjdmv5TaR7FgCT1K/7rTIQU4owd6LUK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451976; c=relaxed/simple;
-	bh=XV9nUjhCLyBExk+VSw3rxsjG7FtPdvav3bqcyHbHGkQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nA86uGZNlDzquTLX1rjl0sQNFK0pdXWtufwMD9V7TgfYpCOeQ1eITgIvTfMTGHKBea/4Gg9Mpy3WgtifYaeBG9/9B7jikeSumcnZelJ4OhYXjN26j7IOX8VA+OS4BCHD6/YsN9R9GK0NyJRIOqFGuJ9xqig4u8nSHBXOG2WBqyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqVOzP9o; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb4b6ecb3dso2676011a91.3;
-        Mon, 12 Aug 2024 01:39:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723451974; x=1724056774; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xBMPxTNOVtFQ5xIdEF+qAroCx/SMbY1g0f4CRcJTrug=;
-        b=YqVOzP9oM42kWqvxFpPeD3Xw/CJ8H2/PBm4tMg2JtoBzujuWkTCqOXyRC9tw4esDRA
-         3Y4Gc0oefxkvqx65h65WuUmJ9xn40PpiGX7PJWRPVSWKcS88TiLGc+nhuvzWXuN0YTir
-         nzWt11H03LejuosnuIdlJwY3eZXISIudxPKZkC6ZFvtQlqXTkutjps8y1zDWB7q1UTM9
-         A2ZGJV/G18vBn8GzHRPoXT+w03s9vpRky2NFf6XhBWJ8RbB/zFJa8RUSAnAEjiC1tKzy
-         YgBB7AltQVs5lFdisKcv7E+ZERYqenBkQTon+Q7zgwo1pZIM933nTc3d+Q3P83vuPzNb
-         /iEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723451974; x=1724056774;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xBMPxTNOVtFQ5xIdEF+qAroCx/SMbY1g0f4CRcJTrug=;
-        b=YUaQjS+B3MzK9dF/NxOrTAdSjXP6BVsShPtdZUPgcCP8K5EIeMTd66Vx/XQpff84R4
-         Nli3lwOiktdWVfsk2tw+EXKNAalRVRYU0rl9ubh7E/AejA+3qCy/3XmBr7U0yKkUn3L9
-         gjkR0hO7OI/9vPNMRmakHjmJRh55Xsa1xmQ8GaHapwuRKaru/b6vMpMmModrajyzoPNb
-         z/XccHOKJVWUvR6PazDM4l5WAbgnH010JUVCoWNo9naNMV2KvsrCtcRcVi+U7weGSAS+
-         9V8mFATpFeZY1hpvHE0+OZFIv3nQu/2I+spX/iIaQOn4jzxUvxDWmONGxAIohz6isAYi
-         A/AA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqXhj0EEJ87VZMZTwJ5M2URWC5VL+DJL0Oi07aNF3P3TCMN5ZooUkRpf7K66ICNSoLGx0xpCxLsG8T/7XjavRRU8Wq8Ha8QosD8YAU63iRhE6K2zQyglqufPXhZT4xqmJl
-X-Gm-Message-State: AOJu0YwPNaVRmoc3XJcouDWDsKfpYBArNFtX/vOXk/xsnWYrW6gm+KWF
-	2xcoecPnuj7x1DWcwofPoIYC7KH/vyntGza71H8l4v/v6vCDvwdNtvle0b+cRqDFAF/7MfC0pm0
-	x0RKOPhdxXkRBKaoSKzr9N6jSieporD7O
-X-Google-Smtp-Source: AGHT+IH6HghSMo+9Sxukc4P5KkTBPEh7Tn0fTZUIAUJi80M4JJMpJiInTSz+J+l7UC2Qak+l8kDuTrE2/oRUmDNLcIo=
-X-Received: by 2002:a17:90a:d812:b0:2c9:6ad9:b75b with SMTP id
- 98e67ed59e1d1-2d1e806a0d7mr5647208a91.40.1723451973922; Mon, 12 Aug 2024
- 01:39:33 -0700 (PDT)
+	s=arc-20240116; t=1723452011; c=relaxed/simple;
+	bh=DmoRqVAVIIzX9czb1SfLwMPylTd8uefceb4XEeX2UBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZgC5o3KmGrOi0KPglXuZMmUmbj6R5Ve2ZjsLJmQ/Iaxv8SOqIbLoB8EjoIbYYVAEpAP7UZSjdqk6xCUSV2RRbr+dT+UNRqIRbkWe6yLFsW9btI/ZI5jJYMyxQgAPHWf3Q455QXMyxT39GDIO2b4+vE7KcYTD5+RYLZZs3werQtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ne2p68+A; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3F827FF80F;
+	Mon, 12 Aug 2024 08:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723452001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jHAG+jr6VS671kkd3H78pc9Iro9nLTf+bq+1ySK8OnU=;
+	b=Ne2p68+A/GgfP/80JnUELAHEfVOaVX9dUSegNx2U92Hm4Z+Z1tahbt/l3m/yDi/8Rg3yrX
+	VPhiQlymu6tf5Dd62mTznTv+B41O9S6hXO3soybZzLuPwJ4avLyz0uieM4UcQ/O+XsXBDW
+	29n/W0lXXeEP6UOG4OOrY/EoJ/lavU6/A3xZj/SvNZlHe2kGmzkKt7WvUu9C0vZwWi7mZJ
+	SsBl6rAFh+4ke/YlSof6m/uMVG705rrGJidSAzD8lHx3VZJYI/1DsO/1Tel3tjlnVtyEtB
+	cPR6vqhZKGqWUlu+ynuxR3hEd5mx9dPoGK7cwHxuIr8iqMJGW/9C1nblAWRxZw==
+Date: Mon, 12 Aug 2024 10:39:57 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Michael Walle" <michael@walle.cc>
+Cc: "Michal Simek" <michal.simek@amd.com>, "Mahapatra, Amit Kumar"
+ <amit.kumar-mahapatra@amd.com>, "Tudor Ambarus" <tudor.ambarus@linaro.org>,
+ "broonie@kernel.org" <broonie@kernel.org>, "pratyush@kernel.org"
+ <pratyush@kernel.org>, "richard@nod.at" <richard@nod.at>, "vigneshr@ti.com"
+ <vigneshr@ti.com>, "sbinding@opensource.cirrus.com"
+ <sbinding@opensource.cirrus.com>, "lee@kernel.org" <lee@kernel.org>,
+ "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
+ "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
+ "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>, "perex@perex.cz"
+ <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
+ "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, "Conor Dooley"
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+Message-ID: <20240812103957.04a1ef55@xps-13>
+In-Reply-To: <D3DREP874QG7.2UOSZSBI3BRQY@walle.cc>
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+	<BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
+	<BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
+	<BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
+	<9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
+	<BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+	<D2ZHJ765LUGP.2KTA46P1BL75X@walle.cc>
+	<e1587f61-f765-4a22-b06e-71387cc49c4d@amd.com>
+	<D33M26RLVLHF.3Q5YARPBNSBOY@walle.cc>
+	<9fb60743-3e89-49fa-a399-3cf2607a7e41@amd.com>
+	<D33S9T73M6ND.G7CCJ4PDVYQU@walle.cc>
+	<20240812092937.2bd5c85a@xps-13>
+	<D3DREP874QG7.2UOSZSBI3BRQY@walle.cc>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809194335.1726916-1-seanjc@google.com> <20240809194335.1726916-20-seanjc@google.com>
-In-Reply-To: <20240809194335.1726916-20-seanjc@google.com>
-From: Lai Jiangshan <jiangshanlai@gmail.com>
-Date: Mon, 12 Aug 2024 16:39:21 +0800
-Message-ID: <CAJhGHyDjsmQOQQoU52vA95sddWtzg1wh139jpPYBT1miUAgj6Q@mail.gmail.com>
-Subject: Re: [PATCH 19/22] KVM: x86/mmu: Add infrastructure to allow walking
- rmaps outside of mmu_lock
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>, Peter Xu <peterx@redhat.com>, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Sat, Aug 10, 2024 at 3:49=E2=80=AFAM Sean Christopherson <seanjc@google.=
-com> wrote:
+Hi Michael,
 
-> +
-> +static unsigned long kvm_rmap_lock(struct kvm_rmap_head *rmap_head)
-> +{
-> +       unsigned long old_val, new_val;
-> +
-> +       old_val =3D READ_ONCE(rmap_head->val);
-> +       if (!old_val)
-> +               return 0;
-> +
-> +       do {
-> +               /*
-> +                * If the rmap is locked, wait for it to be unlocked befo=
-re
-> +                * trying acquire the lock, e.g. to bounce the cache line=
-.
-> +                */
-> +               while (old_val & KVM_RMAP_LOCKED) {
-> +                       old_val =3D READ_ONCE(rmap_head->val);
-> +                       cpu_relax();
+michael@walle.cc wrote on Mon, 12 Aug 2024 09:37:06 +0200:
 
-The sequence of these two lines of code can be improved.
+> Hi,
+>=20
+> > > > > The first round of patches were really invasive regarding the core
+> > > > > code. So if there is a clean layering approach which can be enabl=
+ed
+> > > > > as a module and you are maintaining it I'm fine with that (even if
+> > > > > the core code needs some changes then like hooks or so, not sure)=
+.   =20
+> > > >
+> > > > That discussion started with Miquel some years ago when he was tryi=
+ng to to=20
+> > > > solve description in DT which is merged for a while in the kernel. =
+  =20
+> > >=20
+> > > What's your point here? From what I can tell the DT binding is wrong
+> > > and needs to be reworked anyway. =20
+> >
+> > I'm sorry I'm now catching up, can you point at the thread explaining
+> > what is wrong in the bindings? I didn't find where this was detailed. Or
+> > otherwise summarize quickly what needs to change? =20
+>=20
+> Somewhere in this mega thread Tudor had some remarks about the
+> bindings. Amit also mentioned it here:
+>=20
+> https://lore.kernel.org/r/IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12M=
+B7699.namprd12.prod.outlook.com/
 
-> +               }
-> +
-> +               /*
-> +                * Recheck for an empty rmap, it may have been purged by =
-the
-> +                * task that held the lock.
-> +                */
-> +               if (!old_val)
-> +                       return 0;
-> +
-> +               new_val =3D old_val | KVM_RMAP_LOCKED;
-> +       } while (!try_cmpxchg(&rmap_head->val, &old_val, new_val));
-> +
-> +       /* Return the old value, i.e. _without_ the LOCKED bit set. */
-> +       return old_val;
-> +}
+Great. I jumped-in there. Thanks!
+
+Miqu=C3=A8l
 
