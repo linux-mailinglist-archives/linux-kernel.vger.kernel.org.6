@@ -1,91 +1,264 @@
-Return-Path: <linux-kernel+bounces-283612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9824594F6BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:31:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E9294F6BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54BC92860B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 134B61C20DAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6F318C33F;
-	Mon, 12 Aug 2024 18:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5B318E03A;
+	Mon, 12 Aug 2024 18:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrKq9J2L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d6S/LNJt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44240189B87;
-	Mon, 12 Aug 2024 18:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A77E189B87
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487382; cv=none; b=ImOSFYTLReuhcN+QO4Cs4YgxZMHhz1vDUQVc6UmvlkXXwkZVqLrB4VSGLQgmT3OVOvtg6JoRRyDpVcO1NtXajbQ5hYjFKsyCmqix0ZWFM1ylAe9GVRVFK+f9sw1xY2D77Z7cFW5ZFNyz2gItqyT6S0D1/8yJ1/FCO+5CTPLeKjw=
+	t=1723487396; cv=none; b=QIoK63K7l3u/+ho0ebr+ZQRUCoYOmn6qf+MNg+mGkvBX92ZTS1SoR5Y4LTHxXSw/IBQ86lX5YJKtIimOQrvPxFHfO5cmpRrbZOECueHAZ0TYIjXMBWNH9SUiDizzoHEwWHSu5v9dh076plKOi1FkFpmNxHY/vjkOHhwc2bl0nqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487382; c=relaxed/simple;
-	bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OEpVwki8xLABs0mg0dqPDP1qB5rDPsq2bn6CSlfBijmbjqxoCMl7coZDLU2CNhS0ID7sqiTwJEf1KQt983ltCv/KQHaEXVJDtjlRDuDzGFJsiRtHUulnM3HUGb7OyW8maNpa7jUuGZxPxaxMhw6DNYHyUtNqEl2EbbEHNwt1UWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrKq9J2L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B679AC32782;
-	Mon, 12 Aug 2024 18:29:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487381;
-	bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OrKq9J2LRxbHJ2rpZM0H8R1UsAaB0zW1vBnhb6z/Gc37ZCZHXvkeRo7mJibj7isZj
-	 48Kvgasu2kWgw9zcq2srDFV5h8zTnA34t0Y9tXNMEZwQMlirzCWEIiV5+RTuDKrnod
-	 v4WEZ4lU8PKfV48Rt2I7nUKCPiDymbYQbbOKDmkwXs/tdKzTBZHZKPC/T1a5XOBfN3
-	 D3bVGAzmfzfMFgBXUNTsNO+FChECBZ7ZLxwzOFuKe4EXp5PqWRL6TEBG6IiDILwg6M
-	 2Uu5YE0pCW1uh/cGtDtF9faWieC817On7iMyxUfRhYN3frjhAgMF2XetcaEVGFItZX
-	 tP9KRVs2bj0fA==
-From: Kees Cook <kees@kernel.org>
-To: Andy Shevchenko <andy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Michal Wajdeczko <michal.wajdeczko@intel.com>,
-	linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] string_choices: Add wrapper for str_down_up()
-Date: Mon, 12 Aug 2024 11:29:40 -0700
-Message-Id: <20240812182939.work.424-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723487396; c=relaxed/simple;
+	bh=Zn57kG3fHkqhYjr0Vb+8fA7GL+EkzEs46JqrGXATWlA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=olmtqx1DSaXrkMWY9qUrofjZf/ZJg5o4je2Dw5mJXfy9iLBU1OY9uJ6SLjQOo1/qOysFQCshBTlcNtVHp+DxSY2MdJ9wUXei5IZZPrpLgvNhZVo3HsZEn4WZ3eLFUn5/LQ9jBQFM33yMSBB0yFvD7gtB+mKBho12MmcxhHBeO7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d6S/LNJt; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723487393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3lzHa+4oPgNh0JbtSfXdnixp3cbcHkW2yBVpxgt+hHU=;
+	b=d6S/LNJtRekFufYdziRvWY8aKh1M7uicfp99pvAEZpoE3P69UjbGIjl3UmMgI41DIA+5/8
+	yK/UyBBp8ib/DSCP4NVL/EbWGev3AUvIKcBXEo+aPZDmdBqtZ644LsyWK5AhLalU17BHnw
+	qicYVLt3rHJFVVrxvQi7hye+Hcu8nH4=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-86-6h6JooNuOHiEdJl0N2lEsQ-1; Mon, 12 Aug 2024 14:29:52 -0400
+X-MC-Unique: 6h6JooNuOHiEdJl0N2lEsQ-1
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-492a6b7ce80so178815137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:29:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723487391; x=1724092191;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3lzHa+4oPgNh0JbtSfXdnixp3cbcHkW2yBVpxgt+hHU=;
+        b=eUR5EvDaOVxdXDqBpAd75CsgKkRmkKpbCpzGkyhV+IimDBPvJUvrsQ5ZtVU7zsMhWF
+         QcNViR5BrJ/iRwGRTQvMTmjGlE48QGUZvQcXZxk4BxasdiIcUnlaBGPvK5WyyiBGvhei
+         o+nih/EHXxJhxSSdDsAt3R4vMkkJ80jgx8Lt4+pJhIeOmuG3epMCT+dubBOi82465diZ
+         rd5jwNzYUkYH4vm/VL7J1OusdK8Kxx4kGnuhCCotzrPKbBLWE9af0sS86xhpe0SnxMVw
+         2YEMUoFvMXcttSHnlQnnjVlhERfYO89+QKOvY7YNtwXo7jCie5zXkyKjpnVyVtLsJaLc
+         1G0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUU/ooVD+fNBR53DE9EwaUrfTGLSAiS/nLKby4p+EgJjBOjEnvsdjK3AlAJOXaNY10onTRN94eCdhgUX9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbVsMnXVHyyRD1KFkwQ0nq+qW5spoLe3n5LSR9M+kOGBHmKuho
+	CIJ2alJrIBR539JxBZ/3CWmFxCZtTpdyUZuN2W2Mxk+moiis2yMsPjr7IIcFThgRbt7Z5DNfW1G
+	1V+ngMQCT0RdtEJSyV+4xkj+v+X80GeuLhE2alN2ZvZbLDWD+f24Pn5cLWURnnQ==
+X-Received: by 2002:a05:6102:38d1:b0:493:31f9:d14e with SMTP id ada2fe7eead31-4974398cf6amr814417137.2.1723487391383;
+        Mon, 12 Aug 2024 11:29:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEgRvFG1AyF51iCR4QUK+iwha9x9ZVtk0r/+P1oFdTeH6YoJu+ZSYhqn/ax3TJ2lpn0JjOZGQ==
+X-Received: by 2002:a05:6102:38d1:b0:493:31f9:d14e with SMTP id ada2fe7eead31-4974398cf6amr814391137.2.1723487390933;
+        Mon, 12 Aug 2024 11:29:50 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c26dc23sm25342021cf.75.2024.08.12.11.29.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 11:29:50 -0700 (PDT)
+Date: Mon, 12 Aug 2024 14:29:47 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 07/19] mm/fork: Accept huge pfnmap entries
+Message-ID: <ZrpUm-Lz-plw_fZy@x1n>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-8-peterx@redhat.com>
+ <d7fcec73-16f6-4d54-b334-6450a29e0a1d@redhat.com>
+ <ZrZOqbS3bcj52JZP@x1n>
+ <8ef394e6-a964-41c4-b33c-0e940b6b9bd8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=890; i=kees@kernel.org; h=from:subject:message-id; bh=rTfxeUh3rorZbCGgE8pHTvw8dbPxE9ozx9jJWBZeR6s=; b=owGbwMvMwCVmps19z/KJym7G02pJDGm7QqacOqh4Y8u8yW6XPu0qW7peW8bY/kZV/JYdDdtPn zZce+xmb0cpC4MYF4OsmCJLkJ17nIvH2/Zw97mKMHNYmUCGMHBxCsBE9l1kZPj7qYfvf5/JNc9w 1l2FXxs5znHvO7kz3KT8nciM1IU/PjAzMqyMsF5muYTJqtlf1/ll52Pe1p+tRqGnu9rr8qae/OW 6hQcA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8ef394e6-a964-41c4-b33c-0e940b6b9bd8@redhat.com>
 
-The string choice functions which are not clearly true/false synonyms
-also have inverted wrappers. Add this for str_down_up() as well.
+On Fri, Aug 09, 2024 at 07:59:58PM +0200, David Hildenbrand wrote:
+> On 09.08.24 19:15, Peter Xu wrote:
+> > On Fri, Aug 09, 2024 at 06:32:44PM +0200, David Hildenbrand wrote:
+> > > On 09.08.24 18:08, Peter Xu wrote:
+> > > > Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
+> > > > much easier, the write bit needs to be persisted though for writable and
+> > > > shared pud mappings like PFNMAP ones, otherwise a follow up write in either
+> > > > parent or child process will trigger a write fault.
+> > > > 
+> > > > Do the same for pmd level.
+> > > > 
+> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > > > ---
+> > > >    mm/huge_memory.c | 27 ++++++++++++++++++++++++---
+> > > >    1 file changed, 24 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > index 6568586b21ab..015c9468eed5 100644
+> > > > --- a/mm/huge_memory.c
+> > > > +++ b/mm/huge_memory.c
+> > > > @@ -1375,6 +1375,22 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> > > >    	pgtable_t pgtable = NULL;
+> > > >    	int ret = -ENOMEM;
+> > > > +	pmd = pmdp_get_lockless(src_pmd);
+> > > > +	if (unlikely(pmd_special(pmd))) {
+> > > > +		dst_ptl = pmd_lock(dst_mm, dst_pmd);
+> > > > +		src_ptl = pmd_lockptr(src_mm, src_pmd);
+> > > > +		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
+> > > > +		/*
+> > > > +		 * No need to recheck the pmd, it can't change with write
+> > > > +		 * mmap lock held here.
+> > > > +		 */
+> > > > +		if (is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd)) {
+> > > > +			pmdp_set_wrprotect(src_mm, addr, src_pmd);
+> > > > +			pmd = pmd_wrprotect(pmd);
+> > > > +		}
+> > > > +		goto set_pmd;
+> > > > +	}
+> > > > +
+> > > 
+> > > I strongly assume we should be using using vm_normal_page_pmd() instead of
+> > > pmd_page() further below. pmd_special() should be mostly limited to GUP-fast
+> > > and vm_normal_page_pmd().
+> > 
+> > One thing to mention that it has this:
+> > 
+> > 	if (!vma_is_anonymous(dst_vma))
+> > 		return 0;
+> 
+> Another obscure thing in this function. It's not the job of copy_huge_pmd()
+> to make the decision whether to copy, it's the job of vma_needs_copy() in
+> copy_page_range().
+> 
+> And now I have to suspect that uffd-wp is broken with this function, because
+> as vma_needs_copy() clearly states, we must copy, and we don't do that for
+> PMDs. Ugh.
+> 
+> What a mess, we should just do what we do for PTEs and we will be fine ;)
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Andy Shevchenko <andy@kernel.org>
-Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>
-Cc: linux-hardening@vger.kernel.org
----
- include/linux/string_choices.h | 1 +
- 1 file changed, 1 insertion(+)
+IIUC it's not a problem: file uffd-wp is different from anonymous, in that
+it pushes everything down to ptes.
 
-diff --git a/include/linux/string_choices.h b/include/linux/string_choices.h
-index bcde3c9cff81..1320bcdcb89c 100644
---- a/include/linux/string_choices.h
-+++ b/include/linux/string_choices.h
-@@ -46,6 +46,7 @@ static inline const char *str_up_down(bool v)
- {
- 	return v ? "up" : "down";
- }
-+#define str_down_up(v)		str_up_down(!(v))
- 
- /**
-  * str_plural - Return the simple pluralization based on English counts
+It means if we skipped one huge pmd here for file, then it's destined to
+have nothing to do with uffd-wp, otherwise it should have already been
+split at the first attempt to wr-protect.
+
+> 
+> Also, we call copy_huge_pmd() only if "is_swap_pmd(*src_pmd) ||
+> pmd_trans_huge(*src_pmd) || pmd_devmap(*src_pmd)"
+> 
+> Would that even be the case with PFNMAP? I suspect that pmd_trans_huge()
+> would return "true" for special pfnmap, which is rather "surprising", but
+> fortunate for us.
+
+It's definitely not surprising to me as that's the plan.. and I thought it
+shoulidn't be surprising to you - if you remember before I sent this one, I
+tried to decouple that here with the "thp agnostic" series:
+
+  https://lore.kernel.org/r/20240717220219.3743374-1-peterx@redhat.com
+
+in which you reviewed it (which I appreciated).
+
+So yes, pfnmap on pmd so far will report pmd_trans_huge==true.
+
+> 
+> Likely we should be calling copy_huge_pmd() if pmd_leaf() ... cleanup for
+> another day.
+
+Yes, ultimately it should really be a pmd_leaf(), but since I didn't get
+much feedback there, and that can further postpone this series from being
+posted I'm afraid, then I decided to just move on with "taking pfnmap as
+THPs".  The corresponding change on this path is here in that series:
+
+https://lore.kernel.org/all/20240717220219.3743374-7-peterx@redhat.com/
+
+@@ -1235,8 +1235,7 @@ copy_pmd_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
+ 	src_pmd = pmd_offset(src_pud, addr);
+ 	do {
+ 		next = pmd_addr_end(addr, end);
+-		if (is_swap_pmd(*src_pmd) || pmd_trans_huge(*src_pmd)
+-			|| pmd_devmap(*src_pmd)) {
++		if (is_swap_pmd(*src_pmd) || pmd_is_leaf(*src_pmd)) {
+ 			int err;
+ 			VM_BUG_ON_VMA(next-addr != HPAGE_PMD_SIZE, src_vma);
+ 			err = copy_huge_pmd(dst_mm, src_mm, dst_pmd, src_pmd,
+
+> 
+> > 
+> > So it's only about anonymous below that.  In that case I feel like the
+> > pmd_page() is benign, and actually good.
+> 
+> Yes, it would likely currently work.
+> 
+> > 
+> > Though what you're saying here made me notice my above check doesn't seem
+> > to be necessary, I mean, "(is_cow_mapping(src_vma->vm_flags) &&
+> > pmd_write(pmd))" can't be true when special bit is set, aka, pfnmaps.. and
+> > if it's writable for CoW it means it's already an anon.
+> > 
+> > I think I can probably drop that line there, perhaps with a
+> > VM_WARN_ON_ONCE() making sure it won't happen.
+> > 
+> > > 
+> > > Again, we should be doing this similar to how we handle PTEs.
+> > > 
+> > > I'm a bit confused about the "unlikely(!pmd_trans_huge(pmd)" check, below:
+> > > what else should we have here if it's not a migration entry but a present
+> > > entry?
+> > 
+> > I had a feeling that it was just a safety belt since the 1st day of thp
+> > when Andrea worked that out, so that it'll work with e.g. file truncation
+> > races.
+> > 
+> > But with current code it looks like it's only anonymous indeed, so looks
+> > not possible at least from that pov.
+> 
+> Yes, as stated above, likely broken with UFFD-WP ...
+> 
+> I really think we should make this code just behave like it would with PTEs,
+> instead of throwing in more "different" handling.
+
+So it could simply because file / anon uffd-wp work very differently.
+
+Let me know if you still spot something that is suspicious, but in all
+cases I guess we can move on with this series, but maybe if you can find
+something I can tackle them together when I decide to go back to the
+mremap() issues in the other thread.
+
+Thanks,
+
 -- 
-2.34.1
+Peter Xu
 
 
