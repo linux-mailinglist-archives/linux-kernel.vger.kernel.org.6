@@ -1,244 +1,183 @@
-Return-Path: <linux-kernel+bounces-283284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A3A94EF91
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:30:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3296D94EF96
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2116C1F23026
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:30:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30EE8B23B13
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA65914C5A4;
-	Mon, 12 Aug 2024 14:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4170181337;
+	Mon, 12 Aug 2024 14:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Soatas2s"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nVpM3Bw9"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14A6517C9EB
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 14:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BB016B38D;
+	Mon, 12 Aug 2024 14:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473013; cv=none; b=ht0IIJe6Xu1v3+lqPPiTi1Bc0eo/XqF7n+kiKTPdn3rVmySSfpRWyQjg1GMRxgLZDu5NxQK9IzmqLag6tHhUO8VhYMR2sxXlEHZ7mExQckF4JjIfn0mR47spOjKf+P1rne8dQ5Y6/cQnNH+f9HO09rJTzQ9PpwflWJHKK2AJIc4=
+	t=1723473065; cv=none; b=dCQNE2bZxCXoxtFtWURFWCHhIpckWsJ0DKXnlIh4ZENHYqKHWerivIDMbWorXANBAyXr/YFbeJD5hOvZVBkNusCTWYSI9o5CI4zfqFgjAUrBhJrYUx0wxS/RNsQ/a3DLS4phG/ihZFNHVCNWPNKiBFt7F0rybur4NMtBhwjpjeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473013; c=relaxed/simple;
-	bh=cxxMgX14Pj0MJ7A4WPkHJPa57eS+Q9Yp4Eoc6EdOvZY=;
+	s=arc-20240116; t=1723473065; c=relaxed/simple;
+	bh=+lGB1nUEVVA7esqNPkyaO/r3t9LgW0p3dWFyGVV0s2Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ktcgegBmzKa6LMtPD9gsAKmVZ+AlnAWrv28gB14ZMf03LVioKLIhD+4AmHKNp8JS6aK+863nLQ8VQuKVXUHhgSvWAqG/6ad8EKU47g/qA41+57LiG9f92dCKZ2ISLOarrOj+bCh+H09ZkfS73Lre7+KWRaluhUcb4nz5PAL7GyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Soatas2s; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so14318a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:30:11 -0700 (PDT)
+	 To:Cc:Content-Type; b=X/wqjW/qa239YsDnLBg87WkZm3lq0mSMWSGhJUHCHawXMuQkUHy0PGIg3M4eWypF1yx4LC/qcGK+N48bsbsF4cd57/db+IQlPR8MLv8938x0+Lu/69B2X/1RN7BGt1wQ5utZS+i82Sm8C5l9xJGm4DXzGG60qw42YVEEBfePPJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nVpM3Bw9; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-39b4f847a5eso14469995ab.1;
+        Mon, 12 Aug 2024 07:31:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723473010; x=1724077810; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1723473063; x=1724077863; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UgmtalDDpDr/MN1t4TqgaC8ETll2KaDq52qckxLfkss=;
-        b=Soatas2srRYFRakPFA9Q0isAXwDytkKpeLpPGMKfA2r8N5Xttaw5yzAUY2vw2arsIt
-         pOerf1aIiY05k5yY6HvDgVqIybBL5hojKvVRQgzKYKRXib2ieI9cKGuREJULfaHq5ZtS
-         yFhFSmH/cnNV0ADr2mMzF6B5XrQPqV/BSJCziZW5wCuvqki07HlinacC7kQuVZ5LbcaH
-         Ey24tMA2yOhdILvsZco5kfyBafYRf91NzDrZFw9B29Wu1JIeMYVKQxJkQT9eeVKcJNGG
-         +xGdDpbHZo4+pdfdaM1O17J0EkccoxnPTMGVAwifl5Lk6vk7hAC/OA5110mr4CxQGvqp
-         alEw==
+        bh=xw3acn4+txaoOaW/DAlL/mFLwqYjsFnhae1GSCFNUDQ=;
+        b=nVpM3Bw9Mdp8nmBn7TAIDkMtmAB2pZ0suvrHuMJzhQx7w8705zEDkqv5rDC+qcVqfW
+         0iCR74ptoiHXAxLMPAyC2M02OmgDpnCknMEz+l/KlQnjEmuKgLvPyes02WZ8niqoOxw6
+         WeqZZ5qy2mTM78CGchp3UzxwspKrp6g9WhyryyJpM14KhX8RepwKy7uEPrRGZAa3nLVp
+         gK6Lu4gfCeJsCNYqHxbxhaCaGSxTWeA4jZK8wse+M9CjEhXB9jjg9R5T9+O8f3f2Cm9P
+         uHdt6GX/IVFkCP32aPDOGMFKav+3LkJEL0ucQxMWqmbhILNATqx5TEA2J9CslBf24+TH
+         GBXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723473010; x=1724077810;
-        h=content-transfer-encoding:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1723473063; x=1724077863;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UgmtalDDpDr/MN1t4TqgaC8ETll2KaDq52qckxLfkss=;
-        b=dDXw2I9LtApF3bkr5D29AJboibnrTPMBSzF6saFxdYXjIGW9zwZdXGjzeA2IvyPOte
-         fE1eOVpSv7qHJ/YtKKpvJqY4eLfv1cealAoBDusfuUNkYB2XZCKlQHD6uUVoWKkay7Um
-         FsMJJGaj2AYRzuQM5K1YJFKSqne4uOc8EU1eKssBE0pRwrAEWExkEsV7ZLGS/MYtTdwX
-         ek9obf53saI6OV8NGrseAfwNf0tYLV2hIJkwSPluUG/rTawv8KTNG+KT7okdFSo3X/Kd
-         jJRIPLSPWWP+2kIffHo3ghvbQJhaodshO9I4SA0XRm/xUUKdydlwRp5qwabcAWCGS0S7
-         wolw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhNaYceg+TdfhmEjeV9TjcGabQhDMqtl/MLqZJfqPShPWVoojImjkvEFp7K/9mSgnAvcIrx8jKlmVS0vUo/2PMOVkGOqE2ZgFHCeu3
-X-Gm-Message-State: AOJu0YwymHWo7pYrO2iAv7A8nEhcaTuHGXtYIlCo7eNevIeU/XRpVK58
-	Rui/fWGd+t0xKH4AQtk5lGbf/oJEhhuJHMIOimVaeL+VjOWkwazO5NYW5BGkSe2pAaVlrVdujFs
-	DsAvNHL4dUTSPp0DPtDem8lxLCTNiPOAhpiPf
-X-Google-Smtp-Source: AGHT+IGRJXeBEjboJZFkfR+yCIyyvKdUM/p3cp8P7yhd6aGpDPBM0Xw0RiUE2SdGQ77/srGD5rh3AQKZhRUMoF/azP4=
-X-Received: by 2002:a05:6402:27c9:b0:5b8:ccae:a8b8 with SMTP id
- 4fb4d7f45d1cf-5bd1b3d0b41mr208907a12.3.1723473009940; Mon, 12 Aug 2024
- 07:30:09 -0700 (PDT)
+        bh=xw3acn4+txaoOaW/DAlL/mFLwqYjsFnhae1GSCFNUDQ=;
+        b=JIS2oQt6w9efeDHbeehOPrAlUagGEvV4TGI+0rhTaPs/6um8n3XU/5TpjYGI3flA9Q
+         kxOgABg0twTECfS/9hQqyAeVMhc8MFlu8T6AhE1tpY8+Tud7NyZZjyeTjlF5cvtlEp/r
+         x6FCqJv8eTIjZG4BChami7D1VoNZZ5Z5WToPLgEZTG6VZM1g3QGpsE9HkXZK49xapjzN
+         wFOUGOA2RarLmDA0iBsi5y5jm9pm/cpJkMR0p+wx7dHkY/C+YlhTUdWGdQ+VZoKY5CvU
+         wzSfP0t2lGJ/F4JNxIr5dVnXAUKHMSnza//7rs7cX252Ma3rCw2jxwyf4va6DjWTR6VF
+         i0Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSfJfDzs0+J4ReU42iPlME+EmoXKVVHJ8Rn/+mRFdLXBryuD5STjVeggHcZqMcqKDVTG88J6RYUn7ok4tPU7bPhqqtPUhEb8MZfRidaorfLQKZxgSX7CBqhnzmLbPCG+hHNNbv
+X-Gm-Message-State: AOJu0YxFpzROdGUz9cxemrlAODJBLh77yeFq0RailBbIYcMqBtyB9gGr
+	QlfeHQVIRY4HtRuaMMcTFp+AP6O8WZ1jDi9ouV2KMa41O4hyiQGcc5oSknChcB3U4y6HT6HyEHP
+	O/DNGbUZ11/KotJX6I3GPJjv5WIY=
+X-Google-Smtp-Source: AGHT+IFmkWXRBl7Fab7EdpXLwMBcn31kV/W3d53R7TPKcOM148k86Xl2b9dA7ZouZl1oNu8z3rcr0dfJy4YHR0guHSE=
+X-Received: by 2002:a05:6e02:20e9:b0:39a:e86b:a76a with SMTP id
+ e9e14a558f8ab-39c4791c13dmr4162065ab.26.1723473062593; Mon, 12 Aug 2024
+ 07:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240807211309.2729719-1-pedro.falcato@gmail.com>
- <20240807211309.2729719-3-pedro.falcato@gmail.com> <n3v6ebfiwnk26rvxwtgkingmuduv7gla7kaiasjdvadbrpczlw@d3xjceezvgzc>
- <3hzwtm7jw25ng5gemkp42k5ypkfky25fxeevccnk2d6gcpft32@qwkwofgauqna>
- <CAKbZUD2VV=FOeGhCOb3o5CKBiaV+6JSPoDRwzV1-3t2hZX7rQw@mail.gmail.com> <ljhdwgkfzjgdehfjgvdxa4wyxx4d32kpqqz2pwjse65rasuaeo@nncsuq3ku53o>
-In-Reply-To: <ljhdwgkfzjgdehfjgvdxa4wyxx4d32kpqqz2pwjse65rasuaeo@nncsuq3ku53o>
-From: Jeff Xu <jeffxu@google.com>
-Date: Mon, 12 Aug 2024 07:30:00 -0700
-Message-ID: <CALmYWFvURJBgyFw7x5qrL4CqoZjy92NeFAS750XaLxO7o7Cv9A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] mm/munmap: Replace can_modify_mm with can_modify_vma
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Pedro Falcato <pedro.falcato@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, oliver.sang@intel.com, 
-	torvalds@linux-foundation.org, jeffxu@google.com, 
-	Michael Ellerman <mpe@ellerman.id.au>, Kees Cook <keescook@chromium.org>
+References: <20240811230029.95258-1-kuniyu@amazon.com> <20240811230836.95914-1-kuniyu@amazon.com>
+ <20240812140104.GA21559@breakpoint.cc>
+In-Reply-To: <20240812140104.GA21559@breakpoint.cc>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Mon, 12 Aug 2024 22:30:26 +0800
+Message-ID: <CAL+tcoCyq4Xra97sEhxGQBB8PVtKa5qGj0wW7wM=a9tu-fOumw@mail.gmail.com>
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
+To: Florian Westphal <fw@strlen.de>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-+ Kees who commented on mseal() series before. Please keep Kees in the
-cc for future response to this series.
+Hello Florian,
 
-On Fri, Aug 9, 2024 at 12:25=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
+On Mon, Aug 12, 2024 at 10:02=E2=80=AFPM Florian Westphal <fw@strlen.de> wr=
+ote:
 >
-> * Pedro Falcato <pedro.falcato@gmail.com> [240809 14:53]:
-> > On Fri, Aug 9, 2024 at 5:48=E2=80=AFPM Liam R. Howlett <Liam.Howlett@or=
-acle.com> wrote:
-> > >
-> > > * Liam R. Howlett <Liam.Howlett@oracle.com> [240809 12:15]:
-> > > > * Pedro Falcato <pedro.falcato@gmail.com> [240807 17:13]:
-> > > > > We were doing an extra mmap tree traversal just to check if the e=
-ntire
-> > > > > range is modifiable. This can be done when we iterate through the=
- VMAs
-> > > > > instead.
+> Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > From: Kuniyuki Iwashima <kuniyu@amazon.com>
+> > Date: Sun, 11 Aug 2024 16:00:29 -0700
+> > > From: Florian Westphal <fw@strlen.de>
+> > > Date: Sun, 11 Aug 2024 18:28:50 +0200
+> > > > Florian Westphal <fw@strlen.de> wrote:
+> > > > > https://syzkaller.appspot.com/x/log.txt?x=3D117f3182980000
 > > > > >
-> > > > > Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
-> > > > > ---
-> > > > >  mm/mmap.c | 13 +------------
-> > > > >  mm/vma.c  | 23 ++++++++++++-----------
-> > > > >  2 files changed, 13 insertions(+), 23 deletions(-)
+> > > > > ... shows at two cores racing:
 > > > > >
-> > > > > diff --git a/mm/mmap.c b/mm/mmap.c
-> > > > > index 4a9c2329b09..c1c7a7d00f5 100644
-> > > > > --- a/mm/mmap.c
-> > > > > +++ b/mm/mmap.c
-> > > > > @@ -1740,18 +1740,7 @@ int do_vma_munmap(struct vma_iterator *vmi=
-, struct vm_area_struct *vma,
-> > > > >             unsigned long start, unsigned long end, struct list_h=
-ead *uf,
-> > > > >             bool unlock)
-> > > > >  {
-> > > > > -   struct mm_struct *mm =3D vma->vm_mm;
-> > > > > -
-> > > > > -   /*
-> > > > > -    * Check if memory is sealed before arch_unmap.
-> > > > > -    * Prevent unmapping a sealed VMA.
-> > > > > -    * can_modify_mm assumes we have acquired the lock on MM.
-> > > > > -    */
-> > > > > -   if (unlikely(!can_modify_mm(mm, start, end)))
-> > > > > -           return -EPERM;
-> > > > > -
-> > > > > -   arch_unmap(mm, start, end);
-> > > > > -   return do_vmi_align_munmap(vmi, vma, mm, start, end, uf, unlo=
-ck);
-> > > > > +   return do_vmi_align_munmap(vmi, vma, vma->vm_mm, start, end, =
-uf, unlock);
-> > > > >  }
+> > > > > [ 3127.234402][ T1396] CPU: 3 PID: 1396 Comm: syz-executor.3 Not
+> > > > > and
+> > > > > [ 3127.257864][   T13] CPU: 1 PID: 13 Comm: kworker/u32:1 Not tai=
+nted 6.9.0-syzkalle (netns cleanup net).
 > > > > >
-> > > > >  /*
-> > > > > diff --git a/mm/vma.c b/mm/vma.c
-> > > > > index bf0546fe6ea..7a121bcc907 100644
-> > > > > --- a/mm/vma.c
-> > > > > +++ b/mm/vma.c
-> > > > > @@ -712,6 +712,12 @@ do_vmi_align_munmap(struct vma_iterator *vmi=
-, struct vm_area_struct *vma,
-> > > > >             if (end < vma->vm_end && mm->map_count >=3D sysctl_ma=
-x_map_count)
-> > > > >                     goto map_count_exceeded;
 > > > > >
-> > > > > +           /* Don't bother splitting the VMA if we can't unmap i=
-t anyway */
-> > > > > +           if (!can_modify_vma(vma)) {
-> > > > > +                   error =3D -EPERM;
-> > > > > +                   goto start_split_failed;
-> > > > > +           }
-> > > > > +
+> > > > > first splat backtrace shows invocation of tcp_sk_exit_batch() fro=
+m
+> > > > > netns error unwinding code.
+> > > > >
+> > > > > Second one lacks backtrace, but its also in tcp_sk_exit_batch(),
 > > > >
-> > > > Would this check be better placed in __split_vma()?  It could repla=
-ce
-> > > > both this and the next chunk of code.
+> > > > ... which doesn't work.  Does this look like a plausible
+> > > > theory/exlanation?
 > > >
-> > > not quite.
-> >
-> > Yeah, I was going to say that splitting a sealed VMA is okay (and we
-> > allow it on mlock and madvise).
+> > > Yes!  The problem here is that inet_twsk_purge() operates on twsk
+> > > not in net_exit_list, but I think such a check is overkill and we
+> > > can work around it in another way.
 >
-> splitting a sealed vma wasn't supposed to be okay.. but it is Jeff's
-> feature.  Jeff?
+> I'm not so sure.  Once 'other' inet_twsk_purge() found the twsk and
+> called inet_twsk_kill(), 'our' task has to wait for that to complete.
 >
-Splitting a sealed VMA is wrong.
-Whoever wants to split a sealed VMA should  answer this question
-first: what is the use case for splitting a sealed VMA?
-
-The V2 series doesn't have selftest change which indicates lack of
-testing. The out-of-loop check is positioned nearer to the API entry
-point and separated from internal business logic, thereby minimizing
-the testing requirements. However, as we move the sealing check
-further inward and intertwine it with business logic, greater test
-coverage becomes necessary to ensure  the correctness of  sealing
-is preserved.
-
-
-
-
--Jeff
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-> >
+> We need to force proper ordering so that all twsk found
+>
+> static void __net_exit tcp_sk_exit_batch(struct list_head *net_exit_list)
+> {
+>         struct net *net;
+>
+> /*HERE*/tcp_twsk_purge(net_exit_list);
+>
+>         list_for_each_entry(net, net_exit_list, exit_list) {
+>                 inet_pernet_hashinfo_free(net->ipv4.tcp_death_row.hashinf=
+o);
+>
+> .... have gone through inet_twsk_kill() so tw_refcount managed to
+> drop back to 1 before doing
+>                 WARN_ON_ONCE(!refcount_dec_and_test(&net->ipv4.tcp_death_=
+row.tw_refcount));
+> .
+>
+> > > We need to sync two inet_twsk_kill(), so maybe give up one
+> > > if twsk is not hashed ?
+>
+> Not sure, afaiu only one thread enters inet_twsk_kill()
+> (the one that manages to deactivate the timer).
+>
+> > > ---8<---
+> > > diff --git a/net/ipv4/inet_timewait_sock.c b/net/ipv4/inet_timewait_s=
+ock.c
+> > > index 337390ba85b4..51889567274b 100644
+> > > --- a/net/ipv4/inet_timewait_sock.c
+> > > +++ b/net/ipv4/inet_timewait_sock.c
+> > > @@ -52,7 +52,10 @@ static void inet_twsk_kill(struct inet_timewait_so=
+ck *tw)
+> > >     struct inet_bind_hashbucket *bhead, *bhead2;
 > > >
-> > > >
-> > > > >             error =3D __split_vma(vmi, vma, start, 1);
-> > > > >             if (error)
-> > > > >                     goto start_split_failed;
-> > > > > @@ -723,6 +729,11 @@ do_vmi_align_munmap(struct vma_iterator *vmi=
-, struct vm_area_struct *vma,
-> > > > >      */
-> > > > >     next =3D vma;
-> > > > >     do {
-> > > > > +           if (!can_modify_vma(vma)) {
-> > > > > +                   error =3D -EPERM;
-> > > > > +                   goto modify_vma_failed;
-> > > > > +           }
-> > > > > +
-> > >
-> > > This chunk would need to be moved below the end check so that we catc=
-h
-> > > full vma unmaps.
+> > >     spin_lock(lock);
+> > > -   sk_nulls_del_node_init_rcu((struct sock *)tw);
+> > > +   if (!sk_nulls_del_node_init_rcu((struct sock *)tw)) {
+> > > +           spin_unlock(lock);
+> > > +           return false;
 > >
-> > Why below the end check? I believe we can avoid the split? Is there
-> > something I'm missing?
-> > But I did find a bug, what I really seem to want is:
-> >
-> >  +           if (!can_modify_vma(next)) {
+> > forgot to remove false, just return :)
 >
-> Good catch.
->
-> > instead of (vma). It's somewhat concerning how the mseal selftests
-> > didn't trip on this?
->
-> the end check will call split and will fail in there, if you move the
-> code as I suggested.
->
-> That means, if we aren't splitting, we still have to check the vma, so
-> the check is necessary.
->
->
+> I don't see how this helps, we need to wait until 'stolen' twsk
+> has gone through inet_twsk_kill() and decremented tw_refcount.
+> Obviously It would be a bit simpler if we had a reliable reproducer :-)
+
+Allow me to say something irrelevant to this bug report.
+
+Do you think that Kuniyuki's patch can solve the race between two
+'killers' calling inet_twsk_deschedule_put()->inet_twsk_kill()
+concurrently at two cores, say, inet_twsk_purge() and tcp_abort()?
+
+It at least does help avoid decrementing tw_refcount twice in the
+above case if I understand correctly.
+
+Thanks,
+Jason
 
