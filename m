@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-283518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D428194F5DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:35:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7D2594F5DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:35:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 044991C2134D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47ED81F22922
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A939F189F2D;
-	Mon, 12 Aug 2024 17:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB8D318B486;
+	Mon, 12 Aug 2024 17:34:28 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDCD189BAD;
-	Mon, 12 Aug 2024 17:34:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45EC2189BB9;
+	Mon, 12 Aug 2024 17:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723484066; cv=none; b=eSC6/gCHLCgqp9zllZ05o1ya70uc8m4saFj0OT6/6ysfmkRS0GLIWf9X7IIDNYHIY0iBepd2ZhRf3XQkC7RrIGn+pd2bais5BlXHSitmTVppnD3ntlz39leS/LhjdZnbPEXmeJcOltmAw/Ha48npJjJxWOpB/H+XjfeGLxDZrXE=
+	t=1723484068; cv=none; b=PrwKk/JUJAURtQbGGNNOgIFaA2/OPJ0lFnxS+YlnK7tk013fONLxtRopMXBpqqABF51NaJvHpDrUNRcT31hsKmvUI6npgbAAG4HZneRj49GVxm6FMMO4voPKtn2QDsEtudZ4fql1MdGkVIy0+CBJqn/IXsnp/b5Weu+snQoJZgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723484066; c=relaxed/simple;
-	bh=vxRSvhhsbo4G133lqlVlIThjQPU65lzSnZVnHux1c70=;
+	s=arc-20240116; t=1723484068; c=relaxed/simple;
+	bh=VFKAtrr8hBJLch3qNuighZTRJG3d+4NJU3FxReIuCTI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GWRWLJaoa+9/LVlqm7/nJIBzP5KXnVO97gNfHhidru+ch6VpU8564YKPoPLr/w7fPAKFOW0tokzfb2+Barw84XSHxHSWyCX0+TvHFyeBHre5PkHlDrSP4JjMBK853A6urSs+kuZTpiqENvhgnJOkm+LIjjvATfoDEyO0IOIQUb8=
+	 MIME-Version; b=JVl89/a+ZsK9Hl1AToGoIWmTOg8SlI4ORS4nK7XU8xf2rq1bfFN3ODRq3YDMSUBd6d95kCfx0ip1f1+ri0qA3/Xfq2E68LqPhuVT98lILecSnasKy0Pmo20DfoCuFxWK1bj2TTGbfUnoNRT15D6ztOANmOrpYrpzdlMCagOnNAY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1FDCFEC;
-	Mon, 12 Aug 2024 10:34:48 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A396106F;
+	Mon, 12 Aug 2024 10:34:51 -0700 (PDT)
 Received: from pluto.guestnet.cambridge.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 39FA93F40C;
-	Mon, 12 Aug 2024 10:34:20 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 432E93F40C;
+	Mon, 12 Aug 2024 10:34:23 -0700 (PDT)
 From: Cristian Marussi <cristian.marussi@arm.com>
 To: linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
@@ -49,9 +49,9 @@ Cc: sudeep.holla@arm.com,
 	dan.carpenter@linaro.org,
 	souvik.chakravarty@arm.com,
 	Cristian Marussi <cristian.marussi@arm.com>
-Subject: [PATCH v4 4/9] firmware: arm_scmi: Add support for standalone transport drivers
-Date: Mon, 12 Aug 2024 18:33:35 +0100
-Message-ID: <20240812173340.3912830-5-cristian.marussi@arm.com>
+Subject: [PATCH v4 5/9] firmware: arm_scmi: Make MBOX transport a standalone driver
+Date: Mon, 12 Aug 2024 18:33:36 +0100
+Message-ID: <20240812173340.3912830-6-cristian.marussi@arm.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240812173340.3912830-1-cristian.marussi@arm.com>
 References: <20240812173340.3912830-1-cristian.marussi@arm.com>
@@ -63,244 +63,315 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Extend the core SCMI stack with structures and methods to allow for
-transports to be split out as standalone drivers, while still supporting
-old style transports, defined as built into the SCMI core stack.
-
-No functional change.
+Make SCMI mailbox transport a standalone driver that can be optionally
+loaded as a module; while at it, create a dedicated subdirectory and
+submenu for SCMI Transports.
 
 Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
 ---
-NOTE: old style transport support will be removed later in this series.
-
+v3 --> V4
+- dropped MODULE_ALIAS
+- moved transport drivers to their own subdir and submenu
+- moved MBOX transport driver to transports/ subdir
 v2 --> v3
-- reworked DEFINE_SCMI_TRANSPORT
-  + using platform device_alloc + add_data + add
-    (so as to gain a proper default device_release method)
-  + dropped remove in favour of devres_add_action_or_reset
-  + using explicit parameters for driver/desc structs naming
-- renamed scmi_transport_lookup() to scmi_transport_setup()
-- fixed typo in comments
-v1 --> v2
-- fixed comit message
+- fixed spacing in Kconfig
+- updated Copyright
+- use new params in DEFINE_SCMI_TRANSPORT_DRIVER
 ---
- drivers/firmware/arm_scmi/common.h | 84 ++++++++++++++++++++++++++++++
- drivers/firmware/arm_scmi/driver.c | 44 +++++++++++++++-
- drivers/firmware/arm_scmi/msg.c    |  5 ++
- drivers/firmware/arm_scmi/shmem.c  |  5 ++
- 4 files changed, 136 insertions(+), 2 deletions(-)
+ drivers/firmware/arm_scmi/Kconfig             | 31 +-----------
+ drivers/firmware/arm_scmi/Makefile            |  3 +-
+ drivers/firmware/arm_scmi/common.h            |  3 --
+ drivers/firmware/arm_scmi/driver.c            |  3 --
+ drivers/firmware/arm_scmi/transports/Kconfig  | 37 ++++++++++++++
+ drivers/firmware/arm_scmi/transports/Makefile |  4 ++
+ .../arm_scmi/{ => transports}/mailbox.c       | 48 +++++++++++++------
+ 7 files changed, 77 insertions(+), 52 deletions(-)
+ create mode 100644 drivers/firmware/arm_scmi/transports/Kconfig
+ create mode 100644 drivers/firmware/arm_scmi/transports/Makefile
+ rename drivers/firmware/arm_scmi/{ => transports}/mailbox.c (87%)
 
+diff --git a/drivers/firmware/arm_scmi/Kconfig b/drivers/firmware/arm_scmi/Kconfig
+index f35784d0a8dd..e9a7c9aaa956 100644
+--- a/drivers/firmware/arm_scmi/Kconfig
++++ b/drivers/firmware/arm_scmi/Kconfig
+@@ -69,36 +69,7 @@ config ARM_SCMI_DEBUG_COUNTERS
+ 	  such useful debug counters. This can be helpful for debugging and
+ 	  SCMI monitoring.
+ 
+-config ARM_SCMI_HAVE_TRANSPORT
+-	bool
+-	help
+-	  This declares whether at least one SCMI transport has been configured.
+-	  Used to trigger a build bug when trying to build SCMI without any
+-	  configured transport.
+-
+-config ARM_SCMI_HAVE_SHMEM
+-	bool
+-	help
+-	  This declares whether a shared memory based transport for SCMI is
+-	  available.
+-
+-config ARM_SCMI_HAVE_MSG
+-	bool
+-	help
+-	  This declares whether a message passing based transport for SCMI is
+-	  available.
+-
+-config ARM_SCMI_TRANSPORT_MAILBOX
+-	bool "SCMI transport based on Mailbox"
+-	depends on MAILBOX
+-	select ARM_SCMI_HAVE_TRANSPORT
+-	select ARM_SCMI_HAVE_SHMEM
+-	default y
+-	help
+-	  Enable mailbox based transport for SCMI.
+-
+-	  If you want the ARM SCMI PROTOCOL stack to include support for a
+-	  transport based on mailboxes, answer Y.
++source "drivers/firmware/arm_scmi/transports/Kconfig"
+ 
+ config ARM_SCMI_TRANSPORT_OPTEE
+ 	bool "SCMI transport based on OP-TEE service"
+diff --git a/drivers/firmware/arm_scmi/Makefile b/drivers/firmware/arm_scmi/Makefile
+index fd59f58ce8a2..beaa55c146b8 100644
+--- a/drivers/firmware/arm_scmi/Makefile
++++ b/drivers/firmware/arm_scmi/Makefile
+@@ -5,7 +5,6 @@ scmi-core-objs := $(scmi-bus-y)
+ scmi-driver-y = driver.o notify.o
+ scmi-driver-$(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT) += raw_mode.o
+ scmi-transport-$(CONFIG_ARM_SCMI_HAVE_SHMEM) = shmem.o
+-scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += mailbox.o
+ scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_SMC) += smc.o
+ scmi-transport-$(CONFIG_ARM_SCMI_HAVE_MSG) += msg.o
+ scmi-transport-$(CONFIG_ARM_SCMI_TRANSPORT_VIRTIO) += virtio.o
+@@ -14,6 +13,8 @@ scmi-protocols-y := base.o clock.o perf.o power.o reset.o sensors.o system.o vol
+ scmi-protocols-y += pinctrl.o
+ scmi-module-objs := $(scmi-driver-y) $(scmi-protocols-y) $(scmi-transport-y)
+ 
++obj-$(CONFIG_ARM_SCMI_PROTOCOL) += transports/
++
+ obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-core.o
+ obj-$(CONFIG_ARM_SCMI_PROTOCOL) += scmi-module.o
+ 
 diff --git a/drivers/firmware/arm_scmi/common.h b/drivers/firmware/arm_scmi/common.h
-index d5b78681b292..90404ac0629f 100644
+index 90404ac0629f..2bca62a8ecde 100644
 --- a/drivers/firmware/arm_scmi/common.h
 +++ b/drivers/firmware/arm_scmi/common.h
-@@ -373,6 +373,8 @@ struct scmi_shared_mem_operations {
- 				     bool tx, struct resource *res);
- };
- 
-+const struct scmi_shared_mem_operations *scmi_shared_mem_operations_get(void);
-+
- /* declarations for message passing transports */
- struct scmi_msg_payld;
- 
-@@ -400,6 +402,88 @@ struct scmi_message_operations {
- 				   size_t max_len, struct scmi_xfer *xfer);
- };
- 
-+const struct scmi_message_operations *scmi_message_operations_get(void);
-+
-+/**
-+ * struct scmi_transport_core_operations  - Transpoert core operations
-+ *
-+ * @bad_message_trace: An helper to report a malformed/unexpected message
-+ * @rx_callback: Callback to report received messages
-+ * @shmem: Datagram operations for shared memory based transports
-+ * @msg: Datagram operations for message based transports
-+ */
-+struct scmi_transport_core_operations {
-+	void (*bad_message_trace)(struct scmi_chan_info *cinfo,
-+				  u32 msg_hdr, enum scmi_bad_msg err);
-+	void (*rx_callback)(struct scmi_chan_info *cinfo, u32 msg_hdr,
-+			    void *priv);
-+	const struct scmi_shared_mem_operations *shmem;
-+	const struct scmi_message_operations *msg;
-+};
-+
-+/**
-+ * struct scmi_transport  - A structure representing a configured transport
-+ *
-+ * @supplier: Device representing the transport and acting as a supplier for
-+ *	      the core SCMI stack
-+ * @desc: Transport descriptor
-+ * @core_ops: A pointer to a pointer used by the core SCMI stack to make the
-+ *	      core transport operations accessible to the transports.
-+ */
-+struct scmi_transport {
-+	struct device *supplier;
-+	const struct scmi_desc *desc;
-+	struct scmi_transport_core_operations **core_ops;
-+};
-+
-+#define DEFINE_SCMI_TRANSPORT_DRIVER(__tag, __drv, __desc, __match, __core_ops)\
-+static void __tag##_dev_free(void *data)				       \
-+{									       \
-+	struct platform_device *spdev = data;				       \
-+									       \
-+	platform_device_unregister(spdev);				       \
-+}									       \
-+									       \
-+static int __tag##_probe(struct platform_device *pdev)			       \
-+{									       \
-+	struct device *dev = &pdev->dev;				       \
-+	struct platform_device *spdev;					       \
-+	struct scmi_transport strans;					       \
-+	int ret;							       \
-+									       \
-+	spdev = platform_device_alloc("arm-scmi", PLATFORM_DEVID_AUTO);	       \
-+	if (!spdev)							       \
-+		return -ENOMEM;						       \
-+									       \
-+	device_set_of_node_from_dev(&spdev->dev, dev);			       \
-+									       \
-+	strans.supplier = dev;						       \
-+	strans.desc = &(__desc);					       \
-+	strans.core_ops = &(__core_ops);				       \
-+									       \
-+	ret = platform_device_add_data(spdev, &strans, sizeof(strans));	       \
-+	if (ret)							       \
-+		goto err;						       \
-+									       \
-+	ret = platform_device_add(spdev);				       \
-+	if (ret)							       \
-+		goto err;						       \
-+									       \
-+	return devm_add_action_or_reset(dev, __tag##_dev_free, spdev);	       \
-+									       \
-+err:									       \
-+	platform_device_put(spdev);					       \
-+	return ret;							       \
-+}									       \
-+									       \
-+static struct platform_driver __drv = {					       \
-+	.driver = {							       \
-+		   .name = #__tag "_transport",				       \
-+		   .of_match_table = __match,				       \
-+		   },							       \
-+	.probe = __tag##_probe,						       \
-+}
-+
- extern const struct scmi_shared_mem_operations scmi_shmem_ops;
- extern const struct scmi_message_operations scmi_msg_ops;
- 
+@@ -286,9 +286,6 @@ int scmi_xfer_raw_inflight_register(const struct scmi_handle *handle,
+ int scmi_xfer_raw_wait_for_message_response(struct scmi_chan_info *cinfo,
+ 					    struct scmi_xfer *xfer,
+ 					    unsigned int timeout_ms);
+-#ifdef CONFIG_ARM_SCMI_TRANSPORT_MAILBOX
+-extern const struct scmi_desc scmi_mailbox_desc;
+-#endif
+ #ifdef CONFIG_ARM_SCMI_TRANSPORT_SMC
+ extern const struct scmi_desc scmi_smc_desc;
+ #endif
 diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index ca910079d718..708efe6f9be6 100644
+index 708efe6f9be6..c13bef8a1796 100644
 --- a/drivers/firmware/arm_scmi/driver.c
 +++ b/drivers/firmware/arm_scmi/driver.c
-@@ -196,6 +196,11 @@ struct scmi_info {
- #define bus_nb_to_scmi_info(nb)	container_of(nb, struct scmi_info, bus_nb)
- #define req_nb_to_scmi_info(nb)	container_of(nb, struct scmi_info, dev_req_nb)
+@@ -3318,9 +3318,6 @@ ATTRIBUTE_GROUPS(versions);
  
-+static struct scmi_transport_core_operations scmi_trans_core_ops = {
-+	.bad_message_trace = scmi_bad_message_trace,
-+	.rx_callback = scmi_rx_callback,
+ /* Each compatible listed below must have descriptor associated with it */
+ static const struct of_device_id scmi_of_match[] = {
+-#ifdef CONFIG_ARM_SCMI_TRANSPORT_MAILBOX
+-	{ .compatible = "arm,scmi", .data = &scmi_mailbox_desc },
+-#endif
+ #ifdef CONFIG_ARM_SCMI_TRANSPORT_OPTEE
+ 	{ .compatible = "linaro,scmi-optee", .data = &scmi_optee_desc },
+ #endif
+diff --git a/drivers/firmware/arm_scmi/transports/Kconfig b/drivers/firmware/arm_scmi/transports/Kconfig
+new file mode 100644
+index 000000000000..96c0d76b3042
+--- /dev/null
++++ b/drivers/firmware/arm_scmi/transports/Kconfig
+@@ -0,0 +1,37 @@
++# SPDX-License-Identifier: GPL-2.0-only
++menu "SCMI Transport Drivers"
++
++config ARM_SCMI_HAVE_TRANSPORT
++	bool
++	help
++	  This declares whether at least one SCMI transport has been configured.
++	  Used to trigger a build bug when trying to build SCMI without any
++	  configured transport.
++
++config ARM_SCMI_HAVE_SHMEM
++	bool
++	help
++	  This declares whether a shared memory based transport for SCMI is
++	  available.
++
++config ARM_SCMI_HAVE_MSG
++	bool
++	help
++	  This declares whether a message passing based transport for SCMI is
++	  available.
++
++config ARM_SCMI_TRANSPORT_MAILBOX
++	tristate "SCMI transport based on Mailbox"
++	depends on MAILBOX
++	select ARM_SCMI_HAVE_TRANSPORT
++	select ARM_SCMI_HAVE_SHMEM
++	default y
++	help
++	  Enable mailbox based transport for SCMI.
++
++	  If you want the ARM SCMI PROTOCOL stack to include support for a
++	  transport based on mailboxes, answer Y.
++	  This driver can also be built as a module. If so, the module
++	  will be called scmi_transport_mailbox.
++
++endmenu
+diff --git a/drivers/firmware/arm_scmi/transports/Makefile b/drivers/firmware/arm_scmi/transports/Makefile
+new file mode 100644
+index 000000000000..cb40be8955be
+--- /dev/null
++++ b/drivers/firmware/arm_scmi/transports/Makefile
+@@ -0,0 +1,4 @@
++# SPDX-License-Identifier: GPL-2.0-only
++scmi_transport_mailbox-objs := mailbox.o
++obj-$(CONFIG_ARM_SCMI_TRANSPORT_MAILBOX) += scmi_transport_mailbox.o
++
+diff --git a/drivers/firmware/arm_scmi/mailbox.c b/drivers/firmware/arm_scmi/transports/mailbox.c
+similarity index 87%
+rename from drivers/firmware/arm_scmi/mailbox.c
+rename to drivers/firmware/arm_scmi/transports/mailbox.c
+index 60698efe8442..917f9b8918d6 100644
+--- a/drivers/firmware/arm_scmi/mailbox.c
++++ b/drivers/firmware/arm_scmi/transports/mailbox.c
+@@ -3,7 +3,7 @@
+  * System Control and Management Interface (SCMI) Message Mailbox Transport
+  * driver.
+  *
+- * Copyright (C) 2019 ARM Ltd.
++ * Copyright (C) 2019-2024 ARM Ltd.
+  */
+ 
+ #include <linux/err.h>
+@@ -11,9 +11,10 @@
+ #include <linux/mailbox_client.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
++#include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
+-#include "common.h"
++#include "../common.h"
+ 
+ /**
+  * struct scmi_mailbox - Structure representing a SCMI mailbox transport
+@@ -36,11 +37,13 @@ struct scmi_mailbox {
+ 
+ #define client_to_scmi_mailbox(c) container_of(c, struct scmi_mailbox, cl)
+ 
++static struct scmi_transport_core_operations *core;
++
+ static void tx_prepare(struct mbox_client *cl, void *m)
+ {
+ 	struct scmi_mailbox *smbox = client_to_scmi_mailbox(cl);
+ 
+-	scmi_shmem_ops.tx_prepare(smbox->shmem, m, smbox->cinfo);
++	core->shmem->tx_prepare(smbox->shmem, m, smbox->cinfo);
+ }
+ 
+ static void rx_callback(struct mbox_client *cl, void *m)
+@@ -56,15 +59,17 @@ static void rx_callback(struct mbox_client *cl, void *m)
+ 	 * a previous timed-out reply which arrived late could be wrongly
+ 	 * associated with the next pending transaction.
+ 	 */
+-	if (cl->knows_txdone && !scmi_shmem_ops.channel_free(smbox->shmem)) {
++	if (cl->knows_txdone &&
++	    !core->shmem->channel_free(smbox->shmem)) {
+ 		dev_warn(smbox->cinfo->dev, "Ignoring spurious A2P IRQ !\n");
+-		scmi_bad_message_trace(smbox->cinfo,
+-				       scmi_shmem_ops.read_header(smbox->shmem),
+-				       MSG_MBOX_SPURIOUS);
++		core->bad_message_trace(smbox->cinfo,
++			     core->shmem->read_header(smbox->shmem),
++							     MSG_MBOX_SPURIOUS);
+ 		return;
+ 	}
+ 
+-	scmi_rx_callback(smbox->cinfo, scmi_shmem_ops.read_header(smbox->shmem), NULL);
++	core->rx_callback(smbox->cinfo,
++		      core->shmem->read_header(smbox->shmem), NULL);
+ }
+ 
+ static bool mailbox_chan_available(struct device_node *of_node, int idx)
+@@ -192,7 +197,7 @@ static int mailbox_chan_setup(struct scmi_chan_info *cinfo, struct device *dev,
+ 	if (!smbox)
+ 		return -ENOMEM;
+ 
+-	smbox->shmem = scmi_shmem_ops.setup_iomap(cinfo, dev, tx, NULL);
++	smbox->shmem = core->shmem->setup_iomap(cinfo, dev, tx, NULL);
+ 	if (IS_ERR(smbox->shmem))
+ 		return PTR_ERR(smbox->shmem);
+ 
+@@ -293,7 +298,7 @@ static void mailbox_fetch_response(struct scmi_chan_info *cinfo,
+ {
+ 	struct scmi_mailbox *smbox = cinfo->transport_info;
+ 
+-	scmi_shmem_ops.fetch_response(smbox->shmem, xfer);
++	core->shmem->fetch_response(smbox->shmem, xfer);
+ }
+ 
+ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
+@@ -301,7 +306,7 @@ static void mailbox_fetch_notification(struct scmi_chan_info *cinfo,
+ {
+ 	struct scmi_mailbox *smbox = cinfo->transport_info;
+ 
+-	scmi_shmem_ops.fetch_notification(smbox->shmem, max_len, xfer);
++	core->shmem->fetch_notification(smbox->shmem, max_len, xfer);
+ }
+ 
+ static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
+@@ -310,9 +315,9 @@ static void mailbox_clear_channel(struct scmi_chan_info *cinfo)
+ 	struct mbox_chan *intr_chan;
+ 	int ret;
+ 
+-	scmi_shmem_ops.clear_channel(smbox->shmem);
++	core->shmem->clear_channel(smbox->shmem);
+ 
+-	if (!scmi_shmem_ops.channel_intr_enabled(smbox->shmem))
++	if (!core->shmem->channel_intr_enabled(smbox->shmem))
+ 		return;
+ 
+ 	if (smbox->chan_platform_receiver)
+@@ -335,7 +340,7 @@ mailbox_poll_done(struct scmi_chan_info *cinfo, struct scmi_xfer *xfer)
+ {
+ 	struct scmi_mailbox *smbox = cinfo->transport_info;
+ 
+-	return scmi_shmem_ops.poll_done(smbox->shmem, xfer);
++	return core->shmem->poll_done(smbox->shmem, xfer);
+ }
+ 
+ static const struct scmi_transport_ops scmi_mailbox_ops = {
+@@ -350,9 +355,22 @@ static const struct scmi_transport_ops scmi_mailbox_ops = {
+ 	.poll_done = mailbox_poll_done,
+ };
+ 
+-const struct scmi_desc scmi_mailbox_desc = {
++static const struct scmi_desc scmi_mailbox_desc = {
+ 	.ops = &scmi_mailbox_ops,
+ 	.max_rx_timeout_ms = 30, /* We may increase this if required */
+ 	.max_msg = 20, /* Limited by MBOX_TX_QUEUE_LEN */
+ 	.max_msg_size = 128,
+ };
++
++static const struct of_device_id scmi_of_match[] = {
++	{ .compatible = "arm,scmi" },
++	{ /* Sentinel */ },
 +};
 +
- static unsigned long
- scmi_vendor_protocol_signature(unsigned int protocol_id, char *vendor_id,
- 			       char *sub_vendor_id, u32 impl_ver)
-@@ -3017,6 +3022,28 @@ static int scmi_debugfs_raw_mode_setup(struct scmi_info *info)
- 	return ret;
- }
- 
-+static const struct scmi_desc *scmi_transport_setup(struct device *dev)
-+{
-+	struct scmi_transport *trans;
++DEFINE_SCMI_TRANSPORT_DRIVER(scmi_mailbox, scmi_mailbox_driver,
++			     scmi_mailbox_desc, scmi_of_match, core);
++module_platform_driver(scmi_mailbox_driver);
 +
-+	trans = dev_get_platdata(dev);
-+	if (!trans || !trans->desc || !trans->supplier || !trans->core_ops)
-+		return NULL;
-+
-+	if (!device_link_add(dev, trans->supplier, DL_FLAG_AUTOREMOVE_CONSUMER)) {
-+		dev_err(dev,
-+			"Adding link to supplier transport device failed\n");
-+		return NULL;
-+	}
-+
-+	/* Provide core transport ops */
-+	*trans->core_ops = &scmi_trans_core_ops;
-+
-+	dev_info(dev, "Using %s\n", dev_driver_string(trans->supplier));
-+
-+	return trans->desc;
-+}
-+
- static int scmi_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -3029,8 +3056,14 @@ static int scmi_probe(struct platform_device *pdev)
- 	struct device_node *child, *np = dev->of_node;
- 
- 	desc = of_device_get_match_data(dev);
--	if (!desc)
--		return -EINVAL;
-+	if (!desc) {
-+		desc = scmi_transport_setup(dev);
-+		if (!desc) {
-+			err_str = "transport invalid\n";
-+			ret = -EINVAL;
-+			goto out_err;
-+		}
-+	}
- 
- 	info = devm_kzalloc(dev, sizeof(*info), GFP_KERNEL);
- 	if (!info)
-@@ -3197,6 +3230,7 @@ static int scmi_probe(struct platform_device *pdev)
- clear_ida:
- 	ida_free(&scmi_id, info->id);
- 
-+out_err:
- 	return dev_err_probe(dev, ret, "%s", err_str);
- }
- 
-@@ -3388,6 +3422,12 @@ static int __init scmi_driver_init(void)
- 	if (ret)
- 		return ret;
- 
-+	if (IS_ENABLED(CONFIG_ARM_SCMI_HAVE_SHMEM))
-+		scmi_trans_core_ops.shmem = scmi_shared_mem_operations_get();
-+
-+	if (IS_ENABLED(CONFIG_ARM_SCMI_HAVE_MSG))
-+		scmi_trans_core_ops.msg = scmi_message_operations_get();
-+
- 	if (IS_ENABLED(CONFIG_ARM_SCMI_NEED_DEBUGFS))
- 		scmi_top_dentry = scmi_debugfs_init();
- 
-diff --git a/drivers/firmware/arm_scmi/msg.c b/drivers/firmware/arm_scmi/msg.c
-index f5f6c2c55577..18337f9191d0 100644
---- a/drivers/firmware/arm_scmi/msg.c
-+++ b/drivers/firmware/arm_scmi/msg.c
-@@ -118,3 +118,8 @@ const struct scmi_message_operations scmi_msg_ops = {
- 	.fetch_response = msg_fetch_response,
- 	.fetch_notification = msg_fetch_notification,
- };
-+
-+const struct scmi_message_operations *scmi_message_operations_get(void)
-+{
-+	return &scmi_msg_ops;
-+}
-diff --git a/drivers/firmware/arm_scmi/shmem.c b/drivers/firmware/arm_scmi/shmem.c
-index 477d391968c6..3fba05e1560c 100644
---- a/drivers/firmware/arm_scmi/shmem.c
-+++ b/drivers/firmware/arm_scmi/shmem.c
-@@ -187,3 +187,8 @@ const struct scmi_shared_mem_operations scmi_shmem_ops = {
- 	.channel_intr_enabled = shmem_channel_intr_enabled,
- 	.setup_iomap = shmem_setup_iomap,
- };
-+
-+const struct scmi_shared_mem_operations *scmi_shared_mem_operations_get(void)
-+{
-+	return &scmi_shmem_ops;
-+}
++MODULE_AUTHOR("Sudeep Holla <sudeep.holla@arm.com>");
++MODULE_DESCRIPTION("SCMI Mailbox Transport driver");
++MODULE_LICENSE("GPL");
 -- 
 2.45.2
 
