@@ -1,115 +1,120 @@
-Return-Path: <linux-kernel+bounces-283843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDDA294F96C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:13:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C19C94F974
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:14:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 716531F230B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:13:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0CBABB221EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38591957E9;
-	Mon, 12 Aug 2024 22:13:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DC4197552;
+	Mon, 12 Aug 2024 22:14:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vzgd/zIy"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b="hRgRrB4o"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461E41514E4
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2401514E4
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723500786; cv=none; b=Qw1R5Il63q0DWWU+5/C/8UEE94wzIUIRCZqWgrojxhcQgrwqUX4MyDvIK7rXLdtBu3ZP+vINL/WLYsmyaA+jXw+H7pczakvAIX2rWr/44CYZ9elvmyUcjXOfVsHTl6L9q9+V6W8Vh29Rly5+5Ryw86ZRdjngKlLWHLElzS7k+1E=
+	t=1723500857; cv=none; b=mAsAi3yPMA6UsFH3GkkWtKi5aAqyAwny0pFnzidlx/iIQh0zWO2X3b3syD156hgTK8gwX6H417B/g12EjA4s2GlhhfrWmzgoGvNihbOQ6j0AUdF2cv7HTLOIu5z2CPDXaI3dYWGmSjpXBLk85P8I3MdGPxxZ5QYz8gc0IA4p2yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723500786; c=relaxed/simple;
-	bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ErDWgFsEafO7bf89Ve++F35UaTQrVM2OhIdNgxvPMx4KeTCMwQyx6Jni4JtgFqysyzGuzKK9KT57MwKY4CvEUwk+9BuXSSna8QT25AC1XJB6HagJX18PTHqWLjHWHViDdFyeR5Q7/RtdHIWAYQpBqqTzQwCBpzC1ytdwcc7V+ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vzgd/zIy; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6b7b23793c1so28978126d6.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:13:04 -0700 (PDT)
+	s=arc-20240116; t=1723500857; c=relaxed/simple;
+	bh=5C1krAJ1oJcZnwKGgzLTXj3Ja5HLT0Q2IwevTgFEtV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SzFs5Ozj9v/2H10+iJ9LUiiqFl10XCOOSlcts381H7XrQBoevfoV4SWLJv8VaoYrH6S86sxeJSNSK4MCHvLYsUbTquSCkHBZk1ocQSWL9ZM/bgzUcDyjMDDLAv/r48iAYZSn46f/HlT/vrt62kT2C+UyQV2yw5BNKglQHE2UntA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu; spf=pass smtp.mailfrom=andrew.cmu.edu; dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b=hRgRrB4o; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andrew.cmu.edu
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6b7af49e815so29199026d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:14:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723500783; x=1724105583; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
-        b=vzgd/zIy/a8CtrKn+aMa6+W6QV9pflfnj1q3DWNiRj50Ln/3Yzj5mYSiu+5crxGChr
-         vo2Gp/GbQFllVDbaaiJ3+TcGCjQ1c+vFPcPRod+9qK1vCM05C62H4PlPu9LpDggB1bkS
-         qaPpBwf2N/nllYKnWJFUHKR+4DPb5Jz0EflzpxvzAKZSnOQ4bOPj01efO+VW8i0OIiQB
-         7LpgID7pv/XnQxFrh5a2htHHAUcrom4dr4CrXjdwqiaGKOQipsdU303WLLe28ssigvrP
-         MzDi4oCWXNLGYZOjYxGzYITusEh/9fplhLt4iHeAVp0GCrU3Snx6Nxp5Iew5UCWfaXel
-         k8sw==
+        d=cs.cmu.edu; s=google-2021; t=1723500853; x=1724105653; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BEBI0rSvxScgRvn2lJRJ3h9SLseLD39QMADZHzmF2os=;
+        b=hRgRrB4ogvtaeXLZiiPtetmVtBxERNMdks/c0mbzjhKRNG5KdbXR3f6m32qjYhQh1F
+         4Tibb202spj70DixENGYsx3IPuk7XkthLecvHccTWPb7VnUqJvfNfn2GuBOJ/dtkBg59
+         ZxcOR2hoW+Q6bu9J+m0QNjBTDUEzsOrMqTiev0JhfHR5n1Bt50spa1fnqcwupbieJN98
+         Rx2p2fp459JGMO39cVYbqdea5JtSJUiO56xyfDRyNhORpJmkn/kf3GnFes+JP3HxJQyD
+         a8iIza1qC55jM9lLOZ8w/ulv91Erw0mK/sMuERymIPgVaCK87mjFzFuErQmuaf4i5iwU
+         50dg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723500783; x=1724105583;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LyFKsDEgjnxNEVYqxUkhyYjIwPC3euwsxGOU2i6sWGk=;
-        b=UBcYYvstW/ucaBqdG7q973k0ww0lKHt4mY2xjsTLMesClGrBxyj22sydw/KPsQatyx
-         bVLxUaSN1bs2zmbPFuZwB1fGHpxGlLymTyMlEf/fYoygN1AtQZhh9aIVhKLKI9paKKaC
-         s9CSxfI1lUz6IMeGiwCdhYVQhinSJlo2a3UNQBhr7kTRA76p6MXXbRETZC34kI2QhsjR
-         UzKHViHNbAaHF4+OlVYh3IzJlFKIm/nmFFg9+JLE+5KughRkztos+54Bno/w0ansQyaB
-         odWK4jxic1mi/4FNvLrcTdg2g3OKJXudw1+YHws6CmZn8qQjlrpzTb0836auvmDUpy3q
-         9xUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXPI9IH13GXs+Y78/jlxQya+PY/oQVHujlsRMiri0iF7kLDzWstGc+WT3q7JdKARaZJokaUFHa03PwVyWAgDlaxW02JLIpdOlCJKzO
-X-Gm-Message-State: AOJu0YxNQl8/a73ZdpCsmKexIy9XB5sFoCLw47D5NuH74KmvSgM7jvRz
-	256TSqaRweSaXJva3AFCMVgs6ZVPeUQBdY2l1XlwBTgVHi78zM/2f6fgCDn2TdHifvNIeHJOT/5
-	seyYhUyTjZ45q9vp1GeSsmQreDi7utrdpLAdx
-X-Google-Smtp-Source: AGHT+IEoO+b9pY7C5DoqMaKmNrfWrx3T3pQDUYneGHRDOHmrDXK+WYRUv2ZXVfLXYFWMQ9tgg2yWFX1PctT326bWJv4=
-X-Received: by 2002:a05:6214:3a03:b0:6b9:5cf1:65a3 with SMTP id
- 6a1803df08f44-6bf4f84c149mr17036116d6.43.1723500782966; Mon, 12 Aug 2024
- 15:13:02 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723500853; x=1724105653;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BEBI0rSvxScgRvn2lJRJ3h9SLseLD39QMADZHzmF2os=;
+        b=d1FlHUyl73XuoEgwQkflg0YyvDH5J9lCwb1HOZmKb7VeSsfY123skZr1J6wBiybjPB
+         sytldAqMfUWZnFeZzDxKWOC7zS+SljApkjk1ay7WsUhLlWf3DBmX489xJA/JmqWOWlbo
+         6QSgFHeOSGE8pFX5EpqkPiDfUd8TM9DLoKaVr9NiJ4IvTCLk9pBZ+1D9W5G6Gwn5f7uz
+         MBoFlfYNbuTax3xdPrgHe9vQOIFEM2nB2+kyNF4VXHnJpaKuYKfUajDTWbO1s4IdppHy
+         5pOC04FlcILk9AOO8uswp4uZtKvk1m9LX6ovnkJ1CLFU1q9pTtoEKy2EytT2PzgNwUNd
+         xKyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHm+X9sgkuPdH/Cr684EKjSwxtXfQ3IM9376jqp+Q32sKcfmihViUt5AQjH3Q0NBA6mzltM/G3lryidNGwN7jxH+8mCQnGmy3ZsX1Z
+X-Gm-Message-State: AOJu0YwtjT8HALc7MTx6b1x8FPsenM1+zpGlDW/NcbQq4RBc6VdMya77
+	jE1vR/E+BYrWNcRM7Y3xu7X9bYU4wtL/oaYLughmF+GRQKHZl2OKQJQyjEdRV2LZdgAak0qI+Tw
+	=
+X-Google-Smtp-Source: AGHT+IG0Cziy2SsxyOzWXpFg85ddyMgvvtAARxFbB3pAbnIYfrcvc/i7Cah1M77odIaYos/myhaJPg==
+X-Received: by 2002:a05:6214:3983:b0:6b7:a81a:1340 with SMTP id 6a1803df08f44-6bf4f8b427emr16533626d6.51.1723500852693;
+        Mon, 12 Aug 2024 15:14:12 -0700 (PDT)
+Received: from localhost.localhost (pool-74-98-231-160.pitbpa.fios.verizon.net. [74.98.231.160])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bf43648a93sm12302636d6.24.2024.08.12.15.14.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 15:14:12 -0700 (PDT)
+Date: Mon, 12 Aug 2024 22:14:10 +0000
+From: Kaiyang Zhao <kaiyang2@cs.cmu.edu>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the mm tree
+Message-ID: <ZrqJMqeE8Y7UIn09@localhost.localhost>
+References: <20240812093016.148a433c@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240809114854.3745464-1-kirill.shutemov@linux.intel.com> <20240809114854.3745464-2-kirill.shutemov@linux.intel.com>
-In-Reply-To: <20240809114854.3745464-2-kirill.shutemov@linux.intel.com>
-From: Jianxiong Gao <jxgao@google.com>
-Date: Mon, 12 Aug 2024 15:12:50 -0700
-Message-ID: <CAMGD6P0ckHzobW1j2GvqqZ3mNUHCBfP9xM-15s8B6yOfdv8MPg@mail.gmail.com>
-Subject: Re: [PATCHv2 1/8] mm: Fix endless reclaim on machines with unaccepted memory
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
-	Mel Gorman <mgorman@suse.de>, Vlastimil Babka <vbabka@suse.cz>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Mike Rapoport <rppt@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812093016.148a433c@canb.auug.org.au>
 
-On Fri, Aug 9, 2024 at 4:49=E2=80=AFAM Kirill A. Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
+On Mon, Aug 12, 2024 at 09:30:16AM +1000, Stephen Rothwell wrote:
+> Hi all,
 >
-> Unaccepted memory is considered unusable free memory, which is not
-> counted as free on the zone watermark check. This causes
-> get_page_from_freelist() to accept more memory to hit the high
-> watermark, but it creates problems in the reclaim path.
+> After merging the mm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
 >
-> The reclaim path encounters a failed zone watermark check and attempts
-> to reclaim memory. This is usually successful, but if there is little or
-> no reclaimable memory, it can result in endless reclaim with little to
-> no progress. This can occur early in the boot process, just after start
-> of the init process when the only reclaimable memory is the page cache
-> of the init executable and its libraries.
+> mm/memory.c: In function 'numa_migrate_check':
+> mm/memory.c:5403:41: error: 'NUMA_HINT_FAULTS' undeclared (first use in this function)
+>  5403 |         count_memcg_folio_events(folio, NUMA_HINT_FAULTS, 1);
+>       |                                         ^~~~~~~~~~~~~~~~
+> mm/memory.c:5403:41: note: each undeclared identifier is reported only once for each function it appears in
 >
-> Make unaccepted memory free from watermark check point of view. This way
-> unaccepted memory will never be the trigger of memory reclaim.
-> Accept more memory in the get_page_from_freelist() if needed.
+> Caused by commit
 >
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reported-by: Jianxiong Gao <jxgao@google.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Fixes: dcdfdd40fa82 ("mm: Add support for unaccepted memory")
-> Cc: stable@vger.kernel.org # v6.5+
+>   75747a26eec1 ("mm,memcg: provide per-cgroup counters for NUMA balancing operations")
+>
+> from the mm-unstable branch of the mm tree.
+>
+> CONFIG_NUMA_BALANCING is not set for this build.  I note that the
+> preexisting calls to count_vm_numa_event() compile because it is
+> implemented as a macro ...
+>
+> Not the best fix, but I applied the patch below.
 
-Tested-by: Jianxiong Gao <jxgao@google.com>
-I have verified that the patch fixes the systemd issue reported.
+Sorry about it. I should have tested with more configs. I'll send a v2
+with a fix for this compilation error and the other compilation warning
+about the documentation (and remember to run make htmldocs in the future).
+
+Bear with me, from a newbie trying to learn...
+
+Best,
+Kaiyang Zhao
 
