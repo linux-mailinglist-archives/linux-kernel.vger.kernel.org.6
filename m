@@ -1,267 +1,139 @@
-Return-Path: <linux-kernel+bounces-283543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3026594F61D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:55:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CCD294F61F
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:55:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30601F22B08
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:55:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A2EBB21F30
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C60C18951C;
-	Mon, 12 Aug 2024 17:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A0E1898E4;
+	Mon, 12 Aug 2024 17:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="e1Nrw5a3"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WPUhlG75"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A613A24D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:55:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E465218952C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723485315; cv=none; b=Z4Adi9uYBQAfa37eVqhM9IvSBKI9ZHHhQJzWQzz10jIKXViCHwPSPB1geFq6N1Qh/DMV11kYo1SUxOTRiHTa8LSxXMRBF9Cw4+vdGqV9oT43U1TytXFofx07OZlDH3LmoXtirsIJZYmlNKDlgaK6U5DFU2ZxFFFzxUNchYJe2zQ=
+	t=1723485317; cv=none; b=XfN78HNRmkC2rKtnR54OWUCJZ1itmABtzay3EZZCK/R0S/CbWHmhpO6rMRUYl97ZcgGg/ELuzAQ1+DymrKpH/4oBkWozcspVz0LscquUl9GGLjfZO37G8f/xHqUlFkQf5jrf3/zKr9NyaBB2alhcSeT2ekNF/FPiH9MtGVbOY60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723485315; c=relaxed/simple;
-	bh=6BuwtxkOw+LbgmHont2lDmwWYUygWmSMZWCYt10eLlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FniF0y6Kez/467VQ0Lybl06NH2FrgY5UdjroTIb/OCmwTnJ9HZglWTXWSAJned5ZlHNbMhw2s29TN9ZEfmPzi4M55tgfkY1xgYRELwrw2jY9WUVP5952RXh4muQll57vdlY6m0CCQDvacwOsCehn40PjyycJmp7o8ieet9GGTOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=e1Nrw5a3; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d4so26724231fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1723485312; x=1724090112; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xcEjfDc7c1NgjoDZQU2kcYerW5vvr8yoBs/gk0xV80M=;
-        b=e1Nrw5a3Tv5kUayIasNFyHqVdtElDt+YYYQYXaF/cs4NrY/BxpwhIb25sGXiTaKIuI
-         j8M0lwpA0zNLgDXD+8oWkwjZAgJpdA2NLw8VmD6avMYegLQzxLDXSskaes9QX/LMmlP7
-         vWAzKwkhKtjJHDyYtkw8M+oEKaauzQNEflLIA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723485312; x=1724090112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xcEjfDc7c1NgjoDZQU2kcYerW5vvr8yoBs/gk0xV80M=;
-        b=SkjAX6z7QZPssTlGkV3ZtYJTuipjPsxBWZtZ6a6SlUCMHZ2ZqupGHRCUxTWFLoik0K
-         yBL7HZwZxtVaIk3hC0TbIVZtqD5LYtwKuUDnh/HYS9kgRcdj7Ojy1DKnUQK0CEVHtJcD
-         yJJARSVDbP+SiT79wpUNZoXOt08F9/0iijkxa00G6O/BtiC3Dccjgn0VDAKba02apSF8
-         0yLh70zrMQgeXWFwZhmBd0fnbZ3K3VlOOjA4RLRqVx/lG9oC9cQJyIeC6s1ieZdZuxXw
-         wYoNVbdRivdwwnNUmOltcC8EJr/HmLQeTokAwjqaoVAWaN6SWqOdTF+bWo4SpY9AKXeC
-         Eqcw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnGQoRkQ2CqUXCE15fQ3Vdl8dl33vu+IJzPvD4qhGHtvMs+BPJqZdIoUTD6jVwa//yNS++YES8Ylg9IBm5t/7rXy224jzU/OTfi9Ox
-X-Gm-Message-State: AOJu0Yy0YJaFSWFl5/FURbkwGxxKzN9YROjwbTAPyx0CLmVcAqwXvmQH
-	dhgXh6C2162IU7UsGqusLGBrmsb4ig9ANWi4JbEmp0g4ulYO5H3OQQpCw1pTq+l8+zmkdh/xG10
-	DlIELratRRUa3SqpTstD0WOBYR8QOeFYGg6+Y
-X-Google-Smtp-Source: AGHT+IEwWo0ga1YJbpRGNtll27ejw8elve2Kxllw5X1gl7dZQDu9iVZntUj1AfNi1+LD9sL/nXpWrW5CAU8tk77Vmvw=
-X-Received: by 2002:a05:651c:1509:b0:2f0:1c57:625a with SMTP id
- 38308e7fff4ca-2f2b8ed7a09mr1049891fa.9.1723485311496; Mon, 12 Aug 2024
- 10:55:11 -0700 (PDT)
+	s=arc-20240116; t=1723485317; c=relaxed/simple;
+	bh=Ay8VaO4Jv/lXv+JmnPgO0eWEOIHNdWaHckuTwRmJZk8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=clkHiOJCPNJ7EXKN/JpsLR620G4G5ZJTTCpZrXt7WYBFUE3N0oEk2oXlK6nnuvWQ6YK2d98aaY0xpUV4Y75PlnF8RXTK9HGjKpqRR9QbEk+rMyQO2lOklVewhy2C7nhD0z8JrXKhVAPHf2kbmjXU/0aXH1ZlYYTeaKir4uM81ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WPUhlG75; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54836C4AF1B;
+	Mon, 12 Aug 2024 17:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723485316;
+	bh=Ay8VaO4Jv/lXv+JmnPgO0eWEOIHNdWaHckuTwRmJZk8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=WPUhlG756UwmloX/ZNx6WVIG3Gz7KgFAkSwPL8PIfLsv/XnJsPd7S8xowSMYh4luW
+	 lcc0KfrTiC3kgPzN9OZTvsdapHW2pemGRt/l3F9OEGSqs9JTN9EArcYPgxJ9GSX0iE
+	 N74gb4dfbZnK45nPSxPGpri2dG8Vw3FQ12MjL7ZyYCI0X2xtlIs0HY1AAKrzTWgwFU
+	 WrSuXSuLig0hU9sSwDZRHf+gZP42P3CJ8QNcSmZHttnv0CYANF0YMeNdhslCzQEfiJ
+	 doG3CBqubwgL0dNsX8tnsgfU1qc+BM/mjUzL/s5fXptgpU41qFJcIsa5TuSfxodOXy
+	 tA/Mz29d0mPCg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4871AC52D7C;
+	Mon, 12 Aug 2024 17:55:16 +0000 (UTC)
+From: Christoph Lameter via B4 Relay <devnull+cl.gentwo.org@kernel.org>
+Date: Mon, 12 Aug 2024 10:55:06 -0700
+Subject: [PATCH] Reenable NUMA policy support in the slab allocator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240731222831.14895-1-james.quinlan@broadcom.com>
- <20240731222831.14895-6-james.quinlan@broadcom.com> <20240807030342.GH3412@thinkpad>
-In-Reply-To: <20240807030342.GH3412@thinkpad>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Mon, 12 Aug 2024 13:54:59 -0400
-Message-ID: <CA+-6iNys9hW6O=kYE0qSgny6zviKmQkn6hNnpL+-9s4oYPOWuw@mail.gmail.com>
-Subject: Re: [PATCH v5 05/12] PCI: brcmstb: Use swinit reset if available
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
-	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000ce502a061f803116"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240812-numa_policy-v1-1-1732602b976c@gentwo.org>
+X-B4-Tracking: v=1; b=H4sIAHlMumYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCwMz3bzS3MT4gvyczORKXVNDC4s0E5OkRIMUCyWgjoKi1LTMCrBp0bG
+ 1tQCMAoOGXQAAAA==
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+ Johannes Weiner <hannes@cmpxchg.org>, Pekka Enberg <penberg@kernel.org>, 
+ David Rientjes <rientjes@google.com>, Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, 
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+ Christoph Lameter <cl@gentwo.org>
+X-Mailer: b4 0.15-dev-37811
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723485315; l=2030;
+ i=cl@gentwo.org; s=20240811; h=from:subject:message-id;
+ bh=oIsOUj+s52JxQUrLe0TMZXCQFfAgTyXqoXTDzKem1MA=;
+ b=Z286VwSdQVPVNRMc582ozWP7NFSxGLmQwBaCtj9kzM80sRwA6XOkZDFrPl4wKma09vPviLxBh
+ p5zaM/WaXQaCAi00LCfffQoEJ69rjA3c7EcHqnOIkayhvpRYMQaRcRQ
+X-Developer-Key: i=cl@gentwo.org; a=ed25519;
+ pk=I7gqGwDi9drzCReFIuf2k9de1FI1BGibsshXI0DIvq8=
+X-Endpoint-Received: by B4 Relay for cl@gentwo.org/20240811 with
+ auth_id=194
+X-Original-From: Christoph Lameter <cl@gentwo.org>
+Reply-To: cl@gentwo.org
 
---000000000000ce502a061f803116
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: Christoph Lameter <cl@gentwo.org>
 
-On Tue, Aug 6, 2024 at 11:03=E2=80=AFPM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> On Wed, Jul 31, 2024 at 06:28:19PM -0400, Jim Quinlan wrote:
-> > The 7712 SOC adds a software init reset device for the PCIe HW.
-> > If found in the DT node, use it.
-> >
-> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >
-> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
-ller/pcie-brcmstb.c
-> > index 4d68fe318178..948fd4d176bc 100644
-> > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > @@ -266,6 +266,7 @@ struct brcm_pcie {
-> >       struct reset_control    *rescal;
-> >       struct reset_control    *perst_reset;
-> >       struct reset_control    *bridge_reset;
-> > +     struct reset_control    *swinit_reset;
-> >       int                     num_memc;
-> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
-> >       u32                     hw_rev;
-> > @@ -1633,12 +1634,30 @@ static int brcm_pcie_probe(struct platform_devi=
-ce *pdev)
-> >       if (IS_ERR(pcie->bridge_reset))
-> >               return PTR_ERR(pcie->bridge_reset);
-> >
-> > +     pcie->swinit_reset =3D devm_reset_control_get_optional_exclusive(=
-&pdev->dev, "swinit");
-> > +     if (IS_ERR(pcie->swinit_reset))
-> > +             return PTR_ERR(pcie->swinit_reset);
-> > +
-> >       ret =3D clk_prepare_enable(pcie->clk);
-> >       if (ret)
-> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
-lock\n");
-> >
-> >       pcie->bridge_sw_init_set(pcie, 0);
-> >
-> > +     if (pcie->swinit_reset) {
->
-> You already have a callback called 'bridge_sw_init_set', so this 'swinit_=
-reset'
-> is different from 'bridge_sw_init'?
-Yes.  The swinit_reset is a soft reset of the entire core while
-bridge_sw_init reset is only for the bridge to system memory.
+Revert commit 8014c46ad991f05b15ffbc0c6ae130bdf911187b
+("slub: use alloc_pages_node() in alloc_slab_page()").
 
-If so, does it make sense to move this into
-> the callback itself to have all reset sequence in one place?
+The patch disabled the numa policy support in the slab allocator. It
+did not consider that alloc_pages() uses memory policies but
+alloc_pages_node() does not.
 
-The order and placement of the resets can sometimes be fragile and I
-would prefer to leave them where they are.
+As a result of this patch slab memory allocations are no longer spread via
+interleave policy across all available NUMA nodes on bootup. Instead
+all slab memory is allocated close to the boot processor. This leads to
+an imbalance of memory accesses on NUMA systems.
 
-Regards,
-Jim Quinlan
-Broadcom STB/CM
+Also applications using MPOL_INTERLEAVE as a memory policy will no longer
+spread slab allocations over all nodes in the interleave set but allocate
+memory locally. This may also result in unbalanced allocations
+on a single node if f.e. a certain process does the memory allocation on
+behalf of all the other processes.
 
->
-> - Mani
->
-> > +             ret =3D reset_control_assert(pcie->swinit_reset);
-> > +             if (dev_err_probe(&pdev->dev, ret, "could not assert rese=
-t 'swinit'\n"))
-> > +                     goto clk_disable_unprepare;
-> > +
-> > +             /* HW team recommends 1us for proper sync and propagation=
- of reset */
-> > +             udelay(1);
-> > +
-> > +             ret =3D reset_control_deassert(pcie->swinit_reset);
-> > +             if (dev_err_probe(&pdev->dev, ret,
-> > +                               "could not de-assert reset 'swinit' aft=
-er asserting\n"))
-> > +                     goto clk_disable_unprepare;
-> > +     }
-> > +
-> >       ret =3D reset_control_reset(pcie->rescal);
-> >       if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
-"))
-> >               goto clk_disable_unprepare;
-> > --
-> > 2.17.1
-> >
->
-> --
-> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
+SLUB does not apply memory policies to individual object allocations.
+However, it relies on the page allocators support of memory policies
+through alloc_pages() to do the NUMA memory allocations on a per
+folio or page level. SLUB also applies memory policies when retrieving
+partial allocated slab pages from the partial list.
 
---000000000000ce502a061f803116
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+Signed-off-by: Christoph Lameter <cl@gentwo.org>
+---
+ mm/slub.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
-AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBIgeLout8dCqQcfuxz6qcttM9z/G2Z
-L4OZxUxwvROrszAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
-MTIxNzU1MTJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
-AgEwDQYJKoZIhvcNAQEBBQAEggEAg73MZnPzIAhhi9uoC7NB3nzfltKwQ7ZgSR+f2MGTtKjsgWnE
-kVOpekNCdAlybcj/tJlb5dnOIOsbHmZJNULRCAEdsJba9GMXGJYYup5EbhRIfgEdI1xInviv9jUD
-yNgq0+KhDTZFe4cnnlcMRMmr0kc/ZhQsm3fx2+bu2wi+b88AeaMKHydRUsywV6TgCXxDsHez5pt8
-MJXgKH2k5tgWE23Prz2wZWzTvD8djRBWexaj9rdzjuLmRvimXqAIcTTDW7MKRHA6Ry3HCy2z/FCp
-TyUwR4I1fWvjBd/B8M3rxrctFIbqGnU7SmjlHTKxXSVNDeuX+oghIMZwcLFB7yovfA==
---000000000000ce502a061f803116--
+diff --git a/mm/slub.c b/mm/slub.c
+index c9d8a2497fd6..4dea3c7df5ad 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2318,7 +2318,11 @@ static inline struct slab *alloc_slab_page(gfp_t flags, int node,
+ 	struct slab *slab;
+ 	unsigned int order = oo_order(oo);
+ 
+-	folio = (struct folio *)alloc_pages_node(node, flags, order);
++	if (node == NUMA_NO_NODE)
++		folio = (struct folio *)alloc_pages(flags, order);
++	else
++		folio = (struct folio *)__alloc_pages_node(node, flags, order);
++
+ 	if (!folio)
+ 		return NULL;
+ 
+
+---
+base-commit: d74da846046aeec9333e802f5918bd3261fb5509
+change-id: 20240806-numa_policy-5188f44ba0d8
+
+Best regards,
+-- 
+Christoph Lameter <cl@gentwo.org>
+
+
 
