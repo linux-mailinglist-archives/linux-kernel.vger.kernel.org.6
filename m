@@ -1,129 +1,131 @@
-Return-Path: <linux-kernel+bounces-283107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C64294ED49
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:46:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F8D94ED4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5346B1F22D6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67DA91C218B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7FE17B508;
-	Mon, 12 Aug 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LmIGq+7Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649EE17BB06;
+	Mon, 12 Aug 2024 12:47:53 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC2316D9AE
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A017B501;
+	Mon, 12 Aug 2024 12:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723466768; cv=none; b=g5fQEWkDON1IYE/dsiSbKrEUUiK2CBhoy7h+9cp902ShAFCJ0dCrqJLFuYqTQhtFkiOnFta306Ge92d/QJFpqiCOTUeAzM87Ut/PpsY6XsHXbWMiY9eDBpcdJGtKmnmPfcrbFPtQDTVIm1R/sH9QNzIVlopl/nYMb88p3ezmmK4=
+	t=1723466873; cv=none; b=gB0SL5M8EHw28Y2s0tysmuCu7yNhosoAtg2Vkf/F7SMdZJQ/YiG/xPdIOuCNwYd62UFYj2deXgWEeCSXLWB+ZJrrOcnOUwzDdOh+CT+bw+hxf+oDU+NoJdfu8J05XAQ5LAkeN459XLrOfzphgY6sXvSZXRIbuy4au+t+22+eYMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723466768; c=relaxed/simple;
-	bh=b/y09YHavkqM6IvK7Q7CY4hdPzCfffVt4tKff0uiNjU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l8/HJVEwXeME2qpkITBp3gjb1v5RKGk1U1JByDW8r0xZiRj6xoP0cQEEMux2cpMHQVetkvlJwtL9RC1tm87ilQc1uDGac2DSbK3aCyZwR+p0LqQdrGWIr1IBMi9VFJxNZrpBoO7fBrXCUXDq5JDeHCCicenlXtYlqHEQkRY2Pvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LmIGq+7Q; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723466765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wKDtWb6RxLCMwAwdf51Z/WY8vKRIwoyi9gdOkFeKbfA=;
-	b=LmIGq+7Q5Zfon6Ho5WrxpK4TeE9LkLzBYuay6M4Rm772NyzNEkL4BpTsdan4osNSwovjvc
-	X9pVuF/HThP+kuMz7aGxma7mbcICN0IpI+X6Jktpz3a0pNSO2n/otsU5ZMeG5eBRlKui2t
-	LZ6OOBmUA4M05I+QYHejDM2vi93Cdzo=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-682-dDBCF8nhPw-oOgt18glHEw-1; Mon,
- 12 Aug 2024 08:46:02 -0400
-X-MC-Unique: dDBCF8nhPw-oOgt18glHEw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62EEA1918147;
-	Mon, 12 Aug 2024 12:46:01 +0000 (UTC)
-Received: from localhost (unknown [10.22.8.16])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 6A54819560AA;
-	Mon, 12 Aug 2024 12:46:00 +0000 (UTC)
-Date: Mon, 12 Aug 2024 09:45:58 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, John Kacur <jkacur@redhat.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtla/osnoise: prevent NULL dereference in error handling
-Message-ID: <ZroEBi-yAGy8ogJ3@uudg.org>
-References: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
+	s=arc-20240116; t=1723466873; c=relaxed/simple;
+	bh=O4m+UYGqu6T4Onmz+MHv97vuuf+KeykpMVt+uLQVovI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jj0esBShMitRPPWyjH8e3DoEXNsnlomO0ybvUm18lCK3cUXjQTD9ebFihef08paB+Zzmx7N88nVm8UHl133yy8WzRCBBt/M1Khl10fyLl0XnFBwx/n5GuFFxMqgyYJkSrBBiaCb0B+0HVSblPNCKoWHxW4Nk5esNbrpV6q5LnKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4WjDlR1rGZz3RrlX;
+	Mon, 12 Aug 2024 20:45:55 +0800 (CST)
+Received: from kwepemf100006.china.huawei.com (unknown [7.202.181.220])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7854140202;
+	Mon, 12 Aug 2024 20:47:45 +0800 (CST)
+Received: from [10.174.177.210] (10.174.177.210) by
+ kwepemf100006.china.huawei.com (7.202.181.220) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 12 Aug 2024 20:47:44 +0800
+Message-ID: <137c8c6e-ead3-51ed-be5a-c8eba0be3a2d@huawei.com>
+Date: Mon, 12 Aug 2024 20:47:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f964ed1f-64d2-4fde-ad3e-708331f8f358@stanley.mountain>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: Zhang Yi <yi.zhang@huaweicloud.com>, <linux-xfs@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <djwong@kernel.org>, <hch@infradead.org>,
+	<brauner@kernel.org>, <david@fromorbit.com>, <jack@suse.cz>,
+	<willy@infradead.org>, <yi.zhang@huawei.com>, <chengzhihao1@huawei.com>,
+	<yukuai3@huawei.com>
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+From: yangerkun <yangerkun@huawei.com>
+In-Reply-To: <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf100006.china.huawei.com (7.202.181.220)
 
-On Fri, Aug 09, 2024 at 03:34:30PM +0300, Dan Carpenter wrote:
-> If the "tool->data" allocation fails then there is no need to call
-> osnoise_free_top() and, in fact, doing so will lead to a NULL dereference.
+
+
+在 2024/8/12 20:11, Zhang Yi 写道:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> Fixes: 1eceb2fc2ca5 ("rtla/osnoise: Add osnoise top mode")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Now we allocate ifs if i_blocks_per_folio is larger than one when
+> writing back dirty folios in iomap_writepage_map(), so we don't attach
+> an ifs after buffer write to an entire folio until it starts writing
+> back, if we partial truncate that folio, iomap_invalidate_folio() can't
+> clear counterpart block's dirty bit as expected. Fix this by advance the
+> ifs allocation to __iomap_write_begin().
+> 
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > ---
->  tools/tracing/rtla/src/osnoise_top.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
-
-Looks good to me.
-
-Reviewed-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-
-
+>   fs/iomap/buffered-io.c | 17 ++++++++++++-----
+>   1 file changed, 12 insertions(+), 5 deletions(-)
 > 
-> diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-> index f594a44df840..2f756628613d 100644
-> --- a/tools/tracing/rtla/src/osnoise_top.c
-> +++ b/tools/tracing/rtla/src/osnoise_top.c
-> @@ -651,8 +651,10 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
->  		return NULL;
->  
->  	tool->data = osnoise_alloc_top(nr_cpus);
-> -	if (!tool->data)
-> -		goto out_err;
-> +	if (!tool->data) {
-> +		osnoise_destroy_tool(tool);
-> +		return NULL;
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 763deabe8331..79031b7517e5 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -699,6 +699,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>   	size_t from = offset_in_folio(folio, pos), to = from + len;
+>   	size_t poff, plen;
+>   
+> +	if (nr_blocks > 1) {
+> +		ifs = ifs_alloc(iter->inode, folio, iter->flags);
+> +		if ((iter->flags & IOMAP_NOWAIT) && !ifs)
+> +			return -EAGAIN;
 > +	}
->  
->  	tool->params = params;
->  
-> @@ -660,11 +662,6 @@ struct osnoise_tool *osnoise_init_top(struct osnoise_top_params *params)
->  				   osnoise_top_handler, NULL);
->  
->  	return tool;
-> -
-> -out_err:
-> -	osnoise_free_top(tool->data);
-> -	osnoise_destroy_tool(tool);
-> -	return NULL;
->  }
->  
->  static int stop_tracing;
-> -- 
-> 2.43.0
-> 
-> 
----end quoted text---
+> +
+>   	/*
+>   	 * If the write or zeroing completely overlaps the current folio, then
+>   	 * entire folio will be dirtied so there is no need for
 
+The comments upper need change too.
+
+
+> @@ -710,10 +716,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>   	    pos + len >= folio_pos(folio) + folio_size(folio))
+>   		return 0;
+>   
+> -	ifs = ifs_alloc(iter->inode, folio, iter->flags);
+> -	if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+> -		return -EAGAIN;
+> -
+>   	if (folio_test_uptodate(folio))
+>   		return 0;
+>   
+> @@ -1928,7 +1930,12 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>   	WARN_ON_ONCE(end_pos <= pos);
+>   
+>   	if (i_blocks_per_folio(inode, folio) > 1) {
+> -		if (!ifs) {
+> +		/*
+> +		 * This should not happen since we always allocate ifs in
+> +		 * iomap_folio_mkwrite_iter() and there is more than one
+> +		 * blocks per folio in __iomap_write_begin().
+> +		 */
+> +		if (WARN_ON_ONCE(!ifs)) {
+>   			ifs = ifs_alloc(inode, folio, 0);
+>   			iomap_set_range_dirty(folio, 0, end_pos - pos);
+>   		}
 
