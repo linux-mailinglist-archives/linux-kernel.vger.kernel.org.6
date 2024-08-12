@@ -1,241 +1,148 @@
-Return-Path: <linux-kernel+bounces-282736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DCB094E803
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:44:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B06E94E806
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:44:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2B791C21BFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:44:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC388280C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC5016D9C5;
-	Mon, 12 Aug 2024 07:42:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A12316132B;
+	Mon, 12 Aug 2024 07:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AE/C8scD"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V44oqUz8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9817A16D4C2
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF40B1474D3;
+	Mon, 12 Aug 2024 07:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723448558; cv=none; b=mLn7HYB9V6k2q2qYvB74PxhHDl+ElfcuLNeDM8y8Jv4gIFVnIQtFp56/yBBEVfxHJishDNWKtzZrYHzMM+PE6zKLygvjbKSK+eAwqJqSxp4CBz7DLIYNQ2w9zXy/6OL53ynoNnm3ErWqLDIJoihqJv3SUB2gpez7t+W6PMzJ15Q=
+	t=1723448614; cv=none; b=M6rDVdJy5zNPfpzT7JpeUPh+wmUkd0WvMvG5/lvT4WhAM/8GlLm/0mpgif0x5jlTA+xxOGYI+5D+zN1A/mnel87y6zOQwJkNXHfiZ6uiWi930JIFACYYrpMDn8q0KLdMlsraQc3Pz41fFqXjL6xamUx3HN0bqGsixff7K4FbQkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723448558; c=relaxed/simple;
-	bh=Fad/wvCvAhhMbu2+GNFchjOYH9D0Up5PK5PcdgD4djw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P5Px95t82h23AYVPCHlCcnqrFiM/s4p4I456wZJ14xLCTvv5z1FtPi8J0xiW3SE83NcdKDRsLP/2VYQe1gZm8iX0qM1DKki4brRTPwZ3OyN6B5cb2+4/2yhlyIu4WWlSh124ojzSy1aIcmnky+VyJ56h0Ldpygu041qXE4KisQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AE/C8scD; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723448549; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=d32a7jBZCt/LbWrkrcBvwBUp97vywsx+8D5iSkO5umo=;
-	b=AE/C8scDa77VHZn2x1S3uv59HGA2JQtdlp85JCxcurcrJzdJZ4PzulLYfg2ZbX4Z2HzTG1G57n4Bpq+NGto8/87cSFUZlFDe9uXj9fFCLfBhupy88AvP/flpnZtJyfuf/jp8Z7hsKpVf6uu9o/yhg//JIKVl/xcAlKanw5Gaoj8=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WCbAKQr_1723448546)
-          by smtp.aliyun-inc.com;
-          Mon, 12 Aug 2024 15:42:27 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	hughd@google.com
-Cc: willy@infradead.org,
-	david@redhat.com,
-	wangkefeng.wang@huawei.com,
-	chrisl@kernel.org,
-	ying.huang@intel.com,
-	21cnbao@gmail.com,
-	ryan.roberts@arm.com,
-	shy828301@gmail.com,
-	ziy@nvidia.com,
-	ioworker0@gmail.com,
-	da.gomez@samsung.com,
-	p.raghav@samsung.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 9/9] mm: shmem: support large folio swap out
-Date: Mon, 12 Aug 2024 15:42:10 +0800
-Message-Id: <d80c21abd20e1b0f5ca66b330f074060fb2f082d.1723434324.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
-References: <cover.1723434324.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1723448614; c=relaxed/simple;
+	bh=Bl3cBAer8sBVl4IHK1bCv7eJJiByh3fjQJ5m6NjjIxI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e6eOIc5KiCk1EDLwqOtFUF7MgPi0zHO0EPADP/jfgq+18/TarZtAjoSptIILT/Ls6gP+TZFRWvyWTevqw0zM+7xyVJQw3qHh1Jkssbopj0F49hNwZu+kNp4vQZ5OIJH4UtHFmr3/m+Hd1e7WBnRX5WIl+xYdqvx8ybR6K/rd+oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V44oqUz8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 891CBC32782;
+	Mon, 12 Aug 2024 07:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723448614;
+	bh=Bl3cBAer8sBVl4IHK1bCv7eJJiByh3fjQJ5m6NjjIxI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=V44oqUz8m4qlMIOzG5CPIdF6U3Q3MFNyPdYMqdsQPvOmeoY3JLStu35jisivDUBz2
+	 +RE9GWJYykDxYMJZXfDyCSgTwnjsCFXYnDq9eE0gu2oWINldme4hcJ/Ue2n2vnRPhZ
+	 bCpNc2F5MlCaKgAgJ0KkKeObkAVdHckPoV9QFUgqBcqhp15dSB8+P/2FgESzsJnY31
+	 a1JkPZ/V0Jp/mxr8wMroQW3jQ7paoPdw5GrZ9FMVC8b5EORKLaQsx9wQxIsfX4/WJ/
+	 7SWFo50cP+1x9BTZx1Y/ddHOfksIre7dgTL/jJIw82zrufOaVLmD6z4KeI8zzl/TCT
+	 586NAZ3MUpGQA==
+Message-ID: <df52ac23-5eee-4d17-9e74-237cf49fe4d7@kernel.org>
+Date: Mon, 12 Aug 2024 09:43:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next v2] mptcp: correct MPTCP_SUBFLOW_ATTR_SSN_OFFSET
+ reserved size
+Content-Language: en-GB
+To: Eugene Syromiatnikov <esyr@redhat.com>, mptcp@lists.linux.dev
+Cc: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Davide Caratti <dcaratti@redhat.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240812065024.GA19719@asgard.redhat.com>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20240812065024.GA19719@asgard.redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Shmem will support large folio allocation [1] [2] to get a better performance,
-however, the memory reclaim still splits the precious large folios when trying
-to swap out shmem, which may lead to the memory fragmentation issue and can not
-take advantage of the large folio for shmeme.
+Hi Eugene, Network maintainers,
 
-Moreover, the swap code already supports for swapping out large folio without
-split, hence this patch set supports the large folio swap out for shmem.
+On 12/08/2024 08:51, Eugene Syromiatnikov wrote:
+> ssn_offset field is u32 and is placed into the netlink response with
+> nla_put_u32(), but only 2 bytes are reserved for the attribute payload
+> in subflow_get_info_size() (even though it makes no difference
+> in the end, as it is aligned up to 4 bytes).  Supply the correct
+> argument to the relevant nla_total_size() call to make it less
+> confusing.
+> 
+> Fixes: 5147dfb50832 ("mptcp: allow dumping subflow context to userspace")
+> Signed-off-by: Eugene Syromiatnikov <esyr@redhat.com>
+> ---
+> v2:
+>   - Added prefix to the patch subject
+>   - Fixed commit message formatting (line width, "Fixes:" commit hash
+>     prefix size)
 
-Note the i915_gem_shmem driver still need to be split when swapping, thus
-add a new flag 'split_large_folio' for writeback_control to indicate spliting
-the large folio.
+Thank you for the v2!
 
-[1] https://lore.kernel.org/all/cover.1717495894.git.baolin.wang@linux.alibaba.com/
-[2] https://lore.kernel.org/all/20240515055719.32577-1-da.gomez@samsung.com/
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- drivers/gpu/drm/i915/gem/i915_gem_shmem.c |  1 +
- include/linux/writeback.h                 |  4 +++
- mm/shmem.c                                | 12 ++++++---
- mm/vmscan.c                               | 32 ++++++++++++++++++-----
- 4 files changed, 38 insertions(+), 11 deletions(-)
+The patch looks good to me:
 
-diff --git a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-index c5e1c718a6d2..c66cb9c585e1 100644
---- a/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-+++ b/drivers/gpu/drm/i915/gem/i915_gem_shmem.c
-@@ -308,6 +308,7 @@ void __shmem_writeback(size_t size, struct address_space *mapping)
- 		.range_start = 0,
- 		.range_end = LLONG_MAX,
- 		.for_reclaim = 1,
-+		.split_large_folio = 1,
- 	};
- 	unsigned long i;
- 
-diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-index 1a54676d843a..10100e22d5c6 100644
---- a/include/linux/writeback.h
-+++ b/include/linux/writeback.h
-@@ -63,6 +63,7 @@ struct writeback_control {
- 	unsigned range_cyclic:1;	/* range_start is cyclic */
- 	unsigned for_sync:1;		/* sync(2) WB_SYNC_ALL writeback */
- 	unsigned unpinned_netfs_wb:1;	/* Cleared I_PINNING_NETFS_WB */
-+	unsigned split_large_folio:1;	/* Split large folio for shmem writeback */
- 
- 	/*
- 	 * When writeback IOs are bounced through async layers, only the
-@@ -79,6 +80,9 @@ struct writeback_control {
- 	 */
- 	struct swap_iocb **swap_plug;
- 
-+	/* Target list for splitting a large folio */
-+	struct list_head *list;
-+
- 	/* internal fields used by the ->writepages implementation: */
- 	struct folio_batch fbatch;
- 	pgoff_t index;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 996062dc196b..50aeb03c4d34 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -795,7 +795,6 @@ static int shmem_add_to_page_cache(struct folio *folio,
- 	VM_BUG_ON_FOLIO(index != round_down(index, nr), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapbacked(folio), folio);
--	VM_BUG_ON(expected && folio_test_large(folio));
- 
- 	folio_ref_add(folio, nr);
- 	folio->mapping = mapping;
-@@ -1482,10 +1481,11 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 	 * "force", drivers/gpu/drm/i915/gem/i915_gem_shmem.c gets huge pages,
- 	 * and its shmem_writeback() needs them to be split when swapping.
- 	 */
--	if (folio_test_large(folio)) {
-+	if (wbc->split_large_folio && folio_test_large(folio)) {
-+try_split:
- 		/* Ensure the subpages are still dirty */
- 		folio_test_set_dirty(folio);
--		if (split_huge_page(page) < 0)
-+		if (split_huge_page_to_list_to_order(page, wbc->list, 0))
- 			goto redirty;
- 		folio = page_folio(page);
- 		folio_clear_dirty(folio);
-@@ -1527,8 +1527,12 @@ static int shmem_writepage(struct page *page, struct writeback_control *wbc)
- 	}
- 
- 	swap = folio_alloc_swap(folio);
--	if (!swap.val)
-+	if (!swap.val) {
-+		if (nr_pages > 1)
-+			goto try_split;
-+
- 		goto redirty;
-+	}
- 
- 	/*
- 	 * Add inode to shmem_unuse()'s list of swapped-out inodes,
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 96ce889ea3d0..ba7b67218caf 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -628,7 +628,7 @@ typedef enum {
-  * Calls ->writepage().
-  */
- static pageout_t pageout(struct folio *folio, struct address_space *mapping,
--			 struct swap_iocb **plug)
-+			 struct swap_iocb **plug, struct list_head *folio_list)
- {
- 	/*
- 	 * If the folio is dirty, only perform writeback if that write
-@@ -676,6 +676,16 @@ static pageout_t pageout(struct folio *folio, struct address_space *mapping,
- 			.swap_plug = plug,
- 		};
- 
-+		/*
-+		 * The large shmem folio can be split if CONFIG_THP_SWAP is
-+		 * not enabled or contiguous swap entries are failed to
-+		 * allocate.
-+		 */
-+		if (shmem_mapping(mapping) && folio_test_large(folio)) {
-+			wbc.list = folio_list;
-+			wbc.split_large_folio = !IS_ENABLED(CONFIG_THP_SWAP);
-+		}
-+
- 		folio_set_reclaim(folio);
- 		res = mapping->a_ops->writepage(&folio->page, &wbc);
- 		if (res < 0)
-@@ -1257,11 +1267,6 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 						goto activate_locked_split;
- 				}
- 			}
--		} else if (folio_test_swapbacked(folio) &&
--			   folio_test_large(folio)) {
--			/* Split shmem folio */
--			if (split_folio_to_list(folio, folio_list))
--				goto keep_locked;
- 		}
- 
- 		/*
-@@ -1362,12 +1367,25 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 			 * starts and then write it out here.
- 			 */
- 			try_to_unmap_flush_dirty();
--			switch (pageout(folio, mapping, &plug)) {
-+			switch (pageout(folio, mapping, &plug, folio_list)) {
- 			case PAGE_KEEP:
- 				goto keep_locked;
- 			case PAGE_ACTIVATE:
-+				/*
-+				 * If shmem folio is split when writeback to swap,
-+				 * the tail pages will make their own pass through
-+				 * this function and be accounted then.
-+				 */
-+				if (nr_pages > 1 && !folio_test_large(folio)) {
-+					sc->nr_scanned -= (nr_pages - 1);
-+					nr_pages = 1;
-+				}
- 				goto activate_locked;
- 			case PAGE_SUCCESS:
-+				if (nr_pages > 1 && !folio_test_large(folio)) {
-+					sc->nr_scanned -= (nr_pages - 1);
-+					nr_pages = 1;
-+				}
- 				stat->nr_pageout += nr_pages;
- 
- 				if (folio_test_writeback(folio))
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
+Because it is a fix, I think it is a candidate for -net, not net-next.
+
+@Network maintainers: is it OK for you to apply this v2 in "net", not
+"net-next"? Or is it easier for you to have a v3 with a different prefix?
+
+(No conflicts to apply this patch on -net, the code didn't change for 4
+years.)
+
+Cheers,
+Matt
 -- 
-2.39.3
+Sponsored by the NGI0 Core fund.
 
 
