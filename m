@@ -1,117 +1,180 @@
-Return-Path: <linux-kernel+bounces-283152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968FE94EDED
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:18:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF4C94EDE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC6C1C21950
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:18:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C236284227
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079DC17C9EA;
-	Mon, 12 Aug 2024 13:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D48817C217;
+	Mon, 12 Aug 2024 13:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0xwqkTU"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="T1DGM4+f"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C663917C211;
-	Mon, 12 Aug 2024 13:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839261D699;
+	Mon, 12 Aug 2024 13:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723468693; cv=none; b=ACmFAMcoVMgkCkfcuG4kiH5nFj6hlQK/TfHXHSe6EfWxMWcnf3y+cAdIti0j1TNa6A+zEXXspr/nKtGn1UPjfns7RO6HPihMjrK7FznFzu6PPQs4xoeLVEav70AElKpdEuDehLXiZaHckd2YLlvJViLMn9Vqlc6urh9S2InsFPk=
+	t=1723468682; cv=none; b=AKTqgzUPzmMeHyFktSRAagmuz37fZ6YFvYDVc+h/hCB954v7y+uao88AQcQg9OP3icn4GHksRN12ar/ZiWTntJ+jP5AHvoOihfuEQfJxTyxQleokJgvo5S9S2U2YS6WUn1IG2w7FsWhrW4d1q7DvJBRqnR3x3+Sp1wryB2CmSmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723468693; c=relaxed/simple;
-	bh=87yztn4D1KIhhST1W56YLq4a+J6Ax5vSB9B/WnFsHuQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UiTOEpT9Crupp8FQHwrqcp5y1BfhAwjsXVOAKqDReLDiRcduY2zj0YLJlKDMaL4TL5AQ2lRC/+Bvpvicv8bV0741Z9TH2ksAwf76mCaKlUaSpFCFVZ6Uq3RcPTEiTP+aFgdjPHwvlu1gooV3i5skejqmHf2vX4UzgPGHlq6IqfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0xwqkTU; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3684407b2deso2372325f8f.1;
-        Mon, 12 Aug 2024 06:18:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723468690; x=1724073490; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gO5OeEBjL0muHiUOKED6KPQ9bnjlNdkaKaqLWi0q2X4=;
-        b=Y0xwqkTU2bqytbVBIQghpS7VzE7/ZjHFqyQCoBi6Nq6HrpUPkA6YrYcH8/PUQoXl1Q
-         t8gJB8gmBu7h2rwY7szTcRVtBFo/RgEeZ4CreJCKIgta6V5sfSC59jZDSP7j8Wr25Bcr
-         6PyWRe5w9mdI/bVVrDXLUw0rth7rYmsNe61j+9WMXqjPJS/HO76f3ig8LWVp9Nu9zgFd
-         KHBtuFVVSqq5basudEfuvm+pG0gCZPSQsZjSaMUS7s+BlUEPSonucyoZNipd+/PbQh5l
-         cUCqEAyJOdeoG94AaydBdn9lma0+z1uTJQv389xvnXRQmlwxvN19mco5Fnq8IdytXRyN
-         tMLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723468690; x=1724073490;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gO5OeEBjL0muHiUOKED6KPQ9bnjlNdkaKaqLWi0q2X4=;
-        b=XjfH6RfM/YYwovUoyZBkIkdPtDx8QcN0S3MRZmLFFtaSK7D3DMfeufD/DWIUTxWU8b
-         Uz6v2BDMpBvvVrutGGveXoZ0zIaJOiwIsp7tvcANbY2se6UqXqjdz7g+82+pbU7V2Fka
-         PtS3Jm8nKjUGX+gakwmPaoyILHE7vMBmsLPGHU77nPrWpGnYp5ZVBKHUN+Qjj7kAhLci
-         qY/ASmRD+dPLFkv2GuaJcerjWikhEpEP+WYYfM5Z7a6UtHcffixJvRKH0rKPCQ0jNEiI
-         y3U2wST6RCSNH67LFsnA34+D6n6xiEQGQ9u3cM39Oylagc6Zyx8frvsCRBPvAIzD5/Vm
-         xoKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSRcztpUxHJfjDELd8kWBtVe8/qc8kHDmilZFitQs1MrVcg9wV91K38sog4tNWuIbEUOZEzr7NCAceh1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYSvBoouX2KOpTbAtbCLxwjLfwvub5NRoZmUQ8K9sFqIAoe+11
-	o/ff+XVcYAxGD3pSk3e1z+ds4E5QB0ewv12uu0oZdLKZj6fou91H
-X-Google-Smtp-Source: AGHT+IE2w+Q7APZQVvTo0NOu9QmMtNISobLlKyPKAWkTbhNsMI7kKnTrddCPopOlyYQ3wrdDabSOJw==
-X-Received: by 2002:adf:e2c6:0:b0:368:7f4f:9ead with SMTP id ffacd0b85a97d-3716ccd6e7cmr222600f8f.7.1723468689607;
-        Mon, 12 Aug 2024 06:18:09 -0700 (PDT)
-Received: from ryzen.lan (82-65-243-93.subs.proxad.net. [82.65.243.93])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c7bc8c3sm191105975e9.47.2024.08.12.06.18.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:18:09 -0700 (PDT)
-From: Vincent Legoll <vincent.legoll@gmail.com>
-To: John Crispin <john@phrozen.org>,
-	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vincent Legoll <vincent.legoll@gmail.com>
-Subject: [PATCH 2/2] MIPS: ralink: Fix missing `get_c0_perfcount_int` prototype
-Date: Mon, 12 Aug 2024 15:17:43 +0200
-Message-ID: <20240812131803.16475-3-vincent.legoll@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240812131803.16475-1-vincent.legoll@gmail.com>
-References: <20240812131803.16475-1-vincent.legoll@gmail.com>
+	s=arc-20240116; t=1723468682; c=relaxed/simple;
+	bh=aoEG7LVugUDhTzLFYA5r9vLpssJzwnJp6xpB5GyAH0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qWXTZiIh+wmlUjrPiiTMaAnUAPmOWjXJx22aKk908i7oOd0yEUcNruVN3Nroq0ueuSoxQaTnSjRG9kpbRko0ELwzDn9addDMU08ZTvzToGJdySTkEqEv/d3nVnrcZSPjwPwkxi5ECVWr5WiiZLJFK6w2RNnwn41/ZlEgpdj50as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=T1DGM4+f; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 41E7620002;
+	Mon, 12 Aug 2024 13:17:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723468677;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JdcV2kRk9M7GFAK/D+USec3altBfiWngrF1bMZJR0h0=;
+	b=T1DGM4+ftpehFe4HTk9kRVwPAVKw3AXm0nD1T1JMZhEdelkbXoOfgy4NgYAKj95rVaLvIp
+	nZnomFB1XkmKUg7BHzwy2Zpp7FfDaMYjbRXKCK5jVbxGkA4HSJ1kb6ERXFei+u8THVVKQK
+	AB7ydR869hd6hCgePz3L2ncJBB48RgAJbw3nqvRXWZ2bnwmJrOyzsbOyD1LgGLVygbOXe1
+	h2sXickvc/8OCgBUceYdm1WA7UmkQX6+A8msWci8Mu3YNPv7JKtz5mpXi+/Z91kCss8Pbp
+	noYDmTyhdrsEflAz5id8Ax4oD5XfbGH/ORmkMLDhKex9GquwQMFbGoeyrW6ljA==
+Date: Mon, 12 Aug 2024 15:17:55 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Joern Engel <joern@lazybastard.org>, Keith
+ Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig
+ <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan
+ <saravanak@google.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>, Florian Fainelli
+ <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v4 0/7] mtd: improve block2mtd + airoha parser
+Message-ID: <20240812151755.0feab4b2@xps-13>
+In-Reply-To: <66b9df7c.050a0220.3574aa.d5bb@mx.google.com>
+References: <20240809172106.25892-1-ansuelsmth@gmail.com>
+	<20240812104954.1e8d55f7@xps-13>
+	<66b9df7c.050a0220.3574aa.d5bb@mx.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-Fix the following warning:
+Hi Christian,
 
-  CC      arch/mips/ralink/irq-gic.o
-arch/mips/ralink/irq-gic.c:15:5: warning: no previous prototype for 'get_c0_perfcount_int' [-Wmissing-prototypes]
-   15 | int get_c0_perfcount_int(void)
-      |     ^~~~~~~~~~~~~~~~~~~~
+ansuelsmth@gmail.com wrote on Mon, 12 Aug 2024 12:10:03 +0200:
 
-Signed-off-by: Vincent Legoll <vincent.legoll@gmail.com>
----
- arch/mips/ralink/irq-gic.c | 1 +
- 1 file changed, 1 insertion(+)
+> On Mon, Aug 12, 2024 at 10:49:54AM +0200, Miquel Raynal wrote:
+> > Hi Christian,
+> >=20
+> > ansuelsmth@gmail.com wrote on Fri,  9 Aug 2024 19:20:58 +0200:
+> >  =20
+> > > This small series handle 2 problems.
+> > >=20
+> > > It does try to ""standardize"" the usage of block2mtd module with
+> > > MTD OF nodes.
+> > >=20
+> > > It is very easy to add support for MTD parser by just adding an
+> > > OF node to the mtd created for block2mtd.
+> > >=20
+> > > This apply only if the root block is used for block2mtd to allow
+> > > scenario where the full eMMC or an NVME is used for MTD and it doesn't
+> > > have any partition table.
+> > >=20
+> > > To also support NVME, similar to how it's done with eMMC, we introduce
+> > > a subnode to the NVME controller that needs to have the "nvme-card"
+> > > compatible where a dev can define fixed-paritions for MTD parser usag=
+e.
+> > >=20
+> > > This series also add support for the Airoha partition table where
+> > > the last partition is always ART and is placed at the end of the flas=
+h.
+> > >=20
+> > > This require dynamic calculation of the offset as some dedicated
+> > > driver for bad block management might be used that reserve some space
+> > > at the end of the flash for block accounting. =20
+> >=20
+> > Who is reserving this space? And this is not reflected anywhere in the
+> > partition table?
+> > =20
+>=20
+> To be more precise Mediatek use a custom way to handle bad blocks called
+> BMT where they reserve and store data at the end of the nand. This is
+> loaded before the flash driver controller so when MTD is init, the size
+> is already reduced. The reserved space can change and it really depends
+> on the tuned values hence it may change.
 
-diff --git a/arch/mips/ralink/irq-gic.c b/arch/mips/ralink/irq-gic.c
-index 3bab51a5fb4c..8bc566ea00e5 100644
---- a/arch/mips/ralink/irq-gic.c
-+++ b/arch/mips/ralink/irq-gic.c
-@@ -10,6 +10,7 @@
- #include <linux/of.h>
- #include <linux/irqchip.h>
- #include <asm/mips-cps.h>
-+#include <asm/time.h>
- 
- int get_c0_perfcount_int(void)
- {
--- 
-2.46.0
+Is this supported in mainline Linux? MTD handles the bad blocks and the
+bad block tables, so I don't understand how this hardware feature can
+live together with MTD.
 
+Anyway, you are talking about MMCs, I don't understand why there are
+bad blocks, nor what is checking them and when. This is all still very
+fuzzy to me, I'm sorry.
+
+> > > New aarch64 Airoha SoC make use of this partition table and use block=
+2mtd
+> > > for eMMC to treat them as MTD with custom bad block management and bl=
+ock
+> > > tracking. =20
+> >=20
+> > I am sorry, I am not used to such use cases, and I really fail getting
+> > why you would like to use mtd with an eMMC. Can you explain a little
+> > bit more what is not available in the block world that you really need
+> > from mtd? =20
+>=20
+> Since vendor needs more space and doesn't want to adapt to block world,
+> they are starting to use eMMC or block devices in general unpartitioned
+> and raw=20
+
+Okay, why not, it's easier for ROMs to access it I guess.
+
+> and using block2mtd to simulate it.
+
+This is what I don't understand. You can very well access your block
+device by offset, why do you need the mtd interface at all?
+
+> They don't care about the
+> performance penalities as it's something read at boot time and only new
+> firmware or some config files are written.
+>=20
+> Is it more clear now?
+
+I still don't understand the need for going through MTD tbh.
+
+> > Also, did you consider nvmem layouts instead to detect and define the
+> > ART area? (just asking).
+> >  =20
+>=20
+> They still need a MTD partition
+
+Why?
+
+> and most of the time userspace tool are
+> used on the ART partition. Using block2mtd and DT support will permit
+> the use of nvmem cell as a side effect (and that is a missive bonus
+> point of this honestly)
+
+MTD also registers into NVMEM, so this is nice if you need both, but if
+what you need is some NVMEM area derived dynamically and you register
+into MTD for that, then no, I'm sorry, that's not the correct approach.
+
+Thanks,
+Miqu=C3=A8l
 
