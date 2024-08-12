@@ -1,119 +1,146 @@
-Return-Path: <linux-kernel+bounces-283478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF23B94F570
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:57:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E346B94F574
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:58:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCD2B1C21020
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:57:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AEDFB2663C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576C187842;
-	Mon, 12 Aug 2024 16:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EXPsSksu"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31A9188CB0;
+	Mon, 12 Aug 2024 16:57:42 +0000 (UTC)
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB41189511
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD5A184558;
+	Mon, 12 Aug 2024 16:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481838; cv=none; b=j7fqQJVl7i8kL7MJhviM8qWMrqPFgqDIswXgeGs/hnGpVbmjl8h23+SH0BAKiFqtNKFOGHRF9/Kkz6iehOeRfERnxUbgBrGfPUc+FvSH4ir6WTBzqXsE0+9nKYLMIbvVmri6ZF8usjjQ6x59SdL/uG9FREOS3g3baD8bTHI39GI=
+	t=1723481862; cv=none; b=GsYJWCpPjnkAyt/O60TptVcAgypdfEpYTqJSdMys9iw5/dTovENFSweeP0AXxGSSoAKkZyxLSXySEOLX0pzvP7DZkStwp8f37UehADcGRrr+Ofci1r2A6zC8Sydl5ELu+X7GwUAmd5cNpeiAMJvj+DYYWfKwJaNu7w1xasfpzMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481838; c=relaxed/simple;
-	bh=MSWheAYOm5uORv3/WCtLXbFVBaYVV4paR3isdB7aaWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlr/ZO2VmetA+7Ok37rPDeFBOVidcERTSYkyyJdcNffVhilv1ubaI+ibKm7ZoHH+fWvZblp2s7tu4jMv6l+/PQEulrl2pb9Dv9iXMimYtiSpFklF7pOwfBz/yzQuKiUcridqLhd3B3uTXO3n3yCI3Q04agqtWv+1Gkf1XGgEw00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EXPsSksu; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7aa4ca9d72so558321366b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:57:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723481835; x=1724086635; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSWheAYOm5uORv3/WCtLXbFVBaYVV4paR3isdB7aaWA=;
-        b=EXPsSksulhbu14+eyHeEEuTIuu3w4K7i756tPidsMd3NbXQcyAYLlAyyYtPsz+WY7Y
-         OhMuw5t/G1FI2KjPtdjNrczewmFQHP8ZxpIOX6/wb2eBbX48dXmaU4vxEfUQshtnBBpw
-         /GCDGm/QOWfGczOJM52ws0vAbfen8YyaZ7X+F1/p8CizS9pBIRrA4m+KR1fsxGu4pmp2
-         5bmxOPacewTFQvqCaYlBSg14tSvmvkhgasKktyjUCeLTyy7rqQFimFs1iGPtEwuYv44t
-         StBA3ZyhNLqWQY7z1Bve48G/TQM8prkqq20pbDOiROVEap40y1m/wodYjd0x4VD8AHTT
-         JnJA==
+	s=arc-20240116; t=1723481862; c=relaxed/simple;
+	bh=PFOeBR7DEWkdt/jQdta5OhkaVmv7rjz82/c3N9bXu5Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nwKs53HtS0miyN3zdU3hKjZfIDWeWdU7k2grbJLtLijhz9OOY8CTyz9tag/USH0zV/T61ETkN4mI9wBY/REfAO+vj3R05WyPA81asaztyeHdJXvDodSioCVIra3LJs00oM2jvVaNIXVe1PRMiIhUWvZgtC/iNPvyyi9F34+0UGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2cb4c4de4cbso2925215a91.1;
+        Mon, 12 Aug 2024 09:57:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723481835; x=1724086635;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MSWheAYOm5uORv3/WCtLXbFVBaYVV4paR3isdB7aaWA=;
-        b=tEQ3W01+eKdyudLTvQZoQXfmoH8ZaeO9HpXZcVWRWxFFRh561p/fa5KP8ez8QaJL9F
-         SEPmR0vlLah/wWcl2RNLFEdcPCluKa0MRoWCvtbeS4m+5HmHF3cuGR5kLDgWULcN17KK
-         LvEQoLXWFCsxxKOhIJ5al2OHD58lIxcK0aNGwEjuiVvi93I1lGtQGNMWdlC3nM7pjoBO
-         QHSsYu1a3vX4lfG//Pz7LN6WhlJs1tB9dZbf+ID27mxO5KFMnpPEAiWS3hDsBDG40mx5
-         gGfcnHAY/gkRpf42tnIVsoICrrYYTaGeZupPrJVxQkQID0xZYhl+2ejZKZYDACg9fgT8
-         oVfw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaDTkNbRKLXtJYFkb7U+y8QtCmfdJLLgR5zAS/8GWF5GffowQ0vpUbyL4/OLGdczoqwBEZd1NPWnwTYLJlZpX/cAiqr2B330oL42hB
-X-Gm-Message-State: AOJu0YxO1vc+d0sfvbbA4fiSmrushM8tYhzubUGMHqXoyc1ZXB1v3F7/
-	+oKFHcAhHcpMWPsYmzGZdizDqK8+81iPbVjVa/kGD5a8rwxUWHx58tZ/2mktFoo=
-X-Google-Smtp-Source: AGHT+IG8DI/8ApiuNEjifMrK4rBjseINuAZz4OESjCkxUQKd+mruXpNXcSB3i9JLyRHHNcr+bNoYiQ==
-X-Received: by 2002:a17:907:d841:b0:a7a:acae:3420 with SMTP id a640c23a62f3a-a80ed2c4d3emr67882666b.49.1723481834870;
-        Mon, 12 Aug 2024 09:57:14 -0700 (PDT)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb08f6b8sm243602566b.20.2024.08.12.09.57.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 09:57:14 -0700 (PDT)
-Date: Mon, 12 Aug 2024 18:57:12 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Chen Ridong <chenridong@huawei.com>
-Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
-	longman@redhat.com, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next 1/2] cgroup: update comment about delegation
-Message-ID: <qk63o7tqgwt246tmjhvpnzd5ojuuhbndn44tdc54newzws3i5x@igea5nmzcoz5>
-References: <20240812073746.3070616-1-chenridong@huawei.com>
- <20240812073746.3070616-2-chenridong@huawei.com>
+        d=1e100.net; s=20230601; t=1723481860; x=1724086660;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RBT6GUroxASOGIZcaDGkgoB7aJF/nxAzTjccxRYF0yA=;
+        b=HftjBlctT9vSmeEwXaZX1IkTUMazo3HI0MlTEINiSzIeAxtYVv14eeK4aPwyI/4iEp
+         fKTqQe2ExIVxxsUAdo0aTyI+hJOZoUaKY4AWc8d2aOaNtVZFKtMH1HpAQqNnXB2pF3RV
+         eFPNIe71GyH/QHHamzUJuPwbvkiZq81zVKHnz559ecsT6om26/mru3fRi1zkZEXfnV4C
+         8XOTf4hpyXAKtVYIflsltth/faTGxuBoYFAvX2OiJCAmguYVr43N2mEkLdfOHCxGQM9M
+         qVrd5v7SwiOt8aio9+0KmOSahOA5oaSwt7gyHwCl4Jaom0nNFkXEUn+7S7pMu3h6HT0c
+         /9/A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuQuDlAt597UW7PC8bLs4rwkr8BnxxWeshMl0QqGAnOG+dDh601YDY5Fcz2+r6PD4eKfkxtp/th/dxwIVUw85KzzYmqx1vuerbwfzyLT5bIxi2QvMG8TAkoW51m3Jq1BDCqpbrTebo53oDgaWqiA==
+X-Gm-Message-State: AOJu0YzpcHCQ1YRGbfGLCJgQlu1omD4p0Md1DCr5IxYbwASdJ3G0VXUX
+	NG56sQxsi81Nrb5swnWUgT+me2N09uYlgEdy0oXwa5kpqiyJ1FQ/q5q5zmFrknYpsyoL+tGn2Kk
+	+kpOV7BkH5oPU8ybLwjsM/eKC0d0=
+X-Google-Smtp-Source: AGHT+IHWp42ThEM9dW+KrJQ0c4HyecKzjeMkYed6s9Ndqys32WZ9fNaZLY3ER+aplHGMgQImA7IjNNuaAO89dP+kRog=
+X-Received: by 2002:a17:90a:ea0a:b0:2cb:5654:8367 with SMTP id
+ 98e67ed59e1d1-2d3926407bcmr946152a91.26.1723481860169; Mon, 12 Aug 2024
+ 09:57:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="is5odoxrqipkobog"
-Content-Disposition: inline
-In-Reply-To: <20240812073746.3070616-2-chenridong@huawei.com>
+References: <909abbc8-efca-40df-9876-8c36b6942a83@stanley.mountain>
+ <20240810191704.1948365-1-namhyung@kernel.org> <ZrozwIQcB_viRsKt@x1> <Zro90YPyLCB9PsfL@x1>
+In-Reply-To: <Zro90YPyLCB9PsfL@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 12 Aug 2024 09:57:27 -0700
+Message-ID: <CAM9d7ch1ESEhJW-1j0O-0xxr-w1we+opD1xWTs4Eq=u7Gg7unQ@mail.gmail.com>
+Subject: Re: [PATCH] perf lock contention: Change stack_id type to s32
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Aug 12, 2024 at 9:52=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Aug 12, 2024 at 01:09:40PM -0300, Arnaldo Carvalho de Melo wrote:
+> > On Sat, Aug 10, 2024 at 12:17:04PM -0700, Namhyung Kim wrote:
+> > > The bpf_get_stackid() helper returns a signed type to check whether i=
+t
+> > > failed to get a stacktrace or not.  But it saved the result in u32 an=
+d
+> > > checked if the value is negative.
+> > >
+> > >       376         if (needs_callstack) {
+> > >       377                 pelem->stack_id =3D bpf_get_stackid(ctx, &s=
+tacks,
+> > >       378                                                   BPF_F_FAS=
+T_STACK_CMP | stack_skip);
+> > >   --> 379                 if (pelem->stack_id < 0)
+> > >
+> > >   ./tools/perf/util/bpf_skel/lock_contention.bpf.c:379 contention_beg=
+in()
+> > >   warn: unsigned 'pelem->stack_id' is never less than zero.
+> > >
+> > > Let's change the type to s32 instead.
+> > >
+> > > Fixes: 6d499a6b3d90 ("perf lock: Print the number of lost entries for=
+ BPF")
+> >
+> > Thanks, applied to perf-tools-next,
+>
+> I'll try to fix this later, but now it fails the first 'make -C
+> tools/perf build-test' target, that you can run directly as:
+>
+> =E2=AC=A2[acme@toolbox perf-tools-next]$ tools/perf/tests/perf-targz-src-=
+pkg tools/perf
+> <SNIP>
+>   CLANG   /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf/util/bpf_skel/.t=
+mp/augmented_raw_syscalls.bpf.o
+> In file included from util/bpf_skel/lock_contention.bpf.c:9:
+> util/bpf_skel/lock_data.h:10:2: error: unknown type name 's32'; did you m=
+ean 'u32'?
+>    10 |         s32 stack_id;
+>       |         ^~~
+>       |         u32
+> util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
+>    17 | typedef __u32 u32;
+>       |               ^
 
---is5odoxrqipkobog
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Aug 12, 2024 at 07:37:45AM GMT, Chen Ridong <chenridong@huawei.com> wrote:
-> There are three interfaces that delegatee was not allowed to write.
-
-Actually, the right way is to query
-/sys/kernel/cgroup/delegate
-
-> However, cgroup.threads was missed at some place, just add it.
-
-When you're at it, could you change the docs to refer to the generic
-definition of set set of delegatable files where it makes sense.
+Oops, sorry about this.  There was a kernel test robot report.
+It seems we need 'typedef __s32 s32;' too.
 
 Thanks,
-Michal
+Namhyung
 
---is5odoxrqipkobog
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZro+5gAKCRAt3Wney77B
-SbJ9AP9qJuDZGebJ0/ukBJ5kkcdviUeldQJlj4sv6mz0BpetkgEA4p2fTqTxn3I4
-h4lm0fR7jVm1mHsw1OmVLtv0TPHczg4=
-=IYjR
------END PGP SIGNATURE-----
-
---is5odoxrqipkobog--
+> In file included from util/bpf_skel/lock_contention.bpf.c:9:
+> util/bpf_skel/lock_data.h:14:2: error: unknown type name 's32'; did you m=
+ean 'u32'?
+>    14 |         s32 stack_id;
+>       |         ^~~
+>       |         u32
+> util/bpf_skel/vmlinux.h:17:15: note: 'u32' declared here
+>    17 | typedef __u32 u32;
+>       |               ^
+> 2 errors generated.
+> make[2]: *** [Makefile.perf:1247: /tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/too=
+ls/perf/util/bpf_skel/.tmp/lock_contention.bpf.o] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [Makefile.perf:292: sub-make] Error 2
+> make: *** [Makefile:76: all] Error 2
+> make: Leaving directory '/tmp/tmp.FRZLVEwqdz/perf-6.11.0-rc2/tools/perf'
+> =E2=AC=A2[acme@toolbox perf-tools-next]$
 
