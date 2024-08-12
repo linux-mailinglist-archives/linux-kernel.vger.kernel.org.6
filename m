@@ -1,94 +1,39 @@
-Return-Path: <linux-kernel+bounces-282585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8968D94E62A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:35:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36FA894E62D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:35:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD96281A21
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C3321C209FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 05:35:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7342814D446;
-	Mon, 12 Aug 2024 05:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o75YNYcs";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/302KZYv";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UbyLc634";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pMz4q7t7"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328D23C0B;
-	Mon, 12 Aug 2024 05:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5318B14D42C;
+	Mon, 12 Aug 2024 05:35:21 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF223C0B;
+	Mon, 12 Aug 2024 05:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723440907; cv=none; b=L3gGL29gzp1FNlLO3nLRPiG4dywd63FATv2PUPIf4ckujhWWZvjCxzjZJUE4t2qRGFMkYSdJNcunEaswK16wLEozfv9sUgoJacdf823wg1Xh5eyJ8vqPrcxh4mgmmgCsCFfggwolWKvBdxGMAeMVqMiyVuIfdRGdy/kX2WejoXw=
+	t=1723440920; cv=none; b=I1Z4duhVBy1QQZSAMG+Y8hJLPlWLev1e4LhJKFfR68TQEOCfyUa1dhlyjf911iuc93/hhoum4z+61VFPl0Y57fSFvhhNnpM/S6U36SREThoo+sazTsR8aWHpjrpUN42hQnYq9Qa6W/8bdQX7wDmKmCAfoJ9MjAtqcuLcBjCSOp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723440907; c=relaxed/simple;
-	bh=oRsqaqJX4soiEj4HdeBuZMog9oA+glkc97p3Qo7ymO4=;
+	s=arc-20240116; t=1723440920; c=relaxed/simple;
+	bh=XamrK1GEP9bUHjr4am2AMnr/cGX21Z9pvoIc9kOKlaY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HJPdXJs0zx+hVkpnLamSQ3Cu4sQwvx/p7L/Bb9yQq/pEdpmP6PHuDTptJRNFxGIaEcQ5Ojag97jtHYEnzlhPbfT9g6O/fTBYqR0t1UJJ4VsSNFOu+5Qa5+QHJGlT9m9lP6EZ6qYgW9cbwyQFylcUyGHppz1nzc4Dzq6ToyMpRfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o75YNYcs; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/302KZYv; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UbyLc634; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pMz4q7t7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6A8472249B;
-	Mon, 12 Aug 2024 05:35:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723440903; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9fPhA3Mhguzt87NwzNRfDuCVskfrjtQ0j5pDVwcDzAg=;
-	b=o75YNYcskvTCJVeOBNPFDBiXFFhd7dAuPAKlqLDp1FXhVGutJ4/QK4rISapX7FZK7vQJ3q
-	XepEIViKt3dy/6JWG0/NqH1KEbGegFaiFNtKLx+hr9v+FEeNNCFb18HW+xMEBfOTCw4KcD
-	Sd/4PgITnEVZGt/vZjxhcIltmLVlc90=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723440903;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9fPhA3Mhguzt87NwzNRfDuCVskfrjtQ0j5pDVwcDzAg=;
-	b=/302KZYveb5EoVMD9xqHBvoqanbn6SAEiHRj5TqUpsJSGeZesUUSCiEz7DitIIndLAfImN
-	XUu1Ilc8POHKjHCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723440902; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9fPhA3Mhguzt87NwzNRfDuCVskfrjtQ0j5pDVwcDzAg=;
-	b=UbyLc634uSjrjru9duUPaqBKJ1ZK9rBgAuw6Km+MMUUbpEI8Y4KLVE02s7+LhlZ3mey/Lh
-	R/AApzyiBHWzbJEOkFjPfwfNu3bmE/nCWuggrsYt/FOxEeDyfeufI2TwzQn5Uzd+eSO+ZY
-	rHlkLjNEcZU+DLdmBIuDBnCHUManuBQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723440902;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9fPhA3Mhguzt87NwzNRfDuCVskfrjtQ0j5pDVwcDzAg=;
-	b=pMz4q7t7yo9m8DBEVcz3YQHMwcCFhWfDuXMA4F/sJJadCWVb5tUZQGmuvakiMeY3lnbwmk
-	88sKb/FnnzzhgKBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 18D1B137BA;
-	Mon, 12 Aug 2024 05:35:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YapLBAafuWbZbAAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Mon, 12 Aug 2024 05:35:02 +0000
-Message-ID: <945ccdcd-81ad-40de-8b56-749458f68702@suse.de>
-Date: Mon, 12 Aug 2024 07:35:01 +0200
+	 In-Reply-To:Content-Type; b=iUp7QGz9glcueYryKl+kRF8GN+Nq8A1miUd9hW5xl+5nsVKjEur7A008olP1ZxEWRBuxJJTfP9PLzREg6XFtLLqakTEh2WqpSvDnW4PnA7QVO20C6zHoTHHcGT2LJqbBRO9D6ayEoAAeOtSPdgFvIun1R8Y/wML3mCBp+np0jsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F03CAFEC;
+	Sun, 11 Aug 2024 22:35:42 -0700 (PDT)
+Received: from [10.162.43.141] (e116581.arm.com [10.162.43.141])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C43693F6A8;
+	Sun, 11 Aug 2024 22:35:07 -0700 (PDT)
+Message-ID: <0d049ec4-ab39-441b-8560-5613f3527473@arm.com>
+Date: Mon, 12 Aug 2024 11:05:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,145 +41,152 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/ast: astdp: fix pre-op vs post-op bug
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Dave Airlie <airlied@redhat.com>, Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <f7790a38-6b72-44dd-aaeb-550d2de14cf2@stanley.mountain>
- <57cea156-1abc-4860-9a6a-0a5fdb4a2971@suse.de> <87h6bt3j6w.fsf@intel.com>
- <359e5aa5-5908-44d3-8359-4605aac3f5d5@stanley.mountain>
+Subject: Re: [PATCH 1/2] mm: Retry migration earlier upon refcount mismatch
+To: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ shuah@kernel.org, willy@infradead.org
+Cc: ryan.roberts@arm.com, anshuman.khandual@arm.com, catalin.marinas@arm.com,
+ cl@gentwo.org, vbabka@suse.cz, mhocko@suse.com, apopple@nvidia.com,
+ osalvador@suse.de, baolin.wang@linux.alibaba.com,
+ dave.hansen@linux.intel.com, will@kernel.org, baohua@kernel.org,
+ ioworker0@gmail.com, gshan@redhat.com, mark.rutland@arm.com,
+ kirill.shutemov@linux.intel.com, hughd@google.com, aneesh.kumar@kernel.org,
+ yang@os.amperecomputing.com, peterx@redhat.com, broonie@kernel.org,
+ mgorman@techsingularity.net, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kselftest@vger.kernel.org, ying.huang@intel.com
+References: <20240809103129.365029-1-dev.jain@arm.com>
+ <20240809103129.365029-2-dev.jain@arm.com>
+ <761ba58e-9d6f-4a14-a513-dcc098c2aa94@redhat.com>
+ <5a4ae1d3-d753-4261-97a8-926e44d4217a@arm.com>
+ <367b0403-7477-4857-9e7c-5a749c723432@redhat.com>
+ <ee1b9177-fb12-4bcb-a644-8d5d3d9f16fa@arm.com>
+ <04e12698-8f83-4033-91b2-3a402c59c17a@redhat.com>
 Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <359e5aa5-5908-44d3-8359-4605aac3f5d5@stanley.mountain>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <04e12698-8f83-4033-91b2-3a402c59c17a@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-1.29 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -1.29
 
-Hi
 
-Am 09.08.24 um 19:06 schrieb Dan Carpenter:
-> On Fri, Aug 09, 2024 at 04:43:51PM +0300, Jani Nikula wrote:
->> On Fri, 09 Aug 2024, Thomas Zimmermann <tzimmermann@suse.de> wrote:
->>> Hi,
->>>
->>> thanks a lot for the bugfix.
->>>
->>> Am 09.08.24 um 14:33 schrieb Dan Carpenter:
->>>> The test for "Link training failed" expect the loop to exit with "i"
->>>> set to zero but it exits when "i" is set to -1.  Change this from a
->>>> post-op to a pre-op so that it exits with "i" set to zero.  This
->>>> changes the number of iterations from 10 to 9 but probably that's
->>>> okay.
->>> Yes, that's ok.
->>>
->>>> Fixes: 2281475168d2 ("drm/ast: astdp: Perform link training during atomic_enable")
->>>> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
->>>> ---
->>>>    drivers/gpu/drm/ast/ast_dp.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/11/24 14:38, David Hildenbrand wrote:
+> On 11.08.24 08:06, Dev Jain wrote:
+>>
+>> On 8/11/24 00:22, David Hildenbrand wrote:
+>>> On 10.08.24 20:42, Dev Jain wrote:
 >>>>
->>>> diff --git a/drivers/gpu/drm/ast/ast_dp.c b/drivers/gpu/drm/ast/ast_dp.c
->>>> index 5d07678b502c..4329ab680f62 100644
->>>> --- a/drivers/gpu/drm/ast/ast_dp.c
->>>> +++ b/drivers/gpu/drm/ast/ast_dp.c
->>>> @@ -148,7 +148,7 @@ void ast_dp_link_training(struct ast_device *ast)
->>>>    	struct drm_device *dev = &ast->base;
->>>>    	unsigned int i = 10;
->>>>    
->>>> -	while (i--) {
->>>> +	while (--i) {
->>> If this loop ever starts with i = 0, it would break again. Can we use
+>>>> On 8/9/24 19:17, David Hildenbrand wrote:
+>>>>> On 09.08.24 12:31, Dev Jain wrote:
+>>>>>> As already being done in __migrate_folio(), wherein we backoff if 
+>>>>>> the
+>>>>>> folio refcount is wrong, make this check during the unmapping phase,
+>>>>>> upon
+>>>>>> the failure of which, the original state of the PTEs will be 
+>>>>>> restored
+>>>>>> and
+>>>>>> the folio lock will be dropped via migrate_folio_undo_src(), any
+>>>>>> racing
+>>>>>> thread will make progress and migration will be retried.
+>>>>>>
+>>>>>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>>>>>> ---
+>>>>>>     mm/migrate.c | 9 +++++++++
+>>>>>>     1 file changed, 9 insertions(+)
+>>>>>>
+>>>>>> diff --git a/mm/migrate.c b/mm/migrate.c
+>>>>>> index e7296c0fb5d5..477acf996951 100644
+>>>>>> --- a/mm/migrate.c
+>>>>>> +++ b/mm/migrate.c
+>>>>>> @@ -1250,6 +1250,15 @@ static int migrate_folio_unmap(new_folio_t
+>>>>>> get_new_folio,
+>>>>>>         }
+>>>>>>           if (!folio_mapped(src)) {
+>>>>>> +        /*
+>>>>>> +         * Someone may have changed the refcount and maybe sleeping
+>>>>>> +         * on the folio lock. In case of refcount mismatch, bail 
+>>>>>> out,
+>>>>>> +         * let the system make progress and retry.
+>>>>>> +         */
+>>>>>> +        struct address_space *mapping = folio_mapping(src);
+>>>>>> +
+>>>>>> +        if (folio_ref_count(src) != folio_expected_refs(mapping,
+>>>>>> src))
+>>>>>> +            goto out;
+>>>>>
+>>>>> This really seems to be the latest point where we can "easily" back
+>>>>> off and unlock the source folio -- in this function :)
+>>>>>
+>>>>> I wonder if we should be smarter in the migrate_pages_batch() loop
+>>>>> when we start the actual migrations via migrate_folio_move(): if we
+>>>>> detect that a folio has unexpected references *and* it has waiters
+>>>>> (PG_waiters), back off then and retry the folio later. If it only has
+>>>>> unexpected references, just keep retrying: no waiters -> nobody is
+>>>>> waiting for the lock to make progress.
+>>>>
+>>>>
+>>>> The patch currently retries migration irrespective of the reason of
+>>>> refcount change.
+>>>>
+>>>> If you are suggesting that, break the retrying according to two
+>>>> conditions:
 >>>
->>> while (i) {
->>>     --i;
->>>      ...
->>> }
+>>> That's not what I am suggesting ...
 >>>
->>> instead?
->> FWIW, I personally *always* use for loops when there isn't a compelling
->> reason to do otherwise. You know at a glance that
+>>>>
+>>>>
+>>>>> This really seems to be the latest point where we can "easily" back
+>>>>> off and unlock the source folio -- in this function :)
+>>>>> For example, when migrate_folio_move() fails with -EAGAIN, check if
+>>>>> there are waiters (PG_waiter?) and undo+unlock to try again later.
+>>>>
+>>>>
+>>>> Currently, on -EAGAIN, migrate_folio_move() returns without undoing 
+>>>> src
+>>>> and dst; even if we were to fall
+>>>
+>>> ...
+>>>
+>>> I am wondering if we should detect here if there are waiters and undo
+>>> src+dst.
 >>
->> 	for (i = 0; i < N; i++)
+>> After undoing src+dst, which restores the PTEs, how are you going to 
+>> set the
 >>
->> gets run N times and what i is going to be afterwards.
+>> PTEs to migration again? That is being done through 
+>> migrate_folio_unmap(),
 >>
->> Sure, you may have to restructure other things, but I think it's almost
->> always worth it.
-> A for statement works here.  I need to resend the patch anyway because
-> the if (i) msleep() code doesn't make sense now.
+>> and the loops of _unmap() and _move() are different. Or am I missing
+>> something...
+>
+> Again, no expert on the code, but it would mean that if we detect that 
+> there are waiters, we would undo src+dst and add them to ret_folios, 
+> similar to what we do in "Cleanup remaining folios" at the end of 
+> migrate_pages_batch()?
+>
+> So instead of retrying migration of that folio, just give it up 
+> immediately and retry again later.
+>
+> Of course, this means that (without further modifications to that 
+> function), we would leave retrying these folios to the caller, such as 
+> in migrate_pages_sync(), where we move ret_folios to the tail of 
+> "folios" and retry migration.
 
-Why? The loop counts downwards and does not wait if the final iteration 
-(i == 0) fails.
+So IIUC, you are saying to change the return value in 
+__folio_migrate_mapping(), so that when move_to_new_folio() fails
 
-Personally, I prefer while for counting downwards. But if you do the for 
-loop as mentioned, you have to adapt the loop body.
+in migrate_folio_move(), we end up in the retrying loop of _sync() which 
+calls _batch() in synchronous mode. Here, we
 
-Best regards
-Thomas
+will have to make a change to decide how much we want to retry?
 
 >
-> regards,
-> dan carpenter
 >
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+> Maybe one would want to optimize that retry logic with such 
+> "temporarily failed because someone else has to make progress for us 
+> to make progress and free up a page reference" case. These are 
+> different to the typical "speculative" references that we try to 
+> handle via the existing retry magic.
+>
+> Please let me know if I am missing something fundamental.
+>
+>
 
