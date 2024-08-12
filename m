@@ -1,128 +1,99 @@
-Return-Path: <linux-kernel+bounces-283622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BFB94F6E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:46:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5523F94F6E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:46:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD9B1F21D07
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:46:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2561B20E05
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E1718DF6C;
-	Mon, 12 Aug 2024 18:45:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABE018EFC5;
+	Mon, 12 Aug 2024 18:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="feUxoO/M"
-Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MMZsu1Da"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1693E2B9B7;
-	Mon, 12 Aug 2024 18:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBCF18E77D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723488356; cv=none; b=tu6HsFIYwXZqWMwiHUYQRBUEGwBFuphZrtjbb56XIugrcygGvREaCPpdQUpy+cwswqAp7Rtf4WSiK8puGqUPquTMvXtAsbKGXbB7GyRT683cRWbf57JwIZS1W58sDAW8H9/kkgPGBo/SLwcCgsEvn6ME2u02u9UeqbT1qu5tmCk=
+	t=1723488360; cv=none; b=BRXCOE/lAppcRCdtiZZ3qLNbg0W4dixHpqNedIr7INA1EPPpIVT9mq9GBaltOymzX60bYzvs9rd/GLvQPRtJokUyXWqynOGviYchOmuv/73/ZVY5e4qR0zdzbJSUMe2ugsi0Ap4E8ZcGUrbSlwcN63+wspz66tOsIv5vcGRfEW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723488356; c=relaxed/simple;
-	bh=TR9nm8qypj66rgyu/7tTWyN3lIGveJ1wdSlfjYIj1uw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BZS9bsWyz2ht5jcwv+TCEmsrtW1EN9hJMJ5ZxMjdThDCY8rD4sI8zUz7on8M2vJ52bjRQkwCkZzsBRtR9GPutRkvAxumKiTrQPo4syim/uju/M2KfpDLejCrMfE7HVjjJCwrYRn1RU7e6385zKdcuieAb91F7KFRKTYqfC4VrUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=feUxoO/M; arc=none smtp.client-ip=52.119.213.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1723488360; c=relaxed/simple;
+	bh=FlJeUeETxp2FXGyr2GWev4hf6sZx/3ANmPmJGGVMNOM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nslvCyLWs35z4dRP43V3lAWxDLXS0D+T/btaz/JbMkHNkCFhVQ+79cPas5PJGWPVTT67XY3BjeRdeVME4CJIemRmDg3dR5B5Z5iAx2L6rekhkeCFgZrqK3X1r/8Rvz3SVVF8myd9bFjdVg0BmS4oLDsgei0IcbdRgsuoiFkutvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=MMZsu1Da; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2689f749702so2584722fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:45:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1723488356; x=1755024356;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=vZiDuPYpb58bPwU+I9LWgQyOBzqpwIr01DUBTsMb5eo=;
-  b=feUxoO/MY7kYHZug1NVXsKV50V97+LTLHllB/TQZxEBu95KGuVbwZjqo
-   IThY8IXdSdOPCsRsnfFo3vL0DCFGp7x1PZA55m+R5p4I0UFEM7jBXMtNa
-   Jk4lSnXYzg69AWtC2FBgDO67LmCPYqqG7AS0LRlODTuvyzzXCJd+ij/7W
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.09,283,1716249600"; 
-   d="scan'208";a="673462861"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 18:45:52 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.38.20:50457]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.46.236:2525] with esmtp (Farcaster)
- id c93f32e9-5893-4d1e-b1f8-7cefa3a997c6; Mon, 12 Aug 2024 18:45:51 +0000 (UTC)
-X-Farcaster-Flow-ID: c93f32e9-5893-4d1e-b1f8-7cefa3a997c6
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.218) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 12 Aug 2024 18:45:50 +0000
-Received: from 88665a182662.ant.amazon.com (10.142.139.164) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Mon, 12 Aug 2024 18:45:48 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <mtodorovac69@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <shuah@kernel.org>, <jain.abhinav177@gmail.com>
-Subject: Re: [PATCH v1 1/1] selftests: net: af_unix: cast void* to char* in call to macro TH_LOG()
-Date: Mon, 12 Aug 2024 11:45:40 -0700
-Message-ID: <20240812184540.60174-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20240812002257.23447-2-mtodorovac69@gmail.com>
-References: <20240812002257.23447-2-mtodorovac69@gmail.com>
+        d=chromium.org; s=google; t=1723488358; x=1724093158; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FlJeUeETxp2FXGyr2GWev4hf6sZx/3ANmPmJGGVMNOM=;
+        b=MMZsu1DaNz9IEO7vHVWVTlIglXU5NhcWP0UdWzyIBEMcTI61ZKl61IBYlWWOop+W2+
+         arPgfgHUdOu4kQz1pCH7+3Eyfy/dCC9C1AvVdfKifUt7NKlRgXrINKt4bfTISRfk0Md7
+         2s3G/Ryh4r8MOeQauxsBjOWwH9+WVYbv8/98Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723488358; x=1724093158;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FlJeUeETxp2FXGyr2GWev4hf6sZx/3ANmPmJGGVMNOM=;
+        b=AcqDVhyLVQ0XkXJt5/MnsGO4vVSpaEHf0GQOT6nONhZVZZ0mJITtq7FExm7sSsSI+V
+         UMS118xGZaTRIXuyIWKvuYjcVRuc6/SDjAvPjbNwb9BwFCAXPU4lfWAwWPCIGMjMflcJ
+         mXl6bN1sV5agLmGYpEaWAooapi+5zNwKKw41XHautXPk/NoXl47l0209v0lF35bulEXc
+         irGJNQL21e1feviDL+f+ieQt94DVQpflMFJiITfub7neXg/Sl2jJLnD+BSP+gnmZXHqa
+         VA2bA6seRTbw08cMVEmOK3PNxCEVYGPFdFo1keChhdnJUmzg/yisJMVOBlUKCmivmjrw
+         fe4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXV4YLLuNgmgYLYhqxg0YPd1FjbPTIy3n43zg6B4pmDJ87YlIsXsmo1HI0vJXsODRhN0EickaGWyA1jhn1B43WpcVYVhBAbUkDqcDuq
+X-Gm-Message-State: AOJu0YxrVOQODPehior7vLo01WtZvdNFcRobNDpxHg1r5YjKzvF+41rx
+	IrNMzElh3lGDybVLlwr9kcxQwZQaZnlH6uMc+uMVLeY/RpEju4iWFaK/CLVuUgVip14OZF3OxzF
+	wUxL1Z08Z/LRZyBa3WYjHSF/Wc78ezhBc2f6i
+X-Google-Smtp-Source: AGHT+IH30s8urnd9D4vusdb6oKwp0HXj/UnYiPnQHXC9OHfS2VY28kyI7YDJnpNmod6p2kMXZIJDF0yMvKKrEoNk7XY=
+X-Received: by 2002:a05:6870:831d:b0:260:eb3a:1bc with SMTP id
+ 586e51a60fabf-26fcb8cad9emr1220729fac.41.1723488358507; Mon, 12 Aug 2024
+ 11:45:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org>
+In-Reply-To: <20240808-trust-tbt-fix-v2-1-2e34a05a9186@chromium.org>
+From: Esther Shimanovich <eshimanovich@chromium.org>
+Date: Mon, 12 Aug 2024 14:45:47 -0400
+Message-ID: <CA+Y6NJFx21B9Up14VCW_w_gzv4TGDYL3BsNc_4FOym5GvcY8ew@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: Detect and trust built-in Thunderbolt chips
+To: Bjorn Helgaas <bhelgaas@google.com>, Rajat Jain <rajatja@google.com>, 
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, iommu@lists.linux.dev, 
+	Lukas Wunner <lukas@wunner.de>, Mika Westerberg <mika.westerberg@linux.intel.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: EX19D037UWC002.ant.amazon.com (10.13.139.250) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-Date: Mon, 12 Aug 2024 02:22:58 +0200
-> GCC 13.2.0 reported warning about (void *) beeing used as a param where (char *) is expected:
-> 
-> In file included from msg_oob.c:14:
-> msg_oob.c: In function ‘__recvpair’:
-> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’,
-> 							but argument 6 has type ‘const void *’ [-Wformat=]
->   106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
->       |                                        ^~~~~~~~~~~~~
-> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
->   101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
->       |                 ^~~~~~~~
-> msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
->   235 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
->       |                 ^~~~~~
-> ../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’,
-> 							but argument 6 has type ‘const void *’ [-Wformat=]
->   106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
->       |                                        ^~~~~~~~~~~~~
-> ../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
->   101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
->       |                 ^~~~~~~~
-> msg_oob.c:259:25: note: in expansion of macro ‘TH_LOG’
->   259 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
->       |                 ^~~~~~
-> 
-> Casting param to (char *) silences the warning.
-> 
-> Fixes: d098d77232c37 ("selftest: af_unix: Add msg_oob.c.")
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Eric Dumazet <edumazet@google.com>
-> Cc: Jakub Kicinski <kuba@kernel.org>
-> Cc: Paolo Abeni <pabeni@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kselftest@vger.kernel.org
-> Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Additional note - I have access to a variety of computers, with lspci
+information accessible via a database.
 
-Thanks for the patch!
+Testing I've done so far:
+- So far, this version of the patch has been tested on computers with
+two different discrete Thunderbolt Intel JHL controllers (JHL6540 and
+JHL7540).
+- I have been using an external Thunderbolt dock with JHL7540 to
+verify that external docks are still recognized as untrusted and
+removable.
+- An earlier iteration of this patch (before I refactored it) was
+tested on computers with JHL6250, JHL6340, JHL6540, JHL7540.
 
-but I found the same patch posted a bit earlier here,
-and Abhinav will post v2.
+Is there any additional testing that would be ideal for this ticket?
+Which configurations/types of devices would you want to see tested?
 
-https://lore.kernel.org/netdev/20240810134037.669765-1-jain.abhinav177@gmail.com/
+Thank you!
 
