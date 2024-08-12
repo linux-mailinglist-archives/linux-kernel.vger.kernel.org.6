@@ -1,107 +1,242 @@
-Return-Path: <linux-kernel+bounces-283666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C4EE94F78C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:38:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD14994F78D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:39:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1701C21CF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7EEFB218AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 661C61917CD;
-	Mon, 12 Aug 2024 19:38:41 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3D217A5B5
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5941917EB;
+	Mon, 12 Aug 2024 19:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOS/va7O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA8D17A5B5;
+	Mon, 12 Aug 2024 19:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723491521; cv=none; b=Tay9rWslyCoO4+nSBOMqhFCqgpfRKXreYz9VzbuYVYIBXem1LjwRX+5Aj1E9h++6saavMJam3Kxiglw3cU8AJaFwWgfuzP0Zm1v55P0ydcWH7Z6h9hmUEmxGu7e7CwQnr7+H1a64ELLzrAHyn8KSP2otB7ouEINK3POMw8YS+ak=
+	t=1723491560; cv=none; b=aTpgNVRMHt4QjdYLAlqZuDnWFu5yHjB2nV4HjYVqIUJjukXlF0q7oq0nGIx+U0Xkw7uUi97ez656tuNicjxEIIwDJ/jIK7bq2iA5m0cSFF6ddfSQfU48THBk8BE8O7TrpV6ayLOjoTDaNu9dmJ0n5fzjhTO8ba85I7GpEMAhyU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723491521; c=relaxed/simple;
-	bh=s/A5uX7yfaaDfrgHpeQ+Gmfl+MK0xIzRFPutyIkEPuM=;
+	s=arc-20240116; t=1723491560; c=relaxed/simple;
+	bh=4c2DWHnn3Rchka7MEhcsnyBGNJt8bJEvTsEN8uLK7bs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMh+X+uNHYcphIDgqkap6DlHttrQmhSFwC2+5QSM02h1mvppOzKbBqniYDao6hIgmbWaTsXrc6Fpo715ZgNZMiH/g3FjwA9Q7FPdRuUhEyGH20OqE7zrmwFHAVDc3ro+F5Yg9Hlultg34EiXBikxdmtx3q6w5fWVTFO8Ji0SnIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by mail.home.local (8.17.1/8.17.1/Submit) id 47CJcQFq025695;
-	Mon, 12 Aug 2024 21:38:26 +0200
-Date: Mon, 12 Aug 2024 21:38:26 +0200
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] tools/nolibc: x86_64: wrap asm functions in functions
-Message-ID: <Zrpksrnrbykx+IML@1wt.eu>
-References: <20240810-nolibc-lto-v1-0-a86e514c7fc1@weissschuh.net>
- <20240810-nolibc-lto-v1-3-a86e514c7fc1@weissschuh.net>
- <ZrdZKcQ1SClUHWa1@biznet-home.integral.gnuweeb.org>
- <121f58b7-b781-44cf-a18f-6f8893c82187@t-8ch.de>
- <20240810143556.GA9168@1wt.eu>
- <384a1d29-13ca-4e4b-b4b7-2a99e3fdb01b@t-8ch.de>
- <17ed9bf5-64da-418e-b40e-6e3d40c67769@t-8ch.de>
- <20240810170030.GA4461@1wt.eu>
- <65cf1965-841b-4fb1-9222-913c6bd9ccd4@t-8ch.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pFrej7Up7St8Lip6Ja2mbiuA8v3g46TPw/uEfy8SilW+jCf6LNO+Gk8hJ1utar0ZQ6Yft+0SuASrPuZABTj7JF4Vt4v3qPcOsvvk1RpjXUV/OwSg/jsgH90lxLzF8QsQQfnt5Z7EmVdKw4L/iI1atzLFHbUQNPp7uLr6K6oYOdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iOS/va7O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457AFC32782;
+	Mon, 12 Aug 2024 19:39:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723491559;
+	bh=4c2DWHnn3Rchka7MEhcsnyBGNJt8bJEvTsEN8uLK7bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iOS/va7OJy2/8D1kn4Yqnfp7ko+6lVS48RjcgVfmcC6a+Sq4PNE5cW2h3ut2r7UMp
+	 DYHkZ5yllSvFuhNMwJq4LeZWSq7nCUK5SCqjdcyY0ULkk4LyfUK6KTzA1lKORVmMzJ
+	 d9UkHjuzc4KDUu2mXT1ZzMR6Xso3OKA9zMCCLa5hAyP6Fw8A5nUNwvxUPfKn7vZdkW
+	 QNTqOuHFbKabM45W9VLLF2e9p+GzsZRhOEE1Pds8q72C/U2PCHdHAlRfqTfWASVQJ0
+	 t514tK91Fq4fuQhLnWRUjYTCD6TaygU4yOo7YZo5LB3QuoJU9KTY/AmTQyJHK4CIHt
+	 00Pl1uxfGgeIA==
+Date: Mon, 12 Aug 2024 12:39:17 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: kan.liang@linux.intel.com
+Cc: acme@kernel.org, irogers@google.com, peterz@infradead.org,
+	mingo@kernel.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, adrian.hunter@intel.com,
+	ak@linux.intel.com, eranian@google.com
+Subject: Re: [PATCH V2 0/9] Support branch counters in block annotation
+Message-ID: <Zrpk5a2GQl5i5APD@google.com>
+References: <20240808193324.2027665-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <65cf1965-841b-4fb1-9222-913c6bd9ccd4@t-8ch.de>
+In-Reply-To: <20240808193324.2027665-1-kan.liang@linux.intel.com>
 
-Hi Thomas,
+Hello,
 
-On Mon, Aug 12, 2024 at 07:01:26PM +0200, Thomas Wei�schuh wrote:
-> > > The memcpy / memmove combination could be split up into one real
-> > > function and one C inline wrapper and then the same pattern would apply.
-> > > 
-> > > But to be honest I'd be fine with not supporting -flto on GCC.
-> > 
-> > That could also be a reasonable solution. The primary goal of nolibc
-> > is to make it easy for developers to develop tests, and for those who
-> > want to create pre-boot code to do so. By nature this code is prone to
-> > bugs. If it becomes totally unreadable for very unlikely cases, it will
-> > cause issues that are hard to debug by the users themselves. It's sure
-> > that supporting a variety of compilers and setups is great, but we should
-> > keep in mind the maintainability goal when thinking about this. I think
-> > that LTO will mostly be used for testing, and in this case I think it's
-> > totally reasonable to restrict the choice of compatible compilers.
+On Thu, Aug 08, 2024 at 12:33:15PM -0700, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
 > 
-> IMO LTO is useful for nolibc to reduce the size of the generated binaries.
-> For example the custom function sections that then can be combined with
-> --gc-sections to get rid of unused functions is all implicit in LTO.
-> And on top of that it can perform other size optimizations.
+> Changes since V1:
+> - Add Acked-by from Namhyung for patch 1 and 2.
+> - Use array to replace pointer to store the abbr name. (Patch 5)
+>   (Namhyung)
+> - Add -v to print the value like "A=<n>,B=<n>", rather than histogram.
+>   (Patch 6) (Namhyung)
+> 
+> The branch counters logging (A.K.A LBR event logging) introduces a
+> per-counter indication of precise event occurrences in LBRs. It can
+> provide a means to attribute exposed retirement latency to combinations
+> of events across a block of instructions. It also provides a means of
+> attributing Timed LBR latencies to events.
+> 
+> The kernel support and basic perf tool support have been merged.
+> https://lore.kernel.org/lkml/20231025201626.3000228-1-kan.liang@linux.intel.com/
+> 
+> This series is to provide advanced perf tool support via adding the
+> branch counters information in block annotation. It can further
+> facilitate the analysis of branch blocks.
+> 
+> The patch 1 and 2 are to fix two existing issues of --total-cycles and
+> the branch counters feature.
+> 
+> The patch 3-9 are the advanced perf tool support.
+> 
+> Here are some examples.
+> 
+> perf annotation:
+> 
+> $perf record -e "{branch-instructions:ppp,branch-misses}:S" -j any,counter
+> $perf report  --total-cycles --stdio
+> 
+>  # To display the perf.data header info, please use --header/--header-only options.
+>  #
+>  #
+>  # Total Lost Samples: 0
+>  #
+>  # Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }'
+>  # Event count (approx.): 1610046
+>  #
+>  # Branch counter abbr list:
+>  # branch-instructions:ppp = A
+>  # branch-misses = B
+>  # '-' No event occurs
+>  # '+' Event occurrences may be lost due to branch counter saturated
+>  #
+>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles          Branch Counter [Program Block Range]
+>  # ...............  ..............  ...........  ..........  ......................  ..
+>  #
+>            57.55%            2.5M        0.00%           3             |A   |-   |                 ...
+>            25.27%            1.1M        0.00%           2             |AA  |-   |                 ...
+>            15.61%          667.2K        0.00%           1             |A   |-   |                 ...
+>             0.16%            6.9K        0.81%         575             |A   |-   |                 ...
+>             0.16%            6.8K        1.38%         977             |AA  |-   |                 ...
+>             0.16%            6.8K        0.04%          28             |AA  |B   |                 ...
+>             0.15%            6.6K        1.33%         946             |A   |-   |                 ...
+>             0.11%            4.5K        0.06%          46             |AAA+|-   |                 ...
+> 
+> With -v applied,
+> $perf report  --total-cycles --stdio -v
+> 
+>  # Sampled Cycles%  Sampled Cycles  Avg Cycles%  Avg Cycles          Branch Counter [Program Block Range]
+>  # ...............  ..............  ...........  ..........  ......................  ..................
+>  #
+>            57.55%            2.5M        0.00%           3               A=1 ,B=-                  ...
+>            25.27%            1.1M        0.00%           2               A=2 ,B=-                  ...
+>            15.61%          667.2K        0.00%           1               A=1 ,B=-                  ...
+>             0.16%            6.9K        0.81%         575               A=1 ,B=-                  ...
+>             0.16%            6.8K        1.38%         977               A=2 ,B=-                  ...
+>             0.16%            6.8K        0.04%          28               A=2 ,B=1                  ...
+>             0.15%            6.6K        1.33%         946               A=1 ,B=-                  ...
+>             0.11%            4.5K        0.06%          46               A=3+,B=-                  ...
+> 
+> (The below output is in the TUI mode. Users can press 'B' to display
+> the Branch counter abbr list.)
+> 
+> Samples: 1M of events 'anon group { branch-instructions:ppp, branch-misses }',
+> 4000 Hz, Event count (approx.):
+> f3  /home/sdp/test/tchain_edit [Percent: local period]
+> Percent       │ IPC Cycle       Branch Counter (Average IPC: 1.39, IPC Coverage: 29.4%)
+>               │                                     0000000000401755 <f3>:
+>   0.00   0.00 │                                       endbr64
+>               │                                       push    %rbp
+>               │                                       mov     %rsp,%rbp
+>               │                                       movl    $0x0,-0x4(%rbp)
+>   0.00   0.00 │1.33     3          |A   |-   |      ↓ jmp     25
+>  11.03  11.03 │                                 11:   mov     -0x4(%rbp),%eax
+>               │                                       and     $0x1,%eax
+>               │                                       test    %eax,%eax
+>  17.13  17.13 │2.41     1          |A   |-   |      ↓ je      21
+>               │                                       addl    $0x1,-0x4(%rbp)
+>  21.84  21.84 │2.22     2          |AA  |-   |      ↓ jmp     25
+>  17.13  17.13 │                                 21:   addl    $0x1,-0x4(%rbp)
+>  21.84  21.84 │                                 25:   cmpl    $0x270f,-0x4(%rbp)
+>  11.03  11.03 │0.61     3          |A   |-   |      ↑ jle     11
+>               │                                       nop
+>               │                                       pop     %rbp
+>   0.00   0.00 │0.24    20          |AA  |B   |      ← ret
+> 
+> perf script:
+> 
+> $perf script -F +brstackinsn,+brcntr
+> 
+>  # Branch counter abbr list:
+>  # branch-instructions:ppp = A
+>  # branch-misses = B
+>  # '-' No event occurs
+>  # '+' Event occurrences may be lost due to branch counter saturated
+>      tchain_edit  332203 3366329.405674:      53030 branch-instructions:ppp:            401781 f3+0x2c (home/sdp/test/tchain_edit)
+>         f3+31:
+>         0000000000401774        insn: eb 04                     br_cntr: AA     # PRED 5 cycles [5]
+>         000000000040177a        insn: 81 7d fc 0f 27 00 00
+>         0000000000401781        insn: 7e e3                     br_cntr: A      # PRED 1 cycles [6] 2.00 IPC
+>         0000000000401766        insn: 8b 45 fc
+>         0000000000401769        insn: 83 e0 01
+>         000000000040176c        insn: 85 c0
+> 
+> $perf script -F +brstackinsn,+brcntr -v
+> 
+>      tchain_edit  332203 3366329.405674:      53030 branch-instructions:ppp:            401781 f3+0x2c (/home/sdp/test/tchain_edit)
+>         f3+31:
+>         0000000000401774        insn: eb 04                     br_cntr: branch-instructions:ppp 2 branch-misses 0      # PRED 5 cycles [5]
+>         000000000040177a        insn: 81 7d fc 0f 27 00 00
+>         0000000000401781        insn: 7e e3                     br_cntr: branch-instructions:ppp 1 branch-misses 0      # PRED 1 cycles [6] 2.00 IPC
+>         0000000000401766        insn: 8b 45 fc
+>         0000000000401769        insn: 83 e0 01
+>         000000000040176c        insn: 85 c0
+> 
+> Kan Liang (9):
+>   perf report: Fix --total-cycles --stdio output error
+>   perf report: Remove the first overflow check for branch counters
+>   perf evlist: Save branch counters information
+>   perf annotate: Save branch counters for each block
+>   perf evsel: Assign abbr name for the branch counter events
+>   perf report: Display the branch counter histogram
+>   perf annotate: Display the branch counter histogram
+>   perf script: Add branch counters
+>   perf test: Add new test cases for the branch counter feature
 
-Well, probably, but my experience of it till now has been quite negative,
-between stuff that doesn't build and stuff that takes ages to link on a
-single core, for most of the time tiny to no gain at all :-/  But I admit
-that in our case here at least we shouldn't witness long link times.
+Acked-by: Namhyung Kim <namhyung@kernel.org>
 
-> But the complications for GCC are not worth it.
-> And there seem general with LTO on GCC anyways as evidenced by the
-> constructor and duplicate-asm bugs.
+Thanks,
+Namhyung
 
-Yes, and the trouble it will cause will result in a lot of head-scratching
-for those affected.
-
-> After this discussion I think we should also change the __nolibc_naked
-> attribute back to __nolibc_entrypoint as it was before.
-> It is indeed not a replacement for a proper "naked".
-
-Indeed, it sort of emulates it but does not have the exact same properties
-as we've seen.
-
-> What do you think about me rewriting the existing commits on nolibc-next
-> to fix this up?
-
-I'm obviously fine with this :-)
-
-Thank you!
-Willy
+> 
+>  tools/perf/Documentation/perf-report.txt |   1 +
+>  tools/perf/Documentation/perf-script.txt |   2 +-
+>  tools/perf/builtin-annotate.c            |  13 +-
+>  tools/perf/builtin-diff.c                |   8 +-
+>  tools/perf/builtin-report.c              |  25 ++-
+>  tools/perf/builtin-script.c              |  69 ++++++-
+>  tools/perf/builtin-top.c                 |   4 +-
+>  tools/perf/tests/shell/record.sh         |  17 +-
+>  tools/perf/ui/browsers/annotate.c        |  18 +-
+>  tools/perf/ui/browsers/hists.c           |  18 +-
+>  tools/perf/util/annotate.c               | 253 +++++++++++++++++++++--
+>  tools/perf/util/annotate.h               |  24 ++-
+>  tools/perf/util/block-info.c             |  66 +++++-
+>  tools/perf/util/block-info.h             |   8 +-
+>  tools/perf/util/branch.h                 |   1 +
+>  tools/perf/util/disasm.c                 |   1 +
+>  tools/perf/util/evlist.c                 |  68 ++++++
+>  tools/perf/util/evlist.h                 |   2 +
+>  tools/perf/util/evsel.c                  |  15 +-
+>  tools/perf/util/evsel.h                  |  14 ++
+>  tools/perf/util/hist.c                   |   5 +-
+>  tools/perf/util/hist.h                   |   2 +-
+>  tools/perf/util/machine.c                |   3 +
+>  23 files changed, 567 insertions(+), 70 deletions(-)
+> 
+> -- 
+> 2.38.1
+> 
 
