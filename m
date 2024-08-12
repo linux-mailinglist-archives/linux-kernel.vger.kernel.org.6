@@ -1,274 +1,284 @@
-Return-Path: <linux-kernel+bounces-282794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B765594E8B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:36:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDC3394E8BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61916280DA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DDE81C214C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F253B16B3B7;
-	Mon, 12 Aug 2024 08:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D6D16BE0C;
+	Mon, 12 Aug 2024 08:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BK2NvEon"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="c6AlCNyi"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E35B4D599
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64B14D599;
+	Mon, 12 Aug 2024 08:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451808; cv=none; b=YOifyaWanY7YpsGmfawkaeNI+T2OGkWdvsGCtpvvGq2JL7T2xK3z6B9bpOyhy9wfC7zQuX6yGJzp7rdFXcd8RJbKrrkmhsZFG2gCvwghEEAOWInHQjVq0d/fiND77SlMXaHQF9WpSQ8GYWx3vLFUxqKy9uQIsKnoxI/MvFas9Go=
+	t=1723451907; cv=none; b=q1gC9jiJdQ7RlyWf7lLW7nHtJa9SDjbgr6ReT/dP6GbcNhOC2VU0jocRqmBhGql+BJ9ej+ZHY7wpn9MhxRKjarOlTkTSCSALssXEUvw3MP/tjsFaH3ifI5QZ9bW1omM8v27PmtapV5ApFo23Gn0ITuLFF1QzbRDnTSBJCAjp1ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451808; c=relaxed/simple;
-	bh=4R8Svbxkp171kMzD5AlVoXzAKFtIEJPXTIqFc59Wikg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l7Dgx5DcCuXAO4lTz0LhQE9E0cPi0dnC8BMbveq8Rb6D4NFtaIrKjjnAbeH7W/27yQK70Ooe6n0kFTJs9f3SbKtOXiY3Gie74N7CWFgrDfvKnOSUwm2t5lGiztCysQMLuOip2JcAvZcz6ndfJiBsVrqWTMqmwQsSEgh/9VKbf2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BK2NvEon; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4f521a22d74so1183920e0c.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 01:36:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723451805; x=1724056605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U1JsfLqQ9LSdOmAjyn3CJzHlFX+uzh/xVJFUjHoNFWo=;
-        b=BK2NvEonSFcX3m/WvcCwvy/prAQlrVfMHe32D3Vqj+VmbDvhK0oZNmfpNBssHiwBWo
-         li5aRg9bKw/8jxpupnnYqZ+rQVS9SvkTEdUIeywLQjXH1rbbm5ITMPHSazrnZiJW3Fl1
-         +2iLCKKZK7IXp+H7/dgzXHJmODMHOWLpckWP+iRQ64h2UW8b0bSei25TT7Jc8XpYZLTw
-         Nngs19wKPBG6pbrkpRNCc51RjsIhQHgVm02XgGtU8h8pGJHY5QJR5HhfEfX1ys4TXHTo
-         QVkvcHG4MuaOHEJpiRV5xlrfnam9uGhw7VkgEz/8s7NYQqMv+InZI1PHmEIcvqLrtawH
-         aimA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723451805; x=1724056605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U1JsfLqQ9LSdOmAjyn3CJzHlFX+uzh/xVJFUjHoNFWo=;
-        b=Tr8DikTLav5zAKhJEkJwpyLyGvizN1mGMFJsvHuEVoNgkqFPPLVaqqxd0uFsBkEbHf
-         mZkcMjJvjxzNGO0qqkDzosOgUuFKpxjDkhOYPARENo6iBCXLKFmcZgdducIyaf/URhpB
-         oN2YoW39UuLyYw3J37kHMb4/hQ6qeAX1x5Q3WVOgQnIoyrVm+JhdqAAeVwztFPiHz4n/
-         yjvm9ntGq5vhWnzNXG2bdTVbQLv42yoUDZLfyZPqCmQS4sOr9eTT8Jkn9Rn0eBC9wZEa
-         FyyQWh/UNv+L7VhCv4nsSMRcnyaY+HMBUcdDKRtxZ6st6h1zBpvPG6yFO8wMkxnhN8Kw
-         LNqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVOE2/1JyA/nYhP9t63pigrtl7IydY+CZVHoTqCULsIDZEvBcT/A8V1NnzXl1aLtUpmcamLBsGrbfmKbo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6yvi1HKzm2UDW0eDkFC5WSMT750VOOQr/rJ79/OLlQydSQrbV
-	8wK195lV3q3onlNUzrenIN+euRR8Pk11aq5B0qrtqdoVPg5V6Tt+PeD7w4ba0Drb3YeR53rsRlM
-	6/VAcyCyLkl4bd3uUAO8uR3ZPZhU=
-X-Google-Smtp-Source: AGHT+IHLA3KARxvO1GQYnYoHemosKuZRdJlx7z2flT5ePQ81gacRwx5Nt8UVgknnY/+JPuXby8eBFTTaKdsb8cm4+rA=
-X-Received: by 2002:a05:6122:318c:b0:4f6:b160:3806 with SMTP id
- 71dfb90a1353d-4f9132eaf09mr10292319e0c.11.1723451805227; Mon, 12 Aug 2024
- 01:36:45 -0700 (PDT)
+	s=arc-20240116; t=1723451907; c=relaxed/simple;
+	bh=C39qRErPUQkJNzW9w7SV07Iow5wNuuOXfmuMigKGNYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i39c7jR62SLQe+da6HP8AXqhpnhHi2F+IFNFlPsyejk8y4IMEu5JqtMfzQhZIGEQKKyayPQmD7xNyhZmtw5m2qLuZPg0V7hpYXHnXVrrePVHQO86IisZYLt4dI2uL5u3F5612R+G1Xzz2DETleberqjvpMBKlrFnLOLuGTx/mEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=c6AlCNyi; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9CA3DC0007;
+	Mon, 12 Aug 2024 08:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723451896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wpp+yPNEBFJMfjQq3cL+mUf+1IBUOb95UB4rmwmrlsY=;
+	b=c6AlCNyiO8HVav7lY582H4/RuX+O01sHF3FNBasOHB+VazJm8ydFO5xcwvZJ6d0jkuT1+i
+	Sv6Jmq7TiB6stzxv6fHQQa+YoLJwE6CB0pLKjHXsxJutvIaUi3XWsYO0U/WLuaOQKhRMaj
+	oYCvTZD9GQ24ua+nUP3gCpF3C6okHJvfQouuv+Um04e3FbRgfLwABTZb1Gz3Bv7n8iXw03
+	x9Asn7ip/Md3h2Z5s2eWCP8HOY68mRsa/1Af21B9Pn6tV6LjyvoVyXtr2k+qyIVZjDyrqX
+	hZ95LcD6Gu/o+tPGUr5jmWRM7yJB3Z7WuAv3A3Gh79rQQk5Q9dDD2WZqwYr7Vg==
+Date: Mon, 12 Aug 2024 10:38:12 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, "broonie@kernel.org"
+ <broonie@kernel.org>, "pratyush@kernel.org" <pratyush@kernel.org>,
+ "richard@nod.at" <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
+ "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
+ "lee@kernel.org" <lee@kernel.org>, "james.schulman@cirrus.com"
+ <james.schulman@cirrus.com>, "david.rhodes@cirrus.com"
+ <david.rhodes@cirrus.com>, "rf@opensource.cirrus.com"
+ <rf@opensource.cirrus.com>, "perex@perex.cz" <perex@perex.cz>,
+ "tiwai@suse.com" <tiwai@suse.com>, "linux-spi@vger.kernel.org"
+ <linux-spi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "michael@walle.cc" <michael@walle.cc>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>, "Simek, Michal"
+ <michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "alsa-devel@alsa-project.org"
+ <alsa-devel@alsa-project.org>, "patches@opensource.cirrus.com"
+ <patches@opensource.cirrus.com>, "linux-sound@vger.kernel.org"
+ <linux-sound@vger.kernel.org>, "git (AMD-Xilinx)" <git@amd.com>,
+ "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>, Conor Dooley
+ <conor.dooley@microchip.com>, "beanhuo@micron.com" <beanhuo@micron.com>
+Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
+ spi-nor
+Message-ID: <20240812103812.72763f69@xps-13>
+In-Reply-To: <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
+	<BN7PR12MB28029EB1A7D09882878499A2DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
+	<BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
+	<BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
+	<BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
+	<BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
+	<9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
+	<BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
+	<IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <8258bf4c-ecec-4e06-ada0-da9fb99b1219@redhat.com>
- <20240812053636.97700-1-21cnbao@gmail.com> <08390990-b47a-4663-8eae-ee51aac55b45@redhat.com>
-In-Reply-To: <08390990-b47a-4663-8eae-ee51aac55b45@redhat.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 12 Aug 2024 20:36:33 +1200
-Message-ID: <CAGsJ_4ziAchNaqHXmXFLa56t5PxfayDwkrdfR9OzRc35t3PfAg@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Override mTHP "enabled" defaults at kernel cmdline
-To: David Hildenbrand <david@redhat.com>
-Cc: akpm@linux-foundation.org, baolin.wang@linux.alibaba.com, corbet@lwn.net, 
-	ioworker0@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	ryan.roberts@arm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Mon, Aug 12, 2024 at 8:20=E2=80=AFPM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 12.08.24 07:36, Barry Song wrote:
-> > On Sat, Aug 10, 2024 at 1:15=E2=80=AFAM David Hildenbrand <david@redhat=
-.com> wrote:
-> >>
-> >>>>>>> -You can change the sysfs boot time defaults of Transparent Hugep=
-age
-> >>>>>>> -Support by passing the parameter ``transparent_hugepage=3Dalways=
-`` or
-> >>>>>>> -``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dn=
-ever``
-> >>>>>>> -to the kernel command line.
-> >>>>>>> +You can change the sysfs boot time default for the top-level "en=
-abled"
-> >>>>>>> +control by passing the parameter ``transparent_hugepage=3Dalways=
-`` or
-> >>>>>>> +``transparent_hugepage=3Dmadvise`` or ``transparent_hugepage=3Dn=
-ever`` to the
-> >>>>>>> +kernel command line.
-> >>>>>>> +
-> >>>>>>> +Alternatively, each supported anonymous THP size can be controll=
-ed by
-> >>>>>>> +passing ``thp_anon=3D<size>[KMG]:<state>``, where ``<size>`` is =
-the THP size
-> >>>>>>> +and ``<state>`` is one of ``always``, ``madvise``, ``never`` or
-> >>>>>>> +``inherit``.
-> >>>>>>> +
-> >>>>>>> +For example, the following will set 64K THP to ``always``::
-> >>>>>>> +
-> >>>>>>> +     thp_anon=3D64K:always
-> >>>>>>> +
-> >>>>>>> +``thp_anon=3D`` may be specified multiple times to configure all=
- THP sizes as
-> >>>>>>> +required. If ``thp_anon=3D`` is specified at least once, any ano=
-n THP sizes
-> >>>>>>> +not explicitly configured on the command line are implicitly set=
- to
-> >>>>>>> +``never``.
-> >>>>>>
-> >>>>>> I suggest documenting that "thp_anon=3D" will not effect the value=
- of
-> >>>>>> "transparent_hugepage=3D", or any configured default.
-> >>>
-> >>> Did you see the previous conversation with Barry about whether or not=
- to honour
-> >>> configured defaults when any thp_anon=3D is provided [1]? Sounds like=
- you also
-> >>> think we should honour the PMD "inherit" default if not explicitly pr=
-ovided on
-> >>> the command line? (see link for justification for the approach I'm cu=
-rrently
-> >>> taking).
-> >>
-> >> I primarily think that we should document it :)
-> >>
-> >> What if someone passes "transparent_hugepage=3Dalways" and "thp_anon=
-=3D..."?
-> >> I would assume that transparent_hugepage would only affect the global
-> >> toggle then?
-> >>
-> >>>
-> >>> [1]
-> >>> https://lore.kernel.org/linux-mm/CAGsJ_4x8ruPspuk_FQVggJMWcXLbRuZFq44=
-gg-Dt7Ewt3ExqTw@mail.gmail.com/
-> >>>
-> >>>>>>
-> >>>>>> Wondering if a syntax like
-> >>>>>>
-> >>>>>> thp_anon=3D16K,32K,64K:always;1048K,2048K:madvise
-> >>>
-> >>> Are there examples of that syntax already or have you just made it up=
-? I found
-> >>> examples with the colon (:) but nothing this fancy. I guess that's no=
-t a reason
-> >>> not to do it though (other than the risk of screwing up the parser in=
- a subtle way).
-> >>
-> >> I made it up -- mostly ;) I think we are quite flexible on what we can
-> >> do. As always, maybe we can keep it bit consistent with existing stuff=
-.
-> >>
-> >> For hugetlb_cma we have things like
-> >>          "<node>:nn[KMGTPE|[,<node>:nn[KMGTPE]]
-> >>
-> >> "memmap=3D" options are more ... advanced, including memory ranges. Th=
-ere
-> >> are a bunch more documented in kernel-parameters.txt that have more
-> >> elaborate formats.
-> >>
-> >> Ranges would probably be the most valuable addition. So maybe we shoul=
-d
-> >> start with:
-> >>
-> >>          thp_anon=3D16K-64K:always,1048K-2048K:madvise
-> >>
-> >> So to enable all THPs it would simply be
-> >>
-> >>          thp_anon=3D16K-2M:always
-> >>
-> >> Interesting question what would happen if someone passes:
-> >>
-> >>          thp_anon=3D8K-2M:always
-> >>
-> >> Likely we simply would apply it to any size in the range, even if
-> >> start/end is not a THP size.
-> >>
-> >> But we would want to complain to the user if someone only specifies a
-> >> single one (or a range does not even select a single one) that does no=
-t
-> >> exist:
-> >>
-> >>          thp_anon=3D8K:always
-> >
-> > How about rejecting settings with any illegal size or policy?
-> >
-> > I found there are too many corner cases to say "yes" or "no". It seems
-> > the code could be much cleaner if we simply reject illegal settings.
-> > On the other hand, we should rely on smart users to provide correct
-> > settings, shouldn=E2=80=99t we? While working one the code, I felt that
-> > extracting partial correct settings from incorrect ones and supporting
-> > them might be a bit of over-design.
->
-> No strong opinion on failing configs. Ignoring non-existing sizes might
-> lead to more portable cmdlines between kernel versions.
+Hi,
 
-Well, I realized that the code I posted has actually applied the correct
-parts because it modifies the global variable huge_anon_orders_xxx.
-Unless I use temporary variables and then copy the results to
-global ones, the code has been this issue to some extent.
+> Hello Everyone,
+>=20
+> I would like to propose another approach for handling stacked and=20
+> parallel connection modes and would appreciate your thoughts on it.=20
+> But before that, here is some background on what we are trying to achieve.
+>=20
+> The AMD QSPI controller supports two advanced connection modes(Stacked an=
+d=20
+> Dual Parallel) which allow the controller to treat two different flashes=
+=20
+> as one storage.
+>=20
+> Stacked:
+> Flashes share the same SPI bus, but different CS line, controller asserts=
+=20
+> the CS of the flash to which it needs to communicate.
+>=20
+> Dual Parallel:
+> Both the flashes have their separate SPI bus CS of both the flashes will=
+=20
+> be asserted/de-asserted at the same time. In this mode data will be split=
+=20
+> across both the flashes by enabling the STRIPE setting in the controller.=
+=20
+> If STRIPE is not enabled, then same data will be sent to both the devices.
+>=20
+> For more information on the modes please feel free to go through the=20
+> controller flash interface below
+> https://docs.amd.com/r/en-US/am011-versal-acap-trm/QSPI-Flash-Device-Inte=
+rface
+>=20
+> Mirochip QSPI controller also supports "Dual Parallel 8-bit IO mode", but=
+=20
+> they call it "Twin Quad Mode".
+> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductD=
+ocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
+>=20
+> DT binding changes were added through the following commits:
+> https://github.com/torvalds/linux/commit/f89504300e94524d5d5846ff8b728592=
+ac72cec4
+> https://github.com/torvalds/linux/commit/eba5368503b4291db7819512600fa014=
+ea17c5a8
+> https://github.com/torvalds/linux/commit/e2edd1b64f1c79e8abda365149ed62a2=
+a9a494b4
+>=20
+> SPI core changes were adds through the following commit:
+> https://github.com/torvalds/linux/commit/4d8ff6b0991d5e86b17b235fc46ec62e=
+9195cb9b
+>=20
+> Based on the inputs/suggestions from Tudor, i am planning to add a new=20
+> layer between the SPI-NOR and MTD layers to support stacked and parallel=
+=20
+> configurations. This new layer will be part of the spi-nor and located in=
+=20
+> mtd/spi-nor/
 
-maybe I should remove the below  "goto err", instead, ignore the
-incorrect strings and go to the next strings to parse.
+For now I don't think you need a totally generic implementation. As
+long as there is only one controller supporting these modes, I'd say
+this is not super relevant.
 
-static int __init setup_thp_anon(char *str)
-{
-        ...
+> This layer would perform the following tasks:
+>  - During probing, store information from all the connected flashes,=20
+>    whether in stacked or parallel mode, and present it as a single device=
+=20
+>    to the MTD layer.
+>  - Register callbacks through this new layer instead of spi-nor/core.c an=
+d=20
+>    handle MTD device registration.
+>  - In stacked mode, select the appropriate spi-nor flash based on the=20
+>    address provided by the MTD layer during flash operations.
+>  - Manage flash crossover operations in stacked mode.
+>  - Ensure both connected flashes are identical in parallel mode.
+>  - Handle odd byte count requests from the MTD layer during flash=20
+>    operations in parallel mode.
+>=20
+> For implementing this the current DT binding need to be updated as=20
+> follows.
 
-                        if (!strcmp(policy, "always")) {
-                                set_bits(&huge_anon_orders_always, start, e=
-nd);
-                                clear_bits(&huge_anon_orders_inherit,
-start, end);
-                                clear_bits(&huge_anon_orders_madvise,
-start, end);
-                        } else if (!strcmp(policy, "madvise")) {
-                                ...
-                        } else if (!strcmp(policy, "inherit")) {
-                                ...
-                        } else if (!strcmp(policy, "never")) {
-                                ...
-                        } else {
-                                /* goto err; */     ->   pr_err
-                        }
-                }
-        }
-        ...
-err:
-        pr_warn("thp_anon=3D%s: cannot parse(invalid size or policy),
-ignored\n", str);
-        return 0;
-}
+So you want to go back to step 1 and redefine bindings? Is that worth?
 
->
-> >
-> > I have tested the below code by
-> >
-> > "thp_anon=3D16K-64K:always;128K,512K:inherit;256K:madvise;1M-2M:never"
->
-> There are some parameters that separate individual options by ";"
-> already (config_acs). Most parameters use ",". No idea what's better
-> here, and which separator to use for sizes instead when using "," for
-> options. No strong opinion.
+> stacked-memories DT changes:
+>  - Flash size information can be retrieved directly from the flash, so it=
+=20
+>    has been removed from the DT binding.
+>  - Each stacked flash will have its own flash node. This approach allows=
+=20
+>    flashes of different makes and sizes to be stacked together, as each=20
+>    flash will be probed individually.
 
-But we have used "," for the purpose "128K,512K:inherit". so here
-we have to use ";" for  "16K-64K:always;128K,512K:inherit"
+And how will you define partitions crossing device boundaries? I
+believe this constraint has been totally forgotten in this proposal.
+The whole idea of stacking two devices this way was to simplify the
+user's life with a single device exposed and the controller handling
+itself the CS changes. That is precisely what the current binding do.
+The final goal being to double your storage transparently. If your goal
+was to put two chips aside, then none of this was actually needed. If
+you don't care about that anymore, then all the energy put into
+discussing the bindings initially was useless and a controller property
+could also have made the trick.
 
->
->
-> --
-> Cheers,
->
-> David / dhildenb
+>  - The stacked-memories DT bindings will contain the phandles of the flas=
+h=20
+>    nodes connected in stacked mode.
+>=20
+> spi@0 {
+>  =20
+>   flash@0 {
+>     compatible =3D "jedec,spi-nor"
+>     reg =3D <0x00>;
+>     stacked-memories =3D <&flash@0 &flash@1>;
+>     spi-max-frequency =3D <50000000>;
+>     ...
+>               partition@0 {=20
+>         label =3D "qspi-0";
+>         reg =3D <0x0 0xf00000>;
+>     };
+>                        =20
+>=20
+>   }
+>  =20
+>   flash@1 {
+>     compatible =3D "jedec,spi-nor"
+>               reg =3D <0x01>;
+>     spi-max-frequency =3D <50000000>;
+>     ...
+>               partition@0 {=20
+>         label =3D "qspi-1";
+>         reg =3D <0x0 0x800000>;
+>     };
+>   }
+> }
+>=20
+> parallel-memories DT changes:
+>  - Flash size information can be retrieved directly from the flash, so it=
+=20
+>    has been removed from the DT binding.
+>  - Each flash connected in parallel mode will have its own flash node.=20
+>    This allows us to verify that both flashes connected in parallel are=20
+>    identical, as each flash node will be probed separately.
 
-Thanks
-Barry
+Well, you don't have to verify that. It's a basic hardware design
+constraint for using this mode.
+
+Otherwise same comment as above, this description doesn't allow
+correct partitioning and that was one of the main constraints back when
+we discussed these needs.
+
+>  - The parallel-memories DT bindings will contain the phandles of the=20
+>    flash nodes connected in parallel.
+>=20
+> spi@0 {
+>  =20
+>   flash@0 {
+>     compatible =3D "jedec,spi-nor"
+>     reg =3D <0x00>;
+>     parallel-memories =3D <&flash@0 &flash@1>;
+>     spi-max-frequency =3D <50000000>;
+>     ...
+>               partition@0 {=20
+>         label =3D "qspi-0";
+>         reg =3D <0x0 0xf00000>;
+>     };
+>                        =20
+>=20
+>   }
+>  =20
+>   flash@1 {
+>     compatible =3D "jedec,spi-nor"
+>               reg =3D <0x01>;
+>     spi-max-frequency =3D <50000000>;
+>     ...
+>               partition@0 {=20
+>         label =3D "qspi-1";
+>         reg =3D <0x0 0x800000>;
+>     };
+>   }
+> }
+
+Thanks,
+Miqu=C3=A8l
 
