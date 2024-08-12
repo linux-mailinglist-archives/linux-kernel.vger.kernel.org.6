@@ -1,72 +1,71 @@
-Return-Path: <linux-kernel+bounces-283226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAE1A94EEDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:54:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F15E694EEE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56ED71F210C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:54:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B25028212A
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DF317C7C2;
-	Mon, 12 Aug 2024 13:52:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70980186295;
+	Mon, 12 Aug 2024 13:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uG4ez6ll"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zo8s/NLg"
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4FB17E902;
-	Mon, 12 Aug 2024 13:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D1417F397;
+	Mon, 12 Aug 2024 13:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470776; cv=none; b=QdyZ6I1rfkOm3ByMc3/Kuoau+hbG/6LDqtpdbQGaaHXmXxITznSqNJUjzrDL5E6YY/zf6d+wgNHD+n0Ff/Gj2q//0R7a1J0vYK8Xc1Spg0jJBvGMY5KrUZOTYIn527Sei3moBLfw8uNfRSs4U0P3h5wmx/mvkL090i4PbzKbAqk=
+	t=1723470778; cv=none; b=PMM5V9idwnAXi/KQeoVygbwutcbshutYMNvMXgT//kRQGQnJJ8cDaJbu1HMtAmH0FOpFAfhfSsh3q8//0RILWnPErKqV0wDkiATFfMNeSfucjigSpYXBlK/0I+GjDRZJcORdvsPWrYn0EPAhgr259nWmp7Wj3QBqhKAPAcS5W0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470776; c=relaxed/simple;
-	bh=ykeS6VoIwd0uuNUslgahaQuM8F5Z+YJ644IDPqbNm04=;
+	s=arc-20240116; t=1723470778; c=relaxed/simple;
+	bh=jp+geUDZCqTPYYoFzm0i6Cp+RUKDlSua67ltTtH+eKQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UnZ5reSZa/DHmCN9BrpTR7voBAxhgoTjYMghGd4Ie0e7MBPIxCkZVhTAwkq+X50GTahH8+P0iIkZ8/KfIFOX02ESdNuwXSf7pIjzFBJUZQ48Ha5NuVoBzqjA6LZpPT/VhCYCqM7eUNZDLtILbFSxXmJuyZaiQ68XovzR78xxQuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=uG4ez6ll; arc=none smtp.client-ip=68.232.153.233
+	 MIME-Version:Content-Type; b=W7BvoxW9fwc4zmND1WTznKorfEk+MVqGmQUqk5VG1f1UIhIHcBreQy4GnqaOwnhccV9OwxJ6iSOd2MqJcb0Zi8mJP/uJ2t7UvQmFuNXg44TsCd7LEAXP8LpFcLpz0S93X2Mt/BOU65HFIGVL4LbcoH4pcTXsnHnBET2lg19nvho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=zo8s/NLg; arc=none smtp.client-ip=68.232.153.233
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723470775; x=1755006775;
+  t=1723470777; x=1755006777;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=ykeS6VoIwd0uuNUslgahaQuM8F5Z+YJ644IDPqbNm04=;
-  b=uG4ez6ll8Iysz1sha3wFDQ1fnTgPmqW6SJr+LysbZ3McSBbXKumtq/RB
-   QEM+qtVdT0GsbXAp15/w6sSzJz/Hbrp/p3dRHq7SIF+J4mWxgFQDnJeAs
-   w32AQtws/Tj/fr6Od6NrfdyttSvEc5QnPTvczb/t+rmoab6dFuBhrBR8S
-   kSALe0fhwmeN6GKVGD36qAmrRiwrGYvfFvQ203+3jsxaMcpgI4xEQkPTC
-   csi/0SH4th1Dusy28xQVIt5Y2qKodIe7iuyutTEc1Zqm42vZJaX3609t7
-   lvnJElVCE6bnWLiUNkFN/4NE8h/i+NU/qHgSUOzdQBenVY8SHO1mAcEfO
-   A==;
+  bh=jp+geUDZCqTPYYoFzm0i6Cp+RUKDlSua67ltTtH+eKQ=;
+  b=zo8s/NLgW1Xi4YSWmsJUANaKh89kHiNsbHOm1Fj3prUKqSB2lDNgljeC
+   XvgEPDzrq18rhtL6jTkhwKq+CpELDUrOSP7CiFMNSN/rUyFMcVsKH7uES
+   /Gj7265Z1iS4Rgp1FyyjAKAf/F61R2glHkUifv1lYU1Ec10woY/HE4V53
+   poA1NvLShONo7fG5cpZc0iLtwVpyLImJDcJkwnW/8OI5x4le/891mYpBK
+   olSLY/YP5Ifc1oo2kOM3l5I+amCGSm9SEMmzQDbeKT/C9Li+fKVvbnf35
+   tqypRKxddzPjC2qNsHyC8DPGa9CcpgSEYfmFLLmlN31Ba/jx5CbP6cqQy
+   Q==;
 X-CSE-ConnectionGUID: s4TBmy++Rr+nQ8F2ugpKvw==
-X-CSE-MsgGUID: a4vGk6CoTiGArcdctt08SA==
+X-CSE-MsgGUID: Q+ToFOHzSC6AcBeLd4lv7A==
 X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="261298073"
+   d="scan'208";a="261298074"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Aug 2024 06:52:54 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Aug 2024 06:52:55 -0700
 Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 12 Aug 2024 06:52:40 -0700
+ 15.1.2507.35; Mon, 12 Aug 2024 06:52:43 -0700
 Received: from ROB-ULT-M76677.microchip.com (10.10.85.11) by
  chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 12 Aug 2024 06:52:38 -0700
+ 15.1.2507.35 via Frontend Transport; Mon, 12 Aug 2024 06:52:41 -0700
 From: Andrei Simion <andrei.simion@microchip.com>
 To: <claudiu.beznea@tuxon.dev>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
 	<nicolas.ferre@microchip.com>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
 	<robh@kernel.org>, <alexandre.belloni@bootlin.com>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>,
-	Mihai Sain <mihai.sain@microchip.com>
-Subject: [PATCH v2 1/7] regulator: mcp16502: Add supplier for regulators
-Date: Mon, 12 Aug 2024 16:52:25 +0300
-Message-ID: <20240812135231.43744-2-andrei.simion@microchip.com>
+	<devicetree@vger.kernel.org>, Andrei Simion <andrei.simion@microchip.com>
+Subject: [PATCH v2 2/7] regulator: dt-bindings: microchip,mcp16502: Add voltage input supply documentation
+Date: Mon, 12 Aug 2024 16:52:26 +0300
+Message-ID: <20240812135231.43744-3-andrei.simion@microchip.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240812135231.43744-1-andrei.simion@microchip.com>
 References: <20240812135231.43744-1-andrei.simion@microchip.com>
@@ -79,64 +78,55 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 
-Based on the datasheet [1] (Block Diagram) PVIN[1-4] and LVIN
-represent the input voltage supply for each BUCKs respective LDOs.
-Update the driver to align with the datasheet [1].
+Update the yaml schema with info about input supply phandle for
+each buck and ldo according with the PMIC MCP16502 Datasheet.
 
-[1]: https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP16502-Data-Sheet-DS20006275.pdf
-
-Co-developed-by: Mihai Sain <mihai.sain@microchip.com>
-Signed-off-by: Mihai Sain <mihai.sain@microchip.com>
 Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 ---
 v1 -> v2:
-- no update
+- added in v2
 ---
- drivers/regulator/mcp16502.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ .../regulator/microchip,mcp16502.yaml         | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 5de9d4fa5113..b34ae0bbba6f 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -107,9 +107,10 @@ static unsigned int mcp16502_of_map_mode(unsigned int mode)
- 	return REGULATOR_MODE_INVALID;
- }
+diff --git a/Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml b/Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
+index 1aca3646789e..c3e1fc6e260e 100644
+--- a/Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
++++ b/Documentation/devicetree/bindings/regulator/microchip,mcp16502.yaml
+@@ -28,6 +28,21 @@ properties:
+   reg:
+     maxItems: 1
  
--#define MCP16502_REGULATOR(_name, _id, _ranges, _ops, _ramp_table)	\
-+#define MCP16502_REGULATOR(_name, _id, _sn, _ranges, _ops, _ramp_table)	\
- 	[_id] = {							\
- 		.name			= _name,			\
-+		.supply_name		= #_sn,				\
- 		.regulators_node	= "regulators",			\
- 		.id			= _id,				\
- 		.ops			= &(_ops),			\
-@@ -467,18 +468,18 @@ static const struct linear_range b234_ranges[] = {
- };
++  lvin-supply:
++    description: Input supply phandle for LDO1 and LDO2
++
++  pvin1-supply:
++    description: Input supply phandle for VDD_IO (BUCK1)
++
++  pvin2-supply:
++    description: Input supply phandle for VDD_DDR (BUCK2)
++
++  pvin3-supply:
++    description: Input supply phandle for VDD_CORE (BUCK3)
++
++  pvin4-supply:
++    description: Input supply phandle for VDD_OTHER (BUCK4)
++
+   regulators:
+     type: object
+     additionalProperties: false
+@@ -68,6 +83,11 @@ examples:
+         pmic@5b {
+             compatible = "microchip,mcp16502";
+             reg = <0x5b>;
++            lvin-supply = <&reg_5v>;
++            pvin1-supply = <&reg_5v>;
++            pvin2-supply = <&reg_5v>;
++            pvin3-supply = <&reg_5v>;
++            pvin4-supply = <&reg_5v>;
  
- static const struct regulator_desc mcp16502_desc[] = {
--	/* MCP16502_REGULATOR(_name, _id, ranges, regulator_ops, ramp_table) */
--	MCP16502_REGULATOR("VDD_IO", BUCK1, b1l12_ranges, mcp16502_buck_ops,
-+	/* MCP16502_REGULATOR(_name, _id, _sn, _ranges, _ops, _ramp_table) */
-+	MCP16502_REGULATOR("VDD_IO", BUCK1, pvin1, b1l12_ranges, mcp16502_buck_ops,
- 			   mcp16502_ramp_b1l12),
--	MCP16502_REGULATOR("VDD_DDR", BUCK2, b234_ranges, mcp16502_buck_ops,
-+	MCP16502_REGULATOR("VDD_DDR", BUCK2, pvin2, b234_ranges, mcp16502_buck_ops,
- 			   mcp16502_ramp_b234),
--	MCP16502_REGULATOR("VDD_CORE", BUCK3, b234_ranges, mcp16502_buck_ops,
-+	MCP16502_REGULATOR("VDD_CORE", BUCK3, pvin3, b234_ranges, mcp16502_buck_ops,
- 			   mcp16502_ramp_b234),
--	MCP16502_REGULATOR("VDD_OTHER", BUCK4, b234_ranges, mcp16502_buck_ops,
-+	MCP16502_REGULATOR("VDD_OTHER", BUCK4, pvin4, b234_ranges, mcp16502_buck_ops,
- 			   mcp16502_ramp_b234),
--	MCP16502_REGULATOR("LDO1", LDO1, b1l12_ranges, mcp16502_ldo_ops,
-+	MCP16502_REGULATOR("LDO1", LDO1, lvin, b1l12_ranges, mcp16502_ldo_ops,
- 			   mcp16502_ramp_b1l12),
--	MCP16502_REGULATOR("LDO2", LDO2, b1l12_ranges, mcp16502_ldo_ops,
-+	MCP16502_REGULATOR("LDO2", LDO2, lvin, b1l12_ranges, mcp16502_ldo_ops,
- 			   mcp16502_ramp_b1l12)
- };
- 
+             regulators {
+                 VDD_IO {
 -- 
 2.34.1
 
