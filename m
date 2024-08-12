@@ -1,91 +1,109 @@
-Return-Path: <linux-kernel+bounces-283459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B0394F538
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:48:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A83B994F53C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B54D7B2389C
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA031C20FA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:49:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F04187568;
-	Mon, 12 Aug 2024 16:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF871891C6;
+	Mon, 12 Aug 2024 16:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="l6we3NDL"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhNdYLxy"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F2218754E;
-	Mon, 12 Aug 2024 16:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5717B18800F;
+	Mon, 12 Aug 2024 16:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723481323; cv=none; b=X3dtJ2XUSh2PN1p2bdfHoKhMSm70PfZFLHTJEYV/FLjq6pQI0MRgc5qbuLX3y9NVt8Lfmy1wWuaPZjwXmAsRvkJdmNhcBD+JMGJisyIXdlOWGeVocOiShuZMUEnWiuF0dY6VKmAtcd9Jr9Zqm6mdCnRf4WI/hySAC+mJDbvWERw=
+	t=1723481327; cv=none; b=UkMV8aAL3zRLgLZb2t5Wsgu73L2pM3eGJ5Arqbei65DD7e7aDqxaIrWfvheYz2tU0snC6IqXxM1pnaM1OVent/bOGFES4x+YkBsKT/a8JfwrhSenU5kScPS+UeJgcmHxD3iEbslXxvyekMO1c7N1m68XBj9tHbs8H8VNyoHY7qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723481323; c=relaxed/simple;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=CCwLm2LLv+QlCAKhqRlGqwKFqQGmNrIzentFOZ/UylXWKSaBHRCZTaUUyddNnWHzaVsuYXyH4rUUMvfDGxrLM6lPOj/HLLOjbp4NpHhNwIaS0RJlFDqohfDSePJ68QfZ6oRpcNeK/OJx4+qh71GG4FgcL6cOvzZxVeAgCsZ9q5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=l6we3NDL; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1723481317; x=1724086117; i=rwarsow@gmx.de;
-	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=l6we3NDL5vRvPSfK9bmgXjcpXzi+bWZDBuomZ7kpOm3jQbdIcab8xJoKFqV7qNA5
-	 BQU7obcwPykaOqyk2Z27znSRk3uBYWmKvg4ux/1/z5eklVztmLkXAXTqQBQ/hWgtm
-	 wXTOuBbBva/7knG6EkZVsPW5v83UMfpB6orLxZasCIDY5iAdhvosq0uVS/v+oI0jo
-	 6BquBK1etY7zU6f6qTmfF7ogIJ3R0o6HmSNZPVMnpxalGreP0B36bGRnXNJQ+Zz04
-	 0rx5QkAYnXY1YsC4f5U+oUa3HdhR0bI6OmOwE9cbnuWXZopW352ISBSom9d4OivDP
-	 kusDvHwNd9Hqc2RUXg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.100.20] ([46.142.32.4]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1Ma24y-1sj3yb2yhg-00Uyi4; Mon, 12
- Aug 2024 18:48:37 +0200
-Message-ID: <907be9df-7173-40ac-9381-80455e73dea3@gmx.de>
-Date: Mon, 12 Aug 2024 18:48:37 +0200
+	s=arc-20240116; t=1723481327; c=relaxed/simple;
+	bh=XlaiAMQh1V6IadrgEMbgyeLhJ3AoIR6vUvuyik168Es=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=keuL6UCfJK6/UcYlAkx6yBWn9xeZ5jfjmuDe3Cz/7LtEoe2Bi1/vc4k4lUYKEaloA32fzROSupqj5VKDlWd51uYBzx7FDPAiuBBSXqntqe6LZwP5C5rOd/4flzwPa/X14ltLk7lwVqeMDKHs9FfHIfMGhEJhPVVsVQnj766QlYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhNdYLxy; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fd6ed7688cso39185535ad.3;
+        Mon, 12 Aug 2024 09:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723481326; x=1724086126; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hpMVxN3h+wXRgJtl6Puat78aXyyI7hCBpes+Mit4XIQ=;
+        b=dhNdYLxyxePKerR03jMHVOzAd5FeudD9npsvmSuYvHTL4Y9ciWZKI2H7DhpnETIz1h
+         3KONYZtoxmF9/swekkqJn08cNIuYdFYStbJk6ioTIEtIiO2u/BsCkDVuFzQxgphJawoj
+         Hl6AI371GsJOT2acZOzU4VdTRr+ol7x+59gnjsJp4gAhLl+wEKBKPaLiRgxk7jenhbXV
+         AELFbv8Eb5tfdxzVqRWnSI+CXeBgZL9dz719XeH6q3hHl4ude/M7/i5VUrEefJ+AeYr5
+         ui7gXpgf9ipdLvxPBEx6yNGGTr7kdBb4ZXs3Cl4MdDTHQaQ2ueC4QJDrt0g7MM6iWJcq
+         sT3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723481326; x=1724086126;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hpMVxN3h+wXRgJtl6Puat78aXyyI7hCBpes+Mit4XIQ=;
+        b=GMaVkgnk76xbqs7R0uBxTSi33xeMjBVNDqMyyp3YaKMxiLIVNmsJtCAwf/v+J8ql4V
+         owOjuOERzuJjnZ8roMN2zH9xlWSLwvSj5h/T2hSqdIY1cABZXfnE91ctcNtR73a6TFb2
+         skLhPt+LUjdPPvaL9Br9V8KHFPQ6tQAu+L9SRfcKYbC2eT8A+jgYGRrFNFXuh3q7V4Ov
+         yeaL+d9b6VcPiasPV2YRqUktVtvsnEgGNMV7BYYpGLVxJOmPGYyiLtgrIv2yHXqHuCHl
+         PyLgj9/7dK4BNqi4BrSqg/MwDyOuuBR0zskSaFCs2Pp655drMCr+Xje9d2g4CnsgJAlB
+         5q8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVRJ2MH5bOGYBnxHftyRvgUxZMfV9rasxF0uXe8r47fP24VazbJHS3J8Lt3txMwAmjjH34xf6DxfbLlgSv0@vger.kernel.org, AJvYcCW4Ayop5JYk5s5XF9Hap5P10Cd2asr+f3cnTIjIWJF4L39P0orKwWLqEW7cor0XawaeCeF6kVldFOfr2H4=@vger.kernel.org, AJvYcCX9OcWx5p5prgG9ZLWgrqm0MUlzpky4gQqfS4xLMSdUXoxwfvCFTUD2FmmOENPqCa4qktMqqXUC43DO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwFsZO77l+ElPKN3Qg9fF8Mx0hLzKaldRawfLdPiLobYwYQuPA
+	DbF+RayQs5rCRtwsEcv/8GOGu2HCsWt7s012EkP+Agw/PUDV8XjU
+X-Google-Smtp-Source: AGHT+IHdDf7SW+xokXQj9UeB5NGIK7iiYD2rn/ORwOD8E5Ll4AimeY8xbAADkg0XqSxW4hNHVgstXQ==
+X-Received: by 2002:a17:902:e74f:b0:1f4:620b:6a27 with SMTP id d9443c01a7336-201ca120464mr12826775ad.13.1723481325443;
+        Mon, 12 Aug 2024 09:48:45 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:53c5:10b0:cfab:3972])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb7eeeafsm40051455ad.26.2024.08.12.09.48.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 09:48:45 -0700 (PDT)
+Date: Mon, 12 Aug 2024 09:48:42 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH v2 1/1] dt-bindings: input: touchscreen: convert ad7879
+ to yaml format
+Message-ID: <Zro86hWQVyaOAQKf@google.com>
+References: <20240810143840.3615450-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Ronald Warsow <rwarsow@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Language: de-DE, en-US
-Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:70C765adf4rNhh6BDR0qKncMl/12M0RxNChIhrt3uQhXLn7X9n6
- ojDnFNk3O3cWBZ9YonRsyV1YS2B+eJxLDOQM2tXCZwP8Y+03QM+AoOPEddwiEACIjuDqqLG
- AScohIxfXsozAfDYjWFqjolMHVw8DMqD5nfM+kz0CGXyGHov8rqTHM64DmxLe5d3lnpwy1H
- uh2Dlw1IGcV8oBaA/XzVg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:L3Xbrp5wygA=;ljmNZ45VEmIALCdTV4EI7mQHP18
- +Ujfm5Zzg+sQx/nlqWzrOdNDsfeYrP+2CcUuoMJeZIlP29npax/M0h1153F1xHOi1ns57F+xM
- 0uP5OiS9A7Oc2ncQduzrEoKB50jmLPzaecRFYx9incw/o1NStLe10RXQuAuNOlbC8b7gF3caQ
- pFfl4WJ2b40N+ZAJBQulU/Qol6kwm786K8FHBrcd9jMWdYeBrhJVkyz82zrbdHqKLMLAEvPpx
- FMRyfBjgARoQecpCZ1ksveWQPlIxf1oNSB0yvH/+eMW1jKjbvByQdc4V8SMqXGBZJ4ezYeG6I
- kVO9Lm1Ot3EKuWnUxdfHXoSZmQ1jpuH3hYq/5Y4G55xIUx+U2B6xqOuBUzVOSGtBNee4arz12
- 3Eb74IIM6Ogza0v2x2zKBFXLPDpEP83yPEZJAyzSeJ+gpHZgI1nWPm9jodSMvbnzvN1wQ1z5q
- +LDgBkdjj7zbG1gI0tQPj0fWogvwy0P56PH1gjzRWKdQ08eMZE66bajaC4IwnTCkX1Ej8Fo3x
- ahzqmyAYsBvDkWHnAWupkPma3yhDGZUPwwgX1BXyuD/WX1mUJ8m4ePUKmqH2sBaFAbkQUQBmB
- LCcv9zXkj/uzN6KsFq1yI7FXrET2aC4z8Gg2CBOwBCi4GYuo/GEGQsly6nQjLfOuCSjxXyZcl
- hvouTQ0QtxzTBB/OMKTQDg0/K8dfds1e4D/Y0Q43x7RxRwuiZ5YM2xw0ZU8Zpdn8qUzALG5sX
- 9GpS/nCE6LSJoQYCTHTcTy5WD3RBwLlFGjiiIGpwXErqt0fJxQmbbxMxl7APHKsXdp26lWrY9
- yAtSM+9+z89g4LBy3riRIc+g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240810143840.3615450-1-Frank.Li@nxp.com>
 
-Hi Greg
+On Sat, Aug 10, 2024 at 10:38:34AM -0400, Frank Li wrote:
+> Convert binding doc ad7879.txt to yaml format.
+> Additional change:
+> - Add ref to /schemas/spi/spi-peripheral-props.yaml
+> - Add #gpio-cell
+> - Remove  spi-cpol and spi-cpha in example, the place hold 'spi' can't
+> correct detect spi-controler.yaml. So these two properties can't
+> be recongnized.
+> 
+> Fix warning:
+> arch/arm64/boot/dts/freescale/imx8dx-colibri-aster.dtb:
+> /bus@5a000000/i2c@5a800000/touchscreen@2c: failed to match any schema with compatible: ['adi,ad7879-1']
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+Applied, thank you.
 
-Thanks
-
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+-- 
+Dmitry
 
