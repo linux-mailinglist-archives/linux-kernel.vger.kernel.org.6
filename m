@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-283349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E199394F144
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:07:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F91094F142
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:06:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D9E228114B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:07:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F3B280CB3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CDA183092;
-	Mon, 12 Aug 2024 15:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E5B17C7C8;
+	Mon, 12 Aug 2024 15:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PH9uJ1aj"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SsSu4J2J"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628221E504
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD16F1E504
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723475219; cv=none; b=h4BY+MUDf+qJDsyepMfNFfOXUPKsU8RkH24l0koSWE2u9OpCORdIdkYuRk/ImGEdcKxKxm5CG8gtZTALGCIzQbxRxJomMn2ECDHhiy1iok5w6qOOX/LIpANCpXSdV6ZRYizNufE+Ox70rHLG7vGPeyOyUyaozoOO3qT76gqyi3k=
+	t=1723475205; cv=none; b=jnNBiCpxrRha00EVz5lLjc/dqLw5u8KBWzfB3ToNpOnr55IPGysfqVPv0noFMNfNI9j93PzT1cjbb9ztTxmbekm5x3bXixH6FeKvRXOllVxNCOhSpf/N07YW7NwxPpxtwZCGmLJQJLV9xPPqXgA5qPT1VgQQJOikj5Hrf0Kosek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723475219; c=relaxed/simple;
-	bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cZwPdA2echParu5NGwKVDkRRp8MosOUPP4XRXeI9SpssCqXO1usKMfHQLvpB/Z4MnsCBupaImu3TTMncTyWqWkyTI9ImVnGcQ3cfWATQdrm1WvxpjmJ/4HplwPTdtgQMDBbHVrJH7grXkzSP2FKgFmoh2wTgOzEeeBRrlV/a2+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PH9uJ1aj; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b9fe5ea355so14658a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:06:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723475216; x=1724080016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
-        b=PH9uJ1ajF+VwsbFmieHQ/jDrNVgDM9gz+/DwqwKIF639c7FJEroC/+cyv8n69v5Isl
-         nXUvZJkMXhotNViuWUQOirS8pm8gCgFTYB1LhjzaD98BUiDA/5TZqcIa0l6gnVVkYsE0
-         3wjH3PKctHMrh58LjomGY94dm4VhgSPE6Ks1f0xB2oj17ZlEgpGq53395gDutO15JB9B
-         RmbjYBWtTvvPI7DvFZnzQGmyfawvk0JNUpRXluI6yWZHmckLUyvt06mxzxrJsCpvTriw
-         qWHpsD+J81TuG7gAhzKsvLNCvYeEKwRggvxtPQEwwZpiilLZAwmndZ7aoyZNd0TRnKck
-         dIAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723475216; x=1724080016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/le9A2aEVKUmIV4UkSEJp/ETmS0AvR1tTz3Yj+RukI4=;
-        b=wY1SeyLAE5xD3zLfJ53vTSRpDaoUN4bGzY3EnGQrpw9fnZC8CoY5mI376evc/mugR/
-         DUnZFfny0X4Zi+XEOafFT5gki9Rt1IzCgWfFdKprgeWGpQLY6SwvY2vuqaORrsRAKP0e
-         AiXoUCRjb7dz2g1nT1HkMQAUXUiCgOMnElNTo2uGMkhiPPks+RJ3nkWTif8FNGLWVPLI
-         PsaW/8hFTwE4LbBnic9gtHW9+ttpmg0XwNBciqMPOlaY6C99DHNN0xHkscyJSXKk+NhG
-         otox2OydOP2KvntTdnc6UYaz04sq5jbHPresi6UdROcrPfFdw20y51digIEElDr5tHrX
-         b32w==
-X-Forwarded-Encrypted: i=1; AJvYcCUvWVM3Kr7a/tCayoN6i6IjkI/LlEsjut3e7EzoxnrykNr2jxkb8z3uvEt3wybRZGAssDAHGlNR4skQpx5b213+fmfbUYLjae5TYFPd
-X-Gm-Message-State: AOJu0Yx3c9At+OaWw5vwrJufRqksBC6p07yXkYNR/u7Z4VjxkXn54Rc4
-	1EDzWVZZP7d2JqVlc0Aim5EQzYQGxcL6cQnstM6cKvGHlErQSMdN49fabPhrULW7KzYBx3/mZBQ
-	ztgbtQUcecNFdkNGIbKev1gmP+d1wQvZX+Ztw
-X-Google-Smtp-Source: AGHT+IH0SfAmG8rb+QcktSGfHWi/AHs2OD7smK1wxxMlrDuISAWiDiKzS7E7leJ1IekWL3YFAERaSLWneIBYBvP6CMA=
-X-Received: by 2002:a05:6402:5206:b0:58b:93:b623 with SMTP id
- 4fb4d7f45d1cf-5bd1b40925cmr206174a12.5.1723475214958; Mon, 12 Aug 2024
- 08:06:54 -0700 (PDT)
+	s=arc-20240116; t=1723475205; c=relaxed/simple;
+	bh=wZUKLmGZTJAG1WlIlifrMSRtJQlbTNydGbd1sztoIHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hodZpOeHmB6RziYWg1kH9SF7mekv1AYNZKNNZpwU+5mXxoBUKCWrYGfyY1fu68HKcCv+lyHZZZ9R3NMD8TUq4RmDUXeQCylIe6gGUCWCepn5kgH5i/BlxwDTR9AuQs3IVgJHcrzzZ692EHkpQ+aQqNe7jV7N4OpCJtWKhr3pCWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=SsSu4J2J; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OX2YxCLbB2YLRKPPMAa2K017NZPOzu80/T3MRpTE8kQ=; b=SsSu4J2JaMqE78Wm5orCsihZ1Y
+	NVbvEmLPNskF9gT9W1ujQr6hc7tFs/D5+We5vniiUKmWrlWw28Cx4YhB0J2g8hm5kgVcffh5GlEJy
+	D0xxcvIjEU4dTcnpu7TQQuo9ZnFBft5ubdv8BoGNQV6cXH6tJcXWQiLoMXHo4edSmHzipEdSCqbCr
+	n+TW1Wq4GBpdxG2Aq/AyUAjIe0wt7k0SrW+G1Hr3rZmgW3Wfc/IAtxflUCa3PBCUr15ynY1waPYiH
+	EMX7phVPycrQdg9PSqzDBd5atbaPtfyxM/2a1wryqDjt9yui65VK9YA3yLueV81C4/2niFndSWMeH
+	iacW5q6A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33634)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sdWcx-00047v-30;
+	Mon, 12 Aug 2024 16:06:32 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sdWd1-0000Yf-PC; Mon, 12 Aug 2024 16:06:35 +0100
+Date: Mon, 12 Aug 2024 16:06:35 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Harith George <mail2hgg@gmail.com>
+Cc: Yuntao Liu <liuyuntao12@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	arnd@arndb.de, afd@ti.com, linus.walleij@linaro.org,
+	akpm@linux-foundation.org, eric.devolder@oracle.com,
+	masahiroy@kernel.org
+Subject: Re: [PATCH] arm: Fix build issue with LD_DEAD_CODE_DATA_ELIMINATION
+Message-ID: <Zrok+yGp5epfcZTE@shell.armlinux.org.uk>
+References: <20240808123556.681609-1-liuyuntao12@huawei.com>
+ <54f87fcb-74da-4b48-a12e-4c7d9fa2870e@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <49557e48c1904d2966b8aa563215d2e1733dad95.1722966592.git.fahimitahera@gmail.com>
- <CAG48ez3o9fmqz5FkFh3YoJs_jMdtDq=Jjj-qMj7v=CxFROq+Ew@mail.gmail.com>
- <CAG48ez1jufy8iwP=+DDY662veqBdv9VbMxJ69Ohwt8Tns9afOw@mail.gmail.com>
- <20240807.Yee4al2lahCo@digikod.net> <ZrQE+d2b/FWxIPoA@tahera-OptiPlex-5000>
- <CAG48ez1q80onUxoDrFFvGmoWzOhjRaXzYpu+e8kNAHzPADvAAg@mail.gmail.com>
- <20240808.kaiyaeZoo1ha@digikod.net> <CAG48ez34C2pv7qugcYHeZgp5P=hOLyk4p5RRgKwhU5OA4Dcnuw@mail.gmail.com>
- <20240809.eejeekoo4Quo@digikod.net> <CAG48ez2Cd3sjzv5rKT1YcMi1AzBxwN8r-jTbWy0Lv89iik-Y4Q@mail.gmail.com>
- <20240809.se0ha8tiuJai@digikod.net> <CAG48ez3HSE3WcvA6Yn9vZp_GzutLwAih-gyYM0QF5udRvefwxg@mail.gmail.com>
- <CAHC9VhQsTH4Q8uWfk=SLwQ0LWJDK5od9OdhQ2UBUzxBx+6O8Gg@mail.gmail.com>
- <CAG48ez1fVS=Hg0szXxQym9Yfw4Pgs1THeviXO7wLXbC2-YrLEg@mail.gmail.com> <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhS6=s9o4niaLzkDG6Egir4WL=ieDdyeKk4qzQo1WFi=WQ@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 12 Aug 2024 17:06:17 +0200
-Message-ID: <CAG48ez2tvHgv7sOVP14gCF1MAGE-UzJoMCfZqdmY1nXX4FFV4Q@mail.gmail.com>
-Subject: Re: f_modown and LSM inconsistency (was [PATCH v2 1/4] Landlock: Add
- signal control)
-To: Paul Moore <paul@paul-moore.com>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Tahera Fahimi <fahimitahera@gmail.com>, gnoack@google.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54f87fcb-74da-4b48-a12e-4c7d9fa2870e@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Aug 12, 2024 at 4:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Mon, Aug 12, 2024 at 9:09=E2=80=AFAM Jann Horn <jannh@google.com> wrot=
-e:
-> > On Mon, Aug 12, 2024 at 12:04=E2=80=AFAM Paul Moore <paul@paul-moore.co=
-m> wrote:
->
-> ...
->
-> > > From a LSM perspective I suspect we are always going to need some sor=
-t
-> > > of hook in the F_SETOWN code path as the LSM needs to potentially
-> > > capture state/attributes/something-LSM-specific at that
-> > > context/point-in-time.
-> >
-> > The only thing LSMs currently do there is capture state from
-> > current->cred. So if the VFS takes care of capturing current->cred
-> > there, we should be able to rip out all the file_set_fowner stuff.
-> > Something like this (totally untested):
->
-> I've very hesitant to drop the LSM hook from the F_SETOWN path both
-> because it is reasonable that other LSMs may want to do other things
-> here,
+On Mon, Aug 12, 2024 at 01:21:59PM +0530, Harith George wrote:
+> On 08-08-2024 18:05, Yuntao Liu wrote:
+> > There is a build issue with LD segmentation fault, while
+> > CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled, as bellow.
+> > 
+> > scripts/link-vmlinux.sh: line 49:  3796 Segmentation fault
+> >   (core dumped) ${ld} ${ldflags} -o ${output} ${wl}--whole-archive
+> >   ${objs} ${wl}--no-whole-archive ${wl}--start-group
+> >   ${libs} ${wl}--end-group ${kallsymso} ${btf_vmlinux_bin_o} ${ldlibs}
+> > 
+> > The error occurs in older versions of the GNU ld with version earlier
+> > than 2.36. It makes most sense to have a minimum LD version as
+> > a dependency for HAVE_LD_DEAD_CODE_DATA_ELIMINATION and eliminate
+> > the impact of ".reloc  .text, R_ARM_NONE, ." when
+> > CONFIG_LD_DEAD_CODE_DATA_ELIMINATION is not enabled.
+> > 
+> > Fixes: ed0f94102251 ("ARM: 9404/1: arm32: enable HAVE_LD_DEAD_CODE_DATA_ELIMINATION")
+> > Reported-by: Harith George <mail2hgg@gmail.com>
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+> > Link: https://lore.kernel.org/all/14e9aefb-88d1-4eee-8288-ef15d4a9b059@gmail.com/
+> 
+> Build tested. Solves the earlier build issue I was seeing.
+> fwiw, you can add my tested by tag if needed.
+> 
+> Tested-by: Harith George <mail2hgg@gmail.com>
 
-What is an example for other things an LSM might want to do there? As
-far as I understand, the whole point of this hook is to record the
-identity of the sender of signals - are you talking about an LSM that
-might not be storing credentials in struct cred, or something like
-that?
+(a) please see the note in my signature below.
+(b) this tested-by needs to be collected by the submitter before it gets
+    into the patch system.
+(c) it needs to get into the patch system.
 
-> and adding a LSM hook to the kernel, even if it is re-adding a
-> hook that was previously removed, is a difficult and painful process
-> with an uncertain outcome.
+Bear in mind that as a result of (a), it's going to be better to get it
+into the patch system sooner rather than later - I am expecting there to
+be a period of time (weeks) where it will be impossible for me to read
+the screen...
 
-Do you mean that even if the LSM hook ends up with zero users
-remaining, you'd still want to keep it around in case it's needed
-again later?
+-- 
+*** please note that I probably will only be occasionally responsive
+*** for an unknown period of time due to recent eye surgery making
+*** reading quite difficult.
+
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
