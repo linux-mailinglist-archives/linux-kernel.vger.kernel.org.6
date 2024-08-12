@@ -1,3285 +1,434 @@
-Return-Path: <linux-kernel+bounces-282805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF6294E8D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:47:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD8E94E8D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E261EB20B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:47:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AB951F225D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB99F166F22;
-	Mon, 12 Aug 2024 08:47:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C56B15B117;
+	Mon, 12 Aug 2024 08:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmN/llG+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="o6iCJk8B";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="gD+15XCe"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE89614EC40;
-	Mon, 12 Aug 2024 08:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723452427; cv=none; b=pHs20IHNWWxv1akjEZZi1GwuD4r0HQUedCK9wb+mpMz1p3q2pbq3x99EA9puOOlwotKWrFAIQn1kjPkGrCeiic91mvxp5qUUdgWgaAnJyEXh3Ew4efXTpiXHy0TqmMlvpocECkL/bCVYVay7X98U9uhAnRJnw4CEvqIU6ore+GA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723452427; c=relaxed/simple;
-	bh=E9Geghu9lzVeBV2UAXrWZB24cJWW4+LGNxgC6LnL9Zk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WMWRbfa8v14uoBWLZkRkIpwsrDY7FPXigVG0AiJknxRDLj0wAW1qG/s7xhd5X0PRaxu+97j6yXZAYf3pAoyX0/RdamnwihExmTMdYzOr1KP24e2Lt3r39M/QFdH5CBpwv/6oup6jwEVw9HxGTL4Cl3YRD7xw7KWMDwrNE/oNddc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmN/llG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB1FC4AF12;
-	Mon, 12 Aug 2024 08:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723452426;
-	bh=E9Geghu9lzVeBV2UAXrWZB24cJWW4+LGNxgC6LnL9Zk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZmN/llG+JrsZfbdRh/dH1UMGprricDigE6lB6uFGN41qUJF6+qmydH5FtEcpwDZDO
-	 VShFLQjqG7mxY9LEkvXT8gaVydP/kZWsKyBGMNFkaAlRCSpPUw8pgM5EIA8+FxNiOn
-	 pVN1WirZYH/48EdQi7/j1PrjOp2YvFgftApobGQ2Ym74228ejexXEtkegewlijkcX+
-	 COoghykd6T7+bNpsnxkLhVoLyKCVz0poFJdm/oCt/1Onr9W2cfct/GPaqwqg+1ru8e
-	 0O3uiNyX2lI60ik/TP90dt0AV15aj5pc37tUTC0dLQiq5gZMVqX5rfrBaO5MFoyIsh
-	 b34mBUAcSRaEg==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52f04b3cb33so8162329e87.0;
-        Mon, 12 Aug 2024 01:47:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXjYIo3ok1U7W6Y2BhIwU96ml3ZP6fHLjGNS/CKixVXhKH4tFwWHZU77W9t8Q0B6Aq/T4km+ryYfN52guLdbRSOdwsAj7yr+R+vDTzf
-X-Gm-Message-State: AOJu0YxGoKc4pLSclm4JD+KZJye6W8z4cFI5ltMLTSI85J1lmCR0zoIm
-	5IkBn9BTYGXZy85TDWqUUARmXMurTyVjr6Z78J/eBtDoxd3scAcNUNJvG077Ra1LhxFXv+Q42Sz
-	Tse9S+WMMmKNovmvSeEp1iLuk7Fg=
-X-Google-Smtp-Source: AGHT+IGWbKy+LkaDMReXNgmUafrgOopBv504MpXRtpfIodVZgU4UU+/BqxG5Vxma9u/O/3xtD7a/WvVA6/9YoxJepO8=
-X-Received: by 2002:a05:6512:31c4:b0:52c:df8e:a367 with SMTP id
- 2adb3069b0e04-530eea129b6mr8007928e87.53.1723452424143; Mon, 12 Aug 2024
- 01:47:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BB614EC40
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723452494; cv=fail; b=VR4SgTEmKoDSpAGoRAOieopoUNwj9futPzt5Twg5spv2MsBo7kDsDQgpqMOdE86XQRX7+kyyDC7RFJ97Ks6JyDeWzbnzt1nLlY1Q64X0Elto5GJefSlEHd2SJ5Wo5gcwv38h+fupSY/C9vx79zoUe3WlX5MpyNKd6i3WPpcAAxM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723452494; c=relaxed/simple;
+	bh=rlZHKHg1BQRk9XfsGb4g6J4t8tllsWkpgnggkihm414=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AowpwfwUaTbyb3lT/c5IcPtD05qTTJ91V5GaY6Dldw8DWnvye84OhAG0aSHDmQrx7Y9nJgmldT1KxUaCYzyqf0Erj80YgBzH8BNw2Xuor+lY+lmEPiOn7NNxYQReDWQJ3i784aAOisEi4tFQT5D9tzezxLquo9BC3pB+WS0+nBI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=o6iCJk8B; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=gD+15XCe; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8e41c918588711ef9a4e6796c666300c-20240812
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=rlZHKHg1BQRk9XfsGb4g6J4t8tllsWkpgnggkihm414=;
+	b=o6iCJk8B9h/aFTmGbTk5CE1Y0pnShLdKPG+elEr/sxjyPk/uwGgcXacYIrSMJgVOKv6RnBxmmfnREcJyfam1hHikUV6CQ8ZX4PJqK3Q086rwfRBkIVpI313KfPeJrXEphT81Jkg/5F2xSJkg03rK8H+FYokEzek9OezA7zYVhdc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:7154e303-2679-41d5-97cd-4d7ad0394a73,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:994976fe-77bb-433c-b174-ffb8012693b0,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 8e41c918588711ef9a4e6796c666300c-20240812
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1688004018; Mon, 12 Aug 2024 16:47:50 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 12 Aug 2024 16:47:50 +0800
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 12 Aug 2024 16:47:50 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fIElUDFWpALrkjzCgFZ3GXfidcBud2ksF5RGxeQPQdUtzAR/Z9v7Oo4y/zVYfXiS+5qyYqepaT2c0Izs71zFrvhqud8faM233fTNMjyIGqErVFOMPk3wRcmjwyWDKEXgCv2Vvn9iK142kEpAN7AHe8BCbHKm0gNcHW5Qvyma8EAUuP5P6NP4EeOnIxf5WyC8a9FTtbHh/eOGoCTVxRYWvqpUf6w/WEcCQIcHCrmA4gqFsXAeZAUoWMbnm+R8QvvQjbLgbvp03z+nu/5zpnSGq6RYkmQCAPRQ/GnIs/FxgXyPb8utvStzkXALc7bL8OyvcnA6bTMrzls6yN3FGAvDYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rlZHKHg1BQRk9XfsGb4g6J4t8tllsWkpgnggkihm414=;
+ b=bUQQXX6ownPdMHOzZytmuX6bBcDGncdW+7/dA3rhUQzA1rThlTPIG8XdpTSF+VgAqII1bhDknTmpxpMd56DvBleEwowRqOXD1Ss3OBvKWlMHat52KnsyMIPNWxRp/ZJRFbhcCoSkjvyLNsvkSqzpz+brFAGAEbmwFDPFZDbZukqm4RoBTge+aUbCaNgtdK9FP+46+4Xj5nYot/pan+yhI9AACGuojbipXoIt4JFUOvO6VMu/58WNmWMs2392j9/61GqUNkHcacp7/eHPNpopszaev75th7Y9moIDWkN3n3EAKpYLyTDDAlhi8HjkT6uVUNsCxDji9Qbq3j3IYkHl7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rlZHKHg1BQRk9XfsGb4g6J4t8tllsWkpgnggkihm414=;
+ b=gD+15XCeAqKzFxcRhyUqEeeGZb9dMtKtlDV4yqbBDxcJnUb+2QQM0LXfHcSR9dZ9bw6EcjHfHYKwQjbQOV/TbmhPp32X0iAHD8/h6FzgsrDslkv9bxjrk1EK7xQyB70ANLLg78HdW3N28gfezDajQzkWGuy6ArNKuMqVrK+dAos=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by KL1PR03MB7797.apcprd03.prod.outlook.com (2603:1096:820:f7::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 08:47:47 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%4]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
+ 08:47:47 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: =?utf-8?B?U2h1aWppbmcgTGkgKOadjuawtOmdmSk=?= <Shuijing.Li@mediatek.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
+	=?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?= <jitao.shi@mediatek.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	"angelogioacchino.delregno@collabora.com"
+	<angelogioacchino.delregno@collabora.com>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: Re: [PATCH v5] drm/mediatek: dsi: Add dsi per-frame lp code for
+ mt8188
+Thread-Topic: [PATCH v5] drm/mediatek: dsi: Add dsi per-frame lp code for
+ mt8188
+Thread-Index: AQHa7IXY5o5MgcywhkOASTar3Krrc7IjT48A
+Date: Mon, 12 Aug 2024 08:47:47 +0000
+Message-ID: <0498d1942753f7e0e3bbed0971c6e66d8b8519d3.camel@mediatek.com>
+References: <20240812070341.26053-1-shuijing.li@mediatek.com>
+In-Reply-To: <20240812070341.26053-1-shuijing.li@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|KL1PR03MB7797:EE_
+x-ms-office365-filtering-correlation-id: c5e49841-78d8-427f-7e32-08dcbaab70e8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?dW5pRmdvdDY1UHNkUkV6clBpQ2JBbGVvN0k5Q2RkNXRjREJwd0kvT25sQmty?=
+ =?utf-8?B?VS8zcENGM1FkNis3aHIyS2M1VlJHTFllcnpqQVF0RjVuL3l5bFRNQzFZZFpy?=
+ =?utf-8?B?UU5FZVIvUjQ3TVVnaTRxYjdMTzNVRTZqa01UOWxCMnlyb2xrR2VOa25lMGg3?=
+ =?utf-8?B?SjBoTXNIZFBLR0I3Q2ZVLzJ4MCtYQ1lxY0RsOGlrTE1RT3Q2RXhMN2IyUDZP?=
+ =?utf-8?B?SkNRU0pqN0ZvYmNxMkNUaEtPT25neGM5YVR6UlBiait6emVJcHp6bE9jaXRJ?=
+ =?utf-8?B?VEJxVTlyT1lrYTNKaVYrZzNSZXJRY3o4SGh6RDBVdXlBdjAyT1NpR1dSZUsy?=
+ =?utf-8?B?M096K0xmakFRYXNqU29xVEFXZHpDWGQ0dWZIeEJQV2FxejlHQjZwempNcXN6?=
+ =?utf-8?B?UXlwL1g3T0VaZFFVMXYzUGFtOXcyRjQ5WldNOVNCd3FTU3BsbzQ2N2tSR3pv?=
+ =?utf-8?B?a01scmVQaGJqZllFNi9KcHVyVlAvMVBCMmpZeHlEVWc4a1ZHMk5iYmVUcXBt?=
+ =?utf-8?B?Z1ZaM3djSDR2SnJsNGR2S3BuZ1ZZRUJZbFcyQzFDWjlUVlhaUUFNTlVXT2VJ?=
+ =?utf-8?B?dGhMTUw5Zk5OaFZlQmZ3TDdQZ0FlbEp1VmwvSTd2aXhaSTEvQ0w1UkJQSW44?=
+ =?utf-8?B?M2pZeUZ1SmtidUdCc0dNZTk2Y21YOFRUOWQ3V1NLbmZLRUZVQ0tmKzBDbnlK?=
+ =?utf-8?B?NUhDclVieDFrbDREa2VFdERaNGhNRno5ZHovRWNMYzBSVXZCS2lhNGdSODU2?=
+ =?utf-8?B?NDZURnNLM1lTVlFFUVFsRTJRS3dVdUpFRHBhb2VlYkQ2SC9PMXpJSmk0eEhx?=
+ =?utf-8?B?SGVQdDVGcmtZUFRBRGFvMzNRYXhVQXJseW5TUENMYW1zUXlPYUo2bnRkMjRw?=
+ =?utf-8?B?YWRtaUV1M3NGNHBsNHpvYWxyaHp3OVJ4K1ZPNVFIdnp5VnF6dThRMjZVdDlC?=
+ =?utf-8?B?dVp5a2JKdUhPQ3R6OW1rTXpkSUs4dlFGNSs4a0MydzU4cFJmTk9MR0E0ZTN6?=
+ =?utf-8?B?UUtNaW1pOEZRbVRyRCtpSHpUME5nbTNWWG9XY0dsenhKK3djK0dQNThibmR2?=
+ =?utf-8?B?MUhPenZMeldwRC9GZC9yL3ZVTDVWR28vZ2d1VnRZa3EvVDI2YXZWSTlrdVVp?=
+ =?utf-8?B?d0QxeG1JYi9lZjEzUzRkTXJYUjdmSEFBSHYxK3pnbFlxR0U4ZWZKWkZ1R05y?=
+ =?utf-8?B?UmVHWTNKTDk5UTFIKzNDY3hKd214OU1saS9jbXZzRjUvOCsvakZuRTdjQ3JX?=
+ =?utf-8?B?TkRvbEpvVWZmNmlaR25YQ2ZkNGtaMUwxZGZHUmJhUUZsYzZlUmNmSzloZnN0?=
+ =?utf-8?B?T3U0SnVPMjYzaDFYdGc2TmU1aG5qdUhIWUJ5Vkc2NWlzRERpYkxWRnRrNWF2?=
+ =?utf-8?B?MU5lZG4ySGYrbzArNlJ5b2xIeHdZdkFiWU9RenhyY1dXcWRUS1ZKa0p5bk5C?=
+ =?utf-8?B?ZFB2VDVGUTRuVGJLTkhzVlBQKzBpZU1heGR2bm1lQWdFdTZuajhyN3lIc2Js?=
+ =?utf-8?B?bUw4Um1MM2NkOWxmQkJsWGZlMDlCa2VldHorZGphcFlJZHgyNjZhd0ZZNEFy?=
+ =?utf-8?B?aVZmNHdRTTVySUl6NksyNXRwSWxrUFNxL0UzaUt0cyt1NU5aRE41T0RZdWVY?=
+ =?utf-8?B?ZzB4MzZyZkNvMU9CRlplRVlyN2F5UUJyTUVYaVhacTlzYXJtaE5BMWVoQU56?=
+ =?utf-8?B?NFk3Z2Z3aGh6YWhFb283Z1RHMktZc2Iwd3lHdlR3Vmh1TmJjdTEzblhMOTZm?=
+ =?utf-8?Q?yeujeB1cQW92Ni+Ipq0PTKGnDakL1HJaY0sIgSa?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?T1poYVp2aU1QeEhIU0xJZ1ppbUR1Nk85eUlnNTZ1cE42bGllbERRUk4wK3lG?=
+ =?utf-8?B?bjF4VGxjSlZsZDMyUTM2cGZkNWpBZGd4bUlEQjhjdjhZMzQySGhsZVU2ZkpD?=
+ =?utf-8?B?T1FOd1pjazJNdStPT0ZQTzZRR2xEUCtFaG8vWEpKZ2VFbVE3bThBSkNjeC9s?=
+ =?utf-8?B?bUNBV1BZVk5SOFUvL0dwWGk4YVZ3TmU0a2Nkc0o4WHBMN2dXYnF1eDViOFMx?=
+ =?utf-8?B?eFk1SnRzOWUvS0s0R3VMamlFeWJqQktEMXRIdnNTamVIYXdOVnltYWNzU3Jn?=
+ =?utf-8?B?dWRJeEM0UnQycm1GUllwNjFjK2tzbFFSS0RSc1JHUGJXVGpidlY0R0JwVnpR?=
+ =?utf-8?B?a2lCTzRBS2ZZV1hZY05LUVFjZzRPeFZLRXhWVjVqbFh4N09qOUtuUEJZWkxX?=
+ =?utf-8?B?SXFwM3p1T1BWVjZhaEtHeCtMbVBDV2tweUtOL1FTYjBKMXpMdkxVZmZpU1R3?=
+ =?utf-8?B?cWxCVjQ1Z0JjeFcrRktzNW1nc2Vxa2FrK2dGTk9YSFB2Y1RCUWNSWUxtNVZn?=
+ =?utf-8?B?VkRUWXpZcS9WNVl5VVJyby9MN3pENGtFODZXaXhLSU03THdzZTIrOTdrZTlj?=
+ =?utf-8?B?UVQrZ3g5MnNGSEMvUUhmcnFmUmZwQTdLUjRhbGpoRjhhQTlpTVNDaU52ZDNV?=
+ =?utf-8?B?Nko3di85MTVHdnNUdVQvQzIzcUFqZFppMm94QWRJQ0RlMzY1WUhwZDJGZGxJ?=
+ =?utf-8?B?WnpxSEVWN2dLSHppWmhoVWl4R3NiOE5ZTjFXK0ErT1VkRSsvL1ZlRVcvOStS?=
+ =?utf-8?B?VUsyUTYyOWdjNmx1enJQOWFSSTg1UmxkaUQ2Kys1aUNlU09ZdE1FRkR2Tno4?=
+ =?utf-8?B?RlMyQ1pCVHE1bnFOZ1JnT2NOOGhITGNqVWI0N0xoQ3RucDR6c2hJRkNrcThY?=
+ =?utf-8?B?enYzQXRzVXQ5c0RwWDdFR041OGk5YThWcWF6cnBtTDlNRm1FU1Z3b0VZbmU1?=
+ =?utf-8?B?Mmgycjl6d01IUEFQWDFUNjJuTHVYL1BWcXRNTDlKVGw3YlB5QW9WeDFLaDRm?=
+ =?utf-8?B?cy9EVTExM0tsUEgzTitreTdjNXFmQ0ZTOFZkQ2o2cEpuMWRBbEwzalBFblNK?=
+ =?utf-8?B?dzRaL1gxZklZNWVnQnhZODdMZVU3VmZCVFVXYzU5N09va25mMmU1cmNmc3RE?=
+ =?utf-8?B?MTBVZVpkTEcvb292cTRkSUFyR2owNzcyUE12emlGNHhMdER2SHY0Z0IrMnBh?=
+ =?utf-8?B?dlhic0NONW1nYTJlUmJsWDEydmFsSVNpYzY4WTBCL1VIeVhiTzJBd0R3Rklv?=
+ =?utf-8?B?ODdYbnplb2JlS3BzRTFqTGRCNzd5VVcrd2sxYk5TYzFXTnhERFZZekJPN2ZQ?=
+ =?utf-8?B?angrazB2SGlZWkdxL2RPREliN0hJQWJsYUdFZDFJd0d3bVNSWTl5dmtZNWZD?=
+ =?utf-8?B?TjlxTHhjZHppK1E5eTFZNmpkZ2pQeEo4SzZFZzFvSk5JSjVxYXdOSlNoUUxX?=
+ =?utf-8?B?cXJuQ2QxV0ZURDBvTFBKdmthNWdSdVprRDErMlVsUXUwQk1xVnJrRWp6WUxw?=
+ =?utf-8?B?WG9rTFAybW95NUJVZVlSWDZiRi9FZkQyWlh5eThnQlRodUFYeHBZbnNZZWI0?=
+ =?utf-8?B?VGZ3R2kwSlFYUUkzL1FZNjJzYi90VEl5N1cxWnpHbi92TEVZN3k3NGhXTFBJ?=
+ =?utf-8?B?SUt4QjlId2ZqRnNmU0wzd3Q2VDRqWXVHTGh5Um1jQlRJZVVhZXhZVmZJSDEx?=
+ =?utf-8?B?VTcrOFJ4eFJjSlU4VTN2UlZHUi9sT2w5eXlSYXIycmkwb0pQWnZPV0JxbVQ5?=
+ =?utf-8?B?d1o3TEkzWFR5SFdIWHhidWYrZUludzNKMmVqYU9WK09UbE14L1pDQThvMU1i?=
+ =?utf-8?B?SUozL3QxSCtXQyt1eXdiQ2k3TGxzM005Ulo2T1JaZjZTaUJKNGNRNVZMUUQx?=
+ =?utf-8?B?cHhhZ1dvUnhjUjNlUUE2UlNmaGF1bzJVdFQzVjJnVEZ5am5RMGdHZDV2WFVl?=
+ =?utf-8?B?TERTK2s3UWRFaFFzcEtkcmVvRlpHbGY5d2hXM2I4bSswMThSbTFwbUY0ZTlD?=
+ =?utf-8?B?NHV1ZlJGVkFXQk9DQkFmajI3TzZwUjByL0xnNDhnRGhDYzNUenU3b3hpajE2?=
+ =?utf-8?B?bzdXYmxGdzNJRGJzMnhCem9GNzBpeGR2aFZVWHdubFNTMXREUUx2RE5RcEhF?=
+ =?utf-8?Q?TvvGplHXVuZmxdSBPqZf/uy+o?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <620520DF08E6A34ABC7AF9FDC3A5F540@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710065255.10338-1-ole0811sch@gmail.com> <20240710065255.10338-8-ole0811sch@gmail.com>
-In-Reply-To: <20240710065255.10338-8-ole0811sch@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 12 Aug 2024 17:46:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARA2W41X2n97O-=TXYPrmTsGqL-aMczPHsB2T_Y3QOGrA@mail.gmail.com>
-Message-ID: <CAK7LNARA2W41X2n97O-=TXYPrmTsGqL-aMczPHsB2T_Y3QOGrA@mail.gmail.com>
-Subject: Re: [PATCH v4 07/12] kconfig: Add files for handling expressions
-To: Ole Schuerks <ole0811sch@gmail.com>
-Cc: linux-kbuild@vger.kernel.org, jude.gyimah@rub.de, thorsten.berger@rub.de, 
-	deltaone@debian.org, jan.sollmann@rub.de, mcgrof@kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 10, 2024 at 3:54=E2=80=AFPM Ole Schuerks <ole0811sch@gmail.com>=
- wrote:
->
-> To translate the Kconfig-model into propositional logic and resolve
-> conflicts, we need to handle propostional formulas.
-> These files contain many functions and macros to deal with
-> propositional formulas.
->
-> Co-developed-by: Patrick Franz <deltaone@debian.org>
-> Signed-off-by: Patrick Franz <deltaone@debian.org>
-> Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
-> Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-> Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
-> Suggested-by: Sarah Nadi <nadi@ualberta.ca>
-> Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
-> Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
-> Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
-> ---
->  scripts/kconfig/cf_expr.c | 2594 +++++++++++++++++++++++++++++++++++++
->  scripts/kconfig/cf_expr.h |  296 +++++
->  2 files changed, 2890 insertions(+)
->  create mode 100644 scripts/kconfig/cf_expr.c
->  create mode 100644 scripts/kconfig/cf_expr.h
->
-> diff --git a/scripts/kconfig/cf_expr.c b/scripts/kconfig/cf_expr.c
-> new file mode 100644
-> index 000000000000..f015f91ec8c6
-> --- /dev/null
-> +++ b/scripts/kconfig/cf_expr.c
-> @@ -0,0 +1,2594 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023 Patrick Franz <deltaone@debian.org>
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <assert.h>
-> +#include <locale.h>
-> +#include <stdarg.h>
-> +#include <stdbool.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <string.h>
-> +#include <time.h>
-> +#include <unistd.h>
-> +
-> +#include "cf_expr.h"
-> +#include "cf_defs.h"
-> +#include "cf_utils.h"
-> +
-> +static void create_fexpr_bool(struct symbol *sym, struct cfdata *data);
-> +static void create_fexpr_nonbool(struct symbol *sym, struct cfdata *data=
-);
-> +static void create_fexpr_unknown(struct symbol *sym, struct cfdata *data=
-);
-> +static void create_fexpr_choice(struct symbol *sym, struct cfdata *data)=
-;
-> +
-> +static void pexpr_print_util(struct pexpr *e, int prevtoken);
-> +static void pexpr_shallow_copy(struct pexpr *dest, struct pexpr *org, un=
-signed int ref_count);
-> +
-> +static struct pexpr *pexpr_move_wrapper(
-> +       struct pexpr *a, struct pexpr *b, struct cfdata *data,
-> +       enum pexpr_move move,
-> +       struct pexpr *(*func)(struct pexpr *, struct pexpr *, struct cfda=
-ta *));
-> +
-> +static int trans_count;
-> +
-> +
-> +/*
-> + *  create a fexpr
-> + */
-> +struct fexpr *fexpr_create(int satval, enum fexpr_type type, char *name)
-> +{
-> +       struct fexpr *e =3D xcalloc(1, sizeof(*e));
-
-
-Why xcalloc() instead of xmalloc()?
-
-(same for all other places)
-
-
-
-> +
-> +       e->satval =3D satval;
-> +       e->type =3D type;
-> +       e->name =3D str_new();
-> +       e->assumption =3D false;
-> +       str_append(&e->name, name);
-> +
-> +       return e;
-> +}
-> +
-> +/*
-> + * create the fexpr for a symbol
-> + */
-> +void sym_create_fexpr(struct symbol *sym, struct cfdata *data)
-> +{
-> +       if (sym_is_choice(sym))
-> +               create_fexpr_choice(sym, data);
-> +       else if (sym_is_boolean(sym))
-> +               create_fexpr_bool(sym, data);
-> +       else if (sym_is_nonboolean(sym))
-> +               create_fexpr_nonbool(sym, data);
-> +       else
-> +               create_fexpr_unknown(sym, data);
-> +}
-> +
-> +/*
-> + * create the fexpr for symbols with reverse dependencies
-> + */
-> +static void create_fexpr_selected(struct symbol *sym, struct cfdata *dat=
-a)
-> +{
-> +       struct fexpr *fexpr_sel_y;
-> +       struct fexpr *fexpr_sel_m;
-> +
-> +       /* fexpr_sel_y */
-> +       fexpr_sel_y =3D fexpr_create(data->sat_variable_nr++, FE_SELECT, =
-sym->name);
-> +       str_append(&fexpr_sel_y->name, "_sel_y");
-> +       fexpr_sel_y->sym =3D sym;
-> +       fexpr_add_to_satmap(fexpr_sel_y, data);
-> +
-> +       sym->fexpr_sel_y =3D fexpr_sel_y;
-> +
-> +       /* fexpr_sel_m */
-> +       if (sym->type =3D=3D S_BOOLEAN)
-> +               return;
-> +
-> +       fexpr_sel_m =3D fexpr_create(data->sat_variable_nr++, FE_SELECT, =
-sym->name);
-> +       str_append(&fexpr_sel_m->name, "_sel_m");
-> +       fexpr_sel_m->sym =3D sym;
-> +       fexpr_add_to_satmap(fexpr_sel_m, data);
-> +
-> +       sym->fexpr_sel_m =3D fexpr_sel_m;
-> +}
-> +
-> +/*
-> + * create the fexpr for a boolean/tristate symbol
-> + */
-> +static void create_fexpr_bool(struct symbol *sym, struct cfdata *data)
-> +{
-> +       struct fexpr *fexpr_y;
-> +       struct fexpr *fexpr_m;
-> +
-> +       fexpr_y =3D fexpr_create(data->sat_variable_nr++, FE_SYMBOL, sym-=
->name);
-> +       fexpr_y->sym =3D sym;
-> +       fexpr_y->tri =3D yes;
-> +       fexpr_add_to_satmap(fexpr_y, data);
-> +
-> +       sym->fexpr_y =3D fexpr_y;
-> +
-> +
-> +       if (sym->type =3D=3D S_TRISTATE) {
-> +               fexpr_m =3D fexpr_create(data->sat_variable_nr++, FE_SYMB=
-OL, sym->name);
-> +               str_append(&fexpr_m->name, "_MODULE");
-> +               fexpr_m->sym =3D sym;
-> +               fexpr_m->tri =3D mod;
-> +               fexpr_add_to_satmap(fexpr_m, data);
-> +       } else {
-> +               fexpr_m =3D data->constants->const_false;
-> +       }
-> +
-> +       sym->fexpr_m =3D fexpr_m;
-> +
-> +       if (sym->rev_dep.expr)
-> +               create_fexpr_selected(sym, data);
-> +}
-> +
-> +/*
-> + * create the fexpr for a non-boolean symbol
-> + */
-> +static void create_fexpr_nonbool(struct symbol *sym, struct cfdata *data=
-)
-> +{
-> +       /* default values */
-> +       char int_values[][2] =3D {"n", "0", "1"};
-> +       char hex_values[][4] =3D {"n", "0x0", "0x1"};
-> +       char string_values[][9] =3D {"n", "", "nonempty"};
-> +
-> +       sym->fexpr_y =3D data->constants->const_false;
-> +       sym->fexpr_m =3D data->constants->const_false;
-> +       sym->nb_vals =3D fexpr_list_init();
-> +
-> +       for (int i =3D 0; i < 3; i++) {
-> +               struct fexpr *e =3D fexpr_create(data->sat_variable_nr++,=
- FE_NONBOOL, sym->name);
-> +
-> +               e->sym =3D sym;
-> +               str_append(&e->name, "=3D");
-> +               e->nb_val =3D str_new();
-> +
-> +               switch (sym->type) {
-> +               case S_INT:
-> +                       str_append(&e->name, int_values[i]);
-> +                       str_append(&e->nb_val, int_values[i]);
-> +                       break;
-> +               case S_HEX:
-> +                       str_append(&e->name, hex_values[i]);
-> +                       str_append(&e->nb_val, hex_values[i]);
-> +                       break;
-> +               case S_STRING:
-> +                       str_append(&e->name, string_values[i]);
-> +                       str_append(&e->nb_val, string_values[i]);
-> +                       break;
-> +               default:
-> +                       break;
-> +               }
-> +
-> +               fexpr_list_add(sym->nb_vals, e);
-> +               fexpr_add_to_satmap(e, data);
-> +       }
-> +}
-> +
-> +/*
-> + * set fexpr_y and fexpr_m simply to False
-> + */
-> +static void create_fexpr_unknown(struct symbol *sym, struct cfdata *data=
-)
-> +{
-> +       sym->fexpr_y =3D data->constants->const_false;
-> +       sym->fexpr_m =3D data->constants->const_false;
-> +}
-> +
-> +/*
-> + * create the fexpr for a choice symbol
-> + */
-> +static void create_fexpr_choice(struct symbol *sym, struct cfdata *data)
-> +{
-> +       struct property *prompt;
-> +       char *name, *write, *read;
-> +       struct fexpr *fexpr_y;
-> +       struct fexpr *fexpr_m;
-> +
-> +       if (!sym_is_boolean(sym))
-> +               return;
-> +
-> +       prompt =3D sym_get_prompt(sym);
-> +       if (prompt =3D=3D NULL) {
-> +               perror("Choice symbol should have a prompt.");
-> +               return;
-> +       }
-> +
-> +       name =3D strdup(prompt->text);
-> +
-> +       /* remove spaces */
-> +       write =3D name;
-> +       read =3D name;
-> +       do {
-> +               if (*read !=3D ' ')
-> +                       *write++ =3D *read;
-> +       } while (*read++);
-> +
-> +       fexpr_y =3D fexpr_create(data->sat_variable_nr++, FE_CHOICE, "Cho=
-ice_");
-> +       str_append(&fexpr_y->name, name);
-> +       fexpr_y->sym =3D sym;
-> +       fexpr_y->tri =3D yes;
-> +       fexpr_add_to_satmap(fexpr_y, data);
-> +
-> +       sym->fexpr_y =3D fexpr_y;
-> +
-> +       if (sym->type =3D=3D S_TRISTATE) {
-> +               fexpr_m =3D fexpr_create(data->sat_variable_nr++, FE_CHOI=
-CE, "Choice_");
-> +               str_append(&fexpr_m->name, name);
-> +               str_append(&fexpr_m->name, "_MODULE");
-> +               fexpr_m->sym =3D sym;
-> +               fexpr_m->tri =3D mod;
-> +               fexpr_add_to_satmap(fexpr_m, data);
-> +       } else {
-> +               fexpr_m =3D data->constants->const_false;
-> +       }
-> +       sym->fexpr_m =3D fexpr_m;
-> +       free(name);
-> +}
-> +
-> +/*
-> + * evaluate an unequality between a non-Boolean symbol and a constant
-> + */
-> +static struct pexpr *expr_eval_unequal_nonbool_const(struct symbol *sym,=
- struct symbol *compval,
-> +                                                    enum expr_type type,=
- struct cfdata *data)
-> +{
-> +       int base;
-> +       struct pexpr *c;
-> +       long val;
-> +       struct fexpr_node *node;
-> +       struct fexpr *fe;
-> +
-> +       if (!sym || !compval)
-> +               return pexf(data->constants->const_false);
-> +
-> +       base =3D 0;
-> +       switch (sym->type) {
-> +       case S_INT:
-> +               base =3D 10;
-> +               break;
-> +       case S_HEX:
-> +               base =3D 16;
-> +               break;
-> +       default:
-> +               break;
-> +       }
-> +
-> +       c =3D pexf(data->constants->const_false);
-> +       val =3D strtol(compval->name, NULL, base);
-> +       for (node =3D sym->nb_vals->head->next; node !=3D NULL; node =3D =
-node->next) {
-> +               long symval;
-> +
-> +               fe =3D node->elem;
-> +               symval =3D strtol(str_get(&fe->nb_val), NULL, base);
-> +
-> +               switch (type) {
-> +               case E_LTH:
-> +                       if (symval < val)
-> +                               c =3D pexpr_or(c, pexf(fe), data, PEXPR_A=
-RGX);
-> +                       break;
-> +               case E_LEQ:
-> +                       if (symval <=3D val)
-> +                               c =3D pexpr_or(c, pexf(fe), data, PEXPR_A=
-RGX);
-> +                       break;
-> +               case E_GTH:
-> +                       if (symval > val)
-> +                               c =3D pexpr_or(c, pexf(fe), data, PEXPR_A=
-RGX);
-> +                       break;
-> +               case E_GEQ:
-> +                       if (symval >=3D val)
-> +                               c =3D pexpr_or(c, pexf(fe), data, PEXPR_A=
-RGX);
-> +                       break;
-> +               default:
-> +                       perror("Illegal unequal.");
-> +               }
-> +       }
-> +
-> +       return c;
-> +}
-> +
-> +/*
-> + * evaluate an unequality between 2 Boolean symbols
-> + */
-> +static struct pexpr *expr_eval_unequal_bool(struct symbol *left, struct =
-symbol *right,
-> +                                           enum expr_type type, struct c=
-fdata *data)
-> +{
-> +       struct pexpr *c;
-> +
-> +       if (!left || !right)
-> +               return pexf(data->constants->const_false);
-> +
-> +       if (!sym_is_boolean(left) || !sym_is_boolean(right)) {
-> +               perror("Comparing 2 symbols that should be boolean.");
-> +               return pexf(data->constants->const_false);
-> +       }
-> +
-> +       switch (type) {
-> +       case E_LTH:
-> +               c =3D pexpr_and(pexpr_not(sym_get_fexpr_both(left, data),=
- data),
-> +                             sym_get_fexpr_both(right, data), data,
-> +                             PEXPR_ARGX);
-> +               if (left->type =3D=3D S_TRISTATE)
-> +                       c =3D pexpr_or(c,
-> +                                    pexpr_and(pexf(left->fexpr_m),
-> +                                              pexf(right->fexpr_y), data=
-,
-> +                                              PEXPR_ARGX),
-> +                                    data, PEXPR_ARGX);
-> +               break;
-> +       case E_LEQ:
-> +               c =3D pexpr_and(pexf(left->fexpr_y), pexf(right->fexpr_y)=
-, data,
-> +                             PEXPR_ARGX);
-> +               if (left->type =3D=3D S_TRISTATE)
-> +                       c =3D pexpr_or(c,
-> +                                    pexpr_and(pexf(left->fexpr_m),
-> +                                              sym_get_fexpr_both(right, =
-data),
-> +                                              data, PEXPR_ARGX),
-> +                                    data, PEXPR_ARGX);
-> +               c =3D pexpr_or(c, pexpr_not(sym_get_fexpr_both(left, data=
-), data),
-> +                            data, PEXPR_ARGX);
-> +               break;
-> +       case E_GTH:
-> +               c =3D pexpr_and(sym_get_fexpr_both(left, data),
-> +                             pexpr_not(sym_get_fexpr_both(right, data), =
-data),
-> +                             data, PEXPR_ARGX);
-> +               if (right->type =3D=3D S_TRISTATE)
-> +                       c =3D pexpr_or(c,
-> +                                    pexpr_and(pexf(left->fexpr_y),
-> +                                              pexf(right->fexpr_m), data=
-,
-> +                                              PEXPR_ARGX),
-> +                                    data, PEXPR_ARGX);
-> +               break;
-> +       case E_GEQ:
-> +               c =3D pexpr_and(pexf(left->fexpr_y), pexf(right->fexpr_y)=
-, data,
-> +                             PEXPR_ARGX);
-> +               if (right->type =3D=3D S_TRISTATE)
-> +                       c =3D pexpr_or(c,
-> +                                    pexpr_and(sym_get_fexpr_both(left, d=
-ata),
-> +                                              pexf(right->fexpr_m), data=
-,
-> +                                              PEXPR_ARGX),
-> +                                    data, PEXPR_ARGX);
-> +               c =3D pexpr_or(c,
-> +                            pexpr_not(sym_get_fexpr_both(right, data), d=
-ata),
-> +                            data, PEXPR_ARGX);
-> +               break;
-> +       default:
-> +               fprintf(stderr, "Wrong type - %s", __func__);
-> +               c =3D pexf(data->constants->const_false);
-> +       }
-> +
-> +       return c;
-> +}
-> +/*
-> + * calculate, when expr will evaluate to yes or mod
-> + */
-> +struct pexpr *expr_calculate_pexpr_both(struct expr *e, struct cfdata *d=
-ata)
-> +{
-> +       if (!e)
-> +               return pexf(data->constants->const_false);
-> +
-> +       if (!expr_can_evaluate_to_mod(e))
-> +               return expr_calculate_pexpr_y(e, data);
-> +
-> +       switch (e->type) {
-> +       case E_SYMBOL:
-> +               return pexpr_or(expr_calculate_pexpr_m(e, data), expr_cal=
-culate_pexpr_y(e, data),
-> +                               data, PEXPR_ARGX);
-> +       case E_AND:
-> +               return expr_calculate_pexpr_both_and(e->left.expr, e->rig=
-ht.expr, data);
-> +       case E_OR:
-> +               return expr_calculate_pexpr_both_or(e->left.expr, e->righ=
-t.expr, data);
-> +       case E_NOT:
-> +               return pexpr_or(expr_calculate_pexpr_m(e, data), expr_cal=
-culate_pexpr_y(e, data),
-> +                               data, PEXPR_ARGX);
-> +       case E_EQUAL:
-> +               return expr_calculate_pexpr_y_equals(e, data);
-> +       case E_UNEQUAL:
-> +               return expr_calculate_pexpr_y_unequals(e, data);
-> +       case E_LTH:
-> +       case E_LEQ:
-> +       case E_GTH:
-> +       case E_GEQ:
-> +               return expr_calculate_pexpr_y_comp(e, data);
-> +       default:
-> +               // TODO
-> +               fprintf(stderr, "Unhandled type - %s", __func__);
-> +               return NULL;
-> +       }
-> +}
-> +
-> +/*
-> + * calculate, when expr will evaluate to yes
-> + */
-> +struct pexpr *expr_calculate_pexpr_y(struct expr *e, struct cfdata *data=
-)
-> +{
-> +       if (!e)
-> +               return NULL;
-> +
-> +       switch (e->type) {
-> +       case E_SYMBOL:
-> +               return pexf(e->left.sym->fexpr_y);
-> +       case E_AND:
-> +               return expr_calculate_pexpr_y_and(e->left.expr, e->right.=
-expr, data);
-> +       case E_OR:
-> +               return expr_calculate_pexpr_y_or(e->left.expr, e->right.e=
-xpr, data);
-> +       case E_NOT:
-> +               return expr_calculate_pexpr_y_not(e->left.expr, data);
-> +       case E_EQUAL:
-> +               return expr_calculate_pexpr_y_equals(e, data);
-> +       case E_UNEQUAL:
-> +               return expr_calculate_pexpr_y_unequals(e, data);
-> +       case E_LTH:
-> +       case E_LEQ:
-> +       case E_GTH:
-> +       case E_GEQ:
-> +               return expr_calculate_pexpr_y_comp(e, data);
-> +       default:
-> +               fprintf(stderr, "Unhandled type - %s", __func__);
-> +               return NULL;
-> +       }
-> +}
-> +
-> +/*
-> + * calculate, when expr will evaluate to mod
-> + */
-> +struct pexpr *expr_calculate_pexpr_m(struct expr *e, struct cfdata *data=
-)
-> +{
-> +       if (!e)
-> +               return NULL;
-> +
-> +       if (!expr_can_evaluate_to_mod(e))
-> +               return pexf(data->constants->const_false);
-> +
-> +       switch (e->type) {
-> +       case E_SYMBOL:
-> +               return pexf(e->left.sym->fexpr_m);
-> +       case E_AND:
-> +               return expr_calculate_pexpr_m_and(e->left.expr, e->right.=
-expr, data);
-> +       case E_OR:
-> +               return expr_calculate_pexpr_m_or(e->left.expr, e->right.e=
-xpr, data);
-> +       case E_NOT:
-> +               return expr_calculate_pexpr_m_not(e->left.expr, data);
-> +       default:
-> +               perror("Trying to evaluate to mod.");
-> +               return NULL;
-> +       }
-> +}
-> +
-> +/*
-> + * calculate, when expr of type AND will evaluate to yes
-> + * A && B
-> + */
-> +struct pexpr *expr_calculate_pexpr_y_and(struct expr *a, struct expr *b,=
- struct cfdata *data)
-> +{
-> +       return pexpr_and(expr_calculate_pexpr_y(a, data),
-> +                             expr_calculate_pexpr_y(b, data), data,
-> +                             PEXPR_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type AND will evaluate to mod
-> + * (A || A_m) && (B || B_m) && !(A && B)
-> + */
-> +struct pexpr *expr_calculate_pexpr_m_and(struct expr *a, struct expr *b,
-> +                                        struct cfdata *data)
-> +{
-> +       struct pexpr *topright =3D
-> +               pexpr_not(pexpr_and(expr_calculate_pexpr_y(a, data),
-> +                                             expr_calculate_pexpr_y(b, d=
-ata),
-> +                                             data, PEXPR_ARGX),
-> +                              data);
-> +       struct pexpr *ll_left =3D pexpr_or(expr_calculate_pexpr_y(a, data=
-),
-> +                                        expr_calculate_pexpr_m(a, data),=
- data,
-> +                                        PEXPR_ARGX);
-> +       struct pexpr *ll_right =3D pexpr_or(expr_calculate_pexpr_y(b, dat=
-a),
-> +                                         expr_calculate_pexpr_m(b, data)=
-, data,
-> +                                         PEXPR_ARGX);
-> +       struct pexpr *topleft =3D pexpr_and(ll_left, ll_right, data, PEXP=
-R_ARGX);
-> +
-> +       return pexpr_and(topleft, topright, data, PEXPR_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type AND will evaluate to mod or yes
-> + * (A || A_m) && (B || B_m)
-> + */
-> +struct pexpr *expr_calculate_pexpr_both_and(struct expr *a, struct expr =
-*b,
-> +                                           struct cfdata *data)
-> +{
-> +       struct pexpr *left =3D pexpr_or(expr_calculate_pexpr_y(a, data),
-> +                                     expr_calculate_pexpr_m(a, data), da=
-ta,
-> +                                     PEXPR_ARGX);
-> +       struct pexpr *right =3D pexpr_or(expr_calculate_pexpr_y(b, data),
-> +                                      expr_calculate_pexpr_m(b, data), d=
-ata,
-> +                                      PEXPR_ARGX);
-> +
-> +       return pexpr_and(left, right, data, PEXPR_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type OR will evaluate to yes
-> + * A || B
-> + */
-> +struct pexpr *expr_calculate_pexpr_y_or(struct expr *a, struct expr *b,
-> +                                       struct cfdata *data)
-> +{
-> +       return pexpr_or(expr_calculate_pexpr_y(a, data),
-> +                            expr_calculate_pexpr_y(b, data), data, PEXPR=
-_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type OR will evaluate to mod
-> + * (A_m || B_m) && !A && !B
-> + */
-> +struct pexpr *expr_calculate_pexpr_m_or(struct expr *a, struct expr *b,
-> +                                       struct cfdata *data)
-> +{
-> +       struct pexpr *topright =3D
-> +               pexpr_not(expr_calculate_pexpr_y(b, data), data);
-> +       struct pexpr *lowerleft =3D pexpr_or(expr_calculate_pexpr_m(a, da=
-ta),
-> +                                               expr_calculate_pexpr_m(b,=
- data),
-> +                                               data, PEXPR_ARGX);
-> +       struct pexpr *topleft =3D pexpr_and(
-> +               lowerleft,
-> +               pexpr_not(expr_calculate_pexpr_y(a, data), data), data,
-> +               PEXPR_ARGX);
-> +
-> +       return pexpr_and(topleft, topright, data, PEXPR_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type OR will evaluate to mod or yes
-> + * (A_m || A || B_m || B)
-> + */
-> +struct pexpr *expr_calculate_pexpr_both_or(struct expr *a, struct expr *=
-b,
-> +                                          struct cfdata *data)
-> +{
-> +       struct pexpr *left =3D pexpr_or(expr_calculate_pexpr_y(a, data),
-> +                                     expr_calculate_pexpr_m(a, data), da=
-ta,
-> +                                     PEXPR_ARGX);
-> +       struct pexpr *right =3D pexpr_or(expr_calculate_pexpr_y(b, data),
-> +                                      expr_calculate_pexpr_m(b, data), d=
-ata,
-> +                                      PEXPR_ARGX);
-> +
-> +       return pexpr_or(left, right, data, PEXPR_ARGX);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type NOT will evaluate to yes
-> + * !(A || A_m)
-> + */
-> +struct pexpr *expr_calculate_pexpr_y_not(struct expr *e, struct cfdata *=
-data)
-> +{
-> +       return pexpr_not(pexpr_or(expr_calculate_pexpr_y(e, data),
-> +                                           expr_calculate_pexpr_m(e, dat=
-a),
-> +                                           data, PEXPR_ARGX),
-> +                             data);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type NOT will evaluate to mod
-> + * A_m
-> + */
-> +struct pexpr *expr_calculate_pexpr_m_not(struct expr *e, struct cfdata *=
-data)
-> +{
-> +       return expr_calculate_pexpr_m(e, data);
-> +}
-> +
-> +static struct pexpr *equiv_pexpr_share(struct pexpr *a, struct pexpr *b,
-> +                                      struct cfdata *data)
-> +{
-> +       struct pexpr *yes =3D pexpr_and_share(a, b, data);
-> +       struct pexpr *not =3D pexpr_and(pexpr_not_share(a, data),
-> +                                          pexpr_not_share(b, data), data=
-,
-> +                                          PEXPR_ARGX);
-> +
-> +       return pexpr_or(yes, not, data, PEXPR_ARGX);
-> +}
-> +
-> +static struct pexpr *equiv_pexpr_move(struct pexpr *a, struct pexpr *b,
-> +                                      struct cfdata *data,
-> +                                      enum pexpr_move move)
-> +{
-> +       return pexpr_move_wrapper(a, b, data, move, equiv_pexpr_share);
-> +}
-> +
-> +/*
-> + * create the fexpr of a non-boolean symbol for a specific value
-> + */
-> +struct fexpr *sym_create_nonbool_fexpr(struct symbol *sym, char *value,
-> +                                      struct cfdata *data)
-> +{
-> +       struct fexpr *e;
-> +       char *s;
-> +
-> +       if (!strcmp(value, "")) {
-> +               if (sym->type =3D=3D S_STRING)
-> +                       return sym->nb_vals->head->next->elem;
-> +               else
-> +                       return sym->nb_vals->head->elem;
-> +       }
-> +
-> +       e =3D sym_get_nonbool_fexpr(sym, value);
-> +
-> +       /* fexpr already exists */
-> +       if (e !=3D NULL)
-> +               return e;
-> +
-> +       s =3D value;
-> +       if (sym->type =3D=3D S_INT && !string_is_number(value)) {
-> +               struct symbol *tmp =3D sym_find(value);
-> +
-> +               if (tmp !=3D NULL)
-> +                       s =3D (char *) tmp->curr.val;
-> +       } else if (sym->type =3D=3D S_HEX && !string_is_hex(value)) {
-> +               struct symbol *tmp =3D sym_find(value);
-> +
-> +               if (tmp !=3D NULL)
-> +                       s =3D (char *) tmp->curr.val;
-> +       } else if (sym->type =3D=3D S_STRING) {
-> +               struct symbol *tmp =3D sym_find(value);
-> +
-> +               if (tmp !=3D NULL)
-> +                       s =3D (char *) tmp->curr.val;
-> +       }
-> +
-> +       if (!strcmp(s, "")) {
-> +               if (sym->type =3D=3D S_STRING)
-> +                       return sym->nb_vals->head->next->elem;
-> +               else
-> +                       return sym->nb_vals->head->elem;
-> +       }
-> +
-> +       e =3D sym_get_nonbool_fexpr(sym, s);
-> +       if (e !=3D NULL)
-> +               return e;
-> +
-> +       e =3D fexpr_create(data->sat_variable_nr++, FE_NONBOOL, sym->name=
-);
-> +       e->sym =3D sym;
-> +       str_append(&e->name, "=3D");
-> +       str_append(&e->name, s);
-> +       e->nb_val =3D str_new();
-> +       str_append(&e->nb_val, s);
-> +
-> +       fexpr_list_add(sym->nb_vals, e);
-> +       fexpr_add_to_satmap(e, data);
-> +
-> +       return e;
-> +}
-> +
-> +/*
-> + * return the fexpr of a non-boolean symbol for a specific value, NULL i=
-f
-> + * non-existent
-> + */
-> +struct fexpr *sym_get_nonbool_fexpr(struct symbol *sym, char *value)
-> +{
-> +       struct fexpr_node *e;
-> +
-> +       fexpr_list_for_each(e, sym->nb_vals) {
-> +               if (strcmp(str_get(&e->elem->nb_val), value) =3D=3D 0)
-> +                       return e->elem;
-> +       }
-> +
-> +       return NULL;
-> +}
-> +
-> +/*
-> + * return the fexpr of a non-boolean symbol for a specific value, if it =
-exists
-> + * otherwise create it
-> + */
-> +struct fexpr *sym_get_or_create_nonbool_fexpr(struct symbol *sym, char *=
-value,
-> +                                             struct cfdata *data)
-> +{
-> +       struct fexpr *e =3D sym_get_nonbool_fexpr(sym, value);
-> +
-> +       if (e !=3D NULL)
-> +               return e;
-> +       else
-> +               return sym_create_nonbool_fexpr(sym, value, data);
-> +}
-> +
-> +/*
-> + * calculate, when expr of type EQUAL will evaluate to yes
-> + * Side effect: May create certain values in e->{left,right}.sym.nb_vals
-> + */
-> +struct pexpr *expr_calculate_pexpr_y_equals(struct expr *e, struct cfdat=
-a *data)
-> +{
-> +       /* comparing 2 tristate constants */
-> +       if (sym_is_tristate_constant(e->left.sym) &&
-> +           sym_is_tristate_constant(e->right.sym))
-> +               return e->left.sym =3D=3D e->right.sym ?
-> +                              pexf(data->constants->const_true) :
-> +                              pexf(data->constants->const_false);
-> +
-> +       /* comparing 2 nonboolean constants */
-> +       if (sym_is_nonbool_constant(e->left.sym) &&
-> +           sym_is_nonbool_constant(e->right.sym))
-> +               return strcmp(e->left.sym->name, e->right.sym->name) =3D=
-=3D 0 ?
-> +                              pexf(data->constants->const_true) :
-> +                              pexf(data->constants->const_false);
-> +
-> +       /* comparing 2 boolean/tristate incl. yes/mod/no constants */
-> +       if (sym_is_bool_or_triconst(e->left.sym) &&
-> +           sym_is_bool_or_triconst(e->right.sym)) {
-> +               struct pexpr *yes =3D equiv_pexpr_move(
-> +                       pexf(e->left.sym->fexpr_y), pexf(e->right.sym->fe=
-xpr_y),
-> +                       data, PEXPR_ARGX);
-> +               struct pexpr *mod =3D equiv_pexpr_move(
-> +                       pexf(e->left.sym->fexpr_m), pexf(e->right.sym->fe=
-xpr_m),
-> +                       data, PEXPR_ARGX);
-> +
-> +               return pexpr_and(yes, mod, data, PEXPR_ARGX);
-> +       }
-> +
-> +       /* comparing nonboolean with a constant */
-> +       if (sym_is_nonboolean(e->left.sym) &&
-> +           sym_is_nonbool_constant(e->right.sym))
-> +               return pexf(sym_get_or_create_nonbool_fexpr(
-> +                       e->left.sym, e->right.sym->name, data));
-> +
-> +       if (sym_is_nonbool_constant(e->left.sym) &&
-> +           sym_is_nonboolean(e->right.sym))
-> +               return pexf(sym_get_or_create_nonbool_fexpr(
-> +                       e->right.sym, e->left.sym->name, data));
-> +
-> +       /* comparing nonboolean with tristate constant, will never be tru=
-e */
-> +       if (sym_is_nonboolean(e->left.sym) &&
-> +           sym_is_tristate_constant(e->right.sym))
-> +               return pexf(data->constants->const_false);
-> +       if (sym_is_tristate_constant(e->left.sym) &&
-> +           sym_is_nonboolean(e->right.sym))
-> +               return pexf(data->constants->const_false);
-> +
-> +       /* comparing 2 nonboolean symbols */
-> +       if (sym_is_nonboolean(e->left.sym) && sym_is_nonboolean(e->right.=
-sym)) {
-> +               struct pexpr *c =3D pexf(data->constants->const_false);
-> +               struct fexpr *e1, *e2;
-> +
-> +               for (struct fexpr_node *node1 =3D
-> +                            e->left.sym->nb_vals->head->next;
-> +                    node1 !=3D NULL; node1 =3D node1->next) {
-> +                       e1 =3D node1->elem;
-> +                       for (struct fexpr_node *node2 =3D
-> +                                    e->right.sym->nb_vals->head->next;
-> +                            node2 !=3D NULL; node2 =3D node2->next) {
-> +                               e2 =3D node2->elem;
-> +                               if (!strcmp(str_get(&e1->nb_val),
-> +                                           str_get(&e2->nb_val))) {
-> +                                       c =3D pexpr_or(
-> +                                               c,
-> +                                               pexpr_and(pexf(e1),
-> +                                                              pexf(e2), =
-data,
-> +                                                              PEXPR_ARGX=
-),
-> +                                               data, PEXPR_ARGX);
-> +                                       break;
-> +                               }
-> +                       }
-> +               }
-> +               return c;
-> +       }
-> +
-> +       /* comparing boolean item with nonboolean constant, will never be=
- true */
-> +       if (sym_is_tristate_constant(e->left.sym) &&
-> +           sym_is_nonbool_constant(e->right.sym))
-> +               return pexf(data->constants->const_false);
-> +       if (sym_is_nonbool_constant(e->left.sym) &&
-> +           sym_is_tristate_constant(e->right.sym))
-> +               return pexf(data->constants->const_false);
-> +
-> +       /* comparing symbol of type unknown with tristate constant */
-> +       if (e->left.sym->type =3D=3D S_UNKNOWN &&
-> +           sym_is_tristate_constant(e->right.sym))
-> +               return pexf(data->constants->const_false);
-> +       if (sym_is_tristate_constant(e->left.sym) &&
-> +           e->right.sym->type =3D=3D S_UNKNOWN)
-> +               return pexf(data->constants->const_false);
-> +
-> +       /* any other comparison is not supported and should not be execut=
-ed */
-> +       fprintf(stderr, "Unsupported equality.");
-> +       print_expr(":", e, 0);
-> +
-> +       return pexf(data->constants->const_false);
-> +}
-> +
-> +/*
-> + * transform an UNEQUAL into a Not(EQUAL)
-> + */
-> +struct pexpr *expr_calculate_pexpr_y_unequals(struct expr *e, struct cfd=
-ata *data)
-> +{
-> +       return pexpr_not(expr_calculate_pexpr_y_equals(e, data), data);
-> +}
-> +
-> +struct pexpr *expr_calculate_pexpr_y_comp(struct expr *e, struct cfdata =
-*data)
-> +{
-> +       if (!e)
-> +               return NULL;
-> +
-> +       switch (e->type) {
-> +       case E_LTH:
-> +       case E_LEQ:
-> +       case E_GTH:
-> +       case E_GEQ:
-> +               /* compare non-Boolean symbol with constant */
-> +               if (sym_is_nonboolean(e->left.sym) &&
-> +                       e->right.sym->type =3D=3D S_UNKNOWN &&
-> +                       string_is_number(e->right.sym->name)
-> +               ) {
-> +                       return expr_eval_unequal_nonbool_const(e->left.sy=
-m, e->right.sym, e->type,
-> +                                                              data);
-> +               }
-> +               if (sym_is_nonboolean(e->right.sym) &&
-> +                       e->left.sym->type =3D=3D S_UNKNOWN &&
-> +                       string_is_number(e->left.sym->name)
-> +               ) {
-> +                       return expr_eval_unequal_nonbool_const(e->right.s=
-ym, e->left.sym, e->type,
-> +                                                              data);
-> +               }
-> +
-> +               /* compare 2 Boolean symbols */
-> +               if (sym_is_boolean(e->left.sym) && sym_is_boolean(e->righ=
-t.sym))
-> +                       return expr_eval_unequal_bool(e->left.sym, e->rig=
-ht.sym, e->type, data);
-> +
-> +               return pexf(data->constants->const_false);
-> +       default:
-> +               fprintf(stderr, "Unhandled type - %s", __func__);
-> +               return NULL;
-> +       }
-> +}
-> +
-> +static struct pexpr *pexpr_move_wrapper(
-> +       struct pexpr *a, struct pexpr *b, struct cfdata *data,
-> +       enum pexpr_move move,
-> +       struct pexpr *(*func)(struct pexpr *, struct pexpr *, struct cfda=
-ta *))
-> +{
-> +       struct pexpr *retval =3D func(a, b, data);
-> +
-> +       switch (move) {
-> +       case PEXPR_ARG1:
-> +               pexpr_put(a);
-> +               break;
-> +       case PEXPR_ARG2:
-> +               pexpr_put(b);
-> +               break;
-> +       case PEXPR_ARGX:
-> +               pexpr_put(a);
-> +               pexpr_put(b);
-> +               break;
-> +       default:
-> +               fprintf(stderr, "%s: invalid value for @move - %d\n", __f=
-unc__,
-> +                       move);
-> +       }
-> +       return retval;
-> +}
-> +
-> +struct pexpr *pexpr_and(struct pexpr *a, struct pexpr *b, struct cfdata =
-*data, enum pexpr_move move)
-> +{
-> +       return pexpr_move_wrapper(a, b, data, move, pexpr_and_share);
-> +}
-> +
-> +/*
-> + * macro to create a pexpr of type AND
-> + */
-> +struct pexpr *pexpr_and_share(struct pexpr *a, struct pexpr *b, struct c=
-fdata *data)
-> +{
-> +       struct pexpr *e;
-> +
-> +       /* A && A -> A */
-> +       if (a =3D=3D b || pexpr_eq(a, b, data)) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       /* simplifications:
-> +        * expr && False -> False
-> +        * expr && True  -> expr
-> +        */
-> +       if ((a->type =3D=3D PE_SYMBOL &&
-> +            a->left.fexpr =3D=3D data->constants->const_false) ||
-> +           (b->type =3D=3D PE_SYMBOL &&
-> +            b->left.fexpr =3D=3D data->constants->const_true)) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       if ((b->type =3D=3D PE_SYMBOL &&
-> +            b->left.fexpr =3D=3D data->constants->const_false) ||
-> +           (a->type =3D=3D PE_SYMBOL &&
-> +            a->left.fexpr =3D=3D data->constants->const_true)) {
-> +               pexpr_get(b);
-> +               return b;
-> +       }
-> +
-> +       /* (A && B) && C -> A && B if B =3D=3D C */
-> +       if (a->type =3D=3D PE_AND && pexpr_eq(a->right.pexpr, b, data)) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       /* A && (B && C) -> B && C if A =3D=3D B */
-> +       if (b->type =3D=3D PE_AND && pexpr_eq(a, b->left.pexpr, data)) {
-> +               pexpr_get(b);
-> +               return b;
-> +       }
-> +
-> +       if (a->type =3D=3D PE_OR && b->type =3D=3D PE_OR) {
-> +               e =3D NULL;
-> +               /* (A || B) && (C || D) -> A || (B && D) if A =3D=3D C */
-> +               if (pexpr_eq(a->left.pexpr, b->left.pexpr, data)) {
-> +                       e =3D pexpr_or(a->left.pexpr,
-> +                                         pexpr_and_share(a->right.pexpr,
-> +                                                         b->right.pexpr,=
- data),
-> +                                         data, PEXPR_ARG2);
-> +               }
-> +               /* (A || B) && (C || D) -> B || (A && C) if B =3D=3D D */
-> +               else if (pexpr_eq(a->right.pexpr, b->right.pexpr, data)) =
-{
-> +                       e =3D pexpr_or(a->right.pexpr,
-> +                                         pexpr_and_share(a->left.pexpr,
-> +                                                         b->left.pexpr, =
-data),
-> +                                         data, PEXPR_ARG2);
-> +               }
-> +               /* (A || B) && (C || D) -> A || (B && C) if A =3D=3D D */
-> +               else if (pexpr_eq(a->left.pexpr, b->right.pexpr, data)) {
-> +                       e =3D pexpr_or(a->left.pexpr,
-> +                                         pexpr_and_share(a->right.pexpr,
-> +                                                         b->left.pexpr, =
-data),
-> +                                         data, PEXPR_ARG2);
-> +               }
-> +               /* (A || B) && (C || D) -> B || (A && D) if B =3D=3D C */
-> +               else if (pexpr_eq(a->right.pexpr, b->left.pexpr, data)) {
-> +                       e =3D pexpr_or(a->right.pexpr,
-> +                                         pexpr_and_share(a->left.pexpr,
-> +                                                         b->right.pexpr,=
- data),
-> +                                         data, PEXPR_ARG2);
-> +               }
-> +               if (e)
-> +                       return e;
-> +       }
-> +
-> +       /* general case */
-> +       e =3D xcalloc(1, sizeof(*e));
-> +       pexpr_get(a);
-> +       pexpr_get(b);
-> +       pexpr_construct_and(e, a, b, 1);
-> +       return e;
-> +}
-> +
-> +struct pexpr *pexpr_or(struct pexpr *a, struct pexpr *b, struct cfdata *=
-data, enum pexpr_move move)
-> +{
-> +       return pexpr_move_wrapper(a, b, data, move, pexpr_or_share);
-> +}
-> +
-> +/*
-> + * macro to create a pexpr of type OR
-> + */
-> +struct pexpr *pexpr_or_share(struct pexpr *a, struct pexpr *b, struct cf=
-data *data)
-> +{
-> +       struct pexpr *e;
-> +       bool cond1, cond2;
-> +
-> +       /* A || A  -> A */
-> +       if (a =3D=3D b || pexpr_eq(a, b, data)) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       /* simplifications:
-> +        * A || False -> A
-> +        * A || True  -> True
-> +        */
-> +       cond1 =3D a->type =3D=3D PE_SYMBOL && a->left.fexpr =3D=3D data->=
-constants->const_false;
-> +       cond2 =3D b->type =3D=3D PE_SYMBOL && b->left.fexpr =3D=3D data->=
-constants->const_true;
-> +       if (cond1 || cond2) {
-> +               pexpr_get(b);
-> +               return b;
-> +       }
-> +       cond1 =3D b->type =3D=3D PE_SYMBOL && b->left.fexpr =3D=3D data->=
-constants->const_false;
-> +       cond2 =3D a->type =3D=3D PE_SYMBOL && a->left.fexpr =3D=3D data->=
-constants->const_true;
-> +       if (cond1 || cond2) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       /* A || (B && C) -> A if (A =3D=3D B || A =3D=3D C) */
-> +       if (b->type =3D=3D PE_AND && (
-> +               pexpr_eq(a, b->left.pexpr, data) || pexpr_eq(a, b->right.=
-pexpr, data)
-> +       )) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +       /* (A && B) || C -> C if (A =3D=3D C || B =3D=3D C) */
-> +       if (a->type =3D=3D PE_AND && (
-> +               pexpr_eq(a->left.pexpr, b, data) || pexpr_eq(a->right.pex=
-pr, b, data)
-> +       )) {
-> +               pexpr_get(b);
-> +               return b;
-> +       }
-> +
-> +       /* -A || B -> True if A =3D=3D B
-> +        * A || -B -> True if A =3D=3D B
-> +        */
-> +       cond1 =3D a->type =3D=3D PE_NOT && pexpr_eq(a->left.pexpr, b, dat=
-a);
-> +       cond2 =3D b->type =3D=3D PE_NOT && pexpr_eq(a, b->left.pexpr, dat=
-a);
-> +       if (cond1 || cond2)
-> +               return pexf(data->constants->const_true);
-> +
-> +       if (a->type =3D=3D PE_AND && b->type =3D=3D PE_AND) {
-> +               e =3D NULL;
-> +               /* (A && B) || (C && D) -> A && (B || D) if (A =3D=3D C) =
-*/
-> +               if (pexpr_eq(a->left.pexpr, b->left.pexpr, data)) {
-> +                       e =3D pexpr_and(a->left.pexpr,
-> +                                     pexpr_or_share(a->right.pexpr, b->r=
-ight.pexpr, data), data,
-> +                                     PEXPR_ARG2);
-> +               }
-> +               /* (A && B) || (C && D) -> B && (A || C) if (B =3D=3D D) =
-*/
-> +               if (pexpr_eq(a->right.pexpr, b->right.pexpr, data)) {
-> +                       e =3D pexpr_and(a->right.pexpr,
-> +                                     pexpr_or_share(a->left.pexpr, b->le=
-ft.pexpr, data), data,
-> +                                     PEXPR_ARG2);
-> +               }
-> +               /* (A && B) || (C && D) -> A && (B || C) if (A =3D=3D D) =
-*/
-> +               if (pexpr_eq(a->left.pexpr, b->right.pexpr, data)) {
-> +                       e =3D pexpr_and(a->left.pexpr,
-> +                                     pexpr_or_share(a->right.pexpr, b->l=
-eft.pexpr, data), data,
-> +                                     PEXPR_ARG2);
-> +               }
-> +               /* (A && B) || (C && D) -> B && (A || D) if (B =3D=3D C) =
-*/
-> +               if (pexpr_eq(a->right.pexpr, b->left.pexpr, data)) {
-> +                       e =3D pexpr_and(a->right.pexpr,
-> +                                     pexpr_or_share(a->left.pexpr, b->ri=
-ght.pexpr, data), data,
-> +                                     PEXPR_ARG2);
-> +               }
-> +               if (e)
-> +                       return e;
-> +       }
-> +
-> +       /* (A && B) || (C || D) -> C || D if
-> +        * A =3D=3D C || A =3D=3D D || B =3D=3D C || B =3D=3D D
-> +        */
-> +       if (a->type =3D=3D PE_AND && b->type =3D=3D PE_OR && (
-> +               pexpr_eq(a->left.pexpr, b->left.pexpr, data) ||
-> +               pexpr_eq(a->left.pexpr, b->right.pexpr, data) ||
-> +               pexpr_eq(a->right.pexpr, b->left.pexpr, data) ||
-> +               pexpr_eq(a->right.pexpr, b->right.pexpr, data)
-> +       )) {
-> +               pexpr_get(b);
-> +               return b;
-> +       }
-> +       /* (C || D) || (A && B) -> C || D if
-> +        * A =3D=3D C || A =3D=3D D || B =3D=3D C || B =3D=3D D
-> +        */
-> +       if (a->type =3D=3D PE_OR && b->type =3D=3D PE_AND && (
-> +               pexpr_eq(a->left.pexpr, b->left.pexpr, data) ||
-> +               pexpr_eq(a->left.pexpr, b->right.pexpr, data) ||
-> +               pexpr_eq(a->right.pexpr, b->left.pexpr, data) ||
-> +               pexpr_eq(a->right.pexpr, b->right.pexpr, data)
-> +       )) {
-> +               pexpr_get(a);
-> +               return a;
-> +       }
-> +
-> +       /* general case */
-> +       e =3D xcalloc(1, sizeof(*e));
-> +       pexpr_get(a);
-> +       pexpr_get(b);
-> +       pexpr_construct_or(e, a, b, 1);
-> +
-> +       return e;
-> +}
-> +
-> +struct pexpr *pexpr_not(struct pexpr *a, struct cfdata *data)
-> +{
-> +       struct pexpr *retval =3D pexpr_not_share(a, data);
-> +
-> +       pexpr_put(a);
-> +       return retval;
-> +}
-> +
-> +/*
-> + * Builds NOT(@a)
-> + */
-> +struct pexpr *pexpr_not_share(struct pexpr *a, struct cfdata *data)
-> +{
-> +       struct pexpr *ret_val;
-> +
-> +       if (a->type =3D=3D PE_SYMBOL &&
-> +           a->left.fexpr =3D=3D data->constants->const_false)
-> +               ret_val =3D pexf(data->constants->const_true);
-> +       else if (a->type =3D=3D PE_SYMBOL &&
-> +           a->left.fexpr =3D=3D data->constants->const_true)
-> +               ret_val =3D pexf(data->constants->const_false);
-> +       /* eliminate double negation */
-> +       else if (a->type =3D=3D PE_NOT) {
-> +               ret_val =3D a->left.pexpr;
-> +               pexpr_get(ret_val);
-> +       }
-> +       /* De Morgan */
-> +       else if (a->type =3D=3D PE_AND) {
-> +               ret_val =3D xmalloc(sizeof(*ret_val));
-> +               pexpr_construct_or(ret_val,
-> +                                  pexpr_not_share(a->left.pexpr, data),
-> +                                  pexpr_not_share(a->right.pexpr, data),=
- 1);
-> +       } else if (a->type =3D=3D PE_OR) {
-> +               ret_val =3D xmalloc(sizeof(*ret_val));
-> +               pexpr_construct_and(ret_val,
-> +                                   pexpr_not_share(a->left.pexpr, data),
-> +                                   pexpr_not_share(a->right.pexpr, data)=
-, 1);
-> +       } else {
-> +               ret_val =3D xmalloc(sizeof(*ret_val));
-> +               pexpr_get(a);
-> +               pexpr_construct_not(ret_val, a, 1);
-> +       }
-> +
-> +       return ret_val;
-> +}
-> +
-> +struct pexpr *pexpr_implies(struct pexpr *a, struct pexpr *b, struct cfd=
-ata *data,
-> +                           enum pexpr_move move)
-> +{
-> +       return pexpr_move_wrapper(a, b, data, move, pexpr_implies_share);
-> +}
-> +
-> +/*
-> + * macro to construct a pexpr for "A implies B"
-> + */
-> +struct pexpr *pexpr_implies_share(struct pexpr *a, struct pexpr *b, stru=
-ct cfdata *data)
-> +{
-> +       /* A =3D> B -> True if A =3D=3D B */
-> +       if (a =3D=3D b || pexpr_eq(a, b, data))
-> +               return pexf(data->constants->const_true);
-> +
-> +       /* (A =3D> B && C) -> (A =3D> C) if A =3D=3D B */
-> +       if (b->type =3D=3D PE_AND && pexpr_eq(a, b->left.pexpr, data))
-> +               return pexpr_implies_share(a, b->right.pexpr, data);
-> +       /* (A =3D> B && C) -> (A =3D> B) if A =3D=3D C */
-> +       if (b->type =3D=3D PE_AND && pexpr_eq(a, b->right.pexpr, data))
-> +               return pexpr_implies_share(a, b->left.pexpr, data);
-> +
-> +       /* (A =3D> B || C) -> True if (A =3D=3D B || A =3D=3D C) */
-> +       if (b->type =3D=3D PE_OR && (
-> +               pexpr_eq(a, b->left.pexpr, data) || pexpr_eq(a, b->right.=
-pexpr, data)
-> +       ))
-> +               return pexf(data->constants->const_true);
-> +
-> +       /* (A && B =3D> C) -> True if (A =3D=3D C || B =3D=3D C) */
-> +       if (a->type =3D=3D PE_AND && (
-> +               pexpr_eq(a->left.pexpr, b, data) || pexpr_eq(a->right.pex=
-pr, b, data)
-> +       ))
-> +               return pexf(data->constants->const_true);
-> +
-> +       return pexpr_or(pexpr_not_share(a, data), b, data, PEXPR_ARG1);
-> +}
-> +
-> +/*
-> + * check whether a pexpr is in CNF
-> + */
-> +bool pexpr_is_cnf(struct pexpr *e)
-> +{
-> +       if (!e)
-> +               return false;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               return true;
-> +       case PE_AND:
-> +               return false;
-> +       case PE_OR:
-> +               return pexpr_is_cnf(e->left.pexpr) &&
-> +                      pexpr_is_cnf(e->right.pexpr);
-> +       case PE_NOT:
-> +               return e->left.pexpr->type =3D=3D PE_SYMBOL;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +/*
-> + * check whether a pexpr is in NNF
-> + */
-> +bool pexpr_is_nnf(struct pexpr *e)
-> +{
-> +       if (!e)
-> +               return false;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               return true;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               return pexpr_is_nnf(e->left.pexpr) && pexpr_is_nnf(e->rig=
-ht.pexpr);
-> +       case PE_NOT:
-> +               return e->left.pexpr->type =3D=3D PE_SYMBOL;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +/*
-> + * return fexpr_both for a symbol
-> + */
-> +struct pexpr *sym_get_fexpr_both(struct symbol *sym, struct cfdata *data=
-)
-> +{
-> +       return sym->type =3D=3D S_TRISTATE ?
-> +                      pexpr_or(pexf(sym->fexpr_m), pexf(sym->fexpr_y),
-> +                                    data, PEXPR_ARGX) :
-> +                      pexf(sym->fexpr_y);
-> +}
-> +
-> +/*
-> + * return fexpr_sel_both for a symbol
-> + */
-> +struct pexpr *sym_get_fexpr_sel_both(struct symbol *sym, struct cfdata *=
-data)
-> +{
-> +       if (!sym->rev_dep.expr)
-> +               return pexf(data->constants->const_false);
-> +
-> +       return sym->type =3D=3D S_TRISTATE ?
-> +                      pexpr_or(pexf(sym->fexpr_sel_m),
-> +                                    pexf(sym->fexpr_sel_y), data, PEXPR_=
-ARGX) :
-> +                      pexf(sym->fexpr_sel_y);
-> +}
-> +
-> +/*
-> + * check, if the fexpr is a symbol, a True/False-constant, a literal sym=
-bolizing a non-boolean or
-> + * a choice symbol
-> + */
-> +bool fexpr_is_symbol(struct fexpr *e)
-> +{
-> +       return e->type =3D=3D FE_SYMBOL || e->type =3D=3D FE_FALSE || e->=
-type =3D=3D FE_TRUE ||
-> +              e->type =3D=3D FE_NONBOOL || e->type =3D=3D FE_CHOICE || e=
-->type =3D=3D FE_SELECT ||
-> +              e->type =3D=3D FE_NPC;
-> +}
-> +
-> +/*
-> + * check whether a pexpr is a symbol or a negated symbol
-> + */
-> +bool pexpr_is_symbol(struct pexpr *e)
-> +{
-> +       return e->type =3D=3D PE_SYMBOL || (e->type =3D=3D PE_NOT && e->l=
-eft.pexpr->type =3D=3D PE_SYMBOL);
-> +}
-> +
-> +/*
-> + * check whether the fexpr is a constant (true/false)
-> + */
-> +bool fexpr_is_constant(struct fexpr *e, struct cfdata *data)
-> +{
-> +       return e =3D=3D data->constants->const_true || e =3D=3D data->con=
-stants->const_false;
-> +}
-> +
-> +/*
-> + * add a fexpr to the satmap
-> + */
-> +void fexpr_add_to_satmap(struct fexpr *e, struct cfdata *data)
-> +{
-> +       if (e->satval >=3D data->satmap_size) {
-> +               data->satmap =3D
-> +                       xrealloc(data->satmap, data->satmap_size * 2 * si=
-zeof(**data->satmap));
-> +               data->satmap_size *=3D 2;
-> +       }
-> +
-> +       data->satmap[e->satval] =3D e;
-
-
-
-I see a bug here.
-
-Size mismatch for memory allocation.
-(much bigger than used)
-
-
-
-
-
-
-
-
-
-> +}
-> +
-> +/*
-> + * print a fexpr
-> + */
-> +void fexpr_print(char *tag, struct fexpr *e)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       printf("%s: %s\n", tag, str_get(&e->name));
-> +}
-> +
-> +/*
-> + * write an fexpr into a string (format needed for testing)
-> + */
-> +void fexpr_as_char(struct fexpr *e, struct gstr *s)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case FE_SYMBOL:
-> +       case FE_CHOICE:
-> +       case FE_SELECT:
-> +       case FE_NPC:
-> +       case FE_NONBOOL:
-> +               str_append(s, "definedEx(");
-> +               str_append(s, str_get(&e->name));
-> +               str_append(s, ")");
-> +               return;
-> +       case FE_FALSE:
-> +               str_append(s, "0");
-> +               return;
-> +       case FE_TRUE:
-> +               str_append(s, "1");
-> +               return;
-> +       default:
-> +               return;
-> +       }
-> +}
-> +
-> +/*
-> + * write a pexpr into a string
-> + */
-> +void pexpr_as_char(struct pexpr *e, struct gstr *s, int parent, struct c=
-fdata *data)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               if (e->left.fexpr =3D=3D data->constants->const_false) {
-> +                       str_append(s, "0");
-> +                       return;
-> +               }
-> +               if (e->left.fexpr =3D=3D data->constants->const_true) {
-> +                       str_append(s, "1");
-> +                       return;
-> +               }
-> +               str_append(s, "definedEx(");
-> +               str_append(s, str_get(&e->left.fexpr->name));
-> +               str_append(s, ")");
-> +               return;
-> +       case PE_AND:
-> +               if (parent !=3D PE_AND)
-> +                       str_append(s, "(");
-> +               pexpr_as_char(e->left.pexpr, s, PE_AND, data);
-> +               str_append(s, " && ");
-> +               pexpr_as_char(e->right.pexpr, s, PE_AND, data);
-> +               if (parent !=3D PE_AND)
-> +                       str_append(s, ")");
-> +               return;
-> +       case PE_OR:
-> +               if (parent !=3D PE_OR)
-> +                       str_append(s, "(");
-> +               pexpr_as_char(e->left.pexpr, s, PE_OR, data);
-> +               str_append(s, " || ");
-> +               pexpr_as_char(e->right.pexpr, s, PE_OR, data);
-> +               if (parent !=3D PE_OR)
-> +                       str_append(s, ")");
-> +               return;
-> +       case PE_NOT:
-> +               str_append(s, "!");
-> +               pexpr_as_char(e->left.pexpr, s, PE_NOT, data);
-> +               return;
-> +       }
-> +}
-> +
-> +/*
-> + * write a pexpr into a string
-> + */
-> +void pexpr_as_char_short(struct pexpr *e, struct gstr *s, int parent)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               str_append(s, str_get(&e->left.fexpr->name));
-> +               return;
-> +       case PE_AND:
-> +               if (parent !=3D PE_AND)
-> +                       str_append(s, "(");
-> +               pexpr_as_char_short(e->left.pexpr, s, PE_AND);
-> +               str_append(s, " && ");
-> +               pexpr_as_char_short(e->right.pexpr, s, PE_AND);
-> +               if (parent !=3D PE_AND)
-> +                       str_append(s, ")");
-> +               return;
-> +       case PE_OR:
-> +               if (parent !=3D PE_OR)
-> +                       str_append(s, "(");
-> +               pexpr_as_char_short(e->left.pexpr, s, PE_OR);
-> +               str_append(s, " || ");
-> +               pexpr_as_char_short(e->right.pexpr, s, PE_OR);
-> +               if (parent !=3D PE_OR)
-> +                       str_append(s, ")");
-> +               return;
-> +       case PE_NOT:
-> +               str_append(s, "!");
-> +               pexpr_as_char_short(e->left.pexpr, s, PE_NOT);
-> +               return;
-> +       }
-> +}
-> +
-> +/*
-> + * check whether a pexpr contains a specific fexpr
-> + */
-> +bool pexpr_contains_fexpr(struct pexpr *e, struct fexpr *fe)
-> +{
-> +       if (!e)
-> +               return false;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               return e->left.fexpr->satval =3D=3D fe->satval;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               return pexpr_contains_fexpr(e->left.pexpr, fe) ||
-> +                       pexpr_contains_fexpr(e->right.pexpr, fe);
-> +       case PE_NOT:
-> +               return e->left.pexpr->left.fexpr->satval =3D=3D fe->satva=
-l;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +/*
-> + * init list of fexpr
-> + */
-> +struct fexpr_list *fexpr_list_init(void)
-> +{
-> +       struct fexpr_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of fexpr_list
-> + */
-> +struct fexl_list *fexl_list_init(void)
-> +{
-> +       struct fexl_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of pexpr
-> + */
-> +struct pexpr_list *pexpr_list_init(void)
-> +{
-> +       struct pexpr_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of symbol_fix
-> + */
-> +struct sfix_list *sfix_list_init(void)
-> +{
-> +       struct sfix_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of symbol_fix
-> + */
-> +struct sfl_list *sfl_list_init(void)
-> +{
-> +       struct sfl_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of symbol_dvalue
-> + */
-> +struct sdv_list *sdv_list_init(void)
-> +{
-> +       struct sdv_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of symbols
-> + */
-> +struct sym_list *sym_list_init(void)
-> +{
-> +       struct sym_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of default_maps
-> + */
-> +struct defm_list *defm_list_init(void)
-> +{
-> +       struct defm_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-> +
-> +/*
-> + * init list of properties
-> + */
-> +struct prop_list *prop_list_init(void)
-> +{
-> +       struct prop_list *list =3D xcalloc(1, sizeof(*list));
-> +
-> +       list->head =3D NULL;
-> +       list->tail =3D NULL;
-> +       list->size =3D 0;
-> +
-> +       return list;
-> +}
-
-
-
-A bunch of similar *_list_init() functions.
-Do not do this.
-
-Kconfig uses the similar liss.h to the kernel space.
-
-
-Remove all the duplications.
-
-
-
-
-> +/*
-> + * add element to tail of a fexpr_list
-> + */
-> +void fexpr_list_add(struct fexpr_list *list, struct fexpr *fe)
-> +{
-> +       struct fexpr_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D fe;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a fexl_list
-> + */
-> +void fexl_list_add(struct fexl_list *list, struct fexpr_list *elem)
-> +{
-> +       struct fexl_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D elem;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a pexpr_list
-> + */
-> +void pexpr_list_add(struct pexpr_list *list, struct pexpr *e)
-> +{
-> +       struct pexpr_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D e;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a sfix_list
-> + */
-> +void sfix_list_add(struct sfix_list *list, struct symbol_fix *fix)
-> +{
-> +       struct sfix_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D fix;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a sfl_list
-> + */
-> +void sfl_list_add(struct sfl_list *list, struct sfix_list *elem)
-> +{
-> +       struct sfl_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D elem;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a sdv_list
-> + */
-> +void sdv_list_add(struct sdv_list *list, struct symbol_dvalue *sdv)
-> +{
-> +       struct sdv_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D sdv;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a sym_list
-> + */
-> +void sym_list_add(struct sym_list *list, struct symbol *sym)
-> +{
-> +       struct sym_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D sym;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a defm_list
-> + */
-> +void defm_list_add(struct defm_list *list, struct default_map *map)
-> +{
-> +       struct defm_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D map;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-> +
-> +/*
-> + * add element to tail of a prop_list
-> + */
-> +void prop_list_add(struct prop_list *list, struct property *prop)
-> +{
-> +       struct prop_node *node =3D xcalloc(1, sizeof(*node));
-> +
-> +       node->elem =3D prop;
-> +
-> +       if (list->size =3D=3D 0) {
-> +               list->head =3D node;
-> +               list->tail =3D node;
-> +       } else {
-> +               node->prev =3D list->tail;
-> +               list->tail =3D node;
-> +               node->prev->next =3D node;
-> +       }
-> +
-> +       list->size++;
-> +}
-
-
-
-Again. A bunch of *_list_add().
-
-
-
-> +/*
-> + * delete an element from a fexpr_list
-> + */
-> +void fexpr_list_delete(struct fexpr_list *list, struct fexpr_node *node)
-> +{
-> +       if (list->size =3D=3D 0 || node =3D=3D NULL)
-> +               return;
-> +
-> +       if (node =3D=3D list->head)
-> +               list->head =3D node->next;
-> +       else
-> +               node->prev->next =3D node->next;
-> +
-> +       if (node =3D=3D list->tail)
-> +               list->tail =3D node->prev;
-> +       else
-> +               node->next->prev =3D node->prev;
-> +
-> +       list->size--;
-> +       free(node);
-> +}
-> +
-> +/*
-> + * delete an element from a fexpr_list
-> + */
-> +void sfix_list_delete(struct sfix_list *list, struct sfix_node *node)
-> +{
-> +       if (list->size =3D=3D 0 || node =3D=3D NULL)
-> +               return;
-> +
-> +       if (node =3D=3D list->head)
-> +               list->head =3D node->next;
-> +       else
-> +               node->prev->next =3D node->next;
-> +
-> +       if (node =3D=3D list->tail)
-> +               list->tail =3D node->prev;
-> +       else
-> +               node->next->prev =3D node->prev;
-> +
-> +       list->size--;
-> +       free(node);
-> +}
-> +
-> +/*
-> + * delete an element from a fexpr_list
-> + */
-> +void pexpr_list_delete(struct pexpr_list *list, struct pexpr_node *node)
-> +{
-> +       if (list->size =3D=3D 0 || node =3D=3D NULL)
-> +               return;
-> +
-> +       if (node =3D=3D list->head)
-> +               list->head =3D node->next;
-> +       else
-> +               node->prev->next =3D node->next;
-> +
-> +       if (node =3D=3D list->tail)
-> +               list->tail =3D node->prev;
-> +       else
-> +               node->next->prev =3D node->prev;
-> +
-> +       list->size--;
-> +       free(node);
-> +}
-> +
-> +/*
-> + * delete an element from a fexl_list
-> + */
-> +void fexl_list_delete(struct fexl_list *list, struct fexl_node *node)
-> +{
-> +       if (list->size =3D=3D 0 || node =3D=3D NULL)
-> +               return;
-> +
-> +       if (node =3D=3D list->head)
-> +               list->head =3D node->next;
-> +       else
-> +               node->prev->next =3D node->next;
-> +
-> +       if (node =3D=3D list->tail)
-> +               list->tail =3D node->prev;
-> +       else
-> +               node->next->prev =3D node->prev;
-> +
-> +       list->size--;
-> +       free(node);
-> +}
-> +
-> +/*
-> + * delete the first occurrence of elem in an fexl_list
-> + */
-> +void fexl_list_delete_elem(struct fexl_list *list, struct fexpr_list *el=
-em)
-> +{
-> +       struct fexl_node *node, *to_delete =3D NULL;
-> +
-> +       fexl_list_for_each(node, list) {
-> +               if (node->elem =3D=3D elem) {
-> +                       to_delete =3D node;
-> +                       break;
-> +               }
-> +       }
-> +
-> +       if (to_delete !=3D NULL)
-> +               fexl_list_delete(list, to_delete);
-> +}
-> +
-> +/*
-> + * make a shallow copy of a fexpr_list
-> + */
-> +struct fexpr_list *fexpr_list_copy(struct fexpr_list *list)
-> +{
-> +       struct fexpr_list *ret =3D fexpr_list_init();
-> +       struct fexpr_node *node;
-> +
-> +       fexpr_list_for_each(node, list)
-> +               fexpr_list_add(ret, node->elem);
-> +
-> +       return ret;
-> +}
-> +
-> +/*
-> + * make a shallow copy of a fexl_list
-> + */
-> +struct fexl_list *fexl_list_copy(struct fexl_list *list)
-> +{
-> +       struct fexl_list *ret =3D fexl_list_init();
-> +       struct fexl_node *node;
-> +
-> +       fexl_list_for_each(node, list)
-> +               fexl_list_add(ret, node->elem);
-> +
-> +       return ret;
-> +}
-> +
-> +/*
-> + * make a shallow copy of a sdv_list
-> + */
-> +struct sdv_list *sdv_list_copy(struct sdv_list *list)
-> +{
-> +       struct sdv_list *ret =3D sdv_list_init();
-> +       struct sdv_node *node;
-> +
-> +       sdv_list_for_each(node, list)
-> +               sdv_list_add(ret, node->elem);
-> +
-> +
-> +       return ret;
-> +}
-> +
-> +/*
-> + * make a shallow copy of a sfix_list
-> + */
-> +struct sfix_list *sfix_list_copy(struct sfix_list *list)
-> +{
-> +       struct sfix_list *ret =3D sfix_list_init();
-> +       struct sfix_node *node;
-> +
-> +       sfix_list_for_each(node, list)
-> +               sfix_list_add(ret, node->elem);
-> +
-> +       return ret;
-> +}
-> +
-> +/*
-> + * print a fexpr_list
-> + */
-> +void fexpr_list_print(char *title, struct fexpr_list *list)
-> +{
-> +       struct fexpr_node *node;
-> +
-> +       printf("%s: [", title);
-> +
-> +       fexpr_list_for_each(node, list) {
-> +               printf("%s", str_get(&node->elem->name));
-> +               if (node->next !=3D NULL)
-> +                       printf(", ");
-> +       }
-> +
-> +       printf("]\n");
-> +}
-> +
-> +/*
-> + * print a fexl_list
-> + */
-> +void fexl_list_print(char *title, struct fexl_list *list)
-> +{
-> +       struct fexl_node *node;
-> +
-> +       printf("%s:\n", title);
-> +
-> +       fexl_list_for_each(node, list)
-> +               fexpr_list_print(":", node->elem);
-> +}
-> +
-> +/*
-> + * print a pexpr_list
-> + */
-> +void pexpr_list_print(char *title, struct pexpr_list *list)
-> +{
-> +       struct pexpr_node *node;
-> +
-> +       printf("%s: [", title);
-> +
-> +       pexpr_list_for_each(node, list) {
-> +               pexpr_print_util(node->elem, -1);
-> +               if (node->next !=3D NULL)
-> +                       printf(", ");
-> +       }
-> +
-> +       printf("]\n");
-> +}
-> +
-> +/*
-> + * free an fexpr_list
-> + */
-> +void fexpr_list_free(struct fexpr_list *list)
-> +{
-> +       struct fexpr_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free an defm_list (and pexpr_put the conditions of the maps and free =
-the
-> + * node->element's)
-> + */
-> +void defm_list_destruct(struct defm_list *list)
-> +{
-> +       struct defm_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               pexpr_put(node->elem->e);
-> +               free(node->elem);
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free an fexl_list
-> + */
-> +void fexl_list_free(struct fexl_list *list)
-> +{
-> +       struct fexl_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free a sdv_list
-> + */
-> +void sdv_list_free(struct sdv_list *list)
-> +{
-> +       struct sdv_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free a pexpr_list (and pexpr_put the elements)
-> + */
-> +void pexpr_list_free_put(struct pexpr_list *list)
-> +{
-> +       struct pexpr_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               pexpr_put(node->elem);
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free a prop_list
-> + */
-> +void prop_list_free(struct prop_list *list)
-> +{
-> +       struct prop_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * free a sym_list
-> + */
-> +void sym_list_free(struct sym_list *list)
-> +{
-> +       struct sym_node *node =3D list->head, *tmp;
-> +
-> +       while (node !=3D NULL) {
-> +               tmp =3D node->next;
-> +               free(node);
-> +               node =3D tmp;
-> +       }
-> +
-> +       free(list);
-> +}
-> +
-> +/*
-> + * simplify a pexpr in-place
-> + *     pexpr && False -> False
-> + *     pexpr && True  -> pexpr
-> + *     pexpr || False -> pexpr
-> + *     pexpr || True  -> True
-> + */
-> +static void pexpr_eliminate_yn(struct pexpr *e, struct cfdata *data)
-> +{
-> +       struct pexpr *tmp;
-> +       unsigned int ref_count;
-> +
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_AND:
-> +               pexpr_eliminate_yn(e->left.pexpr, data);
-> +               pexpr_eliminate_yn(e->right.pexpr, data);
-> +               if (e->left.pexpr->type =3D=3D PE_SYMBOL) {
-> +                       if (e->left.pexpr->left.fexpr =3D=3D data->consta=
-nts->const_false) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               pexpr_put(e->right.pexpr);
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_construct_sym(
-> +                                       e, data->constants->const_false,
-> +                                       ref_count);
-> +                               return;
-> +                       } else if (e->left.pexpr->left.fexpr =3D=3D data-=
->constants->const_true) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               tmp =3D e->right.pexpr;
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_shallow_copy(e, tmp, ref_count);
-> +                               pexpr_put(tmp);
-> +                               return;
-> +                       }
-> +               }
-> +               if (e->right.pexpr->type =3D=3D PE_SYMBOL) {
-> +                       if (e->right.pexpr->left.fexpr =3D=3D data->const=
-ants->const_false) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               pexpr_put(e->right.pexpr);
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_construct_sym(
-> +                                       e, data->constants->const_false,
-> +                                       ref_count);
-> +                               return;
-> +                       } else if (e->right.pexpr->left.fexpr =3D=3D data=
-->constants->const_true) {
-> +                               pexpr_put(e->right.pexpr);
-> +                               tmp =3D e->left.pexpr;
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_shallow_copy(e, tmp, ref_count);
-> +                               pexpr_put(tmp);
-> +                               return;
-> +                       }
-> +               }
-> +               break;
-> +       case PE_OR:
-> +               pexpr_eliminate_yn(e->left.pexpr, data);
-> +               pexpr_eliminate_yn(e->right.pexpr, data);
-> +               if (e->left.pexpr->type =3D=3D PE_SYMBOL) {
-> +                       if (e->left.pexpr->left.fexpr =3D=3D data->consta=
-nts->const_false) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               tmp =3D e->right.pexpr;
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_shallow_copy(e, tmp, ref_count);
-> +                               pexpr_put(tmp);
-> +                               return;
-> +                       } else if (e->left.pexpr->left.fexpr =3D=3D data-=
->constants->const_true) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               pexpr_put(e->right.pexpr);
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_construct_sym(
-> +                                       e, data->constants->const_true,
-> +                                       ref_count);
-> +                               return;
-> +                       }
-> +               }
-> +               if (e->right.pexpr->type =3D=3D PE_SYMBOL) {
-> +                       if (e->right.pexpr->left.fexpr =3D=3D data->const=
-ants->const_false) {
-> +                               pexpr_put(e->right.pexpr);
-> +                               tmp =3D e->left.pexpr;
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_shallow_copy(e, tmp, ref_count);
-> +                               pexpr_put(tmp);
-> +                               return;
-> +                       } else if (e->right.pexpr->left.fexpr =3D=3D data=
-->constants->const_true) {
-> +                               pexpr_put(e->left.pexpr);
-> +                               pexpr_put(e->right.pexpr);
-> +                               ref_count =3D e->ref_count;
-> +                               pexpr_construct_sym(e,
-> +                                                   data->constants->cons=
-t_true,
-> +                                                   ref_count);
-> +                               return;
-> +                       }
-> +               }
-> +       default:
-> +               break;
-> +       }
-> +}
-> +
-> +static void pexpr_shallow_copy(struct pexpr *dest, struct pexpr *org, un=
-signed int ref_count)
-> +{
-> +       struct pexpr inter;
-> +
-> +       inter.type =3D org->type;
-> +       inter.left =3D org->left;
-> +       inter.right =3D org->right;
-> +       if (org->type =3D=3D PE_OR || org->type =3D=3D PE_AND) {
-> +               pexpr_get(org->left.pexpr);
-> +               pexpr_get(org->right.pexpr);
-> +       } else if (org->type =3D=3D PE_NOT) {
-> +               pexpr_get(org->left.pexpr);
-> +       }
-> +       inter.ref_count =3D ref_count;
-> +       *dest =3D inter;
-> +}
-> +
-> +/*
-> + * copy a pexpr
-> + */
-> +struct pexpr *pexpr_deep_copy(const struct pexpr *org)
-> +{
-> +       struct pexpr *e;
-> +
-> +       if (!org)
-> +               return NULL;
-> +
-> +       e =3D xmalloc(sizeof(*org));
-> +       memcpy(e, org, sizeof(*org));
-> +       e->ref_count =3D 1;
-> +       switch (org->type) {
-> +       case PE_SYMBOL:
-> +               e->left =3D org->left;
-> +               break;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               e->left.pexpr =3D pexpr_deep_copy(org->left.pexpr);
-> +               e->right.pexpr =3D pexpr_deep_copy(org->right.pexpr);
-> +               break;
-> +       case PE_NOT:
-> +               e->left.pexpr =3D pexpr_deep_copy(org->left.pexpr);
-> +               break;
-> +       }
-> +
-> +       return e;
-> +}
-> +
-> +/*
-> + * free a pexpr
-> + */
-> +void pexpr_free_depr(struct pexpr *e)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               break;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               pexpr_free_depr(e->left.pexpr);
-> +               pexpr_free_depr(e->right.pexpr);
-> +               break;
-> +       case PE_NOT:
-> +               pexpr_free_depr(e->left.pexpr);
-> +               break;
-> +       }
-> +
-> +       free(e);
-> +}
-> +
-> +/*
-> + * Increments ref_count and returns @e
-> + */
-> +struct pexpr *pexpr_get(struct pexpr *e)
-> +{
-> +       ++e->ref_count;
-> +       return e;
-> +}
-> +
-> +/*
-> + * Decrements ref_count and if it becomes 0, it recursively puts the ref=
-erences
-> + * to its children and calls ``free(e)``. If @e =3D=3D NULL, it does not=
-hing.
-> + */
-> +void pexpr_put(struct pexpr *e)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       if (e->ref_count =3D=3D 0) {
-> +               printd("Invalid call to %s - ref_count is zero\n", __func=
-__);
-> +               return;
-> +       }
-> +
-> +       --e->ref_count;
-> +       if (e->ref_count > 0)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               break;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               pexpr_put(e->left.pexpr);
-> +               pexpr_put(e->right.pexpr);
-> +               break;
-> +       case PE_NOT:
-> +               pexpr_put(e->left.pexpr);
-> +               break;
-> +       }
-> +
-> +       free(e);
-> +}
-> +
-> +/*
-> + * calls pexpr_put for a NULL-terminated array of struct pexpr *
-> + */
-> +void _pexpr_put_list(struct pexpr **es)
-> +{
-> +       for (; *es !=3D NULL; es++)
-> +               pexpr_put(*es);
-> +}
-> +
-> +#define e1 (*ep1)
-> +#define e2 (*ep2)
-> +/*
-> + * pexpr_eliminate_eq() helper
-> + */
-> +static void __pexpr_eliminate_eq(enum pexpr_type type, struct pexpr **ep=
-1, struct pexpr **ep2,
-> +                                struct cfdata *data)
-> +{
-> +       /* recurse down to the leaves */
-> +       if (e1->type =3D=3D type) {
-> +               __pexpr_eliminate_eq(type, &e1->left.pexpr, &e2, data);
-> +               __pexpr_eliminate_eq(type, &e1->right.pexpr, &e2, data);
-> +               return;
-> +       }
-> +       if (e2->type =3D=3D type) {
-> +               __pexpr_eliminate_eq(type, &e1, &e2->left.pexpr, data);
-> +               __pexpr_eliminate_eq(type, &e1, &e2->right.pexpr, data);
-> +               return;
-> +       }
-> +
-> +       /* e1 and e2 are leaves. Compare them. */
-> +       if (e1->type =3D=3D PE_SYMBOL && e2->type =3D=3D PE_SYMBOL &&
-> +           e1->left.fexpr->satval =3D=3D e2->left.fexpr->satval &&
-> +           (e1->left.fexpr =3D=3D data->constants->const_true ||
-> +            e2->left.fexpr =3D=3D data->constants->const_false))
-> +               return;
-> +       if (!pexpr_eq(e1, e2, data))
-> +               return;
-> +
-> +       /* e1 and e2 are equal leaves. Prepare them for elimination. */
-> +       trans_count++;
-> +       pexpr_put(e1);
-> +       pexpr_put(e2);
-> +       switch (type) {
-> +       case PE_AND:
-> +               e1 =3D pexf(data->constants->const_true);
-> +               e2 =3D pexf(data->constants->const_true);
-> +               break;
-> +       case PE_OR:
-> +               e1 =3D pexf(data->constants->const_false);
-> +               e2 =3D pexf(data->constants->const_false);
-> +               break;
-> +       default:
-> +               break;
-> +       }
-> +}
-> +
-> +/*
-> + * rewrite pexpr ep1 and ep2 to remove operands common to both
-> + */
-> +static void pexpr_eliminate_eq(struct pexpr **ep1, struct pexpr **ep2, s=
-truct cfdata *data)
-> +{
-> +       if (!e1 || !e2)
-> +               return;
-> +
-> +       switch (e1->type) {
-> +       case PE_AND:
-> +       case PE_OR:
-> +               __pexpr_eliminate_eq(e1->type, ep1, ep2, data);
-> +       default:
-> +               break;
-> +       }
-> +       if (e1->type !=3D e2->type)
-> +               switch (e2->type) {
-> +               case PE_AND:
-> +               case PE_OR:
-> +                       __pexpr_eliminate_eq(e2->type, ep1, ep2, data);
-> +               default:
-> +                       break;
-> +               }
-> +       pexpr_eliminate_yn(e1, data);
-> +       pexpr_eliminate_yn(e2, data);
-> +}
-> +#undef e1
-> +#undef e2
-> +
-> +/*
-> + * check whether 2 pexpr are equal
-> + */
-> +bool pexpr_eq(struct pexpr *e1, struct pexpr *e2, struct cfdata *data)
-> +{
-> +       bool res;
-> +       int old_count;
-> +
-> +       if (!e1 || !e2)
-> +               return false;
-> +
-> +       if (e1->type !=3D e2->type)
-> +               return false;
-> +
-> +       switch (e1->type) {
-> +       case PE_SYMBOL:
-> +               return e1->left.fexpr->satval =3D=3D e2->left.fexpr->satv=
-al;
-> +       case PE_AND:
-> +       case PE_OR:
-> +               e1 =3D pexpr_deep_copy(e1);
-> +               e2 =3D pexpr_deep_copy(e2);
-> +               old_count =3D trans_count;
-> +               pexpr_eliminate_eq(&e1, &e2, data);
-> +               res =3D (e1->type =3D=3D PE_SYMBOL && e2->type =3D=3D PE_=
-SYMBOL &&
-> +                       e1->left.fexpr->satval =3D=3D e2->left.fexpr->sat=
-val);
-> +               pexpr_put(e1);
-> +               pexpr_put(e2);
-> +               trans_count =3D old_count;
-> +               return res;
-> +       case PE_NOT:
-> +               return pexpr_eq(e1->left.pexpr, e2->left.pexpr, data);
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +/*
-> + * print a pexpr
-> + */
-> +static void pexpr_print_util(struct pexpr *e, int prevtoken)
-> +{
-> +       if (!e)
-> +               return;
-> +
-> +       switch (e->type) {
-> +       case PE_SYMBOL:
-> +               printf("%s", str_get(&e->left.fexpr->name));
-> +               break;
-> +       case PE_AND:
-> +               if (prevtoken !=3D PE_AND && prevtoken !=3D -1)
-> +                       printf("(");
-> +               pexpr_print_util(e->left.pexpr, PE_AND);
-> +               printf(" && ");
-> +               pexpr_print_util(e->right.pexpr, PE_AND);
-> +               if (prevtoken !=3D PE_AND && prevtoken !=3D -1)
-> +                       printf(")");
-> +               break;
-> +       case PE_OR:
-> +               if (prevtoken !=3D PE_OR && prevtoken !=3D -1)
-> +                       printf("(");
-> +               pexpr_print_util(e->left.pexpr, PE_OR);
-> +               printf(" || ");
-> +               pexpr_print_util(e->right.pexpr, PE_OR);
-> +               if (prevtoken !=3D PE_OR && prevtoken !=3D -1)
-> +                       printf(")");
-> +               break;
-> +       case PE_NOT:
-> +               printf("!");
-> +               pexpr_print_util(e->left.pexpr, PE_NOT);
-> +               break;
-> +       }
-> +}
-> +void pexpr_print(char *tag, struct pexpr *e, int prevtoken)
-> +{
-> +       printf("%s: ", tag);
-> +       pexpr_print_util(e, prevtoken);
-> +       printf("\n");
-> +}
-> +
-> +/*
-> + * convert a fexpr to a pexpr
-> + */
-> +struct pexpr *pexf(struct fexpr *fe)
-
-
-
-
-Not only this one, but more descriptive function name please.
-
-"pexf", so what?
-I do not understand what it is doing from the name.
-
-
-
-
-
-
-
-
-
-> +{
-> +       struct pexpr *pe =3D xcalloc(1, sizeof(*pe));
-> +
-> +       pexpr_construct_sym(pe, fe, 1);
-> +       return pe;
-> +}
-> +
-> +void pexpr_construct_or(struct pexpr *e, struct pexpr *left,
-> +                            struct pexpr *right, unsigned int ref_count)
-> +{
-> +       e->type =3D PE_OR;
-> +       e->left.pexpr =3D left;
-> +       e->right.pexpr =3D right;
-> +       e->ref_count =3D ref_count;
-> +}
-> +
-> +void pexpr_construct_and(struct pexpr *e, struct pexpr *left,
-> +                            struct pexpr *right, unsigned int ref_count)
-> +{
-> +       e->type =3D PE_AND;
-> +       e->left.pexpr =3D left;
-> +       e->right.pexpr =3D right;
-> +       e->ref_count =3D ref_count;
-> +}
-> +
-> +void pexpr_construct_not(struct pexpr *e, struct pexpr *left,
-> +                         unsigned int ref_count)
-> +{
-> +       e->type =3D PE_NOT;
-> +       e->left.pexpr =3D left;
-> +       e->right.pexpr =3D NULL;
-> +       e->ref_count =3D ref_count;
-> +}
-> +
-> +void pexpr_construct_sym(struct pexpr *e, struct fexpr *left,
-> +                         unsigned int ref_count)
-> +{
-> +       e->type =3D PE_SYMBOL;
-> +       e->left.fexpr =3D left;
-> +       e->right.pexpr =3D NULL;
-> +       e->ref_count =3D ref_count;
-> +}
-> +
-> +static struct pexpr *pexpr_join_or(struct pexpr *e1, struct pexpr *e2, s=
-truct cfdata *data)
-> +{
-> +       if (pexpr_eq(e1, e2, data))
-> +               return pexpr_deep_copy(e1);
-> +       else
-> +               return NULL;
-> +}
-> +
-> +static struct pexpr *pexpr_join_and(struct pexpr *e1, struct pexpr *e2, =
-struct cfdata *data)
-> +{
-> +       if (pexpr_eq(e1, e2, data))
-> +               return pexpr_deep_copy(e1);
-> +       else
-> +               return NULL;
-> +}
-> +
-> +/*
-> + * pexpr_eliminate_dups() helper.
-> + */
-> +static void pexpr_eliminate_dups1(enum pexpr_type type, struct pexpr **e=
-p1, struct pexpr **ep2,
-> +                                 struct cfdata *data)
-> +{
-> +#define e1 (*ep1)
-> +#define e2 (*ep2)
-> +
-> +       struct pexpr *tmp;
-> +
-> +       /* recurse down to leaves */
-> +       if (e1->type =3D=3D type) {
-> +               pexpr_eliminate_dups1(type, &e1->left.pexpr, &e2, data);
-> +               pexpr_eliminate_dups1(type, &e1->right.pexpr, &e2, data);
-> +               return;
-> +       }
-> +       if (e2->type =3D=3D type) {
-> +               pexpr_eliminate_dups1(type, &e1, &e2->left.pexpr, data);
-> +               pexpr_eliminate_dups1(type, &e1, &e2->right.pexpr, data);
-> +               return;
-> +       }
-> +
-> +       /* e1 and e2 are leaves. Compare them. */
-> +
-> +       if (e1 =3D=3D e2)
-> +               return;
-> +
-> +       switch (e1->type) {
-> +       case PE_AND:
-> +       case PE_OR:
-> +               pexpr_eliminate_dups1(e1->type, &e1, &e1, data);
-> +       default:
-> +               break;
-> +       }
-> +
-> +       switch (type) {
-> +       case PE_AND:
-> +               tmp =3D pexpr_join_and(e1, e2, data);
-> +               if (tmp) {
-> +                       pexpr_put(e1);
-> +                       pexpr_put(e2);
-> +                       e1 =3D pexf(data->constants->const_true);
-> +                       e2 =3D tmp;
-> +                       trans_count++;
-> +               }
-> +               break;
-> +       case PE_OR:
-> +               tmp =3D pexpr_join_or(e1, e2, data);
-> +               if (tmp) {
-> +                       pexpr_put(e1);
-> +                       pexpr_put(e2);
-> +                       e1 =3D pexf(data->constants->const_false);
-> +                       e2 =3D tmp;
-> +                       trans_count++;
-> +               }
-> +               break;
-> +       default:
-> +               break;
-> +       }
-> +
-> +#undef e1
-> +#undef e2
-> +}
-> +
-> +/*
-> + * eliminate duplicate and redundant operands
-> + */
-> +struct pexpr *pexpr_eliminate_dups(struct pexpr *e, struct cfdata *data)
-> +{
-> +       int oldcount;
-> +
-> +       if (!e)
-> +               return e;
-> +
-> +       oldcount =3D trans_count;
-> +       while (true) {
-> +               trans_count =3D 0;
-> +               switch (e->type) {
-> +               case PE_AND:
-> +               case PE_OR:
-> +                       pexpr_eliminate_dups1(e->type, &e, &e, data);
-> +               default:
-> +                       break;
-> +               }
-> +               if (!trans_count)
-> +                       /* no simplification done in this pass. We're don=
-e. */
-> +                       break;
-> +               pexpr_eliminate_yn(e, data);
-> +       }
-> +       trans_count =3D oldcount;
-> +       return e;
-> +}
-
-
-
-This is a full copy-paste of scripts/kconfig/expr.c
-
-If you need all of these, please referector
-to avoid code duplication.
-
-
-
-
-
-
-
-
-
-
-
-
-> diff --git a/scripts/kconfig/cf_expr.h b/scripts/kconfig/cf_expr.h
-> new file mode 100644
-> index 000000000000..07435ae381e6
-> --- /dev/null
-> +++ b/scripts/kconfig/cf_expr.h
-> @@ -0,0 +1,296 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023 Patrick Franz <deltaone@debian.org>
-> + */
-> +
-> +#ifndef CF_EXPR_H
-> +#define CF_EXPR_H
-> +
-> +#include <stdbool.h>
-> +
-> +#include "cf_defs.h"(
-> +
-> +#define fexpr_list_for_each(node, list) \
-> +       for (node =3D list->head; node !=3D NULL; node =3D node->next)
-> +
-> +#define fexl_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define pexpr_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define sdv_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define sfix_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define sfl_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define sym_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define defm_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-> +
-> +#define prop_list_for_each(node, list) \
-> +       fexpr_list_for_each(node, list)
-
-
-All of these are the same as fexpr_list_for_each(),
-which is the same as list_for_each().
-
-kconfig already use list.h
-
-Please do not proliferate similar code.
-
-
-
-
-
-
-
-> +
-> +/* call pexpr_put for a list of pexpr's */
-> +#define PEXPR_PUT(...) _pexpr_put_list((struct pexpr *[]){ __VA_ARGS__, =
-NULL })
-> +
-> +/* create a fexpr */
-> +struct fexpr *fexpr_create(int satval, enum fexpr_type type, char *name)=
-;
-> +
-> +/* create the fexpr for a symbol */
-> +void sym_create_fexpr(struct symbol *sym, struct cfdata *data);
-> +
-> +struct pexpr *expr_calculate_pexpr_both(struct expr *e, struct cfdata *d=
-ata);
-> +struct pexpr *expr_calculate_pexpr_y(struct expr *e, struct cfdata *data=
-);
-> +struct pexpr *expr_calculate_pexpr_m(struct expr *e, struct cfdata *data=
-);
-> +struct pexpr *expr_calculate_pexpr_y_and(struct expr *a, struct expr *b,
-> +                                        struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_m_and(struct expr *a, struct expr *b,
-> +                                        struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_both_and(struct expr *a, struct expr =
-*b,
-> +                                           struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_y_or(struct expr *a, struct expr *b,
-> +                                       struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_m_or(struct expr *a, struct expr *b,
-> +                                       struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_both_or(struct expr *a, struct expr *=
-b,
-> +                                          struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_y_not(struct expr *e, struct cfdata *=
-data);
-> +struct pexpr *expr_calculate_pexpr_m_not(struct expr *e, struct cfdata *=
-data);
-> +struct pexpr *expr_calculate_pexpr_y_equals(struct expr *e,
-> +                                           struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_y_unequals(struct expr *e,
-> +                                             struct cfdata *data);
-> +struct pexpr *expr_calculate_pexpr_y_comp(struct expr *e, struct cfdata =
-*data);
-> +
-> +/* macro to create a pexpr of type AND */
-> +struct pexpr *pexpr_and_share(struct pexpr *a, struct pexpr *b,
-> +                             struct cfdata *data);
-> +struct pexpr *pexpr_and(struct pexpr *a, struct pexpr *b, struct cfdata =
-*data,
-> +                       enum pexpr_move move);
-> +
-> +/* macro to create a pexpr of type OR */
-> +struct pexpr *pexpr_or_share(struct pexpr *a, struct pexpr *b,
-> +                            struct cfdata *data);
-> +struct pexpr *pexpr_or(struct pexpr *a, struct pexpr *b, struct cfdata *=
-data,
-> +                      enum pexpr_move move);
-> +
-> +/* macro to create a pexpr of type NOT */
-> +struct pexpr *pexpr_not_share(struct pexpr *a, struct cfdata *data);
-> +struct pexpr *pexpr_not(struct pexpr *a, struct cfdata *data);
-> +
-> +/* check whether a pexpr is in CNF */
-> +bool pexpr_is_cnf(struct pexpr *e);
-> +
-> +/* check whether a pexpr is in NNF */
-> +bool pexpr_is_nnf(struct pexpr *e);
-> +
-> +/* return fexpr_both for a symbol */
-> +struct pexpr *sym_get_fexpr_both(struct symbol *sym, struct cfdata *data=
-);
-> +
-> +/* return fexpr_sel_both for a symbol */
-> +struct pexpr *sym_get_fexpr_sel_both(struct symbol *sym, struct cfdata *=
-data);
-> +
-> +/* create the fexpr of a non-boolean symbol for a specific value */
-> +struct fexpr *sym_create_nonbool_fexpr(struct symbol *sym, char *value,
-> +                                      struct cfdata *data);
-> +
-> +/*
-> + * return the fexpr of a non-boolean symbol for a specific value, NULL i=
-f
-> + * non-existent
-> + */
-> +struct fexpr *sym_get_nonbool_fexpr(struct symbol *sym, char *value);
-> +
-> +/*
-> + * return the fexpr of a non-boolean symbol for a specific value, if it =
-exists
-> + * otherwise create it
-> + */
-> +struct fexpr *sym_get_or_create_nonbool_fexpr(struct symbol *sym, char *=
-value, struct cfdata *data);
-> +
-> +/* macro to construct a pexpr for "A implies B" */
-> +struct pexpr *pexpr_implies_share(struct pexpr *a, struct pexpr *b, stru=
-ct cfdata *data);
-> +struct pexpr *pexpr_implies(struct pexpr *a, struct pexpr *b, struct cfd=
-ata *data,
-> +                           enum pexpr_move move);
-> +
-> +/* check, if the fexpr is a symbol, a True/False-constant, a literal sym=
-bolising a non-boolean or
-> + * a choice symbol
-> + */
-> +bool fexpr_is_symbol(struct fexpr *e);
-> +
-> +/* check whether a pexpr is a symbol or a negated symbol */
-> +bool pexpr_is_symbol(struct pexpr *e);
-> +
-> +/* check whether the fexpr is a constant (true/false) */
-> +bool fexpr_is_constant(struct fexpr *e, struct cfdata *data);
-> +
-> +/* add a fexpr to the satmap */
-> +void fexpr_add_to_satmap(struct fexpr *e, struct cfdata *data);
-> +
-> +/* print an fexpr */
-> +void fexpr_print(char *tag, struct fexpr *e);
-> +
-> +/* write an fexpr into a string (format needed for testing) */
-> +void fexpr_as_char(struct fexpr *e, struct gstr *s);
-> +
-> +/* write pn pexpr into a string */
-> +void pexpr_as_char_short(struct pexpr *e, struct gstr *s, int parent);
-> +
-> +/* write an fexpr into a string (format needed for testing) */
-> +void pexpr_as_char(struct pexpr *e, struct gstr *s, int parent, struct c=
-fdata *data);
-> +
-> +/* check whether a pexpr contains a specific fexpr */
-> +bool pexpr_contains_fexpr(struct pexpr *e, struct fexpr *fe);
-> +
-> +/* init list of fexpr */
-> +struct fexpr_list *fexpr_list_init(void);
-> +
-> +/* init list of fexpr_list */
-> +struct fexl_list *fexl_list_init(void);
-> +
-> +/* init list of pexpr */
-> +struct pexpr_list *pexpr_list_init(void);
-> +
-> +/* init list of symbol_fix */
-> +struct sfix_list *sfix_list_init(void);
-> +
-> +/* init list of sfix_list */
-> +struct sfl_list *sfl_list_init(void);
-> +
-> +/* init list of symbol_dvalue */
-> +struct sdv_list *sdv_list_init(void);
-> +
-> +/* init list of symbols */
-> +struct sym_list *sym_list_init(void);
-> +
-> +/* init list of default_maps */
-> +struct defm_list *defm_list_init(void);
-> +
-> +/* init list of properties */
-> +struct prop_list *prop_list_init(void);
-> +
-> +/* add element to tail of a fexpr_list */
-> +void fexpr_list_add(struct fexpr_list *list, struct fexpr *fe);
-> +
-> +/* add element to tail of a fexl_list */
-> +void fexl_list_add(struct fexl_list *list, struct fexpr_list *elem);
-> +
-> +/* add element to tail of a pexpr_list */
-> +void pexpr_list_add(struct pexpr_list *list, struct pexpr *e);
-> +
-> +/* add element to tail of a sfix_list */
-> +void sfix_list_add(struct sfix_list *list, struct symbol_fix *fix);
-> +
-> +/* add element to tail of a sfl_list */
-> +void sfl_list_add(struct sfl_list *list, struct sfix_list *elem);
-> +
-> +/* add element to tail of a sdv_list */
-> +void sdv_list_add(struct sdv_list *list, struct symbol_dvalue *sdv);
-> +
-> +/* add element to tail of a sym_list */
-> +void sym_list_add(struct sym_list *list, struct symbol *sym);
-> +
-> +/* add element to tail of a defm_list */
-> +void defm_list_add(struct defm_list *list, struct default_map *map);
-> +
-> +/* add element to tail of a prop_list */
-> +void prop_list_add(struct prop_list *list, struct property *prop);
-> +
-> +/* delete an element from a fexpr_list */
-> +void fexpr_list_delete(struct fexpr_list *list, struct fexpr_node *node)=
-;
-> +
-> +/* delete an element from a fexpr_list */
-> +void fexl_list_delete(struct fexl_list *list, struct fexl_node *node);
-> +
-> +/* delete the first occurrence of elem in an fexl_list */
-> +void fexl_list_delete_elem(struct fexl_list *list, struct fexpr_list *el=
-em);
-> +
-> +/* delete an element from a pexpr_list */
-> +void pexpr_list_delete(struct pexpr_list *list, struct pexpr_node *node)=
-;
-> +
-> +/* delete an element from a sfix_list */
-> +void sfix_list_delete(struct sfix_list *list, struct sfix_node *node);
-> +
-> +/* make a shallow copy of a fexpr_list */
-> +struct fexpr_list *fexpr_list_copy(struct fexpr_list *list);
-> +
-> +/* make a shallow copy of a fexpr_list */
-> +struct fexl_list *fexl_list_copy(struct fexl_list *list);
-> +
-> +/* make a shallow copy of a sdv_list */
-> +struct sdv_list *sdv_list_copy(struct sdv_list *list);
-> +
-> +/* make a shallow copy of a sfix_list */
-> +struct sfix_list *sfix_list_copy(struct sfix_list *list);
-> +
-> +/* print a fexpr_list */
-> +void fexpr_list_print(char *title, struct fexpr_list *list);
-> +
-> +/* print a fexl_list */
-> +void fexl_list_print(char *title, struct fexl_list *list);
-> +
-> +/* print a pexpr_list */
-> +void pexpr_list_print(char *title, struct pexpr_list *list);
-> +
-> +/* free an fexpr_list */
-> +void fexpr_list_free(struct fexpr_list *list);
-> +
-> +/* free an pexpr_list (and pexpr_put the elements) */
-> +void pexpr_list_free_put(struct pexpr_list *list);
-> +
-> +/* free an fexl_list */
-> +void fexl_list_free(struct fexl_list *list);
-> +
-> +/* free a sdv_list */
-> +void sdv_list_free(struct sdv_list *list);
-> +
-> +/* free a prop_list */
-> +void prop_list_free(struct prop_list *list);
-> +
-> +/* free a defm_list (and pexpr_put the conditions of the maps) */
-> +void defm_list_destruct(struct defm_list *list);
-> +
-> +/* free a sym_list */
-> +void sym_list_free(struct sym_list *list);
-> +
-> +/* check whether 2 pexpr are equal */
-> +bool pexpr_eq(struct pexpr *e1, struct pexpr *e2, struct cfdata *data);
-> +
-> +/* copy a pexpr */
-> +struct pexpr *pexpr_deep_copy(const struct pexpr *org);
-> +
-> +void pexpr_construct_sym(struct pexpr *e, struct fexpr *left,
-> +                        unsigned int ref_count);
-> +void pexpr_construct_not(struct pexpr *e, struct pexpr *left,
-> +                        unsigned int ref_count);
-> +void pexpr_construct_and(struct pexpr *e, struct pexpr *left,
-> +                        struct pexpr *right, unsigned int ref_count);
-> +void pexpr_construct_or(struct pexpr *e, struct pexpr *left,
-> +                       struct pexpr *right, unsigned int ref_count);
-> +
-> +/* free a pexpr */
-> +void pexpr_free_depr(struct pexpr *e);
-> +
-> +/* give up a reference to e. Also see struct pexpr. */
-> +void pexpr_put(struct pexpr *e);
-> +/* Used by PEXPR_PUT(). Not to be used directly. */
-> +void _pexpr_put_list(struct pexpr **es);
-> +
-> +/* acquire a reference to e. Also see struct pexpr. */
-> +struct pexpr *pexpr_get(struct pexpr *e);
-> +
-> +/* print a pexpr  */
-> +void pexpr_print(char *tag, struct pexpr *e, int prevtoken);
-> +
-> +/* convert a fexpr to a pexpr */
-> +struct pexpr *pexf(struct fexpr *fe);
-> +
-> +/* eliminate duplicate and redundant operands */
-> +struct pexpr *pexpr_eliminate_dups(struct pexpr *e, struct cfdata *data)=
-;
-> +
-> +#endif
-
-> --
-> 2.39.2
->
-
-
---
-Best Regards
-
-
-Masahiro Yamada
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5e49841-78d8-427f-7e32-08dcbaab70e8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Aug 2024 08:47:47.5889
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cqeHcDgq+xlM6mtexoevKSXEA1bTkz7ptpJBbvRBEQbtM6xRDhbyZjdR5UnWqA63Q0EAfK9H5lWiNQR3iS2asg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB7797
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--13.089900-8.000000
+X-TMASE-MatchedRID: vbSD0OnL8/L4OiVTWoD8RCa1MaKuob8PC/ExpXrHizxEv26FkhjLXeV8
+	LPcEXtiPjsBcM2F2TRSZ5n4hM5k0ap1OGPOtOV85l1zsjZ1/6axzd7C7BtJobvk3SjZMcZFk9BQ
+	FWu9qPYb5OF/7keJRz9t9i45mMISqsZoAfmv0SGSEryjhqiyzygJ+D+xbilRQ+Cckfm+bb6A9CU
+	on0NTGeSFZ3JyEu+QIEqqN2VH6x4ctVrIvuTuiXEf49ONH0RaSuLwbhNl9B5UKogmGusPLb0bbW
+	GO0926TNIKgT6xjtkebk3n6EL1Zg0X9M0WKaNK4pR5s3QVABthn+sA9+u1YLcgtFGqS2m8j0A45
+	IAXRxM3/ZApGyX5NvlDpXI2mAWhGwacxYVzCGcCO0rt0LpQGebn7V+KB+3cumyiLZetSf8n5kvm
+	j69FXvKEwgORH8p/AuRuWSuAIu/jdB/CxWTRRu25FeHtsUoHuyzH1JpdhVsUNqkf3LNQeGdtGXS
+	dTX4JdvMV5GNJWNT2wFMlIPaIBbQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--13.089900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	7EE90F33B6F2A36E0C377D7EF5C63F08EEACCD01C7058801AECD86C2C511763F2000:8
+
+SGksIFNodWlqaW5nOg0KDQpPbiBNb24sIDIwMjQtMDgtMTIgYXQgMTU6MDMgKzA4MDAsIFNodWlq
+aW5nIExpIHdyb3RlOg0KPiBBZGRpbmcgdGhlIHBlci1mcmFtZSBscCBmdW5jdGlvbiBvZiBtdDgx
+ODgsIHdoaWNoIGNhbiBrZWVwIEhGUCBpbiBIUyBhbmQNCj4gcmVkdWNlIHRoZSB0aW1lIHJlcXVp
+cmVkIGZvciBlYWNoIGxpbmUgdG8gZW50ZXIgYW5kIGV4aXQgbG93IHBvd2VyLg0KPiBQZXIgRnJh
+bWUgTFA6DQo+ICAgfDwtLS0tLS0tLS0tT25lIEFjdGl2ZSBGcmFtZS0tLS0tLS0tPnwNCj4gLS1f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXy0tLS1fX19fX19fX19fX19fX19f
+X19fDQo+ICAgXkhTQStIQlBeXlJHQl5eSEZQXl5IU0ErSEJQXl5SR0JeXkhGUF4gICAgXkhTQStI
+QlBeXlJHQl5eSEZQXg0KPiANCj4gUGVyIExpbmUgTFA6DQo+ICAgfDwtLS0tLS0tLS0tLS0tLS1P
+bmUgQWN0aXZlIEZyYW1lLS0tLS0tLS0tLS0+fA0KPiAtLV9fX19fX19fX19fX19fLS1fX19fX19f
+X19fX19fXy0tX19fX19fX19fX19fX18tLS0tX19fX19fX19fX19fX18NCj4gICBeSFNBK0hCUF5e
+UkdCXiAgXkhTQStIQlBeXlJHQl4gIF5IU0ErSEJQXl5SR0JeICAgIF5IU0ErSEJQXl5SR0JeDQo+
+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTaHVpamluZyBMaSA8c2h1aWppbmcubGlAbWVkaWF0ZWsuY29t
+Pg0KPiAtLS0NCj4gQ2hhbmdlcyBpbiB2NToNCj4gRml4IGNvZGUgc3R5bGUgaXNzdWUgYW5kIGFk
+ZCBwZXItbGluZS1scCBmdW5jdGlvbiB0byBiZSBzeW1tZXRyaWNhbCB3aXRoIHBlci1mcmFtZS1s
+cC4NCj4gcGVyIHN1Z2dlc3Rpb24gZnJvbSBwcmV2aW91cyB0aHJlYWQ6DQo+IGh0dHBzOi8vdXJs
+ZGVmZW5zZS5jb20vdjMvX19odHRwczovL3BhdGNod29yay5rZXJuZWwub3JnL3Byb2plY3QvbGlu
+dXgtbWVkaWF0ZWsvcGF0Y2gvMjAyNDA4MDEwODExNDQuMjIzNzItMS1zaHVpamluZy5saUBtZWRp
+YXRlay5jb20vX187ISFDVFJOS0E5d01nMEFSYnchbHQwV2VXck90a0cyczRVblVDdEh4MTRqOEZ2
+VFFLLVUtRGhFeXc4WWhzbnBiVWoybzJLU0RrM0Q2NWswOEc2Z0FRU3h6QVRMNG9jLXE2d3FISUo2
+eVEkIA0KPiBDaGFuZ2VzIGluIHY0Og0KPiBEcm9wIHRoZSBjb2RlIHJlbGF0ZWQgdG8gYmxscF9l
+biBhbmQgYmxscF93YywgYWRqdXN0IHBzX3djIHRvIGRzaS0+dm0uaGFjdGl2ZSAqDQo+IGRzaV9i
+dWZfYnBwLg0KPiBDaGFuZ2VzIGluIHYzOg0KPiBVc2UgZnVuY3Rpb24gaW4gYml0ZmllbGQuaCBh
+bmQgZ2V0IHZhbHVlIGZyb20gcGh5IHRpbWluZywgcGVyIHN1Z2dlc3Rpb24NCj4gZnJvbSBwcmV2
+aW91cyB0aHJlYWQ6DQo+IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczovL3BhdGNo
+d29yay5rZXJuZWwub3JnL3Byb2plY3QvbGludXgtbWVkaWF0ZWsvcGF0Y2gvMjAyNDA0MjQwOTE2
+MzkuMjI3NTktMS1zaHVpamluZy5saUBtZWRpYXRlay5jb20vX187ISFDVFJOS0E5d01nMEFSYnch
+bHQwV2VXck90a0cyczRVblVDdEh4MTRqOEZ2VFFLLVUtRGhFeXc4WWhzbnBiVWoybzJLU0RrM0Q2
+NWswOEc2Z0FRU3h6QVRMNG9jLXE2eUtpUjVCTFEkIA0KPiBDaGFuZ2VzIGluIHYyOg0KPiBVc2Ug
+Yml0ZmllbGQgbWFjcm9zIGFuZCBhZGQgbmV3IGZ1bmN0aW9uIGZvciBwZXIgcHJhbWUgbHAgYW5k
+IGltcHJvdmUNCj4gdGhlIGZvcm1hdCwgcGVyIHN1Z2dlc3Rpb24gZnJvbSBwcmV2aW91cyB0aHJl
+YWQ6DQo+IGh0dHBzOi8vdXJsZGVmZW5zZS5jb20vdjMvX19odHRwczovL3BhdGNod29yay5rZXJu
+ZWwub3JnL3Byb2plY3QvbGludXgtbWVkaWF0ZWsvcGF0Y2gvMjAyNDAzMTQwOTQyMzguMzMxNS0x
+LXNodWlqaW5nLmxpQG1lZGlhdGVrLmNvbS9fXzshIUNUUk5LQTl3TWcwQVJidyFsdDBXZVdyT3Rr
+RzJzNFVuVUN0SHgxNGo4RnZUUUstVS1EaEV5dzhZaHNucGJVajJvMktTRGszRDY1azA4RzZnQVFT
+eHpBVEw0b2MtcTZ5a083VmhCdyQgDQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
+L210a19kc2kuYyB8IDE1OCArKysrKysrKysrKysrKysrKysrKysrKysrLS0tLQ0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDEzOSBpbnNlcnRpb25zKCspLCAxOSBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jIGIvZHJpdmVycy9ncHUv
+ZHJtL21lZGlhdGVrL210a19kc2kuYw0KPiBpbmRleCBiNmUzYzAxMWExMmQuLjAyN2NmNzE5YjA3
+OCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kc2kuYw0KPiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jDQo+IEBAIC04OCwxMiArODgs
+MTUgQEANCj4gICNkZWZpbmUgRFNJX0hTQV9XQwkJMHg1MA0KPiAgI2RlZmluZSBEU0lfSEJQX1dD
+CQkweDU0DQo+ICAjZGVmaW5lIERTSV9IRlBfV0MJCTB4NTgNCj4gKyNkZWZpbmUgSEZQX0hTX1ZC
+X1BTX1dDCUdFTk1BU0soMzAsIDE2KQ0KPiArI2RlZmluZSBIRlBfSFNfRU4JCUJJVCgzMSkNCj4g
+IA0KPiAgI2RlZmluZSBEU0lfQ01EUV9TSVpFCQkweDYwDQo+ICAjZGVmaW5lIENNRFFfU0laRQkJ
+CTB4M2YNCj4gICNkZWZpbmUgQ01EUV9TSVpFX1NFTAkJQklUKDE1KQ0KPiAgDQo+ICAjZGVmaW5l
+IERTSV9IU1RYX0NLTF9XQwkJMHg2NA0KPiArI2RlZmluZSBIU1RYX0NLTF9XQwkJCQlHRU5NQVNL
+KDE1LCAyKQ0KPiAgDQo+ICAjZGVmaW5lIERTSV9SWF9EQVRBMAkJMHg3NA0KPiAgI2RlZmluZSBE
+U0lfUlhfREFUQTEJCTB4NzgNCj4gQEAgLTE4Nyw2ICsxOTAsNyBAQCBzdHJ1Y3QgbXRrX2RzaV9k
+cml2ZXJfZGF0YSB7DQo+ICAJYm9vbCBoYXNfc2hhZG93X2N0bDsNCj4gIAlib29sIGhhc19zaXpl
+X2N0bDsNCj4gIAlib29sIGNtZHFfbG9uZ19wYWNrZXRfY3RsOw0KPiArCWJvb2wgc3VwcG9ydF9w
+ZXJfZnJhbWVfbHA7DQo+ICB9Ow0KPiAgDQo+ICBzdHJ1Y3QgbXRrX2RzaSB7DQo+IEBAIC00MjYs
+NyArNDMwLDExMiBAQCBzdGF0aWMgdm9pZCBtdGtfZHNpX3BzX2NvbnRyb2woc3RydWN0IG10a19k
+c2kgKmRzaSwgYm9vbCBjb25maWdfdmFjdCkNCj4gIAl3cml0ZWwocHNfdmFsLCBkc2ktPnJlZ3Mg
+KyBEU0lfUFNDVFJMKTsNCj4gIH0NCj4gIA0KPiAtc3RhdGljIHZvaWQgbXRrX2RzaV9jb25maWdf
+dmRvX3RpbWluZyhzdHJ1Y3QgbXRrX2RzaSAqZHNpKQ0KPiArc3RhdGljIHZvaWQgbXRrX2RzaV9j
+b25maWdfdmRvX3RpbWluZ19wZXJfZnJhbWVfbHAoc3RydWN0IG10a19kc2kgKmRzaSkNCj4gK3sN
+Cj4gKwl1MzIgaG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlOw0KPiArCXUzMiBob3Jpem9udGFs
+X2JhY2twb3JjaF9ieXRlOw0KPiArCXUzMiBob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0ZTsNCj4g
+Kwl1MzIgaGZwX2J5dGVfYWRqdXN0Ow0KPiArCXUzMiBkc2lfdG1wX2J1Zl9icHA7DQo+ICsJdW5z
+aWduZWQgaW50IGxweCwgZGFfaHNfZXhpdCwgZGFfaHNfcHJlcCwgZGFfaHNfdHJhaWw7DQo+ICsJ
+dW5zaWduZWQgaW50IGRhX2hzX3plcm8sIHBzX3djLCBoc192Yl9wc193YzsNCj4gKwl1MzIgdl9h
+Y3RpdmVfcm91bmR1cCwgaHN0eF9ja2xwX3djOw0KPiArCXUzMiBoc3R4X2NrbHBfd2NfbWF4LCBo
+c3R4X2NrbHBfd2NfbWluOw0KPiArCXN0cnVjdCB2aWRlb21vZGUgKnZtID0gJmRzaS0+dm07DQo+
+ICsNCj4gKwlpZiAoZHNpLT5mb3JtYXQgPT0gTUlQSV9EU0lfRk1UX1JHQjU2NSkNCj4gKwkJZHNp
+X3RtcF9idWZfYnBwID0gMjsNCj4gKwllbHNlDQo+ICsJCWRzaV90bXBfYnVmX2JwcCA9IDM7DQo+
+ICsNCj4gKwlkYV9oc190cmFpbCA9IGRzaS0+cGh5X3RpbWluZy5kYV9oc190cmFpbDsNCj4gKwlw
+c193YyA9IGRzaS0+dm0uaGFjdGl2ZSAqIGRzaV90bXBfYnVmX2JwcDsNCj4gKw0KPiArCWlmIChk
+c2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX1NZTkNfUFVMU0UpIHsNCj4gKwkJ
+aG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlID0NCj4gKwkJCXZtLT5oc3luY19sZW4gKiBkc2lf
+dG1wX2J1Zl9icHAgLSAxMDsNCj4gKwkJaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSA9DQo+ICsJ
+CQl2bS0+aGJhY2tfcG9yY2ggKiBkc2lfdG1wX2J1Zl9icHAgLSAxMDsNCj4gKwkJaGZwX2J5dGVf
+YWRqdXN0ID0gMTI7DQo+ICsNCj4gKwkJdl9hY3RpdmVfcm91bmR1cCA9ICgzMiArIGhvcml6b250
+YWxfc3luY19hY3RpdmVfYnl0ZSArDQo+ICsJCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlICsg
+cHNfd2MgKw0KPiArCQkJdm0tPmhmcm9udF9wb3JjaCAqIGRzaV90bXBfYnVmX2JwcCAtIGhmcF9i
+eXRlX2FkanVzdCkgJSBkc2ktPmxhbmVzOw0KPiArCQlpZiAodl9hY3RpdmVfcm91bmR1cCkNCj4g
+KwkJCWhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgPSBob3Jpem9udGFsX2JhY2twb3JjaF9ieXRl
+ICsNCj4gKwkJCQlkc2ktPmxhbmVzIC0gdl9hY3RpdmVfcm91bmR1cDsNCj4gKwkJaHN0eF9ja2xw
+X3djX21pbiA9IChESVZfUk9VTkRfVVAoKDEyICsgMiArIDQgKw0KPiArCQkJaG9yaXpvbnRhbF9z
+eW5jX2FjdGl2ZV9ieXRlKSwgZHNpLT5sYW5lcykgKyBkYV9oc190cmFpbCArIDEpDQo+ICsJCQkq
+IGRzaS0+bGFuZXMgLyA2IC0gMTsNCj4gKwkJaHN0eF9ja2xwX3djX21heCA9IChESVZfUk9VTkRf
+VVAoKDIwICsgNiArIDQgKw0KPiArCQkJaG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlICsgaG9y
+aXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSArDQo+ICsJCQlwc193YyksIGRzaS0+bGFuZXMpICsgZGFf
+aHNfdHJhaWwgKyAxKSAqIGRzaS0+bGFuZXMgLyA2IC0gMTsNCj4gKwl9IGVsc2Ugew0KPiArCQlo
+b3Jpem9udGFsX3N5bmNfYWN0aXZlX2J5dGUgPSB2bS0+aHN5bmNfbGVuICogZHNpX3RtcF9idWZf
+YnBwIC0gNDsNCj4gKw0KPiArCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlID0gKHZtLT5oYmFj
+a19wb3JjaCArIHZtLT5oc3luY19sZW4pICoNCj4gKwkJCWRzaV90bXBfYnVmX2JwcCAtIDEwOw0K
+PiArCQloc3R4X2NrbHBfd2NfbWluID0gKERJVl9ST1VORF9VUCg0LCBkc2ktPmxhbmVzKSArIGRh
+X2hzX3RyYWlsICsgMSkNCj4gKwkJCSogZHNpLT5sYW5lcyAvIDYgLSAxOw0KPiArDQo+ICsJCWlm
+IChkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9NT0RFX1ZJREVPX0JVUlNUKSB7DQo+ICsJCQlo
+ZnBfYnl0ZV9hZGp1c3QgPSAxODsNCj4gKw0KPiArCQkJdl9hY3RpdmVfcm91bmR1cCA9ICgyOCAr
+IGhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgKyBwc193YyArDQo+ICsJCQkJdm0tPmhmcm9udF9w
+b3JjaCAqIGRzaV90bXBfYnVmX2JwcCAtIGhmcF9ieXRlX2FkanVzdCkgJSBkc2ktPmxhbmVzOw0K
+PiArCQkJaWYgKHZfYWN0aXZlX3JvdW5kdXApDQo+ICsJCQkJaG9yaXpvbnRhbF9iYWNrcG9yY2hf
+Ynl0ZSA9IGhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgKw0KPiArCQkJCWRzaS0+bGFuZXMgLSB2
+X2FjdGl2ZV9yb3VuZHVwOw0KPiArDQo+ICsJCQloc3R4X2NrbHBfd2NfbWF4ID0gKERJVl9ST1VO
+RF9VUCgoMTIgKyA0ICsgNCArDQo+ICsJCQkJaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSArIHBz
+X3djKSwNCj4gKwkJCQlkc2ktPmxhbmVzKSArIGRhX2hzX3RyYWlsICsgMSkgKiBkc2ktPmxhbmVz
+IC8gNiAtIDE7DQo+ICsJCX0gZWxzZSB7DQo+ICsJCQloZnBfYnl0ZV9hZGp1c3QgPSAxMjsNCj4g
+Kw0KPiArCQkJdl9hY3RpdmVfcm91bmR1cCA9ICgyMiArIGhvcml6b250YWxfYmFja3BvcmNoX2J5
+dGUgKyBwc193YyArDQo+ICsJCQkJdm0tPmhmcm9udF9wb3JjaCAqIGRzaV90bXBfYnVmX2JwcCAt
+IGhmcF9ieXRlX2FkanVzdCkgJSBkc2ktPmxhbmVzOw0KPiArCQkJaWYgKHZfYWN0aXZlX3JvdW5k
+dXApDQo+ICsJCQkJaG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSA9IGhvcml6b250YWxfYmFja3Bv
+cmNoX2J5dGUgKw0KPiArCQkJCWRzaS0+bGFuZXMgLSB2X2FjdGl2ZV9yb3VuZHVwOw0KDQpUcnkg
+dG8gc2ltcGxpZnkgdGhlIGNvZGU6DQoNCmlmIChkc2ktPm1vZGVfZmxhZ3MgJiBNSVBJX0RTSV9N
+T0RFX1ZJREVPX1NZTkNfUFVMU0UpIHsNCgl2X2FjdGl2ZV9hZGp1c3QgPSAzMiArIGhvcml6b250
+YWxfc3luY19hY3RpdmVfYnl0ZTsNCg0KCS4uLg0KfSBlbHNlIHsNCglpZiAoZHNpLT5tb2RlX2Zs
+YWdzICYgTUlQSV9EU0lfTU9ERV9WSURFT19CVVJTVCkgew0KCQl2X2FjdGl2ZV9hZGp1c3QgPSAy
+ODsNCgkJLi4uDQoJfSBlbHNlIHsNCgkJdl9hY3RpdmVfYWRqdXN0ID0gMjI7DQoJCS4uLg0KCX0N
+Cn0NCg0Kdl9hY3RpdmVfcm91bmR1cCA9ICh2X2FjdGl2ZV9hZGp1c3QgKyBob3Jpem9udGFsX2Jh
+Y2twb3JjaF9ieXRlICsgcHNfd2MgKw0KCQkgICB2bS0+aGZyb250X3BvcmNoICogZHNpX3RtcF9i
+dWZfYnBwIC0gaGZwX2J5dGVfYWRqdXN0KSAlIGRzaS0+bGFuZXM7DQpob3Jpem9udGFsX2JhY2tw
+b3JjaF9ieXRlICs9IGRzaS0+bGFuZXMgLSB2X2FjdGl2ZV9yb3VuZHVwOw0KDQpZb3UgbmVlZCBu
+b3QgdG8gY2hlY2sgdl9hY3RpdmVfcm91bmR1cCBpcyB6ZXJvIG9yIG5vdC4NCg0KPiArDQo+ICsJ
+CQloc3R4X2NrbHBfd2NfbWF4ID0gKERJVl9ST1VORF9VUCgoMTIgKyA0ICsgNCArDQo+ICsJCQkJ
+aG9yaXpvbnRhbF9iYWNrcG9yY2hfYnl0ZSArIHBzX3djKSwNCj4gKwkJCQlkc2ktPmxhbmVzKSAr
+IGRhX2hzX3RyYWlsICsgMSkgKiBkc2ktPmxhbmVzIC8gNiAtIDE7DQo+ICsJCX0NCj4gKwl9DQo+
+ICsJaG9yaXpvbnRhbF9mcm9udHBvcmNoX2J5dGUgPSB2bS0+aGZyb250X3BvcmNoICogZHNpX3Rt
+cF9idWZfYnBwIC0gaGZwX2J5dGVfYWRqdXN0Ow0KPiArCWhzdHhfY2tscF93YyA9IEZJRUxEX0dF
+VChIU1RYX0NLTF9XQywgcmVhZGwoZHNpLT5yZWdzICsgRFNJX0hTVFhfQ0tMX1dDKSk7DQo+ICsN
+Cj4gKwlpZiAoaHN0eF9ja2xwX3djIDw9IGhzdHhfY2tscF93Y19taW4gfHwgaHN0eF9ja2xwX3dj
+ID49IGhzdHhfY2tscF93Y19tYXgpIHsNCj4gKwkJaHN0eF9ja2xwX3djID0gKChoc3R4X2NrbHBf
+d2NfbWluICsgaHN0eF9ja2xwX3djX21heCkgLyAyKTsNCj4gKw0KPiArCQkvKiBDaGVjayBpZiB0
+aGUgbmV3IHNldHRpbmcgaXMgdmFsaWQgKi8NCj4gKwkJaWYgKGhzdHhfY2tscF93YyA8PSBoc3R4
+X2NrbHBfd2NfbWluIHx8CWhzdHhfY2tscF93YyA+PSBoc3R4X2NrbHBfd2NfbWF4KQ0KPiArCQkJ
+RFJNX1dBUk4oIldyb25nIHNldHRpbmcgb2YgaHN0eF9ja2xfd2NcbiIpOw0KPiArDQo+ICsJCWhz
+dHhfY2tscF93YyA9IEZJRUxEX1BSRVAoSFNUWF9DS0xfV0MsIGhzdHhfY2tscF93Yyk7DQo+ICsJ
+CXdyaXRlbChoc3R4X2NrbHBfd2MsIGRzaS0+cmVncyArIERTSV9IU1RYX0NLTF9XQyk7DQo+ICsJ
+fQ0KPiArDQo+ICsJbHB4ID0gZHNpLT5waHlfdGltaW5nLmxweDsNCj4gKwlkYV9oc19leGl0ID0g
+ZHNpLT5waHlfdGltaW5nLmRhX2hzX2V4aXQ7DQo+ICsJZGFfaHNfcHJlcCA9IGRzaS0+cGh5X3Rp
+bWluZy5kYV9oc19wcmVwYXJlOw0KPiArCWRhX2hzX3plcm8gPSBkc2ktPnBoeV90aW1pbmcuZGFf
+aHNfemVybzsNCj4gKw0KPiArCWhzX3ZiX3BzX3djID0gcHNfd2MgLQ0KPiArCQkobHB4ICsgZGFf
+aHNfZXhpdCArIGRhX2hzX3ByZXAgKyBkYV9oc196ZXJvICsgMikNCj4gKwkJKiBkc2ktPmxhbmVz
+Ow0KPiArCWhvcml6b250YWxfZnJvbnRwb3JjaF9ieXRlID0gRklFTERfUFJFUChIRlBfSFNfRU4s
+IDEpIHwNCj4gKwkJRklFTERfUFJFUChIRlBfSFNfVkJfUFNfV0MsIGhzX3ZiX3BzX3djKSB8DQo+
+ICsJCWhvcml6b250YWxfZnJvbnRwb3JjaF9ieXRlOw0KPiArDQo+ICsJd3JpdGVsKGhvcml6b250
+YWxfc3luY19hY3RpdmVfYnl0ZSwgZHNpLT5yZWdzICsgRFNJX0hTQV9XQyk7DQo+ICsJd3JpdGVs
+KGhvcml6b250YWxfYmFja3BvcmNoX2J5dGUsIGRzaS0+cmVncyArIERTSV9IQlBfV0MpOw0KPiAr
+CXdyaXRlbChob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0ZSwgZHNpLT5yZWdzICsgRFNJX0hGUF9X
+Qyk7DQo+ICt9DQo+ICsNCj4gK3N0YXRpYyB2b2lkIG10a19kc2lfY29uZmlnX3Zkb190aW1pbmdf
+cGVyX2xpbmVfbHAoc3RydWN0IG10a19kc2kgKmRzaSkNCj4gIHsNCj4gIAl1MzIgaG9yaXpvbnRh
+bF9zeW5jX2FjdGl2ZV9ieXRlOw0KPiAgCXUzMiBob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlOw0K
+PiBAQCAtNDM2LDcgKzU0NSw2IEBAIHN0YXRpYyB2b2lkIG10a19kc2lfY29uZmlnX3Zkb190aW1p
+bmcoc3RydWN0IG10a19kc2kgKmRzaSkNCj4gIAl1MzIgZHNpX3RtcF9idWZfYnBwLCBkYXRhX3Bo
+eV9jeWNsZXM7DQo+ICAJdTMyIGRlbHRhOw0KPiAgCXN0cnVjdCBtdGtfcGh5X3RpbWluZyAqdGlt
+aW5nID0gJmRzaS0+cGh5X3RpbWluZzsNCj4gLQ0KPiAgCXN0cnVjdCB2aWRlb21vZGUgKnZtID0g
+JmRzaS0+dm07DQo+ICANCj4gIAlpZiAoZHNpLT5mb3JtYXQgPT0gTUlQSV9EU0lfRk1UX1JHQjU2
+NSkNCj4gQEAgLTQ0NCwyNiArNTUyLDE2IEBAIHN0YXRpYyB2b2lkIG10a19kc2lfY29uZmlnX3Zk
+b190aW1pbmcoc3RydWN0IG10a19kc2kgKmRzaSkNCj4gIAllbHNlDQo+ICAJCWRzaV90bXBfYnVm
+X2JwcCA9IDM7DQo+ICANCj4gLQl3cml0ZWwodm0tPnZzeW5jX2xlbiwgZHNpLT5yZWdzICsgRFNJ
+X1ZTQV9OTCk7DQo+IC0Jd3JpdGVsKHZtLT52YmFja19wb3JjaCwgZHNpLT5yZWdzICsgRFNJX1ZC
+UF9OTCk7DQo+IC0Jd3JpdGVsKHZtLT52ZnJvbnRfcG9yY2gsIGRzaS0+cmVncyArIERTSV9WRlBf
+TkwpOw0KPiAtCXdyaXRlbCh2bS0+dmFjdGl2ZSwgZHNpLT5yZWdzICsgRFNJX1ZBQ1RfTkwpOw0K
+PiAtDQo+IC0JaWYgKGRzaS0+ZHJpdmVyX2RhdGEtPmhhc19zaXplX2N0bCkNCj4gLQkJd3JpdGVs
+KEZJRUxEX1BSRVAoRFNJX0hFSUdIVCwgdm0tPnZhY3RpdmUpIHwNCj4gLQkJICAgICAgIEZJRUxE
+X1BSRVAoRFNJX1dJRFRILCB2bS0+aGFjdGl2ZSksDQo+IC0JCSAgICAgICBkc2ktPnJlZ3MgKyBE
+U0lfU0laRV9DT04pOw0KPiAtDQo+ICAJaG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlID0gKHZt
+LT5oc3luY19sZW4gKiBkc2lfdG1wX2J1Zl9icHAgLSAxMCk7DQo+ICANCj4gIAlpZiAoZHNpLT5t
+b2RlX2ZsYWdzICYgTUlQSV9EU0lfTU9ERV9WSURFT19TWU5DX1BVTFNFKQ0KPiAgCQlob3Jpem9u
+dGFsX2JhY2twb3JjaF9ieXRlID0gdm0tPmhiYWNrX3BvcmNoICogZHNpX3RtcF9idWZfYnBwIC0g
+MTA7DQo+ICAJZWxzZQ0KPiAgCQlob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlID0gKHZtLT5oYmFj
+a19wb3JjaCArIHZtLT5oc3luY19sZW4pICoNCj4gLQkJCQkJICAgIGRzaV90bXBfYnVmX2JwcCAt
+IDEwOw0KPiArCQkJCQkJZHNpX3RtcF9idWZfYnBwIC0gMTA7DQoNCkRvIG5vdCBtb2RpZnkgdGhp
+cy4NCg0KPiAgDQo+ICAJZGF0YV9waHlfY3ljbGVzID0gdGltaW5nLT5scHggKyB0aW1pbmctPmRh
+X2hzX3ByZXBhcmUgKw0KPiAtCQkJICB0aW1pbmctPmRhX2hzX3plcm8gKyB0aW1pbmctPmRhX2hz
+X2V4aXQgKyAzOw0KPiArCQkJdGltaW5nLT5kYV9oc196ZXJvICsgdGltaW5nLT5kYV9oc19leGl0
+ICsgMzsNCg0KRGl0dG8uDQoNCj4gIA0KPiAgCWRlbHRhID0gZHNpLT5tb2RlX2ZsYWdzICYgTUlQ
+SV9EU0lfTU9ERV9WSURFT19CVVJTVCA/IDE4IDogMTI7DQo+ICAJZGVsdGEgKz0gZHNpLT5tb2Rl
+X2ZsYWdzICYgTUlQSV9EU0lfTU9ERV9OT19FT1RfUEFDS0VUID8gMCA6IDI7DQo+IEBAIC00NzQs
+MTggKzU3MiwxOCBAQCBzdGF0aWMgdm9pZCBtdGtfZHNpX2NvbmZpZ192ZG9fdGltaW5nKHN0cnVj
+dCBtdGtfZHNpICpkc2kpDQo+ICANCj4gIAlpZiAoaG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5dGUg
+PiBkYXRhX3BoeV9jeWNsZXNfYnl0ZSkgew0KPiAgCQlob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0
+ZSAtPSBkYXRhX3BoeV9jeWNsZXNfYnl0ZSAqDQo+IC0JCQkJCSAgICAgIGhvcml6b250YWxfZnJv
+bnRwb3JjaF9ieXRlIC8NCj4gLQkJCQkJICAgICAgaG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5dGU7
+DQo+ICsJCQkJCQlob3Jpem9udGFsX2Zyb250cG9yY2hfYnl0ZSAvDQo+ICsJCQkJCQlob3Jpem9u
+dGFsX2Zyb250X2JhY2tfYnl0ZTsNCg0KRGl0dG8uDQoNCj4gIA0KPiAgCQlob3Jpem9udGFsX2Jh
+Y2twb3JjaF9ieXRlIC09IGRhdGFfcGh5X2N5Y2xlc19ieXRlICoNCj4gLQkJCQkJICAgICBob3Jp
+em9udGFsX2JhY2twb3JjaF9ieXRlIC8NCj4gLQkJCQkJICAgICBob3Jpem9udGFsX2Zyb250X2Jh
+Y2tfYnl0ZTsNCj4gKwkJCQkJCWhvcml6b250YWxfYmFja3BvcmNoX2J5dGUgLw0KPiArCQkJCQkJ
+aG9yaXpvbnRhbF9mcm9udF9iYWNrX2J5dGU7DQoNCkRpdHRvLg0KDQo+ICAJfSBlbHNlIHsNCj4g
+IAkJRFJNX1dBUk4oIkhGUCArIEhCUCBsZXNzIHRoYW4gZC1waHksIEZQUyB3aWxsIHVuZGVyIDYw
+SHpcbiIpOw0KPiAgCX0NCj4gIA0KPiAgCWlmICgoZHNpLT5tb2RlX2ZsYWdzICYgTUlQSV9EU0lf
+SFNfUEtUX0VORF9BTElHTkVEKSAmJg0KPiAtCSAgICAoZHNpLT5sYW5lcyA9PSA0KSkgew0KPiAr
+CQkoZHNpLT5sYW5lcyA9PSA0KSkgew0KDQpEaXR0by4NCg0KUmVnYXJkcywNCkNLDQoNCj4gIAkJ
+aG9yaXpvbnRhbF9zeW5jX2FjdGl2ZV9ieXRlID0NCj4gIAkJCXJvdW5kdXAoaG9yaXpvbnRhbF9z
+eW5jX2FjdGl2ZV9ieXRlLCBkc2ktPmxhbmVzKSAtIDI7DQo+ICAJCWhvcml6b250YWxfZnJvbnRw
+b3JjaF9ieXRlID0NCj4gQEAgLTQ5OSw2ICs1OTcsMjYgQEAgc3RhdGljIHZvaWQgbXRrX2RzaV9j
+b25maWdfdmRvX3RpbWluZyhzdHJ1Y3QgbXRrX2RzaSAqZHNpKQ0KPiAgCXdyaXRlbChob3Jpem9u
+dGFsX3N5bmNfYWN0aXZlX2J5dGUsIGRzaS0+cmVncyArIERTSV9IU0FfV0MpOw0KPiAgCXdyaXRl
+bChob3Jpem9udGFsX2JhY2twb3JjaF9ieXRlLCBkc2ktPnJlZ3MgKyBEU0lfSEJQX1dDKTsNCj4g
+IAl3cml0ZWwoaG9yaXpvbnRhbF9mcm9udHBvcmNoX2J5dGUsIGRzaS0+cmVncyArIERTSV9IRlBf
+V0MpOw0KPiArfQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBtdGtfZHNpX2NvbmZpZ192ZG9fdGltaW5n
+KHN0cnVjdCBtdGtfZHNpICpkc2kpDQo+ICt7DQo+ICsJc3RydWN0IHZpZGVvbW9kZSAqdm0gPSAm
+ZHNpLT52bTsNCj4gKw0KPiArCXdyaXRlbCh2bS0+dnN5bmNfbGVuLCBkc2ktPnJlZ3MgKyBEU0lf
+VlNBX05MKTsNCj4gKwl3cml0ZWwodm0tPnZiYWNrX3BvcmNoLCBkc2ktPnJlZ3MgKyBEU0lfVkJQ
+X05MKTsNCj4gKwl3cml0ZWwodm0tPnZmcm9udF9wb3JjaCwgZHNpLT5yZWdzICsgRFNJX1ZGUF9O
+TCk7DQo+ICsJd3JpdGVsKHZtLT52YWN0aXZlLCBkc2ktPnJlZ3MgKyBEU0lfVkFDVF9OTCk7DQo+
+ICsNCj4gKwlpZiAoZHNpLT5kcml2ZXJfZGF0YS0+aGFzX3NpemVfY3RsKQ0KPiArCQl3cml0ZWwo
+RklFTERfUFJFUChEU0lfSEVJR0hULCB2bS0+dmFjdGl2ZSkgfA0KPiArCQkJRklFTERfUFJFUChE
+U0lfV0lEVEgsIHZtLT5oYWN0aXZlKSwNCj4gKwkJCWRzaS0+cmVncyArIERTSV9TSVpFX0NPTik7
+DQo+ICsNCj4gKwlpZiAoZHNpLT5kcml2ZXJfZGF0YS0+c3VwcG9ydF9wZXJfZnJhbWVfbHApDQo+
+ICsJCW10a19kc2lfY29uZmlnX3Zkb190aW1pbmdfcGVyX2ZyYW1lX2xwKGRzaSk7DQo+ICsJZWxz
+ZQ0KPiArCQltdGtfZHNpX2NvbmZpZ192ZG9fdGltaW5nX3Blcl9saW5lX2xwKGRzaSk7DQo+ICAN
+Cj4gIAltdGtfZHNpX3BzX2NvbnRyb2woZHNpLCBmYWxzZSk7DQo+ICB9DQo+IEBAIC0xMTk3LDYg
+KzEzMTUsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG10a19kc2lfZHJpdmVyX2RhdGEgbXQ4MTg4
+X2RzaV9kcml2ZXJfZGF0YSA9IHsNCj4gIAkuaGFzX3NoYWRvd19jdGwgPSB0cnVlLA0KPiAgCS5o
+YXNfc2l6ZV9jdGwgPSB0cnVlLA0KPiAgCS5jbWRxX2xvbmdfcGFja2V0X2N0bCA9IHRydWUsDQo+
+ICsJLnN1cHBvcnRfcGVyX2ZyYW1lX2xwID0gdHJ1ZSwNCj4gIH07DQo+ICANCj4gIHN0YXRpYyBj
+b25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIG10a19kc2lfb2ZfbWF0Y2hbXSA9IHsNCg==
 
