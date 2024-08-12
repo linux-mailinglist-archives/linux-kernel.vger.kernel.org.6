@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-282893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F26FD94EA33
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:46:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2261994EA37
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 11:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 232E91C2101A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFC91F2242C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C46416DED2;
-	Mon, 12 Aug 2024 09:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0C816E885;
+	Mon, 12 Aug 2024 09:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc4Jjq6C"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k/6J2eS1"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE531C3E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 09:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5661C3E;
+	Mon, 12 Aug 2024 09:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455964; cv=none; b=R/XbRI5FqEvCnGhZjhoat+dvf2CxrrO4E3cn6miLM6N6mjua9anY6VQfZuW0azZKK5CJGyDUpv87ZZbSZGuh9Yfpx91lOeKXv6wdzfWXY8lOzy89/6P2g2bwG5Dgbcr6qAFeAYqNSdPhtd12sy2gfQ2knkEM+pZEy4DavP3O4f4=
+	t=1723455978; cv=none; b=KhUqrGsOCJ3H198l+ra9o3AX1q+mJSQH/AbI7wKo/OccymXvXKKMwk+1RuPJYAtuvUeKr1BZIWMdMBWQQ5pnrtB8a4dodUBhu7KO6jQCWjxJ+2dqVCpBy+AQBOHuy3rT3OC0ABYHzS51jBirUoLmRJ4PkDV1m2XeFJyjmkJnZ8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455964; c=relaxed/simple;
-	bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
+	s=arc-20240116; t=1723455978; c=relaxed/simple;
+	bh=yOE2mc5cU3Ike/C/o6AZ6ex5/MryW/D7i3oyQt06Vng=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VobdPXXeayOE453lZqerxWhvCijqx58kQKBS1Khdlbsi88937/QoloZwepb9wkrimW8CRzuzCvyNvN09GmfUEPPf9AHY8l1s83WqMxz+yS39gS4Ac4G3CDM26yklXjM5SdDD5W+kiRP41caQDcxvSC2NgyM6sf2fDGQ4iPnBENg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc4Jjq6C; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b01af9b0c9so4313754a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 02:46:02 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=i4qVVBtGkHzjIHQmYbWZLYtq+c1mdKGKUD9MD1dUippy1rMM4d22wpuQf913afCHq1KqqNRTDihP8bOA6agceMj4r3NdOGVy4vllVOGTAFmgHsrkxthlGL6hWKQ3XzJEkVdbgfo/16FvxDI71JScGZiG6CqiIS+l/XRmA2jtKZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k/6J2eS1; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1fd69e44596so27895125ad.1;
+        Mon, 12 Aug 2024 02:46:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723455961; x=1724060761; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723455976; x=1724060776; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
-        b=Mc4Jjq6CfTFem157MsUIbSwlDgogqRFbQP/swk6XmGsMwl4Oa98ZjlZiSS535k22FC
-         Stz7ycnUmt6EcLxVdtsJdpkMkPNiq90j5Mt1jZeT1Yi00wJIYwphhaYIHRf67g5So9d/
-         I+O0pqOh6xyEMmTev2UZgx6AHj5rDgC9eEbygz1EP4EX8Z4Lx7yUH/on3MmPdMkBZ/Fq
-         kUVIZ2GOnS0mbKPpYBbMALQqnJhR1m2roDKY99DzaDyvM3z7sZr6Jw/4gWNUVyioD3rz
-         eDxTYunU1DdIci6k8jVuXIMvUz9MvaL6+63FFzHnT0WsKYPyAMfFoIPLSdXGLbboPph+
-         ebxg==
+        bh=MUxh3YwlPzmy+PcO3DHdAzw/4G592svoiNiI2B6pc4k=;
+        b=k/6J2eS1Iwvl+F7eb875p59kZIqEfpKxL647wuqs++U3OoH2hRgAXyU/n1GABRBgfp
+         AusbpIChRJUuRCao/HTSHV44RmSrOq3nlyxZBO2KxCiGSfYiB5ojutKJn77lXxiMLz2+
+         zzO5Yux8K1GvTm/EbbpJcdFY0SHfBkVgzYq6yh6dWMmUbdQ7bDwdiFK/EfafKl0iA8ok
+         X0fOBLClybm8b12j1zywAFeeJdMn84decshe76xKv4NjHRghlDYcU2zlyYiOz17FgC+a
+         AK5jO5IPoU5FAm7fuC3D7kwtn6iIMIfMUbpx9mND53ljMgQ5wi7w/HoTZH2G9jlg7xH5
+         73EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723455961; x=1724060761;
+        d=1e100.net; s=20230601; t=1723455976; x=1724060776;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JttXyWvNBrLovswX1EnPaJPxm1PSVZ+ohR3t2TiKVsQ=;
-        b=P340MSseDVNqe7m5XOLr2BVayG9F1vEgrVYdFecbJSEdWuwJbYbuyUSNJZ6AwsFgpk
-         6C3MdIVj0FK8vT0ZR/Xsly0cKxA/K3R7XwmSxI4XBYWWYIHyXZu1sWZlV+6Dag0BGzE+
-         61RqaDgZ9zngHCJkUlVPEB8dAVWaYmw5IpGY3l9fxPzRCZs8aler3JbweYxH1f8FB10U
-         QIY05YCjr6GsMdZ1fOgr8DTm358lN3MWrkzopvyvB6YpVBCU1KtQngO8ilEv292ynyXZ
-         HUQ6vyV3lgySGDpRUbvGLJIZpQeOSLUcxmoVdewCuI97kl0j7qgolNstL+4N5QF9R3iq
-         e83A==
-X-Forwarded-Encrypted: i=1; AJvYcCX4Kkko1+64IcsoDj1J+lmDHMbUWvzDC0OcJc/maZoOsVZYhGIrvDrpfk36vdf7YaEqkwxBK9r+CiphbkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ2k1/OFHBgb+NNcQ3Mbk3wgsCnputYfgWdhBMQIYF+cB3oTKN
-	B9nPkhFvvGAMzUe9MeV26PWCT5fhbyjs3i8GKvvME4TvoeCtBobX//jH9ZrPuKw=
-X-Google-Smtp-Source: AGHT+IGaHEWZkOKxfoZJQYtrgry1CYeTIzGR/wr2t1cep4NpltsL9e4x6ljRA9qjxohlOrRIpWZzRw==
-X-Received: by 2002:a05:6402:2346:b0:5a1:40d9:6a46 with SMTP id 4fb4d7f45d1cf-5bd0a6b4bf9mr6210531a12.36.1723455961053;
-        Mon, 12 Aug 2024 02:46:01 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e04e1sm1967189a12.77.2024.08.12.02.45.58
+        bh=MUxh3YwlPzmy+PcO3DHdAzw/4G592svoiNiI2B6pc4k=;
+        b=XlRTmT7T1UvmGLPzKH6Kv/KbCxHCZzeJLXMSpVYLYIanUIdZN+xjELBFKQvpO7bQyi
+         lvHIhB7m+nXeyVuBxdRALk8RV0wRYX6eJ1O17X3MofWXNlpZTdw+01h0p9VmR3i+nz3h
+         +xkPpwgBYooPZt40BCeKawzDWThIS8ZR7riIPxKH2PUNxec5+soWUCNwbHSRlVkzvDlx
+         pjhktPh5UWa1EgCdFH5w4VzVo7JLQod4rNBPQuRQLlB5txjVzxbOjMndwR19SygTUt50
+         V+x7Np7HL1RhMondRfTDEliXxuVn57IfLiXroov5PulFi9jengJJlbtO9K3kQ6cB86eU
+         GM+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXtyUbofISxU0Xlmwj9VNC0t35GqxoLijyGG8SlY/25790CtJHhjmQMF7hukhweYvrrusVxehRfxDPH8cEQnip4ij3UvgCVZtilAQdOPyPZ55SSv09yJEXN6KmCoH9fHvHEjUSeJ3ucADwOzN7xRqvAX1SDETRmyoVh+/MKIvPgKwTQrc8q
+X-Gm-Message-State: AOJu0YwrAgIdxp7XXxUxR6XZAvzw83loFWQM4tVNVZHEOsWV0EgjjglG
+	xpSjoMFgnlfFfYwkRJJSetFvBNpm6sqbouBQ/+laLtlUNKMFluKq
+X-Google-Smtp-Source: AGHT+IEhL4arKcRb/xw7OVPVg6BiQe2H2AJSFtWsVZ5BkuWfnuoclUhY2oj8Zy9Gy/7Hw/+kdf10Dg==
+X-Received: by 2002:a17:902:ea01:b0:1fb:8e29:621f with SMTP id d9443c01a7336-200ae567dd3mr136423225ad.16.1723455976170;
+        Mon, 12 Aug 2024 02:46:16 -0700 (PDT)
+Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-200bb9b17dasm34061725ad.137.2024.08.12.02.46.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 02:46:00 -0700 (PDT)
-Message-ID: <b96f483e-314e-4e47-af58-ddb078dd6df3@linaro.org>
-Date: Mon, 12 Aug 2024 10:45:58 +0100
+        Mon, 12 Aug 2024 02:46:15 -0700 (PDT)
+Message-ID: <b9f9cbae-c4d8-420e-865b-e0f48dfa9667@gmail.com>
+Date: Mon, 12 Aug 2024 17:46:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,75 +75,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 07/10] mtd: spi-nor: Add stacked memories support in
- spi-nor
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- "Mahapatra, Amit Kumar" <amit.kumar-mahapatra@amd.com>
-Cc: "broonie@kernel.org" <broonie@kernel.org>,
- "pratyush@kernel.org" <pratyush@kernel.org>, "richard@nod.at"
- <richard@nod.at>, "vigneshr@ti.com" <vigneshr@ti.com>,
- "sbinding@opensource.cirrus.com" <sbinding@opensource.cirrus.com>,
- "lee@kernel.org" <lee@kernel.org>,
- "james.schulman@cirrus.com" <james.schulman@cirrus.com>,
- "david.rhodes@cirrus.com" <david.rhodes@cirrus.com>,
- "rf@opensource.cirrus.com" <rf@opensource.cirrus.com>,
- "perex@perex.cz" <perex@perex.cz>, "tiwai@suse.com" <tiwai@suse.com>,
- "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "michael@walle.cc" <michael@walle.cc>,
- "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
- "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
- "claudiu.beznea@tuxon.dev" <claudiu.beznea@tuxon.dev>,
- "Simek, Michal" <michal.simek@amd.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
- "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
- "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
- "git (AMD-Xilinx)" <git@amd.com>,
- "amitrkcian2002@gmail.com" <amitrkcian2002@gmail.com>,
- Conor Dooley <conor.dooley@microchip.com>,
- "beanhuo@micron.com" <beanhuo@micron.com>
-References: <20231125092137.2948-1-amit.kumar-mahapatra@amd.com>
- <BN7PR12MB28029EB1A7D09882878499A2DC8FA@BN7PR12MB2802.namprd12.prod.outlook.com>
- <c3fa1e04-92ed-48ab-a509-98e43abd5cd6@linaro.org>
- <BN7PR12MB2802E87F1A6CD22D904CAEACDC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
- <b3d3c457-a43b-478a-85b3-52558227d139@linaro.org>
- <BN7PR12MB28027E62D66460A374E3CFEADC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
- <e212f9fa-83c5-4b9e-8636-c8c6183096ab@linaro.org>
- <BN7PR12MB280237CDD7BB148479932874DC93A@BN7PR12MB2802.namprd12.prod.outlook.com>
- <576d56ed-d24b-40f9-9ae4-a02c50eea2ab@linaro.org>
- <BN7PR12MB2802F288C6A6B1580CF07959DC95A@BN7PR12MB2802.namprd12.prod.outlook.com>
- <c6f209c8-47da-4881-921d-683464b9ddd5@linaro.org>
- <9cdb7f8b-e64f-46f6-94cb-194a25a42ccd@linaro.org>
- <BN7PR12MB28028B63E69134094D50F3E4DC2A2@BN7PR12MB2802.namprd12.prod.outlook.com>
- <IA0PR12MB769944254171C39FF4171B52DCB42@IA0PR12MB7699.namprd12.prod.outlook.com>
- <20240812103812.72763f69@xps-13>
+Subject: Re: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the Nuvoton
+ MA35 SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, sumit.semwal@linaro.org, christian.koenig@amd.com,
+ esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-mtd@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org
+References: <20240812030045.20831-1-hpchen0nvt@gmail.com>
+ <20240812030045.20831-3-hpchen0nvt@gmail.com>
+ <06d627d5-947c-4da4-826a-76033386b575@kernel.org>
+ <3b7b629e-0085-4821-932c-e89faad15c1a@gmail.com>
+ <33ae3c93-81cb-491c-a5b3-239c7c413eb3@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20240812103812.72763f69@xps-13>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+In-Reply-To: <33ae3c93-81cb-491c-a5b3-239c7c413eb3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hiya,
+Dear Krzysztof,
 
-Amit, the thread becomes unreadable, better start a new one describing
-what you plan to do.
-
-On 8/12/24 9:38 AM, Miquel Raynal wrote:
-> For now I don't think you need a totally generic implementation. As
-> long as there is only one controller supporting these modes, I'd say
-> this is not super relevant.
+Thank you for your reply.
 
 
-Miquel,
 
-Microchip supports a twin quad mode too, and micron has some flashes
-with similar architecture, see:
 
-https://lore.kernel.org/linux-mtd/20231125092137.2948-1-amit.kumar-mahapatra@amd.com/T/#mbe999dde1d29371183aa53089ef6f0087d6902a7
+On 2024/8/12 下午 05:13, Krzysztof Kozlowski wrote:
+> On 12/08/2024 11:10, Hui-Ping Chen wrote:
+>>>> +
+>>>> +/* NAND-type Flash BCH Error Data Registers */
+>>>> +#define MA35_NFI_REG_NANDECCED0	(0x960)
+>>>> +#define MA35_NFI_REG_NANDECCED1	(0x964)
+>>>> +#define MA35_NFI_REG_NANDECCED2	(0x968)
+>>>> +#define MA35_NFI_REG_NANDECCED3	(0x96C)
+>>>> +#define MA35_NFI_REG_NANDECCED4	(0x970)
+>>>> +#define MA35_NFI_REG_NANDECCED5	(0x974)
+>>>> +
+>>>> +/* NAND-type Flash Redundant Area Registers */
+>>>> +#define MA35_NFI_REG_NANDRA0		(0xA00)
+>>>> +#define MA35_NFI_REG_NANDRA1		(0xA04)
+>>>> +
+>>>> +#define SKIP_SPARE_BYTES	4
+>>>> +
+>>>> +/* BCH algorithm related constants and variables */
+>>>> +enum {
+>>>> +	eBCH_NONE = 0,
+>>>> +	eBCH_T8,
+>>>> +	eBCH_T12,
+>>>> +	eBCH_T24,
+>>>> +	eBCH_CNT
+>>>> +} E_BCHALGORITHM;
+>>>> +
+>>>> +static const int g_i32BCHAlgoIdx[eBCH_CNT] = {BCH_T8, BCH_T8, BCH_T12, BCH_T24};
+>>>> +static struct nand_ecclayout_user ma35_nand_oob;
+>>> Why this is file-scope?
+>> I will remove the `static`.
+> No, why this cannot be instance dependent? Quick looks says it could.
+> And should.
 
-We shall consider them from the beginning. I guess we need to read
-everything all over again.
+I will add this variable to the ma35_nand_info structure.
+
+
+
+>
+> Best regards,
+> Krzysztof
+
+
+Best regards,
+
+Hui-Ping Chen
+
+
 
