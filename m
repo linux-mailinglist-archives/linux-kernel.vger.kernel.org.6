@@ -1,180 +1,273 @@
-Return-Path: <linux-kernel+bounces-283845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2B294F977
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:16:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A6594F97C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:17:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358DE1F22F67
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20A821C2239C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A483195B27;
-	Mon, 12 Aug 2024 22:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBE19883C;
+	Mon, 12 Aug 2024 22:16:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GjXNWBjW"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XwHr5U6H"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D237114A4DF;
-	Mon, 12 Aug 2024 22:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE44414A4DF;
+	Mon, 12 Aug 2024 22:16:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723500996; cv=none; b=GQoRxKIDRBwSoxNJruzTDOaaFsjKR+rB7Og5PcjC1NP0Naa/VxQx6xHYtbMHZUXlIL0XSXIh6wpjQ0WeXFFg1UqoixR943Nihpmi7uvgU/UNmXMOi3hLnEDR7WDewK+O8YW4i4sWy88Y5Nw5FANvOSg87fqWmwnq6kBisWNFG4o=
+	t=1723501018; cv=none; b=j1XCDErj1VgZEuCWgrTUtvo4URvLqmGHRveEIedxu2f0NF2eM52FLHDABekZKyvRcbTFFbKWzdsJTqW4XR/CXRCXF3YRWMEhVM4l7THmCIbi5MkW7QsScSTrOA4UrJyvFZJS3Qicy/lZv+PjZ1g8iPpjWi6Wj4kx6rLhIxYD1Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723500996; c=relaxed/simple;
-	bh=a06a3pGNW29gyTPgk1weaqCYbA2jS7imR1LbT+41a5g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7S+lUuJi+XWlm0Sv/qVTFU5bE4xfFf5B0izClwq6AcYjFVO1dBkZtbWZvBn+ggfY7nN8sLPKF8rVW3gjNqsSkGfJsmkCJvfPQdiCMzWgLXwf5Weq19Pfu3O5D7B/80wzNtr6QgwIrCO6W+KkwvgfPM9klH1QOzbJjLbszfRmMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GjXNWBjW; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-39b3c36d3adso17443815ab.1;
-        Mon, 12 Aug 2024 15:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723500994; x=1724105794; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ne6zuaLqz7R/pnnmQlQ0mOJQkt+W57j9j1ohBlOxvMY=;
-        b=GjXNWBjWh0D87k3svKZrIa0euFXOINXXH9HbDgnEwzOyi83UxxUZAz2hHPEmiNkv46
-         JpwxTri7NFdMWlVj+4T0ieR5NzlNGiPv5LZAmxdyr0/CTUl5Qll+IMpfDN2ijeOeRKmh
-         YEnL9lR/ObaN3b4oFgKwoHeTJPCEeMlVN6GpsKaB1YGndtmHmIDEyr+0VpkwW78/3OsF
-         GMLF3QX1IRSGfTlQBtxXEQz1w3+PYQ716THi8ZPZ2jtiuxcHJZQ9Lccjwp/QT0Ppw82O
-         7QQVXXFLUL1tP2ms+rBAbvNE0WjBhesxKrlL9BH1JU054ZUYIz8ePKYk6lJ4mBlpnjtq
-         2ybA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723500994; x=1724105794;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ne6zuaLqz7R/pnnmQlQ0mOJQkt+W57j9j1ohBlOxvMY=;
-        b=LoJ7fAgXWMe4RY1VFWTBu/luM6cIOp38oax4X3UMWqIQ81x0L+387uiwzk1yKqnb+7
-         0JoHpk4JZpYucshb/aXr2tjn6Fanvh3ZaV7sxNkO8sWk2FTf9IK/Lw/vsjiszBujo7VM
-         tUoziZIwdpfKuNIDacj3eCZiRGGk9uPoi43eocfW+Ao31RZHDkK2pLvgzYHvRLiy1je3
-         zKt/RZQOAFBb7uWHyTTgTCvB9jFWMHv+7Pw2fw415Ev5jBT/EkfGToSTtifwegKG9XNO
-         F6ZgwSghpfkssxbq3WZ0BwLIOELOHsjyneQzm3w/q2XyerYSYJV38yCImgKGD0WDeHrQ
-         97Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4u9WVsLDxdNlXtY3eN0I+IfxezaCbxdwi40MCyjTLxjO+wU1MaQcP7TTAHhWNeUnbRAijUERX@vger.kernel.org, AJvYcCW8m11wqBBB3+D4M4zllDOShQSNeA+9yAdko3o5u/N3bYhEvVu9927U+E7TDJjLRgk8+ImYLobvKD+mbDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz21cYh1LLb/AVEpfRs19dMnKJC8wqSgyfdHkU67QQk4BzZmQjF
-	BKZfdtEZ1lBojKboTXqiPCpMjS1Eg1svjfyPJkR2RRbDHs1vpLGJs2Wo1vZ/NTf3oWfhEA0aAUC
-	IFo/hva7xrJ4T1wMHKVXYH9ATfdI=
-X-Google-Smtp-Source: AGHT+IECxMETaBumCX6mT8bW72XAu59ybzU+MzXjpeYLd4mKJO7nfQrI6CO3/mJ84BWr30EgDVZGl0s33j7++n7nYRQ=
-X-Received: by 2002:a05:6e02:1c05:b0:374:983b:6ff2 with SMTP id
- e9e14a558f8ab-39c478d11a2mr18427565ab.20.1723500993822; Mon, 12 Aug 2024
- 15:16:33 -0700 (PDT)
+	s=arc-20240116; t=1723501018; c=relaxed/simple;
+	bh=+ncDPARUwx6p23qdb8i7srs3SW1uDHyV+GGvWZdk5sE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UmEpP856wzbIgiPkJZj8kOWmHoF67NmeXfd9tY9MhdjUxQn2ltKdlwR9VDTLDe6d0mXd7c/8SPXIa+viTlQSOn2DwCiu6hn0/jYWJqUCBZTTfsmqn87jAEet/IlDsGEVDRDmyOEdiJ7Kcyi5nqxRbTFm3SxrMPtG1fhFXZ6GwBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XwHr5U6H; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSZuM021499;
+	Mon, 12 Aug 2024 22:16:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=QNIE3yAdiYLgDXjZr4W4bENb
+	pXioQ42veMrNJMx0qhg=; b=XwHr5U6HrZSGJSDxnWnzrCrrO1wxvDXQRTzfgqNi
+	If/QRHr3z79y6k+bo4fvgsKZqWRewO5bO4ZA7jrDEoXwwvKcNx7eaX9T6UHSqdAE
+	Dn4YX5+90XBuLdJpOPVX1fu7JXb8I5OM8e/LNbwxn6zBN45qsnOTssBygdFhb3uI
+	hD3d/368FnJ8KCz5nOPNAP3QZvJDbhNqzeM2OXaG/qtQ964DZsj2ITXELL0Hh6/q
+	7eLNGHLPrQF/tbPhwPmHxmDtjL6csUF+FGoAojXG5xBODXTp11EKFKT9AXeWCGhf
+	5Lchgy24m12iaw41TdeOCdc0eCtcW5ok3D5ZUblP+PfHNQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7wks1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 22:16:45 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47CMGiCF021972
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 22:16:44 GMT
+Received: from hu-bjorande-lv.qualcomm.com (10.49.16.6) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 12 Aug 2024 15:16:43 -0700
+Date: Mon, 12 Aug 2024 15:16:42 -0700
+From: Bjorn Andersson <quic_bjorande@quicinc.com>
+To: Rob Herring <robh@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor Dooley" <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+        Wesley
+ Cheng <quic_wcheng@quicinc.com>,
+        Saravana Kannan <saravanak@google.com>,
+        "Thinh Nguyen" <Thinh.Nguyen@synopsys.com>,
+        Philipp Zabel
+	<p.zabel@pengutronix.de>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>
+Subject: Re: [PATCH v2 6/7] usb: dwc3: qcom: Transition to flattened model
+Message-ID: <ZrqJyh4UPJ5xBhq2@hu-bjorande-lv.qualcomm.com>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
+ <20240811-dwc3-refactor-v2-6-91f370d61ad2@quicinc.com>
+ <20240812212139.GA1797954-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812105315.440718-1-kuro@kuroa.me> <CAL+tcoApiWPx8JW9DeQ6VbAH7Dnqtw7PmVVvup9HMyBHHDhvcQ@mail.gmail.com>
-In-Reply-To: <CAL+tcoApiWPx8JW9DeQ6VbAH7Dnqtw7PmVVvup9HMyBHHDhvcQ@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Tue, 13 Aug 2024 06:15:57 +0800
-Message-ID: <CAL+tcoC6MCPx-TZup6N9BgcK9Smn5xjppKAf949uKXgs8m5XJQ@mail.gmail.com>
-Subject: Re: [PATCH net,v2] tcp: fix forever orphan socket caused by tcp_abort
-To: Xueming Feng <kuro@kuroa.me>
-Cc: "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org, 
-	Eric Dumazet <edumazet@google.com>, Lorenzo Colitti <lorenzo@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, Yuchung Cheng <ycheng@google.com>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, David Ahern <dsahern@kernel.org>, linux-kernel@vger.kernel.org, 
-	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240812212139.GA1797954-robh@kernel.org>
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XdqdRzcO9BWaJRLGOI6TBGoKgepnYOmU
+X-Proofpoint-ORIG-GUID: XdqdRzcO9BWaJRLGOI6TBGoKgepnYOmU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120164
 
-On Mon, Aug 12, 2024 at 10:00=E2=80=AFPM Jason Xing <kerneljasonxing@gmail.=
-com> wrote:
->
-> On Mon, Aug 12, 2024 at 6:53=E2=80=AFPM Xueming Feng <kuro@kuroa.me> wrot=
-e:
-> >
-> > We have some problem closing zero-window fin-wait-1 tcp sockets in our
-> > environment. This patch come from the investigation.
-> >
-> > Previously tcp_abort only sends out reset and calls tcp_done when the
-> > socket is not SOCK_DEAD, aka orphan. For orphan socket, it will only
-> > purging the write queue, but not close the socket and left it to the
-> > timer.
-> >
-> > While purging the write queue, tp->packets_out and sk->sk_write_queue
-> > is cleared along the way. However tcp_retransmit_timer have early
-> > return based on !tp->packets_out and tcp_probe_timer have early
-> > return based on !sk->sk_write_queue.
-> >
-> > This caused ICSK_TIME_RETRANS and ICSK_TIME_PROBE0 not being resched
-> > and socket not being killed by the timers, converting a zero-windowed
-> > orphan into a forever orphan.
-> >
-> > This patch removes the SOCK_DEAD check in tcp_abort, making it send
-> > reset to peer and close the socket accordingly. Preventing the
-> > timer-less orphan from happening.
-> >
-> > According to Lorenzo's email in the v1 thread, the check was there to
-> > prevent force-closing the same socket twice. That situation is handled
-> > by testing for TCP_CLOSE inside lock, and returning -ENOENT if it is
-> > already closed.
-> >
-> > The -ENOENT code comes from the associate patch Lorenzo made for
-> > iproute2-ss; link attached below.
-> >
-> > Link: https://patchwork.ozlabs.org/project/netdev/patch/1450773094-7978=
--3-git-send-email-lorenzo@google.com/
-> > Fixes: c1e64e298b8c ("net: diag: Support destroying TCP sockets.")
-> > Signed-off-by: Xueming Feng <kuro@kuroa.me>
->
-> You seem to have forgotten to CC Jakub and Paolo which are also
-> networking maintainers.
->
+On Mon, Aug 12, 2024 at 03:21:39PM -0600, Rob Herring wrote:
+> On Sun, Aug 11, 2024 at 08:12:03PM -0700, Bjorn Andersson wrote:
+> > From: Bjorn Andersson <quic_bjorande@quicinc.com>
+> > 
+> > The USB IP-block found in most Qualcomm platforms is modelled in the
+> > Linux kernel as 3 different independent device drivers, but as shown by
+> > the already existing layering violations in the Qualcomm glue driver
+> > they can not be operated independently.
+> > 
+> > With the current implementation, the glue driver registers the core and
+> > has no way to know when this is done. As a result, e.g. the suspend
+> > callbacks needs to guard against NULL pointer dereferences when trying
+> > to peek into the struct dwc3 found in the drvdata of the child.
+> > Even with these checks, there are no way to fully protect ourselves from
+> > the race conditions that occur if the DWC3 is unbound.
+> > 
+> > Missing from the upstream Qualcomm USB support is handling of role
+> > switching, in which the glue needs to be notified upon DRD mode changes.
+> > Several attempts has been made through the years to register callbacks
+> > etc, but they always fall short when it comes to handling of the core's
+> > probe deferral on resources etc.
+> > 
+> > Moving to a model where the DWC3 core is instantiated in a synchronous
+> > fashion avoids above described race conditions.
+> > 
+> > It is however not feasible to do so without also flattening the
+> > DeviceTree binding, as assumptions are made in the DWC3 core and
+> > frameworks used that the device's associated of_node will the that of
+> > the core. Furthermore, the DeviceTree binding is a direct
+> > representation of the Linux driver model, and doesn't necessarily
+> > describe "the USB IP-block".
+> > 
+> > The Qualcomm DWC3 glue driver is therefor transitioned to initialize and
+> > operate the DWC3 within the one device context, in synchronous fashion.
+> > 
+> > To handle backwards compatibility, and to remove the two-device model,
+> > of_nodes of the old compatible are converted to the new one, early
+> > during probe.
+> > 
+> > This happens in the event that a DWC3 core child node is present, the
+> > content of the reg and interrupt properties of this node are merged into
+> > the shared properties, all remaining properties are copied and the core
+> > node is dropped. Effectively transitioning the node from qcom,dwc3 to
+> > qcom,snps-dwc3.
+> 
+> In the past we've done this old binding to new binding with an overlay 
+> embedded in the kernel. The overlay would just be the .dts change you've 
+> made (we should have a tool that takes 2 DTs and generates an overlay as 
+> the diff). I suppose it's a few platforms here, but then it is just data 
+> and easily deleted when no longer needed (I think the cases I'm 
+> remembering did just that because they are gone now. It was TI display 
+> and Renesas media stuff IIRC). 
+> 
+
+Where and how do you apply this overlay?
+
+If I can avoid doing the dynamic translation, I'd be happy to do so.
+
+> 
+> > Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
 > > ---
-> >  net/ipv4/tcp.c | 18 +++++++++++-------
-> >  1 file changed, 11 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> > index e03a342c9162..831a18dc7aa6 100644
-> > --- a/net/ipv4/tcp.c
-> > +++ b/net/ipv4/tcp.c
-> > @@ -4637,6 +4637,13 @@ int tcp_abort(struct sock *sk, int err)
-> >                 /* Don't race with userspace socket closes such as tcp_=
-close. */
-> >                 lock_sock(sk);
-> >
-> > +       /* Avoid closing the same socket twice. */
-> > +       if (sk->sk_state =3D=3D TCP_CLOSE) {
-> > +               if (!has_current_bpf_ctx())
-> > +                       release_sock(sk);
-> > +               return -ENOENT;
-> > +       }
+> >  drivers/usb/dwc3/dwc3-qcom.c | 310 +++++++++++++++++++++++++++++++++++--------
+> >  1 file changed, 251 insertions(+), 59 deletions(-)
+> > 
+> > diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+[..]
+> > -static int dwc3_qcom_of_register_core(struct dwc3_qcom *qcom, struct platform_device *pdev)
+> > +static struct property *dwc3_qcom_legacy_prop_concat(const char *name,
+> > +						     const void *a, size_t a_len,
+> > +						     const void *b, size_t b_len)
+> >  {
+> > -	struct device_node	*np = pdev->dev.of_node, *dwc3_np;
+> > -	struct device		*dev = &pdev->dev;
+> > -	int			ret;
+> > +	size_t len = a_len + b_len;
+> >  
+> > -	dwc3_np = of_get_compatible_child(np, "snps,dwc3");
+> > -	if (!dwc3_np) {
+> > -		dev_err(dev, "failed to find dwc3 core child\n");
+> > -		return -ENODEV;
+> > -	}
+> > +	struct property *prop __free(kfree) = kzalloc(sizeof(*prop), GFP_KERNEL);
+> > +	char *prop_name __free(kfree) = kstrdup(name, GFP_KERNEL);
+> > +	void *value __free(kfree) = kzalloc(len, GFP_KERNEL);
+> > +	if (!prop || !prop_name || !value)
+> > +		return NULL;
+> >  
+> > -	ret = of_platform_populate(np, NULL, NULL, dev);
+> > -	if (ret) {
+> > -		dev_err(dev, "failed to register dwc3 core - %d\n", ret);
+> > -		goto node_put;
+> > +	prop->name = no_free_ptr(prop_name);
+> > +	prop->value = no_free_ptr(value);
+> > +	prop->length = len;
+> 
+> We're trying to make struct property opaque or even internal to DT core. 
+> Exposing it leaks pointers and then we can't ever free things. This is 
+> not helping. The changeset API avoids mucking with struct property.
+> 
+
+I will review the changeset API!
+
 > > +
-> >         if (sk->sk_state =3D=3D TCP_LISTEN) {
-> >                 tcp_set_state(sk, TCP_CLOSE);
-> >                 inet_csk_listen_stop(sk);
-> > @@ -4646,16 +4653,13 @@ int tcp_abort(struct sock *sk, int err)
-> >         local_bh_disable();
-> >         bh_lock_sock(sk);
-> >
-> > -       if (!sock_flag(sk, SOCK_DEAD)) {
-> > -               if (tcp_need_reset(sk->sk_state))
-> > -                       tcp_send_active_reset(sk, GFP_ATOMIC,
-> > -                                             SK_RST_REASON_NOT_SPECIFI=
-ED);
-> > -               tcp_done_with_error(sk, err);
-> > -       }
-> > +       if (tcp_need_reset(sk->sk_state))
-> > +               tcp_send_active_reset(sk, GFP_ATOMIC,
-> > +                                     SK_RST_REASON_NOT_SPECIFIED);
->
-> Please use SK_RST_REASON_TCP_STATE here. I should have pointed out this e=
-arlier.
+> > +	memcpy(prop->value, a, a_len);
+> > +	memcpy(prop->value + a_len, b, b_len);
+> > +
+> > +	return_ptr(prop);
+> > +}
+> > +
+> > +/* Replace reg property with base address from dwc3 node and fixed length */
+> > +static int dwc3_qcom_legacy_update_reg(struct device_node *qcom,
+> > +				       struct device_node *dwc3)
+> > +{
+> > +	int addr_cells;
+> > +	int size_cells;
+> > +	u64 dwc3_addr;
+> > +	int ret;
+> > +
+> > +	ret = of_property_read_reg(dwc3, 0, &dwc3_addr, NULL);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	addr_cells = of_n_addr_cells(qcom);
+> > +	size_cells = of_n_addr_cells(qcom);
+> > +
+> > +	__be32 *reg __free(kfree) = kcalloc(addr_cells + size_cells, sizeof(__be32), GFP_KERNEL);
+> > +	if (!reg)
+> > +		return -ENOMEM;
+> > +
+> > +	reg[addr_cells - 1] = cpu_to_be32(dwc3_addr);
+> 
+> Assuming dwc3_addr fits in 32-bit or that the upper 32-bits matches?
+> 
 
-Sorry, my fault. It's the net tree which doesn't have the commit
-edefba66d92 yet, so you don't need to modify this.
+The core resides in the lower 32 bits on all existing targets, and I
+expect any new targets that possibly changes that assumption would not
+take the path through this translation (or would need to correct my
+assumption).
 
-As I said, the patch looks good to me. Let Eric make the decision
-finally. Thanks!
+> > +	reg[addr_cells + size_cells - 1] = cpu_to_be32(SDM845_QSCRATCH_BASE_OFFSET + SDM845_QSCRATCH_SIZE);
+> > +
+[..]
+> > @@ -773,10 +937,14 @@ static int dwc3_qcom_probe(struct platform_device *pdev)
+> >  		goto reset_assert;
+> >  	}
+> >  
+> > -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	ret = of_address_to_resource(np, 0, &res);
+> 
+> So we just leave the platform device resources stale? The right solution 
+> is probably to make platform_get_resource() work on demand.
 
-Thanks,
-Jason
+I did consider updating the resource, only in the case that we rewrite
+the information, as it would be slightly cleaner not to leave that
+dangling. But this was cleaner code wise.
+
+> That's what 
+> we did for IRQ resources years ago (since those had irqchip driver 
+> dependencies).
+> 
+
+Right, for platform_get_irq(), but I presume for platform_get_resource()
+we would end up with the union of the different resource-specific lookup
+mechanisms?
+
+Regards,
+Bjorn
+
+> Rob
+> 
 
