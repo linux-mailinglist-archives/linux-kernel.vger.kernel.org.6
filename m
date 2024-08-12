@@ -1,332 +1,160 @@
-Return-Path: <linux-kernel+bounces-282625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFA594E697
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:29:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86CE794E6A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 681CD1F2255E
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:29:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F392825D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF131514E4;
-	Mon, 12 Aug 2024 06:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB1F167DA4;
+	Mon, 12 Aug 2024 06:29:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b="TZVJBcmG"
-Received: from PUWP216CU001.outbound.protection.outlook.com (mail-koreasouthazon11020119.outbound.protection.outlook.com [52.101.156.119])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jdtQXCfv"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6398714EC4C;
-	Mon, 12 Aug 2024 06:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.156.119
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444177; cv=fail; b=L6ZYnAN4c39a2vzaloVwUH/AL13/0ZboOleX45iPrqSFE046VvqkJ89GsxojhcLM5kXy9y85Kjr/4JN+5pDICBgCwGv0RVyvhqyvxISfvc/3zkLxZiEmUjSFCTnL77qu0FzCMuHI9B1UUwxIYVXKlSjS3aXYjERk/95t2Moi5JU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444177; c=relaxed/simple;
-	bh=UiTOsuIPdnjFiy25DGycvOoGT0s1iFeQjnnlxcQCqy0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LRo/tAezfMNIF43410TxDcHK9RxeRbgRz/Jw3YFwv1DJlQ2jdlotpjtutIgoRYN8mPbsUQy1f/ahtW7FgcjU+6J8lvsa6lzo4XWO83HCK89HlQf1FEcNEXER7RB8O768X+KZ3WpjpvyI8aizoztJePiGGugoVH/1F3XxmTjvNlI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com; spf=pass smtp.mailfrom=chipsnmedia.com; dkim=pass (1024-bit key) header.d=chipsnmedia.com header.i=@chipsnmedia.com header.b=TZVJBcmG; arc=fail smtp.client-ip=52.101.156.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=chipsnmedia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chipsnmedia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=D1q59LUIwziAYptdqRhrM60CFmGnXrv5iUXlAH1hSEOTpnMQMNPLbmCQYLGAdGy97D/mBqPef8N4r2hhjU0W6JQCdcNwlsbKrUWZIgdqQbJkKdMqPncKZFBxsCqftxiLRfOMS1Az0/lGd9NPPEFXQl+7XZry7iz4okWnOye7sSDD4nrMfItm/kYbYpeTKpqxKaXtb8Px8HVUdQgR6N0b47SUm9NH8yfXCQy0LaSBnNUqq3tQH4ivQYKqXPvaE4umuzBzVx4QYS69AkMp4KCf4s5u0+gOOANMHKX9cPpyQ3VpFGgHkEYhZ4VyWSf3qzZ+l2TbwqK6D/YCcBtWcsEfHA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Jo09o0f7cArhs9nmYI/Ipzy2U9tnqhbP6xrDVuSq5UU=;
- b=l977/YEY4SJ5SKFb7YHtq+WivAIsFXbGvT6keaDkpOjt3KJ6OHzbapxBjq5M7pU2iuJbazGuqeZbjo9jAu/dLxul7ZjuKipVv1EqAY9ea5aRMyHgrVlyjpV058VwFtfXOwejB644NRaJgeB3PnUGc7HnhqM6k1lgBNTww2tUWdchugX1v3IFsoEIRP7PtKOghGe91ohvHH7vp9Kq9u/ASkVmS1B0j3UzgE2eUBmHcK8CKkbR6N1Bggz0+1XS0T/F0BZJyyxbcfdaaU0tDjAIBey7LmYBKcECq2CiiPc90P/Rtqyod+SBeHij0CPWS3Khpb+nep2Mx/iF5CQBF8CHyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=chipsnmedia.com; dmarc=pass action=none
- header.from=chipsnmedia.com; dkim=pass header.d=chipsnmedia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=chipsnmedia.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Jo09o0f7cArhs9nmYI/Ipzy2U9tnqhbP6xrDVuSq5UU=;
- b=TZVJBcmGtysyePzS9+vmhdmwjeQxEDwBP4Y6oNIO53ze7udvaZm4izlZCAQ5e7QFMf7Lj4TerMpWOfviaDsPsBnD1GhtS1uXZpQG8D2xTdosKhk5XfLld0GmY4DVP8faCV/0RBRjeGFBUdGSi4Tsopv6khvpFAMPfLAdKxpNOtA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=chipsnmedia.com;
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM (2603:1096:101:15::5) by
- PU4P216MB1820.KORP216.PROD.OUTLOOK.COM (2603:1096:301:10a::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7849.20; Mon, 12 Aug 2024 06:29:30 +0000
-Received: from SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b]) by SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- ([fe80::b711:5ab1:b5a4:d01b%7]) with mapi id 15.20.7849.019; Mon, 12 Aug 2024
- 06:29:30 +0000
-From: "Jackson.lee" <jackson.lee@chipsnmedia.com>
-To: mchehab@kernel.org,
-	nicolas@ndufresne.ca,
-	sebastian.fricke@collabora.com
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	hverkuil@xs4all.nl,
-	nas.chung@chipsnmedia.com,
-	lafley.kim@chipsnmedia.com,
-	b-brnich@ti.com,
-	jackson.lee@chipsnmedia.com,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>
-Subject: [PATCH v7 4/4] media: chips-media: wave5: Support YUV422 raw pixel-formats on the encoder.
-Date: Mon, 12 Aug 2024 15:29:19 +0900
-Message-Id: <20240812062919.78-5-jackson.lee@chipsnmedia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812062919.78-1-jackson.lee@chipsnmedia.com>
-References: <20240812062919.78-1-jackson.lee@chipsnmedia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SE2P216CA0044.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:116::11) To SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
- (2603:1096:101:15::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D46215F410;
+	Mon, 12 Aug 2024 06:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723444184; cv=none; b=hK8cMKR5OqWNBP/ObsIwIoVGjYhyRZi35iMqOdPizhnJIQRiy/XY3CHRNKHB+M/Pcc7/KDJZh49AXGiRWiJ5vMbvHrf4qUF4PXLavLLCjjQUdzyHQU/2ZReczgz7i63W2mOvRuSeNk9sLacpHt/UGGEezQSivrGDA2p1UsqJcY4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723444184; c=relaxed/simple;
+	bh=HVMm0LRGbTcA7C2OT3F9o6ZG8lrp1l6Jf1CFDR86p+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLrXs7XqLF7KlTKMLXG3oyWJFiqXUi8nIIZvUqr9gyRTljA2porkCPEaS29zbHRmkhpWNf2Rh3K69pQlw0vWYMsRqhGGt8ZHuJ0aA6+VvpCDISSl5f3t4z/3SH1rPxWXhCWqT5fSQRgve3tDDjAhXXrzAx0U8mJM6F6NfYTLvKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jdtQXCfv; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C4oDtn026486;
+	Mon, 12 Aug 2024 06:29:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=e
+	J2AwkxTY7H9tUucBRnELfKYFtQ4xduLEZZLsud8IY4=; b=jdtQXCfvwHXqcLwL4
+	VDO4xaH6DbMhgCrFECoUvU8bPEGiD4rKjqaQWJmpiMzW03JSoO8LR2jGuR3cm7IT
+	Yf2BBuOa/Oney1BmflDgWxxg22uGlJFjrZO8feytCmUXvs2VkhL3958JgQLvUyKL
+	Lb59szx9eH5YyoTAZpdNfk/UivZjrWRZXsA/BEVU9VEpJWOCslzu9WcVZiVj8v6U
+	JJsQBvs05f496+ZZEkZzLUa4e7zqBVgQVd/CcL7lh10/WuXWi9IaPDqEOxu/UKhF
+	J8Er8E66Gw6noo1KVIW/Sj71Qt1DLietlg9k09KETt5EEZSCNSBSeS6AX8i31B27
+	afyeQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wy7am3r8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 06:29:37 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 47C6TaSc027279;
+	Mon, 12 Aug 2024 06:29:36 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wy7am3r4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 06:29:36 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47C4H5kC020896;
+	Mon, 12 Aug 2024 06:29:35 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xn82vru2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 06:29:35 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47C6TVHg42205514
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 06:29:34 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D3CD42015E;
+	Mon, 12 Aug 2024 06:29:31 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0E9AE2017A;
+	Mon, 12 Aug 2024 06:29:28 +0000 (GMT)
+Received: from [9.171.70.59] (unknown [9.171.70.59])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 Aug 2024 06:29:27 +0000 (GMT)
+Message-ID: <90da4cb0-a422-405d-b5f9-99eba490071f@linux.ibm.com>
+Date: Mon, 12 Aug 2024 08:29:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SE1P216MB1303:EE_|PU4P216MB1820:EE_
-X-MS-Office365-Filtering-Correlation-Id: d2ecd6be-7308-4a18-e2eb-08dcba981f5c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|376014|52116014|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ezaOQYpAA0kGWgIQsS2fUrTDH5J1aZafntAr+cyF6KATs330GcQU1AYXJF3h?=
- =?us-ascii?Q?362gp+3ZEZGR1DWSM7d+/6OkvmD/BWCryQ3kxXinEXnMaUYY9/my9M5TShkW?=
- =?us-ascii?Q?VUTEK5nfKiMipHROPrRMAqgsQXtEnPA09bXI9ia51V1fZANx0tqOuKuVpaBc?=
- =?us-ascii?Q?3hK34NXOaF5gei6vZFNhz1i/OGnmeUs63yZu+PDv6ZaDgkRUTaWxQCZmJiHL?=
- =?us-ascii?Q?U8fsMR6WTs8WGbOt6N0/1W9WSmwO+AM28AtfE91gASqYwS5KeULADoQ6Xv4K?=
- =?us-ascii?Q?GtG733R4rI+I77ogH26n5sh5brGtJ2R5vpM62UrPd1xRkBQx/3MNTPHxvdmZ?=
- =?us-ascii?Q?sqaWlZa4XHCN3y9CicuYEkx5LrpJ/yE2Lou45nQCZVFIf0WAU2IR+kODl2yj?=
- =?us-ascii?Q?RK0o8qwTW7vbXga8RGWJCf1zm770N8syjWtc37no3R4rtusd1ak0bxWYMyen?=
- =?us-ascii?Q?SLIxadUy7AU1CrGXlP6BmWodh8z7+Ep6hdRgePFJw6y/KM6ont4CeUQIoVO8?=
- =?us-ascii?Q?kfLg14ZuFjRq3/tmCY0PMOkksUuHDLAiit+Uj4mA1PzebModB1SxVs8ZUug3?=
- =?us-ascii?Q?IfIzyW0PWIQHIn0jpsEx4F1096aMKlZX0nBs8xSNCG3+TTwPfKvAw0y8EABZ?=
- =?us-ascii?Q?FZo53XW2Jj+IbbwKtlK5rDldS0l2SvS2SJu9U05hE1qvHZtC9gIrjt+xwpBA?=
- =?us-ascii?Q?ptScMVkIEWc0PrCt2ICYji0lnuiCLPJhGZaHPMVywV4iDa+hwbdNuTlA19xi?=
- =?us-ascii?Q?JcE4S95SpmLNB0QsQpLSoi4LNqePCUeph7dP865/+m+b95bFDgrXEct4ECLt?=
- =?us-ascii?Q?WyY0CG9aosbPzPZEbVFXyxrRGu5fheK5MWdV1sKYaJDAfB1vNwYTwM3l/flG?=
- =?us-ascii?Q?1ckiHHpnmzy3iRoNCe1pAR/kGZ7b3mc+cqeH8dcXHiSbNZE3c+kdrx5IJHYA?=
- =?us-ascii?Q?QbgDzdXICrkfeXtG+QHyiVj0XnyTmfe9samOmgvWxfn1/ozAIHjGXWSlajPf?=
- =?us-ascii?Q?yF77arVtg13UeQRwI1WRqPuoVVKooA/B0yAUPqAN84yZlqX9tvUkPoOUC0SA?=
- =?us-ascii?Q?7b1ljwfVwBJvTKmi0suR6S5GPmgrXST2eIHPjbcCFnOocpklr1xOiji2wnJc?=
- =?us-ascii?Q?NLYaC8nwm2XA7iAnNqcq1DkJl8TvBtnC2sltJeg5435czAblh5w8ctl45Y/s?=
- =?us-ascii?Q?ZGBrdkiRV0KZ8KigVLSTTrPTfYYA7gBAt/uNFvorQerYp5CQu4DtiGzabZU6?=
- =?us-ascii?Q?40U3n4YHQ+7Vy0i68oiV0ISEJiyV5fO5YSGrrPf0oLgKWagdDrIYPmbxuxiP?=
- =?us-ascii?Q?mnK2vL5GVxktqGaEuBgT5LSXf61Y/7JGgxl+g5OTtp6Ry9yTI9GZmKuI8JPk?=
- =?us-ascii?Q?+q5Z3UIoZF5bO2T6SSBLymfSpONCSmalF/lIc8cLUx95yoT1ag=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SE1P216MB1303.KORP216.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(52116014)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VAETeMK1vkV1wwwdAUP3WUmISaeKOXF5hl+EI4+2Q0ek68ctmjJey1e7/xYl?=
- =?us-ascii?Q?hdrvIp6fVlStKq1wJDCEAd728ApW1eeE53VNkeY9DYuokw/Qv4xHWM3fHB4u?=
- =?us-ascii?Q?x0KZRaZFTK6VxBpkloccqLSmJdAQncRcWKL1dcOzplZ9CxKtk8WQbEz7isUG?=
- =?us-ascii?Q?n6pP5C01Gh8ua2K33r4W1k6eakAP21yM6R/QXS+EjNO9NmJv/G8mz6f62IBE?=
- =?us-ascii?Q?vN2F97mVUOirFXIvqq6TVfVALd8uxSbU5StZDWu+OGrC3siC/TGoVEXzTao9?=
- =?us-ascii?Q?MN8njvRzfqNn6lcsB70fquOFpTpAxvNx47GxcmdTRUwgl29Qh8LDL8DTGrSp?=
- =?us-ascii?Q?+1GcTwZ14IHS+pZj18rBtm9txWeG4M9IAr/9iI8jV3w07TbPnYLX+9QImCyD?=
- =?us-ascii?Q?h/vsQ1gmUfVy4UtUYGi+Zl5qm33Ctoqga6RNUt2yWja0RSpdTPuXLR/A8yhv?=
- =?us-ascii?Q?vhqEESrd9ESiK5Xg3yrlsvpRMkx3i+BtuzT8XHSS9wptJov3SlqLGQ4DFEBw?=
- =?us-ascii?Q?n4RoNkRuqO8/le3rSKuOClPA2x3tXAohZZrB7O/ik0Knt3xl+aRZTjCgbgBb?=
- =?us-ascii?Q?Q5njJ5BNaKrOV2pZy8R0qFObXcVB1+kc3Wq6xv5kyJH/jbKej8yEXc952zI8?=
- =?us-ascii?Q?p19mgPYSy5ETxSiUPs37t2EzFqtj7KOCR0pOFu31Ba5uajsQ3VlzeH+33v4f?=
- =?us-ascii?Q?GlTqRLru7qodRQN/WOKKHBWATmfcvSZQHFlwCcEwP+yv7C0HKDn93bxn70kh?=
- =?us-ascii?Q?v2e9uVqasxRrB6bgcv7UfQmT9xtbimE/5WvzZKxCooRDxgLNMM7f0b6kpDQ1?=
- =?us-ascii?Q?5/8XQequxmIVue7V0BAjxBUVCJF2y9Rl2JK0wQFmKW5+y7hvsrJLs/WYrtFM?=
- =?us-ascii?Q?wGicG8UcdThUDIdrSGEiBE9LVpBjfAdnpSZnP4Xv20NXFUq0stTDBT+7P+bK?=
- =?us-ascii?Q?8jG6Dn5OYfJ7VI1v0HDK4Ligebjymt0ZwAcjBBe2jnJn68iwNsp1ODt4KfkP?=
- =?us-ascii?Q?Ddv7dEC/C35zC84LlQ4s6t7lRVzLcjGH6U7cbqjLBpURrxf4ebA9SMbXt5aN?=
- =?us-ascii?Q?sK8v4jTjEP9dgqFs4JNmi539O2JzrcF2hsqT5AIq/8fyRoH6BTWCArmhgs1O?=
- =?us-ascii?Q?eDO9BCD5s7l3cv65wHbMEcqFCzkI0GJTLTF+o7EI7tcrQh3WbPAgdjvmvdAl?=
- =?us-ascii?Q?s4Vkl9IhCb36shAsSnTPLFpLvtuzUTDmPvTm8IJIdv2m28m1YhVMDciGpp60?=
- =?us-ascii?Q?jM7VRTsEbybu39J/fpkYMCer5HeEbRCI5+jL8mecUstIzy1IpfeHgCxqO/b+?=
- =?us-ascii?Q?0B4AkxAW35H9y+7lgaJ/7TMrkSYJHB4I1PquzajUilI3OlAHmpmnmCwA2kc4?=
- =?us-ascii?Q?DG4+0ojaC1GL4p05rv9e0uRsDu2a77ZdkM4z7ri1QsoT64xZE9moZCH+ezKE?=
- =?us-ascii?Q?FAAavPVfRQDDVHvAjf/vbBj6lXJqduPkPYnTA3MFleS+Wtf8N+0S4f6l5H/I?=
- =?us-ascii?Q?joXVGlWLGvdwy0trynYQtylMeMB7MY3gxBEqMzkoXOK5rRPXIqriJrW6xcND?=
- =?us-ascii?Q?FBN5lyVncmZ/SixJ/dD3WQPkKb0hnjc1uOea9M/DMDFsyYybp2gUy76+Lk4W?=
- =?us-ascii?Q?Ww=3D=3D?=
-X-OriginatorOrg: chipsnmedia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d2ecd6be-7308-4a18-e2eb-08dcba981f5c
-X-MS-Exchange-CrossTenant-AuthSource: SE1P216MB1303.KORP216.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 06:29:30.4611
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4d70c8e9-142b-4389-b7f2-fa8a3c68c467
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vDAXNhe058SEoIlARkU7Fc5hsG2gadU21D2Z0xVUbsiVU3Vmn9Un/zjsNQzlYjLdkvEX/yfrWtC4yvZ6JX1718yAIgrvTd9AWFPMWnRuH3Y=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU4P216MB1820
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] net/smc: Use static_assert() to check struct sizes
+To: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Wenjia Zhang <wenjia@linux.ibm.com>,
+        "D. Wythe" <alibuda@linux.alibaba.com>,
+        Tony Lu <tonylu@linux.alibaba.com>, Wen Gu <guwen@linux.alibaba.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc: linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <ZrVBuiqFHAORpFxE@cute>
+From: Jan Karcher <jaka@linux.ibm.com>
+Organization: IBM - Network Linux on Z
+In-Reply-To: <ZrVBuiqFHAORpFxE@cute>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Do6X6uAXbeRBsCu70CzasC-89mr5k1_T
+X-Proofpoint-ORIG-GUID: O30LSGKdDr_cmJY0FkCBAGQztESZf_fT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_25,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 suspectscore=0 spamscore=0 mlxscore=0 phishscore=0
+ bulkscore=0 adultscore=0 priorityscore=1501 impostorscore=0 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408120045
 
-Add support for the YUV422P, NV16, NV61, YUV422M, NV16M,
-NV61M raw pixel-formats to the Wave5 encoder.
 
-All these formats have a chroma subsampling ratio of 4:2:2 and
-therefore require a new image size calculation as the driver
-previously only handled a ratio of 4:2:0.
 
-Signed-off-by: Jackson.lee <jackson.lee@chipsnmedia.com>
-Signed-off-by: Nas Chung <nas.chung@chipsnmedia.com>
-Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
----
- .../chips-media/wave5/wave5-vpu-enc.c         | 89 +++++++++++++++----
- 1 file changed, 74 insertions(+), 15 deletions(-)
+On 09/08/2024 00:07, Gustavo A. R. Silva wrote:
+> Commit 9748dbc9f265 ("net/smc: Avoid -Wflex-array-member-not-at-end
+> warnings") introduced tagged `struct smc_clc_v2_extension_fixed` and
+> `struct smc_clc_smcd_v2_extension_fixed`. We want to ensure that when
+> new members need to be added to the flexible structures, they are
+> always included within these tagged structs.
+> 
+> So, we use `static_assert()` to ensure that the memory layout for
+> both the flexible structure and the tagged struct is the same after
+> any changes.
 
-diff --git a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-index ef9aa1562346..4e1c8a4e7272 100644
---- a/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-+++ b/drivers/media/platform/chips-media/wave5/wave5-vpu-enc.c
-@@ -66,6 +66,30 @@ static const struct vpu_format enc_fmt_list[FMT_TYPES][MAX_FMTS] = {
- 			.v4l2_pix_fmt = V4L2_PIX_FMT_NV21M,
- 			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
- 		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422P,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_YUV422M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV16M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
-+		{
-+			.v4l2_pix_fmt = V4L2_PIX_FMT_NV61M,
-+			.v4l2_frmsize = &enc_frmsize[VPU_FMT_TYPE_RAW],
-+		},
- 	}
- };
- 
-@@ -109,13 +133,26 @@ static int start_encode(struct vpu_instance *inst, u32 *fail_res)
- 	struct vb2_v4l2_buffer *dst_buf;
- 	struct frame_buffer frame_buf;
- 	struct enc_param pic_param;
--	u32 stride = ALIGN(inst->dst_fmt.width, 32);
--	u32 luma_size = (stride * inst->dst_fmt.height);
--	u32 chroma_size = ((stride / 2) * (inst->dst_fmt.height / 2));
-+	const struct v4l2_format_info *info;
-+	u32 stride = inst->src_fmt.plane_fmt[0].bytesperline;
-+	u32 luma_size = 0;
-+	u32 chroma_size = 0;
- 
- 	memset(&pic_param, 0, sizeof(struct enc_param));
- 	memset(&frame_buf, 0, sizeof(struct frame_buffer));
- 
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	if (info->mem_planes == 1) {
-+		luma_size = stride * inst->dst_fmt.height;
-+		chroma_size = luma_size / (info->hdiv * info->vdiv);
-+	} else {
-+		luma_size = inst->src_fmt.plane_fmt[0].sizeimage;
-+		chroma_size = inst->src_fmt.plane_fmt[1].sizeimage;
-+	}
-+
- 	dst_buf = v4l2_m2m_next_dst_buf(m2m_ctx);
- 	if (!dst_buf) {
- 		dev_dbg(inst->dev->dev, "%s: No destination buffer found\n", __func__);
-@@ -480,6 +517,7 @@ static int wave5_vpu_enc_s_fmt_out(struct file *file, void *fh, struct v4l2_form
- {
- 	struct vpu_instance *inst = wave5_to_vpu_inst(fh);
- 	const struct vpu_format *vpu_fmt;
-+	const struct v4l2_format_info *info;
- 	int i, ret;
- 
- 	dev_dbg(inst->dev->dev, "%s: fourcc: %u width: %u height: %u num_planes: %u field: %u\n",
-@@ -501,16 +539,20 @@ static int wave5_vpu_enc_s_fmt_out(struct file *file, void *fh, struct v4l2_form
- 		inst->src_fmt.plane_fmt[i].sizeimage = f->fmt.pix_mp.plane_fmt[i].sizeimage;
- 	}
- 
--	if (inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV12 ||
--	    inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV12M) {
--		inst->cbcr_interleave = true;
--		inst->nv21 = false;
--	} else if (inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV21 ||
--		   inst->src_fmt.pixelformat == V4L2_PIX_FMT_NV21M) {
--		inst->cbcr_interleave = true;
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	inst->cbcr_interleave = (info->comp_planes == 2) ? true : false;
-+
-+	switch (inst->src_fmt.pixelformat) {
-+	case V4L2_PIX_FMT_NV21:
-+	case V4L2_PIX_FMT_NV21M:
-+	case V4L2_PIX_FMT_NV61:
-+	case V4L2_PIX_FMT_NV61M:
- 		inst->nv21 = true;
--	} else {
--		inst->cbcr_interleave = false;
-+		break;
-+	default:
- 		inst->nv21 = false;
- 	}
- 
-@@ -1095,13 +1137,23 @@ static void wave5_vpu_enc_buf_queue(struct vb2_buffer *vb)
- 	v4l2_m2m_buf_queue(m2m_ctx, vbuf);
- }
- 
--static void wave5_set_enc_openparam(struct enc_open_param *open_param,
--				    struct vpu_instance *inst)
-+static int wave5_set_enc_openparam(struct enc_open_param *open_param,
-+				   struct vpu_instance *inst)
- {
- 	struct enc_wave_param input = inst->enc_param;
-+	const struct v4l2_format_info *info;
- 	u32 num_ctu_row = ALIGN(inst->dst_fmt.height, 64) / 64;
- 	u32 num_mb_row = ALIGN(inst->dst_fmt.height, 16) / 16;
- 
-+	info = v4l2_format_info(inst->src_fmt.pixelformat);
-+	if (!info)
-+		return -EINVAL;
-+
-+	if (info->hdiv == 2 && info->vdiv == 1)
-+		open_param->src_format = FORMAT_422;
-+	else
-+		open_param->src_format = FORMAT_420;
-+
- 	open_param->wave_param.gop_preset_idx = PRESET_IDX_IPP_SINGLE;
- 	open_param->wave_param.hvs_qp_scale = 2;
- 	open_param->wave_param.hvs_max_delta_qp = 10;
-@@ -1190,6 +1242,8 @@ static void wave5_set_enc_openparam(struct enc_open_param *open_param,
- 			open_param->wave_param.intra_refresh_arg = num_ctu_row;
- 	}
- 	open_param->wave_param.forced_idr_header_enable = input.forced_idr_header_enable;
-+
-+	return 0;
- }
- 
- static int initialize_sequence(struct vpu_instance *inst)
-@@ -1285,7 +1339,12 @@ static int wave5_vpu_enc_start_streaming(struct vb2_queue *q, unsigned int count
- 
- 		memset(&open_param, 0, sizeof(struct enc_open_param));
- 
--		wave5_set_enc_openparam(&open_param, inst);
-+		ret = wave5_set_enc_openparam(&open_param, inst);
-+		if (ret) {
-+			dev_dbg(inst->dev->dev, "%s: wave5_set_enc_openparam, fail: %d\n",
-+				__func__, ret);
-+			goto return_buffers;
-+		}
- 
- 		ret = wave5_vpu_enc_open(inst, &open_param);
- 		if (ret) {
--- 
-2.43.0
+Read up what the macro does. I like it.
+Compile tested on s390.
 
+Reviewed-by: Jan Karcher <jaka@linux.ibm.com>
+
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+> ---
+>   net/smc/smc_clc.h | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/net/smc/smc_clc.h b/net/smc/smc_clc.h
+> index 467effb50cd6..5625fda2960b 100644
+> --- a/net/smc/smc_clc.h
+> +++ b/net/smc/smc_clc.h
+> @@ -145,6 +145,8 @@ struct smc_clc_v2_extension {
+>   	);
+>   	u8 user_eids[][SMC_MAX_EID_LEN];
+>   };
+> +static_assert(offsetof(struct smc_clc_v2_extension, user_eids) == sizeof(struct smc_clc_v2_extension_fixed),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   struct smc_clc_msg_proposal_prefix {	/* prefix part of clc proposal message*/
+>   	__be32 outgoing_subnet;	/* subnet mask */
+> @@ -169,6 +171,8 @@ struct smc_clc_smcd_v2_extension {
+>   	);
+>   	struct smc_clc_smcd_gid_chid gidchid[];
+>   };
+> +static_assert(offsetof(struct smc_clc_smcd_v2_extension, gidchid) == sizeof(struct smc_clc_smcd_v2_extension_fixed),
+> +	      "struct member likely outside of struct_group_tagged()");
+>   
+>   struct smc_clc_msg_proposal {	/* clc proposal message sent by Linux */
+>   	struct smc_clc_msg_hdr hdr;
 
