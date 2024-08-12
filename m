@@ -1,276 +1,264 @@
-Return-Path: <linux-kernel+bounces-283639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC4B94F735
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:06:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC2F794F733
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B3E5B21427
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:06:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5786F1F22B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEAC81917EC;
-	Mon, 12 Aug 2024 19:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E9B19149E;
+	Mon, 12 Aug 2024 19:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="culyO0NO"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JWtJQr0p"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FC6518FC75
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:06:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.165.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AA2190470
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 19:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723489570; cv=none; b=Z/Zf9Bootk0Esh52UpcUe9ss0z9vjWOBMFOyyuC11kZGvtjI23uWDBo7UaNlAnG/gBNitPz8UAh2iNp6cE2I2lE7LDTBe5HvaJUu7LaoYLRQQ064x1iwvJHgEaBZCV9RgziXk8D9V3twfohHHVM8p+yWs+tnnu1KRG5gveyaKyI=
+	t=1723489557; cv=none; b=oGh1Wmt9r4hSkTJ7slF1yo8C4AB92Ax+odylwiUQ8O7ZP7gk5mlkb4ifWEDejx3TgZryJOvSpg7pweyy5ex3hgCenDQ13miIHtDTuBjE1DagY/SrTQMDJCXv2FSXMkV8VCQ+3B69WY/EQnixD4R1ss9RjGzfXTSj9IZrxy0JZ4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723489570; c=relaxed/simple;
-	bh=SD3o8t3xpSydQKsCJ4Oo318BGEY3obp3OrU51923D2s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kMeULa7GQ9xlflqZ6DHTVelSVMFTWSWYNBXlxzGkn+rKIijk/Rkus6m0Yiy+h6F9HeRN1rXzXhWgwAn3mSI+tP6b741RXYutpDLX+gbumO6Un/tGpSl5sKfH14cKT3+GoVjxnpZhvKOsjD1ghRWKDiDKajtQfzRQ2lfa0Va2qjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=culyO0NO; arc=none smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CHXnhS018534;
-	Mon, 12 Aug 2024 19:05:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=corp-2023-11-20; bh=8
-	QTi9OJ0WYuil/jQ98RXaB1n034ZwVOed6J+lTgWExk=; b=culyO0NOP0oVmsnsn
-	cbPrM9zUWvS1ZtsMK6xES9k8eLzGvfUbwlH9QkQMEe61bf7c5uNw3va2wpfoB0cw
-	pHQrOwNbGwSOO9CtZ28bVk4PuKqhQ+aYqc2TR8HxkdD7F4ulCfYN3aBVzYzgObc4
-	8T3pRh8iunpYJMfNt5WldhuaXasZB0Qj1DuGkezQ79r7CJfBe2JkLaXX8EJkkMMZ
-	uXZMZe0EpzFdBRVY6mS0vlGo9LN8FvDq51MLMJuzcytXPkitPyV3RVwOzQD94fXL
-	5wVB09Pka3B654l4HGcyodrV1nNl0r6VI+c2ZUjFtVEJmz9XY8sz0IkyDP6puEVB
-	mv+Jw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40x0393ck9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 19:05:50 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CJ3jNO017630;
-	Mon, 12 Aug 2024 19:05:50 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn8dfdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 19:05:50 +0000
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47CJ22Kh022973;
-	Mon, 12 Aug 2024 19:05:49 GMT
-Received: from sidkumar-mac.us.oracle.com (dhcp-10-65-176-210.vpn.oracle.com [10.65.176.210])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 40wxn8dfa3-2;
-	Mon, 12 Aug 2024 19:05:49 +0000
-From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-To: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, liam.howlett@oracle.com,
-        willy@infradead.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Subject: [PATCH v2 2/2] maple_tree: add test to replicate low memory race conditions
-Date: Mon, 12 Aug 2024 15:05:43 -0400
-Message-ID: <20240812190543.71967-2-sidhartha.kumar@oracle.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240812190543.71967-1-sidhartha.kumar@oracle.com>
-References: <20240812190543.71967-1-sidhartha.kumar@oracle.com>
+	s=arc-20240116; t=1723489557; c=relaxed/simple;
+	bh=qex7tbBtNhCnUhGbju+uO76z0q9IsTf6CB4hr36kAc4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZIio+0oKzFjG1IzNACPHWZhjB+wP/YYxtR8if2J3kElOwsLLesSMNSdxjpxkz2wJAHWhHIVBjDIK/eOESbaNRHHVRqpK5ugZpe8WEN9an0cg6OG1Eh34AYD542tp7lByHsA225YkU9iKttSY8AfkBEl5M9TmJhuWUpvKzuKd2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JWtJQr0p; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723489554;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HzakOI9YGqv9HtFf9jIxuThCq3IEoBU6xpTlkdeG+TM=;
+	b=JWtJQr0pjOiYDniv3k2CKLwf64+TSaQTvC1B3/Y0MzKs0b8qAfTRwoZisCYOjZuJlEBCr5
+	kYytbkCEbvv/BKGyzZvgg5+VxmwTi0yA/v9JzDoiyX10u62vtPyvk0PAGrFcOuMAr9YeGe
+	aAhgzRgOFYn6CKBLyVNMf9ZuPcj4NPU=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-523-jdfr5jxZOEObKy73iDSb9A-1; Mon, 12 Aug 2024 15:05:53 -0400
+X-MC-Unique: jdfr5jxZOEObKy73iDSb9A-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6ba92dd246fso10461856d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 12:05:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723489553; x=1724094353;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HzakOI9YGqv9HtFf9jIxuThCq3IEoBU6xpTlkdeG+TM=;
+        b=D4BQazdyoj26KxIS2zuOsPazL2sL+5aAE0sKn5dELpGIVjNS+ZPOTa7+RvSpZ/Wgw5
+         PsRckcskOG6oHLOJ0kxSVp9rjETluaQbXkYOTr+pusf8E89f43bFtedsMCTJ/m9evasq
+         tEvQCP92hA4JQT6Sz2oD5FlMUl4cldZBmTn2pbnRFL7T3v4n9HiHACSdc23VQR1xoXA7
+         6FyZDUwpqGb+mI9sQ2jrpJMZMJI8rR7zXOUSX1O0nvlgU3jIhgyhLm7hduDGK8yzbtGy
+         s0/n7wESpapR0I0R6QgeXNJ8x+fq/ckhcWq8JlHHm8kig7a5kBsv+fREaZXAyiNepu17
+         heSw==
+X-Forwarded-Encrypted: i=1; AJvYcCXyXQGUCnKD62V4/9U4qmFJH/jGu81YhlP9j4+LGAMRhBn2WeU+D2eQTtAgd4BSlmJ5MfZHIxa65efJd0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6dnE5yR2IHdZAg46ZQ5dsoQthKsz8EQjbwtas5h5ELQhjkfXy
+	Ie+SretJ3I47uBLfmhr0ww6vLE1OZirYJ9V4m8+VLYZ/+uBpf3sGKM911RzfOV2rvFUQe0hI+HI
+	KQxpimAxVJ+t6qkP+DNCH+CB5HekLaldVqRQb80o2cNlZ67hJRodQBZTcCHgHvQ==
+X-Received: by 2002:a05:6214:e41:b0:6bf:5037:34f2 with SMTP id 6a1803df08f44-6bf5266e6damr316376d6.0.1723489552703;
+        Mon, 12 Aug 2024 12:05:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHULEPrzuVK7C4EVg3OxKvCsQnbJxY4NNhAXiFtPbLqFyv/lM4Rh6yLbZbETy8EfhglpTaRGQ==
+X-Received: by 2002:a05:6214:e41:b0:6bf:5037:34f2 with SMTP id 6a1803df08f44-6bf5266e6damr316036d6.0.1723489552107;
+        Mon, 12 Aug 2024 12:05:52 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82e6dcb3sm27136416d6.144.2024.08.12.12.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 12:05:51 -0700 (PDT)
+Date: Mon, 12 Aug 2024 15:05:48 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	Sean Christopherson <seanjc@google.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	Will Deacon <will@kernel.org>, Gavin Shan <gshan@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Zi Yan <ziy@nvidia.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Yan Zhao <yan.y.zhao@intel.com>
+Subject: Re: [PATCH 07/19] mm/fork: Accept huge pfnmap entries
+Message-ID: <ZrpdDI18wnYJcyIM@x1n>
+References: <20240809160909.1023470-1-peterx@redhat.com>
+ <20240809160909.1023470-8-peterx@redhat.com>
+ <d7fcec73-16f6-4d54-b334-6450a29e0a1d@redhat.com>
+ <ZrZOqbS3bcj52JZP@x1n>
+ <8ef394e6-a964-41c4-b33c-0e940b6b9bd8@redhat.com>
+ <ZrpUm-Lz-plw_fZy@x1n>
+ <9155deaa-b6c5-4e6c-95a7-9a5311b7085a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 adultscore=0 spamscore=0
- phishscore=0 malwarescore=0 suspectscore=0 bulkscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
- definitions=main-2408120141
-X-Proofpoint-ORIG-GUID: rAZAEemYjuAn6o_hPAuZF05o8qpaOcbe
-X-Proofpoint-GUID: rAZAEemYjuAn6o_hPAuZF05o8qpaOcbe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <9155deaa-b6c5-4e6c-95a7-9a5311b7085a@redhat.com>
 
-Add new callback fields to the userspace implementation of struct
-kmem_cache. This allows for executing callback functions in order to
-further test low memory scenarios where node allocation is retried.
+On Mon, Aug 12, 2024 at 08:50:12PM +0200, David Hildenbrand wrote:
+> On 12.08.24 20:29, Peter Xu wrote:
+> > On Fri, Aug 09, 2024 at 07:59:58PM +0200, David Hildenbrand wrote:
+> > > On 09.08.24 19:15, Peter Xu wrote:
+> > > > On Fri, Aug 09, 2024 at 06:32:44PM +0200, David Hildenbrand wrote:
+> > > > > On 09.08.24 18:08, Peter Xu wrote:
+> > > > > > Teach the fork code to properly copy pfnmaps for pmd/pud levels.  Pud is
+> > > > > > much easier, the write bit needs to be persisted though for writable and
+> > > > > > shared pud mappings like PFNMAP ones, otherwise a follow up write in either
+> > > > > > parent or child process will trigger a write fault.
+> > > > > > 
+> > > > > > Do the same for pmd level.
+> > > > > > 
+> > > > > > Signed-off-by: Peter Xu <peterx@redhat.com>
+> > > > > > ---
+> > > > > >     mm/huge_memory.c | 27 ++++++++++++++++++++++++---
+> > > > > >     1 file changed, 24 insertions(+), 3 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> > > > > > index 6568586b21ab..015c9468eed5 100644
+> > > > > > --- a/mm/huge_memory.c
+> > > > > > +++ b/mm/huge_memory.c
+> > > > > > @@ -1375,6 +1375,22 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
+> > > > > >     	pgtable_t pgtable = NULL;
+> > > > > >     	int ret = -ENOMEM;
+> > > > > > +	pmd = pmdp_get_lockless(src_pmd);
+> > > > > > +	if (unlikely(pmd_special(pmd))) {
+> > > > > > +		dst_ptl = pmd_lock(dst_mm, dst_pmd);
+> > > > > > +		src_ptl = pmd_lockptr(src_mm, src_pmd);
+> > > > > > +		spin_lock_nested(src_ptl, SINGLE_DEPTH_NESTING);
+> > > > > > +		/*
+> > > > > > +		 * No need to recheck the pmd, it can't change with write
+> > > > > > +		 * mmap lock held here.
+> > > > > > +		 */
+> > > > > > +		if (is_cow_mapping(src_vma->vm_flags) && pmd_write(pmd)) {
+> > > > > > +			pmdp_set_wrprotect(src_mm, addr, src_pmd);
+> > > > > > +			pmd = pmd_wrprotect(pmd);
+> > > > > > +		}
+> > > > > > +		goto set_pmd;
+> > > > > > +	}
+> > > > > > +
+> > > > > 
+> > > > > I strongly assume we should be using using vm_normal_page_pmd() instead of
+> > > > > pmd_page() further below. pmd_special() should be mostly limited to GUP-fast
+> > > > > and vm_normal_page_pmd().
+> > > > 
+> > > > One thing to mention that it has this:
+> > > > 
+> > > > 	if (!vma_is_anonymous(dst_vma))
+> > > > 		return 0;
+> > > 
+> > > Another obscure thing in this function. It's not the job of copy_huge_pmd()
+> > > to make the decision whether to copy, it's the job of vma_needs_copy() in
+> > > copy_page_range().
+> > > 
+> > > And now I have to suspect that uffd-wp is broken with this function, because
+> > > as vma_needs_copy() clearly states, we must copy, and we don't do that for
+> > > PMDs. Ugh.
+> > > 
+> > > What a mess, we should just do what we do for PTEs and we will be fine ;)
+> > 
+> > IIUC it's not a problem: file uffd-wp is different from anonymous, in that
+> > it pushes everything down to ptes.
+> > 
+> > It means if we skipped one huge pmd here for file, then it's destined to
+> > have nothing to do with uffd-wp, otherwise it should have already been
+> > split at the first attempt to wr-protect.
+> 
+> Is that also true for UFFD_FEATURE_WP_ASYNC, when we call
+> pagemap_scan_thp_entry()->make_uffd_wp_pmd() ?
+> 
+> I'm not immediately finding the code that does the "pushes everything down
+> to ptes", so I might miss that part.
 
-This callback can help test race conditions by calling a function when a
-low memory event is tested.
+UFFDIO_WRITEPROTECT should have all those covered, while I guess you're
+right, looks like the pagemap ioctl is overlooked..
 
-Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
----
-v1 -> v2:
-        - change test name to check_nomem_writer_race()
-        - move test down in farmer_tests()
-        - remove mas_destroy() from check_nomem_writer_race() as its not
-          needed
-        - remove using mas.index and mas.last directly through
-          mas_set_range() and MA_STATE macros.
-        - remove uneeded mas_reset() in check_nomem_writer_race().
+> 
+> > 
+> > > 
+> > > Also, we call copy_huge_pmd() only if "is_swap_pmd(*src_pmd) ||
+> > > pmd_trans_huge(*src_pmd) || pmd_devmap(*src_pmd)"
+> > > 
+> > > Would that even be the case with PFNMAP? I suspect that pmd_trans_huge()
+> > > would return "true" for special pfnmap, which is rather "surprising", but
+> > > fortunate for us.
+> > 
+> > It's definitely not surprising to me as that's the plan.. and I thought it
+> > shoulidn't be surprising to you - if you remember before I sent this one, I
+> > tried to decouple that here with the "thp agnostic" series:
+> > 
+> >    https://lore.kernel.org/r/20240717220219.3743374-1-peterx@redhat.com
+> > 
+> > in which you reviewed it (which I appreciated).
+> > 
+> > So yes, pfnmap on pmd so far will report pmd_trans_huge==true.
+> 
+> I review way to much stuff to remember everything :) That certainly screams
+> for a cleanup ...
 
- lib/maple_tree.c                 | 13 +++++++
- tools/testing/radix-tree/maple.c | 63 ++++++++++++++++++++++++++++++++
- tools/testing/shared/linux.c     | 26 ++++++++++++-
- 3 files changed, 101 insertions(+), 1 deletion(-)
+Definitely.
 
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index b547ff211ac7..14d7864b8d53 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -7005,6 +7005,19 @@ void mt_set_non_kernel(unsigned int val)
- 	kmem_cache_set_non_kernel(maple_node_cache, val);
- }
- 
-+extern void kmem_cache_set_callback(struct kmem_cache *cachep,
-+		void (*callback)(void *));
-+void mt_set_callback(void (*callback)(void *))
-+{
-+	kmem_cache_set_callback(maple_node_cache, callback);
-+}
-+
-+extern void kmem_cache_set_private(struct kmem_cache *cachep, void *private);
-+void mt_set_private(void *private)
-+{
-+	kmem_cache_set_private(maple_node_cache, private);
-+}
-+
- extern unsigned long kmem_cache_get_alloc(struct kmem_cache *);
- unsigned long mt_get_alloc_size(void)
- {
-diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
-index cd1cf05503b4..ef5b83cf94ea 100644
---- a/tools/testing/radix-tree/maple.c
-+++ b/tools/testing/radix-tree/maple.c
-@@ -36224,6 +36224,65 @@ static noinline void __init check_mtree_dup(struct maple_tree *mt)
- 
- extern void test_kmem_cache_bulk(void);
- 
-+/* callback function used for check_nomem_writer_race() */
-+static void writer2(void *maple_tree)
-+{
-+	struct maple_tree *mt = (struct maple_tree *)maple_tree;
-+	MA_STATE(mas, mt, 6, 10);
-+
-+	mtree_lock(mas.tree);
-+	mas_store(&mas, xa_mk_value(0xC));
-+	mas_destroy(&mas);
-+	mtree_unlock(mas.tree);
-+}
-+
-+/*
-+ * check_nomem_writer_race() - test a possible race in the mas_nomem() path
-+ * @mt: The tree to build.
-+ *
-+ * There is a possible race condition in low memory conditions when mas_nomem()
-+ * gives up its lock. A second writer can chagne the entry that the primary
-+ * writer executing the mas_nomem() path is modifying. This test recreates this
-+ * scenario to ensure we are handling it correctly.
-+ */
-+static void check_nomem_writer_race(struct maple_tree *mt)
-+{
-+	MA_STATE(mas, mt, 0, 5);
-+
-+	mt_set_non_kernel(0);
-+	/* setup root with 2 values with NULL in between */
-+	mtree_store_range(mt, 0, 5, xa_mk_value(0xA), GFP_KERNEL);
-+	mtree_store_range(mt, 6, 10, NULL, GFP_KERNEL);
-+	mtree_store_range(mt, 11, 15, xa_mk_value(0xB), GFP_KERNEL);
-+
-+	/* setup writer 2 that will trigger the race condition */
-+	mt_set_private(mt);
-+	mt_set_callback(writer2);
-+
-+	mtree_lock(mt);
-+	/* erase 0-5 */
-+	mas_erase(&mas);
-+
-+	/* index 6-10 should retain the value from writer 2 */
-+	check_load(mt, 6, xa_mk_value(0xC));
-+	mtree_unlock(mt);
-+
-+	/* test for the same race but with mas_store_gfp() */
-+	mtree_store_range(mt, 0, 5, xa_mk_value(0xA), GFP_KERNEL);
-+	mtree_store_range(mt, 6, 10, NULL, GFP_KERNEL);
-+
-+	mas_set_range(&mas, 0, 5);
-+	mtree_lock(mt);
-+	mas_store_gfp(&mas, NULL, GFP_KERNEL);
-+
-+	/* ensure write made by writer 2 is retained */
-+	check_load(mt, 6, xa_mk_value(0xC));
-+
-+	mt_set_private(NULL);
-+	mt_set_callback(NULL);
-+	mtree_unlock(mt);
-+}
-+
- void farmer_tests(void)
- {
- 	struct maple_node *node;
-@@ -36257,6 +36316,10 @@ void farmer_tests(void)
- 	check_dfs_preorder(&tree);
- 	mtree_destroy(&tree);
- 
-+	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE | MT_FLAGS_USE_RCU);
-+	check_nomem_writer_race(&tree);
-+	mtree_destroy(&tree);
-+
- 	mt_init_flags(&tree, MT_FLAGS_ALLOC_RANGE);
- 	check_prealloc(&tree);
- 	mtree_destroy(&tree);
-diff --git a/tools/testing/shared/linux.c b/tools/testing/shared/linux.c
-index 4eb442206d01..17263696b5d8 100644
---- a/tools/testing/shared/linux.c
-+++ b/tools/testing/shared/linux.c
-@@ -26,8 +26,21 @@ struct kmem_cache {
- 	unsigned int non_kernel;
- 	unsigned long nr_allocated;
- 	unsigned long nr_tallocated;
-+	bool exec_callback;
-+	void (*callback)(void *);
-+	void *private;
- };
- 
-+void kmem_cache_set_callback(struct kmem_cache *cachep, void (*callback)(void *))
-+{
-+	cachep->callback = callback;
-+}
-+
-+void kmem_cache_set_private(struct kmem_cache *cachep, void *private)
-+{
-+	cachep->private = private;
-+}
-+
- void kmem_cache_set_non_kernel(struct kmem_cache *cachep, unsigned int val)
- {
- 	cachep->non_kernel = val;
-@@ -58,9 +71,17 @@ void *kmem_cache_alloc_lru(struct kmem_cache *cachep, struct list_lru *lru,
- {
- 	void *p;
- 
-+	if (cachep->exec_callback) {
-+		if (cachep->callback)
-+			cachep->callback(cachep->private);
-+		cachep->exec_callback = false;
-+	}
-+
- 	if (!(gfp & __GFP_DIRECT_RECLAIM)) {
--		if (!cachep->non_kernel)
-+		if (!cachep->non_kernel) {
-+			cachep->exec_callback = true;
- 			return NULL;
-+		}
- 
- 		cachep->non_kernel--;
- 	}
-@@ -223,6 +244,9 @@ kmem_cache_create(const char *name, unsigned int size, unsigned int align,
- 	ret->objs = NULL;
- 	ret->ctor = ctor;
- 	ret->non_kernel = 0;
-+	ret->exec_callback = false;
-+	ret->callback = NULL;
-+	ret->private = NULL;
- 	return ret;
- }
- 
+> 
+> > 
+> > > 
+> > > Likely we should be calling copy_huge_pmd() if pmd_leaf() ... cleanup for
+> > > another day.
+> > 
+> > Yes, ultimately it should really be a pmd_leaf(), but since I didn't get
+> > much feedback there, and that can further postpone this series from being
+> > posted I'm afraid, then I decided to just move on with "taking pfnmap as
+> > THPs".  The corresponding change on this path is here in that series:
+> > 
+> > https://lore.kernel.org/all/20240717220219.3743374-7-peterx@redhat.com/
+> > 
+> > @@ -1235,8 +1235,7 @@ copy_pmd_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma,
+> >   	src_pmd = pmd_offset(src_pud, addr);
+> >   	do {
+> >   		next = pmd_addr_end(addr, end);
+> > -		if (is_swap_pmd(*src_pmd) || pmd_trans_huge(*src_pmd)
+> > -			|| pmd_devmap(*src_pmd)) {
+> > +		if (is_swap_pmd(*src_pmd) || pmd_is_leaf(*src_pmd)) {
+> >   			int err;
+> >   			VM_BUG_ON_VMA(next-addr != HPAGE_PMD_SIZE, src_vma);
+> >   			err = copy_huge_pmd(dst_mm, src_mm, dst_pmd, src_pmd,
+> > 
+> 
+> Ah, good.
+> 
+> [...]
+> 
+> > > Yes, as stated above, likely broken with UFFD-WP ...
+> > > 
+> > > I really think we should make this code just behave like it would with PTEs,
+> > > instead of throwing in more "different" handling.
+> > 
+> > So it could simply because file / anon uffd-wp work very differently.
+> 
+> Or because nobody wants to clean up that code ;)
+
+I think in this case maybe the fork() part is all fine? As long as we can
+switch pagemap ioctl to do proper break-downs when necessary, or even try
+to reuse what UFFDIO_WRITEPROTECT does if still possible in some way.
+
+In all cases, definitely sounds like another separate effort.
+
+Thanks,
+
 -- 
-2.46.0
+Peter Xu
 
 
