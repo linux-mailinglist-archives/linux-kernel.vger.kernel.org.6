@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-283295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B7F94EFB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:35:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA194EFB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:36:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A6FE1C218BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD9F1C20BF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 518D9184554;
-	Mon, 12 Aug 2024 14:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDD2186295;
+	Mon, 12 Aug 2024 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="cOxIWoJg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Z8eC3qOq"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="V0nNrHon";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="EeCCcjRG"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627691836E2;
-	Mon, 12 Aug 2024 14:35:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DFD1850B6;
+	Mon, 12 Aug 2024 14:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473302; cv=none; b=u3F5xxhixoD7DX8P0aC6jpr8SnNGBxVIbhF2WqtJYLMxcenZuxpnlYO25nP505AJTaLaXAhC+bIXInu2U2vUOseELFMeybSH9t0sb1cHFiMsz5u07wtPPK6oUM5q/tb7jXsa7z5Ez+UzlRlb5rreQaCx55Uyqbmb9mBqNm0dHKI=
+	t=1723473307; cv=none; b=QzYY7yLPYcdLYttAcIxGuFHSfSGI9gAfgOd232RcqDfSAxK7/HCFLWLrR+GYOoj1CR9UM5F9R/uZYGvzdIILOFndCnIFxbjzmVL9zL73ev3JkOIO8zSwNI35WDVAQEQkldNVjJgyrchhMEEwzirJGFQNRxcIehsZ0aNtllFl+fE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473302; c=relaxed/simple;
-	bh=bj/VV9G2eqEk65QqwUpKk84CIzh52ClavkvhqTaR3go=;
+	s=arc-20240116; t=1723473307; c=relaxed/simple;
+	bh=xjqAuhJpA0xZWEigQoCmxwh+5iQGcDcAu0cT4Y6ew0o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RtbBcAigNRfDuL1Rwd6t5+HDeo4t4JyrdES4bNnkl1EwxJEzZ8NMhpSZkoaW5OYfuYinIMRCiEeSWxWQzk6R9tI5jwia5lzG+Pv7uDKXQkCAcSafoXtrw1KBdaOvIw2lhIBgx2DO1tVtYXNfm1/zanaJK91pZPGU+Ich1fxIB0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=cOxIWoJg; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Z8eC3qOq reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version; b=ohuAZr/0+Uq3VaIlPOLyV4rmXvG4Bbo6H1rF0qIK3x0f+IJ9K4N3rBlyX7fuLfdVcxbWekFG4UUyktFlUwJqTQZu9FtTWOV48YVMMSyaAmVonleEWGHu1DUOxc4XmHUsWBZxk+QbFgFtVRE4lOIlzJ4xaVFZCEvIaefPpYtwnz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=V0nNrHon; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=EeCCcjRG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723473300; x=1755009300;
+  t=1723473305; x=1755009305;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=AFhGcL+XVaPj2vc+EIgiNYlY3sR/olQUv7UwVtTOVJ8=;
-  b=cOxIWoJgUlIo74xhEwD+FEzPIi/yQBb2hck7NaVfellhxj/J5kTVsczM
-   VX0qwNASxSEfrRUXuL06ebMLZMbmU/oejVexlxq16C+Fg6mZ+Nwlfmbrh
-   QxnAfcx2fFEbsdzvEZmE6ug83V9Sm2RqthuR1cPN52z3E/ncUAybGuveI
-   jvfq2YEhJ1VXQ9mq5APUXuZtQFlIPOhwYR1+eXxPj3JLDsAikjhsnssJ5
-   AOMoPwEtNZIr+CAtZ4QaYMQBqNynX8kK/q4FYJGn27fghzZnot6Ak5tF8
-   BDGD4s4BM6fcRdVJqwVb8nckzBS4xRCKbw6nVSHjtUcDN/NrQ4J2zw/LK
-   A==;
-X-CSE-ConnectionGUID: p7+HlikYTkuL9p2F0C3j2A==
-X-CSE-MsgGUID: q9lQ1UuqSIWz2WEyDbElWw==
+  bh=E8Kth3fA3aTsIi3zi/z1NJuU2FBB7BRl6ZUueJYtQlU=;
+  b=V0nNrHonQwEtwAxZgOc1Cq5m+e0XdkqNoBL3COkZK+jUe+iVEt/yY2Hp
+   rsQXgyI2SN3ksHCadbsS3nJLzhKQI22tw6q8cT2z3EWLgQtasf0bbjDPU
+   7GZC5kLte8E018hnq3TYc/m/kVgZk/z1shJjrQfob/rxVeKM3eoM0hQQL
+   epQGB8N7jxrxM/XZfaXnKtI1+qyZkBFj4ab6veYpZwHDnj7kWQ+t2FihJ
+   NlwiFNfbVmFJ+3XS/celKF6f+WmjoF2cwUetgeG2lgVteml1Dwf8EcYsL
+   nguhORxMRvcZ8yPWKL0IW4W6X1mmZgFgVnjp58reYa4FKoSV103LfieYY
+   Q==;
+X-CSE-ConnectionGUID: midpRNUzQkKSXEAy+2ubdw==
+X-CSE-MsgGUID: PuwqICoMR3WRKO0yQCPSyA==
 X-IronPort-AV: E=Sophos;i="6.09,283,1716242400"; 
-   d="scan'208";a="38365810"
+   d="scan'208";a="38365816"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 12 Aug 2024 16:34:59 +0200
-X-CheckPoint: {66BA1D93-6-78509F09-E532FC2E}
-X-MAIL-CPID: 4FADB42A9F296772E502E13CDFB1E63E_1
-X-Control-Analysis: str=0001.0A782F25.66BA1D94.0032,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6D188164773;
-	Mon, 12 Aug 2024 16:34:55 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 12 Aug 2024 16:35:04 +0200
+X-CheckPoint: {66BA1D98-D-751552D8-F91D2344}
+X-MAIL-CPID: 095354DFB4E9CC4285F0E89EE3615953_4
+X-Control-Analysis: str=0001.0A782F25.66BA1D98.011C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2247164776;
+	Mon, 12 Aug 2024 16:34:59 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723473295; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1723473300; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=AFhGcL+XVaPj2vc+EIgiNYlY3sR/olQUv7UwVtTOVJ8=;
-	b=Z8eC3qOqMVxtS4QOm4FbDXEERK9oplbbDf7QtUz+Vhgjo8nLOmwOrAr51rzOedEFV9IQXN
-	cElxdLraSuFc+ziBtnzlhO5EgD9xzONhhJ+4hGt/MNWdDC9LPibLv2XfbDaltvhBhWPohP
-	vpJWhQMw+JlI4rcnjL1k1xTGvF4iq7fa0l4pl/ubABfkGdhxN6CvkhF84LSoyvNPEVFQ4e
-	nIYAbCDqdaskN1u033Fq/U7BnOCarrtfLYI0hcoKUGPWgDiVf8F0uIoMlRpjOjHJQfAXYS
-	8oTQM0IryRMCeDKMLwQqAI14vG+NB1KFrZWvku7Kt9L+F+gRX/Y4uREnEGJd4Q==
+	bh=E8Kth3fA3aTsIi3zi/z1NJuU2FBB7BRl6ZUueJYtQlU=;
+	b=EeCCcjRG+2Zmi/c3b7/iJzYo8reaNBemR4qCEffyvC7onJhF7uoWb+ZBOQYcFq8FlZYkUa
+	zaAsmsM5t926leadNEaWwvDLESjPkmB7A9o4mfY3qd/60SIH70CmcbOIGOIwNBORh9Pr+w
+	d/HOSMJMzzLN1DyvCTq8T1UDpC/Ytp2rnylntB0XZnGR2fB6kyPcgwStIFVWSxN3FF30Wh
+	1l9dfqcepd+zk0H62GO/D0C1N+b0o58K88KLUgEtV6aP4amaPe0lNcHS6wUWw6+a3Tp9RT
+	PCl1g/3kzwFndTSQnp+9PwNIRYXQYbRVIrJmzlt7PZS6nPYAFyb18wSgezNrxQ==
 From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,10 +77,10 @@ Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux@ew.tq-group.com,
-	Markus Niebel <Markus.Niebel@ew.tq-group.com>
-Subject: [PATCH 4/5] arm: dts: imx6qdl-mba6b: remove doubled entry for I2C1 pinmux
-Date: Mon, 12 Aug 2024 16:34:30 +0200
-Message-Id: <20240812143431.98323-5-Markus.Niebel@ew.tq-group.com>
+	Alexander Stein <alexander.stein@ew.tq-group.com>
+Subject: [PATCH 5/5] ARM: dts: imx6qdl: Rename USB hub node name
+Date: Mon, 12 Aug 2024 16:34:31 +0200
+Message-Id: <20240812143431.98323-6-Markus.Niebel@ew.tq-group.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
 References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
@@ -93,31 +93,28 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Since the muxing is described already in imx6qdl-tqma6 can be reused
-by this variant. No functional change.
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
 
-Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
+According to microchip,usb2514.yaml the node name shall be usb-hub.
+
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi | 9 ---------
- 1 file changed, 9 deletions(-)
+ arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-index eacd230b97d5..c7bbd6195fef 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi
-@@ -50,12 +50,3 @@ rtc0: rtc@68 {
- 		reg = <0x68>;
- 	};
- };
--
--&iomuxc {
--	pinctrl_i2c1: i2c1grp {
--		fsl,pins = <
--			MX6QDL_PAD_CSI0_DAT8__I2C1_SDA 0x4001b899
--			MX6QDL_PAD_CSI0_DAT9__I2C1_SCL 0x4001b899
--		>;
--	};
--};
+diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+index 60aa1e947f62..d03f7065ddfd 100644
+--- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
++++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
+@@ -293,7 +293,7 @@ &usbh1 {
+ 	#address-cells = <1>;
+ 	#size-cells = <0>;
+ 
+-	hub@1 {
++	usb-hub@1 {
+ 		compatible = "usb424,2517";
+ 		reg = <1>;
+ 		#address-cells = <1>;
 -- 
 2.34.1
 
