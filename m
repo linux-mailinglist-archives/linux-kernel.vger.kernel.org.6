@@ -1,78 +1,68 @@
-Return-Path: <linux-kernel+bounces-282720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D48294E7DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:32:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFFD694E7CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 09:30:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80C381C21B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF6D1F23CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 07:30:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE08E15C143;
-	Mon, 12 Aug 2024 07:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jAJc3bAf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E609E1586CD;
+	Mon, 12 Aug 2024 07:30:04 +0000 (UTC)
+Received: from mail.valinux.co.jp (mail.valinux.co.jp [210.128.90.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A9A314F138;
-	Mon, 12 Aug 2024 07:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D2115854C
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 07:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.128.90.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723447923; cv=none; b=Od4+rv8zBT4uU4ihK0kZYh0teW+UbpkaA/wzH8TxlzWREAex3UCucUZXze5Yb3BEKr4LNo030l5EKPk4q9tYCxHYWZ9S4sFrV/L0HFpVb2ksmgRGOshpNKVwlwrOUBbL5rlQVjPnVMQIogv6Fh++AhbaHN+Rnq9zBqR8oA2g5KQ=
+	t=1723447804; cv=none; b=JeK7s8tw9ykFHB8Y2pLkXO2zYF1/m5QIrgLXER9l0qQZtt5cFo97q4Z61a1Q0FKD0yYzRujK9hsms11ocPY6GpJDmHlNKNJDD1pctnTyTZ7YDmK5b80eLVfVBv5/R2q7vSfV3F3KeKoJM/9EjqvtY8ED872zcMyucsz3lcG5XUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723447923; c=relaxed/simple;
-	bh=YICp9joOECakgIGokpdFofJxcmG9NCv1dYggMCI17Uc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fvvPds1hpy23gwt53YTOtUSD5d0Di78b/PdwgXphtO6V8FUeKxUJdSOz458+0KgwUhQ8MLsb9W7tsgyxeuqo/skNgQ/h3z2bTU62Ia2Ey5Tv1dBThx5YUPUHi7orstFmZD8kfIauERbVh1uxXIzcLUCSZ+CR1Mjik8Trg1xLtS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jAJc3bAf; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723447921; x=1754983921;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=YICp9joOECakgIGokpdFofJxcmG9NCv1dYggMCI17Uc=;
-  b=jAJc3bAfqSsvy+PCUQ2mlOtwN7aMEbIkrUfQBT0VBnSvcJI6hAOH4Dkg
-   hFs6s3dTyt7jR45Z8zNKqTWpi9KTA05XS2Lg3giHBFSo8Tzmz6HmvRTRV
-   j6p6E8TiOFmWo7TPkdLh3QQ56uWHLbFj++mMGLzQ2jfuRawbTSHeaBEHM
-   WXMDnSmi4AtAgN/RpWOWLxF3f5a9teT9HQRqDFqeAn+kYOs+Y1vLMYC+T
-   IwrIyx1tpQG0SoTgueUTqG8JrdxEnpv1c5Ev6lEAXOGINcYsbBZsj8/07
-   F3VPxlwspcKVMFm8dWiIJbjdPASSDfZHleE8IQKdgu4ASXg9rgyCsF1MZ
-   A==;
-X-CSE-ConnectionGUID: an98I38zSy2eu9NRr3+stQ==
-X-CSE-MsgGUID: 666yAXVbRaSFkdcFsyxWXg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="46942859"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="46942859"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 00:32:00 -0700
-X-CSE-ConnectionGUID: rpnO7eRTSpOQFjsZp8jpOg==
-X-CSE-MsgGUID: +Ty6jrrYQwuE5rsEJehuaA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="62832178"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by fmviesa004.fm.intel.com with ESMTP; 12 Aug 2024 00:31:42 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>
-Cc: linux-remoteproc@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH 1/1] remoteproc: Use iommu_paging_domain_alloc()
-Date: Mon, 12 Aug 2024 15:28:11 +0800
-Message-Id: <20240812072811.9737-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1723447804; c=relaxed/simple;
+	bh=E7S2VAvUA4wixOtL/CY8u6xDZ4zL9QmT30ykqGOY8MQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Kkw7xkbLdJRsVWjykIcnbUDaxGQjcUqaLMWR9vm6cIQWFhlQM+xTtK3MMQNyKfTZUC2vpb1AR/NKWTM/NH3lmJwRxrrxlL7Q6athMBV3J0xcTzllokotzof/5GK6Y+yWE4vYTj22ETuL4gED4Eq1fzMY2kzfMJNVaFFaj1LpOmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp; spf=pass smtp.mailfrom=valinux.co.jp; arc=none smtp.client-ip=210.128.90.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=valinux.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=valinux.co.jp
+Received: from localhost (localhost [127.0.0.1])
+	by mail.valinux.co.jp (Postfix) with ESMTP id 16337A9E3D;
+	Mon, 12 Aug 2024 16:30:01 +0900 (JST)
+X-Virus-Scanned: Debian amavisd-new at valinux.co.jp
+Received: from mail.valinux.co.jp ([127.0.0.1])
+	by localhost (mail.valinux.co.jp [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id Vm01jyLsZTxJ; Mon, 12 Aug 2024 16:30:00 +0900 (JST)
+Received: from localhost.localdomain (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp [153.220.101.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail.valinux.co.jp (Postfix) with ESMTPSA id C1E95A9E38;
+	Mon, 12 Aug 2024 16:30:00 +0900 (JST)
+From: takakura@valinux.co.jp
+To: pmladek@suse.com,
+	rostedt@goodmis.org,
+	john.ogness@linutronix.de,
+	senozhatsky@chromium.org,
+	akpm@linux-foundation.org,
+	bhe@redhat.com,
+	lukas@wunner.de,
+	wangkefeng.wang@huawei.com,
+	ubizjak@gmail.com,
+	feng.tang@intel.com,
+	j.granados@samsung.com,
+	stephen.s.brennan@oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	nishimura@valinux.co.jp,
+	taka@valinux.co.jp,
+	Ryo Takakura <takakura@valinux.co.jp>
+Subject: [PATCH v3 2/2] Handle flushing of CPU backtraces during panic
+Date: Mon, 12 Aug 2024 16:29:31 +0900
+Message-Id: <20240812072931.339735-1-takakura@valinux.co.jp>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240812072137.339644-1-takakura@valinux.co.jp>
+References: <20240812072137.339644-1-takakura@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,36 +71,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-An iommu domain is allocated in rproc_enable_iommu() and is attached to
-rproc->dev.parent in the same function.
+From: Ryo Takakura <takakura@valinux.co.jp>
 
-Use iommu_paging_domain_alloc() to make it explicit.
+After panic, non-panicked CPU's has been unable to flush ringbuffer
+while they can still write into it. This can affect CPU backtrace
+triggered in panic only able to write into ringbuffer incapable of
+flushing them.
 
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
-Link: https://lore.kernel.org/r/20240610085555.88197-13-baolu.lu@linux.intel.com
+Fix the issue by letting the panicked CPU handle the flushing of
+ringbuffer right after non-panicked CPUs finished writing their
+backtraces.
+
+Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
 ---
- drivers/remoteproc/remoteproc_core.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ include/linux/console.h |  1 +
+ kernel/panic.c          |  1 +
+ kernel/printk/printk.c  | 14 ++++++++++++++
+ 3 files changed, 16 insertions(+)
 
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index f276956f2c5c..eb66f78ec8b7 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -109,10 +109,10 @@ static int rproc_enable_iommu(struct rproc *rproc)
- 		return 0;
+diff --git a/include/linux/console.h b/include/linux/console.h
+index 31a8f5b85..c7eb6f785 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -504,6 +504,7 @@ extern void console_unlock(void);
+ extern void console_conditional_schedule(void);
+ extern void console_unblank(void);
+ extern void console_flush_on_panic(enum con_flush_mode mode);
++extern void console_try_flush(void);
+ extern struct tty_driver *console_device(int *);
+ extern void console_stop(struct console *);
+ extern void console_start(struct console *);
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 2a0449144..6519cc6bd 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -260,6 +260,7 @@ static void panic_other_cpus_shutdown(bool crash_kexec)
+ 		panic_triggering_all_cpu_backtrace = true;
+ 		trigger_all_cpu_backtrace();
+ 		panic_triggering_all_cpu_backtrace = false;
++		console_try_flush();
  	}
  
--	domain = iommu_domain_alloc(dev->bus);
--	if (!domain) {
-+	domain = iommu_paging_domain_alloc(dev);
-+	if (IS_ERR(domain)) {
- 		dev_err(dev, "can't alloc iommu domain\n");
--		return -ENOMEM;
-+		return PTR_ERR(domain);
- 	}
+ 	/*
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index c22b07049..517b8b02e 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -3284,6 +3284,20 @@ void console_flush_on_panic(enum con_flush_mode mode)
+ 	console_flush_all(false, &next_seq, &handover);
+ }
  
- 	iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
++/**
++ * console_try_flush - try to flush consoles when safe
++ *
++ * Context: Any, except for NMI.
++ */
++void console_try_flush(void)
++{
++	if (is_printk_legacy_deferred())
++		return;
++
++	if (console_trylock())
++		console_unlock();
++}
++
+ /*
+  * Return the console tty driver structure and its associated index
+  */
 -- 
 2.34.1
 
