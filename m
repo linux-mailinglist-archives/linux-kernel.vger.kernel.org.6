@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-283601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80F294F6AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:28:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2358C94F6B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29ACC1F21ACB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A62701F213AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2844619306C;
-	Mon, 12 Aug 2024 18:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412481993B5;
+	Mon, 12 Aug 2024 18:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mVtAY1mW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sJY0rk4M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D86192B70;
-	Mon, 12 Aug 2024 18:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514C2192B70;
+	Mon, 12 Aug 2024 18:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487135; cv=none; b=SW94F2iYzN+H5+R7Y7hIlE0PeunHgfhjYa/i6JXLejiVZ4bIszsIuQMGsmjQueOedzhbGC2FZvuZveXl9ZtoE16sYSlY0GScf1ctrzjvlc8s3B4LBDXxf4F6LA+4M9/yxt5fMba0FartBlD2chFaX60WBekBhiMtW7aryt9OYQ4=
+	t=1723487140; cv=none; b=rMVKYfbb6Ee61OEPIDMRu4sJVK+JkULkJpfRQWExa+fnYFTCpWmzF0k87Fm+PudJ3AK9eBtgVSHjZOb31jgAngNrI3SLmVCTB8XYFWR3nLKCQpvbBWpFw7BvKTS8xmxkm4O3ZHofhWag7hvEJuJ75Uzbe4kh56/emuXiuv3BExk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487135; c=relaxed/simple;
-	bh=OOOwgVRJfePu8PY+REcfTzHgRHI6ksicI60irRAmGTI=;
+	s=arc-20240116; t=1723487140; c=relaxed/simple;
+	bh=m7HbTZHBJlRggfNUaOoLamnAddQQ70J0syR4UcM8PHQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bOwsKC85tN7CgrmIsfes/NicFFUENa2bOEfoQ13qDQbjS+7N4BxzcFMO8tiFieN6PpqnGtYqYsRvSVFxhVJX3fVAu6bB5yVTltr8UB0MYUtxlvUPqazk4p84tHvjipdesSsKLqbPanwjyPjKzpVQaMiAy0NOrQOjoW0+csjSmPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mVtAY1mW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0069C4AF14;
-	Mon, 12 Aug 2024 18:25:29 +0000 (UTC)
+	 MIME-Version; b=F8sbqg7NYuQBxHkp0bBpNMKPY7sypiAXsX5Hj6OqnqT8ClFkhXidQa3GdSyg+IufMup8sug//ZnnuYrDZBFnFkR4LK7rZj3CorkkUx4Va4g3OkkqaQavaB2sAnLGAj0DC262iQ/BzT+y2/DVsgovWxXQDyFTZc7902rBjoNsy/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sJY0rk4M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E33AC4AF0C;
+	Mon, 12 Aug 2024 18:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723487134;
-	bh=OOOwgVRJfePu8PY+REcfTzHgRHI6ksicI60irRAmGTI=;
+	s=k20201202; t=1723487140;
+	bh=m7HbTZHBJlRggfNUaOoLamnAddQQ70J0syR4UcM8PHQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mVtAY1mWFugPVxOUM9PJ/yXnWtCliEGpVKwDTimyad7a1Rv8QsFzGDFxAhFDDBNh+
-	 xr8VuK2bfnQktrv8PCU+FJNu7ZRdtKAIslM3iSCV8pAOwjAobwUuMiCnnJnv88ojm4
-	 Cy2e3GPtNHaxKuMlMGR4ZDcgabHxC9cmlTXDWP1JBh1yewOZnsWpXLwkdbbZpYgngO
-	 Q2EIYuG6L4h/7t9ZsbcM9ILpreAZg9NxIjaeRRVQ7zAOLCOrxAeY3hk03CEhfc0FMp
-	 oha6Y0mhw4uK5fN2gwB23kpfyb3HiRMQBTjRwnq2VshAyLXpsI774JNrbQyQGw+9Jx
-	 g+z6UgAzMzfOA==
+	b=sJY0rk4M9CRwGFBQj6kA3sbwR/ZmLcxfe+tIJ4uV0rcOTwIIqbB7WbzkqHXgsu2Mm
+	 UROXeQoa0dDch3iwyW68ngAgaeNXpooPE7Nqm5RZceLi2EYWlv5HItx7etZ5EiPv5D
+	 vLE24RkZvPAPEH1zjsIz30yONsus8VI0Cb5th5wU/I2O2/ZLZhPi8wsvUPK3HOJpfX
+	 y8xMsFR4Apdry2bcw0so3b5sQahNPk4ItAQkzUV2a4auoi9oK4t98KDEBfjijJN75t
+	 Qha7iHPu9kFSUD9pxxFxIHNkgNlC/hEx9cMJTQm6vTyEp3PBOIzKvT73rUI6Us6maq
+	 Ly2irV4fbwLcw==
 From: Danilo Krummrich <dakr@kernel.org>
 To: ojeda@kernel.org,
 	alex.gaynor@gmail.com,
@@ -66,9 +66,9 @@ Cc: daniel.almeida@collabora.com,
 	rust-for-linux@vger.kernel.org,
 	linux-mm@kvack.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v5 16/26] rust: treewide: switch to the kernel `Vec` type
-Date: Mon, 12 Aug 2024 20:23:02 +0200
-Message-ID: <20240812182355.11641-17-dakr@kernel.org>
+Subject: [PATCH v5 17/26] rust: alloc: remove `VecExt` extension
+Date: Mon, 12 Aug 2024 20:23:03 +0200
+Message-ID: <20240812182355.11641-18-dakr@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240812182355.11641-1-dakr@kernel.org>
 References: <20240812182355.11641-1-dakr@kernel.org>
@@ -80,227 +80,238 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Now that we got the kernel `Vec` in place, convert all existing `Vec`
-users to make use of it.
+Now that all existing `Vec` users were moved to the kernel `Vec` type,
+remove the `VecExt` extension.
 
 Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/kernel/str.rs            | 12 +++++-------
- rust/kernel/sync/locked_by.rs |  2 +-
- rust/kernel/types.rs          |  2 +-
- rust/kernel/uaccess.rs        | 17 +++++++----------
- rust/macros/lib.rs            |  6 +++---
- samples/rust/rust_minimal.rs  |  4 ++--
- 6 files changed, 19 insertions(+), 24 deletions(-)
+ rust/kernel/alloc.rs         |   1 -
+ rust/kernel/alloc/vec_ext.rs | 185 -----------------------------------
+ rust/kernel/prelude.rs       |   5 +-
+ 3 files changed, 1 insertion(+), 190 deletions(-)
+ delete mode 100644 rust/kernel/alloc/vec_ext.rs
 
-diff --git a/rust/kernel/str.rs b/rust/kernel/str.rs
-index bb8d4f41475b..209ad1bb1a49 100644
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@ -2,8 +2,7 @@
+diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
+index 4035644b5dca..820ef6072e02 100644
+--- a/rust/kernel/alloc.rs
++++ b/rust/kernel/alloc.rs
+@@ -6,7 +6,6 @@
+ pub mod allocator;
+ pub mod kbox;
+ pub mod kvec;
+-pub mod vec_ext;
  
- //! String representations.
- 
--use crate::alloc::{flags::*, vec_ext::VecExt, AllocError};
+ #[cfg(any(test, testlib))]
+ pub mod allocator_test;
+diff --git a/rust/kernel/alloc/vec_ext.rs b/rust/kernel/alloc/vec_ext.rs
+deleted file mode 100644
+index 1297a4be32e8..000000000000
+--- a/rust/kernel/alloc/vec_ext.rs
++++ /dev/null
+@@ -1,185 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-
+-//! Extensions to [`Vec`] for fallible allocations.
+-
+-use super::{AllocError, Flags};
 -use alloc::vec::Vec;
-+use crate::alloc::{flags::*, AllocError, KVec};
- use core::fmt::{self, Write};
- use core::ops::{self, Deref, DerefMut, Index};
+-
+-/// Extensions to [`Vec`].
+-pub trait VecExt<T>: Sized {
+-    /// Creates a new [`Vec`] instance with at least the given capacity.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let v = Vec::<u32>::with_capacity(20, GFP_KERNEL)?;
+-    ///
+-    /// assert!(v.capacity() >= 20);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError>;
+-
+-    /// Appends an element to the back of the [`Vec`] instance.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1]);
+-    ///
+-    /// v.push(2, GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 2]);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError>;
+-
+-    /// Pushes clones of the elements of slice into the [`Vec`] instance.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    ///
+-    /// v.extend_from_slice(&[20, 30, 40], GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 20, 30, 40]);
+-    ///
+-    /// v.extend_from_slice(&[50, 60], GFP_KERNEL)?;
+-    /// assert_eq!(&v, &[1, 20, 30, 40, 50, 60]);
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), AllocError>
+-    where
+-        T: Clone;
+-
+-    /// Ensures that the capacity exceeds the length by at least `additional` elements.
+-    ///
+-    /// # Examples
+-    ///
+-    /// ```
+-    /// let mut v = Vec::new();
+-    /// v.push(1, GFP_KERNEL)?;
+-    ///
+-    /// v.reserve(10, GFP_KERNEL)?;
+-    /// let cap = v.capacity();
+-    /// assert!(cap >= 10);
+-    ///
+-    /// v.reserve(10, GFP_KERNEL)?;
+-    /// let new_cap = v.capacity();
+-    /// assert_eq!(new_cap, cap);
+-    ///
+-    /// # Ok::<(), Error>(())
+-    /// ```
+-    fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError>;
+-}
+-
+-impl<T> VecExt<T> for Vec<T> {
+-    fn with_capacity(capacity: usize, flags: Flags) -> Result<Self, AllocError> {
+-        let mut v = Vec::new();
+-        <Self as VecExt<_>>::reserve(&mut v, capacity, flags)?;
+-        Ok(v)
+-    }
+-
+-    fn push(&mut self, v: T, flags: Flags) -> Result<(), AllocError> {
+-        <Self as VecExt<_>>::reserve(self, 1, flags)?;
+-        let s = self.spare_capacity_mut();
+-        s[0].write(v);
+-
+-        // SAFETY: We just initialised the first spare entry, so it is safe to increase the length
+-        // by 1. We also know that the new length is <= capacity because of the previous call to
+-        // `reserve` above.
+-        unsafe { self.set_len(self.len() + 1) };
+-        Ok(())
+-    }
+-
+-    fn extend_from_slice(&mut self, other: &[T], flags: Flags) -> Result<(), AllocError>
+-    where
+-        T: Clone,
+-    {
+-        <Self as VecExt<_>>::reserve(self, other.len(), flags)?;
+-        for (slot, item) in core::iter::zip(self.spare_capacity_mut(), other) {
+-            slot.write(item.clone());
+-        }
+-
+-        // SAFETY: We just initialised the `other.len()` spare entries, so it is safe to increase
+-        // the length by the same amount. We also know that the new length is <= capacity because
+-        // of the previous call to `reserve` above.
+-        unsafe { self.set_len(self.len() + other.len()) };
+-        Ok(())
+-    }
+-
+-    #[cfg(any(test, testlib))]
+-    fn reserve(&mut self, additional: usize, _flags: Flags) -> Result<(), AllocError> {
+-        Vec::reserve(self, additional);
+-        Ok(())
+-    }
+-
+-    #[cfg(not(any(test, testlib)))]
+-    fn reserve(&mut self, additional: usize, flags: Flags) -> Result<(), AllocError> {
+-        let len = self.len();
+-        let cap = self.capacity();
+-
+-        if cap - len >= additional {
+-            return Ok(());
+-        }
+-
+-        if core::mem::size_of::<T>() == 0 {
+-            // The capacity is already `usize::MAX` for SZTs, we can't go higher.
+-            return Err(AllocError);
+-        }
+-
+-        // We know cap is <= `isize::MAX` because `Layout::array` fails if the resulting byte size
+-        // is greater than `isize::MAX`. So the multiplication by two won't overflow.
+-        let new_cap = core::cmp::max(cap * 2, len.checked_add(additional).ok_or(AllocError)?);
+-        let layout = core::alloc::Layout::array::<T>(new_cap).map_err(|_| AllocError)?;
+-
+-        let (old_ptr, len, cap) = destructure(self);
+-
+-        // We need to make sure that `ptr` is either NULL or comes from a previous call to
+-        // `krealloc_aligned`. A `Vec<T>`'s `ptr` value is not guaranteed to be NULL and might be
+-        // dangling after being created with `Vec::new`. Instead, we can rely on `Vec<T>`'s capacity
+-        // to be zero if no memory has been allocated yet.
+-        let ptr = if cap == 0 {
+-            core::ptr::null_mut()
+-        } else {
+-            old_ptr
+-        };
+-
+-        // SAFETY: `ptr` is valid because it's either NULL or comes from a previous call to
+-        // `krealloc_aligned`. We also verified that the type is not a ZST.
+-        let new_ptr = unsafe { super::allocator::krealloc_aligned(ptr.cast(), layout, flags) };
+-        if new_ptr.is_null() {
+-            // SAFETY: We are just rebuilding the existing `Vec` with no changes.
+-            unsafe { rebuild(self, old_ptr, len, cap) };
+-            Err(AllocError)
+-        } else {
+-            // SAFETY: `ptr` has been reallocated with the layout for `new_cap` elements. New cap
+-            // is greater than `cap`, so it continues to be >= `len`.
+-            unsafe { rebuild(self, new_ptr.cast::<T>(), len, new_cap) };
+-            Ok(())
+-        }
+-    }
+-}
+-
+-#[cfg(not(any(test, testlib)))]
+-fn destructure<T>(v: &mut Vec<T>) -> (*mut T, usize, usize) {
+-    let mut tmp = Vec::new();
+-    core::mem::swap(&mut tmp, v);
+-    let mut tmp = core::mem::ManuallyDrop::new(tmp);
+-    let len = tmp.len();
+-    let cap = tmp.capacity();
+-    (tmp.as_mut_ptr(), len, cap)
+-}
+-
+-/// Rebuilds a `Vec` from a pointer, length, and capacity.
+-///
+-/// # Safety
+-///
+-/// The same as [`Vec::from_raw_parts`].
+-#[cfg(not(any(test, testlib)))]
+-unsafe fn rebuild<T>(v: &mut Vec<T>, ptr: *mut T, len: usize, cap: usize) {
+-    // SAFETY: The safety requirements from this function satisfy those of `from_raw_parts`.
+-    let mut tmp = unsafe { Vec::from_raw_parts(ptr, len, cap) };
+-    core::mem::swap(&mut tmp, v);
+-}
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index bb80a43d20fb..fcc8656fdb51 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -14,10 +14,7 @@
+ #[doc(no_inline)]
+ pub use core::pin::Pin;
  
-@@ -790,7 +789,7 @@ fn write_str(&mut self, s: &str) -> fmt::Result {
- /// assert_eq!(s.is_ok(), false);
- /// ```
- pub struct CString {
--    buf: Vec<u8>,
-+    buf: KVec<u8>,
- }
+-pub use crate::alloc::{flags::*, vec_ext::VecExt, Box, KBox, KVBox, KVVec, KVec, VBox, VVec};
+-
+-#[doc(no_inline)]
+-pub use alloc::vec::Vec;
++pub use crate::alloc::{flags::*, Box, KBox, KVBox, KVVec, KVec, VBox, VVec};
  
- impl CString {
-@@ -803,7 +802,7 @@ pub fn try_from_fmt(args: fmt::Arguments<'_>) -> Result<Self, Error> {
-         let size = f.bytes_written();
- 
-         // Allocate a vector with the required number of bytes, and write to it.
--        let mut buf = <Vec<_> as VecExt<_>>::with_capacity(size, GFP_KERNEL)?;
-+        let mut buf = KVec::with_capacity(size, GFP_KERNEL)?;
-         // SAFETY: The buffer stored in `buf` is at least of size `size` and is valid for writes.
-         let mut f = unsafe { Formatter::from_buffer(buf.as_mut_ptr(), size) };
-         f.write_fmt(args)?;
-@@ -850,10 +849,9 @@ impl<'a> TryFrom<&'a CStr> for CString {
-     type Error = AllocError;
- 
-     fn try_from(cstr: &'a CStr) -> Result<CString, AllocError> {
--        let mut buf = Vec::new();
-+        let mut buf = KVec::new();
- 
--        <Vec<_> as VecExt<_>>::extend_from_slice(&mut buf, cstr.as_bytes_with_nul(), GFP_KERNEL)
--            .map_err(|_| AllocError)?;
-+        buf.extend_from_slice(cstr.as_bytes_with_nul(), GFP_KERNEL)?;
- 
-         // INVARIANT: The `CStr` and `CString` types have the same invariants for
-         // the string data, and we copied it over without changes.
-diff --git a/rust/kernel/sync/locked_by.rs b/rust/kernel/sync/locked_by.rs
-index babc731bd5f6..b94517231fcc 100644
---- a/rust/kernel/sync/locked_by.rs
-+++ b/rust/kernel/sync/locked_by.rs
-@@ -43,7 +43,7 @@
- /// struct InnerDirectory {
- ///     /// The sum of the bytes used by all files.
- ///     bytes_used: u64,
--///     _files: Vec<File>,
-+///     _files: KVec<File>,
- /// }
- ///
- /// struct Directory {
-diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
-index f48704db33c1..3c66f2fbd737 100644
---- a/rust/kernel/types.rs
-+++ b/rust/kernel/types.rs
-@@ -132,7 +132,7 @@ unsafe fn from_foreign(_: *const core::ffi::c_void) -> Self {}
- /// # use kernel::types::ScopeGuard;
- /// fn example3(arg: bool) -> Result {
- ///     let mut vec =
--///         ScopeGuard::new_with_data(Vec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
-+///         ScopeGuard::new_with_data(KVec::new(), |v| pr_info!("vec had {} elements\n", v.len()));
- ///
- ///     vec.push(10u8, GFP_KERNEL)?;
- ///     if arg {
-diff --git a/rust/kernel/uaccess.rs b/rust/kernel/uaccess.rs
-index e9347cff99ab..bc011061de45 100644
---- a/rust/kernel/uaccess.rs
-+++ b/rust/kernel/uaccess.rs
-@@ -11,7 +11,6 @@
-     prelude::*,
-     types::{AsBytes, FromBytes},
- };
--use alloc::vec::Vec;
- use core::ffi::{c_ulong, c_void};
- use core::mem::{size_of, MaybeUninit};
- 
-@@ -46,7 +45,6 @@
- /// every byte in the region.
- ///
- /// ```no_run
--/// use alloc::vec::Vec;
- /// use core::ffi::c_void;
- /// use kernel::error::Result;
- /// use kernel::uaccess::{UserPtr, UserSlice};
-@@ -54,7 +52,7 @@
- /// fn bytes_add_one(uptr: UserPtr, len: usize) -> Result<()> {
- ///     let (read, mut write) = UserSlice::new(uptr, len).reader_writer();
- ///
--///     let mut buf = Vec::new();
-+///     let mut buf = KVec::new();
- ///     read.read_all(&mut buf, GFP_KERNEL)?;
- ///
- ///     for b in &mut buf {
-@@ -69,7 +67,6 @@
- /// Example illustrating a TOCTOU (time-of-check to time-of-use) bug.
- ///
- /// ```no_run
--/// use alloc::vec::Vec;
- /// use core::ffi::c_void;
- /// use kernel::error::{code::EINVAL, Result};
- /// use kernel::uaccess::{UserPtr, UserSlice};
-@@ -78,21 +75,21 @@
- /// fn is_valid(uptr: UserPtr, len: usize) -> Result<bool> {
- ///     let read = UserSlice::new(uptr, len).reader();
- ///
--///     let mut buf = Vec::new();
-+///     let mut buf = KVec::new();
- ///     read.read_all(&mut buf, GFP_KERNEL)?;
- ///
- ///     todo!()
- /// }
- ///
- /// /// Returns the bytes behind this user pointer if they are valid.
--/// fn get_bytes_if_valid(uptr: UserPtr, len: usize) -> Result<Vec<u8>> {
-+/// fn get_bytes_if_valid(uptr: UserPtr, len: usize) -> Result<KVec<u8>> {
- ///     if !is_valid(uptr, len)? {
- ///         return Err(EINVAL);
- ///     }
- ///
- ///     let read = UserSlice::new(uptr, len).reader();
- ///
--///     let mut buf = Vec::new();
-+///     let mut buf = KVec::new();
- ///     read.read_all(&mut buf, GFP_KERNEL)?;
- ///
- ///     // THIS IS A BUG! The bytes could have changed since we checked them.
-@@ -130,7 +127,7 @@ pub fn new(ptr: UserPtr, length: usize) -> Self {
-     /// Reads the entirety of the user slice, appending it to the end of the provided buffer.
-     ///
-     /// Fails with [`EFAULT`] if the read happens on a bad address.
--    pub fn read_all(self, buf: &mut Vec<u8>, flags: Flags) -> Result {
-+    pub fn read_all(self, buf: &mut KVec<u8>, flags: Flags) -> Result {
-         self.reader().read_all(buf, flags)
-     }
- 
-@@ -291,9 +288,9 @@ pub fn read<T: FromBytes>(&mut self) -> Result<T> {
-     /// Reads the entirety of the user slice, appending it to the end of the provided buffer.
-     ///
-     /// Fails with [`EFAULT`] if the read happens on a bad address.
--    pub fn read_all(mut self, buf: &mut Vec<u8>, flags: Flags) -> Result {
-+    pub fn read_all(mut self, buf: &mut KVec<u8>, flags: Flags) -> Result {
-         let len = self.length;
--        VecExt::<u8>::reserve(buf, len, flags)?;
-+        buf.reserve(len, flags)?;
- 
-         // The call to `try_reserve` was successful, so the spare capacity is at least `len` bytes
-         // long.
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index c327fe0617c8..a733168d40f9 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -238,7 +238,7 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream {
- /// #[pin_data]
- /// struct DriverData {
- ///     #[pin]
--///     queue: Mutex<Vec<Command>>,
-+///     queue: Mutex<KVec<Command>>,
- ///     buf: KBox<[u8; 1024 * 1024]>,
- /// }
- /// ```
-@@ -247,7 +247,7 @@ pub fn concat_idents(ts: TokenStream) -> TokenStream {
- /// #[pin_data(PinnedDrop)]
- /// struct DriverData {
- ///     #[pin]
--///     queue: Mutex<Vec<Command>>,
-+///     queue: Mutex<KVec<Command>>,
- ///     buf: KBox<[u8; 1024 * 1024]>,
- ///     raw_info: *mut Info,
- /// }
-@@ -277,7 +277,7 @@ pub fn pin_data(inner: TokenStream, item: TokenStream) -> TokenStream {
- /// #[pin_data(PinnedDrop)]
- /// struct DriverData {
- ///     #[pin]
--///     queue: Mutex<Vec<Command>>,
-+///     queue: Mutex<KVec<Command>>,
- ///     buf: KBox<[u8; 1024 * 1024]>,
- ///     raw_info: *mut Info,
- /// }
-diff --git a/samples/rust/rust_minimal.rs b/samples/rust/rust_minimal.rs
-index 2a9eaab62d1c..4aaf117bf8e3 100644
---- a/samples/rust/rust_minimal.rs
-+++ b/samples/rust/rust_minimal.rs
-@@ -13,7 +13,7 @@
- }
- 
- struct RustMinimal {
--    numbers: Vec<i32>,
-+    numbers: KVec<i32>,
- }
- 
- impl kernel::Module for RustMinimal {
-@@ -21,7 +21,7 @@ fn init(_module: &'static ThisModule) -> Result<Self> {
-         pr_info!("Rust minimal sample (init)\n");
-         pr_info!("Am I built-in? {}\n", !cfg!(MODULE));
- 
--        let mut numbers = Vec::new();
-+        let mut numbers = KVec::new();
-         numbers.push(72, GFP_KERNEL)?;
-         numbers.push(108, GFP_KERNEL)?;
-         numbers.push(200, GFP_KERNEL)?;
+ #[doc(no_inline)]
+ pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
 -- 
 2.45.2
 
