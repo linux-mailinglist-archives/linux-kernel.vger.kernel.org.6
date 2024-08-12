@@ -1,100 +1,156 @@
-Return-Path: <linux-kernel+bounces-282793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7A794E8B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:34:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDFC694E882
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48FB5280ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:34:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D46FA1C2074D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD36016BE16;
-	Mon, 12 Aug 2024 08:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F036A16B39F;
+	Mon, 12 Aug 2024 08:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fvvYa48K"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="fhxsz34w"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FCE16A95A;
-	Mon, 12 Aug 2024 08:33:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8EA16A95A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723451641; cv=none; b=KLoNBTG+pfqQi3tFmmWqT8qZ96bNBoPO14GrKrZCNNYyIKs96IvwNJoYPBXtY6vcgUJ+S+JUhDPlX3F5nNeGBfosA+JHr8AvdIY1YlKMo+85/8ne0NRxfLynQ86ue67MfPe22SUiHScoTPQHZoq4sk0QxfUXHd4Kqh4AcBAQynk=
+	t=1723451175; cv=none; b=qeXpDXmqJx0Qq5Qxy5s5nW5KRQT2qIZxJD4tqNOyLkbQTYpSxh4/gNBJuHaZV3YVLXFquJN1HP4xvDLJFGcxqSiOM1mChOmYjD2E3dpUMzM9YZ9XHrH8qCkFyplnUFu/b9O1hBd7umVOqoXzyZ5NBcxhriUeH7rkXmzAJO2F/6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723451641; c=relaxed/simple;
-	bh=pG6wDFyUJxC3AasONzPAws4KS4sgzPKO6TKJ/wpSuUo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=smvIhahY/dtVIgxqCVQTS27Lg+9m453BAhssveixDvlMIC4mHUU1FbTRoAPSCJJb7SdgYkOb9Lnv5b4StEB+k0pnd6OTOTBp8Rjh3PTwGdSrka+2y1HYEiVVN+BogVxPnIpcBh4jcAbFjVVxQ27kSAeK7rHxw/sK81bZ8dweILc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fvvYa48K; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723451640; x=1754987640;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pG6wDFyUJxC3AasONzPAws4KS4sgzPKO6TKJ/wpSuUo=;
-  b=fvvYa48K5rY9WuxSPhimyFcHoS6XuJOEeNkWwe6MQctN023yGKJKDcW2
-   Tpy8TaX6UQGz1VlWGZXRxvzjhyvjs8iXdIRAXqxwIYbl7wlW7r1+WomoY
-   3bWq/pamETVR9raYlMfijiZdkXCjDwX8dpCN98CpJsx1a/Qk5wATbuyJP
-   k/Gx8ZyWRXNNiWG0QglIb7HrcHnDy30VljIGyuwkaL330lX4pryMghRIC
-   TiqcdTiCwcRgUVjwFnZBziMRo7fXW/NsuXNwSQ0r/PtX4JM8+nEvL6t5N
-   d4omJrzc8DgoCMCFC9DgJAxjrdPHrZiQcZeOGdCsE0K7MUjnglwoa4ueO
-   g==;
-X-CSE-ConnectionGUID: 2+G1gPcMQ/+CdOAdjfgyPw==
-X-CSE-MsgGUID: 4sGuEyO6TbGtRSZ5a6Qb9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11161"; a="21719371"
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="21719371"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:33:58 -0700
-X-CSE-ConnectionGUID: RyPsGtIqSZW6Q/9t8j8MLA==
-X-CSE-MsgGUID: ipb3PWfLT32bD+AwUolfDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,282,1716274800"; 
-   d="scan'208";a="58144324"
-Received: from mehlow-prequal01.jf.intel.com ([10.54.102.156])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 01:33:57 -0700
-From: Dmitrii Kuvaiskii <dmitrii.kuvaiskii@intel.com>
-To: jarkko@kernel.org
-Cc: dave.hansen@linux.intel.com,
-	dmitrii.kuvaiskii@intel.com,
-	haitao.huang@linux.intel.com,
-	kai.huang@intel.com,
-	kailun.qin@intel.com,
+	s=arc-20240116; t=1723451175; c=relaxed/simple;
+	bh=DXa5WteqkDYl9POkkjCPhisJN790pa/u/7os7TuA5Kc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jV8TugRtBL3C1nQGXMJEy3zlLxmolKIhNTQVY1NB81I+BXPxlkXrjATiSb9lXjp8q7ie3/yjOxleJ8ajeajNH/B/aRNP13vezHI8u4dRqHdzKgT9khNTI1Nk+AHxLeoawlJEvtZz7Rfb5PY3+UAzRhMczDTZomLFbr7nCnKHvrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=fhxsz34w; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723451171;
+	bh=VDTeFKG0tWsaWgY5r4pEV0pX09s9ysckDeAKLLaIFRs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fhxsz34wOUUSnbdDDauItzNL8KbrPOk7aPwcBLdQypYkobErRlI50imsAL30scp4Z
+	 eXKETdiRr+U+E3qiwMLaSxlWuSJnrNmrmKLNCTA/G2NJ8867qYNafCfX9VWbnZZCnL
+	 uPOtIF7r8dFU2DF48vSD8LhCKd3cqpi6Jkg8gIQIXnXkrpkXF3Msyqsu1VO+DKOgD/
+	 tQ1jxVLo0FWhKB1XV4icEInoLMAkmCr33AojWOhDDEtuQwrvFO0s0DjemBcYFg1Xce
+	 5qVFHDIj1hYHLlHTIwAg5HBTIhtv9w+LTNZKa4gPH8+QUvKzS/5Myj08LAvTEMjTrx
+	 5Xk7bT1INhDYA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Wj6zk6yjDz4x8Q;
+	Mon, 12 Aug 2024 18:26:10 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: <linux-mm@kvack.org>
+Cc: <linuxppc-dev@lists.ozlabs.org>,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	christophe.leroy@csgroup.eu,
+	jeffxu@google.com,
+	Liam.Howlett@oracle.com,
 	linux-kernel@vger.kernel.org,
-	linux-sgx@vger.kernel.org,
-	mona.vij@intel.com,
-	reinette.chatre@intel.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] x86/sgx: Resolve EREMOVE page vs EAUG page data race
-Date: Mon, 12 Aug 2024 01:25:43 -0700
-Message-Id: <20240812082543.3119659-1-dmitrii.kuvaiskii@intel.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
-References: <D2RQZSM3MMVN.8DFKF3GGGTWE@kernel.org>
+	npiggin@gmail.com,
+	oliver.sang@intel.com,
+	pedro.falcato@gmail.com
+Subject: [PATCH v2 1/4] mm: Add optional close() to struct vm_special_mapping
+Date: Mon, 12 Aug 2024 18:26:02 +1000
+Message-ID: <20240812082605.743814-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Organization: Intel Deutschland GmbH - Registered Address: Am Campeon 10, 85579 Neubiberg, Germany
 Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 17, 2024 at 01:38:59PM +0300, Jarkko Sakkinen wrote:
+Add an optional close() callback to struct vm_special_mapping. It will
+be used, by powerpc at least, to handle unmapping of the VDSO.
 
-> Ditto.
+Although support for unmapping the VDSO was initially added
+for CRIU[1], it is not desirable to guard that support behind
+CONFIG_CHECKPOINT_RESTORE.
 
-Just to be sure: I assume this means "Fixes should be in the head of the
-series so please reorder"? If yes, please see my reply in the other email
-[1].
+There are other known users of unmapping the VDSO which are not related
+to CRIU, eg. Valgrind [2] and void-ship [3].
 
-[1] https://lore.kernel.org/all/20240812082128.3084051-1-dmitrii.kuvaiskii@intel.com/
+The powerpc arch_unmap() hook has been in place for ~9 years, with no
+ifdef, so there may be other unknown users that have come to rely on
+unmapping the VDSO. Even if the code was behind an ifdef, major distros
+enable CHECKPOINT_RESTORE so users may not realise unmapping the VDSO
+depends on that configuration option.
 
---
-Dmitrii Kuvaiskii
+It's also undesirable to have such core mm behaviour behind a relatively
+obscure CONFIG option.
+
+Longer term the unmap behaviour should be standardised across
+architectures, however that is complicated by the fact the VDSO pointer
+is stored differently across architectures. There was a previous attempt
+to unify that handling [4], which could be revived.
+
+See [5] for further discussion.
+
+[1]: commit 83d3f0e90c6c ("powerpc/mm: tracking vDSO remap")
+[2]: https://sourceware.org/git/?p=valgrind.git;a=commit;h=3a004915a2cbdcdebafc1612427576bf3321eef5
+[3]: https://github.com/insanitybit/void-ship
+[4]: https://lore.kernel.org/lkml/20210611180242.711399-17-dima@arista.com/
+[5]: https://lore.kernel.org/linuxppc-dev/shiq5v3jrmyi6ncwke7wgl76ojysgbhrchsk32q4lbx2hadqqc@kzyy2igem256
+
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+---
+ include/linux/mm_types.h | 3 +++
+ mm/mmap.c                | 6 ++++++
+ 2 files changed, 9 insertions(+)
+
+v2:
+- Add some blank lines as requested.
+- Expand special_mapping_close() comment.
+- Add David's reviewed-by.
+- Expand change log to capture review discussion.
+
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 485424979254..78bdfc59abe5 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1313,6 +1313,9 @@ struct vm_special_mapping {
+ 
+ 	int (*mremap)(const struct vm_special_mapping *sm,
+ 		     struct vm_area_struct *new_vma);
++
++	void (*close)(const struct vm_special_mapping *sm,
++		      struct vm_area_struct *vma);
+ };
+ 
+ enum tlb_flush_reason {
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d0dfc85b209b..af4dbf0d3bd4 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -3620,10 +3620,16 @@ void vm_stat_account(struct mm_struct *mm, vm_flags_t flags, long npages)
+ static vm_fault_t special_mapping_fault(struct vm_fault *vmf);
+ 
+ /*
++ * Close hook, called for unmap() and on the old vma for mremap().
++ *
+  * Having a close hook prevents vma merging regardless of flags.
+  */
+ static void special_mapping_close(struct vm_area_struct *vma)
+ {
++	const struct vm_special_mapping *sm = vma->vm_private_data;
++
++	if (sm->close)
++		sm->close(sm, vma);
+ }
+ 
+ static const char *special_mapping_name(struct vm_area_struct *vma)
+-- 
+2.45.2
+
 
