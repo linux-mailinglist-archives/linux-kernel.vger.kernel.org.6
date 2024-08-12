@@ -1,107 +1,99 @@
-Return-Path: <linux-kernel+bounces-283821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D48494F902
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2567F94F90C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2816F1F22F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:36:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C15391F23045
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 21:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0669194A73;
-	Mon, 12 Aug 2024 21:36:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2379B197A8E;
+	Mon, 12 Aug 2024 21:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cFsAIJhw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gfSYWFcz"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8559C186E3C
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:36:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD2FC186E3C;
+	Mon, 12 Aug 2024 21:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723498607; cv=none; b=c5G841u+urJGSeqAAVv/08VWdyNHjuuO5ai9iEGWMqyDWI6lNA+GIy0qjUkDVvk7CEQ3XvdktQNj5um+4Vpa/3ByF6IeL8oS6WhVgz8c5Htjo+/FEBh5q1IlhMrVtalrnm6uAohEYA34n5GSeLbeaITfbeBJca4E8YKsqCGaea8=
+	t=1723498989; cv=none; b=ZZheVCOA3KZqmDd3x/vFJNUyWqL7E6KRwqytgHAvDz0sa/UNGrTlYRZ16Q8byi19WViQcT1zsfMoVAWd+eZ1QK2D9uWImeQSKY4pRPB5Wq301SktItMbCK+XPh/YNScqnJvNRkUsGt2qs/wVbAOV3lrdoi9spO07mryb1mfEHGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723498607; c=relaxed/simple;
-	bh=8z9+1PzvP+5Q68yaNgYtA5o3wmc3B+8FhmL6Cqq9EyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Y0RZpAjtmxASujBlTert+kdOyu+taAOA/mtg+KX7sPSZa6uZ9DZR1RJu4YKq9OycIgBCzPKEYWGaV7wDRXqcNvXR2nsfQNPXQTZklB7wNog6439mAVkABUnymmsOen5gKILTavME0K6fSxLSLctxi5xmQsi86HEskv8uenjIU18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cFsAIJhw; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723498605; x=1755034605;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=8z9+1PzvP+5Q68yaNgYtA5o3wmc3B+8FhmL6Cqq9EyI=;
-  b=cFsAIJhwAvB/ueQ2s5R/edQBUtEWLnTs8skdrXByZQzecbVpZhyoHmSj
-   eU/B1eqVuFa01qGHiWHzFM3s7C8zsmJvwV+3oyz+s2Yc47h8J6u9C24El
-   vR5jZig84eSFNDzvz8WNXe9nfOfkAHn2lCbbWE9w61JlrCl1fQPc4Xvhj
-   co1KQkhnvaXrZePfLINsFXPGRXypPtnabxPafXaiPsAcuZZtHLYfar/VJ
-   KIBahqXetq2BoMdsC+MFVLXP9jkMAxexyRPiFOsAQ/+0QwT6lteVHh/XB
-   Z8tqcmqytyNFzqSW01gpxb1dzut3DC2qCbU1HXQcURnIgfZrsm3Xv1Eyn
-   g==;
-X-CSE-ConnectionGUID: QFwtIz/RST6BniTeoWtdoQ==
-X-CSE-MsgGUID: TvnOH+fxTymWZyf5m9UDJw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21777016"
-X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="21777016"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 14:36:44 -0700
-X-CSE-ConnectionGUID: mkiYyRcyRxioi6OB1+WImQ==
-X-CSE-MsgGUID: mKQH8xRkRcuCdo+r16JGNw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
-   d="scan'208";a="62830310"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 12 Aug 2024 14:36:41 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdciV-000CCd-2L;
-	Mon, 12 Aug 2024 21:36:39 +0000
-Date: Tue, 13 Aug 2024 05:36:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>
-Subject: ld.lld: warning:
- src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:755:0:
- stack frame size (3432) exceeds limit (3072) in function
- 'dml2_core_shared_mode_support'
-Message-ID: <202408130537.amQPXvmF-lkp@intel.com>
+	s=arc-20240116; t=1723498989; c=relaxed/simple;
+	bh=1YicVVsFsQ7IT1w9ZPZCb4kbLLF28+VO0GcelwLM2LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JGxQQgpLRLr83a4Ym0DbbzV1Zh88n4YVayX4ydkGEwl6m6nA3y/cVq6kE6U47tvJhIhDYOO6Hxec88ADqBx60oi5oycQYfAwGeQyKOX5YjiO7s/RZkMjNST4lH4nseJVjgUMTRL9MNF5er8/Hlde8Kq6HORVWpmzwO+zTJdShuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=gfSYWFcz; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
+	In-Reply-To:References; bh=/DsQFtZsoWTGXRj8x/ckpz5zLdJncXQdBv0zIiIWDvo=; b=gf
+	SYWFczD+N33OW1eFfWb9DuJmJJv7XZYWfZeRS6XXl37DV/HDEr7rQRVBS+aLaneO6Xx/Rk4zBXGQI
+	NpbnMzY3q0tUVG16YKvaBl2zXOr4FJOtKJI3IjTbs6lGtBQ2JYPXKnllHl4vLM1hjnVQ9G/Wp5nls
+	9UJiyYN/GvK7TwA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sdcoY-004ci5-6s; Mon, 12 Aug 2024 23:42:54 +0200
+Date: Mon, 12 Aug 2024 23:42:54 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
+	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
+Subject: Re: [PATCH net-next 2/3] net: ag71xx: use devm for
+ of_mdiobus_register
+Message-ID: <38c43119-4158-4be8-8919-f6890a5f4722@lunn.ch>
+References: <20240812190700.14270-1-rosenp@gmail.com>
+ <20240812190700.14270-3-rosenp@gmail.com>
+ <ae818694-e697-41cc-a731-73cd50dd7d99@lunn.ch>
+ <CAKxU2N9p4DrbREqHuagmVS=evjK48SWE5NM3RbD5zF6D-H93kA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKxU2N9p4DrbREqHuagmVS=evjK48SWE5NM3RbD5zF6D-H93kA@mail.gmail.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d74da846046aeec9333e802f5918bd3261fb5509
-commit: 9f4c6256d0cf887ef64fe87a48a34d50b4bde493 drm/amd/display: Add frame_warn_flag to dml2_core_shared.o
-date:   4 months ago
-config: x86_64-randconfig-002-20240810 (https://download.01.org/0day-ci/archive/20240813/202408130537.amQPXvmF-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408130537.amQPXvmF-lkp@intel.com/reproduce)
+On Mon, Aug 12, 2024 at 02:35:45PM -0700, Rosen Penev wrote:
+> On Mon, Aug 12, 2024 at 2:28 PM Andrew Lunn <andrew@lunn.ch> wrote:
+> >
+> > On Mon, Aug 12, 2024 at 12:06:52PM -0700, Rosen Penev wrote:
+> > > Allows removing ag71xx_mdio_remove.
+> > >
+> > > Removed local mii_bus variable and assign struct members directly.
+> > > Easier to reason about.
+> >
+> > This mixes up two different things, making the patch harder to
+> > review. Ideally you want lots of little patches, each doing one thing,
+> > and being obviously correct.
+> >
+> > Is ag->mii_bus actually used anywhere, outside of ag71xx_mdio_probe()?
+> > Often swapping to devm_ means the driver does not need to keep hold of
+> > the resources. So i actually think you can remove ag->mii_bus. This
+> > might of been more obvious if you had first swapped to
+> > devm_of_mdiobus_register() without the other changes mixed in.
+> not sure I follow. mdiobus_unregister would need to be called in
+> remove without devm. That would need a private mii_bus of some kind.
+> So with devm this is unneeded?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408130537.amQPXvmF-lkp@intel.com/
+If you use devm_of_mdiobus_register(), the device core will call
+devm_mdiobus_unregister() on remove. Your patch removed
+mdiobus_unregister() in remove....
 
-All warnings (new ones prefixed by >>):
+Is there any user of ag->mii_bus left after converting to
+devm_of_mdiobus_register()?
 
-   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:6711:0: stack frame size (4888) exceeds limit (3072) in function 'dml_core_mode_support'
-   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:8280:0: stack frame size (3264) exceeds limit (3072) in function 'dml_core_mode_programming'
->> ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:755:0: stack frame size (3432) exceeds limit (3072) in function 'dml2_core_shared_mode_support'
-   vmlinux.o: warning: objtool: .text.jffs2_erase_pending_blocks: unexpected end of section
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
