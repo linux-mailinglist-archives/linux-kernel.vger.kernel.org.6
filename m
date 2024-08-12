@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-283296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DFA194EFB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:36:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5919994EFB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FD9F1C20BF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 033CD1F22BD5
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 14:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDD2186295;
-	Mon, 12 Aug 2024 14:35:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5B6183CCD;
+	Mon, 12 Aug 2024 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="V0nNrHon";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="EeCCcjRG"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HFXiPqqH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DFD1850B6;
-	Mon, 12 Aug 2024 14:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F09917DE16;
+	Mon, 12 Aug 2024 14:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723473307; cv=none; b=QzYY7yLPYcdLYttAcIxGuFHSfSGI9gAfgOd232RcqDfSAxK7/HCFLWLrR+GYOoj1CR9UM5F9R/uZYGvzdIILOFndCnIFxbjzmVL9zL73ev3JkOIO8zSwNI35WDVAQEQkldNVjJgyrchhMEEwzirJGFQNRxcIehsZ0aNtllFl+fE=
+	t=1723473324; cv=none; b=dLLJ+STFdGqPa9XbKNBC8xaDn/r11TGKKpTxP8upaDE446x99ZQ4nBLOrrCy4EaZuvQjQJBFloZFUtCWgH7klMoiwwrpE6FO0bO0VODWFQ6uFA5RmGvJIX0vYNFuIoYPRAiqXuQ0wIvccc0zpgd77d+roy4jqbDBCrbuO6stqhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723473307; c=relaxed/simple;
-	bh=xjqAuhJpA0xZWEigQoCmxwh+5iQGcDcAu0cT4Y6ew0o=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ohuAZr/0+Uq3VaIlPOLyV4rmXvG4Bbo6H1rF0qIK3x0f+IJ9K4N3rBlyX7fuLfdVcxbWekFG4UUyktFlUwJqTQZu9FtTWOV48YVMMSyaAmVonleEWGHu1DUOxc4XmHUsWBZxk+QbFgFtVRE4lOIlzJ4xaVFZCEvIaefPpYtwnz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=V0nNrHon; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=EeCCcjRG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723473305; x=1755009305;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E8Kth3fA3aTsIi3zi/z1NJuU2FBB7BRl6ZUueJYtQlU=;
-  b=V0nNrHonQwEtwAxZgOc1Cq5m+e0XdkqNoBL3COkZK+jUe+iVEt/yY2Hp
-   rsQXgyI2SN3ksHCadbsS3nJLzhKQI22tw6q8cT2z3EWLgQtasf0bbjDPU
-   7GZC5kLte8E018hnq3TYc/m/kVgZk/z1shJjrQfob/rxVeKM3eoM0hQQL
-   epQGB8N7jxrxM/XZfaXnKtI1+qyZkBFj4ab6veYpZwHDnj7kWQ+t2FihJ
-   NlwiFNfbVmFJ+3XS/celKF6f+WmjoF2cwUetgeG2lgVteml1Dwf8EcYsL
-   nguhORxMRvcZ8yPWKL0IW4W6X1mmZgFgVnjp58reYa4FKoSV103LfieYY
-   Q==;
-X-CSE-ConnectionGUID: midpRNUzQkKSXEAy+2ubdw==
-X-CSE-MsgGUID: PuwqICoMR3WRKO0yQCPSyA==
-X-IronPort-AV: E=Sophos;i="6.09,283,1716242400"; 
-   d="scan'208";a="38365816"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 12 Aug 2024 16:35:04 +0200
-X-CheckPoint: {66BA1D98-D-751552D8-F91D2344}
-X-MAIL-CPID: 095354DFB4E9CC4285F0E89EE3615953_4
-X-Control-Analysis: str=0001.0A782F25.66BA1D98.011C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F2247164776;
-	Mon, 12 Aug 2024 16:34:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723473300; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=E8Kth3fA3aTsIi3zi/z1NJuU2FBB7BRl6ZUueJYtQlU=;
-	b=EeCCcjRG+2Zmi/c3b7/iJzYo8reaNBemR4qCEffyvC7onJhF7uoWb+ZBOQYcFq8FlZYkUa
-	zaAsmsM5t926leadNEaWwvDLESjPkmB7A9o4mfY3qd/60SIH70CmcbOIGOIwNBORh9Pr+w
-	d/HOSMJMzzLN1DyvCTq8T1UDpC/Ytp2rnylntB0XZnGR2fB6kyPcgwStIFVWSxN3FF30Wh
-	1l9dfqcepd+zk0H62GO/D0C1N+b0o58K88KLUgEtV6aP4amaPe0lNcHS6wUWw6+a3Tp9RT
-	PCl1g/3kzwFndTSQnp+9PwNIRYXQYbRVIrJmzlt7PZS6nPYAFyb18wSgezNrxQ==
-From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1723473324; c=relaxed/simple;
+	bh=tX0m5QDjLh6ZQGlkWAS+et//rPaZnf4Njh/KWLdYqZY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A8oZff6/NJ0e+ISLEDwZ9UllI2SnncI+Mel1h9UK3XofsP9SNIlvfuDRyGXUlegdYS5il6MZ1RTv7Nmgv51q2WQGoHH2Z9OKd2eE29UURt/ZWHgn5AEp4L1xTk2c64a17C4UI4mTulpAjcBXquzhJnFe9JpnFpA4SisRl6XryLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HFXiPqqH; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723473323; x=1755009323;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tX0m5QDjLh6ZQGlkWAS+et//rPaZnf4Njh/KWLdYqZY=;
+  b=HFXiPqqHzeeB1ZK3J7UrJ/rsWJN4aqZHm6W+aaaPx3PvSdsSNH8gDWx7
+   kuPKn00B9a8A0go0M/7II/9JkyET3uaAvHaL7zHrubJG8uYBdF3r7gzfw
+   dTALO0bJrQwssTdU+ZhTU2pXxN25iSDOfPEiIgNO/NshMplhOF8MsMEtU
+   qXm/ern27wx3CgCE3OFVs3OdTYyVuRdUsGfHUmEhZ09QlKcTbMv7M8n6f
+   e99BrrDxxXUqJxkNfjMz+tBk3EJMwW8DKb7JA4rIvFY37U++eku5RsXHJ
+   +RXjdz/NORnuaUATYgKz54DyOzt+kLG91TVL8fzCYOUu9VPAtbtEUrn67
+   w==;
+X-CSE-ConnectionGUID: Akg2kluEQpGXg0ro/FY/Kw==
+X-CSE-MsgGUID: HiamngvOTUu2HFUCjnaVDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32977358"
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="32977358"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 07:35:22 -0700
+X-CSE-ConnectionGUID: 1ojTV89YTd6u9U4L20gaYw==
+X-CSE-MsgGUID: olL4LqfKRL+oeb1lof9fQQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
+   d="scan'208";a="89114390"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 12 Aug 2024 07:35:19 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7498B178; Mon, 12 Aug 2024 17:35:17 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-kernel@vger.kernel.org,
-	linux@ew.tq-group.com,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: [PATCH 5/5] ARM: dts: imx6qdl: Rename USB hub node name
-Date: Mon, 12 Aug 2024 16:34:31 +0200
-Message-Id: <20240812143431.98323-6-Markus.Niebel@ew.tq-group.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
-References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
+	linux-serial@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>,
+	Scott Branden <sbranden@broadcom.com>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH v1 1/1] serial: 8250_bcm2835aux: Switch to DEFINE_SIMPLE_DEV_PM_OPS()
+Date: Mon, 12 Aug 2024 17:35:14 +0300
+Message-ID: <20240812143514.953612-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,31 +82,31 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
+The SIMPLE_DEV_PM_OPS() is deprecated, replace it with the
+DEFINE_SIMPLE_DEV_PM_OPS() for setting the driver's PM routines.
 
-According to microchip,usb2514.yaml the node name shall be usb-hub.
-
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/8250/8250_bcm2835aux.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
-index 60aa1e947f62..d03f7065ddfd 100644
---- a/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi
-@@ -293,7 +293,7 @@ &usbh1 {
- 	#address-cells = <1>;
- 	#size-cells = <0>;
+diff --git a/drivers/tty/serial/8250/8250_bcm2835aux.c b/drivers/tty/serial/8250/8250_bcm2835aux.c
+index 36e2bb34d82b..829abef2564d 100644
+--- a/drivers/tty/serial/8250/8250_bcm2835aux.c
++++ b/drivers/tty/serial/8250/8250_bcm2835aux.c
+@@ -245,9 +245,7 @@ static int bcm2835aux_resume(struct device *dev)
+ 	return 0;
+ }
  
--	hub@1 {
-+	usb-hub@1 {
- 		compatible = "usb424,2517";
- 		reg = <1>;
- 		#address-cells = <1>;
+-static const struct dev_pm_ops bcm2835aux_dev_pm_ops = {
+-	SYSTEM_SLEEP_PM_OPS(bcm2835aux_suspend, bcm2835aux_resume)
+-};
++static DEFINE_SIMPLE_DEV_PM_OPS(bcm2835aux_dev_pm_ops, bcm2835aux_suspend, bcm2835aux_resume);
+ 
+ static struct platform_driver bcm2835aux_serial_driver = {
+ 	.driver = {
 -- 
-2.34.1
+2.43.0.rc1.1336.g36b5255a03ac
 
 
