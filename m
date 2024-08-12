@@ -1,165 +1,160 @@
-Return-Path: <linux-kernel+bounces-283499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8417694F5AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:12:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7657494F5AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:14:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10CBE1F21F75
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:12:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A942B1C214A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C460E188007;
-	Mon, 12 Aug 2024 17:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D6D18800D;
+	Mon, 12 Aug 2024 17:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfesSTZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tisC+cn3"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09278187FE1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3BC518784F
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723482750; cv=none; b=fcQ8FMGNON4PV43w3HM0/6bD1ckJy8HEI4tJqN2hheRRaVj01gQ0UgWy7O6rm59IS5Hu1SV6AjWciYJW1vErKL87jOHcmEHo+WD+IAAKfNdnx8CCQXX2WCDuqp+OSstXH2ll08tu7Y7F9CFEk0ME/8z69pPx/aoF2Uq1v/2Wr8w=
+	t=1723482834; cv=none; b=D2c9a5l72Wahsxyx6dTcX4tlP4CqbL7mfnFLF8+AinWTkP2JiV1BGPTRPPFSNcKZCi/R/RzRvzHm2tvSbJEAfguFJB3/A1l9O77ZOrZ7nV1MBKsLy+ISoHNOPq0lsN6MHUt3dE2IXDY3SIQZES5P1+gB0xQ1NVEH6n7U7fsOqkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723482750; c=relaxed/simple;
-	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iNzOEPX1O4iHHWvne5u+r/KVosfl2pfBfzBGheZrnjPnFOdv1xETcQJ53jvFV3JK7xM9IMO42lyrN8Uf7qDxRBmocqNJX5+8G/pMUSW426trklGF3GPbtkVA/gDUbDnLdMAuTWEztsF68MLjkRr2lalR6tu9Kv+aJ8zLJYV0YlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfesSTZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82D1C4AF11
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:12:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723482749;
-	bh=8yHdW4ydlVda22NnDC+U1b2MHPLhbwDjGEoQoIRmfJg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=kfesSTZwHTrBiFaLuPDwvr27ASE5jekpBUPczFc5xSc18MS6m12L6U+74J1wTa8Ad
-	 L1dMIYAYkmdVCEQc3FYCB0jvOPHFbfJIcJsTflp52ekfrNzVKsDm1e8eg9sim5Ddg7
-	 lEFHlL6kCYE+3z02avS6Pt1cZszNSdnkhICxc+Thglr5x3QlJKCJo6HmKoh7qI62zj
-	 e/Og6B+nLsfU9tis91h/ETCYyoW9+hqK+qVU/44xn7W7LhZ/W+4EWcCZ+DBDRrrtw4
-	 bn+P4k9WNwRRroI/Z83HjEVU+cLOfZfGOE4luWaUdAYzvrgnMqKUiQr+qfY34iG41U
-	 OLXcmSlxo/yVA==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d5so36079361fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:12:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW++a+8DXpYMY0tc0hNPo/YvCOh0zaY1xG99efYJDJdXHy6bbPlZaXoxtWarMBF1iOBcg/dnMNokJkkSRS8y6LiAGdzNxDPavyFd1OK
-X-Gm-Message-State: AOJu0YzCje98wRS1JAWidla+3R7bCBxR+S6xxHmm1vB41R15HIMaYQNv
-	/7/89stUR/rEed/DcTzGxEuxnvi08XaC1Lpz9+uKcFJrYzaC8XIkjmdKjGSGYohmna8gTXbGqdd
-	jg1JHFb3142OqJbT3LIZwG7B1S2uqwGbqQmqE
-X-Google-Smtp-Source: AGHT+IEi4x2lKyzSlBdDqyzNvP1WkxgKGyo1LKUTYnu8D717dYjlPG7KYanK/LSOMd8pZXkQOcvI64ymMk//DOzcflQ=
-X-Received: by 2002:a2e:a550:0:b0:2ef:2c87:3bd7 with SMTP id
- 38308e7fff4ca-2f2b7178548mr8639581fa.37.1723482747964; Mon, 12 Aug 2024
- 10:12:27 -0700 (PDT)
+	s=arc-20240116; t=1723482834; c=relaxed/simple;
+	bh=x1Gb8SB4mpP+wfFgYnDE4mv3uyT5UcVGyJZO+O2IoKc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ehtUmZ1VmTarpjaXx+rFpBvUiIbt5VayzAswYXCwZdgtCICwi2eQMNuafGyByBaa3z+y01yhJSLVRWTC+urwcvMSyeRKdUNngV4U8S3N1WbZqoOpqstVtdWX2ZavCNXlIRx7qTSnLYCCgr5yK5nlNE6/Z9G+etKMVq0xBXv0lu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tisC+cn3; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--vipinsh.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-721d20a0807so4736554a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723482832; x=1724087632; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=z1s1bGCcVN/xkxWve8NUCJjdRnJHJDY/h72u7nlvk/8=;
+        b=tisC+cn3Zosb84aYhyGsY7urdJk94FVHm25pGt33TvpfdyXQqzZPaaWPJZi6KH/Sgi
+         Oxdeyh03UUdmgxwWWfE+wAGghRm4QdxF/7Ng/lBWZRF8NxqBE+ExrYZi7eDsJaczKQso
+         guIDxfcOmEIpokjP8DgAP3Ukqk8MBgSAHDGWAb6HYuBX7dGHNAWj7vFzvbKWgg2ZlB63
+         A2w+6mamCpkAIXIKDQrS8eypOFvp6S7LkbOou9sccutBhUClpz1otonx/Vc9jpsKbWsd
+         wbpxyLMFjIj+0ralhSKBrv/FFGnbJ0S1Mi7KlQBBgTzpvGFtVbteszNMZs1E0ZOM6kzU
+         3cxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723482832; x=1724087632;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z1s1bGCcVN/xkxWve8NUCJjdRnJHJDY/h72u7nlvk/8=;
+        b=Nwfjeo0NPwIDB6Ne1uZUqnZ/y0FxNJ4ixk5uJkl8jZIS0O7jwnwPbCrRJtN/bgvDGa
+         jFUyTyVqiPcQEJoh12wvLeRmscWxLjaTTfjwSxl3GbV6Pc7OihJnkGHG25iFwgII1Yjh
+         Hn5ALvfu8MsO4MROhFQrwsfqhDDvB3ZKYayUq0kjYXczmoyB0qfAW0oYfwxSBfDWKO2H
+         2AHQnqAjOO4EZN+ffWBEBsd0SIvgADqXx4ZY1C325GYGldretheM1U7ytzbnN2J6bdWD
+         Iw0nQ92Mz6Hkworj8ma4GxXUYNooURv7NiMj14qH4f6Qmh0N7grwXQPsMFBbJhXm7FLQ
+         08Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXpSFBVf7lYbeVKH6iRc92kERyCUresa4j3nm1KxQa0i6jCB0mcPq9x1E4kxwra++ZE64tJyz+9GrtdjmsHEaBKj3wE+HnyQYaDcKA
+X-Gm-Message-State: AOJu0Yza6+2+1uycsVzB5Vk/5AXshNu04mmfK/k+507R7Fs0Txj6smn6
+	u1g3VL1s6J68+E7wx5MlDZRFRJIymUwOCsKQ2Jf5vu5ADz/0RFqUk+HCEhwu0y0NXvHPQEor0AD
+	Gzdli6A==
+X-Google-Smtp-Source: AGHT+IFZur4pxrvFdN706JZtZb8N8sYJW5Ui4zQ330SdBlLi/fdgnC75M4+aVGUBezgmmGmCPuo1mHy56p3R
+X-Received: from vipin.c.googlers.com ([34.105.13.176]) (user=vipinsh
+ job=sendgmr) by 2002:a65:6a0e:0:b0:7b2:5893:ac16 with SMTP id
+ 41be03b00d2f7-7c695196a9fmr1008a12.6.1723482831991; Mon, 12 Aug 2024 10:13:51
+ -0700 (PDT)
+Date: Mon, 12 Aug 2024 10:13:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
-In-Reply-To: <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Mon, 12 Aug 2024 19:12:16 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
-Message-ID: <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Paul Moore <paul@paul-moore.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240812171341.1763297-1-vipinsh@google.com>
+Subject: [PATCH 0/2] KVM: x86/mmu: Run NX huge page recovery under MMU read lock
+From: Vipin Sharma <vipinsh@google.com>
+To: seanjc@google.com, pbonzini@redhat.com
+Cc: dmatlack@google.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vipin Sharma <vipinsh@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 8, 2024 at 10:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Thu, Aug 8, 2024 at 2:00=E2=80=AFPM Guenter Roeck <linux@roeck-us.net>=
- wrote:
-> > On Thu, Aug 08, 2024 at 01:32:37PM -0400, Paul Moore wrote:
-> > > On Thu, Aug 8, 2024 at 12:43=E2=80=AFPM Guenter Roeck <linux@roeck-us=
-.net> wrote:
-> > > >
-> > > > Also, there is a backtrace on ppc (also see below), but that is unr=
-elated
-> > > > to your patches and only seen now because I enabled the security mo=
-dules
-> > > > on that architecture. I'll bring that up with ppc maintainers.
-> > >
-> > > Thanks for all your help testing this Guenter.  I see you've also
-> > > already submitted an AppArmor fix for the endian issue, that's very
-> > > helpful and I'm sure John will be happy to see it.
-> > >
-> > > Beyond this work testing the static call patches from KP, would you b=
-e
-> > > willing to add a LSM configuration to your normal testing?  While mos=
-t
-> > > of the LSM subsystem should be architecture agnostic, there are
-> > > definitely bits and pieces that can vary (as you've seen), and I thin=
-k
-> > > it would be great to get more testing across a broad range of
-> > > supported arches, even if it is just some simple "does it boot" tests=
-.
-> > >
-> >
-> > That really depends. I already enabled some of the kernel security modu=
-les.
-> >
-> > CONFIG_SECURITY=3Dy
-> > CONFIG_SECURITY_APPARMOR=3Dy
-> > CONFIG_SECURITY_APPARMOR_KUNIT_TEST=3Dy
-> > CONFIG_SECURITY_LANDLOCK=3Dy
-> > CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=3Dy
-> > CONFIG_SECURITY_LOCKDOWN_LSM=3Dy
-> > CONFIG_SECURITY_LOCKDOWN_LSM_EARLY=3Dy
-> > CONFIG_SECURITY_YAMA=3Dy
-> > CONFIG_SECURITY_LOADPIN=3Dy
-> > CONFIG_SECURITY_SAFESETID=3Dy
-> > CONFIG_BPF_LSM=3Dy
-> > CONFIG_LSM=3D"landlock,lockdown,yama,loadpin,safesetid,bpf"
-> >
-> > I can easily add more if you tell me what else I should enable.
->
-> Thanks, I just added a todo item to send you a list.  I appreciate the he=
-lp.
->
-> > Userspace is more difficult. My root file systems are generated using
-> > buildroot. I run some basic tests, such as network interface tests
-> > and TPM tests, but those are just simple scripts utilizing packages
-> > provided by buildroot. I can add more, but I would need to know what
-> > exactly to add and how to execute it.
->
-> Of course.  As far as I'm concerned, simply enabling the LSMs and
-> making sure the various arches boot without additional faults would be
-> a nice boost in testing.
->
-> > > Out of curiosity, do you have your test setup documented anywhere?  I=
-t
-> > > sounds fairly impressive and I'd be curious to learn more about it.
-> >
-> > Not really. The code is at https://github.com/groeck/linux-build-test.
-> > My clone of buildroot is at https://github.com/groeck/buildroot (look
-> > for local- branches to see my changes). Please feel free to have a look=
-,
-> > but documentation is seriously lacking (and README is completely out
-> > of date).
->
+Split NX huge page recovery in two separate flows, one for TDP MMU and
+one for non-TDP MMU.
 
-JFYI, I synced with Guenter and all arch seem to pass and alpha does
-not work due to a reason that I am unable to debug. I will try doing
-more debugging but I will need more alpha help here (Added the
-maintainers to this thread).
+TDP MMU flow will use MMU read lock and non-TDP MMU flow will use MMU
+write lock. This change unblocks vCPUs which are waiting for MMU read
+lock while NX huge page recovery is running and zapping shadow pages.
+
+A Windows guest was showing network latency jitters which was root
+caused to vCPUs waiting for MMU read lock when NX huge page recovery
+thread was holding MMU write lock. Disabling NX huge page recovery fixed
+the jitter issue.
+
+So, to optimize NX huge page recovery, it was modified to run under MMU
+read lock, the switch made jitter issue disappear completely and vCPUs
+wait time for MMU read lock reduced drastically.
+
+Patch 1 is splitting the logic in two separate flows but still running
+under MMU write lock.
+
+Patch 2 is changing TDP MMU flow to use MMU read lock.
+
+Patch 2 commit log contains the test results. Here is the brief
+histogram, where 'Interval' is the time it took to complete the network
+calls and 'Frequency' is how many calls:
+
+Before
+------
+
+Interval(usec)   Frequency
+      0          9999964
+   1000          12
+   2000          3
+   3000          0
+   4000          0
+   5000          0
+   6000          0
+   7000          1
+   8000          1
+   9000          1
+  10000          2
+  11000          1
+  12000          0
+  13000          4
+  14000          1
+  15000          1
+  16000          4
+  17000          1
+  18000          2
+  19000          0
+  20000          0
+  21000          1
+  22000          0
+  23000          0
+  24000          1
+
+After
+-----
+
+Interval(usec)   Frequency
+      0          9999996
+   1000          4
+
+Vipin Sharma (2):
+  KVM: x86/mmu: Split NX hugepage recovery flow into TDP and non-TDP
+    flow
+  KVM: x86/mmu: Recover NX Huge pages belonging to TDP MMU under MMU
+    read lock
+
+ arch/x86/kvm/mmu/mmu.c          | 168 +++++++++++++++++++-------------
+ arch/x86/kvm/mmu/mmu_internal.h |   6 ++
+ arch/x86/kvm/mmu/tdp_mmu.c      |  89 +++++++++++++++--
+ arch/x86/kvm/mmu/tdp_mmu.h      |   3 +-
+ 4 files changed, 192 insertions(+), 74 deletions(-)
 
 
+base-commit: 332d2c1d713e232e163386c35a3ba0c1b90df83f
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
-> Thanks for the pointers.
->
-> --
-> paul-moore.com
 
