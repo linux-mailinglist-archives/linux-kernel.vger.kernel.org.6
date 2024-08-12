@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-283614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D078E94F6C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:36:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A71EC94F6C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 20:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8A7283CBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:36:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02300B21950
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41DE718C330;
-	Mon, 12 Aug 2024 18:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3012D18C330;
+	Mon, 12 Aug 2024 18:36:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L3X6mVdf"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="epF6kaum"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DF917A584
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678E017A584;
+	Mon, 12 Aug 2024 18:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723487787; cv=none; b=lPZKYHl5VeEMJfu/F9/ep2tIQjxTZVeT+dKZv5OwytqJEg2VBLuQ8CWJzGo3NoPlKZOCVBEiIP1lX6kWul9ibBkVgSvwQw4eWsMaocIEBpVpAtYcJoT2WuHmjdzGRMW/YyQIzJmgrze/yLsod47vSz4u12c1zM6GxZsf/wuo3wg=
+	t=1723487800; cv=none; b=hwxx5EiY2ixijNRqg0Fe7BKXGay8/T6lKcfVlwSmW2TidXqY05O974ECm89E5eh1RltnFkU6YvY7ljXkTIYvBbyoRJlwGMfb/2xPafcEKhwShRn6J3GCKHWdCB5vPaENQ5AVAWsfmgSQWGcfrqgRQVy6MoxbganGnRh1L3/QDfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723487787; c=relaxed/simple;
-	bh=XVEY3EOQ7EfM3BETXw06qP0pD8+sQ+yqKMA+bsLb1lY=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wge95h9IXPNI+w1Mk9EWP5CjV2qveDopTgw0Y71dTDBNAFCidjuRmgl7XNUf7ZhzioNVlIPyo1Mvhgjsnf0+zB2boBsdlAACnC9acVkoFnaP326MnkO/svkYpBpDrMBOe5Qg23QdK6+2KxuFJpzOFvCUV3c64KFjdoLdRn4U6aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L3X6mVdf; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7a1d0dc869bso285507985a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 11:36:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723487784; x=1724092584; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XVEY3EOQ7EfM3BETXw06qP0pD8+sQ+yqKMA+bsLb1lY=;
-        b=L3X6mVdfA/P5O1lyzBKTcZlu9FeGgdHassW5cydz5DRgnebugUHsUHihGMdvOCFaK5
-         KfkbtzAs2asNlv+7REaIoG6idjtHj6GqLxEs9fLOBB+AaltjQAZIONZAEnIOOQRjdITA
-         ai8z/hMw2uQRANgtgf08N5LoFQpBOOb1PKzjI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723487784; x=1724092584;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XVEY3EOQ7EfM3BETXw06qP0pD8+sQ+yqKMA+bsLb1lY=;
-        b=kxXQ8RyEWUbtFQnjTON+p/0fBX2iqcOlzN2AKvo7ECg+C9AuqQcZlTaRNxcMPFjvbN
-         PToccXX7QGAX5eQI0w72+bz43em4w49jlGe2D8miKRIK4sH85V3+fwIEM07IEOj3z9hM
-         OWtNVpTF/mtl8kMhp55gaIx6PWnX+1gU9vFJzn6DCkD3pvKq5WLhuPTW49TK/LiQGwZJ
-         N8I2Ii/vwsWb6r5Xty0aeoRhrHtEqynWl+sjc9P6MfUo9d1+njyfOchVPVEKRNNRvYU/
-         gqjnts6V9o6v1mqGUypCStU/fOOlmXsJ2Z68luzQKLJ+Vs1Y40BVplMLIC0YXqXhRbfX
-         mo7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUzqgUEBVNdJVB9HRTu2JV/Bj4KGU7bDZF4p4CfEgKndH89PxQvGqh7NjtlQNelQQ/lt0ZYB9TNmEW8w8yjDN+ETkzomhLIRQ0nqCsY
-X-Gm-Message-State: AOJu0Yxb1Ad3laiD4c41rj3XMJDwd9tlh5DlJQdoecM/E6TNxUfFCzPY
-	VtQlCyZDNGg6mvf0RsRRLVbqAL2u1130y0yJPNOAsnxQoZa0RSC6n4w6RqTkX+cDmD/HgWakwb9
-	0+VGHEXqd8pqWbl6j8I1doEYZNDiuoJiTDPOp
-X-Google-Smtp-Source: AGHT+IHmoofWaFYJnBjW3Mad9MwbSlnA+Lmn21+JRVXHiDX9eb3lBTF/fIYOBI/SdgNYe7IAkY5SEsY8XTjEOJNFGZk=
-X-Received: by 2002:a05:620a:4010:b0:7a1:d73f:53d2 with SMTP id
- af79cd13be357-7a4e151bd49mr129101485a.20.1723487784514; Mon, 12 Aug 2024
- 11:36:24 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 12 Aug 2024 11:36:23 -0700
+	s=arc-20240116; t=1723487800; c=relaxed/simple;
+	bh=cQPr+So1SBLf4JDT0q7xmiL2DlYxMtP/xfHwRK21seY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pKmjeG1UuW4fYXF8HJ1OHZQXrh2CUUK9ODi1qLf0TrqVCMRBkJ8Z4BLgEMYKRLb8eCgd+tHDdXoXC7LDv/JFyLmDrST4obFKZSCd3L3sVTA0bcLfTf42qk1XcmtedKe4PAEbJ5xl3LydWhD7fBTgb7dOmUTpqBbm2KuiJBmtkk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=epF6kaum; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFFBC32782;
+	Mon, 12 Aug 2024 18:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723487799;
+	bh=cQPr+So1SBLf4JDT0q7xmiL2DlYxMtP/xfHwRK21seY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=epF6kaumb9KQzWF/qZtZvUNkZjk35e8LThxYBnKrNtYiYeYAUjCad38laysl1LK74
+	 VjJWu/Wvzs5F7DDZ8eE+8YWvl8Ob9teXaw9SRF/H7K6EiMlDGInmFy6oym8FNVuLpm
+	 RRL1F8AVsvx5pZN5W0mIbgyVWDShG7QOqUcD0Zdk+NLVGsDizRwxGWwdeGXU5I0prR
+	 dqhZuwExWhKlYHQ/RxllGQL0EzVRTQ2aqrzn5Ve32+zOb4jqSetWKO07xIe16mUwD2
+	 GdwyGWYknn1kil9M1ZcL/aVA4cn70Y/JWU1pXb9Y3y2JN+He25+ihgMZcKF2OWMm4f
+	 CLO/GGgsKnWgQ==
+From: Kees Cook <kees@kernel.org>
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Andy Shevchenko <andy.shevchenko@gmail.com>,
+	Michal Wajdeczko <michal.wajdeczko@intel.com>,
+	Julia Lawall <Julia.Lawall@inria.fr>,
+	Nicolas Palix <nicolas.palix@imag.fr>,
+	linux-hardening@vger.kernel.org,
+	cocci@inria.fr,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] coccinelle: Add rules to find str_down_up() replacements
+Date: Mon, 12 Aug 2024 11:36:38 -0700
+Message-Id: <20240812183637.work.999-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240808235227.2701479-1-quic_abhinavk@quicinc.com>
-References: <20240808235227.2701479-1-quic_abhinavk@quicinc.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Mon, 12 Aug 2024 11:36:23 -0700
-Message-ID: <CAE-0n523aJOogAidORYJNGUG4aW9Eq0wzoD3U72i8CFF=BqsaA@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm: fix the highest_bank_bit for sc7180
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	David Airlie <airlied@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>, 
-	Sean Paul <sean@poorly.run>, freedreno@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org, quic_jesszhan@quicinc.com, 
-	dianders@chromium.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1367; i=kees@kernel.org; h=from:subject:message-id; bh=cQPr+So1SBLf4JDT0q7xmiL2DlYxMtP/xfHwRK21seY=; b=owGbwMvMwCVmps19z/KJym7G02pJDGm7wsyKrmw96d2oyRiQ3Cj9r83oml3hisZCoWcbUmdEu AfYLi/uKGVhEONikBVTZAmyc49z8XjbHu4+VxFmDisTyBAGLk4BmEilACPD4RtbxSesXb58mvCE NVpb/rIKWnuHZe08bugY5BFVxvQgheGf1TW2MyYPt8+PEHx6KL/3/0ajZzo/j/8M7nwsWvI9T+I IBwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-Quoting Abhinav Kumar (2024-08-08 16:52:27)
-> sc7180 programs the ubwc settings as 0x1e as that would mean a
-> highest bank bit of 14 which matches what the GPU sets as well.
->
-> However, the highest_bank_bit field of the msm_mdss_data which is
-> being used to program the SSPP's fetch configuration is programmed
-> to a highest bank bit of 16 as 0x3 translates to 16 and not 14.
->
-> Fix the highest bank bit field used for the SSPP to match the mdss
-> and gpu settings.
->
-> Fixes: 6f410b246209 ("drm/msm/mdss: populate missing data")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
+As done with str_up_down(), add checks for str_down_up() opportunities.
+5 cases currently exist in the tree.
 
-Tested-by: Stephen Boyd <swboyd@chromium.org> # Trogdor.Lazor
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Cc: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Nicolas Palix <nicolas.palix@imag.fr>
+Cc: linux-hardening@vger.kernel.org
+Cc: cocci@inria.fr
+---
+ scripts/coccinelle/api/string_choices.cocci | 23 +++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
+
+diff --git a/scripts/coccinelle/api/string_choices.cocci b/scripts/coccinelle/api/string_choices.cocci
+index d517f6bc850b..5e729f187f22 100644
+--- a/scripts/coccinelle/api/string_choices.cocci
++++ b/scripts/coccinelle/api/string_choices.cocci
+@@ -62,3 +62,26 @@ e << str_up_down_r.E;
+ @@
+ 
+ coccilib.report.print_report(p[0], "opportunity for str_up_down(%s)" % e)
++
++@str_down_up depends on patch@
++expression E;
++@@
++(
++-      ((E) ? "down" : "up")
+++      str_down_up(E)
++)
++
++@str_down_up_r depends on !patch exists@
++expression E;
++position P;
++@@
++(
++*      ((E@P) ? "down" : "up")
++)
++
++@script:python depends on report@
++p << str_down_up_r.P;
++e << str_down_up_r.E;
++@@
++
++coccilib.report.print_report(p[0], "opportunity for str_down_up(%s)" % e)
+-- 
+2.34.1
+
 
