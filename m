@@ -1,288 +1,267 @@
-Return-Path: <linux-kernel+bounces-283542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D00994F617
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3026594F61D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 19:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A881F22B98
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:50:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30601F22B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B54518952C;
-	Mon, 12 Aug 2024 17:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C60C18951C;
+	Mon, 12 Aug 2024 17:55:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbQgXQn3"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="e1Nrw5a3"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A67187332;
-	Mon, 12 Aug 2024 17:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A613A24D
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 17:55:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723485011; cv=none; b=MFTU3UPbFd6M0zjn/nz29fgO0AtEJgAvODqS+hDgRO4SjITGYlMgE5gjoNVbMVnslpzBhH607tkJaYJYu8Ok5Mcgoz4cu/lQTkn/ADA01Syq+cD2Dr56eAeyvvJB9WCLKrK5AHFBNy6DrYVuFvIErFDZnxLFMlgRg4uC9HFXeKE=
+	t=1723485315; cv=none; b=Z4Adi9uYBQAfa37eVqhM9IvSBKI9ZHHhQJzWQzz10jIKXViCHwPSPB1geFq6N1Qh/DMV11kYo1SUxOTRiHTa8LSxXMRBF9Cw4+vdGqV9oT43U1TytXFofx07OZlDH3LmoXtirsIJZYmlNKDlgaK6U5DFU2ZxFFFzxUNchYJe2zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723485011; c=relaxed/simple;
-	bh=2z2RSKov/GyH1EK5WVNnSxrbnB9jrrm9TIxF5hy0Ejk=;
+	s=arc-20240116; t=1723485315; c=relaxed/simple;
+	bh=6BuwtxkOw+LbgmHont2lDmwWYUygWmSMZWCYt10eLlo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KYop6/RZ692/YKuVqvZjkNbL4D4mHyHmrD8ZgkfCl7VZsGY0dd2BnVjFjER9Me8K99DMHLBIPprOgiTUf9XHfvK2ePf6YutcwveURGl/T33Z/Hv5CF9aa6/DI7xwAMtiAvKV59icbGZINoK4g7EkMj884FPbQGKycA30kfIg3IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PbQgXQn3; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2d1bb65e906so2952820a91.3;
-        Mon, 12 Aug 2024 10:50:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=FniF0y6Kez/467VQ0Lybl06NH2FrgY5UdjroTIb/OCmwTnJ9HZglWTXWSAJned5ZlHNbMhw2s29TN9ZEfmPzi4M55tgfkY1xgYRELwrw2jY9WUVP5952RXh4muQll57vdlY6m0CCQDvacwOsCehn40PjyycJmp7o8ieet9GGTOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=e1Nrw5a3; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d4so26724231fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:55:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723485008; x=1724089808; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NawEhTzLqH6yNvIfmhIsOQiQSLsjJ89Sw7WTHq6svcA=;
-        b=PbQgXQn3ukIAkv8ddUq+GLEG7urlVYxJVStzACTLEKd4h+BjSRvFsLUqs5JhD1fnOU
-         sn4sIz4z8gJaRczPnC/GhMqxMAjwXVqrPReeI7Al4J3T7GOmnhSuyz30T4T6c3fa0ttL
-         BLk+HHP5bcIQhqvovzfpvH2ioY8t0pgO7m68uwJOWAsyjgu1+9qRxh0S83/AXg/qamJB
-         qluMq7p2buI3iIkmExQRCbSGGly2J2URjGgLkqG5niTHSpZ7eUaEGZNc8rjEUSs1VEHq
-         /COdLmkAldcpfwQ9PV5cumE+gwWDf6EmV00DyKrs5eApMUPrsUUl/QOMJGZT8NRRItd0
-         Z26Q==
+        d=broadcom.com; s=google; t=1723485312; x=1724090112; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xcEjfDc7c1NgjoDZQU2kcYerW5vvr8yoBs/gk0xV80M=;
+        b=e1Nrw5a3Tv5kUayIasNFyHqVdtElDt+YYYQYXaF/cs4NrY/BxpwhIb25sGXiTaKIuI
+         j8M0lwpA0zNLgDXD+8oWkwjZAgJpdA2NLw8VmD6avMYegLQzxLDXSskaes9QX/LMmlP7
+         vWAzKwkhKtjJHDyYtkw8M+oEKaauzQNEflLIA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723485008; x=1724089808;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NawEhTzLqH6yNvIfmhIsOQiQSLsjJ89Sw7WTHq6svcA=;
-        b=dkmzEWo570949fHlOU1InZac2yMj2wmGjJnCIfVw6yK31RHRc2ugiyx2UDxOYiUD2P
-         JzKlPfbd/ynCMNsED7AcKD3oT9r6SeaKbwGirug+NQNhT8eLE4NF2u7tQlwt65AMiFKd
-         RKLrXPAyDntlLujPzdnIw8EYN7UY7lmI2NeuJ9ndtFfTYE7reeugPF5bVcJP8ut/T8ct
-         fi2g3VpucnFtbxfj+xlGUAiP3KYdz3yulNQlXPImqfhnk2qcCCf9yKEmhv0GeVXwHADy
-         0EcTf6H4ODTe4uZSjwH96c39jYjdxwPM+dC/WHn0X4i6RXoB6569NBq98j0HTidhSkNE
-         Ofcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOzhAskrZOeKbHc3HR47VoMFO+IYOzz2QFK9JZH9x7AUMR4Ch5PvP80NAG24pABcgAp01hRM1T3VdU4BIu7Z+14u/9B3n6ECFBSvyeJwuHuxRLzNYzwwRafWlz3RJORXNO0T8/QueIgQkaxoc+Hf/88AQR7RHlAXCw9PdSCqaXTK6pEi1Lzd2Ts0b4nasebmdb3VqwIrJctnVm6ONPDv7LOxG9brk/xg==
-X-Gm-Message-State: AOJu0Yz0xihEs/EEs0eB61eDkaf6MgAHjJQ4Qkwtg0vE9X1dWrTSDh+6
-	bkqQfoyIwgFauiRnhkZGTlBHKjYUJ5ERBuMt44XJ1LzJWiPFtcul0aHGTwnLltyzAGNOxbIHxhN
-	fgmIwfzBb3vhfMfCEdtuL3lRATrw=
-X-Google-Smtp-Source: AGHT+IEzNLNL72J4chcApxip/q/fhhOWJeN9YXVN3ipYVj/KZQHYL6UbpTdjRx5N6fk+CtSG34OoY/ZfBHTKTHmVGO8=
-X-Received: by 2002:a17:90b:4b88:b0:2c8:85c:750b with SMTP id
- 98e67ed59e1d1-2d39263fefdmr1134353a91.34.1723485008393; Mon, 12 Aug 2024
- 10:50:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723485312; x=1724090112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xcEjfDc7c1NgjoDZQU2kcYerW5vvr8yoBs/gk0xV80M=;
+        b=SkjAX6z7QZPssTlGkV3ZtYJTuipjPsxBWZtZ6a6SlUCMHZ2ZqupGHRCUxTWFLoik0K
+         yBL7HZwZxtVaIk3hC0TbIVZtqD5LYtwKuUDnh/HYS9kgRcdj7Ojy1DKnUQK0CEVHtJcD
+         yJJARSVDbP+SiT79wpUNZoXOt08F9/0iijkxa00G6O/BtiC3Dccjgn0VDAKba02apSF8
+         0yLh70zrMQgeXWFwZhmBd0fnbZ3K3VlOOjA4RLRqVx/lG9oC9cQJyIeC6s1ieZdZuxXw
+         wYoNVbdRivdwwnNUmOltcC8EJr/HmLQeTokAwjqaoVAWaN6SWqOdTF+bWo4SpY9AKXeC
+         Eqcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnGQoRkQ2CqUXCE15fQ3Vdl8dl33vu+IJzPvD4qhGHtvMs+BPJqZdIoUTD6jVwa//yNS++YES8Ylg9IBm5t/7rXy224jzU/OTfi9Ox
+X-Gm-Message-State: AOJu0Yy0YJaFSWFl5/FURbkwGxxKzN9YROjwbTAPyx0CLmVcAqwXvmQH
+	dhgXh6C2162IU7UsGqusLGBrmsb4ig9ANWi4JbEmp0g4ulYO5H3OQQpCw1pTq+l8+zmkdh/xG10
+	DlIELratRRUa3SqpTstD0WOBYR8QOeFYGg6+Y
+X-Google-Smtp-Source: AGHT+IEwWo0ga1YJbpRGNtll27ejw8elve2Kxllw5X1gl7dZQDu9iVZntUj1AfNi1+LD9sL/nXpWrW5CAU8tk77Vmvw=
+X-Received: by 2002:a05:651c:1509:b0:2f0:1c57:625a with SMTP id
+ 38308e7fff4ca-2f2b8ed7a09mr1049891fa.9.1723485311496; Mon, 12 Aug 2024
+ 10:55:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240727094405.1362496-1-liaochang1@huawei.com>
- <7eefae59-8cd1-14a5-ef62-fc0e62b26831@huawei.com> <CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com>
- <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
-In-Reply-To: <85991ce3-674d-b46e-b4f9-88a50f7f5122@huawei.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 12 Aug 2024 10:49:56 -0700
-Message-ID: <CAEf4BzYvpgfFGckcKdzkC_g1J1SFi7xBe=_cjdVy4KEMikvGMw@mail.gmail.com>
-Subject: Re: [PATCH] uprobes: Optimize the allocation of insn_slot for performance
-To: "Liao, Chang" <liaochang1@huawei.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, 
-	"oleg@redhat.com >> Oleg Nesterov" <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, paulmck@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-6-james.quinlan@broadcom.com> <20240807030342.GH3412@thinkpad>
+In-Reply-To: <20240807030342.GH3412@thinkpad>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 12 Aug 2024 13:54:59 -0400
+Message-ID: <CA+-6iNys9hW6O=kYE0qSgny6zviKmQkn6hNnpL+-9s4oYPOWuw@mail.gmail.com>
+Subject: Re: [PATCH v5 05/12] PCI: brcmstb: Use swinit reset if available
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000ce502a061f803116"
+
+--000000000000ce502a061f803116
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 4:11=E2=80=AFAM Liao, Chang <liaochang1@huawei.com>=
- wrote:
+On Tue, Aug 6, 2024 at 11:03=E2=80=AFPM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
->
->
-> =E5=9C=A8 2024/8/9 2:26, Andrii Nakryiko =E5=86=99=E9=81=93:
-> > On Thu, Aug 8, 2024 at 1:45=E2=80=AFAM Liao, Chang <liaochang1@huawei.c=
-om> wrote:
-> >>
-> >> Hi Andrii and Oleg.
-> >>
-> >> This patch sent by me two weeks ago also aim to optimize the performan=
-ce of uprobe
-> >> on arm64. I notice recent discussions on the performance and scalabili=
-ty of uprobes
-> >> within the mailing list. Considering this interest, I've added you and=
- other relevant
-> >> maintainers to the CC list for broader visibility and potential collab=
-oration.
-> >>
+> On Wed, Jul 31, 2024 at 06:28:19PM -0400, Jim Quinlan wrote:
+> > The 7712 SOC adds a software init reset device for the PCIe HW.
+> > If found in the DT node, use it.
 > >
-> > Hi Liao,
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 19 +++++++++++++++++++
+> >  1 file changed, 19 insertions(+)
 > >
-> > As you can see there is an active work to improve uprobes, that
-> > changes lifetime management of uprobes, removes a bunch of locks taken
-> > in the uprobe/uretprobe hot path, etc. It would be nice if you can
-> > hold off a bit with your changes until all that lands. And then
-> > re-benchmark, as costs might shift.
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index 4d68fe318178..948fd4d176bc 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -266,6 +266,7 @@ struct brcm_pcie {
+> >       struct reset_control    *rescal;
+> >       struct reset_control    *perst_reset;
+> >       struct reset_control    *bridge_reset;
+> > +     struct reset_control    *swinit_reset;
+> >       int                     num_memc;
+> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> >       u32                     hw_rev;
+> > @@ -1633,12 +1634,30 @@ static int brcm_pcie_probe(struct platform_devi=
+ce *pdev)
+> >       if (IS_ERR(pcie->bridge_reset))
+> >               return PTR_ERR(pcie->bridge_reset);
 > >
-> > But also see some remarks below.
+> > +     pcie->swinit_reset =3D devm_reset_control_get_optional_exclusive(=
+&pdev->dev, "swinit");
+> > +     if (IS_ERR(pcie->swinit_reset))
+> > +             return PTR_ERR(pcie->swinit_reset);
+> > +
+> >       ret =3D clk_prepare_enable(pcie->clk);
+> >       if (ret)
+> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
+lock\n");
 > >
-> >> Thanks.
-> >>
-> >> =E5=9C=A8 2024/7/27 17:44, Liao Chang =E5=86=99=E9=81=93:
-> >>> The profiling result of single-thread model of selftests bench reveal=
-s
-> >>> performance bottlenecks in find_uprobe() and caches_clean_inval_pou()=
- on
-> >>> ARM64. On my local testing machine, 5% of CPU time is consumed by
-> >>> find_uprobe() for trig-uprobe-ret, while caches_clean_inval_pou() tak=
-e
-> >>> about 34% of CPU time for trig-uprobe-nop and trig-uprobe-push.
-> >>>
-> >>> This patch introduce struct uprobe_breakpoint to track previously
-> >>> allocated insn_slot for frequently hit uprobe. it effectively reduce =
-the
-> >>> need for redundant insn_slot writes and subsequent expensive cache
-> >>> flush, especially on architecture like ARM64. This patch has been tes=
-ted
-> >>> on Kunpeng916 (Hi1616), 4 NUMA nodes, 64 cores@ 2.4GHz. The selftest
-> >>> bench and Redis GET/SET benchmark result below reveal obivious
-> >>> performance gain.
-> >>>
-> >>> before-opt
-> >>> ----------
-> >>> trig-uprobe-nop:  0.371 =C2=B1 0.001M/s (0.371M/prod)
-> >>> trig-uprobe-push: 0.370 =C2=B1 0.001M/s (0.370M/prod)
-> >>> trig-uprobe-ret:  1.637 =C2=B1 0.001M/s (1.647M/prod)
+> >       pcie->bridge_sw_init_set(pcie, 0);
 > >
-> > I'm surprised that nop and push variants are much slower than ret
-> > variant. This is exactly opposite on x86-64. Do you have an
-> > explanation why this might be happening? I see you are trying to
-> > optimize xol_get_insn_slot(), but that is (at least for x86) a slow
-> > variant of uprobe that normally shouldn't be used. Typically uprobe is
-> > installed on nop (for USDT) and on function entry (which would be push
-> > variant, `push %rbp` instruction).
-> >
-> > ret variant, for x86-64, causes one extra step to go back to user
-> > space to execute original instruction out-of-line, and then trapping
-> > back to kernel for running uprobe. Which is what you normally want to
-> > avoid.
-> >
-> > What I'm getting at here. It seems like maybe arm arch is missing fast
-> > emulated implementations for nops/push or whatever equivalents for
-> > ARM64 that is. Please take a look at that and see why those are slow
-> > and whether you can make those into fast uprobe cases?
+> > +     if (pcie->swinit_reset) {
 >
-> Hi Andrii,
->
-> As you correctly pointed out, the benchmark result on Arm64 is counterint=
-uitive
-> compared to X86 behavior. My investigation revealed that the root cause l=
-ies in
-> the arch_uprobe_analyse_insn(), which excludes the Arm64 equvialents inst=
-ructions
-> of 'nop' and 'push' from the emulatable instruction list. This forces the=
- kernel
-> to handle these instructions out-of-line in userspace upon breakpoint exc=
-eption
-> is handled, leading to a significant performance overhead compared to 're=
-t' variant,
-> which is already emulated.
->
-> To address this issue, I've developed a patch supports  the emulation of =
-'nop' and
-> 'push' variants. The benchmark results below indicates the performance ga=
-in of
-> emulation is obivious.
->
-> xol (1 cpus)
-> ------------
-> uprobe-nop:  0.916 =C2=B1 0.001M/s (0.916M/prod)
-> uprobe-push: 0.908 =C2=B1 0.001M/s (0.908M/prod)
-> uprobe-ret:  1.855 =C2=B1 0.000M/s (1.855M/prod)
-> uretprobe-nop:  0.640 =C2=B1 0.000M/s (0.640M/prod)
-> uretprobe-push: 0.633 =C2=B1 0.001M/s (0.633M/prod)
-> uretprobe-ret:  0.978 =C2=B1 0.003M/s (0.978M/prod)
->
-> emulation (1 cpus)
-> -------------------
-> uprobe-nop:  1.862 =C2=B1 0.002M/s  (1.862M/s/cpu)
-> uprobe-push: 1.743 =C2=B1 0.006M/s  (1.743M/s/cpu)
-> uprobe-ret:  1.840 =C2=B1 0.001M/s  (1.840M/s/cpu)
-> uretprobe-nop:  0.964 =C2=B1 0.004M/s  (0.964M/s/cpu)
-> uretprobe-push: 0.936 =C2=B1 0.004M/s  (0.936M/s/cpu)
-> uretprobe-ret:  0.940 =C2=B1 0.001M/s  (0.940M/s/cpu)
->
-> As you can see, the performance gap between nop/push and ret variants has=
- been significantly
-> reduced. Due to the emulation of 'push' instruction need to access usersp=
-ace memory, it spent
-> more cycles than the other.
+> You already have a callback called 'bridge_sw_init_set', so this 'swinit_=
+reset'
+> is different from 'bridge_sw_init'?
+Yes.  The swinit_reset is a soft reset of the entire core while
+bridge_sw_init reset is only for the bridge to system memory.
 
-Great, it's an obvious improvement. Are you going to send patches
-upstream? Please cc bpf@vger.kernel.org as well.
+If so, does it make sense to move this into
+> the callback itself to have all reset sequence in one place?
 
+The order and placement of the resets can sometimes be fragile and I
+would prefer to leave them where they are.
 
-I'm also thinking we should update uprobe/uretprobe benchmarks to be
-less x86-specific. Right now "-nop" is the happy fastest case, "-push"
-is still happy, slightly slower case (due to the need to emulate stack
-operation) and "-ret" is meant to be the slow single-step case. We
-should adjust the naming and make sure that on ARM64 we hit similar
-code paths. Given you seem to know arm64 pretty well, can you please
-take a look at updating bench tool for ARM64 (we can also rename
-benchmarks to something a bit more generic, rather than using
-instruction names)?
+Regards,
+Jim Quinlan
+Broadcom STB/CM
 
 >
+> - Mani
+>
+> > +             ret =3D reset_control_assert(pcie->swinit_reset);
+> > +             if (dev_err_probe(&pdev->dev, ret, "could not assert rese=
+t 'swinit'\n"))
+> > +                     goto clk_disable_unprepare;
+> > +
+> > +             /* HW team recommends 1us for proper sync and propagation=
+ of reset */
+> > +             udelay(1);
+> > +
+> > +             ret =3D reset_control_deassert(pcie->swinit_reset);
+> > +             if (dev_err_probe(&pdev->dev, ret,
+> > +                               "could not de-assert reset 'swinit' aft=
+er asserting\n"))
+> > +                     goto clk_disable_unprepare;
+> > +     }
+> > +
+> >       ret =3D reset_control_reset(pcie->rescal);
+> >       if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
+"))
+> >               goto clk_disable_unprepare;
+> > --
+> > 2.17.1
 > >
-> >>> trig-uretprobe-nop:  0.331 =C2=B1 0.004M/s (0.331M/prod)
-> >>> trig-uretprobe-push: 0.333 =C2=B1 0.000M/s (0.333M/prod)
-> >>> trig-uretprobe-ret:  0.854 =C2=B1 0.002M/s (0.854M/prod)
-> >>> Redis SET (RPS) uprobe: 42728.52
-> >>> Redis GET (RPS) uprobe: 43640.18
-> >>> Redis SET (RPS) uretprobe: 40624.54
-> >>> Redis GET (RPS) uretprobe: 41180.56
-> >>>
-> >>> after-opt
-> >>> ---------
-> >>> trig-uprobe-nop:  0.916 =C2=B1 0.001M/s (0.916M/prod)
-> >>> trig-uprobe-push: 0.908 =C2=B1 0.001M/s (0.908M/prod)
-> >>> trig-uprobe-ret:  1.855 =C2=B1 0.000M/s (1.855M/prod)
-> >>> trig-uretprobe-nop:  0.640 =C2=B1 0.000M/s (0.640M/prod)
-> >>> trig-uretprobe-push: 0.633 =C2=B1 0.001M/s (0.633M/prod)
-> >>> trig-uretprobe-ret:  0.978 =C2=B1 0.003M/s (0.978M/prod)
-> >>> Redis SET (RPS) uprobe: 43939.69
-> >>> Redis GET (RPS) uprobe: 45200.80
-> >>> Redis SET (RPS) uretprobe: 41658.58
-> >>> Redis GET (RPS) uretprobe: 42805.80
-> >>>
-> >>> While some uprobes might still need to share the same insn_slot, this
-> >>> patch compare the instructions in the resued insn_slot with the
-> >>> instructions execute out-of-line firstly to decides allocate a new on=
-e
-> >>> or not.
-> >>>
-> >>> Additionally, this patch use a rbtree associated with each thread tha=
-t
-> >>> hit uprobes to manage these allocated uprobe_breakpoint data. Due to =
-the
-> >>> rbtree of uprobe_breakpoints has smaller node, better locality and le=
-ss
-> >>> contention, it result in faster lookup times compared to find_uprobe(=
-).
-> >>>
-> >>> The other part of this patch are some necessary memory management for
-> >>> uprobe_breakpoint data. A uprobe_breakpoint is allocated for each new=
-ly
-> >>> hit uprobe that doesn't already have a corresponding node in rbtree. =
-All
-> >>> uprobe_breakpoints will be freed when thread exit.
-> >>>
-> >>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
-> >>> ---
-> >>>  include/linux/uprobes.h |   3 +
-> >>>  kernel/events/uprobes.c | 246 +++++++++++++++++++++++++++++++++-----=
---
-> >>>  2 files changed, 211 insertions(+), 38 deletions(-)
-> >>>
-> >
-> > [...]
 >
 > --
-> BR
-> Liao, Chang
+> =E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
+
+--000000000000ce502a061f803116
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIQbgYJKoZIhvcNAQcCoIIQXzCCEFsCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+gg3FMIIFDTCCA/WgAwIBAgIQeEqpED+lv77edQixNJMdADANBgkqhkiG9w0BAQsFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMDA5MTYwMDAwMDBaFw0yODA5MTYwMDAwMDBaMFsxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBS
+MyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA
+vbCmXCcsbZ/a0fRIQMBxp4gJnnyeneFYpEtNydrZZ+GeKSMdHiDgXD1UnRSIudKo+moQ6YlCOu4t
+rVWO/EiXfYnK7zeop26ry1RpKtogB7/O115zultAz64ydQYLe+a1e/czkALg3sgTcOOcFZTXk38e
+aqsXsipoX1vsNurqPtnC27TWsA7pk4uKXscFjkeUE8JZu9BDKaswZygxBOPBQBwrA5+20Wxlk6k1
+e6EKaaNaNZUy30q3ArEf30ZDpXyfCtiXnupjSK8WU2cK4qsEtj09JS4+mhi0CTCrCnXAzum3tgcH
+cHRg0prcSzzEUDQWoFxyuqwiwhHu3sPQNmFOMwIDAQABo4IB2jCCAdYwDgYDVR0PAQH/BAQDAgGG
+MGAGA1UdJQRZMFcGCCsGAQUFBwMCBggrBgEFBQcDBAYKKwYBBAGCNxQCAgYKKwYBBAGCNwoDBAYJ
+KwYBBAGCNxUGBgorBgEEAYI3CgMMBggrBgEFBQcDBwYIKwYBBQUHAxEwEgYDVR0TAQH/BAgwBgEB
+/wIBADAdBgNVHQ4EFgQUljPR5lgXWzR1ioFWZNW+SN6hj88wHwYDVR0jBBgwFoAUj/BLf6guRSSu
+TVD6Y5qL3uLdG7wwegYIKwYBBQUHAQEEbjBsMC0GCCsGAQUFBzABhiFodHRwOi8vb2NzcC5nbG9i
+YWxzaWduLmNvbS9yb290cjMwOwYIKwYBBQUHMAKGL2h0dHA6Ly9zZWN1cmUuZ2xvYmFsc2lnbi5j
+b20vY2FjZXJ0L3Jvb3QtcjMuY3J0MDYGA1UdHwQvMC0wK6ApoCeGJWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vcm9vdC1yMy5jcmwwWgYDVR0gBFMwUTALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgEo
+CjA0MDIGCCsGAQUFBwIBFiZodHRwczovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAN
+BgkqhkiG9w0BAQsFAAOCAQEAdAXk/XCnDeAOd9nNEUvWPxblOQ/5o/q6OIeTYvoEvUUi2qHUOtbf
+jBGdTptFsXXe4RgjVF9b6DuizgYfy+cILmvi5hfk3Iq8MAZsgtW+A/otQsJvK2wRatLE61RbzkX8
+9/OXEZ1zT7t/q2RiJqzpvV8NChxIj+P7WTtepPm9AIj0Keue+gS2qvzAZAY34ZZeRHgA7g5O4TPJ
+/oTd+4rgiU++wLDlcZYd/slFkaT3xg4qWDepEMjT4T1qFOQIL+ijUArYS4owpPg9NISTKa1qqKWJ
+jFoyms0d0GwOniIIbBvhI2MJ7BSY9MYtWVT5jJO3tsVHwj4cp92CSFuGwunFMzCCA18wggJHoAMC
+AQICCwQAAAAAASFYUwiiMA0GCSqGSIb3DQEBCwUAMEwxIDAeBgNVBAsTF0dsb2JhbFNpZ24gUm9v
+dCBDQSAtIFIzMRMwEQYDVQQKEwpHbG9iYWxTaWduMRMwEQYDVQQDEwpHbG9iYWxTaWduMB4XDTA5
+MDMxODEwMDAwMFoXDTI5MDMxODEwMDAwMFowTDEgMB4GA1UECxMXR2xvYmFsU2lnbiBSb290IENB
+IC0gUjMxEzARBgNVBAoTCkdsb2JhbFNpZ24xEzARBgNVBAMTCkdsb2JhbFNpZ24wggEiMA0GCSqG
+SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDMJXaQeQZ4Ihb1wIO2hMoonv0FdhHFrYhy/EYCQ8eyip0E
+XyTLLkvhYIJG4VKrDIFHcGzdZNHr9SyjD4I9DCuul9e2FIYQebs7E4B3jAjhSdJqYi8fXvqWaN+J
+J5U4nwbXPsnLJlkNc96wyOkmDoMVxu9bi9IEYMpJpij2aTv2y8gokeWdimFXN6x0FNx04Druci8u
+nPvQu7/1PQDhBjPogiuuU6Y6FnOM3UEOIDrAtKeh6bJPkC4yYOlXy7kEkmho5TgmYHWyn3f/kRTv
+riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
+QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
+UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
+M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
+Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
+14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
+a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
+XzCCBU0wggQ1oAMCAQICDEjuN1Vuw+TT9V/ygzANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
+RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
+UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE3MTNaFw0yNTA5MTAxMjE3MTNaMIGO
+MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
+BgNVBAoTDUJyb2FkY29tIEluYy4xFDASBgNVBAMTC0ppbSBRdWlubGFuMSkwJwYJKoZIhvcNAQkB
+FhpqYW1lcy5xdWlubGFuQGJyb2FkY29tLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoC
+ggEBAKtQZbH0dDsCEixB9shqHxmN7R0Tywh2HUGagri/LzbKgXsvGH/LjKUjwFOQwFe4EIVds/0S
+hNqJNn6Z/DzcMdIAfbMJ7juijAJCzZSg8m164K+7ipfhk7SFmnv71spEVlo7tr41/DT2HvUCo93M
+7Hu+D3IWHBqIg9YYs3tZzxhxXKtJW6SH7jKRz1Y94pEYplGQLM+uuPCZaARbh+i0auVCQNnxgfQ/
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCBIgeLout8dCqQcfuxz6qcttM9z/G2Z
+L4OZxUxwvROrszAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MTIxNzU1MTJaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAg73MZnPzIAhhi9uoC7NB3nzfltKwQ7ZgSR+f2MGTtKjsgWnE
+kVOpekNCdAlybcj/tJlb5dnOIOsbHmZJNULRCAEdsJba9GMXGJYYup5EbhRIfgEdI1xInviv9jUD
+yNgq0+KhDTZFe4cnnlcMRMmr0kc/ZhQsm3fx2+bu2wi+b88AeaMKHydRUsywV6TgCXxDsHez5pt8
+MJXgKH2k5tgWE23Prz2wZWzTvD8djRBWexaj9rdzjuLmRvimXqAIcTTDW7MKRHA6Ry3HCy2z/FCp
+TyUwR4I1fWvjBd/B8M3rxrctFIbqGnU7SmjlHTKxXSVNDeuX+oghIMZwcLFB7yovfA==
+--000000000000ce502a061f803116--
 
