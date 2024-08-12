@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-283450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC56794F516
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:40:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF1F794F51D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 18:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CA11B21E8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:40:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9C12812E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 16:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66DF187345;
-	Mon, 12 Aug 2024 16:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373A918757C;
+	Mon, 12 Aug 2024 16:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="hoQRIyKZ"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQfaukLW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FE61494B8;
-	Mon, 12 Aug 2024 16:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC07187347;
+	Mon, 12 Aug 2024 16:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723480815; cv=none; b=P5o+V8LdriEorWc9y09vMpGuB8qrZOpunJTqhpsBY+pjCm9LwsF36t0+yicrpMBQDz8gtIVVp86BTHveAWFUO9OJMUdz2KtFhVXQcaGKvfghmEnWQua597rFHMNRHezQojh7uUkbsWRZW1izfenVzxaVBHJ98ZlrJpIys8XKmro=
+	t=1723480902; cv=none; b=UgF6LwJt5JmovNsYBCgDKNz+WTM/W+ZhhvzRhWeQZDfOvC9Tx7Dil7pYqndkm+MOVf7e8ZjDjLqjZWY7jRMHfk4DFVyiaTkfgOILh97wH8iXmDr80Qk07vofEBKxv+50m4VmCydbaE2BcKDkS8kmsUPyelWS82dfkcoiz5VvBzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723480815; c=relaxed/simple;
-	bh=BhuxBHwSqvK3NfpdV6y7jZbOqPnGXVRVotuTD2awFSI=;
+	s=arc-20240116; t=1723480902; c=relaxed/simple;
+	bh=w/foYfrPOgxcK2AUgC3oPzuz6RvE+fU4WtbCKyDaDd8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LRuEAIalEehhpJgq61npSTVzFcdF2M5AtCv1pbFunnNVUMNJufQALk6gksPJCuK7ExvvVH5z1d/o5DbWAO2aVd7XxEnnaiYR/W1dj/XWff3q5U2l5jAkPzsJBYKChHMlrQ4ttseLwWMeUuR/9HbGzf7sYWOonY2KNOdus/NUvTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=hoQRIyKZ; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4WjKxb0d8yz9t6q;
-	Mon, 12 Aug 2024 18:40:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1723480803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rJk4Vnl04Aw7j+NDa+iBHRI+DmCBEW0NB+2kLgBa26E=;
-	b=hoQRIyKZjG/fYVUmT/agpW2XV974v/vv4+sVRs19uH3+KkIBDIBu7ezLh6wWIF6h76NT16
-	TUWz6o/OdRRR5qtGX26SfbxPxDPHIXezFf2yt4cXepvXQkhflwtBgDZBaQX2Zin3x1cric
-	uOX6q0jkxexjQOiZ+TdWOL9I6qgRrA0MTbuV8fVELOcPM6qaZv7VsxWodc3v8FObdzWzV1
-	D5mVTXKVKlzOLxmMSalVIO9NC50PIi120AWLUn9U/kg5GuwNhctn/C4iA59rJIghlssIvH
-	IWdQI2xxs1MYCSkavZDk+RC6mK1ZYUPGklribuB0zSluA0nnpXi8btmrhR3ZlQ==
-Date: Mon, 12 Aug 2024 16:39:56 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Chandan Babu R <chandan.babu@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, p.raghav@samsung.com
-Subject: Re: [PATCH 2/3] xfs: convert perag lookup to xarray
-Message-ID: <20240812163956.xduakibqyzuapfkt@quentin>
-References: <20240812063143.3806677-1-hch@lst.de>
- <20240812063143.3806677-3-hch@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nu+yslXAUkk5+9iJhMpiNmzUKMcGlUdLub2a4batxcdGhjiPclR8RTpxU05K0Fo6oAcCFBApyCPbbgiqcWVVWoGB6pQG+CTYuj61g9YJgjWocDD3W0LxHTqmC5fP6U+HWAa0nS85DlOT1NMRWeiY0a4BQWvP45Kof+C8vg3tT/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQfaukLW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F5C5C4AF09;
+	Mon, 12 Aug 2024 16:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723480901;
+	bh=w/foYfrPOgxcK2AUgC3oPzuz6RvE+fU4WtbCKyDaDd8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AQfaukLWVXSdXViNPLTzV2UfFjHeGyu9B3U2wGAbLx9d5OksT+t5fqn9Nm6K15iRj
+	 tSmiNJIKPKPbvcROPJ9/QmsMi5/YKwWurxx79RtrpKrKRWijWTdBaR5CK+/Mgf0ik9
+	 Kegga2BSy7jBYKzf8OfA1DzWF2LShXYDbbNcR/myrKoAmZCGCgZkIvPqAAMoWl5w7t
+	 v/Pe9FAOJcl7Yw0kLkxuDcuPV0+346KYovLc5d04ngZwCGrZi03x+YSdO6ypQINpZq
+	 gSdcApK9+5ODXY1tb5BoBk0FHhK6FuQCv9mIM4GAnQ5q28Itoq8426oPBHHv3/94oU
+	 fOfeyZFrUzCdA==
+Date: Mon, 12 Aug 2024 10:41:40 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Mateusz Majewski <m.majewski2@samsung.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>,
+	Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>,
+	linux-pm@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Zhang Rui <rui.zhang@intel.com>, Conor Dooley <conor+dt@kernel.org>,
+	Anand Moon <linux.amoon@gmail.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v3 6/6] dt-bindings: thermal: samsung,exynos: remove
+ driver-specific information
+Message-ID: <172348088057.1248578.13184314631777565380.robh@kernel.org>
+References: <20240807084829.1037303-1-m.majewski2@samsung.com>
+ <CGME20240807084917eucas1p28c675c9da74f0de0bb09689819202c39@eucas1p2.samsung.com>
+ <20240807084829.1037303-7-m.majewski2@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,47 +69,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812063143.3806677-3-hch@lst.de>
+In-Reply-To: <20240807084829.1037303-7-m.majewski2@samsung.com>
 
-On Mon, Aug 12, 2024 at 08:31:01AM +0200, Christoph Hellwig wrote:
-> diff --git a/fs/xfs/libxfs/xfs_ag.c b/fs/xfs/libxfs/xfs_ag.c
-> index 7e80732cb54708..5efb1e8b4107a9 100644
-> --- a/fs/xfs/libxfs/xfs_ag.c
-> +++ b/fs/xfs/libxfs/xfs_ag.c
-> @@ -46,7 +46,7 @@ xfs_perag_get(
->  	struct xfs_perag	*pag;
->  
->  	rcu_read_lock();
-xa_load() already calls rcu_read_lock(). So we can get rid of this I
-guess?
-> -	pag = radix_tree_lookup(&mp->m_perag_tree, agno);
-> -xfs_perag_get_tag(
-> -	struct xfs_mount	*mp,
-> -	xfs_agnumber_t		first,
-> -	unsigned int		tag)
-> -{
-> -	struct xfs_perag	*pag;
-> -	int			found;
-> -
-> -	rcu_read_lock();
-> -	found = radix_tree_gang_lookup_tag(&mp->m_perag_tree,
-> -					(void **)&pag, first, 1, tag);
-> -	if (found <= 0) {
-> -		rcu_read_unlock();
-> -		return NULL;
-> -	}
-> -	trace_xfs_perag_get_tag(pag, _RET_IP_);
-> -	atomic_inc(&pag->pag_ref);
-> -	rcu_read_unlock();
-> -	return pag;
-> -}
-> -
->  /* Get a passive reference to the given perag. */
->  struct xfs_perag *
->  xfs_perag_hold(
-> @@ -117,38 +92,13 @@ xfs_perag_grab(
->  	struct xfs_perag	*pag;
->  
->  	rcu_read_lock();
-Same here.
+
+On Wed, 07 Aug 2024 10:48:25 +0200, Mateusz Majewski wrote:
+> The number of supported trip points was only limited by the driver
+> implementation at the time, which mapped each trip point defined in the
+> devicetree source file to a hardware trip point. An implementation that
+> does not have this limitation is possible; indeed, that is how the
+> driver works currently. Therefore, this information should be removed
+> from the bindings description, which are meant to be independent of
+> the details of the driver implementation.
+> 
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Signed-off-by: Mateusz Majewski <m.majewski2@samsung.com>
+> ---
+> v2 -> v3: reword the commit message to be easier to understand in
+>   context of dt-bindings.
+> v1 -> v2: remove an unnecessary sentence.
+> 
+>  .../devicetree/bindings/thermal/samsung,exynos-thermal.yaml | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
 
