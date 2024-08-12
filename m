@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-282444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4616B94E41A
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3D994E41C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 02:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EA69281E38
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:55:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25F9A1F21E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 00:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66649AD4B;
-	Mon, 12 Aug 2024 00:54:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA754A32;
+	Mon, 12 Aug 2024 00:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCuyvqzF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QcO3RWIy"
+Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14F2847A;
-	Mon, 12 Aug 2024 00:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E47193
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 00:55:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723424094; cv=none; b=NHVnPmmcJ3D/c5dShLj/pra6DQ48kWLV2RMs0JouMCAXkyNM4xygu+FpOtWL9ufU42Rsb7xvBK48hnRor9+n0l9tFPC0hbsMT2wSDxDXb8FWnBaK/yPzQuVwOEYNJeeOeWv8cZtbY4vRgMsGIUV0z3DR7veD0NDZ66ibmNUd2tk=
+	t=1723424150; cv=none; b=ZJJIujovLO4+Y73+NVuHIdXqAZUU8wajgnh7FSTIXVBk9RqqRRf3c3ekV6yVzUfkvTOb5SHRTuIHi48vy6zmPBPvFaCKRC1T1VN8QDcvPkLt8nw1LNiVUCPolT62B1QfcDap/2XyFu4YAftELpr1CKHM2zmoOrbk/ALu+R18aE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723424094; c=relaxed/simple;
-	bh=9vCm2QQLHHc8gdTjjYZ4IeMay+XY9rlqzzCnFkWnrdM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g20z+Npv06ecEwX5qX4ubzYRWk0wv1tk2/N0A6eDVB69xf4Ouk3dAap06N3iYPz6hM8+vKRgS6y2akjWeHCCdCNEmmv3ixyz3mL+6d4KLsHPyeiIvsd/igTGsGQGS1k12cfu6DMnJlJWtcaRGr4Gf82rADCkkLnXJwO0Oq1M22Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCuyvqzF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E952C4AF0F;
-	Mon, 12 Aug 2024 00:54:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723424094;
-	bh=9vCm2QQLHHc8gdTjjYZ4IeMay+XY9rlqzzCnFkWnrdM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=oCuyvqzF6sLPVv2ay/iIzSUG3olpK66YAZBHhvIOnJuERDhEIYo2Q83q+6cAQVEfa
-	 5hRagXFcQt4V8bTkXzkUwoNi7tm7LZvo171WUW/sfcd5vZgfCoK8oeevLPRX1J9VIL
-	 ee+iOMhQOxmWAYfnW+FpBLQVKjdBrk46ocW1sImLhoafbhxhvIkuXWcBKD0w4W2jiW
-	 JZgQX1GApsqGAuXQF40ITXcIB7hRrHlhA/jkZJ7ukeCXK5BhqBddQqPjkMHo4JW+dr
-	 xxkR2hKfnPABGaEiVltj1ojTx1UTC27GfnoEFRC5hNvFHkPnV0rcgETNQlBcxyDwzM
-	 znB/tbh3jLTiQ==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-260dde65a68so2443222fac.2;
-        Sun, 11 Aug 2024 17:54:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqqn3k2zEQbCxoxlKLhCGPvoZDNGQTyHYtXdxhj8upUnCtfu3dmM0JVLAgz2KT/a5X9hOiqrbADfK/0FQVaGq9883np79pJNGZhBsr4FP8uBCwjmLCDnfqMDE+DPJGq8XHIxIw91C6BQ==
-X-Gm-Message-State: AOJu0Ywrn/KQaXm2dCGNe/Z6SRL0cf8DQPuKVOa4+RDJWcUrlqRkCJAa
-	nGPBzkrMNBbKMAjQnKqL0SkpSIZdd2g5McHcOL3RgVzN2kGYVIfw3fa8doVIq90LrY/X0SNlFFN
-	gwKxhh+t8S+MeB/Pio8tVErE7RCo=
-X-Google-Smtp-Source: AGHT+IE1n0UODjeHKp3o7Zh8H9n0F1A9E7rYuDnukX4P94N3SBkMA21DF7WmgMN4HJVgVLhVB9HrtlE82TPI1INDbcw=
-X-Received: by 2002:a05:6870:e313:b0:25e:1532:fa93 with SMTP id
- 586e51a60fabf-26c62c68e93mr9048602fac.15.1723424093537; Sun, 11 Aug 2024
- 17:54:53 -0700 (PDT)
+	s=arc-20240116; t=1723424150; c=relaxed/simple;
+	bh=5am0jIIL0wjoxX56gKELDhDdWpcBb6Ij4l84QXiSECI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=awZBd2UszQ0FIXq1+dGzRrm7Wm/OuLHQ3zs26/+Zz2xWFeYUWTJD6cochl7qWhpF9fL5H18SbjJJPAVaZpwm9tsW7KzVL2dsMdD9RzR1Mybys5UB+WFgmpH8QSEGiN5MJXuJq5uiM3E+uBfPc4e3l/gNL3HEmZcMWK7p6uq8dTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QcO3RWIy; arc=none smtp.client-ip=209.85.166.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-39c3bf0584cso92885ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 17:55:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723424148; x=1724028948; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1wZscBRBmINP9lOLmPC6SYu14+hz1L8Prsr/p/rIDU=;
+        b=QcO3RWIyqwguD9JD8KRNAiuUzH3rz790aVWTcJsXSN4+ituY7IhgpAjkW0afkAEsVd
+         pa84cAz+anNq2gzfFFq9xxGnfD7NLNbmW2W2ya0HXfv1cmz8Z9FIOuCkvcUTEFbxIPeR
+         OtwfumIC/t/zQF5rcuHMoOamKqbGYMQBip8JEmcwUHVQ94JdA1c+g3+iD/8ItEm5mhF9
+         oedmdi40LkDJmvVPNFEjs4VjLDCBLvSjNpI68QuuBYMd3KN9P5EfDYK8n0GSZ/xlK97l
+         whejkBnlZaF7kQuZOioRaeYH01YgVVcoIDcoptmxvkxKJm34vzQ1lrXlS+wh117ZvhIJ
+         Xu9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723424148; x=1724028948;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P1wZscBRBmINP9lOLmPC6SYu14+hz1L8Prsr/p/rIDU=;
+        b=EorgG4Kr1nNiJCfmWCLlV/7RW4tYafI/7Mgk0iL0SQYMQnNQifgzvSIYxN/UlHpWP3
+         fBi2vMXRhQb6ddzmJsM457h/SFoMBT1QgpUzMlXQdxW402KoRTeCN/djG4FKx5aPLCl8
+         Izuin7Yn4NbxOmEGCniNMThsgBb6xX3bVs3TXS4mbT+6beNx4gP6yyAeUMLkQx1Rknij
+         tNl85RBC4+KAJl0uk8lEVIhAmzvZ2UfChDX7Vfi4u1nSPsO4uYwETFxh5t6skCp0fmEV
+         kWPr57BUv4bewMe1YpzyeDZc1AdOJqWUq8zpp6KWoNhzZK8Q0vW3dpHAZYQA7Ht0WcqK
+         l0WA==
+X-Forwarded-Encrypted: i=1; AJvYcCVvLypQ8py9/DAsRta684m1Ts83y1azn8OaW+E8Q4qd17/nvNnGnS0c6ZD+w5Cb3H5HYK5tGvSM74IOLlLG+gG0xRjAvef7/JJboNm3
+X-Gm-Message-State: AOJu0Yyx/KAQWfYdEzyosBe0UsGZhiFuwRQbGfWMoF+IGeQBqDdkqg/n
+	+4KyZQlVgYV/H4hqm0TYJFdZJ1WZ8tyHMK99BDBTBjMMVjcpjSrgjmsSRWQ6KA==
+X-Google-Smtp-Source: AGHT+IGDAqzpM79bpYGMVHChZ1fIFHVGw/q8RR1gcs+2AbudhGZaWMHnJ08MS+Oct5ZK3MfQ23NTJA==
+X-Received: by 2002:a05:6e02:1aa9:b0:39b:968:85fc with SMTP id e9e14a558f8ab-39c3146c1b9mr3187825ab.9.1723424147543;
+        Sun, 11 Aug 2024 17:55:47 -0700 (PDT)
+Received: from [2620:0:1008:15:49ba:9fa:21c6:8a73] ([2620:0:1008:15:49ba:9fa:21c6:8a73])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbe12fc8sm2630204a12.21.2024.08.11.17.55.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 17:55:46 -0700 (PDT)
+Date: Sun, 11 Aug 2024 17:55:46 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Pedro Falcato <pedro.falcato@gmail.com>
+cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
+    Joonsoo Kim <iamjoonsoo.kim@lge.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    Vlastimil Babka <vbabka@suse.cz>, 
+    Roman Gushchin <roman.gushchin@linux.dev>, 
+    Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] slab: Warn on duplicate cache names when DEBUG_VM=y
+In-Reply-To: <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
+Message-ID: <aab45188-d34c-93c6-cfab-3c0cd1326a53@google.com>
+References: <20240807090746.2146479-1-pedro.falcato@gmail.com> <cdfc5a08-c0ee-30a3-d6c5-22d4cfddc3a4@google.com> <CAKbZUD1e5nvmrQ5XZ=xV1eYbh5eeSLBQEeDT=KBx1C5T1Bjjzg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812081046.369bbba5@canb.auug.org.au>
-In-Reply-To: <20240812081046.369bbba5@canb.auug.org.au>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Mon, 12 Aug 2024 09:54:42 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_HNrckYs7R=ObghAovsA=o1ZynV3JwY0Czn2Bd_KGv1w@mail.gmail.com>
-Message-ID: <CAKYAXd_HNrckYs7R=ObghAovsA=o1ZynV3JwY0Czn2Bd_KGv1w@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the vfs-brauner tree with the exfat tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Brauner <brauner@kernel.org>, Dongliang Cui <dongliang.cui@unisoc.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Yuezhang Mo <Yuezhang.Mo@sony.com>, 
-	Zhiguo Niu <zhiguo.niu@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-2024=EB=85=84 8=EC=9B=94 12=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 7:10, S=
-tephen Rothwell <sfr@canb.auug.org.au>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=
-:
->
-> Hi all,
->
-> Today's linux-next merge of the vfs-brauner tree got a conflict in:
->
->   fs/exfat/inode.c
->
-> between commits:
->
->   3e491faa7648 ("exfat: do not fallback to buffered write")
->   98ad7b9012b5 ("exfat: Implement sops->shutdown and ioctl")
->
-> from the exfat tree and commits:
->
->   a225800f322a ("fs: Convert aops->write_end to take a folio")
->   1da86618bdce ("fs: Convert aops->write_begin to take a folio")
->
-> from the vfs-brauner tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-Thanks for your work, Looks good to me:)
-I'll send an exfat PR after making sure it doesn't conflict with these patc=
-hes.
->
-> --
-> Cheers,
-> Stephen Rothwell
->
-> diff --cc fs/exfat/inode.c
-> index 7d43a0942911,05f0e07b01d0..000000000000
-> --- a/fs/exfat/inode.c
-> +++ b/fs/exfat/inode.c
-> @@@ -428,11 -452,7 +428,10 @@@ static int exfat_write_begin(struct fil
->   {
->         int ret;
->
->  +      if (unlikely(exfat_forced_shutdown(mapping->host->i_sb)))
->  +              return -EIO;
->  +
-> -       *pagep =3D NULL;
-> -       ret =3D block_write_begin(mapping, pos, len, pagep, exfat_get_blo=
-ck);
-> +       ret =3D block_write_begin(mapping, pos, len, foliop, exfat_get_bl=
-ock);
->
->         if (ret < 0)
->                 exfat_write_failed(mapping, pos+len);
-> @@@ -448,7 -468,15 +447,7 @@@ static int exfat_write_end(struct file
->         struct exfat_inode_info *ei =3D EXFAT_I(inode);
->         int err;
->
-> -       err =3D generic_write_end(file, mapping, pos, len, copied, pagep,=
- fsdata);
-> +       err =3D generic_write_end(file, mapping, pos, len, copied, folio,=
- fsdata);
->  -
->  -      if (ei->i_size_aligned < i_size_read(inode)) {
->  -              exfat_fs_error(inode->i_sb,
->  -                      "invalid size(size(%llu) > aligned(%llu)\n",
->  -                      i_size_read(inode), ei->i_size_aligned);
->  -              return -EIO;
->  -      }
->  -
->         if (err < len)
->                 exfat_write_failed(mapping, pos+len);
->
+On Sun, 11 Aug 2024, Pedro Falcato wrote:
+
+> > > diff --git a/mm/slab_common.c b/mm/slab_common.c
+> > > index 40b582a014b..1abe6a577d5 100644
+> > > --- a/mm/slab_common.c
+> > > +++ b/mm/slab_common.c
+> > > @@ -88,6 +88,19 @@ unsigned int kmem_cache_size(struct kmem_cache *s)
+> > >  EXPORT_SYMBOL(kmem_cache_size);
+> > >
+> > >  #ifdef CONFIG_DEBUG_VM
+> > > +
+> > > +static bool kmem_cache_is_duplicate_name(const char *name)
+> > > +{
+> > > +     struct kmem_cache *s;
+> > > +
+> > > +     list_for_each_entry(s, &slab_caches, list) {
+> > > +             if (!strcmp(s->name, name))
+> > > +                     return true;
+> > > +     }
+> > > +
+> > > +     return false;
+> > > +}
+> > > +
+> > >  static int kmem_cache_sanity_check(const char *name, unsigned int size)
+> > >  {
+> > >       if (!name || in_interrupt() || size > KMALLOC_MAX_SIZE) {
+> > > @@ -95,6 +108,11 @@ static int kmem_cache_sanity_check(const char *name, unsigned int size)
+> > >               return -EINVAL;
+> > >       }
+> > >
+> > > +     if (kmem_cache_is_duplicate_name(name)) {
+> > > +             /* Duplicate names will confuse slabtop, et al */
+> > > +             pr_warn("%s: name %s already exists as a cache\n", __func__, name);
+> >
+> >
+> > Shouldn't this be a full WARN_ON() instead of pr_warn()?  I assume we'll
+> > be interested in who is adding the cache when the name already exists.
+> 
+> panic_on_warn? :)
+> 
+
+Would get the problem fixed up pretty fast, no? :)
+
+> Personally I don't have anything against WARN_ON, but we've seen that
+> panic_on_warn is a real thing on real systems, and DEBUG_VM is also
+> set on real prod configs (like Fedora does/used to do). I've sent out
+> one or two loose patches for problems I did find in my own testing
+> around, but there may be many more (e.g some drivers may call
+> kmem_cache_create repeatedly in some sort of callback, like 9pfs was
+> doing when mounting; this is not greppable). And I'd guess grepping
+> for cache names tends to be easy enough?
+> 
+
+Can we add a dump_stack() to make this way easier instead of hiding who is 
+creating the duplicate name?
 
