@@ -1,91 +1,157 @@
-Return-Path: <linux-kernel+bounces-283908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB8794FA3C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:24:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94B9D94FA3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:27:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 139911F22AB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:24:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A1351F22BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 23:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E712619A294;
-	Mon, 12 Aug 2024 23:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3284919A28B;
+	Mon, 12 Aug 2024 23:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTBCMR3/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RxfDjdGS"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28CFE175D59;
-	Mon, 12 Aug 2024 23:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79719170A22
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723505012; cv=none; b=kH7awCgoP9RbSv0DghAsVjBBtScoK8BohJ0DeP+kuNb5ji218tIMDXkaa5YYFWfFqWgi2Gs4nSXNIdOB0ViygWEI0vcJQxw+5xCst+FexKB8sFIiYWmnDCWVxSig67LPVcNJG6qYMbNQ2SKWC0jde4midqszMkSMxzKfVaY2VFc=
+	t=1723505234; cv=none; b=aL3cOu+Q1VTWvD58+sk+euUo8hcZe6gC+j7w0DvI2AvkEXH1M+dLEsiPN7X/yMFmiRQE+cB4T5fLdPnawR4zdHE5qwJ75bFpv6FJJ1Owh3XF1P32WAFUyK6HhKeLnM4mkhoCUfEROUHgNUBQFeqzQC5EqAVXM82CXTdt2cBXcu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723505012; c=relaxed/simple;
-	bh=5ewRKoMVxsN885I2VkloOsrGqHKI0p6ygfp3g2u4lgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Hvvd25sd1gPCZgkmwFRgKXe3sS1PloADJhKI2wEsIeYk03s8bGDS1cB7/3znqho68jL6Rk1QZzoagXS9efGAvvoL8gpZcdtwneZ2zwsDJcH4qTxVffVBmYrXwQkGTb0LdhcdT+dg2rq10Ue8dVu2lkxqkHCPyBAs2zqMCxPTB8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTBCMR3/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB8CC4AF0D;
-	Mon, 12 Aug 2024 23:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723505011;
-	bh=5ewRKoMVxsN885I2VkloOsrGqHKI0p6ygfp3g2u4lgk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FTBCMR3/vR522Q6cV8aElPlbxUBn6rVU9tYgFjwL/Y+g9raT7fYQVGNrcNPf1Eh7/
-	 7zT0eB9YS+bMCnDNVCHGzEm3PCWG/xW3cxHV7oCo0rLw/dEfLgLL5qK2T6mpMCdudr
-	 zKK0Ct7NtqpxT1V0IbDyatIHUn2yrpfWmrhOkCLo2uIxayDvbwr7CzWi131Bq80GFj
-	 iu1/rQJsAFk5KVETKERe7uyp5HRjuyyMAZ1/uUvG3Kw3M4j33gBUFLJNQPz1fq5uJy
-	 TAIb1GBByREciANG+Z8wD/YvFHQOz6Nqw13ymfL1uJ16sv/Y8mpaiR48Atqrc2Jf4M
-	 Rx6AtzGWs280w==
-Date: Mon, 12 Aug 2024 16:23:29 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Christoph Hellwig <hch@lst.de>, Tariq Toukan <ttoukan.linux@gmail.com>,
- Anna Schumaker <Anna.Schumaker@Netapp.com>, Trond Myklebust
- <trondmy@kernel.org>, linux-nfs@vger.kernel.org, Boris Pismenny
- <borisp@nvidia.com>, John Fastabend <john.fastabend@gmail.com>, Maxim
- Mikityanskiy <maxtram95@gmail.com>, Saeed Mahameed <saeedm@nvidia.com>, Gal
- Pressman <gal@nvidia.com>, Networking <netdev@vger.kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David S. Miller"
- <davem@davemloft.net>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Leon Romanovsky <leon@kernel.org>, Tariq
- Toukan <tariqt@nvidia.com>
-Subject: Re: [Bug report] NFS patch breaks TLS device-offloaded TX zerocopy
-Message-ID: <20240812162329.7224eb26@kernel.org>
-In-Reply-To: <06a66824-cc2e-4f6d-8776-c2bd415c06f9@grimberg.me>
-References: <aeea3ae5-5c0b-48fa-942b-4d17acfd8cba@gmail.com>
-	<77fb3db5-7a59-4879-b9c2-d3408fcf67e8@grimberg.me>
-	<4f42fac4-2a4e-426a-be86-1f4bb79987b4@gmail.com>
-	<3e08421f-91ac-4bd1-9886-3d5ecf9afa04@grimberg.me>
-	<8683155c-79ad-4090-9aff-fc8d765b096b@gmail.com>
-	<20240812090215.GA5497@lst.de>
-	<06a66824-cc2e-4f6d-8776-c2bd415c06f9@grimberg.me>
+	s=arc-20240116; t=1723505234; c=relaxed/simple;
+	bh=tvqcMueI8bhXuiqM6AK7srDyvkZ4Cq75Q/GFz5bTpX8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PDwq65iOnNr4vSeCV182e9p75/6UeVRpho38sV/dP9MYkDWQ6abVunDUB47nXQUXkOwt9h2/rEHFzyjXe1RsDR7KUF74BzqE4z5ymYxn/3fivOWIymg7pzLgVMaj1AW51ZOZEPjdcBXbSluCg0gwbQwluzq1iiDsx6t+FKnHQoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RxfDjdGS; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3684e8220f9so2724748f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 16:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723505231; x=1724110031; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YD7cg+9/vEjihVTfP6GdSKzC4qTymdlhkccRC+5Gbok=;
+        b=RxfDjdGSa3K+ujRxXnkcYKnsGfqygd+qRDiQThH1rOyn5mV+71MVllpiaehPL4AMF2
+         u1xQ0TPuZ3wr8f5K3y/Cj7GKSTu5w7A8QMvpKwPHLsFEOmsp1oPkCzVa3KehxnMjFJay
+         QnwaGMNVzmy5Jzr7P37hJP51gYHJoZNjS84x40pC5P3yLDp7p+MaYhe4EqtS74zSyjOJ
+         a/Mkdj/5Y3IHEjeWjQjyTWO9Yv3EnQKTCblQMXLCk6bkYQJT8q7I7P8UdmMsFLJkTgh4
+         XmKX7C2ALyQsJv9fjoJRe7eAKaTFva3GWKV5/Jt/pN0D/iO/Eq35BtZO8G8gy4FeAF+k
+         4kIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723505231; x=1724110031;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YD7cg+9/vEjihVTfP6GdSKzC4qTymdlhkccRC+5Gbok=;
+        b=MmQuwA+Ah1GyaXn18MhZUN2Kyo7UMG5uDlILimwTt97RAjzm8N1F8ID0S4sA93n3pM
+         nC+7wnp8ddOto8jSNunm16htYUmKntCCpp7SqYYn380jl60kv9KnTDfnnEcRhGu3NYQo
+         cpK93FIsSyQX97fswK6waFPm08/B+u+WSJFPdmXZ8Vaclps4QzrAyReNk3cpMmCDGjeu
+         nDeTA7K5omFIq8sWhwILlWjIBndj0+UYu8dhxNBW8VD730kWuw/ASwQqxvAhJXAFmhSI
+         ed5NtvkWI5RVOiTPUkGBAzBSAax7Vq40X0fU58iKpAf+v/G34tY5L2/vKD5UYjv4FSDP
+         cVjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nftKfoKv9Z3ZzIcqeGok9eJyMod4jTu76OgLU9w1DB70F7/QCwaiZoGOwCvDqzR/ER6N5Hf3v6Q8SpKDuYZd0r8KsPx9bGiDshRz
+X-Gm-Message-State: AOJu0YyczUiI3c7khpjgqmUpvHb95RZabJUn9NYoLtGB1tqdD3sBfNxC
+	IcAvaBF7LGaagBRlVGAmTf5tIIGqcAtdlt/wUteVGHhhWKNIC+V5V88BOsSUU/s=
+X-Google-Smtp-Source: AGHT+IG6CXy2Pt1GGArovitwUEAUTVVp2pZrsNj7gQT7hvcVDqW1OA2/mPl3SeDPLn1DldH7lvDWlA==
+X-Received: by 2002:adf:ef42:0:b0:362:23d5:3928 with SMTP id ffacd0b85a97d-3716e42b973mr806943f8f.17.1723505230255;
+        Mon, 12 Aug 2024 16:27:10 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e58a99efsm4521191b3a.82.2024.08.12.16.27.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Aug 2024 16:27:09 -0700 (PDT)
+Message-ID: <cd06772c-b4be-4416-9f0f-6d849146ffe0@suse.com>
+Date: Tue, 13 Aug 2024 08:57:04 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: update target inode's ctime on unlink
+To: Jeff Layton <jlayton@kernel.org>, Chris Mason <clm@fb.com>,
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJVBQkNOgemAAoJEMI9kfOh
+ Jf6oapEH/3r/xcalNXMvyRODoprkDraOPbCnULLPNwwp4wLP0/nKXvAlhvRbDpyx1+Ht/3gW
+ p+Klw+S9zBQemxu+6v5nX8zny8l7Q6nAM5InkLaD7U5OLRgJ0O1MNr/UTODIEVx3uzD2X6MR
+ ECMigQxu9c3XKSELXVjTJYgRrEo8o2qb7xoInk4mlleji2rRrqBh1rS0pEexImWphJi+Xgp3
+ dxRGHsNGEbJ5+9yK9Nc5r67EYG4bwm+06yVT8aQS58ZI22C/UeJpPwcsYrdABcisd7dddj4Q
+ RhWiO4Iy5MTGUD7PdfIkQ40iRcQzVEL1BeidP8v8C4LVGmk4vD1wF6xTjQRKfXHOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJjTSJuBQkNOge/AAoJEMI9kfOhJf6o
+ rq8H/3LJmWxL6KO2y/BgOMYDZaFWE3TtdrlIEG8YIDJzIYbNIyQ4lw61RR+0P4APKstsu5VJ
+ 9E3WR7vfxSiOmHCRIWPi32xwbkD5TwaA5m2uVg6xjb5wbdHm+OhdSBcw/fsg19aHQpsmh1/Q
+ bjzGi56yfTxxt9R2WmFIxe6MIDzLlNw3JG42/ark2LOXywqFRnOHgFqxygoMKEG7OcGy5wJM
+ AavA+Abj+6XoedYTwOKkwq+RX2hvXElLZbhYlE+npB1WsFYn1wJ22lHoZsuJCLba5lehI+//
+ ShSsZT5Tlfgi92e9P7y+I/OzMvnBezAll+p/Ly2YczznKM5tV0gboCWeusM=
+In-Reply-To: <20240812-btrfs-unlink-v1-1-ee5c2ef538eb@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 12 Aug 2024 12:13:51 +0300 Sagi Grimberg wrote:
-> On 12/08/2024 12:02, Christoph Hellwig wrote:
-> > On Tue, Aug 06, 2024 at 01:07:47PM +0300, Tariq Toukan wrote:  
-> >> Adding Maxim Mikityanskiy, he might have some insights.  
-> > I think the important part to find out is if the in-kernel TLS API
-> > has a limitation to PAGE_SIZE buffer segments, or not.  
+
+
+在 2024/8/13 02:00, Jeff Layton 写道:
+> Unlink changes the link count on the target inode. POSIX mandates that
+> the ctime must also change when this occurs.
 > 
-> I don't see why it should. Also note that sw tls does not suffer from
-> this. Maybe Jakub can add more light here in case something was missed?
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-I don't recall anything special. For SW crypto the splice is kinda moot,
-because we encrypt and use the ciphertext so the plaintext pages are
-likely to be freed before sendmsg() returns. For offload we wait until
-the data is acked (not just sent) so any potential race window is
-significantly longer. There's also the use of pfrag in the offload path.
-Dunno..
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+And since we decreased the nlink of the target inode already, updating 
+the timestamp will not cause extra COW overhead.
+
+So this won't cause any extra performance penalty.
+
+Thanks,
+Qu
+
+> ---
+> Found using the nfstest_posix testsuite with knfsd exporting btrfs.
+> ---
+>   fs/btrfs/inode.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+> index 333b0e8587a2..b1b6564ab68f 100644
+> --- a/fs/btrfs/inode.c
+> +++ b/fs/btrfs/inode.c
+> @@ -4195,6 +4195,7 @@ static int __btrfs_unlink_inode(struct btrfs_trans_handle *trans,
+>   
+>   	btrfs_i_size_write(dir, dir->vfs_inode.i_size - name->len * 2);
+>   	inode_inc_iversion(&inode->vfs_inode);
+> +	inode_set_ctime_current(&inode->vfs_inode);
+>   	inode_inc_iversion(&dir->vfs_inode);
+>    	inode_set_mtime_to_ts(&dir->vfs_inode, inode_set_ctime_current(&dir->vfs_inode));
+>   	ret = btrfs_update_inode(trans, dir);
+> 
+> ---
+> base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
+> change-id: 20240812-btrfs-unlink-77293421e416
+> 
+> Best regards,
 
