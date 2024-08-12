@@ -1,73 +1,44 @@
-Return-Path: <linux-kernel+bounces-282618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83B0994E680
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:21:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D92EC94E68E
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:26:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CCAB282793
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 09BE91C214A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687CE14D435;
-	Mon, 12 Aug 2024 06:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056A4152790;
+	Mon, 12 Aug 2024 06:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NUs9lllk"
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Gfld9vnd"
+Received: from mail-m127164.xmail.ntesmail.com (mail-m127164.xmail.ntesmail.com [115.236.127.164])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5840E27457
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6404514E2C1;
+	Mon, 12 Aug 2024 06:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723443675; cv=none; b=FoBlEmne4kSY1lX3XIiGP5hMyEmhhxcc2IVtBiPqLHBgJgkeWPzVokxZVNZfqbOrqZgOtbtdXYUGecGnYJ/nzqPS1YBTF0PMzot8lzDSEhjeuvR5rsJrrDOUS2Ply1w2EmJaVt1LpzaVqyPyV1nebh8xCMJyEI1QpQvgQPN7jp8=
+	t=1723443938; cv=none; b=sTWtnVNgVeIdMeIJwUByDZ9xfYSgE3PyNKJwAPhmCAAJ7ZiwBnwjP/QjHLXIf8LtgMd/FyM4abGuTYwJIXOUDYbXlwv8SGgD6IV73HCMVsvnp32ev+kmCyaFxuwFXPjuCi7LOr0Nn84HcPt8lBAoPfwvI+igfW2TMIN+Xob4K0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723443675; c=relaxed/simple;
-	bh=IUMqUmgGIZNbYwBr+n1ZWHy0H4fDY1v4tvJ9Mslw0Gs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UCTqbBN0QADpZX6sGlQHm8FnGjM+y0XIJyeMeMFlrJstiJEH1UvTUOcF4pTlN7Fts6tCwa1RpdIr8xbISJhvflb0fIgfUsR+CVzJ5g3Hyc+H4jXJo0xI/BRoKv33nDx0xj0uFXLERTKf+/RoaV0DqjZKxlth5hhRU4l1AzJ9XEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NUs9lllk; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2635abdc742so458067fac.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1723443672; x=1724048472; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uQlCdV65LEz1kHk47bwY6iHdSZ8qzDbLv2CS0ac6kI8=;
-        b=NUs9lllkZ9TZzbq/uY//BWZEZWp3tYXB8gnh+gAFUTqBeWUpNShrzwvj3/7OMYqZ01
-         cNGotNDxjlQGmw5wAEGXyv/BHX2sdnnRZf1i+i6/FtnLZiCcF7p4iJSejcpm7JKhGYTo
-         J3/kE8Lwv2ExZyUvInTdii7L0oI+rr6yOM1iOdFIfbzdKWqpNzkFfT4J/mX7Z75jfLgw
-         nniQpBnELqy8maorJBN8idSM1QAbWyc1Edu+1/vFp12KNhOQ7VVHKuFU0C66y8yuLB7l
-         WvMHIM/z/9M4YQkyMlirWHfrB9PpsMLIUNYUjFQ/mxMEXbHnwkyxyakxwHpsqunMny5d
-         KZzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723443672; x=1724048472;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uQlCdV65LEz1kHk47bwY6iHdSZ8qzDbLv2CS0ac6kI8=;
-        b=nWXQG2Vq+j8vxV7PFIki4GbH4TdWtqu2Z34ClhvUcdpULp2aWhqz5Xd5Tgh2R8fgZe
-         ZGDtzHz0mrgYXm3jqcsKsrmkN1GVbKfJFXF01TpQckoqPo5fvIXgpdf9bWYivS8rC4gF
-         NAaEKSPWvQtKoWTo3GFR7R/FGl5C0EbrpynhSAMgY3Sl6ce5TafeoBmdByRac/tsrihH
-         kubTM9mmEHE6hWdcb1FPytP/Ft4t7TSgxlSz05i/SDV31UIBrFz+B/xQ1FCNzZkv5J5x
-         SImngVpi0YTbSHPGNEWuivVlLIQXibkt2Rp9vKAarVfRlrjkX5y3JxkOqBi96EhYrX6P
-         oozw==
-X-Forwarded-Encrypted: i=1; AJvYcCXrKndG2GiZnduo7Fe/joFMrfl+RJlE+Dc0LPl6hcPQ2PMHRtB5wwePrI0Q5PDANHe223ZokWwT+oIlm9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+wj74/iHZHAPdhvfFq4szSAFjOBS704rsPxXfhCjCdqgNrp9m
-	4hpKIC5B4xIYQEGyVhTLxnlmMTpupdY1Qvs1RXzArc5N6p6+zw3sZB/deoAbPZ0=
-X-Google-Smtp-Source: AGHT+IFmB5BoVq6D14NtSCtkb6BEh80Rryr97W+EDEWN3kH2nMQUF8wgurMj4XoRqHWBBaDrHk6YBQ==
-X-Received: by 2002:a05:6870:658d:b0:260:e5e1:2411 with SMTP id 586e51a60fabf-26c62f1afa6mr5545965fac.6.1723443672322;
-        Sun, 11 Aug 2024 23:21:12 -0700 (PDT)
-Received: from [10.4.217.215] ([139.177.225.242])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c3dbe12e80sm3506101a12.24.2024.08.11.23.21.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 11 Aug 2024 23:21:11 -0700 (PDT)
-Message-ID: <3e8253c4-9181-4027-84ee-28e1fc488f61@bytedance.com>
-Date: Mon, 12 Aug 2024 14:21:04 +0800
+	s=arc-20240116; t=1723443938; c=relaxed/simple;
+	bh=FFAPDBImVscljdc0H4zPFTunCEH8BGPtMVJd7j1hr7Y=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=M6FGKMtAN3FLeQfUE3JpmtJ13CoIoIaDVTw1f+aZMuv07ieuK97jNfN7uEQwbScXIYPzxAfssEQqURsmfZM+ICmlvBbOMp+/34P6ke9Izua7cxYluRRaXt6n/N7MhkNJwI5sJzE7dRTRv9VrvJ1LAypbPmD4Z+V7TbZNPFO77uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Gfld9vnd; arc=none smtp.client-ip=115.236.127.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+DKIM-Signature: a=rsa-sha256;
+	b=Gfld9vndC1h8reFl6TiMz3EFUdM3Xi2sLmIXzCsdahO/v+G+fbo/LodrmnnQ5o+qgymmpFAuqhAGDaSgx9QKdHkshCnG1BGZyoHwJt1LvbfxYJS5xSEYYAFVR1w0RYFGvso+hWKvuuds844wIhIr1UK8E0CJO/CmtLYGb7QEwn8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=jEPglZ6GFo8g6RuzPNZALiqPBdnmdtRSR0hiKORPRlM=;
+	h=date:mime-version:subject:message-id:from;
+Received: from [172.16.12.69] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 70F77460167;
+	Mon, 12 Aug 2024 14:24:31 +0800 (CST)
+Message-ID: <49659932-5caf-433b-a140-664b61617c43@rock-chips.com>
+Date: Mon, 12 Aug 2024 14:24:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,126 +46,264 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/7] mm: pgtable: make pte_offset_map_nolock()
- return pmdval
-Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>
-Cc: hughd@google.com, willy@infradead.org, mgorman@suse.de,
- muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
- zokeefe@google.com, rientjes@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-References: <cover.1722861064.git.zhengqi.arch@bytedance.com>
- <d101b185eb55438b18faa2029e4303b7453bd5f5.1722861064.git.zhengqi.arch@bytedance.com>
- <0e8e0503-5796-4b61-bb5b-249e285f5d21@redhat.com>
- <39281a4d-d896-46fd-80a5-8cd547d1625f@bytedance.com>
- <0f467510-a0d0-4a98-8517-43813fa4c131@redhat.com>
- <f6c05526-5ac9-4597-9e80-099ea22fa0ae@bytedance.com>
- <f79bbfc9-bb4c-4da4-9902-2e73817dd135@redhat.com>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <f79bbfc9-bb4c-4da4-9902-2e73817dd135@redhat.com>
+Cc: shawn.lin@rock-chips.com, Rob Herring <robh+dt@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, YiFeng Zhao <zyf@rock-chips.com>,
+ Liang Chen <cl@rock-chips.com>, linux-scsi@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] scsi: ufs: rockchip: init support for UFS
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+References: <1723089163-28983-1-git-send-email-shawn.lin@rock-chips.com>
+ <1723089163-28983-4-git-send-email-shawn.lin@rock-chips.com>
+ <20240809062813.GC2826@thinkpad>
+ <421d48b7-4aa7-4202-8b5f-9c60916f6ef6@rock-chips.com>
+ <20240810092817.GA147655@thinkpad>
+ <3b2617f5-acb1-45c6-993c-33249fd19888@rock-chips.com>
+ <20240812041051.GA2861@thinkpad>
+Content-Language: en-GB
+From: Shawn Lin <shawn.lin@rock-chips.com>
+In-Reply-To: <20240812041051.GA2861@thinkpad>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUtCGVYdHh4dGUgfHh8dSB5WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a91454282cc03aekunm70f77460167
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OQw6Vhw5SzI1KQE9Gh4CNilW
+	NDUaCixVSlVKTElIT09IQ0xIS01NVTMWGhIXVQgTGgwVVRcSFTsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUpJTk9NNwY+
 
-Hi David,
-
-On 2024/8/10 00:54, David Hildenbrand wrote:
-> On 07.08.24 05:08, Qi Zheng wrote:
->> Hi David,
+在 2024/8/12 12:10, Manivannan Sadhasivam 写道:
+> On Mon, Aug 12, 2024 at 09:28:26AM +0800, Shawn Lin wrote:
+>> JHi Mani,
 >>
->> On 2024/8/6 22:16, David Hildenbrand wrote:
->>> On 06.08.24 04:40, Qi Zheng wrote:
->>>> Hi David,
->>>>
->>>> On 2024/8/5 22:43, David Hildenbrand wrote:
->>>>> On 05.08.24 14:55, Qi Zheng wrote:
->>>>>> Make pte_offset_map_nolock() return pmdval so that we can recheck the
->>>>>> *pmd once the lock is taken. This is a preparation for freeing empty
->>>>>> PTE pages, no functional changes are expected.
+>> 在 2024/8/10 17:28, Manivannan Sadhasivam 写道:
+>>> On Fri, Aug 09, 2024 at 04:16:41PM +0800, Shawn Lin wrote:
+>>>
+>>> [...]
+>>>
+>>>>>> +static int ufs_rockchip_hce_enable_notify(struct ufs_hba *hba,
+>>>>>> +					 enum ufs_notify_change_status status)
+>>>>>> +{
+>>>>>> +	int err = 0;
+>>>>>> +
+>>>>>> +	if (status == PRE_CHANGE) {
+>>>>>> +		int retry_outer = 3;
+>>>>>> +		int retry_inner;
+>>>>>> +start:
+>>>>>> +		if (ufshcd_is_hba_active(hba))
+>>>>>> +			/* change controller state to "reset state" */
+>>>>>> +			ufshcd_hba_stop(hba);
+>>>>>> +
+>>>>>> +		/* UniPro link is disabled at this point */
+>>>>>> +		ufshcd_set_link_off(hba);
+>>>>>> +
+>>>>>> +		/* start controller initialization sequence */
+>>>>>> +		ufshcd_writel(hba, CONTROLLER_ENABLE, REG_CONTROLLER_ENABLE);
+>>>>>> +
+>>>>>> +		usleep_range(100, 200);
+>>>>>> +
+>>>>>> +		/* wait for the host controller to complete initialization */
+>>>>>> +		retry_inner = 50;
+>>>>>> +		while (!ufshcd_is_hba_active(hba)) {
+>>>>>> +			if (retry_inner) {
+>>>>>> +				retry_inner--;
+>>>>>> +			} else {
+>>>>>> +				dev_err(hba->dev,
+>>>>>> +					"Controller enable failed\n");
+>>>>>> +				if (retry_outer) {
+>>>>>> +					retry_outer--;
+>>>>>> +					goto start;
+>>>>>> +				}
+>>>>>> +				return -EIO;
+>>>>>> +			}
+>>>>>> +			usleep_range(1000, 1100);
+>>>>>> +		}
 >>>>>
->>>>> Skimming the patches, only patch #4 updates one of the callsites
->>>>> (collapse_pte_mapped_thp).
+>>>>> You just duplicated ufshcd_hba_execute_hce() here. Why? This doesn't make sense.
 >>>>
->>>> In addition, retract_page_tables() and reclaim_pgtables_pmd_entry()
->>>> also used the pmdval returned by pte_offset_map_nolock().
->>>
->>> Right, and I am questioning if only touching these two is sufficient,
->>> and how we can make it clearer when someone actually has to recheck the
->>> PMD.
->>>
+>>>> Since we set UFSHCI_QUIRK_BROKEN_HCE, and we also need to do someting
+>>>> which is very similar to ufshcd_hba_execute_hce(), before calling
+>>>> ufshcd_dme_reset(). Similar but not totally the same. I'll try to see if
+>>>> we can export ufshcd_hba_execute_hce() to make full use of it.
 >>>>
+>>>
+>>> But you are starting the controller using REG_CONTROLLER_ENABLE. Isn't that
+>>> supposed to be broken if you set UFSHCI_QUIRK_BROKEN_HCE? Or I am
+>>> misunderstanding the quirk?
+>>>
+>>
+>> Our controller doesn't work with exiting code, whether setting
+>> UFSHCI_QUIRK_BROKEN_HCE or not.
+>>
+> 
+> Okay. Then this means you do not need this quirk at all.
+> 
+>>
+>> For UFSHCI_QUIRK_BROKEN_HCE case, it calls ufshcd_dme_reset（）first,
+>> but we need to set REG_CONTROLLER_ENABLE first.
+>>
+>> For !UFSHCI_QUIRK_BROKEN_HCE case, namly ufshcd_hba_execute_hce, it
+>> sets REG_CONTROLLER_ENABLE  first but never send DMA_RESET and calls
+>> ufshcd_dme_enable.
+>>
+> 
+> I don't see where ufshcd_dme_enable() is getting called for
+> !UFSHCI_QUIRK_BROKEN_HCE case.
+> 
+>> So the closet code path is to go through UFSHCI_QUIRK_BROKEN_HCE case,
+>> and set REG_CONTROLLER_ENABLE by adding hce_enable_notify hook.
+>>
+> 
+> No, that is abusing the quirk. But I'm confused about why your controller wants
+> resetting the unipro stack _after_ enabling the controller? Why can't it be
+> reset before?
+> 
+
+It can't be. The DME_RESET to reset the unipro stack will be failed
+without enabling REG_CONTROLLER_ENABLE. And the controller does want us
+to reset the unipro stack before other coming UICs.
+
+So I considered it's a kind of broken HCE case as well. Should I add a
+new quirk or add a new hba_enable hook in ufs_hba_variant_ops? Or just
+use UFSHCI_QUIRK_BROKEN_HCE ?
+
 >>>>>
->>>>> Wouldn't we have to recheck if the PMD val changed in more cases after
->>>>> taking the PTL?
+>>>>>> +	} else { /* POST_CHANGE */
+>>>>>> +		err = ufshcd_vops_phy_initialization(hba);
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	return err;
+>>>>>> +}
+>>>>>> +
+> 
+> [...]
+> 
+>>>>>> +static const struct dev_pm_ops ufs_rockchip_pm_ops = {
+>>>>>> +	SET_SYSTEM_SLEEP_PM_OPS(ufs_rockchip_suspend, ufs_rockchip_resume)
+>>>>>> +	SET_RUNTIME_PM_OPS(ufs_rockchip_runtime_suspend, ufs_rockchip_runtime_resume, NULL)
 >>>>>
->>>>> If not, would it make sense to have a separate function that 
->>>>> returns the
->>>>> pmdval and we won't have to update each and every callsite?
+>>>>> Why can't you use ufshcd PM ops as like other vendor drivers?
 >>>>
->>>> pte_offset_map_nolock() had already obtained the pmdval previously, 
->>>> just
->>>> hadn't returned it. And updating those callsite is simple, so I think
->>>> there may not be a need to add a separate function.
+>>>> It doesn't work from the test. We have many use case to power down the
+>>>> controller and device, so there is no flow to recovery the link. Only
+>>>> when the first accessing to UFS fails, the ufshcd error handle recovery the
+>>>> link. This is not what we expect.
+>>>>
 >>>
->>> Let me ask this way: why is retract_page_tables() and
->>> reclaim_pgtables_pmd_entry() different to the other ones, and how would
->>> someone using pte_offset_map_nolock() know what's to do here?
->>
->> If we acuqire the PTL (PTE or PMD lock) after calling
->> pte_offset_map_nolock(), it means we may be modifying the corresponding
->> pte or pmd entry. In that case, we need to perform a pmd_same() check
->> after holding the PTL, just like in pte_offset_map_lock(), to prevent
->> the possibility of the PTE page being reclaimed at that time.
-> 
-> Okay, what I thought.
-> 
->>
->> If we call pte_offset_map_nolock() and do not need to acquire the PTL
->> afterwards, it means we are only reading the PTE page. In this case, the
->> rcu_read_lock() in pte_offset_map_nolock() will ensure that the PTE page
->> cannot be reclaimed.
->>
+>>> What tests? The existing UFS controller drivers are used in production devices
+>>> and they never had a usecase to invent their own PM callbacks. So if your
+>>> controller is special, then you need to justify it more elaborately. If
+>>> something is missing in ufshcd callbacks, then we can add them.
 >>>
->>> IIUC, we must check the PMDVAL after taking the PTL in case
->>>
->>> (a) we want to modify the page table to turn pte_none() entries to
->>>       !pte_none(). Because it could be that the page table was 
->>> removed and
->>>       now is all pte_none()
->>>
->>> (b) we want to remove the page table ourselves and want to check if it
->>>       has already been removed.
->>>
->>> Is that it?
 >>
->> Yes.
->>
->>>
->>> So my thinking is if another function variant can make that clearer.
->>
->> OK, how about naming it pte_offset_map_before_lock?
+>> All the register got lost each time as we power down both controller & PHY
+>> and devices in suspend.
 > 
-> That's the issue with some of the code: for example in 
-> filemap_fault_recheck_pte_none() we'll call pte_offset_map_nolock() and 
-> conditionally take the PTL. But we won't be modifying the pages tables.
-> 
-> Maybe something like:
-> 
-> pte_offset_map_readonly_nolock()
-> 
-> and
-> 
-> pte_offset_map_maywrite_nolock()
-> 
-> The latter would require you to pass the PMD pointer such that you have 
-> to really mess up to ignore what to do with it (check PMD same or not 
-> check PMD same if you really know what you are douing).
-> 
-> The first would not take a PMD pointer at all, because there is no need to.
+> Which suspend? runtime or system suspend? I believe system suspend.
 
-These two function names LGTM. Will do in the next version.
+Both.
 
-Thanks,
-Qi
+> 
+>> So we have to restore the necessary
+>> registers and link. I didn't see where the code recovery the controller
+>> settings in ufshcd_resume, except ufshcd_err_handler（）triggers that.
+>> Am I missing any thing?
+> 
+> Can you explain what is causing the powerdown of the controller and PHY?
+> Because, ufshcd_suspend() just turns off the clocks and regulators (if
+> UFSHCD_CAP_AGGR_POWER_COLLAPSE is set) and spm_lvl 3 set by this driver only
+> puts the device in sleep mode and link in hibern8 state.
+> 
 
+For runtime PM case, it's the power-domain driver will power down the
+controller and PHY if UFS stack is not active any more（autosuspend）.
+
+For system PM case, it's the SoC's firmware to cutting of all the power
+for controller/PHY and device.
+
+> - Mani
+> 
+>> Below is the dump we get if using
+>> SET_SYSTEM_SLEEP_PM_OPS(ufshcd_system_suspend, ufshcd_system_resume).
+>> It can work as ufshcd_err_handler () will fix the link, but we have to
+>> suffer from getting the error log each time. Moreover, we need to gate
+>> 26MHz refclk for device when RPM is called. So our own rpm callback is
+>> needed.
+>>
+>> [   14.318444] <<GTP-INF>>[gt1x_wakeup_sleep:964] Wakeup by poweron
+>> [   14.439723] ufshcd-rockchip 2a2d0000.ufs: Controller not ready to accept
+>> UIC commands
+>> [   14.439730] ufshcd-rockchip 2a2d0000.ufs: pwr ctrl cmd 0x18 with mode 0x0
+>> uic error -5
+>> [   14.439736] ufshcd-rockchip 2a2d0000.ufs: UFS Host state=1
+>> [   14.439740] ufshcd-rockchip 2a2d0000.ufs: outstanding reqs=0x0 tasks=0x0
+>> [   14.439744] ufshcd-rockchip 2a2d0000.ufs: saved_err=0x0,
+>> saved_uic_err=0x0
+>> [   14.439748] ufshcd-rockchip 2a2d0000.ufs: Device power mode=2, UIC link
+>> state=2
+>> [   14.439753] ufshcd-rockchip 2a2d0000.ufs: PM in progress=1, sys.
+>> suspended=1
+>> [   14.439758] ufshcd-rockchip 2a2d0000.ufs: Auto BKOPS=0, Host self-block=0
+>> [   14.439762] ufshcd-rockchip 2a2d0000.ufs: Clk gate=1
+>> [   14.439766] ufshcd-rockchip 2a2d0000.ufs: last_hibern8_exit_tstamp at 0
+>> us, hibern8_exit_cnt=0
+>> [   14.439770] ufshcd-rockchip 2a2d0000.ufs: last intr at 10807625 us, last
+>> intr status=0x440
+>> [   14.439775] ufshcd-rockchip 2a2d0000.ufs: error handling flags=0x0, req.
+>> abort count=0
+>> [   14.439779] ufshcd-rockchip 2a2d0000.ufs: hba->ufs_version=0x200, Host
+>> capabilities=0x187011f, caps=0x48c
+>> [   14.439785] ufshcd-rockchip 2a2d0000.ufs: quirks=0x2100, dev. quirks=0xc4
+>> [   14.439790] ufshcd-rockchip 2a2d0000.ufs: UFS dev info: SAMSUNG
+>> KLUDG2R1DE-B0F1  rev 0100
+>> [   14.439796] ufshcd-rockchip 2a2d0000.ufs: clk: core, rate: 50000000
+>> [   14.439822] host_regs: 00000000: 0187011f 00000000 00000200 00000000
+>> [   14.439827] host_regs: 00000010: 00000000 000005e6 00000000 00000000
+>> [   14.439831] host_regs: 00000020: 00000000 00000000 00000000 00000000
+>> [   14.439835] host_regs: 00000030: 00000000 00000000 00000000 00000000
+>> [   14.439839] host_regs: 00000040: 00000000 00000000 00000000 00000000
+>> [   14.439843] host_regs: 00000050: 00000000 00000000 00000000 00000000
+>> [   14.439847] host_regs: 00000060: 00000000 00000000 00000000 00000000
+>> [   14.439851] host_regs: 00000070: 00000000 00000000 00000000 00000000
+>> [   14.439855] host_regs: 00000080: 00000000 00000000 00000000 00000000
+>> [   14.439859] host_regs: 00000090: 00000000 00000000 00000000 00000000
+>> [   14.439863] ufshcd-rockchip 2a2d0000.ufs: No record of pa_err
+>> [   14.439867] ufshcd-rockchip 2a2d0000.ufs: No record of dl_err
+>> [   14.439871] ufshcd-rockchip 2a2d0000.ufs: No record of nl_err
+>> [   14.439876] ufshcd-rockchip 2a2d0000.ufs: No record of tl_err
+>> [   14.439880] ufshcd-rockchip 2a2d0000.ufs: No record of dme_err
+>> [   14.439884] ufshcd-rockchip 2a2d0000.ufs: No record of auto_hibern8_err
+>> [   14.439888] ufshcd-rockchip 2a2d0000.ufs: No record of fatal_err
+>> [   14.439892] ufshcd-rockchip 2a2d0000.ufs: No record of link_startup_fail
+>> [   14.439896] ufshcd-rockchip 2a2d0000.ufs: No record of resume_fail
+>> [   14.439900] ufshcd-rockchip 2a2d0000.ufs: No record of suspend_fail
+>> [   14.439905] ufshcd-rockchip 2a2d0000.ufs: dev_reset[0] = 0x0 at 1418763
+>> us
+>> [   14.439910] ufshcd-rockchip 2a2d0000.ufs: dev_reset: total cnt=1
+>> [   14.439914] ufshcd-rockchip 2a2d0000.ufs: No record of host_reset
+>> [   14.439918] ufshcd-rockchip 2a2d0000.ufs: No record of task_abort
+>> [   14.439930] ufshcd-rockchip 2a2d0000.ufs: ufshcd_uic_hibern8_exit:
+>> hibern8 exit failed. ret = -5
+>> [   14.439935] ufshcd-rockchip 2a2d0000.ufs: __ufshcd_wl_resume: hibern8
+>> exit failed -5
+>> [   14.439944] ufs_device_wlun 0:0:0:49488: ufshcd_wl_resume failed: -5
+>> [   14.439950] ufs_device_wlun 0:0:0:49488: PM: dpm_run_callback():
+>> scsi_bus_resume+0x0/0xa8 returns -5
+>> [   14.440003] ufshcd-rockchip 2a2d0000.ufs: ufshcd_err_handler started; HBA
+>> state eh_fatal; powered 1; shutting down 0; saved_err = 0; saved_uic_err =
+>> 0; force_reset = 0; link is broken
+>> [   14.440017] ufs_device_wlun 0:0:0:49488: PM: failed to resume async:
+>> error -5
+>>
+>>> - Mani
+>>>
 > 
 
