@@ -1,172 +1,247 @@
-Return-Path: <linux-kernel+bounces-282905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D279F94EA61
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:00:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21CF94EA63
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:01:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1065D1C20901
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:00:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 615401F223B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:01:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3E980C;
-	Mon, 12 Aug 2024 10:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB3616E882;
+	Mon, 12 Aug 2024 10:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XNgH9La9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPuKywQt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A5515F40D
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8DA166F1E;
+	Mon, 12 Aug 2024 10:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723456848; cv=none; b=X3trrCaiqbIYs13j/dHEs/Evii1uOhSoH8GZmOuqLREDQ5o+Rox4lVKYu//a1wEkgTCdOjBnO5Ggo/dqzW5VICuw66hiiEpnk/+itbiyEgwGDvhfZH3f9Jur8Su9mq2bPqc27fxlY5wpqL7OEFizKbtx2e5V6E1ntkcQ8SFKGJE=
+	t=1723456873; cv=none; b=esh1lBfN5AWdRWXoqQHDM613fWCvJBUc8/Z5pPZAgKjjAAdpiSS16IvDkNAMiSp7A8ardMKjrszrYlEwsCCsAj/pJCdWR21eGzCs4VvNplZVSGwtDaOgXzoZM+p+Gs1z4EBAHZ5urrybYRRQC2iPaT3lyqvr+n6qbjr03EUbxaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723456848; c=relaxed/simple;
-	bh=1ScUciWogHjmKRVSwQmXQGyugl3YVgp7XQoDiei4zcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgvC+rleELOGqrwZS+xeeu+8Fppb6MPtBMW4URplT2pWYPlCGjanbqS91HI/yK301tyFuKcGXDAnPKkBRPbpqFE61SnjdKco1604UglQx7QFHpiS3bcQR+pGBcBnJZhQEQG8jau6ThN9rWTdjDi2O+zv18IxDCV9Oq5dTn767/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XNgH9La9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723456846;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f81rvnkheDUqXD/+ZGX/tQ13uHZx0W8+/XahKIlC0eU=;
-	b=XNgH9La982QjBNHNseMWSFv/uTyvTcjHL7oOjZzI1ZC7blq4m5MWA/doOXl965dfqVYSqp
-	MiuVZiNDfVtM3pAAdiWmrLEcHZU6Q59xcY4T2Ap/eibgc6kaSd3gHMr9VH0nb9jP93c4/Y
-	9RuTB7DXAZet5T52J1Duw2rJhe7+cwk=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-130-CP-IX_DpNxGWY2QmQJbCSg-1; Mon,
- 12 Aug 2024 06:00:42 -0400
-X-MC-Unique: CP-IX_DpNxGWY2QmQJbCSg-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA87418EB230;
-	Mon, 12 Aug 2024 10:00:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.102])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 9161430001A1;
-	Mon, 12 Aug 2024 10:00:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 12 Aug 2024 12:00:36 +0200 (CEST)
-Date: Mon, 12 Aug 2024 12:00:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: syzbot <syzbot+f7a1c2c2711e4a780f19@syzkaller.appspotmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>, jolsa@kernel.org,
-	acme@kernel.org, adrian.hunter@intel.com,
-	alexander.shishkin@linux.intel.com, irogers@google.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, mark.rutland@arm.com,
-	mhiramat@kernel.org, mingo@redhat.com, namhyung@kernel.org,
-	peterz@infradead.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [perf?] KASAN: slab-use-after-free Read in
- __uprobe_unregister
-Message-ID: <20240812100028.GA11656@redhat.com>
-References: <000000000000382d39061f59f2dd@google.com>
- <20240811121444.GA30068@redhat.com>
- <20240811123504.GB30068@redhat.com>
- <CAEf4Bza8Ptd4eLfhqci2OVgGQZYrFC-bn-250ErFPcsKzQoRXA@mail.gmail.com>
+	s=arc-20240116; t=1723456873; c=relaxed/simple;
+	bh=rDovt1jA4FilWh0esLwefbyZJ+MsGHIIGBsUzJKCUO4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WsafgWM6a49suRFfbboABDa7poSZHzqYPDutLrVym8XaEC8NVvIwQwcg3M+QvFlIlaE1H83GzB7oL6tM6a8gOWIxkrW3YhpOZsz9rxRRjh8gT224MhE2QFYySlvMSuCPkj4OxNiSCdsAnLwfvI4t4IBaunkkU6Tf9iJzyb076TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPuKywQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79E8CC32782;
+	Mon, 12 Aug 2024 10:01:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723456872;
+	bh=rDovt1jA4FilWh0esLwefbyZJ+MsGHIIGBsUzJKCUO4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CPuKywQtbKeIlxVu2bsFo4iJvYKRZt5Sb76muym6av9s3rYnbwNvBcxYIRDyRoqGr
+	 9ICteh+bSA6jO3MnrOQqdvkcPSTLrJqX5xv2Q21YBrPyXU9qYlt7KsnZtDhUqRYEev
+	 oK4ftrvjpDEfclgINvskfpaEknYSv7W+mXLyfXhqN3ppyuRzCpgpA8ju66wT8ly0GJ
+	 NNbDCwl3OjvPibQFv1VwQ8Vs5uMTvk5kSWkJDWn44I36B9k3WFBR2B7uJLXqwC6iWC
+	 5xWRgxh6DSsj1ukuoTtYe/xe7KkXwkm1aIRDWn9Dt297OLzgQjyHAa+LIOT9iCHQJw
+	 JlgdHG74TOFnw==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef32fea28dso45513581fa.2;
+        Mon, 12 Aug 2024 03:01:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaHnXi83EOPECMCX6gWSIpy7IpGEpI5LT+zvzvL296K9P4g9d3Ef3TEyXqX3D0Lnj/1U7nFx7EnB4XI67YxCS7qxl59oX96ZLhxSYQ
+X-Gm-Message-State: AOJu0YzKwaLWcqWsVmC3mtd865ZFVYqaA9L7NsVoldWJ3UiOx4F43O0p
+	QyFsw9xUhnmmwFa7Yfq7VDWyAoLwFPpKvZqicbX9TCHzhGdnk1AorvGA8txAp/yuZBOOfsBtCRx
+	/Jo9lPEByXddSue4UFFwszs1PGaY=
+X-Google-Smtp-Source: AGHT+IGxSzqGNABxFzUhSYMHabUWezImLCapDo5soh+NbRONgDMbuGydYt6aQfjoU/4wtltxa5bfmrEy0UOrE9HRFDI=
+X-Received: by 2002:a2e:a902:0:b0:2ee:80b2:1e99 with SMTP id
+ 38308e7fff4ca-2f1a6d6602fmr77279601fa.44.1723456871124; Mon, 12 Aug 2024
+ 03:01:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4Bza8Ptd4eLfhqci2OVgGQZYrFC-bn-250ErFPcsKzQoRXA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+References: <20240710065255.10338-1-ole0811sch@gmail.com> <20240710065255.10338-7-ole0811sch@gmail.com>
+ <CAK7LNAQYfRzH8xh5u18z6upb9kJCMpSONn_nCS-5far9jLXsbg@mail.gmail.com>
+In-Reply-To: <CAK7LNAQYfRzH8xh5u18z6upb9kJCMpSONn_nCS-5far9jLXsbg@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 12 Aug 2024 19:00:34 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQwBu90CzjfSpP-sokwZMJMTq20UW-xP31gNQh+N7+GwA@mail.gmail.com>
+Message-ID: <CAK7LNAQwBu90CzjfSpP-sokwZMJMTq20UW-xP31gNQh+N7+GwA@mail.gmail.com>
+Subject: Re: [PATCH v4 06/12] kconfig: Add files for building constraints
+To: Ole Schuerks <ole0811sch@gmail.com>
+Cc: linux-kbuild@vger.kernel.org, jude.gyimah@rub.de, thorsten.berger@rub.de, 
+	deltaone@debian.org, jan.sollmann@rub.de, mcgrof@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 08/11, Andrii Nakryiko wrote:
+On Mon, Aug 12, 2024 at 5:49=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
 >
-> On Sun, Aug 11, 2024 at 5:35 AM Oleg Nesterov <oleg@redhat.com> wrote:
+> On Wed, Jul 10, 2024 at 3:54=E2=80=AFPM Ole Schuerks <ole0811sch@gmail.co=
+m> wrote:
 > >
-> > Something like below on top of perf/core. But I don't like the usage of
-> > "i" in the +error_unregister path...
+> > These files translate the Kconfig-model into propositional logic and st=
+ore
+> > the constraints for each symbol in the corresponding struct.
 > >
+> > Co-developed-by: Patrick Franz <deltaone@debian.org>
+> > Signed-off-by: Patrick Franz <deltaone@debian.org>
+> > Co-developed-by: Ibrahim Fayaz <phayax@gmail.com>
+> > Signed-off-by: Ibrahim Fayaz <phayax@gmail.com>
+> > Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Tested-by: Evgeny Groshev <eugene.groshev@gmail.com>
+> > Suggested-by: Sarah Nadi <nadi@ualberta.ca>
+> > Suggested-by: Thorsten Berger <thorsten.berger@rub.de>
+> > Signed-off-by: Thorsten Berger <thorsten.berger@rub.de>
+> > Signed-off-by: Ole Schuerks <ole0811sch@gmail.com>
+> > ---
+> >  scripts/kconfig/cf_constraints.c | 1720 ++++++++++++++++++++++++++++++
+> >  scripts/kconfig/cf_constraints.h |   26 +
+> >  2 files changed, 1746 insertions(+)
+> >  create mode 100644 scripts/kconfig/cf_constraints.c
+> >  create mode 100644 scripts/kconfig/cf_constraints.h
+> >
+> > diff --git a/scripts/kconfig/cf_constraints.c b/scripts/kconfig/cf_cons=
+traints.c
+> > new file mode 100644
+> > index 000000000000..1c02a4b47383
+> > --- /dev/null
+> > +++ b/scripts/kconfig/cf_constraints.c
+> > @@ -0,0 +1,1720 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2023 Patrick Franz <deltaone@debian.org>
+> > + */
+> > +
+> > +#include "cf_defs.h"
+> > +#include "expr.h"
+> > +#define _GNU_SOURCE
+> > +#include <assert.h>
+> > +#include <locale.h>
+> > +#include <stdarg.h>
+> > +#include <stdbool.h>
+> > +#include <stdio.h>
+> > +#include <stdlib.h>
+> > +#include <string.h>
+> > +#include <time.h>
+> > +#include <unistd.h>
+> > +
+> > +#include "cf_utils.h"
+> > +#include "internal.h"
+> > +#include "cf_expr.h"
+> > +#include "cf_constraints.h"
+> > +
+> > +#define KCR_CMP false
+> > +#define NPC_OPTIMISATION true
+> > +
+> > +static void init_constraints(struct cfdata *data);
+> > +static void get_constraints_bool(struct cfdata *data);
+> > +static void get_constraints_select(struct cfdata *data);
+> > +static void get_constraints_nonbool(struct cfdata *data);
+> > +
+> > +static void build_tristate_constraint_clause(struct symbol *sym,
+> > +                                            struct cfdata *data);
+> > +
+> > +static void add_selects_kcr(struct symbol *sym, struct cfdata *data);
+> > +static void add_selects(struct symbol *sym, struct cfdata *data);
+> > +
+> > +static void add_dependencies_bool(struct symbol *sym, struct cfdata *d=
+ata);
+> > +static void add_dependencies_bool_kcr(struct symbol *sym, struct cfdat=
+a *data);
+> > +static void add_dependencies_nonbool(struct symbol *sym, struct cfdata=
+ *data);
+> > +
+> > +static void add_choice_prompt_cond(struct symbol *sym, struct cfdata *=
+data);
+> > +static void add_choice_dependencies(struct symbol *sym, struct cfdata =
+*data);
+> > +static void add_choice_constraints(struct symbol *sym, struct cfdata *=
+data);
+> > +static void add_invisible_constraints(struct symbol *sym, struct cfdat=
+a *data);
+> > +static void sym_nonbool_at_least_1(struct symbol *sym, struct cfdata *=
+data);
+> > +static void sym_nonbool_at_most_1(struct symbol *sym, struct cfdata *d=
+ata);
+> > +static void sym_add_nonbool_values_from_default_range(struct symbol *s=
+ym,
+> > +                                                     struct cfdata *da=
+ta);
+> > +static void sym_add_range_constraints(struct symbol *sym, struct cfdat=
+a *data);
+> > +static void sym_add_nonbool_prompt_constraint(struct symbol *sym,
+> > +                                             struct cfdata *data);
+> > +
+> > +static struct default_map *create_default_map_entry(struct fexpr *val,
+> > +                                                   struct pexpr *e);
+> > +static struct defm_list *get_defaults(struct symbol *sym, struct cfdat=
+a *data);
+> > +static struct pexpr *get_default_y(struct defm_list *list, struct cfda=
+ta *data);
+> > +static struct pexpr *get_default_m(struct defm_list *list, struct cfda=
+ta *data);
+> > +static struct pexpr *get_default_any(struct symbol *sym, struct cfdata=
+ *data);
+> > +static long sym_get_range_val(struct symbol *sym, int base);
+> > +
+> > +/* -------------------------------------- */
+> > +
+> > +/*
+> > + * build the constraints for each symbol
+> > + */
+> > +void get_constraints(struct cfdata *data)
+> > +{
+> > +       printd("Building constraints...");
+> > +
+> > +       init_constraints(data);
+> > +       get_constraints_bool(data);
+> > +       get_constraints_select(data);
+> > +       get_constraints_nonbool(data);
+> > +}
+> > +
+> > +/*
+> > + * need to go through the constraints once to find all "known values"
+> > + * for the non-Boolean symbols (and add them to sym->nb_vals for the g=
+iven
+> > + * symbols).
+> > + * expr_calculate_pexpr_both and get_defaults have the side effect of =
+creating
+> > + * known values.
+> > + */
+> > +static void init_constraints(struct cfdata *data)
+> > +{
+> > +       struct symbol *sym;
+> > +       struct property *p;
+> > +
+> > +       for_all_symbols(sym) {
+> > +               struct property *prompt;
+> > +
+> > +               if (sym->type =3D=3D S_UNKNOWN)
+> > +                       continue;
+> > +
+> > +               if (sym_is_boolean(sym)) {
+> > +                       for_all_properties(sym, p, P_SELECT)
+> > +                               pexpr_put(expr_calculate_pexpr_both(p->=
+visible.expr,
+> > +                                                         data));
+> > +
+> > +                       for_all_properties(sym, p, P_IMPLY)
+> > +                               pexpr_put(expr_calculate_pexpr_both(p->=
+visible.expr,
+> > +                                                         data));
 >
-> Wouldn't the below be cleaner?
 >
-> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-> index cd098846e251..3ca65454f888 100644
-> --- a/kernel/trace/bpf_trace.c
-> +++ b/kernel/trace/bpf_trace.c
-> @@ -3491,8 +3491,10 @@ int bpf_uprobe_multi_link_attach(const union
-> bpf_attr *attr, struct bpf_prog *pr
->         }
 >
->         err = bpf_link_prime(&link->link, &link_primer);
-> -       if (err)
-> +       if (err) {
-> +               bpf_uprobe_unregister(&path, uprobes, cnt);
+> Does 'imply' give any constraint?
 
-I disagree. This code already uses the "goto error_xxx" pattern, why
-duplicate bpf_uprobe_unregister() ? What if another "can fail" code
-comes between register and bpf_link_prime() ?
 
-See the patch below, on top of perf/core.
+I take back this comment.
 
-> We should probably route this through the bpf tree, I don't think it
-> will conflict with your changes, right?
+'imply' does give a constraint when the implied symbol has
+no prompt.
 
-It will conflict, and in this sense it is even worse than the "#syz test"
-patch I sent in https://lore.kernel.org/all/20240811125816.GC30068@redhat.com/
 
-Because with your version above the necessary change
 
-	-	bpf_uprobe_unregister(&path, uprobes, cnt);
-	+	bpf_uprobe_unregister(uprobes, cnt);
 
-won't be noticed during the merge, I guess.
-
-So can we route this fix through the perf/core ? I'll add "cc: stable",
-in the next merge window the Greg's scripts will report the "FAILED"
-status of the -stable patch, I'll send the trivial backport in reply.
-
-No?
-
-Oleg.
----
-
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 4e391daafa64..90cd30e9723e 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -3484,17 +3484,20 @@ int bpf_uprobe_multi_link_attach(const union bpf_attr *attr, struct bpf_prog *pr
- 						    &uprobes[i].consumer);
- 		if (IS_ERR(uprobes[i].uprobe)) {
- 			err = PTR_ERR(uprobes[i].uprobe);
--			bpf_uprobe_unregister(uprobes, i);
--			goto error_free;
-+			link->cnt = i;
-+			goto error_unregister;
- 		}
- 	}
- 
- 	err = bpf_link_prime(&link->link, &link_primer);
- 	if (err)
--		goto error_free;
-+		goto error_unregister;
- 
- 	return bpf_link_settle(&link_primer);
- 
-+error_unregister:
-+	bpf_uprobe_unregister(uprobes, link->cnt);
-+
- error_free:
- 	kvfree(uprobes);
- 	kfree(link);
-
+--=20
+Best Regards
+Masahiro Yamada
 
