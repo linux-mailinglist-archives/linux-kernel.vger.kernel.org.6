@@ -1,171 +1,106 @@
-Return-Path: <linux-kernel+bounces-283191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4956994EE77
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:37:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7D194EE50
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:35:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C74881F23025
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516E61C21BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 13:35:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9417186E48;
-	Mon, 12 Aug 2024 13:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C7217E473;
+	Mon, 12 Aug 2024 13:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMDLQwpb"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QARKBhky"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3A5186E3E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 13:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC44617E902;
+	Mon, 12 Aug 2024 13:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723469676; cv=none; b=TeiF/4T/WzjZ7Edb59mXngbHN7imnBMHQx7smTP9nbAsycnyq0m351MgWpbvnS3yreDVfZEv2XfkZmiDHXw6DwbLFGMDDtIcPsNQs4R0DL/tkjQIBVihJv2+cttvMl8vzA9fZRQ3YjFWozJFroLFZ6pkvXne3h7jyuaIDFeldpI=
+	t=1723469654; cv=none; b=cSAJMyvd6vUVCRgM4VbCAbglTMSgyqO0tKb21rRSR0QBqFaGN+PXlAPBaSTDN6/FZm7R1Xmfc3xhAN5zDyWQPdiW3oApC7pGVFCTtAX4bMzU3UZxVtV1v7wDuJChdQu9Q19LiEcB9adrD1DclqGZ1024whILjFSfbs9e8VYlx+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723469676; c=relaxed/simple;
-	bh=1y9LIZ3UpOVR4pnvMVqojw1S5Kf9CAK2N1Et998QgxM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=oUVyMBg78b/Z8kMCQJOA6W0VUhks9XLSvG1v1h2jnJF3yGvEPjquerBBl74ZRqTf5VrxX9eaIQ7Egry6Bu3cXOyqpsKiJ3RFBpw0zFD1HV0b6nj2xTXnJGsj0Jzzmj8t0ysYgnacXUH+UHwDWrjqMXRv1ntqq3ro9aiYgisuaHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RMDLQwpb; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42809d6e719so33280565e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723469673; x=1724074473; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KDjln6hpCDXYJ0URbIXokRubyMBzSip15NzhUO8TB7c=;
-        b=RMDLQwpbrNYeWvYBBG3wQC6alJ4BkDSartO7T38R+n2++6HF/JN9IsebeYdt53/0cE
-         MQq003aOzYm62OHOPcNt3Vbp48zTXhnfGb7F1+1Ov+58NOD4KJY1hRGuwMhoHq/26LQX
-         12sdBthwH2tNzO9MqElsSbCp0vTgswVlWbeUFTMweXVZIBkj5LCJsHKPMcA8Mime5wD7
-         +85dbPCoX3isZ+o0zpNrZfXiNdDy1UkdAbjdZeAeRJTSAFP5CDHYoL34NQkxyFxBjywS
-         vO6lcpJ1m4rTVFAudr+t9sVTYS/1evWwD9k4cWw2VjpGKuqZwdTVEgq+tOpgzgUa1ZU/
-         aycQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723469673; x=1724074473;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KDjln6hpCDXYJ0URbIXokRubyMBzSip15NzhUO8TB7c=;
-        b=ESbVoUf6l4WLcBGpk3UsI5TWMM1BaBJ+RLlZQexGaf93sG9rooNlVhf+nQMcUcQME7
-         OaXXbVHT8vFbRmFfXFhVlt2Qpc+Np35rCBMabE1PYYz8jStZfdMtQb9ziTyKVMf7YPxV
-         bOKdCFx9w5VSI/qMn9FaEKv7mFwIKhv4ZJHPpWItoHzR8SHjMsq3le8vVuknt0cmoVnX
-         HTnWox7fWtB3m7c0LuqyyErbO7l9Znj/2l9EnEjpdsEWCasDsi6p143pykD2Vl9MBe8a
-         TsZP75FIpKivg5nvAHgwSn2mZu8Uch/mBTm3l83ow+EIokweG7gqbvQDmSnLRAlXx1C1
-         ZGkA==
-X-Gm-Message-State: AOJu0YxW+KpCX4+f0Q5tTWHgXqtsmuBw+IOr7RRoOODh3AzX+xlEipzp
-	njIQy2qmf3+pknztFAkCtsjCIEse6ZHYJIjFPyjeo4C5t9MeIdCwomHZ08l72JA=
-X-Google-Smtp-Source: AGHT+IGxNdfGFBc2sd+uT8Mshv7zE0iMHxVPPRhCFdm+enI7xTfevgaIs4pdgcrzguVgeuzP0FcuHg==
-X-Received: by 2002:a05:600c:358a:b0:426:5269:9838 with SMTP id 5b1f17b1804b1-429d47f43a1mr3753855e9.4.1723469673377;
-        Mon, 12 Aug 2024 06:34:33 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c7737c64sm102733975e9.31.2024.08.12.06.34.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 06:34:32 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 12 Aug 2024 15:34:03 +0200
-Subject: [PATCH 9/9] memory: ti-aemif: simplify with scoped for each OF
- child loop
+	s=arc-20240116; t=1723469654; c=relaxed/simple;
+	bh=JL8XYXMlmVgvqed30UCj2bKK2g4QBnMop/kHWgz0fEk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=dfKuLp+P+4gEjxJmd7wi392Ja2Bw3WK/X7/vHzTE7PuKLO5MKvuh60kg3xHwW3f656k3xY+WGqTu+AalnA12sN/i3tgAroG3WOT0vp9M9fsw7G7Ih//26TsnJMZILXKSU+t5FkR6HL2Fl9R/z0UXL8rkazUCfrVilkJ12wDmtQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QARKBhky; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98A2C32782;
+	Mon, 12 Aug 2024 13:34:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723469654;
+	bh=JL8XYXMlmVgvqed30UCj2bKK2g4QBnMop/kHWgz0fEk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=QARKBhkyAN/eafKtlB6M6qiuFUFApRL1r8zWesXVem0VfWgOANHT0y5OWLPfQ7XVy
+	 iKSd26sXRNVLGSDVc9ggq6Txbk5pSwe5sTANAE8XoIfHhqeVN2uzLqQDw4Jm/rP8aU
+	 kLigtPlx5kj5mLwI1MAvWSDtsdMG+vKjApCGqgYBxn4boPOYjFuRrKKw7L+wbHTirL
+	 uoov6jSd7w+Bz4tgKfg8M2COsjaQVvdHGpLM9b8Uy/PV27LvyvrsjE+Bjx1L+2oJbW
+	 /hqBTFd6BnfPWnVS2W+mU5wL8KUeb/2D+hvtKsP1Tc/jDlG97v6vJ5Vf6RNOOLz2gb
+	 9u3+o4q7U6zdQ==
+Date: Mon, 12 Aug 2024 07:34:12 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240812-cleanup-h-of-node-put-memory-v1-9-5065a8f361d2@linaro.org>
-References: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
-In-Reply-To: <20240812-cleanup-h-of-node-put-memory-v1-0-5065a8f361d2@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Lukasz Luba <lukasz.luba@arm.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>, 
- Santosh Shilimkar <ssantosh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1869;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=1y9LIZ3UpOVR4pnvMVqojw1S5Kf9CAK2N1Et998QgxM=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBmug9YQQCkCmD6RWyldjxAxJ+p417Q43d0hTixW
- dLzROOtWr+JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZroPWAAKCRDBN2bmhouD
- 1+nCD/9WeAq/6x6IjpXwsbY6q4WpzSCuLIsFjo3y8wWVAXieoqOsqOZ33OR2zlrlb5R7xqAmLOk
- n+hWanKoaIz81P6uaaOV4ADrfzpSGO3F3pljzOFcC5kjgcvvPffYqPKATl5sUjzZNH+GbX+OJRZ
- 0av395if4QbFFVZNGRncMfCo2pB8HZQQawKOrIVCOPLzN1l5iqgNomvHLRDECCa/i8nCeaWlmi/
- 9UjCR9X02xh/BxZW74SjO55jI7IqLA9ohbA/OOGySP5UKVr42BoPn58P1GXpkfY6FZA+HZZ3ZxH
- v+AGb+6rq80Wl7Lz7DM4tVc3RniN66Yw1veXOM5c0CnQcQHGRGJDD0PV1Mm5Y/UEhTzsYmy3srt
- a2GcSDTHi2UlW11x5nxxS3OqY5xQ0lPmPn3y1UQ34g+x6gZpPZIQ5sRbQBNisH0kkU20pL32Toj
- vJG2V8EcF8BgyExdqs5VwUIyMk+IGrWmq9XPpedyVUo3qSrUBR657572wxtDIFSOEkJ4sPtKxg0
- j3AB0xCbvaDIJIE3xaTuD2DMCy2Tqf/EocjX/gF6//BfmKUbuQQUFxqm5UCiuSihYMtB82scL+Q
- uQzGTpTFXzJKJUPlJUNaBiagiaOp0EoNTtbPKrmqybnQqPkBi7eMW/iiBy5E8nu+QOfyqv/mAoP
- uWIYBVUyjipVCyQ==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Bruel <christian.bruel@foss.st.com>
+Cc: kishon@kernel.org, fabrice.gasnier@foss.st.com, 
+ linux-stm32@st-md-mailman.stormreply.com, alexandre.torgue@foss.st.com, 
+ p.zabel@pengutronix.de, vkoul@kernel.org, devicetree@vger.kernel.org, 
+ conor+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org, mcoquelin.stm32@gmail.com, 
+ linux-phy@lists.infradead.org
+In-Reply-To: <20240812120529.3564390-3-christian.bruel@foss.st.com>
+References: <20240812120529.3564390-1-christian.bruel@foss.st.com>
+ <20240812120529.3564390-3-christian.bruel@foss.st.com>
+Message-Id: <172346965242.493337.13574697496053856.robh@kernel.org>
+Subject: Re: [PATCH 2/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
 
-Use scoped for_each_available_child_of_node_scoped() when iterating over
-device nodes to make code a bit simpler.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/memory/ti-aemif.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+On Mon, 12 Aug 2024 14:05:26 +0200, Christian Bruel wrote:
+> Document the bindings for STM32 COMBOPHY interface, used to support
+> the PCIe and USB3 stm32mp25 drivers.
+> Following entries can be used to tune caracterisation parameters
+>  - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
+> to tune the impedance and voltage swing using discrete simulation results
+>  - st, phy_rx0_eq register to set the internal rx equalizer filter value.
+> 
+> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
+> ---
+>  .../bindings/phy/st,stm32-combophy.yaml       | 178 ++++++++++++++++++
+>  1 file changed, 178 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
+> 
 
-diff --git a/drivers/memory/ti-aemif.c b/drivers/memory/ti-aemif.c
-index e192db9e0e4b..cd2945d4ec18 100644
---- a/drivers/memory/ti-aemif.c
-+++ b/drivers/memory/ti-aemif.c
-@@ -330,7 +330,6 @@ static int aemif_probe(struct platform_device *pdev)
- 	int ret = -ENODEV;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
--	struct device_node *child_np;
- 	struct aemif_device *aemif;
- 	struct aemif_platform_data *pdata;
- 	struct of_dev_auxdata *dev_lookup;
-@@ -374,12 +373,10 @@ static int aemif_probe(struct platform_device *pdev)
- 		 * functions iterate over these nodes and update the cs data
- 		 * array.
- 		 */
--		for_each_available_child_of_node(np, child_np) {
-+		for_each_available_child_of_node_scoped(np, child_np) {
- 			ret = of_aemif_parse_abus_config(pdev, child_np);
--			if (ret < 0) {
--				of_node_put(child_np);
-+			if (ret < 0)
- 				goto error;
--			}
- 		}
- 	} else if (pdata && pdata->num_abus_data > 0) {
- 		for (i = 0; i < pdata->num_abus_data; i++, aemif->num_cs++) {
-@@ -402,13 +399,11 @@ static int aemif_probe(struct platform_device *pdev)
- 	 * child will be probed after the AEMIF timing parameters are set.
- 	 */
- 	if (np) {
--		for_each_available_child_of_node(np, child_np) {
-+		for_each_available_child_of_node_scoped(np, child_np) {
- 			ret = of_platform_populate(child_np, NULL,
- 						   dev_lookup, dev);
--			if (ret < 0) {
--				of_node_put(child_np);
-+			if (ret < 0)
- 				goto error;
--			}
- 		}
- 	} else if (pdata) {
- 		for (i = 0; i < pdata->num_sub_devices; i++) {
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-2.43.0
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml: access-controllers: missing type definition
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240812120529.3564390-3-christian.bruel@foss.st.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
