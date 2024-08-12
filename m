@@ -1,301 +1,281 @@
-Return-Path: <linux-kernel+bounces-283400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38FEC94F1FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 572BB94F202
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B7D1F21010
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 900CCB22673
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFBE18732F;
-	Mon, 12 Aug 2024 15:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92AA187325;
+	Mon, 12 Aug 2024 15:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DoD2mQnt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HGtlFBgp"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43A58186E29;
-	Mon, 12 Aug 2024 15:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076C0186E5A
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477598; cv=none; b=NI/GMUtQQ7Gop08zpVGpxtl1l/36SrMlBLXVnxfNX6YrIUcrS8kBxgFgSwS1/207h/zCoEIpy4X8qz1bpSggrKqSN8Obi3VwJh1HkiqC0nru76uocN3KvNlK9/8+Z+IMGwXuAlmz4ZTumNZ6EvgkUtJEdS5UjwkUdqR1cUsfUmU=
+	t=1723477611; cv=none; b=RoR8xXQLaRUxrAtCpenh4CBKdUNJLKhELHoZ61jxFc1pZAlC/Mi+vEv5ztg0FA7YNhGwaLE3F4xH86pGmhZCEBflGS98BMA9ox7LhuLjSdsfM8B4TBMSZrrb/DM/clNwc5Q7hR5lQ0X4Xm0F+8UE+V4NZwV0KYagChM59NttRx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477598; c=relaxed/simple;
-	bh=LVd9TGyp4d0U2ismMK0yyPmFgRWGEjHc5jVuSmjiEm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8FEj/ow+zOrG5ItwV6Zk3CpZAYPwBBxe3UXYkoBFwcFB4F3185HBosz/QD7Xk9kmExjVHFcTU+Pfj5x5BxhMDYN4JDSDPK5Gvzm6aw/8IZQgEyaKPi222A09C9YEZY308TtiUbmd568NjPN70YTWqSTy9IKkHPjo2TQkAqEzfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DoD2mQnt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4695C32782;
-	Mon, 12 Aug 2024 15:46:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723477598;
-	bh=LVd9TGyp4d0U2ismMK0yyPmFgRWGEjHc5jVuSmjiEm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DoD2mQntD+Qh4IZ33zQCH33TBS1+jhJwVOkFTC88ccqNz+vbk4a1qjR8tpAs/JNM1
-	 7+HVG6jxEkR5wxBW+sQnje5OJaZH7+k9smfyYW+MvJgsT8c17jVx9ASl3xvjqbS6VC
-	 Lb70vfVA5PTDiul77Pntd8ZBwnRLESZMLsPN8RthDnz74nCCG77hl9CcTybBrPPOU2
-	 yWeB0y7ZEaf+IZ3KAcQgNsL55sv6zenhpaMqbgjhn3mkmnsELCDR9vw8ZNG4SbSMbe
-	 9dANZQy2FTlXAgEW5aKzumFK4bLZ9P1pXq40FkMqmcsAdBRy/cdBuaQ5nD8LMBHcxi
-	 2aF3RXB2gTDpw==
-Date: Mon, 12 Aug 2024 09:46:33 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Bruel <christian.bruel@foss.st.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, p.zabel@pengutronix.de,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	fabrice.gasnier@foss.st.com
-Subject: Re: [PATCH 2/5] dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
-Message-ID: <20240812154633.GB593866-robh@kernel.org>
-References: <20240812120529.3564390-1-christian.bruel@foss.st.com>
- <20240812120529.3564390-3-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1723477611; c=relaxed/simple;
+	bh=TiS0XVOQaveTZWTjTShhgLNz9STX/nh1DiWEt9YJO/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LWblrpPy1wNxNVt8RX3NP/ET6oYKP0+kN21YMAWzi+lnnbUm+MdKJjqq0QJJ6I2NKp5tQ2FSffbk6rGY5aLPHzKo43s2v+WU2BfJFlPqVBb+VLh5V7qS3weQd0TYx6vAec3mDDIk95D4UrQ4b8OX7o9rGE88fdTkGcMK4psk594=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=HGtlFBgp; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7d26c2297eso517241866b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 08:46:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723477607; x=1724082407; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ql5fXxiCJkIiTyhtm29TmC99eYPdWjKav8Lrje672xQ=;
+        b=HGtlFBgpgTu/YvrcNJRpFFTO/3194Y7H0xXuOxa5zk/ihJKt4cIAub/2qv1kPYb6bt
+         iQCE16QJ5fv0lkhDZ/91dLm4YiO77VL268JgmU/3tq/FWy32nLlQkAh3v4ljGBo0nQRv
+         8jKyUHX6QVbG/TZq8dl+DRh35JZSqvkxNeI9k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723477607; x=1724082407;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ql5fXxiCJkIiTyhtm29TmC99eYPdWjKav8Lrje672xQ=;
+        b=bLyjdULYu5CpzHkBpTZiFX2S2lVzpvcxOl1DfYAvNQGElJlzz8iyZQwRPvNGXVrmIt
+         zA6Z/T3i0x2AikpGgt0wwA0eRTYjEtuLI+KYMCCVf/DVX0s66d7eve+0hf3Lq3seL82R
+         92fpB1nQRL9JPbQDIKfOwlYbjvU0DQMQt5rJueRgQCGc7UOu9BKTVrkcTQJyN0+jgjre
+         vSkf9e8800903ee43BhmBqvYvOBVANM9ps+vD9nD1RB3fxtjYVvR60wX2vJquKuXPXlV
+         F6rr7AfFbfIShN26E4rDzYFNxcksRzBzR3a/tqWIpM8OI97v8tEkfsdA4cM2rxDu+GL+
+         zZAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGIzxt82Etpt/GAijhaRZqxXl+lWbpq0iL19HrF+JeUgL5hqKjR71MvGDKjtlLjo5VBrAFy+ntX5pAg016ol5kZwWaMLB3HDcyslNf
+X-Gm-Message-State: AOJu0Yy73iPTRVLsuWQ5MXDEQbu4BHq/4WGclWCENKgWBFT0uASDUhkZ
+	Nbot5gp64QrfrzH1mCflZJNtB1nZ1Jjhafv4pKQbTyVgtaaaVAkBCLQbVPhV7ax0oeYaEIKE5kH
+	Di4BpulBgHAYTvf1he0Nue1o5fVQ1F5AtouG1
+X-Google-Smtp-Source: AGHT+IEKYMxDjZpA4ugql0q25haDMG9of3iEjyR/9J5O5gQHUxbbAlTphHF0z0O4yvsgnJiQItnvd4OSHTEmrglB6OI=
+X-Received: by 2002:a17:907:d14:b0:a7a:a5ae:11bd with SMTP id
+ a640c23a62f3a-a80ed2d3189mr47121366b.67.1723477607030; Mon, 12 Aug 2024
+ 08:46:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812120529.3564390-3-christian.bruel@foss.st.com>
+References: <20240731222831.14895-1-james.quinlan@broadcom.com>
+ <20240731222831.14895-5-james.quinlan@broadcom.com> <9c22a495-7b89-4df6-b57b-cb0f39b09c30@suse.de>
+In-Reply-To: <9c22a495-7b89-4df6-b57b-cb0f39b09c30@suse.de>
+From: Jim Quinlan <james.quinlan@broadcom.com>
+Date: Mon, 12 Aug 2024 11:46:34 -0400
+Message-ID: <CA+-6iNy2f3zNsSZcFBHnEoTSqDHx34+ijZrLWhnC5bfF=S3nQg@mail.gmail.com>
+Subject: Re: [PATCH v5 04/12] PCI: brcmstb: Use bridge reset if available
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
+	Cyril Brulebois <kibi@debian.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, bcm-kernel-feedback-list@broadcom.com, 
+	jim2101024@gmail.com, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="00000000000095c487061f7e6658"
 
-On Mon, Aug 12, 2024 at 02:05:26PM +0200, Christian Bruel wrote:
-> Document the bindings for STM32 COMBOPHY interface, used to support
-> the PCIe and USB3 stm32mp25 drivers.
-> Following entries can be used to tune caracterisation parameters
->  - st,output-micro-ohms and st,output-vswing-microvolt bindings entries
-> to tune the impedance and voltage swing using discrete simulation results
->  - st, phy_rx0_eq register to set the internal rx equalizer filter value.
-> 
-> Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
-> ---
->  .../bindings/phy/st,stm32-combophy.yaml       | 178 ++++++++++++++++++
->  1 file changed, 178 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-> new file mode 100644
-> index 0000000000000..6a53ab834b2a7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/st,stm32-combophy.yaml
-> @@ -0,0 +1,178 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/st,stm32-combophy.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: STMicroelectronics STM32MP25 USB3/PCIe COMBOPHY
-> +
-> +maintainers:
-> +  - Christian Bruel <christian.bruel@foss.st.com>
-> +
-> +description: |
+--00000000000095c487061f7e6658
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Don't need '|' if no formatting to preserve.
+On Fri, Aug 9, 2024 at 7:16=E2=80=AFAM Stanimir Varbanov <svarbanov@suse.de=
+> wrote:
+>
+> Hi Jim,
+>
+> On 8/1/24 01:28, Jim Quinlan wrote:
+> > The 7712 SOC has a bridge reset which can be described in the device tr=
+ee.
+> > Use it if present.  Otherwise, continue to use the legacy method to res=
+et
+> > the bridge.
+> >
+> > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-brcmstb.c | 24 +++++++++++++++++++-----
+> >  1 file changed, 19 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/contro=
+ller/pcie-brcmstb.c
+> > index 7595e7009192..4d68fe318178 100644
+> > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > @@ -265,6 +265,7 @@ struct brcm_pcie {
+> >       enum pcie_type          type;
+> >       struct reset_control    *rescal;
+> >       struct reset_control    *perst_reset;
+> > +     struct reset_control    *bridge_reset;
+> >       int                     num_memc;
+> >       u64                     memc_size[PCIE_BRCM_MAX_MEMC];
+> >       u32                     hw_rev;
+> > @@ -732,12 +733,19 @@ static void __iomem *brcm7425_pcie_map_bus(struct=
+ pci_bus *bus,
+> >
+> >  static void brcm_pcie_bridge_sw_init_set_generic(struct brcm_pcie *pci=
+e, u32 val)
+> >  {
+> > -     u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > -     u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > +     if (val)
+> > +             reset_control_assert(pcie->bridge_reset);
+> > +     else
+> > +             reset_control_deassert(pcie->bridge_reset);
+> >
+> > -     tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > -     tmp =3D (tmp & ~mask) | ((val << shift) & mask);
+> > -     writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +     if (!pcie->bridge_reset) {
+> > +             u32 tmp, mask =3D  RGR1_SW_INIT_1_INIT_GENERIC_MASK;
+> > +             u32 shift =3D RGR1_SW_INIT_1_INIT_GENERIC_SHIFT;
+> > +
+> > +             tmp =3D readl(pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +             tmp =3D (tmp & ~mask) | ((val << shift) & mask);
+> > +             writel(tmp, pcie->base + PCIE_RGR1_SW_INIT_1(pcie));
+> > +     }
+> >  }
+> >
+> >  static void brcm_pcie_bridge_sw_init_set_7278(struct brcm_pcie *pcie, =
+u32 val)
+> > @@ -1621,10 +1629,16 @@ static int brcm_pcie_probe(struct platform_devi=
+ce *pdev)
+> >       if (IS_ERR(pcie->perst_reset))
+> >               return PTR_ERR(pcie->perst_reset);
+> >
+> > +     pcie->bridge_reset =3D devm_reset_control_get_optional_exclusive(=
+&pdev->dev, "bridge");
+>
+> Shouldn't this be devm_reset_control_get_optional_shared? See more below.
+>
+> > +     if (IS_ERR(pcie->bridge_reset))
+> > +             return PTR_ERR(pcie->bridge_reset);
+> > +
+> >       ret =3D clk_prepare_enable(pcie->clk);
+> >       if (ret)
+> >               return dev_err_probe(&pdev->dev, ret, "could not enable c=
+lock\n");
+> >
+> > +     pcie->bridge_sw_init_set(pcie, 0);
+>
+> According to reset_control_get_shared description looks like this
+> .deassert is satisfying the requirements for _shared reset-control API
+> variant.
+> Is that the intention to call reset_control_deassert() here?
 
-> +  Single lane PHY shared (exclusive) between the USB3 and PCIe controllers.
-> +  Supports 5Gbit/s for USB3 and PCIe gen2 or 2.5Gbit/s for PCIe gen1.
-> +
-> +properties:
-> +  compatible:
-> +    const: st,stm32mp25-combophy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  st,syscfg:
+Hi Stan,
+Now I'm not sure I understand you.  All of the resets (bridge, perst,
+swinit) are exclusive, except for the "rescal" reset, which is shared.
 
-Order is standard properties first, vendor properties second. 
+On the exclusive resets I am using reset_control_assert() and
+reset_control_deasssert().  On the shared reset I am using
+reset_control_rearm() and reset_control_reset().   Why do
+you think the calls I am using are incongruent with the shard/exclusive
+status?
 
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    description: Phandle to the SYSCON entry required for configuring PCIe
-> +      or USB3.
+Regards,
+Jim Quinlan
+Broadcom STB/CM
 
-You need constraints on the size of the phandle-array or perhaps this 
-should be just 'phandle'.
+>
+> > +
+> >       ret =3D reset_control_reset(pcie->rescal);
+> >       if (dev_err_probe(&pdev->dev, ret, "failed to deassert 'rescal'\n=
+"))
+> >               goto clk_disable_unprepare;
+>
+> ~Stan
 
-> +
-> +  "#phy-cells":
-> +    const: 1
-> +    description: |
-> +      The cells contain the following arguments.
-> +
-> +      - description: The PHY type
-> +          enum:
-> +            - PHY_TYPE_USB3
-> +            - PHY_TYPE_PCIE
-> +
-> +  clocks:
-> +    anyOf:
+--00000000000095c487061f7e6658
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-Should be 'items'
-
-> +      - description: apb-clk Bus clock mandatory to access registers.
-> +      - description: ker-clk Internal RCC reference clock for USB3 or PCIe
-> +      - description: pad-clk Optional on board clock input for PCIe only. Typically an
-> +                     external 100Mhz oscillator wired on dedicated CLKIN pad. Used as reference
-> +                     clock input instead of the ker-clk
-> +
-> +  clock-names:
-> +    oneOf:
-> +      - items:
-> +          - const: apb-clk
-> +          - const: ker-clk
-> +
-> +      - items:
-> +          - const: apb-clk
-> +          - const: ker-clk
-> +          - const: pad-clk
-
-Don't need oneOf here. Just add 'minItems: 2' on the 2nd entry.
-
-'-clk' is also redundant. Drop.
-
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  reset-names:
-> +    const: phy-rst
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  st,ssc-on:
-> +    type: boolean
-> +    description:
-> +      A boolean property whose presence indicates that the SSC for common clock
-> +      needs to be set.
-> +
-> +  st,rx_equalizer:
-
-s/_/-/
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-
-That's already the minimum. Drop.
-
-> +    maximum: 7
-> +    default: 2
-> +    description:
-> +      A 3 bit value describing internal filter settings for the RX equalizer.
-
-How does one decide what value to use?
-
-> +
-> +  st,output-micro-ohms:
-> +    minimum: 3999000
-> +    maximum: 6090000
-> +    default: 4968000
-> +    description:
-> +      A value property to tune the Single Ended Output Impedance, simulations results
-> +      at 25C for a VDDP=0.8V. The hardware accepts discrete values in this range.
-> +
-> +  st,output-vswing-microvolt:
-> +    minimum: 442000
-> +    maximum: 803000
-> +    default: 803000
-> +    description:
-> +      A value property in microvolt to tune the Single Ended Output Voltage Swing to change the
-> +      Vlo, Vhi for a VDDP = 0.8V. The hardware accepts discrete values in this range.
-> +
-> +  wakeup-source: true
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: interrupt used for wakeup
-> +
-> +  access-controllers:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - st,syscfg
-> +  - '#phy-cells'
-> +  - resets
-> +  - reset-names
-> +  - clocks
-> +  - clock-names
-> +
-> +allOf:
-> +  - if:
-> +      required:
-> +        - wakeup-source
-> +    then:
-> +      anyOf:
-> +        - required: [interrupts]
-> +        - required: [interrupts-extended]
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    // Example 1: COMBOPHY configured to use internal reference clock
-> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-> +
-> +    combophy_internal: phy@480c0000 {
-> +        compatible = "st,stm32mp25-combophy";
-> +        reg = <0x480c0000 0x1000>;
-> +        #phy-cells = <1>;
-> +        clocks = <&rcc CK_BUS_USB3PCIEPHY>, <&rcc CK_KER_USB3PCIEPHY>;
-> +        clock-names = "apb-clk", "ker-clk";
-> +        resets = <&rcc USB3PCIEPHY_R>;
-> +        reset-names = "phy-rst";
-> +        st,syscfg = <&syscfg>;
-> +        access-controllers = <&rifsc 67>;
-> +        power-domains = <&CLUSTER_PD>;
-> +        wakeup-source;
-> +        interrupts-extended = <&exti1 45 IRQ_TYPE_EDGE_FALLING>;
-> +    };
-> +
-> +  - |
-> +    // Example 2: COMBOPHY configured to use extrenal 100MHz reference clock
-> +    // on CLKIN pad for PCIe
-> +    #include <dt-bindings/clock/st,stm32mp25-rcc.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/reset/st,stm32mp25-rcc.h>
-> +
-> +    clocks {
-> +        pad_clk: pad-clk {
-> +            #clock-cells = <0>;
-> +            compatible = "fixed-clock";
-> +            clock-frequency = <100000000>;
-> +        };
-> +    };
-
-Drop. Providers aren't relevant to this binding.
-
-Though just 1 optional clock doesn't justify a whole other example. So 
-drop one of the examples.
-
-> +
-> +    combophy_pad: phy@480c0000 {
-> +        compatible = "st,stm32mp25-combophy";
-> +        reg = <0x480c0000 0x1000>;
-> +        #phy-cells = <1>;
-> +        clocks = <&rcc CK_BUS_USB3PCIEPHY>, <&rcc CK_KER_USB3PCIEPHY>, <&pad_clk>;
-> +        clock-names = "apb-clk", "ker-clk", "pad-clk";
-> +        resets = <&rcc USB3PCIEPHY_R>;
-> +        reset-names = "phy-rst";
-> +        st,syscfg = <&syscfg>;
-> +        access-controllers = <&rifsc 67>;
-> +        power-domains = <&CLUSTER_PD>;
-> +        wakeup-source;
-> +        interrupts-extended = <&exti1 45 IRQ_TYPE_EDGE_FALLING>;
-> +    };
-> +...
-> -- 
-> 2.34.1
-> 
+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
+mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
+uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
+BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
+VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
+z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
+b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
++R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
+AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
+75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICbTCC
+AmkCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
+AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
+MA0GCWCGSAFlAwQCAQUAoIHUMC8GCSqGSIb3DQEJBDEiBCCLAB2aCM7o9X9EHbztLLa5cLuaaRxR
+B7R8xpE5IbKLSzAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNDA4
+MTIxNTQ2NDdaMGkGCSqGSIb3DQEJDzFcMFowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEKMAsGCSqGSIb3DQEBBzALBglghkgBZQME
+AgEwDQYJKoZIhvcNAQEBBQAEggEAapgzgsPC4c7llJ9i8Cz/Rdxyotf8k2VKiS2sbwlKjmuvxfOZ
+FlM5boUgoBdD6pWLjwsQxI+jCYQPMcGloPkFJJmX9UHOADcsdyih6EMdOOL6RzxJQB+ghk+vWtHw
+10qpKCnVcGlOr8JoAqm4ImLxIMzrj95eBDgLIjoKQXoRlfjel3PkxfqY7AftZspSYOi7xnQJQXg5
+hbFeWLwXlqUOVRMeOTo0b5jPdK15TncU2rYSXfBqL3RFyE1Ek+Ysx0KO4F8GHN+PTI4mUfiRLvS+
+rjzOu2KOLUkSIF3AwoZ0vff3uu8vUBoKvu7tNTR023uC1VpYShKDVaWUNxLj1+YYTQ==
+--00000000000095c487061f7e6658--
 
