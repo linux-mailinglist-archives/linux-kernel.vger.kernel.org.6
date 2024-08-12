@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-282911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FD394EA6F
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:04:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2F6194EA73
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 12:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD7C9280E52
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:04:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52ACB1F228E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 10:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8013616EB54;
-	Mon, 12 Aug 2024 10:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC7616EB5D;
+	Mon, 12 Aug 2024 10:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cABFegQ8";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G8h8nGUz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="WHHzcnkF"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2044.outbound.protection.outlook.com [40.107.94.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE121876
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 10:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723457037; cv=none; b=bbay0BatdGwMlMTuiMYSsB1L6ihkUktJHI+WxF24hQcRdFyLfM8Jy5+m1jYxwvzD10hkONWz6isXpGrEjXeawlmU33YAggTwVezkYGEIrC1mXvcIK5rUu/8vYPURBLyNkim9KaSA/PRnkWouuLYIde69ok6TiLmlEdsvhQuz39s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723457037; c=relaxed/simple;
-	bh=c+F6pih3HXN3RRsXKqoQpXQEz+y1uqBWiJvMUIAA9fs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nSpCQp/laIRUhaJGiDEmg7PO89dveGpmLVlUSVr620WO9XQfbXCdles2WEqFAmP4ma5DIu2jWD6/N1lZqsQWbQeUkM5IBjd3HPo+RbFP6oTwBHPJVmaKT+SN/vMep6X/KUF82gFNSZkJGjnrAX+jbEvBzu4L7TJQZdrTEW8b20M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cABFegQ8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G8h8nGUz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723457034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBF+ztuG3CVbPA559Kz5ePviHRu7t2DYysXz02ANcRM=;
-	b=cABFegQ8su832/BA0n9TEorAY72ijtvN5/Wk6eiZUtLC10ULdz/l6g0KaLvJChgs8n80tk
-	Lum+E+o6ki2dCalfCrDnyCY9iwmU8l7+cYdPO1FU9QpFPssI51vKIs/p9SugCrH1TYW7Jc
-	JLbK8AGuhVRUQlSY34rhMzMFPEuoIlURwveHP0YFYOR70yKWybKi/8DZ91l4QHUpgjp7aT
-	5QP1Bnb0cyP/0T5NGsZ05JnUNWJUMmPN/QYwNwLPd/x4W+TmV3j+l0PpkKFGB9Rvm9amjv
-	PzC6u8k3uDg61zRQe4FTlYc7gUe8OihPrSy5+0ZEAmAYvhrRQSRA2I8ApRkCTA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723457034;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBF+ztuG3CVbPA559Kz5ePviHRu7t2DYysXz02ANcRM=;
-	b=G8h8nGUzCJ4NMvT+VA97uinHq6q5jlYLPjF41zu/XNG+AsQdoiNG238YLyXncHxBBpUDm8
-	meH1VhK3EF9ByxAA==
-To: Alistair Popple <apopple@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, dave.hansen@linux.intel.com,
- luto@kernel.org, peterz@infradead.org, max8rr8@gmail.com,
- linux-kernel@vger.kernel.org, x86@kernel.org, jhubbard@nvidia.com, Kees
- Cook <keescook@chromium.org>
-Subject: Re: [PATCH 1/1] x86/ioremap: Use is_vmalloc_addr in iounmap
-In-Reply-To: <87o75y428z.fsf@nvdebian.thelocal>
-References: <20230810100011.14552-1-max8rr8@gmail.com> <87le17yu5y.ffs@tglx>
- <66b4eb2a62f6_c1448294b0@dwillia2-xfh.jf.intel.com.notmuch>
- <877ccryor7.ffs@tglx>
- <66b4f305eb227_c144829443@dwillia2-xfh.jf.intel.com.notmuch>
- <66b4f4a522508_c1448294f2@dwillia2-xfh.jf.intel.com.notmuch>
- <87zfpmyhvr.ffs@tglx>
- <66b523ac448e2_c1448294ec@dwillia2-xfh.jf.intel.com.notmuch>
- <87seve4e37.fsf@nvdebian.thelocal>
- <66b59314b3d4_c1448294d3@dwillia2-xfh.jf.intel.com.notmuch>
- <87zfpks23v.ffs@tglx> <87o75y428z.fsf@nvdebian.thelocal>
-Date: Mon, 12 Aug 2024 12:03:53 +0200
-Message-ID: <87ikw6rrau.ffs@tglx>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB2F16DC26;
+	Mon, 12 Aug 2024 10:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723457090; cv=fail; b=kmdS1csalvOIvV7YtZjaEMpZdCaQKnbQT5iOnneOmqLnOHRGgmdnHotr6j1Khht2zkEzHFo1eKjpzQDWshJvkCSFqbIxKWjs3k/0Zllg1kvLT91G68eY2uyYOtfZ3JtjtJKfQP9EZlPlTHQxR4Un+Ta1xSB6/kVWIMPUVPrlS04=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723457090; c=relaxed/simple;
+	bh=pFphKa6qJi6OgcW+BS+FZxBkttZDB6P+4CpWPOvplFE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uhCrNPKCR6rE9Ceo+5TOIWmWkT2n6223h5dhnRZhJ/DtxGsrzHvu5/WpSn5z+HTnZa8jQTZwXycCxRlOUChxJILMXSxXy4xCcgrRf7dQ5k52IR5xaH5wC91QZWn1b3Fh/pSk6Lg+04GN4G89EYcdl/c49l3WAGzNlepLmYWmo20=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=WHHzcnkF; arc=fail smtp.client-ip=40.107.94.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cd14mg9eq72hndL7BpqvcJ2ZaeNSsHCcgwlw/GPDTnu8F4tq8GFDzu3SpvkxJEUH70TotYXXm5xdhyQJl3j+7saLSmppqjEfJEwSKqrR79J2BHYC28bRsJcDAKXuQG8tUMBuJnFI/keS3G7+lu19vXYNatY6uY02mDHK7D6RO+qqH412SFcZqorb6YkIzdtKDuynu5o5iqLKGEhRYByu43TE9w+MSlp312EzVBioSxt80o2Pc5Isgb37NJ0dMdwYu8WhpZZEZWt20Mo7gA821ewlsZiTF/SHDLEEUK2I/wybI44CIyP8b9IR7B60fhRmS+/bdMP5DiuJc59uwpvnuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KPt72Cimb+2QfkM30b0ByRs6PiQ/Yi2yATKvrS50q9M=;
+ b=y87DWE1cZiSYTcf7DlJm58nXnQaMoE4QKcE11T4NJBV1M9+kqyTnmiXTmLIZm3hsqscIXow0yS125CBhTPQtB//FE35jEJzdEfkqDJqFP6eBDBIeRa54NU8q5JVhbuYXetUGIXnGzFWDuM6SgjFiuBuhkFSdUPcdKLff+gha9bOXZ8ZjUhSp7lqRPhsv2WCmx7jUyek+nYCCvgvpLT18utSKVkH37+Wgn8HP+zYYbU0c7Pr6UCeloSpqm8Ze22ovjhJ7IpYt32UqSUkrZOX48XsRqQZmZ6QR6mtWLxnIlVtsY6wZ3aI0OVMJm7Uo7V2Beiv71oaL1KilavYHOxDcXQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KPt72Cimb+2QfkM30b0ByRs6PiQ/Yi2yATKvrS50q9M=;
+ b=WHHzcnkFW7wh4YkDoJMv4aLtTu5EIQdR/Az6IhC2TLQT7b9IjdIOryss95JlOipCSK8vI+JziM0dhgqISKHbLGgqbMEhe0bqMKMUzZCXy00Vias93ZRMbR99F82G/fUJb/Ezx2+XKxrYbneN6o2bJGUd46t63cG53iUy+B5yyWA=
+Received: from DM6PR02CA0060.namprd02.prod.outlook.com (2603:10b6:5:177::37)
+ by DS7PR12MB8420.namprd12.prod.outlook.com (2603:10b6:8:e9::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Mon, 12 Aug
+ 2024 10:04:47 +0000
+Received: from DS1PEPF0001709C.namprd05.prod.outlook.com
+ (2603:10b6:5:177:cafe::c2) by DM6PR02CA0060.outlook.office365.com
+ (2603:10b6:5:177::37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
+ Transport; Mon, 12 Aug 2024 10:04:46 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF0001709C.mail.protection.outlook.com (10.167.18.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Mon, 12 Aug 2024 10:04:46 +0000
+Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 12 Aug 2024 05:04:41 -0500
+From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+To: <broonie@kernel.org>
+CC: <alsa-devel@alsa-project.org>, <Sunil-kumar.Dommati@amd.com>,
+	<Basavaraj.Hiregoudar@amd.com>, <venkataprasad.potturu@amd.com>, "Vijendar
+ Mukunda" <Vijendar.Mukunda@amd.com>, Ranjani Sridharan
+	<ranjani.sridharan@linux.intel.com>, Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.intel.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Bard Liao
+	<yung-chuan.liao@linux.intel.com>, "open list:SOUND - SOC LAYER / DYNAMIC
+ AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] ASoC: amd: acp: Convert comma to semicolon
+Date: Mon, 12 Aug 2024 15:34:22 +0530
+Message-ID: <20240812100429.2594745-1-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709C:EE_|DS7PR12MB8420:EE_
+X-MS-Office365-Filtering-Correlation-Id: efa20020-2f16-4e9f-e2fb-08dcbab631dc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Pvnyzke4/2boeDTINZcan20y8GEIvVNrYp27L8oYzJSNTz0q/49yOhyvjebV?=
+ =?us-ascii?Q?oIdmZbIc6/D5KYHel2+DTMQaVQS03JlRKIXP4iIFx9zyc6AVHvWBi52nS0qa?=
+ =?us-ascii?Q?OYgQioWotqABPpK2vSog652Gplya/l8NDaaf3AYzNix6XgUmnN/OOy+8jixo?=
+ =?us-ascii?Q?Rv8t/RRief4GJiJNA9RIPz0oRlRDZwu00Hq3xEtSipwTEPH87wSUfSSec+5s?=
+ =?us-ascii?Q?KQi1LmDrcexVXDJfp85N3O9rYSda8kEztKNpXQqJCr52vEy+H1TAGwL5b9U2?=
+ =?us-ascii?Q?GIGIoBR5hx4IpvugMNEDfCf7h++eh34vy1TPkb04rw3kAdjhtaxFwUOJVzAO?=
+ =?us-ascii?Q?1Y/e+QLaNa/71yn9AS+SZegBYd6e1160qCofDVxFRX9+WNkyAwtPN1hTQumf?=
+ =?us-ascii?Q?sXDZ6l7pvoGZMlZnFgI0baVby1MEKl1sl2JVtHl2jgkWqvHYu0FsvCgnEqxo?=
+ =?us-ascii?Q?nKMGsXrkrlCJGMlFIxREo4/oeIzBQ23K4dk7+fdloxwpr05UDk4pwA2s3vLC?=
+ =?us-ascii?Q?bcaCheSipv7d8RAUG3QTZQVLvnxuu0zhkFyO9M+4lBlY2voxbsYNx0zxArHZ?=
+ =?us-ascii?Q?T6QBNJ3/MF3OpE1UdajHxa/7YnGUZ8wvQCeQJdhRR9r1rwIj/nk75QFEUD13?=
+ =?us-ascii?Q?RwALNIhMeVtqvsfH0/8KI7mV3uyCtwfTmlSh3YgKR0eE87+aneBdQ17gzJAg?=
+ =?us-ascii?Q?IECgGLEJNwioVlZIAxGrccDgI+8UYNTM1jjMOHSZmb/l4nBCQG09YMwExMxR?=
+ =?us-ascii?Q?fpmiFO0ynftVDzBka+hJ55akykFFIPqLVbHrSACeT1D9o8Cyl0ekSvvEOjbc?=
+ =?us-ascii?Q?+jAN/CZmBPMevBJJRAXL9nCkqk3spXUx6+HyzlKq1xh6PQ+bws2UX+rRqr8m?=
+ =?us-ascii?Q?ZxucHEw+nw5iADs67EYJqgugL8SPFqdUrYvAuQvYOSeDOmjtrw2CNbrznnTu?=
+ =?us-ascii?Q?y7cIJ+qraqURJxVFLuZfwPmVJb0sXRhiJdiXqo0C8EUb/db13jRofCGqqrkX?=
+ =?us-ascii?Q?txiAhTzTMfinU8uaGyODU18htXbr5fiWyQxs13kdycjxl6Dh2U0A22jxwHbA?=
+ =?us-ascii?Q?gsQCuBn9YJuI+CDZp68y2wsgYOBwv0FhZ3doVmCQMRnzrZ21yKORrkFb705L?=
+ =?us-ascii?Q?T0YypyGVaRe3sa4ZcizdPjjvC/iSu9tLwRej+znaxH9kzKXNsNPJjJ4ceDwc?=
+ =?us-ascii?Q?O5d2ef03MuPajfYpy+MZ40ObMeioNXH0Gi17KXQVkv/wFg7I3IlZ2ldp/n48?=
+ =?us-ascii?Q?ecrjMfRskE41k1iWpBHO5V+RmfBfzI1Sg/7uOM8weEXPRT6o4BSYq9lhZh70?=
+ =?us-ascii?Q?v+Ox+dzDWQEkhfT6aDLhv1Dy47lND3v7U5hqXZND+acLgISVOCXA7B+tquX9?=
+ =?us-ascii?Q?ex/OLZPs1pq/m4Qi3s9kd/w2XoxZnDMOyS2ZJ8Dd7N4iX/tZ3K2Il0U4OiVZ?=
+ =?us-ascii?Q?sjay/s1zBm4fN6vmqbsF1fTFMbj6VAbv?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 10:04:46.2204
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: efa20020-2f16-4e9f-e2fb-08dcbab631dc
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709C.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8420
 
-On Mon, Aug 12 2024 at 17:41, Alistair Popple wrote:
-> Thomas Gleixner <tglx@linutronix.de> writes:
->> ---
->> --- a/arch/x86/include/asm/pgtable_64_types.h
->> +++ b/arch/x86/include/asm/pgtable_64_types.h
->> @@ -187,6 +187,8 @@ extern unsigned int ptrs_per_p4d;
->>  #define KMSAN_MODULES_ORIGIN_START	(KMSAN_MODULES_SHADOW_START + MODULES_LEN)
->>  #endif /* CONFIG_KMSAN */
->>  
->> +#define DIRECT_MAP_END		(VMALLOC_START - 1)
->
-> If I'm understanding the KASLR implementation correctly then this
-> doesn't seem quite right - the entropy means there is a hole from the
-> end of the direct map (ie. the range PAGE_OFFSET to
-> PAGE_OFFSET+kaslr_regions[0].size_tb) and VMALLOC_START which shouldn't
-> be used.
->
-> In practice hotplugging memory into that range probably works, but it
-> seems like it would set us up for future bugs. It also means memory
-> hotplug could fail intermittently based on the per-boot entropy.
->
-> For example with CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING set to 10T one
-> could imagine hotplugging 16T would mostly work except on some system
-> boots if KASLR happens to randomly place VMALLOC_START close to the end
-> of the direct map.
->
-> Therefore to keep memory hotplug deterministic I think it would be
-> better to define DIRECT_MAP_END as a variable that KASLR sets/updates.
+Replace a comma between expression statements by a semicolon.
 
-Right. I forgot about the hole.
+Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
+Reviewed-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ sound/soc/amd/acp/acp-sdw-sof-mach.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> This does not look right to me - isn't DIRECT_MAP_END a virtual address
-> where as the resource ranges are physical addresses? Ie. I think this
-> should be:
->
-> +		end = min_t(resource_size_t, base->end, __pa(DIRECT_MAP_END));
->
-> The same applies to the rest of the DIRECT_MAP_END users here. Perhaps
-> it would be better to define this as DIRECT_MAP_SIZE and calculate this
-> based off PAGE_OFFSET instead?
+diff --git a/sound/soc/amd/acp/acp-sdw-sof-mach.c b/sound/soc/amd/acp/acp-sdw-sof-mach.c
+index f7e4af850309..08f368b3bbc8 100644
+--- a/sound/soc/amd/acp/acp-sdw-sof-mach.c
++++ b/sound/soc/amd/acp/acp-sdw-sof-mach.c
+@@ -657,9 +657,9 @@ static int mc_probe(struct platform_device *pdev)
+ 	ctx->private = amd_ctx;
+ 	card = &ctx->card;
+ 	card->dev = &pdev->dev;
+-	card->name = "amd-soundwire",
+-	card->owner = THIS_MODULE,
+-	card->late_probe = asoc_sdw_card_late_probe,
++	card->name = "amd-soundwire";
++	card->owner = THIS_MODULE;
++	card->late_probe = asoc_sdw_card_late_probe;
+ 
+ 	snd_soc_card_set_drvdata(card, ctx);
+ 
+-- 
+2.34.1
 
-Duh, yes. I shouldn't try to write patches at 30C :)
 
