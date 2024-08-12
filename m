@@ -1,109 +1,93 @@
-Return-Path: <linux-kernel+bounces-282659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F2594E6F2
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:42:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6C294E6D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:38:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 109FA282A72
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:42:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C1081C215B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:38:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 307E5152DF5;
-	Mon, 12 Aug 2024 06:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A168214F9C9;
+	Mon, 12 Aug 2024 06:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="qAT6bcn+"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MBSJz0mG"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2148114EC64;
-	Mon, 12 Aug 2024 06:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E5F1537D6;
+	Mon, 12 Aug 2024 06:38:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444968; cv=none; b=an8jvNIs7VHqoosrImz9X+lkkcfHnBcZjh4VRcmfGLhbAx6awS7ubPrD4F53c+UaLtVi2luQXHjtewn9kvA80pSKZNmimO9D+RfWzqFUx8Mho+0coJBqRuZNGZiwf1K4uw15IxIrysUAaqpsC2X0fPRkJ6BVtYf4z9BMzE3iKYY=
+	t=1723444694; cv=none; b=Yxl7f9b5YU7jGKPaxWQIiNsKB761by11uu/gFnJB3BZrV6jD8pekGZhgXeO1wYyK2veLd7E2BztFeZDiCrgyPdG7WptahCuFFXd1pr2XRp5KCiS0uc8VFJ8DI+fuD3LGMRp/6/f0g7WqRKohTNNmxCnThmBU2qr1nVJ5tZ5BU2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444968; c=relaxed/simple;
-	bh=8qEpfOm8pg8Ckvhrn4hUNFkxIJpXkA67UcDElNDXRUQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nvnwdNH67HX1H4d4PkoR06DnwztMxWSn/Bn87w/ylrKy2DR/cTGSX/4Pd0A7gj9xW3xJ9diiFwzwa3E10PjwERRLmhgbkArw6tlq7fvI7XWCdTwgePvcujIiKqNZPKv25b6qxjl9cw6Z7IfBzDWf8zDisDW3fALvXUj4fRvcKMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=qAT6bcn+; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 47C6gH4R13759181, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1723444937; bh=8qEpfOm8pg8Ckvhrn4hUNFkxIJpXkA67UcDElNDXRUQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Transfer-Encoding:Content-Type;
-	b=qAT6bcn+eHiKwBerO5yNvoVkFgmPt28VNlywUorG/lH98Rv54CslmFYYdHbRDLJzY
-	 pPu76uGg6+zmmym4hmuZFwYgsMNnHGamnY525+BnzvCR5UiB4iR4I/pW2nX20IVCLR
-	 BPiKy/Zk8GEFmgnMDPgOTZoMyLpTpgNB1KMygTMFBO26/fXXU+Q3ZLGeqMm4Z39I/y
-	 a+0hHd4PqLra2F+rzqmj7gBobBn6L4tn3NCJ4PBeoT+0bTwX2JI4jkXQpQhx5bx70B
-	 XobE+PFym7N3gwxzBWiPH8+r4WpdPTmoXC+dipTimjITGAlzxLl/Eq7glbvUB+MEvT
-	 +whstshZ2MMTw==
-Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
-	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 47C6gH4R13759181
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Aug 2024 14:42:17 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 12 Aug 2024 14:42:18 +0800
-Received: from RTDOMAIN (172.21.210.74) by RTEXMBS04.realtek.com.tw
- (172.21.6.97) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 12 Aug
- 2024 14:42:17 +0800
-From: Justin Lai <justinlai0215@realtek.com>
-To: <kuba@kernel.org>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <andrew@lunn.ch>, <jiri@resnulli.us>, <horms@kernel.org>,
-        <rkannoth@marvell.com>, <jdamato@fastly.com>, <pkshih@realtek.com>,
-        <larry.chiu@realtek.com>, "Justin
- Lai" <justinlai0215@realtek.com>
-Subject: [PATCH net-next v27 13/13] MAINTAINERS: Add the rtase ethernet driver entry
-Date: Mon, 12 Aug 2024 14:35:39 +0800
-Message-ID: <20240812063539.575865-14-justinlai0215@realtek.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240812063539.575865-1-justinlai0215@realtek.com>
-References: <20240812063539.575865-1-justinlai0215@realtek.com>
+	s=arc-20240116; t=1723444694; c=relaxed/simple;
+	bh=YZPbBCNCNyl4ICx7FrNvj2HMt9tV6wDMzaPlydINxAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prwFTyqNg8sQdkkpsr7pXwwv0+4kLtuCYO4AAphRE4tNbdnise2N97CdTWa1s3XDTuLDnIkZd1tijiZKbn0K+e+fCyoe2W96+tchSkASJArdGhRGXNQ01PDBIa28cnTS9D3JXnuw/hQC8KJs5ZRF7E4NaHJf58ZAtT+Q/D/or6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MBSJz0mG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ulRAiGkS5n4S+P7CQGT1jtN5nIy1RM3sOKQEtCLBjro=; b=MBSJz0mGNUK08tYYjvzkweF6Es
+	yQokYQStOm/bZB1vzTHzdYvytJW5+Uo5W76I5bkgf9QBXSUG4NctY4BfQV+8W1vU3K6z1w7cQsdSQ
+	ITkLPJDQWSVuFYIffaZ1j8bZ8hHFRDiI32orZk+0NkX8DRh2hij1UtCUU0d2Fs/G8JokSwGR9HC9j
+	y39H3gcx15Ll3UzRW5hfDCSbeeeejkwILKUAEuQpsurgTs7+hQKi6bb1NX2VlqXfodrybZgD3UOkR
+	eWNumbUhIZwY8M90ygU+3cwF0eiZs8oazutm8F6pC202ITESlBqOnSvtYfaAhUd8jiEE6JThBALcr
+	OmUwIMUA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdOh1-0000000H2sT-0g43;
+	Mon, 12 Aug 2024 06:38:11 +0000
+Date: Sun, 11 Aug 2024 23:38:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Martin Oliveira <martin.oliveira@eideticom.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Artemy Kovalyov <artemyko@nvidia.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Mike Marciniszyn <mike.marciniszyn@intel.com>,
+	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	David Sloan <david.sloan@eideticom.com>
+Subject: Re: [PATCH v5 1/4] kernfs: add a WARN_ON_ONCE if ->close is set
+Message-ID: <Zrmt01OTCRywW55v@infradead.org>
+References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
+ <20240808183340.483468-2-martin.oliveira@eideticom.com>
+ <2024080933-jazz-supernova-9f3a@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: RTEXH36505.realtek.com.tw (172.21.6.25) To
- RTEXMBS04.realtek.com.tw (172.21.6.97)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024080933-jazz-supernova-9f3a@gregkh>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add myself and Larry Chiu as the maintainer for the rtase ethernet driver.
+On Fri, Aug 09, 2024 at 07:37:49AM +0200, Greg Kroah-Hartman wrote:
+> >  	 * It is not possible to successfully wrap close.
+> >  	 * So error if someone is trying to use close.
+> >  	 */
+> > -	if (vma->vm_ops && vma->vm_ops->close)
+> > +	if (WARN_ON_ONCE(vma->vm_ops && vma->vm_ops->close))
+> 
+> So you just rebooted a machine that hits this, loosing data everywhere.
+> Not nice :(
 
-Signed-off-by: Justin Lai <justinlai0215@realtek.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+Huh.  if you are stupid enough to set panic_on_warn you get to keep
+the pieces.  And our file systems are reliable to not use data on
+an unclean shutdown anyway.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7b291c3a9aa4..764b542ae8f0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19848,6 +19848,13 @@ L:	linux-remoteproc@vger.kernel.org
- S:	Maintained
- F:	drivers/tty/rpmsg_tty.c
- 
-+RTASE ETHERNET DRIVER
-+M:	Justin Lai <justinlai0215@realtek.com>
-+M:	Larry Chiu <larry.chiu@realtek.com>
-+L:	netdev@vger.kernel.org
-+S:	Maintained
-+F:	drivers/net/ethernet/realtek/rtase/
-+
- RTL2830 MEDIA DRIVER
- L:	linux-media@vger.kernel.org
- S:	Orphan
--- 
-2.34.1
+Pleaee stop these BS arguments.
 
 
