@@ -1,79 +1,77 @@
-Return-Path: <linux-kernel+bounces-282661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-282662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A216494E6F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:43:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0533494E6F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 08:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78F71C21CA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FB8283E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 06:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1A0415098A;
-	Mon, 12 Aug 2024 06:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9955D14EC64;
+	Mon, 12 Aug 2024 06:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTPqjGl/"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBuT0OHR"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0E315098E
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:43:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BA61537D1
+	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 06:43:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444993; cv=none; b=QldTiF3yFB4840G3qr4milKGmuzvXw2bstmczAyvlJTDEFAwifrublcX4CF2WqdmUz790N32JMMpQIACsQYIA5MK+WSkHisUrwumr7g5DpIEIdY531k1XtorfLMaYWW6tyMAfSKK2cUcz2GMBi+P1YEZxNU4e1+5LM1PDgfjghA=
+	t=1723444998; cv=none; b=RSG2tHFUfjIWwrhiH75YPITKwByA+rjN9djmmymnZ88+XX8h4oqY76rialvh8HoXzZluIOR5rEvToeUROnLFeFWt+7HCo88NnXqHyMRbeVSSyd2C9M3pvKG+zBffs06t07XYgKnKmXFF1QYV0ignvt/h21/krjyU9Kv0JhkAKSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444993; c=relaxed/simple;
-	bh=Ajb6lg4vAB0c9I6RQA7b777Zw8d7gs5j3f5fTYHkSrM=;
+	s=arc-20240116; t=1723444998; c=relaxed/simple;
+	bh=y2rTkK36HSBOLJ32CSLLN6vZXBG8wpeB/uPQHcQRFws=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H2h5yMbDsS4nT4ZyWO+OceyzkOSxE2rIUmby3bkcXl03aP67Szh3ncquT5cWsEgVdjIbuM0niCzE9LbKTCA0Qc2FcZ5I4H+YEeatJEKL1aPKOiTlwFAltCrFDUEqfY3uCT7Bbt36aulPrKwL5yxs70E2wn67MU4kREVkaeDeP7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lTPqjGl/; arc=none smtp.client-ip=209.85.208.43
+	 Content-Disposition; b=elpjgQSOxHmvKYunAoi5zHKT9C/SsoZPyGR9wNV8i7baLr7Z9A6Sr+4dj1iZyyMrOg9ojGJMieQ80zqtikFWa95nAkjVe+ucPwy4givONlKNBxtheo5rRvWCVuADWArY/Bb++iJKz/dcXiPgNhcdbS418L1fZ7NZR39Yu3z5idA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBuT0OHR; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so4579688a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:43:11 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7d2a9a23d9so427523766b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Aug 2024 23:43:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723444990; x=1724049790; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723444995; x=1724049795; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=1N4wK86NjIrRtEeCb9nnImTO29M6AM8fXsAaSjX4L8M=;
-        b=lTPqjGl/k+avwftKHDfKHxpksJEVPGBy3YfnmPoAOoK0W1oIK986CADOiGX9349kSc
-         MvsRiY9UZz0b3M4MFqb5u/osa9C5GJho2onlC35gc8Ppr+bUNreyY4qgJZ6wPghtMbPY
-         m6VrdHn9prUg5udZmqoW7/4Wx0SAA4jgUmtNnA+488Kkjct9+x6aRkr6sJbKw8ZWpfvZ
-         lZyl3JlLOhuL+AbwtSuECkpp6H1qDQHlcvzzDZgPmMUD3Tn6TsrLS+teuTI36hbef+1v
-         Dx7T4rp+IpfE9M7m5hBmYTjD6ryhzPr9oYGhpge7gvidneSCp9RzmfaanKyXQk9aTJXC
-         v45A==
+        bh=lbk1v6Dq8H0stWDfbtbWzC1hgrGf/GYDIFM0FXly8S0=;
+        b=QBuT0OHRlUxlwGKjEp+lmA9GZDvHNh+4r+RbW/w/K1Ky/93dXfNSEpCjz+bx9KVCtm
+         7qq0SPhP0QZZfnxkZHF8fGxrMoz+wwqRl5C0ekYIp7sHh9q6m0dohp7SVC0nvLfdGSJg
+         7vrhT8RGxK1E7VhTRUL9LbK2u3+RGZTY/uTji3lcsaKHtv02IphhS2ninZLhMB9FH5nl
+         Wjd83uoGnWvcOQjvBdCraszk47KLSLpSN5GXLKYfENsVd3yDVC50S+Sx3erIt+RD3h2l
+         nsGhemR9nUX0NFDcH/3WOc6DVCIoMi0755rD5guvDBfDblscodW806p5z7PCmrmc3Pbw
+         bNgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723444990; x=1724049790;
+        d=1e100.net; s=20230601; t=1723444995; x=1724049795;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1N4wK86NjIrRtEeCb9nnImTO29M6AM8fXsAaSjX4L8M=;
-        b=wBJp2gFbYoXS14p2cSWEUV66zKCmL4XWf7XpgL8PJfULeGUtGdHkinCvJmj08T3HaA
-         tmp0BsuyXDvZgvKQvXswEOQtodBIoiA/Sxanev/7gLhU/QAPrys4t9mt2Lv4sDIU2FVG
-         TsezBy2/4IPjD/a+jCr4/4NMGdAMjYv2wOvTsSUPoSpyZy25bTXBPLaQbwGI36M25CFv
-         weidmg0FW+P5NgtY65MMQUSy0YOTihRvh4syhgzzkS1tmUQ8lKi8qELjWRE7052Km5lc
-         QZx40XqwYZZeFi7Szmc1r14sZ4f+5qoRWZuU+aaUxI4L68/VsByxxPaltiHR0yi38K5j
-         2Oeg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9qe4JLVX+B8xFpAyAhVkSqlXtDrnHDeyJfbjV0Dki7s6KzY37i8aaSYQSMPBJ1HEPHWOlBxxsLgakrLIxYIfU7YUZKRIvtGeUuEvO
-X-Gm-Message-State: AOJu0YxpmRB6YynRJth3MLhGwmF7C7XBw2wdHiTM2Sed7FrnrSmrJDSb
-	h9XhoqhlIiZNQIoYWj7G6FuzEZRk+BrRgqak1xf2MH+x/OgLywOlHM3a5YF5xlo=
-X-Google-Smtp-Source: AGHT+IFUwjEdJZ99b2PzVNgvGD4YZjVQ/89Mt4+D8vDZSCukf8v7q9Ul6n+RpRh7M3G9Um5gXeRLag==
-X-Received: by 2002:a05:6402:5413:b0:5a1:b9c0:7758 with SMTP id 4fb4d7f45d1cf-5bd0a64afe9mr5516868a12.33.1723444989466;
-        Sun, 11 Aug 2024 23:43:09 -0700 (PDT)
+        bh=lbk1v6Dq8H0stWDfbtbWzC1hgrGf/GYDIFM0FXly8S0=;
+        b=uNOoP/89SujQDP1DwtEowCXFRX3364EOl1HCztmSJ/6VaJaY+rPEZovU7ttkiyVo80
+         ogLRfq6WsRGr2xdnaA01cnfJg4QEzqVKTOFqOZPa7yOuJxke/W6QjzisgMn8AAiYCxvy
+         8ItwkgFquy0QR8yK6v+hWZ1lW9k4LeqX+xlhFQlOHyWjcycsqzZCv1BgVR9tRh+C1WHJ
+         FH/YZWkd45NqsaUhA9GT8XF9blNPZ3XReSXcAu1CjWT8NGsv8Ow2RxR95eaqnoeXPzsw
+         au6m0gPIvNC9M1cDgoUI9cPwElZssFzJRiSg/3yHF0LxYnezoDv0lWuu/YpVClOMzqo1
+         Ex8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWQhPuwwn2DSlLo0nRqBPnAs0PO2xV8Iss6LfivaVuOfSnhE43r5UKkxvxtPARSpMy0C3ThamDAz/DeKmvdoHnButZGn6WbrIDOf6lF
+X-Gm-Message-State: AOJu0YyGy4I8+yUxVESdpH3571S71/PPwpPmUA+n1fDoLXsIXPi89TtV
+	lWSmk7WOii4wszDdsZBrNeLjRKxQs/fbm9q8LgUR2vRBigq+8BNKzGs9W/v5/Jw=
+X-Google-Smtp-Source: AGHT+IHdlRAn61sJCLGJXEbG9EdnA7ugHPcm4jgWJ7ruc9zVraAFTLGMOKHsOinX3VlxmZmUEw8fYg==
+X-Received: by 2002:a17:907:ea5:b0:a7a:929f:c0c2 with SMTP id a640c23a62f3a-a80aa65ce8fmr633287066b.51.1723444995569;
+        Sun, 11 Aug 2024 23:43:15 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd191a20bcsm1869121a12.34.2024.08.11.23.43.08
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80bb24246fsm202385566b.203.2024.08.11.23.43.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Aug 2024 23:43:09 -0700 (PDT)
-Date: Mon, 12 Aug 2024 09:43:05 +0300
+        Sun, 11 Aug 2024 23:43:15 -0700 (PDT)
+Date: Mon, 12 Aug 2024 09:43:11 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yasin Lee <yasin.lee.x@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+To: Rob Herring <robh@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH] iio: proximity: hx9023s: Fix error code in
- hx9023s_property_get()
-Message-ID: <49b5a9bc-e5ca-43a7-a665-313eb06fbe27@stanley.mountain>
+Subject: [PATCH] pwm: lp3943: Fix signedness bug in lp3943_pwm_parse_dt()
+Message-ID: <5e74df19-4469-4a10-8b87-e918769a2f9f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,29 +82,30 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-If we're returning because "reg >= HX9023S_CH_NUM" then set the error code
-to -ENIVAL instead of success.
+The "num_outputs" variable needs to be signed for the error checking for
+of_property_count_u32_elems() to work correctly.  If the property is not
+present then we're supposed to continue, but in the current code we will
+try to allocate negative bytes, which will fail and it returns -ENOMEM.
 
-Fixes: 60df548277b7 ("iio: proximity: Add driver support for TYHX's HX9023S capacitive proximity sensor")
+Fixes: d6a56f3bb650 ("pwm: lp3943: Use of_property_count_u32_elems() to get property length")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/iio/proximity/hx9023s.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/pwm/pwm-lp3943.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iio/proximity/hx9023s.c b/drivers/iio/proximity/hx9023s.c
-index fe14a62a1342..8b9f84400e00 100644
---- a/drivers/iio/proximity/hx9023s.c
-+++ b/drivers/iio/proximity/hx9023s.c
-@@ -598,7 +598,8 @@ static int hx9023s_property_get(struct hx9023s_data *data)
- 	device_for_each_child_node_scoped(dev, child) {
- 		ret = fwnode_property_read_u32(child, "reg", &reg);
- 		if (ret || reg >= HX9023S_CH_NUM)
--			return dev_err_probe(dev, ret, "Failed to read reg\n");
-+			return dev_err_probe(dev, ret < 0 ? ret : -EINVAL,
-+					     "Failed to read reg\n");
- 		__set_bit(reg, &data->chan_in_use);
+diff --git a/drivers/pwm/pwm-lp3943.c b/drivers/pwm/pwm-lp3943.c
+index f0e94c9e5956..803ecd6435cc 100644
+--- a/drivers/pwm/pwm-lp3943.c
++++ b/drivers/pwm/pwm-lp3943.c
+@@ -219,7 +219,7 @@ static int lp3943_pwm_parse_dt(struct device *dev,
+ 	struct lp3943_pwm_map *pwm_map;
+ 	enum lp3943_pwm_output *output;
+ 	int i, err, count = 0;
+-	u32 num_outputs;
++	int num_outputs;
  
- 		ret = fwnode_property_read_u32(child, "single-channel", &temp);
+ 	if (!node)
+ 		return -EINVAL;
 -- 
 2.43.0
 
