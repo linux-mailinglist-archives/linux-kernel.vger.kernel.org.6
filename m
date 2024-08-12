@@ -1,155 +1,198 @@
-Return-Path: <linux-kernel+bounces-283837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B88094F94A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:03:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDAF294F94D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B019B20D94
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42BB283381
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 22:04:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3784418F2FF;
-	Mon, 12 Aug 2024 22:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CD41953B9;
+	Mon, 12 Aug 2024 22:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2OqgoTE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cag4ica8";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j9pF29EL"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714DB74BE1
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723500175; cv=none; b=MgkIvH3X7woNwI1reycLfpLMNPQtiXoUMymLe476Foz5lKm/J87xZi7Q+apJreuwQrh3SAVcxB+x6Xpa75yZM8sFs6gTbxwzh3YClXbX2LLI1oYlSYlEllUqJi9X+wVn4XjlyQX5hdHgUO5ceiJunKCKmAUxq7kpz3+IGpBngFk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723500175; c=relaxed/simple;
-	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OC+ObOzi96B7w0vIF42/idqZpckEL9BiuP1ykidlfTq9vlQWUdgzCzXEK+3Lr5+tjwrCuUaihGgfg8+pRyDSdJ1Rf37teVHhNZOprcHZZRPdwfnRQBrsgJc0FGvtj841y3Gf7PtMwPRBe0a9ubmedjn0T+KkFmwfp+PZ3EFC5ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2OqgoTE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10BF1C4AF12
-	for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 22:02:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723500175;
-	bh=O2akboDJIEh8Nd3HZXbrNHkmzz+22fYpF1PWKSyWaQc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l2OqgoTEKp4NmGqFi458SRI4gluNCiXgM5dmYMINAdYh45ZPFYi2YPTg77/DXLfOb
-	 TzMngkSl+ud3CEk45VUZ4O5r0dqDJ7LtURp5tFfT9x1rx89OWI9hTx8AUD9E+kBZJU
-	 8Dw9oiD6NZ0RGGoIKYvjqUXqs6LhhzxkR7tCNBT9M5I5WR98UAkQBO6LmRhghCHgWp
-	 ZFp0O0gSSu5tT0cGpUL9EA1WDm4Ip8ZFJkut+EaIlaDDR60NpSJIxmokx3ySWZr7uq
-	 vDIGYLQylAENq5wWntWBsi5jLQ9a/1dkkUflnmseHAt9vOE3G3s357s3vf1b+8QZrZ
-	 vbru6yR6etjkw==
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so1133419a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 15:02:54 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6ic2l7fHqj8y9vxrAID8vt30YYQFPUZNSh0T2efF9HiWTZShN4k0/yj4TNCSF5rhUtMZ+I/nTRJs85efXd+MrBfx+Pr+1bN7D2dr5
-X-Gm-Message-State: AOJu0YxTwr2165srBcCwSB3qvMcWBw3LOBGDc5MSqx0SrcF/Un20CuNZ
-	fLXpUwUTT+I/mL379clFVfT5VVQfjPA8CEJfayIrrNnOj5NSioZECEtGWNVk9rwWERM73QZgOLs
-	imPNEylS6Gk734nXgMIDUpakzjHu6ZVU8a6qL
-X-Google-Smtp-Source: AGHT+IGEzzK8lUbL2BKdbvhUGvMXkJafhinn84c+jnXZlrrZX4BZDnaa33VL18lOtCdmW7PtFGbbrSPRhGW/DlgOw44=
-X-Received: by 2002:a05:6402:190e:b0:58b:bb69:763e with SMTP id
- 4fb4d7f45d1cf-5bd4619735amr970724a12.7.1723500173628; Mon, 12 Aug 2024
- 15:02:53 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC14274BE1;
+	Mon, 12 Aug 2024 22:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723500248; cv=fail; b=kC0CeX41XNVkSzcEahPdq3Vs1T4LBqUgRBfzxPlC6pZxVBieG7aG/JTOaRkl6au//dDmD7kTGkFPTlVh8LIYrCwyByezExkO3YhVyk4FjmdGC+/xY1kZsLAB+06f/12DDz1MP6bmRz4LG/+T/CAy+2q7Z22XpzxtNBUW9MOp0w0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723500248; c=relaxed/simple;
+	bh=62w8LVxnkccIHA7O8Bhfp9WxfAJI9kO/DTHpXIyRFzM=;
+	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
+	 Content-Type:MIME-Version; b=fiQHIOm2hPalHs4N5Hq5+9ZB7KCKYPUvmZf5sLrUSfGdpT1+Pk+A1//GSI8xqHbMMOvdkq+mToy0ZGPG1O2j4bFJOpeMxl4U7ReYw+BskZvTeutA9jhqD3nLWTFs/VZBk1QhmRqmhelRDG4Xp2kSCKErk3DEZHwL560BBkfJiFE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cag4ica8; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j9pF29EL; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CL7IYU017240;
+	Mon, 12 Aug 2024 22:04:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
+	:cc:subject:from:in-reply-to:message-id:references:date
+	:content-type:mime-version; s=corp-2023-11-20; bh=u7annRkhU34CgN
+	mmXhAwA1kqXNmdiFSSJSg94+BV06c=; b=cag4ica8Q3gpJ9jl3Hign1aUEeltCK
+	0hH1zgLysZ0h8lH+erqC99r08onQTEB7TFosl56dfrfn8ZxVVfkNScw3AzzvEWoG
+	HVkFsQMo9PHbzlJwFut7jB3zIAXxZE0QfspAnRqUM3zofFGIDz7cgEsD95ZczM4J
+	NE0LLmzkVAaNc1Kzfz9s9v5kZewj1eFeC4v9sW1KrftAwH0XvmO/FF9Pf5ny+SIJ
+	3FLoAX9AAy7MLeTGZtX3bm5jdXFNdvYRrM/0rIkQ7A3lGsyNDojasI0LfNLk3qn4
+	iDwUwSVNrTB1EV628DjM0uWKuL0SRq6LhVw3g2f52rFX+ijmf27R+2aA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy4bcr64-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 22:04:04 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47CKUTU9020991;
+	Mon, 12 Aug 2024 22:04:03 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2168.outbound.protection.outlook.com [104.47.56.168])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 40wxne8ks2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Aug 2024 22:04:03 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=NKMdUUFkfBlMxm31NAQ4tAH4U6gcz++WmvXklX2j+lrH14BO74F3X4Tle88dV/T2gR0NO1BzO68yjie6pw3jkNcI2VcQuI/Uh3aNLkxNy8JWQnbkHK6O/yUU3ctGYRLnq2j2C7/f1Md4tCKTgPs7OaOvgxIdxp32m3V/nFa1lcmfHm1eQMiryEFMgmpAzDWHnhZd8+C2ZYj0M/DqbQ5UWlv0F7jyBXjZrjxXVpy2g1NsHzd+OtZkGxnamJIXUUFjEbUgOTmB336yR51sgd0eHBoxyEsuogfPIVTwtHpfFM92x03iNPGm9CfnBLyQgg29VSZtTHBc/om7XoWC+FWCyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u7annRkhU34CgNmmXhAwA1kqXNmdiFSSJSg94+BV06c=;
+ b=YljTpDCYpNC/9dmd4b/rjfhqqv0aD6sQB9KI8iP/so75Sj1HHFn6EE2vxXsWhVnpFtRi7e5HpWO/42oxZpCtHCEF3mU72DgSUtwl8ILhSE4NWw1WX9/wpTDXBHORujDKYvnxyqhlCA+jSkiKOB4YFwW6M/0bEY3IF45o0IKwjvhE0dy08BO9zKihJsGoFgdAks7sxgBTn9Aa0i8zAeHOpvKgb0SFdKXmFAxp0YIlKImLOkrOEukB9ASL6O2B35NsXEpo9ZwUYio/Jdus/ESzqzGYHh83MLrz6xWqkqmBitPAua/L0VUFriyNYe5NqtZojf94+s8JIsGq5j/zCfG/dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u7annRkhU34CgNmmXhAwA1kqXNmdiFSSJSg94+BV06c=;
+ b=j9pF29ELJxvgluhNLJWtriGzSRx8cq0J5zkYm+4TWHqm2H9EQ+VDzK14eYC7c6xJ2aL3tSyrBwHHl0Uvu9aW7CBA5DwUdZrVnySZu2R5sveFU6IN8A9BfqqZVIYHShmfdTSDgeCPObxYOkzBE6Ki8mN62+DlEExEr3AxHXNNvDQ=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by CH3PR10MB7763.namprd10.prod.outlook.com (2603:10b6:610:1bd::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Mon, 12 Aug
+ 2024 22:04:01 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7875.015; Mon, 12 Aug 2024
+ 22:04:00 +0000
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, James.Bottomley@HansenPartnership.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Subject: Re: [PATCH 0/2] block atomic writes tidy-ups/fix
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+In-Reply-To: <20240805113315.1048591-1-john.g.garry@oracle.com> (John Garry's
+	message of "Mon, 5 Aug 2024 11:33:13 +0000")
+Organization: Oracle Corporation
+Message-ID: <yq1cymdz9dr.fsf@ca-mkp.ca.oracle.com>
+References: <20240805113315.1048591-1-john.g.garry@oracle.com>
+Date: Mon, 12 Aug 2024 18:03:57 -0400
+Content-Type: text/plain
+X-ClientProxiedBy: LO2P265CA0422.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a0::26) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <CACYkzJ7rdm6MotCHcM8qLdOFEXrieLqY1voq8EpeRbWA0DFqaQ@mail.gmail.com>
- <CAHC9VhQ1JOJD6Eqvcn98UanH5e+s6wJ4qwWEdym4_ycm+vfxmQ@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
- <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
- <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
- <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com> <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
-In-Reply-To: <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 13 Aug 2024 00:02:42 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
-Message-ID: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Paul Moore <paul@paul-moore.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Aug 12, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Mon, Aug 12, 2024 at 5:14=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
-te:
-> > On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org>=
- wrote:
-> > > >
-> > > > JFYI, I synced with Guenter and all arch seem to pass and alpha doe=
-s
-> > > > not work due to a reason that I am unable to debug. I will try doin=
-g
-> > > > more debugging but I will need more alpha help here (Added the
-> > > > maintainers to this thread).
-> > >
-> > > Thanks for the update; I was hoping that we might have a resolution
-> > > for the Alpha failure by now but it doesn't look like we're that
-> > > lucky.  Hopefully the Alpha devs will be able to help resolve this
-> > > without too much trouble.
-> > >
-> > > Unfortunately, this does mean that I'm going to drop the static call
-> > > patches from the lsm/dev branch so that we can continue merging other
-> > > things.  Of course this doesn't mean the static call patches can't
-> > > come back in later during this dev cycle once everything is solved if
-> > > there is still time, and worst case there is always the next dev
-> > > cycle.
-> > >
-> >
-> > Do we really want to drop them for alpha? I would rather disable
-> > CONFIG_SECURITY for alpha and if people really care for alpha we can
-> > enable it. Alpha folks, what do you think?
->
-> Seriously?  I realize Alpha is an older, lesser used arch, but it is
-> still a supported arch and we are not going to cause a regression for
-> the sake of a new feature.  As I mentioned earlier, once the problem
-> is resolved we can bring the patchset back into lsm/dev; if it gets
-> resolved soon enough we can even do it during this dev cycle.
->
-
-Okay, more data for the alpha folks, when I moved trap_init() before
-early_security_init() everything seemed to work, I think we might need
-to call trap_init() from setup_arch and this would fix the issue. As
-to why? I don't know :)
-
-Would alpha folks be okay with this patch:
-
-kpsingh@kpsingh:~/projects/linux$ git diff
-diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-index bebdffafaee8..53909c1be4cf 100644
---- a/arch/alpha/kernel/setup.c
-+++ b/arch/alpha/kernel/setup.c
-@@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
-        setup_smp();
- #endif
-        paging_init();
-+       trap_init();
- }
-
-
-and provide me some reason as to why this works, it would be great for
-a patch description
-
-- KP
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|CH3PR10MB7763:EE_
+X-MS-Office365-Filtering-Correlation-Id: c18cba52-79e8-43e0-9629-08dcbb1aabed
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?nsrf5q2D0AAN1oWHmzTiT5sM4z0D90rEjBL52O44EDrFl6khf65D+jgdEO3D?=
+ =?us-ascii?Q?p4nTIQ+s7OUbK/q1wkOoxPBizOmV+ZXqcXxEL4WkK5IcIQSlrzldtUxvMK7g?=
+ =?us-ascii?Q?Yaq4Ke4uujKLT5rRrPDeVV2B5YQJB4PWr1kvsLPYq4XU9uYiQsQllFOuZIPy?=
+ =?us-ascii?Q?fVNWCmADy/wYMH12JakA92Lwis14D1zEhbzBRczLyvGCk1ynj7x9QPoXe0jy?=
+ =?us-ascii?Q?l29aKwb6+U1+ZVGAOMRko27o2rSZSzrTAGJbDvRMvIY5xcZNivgYqHoKf18l?=
+ =?us-ascii?Q?jRjDs+yRSDHF5pPXfH1PxqkdoojxlsfD/bCamsASwRbFmWMf718gMzerEtSl?=
+ =?us-ascii?Q?lE1EDvvNT7k+8Ji9ta+3K9IrLAQiDzK9V34j3QbOlUljhx927e66sBatyOKi?=
+ =?us-ascii?Q?47vbNzUQvHT0olPXkCE+oZ6yn2M+u1OjTZ9plK5W0kwhVaY0UwvAkQfQpRcQ?=
+ =?us-ascii?Q?I6vm9lHYo6fuzJMteGu0tdXSxfnpJkz9iuNoHZouovD//6Fl+Pm0LR8cZdMe?=
+ =?us-ascii?Q?yTTRu2eRVijVdLc/bJ5FrSbJ7XtBy478oJJaF8NTy4AOJ6rpda/1VS19bK1j?=
+ =?us-ascii?Q?IhHGsL9kWnqeF4hpk7QASgEqaTF9nFQkAq6kPpA3HmuRjne6tYyRimopzqGI?=
+ =?us-ascii?Q?6aiXsbQcwfCOHPlkqGhLVkly+SubOWCgJkRjQlaAJ9boWONaHbWyiINhfpCV?=
+ =?us-ascii?Q?iSnm1zGavJGWeUHQZurn6XFjMNwDRsqw5sjIrZXjiQ8mfyQMjixmt+gIl0Bt?=
+ =?us-ascii?Q?o02UCU1bxNdFPNP/HK/FS6TuxtcvISi9YpxIVCaDVnWR8SJS5Y3TPhWVdoX0?=
+ =?us-ascii?Q?/Gz4o1g6ZzL/db7Sj6TQKa+yOCsYDZcakrbmFXX0DpJr9okw5KvCbMV1HDLM?=
+ =?us-ascii?Q?Y1y+4SOeHNdhF7AxPPEvGBzWFyToYjENsUPE6zWWcrCo5bxvoTQDS5Y1mWI+?=
+ =?us-ascii?Q?4Q8bZ1Z3imo9a5m8l7CZjbeg/HfdKyk9AQ1W+LmX+Lg+Bz/s8HjRjbRiFyia?=
+ =?us-ascii?Q?6DneXaZ3jTDwFxjMCnwHF6aVdQuooz0tXGdgGx9XvA17s6JqyytWbetGfwoB?=
+ =?us-ascii?Q?JJvLbC3XCmaIE6BrQu+rU/DN559z0mNk2fq4+8Q5NrLAkU/K1Ruftae60gnc?=
+ =?us-ascii?Q?MLwMYQoIfKP1UJkg9FxOQbzKzTmGTg3gMxgHyuKzNsKsVGOnfrJZgr5hj7MU?=
+ =?us-ascii?Q?L6h2CAppBnee4L9FlGeyrSe3XlszJnQZp/YY4DUU0c2oLeNI3oUs+hVZ9364?=
+ =?us-ascii?Q?Jv7iImC+6Q0pMiiY3VbyYXMNFDbFVpdtkymi7QukT4QXiR9m9QaJ6poSkkDQ?=
+ =?us-ascii?Q?qjMum4XhpSXi4w5eT6fyR3qlEoUxR9RrKSqVBrHdJAiQTQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?POsdBc5hSWiqRZ0c+c9qwIE8HcrT8Y/u/N9aZxFyw2jHUFP2hJHv1ru6FZeq?=
+ =?us-ascii?Q?BNsBnsMyF8qJGd05/DrKidhYV3MQLy/4WSTBrJoPW+wdoIAwOUQFxwKW7xrL?=
+ =?us-ascii?Q?pflj3F6a/3Te2GrtgV5CzwF6dvuadP+Vh8XDKuEXofcXlUuEmv6mQpOdU5pW?=
+ =?us-ascii?Q?R/qLK+yO2fNHDLruILgCUUbtnKkLo2aeBbG6gGi4MXSN2nS4/70+CbtzfdD4?=
+ =?us-ascii?Q?VetZNJnTLuBWBPn22hh+Bx2p37YhSwrrI9O56fFKhcI6IZyXRh0mQF9VIsqT?=
+ =?us-ascii?Q?dM+fwDJqUvanqPNXLASomc0WWROpXOSF5SbqzIUWDwQuJGZ4cVHpl8HhvxTp?=
+ =?us-ascii?Q?nq6wTQqBuy5XXoPZs8U6e6LvAC1T4dcGIA46oguUB1S7YlJxnyG53SX9P97u?=
+ =?us-ascii?Q?yozpT1wrlSzIKT9AMv7tCb8XsiHrTZHSfB68BV2iGXkreSvJrD6qxs0ykKsS?=
+ =?us-ascii?Q?E3/yBppH6x+yrcNs2BS8hML8BFPaqGEKiE2B/8ayjwcjWIMLhNKJxZIf2EuQ?=
+ =?us-ascii?Q?lv/nzkPbO5NKAW2uSsWz8VgSJ0SLGqziD6j0rZRhJQTlXgsuJQhENr14bKco?=
+ =?us-ascii?Q?XWzrOKDIK//76g8yMp6DYY6hUWZd2JwuzX6Tt0F8jUBDMffHDI1lgArUc+V5?=
+ =?us-ascii?Q?2vi4QhlfoEyYoKspMXbkNUVnTS+S/qdykqxC4Yb+UXOQK3VDIlBlZ9YLycIx?=
+ =?us-ascii?Q?EXnQE+dA4/0xpKbKz37Nex9OnbEE4HPDOyg6L6IJkU/1RhJPdQS8vl5KrVCx?=
+ =?us-ascii?Q?EtWWCPbbJwndlvHjYxhf0NAdoEHk5o9JbjTGfAZd8vGbXOoI8kZPhlCOKmRf?=
+ =?us-ascii?Q?pLOo1xbxl5ndeuu0xXpOeU0RKF57OO43N8sPjlEGD5ews1hb5y8z+tgVcAUY?=
+ =?us-ascii?Q?vSYHeAD7vdLcd7y5GDizVZUC0Dvd/TVEi3eDATpXDOeJUymgvBTBCPQfQHl2?=
+ =?us-ascii?Q?BaGmIVySY9dAGifEtjg4hScG4lmou9gMtTfCMLr2pmq0qEiFnP+FkIG0kXRm?=
+ =?us-ascii?Q?SJ3rkV/KC57TpHulHdYY4+NqrPtlx+07lYu4wKU+Ctog6wxHl0sCno4DB+7H?=
+ =?us-ascii?Q?kbZsnFj/D21tqQye4L4iuamlHnVUcqD4PNL+TwubUvKQrCsIAHlAWbIGdc7R?=
+ =?us-ascii?Q?vk9rW/XohktLK4nQx29jJUOHJIErrU6yFivQc9SL8kTRt8PPWNc61p0qSPUb?=
+ =?us-ascii?Q?HlKY1fO3MKJ6kNZcEQg/QaIUhF/wfWglwpcywRj2KANzYIjafD3JWjk/70sY?=
+ =?us-ascii?Q?hHsvSnrLNguKXflp/DYnywkTiY3+P0BVvtd79OpbNhtQjYQ/Hpf1g5/4OH1+?=
+ =?us-ascii?Q?4PsgQOyr9W+w7Cf7QPH+ZNtlW5JH2rjWFoRBP/v6E10MZqE/e+FKCAyutt68?=
+ =?us-ascii?Q?HcfDlzpDJ64g0iWJWmMf4TvhjwYjOUR+HDcZH1EuYA+c6jB40UZpbsV6wDCR?=
+ =?us-ascii?Q?v4vkDr575PtT6XDASn1KIvMCWTqNX4P3bRdZT2cgSU24UW/Ub1PHDwctuZgZ?=
+ =?us-ascii?Q?oIEgYicdtzO9JYyAp2QQQkK99nbpyyM51NhZlibawqLd8/nGApXEGEZtCB1I?=
+ =?us-ascii?Q?OD6IAF+8H9KbHGI3Dgibkze8gBwMA1nC5ZZtDzFbjaKgqC1ls79jcbgVllTM?=
+ =?us-ascii?Q?8g=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	KlCFIlobrTWEq7eYX5SU3rIubfg2N9uCZQFWUkMfw6mshW/9dUBZmStmduIoHzBHwpN90R3I/JZuGu9t5IoC6PrYykatYtrARWytQC5SBBrRxSfoYQTAKot9xkfdt9xRChgzYmAS6StIbCozjobLub7hs5WtS43LTfX9mKSyA/3Rycc2c37upLUx97innrzS4pbXUiIeeI1gePUY3tlr8JVD5o2uKyfCo8tU3eXleRGx+46DmVm6ySrJYqTFjjtNdTABTPiwVdAO8JO5nSu9VnYieMOYloKIh4JjNZN67yComK+AzvPfl6n2ulQ7pCOTA/R96KMTFXPxzsbOOJ/1xPvKXKL235sitOxTk3RDrB0w9tD1PkLkpkb18d3cOGOFFfYCknNMdDHUvb6EMZZRWoXysreQFCTwiaodiLgDWOoW0n2qGHsMZVsN0N/iucORS+mz0djVKrarHPqdRXI9IQLniU2iyTkzU8+cbPs1ADTciLxqux3iqli3jtsaOnKNZXzxjha+pvXav8IZb1gYuh4ZdWNpY00agARmNdqsHztZ2Vw/T/cUzub103/WLh+0dtEXQeEWRgn8VHloWGqWWJBLzO9coageKpW2GQfIw3g=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c18cba52-79e8-43e0-9629-08dcbb1aabed
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Aug 2024 22:04:00.8820
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +9um+qY+gKV4I6oelNcrDoVnkXhcMWV/KZX/hLsj4RsQQ20kV1NjtxYnw1/BatNuOQIxB1K+fh/HROoFRSVojcz//vlXWgolaiwpGySNjUE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7763
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxscore=0 bulkscore=0
+ phishscore=0 malwarescore=0 suspectscore=0 spamscore=0 mlxlogscore=892
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2407110000
+ definitions=main-2408120162
+X-Proofpoint-GUID: tC0l_A_fxCh8EMM8BhniD1lDZ6f2D1nB
+X-Proofpoint-ORIG-GUID: tC0l_A_fxCh8EMM8BhniD1lDZ6f2D1nB
 
 
+John,
 
+> These two minor patches are tidy-ups for atomic write support.
 
+Applied to 6.12/scsi-staging, thanks!
 
-> --
-> paul-moore.com
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
