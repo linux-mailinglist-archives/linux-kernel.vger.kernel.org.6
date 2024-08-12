@@ -1,204 +1,141 @@
-Return-Path: <linux-kernel+bounces-283406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610A194F211
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:49:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F58294F21C
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 17:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C796DB24092
-	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:49:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 813301C2125D
+	for <lists+linux-kernel@lfdr.de>; Mon, 12 Aug 2024 15:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF4A18756E;
-	Mon, 12 Aug 2024 15:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15974187323;
+	Mon, 12 Aug 2024 15:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LuGryWLQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+vP+3sR"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE51186298;
-	Mon, 12 Aug 2024 15:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4381862BB;
+	Mon, 12 Aug 2024 15:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723477749; cv=none; b=LA/XnK5dy83pCSTEQ0+cX6heBNAcVseDqVwdro6HoQ/0DWD3vVnoXkQEqB/MJ/xYR/Hk2tYelKNVLiqjZfRlm9Or4bPoCQoY/mNiMO1WGNCdFcdMJ1JFybz0ZV03p5OjDV14/WCPZHnUNyS57/P7mGXwUsmLpSCe1NSaSmfkSho=
+	t=1723477819; cv=none; b=Ha/XoDXky1Hv6VQWohDvE/bKz/e2lUa4Qx3wTqh26KpngrpikOlse5nkUDpbU8x44q15HqcFphQJkCXTE57fFWLLErXzKciB67kF6t6E2lW+0oGWmX+1QZnG46buQYKc+vkDfx1Kq+Rph1wmnrOUNcUfkzB8qOD3Ok0IMBt826E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723477749; c=relaxed/simple;
-	bh=nTJueB6tgQfuqsoeCX67y92PwedAzw7ogpVO79oK5Kc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s4FoXfh4fXS6rqyBSqq9eyZt5VbFizBCT8b2k+/JsTY8mJb9NFRPgBuINqZrswNjNCMfqQNL7e9drCN1PA22h3otI4m+aVvE/eYSIFYiqwOE7hAtFjNsHvHu7/ae/Wen9QlIfS0hyGVBCuoF9EZxB/WH945zexCQvi2A88IbdYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LuGryWLQ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723477748; x=1755013748;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=nTJueB6tgQfuqsoeCX67y92PwedAzw7ogpVO79oK5Kc=;
-  b=LuGryWLQ1uncwVDd45NBBKbvft85zNVUArrpR6h+MoGF1Pphex2hUXk4
-   36/rBB7pZWDX+cZQ26i7sFtERfTn2wyA+fJ8AZIItB0F8z0BRRrad43In
-   d1PFOvPc8O5XFG5O8tvJkuFN7LuTy+EtOErQnooA03Nt3SM25bZv0Yc1+
-   8O79h+zPHuX/QcRB/K5wjA3uUrz//cgylrV6WqW7AlAdgfExwmt3Y3rXL
-   NZivxA0Uj3tmmS0jcMDulvAq/ShkYWlCqHG7aaJc4DaHZkG/vIggHfC0X
-   mnZHUOlIIGz+tFoFmV9Jjuk0c3lrmGTvpyhSj151AQJf4b/jFDFzIzHBB
-   g==;
-X-CSE-ConnectionGUID: /nsK80HeQemny4YLCGIaHA==
-X-CSE-MsgGUID: YrVRa3D9SYOUSXmbVmVVdw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21160808"
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="21160808"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 08:49:08 -0700
-X-CSE-ConnectionGUID: bR+hjvaFQeiXfZ9FXCVycA==
-X-CSE-MsgGUID: bPeC7LZGTNukLtjl9AZbIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,283,1716274800"; 
-   d="scan'208";a="58187005"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 12 Aug 2024 08:49:07 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 1064B858; Mon, 12 Aug 2024 18:49:03 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Sunil V L <sunilvl@ventanamicro.com>
-Subject: [PATCH v1 7/7] serial: 8250_platform: Unify comment style
-Date: Mon, 12 Aug 2024 18:47:09 +0300
-Message-ID: <20240812154901.1068407-8-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
-References: <20240812154901.1068407-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1723477819; c=relaxed/simple;
+	bh=tPzxt4/H777G16ixqqD15EZUv69PJ912iUNnIRA/11s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nW4Sbq8JGFGORaHRoyD7E1ntxeBLZQsAgDZmgY7hf/fCZtsk2bcQgyvW4oyBeQF+GkiAwVRfP9T2mOieoBVzL+11brmNYYHGOiuKENt78scRmISD4OFXzk+2XVR4zL+EcM90cvQuIaRF3CN0rYZtUkurmex4LSBhu9+roD8XTGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+vP+3sR; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-396cc82f6d7so15172735ab.0;
+        Mon, 12 Aug 2024 08:50:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723477817; x=1724082617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uUbs+IDJtGINX8Ssllhw/FR35ZOMUwTrv0DIBDR8E18=;
+        b=O+vP+3sR2NVfOxkJYGsduLEzaD7h7nchzXkS7Nuogr5r9GjTju//mLj51b0A3aVlU1
+         PeUWTpsJoRipylvpZ+yjI0SF1XF39DDm8UgYW5YCXwKsww3617HJ+nQzab1kA8f9QQlh
+         op8FCbkgyesZ00SVjhb2RckQJPyp7GlgnRWuXZcM7+CZVABI+KrLd6vra+rn7xErB/Px
+         fEiVQ/nTuFsSD9jaRUN846BkF92fc2sNRaQ3RYkqIYG4CPMgZ0cUCsMTlPUR2teDMOSt
+         CN1mNz2GT5eMniTaQGH30iq0CxSmavifO/sFtrBXiNaliEKC/8WGgDPgFXNA9PWtDIbN
+         WFGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723477817; x=1724082617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uUbs+IDJtGINX8Ssllhw/FR35ZOMUwTrv0DIBDR8E18=;
+        b=LObyrjGgRWcgwuqAenfmy1gKcog0bacrtJpn/VSe0iiMsxEvjzWEbR2hQpiD5aY1QL
+         /DoNOG3XkDoXTHWz4mf5MBb/IpS2DVDlEDHWFyzvHrfu2UjfjW2RMpuyWLkqScR1sgTR
+         gQQu6OSIlJDDjl/of6rCpS52xAy3LZX5HtRF44zVk7K2EnR9IWn9SNK7Qma/jCOcF+hS
+         KcYnmVn9Q4TehKh74riTrd9XrfHMn9djkpU2vP4Fv/KHhMMUH7I2V41ldgDQj50f6mMY
+         o2E3ztfYEgTH/BgljCefrMaB3h62DjRj12s/Ic6a4gxDFOGLtkTVPyA4epcchjy034ro
+         TVfg==
+X-Forwarded-Encrypted: i=1; AJvYcCViVcYs1Qco54IcnL9l7xKMtTzsvGWhVDcRm2IQ+gWM16XRSemuDy5FPoOxuHrk6ww3hAQpagBClCdh7z6Zb+CntGV0fuVz1gz2p5CgiksvgDxASHAbPp3wW8+7tr+5aAB9oohu
+X-Gm-Message-State: AOJu0YzUI2P0hElQ+OfS/gGsE8dYF/HBfw+2tSpD2dwUFWI1omEI947M
+	SdgiqhCRjzBLOqrPr7GHCyQIG8OH2TWa1FnbZ7X+RlHN2C4M3iO+JUKHRYU903+RB12UXfsTTjg
+	PED/418Vm0cNTrjsWUFtf1hPIQG8=
+X-Google-Smtp-Source: AGHT+IEbHhOOHCDcOxlsI+o5NptePUQh/p/xxNKlbMH2+CUpecqtOvnc5voB4cbT3qclyBxjWK8e+jVZZMw1D0PO/NI=
+X-Received: by 2002:a05:6e02:1605:b0:39b:3a29:b860 with SMTP id
+ e9e14a558f8ab-39c48db507emr436365ab.4.1723477817128; Mon, 12 Aug 2024
+ 08:50:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240811230029.95258-1-kuniyu@amazon.com> <20240811230836.95914-1-kuniyu@amazon.com>
+ <20240812140104.GA21559@breakpoint.cc> <CAL+tcoCyq4Xra97sEhxGQBB8PVtKa5qGj0wW7wM=a9tu-fOumw@mail.gmail.com>
+ <20240812150338.GA25936@breakpoint.cc>
+In-Reply-To: <20240812150338.GA25936@breakpoint.cc>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Mon, 12 Aug 2024 23:49:40 +0800
+Message-ID: <CAL+tcoD+8A+eJ2M2mgTw0HSaNEa7YDvakO3Q_CFNn-eeUmVzHQ@mail.gmail.com>
+Subject: Re: [syzbot] [net?] WARNING: refcount bug in inet_twsk_kill
+To: Florian Westphal <fw@strlen.de>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, davem@davemloft.net, dsahern@kernel.org, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzbot+8ea26396ff85d23a8929@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Unify comment style and fix indentation in some cases.
-While at it, add that it supports ACPI enumerated non-PNP devices.
+On Mon, Aug 12, 2024 at 11:03=E2=80=AFPM Florian Westphal <fw@strlen.de> wr=
+ote:
+>
+> Jason Xing <kerneljasonxing@gmail.com> wrote:
+> > > I don't see how this helps, we need to wait until 'stolen' twsk
+> > > has gone through inet_twsk_kill() and decremented tw_refcount.
+> > > Obviously It would be a bit simpler if we had a reliable reproducer :=
+-)
+> >
+> > Allow me to say something irrelevant to this bug report.
+> >
+> > Do you think that Kuniyuki's patch can solve the race between two
+> > 'killers' calling inet_twsk_deschedule_put()->inet_twsk_kill()
+> > concurrently at two cores, say, inet_twsk_purge() and tcp_abort()?
+>
+> I don't think its possible, tcp_abort() calls inet_twsk_deschedule_put,
+> which does:
+>
+>         if (timer_shutdown_sync(&tw->tw_timer))
+>                 inet_twsk_kill(tw);
+>
+> So I don't see how two concurrent callers, working on same tw address,
+> would both be able to shut down the timer.
+>
+> One will shut it down and calls inet_twsk_kill(), other will wait until
+> the callback has completed, but it doesn't call inet_twsk_kill().
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/tty/serial/8250/8250_platform.c | 35 ++++++++++++++-----------
- 1 file changed, 19 insertions(+), 16 deletions(-)
+Oh, thanks. Since timer_shutdown_sync() can be used as a lock, there
+is indeed no way to call inet_twsk_kill() concurrently.
 
-diff --git a/drivers/tty/serial/8250/8250_platform.c b/drivers/tty/serial/8250/8250_platform.c
-index f4a0731ff134..30b4d12ab05b 100644
---- a/drivers/tty/serial/8250/8250_platform.c
-+++ b/drivers/tty/serial/8250/8250_platform.c
-@@ -2,7 +2,9 @@
- /*
-  *  Universal/legacy platform driver for 8250/16550-type serial ports
-  *
-- *  Supports: ISA-compatible 8250/16550 ports
-+ *  Supports:
-+ *	      ISA-compatible 8250/16550 ports
-+ *	      ACPI 8250/16550 ports
-  *	      PNP 8250/16550 ports
-  *	      "serial8250" platform devices
-  */
-@@ -24,9 +26,9 @@
- 
- /*
-  * Configuration:
-- *    share_irqs   Whether we pass IRQF_SHARED to request_irq().
-+ * share_irqs:     Whether we pass IRQF_SHARED to request_irq().
-  *                 This option is unsafe when used on edge-triggered interrupts.
-- * skip_txen_test  Force skip of txen test at init time.
-+ * skip_txen_test: Force skip of txen test at init time.
-  */
- unsigned int share_irqs = SERIAL8250_SHARE_IRQS;
- unsigned int skip_txen_test;
-@@ -63,9 +65,9 @@ static void __init __serial8250_isa_init_ports(void)
- 		nr_uarts = UART_NR;
- 
- 	/*
--	 * Set up initial isa ports based on nr_uart module param, or else
-+	 * Set up initial ISA ports based on nr_uart module param, or else
- 	 * default to CONFIG_SERIAL_8250_RUNTIME_UARTS. Note that we do not
--	 * need to increase nr_uarts when setting up the initial isa ports.
-+	 * need to increase nr_uarts when setting up the initial ISA ports.
- 	 */
- 	for (i = 0; i < nr_uarts; i++)
- 		serial8250_setup_port(i);
-@@ -132,11 +134,12 @@ static int serial8250_probe_acpi(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	/* Default clock frequency*/
-+	/* default clock frequency */
- 	uart.port.uartclk = 1843200;
- 	uart.port.type = PORT_16550A;
- 	uart.port.dev = &pdev->dev;
- 	uart.port.flags |= UPF_SKIP_TEST | UPF_BOOT_AUTOCONF;
-+
- 	ret = uart_read_and_validate_port_properties(&uart.port);
- 	/* no interrupt -> fall back to polling */
- 	if (ret == -ENXIO)
-@@ -206,8 +209,8 @@ static int serial8250_probe_platform(struct platform_device *dev, struct plat_se
- }
- 
- /*
-- * Register a set of serial devices attached to a platform device.  The
-- * list is terminated with a zero flags entry, which means we expect
-+ * Register a set of serial devices attached to a platform device.
-+ * The list is terminated with a zero flags entry, which means we expect
-  * all entries to have at least UPF_BOOT_AUTOCONF set.
-  */
- static int serial8250_probe(struct platform_device *pdev)
-@@ -292,7 +295,7 @@ static struct platform_driver serial8250_isa_driver = {
- 
- /*
-  * This "device" covers _all_ ISA 8250-compatible serial devices listed
-- * in the table in include/asm/serial.h
-+ * in the table in include/asm/serial.h.
-  */
- struct platform_device *serial8250_isa_devs;
- 
-@@ -321,8 +324,7 @@ static int __init serial8250_init(void)
- 	if (ret)
- 		goto unreg_uart_drv;
- 
--	serial8250_isa_devs = platform_device_alloc("serial8250",
--						    PLAT8250_DEV_LEGACY);
-+	serial8250_isa_devs = platform_device_alloc("serial8250", PLAT8250_DEV_LEGACY);
- 	if (!serial8250_isa_devs) {
- 		ret = -ENOMEM;
- 		goto unreg_pnp;
-@@ -361,7 +363,7 @@ static void __exit serial8250_exit(void)
- 	/*
- 	 * This tells serial8250_unregister_port() not to re-register
- 	 * the ports (thereby making serial8250_isa_driver permanently
--	 * in use.)
-+	 * in use).
- 	 */
- 	serial8250_isa_devs = NULL;
- 
-@@ -394,12 +396,13 @@ MODULE_ALIAS_CHARDEV_MAJOR(TTY_MAJOR);
- 
- #ifdef CONFIG_SERIAL_8250_DEPRECATED_OPTIONS
- #ifndef MODULE
--/* This module was renamed to 8250_core in 3.7.  Keep the old "8250" name
-- * working as well for the module options so we don't break people.  We
-+/*
-+ * This module was renamed to 8250_core in 3.7. Keep the old "8250" name
-+ * working as well for the module options so we don't break people. We
-  * need to keep the names identical and the convenient macros will happily
-  * refuse to let us do that by failing the build with redefinition errors
-- * of global variables.  So we stick them inside a dummy function to avoid
-- * those conflicts.  The options still get parsed, and the redefined
-+ * of global variables. So we stick them inside a dummy function to avoid
-+ * those conflicts. The options still get parsed, and the redefined
-  * MODULE_PARAM_PREFIX lets us keep the "8250." syntax alive.
-  *
-  * This is hacky.  I'm sorry.
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+>
+> > It at least does help avoid decrementing tw_refcount twice in the
+> > above case if I understand correctly.
+>
+> I don't think the refcount is decremented twice.
+>
+> Problem is one thread is already at the 'final' decrement of
+>  WARN_ON_ONCE(!refcount_dec_and_test(&net->ipv4.tcp_death_row.tw_refcount=
+));
+>
+> in tcp_sk_exit_batch(), while other thread has not yet called
+> refcount_dec() on it (inet_twsk_kill still executing).
+>
+> So we get two splats, refcount_dec_and_test() returns 1 not expected 0
+> and refcount_dec() coming right afterwards from other task observes the
+> transition to 0, while it should have dropped down to 1.
 
+I see.
+
+Thanks,
+Jason
 
