@@ -1,216 +1,119 @@
-Return-Path: <linux-kernel+bounces-284914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D189506BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:39:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66EDA9506C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05C1628A5AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994891C209F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB859192B91;
-	Tue, 13 Aug 2024 13:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA85119CCF8;
+	Tue, 13 Aug 2024 13:39:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b="NZNcxwKP"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtXwyBtc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081A160EC4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE30D60EC4;
+	Tue, 13 Aug 2024 13:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556325; cv=none; b=Tovj1V+TZdWP4TqYXKOXDjVsX5W9C1shwytTvBj5kOXyXSJoWAh1TSSOAFJNz8Byr5N9gpmq5ZFcNXJbM9QQoyYbTSF0cgZU68IxYCrSQHBUz7B3UTN61JEq0Xhl8BJ9FiZ6Qy0y+UumbhTCty6utrRePKjmBf3WESGRystpw5w=
+	t=1723556389; cv=none; b=WiRNMg9A6w2C9OdBnfJJOLKTU01BXdDG0tJWyTq0RnW4jzsxYPSMvkpE71b1iSrSZbe6QF5xKst6ObxdlUvHHjtjGuCo/AxQ8z6MLAu+ll3glv/L8kQ2LyJH1gbBPhJizN1F0UOFcXfVHhxz1jb6eBx7Ilvaj5CQStoPQSSobsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556325; c=relaxed/simple;
-	bh=43igTuJor3nq4TOqUbEZQycMVXzKpmUbmi9vcEwrMUA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQsFoTuSWHHz8yuBp8aBF6j6s/9FKTf52wEqQZqRebqk5QZ3YX7vnwMuCFhQ/pqQ4yYhzcdO0c5cRnkzGaiRzqPOQa5lNy5GbkjHbyhfiSwPN3mhvMO2js2h/i6h+c08XdBNXKj0ZOm7Yu8fStnQKhQbNG0/OOYDQdA5FeMJiQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com; spf=pass smtp.mailfrom=kylehuey.com; dkim=pass (2048-bit key) header.d=kylehuey.com header.i=@kylehuey.com header.b=NZNcxwKP; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylehuey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylehuey.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef2fccca2cso57275631fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:38:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kylehuey.com; s=google; t=1723556321; x=1724161121; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hLTqSL9xOGJSln+6oYEQ8vVYIDiotdSevswl3wN47gE=;
-        b=NZNcxwKPLZ1l5EE0atKjMmqxMTrRDFqnLXW6/uLFnsI3DlIuH1e4SOlaWLQz4y9m03
-         Td2NTU8OG3Gwd1eqx0HfLyk5xOQnIJ56O5uX8aJdvNPhu8lUD+vd8fB/V/Py9mjTd1ui
-         X92XPImxd+QYqz8YECFer31kJhKny7769aeGae3yANDBHcAFuUaLmft6sYKQH+gDb+p9
-         83rceZ3gmYP9oagqGL1k7JN9ziFWwDoESu5pahfFiMlMzOyvXLSa2ybtlQstUSm+1Ww/
-         UvNonxQscc5obvkcQOpfqenWUtNqRqp6PSBAy1BrcGGz10rfVCwBRa4jdZirCWYC15pq
-         zaog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723556321; x=1724161121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hLTqSL9xOGJSln+6oYEQ8vVYIDiotdSevswl3wN47gE=;
-        b=Nq0904+XuUTexjnxyJoGQxQQDFgrXOyVbq6bR8qD7IcNAc5o8NBYJFeOH6QsIJbquU
-         GsX13N+uVF3a37sFkZIROSpGLrEtZWPi++Go1o7jCUHLVOffWzyxuby0gVr58YlfKdrM
-         eZRWxUz+/ioGnJO9kbdkt9szHvp2YAM6lXnMsS8zztxxTFJQ6sBZ0oheP99kk3kJPR9x
-         r0ZFcU5h0EOuQ3ZQk3rXZt8hm+UBtLra6fXUns+RNPiQC5vpGINUJKmSXnUqMlUGJdkx
-         q3t7vY8HpFCyjeA81E6iup1S6WkVGO8lOEBRql4A6eiRllwCuMkN4M0plxjLha4Ec/7U
-         Hvig==
-X-Forwarded-Encrypted: i=1; AJvYcCWcmW7LJc7vcslXuF9KxgqbhPTSOHJs/tFjW8zq2MWfcJ3gbzcEpkwuTNi3grtnuDvnmawML/heqShg+wwoa8IoeqYtgcz6DBY2vr5P
-X-Gm-Message-State: AOJu0Yy5qGumtJeDZg9QHpOmM6ROeCGR9hmwYRpWHhpukCwA148+MlJR
-	E2YzVUrEwmyEYauYHKb242tJkWoskc6vbvwaQxanaWVS3+NW0W8RmOK23zyQmlAJmCDdDscH6zh
-	lcgWO3xCDn1vhhbwR1HyPLcf3Xuk5sCS59yFcNJOtFITqQAA=
-X-Google-Smtp-Source: AGHT+IE+nNeBsXzq8AYhTZpzokdNZ0mZWmEpb0RS22YZUXsbGpDyqS6vAtqPQIv/45k+PjQ/HO8v6uwE2iVwuW/+2r8=
-X-Received: by 2002:a2e:b894:0:b0:2ef:2638:48cd with SMTP id
- 38308e7fff4ca-2f2b7177c80mr32730081fa.30.1723556320633; Tue, 13 Aug 2024
- 06:38:40 -0700 (PDT)
+	s=arc-20240116; t=1723556389; c=relaxed/simple;
+	bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hvMdLx3sAQFVq+2HHstY1aQ7q5pAeCEYwCg6bgZ458YJ4ieE7NR8uLG1zUlyCehVaIUzCKgjx62jPMPb+K8tOc+rG6yqYdgCwUqXK6VG0rTxTNSQQSgFMCdkTWDT+nkM7mB6eSQPDQr5kYsfcgxvSFTXrHElMNLgAvm8XP85ThY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtXwyBtc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3C0BC4AF09;
+	Tue, 13 Aug 2024 13:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723556388;
+	bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
+	h=From:Date:Subject:To:Cc:From;
+	b=CtXwyBtcQmclsv9nEWsuu9fWoRpeALgeMKF3XTOwLR0DPm11eO7eo7wd6RivlwAAo
+	 RWmiJ7FNnck6Z5N1zdtbmZoPtoG32dIoOtt6AWoHBS22Win4/QyWyoSTiMWVXQGKTz
+	 2e3ftaV/EaHa6Bpsr6L8kOkL65dQCcv8pJho3I4JUYS1aaVz+jYtsHk+CZAUodEmU3
+	 HyAn1PFowIMUG46kjyERJGlmaXvI1mGOM6DpAgZXKKjvIM6x9L9SijW1LJrwaU8YJ/
+	 nzWnDt+de2JXzFWGZJOdBxET/x0WhfN1BR6G/TXduWfLbPWjYBNmhXkU9mTPYWRGql
+	 BccoFIPm9weFQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Tue, 13 Aug 2024 15:39:34 +0200
+Subject: [PATCH net] selftests: net: lib: kill PIDs before del netns
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715150410.GJ14400@noisy.programming.kicks-ass.net>
- <CAP045Aq3Mv2oDMCU8-Afe7Ne+RLH62120F3RWqc+p9STpcxyxg@mail.gmail.com>
- <20240715163003.GK14400@noisy.programming.kicks-ass.net> <CAP045Apu6Sb=eKLXkZ5TWitWbmGHMDArD1++81vdN2_NqeFTyw@mail.gmail.com>
- <ZpYgYaKKbw3FPUpv@krava> <CAEf4BzZWWzio9oPe2_jS=_7CnKuJnugr2h4yd3QY1TqSF0aMXQ@mail.gmail.com>
- <CAP045ArhO4K2vcrhG_GnJNhx=+7v6WLYKsDj4CvqO7HKzBshXg@mail.gmail.com>
- <CAEf4BzbE4keci=hyt2APp5sfimvqfpLoWgEgEnC=Yp5S-jejKg@mail.gmail.com>
- <CAP045ArBf5Ja4s_gkg3vQciw0v7_h4kWjnbLUSk=uFgQ7WbTqQ@mail.gmail.com>
- <ZrC9oxIcKebAKpx3@LQ3V64L9R2.home> <Zrs3ZqRtT3_lNj6a@LQ3V64L9R2.home>
-In-Reply-To: <Zrs3ZqRtT3_lNj6a@LQ3V64L9R2.home>
-From: Kyle Huey <me@kylehuey.com>
-Date: Tue, 13 Aug 2024 06:38:27 -0700
-Message-ID: <CAP045AoTAX7MOObBq0ubS0bSbu1MmrG4wEEiXpKV54W9up1zJg@mail.gmail.com>
-Subject: Re: [PATCH] perf/bpf: Don't call bpf_overflow_handler() for tracing events
-To: Joe Damato <jdamato@fastly.com>
-Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jiri Olsa <olsajiri@gmail.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, khuey@kylehuey.com, 
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, robert@ocallahan.org, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240813-upstream-net-20240813-selftests-net-lib-kill-v1-1-27b689b248b8@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABViu2YC/z2NywqDMBBFf0Vm3QGfrfZXpIu03rSDMUomFUH89
+ wYXXZ7D5dydFEGgdM92ClhFZfYJiktGr4/xb7AMianMyzpvi4q/i8YAM7FH5L9VOBuhUU/t5Mm
+ jOMf21l1rU5mmtaCUXAKsbOddT2lJj+P4AUP8F1KDAAAA
+To: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Hangbin Liu <liuhangbin@gmail.com>, Petr Machata <petrm@nvidia.com>
+Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mat Martineau <martineau@kernel.org>, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1427; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmu2Ih2tgE3mKo82PooAHQqtAlS0SutfN+iLo+P
+ bd/L7QH6tKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZrtiIQAKCRD2t4JPQmmg
+ c9lZD/9pH0LZLwr1ok0Jgepa9D2tQqV6P+qgeuOxnAnxA8j4inoPl5PUxLdLI1H3nKECS9WgFSZ
+ yXsDwhtCQHKOzFfKrueNnTZSxJQJ5mHpMorxxPuhun6buI75wZXdIKEqCGekKq1GeCmaqv4+28u
+ vW6mLWbQ0sjH2fpkN6KpWiQCgEmnM55iiS9AKWJF16XIkJMm7wzqwYqmoOAEFtqBrpPa6D6ikli
+ 90eKHxe7apSl1upOIXCNKI7bmPC/h6Ugr1cz81Bi/ieq5ApS6zmbQEGNHS5yh2jugWxPTp7Btc0
+ x2jVqw0N0THPhmJBrA54S6dxspohY7f9MmSn6dYbu2zFbGDdcI5fHprscZRvMzgDqa/XeMjTKTb
+ NYh/TsaWK0QVcqYuGtuXMjl+6Kj79Ll1+aPTGlPKlriXi0o/1Tns2yAVI1M1nqXQmpGM6eJlMMJ
+ FLOGAU9m7S58OTd3LLb4AG19rrm5jtviQZkTe2UbQfssDfYT90jWz56bqGE0JcuxmbNb6qWUzD0
+ UBeNJAbpVqCymjIZEsQL+jDXvRiTknCFovhYyqC00qZwrjfXKTaEbPL0GttFX4mK/zsBrVPLdvY
+ +hbE5Tc9jatIMeJgO+jXjHCGUz9iBy7oKklJQ7B952H26nvac0d+rQ3HlhemfIM5Rx8Q7m3u4FS
+ Iy3cpdO1gW3IvrQ==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On Tue, Aug 13, 2024 at 3:37=E2=80=AFAM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> On Mon, Aug 05, 2024 at 12:55:17PM +0100, Joe Damato wrote:
-> > On Fri, Jul 26, 2024 at 09:35:43AM -0700, Kyle Huey wrote:
-> > > Will do.
-> > >
-> > > - Kyle
-> > >
-> > > On Fri, Jul 26, 2024 at 9:34=E2=80=AFAM Andrii Nakryiko
-> > > <andrii.nakryiko@gmail.com> wrote:
-> > > >
-> > > > On Fri, Jul 26, 2024 at 5:37=E2=80=AFAM Kyle Huey <me@kylehuey.com>=
- wrote:
-> > > > >
-> > > > > On Fri, Jul 19, 2024 at 11:26=E2=80=AFAM Andrii Nakryiko
-> > > > > <andrii.nakryiko@gmail.com> wrote:
-> > > > > >
-> > > > > > On Tue, Jul 16, 2024 at 12:25=E2=80=AFAM Jiri Olsa <olsajiri@gm=
-ail.com> wrote:
-> > > > > > >
-> > > > > > > On Mon, Jul 15, 2024 at 09:48:58AM -0700, Kyle Huey wrote:
-> > > > > > > > On Mon, Jul 15, 2024 at 9:30=E2=80=AFAM Peter Zijlstra <pet=
-erz@infradead.org> wrote:
-> > > > > > > > >
-> > > > > > > > > On Mon, Jul 15, 2024 at 08:19:44AM -0700, Kyle Huey wrote=
-:
-> > > > > > > > >
-> > > > > > > > > > I think this would probably work but stealing the bit s=
-eems far more
-> > > > > > > > > > complicated than just gating on perf_event_is_tracing()=
-.
-> > > > > > > > >
-> > > > > > > > > perf_event_is_tracing() is something like 3 branches. It =
-is not a simple
-> > > > > > > > > conditional. Combined with that re-load and the wrong ret=
-urn value, this
-> > > > > > > > > all wants a cleanup.
-> > > > > > > > >
-> > > > > > > > > Using that LSB works, it's just that the code aint pretty=
-.
-> > > > > > > >
-> > > > > > > > Maybe we could gate on !event->tp_event instead. Somebody w=
-ho is more
-> > > > > > > > familiar with this code than me should probably confirm tha=
-t tp_event
-> > > > > > > > being non-null and perf_event_is_tracing() being true are e=
-quivalent
-> > > > > > > > though.
-> > > > > > > >
-> > > > > > >
-> > > > > > > it looks like that's the case, AFAICS tracepoint/kprobe/uprob=
-e events
-> > > > > > > are the only ones having the tp_event pointer set, Masami?
-> > > > > > >
-> > > > > > > fwiw I tried to run bpf selftests with that and it's fine
-> > > > > >
-> > > > > > Why can't we do the most straightforward thing in this case?
-> > > > > >
-> > > > > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > > > > index ab6c4c942f79..cf4645b26c90 100644
-> > > > > > --- a/kernel/events/core.c
-> > > > > > +++ b/kernel/events/core.c
-> > > > > > @@ -9707,7 +9707,8 @@ static int __perf_event_overflow(struct p=
-erf_event *event,
-> > > > > >
-> > > > > >         ret =3D __perf_event_account_interrupt(event, throttle)=
-;
-> > > > > >
-> > > > > > -       if (event->prog && !bpf_overflow_handler(event, data, r=
-egs))
-> > > > > > +       if (event->prog && event->prog->type =3D=3D BPF_PROG_TY=
-PE_PERF_EVENT &&
-> > > > > > +           !bpf_overflow_handler(event, data, regs))
-> > > > > >                 return ret;
-> > > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > jirka
-> > > > > > >
-> > > > >
-> > > > > Yes, that's effectively equivalent to calling perf_event_is_traci=
-ng()
-> > > > > and would work too. Do you want to land that patch? It needs to g=
-o to
-> > > > > 6.10 stable too.
-> > > >
-> > > > I'd appreciate it if you can just incorporate that into your patch =
-and
-> > > > resend it, thank you!
-> > > >
-> > > > >
-> > > > > - Kyle
-> >
-> > I probably missed the updated patch, but I am happy to test any new
-> > versions, if needed, to ensure that the bug I hit is fixed.
-> >
-> > Kyle: please let me know if there's a patch you'd like me to test?
->
-> Sorry for pinging this thread again; let me know if a fix was merged
-> and I missed it?
->
-> Otherwise, if it'd be helpful, I am happy to modify Kyle's patch to
-> take Andrii's suggestion and resend, but I don't want to step on
-> anyone's toes :)
->
-> - Joe
+When deleting netns, it is possible to still have some tasks running,
+e.g. background tasks like tcpdump running in the background, not
+stopped because the test has been interrupted.
 
-Hi Joe,
+Before deleting the netns, it is then safer to kill all attached PIDs,
+if any. That should reduce some noises after the end of some tests, and
+help with the debugging of some issues. That's why this modification is
+seen as a "fix".
 
-You didn't miss anything. I've been remiss in getting back to this.
-I'm currently away from home (and the machine I usually do kernel
-development on), so if you want to run with this please do so.
+Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
+Acked-by: Mat Martineau <martineau@kernel.org>
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ tools/testing/selftests/net/lib.sh | 1 +
+ 1 file changed, 1 insertion(+)
 
-Sorry for the inconvenience,
+diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
+index d0219032f773..8ee4489238ca 100644
+--- a/tools/testing/selftests/net/lib.sh
++++ b/tools/testing/selftests/net/lib.sh
+@@ -146,6 +146,7 @@ cleanup_ns()
+ 
+ 	for ns in "$@"; do
+ 		[ -z "${ns}" ] && continue
++		ip netns pids "${ns}" 2> /dev/null | xargs -r kill || true
+ 		ip netns delete "${ns}" &> /dev/null || true
+ 		if ! busywait $BUSYWAIT_TIMEOUT ip netns list \| grep -vq "^$ns$" &> /dev/null; then
+ 			echo "Warn: Failed to remove namespace $ns"
 
-- Kyle
+---
+base-commit: 58a63729c957621f1990c3494c702711188ca347
+change-id: 20240813-upstream-net-20240813-selftests-net-lib-kill-f7964a3a58fe
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
