@@ -1,66 +1,83 @@
-Return-Path: <linux-kernel+bounces-285202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02328950A86
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A90950A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:42:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14761F2583B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:42:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB421C23463
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0168E1AAE38;
-	Tue, 13 Aug 2024 16:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0491A2C12;
+	Tue, 13 Aug 2024 16:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U83X13tZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a2brPvgs"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFDF1AAE24;
-	Tue, 13 Aug 2024 16:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F11A0AE4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567147; cv=none; b=fHKKFE6Ck1ak8WwxIQDllZUZVKRvV2Mstu8UHVFCs7yz7pxwjBgLf7iqTrMFSLuWfL1NN92aw7Kbj9qCiTVlEqrPvzLLg0XqYukvZmYVbJz/jubZDS66abj5U0APGB9NUFfPYz1Op3sz48IEw0++ueJa4yexHPA8mTyuuO2DUyY=
+	t=1723567213; cv=none; b=tIyxB9ce9xQz7cODTHM7XCPoLHVWX08hcW93K9F1/DnPfWcnir/oZASo8QQEnYJKQyd9GLIJbBY1CrE90pPsK5Dsz3O93xfRU6VD+3Z4if/mXNbkFPttSUbBu/B23qYHXfPGKTrLwfUhznhVBGsWIiDixv7tUFy/cFbtFAOYZhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567147; c=relaxed/simple;
-	bh=roREPA9w0B4QAmH4r0DoxNSGqiEyAAIoSzcgMliRsOE=;
+	s=arc-20240116; t=1723567213; c=relaxed/simple;
+	bh=z9ThKaCl2dwq7iAZdlUAc8Sa13mjVWGUvaiqO0kBgkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pM1KUONsZKu4eNcEYSQ65K7Ddhl6+1+J763u0D4xMW0mXAfTyx4QqvS6rZS7oI2d1X22YNrh2XNRPEHC+dUiPeCA6LO5+aQEOuXwnxPo01GbE0qG9LbaRk0us+49Qp37tO+apue7A4GuhbhqyXWEqHie0vrc52/ibYhixEGtsxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U83X13tZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF608C4AF09;
-	Tue, 13 Aug 2024 16:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723567147;
-	bh=roREPA9w0B4QAmH4r0DoxNSGqiEyAAIoSzcgMliRsOE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U83X13tZQk/OI6R78ui8JndwEQGAras2KVqWeG8ITZK1AZFFWUMvuOlXV3Gg5wTex
-	 6U3o+vGf2sUnQMgLNvhrkNhkoPKaYaddn0yVuTJtSzGFvigS4841h2ChI+BsW2uROw
-	 KqX+quzQSkwtFDemaMxN1OPkYRbmJqvsah/NfmKMStAiJj50bwvu29jt5PcS4JRWvV
-	 JXsNf6TuS3ItTKQ0x0bCGBbtFeS39vvvDF11JADw4MzxjGfqRW48g+DnOK1C4AsENb
-	 5+GrvXq6OWkZncL+SSROQwFfr2V/FszfaU4WTxXGqVS5Lu99qBtFGHoffaf2994qGb
-	 e3fJeIFmi0U3Q==
-Date: Tue, 13 Aug 2024 10:39:05 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ayush Singh <ayush@beagleboard.org>
-Cc: Eric Dumazet <edumazet@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alex Elder <elder@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jakub Kicinski <kuba@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	robertcnelson@beagleboard.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	lorforlinux@beagleboard.org, greybus-dev@lists.linaro.org,
-	Nishanth Menon <nm@ti.com>, jkridner@beagleboard.org,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v2 1/3] dt-bindings: net: ti,cc1352p7: Add
- bootloader-backdoor-gpios
-Message-ID: <172356714476.1180285.11438350948461770539.robh@kernel.org>
-References: <20240801-beagleplay_fw_upgrade-v2-0-e36928b792db@beagleboard.org>
- <20240801-beagleplay_fw_upgrade-v2-1-e36928b792db@beagleboard.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gE4ivxSSTaze5wWaNvRKFl/70smnsOU4P/TUHwPfZtCdsRJ2+17pw/Cr67iZQLOqJjuj2GB3FvWKLCB475dbzXUB86+NkOleJZ1itgghNUi0N+e6JNCFOnnW7mV4zP7u54MeeRvc+uFX/0fhqhPchZtV2cZ6qg3NknQyqfJeKWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a2brPvgs; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc569440e1so52594945ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:40:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723567212; x=1724172012; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIj0JJnYshjIVjXZcWpKVRySnGCTB+N0e3BxW4PAJ2c=;
+        b=a2brPvgsk37d3qEyACZw8pnMuzwnqzj8UVLFy0XDBxdHcZBcdvbXNJ8srijEPHliOP
+         /EiS3GAHdEvtm2cNhaUiC78JjFz3LDzcXujtGcT9AS4sIZftNpOExDZoxiz32MZrkqqi
+         IwwtVgcK89m4JXQFMxV2Xby5TMMYa4cxnDIvY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723567212; x=1724172012;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UIj0JJnYshjIVjXZcWpKVRySnGCTB+N0e3BxW4PAJ2c=;
+        b=lm6/6rTpAg0/aovt/XcVQYKZucZZ9phmLQ/P7sqU05R2SOTx6rUt8qUZFbITSszfKf
+         ikVc0S30mj+GIYse8zCaKRsEpquCha/smnGVG1umyUNIMPSzBj8dThHelHF8qF5REste
+         VEDUQAc7y9Qzuh7zCgHHpTIvFIcS3BUCmiUtPYN39vh5FQbTXaiaFQp6OowC3tAsg6UB
+         ZDig4JAeVmRKGGIbyqCOBlhNXQ5d5iU39IWci7xZavRdss4LITEuQtUkUAfJZm9hQAu0
+         xN/dl1ydhrk4Ah8eaH2R/5h51K9kxJRgmQoSXSKMclMFt9Gk5TNQgZIsSuKEXvGb8jyj
+         N45g==
+X-Forwarded-Encrypted: i=1; AJvYcCWsmfieL5Lv4Q2KDoSQmakaGvKSoXXTf7t52AUxvW1ST+0sOaR6pNAHobU3w7eZcGyDKxnV4VjDy7Oulx1bhLfOGM6g1j2+uMYZ6t4V
+X-Gm-Message-State: AOJu0YwuODJUoijm23CeJyNIWmiH8ZJPmyHBrA5Ek9qHoxr+5y5Zqd+F
+	fIlO2V2iQiHXadGl71b2DOGkxDA7Q+WVTCye7T3V83JvGNzYOsDq0BXMBZ4p9w==
+X-Google-Smtp-Source: AGHT+IH/REf7OKTZn9xv3HDv0yFQhoCXp3NXeg4RoixeHv4QdV9uxYQmfmO+wc0WQGBCMgKE9Yyo2Q==
+X-Received: by 2002:a17:903:1c6:b0:1fb:9280:c970 with SMTP id d9443c01a7336-201d638d7a2mr1036295ad.7.1723567211719;
+        Tue, 13 Aug 2024 09:40:11 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:45ad:979d:1377:77f0])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201cd130632sm15867485ad.49.2024.08.13.09.40.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 09:40:11 -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:40:08 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>, bpf@vger.kernel.org,
+	linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] tools build: Avoid circular .fixdep-in.o.cmd
+ issues
+Message-ID: <ZruMaIGu8EoAE1Fy@google.com>
+References: <20240715203325.3832977-1-briannorris@chromium.org>
+ <20240715203325.3832977-3-briannorris@chromium.org>
+ <99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,24 +86,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240801-beagleplay_fw_upgrade-v2-1-e36928b792db@beagleboard.org>
+In-Reply-To: <99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info>
 
+Hi Thorsten,
 
-On Thu, 01 Aug 2024 00:21:05 +0530, Ayush Singh wrote:
-> bootloader-backdoor-gpio (along with reset-gpio) is used to enable
-> bootloader backdoor for flashing new firmware.
+On Mon, Aug 12, 2024 at 08:32:29AM +0200, Thorsten Leemhuis wrote:
+> Lo! TWIMC, this change broke my daily arm64 and x86_64 Fedora vanilla RPM
+> builds on all Fedora releases when it hit -next a few days ago. Reverting
+> it fixes the problem.
 > 
-> The pin and pin level to enable bootloader backdoor is configured using
-> the following CCFG variables in cc1352p7:
-> - SET_CCFG_BL_CONFIG_BL_PIN_NO
-> - SET_CCFG_BL_CONFIG_BL_LEVEL
+> The problem is related to the RPM magic somehow, as building worked fine
+> when when I omitted stuff like "-specs=/usr/lib/rpm/redhat/redhat-
+> hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1" from the
+> make call. So the real problem might be that space somewhere.
 > 
-> Signed-off-by: Ayush Singh <ayush@beagleboard.org>
-> ---
->  Documentation/devicetree/bindings/net/ti,cc1352p7.yaml | 7 +++++++
->  1 file changed, 7 insertions(+)
 > 
+> This is how the build fails on x86_64:
+> 
+> + /usr/bin/make -s 'HOSTCFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection   ' 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' ARCH=x86_64 'KCFLAGS= ' WITH_GCOV=0 -j2 bzImage
+> /usr/bin/ld: /tmp/ccMoR0Wr.o: relocation R_X86_64_32 against `.rodata' can not be used when making a PIE object; recompile with -fPIE
+> /usr/bin/ld: failed to set dynamic section sizes: bad value
+> collect2: error: ld returned 1 exit status
+> make[4]: *** [Makefile:47: /builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/tools/objtool/fixdep] Error 1
+> make[3]: *** [/builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/tools/build/Makefile.include:15: fixdep] Error 2
+> make[2]: *** [Makefile:73: objtool] Error 2
+> make[1]: *** [/builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/Makefile:1361: tools/objtool] Error 2
+> make[1]: *** Waiting for unfinished jobs....
+> make: *** [Makefile:226: __sub-make] Error 2
+> error: Bad exit status from /var/tmp/rpm-tmp.ZQfBFY (%build)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+I don't have a Fedora installation on hand at the moment, and the logs
+don't seem to include most of the actual kernel build logs
+(stdout+stderr of a V=1 build might help), but I think what you've
+provided so far has highlighted one possible problem -- that the new
+one-shot compile+link is ignoring HOSTCFLAGS, which were previously
+respected via tools/build/Build.include. Could you try the following
+diff? I'll cook a proper patch and description later, but for now:
 
+--- a/tools/build/Makefile
++++ b/tools/build/Makefile
+@@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
+ endif
+ 
+ $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+-	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
++	$(QUIET_CC)$(HOSTCC) $(HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
 
