@@ -1,106 +1,120 @@
-Return-Path: <linux-kernel+bounces-283929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7292A94FA8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:04:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6895594FA8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27246283CC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:04:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8EEDB21DE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1828E184F;
-	Tue, 13 Aug 2024 00:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623A664C;
+	Tue, 13 Aug 2024 00:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uwaterloo.ca header.i=@uwaterloo.ca header.b="85fU3MZV"
-Received: from esa.hc503-62.ca.iphmx.com (esa.hc503-62.ca.iphmx.com [216.71.135.51])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X1taOJ4j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600E518E;
-	Tue, 13 Aug 2024 00:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.135.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B925E18E;
+	Tue, 13 Aug 2024 00:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.11
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723507468; cv=fail; b=fuh1JJpUrx/9JXgfJ9rcv7JrngN8N1qDlqCT9pFLvC7V36X4CWxHBIkHW01qBxnJ594fkJaccl5+z0A61A84AJyeI22nvu+BW5RDtBisZmBlXjWyoI8utV3GPogeDzx+QVrGtfNiPGPEXIlEO+XGgyn6z3pzqXtIhZzTtH7qsng=
+	t=1723507546; cv=fail; b=XQClshanK2ToKctfFalWjMsssKwZZXV7NVejh0mBlMm85Jrgs9NSQMxi+SA7M6QxM5zgC67QlUiB49FTnkKnXgO9CwAP4iaySV28sfW+if9yBDz9s/U2/wmMAD+4PU9cyTCS3D1AYIjCorn6qlQyhYzs8zIU+TIUNpKO0kFXNxo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723507468; c=relaxed/simple;
-	bh=OiPvRqHcFng+zQdDkxqv27uruCSmoqaRZGPrLXQNJsw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aFYtxh0IYp694dPfcJAEWh+IgVRoJZ5iZv6XkL1zBttW6l3f4GYYJUlQqtwhBMECX+Lc4XDT1Wud4h9BtRjQu9ZIgq5kR9zgE3302D/+l/53WycqqG5/oZUvhOGQ/cmR2Hjx5W+vS92TbFMPCk/n/8svCY1LmIIm+Ufc+ogD8fE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uwaterloo.ca; spf=pass smtp.mailfrom=uwaterloo.ca; dkim=pass (1024-bit key) header.d=uwaterloo.ca header.i=@uwaterloo.ca header.b=85fU3MZV; arc=fail smtp.client-ip=216.71.135.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uwaterloo.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uwaterloo.ca
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=uwaterloo.ca; i=@uwaterloo.ca; q=dns/txt; s=default;
-  t=1723507466; x=1755043466;
+	s=arc-20240116; t=1723507546; c=relaxed/simple;
+	bh=W4PcVZYj403m5F+x4caHbVtQwX7+nLxW5Z5LfqDWrig=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=H4AHOoEXHvDd1pDDZG/d+/1hd8rDls8TcBqd3VEB3Q+B5CvLaPOea79FPJGNzuCtrjBtLNi+0QPZRreJSaKFPbe3p7egWvb52J1FBdXcJt/V2JaJ2hugCuH7S4uvWJmgxb9TsHyTCV31DvpXZgsgftzNV1qFK6K89+tRXHLBYH8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X1taOJ4j; arc=fail smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723507544; x=1755043544;
   h=message-id:date:subject:to:cc:references:from:
    in-reply-to:content-transfer-encoding:mime-version;
-  bh=OiPvRqHcFng+zQdDkxqv27uruCSmoqaRZGPrLXQNJsw=;
-  b=85fU3MZV36wndmDpFUfiHa70iqK9hCK6uxaV1fpjHr7Ns7jvLOwO2MJb
-   tkwY+26PLEIHEW6bVnsla98fYC3pKeRQT0eLHPzfWgIV0FypFntLzOq+z
-   ChMP+M9pjEqc3epcKU5jmsHsuDP7S2VvBDnKY+Gi106jTKgreDTaXogQl
-   Y=;
-X-CSE-ConnectionGUID: Z2B4yre5TP2k20o0uEXGfg==
-X-CSE-MsgGUID: dugHXx8xTUGvP+T47WNtVw==
-X-Talos-CUID: =?us-ascii?q?9a23=3AOn4ttmobF6PIVy0kcFKxw5nmUfJ/WCHM1nqNH3f?=
- =?us-ascii?q?iCjwxT+WIZG+/9qwxxg=3D=3D?=
-X-Talos-MUID: =?us-ascii?q?9a23=3Adxd+QQ4W+63HmaqWhnUhIsIexoxk/quOOFBdgak?=
- =?us-ascii?q?7lNe8dhAsZAi7kAqoF9o=3D?=
-Received: from mail-canadacentralazlp17012026.outbound.protection.outlook.com (HELO YT6PR01CU002.outbound.protection.outlook.com) ([40.93.18.26])
-  by ob1.hc503-62.ca.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 20:04:18 -0400
+  bh=W4PcVZYj403m5F+x4caHbVtQwX7+nLxW5Z5LfqDWrig=;
+  b=X1taOJ4jpDBAD85v/tDXW6bIg4QG8afibUlGQQxQSQFEM32SP5MIHYgc
+   UVVhqat1IxDqbRf97G+LW9xtnWbHlp2zWDfeWQJrILYrqHLDo85VgI4Tl
+   q50o6Xng0834WxKpk3JJPnBqUY0rrE7nduJobQdnOlCM/QBqiKuLAwXYH
+   hUJnxkdUUlQFaHW2vqI94bfg0EkbDo4jbYZdnB3dyuPaJxCpJCxNxvKZn
+   K87/h2kU6h2wNWMGbyA+g526AcgL4aQ8YuKB1SIrlGYxkW+iF+Flqe5iq
+   BcwJmCvuh/qOMkgqDiVw1uGx71wi/FOXK5/tiGhAra/iTa3iatfOZ4QON
+   w==;
+X-CSE-ConnectionGUID: HD4fRFsoTLmSOmuSHKpRfw==
+X-CSE-MsgGUID: 0YyQC8L6R1Cjabm7WXd5DA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32266013"
+X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
+   d="scan'208";a="32266013"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 17:05:37 -0700
+X-CSE-ConnectionGUID: Qjq8il5NTOGQ+/KNH92SmQ==
+X-CSE-MsgGUID: E5q3i+qHQ2KSwLG1tqFQgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,284,1716274800"; 
+   d="scan'208";a="81712153"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 12 Aug 2024 17:05:36 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 12 Aug 2024 17:05:36 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 12 Aug 2024 17:05:36 -0700
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.47) by
+ edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 12 Aug 2024 17:05:35 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cuYPNHub+kdNa2xQlNDhLPDCsb/ByPjTonE/maPr+IFcqskO6pYpuTl/lBSXn7OG9Qw5FFf0dNJFa7MjAk9Jh5xFKSYgHSa2KLcrJj+78E+N75VbeS/jQuHm1SeBgOkuC8y8SA6mZ9/rc/9fPELB/UfgstpgcEV829vCS0WxiHnsxVGecSq1lFv29A1i2BzbinZp2Li71uVQRXsNXvcu8DVKH5lqh6hjbSh1C8lFCQ2LjygPmLDln6nBEYc68k5xdOZ7O53eYdnz1DlTT2gVThtDxzC7Akj82c69H/nQ4gvh4f2PQO0uq10dGKTzzopUmd3jpho1jS0Gz9vEf/k2XA==
+ b=SozrbukWSdDHygEVg5BoOjtob8oVPZlGOVbh6IkFYdMI4ggD1DCSdmYVZ8eySjju0QgTum3RjUMSP2ueC0wRYScn68gPwb/iL/Y7/2unW523p5yCyPBJBzeF7rVK/mzgMv2G5Gfbd+HSq4v1Pb9pDGelvMzTe6gl1cFNytTrvW0M/jp8A5T37r5NVdeCbzcxdfXw1rYkaWxqUFwddOQswAo8fuyX19UBpqmC0wN8euASWBUCQyHqKG7iMR809p83yEYuMGu8gkTCWnQtbGeFcceQbRUUXZ3BEN9LMxASNyRzHKiwSh7KEHwKEfRbd+NlpEcuDvKZC1SHhesQ5M9LuA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p4j8DCNV34X70t0CpsXp5/V9yxYkgSzsSBaIofLuQas=;
- b=FRX817mxcJwdGdB6Xa4j4Kn4gm2710UQho5M7YtWJ8FbIzGfIxvCV31/AT3FmkjMGQspWVLoN6spTI2R24S8LL4bOYG0WT30zEI/wxjDX/UZxfOGeyQxM+7IiFeFW68xyFGc906l1rZwzCz3PwGlHrsUssSzbtKR86R2Qg0PB5NKDlTCwMR0V1Vl2UjEZzpeRkclkU0WnBNXL+RkwUaQq3Qm59eGIcJe2XP6gBkhaQxbbvmvGo3kIo5o0Xb4KmEw/WHTjtVNCylWa+zxbQYvKpgFZh3LGMI1ObfoT7HNudQaSMy4g5tnTe++gTHB4FfrMfZzp0kYTA4WPC9TFxjh5g==
+ bh=t8SojgWaAEzRnNYrV8UpzBVeQkVddEkp2/WZ0O7gsUs=;
+ b=BzrJskv9mQJfr/gbxcf0csWqF+6AToxdR7ntFffISIINEbtRVwWcdWIfVx92e/7Qvs7nKnS4VL20DhoayOIbHibkHbjKJoEMBLOyAcFvoH+LRn8ypWXzTl8A6BNxkfDKVvM4VB59s6t5UwuRt9uyYAJo7H7lskPoum4mIMTpKbtK3uTpgl4k6XrTvlJF/M8UORQwIJ8b+HFxCY77iSZbvoAp90rwx5H1LI1Sgx4UpgcixByATXngxrXOUpaigSZRiZg1TNfjlUc6VcIQzoIqGxdFB4Is9DgVboHndWaB1CpNR5yP8gjNNEms52ARZSSZcTO9drRJImV9asy81LmWuA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=uwaterloo.ca; dmarc=pass action=none header.from=uwaterloo.ca;
- dkim=pass header.d=uwaterloo.ca; arc=none
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=uwaterloo.ca;
-Received: from YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:4b::13) by YT2PR01MB8518.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:b5::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
- 2024 00:04:17 +0000
-Received: from YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::d36e:ef93:93fd:930]) by YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::d36e:ef93:93fd:930%6]) with mapi id 15.20.7849.021; Tue, 13 Aug 2024
- 00:04:17 +0000
-Message-ID: <d53e8aa6-a5eb-41f4-9a4c-70d04a5ca748@uwaterloo.ca>
-Date: Mon, 12 Aug 2024 20:04:13 -0400
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by IA1PR11MB6148.namprd11.prod.outlook.com (2603:10b6:208:3ec::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Tue, 13 Aug
+ 2024 00:05:33 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7828.023; Tue, 13 Aug 2024
+ 00:05:33 +0000
+Message-ID: <6dd1b5ce-2ce2-4d61-beff-a100da213528@intel.com>
+Date: Mon, 12 Aug 2024 17:05:30 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC net-next 0/5] Suspend IRQs during preferred busy poll
-To: Stanislav Fomichev <sdf@fomichev.me>
-Cc: netdev@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
- amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
- Christian Brauner <brauner@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>,
- Jiri Pirko <jiri@resnulli.us>, Johannes Berg <johannes.berg@intel.com>,
- Jonathan Corbet <corbet@lwn.net>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- "open list:FILESYSTEMS (VFS and infrastructure)"
- <linux-fsdevel@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-References: <20240812125717.413108-1-jdamato@fastly.com>
- <ZrpuWMoXHxzPvvhL@mini-arch>
- <2bb121dd-3dcd-4142-ab87-02ccf4afd469@uwaterloo.ca>
- <ZrqU3kYgL4-OI-qj@mini-arch>
-Content-Language: en-CA, de-DE
-From: Martin Karsten <mkarsten@uwaterloo.ca>
-In-Reply-To: <ZrqU3kYgL4-OI-qj@mini-arch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: CH0PR07CA0006.namprd07.prod.outlook.com
- (2603:10b6:610:32::11) To YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:4b::13)
+Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
+ architectures
+To: Shuah Khan <skhan@linuxfoundation.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>, Muhammad Usama Anjum
+	<Usama.Anjum@collabora.com>
+CC: Fenghua Yu <fenghua.yu@intel.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>, <kernel@collabora.com>, LKML
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	=?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>
+References: <20240809071059.265914-1-usama.anjum@collabora.com>
+ <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
+ <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
+ <f7593344-203a-8e73-d53e-574ca511d003@linux.intel.com>
+ <4072bf51-1d37-4595-a2fa-b72f83c8298b@linuxfoundation.org>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <4072bf51-1d37-4595-a2fa-b72f83c8298b@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MW4PR04CA0306.namprd04.prod.outlook.com
+ (2603:10b6:303:82::11) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,228 +122,187 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YQBPR0101MB6572:EE_|YT2PR01MB8518:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17318e65-be45-4362-b021-08dcbb2b7934
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|IA1PR11MB6148:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05bb4a40-3bca-4f2e-7435-08dcbb2ba6aa
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dnVrN3YzRjZncC8yK2FCanNtbkpIZGxEaEs3L0RlR3llN1J0dmxQRDFSZzly?=
- =?utf-8?B?UFFJMEg3RWxXdkh5TDVhZllRaU9PemtEaEFBUTFraDJzeHlvZTV3UEZkUncx?=
- =?utf-8?B?L0psWStxLzhBTVQrQkZLbEZjblRlK1Uxckl1YXA3eFpLUW9uelBIRGkxQVpj?=
- =?utf-8?B?dS9pSFY1NEJuU2IwbS9DSk5RN25sekF5V3YvclZrTEsreWJTRzJ4VzhiZTZ1?=
- =?utf-8?B?cVdYRnlpOGhPOG1mQUtCYTRXY2REMEdvaTdCS1pXWEYzemk5RTZMc0puUjhD?=
- =?utf-8?B?dXhZWHZCSjNsUDZ1TmNUWHkxaW9mY0ZVS2xQcDZtQUhURGNHcFlBbFVmUjQ4?=
- =?utf-8?B?SldxTEtvRlgvbTd2TTFIVWRxWXBqU2N0T2UwcEgrYWRaeVBmQ2hGektQWXRM?=
- =?utf-8?B?M0IzUjFZeC9TeDl5aUZ5U2ZYdXlPcjZSaFlFc05qOWEybFBrSWNrZ0x4dGpV?=
- =?utf-8?B?ZXlnQ1p4a0tGQzlsb1hrTk9SSEN4M1EvYytwSTRwbG4ydER5ckxDUXdqSWhj?=
- =?utf-8?B?QnJkeHJldjhSVno4T0ZjTnBmNm9qb3RXSmR4TlIwTmdISnFLWllPbnpHQTdm?=
- =?utf-8?B?NjdRKzdpdldUS2xPaWFKZHJ6THhxUkh5dXdSVllMZjkwQWMrdDYyZGh3dHBx?=
- =?utf-8?B?TDhpUkk0dERNZUc3RWI1Sy9uZmNnK1k1Y2ZDeHU4TDdKT3UwRTNIeEV0Mi9W?=
- =?utf-8?B?cSsvMkgvenR2cVpYd0xpbU12VUYyVVFFVk55UkZhM0lDRUdFK0c0Z1FRdUtk?=
- =?utf-8?B?UFRBWk45cFhyYStsZjFxSHdVMHFZSmtpOXI3MklzaHIrR3BJZUJNbWNtdHdm?=
- =?utf-8?B?d3UrRm5GQi9RQmk0M2tBRmVjdlZEbGFWN0RSRHZQckJiR212ZnFsZ3BDZGVt?=
- =?utf-8?B?VmMwbWltNzF2a0E3Sk9nbWJOSmYwVUVXMkZjM2xOZUo5M2VGR2lmcFVBckwv?=
- =?utf-8?B?ZWJ1bExDM05RdHhjV0ZaUm5HT0lneVFHZjNnT1Z5VGpvZ2pYckZBa2FZcXlQ?=
- =?utf-8?B?emNPV1I5N0xvcFV4VEtNTGNaVVIwc3NSZnE0dUl0V1d5Qkt2YlE3b2RIdmdC?=
- =?utf-8?B?cVRseXFyWXYvY3duU3FiclhRYUwzd2hHL25LNDJPcWp4TUF2bVRHcCtIeVNt?=
- =?utf-8?B?SDlHUEpraDZlb0lhMnhrbDJIdEhYN2VJWE5zSlJNMWwxRFgxYVAwQUo5V3NG?=
- =?utf-8?B?TVhyY29MWjg3Q2JmVkVVY2ppMXRWZThiYktXQ2NERUNweWEreDgrU0hwa1c5?=
- =?utf-8?B?K1h3UFI5WGlaRm1zdWdXekxSck9KSnd1ZFFQTXFUS3Q4cGNza3RCemtDNEpZ?=
- =?utf-8?B?OFcxY2hxWGdzVkk0c3NZeW15MjZOWkxVMjZKSmZEdmxoM2ExYWkzcFhIVnNz?=
- =?utf-8?B?SjlYU2pWRzF5UHNTbE9na2dTbUdFZjlKQjY1YlNjQitiOUR4dGl0NFF3cXR4?=
- =?utf-8?B?TGpSV3AzdFBGVWMvN2tVZ1FmKzRjUjA1TUhNL1Q5SUtiQVU3TEcyVVo4S0RG?=
- =?utf-8?B?MDJzZ293QncxNE5YNzBMUEp5Rmh1blY1NmpJZzdxRzNMdGwxWnMrRmltbGxR?=
- =?utf-8?B?VVVPQ01mZUtSdTg1YlplcDhhK0N1YzcwejRRRzFnNHoxdnRoa2JCYWsvYmNr?=
- =?utf-8?B?SmpkMUxuKzVPdzNwTlhJQnZhZEtEYk9RSUlyWDBkQ2VZaWhIb3phR2Y3Y3c0?=
- =?utf-8?B?czlTTGNYMWczakJBUFI2Yll2Q20xZ0J2UlVZa2tRZVU3cGxOVlUzVDhXMUtN?=
- =?utf-8?Q?1rUBul77C5A9T0Qn7AGKE2TrnlfevukPnAaxc3i?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?WGFNU0MwZDF4ZEZuMmVRU3BGVm1zbDdFNmlDRHZ1dWM5ckZzVWwxSVdWTVp1?=
+ =?utf-8?B?SUJoNHRoSEhZblJFb2NmWGNsQ2lYRXh3K0tJM2VrMjMvUGdIeWZEOVRZcmJk?=
+ =?utf-8?B?aWlrOEZkNVNTNUxOZGF3ejI3OGJUVXpOUjQxSFZ0TTdWVEV5cFpiVTZYVTRh?=
+ =?utf-8?B?RlVmMnZnYXM0NWNtTGVpanc2Q3FpcnN5c3E3RktkR3JSQlpMME1uU0FoYkU0?=
+ =?utf-8?B?TGdVMGJSYjVLTVNtWHRPUUdnTTY2R2cwU0xrVEM5cTc2OE9mSGV0bXZFSk9m?=
+ =?utf-8?B?WTN6d0J5bWcrU1dQcHJIRDlicHVPR3ZyZEo0OENrTGsvcnlpU0pFVUluWGdt?=
+ =?utf-8?B?RWxNSkFyQ2xKNk1DR1pNTnVMcW1Kd1VPLzdSQnF0d0w5OEY1S2R4OHJyS1M5?=
+ =?utf-8?B?ZmlidGw3VVYwTk42UG1JYlZUYmh6OVdEL1hQV2hRWDhtYS9rUk5nVjR2VkVM?=
+ =?utf-8?B?bzlHd0MrRFNTWEgrNjdSOU1WZDdsZHRkV09jZTI3VVptaldEaG5DSUF4ZWpy?=
+ =?utf-8?B?Qi9NMGZVRytSWnNOY0d5YmNwYmE5SnNvcysxbkZpeW14VjR2djdXVDU5eVQ4?=
+ =?utf-8?B?ekFEN0pnRDFzc2ZIbXZTRnphcDduS28yZ0g1R3N0RERpd1N6Nk14UTNmRlNk?=
+ =?utf-8?B?ZGFOb05SR1d1RmkrUmgzcHM1dE5QMEV3Vm1rQnM1NFdPTTRncEtlaDArN01B?=
+ =?utf-8?B?TXJvSDV2cjRBZmhRbEp0c1FLLy92U0EvUjM1NS9EdGlDNHFJWjFYOFh0d3cz?=
+ =?utf-8?B?VnVNZmhsRHJUYWEwYWdDWUVsVStjVmFnQUQxQ3RWYk1vMHpqWEFxNDM5SmtZ?=
+ =?utf-8?B?ZXJ2Z0VKeFBrU1BRVDNnbzkyYlAxQ0RiVi9zKzZ0VlVZenE3SmErUXlQSGwx?=
+ =?utf-8?B?R1BjWnFNWkNEMk5LWFdHdTJXUlFIQmozb2NMaUNSUkRQUDFUaDEzWlJvU0Z1?=
+ =?utf-8?B?ZVRXUkxQVWZUUm94RWsyRDNzbTBMc1oyMFc5c1hHQ1pOV3V3US94QWpzT05O?=
+ =?utf-8?B?TTB4ZW9OV1dma05jMlgwNllVSmFvMDU2dU1RQTFETXBVRERKSEMxSzFVTkhy?=
+ =?utf-8?B?bHI5aVFKdE9va1JISDBhVVAvbGdQL3JMNEFCRXM0aEJ2TEhnQW1VcGYyVHUy?=
+ =?utf-8?B?aXhjRnlYSSs3a05ueUdLVjhBanF1N0hBVklzNk1sZVRJcU94WnpoYis3YVk3?=
+ =?utf-8?B?YVRxSUVBK2pjdGMxVWhIL2o4V0hENjFWckp2N1lZYUJLYXo4VGlpU2NvS1Fi?=
+ =?utf-8?B?cHl2ak5yQUlCS2ZndHRyUEFnaFo0M3VQSHRhWkxrSFdWb3ZyYklhbkNnTUdV?=
+ =?utf-8?B?UldTQ3h6TjRXY0pNemhXUUdKQnFoM0lNWFpUVGRQc0hGTEpGY1BwOUVQTDB1?=
+ =?utf-8?B?T1NjRGlWakNpWmVNVE1JaWlZUnBjNk8xMlhBQXJYSlpzR1U0NGQ5M0krbkR3?=
+ =?utf-8?B?bENPUWJDaVJscVlnUzFObm5aV2p2Yi9RNnoyL1RTZjZQbHVYWHFXN2x6VkVQ?=
+ =?utf-8?B?enNZL0ZyNUVmeTYzdzhlRk05YnBBYTE2bzFldDVWckdtVDZ6enhsYy9zL3lY?=
+ =?utf-8?B?VEh2ZnpzRkt5N3JJelU4ZDVDWjB3NUxzTHB5em9VdHhTQVB1UVMzYWR0RkxZ?=
+ =?utf-8?B?QVNlOUxCL2dUOXJNQm80eUUvM2tnWXNDMm1TTWtTZW1lUldCRmcrNk5RREhr?=
+ =?utf-8?B?VU1kN1lUeTRkYTZHTEFIOEhLTzZUNG1WTkdBdktCRGJRc2VtVDRxQy9hOFVk?=
+ =?utf-8?Q?ZvZZX3umG4NeIwjr68=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RGtBTjBBMzFXdHNUV3cycGdvc1gzNE1obzd4ZVg3S0Q4K1pPOHNqUytoaWZu?=
- =?utf-8?B?bmdaeTh3N0NoYXlpbmhoeTBSOUxYLzlrVlEyN3dDTHBCenp6eGRyK29za2Ft?=
- =?utf-8?B?cDlJTi9nWStnMzBuTmU0RC9PbU9jRmRtU2tneE1oczYrcHd5d3VCcmxhR0ds?=
- =?utf-8?B?YkZUWlFlOTRzNGdzYklrRHNWZ0FUeUV4V2FqeGdGc0dLNERsSm03NC9rQ3Mr?=
- =?utf-8?B?N1JSS1hnOFB3WDVxaFJKSWRMQWpVelZFaW9HVmphYWxIQThWS1J6ZldaWkds?=
- =?utf-8?B?Z2lkN3R3NVdTWGFjQng1UjAxaUpMam9QdVZZMG0rWWMzeDRwY1laUmxQWUU2?=
- =?utf-8?B?MVl5UzY2eDZuY0VuQ1orTFdCSFo0RmpldjFSZ2o1OUY2dExKVGlYNEM5YWww?=
- =?utf-8?B?T2d6Wjkrc09QeFg3LzI2NGliU1NKTTFjMjg2dzhGei9qbjJwM2gweXluSnY0?=
- =?utf-8?B?dnM0Zmc4bGY4RzMvOEdiemM1TElFM2FTejhRZFlzU2VhcFI5NWxJb3F3QSta?=
- =?utf-8?B?Rmo3Y0ZZZUxXR2NrSGR4a0g4MG93T1h2MGpISWVzWnR2bG9xeiswL1IrR2NZ?=
- =?utf-8?B?R28vUGpTbExUUm1Dak1aNzhzcllxcW1KNy9GVThuMjFveDNEYzVWamFpcU9U?=
- =?utf-8?B?cUZCbkNrc0lXNmZ2SlNCdjhJWDMyaHZEUE9MLzFCc3JXblA1TjZKMll3N3k1?=
- =?utf-8?B?OVRWSUpsaGNIQjR6VGQwcENVQkIxeWZkNk92ZFNaN3lLVjVrdEtybmRyYnIr?=
- =?utf-8?B?V3ZVSEc5dUl4cG1yOERCZEdGcHhONTZPTXZpbCt6K3F3YzY5MVU2bTRkWHI4?=
- =?utf-8?B?aHA1eVROWWRqQ0FPMEppTXJsaWpWVE80TEdxUmM3Z3RwUTlUQmh0MFpmSVRY?=
- =?utf-8?B?UzV6aUYzTHVBQmFZVnZ0NXJWZWZUamgya3M2c1NoYkRJS2lDSkJHUHZZQktq?=
- =?utf-8?B?UlJBZmE3TjdzSzRUeU51Vk1kMS9vUTBpRlRWcTk3YlpzeVJoQlFsVnhtTnRj?=
- =?utf-8?B?RUZMdEx5aERPRkJNZk5wL05pQXp1ZmdEYWwvMjRJcW95eERiRGRVbXozT3lG?=
- =?utf-8?B?cmY5SzhCdEZKeVFnR1p0S1N4OXpqVG9JM2t5d0hBWlB1NTVKNzJ0UktnWXlj?=
- =?utf-8?B?dkMzQTc5R081UFF5MU0rbHJWbUplNHlINzdmYXdMZExLeGVXK1E5Ym44UTFk?=
- =?utf-8?B?OGFXbm40cWRsaU11Wk4zeVoxQms1QllyWkNuSkFGYmVyM21YaTQydFoyU2pr?=
- =?utf-8?B?YWZocG42ZjlyZW1GMHY5YjdTRUVJL3ZPd3JQVi9CY1RrNm1UbTEvM0pHeVpG?=
- =?utf-8?B?NU9PcHpKL3QvU1lBV1hmTWs5SmJoMWRkaVVrU3JaUWhnNXM3S3B6S0gyUkw3?=
- =?utf-8?B?ZFFLWHg2dGp6enF2bVBnanJtbnRhWWxpVWdlU0NJOU9Ia1VRVnV1QVF4VVhB?=
- =?utf-8?B?YUYvaU9rK3NFMEtGR0NaY3NxL1Iyc1FVc2JLUjl1aUdXMjZNNC9jR0hoT2Fr?=
- =?utf-8?B?WEJyZGJsM3NIWW5sZEZhTXlzVU14T25ZaGlOcVUrU3E0bDd5dEJtWDZEeS8y?=
- =?utf-8?B?VFIyU1huT21Tbjk1SFVKZC9zazRqdStFditKZHNxRHY2Ukh4ZHRML1FUZTFS?=
- =?utf-8?B?Rmx4dWxqK0xtazdOcnJmVEo4RzF2MjBPZmpjWVFKQXltZGZ2c0NyMVplM3g1?=
- =?utf-8?B?MDh3QzNUTmMvZnFhWW1ZNmEwSGtHWURqZHRHaE9tTmlzbEhXK1lIaU9sdTcz?=
- =?utf-8?B?SGU3SUxnS1RQM29DWnhBSmJyNkJ1Y1hKTm8vWUttaCt2dlI2dzlaaExTaEZW?=
- =?utf-8?B?N1NlRVZUYXFOUU94R0R4VHR6OTNJOU9wYm5qUThKSGlyOS9jZFlieWUwcm5u?=
- =?utf-8?B?dnRpY05lVWVKNk1qTk5NSVRxeHBlSFJNS2hJV1hRWUpkOEVsUzI2SGYxa1Fv?=
- =?utf-8?B?SExtRnh6ODMwRDcxZDJFamYrdlNINTJaWFV3UVhoMjhrRm9GaWUxRkNLUy80?=
- =?utf-8?B?d0MreHhDNXBzSUlhUVFxUzc0cHdUejNWU0pjcStaQnc4N3VHRjd1Qy9nY1ZE?=
- =?utf-8?B?SEhiL1JzeVlRNjdPK2Zqb1pEQjhqSmxWNkdvUS9EQktRMEpNVXROcW5FTVNa?=
- =?utf-8?Q?Ts2MAp9KErt339U9lZtHQM2Wv?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	W135T5s0mPa3cgXXfKlcBsvnMVyVuPxt8EUYfZmosg7AoVXtQRVGoZ75edJRdeu40EXoEYsrVt3sEf23BhnhsWR32pYs7Qm1NrJeVrcH1jyGRpaapwykB960G8XatqyVVAJ+DuMGvQaupPEiqpcc9eBwEpYfRo46L+v5VYt0thh7q39x4tuKoDRLclcwqMF61wQ4KqjqEfQ9ZJh5o+nb1hqnSIEFTNpB+xcpGQmMa3EVn/C1dqPv/N4UYg7RHCsPjIq8Zm+xIkS3bnKRzuYAJ5wQAQ3wa0tSAiiindpFL09OcUQdOLZk+1RdO52bViqn5Lltan1xX7t4t0rZXvgzhMCF/RxXGfZT2wMF7D+XnA8R6vDdghhWLisieYhLfA/1CwdNb1rvga6faq27NJkedf/ENNR5pZ0ir5aQ7NY7QSROLexpKc3U1Dhio2OaOF87cPJJYV8va+vbarB0l5b2CxjhGIoeI8n7c5hvRaYq1nBx+nOhfEzK5+GpXqPNjkId32QjaD+pt+MXfZUXlbkcLccLC3N2yT1vY7nquoL0X+93BA1Myky1DELqEO2r3Dm1oLK6YNr5b4Ij7P97t6QSlaWxtUi8nGPqcYmtewUz8S0uNPBFUQ22IZ1iJhhsOmhO
-X-OriginatorOrg: uwaterloo.ca
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17318e65-be45-4362-b021-08dcbb2b7934
-X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB6572.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qm15N0Q3T2MyY3VmS0lMU3VhdEl3WEhKUmFrNE5jRlp0cWZBc250SGZyR0dx?=
+ =?utf-8?B?TXA2Wm51S1hMSTFFNG0waGNtaytiVGVrZFhSUkVxQ1pZS25OZE41dTFLdW1L?=
+ =?utf-8?B?bzJrUXZhK2FaMTlnQVVwODdqNDhQYWhIeUlhbWNrNk9ZMHBTS3BKR25rUi82?=
+ =?utf-8?B?NFJxTWRGdnBISE12UTFBcWErM1QxbEZndUFwTWRiRXk5Z1h1L2NwODZQbWF5?=
+ =?utf-8?B?bkt2YXg5UnBRcDBpODZyckdwUnVUYXQrUTJsMmtMcUMzZnFaek05bE9FQnhJ?=
+ =?utf-8?B?b0RlbE9qZ2gyZEMyaGI4dE44OVh6YWllTUJxTmYyTGZMR1BJOHJxaW14eTlF?=
+ =?utf-8?B?dDhLWXIrUkhIL1RycHlKN1FzTnZxeDgrWldNMFhQeTNHZmF4SnR2U1IzN0NC?=
+ =?utf-8?B?Ymk2aFI1NG8rTmlQU0RGYVZtc3NmamlVbENVUVRRTllwM2phYnZyc2UwWEo3?=
+ =?utf-8?B?TzlsZCtXN0NuT3o5WXhCZDY5NU9ob2EyVitaWi9XSkc1Z1JNcVZ4Z1dGUlBr?=
+ =?utf-8?B?Skh6SGJWQ3prMDBnVFplWVhrK3VTR0hPcXcvZnBEV0pSeHZmVlgxNU1jTGJr?=
+ =?utf-8?B?TWd3OXJSUDZRUzIzdjV4bHVIMHVXRFF3eXQydFEvS0tRS0VhQlQwT1FpWUNv?=
+ =?utf-8?B?a0plTVp5RjhjNjJLV0ErZmlGc2xFZDdnemx2dSs5WWpEYnlaTWVjM2tUUG9R?=
+ =?utf-8?B?SkFnOElDeG5yT3hDdjNmcTQ3a3NiQThPUGNlTTVUZXBuYWd4SXlLYkI5UWl4?=
+ =?utf-8?B?dVpjT0tQdFNVeEc0NGowYU9NNVp1QnozSnVTbllVYWtFUjBsNnY0RTlwUlhp?=
+ =?utf-8?B?UzNFdDJJOGdhTTNlOHRNRlR1SmYzODhBRVRtV2toMzQvWmx2amxDOW9sTlI2?=
+ =?utf-8?B?Ylc2eWVhOVBLM2tkNCtUd3JuVkRTSzVDMHlaLzUvN1hRZEhlUWlTK0gvNTJy?=
+ =?utf-8?B?Njk0YWxBdDFLLzB6dk1CR0pMSzhhdkt3ZXN3OCtTRVlKUGlpclJSbTZpU2FU?=
+ =?utf-8?B?cUUxeVFDUUZTRTFJN1dLdUR2MEN1aEhpZEwvdkhZak5BVUF5UHB3UmpzOUxT?=
+ =?utf-8?B?dzBXNGMzZWtCT0R2WSt5anNKUmlCZS9XTm9vbUovYWpHb3lMWDl0bjZZMHhE?=
+ =?utf-8?B?ZkFJTEpZMXFkZW9WK0RRdzdlRVZOQ3ZnMm82STVON3B4cW1EazJaVm1rdWda?=
+ =?utf-8?B?djM1cWtVWmNjRVhrS3czMHF5OWJpazR4L251L0JUMGRoL3BQRXdiOVBJNjJZ?=
+ =?utf-8?B?cnFZcWpSeFVHSkxEeExUSEZYSWFVU2NiNkRHRURLNmVGencrdHdmZjZDOGd0?=
+ =?utf-8?B?YmhOcU1NM0I5a29US2NWZXZHa0lZbWtkLzNidE9NNEZCKzdoZUNEcUZOSDRH?=
+ =?utf-8?B?YWE5dlpTeUs3R1ZqdVJOaGRYa3NRWi8wRDNRaEdya05May9nSXJlUDBnTzlI?=
+ =?utf-8?B?WUN4dm5wSVZnSWg4UGVaWXF0dWRkOHAxRVlBT2RrbVJlMyttUFh2bkErSUY3?=
+ =?utf-8?B?eXd2L1dyUGM3WHAwTHNzdm1nYkl4TEl0TENWSmd6VXJKOFFlUzF6QVdtRDRv?=
+ =?utf-8?B?ZGxNWEFOaTkxSnBsc09XSGxxRS9QYno4S1FUTkVEOG45eHBmMVhmUzNBU2Yr?=
+ =?utf-8?B?dzJZOEIxQ1c4Mk83dlVBMjE3aXZJS2wyTk1uemZrMmRDZUNKdzFHNklDZGR6?=
+ =?utf-8?B?MWpZVkcwMFFKTCtQY0lZRE9paW9vNSt3aUVLZGRoWk5ua2FEbVJEV2JLQnA2?=
+ =?utf-8?B?NUgwQVdSTUIzSDBUMWlVUzJrb1pVRDZnWWJ2WURoYkpXOGZsekFqVis3WGxw?=
+ =?utf-8?B?QmZFRjVycjF5eEx0T1lEdGd2VmtSN21CeEMvYmVteUdzajJJeWVuSDBxKzA0?=
+ =?utf-8?B?cjhYTGVIVkZmVXdwZkU2SFFFTXFlS3o0Yk5rZmV6dWdxZU4rUEluVmZoVE05?=
+ =?utf-8?B?ZmlTTmRLZzBNSnV4elQvc2xVZFVkVkpKMVh0cW1LY20rSUtrd1hMemF6OGU4?=
+ =?utf-8?B?WklpMEVoUmFadE0wcURNd3JSaFF6aG0zMzlXdkVTdVZ6TmYrOUJGOEZoQzh6?=
+ =?utf-8?B?Wnh6YytESDFDSWU5UnM5bTBmd2hIQnVqWWpNS3o5WmU1dXVhbDcrbXk0dXNh?=
+ =?utf-8?B?VldQUWdUQzQ1ZU1BVFk5N0xaSS9HYldLWWcxeFd4MVhPTEIxVDN4cGhrVVNu?=
+ =?utf-8?B?QXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05bb4a40-3bca-4f2e-7435-08dcbb2ba6aa
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 00:04:17.2360
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 00:05:33.4972
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 723a5a87-f39a-4a22-9247-3fc240c01396
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cSEcC6gUh7S8BNP1bP0+Bjmy7KbN/b4DM/N/qGqL0+lhRm+1HIZgaDIokb1JmmbuqGAW/HrAdbmGlWXhPTt8qg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB8518
+X-MS-Exchange-CrossTenant-UserPrincipalName: XUyt3SJRPOm2Fd8ZIxuf+V9x6ukNK5306mfSqStorjWJS/Hqm3e35Xw7/bcnLAAeWld0xD00OBbNHeSKNCrAZjbTQpjXLToFY3DF837gTwM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB6148
+X-OriginatorOrg: intel.com
 
-On 2024-08-12 19:03, Stanislav Fomichev wrote:
-> On 08/12, Martin Karsten wrote:
->> On 2024-08-12 16:19, Stanislav Fomichev wrote:
->>> On 08/12, Joe Damato wrote:
->>>> Greetings:
+Hi Shuah,
+
+On 8/12/24 3:49 PM, Shuah Khan wrote:
+> On 8/9/24 02:45, Ilpo Järvinen wrote:
+>> Adding Maciej.
+>>
+>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
+>>> On 8/9/24 12:23 PM, Ilpo Järvinen wrote:
+>>>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
 >>>>
->>>> Martin Karsten (CC'd) and I have been collaborating on some ideas about
->>>> ways of reducing tail latency when using epoll-based busy poll and we'd
->>>> love to get feedback from the list on the code in this series. This is
->>>> the idea I mentioned at netdev conf, for those who were there. Barring
->>>> any major issues, we hope to submit this officially shortly after RFC.
+>>>>> This test doesn't have support for other architectures. Altough resctrl
+>>>>> is supported on x86 and ARM, but arch_supports_noncont_cat() shows that
+>>>>> only x86 for AMD and Intel are supported by the test.
 >>>>
->>>> The basic idea for suspending IRQs in this manner was described in an
->>>> earlier paper presented at Sigmetrics 2024 [1].
+>>>> One does not follow from the other. arch_supports_noncont_cat() is only
+>>>> small part of the tests so saying "This test" based on a small subset of
+>>>> all tests is bogus. Also, I don't see any reason why ARCH_ARM could not be
+>>>> added and arch_supports_noncont_cat() adapted accordingly.
+>>> I'm not familiar with resctrl and the architectural part of it. Feel
+>>> free to fix it and ignore this patch.
 >>>
->>> Let me explicitly call out the paper. Very nice analysis!
->>
->> Thank you!
->>
->> [snip]
->>
->>>> Here's how it is intended to work:
->>>>     - An administrator sets the existing sysfs parameters for
->>>>       defer_hard_irqs and gro_flush_timeout to enable IRQ deferral.
+>>> If more things are missing than just adjusting
+>>> arch_supports_noncont_cat(), the test should be turned off until proper
+>>> support is added to the test.
+>>>
+>>>>> We get build
+>>>>> errors when built for ARM and ARM64.
 >>>>
->>>>     - An administrator sets the new sysfs parameter irq_suspend_timeout
->>>>       to a larger value than gro-timeout to enable IRQ suspension.
+>>>> As this seems the real reason, please quote any errors when you use them
+>>>> as justification so it can be reviewed if the reasoning is sound or not.
 >>>
->>> Can you expand more on what's the problem with the existing gro_flush_timeout?
->>> Is it defer_hard_irqs_count? Or you want a separate timeout only for the
->>> perfer_busy_poll case(why?)? Because looking at the first two patches,
->>> you essentially replace all usages of gro_flush_timeout with a new variable
->>> and I don't see how it helps.
+>>>    CC       resctrl_tests
+>>> In file included from resctrl.h:24,
+>>>                   from cat_test.c:11:
+>>> In function 'arch_supports_noncont_cat',
+>>>      inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
+>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
+>>>     74 |         __asm__ __volatile__ ("cpuid\n\t"
+>>>         \
+>>>        |         ^~~~~~~
+>>> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
+>>>    301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
+>>>        |                 ^~~~~~~~~~~~~
+>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
+>>>     74 |         __asm__ __volatile__ ("cpuid\n\t"
+>>>         \
+>>>        |         ^~~~~~~
+>>> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
+>>>    303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
+>>>        |                 ^~~~~~~~~~~~~
 >>
->> gro-flush-timeout (in combination with defer-hard-irqs) is the default irq
->> deferral mechanism and as such, always active when configured. Its static
->> periodic softirq processing leads to a situation where:
+>> Okay, so it's specific to lack of CPUID. This seems a kselftest common
+>> level problem to me, since __cpuid_count() is provided in kselftest.h.
 >>
->> - A long gro-flush-timeout causes high latencies when load is sufficiently
->> below capacity, or
->>
->> - a short gro-flush-timeout causes overhead when softirq execution
->> asynchronously competes with application processing at high load.
->>
->> The shortcomings of this are documented (to some extent) by our experiments.
->> See defer20 working well at low load, but having problems at high load,
->> while defer200 having higher latency at low load.
->>
->> irq-suspend-timeout is only active when an application uses
->> prefer-busy-polling and in that case, produces a nice alternating pattern of
->> application processing and networking processing (similar to what we
->> describe in the paper). This then works well with both low and high load.
+>> Shuah (or others), what is the intended mechanism for selftests to know if
+>> it can be used or not since as is, it's always defined?
+> _cpuid_count() gets defined in ksefltest.h if it can't find it.
 > 
-> So you only want it for the prefer-busy-pollingc case, makes sense. I was
-> a bit confused by the difference between defer200 and suspend200,
-> but now I see that defer200 does not enable busypoll.
+> As the comment says both gcc and cland probide __cpuid_count()
 > 
-> I'm assuming that if you enable busypool in defer200 case, the numbers
-> should be similar to suspend200 (ignoring potentially affecting
-> non-busypolling queues due to higher gro_flush_timeout).
-
-defer200 + napi busy poll is essentially what we labelled "busy" and it 
-does not perform as well, since it still suffers interference between 
-application and softirq processing.
-
->>> Maybe expand more on what code paths are we trying to improve? Existing
->>> busy polling code is not super readable, so would be nice to simplify
->>> it a bit in the process (if possible) instead of adding one more tunable.
->>
->> There are essentially three possible loops for network processing:
->>
->> 1) hardirq -> softirq -> napi poll; this is the baseline functionality
->>
->> 2) timer -> softirq -> napi poll; this is deferred irq processing scheme
->> with the shortcomings described above
->>
->> 3) epoll -> busy-poll -> napi poll
->>
->> If a system is configured for 1), not much can be done, as it is difficult
->> to interject anything into this loop without adding state and side effects.
->> This is what we tried for the paper, but it ended up being a hack.
->>
->> If however the system is configured for irq deferral, Loops 2) and 3)
->> "wrestle" with each other for control. Injecting the larger
->> irq-suspend-timeout for 'timer' in Loop 2) essentially tilts this in favour
->> of Loop 3) and creates the nice pattern describe above.
+>    gcc cpuid.h provides __cpuid_count() since v4.4.
+>    Clang/LLVM cpuid.h provides  __cpuid_count() since v3.4.0.
 > 
-> And you hit (2) when the epoll goes to sleep and/or when the userspace
-> isn't fast enough to keep up with the timer, presumably? I wonder
-> if need to use this opportunity and do proper API as Joe hints in the
-> cover letter. Something over netlink to say "I'm gonna busy-poll on
-> this queue / napi_id and with this timeout". And then we can essentially make
-> gro_flush_timeout per queue (and avoid
-> napi_resume_irqs/napi_suspend_irqs). Existing gro_flush_timeout feels
-> too hacky already :-(
-
-If someone would implement the necessary changes to make these 
-parameters per-napi, this would improve things further, but note that 
-the current proposal gives strong performance across a range of 
-workloads, which is otherwise difficult to impossible to achieve.
-
-Note that napi_suspend_irqs/napi_resume_irqs is needed even for the sake 
-of an individual queue or application to make sure that IRQ suspension 
-is enabled/disabled right away when the state of the system changes from 
-busy to idle and back.
-
->> [snip]
 >>
->>>>     - suspendX:
->>>>       - set defer_hard_irqs to 100
->>>>       - set gro_flush_timeout to X,000
->>>>       - set irq_suspend_timeout to 20,000,000
->>>>       - enable busy poll via the existing ioctl (busy_poll_usecs = 0,
->>>>         busy_poll_budget = 64, prefer_busy_poll = true)
->>>
->>> What's the intention of `busy_poll_usecs = 0` here? Presumably we fallback
->>> to busy_poll sysctl value?
+>> I see some Makefiles use compile testing a trivial program to decide whether
+>> they build some x86_64 tests or not. Is that what should be done here too,
+>> test if __cpuid_count() compiles or not (and then build some #ifdeffery
+>> based on the result of that compile testing)?
 >>
->> Before this patch set, ep_poll only calls napi_busy_poll, if busy_poll
->> (sysctl) or busy_poll_usecs is nonzero. However, this might lead to
->> busy-polling even when the application does not actually need or want it.
->> Only one iteration through the busy loop is needed to make the new scheme
->> work. Additional napi busy polling over and above is optional.
 > 
-> Ack, thanks, was trying to understand why not stay with
-> busy_poll_usecs=64 for consistency. But I guess you were just
-> trying to show that patch 4/5 works.
+> These build errors need to be fixed instead of restricting the build> 
+> In some cases when the test can't be supported on an architecture then it is okay
+> to suppress build. This is not a general solution to suppress build warnings
 
-Right, and we would potentially be wasting CPU cycles by adding more 
-busy-looping.
+While there is an effort to support Arm in resctrl [1], this is not currently
+the case and the resctrl selftests as a consequence only support x86 with
+built-in assumptions that a test runs on either AMD or Intel. After the kernel gains support
+for Arm more changes will be needed for the resctrl tests to support another architecture
+so I do think the most appropriate change to address this build failure is to restrict
+resctrl tests to x86.
 
-Thanks,
-Martin
+> 
+> I would recommend against adding suppress build code when it can be fixed.
+
+I expect after resctrl fs obtains support for Arm the resctrl selftests can be
+updated to support it with more fine grained architectural checks than a global
+enable/disable needed at this time.
+
+> 
+> Let's investigate this problem to fix it properly. I don't see any arm and arm64
+> maintainers and developers on this thread. It would be good to investigate to
+> see if this can be fixed.
+
+Reinette
+
+
+[1] https://lore.kernel.org/lkml/20240802172853.22529-1-james.morse@arm.com/
 
