@@ -1,178 +1,143 @@
-Return-Path: <linux-kernel+bounces-284879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE7E95065A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:22:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350D6950663
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924EF285377
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:22:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6778A1C22474
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:25:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DD419B3E4;
-	Tue, 13 Aug 2024 13:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D4719CCF0;
+	Tue, 13 Aug 2024 13:24:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ge1LNCQt"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vT7dA0Vw"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CE419ADBE;
-	Tue, 13 Aug 2024 13:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BCB19AD6E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555361; cv=none; b=QARWn6tP7DH2xuFKeUrc8DNU6bY6pJ/HHg1NJdHfiNm16svK4kZsqwqISMc5dqjHD55wTKytwM/WrLZa30ygrsQItdY5ydAfXvuoiGpJjebVo6ZA9dGYh7xUTE26sypWY0zRiCxVncoqQT/8zuuVMaFQfWU9ww0/2rcWxG0Lwhw=
+	t=1723555489; cv=none; b=Sp3zu3oHbLn0w/vw4nSQNqL4wZSAsh/CWSOM73lhJv7QHEis/A4S4Zwmins3lPJAUC9BrjV9eSVymmTjZjKpgiWo7P6nLHeZ59sTTYTSVtok1V02Fw2FEvskJ7TMx6qaoC5iD7iY1qZSMWsn/A0O20DyH7LueSfu6wl+JxU/ibA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555361; c=relaxed/simple;
-	bh=t37IbrI0SmClR4kXYdS8rSEW9SNNFFJf+Irl+n7NehE=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=OLuOEhZbBpMDFwtElb5bkD1Y7fxn84GAb+L4unAyGlGn7x+YYPJNx+cm2Gmc15fjef8JTvGuvs00zTo1xIOhGzgSL9hXYLq8sP9XXRQYbvGmf9x7BFyPnhvz0Tw3ScUZ47Sd1IhUXagjXyMEBm2EeHFfajacSydswnUfLXYRNnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ge1LNCQt; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-7094468d392so3168001a34.0;
-        Tue, 13 Aug 2024 06:22:39 -0700 (PDT)
+	s=arc-20240116; t=1723555489; c=relaxed/simple;
+	bh=vbJDszVbFZo5V6bkkKmF3OewIJREyf0evahZxMqFmW0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ea/WsTl0KBxj7D11iLP9FXTfaQMti6HO+vSS8+PlQr0TPWh1k3Nj1sq6S4WEgEY8H2xD5PT1U1sPv0NqIyd9Y4FMj0xNefgbSZfoSUq8/ALvmizeYykQ1hPixDdhFQxt9o8rN7cBlH8AvnIeuCnlnAktE93JT/ytXrkQpTjm+rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vT7dA0Vw; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280c55e488so32137045e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:24:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723555359; x=1724160159; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t37IbrI0SmClR4kXYdS8rSEW9SNNFFJf+Irl+n7NehE=;
-        b=Ge1LNCQttmlQpNR514CwW/lTRghp79izuVkK6ErCZsXk9jw8bdgL+KPDjXZd+FU2YJ
-         rFVGRklsS+k5HlPgi6Hspn7x3r3dee8iUK/pTOqgHzGkLjR1vE2iyQN0VAO3RPfEtZ/n
-         HObr6Vd6qpTEJi/zEdZ6OK1dKRvdGkXNMlkkGA0J/nC3wBaFEZScDEK/cXAXel0jLYqV
-         zjx3FxDNUe/eDVXCzghgTn409mfHq7QCWgq+Srg4OnmnlcCMGnntdlGqbJsbI4Ib5SiJ
-         Elu2BZKLyQ+pAVzVu8NFYdA38T+dcJrX1dsWmT27aKqfXacYX8Atd0bAyGtrHQmfu7h8
-         GlZQ==
+        d=linaro.org; s=google; t=1723555487; x=1724160287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CuKn3zCZ70JZQp+93StFA2ZNN01UscP73ZJf7VHOy5k=;
+        b=vT7dA0VwxJ589CnnVfryw7r8F9SlPL3hXCdBa/2R2vtqDdaQ+txWSkC1ced3+Lw4jx
+         RieNeeFGPMn5shhxfxFmbOq86LcJBblAvLW+FjiziE7TK9H9Pxihx0/hjKNPZRQ2Zy6m
+         5uMusY9Gd24QfxiCiTdOuDHuFv6YqhOz67jr0+kza49ltmM/6/8dBAgHqRIFYs8+6pPn
+         FE2RLZj0manfhFG5aOmmbzJM71v980V0DxR3PKxTI+uneGhmWRFCy++XblUKOuMLCRRE
+         19CsAx6zbMz6ghxHPKCzT3GcjJ4PpGi6K08k2X0vTIyRbZL6qzCSIxjphigLseKk0iyp
+         mAng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555359; x=1724160159;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=t37IbrI0SmClR4kXYdS8rSEW9SNNFFJf+Irl+n7NehE=;
-        b=ZuIpZEzJ8eW90tHQM/OJz4sS6qeEahQhWeviUE1lnJYeRKrdpJiEeg+hQkQuFGxhIN
-         TKNtwiqJ37sc/LAgSh5ohMwctMvb6ZehPsCoF85NkQ1IzQoe2jkeEgu4x88/M/TOdM1P
-         6HUUMmtahp96IlCOEoMTaxuOrVva/DBVTU/TwG1+mJK2yNse6NesadIw50x9l3YuvY3O
-         CYxxvJgXu3gjFgW51ROzqzgIiojoNVPuHJOlEF2Eic9cG9wP4lOuHYl6HbwKbROdu85D
-         qIUhvQYpG8GrxbRGudcvINBu0eyHBRNsjnkGvUa5js3sQcHcaB3sNtQN29NmMoDpEOy7
-         F13g==
-X-Forwarded-Encrypted: i=1; AJvYcCXmQ/2nFq8PsNOP3bkoXmwhYEZoQS863rgnh3vdJ1jKyZnRC4WNxKbqJ73D4av1dkJcnvS/Z8tFlhIfOcrYDACAlhzxEtM8eAPtMxYwMxdWa9I0G2qQT8Db+FM133tWK6PZb33I
-X-Gm-Message-State: AOJu0Ywet/TukCSS7zshg8X4MT10axL4lx71ZeffBwI6CmbTcc6GqU4E
-	+oZtI/dtpkyx5s0rrcikksN72QRc0QGK7Wgr1KeffH3YRBIrK2z3
-X-Google-Smtp-Source: AGHT+IH/Qf0k+m2iDASHI3SyiGgcxfMIpa9nxLKjcPsxqqH2z1dqv+idi8LfQ5+2St8Nx0gIy5dVLA==
-X-Received: by 2002:a05:6358:4195:b0:1aa:b9f2:a0c4 with SMTP id e5c5f4694b2df-1b19d2c578bmr442506955d.11.1723555358669;
-        Tue, 13 Aug 2024 06:22:38 -0700 (PDT)
-Received: from localhost (73.84.86.34.bc.googleusercontent.com. [34.86.84.73])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d6e49bsm340232085a.32.2024.08.13.06.22.38
+        d=1e100.net; s=20230601; t=1723555487; x=1724160287;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CuKn3zCZ70JZQp+93StFA2ZNN01UscP73ZJf7VHOy5k=;
+        b=q091fEyHCdPnVyPoZ1sR+z24k9pqCU/upA+5QnqcYcA4EtGO2B5YgcZyp+cJEETQtK
+         fStbnXiW6ngR9F63V8fgo1lBR9ffiwxi0c3rBRCmeqFW6q7Gn+gHEwIBpeGLI/qLYKK8
+         GA7LJ3JDTXJMU9aodgK7lyB5vqOj4gt/KOEYfMZcKuQcm1+uli0+owhQ5KQZD89RAFC0
+         y9IskKvvcv6S0UrQcHewZYUms4TjuhlX48+v458XaEHE0thJ662x9BbYmFWvN8/LVxR8
+         wNyuvRk5p1Mp4F1MiDguRae+iA357tty+6ICBitGgK4YFNN1LRdzyn4mBtPK71pSD5h0
+         Yy/A==
+X-Forwarded-Encrypted: i=1; AJvYcCW7RCo5BBCyruD+Re7DneYYI0bubpY28t0bPdXQI+EbGZekBznyhyKSn/q7bXbOwJjYyoT3W6eSuah9xmm6xUekqvAtzUuKEpIktn5C
+X-Gm-Message-State: AOJu0YxrBurrorMoNhzp8yKjy9g2PiIR63q6PSVivzvPJ6HdSirVv0Io
+	tEGReojZ47PWjzKz//rXvqlKEnkPAkJfLgOQ7Fjz1T3Jimba2jasGW4fDxtlafc=
+X-Google-Smtp-Source: AGHT+IE5Wty2PhcPyeB3adoas1B2d+fRB+FpKrHGaJmkMiJ3JOcxRs+Gg6UES+MUF4AfDgXHAeTrVw==
+X-Received: by 2002:a05:600c:4689:b0:426:5b19:d2b3 with SMTP id 5b1f17b1804b1-429d62f6d77mr23808865e9.14.1723555486482;
+        Tue, 13 Aug 2024 06:24:46 -0700 (PDT)
+Received: from localhost.localdomain ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:22:38 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:22:37 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Jason Wang <jasowang@redhat.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: ayaka <ayaka@soulik.info>, 
- netdev@vger.kernel.org, 
- davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- pabeni@redhat.com, 
- linux-kernel@vger.kernel.org
-Message-ID: <66bb5e1dbf778_6ef1329466@willemb.c.googlers.com.notmuch>
-In-Reply-To: <CACGkMEt0QF0vnyCM5H8LDywG+gnrq_sf7O8+uYr=_Ko8ncUh3g@mail.gmail.com>
-References: <CAF=yD-JVs3h1PUqHaJAOFGXQQz-c36v_tP4vOiHpfeRhKh-UpA@mail.gmail.com>
- <9C79659E-2CB1-4959-B35C-9D397DF6F399@soulik.info>
- <66b62df442a85_3bec1229461@willemb.c.googlers.com.notmuch>
- <CACGkMEsw-B5b-Kkx=wfW=obMuj-Si3GPyr_efSeCoZj+FozWmA@mail.gmail.com>
- <66ba421ee77f4_48f70294e@willemb.c.googlers.com.notmuch>
- <CACGkMEt0QF0vnyCM5H8LDywG+gnrq_sf7O8+uYr=_Ko8ncUh3g@mail.gmail.com>
-Subject: Re: [PATCH] net: tuntap: add ioctl() TUNGETQUEUEINDX to fetch queue
- index
+        Tue, 13 Aug 2024 06:24:46 -0700 (PDT)
+From: James Clark <james.clark@linaro.org>
+To: irogers@google.com,
+	linux-perf-users@vger.kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Ze Gao <zegao2021@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/7] perf stat: Make default perf stat command work on Arm big.LITTLE
+Date: Tue, 13 Aug 2024 14:23:08 +0100
+Message-Id: <20240813132323.98728-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Jason Wang wrote:
-> On Tue, Aug 13, 2024 at 1:11=E2=80=AFAM Willem de Bruijn
-> <willemdebruijn.kernel@gmail.com> wrote:
-> >
-> > Jason Wang wrote:
-> > > On Fri, Aug 9, 2024 at 10:55=E2=80=AFPM Willem de Bruijn
-> > > <willemdebruijn.kernel@gmail.com> wrote:
-> > > >
-> > > > ayaka wrote:
-> > > > >
-> > > > > Sent from my iPad
-> > > >
-> > > > Try to avoid ^^^
-> > > >
-> > >
-> > > [...]
-> > >
-> > > > > 2. Does such a hash operation happen to every packet passing th=
-rough?
-> > > >
-> > > > For packets with a local socket, the computation is cached in the=
+The important patches are 3 and 5, the rest are tidyups and tests.
 
-> > > > socket.
-> > > >
-> > > > For these tunnel packets, see tun_automq_select_queue. Specifical=
-ly,
-> > > > the call to __skb_get_hash_symmetric.
-> > > >
-> > > > I'm actually not entirely sure why tun has this, rather than defe=
-r
-> > > > to netdev_pick_tx, which call skb_tx_hash.
-> > >
-> > > Not sure I get the question, but it needs to use a consistent hash =
-to
-> > > match the flows stored before.
-> >
-> > This is a bit tangential to Randy's original thread, but I would like=
+I don't think there is any interaction with the other open issues
+about the uncore DSU cycles event or JSON/legacy hw event priorities
+because only hw events on core PMUs are used for the default
+stat command. And also just sharing the existing x86 code works so
+no big changes are required.
 
-> > to understand this part a bit better, if you don't mind.
-> =
+For patch 3 the weak arch specific symbol has to continue to be used
+rather than picking the implementation based on 
+perf_pmus__supports_extended_type() like in patch 5. This is because
+that function ends up calling evsel__hw_name() itself which results
+in recursion. But at least one weak arch_* construct has been removed,
+so it's better than nothing.
 
-> Comments are more than welcomed. The code is written more than 10
-> years, it should have something that can be improved.
-> =
 
-> >
-> > Tun automq calls __skb_get_hash_symmetric instead of the
-> > non-symmetrical skb_get_hash of netdev_pick_tx. That makes sense.
-> >
-> > Also, netdev_pick_tx tries other things first, like XPS.
-> =
+James Clark (7):
+  perf stat: Initialize instead of overwriting clock event
+  perf stat: Remove unused default_null_attrs
+  perf evsel: Use the same arch_evsel__hw_name() on arm64 as x86
+  perf evsel: Remove duplicated __evsel__hw_name() code
+  perf evlist: Use hybrid default attrs whenever extended type is
+    supported
+  perf test: Make stat test work on DT devices
+  perf test: Add a test for default perf stat command
 
-> Right, using XPS may conflict with the user expected behaviour (e.g
-> the automatic steering has been documented in the virtio spec, though
-> it's best effort somehow).
-> =
+ tools/perf/arch/arm64/util/Build   |  1 +
+ tools/perf/arch/arm64/util/evsel.c |  7 ++++
+ tools/perf/arch/x86/util/evlist.c  | 65 ------------------------------
+ tools/perf/arch/x86/util/evsel.c   | 17 +-------
+ tools/perf/builtin-stat.c          | 12 ++----
+ tools/perf/tests/shell/stat.sh     | 33 ++++++++++++---
+ tools/perf/util/evlist.c           | 65 ++++++++++++++++++++++++++----
+ tools/perf/util/evlist.h           |  6 +--
+ tools/perf/util/evsel.c            | 19 +++++++++
+ tools/perf/util/evsel.h            |  2 +-
+ 10 files changed, 119 insertions(+), 108 deletions(-)
+ create mode 100644 tools/perf/arch/arm64/util/evsel.c
 
-> >
-> > Why does automq have to be stateful, keeping a table. Rather than
-> > always computing symmetrical_hash % reciprocal_scale(txq, numqueues)
-> > directly, as is does when the flow is not found?
-> >
-> > Just curious, thanks.
-> =
+-- 
+2.34.1
 
-> You are right, I think we can avoid the hash calculation and depend on
-> the fallback in netdev_pick_tx().
-> =
-
-> Have put this in my backlog.
-
-Great. Thanks for taking a look at that Jason.
-
-It may very well be that standard netdev_pick_tx does not conform to
-the virtio spec behavior. But if it does, nice simplification.
-
-If we have to create a variant that takes a bool skip_xps, that's
-totally worth it.
 
