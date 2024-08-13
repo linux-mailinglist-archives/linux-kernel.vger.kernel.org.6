@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-285537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8DF950F2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:33:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3091950F32
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:36:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCCA8283E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8521C21D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC9B1AAE0E;
-	Tue, 13 Aug 2024 21:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1D61A76CC;
+	Tue, 13 Aug 2024 21:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EKWjyw6g"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PaYZ3Ma8"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81AB417B433;
-	Tue, 13 Aug 2024 21:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26C517CC;
+	Tue, 13 Aug 2024 21:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723584782; cv=none; b=KCpcCCYrdtriiGjr/qg0sEMedHQUKax6GNuTNJSFOh8p/cuWqPEDm0lCFyJQKpZoRfCleKHKxW8c6O0+KLqWJCUOCInk+wBuetOEef1FHPQBLHvbRxfzwhDwzpU4cbo1adlsroSznagGzFZksvhm0paywnJNNnnJ615Z444xYmU=
+	t=1723584992; cv=none; b=SUea1LDPysojrnNDnkvwYFNGa+IDwwh20gNmwLl3AyAi9Y+xWFOntwMqnq5Sg55YsjfPJ2eIgB6GO43cTW3sHxD2vXbY/3xFg2Mz9ySwmBH9NWeEJVo3BKpl79aS+/V5wrIJTvgIj5MEROkupHxR5Fq0W09YHLdeOvdNXvj4Aa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723584782; c=relaxed/simple;
-	bh=LL67Qn5AcFOoxnqElfswr52Sz+rm6HzPth1c/jtLGe8=;
+	s=arc-20240116; t=1723584992; c=relaxed/simple;
+	bh=hIThzvLfNjHy8d8yTXSfHuOhmB/F30HL+S4bAmftiP8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwOjtsneZB7hKdNUzJ9xjT5yHtwW2SEQ5ozNPinoOVhQPUb1+MyZ4rI6jPQrIWAywDw93dnt00iaOhAwPDjgumE1IPUHDYMG7m5gjCMkH7P4Iyg0YXttDz1so6xs5rGXPya6lWIucq6zEaEyD7Oe+NYWx4y0RZoomRc1dz+S+2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EKWjyw6g; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=0zHtH7S9/+nzyRBmhfYheqhQqQGzPuG4dr/VRiZTh44=; b=EKWjyw6g2EXx8NfidMDFp0xD5P
-	kSbdCAjzRbUPWPfdP65kOEunr58lkEDR/aPocTZSQ/BNXqobshCwEclrx9KaNuDRz3mvKNw4UAqDj
-	CmEE3ylxB3KfAlpN7RCanITFIm5yLomICJDnIFmZWxqrQn7kwJZtETYteKWs0a4JLgrA=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sdz87-004iNs-Gi; Tue, 13 Aug 2024 23:32:35 +0200
-Date: Tue, 13 Aug 2024 23:32:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tristram.Ha@microchip.com
-Cc: Woojung.Huh@microchip.com, UNGLinuxDriver@microchip.com,
-	devicetree@vger.kernel.org, f.fainelli@gmail.com, olteanv@gmail.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, marex@denx.de, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/4] dt-bindings: net: dsa: microchip: add SGMII
- port support to KSZ9477 switch
-Message-ID: <144ed2fd-f6e4-43a1-99bc-57e6045996da@lunn.ch>
-References: <20240809233840.59953-1-Tristram.Ha@microchip.com>
- <20240809233840.59953-2-Tristram.Ha@microchip.com>
- <eae7d246-49c3-486e-bc62-cdb49d6b1d72@lunn.ch>
- <BYAPR11MB355823A969242508B05D7156EC862@BYAPR11MB3558.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AgkeaNzWlLaSq9uIE798/hfrYAhmbpqMK2EmIHydSRbaEEKokUt05sVkvkn4PqFFStCb/XfZznVK1yUu3vCN2pG7UjkFis01WAeazbj8jHtxUOsywaoAu955CHsV8tj6QDMsFkR1UeLw58EdEBHpqno9eHKT2XOSo+Qx42Q5DZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PaYZ3Ma8; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723584989; x=1755120989;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hIThzvLfNjHy8d8yTXSfHuOhmB/F30HL+S4bAmftiP8=;
+  b=PaYZ3Ma8mdiRsgRhfEYVlfVvyDS/o6sBktw12FqZSUl6kUTgqaarkZZa
+   KgPaxcdPfumb38sjytLnWJZkEskd8HhGW4dL9AYcjJObXH7IS8y2stnGv
+   Q9EUa46XDfuqfNpli00+wOh11DIaaDP8IGTP2aZLxydXLzswWpy1mNCqj
+   J0EkEn6ktrxujqpZFepTzpZaKY8Ek39ZEqgvRAq1QF0Io28JAqe9xWXJf
+   +XGg2cJ/Mgycs/x8gRCqbKoLBCjS+PFhmHbkj0SXdpuqIJbEO7bt0AV2Q
+   rwGtVtzaHWs80c7eOBErm8/DGG3UOMq6Pai8DKvXqSyt2jmMcwdfI/MA3
+   g==;
+X-CSE-ConnectionGUID: GuiTgVFvQWKu9FHqH4Zf1w==
+X-CSE-MsgGUID: XajXncEaQ9eg6a0UMojzIw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="39283638"
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="39283638"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 14:36:29 -0700
+X-CSE-ConnectionGUID: 06ub4qFPRgKEbQz0svQ1Ng==
+X-CSE-MsgGUID: g4LA9E7WReigYMu4VxB2zA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="58497276"
+Received: from unknown (HELO localhost) ([10.79.152.34])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 14:36:29 -0700
+Date: Tue, 13 Aug 2024 14:36:28 -0700
+From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
+To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Question to hv_vtl_real_mode_header in hv_vtl.c
+Message-ID: <20240813213628.GA7852@yjiang5-mobl.amr.corp.intel.com>
+References: <20240813172819.GA6572@yjiang5-mobl.amr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,34 +73,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <BYAPR11MB355823A969242508B05D7156EC862@BYAPR11MB3558.namprd11.prod.outlook.com>
+In-Reply-To: <20240813172819.GA6572@yjiang5-mobl.amr.corp.intel.com>
 
-On Tue, Aug 13, 2024 at 09:14:34PM +0000, Tristram.Ha@microchip.com wrote:
-> > > From: Tristram Ha <tristram.ha@microchip.com>
-> > >
-> > > The SGMII module of KSZ9477 switch can be setup in 3 ways: 0 for direct
-> > > connect, 1 for 1000BaseT SFP, and 2 for 10/100/1000 SFP.
-> > >
-> > > SFP is typically used so the default is 1.  The driver can detect
-> > > 10/100/1000 SFP and change the mode to 2.  For direct connect this mode
-> > > has to be explicitly set to 0 as driver cannot detect that
-> > > configuration.
-> > 
-> > Could you explain this in more detail. Other SGMII blocks don't need
-> > this. Why is this block special?
-> > 
-> > Has this anything to do with in-band signalling?
->  
-> There are 2 ways to program the hardware registers so that the SGMII
-> module can communicate with either 1000Base-T/LX/SX SFP or
-> 10/100/1000Base-T SFP.  When a SFP is plugged in the driver can try to
-> detect which type and if it thinks 10/100/1000Base-T SFP is used it
-> changes the mode to 2 and program appropriately.
+On Tue, Aug 13, 2024 at 10:28:19AM -0700, Yunhong Jiang wrote:
+> Hi, Srinivasan and Dexuan,
+> 	I have a question to the hv_vtl_real_mode_header in
+> arch/x86//hyperv/hv_vtl.c when addressing one patch review comment.
+> 	In hv_vtl_early_init(), the real_mode_header is set to
+> hv_vtl_real_mode_header, but there is no setup to the real_mode_header, since
+> the realmode_init() is marked x86_init_noop in hv_vtl_init_platform.
+> 	How is the real_mode_header(in another word, hv_vtl_real_mode_header)
+> used? Is it to meet the access requirement from do_boot_cpu(), so that
+> real_mode_header->trampoline_start64 will work, although the start_ip is not
+> used?
+> 	If it's really to support the do_boot_cpu() requirement, how does the
+> non-VTL guest meet the access requirement? The hv_vtl_init_platform() is
+> unconditionally called from ms_hyperv_init_platform(), so I assume all hyperv
+> guest will have the realmode_init() set as x86_init_noop.
 
-What should happen here is that phylink will read the SFP EEPROM and
-determine what mode should be used. It will then tell the MAC or PCS
-how to configure itself, 1000BaseX, or SGMII. Look at the
-mac_link_up() callback, parameter interface.
+The patch review mentioned above is
+https://lore.kernel.org/lkml/87a5ho2q6x.ffs@tglx/ . Can we set real_mode_header
+to hv_vtl_real_mode_header in hv_vtl_init_platform(), instead of
+hv_vtl_early_init()? I'm not sure if such move is safe, because
+hv_vtl_early_init() is invoked only for vtl!=0 guest while
+hv_vtl_init_platform() is invoked for all the hyperv guest.
 
-	Andrew
+> 
+> Thank you
+> --jyh
+> 
 
