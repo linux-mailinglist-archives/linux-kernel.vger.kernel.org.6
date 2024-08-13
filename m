@@ -1,157 +1,221 @@
-Return-Path: <linux-kernel+bounces-284926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCE49506F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:57:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73146950707
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:02:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714891C22935
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:57:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932771C22DA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B7019D070;
-	Tue, 13 Aug 2024 13:57:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OT/S8A62"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456B619D079;
+	Tue, 13 Aug 2024 14:02:42 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FE219CCFC
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5540C17A583;
+	Tue, 13 Aug 2024 14:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723557424; cv=none; b=DuooF6EjV7zHw5q1HqHpdRmeT5K93H+8oAPa946Es3pTZndPZZ8eFJPk3qUvCleeQkHOXGUiAGKAgIeX7KsQd27UTiSoUsC19TbHa/TOaKi7TbpLSj9sj05eYP9eVy3iRgasaUJZ9AdAxZNURuNGIiFXcfPT0VX+rzmRv37JUTU=
+	t=1723557761; cv=none; b=lloxwTm1Oh9wzLlFK9v80zO9k8HeQ4lM/pqXFVl6cLU3Y90RvzuJnfUtOtFyhZvbBdJnhXLLygDVG/+PbXs9J/bJm11jWSJMxWMg6yQ1bTTq3FABMpuidFzLmEMPkGqwWaKDX8DXxIR4nQ2w1Jv9Rb4sjEBr2cpAqSikSR8BYyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723557424; c=relaxed/simple;
-	bh=gA+QStwRj/LVatDuKESJdCv++0LFZ88d5P6I6zHRsOE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aSx6lbKN0p88ZdgjMgz4iOxc7KwtbgHiasSVq8ZrJADCNWch+ztTdcHZfTAhyPGtpKTbkBODSpB427LHbLjFPmr93XrKW0urbsWHxWw6uEV8VhERO7XaozWkf10nFypPsj7/FODzr5r8OAKF/2YMg5XNmKQhIrS8D1Ikd1a9GyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OT/S8A62; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e0bfd14aff7so4857940276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723557421; x=1724162221; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zLSLN/JNWAOSXtxRH8miLcEkaLp2UzeNqUb5zeUUf0g=;
-        b=OT/S8A62y9zYsr69otgjbk24Ht0LA8z/uk936ABsW5HIJGf11g8HYOsKjDzrhVjlU2
-         DbWhIJY54Mxt6D0OlbPHLXz2AEmrGHqRHj0Z30znT7onYTyc2Dq/u1qB4XOq72/a29bf
-         Y8gpqNbxILEragu2S0mHpNcu22G2W9jyqDJphO9UQDc5P/puXeWafhhLE0NV7PysPpwS
-         8EVFo6k9dnA0Lss+4sJ4OYwFliWT54VxY0lDKhnedXOe/JMt0cxu8rpvK0JQsIx43Ar6
-         vhfQYX8skbcaK+LPVmBvJB9ztil0jVeO5yx7Kcusqx2ScOyp7jzxxtZAPuCW/PJMaaXx
-         Y/Cw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723557421; x=1724162221;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zLSLN/JNWAOSXtxRH8miLcEkaLp2UzeNqUb5zeUUf0g=;
-        b=oSGddw0ScjSQ1NBDe8WF8WpsYjuBT603oEk7gOqlT7FLL+Ftd9Qm/FXiA1I9btA9nd
-         bIVMZCB4vF2tijBYT0BRUSW22FUakz1q+ChNPuDkXvyK3MJk++qM+jULa08Kx5kAp4Qv
-         uUp1HCRH15kJRHH6WUK1wY4/mYJxvLya0UvWfhWE1g6sqEsXtK0mzis3VuKQpbNH8/v1
-         pYk/LkVzfZFGL3iWJTpIOZl7C11UCogYDRDLtBuP4P1fcCmvcJUu3ar9qrSj4tFtyqYr
-         yFlraRMytwvtN/vjjg09uoARuBLBSFiMGG0niDhDN1uehIlqD+SE8Tgwv6Xc+NqY10Hs
-         whng==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWV3s6PA9PuuI4qeqW/ZnepuGvXlcwWld4sK4iIFeqaYfXfojmoNmwjZcQ9KR9TSgxkmeefFK3kDW8yQeplbIlffBJLtnjOW2V8kv
-X-Gm-Message-State: AOJu0YzsnzXm9gZXOtMf2LI22P3bHM3ENWzPl3DDYDno/L6YATwl4xak
-	7t3CDJWY94tobrp5Ht22qo9xmlwniCZC48OOp/J8zx+QdvODpKlGVR6bXaepPnAPxjMjiWfVjRW
-	JqpUNtkgafDdoqLRivLzhYNGxN7GYH0v3yZ+kCA==
-X-Google-Smtp-Source: AGHT+IGSRXHkL7PvnTNEwvOCFZfzIGVjr9cYpYKwW+c0HMHoaWdUmQ9IzZF7tEGG+VM8etItOggTy4TAzrcmiyP930o=
-X-Received: by 2002:a05:6902:2805:b0:e0b:f45f:65dd with SMTP id
- 3f1490d57ef6-e113d2e303emr3310212276.57.1723557421255; Tue, 13 Aug 2024
- 06:57:01 -0700 (PDT)
+	s=arc-20240116; t=1723557761; c=relaxed/simple;
+	bh=/8BGoUo8Sjz033UAyN1qINsC3lnaQ5EhzkhogdwdH4c=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ddhJ76Zinhlo51aYIPpuiilLPRcwMI7ZCnasXja2vJJT2YSRcLAGCBTRaFRafYSrqYPiJgTnnbrM/AVWdb1WYL3iKBlVzkqtLEN2WE5en6rji7wChfn3G4PfEezNxT5HRLF42Hjm/jxG4am44VuJzuJD7c6aTPB8amDT4mL8oyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WjtJC2GkMz20lTf;
+	Tue, 13 Aug 2024 21:58:03 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50690140134;
+	Tue, 13 Aug 2024 22:02:36 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 13 Aug 2024 22:02:35 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <yisen.zhuang@huawei.com>, <salil.mehta@huawei.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <shaojijie@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <andrew@lunn.ch>,
+	<jdamato@fastly.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH V2 net-next 01/11] net: hibmcge: Add pci table supported in this module
+Date: Tue, 13 Aug 2024 21:56:30 +0800
+Message-ID: <20240813135640.1694993-2-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
+In-Reply-To: <20240813135640.1694993-1-shaojijie@huawei.com>
+References: <20240813135640.1694993-1-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com> <20240619120920.2703605-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240619120920.2703605-4-claudiu.beznea.uj@bp.renesas.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 13 Aug 2024 15:56:24 +0200
-Message-ID: <CAPDyKFq1EX1Spedhkek=50EdwmHY5erNTmvegVGbxfLzTqYjEA@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/3] watchdog: rzg2l_wdt: Power on the PM domain in rzg2l_wdt_restart()
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: wim@linux-watchdog.org, linux@roeck-us.net, rafael@kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, geert+renesas@glider.be, 
-	linux-renesas-soc@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Wed, 19 Jun 2024 at 14:09, Claudiu <claudiu.beznea@tuxon.dev> wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The rzg2l_wdt_restart() is called in atomic context. Calling
-> pm_runtime_{get_sync, resume_and_get}() or any other runtime PM resume
-> APIs is not an option as it may lead to issues as described in commit
-> e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait context'")
-> that removed the pm_runtime_get_sync() and enabled directly the clocks.
->
-> Starting with RZ/G3S the watchdog could be part of its own
-> software-controlled power domain. In case the watchdog is not used the
-> power domain is off and accessing watchdog registers leads to aborts.
->
-> To solve this, the patch powers on the power domain using
-> dev_pm_genpd_resume_restart_dev() API after enabling its clock. This is
-> not sleeping or taking any other locks as the watchdog power domain is not
-> registered with GENPD_FLAG_IRQ_SAFE flags.
+Add pci table supported in this module, and implement pci_driver function
+to initialize this driver.
 
-Would it be a problem to register the corresponding genpd using the
-GENPD_FLAG_IRQ_SAFE?
+hibmcge is a passthrough network device. Its software runs
+on the host side, and the MAC hardware runs on the BMC side
+to reduce the host CPU area. The software interacts with the
+MAC hardware through the PCIe.
 
-Assuming it wouldn't, it looks like we should be able to make the
-watchdog device irq-safe too, by calling pm_runtime_irq_safe() during
-->probe().
+  ┌─────────────────────────┐
+  │ HOST CPU network device │
+  │    ┌──────────────┐     │
+  │    │hibmcge driver│     │
+  │    └─────┬─┬──────┘     │
+  │          │ │            │
+  │HOST  ┌───┴─┴───┐        │
+  │      │ PCIE RC │        │
+  └──────┴───┬─┬───┴────────┘
+             │ │
+            PCIE
+             │ │
+  ┌──────┬───┴─┴───┬────────┐
+  │      │ PCIE EP │        │
+  │BMC   └───┬─┬───┘        │
+  │          │ │            │
+  │ ┌────────┴─┴──────────┐ │
+  │ │        GE           │ │
+  │ │ ┌─────┐    ┌─────┐  │ │
+  │ │ │ MAC │    │ MAC │  │ │
+  └─┴─┼─────┼────┼─────┼──┴─┘
+      │ PHY │    │ PHY │
+      └─────┘    └─────┘
 
-In that case it should be okay to call pm_runtime_get_sync() in atomic
-context, right?
+Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+---
+ .../ethernet/hisilicon/hibmcge/hbg_common.h   | 16 ++++
+ .../net/ethernet/hisilicon/hibmcge/hbg_main.c | 82 +++++++++++++++++++
+ 2 files changed, 98 insertions(+)
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+ create mode 100644 drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
 
-Kind regards
-Uffe
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+new file mode 100644
+index 000000000000..614650e9a71f
+--- /dev/null
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_common.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/* Copyright (c) 2024 Hisilicon Limited. */
++
++#ifndef __HBG_COMMON_H
++#define __HBG_COMMON_H
++
++#include <linux/netdevice.h>
++#include <linux/pci.h>
++
++struct hbg_priv {
++	struct net_device *netdev;
++	struct pci_dev *pdev;
++	u8 __iomem *io_base;
++};
++
++#endif
+diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+new file mode 100644
+index 000000000000..9195c7fb13e3
+--- /dev/null
++++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_main.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright (c) 2024 Hisilicon Limited.
++
++#include <linux/etherdevice.h>
++#include <linux/netdevice.h>
++#include <linux/pci.h>
++#include "hbg_common.h"
++
++static int hbg_pci_init(struct pci_dev *pdev)
++{
++	struct net_device *netdev = pci_get_drvdata(pdev);
++	struct hbg_priv *priv = netdev_priv(netdev);
++	struct device *dev = &pdev->dev;
++	int ret;
++
++	ret = pcim_enable_device(pdev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to enable PCI device\n");
++
++	ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(32));
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to set PCI DMA mask\n");
++
++	ret = pcim_iomap_regions(pdev, BIT(0), dev_driver_string(dev));
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to map PCI bar space\n");
++
++	priv->io_base = pcim_iomap_table(pdev)[0];
++	if (!priv->io_base)
++		return dev_err_probe(dev, -ENOMEM, "failed to get io base\n");
++
++	pci_set_master(pdev);
++	return 0;
++}
++
++static int hbg_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
++{
++	struct device *dev = &pdev->dev;
++	struct net_device *netdev;
++	struct hbg_priv *priv;
++	int ret;
++
++	netdev = devm_alloc_etherdev_mqs(dev, sizeof(struct hbg_priv), 1, 1);
++	if (!netdev)
++		return -ENOMEM;
++
++	pci_set_drvdata(pdev, netdev);
++
++	SET_NETDEV_DEV(netdev, dev);
++
++	priv = netdev_priv(netdev);
++	priv->netdev = netdev;
++	priv->pdev = pdev;
++
++	ret = hbg_pci_init(pdev);
++	if (ret)
++		return ret;
++
++	ret = devm_register_netdev(dev, netdev);
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to register netdev\n");
++
++	return 0;
++}
++
++static const struct pci_device_id hbg_pci_tbl[] = {
++	{PCI_VDEVICE(HUAWEI, 0x3730), 0},
++	{ }
++};
++MODULE_DEVICE_TABLE(pci, hbg_pci_tbl);
++
++static struct pci_driver hbg_driver = {
++	.name		= "hibmcge",
++	.id_table	= hbg_pci_tbl,
++	.probe		= hbg_probe,
++};
++module_pci_driver(hbg_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Huawei Tech. Co., Ltd.");
++MODULE_DESCRIPTION("hibmcge driver");
++MODULE_VERSION("1.0");
+-- 
+2.33.0
 
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->  drivers/watchdog/rzg2l_wdt.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-> index 6e3d7512f38c..bbdbbaa7b82b 100644
-> --- a/drivers/watchdog/rzg2l_wdt.c
-> +++ b/drivers/watchdog/rzg2l_wdt.c
-> @@ -12,6 +12,7 @@
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> +#include <linux/pm_domain.h>
->  #include <linux/pm_runtime.h>
->  #include <linux/reset.h>
->  #include <linux/units.h>
-> @@ -169,6 +170,17 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
->         clk_enable(priv->pclk);
->         clk_enable(priv->osc_clk);
->
-> +       /*
-> +        * The device may be part of a power domain that is currently
-> +        * powered off. We need to power it on before accessing registers.
-> +        * We don't undo the dev_pm_genpd_resume_restart_dev() as the device
-> +        * need to be on for the reboot to happen. Also, as we are in atomic
-> +        * context here, there is no need to increment PM runtime usage counter
-> +        * (to make sure pm_runtime_active() doesn't return wrong code).
-> +        */
-> +       if (!pm_runtime_active(wdev->parent))
-> +               dev_pm_genpd_resume_restart_dev(wdev->parent);
-> +
->         if (priv->devtype == WDT_RZG2L) {
->                 ret = reset_control_deassert(priv->rstc);
->                 if (ret)
-> --
-> 2.39.2
->
 
