@@ -1,115 +1,94 @@
-Return-Path: <linux-kernel+bounces-285422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAAC950D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:41:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1415950D61
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A14CFB28061
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:40:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E503281818
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D396F1A254F;
-	Tue, 13 Aug 2024 19:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC501A3BD7;
+	Tue, 13 Aug 2024 19:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuXpm8zq"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="BBZbZ+Sz"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF8543AB0
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0C619A2AE
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723578052; cv=none; b=WsF7YounHMptJ8H1m7MkIFyDL/krHwv1LtX3WHIEpeaRIK7un1QNBB5LMGH+FITsEn/ikhmBY+XNwyCQFuuP0LG3HGJ0gh9uxK9AXjJOREvfQuS2983zEklyfQkXv7haXoZBixGVUkKF4BP2EmdM7NaZSE5B+ij0E5Z8PSQboHE=
+	t=1723578540; cv=none; b=KRqm3OOCsLDGlamgjO766+4Ch9C3Go4ZjixBHGCz3wSvr1yR2krk+qExJRjlThA03agyFm+EJez75nVxip+hFIy2X31C8dc+m0oQjQFySuKc5EssSnVatNvsh0Rb8hbAx5rhkudUvjof5D0kE4+shfVu2HuvzNToe94IUW6QE9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723578052; c=relaxed/simple;
-	bh=0XCz4z/9nesUOFpikK91xRt3rXIBg+NxQXA82zBy2gU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKAIp/UQGSJtg+cDf/coz8Qz7GAVc5mP3+dk18NnOG8aEohGnC9vhDsWWrlO9lPknWHSgiLfJLC8hFUSmVCWCACFTBoXRtro70rDOnNWSNI1Qjpg3C1jpa1Nuajvihi6TF+1+bruJT0/2JEPnHnaTnUF5sOiL99gkfcZWcno0CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuXpm8zq; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc5296e214so56300725ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:40:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723578050; x=1724182850; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XI0xx1+8K5NJsUQsWsds8lFOqeeVisrv81Aups4+psI=;
-        b=KuXpm8zqBRWLxpKyq7qkRXawGuX8eAJgjG86aUr0u2glzBlzKgey45eZoAMs8ffras
-         5ffkpMMrlOzBTnLT5Q6CObhOciGcJ+AO9UcneQxWEAOYcUPoJJGEzOtMMkEWS9duJs6d
-         7yfwm1+5UpZRBS/J0DxF/AgpJykY+uXK9iHn6yZswAkmI648lFmhZFGPst0SdR6YpXPb
-         avT4iED/GhiAHS5j6fhQWzxBlBKIdmuDoL8hyzTwjx5V+V2hAM6pjBqeMbwklHjFiLDj
-         izQDTBBP2b5BbzejRHX+SYFx/zbsoK3PesRU46apkwfxAS1HrMkG2BEgyFBnTSXS2VUe
-         Y34A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723578050; x=1724182850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XI0xx1+8K5NJsUQsWsds8lFOqeeVisrv81Aups4+psI=;
-        b=RIXyXNhJ5MBeMXGdmOSLx0VgLZ6vjHpPBs4annfWexLke5NY+K4k1Kn05c+dbisXDj
-         HrjIoD9MqilaBqjNI6mpS/f1jRvxqTHm4n+kpqXdIIWgy7DZuOWX2ScQRFIfrG6ZR3bw
-         BeYDKjZXTeLx/9Ic0QsbyBZ9kYAfMfzBdrHD9S8BbCH/fBdyOl5s5dfK94HFu2MsBd59
-         jengARA4cLFQtAy3deef1jfOZ8fA2af7g8Yy/mfUeTpKITEkrV8w6lfu+mmw1Dfi2yTy
-         u2mDX1M6Ht+GS8ZXvmJLK6zPawGubQKzhfoAFEFp/yneastfnYJJee58eyIrFea5XI7S
-         ubHQ==
-X-Gm-Message-State: AOJu0YydB3/RMxrmFPkQPIc23XieGLi8ggAoY5cg7ioLJeiJHymgT+mm
-	buxWaY2Lbym5Z8xogoJtwdObVItK46ZR3Z5nTAzUjB3ClPKk0UwZ066CEQ==
-X-Google-Smtp-Source: AGHT+IGLkyBr+QXIGEvH3BMKPN5Ne7VSGDZikWg+16bqwcK0qMcxQKF1XBoS9EXsp3dFDkxn6pOodw==
-X-Received: by 2002:a17:902:d50e:b0:1fc:5fc9:84bc with SMTP id d9443c01a7336-201d64d1ae8mr5571445ad.62.1723578049957;
-        Tue, 13 Aug 2024 12:40:49 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a949bsm17222265ad.121.2024.08.13.12.40.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:40:49 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 13 Aug 2024 09:40:48 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 1/4] workqueue: Make wq_affn_dfl_set() use
- wq_online_cpumask
-Message-ID: <Zru2wILO6RwB1d-u@slm.duckdns.org>
-References: <20240802211850.1211737-1-tj@kernel.org>
- <20240802211850.1211737-2-tj@kernel.org>
- <CAJhGHyAv_jwMxFoU6Wa2epfCQK_0LsAkBhFwkGX-ZT-9tAdwYg@mail.gmail.com>
+	s=arc-20240116; t=1723578540; c=relaxed/simple;
+	bh=ujAzKhvz2m85q9OKAVeMysx4OHTHQ3MJssBelvEs0NY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SgrbdeewjnzPcSjQrqLtW1UMYDYIgG1hYOe9nH6D3cENW/vEfkyEur4QEwZI6lWBd7g0e6SUO3mvymF52qKzbxuDYAVN2ZoiFZ1S0Qjc1f3e2VmBLZRTocy5WB33Ubfi5mm+OE86CrphHfezniMIX0K4/gnAOMAnaMd/H6LbvCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=BBZbZ+Sz; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1723578071;
+	bh=ujAzKhvz2m85q9OKAVeMysx4OHTHQ3MJssBelvEs0NY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=BBZbZ+SztijdgLY0TVQ4M0iRQlHQ6u/Nwv47FTIhHi+NOoipKuvuKsatk71urBcSe
+	 wlzbeGoJLodwSmPqxRRmsq4vA/S9cf/zhRHMIQer3+HAuxE2We2FnUXCGm9zll7Cwb
+	 rcw5wy29kaG9Va/LST1S0Ckm4qguoFdl2EQWk0e0=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 5B852400CA; Tue, 13 Aug 2024 12:41:11 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 5A5CD400C5;
+	Tue, 13 Aug 2024 12:41:11 -0700 (PDT)
+Date: Tue, 13 Aug 2024 12:41:11 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Waiman Long <longman@redhat.com>
+cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+    Boqun Feng <boqun.feng@gmail.com>, 
+    Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load
+ acquire
+In-Reply-To: <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com>
+Message-ID: <147572ea-c5ae-7992-6015-3181f10a785e@gentwo.org>
+References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org> <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJhGHyAv_jwMxFoU6Wa2epfCQK_0LsAkBhFwkGX-ZT-9tAdwYg@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-Hello,
+On Tue, 13 Aug 2024, Waiman Long wrote:
 
-On Thu, Aug 08, 2024 at 12:23:32PM +0800, Lai Jiangshan wrote:
-> > @@ -6909,18 +6909,16 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
-> >         if (affn == WQ_AFFN_DFL)
-> >                 return -EINVAL;
-> >
-> > -       cpus_read_lock();
-> >         mutex_lock(&wq_pool_mutex);
-> >
-> >         wq_affn_dfl = affn;
-> >
-> >         list_for_each_entry(wq, &workqueues, list) {
-> > -               for_each_online_cpu(cpu)
-> > +               for_each_cpu(cpu, wq_online_cpumask)
-> >                         unbound_wq_update_pwq(wq, cpu);
-> >         }
-> 
-> I think it should be for_each_possible_cpu() for updating the pwqs.
+> Do we need a new ARCH flag? I believe barrier APIs like smp_load_acquire() 
+> will use the full barrier for those arch'es that don't define their own 
+> smp_load_acquire().
 
-Can you send a patch?
+Well this is a load acquire instruction. The fallback of smp_load_aquire 
+is:
 
-Thanks.
+#define __smp_load_acquire(p)                                           \
+({                                                                      \
+         __unqual_scalar_typeof(*p) ___p1 = READ_ONCE(*p);               \
+         compiletime_assert_atomic_type(*p);                             \
+         __smp_mb();                                                     \
+         (typeof(*p))___p1;                                              \
+})
 
--- 
-tejun
+Looks like we have an acquire + barrier here.
+
+> BTW, acquire/release can be considered memory barriers too. Maybe you are 
+> talking about preferring acquire/release barriers over read/write barriers. 
+> Right?
+
+Load acquire is a single instruction load that does not require full 
+barrier semantics for the critical section but ensures that the value is 
+loaded before all following. Regular barriers do not have this singe load 
+that isolates the critical section and sequence all loads around them.
+
 
