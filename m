@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-285217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A1F1950ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 769CB950ABF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F70B24BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:49:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0C58B25BC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5D21A2555;
-	Tue, 13 Aug 2024 16:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C23B1A2555;
+	Tue, 13 Aug 2024 16:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XllG348N"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDbE0rW9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F3454918
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3B41CA9F;
+	Tue, 13 Aug 2024 16:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567729; cv=none; b=di78Kpb4RKIhjtYhinGHH2PTiaFK5fUUOZoD5YNMr7+XIA9Nxfl0ofEhOFV+49HCTgGEdyMn1OmvGBcBs38Q1qwOhkZ7dydZMY8pyAn8xugtfCra+YYRZSZXQEx2dNMdoH6eWb1sY9CKHyOQ1md1z5UOmELuWdC42EF/Zuw2ah8=
+	t=1723567747; cv=none; b=AbEkZufBwDXtRzXuaK/OvmvBWqp5XBtIxAk32E42sA89bqQRwQtwqGAAo0VIPBMkx2zW1Tag2TMZ4KV3oHpE/3ewK2NbkXMqLdakMZpuFZU2dnq/CTbGeTHA8DOaA3d7BCOfUImrvuobjFJrVWlouQBoBrrFESdLLfGKCGbRaSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567729; c=relaxed/simple;
-	bh=AbyZZV8OemEO6yQWBbj90k325MRdx2HrxlcMri6YGQA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbsMm3AyKz+k3cXSicP/63396lNkmC9O+vIMcCCwnI+LNH0s4OS4Wn72TPkoYBqFVEknz7D6M5mwpLCmfM0CUXha5ABzgT8Bdw3lebn90fm9L5AMoarazHaVEXUQzBgBfBsyuNfCGI/1CZZGG5uPcCG64A6X2zoz/ImUTqhuG7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XllG348N; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc587361b6so47150525ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723567728; x=1724172528; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1B3Gf2ESIqFOuwatjJBDFN+ZmaA9cH3bs2DrpeTPuZQ=;
-        b=XllG348NuaTu/X87n6jTIxZq70C5aISv91H7hAhFrpQo8n0k7iHgQY2ikxQGQUn6Dy
-         rUhjJO3Pfx8f1jNV5iMZjbRgCtFf7Vj2MpF5u5fG5mtUao5nkJOiX5IxUqWfKcsoY64G
-         X20ZoLOyC8qnhRVyzbqmPswAZZl9xe/FzffzI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723567728; x=1724172528;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1B3Gf2ESIqFOuwatjJBDFN+ZmaA9cH3bs2DrpeTPuZQ=;
-        b=s/xByRTPgd602I2os6/by5ooP/78mSjFeNCWvqiwe0qfKAzdNIizLQmdQ99GWO5HmS
-         cjSP8NlURC0QS+8WhSQ5RD/09z7DPeedM+i1IYpHDz8elLLptPvuXUxU4Kbbwg0ueMmP
-         TUVf85jzf36h56L+CfleR2eJvG64tp+cW8ggaq9X+AUgnN3m4ikqgG6uWn3h66qUqEWA
-         T/DIlIR1ytPG1ChTJRm3F0+70YQdhKRNlpPPz7Gvd0nKq2Und3ebOs4M6/IkLgl14niQ
-         ELs0ImpJImdfCskXwxijg0hriW8DU7Qgkyx/3jtERfc7uQFuXnpiLnHb+bPNbp6xUeJp
-         Q+SA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYk0NgloEZ2QA38ysEbiG3ameR7Z0R1DrrOH4sc+B7uIHPCeKxRZiE+b4NmT05YS9BknCxtYnpunMqJeTGCFiuagkijQmsGSgGtKBp
-X-Gm-Message-State: AOJu0Yzr4Y9EVV2bB4Mk6ScfWYXhi2NqP/M1fINzXSJ6HBK7DD68yi0/
-	taKae+5TcWZl3BYABorcKTsVcFk2VXl4Z9dSfo3G13fQ2Sgvpn2HdQUgNMvcpg==
-X-Google-Smtp-Source: AGHT+IEj0wPMiW8kmdwXC1HxDPUfbMhHQQB3MyjLItlZspVvqa8S7vnINZrGuQzEF1UyzVq2TpavBA==
-X-Received: by 2002:a17:903:32c2:b0:1fc:6ebf:9092 with SMTP id d9443c01a7336-201d64e85e5mr1012705ad.57.1723567727726;
-        Tue, 13 Aug 2024 09:48:47 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:45ad:979d:1377:77f0])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201cd1a9389sm15752865ad.135.2024.08.13.09.48.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 09:48:47 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:48:46 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
-	David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel@pengutronix.de
-Subject: Re: [PATCH] wifi: mwifiex: keep mwifiex_cfg80211_ops constant
-Message-ID: <ZruOblIWV7_aogyu@google.com>
-References: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
+	s=arc-20240116; t=1723567747; c=relaxed/simple;
+	bh=m6VisToohIEMIQJQIbU8qwBhwVBuJUfVH2KDYx1eBWQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D/817RNhd6CfT7Q+aX514/QGJ8ike1h8ookgDYu7C1xXrB82ofeue1moRofgQsNg2a6E2iiBWXxxhAIyylwRAGn6GR05QxJMwDp5JOu04OgtEWQ+GQ0nVPN9C8EO86Ezn5iaV5+kRzcF27bCIq34pt2Qq7Y+fZIs3atq8Ovhis8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDbE0rW9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7BDC4AF09;
+	Tue, 13 Aug 2024 16:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723567746;
+	bh=m6VisToohIEMIQJQIbU8qwBhwVBuJUfVH2KDYx1eBWQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IDbE0rW91NfgeiyaVSeUG+leSIJD28drSzhjH79F/ohoMaJOx/o3fpMzrt+BoEFOB
+	 G0v8LK+bDG2+Hr+7zYY6x5ih92Ie+CpERw0cuiGIeu3PiMHA1d46z+LUJMBqIVRtu3
+	 3PoEHKElKNBWozlUp0IkA9LRyHvVClVf3EsX3Engg+aTJ6Iv4qz6eq7RPUbboIjTDl
+	 1BwIqjkQ/mEPC50dvdAIRC934MPbCEXIzUlibJUdYWtYj9W6USLekd2qTerSuTpOj2
+	 0/drEIfE2neATCFj24azxArhbSvQ7Tmxf59qwmgs20ItEsqJtkLw7/EGHPdaSCYgUn
+	 k/dE1cv0npviA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1sduhk-003QLJ-AG;
+	Tue, 13 Aug 2024 17:49:04 +0100
+Date: Tue, 13 Aug 2024 17:49:04 +0100
+Message-ID: <86wmkkz7un.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Sunil Goutham <sgoutham@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH net] net: thunder_bgx: Fix netdev structure allocation
+In-Reply-To: <ZruI940YZCETGNGq@gmail.com>
+References: <20240812141322.1742918-1-maz@kernel.org>
+	<ZruI940YZCETGNGq@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: leitao@debian.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, sgoutham@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Aug 09, 2024 at 11:51:48AM +0200, Sascha Hauer wrote:
-> With host_mlme support being added mwifiex_cfg80211_ops is no longer
-> constant, but supplemented with the host_mlme related ops when host_mlme
-> support is enabled. This doesn't work with multiple adapters when only
-> few of then have host_mlme support. Duplicate mwifiex_cfg80211_ops
-> before using it and keep the original constant.
+On Tue, 13 Aug 2024 17:25:27 +0100,
+Breno Leitao <leitao@debian.org> wrote:
 > 
-> While at it mark mwifiex_cfg80211_ops const to prevent people from
-> changing it again during runtime.
+> Hello Marc,
 > 
-> Fixes: 36995892c271c ("wifi: mwifiex: add host mlme for client mode")
-> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
+> On Mon, Aug 12, 2024 at 03:13:22PM +0100, Marc Zyngier wrote:
+> > Commit 94833addfaba ("net: thunderx: Unembed netdev structure") had
+> > a go at dynamically allocating the netdev structures for the thunderx_bgx
+> > driver.  This change results in my ThunderX box catching fire (to be fair,
+> > it is what it does best).
+> 
+> Should I be proud of it? :-)
 
-Acked-by: Brian Norris <briannorris@chromium.org>
+It's always good practice to check that someone still cares about
+terrible HW. Break it, wait for a few releases, and purge it if nobody
+was looking.
+
+Unfortunately, this is one of the few machines I have that has 16kB
+page support, so I can't really turn a blind eye on the
+breakage... ;-)
+
+> 
+> > The issues with this change are that:
+> > 
+> > - bgx_lmac_enable() is called *after* bgx_acpi_register_phy() and
+> >   bgx_init_of_phy(), both expecting netdev to be a valid pointer.
+> > 
+> > - bgx_init_of_phy() populates the MAC addresses for *all* LMACs
+> >   attached to a given BGX instance, and thus needs netdev for each of
+> >   them to have been allocated.
+> > 
+> > There is a few things to be said about how the driver mixes LMAC and
+> > BGX states which leads to this sorry state, but that's beside the point.
+> > 
+> > To address this, go back to a situation where all netdev structures
+> > are allocated before the driver starts relying on them, and move the
+> > freeing of these structures to driver removal. Someone brave enough
+> > can always go and restructure the driver if they want.
+> > 
+> > Fixes: 94833addfaba ("net: thunderx: Unembed netdev structure")
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> 
+> Reviewed-by: Breno Leitao <leitao@debian.org>
+> 
+> Thanks for taming my fiery commit.
+
+No worries.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
