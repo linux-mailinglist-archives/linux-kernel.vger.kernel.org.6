@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-283949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134B494FAF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:16:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A722894FAFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:18:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64821F22A88
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6323C284155
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192486AAD;
-	Tue, 13 Aug 2024 01:16:35 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166F179C8;
+	Tue, 13 Aug 2024 01:17:54 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4CBED8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA16AB641;
+	Tue, 13 Aug 2024 01:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723511794; cv=none; b=M+h+CtyzVZWh8RUt8owBYdMckkOauq5WBv6mG2Q8GVDI1H+9+JRbUzvNhoAngGNNJstka8d1K2qLZMtaXfYNLg9JRDbJx/Fm/JMtKBEbseAPo6cd1A0deCmVOt+cBcdZK++6uDc2hCCZ+pJ8y8ohjVkPd9LTKOiBXHxv6GTqR0o=
+	t=1723511873; cv=none; b=I1dONFtdUx33JdOUP4lVAblNg8VN/VuTyv29n47uyGE8vziW0ZqoHkI0h5zC4GQxenng56jQtuexPHubyaDmiErN9pQT8CBmK9VuOHJv27dNzOZ3SMeaqIWS2EZTr4BBQHwlnUI16Jrm4DfFNcpylZPzIbaiTog8/7zb3Go5VAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723511794; c=relaxed/simple;
-	bh=vg4e1qlxPcyrFtLE/lIzbF4TmkT/NgEeTvSWMaQ00oQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=h4/KMmCNQG4aSvYoWcVLuhNpt6Auwldt72ACJucSleZDnjNKQ8OIkhz26EP2BD9BWGHQi7diEBp+t6jZmr1e7N7TTaATglalXNF8qYH0LqhI4fSKltyEbWGZwfmbQXX3kQagthplOmkfEmYEpDfqAhda/fgYR4Qw37jYyxfM5gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3a9f9f5bso59683785ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 18:16:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723511792; x=1724116592;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SSU5E8vunfXqm7aZcMeBcFQaELDnaHs9YAAg3IhSG0I=;
-        b=P9/lRIAKbAxHKX7nmvsOAZbfsCI4Y9PxlUS+QTjjGV1suXnOZfnBH7w/oPkMg6FJQn
-         oND/0/2ya/sTD1OPoIcKF/8KxtZCtLtJbwt0nUbULicDCQoFt9Uk5S+BAZLLYpGhBj/B
-         bz6pOUu3Qeb2OvxHQrWXlJfyvuzfC8MAYgIemxKVoZZm2Gb6GciIR0zf68mmGzRnlPop
-         jA3K2m7td18M9DdS5iOFDxqLxM5Zft5eaYOz1H1setrIEcHQ5JH/MRFtmgwXBlQ/hbO0
-         D7C5t+3/wqj6uQ56uTY19t6bwuYeZZvYpki7QFM+iGWUmsTPZlebhCsur/Hr93KUUA4K
-         glAA==
-X-Gm-Message-State: AOJu0YxQAkqtaikZuRgy3j6kaRyodpt1o4ZrioF6W/Suw5E1bfcjSSOy
-	aS0fkTzlO3/5WGeSuQ2G++gx012nRVvRFyCPXBJOgHsayCViFRgLk2BOlZ+3CwjenckG9irEAnv
-	In83tnasaJyC3DM8GG8TAOJ3N3TXC4Aq4QpToB4hT6llyrtBs3yElQhA=
-X-Google-Smtp-Source: AGHT+IHqGLVBfFRluyoSwHwJO7hkb+QV8OvpNPKCiCNXzSXnHxaWsWVPbM3UmmByqCIOXDUu6I72S8c2mmcJ/sitquuVJsLsJnne
+	s=arc-20240116; t=1723511873; c=relaxed/simple;
+	bh=+Bl/QFyvHPkQk4wR6IGsctn9HArd4F291XCIrwwb21E=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m7rrWwW5NQmsmuTyRQwN52gOd0ySiFUPqvlWOu4mxKip3laIASxzGweKRAD3Lebgy7rfmlGCdNLhgfT3JWCU0Zl2zxMlC1TvSN4qwIklYBq72jNe1tv/BByzhyNuEzDJGkZ0F70HenVZmRkMjDbelnC+GWekSB5ZQR8rqAcUBHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4WjYKl475dz20lTQ;
+	Tue, 13 Aug 2024 09:13:15 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 068BF1A016C;
+	Tue, 13 Aug 2024 09:17:48 +0800 (CST)
+Received: from localhost.huawei.com (10.50.165.33) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 13 Aug 2024 09:17:47 +0800
+From: Yihang Li <liyihang9@huawei.com>
+To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<bvanassche@acm.org>, <liyihang9@huawei.com>, <linuxarm@huawei.com>,
+	<prime.zeng@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v3] scsi: sd: retry command SYNC CACHE if format in progress
+Date: Tue, 13 Aug 2024 09:17:47 +0800
+Message-ID: <20240813011747.3643577-1-liyihang9@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ee:b0:396:ec3b:df69 with SMTP id
- e9e14a558f8ab-39c478cc985mr1213365ab.3.1723511792236; Mon, 12 Aug 2024
- 18:16:32 -0700 (PDT)
-Date: Mon, 12 Aug 2024 18:16:32 -0700
-In-Reply-To: <000000000000fabef5061f429db7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002488c5061f865c65@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
-From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+If formatting a suspended disk (such as formatting with different DIF
+type), the disk will be resuming first, and then the format command will
+submit to the disk through SG_IO ioctl.
 
-***
+When the disk is processing the format command, the system does not submit
+other commands to the disk. Therefore, the system attempts to suspend the
+disk again and sends the SYNC CACHE command. However, the SYNC CACHE
+command will fail because the disk is in the formatting process, which
+will cause the runtime_status of the disk to error and it is difficult
+for user to recover it. Error info like:
 
-Subject: Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
-Author: aha310510@gmail.com
+[  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
+[  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
+[  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
+[  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
 
-#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+To solve the issue, retry the command until format command is finished.
 
+Signed-off-by: Yihang Li <liyihang9@huawei.com>
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
 ---
-net/smc/smc.h      | 19 ++++++++++---------
-net/smc/smc_inet.c | 24 +++++++++++++++---------
-2 files changed, 25 insertions(+), 18 deletions(-)
+ drivers/scsi/sd.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/net/smc/smc.h b/net/smc/smc.h
-index 34b781e463c4..f4d9338b5ed5 100644
---- a/net/smc/smc.h
-+++ b/net/smc/smc.h
-@@ -284,15 +284,6 @@ struct smc_connection {
-
-struct smc_sock {                /* smc sock container */
-   struct sock        sk;
--    struct socket        *clcsock;    /* internal tcp socket */
--    void            (*clcsk_state_change)(struct sock *sk);
--                        /* original stat_change fct. */
--    void            (*clcsk_data_ready)(struct sock *sk);
--                        /* original data_ready fct. */
--    void            (*clcsk_write_space)(struct sock *sk);
--                        /* original write_space fct. */
--    void            (*clcsk_error_report)(struct sock *sk);
--                        /* original error_report fct. */
-   struct smc_connection    conn;        /* smc connection */
-   struct smc_sock        *listen_smc;    /* listen parent */
-   struct work_struct    connect_work;    /* handle non-blocking connect*/
-@@ -325,6 +316,16 @@ struct smc_sock {                /* smc sock container */
-                       /* protects clcsock of a listen
-                        * socket
-                        * */
-+    struct socket        *clcsock;    /* internal tcp socket */
-+    void            (*clcsk_state_change)(struct sock *sk);
-+                        /* original stat_change fct. */
-+    void            (*clcsk_data_ready)(struct sock *sk);
-+                        /* original data_ready fct. */
-+    void            (*clcsk_write_space)(struct sock *sk);
-+                        /* original write_space fct. */
-+    void            (*clcsk_error_report)(struct sock *sk);
-+                        /* original error_report fct. */
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index adeaa8ab9951..5cd88a8eea73 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -1823,6 +1823,11 @@ static int sd_sync_cache(struct scsi_disk *sdkp)
+ 			    (sshdr.asc == 0x74 && sshdr.ascq == 0x71))	/* drive is password locked */
+ 				/* this is no error here */
+ 				return 0;
 +
-};
-
-#define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-index bece346dd8e9..3c54faef6042 100644
---- a/net/smc/smc_inet.c
-+++ b/net/smc/smc_inet.c
-@@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
-};
-
-#if IS_ENABLED(CONFIG_IPV6)
-+struct smc6_sock {
-+    struct smc_sock smc;
-+    struct ipv6_pinfo np;
-+};
++			/* retry if format in progress */
++			if (sshdr.asc == 0x4 && sshdr.ascq == 0x4)
++				return -EBUSY;
 +
-static struct proto smc_inet6_prot = {
--    .name        = "INET6_SMC",
--    .owner        = THIS_MODULE,
--    .init        = smc_inet_init_sock,
--    .hash        = smc_hash_sk,
--    .unhash        = smc_unhash_sk,
--    .release_cb    = smc_release_cb,
--    .obj_size    = sizeof(struct smc_sock),
--    .h.smc_hash    = &smc_v6_hashinfo,
--    .slab_flags    = SLAB_TYPESAFE_BY_RCU,
-+    .name               = "INET6_SMC",
-+    .owner               = THIS_MODULE,
-+    .init               = smc_inet_init_sock,
-+    .hash               = smc_hash_sk,
-+    .unhash               = smc_unhash_sk,
-+    .release_cb           = smc_release_cb,
-+    .obj_size           = sizeof(struct smc6_sock),
-+    .h.smc_hash           = &smc_v6_hashinfo,
-+    .slab_flags           = SLAB_TYPESAFE_BY_RCU,
-+    .ipv6_pinfo_offset = offsetof(struct smc6_sock, np),
-};
+ 			/*
+ 			 * This drive doesn't support sync and there's not much
+ 			 * we can do because this is called during shutdown
+-- 
+2.33.0
 
-static const struct proto_ops smc_inet6_stream_ops = {
---
 
