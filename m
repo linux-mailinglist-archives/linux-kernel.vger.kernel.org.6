@@ -1,140 +1,79 @@
-Return-Path: <linux-kernel+bounces-283997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E60794FBB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:15:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8AA094FBB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB8FAB22274
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:15:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F63BB2201A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD3E14A82;
-	Tue, 13 Aug 2024 02:14:50 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4580ED531;
-	Tue, 13 Aug 2024 02:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1289114A84;
+	Tue, 13 Aug 2024 02:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="FKumcd9P"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D2814A82;
+	Tue, 13 Aug 2024 02:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723515289; cv=none; b=UTqFHQ7D8yK4GM14CoU1x84RMUq2zvZDMh4DQ1/tSqqAEfs4m68SX3vC6ScpycFXblPsinlzaKDaj2ON8FvSBSNTlCCcP28DWrtzEC+C2DEytSWBkarfsW/Cm1nZAXe19wEhKDy4pdy+UZu4mv01mR6hDFjil5qkMDsl3DnT3UE=
+	t=1723515329; cv=none; b=dY9cHYPyIPiuR+eaSZyUT8R0uy0JveLnpelugzJUpuwZdns7xxtms3pGRUgm0tVKKmdraYbH5dvva5yYdT/6R50Jg4ThgC4F3EQyhxLK/3ltfY7924MLm0SuE2XyEvuU9sZlD7zMmILfGjX6FRR0QLsvrBlLHKShZupAhMXWp2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723515289; c=relaxed/simple;
-	bh=vvhvWKIh2t4mtzuVwGeHfsr+W2bjpTI1kncVkcWG15g=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OwfhQ4boemyuW//CA1MQ1JYC2/zo2zSu9N+khH7Ya8WQJKdmJRSVv7qEVyHt9373XwWbYR/5BLrYXgAxfP86GuyMmeLDUUKaHWLIb0b9eiRuKv1JQ5zR699/qv1zJ4irkH9F5nb4cSRDzcbF6kAANm/91UZmyClPX4OuiLrdMf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjZhM6kHwz4f3kvY;
-	Tue, 13 Aug 2024 10:14:27 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 91AA81A058E;
-	Tue, 13 Aug 2024 10:14:42 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4WQwbpmVecoBg--.63080S3;
-	Tue, 13 Aug 2024 10:14:42 +0800 (CST)
-Subject: Re: [PATCH v2 1/6] iomap: correct the range of a partial dirty clear
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
- david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-2-yi.zhang@huaweicloud.com>
- <20240812163339.GD6043@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <d56e3183-a27e-fbbb-4203-28e8e10127cb@huaweicloud.com>
-Date: Tue, 13 Aug 2024 10:14:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723515329; c=relaxed/simple;
+	bh=Pf5ZElkQmNA2m6aY8AbUjVYVSC9zVbF068LhSQLoXr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0PiuWwvwaurjIvowVpgxjtDmtRXHR5DsVSOJ/lFWeBNi+I1XlPVCYxluA3b8JjzMW3KnbmwmpqNnzJrqpq70NRz5DLt8tbvp0K7CpklBBV8lMfGZdznVb9cIdnU3bkT1IowKb84eWXqqZSfePg8w1vLBiVd0Hwcn8pFy/6TwNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=FKumcd9P; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=oWH5Kdz5Je7Il8az5t2Br+k/4wua5bwNMFZMwTB36X4=;
+	b=FKumcd9PEMy5CjqLJzuzMacub1nNOhjTrEekrHs0N3bGfDTBlu8+tgFpmENbd8
+	rIEBmWAzC7JAuGOHfCnyoaUmYeTxr5ooMCKWKgKlgixj9B7qT+XswpEP6QSVWRwU
+	gZUKxRraVzzmChMxdXBhSgy5QSQbwsXBQYQNOhAr52XQw=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp3 (Coremail) with SMTP id M88vCgD3_w2Rwbpmk5UXAg--.8638S3;
+	Tue, 13 Aug 2024 10:14:43 +0800 (CST)
+Date: Tue, 13 Aug 2024 10:14:41 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: krzk+dt@kernel.org, shawnguo@kernel.org, festevam@gmail.com,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] arm64: dts: imx8mm-emtop-baseboard: Add Ethernet
+ Support
+Message-ID: <ZrrBkaNZz9xFQK4G@dragon>
+References: <20240725122522.5030-1-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240812163339.GD6043@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAHL4WQwbpmVecoBg--.63080S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ury8Jr13Kw1UWrW5Xw1UWrg_yoW8ur1rpr
-	s3KF4UKrWDXry29r1xXFyrXFn5tanrWF48JrW7WryrWan0qr1fKr109ay3uF92gr4xAF10
-	vF1agrWxCrWqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725122522.5030-1-tarang.raval@siliconsignals.io>
+X-CM-TRANSID:M88vCgD3_w2Rwbpmk5UXAg--.8638S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUxCJmUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRs6ZWa6WIL-LAAAsY
 
-On 2024/8/13 0:33, Darrick J. Wong wrote:
-> On Mon, Aug 12, 2024 at 08:11:54PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> The block range calculation in ifs_clear_range_dirty() is incorrect when
->> partial clear a range in a folio. We can't clear the dirty bit of the
->> first block or the last block if the start or end offset is blocksize
->> unaligned, this has not yet caused any issue since we always clear a
->> whole folio in iomap_writepage_map()->iomap_clear_range_dirty(). Fix
->> this by round up the first block and round down the last block and
->> correct the calculation of nr_blks.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/iomap/buffered-io.c | 9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index f420c53d86ac..4da453394aaf 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
->> @@ -138,11 +138,14 @@ static void ifs_clear_range_dirty(struct folio *folio,
->>  {
->>  	struct inode *inode = folio->mapping->host;
->>  	unsigned int blks_per_folio = i_blocks_per_folio(inode, folio);
->> -	unsigned int first_blk = (off >> inode->i_blkbits);
->> -	unsigned int last_blk = (off + len - 1) >> inode->i_blkbits;
->> -	unsigned int nr_blks = last_blk - first_blk + 1;
->> +	unsigned int first_blk = DIV_ROUND_UP(off, i_blocksize(inode));
-> 
-> Is there a round up macro that doesn't involve integer division?
-> 
+On Thu, Jul 25, 2024 at 05:55:22PM +0530, Tarang Raval wrote:
+> Add ethernet support for emtop imx8mm basboard
 
-Sorry, I don't find a common macro now, if we want to avoid integer division,
-how about open code here?
+s/basboard/baseboard
 
-	first_blk = round_up(off, i_blocksize(inode)) >> inode->i_blkbits;
+Fixed it up and applied the patch, thanks!
 
-Thanks,
-Yi.
+Shawn
 
 > 
->> +	unsigned int last_blk = (off + len) >> inode->i_blkbits;
->> +	unsigned int nr_blks = last_blk - first_blk;
->>  	unsigned long flags;
->>  
->> +	if (!nr_blks)
->> +		return;
->> +
->>  	spin_lock_irqsave(&ifs->state_lock, flags);
->>  	bitmap_clear(ifs->state, first_blk + blks_per_folio, nr_blks);
->>  	spin_unlock_irqrestore(&ifs->state_lock, flags);
->> -- 
->> 2.39.2
->>
->>
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
 
 
