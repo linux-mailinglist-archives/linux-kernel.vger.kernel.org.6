@@ -1,98 +1,137 @@
-Return-Path: <linux-kernel+bounces-285446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CB8950D93
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:06:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF791950D95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:07:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 769A1B284CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:06:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F5F281C4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CAD1A4F39;
-	Tue, 13 Aug 2024 20:06:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180EF1A4F25;
+	Tue, 13 Aug 2024 20:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="am7s8RDE"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="rQ4vJqTc"
+Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA271A00F2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579573; cv=pass; b=P06mS9J2q9FveTYEfhsx5NicPWI/UAuZZxILAWpnBHe2ac5GAj044XfTUFVTYH7225Qv8u2/ZCujqBeTU+VE21lygJuWcoz4X7ur07norbWS1MuLZIqTll9nNvsq6ifyUWD1TajObll/WdExbjXB9jZCGJZ968C33xHLgjSFFxQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579573; c=relaxed/simple;
-	bh=1aNhFWk7kUadevvEHfpVPlJcGU717W4X8c3cStB0VFM=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=hUOWH/lleqfbng6XsZD3REiBNrdDU6QyrkHXZOlRDUXVZYxAbvsLk0XTdyV+ZAyBmNeVIW+ztNi2RDxrfVkCtyy6RnpPlGZ9xHlvC060h9z5KTrrUaThvnQnAtMpN0IW/v/FtncwrZ1y1POz2nF5AjDtmACQ32tNS7irZ4sRHtg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=am7s8RDE; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Delivered-To: vignesh.raman@collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1723579567; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ONA+Dn/+VKgTnBa2REUHtNDBSRiJp/n5ZA2OUyvELanaiSdXYjUsm7WJPbnm5n2xNbr/ev9BaETrvr5xd5w8mL6WTi4kIS7+jNdRXMOLaHKBA1Fv0nu0C8GxXiQ0U4tqNnbVfeM12Io6ILYKjJaIteLYzfXgEUIJfNe+rV0HBe0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723579567; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=4kgDpvw/qRDvAuTJMC6kdFG5fzn7p6L34o5jQat7XV0=; 
-	b=mQbA50wIo226KWk/ovdaZ/IT122d5pDo8EnrcJ3eSGwaKsaFZltxD1EMXilZWDOzp7rtERBDTV18q9Kdmlf2mDZNsOJuLAFiNEFWvROwIHqzXsKbuE4gweqql/mSekrT2QyeGzgJRlu9k2dXl1FnbtrvnizuksI0g6TJ5XyPhJI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
-	dmarc=pass header.from=<helen.koike@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723579567;
-	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=4kgDpvw/qRDvAuTJMC6kdFG5fzn7p6L34o5jQat7XV0=;
-	b=am7s8RDE0ij43aAYMZsBpF6mFSYV/BJBBSxFR535LMdeGLI86cKT2NwomYru0Ve7
-	V5B59hPlzvhaEQqbvCxhhA5YuKb9/h+AJyh3MBVCOFxWbcm8j0y80qA1CdoAg7Wn30s
-	zEyulYl9TySqFrP+kBht0665Uvx2BrYMoQ8QNG44=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1723579566707428.10798840074915; Tue, 13 Aug 2024 13:06:06 -0700 (PDT)
-Date: Tue, 13 Aug 2024 17:06:06 -0300
-From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
-To: "Daniel Stone" <daniel@fooishbar.org>
-Cc: "Vignesh Raman" <vignesh.raman@collabora.com>,
-	"dri-devel" <dri-devel@lists.freedesktop.org>,
-	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
-	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
-	"guilherme.gallo" <guilherme.gallo@collabora.com>,
-	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
-	"deborah.brouwer" <deborah.brouwer@collabora.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <1914d590a61.110918b2f913118.3115650497780570443@collabora.com>
-In-Reply-To: <CAPj87rNO4ckvgggn=FE4odpAsGDb95XZ7py0GrguJqB0Y0TN8g@mail.gmail.com>
-References: <20240807082020.429434-1-vignesh.raman@collabora.com> <CAPj87rNO4ckvgggn=FE4odpAsGDb95XZ7py0GrguJqB0Y0TN8g@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/ci: uprev mesa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6FF44C61;
+	Tue, 13 Aug 2024 20:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723579654; cv=none; b=TLtAKtQ2xOZYQn0T3Lk/qRNF1bSYzE64zwiLyxygJNy1cdAOP2rItMl6QGe8bp3fe14epMx45VKxF1uRs+L+L53THESyevTznIFG3ncr5ZuFdLMHbPT+/tSiCGjYC4u7hsK37DppkOmTX291eYiq9Pp8yoa/oL9eySlQgSoWbE4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723579654; c=relaxed/simple;
+	bh=/SXSt9VbXqIM8kyDndi2gEtfqFn1BbcY/BP9EV1bxpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GipAYh2bhYnekFHEELvanSiJ/jcO6F6DckGrB8zGyFyJfRWXDac0Fbr9x4YD5+GWNYWoBj9de6RAU7zFj7u7/HzFd9j2mPGPlErCuNEVRiPhVEgV17nlZC1dzrW2bEJcf9vZsO4H1M+8iPXt1uJuxNDdVpPWjP/N9Yawow4a+ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=rQ4vJqTc; arc=none smtp.client-ip=212.227.17.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1723579619; x=1724184419; i=christian@heusel.eu;
+	bh=/SXSt9VbXqIM8kyDndi2gEtfqFn1BbcY/BP9EV1bxpU=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rQ4vJqTcdQI7gVYBjtZbXd3cl+3uqpHIc5oGThgJ3sCumM0qYdMV+bA1bci+Vdp1
+	 vcHvCKWVQyKfJDnwO7siRvM7l5hUPXQgtq9Z9nFaoai/rRwwgOTXFww/Q0o3yBC6Y
+	 9BOTskbkAxiEw8b4+j7xNSnthZ6O/MRwjIeDzLe2g0uGtItuSZRRUVH74A/kieo2S
+	 dLmZ8eNQKqicEtA4EY4ZrBAwKLp/KeGab2dSae8LXiyZol/VZE01euqL/OrB44uP+
+	 B+k9r8pJ0S6KPxRKIxUz7vuSNIzmVfNmEECJvTmNLbl3Cu6NdVdj6wiD0YRUiA0ze
+	 /M662N69GXjoNz57BQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([80.140.201.142]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M89TB-1sYj0D3epn-007lih; Tue, 13 Aug 2024 22:06:58 +0200
+Date: Tue, 13 Aug 2024 22:06:57 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Jose Fernandez <jose.fernandez@linux.dev>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Nathan Chancellor <nathan@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V3] kbuild: control extra pacman packages with
+ PACMAN_EXTRAPACKAGES
+Message-ID: <129eeb10-5fe2-4a7f-8edb-9d02e4330f59@heusel.eu>
+References: <20240813011619.13857-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2lwwpyglkpsbvwfq"
+Content-Disposition: inline
+In-Reply-To: <20240813011619.13857-1-jose.fernandez@linux.dev>
+X-Provags-ID: V03:K1:fsnF8B18ToL5IL4m3TjVOTMV+301kn0IcyFRMVf2+gqeNDg01ah
+ 5fjLAMNdXNoy3ezZrfX4iIIoJHTOpyAyL26GUlRYMJ6KAh/WfYaM3sRsPztC06RuZidgKGD
+ y/44qg/FLTPITWP6pBs+6K9O1KU4wmPl27u2JsrhSOGAtbwfiZGZW2oxfVGbnuvT3a5bQCA
+ MIPwq8+wWxvkWjB7/hWXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YSucZGpK7n8=;aHMKjeI1G14dL3+egY4rqf7jBkE
+ xDgmavzOyr4ozse5w5PVDKqOjOm24WELBNcFpGXV4Jh/2O+0apQ8YnuwT7RufZ5UMxXgCECC/
+ u09TviE48ZjJ7gxNB7R6BZVX6bBQ5rgu90b+Qi6Z83rIhLP12+w1o62FoNjbyqEr0e2ZmDyrJ
+ Rpx03bnvk9MMsLhTKyg1/tRRzI/Q42uck7XVQ5671+HUOurz0gRJXwyzT4ig4tkWA1xvtxLJI
+ YwoeI9LWgAohlwAynIp6glJD/PMuOj+TnswDhOnH4Src2kOMI+ALiD4GDwddFjglaF2DHbLOj
+ DeMI2h2s36N6zO3C7IZZ4Wwjt0JDhx1Y4XoU3S+EwkPGRF5444K5KkGgCRTdCk7xOMRrD4KzM
+ 9ueDsYcJeuXjFM5HxHint2JOclGchNZod4WTzSy3YG35UIIMilo77LTAdjdAPdCkLylyfA6gN
+ QRuO7yvS08jDPtkX8UPWLr1FZYyv5Mq8Uul5StxyqZ5QAEx69wGaUMOsQKgFwTT8JEsnLObKN
+ 2hz29WTzYcmIAnwuXTtYHfbp0nGlH5+utAvBD81+jnG/3QXjk0xH7+wsq6tXZvtMYfUmZsQDM
+ DgROdziNYEOQv+1HpwstmShZgje5SkkNNRFqCY6q9jL4Kt/QJTz2BglbNi+6k4CKP62SCbzq9
+ IbZHiIf5iHX1EjYe5nKZ+U9OsmagPUtvynMMtqmiho/qqBBDOyd79AmC8aUCPmqRL6rIh1Bvg
+ e67zNC4oBu1J1+jE9+ZlkDTCu6xMRF/RA==
 
 
+--2lwwpyglkpsbvwfq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On 24/08/12 07:16PM, Jose Fernandez wrote:
+> Introduce the PACMAN_EXTRAPACKAGES variable in PKGBUILD to allow users
+> to specify which additional packages are built by the pacman-pkg target.
+>=20
+> Previously, the api-headers package was always included, and the headers
+> package was included only if CONFIG_MODULES=3Dy. With this change, both
+> headers and api-headers packages are included by default. Users can now
+> control this behavior by setting PACMAN_EXTRAPACKAGES to a
+> space-separated list of desired extra packages or leaving it empty to
+> exclude all.
+>=20
+> For example, to build only the base package without extras:
+>=20
+> make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
+>=20
+> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
 
+Reviewed-by: Christian Heusel <christian@heusel.eu>
+Tested-by: Christian Heusel <christian@heusel.eu>
 
----- On Wed, 07 Aug 2024 09:33:10 -0300 Daniel Stone  wrote ---
+--2lwwpyglkpsbvwfq
+Content-Type: application/pgp-signature; name="signature.asc"
 
- > On Wed, 7 Aug 2024 at 09:21, Vignesh Raman vignesh.raman@collabora.com> wrote: 
- > > Uprev mesa to adapt to the latest changes in mesa ci. 
- > > Project 'anholt/deqp-runner' was moved to 'mesa/deqp-runner'. 
- > > So update the link. 
- >  
- > Reviewed-by: Daniel Stone daniels@collabora.com> 
- > 
+-----BEGIN PGP SIGNATURE-----
 
-Applied to drm-misc-next
+iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAma7vOEACgkQwEfU8yi1
+JYUxWA/+OKRM3CmmWjHAcJH5X58mltgn06iiuo34KcwFm2YKniqIY3qp1zDSzEmt
+d4L+lD5ujgrsO73wq0nJS4CTD7HDWxP+8JEBkHC61BNQyiwPFurXUVzNdwEi2xQz
+TUC5ORh9Id2CxAw2TOQPXBv6Vn15qiim1erunVcnGh1jY4xhWaS1305xc3/mx4uq
+jV36oJwMQ6up8imIKKtXvhGQs6whBL9LPkAro+kToTX8zopD3W/PJviQHJRJy56w
+pv0dXuF47HavkWCCTY/A5mswxbaWHf2UEpaexl0+/+LiL03/r+CCCI/sSn2Taktj
+mP1ZZuvQdi5z9w5tky1vE8y1TXyfXIy8qkEcvv51knThEQ3Ybn+UTNr+8ptUinq4
+vA9uDHY8T9ing3WTNxppJI06mKk4eq2DyuQRn6gXtXbXWeL/3J1qCbnlVeMmTcEF
+HD4l2Lt898pfn+CVv8pjfM6qveJroz8vTXLclrUHBM0uCOw43nt8ycDkmfVep0Vj
+flqcr5MqKI73u6ibC3RtEQROgNQxdbHTKSlvzf7JD2lFrFMvCs9IV+Y+7yKpECMT
+ijQBMO0Gu07x3JO5DibpmGUwtTLGb18YRgSvxQF0bSJaN+smfTBZQtxE4PFSXX+x
+6i3WX8WgfIFSkDySZwacZ5X3EwiTiweOR3ep6B9+0kFUP3kqLCo=
+=bMfG
+-----END PGP SIGNATURE-----
 
-Thanks
+--2lwwpyglkpsbvwfq--
 
