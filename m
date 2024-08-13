@@ -1,151 +1,316 @@
-Return-Path: <linux-kernel+bounces-284000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BE494FBBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7DD94FBC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FEB1F22D9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915D91F21E2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942F215ACA;
-	Tue, 13 Aug 2024 02:21:44 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C16313AF2;
+	Tue, 13 Aug 2024 02:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JsRtZ8RM"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942231862A;
-	Tue, 13 Aug 2024 02:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FBF15A8
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723515704; cv=none; b=n3LOhjV+o4Z6xvu2V0e3SNed5vye+vkhYMKZ6C3Vg4w9Pj3B6++w5xBhKVAxb/9NT9deyboCfsfwe/xxk5mfw+TH8OURh8EYG9L2/oQcG7wrn56yVwfHwNCt1FMotoDNGwKLyzc869RBu1WmtPzIVTjypJLfqeb6sc8QZRtAQFk=
+	t=1723515814; cv=none; b=Yjg0GZLoU+fIk1DzXGsV5SpnCOmU9vc+5dFB0RUnF5kQf4oOHvi5r1rMnFHMifCDlOkRW5RnxDRpV2cylvCicx19mK4O97Z0UkUVjd8U3fnEy2JXsb/U7rl4MWT7n3HTOUZAzlaKVQiXUo420z714HqIe/aRh06PWutp/6b9zxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723515704; c=relaxed/simple;
-	bh=CWDikRhvACJ6VTavQgtCFQU2sXIpkGz0NQquxrwT4Hw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=f6TDa//LwhYT1vDmOs10xG6UHPnq5QQQVx7o81wpTT5EprIWqj3g/3cA0o4GL9xAe2w5OM0e2Qtmkmq6HFEQbBI9qAVZ27HDiIbNkzmGtOlAwQEeX89ZOgKatT4pNtLy0UltYhv127zn4c25yldaiJaiTay069YqHkuC+DIDmJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjZrL2CmBz4f3jM9;
-	Tue, 13 Aug 2024 10:21:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id F323E1A1645;
-	Tue, 13 Aug 2024 10:21:35 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXfoQvw7pmIV0pBg--.64234S3;
-	Tue, 13 Aug 2024 10:21:35 +0800 (CST)
-Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
- than one blocks per folio
-To: yangerkun <yangerkun@huawei.com>, linux-xfs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, david@fromorbit.com, jack@suse.cz, willy@infradead.org,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
- <137c8c6e-ead3-51ed-be5a-c8eba0be3a2d@huawei.com>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <02adb965-ad95-2b75-f48a-51a4b75ad88b@huaweicloud.com>
-Date: Tue, 13 Aug 2024 10:21:34 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723515814; c=relaxed/simple;
+	bh=CmEqrDybynqqL8qD9fwB6EPvcKg0uWHy3O+RXX9wopM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ACIs5NYo+6QQKyXqDNMob/cGrKo0Q/9tATeqPtl6tdHdAdACEVBfG30p00U9u5jgm5CB0fU84jnvVA0EDSf1cSjwy4Jie+j7Y8/QK1A/W4H6BSoV/Vk89yWHuDJ+RkNrRseR6txiee1LSogole1lNszTMvNYJgm6BlAWnbVvK0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JsRtZ8RM; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 002a3fc2591b11ef9a4e6796c666300c-20240813
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=NYx9FHNUjfdW5MSmPrzW9lgHzLnEs6Sa+hTWUNOhjL8=;
+	b=JsRtZ8RM5RU2L+hVu029VFEdq+kggNpM5vJCEA10ErIrBFef+e1iFZqkbAsHblfc1VieVI7CFr8yskhMoWWIWDbPJn+bripxKuSm+r+GwSrLYoSoMSOryQRjESE6nsNnUdXB1uWfN9mZVFANAxVYKaPhliJ+5us8I9e/V3gr/KU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:d106ae70-02a5-47ca-9121-f3577916f710,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:6dc6a47,CLOUDID:aef30c3f-6019-4002-9080-12f7f4711092,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,UR
+	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
+	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 002a3fc2591b11ef9a4e6796c666300c-20240813
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <shuijing.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 233601480; Tue, 13 Aug 2024 10:23:17 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 13 Aug 2024 10:23:16 +0800
+Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 13 Aug 2024 10:23:16 +0800
+From: Shuijing Li <shuijing.li@mediatek.com>
+To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
+	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>
+CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Shuijing Li
+	<shuijing.li@mediatek.com>
+Subject: [PATCH v6] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
+Date: Tue, 13 Aug 2024 10:22:51 +0800
+Message-ID: <20240813022315.18502-1-shuijing.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <137c8c6e-ead3-51ed-be5a-c8eba0be3a2d@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXfoQvw7pmIV0pBg--.64234S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXFyUKr4ftr4DZw18Zw4fXwb_yoW5WFy8pr
-	4kKFWUGrWxJrn3urnrtFyUZryUt3yUJ3WUGr48W3W7XF4UJr1jgr4UWFyq9F1UXr4xJr48
-	Xr1jqryxuF15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.069000-8.000000
+X-TMASE-MatchedRID: RzvPREWj2HcwKP61E4rxu1VN8laWo90M5TpDO1WKs2mYQOVjVNfbbpOu
+	v4LVY2bFO+NwyBVe+HBIT4SOZxkibrGaAH5r9EhkhK8o4aoss8q+1Vx7rDn4r/k3SjZMcZFk9BQ
+	FWu9qPYZckfCAECj1GiN8DuhwooinL0W1btd8e57LtNJZxvPj1hG8SlV3e9LV31GU/N5W5BBb53
+	SJ0uOmmjFeXjrzLWaDf4eyKeT1hq1nPzp+oCPs8yNHByyOpYYC5TbwqVVpF+PvPjzagmh01OYHE
+	PaPco6bUjpSbEFN/xydZVUStkfgGWsV28ESZOe8kPoFsM336M7JV9WzHT2T5WI4wQ1Yq/d0GOmx
+	KvkU9Nj3cuxjGnQlwIAy6p60ZV628dnCdmtX28KtIWznhjjBtfoLR4+zsDTtqFhHt/jREakEjL6
+	3fz0OrKfIQlX7lQr797qzTR8oUxAiJh4QFUH9xlZca9RSYo/b
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.069000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 7DEBCE6D96BEFE86668EA096D1ACAFA397E01EDBCD3E3B8451EC47FDE7BB8E552000:8
+X-MTK: N
 
-On 2024/8/12 20:47, yangerkun wrote:
-> 
-> 
-> 在 2024/8/12 20:11, Zhang Yi 写道:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Now we allocate ifs if i_blocks_per_folio is larger than one when
->> writing back dirty folios in iomap_writepage_map(), so we don't attach
->> an ifs after buffer write to an entire folio until it starts writing
->> back, if we partial truncate that folio, iomap_invalidate_folio() can't
->> clear counterpart block's dirty bit as expected. Fix this by advance the
->> ifs allocation to __iomap_write_begin().
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>   fs/iomap/buffered-io.c | 17 ++++++++++++-----
->>   1 file changed, 12 insertions(+), 5 deletions(-)
->>
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index 763deabe8331..79031b7517e5 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
->> @@ -699,6 +699,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->>       size_t from = offset_in_folio(folio, pos), to = from + len;
->>       size_t poff, plen;
->>   +    if (nr_blocks > 1) {
->> +        ifs = ifs_alloc(iter->inode, folio, iter->flags);
->> +        if ((iter->flags & IOMAP_NOWAIT) && !ifs)
->> +            return -EAGAIN;
->> +    }
->> +
->>       /*
->>        * If the write or zeroing completely overlaps the current folio, then
->>        * entire folio will be dirtied so there is no need for
-> 
-> The comments upper need change too.
+Adding the per-frame lp function of mt8188, which can keep HFP in HS and
+reduce the time required for each line to enter and exit low power.
+Per Frame LP:
+  |<----------One Active Frame-------->|
+--______________________________________----___________________
+  ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
 
-Will update as well, thanks for pointing this out.
+Per Line LP:
+  |<---------------One Active Frame----------->|
+--______________--______________--______________----______________
+  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
 
-Thanks,
-Yi.
+Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
+---
+Changes in v6:
+Simplify the code per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240812070341.26053-1-shuijing.li@mediatek.com/
+Changes in v5:
+Fix code style issue and add per-line-lp function to be symmetrical with per-frame-lp.
+per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.22372-1-shuijing.li@mediatek.com/
+Changes in v4:
+Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hactive *
+dsi_buf_bpp.
+Changes in v3:
+Use function in bitfield.h and get value from phy timing, per suggestion
+from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.22759-1-shuijing.li@mediatek.com/
+Changes in v2:
+Use bitfield macros and add new function for per prame lp and improve
+the format, per suggestion from previous thread:
+https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.3315-1-shuijing.li@mediatek.com/
+---
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 158 +++++++++++++++++++++++++----
+ 1 file changed, 139 insertions(+), 19 deletions(-)
 
-> 
-> 
->> @@ -710,10 +716,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->>           pos + len >= folio_pos(folio) + folio_size(folio))
->>           return 0;
->>   -    ifs = ifs_alloc(iter->inode, folio, iter->flags);
->> -    if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
->> -        return -EAGAIN;
->> -
->>       if (folio_test_uptodate(folio))
->>           return 0;
->>   @@ -1928,7 +1930,12 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->>       WARN_ON_ONCE(end_pos <= pos);
->>         if (i_blocks_per_folio(inode, folio) > 1) {
->> -        if (!ifs) {
->> +        /*
->> +         * This should not happen since we always allocate ifs in
->> +         * iomap_folio_mkwrite_iter() and there is more than one
->> +         * blocks per folio in __iomap_write_begin().
->> +         */
->> +        if (WARN_ON_ONCE(!ifs)) {
->>               ifs = ifs_alloc(inode, folio, 0);
->>               iomap_set_range_dirty(folio, 0, end_pos - pos);
->>           }
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index b6e3c011a12d..940fc99cc87d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -88,12 +88,15 @@
+ #define DSI_HSA_WC		0x50
+ #define DSI_HBP_WC		0x54
+ #define DSI_HFP_WC		0x58
++#define HFP_HS_VB_PS_WC	GENMASK(30, 16)
++#define HFP_HS_EN		BIT(31)
+ 
+ #define DSI_CMDQ_SIZE		0x60
+ #define CMDQ_SIZE			0x3f
+ #define CMDQ_SIZE_SEL		BIT(15)
+ 
+ #define DSI_HSTX_CKL_WC		0x64
++#define HSTX_CKL_WC			GENMASK(15, 2)
+ 
+ #define DSI_RX_DATA0		0x74
+ #define DSI_RX_DATA1		0x78
+@@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
+ 	bool has_shadow_ctl;
+ 	bool has_size_ctl;
+ 	bool cmdq_long_packet_ctl;
++	bool support_per_frame_lp;
+ };
+ 
+ struct mtk_dsi {
+@@ -426,7 +430,92 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, bool config_vact)
+ 	writel(ps_val, dsi->regs + DSI_PSCTRL);
+ }
+ 
+-static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
++static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
++{
++	u32 horizontal_sync_active_byte;
++	u32 horizontal_backporch_byte;
++	u32 horizontal_frontporch_byte;
++	u32 hfp_byte_adjust, v_active_adjust;
++	u32 cklp_wc_min_adjust, cklp_wc_max_adjust;
++	u32 dsi_tmp_buf_bpp;
++	unsigned int lpx, da_hs_exit, da_hs_prep, da_hs_trail;
++	unsigned int da_hs_zero, ps_wc, hs_vb_ps_wc;
++	u32 v_active_roundup, hstx_cklp_wc;
++	u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
++	struct videomode *vm = &dsi->vm;
++
++	if (dsi->format == MIPI_DSI_FMT_RGB565)
++		dsi_tmp_buf_bpp = 2;
++	else
++		dsi_tmp_buf_bpp = 3;
++
++	da_hs_trail = dsi->phy_timing.da_hs_trail;
++	ps_wc = dsi->vm.hactive * dsi_tmp_buf_bpp;
++
++	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
++		horizontal_sync_active_byte =
++			vm->hsync_len * dsi_tmp_buf_bpp - 10;
++		horizontal_backporch_byte =
++			vm->hback_porch * dsi_tmp_buf_bpp - 10;
++		hfp_byte_adjust = 12;
++		v_active_adjust = 32 + horizontal_sync_active_byte;
++		cklp_wc_min_adjust = 12 + 2 + 4 + horizontal_sync_active_byte;
++		cklp_wc_max_adjust = 20 + 6 + 4 + horizontal_sync_active_byte;
++	} else {
++		horizontal_sync_active_byte = vm->hsync_len * dsi_tmp_buf_bpp - 4;
++		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
++			dsi_tmp_buf_bpp - 10;
++		cklp_wc_min_adjust = 4;
++		cklp_wc_max_adjust = 12 + 4 + 4;
++		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
++			hfp_byte_adjust = 18;
++			v_active_adjust = 28;
++		} else {
++			hfp_byte_adjust = 12;
++			v_active_adjust = 22;
++		}
++	}
++	horizontal_frontporch_byte = vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust;
++	v_active_roundup = (v_active_adjust + horizontal_backporch_byte + ps_wc +
++		horizontal_frontporch_byte) % dsi->lanes;
++	if (v_active_roundup)
++		horizontal_backporch_byte += dsi->lanes - v_active_roundup;
++	hstx_cklp_wc_min = (DIV_ROUND_UP(cklp_wc_min_adjust, dsi->lanes) + da_hs_trail + 1)
++		* dsi->lanes / 6 - 1;
++	hstx_cklp_wc_max = (DIV_ROUND_UP((cklp_wc_max_adjust + horizontal_backporch_byte +
++		ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
++
++	hstx_cklp_wc = FIELD_GET(HSTX_CKL_WC, readl(dsi->regs + DSI_HSTX_CKL_WC));
++
++	if (hstx_cklp_wc <= hstx_cklp_wc_min || hstx_cklp_wc >= hstx_cklp_wc_max) {
++		hstx_cklp_wc = ((hstx_cklp_wc_min + hstx_cklp_wc_max) / 2);
++
++		/* Check if the new setting is valid */
++		if (hstx_cklp_wc <= hstx_cklp_wc_min ||	hstx_cklp_wc >= hstx_cklp_wc_max)
++			DRM_WARN("Wrong setting of hstx_ckl_wc\n");
++
++		hstx_cklp_wc = FIELD_PREP(HSTX_CKL_WC, hstx_cklp_wc);
++		writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
++	}
++
++	lpx = dsi->phy_timing.lpx;
++	da_hs_exit = dsi->phy_timing.da_hs_exit;
++	da_hs_prep = dsi->phy_timing.da_hs_prepare;
++	da_hs_zero = dsi->phy_timing.da_hs_zero;
++
++	hs_vb_ps_wc = ps_wc -
++		(lpx + da_hs_exit + da_hs_prep + da_hs_zero + 2)
++		* dsi->lanes;
++	horizontal_frontporch_byte = FIELD_PREP(HFP_HS_EN, 1) |
++		FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_ps_wc) |
++		horizontal_frontporch_byte;
++
++	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
++	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
++	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
++}
++
++static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
+ {
+ 	u32 horizontal_sync_active_byte;
+ 	u32 horizontal_backporch_byte;
+@@ -436,7 +525,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	u32 dsi_tmp_buf_bpp, data_phy_cycles;
+ 	u32 delta;
+ 	struct mtk_phy_timing *timing = &dsi->phy_timing;
+-
+ 	struct videomode *vm = &dsi->vm;
+ 
+ 	if (dsi->format == MIPI_DSI_FMT_RGB565)
+@@ -444,16 +532,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	else
+ 		dsi_tmp_buf_bpp = 3;
+ 
+-	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
+-	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
+-	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
+-	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
+-
+-	if (dsi->driver_data->has_size_ctl)
+-		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
+-		       FIELD_PREP(DSI_WIDTH, vm->hactive),
+-		       dsi->regs + DSI_SIZE_CON);
+-
+ 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
+ 
+ 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+@@ -499,6 +577,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+ 	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
+ 	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
+ 	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
++}
++
++static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
++{
++	struct videomode *vm = &dsi->vm;
++
++	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
++	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
++	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
++	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
++
++	if (dsi->driver_data->has_size_ctl)
++		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
++			FIELD_PREP(DSI_WIDTH, vm->hactive),
++			dsi->regs + DSI_SIZE_CON);
++
++	if (dsi->driver_data->support_per_frame_lp)
++		mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
++	else
++		mtk_dsi_config_vdo_timing_per_line_lp(dsi);
+ 
+ 	mtk_dsi_ps_control(dsi, false);
+ }
+@@ -1197,6 +1295,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_driver_data = {
+ 	.has_shadow_ctl = true,
+ 	.has_size_ctl = true,
+ 	.cmdq_long_packet_ctl = true,
++	.support_per_frame_lp = true,
+ };
+ 
+ static const struct of_device_id mtk_dsi_of_match[] = {
+-- 
+2.45.2
 
 
