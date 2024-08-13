@@ -1,357 +1,137 @@
-Return-Path: <linux-kernel+bounces-285363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA7D2950C91
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:56:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75B5A950C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:56:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BB751C21DC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA8BD1F230F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4C81A3BD6;
-	Tue, 13 Aug 2024 18:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A3021A3BB8;
+	Tue, 13 Aug 2024 18:56:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XaTkQaYH"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwMrEPAh"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA981A3BA1
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E3E1A3BDF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575361; cv=none; b=FHi2BKHrQVtDbCLiIrD6tAdWtBeX20DgZr2o+uVca3wecIu7QY5TjgpBEhdEv+HZTXdMIrcUixAdChUdgrEbaax4eD7Bje+A5/8ppU8RyqHz+6QIuhKs3yrBD1QZvaG02L0gfQmtD+tEpH3gW5bj6uIX4mMszhli+zK4mnqBRp4=
+	t=1723575399; cv=none; b=OCOVUwkTNUdjMwSyUGdl/zgOrU8BqgKEthN0O7BL+qJg7BtQvtz3eyrkdyFrX81+KfQ0ySazCgzJ8w1GX5PbEFS5GzcRlCBtApAAzqhgIJBAWV+q7HjImmbavHCmo4HHvl1IPdj4q92sdq5WoHrYvJCVUCbep9Gz53LmGYL5jIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575361; c=relaxed/simple;
-	bh=uz4Lk1CQYACULUAwm7tJvpDL6knHk0jFHH5VOVVHDis=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jFLbAD2Z7l/3/TR/ykmmNp7XbfHJEzt0krf+O2KEm3G7q/1dCwfMDxvEQu6DIKR3ZncCJy7ScruRgmj1yBvwBAQc9UztF65LsQEXNaIQM47GWC8J/X5zhv0eRAEiDa8UCe5Y5HfYg2qmFKxdXcDSlVlY1kuM9/OA9jCrNzfEShY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XaTkQaYH; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70f5ef74143so4828473b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:55:59 -0700 (PDT)
+	s=arc-20240116; t=1723575399; c=relaxed/simple;
+	bh=sxl3Q/M50FoEVLaFI487kfJRqkxBTh9NlombsgH24Bg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=jYvX+B78gRpsQLyHaNu5RcBxMW2pjUphiNDCAoSmkmO0ew956BgqHx2mko0BPQyIFBGf2HnJx/QZ5wJijJLPfMdfkgPeDive6mftA3z7AJEdMiF2w7qY1Ul4Ea6+WlCquID57t1iGmFgjlSOW1lyVQvMk0U63HZYnFXubCT/TBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwMrEPAh; arc=none smtp.client-ip=209.85.210.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-70945a007f0so3544923a34.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:56:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723575359; x=1724180159; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIwyRI9MZtZeo1mI2C/miZzSeV2UjG9Vo3bAQzKw5cU=;
-        b=XaTkQaYHI3Lf+Wca8vbSkhLDvPeG5SW811oSsXIl8fwWlNstxbbRn7pLBA7WvLdlzV
-         0GguQ/2AmlLoVp3O39CBe/GL5kUJC0R8qYuR4/hOrISOzxp/j+aq1ZFHYbk03FrfJdon
-         L6tEZHALlU2o9pd34SqoJO5ivVUpMgw2dbV+DXnkGO1pDF5xhNYmbYtJD+CBD3MtWDAP
-         pErEMhl3ihW/C01nC3Kov+NiD6ARCEQkh9NrpV1W7JuazXhSbDH8NLKqiECGtHkiii8s
-         H/Ns0PY9LMnnJ3HL8BnSfNeEk46qqETmGjPGqNcPcDricz63v9xuPJrHUv6jyjuALnXW
-         9dMg==
+        d=gmail.com; s=20230601; t=1723575397; x=1724180197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZPoZLwwYwjeoVzOm1/fGWvSJYOkVNi9fLZREpsKc50=;
+        b=SwMrEPAhge2QLO7R8AiY4UV4YuhIxUgxIrS1M5cEENNZI8NOWQr8EgaraTR/ms+/TR
+         SXt0bjNOrndAAPCyfBtsvEceijm1BO/s0DJj/oIaX3cWC2ikdhGAIDv6tyODcPrJubmr
+         RkBTZ1EoxkD0mzQxiR+7ONP5sWTnmaZRFvwR00isR9gGiPg9jT/jAcIdTWbaNA3DYcWq
+         tcd8WfgC9ns3RxWzKma0EfHgWLhjXuOeYXw20rtP53dGPxBmOMfZxWV97e1g4/Sktd/b
+         Y9pRdwafj6TVp4K/AlMQKb01baO6rN+xYNfbBYnY3O+XxyIi2U1HT3IRplUbTPbqgmE3
+         +/gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723575359; x=1724180159;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YIwyRI9MZtZeo1mI2C/miZzSeV2UjG9Vo3bAQzKw5cU=;
-        b=olZKwDxRJuyDyl8Ueo6D+35Nnk8OW7/usVYCGzyF3uRrDk4BYAUukSbtHo3QOeITx/
-         5ugpGRSsn3irJggCqK09SLUzIhMqrq+Pvp1K1PpCNdbQAoQggf0zcLFKLgL2/jyH/Evw
-         U3LU/0bZE2rO6F5ZUyfFdrHFjzVLsmTl9mtD8ycK5En/znZyRVMoOxkK9aKEBneR+y/t
-         ngpd3r4xmetUHzzOJjCad+JzfgQPHD3RchsqZbE9XdVAhqzc/ue+XyDF0/S3nd++aFoq
-         K0sJTB9HraWDdPI+5Eij5DIZPRK0kxjz816O5XPkSEWFLhVzpeUqXFsSLf0qIM4x2RqS
-         UF2w==
-X-Forwarded-Encrypted: i=1; AJvYcCXzwAcBPyX84JV2t9pz6XcW/1ITrkVnHBDuw7ALfx11MCZd2Fwzh7FCx1kBDc9A8y6ujRuNSP/8uMVATT0wyGF35Y+I06dLjRCImRli
-X-Gm-Message-State: AOJu0YxFBz1j+N0um2wcCJoN8EZqzHXXzqB/iyiMHg/VjThst92adIlT
-	12evh7PX3IfHh3cm7Mcf/KDU2EqDtCd6+fE/O/0X9KkVPsfoT9hyDf3SJXmIITqYkhCv2YujsY7
-	bVA==
-X-Google-Smtp-Source: AGHT+IE4Y4KFJ5Upvg/w8mkmeB/IUJyaWk9lTVg3XEnbN4gS5RvAHV9sOvm7no7vasckUgUymsBZfgODW9E=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:4d03:b0:704:3140:5a94 with SMTP id
- d2e1a72fcca58-7126710c15bmr7017b3a.2.1723575358775; Tue, 13 Aug 2024 11:55:58
- -0700 (PDT)
-Date: Tue, 13 Aug 2024 11:55:57 -0700
-In-Reply-To: <20240522001817.619072-6-dwmw2@infradead.org>
+        d=1e100.net; s=20230601; t=1723575397; x=1724180197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZPoZLwwYwjeoVzOm1/fGWvSJYOkVNi9fLZREpsKc50=;
+        b=FMuWWqbSQSiTJqq24gOJC3SCymKwvjptVMFRt36de7RCIj5N8yZfB9otLiLBhlKucb
+         3jhjGvo08L5Jb6QrstuMgK8FuroJ1XlsDDc+yHTd0OrmCpy/6iibvW3pv41Zr/lor/AI
+         11ESGylTFSaG5IfcDBlTqop3UvvtTLSPHNbATL1pSnSdB2Ws42v5ZXcambGxTa19CkzZ
+         sE2pSA7TbEC2MXy/GIO+xoKTpbkB85Z//phErSdbHSiGc4I0szn539MheV1i2T8AdtGx
+         Hjy6ribC+49L7GRF9l4ClPT/pVAbo6DDDFFckRuwcOtf/+4O3wK/Ulvpj5M07j14Vswy
+         40sA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2x0JhBUxiwEo4ST0jHD0bDPVB/DY4UD7Efef6xIOHMD8WliCk06tJmeiC3ZCDCIHWG2txgrEvB0G+Q1OkuX8KGts5yF4oBScOBrgO
+X-Gm-Message-State: AOJu0YzmKqyJUnXwUGgbgKUUcMdNpMWd6d4gdxwx2hd0BxDPv4PQVb+V
+	dY3+voSYQ7aiPNaiXhNIxk/X7aXQYbuWqVsKBu9aPdJvO/cC5hqONwMxwQ==
+X-Google-Smtp-Source: AGHT+IGI01OmA2yTXOPZ5CIrfgBK4+YbufSTzte+mnqLwGHZJ4GtekvUuYSRQCTZktfT1wtgne62+w==
+X-Received: by 2002:a05:6830:6e8b:b0:709:4c6a:b98a with SMTP id 46e09a7af769-70c9da04c91mr766060a34.30.1723575396875;
+        Tue, 13 Aug 2024 11:56:36 -0700 (PDT)
+Received: from localhost (fwdproxy-vll-115.fbsv.net. [2a03:2880:12ff:73::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-70c7b829b5dsm1959618a34.42.2024.08.13.11.56.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 11:56:36 -0700 (PDT)
+From: Manu Bretelle <chantr4@gmail.com>
+To: tj@kernel.org,
+	void@manifault.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched_ext: define missing cfi stubs for sched_ext
+Date: Tue, 13 Aug 2024 11:56:25 -0700
+Message-ID: <20240813185625.535541-1-chantr4@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-6-dwmw2@infradead.org>
-Message-ID: <ZrusPRKEuvcO11m0@google.com>
-Subject: Re: [RFC PATCH v3 05/21] KVM: selftests: Add KVM/PV clock selftest to
- prove timer correction
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
-	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024, David Woodhouse wrote:
-> The guest the records a singular TSC reference point in time and uses it to
-            ^^^^
-            then
+`__bpf_ops_sched_ext_ops` was missing the initialization of some struct
+attributes.
+With
+https://lore.kernel.org/all/20240722183049.2254692-4-martin.lau@linux.dev/
+every single attributes need to be initialized programs (like scx_layered)
+will fail to load.
 
-> calculate 3 KVM clock values utilizing the 3 recorded PVTI prior. Let's
-> call each clock value CLK[0-2].
-> 
-> In a perfect world CLK[0-2] should all be the same value if the KVM clock
-> & TSC relationship is preserved across the LU/LM (or faked in this test),
-> however it is not.
-> 
-> A delta can be observed between CLK0-CLK1 due to KVM recalculating the PVTI
-> (and the inaccuracies associated with that). A delta of ~3500ns can be
-> observed if guest TSC scaling to half host TSC frequency is also enabled,
-> where as without scaling this is observed at ~180ns.
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_init not found in kernel, skipping it as it's set to zero
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_exit not found in kernel, skipping it as it's set to zero
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_prep_move not found in kernel, skipping it as it's set to zero
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_move not found in kernel, skipping it as it's set to zero
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_cancel_move not found in kernel, skipping it as it's set to zero
+  05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_set_weight not found in kernel, skipping it as it's set to zero
+  05:26:48 [WARN] libbpf: prog 'layered_dump': BPF program load failed: unknown error (-524)
+  05:26:48 [WARN] libbpf: prog 'layered_dump': -- BEGIN PROG LOAD LOG --
+  attach to unsupported member dump of struct sched_ext_ops
+  processed 0 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
+  -- END PROG LOAD LOG --
+  05:26:48 [WARN] libbpf: prog 'layered_dump': failed to load: -524
+  05:26:48 [WARN] libbpf: failed to load object 'bpf_bpf'
+  05:26:48 [WARN] libbpf: failed to load BPF skeleton 'bpf_bpf': -524
+  Error: Failed to load BPF program
 
-It'd be helpful to explain why TSC scaling results in a larger drift.  I'm by no
-means a clock expert, but I've likely stared at this code more than most and it's
-not obvious to me why scaling is problematic.  If I thought hard maybe I could
-figure it out, but it's been an -ENOCOFFE sort of week so far, so I wouldn't bet
-on it :-)
+Signed-off-by: Manu Bretelle <chantr4@gmail.com>
+---
+ kernel/sched/ext.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-> +static void trigger_pvti_update(vm_paddr_t pvti_pa)
-> +{
-> +	/*
-> +	 * We need a way to trigger KVM to update the fields
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 143c4207a826..3560d8bed06d 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5111,6 +5111,9 @@ static void cpu_online_stub(s32 cpu) {}
+ static void cpu_offline_stub(s32 cpu) {}
+ static s32 init_stub(void) { return -EINVAL; }
+ static void exit_stub(struct scx_exit_info *info) {}
++static void dump_stub(struct scx_dump_ctx *ctx) {}
++static void dump_cpu_stub(struct scx_dump_ctx *ctx, s32 cpu, bool idle) {}
++static void dump_task_stub(struct scx_dump_ctx *ctx, struct task_struct *p) {}
+ 
+ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+ 	.select_cpu = select_cpu_stub,
+@@ -5136,6 +5139,9 @@ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+ 	.cpu_offline = cpu_offline_stub,
+ 	.init = init_stub,
+ 	.exit = exit_stub,
++	.dump = dump_stub,
++	.dump_cpu = dump_cpu_stub,
++	.dump_task = dump_task_stub,
+ };
+ 
+ static struct bpf_struct_ops bpf_sched_ext_ops = {
+-- 
+2.43.5
 
-Please avoid "we", it's unnecessarily confusing as there are too many possible
-subjects that "we" could apply to.  And please use the "full" 80 characters for
-comments, there's no reason to wrap more aggressively.  E.g.
-
-	/*
-	 * Toggle between KVM's old and new system time methods to coerce KVM
-	 * into updating the fields in the PV time info struct.
-	 */
-
-> +	 * in the PV time info. The easiest way to do this is
-> +	 * to temporarily switch to the old KVM system time
-> +	 * method and then switch back to the new one.
-> +	 */
-> +	wrmsr(MSR_KVM_SYSTEM_TIME, pvti_pa | KVM_MSR_ENABLED);
-> +	wrmsr(MSR_KVM_SYSTEM_TIME_NEW, pvti_pa | KVM_MSR_ENABLED);
-> +}
-> +
-> +static void guest_code(vm_paddr_t pvti_pa)
-> +{
-> +	struct pvclock_vcpu_time_info *pvti_va =
-> +		(struct pvclock_vcpu_time_info *)pvti_pa;
-
-Casting to "void *" will let this vit on a single line.  Though I don't see any
-reason to take a vm_paddr_t, the infrastructure doesn't validate the arg types.
-
-> +	struct pvclock_vcpu_time_info pvti_boot;
-> +	struct pvclock_vcpu_time_info pvti_uncorrected;
-> +	struct pvclock_vcpu_time_info pvti_corrected;
-> +	uint64_t cycles_boot;
-> +	uint64_t cycles_uncorrected;
-> +	uint64_t cycles_corrected;
-> +	uint64_t tsc_guest;
-> +
-> +	/*
-> +	 * Setup the KVMCLOCK in the guest & store the original
-
-s/&/and
-
-And wrap less aggressively here too.
-
-> +	 * PV time structure that is used.
-> +	 */
-> +	wrmsr(MSR_KVM_SYSTEM_TIME_NEW, pvti_pa | KVM_MSR_ENABLED);
-> +	pvti_boot = *pvti_va;
-> +	GUEST_SYNC(STAGE_FIRST_BOOT);
-> +
-> +	/*
-> +	 * Trigger an update of the PVTI, if we calculate
-> +	 * the KVM clock using this structure we'll see
-> +	 * a delta from the TSC.
-
-Too many pronouns.  Maybe this?
-
-	/*
-	 * Trigger an update of the PVTI and snapshot the time, which at this
-	 * point is uncorrected, i.e. have a 
-
-> +	 */
-> +	trigger_pvti_update(pvti_pa);
-> +	pvti_uncorrected = *pvti_va;
-> +	GUEST_SYNC(STAGE_UNCORRECTED);
-> +
-> +	/*
-> +	 * The test should have triggered the correction by this
-> +	 * point in time. We have a copy of each of the PVTI structs
-> +	 * at each stage now.
-> +	 *
-> +	 * Let's sample the timestamp at a SINGLE point in time and
-> +	 * then calculate what the KVM clock would be using the PVTI
-> +	 * from each stage.
-> +	 *
-> +	 * Then return each of these values to the tester.
-> +	 */
-
-	/*
-	 * Snapshot the corrected time (the host does KVM_SET_CLOCK_GUEST when
-	 * handling STAGE_UNCORRECTED).
-	 */  
-
-> +	pvti_corrected = *pvti_va;
-
-	/*
-	 * Sample the timestamp at a SINGLE point in time, and then calculate
-	 * the effective KVM clock using the PVTI from each stage, and sync all
-	 * values back to the host for verification.
-	 */
-
-
-On that last point though, why sync things back to the host?  The verification
-can be done in the guest via __GUEST_ASSERT(), that way there are few magic
-fields being passed around, e.g. no need for uc.args[2..4].
-
-> +	tsc_guest = rdtsc();
-> +
-> +	cycles_boot = __pvclock_read_cycles(&pvti_boot, tsc_guest);
-> +	cycles_uncorrected = __pvclock_read_cycles(&pvti_uncorrected, tsc_guest);
-> +	cycles_corrected = __pvclock_read_cycles(&pvti_corrected, tsc_guest);
-> +
-> +	GUEST_SYNC_ARGS(STAGE_CORRECTED, cycles_boot, cycles_uncorrected,
-> +			cycles_corrected, 0);
-> +}
-
-> +
-> +static void run_test(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-> +{
-> +	struct pvclock_vcpu_time_info pvti_before;
-> +	uint64_t before, uncorrected, corrected;
-> +	int64_t delta_uncorrected, delta_corrected;
-> +	struct ucall uc;
-> +	uint64_t ucall_reason;
-> +
-> +	/* Loop through each stage of the test. */
-> +	while (true) {
-> +
-> +		/* Start/restart the running vCPU code. */
-> +		vcpu_run(vcpu);
-> +		TEST_ASSERT_KVM_EXIT_REASON(vcpu, KVM_EXIT_IO);
-> +
-> +		/* Retrieve and verify our stage. */
-> +		ucall_reason = get_ucall(vcpu, &uc);
-> +		TEST_ASSERT(ucall_reason == UCALL_SYNC,
-> +			    "Unhandled ucall reason=%lu",
-> +			    ucall_reason);
-
-Or just TEST_ASSERT_EQ().
-
-> +		/* Run host specific code relating to stage. */
-> +		switch (uc.args[1]) {
-> +		case STAGE_FIRST_BOOT:
-> +			/* Store the KVM clock values before an update. */
-> +			vcpu_ioctl(vcpu, KVM_GET_CLOCK_GUEST, &pvti_before);
-> +
-> +			/* Sleep for a set amount of time to increase delta. */
-> +			sleep(5);
-
-This is probably worth plumbing in via command line, e.g. so that the test can
-run with a shorter sleep() by default while also allowing users to stress things
-by running with longer delays.  Ideally, the default sleep() would be as short
-as possible while still detecting ~100% of bugs.
-
-> +			break;
-> +
-> +		case STAGE_UNCORRECTED:
-> +			/* Restore the KVM clock values. */
-> +			vcpu_ioctl(vcpu, KVM_SET_CLOCK_GUEST, &pvti_before);
-> +			break;
-> +
-> +		case STAGE_CORRECTED:
-> +			/* Query the clock information and verify delta. */
-> +			before = uc.args[2];
-> +			uncorrected = uc.args[3];
-> +			corrected = uc.args[4];
-> +
-> +			delta_uncorrected = before - uncorrected;
-> +			delta_corrected = before - corrected;
-> +
-> +			pr_info("before=%lu uncorrected=%lu corrected=%lu\n",
-> +				before, uncorrected, corrected);
-> +
-> +			pr_info("delta_uncorrected=%ld delta_corrected=%ld\n",
-> +				delta_uncorrected, delta_corrected);
-> +
-> +			TEST_ASSERT((delta_corrected <= 1) && (delta_corrected >= -1),
-> +				    "larger than expected delta detected = %ld", delta_corrected);
-> +			return;
-> +		}
-> +	}
-> +}
-> +
-> +static void configure_pvclock(struct kvm_vm *vm, struct kvm_vcpu *vcpu)
-> +{
-> +	unsigned int gpages;
-
-I'd prefer something like nr_pages
-> +
-> +	gpages = vm_calc_num_guest_pages(VM_MODE_DEFAULT, KVMCLOCK_SIZE);
-> +	vm_userspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,
-> +				    KVMCLOCK_GPA, 1, gpages, 0);
-> +	virt_map(vm, KVMCLOCK_GPA, KVMCLOCK_GPA, gpages);
-> +
-> +	vcpu_args_set(vcpu, 1, KVMCLOCK_GPA);
-
-This is somewhat silly.  If you're going to hardcode the address, just use the
-#define in both the host and the guest.  Then this helper doesn't need to take
-a vCPU and could be more easily expanded to multiple vCPUs (if there's a good
-reason to do so).
-
-> +}
-> +
-> +static void configure_scaled_tsc(struct kvm_vcpu *vcpu)
-> +{
-> +	uint64_t tsc_khz;
-> +
-> +	tsc_khz =  __vcpu_ioctl(vcpu, KVM_GET_TSC_KHZ, NULL);
-> +	pr_info("scaling tsc from %ldKHz to %ldKHz\n", tsc_khz, tsc_khz / 2);
-> +	tsc_khz /= 2;
-
-There's nothing special about scaling to 50%, correct?  So rather than hardcode
-a single testcase, enumerate over a variety of frequencies, and specifically
-cross the 32-bit boundary, e.g. 1Ghz - 5Ghz at 500Mhz jumps or something, plus
-the host's native unscaled value.
-
-> +	vcpu_ioctl(vcpu, KVM_SET_TSC_KHZ, (void *)tsc_khz);
-> +}
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	struct kvm_vcpu *vcpu;
-> +	struct kvm_vm *vm;
-> +	bool scale_tsc;
-> +
-> +	scale_tsc = argc > 1 && (!strncmp(argv[1], "-s", 3) ||
-> +				 !strncmp(argv[1], "--scale-tsc", 10));
-
-I think it's worth adding proper argument parsing, e.g. to print a help.  The
-boilerplate is annoying, but it'll payoff in the long run as I suspect we'll end
-up with more params, e.g. to configure the sleep/delay, the min/max frequency,
-the intervals between frequencies, etc.
-
-> +
-> +	TEST_REQUIRE(sys_clocksource_is_based_on_tsc());
-> +
-> +	vm = vm_create_with_one_vcpu(&vcpu, guest_code);
-> +
-> +	configure_pvclock(vm, vcpu);
-> +
-> +	if (scale_tsc)
-> +		configure_scaled_tsc(vcpu);
-> +
-> +	run_test(vm, vcpu);
-> +
-> +	return 0;
-> +}
-> -- 
-> 2.44.0
-> 
 
