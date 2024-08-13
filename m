@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-285379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 552AC950CC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36DB6950CC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:03:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868E81C23547
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA97828194C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2320E1A3BAA;
-	Tue, 13 Aug 2024 19:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B75411A4F14;
+	Tue, 13 Aug 2024 19:03:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSdhxiQy"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="g6hHk7Yx"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0EC1A3BC4;
-	Tue, 13 Aug 2024 19:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FEAB19AD5C
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:03:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575724; cv=none; b=GyRQMovpgVs+r2Ew674SH8T3rQ4n7d4O5oXMbI5QpMnmnY8CsugNbzSQD5BwIE0MmQXKSibhE3LXYtoqBQMzttwlNS10xC8Spychkv0G+FuS5m2AqKDJiLsvRCP0qYPuN88nplawu6wQYB03yoEc1IZd0XmQ3+F/GmFRS5q2tOE=
+	t=1723575799; cv=none; b=I3nNA9OLjXlVj4k0hrtCB+zh+Nb6mu2UdHS1LZAG/bkKijGa2h+JdrLu2xcDy6QsPY+GlkD7uvPPlhJuUaiYblF2YenGoDbbXGOYhkxm/H/h6HaRKlXFObZa6cOUBeO07IfD+Zs4N1QTNrD31Ln/Pus51fgSAkFeIfGLFhZT00s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575724; c=relaxed/simple;
-	bh=Zn1CdejGdzH3qrvO4azODSklzSoXsl0lU9zBAeb/I6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVaXHxtAVXUMK1C+HmpNUfRcoMxfXOfEu9QaufGAO1woRjZSb8aeOayI/bmrct0UpORnqp+t5eMCxXWVM0NS9QzftR0zywWoaVpN7bVyolvZpxG3EE42ei5v5hEclE72yaT/tLB555r1p3K3I6UozIYm6+HcGAYOjxWrD6yEjOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSdhxiQy; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc47abc040so38986155ad.0;
-        Tue, 13 Aug 2024 12:02:02 -0700 (PDT)
+	s=arc-20240116; t=1723575799; c=relaxed/simple;
+	bh=wZZi2FnrSd3Y6ntD+VqvzTWx0ibV9Sj/dK6MjW4hzrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fL84S2x86GN2o7cZQ59uGPeYPWGlAL7OcCgxFK5QXHrHa7IGqDUXEFTPtYxIY4nLobNTE41nSWLEgjv02+ein0WKaDDSpgnYGXUCQnLPzUGNzsIy23sappD6revcPFnwkiJ8SsGbPXDx4QQWJNa1q2SxHseP6mSkgqoo3Un0zgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=g6hHk7Yx; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52ef95ec938so6132423e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:03:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723575722; x=1724180522; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s068iVhOZ+3GA1IKeu19ZmOzE72AR5vLObVpRyMcB40=;
-        b=CSdhxiQyxdr7iXMyHs4j/GzDDQywY3fePUJOl49GoIHMLZC+AVyNmzsPRUcHi7JQEP
-         Dn1CHY0yn3HluK8g0QSk9N0GhJyTEEOqc678A5GwLTBFsZg/nlT/lsiBZIPqfz9uPmWI
-         FN+h53C22Gj+UipsjVOJoJhBNPmhAXA9R07vThSOttpNQxwq7zDiA7LGExPIa0ry9vBz
-         vgsN+rAmeQCWNDF1B4QssGIAB/o1eYF+sOWZr+pCQ8Te+Z5WPfzkJ7caRPcikS5hMWOW
-         jr2wuJYOMsA+XeoLCx+hRKry8EF5LOSe41/gEsLnwGeyXB9ZXPvZTlw7RxnZtXCuKHyq
-         Xptw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723575794; x=1724180594; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fpSg/3y828Pw97blr6HDnxsdU+5aKQgCf2MNnTGXTPg=;
+        b=g6hHk7YxcXKw9XYZlz/rldPNPtP9sSxJ3sP5e9/TD+gaMjqzohmlaZeYju6RqwpK3s
+         EW0YwOgAKdyl9GFH5qavww7ownEi0yz+UHzqKtdW2ThprXl+rQQEditJeq3TgyjN2FUE
+         mbEd9Vk6WF/WHVu32tWpkTG7SA+mqCzGMXQhzZdKoXv9KRXYEtWTH7h1WOOIsIGKIRZM
+         uIT//+AZ2sQCMC9gON8jVUTrD+OewaVnYf48Rspq19wg5V6bSmNlcuuFLgNZ8a+SIlfG
+         Sya7cPzOOX29nHuhRPMkGljQIKFbJbYai10US3rO6qkz2NH5I8MdO3VfXUiDa2kpKFJv
+         JygQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723575722; x=1724180522;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=s068iVhOZ+3GA1IKeu19ZmOzE72AR5vLObVpRyMcB40=;
-        b=rmuR2QAW+Ib20bswjnWzrQNjzxRjQvdUk4TGxZZIuayko1mKDDuNP6YXMivxOAuVff
-         VHGeIJyhZnQmF+N2V4UKbC9BF4bL4nCrx/dMC1tqDpgR8ohoRSi6AicXoqXrkzO9571I
-         97b3fPqU8N7Dlx9ioVqotFGSfBD3LHF/9p+ZRb8h8sVOMHFZiN7VwUMq3tmmPasZfX2f
-         8tM/Y+V5j1Sq/ECFKhPY3Xk5LyGWDGQ7e+ocIdO1201TFXseXksJXGXVfBVQgZWKq/Gw
-         eUfVj5pL2Uv4N3aXUs1NfaAtxKldWJRRfzifWJ2Xqm4qcUXj2LE//M00OUt2Rdb9Py6e
-         GvzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX66vidcBKSyVtZPzprlHVJrKwesog9jqXzTZ3O3470GqMv/1RVK3qTcN39JKVEoWRN2c7uM5HWLuU5OXUu4S2IMycOHNbLDQ/jsEECCJLqT9RiGcRDsZjlsg7vu9pDrVTP2BYU6w==
-X-Gm-Message-State: AOJu0Yy0lHQEEDlTDbLOnVkN72/HmkELiuD3UgSc1tzNrH5XK22bnaK0
-	oJrGJC1WWPL1FacHCt6b1PcyboDBpeXy3mzqodNF4E3j/iSPq7DI
-X-Google-Smtp-Source: AGHT+IF9dG5BwSTQD03rkROc00ErVNht2yV1WtWbGXemgrllsq31QSL+oNbku2+JddTKt1na1aXRhw==
-X-Received: by 2002:a17:902:db02:b0:1ff:493:8de1 with SMTP id d9443c01a7336-201d63bc2acmr6884165ad.1.1723575722165;
-        Tue, 13 Aug 2024 12:02:02 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a93d7sm16985145ad.149.2024.08.13.12.02.01
+        d=1e100.net; s=20230601; t=1723575794; x=1724180594;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fpSg/3y828Pw97blr6HDnxsdU+5aKQgCf2MNnTGXTPg=;
+        b=q+NErBxmFFLthe9auhoHb99Om6XQJTgnIFKhQmVdk+e55AxBN5RxRve7KEWJxRAkg4
+         OLtz87Drh1CU4IqfE/V0JUklBv0Rq9TuSJQjid4KcxEmnuMpbnqDMd9ed5BspagNGtdt
+         Q4dHJqVBAtDK2ZsdM1HBPBsNnPmFucQ7qndkdpyHPLPGtoaFuWEKrTanH3mzyZmM5fzZ
+         /IP++W8tDF+uL1/GQ1s6Ko9Dl3+kKtc7PePD7vkvMHU7HkG3AajCIatMI26w/L74gYCt
+         xQvce3c3y2104y6n1/fld6EKWbr/kNedM53eSf5mYz4lYdKE4TBP5pAKWZziUqDPKodI
+         iM0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpQ3Wq4Iyflxl9lIOmM4Nk34epGf7Nsku+sXjfTGJMdCAkmAGYRImy4clkxy7JtCnudPC498ZZLf0TKPAovGWVNEvbyVxQ1R7sSXPN
+X-Gm-Message-State: AOJu0Yx4LkKeXFqAePGGyMJegpCegzXk8n1CupsIoSZOsIOgctz2ugE0
+	v4wFD0CSocx+FjubqICRMQgxImSov0kbwNU3cIi2OvVCJhtK5qavv2OXNxUHjaA=
+X-Google-Smtp-Source: AGHT+IH+VagueuQIXMxGnIX0w5CylWhKwU2nLQR+DMf+tI3DEgtgkMQnem1H9OyA00MT+ZbTBm902g==
+X-Received: by 2002:a05:6512:2351:b0:52c:b479:902d with SMTP id 2adb3069b0e04-532eda5b0famr222373e87.4.1723575794356;
+        Tue, 13 Aug 2024 12:03:14 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c72d8ffsm229487185e9.7.2024.08.13.12.03.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:02:01 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 13 Aug 2024 09:02:00 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Chen Ridong <chenridong@huawei.com>, lizefan.x@bytedance.com,
-	hannes@cmpxchg.org, longman@redhat.com, cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next 2/2] cgroup: Disallow delegatee to write all
- interfaces outsize of cgroup ns
-Message-ID: <ZrutqDox2rrr7dlA@slm.duckdns.org>
-References: <20240812073746.3070616-1-chenridong@huawei.com>
- <20240812073746.3070616-3-chenridong@huawei.com>
- <ex5gnhcoobbw74se4uchhqj2lsrcjx5bsh6m5lva2xmujv7uae@34vwukkwhkbc>
+        Tue, 13 Aug 2024 12:03:14 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Kalle Valo <kvalo@kernel.org>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jeff Johnson <jjohnson@kernel.org>
+Cc: linux-wireless@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	ath11k@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] dt-bindings: net: ath11k: document the inputs of the ath11k on WCN6855
+Date: Tue, 13 Aug 2024 21:03:05 +0200
+Message-ID: <20240813190306.154943-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ex5gnhcoobbw74se4uchhqj2lsrcjx5bsh6m5lva2xmujv7uae@34vwukkwhkbc>
 
-Hello,
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Mon, Aug 12, 2024 at 06:57:06PM +0200, Michal Koutný wrote:
-...
-> You could also have increased the ancestral limit (if there was any)
-> echo max > dlgt_grp_ns/pids.max // similarly allowed
-> 
-> If you're a root (or otherwise have sufficient permissions) and you can
-> _see_ an ancestral cgroup, you can write to its attributes according to
-> permissions. Thus the delegation works via cgroup ns (in)visibility but
-> cgroup ns root is visible on both sides of the boundary hence the extra
-> check.
+Describe the inputs from the PMU of the ath11k module on WCN6855.
 
-Yeah, the intended usage scenario w/ NS delegation is that the delegatee
-won't be able to see the ancetral cgroups beyond the delegation point. Chen,
-is this from an actual usecase? If so, can you describe what's going on?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ .../net/wireless/qcom,ath11k-pci.yaml         | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-Thanks.
-
+diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
+index 8675d7d0215c..404974d77826 100644
+--- a/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
++++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.yaml
+@@ -50,6 +50,9 @@ properties:
+   vddrfa1p7-supply:
+     description: VDD_RFA_1P7 supply regulator handle
+ 
++  vddrfa1p8-supply:
++    description: VDD_RFA_1P8 supply regulator handle
++
+   vddpcie0p9-supply:
+     description: VDD_PCIE_0P9 supply regulator handle
+ 
+@@ -77,6 +80,22 @@ allOf:
+         - vddrfa1p7-supply
+         - vddpcie0p9-supply
+         - vddpcie1p8-supply
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: pci17cb,1103
++    then:
++      required:
++        - vddrfacmn-supply
++        - vddaon-supply
++        - vddwlcx-supply
++        - vddwlmx-supply
++        - vddrfa0p8-supply
++        - vddrfa1p2-supply
++        - vddrfa1p8-supply
++        - vddpcie0p9-supply
++        - vddpcie1p8-supply
+ 
+ additionalProperties: false
+ 
 -- 
-tejun
+2.43.0
+
 
