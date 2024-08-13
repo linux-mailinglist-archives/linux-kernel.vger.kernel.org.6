@@ -1,92 +1,150 @@
-Return-Path: <linux-kernel+bounces-285448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A45950D98
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:07:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36B99950DA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84380B246B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E21672860BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B8B1A7049;
-	Tue, 13 Aug 2024 20:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A22E41A4F28;
+	Tue, 13 Aug 2024 20:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+a9BFGu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DW1NAk/M"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C991A4F30;
-	Tue, 13 Aug 2024 20:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3E31A76D0
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579656; cv=none; b=QlBL4nwr8W624RcHXEQQ0NRfvTwavys5fgaH00lpP9QrwAhoMQrke13mD/vbyaQzqAMErJT+tvvOuB+LuxLhJPjzk57oI5ZAvOzsDxFVqjL87YbV3VZTe0NSNYeC2/6mPt7POMg3RcRzoIf0iv0iR8MU0/7vsgTrLmZJEBcnltY=
+	t=1723579737; cv=none; b=SL0EC2uQ4QZ7LfdknoLclJICRykpcmIIpJMn9So/5H0q6Zzjqzuvsyw7r+u+WISODI0mh1IIxg2NeseiIh0sc6tRtmfjIep0y2E8xHxiZtSiuE7gaLHbqkzfeKdYtUDgnejYQTeFht1v0fZ3KrmDjwqlIxBkwRlKQ7x0yIjV5z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579656; c=relaxed/simple;
-	bh=pcU0DlQ+ID/ze4Ee6AQQElRUnHpjqLCr6VqHuIdU5FI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYaytyvTYYbHJUJlfo6hR7LPMrmBpiJf6zEOj8w4Lm2VKFWt9B0taE+YrtSiOVgPwgclA+U0UDwc0kdM5u7wJZmRvuoo+dOS3boGzIbt6Sgz7utT+vk/1GgdcH73pKWm+TMnKK+GLbyw/qED/uvDdGusCM3qFXOBdM44Oxt/SqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+a9BFGu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95ACDC4AF10;
-	Tue, 13 Aug 2024 20:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723579655;
-	bh=pcU0DlQ+ID/ze4Ee6AQQElRUnHpjqLCr6VqHuIdU5FI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+a9BFGu5rXoC2VXF6YVaCHXPLBvjQuCO8q/YvNGn+2s8sNyKgBQOKR/h+Ir4j/no
-	 olrDkMK2uBr05dFbfSDhtvK0drNBkgcfwHf0f4I4yBTsilX/69neoR+L9aMLsl97ot
-	 v2XrSh2CgqXEZlReERf1DOAfXBEFIiSX49Run3f1H/eIYLw5Fp3Q8RcdUyKdNAEu9N
-	 Q1kzD3q88FLCEQb5JTURDmmAikCCifDm+nDix/zedHtEqRj6rmIzIEeApdN5iT2uf7
-	 0B/2krLSkbGHqqWiM1VXpoV6E/5RJRBy9TpuHYIfHQ40KAr4ZG5gfWjAt7dzQPBQlg
-	 1hhTdmNsn2RCA==
-Date: Tue, 13 Aug 2024 14:07:34 -0600
-From: Rob Herring <robh@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Joern Engel <joern@lazybastard.org>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Saravana Kannan <saravanak@google.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Florian Fainelli <f.fainelli@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org
-Subject: Re: [PATCH v4 3/7] dt-bindings: mmc: add property for partitions
- node in mmc-card node
-Message-ID: <20240813200734.GA1659224-robh@kernel.org>
-References: <20240809172106.25892-1-ansuelsmth@gmail.com>
- <20240809172106.25892-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1723579737; c=relaxed/simple;
+	bh=hHDx9OPdr+6z3WWxNY01JOJh0e1OR4Dh+NGFkJAh8Ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZ3He0bSptr56r4rFz7ZnH8St37Q9MWeuZBZL6KzL2uN9xEeqOqzNvgWPZsXm3OnfMKAYa3XBVfiRVyNVXW//2ejhE+Zlsx2b6NBwgB7ZxxzIF3i2xXFvEJrvBFF+lv/Sd5SvQP4AowDfQB0XXJxdT991APdCzCgqKLrB2h7kVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DW1NAk/M; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-710d0995e21so3860450b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:08:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1723579736; x=1724184536; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mogpSA6tnPpQ3+FsmEemAAY1GN9dexeB8hMBdlUeGFs=;
+        b=DW1NAk/MBAbiAWs/5f9OgtZ6/SQilsfbPTdZmVFFVyIjlYoAo//+78sQiU3U1Sxe6O
+         ZYvvKz2FiSBGBziz6U4VveGctxaFwcm1aaLaXOK+7PAml9XkKQfFrPXSVQ++OhI8R4CC
+         WRFi5vkOEbyk9qTLYEYM7WvRo6GOBC+dSKkTs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723579736; x=1724184536;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mogpSA6tnPpQ3+FsmEemAAY1GN9dexeB8hMBdlUeGFs=;
+        b=FOfMsj79+Hbi7czbBbY7uUObY1xdnbCzGYTbN9EfCWlLRgCmNAEZkmmP4Hf8eWOFE5
+         B5jO0fbyD3cG3onk5/xlP73bvsNRxzr6GAVTFjQyPaB4I+OTN/wRLUcMjYgSIKoBFPyu
+         91iyAHFawti6i/2vwbchL2nDA2vjLe5P5Jw/GeQCUlwnQlrIX4x0QsrSYFRgD1hy4HW/
+         jmA90At7/4FEKH/XoWi4DjFLFEuwPEd3yHraJByOUXaY8gk0Wku+b0tM7r7OIGOTy3sX
+         5VKDj8xDxwBOLlUfbXbngltA1a1wXjhNibF+nA0W3T9FzK+UryfSqaMkgguvqaDOlYe0
+         Kapg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuhzG/qTg8jIs33uDw6Maotp5HxBDxje7bPXQccpJDzZgyf9WjK5gDOAjlKUQJKmSGH50wLCozFHxuE1o1uAawR8W3XCuhXuxbyS0M
+X-Gm-Message-State: AOJu0Yymqden7ODEJYkWFRavHU3yiFDz+qDhUqXFIH/69psCu0Y1xmsb
+	k8eqDKYJfSBZwwMY/LqRCE2Ubr+76oopUnnLBbq2NSob25lVj78hLpqTOIeHXQ==
+X-Google-Smtp-Source: AGHT+IGTfGWSQYpvtsfJqO7kAE/AtFBq4DJrEYoFpcg14OTafr6ULR0Hu/1x5uFVd1Sxv8uLMztUxA==
+X-Received: by 2002:a05:6a00:2da4:b0:70d:3174:262b with SMTP id d2e1a72fcca58-712673ee4d1mr1108891b3a.29.1723579735522;
+        Tue, 13 Aug 2024 13:08:55 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5ab79casm6090240b3a.199.2024.08.13.13.08.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 13:08:54 -0700 (PDT)
+Message-ID: <8879cc2a-ba01-4760-ad4a-a40e1d2da3c5@broadcom.com>
+Date: Tue, 13 Aug 2024 13:08:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809172106.25892-4-ansuelsmth@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: sram: Document reg-io-width property
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: bcm-kernel-feedback-list@broadcom.com,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Cristian Marussi <cristian.marussi@arm.com>, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor+dt@kernel.org>, arm-scmi@vger.kernel.org,
+ Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org,
+ justin.chen@broadcom.com, opendmb@gmail.com, kapil.hali@broadcom.com,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ devicetree@vger.kernel.org
+References: <20240813180747.1439034-1-florian.fainelli@broadcom.com>
+ <20240813180747.1439034-2-florian.fainelli@broadcom.com>
+ <172357734438.1612221.15779792680136216420.robh@kernel.org>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <172357734438.1612221.15779792680136216420.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 09, 2024 at 07:21:01PM +0200, Christian Marangi wrote:
-> Add property for defining partitions node in mmc-card node to define
-> partitions in DT by the use of the block2mtd module to use block
-> devices as MTD.
-
-You justified patch 1 saying eMMC already supported this, but then here 
-you add support.
-
-Both are a NAK for me as both already have a way to describe partitions 
-with GPT.
-
+On 8/13/24 12:29, Rob Herring (Arm) wrote:
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
->  .../devicetree/bindings/mmc/mmc-card.yaml     | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> On Tue, 13 Aug 2024 11:07:46 -0700, Florian Fainelli wrote:
+>> Some SRAMs need to be accessed with a specific access width, define
+>> the 'reg-io-width' property specifying such access sizes.
+>>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+>> ---
+>>   Documentation/devicetree/bindings/sram/sram.yaml | 6 ++++++
+>>   1 file changed, 6 insertions(+)
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> ./Documentation/devicetree/bindings/sram/sram.yaml:106:12: [warning] wrong indentation: expected 10 but found 11 (indentation)
+
+My bad, I had it corrected on the machine I used to do v1, but did not 
+carry that commit over. Will fix in v3.
+-- 
+Florian
+
 
