@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-285226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08D9950AE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:00:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1107950AEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5CC11C22CA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:00:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51EA61F23483
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772F11A38EF;
-	Tue, 13 Aug 2024 16:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C54E1A256A;
+	Tue, 13 Aug 2024 16:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IlJ+ydgf"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gjPGFElB"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84FE1A2C39
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1941A2561
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723568385; cv=none; b=Ae60kwI63Tl+hrCxei+Csl4626Ru6oHsHE82N7TSwgkDQRstOCOwNJpQghahUcue/z7rp5+S7sitYYwNIUhRtGs7stxiTk6lVKMOa3gaWXV4rF0VvPdZL3yfDz6/aARn52LGcKso4z/wwA2wIsHjiYZJMmJgFQgUMc4YZ2QtdyE=
+	t=1723568386; cv=none; b=KDLgko48uw8A6N4bCLYOBO8HEr1pO0DS3IGzN3YWNYLxiNx6aHsu+7m5MD8VoitTq8JG8Xu0z7/lHSDA7NI/yrOriVmrVoyRdNI0HTah45s/UJIcJLDjgkY80b5nCLYzrRI1qYsWu/50R+gkG8D885MhNToRzh6Ab+rGXc75Ue8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723568385; c=relaxed/simple;
-	bh=uUt4ZAicTtOcUFBajc2Rcm/DS6stfUhYzd+Acgyt79g=;
+	s=arc-20240116; t=1723568386; c=relaxed/simple;
+	bh=v4o0k/hvkZp0NOHjP3zwNZqrNqtVb/d9j5ZzED2dby8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cvWyVTDZ4zt7mWO93BLZUDxvcxHX7lj5aSoa2wRJ+CHZVinWPfuSb8ZyzHkk6NNeItBogzuLyM4ZzK7kYzoRP1yU0ABAwK8wB6FhiUksd6e0V98+9CvveS1OvwVwdF/c1OLHheMSIdSZnemM58e0HhjsU7aYtfILmpZHja75YnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IlJ+ydgf; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=mpRC6638J0Taz9gEgXgoFjOuBTH/p9iady6o9JLwMVVk2oC3jhNbbjmT0+tujWa1UjGOARgW8VZBlsc+Gq5KeyJZ8GIDIqLffE77kgI0MRn74AZzL3JXEWWERJhW51aLW82cMwsqOPhAE45PA85uYRvDoiiUVK9a9ij0BcAFHEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gjPGFElB; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-666010fb35cso1071527b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:59:42 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02a4de4f4eso9998386276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:59:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723568382; x=1724173182; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1723568384; x=1724173184; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1JUyOR+BauD0beWrpDUPXKr0GpTowWtPDSwnxHbi4c=;
-        b=IlJ+ydgfsQVGD8V5EZalojt0t8crnWOVXavzywaQ7Jf5nNZbWQktI6u+EEWwF3OcBi
-         PzZFmPY9kXHnCTqhgo9g6R1R88vbfDsMpaDEDHz1v9AVFAmJRjeWSUFQgl2xu/zXWwri
-         qYGYYLfuHxweY+fWH6CNZf97W3w6dPIbIYoBPXHGSoTZfwK62XrATImy+GfwasCNV7Rt
-         fhNGrdRUk8NnSyjNhO1x0MTz9Cys0+MNPZ/hbRCiQoePfPYGo2OGEaMhtK7oZiLQJyjT
-         uhkSfMIR0ivCHBGotLCpQUVa1/AUBje7cxFnexmDIT2V/n6CLqVTc9s+RWzcI+orO26B
-         HG2A==
+        bh=nX5Or29rWGSYnqI8Mal7bT79wmdNbU4VM0EJZ849BDE=;
+        b=gjPGFElBOXW8hFo0GgXOLyAozJnNvOMIU8QgVLuHjvCQmysB982i4f4fdkHRfabKw4
+         TXhj1UbH34oRXb8glQlAjD0o/x1u+PXiccyH1uPOtVxIRjd6YTUsjktE9yg/KCvUkC5o
+         nBI18micNsWLBTmmnh8bjmTUCmuPkYiQsPZLbZBYdOHFxWwG5HPVSKVRcIeh0mRNWr9B
+         iDyl6anDgnNU4ph+QQK0oDiXViUnSgCo5meneHYxyXcxWjoEpk9SZS60nNjfmmzXJfVt
+         yyFY/slaWzfogMkaZg7joAFYXxDNdnm/NI9TkMDeVzuBdDb6/fO4KtOLB4wFn+le7qv2
+         hBTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723568382; x=1724173182;
+        d=1e100.net; s=20230601; t=1723568384; x=1724173184;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=I1JUyOR+BauD0beWrpDUPXKr0GpTowWtPDSwnxHbi4c=;
-        b=wd8oDD593MELyw21tcfSIEH3pISP2UWdktZPtORtRGjwBJ9u+CQNyBFiasfPlhmTPs
-         DpqQpYjatB7FnhQiICeViY5gA9bbN3sTjoiTSBg8t+0Go2HZThvGogGiSXMcPOSeB8d9
-         eShv7Mv5LtvbWg+xUXlIiHV6OGr8yA7TRKesTZRuwZN5OGZQbMzeUdlZMHppldbJ5bCW
-         99QftfpbJEm6BRfTixVkyiDtpqmJuP7vhwBdVsvYZ58NiF+HFrjTIsBFJlG/tOFsrLkr
-         WL3Mz236Tb79kyQ0ilc0oYBgLpPV2swJx+M7xF3zG+3qtjpJ7p2lKQdN+Jcjq2WqbOp5
-         7I8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ7e7w2mtESOQYB4fwv2mLORGyKW0ti2LivJi1vmS4Yb8u33zfzD4GL2xqh8PHrq0eDjDkp8sTWsZV/EXsFIUnJ4Eu1QnjPYweL1Gf
-X-Gm-Message-State: AOJu0Yxv6D3WKQ4D3tZyvnE9We3GSOah8VDF8TtBG2CI41v6ap/jEJB5
-	7LMoHdG9cyMtHEvdaRFLkJRb3AaLsPz+8IlHx3hj9139JdeWUW6SXedcfYRWiiYqhTtsKW//t/N
-	GUkk2NA==
-X-Google-Smtp-Source: AGHT+IGF6gcvOUuK0qRwt2F4MDLyEzr3H7dooXhW2VhDhQ7vMG1kJd5bUtwNOeRY1xrvYnGAuUjldLTxpbDJ
+        bh=nX5Or29rWGSYnqI8Mal7bT79wmdNbU4VM0EJZ849BDE=;
+        b=PTHwQm0E0fmpfmmNwL8iy4g+R25mDUmpjOt2uJDaIIhT8e4gIjIDS2eFW0kUbmm5o6
+         uuBRIZ3dip2Ysqs8ox1dPeiKPzWxB2NLdNqp+LvDpnya6ejJIxC0wQ+yGk1AFYg3GJUO
+         smRjiUA4trHeAxJtDZnwrbAuyaLASZ0pW3rhu8KBVTK4IAIfFg9MqR+7LYWBmVU6y6rp
+         n0Eq+PITOG3umEER4Jy1n6osPPyz9ad2GARWjg8RII5y7z8jfg1eL7r2Hqbk7nRs/gS8
+         fcLPi9ssVy28BLNSVMElus8K68VYDP79QdK/q8fyMaDV5lUN2ewL/lnuWeOXjJYInWxr
+         Yuyg==
+X-Forwarded-Encrypted: i=1; AJvYcCXI0m3LYcF7ljsW5JRy3NEkhmfX6tIK4xZGHnqbhq6k33XpFzOq0T+Jt85UxuUPxU7vtPkb/dDnQQnRyVM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxENAnHRSP66u1bAYQzUygUj5bu1nPjcmW21FuuH+Xjry1YjIEl
+	wA9L2n/8WMjnal/txC8c3AJmMzcFmqXtEqJXTyIbMVfqA2BKE1n/pQiDz5HZxYS/WGWq4S+dK+c
+	AjqC1uw==
+X-Google-Smtp-Source: AGHT+IEDV077DvpPZgcSOtEG+50DqdAd9HxWks1Jm8Rh/HY1wmqFnkHTld2tYhmnQaOc9LEXewCUzyWTHQqf
 X-Received: from yuanchu-desktop.svl.corp.google.com ([2620:15c:2a3:200:b50c:66e8:6532:a371])
- (user=yuanchu job=sendgmr) by 2002:a0d:ce01:0:b0:6a1:741b:b723 with SMTP id
- 00721157ae682-6a9ea8e5238mr545567b3.5.1723568381863; Tue, 13 Aug 2024
- 09:59:41 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:56:14 -0700
+ (user=yuanchu job=sendgmr) by 2002:a25:a444:0:b0:e05:6e45:84b6 with SMTP id
+ 3f1490d57ef6-e1155b79891mr171276.8.1723568383787; Tue, 13 Aug 2024 09:59:43
+ -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:56:15 -0700
 In-Reply-To: <20240813165619.748102-1-yuanchu@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240813165619.748102-1-yuanchu@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240813165619.748102-4-yuanchu@google.com>
-Subject: [PATCH v3 3/7] mm: report workingset during memory pressure driven scanning
+Message-ID: <20240813165619.748102-5-yuanchu@google.com>
+Subject: [PATCH v3 4/7] mm: extend working set reporting to memcgs
 From: Yuanchu Xie <yuanchu@google.com>
 To: David Hildenbrand <david@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
 	Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
@@ -97,219 +97,373 @@ Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
 	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-When a node reaches its low watermarks and wakes up kswapd, notify all
-userspace programs waiting on the workingset page age histogram of the
-memory pressure, so a userspace agent can read the workingset report in
-time and make policy decisions, such as logging, oom-killing, or
-migration.
+Break down the system-wide working set reporting into
+per-memcg reports, which aggregages its children hierarchically.
+The per-node working set reporting histograms and refresh/report
+threshold files are presented as memcg files, showing a report
+containing all the nodes.
 
-Sysfs interface:
-/sys/devices/system/node/nodeX/workingset_report/report_threshold
-	time in milliseconds that specifies how often the userspace
-	agent can be notified for node memory pressure.
+The per-node page age interval is configurable in sysfs and not
+available per-memcg, while the refresh interval and report threshold are
+configured per-memcg.
+
+Memcg interface:
+/sys/fs/cgroup/.../memory.workingset.page_age
+	The memcg equivalent of the sysfs workingset page age histogram
+	breaks down the workingset of this memcg and its children into
+	page age intervals. Each node is prefixed with a node header and
+	a newline. Non-proactive direct reclaim on this memcg can also
+	wake up userspace agents that are waiting on this file.
+	e.g.
+	N0
+	1000 anon=0 file=0
+	2000 anon=0 file=0
+	3000 anon=0 file=0
+	4000 anon=0 file=0
+	5000 anon=0 file=0
+	18446744073709551615 anon=0 file=0
+
+/sys/fs/cgroup/.../memory.workingset.refresh_interval
+	The memcg equivalent of the sysfs refresh interval. A per-node
+	number of how much time a page age histogram is valid for, in
+	milliseconds.
+	e.g.
+	echo N0=2000 > memory.workingset.refresh_interval
+
+/sys/fs/cgroup/.../memory.workingset.report_threshold
+	The memcg equivalent of the sysfs report threshold. A per-node
+	number of how often userspace agent waiting on the page age
+	histogram can be woken up, in milliseconds.
+	e.g.
+	echo N0=1000 > memory.workingset.report_threshold
 
 Signed-off-by: Yuanchu Xie <yuanchu@google.com>
-Change-Id: Ib1fdb726da921e8d467822a99da8f384c6181951
+Change-Id: I6c8a39cddd248c031c85f144787c9044912f3c21
 ---
- include/linux/workingset_report.h |  4 +++
- mm/internal.h                     | 12 ++++++++
- mm/vmscan.c                       | 46 +++++++++++++++++++++++++++++++
- mm/workingset_report.c            | 43 ++++++++++++++++++++++++++++-
- 4 files changed, 104 insertions(+), 1 deletion(-)
+ include/linux/memcontrol.h        |  21 ++++
+ include/linux/workingset_report.h |   6 +-
+ mm/internal.h                     |   2 +
+ mm/memcontrol.c                   | 178 +++++++++++++++++++++++++++++-
+ mm/workingset_report.c            |  12 +-
+ 5 files changed, 214 insertions(+), 5 deletions(-)
 
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 0e5bf25d324f..6d67f1072943 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -315,6 +315,11 @@ struct mem_cgroup {
+ 	spinlock_t event_list_lock;
+ #endif /* CONFIG_MEMCG_V1 */
+ 
++#ifdef CONFIG_WORKINGSET_REPORT
++	/* memory.workingset.page_age file */
++	struct cgroup_file workingset_page_age_file;
++#endif
++
+ 	struct mem_cgroup_per_node *nodeinfo[];
+ };
+ 
+@@ -1063,6 +1068,16 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ 
+ void split_page_memcg(struct page *head, int old_order, int new_order);
+ 
++static inline struct cgroup_file *
++mem_cgroup_page_age_file(struct mem_cgroup *memcg)
++{
++#ifdef CONFIG_WORKINGSET_REPORT
++	return &memcg->workingset_page_age_file;
++#else
++	return NULL;
++#endif
++}
++
+ #else /* CONFIG_MEMCG */
+ 
+ #define MEM_CGROUP_ID_SHIFT	0
+@@ -1470,6 +1485,12 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
+ static inline void split_page_memcg(struct page *head, int old_order, int new_order)
+ {
+ }
++
++static inline struct cgroup_file *
++mem_cgroup_page_age_file(struct mem_cgroup *memcg)
++{
++	return NULL;
++}
+ #endif /* CONFIG_MEMCG */
+ 
+ /*
 diff --git a/include/linux/workingset_report.h b/include/linux/workingset_report.h
-index 8bae6a600410..2ec8b927b200 100644
+index 2ec8b927b200..ae412d408037 100644
 --- a/include/linux/workingset_report.h
 +++ b/include/linux/workingset_report.h
-@@ -37,7 +37,11 @@ struct wsr_page_age_histo {
- };
+@@ -9,6 +9,7 @@ struct mem_cgroup;
+ struct pglist_data;
+ struct node;
+ struct lruvec;
++struct cgroup_file;
  
- struct wsr_state {
-+	unsigned long report_threshold;
+ #ifdef CONFIG_WORKINGSET_REPORT
+ 
+@@ -40,7 +41,10 @@ struct wsr_state {
+ 	unsigned long report_threshold;
  	unsigned long refresh_interval;
-+
-+	struct kernfs_node *page_age_sys_file;
-+
+ 
+-	struct kernfs_node *page_age_sys_file;
++	union {
++		struct kernfs_node *page_age_sys_file;
++		struct cgroup_file *page_age_cgroup_file;
++	};
+ 
  	/* breakdown of workingset by page age */
  	struct mutex page_age_lock;
- 	struct wsr_page_age_histo *page_age;
 diff --git a/mm/internal.h b/mm/internal.h
-index f7d790f5d41c..19af882c506e 100644
+index 19af882c506e..cc54358ed582 100644
 --- a/mm/internal.h
 +++ b/mm/internal.h
-@@ -416,6 +416,18 @@ bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq, bool can_swap,
- 			bool force_scan);
- void set_task_reclaim_state(struct task_struct *task, struct reclaim_state *rs);
- 
-+#ifdef CONFIG_WORKINGSET_REPORT
-+/*
-+ * in mm/wsr.c
-+ */
-+void notify_workingset(struct mem_cgroup *memcg, struct pglist_data *pgdat);
-+#else
-+static inline void notify_workingset(struct mem_cgroup *memcg,
-+				     struct pglist_data *pgdat)
-+{
-+}
-+#endif
-+
- /*
-  * in mm/rmap.c:
+@@ -421,6 +421,8 @@ void set_task_reclaim_state(struct task_struct *task, struct reclaim_state *rs);
+  * in mm/wsr.c
   */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 8ab1b456d2cf..b07fd2016c75 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2574,6 +2574,15 @@ static bool can_age_anon_pages(struct pglist_data *pgdat,
- 	return can_demote(pgdat->node_id, sc);
+ void notify_workingset(struct mem_cgroup *memcg, struct pglist_data *pgdat);
++int workingset_report_intervals_parse(char *src,
++				      struct wsr_report_bins *bins);
+ #else
+ static inline void notify_workingset(struct mem_cgroup *memcg,
+ 				     struct pglist_data *pgdat)
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 5d16fd9d2c3f..56848dc94d48 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4318,6 +4318,162 @@ static ssize_t memory_reclaim(struct kernfs_open_file *of, char *buf,
+ 	return nbytes;
  }
  
 +#ifdef CONFIG_WORKINGSET_REPORT
-+static void try_to_report_workingset(struct pglist_data *pgdat, struct scan_control *sc);
-+#else
-+static inline void try_to_report_workingset(struct pglist_data *pgdat,
-+					    struct scan_control *sc)
++static int memory_ws_refresh_interval_show(struct seq_file *m, void *v)
 +{
-+}
-+#endif
++	int nid;
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
 +
- #ifdef CONFIG_LRU_GEN
- 
- #ifdef CONFIG_LRU_GEN_ENABLED
-@@ -4000,6 +4009,8 @@ static void lru_gen_age_node(struct pglist_data *pgdat, struct scan_control *sc)
- 
- 	set_initial_priority(pgdat, sc);
- 
-+	try_to_report_workingset(pgdat, sc);
++	for_each_node_state(nid, N_MEMORY) {
++		struct wsr_state *wsr =
++			&mem_cgroup_lruvec(memcg, NODE_DATA(nid))->wsr;
 +
- 	memcg = mem_cgroup_iter(NULL, NULL, NULL);
- 	do {
- 		struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
-@@ -5640,6 +5651,38 @@ static int __init init_lru_gen(void)
- };
- late_initcall(init_lru_gen);
- 
-+#ifdef CONFIG_WORKINGSET_REPORT
-+static void try_to_report_workingset(struct pglist_data *pgdat,
-+				     struct scan_control *sc)
-+{
-+	struct mem_cgroup *memcg = sc->target_mem_cgroup;
-+	struct wsr_state *wsr = &mem_cgroup_lruvec(memcg, pgdat)->wsr;
-+	unsigned long threshold = READ_ONCE(wsr->report_threshold);
-+
-+	if (sc->priority == DEF_PRIORITY)
-+		return;
-+
-+	if (!threshold)
-+		return;
-+
-+	if (!mutex_trylock(&wsr->page_age_lock))
-+		return;
-+
-+	if (!wsr->page_age) {
-+		mutex_unlock(&wsr->page_age_lock);
-+		return;
++		seq_printf(m, "N%d=%u ", nid,
++			   jiffies_to_msecs(READ_ONCE(wsr->refresh_interval)));
 +	}
++	seq_putc(m, '\n');
 +
-+	if (time_is_after_jiffies(wsr->page_age->timestamp + threshold)) {
-+		mutex_unlock(&wsr->page_age_lock);
-+		return;
-+	}
-+
-+	mutex_unlock(&wsr->page_age_lock);
-+	notify_workingset(memcg, pgdat);
-+}
-+#endif /* CONFIG_WORKINGSET_REPORT */
-+
- #else /* !CONFIG_LRU_GEN */
- 
- static void lru_gen_age_node(struct pglist_data *pgdat, struct scan_control *sc)
-@@ -6191,6 +6234,9 @@ static void shrink_zones(struct zonelist *zonelist, struct scan_control *sc)
- 		if (zone->zone_pgdat == last_pgdat)
- 			continue;
- 		last_pgdat = zone->zone_pgdat;
-+
-+		if (!sc->proactive)
-+			try_to_report_workingset(zone->zone_pgdat, sc);
- 		shrink_node(zone->zone_pgdat, sc);
- 	}
- 
-diff --git a/mm/workingset_report.c b/mm/workingset_report.c
-index fe553c0a653e..801ac8e5c1da 100644
---- a/mm/workingset_report.c
-+++ b/mm/workingset_report.c
-@@ -311,6 +311,33 @@ static struct wsr_state *kobj_to_wsr(struct kobject *kobj)
- 	return &mem_cgroup_lruvec(NULL, kobj_to_pgdat(kobj))->wsr;
- }
- 
-+static ssize_t report_threshold_show(struct kobject *kobj,
-+				     struct kobj_attribute *attr, char *buf)
-+{
-+	struct wsr_state *wsr = kobj_to_wsr(kobj);
-+	unsigned int threshold = READ_ONCE(wsr->report_threshold);
-+
-+	return sysfs_emit(buf, "%u\n", jiffies_to_msecs(threshold));
++	return 0;
 +}
 +
-+static ssize_t report_threshold_store(struct kobject *kobj,
-+				      struct kobj_attribute *attr,
-+				      const char *buf, size_t len)
++static ssize_t memory_wsr_threshold_parse(char *buf, size_t nbytes,
++					  unsigned int *nid_out,
++					  unsigned int *msecs)
 +{
-+	unsigned int threshold;
-+	struct wsr_state *wsr = kobj_to_wsr(kobj);
++	char *node, *threshold;
++	unsigned int nid;
++	int err;
 +
-+	if (kstrtouint(buf, 0, &threshold))
++	buf = strstrip(buf);
++	threshold = buf;
++	node = strsep(&threshold, "=");
++
++	if (*node != 'N')
 +		return -EINVAL;
 +
-+	WRITE_ONCE(wsr->report_threshold, msecs_to_jiffies(threshold));
++	err = kstrtouint(node + 1, 0, &nid);
++	if (err)
++		return err;
 +
-+	return len;
++	if (nid >= nr_node_ids || !node_state(nid, N_MEMORY))
++		return -EINVAL;
++
++	err = kstrtouint(threshold, 0, msecs);
++	if (err)
++		return err;
++
++	*nid_out = nid;
++
++	return nbytes;
 +}
 +
-+static struct kobj_attribute report_threshold_attr =
-+	__ATTR_RW(report_threshold);
++static ssize_t memory_ws_refresh_interval_write(struct kernfs_open_file *of,
++						 char *buf, size_t nbytes,
++						 loff_t off)
++{
++	unsigned int nid, msecs;
++	struct wsr_state *wsr;
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	ssize_t ret = memory_wsr_threshold_parse(buf, nbytes, &nid, &msecs);
 +
- static ssize_t refresh_interval_show(struct kobject *kobj,
- 				     struct kobj_attribute *attr, char *buf)
- {
-@@ -465,6 +492,7 @@ static ssize_t page_age_show(struct kobject *kobj, struct kobj_attribute *attr,
- static struct kobj_attribute page_age_attr = __ATTR_RO(page_age);
- 
- static struct attribute *workingset_report_attrs[] = {
-+	&report_threshold_attr.attr,
- 	&refresh_interval_attr.attr,
- 	&page_age_intervals_attr.attr,
- 	&page_age_attr.attr,
-@@ -486,8 +514,13 @@ void wsr_init_sysfs(struct node *node)
- 
- 	wsr = kobj_to_wsr(kobj);
- 
--	if (sysfs_create_group(kobj, &workingset_report_attr_group))
-+	if (sysfs_create_group(kobj, &workingset_report_attr_group)) {
- 		pr_warn("Workingset report failed to create sysfs files\n");
-+		return;
++	if (ret < 0)
++		return ret;
++
++	wsr = &mem_cgroup_lruvec(memcg, NODE_DATA(nid))->wsr;
++
++	mutex_lock(&wsr->page_age_lock);
++	if (msecs && !wsr->page_age) {
++		struct wsr_page_age_histo *page_age =
++			kzalloc(sizeof(struct wsr_page_age_histo), GFP_KERNEL);
++
++		if (!page_age) {
++			ret = -ENOMEM;
++			goto unlock;
++		}
++		wsr->page_age = page_age;
++	}
++	if (!msecs && wsr->page_age) {
++		kfree(wsr->page_age);
++		wsr->page_age = NULL;
 +	}
 +
-+	wsr->page_age_sys_file =
-+		kernfs_walk_and_get(kobj->sd, "workingset_report/page_age");
- }
- EXPORT_SYMBOL_GPL(wsr_init_sysfs);
- 
-@@ -500,6 +533,14 @@ void wsr_remove_sysfs(struct node *node)
- 		return;
- 
- 	wsr = kobj_to_wsr(kobj);
-+	kernfs_put(wsr->page_age_sys_file);
- 	sysfs_remove_group(kobj, &workingset_report_attr_group);
- }
- EXPORT_SYMBOL_GPL(wsr_remove_sysfs);
-+
-+void notify_workingset(struct mem_cgroup *memcg, struct pglist_data *pgdat)
-+{
-+	struct wsr_state *wsr = &mem_cgroup_lruvec(memcg, pgdat)->wsr;
-+
-+	kernfs_notify(wsr->page_age_sys_file);
++	WRITE_ONCE(wsr->refresh_interval, msecs_to_jiffies(msecs));
++unlock:
++	mutex_unlock(&wsr->page_age_lock);
++	return ret;
 +}
++
++static int memory_ws_report_threshold_show(struct seq_file *m, void *v)
++{
++	int nid;
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
++
++	for_each_node_state(nid, N_MEMORY) {
++		struct wsr_state *wsr =
++			&mem_cgroup_lruvec(memcg, NODE_DATA(nid))->wsr;
++
++		seq_printf(m, "N%d=%u ", nid,
++			   jiffies_to_msecs(READ_ONCE(wsr->report_threshold)));
++	}
++	seq_putc(m, '\n');
++
++	return 0;
++}
++
++static ssize_t memory_ws_report_threshold_write(struct kernfs_open_file *of,
++						 char *buf, size_t nbytes,
++						 loff_t off)
++{
++	unsigned int nid, msecs;
++	struct wsr_state *wsr;
++	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
++	ssize_t ret = memory_wsr_threshold_parse(buf, nbytes, &nid, &msecs);
++
++	if (ret < 0)
++		return ret;
++
++	wsr = &mem_cgroup_lruvec(memcg, NODE_DATA(nid))->wsr;
++	WRITE_ONCE(wsr->report_threshold, msecs_to_jiffies(msecs));
++	return ret;
++}
++
++static int memory_ws_page_age_show(struct seq_file *m, void *v)
++{
++	int nid;
++	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
++
++	for_each_node_state(nid, N_MEMORY) {
++		struct wsr_state *wsr =
++			&mem_cgroup_lruvec(memcg, NODE_DATA(nid))->wsr;
++		struct wsr_report_bin *bin;
++
++		if (!READ_ONCE(wsr->page_age))
++			continue;
++
++		wsr_refresh_report(wsr, memcg, NODE_DATA(nid));
++		mutex_lock(&wsr->page_age_lock);
++		if (!wsr->page_age)
++			goto unlock;
++		seq_printf(m, "N%d\n", nid);
++		for (bin = wsr->page_age->bins;
++		     bin->idle_age != WORKINGSET_INTERVAL_MAX; bin++)
++			seq_printf(m, "%u anon=%lu file=%lu\n",
++				   jiffies_to_msecs(bin->idle_age),
++				   bin->nr_pages[0] * PAGE_SIZE,
++				   bin->nr_pages[1] * PAGE_SIZE);
++
++		seq_printf(m, "%lu anon=%lu file=%lu\n", WORKINGSET_INTERVAL_MAX,
++			   bin->nr_pages[0] * PAGE_SIZE,
++			   bin->nr_pages[1] * PAGE_SIZE);
++
++unlock:
++		mutex_unlock(&wsr->page_age_lock);
++	}
++
++	return 0;
++}
++#endif
++
+ static struct cftype memory_files[] = {
+ 	{
+ 		.name = "current",
+@@ -4386,7 +4542,27 @@ static struct cftype memory_files[] = {
+ 		.flags = CFTYPE_NS_DELEGATABLE,
+ 		.write = memory_reclaim,
+ 	},
+-	{ }	/* terminate */
++#ifdef CONFIG_WORKINGSET_REPORT
++	{
++		.name = "workingset.refresh_interval",
++		.flags = CFTYPE_NOT_ON_ROOT | CFTYPE_NS_DELEGATABLE,
++		.seq_show = memory_ws_refresh_interval_show,
++		.write = memory_ws_refresh_interval_write,
++	},
++	{
++		.name = "workingset.report_threshold",
++		.flags = CFTYPE_NOT_ON_ROOT | CFTYPE_NS_DELEGATABLE,
++		.seq_show = memory_ws_report_threshold_show,
++		.write = memory_ws_report_threshold_write,
++	},
++	{
++		.name = "workingset.page_age",
++		.flags = CFTYPE_NOT_ON_ROOT | CFTYPE_NS_DELEGATABLE,
++		.file_offset = offsetof(struct mem_cgroup, workingset_page_age_file),
++		.seq_show = memory_ws_page_age_show,
++	},
++#endif
++	{} /* terminate */
+ };
+ 
+ struct cgroup_subsys memory_cgrp_subsys = {
+diff --git a/mm/workingset_report.c b/mm/workingset_report.c
+index 801ac8e5c1da..333e51e3ee12 100644
+--- a/mm/workingset_report.c
++++ b/mm/workingset_report.c
+@@ -37,9 +37,12 @@ void wsr_destroy_pgdat(struct pglist_data *pgdat)
+ void wsr_init_lruvec(struct lruvec *lruvec)
+ {
+ 	struct wsr_state *wsr = &lruvec->wsr;
++	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
+ 
+ 	memset(wsr, 0, sizeof(*wsr));
+ 	mutex_init(&wsr->page_age_lock);
++	if (memcg && !mem_cgroup_is_root(memcg))
++		wsr->page_age_cgroup_file = mem_cgroup_page_age_file(memcg);
+ }
+ 
+ void wsr_destroy_lruvec(struct lruvec *lruvec)
+@@ -51,8 +54,8 @@ void wsr_destroy_lruvec(struct lruvec *lruvec)
+ 	memset(wsr, 0, sizeof(*wsr));
+ }
+ 
+-static int workingset_report_intervals_parse(char *src,
+-					     struct wsr_report_bins *bins)
++int workingset_report_intervals_parse(char *src,
++				      struct wsr_report_bins *bins)
+ {
+ 	int err = 0, i = 0;
+ 	char *cur, *next = strim(src);
+@@ -542,5 +545,8 @@ void notify_workingset(struct mem_cgroup *memcg, struct pglist_data *pgdat)
+ {
+ 	struct wsr_state *wsr = &mem_cgroup_lruvec(memcg, pgdat)->wsr;
+ 
+-	kernfs_notify(wsr->page_age_sys_file);
++	if (mem_cgroup_is_root(memcg))
++		kernfs_notify(wsr->page_age_sys_file);
++	else
++		cgroup_file_notify(wsr->page_age_cgroup_file);
+ }
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
