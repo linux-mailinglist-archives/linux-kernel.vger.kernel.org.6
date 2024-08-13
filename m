@@ -1,237 +1,287 @@
-Return-Path: <linux-kernel+bounces-285230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90148950AF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:01:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD41950AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 488B5284391
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35024280E0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCD81A4F2B;
-	Tue, 13 Aug 2024 16:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0D61A2567;
+	Tue, 13 Aug 2024 16:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OKSwEPTo"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="E5n+EdQ7"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF2A1A4F03
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723568392; cv=none; b=boH6RNCB92Zh/oE7bckA2NyjN1uwA7oJOpcjUzDOr02GJSFMJI0iSo0//AKoBQ9YbWi5vnV+ltORJjKoAAqRtBceRevsqBz7ItqeycdqhJCuxNwgt59CdoedvGi95QGoaAhqfV/hw4hldn0FlKYIlm7gs4IHCoO1j0nTrlNtdG0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723568392; c=relaxed/simple;
-	bh=E3sZsNR1YDqdKFQzjzHncZWFfHtHPWAP/JNt5fBaZxE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HUrDKeYGwg6pmLLdNKvIQJkderdT95819MTjCOyQEUvVaau4IpR+Kra2S9hZZFJBcWirR4l8NCqfM7SGAdZs/8jExsPn9x7vpRCN34eoJXX9zQgDJYTLk9xNWIBtrSx6E/Aoqx8caXsKcu4RbYM7aQlhQl7NmtzDoDSe/Gt/MUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OKSwEPTo; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0be7c74d79so8484950276.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:59:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723568390; x=1724173190; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOP5SFFIvPyG4OwQTVSroxGri5wlFhobHFeL7lq0KZY=;
-        b=OKSwEPToulZl0T2izwfPaRPN6vFy2Ki+eztr4Ofu2n8anxMZpvueHA5TRSepOjckvw
-         1XtpUP0K8pBKDvotcZUpnntALkCe71c55Tqw/8ZKotBE9RMfvgIdy9LhC10xUtnfNSnB
-         N0sk325a+O6S0fXbk3TZSjmJm7lMYfm7OH198gJN3n/c6X/izQ5V78tdnrdI7t+Rwa+m
-         TxsNRby1cdFkSkCJFyMlAPGmtQT/P378e4dvuyiQHg7+XBBUemWA3pa51eSLgr2GpXYi
-         IdWh/dIygaeDLTHrC4BMZvLfl9JGdS2U1QVH52BA44N77y7ggOICaqqEea/p/B3NRCf2
-         dBdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723568390; x=1724173190;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOP5SFFIvPyG4OwQTVSroxGri5wlFhobHFeL7lq0KZY=;
-        b=msZsbH+MXcXRiEFXSDyvJD/2W+3A/qduYraOjzdcs0RTffNrOWIfOZpNifEB/jpTCv
-         UH2NLgfTNza7IolmaY11q0QG5CemkvwpKUQoXRcgYxMLc8mYcjGcY+tgs48EJzt2y00s
-         dQfdN8v83lep/O0GWErUSGokvWVnCRInI1IpgdgAAb703ET2d1AYEpHLDbad/klT/Kh2
-         i3dNmFiIwjXj9whlkyXbz+QsgFpSs++3w4jdQji079Fg/I9KrXVloSKLJeSu+EHF5VHJ
-         J4ae7weyXZr+nTkRy4M2vWJ3xSmcvXm+xrdGi/cmA/HlYQNvSw9RDxFOMAiCRaIb4zI3
-         uNdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwawLiQQjbKR64xCskTzh92Qac/6WIiRZtN6zxD9puRvTR/pCfMhRM70yYKjnh/QjorJLV7/jE/UgdX081DGGSDPSgt5Ng7It/73q0
-X-Gm-Message-State: AOJu0YydsSzt+uV4W/NwxWBRYXuM8yCt9aSGny/V5jzMhqbVL5T//M4G
-	OEfAiBSFypvyhallXAeychIG/YST4ZhxEr3k6aA0MtDhcToxkbxHXZiNMAZviOh0PGQbxmGdMvh
-	WZ2/1DQ==
-X-Google-Smtp-Source: AGHT+IECAXtBsp42GLKJ5N1BoyX/FjeEZsFBUtplL8hab3FEghl0VDuEX9j5TFSLO+qQ7fOJRfdfV8wWTHGk
-X-Received: from yuanchu-desktop.svl.corp.google.com ([2620:15c:2a3:200:b50c:66e8:6532:a371])
- (user=yuanchu job=sendgmr) by 2002:a25:7450:0:b0:e05:fc91:8935 with SMTP id
- 3f1490d57ef6-e1155a4ac06mr3055276.3.1723568389892; Tue, 13 Aug 2024 09:59:49
- -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:56:18 -0700
-In-Reply-To: <20240813165619.748102-1-yuanchu@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5C955892;
+	Tue, 13 Aug 2024 16:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723568245; cv=fail; b=hhVR65ezwDKxi8nt9cYC2PKEngfuUflAyvrE8slpNYXJI3mN5LMrMQW4W9zZvzZ1c7diqt7TinncevYWbSjzxbM6b8T72lsr/10tIrkszLlea3cXx0APqLTN0wLazqw6kDKaI/STiS7MlpItTVBMkGI0j5inuYGD18wKGOKvWHY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723568245; c=relaxed/simple;
+	bh=KxW7Na5P4OEjhYlGdx3SkWjOuVipVGbyNM2Dj8lLcCQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=jElD+Hyxhh23mM4D0n11/i94bU8/7HsnzO+OkHwFdVrhvJSOVti84Hage2fXUWMoxUW7cT1vk1u6ZA2xwMmY/7GteUX3Yo/CyF0PGm82JdIl60+IU+ugEzUhgg8XYAt46e3AiEBWxYCoaAPVHhCnEBo2I0S1+tgaVFqTS1bLEB4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=E5n+EdQ7; arc=fail smtp.client-ip=40.107.21.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J89fRP2QQrHM02DGgyZpbsVPODo0PGyklSDYhCXg9LVHTeAd5/Vqby80m4xQYa4xvE8qy4kM7jbj/PZfOx4xVZzMbgERcZCj+VyzdAABO/r15+SgQ30zdobBcXWHRHIye/olMynZC2fQF0PfzhmUN80cI5B4t1ElZfi6Nt5MsPAFaSAzy2I7i9748CMErlafrZ7kJD9zyVQg12/RUybFjT0zd3M2avlxvSrFWWUNaUSsoZxdjyBHt0TIMAvKgIA5NeF1F5u80F9c+qF5qBybA9hFoIVgHxwsMVXpkLpB7z89NEFRakyKFUiQA/B7cscb4ihPSvsVZfYipB4J2esaKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=m0TPo/D0vDO42eZJLlH8uD46KCeaQQL1p66ZoH+/Z+c=;
+ b=S7QSrN3hm3acc6LKbEpFT5JAUH0A2euepkuC69fFY902ZryV6qhWNNejY4RJK6tCP74V9dVlujYR+ClYVmSSeY3H681iog31mlXiTlmcFQ1lmxg+szy/WRqUOx3Orqv6kJEN9G4g4kPfCorw1DbqISikpQvNy7yEao/6BbRdPTMNL6SYttNtfPNQDZB8udEPGUpAK4Fg8fv1LIEYtm6j+qjKc1siMfu8XrORzeF/w+4HdMR5HZ2BbMAROsk9CobUL2JZUmVqGW1qpXfTCIGWG9B0PJ8ZvvxED7iBbq12VszGeDZFD/OK3dypPDf658ZAntjRSbjUB1KY544fiXKfBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m0TPo/D0vDO42eZJLlH8uD46KCeaQQL1p66ZoH+/Z+c=;
+ b=E5n+EdQ7J8IScLrrP40vpAwYyyjnBZaMagsNYRRViMBZiowTpnFIXoO1ehDxEAs6bAUM7YJow5NAbCLTiEAgWtiOl/nK89OjVBogQyaI9hg1k0TQZp05Sy68WIkHdXjesJOvwl49cEhTlVyNQGYnOqZJH9fn2/LXj0zMoIchqphb3ptN+aBYSpZZrw4kan/U9aSadhiwcjRCf+KBqf11Z4XC6ZKZd0u1dHX0neRyne+c0E2jyKktbKcit8HEIOfWNSkbnQKL3XMn5Iu108cXhkRzaLKf+VO06lUB9U78ETIs70KwdrA4b9NhjXaJyymdfOS0VoqL8+aFM3Vx5ceIZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB8060.eurprd04.prod.outlook.com (2603:10a6:10:1e6::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
+ 2024 16:57:19 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Tue, 13 Aug 2024
+ 16:57:19 +0000
+Date: Tue, 13 Aug 2024 12:57:11 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"jun.li@nxp.com" <jun.li@nxp.com>, Peter Chen <peter.chen@nxp.com>
+Subject: Re: [PATCH 3/4] usb: dwc3: core: add a core init flag for device
+ mode resume
+Message-ID: <ZruQZ/Y/aqIcO0tq@lizhi-Precision-Tower-5810>
+References: <20240712-dwc-mp-v1-0-295e5c4e3ec9@nxp.com>
+ <20240712-dwc-mp-v1-3-295e5c4e3ec9@nxp.com>
+ <20240807011347.ucxlxmcikizreioj@synopsys.com>
+ <ZrZC8AFtmR3Zn1c9@lizhi-Precision-Tower-5810>
+ <20240809231844.okzwndlds3zh75rh@synopsys.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240809231844.okzwndlds3zh75rh@synopsys.com>
+X-ClientProxiedBy: SJ0PR03CA0358.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240813165619.748102-1-yuanchu@google.com>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240813165619.748102-8-yuanchu@google.com>
-Subject: [PATCH v3 7/7] Docs/admin-guide/mm/workingset_report: document sysfs
- and memcg interfaces
-From: Yuanchu Xie <yuanchu@google.com>
-To: David Hildenbrand <david@redhat.com>, "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>, 
-	Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>, 
-	Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Gregory Price <gregory.price@memverge.com>, Huang Ying <ying.huang@intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Lance Yang <ioworker0@gmail.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>, 
-	David Rientjes <rientjes@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Muchun Song <muchun.song@linux.dev>, 
-	Shuah Khan <shuah@kernel.org>, Yosry Ahmed <yosryahmed@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>, 
-	Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	Abel Wu <wuyun.abel@bytedance.com>, "Vishal Moola (Oracle)" <vishal.moola@gmail.com>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Yuanchu Xie <yuanchu@google.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, cgroups@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8060:EE_
+X-MS-Office365-Filtering-Correlation-Id: 066273ac-bebb-4d34-0433-08dcbbb8fe2d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?b24a3/rQidMqXNSr8oow7ZhHwu/2meZvSn76LHzSmcwwKz7/qqPx8oh1Wb1o?=
+ =?us-ascii?Q?7DifEnGQIqMQgaKdA5fOsG6u0qtC8zSXr0zIeFBLQ8vT9EC+sh96LJwNwXD7?=
+ =?us-ascii?Q?dUPQddHn7j88rvoLfu1y2oRZ3n5kKd7nnIixcIZg/i7kVKZOIRT6WWaQPTjB?=
+ =?us-ascii?Q?oGxLzrWi8D3mr3wGgoaOih4duE0biRed78KPg7zqV28X257uh2mWLZ+Amkwa?=
+ =?us-ascii?Q?waj3V7UsBg28e6k+iyQ+rDR5sohMLenadNVNbIJeG+T3ePqqDUnqJSXoQ1J0?=
+ =?us-ascii?Q?nS/OaTQkYe1bDftVfKMWOOlA8u658yiwml7TaTRcYtPWTubxmT1CuHSgCY0E?=
+ =?us-ascii?Q?qR59WhP1gbzbkMKJ6hVyzQ0HWqNC7A9oExKbaI3HWkQt1AU3ip7Kk7f7bydT?=
+ =?us-ascii?Q?9h9NvyIXr9b1Kxi/q/N1cvYp9gpzGvDtUlEMrjZdKm8np2LaO1k1jFlWGs+3?=
+ =?us-ascii?Q?JD8wWKmbaABv6fl12Y5rdqbtpyJUzIJOSALK4EjIlZigVxpTDYe1hrvg9qnE?=
+ =?us-ascii?Q?Acyu3U0MBSbxcrlB8z43qX/Z1hLCTvMJ0vltZJ6+LoqmOSeWCQzvw0p6VkYB?=
+ =?us-ascii?Q?8+GqHf27jF9AonUQ5Ue/7QAz2/5OBJLOqR4u8rjzuhOb4718DVeYBDw9NLIV?=
+ =?us-ascii?Q?7PWGBR0klDA0BG2bZO7/CvYwFWvLbv8OMEDIQsletKx1qb+zIdCnOh3/adoR?=
+ =?us-ascii?Q?5fXI/ITo2HVWQmJzha8/l1wa264UUNroSgqSvu7jGApJCHgEZdLR6cpZZryd?=
+ =?us-ascii?Q?7Xjc5MfA4XfzSU1Yv/GP6DvOiQox3wNKh1lgxMvc2iRtTpMki7VaIiMyMuZt?=
+ =?us-ascii?Q?RHYHFfNrEPYN439NiqzMRPxi/Ok3UmE3aBdZYT+mcSZPHfdS+4IJVHSg45qI?=
+ =?us-ascii?Q?BffmkY96oFGi8MzkwXrBw4baHBuFuvtu60uClWV1d2b6TIkPcDAxjS/zujDk?=
+ =?us-ascii?Q?teyMHRa0yZOibqnCmFbqBRd819NGmX7dctgi9Zl5nyXNwKh/Ue641wANklhr?=
+ =?us-ascii?Q?kp6G8jKSzYh+LwCja/iWRVrdhe0YdZZWSm+stwleyrXD1/3+e9o4ZZ7eZTSm?=
+ =?us-ascii?Q?xmi1tNjsayPSOOuAbpm1mhqxnYFQ+948090SPjU0O2HI+L4/rthz+AEqL0ly?=
+ =?us-ascii?Q?XXreqldWXa1X426MP9Xa+K8xxSqnqkK+jNrgyEcM2/VObpd0Y1M+dwQb/cRz?=
+ =?us-ascii?Q?eNhU5FoixLerxmNVa3iCljukFvXoDeNAytueLFcB/E9q1R99ohiup8EEQqis?=
+ =?us-ascii?Q?Y6BxI8zp6BgP4VLJ6ARzL/T1jbQB3czayOBrHPlfUO52BBasc+Pr9GTEnPoi?=
+ =?us-ascii?Q?T1oMCEZ2kE8lzUilcksl2jQjoitbmO6Jgak1QZMrarlOav+tYBqROkQJXX+t?=
+ =?us-ascii?Q?CnIIw0OD5xYvVPnag5erJ0jwWl/Q6K9sjIKs/B79uLD2VzMkFw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Z/ejW7z+vF8KhGLHGynhpt+P2gczWDGQkoPOeyFaZSjpd2akGRYg+4CtNrOC?=
+ =?us-ascii?Q?Vq7Td7FnCCinHH1nEJzZWPOxHxZ86Oiwrkh5ZRBIspqx4DRz6C+OdLZx2AXy?=
+ =?us-ascii?Q?tcoqI4OpXybs9/b9+ggbddr7MZm3hSYFK68rymDyAVwK5HrvweslVOROKIoU?=
+ =?us-ascii?Q?6DjnE4wmaePHjA/H6EyHl9cCwXTF4uurhQ8XR8xh/5hYQkcHDYhqRF3r96yU?=
+ =?us-ascii?Q?ZKt6O6ejIUrq2urm/kLuZ4S3k0hWCRFaOwAlASI9bYsnJauVl61ZJEE6WE1D?=
+ =?us-ascii?Q?Mi4uZpsKwb3weU3gcynbVRKS0Abr/nUpgrJs927fr2IzpFaevN+rQGbu2t8+?=
+ =?us-ascii?Q?Vcb7Ypu6q8CzAZ05rjd9NxuddW4SwUyu16rC9Fbc22UykIsQldExmZQC3EXm?=
+ =?us-ascii?Q?jMhNJHQ4DSGq2kAWRzOhV8/G1TBLyC/WcNE82xhLMQZG4VHpXIScSER7PjP2?=
+ =?us-ascii?Q?K3p9+h8gaZzA/oF+TwfS4MqIhz1XyRfH9Xb0GtMuAHVt66c3jWoibfAjUECF?=
+ =?us-ascii?Q?tvRbrAqZt7QWtCqGsbK4IXr7ddDgQLmixN8bMq2J5zVJfV82hbjHtnQFM+PN?=
+ =?us-ascii?Q?FoDFjmWy+4hSmZtgri9eo9UmSnioZrGaBQMgdPjBFxTkCUVrN7nJWjHuPMzi?=
+ =?us-ascii?Q?x9L0m1m1vNN1t+coyB3wjboxoZKMEJJh8hwaaGe/qsiScCLZ81LXZtW0fuUZ?=
+ =?us-ascii?Q?D6bqURwIT7n0eWp6Q4PosfNlhfuik1GeHllkb63syDo0nXNJe0PUJ4KJkCkS?=
+ =?us-ascii?Q?3ryrcJpi/0/zObvGetPAaAJYBZks8t7imOHG5w9/2cCuRF2yLXBSZYzqRzNw?=
+ =?us-ascii?Q?UZGeLMMZ60Nn0+Sc3IHyZXkarNbUEXpdcw1F//bh0xDkxDEmDOvzkBIDWVUl?=
+ =?us-ascii?Q?eCBm478nWClHgPgPwCP+Q5WVadPb5J9K4+xjCh9k+JZJcIf1efoTHLZX8VCG?=
+ =?us-ascii?Q?rZn4kXL7O0eGOqx+JygnYmdw/5D0yg2np2TOPNqnqu8IFQzvEiTxJwVbYa17?=
+ =?us-ascii?Q?eTsZURxaOb9jX5KylbATDTkWW+kjHSXV9GbliZ5w7glea9hM1CYPbVL2fRaT?=
+ =?us-ascii?Q?T82B+hvT4BEmXQeDBs34MV4TOARmVNtyg+OQwL8JTYENASYNla+EXMVzBCRD?=
+ =?us-ascii?Q?XTFVUg5HwkLFI1z19mJFK/QYAg8+AYZVv46sltJ43KmXA6pgFW6+p+TgKDBi?=
+ =?us-ascii?Q?qRt2SLtEFZ7zJ4soAio/vzj+n6CzOZPddUyadcGR1vcisfXgmTHQejwydcPY?=
+ =?us-ascii?Q?/Ug8a2Ma1eGegv9YrMWQUfpaq36d20GhmjhntWoBswpR6aJBaLKCXpoJ3CzY?=
+ =?us-ascii?Q?AAAkiqqwrhCQ5wQVKlNLa4kqPMSja6t+rglB1iAgG8G/xcaN3olic5qS5dQy?=
+ =?us-ascii?Q?gDnDkOQvwOKa9PBCQisb3l3Auo2DaldxlM3/y1snK2VNqtIhPLKWISXzvvMH?=
+ =?us-ascii?Q?bX4hWqKvq2d8rj6kcLLzhua3CYfQzCXBlp9cBqRehI0A5e0SyBj6tl8mLrFk?=
+ =?us-ascii?Q?OmjTJrdNe6Z2TsW8NPPqH6iHArknv1V46z3Q1mhTqnLMH6O9PyuWFmKaxqbA?=
+ =?us-ascii?Q?ofw6I0zKYtAhisy5y2ZH8ykpgTakb5KnXFwuyljg?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 066273ac-bebb-4d34-0433-08dcbbb8fe2d
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 16:57:19.3832
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9EsvggJWtEQ8UVabmjz/MxcHlNAlwUyKAQoH8gKPB8wKUDZQXwC8tmowvWhW/Woq5PAzY8jp++zMM5eWy50uEg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8060
 
-Add workingset reporting documentation for better discoverability of
-its sysfs and memcg interfaces. Also document the required kernel
-config to enable workingset reporting.
+On Fri, Aug 09, 2024 at 11:18:53PM +0000, Thinh Nguyen wrote:
+> On Fri, Aug 09, 2024, Frank Li wrote:
+> > On Wed, Aug 07, 2024 at 01:13:52AM +0000, Thinh Nguyen wrote:
+> > > On Fri, Jul 12, 2024, Frank Li wrote:
+> > > > From: Li Jun <jun.li@nxp.com>
+> > > >
+> > > > The runtime resume will happen before system resume if system wakeup by
+> > > > device mode wakeup event(e.g, VBUS). Add a flag to avoid init twice.
+> > >
+> > > What's the consequence of going through the resuming sequence twice?
+> > > Will this cause any functional issue?
+> >
+> > static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+> > {
+> >
+> > 	...
+> >         ret = dwc3_clk_enable(dwc);
+> >         if (ret)
+> >                 goto assert_reset;
+> >
+> > 	...
+> > }
+> >
+> > clk will be enabled twice, the reference count in clk will be wrong because
+> > clk_disable() only once at suspend.
+>
+> Please capture these info in the commit message.
+>
+> >
+> > So clk will be always ON at next suspend.
+> >
+> > Frank Li
+> >
+>
+> dwc3_clk_enable() happens in probe() and dwc3_core_init_for_resume(),
+> but you're checking dwc->core_inited in dwc3_core_init(). Why?
 
-Change-Id: Ib9dfc9004473baa6ef26ca7277d220b6199517de
-Signed-off-by: Yuanchu Xie <yuanchu@google.com>
----
- Documentation/admin-guide/mm/index.rst        |   1 +
- .../admin-guide/mm/workingset_report.rst      | 105 ++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
+I have not check dwc->core_inited in dwc3_core_init(). Just set init value
+dwc->core_inited = true
 
-diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-index 8b35795b664b..61a2a347fc91 100644
---- a/Documentation/admin-guide/mm/index.rst
-+++ b/Documentation/admin-guide/mm/index.rst
-@@ -41,4 +41,5 @@ the Linux memory management.
-    swap_numa
-    transhuge
-    userfaultfd
-+   workingset_report
-    zswap
-diff --git a/Documentation/admin-guide/mm/workingset_report.rst b/Documentation/admin-guide/mm/workingset_report.rst
-new file mode 100644
-index 000000000000..ddcc0c33a8df
---- /dev/null
-+++ b/Documentation/admin-guide/mm/workingset_report.rst
-@@ -0,0 +1,105 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=================
-+Workingset Report
-+=================
-+Workingset report provides a view of memory coldness in user-defined
-+time intervals, i.e. X bytes are Y milliseconds cold. It breaks down
-+the user pages in the system per-NUMA node, per-memcg, for both
-+anonymous and file pages into histograms that look like:
-+::
-+
-+    1000 anon=137368 file=24530
-+    20000 anon=34342 file=0
-+    30000 anon=353232 file=333608
-+    40000 anon=407198 file=206052
-+    9223372036854775807 anon=4925624 file=892892
-+
-+The workingset reports can be used to drive proactive reclaim, by
-+identifying the number of cold bytes in a memcg, then writing to
-+``memory.reclaim``.
-+
-+Quick start
-+===========
-+Build the kernel with the following configurations. The report relies
-+on Multi-gen LRU for page coldness.
-+
-+* ``CONFIG_LRU_GEN=y``
-+* ``CONFIG_LRU_GEN_ENABLED=y``
-+* ``CONFIG_WORKINGSET_REPORT=y``
-+
-+Optionally, the aging kernel daemon can be enabled with the following
-+configuration.
-+* ``CONFIG_WORKINGSET_REPORT_AGING=y``
-+
-+Sysfs interfaces
-+================
-+``/sys/devices/system/node/nodeX/workingset_report/page_age`` provides
-+a per-node page age histogram, showing an aggregate of the node's lruvecs.
-+Reading this file causes a hierarchical aging of all lruvecs, scanning
-+pages and creates a new Multi-gen LRU generation in each lruvec.
-+For example:
-+::
-+
-+    1000 anon=0 file=0
-+    2000 anon=0 file=0
-+    100000 anon=5533696 file=5566464
-+    18446744073709551615 anon=0 file=0
-+
-+``/sys/devices/system/node/nodeX/workingset_report/page_age_intervals``
-+is a comma separated list of time in milliseconds that configures what
-+the page age histogram uses for aggregation. For the above histogram,
-+the intervals are:
-+::
-+    1000,2000,100000
-+
-+``/sys/devices/system/node/nodeX/workingset_report/refresh_interval``
-+defines the amount of time the report is valid for in milliseconds.
-+When a report is still valid, reading the ``page_age`` file shows
-+the existing valid report, instead of generating a new one.
-+
-+``/sys/devices/system/node/nodeX/workingset_report/report_threshold``
-+specifies how often the userspace agent can be notified for node
-+memory pressure, in milliseconds. When a node reaches its low
-+watermarks and wakes up kswapd, programs waiting on ``page_age`` are
-+woken up so they can read the histogram and make policy decisions.
-+
-+Memcg interface
-+===============
-+While ``page_age_interval`` is defined per-node in sysfs, ``page_age``,
-+``refresh_interval`` and ``report_threshold`` are available per-memcg.
-+
-+``/sys/fs/cgroup/.../memory.workingset.page_age``
-+The memcg equivalent of the sysfs workingset page age histogram
-+breaks down the workingset of this memcg and its children into
-+page age intervals. Each node is prefixed with a node header and
-+a newline. Non-proactive direct reclaim on this memcg can also
-+wake up userspace agents that are waiting on this file.
-+e.g.
-+::
-+
-+    N0
-+    1000 anon=0 file=0
-+    2000 anon=0 file=0
-+    3000 anon=0 file=0
-+    4000 anon=0 file=0
-+    5000 anon=0 file=0
-+    18446744073709551615 anon=0 file=0
-+
-+``/sys/fs/cgroup/.../memory.workingset.refresh_interval``
-+The memcg equivalent of the sysfs refresh interval. A per-node
-+number of how much time a page age histogram is valid for, in
-+milliseconds.
-+e.g.
-+::
-+
-+    echo N0=2000 > memory.workingset.refresh_interval
-+
-+``/sys/fs/cgroup/.../memory.workingset.report_threshold``
-+The memcg equivalent of the sysfs report threshold. A per-node
-+number of how often userspace agent waiting on the page age
-+histogram can be woken up, in milliseconds.
-+e.g.
-+::
-+
-+    echo N0=1000 > memory.workingset.report_threshold
--- 
-2.46.0.76.ge559c4bf1a-goog
+Do you means dwc3_core_init() as dwc3_resume_common()?
 
+>
+> If the issue is only related to clk_enable(), perhaps just check that?
+
+This should be major one. Any paired operator between suspend/resume should
+have issue.
+
+Frank
+
+>
+> (minor nit: rename core_inited to core_initialized if you plan to do
+> that)
+>
+> Thanks,
+> Thinh
+>
+> > > >
+> > > > Reviewed-by: Peter Chen <peter.chen@nxp.com>
+> > > > Signed-off-by: Li Jun <jun.li@nxp.com>
+> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> > > > ---
+> > > >  drivers/usb/dwc3/core.c | 13 +++++++++++++
+> > > >  drivers/usb/dwc3/core.h |  1 +
+> > > >  2 files changed, 14 insertions(+)
+> > > >
+> > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> > > > index 734de2a8bd212..d60917fad8c52 100644
+> > > > --- a/drivers/usb/dwc3/core.c
+> > > > +++ b/drivers/usb/dwc3/core.c
+> > > > @@ -950,6 +950,8 @@ static void dwc3_core_exit(struct dwc3 *dwc)
+> > > >  	dwc3_phy_exit(dwc);
+> > > >  	dwc3_clk_disable(dwc);
+> > > >  	reset_control_assert(dwc->reset);
+> > > > +
+> > > > +	dwc->core_inited = false;
+> > > >  }
+> > > >
+> > > >  static bool dwc3_core_is_valid(struct dwc3 *dwc)
+> > > > @@ -1446,6 +1448,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
+> > > >  		dwc3_writel(dwc->regs, DWC3_LLUCTL, reg);
+> > > >  	}
+> > > >
+> > > > +	dwc->core_inited = true;
+> > > > +
+> > > >  	return 0;
+> > > >
+> > > >  err_power_off_phy:
+> > > > @@ -2375,6 +2379,15 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+> > > >
+> > > >  	switch (dwc->current_dr_role) {
+> > > >  	case DWC3_GCTL_PRTCAP_DEVICE:
+> > > > +		/*
+> > > > +		 * system resume may come after runtime resume
+> > > > +		 * e.g. rpm suspend -> pm suspend -> wakeup
+> > > > +		 * -> rpm resume -> system resume, so if already
+> > > > +		 *  runtime resumed, system resume should skip it.
+> > > > +		 */
+> > > > +		if (dwc->core_inited)
+> > > > +			break;
+> > > > +
+> > > >  		ret = dwc3_core_init_for_resume(dwc);
+> > > >  		if (ret)
+> > > >  			return ret;
+> > > > diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+> > > > index 1e561fd8b86e2..8a4bfd9a25b19 100644
+> > > > --- a/drivers/usb/dwc3/core.h
+> > > > +++ b/drivers/usb/dwc3/core.h
+> > > > @@ -1195,6 +1195,7 @@ struct dwc3 {
+> > > >  	struct clk		*utmi_clk;
+> > > >  	struct clk		*pipe_clk;
+> > > >
+> > > > +	bool			core_inited;
+> > > >  	struct reset_control	*reset;
+> > > >
+> > > >  	struct usb_phy		*usb2_phy;
+> > > >
+> > > > --
+> > > > 2.34.1
+> > > >
 
