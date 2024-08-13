@@ -1,175 +1,120 @@
-Return-Path: <linux-kernel+bounces-284921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC649506E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:49:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CCE9506DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:48:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389941F21AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15CE2834E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:48:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9B9E19D075;
-	Tue, 13 Aug 2024 13:48:44 +0000 (UTC)
-Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1254A19CD05;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0398419CCEB;
 	Tue, 13 Aug 2024 13:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ME7ff/IW"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E111EA8D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556924; cv=none; b=XMkFxuzPZvOR1heYIZqwrwi7mfkbdjZp+GyTELopkPwUs/pfvixaaa0/7LIbB1aKCNvoF+oWFILGxrSEr/N1klyxYV3HRiipXOrqKuIgywlDRyFqYPOataExVLT4Eh8ZRg0MEOie6iOEoBEP6rPnzH8FFztTn/yoyMqleNv5JxM=
+	t=1723556920; cv=none; b=DFV0m8fgWzrMcS9XdhpFV5uCY/g6H05UoMYJPO0cjQs6FYhw6vxyZl9A35AZnM4QXMgabAVlzF2whxfwYdR2cnJzjGgNQ4JD4dstQzw+KOktu2uy0MUgBWYVf2zCVV0l6oJzx1ox9gHVEIrT7bIUG8mxF13TIaOad6vS+VkiQEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556924; c=relaxed/simple;
-	bh=8L+5hdMZi624aswdRULhySVYITXomchoDsxT+/7/Xk4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UsZl2DywZL+B2dU///cFVl5xoAfjeVzXJBqMHmokoeT2V2jZn5ncNS9lheWtZG5ARwPa3AKYmckBTk4PDErZLaxDcpC4j3hSRJ1d0YkwDN3MXHU2r4lPHx4lgfQYqmderND2IHtBMoyt7tTAIRimhOVzeRxulF3Y8bC5yMq+L64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
-X-CSE-ConnectionGUID: c6C2O5LqQtiPkbP36ydycw==
-X-CSE-MsgGUID: 8cMa+XtKT22D9+IagzsBtA==
-X-IronPort-AV: E=Sophos;i="6.09,286,1716220800"; 
-   d="scan'208";a="119246640"
-From: ZhangHui <zhanghui31@xiaomi.com>
-To: <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.co>, <bvanassche@acm.org>,
-	<peter.wang@mediatek.com>, <manivannan.sadhasivam@linaro.org>,
-	<huangjianan@xiaomi.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, zhanghui <zhanghui31@xiaomi.com>
-Subject: [PATCH] ufs: core: fix bus timeout in ufshcd_wl_resume flow
-Date: Tue, 13 Aug 2024 21:47:29 +0800
-Message-ID: <20240813134729.284583-1-zhanghui31@xiaomi.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723556920; c=relaxed/simple;
+	bh=J7EQyefZIhPS+LFo6BXF2fBKpJZft2paSM+4jMeHsY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TITKrIqkLkbPbpJn++l/dy0Jqec0t12WDrMmH/+vpusEgW+qpMVltjV3CH3clshAHlDO5Dh7xYoP9DXH5WC0Z+Q9k8dPBPvVlAJ+OCP9NgODwrE50W+DWl9C7pIQZ1k1F5ELthgHEBhUSsax+sW8+//CZrJmCM9jQNrv76PbI+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ME7ff/IW; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bd1a9bdce4so3662308a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:48:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1723556915; x=1724161715; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oZNAzTyg6Waa0pqBLj43mkX1Hv89TbQTGu6ZA1/BZfo=;
+        b=ME7ff/IWK6lOO9b13+O2luCtNkWrBSNaxBPQRBfjqQuzcuPswrh+vXrtZ/Go1CFF/3
+         gOpjM6Jpql283qhfVKDGICVtASCXpkx8EozUjh6BSbyJyhsbe021w7IvA0w0cjdsjzkq
+         57/MgMXQmsp/ZJA+mIPlWdQJ8UWHon1sc9Bf5qIDwWvfgjmeh7ORyl5/V2jndCCXcCE+
+         9VGCDPeKjRFTSKauY/2+YKFUpi+5SQbZfR8DRFqMWRi5PTV8HF2KLFqhmQ86bXZLhOO5
+         95evMFHsb4FSc32CYDK0fsHISuBVp7912mZ5KZatrYbTkDF/ABcxpIHqNENO1Vb5L24T
+         SGrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723556915; x=1724161715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oZNAzTyg6Waa0pqBLj43mkX1Hv89TbQTGu6ZA1/BZfo=;
+        b=GzdThS8vvSsS25iqssHTHmeTWVixwsJEF26aaWREbYdoPHVyihv9n4JyX6wXBKtbfr
+         j8L0jmFSTKhMfGF/bsL/i0DSKHqywSRmV5T92vSekpD9C1ncMZ+iiZGYUKInOFUB1PpY
+         W9V4wYK20eO2w1W1IrtnK3Ai0lrcN0tMgs8tRTg+WuhImWdsPOgzLjr8Gsml9/ncEMAK
+         8B4ZkSddLgC/PvsmCtbn6CQ5y3haxk4v1nubCjLoyF90KubM2dO7W4TG69kAXfn14V+I
+         Mgtcv11wTOd2Kd3EZXodwhhL9uBIwb2Hj5XGxjlltGb9AwJoKKfT1rZqtaudZTIFmJ9v
+         zsrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQECBuMSSDyEKDDZBIWU+qsSHyVxl/of1e2QWxFLJO35tMpZr7Qv2EAOtpYSB7QCtdJ+VkOIZo7AAMrTGY9lE/1PjLn0N7wCXXHD1t
+X-Gm-Message-State: AOJu0Yw9fymlU3Ipoxe8oEQX2R9f5W/nk/QvsTl+GfAqkcfubrJZDWmT
+	MRzrssvR/g2TMurySypA6JTjZ1rDX0N/M0j3zUR6auC1cCxY2EJ5p2tgVjTLNHA=
+X-Google-Smtp-Source: AGHT+IFDI23ZutMxXOA0vQkFPnBjN3ma8S+VSR9VcD5oReOiT667cjDK2CtZzA9egSKOEDpRfH/FOw==
+X-Received: by 2002:a05:6402:27d0:b0:5a2:1693:1a2e with SMTP id 4fb4d7f45d1cf-5bd44c42176mr2862979a12.18.1723556915510;
+        Tue, 13 Aug 2024 06:48:35 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e07a9sm2933877a12.78.2024.08.13.06.48.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 06:48:35 -0700 (PDT)
+Date: Tue, 13 Aug 2024 15:48:33 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: takakura@valinux.co.jp
+Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
+	senozhatsky@chromium.org, akpm@linux-foundation.org, bhe@redhat.com,
+	lukas@wunner.de, wangkefeng.wang@huawei.com, ubizjak@gmail.com,
+	feng.tang@intel.com, j.granados@samsung.com,
+	stephen.s.brennan@oracle.com, linux-kernel@vger.kernel.org,
+	nishimura@valinux.co.jp, taka@valinux.co.jp
+Subject: Re: [PATCH v3 1/2] Allow cpu backtraces to be written into
+ ringbuffer during panic
+Message-ID: <ZrtkMciiYhUK8Fs4@pathway.suse.cz>
+References: <20240812072137.339644-1-takakura@valinux.co.jp>
+ <20240812072703.339690-1-takakura@valinux.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: bj-mbx11.mioffice.cn (10.237.8.131) To YZ-MBX07.mioffice.cn
- (10.237.88.127)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812072703.339690-1-takakura@valinux.co.jp>
 
-From: zhanghui <zhanghui31@xiaomi.com>
+On Mon 2024-08-12 16:27:03, takakura@valinux.co.jp wrote:
+> From: Ryo Takakura <takakura@valinux.co.jp>
+> 
+> commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
+> to ringbuffer") disabled non-panic CPUs to further write messages to
+> ringbuffer after panicked.
+> 
+> Since the commit, non-panicked CPU's are not allowed to write to
+> ring buffer after panicked and CPU backtrace which is triggered
+> after panicked to sample non-panicked CPUs' backtrace no longer
+> serves its function as it has nothing to print.
+> 
+> Fix the issue by allowing non-panicked CPUs to write into ringbuffer
+> while CPU backtrace is in flight.
+> 
+> Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
+> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-If the SSU CMD completion flow in UFS resume and the CMD timeout flow occur
-simultaneously, the timestamp attribute command will be sent to the device
-during the UFS resume flow, while the UFS controller performs a reset in
-the timeout error handling flow.
+JFYI, I have pushed this patch into printk/linux.git, branch for-6.11-fixup.
+I am going to create pull request after it spends at least one or two
+days in linux-next.
 
-In this scenario, a bus timeout will occur because the UFS resume flow
-will attempt to access the UFS host controller registers while the UFS
-controller is in a reset state or power cycle.
+The 2nd patch is more complicated. It depends on another patchset
+integrating con->write_atomic() callback. 
 
-Call trace:
-  arm64_serror_panic+0x6c/0x94
-  do_serror+0xbc/0xc8
-  el1h_64_error_handler+0x34/0x48
-  el1h_64_error+0x68/0x6c
-  _raw_spin_unlock+0x18/0x44
-  ufshcd_send_command+0x1c0/0x380
-  ufshcd_exec_dev_cmd+0x21c/0x29c
-  ufshcd_set_timestamp_attr+0x78/0xdc
-  __ufshcd_wl_resume+0x228/0x48c
-  ufshcd_wl_resume+0x5c/0x1b4
-  scsi_bus_resume+0x58/0xa0
-  dpm_run_callback+0x6c/0x23c
-  __device_resume+0x298/0x46c
-  async_resume+0x24/0x3c
-  async_run_entry_fn+0x44/0x150
-  process_scheduled_works+0x254/0x4f4
-  worker_thread+0x244/0x334
-  kthread+0x124/0x1f0
-  ret_from_fork+0x10/0x20
-
-This patch fixes the issue by adding a check of the UFS controller
-register states before sending the device command.
-
-Signed-off-by: zhanghui <zhanghui31@xiaomi.com>
----
- drivers/ufs/core/ufshcd.c | 14 ++++++++++++++
- include/ufs/ufshcd.h      | 13 +++++++++++++
- 2 files changed, 27 insertions(+)
-
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 5e3c67e96956..e5e3e0277d43 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -3291,6 +3291,8 @@ static int ufshcd_exec_dev_cmd(struct ufs_hba *hba,
- 	struct ufshcd_lrb *lrbp = &hba->lrb[tag];
- 	int err;
- 
-+	if (hba->ufshcd_reg_state == UFSHCD_REG_RESET)
-+		return -EBUSY;
- 	/* Protects use of hba->reserved_slot. */
- 	lockdep_assert_held(&hba->dev_cmd.lock);
- 
-@@ -4857,6 +4859,7 @@ static int ufshcd_hba_execute_hce(struct ufs_hba *hba)
- int ufshcd_hba_enable(struct ufs_hba *hba)
- {
- 	int ret;
-+	unsigned long flags;
- 
- 	if (hba->quirks & UFSHCI_QUIRK_BROKEN_HCE) {
- 		ufshcd_set_link_off(hba);
-@@ -4881,6 +4884,13 @@ int ufshcd_hba_enable(struct ufs_hba *hba)
- 		ret = ufshcd_hba_execute_hce(hba);
- 	}
- 
-+	spin_lock_irqsave(hba->host->host_lock, flags);
-+	if (ret)
-+		hba->ufshcd_reg_state = UFSHCD_REG_RESET;
-+	else
-+		hba->ufshcd_reg_state = UFSHCD_REG_OPERATIONAL;
-+	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(ufshcd_hba_enable);
-@@ -7693,7 +7703,11 @@ static int ufshcd_abort(struct scsi_cmnd *cmd)
- static int ufshcd_host_reset_and_restore(struct ufs_hba *hba)
- {
- 	int err;
-+	unsigned long flags;
- 
-+	spin_lock_irqsave(hba->host->host_lock, flags);
-+	hba->ufshcd_reg_state = UFSHCD_REG_RESET;
-+	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 	/*
- 	 * Stop the host controller and complete the requests
- 	 * cleared by h/w
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index cac0cdb9a916..e5af4c2114ce 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -523,6 +523,18 @@ enum ufshcd_state {
- 	UFSHCD_STATE_ERROR,
- };
- 
-+/**
-+ * enum ufshcd_state - UFS host controller state
-+ * @UFSHCD_REG_OPERATIONAL: UFS host controller is enabled, the host controller
-+ * register can be accessed.
-+ * @UFSHCD_REG_RESET: UFS host controller registers will be reset, can't access
-+ * any ufs host controller register.
-+ */
-+enum ufshcd_reg_state {
-+	UFSHCD_REG_OPERATIONAL,
-+	UFSHCD_REG_RESET,
-+};
-+
- enum ufshcd_quirks {
- 	/* Interrupt aggregation support is broken */
- 	UFSHCD_QUIRK_BROKEN_INTR_AGGR			= 1 << 0,
-@@ -1020,6 +1032,7 @@ struct ufs_hba {
- 	struct completion *uic_async_done;
- 
- 	enum ufshcd_state ufshcd_state;
-+	enum ufshcd_reg_state ufshcd_reg_state;
- 	u32 eh_flags;
- 	u32 intr_mask;
- 	u16 ee_ctrl_mask;
--- 
-2.43.0
-
+Best Regards,
+Petr
 
