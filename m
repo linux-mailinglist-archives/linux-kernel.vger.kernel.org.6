@@ -1,155 +1,125 @@
-Return-Path: <linux-kernel+bounces-285000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5E69507E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:39:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0440A9507F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:39:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4497B26648
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:39:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5A71F2181C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:39:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B4219E808;
-	Tue, 13 Aug 2024 14:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EE719EED8;
+	Tue, 13 Aug 2024 14:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W+YqRtnG"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJUMvPwY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD62B19D07D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F219E802;
+	Tue, 13 Aug 2024 14:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559938; cv=none; b=gVmHFgLS/2wXHlYQCHBE7zCJ2lw86/uuq9rpEVqN65YE5zetJU3DVX9UYePVL90AZWHfhL/qFZU/XDsYFrtAlytj19XF5azMB+embqkA26IJ3J0EJJgwuSsgow6PawdhM7T23xMQQ/R77XJal/eyvignLBFizah7KE2xR+ycYYE=
+	t=1723559961; cv=none; b=TuO4QbzTBMr5oFp40Y3QwOdSkxiSrFmymYJTRg/kz6oOiIGej2LGcl4MkTzz30Rf6j/cB7bswh88YTXOC102dc7Uvn4mZ6qLdvZ3AZ9e0eETFVhqf9idpBiCSd1GZnsbu8BviXxO6EMXW36ZdKeo2/9D6AICqmn8XhX4DKRpd+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559938; c=relaxed/simple;
-	bh=B3hf41SbGEXb5U+irpYfxacjxMaRj3pkNpkzqprh8jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WVEM491KAcOEzrXhzEmgux7e2fuIvGUOPI5xHRskLmucgl3wkz2raNZUqiqs5dT6UYHSTS6Yy50eclYWUc0b6NvHCjuBZ1VmurLwwkx6LfRKoVKqKSHc41eDsh9GZ8vv671yG9FS0CL2t8gzZ1AaZnjNZpXHAJTOBXmYTqRuVpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W+YqRtnG; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3685a5e7d3cso3435616f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723559935; x=1724164735; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UtQ1YB4RrIk11ETTD2r10cRbUnQqCHQoAwSrZok6NMo=;
-        b=W+YqRtnGAOwa+F9gD65LjQ3mD05ryxQkrNYfyAAj3m1OG+Ytx9gK15+tAWU+uDvEZ2
-         Rva79BcVTMA5oVaPhZqa3OBLpPbNWm2BM0RdzJvb0YNMwy6jbyX+SF2TNvCSXifmIkYP
-         FDmrWW12eywYn5j04ai9vnXNl+MPp3xZRdC6jfgWr3bwdghUu6/GxLBhnkjSN0g/EBWa
-         g01RoFJZxTHD6FSvTSZwljdN3JwtoeSfbhj/TyzOCd0Xt86C7z1DQdscfaFGHLY5siqi
-         3jOeafbu5u8HGikW+Ds5oH4lczA5z2EKozKePbkH8LlvP6HPQ8EWVue3Pds4VlY2PdF3
-         nvbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723559935; x=1724164735;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UtQ1YB4RrIk11ETTD2r10cRbUnQqCHQoAwSrZok6NMo=;
-        b=r+VYQQ/CjlYW7lgweT7UUx6Je/LJov9VIYUIFExEhk296kxw8InlOiJqmz6A2bbApi
-         94QyIldvqkH4J9lYX35gH0OxL+zEL6Y9wkLYO1HhY1Aa6+fLWYip6lRW50h6YiQXuDL4
-         1zWrSnDnnWh7yXUEE+OLIIEj+OkBstjtGXdY0WeePnRZnbE78dvCizP4dR1PliWJLkO6
-         daojBeEr+IrwzISNXuA9kPyAVugsatWlbl+uKw8K3ZfwmL4nMjm62aURT3My0L/ENXgK
-         jJFWR7J3f3xzO7Mnvzo3Eurv2KicXJlMrq9uL7CuNzlAyjO65fdZhwKwrX7FdP87KFWO
-         0RxA==
-X-Forwarded-Encrypted: i=1; AJvYcCVefQGxc7dQJ02PpSECvyNZi28bZeBJzGKm1oscKGxTSfyXVVNwoMvN45ISTnhZ9o2jiTxL/zbcimi6QvwtDwmJqpCwZ/2r7qjeEJCk
-X-Gm-Message-State: AOJu0YxC9Ba6iOzaj47to5KiXX1RX59UMJXYCiX4gsiluJ2Pi26Ai+6W
-	rInsMRtR5A9nMJIL3PBZpGZJgZl3lSjR/CFQHnvfUk1vjOHYz3kNM7lyiRRPsW0=
-X-Google-Smtp-Source: AGHT+IGZ3q4qbGnDy3Ugzxb9kudMaZUjN4anbfPXoXoEcqrmhBSoqtwtLTteBZDVMdUtj+hl9W7U2w==
-X-Received: by 2002:a5d:40cc:0:b0:367:947a:a491 with SMTP id ffacd0b85a97d-3716cd028b6mr2751743f8f.26.1723559935045;
-        Tue, 13 Aug 2024 07:38:55 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4f0a7111sm10604674f8f.117.2024.08.13.07.38.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 07:38:54 -0700 (PDT)
-Message-ID: <76ee9150-36fa-4dfc-ba9f-8a10df580c92@linaro.org>
-Date: Tue, 13 Aug 2024 15:38:53 +0100
+	s=arc-20240116; t=1723559961; c=relaxed/simple;
+	bh=BkMT1oZs8wsRPi0UzxeExZ+sMn6QcdSVOxPluJLt7fQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hgIG9oAS7o+mmdqIhPmDoFD+K0YJXKsnfVrUNrYrhr2IO4g3m0dLptqSzRekY1aC5SfBjsfrRM7DIlXn8V22YX3b00NjZztyFO9tGVLkUtdXGBMWbpf8ctgEXLrXHjJ2kzaDVp/EF0O5XJ4UQupZR1+huJtVr6VKdRSHHue/Q28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJUMvPwY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C51EC4AF09;
+	Tue, 13 Aug 2024 14:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723559960;
+	bh=BkMT1oZs8wsRPi0UzxeExZ+sMn6QcdSVOxPluJLt7fQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kJUMvPwYEz4twWJkX2/DBO6lgBCLmry7xNwcj7mHVF1Wu2r8anDxNlilhF+jy27aG
+	 Jx4dgTgc0s0HDaUublN5PoN+H2skcCgaLvJGlu/2GxlZwYI7trTSQQXdb74w8R7tRn
+	 kCAPwm2Cvvz4ybkwcPKvuy2ErXaxmTGR863mS4+qtva0pxa/f44xuE8jHSz/3UVCmz
+	 lVJkV9Q5J5+Req3XUGUlQgEEwM+nqyKtfAcw+m/7oLQ42wuYXHvL56R/79oq9hyP1W
+	 bTxxyYQPhwO7iNiUaDaMkCYKVsACtIKK6NbL+EWpR45m+gJVBf9pcDvFLplWXr/S3t
+	 BGr028oZ7DLMQ==
+Date: Tue, 13 Aug 2024 07:39:17 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Donald Hunter
+ <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>,
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
+ <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge
+ Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
+ <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, Steffen
+ Klassert <steffen.klassert@secunet.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem de
+ Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
+ <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
+ Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
+ Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
+ Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
+ <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
+ Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
+Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem
+ memory provider
+Message-ID: <20240813073917.690ac1cc@kernel.org>
+In-Reply-To: <5a51b11d-9c35-42a5-879b-08dc7ca2ca18@gmail.com>
+References: <20240805212536.2172174-1-almasrymina@google.com>
+	<20240805212536.2172174-8-almasrymina@google.com>
+	<20240806135924.5bb65ec7@kernel.org>
+	<CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
+	<20240808192410.37a49724@kernel.org>
+	<CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
+	<fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com>
+	<20240809205236.77c959b0@kernel.org>
+	<CAHS8izOXwZS-8sfvn3DuT1XWhjc--7-ZLjr8rMn1XHr5F+ckbA@mail.gmail.com>
+	<48f3a61f-9e04-4755-b50c-8fae6e6112eb@gmail.com>
+	<20240812105732.5d2845e4@kernel.org>
+	<CAHS8izPb51gvEHGHeQwWTs4YmimLLamau1c4j=Z4KGM8ZJrx5g@mail.gmail.com>
+	<a6747b29-ed79-49d4-9ffe-b62074db1e09@gmail.com>
+	<20240812165708.33234ed6@kernel.org>
+	<5a51b11d-9c35-42a5-879b-08dc7ca2ca18@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] perf stat: Initialize instead of overwriting clock
- event
-To: Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Yang Jihong <yangjihong1@huawei.com>, Ze Gao <zegao2021@gmail.com>,
- Dominique Martinet <asmadeus@codewreck.org>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240813132323.98728-1-james.clark@linaro.org>
- <20240813132323.98728-2-james.clark@linaro.org>
- <CAP-5=fX-m3mhi0sGsGo9biWmFV_U=35Tp7h9X0reg3zHMEsy_Q@mail.gmail.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <CAP-5=fX-m3mhi0sGsGo9biWmFV_U=35Tp7h9X0reg3zHMEsy_Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-
-
-On 13/08/2024 3:28 pm, Ian Rogers wrote:
-> On Tue, Aug 13, 2024 at 6:24 AM James Clark <james.clark@linaro.org> wrote:
->>
->> This overwrite relies on the clock event remaining at index 0 and is
->> quite a way down from where the array is initialized, making it easy to
->> miss. Just initialize it with the correct clock event to begin with.
->>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> ---
->>   tools/perf/builtin-stat.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
->> index 1f92445f7480..a65f58f8783f 100644
->> --- a/tools/perf/builtin-stat.c
->> +++ b/tools/perf/builtin-stat.c
->> @@ -1817,7 +1817,9 @@ static int add_default_attributes(void)
->>   {
->>          struct perf_event_attr default_attrs0[] = {
->>
->> -  { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_TASK_CLOCK             },
->> +  { .type = PERF_TYPE_SOFTWARE, .config = target__has_cpu(&target) ?
->> +                                               PERF_COUNT_SW_CPU_CLOCK :
->> +                                               PERF_COUNT_SW_TASK_CLOCK        },
+On Tue, 13 Aug 2024 03:31:13 +0100 Pavel Begunkov wrote:
+> I'm getting lost, so repeating myself a bit. What I think
+> would be a good approach is if we get an error back from
+> the driver if it doesn't support netiov / providers.
 > 
-> Hand crafting perf_event_attr when we have an event name to
-> perf_event_atttr parser doesn't make sense. Doing things this way
-> means we need to duplicate logic between event parsing and these
-> default configurations. The default configurations are also using
-> legacy events which of course are broken on Apple ARM M? (albeit for
-> hardware events, here it is software). Event and metric parsing has to
-> worry about things like grouping topdown events. All-in-all let's have
-> one way to do things, event parsing, otherwise this code is going to
-> end up reinventing all the workarounds the event parsing has to have.
-> Lots of struct perf_event_attr also contribute to binary size.
+> netdev_rx_queue_restart() {
+> 	...
+> 	err = dev->queue_mgmt_ops->ndo_queue_mem_alloc();
+> 	if (err == -EOPNOTSUPP) // the driver doesn't support netiov
+> 		return -EOPNOTSUPP;
+> 	...
+> }
 > 
-> If you are worried about a cycles event being opened on arm_dsu PMUs,
-> there is this patch:
-> https://lore.kernel.org/lkml/20240525152927.665498-1-irogers@google.com/
+> That can be done if drivers opt in to support providers,
+> e.g. via a page pool flag.
 > 
-> Thanks,
-> Ian
+> What I think wouldn't be a great option is getting back a
+> "success" from the driver even though it ignored
 
-Hi Ian,
-
-Is this comment related to this patch specifically or is it more of a 
-general comment?
-
-This patch doesn't really make any actual changes other than move one 
-line of code from one place to another.
-
-James
+page pool params are not the right place for a supported flag.
+Sooner or later we'll want to expose this flag to user space.
 
