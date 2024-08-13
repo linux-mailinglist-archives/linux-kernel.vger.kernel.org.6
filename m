@@ -1,368 +1,647 @@
-Return-Path: <linux-kernel+bounces-285634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1C09510AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:40:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A97A9510B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD1091F24E57
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C8A51C22F26
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4DC1AC45E;
-	Tue, 13 Aug 2024 23:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF84F1AD3FC;
+	Tue, 13 Aug 2024 23:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Zs4w46DB"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpkMtHJ8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B5B1AC424
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F8DB22EEF;
+	Tue, 13 Aug 2024 23:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723592399; cv=none; b=JU3rTnd6q6ZLsMGDDqUiMqXPFxL2nwHRmkNQVHgOE2RNZUuX+V9zyCjSyzRq83HAiXw/W69jNvCLYGOotoePcEdq3UiD+XDRiNn/qL5zmtIibmkA8QervuIrDOrHykf2Tq5XTnQEOaF0epjMbyf/huzzFI5T6efdq4Cv2uT1VNI=
+	t=1723592479; cv=none; b=ZaoPvDfnzlsO6phqdN/7R3oRe1wI6Es/6BuSDGFhg7Uk6/sUM/k2B24MGLnueGavHKXwRtevMX11VEX0CAeLm37PeyVqOlMO0b0o0afqn7xwi3riTahwqHdgVQYX9Vo1IJ1EzGMtvfKrKZDi9e/ManNigwB/iOircxLNOmyo4DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723592399; c=relaxed/simple;
-	bh=XPE7PifyKIQTXDVhG2o65ghTKjKDk/DQqJv4dIBIoNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l6GJ2LDqwPwsV4RD2ravwzkbGHnX9lKGiHfsMEs4OrmH4ll8736YtRQCK8LWWHHfzBN1iYYLlqbnJYA+NoCHwehSq2jjRYL78yaF6ZotAc46nR1V7RZaxKDrjDjNbvf7X7t+oXM530NfCbzPoeyFS8fZPWJRFg2/zyMvqK88Sic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Zs4w46DB; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-699d8dc6744so3312177b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1723592396; x=1724197196; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDQf98wVgqtnt7GJUEUuSvz77H9RkjHMPYmNvqJv22w=;
-        b=Zs4w46DB9bBgpnfnpxPxEwSLH9eHFg0Q7cC73KG3nNiJOfdLVG9tleRfrjCGkeGEa6
-         GUc6soL+KsQAbXhA7wOPCxB1U8+TJcnCLr7ygb9TrN7xA3tGRb9uPGz75be5EKFa+OX8
-         VseS9qwN8YQq5BYAXVYFl/b2p7FUI2zQ+0aTa5bWfjuPvVGJO/t3ZHinGdgA68Ndx1MZ
-         sWw59L+PNZJKRDL3F1Sdh/seqd4+kspkm1OLWNOi4e7bNiqLhpKDv8Ou7vO13CSV6xaW
-         Aqq74Ma9q9VUfD0aFHwgBu2UcEYybdfxQFCOQcX/26GIgn4/WP+U5ANXc69t5Pc1Zbxy
-         IbBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723592396; x=1724197196;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yDQf98wVgqtnt7GJUEUuSvz77H9RkjHMPYmNvqJv22w=;
-        b=mVtJxRTu1UolBDHVWh/xkOHYcJty46cprIQGKCP//rCUDABs4yhqEmTKWUHLS2GyJ/
-         S9vQ5eWI1g7WeGVzx/lnFSEMVoWYEn1qN2PInZ7SfwYePnYRiPl1HJ7fQuQThE0m5oCK
-         jHJjQiOL1KbxT2/H/65qmVk+qKhhQlX4ecf5BIEZtRj2lEZXcouv7E99Juyr7sSzrvTK
-         hDL7Wk1tqCBREm87uTZ6s2VV2O8kQQgouXh6u9fRaNqwIwTIRGJbVCkgv0e/lEdFce5J
-         4m2TTjnnoYggfGYhrYKFKsCxzOXkK3IDM2HBIsQXRFOYp1qYLNdUleuDnBVf41au5DsK
-         Xsxw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9D2VMEFkn7qhgqJ2uLevsevowBXj4saJW8BzDm4kgrI7ws0zF0tr09oypPv45etwKS4DpSfe2SjYF77GxkDebxU2L9ZVZwJCLi3d+
-X-Gm-Message-State: AOJu0YzOIfnDdeekPEHDhIwrZm7v77Dcdd/sds8fLhtkiyQZ73jQ5QO+
-	SkCg/WhZhNj8yc5DfLVpcWtfYE1r7ELLu8cEwYAoXoDQ6E08HO4jtE6tBTaG1XzX9eyH9ibyUBt
-	p5mcGfEHI+V5KCHtcy4AdyZ8VqkJOeNo4eBZp
-X-Google-Smtp-Source: AGHT+IEGfB5nTeoOSJssS3GUnBC7oP3LxdFZ3wud3lHRx6WFqJjYsb1CAfo6dizsB7JjD0qzFKvGiy99i54VIaYs+U8=
-X-Received: by 2002:a05:690c:4808:b0:630:8515:f076 with SMTP id
- 00721157ae682-6a9e61fd383mr45866787b3.7.1723592396324; Tue, 13 Aug 2024
- 16:39:56 -0700 (PDT)
+	s=arc-20240116; t=1723592479; c=relaxed/simple;
+	bh=6mhEb9oLARyOU3kjN+5aPxpbXt4p56vv9zgrmma9/II=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lphIp1ZQTm0rLOuMkYrkTeY2ory/DZDID8FNuSd4thnx/b7GXJZ1CKYDl9pt30eqqLo0AJuTi9HmPachlKSCWKiBYZDfC2HtTjGr5nAx/9eENXRd7XcrHq71qsB4h10ILQ0K3+0rozHkjmymCNxGOLdElP3+t2zINmwn5Jz4Erg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpkMtHJ8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 871BDC32782;
+	Tue, 13 Aug 2024 23:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723592479;
+	bh=6mhEb9oLARyOU3kjN+5aPxpbXt4p56vv9zgrmma9/II=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RpkMtHJ8c1EwbhQmnTFMgOUystM6u1xcbR4MIPTt1nRBwFxVD20N/4aHKbptfH0l9
+	 ewF4r+fWOqOJ/oeVbI6Rif0uivVpRKKuV1XdXmmGtWBbkETbrSewwba1Cg2eo94MVQ
+	 e4jKRYeWMQsyOppJLk+Sl/sN1w30CMggvOTWqWGhqyuIp2vdLhC1W0LR/tCOareCmE
+	 sgbgxzMi1rmU4Ohvwzf+Ol/uU9CKFlDg3UlrALOsyuM1FwnbstgqUU2Lw+t9yGVu7T
+	 nA+Dx7C/VmXMwumwwkJj6jJ7f1izJsbM+qlP1rt29WMMDEVGYMAAwqUsBvt0SWPegb
+	 uq6dly+NnYjkQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	KP Singh <kpsingh@kernel.org>,
+	Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org,
+	Stephane Eranian <eranian@google.com>
+Subject: [PATCH v2 1/2] perf bpf-filter: Support multiple events properly
+Date: Tue, 13 Aug 2024 16:41:16 -0700
+Message-ID: <20240813234117.2265235-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812174421.1636724-1-mic@digikod.net> <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
- <20240813.la2Aiyico3lo@digikod.net> <CAHC9VhRrcTo4gXrexb=fqEGbNcynKUUoMWR=EseJ+oa0ZM-8qA@mail.gmail.com>
- <20240813.ideiNgoo1oob@digikod.net>
-In-Reply-To: <20240813.ideiNgoo1oob@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 13 Aug 2024 19:39:45 -0400
-Message-ID: <CAHC9VhR-jbQQpb6OZjtDyhmkq3gb5GLkt87tfUBQM84uG-q1bQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook inconsistencies
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Mateusz Guzik <mjguzik@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 2:28=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
-> On Tue, Aug 13, 2024 at 11:04:13AM -0400, Paul Moore wrote:
-> > On Tue, Aug 13, 2024 at 6:05=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > > On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
-> > > > On Mon, Aug 12, 2024 at 1:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <m=
-ic@digikod.net> wrote:
-> > > > >
-> > > > > The fcntl's F_SETOWN command sets the process that handle SIGIO/S=
-IGURG
-> > > > > for the related file descriptor.  Before this change, the
-> > > > > file_set_fowner LSM hook was used to store this information.  How=
-ever,
-> > > > > there are three issues with this approach:
-> > > > >
-> > > > > - Because security_file_set_fowner() only get one argument, all h=
-ook
-> > > > >   implementations ignore the VFS logic which may not actually cha=
-nge the
-> > > > >   process that handles SIGIO (e.g. TUN, TTY, dnotify).
-> > > > >
-> > > > > - Because security_file_set_fowner() is called before f_modown() =
-without
-> > > > >   lock (e.g. f_owner.lock), concurrent F_SETOWN commands could re=
-sult to
-> > > > >   a race condition and inconsistent LSM states (e.g. SELinux's fo=
-wn_sid)
-> > > > >   compared to struct fown_struct's UID/EUID.
-> > > > >
-> > > > > - Because the current hook implementations does not use explicit =
-atomic
-> > > > >   operations, they may create inconsistencies.  It would help to
-> > > > >   completely remove this constraint, as well as the requirements =
-of the
-> > > > >   RCU read-side critical section for the hook.
-> > > > >
-> > > > > Fix these issues by replacing f_owner.uid and f_owner.euid with a=
- new
-> > > > > f_owner.cred [1].  This also saves memory by removing dedicated L=
-SM
-> > > > > blobs, and simplifies code by removing file_set_fowner hook
-> > > > > implementations for SELinux and Smack.
-> > > > >
-> > > > > This changes enables to remove the smack_file_alloc_security
-> > > > > implementation, Smack's file blob, and SELinux's
-> > > > > file_security_struct->fown_sid field.
-> > > > >
-> > > > > As for the UID/EUID, f_owner.cred is not always updated.  Move th=
-e
-> > > > > file_set_fowner hook to align with the VFS semantic.  This hook d=
-oes not
-> > > > > have user anymore [2].
-> > > > >
-> > > > > Before this change, f_owner's UID/EUID were initialized to zero
-> > > > > (i.e. GLOBAL_ROOT_UID), but to simplify code, f_owner's cred is n=
-ow
-> > > > > initialized with the file descriptor creator's credentials (i.e.
-> > > > > file->f_cred), which is more consistent and simplifies LSMs logic=
-.  The
-> > > > > sigio_perm()'s semantic does not need any change because SIGIO/SI=
-GURG
-> > > > > are only sent when a process is explicitly set with __f_setown().
-> > > > >
-> > > > > Rename f_modown() to __f_setown() to simplify code.
-> > > > >
-> > > > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > > > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > Cc: Christian Brauner <brauner@kernel.org>
-> > > > > Cc: James Morris <jmorris@namei.org>
-> > > > > Cc: Jann Horn <jannh@google.com>
-> > > > > Cc: Ondrej Mosnacek <omosnace@redhat.com>
-> > > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > > > > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > > > > Link: https://lore.kernel.org/r/20240809-explosionsartig-ablesen-=
-b039dbc6ce82@brauner [1]
-> > > > > Link: https://lore.kernel.org/r/CAHC9VhQY+H7n2zCn8ST0Vu672UA=3D_e=
-iUikRDW2sUDSN3c=3DgVQw@mail.gmail.com [2]
-> > > > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > > > ---
-> > > > >
-> > > > > Changes since v1:
-> > > > > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.ne=
-t
-> > > > > - Add back the file_set_fowner hook (but without user) as
-> > > > >   requested by Paul, but move it for consistency.
-> > > > > ---
-> > > > >  fs/fcntl.c                        | 42 +++++++++++++++----------=
-------
-> > > > >  fs/file_table.c                   |  3 +++
-> > > > >  include/linux/fs.h                |  2 +-
-> > > > >  security/security.c               |  5 +++-
-> > > > >  security/selinux/hooks.c          | 22 +++-------------
-> > > > >  security/selinux/include/objsec.h |  1 -
-> > > > >  security/smack/smack.h            |  6 -----
-> > > > >  security/smack/smack_lsm.c        | 39 +------------------------=
+So far it used tgid as a key to get the filter expressions in the
+pinned filters map for regular users but it won't work well if the has
+more than one filters at the same time.  Let's add the event id to the
+key of the filter hash map so that it can identify the right filter
+expression in the BPF program.
+
+As the event can be inherited to child tasks, it should use the primary
+id which belongs to the parent (original) event.  Since evsel opens the
+event for multiple CPUs and tasks, it needs to maintain a separate hash
+map for the event id.
+
+In the user space, it keeps a list for the multiple evsel and release
+the entries in the both hash map when it closes the event.
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
-> > > > >  8 files changed, 33 insertions(+), 87 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/fcntl.c b/fs/fcntl.c
-> > > > > index 300e5d9ad913..4217b66a4e99 100644
-> > > > > --- a/fs/fcntl.c
-> > > > > +++ b/fs/fcntl.c
-> > > > > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, un=
-signed int arg)
-> > > > >         return error;
-> > > > >  }
-> > > > >
-> > > > > -static void f_modown(struct file *filp, struct pid *pid, enum pi=
-d_type type,
-> > > > > -                     int force)
-> > > > > +void __f_setown(struct file *filp, struct pid *pid, enum pid_typ=
-e type,
-> > > > > +               int force)
-> > > > >  {
-> > > > >         write_lock_irq(&filp->f_owner.lock);
-> > > > >         if (force || !filp->f_owner.pid) {
-> > > > > @@ -97,20 +97,15 @@ static void f_modown(struct file *filp, struc=
-t pid *pid, enum pid_type type,
-> > > > >                 filp->f_owner.pid_type =3D type;
-> > > > >
-> > > > >                 if (pid) {
-> > > > > -                       const struct cred *cred =3D current_cred(=
-);
-> > > > > -                       filp->f_owner.uid =3D cred->uid;
-> > > > > -                       filp->f_owner.euid =3D cred->euid;
-> > > > > +                       security_file_set_fowner(filp);
-> > > > > +                       put_cred(rcu_replace_pointer(
-> > > > > +                               filp->f_owner.cred,
-> > > > > +                               get_cred_rcu(current_cred()),
-> > > > > +                               lockdep_is_held(&filp->f_owner.lo=
-ck)));
-> > > > >                 }
-> > > > >         }
-> > > > >         write_unlock_irq(&filp->f_owner.lock);
-> > > > >  }
-> > > >
-> > > > Looking at this quickly, why can't we accomplish pretty much the sa=
-me
-> > > > thing by moving the security_file_set_fowner() into f_modown (as
-> > > > you've done above) and leveraging the existing file->f_security fie=
-ld
-> > > > as Smack and SELinux do today?  I'm seeing a lot of churn to get a
-> > > > cred pointer into fown_struct which doesn't seem to offer that much
-> > > > additional value.
-> > >
-> > > As explained in the commit message, this patch removes related LSM
-> > > (sub)blobs because they are duplicates of what's referenced by the ne=
-w
-> > > f_owner.cred, which is a more generic approach and saves memory.
-> >
-> > That's not entirely correct.  While yes you do remove the need for a
-> > Smack entry in file->f_security, there is still a need for the SELinux
-> > entry in file->f_security no matter what you do, and since the LSM
-> > framework handles the LSM security blob allocations, on systems where
-> > SELinux is enabled you are going to do a file->f_security allocation
-> > regardless.
->
-> That's why I used "(sub)" blob, for the case of SELinux that "only" drop
-> a field.
+ tools/perf/util/bpf-filter.c                 | 288 ++++++++++++++++---
+ tools/perf/util/bpf_skel/sample-filter.h     |  11 +-
+ tools/perf/util/bpf_skel/sample_filter.bpf.c |  42 ++-
+ tools/perf/util/bpf_skel/vmlinux/vmlinux.h   |   5 +
+ 4 files changed, 304 insertions(+), 42 deletions(-)
 
-Your choice of phrasing was misleading in my opinion.
+diff --git a/tools/perf/util/bpf-filter.c b/tools/perf/util/bpf-filter.c
+index c5eb0b7eec19..0a1832564dd2 100644
+--- a/tools/perf/util/bpf-filter.c
++++ b/tools/perf/util/bpf-filter.c
+@@ -1,4 +1,45 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
++/**
++ * Generic event filter for sampling events in BPF.
++ *
++ * The BPF program is fixed and just to read filter expressions in the 'filters'
++ * map and compare the sample data in order to reject samples that don't match.
++ * Each filter expression contains a sample flag (term) to compare, an operation
++ * (==, >=, and so on) and a value.
++ *
++ * Note that each entry has an array of filter expressions and it only succeeds
++ * when all of the expressions are satisfied.  But it supports the logical OR
++ * using a GROUP operation which is satisfied when any of its member expression
++ * is evaluated to true.  But it doesn't allow nested GROUP operations for now.
++ *
++ * To support non-root users, the filters map can be loaded and pinned in the BPF
++ * filesystem by root (perf record --setup-filter pin).  Then each user will get
++ * a new entry in the shared filters map to fill the filter expressions.  And the
++ * BPF program will find the filter using (task-id, event-id) as a key.
++ *
++ * The pinned BPF object (shared for regular users) has:
++ *
++ *                  event_hash                   |
++ *                  |        |                   |
++ *   event->id ---> |   id   | ---+   idx_hash   |     filters
++ *                  |        |    |   |      |   |    |       |
++ *                  |  ....  |    +-> |  idx | --+--> | exprs | --->  perf_bpf_filter_entry[]
++ *                                |   |      |   |    |       |               .op
++ *   task id (tgid) --------------+   | .... |   |    |  ...  |               .term (+ part)
++ *                                               |                            .value
++ *                                               |
++ *   ======= (root would skip this part) ========                     (compares it in a loop)
++ *
++ * This is used for per-task use cases while system-wide profiling (normally from
++ * root user) uses a separate copy of the program and the maps for its own so that
++ * it can proceed even if a lot of non-root users are using the filters at the
++ * same time.  In this case the filters map has a single entry and no need to use
++ * the hash maps to get the index (key) of the filters map (IOW it's always 0).
++ *
++ * The BPF program returns 1 to accept the sample or 0 to drop it.
++ * The 'dropped' map is to keep how many samples it dropped by the filter and
++ * it will be reported as lost samples.
++ */
+ #include <stdlib.h>
+ #include <fcntl.h>
+ #include <sys/ioctl.h>
+@@ -6,6 +47,7 @@
+ 
+ #include <bpf/bpf.h>
+ #include <linux/err.h>
++#include <linux/list.h>
+ #include <api/fs/fs.h>
+ #include <internal/xyarray.h>
+ #include <perf/threadmap.h>
+@@ -27,7 +69,14 @@
+ #define PERF_SAMPLE_TYPE(_st, opt)	__PERF_SAMPLE_TYPE(PBF_TERM_##_st, PERF_SAMPLE_##_st, opt)
+ 
+ /* Index in the pinned 'filters' map.  Should be released after use. */
+-static int pinned_filter_idx = -1;
++struct pinned_filter_idx {
++	struct list_head list;
++	struct evsel *evsel;
++	u64 event_id;
++	int hash_idx;
++};
++
++static LIST_HEAD(pinned_filters);
+ 
+ static const struct perf_sample_info {
+ 	enum perf_bpf_filter_term type;
+@@ -175,24 +224,145 @@ static int convert_to_tgid(int tid)
+ 	return tgid;
+ }
+ 
+-static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *entry)
++/*
++ * The event might be closed already so we cannot get the list of ids using FD
++ * like in create_event_hash() below, let's iterate the event_hash map and
++ * delete all entries that have the event id as a key.
++ */
++static void destroy_event_hash(u64 event_id)
++{
++	int fd;
++	u64 key, *prev_key = NULL;
++	int num = 0, alloced = 32;
++	u64 *ids = calloc(alloced, sizeof(*ids));
++
++	if (ids == NULL)
++		return;
++
++	fd = get_pinned_fd("event_hash");
++	if (fd < 0) {
++		pr_debug("cannot get fd for 'event_hash' map\n");
++		free(ids);
++		return;
++	}
++
++	/* Iterate the whole map to collect keys for the event id. */
++	while (!bpf_map_get_next_key(fd, prev_key, &key)) {
++		u64 id;
++
++		if (bpf_map_lookup_elem(fd, &key, &id) == 0 && id == event_id) {
++			if (num == alloced) {
++				void *tmp;
++
++				alloced *= 2;
++				tmp = realloc(ids, alloced * sizeof(*ids));
++				if (tmp == NULL)
++					break;
++
++				ids = tmp;
++			}
++			ids[num++] = key;
++		}
++
++		prev_key = &key;
++	}
++
++	for (int i = 0; i < num; i++)
++		bpf_map_delete_elem(fd, &ids[i]);
++
++	free(ids);
++	close(fd);
++}
++
++/*
++ * Return a representative id if ok, or 0 for failures.
++ *
++ * The perf_event->id is good for this, but an evsel would have multiple
++ * instances for CPUs and tasks.  So pick up the first id and setup a hash
++ * from id of each instance to the representative id (the first one).
++ */
++static u64 create_event_hash(struct evsel *evsel)
++{
++	int x, y, fd;
++	u64 the_id = 0, id;
++
++	fd = get_pinned_fd("event_hash");
++	if (fd < 0) {
++		pr_err("cannot get fd for 'event_hash' map\n");
++		return 0;
++	}
++
++	for (x = 0; x < xyarray__max_x(evsel->core.fd); x++) {
++		for (y = 0; y < xyarray__max_y(evsel->core.fd); y++) {
++			int ret = ioctl(FD(evsel, x, y), PERF_EVENT_IOC_ID, &id);
++
++			if (ret < 0) {
++				pr_err("Failed to get the event id\n");
++				if (the_id)
++					destroy_event_hash(the_id);
++				return 0;
++			}
++
++			if (the_id == 0)
++				the_id = id;
++
++			bpf_map_update_elem(fd, &id, &the_id, BPF_ANY);
++		}
++	}
++
++	close(fd);
++	return the_id;
++}
++
++static void destroy_idx_hash(struct pinned_filter_idx *pfi)
++{
++	int fd, nr;
++	struct perf_thread_map *threads;
++
++	fd = get_pinned_fd("filters");
++	bpf_map_delete_elem(fd, &pfi->hash_idx);
++	close(fd);
++
++	if (pfi->event_id)
++		destroy_event_hash(pfi->event_id);
++
++	threads = perf_evsel__threads(&pfi->evsel->core);
++	if (threads == NULL)
++		return;
++
++	fd = get_pinned_fd("idx_hash");
++	nr = perf_thread_map__nr(threads);
++	for (int i = 0; i < nr; i++) {
++		/* The target task might be dead already, just try the pid */
++		struct idx_hash_key key = {
++			.evt_id = pfi->event_id,
++			.tgid = perf_thread_map__pid(threads, i),
++		};
++
++		bpf_map_delete_elem(fd, &key);
++	}
++	close(fd);
++}
++
++/* Maintain a hashmap from (tgid, event-id) to filter index */
++static int create_idx_hash(struct evsel *evsel, struct perf_bpf_filter_entry *entry)
+ {
+ 	int filter_idx;
+ 	int fd, nr, last;
++	u64 event_id = 0;
++	struct pinned_filter_idx *pfi = NULL;
+ 	struct perf_thread_map *threads;
+ 
+ 	fd = get_pinned_fd("filters");
+ 	if (fd < 0) {
+-		pr_debug("cannot get fd for 'filters' map\n");
++		pr_err("cannot get fd for 'filters' map\n");
+ 		return fd;
+ 	}
+ 
+ 	/* Find the first available entry in the filters map */
+ 	for (filter_idx = 0; filter_idx < MAX_FILTERS; filter_idx++) {
+-		if (bpf_map_update_elem(fd, &filter_idx, entry, BPF_NOEXIST) == 0) {
+-			pinned_filter_idx = filter_idx;
++		if (bpf_map_update_elem(fd, &filter_idx, entry, BPF_NOEXIST) == 0)
+ 			break;
+-		}
+ 	}
+ 	close(fd);
+ 
+@@ -201,22 +371,44 @@ static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
+ 		return -EBUSY;
+ 	}
+ 
++	pfi = zalloc(sizeof(*pfi));
++	if (pfi == NULL) {
++		pr_err("Cannot save pinned filter index\n");
++		goto err;
++	}
++
++	pfi->evsel = evsel;
++	pfi->hash_idx = filter_idx;
++
++	event_id = create_event_hash(evsel);
++	if (event_id == 0) {
++		pr_err("Cannot update the event hash\n");
++		goto err;
++	}
++
++	pfi->event_id = event_id;
++
+ 	threads = perf_evsel__threads(&evsel->core);
+ 	if (threads == NULL) {
+ 		pr_err("Cannot get the thread list of the event\n");
+-		return -EINVAL;
++		goto err;
+ 	}
+ 
+ 	/* save the index to a hash map */
+-	fd = get_pinned_fd("pid_hash");
+-	if (fd < 0)
+-		return fd;
++	fd = get_pinned_fd("idx_hash");
++	if (fd < 0) {
++		pr_err("cannot get fd for 'idx_hash' map\n");
++		goto err;
++	}
+ 
+ 	last = -1;
+ 	nr = perf_thread_map__nr(threads);
+ 	for (int i = 0; i < nr; i++) {
+ 		int pid = perf_thread_map__pid(threads, i);
+ 		int tgid;
++		struct idx_hash_key key = {
++			.evt_id = event_id,
++		};
+ 
+ 		/* it actually needs tgid, let's get tgid from /proc. */
+ 		tgid = convert_to_tgid(pid);
+@@ -228,16 +420,25 @@ static int update_pid_hash(struct evsel *evsel, struct perf_bpf_filter_entry *en
+ 		if (tgid == last)
+ 			continue;
+ 		last = tgid;
++		key.tgid = tgid;
+ 
+-		if (bpf_map_update_elem(fd, &tgid, &filter_idx, BPF_ANY) < 0) {
+-			pr_err("Failed to update the pid hash\n");
++		if (bpf_map_update_elem(fd, &key, &filter_idx, BPF_ANY) < 0) {
++			pr_err("Failed to update the idx_hash\n");
+ 			close(fd);
+-			return -1;
++			goto err;
+ 		}
+-		pr_debug("pid hash: %d -> %d\n", tgid, filter_idx);
++		pr_debug("bpf-filter: idx_hash (task=%d,%s) -> %d\n",
++			 tgid, evsel__name(evsel), filter_idx);
+ 	}
++
++	list_add(&pfi->list, &pinned_filters);
+ 	close(fd);
+-	return 0;
++	return filter_idx;
++
++err:
++	destroy_idx_hash(pfi);
++	free(pfi);
++	return -1;
+ }
+ 
+ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+@@ -247,7 +448,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ 	struct bpf_program *prog;
+ 	struct bpf_link *link;
+ 	struct perf_bpf_filter_entry *entry;
+-	bool needs_pid_hash = !target__has_cpu(target) && !target->uid_str;
++	bool needs_idx_hash = !target__has_cpu(target) && !target->uid_str;
+ 
+ 	entry = calloc(MAX_FILTERS, sizeof(*entry));
+ 	if (entry == NULL)
+@@ -259,11 +460,11 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ 		goto err;
+ 	}
+ 
+-	if (needs_pid_hash && geteuid() != 0) {
++	if (needs_idx_hash && geteuid() != 0) {
+ 		int zero = 0;
+ 
+ 		/* The filters map is shared among other processes */
+-		ret = update_pid_hash(evsel, entry);
++		ret = create_idx_hash(evsel, entry);
+ 		if (ret < 0)
+ 			goto err;
+ 
+@@ -274,7 +475,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ 		}
+ 
+ 		/* Reset the lost count */
+-		bpf_map_update_elem(fd, &pinned_filter_idx, &zero, BPF_ANY);
++		bpf_map_update_elem(fd, &ret, &zero, BPF_ANY);
+ 		close(fd);
+ 
+ 		fd = get_pinned_fd("perf_sample_filter");
+@@ -288,6 +489,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ 				ret = ioctl(FD(evsel, x, y), PERF_EVENT_IOC_SET_BPF, fd);
+ 				if (ret < 0) {
+ 					pr_err("Failed to attach perf sample-filter\n");
++					close(fd);
+ 					goto err;
+ 				}
+ 			}
+@@ -332,6 +534,15 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ 
+ err:
+ 	free(entry);
++	if (!list_empty(&pinned_filters)) {
++		struct pinned_filter_idx *pfi, *tmp;
++
++		list_for_each_entry_safe(pfi, tmp, &pinned_filters, list) {
++			destroy_idx_hash(pfi);
++			list_del(&pfi->list);
++			free(pfi);
++		}
++	}
+ 	sample_filter_bpf__destroy(skel);
+ 	return ret;
+ }
+@@ -339,6 +550,7 @@ int perf_bpf_filter__prepare(struct evsel *evsel, struct target *target)
+ int perf_bpf_filter__destroy(struct evsel *evsel)
+ {
+ 	struct perf_bpf_filter_expr *expr, *tmp;
++	struct pinned_filter_idx *pfi, *pos;
+ 
+ 	list_for_each_entry_safe(expr, tmp, &evsel->bpf_filters, list) {
+ 		list_del(&expr->list);
+@@ -346,14 +558,11 @@ int perf_bpf_filter__destroy(struct evsel *evsel)
+ 	}
+ 	sample_filter_bpf__destroy(evsel->bpf_skel);
+ 
+-	if (pinned_filter_idx >= 0) {
+-		int fd = get_pinned_fd("filters");
+-
+-		bpf_map_delete_elem(fd, &pinned_filter_idx);
+-		pinned_filter_idx = -1;
+-		close(fd);
++	list_for_each_entry_safe(pfi, pos, &pinned_filters, list) {
++		destroy_idx_hash(pfi);
++		list_del(&pfi->list);
++		free(pfi);
+ 	}
+-
+ 	return 0;
+ }
+ 
+@@ -364,10 +573,20 @@ u64 perf_bpf_filter__lost_count(struct evsel *evsel)
+ 	if (list_empty(&evsel->bpf_filters))
+ 		return 0;
+ 
+-	if (pinned_filter_idx >= 0) {
++	if (!list_empty(&pinned_filters)) {
+ 		int fd = get_pinned_fd("dropped");
++		struct pinned_filter_idx *pfi;
++
++		if (fd < 0)
++			return 0;
+ 
+-		bpf_map_lookup_elem(fd, &pinned_filter_idx, &count);
++		list_for_each_entry(pfi, &pinned_filters, list) {
++			if (pfi->evsel != evsel)
++				continue;
++
++			bpf_map_lookup_elem(fd, &pfi->hash_idx, &count);
++			break;
++		}
+ 		close(fd);
+ 	} else if (evsel->bpf_skel) {
+ 		struct sample_filter_bpf *skel = evsel->bpf_skel;
+@@ -429,9 +648,10 @@ int perf_bpf_filter__pin(void)
+ 
+ 	/* pinned program will use pid-hash */
+ 	bpf_map__set_max_entries(skel->maps.filters, MAX_FILTERS);
+-	bpf_map__set_max_entries(skel->maps.pid_hash, MAX_PIDS);
++	bpf_map__set_max_entries(skel->maps.event_hash, MAX_EVT_HASH);
++	bpf_map__set_max_entries(skel->maps.idx_hash, MAX_IDX_HASH);
+ 	bpf_map__set_max_entries(skel->maps.dropped, MAX_FILTERS);
+-	skel->rodata->use_pid_hash = 1;
++	skel->rodata->use_idx_hash = 1;
+ 
+ 	if (sample_filter_bpf__load(skel) < 0) {
+ 		ret = -errno;
+@@ -484,8 +704,12 @@ int perf_bpf_filter__pin(void)
+ 		pr_debug("chmod for filters failed\n");
+ 		ret = -errno;
+ 	}
+-	if (fchmodat(dir_fd, "pid_hash", 0666, 0) < 0) {
+-		pr_debug("chmod for pid_hash failed\n");
++	if (fchmodat(dir_fd, "event_hash", 0666, 0) < 0) {
++		pr_debug("chmod for event_hash failed\n");
++		ret = -errno;
++	}
++	if (fchmodat(dir_fd, "idx_hash", 0666, 0) < 0) {
++		pr_debug("chmod for idx_hash failed\n");
+ 		ret = -errno;
+ 	}
+ 	if (fchmodat(dir_fd, "dropped", 0666, 0) < 0) {
+diff --git a/tools/perf/util/bpf_skel/sample-filter.h b/tools/perf/util/bpf_skel/sample-filter.h
+index e666bfd5fbdd..5f0c8e4e83d3 100644
+--- a/tools/perf/util/bpf_skel/sample-filter.h
++++ b/tools/perf/util/bpf_skel/sample-filter.h
+@@ -1,8 +1,9 @@
+ #ifndef PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H
+ #define PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H
+ 
+-#define MAX_FILTERS  64
+-#define MAX_PIDS     (16 * 1024)
++#define MAX_FILTERS   64
++#define MAX_IDX_HASH  (16 * 1024)
++#define MAX_EVT_HASH  (1024 * 1024)
+ 
+ /* supported filter operations */
+ enum perf_bpf_filter_op {
+@@ -62,4 +63,10 @@ struct perf_bpf_filter_entry {
+ 	__u64 value;
+ };
+ 
++struct idx_hash_key {
++	__u64 evt_id;
++	__u32 tgid;
++	__u32 reserved;
++};
++
+ #endif /* PERF_UTIL_BPF_SKEL_SAMPLE_FILTER_H */
+diff --git a/tools/perf/util/bpf_skel/sample_filter.bpf.c b/tools/perf/util/bpf_skel/sample_filter.bpf.c
+index 4c75354b84fd..4872a16eedfd 100644
+--- a/tools/perf/util/bpf_skel/sample_filter.bpf.c
++++ b/tools/perf/util/bpf_skel/sample_filter.bpf.c
+@@ -15,13 +15,25 @@ struct filters {
+ 	__uint(max_entries, 1);
+ } filters SEC(".maps");
+ 
+-/* tgid to filter index */
+-struct pid_hash {
++/*
++ * An evsel has multiple instances for each CPU or task but we need a single
++ * id to be used as a key for the idx_hash.  This hashmap would translate the
++ * instance's ID to a representative ID.
++ */
++struct event_hash {
+ 	__uint(type, BPF_MAP_TYPE_HASH);
+-	__type(key, int);
++	__type(key, __u64);
++	__type(value, __u64);
++	__uint(max_entries, 1);
++} event_hash SEC(".maps");
++
++/* tgid/evtid to filter index */
++struct idx_hash {
++	__uint(type, BPF_MAP_TYPE_HASH);
++	__type(key, struct idx_hash_key);
+ 	__type(value, int);
+ 	__uint(max_entries, 1);
+-} pid_hash SEC(".maps");
++} idx_hash SEC(".maps");
+ 
+ /* tgid to filter index */
+ struct lost_count {
+@@ -31,7 +43,7 @@ struct lost_count {
+ 	__uint(max_entries, 1);
+ } dropped SEC(".maps");
+ 
+-volatile const int use_pid_hash;
++volatile const int use_idx_hash;
+ 
+ void *bpf_cast_to_kern_ctx(void *) __ksym;
+ 
+@@ -202,11 +214,25 @@ int perf_sample_filter(void *ctx)
+ 
+ 	k = 0;
+ 
+-	if (use_pid_hash) {
+-		int tgid = bpf_get_current_pid_tgid() >> 32;
++	if (use_idx_hash) {
++		struct idx_hash_key key = {
++			.tgid = bpf_get_current_pid_tgid() >> 32,
++		};
++		__u64 eid = kctx->event->id;
++		__u64 *key_id;
+ 		int *idx;
+ 
+-		idx = bpf_map_lookup_elem(&pid_hash, &tgid);
++		/* get primary_event_id */
++		if (kctx->event->parent)
++			eid = kctx->event->parent->id;
++
++		key_id = bpf_map_lookup_elem(&event_hash, &eid);
++		if (key_id == NULL)
++			goto drop;
++
++		key.evt_id = *key_id;
++
++		idx = bpf_map_lookup_elem(&idx_hash, &key);
+ 		if (idx)
+ 			k = *idx;
+ 		else
+diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+index d818e30c5457..4fa21468487e 100644
+--- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
++++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+@@ -175,6 +175,11 @@ struct perf_sample_data {
+ 	u64			 code_page_size;
+ } __attribute__((__aligned__(64))) __attribute__((preserve_access_index));
+ 
++struct perf_event {
++	struct perf_event	*parent;
++	u64			id;
++} __attribute__((preserve_access_index));
++
+ struct bpf_perf_event_data_kern {
+ 	struct perf_sample_data *data;
+ 	struct perf_event	*event;
+-- 
+2.46.0.76.ge559c4bf1a-goog
 
-> > While a cred based approach may be more generic from a traditional
-> > UID/GID/etc. perspective, file->f_security is always going to be more
-> > generic from a LSM perspective as the LSM has more flexibility about
-> > what is placed into that blob.  Yes, the LSM can also place data into
-> > the cred struct, but that is used across a wide variety of kernel
-> > objects and placing file specific data in there could needlessly
-> > increase the size of the cred struct.
->
-> Yes, it could, but that is not the case with the current implementations
-> (SELinux and Smack). I understand that it could be useful though.
-
-Please keep that last sentence in mind.
-
-> > > > From what I can see this seems really focused on adding a cred
-> > > > reference when it isn't clear an additional one is needed.  If a ne=
-w
-> > > > cred reference *is* needed, please provide an explanation as to why=
-;
-> > > > reading the commit description this isn't clear.  Of course, if I'm
-> > > > mistaken, feel free to correct me, although I'm sure all the people=
- on
-> > > > the Internet don't need to be told that ;)
-> > >
-> > > This is a more generic approach that saves memory, sticks to the VFS
-> > > semantic, and removes code.  So I'd say it's a performance improvemen=
-t
-> >
-> > Considering that additional cred gets/puts are needed I question if
-> > there are actually any performance improvements; in some cases I
-> > suspect the performance will actually be worse.  On SELinux enabled
-> > systems you are still going to do the file->f_security allocation and
-> > now you are going to add the cred management operations on top of
-> > that.
->
-> I was talking about the extra hook calls which are not needed.  The move
-> of fown_struct ou of the file struct should limit any credential
-> reference performance impact, and Mateusz said he is working on
-> improving this part too.
-
-I don't see how where the cred reference live will have any impact,
-you still need to get and drop references which will have an impact.
-There will always be something.
-
-> > With the move in linux-next to pull fown_struct out of the file
-> > struct, I suspect this is not as important as it once may have been.
->
-> I was talking about the LSM blobs shrinking, which impacts all opened
-> files, independently of moving fown_struct out of the file struct.  I
-> think this is not negligible: 32 bits for SELinux + 64 bits for Smack +
-> 64 bits for ongoing Landlock support =3D potentially 128 bits for each
-> opened files.
-
-I'm going to skip over the Landlock contribution as that isn't part of
-the patchset and to the best of my knowledge that is still a work in
-progress and not finalized.
-
-You also forgot to add in the cost of the fown_struct->cred pointer.
-
-I noticed you chose to do your count in bits, likely to make the
-numbers look bigger (which is fair), I'm going to do my count in bytes
-;) ... So we've got four bytes removed from the SELinux blob, and
-eight bytes from the Smack blob, but we add back in another eight
-bytes for the new cred pointer, making a net benefit of only four
-bytes for each open file.  Considering my concerns around the loss of
-flexibility at the LSM layer I don't see this as a worthwhile
-tradeoff.
-
-> > > it fixes the LSM/VFS inconsistency
-> >
-> > Simply moving the security_file_set_fowner() inside the lock protected
-> > region should accomplish that too.  Unless you're talking about
-> > something else?
->
-> Yes, the moving the hook fixes that.
->
-> > > it guarantees
-> > > that the VFS semantic is always visible to each LSMs thanks to the us=
-e
-> > > of the same f_owner.cred
-> >
-> > The existing hooks are designed to make sure that the F_SETOWN
-> > operation is visible to the LSM.
->
-> This should not change the F_SETOWN case.  Am I missing something?
-
-I don't know, you were talking about making sure the VFS semantics are
-visible to the LSM and I was simply suggesting that the existing hooks
-do that too.  To be honest, whatever point you are trying to make here
-isn't very clear to me.
-
-> > > and it avoids LSM mistakes (except if an LSM implements the now-usele=
-ss hook).
-> >
-> > The only mistake I'm seeing is that the call into
-> > security_file_set_fowner() is not in the lock protected region, and
-> > that is easily corrected.  Forcing the LSM framework to reuse a cred
-> > struct has the potential to restrict LSM security models which is
-> > something we try very hard not to do.
->
-> OK, but is the current approach (i.e. keep the LSM hook and reducing LSM
-> blobs size) good for you?  What do you want me to remove from this
-> patch?
-
-I agree that the security_file_set_owner() hook needs to be moved.  I
-disagree about the value in shifting the LSM framework over to a cred
-reference which effectively abandons the existing hook.  My preference
-would be to preserve the flexibility of the hook, but move it to the
-protected lock location, and continue to leverage the file->f_security
-blob as needed for any LSM state.
-
---=20
-paul-moore.com
 
