@@ -1,131 +1,212 @@
-Return-Path: <linux-kernel+bounces-285116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B4F95098F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:55:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B74950992
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A711C20C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:55:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989FA1C21047
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86AE1A08A3;
-	Tue, 13 Aug 2024 15:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEC01A08AB;
+	Tue, 13 Aug 2024 15:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdDaa/og"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjvfWiDv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E019D1A073C;
-	Tue, 13 Aug 2024 15:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26212AF0D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564535; cv=none; b=FEDzJLoLl5J4UaTWQ6lo4XJI0+ig5QZMZhmbEPlWbCV+frhla7s3FiJHY99nOFazJcVxvyszMy3ESDMNa0NCimQwhcubeKp/ZeEQZyU4fqraMVt1zUCxRvS52N5ODcSV37QWCjcaWBKlZhaV+5558hes0e/+iipYJnBmZANPmlc=
+	t=1723564592; cv=none; b=BJExdUzw7MP8zwH+d0yAONGkcJD+7qn5/1VxOqkKoIfvcQ/6Dwuj9SxUiE4hLyrDwP2H+6WmAhWZWkuxdGfnEyBWAKdmeIL8gsOJCZg1pMgYB83uDhtn+Y4eORNE5CFcIuX/V1BjE/SUVglZv7xQEOqVlXxTaQNwf/Ehcuy4+8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564535; c=relaxed/simple;
-	bh=2qbznLVAWa/HOCkibpwEKuFx9BRG0jfLiyGPm/O5D0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DrysTMLe8/lW4Ac9VRJvwngkcSIWbSRXJGhNcYxhEy9FCfbpQhDsehFYZW9P19vR8u/vCZWaDb7HQJ6WUf4mU2LtpUmB4R8laEoloNWTQL2ST8KIm+sSd2ev+NNZSZLf9f/TpYmSZXRIGiQxMrDllAsS5F5JHlv0Cok5LgPjG48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdDaa/og; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B120C4AF09;
-	Tue, 13 Aug 2024 15:55:29 +0000 (UTC)
+	s=arc-20240116; t=1723564592; c=relaxed/simple;
+	bh=3zW0n2w2QVfloPYCYYl/UF5OwhbG9EcTRphaq9+k7jE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HiBDbg37YxEOQFGRhTerywBIZaFZ5zPziQ65qf057DIRteedJyoDcCAdMw6edRMeFbu9hUbHFnpUI+nzafCIzc1zgbzh3dftlDKrx/ToKu6jAKgwg/7ley4ltGaR9L1tH9XPK8YRxV91HHbencvtMTHhmkpmFxYFtiJafBF0rK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjvfWiDv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA76C4AF09
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:56:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723564534;
-	bh=2qbznLVAWa/HOCkibpwEKuFx9BRG0jfLiyGPm/O5D0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TdDaa/og08j0LYWxMjIfmT62Kse6nlmDNAqFUWXRmeAOd4L8HUcdtoNGpFIKZ2ovK
-	 Wo8eroMPA7ljNcvycCtAJoCPSOW0sL4ez8CU0njPbAl5s4w3e1pL1xt0z/5bkAsd3W
-	 AyI8VSs3BZHOYosptDMzpeCBZYGxHn2H8y8LbYAnhcsMLr91GM20TL0ixceE9tPfzb
-	 Vx1zlFj6nEUair4k8rdOYdoG4DTk8CIJwZHafLxB8o8P/RrW8+9bZFSBxfXNpqDFNr
-	 VwMB5tfnO4Fx23eAhjULiqlqOWHy4r2C5DEKNZSBu0vrreLkayROtBxCfuvWvflTI4
-	 xxXxYgEv0gapw==
-Date: Tue, 13 Aug 2024 16:55:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Guo Ren <guoren@kernel.org>, Evan Green <evan@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Jessica Clarke <jrtc27@jrtc27.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sunxi@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v9 00/13] riscv: Add support for xtheadvector
-Message-ID: <20240813-strode-revival-07b8556a8bfe@spud>
-References: <20240806-xtheadvector-v9-0-62a56d2da5d0@rivosinc.com>
- <20240809-slapping-graph-461287bac506@spud>
- <ZrqsqsCtKwfG4Q5B@ghost>
+	s=k20201202; t=1723564592;
+	bh=3zW0n2w2QVfloPYCYYl/UF5OwhbG9EcTRphaq9+k7jE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=DjvfWiDvfABLpLpzbIjVlpxgRJdvhHxD+NKu9G/tf1CjEj7TylwPMZcZbRjzRxiwr
+	 EccakfHJ434ur7XSEbQc9zvewTEq02zwo05kmokMe3IOjrApW2jt1Ur4Zm2iSjieYN
+	 yZjlXlb+fjtrO8RHm4DgozrMS/1DH7IM7SgPJuBowA9v0WHo15SSuDuRhFed1zs6Ki
+	 KNlRhqOdPZrsOtzCcsq/kA9adA4pa/PSo6IHqhS+6/aX88odCDkSgfmIglZVGWncqa
+	 wO6N//3dXgyJ+XlDP7YmOOiMKVo8OJvE0d1BYTzvzSckfXtfckIuHm8ADZJ0LBzOpY
+	 +eEKegQ9wVWCA==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so2432146a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:56:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWrdasO/Y4kMD1a1NGUlrKlUgv7yWLb9JXOuFLmHGyVP8drwLRbr3LniZLic0nCPYoCHPMUfrihow+YCy+kUErR/mDanACSWnFmF1XQ
+X-Gm-Message-State: AOJu0YwnuGO7wisQyJkRJOcDZV7WI7o3tWxGRfmX4oUfovVdu/zvZDNh
+	fhVM+SI6Kx+W16Puj94+OySUBlwacZZvT3e6gBcqTNdBjl2dwoL3NyfFqTPsVUv//JwYdJMK1pS
+	kAE9AVpzphcjDOajEtvlxn5bdkUMO26ygXAjw
+X-Google-Smtp-Source: AGHT+IEoccaNChcOKrH4yV7UVrRWGO1c3dtiERqart7IKHJrf1vUXhXn/JNnmMB1oIBZwRAc6N4ouC4NWBr5UlZtj+4=
+X-Received: by 2002:a05:6402:354c:b0:57d:4409:4f48 with SMTP id
+ 4fb4d7f45d1cf-5bd462178a9mr3149592a12.15.1723564591218; Tue, 13 Aug 2024
+ 08:56:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wVALGEdsN5/GZu0E"
-Content-Disposition: inline
-In-Reply-To: <ZrqsqsCtKwfG4Q5B@ghost>
-
-
---wVALGEdsN5/GZu0E
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
+ <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
+ <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
+ <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
+ <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
+ <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
+ <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
+ <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
+ <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
+ <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
+ <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com> <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
+In-Reply-To: <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
+From: KP Singh <kpsingh@kernel.org>
+Date: Tue, 13 Aug 2024 17:56:20 +0200
+X-Gmail-Original-Message-ID: <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
+Message-ID: <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
+Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
+	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 05:45:30PM -0700, Charlie Jenkins wrote:
-> On Fri, Aug 09, 2024 at 11:31:15PM +0100, Conor Dooley wrote:
-> > On Tue, Aug 06, 2024 at 05:31:36PM -0700, Charlie Jenkins wrote:
-> > > xtheadvector is a custom extension that is based upon riscv vector
-> > > version 0.7.1 [1]. All of the vector routines have been modified to
-> > > support this alternative vector version based upon whether xtheadvect=
-or
-> > > was determined to be supported at boot.
-> > >=20
-> > > vlenb is not supported on the existing xtheadvector hardware, so a
-> > > devicetree property thead,vlenb is added to provide the vlenb to Linu=
-x.
-> > >=20
-> > > There is a new hwprobe key RISCV_HWPROBE_KEY_VENDOR_EXT_THEAD_0 that =
-is
-> > > used to request which thead vendor extensions are supported on the
-> > > current platform. This allows future vendors to allocate hwprobe keys
-> > > for their vendor.
-> > >=20
-> > > Support for xtheadvector is also added to the vector kselftests.
-> >=20
-> > So uh, since noone seems to have brought it up, in the light of the iss=
-ues
-> > with thead's vector implementation, (https://ghostwriteattack.com/) do =
-we
-> > want to enable it at all?
->=20
-> I can make it clear in the kconfig that xtheadvector is succeptible to
-> this attack and that it should be enabled with caution. I think we
-> should let people that understand the risk to enable it.
+On Tue, Aug 13, 2024 at 6:08=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
+wrote:
+>
+> On 8/12/24 15:02, KP Singh wrote:
+> > On Mon, Aug 12, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.co=
+m> wrote:
+> >>
+> >> On Mon, Aug 12, 2024 at 5:14=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
+wrote:
+> >>> On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> >>>> On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org=
+> wrote:
+> >>>>>
+> >>>>> JFYI, I synced with Guenter and all arch seem to pass and alpha doe=
+s
+> >>>>> not work due to a reason that I am unable to debug. I will try doin=
+g
+> >>>>> more debugging but I will need more alpha help here (Added the
+> >>>>> maintainers to this thread).
+> >>>>
+> >>>> Thanks for the update; I was hoping that we might have a resolution
+> >>>> for the Alpha failure by now but it doesn't look like we're that
+> >>>> lucky.  Hopefully the Alpha devs will be able to help resolve this
+> >>>> without too much trouble.
+> >>>>
+> >>>> Unfortunately, this does mean that I'm going to drop the static call
+> >>>> patches from the lsm/dev branch so that we can continue merging othe=
+r
+> >>>> things.  Of course this doesn't mean the static call patches can't
+> >>>> come back in later during this dev cycle once everything is solved i=
+f
+> >>>> there is still time, and worst case there is always the next dev
+> >>>> cycle.
+> >>>>
+> >>>
+> >>> Do we really want to drop them for alpha? I would rather disable
+> >>> CONFIG_SECURITY for alpha and if people really care for alpha we can
+> >>> enable it. Alpha folks, what do you think?
+> >>
+> >> Seriously?  I realize Alpha is an older, lesser used arch, but it is
+> >> still a supported arch and we are not going to cause a regression for
+> >> the sake of a new feature.  As I mentioned earlier, once the problem
+> >> is resolved we can bring the patchset back into lsm/dev; if it gets
+> >> resolved soon enough we can even do it during this dev cycle.
+> >>
+> >
+> > Okay, more data for the alpha folks, when I moved trap_init() before
+> > early_security_init() everything seemed to work, I think we might need
+> > to call trap_init() from setup_arch and this would fix the issue. As
+> > to why? I don't know :)
+> >
+> > Would alpha folks be okay with this patch:
+> >
+> > kpsingh@kpsingh:~/projects/linux$ git diff
+> > diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
+> > index bebdffafaee8..53909c1be4cf 100644
+> > --- a/arch/alpha/kernel/setup.c
+> > +++ b/arch/alpha/kernel/setup.c
+> > @@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
+> >          setup_smp();
+> >   #endif
+> >          paging_init();
+> > +       trap_init();
+> >   }
+> >
+> >
+> > and provide me some reason as to why this works, it would be great for
+> > a patch description
+> >
+>
+> Your code triggers a trap (do_entUna, unaligned access) which isn't handl=
+ed unless
+> trap_init() has been called before.
+>
+> Reason is that static_calls_table is not 8-byte aligned, causing the unal=
+igned
+> access in:
+>
+> static void __init lsm_static_call_init(struct security_hook_list *hl)
+> {
+>          struct lsm_static_call *scall =3D hl->scalls;
+>          int i;
+>
+>          for (i =3D 0; i < MAX_LSM_COUNT; i++) {
+>                  /* Update the first static call that is not used yet */
+>                  if (!scall->hl) {                                       =
+       <-- here
+>                          __static_call_update(scall->key, scall->trampoli=
+ne,
+>                                               hl->hook.lsm_func_addr);
+>                          scall->hl =3D hl;
+>                          static_branch_enable(scall->active);
+>                          return;
+>                  }
+>                  scall++;
+>          }
+>          panic("%s - Ran out of static slots.\n", __func__);
+> }
+>
+> A somewhat primitive alternate fix is:
+>
+> diff --git a/security/security.c b/security/security.c
+> index aa059d0cfc29..dea9736b2014 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -156,7 +156,7 @@ static __initdata struct lsm_info *exclusive;
+>    * and a trampoline (STATIC_CALL_TRAMP) which are used to call
+>    * __static_call_update when updating the static call.
+>    */
+> -struct lsm_static_calls_table static_calls_table __ro_after_init =3D {
+> +struct lsm_static_calls_table static_calls_table __ro_after_init __attri=
+bute__((aligned(8))) =3D {
+>   #define INIT_LSM_STATIC_CALL(NUM, NAME)                                =
+        \
 
-I think the clearest way might be "depends on BROKEN"?
+I think it's worth making it aligned at 8 byte, a much simpler fix
+than the arch change. Paul, I will rebase my series with these
+patches, better descriptions and post them later today.
 
---wVALGEdsN5/GZu0E
-Content-Type: application/pgp-signature; name="signature.asc"
+- KP
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruB7wAKCRB4tDGHoIJi
-0tDJAQCrAAwyJAAGcGaB0lSjHQowc1+M+60A33xWLVpFubDEggD+PdA/5VviAMYd
-FtjIx2BGIAbBB5DLVfsxw4duVA3eAQc=
-=/cR1
------END PGP SIGNATURE-----
-
---wVALGEdsN5/GZu0E--
+>          (struct lsm_static_call) {                                      =
+\
+>                  .key =3D &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),  =
+  \
+>
+> Guenter
+>
 
