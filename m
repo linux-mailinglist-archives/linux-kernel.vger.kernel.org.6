@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-284448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D960B95010E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:16:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8AC95010A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:16:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74D21B27C47
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:16:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D002A1C23435
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0B4189904;
-	Tue, 13 Aug 2024 09:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CDD183CAD;
+	Tue, 13 Aug 2024 09:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d5dn+5kl"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GoxUe6Qh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D5B3BB47;
-	Tue, 13 Aug 2024 09:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C7C3BB47;
+	Tue, 13 Aug 2024 09:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540548; cv=none; b=ju4gRDKsHmSeY6B/LIDMZrZwX3Pg1KR7JBKCdxa1gmRpK/GhDvvuPjLjfpBNX2f1uICa23I85nxQCxXTDGGj5MtgQLD0eVQ9oqLtlFfoI9PPsVmJ3/TlCsDPBySWHSA3wNGKGi0nR1ko5E0B6VDIgxCEnW7KzhRY5HWBUW6VHpg=
+	t=1723540535; cv=none; b=U26azifrMf1nzCSDH1LLLqYZ1G9dKEfIdQWAw/WNZNsNwlk9aVj042ktphA1gptOTyJEYCIDLPuKlztZ/P0NIyWODx5lWNWbzKigt32IojteliBXCFkP8LFSrW2mhS7j8wS7pOuTm43CgN0sVVHWMSS4l1jwft5kaQ+/uP8qZNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540548; c=relaxed/simple;
-	bh=3DFgHxnnZNSpCQ7BeBat9XOxsXgYsrPX5Songv5ncrI=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=jNmKwiPQqyq+GbfJrSO50q0274ZWRqHf/DBSmZAG0BzTp1F2+lDUh5P8laD6dt5lZFlWbmowqxrv5dgCkkhmqgw/LErWj68eeGrBcCr7kxmwYG27OdAum0/BxYKBnexVwbXc1g2Ymux2GEOyh04wv5SvsRUz4OIa2oieTQv6DXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d5dn+5kl; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1723540507; x=1724145307; i=markus.elfring@web.de;
-	bh=rGguLSfwniavDEMHMy3GgVchwkMAgtGND+6W9QtIiDc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=d5dn+5kltuhJs+yuGh2lf8dfvJaXvvciQnd54XEgwRZJo8cjfX2+W9DHfMDFAnRr
-	 oSpeJMNhQZ+xRSgUMaw9dtiSuGP/+3XXDgqBn20m9B7uSHvULJR8NcaMdqXjTaqpy
-	 XlpwQ9WqhDkYAiz3/dHqg9i+sH/z5QPhQyB6fvHTbTlSglVuFAFgzylDODlukXD7y
-	 Q/HER3TJ7bVzCl/2fsXGaIk6t5uKRT/nX5OWt2MtaxDaDhEUh1vLqn8Ni8mrtBfFm
-	 0FqRC6VbxIto64aRQRSiEU7pDfAmYr7XTxqN96Jlr4sws/DIoFaUUMNODKY+7mUmj
-	 wRMHI5XxapfQM8Cn2A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MVrbz-1snSHu1zMb-00UOJc; Tue, 13
- Aug 2024 11:15:07 +0200
-Message-ID: <d49cf866-2223-45e9-9ef6-c72990d87a3a@web.de>
-Date: Tue, 13 Aug 2024 11:15:04 +0200
+	s=arc-20240116; t=1723540535; c=relaxed/simple;
+	bh=PKnElOekxHXRG3WvWmm9EC/3/V9TPm4/L/L/JXal7YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m7Q1nggvMPo7gtSV1DsVRK3TWTt6OWdWz/K/WC4iq3PWi2QEY20llxpNn9UPhXhMQ+wJHeqFe6GNCMVMRjyYUds6Ej9bsuTRPO18OXgEYUhVJDZxTOKyrG4hl4BUF+t73RyO4S2X4PVojINQRbW0xEp1IuZVZN1Fy1+xnHQSITU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GoxUe6Qh; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723540535; x=1755076535;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=PKnElOekxHXRG3WvWmm9EC/3/V9TPm4/L/L/JXal7YI=;
+  b=GoxUe6QhsvjLbYvlQ2dQbXRQ5s1cSJTuN8ZcohWgxGPUZ/90m3h18QSa
+   EhdwDzjDVE83XzAfleRckaYNGpaIeiZ8YsFaAtbGGjSuEX0A/8UhQN/XT
+   Jmfi/kf/kotSkBrdW5CmsIJAEaONQnpdd/CUFtIW0bsuMePfEOoaPFi8P
+   qNpEIBI5Jqj2GON0IfXxq/jRFCoPHtSo+kdzygojkDaYSzjUJq94OhDuF
+   VMWZfRFPDqfkRoFusilmYAXzca5QgDbniCsXkIblXVnsak22Uc31yERTT
+   396nlmjcGy0K4uhuICxXC9Mv2QMo3XwTNdzcY0ewELIyN+R0bq7jzNVRW
+   g==;
+X-CSE-ConnectionGUID: GtMPKnhaShWeyHgi0PxlDw==
+X-CSE-MsgGUID: GAAuVsn9SveFoqCrgdol1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="44212049"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="44212049"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 02:15:34 -0700
+X-CSE-ConnectionGUID: RESNh+4vQqmIf046iR2EVw==
+X-CSE-MsgGUID: mzo6rkFTT6e7/el7rtBtpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58532073"
+Received: from unknown (HELO [10.238.8.207]) ([10.238.8.207])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 02:15:31 -0700
+Message-ID: <c03df364-4cce-4c7e-b9db-191f7b10ca70@linux.intel.com>
+Date: Tue, 13 Aug 2024 17:15:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,50 +66,110 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Christian Marangi <ansuelsmth@gmail.com>, linux-nvme@lists.infradead.org,
- linux-mtd@lists.infradead.org, linux-mmc@vger.kernel.org,
- devicetree@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
- Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
- Jens Axboe <axboe@kernel.dk>, Joern Engel <joern@lazybastard.org>,
- Keith Busch <kbusch@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Rob Herring <robh@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, Saravana Kannan <saravanak@google.com>,
- =?UTF-8?Q?Thomas_Bogend=C3=B6rfer?= <tsbogend@alpha.franken.de>,
- Ulf Hansson <ulf.hansson@linaro.org>, Vignesh Raghavendra <vigneshr@ti.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>
-References: <20240809172106.25892-3-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v4 2/7] nvme: assign of_node to nvme device
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240809172106.25892-3-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5OSznLC1x5l4DccGvfE0cxn4yFFn97VuHg47N4spG6KwoK18cCa
- u7rC+LnBerN5Fj1djIeJHC6ZxqyG7ZBcxRpFbTchUIFAChFRqkBj6wpD3oqHdOEEgRtDlAC
- HtE4KPgNjcMfqicWP1nbyFIFu1giD/7GYtwnkDB7ZP5HD8l4Xm4RETt47ea7DrRFOc6jI9A
- QNidh/HFdpT2P/8HmYCtg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Np8KOEmCYsI=;z/+4c8gTK4XQuaeM7RbBj1+xKBe
- GnmhKkOHHh7e2w732IW8Ag8dTzkXWWfoFRPDNRTDGp4oBqnzRFaqT+QJbgQQzC5q6DoheDvy4
- 4K6hzfjCrIfu1vC7alajleh3cyZ2aBMvJRAnti80z1OClHWKpyU+mLguk1rPeZWI3VNsnjP+a
- l8ZkQeoG0gceLGFDodqgh9p0ukXev3bK4614cWlibUmfPs6N3YNly+XAR4sUkNF6Gi0TKJsS9
- hubWrA3hNvPzUJSlFw4ISIRx6o+r7YnU7J2pKPWy6vgmUgKzcUHhwD3K8HDcPgOoRgw+403/c
- JpzEz60bFdXa0J7JUAdpZrD+577k+Vl+S2iHX3wpIzu4ahBML1W/4sCyzDEgeSd3KRI2xfVI2
- kdE/Cq3EwMociuNW+MJkQaEc6/PzjG56aiZYqnM4YgYSXcizwNvx3KM2Npxq27nG7HErsi1c2
- L8P8AY8CeYDNtgdzsLF2H4pr3q11W6YZSNZLYiCHIojtSZ7LXF4PIg1ibLyEzFaaUcj9ypMPV
- n63CvwhN4LzUcjFE7+JCcPow/boReJ0/oyROQ+Ma830y1msb9f/kF2SCdhbq+6YiH40GRzZot
- LMeWdIma1ZZs+76tDn6IQ2k4YADjqiRKCt+t4GtoaA74dEjaRzeilmv6Vv1mdtW0g1Sw/imUn
- KdGibm3XsP/wn4CYQcjGHH/dnKNnRL7GKKaU7dYu7r0Mxad+CGBoQnV3LFbdUO5gLSTnLTLlV
- PVDDFYhJTg0NhnHj75a7PtNc3iEd/KBBh6G/2B+OswXxAUGsr6JcX3NThjfdQXHro2VXnXY6J
- PLaVer5xX68HLw1Rsd5DNE6g==
+Subject: Re: [PATCH 17/25] KVM: TDX: create/free TDX vcpu structure
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, xiaoyao.li@intel.com,
+ linux-kernel@vger.kernel.org, Isaku Yamahata <isaku.yamahata@intel.com>
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-18-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20240812224820.34826-18-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-=E2=80=A6
-> This follow a similar implementation done for mmc =E2=80=A6
 
-       follows?
 
-Regards,
-Markus
+
+On 8/13/2024 6:48 AM, Rick Edgecombe wrote:
+> From: Isaku Yamahata <isaku.yamahata@intel.com>
+>
+> Implement vcpu related stubs for TDX for create, reset and free.
+>
+> For now, create only the features that do not require the TDX SEAMCALL.
+> The TDX specific vcpu initialization will be handled by KVM_TDX_INIT_VCPU.
+>
+> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v1:
+>   - Dropped unnecessary WARN_ON_ONCE() in tdx_vcpu_create().
+>     WARN_ON_ONCE(vcpu->arch.cpuid_entries),
+>     WARN_ON_ONCE(vcpu->arch.cpuid_nent)
+>   - Use kvm_tdx instead of to_kvm_tdx() in tdx_vcpu_create() (Chao)
+>
+> v19:
+>   - removed stale comment in tdx_vcpu_create().
+>
+> v18:
+>   - update commit log to use create instead of allocate because the patch
+>     doesn't newly allocate memory for TDX vcpu.
+>
+> v16:
+>   - Add AMX support as the KVM upstream supports it.
+> --
+> 2.46.0
+> ---
+>   arch/x86/kvm/vmx/main.c    | 44 ++++++++++++++++++++++++++++++++++----
+>   arch/x86/kvm/vmx/tdx.c     | 41 +++++++++++++++++++++++++++++++++++
+>   arch/x86/kvm/vmx/x86_ops.h | 10 +++++++++
+>   arch/x86/kvm/x86.c         |  2 ++
+>   4 files changed, 93 insertions(+), 4 deletions(-)
+>
+[...]
+> +
+> +static void vt_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> +{
+> +	if (is_td_vcpu(vcpu)) {
+> +		tdx_vcpu_reset(vcpu, init_event);
+> +		return;
+> +	}
+> +
+> +	vmx_vcpu_reset(vcpu, init_event);
+> +}
+> +
+[...]
+> +
+> +void tdx_vcpu_reset(struct kvm_vcpu *vcpu, bool init_event)
+> +{
+> +
+> +	/* Ignore INIT silently because TDX doesn't support INIT event. */
+> +	if (init_event)
+> +		return;
+> +
+> +	/* This is stub for now. More logic will come here. */
+> +}
+> +
+For TDX, it actually doesn't do any thing meaningful in vcpu reset.
+Maybe we can drop the helper and move the comments to vt_vcpu_reset()?
+
+>   
+>   #endif /* __KVM_X86_VMX_X86_OPS_H */
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index ce2ef63f30f2..9cee326f5e7a 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -488,6 +488,7 @@ int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+>   	kvm_recalculate_apic_map(vcpu->kvm);
+>   	return 0;
+>   }
+> +EXPORT_SYMBOL_GPL(kvm_set_apic_base);
+>   
+>   /*
+>    * Handle a fault on a hardware virtualization (VMX or SVM) instruction.
+> @@ -12630,6 +12631,7 @@ bool kvm_vcpu_is_reset_bsp(struct kvm_vcpu *vcpu)
+>   {
+>   	return vcpu->kvm->arch.bsp_vcpu_id == vcpu->vcpu_id;
+>   }
+> +EXPORT_SYMBOL_GPL(kvm_vcpu_is_reset_bsp);
+>   
+>   bool kvm_vcpu_is_bsp(struct kvm_vcpu *vcpu)
+>   {
+
+kvm_set_apic_base() and kvm_vcpu_is_reset_bsp() is not used in
+this patch. The symbol export should move to the next patch, which
+uses them.
+
 
