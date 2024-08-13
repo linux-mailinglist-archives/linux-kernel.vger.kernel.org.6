@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-285302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C92C950BE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:00:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE26F950BDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E10121F279DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:00:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F371F1C225AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196151A7068;
-	Tue, 13 Aug 2024 17:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFE81A3BB8;
+	Tue, 13 Aug 2024 17:59:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JORC/T0g"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ew7miZnl"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95E5E1A3BD4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFDC1A38F9
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571952; cv=none; b=MewjS4jsQR/IiY1n0eEyYNA4/7YJPjIHyHKBNI7NCdZqutdShgsR0mdn/6ExGcFUIqBO3Bn0Nq0nEqFTuB2TPbZr4Ln+7hTQKtFDhhsyq0dnhWb+3dUlXRdNy9xc6GUdUIZ5jB5WzzJsGUSrGQouMeqxsDWq8HdJoqJl/1SYJPw=
+	t=1723571948; cv=none; b=GHzXs01KOettN3ff4YGXYXdg0BdvloD7JSPbtFdACMmGDVtLryo+TxTzv9lMWWyzzstOi30b8zOUse7nEho9N8HkF2s0gIIh7I+9nBO6Yyl9MX3b7RYoA5WORbRNax9vY8v1M5erAX4R7IlSQFruuQaxN1290HtIcL0OVGG2yJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571952; c=relaxed/simple;
-	bh=7cogn5DFs3vr74bqs4V4E2gllYv7cR0Ei4Zarr68vI8=;
+	s=arc-20240116; t=1723571948; c=relaxed/simple;
+	bh=lSlPkTc1rrYHOWWWR58htbgs4DjflRwZAtZMgO1bwxY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GVOJcLaJpiUTyILDMDllCeP0z/xFCrVC3ki9lStyl+tcNGWTEiim19y7ry4qLMKsW5CJ65nrSEhudLWyDdktgnTz0e2ALz8lbO4l48ARLQaIqo+o9G1be5eIqDYy4Fo+gx9GoHpGQ8rSFyHYLr4NCASONjVu5S2h/faJ5idvblc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JORC/T0g; arc=none smtp.client-ip=217.70.183.195
+	 Content-Type:Content-Disposition:In-Reply-To; b=FHWLT44o5ls1nl+jLaFRuva8AdLqsKv1XoOIzBcszGFgJuCt8ovkTyyhHUIBdpq2k+rLD8YwCz/XGpGlED2rnTebYpSP8jC+NJAikxXoa9OTtjPc5B2UApjoUUoqRqcyo8wgM0r6ibVtSXT6LqgA0cqyZWF7638uiy8cb6hz+kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ew7miZnl; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AE18460005;
-	Tue, 13 Aug 2024 17:59:01 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id F335E1C0004;
+	Tue, 13 Aug 2024 17:59:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723571943;
+	t=1723571944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=25Fbsx5jgBfKsyKjRJJa4plhorxoqKaUAERcBQL7aeI=;
-	b=JORC/T0gcCwUhGtsLTHoBIDD5spF6BBtbBprWVBiQalC5jg7Fhqv8Ydy0q578dyfAJ61p/
-	bjFzM5YXsQLedeztCR0krNJewWAKhJ1t5FO0cGrJptcqJoU2f3JJodP0DneVCoJXk4E7Sx
-	zrzk47Re+wJ4tgYiiCiKy3K4TF7MLKsswlKDsoYk25huWzrvHiwuGWykbRG/06aThc/htG
-	S92TUJ8Teid/oipUZr+PFz2cOuIVk3MJFoirBCMnZ//ahaetDOI9FYfLaH4Lbc2tfgRm5D
-	VqHrSCYwhPihm7OJLCKizjXhwDyCq+LEB50uxJXqt0yPqXbP9UgrNjvlJbZNJQ==
-Date: Tue, 13 Aug 2024 19:58:55 +0200
+	bh=Wo1iuzYTuIQLFCD/B6JQxxjdTcdk8Saaz2yCzCNhqGM=;
+	b=Ew7miZnlN8v0alg1ZwRFOkzc2TDUpD9TkQr5yvIJz4lcEWaodPh5WUiRKYTeRfeE3+i7Kh
+	vgZsCK6LF9CsDpP21TxJafLE68gqefD01NtzWWXdRNhT955F/I2PC9oRvzsa07D6ehG0k4
+	69pBF7gnD7F6O9cYKLYCu2wZtuyT3sX79t6cWqgu9BvT1knm2vQ5tdcv/gEtiXIasc2F3K
+	ZwuXnD4nr+zLYvLqSUn6/10szw8f9eUwAkLK4rEy8qzNfZNdwC/EZXQOK2NcGlcya9xMiP
+	3cKu2CwK3c985jeUuroi1BhsZfqmGUZRZ+ReG7SG0gj6Siq8JEwnTl9/Ewqvew==
+Date: Tue, 13 Aug 2024 19:58:57 +0200
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
 Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
 	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
 	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
 	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	thomas@bootlin.com
-Subject: Re: [RFC PATCH 00/17] VKMS: Add configfs support
-Message-ID: <Zrue3980Z4S6P52z@louis-chauvet-laptop>
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/17] drm/vkms: Use managed memory to create
+ connectors
+Message-ID: <Zrue4VV8DCTBnH4F@louis-chauvet-laptop>
 Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
 	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
 	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
 	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
 	tzimmermann@suse.de, airlied@gmail.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	thomas@bootlin.com
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <20240813105134.17439-1-jose.exposito89@gmail.com>
+ <20240813105134.17439-8-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,157 +72,145 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240813105134.17439-1-jose.exposito89@gmail.com>
+In-Reply-To: <20240813105134.17439-8-jose.exposito89@gmail.com>
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 Le 13/08/24 - 12:44, José Expósito a écrit :
-> Hi everyone,
-
-Hi José,
- 
-> This RFC implements support to configure VKMS using configfs.
-> It allows to:
+> A future patch will allow to create multiple connectors. Use managed
+> memory to simplify the code.
 > 
->  - Create multiple devices
->  - Configure multiple overlay planes, CRTCs, encoders and
->    connectors
->  - Enable or disable cursor plane and writeback connector for
->    each CRTC
->  - Hot-plug/unplug connectors after device creation
->  - Disable the creation of the default VKMS instance to be
->    able to use only the configfs ones
+> Refactor, no functional changes.
 > 
-> This work is based on a previous attempt to implement configfs
-> support by Jim Shargo and Brandon Pollack [1].
-> I tried to keep the changes as minimal and simple as possible
-> and addressed Sima's comments on [1].
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_drv.h    |  5 ---
+>  drivers/gpu/drm/vkms/vkms_output.c | 53 +++++++++++++++++-------------
+>  2 files changed, 31 insertions(+), 27 deletions(-)
 > 
-> Currently, there is another RFC by Louis Chauvet [2]. As I
-> mentioned on his RFC, I'm not trying to push my implementation.
-> Instead, I think that having 2 implementations will make code
-> review way easier and I don't mind which implementation is used
-> as long as we get the feature implemented :)
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 2466e8b0231f..cac37d21654a 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -121,14 +121,9 @@ struct vkms_crtc {
+>  
+>  struct vkms_config;
+>  
+> -struct vkms_output {
+> -	struct drm_connector connector;
+> -};
+> -
+>  struct vkms_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+> -	struct vkms_output output;
+>  	struct list_head crtcs;
+>  	const struct vkms_config *config;
+>  };
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index 7afe37aea52d..4413cf88afc7 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -9,7 +9,6 @@
+>  
+>  static const struct drm_connector_funcs vkms_connector_funcs = {
+>  	.fill_modes = drm_helper_probe_single_connector_modes,
+> -	.destroy = drm_connector_cleanup,
+>  	.reset = drm_atomic_helper_connector_reset,
+>  	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
+>  	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
+> @@ -29,6 +28,33 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+>  	.get_modes    = vkms_conn_get_modes,
+>  };
+>  
+> +static struct drm_connector *vkms_connector_init(struct vkms_device *vkms_device,
+> +						 uint32_t possible_encoders)
+> +{
+> +	struct drm_connector *connector;
+> +	int ret;
+> +
+> +	connector = drmm_kzalloc(&vkms_device->drm, sizeof(*connector), GFP_KERNEL);
+> +	if (!connector) {
+> +		DRM_ERROR("Failed to allocate connector\n");
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	ret = drmm_connector_init(&vkms_device->drm, connector,
+> +				  &vkms_connector_funcs,
+> +				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
+> +	if (ret) {
+> +		DRM_ERROR("Failed to init connector\n");
+> +		kfree(connector);
 
-I will send few series tomorrow, don't panic, there will be 9 series and a 
-total of ~50 commits (I have many conflict to rebase only the configFS 
-part, and even if it was easy, I plan to submit all of my work, not 
-everything will be RFC).
+Again, connector is allocated with drmm_kzalloc, so drmm_kfree or nothing.
 
-> I'm looking forward to analyzing Louis's implementation, seeing
-> what the differences are and finding a common solution.
+> +		return ERR_PTR(ret);
+> +	}
+> +
+> +	connector->possible_encoders = possible_encoders;
+> +	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> +
+> +	return connector;
+> +}
+> +
+>  static struct drm_encoder *vkms_encoder_init(struct vkms_device *vkms_device,
+>  					     uint32_t possible_crtcs,
+>  					     unsigned int index)
+> @@ -72,9 +98,8 @@ static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index)
+>  
+>  int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  {
+> -	struct vkms_output *output = &vkmsdev->output;
+>  	struct drm_device *dev = &vkmsdev->drm;
+> -	struct drm_connector *connector = &output->connector;
+> +	struct drm_connector *connector;
+>  	struct drm_encoder *encoder;
+>  	struct vkms_config_encoder *encoder_cfg;
+>  	struct vkms_crtc *vkms_crtc;
+> @@ -117,14 +142,9 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  		}
+>  	}
+>  
+> -	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
+> -				 DRM_MODE_CONNECTOR_VIRTUAL);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to init connector\n");
+> -		return ret;
+> -	}
+> -
+> -	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> +	connector = vkms_connector_init(vkmsdev, BIT(index));
 
-There are four main differences:
-- I complelty splitted vkms_config and vkms_configfs structures 
-- I splitted my work in many different series
-- I created a real platform device driver
-- I did not manage index by hand, I let drm core doing it
-- I used list to link crtc/planes/encoders and not bitfield (because of 
-  the previous point)
-- The primary and cursor planes are fully configurable
+As for CRTC, you can create multiple encoder but connector is always 
+attached to the first? I assume this is intentionnal? Maybe you can attach 
+it to all the created encoders?
 
-The first two points are personnal preferences, so I am open to 
-discussion.
+> +	if (IS_ERR(connector))
+> +		return PTR_ERR(connector);
+>
+>  	list_for_each_entry(encoder_cfg, &vkmsdev->config->encoders, list) {
+>  		encoder = vkms_encoder_init(vkmsdev, encoder_cfg->possible_crtcs,
+> @@ -133,18 +153,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  			return PTR_ERR(encoder);
+>  	}
+>  
+> -	ret = drm_connector_attach_encoder(connector, encoder);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to attach connector to encoder\n");
+> -		goto err_attach;
+> -	}
+> -
 
-The third point was already discussed before, I don't know if it is a good 
-solution or not. I think it should be easy to remove it.
+The encoder is not attached to the connector?
 
-But for the index managment, I really think that for our usage 
-in ConfigFS, bitfields are not a good solution and as shown in this 
-series, very error-prone. If you have a better solution than what I did, 
-let me know, I am not very happy with mine too.
-
-The last point is also important, we don't want to break uAPI once this 
-series is merged, so having "default hidden planes" that can't be 
-configured is annoying as we will have to manage them with a special case.
-
-> What's missing?
-> 
->  - DebugFS only works for the default VKMS instance.
->    If we want to support it on instances created with configfs
->    I'll need to implement it.
-
-Same on my side, I forgot to reimplement this :-). It will not be in my 
-RFC, but on the v1 for sure!
-
-> Known bugs:
-> 
->  - When a CRTC is added and removed before device creation, there
->    is a vblank warning.
->    The issue is caused because vblanks are referenced using the
->    CRTC index but, because one of the CRTCs is removed, the
->    indices are not consecutives and drm_crtc_vblank_crtc() tries to
->    access and invalid index
->    I'm not sure if CRTC's indices *must* start at 0 and be
->    consecutives or if this is a bug in the drm_crtc_vblank_crtc()
->    implementation.
-
-Very nice work, but you hurted many issue I had too, and I attempted to 
-solve them as nicely as I can. Overall there is one main issues for me:
-the crtc index managment is not correct and the configfs behavior is very 
-easily broken because of this.
-
-This is an issue for two reason I think:
-- We are trying to implement a new index allocation mecanism, but it is 
-  not very difficult to let drm manage this part on device creation, so 
-  maybe just dont store indexes in config
-- The usage of a simple index++ is not suitable for configFS usecase, 
-  crating 32 crtcs and deleting 1 should be possible:
-	mkdir {1..32};rmdir 1;mkdir 1
-  but the index of 1 is now 33, which is forbidden by drm, so you have to 
-  do a "complex" algorithim "find_first_value_not_used_bellow_32".
-
-Thanks for all your work! You were right, while reviewing your work, I 
-found issues in mine :-)
-
-Have a nice day,
-Louis Chauvet
-
-> 
-> Best wishes,
-> José Expósito
-> 
-> [1] https://patchwork.kernel.org/project/dri-devel/list/?series=780110&archive=both
-> [2] https://lore.kernel.org/dri-devel/ZrZZFQW5RiG12ApN@louis-chauvet-laptop/T/#u
-> 
-> José Expósito (17):
->   drm/vkms: Extract vkms_config header
->   drm/vkms: Move default_config creation to its own function
->   drm/vkms: Set device name from vkms_config
->   drm/vkms: Allow to configure multiple CRTCs
->   drm/vkms: Use managed memory to create encoders
->   drm/vkms: Allow to configure multiple encoders
->   drm/vkms: Use managed memory to create connectors
->   drm/vkms: Allow to configure multiple connectors
->   drm/vkms: Allow to configure multiple overlay planes
->   drm/vkms: Allow to change connector status
->   drm/vkms: Add and remove VKMS instances via configfs
->   drm/vkms: Allow to configure multiple CRTCs via configfs
->   drm/vkms: Allow to configure multiple encoders via configfs
->   drm/vkms: Allow to configure multiple encoders
->   drm/vkms: Allow to configure multiple planes via configfs
->   drm/vkms: Allow to configure the default device creation
->   drm/vkms: Remove completed task from the TODO list
-> 
->  Documentation/gpu/vkms.rst            | 102 +++-
->  drivers/gpu/drm/vkms/Kconfig          |   1 +
->  drivers/gpu/drm/vkms/Makefile         |   4 +-
->  drivers/gpu/drm/vkms/vkms_composer.c  |  30 +-
->  drivers/gpu/drm/vkms/vkms_config.c    | 265 ++++++++++
->  drivers/gpu/drm/vkms/vkms_config.h    | 101 ++++
->  drivers/gpu/drm/vkms/vkms_configfs.c  | 721 ++++++++++++++++++++++++++
->  drivers/gpu/drm/vkms/vkms_configfs.h  |   9 +
->  drivers/gpu/drm/vkms/vkms_crtc.c      |  99 ++--
->  drivers/gpu/drm/vkms/vkms_drv.c       |  75 ++-
->  drivers/gpu/drm/vkms/vkms_drv.h       |  52 +-
->  drivers/gpu/drm/vkms/vkms_output.c    | 187 ++++---
->  drivers/gpu/drm/vkms/vkms_plane.c     |   6 +-
->  drivers/gpu/drm/vkms/vkms_writeback.c |  27 +-
->  14 files changed, 1464 insertions(+), 215 deletions(-)
->  create mode 100644 drivers/gpu/drm/vkms/vkms_config.c
->  create mode 100644 drivers/gpu/drm/vkms/vkms_config.h
->  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
->  create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
-> 
+>  	drm_mode_config_reset(dev);
+>  
+>  	return 0;
+> -
+> -err_attach:
+> -	drm_connector_cleanup(connector);
+> -
+> -	return ret;
+>  }
 > -- 
 > 2.46.0
 > 
