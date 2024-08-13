@@ -1,194 +1,169 @@
-Return-Path: <linux-kernel+bounces-284585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE589502D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:49:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58444950315
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620AC1C223C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E9B41F239B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F8C19AA68;
-	Tue, 13 Aug 2024 10:49:44 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A85619B3D6;
+	Tue, 13 Aug 2024 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Et9rKDfQ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07A623D0;
-	Tue, 13 Aug 2024 10:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FA819AA58;
+	Tue, 13 Aug 2024 10:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546183; cv=none; b=G5HRFFWlLAprmWnyZyVdftEzC7h7vWIvhJxnPXZNBCIFtlWP6Upbrttbnl8aR3jSYk20kHEQT5qp1B5mttxx75Oo6UIk0bqzQiGjepPO/iDZaCk2TZQ4X2vyNiOMKTvbsxBOBW/wDrg4EXlXDwBUsoUGFeD2HdMCfwZL5eoiFsU=
+	t=1723546567; cv=none; b=iPUKsvNjFqwztL593TVs2XGwyxVP7ZIXL8iBVPagBmEtbEZdRm7UanL7AmEpcDerXgoAvvKY28HNSTUvlqWbHdM92P/fWlZNKcgS6QfKLRSeGOp26+ahMTgy597C8Lj6UDmOlMS0U8XaYhl+EEd450ABf9+jAXAhN3Ewbmu7dEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546183; c=relaxed/simple;
-	bh=2bAnjcylwCIbEgunZmUYly7eRS7HTnWhdO9hyO2NFAc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jlx3tl/ARvcCoC+2rwvUgPm7SCTrVCOcby/gYt66xQn2T9ZKulaBRqzL705UTbQimTKT+xIgujEhV1+M1YlmdaUrIwH2jDejZ4uCUTJcJynSs0nyL9k5DOFKEj3koVq84PVqMkTR8zu+A5XqC9hl2wYYTEX2nKbtkkOmokNhMFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04c29588so1629295e87.3;
-        Tue, 13 Aug 2024 03:49:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723546177; x=1724150977;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EUm/bEXImaEK1obrlqGtsRYLmCBpTLTnHcA0pud0em4=;
-        b=Y3280MklEv5LPlKZR4rUey0CuK6dJ2pu5xfhP4SeT6GpdM32eiTqQvJ8BBreObrnF9
-         +F0navCBBXlhyTagIzbZbJMWWG0CydBU+2pCrFB6kyIsBQKdXleUW2ct/1MyHGg813fd
-         TWPQQm8OAl32DoMxlRX4Ns6G/TvuA62KLsxMz3xVmUYs241wwfi9cT4zEDEtlrryj4Ef
-         VIIKGBoFcXqxF13z5slDEIpjWjwyuEOUWtnip7AktxRz5Yuh2V6YaRisHX3uWJ9KhxDN
-         rr8UyKrLqqjMBYR2UlTvyqM/Yk1dWWp+e4dBUeEJiN5BnGNn8rhvr1TEzFIsaclNsHvx
-         +eZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWol0nensxEzqX3Av9+21/iMzrFn+hR/hpC/2XWL5SSWU1A7sE2dMWD59FvhVGHzppMmZpFQWPcPAkEt79X6XdzWiatGOLXPmckLPH+rNOSyrZYF6wTvq7K0c40P12+na0kZrN++qHFutE=
-X-Gm-Message-State: AOJu0YzBcdXEdC35ngExcfZAR38xoETN3yy/3xldJWWP3eGoEHi4KuhU
-	MHfZcdJaDceNlo1Q1qgBOZPMdTAGxUBd1AYJjfgC1WAglIU3fB/B
-X-Google-Smtp-Source: AGHT+IHFz76jpw0cuOkw55EbndtRrNzhWyNedTeXoCWLJpudYR4McHuWZWp2bJyFKaWegBlDp9CVDg==
-X-Received: by 2002:a05:6512:685:b0:52c:db04:5a57 with SMTP id 2adb3069b0e04-5321365dccamr1956558e87.31.1723546176526;
-        Tue, 13 Aug 2024 03:49:36 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775c912sm131513875e9.45.2024.08.13.03.49.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 03:49:36 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-	Qu Wenruo <wqu@suse.com>,
-	Filipe Manana <fdmanana@suse.com>
-Subject: [PATCH v2] btrfs: reduce chunk_map lookups in btrfs_map_block
-Date: Tue, 13 Aug 2024 12:49:20 +0200
-Message-ID: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723546567; c=relaxed/simple;
+	bh=KSgLvCgukm7SuRr8aIh2efSvJWw2ykWte/os8g56hB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JencHeUbqOka9xQ12cTEaQqxVpMLkCrLqdA3R6Ky1J2Lpfz11bTKKsGHrbowa68OJSSrNqSfZzyKVCUo12sspfmwGqX3N0FIYCrBHmiB/MmoN0Ffg/lAjtOR01AHGzGK21jBWgM48LA/d0GXZ0U38XYeCp/n3CG3/CPt3i48WOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Et9rKDfQ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D9abWb031286;
+	Tue, 13 Aug 2024 10:50:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WhlZuS6gpJmDBfj7tUVk06rz347a2fbx1nf1hh7blm4=; b=Et9rKDfQSSidGydp
+	cuoi0XNprRrzTHf+Jczq4U1SRuoncOaYZMD9Pak6MyQblYfqwv+0bA9wgq5jTlaK
+	swWwUsZMvlps3EUVx02KLf9701hH6dFpnEeQ5A7rM/IjMeznH8lyUdCWV+FXLZ/i
+	bQ3uLVdZWd4tI64Z2v8jYs4257v4WHqoBLSRwEIgjYRMlRHtQb2Ue8FUxrutXuAu
+	KmjOXFu7uejJ4kQJfzioyWpHPpTHmZMTEhKkWugatAkjZTcWO5sDy+oued2ZW/q1
+	YQRwUe8OwYahzI0Fq4ENwvaJx9iCbiUNkU5HA2DrDNVmZjwT8bDE2vMShn7fGVTh
+	RTL+nA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x15e79fp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 10:50:25 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DAoBqU013789
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 10:50:11 GMT
+Received: from [10.253.34.30] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 03:50:07 -0700
+Message-ID: <3f7e9969-5285-4dba-b16e-65c6b10ee89a@quicinc.com>
+Date: Tue, 13 Aug 2024 18:50:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] driver core: Introduce an API
+ constify_device_find_child_helper()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Zijun Hu
+	<zijun_hu@icloud.com>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Davidlohr Bueso
+	<dave@stgolabs.net>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Dave
+ Jiang <dave.jiang@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan
+ Williams <dan.j.williams@intel.com>,
+        Takashi Sakamoto
+	<o-takashi@sakamocchi.jp>,
+        Timur Tabi <timur@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <linux-cxl@vger.kernel.org>, <linux1394-devel@lists.sourceforge.net>,
+        <netdev@vger.kernel.org>
+References: <20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com>
+ <20240811-const_dfc_prepare-v1-2-d67cc416b3d3@quicinc.com>
+ <2024081314-marbling-clasp-442a@gregkh>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <2024081314-marbling-clasp-442a@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: BwLEZ1fydPE7qZsoyL-lqd11wCChzbl4
+X-Proofpoint-ORIG-GUID: BwLEZ1fydPE7qZsoyL-lqd11wCChzbl4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_02,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ phishscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=999
+ clxscore=1015 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130078
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On 8/13/2024 5:45 PM, Greg Kroah-Hartman wrote:
+> On Sun, Aug 11, 2024 at 08:18:08AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Introduce constify_device_find_child_helper() to replace existing
+>> device_find_child()'s usages whose match functions will modify
+>> caller's match data.
+> 
+> Ick, that's not a good name, it should be "noun_verb" with the subsystem being on the prefix always.
+> 
+okay, got it.
 
-Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() in
-btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
-to be able to calculate the number of copies.
+is it okay to use device_find_child_mut() suggested by Przemek Kitszel ?
 
-So split out the code getting the number of copies from btrfs_num_copies()
-into a helper called btrfs_chunk_map_num_copies() and directly call it
-from btrfs_map_block() and btrfs_num_copies().
+> But why is this even needed?  Device pointers are NOT const for the
+> obvious reason that they can be changed by loads of different things.
+> Trying to force them to be const is going to be hard, if not impossible.
+> 
 
-This saves us one rbtree lookup per btrfs_map_block() invocation.
+[PATCH 3/5] have more discussion about these questions with below link:
+https://lore.kernel.org/all/8b8ce122-f16b-4207-b03b-f74b15756ae7@icloud.com/
 
-Reviewed-by: Qu Wenruo <wqu@suse.com>
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
----
-Changes in v2:
-- Added Reviewed-bys
-- Reflowed comments
-- Moved non RAID56 cases to the end without an if
-Link to v1:
-https://lore.kernel.org/all/20240812165931.9106-1-jth@kernel.org/
 
- fs/btrfs/volumes.c | 58 +++++++++++++++++++++++++---------------------
- 1 file changed, 32 insertions(+), 26 deletions(-)
+The ultimate goal is to make device_find_child() have below prototype:
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index e07452207426..796f6350a017 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5781,38 +5781,44 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info *fs_info)
- 	write_unlock(&fs_info->mapping_tree_lock);
- }
- 
-+static int btrfs_chunk_map_num_copies(struct btrfs_chunk_map *map)
-+{
-+	enum btrfs_raid_types index = btrfs_bg_flags_to_raid_index(map->type);
-+
-+	if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-+		return 2;
-+
-+	/*
-+	 * There could be two corrupted data stripes, we need to loop
-+	 * retry in order to rebuild the correct data.
-+	 *
-+	 * Fail a stripe at a time on every retry except the stripe
-+	 * under reconstruction.
-+	 */
-+	if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-+		return map->num_stripes;
-+
-+	/* Non-RAID56, use their ncopies from btrfs_raid_array. */
-+	return btrfs_raid_array[index].ncopies;
-+}
-+
- int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len)
- {
- 	struct btrfs_chunk_map *map;
--	enum btrfs_raid_types index;
--	int ret = 1;
-+	int ret;
- 
- 	map = btrfs_get_chunk_map(fs_info, logical, len);
- 	if (IS_ERR(map))
- 		/*
--		 * We could return errors for these cases, but that could get
--		 * ugly and we'd probably do the same thing which is just not do
--		 * anything else and exit, so return 1 so the callers don't try
--		 * to use other copies.
-+		 * We could return errors for these cases, but that
-+		 * could get ugly and we'd probably do the same thing
-+		 * which is just not do anything else and exit, so
-+		 * return 1 so the callers don't try to use other
-+		 * copies.
- 		 */
- 		return 1;
- 
--	index = btrfs_bg_flags_to_raid_index(map->type);
--
--	/* Non-RAID56, use their ncopies from btrfs_raid_array. */
--	if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
--		ret = btrfs_raid_array[index].ncopies;
--	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
--		ret = 2;
--	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
--		/*
--		 * There could be two corrupted data stripes, we need
--		 * to loop retry in order to rebuild the correct data.
--		 *
--		 * Fail a stripe at a time on every retry except the
--		 * stripe under reconstruction.
--		 */
--		ret = map->num_stripes;
-+	ret = btrfs_chunk_map_num_copies(map);
- 	btrfs_free_chunk_map(map);
- 	return ret;
- }
-@@ -6462,14 +6468,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
- 	io_geom.stripe_index = 0;
- 	io_geom.op = op;
- 
--	num_copies = btrfs_num_copies(fs_info, logical, fs_info->sectorsize);
--	if (io_geom.mirror_num > num_copies)
--		return -EINVAL;
--
- 	map = btrfs_get_chunk_map(fs_info, logical, *length);
- 	if (IS_ERR(map))
- 		return PTR_ERR(map);
- 
-+	num_copies = btrfs_chunk_map_num_copies(map);
-+	if (io_geom.mirror_num > num_copies)
-+		return -EINVAL;
-+
- 	map_offset = logical - map->start;
- 	io_geom.raid56_full_stripe_start = (u64)-1;
- 	max_len = btrfs_max_io_len(map, map_offset, &io_geom);
--- 
-2.43.0
+struct device *device_find_child(struct device *dev, const void *data,
+		int (*match)(struct device *dev, const void *data));
+
+Why ?
+
+(1) It does not make sense, also does not need to, for such device
+finding operation to modify caller's match data which is mainly
+used for comparison.
+
+(2) It will make the API's match function parameter have the same
+signature as all other APIs (bus|class|driver)_find_device().
+
+
+My idea is that:
+use device_find_child() for READ only accessing caller's match data.
+
+use below API if need to Modify caller's data as
+constify_device_find_child_helper() does.
+int device_for_each_child(struct device *dev, void *data,
+                    int (*fn)(struct device *dev, void *data));
+
+So the The ultimate goal is to protect caller's *match data* @*data  NOT
+device @*dev.
+
+> thanks,
+> 
+> greg k-h
 
 
