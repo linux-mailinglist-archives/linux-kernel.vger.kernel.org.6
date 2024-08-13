@@ -1,87 +1,78 @@
-Return-Path: <linux-kernel+bounces-284894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4979495067A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4EDB95067C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2C61F21853
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:29:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E06591C228B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4E7D19CD12;
-	Tue, 13 Aug 2024 13:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B4B19B59C;
+	Tue, 13 Aug 2024 13:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/CZjGCT"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JATqy9l1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B0419B5A7;
-	Tue, 13 Aug 2024 13:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D326199E82
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555739; cv=none; b=vEpkLQYBHfSAUYMIO9fqX913/Z0ousVKf7bInLmD8wpsaggf7Vat2vqLCHdX2w4cHUCOcGjISBF5CpfuvL6KnaGTT3ab9E6LaaeBsUNpAAJiqWeNC/UdD6Vlwx6RrkK8+oNvpcHbtSP7nnv6c93KLFDl53ZtqXT02MQzqZQqm+8=
+	t=1723555762; cv=none; b=I515HxZGlyWNIynt32tWwUN0TSp2Hc4eePsGubJWYowrGjtCe4oJCsNuoFSQX1KL5zHSqAdxIIW45mBy3f6ow7FOJ3P2kqhpB7s8X4Jg5DzxXCl9kOq0uo9V2RwDllBgAxTHHhy63acrQ+7RkVpXW/XMcGjCiwqgnBuTSTJqh58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555739; c=relaxed/simple;
-	bh=nul9oNFo5MlT8L54l8FRJ+VtGDNyl0aThkFSBNHbOKU=;
+	s=arc-20240116; t=1723555762; c=relaxed/simple;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R6Bs5qA0rO+LO/YRGjVeoeCJ3kAE0GJgNah1s+jOdHGSapqPYI3p6go+pefNIhBMSFqmQt7bPTeB6a3ZEy6cKa/RV+xEEFOk8PbWv2vfbLJUuJs2jAeYQvLmSliCsczOTfctidMhd/kbrehNg6nAr7S2atmprBvCykq5mvkpOoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/CZjGCT; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5a1337cfbb5so7214734a12.3;
-        Tue, 13 Aug 2024 06:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723555736; x=1724160536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YKwcvjI1BwRV/PUGETAH1O0LycydQJQiwQrCJX2yD5s=;
-        b=O/CZjGCTxHen70dB28pgnIkDSMhLkjIzz4wbF8m1NqmEvMZTCwWzmROt51nyo+qI50
-         JiJd4PCQU87GODHPBY4u9QYSfiMUQceuHma+gxZAMqh+qK9BXR+JBF2W+GouqZSf4EqV
-         cfJSm8zEoOAvI5NLcrcGk9RHHxZ4ZuD/8OxYfhd+PBOZbbtoeVfWvM7N1HJH1wSrKLJx
-         H8CzrZpws7jo7zahjirDEZsn7a2OAFKcsXx9u/mhN+WPyr3rk8aKqkYRCmUxxSYVC3mC
-         PH8F1GAUajWB4SgSRUI2Er/dW+oskjX1j+5wocvw4naXBbOY8VsnNY/CK0OQKdmqV/2R
-         SAZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555736; x=1724160536;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YKwcvjI1BwRV/PUGETAH1O0LycydQJQiwQrCJX2yD5s=;
-        b=DXCW0CY4vbKZM9AtC9BAbJx5VExHBFFxiW3t4zva1Y4aF/R1YorGMXhaQGIEC/alTp
-         LiH7maGAjgoUTPOVy+YRubz20Iml8HTzMgj7201Pk04Le0zNiyYSw+SIEBLjr5k3FmjG
-         sr0XP4eoX3i5jtOpsVqiruKsDd08rVHI7hsESjH9v1cwygqYLvuBrmQ2NDupZb1EwvRx
-         8/qJHnflbam012IXaZ7rTlsM4/T9BEI93yfGYaVe3VEimjw9bOmv9qebJh2b8U/yxTGi
-         yJdR6lYKvSJCAAw4yxe3kKZUHj/U2S2Isbsjj6GQC/VPS9GUtWrRxmQ1Rvd9OCP1JRFP
-         lFJw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYoWxJDkwsAeDrE1VH40qucA2GIE4UHViMYH+rPOSrPb/+xVlm7XkeAzPc4vNuYkV27sGy9i5eLczQAxxzsRcVcYZO7uW0UgDCIlN3i8Y/mlnJGa/CGLVsfEIdAV2SSIJtwheyTLC+
-X-Gm-Message-State: AOJu0YxVDXII/fdaTSwFauqED3EtUSZA8JP1iUV1yyCITsALwE8UX4OT
-	QWUWOz7jMfhgQa1j1irbOeIM9514fzwKYCIE9n3M5sfj6WNO/yBa
-X-Google-Smtp-Source: AGHT+IEqoEDOsqu63OSRHDTK19w80a+3vW/zllREoHYe+sC7y4RPTXw2fRGg0bBLMzql2oo+nm3Zfg==
-X-Received: by 2002:a17:907:3e14:b0:a77:c080:11fa with SMTP id a640c23a62f3a-a80ed2c5360mr278671866b.48.1723555735619;
-        Tue, 13 Aug 2024 06:28:55 -0700 (PDT)
-Received: from lenovo.homenet.telecomitalia.it (host-79-17-17-86.retail.telecomitalia.it. [79.17.17.86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414afe2sm70426766b.144.2024.08.13.06.28.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:28:55 -0700 (PDT)
-From: Matteo Croce <technoboy85@gmail.com>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	bpf@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Matteo Croce <teknoraver@meta.com>
-Subject: [PATCH bpf-next v5 2/2] bpf: allow bpf_current_task_under_cgroup() with BPF_CGROUP_*
-Date: Tue, 13 Aug 2024 15:28:31 +0200
-Message-ID: <20240813132831.184362-3-technoboy85@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240813132831.184362-1-technoboy85@gmail.com>
-References: <20240813132831.184362-1-technoboy85@gmail.com>
+	 MIME-Version; b=jM0cwFmfdrZmuoFxaqim4fqYMsI0J7ClN+OjlLi9vBf9CrAsqPKDsgAsjVoUCO9LPWXsmolyyjeh37G16WIlNU4S0CNuDzGUqRYoJSAFG5aeXdQM/i2NBQK1WvjFnhsIhNGMt8yq0YBFMZojs3gPXTxqamGaMBsRhucaIYed/CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JATqy9l1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723555758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	b=JATqy9l1Az64T1mGlQiGJop8F0KF9kXAeF7vEmpjE9IcwNQC3UrlzG0bpvYJOPvYaqomyN
+	1vxE3hJ+hqO1UxImf2gs1PLq1ON0f9Grk9JSG+0CTwmKooqWUPN5jalpG9Y66L8X+a4Kg5
+	4R2HEX8ut7qBcRHHELgX7exqPmurzuU=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-22-mw9b2aXWNi-E2TBNlX91Mw-1; Tue,
+ 13 Aug 2024 09:29:17 -0400
+X-MC-Unique: mw9b2aXWNi-E2TBNlX91Mw-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34FB91956095;
+	Tue, 13 Aug 2024 13:29:15 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CE91B300019C;
+	Tue, 13 Aug 2024 13:29:12 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: vkuznets@redhat.com,
+	seanjc@google.com,
+	pbonzini@redhat.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] KVM: x86: hyper-v: Remove unused inline function kvm_hv_free_pa_page()
+Date: Tue, 13 Aug 2024 09:29:11 -0400
+Message-ID: <20240813132911.133380-1-pbonzini@redhat.com>
+In-Reply-To: <20240803113233.128185-1-yuehaibing@huawei.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,121 +80,11 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Matteo Croce <teknoraver@meta.com>
+Queued, thanks.
 
-The helper bpf_current_task_under_cgroup() currently is only allowed for
-tracing programs, allow its usage also in the BPF_CGROUP_* program types.
+Paolo
 
-Move the code from kernel/trace/bpf_trace.c to kernel/bpf/helpers.c,
-so it compiles also without CONFIG_BPF_EVENTS.
-
-This will be used in systemd-networkd to monitor the sysctl writes,
-and filter it's own writes from others:
-https://github.com/systemd/systemd/pull/32212
-
-Signed-off-by: Matteo Croce <teknoraver@meta.com>
----
- include/linux/bpf.h      |  1 +
- kernel/bpf/cgroup.c      |  2 ++
- kernel/bpf/helpers.c     | 23 +++++++++++++++++++++++
- kernel/trace/bpf_trace.c | 23 -----------------------
- 4 files changed, 26 insertions(+), 23 deletions(-)
-
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index b9425e410bcb..f0192c173ed8 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -3206,6 +3206,7 @@ extern const struct bpf_func_proto bpf_sock_hash_update_proto;
- extern const struct bpf_func_proto bpf_get_current_cgroup_id_proto;
- extern const struct bpf_func_proto bpf_get_current_ancestor_cgroup_id_proto;
- extern const struct bpf_func_proto bpf_get_cgroup_classid_curr_proto;
-+extern const struct bpf_func_proto bpf_current_task_under_cgroup_proto;
- extern const struct bpf_func_proto bpf_msg_redirect_hash_proto;
- extern const struct bpf_func_proto bpf_msg_redirect_map_proto;
- extern const struct bpf_func_proto bpf_sk_redirect_hash_proto;
-diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-index 8ba73042a239..e7113d700b87 100644
---- a/kernel/bpf/cgroup.c
-+++ b/kernel/bpf/cgroup.c
-@@ -2581,6 +2581,8 @@ cgroup_current_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
- 	case BPF_FUNC_get_cgroup_classid:
- 		return &bpf_get_cgroup_classid_curr_proto;
- #endif
-+	case BPF_FUNC_current_task_under_cgroup:
-+		return &bpf_current_task_under_cgroup_proto;
- 	default:
- 		return NULL;
- 	}
-diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-index 0d1d97d968b0..8502cfed2926 100644
---- a/kernel/bpf/helpers.c
-+++ b/kernel/bpf/helpers.c
-@@ -2458,6 +2458,29 @@ __bpf_kfunc long bpf_task_under_cgroup(struct task_struct *task,
- 	return ret;
- }
- 
-+BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, idx)
-+{
-+	struct bpf_array *array = container_of(map, struct bpf_array, map);
-+	struct cgroup *cgrp;
-+
-+	if (unlikely(idx >= array->map.max_entries))
-+		return -E2BIG;
-+
-+	cgrp = READ_ONCE(array->ptrs[idx]);
-+	if (unlikely(!cgrp))
-+		return -EAGAIN;
-+
-+	return task_under_cgroup_hierarchy(current, cgrp);
-+}
-+
-+const struct bpf_func_proto bpf_current_task_under_cgroup_proto = {
-+	.func           = bpf_current_task_under_cgroup,
-+	.gpl_only       = false,
-+	.ret_type       = RET_INTEGER,
-+	.arg1_type      = ARG_CONST_MAP_PTR,
-+	.arg2_type      = ARG_ANYTHING,
-+};
-+
- /**
-  * bpf_task_get_cgroup1 - Acquires the associated cgroup of a task within a
-  * specific cgroup1 hierarchy. The cgroup1 hierarchy is identified by its
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index d557bb11e0ff..e4e1f5d8b2a6 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -797,29 +797,6 @@ const struct bpf_func_proto bpf_task_pt_regs_proto = {
- 	.ret_btf_id	= &bpf_task_pt_regs_ids[0],
- };
- 
--BPF_CALL_2(bpf_current_task_under_cgroup, struct bpf_map *, map, u32, idx)
--{
--	struct bpf_array *array = container_of(map, struct bpf_array, map);
--	struct cgroup *cgrp;
--
--	if (unlikely(idx >= array->map.max_entries))
--		return -E2BIG;
--
--	cgrp = READ_ONCE(array->ptrs[idx]);
--	if (unlikely(!cgrp))
--		return -EAGAIN;
--
--	return task_under_cgroup_hierarchy(current, cgrp);
--}
--
--static const struct bpf_func_proto bpf_current_task_under_cgroup_proto = {
--	.func           = bpf_current_task_under_cgroup,
--	.gpl_only       = false,
--	.ret_type       = RET_INTEGER,
--	.arg1_type      = ARG_CONST_MAP_PTR,
--	.arg2_type      = ARG_ANYTHING,
--};
--
- struct send_signal_irq_work {
- 	struct irq_work irq_work;
- 	struct task_struct *task;
--- 
-2.46.0
 
 
