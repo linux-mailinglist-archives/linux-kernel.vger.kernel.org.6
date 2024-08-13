@@ -1,184 +1,150 @@
-Return-Path: <linux-kernel+bounces-284517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A171E9501D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:59:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5D99501DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EBE1C21FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:59:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66753B28E7C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56078189BA5;
-	Tue, 13 Aug 2024 09:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD78D189533;
+	Tue, 13 Aug 2024 10:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="KfxwyPzR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iuwB9IF/"
-Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AvChRrV/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F4313BADF;
-	Tue, 13 Aug 2024 09:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BDE19470;
+	Tue, 13 Aug 2024 10:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543153; cv=none; b=WUGdL2ZgN9ZwAVeP7W4efkXNw1hcbtYtDtaphtXhNm3zGAd7HwZY8F5qkRSvD8RDK5eLvBRaD/MpatHIihgYlkwHxnS6k+7kJlQR82yNg3ckW5UtBoOIwZG77IWMORi7nieWjg6iatfJ4h6fk8Uic4mdeNvxGGm2qO87j8bA2ZA=
+	t=1723543279; cv=none; b=m+38gWKTuhICrVdRzUYF8/MECQzk1yciBNLi+NqjbGIvD4pVM/NNq0w8HOvQSLPdAwFtJY9c4KlaFK8L+FcgIlIjWZkmdg2LKI+87uVBdCwR2naoUW7aqFJv+oUs0pL1DQVp4Pym8+CD0DsAujm1ud9ZkIiof4IDtkeF1IWSelc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543153; c=relaxed/simple;
-	bh=Yg+SvLnKDfc6IhCsYzXH5LG+1D5ljKI1al26FDrP2Co=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s2JsN1xjYPYV5PoOqFUHdu4WsNazNM8HgaUSXqu0r7g4JVGI7dtugtjMYz7e4FxLzG8qoG1/t6w+5Z/fZP9aAX4+ZVmp23lKZE+7+YVLvwilV2+ezrU8p4F3XupJNgZj0XI6ckekRk+wq85ckjhadilo1xeBgkpTnrVpbDImL8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=KfxwyPzR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iuwB9IF/; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8147E11519A2;
-	Tue, 13 Aug 2024 05:59:10 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-08.internal (MEProxy); Tue, 13 Aug 2024 05:59:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm1; t=1723543150; x=1723629550; bh=6Q
-	d4aztaFlRmvO0r2D6tqPKDXCbzC6+wHcCsX84k054=; b=KfxwyPzR+JP8HaDhik
-	Oh8b+ZHmBoNYtVwDEgQDWtBVy36LeCpcHv9PJK8vPyCUeRfINEpdCcxh3hEHEhLN
-	XHDIj1bhNcuYfVIgwJKzr4ptmAvY/le9llj85LfXoxP2HVGc1I+qGlCZUkJy15jw
-	UvbNpQ7MoylRrl3cnxwGqEzhiRc1Um96UqAvg61l+DKMMtDoj5OhzPYxPizwe3Dk
-	wpOmTXEATH9WL33Bh1eTWiEDyEfH2GlhJz+yrPG4txzPsvZfpk83oKn9MrjDgVsZ
-	Kp/lD2xG/UFnOKO5xNRbmBatPvgPMAsKsmvBrB7sGOmz/mvn5R0a+XqmuQeWlF6F
-	n6cQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm3; t=1723543150; x=1723629550; bh=6Qd4aztaFlRmv
-	O0r2D6tqPKDXCbzC6+wHcCsX84k054=; b=iuwB9IF/aYgR7T/wVNOdFkJzbBSa7
-	PKX7dCJD8Ei9pg/XIZePdt9Gu4w+MyrrNqvC9HxB37tA2x/xmh9AnKLuDSDQG1Px
-	6oqxPDFFkjFHHpRc2TRKOs3tlr553cBkINTmsm0J8BZMdNJYM8FU4tsU10xxk0Vi
-	65tpuSPTGiStjFex6G+QdrXYIyVbuv2dMxCUrtGka/FjvF/y6sv0HxvwkAk+rWmp
-	CJcfHPC51PvP5TMkcYit6UBSR/5LoCTL7rlTcp3HPj2Ea+RU/5ntu05Au9JTuinf
-	vu5f5qEoz25FnfKYwfalNe+gzWm+Z7agwRdb/VGyaFG32CIX8TtYG5s3A==
-X-ME-Sender: <xms:bi67ZpSRgJg11ezP0ninKcS5TrT07V9ZSyDUiAVL5-Y4wQ113LkUfw>
-    <xme:bi67ZiwQ70VJ5smF7eeDhtsMVBVRAg1QcU6KClPtvk7dYcuzzyKGgWpFY36F-Ht4V
-    umpQjEuZZMohLnH4rY>
-X-ME-Received: <xmr:bi67Zu3CQZfkDFVfnPsAlumOcqr3KTZSTMRn_31aLvcREc1kXIRtgp682mnG1xborg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecu
-    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
-    grthdrtghomheqnecuggftrfgrthhtvghrnhephfffgeejgfejieeugffgudegvdekffev
-    geeuteetgeejveeiteeivedvffehlefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
-    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhopeehpdhmoh
-    guvgepshhmthhpohhuthdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
-    rghtrdgtohhmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtg
-    homhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpd
-    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:bi67ZhBZgPkBJgU86CNZ490PKUtIKWVa5uLt3eyXlUBo3uEcilqZBA>
-    <xmx:bi67ZigQrsJtaz15ges34xJCP-EzpZbRtcPSKKHq1El1ZcVOSjTzHA>
-    <xmx:bi67ZlptZ1y2kJJ9JVFdLtotrTteF53R43A6xrmuU7pTGzUDhbo62w>
-    <xmx:bi67Ztj83ZHSK_xHLyN4KZ4oluVYIf7ciqEJ0SGKzKPGMIaOFr_yrQ>
-    <xmx:bi67ZkZ9Bf8N8CUFsBqnJP3toQNjD2fzHsPO1f10g2IeTx_RLRfDczzx>
-Feedback-ID: ifd894703:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Aug 2024 05:59:09 -0400 (EDT)
-From: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Date: Tue, 13 Aug 2024 10:59:08 +0100
-Subject: [PATCH] MIPS: cevt-r4k: Don't call get_c0_compare_int if timer irq
- is installed
+	s=arc-20240116; t=1723543279; c=relaxed/simple;
+	bh=Z1oVe7T8LHuIdU/LiTOlXSqGr4WUrp3gsiY+G3UVEGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OVggngoVAkBcM70k49TRbAyLFaENwguoGyaM84KuTOAAJgpKoGvPSSPFz8M8TNg8ojC4iZU6icrkTXV4jsKbanbPwU9eFkyRdXGLMrvvFpIMXegzV9aD+oKjSC3EnXgIPZnPbZOyOnO+DY01L/J1ZaSFhvIbGbc7p0ssYquk2Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AvChRrV/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D8MOWR004626;
+	Tue, 13 Aug 2024 10:00:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VsvtXm/v428aOkoWR84mCKI/dm4EvDwjowuajS7NOkc=; b=AvChRrV/+7aOZ4QR
+	32J2jiBV4MF01U/GiZyaFMvtn88xdh1QgVyP2VaTgco9m3QncMtKuopuWcLi98JI
+	VIxaKdOLUm0GIZAp2vS54gTedHQCFJB4n20u7MrP9Cx/QJ7DJnJdEyw3kU4JTzMB
+	zmU5d7R+gFPDRePhgPULVlxxh5jRGR2voC9t7IGCCz1iUAydlDSw369zk8nK69GA
+	qTyqh0tAubBkD6ttM54jANm5nGMJxo7OUjI3K1FvymbvAHLrd5e+XwKNCd4J28E7
+	cjGXv1l17o+62hg37X30pxup9XpCdrf9zWjXclG3NhkAekJURh26F4C1YI4WTVoh
+	2MTq+w==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4103ws09ej-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 10:00:38 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DA0bMm014849
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 10:00:37 GMT
+Received: from [10.253.34.30] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 03:00:32 -0700
+Message-ID: <4f4095a7-2fd1-48df-b3c9-cdb9f7da0e79@quicinc.com>
+Date: Tue, 13 Aug 2024 18:00:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] driver core: Add simple parameter checks for APIs
+ device_(for_each|find)_child()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Davidlohr Bueso
+	<dave@stgolabs.net>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        Dave
+ Jiang <dave.jiang@intel.com>,
+        Alison Schofield <alison.schofield@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Dan
+ Williams <dan.j.williams@intel.com>,
+        Takashi Sakamoto
+	<o-takashi@sakamocchi.jp>,
+        Timur Tabi <timur@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <linux-cxl@vger.kernel.org>, <linux1394-devel@lists.sourceforge.net>,
+        <netdev@vger.kernel.org>, Zijun Hu
+	<zijun_hu@icloud.com>
+References: <20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com>
+ <20240811-const_dfc_prepare-v1-1-d67cc416b3d3@quicinc.com>
+ <2024081328-blanching-deduce-5cee@gregkh>
+Content-Language: en-US
+From: quic_zijuhu <quic_zijuhu@quicinc.com>
+In-Reply-To: <2024081328-blanching-deduce-5cee@gregkh>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-get_c0_compare_int-v1-1-a0a1b007d736@flygoat.com>
-X-B4-Tracking: v=1; b=H4sIAGsuu2YC/x3MTQqAIBBA4avIrBP8qbCuEiFiU80iFY0IorsnL
- b/Few8UzIQFRvZAxosKxVAhGwZ+d2FDTks1KKFaYaTiG57WC+vjkVxGS+HkfT/oznTaaWGghin
- jSvc/neb3/QC9pHSyZAAAAA==
-To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Serge Semin <fancer.lancer@gmail.com>, 
- Jiaxun Yang <jiaxun.yang@flygoat.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2142;
- i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
- bh=Yg+SvLnKDfc6IhCsYzXH5LG+1D5ljKI1al26FDrP2Co=;
- b=owGbwMvMwCXmXMhTe71c8zDjabUkhrTdermBTFofi+0NFs+MnXj2kdj+ndVP68vX7uHbV5yey
- G011dayo5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACbikM3wV7px++enLJOd94r0
- pHvJf8s83fx+5f1mj5gruTs8NQzO7GZkeH7l4o7JV21vt+2QaazqPX/6XLDky86kRR0y5i7R01Y
- IcAAA
-X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
- fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: QGwAKjM9GrkdGWPWKYU_bqjwKEOf2Hz8
+X-Proofpoint-ORIG-GUID: QGwAKjM9GrkdGWPWKYU_bqjwKEOf2Hz8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_02,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 malwarescore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
+ mlxlogscore=807 bulkscore=0 adultscore=0 priorityscore=1501 clxscore=1011
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130071
 
-This avoids warning:
+On 8/13/2024 5:44 PM, Greg Kroah-Hartman wrote:
+> On Sun, Aug 11, 2024 at 08:18:07AM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Add simple parameter checks for APIs device_(for_each|find)_child() and
+>> device_for_each_child_reverse().
+> 
+> Ok, but why?  Who is calling this with NULL as a parent pointer?
+> 
+> Remember, changelog text describes _why_ not just _what_ you are doing.
+> 
 
-[    0.118053] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:283
+For question why ?
 
-Caused by get_c0_compare_int on secondary CPU.
+The main purpose of this change is to make these APIs have *CONSISTENT*
+parameter checking (!parent || !parent->p)
 
-We also skipped saving IRQ number to struct clock_event_device *cd as
-it's never used by clockevent core, as per comments it's only meant
-for "non CPU local devices".
+currently, 2 of them have checking (!parent->p), the other have checking
+(!parent), the are INCONSISTENT.
 
-Reported-by: Serge Semin <fancer.lancer@gmail.com>
-Closes: https://lore.kernel.org/linux-mips/6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k/
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- arch/mips/kernel/cevt-r4k.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/arch/mips/kernel/cevt-r4k.c b/arch/mips/kernel/cevt-r4k.c
-index 368e8475870f..5f6e9e2ebbdb 100644
---- a/arch/mips/kernel/cevt-r4k.c
-+++ b/arch/mips/kernel/cevt-r4k.c
-@@ -303,13 +303,6 @@ int r4k_clockevent_init(void)
- 	if (!c0_compare_int_usable())
- 		return -ENXIO;
- 
--	/*
--	 * With vectored interrupts things are getting platform specific.
--	 * get_c0_compare_int is a hook to allow a platform to return the
--	 * interrupt number of its liking.
--	 */
--	irq = get_c0_compare_int();
--
- 	cd = &per_cpu(mips_clockevent_device, cpu);
- 
- 	cd->name		= "MIPS";
-@@ -320,7 +313,6 @@ int r4k_clockevent_init(void)
- 	min_delta		= calculate_min_delta();
- 
- 	cd->rating		= 300;
--	cd->irq			= irq;
- 	cd->cpumask		= cpumask_of(cpu);
- 	cd->set_next_event	= mips_next_event;
- 	cd->event_handler	= mips_event_handler;
-@@ -332,6 +324,13 @@ int r4k_clockevent_init(void)
- 
- 	cp0_timer_irq_installed = 1;
- 
-+	/*
-+	 * With vectored interrupts things are getting platform specific.
-+	 * get_c0_compare_int is a hook to allow a platform to return the
-+	 * interrupt number of its liking.
-+	 */
-+	irq = get_c0_compare_int();
-+
- 	if (request_irq(irq, c0_compare_interrupt, flags, "timer",
- 			c0_compare_interrupt))
- 		pr_err("Failed to request irq %d (timer)\n", irq);
+For question who ?
+device_find_child() have had such checking (!parent), that maybe mean
+original author has concern that parent may be NULL.
 
----
-base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
-change-id: 20240812-get_c0_compare_int-66935853a308
+Moreover, these are core driver APIs, it is worthy checking input
+parameter strictly.
 
-Best regards,
--- 
-Jiaxun Yang <jiaxun.yang@flygoat.com>
+
+will correct commit message with v2.
+
+> thanks,
+> 
+> greg k-h
 
 
