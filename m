@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-284485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FFC950181
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F499950187
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4052830CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:46:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08E98B21D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0379B184521;
-	Tue, 13 Aug 2024 09:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FD11898EB;
+	Tue, 13 Aug 2024 09:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DUgzbxCa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiNAKkSK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21245210E7;
-	Tue, 13 Aug 2024 09:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D885517F4F2;
+	Tue, 13 Aug 2024 09:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542400; cv=none; b=D2p7+ARUY621J6mALpasAQ+euMoV+ZQABwKhAeq8+FgeGqGfbS9prsggooMbnJ3TtBqGGe+mC4CKmuD5raoIp9Z58gPJKlDs9dvCxXMUXa8p3XSH25C3WOp70Aff1AeufLY7TRU9fENeoJKJ/iFQ0iSMrhcl7gNa5ZBC2/iNGgo=
+	t=1723542516; cv=none; b=Qquspnmalh4vNZy09LuNN58QXXvfqsOd+ct0AuNYuSF0YMTxoEb1ydXT+BdMtX0IExinz1wXVx2ER3niu5o4QG6wHtcg47LhAsxI2GEn3j+UC+n2dqsMh/aSBCF8x4a2VesTr3/MlXkSzzVoJZz1CNdltHOvncKjJO2EKebNwnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542400; c=relaxed/simple;
-	bh=ymT2I/4SMiXIMej+1eahwXe1+S+4WvRsTFHYt6PhdBw=;
+	s=arc-20240116; t=1723542516; c=relaxed/simple;
+	bh=dyRheu5fkc36+Z6U55nfDJfyAv0UpJ9ogHZFM42QJM4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=E9PYN1etTvH6/G6eqh7HTGh/q1+BebjPlWdbYfEKb0QaePW33539FznkBIUQAlXkpjr+zBuUKvjskj1iShROeH3MHl3E6wkW2CVBfksg8KpmvUd70gz8lfF/smqu0nMfiSsNSr4bbQCYo9Pdjq/wdB3HRq0oBf52dQNZ+kyyJFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DUgzbxCa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3BAFC4AF09;
-	Tue, 13 Aug 2024 09:46:34 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=hnd28wBEjmBkzfAs6ZWItdf/uPQvdu+l53eJCdAY8PI0zWTYSjd9tqj5pLOotqr3q5xFEdQxsHR8esKuS/p0IKmEjUXqGObTU1WXhw+IX4cxFOwJRQ3KMfO9Dc05FWTjOnW5UIuYoIMj19lbOByvZaZNYdKopi91jxKWQ1O8cg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QiNAKkSK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0D7DC4AF09;
+	Tue, 13 Aug 2024 09:48:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542399;
-	bh=ymT2I/4SMiXIMej+1eahwXe1+S+4WvRsTFHYt6PhdBw=;
+	s=k20201202; t=1723542516;
+	bh=dyRheu5fkc36+Z6U55nfDJfyAv0UpJ9ogHZFM42QJM4=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=DUgzbxCawhn90Us54mf07Kp2BVFRryYEFFpQk5WaFAaQ3on9Q6ze54BnZqNwLIT1U
-	 Ulpikv8Ezg1ps+7rjMImZ0GDRdsQIEIWgf4cW77Ghk1SJ89QW5ENBumrmr5mrXaMyY
-	 jAQA5XLiyqvGBfMZ4Vl9w/zRC9ewuyQAImj/mw+r6en32QTE+j9VuNk7WCTlXAWJIa
-	 XZyXn9o4Iw1pD+oVDUM9d1CXtAwEPuFWYsCAEazScW+wdXB/xr0IiGiAE+wmEXlJ9l
-	 OYpayNnwA9cC/22naDb0clXeLuax9Eib990R+lCiTR3PICpakxUlw/ZUmlHG1Woquc
-	 zrPFGqIkYmtaQ==
-Message-ID: <bb33aeb0-7134-45ec-8536-47c524ec9e4b@kernel.org>
-Date: Tue, 13 Aug 2024 11:46:32 +0200
+	b=QiNAKkSKIF0gzskpmY+GtpgZky72EAJhl9omsxNkvhqpMGKIunNW04TMZJ/z1jxr+
+	 mbjnbkxNxJ+9Z5YzaSz5VVWCV25iKn4iP3rAnly/60463oY7i5kHXdru2SokHUTNJ2
+	 Z+y/EfEyEtOcCl6rtxfXv/wPpQL8a+c3WTRyCqNPf4Z0gFgwGSbG3gBolKC3UkIZCM
+	 O+wf4dJ2j3T1LbZJ9fSn8kmaI4cPLR6oJrAWDso6XCLNK6l8y3QeYzf8D//SQ2C7Lp
+	 nlvefdp7BVEQZvOlaloxKy/ngP4IhxaU5BHu0+tu3ekPXCbtUlGhIuICxJx5ZdftAN
+	 GXa4lCyHGGlTA==
+Message-ID: <13e6625f-9f62-4973-b8f2-e825bd7665ee@kernel.org>
+Date: Tue, 13 Aug 2024 11:48:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,25 +49,25 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: imu: smi240: imu driver
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>,
- "jic23@kernel.org" <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
- "marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+Subject: =?UTF-8?B?UmU6IOWbnuimhjogW1BBVENIIHYxIDIvMl0gaXJxY2hpcC9hc3BlZWQt?=
+ =?UTF-8?Q?intc=3A_Add_support_for_10_INTC_interrupts_on_AST27XX_platforms?=
+To: Kevin Chen <kevin_chen@aspeedtech.com>,
+ "tglx@linutronix.de" <tglx@linutronix.de>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+ <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+ <andrew@codeconstruct.com.au>,
  "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Lorenz Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>,
- "Frauendorf Ulrike (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>,
- "Dolde Kai (ME-SE/PAE-A3)" <Kai.Dolde@de.bosch.com>
-References: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
- <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
- <561b467a-58aa-471c-8ea6-cd6ef927c287@kernel.org>
- <AM8PR10MB47217665274B9848EB21FA65CD862@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-Content-Language: en-US
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>
+References: <20240813074338.969883-1-kevin_chen@aspeedtech.com>
+ <20240813074338.969883-3-kevin_chen@aspeedtech.com>
+ <315f9095-8928-44a9-bab7-a924a070eded@kernel.org>
+ <PSAPR06MB4949680EBF66DCD47F2B4CF889862@PSAPR06MB4949.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -111,115 +111,114 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <AM8PR10MB47217665274B9848EB21FA65CD862@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
+In-Reply-To: <PSAPR06MB4949680EBF66DCD47F2B4CF889862@PSAPR06MB4949.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/08/2024 11:41, Shen Jianping (ME-SE/EAD2) wrote:
-> Hi
+On 13/08/2024 11:44, Kevin Chen wrote:
+> Hi Krzk,
 > 
-> On 09/08/2024 13:16, Jianping.Shen@de.bosch.com wrote:
->> From: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>
->>
->> iio: imu: smi240: driver improvements
+> In ASPEED, ast2400/2500/2600 use arm architecture with KCONFIG_ARCH_ASPEED which slect MACH_ASPEED_G4/G5/G6 in arch/arm/mach-aspeed/Kconfig.
+> In the fureture, there would be ast2800/2900/... using arm64. We need to clarify the IC generation between 7th/8th/9th/....
 > 
-> ?????
-> Did not get your point, what is wrong here? how it shall be?
+> Maybe change ARCH_ASPEED/MACH_ASPEEDG7 to ARCH_ASPEED first.
+> Or, do you have better Kconfig usage?
 
-See submitting patches. This does not match your commit at all. I do not
-see any driver improvements done here. If so, please list all your
-improvements against existing kernel driver.
+Fix your quotes and do not top-post.
 
-
-> 
->> Signed-off-by: Shen Jianping (ME-SE/EAD2) <Jianping.Shen@de.bosch.com>
->> ---
->>
-> 
-> 
-> ...
-> 
->> +	ret = regmap_read(data->regmap, SMI240_CHIP_ID_REG, &response);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Read chip id failed\n");
->> +
->> +	if (response != SMI240_CHIP_ID)
->> +		dev_info(dev, "Unknown chip id: 0x%04x\n", response);
->> +
->> +	ret = smi240_init(data);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Device initialization failed\n");
->> +
->> +	indio_dev->channels = smi240_channels;
->> +	indio_dev->num_channels = ARRAY_SIZE(smi240_channels);
->> +	indio_dev->name = "smi240";
->> +	indio_dev->modes = INDIO_DIRECT_MODE;
->> +	indio_dev->info = &smi240_info;
->> +
->> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
->> +					      iio_pollfunc_store_time,
->> +					      smi240_trigger_handler, NULL);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret,
->> +				     "Setup triggered buffer failed\n");
->> +
->> +	ret = devm_iio_device_register(dev, indio_dev);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Register IIO device failed\n");
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(smi240_core_probe);
->> +
->> +MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>"); 
->> +MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>"); 
->> +MODULE_DESCRIPTION("Bosch SMI240 driver"); MODULE_LICENSE("Dual 
->> +BSD/GPL");
-> 
-> Hm? How many modules do you have here? What are their names?
-> 
-> We have one module, named  "Bosch SMI240 driver". Any problem here?
-
-Yes, you put MODULE_* to how many files? Two? Three? Why is it needed
-everywhere?
+Please respond inline, instead of top-posting, because it makes your
+emails hard to follow.
+https://elixir.bootlin.com/linux/v6.8-rc7/source/Documentation/process/submitting-patches.rst#L340
 
 > 
 > 
-> 
+>> +config ARCH_ASPEED
+>> +     bool "Aspeed SoC family"
+>> +     select MACH_ASPEED_G7
+>> +     help
+>> +       Say yes if you intend to run on an Aspeed ast2700 or similar
+>> +       seventh generation Aspeed BMCs.
 >> +
->> +static const struct spi_device_id smi240_spi_id[] = { { "smi240", 0 
->> +}, {} };
+>> +config MACH_ASPEED_G7
+>> +     bool "Aspeed SoC AST2700"
 > 
-> Don't wrap it.
-> 
-> We don't , git send-mail did it automatically for us. 
-> 
-> 
->> +MODULE_DEVICE_TABLE(spi, smi240_spi_id);
->> +
->> +static const struct of_device_id smi240_of_match[] = {
->> +	{ .compatible = "bosch,smi240" },
->> +	{},
->> +};
->> +MODULE_DEVICE_TABLE(of, smi240_of_match);
->> +
->> +static struct spi_driver smi240_spi_driver = {
->> +	.probe = smi240_spi_probe,
->> +	.id_table = smi240_spi_id,
->> +	.driver = {
->> +		.of_match_table = of_match_ptr(smi240_of_match),
-> 
-> Why did it appear? You introduce now warnings.
-> 
-> Did not get your point, why we introduce now warnings here ?
+> There are no MACHines for arm64. Look at this code. Do you see MACH
+> anywhere else? No. Then why Aspeed must be different?
 
-Fix your quoting. It's impossible to figure out what is here my quote
-and what is yours.
+What is this?
 
-Why? Test your code properly... Drop the of_match_ptr.
+> 
+> --
+> Best Regards,
+> Kevin. Chen
+> 
+> ________________________________
+> 寄件者: Krzysztof Kozlowski <krzk@kernel.org>
+> 寄件日期: 2024年8月13日 下午 04:50
+> 收件者: Kevin Chen <kevin_chen@aspeedtech.com>; tglx@linutronix.de <tglx@linutronix.de>; robh@kernel.org <robh@kernel.org>; krzk+dt@kernel.org <krzk+dt@kernel.org>; conor+dt@kernel.org <conor+dt@kernel.org>; joel@jms.id.au <joel@jms.id.au>; andrew@codeconstruct.com.au <andrew@codeconstruct.com.au>; linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>; devicetree@vger.kernel.org <devicetree@vger.kernel.org>; linux-arm-kernel@lists.infradead.org <linux-arm-kernel@lists.infradead.org>; linux-aspeed@lists.ozlabs.org <linux-aspeed@lists.ozlabs.org>
+> 主旨: Re: [PATCH v1 2/2] irqchip/aspeed-intc: Add support for 10 INTC interrupts on AST27XX platforms
+> 
 
+...
 
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index 15635812b2d6..d2fe686ae018 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -84,6 +84,7 @@ obj-$(CONFIG_MVEBU_SEI)                     += irq-mvebu-sei.o
+>>  obj-$(CONFIG_LS_EXTIRQ)                      += irq-ls-extirq.o
+>>  obj-$(CONFIG_LS_SCFG_MSI)            += irq-ls-scfg-msi.o
+>>  obj-$(CONFIG_ARCH_ASPEED)            += irq-aspeed-vic.o irq-aspeed-i2c-ic.o irq-aspeed-scu-ic.o
+>> +obj-$(CONFIG_MACH_ASPEED_G7)         += irq-aspeed-intc.o
+> 
+> There is no such thing as CONFIG_MACH_ASPEED_G7. And there will never be.
+> 
+> You already received feedback on this, so why do you keep pushing your
+> solution? You did not respond to any feedback given, just send the same
+> and the same till we agree?
+> 
+> NAK.
+
+And this?
+
+> 
+>>  obj-$(CONFIG_STM32MP_EXTI)           += irq-stm32mp-exti.o
+>>  obj-$(CONFIG_STM32_EXTI)              += irq-stm32-exti.o
+>>  obj-$(CONFIG_QCOM_IRQ_COMBINER)              += qcom-irq-combiner.o
+>> diff --git a/drivers/irqchip/irq-aspeed-intc.c b/drivers/irqchip/irq-aspeed-intc.c
+>> new file mode 100644
+>> index 000000000000..71407475fb27
+> 
+
+...
+
+> 
+> ************* Email Confidentiality Notice ********************
+> 免責聲明:
+> 本信件(或其附件)可能包含機密資訊，並受法律保護。如 台端非指定之收件者，請以電子郵件通知本電子郵件之發送者, 並請立即刪除本電子郵件及其附件和銷毀所有複印件。謝謝您的合作!
+> 
+> DISCLAIMER:
+> This message (and any attachments) may contain legally privileged and/or other confidential information. If you have received it in error, please notify the sender by reply e-mail and immediately delete the e-mail and any attachments without copying or disclosing the contents. Thank you.
+
+Maybe I am the intended recipient of your message, maybe not. I don't
+want to have any legal questions regarding upstream, public
+collaboration, thus probably I should just remove your messages.
+
+Please talk with your IT that such disclaimers in open-source are not
+desired (and maybe even harmful).
+If you do not understand why, please also see:
+https://www.youtube.com/live/fMeH7wqOwXA?si=GY7igfbda6vnjXlJ&t=835
+
+If you need to go around company SMTP server, then consider using b4
+web-relay: https://b4.docs.kernel.org/en/latest/contributor/send.html
+
+Please be informed that by responding to this email you agree that all
+communications from you and/or your company is made public. In other
+words, all messages originating from you and/or your company will be
+made public.
+
+You already received exactly this feedback. Around three times. If you
+keep ignoring feedback, I will keep NAKing your patches.
 
 Best regards,
 Krzysztof
