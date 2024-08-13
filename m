@@ -1,119 +1,117 @@
-Return-Path: <linux-kernel+bounces-285396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB6A7950CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924D3950CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97A781F25535
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F7D7284AB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410631A4F11;
-	Tue, 13 Aug 2024 19:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E331A7041;
+	Tue, 13 Aug 2024 19:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="B729vSPr"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Lq7OPLBY"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8E1A705B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671BA1A4F2E
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576299; cv=none; b=Z9YopphTvlr5fKH+tzde32gOH6qjp20zRmw7Hoy4AzQuTYIoxsXC6wYKubnHNQjmxUuxVOtw4c1XmQv79HI5vLyOQg58y5Ad4tPTbRmhr5CowxBBP/WvbZ1p829NnphTZhdU3TOaqxJSvfI6PexyeSculbBXe4mzlf/ygsOMlMU=
+	t=1723576330; cv=none; b=De7wj+fM8wLKFH/B8ma4IFFshYTqtmNlE7N4/OrT5/vhW5kwlXZRqmyJpFmLSwseSLdQYbTWPV8HWRHfzWA7l1VJrRfX+izRNgQn5AV6txjThzga16EiScUCjDSUr/reE5q1aF1JDh9HSSqcfkNk9JfjlTM0RBWtgdXMtITeqrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576299; c=relaxed/simple;
-	bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ze/77pwc6PlFn8zYsYLMYEbIJUD7Sly0kaJwNCvxWWfZXQr4xFOIvgHc55HzjrpN2zzlmjpwZUyFhEHxsyzVYvIymxXC00N64Gt+xPtfCS4gBOfflAw3/XZ8QvYMVtLfUOrvxOS5ATRQicfSsHagoGqRprR9sAIR5u4qCoIVRz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=B729vSPr; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-200aa53d6d2so15985ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:11:37 -0700 (PDT)
+	s=arc-20240116; t=1723576330; c=relaxed/simple;
+	bh=PPwW78qgunnYtZvqCU/S509OHopFesLiZnEPd2aWgyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U3UlwdtDM1UM4bYWgUphVfaTu4TbAq6/rLtNHaXJZDNP515ecH2odNWspztzAz48OBjtOCtkeHZr1zkXthm9Mra9Y80N1M+ci3HAhwHc9dL59viFdCJliEeQd0LcYtMT3LPdvEeg8HuBOk580rgx+9Dpum07ym1A0GyMAx/8RIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Lq7OPLBY; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so5372167e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:12:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723576297; x=1724181097; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
-        b=B729vSPrcNEGQKlsKDz6guarSKr345ecj6c36vuXCOJpMRNeIm5yyy6dnYwAmStzAw
-         JTju1PSEx2fGmj+e9HHOJ8x1xj6Hkxt/WktJ5cNPZ4zy9+itvTiF0BLZB79I7hnG70XE
-         STa7LCS/ddZD0UPZ7SD8S7atBtMdqpC3VdDTzS9L5libqZmgm9a7g2Kw5kOZgzZpHrSX
-         TdlDhT172CdZ30wccrS7Ak1Bq5xt8UwJwJXEHgancPaMFL98Pot83SBaIAdeH032mTUd
-         Gw8+b5KOh24PXehk9ZAtbKMfVYuGXAFhS2f4Lbm9+Q/sFKM9ShTR8N7Wwgn3WOIfnJOQ
-         yTFA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723576326; x=1724181126; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UIp7b12fAVv8rkm6/TKT5fjSShHkGlLIT78jfOCi3C8=;
+        b=Lq7OPLBY+5yUQD/vMeyVH1SMtw0uJDKWc/qR0J6nnjQQrx+obM0Zx41Og1SaF4DewP
+         iWueO0tRZSn3bWfOV27Wre7KIz+ndYGFAvAx+hKGx7jfxWvL9b+5EXKcbEvheCpirLQs
+         QMwFsiHj2DP1lQmN1O6m9pAUUsvr++DDXjmzO4TRuhhOYrvIndHv650KmdE+iovNM8t7
+         RR7CtG9u/z3zsElW84ms5jQIVEzpXSUZWoyy/JM3M1CkhnKr3d7qNNjV9i0SITzR+V4z
+         IvutAFW20e447/B/Wl91FR+hjuFHfyIMli7FTCqGwZoas3yd35JlVau6dqXw00UZ0HFE
+         oQhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576297; x=1724181097;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0akCB2lUXwXXL4c4nPCxosaE3I857/U47hgI91ToH8w=;
-        b=eOCnUViD4M+p0MT2cl/XTSfYE9Gnr8TUlk0nLJXiXd+iZIU1Ki9VDOBEJnExkDKR/K
-         tA+vRFnBwDnnMwg9BiHnEivVeR0m0fcTx4+xk48fTeAxNyYgmloQ9XanFLCKmBoz+VAQ
-         VxqLBhyVErRI41ROucB6lLOqF8MsHiKCGABwu24vlyCd3ri4vxlOWCUuVCRYFgluvh83
-         XcPPeBaZET2y1HDW2m/5pEvMjbF6QLJ8/2ORylyLfTVG5xcbWlOSgr6se2AeSrOmkgij
-         AHH5sFrYFvt55j99I2Mvi/DRQfm1O3lUGHcagMDbdIW/7F5/NMgro3bqhAbcdyv4KIph
-         dSzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU++oFsADJLxI8/QicodypxSQdH291ZJQYpyP1AO7r+X1j8g71PoDQLgzYlVgCsc/s334brHNOk9X1Or9V5caxIWjDViMPqIFPPFYz+
-X-Gm-Message-State: AOJu0Yzy6EdGOEsHbrMk3VgV8vO4GKEKjNMd8ul9har2I34zM5Xfo5D/
-	dZw9qfp4rvUKDuQwm/305eVQDUV29aVTVRRIj7KRaicxLf8BEYMbJmlKS2shWRgN4GL4FbPECmo
-	5gzOQrMH/+M+llvKZMOuc2t7vM9dekGubWhpE
-X-Google-Smtp-Source: AGHT+IHdvTrBByfKnXhhh6zwnJjdbwU4J5mMe1EDQZ4dHX8vp3horZ6QsjNBJr6Goj6FpxG/8/69jGclyK5ceJGotzY=
-X-Received: by 2002:a17:902:a515:b0:1fd:d807:b29d with SMTP id
- d9443c01a7336-201d747b187mr219165ad.28.1723576297094; Tue, 13 Aug 2024
- 12:11:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723576326; x=1724181126;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UIp7b12fAVv8rkm6/TKT5fjSShHkGlLIT78jfOCi3C8=;
+        b=mmo+rfB4pFygHpUD02qnt8orxiArzFiTlYBQJAtets6V8YYNCcKlb1EDol47VSPqvh
+         OyP31TX0XFTbTeRpAgBaZqo+Rsgo7oXMDfQ233KTG+9SyGJ8Mj6K5/k3KFMabKpUA4CK
+         VdFnC9UnR7zQMyHraRNXvrjF6dPrR2ifL27M7iGa6Qi+ipG9m3GCbc6sQBqyOSEOb/eF
+         4mQsB0TroN8jSEbfMy+ruqers64ZFazRaBd/gIKU2rBh3U/H/MQlhARWlC1C8P29nIuN
+         XW1g+aq7d6/u07XiYhUJstdCmWlY8sRbUCfSNpd1OMaOUIKW/GytgF7Rnx3imr3ZNRVo
+         KcDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIQbmaTf5ZmdUlYl249Yvi+CS/hwmC7rDuA7h14pP9PTi1TI1mJumLDQyC17NWvzCTgf8JXDei55i67Mh4pZ1Nod8D7VLEUf24Kysy
+X-Gm-Message-State: AOJu0YzH70Hu/JbCYvos4z3Fzhimenl9acaMzCOIe6IiHz8KRJQiFkXb
+	qQk5e9D6ehkbMTVasqA50zk8yp4Yw2RxooMnpXfQDQQK1uCKrsfa91GgXJ+//fw=
+X-Google-Smtp-Source: AGHT+IFIBVxZaulsbwEixDBwx/xvqg42Eqvsg5pKm87hj4sJVV0voSlvx3fWUfrZpH18h8eGif2S1g==
+X-Received: by 2002:a05:6512:1396:b0:52c:e03d:dfd7 with SMTP id 2adb3069b0e04-532edbe9ab4mr264805e87.39.1723576326356;
+        Tue, 13 Aug 2024 12:12:06 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4e51e966sm11091807f8f.75.2024.08.13.12.12.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:12:05 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] PCI/pwrctl: pwrseq: add support for WCN6855
+Date: Tue, 13 Aug 2024 21:12:00 +0200
+Message-ID: <20240813191201.155123-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813040613.882075-1-irogers@google.com> <ZrtzTTHim_vGX1ma@x1>
- <CAP-5=fUA8T9B2RvXg-Hpj_fHXmwB18ah6Krm3qm5ULH-M04Lqw@mail.gmail.com> <ZruhsN4i6xtc59nJ@x1>
-In-Reply-To: <ZruhsN4i6xtc59nJ@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 13 Aug 2024 12:11:21 -0700
-Message-ID: <CAP-5=fXVrhanvW6vrUJsubuWUC4jBM5v_NOFp40cqTsqdHHNaw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] perf disasm: Fix memory leak for locked operations
-To: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Thomas Richter <tmricht@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 11:11=E2=80=AFAM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Tue, Aug 13, 2024 at 09:04:57AM -0700, Ian Rogers wrote:
-> > On Tue, Aug 13, 2024 at 7:53=E2=80=AFAM Arnaldo Carvalho de Melo
-> > <acme@kernel.org> wrote:
-> > >
-> > > On Mon, Aug 12, 2024 at 09:06:12PM -0700, Ian Rogers wrote:
-> > > > lock__parse calls disasm_line__parse passing
-> > > > &ops->locked.ins.name. Ensure ops->locked.ins.name is freed in
-> > > > lock__delete.
-> > > >
-> > > > Found with lock/leak sanitizer.
-> >
-> > Ooops, I meant address/leak sanitizer.
-> >
-> > > Applied both patches to perf-tools-next.
-> >
-> > Thanks, could you fix the commit message.
->
-> Sure,
+From: Konrad Dybcio <konradybcio@kernel.org>
 
-Also, it'd be good if maybe Namhyung could take a look. I did things
-this way as it made sense to me, but we have nested things going on
-and potentially the free would be more natural in ins_ops__delete.
+Add support for ATH11K inside the WCN6855 package to the power
+sequencing PCI power control driver.
 
-Thanks,
-Ian
+Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+[Bartosz: split Konrad's bigger patch, write the commit message]
+Co-developed-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/pci/pwrctl/pci-pwrctl-pwrseq.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+index f07758c9edad..a23a4312574b 100644
+--- a/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
++++ b/drivers/pci/pwrctl/pci-pwrctl-pwrseq.c
+@@ -66,6 +66,11 @@ static const struct of_device_id pci_pwrctl_pwrseq_of_match[] = {
+ 		.compatible = "pci17cb,1101",
+ 		.data = "wlan",
+ 	},
++	{
++		/* ATH11K in WCN6855 package. */
++		.compatible = "pci17cb,1103",
++		.data = "wlan",
++	},
+ 	{
+ 		/* ATH12K in WCN7850 package. */
+ 		.compatible = "pci17cb,1107",
+-- 
+2.43.0
+
 
