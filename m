@@ -1,167 +1,186 @@
-Return-Path: <linux-kernel+bounces-284676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1DD69503FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:45:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 316949503FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:46:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389321F20EF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:45:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D8E1C2174F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179EA1991CA;
-	Tue, 13 Aug 2024 11:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA31991C6;
+	Tue, 13 Aug 2024 11:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn7MwSWR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SIUmahaX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31D52D611;
-	Tue, 13 Aug 2024 11:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD0170A2B;
+	Tue, 13 Aug 2024 11:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549526; cv=none; b=tyuGJ2kfBn8fivVXVS9YFCOnq/KrRK9y2/lnzyTptAtncNyJRLwFChGS539UqKJOa/zVC+8Jda2RyWXjhKVPl9EEP/tfWJZHtZ1CDAkCh/pYsh++RkPzs2CyIW1wY16pviBCEHn99mAdkXezFVhoPi0WIynwHHFa+vAuQbK6tNw=
+	t=1723549582; cv=none; b=oNclDQS8R9JQFu4VehXDyBVC349RUNOyJuj3/Gh8lzu6/LcbXBrB+oCikptAl2uK0aZxjNHWkUvP23zxnr2aar6xnPL/j7jECH8z9IboDuIsXUDsjHRyJaqeJpQ3Qr2IzQS+JVKKAWDbYTxBBiETjG6Cq4//V1mIcfUFz++V1MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549526; c=relaxed/simple;
-	bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
+	s=arc-20240116; t=1723549582; c=relaxed/simple;
+	bh=PEn3XtRW5tjHG4xl8Hpy2BfiNBLyF2Xe3sCNrstiv8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzGkb548IDesyc+8INfqTmFjEvswRS/t8bLK8i8Ec631z/bocRSEmp1BgQZWoM/ptLQSiM5bt0JBS3+HXjL/80Is2rPyTEi4qxm+tYmE133U/Mx8HoMYIrE2S5fZ8GxpAFb8QkHVrsFCat+TD6tEs+kpMngp848NhzltEZwVP8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn7MwSWR; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+IrYzl8RmJwvq44x+jQ/f6B3sCat5H9ogFMDvSEfeql18QckHEvpMw1o8uJVq9PWd9yjcxAgzmVVlN4aDxFNA/Qa5yPlq4FkkptLwQS9HU+M0suu8iIFgxtwKQiKimFDJiiGVC9Bu6AEzcXhSTgFUoYavcoAHwSvxcdKvmwAL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SIUmahaX; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723549525; x=1755085525;
+  t=1723549581; x=1755085581;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
-  b=Sn7MwSWRGgUxMrgrIYZ79Mb7IvLaGolV72Pgg2dFDa7uFhYo8QSVrFy2
-   X3yIVmxHQGob8ZWOZlg/J0EG8wXJgeGWX/jRPMAeMarKEzniKYrivxVSM
-   vgTwQTs8DoyEf3CK06USz8QTMhEoRFIVGeR0EdTNF2IyYDKcZN6qV5KFL
-   rZuTd/0eXetaANXsMvGgLoyNtq9gw1nG6AM3lCHxYgAt0jByXZaaPtmxY
-   5Sl8ThDmaki+pdp5nzHWRaumLBwShnr7pe6bKZyYp+xpTLgi2a4hf85wg
-   JWTZHyVmI4LXgyFuFAqBUnk5+VrzpbHhEVdVzPd7T8ihxZ3GXEAsIiZ+R
-   A==;
-X-CSE-ConnectionGUID: wS6y8s7bTkKKSRIUdmPQEg==
-X-CSE-MsgGUID: RkVhylHqS9WbeX0hneKdrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="47109653"
+   mime-version:in-reply-to;
+  bh=PEn3XtRW5tjHG4xl8Hpy2BfiNBLyF2Xe3sCNrstiv8Y=;
+  b=SIUmahaXxiR98Fc0tIM0nTtJqsKgfVOaiHlhBEWYTiLruyM5PTjlwLFN
+   JmMm3ASDlRW2SXqvXZW7f7AAQ2oLjRBiOU9wZ4vLI49WVfqS8sH2Iiuu5
+   KBFgEgWJuLjrhMhSI7w5YH+ioO1Wjcd0/lgPyOOL9GbtJBWehwzTBklxt
+   ibgUe4WYp14MqSYEUxOTzGv2bKiRv8j7m/RDB+kPZJdAj353eRE0QjgUP
+   vya4LzYR35C8irQnxOtj0SMwcgPxz2XtiL5TWQYh0571U4g0ZqgcePXQY
+   Un8qEBfZtBJyHkRvrT8UYa42bwX4Bs5c4UmK0fattNSU4vftZZuoD9lXo
+   w==;
+X-CSE-ConnectionGUID: tfhQFx/VT42AZTsejq4kTA==
+X-CSE-MsgGUID: HvAJJ3y5SU6+4e2gy2J69A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21523248"
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="47109653"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:45:24 -0700
-X-CSE-ConnectionGUID: CIwk+6DETtaD7q/E3IQgAg==
-X-CSE-MsgGUID: MvFldAgNSQeC0+Wgcchl1A==
+   d="scan'208";a="21523248"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:46:20 -0700
+X-CSE-ConnectionGUID: PSIpAqcSTxuZeWGvCSvo1g==
+X-CSE-MsgGUID: P3hRk+ueTcOZ3cw0Qi3PVA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="89440581"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 13 Aug 2024 04:45:19 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdpxl-0000Nq-2h;
-	Tue, 13 Aug 2024 11:45:17 +0000
-Date: Tue, 13 Aug 2024 19:44:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-	Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>
-Subject: Re: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
-Message-ID: <202408131900.xhbYFHR4-lkp@intel.com>
-References: <20240812144936.1616628-1-mic@digikod.net>
+   d="scan'208";a="63037742"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:46:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdpyf-0000000EiFk-1s3a;
+	Tue, 13 Aug 2024 14:46:13 +0300
+Date: Tue, 13 Aug 2024 14:46:13 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 5/6] platform/chrome: Introduce device tree hardware
+ prober
+Message-ID: <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
+References: <20240808095931.2649657-1-wenst@chromium.org>
+ <20240808095931.2649657-6-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240812144936.1616628-1-mic@digikod.net>
+In-Reply-To: <20240808095931.2649657-6-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Mickaël,
+On Thu, Aug 08, 2024 at 05:59:28PM +0800, Chen-Yu Tsai wrote:
+> Some devices are designed and manufactured with some components having
+> multiple drop-in replacement options. These components are often
+> connected to the mainboard via ribbon cables, having the same signals
+> and pin assignments across all options. These may include the display
+> panel and touchscreen on laptops and tablets, and the trackpad on
+> laptops. Sometimes which component option is used in a particular device
+> can be detected by some firmware provided identifier, other times that
+> information is not available, and the kernel has to try to probe each
+> device.
+> 
+> This change attempts to make the "probe each device" case cleaner. The
+> current approach is to have all options added and enabled in the device
+> tree. The kernel would then bind each device and run each driver's probe
+> function. This works, but has been broken before due to the introduction
+> of asynchronous probing, causing multiple instances requesting "shared"
+> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> time, with only one instance succeeding. Work arounds for these include
+> moving the pinmux to the parent I2C controller, using GPIO hogs or
+> pinmux settings to keep the GPIO pins in some fixed configuration, and
+> requesting the interrupt line very late. Such configurations can be seen
+> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> Lenovo Thinkpad 13S.
+> 
+> Instead of this delicate dance between drivers and device tree quirks,
+> this change introduces a simple I2C component prober. For any given
+> class of devices on the same I2C bus, it will go through all of them,
+> doing a simple I2C read transfer and see which one of them responds.
+> It will then enable the device that responds.
+> 
+> This requires some minor modifications in the existing device tree.
+> The status for all the device nodes for the component options must be
+> set to "failed-needs-probe". This makes it clear that some mechanism is
+> needed to enable one of them, and also prevents the prober and device
+> drivers running at the same time.
 
-kernel test robot noticed the following build warnings:
+...
 
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on linus/master v6.11-rc3]
-[cannot apply to brauner-vfs/vfs.all next-20240813]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> + * Copyright (c) 2023 Google LLC
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/fs-security-Fix-file_set_fowner-LSM-hook-inconsistencies/20240813-004648
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20240812144936.1616628-1-mic%40digikod.net
-patch subject: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
-config: x86_64-randconfig-122-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/reproduce)
+At bare minimum we are in 2024 now.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408131900.xhbYFHR4-lkp@intel.com/
+...
 
-sparse warnings: (new ones prefixed by >>)
->> fs/file_table.c:153:25: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *cred @@     got struct cred const * @@
-   fs/file_table.c:153:25: sparse:     expected struct cred const [noderef] __rcu *cred
-   fs/file_table.c:153:25: sparse:     got struct cred const *
->> fs/file_table.c:157:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
-   fs/file_table.c:157:36: sparse:     expected struct cred const *cred
-   fs/file_table.c:157:36: sparse:     got struct cred const [noderef] __rcu *cred
-   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
-   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
-   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
-   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
-   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
-   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
+> +#include <linux/array_size.h>
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
 
-vim +153 fs/file_table.c
+> +#include <linux/of.h>
 
-   147	
-   148	static int init_file(struct file *f, int flags, const struct cred *cred)
-   149	{
-   150		int error;
-   151	
-   152		f->f_cred = get_cred(cred);
- > 153		f->f_owner.cred = get_cred(cred);
-   154		error = security_file_alloc(f);
-   155		if (unlikely(error)) {
-   156			put_cred(f->f_cred);
- > 157			put_cred(f->f_owner.cred);
-   158			return error;
-   159		}
-   160	
-   161		rwlock_init(&f->f_owner.lock);
-   162		spin_lock_init(&f->f_lock);
-   163		mutex_init(&f->f_pos_lock);
-   164		f->f_flags = flags;
-   165		f->f_mode = OPEN_FMODE(flags);
-   166		/* f->f_version: 0 */
-   167	
-   168		/*
-   169		 * We're SLAB_TYPESAFE_BY_RCU so initialize f_count last. While
-   170		 * fget-rcu pattern users need to be able to handle spurious
-   171		 * refcount bumps we should reinitialize the reused file first.
-   172		 */
-   173		atomic_long_set(&f->f_count, 1);
-   174		return 0;
-   175	}
-   176	
+Why?
+
+> +#include <linux/platform_device.h>
+
+...
+
+> +	for (size_t i = 0; i < ARRAY_SIZE(hw_prober_platforms); i++) {
+> +		if (!of_machine_is_compatible(hw_prober_platforms[i].compatible))
+> +			continue;
+
+> +		int ret;
+
+I didn't know we allow this kind of definition mix besides for-loop and
+__free()... Can you point me out where this style change was discussed?
+
+> +		ret = hw_prober_platforms[i].prober(&pdev->dev, hw_prober_platforms[i].data);
+> +		/* Ignore unrecoverable errors and keep going through other probers */
+> +		if (ret == -EPROBE_DEFER)
+> +			return ret;
+> +	}
+
+...
+
+> +static void chromeos_of_hw_prober_driver_exit(void)
+> +{
+> +	if (!chromeos_of_hw_prober_pdev)
+> +		return;
+
+First of all, this is dup for the next call, second, when may this conditional
+be true?
+
+> +	platform_device_unregister(chromeos_of_hw_prober_pdev);
+> +	platform_driver_unregister(&chromeos_of_hw_prober_driver);
+> +}
+> +module_exit(chromeos_of_hw_prober_driver_exit);
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
