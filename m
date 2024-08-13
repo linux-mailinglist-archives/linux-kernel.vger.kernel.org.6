@@ -1,84 +1,114 @@
-Return-Path: <linux-kernel+bounces-284971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44466950779
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:25:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C95839507DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:37:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9AA28428F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B8FD2852E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E3B19D087;
-	Tue, 13 Aug 2024 14:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC0A19EEBF;
+	Tue, 13 Aug 2024 14:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D0ghPd2I"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="AuRHprR9"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0361319B3DD
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1619E7CF;
+	Tue, 13 Aug 2024 14:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559092; cv=none; b=MGoR+FlpJXwFAf/UeoTihRGOQkK1dgxWRwrkR+kOghpA0na0xXrIuWm1xPqvtnoe4EYuBHbB09b4qTc1JHwLr345DnoWxQNQHVeTvxgLMSFD8QhR4Zgj3fpnU2Chnsrrf4qihuitNUXPp6x7UtfSMr84d9PBUPGUozL6KAOjXuE=
+	t=1723559808; cv=none; b=NRgzOLS/L8HwZL1Z/lnq1rSCf5tBSgmDHs8Bwx9Z8AcvvJFFOJqmEGN9nSXyzKEz5zsRiAdwI4qGoiSeXxoeEdewHzO4Ee+UeplIQgEHbRq9QFgMhPu/gMpgF9BNyte7wZWPJFg1Msfa8o4TdptmZjGnfKbL+AUEbmpjHj8kYeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559092; c=relaxed/simple;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
+	s=arc-20240116; t=1723559808; c=relaxed/simple;
+	bh=xvkO/RTBKgQM5PQe33l5QAyOs/W2Yq6mxhuiaRF//TE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cK7nduCV3Rb156999rtchxat1UJmp5M9zKCNNjsqWTNin/Xqi459U4rKQ5pMRE2zGbbBmGSOfqvUGKoc+uI7voZvQelwXIAjTfq0Ee6fXz5tqEFYKnfIGdFzRsXS6YFyuVhs389knb3R56lwNmzhuqo19Bc3ir1aR1m3Bx7Q808=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D0ghPd2I; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723559089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cyh9GNwkSeiWX8VVWJet6cmrStrv1Y1BhHYKMAKCy08=;
-	b=D0ghPd2Iti+DTxxeze9L+NJzM95qz6/thKVuxYjvJ3/I1M5ULi6FMAKPLaTbY2GtPe35nE
-	0Tc6mO++azCoWtKst+sonPIgezBIOVtNrcrRnQbIpF8ktB95JnHZ+TdBZUsnGl4F08sfm4
-	NW0zcQxN+JSO/pBDzUAgUt9eNm0V3b0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-332-sjYWYpHfN6y8_9HHD8-szw-1; Tue,
- 13 Aug 2024 10:24:48 -0400
-X-MC-Unique: sjYWYpHfN6y8_9HHD8-szw-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	 MIME-Version:Content-Type; b=s5qPEG1EneV0zt+R8aN3vXuZ+YsiSgsxGgrUqRKWaUZbsyRyx3dYThhGA6WDW2V+Kbt6lsIDDy3tXhPamITidzk8moWJeqhV4oSjGNQWLzI2zRBOakDav4B1WahqOkbt8opzEuoLpa08rxstycfB8QTOwGTL4z5hB0RmwI+yN9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=AuRHprR9 reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 86b400dca339de90; Tue, 13 Aug 2024 16:36:44 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D3661955EB7;
-	Tue, 13 Aug 2024 14:24:46 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4574D1955F23;
-	Tue, 13 Aug 2024 14:24:45 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Chao Gao <chao.gao@intel.com>,
-	Yuan Yao <yuan.yao@intel.com>
-Subject: Re: [PATCH] KVM: x86: Use this_cpu_ptr() instead of per_cpu_ptr(smp_processor_id())
-Date: Tue, 13 Aug 2024 10:24:43 -0400
-Message-ID: <20240813142443.133703-1-pbonzini@redhat.com>
-In-Reply-To: <20240802201630.339306-1-seanjc@google.com>
-References: 
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 6461C6A89E1;
+	Tue, 13 Aug 2024 16:36:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1723559804;
+	bh=xvkO/RTBKgQM5PQe33l5QAyOs/W2Yq6mxhuiaRF//TE=;
+	h=From:Subject:Date;
+	b=AuRHprR9VUBYzXzmcpiCwfMfV88NwIhxnWhdMTonPCmk1IJItZ0dVqGn3pLxAX9r2
+	 +qN0MyuxbEU2NoMZJE260DhJcbdLEtLvaa7gbIrSjSMSzU3Ewh7gMLNJlwZ9fiY7KY
+	 9rhe0O/0RxCl/Xu+/33gw2AMolBYcUc0dqt+3iZqvTImGRGomPGvcVOmX7aMH1aO/o
+	 xGC2JHDElTEtbVQWp4TbwCdYYX0rGeSmkxYbUesfGP1b/0j8YyDJeCR5SnGZQw8Sgd
+	 9JG2gYLvJvSyUXBaDA4B6Pev411v/HcRzlOmXL2MaYUVy775h8gpBjB2Q/l2Y8NIrl
+	 cE1z9oJtbDnRw==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
+Subject:
+ [PATCH v1 1/4] thermal: gov_bang_bang: Call __thermal_cdev_update() directly
+Date: Tue, 13 Aug 2024 16:25:19 +0200
+Message-ID: <13583081.uLZWGnKmhe@rjwysocki.net>
+In-Reply-To: <1903691.tdWV9SEqCh@rjwysocki.net>
+References: <1903691.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohep
+ uggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepphgvthgvrhesphhiihgvrdhnvght
+X-DCC--Metrics: v370.home.net.pl 1024; Body=18 Fuz1=18 Fuz2=18
 
-Queued, thanks.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Paolo
+Instead of clearing the "updated" flag for each cooling device
+affected by the trip point crossing in bang_bang_control() and
+walking all thermal instances to run thermal_cdev_update() for all
+of the affected cooling devices, call __thermal_cdev_update()
+directly for each of them.
+
+No intentional functional impact.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/gov_bang_bang.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+Index: linux-pm/drivers/thermal/gov_bang_bang.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_bang_bang.c
++++ linux-pm/drivers/thermal/gov_bang_bang.c
+@@ -71,12 +71,9 @@ static void bang_bang_control(struct the
+ 		dev_dbg(&instance->cdev->device, "target=%ld\n", instance->target);
+ 
+ 		mutex_lock(&instance->cdev->lock);
+-		instance->cdev->updated = false; /* cdev needs update */
++		__thermal_cdev_update(instance->cdev);
+ 		mutex_unlock(&instance->cdev->lock);
+ 	}
+-
+-	list_for_each_entry(instance, &tz->thermal_instances, tz_node)
+-		thermal_cdev_update(instance->cdev);
+ }
+ 
+ static struct thermal_governor thermal_gov_bang_bang = {
+
 
 
 
