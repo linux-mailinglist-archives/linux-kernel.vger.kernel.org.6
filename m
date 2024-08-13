@@ -1,97 +1,116 @@
-Return-Path: <linux-kernel+bounces-284830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5D47950598
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:53:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C2995059B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:53:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8ED628293B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:53:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE15284864
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8A519ADAA;
-	Tue, 13 Aug 2024 12:53:22 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390001993BA;
-	Tue, 13 Aug 2024 12:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0119ADA6;
+	Tue, 13 Aug 2024 12:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwLVNos1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715631993BA;
+	Tue, 13 Aug 2024 12:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553602; cv=none; b=JklLBDjHT49WqyVHvQY3uFgq6xW1WFUVBZSV8P8Lss34io/oCSO//zIQ2Dol64++1xcY2iIyC5RBfCov5G7BtIwlxWPoIcVxajJ85RKy18bLXsbUW4c1JKaNTCjlMDl8Jpwk2LabIcwQgxVYydReGtFcqIEcu1I2tea7B0ijb4Q=
+	t=1723553615; cv=none; b=eKR1ArHv4ntgkqzdJncpJgZWzW2Y5/0Fwp9SgpxWkFA5b/6GVnooAke1XuXyN3lrHqpG5+jQEZ0jmJxSah9x5sSsdKCZKy3EFCoU9uQRSer/uIhmSyC5AhLlRXLqqh+7fcdPF9gaQi0hRz7R20kFNnit3WvVbFiH+6FeKYyNX94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553602; c=relaxed/simple;
-	bh=euRZty7+jz+1Gx1SNSqjy8oGMoxrs/iXSvKUUcdMh8s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uRhpUr/AJkfYBJTjdqrLIgVwkQ9/i3k28eVA/su/SG/RI7ytrr6nG1C9bK/vv+jkSVE844IgZl6NbONwrNiYhAhQNtQwJhLkNwbOckoURo69jvt4IKNgiEtgzRQxOqNsgptnsnsiJBULtRfU7cl9SMhT0A3EwXqf0WKP4fk+i3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.09,285,1716217200"; 
-   d="scan'208";a="215499107"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Aug 2024 21:53:11 +0900
-Received: from [10.226.93.14] (unknown [10.226.93.14])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 1A24441D8594;
-	Tue, 13 Aug 2024 21:53:07 +0900 (JST)
-Message-ID: <1d159325-3b64-4f50-8f95-b88f6638e19d@bp.renesas.com>
-Date: Tue, 13 Aug 2024 13:53:06 +0100
+	s=arc-20240116; t=1723553615; c=relaxed/simple;
+	bh=s3WViNmjNJ6o3NfDc+gVFx6Ybq9EcXt5R1mltnGBdKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HOLJPB7NcVyCOe5P+kQ6tN+ggxihUXBHSIj0KNHQUSiKGE68RX8h5gRTbYlwfc5/cclurs6f8+PUkqbGHN8kf3W4bfsLzKk+NKrt4XOnRUKJ7gv1FKmt64+W8TmAqoFCx/Tlq44zojD/4IPzLrmtkRsaILFS5y93Tjn4eohkA+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwLVNos1; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723553613; x=1755089613;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s3WViNmjNJ6o3NfDc+gVFx6Ybq9EcXt5R1mltnGBdKE=;
+  b=FwLVNos14bauskWYbsW4bstXfRkXT2Ri3Ts4Ch9vjaIhDMMwxDLuz0DY
+   R+so4HEJKsnv2WDfvRxSbOXOb0PLs+BjHjQJWkXOrSjBK6chnE2WBtsZ0
+   iaDRpfFubCSAVpnQ+ktk/NqQbFSOS6lLMYyOtZX+E28K3NF1qJrbqOEje
+   tpUQwtViHKuhJQVq+JK75FeYFUpsteQDPBwaw2BQSoWvaiX5TGPcawN7N
+   7VhDQufxFc1pCOe7glliGB+/Oz1gubN6KfrrtU42IIRUAZRtlvDYzoNWV
+   FA+moG+J00JLEwtVMT2GdkEEmMJNgJcyivkjZHaXCupKNY3SLNFp+qqKu
+   Q==;
+X-CSE-ConnectionGUID: q6YUYli1Q9SKs7+UwEJ0cg==
+X-CSE-MsgGUID: FsmOBv+RSNG3nPCDoF+2FQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39163793"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="39163793"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:53:32 -0700
+X-CSE-ConnectionGUID: qW8nmxWuQcCi7KvEjkkwXQ==
+X-CSE-MsgGUID: YBZBrvvTRwmZiwNFcbn3DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="96189629"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:53:28 -0700
+Date: Tue, 13 Aug 2024 15:53:25 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
+Message-ID: <ZrtXReujITKx4rHH@black.fi.intel.com>
+References: <20240809061525.1368153-1-raag.jadav@intel.com>
+ <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
+ <ZrtCIU8On4ZKILmh@black.fi.intel.com>
+ <ZrtHz1aY_Lf_XIsL@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH 1/2] net: ravb: Fix maximum MTU for GbEth devices
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Sergey Shtylyov <s.shtylyov@omp.ru>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Mitsuhiro Kimura <mitsuhiro.kimura.kc@renesas.com>, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240615103038.973-1-paul.barker.ct@bp.renesas.com>
- <20240615103038.973-2-paul.barker.ct@bp.renesas.com>
- <20240617170759.270f79f0@kernel.org>
-Content-Language: en-GB
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <20240617170759.270f79f0@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrtHz1aY_Lf_XIsL@smile.fi.intel.com>
 
-On 18/06/2024 01:07, Jakub Kicinski wrote:
-> On Sat, 15 Jun 2024 11:30:37 +0100 Paul Barker wrote:
->> The datasheets for all SoCs using the GbEth IP specify a maximum
->> transmission frame size of 1.5 kByte. I've confirmed through internal
->> discussions that support for 1522 byte frames has been validated, which
->> allows us to support the default MTU of 1500 bytes after reserving space
->> for the Ethernet header, frame checksums and an optional VLAN tag.
+On Tue, Aug 13, 2024 at 02:47:27PM +0300, Andy Shevchenko wrote:
+> On Tue, Aug 13, 2024 at 02:23:13PM +0300, Raag Jadav wrote:
+> > On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
+> > > On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
 > 
+> ...
 > 
-> But what's the user impact? If we send a bigger frame the IP will hang?
-> Drop the packet? Something else?
-> "Validated" can also mean "officially supported" sometimes vendors just
-> say that to narrow down the test matrix :(
+> > > > +	/*
+> > > > +	 * HW register value is accumulated count of pulses from
+> > > > +	 * PWM fan with the scale of 2 pulses per rotation.
+> > > > +	 */
+> > > > +	rotations = pulses >> 1;
+> > > 
+> > > In accordance with the comment the
+> > > 
+> > > 	rotations = pulses / 2;
+> > > 
+> > > looks better.
+> > 
+> > This change seems to cause a build error in v5.
+> > Something to do with __udivdi3 on i386.
+> 
+> No, it's not this change.
+> Please, read report carefully.
 
-Apologies for the late response.
+CI seems to point to DIV_ROUND_UP(), but it's been there since v1.
+So not sure if I entirely understand.
 
-I was able to hang the GbEth IP by attempting to transmit a 2kB frame,
-no error condition was raised by the hardware but no further packets
-could be sent or received. I was able to successfully send a 1.8kB
-frame, but there is no guarantee that this will always work. The RZ/G2L
-datasheet states that frames of up to 1.5kB can be transmitted so I
-clarified with the HW team that 1522 bytes was ok to allow for the
-default MTU plus headers.
-
-I'm going to submit v2 of this series as bugfixes against net (instead
-of net-next) shortly.
-
-Thanks,
-
--- 
-Paul Barker
+Raag
 
