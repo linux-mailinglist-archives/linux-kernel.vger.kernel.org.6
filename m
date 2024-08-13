@@ -1,91 +1,365 @@
-Return-Path: <linux-kernel+bounces-284444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10709950105
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:13:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D56950106
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:13:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06EC286EC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00D6C1C23085
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB851946C1;
-	Tue, 13 Aug 2024 09:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B42E17B433;
+	Tue, 13 Aug 2024 09:13:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="yBW6Eldv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXs2v11u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA1F17C21C;
-	Tue, 13 Aug 2024 09:11:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301B1339A1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540286; cv=none; b=GIYfB6FejXm2+rhWJtZ6CwGRga7SE6fLJLXqInuJxHeh8eMIFVdKVv7FOTiFbgMc+gnFSKRChCuJSXx7gwQQfW8RAX8eES/D1D3VfZm88PktdeDjOMndz/JXNlBcuvpTI/fT72mFmU51zjnwtCYaTXeLKjBTzjcGjf63dC9Ez+Y=
+	t=1723540392; cv=none; b=k0AVGvWiNmYOulbPZdoNsLLfPfLRZx1mai98RzZa6/0siHChNEhK7TCJ/0hsaHHrImUGmTODtny3iM0cUXQi2VEdDQ1WG+tDAva4G0C2Nm+i224NQkcnIcvdjkfm7EHwsD1hgmfeRo12P22/6cFxBeyFwVuQ2NiWhCKmstMh4Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540286; c=relaxed/simple;
-	bh=3170JaPRIKXZZLAfKRhqR5tUWqhTRBY0uB9PjHRJxCg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aPonAeraxAxolPZX2P17SID6uIEnrnzUmWDo9RcOouGqLnFiWCMDx357uMv03CF3D9PhH1FRnq1d8YUuvrofCJhol0tkn2J6icDIkwwwZJ0B9xtVwnooZfYrmbRag8SSOlew2sT8OcBteP2thOaJmEfndtwMnh3H6oxwL+MX2gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=yBW6Eldv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E991EC4AF09;
-	Tue, 13 Aug 2024 09:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723540286;
-	bh=3170JaPRIKXZZLAfKRhqR5tUWqhTRBY0uB9PjHRJxCg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yBW6EldvXwchpyt4mH5oLYrG1U2PYE76VNaTTIeNMRsuOjB/VrLtkhxkihTH1LB3Y
-	 sBIrEsp1NPg3GCniO0d0YxEoiPMCDMcTVnuPCJK1vvGmW3+fNxaSMh7E7Tj2SkSMOV
-	 +aYTg5lymMyR5Z5NMyjYrZYWoffHc+vtmjY7Gu1E=
-Date: Tue, 13 Aug 2024 11:11:23 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: giometti@enneenne.com, christophe.jaillet@wanadoo.fr, linux@treblig.org,
-	sudipm.mukherjee@gmail.com, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] pps: add an error check in parport_attach
-Message-ID: <2024081336-escapable-anemia-87cb@gregkh>
-References: <20240813030800.3949400-1-make24@iscas.ac.cn>
+	s=arc-20240116; t=1723540392; c=relaxed/simple;
+	bh=aGvqIoXoggMy1201TQt+pLxsPlqGZEth0kDPzckpUwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a6iJaMIY8iWZ5a75/608k1TsvQMw/bi0HiFThe4/BH+Kjx9tX9gTTnMZaUhBRLKpnCkV+PBkT6g/mTkEWE1+TqdIgC9beV5ItHOWTkuSYRx/Yxdt+xC+Wmrg7eauSHvgiaAw+nhid6M1tpejMIRtNICSDO1DMHazYdW2KYUw7rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXs2v11u; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723540390; x=1755076390;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=aGvqIoXoggMy1201TQt+pLxsPlqGZEth0kDPzckpUwQ=;
+  b=YXs2v11uCWucGzhOA3x1ZugisUev+xmVOq0H76gIxYu2mSKEt+FXW1Of
+   ZkfwtIUHpZ0AUU/kdQaTKldwPjHsqsR+/3ajLL9PWa33s0RT62UrQBKN0
+   5kc/t3sACQyEanoQyChiFeE02sF73gUmhzRqEYp692Yc57ZMJbfaX3ZS2
+   ECS79p3xMYKv+ymxMmE6ybGmqpnEHifpS72GPe2W4qyQWc2rF55REEI1e
+   NNok1cgNOnw3nRvg2J4vTIgNlucQKhZLErY5vyfuBllfpcRKN3spguD3j
+   SzISyKiPAZzgQOD5GsSsmSHfQqh4LP4DWMgbZO/9jIR/0btRkZk+aH1q8
+   w==;
+X-CSE-ConnectionGUID: yTflgErnRiOCgbybEdyW2w==
+X-CSE-MsgGUID: SLIT+BifTcmTgpfrTWXAWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25555179"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="25555179"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 02:13:09 -0700
+X-CSE-ConnectionGUID: oitavjEVQQyvVznpoH6E6g==
+X-CSE-MsgGUID: JJu4iHE+SUORa3eqt/B3SQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="96144764"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa001.jf.intel.com with ESMTP; 13 Aug 2024 02:13:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id F2FF53B5; Tue, 13 Aug 2024 12:13:01 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH v1 1/1] drm/panel: ili9341: Remove duplicate code
+Date: Tue, 13 Aug 2024 12:12:58 +0300
+Message-ID: <20240813091258.1625646-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813030800.3949400-1-make24@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 11:08:00AM +0800, Ma Ke wrote:
-> In parport_attach, the return value of ida_alloc is unchecked, witch leads
-> to the use of an invalid index value.
-> 
-> To address this issue, index should be checked. When the index value is
-> abnormal, the device should be freed.
-> 
-> Found by code review, compile tested only.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 55dbc5b5174d ("pps: remove usage of the deprecated ida_simple_xx() API")
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/pps/clients/pps_parport.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-> index 63d03a0df5cc..9ab7f6961e42 100644
-> --- a/drivers/pps/clients/pps_parport.c
-> +++ b/drivers/pps/clients/pps_parport.c
-> @@ -149,6 +149,11 @@ static void parport_attach(struct parport *port)
->  	}
->  
->  	index = ida_alloc(&pps_client_index, GFP_KERNEL);
-> +	if (index < 0) {
-> +		pr_err("failed to get index\n");
+Remove duplicate code that is handled by tinyDRM,
+i.e. drivers/gpu/drm/tiny/ili9341.c.
 
-No need to be noisy, right?
+Suggested-by: Maxime Ripard <mripard@kernel.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c | 210 +------------------
+ 1 file changed, 3 insertions(+), 207 deletions(-)
 
-thanks,
+diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+index 775d5d5e828c..ae4062bb3249 100644
+--- a/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
++++ b/drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+@@ -13,9 +13,6 @@
+  * Derived from drivers/drm/gpu/panel/panel-ilitek-ili9322.c
+  * the reuse of DBI abstraction part referred from Linus's patch
+  * "drm/panel: s6e63m0: Switch to DBI abstraction for SPI"
+- *
+- * For only-dbi part, copy from David's code (drm/tiny/ili9341.c)
+- * Copyright 2018 David Lechner <david@lechnology.com>
+  */
+ 
+ #include <linux/backlight.h>
+@@ -486,176 +483,6 @@ static const struct drm_panel_funcs ili9341_dpi_funcs = {
+ 	.get_modes = ili9341_dpi_get_modes,
+ };
+ 
+-static void ili9341_dbi_enable(struct drm_simple_display_pipe *pipe,
+-			       struct drm_crtc_state *crtc_state,
+-			       struct drm_plane_state *plane_state)
+-{
+-	struct mipi_dbi_dev *dbidev = drm_to_mipi_dbi_dev(pipe->crtc.dev);
+-	struct mipi_dbi *dbi = &dbidev->dbi;
+-	u8 addr_mode;
+-	int ret, idx;
+-
+-	if (!drm_dev_enter(pipe->crtc.dev, &idx))
+-		return;
+-
+-	ret = mipi_dbi_poweron_conditional_reset(dbidev);
+-	if (ret < 0)
+-		goto out_exit;
+-	if (ret == 1)
+-		goto out_enable;
+-
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_DISPLAY_OFF);
+-
+-	mipi_dbi_command(dbi, ILI9341_POWERB, 0x00, 0xc1, 0x30);
+-	mipi_dbi_command(dbi, ILI9341_POWER_SEQ, 0x64, 0x03, 0x12, 0x81);
+-	mipi_dbi_command(dbi, ILI9341_DTCA, 0x85, 0x00, 0x78);
+-	mipi_dbi_command(dbi, ILI9341_POWERA, 0x39, 0x2c, 0x00, 0x34, 0x02);
+-	mipi_dbi_command(dbi, ILI9341_PRC, ILI9341_DBI_PRC_NORMAL);
+-	mipi_dbi_command(dbi, ILI9341_DTCB, 0x00, 0x00);
+-
+-	/* Power Control */
+-	mipi_dbi_command(dbi, ILI9341_POWER1, ILI9341_DBI_VCOMH_4P6V);
+-	mipi_dbi_command(dbi, ILI9341_POWER2, ILI9341_DBI_PWR_2_DEFAULT);
+-	/* VCOM */
+-	mipi_dbi_command(dbi, ILI9341_VCOM1, ILI9341_DBI_VCOM_1_VMH_4P25V,
+-			 ILI9341_DBI_VCOM_1_VML_1P5V);
+-	mipi_dbi_command(dbi, ILI9341_VCOM2, ILI9341_DBI_VCOM_2_DEC_58);
+-
+-	/* Memory Access Control */
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_PIXEL_FORMAT,
+-			 MIPI_DCS_PIXEL_FMT_16BIT);
+-
+-	/* Frame Rate */
+-	mipi_dbi_command(dbi, ILI9341_FRC, ILI9341_DBI_FRC_DIVA & 0x03,
+-			 ILI9341_DBI_FRC_RTNA & 0x1f);
+-
+-	/* Gamma */
+-	mipi_dbi_command(dbi, ILI9341_3GAMMA_EN, 0x00);
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_GAMMA_CURVE, ILI9341_GAMMA_CURVE_1);
+-	mipi_dbi_command(dbi, ILI9341_PGAMMA,
+-			 0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
+-			 0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00);
+-	mipi_dbi_command(dbi, ILI9341_NGAMMA,
+-			 0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
+-			 0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f);
+-
+-	/* DDRAM */
+-	mipi_dbi_command(dbi, ILI9341_ETMOD, ILI9341_DBI_EMS_GAS |
+-			 ILI9341_DBI_EMS_DTS |
+-			 ILI9341_DBI_EMS_GON);
+-
+-	/* Display */
+-	mipi_dbi_command(dbi, ILI9341_DFC, 0x08, 0x82, 0x27, 0x00);
+-	mipi_dbi_command(dbi, MIPI_DCS_EXIT_SLEEP_MODE);
+-	msleep(100);
+-
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_DISPLAY_ON);
+-	msleep(100);
+-
+-out_enable:
+-	switch (dbidev->rotation) {
+-	default:
+-		addr_mode = ILI9341_MADCTL_MX;
+-		break;
+-	case 90:
+-		addr_mode = ILI9341_MADCTL_MV;
+-		break;
+-	case 180:
+-		addr_mode = ILI9341_MADCTL_MY;
+-		break;
+-	case 270:
+-		addr_mode = ILI9341_MADCTL_MV | ILI9341_MADCTL_MY |
+-			    ILI9341_MADCTL_MX;
+-		break;
+-	}
+-
+-	addr_mode |= ILI9341_MADCTL_BGR;
+-	mipi_dbi_command(dbi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
+-	mipi_dbi_enable_flush(dbidev, crtc_state, plane_state);
+-	drm_info(&dbidev->drm, "Initialized display serial interface\n");
+-out_exit:
+-	drm_dev_exit(idx);
+-}
+-
+-static const struct drm_simple_display_pipe_funcs ili9341_dbi_funcs = {
+-	DRM_MIPI_DBI_SIMPLE_DISPLAY_PIPE_FUNCS(ili9341_dbi_enable),
+-};
+-
+-static const struct drm_display_mode ili9341_dbi_mode = {
+-	DRM_SIMPLE_MODE(240, 320, 37, 49),
+-};
+-
+-DEFINE_DRM_GEM_DMA_FOPS(ili9341_dbi_fops);
+-
+-static struct drm_driver ili9341_dbi_driver = {
+-	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_ATOMIC,
+-	.fops			= &ili9341_dbi_fops,
+-	DRM_GEM_DMA_DRIVER_OPS_VMAP,
+-	.debugfs_init		= mipi_dbi_debugfs_init,
+-	.name			= "ili9341",
+-	.desc			= "Ilitek ILI9341",
+-	.date			= "20210716",
+-	.major			= 1,
+-	.minor			= 0,
+-};
+-
+-static int ili9341_dbi_probe(struct spi_device *spi, struct gpio_desc *dc,
+-			     struct gpio_desc *reset)
+-{
+-	struct device *dev = &spi->dev;
+-	struct mipi_dbi_dev *dbidev;
+-	struct mipi_dbi *dbi;
+-	struct drm_device *drm;
+-	struct regulator *vcc;
+-	u32 rotation = 0;
+-	int ret;
+-
+-	vcc = devm_regulator_get_optional(dev, "vcc");
+-	if (IS_ERR(vcc)) {
+-		dev_err(dev, "get optional vcc failed\n");
+-		vcc = NULL;
+-	}
+-
+-	dbidev = devm_drm_dev_alloc(dev, &ili9341_dbi_driver,
+-				    struct mipi_dbi_dev, drm);
+-	if (IS_ERR(dbidev))
+-		return PTR_ERR(dbidev);
+-
+-	dbi = &dbidev->dbi;
+-	drm = &dbidev->drm;
+-	dbi->reset = reset;
+-	dbidev->regulator = vcc;
+-
+-	drm_mode_config_init(drm);
+-
+-	dbidev->backlight = devm_of_find_backlight(dev);
+-	if (IS_ERR(dbidev->backlight))
+-		return PTR_ERR(dbidev->backlight);
+-
+-	device_property_read_u32(dev, "rotation", &rotation);
+-
+-	ret = mipi_dbi_spi_init(spi, dbi, dc);
+-	if (ret)
+-		return ret;
+-
+-	ret = mipi_dbi_dev_init(dbidev, &ili9341_dbi_funcs,
+-				&ili9341_dbi_mode, rotation);
+-	if (ret)
+-		return ret;
+-
+-	drm_mode_config_reset(drm);
+-
+-	ret = drm_dev_register(drm, 0);
+-	if (ret)
+-		return ret;
+-
+-	spi_set_drvdata(spi, drm);
+-
+-	drm_fbdev_dma_setup(drm, 0);
+-
+-	return 0;
+-}
+-
+ static int ili9341_dpi_probe(struct spi_device *spi, struct gpio_desc *dc,
+ 			     struct gpio_desc *reset)
+ {
+@@ -711,7 +538,6 @@ static int ili9341_probe(struct spi_device *spi)
+ 	struct device *dev = &spi->dev;
+ 	struct gpio_desc *dc;
+ 	struct gpio_desc *reset;
+-	const struct spi_device_id *id = spi_get_device_id(spi);
+ 
+ 	reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+ 	if (IS_ERR(reset))
+@@ -721,36 +547,15 @@ static int ili9341_probe(struct spi_device *spi)
+ 	if (IS_ERR(dc))
+ 		return dev_err_probe(dev, PTR_ERR(dc), "Failed to get gpio 'dc'\n");
+ 
+-	if (!strcmp(id->name, "sf-tc240t-9370-t"))
+-		return ili9341_dpi_probe(spi, dc, reset);
+-
+-	if (!strcmp(id->name, "yx240qv29"))
+-		return ili9341_dbi_probe(spi, dc, reset);
+-
+-	return -ENODEV;
++	return ili9341_dpi_probe(spi, dc, reset);
+ }
+ 
+ static void ili9341_remove(struct spi_device *spi)
+ {
+-	const struct spi_device_id *id = spi_get_device_id(spi);
+ 	struct ili9341 *ili = spi_get_drvdata(spi);
+-	struct drm_device *drm = spi_get_drvdata(spi);
+ 
+-	if (!strcmp(id->name, "sf-tc240t-9370-t")) {
+-		ili9341_dpi_power_off(ili);
+-		drm_panel_remove(&ili->panel);
+-	} else if (!strcmp(id->name, "yx240qv29")) {
+-		drm_dev_unplug(drm);
+-		drm_atomic_helper_shutdown(drm);
+-	}
+-}
+-
+-static void ili9341_shutdown(struct spi_device *spi)
+-{
+-	const struct spi_device_id *id = spi_get_device_id(spi);
+-
+-	if (!strcmp(id->name, "yx240qv29"))
+-		drm_atomic_helper_shutdown(spi_get_drvdata(spi));
++	ili9341_dpi_power_off(ili);
++	drm_panel_remove(&ili->panel);
+ }
+ 
+ static const struct of_device_id ili9341_of_match[] = {
+@@ -758,19 +563,11 @@ static const struct of_device_id ili9341_of_match[] = {
+ 		.compatible = "st,sf-tc240t-9370-t",
+ 		.data = &ili9341_stm32f429_disco_data,
+ 	},
+-	{
+-		/* porting from tiny/ili9341.c
+-		 * for original mipi dbi compitable
+-		 */
+-		.compatible = "adafruit,yx240qv29",
+-		.data = NULL,
+-	},
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, ili9341_of_match);
+ 
+ static const struct spi_device_id ili9341_id[] = {
+-	{ "yx240qv29", 0 },
+ 	{ "sf-tc240t-9370-t", 0 },
+ 	{ }
+ };
+@@ -779,7 +576,6 @@ MODULE_DEVICE_TABLE(spi, ili9341_id);
+ static struct spi_driver ili9341_driver = {
+ 	.probe = ili9341_probe,
+ 	.remove = ili9341_remove,
+-	.shutdown = ili9341_shutdown,
+ 	.id_table = ili9341_id,
+ 	.driver = {
+ 		.name = "panel-ilitek-ili9341",
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
 
-greg k-h
 
