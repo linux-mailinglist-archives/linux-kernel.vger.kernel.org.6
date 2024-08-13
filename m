@@ -1,158 +1,183 @@
-Return-Path: <linux-kernel+bounces-284143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BCA894FD87
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A041494FD85
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59F842841D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 224921F238DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A5237160;
-	Tue, 13 Aug 2024 06:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D88638DC0;
+	Tue, 13 Aug 2024 06:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jh1zSZDE"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yfonxd4A";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2FLaanZn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yfonxd4A";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2FLaanZn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8BC2374C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06942374C;
+	Tue, 13 Aug 2024 06:02:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723529067; cv=none; b=B8SukuMxdfbvUcnYVQY96CDPJW8hCwNMlcWBiGsKhWlSdFjCkdr1XS6jueYvv1G7/hYBTAwmpu+Q8QT2gkEu5wjEb4Z0IqWr40O1UvVqb96BpP4/K+ocdTBwwXktmn9M7DG4372ZxuuRmKYln1abXtbBaT4ApQ2uv+22CVlEAd0=
+	t=1723528935; cv=none; b=Eqb40expiSzc9MGf9Li8D2WKMWsAyL+jCGWfk/nmYLT2Sx5zN2Dw+yFth81Vh/ojY9KHlmaRRyzZvt6BuaN6+mtUsB3eAxls4+rYUxjapQ3ga06dWTj+omQ7X5KydGdqOts3T01zDmexAncOJz0htOyibwtX4V1gUzxgBwm0WV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723529067; c=relaxed/simple;
-	bh=LBYhYSX2Qg62AU7ZHZ8GuRF+EyCAChlYIjmWAnHyslA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ag+fZ3JidMwnCxk7ZYAnpZmDConhE8EZ6CSyS9pI8/EvaYSdN46mprLylLMJZy5dC0L2JW4qkQ2aPAF5oUamYXqF7avppvW+fw7KOhGU5byilznTShjrqnEJQP9SSvsYtOyWdPr2PFw7cQoDo+UlAk01AKcNojIlkNXCkuZu6d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jh1zSZDE; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7a10b293432so3621257a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:04:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723529065; x=1724133865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MJLsE7Xr/p93PhEhSOjWGpmLu5pfF3uWp3jc7+NUeN4=;
-        b=jh1zSZDE5V4xvF2ahW7Ha7v/vLkehU3i1phRhGYvWooXJOcuHDbNcmzoZUg37pztDn
-         2nWO2ga98RRpaAFHGY+cfCnNW0GPB87/RVmwoSII3Rn05dQBY/D0sbAMeXbJTbCSl/zP
-         JSMEA4J4zv+wnziLA4XnflXzSMdhJ/ordRWNly2Biyy6gxYD/eQuTvLjMfdBxUZyfsCW
-         Rk3TKxk2Wn7G1BCBMu7pwWZC3G4a6siW7orHXZdP4Lefytb6B+Y4uYiMvyuYha3ytLk2
-         3STNQfojxjK/dsalqrFvJomsYLyJaHiFkcxYUUMsPrso3RbhrQObs+DlXKPNRY3BKwxp
-         k7Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723529065; x=1724133865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MJLsE7Xr/p93PhEhSOjWGpmLu5pfF3uWp3jc7+NUeN4=;
-        b=fnlGXXY8W489/aVv+5a3jrELhMezr6poBx6iHYpddYDka/POADPoJ7PRFphrloCJDX
-         t+IQWyJ8E1u15BJ8pQmTfbToKzKCquVN8qi64ZaDWuaLGTDetc3ehqMob3+mIdZ4FBJ3
-         YA5QcDf43h+WoUU9VA67kcgDlI7YeQ4dG9yHly7OsYGedsXa4k/rH5c3w/IEhKK5ccqJ
-         E0cyCPCZLVc1TCQG1T+9XJj1QEjpit9Fv8lcIvkC13HJcU6xKCvuOJxUNH82/qgyPx2+
-         KEdAccsoKRdhuGVJzbvmKtSMHw+ahOA84zU71UoLm1xeeLNicBjgUhwOmCPU2R7i8Uo+
-         J3aA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHk0qFI82El4t94e2SHiZI7BhWLRdGYAhWrUvS2HxCp542rhpa+ZXnniOBKMhgGiRa07+d3DukwabrdGcVwc0dszk36+Mm+LPNR5eK
-X-Gm-Message-State: AOJu0Yx+qB5b3+0C8Dt1fnjn4rxEm/qoqwqSv2g2ubwsqWG3Bze4bGGz
-	QfbnMt3PWCTJbbTNUF7PP5W2RiZswOM4RMpI720NEo5oZh6xJ0bcS6pT+UsgwpVZWyHCB8an91K
-	Wds6ZnZOTWqLiAARcGg9R+BwYBvoNdU+W
-X-Google-Smtp-Source: AGHT+IHqhg7Fh7b0TIq7m0lUpP+gnrWZRgw8uTbB2WK2/ABQlNCExOmUDrbZ+YpR7/f/tAtvyqerpK34MsO1kNQK6hE=
-X-Received: by 2002:a17:90a:d794:b0:2c7:ab00:f605 with SMTP id
- 98e67ed59e1d1-2d39254ebe9mr2709394a91.20.1723529065033; Mon, 12 Aug 2024
- 23:04:25 -0700 (PDT)
+	s=arc-20240116; t=1723528935; c=relaxed/simple;
+	bh=OjLN19HU3mLCsXhYlfdKT7dHHQUZUv/OjRXggZr1QsA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DB2+pypdsKh7iHhCW11iACdnc0vs9C73x1NrXWyOPk0sEIhLTLbW2ggRkRcEautpJlcP/wahBh71e0O7EKDckBZv5fDp0YEJifxh3O1/AC1t5kipcGi/6afRagGtdQJ6wLBZLX92j9yGfUNXpX6FMiHK3WBcj5/iPtjpcKcgZNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yfonxd4A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2FLaanZn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yfonxd4A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2FLaanZn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B5E312270A;
+	Tue, 13 Aug 2024 06:02:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723528931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYVkwWKxTSpRkPweEImYn5jNfhe+tzmk8OXzSLOoKwg=;
+	b=yfonxd4AO6qRrG9eo8KSQB83I0rwb/ixXqcVyvDW9aAyJ7lJffFzz4kL07tcpjrzDMguP+
+	pIO1tbRdEK+7g97fDeoe/tJmiG/8I0TiqPxFWaVK6KCuZHUMfBKw04SyHKfm1DqW/5OCVm
+	anAlmcSnsKYNzEJEOXsF+bEAYg21Sq4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723528931;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYVkwWKxTSpRkPweEImYn5jNfhe+tzmk8OXzSLOoKwg=;
+	b=2FLaanZnIGDZKboPEcw0bPT0FsBmQhguEWH06OxnhxMNumCqP9gdHzoW6+DnxpNaIcXRYf
+	7xMKNovBZx9DJKCw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yfonxd4A;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=2FLaanZn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723528931; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYVkwWKxTSpRkPweEImYn5jNfhe+tzmk8OXzSLOoKwg=;
+	b=yfonxd4AO6qRrG9eo8KSQB83I0rwb/ixXqcVyvDW9aAyJ7lJffFzz4kL07tcpjrzDMguP+
+	pIO1tbRdEK+7g97fDeoe/tJmiG/8I0TiqPxFWaVK6KCuZHUMfBKw04SyHKfm1DqW/5OCVm
+	anAlmcSnsKYNzEJEOXsF+bEAYg21Sq4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723528931;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jYVkwWKxTSpRkPweEImYn5jNfhe+tzmk8OXzSLOoKwg=;
+	b=2FLaanZnIGDZKboPEcw0bPT0FsBmQhguEWH06OxnhxMNumCqP9gdHzoW6+DnxpNaIcXRYf
+	7xMKNovBZx9DJKCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60F4013ABD;
+	Tue, 13 Aug 2024 06:02:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3rMMFuP2umZvCgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 06:02:11 +0000
+Date: Tue, 13 Aug 2024 08:02:51 +0200
+Message-ID: <87ikw5c644.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Ivan Orlov <ivan.orlov0322@gmail.com>
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net,
+	broonie@kernel.org,
+	shuah@kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr,
+	aholzinger@gmx.de
+Subject: Re: [PATCH v4 3/4] ALSA: timer: Introduce virtual userspace-driven timers
+In-Reply-To: <20240811202337.48381-4-ivan.orlov0322@gmail.com>
+References: <20240811202337.48381-1-ivan.orlov0322@gmail.com>
+	<20240811202337.48381-4-ivan.orlov0322@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240718075356.488253-1-linchengming884@gmail.com> <20240812105630.2b71ed19@xps-13>
-In-Reply-To: <20240812105630.2b71ed19@xps-13>
-From: Cheng Ming Lin <linchengming884@gmail.com>
-Date: Tue, 13 Aug 2024 14:02:44 +0800
-Message-ID: <CAAyq3SazQFSU9C5Z5YURP9cFdc6gLNJfF2ReQ9Z_-GpzVWhoeQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add fixups for two-plane serial NAND flash
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: vigneshr@ti.com, linux-mtd@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, richard@nod.at, alvinzhou@mxic.com.tw, 
-	leoyu@mxic.com.tw, Cheng Ming Lin <chengminglin@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: B5E312270A
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de,wanadoo.fr];
+	FREEMAIL_CC(0.00)[perex.cz,suse.com,lwn.net,kernel.org,vger.kernel.org,wanadoo.fr,gmx.de];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-Hi Miquel,
+On Sun, 11 Aug 2024 22:23:36 +0200,
+Ivan Orlov wrote:
+> +static int snd_utimer_ioctl_create(struct file *file,
+> +				   struct snd_timer_uinfo __user *_utimer_info)
+> +{
+> +	struct snd_utimer *utimer;
+> +	struct snd_timer_uinfo *utimer_info __free(kfree) = NULL;
+> +	int err;
+> +
+> +	utimer_info = memdup_user(_utimer_info, sizeof(*utimer_info));
+> +	if (IS_ERR(utimer_info))
+> +		return PTR_ERR(no_free_ptr(utimer_info));
+> +
+> +	err = snd_utimer_create(utimer_info, &utimer);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	utimer_info->id = utimer->id;
+> +
+> +	err = copy_to_user(_utimer_info, utimer_info, sizeof(*utimer_info));
+> +	if (err) {
+> +		snd_utimer_free(utimer);
+> +		return -EFAULT;
+> +	}
+> +
+> +	return anon_inode_getfd(utimer->name, &snd_utimer_fops, utimer, O_RDWR | O_CLOEXEC);
 
-Miquel Raynal <miquel.raynal@bootlin.com> =E6=96=BC 2024=E5=B9=B48=E6=9C=88=
-12=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=884:56=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi Cheng,
->
-> linchengming884@gmail.com wrote on Thu, 18 Jul 2024 15:53:54 +0800:
->
-> > From: Cheng Ming Lin <chengminglin@mxic.com.tw>
-> >
-> > Macronix serial NAND flash with a two-plane structure
-> > requires insertion of Plane Select bit into the column
-> > address during the write_to_cache operation.
-> >
-> > Additionally, for MX35{U,F}2G14AC, insertion of Plane
-> > Select bit into the column address is required during
-> > the read_from_cache operation.
->
-> I guess if the plane bit is needed for your chips, it is also needed
-> for other whips with two planes? Could it be possible that we never had
-> support for devices with more than one plane and you just fall into a
-> common issue? Maybe we should always add the plane information when
-> there is more than one plane to address? Can you check whether this is
-> specific to Macronix or not?
->
+Wouldn't utimer be left unfreed if this returns an error?
 
-I have reviewed the chips listed by each vendor.
 
-Micron offers MT29F2G01AB{A,B}GD, MT29F2G01AAAED with two planes;
-however, only MT29F2G01AAAED requires the plane select bit when performing
-program load or read from cache.
+thanks,
 
-Link: https://semiconductors.es/pdf-down/M/T/2/MT29F2G01AAAED-MicronTechnol=
-ogy.pdf
-
-Winbond provides W25N04KV with two planes, but it does not require the plan=
-e
-select bit for program load or cache read operations.
-
-Therefore, we should not always include the plane select bit when dealing w=
-ith
-multiple planes.
-
-> In this case we wouldn't need a specific fixup.
->
-
-Based on the above perspective, do we still need to use fixup, or can we us=
-e
-flags to determine whether the plane select bit is necessary?
-
-> >
-> > These flashes have been validated on Xilinx zynq-picozed
-> > board which included Macronix SPI Host.
-> >
-> > Cheng Ming Lin (2):
-> >   mtd: spinand: Add fixups for spinand
-> >   mtd: spinand: macronix: Fixups for Plane Select bit
-> >
-> >  drivers/mtd/nand/spi/core.c     |  7 ++++
-> >  drivers/mtd/nand/spi/macronix.c | 66 ++++++++++++++++++++++++++++++---
-> >  include/linux/mtd/spinand.h     | 17 +++++++++
-> >  3 files changed, 84 insertions(+), 6 deletions(-)
-> >
->
->
-> Thanks,
-> Miqu=C3=A8l
-
-Thanks,
-ChengMing Lin
+Takashi
 
