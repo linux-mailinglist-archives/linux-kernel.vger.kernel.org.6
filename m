@@ -1,134 +1,107 @@
-Return-Path: <linux-kernel+bounces-285404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C666950D03
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:18:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB96950D08
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 016061F256BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:18:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49BF21C20BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:18:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A01761A3BD6;
-	Tue, 13 Aug 2024 19:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C981A3BD6;
+	Tue, 13 Aug 2024 19:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UJcBxzHA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dvTp4psB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD8719CD00
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB1A1A4F21;
+	Tue, 13 Aug 2024 19:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576693; cv=none; b=kqY7M4MKDbBfrD1hOYsEYxBSAkJ38ik6zfK53c4bcVGDtF7AhnQcvyFquoC5MtrBHxvnJs9OYD0E6rBY+7Z6/w70Icx+dS9GKnqZwOopL5QDNsc/4KSgjMEzVMDROk5WlcA08MVe1I2yiI8IwRIQcmftuPcd9KPCUydkwWTUwqA=
+	t=1723576717; cv=none; b=QdXlqVbczECcA02loG2Cfbz812nKRvbM+PWZ8vI6PwLbF8/4tNmhz+B2GoMvXP7EdXAMegKqdoJE71td4mC/UV3DfpOqKPEH7BFy7oN63I2WXaK3Bbj4gmIkd5EVS2BYAdf6aK3XX4sgeHKa5ULF5r1+/mJi4Z1N5CrAVazrycU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576693; c=relaxed/simple;
-	bh=J/7f+bc9NmdSfhFyguy4I3TTRwUcHRQu6/PwycSGG5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vc9jvTFYy4VLmKtxkySeKpxEuA6fBQFJ3gQeWw396wJ7jAEoJCHAUOY/+ypgRJ2fO026Ie2vXb4VrqXaarMromYqQtathpogZoZm5/HlPVpvKoNPFbN9UMYfIlrgWJMXrlRdC4xbImZrH8ht0OuSjnAqslQS3sI5m6FQm8Ws3j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UJcBxzHA; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723576691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DqBAn7A/SORxl/E+//yz9lAkEvT4ewR8zL8GXdVNf8k=;
-	b=UJcBxzHAE3pSRDZHXwtxUjNRnYAoap6bejF+bPyRjj1NnEaVs5J3qu3ltoY4GWg0SpbYeA
-	FjLog788JJK/EaqOeLCh3Jhw30nlVj3NL5SunkNIhFYjsR8omP/vAIzvCqs7e65d4fq63B
-	6Pn0+AJbiZ7E7TaMggxKn0yyMq4lYRg=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-441-fw7Wqma1MwaI-8NDYYv4UQ-1; Tue, 13 Aug 2024 15:18:09 -0400
-X-MC-Unique: fw7Wqma1MwaI-8NDYYv4UQ-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f9612b44fso763634439f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:18:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576689; x=1724181489;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DqBAn7A/SORxl/E+//yz9lAkEvT4ewR8zL8GXdVNf8k=;
-        b=s820eKomkeMHgJvwSjo57HkR9INTEzmcTsfNvyyUH39mV82srrAkbcrK0xZwAJM+hb
-         TSOiym6wMW20el9lAwsvH77UzALrBnhZS/XELAIrUM7pdgFyUdMGt9GCFr9y/gnntZAL
-         sp4/aFkQGPSDMgqwRHRbsiQwaC4vSwtxi9TCNF6WK4lmqzmtqTN4jj1oM4gyz1UXkm3w
-         +BYRN+2gbMesN8yelp+WnmU+cRVl2AcnEnRmN7sU5kiIN6RgUvb4exOM5B63cwEByvjR
-         N2CFDJvDY2WLTEy0CKWrSjcJ/VTZssD3SJZyvgMhHXSIyQHNFSwMjs8bxMw3njC5PF6v
-         MHFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzNNBtQXCq6JN3RZLmF0bKxp93tar2Cu2wImlxmuya8a5njISDD6VMDfctAcXekhWWrhRiM0waAFxnZh6QFWJgxFmaBUU3BzVt+3Dc
-X-Gm-Message-State: AOJu0YxVzW1ExmyXaZ5noucpk9iCSvlqNCB6YrdeTEWenNS473uG5sqn
-	2Q6t49FLN2MdDSu0HhhrWTA/x3djRw+HCxiR0gUtF8ub6J8O5vupOdo+kvRusKJQE1RiTJfcMHo
-	NBkKXkplTYpgk3Yx8zgxiv0ICEvyC/gfhPu3kPjt4EsEnvMoL66jLySTctd0FCw==
-X-Received: by 2002:a05:6602:6b08:b0:81f:bcd2:24e with SMTP id ca18e2360f4ac-824dacff207mr64100139f.9.1723576688821;
-        Tue, 13 Aug 2024 12:18:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGwwof9f8qA/sn+YUSjzIomGUCxCuhfKOgve8kLwDVFC2q2nZl23gWPVS3a41EDgIKaC2T95w==
-X-Received: by 2002:a05:6602:6b08:b0:81f:bcd2:24e with SMTP id ca18e2360f4ac-824dacff207mr64097839f.9.1723576688430;
-        Tue, 13 Aug 2024 12:18:08 -0700 (PDT)
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4ca769105cbsm2650065173.27.2024.08.13.12.18.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 12:18:08 -0700 (PDT)
-Message-ID: <0798a2cf-b43b-4c17-94a0-142314d80f5b@redhat.com>
-Date: Tue, 13 Aug 2024 14:18:07 -0500
+	s=arc-20240116; t=1723576717; c=relaxed/simple;
+	bh=LtGc6wajrhVOIl5CtVks89VZVqP++H1N10wAKeaRw6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C73uqOuLm2f+4DlLwO2R9ux21oZp4sxN1eMfXJy3mgZF3SkwoItoRLbR/7lWZk17ws2sSIbydPhbgCnjtOTqeAlpvJ/V2yLt3nS9j2pxD1zbp0QUs97OByGd1xUx0e9jLJk1QGPwqBncpFh5Yd5b8GzoBl66VWthEVLkq61keB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dvTp4psB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 010B7C32782;
+	Tue, 13 Aug 2024 19:18:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723576717;
+	bh=LtGc6wajrhVOIl5CtVks89VZVqP++H1N10wAKeaRw6E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dvTp4psBfGRcvAXdjnnn5oXghTeBEYPSpB4k2hcZvGs31b0skj9OQHPdtk/l1V9D5
+	 jkz1kHZRmNquCYEgFpfuwQZfKCTPhj3lCfn9JIjb3K3AewMRlschTgITFSAkJMQAWm
+	 TuMnXO+5aJo5puTSc48YiJHSYAr/2BDKjniCOTBbwUuo6oaxvU6H50AKpV7rXQG4k4
+	 z9oHR4mUGOMOU7JtUBHyeL6RPd6ePCJVRQCkZw+bVhzXYXPfJyv9/bCNtvkVm/B7fA
+	 VNbgLtUNF5Ox6JZluoo8kGFsYNerxBfSBgc5b9jI3N29MucDcNSo8oWK1wQN1JR3U3
+	 Bnq5kywCNQKXA==
+Date: Tue, 13 Aug 2024 13:18:35 -0600
+From: Rob Herring <robh@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 1/6] of: dynamic: Add of_changeset_update_prop_string
+Message-ID: <20240813191835.GA1598838-robh@kernel.org>
+References: <20240808095931.2649657-1-wenst@chromium.org>
+ <20240808095931.2649657-2-wenst@chromium.org>
+ <Zrs_YijPxKBFQF0_@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] debugfs show actual source in /proc/mounts
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Marc_Aur=C3=A8le_La_France?= <tsi@tuyoix.net>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <e439fae2-01da-234b-75b9-2a7951671e27@tuyoix.net>
- <2024081303-bakery-rewash-4c1a@gregkh>
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <2024081303-bakery-rewash-4c1a@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zrs_YijPxKBFQF0_@smile.fi.intel.com>
 
-On 8/13/24 4:54 AM, Greg Kroah-Hartman wrote:
-> On Sat, Aug 10, 2024 at 01:25:27PM -0600, Marc Aurèle La France wrote:
->> After its conversion to the new mount API, debugfs displays "none" in
->> /proc/mounts instead of the actual source.  Fix this by recognising its
->> "source" mount option.
->>
->> Signed-off-by: Marc Aurèle La France <tsi@tuyoix.net>
->> Fixes: a20971c18752 ("vfs: Convert debugfs to use the new mount API")
->> Cc: stable@vger.kernel.org # 6.10.x: 9f111059e725: fs_parse: add uid & gid option option parsing helpers
->> Cc: stable@vger.kernel.org # 6.10.x: 49abee5991e1: debugfs: Convert to new uid/gid option parsing helpers
+On Tue, Aug 13, 2024 at 02:11:30PM +0300, Andy Shevchenko wrote:
+> On Thu, Aug 08, 2024 at 05:59:24PM +0800, Chen-Yu Tsai wrote:
+> > Add a helper function to add string property updates to an OF changeset.
+> > This is similar to of_changeset_add_prop_string(), but instead of adding
+> > the property (and failing if it exists), it will update the property.
+> > 
+> > This shall be used later in the DT hardware prober.
 > 
-> As this came from a fs tree, I'll let the vfs maintainer take it if they
-> think it is ok as I know nothing about the fs_parse stuff at the moment,
-> sorry.
-
-Hm, I guess this is OK, though it seems a little unexpected for debugfs
-to have to parse the trivial internal "source" option.
-
-This actually worked OK until
-
-0c07c273a5fe debugfs: continue to ignore unknown mount options
-
-but after that commit, debugfs claims to parse "source" successfully even
-though it has not. So really, it Fixes: that commit, not the original
-conversion.
-
-I'm not sure of a better approach offhand, but maybe a comment about why
-Opt_source exists in debugfs would help future readers?
-
-Thanks,
--Eric
-
-
-> greg k-h
+> ...
 > 
+> > +int of_changeset_update_prop_string(struct of_changeset *ocs,
+> > +				    struct device_node *np,
+> > +				    const char *prop_name, const char *str)
+> > +{
+> > +	struct property prop;
+> > +
+> > +	prop.name = (char *)prop_name;
+> > +	prop.length = strlen(str) + 1;
+> > +	prop.value = (void *)str;
+> 
+> Is it the existing style in the file? Otherwise I often see style like this
+> 
+> 	struct property prop = {
+> 		.name = (char *)prop_name;
+> 		.length = strlen(str) + 1;
+> 		.value = (void *)str;
+> 	};
+> 
+> in the kernel (IRQ domain, platform core, ...).
 
+Okay with me to use this style regardless of existing style.
+
+Rob
 
