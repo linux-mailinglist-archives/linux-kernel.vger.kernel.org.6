@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-284605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3731D9502FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:55:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7956E950301
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7B12873E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:55:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 308CC1F21634
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B272219EED0;
-	Tue, 13 Aug 2024 10:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3563819B3D7;
+	Tue, 13 Aug 2024 10:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsCSw3y3"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WyYqUWeC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D7C19ADB9;
-	Tue, 13 Aug 2024 10:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B4E19A288;
+	Tue, 13 Aug 2024 10:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546330; cv=none; b=mBGW8wQyM8fePxBJlA/haH84NBmQET0STasTDShlHNEcI3c+v+adTIldvQjtUJWSfjqPUX1YTve62F7qb+ASy9cQ97MBGotbPwVMJNOrxU8xVXUXSVdEAFxTViQRqFMiCsb4cIaIRtZ5ckfk2eNok/iy3PRWgYTA8qRhAZmJVqk=
+	t=1723546342; cv=none; b=F4SGvxOInh+tyM0d76c3K6cTCG4TwI810w0Ts8LqeCPhbU+poAodkzCNOdwNCnfK+TrNVWzVYRqm4eQBGNJJcqRGfuNQGIgo0+qEeCsTOBxf0w8FqGgUZg3CkZV/GXiF+ZkUaNbV7moukZwuCn9mtPmpSTOHQh0bIwOxtUL4rV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546330; c=relaxed/simple;
-	bh=19P1yH4b64Ikkc4SmfeEMqvZKraUG3cSFt25H0eCWL0=;
+	s=arc-20240116; t=1723546342; c=relaxed/simple;
+	bh=gbRjCyS9Mj5FwV06RkuYCeTtKVigXVOnoW8CteIpMcc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aZ1h+w+9rO01wjweN3fRdbNRWlqIqC1FmvaYyLuJ5OmZ9/LFuIrrrzytW89srEXY+bVDEyz7CRRQIOn8sFHEtweChKdnWFI/nYRC3tlUuMXsjEtI6UYGzpnKxaVQB3700fW8UMVINeSno9H+czGAoaL4jvOzulu3QGxncRkncAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsCSw3y3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24046C4AF09;
-	Tue, 13 Aug 2024 10:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723546329;
-	bh=19P1yH4b64Ikkc4SmfeEMqvZKraUG3cSFt25H0eCWL0=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=jVoLFcDPIA1Cz3uYKHmbjkvtX0jBNCFmhxv7ZOmtQW21npUGbck6/dqS45PWAcsmZfxf41IvG4tJDNXqa53yuhdu0tQ+NPmH+8MhSSU1SB+gKg77BqkWiBCkTiTOMmngN8pZZkkaXt9T9tkUpjgvP7ZumMpYfedfFgnOYUZyRyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WyYqUWeC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB5B0C4AF0B;
+	Tue, 13 Aug 2024 10:52:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723546342;
+	bh=gbRjCyS9Mj5FwV06RkuYCeTtKVigXVOnoW8CteIpMcc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NsCSw3y3lVYRZKrIkJAurcwjEwJSjcecqGPWp2dm2IyZN1NA8s9ETcCsa3elW34GA
-	 S7ZKO6PAswIa/CJAylNNNsG2Ot/+sQ75+YkEgELJm6pdd4pQ6fmZ7oJESAo6xcdR2+
-	 rnQOJhiez6xtHLtBYvLOzbTklMUJE13wyztuVtGvwvU6zf1NhNYb57ks3rEMs+Awic
-	 KnsaA4Rztvw7XJ3ltUD0Bu9j6YCeinuqRXkrZ5z3AAPdhbaNaQ9/kBe8Zyzij8m2VO
-	 ScgJX7kclPQnBrkaNP00aqOMUdHPwVMbEMJbDOLdsSYaq8gTI2oxKYBLGP80VVXwyp
-	 aKTBRZwAI58/Q==
-Date: Tue, 13 Aug 2024 11:52:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk,
-	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
-Subject: Re: [PATCH net-next 2/3] net: ag71xx: use devm for
- of_mdiobus_register
-Message-ID: <20240813105204.GB5183@kernel.org>
-References: <20240812190700.14270-1-rosenp@gmail.com>
- <20240812190700.14270-3-rosenp@gmail.com>
+	b=WyYqUWeCQ1pA3HCg2rrn7tr7k9c20JMN+PucK+924UXnvCjHQPY/1OLgb6x8tvdkH
+	 LGNfxVFOQ/xJtJLKUM6c6BnOyz98WPcxGwdg/gN9Z39N3WmLV47CHJlR7S+MGCdBkz
+	 cduXsEGP0fXhnS6y3MtO9AlQJeUBOxef7ZEOlk7A=
+Date: Tue, 13 Aug 2024 12:52:19 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Vasily Gorbik <gor@linux.ibm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
+Message-ID: <2024081331-bonnet-fiftieth-9a14@gregkh>
+References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
+ <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,48 +57,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812190700.14270-3-rosenp@gmail.com>
+In-Reply-To: <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
 
-On Mon, Aug 12, 2024 at 12:06:52PM -0700, Rosen Penev wrote:
-> Allows removing ag71xx_mdio_remove.
+On Tue, Aug 13, 2024 at 12:42:37PM +0200, Vasily Gorbik wrote:
+> From: Heiko Carstens <hca@linux.ibm.com>
 > 
-> Removed local mii_bus variable and assign struct members directly.
-> Easier to reason about.
+> iucv_alloc_device() gets a format string and a varying number of
+> arguments. This is incorrectly forwarded by calling dev_set_name() with
+> the format string and a va_list, while dev_set_name() expects also a
+> varying number of arguments.
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/net/ethernet/atheros/ag71xx.c | 39 ++++++++-------------------
->  1 file changed, 11 insertions(+), 28 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/atheros/ag71xx.c b/drivers/net/ethernet/atheros/ag71xx.c
-> index c22ebd3c1f46..1bc882fc1388 100644
-> --- a/drivers/net/ethernet/atheros/ag71xx.c
-> +++ b/drivers/net/ethernet/atheros/ag71xx.c
-> @@ -684,12 +684,10 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
->  {
->  	struct device *dev = &ag->pdev->dev;
->  	struct net_device *ndev = ag->ndev;
-> -	static struct mii_bus *mii_bus;
->  	struct device_node *np, *mnp;
->  	int err;
->  
->  	np = dev->of_node;
-> -	ag->mii_bus = NULL;
->  
->  	ag->clk_mdio = devm_clk_get_enabled(dev, "mdio");
->  	if (IS_ERR(ag->clk_mdio)) {
-> @@ -703,7 +701,7 @@ static int ag71xx_mdio_probe(struct ag71xx *ag)
->  		return err;
->  	}
->  
-> -	mii_bus = devm_mdiobus_alloc(dev);
-> +	ag->mii_bus = devm_mdiobus_alloc(dev);
->  	if (!mii_bus)
+> Fix this and call kobject_set_name_vargs() instead which expects a
+> va_list parameter.
 
-Above mii_bus is removed, but here it is used.
+I don't understand, why can't dev_set_name() be called here?
 
->  		return -ENOMEM;
->  
+Calling "raw" kobject functions is almost never the correct thing to be
+doing, ESPECIALLY as you have a struct device here.
 
-...
+thanks,
+
+greg k-h
 
