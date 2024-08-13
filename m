@@ -1,265 +1,182 @@
-Return-Path: <linux-kernel+bounces-284673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB889503ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:41:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 959EC9503F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:43:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B11A82829D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:41:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C869C1C220A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880121991B0;
-	Tue, 13 Aug 2024 11:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8311991BF;
+	Tue, 13 Aug 2024 11:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kYbU/HvK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="jtJIaSbF"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51496170A2B;
-	Tue, 13 Aug 2024 11:41:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E581990D7;
+	Tue, 13 Aug 2024 11:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549286; cv=none; b=tN/M8ygGo8FkzYRovZXtLJTAZW66PeS+A6tDsckgpdK1AGfUEuLRdIQ0ezR1zaSu2Nkn49ZsU4Y/6ZEhvWYkHi99NhXR2HpiiP1ABO44Zp/fISYfxhkOGnOOm40PXS9Ir9AyoMlYBQ+fPsxbcvPoOpisEHdj3hh4H0pn+0RIbrE=
+	t=1723549412; cv=none; b=SW7FVuf4fTlTPf/8T7v51XRgJXyJfOYa6P7f3a2ZSHbXdwUUU3kB5M9SnZFtZvO5H/0nww7xQsGLLlH/wzqFo14/yYSYB9hq1gsCM54nvfj6sqHixSWMkjRWwU8zbtGL/T9mOb7l+idtJY5UZAlMpNgD+Vy6wxGrwjRn4n4dOc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549286; c=relaxed/simple;
-	bh=I1yV/V1IVGNioZqOcI4srYsqZ1oyEFYyu5tfWfHA0Ro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uKbnFldamn1HCjyZ1qaXPnqse03syDlrVK2+P8IS6e2xTpHgCKPF00Cygf09iy2bXgfVHGBmU6r3ADYKGP+NurGXvJkZbrCoe7LrOmvM3cwdDUWG6UncupU5OqkE4yfjin7cEzvNNtJ6vXGTzS2lQOc+SLQ8ZwVsnHpULv+fN1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kYbU/HvK; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723549285; x=1755085285;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=I1yV/V1IVGNioZqOcI4srYsqZ1oyEFYyu5tfWfHA0Ro=;
-  b=kYbU/HvK58Dk2jrq/t9/935Itk/LzXQ2EelQwcGRpwvfLCiN/sNtA/UH
-   4iuyVGAFaUB1QnN2PCl5SZ+NSwbfQgFYXfBuW1VJIqoCxNSm4htU0qfb6
-   KyM1PIMgeMdrw2xRPUIKSEMtH4Zqr/ActARY9QTUHWn3z8ANYS2YV+4sb
-   vCXqg+rO0LvbdLgAQqgwEY80y5B/UZucYSVM2Gf41MHvoe0PhoQ9AXk3k
-   5teNTlODuDFbtlYYoArcsJzB4zrSxsvwtnGyi67xT88QTC+2C0c0kcJ8L
-   2d6bO2VAibZCuE9M3kKAX2kMGkUcMoSPVuQ/mJt81iHPpkpt8bNaixK2k
-   Q==;
-X-CSE-ConnectionGUID: 8PBSXPctRa6lVN1tIa7XYg==
-X-CSE-MsgGUID: /hhNGdqfQSySfuRQCNbkrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="44226863"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="44226863"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:41:24 -0700
-X-CSE-ConnectionGUID: Su+4s2FHRTCcvTwpuFdDtA==
-X-CSE-MsgGUID: Cww//6/TSFSLG5x9b7d5/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="58604117"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:41:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdptt-0000000EiB6-1uXP;
-	Tue, 13 Aug 2024 14:41:17 +0300
-Date: Tue, 13 Aug 2024 14:41:17 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 4/6] i2c: of-prober: Add GPIO and regulator support
-Message-ID: <ZrtGXfKE6BwupPPA@smile.fi.intel.com>
-References: <20240808095931.2649657-1-wenst@chromium.org>
- <20240808095931.2649657-5-wenst@chromium.org>
+	s=arc-20240116; t=1723549412; c=relaxed/simple;
+	bh=aiqfBHVXvbXqfg9CjaTV+ybmGn8aMCPGWUpQz1eKvwE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y/kfAPfNlCeCGZHJ0WBN0AM9rko8TJy2DELtFHGfPRrEtl0+sO6gqWuuOQi3UP5mgMGJ+jqYgCq3VaDxHDAAt4q0c7K8vaTP3Z3hFg2lemFnbbg4DTzSvgRJQNID/oBd2BWXEautV7/hMYdoqiEdOA0WPST0jsO9ampzkbns0cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=jtJIaSbF; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from [192.168.1.58] (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id A8DB4200BFF4;
+	Tue, 13 Aug 2024 13:43:28 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be A8DB4200BFF4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1723549408;
+	bh=3Zwrp9LeAOWPDiDZahZGuaEjNDNgO3Sw9YGT0O4y4+4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jtJIaSbFxDYOe57ca/hbB+pNOwFuv5CuW1yNzRFvO7vQk8vSQ8S6d8Hx9vJ3zwBL/
+	 vmReB+TWDQ53X6gf+niGOJtGGCxWnpCDEitPFh1aC4Tx7flgO43gkqxexk1oo2WrFP
+	 tJ7xRW8jbyTmFFUYsb1LlhFUGqNK5ygOYJBTbO49am3kfXprif9ZA4EXPyL+1XKXI3
+	 nJnV2evmyeZCY8L1oNIPl0DbG+VS/ESDFHrWN7CbjB1SAdeYqEiuoORS36uKCJAi0P
+	 GiDR1q7wldO5byZcQvfa/WJIPZAlb7lE6e1FgbFqemK2CosN8Nh0asTslVvaup8eE7
+	 uS9bUx13yQkUQ==
+Message-ID: <5bbba416-9c98-47f3-88b5-66747998bba5@uliege.be>
+Date: Tue, 13 Aug 2024 13:43:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808095931.2649657-5-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/2] net: ipv6: ioam6: new feature tunsrc
+To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, justin.iurman@uliege.be
+References: <20240809123915.27812-1-justin.iurman@uliege.be>
+ <20240809123915.27812-3-justin.iurman@uliege.be>
+ <8fe01ef6-2c85-4843-b686-8cb43cc1f454@redhat.com>
+Content-Language: en-US
+From: Justin Iurman <justin.iurman@uliege.be>
+In-Reply-To: <8fe01ef6-2c85-4843-b686-8cb43cc1f454@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Aug 08, 2024 at 05:59:27PM +0800, Chen-Yu Tsai wrote:
-> This adds GPIO and regulator management to the I2C OF component prober.
-
-Can this be two patches?
-
-> Components that the prober intends to probe likely require their
-> regulator supplies be enabled, and GPIOs be toggled to enable them or
-> bring them out of reset before they will respond to probe attempts.
+On 8/13/24 13:06, Paolo Abeni wrote:
+> On 8/9/24 14:39, Justin Iurman wrote:
+>> This patch provides a new feature (i.e., "tunsrc") for the tunnel (i.e.,
+>> "encap") mode of ioam6. Just like seg6 already does, except it is
+>> attached to a route. The "tunsrc" is optional: when not provided (by
+>> default), the automatic resolution is applied. Using "tunsrc" when
+>> possible has a benefit: performance.
 > 
-> Without specific knowledge of each component's resource names or
-> power sequencing requirements, the prober can only enable the
-> regulator supplies all at once, and toggle the GPIOs all at once.
-> Luckily, reset pins tend to be active low, while enable pins tend to
-> be active high, so setting the raw status of all GPIO pins to high
-> should work. The wait time before and after resources are enabled
-> are collected from existing drivers and device trees.
+> It's customary to include performances figures in performance related 
+> changeset ;)
 > 
-> The prober collects resources from all possible components and enables
-> them together, instead of enabling resources and probing each component
-> one by one. The latter approach does not provide any boot time benefits
-> over simply enabling each component and letting each driver probe
-> sequentially.
+>>
+>> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
+>> ---
+>>   include/uapi/linux/ioam6_iptunnel.h |  7 +++++
+>>   net/ipv6/ioam6_iptunnel.c           | 48 ++++++++++++++++++++++++++---
+>>   2 files changed, 51 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/include/uapi/linux/ioam6_iptunnel.h 
+>> b/include/uapi/linux/ioam6_iptunnel.h
+>> index 38f6a8fdfd34..6cdbd0da7ad8 100644
+>> --- a/include/uapi/linux/ioam6_iptunnel.h
+>> +++ b/include/uapi/linux/ioam6_iptunnel.h
+>> @@ -50,6 +50,13 @@ enum {
+>>       IOAM6_IPTUNNEL_FREQ_K,        /* u32 */
+>>       IOAM6_IPTUNNEL_FREQ_N,        /* u32 */
+>> +    /* Tunnel src address.
+>> +     * For encap,auto modes.
+>> +     * Optional (automatic if
+>> +     * not provided).
+>> +     */
+>> +    IOAM6_IPTUNNEL_SRC,        /* struct in6_addr */
+>> +
+>>       __IOAM6_IPTUNNEL_MAX,
+>>   };
+>> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+>> index cd2522f04edf..e0e73faf9969 100644
+>> --- a/net/ipv6/ioam6_iptunnel.c
+>> +++ b/net/ipv6/ioam6_iptunnel.c
+>> @@ -42,6 +42,8 @@ struct ioam6_lwt {
+>>       struct ioam6_lwt_freq freq;
+>>       atomic_t pkt_cnt;
+>>       u8 mode;
+>> +    bool has_tunsrc;
+>> +    struct in6_addr tunsrc;
+>>       struct in6_addr tundst;
+>>       struct ioam6_lwt_encap tuninfo;
+>>   };
+>> @@ -72,6 +74,7 @@ static const struct nla_policy 
+>> ioam6_iptunnel_policy[IOAM6_IPTUNNEL_MAX + 1] = {
+>>       [IOAM6_IPTUNNEL_MODE]    = NLA_POLICY_RANGE(NLA_U8,
+>>                              IOAM6_IPTUNNEL_MODE_MIN,
+>>                              IOAM6_IPTUNNEL_MODE_MAX),
+>> +    [IOAM6_IPTUNNEL_SRC]    = NLA_POLICY_EXACT_LEN(sizeof(struct 
+>> in6_addr)),
+>>       [IOAM6_IPTUNNEL_DST]    = NLA_POLICY_EXACT_LEN(sizeof(struct 
+>> in6_addr)),
+>>       [IOAM6_IPTUNNEL_TRACE]    = NLA_POLICY_EXACT_LEN(
+>>                       sizeof(struct ioam6_trace_hdr)),
+>> @@ -144,6 +147,11 @@ static int ioam6_build_state(struct net *net, 
+>> struct nlattr *nla,
+>>       else
+>>           mode = nla_get_u8(tb[IOAM6_IPTUNNEL_MODE]);
+>> +    if (tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_INLINE) {
+>> +        NL_SET_ERR_MSG(extack, "no tunnel source expected in this 
+>> mode");
+>> +        return -EINVAL;
+>> +    }
 > 
-> The prober will also deduplicate the resources, since on a component
-> swap out or co-layout design, the resources are always the same.
-> While duplicate regulator supplies won't cause much issue, shared
-> GPIOs don't work reliably, especially with other drivers. For the
-> same reason, the prober will release the GPIOs before the successfully
-> probed component is actually enabled.
+> when mode is IOAM6_IPTUNNEL_MODE_AUTO, the data path could still add the 
+> encapsulation for forwarded packets, why explicitly preventing this 
+> optimization in such scenario?
 
-...
+Actually, this check is correct. We don't want the "tunsrc" with 
+"inline" mode since it's useless. If the "auto" mode is chosen, then 
+it's fine (same for the "encap" mode). Preventing "tunsrc" for the 
+"inline" mode does *not* impact the auto mode. Basically:
 
-> +/*
-> + * While 8 seems like a small number, especially when probing many component
-> + * options, in practice all the options will have the same resources. The
-> + * code getting the resources below does deduplication to avoid conflicts.
-> + */
-> +#define RESOURCE_MAX 8
+tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_INLINE -> error
+tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_ENCAP -> OK
+tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_AUTO -> OK
 
-Badly (broadly) named constant. Is it not the same that defines arguments in
-the OF phandle lookup? Can you use that instead?
+It aligns better with the semantics of "tundst", which is a MUST for 
+"encap"/"auto" modes (and forbidden for the "inline" mode). In the case 
+of "tunsrc", it is a MAY for "encap"/"auto" modes (and forbidden for the 
+"inline" mode).
 
-...
-
-> +#define REGULATOR_SUFFIX "-supply"
-
-Name is bad, also move '-' to the code, it's not part of the suffix, it's a
-separator AFAICT.
-
-...
-
-> +	p = strstr(prop->name, REGULATOR_SUFFIX);
-
-strstr()?! Are you sure it will have no side effects on some interesting names?
-
-> +	if (!p)
-> +		return 0;
-
-> +	if (strcmp(p, REGULATOR_SUFFIX))
-> +		return 0;
-
-Ah, you do it this way...
-
-What about
-
-
-
-
-> +
-> +	strscpy(con, prop->name, p - prop->name + 1);
-> +	regulator = regulator_of_get_optional(node, con);
-> +	/* DT lookup should never return -ENODEV */
-> +	if (IS_ERR(regulator))
-> +		return PTR_ERR(regulator);
-
-...
-
-> +	for (int i = 0; i < data->regulators_num; i++)
-
-Why signed?
-
-> +		if (regulator_is_equal(regulator, data->regulators[i])) {
-> +			regulator_put(regulator);
-> +			regulator = NULL;
-> +			break;
-> +		}
-
-...
-
-> +#define GPIO_SUFFIX "-gpio"
-
-Bad define name, and why not "gpios"?
-
-...
-
-> +	p = strstr(prop->name, GPIO_SUFFIX);
-> +	if (p) {
-> +		strscpy(con, prop->name, p - prop->name + 1);
-> +		con_id = con;
-> +	} else if (strcmp(prop->name, "gpio") && strcmp(prop->name, "gpios")) {
-> +		return 0;
-
-We have an array of these suffixes, please use it. If required make it exported
-to the others.
-
-> +	}
-
-...
-
-> +	ret = of_parse_phandle_with_args_map(node, prop->name, "gpio", 0, &phargs);
-> +	if (ret)
-> +		return ret;
-
-> +	gpiod = fwnode_gpiod_get_index(fwnode, con_id, 0, GPIOD_ASIS, "i2c-of-prober");
-> +	if (IS_ERR(gpiod)) {
-> +		of_node_put(phargs.np);
-> +		return PTR_ERR(gpiod);
-> +	}
-
-Try not to mix fwnode and OF specifics. You may rely on fwnode for GPIO completely.
-
-> +	if (data->gpiods_num == ARRAY_SIZE(data->gpiods)) {
-> +		of_node_put(phargs.np);
-> +		gpiod_put(gpiod);
-> +		return -ENOMEM;
-> +	}
-
-...
-
-> +	for (int i = data->gpiods_num - 1; i >= 0; i--)
-> +		gpiod_put(data->gpiods[i]);
-
-This sounds like reinvention of gpiod_*_array() call.
-
-...
-
-> +	for (int i = data->regulators_num; i >= 0; i--)
-> +		regulator_put(data->regulators[i]);
-
-Bulk regulators?
-
-...
-
-> +	for_each_child_of_node_scoped(i2c_node, node) {
-
-Eventually _scoped(), but...
-
-> +		u32 addr;
-> +
-> +		if (!of_node_name_prefix(node, type))
-> +			continue;
-> +		if (of_property_read_u32(node, "reg", &addr))
-> +			continue;
-> +
-> +		dev_dbg(dev, "Requesting resources for %pOF\n", node);
-> +		ret = i2c_of_probe_get_res(dev, node, &data);
-> +		if (ret) {
-
-> +			of_node_put(i2c_node);
-
-...huh?!
-
-> +			return ret;
-> +		}
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>> +
+>>       if (!tb[IOAM6_IPTUNNEL_DST] && mode != 
+>> IOAM6_IPTUNNEL_MODE_INLINE) {
+>>           NL_SET_ERR_MSG(extack, "this mode needs a tunnel destination");
+>>           return -EINVAL;
+>> @@ -178,6 +186,14 @@ static int ioam6_build_state(struct net *net, 
+>> struct nlattr *nla,
+>>       ilwt->freq.n = freq_n;
+>>       ilwt->mode = mode;
+>> +
+>> +    if (!tb[IOAM6_IPTUNNEL_SRC]) {
+>> +        ilwt->has_tunsrc = false;
+>> +    } else {
+>> +        ilwt->has_tunsrc = true;
+>> +        ilwt->tunsrc = nla_get_in6_addr(tb[IOAM6_IPTUNNEL_SRC]);
+> 
+> Since you are going to use the source address only if != ANY, I think it 
+> would be cleaner to refuse such addresses here. That will avoid an 
+> additional check in the datapath.
+> 
+> Cheers,
+> 
+> Paolo
+> 
 
