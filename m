@@ -1,192 +1,125 @@
-Return-Path: <linux-kernel+bounces-284849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3C809505D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:02:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11AB09505E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CA38282E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0A1FB22DAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:06:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A1F19ADA6;
-	Tue, 13 Aug 2024 13:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D96019ADA8;
+	Tue, 13 Aug 2024 13:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l4pR/OhI"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MOHZEs3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463074206D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815644C8C;
+	Tue, 13 Aug 2024 13:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554116; cv=none; b=DoobjBxcp6/N3//bOjnJImatUbNf8FDEuDDcClowd37jGOHzXR2xvk4nBOsm2uKhlDkx5acaaIL0Q3pra+ly4t+LD2TB9H1IWBNBZSZNSXZ44HZisOZvh6caTm1xkv1mPj0MoFa99ZO1ty/eqNZGojNGrw45POko1WSizAndh/s=
+	t=1723554362; cv=none; b=ngGqVM0t3Kigqkp4Lgjauox4WJRm8niFthLpOHAbF0/lfaHKlB20z2WkRO+06f8TGLizRCJ0LoMxhQCK/OtscC6QS+xcRl8mFlreyxyZzvFxR7okCXXUbk6MeXQI60jTP7/NMVmnhSkGKCcaNmaHqcv/KGCuW2AyMeSxebX2l1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554116; c=relaxed/simple;
-	bh=OW9ZXqxEkr9RUH5IYYordISjGdWv1zhb8JCl6eodq94=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BwUMb8rzAKU8/MagYkXrapMqIuXT4Jag2IQEr9jUxQXT3nbUR4eAEDf/SdEfczhG6ZXE9ui1jKkroIAY9Ji7jt0VfmyNZVGA8pTUgsC9zroKbhN/SXounpaJk1MRc07YkAm4FVlwDn9CBNrbcoE9GTNQEorgurTikox/OFzVBHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l4pR/OhI; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a7a843bef98so79322566b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:01:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723554113; x=1724158913; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZ3qkhG6IpTE9k1+4JdfEiuc6iwsZmU2tud2hbQlnTM=;
-        b=l4pR/OhIHnwk6fDl4BcrY+KrVRyVAubIrh/Y/i6RzHb4DxJRwbYJf3MvXhcPgZ7xQ6
-         auVl3r6XtHWFF86hOy1H/d/UPTxAkD16rmuNoXEGy35BCnGtNOZ2/QRMkY1jBVvDkXKG
-         ptPqbHXDNmLAs9/l2qdwu5PpLiWeH0JH1fWIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723554113; x=1724158913;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZ3qkhG6IpTE9k1+4JdfEiuc6iwsZmU2tud2hbQlnTM=;
-        b=TTB245cGMnCVx2axKjgSK20DaUezcF8phsGBxoBdCTPdxroy1gA1VHm1rw4XuODsvJ
-         8C8mkWNB5DErKWqkFyfnOGNTYmQkPOv3sQMJs4diyuuqVleVfXbrmg6bazq8V2lpWi6y
-         bA9b/S8IBRg9iylVfo6h6QlxzqmJEjtNdBjko4yG++xXOiD+1ROzQo5cr6QHZAlLmzTO
-         SxDppGa4p4lhPp8/Mf/1b3BpQV4jw1p7Y/3SIgXNS+zy1rEJ5/PcpYKyxetpDBT3Gmfl
-         2iQD9u9QKZO030LJAlcpnEUg2aXelJxdq4pjIJEiwIiKK1hojxbHserlSxmrqUZckT/G
-         jnrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvRAJ5qYwqEZieObdRZ9Yj5OuqFsQ+QrPlRCxjAX66VEnmUVMFURXvESWM/1nlTBdThA2+xgjrQOsKS1ndaXGTiAbNCDHyttlYUDBy
-X-Gm-Message-State: AOJu0YwWyJThkoBiFaX6oZs89g4Q0lBikslnEBHpV3tEWFIIO93sFvUN
-	eY9S4hWjBggZ6BEOL2ciJ8hwgKkUJeiDezNi3VrymkoCaDsXhqmOaLb/Ut3fxEwfNki48eC27VB
-	9ZQ==
-X-Google-Smtp-Source: AGHT+IHeQe0fmCJgri1XqpVrZ1Fnm/qv6tGZ1VRtTdUpl48Ya2ISncGhdQ58XQr1F6hajNAno18fAw==
-X-Received: by 2002:a17:907:efd5:b0:a7a:929f:c0cf with SMTP id a640c23a62f3a-a80ed1efeedmr267495166b.21.1723554112746;
-        Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f475ccsm70229566b.14.2024.08.13.06.01.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso6414410a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:01:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUH7lJ6RlUyrcdbQ1Ordq7LJh4U/BjRlOBG2f7CmoxDtn4RWvYC0sUmRXDByon9NW2NS7bpbG+2OqfuB5yrUFiB+pP/OG6GWq0WZkgc
-X-Received: by 2002:a17:907:d2d9:b0:a7a:ae85:f245 with SMTP id
- a640c23a62f3a-a80ed258d19mr244135166b.38.1723554111718; Tue, 13 Aug 2024
- 06:01:51 -0700 (PDT)
+	s=arc-20240116; t=1723554362; c=relaxed/simple;
+	bh=z0/J+rknn+ERlf5qhUrQ2PI+OXA6YnEcKi9BS6uaEKU=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gmy1J0KcLP0GbZoD/a9aK2XPosfC3DG5ygLTFJyotntbydSxHgWa2idVuzI3x3sU62Zqvb87X8qcgD/A6zwDmtW3s9Li9Buq7U9HveVgWcQwJjHe4EdqoRgkli0A8YAPwV6sGttmYyqNXRyyjdUkMJNezgwKlSi1v5QWmXmeGe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MOHZEs3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BA80C4AF0B;
+	Tue, 13 Aug 2024 13:05:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723554362;
+	bh=z0/J+rknn+ERlf5qhUrQ2PI+OXA6YnEcKi9BS6uaEKU=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=MOHZEs3gpEO9j923e5xNFqew1WU4DIV3Uhc5sIR0Dh7JMp9OJB4ibyP46I+dg+hbI
+	 aC1srjtED0ne3HOtnRLrnqclhWlEY/bEW59T0hg+ojzUaz7bwb/Osw3oK6C8G+BkID
+	 zbi4xr2FRjdjgMXg10oXEf1iJ87mjQX2wfRH5rg1tLgpkkeYlwz0p1maM1k3sBPM7l
+	 J7BTm0nFw6Jh8tdFchyQQOG7vUT7CtzpL5citv6Vvul4duz4SEhODygBed529wSDjm
+	 +QPV4qnv6B9C8EQwcWDa2LjIhirnR+xx52KeKqEa6saWJqqBDfnHLt7s7QmmTJjiSS
+	 SEwpRD0KwHWxQ==
+Date: Tue, 13 Aug 2024 14:05:56 +0100
+From: Simon Horman <horms@kernel.org>
+To: Joe Damato <jdamato@fastly.com>, Stanislav Fomichev <sdf@fomichev.me>,
+	netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/6] netdevice: Add napi_affinity_no_change
+Message-ID: <20240813130556.GD5183@kernel.org>
+References: <20240812145633.52911-1-jdamato@fastly.com>
+ <20240812145633.52911-2-jdamato@fastly.com>
+ <ZrpvP_QSYkJM9Mqw@mini-arch>
+ <Zrp50DnNfbOJoKr7@LQ3V64L9R2.home>
+ <ZrqOekK43_YyMHmR@mini-arch>
+ <ZrsjLS8wRcYL3HxQ@LQ3V64L9R2.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
- <20240813-smatch-clock-v1-1-664c84295b1c@chromium.org> <ce0ed949-5e57-4193-8190-9e4aa9cb62be@stanley.mountain>
-In-Reply-To: <ce0ed949-5e57-4193-8190-9e4aa9cb62be@stanley.mountain>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 13 Aug 2024 15:01:37 +0200
-X-Gmail-Original-Message-ID: <CANiDSCu6BUdJt1sjmbOq2s4KU1JUN9D+HfnvSG6OqMhD-dKekw@mail.gmail.com>
-Message-ID: <CANiDSCu6BUdJt1sjmbOq2s4KU1JUN9D+HfnvSG6OqMhD-dKekw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] media: ar0521: Refactor ar0521_power_off()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, =?UTF-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrsjLS8wRcYL3HxQ@LQ3V64L9R2.home>
 
-Hi Dan
+On Tue, Aug 13, 2024 at 10:11:09AM +0100, Joe Damato wrote:
+> On Mon, Aug 12, 2024 at 03:36:42PM -0700, Stanislav Fomichev wrote:
+> > On 08/12, Joe Damato wrote:
+> > > On Mon, Aug 12, 2024 at 01:23:27PM -0700, Stanislav Fomichev wrote:
+> > > > On 08/12, Joe Damato wrote:
+> > > > > Several drivers have their own, very similar, implementations of
+> > > > > determining if IRQ affinity has changed. Create napi_affinity_no_change
+> > > > > to centralize this logic in the core.
+> > > > > 
+> > > > > This will be used in following commits for various drivers to eliminate
+> > > > > duplicated code.
+> > > > > 
+> 
+> [...]
+> 
+> > > > > +bool napi_affinity_no_change(unsigned int irq)
+> > > > > +{
+> > > > > +	int cpu_curr = smp_processor_id();
+> > > > > +	const struct cpumask *aff_mask;
+> > > > > +
+> > > > 
+> > > > [..]
+> > > > 
+> > > > > +	aff_mask = irq_get_effective_affinity_mask(irq);
+> > > > 
+> > > > Most drivers don't seem to call this on every napi_poll (and
+> > > > cache the aff_mask somewhere instead). Should we try to keep this
+> > > > out of the past path as well?
+> > > 
+> > > Hm, I see what you mean. It looks like only gve calls it on every
+> > > poll, while the others use a cached value.
+> > > 
+> > > Maybe a better solution is to:
+> > >   1. Have the helper take the cached affinity mask from the driver
+> > >      and return true/false.
+> > >   2. Update gve to cache the mask (like the other 4 are doing).
+> > 
+> > SG! GVE is definitely the outlier here.
+> 
+> OK, I'll hack on that for rfcv2 and see what it looks like. Thanks
+> for the suggestion.
+> 
+> Hopefully the maintainers (or other folks) will chime in on whether
+> or not I should submit fixes for patches 4 - 6 for the type mismatch
+> stuff first or just handle it all together.
 
-On Tue, 13 Aug 2024 at 14:54, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> On Tue, Aug 13, 2024 at 12:13:48PM +0000, Ricardo Ribalda wrote:
-> > Factor out all the power off logic, except the clk_disable_unprepare(),
-> > to a new function __ar0521_power_off().
-> >
-> > This allows ar0521_power_on() to explicitly clean-out the clock during
-> > the error-path.
-> >
-> > The following smatch warning is fixed:
-> > drivers/media/i2c/ar0521.c:912 ar0521_power_on() warn: 'sensor->extclk' from clk_prepare_enable() not released on lines: 912.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
->
-> It's better to just ignore false positives...  The problem here is that
-> Smatch can't track that to_ar0521_dev(dev_get_drvdata(dev))->sensor is the same
-> as sensor.  What I could do is say that "this frees *something* unknown" so
-> let's silence the warning."
->
-> The problem is that check_unwind.c is not very granular.  It just marks things
-> as allocated and freed.  I could make it more granular so the free and the
-> alloc have to match.  Or we could match based on the type.  This frees a
-> "struct ar0521_dev" so mark all those as freed in the caller.
->
-> >  drivers/media/i2c/ar0521.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/media/i2c/ar0521.c b/drivers/media/i2c/ar0521.c
-> > index 09331cf95c62..2c528db31ba6 100644
-> > --- a/drivers/media/i2c/ar0521.c
-> > +++ b/drivers/media/i2c/ar0521.c
-> > @@ -835,7 +835,7 @@ static const struct initial_reg {
-> >            be(0x0707)), /* 3F44: couple k factor 2 */
-> >  };
-> >
-> > -static int ar0521_power_off(struct device *dev)
-> > +static void __ar0521_power_off(struct device *dev)
-> >  {
-> >       struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> >       struct ar0521_dev *sensor = to_ar0521_dev(sd);
-> > @@ -850,6 +850,16 @@ static int ar0521_power_off(struct device *dev)
-> >               if (sensor->supplies[i])
-> >                       regulator_disable(sensor->supplies[i]);
-> >       }
-> > +}
-> > +
-> > +static int ar0521_power_off(struct device *dev)
-> > +{
-> > +     struct v4l2_subdev *sd = dev_get_drvdata(dev);
-> > +     struct ar0521_dev *sensor = to_ar0521_dev(sd);
-> > +
-> > +     clk_disable_unprepare(sensor->extclk);
-> > +     __ar0521_power_off(dev);
->
-> You had intended to remove the clk_disable_unprepare() from __ar0521_power_off()
-> but forgot so these are double unprepares.
+<2c>
+Patches 4 - 6 seem more like clean-ups that fixes to me: they aren't fixing
+any bugs are they? So I would just keep them as part of this patchset
+unless it becomes unwieldy.
+</2c>
 
-Ups, thanks for catching it :)
-
-Will send as v2, unless you fix it in smatch first ;P
-
-Regards!
-
->
-> regards,
-> dan carpenter
->
-> > +
-> >       return 0;
-> >  }
-> >
-> > @@ -908,7 +918,8 @@ static int ar0521_power_on(struct device *dev)
-> >
-> >       return 0;
-> >  off:
-> > -     ar0521_power_off(dev);
-> > +     clk_disable_unprepare(sensor->extclk);
-> > +     __ar0521_power_off(dev);
-> >       return ret;
-> >  }
-> >
-> >
-> > --
-> > 2.46.0.76.ge559c4bf1a-goog
-> >
-
-
-
--- 
-Ricardo Ribalda
+In any case thanks for all your good work in this area.
 
