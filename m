@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-285218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769CB950ABF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:49:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E07950AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0C58B25BC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:49:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9682833C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C23B1A2555;
-	Tue, 13 Aug 2024 16:49:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C53281A2557;
+	Tue, 13 Aug 2024 16:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IDbE0rW9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MKHRhKk8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC3B41CA9F;
-	Tue, 13 Aug 2024 16:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1095154918;
+	Tue, 13 Aug 2024 16:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567747; cv=none; b=AbEkZufBwDXtRzXuaK/OvmvBWqp5XBtIxAk32E42sA89bqQRwQtwqGAAo0VIPBMkx2zW1Tag2TMZ4KV3oHpE/3ewK2NbkXMqLdakMZpuFZU2dnq/CTbGeTHA8DOaA3d7BCOfUImrvuobjFJrVWlouQBoBrrFESdLLfGKCGbRaSg=
+	t=1723568147; cv=none; b=bd6UVSDpdokYBjcAYBdhv/e1OU72/RPxFZHKhTYlrZvpBLXwilw3bfE+hiE+zCnDQGDJOUd/Svk8KU1HLIIevfQLKoyn0f1IHEV34Xp/rFGejORBbVaqdW+WWMV3VnWe63XD7WjBRxqEQmHwnnB/T4YlsWUki6HwtKwBf3D8H4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567747; c=relaxed/simple;
-	bh=m6VisToohIEMIQJQIbU8qwBhwVBuJUfVH2KDYx1eBWQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=D/817RNhd6CfT7Q+aX514/QGJ8ike1h8ookgDYu7C1xXrB82ofeue1moRofgQsNg2a6E2iiBWXxxhAIyylwRAGn6GR05QxJMwDp5JOu04OgtEWQ+GQ0nVPN9C8EO86Ezn5iaV5+kRzcF27bCIq34pt2Qq7Y+fZIs3atq8Ovhis8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IDbE0rW9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E7BDC4AF09;
-	Tue, 13 Aug 2024 16:49:06 +0000 (UTC)
+	s=arc-20240116; t=1723568147; c=relaxed/simple;
+	bh=1EeeR6xvbEYsHpjGC575cAYMgmOuqaJxf/cgh2hpyXE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sbPDl9SmSY3IrJA0hf9IBvhVcNAEFQipLKI+vFFCc9Rx1L+D7dpfrfCAxMRnVCQrAGq8X0ki+UhCUEObRywjxDaknpIEMonhtPoypDMMGUriuYJ9bNLOn+jatCsj5WA301wK2w0KhGs+OSO4yM0HwsfjgUMxKY+O7+vNtRaIf14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MKHRhKk8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76BD8C4AF0F;
+	Tue, 13 Aug 2024 16:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723567746;
-	bh=m6VisToohIEMIQJQIbU8qwBhwVBuJUfVH2KDYx1eBWQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IDbE0rW91NfgeiyaVSeUG+leSIJD28drSzhjH79F/ohoMaJOx/o3fpMzrt+BoEFOB
-	 G0v8LK+bDG2+Hr+7zYY6x5ih92Ie+CpERw0cuiGIeu3PiMHA1d46z+LUJMBqIVRtu3
-	 3PoEHKElKNBWozlUp0IkA9LRyHvVClVf3EsX3Engg+aTJ6Iv4qz6eq7RPUbboIjTDl
-	 1BwIqjkQ/mEPC50dvdAIRC934MPbCEXIzUlibJUdYWtYj9W6USLekd2qTerSuTpOj2
-	 0/drEIfE2neATCFj24azxArhbSvQ7Tmxf59qwmgs20ItEsqJtkLw7/EGHPdaSCYgUn
-	 k/dE1cv0npviA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sduhk-003QLJ-AG;
-	Tue, 13 Aug 2024 17:49:04 +0100
-Date: Tue, 13 Aug 2024 17:49:04 +0100
-Message-ID: <86wmkkz7un.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Sunil Goutham <sgoutham@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH net] net: thunder_bgx: Fix netdev structure allocation
-In-Reply-To: <ZruI940YZCETGNGq@gmail.com>
-References: <20240812141322.1742918-1-maz@kernel.org>
-	<ZruI940YZCETGNGq@gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1723568146;
+	bh=1EeeR6xvbEYsHpjGC575cAYMgmOuqaJxf/cgh2hpyXE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MKHRhKk84jXFr/mGyfLN1Oi4A799JCNwM0GX71lPbrPmO1GgniBXmRYhrN89xuwIV
+	 Dlf/40Xv9RIr5+vOB5MPZDhkQ6oXj4qngnd+7AUBevL6miLolaX65HwpsCEsb3pdCU
+	 V8eBrkNrkmNUchPPE7TiRPyZQUDx/vRoXKtMyfrVjiC9mcTnoeZ6CR5uySde1D1quZ
+	 SREGzrfU+KiXfMGCYSz2KtSBJk+H5Xwrxw8fv0P1N1Te60FSJICUNwgQohSczCpOMM
+	 QDRLG4v69lQjTyajXDk/LY+FBXZ8lHoVHqSY/FiwNKIluc6cvw7h9c28H35al6Q61l
+	 01pBphJiSF7mg==
+Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-2610c095ea1so666243fac.3;
+        Tue, 13 Aug 2024 09:55:46 -0700 (PDT)
+X-Gm-Message-State: AOJu0YyPrJzGBgCas7oUVSZuBBg2NUuTqXJTZutZd341URAvvl2MqJ+q
+	jcvlQAtP3cbj6UjqeceyAw93+50giH8uprrzlsyXZZs3AC7cNdohymjFMqhaW53CI910hSrGkgS
+	MLijzJHYAy+TUJtH1xgaBGHqrv5E=
+X-Google-Smtp-Source: AGHT+IHR+I+Hgio3nA8QFrqAsFv0nUfgN4cL48N6lJgWVemibkoHNjBmDMW1463ISyqPnNu/UQAtoHqpUPttEC9gdmc=
+X-Received: by 2002:a05:6870:d152:b0:260:eb27:1b83 with SMTP id
+ 586e51a60fabf-26fe5bf88bemr158969fac.5.1723568145723; Tue, 13 Aug 2024
+ 09:55:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: leitao@debian.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, sgoutham@marvell.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <114901234.nniJfEyVGO@rjwysocki.net>
+In-Reply-To: <114901234.nniJfEyVGO@rjwysocki.net>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 13 Aug 2024 18:55:34 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0j_EHPANoxK38GbiMyLBX5tCesRzZRmwr3z=-sWQd1tzw@mail.gmail.com>
+Message-ID: <CAJZ5v0j_EHPANoxK38GbiMyLBX5tCesRzZRmwr3z=-sWQd1tzw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] thermal: Rework binding cooling devices to trip points
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Zhang Rui <rui.zhang@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 13 Aug 2024 17:25:27 +0100,
-Breno Leitao <leitao@debian.org> wrote:
-> 
-> Hello Marc,
-> 
-> On Mon, Aug 12, 2024 at 03:13:22PM +0100, Marc Zyngier wrote:
-> > Commit 94833addfaba ("net: thunderx: Unembed netdev structure") had
-> > a go at dynamically allocating the netdev structures for the thunderx_bgx
-> > driver.  This change results in my ThunderX box catching fire (to be fair,
-> > it is what it does best).
-> 
-> Should I be proud of it? :-)
+Hi Everyone,
 
-It's always good practice to check that someone still cares about
-terrible HW. Break it, wait for a few releases, and purge it if nobody
-was looking.
+On Mon, Aug 12, 2024 at 4:01=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> This is an update of
+>
+> https://lore.kernel.org/linux-pm/3134863.CbtlEUcBR6@rjwysocki.net/#r
+>
+> the cover letter of which was sent separately by mistake:
+>
+> https://lore.kernel.org/linux-pm/CAJZ5v0jo5vh2uD5t4GqBnN0qukMBG_ty33PB=3D=
+NiEqigqxzBcsw@mail.gmail.com/
+>
+> It addresses several (arguably minor) issues that have been reported by
+> robots or found by inspection in the v1 and takes review feedback into
+> account.
+>
+> The first 10 patches in the series are not expected to be controversial,
+> even though patch [05/17] requires some extra testing and review (if it
+> turns out to be problematic, it can be deferred without too much hassle).
+>
+> The other 7 patches are driver changes and code simplifications on top of
+> them which may require some more time to process.  For this reason, I'm
+> considering handling the first 10 patches somewhat faster, with the possi=
+ble
+> exception of patch [05/17].
 
-Unfortunately, this is one of the few machines I have that has 16kB
-page support, so I can't really turn a blind eye on the
-breakage... ;-)
+Since patch [04/17] in this series turned out to be broken, I decided
+to drop it and rearrange the rest.  This mostly affects patch [05/17]
+and patch [17/17] which is the only one that really depends on the
+former.
 
-> 
-> > The issues with this change are that:
-> > 
-> > - bgx_lmac_enable() is called *after* bgx_acpi_register_phy() and
-> >   bgx_init_of_phy(), both expecting netdev to be a valid pointer.
-> > 
-> > - bgx_init_of_phy() populates the MAC addresses for *all* LMACs
-> >   attached to a given BGX instance, and thus needs netdev for each of
-> >   them to have been allocated.
-> > 
-> > There is a few things to be said about how the driver mixes LMAC and
-> > BGX states which leads to this sorry state, but that's beside the point.
-> > 
-> > To address this, go back to a situation where all netdev structures
-> > are allocated before the driver starts relying on them, and move the
-> > freeing of these structures to driver removal. Someone brave enough
-> > can always go and restructure the driver if they want.
-> > 
-> > Fixes: 94833addfaba ("net: thunderx: Unembed netdev structure")
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> 
-> Reviewed-by: Breno Leitao <leitao@debian.org>
-> 
-> Thanks for taming my fiery commit.
+Of course, patch [05/17] also clashes with the Bang-bang governor
+changes that have just been posted:
 
-No worries.
+https://lore.kernel.org/linux-pm/1903691.tdWV9SEqCh@rjwysocki.net/
 
-Thanks,
+For this reason, please skip patches [04/17] (broken), [05/17] (needs
+to be rebased), and [17/17] (likewise) for now and focus on the rest
+of the series which still is applicable (a couple of patches need to
+be rebased slightly).
 
-	M.
+I'll send a rearranged v3 next week (I'll be mostly offline for the
+rest of this week), most likely without the patches mentioned above
+(I'll get back to them later).
 
--- 
-Without deviation from the norm, progress is not possible.
+Thanks!
 
