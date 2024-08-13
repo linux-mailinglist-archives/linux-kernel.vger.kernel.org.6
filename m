@@ -1,182 +1,145 @@
-Return-Path: <linux-kernel+bounces-284675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959EC9503F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:43:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766FE9503F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C869C1C220A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:43:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2939B1F26702
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8311991BF;
-	Tue, 13 Aug 2024 11:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765CC1991AA;
+	Tue, 13 Aug 2024 11:43:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="jtJIaSbF"
-Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E581990D7;
-	Tue, 13 Aug 2024 11:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549412; cv=none; b=SW7FVuf4fTlTPf/8T7v51XRgJXyJfOYa6P7f3a2ZSHbXdwUUU3kB5M9SnZFtZvO5H/0nww7xQsGLLlH/wzqFo14/yYSYB9hq1gsCM54nvfj6sqHixSWMkjRWwU8zbtGL/T9mOb7l+idtJY5UZAlMpNgD+Vy6wxGrwjRn4n4dOc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549412; c=relaxed/simple;
-	bh=aiqfBHVXvbXqfg9CjaTV+ybmGn8aMCPGWUpQz1eKvwE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y/kfAPfNlCeCGZHJ0WBN0AM9rko8TJy2DELtFHGfPRrEtl0+sO6gqWuuOQi3UP5mgMGJ+jqYgCq3VaDxHDAAt4q0c7K8vaTP3Z3hFg2lemFnbbg4DTzSvgRJQNID/oBd2BWXEautV7/hMYdoqiEdOA0WPST0jsO9ampzkbns0cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=jtJIaSbF; arc=none smtp.client-ip=139.165.32.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
-Received: from [192.168.1.58] (220.24-245-81.adsl-dyn.isp.belgacom.be [81.245.24.220])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fiCN1956";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aWDHmumI";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iz6DxFO+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JHCU7YQO"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id A8DB4200BFF4;
-	Tue, 13 Aug 2024 13:43:28 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be A8DB4200BFF4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
-	s=ulg20190529; t=1723549408;
-	bh=3Zwrp9LeAOWPDiDZahZGuaEjNDNgO3Sw9YGT0O4y4+4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jtJIaSbFxDYOe57ca/hbB+pNOwFuv5CuW1yNzRFvO7vQk8vSQ8S6d8Hx9vJ3zwBL/
-	 vmReB+TWDQ53X6gf+niGOJtGGCxWnpCDEitPFh1aC4Tx7flgO43gkqxexk1oo2WrFP
-	 tJ7xRW8jbyTmFFUYsb1LlhFUGqNK5ygOYJBTbO49am3kfXprif9ZA4EXPyL+1XKXI3
-	 nJnV2evmyeZCY8L1oNIPl0DbG+VS/ESDFHrWN7CbjB1SAdeYqEiuoORS36uKCJAi0P
-	 GiDR1q7wldO5byZcQvfa/WJIPZAlb7lE6e1FgbFqemK2CosN8Nh0asTslVvaup8eE7
-	 uS9bUx13yQkUQ==
-Message-ID: <5bbba416-9c98-47f3-88b5-66747998bba5@uliege.be>
-Date: Tue, 13 Aug 2024 13:43:28 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBD170A2B;
+	Tue, 13 Aug 2024 11:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723549392; cv=none; b=qykxC/dd1UcD421TpPCHJkAtmTx29/EUmn9JFox+5m5djpVPbf0ZSzk+oWekDaVYhIZrzuN1Yk8R3bphi58+ABDFbO7ah3C6woTGmOArCou6rpObVYaeOWlOQsxByLyJKsxkz9/45eK7SZ+gH7PO5yYVUWeOBSG7DJkkfdn+D9E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723549392; c=relaxed/simple;
+	bh=pjUfrEENcwPiuW1gXWM710zyRSsutznZkJKROw7R1o8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OnGYEGxw1lMpVqjOALXkQakg3AvoSbeZrquvwayRnOep0kYOjG5CIUxUunKK/lOTNcy0kBIJWRxuKKGxRoc8yNL65p9vPaV7vITfuvH3mtTegydGEHBSUDLK+NxktLNhAMz9DxJIi/upaZ9JMlXL5P/46bx5T/SqPC7aVoUpdv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fiCN1956; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aWDHmumI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iz6DxFO+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JHCU7YQO; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E4DEE227A1;
+	Tue, 13 Aug 2024 11:43:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723549389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
+	b=fiCN19565Qx1VSqMY3NU3oGaDboK4WMsqd0cMyY0zj4awButn3o4sW19YqtyP4jnyWFLn5
+	nnHKY/gRgaWfk0XJ8QKY2Ouygk21GsFMPuCYfUOaXvAYymzQFbnm+14GeyGcfYkH3praeW
+	HcNRdnnxumb4q4siY2ccIwsnVVhTh9k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723549389;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
+	b=aWDHmumIq+Opn/9js5XTCoHB2g5u5xXSpYKhLNW35qkp/6xnRb4SkMWXOhE3joFyHNG2XO
+	Jt3zqhqJOq/H0uCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723549387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
+	b=iz6DxFO+HoJwOsKmBRRGP1rbhrPYIt1XTB8TujjiOCkjkAY4zoiJPRLNEbq10+oNsCuTo7
+	PwD7MP8eJ//44kx2DRr7oRfXkrC45NK2sdvLD9YgPCmDWQqdgmrm9OfJaEPi/5zPQ87MV0
+	N4wfDhlycX+WdT6pGsPP3aEwIli6ykQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723549387;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
+	b=JHCU7YQOcjSUu1tkgKer3oiB/OuC09UZafAtKAYdYuHvXlu1wgg+568BdETGCWVyxDJ2cZ
+	qnUUFuTSTCH5vODQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C605013ABD;
+	Tue, 13 Aug 2024 11:43:07 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VwbDL8tGu2Y4cgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 11:43:07 +0000
+Date: Tue, 13 Aug 2024 13:43:44 +0200
+Message-ID: <87le10myvj.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc: <tiwai@suse.com>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>,
+	<patches@opensource.cirrus.com>
+Subject: Re: [PATCH] ALSA: hda: cs35l41: Remove redundant call to hda_cs_dsp_control_remove()
+In-Reply-To: <20240813113209.648-1-rf@opensource.cirrus.com>
+References: <20240813113209.648-1-rf@opensource.cirrus.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] net: ipv6: ioam6: new feature tunsrc
-To: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org, justin.iurman@uliege.be
-References: <20240809123915.27812-1-justin.iurman@uliege.be>
- <20240809123915.27812-3-justin.iurman@uliege.be>
- <8fe01ef6-2c85-4843-b686-8cb43cc1f454@redhat.com>
-Content-Language: en-US
-From: Justin Iurman <justin.iurman@uliege.be>
-In-Reply-To: <8fe01ef6-2c85-4843-b686-8cb43cc1f454@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.991];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,cirrus.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 8/13/24 13:06, Paolo Abeni wrote:
-> On 8/9/24 14:39, Justin Iurman wrote:
->> This patch provides a new feature (i.e., "tunsrc") for the tunnel (i.e.,
->> "encap") mode of ioam6. Just like seg6 already does, except it is
->> attached to a route. The "tunsrc" is optional: when not provided (by
->> default), the automatic resolution is applied. Using "tunsrc" when
->> possible has a benefit: performance.
+On Tue, 13 Aug 2024 13:32:09 +0200,
+Richard Fitzgerald wrote:
 > 
-> It's customary to include performances figures in performance related 
-> changeset ;)
+> The driver doesn't create any ALSA controls for firmware controls, so it
+> shouldn't be calling hda_cs_dsp_control_remove().
 > 
->>
->> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
->> ---
->>   include/uapi/linux/ioam6_iptunnel.h |  7 +++++
->>   net/ipv6/ioam6_iptunnel.c           | 48 ++++++++++++++++++++++++++---
->>   2 files changed, 51 insertions(+), 4 deletions(-)
->>
->> diff --git a/include/uapi/linux/ioam6_iptunnel.h 
->> b/include/uapi/linux/ioam6_iptunnel.h
->> index 38f6a8fdfd34..6cdbd0da7ad8 100644
->> --- a/include/uapi/linux/ioam6_iptunnel.h
->> +++ b/include/uapi/linux/ioam6_iptunnel.h
->> @@ -50,6 +50,13 @@ enum {
->>       IOAM6_IPTUNNEL_FREQ_K,        /* u32 */
->>       IOAM6_IPTUNNEL_FREQ_N,        /* u32 */
->> +    /* Tunnel src address.
->> +     * For encap,auto modes.
->> +     * Optional (automatic if
->> +     * not provided).
->> +     */
->> +    IOAM6_IPTUNNEL_SRC,        /* struct in6_addr */
->> +
->>       __IOAM6_IPTUNNEL_MAX,
->>   };
->> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
->> index cd2522f04edf..e0e73faf9969 100644
->> --- a/net/ipv6/ioam6_iptunnel.c
->> +++ b/net/ipv6/ioam6_iptunnel.c
->> @@ -42,6 +42,8 @@ struct ioam6_lwt {
->>       struct ioam6_lwt_freq freq;
->>       atomic_t pkt_cnt;
->>       u8 mode;
->> +    bool has_tunsrc;
->> +    struct in6_addr tunsrc;
->>       struct in6_addr tundst;
->>       struct ioam6_lwt_encap tuninfo;
->>   };
->> @@ -72,6 +74,7 @@ static const struct nla_policy 
->> ioam6_iptunnel_policy[IOAM6_IPTUNNEL_MAX + 1] = {
->>       [IOAM6_IPTUNNEL_MODE]    = NLA_POLICY_RANGE(NLA_U8,
->>                              IOAM6_IPTUNNEL_MODE_MIN,
->>                              IOAM6_IPTUNNEL_MODE_MAX),
->> +    [IOAM6_IPTUNNEL_SRC]    = NLA_POLICY_EXACT_LEN(sizeof(struct 
->> in6_addr)),
->>       [IOAM6_IPTUNNEL_DST]    = NLA_POLICY_EXACT_LEN(sizeof(struct 
->> in6_addr)),
->>       [IOAM6_IPTUNNEL_TRACE]    = NLA_POLICY_EXACT_LEN(
->>                       sizeof(struct ioam6_trace_hdr)),
->> @@ -144,6 +147,11 @@ static int ioam6_build_state(struct net *net, 
->> struct nlattr *nla,
->>       else
->>           mode = nla_get_u8(tb[IOAM6_IPTUNNEL_MODE]);
->> +    if (tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_INLINE) {
->> +        NL_SET_ERR_MSG(extack, "no tunnel source expected in this 
->> mode");
->> +        return -EINVAL;
->> +    }
+> commit 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for
+> firmware coefficients") removed the call to hda_cs_dsp_add_controls() but
+> didn't remove the call for destroying those controls.
 > 
-> when mode is IOAM6_IPTUNNEL_MODE_AUTO, the data path could still add the 
-> encapsulation for forwarded packets, why explicitly preventing this 
-> optimization in such scenario?
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> Fixes: 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for firmware coefficients")
 
-Actually, this check is correct. We don't want the "tunsrc" with 
-"inline" mode since it's useless. If the "auto" mode is chosen, then 
-it's fine (same for the "encap" mode). Preventing "tunsrc" for the 
-"inline" mode does *not* impact the auto mode. Basically:
+Applied now.  Thanks.
 
-tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_INLINE -> error
-tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_ENCAP -> OK
-tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_AUTO -> OK
 
-It aligns better with the semantics of "tundst", which is a MUST for 
-"encap"/"auto" modes (and forbidden for the "inline" mode). In the case 
-of "tunsrc", it is a MAY for "encap"/"auto" modes (and forbidden for the 
-"inline" mode).
-
->> +
->>       if (!tb[IOAM6_IPTUNNEL_DST] && mode != 
->> IOAM6_IPTUNNEL_MODE_INLINE) {
->>           NL_SET_ERR_MSG(extack, "this mode needs a tunnel destination");
->>           return -EINVAL;
->> @@ -178,6 +186,14 @@ static int ioam6_build_state(struct net *net, 
->> struct nlattr *nla,
->>       ilwt->freq.n = freq_n;
->>       ilwt->mode = mode;
->> +
->> +    if (!tb[IOAM6_IPTUNNEL_SRC]) {
->> +        ilwt->has_tunsrc = false;
->> +    } else {
->> +        ilwt->has_tunsrc = true;
->> +        ilwt->tunsrc = nla_get_in6_addr(tb[IOAM6_IPTUNNEL_SRC]);
-> 
-> Since you are going to use the source address only if != ANY, I think it 
-> would be cleaner to refuse such addresses here. That will avoid an 
-> additional check in the datapath.
-> 
-> Cheers,
-> 
-> Paolo
-> 
+Takashi
 
