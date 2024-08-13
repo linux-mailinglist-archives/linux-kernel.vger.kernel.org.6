@@ -1,139 +1,96 @@
-Return-Path: <linux-kernel+bounces-285467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A01950DE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:26:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1692D950DE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CE921F23881
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:26:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496C41C2252C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9954C1A707C;
-	Tue, 13 Aug 2024 20:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nq6cFsC7"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D5F1A76CD;
+	Tue, 13 Aug 2024 20:25:52 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A6F1A7047
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF31A7047;
+	Tue, 13 Aug 2024 20:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723580746; cv=none; b=i11GydO4Qey7Wcp08tKpX/GIB9fWK4n5KX0Kak5x4ZMipzdnYtBiIt/a/L+5JGFjj2n6XCz5w9+4sT7iHEwJUhcQM+VIrIybP6L+zP35zyp9AAZQRYu2ZHysQx8uP2vjH9JPrADGJE7siuE+fjahpyT6eEBeobuj6aURvhxhxkg=
+	t=1723580751; cv=none; b=juzeVIQTkXox5QbKrLPnBL5DSdQbO2UU5SMJ4JuqKxUJc5vogSLRQzbWroP2h5Nfau6syBc+82XdWLnyhdsuQiblFwuDBxiF43Rh97bJ0bq5kK++5vBP8PXXvc7d+niltVy+aj8IzMFI8jC7d7DeZiLY0A3MKH2eaf3l5UNql8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723580746; c=relaxed/simple;
-	bh=tzIAzt339urOnQP09jTAjXTel5g3L+lCAuxLVJJcPg8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p8O79PXa3iwMxQcDspdR93yCL5/SNpscPhXl9MstZavlc3hu5r3R2KuOYD+lhYvlUnASSxmFpMiRrW+01tjDyzre3HUWjNca5mDbjbX/F8sv2y8z3+0Eq/cPzRg/JiVo8DDcRMFIoJhbUOtc4BW4AaCyUSE576pt+k9gk2BoXjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nq6cFsC7; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428e12f6e56so9965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723580743; x=1724185543; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C8hC/8u5rHQIE5OTDIzO5nzE5ccZrI6SAOcdv8SAfDg=;
-        b=Nq6cFsC7R9m1nkBGwXL8XV5lNp1CMHOmel6arhe4m3i2d0zk2qFJ/9rhLIOb5jUjem
-         180RAWApLDXqQ0v/ghxPslCcWt56gG1+NS3CyYRhEsULlQx9MMrhJLi1i/o2Xn4EHDoM
-         TB/lz+NJ5tnf+0Y73MxL+A9FZWmfCat9Tcg/UEkuFsP9pht7SBTHtZEHmGf57Dpm0zCR
-         FijL/PozcaZFA7abHphrB0tjAtaomVleSzOdkEUPQmPTxTgEbvLLYpmOao+X2JVoCzMJ
-         Z7WbJUGWRSO2mfgg2gIPqQ04nFkUVOPB1VxozmIQkqLSPMLzpit63ZOjDRVVmEw2RyEs
-         93bQ==
+	s=arc-20240116; t=1723580751; c=relaxed/simple;
+	bh=z44RztmMtf5SITglTxONm/jYUCjvFDooxkvRIMfeOGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rj+LEycMhrrCZwBbfFo0C5qppU+4kgCuKz+NcKzlPRg0GfEljClSBhzaCS+AzvlJH34qZfw9tt6SaQnPLNRky9B89JcDSqWkbdwcL+kfIEpGaYUPnZzpqn+EazxH7DzsD9kZruGxryc/pOBx62FKADh2YXEBE4+W4WzaVDFYdmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1ff4568676eso57101595ad.0;
+        Tue, 13 Aug 2024 13:25:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723580743; x=1724185543;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C8hC/8u5rHQIE5OTDIzO5nzE5ccZrI6SAOcdv8SAfDg=;
-        b=BvuVL4ukaAuPdvd8/xff6EEuG40WYou4wIqvAOkWXuihrO6x5PwlbalWetmIl7jpEB
-         rxorBEpyVZMsEGk5H8bipRqLkOInB23TQXcy7NdgYYslupwqnkg47fnPVbHwRDKjF7Jn
-         LrV8cJUwHQhzNn5jPkvQSGdntl4GAyogYmCX+MsBLKzlfLl2liBe81PGtqbkyLywSyO6
-         LNG5U/AP3qu8f4q/hkTsauPDb0C/mof7oXNbFk2bUZq73E667OQ8VUAPrb1BnLycYViq
-         FYUi/N7TdRSRbxFi1Neeb6k/JZZlD44jbRinFI6jKN3SrYq1PsxZsdbmJ81ifkO8SdaC
-         ddsA==
-X-Forwarded-Encrypted: i=1; AJvYcCX0ErbFBbK0jYTbCDdTwRlogbug21uh4nDA1i/2HlEZQiTz6SKfa+wqs+l8bG9+DgzXG+jEyVQheC+U2H1wBE0l2DRTURFrQxzVr8kk
-X-Gm-Message-State: AOJu0YyT3vTKowJswKCyIxpDjRUouwGPE6wVYwlg+0t43aAl6G4hhfXN
-	gjGAysQmO2BGDfAHHh7gdbvDy5AbWdxIQDwJtGqeJH2T9NgFeLsCpt/3AIxxQA==
-X-Google-Smtp-Source: AGHT+IGLLbA7isZyCSmnyKczKWq9+cyJGJEJpYUawegxPAI3pwvA6i9O/zVRBIs345jqiM6wxH4Ilg==
-X-Received: by 2002:a05:600c:501f:b0:426:7018:2e2f with SMTP id 5b1f17b1804b1-429dec3d255mr5555e9.5.1723580742844;
-        Tue, 13 Aug 2024 13:25:42 -0700 (PDT)
-Received: from localhost ([2a00:79e0:9d:4:a608:a4cb:f4c2:6573])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877f234sm26530545e9.1.2024.08.13.13.25.42
+        d=1e100.net; s=20230601; t=1723580750; x=1724185550;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yV0uIj9ZiP/YeZH/VpPgdI6zY7QFHUilTAHYpLb2t6Q=;
+        b=op0JWIrsE/zT8eBk9z3qGXsdbsbS2NMgVBBjs6HtsO0TX/YeCp8N2fLix2KcclwotW
+         SC456gdIv0+IoUM8KVWc4Z4BXPzXvUBDNSv8izpIwSGYaEjPhCNm1vlw/ZF0e4zcPO8r
+         PttsYUQMKjm1pgaGTjTbAEMo7Its0YvMzZ4SJ7KvAP1gaH62A5IDx7VksosSVQUJX1Wn
+         +i+7GITekaFmjxYtZu4r8lJXT/LNHjKW+OlmxnkrUcs2SgkOft5HV6WZiHJF135AfgMa
+         iVYBP/hd9H3ZHMNQuxWnTu9O7lUXMVbF8hrZffHRK5vkvvDE6gN31EYaEt8ex+d//LGS
+         2vGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoTvfgMcA9sD3iwRLdkr+UcPudTXXm6rM4YLMGw0ClVAQdutHXcA9MB/8vVMnv9KicVAnkpdbPqq7PeFpOUPJ3ghfMD2gtIUN04YKwgyLqmOS4AnS6oNvsWyctjwNp4nhGkTS/taImf8hD0eLv6P2Sy4IwBBPSIPTsHue1VIyLge+YhXbauA==
+X-Gm-Message-State: AOJu0Yzm4quN+lIkW/0+8bScT/UMtIh65tWD5gQvkwAX7GXDwSwTKJN+
+	1j0QczhKNIX4WoOxV6fh2Zhthbq7lz1tJ+PaLP+vUtnulg3ECMjY
+X-Google-Smtp-Source: AGHT+IFPHJgjFA+x8OjfXI7lztWMo3R/k3TEX5vSm0aeHgFpmHiP833wBXYNGxb8GBXBaDY3CMP51A==
+X-Received: by 2002:a17:903:2312:b0:1fb:8620:c0bd with SMTP id d9443c01a7336-201d63aa520mr8568325ad.15.1723580749905;
+        Tue, 13 Aug 2024 13:25:49 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14ac7csm17523045ad.108.2024.08.13.13.25.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 13:25:42 -0700 (PDT)
-From: Jann Horn <jannh@google.com>
-Date: Tue, 13 Aug 2024 22:25:22 +0200
-Subject: [PATCH v2 2/2] userfaultfd: Don't BUG_ON() if khugepaged yanks our
- page table
+        Tue, 13 Aug 2024 13:25:49 -0700 (PDT)
+Date: Wed, 14 Aug 2024 05:25:47 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240813202547.GC1922056@rocinante>
+References: <20240727090604.24646-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-uffd-thp-flip-fix-v2-2-5efa61078a41@google.com>
-References: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
-In-Reply-To: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Pavel Emelianov <xemul@virtuozzo.com>, 
- Andrea Arcangeli <aarcange@redhat.com>, Hugh Dickins <hughd@google.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
- David Hildenbrand <david@redhat.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
- Jann Horn <jannh@google.com>, stable@vger.kernel.org
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723580736; l=1397;
- i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=tzIAzt339urOnQP09jTAjXTel5g3L+lCAuxLVJJcPg8=;
- b=U5pU3rpcbs7XfZhd6TtUWxvTgQAQAflkgJ5K+vZYgkKpqqGS3XYHTVRAJkLG94mCVkVX5F7fz
- XY0Lb4AZrHXC6jrhYrjoIfRyPG3EWQwDdn3PUdv78rzxnTrCvAGxNWq
-X-Developer-Key: i=jannh@google.com; a=ed25519;
- pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240727090604.24646-1-manivannan.sadhasivam@linaro.org>
 
-Since khugepaged was changed to allow retracting page tables in file
-mappings without holding the mmap lock, these BUG_ON()s are wrong - get rid
-of them.
+Hello,
 
-We could also remove the preceding "if (unlikely(...))" block, but then
-we could reach pte_offset_map_lock() with transhuge pages not just for file
-mappings but also for anonymous mappings - which would probably be fine but
-I think is not necessarily expected.
+> Starting from commit 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure
+> for drivers requiring refclk from host"), all the hardware register access
+> (like DBI) were moved to dw_pcie_ep_init_registers() which gets called only
+> in qcom_pcie_perst_deassert() i.e., only after the endpoint received refclk
+> from host.
+> 
+> So there is no need to enable the endpoint resources (like clk, regulators,
+> PHY) during probe(). Hence, remove the call to qcom_pcie_enable_resources()
+> helper from probe(). This was added earlier because dw_pcie_ep_init() was
+> doing DBI access, which is not done now.
+> 
+> While at it, let's also call dw_pcie_ep_deinit() in err path to deinit the
+> EP controller in the case of failure.
 
-Cc: stable@vger.kernel.org
-Fixes: 1d65b771bc08 ("mm/khugepaged: retract_page_tables() without mmap or vma lock")
-Reviewed-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Jann Horn <jannh@google.com>
----
- mm/userfaultfd.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Applied to controller/qcom, thank you!
 
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 290b2a0d84ac..acc56c75ba99 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -807,9 +807,10 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 			err = -EFAULT;
- 			break;
- 		}
--
--		BUG_ON(pmd_none(*dst_pmd));
--		BUG_ON(pmd_trans_huge(*dst_pmd));
-+		/*
-+		 * For shmem mappings, khugepaged is allowed to remove page
-+		 * tables under us; pte_offset_map_lock() will deal with that.
-+		 */
- 
- 		err = mfill_atomic_pte(dst_pmd, dst_vma, dst_addr,
- 				       src_addr, flags, &folio);
+[1/1] PCI: qcom-ep: Do not enable resources during probe()
+      https://git.kernel.org/pci/pci/c/cd0b3e13ec30
 
--- 
-2.46.0.76.ge559c4bf1a-goog
-
+	Krzysztof
 
