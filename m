@@ -1,136 +1,191 @@
-Return-Path: <linux-kernel+bounces-284283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A670B94FF56
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:07:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EDD394FF4F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62C3285E79
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE3CC1F24977
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EE113AA2D;
-	Tue, 13 Aug 2024 08:06:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A08136320;
+	Tue, 13 Aug 2024 08:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="BIglsb3t"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="et1USiSw"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2246A61FDA;
-	Tue, 13 Aug 2024 08:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447CE3B192;
+	Tue, 13 Aug 2024 08:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723536412; cv=none; b=qPi/hJa4zl1cp3WlZK1yURNXn6pmz92pEl/MDWmgyOYKyFIpjWc7YK2kM4i6Oi9EBtpsF5i52yuexsafVbVxAz/bj5hOzefjBZJ9chtGiXSENvQ7gDACqm+tfTIErS9t7c4IcTRCWwUM+Mjo/sOz2pcmiEZM/NHDRm2S1nOiGmM=
+	t=1723536328; cv=none; b=Epez+qgzD9gdazjhWok/Kwcab9cvEZ9fDMSJZgeeDAmYgFEFf9QLmj+qTlvHVTsV70f/LzYtee6LqFKizbumeQvt0Xef1C0y2/WpV1v4axD3eTkye2bBrmS7eG18ef2oWijiy0ZjXXcpRLus1rZs7/e7mYI8az7xHRHwg54BfX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723536412; c=relaxed/simple;
-	bh=lRCQuiNobHMBXYSfL9Jb0rozCZiVBAIK+nJJBMDE7k8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2O5Dl8ZVyGd4Q4iC1mo6GJJyK5MR3vxGF8VW1u+OFza1tLC6GIuaRQ2IZl+oNsHoRApiD/FhGkfng0II/Om7pQzOSaejzEPqIn79/gUQk8c4cjZBjwyDqx1gjsZPHfsrn9H+6Ebvg/+BgsjxvsjDawZCJsyyHG4xBv3auPlW04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=BIglsb3t; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5A457148028B;
-	Tue, 13 Aug 2024 09:59:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1723536001; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=wehv1/Y6utVzwpAWRYGCv0ZqekTM2rrEH5oNBghZoN8=;
-	b=BIglsb3t05HmI9NwE/7MEvr8neiKlsLMtF6wQ0SxiawwKyZq2dPWjMs5gNsptS1+fqTc3y
-	Rv7h1KjVijA/v6rySzEh7S0fNkF6cVQ9iSsVKLT1bHoT/Ws50zqJTLaxEBK/BkR1wWgPhS
-	ig+tVGLK12V0UwlkxjaY0ivYTyV+cwTyvtwUJvqcHJ7OC74O9WGWd+wmMTbV5tbZ54tLLp
-	zi9nlfV9mq979EhvzN3pfP5e5RGxmuuZqykCXf9+BGOxHhb/kXp3vfsKgjcPpQEkR4hFRY
-	PgaysLPDBiV5SoZ6i6enfHcOdpm3nT9PXQ+3Tt9T3pFB4cRENH7wxdOYcO9NTw==
-Date: Tue, 13 Aug 2024 09:59:51 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Mathieu Othacehe <othacehe@gnu.org>
-Cc: Richard Genoud <richard.genoud@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: Re: [PATCH] tty: atmel_serial: use the correct RTS flag.
-Message-ID: <20240813-absinthe-plaza-70575e847015@thorsis.com>
-Mail-Followup-To: Mathieu Othacehe <othacehe@gnu.org>,
-	Richard Genoud <richard.genoud@bootlin.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-References: <20240808060637.19886-1-othacehe@gnu.org>
+	s=arc-20240116; t=1723536328; c=relaxed/simple;
+	bh=FIdrhg5f7gPL8C52+sglRjEBy/cZyurxJLuVYrykLcs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3viIMpL0SRPdjA8Pm9dFC2nvydpCRVEKvOF9M/jyKwDT6wtTG98FRaoYHFDveUCG8LhuKH5lYocw1ALW6e7RZSmd74f+4iYt2MPFqrFXveSi9zAA/hmPjgecaxfmo4BJive9lSrFjwBTGI1D/Ca6/BeCBxK8rbdzwdNVaecJfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=et1USiSw; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1723536326; x=1755072326;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FIdrhg5f7gPL8C52+sglRjEBy/cZyurxJLuVYrykLcs=;
+  b=et1USiSwpizgdot7p6iM7dqRE0GqlI1+zJIR/LXdMWOP8nU1ctLcsycb
+   qyuN3+/S88KcJclKlTxGh2dUDU+N01ZjXqmPDX1PF/Ve09Dm9viZIFb+N
+   DYL7GSs4pjLn1o36ye4XNdDLeywytvp1so2k7SWeTsWqmjq3CDAtZIOks
+   9pouFE6DE/ePSHpb8jO65D+4s9soCzGabrjJ2t2XibhdFFe4FZ4qx+1IU
+   j9TCxEiKaJXf4+iCX6UTM9rQD2GwKF+8UHc5+WY0h+n7aaL2pRf6iDogv
+   qqINRARic2JK5q9uhlw1fotAQgt3qYtA6nxk1bFBu+sz3y1J8UGcBNRzt
+   A==;
+X-CSE-ConnectionGUID: oFI4QnJZT5WrEkZVyaQ1bA==
+X-CSE-MsgGUID: HZzKbVx5Sh+M+65LtEXbHA==
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="asc'?scan'208";a="197845690"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2024 01:05:24 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 13 Aug 2024 01:04:57 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Tue, 13 Aug 2024 01:04:55 -0700
+Date: Tue, 13 Aug 2024 09:04:17 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Jan Kiszka <jan.kiszka@siemens.com>
+CC: Conor Dooley <conor@kernel.org>, Minda Chen <minda.chen@starfivetech.com>,
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Dan
+ Carpenter <dan.carpenter@linaro.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v2 1/3] dt-bindings: phy: jh7110-usb-phy: Add sys-syscon
+ property
+Message-ID: <20240813-haiku-pusher-f2fb037a2f49@wendy>
+References: <cover.1723472153.git.jan.kiszka@siemens.com>
+ <30f3ca9f6bd788e16767b36aa22c0e9dc4d1c6a4.1723472153.git.jan.kiszka@siemens.com>
+ <20240812-overstuff-skirt-7a8aabbcdc6f@spud>
+ <8cdba8b0-7364-4c09-b18a-f3f59da1eae2@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="4yclWa1Vx5GaX1/H"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240808060637.19886-1-othacehe@gnu.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <8cdba8b0-7364-4c09-b18a-f3f59da1eae2@siemens.com>
 
-Hello Mathieu,
+--4yclWa1Vx5GaX1/H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Am Thu, Aug 08, 2024 at 08:06:37AM +0200 schrieb Mathieu Othacehe:
-> In RS485 mode, the RTS pin is driven high by hardware when the transmitter
-> is operating. This behaviour cannot be changed. This means that the driver
-> should claim that it supports SER_RS485_RTS_ON_SEND and not
-> SER_RS485_RTS_AFTER_SEND.
-> 
-> Otherwise, when configuring the port with the SER_RS485_RTS_ON_SEND, one
-> get the following warning:
-> 
-> kern.warning kernel: atmel_usart_serial atmel_usart_serial.2.auto:
-> ttyS1 (1): invalid RTS setting, using RTS_AFTER_SEND instead
+On Tue, Aug 13, 2024 at 07:31:50AM +0200, Jan Kiszka wrote:
+> On 12.08.24 17:55, Conor Dooley wrote:
+> > On Mon, Aug 12, 2024 at 04:15:51PM +0200, Jan Kiszka wrote:
+> >> From: Jan Kiszka <jan.kiszka@siemens.com>
+> >>
+> >> Analogously to the PCI PHY, access to sys_syscon is needed to connect
+> >> the USB PHY to its controller.
+> >>
+> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> >> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> >> ---
+> >> CC: Rob Herring <robh@kernel.org>
+> >> CC: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> >> CC: Conor Dooley <conor+dt@kernel.org>
+> >> ---
+> >>  .../bindings/phy/starfive,jh7110-usb-phy.yaml         | 11 +++++++++++
+> >>  1 file changed, 11 insertions(+)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb=
+-phy.yaml b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.y=
+aml
+> >> index 269e9f9f12b6..eaf0050c6f17 100644
+> >> --- a/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.ya=
+ml
+> >> +++ b/Documentation/devicetree/bindings/phy/starfive,jh7110-usb-phy.ya=
+ml
+> >> @@ -19,6 +19,16 @@ properties:
+> >>    "#phy-cells":
+> >>      const: 0
+> >> =20
+> >> +  starfive,sys-syscon:
+> >> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> >> +    items:
+> >> +      - items:
+> >> +          - description: phandle to System Register Controller sys_sy=
+scon node.
+> >> +          - description: PHY connect offset of SYS_SYSCONSAIF__SYSCFG=
+ register for USB PHY.
+> >=20
+> > Why is having a new property for this required? The devicetree only has
+> > a single usb phy, so isn't it sufficient to look up the syscon by
+> > compatible, rather than via phandle + offset?
+> >=20
+>=20
+> I didn't design this, I just copied it from
+> starfive,jh7110-pcie-phy.yaml. As that already exists, I'm neither sure
+> we want to change that anymore nor deviate in the pattern here.
 
-I've seen this warning already, when migrating a sam9x60 based board
-from LTS kernel 6.1 to 6.6, so thanks for taking care of this.
+To be honest, I think some of the other users of phandle + offset on
+this soc were just copy-pasted without thinking about whether or not they
+were required too. This one seems like it should just be a lookup by
+compatible in the driver instead of by phandle. As a bonus, it will work
+with existing devicetrees - whereas your current implementation will
+fail to probe on systems that have the old devicetree, a regression for
+systems running with that devicetree and downstream firmware.
 
-I can confirm after applying the patch on top of 6.6.44 the warning is
-gone, and RS-485 communication still works on our platform, so …
+Cheers,
+Conor.
 
-Tested-by: Alexander Dahl <ada@thorsis.com>
+> Jan
+>=20
+> >> +    description:
+> >> +      The phandle to System Register Controller syscon node and the P=
+HY connect offset
+> >> +      of SYS_SYSCONSAIF__SYSCFG register. Connect PHY to USB controll=
+er.
+> >> +
+> >>    clocks:
+> >>      items:
+> >>        - description: PHY 125m
+> >> @@ -47,4 +57,5 @@ examples:
+> >>                   <&stgcrg 6>;
+> >>          clock-names =3D "125m", "app_125m";
+> >>          #phy-cells =3D <0>;
+> >> +        starfive,sys-syscon =3D <&sys_syscon 0x18>;
+> >>      };
+> >> --=20
+> >> 2.43.0
+> >>
+>=20
+> --=20
+> Siemens AG, Technology
+> Linux Expert Center
+>=20
 
-Does this deserve a Fixes tag for the change which introduced struct
-serial_rs485 to the atmel serial driver?  Then it should be this:
+--4yclWa1Vx5GaX1/H
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Fixes: af47c491e3c7 ("serial: atmel: Fill in rs485_supported")
+-----BEGIN PGP SIGNATURE-----
 
-Greets
-Alex
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrsTdQAKCRB4tDGHoIJi
+0qFLAP9V1J8PxI9x0hWQY9Q7/h1oGpyntcEVazVyrJCTuLV1iwEAgBTmAnTv+AkD
+7ty2V6D+iyeVdmYHbEWBlDVrNlDeKA0=
+=cWfz
+-----END PGP SIGNATURE-----
 
-> which is contradictory with what's really happening.
-> 
-> Signed-off-by: Mathieu Othacehe <othacehe@gnu.org>
-> ---
->  drivers/tty/serial/atmel_serial.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-> index 0a90964d6d107..09b246c9e389e 100644
-> --- a/drivers/tty/serial/atmel_serial.c
-> +++ b/drivers/tty/serial/atmel_serial.c
-> @@ -2514,7 +2514,7 @@ static const struct uart_ops atmel_pops = {
->  };
->  
->  static const struct serial_rs485 atmel_rs485_supported = {
-> -	.flags = SER_RS485_ENABLED | SER_RS485_RTS_AFTER_SEND | SER_RS485_RX_DURING_TX,
-> +	.flags = SER_RS485_ENABLED | SER_RS485_RTS_ON_SEND | SER_RS485_RX_DURING_TX,
->  	.delay_rts_before_send = 1,
->  	.delay_rts_after_send = 1,
->  };
-> -- 
-> 2.45.2
-> 
-> 
+--4yclWa1Vx5GaX1/H--
 
