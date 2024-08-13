@@ -1,73 +1,62 @@
-Return-Path: <linux-kernel+bounces-284721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DBD595046B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:06:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C067395046E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:07:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 208081F2314C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B472882C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:07:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D09187348;
-	Tue, 13 Aug 2024 12:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34ACB199246;
+	Tue, 13 Aug 2024 12:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JjSsPXOx"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O68Hqbk9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E853D1990A2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039552262B;
+	Tue, 13 Aug 2024 12:07:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550774; cv=none; b=Ceg0jC+d+LRMeXf3/juLx9Q7NkUiR4duZhz7c/l23mFPVArIr2XdPTU6KB1jD2qTiwdWpXlipymIw/kuisD6pOCXhtkdNwOvggsslSo+2z0LW4q0R0tWpFq0tkjzes3WRM2kVj2on0Thha9nJwC2qEhQ65aQURm7uQvCuv1Lf/4=
+	t=1723550823; cv=none; b=dosWMhYhV16HYbIB+dnsioVwGQGpiBc5rQq+z1W5SkQeen7VWyCuJLDzd5L74esG3z7/WSnIEfnzjb4yI3HeoGnvjsr82jx2UnvmGT493ZOUNI9BcjwdXfhbJ4ziEl2i8OpWLi1WEQvOal4s0Il9ss22rQQk4DzxeJe9Nq8rQDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550774; c=relaxed/simple;
-	bh=z1541LLoljeScFAviJcOpT1FxAuiQdONaXIbOm3M7tI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g7N0TRljIlOAnxeD3wKmOB0rbmUbZba/9Eq4nV9jl8qQFiRwr7JN/iBh274mQO2yrnDf0vO3IeFcSBZyI89UlMzFEsSLs7nPQfBZ2dcAF+n/C1sS7RgQTH2WL11YCnn7fgkrpuL1VmJ+t5fJKyU4Nh4itDUSUSBdAtWZhWXoN1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JjSsPXOx; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-72703dd2b86so300848a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:06:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723550771; x=1724155571; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FTZVldKRb/o0QB96J4YTidzWQUdWVcUNuGr7ChBtChw=;
-        b=JjSsPXOxgfl7ezcuD/8V4TqKdlBKIMKrdrkGqDG75O0abFwSFdCZrqI2eovmp4poMS
-         TN/4nT4DWsEMU7iF0NjDrBumfOlQHU30aXDanGYDjs/nOsRKy9vaLiV/M7O+G48i7Udn
-         cmV3hDyXS97ojVwiHGPdZzuxOixYVxBLqG6dFYYT32qc5wbOLPxIpAsuUVa7cK9Vtin8
-         Wc7z3kesq2pOP4alLKp2K35F/PIEIO5OPTYfBJxd0GB46+YzGVtQIv/LJ/EecGZ/ZlCD
-         8wbAGGFqhcVWi2tvK6t5REzn8zdLBw9eMxjyzbIjR2lShAJ+uriDgmyDUIYZtxN4ZSkZ
-         7ygw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723550771; x=1724155571;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FTZVldKRb/o0QB96J4YTidzWQUdWVcUNuGr7ChBtChw=;
-        b=KBuWFqe5xah0KcnFecnxIgMMux4x0fhsA2jK2/tnElfLNUybXzUFQ8C7D1AJFc0Fu/
-         x0icfgXwXxDODYXDWc3iJVjX4zm85vB3Gcv2jsznVC7/RoxcNsyqNcN5mQZQ97pk6BH9
-         AEQFpMiJxSY+GJ4jaU5MWcxasnbTJ3oXpxolT0ZLQ3MmWXY5Vjwra3fyTQl4pMbKbZLQ
-         oUZScC/ruvsUsCNGhqLwA77osiWNnljDmHSc2aH1BqtafxkUx2ny+TCoCjo//dbUTSvD
-         dWQEutvhBEh/SiSbvOVo9frQkg5ZnyA7nIdHmlrRWTvHcN9PhOpbBcHMqzCsiPFAabqt
-         BScw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOQIHI5jLlI3egw1Jv5WWJ66AQkiZVPd0VolpXzI3AnFIWMC/V+MafGhD0nGAnCs24GXPMKQL80+6GLT4P42OFagXnxRplaM/sE1qQ
-X-Gm-Message-State: AOJu0Yy39dK1IJ2vuMvl/Qay5cl3xSXDVrMRxIEx+evZwL/+/9zQVX1U
-	FQDtRwWuX/tVEFZjy71gnEpZI4XXl7xH3h309PRXEkbOb4XGG6H0rTBSJ/9az2w=
-X-Google-Smtp-Source: AGHT+IHA0uIBnOoa9zK5QZ9wRP6pn4p19E6yD5IViwfQv396i/GQegJiGKmsIH9XBKL7FRfeZDxC/g==
-X-Received: by 2002:a05:6a21:999d:b0:1c4:c007:51b7 with SMTP id adf61e73a8af0-1c8ddf13570mr1450329637.6.1723550770637;
-        Tue, 13 Aug 2024 05:06:10 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5889deasm5760351b3a.18.2024.08.13.05.06.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 05:06:09 -0700 (PDT)
-Message-ID: <bbc6c4c2-b596-43b3-b37f-95f9fa4134c3@kernel.dk>
-Date: Tue, 13 Aug 2024 06:06:08 -0600
+	s=arc-20240116; t=1723550823; c=relaxed/simple;
+	bh=HFXqsgfkGh2i63MLKdDhs7xSwlr9jFR8Gx45hNBwkXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JX2Zap4a791sEGpABZrnN5xzntzqHeQgD2Kbu9IV+aEonY3UWdAFVow2yQ6TOATb0I678rzhfqGnHYcTf8XoGmswWlL6t6Phi6Tn2CS+xqZSqrsUngAyyLslLNDsbDSvDC4Y4XiwxxcVN/0E/gabSL2MZLfpOuVAixW/PLhZscQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O68Hqbk9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D5LCVZ005635;
+	Tue, 13 Aug 2024 12:06:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CYyOx8obdom0b/vBXVrrjfaT8/6mGblM1Ij0bv6hbto=; b=O68Hqbk9SozddwHJ
+	rC/5lEfiebZKRjP6HZBZBMW7jQloSqnD8yA5xuEzqpMG0GE14QBtP10cwWgsRzSM
+	nC4tMrT6nKo4yM6jG7blceswhnJOLTd1NFoQuXkEPHpyVqD457x7Ws5TMck7ZhBr
+	QAAzOhxuqJZ2Z1Qv/YL01EK+4/bjTfiquEZOjIDkilbqJdBgXazLcm/iAWsCw/zA
+	i9Dt6bffvZxc089KHBcJsnm1QrPhsuN+z0RM92z3o1x/xIkGp0wMiCx1UL7aB2oy
+	ajG3VP3ffQvqV55rrwurDg7thn1djsgEXx3+nJ28otQIpL78jLNAAnTFPfUf4rWA
+	fl1txA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18xyjbw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:06:46 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DC6jtp027343
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:06:45 GMT
+Received: from [10.133.1.196] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 05:06:42 -0700
+Message-ID: <3cb1da06-88e3-4dd2-b56c-e0ab725ef6b2@quicinc.com>
+Date: Tue, 13 Aug 2024 15:06:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,59 +64,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/fdinfo: add timeout_list to fdinfo
-To: Ruyi Zhang <ruyi.zhang@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, peiwei.li@samsung.com
-References: <CGME20240812020140epcas5p3431842ed5508ffb5ae9f1d1812cae4d5@epcas5p3.samsung.com>
- <20240812020052.8763-1-ruyi.zhang@samsung.com>
+Subject: Re: [PATCH 1/1] iommu/arm-smmu-qcom: remove runtime pm enabling for
+ TBU driver
+To: Zhenhua Huang <quic_zhenhuah@quicinc.com>,
+        Pranjal Shrivastava
+	<praan@google.com>
+CC: <robdclark@gmail.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+        <joro@8bytes.org>, <iommu@lists.linux.dev>,
+        <linux-arm-msm@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <dmitry.baryshkov@linaro.org>, Georgi Djakov <djakov@kernel.org>
+References: <1722335443-30080-1-git-send-email-quic_zhenhuah@quicinc.com>
+ <ZroNUGkKuC1L7Qfr@google.com>
+ <cca690c3-916e-43b6-b2a5-eca4f2eb838e@quicinc.com>
+ <ZrsJLqTnq6tG2xp4@google.com>
+ <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20240812020052.8763-1-ruyi.zhang@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+From: Georgi Djakov <quic_c_gdjako@quicinc.com>
+In-Reply-To: <dee2f394-c9c5-4099-8e05-ce0c8756887b@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 33E62etIps3z33ArWAoTcMfQb0k2iyOH
+X-Proofpoint-ORIG-GUID: 33E62etIps3z33ArWAoTcMfQb0k2iyOH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=710
+ suspectscore=0 phishscore=0 malwarescore=0 mlxscore=0 spamscore=0
+ lowpriorityscore=0 impostorscore=0 clxscore=1011 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130088
 
-On 8/11/24 8:00 PM, Ruyi Zhang wrote:
-> io_uring fdinfo contains most of the runtime information,
-> which is helpful for debugging io_uring applications;
-> However, there is currently a lack of timeout-related
-> information, and this patch adds timeout_list information.
+Hi Zhenhua,
 
-Please wrap this at 72 chars, lines are too short right now.
+On 8/13/2024 10:56 AM, Zhenhua Huang wrote:
+> 
+> On 2024/8/13 15:20, Pranjal Shrivastava wrote:
+>> On Tue, Aug 13, 2024 at 10:37:33AM +0800, Zhenhua Huang wrote:
+>>>
+>>> On 2024/8/12 21:25, Pranjal Shrivastava wrote:
+>>>> On Tue, Jul 30, 2024 at 06:30:43PM +0800, Zhenhua Huang wrote:
+>>>>> TBU driver has no runtime pm support now, adding pm_runtime_enable()
+>>>>> seems to be useless. Remove it.
+>>>>>
+>>>>> Signed-off-by: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+[..]
+>> I agree that there are no pm_runtime_suspend/resume calls within the TBU
+>> driver. I'm just trying to understand why was pm_runtime enabled here
+>> earlier (since it's not implemented) in order to ensure that removing it
+>> doesn't cause further troubles?
+> 
+> See above my assumption, need Georgi to comment but.
 
-> @@ -219,9 +221,19 @@ __cold void io_uring_show_fdinfo(struct seq_file *m, struct file *file)
->  
->  		seq_printf(m, "  user_data=%llu, res=%d, flags=%x\n",
->  			   cqe->user_data, cqe->res, cqe->flags);
-> -
->  	}
-> -
->  	spin_unlock(&ctx->completion_lock);
+Thank you for looking at the code! Your assumptions are mostly correct,
+but if you try this patch on a real sdm845 device you will notice some
+issues. So it's actually needed to re-configure the power-domains, three
+of which (MMNOC GDSCs) are requiring this because of a HW bug. I should
+have put a comment in the code to avoid confusion, but it took me some
+time to confirm it.
 
-Some unrelated whitespace changes here?
+I have sent a patch to handle this more cleanly:
+https://lore.kernel.org/lkml/20240813120015.3242787-1-quic_c_gdjako@quicinc.com
 
-> +
-> +	seq_puts(m, "TimeoutList:\n");
-> +	spin_lock(&ctx->timeout_lock);
-> +	list_for_each_entry(timeout, &ctx->timeout_list, list) {
-> +		struct io_kiocb *req = cmd_to_io_kiocb(timeout);
-> +		struct io_timeout_data *data = req->async_data;
-> +
-> +		seq_printf(m, "  off=%d, target_seq=%d, repeats=%x,  ts.tv_sec=%lld, ts.tv_nsec=%ld\n",
-> +			   timeout->off, timeout->target_seq, timeout->repeats,
-> +			   data->ts.tv_sec, data->ts.tv_nsec);
-> +	}
-> +	spin_unlock(&ctx->timeout_lock);
+So we should not remove the runtime pm calls until some version of the
+above patch gets merged.
 
-That seq_printf() line is way too long, please wrap like what is done
-for the overflow printing above.
+Thanks,
+Georgi
 
-Outside of that, please also rebase on the for-6.12/io_uring branch, as
-this one would not apply there.
+>> I see Georgi added it as a part of
+>> https://lore.kernel.org/all/20240704010759.507798-1-quic_c_gdjako@quicinc.com/
+>>
+>> But I'm unsure why was it required to fix that bug?
+> 
+> I'm just thinking it is dead code and want to see if my understanding is correct.
 
-Thanks!
-
--- 
-Jens Axboe
 
 
