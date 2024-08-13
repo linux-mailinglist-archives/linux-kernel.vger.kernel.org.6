@@ -1,186 +1,206 @@
-Return-Path: <linux-kernel+bounces-284677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316949503FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA07B950400
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55D8E1C2174F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C5E4B235D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45CA31991C6;
-	Tue, 13 Aug 2024 11:46:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32FE91991D7;
+	Tue, 13 Aug 2024 11:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SIUmahaX"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oNJmBVbQ"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2079.outbound.protection.outlook.com [40.107.244.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFD0170A2B;
-	Tue, 13 Aug 2024 11:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549582; cv=none; b=oNclDQS8R9JQFu4VehXDyBVC349RUNOyJuj3/Gh8lzu6/LcbXBrB+oCikptAl2uK0aZxjNHWkUvP23zxnr2aar6xnPL/j7jECH8z9IboDuIsXUDsjHRyJaqeJpQ3Qr2IzQS+JVKKAWDbYTxBBiETjG6Cq4//V1mIcfUFz++V1MA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549582; c=relaxed/simple;
-	bh=PEn3XtRW5tjHG4xl8Hpy2BfiNBLyF2Xe3sCNrstiv8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+IrYzl8RmJwvq44x+jQ/f6B3sCat5H9ogFMDvSEfeql18QckHEvpMw1o8uJVq9PWd9yjcxAgzmVVlN4aDxFNA/Qa5yPlq4FkkptLwQS9HU+M0suu8iIFgxtwKQiKimFDJiiGVC9Bu6AEzcXhSTgFUoYavcoAHwSvxcdKvmwAL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SIUmahaX; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723549581; x=1755085581;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PEn3XtRW5tjHG4xl8Hpy2BfiNBLyF2Xe3sCNrstiv8Y=;
-  b=SIUmahaXxiR98Fc0tIM0nTtJqsKgfVOaiHlhBEWYTiLruyM5PTjlwLFN
-   JmMm3ASDlRW2SXqvXZW7f7AAQ2oLjRBiOU9wZ4vLI49WVfqS8sH2Iiuu5
-   KBFgEgWJuLjrhMhSI7w5YH+ioO1Wjcd0/lgPyOOL9GbtJBWehwzTBklxt
-   ibgUe4WYp14MqSYEUxOTzGv2bKiRv8j7m/RDB+kPZJdAj353eRE0QjgUP
-   vya4LzYR35C8irQnxOtj0SMwcgPxz2XtiL5TWQYh0571U4g0ZqgcePXQY
-   Un8qEBfZtBJyHkRvrT8UYa42bwX4Bs5c4UmK0fattNSU4vftZZuoD9lXo
-   w==;
-X-CSE-ConnectionGUID: tfhQFx/VT42AZTsejq4kTA==
-X-CSE-MsgGUID: HvAJJ3y5SU6+4e2gy2J69A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21523248"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21523248"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:46:20 -0700
-X-CSE-ConnectionGUID: PSIpAqcSTxuZeWGvCSvo1g==
-X-CSE-MsgGUID: P3hRk+ueTcOZ3cw0Qi3PVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63037742"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:46:16 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdpyf-0000000EiFk-1s3a;
-	Tue, 13 Aug 2024 14:46:13 +0300
-Date: Tue, 13 Aug 2024 14:46:13 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] platform/chrome: Introduce device tree hardware
- prober
-Message-ID: <ZrtHhcNMiyHmKbal@smile.fi.intel.com>
-References: <20240808095931.2649657-1-wenst@chromium.org>
- <20240808095931.2649657-6-wenst@chromium.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69E91991C6;
+	Tue, 13 Aug 2024 11:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723549599; cv=fail; b=UDZz1He0yyxULZ+IQ3cmdJyBo/gl463u0UF0/5wCJPHqX5kvykiFBoFkSlFs9eJFE/Va+MT1qsEwFAhimQ7MXuLfTNcQMJKuOiw2GWh+tujx6EvkLjVvA52/9Mr28peNpnizqAeQSCaQSqKXoVcCaTM4OKCbzDNWCvNZtlqRiSI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723549599; c=relaxed/simple;
+	bh=ydZH0vv0cdMKBWTFOVgfra/dkByRh8/lJw6FaMAIB+Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=dBdnZ7665iLC8BMNxzhK6Y/03/BHALV2KMi6V5jz692RfphscwAG5dIYj1WXSqoy7U5cyPWCae+0axRRoBJwksDWoOtHu3dd89aO04oMiecPye4uINy3GSX9H/1M1LSOkUsf9QDn3pJRUCxAX3KHG1qDXg2mGE/zC4Os22QdGJo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oNJmBVbQ; arc=fail smtp.client-ip=40.107.244.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=So3xaeGTZEE6XoPIymiSqtIJ/fq+2VCRqPGx5O+7blBRcr8feZD2n3VraBla2eNVFuDfKOWV5PFp8mzcoD2MMcSMYJb9GvmboLrq7rUvYXh1bd95ecwsaQQmZYQnw7hFL7PNjuNvxEg8+bL3BkI0Hb/s4jhD8o4Md4u3f9f9Z+EXOb6Giv6CrQd/KodXp8mg2Jr12TiPUF+0/2Ukc4inR/Sn0O85sveZR96T0VQxpzzZBgUcaFM17pHXn8yMblvgDZrj179rdp4giPopo8+U8U4oaQ8qfuXG4G+H+3EHxmY4K6lAr4B6kc0Nt+qIqLYhcsuWwYGMM0Be7oheBb4hcg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=yClQKGRVnY4id6CROoivBgMOYFvzz2jj3rUpTbJhjfY=;
+ b=O8potbgo120nHVDJDvEAyc9HZkbRMBuZP48I7y9OrYILU8GsOASaACBbIOAcNmNoBGqNX1FFc5t30LRyMJOZKaCDwmjypsSJhGA4E3cPHdQnA3Vhpjt2x5EJENC34v3iyEEKGVtbj/W2oaKQAECuMHUU/zEkdtLvgIT86N3gAuYQUXPbgyin4ZYOfuIkJxzSeJskYi+BI3MdV+7AI5lLLxloZ24OmP8h1XNc6XOtos094LC9RmgikdByrlXXa5plwqdVCAlniQegfDGXH59wwTXbWhBVBtIlxE9a9rgorgXORjqfnre+MDG46REqkVU/YF8reZWm1oYCBxqrOf5bSQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=yClQKGRVnY4id6CROoivBgMOYFvzz2jj3rUpTbJhjfY=;
+ b=oNJmBVbQua2U1cjLuh/XLdGPrtpYPzAX/uUBIEaWJcob1ElPDxdaiPQYCbTc5FpLFfe0qHhvSmSMossNo7BQEDcoPBfTwU0B41Gfv++DRiNt/FHKqp2zTtXnesxE2MU+a+opMuMYKnMx83krBR9nHyZJxqoJXMMoeNW4kCCi+2A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com (2603:10b6:5:21f::23)
+ by SN7PR12MB6888.namprd12.prod.outlook.com (2603:10b6:806:260::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Tue, 13 Aug
+ 2024 11:46:35 +0000
+Received: from DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf]) by DM6PR12MB4123.namprd12.prod.outlook.com
+ ([fe80::512d:6caa:552a:7ebf%4]) with mapi id 15.20.7849.021; Tue, 13 Aug 2024
+ 11:46:35 +0000
+Message-ID: <0e8afd21-60f8-4a8a-aaa6-e148d4571908@amd.com>
+Date: Tue, 13 Aug 2024 17:16:24 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] ASoC: SOF: amd: move iram-dram fence register
+ programming sequence
+Content-Language: en-US
+To: Markus Elfring <Markus.Elfring@web.de>, linux-sound@vger.kernel.org,
+ alsa-devel@alsa-project.org, sound-open-firmware@alsa-project.org,
+ Mark Brown <broonie@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Bard Liao <yung-chuan.liao@linux.intel.com>,
+ Basavaraj Hiregoudar <Basavaraj.Hiregoudar@amd.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Jaroslav Kysela <perex@perex.cz>, Liam Girdwood <lgirdwood@gmail.com>,
+ Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+ Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+ Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+ Sunil-kumar Dommati <Sunil-kumar.Dommati@amd.com>,
+ Takashi Iwai <tiwai@suse.com>,
+ Venkata Prasad Potturu <venkataprasad.potturu@amd.com>
+References: <20240813105944.3126903-1-Vijendar.Mukunda@amd.com>
+ <ac7efdcd-cc79-4984-8b36-50898243afa5@web.de>
+From: "Mukunda,Vijendar" <vijendar.mukunda@amd.com>
+In-Reply-To: <ac7efdcd-cc79-4984-8b36-50898243afa5@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: PN1PEPF000067F7.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c04::2e) To DM6PR12MB4123.namprd12.prod.outlook.com
+ (2603:10b6:5:21f::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808095931.2649657-6-wenst@chromium.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4123:EE_|SN7PR12MB6888:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0f70f0f-b1a7-4b40-b400-08dcbb8d9551
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N2t5Vk1LcEZySXllWjRCeDNpSG9ITzdEZnpsazBpRDltSkdtRHhTYnBSczI0?=
+ =?utf-8?B?cklTcFpubmVoN3RYNCs4a0ViQWhaY1VITTJEQUk2ME1DNzJ3cUVGTmZCb3pu?=
+ =?utf-8?B?Y054bTNPaFNCWDIwa1d6UWtmYXdwT1dPa2doVWY2MWNkOHdvSDN4WlR3TElD?=
+ =?utf-8?B?Y1B1UUFJTFU1TzJUUHhSWkp0RUZCOEFOb0R6dmRpRkVPMVp5Njl4U1k3cHFs?=
+ =?utf-8?B?K1IwOHF6ejdWT1hjaXFBSUc0aVRSMEowLzR6VWxMNW56RGpSQnZ6bGhCSEVl?=
+ =?utf-8?B?enBOTjlBZmNudHc3TnBIb2NIZkcvRFlWaUZYbnR6U3JYV1ovbXI2Q21DWFM0?=
+ =?utf-8?B?RjE4RVc3S1U5QmNzemRvRCtGcU1qS1VtQnZnay9ydVVVOXEzSjRwcUJNbzVq?=
+ =?utf-8?B?MEYzdGMvQm1Jby9kazQwTzFYeUIwUkpoYnpFa1VsWUtWcStCS2VPTHFzWU1I?=
+ =?utf-8?B?Vi9WMCtzTTNRSHhLbHJVYXR0bXp2bDVlZGp0S1lGODNNL1ZORDBjMDNBdndz?=
+ =?utf-8?B?R1UvbC9wdUpQOEo3ZlRBV0E5R1JPanNxL2Z4MGp5b2pBZGdSUFJZVTZzSmF2?=
+ =?utf-8?B?cGxtMkJFdGxVT0lhZ3lpcThObTNadzBXTUxmbkFURUpiRHZ3SldIYUZ5aTc2?=
+ =?utf-8?B?WlNjcnBJSWx1VmJhY0ZrQndkSzFPejRvVy9QUDhxc0FFY0N5dXUvSlpEYlFy?=
+ =?utf-8?B?ckQ1SGdmSFV1YjJtTXBlcDhTQlRPVkliREVqUFBHRXNJQ3dBSDhmVjRiMHpW?=
+ =?utf-8?B?VmlhY2EwTzZqWWMwbmQxS0JjZ3B4cmFlTmRpb2R5M1NyVklpVFN1V3pKZmdq?=
+ =?utf-8?B?elhpR3AzdjkxeWlhUjNCY3FHQ2s3U0grSyt4eDlJZXZPeE1DRHF3RjYzZ3F5?=
+ =?utf-8?B?UDBmMU80aVF4cEkrRGd5YVhiRmlDL0g1TDBxRnZCbzJZbWVEeDU3dVM1dFdT?=
+ =?utf-8?B?TTdKUmRUWlN1VFRjSUJIeE5mY2kxSmVmY2JCMEdZY2ZWRzNMZmZWL2Z4Ny9p?=
+ =?utf-8?B?RVVlZkZYcmEzNlFzTTBmekZCQkYwa3VHWnFCT2VrQVZnbEIrYjA1YURrd1pv?=
+ =?utf-8?B?dDIvYStNRjNiYyt5LzhYcjNvRDQ0SStNU2h0cy9vTW5tZTFJbEtNT0NPRm0x?=
+ =?utf-8?B?dW8zTyt5NG5GMXUrS2o4Y3dHc2hhY3o2WWlQV3o4YXZaTzRTZCtxWVhicHlG?=
+ =?utf-8?B?Uy91THQ5SzRLRm9vZ0hXOWlUdEhQVTNwUHBXTjc1R1VtaDJIZVVUY01sM3hP?=
+ =?utf-8?B?dHZqUFJmZ3d1NXpTZUo1b2p6NWtNeHhZdjV5WTJmUTlBcG5nMElRQWxpTDdC?=
+ =?utf-8?B?elhvWDFYU05pRjl6ZkNZWFpDL1hJRitsTllRTkFoZXJuZUprVW96TnVnVG9V?=
+ =?utf-8?B?WFpaaldYKzdwYnNiaVgwcGV6MEphNVIwc2tDRXJ2dlVnc05mWWlpZjZlR1VN?=
+ =?utf-8?B?WkFxbmxKd241c2ZvbEVpUTlhdGttbTFCZDIwd0ZvY0d1WTk0Und6di9wQTQ4?=
+ =?utf-8?B?cEdTcXJZeEx5NTJvbmRYUkFvQnR3OXZvUG1PcXdiSnBJN0VlazVTWUdjd0NF?=
+ =?utf-8?B?UmdnYTlDc2ltaWRoYlVodEtPcEZlWkEvVVV1bXYvdzBwdE9LaDMrVXg3enIy?=
+ =?utf-8?B?MTlpeUNqZ01xb1ovMVRGd1I4cFNabUFuZzBuaTJCaFd2RGlxWW5yYStxOWJI?=
+ =?utf-8?B?b2pJYVV6S0tRYnMxeHpHdnBzdjk2QW4rM2xWN0R6V2V5aUhEUlZ0Nis1eXcw?=
+ =?utf-8?B?QTBYSTlieXhSeG40VnM5ajFwRUtKYldTTzh0eURrK2U0bTAxY3NkdWdzYW1R?=
+ =?utf-8?B?UUNxbUdGUVIzWkwrTXByUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4123.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VWY1bDJhVjBOSmUwSGgyYmxpUFQwbXR6NkFENVZ4NE5TcW8vYzBUUDd6RXdu?=
+ =?utf-8?B?b241eFpaNFhQcTc3ajlTb0tnTlhadUNGQmNrdWtUdEVaRGR2RTJrd1Z1OEJ4?=
+ =?utf-8?B?bm82RVpIelVnTmZFMkJhLzRETmUyWUM2SzVjU2JWQ3d4RTNZdHdGMnF4d2JM?=
+ =?utf-8?B?K0dPM01XcFlzVjArOFg4SmQ3T3Q4MHJnSVczb2wyVVhkU2hKYWhDZG53V2JD?=
+ =?utf-8?B?a1diYkZpcVdmTHRQK1FyVGg0dno2VStjYjVJQmlmaGh3RXgwam92K01xbmJJ?=
+ =?utf-8?B?eHAraWUwSXhkQldYaThOaExnRTZZeGo0THcreEJMVGhwTTdSaU9sKzB4eWhh?=
+ =?utf-8?B?M25memhyVlF5bGEzV3Fyb080WU9EdytEdUJGcTU3ekxrM1BGQ1V3NmJMeFl2?=
+ =?utf-8?B?WjY1emM3b0wzVmRkcFpCUGtlVFBmSmlVODM0V2lnK05ETDVRZVZ4dWpDNm9k?=
+ =?utf-8?B?NW1zWThuVDVyeXZSL3pQOCtCRHJ1MUFoeHBsYTFsVmtLTzJoM2NSZS9MR2Y2?=
+ =?utf-8?B?NHRZNFJINkdmT1BMUEduVU9TNEIxNFZhVkpYZVpOalMvZ1g2TE1WQXVlY2R3?=
+ =?utf-8?B?Y2FvT3F1RVBIaG1ZOVduV1RqdFJIRy9iVXZzN3JUTk9QV25YYkVLNm4rU1dQ?=
+ =?utf-8?B?Rk1yWUx5SWhpd3VuNFFTOFRXUmdzRGRUMSt5ZW1zL0Nld1NuMys5dkJSNjRx?=
+ =?utf-8?B?c3BpZFc4THFPRkJQaDdJNFBrWnEzWmV0bEx1MjJtZ0l0YjdIVDNuNDJraGRV?=
+ =?utf-8?B?Y0JGKzE5WFhKb3F3S0crUXhaNzY4U0pNVTQwMHhYekkvSHUvVngySHkrNmpT?=
+ =?utf-8?B?UkZvbXFNUUJZS1RkQndIK2VzUW53VTdTQVlIdHc3S3NNWkQwRWd1ZnQ1cDRB?=
+ =?utf-8?B?cWpxTVM3OEpYajNnY05POWtZdjNCdE5hV0FLSXd5VnlHSlEydmxLV1crL3ky?=
+ =?utf-8?B?ekxBMjE5R2h3UWZWU01wQkhPd1NYM1FnS2ZuazRzQnBsb0pMSHk2WG4yNGI0?=
+ =?utf-8?B?VnRZYW1QM0lBNTBMRXpTVnNjdVN5amNpOUdOQjJONWlVQ2h6TzdKV2RyQ0Jw?=
+ =?utf-8?B?dUlYRGhOcG54NWJDVVdiTG5WL05XQms1L2crWmt6SEJaaUhOZEo1bEVTOHJ0?=
+ =?utf-8?B?aGFsRi9TR09CanpwUWtmSEQyYmtGZm1Sblc3NTFhSHVWUWh3TkhkOWpFVEt5?=
+ =?utf-8?B?K1k0OG8xNzBTOTh0UStzKzJ1a0dmZDI1UFJTZjh1ZkFra1dsUDdCenkraXlR?=
+ =?utf-8?B?cnB2OC9ONExEN1hkWjYybGJaVkhvdlRKNlZ0RzBMMkNHMU90cGl6QXM2Nkww?=
+ =?utf-8?B?SndLckNJTXk3ei9VemdCcU9Tbm91MENoaWowVHozdWhBTDR0NzRIZ01DL201?=
+ =?utf-8?B?ZWtIbjBUcjB5RkVORWtQd21GS3R5UVNaOU1pMnNkWTNiNGVEa3FveUFkMW1J?=
+ =?utf-8?B?KytEY282TDRUak95L3hUVTZ4SmVjUFFjSkRBbkpCVzcyUVFBWTE3MnNLUitL?=
+ =?utf-8?B?NjYzZ001c0p5OGI5OEJtSWhhTXVoMDdrcHN4dWE4SmZVVVlTM0J6ZnZ5Umdu?=
+ =?utf-8?B?L2xkcGxBTitvZUd1cDMwZWxMOWVvVDlTa2p1c21VbU93VitUVW5GQzlvRk8z?=
+ =?utf-8?B?cGN5aXc0NzJrU1ZKMjFHZHVUWjRxd2ZJUUtOYVk1Y0NTNXdVOUhEbjdUWjA1?=
+ =?utf-8?B?L0NFM0xmM0lEZVhENGRLSE9yenMxQlh1YjZnbytkNUNZSnJGaTRudFp6Z0VR?=
+ =?utf-8?B?M1NPTU9sSGoyaGFjdmVROUljQ2k0b3hzb1NOT2U1UnVSbC9LRTJ5RFZ0Q3hB?=
+ =?utf-8?B?eFA1dzZ1Mm5JYnNLZ0ZjUUpCZ0Q5bHhhRDZtQStqOHF2cmplYmM1VWl2cXEv?=
+ =?utf-8?B?SVU5TXI3ZmxjL0hKa054MDJYWHhIYnkvWWd6V3BTd1VBZVdpMlI3TUFsc25E?=
+ =?utf-8?B?TFNqSlgvc1plOE9CeEhUZ29POFFmWjBBckhnNWg0ZDRzdzFXMmpDVG5PM2Fj?=
+ =?utf-8?B?c0gxVE5WaDdCekdZZ0lQTlRiVkxITjQ1ajhQWERIZHFjSEZhdFZFSXlYMXRQ?=
+ =?utf-8?B?TXZrN3VtREJISzZ5SVBSdUxyaDRSUUhSbjU0ZDN2dXpmUS8zbXA0VWN3bDlC?=
+ =?utf-8?Q?hi2cNWNlMvarYB7oLhHI8L98e?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0f70f0f-b1a7-4b40-b400-08dcbb8d9551
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4123.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 11:46:35.3345
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F/9E2QVWZbzHcEYIF56afgXlUmC/WI4FU5+Xum2FuJc/9iZT0uf6Vmav5dcegJkoRe9Z3sIfXBL7551V2byPNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6888
 
-On Thu, Aug 08, 2024 at 05:59:28PM +0800, Chen-Yu Tsai wrote:
-> Some devices are designed and manufactured with some components having
-> multiple drop-in replacement options. These components are often
-> connected to the mainboard via ribbon cables, having the same signals
-> and pin assignments across all options. These may include the display
-> panel and touchscreen on laptops and tablets, and the trackpad on
-> laptops. Sometimes which component option is used in a particular device
-> can be detected by some firmware provided identifier, other times that
-> information is not available, and the kernel has to try to probe each
-> device.
-> 
-> This change attempts to make the "probe each device" case cleaner. The
-> current approach is to have all options added and enabled in the device
-> tree. The kernel would then bind each device and run each driver's probe
-> function. This works, but has been broken before due to the introduction
-> of asynchronous probing, causing multiple instances requesting "shared"
-> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
-> time, with only one instance succeeding. Work arounds for these include
-> moving the pinmux to the parent I2C controller, using GPIO hogs or
-> pinmux settings to keep the GPIO pins in some fixed configuration, and
-> requesting the interrupt line very late. Such configurations can be seen
-> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
-> Lenovo Thinkpad 13S.
-> 
-> Instead of this delicate dance between drivers and device tree quirks,
-> this change introduces a simple I2C component prober. For any given
-> class of devices on the same I2C bus, it will go through all of them,
-> doing a simple I2C read transfer and see which one of them responds.
-> It will then enable the device that responds.
-> 
-> This requires some minor modifications in the existing device tree.
-> The status for all the device nodes for the component options must be
-> set to "failed-needs-probe". This makes it clear that some mechanism is
-> needed to enable one of them, and also prevents the prober and device
-> drivers running at the same time.
-
-...
-
-> + * Copyright (c) 2023 Google LLC
-
-At bare minimum we are in 2024 now.
-
-...
-
-> +#include <linux/array_size.h>
-> +#include <linux/i2c.h>
-> +#include <linux/module.h>
-
-> +#include <linux/of.h>
-
-Why?
-
-> +#include <linux/platform_device.h>
-
-...
-
-> +	for (size_t i = 0; i < ARRAY_SIZE(hw_prober_platforms); i++) {
-> +		if (!of_machine_is_compatible(hw_prober_platforms[i].compatible))
-> +			continue;
-
-> +		int ret;
-
-I didn't know we allow this kind of definition mix besides for-loop and
-__free()... Can you point me out where this style change was discussed?
-
-> +		ret = hw_prober_platforms[i].prober(&pdev->dev, hw_prober_platforms[i].data);
-> +		/* Ignore unrecoverable errors and keep going through other probers */
-> +		if (ret == -EPROBE_DEFER)
-> +			return ret;
-> +	}
-
-...
-
-> +static void chromeos_of_hw_prober_driver_exit(void)
-> +{
-> +	if (!chromeos_of_hw_prober_pdev)
-> +		return;
-
-First of all, this is dup for the next call, second, when may this conditional
-be true?
-
-> +	platform_device_unregister(chromeos_of_hw_prober_pdev);
-> +	platform_driver_unregister(&chromeos_of_hw_prober_driver);
-> +}
-> +module_exit(chromeos_of_hw_prober_driver_exit);
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+On 13/08/24 17:05, Markus Elfring wrote:
+>> The existing code modifies IRAM and DRAM size after sha dma start …
+>                                                       SHA DMA?
+>
+>
+> …
+>> sha dma failure …
+>   SHA DMA?
+I think above one seems to be okay.
+>
+>> IRAM size. To fix this issue, Move the iram-dram fence register sequence
+>
+>              Thus move the IRAM-DRAM …?
+ I think above one seems to be okay.
+>
+>
+> How do you think about to offer cover letters for patch series?
+ As these are individual fixes, I don't think a cover letter should
+be included in the patch series.
+>
+> Regards,
+> Markus
 
 
