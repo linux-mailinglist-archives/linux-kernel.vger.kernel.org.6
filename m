@@ -1,283 +1,147 @@
-Return-Path: <linux-kernel+bounces-284617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3190B950327
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:00:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FBD7950329
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79923B22C24
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C08B0281353
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3118197A7E;
-	Tue, 13 Aug 2024 11:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A933198E79;
+	Tue, 13 Aug 2024 11:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wqwlzUDV"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2076.outbound.protection.outlook.com [40.107.94.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tb+0FW+t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96DF21345;
-	Tue, 13 Aug 2024 11:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546833; cv=fail; b=fflnIcWY3OWQ6XeYVWwf/ZoMjp665lVl/qB4YjaqLD5QDRYu+2B6qx1BDOU5tWUJ/i2NnWs9lhPR4tPwFzPzDncCYNDld63sJNnWCreI7WCtJA+HdHCwbUfAdpOpw4O13HtZKmrOJJQYWF6irriYiALBgA1axniHwaJOUibCUx4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546833; c=relaxed/simple;
-	bh=k1GsOJpfG0I462k9m6SQW9l1IRZjxNlCet22BeAV2Bg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JZw6whg7VbuY3D7TD2qR0JxensLkEart9Rjjguz8mEW3ciV/xOpX0PRiob8zLb5zVcoUYXRbRlg6Mcq4pcPLa76V6nCBTp36ARHxEfg7Z8t2dagC4TFtNvnfaghjdfL8PZKN0tobdUpApx98ZWPi2R0EbBN6PeHyQSGYYc+nWC0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wqwlzUDV; arc=fail smtp.client-ip=40.107.94.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=puHwspUEb0ReWiCavw2KepnUj6GNEjL5KSECdEQKnakd/Ft0eCGV0LGyoszTU7W7YPN/U/Ge72IEhUTWbTWyyavosfFgIjf0LcSPkeO0fy8hE3RUrWJL94+Rj5Hb5H08uzW8hv8ubj+Jq3/M6QXg1yP8qzqtvG8IqJu2RBk7Is/xeBOVRdTWe8nMftwxuQByRJDfSdZCyJSHCozzMx3hYGonRNig/ghpMg5Tqb9VeYNWl52xYoCyq3CQG7PzXegr9sr2m8KCNny/3CgNLuzAFICW6+dE7EfrhtKYtzeBMEIWSdbsS7JgfPq/RJRROwQ666FZGMCif3C84gOTJ8it/w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dIcVRvOVovYyl5V42xHAtl29LXrGMQIXlbiSRkohtac=;
- b=Hb/LcIWfy/rXCm1mgRLjGHil8QfMTGfxCkC5590QuTAcG18kp5kfA7/dJDxLykAUnEHeJsrqPvr4wZ/+XHhl7k/cL5hxoaSFB3ncbEAFTxCARQEsRoNvewQQeS+6XoZefdldDWfsMcgZ1YaOeM4ueNGV7uBau4MflZFJkqHHdhUZbYa52S5uQfKaIyfEVGOeo9pc79bG9x2m8l+XFX9to4ydaF92bgatWrUAhWn3goXzxPQTYV52uho2Cuv8rtHn/iANoPp59ZMxwRHyw/a0aSktXxBF80W4QUzkOhIjTf100/dyt5m8ph2W33rGf3HYX/7Lyl4Fq//zFthR/H727Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dIcVRvOVovYyl5V42xHAtl29LXrGMQIXlbiSRkohtac=;
- b=wqwlzUDVtydpOkTVz7Mnzu7vb3lKaggDwAhnzq8MZMg3OpS6UV1XmnuzYNm6BP045oK/RVBtEjlOBxO7Egca4wiN+lG0pOiAoin0tXuYpHejASNAmhYVGWtxqjJkrCQI93yM2uwGdQ73NJxEOo6qyAwEd7R8waK1KrDZJ3cy/mM=
-Received: from SJ0PR13CA0213.namprd13.prod.outlook.com (2603:10b6:a03:2c1::8)
- by SA1PR12MB6872.namprd12.prod.outlook.com (2603:10b6:806:24c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.23; Tue, 13 Aug
- 2024 11:00:27 +0000
-Received: from CO1PEPF000075F0.namprd03.prod.outlook.com
- (2603:10b6:a03:2c1:cafe::d4) by SJ0PR13CA0213.outlook.office365.com
- (2603:10b6:a03:2c1::8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
- Transport; Tue, 13 Aug 2024 11:00:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000075F0.mail.protection.outlook.com (10.167.249.39) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7828.19 via Frontend Transport; Tue, 13 Aug 2024 11:00:27 +0000
-Received: from vijendar-X570-GAMING-X.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 13 Aug 2024 06:00:21 -0500
-From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-To: <broonie@kernel.org>
-CC: <alsa-devel@alsa-project.org>, <Sunil-kumar.Dommati@amd.com>,
-	<Basavaraj.Hiregoudar@amd.com>, <venkataprasad.potturu@amd.com>,
-	<pierre-louis.bossart@linux.intel.com>, <lgirdwood@gmail.com>,
-	<yung-chuan.liao@linux.intel.com>, <peter.ujfalusi@linux.intel.com>,
-	<ranjani.sridharan@linux.intel.com>, <perex@perex.cz>, <tiwai@suse.com>,
-	<cristian.ciocaltea@collabora.com>, <Markus.Elfring@web.de>,
-	<sound-open-firmware@alsa-project.org>, <linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Subject: [PATCH V2 2/2] ASoC: SOF: amd: Fix for incorrect acp error register offsets
-Date: Tue, 13 Aug 2024 16:29:44 +0530
-Message-ID: <20240813105944.3126903-2-Vijendar.Mukunda@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240813105944.3126903-1-Vijendar.Mukunda@amd.com>
-References: <20240813105944.3126903-1-Vijendar.Mukunda@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05F2198A16;
+	Tue, 13 Aug 2024 11:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723546835; cv=none; b=Hm16uEx0BHSgwxHwpGtncwF65oF8ZBJV+7LcvrPQ6Wxykz3AZ17hNnRCj2e2PiWFbkTeTgtk0UovzY5kYEkLSYRRgm9ZNzFpwV32a07wJer5HGF8kLPCisq3o55rTu9pjrCDWkMyCUeDZCvsia+mtzonWw+C4QVf1IqQTY+eHac=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723546835; c=relaxed/simple;
+	bh=B808EudKWrHxZfYg+a3UwZuglHevVcZNFkJtnW2kji4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HRRy814m5joWF3KyNIQNV/dU3n0v5zaqRuWmVj1wLWp3SUKxtY7HqyOubzMIbUXmA8K7VXvRGOIL7xi/yhc7WkVlTAZFoXj9Gmt4BBSDXnQ37L28J+iGCzHGRW//reqDwA6MY6mBpzu39O3XZL1FztNiZKVAhkBSx2HMTeNIWhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tb+0FW+t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D780BC4AF10;
+	Tue, 13 Aug 2024 11:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723546835;
+	bh=B808EudKWrHxZfYg+a3UwZuglHevVcZNFkJtnW2kji4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tb+0FW+tZf+oPwB7sp1BP0xAvdBX0bocm7umTDDTc2QtHC4wg9unm2yzSoVx1Yjz3
+	 0HpVeUz5XPlAjZsWbPNaCl3+gl3RbfWrkMJNRUi9oTMafXERRKlJtfdB0KgiKAXo86
+	 FUOMRocHoHBhCewj4woksJz6ZX5CIfnW6DFsox5GUUxtV5f2utGyxad7d8JCYWL00n
+	 uNGQl6ygAxKPZvZry8w9OqdCnJnj8iB0qUACpviY1MNS45N8En7CRBfTFaisBEBZxy
+	 Q4HJT8usc4u+xLYAQIE7ApsQKjFAJSPDM9CsOlxct0GUW81MdbE2PF8G7/pkicL30R
+	 V2pQ3jPuIJOhQ==
+From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
+To: Andy Chiu <andy.chiu@sifive.com>, Paul Walmsley
+ <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+ <aou@eecs.berkeley.edu>, Alexandre Ghiti <alexghiti@rivosinc.com>, Zong Li
+ <zong.li@sifive.com>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Puranjay Mohan <puranjay@kernel.org>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, Evgenii Shatokhin <e.shatokhin@yadro.com>, Andy Chiu
+ <andy.chiu@sifive.com>
+Subject: Re: [PATCH v2 0/6] riscv: ftrace: atmoic patching and preempt
+ improvements
+In-Reply-To: <20240628-dev-andyc-dyn-ftrace-v4-v2-0-1e5f4cb1f049@sifive.com>
+References: <20240628-dev-andyc-dyn-ftrace-v4-v2-0-1e5f4cb1f049@sifive.com>
+Date: Tue, 13 Aug 2024 13:00:31 +0200
+Message-ID: <87cymcadrk.fsf@all.your.base.are.belong.to.us>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000075F0:EE_|SA1PR12MB6872:EE_
-X-MS-Office365-Filtering-Correlation-Id: ebc5192f-5001-4837-3e63-08dcbb8723c1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|82310400026|376014|7416014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?v1sdiEPjkH05iY4XafrvghvzoKwnoqZ30Cb4mVKjlH8bp0Z8GMk34ROFwpuO?=
- =?us-ascii?Q?HYiAXqhK78HNb23QlTT5MwlIxyCxJljlUhYB+Np+OHIFRVDi6P/8xOioAmi7?=
- =?us-ascii?Q?2WKea4f29VMKWjBbcxUePuecuDcsnwVto6Z7JQn4KPH8kRlyS4dhd6rLgVFk?=
- =?us-ascii?Q?QzumOQ2swVTQxvA3+TFs1IlDN4mNaVFTaH9ZSKDFhh+M4cUosKbkU4oU0hRj?=
- =?us-ascii?Q?hKRDKcUVJWdRlTvokwOVUxubDJ4agSPl2J+v3S0Bft8EK+NK9hCPtvxC/nTs?=
- =?us-ascii?Q?Rs80qitnZb5ZuarRUXyPB2xjBQXy0UxCsVw3TJQuAVRdL24dxd9kXTR5QSSx?=
- =?us-ascii?Q?Tp5K2S/2zNIu0Z/Hth3E6XoxJnujukjWW9noVAeutz8ouTjm15riwhk8T/AF?=
- =?us-ascii?Q?r/IiZvCdGUXRyPfDcyv/8r40ec6iOG3mrNNXhGqBvAqvmYd+e8WX9AHyqm4i?=
- =?us-ascii?Q?Mc+4JvUPsORMiX1TlXG0q28eq0J9TrK6eRXNYXcHTZOUNREQqNQOJHQB/MQA?=
- =?us-ascii?Q?OQFAagAx5hCp30ZxXvGlg8V+jeVZZJnBbyg9QVVmI/jfVVkQs/64eGy2/3k8?=
- =?us-ascii?Q?vvZtnMNfcFFO0CiGng8cMLBwncN8r7QIhjW/NPEsbkFymawa8AqOXmrlqKbr?=
- =?us-ascii?Q?8abb24oVE9AEg6nhLm/QPuJzrG7sl/4On9dxlGbsxXaPWTd3pNsXMnO9exKr?=
- =?us-ascii?Q?HkrJzzo63uDcxi5SrQeoAJ9H0mcDcWFvjujH5W/M0PXgDpLP9jHxRBatFyqa?=
- =?us-ascii?Q?0EWE/26nCYPY1Q4eG/cxDWHA3EdZQwWi7sO5RHB05EmdpNzMM4YhFf9z9B5O?=
- =?us-ascii?Q?dgO57pdwSgU/6kfzjf+YAI2+dOcDqrHHx9TSdMOyHtuxM+1oPUubd8hwO+Tm?=
- =?us-ascii?Q?IuBpSApa6xu320EaLEin5dBwy8RYLeWh0i39e0ltoKcI9f9gotMDyUMl8wx+?=
- =?us-ascii?Q?00ppDXeQFph43UTw/pWugd7zhufVVz0o+QRZiKdHFgDWLapoHOekw4257777?=
- =?us-ascii?Q?DBASesOOtb+amwDj6KyYdv2wY4vctvjOf2hzJAgrsuWO3VaiYOvFJj+YWg6Q?=
- =?us-ascii?Q?Fbu6RbMR+17u2dlnDdYEX0H3kOcQ1ePiMcBVJNcWUj057wlXrJQ/LW2dbp79?=
- =?us-ascii?Q?9ymyobsnb8m836ZH2//NT+orfB3GWM23mjbyNQi2LA4s7sfemjMCVZNpdb2A?=
- =?us-ascii?Q?EJubTLporuN3kE8Z1JQXxO24W5d1Z8tz629kQgYxPoZHO3G8TPGwrv5PZqsN?=
- =?us-ascii?Q?ticNF95t7kirtsBfg5dtOM2D84rZMff3Gul9/X1/BnrMhdwSV2/s/5BgDG11?=
- =?us-ascii?Q?jSKap86YwdsOQYgkcQCYteDuhdmjtqq/2BVPE3zic5Ysl1+QnXvXyXxZyAn0?=
- =?us-ascii?Q?G7+2pbEGDnOJpXxNhHeLtSm/FFhBJChB83Z7xdE0FHiPVHPNGgfPz8J0JQ6H?=
- =?us-ascii?Q?mpIehjohwJGZD4PVA92SIzFvfZSE7k4/?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(7416014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 11:00:27.3051
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ebc5192f-5001-4837-3e63-08dcbb8723c1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000075F0.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6872
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Addition of 'dsp_intr_base' to ACP error register offsets points to
-wrong register offsets in irq handler. Correct the acp error register
-offsets. ACP error status register offset and acp error reason register
-offset got changed from ACP6.0 onwards. Add 'acp_error_stat' and
-'acp_sw0_i2s_err_reason' as descriptor fields in sof_amd_acp_desc
-structure and update the values based on the ACP variant.
-From Rembrandt platform onwards, errors related to SW1 Soundwire manager
-instance/I2S controller connected on P1 power tile is reported with
-ACP_SW1_I2S_ERROR_REASON register. Add conditional check for the same.
+Andy,
 
-Fixes: 96eb81851012 ("ASoC: SOF: amd: add interrupt handling for SoundWire manager devices")
-Signed-off-by: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
----
-changes since v1:
-        - Rephrase commit description
+Way over due; I'm back from my vacation, I've finally started to look at
+the series. Thanks for working on it.
 
- sound/soc/sof/amd/acp-dsp-offset.h |  6 ++++--
- sound/soc/sof/amd/acp.c            | 11 +++++++----
- sound/soc/sof/amd/acp.h            |  2 ++
- sound/soc/sof/amd/pci-acp63.c      |  2 ++
- sound/soc/sof/amd/pci-rmb.c        |  2 ++
- sound/soc/sof/amd/pci-rn.c         |  2 ++
- 6 files changed, 19 insertions(+), 6 deletions(-)
+Andy Chiu <andy.chiu@sifive.com> writes:
 
-diff --git a/sound/soc/sof/amd/acp-dsp-offset.h b/sound/soc/sof/amd/acp-dsp-offset.h
-index 59afbe2e0f42..072b703f9b3f 100644
---- a/sound/soc/sof/amd/acp-dsp-offset.h
-+++ b/sound/soc/sof/amd/acp-dsp-offset.h
-@@ -76,13 +76,15 @@
- #define DSP_SW_INTR_CNTL_OFFSET			0x0
- #define DSP_SW_INTR_STAT_OFFSET			0x4
- #define DSP_SW_INTR_TRIG_OFFSET			0x8
--#define ACP_ERROR_STATUS			0x18C4
-+#define ACP3X_ERROR_STATUS			0x18C4
-+#define ACP6X_ERROR_STATUS			0x1A4C
- #define ACP3X_AXI2DAGB_SEM_0			0x1880
- #define ACP5X_AXI2DAGB_SEM_0			0x1884
- #define ACP6X_AXI2DAGB_SEM_0			0x1874
- 
- /* ACP common registers to report errors related to I2S & SoundWire interfaces */
--#define ACP_SW0_I2S_ERROR_REASON		0x18B4
-+#define ACP3X_SW_I2S_ERROR_REASON		0x18C8
-+#define ACP6X_SW0_I2S_ERROR_REASON		0x18B4
- #define ACP_SW1_I2S_ERROR_REASON		0x1A50
- 
- /* Registers from ACP_SHA block */
-diff --git a/sound/soc/sof/amd/acp.c b/sound/soc/sof/amd/acp.c
-index b8d4f986f89d..35e56d22930f 100644
---- a/sound/soc/sof/amd/acp.c
-+++ b/sound/soc/sof/amd/acp.c
-@@ -92,6 +92,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
- 			      unsigned int idx, unsigned int dscr_count)
- {
- 	struct snd_sof_dev *sdev = adata->dev;
-+	const struct sof_amd_acp_desc *desc = get_chip_info(sdev->pdata);
- 	unsigned int val, status;
- 	int ret;
- 
-@@ -102,7 +103,7 @@ static int config_dma_channel(struct acp_dev_data *adata, unsigned int ch,
- 					    val & (1 << ch), ACP_REG_POLL_INTERVAL,
- 					    ACP_REG_POLL_TIMEOUT_US);
- 	if (ret < 0) {
--		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_ERROR_STATUS);
-+		status = snd_sof_dsp_read(sdev, ACP_DSP_BAR, desc->acp_error_stat);
- 		val = snd_sof_dsp_read(sdev, ACP_DSP_BAR, ACP_DMA_ERR_STS_0 + ch * sizeof(u32));
- 
- 		dev_err(sdev->dev, "ACP_DMA_ERR_STS :0x%x ACP_ERROR_STATUS :0x%x\n", val, status);
-@@ -402,9 +403,11 @@ static irqreturn_t acp_irq_handler(int irq, void *dev_id)
- 
- 	if (val & ACP_ERROR_IRQ_MASK) {
- 		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->ext_intr_stat, ACP_ERROR_IRQ_MASK);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW0_I2S_ERROR_REASON, 0);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_SW1_I2S_ERROR_REASON, 0);
--		snd_sof_dsp_write(sdev, ACP_DSP_BAR, base + ACP_ERROR_STATUS, 0);
-+		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_sw0_i2s_err_reason, 0);
-+		/* ACP_SW1_I2S_ERROR_REASON is newly added register from rmb platform onwards */
-+		if (desc->rev >= 6)
-+			snd_sof_dsp_write(sdev, ACP_DSP_BAR, ACP_SW1_I2S_ERROR_REASON, 0);
-+		snd_sof_dsp_write(sdev, ACP_DSP_BAR, desc->acp_error_stat, 0);
- 		irq_flag = 1;
- 	}
- 
-diff --git a/sound/soc/sof/amd/acp.h b/sound/soc/sof/amd/acp.h
-index ec9170b3f068..f6f0fcfeb691 100644
---- a/sound/soc/sof/amd/acp.h
-+++ b/sound/soc/sof/amd/acp.h
-@@ -203,6 +203,8 @@ struct sof_amd_acp_desc {
- 	u32 probe_reg_offset;
- 	u32 reg_start_addr;
- 	u32 reg_end_addr;
-+	u32 acp_error_stat;
-+	u32 acp_sw0_i2s_err_reason;
- 	u32 sdw_max_link_count;
- 	u64 sdw_acpi_dev_addr;
- };
-diff --git a/sound/soc/sof/amd/pci-acp63.c b/sound/soc/sof/amd/pci-acp63.c
-index 54d42f83ce9e..e90658ba2bd7 100644
---- a/sound/soc/sof/amd/pci-acp63.c
-+++ b/sound/soc/sof/amd/pci-acp63.c
-@@ -35,6 +35,8 @@ static const struct sof_amd_acp_desc acp63_chip_info = {
- 	.ext_intr_cntl = ACP6X_EXTERNAL_INTR_CNTL,
- 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
- 	.ext_intr_stat1	= ACP6X_EXT_INTR_STAT1,
-+	.acp_error_stat = ACP6X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP6X_SW0_I2S_ERROR_REASON,
- 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
- 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
-diff --git a/sound/soc/sof/amd/pci-rmb.c b/sound/soc/sof/amd/pci-rmb.c
-index 4bc30951f8b0..a366f904e6f3 100644
---- a/sound/soc/sof/amd/pci-rmb.c
-+++ b/sound/soc/sof/amd/pci-rmb.c
-@@ -33,6 +33,8 @@ static const struct sof_amd_acp_desc rembrandt_chip_info = {
- 	.pgfsm_base	= ACP6X_PGFSM_BASE,
- 	.ext_intr_stat	= ACP6X_EXT_INTR_STAT,
- 	.dsp_intr_base	= ACP6X_DSP_SW_INTR_BASE,
-+	.acp_error_stat = ACP6X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP6X_SW0_I2S_ERROR_REASON,
- 	.sram_pte_offset = ACP6X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP6X_AXI2DAGB_SEM_0,
- 	.fusion_dsp_offset = ACP6X_DSP_FUSION_RUNSTALL,
-diff --git a/sound/soc/sof/amd/pci-rn.c b/sound/soc/sof/amd/pci-rn.c
-index e08875bdfa8b..2b7c53470ce8 100644
---- a/sound/soc/sof/amd/pci-rn.c
-+++ b/sound/soc/sof/amd/pci-rn.c
-@@ -33,6 +33,8 @@ static const struct sof_amd_acp_desc renoir_chip_info = {
- 	.pgfsm_base	= ACP3X_PGFSM_BASE,
- 	.ext_intr_stat	= ACP3X_EXT_INTR_STAT,
- 	.dsp_intr_base	= ACP3X_DSP_SW_INTR_BASE,
-+	.acp_error_stat = ACP3X_ERROR_STATUS,
-+	.acp_sw0_i2s_err_reason = ACP3X_SW_I2S_ERROR_REASON,
- 	.sram_pte_offset = ACP3X_SRAM_PTE_OFFSET,
- 	.hw_semaphore_offset = ACP3X_AXI2DAGB_SEM_0,
- 	.acp_clkmux_sel	= ACP3X_CLKMUX_SEL,
--- 
-2.34.1
+> This series makes atmoic code patching possible in riscv ftrace. A
+                    atomic
 
+> direct benefit of this is that we can get rid of stop_machine() when
+> patching function entries. This also makes it possible to run ftrace
+> with full kernel preemption. Before this series, the kernel initializes
+> patchable function entries to NOP4 + NOP4. To start tracing, it updates
+> entries to AUIPC + JALR while holding other cores in stop_machine.
+> stop_machine() is required because it is impossible to update 2
+> instructions, and be seen atomically. And preemption must have to be
+> prevented, as kernel preemption allows process to be scheduled out while
+> executing on one of these instruction pairs.
+>
+> This series addresses the problem by initializing the first NOP4 to
+> AUIPC. So, atmoic patching is possible because the kernel only has to
+             atomic
+
+> update one instruction. As long as the instruction is naturally aligned,
+> then it is expected to be updated atomically.
+
+This came up on the last weekly patchwork call; Given that RISC-V does
+not yet (WIP!) has a formal specfication expressing cmodx behaviour, the
+assumptions done in this series (what you're describing here pretty
+much) should be properly documented in Documentation/riscv the next
+revision.
+
+From the earlier public discussions [1], this is "option A".
+
+> However, the address range of the ftrace trampoline is limited to +-2K
+> from ftrace_caller after appplying this series. This issue is expected
+> to be solved by Puranjay's CALL_OPS, where it adds 8B naturally align
+> data in front of pacthable functions and can  use it to direct execution
+                   patchable
+
+Is it really usable to enable with the limit 2K range? Makes me wonder
+if we should bake in Puranjay CALL_OPS work directly in this series.
+Thoughts?
+
+> out to any custom trampolines.
+>
+> The series is composed by three parts. The first part cleans up the
+> existing issues when the kernel is compiled with clang.The second part
+> modifies the ftrace code patching mechanism (2-4) as mentioned above.
+> Then prepare ftrace to be able to run with kernel preemption (5,6)
+>
+> This series is tested after applying the following ftrace/patching in
+> the fixes branch:
+>
+> - commit 57a369b6f2ee ("riscv: patch: Flush the icache right after
+>                         patching to avoid illegal insns")
+> - commit a2bd3a5b4b63 ("riscv: stacktrace: convert arch_stack_walk() to
+>                         noinstr")
+>
+> Changes in v2:
+> - Drop patch 1 as it is merged through fixes.
+> - Drop patch 2, which converts kernel_text_address into notrace. As
+>   users can prevent tracing it by configuring the tracefs.
+> - Use a more generic way in kconfig to align functions.
+> - Link to v1: https://lore.kernel.org/r/20240613-dev-andyc-dyn-ftrace-v4-=
+v1-0-1a538e12c01e@sifive.com
+
+More input in subsequent patches.
+
+
+Cheers,
+Bj=C3=B6rn
+
+[1] https://lore.kernel.org/linux-riscv/87zfv0onre.fsf@all.your.base.are.be=
+long.to.us/
 
