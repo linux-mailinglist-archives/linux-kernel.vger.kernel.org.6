@@ -1,191 +1,156 @@
-Return-Path: <linux-kernel+bounces-285044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AE695089D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:11:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173959508A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 893252824D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8308280C15
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9498A1A00EC;
-	Tue, 13 Aug 2024 15:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D731A01BC;
+	Tue, 13 Aug 2024 15:11:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SxzWBppV"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNMBJq2H"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26BD19EEA4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A541E4A4;
+	Tue, 13 Aug 2024 15:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723561859; cv=none; b=uLfJzLU3/+TdeJJqskZJgghY0csdkIX99Fl58fT6aLDmNz6N9yjB8A8N48zk/2EhPW7RnIniL01TDXPwk7T4VFAN+2F3IBUAGujpkkSGB+hxyOkWlR6WJndijs47+zwiTz9rBGoYPrrw+DD7oC5EJJUtSgXleS76ulAmbWxAQ34=
+	t=1723561904; cv=none; b=bSs/BDLodsnmROARarXRl7b2WA5if3V82R6bqfkO4gAGCqI8efOCFn0lTOyBtgEe3lbOc5U2bn64/dgWpBlCBjfYqmwvUg5WSxJfAFQ7s3N1S/EC4VoDndcrg2kEJoOuMDC4D0IVjXaefF+tF3dxi4sEfaTXfxOou5HXpVwYMXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723561859; c=relaxed/simple;
-	bh=LYIWBtskN6sXTvpBnGG3C6nVsnJ6dgWuEna51QeBeQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=VryBtdgKmlV2HzLQ7yTeaRhmj4ykDc5JNV/T4UjvKFJeKOIAL7MusxfJe9kf0eDVnv6eR8uCZ6CsIymZAWbPwr/Jz58+eOlkgpGVOJhY4ygUlcvwBq8EpEXaVnqSIgg1MrF0i7en49fEdcmADGOrY9zrD/x5SmDb9iRuO405i58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SxzWBppV; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37172a83a4bso362071f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:10:57 -0700 (PDT)
+	s=arc-20240116; t=1723561904; c=relaxed/simple;
+	bh=raOwBnqYH5LhsUp41vZu/c8ShXCLiujerZ2BM0PTRAM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gyF/tUJlVellLUTuLKwuP4MnG5ro6DG0klr2PeDfL12cw2glg6kxsUrvysoOmlAsITq4FnHteRqj8Hh6mI03v5c1VNZun8RtqS59SNrwd+ZnalKx4meM8CRhVlpZkcWClRkmeIzT0W3Q5sNbkPhpAA7aIIot2YCSA8KVZO9H0F8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nNMBJq2H; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3683f56b9bdso3739149f8f.1;
+        Tue, 13 Aug 2024 08:11:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723561856; x=1724166656; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uNaRquM+gUEb0pKk86KM3Zb+qh4ZVa6K8vPWsqTERgs=;
-        b=SxzWBppVNP7mJOaH64PP55cpZp8KBgFA7GOAVUEKCxgSFsG4qa5LPWuEMynAq3AnHe
-         I850ph4Vizos/37qGt9Gt6PCMxPnPQyF+2/xb1qVJsbwLQBmY542DxS9gzBPlH0Pju3h
-         dgSO7DT4PJBpTiH4I+5RNL4L+GkA4FE4Hgkug8sVcr27mKFGhIJjWQeOAbNAsA46ur2n
-         +o7JyX2KG9nE1e9as/40k7cxtpzkl2Ak1aqMC8G5Y88R/SeyTetq375tee1A/ux7VRSQ
-         WLQFdhPK4UyN/AJBtMhleGWoSBAfwCCyAkpGYkd5mvQTvqwwFv4fwcepoAToeU6KaJLv
-         ewZA==
+        d=gmail.com; s=20230601; t=1723561901; x=1724166701; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4nC9j0rwXAV42mfe1JGwEatxbihzY0JrdD7+bccVpsE=;
+        b=nNMBJq2HqcvSHxtrXDlLxKwbvoTgYvObAxOF3a+Y36vrSY+WKZ7SDxvIrvA05NeMM+
+         UiXPxRirj2u/K1XrPj3nAKM3k1ZFc3xj13WkQgoyjLJcc+qeylB80UBq5eN8CoA2/JH2
+         vqn4ln8JbJ5I/9y1744aJUfAYJudv7f/+47sjZnYF81e3dn73YmUJ6YkCPBYCzSu6ndM
+         iMTkoUEOr5w44folNbMCENz2Nal5NZzAU7IFxh1BkhvfUlDr2h/QgueObo8aqfqvhlYo
+         ayKfx0ILPfJFNNfBI/btMeNzwAy8NYDjScc2uG3KBuT3P5SGb2kluDzPFzNLv/fTVmMD
+         4lyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723561856; x=1724166656;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uNaRquM+gUEb0pKk86KM3Zb+qh4ZVa6K8vPWsqTERgs=;
-        b=fxJPg3ArEJ/DxfIZW9WQtfOwSlVn6sIn+91lH249W4fFJd2BkWaBHh9CQzzewS9wGu
-         G5D6rWxp2Sk1QmfFu90zWZO3I0DvOJtDDxzDvnX431h8XztjzDaRR6G+pskAoes1m5Ab
-         TFhvwnOwzaEMLMfPhS9Ev4QVa0RGVPqu8UmCc3qEUCalmEo29wPWKuFNsT4p+3Yghoiu
-         aluB4LvryJBJTfJt97d8P736VNV9eFNS9YpyfK/xhYz0T7IrrZ2meoasES7L04SkUtSS
-         QE36QbLmjFs0heYMfc15j8qTdIH/jZ0GyyJcMqa7qd1/b8wOKUi+4wCwkMKhNO2+nFeW
-         Fciw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcRrtkCSpu2I2Tp0euEK9meSqa9rVbocQVlUtlQvgy5hLJUsP5Xl+Qnx+sAm4cAy6gJ8CM2lz+b6K/qr+biZ6QvX0gTvqITkov5fdk
-X-Gm-Message-State: AOJu0YxW1ClWSZDECD6/SPBuNOrNiRcSxNFwAvaSe1Hth6LnL8Z76Hkk
-	zskp/Vc02UwmO8TbpT9daQSP/oBFevoXeKP1DKLZLahKhAGTlchEL4jz/bqaafQ=
-X-Google-Smtp-Source: AGHT+IFanGBAh+3UifeFJiJZmUQP8fwxUmBb7RFyv+AjfsrU47xau9UjVEIrnOY5ZlY3yXWI/pOLGQ==
-X-Received: by 2002:a05:6000:118e:b0:368:4c54:ae27 with SMTP id ffacd0b85a97d-3716cd07857mr2680656f8f.36.1723561856037;
-        Tue, 13 Aug 2024 08:10:56 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfeefedsm10639103f8f.58.2024.08.13.08.10.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 08:10:55 -0700 (PDT)
-Message-ID: <dac6ad1d-5aca-48b4-9dcb-ff7e54ca43f6@linaro.org>
-Date: Tue, 13 Aug 2024 16:10:54 +0100
+        d=1e100.net; s=20230601; t=1723561901; x=1724166701;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4nC9j0rwXAV42mfe1JGwEatxbihzY0JrdD7+bccVpsE=;
+        b=drzPNEED6abwnvjvm3+GPcDdQkY6D/dglNXJ6+oPAXAwA+PcKj95TtOrPLInMEHLbY
+         d+2+1atHKAn/LZvwB881QoM5uMttZ8QHzDNRojFc3jarKJBRanX8UFsQuNKf0BUjFl9N
+         Iw1xeNbInkKI4P6HHbA252MetG1Hx1G0/xZsBNdsHLjpu5bdScqL9oo0FtNfTNL2wxtg
+         ktRJsYJblLm0TTVqtOk6t3YMGI64+MGXqdZ1uu5DbeG6DfEmILtvGbaz0E8ytMEgAw/4
+         ef8cR5puJlkza2LcOsGdrVy7O3LO5jDulNwabhppFR54dls53oDG62CZBjQXVJ8dZLX1
+         6Eaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXK1n54joW/ZvATScEK3cKCrV5UJEj703V5qLU1czEg9ZL1131cXTEOfy5RHk0f8iuuu8J/Zw5fw3Z0JsPIIRrYB6BSj3gF5qSw7vu4h4YB8G+F2pVeodjrFKUi0nd0QrhiXpXgtdtVY2DNu11f/9yjtZglXMxzyYCM
+X-Gm-Message-State: AOJu0YwTRkQVjuAySABeUXul/w1+4rU9ePp83ie17OpRDGmbJ7eJfVlZ
+	CpsKPqOG4UDJ7JYWCWbkMznrnTqhIxku3+8NzKXb/V3jI8QBQvPTq4wfLzvQY0Qexyt/7XK3Qb/
+	wjosXJ6E34gba7HYM6R2ePf7ijD4=
+X-Google-Smtp-Source: AGHT+IEiRdefQPqd/dPcUdZDhMBU+XuPSqJx3UZGGW6A7Tj9UdJ3g2ZF6n39rYUPDVgFQ3fwnLBKaSyoF92wFN4g+fE=
+X-Received: by 2002:a5d:47c2:0:b0:368:303b:8fe7 with SMTP id
+ ffacd0b85a97d-3716ccd8341mr2763330f8f.7.1723561900405; Tue, 13 Aug 2024
+ 08:11:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] perf stat: Make default perf stat command work on Arm
- big.LITTLE
-From: James Clark <james.clark@linaro.org>
-To: Ian Rogers <irogers@google.com>
-Cc: linux-perf-users@vger.kernel.org, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Dominique Martinet <asmadeus@codewreck.org>, Ze Gao <zegao2021@gmail.com>,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240813132323.98728-1-james.clark@linaro.org>
- <CAP-5=fUVchraZxYg9LY-CtqYZ5DN05-T3vhJmaUG+24Ka6Bsyg@mail.gmail.com>
- <5ac3fc9d-4ed6-46ed-b537-13d27ba46e3b@linaro.org>
-Content-Language: en-US
-In-Reply-To: <5ac3fc9d-4ed6-46ed-b537-13d27ba46e3b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240808123714.462740-1-linyunsheng@huawei.com> <4aba9fae-563d-4a4e-8336-44e24551d9f9@huawei.com>
+In-Reply-To: <4aba9fae-563d-4a4e-8336-44e24551d9f9@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Tue, 13 Aug 2024 08:11:03 -0700
+Message-ID: <CAKgT0UezjgRX9QUWkee_p8KVQQa1va12k2CaGJeOYrr5LGg4YQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v13 00/14] Replace page_frag with page_frag_cache
+ for sk_page_frag()
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, bpf@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Aug 13, 2024 at 4:30=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> On 2024/8/8 20:37, Yunsheng Lin wrote:
+>
+> ...
+>
+> >
+> > CC: Alexander Duyck <alexander.duyck@gmail.com>
+> >
+> > 1. https://lore.kernel.org/all/20240228093013.8263-1-linyunsheng@huawei=
+.com/
+> >
+> > Change log:
+> > V13:
+> >    1. Move page_frag_test from mm/ to tools/testing/selftest/mm
+> >    2. Use ptr_ring to replace ptr_pool for page_frag_test.c
+> >    3. Retest based on the new testing ko, which shows a big different
+> >       result than using ptr_pool.
+>
+> Hi, Davem & Jakub & Paolo
+>     It seems the state of this patchset is changed to 'Deferred' in the
+> patchwork, as the info regarding the state in 'Documentation/process/
+> maintainer-netdev.rst':
+>
+> Deferred           patch needs to be reposted later, usually due to depen=
+dency
+>                    or because it was posted for a closed tree
+>
+> Obviously it was not the a closed tree reason here, I guess it was the de=
+pendency
+> reason casuing the 'Deferred' here? I am not sure if I understand what so=
+rt of
+> dependency this patchset is running into? It would be good to mention wha=
+t need
+> to be done avoid the kind of dependency too.
+>
+>
+> Hi, Alexander
+>     The v13 mainly address your comments about the page_fage_test module.
+> It seems the your main comment about this patchset is about the new API
+> naming now, and it seems there was no feedback in previous version for
+> about a week:
+>
+> https://lore.kernel.org/all/ca6be29e-ab53-4673-9624-90d41616a154@huawei.c=
+om/
+>
+> If there is still disagreement about the new API naming or other things, =
+it
+> would be good to continue the discussion, so that we can have better
+> understanding of each other's main concern and better idea might come up =
+too,
+> like the discussion about new layout for 'struct page_frag_cache' and the
+> new refactoring in patch 8.
 
+Sorry for not getting to this sooner. I have been travelling for the
+last week and a half. I just got home on Sunday and I am suffering
+from a pretty bad bout of jet lag as I am overcoming a 12.5 hour time
+change. The earliest I can probably get to this for review would be
+tomorrow morning (8/14 in the AM PDT) as my calendar has me fully
+booked with meetings most of today.
 
-On 13/08/2024 3:45 pm, James Clark wrote:
-> 
-> 
-> On 13/08/2024 3:35 pm, Ian Rogers wrote:
->> On Tue, Aug 13, 2024 at 6:24 AM James Clark <james.clark@linaro.org> 
->> wrote:
->>>
->>> The important patches are 3 and 5, the rest are tidyups and tests.
->>>
->>> I don't think there is any interaction with the other open issues
->>> about the uncore DSU cycles event or JSON/legacy hw event priorities
->>> because only hw events on core PMUs are used for the default
->>> stat command. And also just sharing the existing x86 code works so
->>> no big changes are required.
->>>
->>> For patch 3 the weak arch specific symbol has to continue to be used
->>> rather than picking the implementation based on
->>> perf_pmus__supports_extended_type() like in patch 5. This is because
->>> that function ends up calling evsel__hw_name() itself which results
->>> in recursion. But at least one weak arch_* construct has been removed,
->>> so it's better than nothing.
->>
->> Let's not do things this way. The use of strings is architecture
->> neutral, means we don't need to create new arch functions on things
->> like RISC-V, it encapsulates the complexity of things like topdown
-> 
-> If the new arch function is an issue that could be worked around by 
-> calling perf_pmus__supports_extended_type() on patch 3 as well? It just 
-> needs a small change to not recurse.
-> 
->> events, Apple ARM M CPUs not supporting legacy events, etc.
-> 
-> If Apple M doesn't support the HW events does _any_ default Perf stat 
-> command (hybrid or not) work? I'm not really trying to fix that here, 
-> just make whatever already works work on big.LITTLE.
-> 
->> Duplicating the existing x86 logic, when that was something trying to
->> be removed, is not the way to go. That logic was a holdover from the
->> hybrid tech debt we've been working to remove with a generic approach.
->>
->> Thanks,
->> Ian
->>
-> 
-> I think all of that may make sense, but in this case I haven't actually 
-> duplicated anything, rather shared the existing code to also be used on 
-> Arm.
-> 
-> This means we can have the default perf stat working on Arm from today, 
-> and if any other changes get made it will continue to work as I've also 
-> added a test for it.
-> 
+Thanks,
 
-I would also like to note that (not including the new test) this 
-patchset _removes_ more code than it adds, so to say it duplicates code 
-is a bit unfair.
-
-Of course this touches some similar areas to your other change, but that 
-doesn't mean I think we shouldn't continue with that one. I'm still 
-happy to review and test or contribute to that one if you like. I think 
-it just helped me to do it in this order and get this thing in a working 
-state first before the next bigger step.
-
->>> James Clark (7):
->>>    perf stat: Initialize instead of overwriting clock event
->>>    perf stat: Remove unused default_null_attrs
->>>    perf evsel: Use the same arch_evsel__hw_name() on arm64 as x86
->>>    perf evsel: Remove duplicated __evsel__hw_name() code
->>>    perf evlist: Use hybrid default attrs whenever extended type is
->>>      supported
->>>    perf test: Make stat test work on DT devices
->>>    perf test: Add a test for default perf stat command
->>>
->>>   tools/perf/arch/arm64/util/Build   |  1 +
->>>   tools/perf/arch/arm64/util/evsel.c |  7 ++++
->>>   tools/perf/arch/x86/util/evlist.c  | 65 ------------------------------
->>>   tools/perf/arch/x86/util/evsel.c   | 17 +-------
->>>   tools/perf/builtin-stat.c          | 12 ++----
->>>   tools/perf/tests/shell/stat.sh     | 33 ++++++++++++---
->>>   tools/perf/util/evlist.c           | 65 ++++++++++++++++++++++++++----
->>>   tools/perf/util/evlist.h           |  6 +--
->>>   tools/perf/util/evsel.c            | 19 +++++++++
->>>   tools/perf/util/evsel.h            |  2 +-
->>>   10 files changed, 119 insertions(+), 108 deletions(-)
->>>   create mode 100644 tools/perf/arch/arm64/util/evsel.c
->>>
->>> -- 
->>> 2.34.1
->>>
+- Alex
 
