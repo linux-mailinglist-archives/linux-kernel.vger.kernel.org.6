@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-284888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FD41950676
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:28:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FE195066B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:26:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE19B289BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:26:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2A89285163
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C719CD06;
-	Tue, 13 Aug 2024 13:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750F819D077;
+	Tue, 13 Aug 2024 13:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmIPvP0U"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SyEubhuE"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDDA19B3E3
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2417819B5B4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555533; cv=none; b=m1QDYU7DNPMpjnkXGK17pETeNMv4oI16cHj49/xNsKiOghRYQry6k4FPPnhMdhM7W5ONNuIdGoMvKRx/+ELd8nwUw2f65c1BfRjIU6dis9w8jRFhWiWj6kj7oa0hx3WdukPvNrnRcULKUcpFsErpsl+nDfUPzLNwUtOdHjKcQJQ=
+	t=1723555540; cv=none; b=K341yZUVUcAnsW0Lj91W7iovyRVNAw6Cc9+OXmb2nRc3Yw60QvfeYMaQ8Bu621ho9uJ2QkrJb6Gw/TnfscdbCKVM2TBMhJEyPgEn9PIr0EciDr5OEhL+L8M7ymY6lpQEMEQHliSNqWXXqu23ZZho0SFojPvxr7EHh84oHZgt5QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555533; c=relaxed/simple;
-	bh=u+E8ctwMhqOhWA0QdLQIlIzYAq6iAtE1bX/6M6IObcI=;
+	s=arc-20240116; t=1723555540; c=relaxed/simple;
+	bh=TCmY5/W8UjZo5v+UmsAxTLf+W/oV6ui66khMLptw/MU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qaXhyj4K+8F0kv1SJaeqUaKR0LGbSXRiIOLdsjKufUcjN5UPppCKWEkZlS4xa2Xnq7d68R37BZI+Gb419BFI91kNH934Zi7jxswmESdzcNRWI+UcOr3D0QEPYamzXOjmW7WqcdfNWNIXe/CaElwGMlZKplucIy/FmSBG3PTxib4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mmIPvP0U; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version; b=VzxjDCqvCK7nYFBeKJH8qyfm97IslP+Tt0vbxztRPfCE/MupdMrqngfISUs7yAD5jdbC2ksYXbCbkyvtdnMcMtkT3Pz5Lj5C0MTZezzhXkjJ/boMB02ipurMhh7lia0if/jYw0CtvDmpnCuy0oiHcAWt/RUNhjccKsD7w/gaLPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SyEubhuE; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-428e3129851so40535635e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:25:30 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-428fb103724so36911095e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:25:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723555529; x=1724160329; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723555537; x=1724160337; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YJPiTzck/wj4Bl8bp1dFvT+bnyHvEgyjm9lLc0sAxDQ=;
-        b=mmIPvP0UvIzGTe+PIB4y0UDelO8Vri1mEBGtWSORkOybGD3rzX/JBjAX207/xTs2Y2
-         8jCQsrSlJn0svUFAaRQNrU3TwSm+2ZckbK4bgLJDOIBW5TM12whPBUrtsy7xzdH7rXRb
-         Iu8bf6JNTL6QHS6qJGdYbjdpooucdExD9+luuGl6+/ap4m5WzFmLwue8CLT5TsdRaxjP
-         PeuDpy7PXMFcqyzL9vX8vMvQGDFaphoYg3lhg5vIBaMQFMTCkLV0S0eOCzJQOmMt9eDl
-         GH8AHBMtIYS3UbdNbGtQvq7sMQJi26Bm8QWAImO7Gz6l/jm9dB4xC8ys94bMqsv7Aqgy
-         /qSQ==
+        bh=FXow/HXS2t6eZsIhNK0KrvK5I+CXmczupsEF4/wQsaM=;
+        b=SyEubhuEKik3hYXSQIEkZ30iK4uJjqe3fZfSo4RIn9Iz8Hz7w7TDuqAiDazlwSIVbV
+         4gNAe4IJAdnPNivrWzM8C7i3vRuibrUMXnIcjCN6bQcozqS2O8gnMTcRCXATEfg1hC/V
+         r5bfi62NgxifckMKRxv4d2MiPzZQRylFom2MJWXoMVIJrfv+7DoGHdWmBTsj3/zzPveG
+         fWIxyQJGy+cp+XcLMVkGL3iSHTrtMewDIJhoC4vJi0/UJuwFA7PAwapcnEQUwE+dHbAT
+         g+whSboAI6dGGva1UYlI3rvZqmFjJfdr6+xR7wjYtRzeUJNYLUo9bTO9FUJYo7Jxa6RR
+         M5vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555529; x=1724160329;
+        d=1e100.net; s=20230601; t=1723555537; x=1724160337;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YJPiTzck/wj4Bl8bp1dFvT+bnyHvEgyjm9lLc0sAxDQ=;
-        b=ncno8dsth5mWAT0Fn7EK4MDeZ3lc+ukUc20ZgWjx3GpXwG9GNUW/S2EVMcKmD4RfJk
-         0Pnv/9Xj6kU1MfyEiPLNZabMkZyaV+VUMfsyYeo8oxsLAadqOcfIIn5iN+1jKoocqvES
-         0a7fGuG+5RxIHwNstUDJZ/XOKv6i+Ai1BimYuZi+erKOZ0jH9HFQdEYOjUZ87p8/sYI+
-         KT/ht87ePCwTXPpB4JoNuln8xh73ROiaD0oT8goYrFgq33fvd9FuT+IyUSXXP9cmxAJl
-         AwG1uLYLX+eAjoYvur4kiiwXHLR5U7jUXWRjSlDViXGr5j59Bid7Chuc/7GQ+SR4QGX5
-         UUpA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCvE4PsfqA2SApIS3/2x2X31xMZVPh56jTkm2ga0GiZR2u452TR/VEafE5oSlKksIBT5LBBAPVeoiz9gkpgLJjFQnYEYhnzkjCaqJA
-X-Gm-Message-State: AOJu0Yxm7DpTvJM9pxurQHhMv608al/9Tfkgvt6Ls/epDge7CUDscpwO
-	+Wc/5gz5zBckyC9lRQ0MRzm3If2vRi/ZFp5eghIFHFLcr4ENMsYexCd7ZZqKHa4=
-X-Google-Smtp-Source: AGHT+IGpUiL8HI1I4dgUEXAngk1hqDYSTUpCg0rDVeIRHKgEB9vHTQ+oOqXVgzYYIWv7xtQbj8/VkA==
-X-Received: by 2002:a05:600c:358c:b0:428:ea8e:b48a with SMTP id 5b1f17b1804b1-429d47f49fbmr28609085e9.8.1723555528866;
-        Tue, 13 Aug 2024 06:25:28 -0700 (PDT)
+        bh=FXow/HXS2t6eZsIhNK0KrvK5I+CXmczupsEF4/wQsaM=;
+        b=Gs52EXzS4A4fzb12nXfIAtb/bnAEBncG+EOzzpy4QDlfgqY0I7Od4IquxYc3fDf6uM
+         CiQ91hc5rLavFCYV+EJrM12soqfEBLyb8pMd9ioOF7WfIZ6RbOEzoNT1kVO5lzVLo5B8
+         9sl/vJwBPI4B9SrY4jl/y/pakaCjUzb5MaRrIaKJGOA/fStsvCs5GY1HspXOzmGN/2Py
+         tbHnRtO2Vj5yIKAEX1Zq10TvzQ6uEjS0l1fV5uDM+gMOqCYmdnc1DbEjXHYCthNqkRfQ
+         Q9hi7T96DyGxfEfSbe+v/m1qr8tjPeDyQ3g+e3XVz58oR9KWmN3Mw1olAbO/dBAtqP5Q
+         ZwzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMO9lHjLwn8Z7VqjyrLSg1pbssWCXlBQ3ZBMVVWJ3l+z1oUZd9phjK2N3isr/Mf8yKF1brMp3OjyyG3IV2Z9D60sH1t0w+qsrWKDV9
+X-Gm-Message-State: AOJu0YzCGyu+CHdJb2ntf4y0aWh51sRTYPKMpILtdfmkxlh/+2I4zajO
+	QQbb640QFJzQZ/hqjLDByx0tvyAJ+I++518YJv/BfvIJNKQKaJ/QHae8fDvccpA=
+X-Google-Smtp-Source: AGHT+IGc9t+MTAwYwGAaBX95OSnKFftghFZ3NfLAkZ7AAvwA9zVwqXl0BELY2LWwoeQ2oa+XAXA1ag==
+X-Received: by 2002:a05:600c:3550:b0:424:a401:f012 with SMTP id 5b1f17b1804b1-429d6269733mr21164045e9.3.1723555537440;
+        Tue, 13 Aug 2024 06:25:37 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.25.28
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.25.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:25:28 -0700 (PDT)
+        Tue, 13 Aug 2024 06:25:36 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: irogers@google.com,
 	linux-perf-users@vger.kernel.org
@@ -83,14 +83,14 @@ Cc: James Clark <james.clark@linaro.org>,
 	Jiri Olsa <jolsa@kernel.org>,
 	Adrian Hunter <adrian.hunter@intel.com>,
 	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
 	Yang Jihong <yangjihong1@huawei.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
 	Ze Gao <zegao2021@gmail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/7] perf evlist: Use hybrid default attrs whenever extended type is supported
-Date: Tue, 13 Aug 2024 14:23:13 +0100
-Message-Id: <20240813132323.98728-6-james.clark@linaro.org>
+Subject: [PATCH 6/7] perf test: Make stat test work on DT devices
+Date: Tue, 13 Aug 2024 14:23:14 +0100
+Message-Id: <20240813132323.98728-7-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240813132323.98728-1-james.clark@linaro.org>
 References: <20240813132323.98728-1-james.clark@linaro.org>
@@ -102,212 +102,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For x86, a hybrid version of ___evlist__add_default_attrs() was added to
-support default perf stat events. This can actually be used whenever
-perf_pmus__supports_extended_type() is true, which now makes default
-perf stat arguments work properly on Arm big.LITTLE:
-
-  $ perf stat
-  ...
-        3347093940    armv8_cortex_a53/cycles/    #  0.563 GHz  (98.99%)
-        3295523067    armv8_cortex_a57/cycles/    #  0.554 GHz  (67.07%)
-  ...
+PMUs aren't listed in /sys/devices/ on DT devices, so change the search
+directory to /sys/bus/event_source/devices which works everywhere. Also
+add armv8_cortex_* as a known PMU type to search for to make the test
+run on more devices.
 
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/arch/x86/util/evlist.c | 65 -------------------------------
- tools/perf/util/evlist.c          | 65 +++++++++++++++++++++++++++----
- tools/perf/util/evlist.h          |  6 +--
- 3 files changed, 59 insertions(+), 77 deletions(-)
+ tools/perf/tests/shell/stat.sh | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-index b1ce0c52d88d..bbe6240c7f71 100644
---- a/tools/perf/arch/x86/util/evlist.c
-+++ b/tools/perf/arch/x86/util/evlist.c
-@@ -8,71 +8,6 @@
- #include "topdown.h"
- #include "evsel.h"
+diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
+index 3f1e67795490..525d0c44fdc6 100755
+--- a/tools/perf/tests/shell/stat.sh
++++ b/tools/perf/tests/shell/stat.sh
+@@ -117,16 +117,18 @@ test_cputype() {
  
--static int ___evlist__add_default_attrs(struct evlist *evlist,
--					struct perf_event_attr *attrs,
--					size_t nr_attrs)
--{
--	LIST_HEAD(head);
--	size_t i = 0;
--
--	for (i = 0; i < nr_attrs; i++)
--		event_attr_init(attrs + i);
--
--	if (perf_pmus__num_core_pmus() == 1)
--		return evlist__add_attrs(evlist, attrs, nr_attrs);
--
--	for (i = 0; i < nr_attrs; i++) {
--		struct perf_pmu *pmu = NULL;
--
--		if (attrs[i].type == PERF_TYPE_SOFTWARE) {
--			struct evsel *evsel = evsel__new(attrs + i);
--
--			if (evsel == NULL)
--				goto out_delete_partial_list;
--			list_add_tail(&evsel->core.node, &head);
--			continue;
--		}
--
--		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
--			struct perf_cpu_map *cpus;
--			struct evsel *evsel;
--
--			evsel = evsel__new(attrs + i);
--			if (evsel == NULL)
--				goto out_delete_partial_list;
--			evsel->core.attr.config |= (__u64)pmu->type << PERF_PMU_TYPE_SHIFT;
--			cpus = perf_cpu_map__get(pmu->cpus);
--			evsel->core.cpus = cpus;
--			evsel->core.own_cpus = perf_cpu_map__get(cpus);
--			evsel->pmu_name = strdup(pmu->name);
--			list_add_tail(&evsel->core.node, &head);
--		}
--	}
--
--	evlist__splice_list_tail(evlist, &head);
--
--	return 0;
--
--out_delete_partial_list:
--	{
--		struct evsel *evsel, *n;
--
--		__evlist__for_each_entry_safe(&head, n, evsel)
--			evsel__delete(evsel);
--	}
--	return -1;
--}
--
--int arch_evlist__add_default_attrs(struct evlist *evlist,
--				   struct perf_event_attr *attrs,
--				   size_t nr_attrs)
--{
--	if (!nr_attrs)
--		return 0;
--
--	return ___evlist__add_default_attrs(evlist, attrs, nr_attrs);
--}
--
- int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
- {
- 	if (topdown_sys_has_perf_metrics() &&
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 1417f9a23083..e0c31399beb6 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -5,6 +5,7 @@
-  * Parts came from builtin-{top,stat,record}.c, see those files for further
-  * copyright notes.
-  */
-+#include "pmus.h"
- #include <api/fs/fs.h>
- #include <errno.h>
- #include <inttypes.h>
-@@ -338,24 +339,74 @@ int evlist__add_attrs(struct evlist *evlist, struct perf_event_attr *attrs, size
- 	return -1;
- }
- 
--int __evlist__add_default_attrs(struct evlist *evlist, struct perf_event_attr *attrs, size_t nr_attrs)
-+
-+static int __evlist__add_default_attrs_ext_type(struct evlist *evlist,
-+						struct perf_event_attr *attrs,
-+						size_t nr_attrs)
- {
--	size_t i;
-+	LIST_HEAD(head);
-+	size_t i = 0;
- 
- 	for (i = 0; i < nr_attrs; i++)
- 		event_attr_init(attrs + i);
- 
--	return evlist__add_attrs(evlist, attrs, nr_attrs);
-+	for (i = 0; i < nr_attrs; i++) {
-+		struct perf_pmu *pmu = NULL;
-+
-+		if (attrs[i].type == PERF_TYPE_SOFTWARE) {
-+			struct evsel *evsel = evsel__new(attrs + i);
-+
-+			if (evsel == NULL)
-+				goto out_delete_partial_list;
-+			list_add_tail(&evsel->core.node, &head);
-+			continue;
-+		}
-+
-+		while ((pmu = perf_pmus__scan_core(pmu)) != NULL) {
-+			struct perf_cpu_map *cpus;
-+			struct evsel *evsel;
-+
-+			evsel = evsel__new(attrs + i);
-+			if (evsel == NULL)
-+				goto out_delete_partial_list;
-+			evsel->core.attr.config |= (__u64)pmu->type << PERF_PMU_TYPE_SHIFT;
-+			cpus = perf_cpu_map__get(pmu->cpus);
-+			evsel->core.cpus = cpus;
-+			evsel->core.own_cpus = perf_cpu_map__get(cpus);
-+			evsel->pmu_name = strdup(pmu->name);
-+			list_add_tail(&evsel->core.node, &head);
-+		}
-+	}
-+
-+	evlist__splice_list_tail(evlist, &head);
-+
-+	return 0;
-+
-+out_delete_partial_list:
-+	{
-+		struct evsel *evsel, *n;
-+
-+		__evlist__for_each_entry_safe(&head, n, evsel)
-+			evsel__delete(evsel);
-+	}
-+	return -1;
- }
- 
--__weak int arch_evlist__add_default_attrs(struct evlist *evlist,
--					  struct perf_event_attr *attrs,
--					  size_t nr_attrs)
-+int __evlist__add_default_attrs(struct evlist *evlist, struct perf_event_attr *attrs,
-+				size_t nr_attrs)
- {
-+	size_t i;
-+
- 	if (!nr_attrs)
- 		return 0;
- 
--	return __evlist__add_default_attrs(evlist, attrs, nr_attrs);
-+	if (perf_pmus__supports_extended_type())
-+		return __evlist__add_default_attrs_ext_type(evlist, attrs, nr_attrs);
-+
-+	for (i = 0; i < nr_attrs; i++)
-+		event_attr_init(attrs + i);
-+
-+	return evlist__add_attrs(evlist, attrs, nr_attrs);
- }
- 
- struct evsel *evlist__find_tracepoint_by_id(struct evlist *evlist, int id)
-diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
-index cccc34da5a02..06d1eeacc0d1 100644
---- a/tools/perf/util/evlist.h
-+++ b/tools/perf/util/evlist.h
-@@ -106,12 +106,8 @@ int evlist__add_attrs(struct evlist *evlist, struct perf_event_attr *attrs, size
- int __evlist__add_default_attrs(struct evlist *evlist,
- 				     struct perf_event_attr *attrs, size_t nr_attrs);
- 
--int arch_evlist__add_default_attrs(struct evlist *evlist,
--				   struct perf_event_attr *attrs,
--				   size_t nr_attrs);
--
- #define evlist__add_default_attrs(evlist, array) \
--	arch_evlist__add_default_attrs(evlist, array, ARRAY_SIZE(array))
-+	__evlist__add_default_attrs(evlist, array, ARRAY_SIZE(array))
- 
- int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs);
- 
+   # Find a known PMU for cputype.
+   pmu=""
+-  for i in cpu cpu_atom armv8_pmuv3_0
++  devs="/sys/bus/event_source/devices"
++  for i in $devs/cpu $devs/cpu_atom $devs/armv8_pmuv3_0 $devs/armv8_cortex_*
+   do
+-    if test -d "/sys/devices/$i"
++    i_base=$(basename "$i")
++    if test -d "$i"
+     then
+-      pmu="$i"
++      pmu="$i_base"
+       break
+     fi
+-    if perf stat -e "$i/instructions/" true > /dev/null 2>&1
++    if perf stat -e "$i_base/instructions/" true > /dev/null 2>&1
+     then
+-      pmu="$i"
++      pmu="$i_base"
+       break
+     fi
+   done
 -- 
 2.34.1
 
