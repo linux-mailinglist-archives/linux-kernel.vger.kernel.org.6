@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-285266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA9A950B69
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:27:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE6BE950B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D96861F240F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:27:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D74A1C21A9F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C408E1A2C3C;
-	Tue, 13 Aug 2024 17:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BD51A2C12;
+	Tue, 13 Aug 2024 17:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GzgQlkzC"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cBAWJHMM"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B611A0B00
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE001A08D1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723570012; cv=none; b=qdPoXMcBExUExukbWBL3YLeTOoxi0+zvmQrrBvwxAD/+YxQiSb1h9AfFjKOC6zrkkFl3ntRk0FEmT86HlUY2sU+DI/6wKaU+QQh1y9SSWpZmRM1/JEybucfhXF0NaFEY9tMZbIy0ftmePgyu0jUArQyradht/pkRebhKQeihYsA=
+	t=1723570075; cv=none; b=ONpnMxXKpaIWpxLquWRJyg0KRJX52ILgEnCoRUaN03RKGd8O5dTEh5SgUjSC4RD1ZHW35RSUkAQgFFuzAbrrLmHoR6B0fynG1cF1NIDGeOCZsIjwUpWqXdI9AZfmcAl/nGELiCCJjcZFYPWLHzDPByQD9N7hmIFO8uAB5vzg4XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723570012; c=relaxed/simple;
-	bh=jYGb5mHlV+ihdJHe49QSxa9mK0oe4vJu7/WyfoVkd3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kvsi4UzAhSixNsgUvzwvK9CrvBGRXrveidw8VmklBv8JDFYlUARzwBeWn98sS2xtNWjIBouo6/D6a43YFu4L6nc/GUnkUNqRiSGj6O8nh8KAnHZf3rJesMoTw6WevMRORjmyICJSWF/wY2tdciWNN3mNUk1PHVSiuf2fRc4JHf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GzgQlkzC; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2689e7a941fso3871814fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:26:50 -0700 (PDT)
+	s=arc-20240116; t=1723570075; c=relaxed/simple;
+	bh=fVPQXHdsqHUwi9VIGaY64omTQpZNyJFY9/T1nVkDXzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eoFuvKQhbVfMKU29nKn+rUAt7xNF758siFNMfH9VlFGc3jgfD5ChsvQaA7kSz4U+nDs041b8gh5JXTFVNpXuHPypUC/DfxEabjwAysGkwNzqKS8qebY+L5b8yqGAMGR1u/6qOy9VR+m58YPUDO2uYJIs7rtdGZvrHda0tH5/RxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cBAWJHMM; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44fe58fcf29so30745231cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:27:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723570009; x=1724174809; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1723570072; x=1724174872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=sfCzq2Lvjd+sCpXqRW/b9Deb8m8Alkw4yxbwVX9rDSs=;
-        b=GzgQlkzCcUnvtm6Smh8RDUus88FAsMGvuBhVVB3Uu82XFjdfaZTf05EIezqN/S5cHM
-         kM6XQIyMCuZ2Jo7qEedUNoaJWQaTRP9uxwXSCeFN2VcH5uszbbiVAX388x/eol62hPg4
-         EB4NjifeLv8NZOdA5l95nt2gaHbgebY7cto5lehfIvBQnU2nLIx2GM7HseWVF6Dk5qxJ
-         gUVmme1iMQLsEnE+oI4t5SRuZ3E1A9knxjVDhqqpnhCxy/i6jVFk5caGu7XxVXqkCTpf
-         6cOtRx+Xxviv8LMCOKvwhhCWTimYKRcrU0hPG6l5HXHZmx3HX1EeNpsNfN4XW2XfuUzC
-         8PRQ==
+        bh=lxBfeskCK9StEbhEGdoE9N+4iMSwlDDr96ExPJPkhg0=;
+        b=cBAWJHMMMGqG0SwxBkMwGyr7v2TgnDa0FcV4IjxH1RlbFCZfaX6cIIJzJ7PmAS2hwQ
+         /ULG3W/WoVrAG8TvXGh1L1h2yOiNMyBBqnQFuaJqYqGoICyyLnxr+kOTk7qq/3y40QJa
+         XO+j7XDS2HnFFw225Eycr2tDa5Oxyqt+GoCls=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723570009; x=1724174809;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723570072; x=1724174872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sfCzq2Lvjd+sCpXqRW/b9Deb8m8Alkw4yxbwVX9rDSs=;
-        b=olG+Tw9CU8XsYKBknKZrxvjZcF5JPjAbs50TE8NKrJSz++nRwO+CHHJIpPN/8PZuJ/
-         hswqIfRslwT8CrpAtBcbVqAYgpCBtV3sS/U75Yb7L3bodTj6lbt7vV8SpDVjOgdkcUfE
-         RfP3Dde/rVcm1D0Fv0IL2hJv/Yj3Im5OzuGq/xS4+po/6f2tn4+LJ9W98DrDVqPfsqNF
-         HosM1oxJftd4xJ4wr2JPyNFHEEPHJ8xFAiWefxqWehG92hYTDItQkfuzoHMUoaZnhQBB
-         C3F8LPBZp5jWIJI7WlCrWnZGCJKsIUL/rr3g0vakCqX6u74Ko5PFUk6h/FW3hGRy4DoK
-         iitw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4ZdKppaqPia695YlCagP7mFUdvMO5QU0L10r4Am0QYZfNKoEyWAucYIwZ95Chcd2f9YHStG3EVVd51ZL6CvVaPzLqqjjCB+h3kmJj
-X-Gm-Message-State: AOJu0Yw8kgT2sUwQF4Lv99opIagNn5sdTGNFss10eIWNkcQzGfwe+p9S
-	SakXyLBVkX559K1hOcRKWmh2gt/7wXNlubvdk24mL4C0AsB57VKtrJW+CIHiOoY=
-X-Google-Smtp-Source: AGHT+IHB7YiQIkoOes9wES0Mi+fNIeVmdTDb7hUa8Ff0QtR3A0cXdNJQk05/+elRrn+hXZiChbW9WA==
-X-Received: by 2002:a05:6870:82a4:b0:26c:64f8:d69b with SMTP id 586e51a60fabf-26fe5bf8b32mr417984fac.38.1723570009443;
-        Tue, 13 Aug 2024 10:26:49 -0700 (PDT)
-Received: from freyr.lechnology.com (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-26c7203f908sm2462915fac.11.2024.08.13.10.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:26:49 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	=?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 2/2] doc: iio: ad4695: document buffered read
-Date: Tue, 13 Aug 2024 12:26:41 -0500
-Message-ID: <20240813-iio-adc-ad4695-buffered-read-v2-2-9bb19fc1924b@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240813-iio-adc-ad4695-buffered-read-v2-0-9bb19fc1924b@baylibre.com>
-References: <20240813-iio-adc-ad4695-buffered-read-v2-0-9bb19fc1924b@baylibre.com>
+        bh=lxBfeskCK9StEbhEGdoE9N+4iMSwlDDr96ExPJPkhg0=;
+        b=PmrCI/ZfQjfBHTrjTau28MkfMc2cN72BBiOD6t4049fwf9G3+JzQAtDkf5/fZyFIYp
+         3978sLwKT4e4fEMp0rSmh+TqSLdyFa2G0H4Did7OySvNv5XoAmzcybcZ+soe0Yr/QXBY
+         +PI9nVVmakn/ygHP0faR842sL7WXQv317hNSjDPG2Iq0y0ptjGhfZ4sP2GlF5cFwGUPU
+         t3FMkYox+gGsB4LdfePSi1MrnoLGt9bmVqgjn8nw4eu3zF8rrwrQeTjvlJnxNypv8+JB
+         RjcO0KEaNLe3rpSzIIENNN2jahs0TGOCpHJBcnGzL5yqtvTCQV6rZn6+qUmuoWi33C6L
+         Q+wg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbFng9Z+xL4alazVihl+f1DopuheHe8AaJ3UnoYo8AZ4+rHxtbO8qZvZaNPQLTvGWNZx36RkM/hGMrVd2B4fJA6tIETlU834ouBNW1
+X-Gm-Message-State: AOJu0YweRjMCyOx2DYfMwq2qPd8lT+C/QT2boTas+q47uO6cGAcTNzJI
+	A+dxuAPotAF+DgyNrQzuXAOlWbRAMxWjpXYddJXTW3FpWbJ+AyWU0w616yKcep/v7k5zSkiNpSc
+	=
+X-Google-Smtp-Source: AGHT+IFxWHesxR6uArDG2zUCAliGX3ypxejxb6/4LdrevYOKbyBhOCJotkZz09hYzCkFK8XAdg9ahw==
+X-Received: by 2002:a05:622a:114b:b0:44f:5e2c:1631 with SMTP id d75a77b69052e-4535ba8ebaamr824981cf.17.1723570072055;
+        Tue, 13 Aug 2024 10:27:52 -0700 (PDT)
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4531c1a7e4asm33837461cf.12.2024.08.13.10.27.51
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 10:27:51 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7a1d0dc869bso345612585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:27:51 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVLh9WbeNrLZ4s441VRVR81pi5iMcHc9bsNBVIUOrQZHl/qK/0a/FGZkmu6yX8kY7vi8k4T3QRDVtE8yLR65MS5tvnMkYaeJNWBjkWV
+X-Received: by 2002:a05:6214:3d02:b0:6b7:b197:c825 with SMTP id
+ 6a1803df08f44-6bf5d17293cmr1654126d6.14.1723570070823; Tue, 13 Aug 2024
+ 10:27:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.14.0
-Content-Transfer-Encoding: 8bit
+References: <20240813133612.49095-1-charles.goodix@gmail.com> <20240813133612.49095-3-charles.goodix@gmail.com>
+In-Reply-To: <20240813133612.49095-3-charles.goodix@gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Tue, 13 Aug 2024 10:27:39 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WLse_tiiMr8t7Kq0EguzJtt4iqhr6cPUvuDcy8MT0k7Q@mail.gmail.com>
+Message-ID: <CAD=FV=WLse_tiiMr8t7Kq0EguzJtt4iqhr6cPUvuDcy8MT0k7Q@mail.gmail.com>
+Subject: Re: [PATCH v6 2/2] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: dmitry.torokhov@gmail.com, dan.carpenter@linaro.org, conor@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, jikos@kernel.org, bentiss@kernel.org, 
+	hbarnor@chromium.org, linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the ad4695 documentation to say that buffered reads are
-supported. Since there are 4 possible modes of reading conversion data,
-it is useful to know which one is actually being used, namely the
-advanced sequencer mode.
+Hi,
 
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
+On Tue, Aug 13, 2024 at 6:37=E2=80=AFAM Charles Wang <charles.goodix@gmail.=
+com> wrote:
+>
+> The Goodix GT7986U touch controller report touch data according to the
+> HID protocol through the SPI bus. However, it is incompatible with
+> Microsoft's HID-over-SPI protocol.
+>
+> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> ---
+>  .../bindings/input/goodix,gt7986u.yaml        | 71 +++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/goodix,gt7986=
+u.yaml
 
-v2 changes:
-* Drop paragraph about temperature channel since it is no longer
-  applicable.
----
- Documentation/iio/ad4695.rst | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+As a point of reference, in v5 Conor gave you his "Reviewed-by" tag
+[1] despite having some nits. It's usually expected that you could fix
+the nits and carry the Reviewed-by tag on the next version unless you
+did something other than what was requested in review feedback.
 
-diff --git a/Documentation/iio/ad4695.rst b/Documentation/iio/ad4695.rst
-index a33e573d61d6..7612596bb6e9 100644
---- a/Documentation/iio/ad4695.rst
-+++ b/Documentation/iio/ad4695.rst
-@@ -147,9 +147,16 @@ Unimplemented features
- ----------------------
- 
- - Additional wiring modes
--- Buffered reads
- - Threshold events
- - Oversampling
- - Gain/offset calibration
- - GPIO support
- - CRC support
-+
-+Device buffers
-+==============
-+
-+This driver supports hardware triggered buffers. This uses the "advanced
-+sequencer" feature of the chip to trigger a burst of conversions.
-+
-+Also see :doc:`iio_devbuf` for more general information.
-
--- 
-2.43.0
-
+[1] https://lore.kernel.org/all/20240618-affluent-unroasted-e6d5d34d1ea2@sp=
+ud/
 
