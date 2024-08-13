@@ -1,103 +1,108 @@
-Return-Path: <linux-kernel+bounces-285312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0B1950BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:07:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62C69950C06
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:15:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F63F1C21FC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:07:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956051C2241B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:15:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7911B1A38D7;
-	Tue, 13 Aug 2024 18:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127CB1A38E0;
+	Tue, 13 Aug 2024 18:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="euWawftz"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="l/gk0oci"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD5E16A92E
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB2D1993AC;
+	Tue, 13 Aug 2024 18:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723572424; cv=none; b=iIgF6NLaILLmzKLw/FfsKL2kELonsHz/xQQ5tWuuEbEnRLLGOfpikQyT4uZ4tTZ/YnAjpKX0fy0G972dQSq+6WRHyFoW+YeqWleSKZZshUwL6/1jmIvi+h754oUsm/o8LXuy/gtqYWO+gvma+5RLmLsZlQ8/iVcAJ/2QsSenwMs=
+	t=1723572900; cv=none; b=WUhhulGzBJY0LjuVM859kArWCrIMMpa4SrUoccFcmHBuF3pvLjDvBS8hZbZnJTIPT3lHFTUc4Ljk1o3zx/sQBkei2FMbN7zOl+oxhFLkVZyrZ7+cwxYKHeANVXtKu43Y7B1xD5O0NV5S1m8ngKaZGd6jYbzPKrqSg5fnwm/Oe/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723572424; c=relaxed/simple;
-	bh=sOfus6+/DqZAdQFB9OtvKFQMXpAt1JX07Ha9uWIUGJs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pJXZ/5YNtEtQoYUqlNCUygKk8UkVUnOxV4o9xQSXkdCUCfKlikIvB8k0dAEjOKmMvmfgl+jkhQopLGYMzu2xHs1JM+wNlzXcTwlPUFjhsrTpviMuJn+z1mMjV3zs08cGhEf5qXj77kLfK7mUUGdCUyDWh5WTZ96CX0e/aY5p3OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=euWawftz; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-1fc6f3ac7beso46431925ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:07:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723572423; x=1724177223; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6N2j6hj9Xt1/uQL+7yLQtfz3MlJVXjDshFxiGVCkNtI=;
-        b=euWawftz7ZBNFJaKD+Ka4S/4b2FEwBHhYEvBs0rok7K7KJDTGod6Yn09uQWqdVzNDL
-         u7teb0Yt7/106HY5KYCr+OJwR3FWE+mX/oAPpqtDIc3YAwvUsuBJApoCMxFNHoRiWhEa
-         wf/F0TshI8slbYXmqlYjKmaMyZbJKWwLBAQDncUK+N0PtmVH4GR9B2wYg1m6NCBOJ5Fr
-         Sbbn24nz3HsMad7DWXoQmZklALSTcbfZmVUpORMXW9y5IMyngFCXxJgiwVklSzNEDg84
-         MWEFRFrOkw1eKjQvHtZgx5guA/E+cx3Cd/5H/kvIQqmHl3onkUZ8T/sfYJTKAkuU1NhE
-         jQEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723572423; x=1724177223;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6N2j6hj9Xt1/uQL+7yLQtfz3MlJVXjDshFxiGVCkNtI=;
-        b=wAV0gtg6PLsll9S1aaDjJcBh0RbCa4a/MD3UJWwcp7pMEPlA0n5YAcZ/8XdheqgeQg
-         wNgAVq/8lN4HOpPFmt1w76jEXcVybimyn3cg0rceZQtM9+JA1JzQhheePePbRLULi/Te
-         Z0PAoFjbKMU+GeMb850e8t5rng2uXmLjvHPZgMCGv8us502kGU2HB8MIL9Q5pUl+ync/
-         DybuQkOePsRWe0hYGAWGwCpGi57nmPWdAp1w8uHEoVwqzcLmb2tTQfCoA6FSYpqhaaTv
-         KMJl6EtXHkcxNcV3IrMEWSZ3Qc98q5EKo23nRKZTOy1AfpoZYpCdFa0PNmbBBini2f/+
-         qrFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrQ3ObVyJeRYw+jGz/92aGk7niRbiobFItVpOOfR7LP6FUqtdD6CS6Imj+/WxNZjKC2fzOKuimoKx+2AKtKRo1rvsW9Oba3BTiA0ce
-X-Gm-Message-State: AOJu0YyM2RHB2vJd5+2YXlWAGFs4KVDryZUV0QnAD9l7kDgn+eqizDsA
-	u0B6SoBjieNEAhd5Vm9gvBqWAohP5Zv/LRXPWms7OEFHFfkMk49JqO8qu8cUTqdwIXttJNxf+PL
-	Ofw==
-X-Google-Smtp-Source: AGHT+IHOrM2tWvPXKObrlH/h6vzbjKiArEJx6s5cZJzigUG3+ukFW7aTc0ehnclrvZIEwYyJkJb04oyYQWA=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:902:f68d:b0:1fb:7c78:4efc with SMTP id
- d9443c01a7336-201d64a5a81mr163125ad.11.1723572422606; Tue, 13 Aug 2024
- 11:07:02 -0700 (PDT)
-Date: Tue, 13 Aug 2024 11:07:01 -0700
-In-Reply-To: <20240522001817.619072-5-dwmw2@infradead.org>
+	s=arc-20240116; t=1723572900; c=relaxed/simple;
+	bh=JvTEShpEcA/48jrCX1sv5imVU10NR7KciDBLqDfV0e0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YM9LZLmrGTF/aqkwJ7M2MQmEl3sHLM0MwCnlhl6VGzLBowQyD35yM5nQtg34/6fMmZGf0wy/6fWcJNMR652kvkKfAAVR1nhHCEvRVmCUYwc3pDq6KsDwFeIgGzXxf54FgsqMQNXz5hj7rfuqCDTTV1kVPN2/uBdudkQyYvJ++q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=l/gk0oci; arc=none smtp.client-ip=192.19.144.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.lvn.broadcom.net (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 366A5C0000EA;
+	Tue, 13 Aug 2024 11:07:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 366A5C0000EA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1723572469;
+	bh=JvTEShpEcA/48jrCX1sv5imVU10NR7KciDBLqDfV0e0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=l/gk0ociroF9tWEQ8wC2FgTwJfC0ZWHs3OAY6sc+t/cTfQ+kbdNMndDDKxz27+Eu0
+	 5E0AtT/hLy4yGLd7R5Vuq1NN1jYf3U6+qJjRU+spGxI+Zj9j0qd33v5iLPuisn/by8
+	 rj0gDMfx8CP026JJZnsq+KOP2/RHZJ16ZbEVzBAU=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mail-lvn-it-01.lvn.broadcom.net (Postfix) with ESMTPSA id 60F6218041CAC4;
+	Tue, 13 Aug 2024 11:07:46 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: linux-kernel@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	arm-scmi@vger.kernel.org (open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
+	linux-arm-kernel@lists.infradead.org (moderated list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE),
+	justin.chen@broadcom.com,
+	opendmb@gmail.com,
+	kapil.hali@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com
+Subject: [PATCH v2 0/2] Support for I/O width within ARM SCMI SHMEM
+Date: Tue, 13 Aug 2024 11:07:45 -0700
+Message-Id: <20240813180747.1439034-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240522001817.619072-1-dwmw2@infradead.org> <20240522001817.619072-5-dwmw2@infradead.org>
-Message-ID: <ZrugxU6OHlLRQZ_j@google.com>
-Subject: Re: [RFC PATCH v3 04/21] UAPI: x86: Move pvclock-abi to UAPI for x86 platforms
-From: Sean Christopherson <seanjc@google.com>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Paul Durrant <paul@xen.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Shuah Khan <shuah@kernel.org>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jalliste@amazon.co.uk, sveith@amazon.de, zide.chen@intel.com, 
-	Dongli Zhang <dongli.zhang@oracle.com>, Chenyi Qiang <chenyi.qiang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 22, 2024, David Woodhouse wrote:
-> From: Jack Allister <jalliste@amazon.com>
-> 
-> KVM provides a new interface for performing a fixup/correction of the KVM
-> clock against the reference TSC. The KVM_[GS]ET_CLOCK_GUEST API requires a
-> pvclock_vcpu_time_info, as such the caller must know about this definition.
-> 
-> Move the definition to the UAPI folder so that it is exported to usermode
-> and also change the type definitions to use the standard for UAPI exports.
+We just got our hands on hardware that only supports 32-bit access width
+to the SRAM being used. This patch series adds support for the
+'reg-io-width' property and allows us to specify the exact access width
+that the SRAM supports.
 
-Shouldn't this be order before the introduction of KVM_[GS]ET_CLOCK_GUEST?
+Changes in v2:
+
+- fixed typo in the binding and added reviewed-by tag from Krzysztof
+
+- determine the correct I/O operation at the time we parse the
+  'reg-io-width' property rather than for each
+  tx_prepare/fetch_response/fetch_notification call
+
+- dropped support for 1 and 2 bytes 'reg-io-width' as they do not quite
+  make sense, if we can support such smaller access size, then we can
+  support the larger 4 byte access width, too, and there are many places
+  within the SCMI code where ioread32/iowrite32 are used
+
+Florian Fainelli (2):
+  dt-bindings: sram: Document reg-io-width property
+  firmware: arm_scmi: Support 'reg-io-width' property for shared memory
+
+ .../devicetree/bindings/sram/sram.yaml        |  6 ++
+ drivers/firmware/arm_scmi/common.h            | 32 +++++++-
+ .../arm_scmi/scmi_transport_mailbox.c         | 13 ++-
+ .../firmware/arm_scmi/scmi_transport_optee.c  | 10 ++-
+ .../firmware/arm_scmi/scmi_transport_smc.c    | 11 ++-
+ drivers/firmware/arm_scmi/shmem.c             | 81 +++++++++++++++++--
+ 6 files changed, 132 insertions(+), 21 deletions(-)
+
+-- 
+2.34.1
+
 
