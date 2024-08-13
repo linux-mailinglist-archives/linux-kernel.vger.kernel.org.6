@@ -1,123 +1,219 @@
-Return-Path: <linux-kernel+bounces-284614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352DF950318
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CEF95031B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E1D1C22491
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE98B281C68
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACB619B5B5;
-	Tue, 13 Aug 2024 10:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A86E19ADAD;
+	Tue, 13 Aug 2024 10:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b="DEVs+VR7"
-Received: from mail.toke.dk (mail.toke.dk [45.145.95.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moSxF8sf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44FA319A2AE;
-	Tue, 13 Aug 2024 10:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.95.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF819A2AE;
+	Tue, 13 Aug 2024 10:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546609; cv=none; b=AT3Gd9PciyjFMB/L7BCp07Vo1DPZFL10dpn9rcjAu4t72eV3NuftyfW+oS8Crc/CQCmsoWHL3Rte/FbwKP3qzZRyHFueqB5o7/HPUJga4GpvjbhNnuuBKhNd2dQU2UNPdeLSFWIdpLF5jcW3whASn890f0Ge0cmAVREGnFSNunI=
+	t=1723546656; cv=none; b=DP8mL51FJJ1OlhBeGf2wt86uLnarb2O2/AAs5NbLJ4PX9ApV5Ew3NOVp8Pbz6La1N3IK0bKiyIVfnzmOO9XMkZk6qxTBDVWRAQ3xqirhOQgSrZhbZukpBrdQoU8XMqbgew4t5utjSi/uQkuuwVk+P0KKSCdCHeQO5KpxmzfnZMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546609; c=relaxed/simple;
-	bh=bHCjmMI6O9YGP1vUBVvoqCp53yxzYEyBqJwhJxoO/gc=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SJ3dtSfyQTpWH5iA8Wd9gEmLKDnA5gSAiAXtiPourVmTDAre+ijTdOllknkOdnumTI0DIl694oO8ZutHC8jsIWYKtzc9AlWb5Wiypt3VXMQ1x3oxlbrlIEtgE3WSGW5Zokdg4zJc95qowU8Lvv7N1YWY4vwsNCd5SABQ+nCR7Nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk; spf=pass smtp.mailfrom=toke.dk; dkim=pass (2048-bit key) header.d=toke.dk header.i=@toke.dk header.b=DEVs+VR7; arc=none smtp.client-ip=45.145.95.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=toke.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=toke.dk
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=toke.dk; s=20161023;
-	t=1723546600; bh=bHCjmMI6O9YGP1vUBVvoqCp53yxzYEyBqJwhJxoO/gc=;
-	h=From:To:Subject:In-Reply-To:References:Date:From;
-	b=DEVs+VR7n39oTVLwnz3/2l6GzacQMYmwNc1DLFF8mQAwCYJDEwZevhMXoQspbFqtg
-	 LR5ffiyeXizo884AFf0hvnia2TJ0M2n79EKaJTeTWJwsYGv9b54VqNTm/vrtjBVzKp
-	 adgI3cQvLy/AGVWjQeuujcByMNZUJm0x2GeMyVTb5bSKg8szT8uSV/YpZLJdaYVx91
-	 kO84m90k2NTN/Qb6u7aIEdJOcKbgF2rvR9k8zi2ulbGeJCccjMRc8MPxxcbG5+xQ85
-	 eG2VzNn2Ia0Hpd/UgL3l0u6ve/NUGthp7mXn47FFM0qSWDlv39URTIR9Z9j+4/OUW7
-	 B1XQDWakBSHOw==
-To: syzbot <syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com>,
- kvalo@kernel.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
- syzkaller-bugs@googlegroups.com, Felix Fietkau <nbd@nbd.name>
-Subject: Re: [syzbot] [wireless?] INFO: task hung in
- ath9k_hif_usb_firmware_cb (3)
-In-Reply-To: <000000000000877f44061f892ace@google.com>
-References: <000000000000877f44061f892ace@google.com>
-Date: Tue, 13 Aug 2024 12:56:40 +0200
-X-Clacks-Overhead: GNU Terry Pratchett
-Message-ID: <87ikw4wv13.fsf@toke.dk>
+	s=arc-20240116; t=1723546656; c=relaxed/simple;
+	bh=mx050o4jCRlSnjcrqLzEeH8cgw5cGnvTCmlBHag64iA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pLk+PM/NzpyOIOD9UYiQji0MwjPrPMH20Wbwm0ocgoxSrNGrFkEljo3zDFhW+DYs2lF0DgLThq53Im/GtyDwtkOOww7Cw8MkI4gkT/RZnp5dosRQETtZ0x1xPBQlBwnVSBle7kpXWm/zsWk2R0nZGb+PWFJX/uJ32UeAwr9e6lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moSxF8sf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DF6C4AF13;
+	Tue, 13 Aug 2024 10:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723546656;
+	bh=mx050o4jCRlSnjcrqLzEeH8cgw5cGnvTCmlBHag64iA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=moSxF8sfqTUhuoAuvAoyuy03WLfuvBxLbECNkNdILCexNjkpmoCVbDpM8zsqYbkrj
+	 HQ5haQWDWvmbF+B4KxBpZ95qphVaikxnnOv3kLS0WRmZmwnFYCRBHG8bVkE1kPlZ2N
+	 MH2YbrJZe273F0qJc+S01QKY40BTt0PIPfgcHx6znS1/IF5shkagq3Un0LY6oMiuw0
+	 eKkiLJK636v1vPERvdRUYYixy6b/f67mdwCeDlYwXB2G6q34a5nImvrcLGO54zMa4Q
+	 y3SVo/wsxWhiYS+R1rUl0NcO4iA/IgHquUGIPgNkDKKb5ZslvEcmmp+Vf18NDUa8tc
+	 vLG9jKy8Z58Yw==
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so5687186a12.3;
+        Tue, 13 Aug 2024 03:57:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUKnigQATalhkmtAlj5Ko1apoXnGHF3vmS1PVADJZ4h5lhIwQvdbB/QNiV8B6V23SfUNF/uUseNtEmK8FUI8jRLkmi/Ff1IczkoH9TIe7KDDbRz1QhQKFL/t/58EfL2EggyuoXPHz1Nxzk=
+X-Gm-Message-State: AOJu0YzkzTbQLMISOw1UzLRFLhnvFU1IOLfHA9LW7QcFilRHH5EwF21D
+	L32NVvazKeH1Kw1AHtc79b1w8dWIsU/r5Qqg87Qj5WP1oISQMot+naX9hvQcVNRChyuHgsTjGmU
+	PFmXuICw+KW5Q1oZzRwsh5hwPK1g=
+X-Google-Smtp-Source: AGHT+IF0VOqfA+Tl46cH7aory7plXaIpyYQMWNWVLRdTqw16VPAQFUN5+KhHyOBZFhBvF8dop4sdnE0EDJwK6gKKZb4=
+X-Received: by 2002:a17:906:c153:b0:a7a:a33e:47cc with SMTP id
+ a640c23a62f3a-a80ed2d1779mr212590466b.59.1723546654537; Tue, 13 Aug 2024
+ 03:57:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
+In-Reply-To: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Tue, 13 Aug 2024 11:56:57 +0100
+X-Gmail-Original-Message-ID: <CAL3q7H5jwR75FwT213yteX5m=5G8ehKmnKxv=xYXbY+UuhP+qQ@mail.gmail.com>
+Message-ID: <CAL3q7H5jwR75FwT213yteX5m=5G8ehKmnKxv=xYXbY+UuhP+qQ@mail.gmail.com>
+Subject: Re: [PATCH v2] btrfs: reduce chunk_map lookups in btrfs_map_block
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot <syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com> writes:
+On Tue, Aug 13, 2024 at 11:49=E2=80=AFAM Johannes Thumshirn <jth@kernel.org=
+> wrote:
+>
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>
+> Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() i=
+n
+> btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
+> to be able to calculate the number of copies.
+>
+> So split out the code getting the number of copies from btrfs_num_copies(=
+)
+> into a helper called btrfs_chunk_map_num_copies() and directly call it
+> from btrfs_map_block() and btrfs_num_copies().
+>
+> This saves us one rbtree lookup per btrfs_map_block() invocation.
+>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
+> Reviewed-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> ---
+> Changes in v2:
+> - Added Reviewed-bys
+> - Reflowed comments
+> - Moved non RAID56 cases to the end without an if
+> Link to v1:
+> https://lore.kernel.org/all/20240812165931.9106-1-jth@kernel.org/
+>
+>  fs/btrfs/volumes.c | 58 +++++++++++++++++++++++++---------------------
+>  1 file changed, 32 insertions(+), 26 deletions(-)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index e07452207426..796f6350a017 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -5781,38 +5781,44 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info=
+ *fs_info)
+>         write_unlock(&fs_info->mapping_tree_lock);
+>  }
+>
+> +static int btrfs_chunk_map_num_copies(struct btrfs_chunk_map *map)
 
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    eb5e56d14912 Merge tag 'platform-drivers-x86-v6.11-2' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=137edff9980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e9b1ff41aa6a7ebf9640
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/a6552acb8476/disk-eb5e56d1.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/5c0963cd33df/vmlinux-eb5e56d1.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/7ba7283f6380/bzImage-eb5e56d1.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e9b1ff41aa6a7ebf9640@syzkaller.appspotmail.com
->
-> INFO: task kworker/0:7:5284 blocked for more than 143 seconds.
->       Not tainted 6.11.0-rc2-syzkaller-00011-geb5e56d14912 #0
-> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> task:kworker/0:7     state:D stack:13232 pid:5284  tgid:5284  ppid:2      flags:0x00004000
-> Workqueue: events request_firmware_work_func
-> Call Trace:
->  <TASK>
->  context_switch kernel/sched/core.c:5188 [inline]
->  __schedule+0x1800/0x4a60 kernel/sched/core.c:6529
->  __schedule_loop kernel/sched/core.c:6606 [inline]
->  schedule+0x14b/0x320 kernel/sched/core.c:6621
->  schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6678
->  __mutex_lock_common kernel/locking/mutex.c:684 [inline]
->  __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
->  device_lock include/linux/device.h:1009 [inline]
->  ath9k_hif_usb_firmware_fail drivers/net/wireless/ath/ath9k/hif_usb.c:1163 [inline]
->  ath9k_hif_usb_firmware_cb+0x34a/0x4b0
-> drivers/net/wireless/ath/ath9k/hif_usb.c:1296
+Same as commented before, can be const.
 
-Ugh. Okay, so ath9k_hif_usb_firmware_cb can recursively call another
-firmware request, and if that fails (because it runs out of firmware
-names to try), it will do a device_release_driver() from within the
-firmware callback. Which takes a lock, and seems to deadlock.
+> +{
+> +       enum btrfs_raid_types index =3D btrfs_bg_flags_to_raid_index(map-=
+>type);
+> +
+> +       if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+> +               return 2;
+> +
+> +       /*
+> +        * There could be two corrupted data stripes, we need to loop
+> +        * retry in order to rebuild the correct data.
+> +        *
+> +        * Fail a stripe at a time on every retry except the stripe
+> +        * under reconstruction.
+> +        */
+> +       if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+> +               return map->num_stripes;
+> +
+> +       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
+> +       return btrfs_raid_array[index].ncopies;
+> +}
+> +
+>  int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len=
+)
+>  {
+>         struct btrfs_chunk_map *map;
+> -       enum btrfs_raid_types index;
+> -       int ret =3D 1;
+> +       int ret;
+>
+>         map =3D btrfs_get_chunk_map(fs_info, logical, len);
+>         if (IS_ERR(map))
+>                 /*
+> -                * We could return errors for these cases, but that could=
+ get
+> -                * ugly and we'd probably do the same thing which is just=
+ not do
+> -                * anything else and exit, so return 1 so the callers don=
+'t try
+> -                * to use other copies.
+> +                * We could return errors for these cases, but that
+> +                * could get ugly and we'd probably do the same thing
+> +                * which is just not do anything else and exit, so
+> +                * return 1 so the callers don't try to use other
+> +                * copies.
 
-It does seem odd to try to do an asynchronous driver release from within
-a callback like this, so I'm not surprised that it deadlocks, really.
-The question is whether this has ever worked - does anyone know?
+My previous comment about reformatting was just for the comment that
+was moved, the one now inside btrfs_chunk_map_num_copies().
+For this one I don't think we should do it, as we aren't moving it
+around or changing its content.
 
-Also, ath9k_htc_probe_device() has wait_for_target logic that depends on
-speaking to the firmware; and it seems to tear everything down if that
-fails. So my immediate thought is that we could just get rid of the
-device_release_driver() from the firmware callback entirely, and just
-rely on that timeout to tear things down. However, I am not well-versed
-enough in the USB probe and device setup logic, so I am not sure if
-there is any reason that wouldn't be enough. Anyone with a better grip
-on these things care to chime in? :)
+It's just confusing to have this sort of unrelated change mixed in.
 
--Toke
+Thanks.
+
+>                  */
+>                 return 1;
+>
+> -       index =3D btrfs_bg_flags_to_raid_index(map->type);
+> -
+> -       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
+> -       if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
+> -               ret =3D btrfs_raid_array[index].ncopies;
+> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+> -               ret =3D 2;
+> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+> -               /*
+> -                * There could be two corrupted data stripes, we need
+> -                * to loop retry in order to rebuild the correct data.
+> -                *
+> -                * Fail a stripe at a time on every retry except the
+> -                * stripe under reconstruction.
+> -                */
+> -               ret =3D map->num_stripes;
+> +       ret =3D btrfs_chunk_map_num_copies(map);
+>         btrfs_free_chunk_map(map);
+>         return ret;
+>  }
+> @@ -6462,14 +6468,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
+, enum btrfs_map_op op,
+>         io_geom.stripe_index =3D 0;
+>         io_geom.op =3D op;
+>
+> -       num_copies =3D btrfs_num_copies(fs_info, logical, fs_info->sector=
+size);
+> -       if (io_geom.mirror_num > num_copies)
+> -               return -EINVAL;
+> -
+>         map =3D btrfs_get_chunk_map(fs_info, logical, *length);
+>         if (IS_ERR(map))
+>                 return PTR_ERR(map);
+>
+> +       num_copies =3D btrfs_chunk_map_num_copies(map);
+> +       if (io_geom.mirror_num > num_copies)
+> +               return -EINVAL;
+> +
+>         map_offset =3D logical - map->start;
+>         io_geom.raid56_full_stripe_start =3D (u64)-1;
+>         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
+> --
+> 2.43.0
+>
+>
 
