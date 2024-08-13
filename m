@@ -1,144 +1,179 @@
-Return-Path: <linux-kernel+bounces-284495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F0F395019A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:52:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AEA95019C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:52:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5335A1C21E8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:52:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A68931C21E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7106818CC0F;
-	Tue, 13 Aug 2024 09:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB35B18953E;
+	Tue, 13 Aug 2024 09:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ytm7Tvhu"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="afGbdhom"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B119D18A94E;
-	Tue, 13 Aug 2024 09:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD58317BB2F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542712; cv=none; b=WGNIDrPMvVZ4gM98lPcwGTv90QUwu1tOroOBQsoq1qxfae4KNncsUes+XWBODeoExv0mdWEs4SZRT64Ke9Sv5jEg83DCXr6plYNX/eFbO/ih9a9nqW7FUYT2j6Ho0P/JvX2gxnqE7jUaGdUZpWNHKwxEgbqNZ2XZgjqRsmfMcHo=
+	t=1723542729; cv=none; b=C8nXyy2Pdc84h7sU2GDwgaDtFdv+SX57QL5LLPw9j36aNMj8OtHXtDHmW3pLEwR9lDHUGmtIWMhWdygUq1APZbuDkbsUQLMARJtE5cbqFpmXMtE+rxutiq+slwOJdADqezewMD3Lxgx+ah+iO5HGon0Dhk7FgmPxrlTW8Sj+yWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542712; c=relaxed/simple;
-	bh=uVOY6MUqZfSq5bY4z+orE5FTCDv75mRnwySRQagyf+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwtZFTvTEnB+2xfilhFwlIkgTKNNysVhNGAaPbkIFL4yTJuW1uh/6A9xQQtgKe4teIu8vtYpbn1gzGnvYtSr/3Wh2hm8/iWcgVZBRB7MoNrAJQ8FbgHpEAhBIc8CTfghFp53iV4Ty3QIdKLTmX4gmhuntVWDG3qx88qw918y2eY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ytm7Tvhu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09894C4AF09;
-	Tue, 13 Aug 2024 09:51:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542712;
-	bh=uVOY6MUqZfSq5bY4z+orE5FTCDv75mRnwySRQagyf+g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ytm7TvhuuejqWWg1WHrU3jv75npQYgUzDDT5st8BLE2SxX1uDkDV0E2HZLzS8jbC2
-	 le65h2j5yY1CN+R5DzTnynWTPTTS+nTJ+loHoZN5Ib+Pja9YJC9jJWboCiM8SwaRUT
-	 2+UToawwW62NZcJorDViGjTDo1D050P2H3KTirPlxzuOpu8Yf7Gj9r+p1FqUeQ05v2
-	 Ny2NBKHPvom94GNNGVgrANr+ata9umSor01qhB4MlwECY48TOKuc91z6v0F4igIXBJ
-	 /+aTwuiv3Ei0jozth6vmA+Xhde3NPflEoXODwfn+cxoxp0QqBKioU+/GNFILu/2aMx
-	 e5AAAOwaKTRsA==
-Message-ID: <25860d8b-a980-4f04-a376-b9cec03605fb@kernel.org>
-Date: Tue, 13 Aug 2024 11:51:45 +0200
+	s=arc-20240116; t=1723542729; c=relaxed/simple;
+	bh=OkL5HlrIiWFlAVdVzfNDjV+VmwU0wKt2n2UcF0Sf2Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bod0XRVKJGTkmYuDumxfdmrd0q+qGEUv8d+N2F2bku1MM+Z7UniDouWE4Gb6lMP0qXm//6plth6tQNzIax/9y/iI/7tbPN2sA/alZiiEcski7jrhl741jzemlnNakJ5ezTiRiPzeqIogEWInkwKm7mHOw9Sh07eY6znxXjmNqJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=afGbdhom; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF46EC4AF10;
+	Tue, 13 Aug 2024 09:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723542729;
+	bh=OkL5HlrIiWFlAVdVzfNDjV+VmwU0wKt2n2UcF0Sf2Uc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=afGbdhomdWetESGojIU9PLjWBg87BM1aCLDYgPtnqKEMqDXet2Y3DKmRQjRulW93T
+	 aZw4nAebCx4mU1Ovbg8gWs+r7GCTXkJK01M94Bn5rXREKuk+KoBLtzs6ebJN+hwEGo
+	 JIMMAxo0SUysiEt99BSO08euIFvr0Ea0i2Z81Z4Y=
+Date: Tue, 13 Aug 2024 11:52:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2] drivers/base: Introduce device_match_t for device
+ finding APIs
+Message-ID: <2024081322-moneyless-gruffly-c540@gregkh>
+References: <20240811-dev_match_api-v2-1-dd22ff555a30@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to
- GRO from netif_receive_skb_list()
-To: Jakub Kicinski <kuba@kernel.org>,
- Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: Daniel Xu <dxu@dxuuu.xyz>, Lorenzo Bianconi
- <lorenzo.bianconi@redhat.com>, Alexander Lobakin
- <alexandr.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Larysa Zaremba <larysa.zaremba@intel.com>,
- Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Magnus Karlsson <magnus.karlsson@intel.com>,
- Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
- Jonathan Lemon <jonathan.lemon@gmail.com>, "toke@redhat.com"
- <toke@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
- David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Jesse Brandeburg <jesse.brandeburg@intel.com>,
- John Fastabend <john.fastabend@gmail.com>, Yajun Deng
- <yajun.deng@linux.dev>, Willem de Bruijn <willemb@google.com>,
- "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
-References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
- <20220628194812.1453059-33-alexandr.lobakin@intel.com>
- <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
- <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
- <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
- <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
- <99662019-7e9b-410d-99fe-a85d04af215c@intel.com>
- <20240812183307.0b6fbd60@kernel.org>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20240812183307.0b6fbd60@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811-dev_match_api-v2-1-dd22ff555a30@quicinc.com>
 
-
-
-On 13/08/2024 03.33, Jakub Kicinski wrote:
-> On Fri, 9 Aug 2024 14:20:25 +0200 Alexander Lobakin wrote:
->> But I think one solution could be:
->>
->> 1. We create some generic structure for cpumap, like
->>
->> struct cpumap_meta {
->> 	u32 magic;
->> 	u32 hash;
->> }
->>
->> 2. We add such check in the cpumap code
->>
->> 	if (xdpf->metalen == sizeof(struct cpumap_meta) &&
->> 	    <here we check magic>)
->> 		skb->hash = meta->hash;
->>
->> 3. In XDP prog, you call Rx hints kfuncs when they're available, obtain
->> RSS hash and then put it in the struct cpumap_meta as XDP frame metadata.
+On Sun, Aug 11, 2024 at 10:15:16AM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> I wonder what the overhead of skb metadata allocation is in practice.
-> With Eric's "return skb to the CPU of origin" we can feed the lockless
-> skb cache one the right CPU, and also feed the lockless page pool
-> cache. I wonder if batched RFS wouldn't be faster than the XDP thing
-> that requires all the groundwork.
+> There are several drivers/base APIs for finding a specific device, and
+> they currently use the following good type for the @match parameter:
+> int (*match)(struct device *dev, const void *data)
+> 
+> Since these operations do not modify the caller-provided @*data, this
+> type is worthy of a dedicated typedef:
+> typedef int (*device_match_t)(struct device *dev, const void *data)
+> 
+> Advantages of using device_match_t:
+>  - Shorter API declarations and definitions
+>  - Prevent further APIs from using a bad type for @match
+> 
+> So introduce device_match_t and apply it to the existing
+> (bus|class|driver|auxiliary)_find_device() APIs.
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> Changes in v2:
+> - Git rebase over the following commit:
+>   bfa54a793ba7 ("driver core: bus: Fix double free in driver API bus_register()")
+> - Link to v1: https://lore.kernel.org/r/20240802-dev_match_api-v1-1-51e16d3bf031@quicinc.com
+> ---
+>  drivers/base/auxiliary.c      | 2 +-
+>  drivers/base/bus.c            | 2 +-
+>  drivers/base/class.c          | 3 +--
+>  drivers/base/driver.c         | 2 +-
+>  include/linux/auxiliary_bus.h | 2 +-
+>  include/linux/device/bus.h    | 5 +++--
+>  include/linux/device/class.h  | 2 +-
+>  include/linux/device/driver.h | 2 +-
+>  8 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
+> index 54b92839e05c..7823888af4f6 100644
+> --- a/drivers/base/auxiliary.c
+> +++ b/drivers/base/auxiliary.c
+> @@ -352,7 +352,7 @@ EXPORT_SYMBOL_GPL(__auxiliary_device_add);
+>   */
+>  struct auxiliary_device *auxiliary_find_device(struct device *start,
+>  					       const void *data,
+> -					       int (*match)(struct device *dev, const void *data))
+> +					       device_match_t match)
+>  {
+>  	struct device *dev;
+>  
+> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> index abf090ace833..657c93c38b0d 100644
+> --- a/drivers/base/bus.c
+> +++ b/drivers/base/bus.c
+> @@ -391,7 +391,7 @@ EXPORT_SYMBOL_GPL(bus_for_each_dev);
+>   */
+>  struct device *bus_find_device(const struct bus_type *bus,
+>  			       struct device *start, const void *data,
+> -			       int (*match)(struct device *dev, const void *data))
+> +			       device_match_t match)
+>  {
+>  	struct subsys_private *sp = bus_to_subsys(bus);
+>  	struct klist_iter i;
+> diff --git a/drivers/base/class.c b/drivers/base/class.c
+> index 7b38fdf8e1d7..ae22fa992c04 100644
+> --- a/drivers/base/class.c
+> +++ b/drivers/base/class.c
+> @@ -433,8 +433,7 @@ EXPORT_SYMBOL_GPL(class_for_each_device);
+>   * code.  There's no locking restriction.
+>   */
+>  struct device *class_find_device(const struct class *class, const struct device *start,
+> -				 const void *data,
+> -				 int (*match)(struct device *, const void *))
+> +				 const void *data, device_match_t match)
+>  {
+>  	struct subsys_private *sp = class_to_subsys(class);
+>  	struct class_dev_iter iter;
+> diff --git a/drivers/base/driver.c b/drivers/base/driver.c
+> index 88c6fd1f1992..b4eb5b89c4ee 100644
+> --- a/drivers/base/driver.c
+> +++ b/drivers/base/driver.c
+> @@ -150,7 +150,7 @@ EXPORT_SYMBOL_GPL(driver_for_each_device);
+>   */
+>  struct device *driver_find_device(const struct device_driver *drv,
+>  				  struct device *start, const void *data,
+> -				  int (*match)(struct device *dev, const void *data))
+> +				  device_match_t match)
+>  {
+>  	struct klist_iter i;
+>  	struct device *dev;
+> diff --git a/include/linux/auxiliary_bus.h b/include/linux/auxiliary_bus.h
+> index 662b8ae54b6a..31762324bcc9 100644
+> --- a/include/linux/auxiliary_bus.h
+> +++ b/include/linux/auxiliary_bus.h
+> @@ -271,6 +271,6 @@ void auxiliary_driver_unregister(struct auxiliary_driver *auxdrv);
+>  
+>  struct auxiliary_device *auxiliary_find_device(struct device *start,
+>  					       const void *data,
+> -					       int (*match)(struct device *dev, const void *data));
+> +					       device_match_t match);
+>  
+>  #endif /* _AUXILIARY_BUS_H_ */
+> diff --git a/include/linux/device/bus.h b/include/linux/device/bus.h
+> index 807831d6bf0f..970de5ee5562 100644
+> --- a/include/linux/device/bus.h
+> +++ b/include/linux/device/bus.h
+> @@ -126,6 +126,8 @@ struct bus_attribute {
+>  int __must_check bus_create_file(const struct bus_type *bus, struct bus_attribute *attr);
+>  void bus_remove_file(const struct bus_type *bus, struct bus_attribute *attr);
+>  
+> +/* Matching function type for drivers/base APIs to find a specific device */
+> +typedef int (*device_match_t)(struct device *dev, const void *data);
+>  /* Generic device matching functions that all busses can use to match with */
 
-I explicitly developed CPUMAP because I was benchmarking Receive Flow
-Steering (RFS) and Receive Packet Steering (RPS), which I observed was
-the bottleneck.  The overhead was too large on the RX-CPU and bottleneck
-due to RFS and RPS maintaining data structures to avoid Out-of-Order
-packets.   The Flow Dissector step was also a limiting factor.
+Extra new-line after the typedef please.
 
-By bottleneck I mean it didn't scale, as RX-CPU packet per second
-processing speeds was too low compared to the remote-CPU pps.
-Digging in my old notes, I can see that RPS was limited to around 4.8
-Mpps (and I have a weird disabling part of it showing 7.5Mpps).  In [1]
-remote-CPU could process (starts at) 2.7 Mpps when dropping UDP packet
-due to UdpNoPorts configured (and baseline 3.3 Mpps if not remote), thus
-it only scales up-to 1.78 remote-CPUs.  [1] shows how optimizations
-brings remote-CPU to handle 3.2Mpps (close non-remote to 3.3Mpps
-baseline). In [2] those optimizations bring remote-CPU to 4Mpps (for
-UdpNoPorts case).  XDP RX-redirect in [1]+[2] was around 19Mpps (which
-might be lower today due to perf paper cuts).
+And shouldn't this be in device.h instead?
 
-  [1] 
-https://github.com/xdp-project/xdp-project/blob/master/areas/cpumap/cpumap02-optimizations.org
-  [2] 
-https://github.com/xdp-project/xdp-project/blob/master/areas/cpumap/cpumap03-optimizations.org
+thanks,
 
-The benefits Eric's "return skb to the CPU of origin" should help
-improve the case for the remote-CPU, as I was seeing some bottlenecks in
-how we returned the memory.
-
---Jesper
+greg k-h
 
