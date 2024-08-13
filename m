@@ -1,232 +1,184 @@
-Return-Path: <linux-kernel+bounces-284515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B2F9501D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:59:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A171E9501D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D4E1F21196
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:59:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4EBE1C21FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC51D187554;
-	Tue, 13 Aug 2024 09:59:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56078189BA5;
+	Tue, 13 Aug 2024 09:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ufal.mff.cuni.cz header.i=@ufal.mff.cuni.cz header.b="d+K6a6YN"
-Received: from ufal-mail.mff.cuni.cz (ufal-mail.mff.cuni.cz [195.113.20.158])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="KfxwyPzR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iuwB9IF/"
+Received: from fhigh6-smtp.messagingengine.com (fhigh6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658F0183CA6;
-	Tue, 13 Aug 2024 09:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59F4313BADF;
+	Tue, 13 Aug 2024 09:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543144; cv=none; b=epK3kIUM76xVqD1PwoSGcVC2e4aqixECBQRYQY1X2HHimh5y6vzU/Az5rFYO4z1xnb5vL3KA4T9JrRlG22Nfjf9GHDjSbq+Sg8cFNc+epuryHI6t+/7OcL4ElNAg/RjCK85V7d4vqjFn3h5rP41wAZLgFJQ2+ImcF7SDcE5OweA=
+	t=1723543153; cv=none; b=WUGdL2ZgN9ZwAVeP7W4efkXNw1hcbtYtDtaphtXhNm3zGAd7HwZY8F5qkRSvD8RDK5eLvBRaD/MpatHIihgYlkwHxnS6k+7kJlQR82yNg3ckW5UtBoOIwZG77IWMORi7nieWjg6iatfJ4h6fk8Uic4mdeNvxGGm2qO87j8bA2ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543144; c=relaxed/simple;
-	bh=iC2FciM3fhX+G2CFgV1lsuH7+JaKrxgQXyUiNytCHzA=;
-	h=From:To:Cc:Subject:Date:MIME-Version:Message-ID:In-Reply-To:
-	 References:Content-Type; b=CIFVahBB22OxiEKMNpBdjePb/RvthCXG7pryvHNcI4SKjY+8GDcahLtLvlgv9KypkvNR4TVw89tsC9tkv5CDTbeXEvKTiGm9nDUG+rexJN1iYhl+eL/CoV01LGjI9gBalzdPATmz/pVD3Rb2KBaLZmzAlSWe6c2ng7sOkcVo5lA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ufal.mff.cuni.cz; spf=fail smtp.mailfrom=ufal.mff.cuni.cz; dkim=pass (2048-bit key) header.d=ufal.mff.cuni.cz header.i=@ufal.mff.cuni.cz header.b=d+K6a6YN; arc=none smtp.client-ip=195.113.20.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ufal.mff.cuni.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=ufal.mff.cuni.cz
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by ufal-mail.mff.cuni.cz (Postfix) with ESMTP id 18BAD563C0E;
-	Tue, 13 Aug 2024 11:58:58 +0200 (CEST)
-Received: from ufal-mail.mff.cuni.cz ([127.0.0.1])
- by localhost (ufal-mail.mff.cuni.cz [127.0.0.1]) (amavis, port 10032)
- with ESMTP id 03FZfOlUR3Ko; Tue, 13 Aug 2024 11:58:58 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by ufal-mail.mff.cuni.cz (Postfix) with ESMTP id E32B0563EB4;
-	Tue, 13 Aug 2024 11:58:57 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 ufal-mail.mff.cuni.cz E32B0563EB4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ufal.mff.cuni.cz;
-	s=9D3691E2-3533-11E9-988E-D2516E4D0B60; t=1723543137;
-	bh=vT0oUDQHdhovG+WtVwDCgVJHUUzxZ+QAH/Sf/89wekM=;
-	h=From:To:Date:MIME-Version:Message-ID;
-	b=d+K6a6YNClVH3GerSzYBtGfRnNoAmjtX19HiW8y7W0fpDYiviVWIxR/xe4X2WRBee
-	 9GWVyPkJxf6Q5Skso40iwDEKaHbVPJHxa3LomjTOmZS/2BCG9jc4YjWexsxXR8nK15
-	 JPlfQY/7yNXMp2Khpm9VwKjeRBr1p442H5Viyd5pSqBCrcy3d+RuS0qB043fcVjf0P
-	 7+mFyWoa7k1GpQiCyLHxaYmFFsx1TWpwnpsOTzOyiSDfTCudhKwgeohxckKJexA0f6
-	 UMfkT7HpiqtWbCnOtZNCSsUxn+JjBAkHHvtJ3TAClcjuWLI59BEjhMSMV8MvR0UTFp
-	 83xV+H++H/7IA==
-X-Virus-Scanned: amavis at ufal.mff.cuni.cz
-Received: from ufal-mail.mff.cuni.cz ([127.0.0.1])
- by localhost (ufal-mail.mff.cuni.cz [127.0.0.1]) (amavis, port 10026)
- with ESMTP id rutZHbVO3QvN; Tue, 13 Aug 2024 11:58:57 +0200 (CEST)
-Received: from localhost (snat-16.cgn.sat-an.net [176.222.226.16])
-	by ufal-mail.mff.cuni.cz (Postfix) with ESMTPSA id BD356563E14;
-	Tue, 13 Aug 2024 11:58:57 +0200 (CEST)
-From: =?utf-8?B?Sm9uw6HFoSBWaWRyYQ==?= <vidra@ufal.mff.cuni.cz>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
- =?iso-8859-1?Q?Kolbj=F8rn_Barmen?= <linux-ppc@kolla.no>,
- <linuxppc-dev@lists.ozlabs.org>,
- <linux-kernel@vger.kernel.org>,
- <linux-ide@vger.kernel.org>,
- Christoph Hellwig <hch@lst.de>,
- <linux@roeck-us.net>
-Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in =?iso-8859-1?Q?drivers/ata/pata=5Fmacio.c?=
-Date: Tue, 13 Aug 2024 11:58:52 +0200
+	s=arc-20240116; t=1723543153; c=relaxed/simple;
+	bh=Yg+SvLnKDfc6IhCsYzXH5LG+1D5ljKI1al26FDrP2Co=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s2JsN1xjYPYV5PoOqFUHdu4WsNazNM8HgaUSXqu0r7g4JVGI7dtugtjMYz7e4FxLzG8qoG1/t6w+5Z/fZP9aAX4+ZVmp23lKZE+7+YVLvwilV2+ezrU8p4F3XupJNgZj0XI6ckekRk+wq85ckjhadilo1xeBgkpTnrVpbDImL8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=KfxwyPzR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iuwB9IF/; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-08.internal (phl-compute-08.nyi.internal [10.202.2.48])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 8147E11519A2;
+	Tue, 13 Aug 2024 05:59:10 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Tue, 13 Aug 2024 05:59:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1723543150; x=1723629550; bh=6Q
+	d4aztaFlRmvO0r2D6tqPKDXCbzC6+wHcCsX84k054=; b=KfxwyPzR+JP8HaDhik
+	Oh8b+ZHmBoNYtVwDEgQDWtBVy36LeCpcHv9PJK8vPyCUeRfINEpdCcxh3hEHEhLN
+	XHDIj1bhNcuYfVIgwJKzr4ptmAvY/le9llj85LfXoxP2HVGc1I+qGlCZUkJy15jw
+	UvbNpQ7MoylRrl3cnxwGqEzhiRc1Um96UqAvg61l+DKMMtDoj5OhzPYxPizwe3Dk
+	wpOmTXEATH9WL33Bh1eTWiEDyEfH2GlhJz+yrPG4txzPsvZfpk83oKn9MrjDgVsZ
+	Kp/lD2xG/UFnOKO5xNRbmBatPvgPMAsKsmvBrB7sGOmz/mvn5R0a+XqmuQeWlF6F
+	n6cQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm3; t=1723543150; x=1723629550; bh=6Qd4aztaFlRmv
+	O0r2D6tqPKDXCbzC6+wHcCsX84k054=; b=iuwB9IF/aYgR7T/wVNOdFkJzbBSa7
+	PKX7dCJD8Ei9pg/XIZePdt9Gu4w+MyrrNqvC9HxB37tA2x/xmh9AnKLuDSDQG1Px
+	6oqxPDFFkjFHHpRc2TRKOs3tlr553cBkINTmsm0J8BZMdNJYM8FU4tsU10xxk0Vi
+	65tpuSPTGiStjFex6G+QdrXYIyVbuv2dMxCUrtGka/FjvF/y6sv0HxvwkAk+rWmp
+	CJcfHPC51PvP5TMkcYit6UBSR/5LoCTL7rlTcp3HPj2Ea+RU/5ntu05Au9JTuinf
+	vu5f5qEoz25FnfKYwfalNe+gzWm+Z7agwRdb/VGyaFG32CIX8TtYG5s3A==
+X-ME-Sender: <xms:bi67ZpSRgJg11ezP0ninKcS5TrT07V9ZSyDUiAVL5-Y4wQ113LkUfw>
+    <xme:bi67ZiwQ70VJ5smF7eeDhtsMVBVRAg1QcU6KClPtvk7dYcuzzyKGgWpFY36F-Ht4V
+    umpQjEuZZMohLnH4rY>
+X-ME-Received: <xmr:bi67Zu3CQZfkDFVfnPsAlumOcqr3KTZSTMRn_31aLvcREc1kXIRtgp682mnG1xborg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgvdduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephfffufggtgfgkffvvefosehtjeertdertdejnecu
+    hfhrohhmpeflihgrgihunhcujggrnhhguceojhhirgiguhhnrdihrghnghesfhhlhihgoh
+    grthdrtghomheqnecuggftrfgrthhtvghrnhephfffgeejgfejieeugffgudegvdekffev
+    geeuteetgeejveeiteeivedvffehlefgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehjihgr
+    gihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhopeehpdhmoh
+    guvgepshhmthhpohhuthdprhgtphhtthhopehjihgrgihunhdrhigrnhhgsehflhihghho
+    rghtrdgtohhmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtg
+    homhdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpd
+    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:bi67ZhBZgPkBJgU86CNZ490PKUtIKWVa5uLt3eyXlUBo3uEcilqZBA>
+    <xmx:bi67ZigQrsJtaz15ges34xJCP-EzpZbRtcPSKKHq1El1ZcVOSjTzHA>
+    <xmx:bi67ZlptZ1y2kJJ9JVFdLtotrTteF53R43A6xrmuU7pTGzUDhbo62w>
+    <xmx:bi67Ztj83ZHSK_xHLyN4KZ4oluVYIf7ciqEJ0SGKzKPGMIaOFr_yrQ>
+    <xmx:bi67ZkZ9Bf8N8CUFsBqnJP3toQNjD2fzHsPO1f10g2IeTx_RLRfDczzx>
+Feedback-ID: ifd894703:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 Aug 2024 05:59:09 -0400 (EDT)
+From: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Date: Tue, 13 Aug 2024 10:59:08 +0100
+Subject: [PATCH] MIPS: cevt-r4k: Don't call get_c0_compare_int if timer irq
+ is installed
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <e6007e53-e1e7-4669-8a8a-ce0efd7733f6@ufal.mff.cuni.cz>
-In-Reply-To: <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
-References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
- <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
- <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
-User-Agent: Trojita/v0.7-596-g21dfb8c3; Qt/5.15.14; xcb; Linux; Gentoo Linux
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240813-get_c0_compare_int-v1-1-a0a1b007d736@flygoat.com>
+X-B4-Tracking: v=1; b=H4sIAGsuu2YC/x3MTQqAIBBA4avIrBP8qbCuEiFiU80iFY0IorsnL
+ b/Few8UzIQFRvZAxosKxVAhGwZ+d2FDTks1KKFaYaTiG57WC+vjkVxGS+HkfT/oznTaaWGghin
+ jSvc/neb3/QC9pHSyZAAAAA==
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Serge Semin <fancer.lancer@gmail.com>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2142;
+ i=jiaxun.yang@flygoat.com; h=from:subject:message-id;
+ bh=Yg+SvLnKDfc6IhCsYzXH5LG+1D5ljKI1al26FDrP2Co=;
+ b=owGbwMvMwCXmXMhTe71c8zDjabUkhrTdermBTFofi+0NFs+MnXj2kdj+ndVP68vX7uHbV5yey
+ G011dayo5SFQYyLQVZMkSVEQKlvQ+PFBdcfZP2BmcPKBDKEgYtTACbikM3wV7px++enLJOd94r0
+ pHvJf8s83fx+5f1mj5gruTs8NQzO7GZkeH7l4o7JV21vt+2QaazqPX/6XLDky86kRR0y5i7R01Y
+ IcAAA
+X-Developer-Key: i=jiaxun.yang@flygoat.com; a=openpgp;
+ fpr=980379BEFEBFBF477EA04EF9C111949073FC0F67
 
-On =C3=BAter=C3=BD 13. srpna 2024 11:54:57 CEST, Niklas Cassel wrote:
-> Hello Jon=C3=A1=C5=A1, Kolbj=C3=B8rn,
->
-> thank you for the report.
->
-> On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wrote:
->
->> On Tue 13. Aug 2024 0:32:37 CEST, Kolbj=C3=B8rn Barmen wrote: ...
->
-> Michael, as the author of the this commit, could you please look into
-> this issue?
->
-> We could revert your patch, which appears to work for some users,
-> but that would again break setups with PAGE_SIZE =3D=3D 64K.
-> (I assume that Jon=C3=A1=C5=A1 and Kolbj=C3=B8rn are not building with PAGE=
-_SIZE =3D=3D 64K.)
+This avoids warning:
 
-This is from a PPC32 machine, so it doesn't even have that option.
-It only supports 4K pages.
+[    0.118053] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:283
 
+Caused by get_c0_compare_int on secondary CPU.
 
->> ------------[ cut here ]------------
->> kernel BUG at drivers/ata/pata_macio.c:544!
->
->
-> https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_macio.c#L=
-544
->
-> It seems that the
-> while (sg_len) loop does not play nice with the new .max_segment_size.
->
->
->
->> Oops: Exception in kernel mode, sig: 5 [#1]
->> BE PAGE_SIZE=3D4K MMU=3DHash SMP NR_CPUS=3D2 DEBUG_PAGEALLOC PowerMac
->> Modules linked in: ipv6 binfmt_misc b43 mac80211 radeon libarc4 cfg80211
->> snd_aoa_codec_tas snd_aoa_fabric_layout snd_aoa rfkill=20
->> snd_aoa_i2sbus hwmon
->> drm_suballoc_helper snd_aoa_soundbus i2c_algo_bit snd_pcm backlight
->> drm_ttm_helper ttm xhci_pci pmac_zilog therm_windtunnel xhci_hcd
->> drm_display_helper firewire_ohci snd_timer snd firewire_core=20
->> serial_base ssb
->> soundcore crc_itu_t
->> CPU: 1 PID: 1870 Comm: kworker/u10:4 Tainted: G                T
->> 6.10.3-gentoo #1
->> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
->> Workqueue: btrfs-worker btrfs_work_helper
->> NIP:  c0719670 LR: c0719678 CTR: 00000001
->> REGS: f2db9bf0 TRAP: 0700   Tainted: G                T   (6.10.3-gentoo)
->> MSR:  00021032 <ME,IR,DR,RI>  CR: 44008408  XER: 20000000
->>=20
->> GPR00: c06fc28c f2db9cb0 c10d8020 c12d28cc 00000000 00000000 00000000
->> c109cff4 GPR08: 69fd0000 00000100 00010000 00000000 00000000 00000000
->> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
->> 00000100 00000122 c11377c8 GPR24: 000000ff 00000008 0000ff00 00000000
->> c14200a8 00000101 00000000 c109d000 NIP [c0719670]
->> pata_macio_qc_prep+0xf4/0x190
->> LR [c0719678] pata_macio_qc_prep+0xfc/0x190
->> Call Trace:
->> [f2db9cb0] [c1421660] 0xc1421660 (unreliable)
->> [f2db9ce0] [c06fc28c] ata_qc_issue+0x14c/0x2d4
->> [f2db9d00] [c0707c5c] __ata_scsi_queuecmd+0x200/0x53c
->> [f2db9d20] [c0707fe8] ata_scsi_queuecmd+0x50/0xe0
->> [f2db9d40] [c06e2644] scsi_queue_rq+0x788/0xb1c
->> [f2db9d80] [c0492464] __blk_mq_issue_directly+0x58/0xf4
->> [f2db9db0] [c0497828] blk_mq_plug_issue_direct+0x8c/0x1b4
->> [f2db9de0] [c0498074] blk_mq_flush_plug_list.part.0+0x584/0x5e0
->> [f2db9e30] [c0485a40] __blk_flush_plug+0xf8/0x194
->> [f2db9e70] [c0485f88] __submit_bio+0x1b8/0x2e0
->> [f2db9ec0] [c04862e0] submit_bio_noacct_nocheck+0x230/0x304
->> [f2db9f00] [c03aaf30] btrfs_work_helper+0x200/0x338
->> [f2db9f40] [c006cae0] process_one_work+0x1a8/0x338
->> [f2db9f70] [c006d79c] worker_thread+0x364/0x4c0
->> [f2db9fc0] [c007811c] kthread+0x100/0x104
->> [f2db9ff0] [c001b304] start_kernel_thread+0x10/0x14
->> Code: 38ff0004 b37f0002 7d20ff2c 3bff0010 7d003d2c 7d084a14 93dffff8
->> b3dffffe b3dffffc 41820010 3bbd0001 4200ffc0 <0fe00000> 4bdcbb01 813c0044
->> 3b180001 ---[ end trace 0000000000000000 ]---
->>=20
->> note: kworker/u10:4[1870] exited with irqs disabled
->> ------------[ cut here ]------------
->> WARNING: CPU: 1 PID: 1870 at kernel/exit.c:825 do_exit+0x854/0x9ec
->> Modules linked in: ipv6 binfmt_misc b43 mac80211 radeon libarc4 cfg80211
->> snd_aoa_codec_tas snd_aoa_fabric_layout snd_aoa rfkill=20
->> snd_aoa_i2sbus hwmon
->> drm_suballoc_helper snd_aoa_soundbus i2c_algo_bit snd_pcm backlight
->> drm_ttm_helper ttm xhci_pci pmac_zilog therm_windtunnel xhci_hcd
->> drm_display_helper firewire_ohci snd_timer snd firewire_core=20
->> serial_base ssb
->> soundcore crc_itu_t
->> CPU: 1 PID: 1870 Comm: kworker/u10:4 Tainted: G      D         T
->> 6.10.3-gentoo #1
->> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
->> Workqueue: btrfs-worker btrfs_work_helper
->> NIP:  c004f09c LR: c004e8a4 CTR: 00000000
->> REGS: f2db9a80 TRAP: 0700   Tainted: G      D         T   (6.10.3-gentoo)
->> MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 88db92e2  XER: 00000000
->>=20
->> GPR00: c004f2c4 f2db9b40 c10d8020 00000000 00002710 00000000 00000000
->> 00000000 GPR08: 00000000 f2db9e88 00000004 00000000 28db92e2 00000000
->> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
->> 00000100 00000122 c11377c8 GPR24: 000000ff c0db0000 00001032 c0a21000
->> c138d520 00000005 c10d8020 c1447220 NIP [c004f09c] do_exit+0x854/0x9ec
->> LR [c004e8a4] do_exit+0x5c/0x9ec
->> Call Trace:
->> [f2db9b40] [c00b0c38] _printk+0x78/0xc4 (unreliable)
->> [f2db9b90] [c004f2c4] make_task_dead+0x90/0x174
->> [f2db9bb0] [c0010b9c] die+0x324/0x32c
->> [f2db9be0] [c0004828] ProgramCheck_virt+0x108/0x158
->> --- interrupt: 700 at pata_macio_qc_prep+0xf4/0x190
->> NIP:  c0719670 LR: c0719678 CTR: 00000001
->> REGS: f2db9bf0 TRAP: 0700   Tainted: G      D         T   (6.10.3-gentoo)
->> MSR:  00021032 <ME,IR,DR,RI>  CR: 44008408  XER: 20000000
->>=20
->> GPR00: c06fc28c f2db9cb0 c10d8020 c12d28cc 00000000 00000000 00000000
->> c109cff4 GPR08: 69fd0000 00000100 00010000 00000000 00000000 00000000
->> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
->> 00000100 00000122 c11377c8 GPR24: 000000ff 00000008 0000ff00 00000000
->> c14200a8 00000101 00000000 c109d000 NIP [c0719670]
->> pata_macio_qc_prep+0xf4/0x190
->> LR [c0719678] pata_macio_qc_prep+0xfc/0x190
->> --- interrupt: 700
->> [f2db9cb0] [c1421660] 0xc1421660 (unreliable)
->> [f2db9ce0] [c06fc28c] ata_qc_issue+0x14c/0x2d4
->> [f2db9d00] [c0707c5c] __ata_scsi_queuecmd+0x200/0x53c
->> [f2db9d20] [c0707fe8] ata_scsi_queuecmd+0x50/0xe0
->> [f2db9d40] [c06e2644] scsi_queue_rq+0x788/0xb1c
->> [f2db9d80] [c0492464] __blk_mq_issue_directly+0x58/0xf4
->> [f2db9db0] [c0497828] blk_mq_plug_issue_direct+0x8c/0x1b4
->> [f2db9de0] [c0498074] blk_mq_flush_plug_list.part.0+0x584/0x5e0
->> [f2db9e30] [c0485a40] __blk_flush_plug+0xf8/0x194
->> [f2db9e70] [c0485f88] __submit_bio+0x1b8/0x2e0
->> [f2db9ec0] [c04862e0] submit_bio_noacct_nocheck+0x230/0x304
->> [f2db9f00] [c03aaf30] btrfs_work_helper+0x200/0x338
->> [f2db9f40] [c006cae0] process_one_work+0x1a8/0x338
->> [f2db9f70] [c006d79c] worker_thread+0x364/0x4c0
->> [f2db9fc0] [c007811c] kthread+0x100/0x104
->> [f2db9ff0] [c001b304] start_kernel_thread+0x10/0x14
->> Code: 915e02fc 81410014 912a0004 915e03c0 939e03c4 91210014 813e04cc
->> 4bfffcec 807e0370 38800000 4bffe195 4bfffc9c <0fe00000> 4bfff848 0fe00000
->> 4bfff7ec ---[ end trace 0000000000000000 ]---
->>=20
->
->
->
+We also skipped saving IRQ number to struct clock_event_device *cd as
+it's never used by clockevent core, as per comments it's only meant
+for "non CPU local devices".
+
+Reported-by: Serge Semin <fancer.lancer@gmail.com>
+Closes: https://lore.kernel.org/linux-mips/6szkkqxpsw26zajwysdrwplpjvhl5abpnmxgu2xuj3dkzjnvsf@4daqrz4mf44k/
+Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+---
+ arch/mips/kernel/cevt-r4k.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/arch/mips/kernel/cevt-r4k.c b/arch/mips/kernel/cevt-r4k.c
+index 368e8475870f..5f6e9e2ebbdb 100644
+--- a/arch/mips/kernel/cevt-r4k.c
++++ b/arch/mips/kernel/cevt-r4k.c
+@@ -303,13 +303,6 @@ int r4k_clockevent_init(void)
+ 	if (!c0_compare_int_usable())
+ 		return -ENXIO;
+ 
+-	/*
+-	 * With vectored interrupts things are getting platform specific.
+-	 * get_c0_compare_int is a hook to allow a platform to return the
+-	 * interrupt number of its liking.
+-	 */
+-	irq = get_c0_compare_int();
+-
+ 	cd = &per_cpu(mips_clockevent_device, cpu);
+ 
+ 	cd->name		= "MIPS";
+@@ -320,7 +313,6 @@ int r4k_clockevent_init(void)
+ 	min_delta		= calculate_min_delta();
+ 
+ 	cd->rating		= 300;
+-	cd->irq			= irq;
+ 	cd->cpumask		= cpumask_of(cpu);
+ 	cd->set_next_event	= mips_next_event;
+ 	cd->event_handler	= mips_event_handler;
+@@ -332,6 +324,13 @@ int r4k_clockevent_init(void)
+ 
+ 	cp0_timer_irq_installed = 1;
+ 
++	/*
++	 * With vectored interrupts things are getting platform specific.
++	 * get_c0_compare_int is a hook to allow a platform to return the
++	 * interrupt number of its liking.
++	 */
++	irq = get_c0_compare_int();
++
+ 	if (request_irq(irq, c0_compare_interrupt, flags, "timer",
+ 			c0_compare_interrupt))
+ 		pr_err("Failed to request irq %d (timer)\n", irq);
+
+---
+base-commit: 9e6869691724b12e1f43655eeedc35fade38120c
+change-id: 20240812-get_c0_compare_int-66935853a308
+
+Best regards,
+-- 
+Jiaxun Yang <jiaxun.yang@flygoat.com>
 
 
