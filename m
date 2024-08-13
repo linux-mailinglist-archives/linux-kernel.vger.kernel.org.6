@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-284022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB16694FC10
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:01:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9344294FC19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813C41F22ADB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:01:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F16BB22335
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:08:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1271B947;
-	Tue, 13 Aug 2024 03:01:48 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E687E1B7FD;
+	Tue, 13 Aug 2024 03:08:26 +0000 (UTC)
+Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D33E4C8C;
-	Tue, 13 Aug 2024 03:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF341862A;
+	Tue, 13 Aug 2024 03:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723518107; cv=none; b=NlZEGatp3g1W+5i78qyn0R5vwrKFeFwWdxf5HW9x7bKp0cvRkEoqV5EJgrok9hetDXJJJ45L/3+ZeTT6Mi9k7eBAExU29qGhZF+GLuoFrE9jXN7NiZxN/H2/9bo/vwTJiHVCCmW+rjmPD+1cn6a5KW7cWlg052gzUTHHhogYH0g=
+	t=1723518506; cv=none; b=jkTwFnKTk6bHZ4EIk1yv+ICwVEA825ovvhJabNbStvED9ShA7xxaUiNEhM9Sxu6/OFX2y3/CRs/rPxSs+q7N8DvUOUroyMzfnOtMi51CLrwtCzJFyToE+s+wffKxik+fuIZjhpoMojJQFtKdi83Q5LfZJAsMR3iV/R2KMRrn3s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723518107; c=relaxed/simple;
-	bh=jm2reYs+G6A80eJrvZtYWfDcDiV6BG2XZDJ5QsPyTOE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nOAwJZxBsrSOW1KyX3JMGGPZhKQouETOW20o8S2a+mH/KK0NhnGom2f9zQIEXf39DJUobeiL0ovtjkYK4SheeRk+Q66Y/Q+59Dg0P7krvOL+4Z3jJFsiToIvcascjYuinH+QAbMLCTSE7hWoxIACC3Q4AEbBoyytk280NUcmx20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjbkY6BpHz4f3jMD;
-	Tue, 13 Aug 2024 11:01:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 885E91A0568;
-	Tue, 13 Aug 2024 11:01:39 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIKQzLpm2RAsBg--.33905S3;
-	Tue, 13 Aug 2024 11:01:37 +0800 (CST)
-Subject: Re: [PATCH v2 5/6] iomap: don't mark blocks uptodate after partial
- zeroing
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
- david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-6-yi.zhang@huaweicloud.com>
- <20240812164912.GF6043@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <d3774e9f-ac6d-7ac3-257f-b8f37cc52544@huaweicloud.com>
-Date: Tue, 13 Aug 2024 11:01:36 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723518506; c=relaxed/simple;
+	bh=G8mlqUI4Vj75JSRSXWP8BhfuW8A9ZPbv9FEMFDs01nw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IBUi/rCRfKk4PhcabIhCUaX7QPx8g+NLYMq5KuteubPvUY8VD8EJ+31u4EmqBE0PvskgZ9AZLDi/gFbT/5n8BO8O82/SUZrF19/SD2pY0EwF4I5q+hNk8mPzliYsLQ/bvXz4xhzXpDEuZZV+831hKYUHVkMquO0F0fqTDdJXRf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-03 (Coremail) with SMTP id rQCowAA3XQARzrpmFDniBQ--.21605S2;
+	Tue, 13 Aug 2024 11:08:10 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: giometti@enneenne.com,
+	christophe.jaillet@wanadoo.fr,
+	linux@treblig.org,
+	gregkh@linuxfoundation.org,
+	sudipm.mukherjee@gmail.com,
+	make24@iscas.ac.cn,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] pps: add an error check in parport_attach
+Date: Tue, 13 Aug 2024 11:08:00 +0800
+Message-Id: <20240813030800.3949400-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240812164912.GF6043@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBXzIKQzLpm2RAsBg--.33905S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ury5uFy5Jw1kAF43uw4Durg_yoW8Cr18pF
-	Z8KFWqkr1kKFZru3W8AF13Zr10y39Igr4fCr47Wwn8uF45tr42gr9Fga1a9F1Fvry7Cr4F
-	vr4vgFy8uF15ZrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:rQCowAA3XQARzrpmFDniBQ--.21605S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fZw4xGFWxCrW5uryrXrb_yoW8Ww17pF
+	WkuFyYqrZ7Xayqkws7Z3Z5WFyrCw1xta1xuFWUK34ak3W3KryFyFW293409F18Jr4DAa45
+	CFsxKayvkF47AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
+	WxJr0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
+	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
+	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
+	YI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On 2024/8/13 0:49, Darrick J. Wong wrote:
-> On Mon, Aug 12, 2024 at 08:11:58PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> In __iomap_write_begin(), if we unaligned buffered write data to a hole
->> of a regular file, we only zero out the place where aligned to block
->> size that we don't want to write, but mark the whole range uptodate if
->> block size < folio size. This is wrong since the not zeroed part will
->> contains stale data and can be accessed by a concurrent buffered read
->> easily (on the filesystem may not hold inode->i_rwsem) once we mark the
->> range uptodate. Fix this by drop iomap_set_range_uptodate() in the
->> zeroing out branch.
->>
->> Fixes: 9dc55f1389f9 ("iomap: add support for sub-pagesize buffered I/O without buffer heads")
->> Reported-by: Matthew Wilcox <willy@infradead.org>
->> Closes: https://lore.kernel.org/all/ZqsN5ouQTEc1KAzV@casper.infradead.org/
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/iomap/buffered-io.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index ac762de9a27f..96600405dbb5 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
->> @@ -744,8 +744,8 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->>  					poff, plen, srcmap);
->>  			if (status)
->>  				return status;
->> +			iomap_set_range_uptodate(folio, poff, plen);
->>  		}
->> -		iomap_set_range_uptodate(folio, poff, plen);
-> 
-> Don't we need to iomap_set_range_uptodate for the bytes that we zeroed
-> with folio_zero_segments?
-> 
+In parport_attach, the return value of ida_alloc is unchecked, witch leads
+to the use of an invalid index value.
 
-We must do partial block zeroing here, hence we don't need to set update
-bit.
+To address this issue, index should be checked. When the index value is
+abnormal, the device should be freed.
 
-Thanks,
-Yi.
+Found by code review, compile tested only.
 
-> --D
-> 
->>  	} while ((block_start += plen) < block_end);
->>  
->>  	return 0;
->> -- 
->> 2.39.2
->>
->>
+Cc: stable@vger.kernel.org
+Fixes: 55dbc5b5174d ("pps: remove usage of the deprecated ida_simple_xx() API")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/pps/clients/pps_parport.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
+index 63d03a0df5cc..9ab7f6961e42 100644
+--- a/drivers/pps/clients/pps_parport.c
++++ b/drivers/pps/clients/pps_parport.c
+@@ -149,6 +149,11 @@ static void parport_attach(struct parport *port)
+ 	}
+ 
+ 	index = ida_alloc(&pps_client_index, GFP_KERNEL);
++	if (index < 0) {
++		pr_err("failed to get index\n");
++		goto err_free_device;
++	}
++
+ 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
+ 	pps_client_cb.private = device;
+ 	pps_client_cb.irq_func = parport_irq;
+@@ -159,7 +164,7 @@ static void parport_attach(struct parport *port)
+ 						    index);
+ 	if (!device->pardev) {
+ 		pr_err("couldn't register with %s\n", port->name);
+-		goto err_free;
++		goto err_free_ida;
+ 	}
+ 
+ 	if (parport_claim_or_block(device->pardev) < 0) {
+@@ -187,8 +192,9 @@ static void parport_attach(struct parport *port)
+ 	parport_release(device->pardev);
+ err_unregister_dev:
+ 	parport_unregister_device(device->pardev);
+-err_free:
++err_free_ida:
+ 	ida_free(&pps_client_index, index);
++err_free_device:
+ 	kfree(device);
+ }
+ 
+-- 
+2.25.1
 
 
