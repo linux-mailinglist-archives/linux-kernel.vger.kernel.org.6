@@ -1,133 +1,173 @@
-Return-Path: <linux-kernel+bounces-284196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98BD94FE5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:03:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E0594FE60
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:07:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 740171F241EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:03:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E6661C229BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90745446B4;
-	Tue, 13 Aug 2024 07:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 229C547F53;
+	Tue, 13 Aug 2024 07:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqZn3uf9"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7024C81;
-	Tue, 13 Aug 2024 07:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b="fdYuIgOC"
+Received: from mail.katalix.com (mail.katalix.com [3.9.82.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DD13DBB7;
+	Tue, 13 Aug 2024 07:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=3.9.82.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723532594; cv=none; b=Pnl2Vs1cJkW3I6M+R4y/vh24achqnWXAYrKkL4ugeyaAAxCxuLihh0UQ1shMfX287tohJKY+C1rybEa8nE1WWHDxBFZEIxjLoz+m1BZlu/rAtLQYkbqFlGodmPjt7jGYa4WVamLJL2GVcqUTUwbTzRtWAEaATgBmehNFdgcbeG8=
+	t=1723532817; cv=none; b=dHl90kflAIRzHTSXqH2RCw2tEq1ZInuHoN0ygCcAhcknBP8MwAZ/wmRt+Y0hHowAeT7K2HLm7lSu9IgH1eiL4v6xe6CV1O1fETLPlTKdIWdpwA5qswbeXV7OIItU96HzP7k9GQJH4fipH9D9XJ60q9pVgNg36gRYQEOybPvcjSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723532594; c=relaxed/simple;
-	bh=dTbZzkcHiIl7NTbNr43zH/Q3LxjRB6jnEClIJdvOAc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qTkJYIevSR2flFQ0aWuM/L0wTcdu2v4p7ooa2q3NsOj9qZXFuQOmGzsUZVqPqkRT352ydSHQbxu/4E3al6uxkpwz73yJp8I3wzKAm3MomfTuJMaC70ZFY2H9J+HRooxst59mNbGthmHffhdv7CYpo95m9e7RMfx6mEQjgGntNzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqZn3uf9; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280921baa2so6080715e9.2;
-        Tue, 13 Aug 2024 00:03:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723532592; x=1724137392; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fIOwaxibfjy8pBTYozQ1M2vGi8fc4Fhd8E64F9TTN1c=;
-        b=lqZn3uf9No77Lcl/HaWu9SM/hQlLxUzMqCy3F1d72B/iOaFF8ecRdNbdfR+CkrLzjD
-         h8nqBtGbBTuct8Mgqk9dm4a40UkYs0RZBipF23sPbLpvqPtxCDLLQ/R1VIj1IHaETmM5
-         1GZJvq2IWy+TJXHw4f9ZWQ+V/G1uORMa2ROYSQf5bMO25ZOmFNIChb2WruuW0h+Foyk9
-         CdmuGgQ+6FKLMvl4e7jwQ8go9nUNAwCx08/YDwZEKkCeJmimwhtTXwxpLpi9nFkWaDxf
-         5f6qkEuudBipfB1lXPHznx95oJEVWczOHTDixYjK1LnKVXfw2t+2UZpi7UKufHf9jou6
-         b/lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723532592; x=1724137392;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fIOwaxibfjy8pBTYozQ1M2vGi8fc4Fhd8E64F9TTN1c=;
-        b=A5sjc/roDlGfcX/msWRGM80TtxG/w/iIO9ZXoezVIYPvRVe8VQDpR+YtgcRKDVrr8V
-         g85apelAfph7mfgUp8h1CThyRBxdix0nTrVY6NNPTWLctxyw9vC3vJr41+yWTICAD+wh
-         CCZXnutZGcT+7eWMUNdkQxzJIbjivoBZf0ZmG4dUEhWRY5WbA1mJaKa6PVZfBSC+xLVC
-         Q0YTU1pct50EJuDgeO2ICZvuA0LajidMSeyXPuwNe1kPKfTUwwx2UrMqynTMiCRipXs8
-         Jlb6WGSYKPUWg51Kiprw0hlS9CgZzQAPqCCJBu47IIATqBIE4jd17c7FPa0UnEYboAbq
-         1p9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ZN/ZsEA+WZmXrHvbcmF3J4RWXwqkFeF3OvtB+2I50YGYtjrrOOABAsa1DI1IrBtV3g2JGbY4fl9sPZ+8brhFeUVcGpoZS7+kJDVpSb6acAPVqijeIup7uJrqM5MADLop0akzcHzEiag4p4MWGFRkVTNRYBcZNRbBHaKQuhwLUS89WHW7vYr2UONNUOriZwRzinvuZmvZu5T9pRfyK+8IlACv6Ag=
-X-Gm-Message-State: AOJu0YwcPabRvynW2Y38AhIxpFsin8rXg6ELgCH1kXKsK65yDymVoUce
-	uIFjp2LH6po730fkF01BdXxCKWD7hJAZo+Dmx+M37LO1o4kQAnxp
-X-Google-Smtp-Source: AGHT+IFT7bLnTaW+ZuudccrGn/oo/3z70x/uR+WhXxRNGyeNLZQD80eh8G9IROEtYFJM2/ZFfGELGQ==
-X-Received: by 2002:a05:600c:1c16:b0:426:6cd1:d116 with SMTP id 5b1f17b1804b1-429d760e0e5mr5749905e9.3.1723532591311;
-        Tue, 13 Aug 2024 00:03:11 -0700 (PDT)
-Received: from ?IPV6:2a01:4b00:d20e:7300:6db6:f2bf:8865:5d31? ([2a01:4b00:d20e:7300:6db6:f2bf:8865:5d31])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c751a554sm130564965e9.22.2024.08.13.00.03.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 00:03:10 -0700 (PDT)
-Message-ID: <93b5b1ce-8b40-473d-a2c4-2b1d2612cd67@gmail.com>
-Date: Tue, 13 Aug 2024 08:03:10 +0100
+	s=arc-20240116; t=1723532817; c=relaxed/simple;
+	bh=RU+gPBhstdJgJCKCgyCoqhUIE27e7CbW1BUihp9JypQ=;
+	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
+	 In-Reply-To:Content-Type; b=gZQhqOPSPMCOLDMa0k/uQqUUkDpkrz+cb9ZhFG1XUL8Q8NuQOi0rPsg6SfUOHKKWwChxovREBqsxgQsgWQuBRC1KfxMlOhtGGpv1nPXS1fSa/4f9/eoawsE8SR/WOh6knjlpFBBDcM4jyWNd3VLu7b9KRGpn2d3bfpalGYvL9Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com; spf=pass smtp.mailfrom=katalix.com; dkim=pass (2048-bit key) header.d=katalix.com header.i=@katalix.com header.b=fdYuIgOC; arc=none smtp.client-ip=3.9.82.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=katalix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=katalix.com
+Received: from [IPV6:2a02:8010:6359:1:e533:7058:72ab:8493] (unknown [IPv6:2a02:8010:6359:1:e533:7058:72ab:8493])
+	(Authenticated sender: james)
+	by mail.katalix.com (Postfix) with ESMTPSA id 450CD7D948;
+	Tue, 13 Aug 2024 08:06:54 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=katalix.com; s=mail;
+	t=1723532814; bh=RU+gPBhstdJgJCKCgyCoqhUIE27e7CbW1BUihp9JypQ=;
+	h=Message-ID:Date:MIME-Version:To:References:From:Subject:
+	 In-Reply-To:From;
+	z=Message-ID:=20<440a73c1-1e84-c959-bb5c-43c3d60cc1c5@katalix.com>|
+	 Date:=20Tue,=2013=20Aug=202024=2008:06:52=20+0100|MIME-Version:=20
+	 1.0|To:=20syzbot=20<syzbot+1ff81cc9c56e63938cf9@syzkaller.appspotm
+	 ail.com>,=0D=0A=20davem@davemloft.net,=20edumazet@google.com,=20ku
+	 ba@kernel.org,=0D=0A=20linux-kernel@vger.kernel.org,=20netdev@vger
+	 .kernel.org,=20pabeni@redhat.com,=0D=0A=20syzkaller-bugs@googlegro
+	 ups.com|References:=20<0000000000002edcf0061f541f85@google.com>|Fr
+	 om:=20James=20Chapman=20<jchapman@katalix.com>|Subject:=20Re:=20[s
+	 yzbot]=20[net?]=20WARNING=20in=20l2tp_udp_encap_destroy|In-Reply-T
+	 o:=20<0000000000002edcf0061f541f85@google.com>;
+	b=fdYuIgOC+0zI8IYIs63igj2pzsnbG4agVLojPVWYBKTxNRsCNZ3doCjo7we0bpj04
+	 Z4EmlS5J8xM9HAcuRQy2Vn51DFEBG4o5lxOb7tc8lcP3HufhGqzxb/16ulfxcuiaLt
+	 Ehwbmk2UgAbnLYAcEj3bN1M0uiQ1IdhkUdGUrKTOpnal2vjQkrlmzRL1WDZbfMEpOA
+	 S6ATzVJBywr/Xh5SyJPy3F8p3xV+CA3iSYhWFcOF0duvdSKdOnFcjYWF8NNkZmT94Y
+	 gwPF+PWPw+aZ/6RBQcNQxmfNLRNFDdfmbHyYnKlYhxaA5qKO6XnJZx/qEowD+0fAya
+	 J7ZIy156et9zQ==
+Message-ID: <440a73c1-1e84-c959-bb5c-43c3d60cc1c5@katalix.com>
+Date: Tue, 13 Aug 2024 08:06:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/4] ALSA: timer: Introduce virtual userspace-driven
- timers
-To: Takashi Iwai <tiwai@suse.de>
-Cc: perex@perex.cz, tiwai@suse.com, corbet@lwn.net, broonie@kernel.org,
- shuah@kernel.org, linux-kselftest@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr,
- aholzinger@gmx.de
-References: <20240811202337.48381-1-ivan.orlov0322@gmail.com>
- <20240811202337.48381-4-ivan.orlov0322@gmail.com>
- <87ikw5c644.wl-tiwai@suse.de>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+To: syzbot <syzbot+1ff81cc9c56e63938cf9@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com
+References: <0000000000002edcf0061f541f85@google.com>
 Content-Language: en-US
-From: Ivan Orlov <ivan.orlov0322@gmail.com>
-In-Reply-To: <87ikw5c644.wl-tiwai@suse.de>
+From: James Chapman <jchapman@katalix.com>
+Organization: Katalix Systems Ltd
+Subject: Re: [syzbot] [net?] WARNING in l2tp_udp_encap_destroy
+In-Reply-To: <0000000000002edcf0061f541f85@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/13/24 07:02, Takashi Iwai wrote:
-> On Sun, 11 Aug 2024 22:23:36 +0200,
-> Ivan Orlov wrote:
->> +static int snd_utimer_ioctl_create(struct file *file,
->> +				   struct snd_timer_uinfo __user *_utimer_info)
->> +{
->> +	struct snd_utimer *utimer;
->> +	struct snd_timer_uinfo *utimer_info __free(kfree) = NULL;
->> +	int err;
->> +
->> +	utimer_info = memdup_user(_utimer_info, sizeof(*utimer_info));
->> +	if (IS_ERR(utimer_info))
->> +		return PTR_ERR(no_free_ptr(utimer_info));
->> +
->> +	err = snd_utimer_create(utimer_info, &utimer);
->> +	if (err < 0)
->> +		return err;
->> +
->> +	utimer_info->id = utimer->id;
->> +
->> +	err = copy_to_user(_utimer_info, utimer_info, sizeof(*utimer_info));
->> +	if (err) {
->> +		snd_utimer_free(utimer);
->> +		return -EFAULT;
->> +	}
->> +
->> +	return anon_inode_getfd(utimer->name, &snd_utimer_fops, utimer, O_RDWR | O_CLOEXEC);
+On 10/08/2024 14:20, syzbot wrote:
+> Hello,
 > 
-> Wouldn't utimer be left unfreed if this returns an error?
+> syzbot found the following issue on:
+> 
+> HEAD commit:    eb3ab13d997a net: ti: icssg_prueth: populate netdev of_node
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13589dbd980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1ff81cc9c56e63938cf9
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/451ec795f57e/disk-eb3ab13d.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e6f090c32577/vmlinux-eb3ab13d.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/ac63cb5127b1/bzImage-eb3ab13d.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+1ff81cc9c56e63938cf9@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 13137 at kernel/workqueue.c:2259 __queue_work+0xcd3/0xf50 kernel/workqueue.c:2258
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 13137 Comm: syz.1.2857 Not tainted 6.11.0-rc2-syzkaller-00271-geb3ab13d997a #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+> RIP: 0010:__queue_work+0xcd3/0xf50 kernel/workqueue.c:2258
+> Code: ff e8 41 85 36 00 90 0f 0b 90 e9 1e fd ff ff e8 33 85 36 00 eb 13 e8 2c 85 36 00 eb 0c e8 25 85 36 00 eb 05 e8 1e 85 36 00 90 <0f> 0b 90 48 83 c4 60 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc
+> RSP: 0018:ffffc900042b7ac8 EFLAGS: 00010093
+> RAX: ffffffff815cf254 RBX: ffff88802a4abc00 RCX: ffff88802a4abc00
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: ffffffff815ce6b4 R09: 0000000000000000
+> R10: ffffc900042b7ba0 R11: fffff52000856f75 R12: ffff88802ac9d800
+> R13: ffff88802ac9d9c0 R14: dffffc0000000000 R15: 0000000000000008
+> FS:  0000555569316500(0000) GS:ffff8880b9200000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b3291aff8 CR3: 0000000074d8c000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>   <TASK>
+>   queue_work_on+0x1c2/0x380 kernel/workqueue.c:2392
+>   l2tp_udp_encap_destroy+0x2a/0x40 net/l2tp/l2tp_core.c:1323
+>   udpv6_destroy_sock+0x19e/0x240 net/ipv6/udp.c:1683
+>   sk_common_release+0x72/0x320 net/core/sock.c:3742
+>   inet_release+0x17d/0x200 net/ipv4/af_inet.c:437
+>   __sock_release net/socket.c:659 [inline]
+>   sock_close+0xbc/0x240 net/socket.c:1421
+>   __fput+0x24a/0x8a0 fs/file_table.c:422
+>   task_work_run+0x24f/0x310 kernel/task_work.c:228
+>   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+>   exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+>   exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+>   __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>   syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+>   do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f0994d779f9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffe09b036c8 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+> RAX: 0000000000000000 RBX: 0000000000052632 RCX: 00007f0994d779f9
+> RDX: 0000000000000000 RSI: 000000000000001e RDI: 0000000000000003
+> RBP: 00007ffe09b037a0 R08: 0000000000000001 R09: 00007ffe09b039af
+> R10: 00007f0994c00000 R11: 0000000000000246 R12: 0000000000000032
+> R13: 00007ffe09b037c0 R14: 00007ffe09b037e0 R15: ffffffffffffffff
+>   </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 > 
 
-Hi Takashi,
+I think this is already fixed by c1b2e36b8776
 
-Ah, yes, it will... :( Thanks!
+#syz fix: l2tp: flush workqueue before draining it
 
--- 
-Kind regards,
-Ivan Orlov
 
