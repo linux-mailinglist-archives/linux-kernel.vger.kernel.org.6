@@ -1,281 +1,159 @@
-Return-Path: <linux-kernel+bounces-284167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6907494FDCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:26:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF5F94FDD2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF921C22ACA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:26:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 496AEB23340
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46653218B;
-	Tue, 13 Aug 2024 06:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB953CF7E;
+	Tue, 13 Aug 2024 06:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXGCbhMx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CqAzioc7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D7CE46522
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DEAF3BBC5
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723530385; cv=none; b=Rc7iZOlxUtlAAnksc28ncVN6DMJeSiRcCeNz8yjrHgxijp07yCkT+y3exK9PHPpIY+abLf1z4UqWjgQ8PkgK68pzvzHIO/qzYHNsck/ZXHjz5WHMHNnCAiCPKmnl0LBvAnB8qvllZaJR1QqQVsdx4AyDYKVL4VofYsd5trNo4U0=
+	t=1723530492; cv=none; b=LyMyc4oNA1JnOrEtFofPYuoGK6N3ugOTeds6g1V1cggnUccRJJAjeWyPm1x76JD9EaLt0JMShcBreAqinvQGN68SKw+1fadLfRv5hfz7r49M5J9XkWI9iVa+4exInmaUOTz75H06RirX2VEuE3l1wGRxkN57IPW7lmJLi2BnyF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723530385; c=relaxed/simple;
-	bh=z11k9/2dZSsWNeKMT/eTZ5hgojGyvlyRrk8ZA0dU1Pk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YrhMGtuAX1hyf9oeQZvMd+WlHrgCGkbyWWobSe6hyU1yfOszTEF8S1/9H1AL74WTUhLiGOQQrE301rkWyQKPS89vWhglVweOQMSlaHHeiYwA0+0LpP4hYWx9SMAFwovRtcIW6m3BHoUwUhmpfNJyUNNvdoPQmqUzLooqI7VxWzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXGCbhMx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723530382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/+1NdbA2w9xTyXuvlnpdZMCH9uHX+JdiWBK5zQ7c8Ig=;
-	b=NXGCbhMx9fJB5imL+elwOFdAgkitFbVVBE5yDb89KEAHNWpGGCTDGAxRcIKOc7DYyxAbh0
-	LBuQx6CV6gf5a2XKNWByoRnEPK4TOiRSV/SVfp60WITfVSCNrIuFJPTOMZTRnsOdOS2H5b
-	B3HmAWl7VRfl8vZNr7sAx9pNVPr+tN0=
-Received: from mail-pf1-f198.google.com (mail-pf1-f198.google.com
- [209.85.210.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-83-PHs9FkGkOUW6shM4Az9brg-1; Tue, 13 Aug 2024 02:26:21 -0400
-X-MC-Unique: PHs9FkGkOUW6shM4Az9brg-1
-Received: by mail-pf1-f198.google.com with SMTP id d2e1a72fcca58-70ec1039600so4355936b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:26:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723530380; x=1724135180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+1NdbA2w9xTyXuvlnpdZMCH9uHX+JdiWBK5zQ7c8Ig=;
-        b=C7KNP/139AfmFqfUUKPF9ZmGyEEPilpww9kM/V7UDe1AgJKzKkjr53HXo60a6oJDtB
-         jrzLW7frjceE1hga46Nbabe5+6LtkBJ61rRgy04ikJJEATE4OmI20VG9Z8rmoOWjn4PH
-         jo1HBMR2JzUxQ8Hd1NciRokN4zayEqCGJdJPjWQqudoPC1IPEPCL2F8dwFeesc8iL08K
-         RN7uh7PPWfEbOM76isCbcdEIXfuJuJbYqFfdfTLpBUVUAa4urQBtAJV5vJnBdAf3RNXX
-         Erc/h7GE2l91kQztRa5xqD2umfaj9cUsnozY1hwlsKn/7hDdU1d09BooFX/tsyejxdjb
-         SgnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWfRescyVFLTXO4c3af+rav/MR4ftrnC2qIHZTB+cvS0hvduoG6EfPFmS0ct7fnIH0hvLX3WOEiUNHXbhwJJVUjLj8AKVS3i3ktZ6dn
-X-Gm-Message-State: AOJu0YzfF1V8cAEkCzdRr/GTmwTLIeaWMOrhEkaGsY2JPp+f7qVyIk0x
-	LbTlnpo49zWmFcVYCe7kApyN2+7k2AmtWPxrngAAPOSqpN/Z7lJiw9F6Z/7/s+I/Nj+yYtD03tR
-	bO+tUSxLytSJ0OjIh3qwwNAwMthV/V27pW5Z+NjM3TJxFNJzmuP6Np4eS9H6PpNWqi1Ols9hGD+
-	gXnMorcJTIz0j3K2ldFam3JbCkyQW5nSCtckHz
-X-Received: by 2002:a05:6a20:d521:b0:1c6:f213:83b with SMTP id adf61e73a8af0-1c8d759479fmr3489563637.37.1723530379977;
-        Mon, 12 Aug 2024 23:26:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFopEJBlYstjGCBUbkbkaEQoKLTASbBt41MNZwlAjPX+uIybIJEIIPhsS6+4J/MoFLwBa1wfojohNxemgd72HU=
-X-Received: by 2002:a05:6a20:d521:b0:1c6:f213:83b with SMTP id
- adf61e73a8af0-1c8d759479fmr3489538637.37.1723530379372; Mon, 12 Aug 2024
- 23:26:19 -0700 (PDT)
+	s=arc-20240116; t=1723530492; c=relaxed/simple;
+	bh=derBRRAO0pG76FVV3scLWIoHy4jk/7v1q8+kLjSqkqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t0OEuzpeFD3UfIJILcn+lZ+aPdscQCu1yQMl0ysbFG8JPIO+QIUiyEjeNMdvef52JM8N79MuETbuE7eRGv9NPRgCcXaLYDchCA+sg92rNAToNbjIfvnoD1wfeE8eXmypoE+u7p/OgdHv7ArWzbb9kr/2gx+sSn147EnYykfwV+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CqAzioc7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E447C4AF09;
+	Tue, 13 Aug 2024 06:28:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723530492;
+	bh=derBRRAO0pG76FVV3scLWIoHy4jk/7v1q8+kLjSqkqo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CqAzioc7M91ugJKeoMUaWhhH/w5N9NuQYSiNIQc1A30ZHjIxEIn0b85FXdYg+2pW+
+	 kSe25YIJBmeuIPsMj+d0kx1y3sZCHj83KEOvLVhTJCR4i5442REhQ9p2kjYyAADqnd
+	 OdB8VolScMqCNYrBIeMveN8W0tdosiUx8/HzbC9Q=
+Date: Tue, 13 Aug 2024 08:28:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, devel@driverdev.osuosl.org, brauner@kernel.org,
+	kernel-team@android.com, tkjos@android.com, arnd@arndb.de,
+	surenb@google.com, masahiroy@kernel.org, cmllamas@google.com,
+	linux-kernel@vger.kernel.org, hridya@google.com, arve@android.com,
+	smoreland@google.com, joel@joelfernandes.org, maco@android.com
+Subject: Re: [PATCH v1] add binder genl for txn report
+Message-ID: <2024081350-establish-direness-38ee@gregkh>
+References: <20240812211844.4107494-1-dualli@chromium.org>
+ <2024081341-egging-custodian-428d@gregkh>
+ <CANBPYPjCobjbtyKoFJHAciE3=m0Z_QeDTdD9C=ggCcvaWy0daA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240808082044.11356-1-jasowang@redhat.com> <9da68127-23d8-48a4-b56f-a3ff54fa213c@nvidia.com>
- <CACGkMEshq0=djGQ0gJe=AinZ2EHSpgE6CykspxRgLS_Ok55FKw@mail.gmail.com>
- <CACGkMEvAVM+KLpq7=+m8q1Wajs_FSSfftRGE+HN16OrFhqX=ow@mail.gmail.com> <ede5a20f-0314-4281-9100-89a265ff6411@nvidia.com>
-In-Reply-To: <ede5a20f-0314-4281-9100-89a265ff6411@nvidia.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 13 Aug 2024 14:26:08 +0800
-Message-ID: <CACGkMEtVMq83rK9ykrN3OvGDYKg6L1Jnpa2wsnfDEbswpcnM1g@mail.gmail.com>
-Subject: Re: [RFC PATCH] vhost_vdpa: assign irq bypass producer token correctly
-To: Dragos Tatulea <dtatulea@nvidia.com>
-Cc: mst@redhat.com, lingshan.zhu@intel.com, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANBPYPjCobjbtyKoFJHAciE3=m0Z_QeDTdD9C=ggCcvaWy0daA@mail.gmail.com>
 
-On Mon, Aug 12, 2024 at 7:22=E2=80=AFPM Dragos Tatulea <dtatulea@nvidia.com=
-> wrote:
->
->
->
-> On 12.08.24 08:49, Jason Wang wrote:
-> > On Mon, Aug 12, 2024 at 1:47=E2=80=AFPM Jason Wang <jasowang@redhat.com=
-> wrote:
-> >>
-> >> On Fri, Aug 9, 2024 at 2:04=E2=80=AFAM Dragos Tatulea <dtatulea@nvidia=
-.com> wrote:
-> >>>
-> >>>
-> >>>
-> >>> On 08.08.24 10:20, Jason Wang wrote:
-> >>>> We used to call irq_bypass_unregister_producer() in
-> >>>> vhost_vdpa_setup_vq_irq() which is problematic as we don't know if t=
-he
-> >>>> token pointer is still valid or not.
-> >>>>
-> >>>> Actually, we use the eventfd_ctx as the token so the life cycle of t=
-he
-> >>>> token should be bound to the VHOST_SET_VRING_CALL instead of
-> >>>> vhost_vdpa_setup_vq_irq() which could be called by set_status().
-> >>>>
-> >>>> Fixing this by setting up  irq bypass producer's token when handling
-> >>>> VHOST_SET_VRING_CALL and un-registering the producer before calling
-> >>>> vhost_vring_ioctl() to prevent a possible use after free as eventfd
-> >>>> could have been released in vhost_vring_ioctl().
-> >>>>
-> >>>> Fixes: 2cf1ba9a4d15 ("vhost_vdpa: implement IRQ offloading in vhost_=
-vdpa")
-> >>>> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> >>>> ---
-> >>>> Note for Dragos: Please check whether this fixes your issue. I
-> >>>> slightly test it with vp_vdpa in L2.
-> >>>> ---
-> >>>>  drivers/vhost/vdpa.c | 12 +++++++++---
-> >>>>  1 file changed, 9 insertions(+), 3 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-> >>>> index e31ec9ebc4ce..388226a48bcc 100644
-> >>>> --- a/drivers/vhost/vdpa.c
-> >>>> +++ b/drivers/vhost/vdpa.c
-> >>>> @@ -209,11 +209,9 @@ static void vhost_vdpa_setup_vq_irq(struct vhos=
-t_vdpa *v, u16 qid)
-> >>>>       if (irq < 0)
-> >>>>               return;
-> >>>>
-> >>>> -     irq_bypass_unregister_producer(&vq->call_ctx.producer);
-> >>>>       if (!vq->call_ctx.ctx)
-> >>>>               return;
-> >>>>
-> >>>> -     vq->call_ctx.producer.token =3D vq->call_ctx.ctx;
-> >>>>       vq->call_ctx.producer.irq =3D irq;
-> >>>>       ret =3D irq_bypass_register_producer(&vq->call_ctx.producer);
-> >>>>       if (unlikely(ret))
-> >>>> @@ -709,6 +707,12 @@ static long vhost_vdpa_vring_ioctl(struct vhost=
-_vdpa *v, unsigned int cmd,
-> >>>>                       vq->last_avail_idx =3D vq_state.split.avail_in=
-dex;
-> >>>>               }
-> >>>>               break;
-> >>>> +     case VHOST_SET_VRING_CALL:
-> >>>> +             if (vq->call_ctx.ctx) {
-> >>>> +                     vhost_vdpa_unsetup_vq_irq(v, idx);
-> >>>> +                     vq->call_ctx.producer.token =3D NULL;
-> >>>> +             }
-> >>>> +             break;
-> >>>>       }
-> >>>>
-> >>>>       r =3D vhost_vring_ioctl(&v->vdev, cmd, argp);
-> >>>> @@ -747,13 +751,14 @@ static long vhost_vdpa_vring_ioctl(struct vhos=
-t_vdpa *v, unsigned int cmd,
-> >>>>                       cb.callback =3D vhost_vdpa_virtqueue_cb;
-> >>>>                       cb.private =3D vq;
-> >>>>                       cb.trigger =3D vq->call_ctx.ctx;
-> >>>> +                     vq->call_ctx.producer.token =3D vq->call_ctx.c=
-tx;
-> >>>> +                     vhost_vdpa_setup_vq_irq(v, idx);
-> >>>>               } else {
-> >>>>                       cb.callback =3D NULL;
-> >>>>                       cb.private =3D NULL;
-> >>>>                       cb.trigger =3D NULL;
-> >>>>               }
-> >>>>               ops->set_vq_cb(vdpa, idx, &cb);
-> >>>> -             vhost_vdpa_setup_vq_irq(v, idx);
-> >>>>               break;
-> >>>>
-> >>>>       case VHOST_SET_VRING_NUM:
-> >>>> @@ -1419,6 +1424,7 @@ static int vhost_vdpa_open(struct inode *inode=
-, struct file *filep)
-> >>>>       for (i =3D 0; i < nvqs; i++) {
-> >>>>               vqs[i] =3D &v->vqs[i];
-> >>>>               vqs[i]->handle_kick =3D handle_vq_kick;
-> >>>> +             vqs[i]->call_ctx.ctx =3D NULL;
-> >>>>       }
-> >>>>       vhost_dev_init(dev, vqs, nvqs, 0, 0, 0, false,
-> >>>>                      vhost_vdpa_process_iotlb_msg);
-> >>>
-> >>> No more crashes, but now getting a lot of:
-> >>>  vhost-vdpa-X: vq Y, irq bypass producer (token 00000000a66e28ab) reg=
-istration fails, ret =3D  -16
-> >>>
-> >>> ... seems like the irq_bypass_unregister_producer() that was removed
-> >>> might still be needed somewhere?
-> >>
-> My statement above was not quite correct. The error comes from the
-> VQ irq being registered twice:
->
-> 1) VHOST_SET_VRING_CALL ioctl gets called for vq 0. VQ irq is unregistere=
-d
->    (vhost_vdpa_unsetup_vq_irq() and re-registered (vhost_vdpa_setup_vq_ir=
-q())
->    successfully. So far so good.
->
-> 2) set status !DRIVER_OK -> DRIVER_OK happens. VQ irq setup is done
->    once again (vhost_vdpa_setup_vq_irq()). As the producer unregister
->    was removed in this patch, the register will complain because the prod=
-ucer
->    token already exists.
-
-I see. I think it's probably too tricky to try to register/unregister
-a producer during set_vring_call if DRIVER_OK is not set.
-
-Does it work if we only do vhost_vdpa_unsetup/setup_vq_irq() if
-DRIVER_OK is set in vhost_vdpa_vring_ioctl() (on top of this patch)?
-
-diff --git a/drivers/vhost/vdpa.c b/drivers/vhost/vdpa.c
-index 388226a48bcc..ab441b8ccd2e 100644
---- a/drivers/vhost/vdpa.c
-+++ b/drivers/vhost/vdpa.c
-@@ -709,7 +709,9 @@ static long vhost_vdpa_vring_ioctl(struct
-vhost_vdpa *v, unsigned int cmd,
-                break;
-        case VHOST_SET_VRING_CALL:
-                if (vq->call_ctx.ctx) {
--                       vhost_vdpa_unsetup_vq_irq(v, idx);
-+                       if (ops->get_status(vdpa) &
-+                           VIRTIO_CONFIG_S_DRIVER_OK)
-+                               vhost_vdpa_unsetup_vq_irq(v, idx);
-                        vq->call_ctx.producer.token =3D NULL;
-                }
-                break;
-@@ -752,7 +754,9 @@ static long vhost_vdpa_vring_ioctl(struct
-vhost_vdpa *v, unsigned int cmd,
-                        cb.private =3D vq;
-                        cb.trigger =3D vq->call_ctx.ctx;
-                        vq->call_ctx.producer.token =3D vq->call_ctx.ctx;
--                       vhost_vdpa_setup_vq_irq(v, idx);
-+                       if (ops->get_status(vdpa) &
-+                           VIRTIO_CONFIG_S_DRIVER_OK)
-+                               vhost_vdpa_setup_vq_irq(v, idx);
-                } else {
-                        cb.callback =3D NULL;
-                        cb.private =3D NULL;
-
->
->
-> >> Probably, but I didn't see this when testing vp_vdpa.
-> >>
-> >> When did you meet those warnings? Is it during the boot or migration?
-> During boot, on the first 2 VQs only (so before the QPs are resized).
-> Traffic does work though when the VM is booted.
-
-Right.
-
->
+On Mon, Aug 12, 2024 at 11:16:27PM -0700, Li Li wrote:
+> On Mon, Aug 12, 2024 at 10:13 PM Greg KH <gregkh@linuxfoundation.org> wrote:
 > >
-> > Btw, it would be helpful to check if mlx5_get_vq_irq() works
-> > correctly. I believe it should return an error if the virtqueue
-> > interrupt is not allocated. After a glance at the code, it seems not
-> > straightforward to me.
+> > On Mon, Aug 12, 2024 at 02:18:44PM -0700, Li Li wrote:
+> > > From: Li Li <dualli@google.com>
 > >
-> I think we're good on that front:
-> mlx5_get_vq_irq() returns EOPNOTSUPP if the vq irq is not allocated.
+> > Sorry, but I can not parse your Subject: line at all.  Please use
+> > vowels, we don't have a lack of them :)
+> >
+> > Also look at how other patches are formatted for these files to get an
+> > idea of how to create a good subject line.
+> 
+> Thank you for reviewing the patch!
+> 
+> Sure, I'll find a more meaningful subject in v2.
+> 
+> > > To prevent making the already bloated binder.c even bigger, a new source
+> > > file binder_genl.c is created to host those generic netlink code.
+> >
+> > "genl" is a rough abbreviation that is not going to be easy to remember,
+> > what's wrong with "binder_netlink.c"?
+> 
+> It's just because genl has already been used in both of generic netlink
+> kernel code (e.g. in linux/include/net/genetlink.h) and user space libraries
+> https://man7.org/linux/man-pages/man8/genl.8.html.
 
-Good to know that.
+Ah, I wasn't aware of the existing names, so that's fine if it is what
+the networking world is used to.
 
-Thanks
+Which reminds me, why aren't you asking for their review here as well to
+ensure that you are doing things with netlink correctly?
 
->
->
-> Thanks,
-> Dragos
->
+> > What userspace code is now going to use this and require it?  How was it
+> > tested?  Where is the test code?  Where is the new user/kernel api that
+> > you created here documented?
+> 
+> As mentioned in the commit message, binder is used in Android OS. But the
+> user space administration process can do little to deal with binder transaction
+> errors. This is tested with Android. I'll upload the user space code to AOSP.
+> If there's a better option to host the test code, e.g. a smaller and
+> simpler project
+> that uses binder, please let me know.
 
+It needs to be somewhere, otherwise we don't know how any of this is
+being used at all.  And there was some binder "test code" somewhere, is
+this new functionality added to that also?
+
+> > You added a new ioctl here as well, why not mention that?  Why is it
+> > needed?  Why not always emit netlink messages?  How do you turn them
+> > off?
+> 
+> The generic netlink message is a convenient way for the kernel driver to send
+> information to user space. Technically it's possible to replace this
+> new ioctl with
+> a netlink message. But that requires much more unnecessary code parsing the
+> raw byte streams and accessing internal binder_proc and other structures from
+> netlink layer. It's much more elegant to use an ioctl with only a
+> couple lines of
+> source code.
+
+Then you need to document that somewhere.
+
+> To turn them off, just call the same ioctl, resetting the flags to 0.
+> That said, the
+> name of this new ioctl (BINDER_ENABLE_REPORT) isn't good enough.
+> What do you think if I change it to BINDER_SET_NETLINK_REPORT?
+
+Yes, the name needs to change if you can both enable and disable reports
+from it.
+
+> > And how does this deal with binder namespaces?  Are these messages all
+> > now "global" somehow?  Or are they separated properly per namespace?
+> 
+> The new ioctl BINDER_ENABLE_REPORT (again, it deserves a better name)
+> sets the report_flags for its associated binder context. Each binder context has
+> its own settings. The messages from all binder contexts are sent to user space
+> via the same netlink socket. The user space code can enable the reports for
+> each binder context separately and distinguish the netlink messages by the
+> name of the binder context.
+
+So userspace will now get all reports and has to do the parsing to
+determine what is, and is not, relevant for what they want?  That feels
+like a big security hole to me, has this been audited by the Android
+security team yet?
+
+> It's also possible to have one netlink socket for each binder context.
+> But it seems
+> like overkill to me.
+
+Again, think of security issues please.  Do you want all binder
+processes in a system to be able to see all other messages?
+
+thanks,
+
+greg k-h
 
