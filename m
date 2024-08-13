@@ -1,208 +1,128 @@
-Return-Path: <linux-kernel+bounces-285087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B14B95091D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 542C3950920
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C30F1C221A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:28:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E481C23FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078411A0706;
-	Tue, 13 Aug 2024 15:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E391A0706;
+	Tue, 13 Aug 2024 15:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6oA+cQO"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGDsSZYW"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47619D886;
-	Tue, 13 Aug 2024 15:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C13C719EEB4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562921; cv=none; b=nLoqmO/fP4OKO4eSqPZnx9rDy9rS0DhCXLE3XiAyMSFcApk4w+3aw0CdS5M9wA3Alszl1uqfOlGo5y4UoJn2/Bw46+qnlB5OuuPvNXqA9w7kcSPJFie7pTjywpem6256nvvc0IMfD/Yy4glr/VADFqF6XL4DgICrIeRHoqcoS1s=
+	t=1723562961; cv=none; b=Swy/ID6h1aZ6Jya5UTc8cCcPQ8GmPzEwmMVOxN9kdOb3OroF6bcX/nAl8oZHT9/2Ug2JQcWC+/nJ41E4whrKzD+k+f3Ic4KRnhwDZfObxn3oNZ9prS4zWbzY1ocKXJS4TmFstGwqlz5RksixdUrw0T4l1MzFP8uBDYvifRGZip0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562921; c=relaxed/simple;
-	bh=Ovr/D785l5BYc8W6iV5RgkT5O87h86WSv+qFh+XHzKk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gD8jTYeJI6L0Sq+xb65/em9S7XhdRJM61XF8XXApesgUSVTlJKLBiJ62LMyxQVtNBWIOT48yDn5S55NTAQSHejsj09yLVrpC1peRTxzdtE9TiPgA+bznZND/zu2+YzJ8jwA+lj1qEvtktwWBmiVEaJn5QSfH7yCTeZ5ROB4iBX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6oA+cQO; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso61198091fa.3;
-        Tue, 13 Aug 2024 08:28:39 -0700 (PDT)
+	s=arc-20240116; t=1723562961; c=relaxed/simple;
+	bh=MqJubU5cYz/aptjU9ySH+C98veWxton14FcRM+3KTMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D0Rd4coV3LcdmSD01EibZfaF1/JJkHU2JG312dt4rvpXUagJ0q1XPABRl/T5wgtppYFc8vgTGwqsmeyHneDoY+k6mssTEjoBtbQJH2RveiOiLn+Wpk88hKJD9ajIy550+/wKbJvwN5EaXNYEgtM4Uf/H97NZl4hxeRlGBfCPnEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NGDsSZYW; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70d23caf8ddso4963451b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:29:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723562917; x=1724167717; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Az5RaI5b63ud2RixYEXJkMIxZwNm3gKEQ9Iv2ve9pLI=;
-        b=e6oA+cQOMNDqoeHFwqqDdU8jtJSYTqv00KjGivfXPY+FGNMzA1GCRCWxUKQ4shsMEF
-         sxCqfxYRPLKsd0lG/Of+fnQPwrzQMRgOctzyqoAhs/UvVBm/+Zu+Z3gSfea1FvVMLOxI
-         wXwYlTSV4yNr24XwwtOsYI9fKrXEecW32xMHkm2SUPgccFm9hgd2euJXAf4/Kpzy023C
-         ijbXX/fzTvb4SIuRKeJPLQgv6olLhhpoXn2NrJRAY/5DS7BYJ43yc4dia2UI36or36QS
-         QRsauUFUlP2ll3pbKd/UGR6W0SF+ycFhjP3Y9/1vL11Dkh68pPpBc9rlIGwjeLf6BPBX
-         qMDA==
+        d=linaro.org; s=google; t=1723562959; x=1724167759; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XzoifUF7R6BsxePNIhgRi9mSGSqDwAxDEVpqozSqGCQ=;
+        b=NGDsSZYWEaWV7BfHAC6nw87ciEF3k2OCRcUPUQgqj8xsS6/sG2mRLmDhC0lV2jBNz9
+         81N4Jo6zY5LmasrWTubaY/s5/bIHNACojxra7kRZSdkZGRA46/unQjWmotxsZUiyEEgF
+         BHqQzT8NKefAZRsRDe/9pXdD4fMJ59Ql5uBWiv0EYd0RixnxCJrUvcFWj6PzcihjKc6Q
+         bG0xQMt2FKbxEcb4nkJ8+th+pT0qQRIHZ9rPZBM96VZV6zjWZQEV846Svx0xelS2Izz0
+         w5NT06qx8QUzcxRNTZAaL2kOfTJU5Vr9UR2wSGKClH3wGrcdONze4vDYvTQK6FvrF9uY
+         nUsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723562917; x=1724167717;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Az5RaI5b63ud2RixYEXJkMIxZwNm3gKEQ9Iv2ve9pLI=;
-        b=ukk12gK8/PYbJ6uP1bknOJNQ6/wUgIGg/hF9HB6b1CBOFcWvnUzKRcIPZtHNWoj7QF
-         OuC8l/uTR6Tmfl/mVQtknlug2wT3jTnZEd17dQQCRSBOUQMrKGcYRL5N2fDwQ3KJPW3O
-         fYOL+70Tdpa66CFDQMMwpMSF5KRzFN2xruBzoJ420uSTqzTDA5Pxdf+9T0Vv6gFMOmc9
-         1qy8jQvN0sPliziHEj94uFrI18cEWt3Ivgvdgjlm5Tq4BPZ+WItSmcR35dVc+/PZUIZ1
-         QNHsyqQolxwaBfQAbU4MqyqvNtlF7cRqxIgG6x4Prx/E1boQvhf6E/nZMOdwnoH0kanY
-         kI4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXG/DVQIxh1FvO7j+OeHeqc3Qt83iW9GWgL5YXmnsKTwt1uO75Yp+dEHglYCHqUaQrH0s8i3oS0Cncf9xu0Nh9G+wniHcVHmXVJ9Es7fHz9tprU+/v2/jFFZVaLezEjyAnMRCMgOBjXH2V6C22wIvYvb1+haZ5WHADqjkO5K2/VlEwEYe0=
-X-Gm-Message-State: AOJu0Yy2YpX1Hr1vfHmVWGy65fPlkAzmlKBHnd62iUhCBvhI6WDcpcPo
-	cqn6AUGMe6J9E6qzcpTsE+vZCAN134FJwe/CjJdMj7VrPmAuERdpYaX9gJUw
-X-Google-Smtp-Source: AGHT+IFJRLK1J7OBinMaGVyi5AHKztjR/0deAHLi2xkzUg7sJUQlSb9CP9w81gztjoWEeSttmEIygg==
-X-Received: by 2002:a2e:be87:0:b0:2ef:23ec:9356 with SMTP id 38308e7fff4ca-2f2b712f827mr35129951fa.8.1723562916946;
-        Tue, 13 Aug 2024 08:28:36 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-149-85.dynamic.spd-mgts.ru. [109.252.149.85])
-        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2f2ad92caddsm5475441fa.62.2024.08.13.08.28.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 08:28:36 -0700 (PDT)
-Message-ID: <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
-Date: Tue, 13 Aug 2024 18:28:35 +0300
+        d=1e100.net; s=20230601; t=1723562959; x=1724167759;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XzoifUF7R6BsxePNIhgRi9mSGSqDwAxDEVpqozSqGCQ=;
+        b=j26WDWXfSZBFhkI7nk9FrFZ58H5Lb/Se4/0txMA7/VTNE96LKPKAMgG1ak0yLlnWmn
+         F6Q7zz3oqKS27/H8lpBmRNdvf3XhQkDjZaaG6pqaUw9Q7eSRMEgvGL4Axszykccteapj
+         mqOaqI/BXbqG9aP4LPqumkYbJzybIIZXm31w1fr69EgSHOy2EvVOz0t3FSlbymFkNEGF
+         3ihcIy/ca2lDo9xJiTGwX2Si3SsTwUDxSaroZCGm+V+tTH9LWwwBOJsgqiNuNxFvxPOs
+         IbTiWH+uQ3U/ZFzH9GxiktRVlhmZgm9Zfzpu4q5E/s7yy3qH2efjNpHuNmcgMjMd9L99
+         drJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXozae0+J0fLKDfnXUIeBAHWt9pAj7r/YdcJRnfiVtaA7/HaaKPY2iOJy10sPOqX1qY5RxLntjVdZWeow+UTxGC6UvsbBJy6A2AXnPq
+X-Gm-Message-State: AOJu0Ywoh8CLVMI0TN75MkhxpX0OhYZI9FamVGupcIDM2HiIrXX6AlY8
+	C/wbUXAm1EMgwPA5OgWoDUS2ezCdS+4Pvt9dNmgjzpU6zX2X7WosMsMQPnyWd2Y=
+X-Google-Smtp-Source: AGHT+IGDymo/Enc2VMdHdFMER69N7RN8NQYcz69tqAUf0DoJFV7XImydzeVK44nDDsmMWz2QKoXx7A==
+X-Received: by 2002:a05:6a00:3a26:b0:70d:21d9:e2ae with SMTP id d2e1a72fcca58-71255105c08mr4830870b3a.6.1723562959046;
+        Tue, 13 Aug 2024 08:29:19 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:d596:d55b:d99d:7ece])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979eda81sm1618944a12.23.2024.08.13.08.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 08:29:18 -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:29:15 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Ben Levinsky <ben.levinsky@amd.com>,
+	Tanmay Shah <tanmay.shah@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: remoteproc: xlnx,zynqmp-r5fss: add missing
+ "additionalProperties" on child nodes
+Message-ID: <Zrt7yxTjBNkMGZlI@p14s>
+References: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
-To: Breno Leitao <leitao@debian.org>,
- Andy Shevchenko <andy.shevchenko@gmail.com>, dmitry.osipenko@collabora.com
-Cc: Andi Shyti <andi.shyti@kernel.org>, Laxman Dewangan
- <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
- Michael van der Westhuizen <rmikey@meta.com>,
- "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
- "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20240808121447.239278-1-leitao@debian.org>
- <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
- <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
- <ZrtgfkzuCbNju3i9@gmail.com>
-From: Dmitry Osipenko <digetx@gmail.com>
-Content-Language: en-US
-In-Reply-To: <ZrtgfkzuCbNju3i9@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811153438.126457-1-krzysztof.kozlowski@linaro.org>
 
-13.08.2024 16:32, Breno Leitao пишет:
-> Hello Andy,
+On Sun, Aug 11, 2024 at 05:34:38PM +0200, Krzysztof Kozlowski wrote:
+> All nodes need an explicit additionalProperties or unevaluatedProperties
+> unless a $ref has one that's false.  Add missing additionalProperties
+> to fix dt_binding_check warning:
 > 
-> On Fri, Aug 09, 2024 at 02:03:27PM +0300, Andy Shevchenko wrote:
->> On Fri, Aug 9, 2024 at 2:57 AM Andi Shyti <andi.shyti@kernel.org> wrote:
->>> On Thu, Aug 08, 2024 at 05:14:46AM GMT, Breno Leitao wrote:
+>   xlnx,zynqmp-r5fss.yaml: ^r(.*)@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
 > 
->>>> The problem arises because during __pm_runtime_resume(), the spinlock
->>>> &dev->power.lock is acquired before rpm_resume() is called. Later,
->>>> rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
->>>> mutexes, triggering the error.
->>>>
->>>> To address this issue, devices on ACPI are now marked as not IRQ-safe,
->>>> considering the dependency of acpi_subsys_runtime_resume() on mutexes.
->>
->> This is a step in the right direction
-> 
-> Thanks
-> 
->> but somewhere in the replies
->> here I would like to hear about roadmap to get rid of the
->> pm_runtime_irq_safe() in all Tegra related code.
-> 
-> Agree, that seems the right way to go, but this is a question to
-> maintainers, Laxman and Dmitry.
-> 
-> By the way, looking at lore, I found that the last email from Laxman is
-> from 2022. And Dmitry seems to be using a different email!? Let me copy
-> the Dmitry's other email (dmitry.osipenko@collabora.com) here.
-> 
->>>> +     if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
->>>
->>> looks good to me, can I have an ack from Andy here?
->>
->> I prefer to see something like
->> is_acpi_node() / is_acpi_device_node() / is_acpi_data_node() /
->> has_acpi_companion()
->> instead depending on the actual ACPI representation of the device.
->>
->> Otherwise no objections.
->> Please, Cc me (andy@kernel.org) for the next version.
-> 
-> Thanks for the feedback, I agree that leveraging the functions about
-> should be better. What about something as:
-> 
-> Author: Breno Leitao <leitao@debian.org>
-> Date:   Thu Jun 6 06:27:07 2024 -0700
-> 
->     Do not mark ACPI devices as irq safe
->     
->     On ACPI machines, the tegra i2c module encounters an issue due to a
->     mutex being called inside a spinlock. This leads to the following bug:
->     
->             BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
->             in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
->             preempt_count: 0, expected: 0
->             RCU nest depth: 0, expected: 0
->             irq event stamp: 0
->     
->             Call trace:
->             __might_sleep
->             __mutex_lock_common
->             mutex_lock_nested
->             acpi_subsys_runtime_resume
->             rpm_resume
->             tegra_i2c_xfer
->     
->     The problem arises because during __pm_runtime_resume(), the spinlock
->     &dev->power.lock is acquired before rpm_resume() is called. Later,
->     rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
->     mutexes, triggering the error.
->     
->     To address this issue, devices on ACPI are now marked as not IRQ-safe,
->     considering the dependency of acpi_subsys_runtime_resume() on mutexes.
->     
->     Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
->     Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
->     Signed-off-by: Breno Leitao <leitao@debian.org>
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 85b31edc558d..1df5b4204142 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->  	 * domain.
->  	 *
->  	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
-> -	 * be used for atomic transfers.
-> +	 * be used for atomic transfers. ACPI device is not IRQ safe also.
->  	 */
-> -	if (!IS_VI(i2c_dev))
-> +	if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
->  		pm_runtime_irq_safe(i2c_dev->dev);
->  
->  	pm_runtime_enable(i2c_dev->dev);
-> 
+> Fixes: 9e1b2a0757d0 ("dt-bindings: remoteproc: Add Tightly Coupled Memory (TCM) bindings")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
+>  .../devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml        | 1 +
+>  1 file changed, 1 insertion(+)
+>
 
-Looks good, thanks
+Applied.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Thanks,
+Mathieu
 
-> but somewhere in the replies
-> here I would like to hear about roadmap to get rid of the
-> pm_runtime_irq_safe() in all Tegra related code.
-
-What is the problem with pm_runtime_irq_safe()? There were multiple
-problems with RPM for this driver in the past, it wasn't trivial to make
-it work for all Tegra HW generations. Don't expect anyone would want to
-invest time into doing it all over again.
-
+> diff --git a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> index 6f13da11f593..ee63c03949c9 100644
+> --- a/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> +++ b/Documentation/devicetree/bindings/remoteproc/xlnx,zynqmp-r5fss.yaml
+> @@ -62,6 +62,7 @@ properties:
+>  patternProperties:
+>    "^r(.*)@[0-9a-f]+$":
+>      type: object
+> +    additionalProperties: false
+>      description: |
+>        The RPU is located in the Low Power Domain of the Processor Subsystem.
+>        Each processor includes separate L1 instruction and data caches and
+> -- 
+> 2.43.0
+> 
 
