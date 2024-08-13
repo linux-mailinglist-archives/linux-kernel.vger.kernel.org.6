@@ -1,211 +1,181 @@
-Return-Path: <linux-kernel+bounces-284506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238719501BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:55:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D8B9501BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77061F21A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:55:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A70AB25596
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:55:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30EE187327;
-	Tue, 13 Aug 2024 09:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47CAC187348;
+	Tue, 13 Aug 2024 09:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hGK5rbHy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="HsofGCG1"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2065.outbound.protection.outlook.com [40.107.244.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF41013BADF;
-	Tue, 13 Aug 2024 09:55:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542903; cv=none; b=mMjqk654Rsz01xDINZDIwfwN02daEfgdPzCq2hCLygFXW9A6+HEeCbkCj8m0JL4mSaRjiCRGqGUHL3K+3NT7fVXLXZ0XRGuYyL3VxQSdYnvWH9vLp03UX05FQUq8osYocTcHZpYep13ds/lXhFDZ8FMC6OwzSMP77qWBV6VkjNQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542903; c=relaxed/simple;
-	bh=7l+R8PBekC49cLcJ8mv50KReFwkjpS74fcamZc8jzK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gUZ0CqACm4UXiNgjkYF1487d8BIP1qPrz/wjTlr+OrdqnQoJRRHWMSF5uf7JlF4HI5tVU16H2NAvsrnStAvYXFHxldYHDCFf8cgbb+KAPznO7NYfFn4H5GS/624Zy53qnN6/F3e14jHwG7FRm761L6P81lOBxtODp+dl7UdsV0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hGK5rbHy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79807C4AF0B;
-	Tue, 13 Aug 2024 09:55:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542902;
-	bh=7l+R8PBekC49cLcJ8mv50KReFwkjpS74fcamZc8jzK8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hGK5rbHy+ktIKjf/5j3XaFRQTcCZbK+rJk2FnI+PU2nwVV/q87yDVjy0sNlATRczA
-	 qpKJOybwr1q1oWNkDvHnlSX2K6+O0sZgtkkLje2QPwRAWikVTFBj8iRwsHAl88BUlo
-	 suJ05F9annyPGljCL2ul0nYXzwqRG6/XvsYgA0pmr+ys3s+lIhorsUJ3II76xDmxgE
-	 zL/u5g+RYqCE7/b7TzBpf8XSVAwRio+TD8nJNLQk2wpySjfVMwGYzB09hm8ftIpuOv
-	 5DXw0rm5za11TSjzEOiY5cK2Xxgil6XgaIcJWBUtWxo2fspNhxzKWeP2o8C4SMbd5T
-	 6b7VNLtr2nE9g==
-Date: Tue, 13 Aug 2024 11:54:57 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: =?utf-8?B?S29sYmrDuHJu?= Barmen <linux-ppc@kolla.no>,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	=?utf-8?B?Sm9uw6HFoQ==?= Vidra <vidra@ufal.mff.cuni.cz>,
-	Christoph Hellwig <hch@lst.de>, linux@roeck-us.net
-Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
- drivers/ata/pata_macio.c
-Message-ID: <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
-References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
- <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB3916DEAA;
+	Tue, 13 Aug 2024 09:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723542940; cv=fail; b=KtdvBZaJgDY8YaMiYEHWXFbfPcA6LS2XbiFOfsFaPjTy2zi2UGihcgxgJcqs256IzShiBbg+7BjUWgfOGel/gZevOSWp97KHkH4tjt2D35MS38wVfu1FtJblNQFA0c8M9u9p0Ij3m+4jDmMf38LwxQm9Sa7mMZjfibN0J86owLc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723542940; c=relaxed/simple;
+	bh=RRjru+KP4Zq9XJzDoL0RpSfT/fnt5p+JQ5eHEXqNUkk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jJm79hq5y83+uuJHRGB6UKJKtY0md5Wa/yuatNWcv1s3CxpS7xhjhvr+lOJN4e7+Vl0Xbb9MRryTBI0I+KkRosLQifSZBUZ2q5AMMCDoXjg7/H2S+lCODShUengAVOu7gCoMLxsPpE9CwxJ9E3it7LLgzPduwY0viqNYHKH39vk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=HsofGCG1; arc=fail smtp.client-ip=40.107.244.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ka02kog49Xw2/B0rWePMMhG4FOOMbAIMuwMql75w/Rffi7h5sltggyeB/69mlVOR4pWSenR2pD1Xi3inBisBhGEsAlycuUASMP+mlDQIQZxnnkFmP7/EG4xnVxpIKjDwb2bVx+u3nPGNNHQA176+MSOjrQeImEOrxALUZ+AE+KudiyjkzPTrNFpBW4PSgBmD+qmcp0Cs+sRBVmNRbUG6b7mMElU9ZY/Pk87EGPxa8FBYSAhwEjCtpNnewScLD5U3KTtt5OWaXuB1n6aEBx9F3VmmuFByN8n5pnU7aSGmEWJp3G5mXyqJTRbGjS/uG/L3CDgL1B7ahrbO3nvqgNJahQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qhZwVD3hKwQ5Z0IB/kRLMzCGJ7bXOzagxFjV/8oy7HQ=;
+ b=SgwGEVp/m/ZB7cKhAc185Ppo1qxQOq9RAmz4BZOKLGDmYS9v/sa6XE2bwKvVs9nzroxXmC30SD2iU45v5z4Y4sOnyt3Ezhf6RhA9zRJqrI5nanPTEfU35BZtmkrypdmxedFr764PYkttPwdurpvFUEdcI/9irSkonbEz00gwdID1Rx/XG21eiUFyEnW8bLTjMGyuDL44oylTO4R/abbcHASL17nKk/lkUkgc66bCLn01BLOA+GHXKRetyJDd8axKWMyW0zYUlg2v9lxIp1oGveym/4CYNewd3q4JyyU3bUslMBPwu9zimmfqfASVBRh9mV/tpK+O5sGwJcDGbLfoOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qhZwVD3hKwQ5Z0IB/kRLMzCGJ7bXOzagxFjV/8oy7HQ=;
+ b=HsofGCG17G+8bjcIqvwdQChd1iCyWVl8GQPvuwlms6HKrY/N4WHwhI5puAEMh+G5Po6mntQ1+l6dVGjijIEhCTYRbJGzzSmE4qH6/Oew9qsZ1LDuRwbNOVJpkdbAVaTPonSNQsAS/126m591Hdm+csh8+3D1H8jsYpOUkcxx4Zk=
+Received: from SA1P222CA0021.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:22c::28)
+ by SJ1PR12MB6170.namprd12.prod.outlook.com (2603:10b6:a03:45b::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
+ 2024 09:55:36 +0000
+Received: from SA2PEPF00003AEA.namprd02.prod.outlook.com
+ (2603:10b6:806:22c:cafe::d7) by SA1P222CA0021.outlook.office365.com
+ (2603:10b6:806:22c::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22 via Frontend
+ Transport; Tue, 13 Aug 2024 09:55:36 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003AEA.mail.protection.outlook.com (10.167.248.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Tue, 13 Aug 2024 09:55:35 +0000
+Received: from BLRRASHENOY1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 13 Aug
+ 2024 04:55:32 -0500
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar
+	<viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, Huang Rui <ray.huang@amd.com>,
+	"Perry Yuan" <perry.yuan@amd.com>, Dan Carpenter <dan.carpenter@linaro.org>,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>, David Wang <00107082@163.com>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>
+Subject: [PATCH 3/3] cpufreq/amd-pstate: Remove warning for X86_FEATURE_CPPC on Zen1 and Zen2
+Date: Tue, 13 Aug 2024 15:24:59 +0530
+Message-ID: <20240813095459.2122-1-gautham.shenoy@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240813095115.2078-3-gautham.shenoy@amd.com>
+References: <20240813095115.2078-3-gautham.shenoy@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003AEA:EE_|SJ1PR12MB6170:EE_
+X-MS-Office365-Filtering-Correlation-Id: c799e75e-35d5-4a39-0732-08dcbb7e1442
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GnNkyeMNvUoZ5AdN9cRVDxLuCOLr9vHC2rMrGrooju01VgElH/SqreszXcVm?=
+ =?us-ascii?Q?AC12/3u0NCXlM5zBlSRGS64H/wiet67EgUjUPpOmO9DAqal+CIlq0mQWF+I/?=
+ =?us-ascii?Q?r91aYtt2hUYa2w3PcL+P+hOJj3IEIJtQBHTTWM+cOiXpjC/fX3YgNCitjYzj?=
+ =?us-ascii?Q?vJd0julV0fFQymw0r0TEOy437Pq3i52JNUaRv/pSlDhZHRY7flNTURzTD0ik?=
+ =?us-ascii?Q?y3cXI9iNNjYIp06KMEuj19buz7muEUn0iIAYMkSK42x70qRSuL2DIfsQr3sl?=
+ =?us-ascii?Q?x67u214LvQ+4eqWN5/hMY5c7LvxmdysxgwIDG+LpEy5z/KdJlkO0AvfnS5/d?=
+ =?us-ascii?Q?sqd89PArtMPBX3Nv8icN5Vcote5lOihF2eAQCbYNg9wawU+mn3beTuXAslMC?=
+ =?us-ascii?Q?/ou8+mDNpYg5XFjcGzz1Se2AQjSV+0wKw7v2WyNnmCeJH6FU4+fFMeQG6xWy?=
+ =?us-ascii?Q?J5CYHow8CBsIxh/+CmGfuoqV4N4g6hOUAUg4qH6RmTe3uKvwQpc3z1V4co2Q?=
+ =?us-ascii?Q?myDIxFdN+y/dNNaoKnm9KkQ47igRsoYPI90k7jXoawXssTXzwOOaHxIastbI?=
+ =?us-ascii?Q?PHdPGhyJkp8gNTpojTuThif1ty2Z13AvIFAm8YHpzXFVjJ3tEhjS7ysMDQtG?=
+ =?us-ascii?Q?cb6hWpyCTMJ2QoR28cLDWptnAeNa8B0diN/TsI4vc+txO9mhoDMJuoaX3SvV?=
+ =?us-ascii?Q?dz1lE59tNpV43IRKRzOoALSGtnnYfOQehYBSoOLHBs+d2JHtLK7Datcv/vH3?=
+ =?us-ascii?Q?hppwZXkQJV98TLQnBPe4tl+zwXjc54WXUUTk1qu8pQYsePKbvON4+V9kj8Jo?=
+ =?us-ascii?Q?byRqAMubwHQ+2+d/2ZSf2G+KvtaKFRyUz4dT2IX1bAyCQ8XBP5SwdMKWzmLq?=
+ =?us-ascii?Q?VStAvo4rysyY3U082gDHeOYzNxMZzqe0h6XQw5O5B1F/mwoiSI4PdaXkow4o?=
+ =?us-ascii?Q?zVyuBdhB1bwxpkMKKtFqinr8LPEgVA5P7TUm602qwVj4LREIrwTKLcLDM4bH?=
+ =?us-ascii?Q?gVkndry5HSJRUunMBzYpD8vUtI2K21TtuVSgPNpsaFOHJBKz93LUuaXMxOLX?=
+ =?us-ascii?Q?8XQGpkchFrQqEQ7eOpG8ELjNvGzKaPTg5UgJCOv/RDvDREz22kUc0sDKwfRF?=
+ =?us-ascii?Q?Rw9EhOeqm9UwYEsdlrzghjkRnrXXhFZlucHq9FkHz+Olmgx4jK3l5ffEEJkk?=
+ =?us-ascii?Q?4bQf9FjC0T5APEC+TMgNND03hxfwsXfliQj0ibhxqCPk5KmnlQG5AZg7oKLl?=
+ =?us-ascii?Q?PFXtl/ttuxxGMb+6TCzROlFEtEDIGby+VO+quWWOT5dStRn4ZdBzZ0qK7Kos?=
+ =?us-ascii?Q?7rtFWtyuZApoq5Nsg7GPiBPs6XyZt/vdGJGPlFLKKRlFbPRrjmIJHwg5OKlF?=
+ =?us-ascii?Q?VT06whfP+LCtO85SjcOxA5SxRhnAa51AZQuk34PwxBAHPrmvBA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 09:55:35.8975
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c799e75e-35d5-4a39-0732-08dcbb7e1442
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003AEA.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6170
 
-Hello Jonáš, Kolbjørn,
+commit bff7d13c190a ("cpufreq: amd-pstate: add debug message while
+CPPC is supported and disabled by SBIOS") issues a warning on plaforms
+where the X86_FEATURE_CPPC is expected to be enabled, but is not due
+to it being disabled in the BIOS.
 
-thank you for the report.
+This feature bit corresponds to CPUID 0x80000008.ebx[27] which is a
+reserved bit on the Zen1 and Zen2 platforms, and is expected to be
+cleared on these platforms. Thus printing the warning message for Zen1
+and Zen2 models when X86_FEATURE_CPPC is incorrect. Fix this.
 
-On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jonáš Vidra wrote:
-> On Tue 13. Aug 2024 0:32:37 CEST, Kolbjørn Barmen wrote:
-> > Ever since 6.10, my macmini G4 behaved unstable when dealing with lots of
-> > I/O activity, such as sync'ing of Gentoo portage tree, unpacking kernel
-> > source tarball, building large software packages (or kernel) etc.
-> > 
-> > After a bit of testing, and patient kernel rebuilding (while crashing) I
-> > found the cuplit to be this commit/change
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/?id=09fe2bfa6b83f865126ce3964744863f69a4a030
-> 
-> I've been able to reproduce this pata_macio bug on a desktop PowerMac G4
-> with the 6.10.3 kernel version. Reverting the linked change
-> ("ata: pata_macio: Fix max_segment_size with PAGE_SIZE == 64K") makes
-> the errors go away.
+Fixes: bff7d13c190a ("cpufreq: amd-pstate: add debug message while CPPC is supported and disabled by SBIOS")
+Reported-by: David Wang <00107082@163.com>
+Closes: https://lore.kernel.org/lkml/20240730140111.4491-1-00107082@163.com/
+Signed-off-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Michael, as the author of the this commit, could you please look into
-this issue?
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 89bda7a2bb8d..66002718397c 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -1841,10 +1841,8 @@ static bool amd_cppc_supported(void)
+ 	 * the code is added for debugging purposes.
+ 	 */
+ 	if (!cpu_feature_enabled(X86_FEATURE_CPPC)) {
+-		if (cpu_feature_enabled(X86_FEATURE_ZEN1) || cpu_feature_enabled(X86_FEATURE_ZEN2)) {
+-			if (c->x86_model > 0x60 && c->x86_model < 0xaf)
+-				warn = true;
+-		} else if (cpu_feature_enabled(X86_FEATURE_ZEN3) || cpu_feature_enabled(X86_FEATURE_ZEN4)) {
++		if (cpu_feature_enabled(X86_FEATURE_ZEN3) ||
++		    cpu_feature_enabled(X86_FEATURE_ZEN4)) {
+ 			if ((c->x86_model > 0x10 && c->x86_model < 0x1F) ||
+ 					(c->x86_model > 0x40 && c->x86_model < 0xaf))
+ 				warn = true;
+-- 
+2.34.1
 
-We could revert your patch, which appears to work for some users,
-but that would again break setups with PAGE_SIZE == 64K.
-(I assume that Jonáš and Kolbjørn are not building with PAGE_SIZE == 64K.)
-
-
-
-> 
-> ------------[ cut here ]------------
-> kernel BUG at drivers/ata/pata_macio.c:544!
-
-https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_macio.c#L544
-
-It seems that the
-while (sg_len) loop does not play nice with the new .max_segment_size.
-
-
-> Oops: Exception in kernel mode, sig: 5 [#1]
-> BE PAGE_SIZE=4K MMU=Hash SMP NR_CPUS=2 DEBUG_PAGEALLOC PowerMac
-> Modules linked in: ipv6 binfmt_misc b43 mac80211 radeon libarc4 cfg80211
-> snd_aoa_codec_tas snd_aoa_fabric_layout snd_aoa rfkill snd_aoa_i2sbus hwmon
-> drm_suballoc_helper snd_aoa_soundbus i2c_algo_bit snd_pcm backlight
-> drm_ttm_helper ttm xhci_pci pmac_zilog therm_windtunnel xhci_hcd
-> drm_display_helper firewire_ohci snd_timer snd firewire_core serial_base ssb
-> soundcore crc_itu_t
-> CPU: 1 PID: 1870 Comm: kworker/u10:4 Tainted: G                T
-> 6.10.3-gentoo #1
-> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-> Workqueue: btrfs-worker btrfs_work_helper
-> NIP:  c0719670 LR: c0719678 CTR: 00000001
-> REGS: f2db9bf0 TRAP: 0700   Tainted: G                T   (6.10.3-gentoo)
-> MSR:  00021032 <ME,IR,DR,RI>  CR: 44008408  XER: 20000000
-> 
-> GPR00: c06fc28c f2db9cb0 c10d8020 c12d28cc 00000000 00000000 00000000
-> c109cff4 GPR08: 69fd0000 00000100 00010000 00000000 00000000 00000000
-> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
-> 00000100 00000122 c11377c8 GPR24: 000000ff 00000008 0000ff00 00000000
-> c14200a8 00000101 00000000 c109d000 NIP [c0719670]
-> pata_macio_qc_prep+0xf4/0x190
-> LR [c0719678] pata_macio_qc_prep+0xfc/0x190
-> Call Trace:
-> [f2db9cb0] [c1421660] 0xc1421660 (unreliable)
-> [f2db9ce0] [c06fc28c] ata_qc_issue+0x14c/0x2d4
-> [f2db9d00] [c0707c5c] __ata_scsi_queuecmd+0x200/0x53c
-> [f2db9d20] [c0707fe8] ata_scsi_queuecmd+0x50/0xe0
-> [f2db9d40] [c06e2644] scsi_queue_rq+0x788/0xb1c
-> [f2db9d80] [c0492464] __blk_mq_issue_directly+0x58/0xf4
-> [f2db9db0] [c0497828] blk_mq_plug_issue_direct+0x8c/0x1b4
-> [f2db9de0] [c0498074] blk_mq_flush_plug_list.part.0+0x584/0x5e0
-> [f2db9e30] [c0485a40] __blk_flush_plug+0xf8/0x194
-> [f2db9e70] [c0485f88] __submit_bio+0x1b8/0x2e0
-> [f2db9ec0] [c04862e0] submit_bio_noacct_nocheck+0x230/0x304
-> [f2db9f00] [c03aaf30] btrfs_work_helper+0x200/0x338
-> [f2db9f40] [c006cae0] process_one_work+0x1a8/0x338
-> [f2db9f70] [c006d79c] worker_thread+0x364/0x4c0
-> [f2db9fc0] [c007811c] kthread+0x100/0x104
-> [f2db9ff0] [c001b304] start_kernel_thread+0x10/0x14
-> Code: 38ff0004 b37f0002 7d20ff2c 3bff0010 7d003d2c 7d084a14 93dffff8
-> b3dffffe b3dffffc 41820010 3bbd0001 4200ffc0 <0fe00000> 4bdcbb01 813c0044
-> 3b180001 ---[ end trace 0000000000000000 ]---
-> 
-> note: kworker/u10:4[1870] exited with irqs disabled
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 1870 at kernel/exit.c:825 do_exit+0x854/0x9ec
-> Modules linked in: ipv6 binfmt_misc b43 mac80211 radeon libarc4 cfg80211
-> snd_aoa_codec_tas snd_aoa_fabric_layout snd_aoa rfkill snd_aoa_i2sbus hwmon
-> drm_suballoc_helper snd_aoa_soundbus i2c_algo_bit snd_pcm backlight
-> drm_ttm_helper ttm xhci_pci pmac_zilog therm_windtunnel xhci_hcd
-> drm_display_helper firewire_ohci snd_timer snd firewire_core serial_base ssb
-> soundcore crc_itu_t
-> CPU: 1 PID: 1870 Comm: kworker/u10:4 Tainted: G      D         T
-> 6.10.3-gentoo #1
-> Hardware name: PowerMac3,6 7455 0x80010303 PowerMac
-> Workqueue: btrfs-worker btrfs_work_helper
-> NIP:  c004f09c LR: c004e8a4 CTR: 00000000
-> REGS: f2db9a80 TRAP: 0700   Tainted: G      D         T   (6.10.3-gentoo)
-> MSR:  00029032 <EE,ME,IR,DR,RI>  CR: 88db92e2  XER: 00000000
-> 
-> GPR00: c004f2c4 f2db9b40 c10d8020 00000000 00002710 00000000 00000000
-> 00000000 GPR08: 00000000 f2db9e88 00000004 00000000 28db92e2 00000000
-> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
-> 00000100 00000122 c11377c8 GPR24: 000000ff c0db0000 00001032 c0a21000
-> c138d520 00000005 c10d8020 c1447220 NIP [c004f09c] do_exit+0x854/0x9ec
-> LR [c004e8a4] do_exit+0x5c/0x9ec
-> Call Trace:
-> [f2db9b40] [c00b0c38] _printk+0x78/0xc4 (unreliable)
-> [f2db9b90] [c004f2c4] make_task_dead+0x90/0x174
-> [f2db9bb0] [c0010b9c] die+0x324/0x32c
-> [f2db9be0] [c0004828] ProgramCheck_virt+0x108/0x158
-> --- interrupt: 700 at pata_macio_qc_prep+0xf4/0x190
-> NIP:  c0719670 LR: c0719678 CTR: 00000001
-> REGS: f2db9bf0 TRAP: 0700   Tainted: G      D         T   (6.10.3-gentoo)
-> MSR:  00021032 <ME,IR,DR,RI>  CR: 44008408  XER: 20000000
-> 
-> GPR00: c06fc28c f2db9cb0 c10d8020 c12d28cc 00000000 00000000 00000000
-> c109cff4 GPR08: 69fd0000 00000100 00010000 00000000 00000000 00000000
-> c007801c c40c1980 GPR16: 00000000 00000000 00000000 00000000 00000000
-> 00000100 00000122 c11377c8 GPR24: 000000ff 00000008 0000ff00 00000000
-> c14200a8 00000101 00000000 c109d000 NIP [c0719670]
-> pata_macio_qc_prep+0xf4/0x190
-> LR [c0719678] pata_macio_qc_prep+0xfc/0x190
-> --- interrupt: 700
-> [f2db9cb0] [c1421660] 0xc1421660 (unreliable)
-> [f2db9ce0] [c06fc28c] ata_qc_issue+0x14c/0x2d4
-> [f2db9d00] [c0707c5c] __ata_scsi_queuecmd+0x200/0x53c
-> [f2db9d20] [c0707fe8] ata_scsi_queuecmd+0x50/0xe0
-> [f2db9d40] [c06e2644] scsi_queue_rq+0x788/0xb1c
-> [f2db9d80] [c0492464] __blk_mq_issue_directly+0x58/0xf4
-> [f2db9db0] [c0497828] blk_mq_plug_issue_direct+0x8c/0x1b4
-> [f2db9de0] [c0498074] blk_mq_flush_plug_list.part.0+0x584/0x5e0
-> [f2db9e30] [c0485a40] __blk_flush_plug+0xf8/0x194
-> [f2db9e70] [c0485f88] __submit_bio+0x1b8/0x2e0
-> [f2db9ec0] [c04862e0] submit_bio_noacct_nocheck+0x230/0x304
-> [f2db9f00] [c03aaf30] btrfs_work_helper+0x200/0x338
-> [f2db9f40] [c006cae0] process_one_work+0x1a8/0x338
-> [f2db9f70] [c006d79c] worker_thread+0x364/0x4c0
-> [f2db9fc0] [c007811c] kthread+0x100/0x104
-> [f2db9ff0] [c001b304] start_kernel_thread+0x10/0x14
-> Code: 915e02fc 81410014 912a0004 915e03c0 939e03c4 91210014 813e04cc
-> 4bfffcec 807e0370 38800000 4bffe195 4bfffc9c <0fe00000> 4bfff848 0fe00000
-> 4bfff7ec ---[ end trace 0000000000000000 ]---
-> 
 
