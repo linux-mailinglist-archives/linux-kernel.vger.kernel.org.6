@@ -1,196 +1,91 @@
-Return-Path: <linux-kernel+bounces-284230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E165D94FEA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:23:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4345694FEAD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:23:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B1B1F24324
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:23:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F34BE285083
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFB418950A;
-	Tue, 13 Aug 2024 07:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5813189BB4;
+	Tue, 13 Aug 2024 07:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="DKlB0JhR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="GrXh2KW4"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x+G1aCv0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C4B187571;
-	Tue, 13 Aug 2024 07:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2E661FDA;
+	Tue, 13 Aug 2024 07:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533682; cv=none; b=IenmcnEwh593dTVoEgS2NxKW1qXiT/lMoNKrpSTL71B+9+DHkIRtEMsucaqIFGD+bey6yUywBGCJsZInoo6qEuEMgKwWo+G+5GoTg4mFbTMB18Xkc1U8VQkrg64JYIJkMutf/SF4e664CmteZUu/GQSv5uALo2eLzfZJ8Wym6dk=
+	t=1723533692; cv=none; b=t2cH8/MUsg3cE2Pie4EGrmCLU6+as9ta1DEyn7r1CjTe27VfV+SsU0IBw+bmbnd3y2/6/d5dM1Jao1l5ifbAJuB+Jmbr7mKfizMQcIP/3c5EvSoIIOImTsIqsXQDhO8TGu2xinAuWu1brD6IW0GRMShq4MoO50JSv17T5gQxL6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533682; c=relaxed/simple;
-	bh=bLtz5nQ04zTFEVggORwXtxwqx5cFy6DrP9Nnu9yFw2Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=eYQRqcZuNDegudmqL3G1cMPu0CoHyk64dT4tsgG4dA3OpM/wBfiDSwDdZOVpt+5J8JvBpDQPVdiMiNVzlGI61ei/DRlbBwHDvToIwJNOjXgA3XN7gXMz/ih8ZWxVmOkdIlSzswp0wCQ/dU1viXeh1M24LRrHUasutCFO54y3ALM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=DKlB0JhR; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=GrXh2KW4 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723533680; x=1755069680;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=GVwASdAR8EU2PXQRA/yGPoFV5yFCrBmLTTbs4254+qw=;
-  b=DKlB0JhRTl0O0lfdWAWmr7CJOq0wIdg2g8L1XfC83Lamrpa6Is+TNAb+
-   AeG7TGdj7pwVzjHFGh6av6RwrJTZJ81wJJTXysi8slXCW4MKI74Opmss1
-   0utWfCb+/Fbkz+2UgOulWkiqEy4z9bBKIYwFNErzMYjQdG6vViSHvw/+6
-   zw4CUlBm5mvKRtKKecDY7IwxsRHYsKcTUbkvZz8/jnMSz73edl5SEIEAe
-   i8af5SAOHgaBfWXdhPQMGZtXaku+iM1WSuc6anrkLEfliRvVu12MiwGc4
-   mAVUHU1rIj/YxY5YItF62WDGG35YuGxuw7ZHAEWzJ+5pv6f0lE+AUxNH4
-   w==;
-X-CSE-ConnectionGUID: ZtFVUOJeSo24j/Zb97Nb4g==
-X-CSE-MsgGUID: RktuUGwXQAe6nT656Xodnw==
-X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
-   d="scan'208";a="38376023"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Aug 2024 09:21:13 +0200
-X-CheckPoint: {66BB0969-15-FF00FE11-F2A862FD}
-X-MAIL-CPID: 53E267B03837F43B6C1C09E0CD9B260E_5
-X-Control-Analysis: str=0001.0A782F23.66BB0969.014F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 1127116A296;
-	Tue, 13 Aug 2024 09:21:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723533669; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=GVwASdAR8EU2PXQRA/yGPoFV5yFCrBmLTTbs4254+qw=;
-	b=GrXh2KW46oWfXNcUOy4KsKxx5Qc6ZChY3b7u1d+afFE1qTmR6eRI6ZvNKl2vJf70uxnxZp
-	KxdcAiN8df0JMrmcUv2j1AhNxQsm34xMalOCPyXEDhoVD8su6j7pBuQ/HMbsktDu3ik3+Z
-	S7SDLo7V1VMi7nmeUxStmVVwbemoZDHuVmIjOYXoxX9O39AGtAPbV1vP2FdjukvjOonW4A
-	3CXKgUW0jcDRTCRYs5i7jtNHytVH62a4qW6upmZT7pCFEj5Yes1qFPvb/vfTHfGK1PJlIb
-	tVMmYR91AQZRcVMRGLIZcOpmN3hc2TveIuWsmeWkTcgIya+hApcpQrRqnDoLZQ==
-From: Max Merchel <Max.Merchel@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Max Merchel <Max.Merchel@ew.tq-group.com>,
-	linux@ew.tq-group.com,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH 7/7] arm64: dts: tqma8xx: change copyright entry to current TQ Copyright style
-Date: Tue, 13 Aug 2024 09:20:19 +0200
-Message-Id: <20240813072019.72735-8-Max.Merchel@ew.tq-group.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240813072019.72735-1-Max.Merchel@ew.tq-group.com>
-References: <20240813072019.72735-1-Max.Merchel@ew.tq-group.com>
+	s=arc-20240116; t=1723533692; c=relaxed/simple;
+	bh=cWBNJPe8NO2mYCdEyRfOZ58MOL3BKWORB1hAY3Znjto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=efBIyBxR9Pa+hBKAiQJmNsAfhekWh38szcxBuwOQiI2DU2FETuYJy1tnJSNlP8Pl2v9Za+90A98izHMHYj/M4qVuez+hv9o4eF5EEwm1R9dXtegCNJFYzWiLOTRhm/Yxdw/qvtrtFqXljzGzVuH12onMkL77AlygUcK8Q+FVuxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=x+G1aCv0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O41PghY9V6lKoOv9CZfMpzgNhd6Z29o3tiejHWQkJio=; b=x+G1aCv0MXeWBqV1MARqgN8Yzt
+	hY24pD/Llm5/14s88MSSL4SKxZXB5eTFWhuk3tM8C03cGbtU7bN8tSy5v8ilF6uLoeR2C4EpNSJmg
+	r4p6dvEle/6uoHhph8vF0OwO7TRtQDugDl1D2hleRzTfodaE6uf14ryxO9sbC5sbj9fGw6Ahlh6O/
+	lsoqXfRJMCddh4LaWx0gCKfNXooNR9iktip9DVSl0ZC3YJ6G9iMAsbF8p3ZvivWC7n5BpDNlzmSDM
+	hs4nXxr+OlzrpHQyCfOFbLn1CEl3HM/30lgGrAmfJyWZQeR0e+wNhHlkBxXGRwGv9BXftjvyy1yKB
+	Dr3sO8XQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdlqT-00000002h54-2Q3M;
+	Tue, 13 Aug 2024 07:21:29 +0000
+Date: Tue, 13 Aug 2024 00:21:29 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [PATCH RFC -next 00/26] md/md-bitmap: introduce bitmap_operations
+Message-ID: <ZrsJeabpeFdXVfIb@infradead.org>
+References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240810020854.797814-1-yukuai1@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Unification of TQ-Systems copyright entries
+On Sat, Aug 10, 2024 at 10:08:28AM +0800, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> The background is that currently bitmap is using a global spin_lock,
+> cauing lock contention and huge IO performance degration for all raid
+> levels.
+> 
+> However, it's impossible to implement a new lock free bitmap with
+> current situation that md-bitmap exposes the internal implementation
+> with lots of exported apis. Hence bitmap_operations is invented, to
+> describe bitmap core implementation, and a new bitmap can be introduced
+> with a new bitmap_operations, we only need to switch to the new one
+> during initialization.
+> 
+> And with this we can build bitmap as kernel module, but that's not
+> our concern for now.
+> 
+> Noted I just compile this patchset, not tested yet.
 
-Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
----
- arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts | 2 +-
- arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi       | 2 +-
- arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi         | 2 +-
- arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts | 2 +-
- arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi       | 2 +-
- arch/arm64/boot/dts/freescale/mba8xx.dtsi                 | 2 +-
- arch/arm64/boot/dts/freescale/tqma8xx.dtsi                | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+Refactoring the bitmap code to be modular seems like a good idea.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
-index d74b5338befe..256050c5c442 100644
---- a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp-mba8xx.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi
-index 9d2bf9178d86..bbc4525e6e93 100644
---- a/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8dxp-tqma8xdp.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
-index 7894a3ab26d6..478234cf30b4 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-ss-vpu.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: (GPL-2.0-or-later OR X11)
- /*
-- * Copyright 2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts b/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts
-index 3544c347cdcd..92fe51f52b21 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp-mba8xx.dts
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi
-index c3983391486d..6885c8fac909 100644
---- a/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8qxp-tqma8xqp.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/mba8xx.dtsi b/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-index 3149c383e1c2..40b0191ff949 100644
---- a/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/mba8xx.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm64/boot/dts/freescale/tqma8xx.dtsi b/arch/arm64/boot/dts/freescale/tqma8xx.dtsi
-index 9659804c5f3b..fdeebde955da 100644
---- a/arch/arm64/boot/dts/freescale/tqma8xx.dtsi
-+++ b/arch/arm64/boot/dts/freescale/tqma8xx.dtsi
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
--- 
-2.33.0
+But I'd just turn this into plain function calls and maybe a hidden
+data structure if you feel really fancy.  No need to introduce expensive
+indirect calls and a separate module.
 
 
