@@ -1,209 +1,247 @@
-Return-Path: <linux-kernel+bounces-285121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253E095099D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:58:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F154795099E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A3DC1C20B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADED128260B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2847A1A0B0D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3BF1A2548;
 	Tue, 13 Aug 2024 15:58:05 +0000 (UTC)
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rtxqIEeo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFE91A08AB;
-	Tue, 13 Aug 2024 15:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33EC1A08C2;
+	Tue, 13 Aug 2024 15:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564684; cv=none; b=hGxPuoKhBYhBMSJY03uijf/Zf/2c7lY5oL+sTQ3VrR0b65ZaTFR1oD3RT5BZOySUgXS5MpJWPAbASGCpXh4nLcg6gNcYKYcxiNZQo9sXvXfdgLBgyU54WEcZlnYw2duB+bEOSVv8sWXJjxAMXVC4STrlNczcJXlbBWoeiJ//8SE=
+	t=1723564684; cv=none; b=OlS/bwX7NIo9UrBhs7bGlsxQmh0ky/J8Wi2WYOndhMxGVFfjT618MOTkqRw9obgTzGZ+ONE/K0IGeYR1IhkC+wYwL0CxsrfNh2hrvQW26kctA7IPFEm3Tiv9EY6XdSbjLwKDP1bZS3Yjq0TxUE+WgauOrZYWuENe3abPF2WJuvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723564684; c=relaxed/simple;
-	bh=NwNbrf8vyk0cQ+c5B2X8sNmPAnM/D0iMY1BoA8Eb9ko=;
+	bh=qP371znJw8sls79s5vY7LeHFBVoyzLBn3QpPi93NjOQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hg6QUxTX92Xmua2hM3GkJQUh+5C7W8RroyeQMLojPd7dqV5EvRKZJJMx+DLxAJDHAOzgljyopqRmxWpenf8xCMZUX1FpNSpqvUp4mRv9SWKMMxenWJ8YD0m/SqNHS1VoUQEZ8gHbu8nqWB8BIQhEYtjRkfGQ056j7J1qJtS+U18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ef2cce8be8so62352191fa.1;
-        Tue, 13 Aug 2024 08:58:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564681; x=1724169481;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mSf70t9XpCK5iIbrD4iy0fziurLgLo486TifTDvrv8c=;
-        b=GKxRZZbRzoRRKCu2eGgJS1YW0uYUeSZ6bo7cAgjCP/IRLd9R0nu+PQLO9CWLHj0cGd
-         vDcos1DnL4ISqJg071OsrNUpXsaJH/zPNES8S5/Sij+ajsmKFoDNTQLhpM9nszQZazy1
-         StT+NbmkJ4yqr48IJ6vDRd95yJmzushHTV7HoW+lxzV5nhmMXCOsqw8GhCgqM3+4gM0N
-         qJRjSXpNHXN9mNvWbQA0px+PSSNE/i1sim3jWd8jEDcfziixhZb1U4StLwu/dyqkeE9l
-         3xlFQ+5dYo39yo3FjCIv9jq0ZJ9CUA2VeWwtQZ2RbBYbrVmcvvwMUSM5dwjK+vl9ZWXU
-         rTAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXysj12xMU7UfyHlj2N1+K4A1YnC/jwk2s1DgvrVWxeJrWnEvaIYLKl+Cw4L/uk/N/5HriPNDGvQ178a0d3ppK5J+VJdAywUK6N9ovlUqSWHSsaHvBNMYIvmlVzye4GjNz576uQ
-X-Gm-Message-State: AOJu0Yy1Uki61260l6PSnv87isGbWV7cOPi49+u4jv5m5NztCJIOoL7K
-	1/1+IxE03x63R7AWz6o6eWfzlG3xr0nxz9Ee4O9X4enCXQNp33xZ
-X-Google-Smtp-Source: AGHT+IGKNz3GNvIY1G8qdlnpx5J4zf4Cy1AdZab+IoibU9hrggopiEst8Rc9BIBgxV5GIuiBOgx5SA==
-X-Received: by 2002:a05:651c:544:b0:2ef:2332:5e63 with SMTP id 38308e7fff4ca-2f2b71569a3mr31462821fa.23.1723564680387;
-        Tue, 13 Aug 2024 08:58:00 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-014.fbsv.net. [2a03:2880:30ff:e::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f5d3asm3040424a12.12.2024.08.13.08.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:57:59 -0700 (PDT)
-Date: Tue, 13 Aug 2024 08:57:57 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
-	thepacketgeek@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Aijay Adams <aijay@meta.com>
-Subject: Re: [PATCH net-next] net: netconsole: Populate dynamic entry even if
- netpoll fails
-Message-ID: <ZruChcqv1kdTdFtE@gmail.com>
-References: <20240809161935.3129104-1-leitao@debian.org>
- <6185be94-65b9-466d-ad1a-bded0e4f8356@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEKFFc9ms7KgRF8niR7ezRz+QnVFFqaKZB12ZJ2QDkS91Iz3ReycP6fBG5JpPedLAzwwmtN3Tksd0m2jSC0lxarXzlAca7rEonEfrk+sIl1lIxYW3FcZJESKJneWnYTAIp9GsibUErpR1petiF6hRrUvSOqlMrzKIdefYKG8cqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rtxqIEeo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69AEFC4AF0B;
+	Tue, 13 Aug 2024 15:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723564684;
+	bh=qP371znJw8sls79s5vY7LeHFBVoyzLBn3QpPi93NjOQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rtxqIEeobTkLl8l/vbORUlOHq2dCm0+y9XPI2O63gnMxswMUB7O4/T8KtIIONs/H8
+	 QFRbWF9F/pq8jF/kqa1EY6XJ+BlBKGgRebbb85dn5rtD7iFIOUWIeyZJC4oveGegEg
+	 iDzRw1bcVbqA42YsSwDJcCiWgHeKxT2nWaqwas8zxEmJgobMCaVmyQhvIrlUOdTRjX
+	 ZiKLfVtoCl//UpwSi+/nkq+KZ15rkPLEQobIV5nl0DTN+M+/gYXnjwDRBEM2y7+Lt8
+	 H6elqhFJq/aIwEkBMttRPL0kLva4QFVLpieTtfxyekYg08rYmu99bDeyRLSq7bewyj
+	 c/PIPi+huT+Lw==
+Date: Tue, 13 Aug 2024 16:58:00 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..." <linux-input@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
+Subject: Re: [PATCH 1/1] dt-bindings: input: touchscreen: convert
+ colibri-vf50-ts.txt to yaml
+Message-ID: <20240813-shakiness-encounter-1cca6a4c3fdf@spud>
+References: <20240812231123.3838058-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fXLw8ZFuZxVd4QoL"
+Content-Disposition: inline
+In-Reply-To: <20240812231123.3838058-1-Frank.Li@nxp.com>
+
+
+--fXLw8ZFuZxVd4QoL
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6185be94-65b9-466d-ad1a-bded0e4f8356@redhat.com>
+Content-Transfer-Encoding: quoted-printable
 
-Hello Paolo,
+On Mon, Aug 12, 2024 at 07:11:19PM -0400, Frank Li wrote:
+> Convert binding doc colibri-vf50-ts.txt to yaml.
+> Additional change:
+> - add ref touchscreen.yaml.
+> - remove standard pinctrl properties.
+>=20
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/imx8qm-apalis-eval.dtb: /touchscreen:
+>   failed to match any schema with compatible: ['toradex,vf50-touchscreen']
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../input/touchscreen/colibri-vf50-ts.txt     | 34 ----------
+>  .../input/touchscreen/toradex,vf50.yaml       | 68 +++++++++++++++++++
+>  2 files changed, 68 insertions(+), 34 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/touchscreen/c=
+olibri-vf50-ts.txt
+>  create mode 100644 Documentation/devicetree/bindings/input/touchscreen/t=
+oradex,vf50.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/colibri-=
+vf50-ts.txt b/Documentation/devicetree/bindings/input/touchscreen/colibri-v=
+f50-ts.txt
+> deleted file mode 100644
+> index ca304357c374a..0000000000000
+> --- a/Documentation/devicetree/bindings/input/touchscreen/colibri-vf50-ts=
+=2Etxt
+> +++ /dev/null
+> @@ -1,34 +0,0 @@
+> -* Toradex Colibri VF50 Touchscreen driver
+> -
+> -Required Properties:
+> -- compatible must be toradex,vf50-touchscreen
+> -- io-channels: adc channels being used by the Colibri VF50 module
+> -    IIO ADC for Y-, X-, Y+, X+ connections
+> -- xp-gpios: FET gate driver for input of X+
+> -- xm-gpios: FET gate driver for input of X-
+> -- yp-gpios: FET gate driver for input of Y+
+> -- ym-gpios: FET gate driver for input of Y-
+> -- interrupts: pen irq interrupt for touch detection, signal from X plate
+> -- pinctrl-names: "idle", "default"
+> -- pinctrl-0: pinctrl node for pen/touch detection, pinctrl must provide
+> -    pull-up resistor on X+, X-.
+> -- pinctrl-1: pinctrl node for X/Y and pressure measurement (ADC) state p=
+inmux
+> -- vf50-ts-min-pressure: pressure level at which to stop measuring X/Y va=
+lues
+> -
+> -Example:
+> -
+> -	touchctrl: vf50_touchctrl {
+> -		compatible =3D "toradex,vf50-touchscreen";
+> -		io-channels =3D <&adc1 0>,<&adc0 0>,
+> -				<&adc0 1>,<&adc1 2>;
+> -		xp-gpios =3D <&gpio0 13 GPIO_ACTIVE_LOW>;
+> -		xm-gpios =3D <&gpio2 29 GPIO_ACTIVE_HIGH>;
+> -		yp-gpios =3D <&gpio0 12 GPIO_ACTIVE_LOW>;
+> -		ym-gpios =3D <&gpio0 4 GPIO_ACTIVE_HIGH>;
+> -		interrupt-parent =3D <&gpio0>;
+> -		interrupts =3D <8 IRQ_TYPE_LEVEL_LOW>;
+> -		pinctrl-names =3D "idle","default";
+> -		pinctrl-0 =3D <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpios>;
+> -		pinctrl-1 =3D <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_gpios>;
+> -		vf50-ts-min-pressure =3D <200>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/toradex,=
+vf50.yaml b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf5=
+0.yaml
+> new file mode 100644
+> index 0000000000000..6ff3ad1f9edfd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/toradex,vf50.ya=
+ml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/touchscreen/toradex,vf50.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Toradex Colibri VF50 Touchscreen
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: toradex,vf50-touchscreen
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  io-channels:
+> +    maxItems: 4
+> +    description:
+> +      adc channels being used by the Colibri VF50 module
+> +      IIO ADC for Y-, X-, Y+, X+ connections
+> +
+> +  xp-gpios:
+> +    description: FET gate driver for input of X+
+> +
+> +  xm-gpios:
+> +    description: FET gate driver for input of X-
+> +
+> +  yp-gpios:
+> +    description: FET gate driver for input of Y+
+> +
+> +  ym-gpios:
+> +    description: FET gate driver for input of Y-
+> +
+> +  vf50-ts-min-pressure:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: pressure level at which to stop measuring X/Y values
 
-On Tue, Aug 13, 2024 at 01:55:27PM +0200, Paolo Abeni wrote:
-> On 8/9/24 18:19, Breno Leitao wrote:> @@ -1304,8 +1308,6 @@ static int
-> __init init_netconsole(void)
-> >   		while ((target_config = strsep(&input, ";"))) {
-> >   			nt = alloc_param_target(target_config, count);
-> >   			if (IS_ERR(nt)) {
-> > -				if (IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
-> > -					continue;
-> >   				err = PTR_ERR(nt);
-> >   				goto fail;
-> >   			}
+What are the constraints on this value?
 
-First of all, thanks for the in-depth review and suggestion.
+> +
+> +required:
+> +  - compatible
 
+The text binding lists all of the properties as required.
 
-> AFAICS the above introduces a behavior change: if CONFIG_NETCONSOLE_DYNAMIC
-> is enabled, and the options parsing fails for any targets in the command
-> line, all the targets will be removed.
-> 
-> I think the old behavior is preferable - just skip the targets with wrong
-> options.
+> +
+> +allOf:
+> +  - $ref: touchscreen.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    #include <dt-bindings/gpio/gpio.h>
+> +
+> +    touchscreen {
+> +        compatible =3D "toradex,vf50-touchscreen";
+> +        interrupt-parent =3D <&gpio0>;
+> +        interrupts =3D <8 IRQ_TYPE_LEVEL_LOW>;
+> +        io-channels =3D <&adc1 0>,<&adc0 0>, <&adc0 1>,<&adc1 2>;
 
-Thinking about it again, and I think I agree with you here. I will
-update.
+This line has inconsistent formatting.
+Otherwise, the conversion looks good.
 
-> Side note: I think the error paths in __netpoll_setup() assume the struct
-> netpoll will be freed in case of error, e.g. the device refcount is released
-> but np->dev is not cleared, I fear we could hit a reference underflow on
-> <setup error>, <disable>
+Thanks,
+Conor.
 
-That is a good catch, and I was even able to simulate it, by forcing two
-errors:
+> +        xp-gpios =3D <&gpio0 13 GPIO_ACTIVE_LOW>;
+> +        xm-gpios =3D <&gpio2 29 GPIO_ACTIVE_HIGH>;
+> +        yp-gpios =3D <&gpio0 12 GPIO_ACTIVE_LOW>;
+> +        ym-gpios =3D <&gpio0 4 GPIO_ACTIVE_HIGH>;
+> +        pinctrl-names =3D "idle", "default";
+> +        pinctrl-0 =3D <&pinctrl_touchctrl_idle>, <&pinctrl_touchctrl_gpi=
+os>;
+> +        pinctrl-1 =3D <&pinctrl_touchctrl_default>, <&pinctrl_touchctrl_=
+gpios>;
+> +        vf50-ts-min-pressure =3D <200>;
+> +    };
+> +
+> --=20
+> 2.34.1
+>=20
 
-Something as:
+--fXLw8ZFuZxVd4QoL
+Content-Type: application/pgp-signature; name="signature.asc"
 
---- a/net/core/netpoll.c
-	+++ b/net/core/netpoll.c
-	@@ -637,7 +637,8 @@ int __netpoll_setup(struct netpoll *np, struct net_device *ndev)
-		}
+-----BEGIN PGP SIGNATURE-----
 
-		if (!ndev->npinfo) {
-	-               npinfo = kmalloc(sizeof(*npinfo), GFP_KERNEL);
-	+               npinfo = NULL;
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruCiAAKCRB4tDGHoIJi
+0tqaAQD5CdxeOQqH/hmp6MhcCBakq3bmaEAd+pqX+zucPC/ifQEAkA4absn2lZbJ
+I6LFB+z+X9vnpzTUQ9AtFKzEeH4nNwU=
+=aVzJ
+-----END PGP SIGNATURE-----
 
-	diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-	index 41a61fa88c32..2c6190808e75 100644
-	--- a/drivers/net/netconsole.c
-	+++ b/drivers/net/netconsole.c
-	@@ -1327,12 +1330,17 @@ static int __init init_netconsole(void)
-		}
-
-		err = dynamic_netconsole_init();
-	+       err = 1;
-		if (err)
-			goto undonotifier;
-
-	
-This caused the following issue:
-	
-	[   19.530831] netconsole: network logging stopped on interface eth0 as it unregistered
-	[   19.531205] ref_tracker: reference already released.
-	[   19.531426] ref_tracker: allocated in:
-	[   19.531505]  netpoll_setup+0xfd/0x7f0
-	[   19.531505]  init_netconsole+0x300/0x960
-	....
-	[   19.534532] ------------[ cut here ]------------
-	[   19.534784] WARNING: CPU: 5 PID: 1 at lib/ref_tracker.c:255 ref_tracker_free+0x4e5/0x740
-	[   19.535103] Modules linked in:
-	....
-	[   19.542116]  ? ref_tracker_free+0x4e5/0x740
-	[   19.542286]  ? refcount_inc+0x40/0x40
-	[   19.542571]  ? do_netpoll_cleanup+0x4e/0xb0
-	[   19.542752]  ? netconsole_process_cleanups_core+0xcd/0x260
-	[   19.542961]  ? netconsole_netdev_event+0x3ab/0x3e0
-	[   19.543199]  ? unregister_netdevice_notifier+0x27c/0x2f0
-	[   19.543456]  ? init_netconsole+0xe4/0x960
-	[   19.543615]  ? do_one_initcall+0x1a8/0x5d0
-	[   19.543764]  ? do_initcall_level+0x133/0x1e0
-	[   19.543963]  ? do_initcalls+0x43/0x80
-	....
-
-That said, now, the list contains enabled and disabled targets. All the
-disable targets have netpoll disabled, thus, we don't handle network
-operations in the disabled targets.
-
-This is my new proposal, based on your feedback, how does it look like?
-
-Thanks for the in-depth review,
---breno
-
-diff --git a/drivers/net/netconsole.c b/drivers/net/netconsole.c
-index 30b6aac08411..60325383ab6d 100644
---- a/drivers/net/netconsole.c
-+++ b/drivers/net/netconsole.c
-@@ -1008,6 +1008,8 @@ static int netconsole_netdev_event(struct notifier_block *this,
- 	mutex_lock(&target_cleanup_list_lock);
- 	spin_lock_irqsave(&target_list_lock, flags);
- 	list_for_each_entry_safe(nt, tmp, &target_list, list) {
-+		if (!nt->enabled)
-+			continue;
- 		netconsole_target_get(nt);
- 		if (nt->np.dev == dev) {
- 			switch (event) {
-@@ -1258,11 +1260,15 @@ static struct netconsole_target *alloc_param_target(char *target_config,
- 		goto fail;
- 
- 	err = netpoll_setup(&nt->np);
--	if (err)
-+	if (!err)
-+		nt->enabled = true;
-+	else if (!IS_ENABLED(CONFIG_NETCONSOLE_DYNAMIC))
-+		/* only fail if dynamic reconfiguration is set,
-+		 * otherwise, keep the target in the list, but disabled.
-+		 */
- 		goto fail;
- 
- 	populate_configfs_item(nt, cmdline_count);
--	nt->enabled = true;
- 
- 	return nt;
- 
-@@ -1274,7 +1280,8 @@ static struct netconsole_target *alloc_param_target(char *target_config,
- /* Cleanup netpoll for given target (from boot/module param) and free it */
- static void free_param_target(struct netconsole_target *nt)
- {
--	netpoll_cleanup(&nt->np);
-+	if (nt->enabled)
-+		netpoll_cleanup(&nt->np);
- 	kfree(nt);
- }
- 
+--fXLw8ZFuZxVd4QoL--
 
