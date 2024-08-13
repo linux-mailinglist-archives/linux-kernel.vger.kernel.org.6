@@ -1,264 +1,154 @@
-Return-Path: <linux-kernel+bounces-284750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9569504B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E5739504B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:15:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728AE1F233A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AAED1F22D92
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF7017D345;
-	Tue, 13 Aug 2024 12:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268891993A7;
+	Tue, 13 Aug 2024 12:14:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="r26n4vCU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BHpSXUKz"
-Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="jHrfDQ32"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC51990AD
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A811A187348
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:14:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551310; cv=none; b=NXVtKyUqPQPmmGxB7lCHAUlcuAbaJ0BkPAWPdP6CXSnUOyrTpS9ivao1wRIjeWemiePZl3tWSbWsWgYJYDUkrwnVIBoKc8vufW4MKyS8Aiuj8rDY/Cija11x8F0fNRwa63HRBSOiDyvUVZfbARPhhgsMshMB6A6pZmIdtMyGarQ=
+	t=1723551293; cv=none; b=ZjxQz7k5YuhzjE7ra/53OopQ6huCtFmIpWPyFmScjHk3i+apcIErKGzId0zeMtHaj63g4mRsWXiUIvoxfcXk+gvhoeiHTyxtctwCh0R1ltUCLvwJ9W43XbbHhPPB/5UkrI9ZMhxT2iITp4yEkgWudQIb0sHVYR5xGEUbFMPm2Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551310; c=relaxed/simple;
-	bh=dx796VhjmO843byt+mnLduUbr/0a4t5ggKZEQlfoaI4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IPkuFcR8FRegfPQXz3LXrXE1QBqEwbYJcVrxvwAKvP3p/RCBt0p7wlOf9eSl4aCaQPzlITsYy0U5A5cssGgLgbENycx+GMiS0Nf+X6UcsG2LkrBKKI8XjaWuHtEYRPJILDlwAPGZknJWsrsGzpzMbHSSLzSg0YVMJiAtxZ2PGEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=r26n4vCU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BHpSXUKz; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 7CA4D138FD8B;
-	Tue, 13 Aug 2024 08:15:07 -0400 (EDT)
-Received: from wimap26 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Tue, 13 Aug 2024 08:15:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1723551307;
-	 x=1723637707; bh=hf+XpJftr/yARgkX8SCc/syV29CdeZlrpAmAw+8JxVk=; b=
-	r26n4vCUogWVf2cfYIS9OPG+yQMg33JuMc1B5ckaUnYCT7bmVUxVDb3sRMuEnMvs
-	Z5ojRRZ/oxGp06OuC5JGHbnfpU/6vh98hHZ6F8o1oPOWcgJg3bWRRfiruzx0yuEo
-	171j6gikJ2AusSs5q24wJP3PdpXwCmwGCXikU84jVSt45T+VHz02AqG+FT8wyeVo
-	nIoLGcnEmULNeLVn8hquakzvkc6wI3k3y8SME1NaLHRuEXwNLzo8GGmQ+LBN1J09
-	qWOpytwiGm7BdPMRYLMNfq90fSditRrEBeQ34uVBhXxlJv4iJIYDVR3kSG9Qui3m
-	VUtZUhE1Bqejc/nuQc1qdA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723551307; x=
-	1723637707; bh=hf+XpJftr/yARgkX8SCc/syV29CdeZlrpAmAw+8JxVk=; b=B
-	HpSXUKzgZ8ccy0tQipw9XF5ByuEDZbmamh5k2XjUxqpiriifJX217IuhUli7BzEW
-	V3cEQGN8DnYoDN8+zenJy0TmEOFK8HET+mEAASfqmwmL18uviUgMMoyQwuNDv9mQ
-	R3+Y8rTCq5qgF3VSSrKM16wNsuuqDNgdldSZhHjCsqvPdbg1W3y82KWE8Vs2MiGV
-	LJGC44fcNEEn9imm1r9ljZQ62LflkNegTokuDYolX8L36+KVBodtJBgJ8B4R+BaU
-	VWUKHM/VBwMLHCkMzB+S2CHO2FXVQOW/7CuDFKYgg0Y3umNRMd+jVB1k+Nu8Gj+h
-	qczgP7NQsM6I+Dk2zOocg==
-X-ME-Sender: <xms:S067ZlNjc7VsViLKIIUPGjbAXrt1Vd_7rbcLLS6TPzzJABf69CQM0A>
-    <xme:S067Zn_417_xg5Yw2N4whdZCdaw1OPYtkzXV47MfZEivC8TeX7fGfKuzY0zbtcaBM
-    l81tzyN0wtg-VxaB6w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddggeelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepmhgrthhtihdrvhgrihhtthhinhgvnhesfhhirdhrohhhmhgvuhhrohhpvgdrtgho
-    mhdprhgtphhtthhopehmrgiiiihivghsrggttghouhhnthesghhmrghilhdrtghomhdprh
-    gtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghf
-    rggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonh
-    higidruggvpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhn
-    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
-    hlrdhorhhg
-X-ME-Proxy: <xmx:S067ZkRAq-a5fdh2Zzrq46pRqjxD_ELvUDcBV0ADLJ88gWlNaZE8MQ>
-    <xmx:S067ZhvhOo485zf36GbI2AFhQc2TifsWg3EgIfkhR7yDT6FJcY06xg>
-    <xmx:S067Ztfed6Ae0RTRO4995h-EiHc2PUrmVqasbmYgzFi8mT2oZ6rmQw>
-    <xmx:S067Zt2nWWZJa551YteGo9Qgl8fb8NVFnxuKUyTNszX8SIc6LVi6XA>
-    <xmx:S067ZlRDHMY3NP8nwdP2MpXuXdJXnsbPVJX3cpuWFxdtktSA5LULiVj_>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 4E8F419C0089; Tue, 13 Aug 2024 08:15:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1723551293; c=relaxed/simple;
+	bh=7JED9j77PKutsGABbXNBQkcMJG/2imqFd4wNMLEJ8F8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Cf7vpahZPS94GJvNmR8Ul+cjpgdCd457mjvV3V5ADo/wbM1rGmH5UdCcPeGOXOmEkBC94/Y3qq79R3+t7z7C+EzLU3oTJ0w9Jy8+x4cTiizwRPv/6gHQ1wbt6TqW295AFexGxQRQdVOGSj1L9/h1o7a7Is+Oj/+i2p3BMMFJH2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=jHrfDQ32; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7c1b624e3b0so359088a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:14:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1723551291; x=1724156091; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=OOHfasRrYR/IurZgZK4bKz+ZtwqF3wUb8jW3AIXAOx4=;
+        b=jHrfDQ32rBeLiUalhp0oCWrbxY1cWvrQ+332y40foRlXazFu26JcKfUzefDi0fwS1/
+         h8DMyCM2PLifuekV9dCEfi3/gVEHuwcz5UkA1NXgELxkm64qIAl69qzlI32bGhWIDZZ9
+         9HYKmxoqRXhi6G0w1qW6QGDp5KgwTdb1FKyGtD+5tukBcu/9flbDOEn0Ih/8fgpUddUq
+         kn5YBtEn4hWFIngrfQ6Sg4d36hQZiHRr83qa9ovjMdhlDhFhEi45UXDgKQZDyfEaExoz
+         sMdkMtVS8EFRKgukbKPkot/pRYaB6mRRaHTRe0fRZqWAr6g5BP5WM0iVTc1hLpQLvkiD
+         aZhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723551291; x=1724156091;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OOHfasRrYR/IurZgZK4bKz+ZtwqF3wUb8jW3AIXAOx4=;
+        b=u2zYcebWi2rqeBTi+UxEbTJgrloASmJe0UA61/hV4bSR4sVKEmTrxqG5o88D9PZgcK
+         bddkIrhH6QmT31rh0s7/dgZOB+hT8WEHu7ZG/8uKu6y7aBYR5PuAdZw4MjlNNjXBYjQB
+         Ld8B1BC8wRaz9CEM1wf8a0cQIXsPcC1Jy69gak6q2QyPkv9f4uIt+vmejc+FAYW0IY8Z
+         uWZA/mXCZxBVS1U8yXy8DUAwMOZtPKSUMvaSagjgyiAPga9XgZa97DlScuq93KeONQmI
+         vUG7wmW/RF7/F+skBo3MWzsKHxizfvZKSMeMphPlqu/LQkd2kRELljkHYtB6ufUQIjhK
+         Wy9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUGurjy7AC7p+kxOiBuX79KMeAjftD0HQC/qLuui4l1yqgTy0Lc0iPGJicxF5NefWlrUrI1azNdipYM55I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHTdCO7SQfddT74OsDpJ8uNL1CujkcOyH0fhKq6GvTaceCP7Ir
+	2AS+PZ8CtAtNA3WFdhXaIX46fs9+RbNWgUQjqh8uRayJqKYF7K7vuCFKB7sTqtV+J/j1+MQQp57
+	X
+X-Google-Smtp-Source: AGHT+IHhvtlPy5GSVWgMeqS8qWX78qZ4pIqMSOFlNGCfFcHZFx0tbT3MGHx/cq3MmeWdSwWeHozC9Q==
+X-Received: by 2002:a05:6a00:91c7:b0:70d:140c:7369 with SMTP id d2e1a72fcca58-7125a26d0a4mr1269317b3a.3.1723551290669;
+        Tue, 13 Aug 2024 05:14:50 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5a4357asm5600846b3a.133.2024.08.13.05.14.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 05:14:50 -0700 (PDT)
+Message-ID: <43b7c2c4-9bba-444a-ba27-9a8f3623a953@kernel.dk>
+Date: Tue, 13 Aug 2024 06:14:48 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 13 Aug 2024 13:14:46 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Matti Vaittinen" <mazziesaccount@gmail.com>,
- "Matti Vaittinen" <matti.vaittinen@fi.rohmeurope.com>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: "Mark Brown" <broonie@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
-Message-Id: <f6aa806f-41fb-4051-9ee2-f039cd4fe0ce@app.fastmail.com>
-In-Reply-To: <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
-References: <cover.1723120028.git.mazziesaccount@gmail.com>
- <32d07bd79eb2b5416e24da9e9e8fe5955423dcf9.1723120028.git.mazziesaccount@gmail.com>
- <27033022-cdbe-40d9-8a97-cdc4d5c25dbe@flygoat.com>
- <78fabd1a-0c68-4e23-8293-89c56eb9010b@gmail.com>
- <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
-Subject: Re: [PATCH v2 1/3] irqdomain: simplify simple and legacy domain creation
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [io-uring?] KCSAN: data-race in io_sq_thread /
+ io_sq_thread_park (9)
+To: syzbot <syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, io-uring@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <00000000000065552a061f8cb396@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <00000000000065552a061f8cb396@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 8/13/24 2:50 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    6a0e38264012 Merge tag 'for-6.11-rc2-tag' of git://git.ker..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1019759d980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=cb57e6ebf675f9d2
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2b946a3fd80caf971b21
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/753a842a966b/disk-6a0e3826.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/e12e23519777/vmlinux-6a0e3826.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/bce0584a8cb4/bzImage-6a0e3826.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com
+> 
+> ==================================================================
+> BUG: KCSAN: data-race in io_sq_thread / io_sq_thread_park
+> 
+> write to 0xffff888111459638 of 8 bytes by task 10761 on cpu 1:
+>  io_sq_thread+0xdab/0xff0 io_uring/sqpoll.c:383
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> read to 0xffff888111459638 of 8 bytes by task 10329 on cpu 0:
+>  io_sq_thread_park+0x1b/0x80 io_uring/sqpoll.c:47
+>  io_ring_exit_work+0x197/0x500 io_uring/io_uring.c:2786
+>  process_one_work kernel/workqueue.c:3231 [inline]
+>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
+>  worker_thread+0x526/0x700 kernel/workqueue.c:3390
+>  kthread+0x1d1/0x210 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> value changed: 0xffff8881223d0000 -> 0x0000000000000000
 
+It's just a debug check.
 
-=E5=9C=A82024=E5=B9=B48=E6=9C=8813=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
-=8D=881:02=EF=BC=8CMatti Vaittinen=E5=86=99=E9=81=93=EF=BC=9A
-> Hi Jiaxun,
->
-> On 8/13/24 13:54, Matti Vaittinen wrote:
->> On 8/13/24 13:19, Jiaxun Yang wrote:
->>>
->>>
->>> On 2024/8/8 13:34, Matti Vaittinen wrote:
->>>> Move a bit more logic in the generic __irq_domain_instantiate() fro=
-m the
->>>> irq_domain_create_simple() and the irq_domain_create_legacy(). This=
- does
->>>> simplify the irq_domain_create_simple() and irq_domain_create_legac=
-y().
->>>> It will also ease the use of irq_domain_instantiate() instead of the
->>>> irq_domain_create_simple() or irq_domain_create_legacy() by allowin=
-g the
->>>> callers of irq_domain_instantiate() to omit the IRQ association and
->>>> irq_desc allocation code.
->>>>
->>>> Reduce code duplication by introducing the hwirq_base and virq_base
->>>> members in the irq_domain_info structure, creating helper function
->>>> for allocating irq_descs, and moving logic from the .._legacy() and
->>>> the .._simple() to the more generic irq_domain_instantiate().
->>>
->>> Hi all,
->>>
->>> This patch currently in next had caused regression on MIPS systems.
->
-> ...
->
->>> Do you have any idea on how should we fix it?
->
-> This is quick'n dirty but do you think you could try following? (I hav=
-e=20
-> only compile-tested it). I'll also attach the patch as I have no idea =
-if=20
-> this mail client mutilates patches. I can send in proper format if it =
-helps.
+#syz test
 
-Can confirm it fixed booting!
+diff --git a/io_uring/sqpoll.c b/io_uring/sqpoll.c
+index b3722e5275e7..3b50dc9586d1 100644
+--- a/io_uring/sqpoll.c
++++ b/io_uring/sqpoll.c
+@@ -44,7 +44,7 @@ void io_sq_thread_unpark(struct io_sq_data *sqd)
+ void io_sq_thread_park(struct io_sq_data *sqd)
+ 	__acquires(&sqd->lock)
+ {
+-	WARN_ON_ONCE(sqd->thread == current);
++	WARN_ON_ONCE(data_race(sqd->thread) == current);
+ 
+ 	atomic_inc(&sqd->park_pending);
+ 	set_bit(IO_SQ_THREAD_SHOULD_PARK, &sqd->state);
 
-Thanks for quick fix.
+-- 
+Jens Axboe
 
-- Jiaxun
-
->
->
-> From: Matti Vaittinen <mazziesaccount@gmail.com>
-> Date: Tue, 13 Aug 2024 14:34:27 +0300
-> Subject: [PATCH] irqdomain: Fix irq_domain_create_legacy() when=20
-> first_irq is 0
->
-> The
-> 70114e7f7585 ("irqdomain: Simplify simple and legacy domain creation")
-> changed logic of calling the irq_domain_associate_many() from the
-> irq_domain_create_legacy() when first_irq is set to 0. Before the chan=
-ge,
-> the irq_domain_associate_many() is unconditionally called inside the
-> irq_domain_create_legacy(). After the change, the call is omitted when
-> first_irq is set to 0. This breaks MIPS systemns where
-> drivers/irqchip/irq-mips-cpu.c has irq_domain_add_legacy() called with
-> first_irq set to 0.
->
-> Fixes: 70114e7f7585 ("irqdomain: Simplify simple and legacy domain=20
-> creation")
-> Signed-off-by Matti Vaittinen <mazziesaccount@gmail.com>
-> ---
->   kernel/irq/irqdomain.c | 12 ++++++------
->   1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index 01001eb615ec..5be165399a96 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -300,7 +300,8 @@ static void irq_domain_instantiate_descs(const=20
-> struct irq_domain_info *info)
->   }
->
->   static struct irq_domain *__irq_domain_instantiate(const struct=20
-> irq_domain_info *info,
-> -						   bool cond_alloc_descs)
-> +						   bool cond_alloc_descs,
-> +						   bool cond_force_associate)
->   {
->   	struct irq_domain *domain;
->   	int err;
-> @@ -337,10 +338,9 @@ static struct irq_domain=20
-> *__irq_domain_instantiate(const struct irq_domain_info
->   		irq_domain_instantiate_descs(info);
->
->   	/* Legacy interrupt domains have a fixed Linux interrupt number */
-> -	if (info->virq_base > 0) {
-> +	if (cond_force_associate || info->virq_base > 0)
->   		irq_domain_associate_many(domain, info->virq_base, info->hwirq_bas=
-e,
->   					  info->size - info->hwirq_base);
-> -	}
->
->   	return domain;
->
-> @@ -360,7 +360,7 @@ static struct irq_domain=20
-> *__irq_domain_instantiate(const struct irq_domain_info
->    */
->   struct irq_domain *irq_domain_instantiate(const struct irq_domain_in=
-fo=20
-> *info)
->   {
-> -	return __irq_domain_instantiate(info, false);
-> +	return __irq_domain_instantiate(info, false, false);
->   }
->   EXPORT_SYMBOL_GPL(irq_domain_instantiate);
->
-> @@ -464,7 +464,7 @@ struct irq_domain *irq_domain_create_simple(struct=20
-> fwnode_handle *fwnode,
->   		.ops		=3D ops,
->   		.host_data	=3D host_data,
->   	};
-> -	struct irq_domain *domain =3D __irq_domain_instantiate(&info, true);
-> +	struct irq_domain *domain =3D __irq_domain_instantiate(&info, true, =
-false);
->
->   	return IS_ERR(domain) ? NULL : domain;
->   }
-> @@ -513,7 +513,7 @@ struct irq_domain *irq_domain_create_legacy(struct=20
-> fwnode_handle *fwnode,
->   		.ops		=3D ops,
->   		.host_data	=3D host_data,
->   	};
-> -	struct irq_domain *domain =3D irq_domain_instantiate(&info);
-> +	struct irq_domain *domain =3D __irq_domain_instantiate(&info, false,=
- true);
->
->   	return IS_ERR(domain) ? NULL : domain;
->   }
-> --=20
-> 2.45.2
->
->
->
-> =E9=99=84=E4=BB=B6:
-> * 0001-irqdomain-Fix-irq_domain_create_legacy-when-first_ir.patch
-
---=20
-- Jiaxun
 
