@@ -1,217 +1,176 @@
-Return-Path: <linux-kernel+bounces-284981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CB6950796
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD17C95079C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 660C51F21852
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCAA1F21168
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2987919F479;
-	Tue, 13 Aug 2024 14:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D8719D893;
+	Tue, 13 Aug 2024 14:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ms+JB4ZP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Gvkp1tcb"
+Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D8519EEC0;
-	Tue, 13 Aug 2024 14:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27BE19D085;
+	Tue, 13 Aug 2024 14:29:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559316; cv=none; b=sdyg5q9irzxOEAu5kZ2n9r/h3AkEh8P9pCE/aiZCao7ZgLUJgFbx33WO1xCtt2qSHDiadxHjlr3LglKoZhs/cIDipOKd2nACAC8YckD5Gwk2vn/prKTmCSCfP/nTtGsodJNtC1jZwGcSQHji38fw8Ro7yxNV/zMBLgCieKUFxUQ=
+	t=1723559377; cv=none; b=LEF3yNFYB8OkGoiL2uQfoZm31nOCWLhb1IHqQP7Ly7xUmXnRBGobHvJ3N5P9JndUQl8uL1tEVbXU5IUlmitR94k1eNXU7QDAxe8IZO7Wo724va5cLgmwoFJT86Uypyp7K62qymMmnnkGkT/BAIxv19b/DEW8W8BenhdTz54XrYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559316; c=relaxed/simple;
-	bh=MXNZ/zeDWQXz9ILdX6QMiT8hkUjUFvD51FnJbgAZ3o4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e4Q7iCP1sywoFyC0O273I9DkJQvzmZUEnqOK4+wdTgLPoRUTBY3pfBqdPAgDwjKACUnhD30MD1snF77afgbl9yDyykIBBiFjNU8umbI6NNgW72A9G7dLqWACui0Ou3bCc3GvuqSsd6sR7am6nH8r+XeBO/z8w5bZrzhzSbfHok0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ms+JB4ZP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75F94C4AF09;
-	Tue, 13 Aug 2024 14:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723559316;
-	bh=MXNZ/zeDWQXz9ILdX6QMiT8hkUjUFvD51FnJbgAZ3o4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ms+JB4ZPldx9SMqL/CSuafJ0nAGICY6NuBj/s1vhr6Mh+Nu3MjOfLRx20h0sVTgvf
-	 9vNDspD6cB5nch2/hQJTvVkldq3CyypACAxrf06+kA8awQLmYxq/xDNTPL2UfSLRoE
-	 6E5eMKbUYX5F1Mw80U4c/q8ESQj2e9O5esYEANPqhQlikuBOY1zMAjvMlhkwHgvxkc
-	 NTrMn1nXDTuljOmGjf/TWwyuTpLVwmMBaJoy8KWANW6cxN+4xsYRGg78Q9K8UH6Vm0
-	 8yrZaL3iT7UXvbWh3d+IYxq7Lx8m+vDN0wFwg56AooCo5sbMe5YB/c18AF8gk3OpKA
-	 QF6QTaMapseSw==
-Date: Tue, 13 Aug 2024 11:28:32 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Casey Chen <cachen@purestorage.com>,
-	Tom Zanussi <tzanussi@gmail.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf inject: Inject build ids for entire call chain
-Message-ID: <ZrttkJHX5DAmHGvP@x1>
-References: <20240812224119.744968-1-irogers@google.com>
+	s=arc-20240116; t=1723559377; c=relaxed/simple;
+	bh=vyM2fA16LJrP9OVcGZqbYqkThW+wMsHSi2s0W/9M4BI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bOG/JRK8sJxruAKYMt1L6MaEB7WsgnlnqwlPnHrRRHo1aZ5D7DRbSwZNLfcby0Sx/TcpWGvb8ASn9olvdiE+trmbYjBXZc0n2AuCWEAbghtfsnTGAc/k8Toe4yI2VHQXOoP+5ABQkDuzuYRBbv0tqQdopPBGpXFiXicGHIYHED4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Gvkp1tcb reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
+Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
+ by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
+ id 04688625b4e6996d; Tue, 13 Aug 2024 16:29:26 +0200
+Received: from kreacher.localnet (unknown [195.136.19.94])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3506C6A89B8;
+	Tue, 13 Aug 2024 16:29:26 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
+	s=dkim; t=1723559366;
+	bh=vyM2fA16LJrP9OVcGZqbYqkThW+wMsHSi2s0W/9M4BI=;
+	h=From:Subject:Date;
+	b=Gvkp1tcbQ657HG2RBh4wWa2tRf4gI5g+2C2bqtrPvjWBjXzU9DY2XKDhhG3kQVbKa
+	 XQ9cjopxSgE0QlPJEtvAQyUctQfDmzjU+t/xbkLcUzppN0PxbEAZcw/kZDJi2bnOju
+	 89eYROzrTgRPYLvYENtzYb7z1+lOD60VaEPZjjuuiNwfLP3fSkmRIlYNo8rRAnT23W
+	 yj+znvNx25KPp40xywZhRo2kWsfbZd3c5zKMJOn9M8yM7tTduegKMmSQGjvZdXa5u3
+	 b5rTeK3MzderIuBK63ojIguucMaLl4Fv88emMqRq21lwauCADse2ONhNJ72YTXCqYH
+	 WhNsDpeOL5JSQ==
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Linux PM <linux-pm@vger.kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
+Subject:
+ [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to reduce overhead
+Date: Tue, 13 Aug 2024 16:29:11 +0200
+Message-ID: <2285575.iZASKD2KPV@rjwysocki.net>
+In-Reply-To: <1903691.tdWV9SEqCh@rjwysocki.net>
+References: <1903691.tdWV9SEqCh@rjwysocki.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812224119.744968-1-irogers@google.com>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+X-CLIENT-IP: 195.136.19.94
+X-CLIENT-HOSTNAME: 195.136.19.94
+X-VADE-SPAMSTATE: spam:low
+X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohep
+ uggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepphgvthgvrhesphhiihgvrdhnvght
+X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
 
-On Mon, Aug 12, 2024 at 03:41:19PM -0700, Ian Rogers wrote:
-> The DSO build id is injected when the dso is first encountered but the
-> checking for first encountered only looks at the sample->ip not the
-> entire callchain. Use the callchain logic to ensure all build ids are
-> inserted.
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Split into two patches, one with the paragraph below and the other, a
-followup to that, with the fix and the paragraph above.
+After running once, the for_each_trip_desc() loop in
+bang_bang_manage() is pure needless overhead because it is not going to
+make any changes unless a new cooling device has been bound to one of
+the trips in the thermal zone or the system is resuming from sleep.
 
-Applied to perf-tools-next,
+For this reason, make bang_bang_manage() set governor_data for the
+thermal zone and check it upfront to decide whether or not it needs to
+do anything.
 
-Thanks,
+However, governor_data needs to be reset in some cases to let
+bang_bang_manage() know that it should walk the trips again, so add an
+.update_tz() callback to the governor and make the core additionally
+invoke it during system resume.
 
-- Arnaldo
+To avoid affecting the other users of that callback unnecessarily, add
+a special notification reason for system resume, THERMAL_TZ_RESUME, and
+also pass it to __thermal_zone_device_update() called during system
+resume for consistency.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
+ drivers/thermal/thermal_core.c  |    3 ++-
+ include/linux/thermal.h         |    1 +
+ 3 files changed, 21 insertions(+), 1 deletion(-)
+
+Index: linux-pm/drivers/thermal/gov_bang_bang.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/gov_bang_bang.c
++++ linux-pm/drivers/thermal/gov_bang_bang.c
+@@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
+ 	const struct thermal_trip_desc *td;
+ 	struct thermal_instance *instance;
  
-> Add a for_each callback style API to callchain with
-> sample__for_each_callchain_node. Possibly in the future such an API
-> can avoid the overhead of constructing the call chain list.
-> 
-> Fixes: 454c407ec17a ("perf: add perf-inject builtin")
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
-> ---
-> v2. Rebase and add Namhyung's acked-by.
-> ---
->  tools/perf/builtin-inject.c | 31 +++++++++++++++++++++++++++++++
->  tools/perf/util/callchain.c | 35 +++++++++++++++++++++++++++++++++++
->  tools/perf/util/callchain.h |  6 ++++++
->  3 files changed, 72 insertions(+)
-> 
-> diff --git a/tools/perf/builtin-inject.c b/tools/perf/builtin-inject.c
-> index ef9cba173dd2..a35bde3f3c09 100644
-> --- a/tools/perf/builtin-inject.c
-> +++ b/tools/perf/builtin-inject.c
-> @@ -743,6 +743,29 @@ static int dso__inject_build_id(struct dso *dso, const struct perf_tool *tool,
->  	return 0;
->  }
->  
-> +struct mark_dso_hit_args {
-> +	const struct perf_tool *tool;
-> +	struct machine *machine;
-> +	u8 cpumode;
-> +};
-> +
-> +static int mark_dso_hit_callback(struct callchain_cursor_node *node, void *data)
-> +{
-> +	struct mark_dso_hit_args *args = data;
-> +	struct map *map = node->ms.map;
-> +
-> +	if (map) {
-> +		struct dso *dso = map__dso(map);
-> +
-> +		if (dso && !dso__hit(dso)) {
-> +			dso__set_hit(dso);
-> +			dso__inject_build_id(dso, args->tool, args->machine,
-> +					     args->cpumode, map__flags(map));
-> +		}
-> +	}
-> +	return 0;
-> +}
-> +
->  int perf_event__inject_buildid(const struct perf_tool *tool, union perf_event *event,
->  			       struct perf_sample *sample,
->  			       struct evsel *evsel __maybe_unused,
-> @@ -750,6 +773,11 @@ int perf_event__inject_buildid(const struct perf_tool *tool, union perf_event *e
->  {
->  	struct addr_location al;
->  	struct thread *thread;
-> +	struct mark_dso_hit_args args = {
-> +		.tool = tool,
-> +		.machine = machine,
-> +		.cpumode = sample->cpumode,
-> +	};
->  
->  	addr_location__init(&al);
->  	thread = machine__findnew_thread(machine, sample->pid, sample->tid);
-> @@ -769,6 +797,9 @@ int perf_event__inject_buildid(const struct perf_tool *tool, union perf_event *e
->  		}
->  	}
->  
-> +	sample__for_each_callchain_node(thread, evsel, sample, PERF_MAX_STACK_DEPTH,
-> +					mark_dso_hit_callback, &args);
-> +
->  	thread__put(thread);
->  repipe:
->  	perf_event__repipe(tool, event, sample, machine);
-> diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
-> index 6d075648d2cc..0d608e875fe9 100644
-> --- a/tools/perf/util/callchain.c
-> +++ b/tools/perf/util/callchain.c
-> @@ -1797,3 +1797,38 @@ s64 callchain_avg_cycles(struct callchain_node *cnode)
->  
->  	return cycles;
->  }
-> +
-> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
-> +				    struct perf_sample *sample, int max_stack,
-> +				    callchain_iter_fn cb, void *data)
-> +{
-> +	struct callchain_cursor *cursor = get_tls_callchain_cursor();
-> +	int ret;
-> +
-> +	if (!cursor)
-> +		return -ENOMEM;
-> +
-> +	/* Fill in the callchain. */
-> +	ret = thread__resolve_callchain(thread, cursor, evsel, sample,
-> +					/*parent=*/NULL, /*root_al=*/NULL,
-> +					max_stack);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Switch from writing the callchain to reading it. */
-> +	callchain_cursor_commit(cursor);
-> +
-> +	while (1) {
-> +		struct callchain_cursor_node *node = callchain_cursor_current(cursor);
-> +
-> +		if (!node)
-> +			break;
-> +
-> +		ret = cb(node, data);
-> +		if (ret)
-> +			return ret;
-> +
-> +		callchain_cursor_advance(cursor);
-> +	}
-> +	return 0;
-> +}
-> diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
-> index d5c66345ae31..76891f8e2373 100644
-> --- a/tools/perf/util/callchain.h
-> +++ b/tools/perf/util/callchain.h
-> @@ -311,4 +311,10 @@ u64 callchain_total_hits(struct hists *hists);
->  
->  s64 callchain_avg_cycles(struct callchain_node *cnode);
->  
-> +typedef int (*callchain_iter_fn)(struct callchain_cursor_node *node, void *data);
-> +
-> +int sample__for_each_callchain_node(struct thread *thread, struct evsel *evsel,
-> +				    struct perf_sample *sample, int max_stack,
-> +				    callchain_iter_fn cb, void *data);
-> +
->  #endif	/* __PERF_CALLCHAIN_H */
-> -- 
-> 2.46.0.76.ge559c4bf1a-goog
-> 
++	/* If the code below has run already, nothing needs to be done. */
++	if (tz->governor_data)
++		return;
++
+ 	for_each_trip_desc(tz, td) {
+ 		const struct thermal_trip *trip = &td->trip;
+ 
+@@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
+ 				bang_bang_set_instance_target(instance, 0);
+ 		}
+ 	}
++
++	tz->governor_data = (void *)true;
++}
++
++static void bang_bang_update_tz(struct thermal_zone_device *tz,
++				enum thermal_notify_event reason)
++{
++	/*
++	 * Let bang_bang_manage() know that it needs to walk trips after binding
++	 * a new cdev and after system resume.
++	 */
++	if (reason == THERMAL_TZ_BIND_CDEV || reason == THERMAL_TZ_RESUME)
++		tz->governor_data = NULL;
+ }
+ 
+ static struct thermal_governor thermal_gov_bang_bang = {
+ 	.name		= "bang_bang",
+ 	.trip_crossed	= bang_bang_control,
+ 	.manage		= bang_bang_manage,
++	.update_tz	= bang_bang_update_tz,
+ };
+ THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
+Index: linux-pm/drivers/thermal/thermal_core.c
+===================================================================
+--- linux-pm.orig/drivers/thermal/thermal_core.c
++++ linux-pm/drivers/thermal/thermal_core.c
+@@ -1692,7 +1692,8 @@ static void thermal_zone_device_resume(s
+ 
+ 	thermal_debug_tz_resume(tz);
+ 	thermal_zone_device_init(tz);
+-	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
++	thermal_governor_update_tz(tz, THERMAL_TZ_RESUME);
++	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
+ 
+ 	complete(&tz->resume);
+ 	tz->resuming = false;
+Index: linux-pm/include/linux/thermal.h
+===================================================================
+--- linux-pm.orig/include/linux/thermal.h
++++ linux-pm/include/linux/thermal.h
+@@ -55,6 +55,7 @@ enum thermal_notify_event {
+ 	THERMAL_TZ_BIND_CDEV, /* Cooling dev is bind to the thermal zone */
+ 	THERMAL_TZ_UNBIND_CDEV, /* Cooling dev is unbind from the thermal zone */
+ 	THERMAL_INSTANCE_WEIGHT_CHANGED, /* Thermal instance weight changed */
++	THERMAL_TZ_RESUME, /* Thermal zone is resuming after system sleep */
+ };
+ 
+ /**
+
+
+
 
