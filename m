@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-285102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66184950959
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAB995095D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:46:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95C1A1C225CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D9071C2180D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287301A0725;
-	Tue, 13 Aug 2024 15:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB231A0724;
+	Tue, 13 Aug 2024 15:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcSAepR8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mxl558Ed"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6596B19CCFC;
-	Tue, 13 Aug 2024 15:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBD549654;
+	Tue, 13 Aug 2024 15:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723563932; cv=none; b=IFTJ5qepxM4OXr9o8cP+Wb7IGdlL/XStDkcYn08MqZUVeyVZnPyUBHNQ68RziCj2TV3UWrPup5yz+JZcrkxHWPTYnlkHUEw1DbVsjL4pLm/sBYJ/9C/r5RRoiMyhYKSGilM8lu6ewwtyf7oeCilTpiNt2qfMuGL+hRg3FJAbm9k=
+	t=1723563978; cv=none; b=OD8fRSJV4x5rYFqAj9tyNHG2Uy0DWe/dpNc23xK+0lPFIWnjHaryGFbPYUlVVTwkpAOHElAyK5DBjqp/upKDFI87ocogqRU540oVuc450FG1dcv5KZdl4DYIBGuWTvn9t6+T1UHRBW3gBfWubnxDegIIebLvWoeMmHgHON89v0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723563932; c=relaxed/simple;
-	bh=k//UBH4jM4TsTT++ZUHXzx+i4dSCfaga5dq+y+X9nRo=;
+	s=arc-20240116; t=1723563978; c=relaxed/simple;
+	bh=FvDI4nlATbEYWH0NbvBp6D3TEzj2s0THCNv0wUb9Nio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oqTMofa40QO2twmcaGVhuFCdlf7XexnsyG/V1ehQUd6s5sR5q0r6H6dC1ZItRS+RCpGgFsr7ySDrhoOFvQ5N4i+r5QDHp+QVMDqrkyigK/7IHQGs9ISXvD8BeE5oZLgdLpQOrDSjaE+6Mw/3SS1jhJkoYKvAac+EQSG7p3aXy1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcSAepR8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D456BC4AF0B;
-	Tue, 13 Aug 2024 15:45:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ETMRH6mfab7/71YJio55ar2yrNuSvJvsrx/k98oG4lPsetvb9fHkhi7HWh71beh3Tn7JJX2/DytlHGlfbXk8Cnk/KfxB1SNMKem20UAFhYCaEur+CPJ3BwUkP0/iazQpeGyZbLytnoGE37ZWZaDSpqJjXJfEMraTm073efnU7bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mxl558Ed; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15C02C4AF09;
+	Tue, 13 Aug 2024 15:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723563932;
-	bh=k//UBH4jM4TsTT++ZUHXzx+i4dSCfaga5dq+y+X9nRo=;
+	s=k20201202; t=1723563977;
+	bh=FvDI4nlATbEYWH0NbvBp6D3TEzj2s0THCNv0wUb9Nio=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EcSAepR8f/+7LUKb7/+zx5jNmK2Xlcst9AtmUFI/jIzRVRwpI5c4DjsQWp3UVj5Cj
-	 bUnt/wEb8cgREveVRruCdpwhUjREbmQNoGkM0+y9eBeo081wu/fpw/a8mwwQPbxkYB
-	 cNLUA7YknHs1XyOKdAvpnUJwlF9pV3WbPmLgX0LcaFxcU8NnpgHNo94N2wHMpllKzi
-	 I1c0vXd9eGC88F/f9YqcsCtk3RiIB2qfpYgrnRvdtKSVSJte5Lmf5ullLHOwU4+Ydm
-	 7KsXnYyR+91GnBlkLfwL5VSZ6y63WoURGElm17DAO/1MLgfQOtLLKzS5cBG30xV/nu
-	 pnB5dGTEQ1NZA==
-Date: Tue, 13 Aug 2024 09:45:30 -0600
+	b=mxl558EdqqOlZgrgDdD7dFRsuTIs49yoF8wlBy7H8k1X3YmBciUxBFZIkGDWLt+H7
+	 geRHZohMuF69M9rlD520230TJnguWjRV7zmxiRVOkkUXUVwcbwqlUH14k4kDELN7pA
+	 K6aRPCxP4YwrmH+VhR1I5XNDFjXoqOkmmctDhj/4hN+lEY/p0Cdaavoh3zZ2g+FsmI
+	 hSnQFNt3yhvKCfh+AGHInbgw30H5wD1CTSoOIJzhfph/Jvb0MQtdMlwCLIouo3W0rI
+	 pPncL0GrdCQQKUKZ//jkt1vFFmsBBWj/re7N+HJ57xawlMCKVPn135WN2YxQvdhdmH
+	 8NnkkJUCuxkvQ==
+Date: Tue, 13 Aug 2024 09:46:15 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kousik Sanagavarapu <five231003@gmail.com>
-Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+To: Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v4 2/2] dt-bindings: watchdog: ti,davinci-wdt: convert to
- dtschema
-Message-ID: <172356392942.1007351.13568087913065764519.robh@kernel.org>
-References: <20240727050736.4756-1-five231003@gmail.com>
- <20240727050736.4756-3-five231003@gmail.com>
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: interrupt-controller:
+ aspeed,ast2400-vic: Convert to DT schema
+Message-ID: <172356397447.1008665.7000351139259690854.robh@kernel.org>
+References: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-0-c2531e02633d@codeconstruct.com.au>
+ <20240808-dt-warnings-irq-aspeed-dt-schema-v2-1-c2531e02633d@codeconstruct.com.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,28 +61,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240727050736.4756-3-five231003@gmail.com>
+In-Reply-To: <20240808-dt-warnings-irq-aspeed-dt-schema-v2-1-c2531e02633d@codeconstruct.com.au>
 
 
-On Sat, 27 Jul 2024 10:34:44 +0530, Kousik Sanagavarapu wrote:
-> Convert txt bindings of TI's DaVinci/Keystone Watchdog Timer Controller
-> to dtschema to allow for validation.
+On Thu, 08 Aug 2024 13:44:24 +0930, Andrew Jeffery wrote:
+> Squash warnings such as:
 > 
-> While at it,
-> - Change the order of the compatibles.
-> - Add "power-domains" to represent that the power domain maybe managed by
->   TI-SCI controller if found on the SoC (for example, Keystone based K2G).
+>     arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-galaxy100.dtb: /ahb/interrupt-controller@1e6c0080: failed to match any schema with compatible: ['aspeed,ast2400-vic']
 > 
-> w.r.t. to the txt binding to stay in sync with existing DTS.
+> The YAML DT schema defines an optional property, valid-sources, which
+> was not previously described in the prose binding. It is added to
+> document existing practice in the Aspeed devicetrees. Unfortunately
+> the property seems to predate the requirement that vendor-specific
+> properties be prefixed.
 > 
-> Signed-off-by: Kousik Sanagavarapu <five231003@gmail.com>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 > ---
->  .../bindings/watchdog/davinci-wdt.txt         | 24 --------
->  .../bindings/watchdog/ti,davinci-wdt.yaml     | 55 +++++++++++++++++++
->  2 files changed, 55 insertions(+), 24 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/watchdog/davinci-wdt.txt
->  create mode 100644 Documentation/devicetree/bindings/watchdog/ti,davinci-wdt.yaml
+>  .../interrupt-controller/aspeed,ast2400-vic.txt    | 23 --------
+>  .../interrupt-controller/aspeed,ast2400-vic.yaml   | 62 ++++++++++++++++++++++
+>  2 files changed, 62 insertions(+), 23 deletions(-)
 > 
 
 Applied, thanks!
