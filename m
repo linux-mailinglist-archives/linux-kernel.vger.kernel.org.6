@@ -1,144 +1,148 @@
-Return-Path: <linux-kernel+bounces-284441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74169500FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:12:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48560950101
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:13:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74A28285375
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:12:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C115C1F24915
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9957818787F;
-	Tue, 13 Aug 2024 09:10:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C3C189F2A;
+	Tue, 13 Aug 2024 09:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="BQi6AnwT"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02F0186E30
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A60D170A23
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540259; cv=none; b=shYXej054d4uiR7Srh7ioiCp0N8CDpLg1mhQUtqXdq73i4j1ivsqbz9AqwudmXOZ27fu5G4glCNJi9DFFdNRN3qRHBlI5z/KIHOhBNYA1AwlpM7/BIymn5hlk0G3kwYLPwm3GGkqDQ2KJF68y3eeZ4V+qP9yKw7X9fBnbAMWvtw=
+	t=1723540274; cv=none; b=cANLtodKe/4TkXQRjE5o9zh2aZQTTDoHckVutEUF+HMrvwxR2GmMYn88gnr38yLoY2bS6RBLVT3qJuH8+BCFt7HVaDCaeuk9NNtZoFtoS09ozPqovXYakaxqpVVGj64StQE5cxOKvxla9xGXXDA9l8uBDagyXHo+wULiKcCNNyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540259; c=relaxed/simple;
-	bh=uq+T3EINNxRTXSs8/aHYthjMxmBKRzZAf7Kll6Pufg0=;
+	s=arc-20240116; t=1723540274; c=relaxed/simple;
+	bh=hf38bQZuWM3dp+pnlJL9eh4Uv0Yip7KWObG1Cg7zjLI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bQ/bQCncgHNs11bHQuo3DoIwc5rpASztRQSwQRl8+cHYsH3NyCw5OuQnRzorEmYAZ4qOyV/U6uTYa61CcnDFsY0OFELTHqX9Ms2K8FbwL+dPVmhS+nVzCvCNLGok4kDGGNRVGc1Ig+nFQcqYAgdUoJIdGpC5e8rqgDaZSxdKGRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sdnYK-0002Q5-1M; Tue, 13 Aug 2024 11:10:52 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sdnYJ-0005pK-KQ; Tue, 13 Aug 2024 11:10:51 +0200
-Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mgr@pengutronix.de>)
-	id 1sdnYJ-000cGA-1b;
-	Tue, 13 Aug 2024 11:10:51 +0200
-Date: Tue, 13 Aug 2024 11:10:51 +0200
-From: Michael Grzeschik <mgr@pengutronix.de>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Daniel Scally <dan.scally@ideasonboard.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Avichal Rakesh <arakesh@google.com>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/10] usb: gadget: uvc: remove pump worker and
- enqueue all buffers per frame in qbuf
-Message-ID: <ZrsjG0b3XFeSRefH@pengutronix.de>
-References: <20240403-uvc_request_length_by_interval-v3-0-4da7033dd488@pengutronix.de>
- <20240403-uvc_request_length_by_interval-v3-3-4da7033dd488@pengutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r1ZRTzNwq0F9rc4lk412098ZztU2LQI+UDvpdv+ZwUjwN6RQalYQez3C4zzFFwWYE+nf22YWCJYuieeLAlNTcPUM6Wjt1Ir6e5n3x8X3ZifxequdvVSVhCvfBxa7WL+fwfIbnV54nIr0HnYF4Bup8Kf40hCEnbUcXRrV2L6XMGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=BQi6AnwT; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so6900121e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1723540271; x=1724145071; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KJFdYK5G5aYcfJcV8ZQsQv/iO29PbtuZR/QhPd3XK64=;
+        b=BQi6AnwTBkpXynqeaxIhGlTq9pEB+90HIF7G1QvxVmZdNXQ9xN+a7FRYWpVMjjX3yV
+         W/lBhalqiJMILdURjwBbZgNnufqSp+gZJEJYAI8sbXV/wngDOdZJ+K0lhm/clyl9v4Rr
+         cvGN74/d0yUlokXehzVHKRd7n+e3Q9t/SmmKs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723540271; x=1724145071;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJFdYK5G5aYcfJcV8ZQsQv/iO29PbtuZR/QhPd3XK64=;
+        b=FFmhCKTjXjnRUgHCnZyzDlhgoaPNCh2Dc4/Fe36MLsZxs6IVs+TlcqLK4ag2DRFstZ
+         pzs7j6/Jk/LqGw/IGQE9stai742EycBGMftRSvJDHkfFzPs9esyuH3kEU90KwIM25pvc
+         9cXREi3+OM2gnWP3suGAc1GUgnLDrcPKkL8jUJ1iFQ9O2Pabzy9McUgEKS7ErkxPFQRG
+         SFK5B1ZcidP5MTsSesrE2GHdfKVVF/WG7gszp2zelrSG4zMdSWlOi/F62bL038yQxM/d
+         tT48YS6p2z39FDlyiBkDqaxwKteSKhtzejjIHIU3J49MnS5W70/Ta00INMV5Qm6IILox
+         UJnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUP8xs0bTsoj5XjgBjmB/QThWZ5VCYC1aQMLTeV7XgywHtzjTS67ukdPXRHeiNpZd5m5zv2cwwkBHA+1/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwemIAXL+s15gU/6GStgO9C76H/l1fkR7l84XEPF0wh6D83AfRd
+	hvtpaw7l4Q2NfqD3njW9Y5/izQEOQK6kqrjTMT6RwZI90uwIKvo0GHJ08yk/iUE=
+X-Google-Smtp-Source: AGHT+IGRBSscIpDOgFZkQD6PeQTFPL4bgN+hns3by8V7H3bQAYSZz5q4pbgfNyoVXlI+t2vwiNIQyw==
+X-Received: by 2002:a05:6512:b86:b0:52e:f950:31e9 with SMTP id 2adb3069b0e04-5321364b9b1mr1803856e87.4.1723540271014;
+        Tue, 13 Aug 2024 02:11:11 -0700 (PDT)
+Received: from LQ3V64L9R2.home ([80.208.222.2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37172483bd9sm1004993f8f.0.2024.08.13.02.11.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 02:11:10 -0700 (PDT)
+Date: Tue, 13 Aug 2024 10:11:09 +0100
+From: Joe Damato <jdamato@fastly.com>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC net-next 1/6] netdevice: Add napi_affinity_no_change
+Message-ID: <ZrsjLS8wRcYL3HxQ@LQ3V64L9R2.home>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240812145633.52911-1-jdamato@fastly.com>
+ <20240812145633.52911-2-jdamato@fastly.com>
+ <ZrpvP_QSYkJM9Mqw@mini-arch>
+ <Zrp50DnNfbOJoKr7@LQ3V64L9R2.home>
+ <ZrqOekK43_YyMHmR@mini-arch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="8j8oXWU2QAY203fW"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240403-uvc_request_length_by_interval-v3-3-4da7033dd488@pengutronix.de>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mgr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <ZrqOekK43_YyMHmR@mini-arch>
 
+On Mon, Aug 12, 2024 at 03:36:42PM -0700, Stanislav Fomichev wrote:
+> On 08/12, Joe Damato wrote:
+> > On Mon, Aug 12, 2024 at 01:23:27PM -0700, Stanislav Fomichev wrote:
+> > > On 08/12, Joe Damato wrote:
+> > > > Several drivers have their own, very similar, implementations of
+> > > > determining if IRQ affinity has changed. Create napi_affinity_no_change
+> > > > to centralize this logic in the core.
+> > > > 
+> > > > This will be used in following commits for various drivers to eliminate
+> > > > duplicated code.
+> > > > 
 
---8j8oXWU2QAY203fW
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[...]
 
-Hi Greg,
+> > > > +bool napi_affinity_no_change(unsigned int irq)
+> > > > +{
+> > > > +	int cpu_curr = smp_processor_id();
+> > > > +	const struct cpumask *aff_mask;
+> > > > +
+> > > 
+> > > [..]
+> > > 
+> > > > +	aff_mask = irq_get_effective_affinity_mask(irq);
+> > > 
+> > > Most drivers don't seem to call this on every napi_poll (and
+> > > cache the aff_mask somewhere instead). Should we try to keep this
+> > > out of the past path as well?
+> > 
+> > Hm, I see what you mean. It looks like only gve calls it on every
+> > poll, while the others use a cached value.
+> > 
+> > Maybe a better solution is to:
+> >   1. Have the helper take the cached affinity mask from the driver
+> >      and return true/false.
+> >   2. Update gve to cache the mask (like the other 4 are doing).
+> 
+> SG! GVE is definitely the outlier here.
 
-On Sat, Jul 27, 2024 at 12:02:38AM +0200, Michael Grzeschik wrote:
->Since we now have at least the amount of requests to fill every frame
->into the isoc queue that is requested with the REQBUFS ioctl, we can
->directly encode all incoming frames into the available requests.
->
->Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
->
->---
->v1 -> v3: new patch
->---
-> drivers/usb/gadget/function/f_uvc.c     |  4 ---
-> drivers/usb/gadget/function/uvc.h       |  5 +---
-> drivers/usb/gadget/function/uvc_queue.c |  3 +++
-> drivers/usb/gadget/function/uvc_v4l2.c  |  3 ---
-> drivers/usb/gadget/function/uvc_video.c | 46 +++++-----------------------=
------
-> drivers/usb/gadget/function/uvc_video.h |  1 +
-> 6 files changed, 12 insertions(+), 50 deletions(-)
->
+OK, I'll hack on that for rfcv2 and see what it looks like. Thanks
+for the suggestion.
 
-This patch is introducing a bug that I have queued in the next series.
-
-I just saw that you picked this series. Could you please drop it and
-pick v4 instead? I will just send it out now.
-
-https://lore.kernel.org/r/20240403-uvc_request_length_by_interval-v4-0-ca22=
-f334226e@pengutronix.de
-
-Besid the mentioned fix, the series is identical.
-
-Regards,
-Michael
-
---=20
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
-
---8j8oXWU2QAY203fW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAma7IxgACgkQC+njFXoe
-LGTXGg//RXAC8POR52MgotKY/b2f79a4B9XRIJCOFtcK5H+xRJ/ZUEzNyagprS5B
-b8GptQ4iu+fXOK3p/V9oJ+ywiOsJK4Qq/3JGtgntEr+WCsK/Yat7/xa1WrB4PstD
-gGri0S0DARZgu+J/w4WLR5NO8wcqr/2b8KXe6U+jjJ7NRqeP67mV+RTFbCkKdZ/G
-ylnf/sWWJ/ZoKXKsKGb53bKufClgiBU8qxes8mfZueauvmUpsEzTYf2sNXFW1iSO
-9kmC5RzI1XrzG5bmw88Btp1U2tyYZqnaKq+X99bs+th7Qa2cy1IvzBQ9SgPrLAbB
-mJIPpDHcIJHyDtljmnO7Cl+8PdUmXReV561PtEpcI7v5UlQisP4EAHoXp69pDRQZ
-xjznDO7ej0M5NBRIzsZ1d/fNmDj0ODTIUy7Q3o9H97Fw4+1ZtAyENrU3lPL4F5PJ
-poAfSodkR0tjq4hjKlPzuJU/m+5MgB27g+UtbOSt0LGxSygLKvCM4Ee2u7re43yZ
-C2lwC6SYH5e2BFWFcu38SHZZAqOvks6I5zpep9Z5FXwopzH19oX5iqYryM5bXJue
-qrEx6tw5hl5C3C1issTTOLBi0Zgccv8/bxt6k587XXxz00wPpYvkRF5ZRZINI9r5
-DmR44iWywWSdeGyFFfaTQpj9XA2et8XAo5YY8qnlIZFLNHa9OT0=
-=X5Qu
------END PGP SIGNATURE-----
-
---8j8oXWU2QAY203fW--
+Hopefully the maintainers (or other folks) will chime in on whether
+or not I should submit fixes for patches 4 - 6 for the type mismatch
+stuff first or just handle it all together.
 
