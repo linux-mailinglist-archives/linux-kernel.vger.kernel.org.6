@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-284439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC5A9500FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:11:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3A9950149
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6196C1C22D23
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:11:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 182771F23822
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26DF19B5A6;
-	Tue, 13 Aug 2024 09:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54C017C7C2;
+	Tue, 13 Aug 2024 09:34:32 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1891917B433
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAF313CA81
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:34:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540183; cv=none; b=hC47SoWBpEbJjKQukNYvjwJfvcvAMHdmB6teo6WnFWYJK88AWzGBGIebK0v0NAwQZyTpI1eu507dMbUYF4TcNnuLP+UcURkj3Bppf12Y3NsZ/INS0y9f6L/rKVzEkVI/H6hR+ZcvXME8FK8UjhdsrFW6UHlEHgRjp22WufAv/Z0=
+	t=1723541672; cv=none; b=bQtOCxTdn6pqrPIkN+6IJuFhz46rdZIbq/wj9d0M3nyPOyK51DojlcpOxTZrOJPGAffDHy+UdAQkS5lskflIP7F+OBq5ILz1WCKFfnGzu7dI/8CLBPrcmgjTZHmugrqBhcddUDB6OvdjpkCsW/K2wrjhwiOJAIrvnYl8arGerwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540183; c=relaxed/simple;
-	bh=pR9Q1xJIQp6r4a68/d9PCSwj+85Vq81NrZV56hszM7Q=;
+	s=arc-20240116; t=1723541672; c=relaxed/simple;
+	bh=rj9b7K0Nbm9lGAMTKb9Y09pi8U+HR6hJCCBIdBSG5FA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nbR7IS5nV+xMxTbf9mwbY5lcAHcJz2jSVWF0g0BnNtJqf66PfYJARpcyheKrsIJHs+CkCX/hqgE7ZRHf2+pTiwK2rUmlF6vLJgUqCiDou0aK42hmbnen9Q1WsAdnyUuXLNCtBoAHpYxvwMU6vhZQFmhQDgJMaVvKpt0apWc9JJA=
+	 In-Reply-To:To:Cc; b=SwVhCEOc5JG9C+Yh6XP+UjKeHpwAufxAuegMsY/RmSkqIvlmFQsMdt2YbAwPmWWr93dfQmwwGkKRvjVNVUd3TOrzuEs6/+amGK1+UQS9ufoielYpYuIZ5+hl/HcQZNW4uwKJlLFJDJiWZnbn9IS+Tl8TYBVPG0lH7b5//Afrt2o=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,21 +32,21 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-0002CP-SF; Tue, 13 Aug 2024 11:09:34 +0200
+	id 1sdnv9-0004A5-UD; Tue, 13 Aug 2024 11:34:27 +0200
 Received: from [2a0a:edc0:0:1101:1d::ac] (helo=dude04.red.stw.pengutronix.de)
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-0005on-83; Tue, 13 Aug 2024 11:09:34 +0200
+	id 1sdnv9-0005yY-FB; Tue, 13 Aug 2024 11:34:27 +0200
 Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
 	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1sdnX4-00G1eS-0O;
+	id 1sdnX4-00G1eS-0P;
 	Tue, 13 Aug 2024 11:09:34 +0200
 From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Tue, 13 Aug 2024 11:09:33 +0200
-Subject: [PATCH v4 09/10] usb: gadget: uvc: set req_length based on payload
- by nreqs instead of req_size
+Date: Tue, 13 Aug 2024 11:09:34 +0200
+Subject: [PATCH v4 10/10] usb: gadget: uvc: add min g_ctrl vidioc and set
+ min buffs to 4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240403-uvc_request_length_by_interval-v4-9-ca22f334226e@pengutronix.de>
+Message-Id: <20240403-uvc_request_length_by_interval-v4-10-ca22f334226e@pengutronix.de>
 References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
 In-Reply-To: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
@@ -65,21 +65,21 @@ To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
  Michael Grzeschik <m.grzeschik@pengutronix.de>
 X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4214;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2804;
  i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=pR9Q1xJIQp6r4a68/d9PCSwj+85Vq81NrZV56hszM7Q=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmuyLN797r8Eswpj0toyqDidEtNCqQT+lBsIcH7
- eNMTNImexmJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZrsizQAKCRC/aVhE+XH0
- q57yEACSN4eXjVOdmtSeMKQSkLpt2z6CiLpauhPyFSwisNfdzhM2T0M+wjNlfEKuzI5Ju7F+7br
- FYAhiSI1OfO1jK5+D4GvgzIQOhktKjBjHGB1NtDDpFslBHTCRToI4hnCvBxfEG5aSHucgGXs73s
- 0RyqLfFFe9r4EyW8SKtGyE5DrzLyqgyXGY4tHr8teRKvUZkglzVY0PcMvwQA+bxRTiwN8R3p9Jc
- PAjH2bBYFNAgwQwxTSZZXHJwETn5TxmyE6EwRthkEYXQ4eDmEGuvZJ16UsjUABEX6zhZYLvBo9i
- Dn2Vg9pfhMJkMRN2m/c/LPtkKZ4skAHEyOi+usIhohP+m8F1i9W+kH638Lf/21hxeJqHkrvvs73
- r9bzSMH1eY1Nyxg6tNPa/WKUdmKgFisLHrKxO/usFJyadtfStTXeM06gPJAQKtxef5QhJAQe5lo
- r+GqRgKgxoTKbFjZAKUFiA6EtHq9dRBJoybu21cUVDiscaeKz4zGyHFLc9nN5p0Wc50EXYH4gaC
- LJpr/xDNRvril3F9I843muw/QBvSQKZRePKCM+a9fgufz/BJLgXitjvV7NleKkMak0hNIfr7jSE
- jO2+py3l37K+hl2Uv2fsgEY2CDK99mQqoPlw7e+WJTVvjnYNYEvjj25xZ3jhu1B/nHmNsbouhjB
- q1RTjlSfRPKb+lQ==
+ bh=rj9b7K0Nbm9lGAMTKb9Y09pi8U+HR6hJCCBIdBSG5FA=;
+ b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBmuyLNqZfMBw7L5B5aKx0UULdgxEbrn+BT9FeHo
+ wBP/cH2TNaJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCZrsizQAKCRC/aVhE+XH0
+ qz7CD/9FEpRSh8VyQlqZG6f1NIn9XdkLGB2o/hBgZDugNSIMCWZJhIOEZMSqdxsTnZ5LlzmRuIE
+ p/KhrHeVrt4OeRolSnxjTrlfDUfBnvKwyRO/5gnQ+QLnHrmu28Jtnn1CQTpT+uPR45ovjiXCJdA
+ JhnqDZBkp1DyDJi3ZBWHvgxIgfYV5LB1TsYD2TCNIEZ0B1IPac4TgXLtqhYpeme3RRaw4XZ0vXl
+ U//AvkY2mJh0Ncb6jA9ZWMlhs2W/+7kPfXBaDmlD8Be0kAFThNTh3R2311vdOLwQbNfvrK+iMie
+ pRpFRc2RCrJP4swbxxLabEugCxY1CcALGgD7memCCXXCH1JH9d2Wdhe1ijzIM7xKt7+a1iN4fYS
+ wWYX7cpVSC3O8TxwFjfTJ8wX2Rh2CYQLtmwxlEj/BSbZ3mRCD5HaXVeEkMroNPuD4cTWp9VKU7L
+ Sj/d7JNSQI3JTXISiQ4nPWoQGrn6g2xxhzWA8VyeHl57RIQphzNebcTEm6YCkPXu23YuagvuVBr
+ APCXKLlMqATZqIrKnXj9Cbr9nbQPzXyo+lzwa3dYQcxAscQ9orEidZWz+oQthFNRHHNSw53wl/I
+ MgVhk+8sbXK2OojoCXoBQosU/ZqJnS3VzGfLbUCNI6Y1bLwR7OKTwcMErVVfcIdXZ+ZddB3X2ui
+ IwmsKPnwgcLNevA==
 X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
  fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
 X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
@@ -87,12 +87,10 @@ X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-For uncompressed formats it makes sense to fill the requests with its
-maximum since the amount of requests and its size is calculated for
-this exact amount. Compressed formats generate content depending amount
-of data that is set in the vb2 buffer by the payload_size. When
-streaming those formats it is even better to scatter that smaller
-data over all requests.
+We increase the minimum amount of v4l2 buffers that will be possibly
+enqueued into the hardware and allocate at least
+UVCG_STREAMING_MIN_BUFFERS amount of requests. This way the driver has
+also more requests available to prefill the isoc hardware with.
 
 Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 
@@ -100,102 +98,76 @@ Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
 v3 -> v4: -
 v1 -> v3: new patch
 ---
- drivers/usb/gadget/function/uvc_queue.c |  9 ++++++++-
- drivers/usb/gadget/function/uvc_queue.h |  1 +
- drivers/usb/gadget/function/uvc_video.c | 13 ++++++-------
- 3 files changed, 15 insertions(+), 8 deletions(-)
+ drivers/usb/gadget/function/uvc.h       |  2 ++
+ drivers/usb/gadget/function/uvc_queue.c |  3 ++-
+ drivers/usb/gadget/function/uvc_v4l2.c  | 13 +++++++++++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
+index f6bc58fb02b84..e0b1f78fdbc65 100644
+--- a/drivers/usb/gadget/function/uvc.h
++++ b/drivers/usb/gadget/function/uvc.h
+@@ -71,6 +71,8 @@ extern unsigned int uvc_gadget_trace_param;
+ 
+ #define UVCG_REQUEST_HEADER_LEN			12
+ 
++#define UVCG_STREAMING_MIN_BUFFERS		4
++
+ /* ------------------------------------------------------------------------
+  * Structures
+  */
 diff --git a/drivers/usb/gadget/function/uvc_queue.c b/drivers/usb/gadget/function/uvc_queue.c
-index ab04df0e4f360..e33ce72325031 100644
+index e33ce72325031..157e7f7d49c7a 100644
 --- a/drivers/usb/gadget/function/uvc_queue.c
 +++ b/drivers/usb/gadget/function/uvc_queue.c
-@@ -94,6 +94,7 @@ static int uvc_queue_setup(struct vb2_queue *vq,
- static int uvc_buffer_prepare(struct vb2_buffer *vb)
- {
- 	struct uvc_video_queue *queue = vb2_get_drv_priv(vb->vb2_queue);
-+	struct uvc_video *video = container_of(queue, struct uvc_video, queue);
- 	struct vb2_v4l2_buffer *vbuf = to_vb2_v4l2_buffer(vb);
- 	struct uvc_buffer *buf = container_of(vbuf, struct uvc_buffer, buf);
+@@ -21,6 +21,7 @@
+ #include <media/videobuf2-vmalloc.h>
  
-@@ -116,8 +117,14 @@ static int uvc_buffer_prepare(struct vb2_buffer *vb)
- 	buf->length = vb2_plane_size(vb, 0);
- 	if (vb->type == V4L2_BUF_TYPE_VIDEO_CAPTURE)
- 		buf->bytesused = 0;
--	else
-+	else {
-+		unsigned int nreq;
-+		nreq = DIV_ROUND_UP(video->interval, video->ep->desc->bInterval * 1250);
- 		buf->bytesused = vb2_get_plane_payload(vb, 0);
-+		buf->req_payload_size =
-+			  DIV_ROUND_UP(buf->bytesused +
-+					(nreq * UVCG_REQUEST_HEADER_LEN), nreq);
-+	}
+ #include "uvc.h"
++#include "uvc_video.h"
+ 
+ /* ------------------------------------------------------------------------
+  * Video buffers queue management.
+@@ -86,7 +87,7 @@ static int uvc_queue_setup(struct vb2_queue *vq,
+ 	}
+ 
+ 	video->req_size = req_size;
+-	video->uvc_num_requests = nreq;
++	video->uvc_num_requests = nreq * UVCG_STREAMING_MIN_BUFFERS;
  
  	return 0;
  }
-diff --git a/drivers/usb/gadget/function/uvc_queue.h b/drivers/usb/gadget/function/uvc_queue.h
-index 41f87b917f6bc..a7355442dd6cd 100644
---- a/drivers/usb/gadget/function/uvc_queue.h
-+++ b/drivers/usb/gadget/function/uvc_queue.h
-@@ -39,6 +39,7 @@ struct uvc_buffer {
- 	unsigned int offset;
- 	unsigned int length;
- 	unsigned int bytesused;
-+	unsigned int req_payload_size;
- };
+diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
+index 392fb400aad14..f96074f2c2824 100644
+--- a/drivers/usb/gadget/function/uvc_v4l2.c
++++ b/drivers/usb/gadget/function/uvc_v4l2.c
+@@ -357,6 +357,18 @@ static int uvc_v4l2_s_parm(struct file *file, void *fh,
+ 	return 0;
+ }
  
- #define UVC_QUEUE_DISCONNECTED		(1 << 0)
-diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-index fe19608b57720..a5cf4dbdc5d59 100644
---- a/drivers/usb/gadget/function/uvc_video.c
-+++ b/drivers/usb/gadget/function/uvc_video.c
-@@ -136,7 +136,7 @@ uvc_video_encode_isoc_sg(struct usb_request *req, struct uvc_video *video,
- 	unsigned int pending = buf->bytesused - video->queue.buf_used;
- 	struct uvc_request *ureq = req->context;
- 	struct scatterlist *sg, *iter;
--	unsigned int len = video->req_size;
-+	unsigned int len = buf->req_payload_size;
- 	unsigned int sg_left, part = 0;
- 	unsigned int i;
- 	int header_len;
-@@ -145,16 +145,15 @@ uvc_video_encode_isoc_sg(struct usb_request *req, struct uvc_video *video,
- 	sg_init_table(sg, ureq->sgt.nents);
- 
- 	/* Init the header. */
--	header_len = uvc_video_encode_header(video, buf, ureq->header,
--				      video->req_size);
-+	header_len = uvc_video_encode_header(video, buf, ureq->header, len);
- 	sg_set_buf(sg, ureq->header, header_len);
- 	len -= header_len;
- 
- 	if (pending <= len)
- 		len = pending;
- 
--	req->length = (len == pending) ?
--		len + header_len : video->req_size;
-+	req->length = (len == pending) ? len + header_len :
-+		buf->req_payload_size;
- 
- 	/* Init the pending sgs with payload */
- 	sg = sg_next(sg);
-@@ -202,7 +201,7 @@ uvc_video_encode_isoc(struct usb_request *req, struct uvc_video *video,
- {
- 	void *mem = req->buf;
- 	struct uvc_request *ureq = req->context;
--	int len = video->req_size;
-+	int len = buf->req_payload_size;
- 	int ret;
- 
- 	/* Add the header. */
-@@ -214,7 +213,7 @@ uvc_video_encode_isoc(struct usb_request *req, struct uvc_video *video,
- 	ret = uvc_video_encode_data(video, buf, mem, len);
- 	len -= ret;
- 
--	req->length = video->req_size - len;
-+	req->length = buf->req_payload_size - len;
- 
- 	if (buf->bytesused == video->queue.buf_used ||
- 			video->queue.flags & UVC_QUEUE_DROP_INCOMPLETE) {
++static int uvc_g_ctrl(struct file *file, void *priv, struct v4l2_control *vc)
++{
++	int ret = -EINVAL;
++
++	if (vc->id == V4L2_CID_MIN_BUFFERS_FOR_OUTPUT) {
++		vc->value = UVCG_STREAMING_MIN_BUFFERS;
++		ret = 0;
++	}
++
++	return ret;
++}
++
+ static int
+ uvc_v4l2_enum_frameintervals(struct file *file, void *fh,
+ 		struct v4l2_frmivalenum *fival)
+@@ -629,6 +641,7 @@ const struct v4l2_ioctl_ops uvc_v4l2_ioctl_ops = {
+ 	.vidioc_streamoff = uvc_v4l2_streamoff,
+ 	.vidioc_s_parm = uvc_v4l2_s_parm,
+ 	.vidioc_g_parm = uvc_v4l2_g_parm,
++	.vidioc_g_ctrl = uvc_g_ctrl,
+ 	.vidioc_subscribe_event = uvc_v4l2_subscribe_event,
+ 	.vidioc_unsubscribe_event = uvc_v4l2_unsubscribe_event,
+ 	.vidioc_default = uvc_v4l2_ioctl_default,
 
 -- 
 2.39.2
