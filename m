@@ -1,181 +1,176 @@
-Return-Path: <linux-kernel+bounces-284783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83233950518
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:34:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D5C95051B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:34:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D76C1F216FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:34:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1233A1C209A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708BC199EA6;
-	Tue, 13 Aug 2024 12:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFF6199E93;
+	Tue, 13 Aug 2024 12:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Lw8i0X7Y"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cfe31hxg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8BE199E93;
-	Tue, 13 Aug 2024 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA6319AD6A;
+	Tue, 13 Aug 2024 12:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552363; cv=none; b=mnVSYzc4vGpC84w6A34kPGlpF5JWuN0xrLUZcL2QFyx+euEedkhxVynN5/CTFlv28JDYcBOLEUfdb1zcVw+ks5stwx34B708lFb65ua41NVw0ggK7wxla9hts3l1wSR8QSKAn3gcm9nrxtZ1ZcgrNg+bRclQaVexq1GKxceomCA=
+	t=1723552376; cv=none; b=ACeZxcWUxAWKBx0CVa6RPd16MLNgJq3xsIowJ+gHXT27Kytpw121wyQoyUJnAxLWTWO73n+seJBkQutZ2hPYp06j5A4o0WSlXSVZrRMm/CsX8kHyu/xhsDjE0Cg7I7rgJw3cQiR0Xs8o00FHyRNYd1ujNovVcVC7NhXjt+ugZsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552363; c=relaxed/simple;
-	bh=gE0ZYFPD+0rjYYUfTXTkptg3LDSOZxo9b0+1h/Rdcns=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MA6SvBdyjkQRj+r9JjwzGboe/VyV+pA3MjqBT7Lxouo90OK5zXfRp0LdolMPdx7KZ0layvF9KLgLGnD0tNXsZp9jV2SZvqt62x4flk/xBVIO2nZkw5pw2G+c3B9ggxeYL6X75QYxx3L5HhQ/dThSIIcXGt6OhFdqyYdllaLRz7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Lw8i0X7Y; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1723552358;
-	bh=k474NsT/hKGeKvuNMaZrdo5+Fa1c4TN5fkh3uTGeTZw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Lw8i0X7Ys1rzFFGNLZf515xcM/EcWHWC1DxmbUymthE87tHCGx/WgfcnJXG5ESg0j
-	 eP7HCCMu/Zziu/4nRu1DZbFrGWprDTIqPewyCDudnYFLcIdvb+Phu++ftbLjTC36Js
-	 mpd1NWEfJmDfpK3fUuHuyd092E+DQkOU4cWqzgWxGTYcnDIcmOgnker29j5vxgw6aS
-	 jSZoOesbn9XjdyoUn2HwXRH4FgADnzY6z+suRcIF1hp7pX6yZPWGrw1ol99R669VmY
-	 g5JbeiHddUV5Gr95vNUq54o1gXiMCyHaO0ex8PiIbi728Q2zugJsSFlbEKxMOg9kDb
-	 mShQV5joPctHA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WjrPd5sjWz4xCV;
-	Tue, 13 Aug 2024 22:32:37 +1000 (AEST)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Niklas Cassel <cassel@kernel.org>
-Cc: =?utf-8?Q?Kolbj=C3=B8rn?= Barmen <linux-ppc@kolla.no>,
- linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, =?utf-8?B?Sm9u?=
- =?utf-8?B?w6HFoQ==?= Vidra
- <vidra@ufal.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>,
- linux@roeck-us.net
-Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
- drivers/ata/pata_macio.c
-In-Reply-To: <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
-References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
- <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
- <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
-Date: Tue, 13 Aug 2024 22:32:36 +1000
-Message-ID: <87sev81u3f.fsf@mail.lhotse>
+	s=arc-20240116; t=1723552376; c=relaxed/simple;
+	bh=rWHptO4ILHYisfbYtoMmHf0mrhvaSphbwM91ej5HbZQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Xbp5PyLMqkSdT/LCu1hl7DElB/1EkrxZ31ARRNow0n5aKbQbW6Mln4yLPr3Rn7PRM0I6edrtTEt+RG2Vq75ORMRueWf+B9kbBqVMzAzGXkBFHpB05ISfXr6Cq+NrbeG1c7vuIU21leppIm0Loot994iKffaK3rFa38P/ft/0Mi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cfe31hxg; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723552374; x=1755088374;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=rWHptO4ILHYisfbYtoMmHf0mrhvaSphbwM91ej5HbZQ=;
+  b=Cfe31hxg13gZcjEzGql60e/2C3es2y+jJjOMwWXJ1KbMmSspwarlhmNH
+   SLGjp6UM2PHMMNv/1HES0Jt/fo1w1PkUwseNpaXxMuSUOSaBGRihQm98Y
+   3WQmP21ZjjeFtIK/UzlHcFd3zdXbcF4xcIgLey7zq4+EiKBQkK27JutoD
+   zrqs5MXe6suK9DS8aBXdjaAC08CpzmML0p8adhQZKnRXG37fm8O1ClFmA
+   NelY87zCorG3vcyzqsxwTEy4LsoICu3qY2rE3xSHrk6WTQmQv1E5UfUUM
+   QlUNYr4n6wDleHE6mYvCfUykWDo8zZzMmKpDwzBM4cNAQPJyCJW4zBqBe
+   Q==;
+X-CSE-ConnectionGUID: YP5CZnvgRASvHRIftp3Q0A==
+X-CSE-MsgGUID: KkAxKstURmyVNtIl3I9T0g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="24621085"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="24621085"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:32:53 -0700
+X-CSE-ConnectionGUID: iQ7gEKo4RKywxnOMFR2hRw==
+X-CSE-MsgGUID: 18rTvv8zQSmVQl8wMppmHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="59218495"
+Received: from pgcooper-mobl3.ger.corp.intel.com (HELO [10.245.244.169]) ([10.245.244.169])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:32:50 -0700
+Message-ID: <cc50eeb7cf3e6a89e66920f498b24a3ef8fa7746.camel@linux.intel.com>
+Subject: Re: [PATCH 3/3] drm/xe: clean up fault injection usage
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Jani Nikula <jani.nikula@intel.com>, linux-kernel@vger.kernel.org
+Cc: intel-xe@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, akinobu.mita@gmail.com, 
+ akpm@linux-foundation.org, lucas.demarchi@intel.com,
+ rodrigo.vivi@intel.com,  robdclark@gmail.com, quic_abhinavk@quicinc.com,
+ dmitry.baryshkov@linaro.org
+Date: Tue, 13 Aug 2024 14:32:47 +0200
+In-Reply-To: <20240813121237.2382534-3-jani.nikula@intel.com>
+References: <20240813121237.2382534-1-jani.nikula@intel.com>
+	 <20240813121237.2382534-3-jani.nikula@intel.com>
+Autocrypt: addr=thomas.hellstrom@linux.intel.com; prefer-encrypt=mutual;
+ keydata=mDMEZaWU6xYJKwYBBAHaRw8BAQdAj/We1UBCIrAm9H5t5Z7+elYJowdlhiYE8zUXgxcFz360SFRob21hcyBIZWxsc3Ryw7ZtIChJbnRlbCBMaW51eCBlbWFpbCkgPHRob21hcy5oZWxsc3Ryb21AbGludXguaW50ZWwuY29tPoiTBBMWCgA7FiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgkQuBaTVQrGBr/yQAD/Z1B+Kzy2JTuIy9LsKfC9FJmt1K/4qgaVeZMIKCAxf2UBAJhmZ5jmkDIf6YghfINZlYq6ixyWnOkWMuSLmELwOsgPuDgEZaWU6xIKKwYBBAGXVQEFAQEHQF9v/LNGegctctMWGHvmV/6oKOWWf/vd4MeqoSYTxVBTAwEIB4h4BBgWCgAgFiEEbJFDO8NaBua8diGTuBaTVQrGBr8FAmWllOsCGwwACgkQuBaTVQrGBr/P2QD9Gts6Ee91w3SzOelNjsus/DcCTBb3fRugJoqcfxjKU0gBAKIFVMvVUGbhlEi6EFTZmBZ0QIZEIzOOVfkaIgWelFEH
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Niklas Cassel <cassel@kernel.org> writes:
-> Hello Jon=C3=A1=C5=A1, Kolbj=C3=B8rn,
->
-> thank you for the report.
->
-> On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wrote:
->> On Tue 13. Aug 2024 0:32:37 CEST, Kolbj=C3=B8rn Barmen wrote:
->> > Ever since 6.10, my macmini G4 behaved unstable when dealing with lots=
- of
->> > I/O activity, such as sync'ing of Gentoo portage tree, unpacking kernel
->> > source tarball, building large software packages (or kernel) etc.
->> >=20
->> > After a bit of testing, and patient kernel rebuilding (while crashing)=
- I
->> > found the cuplit to be this commit/change
->> >=20
->> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/=
-?id=3D09fe2bfa6b83f865126ce3964744863f69a4a030
->>=20
->> I've been able to reproduce this pata_macio bug on a desktop PowerMac G4
->> with the 6.10.3 kernel version. Reverting the linked change
->> ("ata: pata_macio: Fix max_segment_size with PAGE_SIZE =3D=3D 64K") makes
->> the errors go away.
->
-> Michael, as the author of the this commit, could you please look into
-> this issue?
+On Tue, 2024-08-13 at 15:12 +0300, Jani Nikula wrote:
+> With the proper stubs in place in linux/fault-inject.h, we can remove
+> a
+> bunch of conditional compilation for CONFIG_FAULT_INJECTION=3Dn.
+>=20
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Akinobu Mita <akinobu.mita@gmail.com>
+> Cc: Lucas De Marchi <lucas.demarchi@intel.com>
+> Cc: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 
-I can. My commit was really just working around the warning in the SCSI
-core which appeared after afd53a3d8528, it was supposed to just fix the
-warning without changing behaviour. Though obviously it did for 4KB
-PAGE_SIZE kernels.
-
-I don't have easy access to my mac-mini so it would be helpful if you
-can test changes Jon=C3=A1=C5=A1 and/or Kolbj=C3=B8rn.
-
-> We could revert your patch, which appears to work for some users,
-> but that would again break setups with PAGE_SIZE =3D=3D 64K.
-> (I assume that Jon=C3=A1=C5=A1 and Kolbj=C3=B8rn are not building with PA=
-GE_SIZE =3D=3D 64K.)
-
-Yes they are using 4K, it says so in the oops.
-
->> ------------[ cut here ]------------
->> kernel BUG at drivers/ata/pata_macio.c:544!
->
-> https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_macio.c=
-#L544
->
-> It seems that the
-> while (sg_len) loop does not play nice with the new .max_segment_size.
-
-Right, but only for 4KB kernels for some reason. Is there some limit
-elsewhere that prevents the bug tripping on 64KB kernels, or is it just
-luck that no one has hit it?
-
-I wonder if the best solution is something like below. It effectively
-reverts to the old behaviour for 4KB page size, and should avoid the
-same bug happening on 64KB page size kernels.
-
-cheers
+Reviewed-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
 
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 1b85e8bf4ef9..eaffa510de49 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -208,6 +208,19 @@ static const char* macio_ata_names[] =3D {
- /* Don't let a DMA segment go all the way to 64K */
- #define MAX_DBDMA_SEG		0xff00
-=20
-+#ifdef CONFIG_PAGE_SIZE_64KB
-+/*
-+ * The SCSI core requires the segment size to cover at least a page, so
-+ * for 64K page size kernels it must be at least 64K. However the
-+ * hardware can't handle 64K, so pata_macio_qc_prep() will split large
-+ * requests. To handle the split requests the tablesize must be halved.
-+ */
-+#define MAX_SEGMENT_SIZE SZ_64K
-+#define SG_TABLESIZE (MAX_DCMDS / 2)
-+#else
-+#define MAX_SEGMENT_SIZE MAX_DBDMA_SEG
-+#define SG_TABLESIZE MAX_DCMDS
-+#endif
-=20
- /*
-  * Wait 1s for disk to answer on IDE bus after a hard reset
-@@ -912,16 +925,10 @@ static int pata_macio_do_resume(struct pata_macio_pri=
-v *priv)
-=20
- static const struct scsi_host_template pata_macio_sht =3D {
- 	__ATA_BASE_SHT(DRV_NAME),
--	.sg_tablesize		=3D MAX_DCMDS,
-+	.sg_tablesize		=3D SG_TABLESIZE,
- 	/* We may not need that strict one */
- 	.dma_boundary		=3D ATA_DMA_BOUNDARY,
--	/*
--	 * The SCSI core requires the segment size to cover at least a page, so
--	 * for 64K page size kernels this must be at least 64K. However the
--	 * hardware can't handle 64K, so pata_macio_qc_prep() will split large
--	 * requests.
--	 */
--	.max_segment_size	=3D SZ_64K,
-+	.max_segment_size	=3D MAX_SEGMENT_SIZE,
- 	.device_configure	=3D pata_macio_device_configure,
- 	.sdev_groups		=3D ata_common_sdev_groups,
- 	.can_queue		=3D ATA_DEF_QUEUE,
+> ---
+> =C2=A0drivers/gpu/drm/xe/xe_debugfs.c |=C2=A0 7 +------
+> =C2=A0drivers/gpu/drm/xe/xe_gt.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 ++---=
+-----
+> =C2=A02 files changed, 3 insertions(+), 14 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/xe/xe_debugfs.c
+> b/drivers/gpu/drm/xe/xe_debugfs.c
+> index 1011e5d281fa..b381bfb634f7 100644
+> --- a/drivers/gpu/drm/xe/xe_debugfs.c
+> +++ b/drivers/gpu/drm/xe/xe_debugfs.c
+> @@ -6,6 +6,7 @@
+> =C2=A0#include "xe_debugfs.h"
+> =C2=A0
+> =C2=A0#include <linux/debugfs.h>
+> +#include <linux/fault-inject.h>
+> =C2=A0#include <linux/string_helpers.h>
+> =C2=A0
+> =C2=A0#include <drm/drm_debugfs.h>
+> @@ -26,10 +27,7 @@
+> =C2=A0#include "xe_vm.h"
+> =C2=A0#endif
+> =C2=A0
+> -#ifdef CONFIG_FAULT_INJECTION
+> -#include <linux/fault-inject.h> /* XXX: fault-inject.h is broken */
+> =C2=A0DECLARE_FAULT_ATTR(gt_reset_failure);
+> -#endif
+> =C2=A0
+> =C2=A0static struct xe_device *node_to_xe(struct drm_info_node *node)
+> =C2=A0{
+> @@ -214,8 +212,5 @@ void xe_debugfs_register(struct xe_device *xe)
+> =C2=A0	for_each_gt(gt, xe, id)
+> =C2=A0		xe_gt_debugfs_register(gt);
+> =C2=A0
+> -#ifdef CONFIG_FAULT_INJECTION
+> =C2=A0	fault_create_debugfs_attr("fail_gt_reset", root,
+> &gt_reset_failure);
+> -#endif
+> -
+> =C2=A0}
+> diff --git a/drivers/gpu/drm/xe/xe_gt.h b/drivers/gpu/drm/xe/xe_gt.h
+> index 8b1a5027dcf2..ee138e9768a2 100644
+> --- a/drivers/gpu/drm/xe/xe_gt.h
+> +++ b/drivers/gpu/drm/xe/xe_gt.h
+> @@ -6,6 +6,8 @@
+> =C2=A0#ifndef _XE_GT_H_
+> =C2=A0#define _XE_GT_H_
+> =C2=A0
+> +#include <linux/fault-inject.h>
+> +
+> =C2=A0#include <drm/drm_util.h>
+> =C2=A0
+> =C2=A0#include "xe_device.h"
+> @@ -19,19 +21,11 @@
+> =C2=A0
+> =C2=A0#define CCS_MASK(gt) (((gt)->info.engine_mask &
+> XE_HW_ENGINE_CCS_MASK) >> XE_HW_ENGINE_CCS0)
+> =C2=A0
+> -#ifdef CONFIG_FAULT_INJECTION
+> -#include <linux/fault-inject.h> /* XXX: fault-inject.h is broken */
+> =C2=A0extern struct fault_attr gt_reset_failure;
+> =C2=A0static inline bool xe_fault_inject_gt_reset(void)
+> =C2=A0{
+> =C2=A0	return should_fail(&gt_reset_failure, 1);
+> =C2=A0}
+> -#else
+> -static inline bool xe_fault_inject_gt_reset(void)
+> -{
+> -	return false;
+> -}
+> -#endif
+> =C2=A0
+> =C2=A0struct xe_gt *xe_gt_alloc(struct xe_tile *tile);
+> =C2=A0int xe_gt_init_hwconfig(struct xe_gt *gt);
 
 
