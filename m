@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-285430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BFDF950D65
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:50:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5168950D68
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A605B1F21C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:50:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B6171C21B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C691A4F0A;
-	Tue, 13 Aug 2024 19:49:57 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CFB1A4F0A;
+	Tue, 13 Aug 2024 19:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="qFeqBTuN"
+Received: from smtp-fw-33001.amazon.com (smtp-fw-33001.amazon.com [207.171.190.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18C961C287;
-	Tue, 13 Aug 2024 19:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5041C287;
+	Tue, 13 Aug 2024 19:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.190.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723578597; cv=none; b=hb29Vxo3ihUD2J3Xneko1rPBCQ1VdILwlVSQfsLZzvinLfVi74X2efQIF35t7pZgk7+UBksx68EukksNgBQ8GXPNFix52UjuslkFIN2toD99DvqegC/Dp+pRQZpGj1oxKD/p+4x11H7ZxG8euWcbMSjf2yplF+xOshXlI4jWWIo=
+	t=1723578785; cv=none; b=Dbv9Pyr43XjZr8sXukhvhsq2ZSKRpfuVxp0xCA7Noj0wdhUsPX5e2rDEDMX0AeXwBdckfoBMybTMX5uGXdYQuNqa24T44qa2qzkz7Hy96LEXwBhKccsMdx+P0WQsIB24UIt3r1hWYvfFb9Mi6l4hlvcGyexBLFcx388AwA98lrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723578597; c=relaxed/simple;
-	bh=PLrFcNU7ckpOpLk686/xgxDVMbFxUHcGvJjGQOjsC2w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=msZ6Q09j/3cy81DfL/pT4cQykR+NMpITnrQymWs842U0bXWcc1DBpdzlQrv5RbDxgFS4vX6GU9BaqunAvOjnuYQMx1aTaTUTRQ9Izz7YP3BanadDA2nsleKCMmeYavPX8whciYYwKAO/pztSSsMEnwKgO8vrsvOCp26Gn+hMaqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Sam James <sam@gentoo.org>
-To: Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>
-Cc: "Jose E . Marchesi" <jose.marchesi@oracle.com>,
-	Andrew Pinski <quic_apinski@quicinc.com>,
-	=?UTF-8?q?Kacper=20S=C5=82omi=C5=84ski?= <kacper.slominski72@gmail.com>,
-	=?UTF-8?q?Arsen=20Arsenovi=C4=87?= <arsen@gentoo.org>,
-	Sam James <sam@gentoo.org>,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] libbpf: workaround -Wmaybe-uninitialized false positive
-Date: Tue, 13 Aug 2024 20:49:06 +0100
-Message-ID: <14ec488a1cac02794c2fa2b83ae0cef1bce2cb36.1723578546.git.sam@gentoo.org>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723578785; c=relaxed/simple;
+	bh=u8azd52hcgNwadO9/+lnq74JXjt/FATQutSvfuZ5SNY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eg4Xn90go8DuE83mbtoscWgQ9n8gBqlVfeSyWA15T3qNDxrlyMVJIJI2E9UYiFDThoeRK9ffzAW29mb5b/0W+mZN38FyMOK19znPQurdsTbpmC8imdabMtORp1xSYJ9FL3ue7WYe3lHHLk0OHqaOGoV+LhQIghJ4one/EvPx7V0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=qFeqBTuN; arc=none smtp.client-ip=207.171.190.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1723578784; x=1755114784;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=+shor+OzxsCmcctq1mFydd9s6unzmpHSdyiC8OC4HD0=;
+  b=qFeqBTuNUUjssvzHYMQdl81R2dTSWn+OuUOFA02C7lLQ5/qMfVRRLhzH
+   nJEMnbw30pXLvN/giPPzdfavuQX0wWORC200ALmqvg2AHEhERi3yDwPoW
+   +aWI6te8ly5b54Ra/o3bLy9y1ALnF9UVpDeoMksnDQUhqAhWLt3VqrYZs
+   M=;
+X-IronPort-AV: E=Sophos;i="6.09,286,1716249600"; 
+   d="scan'208";a="362106529"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-33001.sea14.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 19:52:57 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.38.20:24099]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.3.1:2525] with esmtp (Farcaster)
+ id 152d6685-bac2-4119-b626-a486ea676ec8; Tue, 13 Aug 2024 19:52:55 +0000 (UTC)
+X-Farcaster-Flow-ID: 152d6685-bac2-4119-b626-a486ea676ec8
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 13 Aug 2024 19:52:55 +0000
+Received: from 88665a182662.ant.amazon.com (10.119.205.65) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Tue, 13 Aug 2024 19:52:52 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
+CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-wpan@vger.kernel.org>, <miquel.raynal@bootlin.com>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <stefan@datenfreihafen.org>,
+	<syzkaller-bugs@googlegroups.com>, <kuniyu@amazon.com>
+Subject: Re: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
+Date: Tue, 13 Aug 2024 12:52:44 -0700
+Message-ID: <20240813195244.23260-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <000000000000f4a1b7061f9421de@google.com>
+References: <000000000000f4a1b7061f9421de@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D033UWA002.ant.amazon.com (10.13.139.10) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-In `elf_close`, we get this with GCC 15 -O3 (at least):
-```
-In function ‘elf_close’,
-    inlined from ‘elf_close’ at elf.c:53:6,
-    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-elf.c:57:9: warning: ‘elf_fd.elf’ may be used uninitialized [-Wmaybe-uninitialized]
-   57 |         elf_end(elf_fd->elf);
-      |         ^~~~~~~~~~~~~~~~~~~~
-elf.c: In function ‘elf_find_func_offset_from_file’:
-elf.c:377:23: note: ‘elf_fd.elf’ was declared here
-  377 |         struct elf_fd elf_fd;
-      |                       ^~~~~~
-In function ‘elf_close’,
-    inlined from ‘elf_close’ at elf.c:53:6,
-    inlined from ‘elf_find_func_offset_from_file’ at elf.c:384:2:
-elf.c:58:9: warning: ‘elf_fd.fd’ may be used uninitialized [-Wmaybe-uninitialized]
-   58 |         close(elf_fd->fd);
-      |         ^~~~~~~~~~~~~~~~~
-elf.c: In function ‘elf_find_func_offset_from_file’:
-elf.c:377:23: note: ‘elf_fd.fd’ was declared here
-  377 |         struct elf_fd elf_fd;
-      |                       ^~~~~~
-```
+From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
+Date: Tue, 13 Aug 2024 10:42:25 -0700
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel...
+> git tree:       net
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13da25d3980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+> dashboard link: https://syzkaller.appspot.com/bug?extid=e0bd4e4815a910c0daa8
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
 
-In reality, our use is fine, it's just that GCC doesn't model errno
-here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly
-by initializing elf_fd.fd to -1 and elf_fd.elf to NULL.
+kstrdup() failed due to fault injection.
 
-I've done this in two other functions as well given it could easily
-occur there too (same access/use pattern).
+We may want to change the WARN_ON(1) in these functions
+to net_warn_ratelimited() as we do so in do_setlink().
 
-Link: https://gcc.gnu.org/PR114952
-Signed-off-by: Sam James <sam@gentoo.org>
----
-v4: Initialize elf and fd members in elf_open to avoid meddling with callers.
+  * __dev_change_net_namespace
+  * cfg802154_switch_netns
+  * cfg80211_switch_netns()
 
- tools/lib/bpf/elf.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
-index c92e02394159e..b5ab1cb13e5ea 100644
---- a/tools/lib/bpf/elf.c
-+++ b/tools/lib/bpf/elf.c
-@@ -28,6 +28,9 @@ int elf_open(const char *binary_path, struct elf_fd *elf_fd)
- 	int fd, ret;
- 	Elf *elf;
- 
-+	elf_fd->elf = NULL;
-+	elf_fd->fd = -1;
-+
- 	if (elf_version(EV_CURRENT) == EV_NONE) {
- 		pr_warn("elf: failed to init libelf for %s\n", binary_path);
- 		return -LIBBPF_ERRNO__LIBELF;
--- 
-2.45.2
-
+[  141.438766][ T8054] FAULT_INJECTION: forcing a failure.
+[  141.438766][ T8054] name failslab, interval 1, probability 0, space 0, times 0
+[  141.453868][ T8054] CPU: 1 UID: 0 PID: 8054 Comm: syz.0.839 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
+[  141.464514][ T8054] Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+[  141.474602][ T8054] Call Trace:
+[  141.477906][ T8054]  <TASK>
+[  141.480854][ T8054]  dump_stack_lvl+0x241/0x360
+[  141.507418][ T8054]  should_fail_ex+0x3b0/0x4e0
+[  141.512110][ T8054]  should_failslab+0xac/0x100
+[  141.516785][ T8054]  __kmalloc_node_track_caller_noprof+0xda/0x440
+[  141.523098][ T8054]  ? device_rename+0xb5/0x1b0
+[  141.527767][ T8054]  kstrdup+0x3a/0x80
+[  141.531651][ T8054]  device_rename+0xb5/0x1b0
+[  141.536142][ T8054]  cfg802154_switch_netns+0x1df/0x390
+[  141.541523][ T8054]  nl802154_wpan_phy_netns+0x13d/0x210
+[  141.546984][ T8054]  genl_rcv_msg+0xb14/0xec0
+[...]
+[  141.801010][ T8054]  </TASK>
+[  141.865238][ T8054] ------------[ cut here ]------------
+[  141.871127][ T8054] WARNING: CPU: 1 PID: 8054 at net/ieee802154/core.c:258 cfg802154_switch_netns+0x37f/0x390
 
