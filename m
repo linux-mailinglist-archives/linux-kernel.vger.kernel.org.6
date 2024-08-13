@@ -1,219 +1,132 @@
-Return-Path: <linux-kernel+bounces-284615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CEF95031B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A1695031D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE98B281C68
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C6A282000
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A86E19ADAD;
-	Tue, 13 Aug 2024 10:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECAD419B3EA;
+	Tue, 13 Aug 2024 10:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="moSxF8sf"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BT1RWm05"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF819A2AE;
-	Tue, 13 Aug 2024 10:57:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B66B19A2BD;
+	Tue, 13 Aug 2024 10:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546656; cv=none; b=DP8mL51FJJ1OlhBeGf2wt86uLnarb2O2/AAs5NbLJ4PX9ApV5Ew3NOVp8Pbz6La1N3IK0bKiyIVfnzmOO9XMkZk6qxTBDVWRAQ3xqirhOQgSrZhbZukpBrdQoU8XMqbgew4t5utjSi/uQkuuwVk+P0KKSCdCHeQO5KpxmzfnZMA=
+	t=1723546667; cv=none; b=rVJvwntTzq4qioqs9rj5tH3//p+rXZMxxh62Q+Oq5BmGpP1T0+o5NBY1WozrOuc6ADWK1zTIz0yRwW+xEaZp6LCyaI87ESdlHwA7fFaKHUt5puVqeaA97nBzDZ7t/j51ZMSJGqTN5Tfse2yZEOnTgWeap/XDpIJpBX997cMJXaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546656; c=relaxed/simple;
-	bh=mx050o4jCRlSnjcrqLzEeH8cgw5cGnvTCmlBHag64iA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pLk+PM/NzpyOIOD9UYiQji0MwjPrPMH20Wbwm0ocgoxSrNGrFkEljo3zDFhW+DYs2lF0DgLThq53Im/GtyDwtkOOww7Cw8MkI4gkT/RZnp5dosRQETtZ0x1xPBQlBwnVSBle7kpXWm/zsWk2R0nZGb+PWFJX/uJ32UeAwr9e6lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=moSxF8sf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DF6C4AF13;
-	Tue, 13 Aug 2024 10:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723546656;
-	bh=mx050o4jCRlSnjcrqLzEeH8cgw5cGnvTCmlBHag64iA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=moSxF8sfqTUhuoAuvAoyuy03WLfuvBxLbECNkNdILCexNjkpmoCVbDpM8zsqYbkrj
-	 HQ5haQWDWvmbF+B4KxBpZ95qphVaikxnnOv3kLS0WRmZmwnFYCRBHG8bVkE1kPlZ2N
-	 MH2YbrJZe273F0qJc+S01QKY40BTt0PIPfgcHx6znS1/IF5shkagq3Un0LY6oMiuw0
-	 eKkiLJK636v1vPERvdRUYYixy6b/f67mdwCeDlYwXB2G6q34a5nImvrcLGO54zMa4Q
-	 y3SVo/wsxWhiYS+R1rUl0NcO4iA/IgHquUGIPgNkDKKb5ZslvEcmmp+Vf18NDUa8tc
-	 vLG9jKy8Z58Yw==
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so5687186a12.3;
-        Tue, 13 Aug 2024 03:57:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUKnigQATalhkmtAlj5Ko1apoXnGHF3vmS1PVADJZ4h5lhIwQvdbB/QNiV8B6V23SfUNF/uUseNtEmK8FUI8jRLkmi/Ff1IczkoH9TIe7KDDbRz1QhQKFL/t/58EfL2EggyuoXPHz1Nxzk=
-X-Gm-Message-State: AOJu0YzkzTbQLMISOw1UzLRFLhnvFU1IOLfHA9LW7QcFilRHH5EwF21D
-	L32NVvazKeH1Kw1AHtc79b1w8dWIsU/r5Qqg87Qj5WP1oISQMot+naX9hvQcVNRChyuHgsTjGmU
-	PFmXuICw+KW5Q1oZzRwsh5hwPK1g=
-X-Google-Smtp-Source: AGHT+IF0VOqfA+Tl46cH7aory7plXaIpyYQMWNWVLRdTqw16VPAQFUN5+KhHyOBZFhBvF8dop4sdnE0EDJwK6gKKZb4=
-X-Received: by 2002:a17:906:c153:b0:a7a:a33e:47cc with SMTP id
- a640c23a62f3a-a80ed2d1779mr212590466b.59.1723546654537; Tue, 13 Aug 2024
- 03:57:34 -0700 (PDT)
+	s=arc-20240116; t=1723546667; c=relaxed/simple;
+	bh=V5hl2VkMO6rgdQk2s5zwqazwuUp62vPKP4mkTn7a+b8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=To5YyzNHi3G/50BoI7x7q+kMiyuJ1uNzE6Q6GPZ7I+VwKXz0lSnzAGQ1WSj9KRMOMpo1XjAkccvcLThI4JiIA6dRzwxhSn9KrESyabDiLQsM692aoMiqLhUmkHjGgwds9P76vEWOoaV6O+ztSLEVMVkHVOSwN62wnKVpqRlXJ2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BT1RWm05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3ABC4AF09;
+	Tue, 13 Aug 2024 10:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723546666;
+	bh=V5hl2VkMO6rgdQk2s5zwqazwuUp62vPKP4mkTn7a+b8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BT1RWm051pHj7rei2TztKCZxk4OEok3dlUFAOjt4PMPW/KTXt74lFYAi3VqkMixu/
+	 jaAGH3tbYJfxIIg/jrU2/Qjov2CajGBhQrGuz8GzhlRsvQ3WW1hypcIjcDt0Ge+gx3
+	 Wrn0S57OcET5z7/IbDXfVMuisCUNEed2PVO14dxc=
+Date: Tue, 13 Aug 2024 12:57:43 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: quic_zijuhu <quic_zijuhu@quicinc.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+	Timur Tabi <timur@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux1394-devel@lists.sourceforge.net, netdev@vger.kernel.org
+Subject: Re: [PATCH 2/5] driver core: Introduce an API
+ constify_device_find_child_helper()
+Message-ID: <2024081311-mortality-opal-cf0f@gregkh>
+References: <20240811-const_dfc_prepare-v1-0-d67cc416b3d3@quicinc.com>
+ <20240811-const_dfc_prepare-v1-2-d67cc416b3d3@quicinc.com>
+ <2024081314-marbling-clasp-442a@gregkh>
+ <3f7e9969-5285-4dba-b16e-65c6b10ee89a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
-In-Reply-To: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Tue, 13 Aug 2024 11:56:57 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5jwR75FwT213yteX5m=5G8ehKmnKxv=xYXbY+UuhP+qQ@mail.gmail.com>
-Message-ID: <CAL3q7H5jwR75FwT213yteX5m=5G8ehKmnKxv=xYXbY+UuhP+qQ@mail.gmail.com>
-Subject: Re: [PATCH v2] btrfs: reduce chunk_map lookups in btrfs_map_block
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3f7e9969-5285-4dba-b16e-65c6b10ee89a@quicinc.com>
 
-On Tue, Aug 13, 2024 at 11:49=E2=80=AFAM Johannes Thumshirn <jth@kernel.org=
-> wrote:
->
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
->
-> Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() i=
-n
-> btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
-> to be able to calculate the number of copies.
->
-> So split out the code getting the number of copies from btrfs_num_copies(=
-)
-> into a helper called btrfs_chunk_map_num_copies() and directly call it
-> from btrfs_map_block() and btrfs_num_copies().
->
-> This saves us one rbtree lookup per btrfs_map_block() invocation.
->
-> Reviewed-by: Qu Wenruo <wqu@suse.com>
-> Reviewed-by: Filipe Manana <fdmanana@suse.com>
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
-> Changes in v2:
-> - Added Reviewed-bys
-> - Reflowed comments
-> - Moved non RAID56 cases to the end without an if
-> Link to v1:
-> https://lore.kernel.org/all/20240812165931.9106-1-jth@kernel.org/
->
->  fs/btrfs/volumes.c | 58 +++++++++++++++++++++++++---------------------
->  1 file changed, 32 insertions(+), 26 deletions(-)
->
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index e07452207426..796f6350a017 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -5781,38 +5781,44 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info=
- *fs_info)
->         write_unlock(&fs_info->mapping_tree_lock);
->  }
->
-> +static int btrfs_chunk_map_num_copies(struct btrfs_chunk_map *map)
+On Tue, Aug 13, 2024 at 06:50:04PM +0800, quic_zijuhu wrote:
+> On 8/13/2024 5:45 PM, Greg Kroah-Hartman wrote:
+> > On Sun, Aug 11, 2024 at 08:18:08AM +0800, Zijun Hu wrote:
+> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>
+> >> Introduce constify_device_find_child_helper() to replace existing
+> >> device_find_child()'s usages whose match functions will modify
+> >> caller's match data.
+> > 
+> > Ick, that's not a good name, it should be "noun_verb" with the subsystem being on the prefix always.
+> > 
+> okay, got it.
+> 
+> is it okay to use device_find_child_mut() suggested by Przemek Kitszel ?
 
-Same as commented before, can be const.
+No, just switch all callers over to be const and keep the same name.
 
-> +{
-> +       enum btrfs_raid_types index =3D btrfs_bg_flags_to_raid_index(map-=
->type);
-> +
-> +       if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-> +               return 2;
-> +
-> +       /*
-> +        * There could be two corrupted data stripes, we need to loop
-> +        * retry in order to rebuild the correct data.
-> +        *
-> +        * Fail a stripe at a time on every retry except the stripe
-> +        * under reconstruction.
-> +        */
-> +       if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-> +               return map->num_stripes;
-> +
-> +       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
-> +       return btrfs_raid_array[index].ncopies;
-> +}
-> +
->  int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len=
-)
->  {
->         struct btrfs_chunk_map *map;
-> -       enum btrfs_raid_types index;
-> -       int ret =3D 1;
-> +       int ret;
->
->         map =3D btrfs_get_chunk_map(fs_info, logical, len);
->         if (IS_ERR(map))
->                 /*
-> -                * We could return errors for these cases, but that could=
- get
-> -                * ugly and we'd probably do the same thing which is just=
- not do
-> -                * anything else and exit, so return 1 so the callers don=
-'t try
-> -                * to use other copies.
-> +                * We could return errors for these cases, but that
-> +                * could get ugly and we'd probably do the same thing
-> +                * which is just not do anything else and exit, so
-> +                * return 1 so the callers don't try to use other
-> +                * copies.
+> > But why is this even needed?  Device pointers are NOT const for the
+> > obvious reason that they can be changed by loads of different things.
+> > Trying to force them to be const is going to be hard, if not impossible.
+> > 
+> 
+> [PATCH 3/5] have more discussion about these questions with below link:
+> https://lore.kernel.org/all/8b8ce122-f16b-4207-b03b-f74b15756ae7@icloud.com/
+> 
+> 
+> The ultimate goal is to make device_find_child() have below prototype:
+> 
+> struct device *device_find_child(struct device *dev, const void *data,
+> 		int (*match)(struct device *dev, const void *data));
+> 
+> Why ?
+> 
+> (1) It does not make sense, also does not need to, for such device
+> finding operation to modify caller's match data which is mainly
+> used for comparison.
+> 
+> (2) It will make the API's match function parameter have the same
+> signature as all other APIs (bus|class|driver)_find_device().
+> 
+> 
+> My idea is that:
+> use device_find_child() for READ only accessing caller's match data.
+> 
+> use below API if need to Modify caller's data as
+> constify_device_find_child_helper() does.
+> int device_for_each_child(struct device *dev, void *data,
+>                     int (*fn)(struct device *dev, void *data));
+> 
+> So the The ultimate goal is to protect caller's *match data* @*data  NOT
+> device @*dev.
 
-My previous comment about reformatting was just for the comment that
-was moved, the one now inside btrfs_chunk_map_num_copies().
-For this one I don't think we should do it, as we aren't moving it
-around or changing its content.
+Ok, sorry, I was confused.
 
-It's just confusing to have this sort of unrelated change mixed in.
+thanks,
 
-Thanks.
-
->                  */
->                 return 1;
->
-> -       index =3D btrfs_bg_flags_to_raid_index(map->type);
-> -
-> -       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
-> -       if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
-> -               ret =3D btrfs_raid_array[index].ncopies;
-> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-> -               ret =3D 2;
-> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-> -               /*
-> -                * There could be two corrupted data stripes, we need
-> -                * to loop retry in order to rebuild the correct data.
-> -                *
-> -                * Fail a stripe at a time on every retry except the
-> -                * stripe under reconstruction.
-> -                */
-> -               ret =3D map->num_stripes;
-> +       ret =3D btrfs_chunk_map_num_copies(map);
->         btrfs_free_chunk_map(map);
->         return ret;
->  }
-> @@ -6462,14 +6468,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->         io_geom.stripe_index =3D 0;
->         io_geom.op =3D op;
->
-> -       num_copies =3D btrfs_num_copies(fs_info, logical, fs_info->sector=
-size);
-> -       if (io_geom.mirror_num > num_copies)
-> -               return -EINVAL;
-> -
->         map =3D btrfs_get_chunk_map(fs_info, logical, *length);
->         if (IS_ERR(map))
->                 return PTR_ERR(map);
->
-> +       num_copies =3D btrfs_chunk_map_num_copies(map);
-> +       if (io_geom.mirror_num > num_copies)
-> +               return -EINVAL;
-> +
->         map_offset =3D logical - map->start;
->         io_geom.raid56_full_stripe_start =3D (u64)-1;
->         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
-> --
-> 2.43.0
->
->
+greg k-h
 
