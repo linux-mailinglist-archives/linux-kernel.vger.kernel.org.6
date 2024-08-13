@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-284209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D72994FE7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:17:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B40694FE7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:17:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743E11C22A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:17:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1FC1C22AB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFDB6770E2;
-	Tue, 13 Aug 2024 07:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017C213A27E;
+	Tue, 13 Aug 2024 07:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ewMWNSmZ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="h5a21ssW"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OGclVwcA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="rZBogA4b"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE1056766;
-	Tue, 13 Aug 2024 07:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A43D132464;
+	Tue, 13 Aug 2024 07:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533436; cv=none; b=FPU0TLpCrAEhqD5XsfTSh32Q7wL3SE5cI4EsffVXuwLKNZTHnLEEkjmXA/VuqhjsU8jVTETe/y/BTpSdXszH0IktxWBCsM6iavuiCb/PHJLulVyjP0jDx5xxFl6/knaMaWidw7P+mCSpg/FkfTModt+8JFlC6qzPdwr4EDxFRq8=
+	t=1723533442; cv=none; b=b9KxZY3RKp/2TfbRodsiH1XVs0IhyLsGqN2IJf6swUqKlMnKI82Q8sYMhhtiELEiJnGqaxUSlV8O6MYiENw6H6fuBKOFru1Bjw4X6HdJOQgoyAhOVbs0nccYUExGwj92Rvmp8SkUoIQcYAjIbl+Hoh3UoKxD0YNW7nrMRsk/7cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533436; c=relaxed/simple;
-	bh=yN5hciNCtrPYkD40AnFPqU1ClpazLUxvTKGvjfEfBSw=;
+	s=arc-20240116; t=1723533442; c=relaxed/simple;
+	bh=fiYkfZLpbpthrE0Yv932tHYaCq6iHiUCyjL7gRXQ/fY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jcHXUJeMuvFKl7YYNqA1zPcSljTo5dCJpD7pkv+cvWCKVPYYT2EW5ZXAZmIEZYEkTgyavVLJxoaul870+TMRRYA+CLUwB3B8Egfyu5M6FY2j3OFUqeN1wU1xAxV9iEI+AqlpOwxKuxNrGDq7xUoeEBEImahwVyBTgfSzod06484=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ewMWNSmZ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=h5a21ssW reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	 MIME-Version; b=PuffEsHO9og7RRXJVG9Ii23g5xM7MkKrW8qpNZLxmlTEXYmCAtx1PHleBUr9PkUNxZlFdUV5KhVK/FTc0Xr6GqPY/yuel46s9JxiCih4/fSJtAJZhYP4e+VLumERiseYfGaKVdjeCFLyt6XAg19rDx90WqHdNjSiJrsp9qJ+Ukw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OGclVwcA; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=rZBogA4b reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723533434; x=1755069434;
+  t=1723533439; x=1755069439;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CAoIspGxuFawan3Rq9OWHfZxHd5dmwSq3gMPV66B9Uo=;
-  b=ewMWNSmZACigFyK/KXA2wRzlzhRla4TY/nXbH02WyveK1yplh98LznIM
-   KMAxj5gdQ25R8AeG5bDMf4T2BBpNYS8FD5Scb5tuiFf4ufrUlPuJSgMa9
-   6FiPOA7IoWFFnns0CnIYyQ6kKLk89yzdm9PUtrE6ImuH/k9r8jqsuw3SA
-   tDPMpTcEBfoJKHLHHTfnko6Hslf3Ayg+sdCWH0JG2AdEfklPuOjKckoNs
-   Z8uStQFzY4eYUAXNGgQHCcA35QELpx5o8VoK1BIMNOMWvcnyaX0B2+6/9
-   ovhhy1zvkQHnfqFFYsA1so/x3VBoBMD8g1Px0xJztcm7mfSXRplZJWKa6
-   w==;
-X-CSE-ConnectionGUID: iw0N9FErRoSNQrXp1EyGUQ==
-X-CSE-MsgGUID: JqynubtMTmyvgjAFwo0ZgQ==
+  bh=QhjLcigutvds5/oUPw2rkEjfCNEIlIQloXIvrY/LJFM=;
+  b=OGclVwcAtpZ2EhAM3sVLqUyTKfDPmDAR2KKcLklL0cYd7ZjZxLejRAjW
+   tT9geoWwn/D9iXecH1KVLnquTjd5MjlI9td+r/xrQFyRY2JMl+eoUUUMX
+   kYf6XGYSTwqIe+6ZMc6FPOS5BIiji5AHdETVd0Rbu13n19BKadgrOys8j
+   rxCxNh9C2ycdK+2wHGNixjUPKdi9MxsVjPbjZctuLASj7k2OoQH15xUUa
+   MYfA61b0+Uec6V2Xfwl33oSlniaaUzqhfepUh/9RX4PK0qOJRhLcC9zDr
+   WneplhXbU7qTP/y6UsU/hrmt93ONQaEK+srgCOfCueKHDKGUSrBxyJq/8
+   A==;
+X-CSE-ConnectionGUID: FPzBX33+RyW1wbHq0AUy8Q==
+X-CSE-MsgGUID: vaNTAS9JTfOzvuuV+7L1uQ==
 X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
-   d="scan'208";a="38375833"
+   d="scan'208";a="38375835"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Aug 2024 09:17:12 +0200
-X-CheckPoint: {66BB0878-13-E9ED6009-C4B0BEC8}
-X-MAIL-CPID: 0D6E200814FB3F5FE839F13136258E73_3
-X-Control-Analysis: str=0001.0A782F19.66BB0878.0171,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 16B7216A128;
-	Tue, 13 Aug 2024 09:17:08 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 13 Aug 2024 09:17:17 +0200
+X-CheckPoint: {66BB087D-9-E9ED6009-C4B0BEC8}
+X-MAIL-CPID: 54C7D845C47E43E71E4CBC4EF74F6F05_3
+X-Control-Analysis: str=0001.0A782F17.66BB087D.0086,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9206A16423A;
+	Tue, 13 Aug 2024 09:17:12 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723533428; h=from:subject:date:message-id:to:cc:mime-version:
+	s=dkim; t=1723533433; h=from:subject:date:message-id:to:cc:mime-version:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=CAoIspGxuFawan3Rq9OWHfZxHd5dmwSq3gMPV66B9Uo=;
-	b=h5a21ssWuuqTiwHmS2kbsyeit6aerFjmppUrR+4QjYuAHWmGO8URg2gmMNTB38y3k/0kej
-	fnCkxP9LfeL34vENO8O0uupoYfcaCH3KEel9rjo4udxdcpvVIAidK4GS1SB+Rp6NUSK+8/
-	kmfutg8r5SpXGEN2HMLr7BVyibZ0K5ueDc2PFkBSDP639fB7i5D/ry+a8H1JFuDmc07SBn
-	Do8O00fmE+XkP7P+JcB9Z6bWvasnw23QHbUNKBgKIUZHMDniXWlR1Q3GwF1vShK7uVn+Nt
-	Fmu6SsxptsXI2N0tAPYCHOfu6TZDUuEQSXjZliMQUwEpKyKEA4WmvKjRyyqbWA==
+	bh=QhjLcigutvds5/oUPw2rkEjfCNEIlIQloXIvrY/LJFM=;
+	b=rZBogA4bsO9f6Hy8AWLix3li/1o90ShFN2fyYa25GD4WEIX5EfMNNFxmSdN6FgxN62Y+rc
+	7EjEIWpd5aJTI/mxVGgt4guusDoNYH81rIwiREpSdN5FwGmBYqnaqBR2N2aUXFBmCqHIKU
+	S44MqawUYffEq0XaeRuqhW8YvdRrJDlobJDpuVY0c2L9tnR0O0ihv8Fu2ACL1JMDRSOe2j
+	LZAtcuaqML2l9/Lq7nVLRG4uSYnNoq3c/C6j3a2Pp0oTcxv5QvDnueAkaJzYQ/usTPxlYL
+	2Gis4cdibOfxZZXBOAjdtZbVHC5SmbaDEh7+w9nquNtkM6IfNZ0hL4s0nLkVYw==
 From: Max Merchel <Max.Merchel@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -77,9 +77,9 @@ Cc: Max Merchel <Max.Merchel@ew.tq-group.com>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] ARM: dts: tqma7: change licenses to use the same as imx7
-Date: Tue, 13 Aug 2024 09:16:27 +0200
-Message-Id: <20240813071637.72528-2-Max.Merchel@ew.tq-group.com>
+Subject: [PATCH 02/10] ARM: dts: tqma7: change copyright entry to current TQ Copyright style
+Date: Tue, 13 Aug 2024 09:16:28 +0200
+Message-Id: <20240813071637.72528-3-Max.Merchel@ew.tq-group.com>
 X-Mailer: git-send-email 2.33.0
 In-Reply-To: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
 References: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
@@ -92,81 +92,121 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-commit 241f76b24b6ea ("ARM: dts: imx: Switch to SPDX identifier")
-change licenses of imx7s.dtsi and imx7d.dtsi to
-"GPL-2.0-or-later OR MIT license".
-Change licenses to use the same licenses for tqma7 device trees.
+Replace developer-specific, personal email addresses by mailing list addresses
+while retaining the author.
 
 Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
 ---
- arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi   | 2 +-
- arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi  | 2 +-
- arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts   | 2 +-
- arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi | 2 +-
- arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts   | 2 +-
- arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi   | 6 ++++--
+ arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi  | 6 ++++--
+ arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts   | 6 ++++--
+ arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi | 6 ++++--
+ arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts   | 6 ++++--
+ arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi | 6 ++++--
+ 6 files changed, 24 insertions(+), 12 deletions(-)
 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi b/arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi
-index 52869e68f833..a25376296f64 100644
+index a25376296f64..5aa3e14b3b87 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Include file for TQ-Systems MBa7 carrier board.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  *
+  * Note: This file does not include nodes for all peripheral devices.
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi b/arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi
-index 028961eb7108..95602ed1e6c5 100644
+index 95602ed1e6c5..3dce6afb61bb 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Include file for TQ-Systems TQMa7x boards with full mounted PCB.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  */
+ 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts b/arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts
-index 0443faa3dfae..e9a49777d19d 100644
+index e9a49777d19d..a499ab5a96b6 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts
 +++ b/arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Source for TQ-Systems TQMa7D board on MBa7 carrier board.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  */
+ 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi b/arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi
-index 3ee2017c1ab3..a7c701bb56b4 100644
+index a7c701bb56b4..119b6b1e990c 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Include file for TQ-Systems TQMa7D board with NXP i.MX7Dual SoC.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  */
+ 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts b/arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts
-index 8e4cf589c92c..cdcb4097ce8c 100644
+index cdcb4097ce8c..17ea082729e1 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts
 +++ b/arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Source for TQ-Systems TQMa7S board on MBa7 carrier board.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  */
+ 
 diff --git a/arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi b/arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi
-index 7a190fdb2d30..125db5cd1528 100644
+index 125db5cd1528..6692742b358b 100644
 --- a/arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi
 +++ b/arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi
-@@ -1,4 +1,4 @@
--// SPDX-License-Identifier: GPL-2.0 OR X11
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+@@ -2,8 +2,10 @@
  /*
   * Device Tree Include file for TQ-Systems TQMa7S board with NXP i.MX7Solo SoC.
   *
+- * Copyright (C) 2016 TQ-Systems GmbH
+- * Author: Markus Niebel <Markus.Niebel@tq-group.com>
++ * Copyright (c) 2016 TQ-Systems GmbH <linux@ew.tq-group.com>,
++ * D-82229 Seefeld, Germany.
++ * Author: Markus Niebel
++ *
+  * Copyright (C) 2019 Bruno Thomsen <bruno.thomsen@gmail.com>
+  */
+ 
 -- 
 2.33.0
 
