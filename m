@@ -1,316 +1,348 @@
-Return-Path: <linux-kernel+bounces-284001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7DD94FBC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:23:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0CE694FBC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 915D91F21E2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:23:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D7D1B21E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C16313AF2;
-	Tue, 13 Aug 2024 02:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6290717545;
+	Tue, 13 Aug 2024 02:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="JsRtZ8RM"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="eEur34Oz"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FBF15A8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E14015A8;
+	Tue, 13 Aug 2024 02:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723515814; cv=none; b=Yjg0GZLoU+fIk1DzXGsV5SpnCOmU9vc+5dFB0RUnF5kQf4oOHvi5r1rMnFHMifCDlOkRW5RnxDRpV2cylvCicx19mK4O97Z0UkUVjd8U3fnEy2JXsb/U7rl4MWT7n3HTOUZAzlaKVQiXUo420z714HqIe/aRh06PWutp/6b9zxg=
+	t=1723516166; cv=none; b=I6GwTtNUHmHE5wOY0Um2/IarTxo82WzwuCX48NxIpjevS+spmo3QhfwRYD2POA5oy/JNqUqUdelLTN+QY53W0Xc3jYaIZTVVE4m05s64JDmMpagAq37KWQQAHMnIhlI4w962P373T8/1nlNot4oyQ/Nf8eq0NnBn9dLre6q+OAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723515814; c=relaxed/simple;
-	bh=CmEqrDybynqqL8qD9fwB6EPvcKg0uWHy3O+RXX9wopM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ACIs5NYo+6QQKyXqDNMob/cGrKo0Q/9tATeqPtl6tdHdAdACEVBfG30p00U9u5jgm5CB0fU84jnvVA0EDSf1cSjwy4Jie+j7Y8/QK1A/W4H6BSoV/Vk89yWHuDJ+RkNrRseR6txiee1LSogole1lNszTMvNYJgm6BlAWnbVvK0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=JsRtZ8RM; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 002a3fc2591b11ef9a4e6796c666300c-20240813
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=NYx9FHNUjfdW5MSmPrzW9lgHzLnEs6Sa+hTWUNOhjL8=;
-	b=JsRtZ8RM5RU2L+hVu029VFEdq+kggNpM5vJCEA10ErIrBFef+e1iFZqkbAsHblfc1VieVI7CFr8yskhMoWWIWDbPJn+bripxKuSm+r+GwSrLYoSoMSOryQRjESE6nsNnUdXB1uWfN9mZVFANAxVYKaPhliJ+5us8I9e/V3gr/KU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:d106ae70-02a5-47ca-9121-f3577916f710,IP:0,U
-	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-30
-X-CID-META: VersionHash:6dc6a47,CLOUDID:aef30c3f-6019-4002-9080-12f7f4711092,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:2,IP:nil,UR
-	L:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:
-	1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: 002a3fc2591b11ef9a4e6796c666300c-20240813
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <shuijing.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 233601480; Tue, 13 Aug 2024 10:23:17 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 13 Aug 2024 10:23:16 +0800
-Received: from mszsdhlt06.gcn.mediatek.inc (10.16.6.206) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 13 Aug 2024 10:23:16 +0800
-From: Shuijing Li <shuijing.li@mediatek.com>
-To: <chunkuang.hu@kernel.org>, <p.zabel@pengutronix.de>, <airlied@gmail.com>,
-	<daniel@ffwll.ch>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <jitao.shi@mediatek.com>
-CC: <dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Shuijing Li
-	<shuijing.li@mediatek.com>
-Subject: [PATCH v6] drm/mediatek: dsi: Add dsi per-frame lp code for mt8188
-Date: Tue, 13 Aug 2024 10:22:51 +0800
-Message-ID: <20240813022315.18502-1-shuijing.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1723516166; c=relaxed/simple;
+	bh=qxykC2Boj0Z9Aj0YZhuHKcXe4DicZs+D51mT/ZyF/zE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=eSbGRQI9i8eNYZA16VIkEeC5U1WVuB+wzm192UtoHPuKZ+eE3G5O6lmvjynxHrUKcvoeVFMSJadvrJyGz65slitHuNZ7N2SGabZO5k8W3B8eTXNQIhN+2wN6/sHiyb8rSv4DmJNzmNHFXMDMRDZ8SLPxzPzTjc3oMTIQ4Nru/Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=eEur34Oz; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1723516151; x=1724120951; i=w_armin@gmx.de;
+	bh=EjDWZu/Lzer1DLgfBWbtMVkqWi33ymTduQ2E9KilLHQ=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=eEur34Ozlj3n/Hiq35OK31m2+JBagso5A3bLHifashR7qbnJBKrHpaRpugJSmcRl
+	 37Im6JRdjbotkMcU8qb220F17ZUUL7/Agg5N6VsIxRGp47hk7uIB68LFf78dD5E+R
+	 K9sJ56TiWYrrYxomVqbvZ/x4YEMCq+fY+TmsGd6pgiw23th3MPz9rKO1H5tqA9nSA
+	 EQr8QPDvE/8zRCRvswRdU2Cu+19Xm3p6J74iDtl+aDKk8odANGc/St+SdhTShTDUd
+	 LCmWsuSHSYMD0tjFLlg2VTVB2Y1L69vcYa0j1kgwhChh/nyGVkJuX28JECd4LVt7n
+	 Rtdk8FRKjShRxknbUw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1MdvmY-1s4uQb0MTe-00d0Kl; Tue, 13 Aug 2024 04:29:11 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: matan@svgalib.org,
+	ghostwind@gmail.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] platform/x86: lg-laptop: Add operation region support
+Date: Tue, 13 Aug 2024 04:29:03 +0200
+Message-Id: <20240813022903.20567-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.069000-8.000000
-X-TMASE-MatchedRID: RzvPREWj2HcwKP61E4rxu1VN8laWo90M5TpDO1WKs2mYQOVjVNfbbpOu
-	v4LVY2bFO+NwyBVe+HBIT4SOZxkibrGaAH5r9EhkhK8o4aoss8q+1Vx7rDn4r/k3SjZMcZFk9BQ
-	FWu9qPYZckfCAECj1GiN8DuhwooinL0W1btd8e57LtNJZxvPj1hG8SlV3e9LV31GU/N5W5BBb53
-	SJ0uOmmjFeXjrzLWaDf4eyKeT1hq1nPzp+oCPs8yNHByyOpYYC5TbwqVVpF+PvPjzagmh01OYHE
-	PaPco6bUjpSbEFN/xydZVUStkfgGWsV28ESZOe8kPoFsM336M7JV9WzHT2T5WI4wQ1Yq/d0GOmx
-	KvkU9Nj3cuxjGnQlwIAy6p60ZV628dnCdmtX28KtIWznhjjBtfoLR4+zsDTtqFhHt/jREakEjL6
-	3fz0OrKfIQlX7lQr797qzTR8oUxAiJh4QFUH9xlZca9RSYo/b
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.069000-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 7DEBCE6D96BEFE86668EA096D1ACAFA397E01EDBCD3E3B8451EC47FDE7BB8E552000:8
-X-MTK: N
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:+ltxM73CDi41HWHj7mPLY1S0LybX0cc6OsDj3vooGolyLocA89y
+ hRaYrqxPsz9u2BDWCAvnT3icOWUnCTkvdtCF1CPJ1FoIQ1TYlXjcpEa+J3Rzoa/D1PpV9PP
+ HumIIixz1H7ONvCJZLRsu53VR7dDlYn6iOpWOLDx5FlIxIFQhPMvQOG3zmJPonAusaVos1C
+ eY9slcP1eqpAHH6/hCOoQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AS9kP3Ze4co=;0HL8pS6z0rsZuH08hGzbqgOqZLY
+ gdUnTYDkTVSkF18MWLnhWPZ3IIehXiRRu3W5B26IuoF3P+vX6rpCIOLK18Je3cx85tD0ESYb8
+ 1OkKkqvXlGTTg3vAYpdvyqC1TrpDQ0xOKWTCK00wG5/mYXvtgzws1YAhNUO/h4O9FPZZw+DJW
+ uEvlBThYpgyzpnc7Wkkk+OPOqHZcUOlBEJpIYdKNHIR2LzX5K5XAoDOioEWRncqytYZUX+bVX
+ TuSxUxHagHqDo7U5Wj1xP4ntm/CJmc2Lyxl8na4qdJB1JcwrXAmULy+oUOaI7gy9Bxcztoew1
+ ly/+6zH+ztfHOf20Eyxv/pkP6l5n1ixmCAZFehDNsHnT+vu0smREz2ITzGoFudxkcC4TGFyds
+ POdi9vZElWH1Ij2lnh7lZl5den0mOWjTm6FMTvP0BGw+H8aKl28AMzoNXPVxA6dANqAVBeIEX
+ 2GNnxQbV9CdzRMmGq/ZQY20GGXER7g4jeDHfsFwGfh21IKB4CRXzHdfiNYUtYfZtrpKbc5jwm
+ QNHzqTv9nkA04koSaumPcc9PNWkRite/CnZf/zaHS0NbjJW4K2e1gsyWgqGW1alDuricBSIyS
+ YnRWln1SdzpDe68dNtWxmJiHH8eCo5t6KAt2inU8qImvnPkptuUeBrAiDC5MYHTYlNbTTidxh
+ J68awyN+SDUyBMrWxBg4gU+BkSTIojWRRrL31NTvOIsFeDo5RL9tZxuXcUiBN7UiVxkcgdhww
+ +hwa/Ys6fqsF7K/+CDafABWnRBySnJRNhQWqeoQ8RVs0RkM2G93dcn8GQ4OY3uq9lDpB1uzbo
+ AyJaP45aay/nZmHHLEFai28w==
 
-Adding the per-frame lp function of mt8188, which can keep HFP in HS and
-reduce the time required for each line to enter and exit low power.
-Per Frame LP:
-  |<----------One Active Frame-------->|
---______________________________________----___________________
-  ^HSA+HBP^^RGB^^HFP^^HSA+HBP^^RGB^^HFP^    ^HSA+HBP^^RGB^^HFP^
+The LEGX0820 ACPI device is expected to provide a custom operation
+region:
 
-Per Line LP:
-  |<---------------One Active Frame----------->|
---______________--______________--______________----______________
-  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^  ^HSA+HBP^^RGB^    ^HSA+HBP^^RGB^
+	OperationRegion (XIN1, 0x8F, Zero, 0x04B0)
+        Field (XIN1, AnyAcc, Lock, Preserve)
+        {
+            DMSG,   8,
+            HDAP,   8,
+            Offset (0x03),
+            AFNM,   8,
+            Offset (0x10),
+            P80B,   8,
+            P81B,   8,
+            P82B,   8,
+            P83B,   8,
+            P84B,   8,
+            P85B,   8,
+            P86B,   8,
+            P87B,   8,
+            Offset (0x20),
+            DTTM,   8,
+            TMP1,   8,
+            LTP1,   8,
+            HTP1,   8,
+            TMP2,   8,
+            LTP2,   8,
+            HTP2,   8,
+            Offset (0x3E8),
+            PMSG,   1600
+        }
 
-Signed-off-by: Shuijing Li <shuijing.li@mediatek.com>
----
-Changes in v6:
-Simplify the code per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240812070341.26053-1-shuijing.li@mediatek.com/
-Changes in v5:
-Fix code style issue and add per-line-lp function to be symmetrical with per-frame-lp.
-per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240801081144.22372-1-shuijing.li@mediatek.com/
-Changes in v4:
-Drop the code related to bllp_en and bllp_wc, adjust ps_wc to dsi->vm.hactive *
-dsi_buf_bpp.
-Changes in v3:
-Use function in bitfield.h and get value from phy timing, per suggestion
-from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240424091639.22759-1-shuijing.li@mediatek.com/
-Changes in v2:
-Use bitfield macros and add new function for per prame lp and improve
-the format, per suggestion from previous thread:
-https://patchwork.kernel.org/project/linux-mediatek/patch/20240314094238.3315-1-shuijing.li@mediatek.com/
----
- drivers/gpu/drm/mediatek/mtk_dsi.c | 158 +++++++++++++++++++++++++----
- 1 file changed, 139 insertions(+), 19 deletions(-)
+The PMSG field is used by AML code to log debug messages when DMSG is
+true. Since those debug messages are already logged using the standard
+ACPI Debug object, we set DMSG unconditionally to 0x00 and ignore any
+writes to PMSG.
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index b6e3c011a12d..940fc99cc87d 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -88,12 +88,15 @@
- #define DSI_HSA_WC		0x50
- #define DSI_HBP_WC		0x54
- #define DSI_HFP_WC		0x58
-+#define HFP_HS_VB_PS_WC	GENMASK(30, 16)
-+#define HFP_HS_EN		BIT(31)
- 
- #define DSI_CMDQ_SIZE		0x60
- #define CMDQ_SIZE			0x3f
- #define CMDQ_SIZE_SEL		BIT(15)
- 
- #define DSI_HSTX_CKL_WC		0x64
-+#define HSTX_CKL_WC			GENMASK(15, 2)
- 
- #define DSI_RX_DATA0		0x74
- #define DSI_RX_DATA1		0x78
-@@ -187,6 +190,7 @@ struct mtk_dsi_driver_data {
- 	bool has_shadow_ctl;
- 	bool has_size_ctl;
- 	bool cmdq_long_packet_ctl;
-+	bool support_per_frame_lp;
+The TMPx, LTPx, HTPx and AFNM fields are used to inform the driver when
+the temperature/(presumably) trip points/fan mode changes. This only
+happens when the DTTM flag is set.
+
+Unfortunately we have to implement support for this operation region
+because the AML codes uses code constructs like this one:
+
+	If (((\_SB.XINI.PLAV !=3D Zero) && (\_SB.XINI.DTTM !=3D Zero)))
+
+The PLAV field gets set to 1 when the driver registers its address space
+handler, so by default XIN1 should not be accessed.
+
+However ACPI does not use short-circuit evaluation when evaluating
+logical conditions. This causes the DTTM field to be accessed even
+when PLAV is 0, which results in an ACPI error.
+Since this check happens inside various thermal-related ACPI control
+methods, various thermal zone become unusable since any attempt to
+read their temperature results in an ACPI error.
+
+Fix this by providing support for this operation region. I suspect
+that the problem does not happen under Windows (which seemingly does
+not use short-circuit evaluation either) because the necessary driver
+comes preinstalled with the machine.
+
+Tested-by: Chris <ghostwind@gmail.com>
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+Changes since v1:
+ - attempts -> attempt
+ - sort defines in numerical order
+ - make lg_laptop_address_space_write() take a plain u64
+ - use BITS_PER_BYTE
+ - manually check fw_debug when handling fan mode updates
+=2D--
+ drivers/platform/x86/lg-laptop.c | 136 +++++++++++++++++++++++++++++++
+ 1 file changed, 136 insertions(+)
+
+diff --git a/drivers/platform/x86/lg-laptop.c b/drivers/platform/x86/lg-la=
+ptop.c
+index 9c7857842caf..55d31d4fefd6 100644
+=2D-- a/drivers/platform/x86/lg-laptop.c
++++ b/drivers/platform/x86/lg-laptop.c
+@@ -8,6 +8,9 @@
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+
+ #include <linux/acpi.h>
++#include <linux/bits.h>
++#include <linux/device.h>
++#include <linux/dev_printk.h>
+ #include <linux/dmi.h>
+ #include <linux/input.h>
+ #include <linux/input/sparse-keymap.h>
+@@ -31,6 +34,26 @@ MODULE_AUTHOR("Matan Ziv-Av");
+ MODULE_DESCRIPTION("LG WMI Hotkey Driver");
+ MODULE_LICENSE("GPL");
+
++static bool fw_debug;
++module_param(fw_debug, bool, 0);
++MODULE_PARM_DESC(fw_debug, "Enable printing of firmware debug messages");
++
++#define LG_ADDRESS_SPACE_ID			0x8F
++
++#define LG_ADDRESS_SPACE_DEBUG_FLAG_ADR		0x00
++#define LG_ADDRESS_SPACE_FAN_MODE_ADR		0x03
++
++#define LG_ADDRESS_SPACE_DTTM_FLAG_ADR		0x20
++#define LG_ADDRESS_SPACE_CPU_TEMP_ADR		0x21
++#define LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR	0x22
++#define LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR	0x23
++#define LG_ADDRESS_SPACE_MB_TEMP_ADR		0x24
++#define LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR	0x25
++#define LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR	0x26
++
++#define LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR	0x3E8
++#define LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR	0x5E8
++
+ #define WMI_EVENT_GUID0	"E4FB94F9-7F2B-4173-AD1A-CD1D95086248"
+ #define WMI_EVENT_GUID1	"023B133E-49D1-4E10-B313-698220140DC2"
+ #define WMI_EVENT_GUID2	"37BE1AC0-C3F2-4B1F-BFBE-8FDEAF2814D6"
+@@ -646,6 +669,107 @@ static struct platform_driver pf_driver =3D {
+ 	}
  };
- 
- struct mtk_dsi {
-@@ -426,7 +430,92 @@ static void mtk_dsi_ps_control(struct mtk_dsi *dsi, bool config_vact)
- 	writel(ps_val, dsi->regs + DSI_PSCTRL);
- }
- 
--static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+static void mtk_dsi_config_vdo_timing_per_frame_lp(struct mtk_dsi *dsi)
+
++static acpi_status lg_laptop_address_space_write(struct device *dev, acpi=
+_physical_address address,
++						 size_t size, u64 value)
 +{
-+	u32 horizontal_sync_active_byte;
-+	u32 horizontal_backporch_byte;
-+	u32 horizontal_frontporch_byte;
-+	u32 hfp_byte_adjust, v_active_adjust;
-+	u32 cklp_wc_min_adjust, cklp_wc_max_adjust;
-+	u32 dsi_tmp_buf_bpp;
-+	unsigned int lpx, da_hs_exit, da_hs_prep, da_hs_trail;
-+	unsigned int da_hs_zero, ps_wc, hs_vb_ps_wc;
-+	u32 v_active_roundup, hstx_cklp_wc;
-+	u32 hstx_cklp_wc_max, hstx_cklp_wc_min;
-+	struct videomode *vm = &dsi->vm;
++	u8 byte;
 +
-+	if (dsi->format == MIPI_DSI_FMT_RGB565)
-+		dsi_tmp_buf_bpp = 2;
-+	else
-+		dsi_tmp_buf_bpp = 3;
++	/* Ignore any debug messages */
++	if (address >=3D LG_ADDRESS_SPACE_DEBUG_MSG_START_ADR &&
++	    address <=3D LG_ADDRESS_SPACE_DEBUG_MSG_END_ADR)
++		return AE_OK;
 +
-+	da_hs_trail = dsi->phy_timing.da_hs_trail;
-+	ps_wc = dsi->vm.hactive * dsi_tmp_buf_bpp;
++	if (size !=3D sizeof(byte))
++		return AE_BAD_PARAMETER;
 +
-+	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE) {
-+		horizontal_sync_active_byte =
-+			vm->hsync_len * dsi_tmp_buf_bpp - 10;
-+		horizontal_backporch_byte =
-+			vm->hback_porch * dsi_tmp_buf_bpp - 10;
-+		hfp_byte_adjust = 12;
-+		v_active_adjust = 32 + horizontal_sync_active_byte;
-+		cklp_wc_min_adjust = 12 + 2 + 4 + horizontal_sync_active_byte;
-+		cklp_wc_max_adjust = 20 + 6 + 4 + horizontal_sync_active_byte;
-+	} else {
-+		horizontal_sync_active_byte = vm->hsync_len * dsi_tmp_buf_bpp - 4;
-+		horizontal_backporch_byte = (vm->hback_porch + vm->hsync_len) *
-+			dsi_tmp_buf_bpp - 10;
-+		cklp_wc_min_adjust = 4;
-+		cklp_wc_max_adjust = 12 + 4 + 4;
-+		if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
-+			hfp_byte_adjust = 18;
-+			v_active_adjust = 28;
-+		} else {
-+			hfp_byte_adjust = 12;
-+			v_active_adjust = 22;
-+		}
++	byte =3D value & 0xFF;
++
++	switch (address) {
++	case LG_ADDRESS_SPACE_FAN_MODE_ADR:
++		/*
++		 * The fan mode field is not affected by the DTTM flag, so we
++		 * have to manually check fw_debug.
++		 */
++		if (fw_debug)
++			dev_dbg(dev, "Fan mode set to mode %u\n", byte);
++
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TEMP_ADR:
++		dev_dbg(dev, "CPU temperature is %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TRIP_LOW_ADR:
++		dev_dbg(dev, "CPU lower trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_CPU_TRIP_HIGH_ADR:
++		dev_dbg(dev, "CPU higher trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TEMP_ADR:
++		dev_dbg(dev, "Motherboard temperature is %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TRIP_LOW_ADR:
++		dev_dbg(dev, "Motherboard lower trip point set to %u =C2=B0C\n", byte);
++		return AE_OK;
++	case LG_ADDRESS_SPACE_MB_TRIP_HIGH_ADR:
++		dev_dbg(dev, "Motherboard higher trip point set to %u =C2=B0C\n", byte)=
+;
++		return AE_OK;
++	default:
++		dev_notice_ratelimited(dev, "Ignoring write to unknown opregion address=
+ %llu\n",
++				       address);
++		return AE_OK;
 +	}
-+	horizontal_frontporch_byte = vm->hfront_porch * dsi_tmp_buf_bpp - hfp_byte_adjust;
-+	v_active_roundup = (v_active_adjust + horizontal_backporch_byte + ps_wc +
-+		horizontal_frontporch_byte) % dsi->lanes;
-+	if (v_active_roundup)
-+		horizontal_backporch_byte += dsi->lanes - v_active_roundup;
-+	hstx_cklp_wc_min = (DIV_ROUND_UP(cklp_wc_min_adjust, dsi->lanes) + da_hs_trail + 1)
-+		* dsi->lanes / 6 - 1;
-+	hstx_cklp_wc_max = (DIV_ROUND_UP((cklp_wc_max_adjust + horizontal_backporch_byte +
-+		ps_wc), dsi->lanes) + da_hs_trail + 1) * dsi->lanes / 6 - 1;
-+
-+	hstx_cklp_wc = FIELD_GET(HSTX_CKL_WC, readl(dsi->regs + DSI_HSTX_CKL_WC));
-+
-+	if (hstx_cklp_wc <= hstx_cklp_wc_min || hstx_cklp_wc >= hstx_cklp_wc_max) {
-+		hstx_cklp_wc = ((hstx_cklp_wc_min + hstx_cklp_wc_max) / 2);
-+
-+		/* Check if the new setting is valid */
-+		if (hstx_cklp_wc <= hstx_cklp_wc_min ||	hstx_cklp_wc >= hstx_cklp_wc_max)
-+			DRM_WARN("Wrong setting of hstx_ckl_wc\n");
-+
-+		hstx_cklp_wc = FIELD_PREP(HSTX_CKL_WC, hstx_cklp_wc);
-+		writel(hstx_cklp_wc, dsi->regs + DSI_HSTX_CKL_WC);
-+	}
-+
-+	lpx = dsi->phy_timing.lpx;
-+	da_hs_exit = dsi->phy_timing.da_hs_exit;
-+	da_hs_prep = dsi->phy_timing.da_hs_prepare;
-+	da_hs_zero = dsi->phy_timing.da_hs_zero;
-+
-+	hs_vb_ps_wc = ps_wc -
-+		(lpx + da_hs_exit + da_hs_prep + da_hs_zero + 2)
-+		* dsi->lanes;
-+	horizontal_frontporch_byte = FIELD_PREP(HFP_HS_EN, 1) |
-+		FIELD_PREP(HFP_HS_VB_PS_WC, hs_vb_ps_wc) |
-+		horizontal_frontporch_byte;
-+
-+	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
-+	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
-+	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
 +}
 +
-+static void mtk_dsi_config_vdo_timing_per_line_lp(struct mtk_dsi *dsi)
++static acpi_status lg_laptop_address_space_read(struct device *dev, acpi_=
+physical_address address,
++						size_t size, u64 *value)
++{
++	if (size !=3D 1)
++		return AE_BAD_PARAMETER;
++
++	switch (address) {
++	case LG_ADDRESS_SPACE_DEBUG_FLAG_ADR:
++		/* Debug messages are already printed using the standard ACPI Debug obj=
+ect */
++		*value =3D 0x00;
++		return AE_OK;
++	case LG_ADDRESS_SPACE_DTTM_FLAG_ADR:
++		*value =3D fw_debug;
++		return AE_OK;
++	default:
++		dev_notice_ratelimited(dev, "Attempt to read unknown opregion address %=
+llu\n",
++				       address);
++		return AE_BAD_PARAMETER;
++	}
++}
++
++static acpi_status lg_laptop_address_space_handler(u32 function, acpi_phy=
+sical_address address,
++						   u32 bits, u64 *value, void *handler_context,
++						   void *region_context)
++{
++	struct device *dev =3D handler_context;
++	size_t size;
++
++	if (bits % BITS_PER_BYTE)
++		return AE_BAD_PARAMETER;
++
++	size =3D bits / BITS_PER_BYTE;
++
++	switch (function) {
++	case ACPI_READ:
++		return lg_laptop_address_space_read(dev, address, size, value);
++	case ACPI_WRITE:
++		return lg_laptop_address_space_write(dev, address, size, *value);
++	default:
++		return AE_BAD_PARAMETER;
++	}
++}
++
++static void lg_laptop_remove_address_space_handler(void *data)
++{
++	struct acpi_device *device =3D data;
++
++	acpi_remove_address_space_handler(device->handle, LG_ADDRESS_SPACE_ID,
++					  &lg_laptop_address_space_handler);
++}
++
+ static int acpi_add(struct acpi_device *device)
  {
- 	u32 horizontal_sync_active_byte;
- 	u32 horizontal_backporch_byte;
-@@ -436,7 +525,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	u32 dsi_tmp_buf_bpp, data_phy_cycles;
- 	u32 delta;
- 	struct mtk_phy_timing *timing = &dsi->phy_timing;
--
- 	struct videomode *vm = &dsi->vm;
- 
- 	if (dsi->format == MIPI_DSI_FMT_RGB565)
-@@ -444,16 +532,6 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	else
- 		dsi_tmp_buf_bpp = 3;
- 
--	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
--	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
--	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
--	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
--
--	if (dsi->driver_data->has_size_ctl)
--		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
--		       FIELD_PREP(DSI_WIDTH, vm->hactive),
--		       dsi->regs + DSI_SIZE_CON);
--
- 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
- 
- 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-@@ -499,6 +577,26 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	writel(horizontal_sync_active_byte, dsi->regs + DSI_HSA_WC);
- 	writel(horizontal_backporch_byte, dsi->regs + DSI_HBP_WC);
- 	writel(horizontal_frontporch_byte, dsi->regs + DSI_HFP_WC);
-+}
+ 	struct platform_device_info pdev_info =3D {
+@@ -653,6 +777,7 @@ static int acpi_add(struct acpi_device *device)
+ 		.name =3D PLATFORM_NAME,
+ 		.id =3D PLATFORM_DEVID_NONE,
+ 	};
++	acpi_status status;
+ 	int ret;
+ 	const char *product;
+ 	int year =3D 2017;
+@@ -660,6 +785,17 @@ static int acpi_add(struct acpi_device *device)
+ 	if (pf_device)
+ 		return 0;
+
++	status =3D acpi_install_address_space_handler(device->handle, LG_ADDRESS=
+_SPACE_ID,
++						    &lg_laptop_address_space_handler,
++						    NULL, &device->dev);
++	if (ACPI_FAILURE(status))
++		return -ENODEV;
 +
-+static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-+{
-+	struct videomode *vm = &dsi->vm;
++	ret =3D devm_add_action_or_reset(&device->dev, lg_laptop_remove_address_=
+space_handler,
++				       device);
++	if (ret < 0)
++		return ret;
 +
-+	writel(vm->vsync_len, dsi->regs + DSI_VSA_NL);
-+	writel(vm->vback_porch, dsi->regs + DSI_VBP_NL);
-+	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-+	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-+
-+	if (dsi->driver_data->has_size_ctl)
-+		writel(FIELD_PREP(DSI_HEIGHT, vm->vactive) |
-+			FIELD_PREP(DSI_WIDTH, vm->hactive),
-+			dsi->regs + DSI_SIZE_CON);
-+
-+	if (dsi->driver_data->support_per_frame_lp)
-+		mtk_dsi_config_vdo_timing_per_frame_lp(dsi);
-+	else
-+		mtk_dsi_config_vdo_timing_per_line_lp(dsi);
- 
- 	mtk_dsi_ps_control(dsi, false);
- }
-@@ -1197,6 +1295,7 @@ static const struct mtk_dsi_driver_data mt8188_dsi_driver_data = {
- 	.has_shadow_ctl = true,
- 	.has_size_ctl = true,
- 	.cmdq_long_packet_ctl = true,
-+	.support_per_frame_lp = true,
- };
- 
- static const struct of_device_id mtk_dsi_of_match[] = {
--- 
-2.45.2
+ 	ret =3D platform_driver_register(&pf_driver);
+ 	if (ret)
+ 		return ret;
+=2D-
+2.39.2
 
 
