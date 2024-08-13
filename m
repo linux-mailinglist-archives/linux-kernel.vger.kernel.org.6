@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-285068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E45719508D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:20:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 939C29508C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:19:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A04CF287FDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:20:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B89F01C22FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2826E1A0AE1;
-	Tue, 13 Aug 2024 15:19:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB871A0AF1;
+	Tue, 13 Aug 2024 15:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="LtBVlUoA"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjDecaah"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025561A08AC
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644CD19925A;
+	Tue, 13 Aug 2024 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562368; cv=none; b=mdd1MyCZGq/qP7K/dG9tsUimXooiDpLogK+T8nK5aRdZLhwb2/UhNLXcb2DwTc4cMxtDwo0XqCKN583VbHb1+myJcfIb7e8AKQLo4JjOpCwjN3Wkov3+fbg0x12GcI8WkQ9vZKjOY8NjrXHsDBNJYNPyGEIs5Oub9Jg2W0oyl8o=
+	t=1723562282; cv=none; b=qQltjA2GPaNIjuUptWGHsactmkz0fsLSPLDQN/ThuDd218zzqxOJg0pFlldtYcxU0QZC/fj+GNwNTHpyy36Hr5eRcAlTMzxnrEKbbpvBS2TRPyz7h332lPFyLsp23HT0pxaOOrh4tUHHCDIEvMsNZpWgShaHDuVsOwbdTkZbCP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562368; c=relaxed/simple;
-	bh=WEGOV/eNmS0JwTGq95TbV76XsATL+GH7esD7KLSP5Ac=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OxMk3XdRBPFVAAUs7iUoUcnRPmkRouqJgaoWr3CQfPnnHUSQ4bYR8rS9WK79XF44+tccXtuUtxW/pyZHqzhjjKhgXjFPnsbCAEoerjJdH+NZnyD+uDpSwxg6znUfIBkqAeWxrH8+9AQW43X68o0QkWayiiUakCEpHwMA0UUEw0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=LtBVlUoA; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f149845d81so62212351fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723562364; x=1724167164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nLy7GIRQMaObsC/QtzsBD1LKVmCMkjVFm0GOFd+PCLQ=;
-        b=LtBVlUoAR2tgEEzSize/rtLSaP7N+bx3ohzWCB2d0aj2ACq6InTygnmpcaaCSVmE4o
-         enA7J2+d/1kBNwrRXuDr9+4O4ZtGiWz6SpFtpMTCt8bIWL4hRhdWutyuLHC2LweeCIQm
-         XK21H0Hq9KhLqdCU3nuumQVXWUVIwkRPpeMaKYYJUlIHnGwozpiJT3oAaj19qOntN26e
-         I1LmGD4zGL60EpT3IWALewNz9922wEPZVZ7AEFT1JvGE1FFFR+bKW2hsID37YuxNYzMS
-         7dYkk/yERk3NvfwOUs7sGnmzs8vvmMcYv2eUQ9gMaRfwPIspGOWzQEsgvC07C6RARpm4
-         zUAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723562364; x=1724167164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nLy7GIRQMaObsC/QtzsBD1LKVmCMkjVFm0GOFd+PCLQ=;
-        b=v6fBN3HKn5xNm6suKhnxvs5FBUmYGXfJdGD8KFCLGwFOhMJp8H1O8hRAtmC+1e8nbO
-         /UMmUcS2Ipnw4d1bATVYu4+u6G4Hp8F4t4D/UmYaeKZgW+MkM85iBf7IeY88Hq6EUk9z
-         Zm7/UQ1TISzrK3zLhMTJpbFNN4pSLctxb0XUj0BaK89ORwKeHhEMAkQkSPrEeuRvu5kt
-         6f7BKGhjoCERgZ3txLVdv4i8YnH7sR35/V1aN5KJPRfykoMsfK6gVEP8aX8JuR5Nvr0T
-         hfASmIsmgbkjKWDJesdsgEgCl9p9TXuLbzdVPCarfpCpbq70IgkToQCMGNC2KNJChWct
-         42MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWADtDzN3K2nRx+sTUDZBJgbiISeI7Q7t4i7k4DwYlDujZMJ3que3v8h53yUVxD3YXqFmW4ZO/1l+oo3/TBT6IJ1ZADXB8SYCzOiXTz
-X-Gm-Message-State: AOJu0YwFj4LDpVVYl82w8lk++LaCGI25Rd1y+pCH2scbqfA1aynCh2wY
-	b9Mv5FB2B3e/rNgHUve2Nle537x0PMboijRKCPDvgHTXwR1Xb8tkBnJLJNugBTY=
-X-Google-Smtp-Source: AGHT+IEQB9NVlJBHy3poayI8faoI7ySKxRBVnFDVKOGewt3x4rzWQUAPonzs+++1KgfNdJo0I641nQ==
-X-Received: by 2002:a2e:611:0:b0:2ef:1b1f:4b4f with SMTP id 38308e7fff4ca-2f2b7178671mr24425421fa.34.1723562363831;
-        Tue, 13 Aug 2024 08:19:23 -0700 (PDT)
-Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd196a756esm2977597a12.52.2024.08.13.08.19.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:19:23 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	kees@kernel.org,
-	gustavoars@kernel.org
-Cc: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] bpf: Annotate struct bpf_cand_cache with __counted_by()
-Date: Tue, 13 Aug 2024 17:17:53 +0200
-Message-ID: <20240813151752.95161-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723562282; c=relaxed/simple;
+	bh=ORJuuh8qBCs0q6+9NYCn9FLe2LVpeI3IuubmowxMQJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGCbAkBos9t2FoqUOCgHC9smVyqF4rybrfFYZkyc+5VfVJ+kvbklqdIHUxqU+mDHYzfXlyEpz+8QAjABFsXLcgZr6nWwTKzh3ATT+ZvuXDBJM+Raie4cKB3G2OY8/ev4NZMhRZEor4SfvTCD/mdfRlKAGy6Hvu9tEllHzzw4cy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjDecaah; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 614D8C4AF0B;
+	Tue, 13 Aug 2024 15:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723562282;
+	bh=ORJuuh8qBCs0q6+9NYCn9FLe2LVpeI3IuubmowxMQJE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DjDecaahe7kDFtgfvmmvPyi+zMS+GYfYXCJih/x3DouS66OfS3yWXFaNrOqcYXmTp
+	 R6DvkHmdvxyRdUZzbmp1Fldij9TAX4Jr76QJolxrJ3mbZHJZsbi9cTnsFet9yrnwBC
+	 LQj/H6b0Cxu5cUP6QqeqVCzQGBvnTxWt3Rr1gSD3R5tTGuLui38PIqvRIbI9AXBRvb
+	 Moug2ufAbDcMkww9jjyYWY1QzR7It88UrMOSFBShfHPggWVHzK7hZrTkPNJiGkmwh6
+	 AWWRysUxU9hjbCFnOiAJ49exO2y/6XQqfI2SLBppdO8oGsmVUITdz1lS8LV0mnPHYW
+	 JpA6OO22AxF0Q==
+Date: Tue, 13 Aug 2024 12:17:58 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, irogers@google.com,
+	peterz@infradead.org, mingo@kernel.org,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	adrian.hunter@intel.com, ak@linux.intel.com, eranian@google.com
+Subject: Re: [PATCH V2 0/9] Support branch counters in block annotation
+Message-ID: <Zrt5Jm9iZ0ntKOKU@x1>
+References: <20240808193324.2027665-1-kan.liang@linux.intel.com>
+ <Zrpk5a2GQl5i5APD@google.com>
+ <Zrps-_ajW_zfze66@x1>
+ <bdf150ed-6a41-4c54-a754-13c1f194fac3@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <bdf150ed-6a41-4c54-a754-13c1f194fac3@linux.intel.com>
 
-Add the __counted_by compiler attribute to the flexible array member
-cands to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
+On Tue, Aug 13, 2024 at 11:15:49AM -0400, Liang, Kan wrote:
+> 
+> 
+> On 2024-08-12 4:13 p.m., Arnaldo Carvalho de Melo wrote:
+> > On Mon, Aug 12, 2024 at 12:39:17PM -0700, Namhyung Kim wrote:
+> >> On Thu, Aug 08, 2024 at 12:33:15PM -0700, kan.liang@linux.intel.com wrote:
+> >>> From: Kan Liang <kan.liang@linux.intel.com>
+> >>> Kan Liang (9):
+> >>>   perf report: Fix --total-cycles --stdio output error
+> >>>   perf report: Remove the first overflow check for branch counters
+> >>>   perf evlist: Save branch counters information
+> >>>   perf annotate: Save branch counters for each block
+> >>>   perf evsel: Assign abbr name for the branch counter events
+> >>>   perf report: Display the branch counter histogram
+> >>>   perf annotate: Display the branch counter histogram
+> >>>   perf script: Add branch counters
+> >>>   perf test: Add new test cases for the branch counter feature
+> >>
+> >> Acked-by: Namhyung Kim <namhyung@kernel.org>
+> > 
+> > Clashed with something here, can you please take a look and rebase to
+> > what is in perf-tools-next/perf-tools-next?
+> 
+> Tools-next/perf-tools-next doesn't include Weilin's TPEBS patch. So I
+> fail at the patch 5, rather than patch 6 (the failure you observed.)
+> 
+> Can you please update the perf-tools-next?
+> Or should I re-base on top of the tmp.perf-tools-next?
 
-Increment cnt before adding a new struct to the cands array.
+Do it over tmp.perf-tools-next please this time.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/bpf/btf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 520f49f422fe..42bc70a56fcd 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -7240,7 +7240,7 @@ struct bpf_cand_cache {
- 	struct {
- 		const struct btf *btf;
- 		u32 id;
--	} cands[];
-+	} cands[] __counted_by(cnt);
- };
+- Arnaldo
  
- static DEFINE_MUTEX(cand_cache_mutex);
-@@ -8784,9 +8784,9 @@ bpf_core_add_cands(struct bpf_cand_cache *cands, const struct btf *targ_btf,
- 		memcpy(new_cands, cands, sizeof_cands(cands->cnt));
- 		bpf_free_cands(cands);
- 		cands = new_cands;
--		cands->cands[cands->cnt].btf = targ_btf;
--		cands->cands[cands->cnt].id = i;
- 		cands->cnt++;
-+		cands->cands[cands->cnt - 1].btf = targ_btf;
-+		cands->cands[cands->cnt - 1].id = i;
- 	}
- 	return cands;
- }
--- 
-2.46.0
-
+> $ git branch -v
+>   master              1639fae5132b Merge tag 'drm-fixes-2023-06-17' of
+> git://anongit.freedesktop.org/drm/drm
+> * perf-tools-next     cb1898f58e0f perf annotate-data: Support
+> --skip-empty option
+>   tmp.perf-tools-next 9da782071202 perf test: Add test for Intel TPEBS
+> counting mode
+> $ git branch --show-current
+> perf-tools-next
+> 
+> $ git am lbr_event_logging_v2/000*
+> Applying: perf report: Fix --total-cycles --stdio output error
+> Applying: perf report: Remove the first overflow check for branch counters
+> Applying: perf evlist: Save branch counters information
+> Applying: perf annotate: Save branch counters for each block
+> Applying: perf evsel: Assign abbr name for the branch counter events
+> error: patch failed: tools/perf/util/evlist.c:33
+> error: tools/perf/util/evlist.c: patch does not apply
+> Patch failed at 0005 perf evsel: Assign abbr name for the branch counter
+> events
+> 
+> Thanks,
+> Kan
+> 
+> > 
+> > - Arnaldo
+> > 
+> >   ✓ [PATCH v2 9/9] perf test: Add new test cases for the branch counter feature
+> >     + Acked-by: Namhyung Kim <namhyung@kernel.org> (✓ DKIM/kernel.org)
+> >     + Reviewed-by: Andi Kleen <ak@linux.intel.com> (✓ DKIM/intel.com)
+> >     + Link: https://lore.kernel.org/r/20240808193324.2027665-10-kan.liang@linux.intel.com
+> >     + Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >   ---
+> >   ✓ Signed: DKIM/intel.com (From: kan.liang@linux.intel.com)
+> > ---
+> > Total patches: 9
+> > ---
+> > Cover: ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.cover
+> >  Link: https://lore.kernel.org/r/20240808193324.2027665-1-kan.liang@linux.intel.com
+> >  Base: not specified
+> >        git am ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.mbx
+> > ⬢[acme@toolbox perf-tools-next]$        git am ./v2_20240808_kan_liang_support_branch_counters_in_block_annotation.mbx
+> > Applying: perf report: Fix --total-cycles --stdio output error
+> > Applying: perf report: Remove the first overflow check for branch counters
+> > Applying: perf evlist: Save branch counters information
+> > Applying: perf annotate: Save branch counters for each block
+> > Applying: perf evsel: Assign abbr name for the branch counter events
+> > Applying: perf report: Display the branch counter histogram
+> > error: patch failed: tools/perf/util/annotate.h:551
+> > error: tools/perf/util/annotate.h: patch does not apply
+> > Patch failed at 0006 perf report: Display the branch counter histogram
+> > hint: Use 'git am --show-current-patch=diff' to see the failed patch
+> > When you have resolved this problem, run "git am --continue".
+> > If you prefer to skip this patch, run "git am --skip" instead.
+> > To restore the original branch and stop patching, run "git am --abort".
+> > ⬢[acme@toolbox perf-tools-next]$
 
