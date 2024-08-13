@@ -1,152 +1,97 @@
-Return-Path: <linux-kernel+bounces-284760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8439504D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:23:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD3569504D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44C9B1F2375A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86FF31F2357D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BD8199225;
-	Tue, 13 Aug 2024 12:23:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FFE1CF9A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD64A1990AD;
+	Tue, 13 Aug 2024 12:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfBALhrz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0121CF9A;
+	Tue, 13 Aug 2024 12:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551797; cv=none; b=a+F0xjqKjhRd9THZ5yWDzQhzNoTPEAaBbK+W+2ZdihoPUxurfzSFZjIv5UlRC04Facnj7FThGUVE4xMDX6QhF60S/4KZAs6F++O9RAvZ2AHJZrhU7ZyMBrLkJ4I4AX8WyHVcTlaqlYettcxOARTCH9jeQaBuBxazM7p2O/zm7n0=
+	t=1723551801; cv=none; b=SjsmifJx3gJUVA6XQt3fIuxa1LcN9Eqbkn8EwMjmk+3ccFYD28ZW/C5omXFEb5yiuLiJItVa3+PIdjcCEUUFA3W8j3my9qnaMUoNQeq2FB6/CD/vgpyiNg5nx/0wGJKmkHTX32Ag6Sarvh0l6cwuNpkNEP/eAiji60DuWHGhbZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551797; c=relaxed/simple;
-	bh=0aF/53rygWBzDGX9kpGl449Fw0+7rQ6VE7MpYaZYMrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jf6ULxHFvdXJtZweE7YW0l4wXhaS3tE5XMU5z6v9m4GlU7LkHKWGRV4e9My3RyzdtZm5I4Yeq5y4wdto83SsMI9AgIOEKyXLj02HyFCQr3jhlsK430vafrs2hfIVrNO41Bvo5RBH94POiBXiQZ8snMBhZgc4gyPLEOGNL2AXNDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32AD912FC;
-	Tue, 13 Aug 2024 05:23:41 -0700 (PDT)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 56A873F73B;
-	Tue, 13 Aug 2024 05:23:12 -0700 (PDT)
-Message-ID: <6304d2f3-4e35-46a7-a54d-eb39ba8f3094@arm.com>
-Date: Tue, 13 Aug 2024 13:23:10 +0100
+	s=arc-20240116; t=1723551801; c=relaxed/simple;
+	bh=ymSonT8T6qomlnFRfpcE9r9zqEqxNIAluUl4XMBE18E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6VJeTvOw3eZGvbO37ASEQBJ9rwum2jhGSTGoPLpFSEYNZ8iGXN81U+uCF3QqXIlQGsxfv2jrHtIarBoGKge0UV7rBUKFnbjJft6JepDsV5hDCINu2WrnVt4NaT4CiiYnIw3DgE0p5FxJedbD2+MxQcMIRaIpF7eqB+cLtfOxw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfBALhrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D9BDC4AF0B;
+	Tue, 13 Aug 2024 12:23:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723551800;
+	bh=ymSonT8T6qomlnFRfpcE9r9zqEqxNIAluUl4XMBE18E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qfBALhrztV7ruJdh1AhNrvVzvM0seKVY+EhP2TCpwhZtexCRdFP/H3QzEtEYMFoct
+	 IV83B52/LOe5vZXpLdsAQs2ZjoL1elMjjesXdBA81+g/rm1WItGHeSHzTZKByAePo0
+	 eKptQf6aV222R4S4i7aLfAFbuQ0bWUEAo6T4mkqSAaYDmhJOZaGbnh8zSfrzQ+dm7Q
+	 VOdkijGWkm5+CPbm0dDiDMfFCq02oJxoUSNBW01K9axJKFsXDmrcRNPxjJzNEvBoAu
+	 T2cTU170ahuPw2AY8eY8sUXwrGB7wiHQnfvONlLCorQ5fPERsiOVFMZvoe8RnPkyqB
+	 IfndqVJtiZ7Fw==
+Date: Tue, 13 Aug 2024 13:23:13 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
+Message-ID: <c66f9da0-8be6-4e41-a297-69312edc694a@sirena.org.uk>
+References: <20240812160146.517184156@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dma: call unconditionally to unmap_page and
- unmap_sg callbacks
-To: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
- Easwar Hariharan <eahariha@linux.microsoft.com>,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- Jason Gunthorpe <jgg@nvidia.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <cover.1721818168.git.leon@kernel.org>
- <595d2716d252cac013a650bb3a94555ddb0d1d43.1721818168.git.leon@kernel.org>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <595d2716d252cac013a650bb3a94555ddb0d1d43.1721818168.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="T95vhYXTCHZKL4E3"
+Content-Disposition: inline
+In-Reply-To: <20240812160146.517184156@linuxfoundation.org>
+X-Cookie: Say no, then negotiate.
 
-On 24/07/2024 7:04 pm, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Almost all users of ->map_page()/map_sg() callbacks implement
-> ->unmap_page()/unmap_sg() callbacks too. One user which doesn't do it,
-> is dummy DMA ops interface, and the use of this interface is to fail
-> the operation and in such case, there won't be any call to
-> ->unmap_page()/unmap_sg().
 
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+--T95vhYXTCHZKL4E3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> This patch removes the existence checks of ->unmap_page()/unmap_sg()
-> and calls to it directly to create symmetrical interface to
-> ->map_page()/map_sg().
-> 
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leon@kernel.org>
-> ---
->   kernel/dma/dummy.c   | 21 +++++++++++++++++++++
->   kernel/dma/mapping.c |  4 ++--
->   2 files changed, 23 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/dma/dummy.c b/kernel/dma/dummy.c
-> index b492d59ac77e..92de80e5b057 100644
-> --- a/kernel/dma/dummy.c
-> +++ b/kernel/dma/dummy.c
-> @@ -17,6 +17,15 @@ static dma_addr_t dma_dummy_map_page(struct device *dev, struct page *page,
->   {
->   	return DMA_MAPPING_ERROR;
->   }
-> +static void dma_dummy_unmap_page(struct device *dev, dma_addr_t dma_handle,
-> +		size_t size, enum dma_data_direction dir, unsigned long attrs)
-> +{
-> +	/*
-> +	 * Dummy ops doesn't support map_page, so unmap_page should never be
-> +	 * called.
-> +	 */
-> +	WARN_ON_ONCE(true);
-> +}
->   
->   static int dma_dummy_map_sg(struct device *dev, struct scatterlist *sgl,
->   		int nelems, enum dma_data_direction dir,
-> @@ -25,6 +34,16 @@ static int dma_dummy_map_sg(struct device *dev, struct scatterlist *sgl,
->   	return -EINVAL;
->   }
->   
-> +static void dma_dummy_unmap_sg(struct device *dev, struct scatterlist *sgl,
-> +		int nelems, enum dma_data_direction dir,
-> +		unsigned long attrs)
-> +{
-> +	/*
-> +	 * Dummy ops doesn't support map_sg, so unmap_sg should never be called.
-> +	 */
-> +	WARN_ON_ONCE(true);
-> +}
-> +
->   static int dma_dummy_supported(struct device *hwdev, u64 mask)
->   {
->   	return 0;
-> @@ -33,6 +52,8 @@ static int dma_dummy_supported(struct device *hwdev, u64 mask)
->   const struct dma_map_ops dma_dummy_ops = {
->   	.mmap                   = dma_dummy_mmap,
->   	.map_page               = dma_dummy_map_page,
-> +	.unmap_page             = dma_dummy_unmap_page,
->   	.map_sg                 = dma_dummy_map_sg,
-> +	.unmap_sg               = dma_dummy_unmap_sg,
->   	.dma_supported          = dma_dummy_supported,
->   };
-> diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-> index 81de84318ccc..6832fd6f0796 100644
-> --- a/kernel/dma/mapping.c
-> +++ b/kernel/dma/mapping.c
-> @@ -177,7 +177,7 @@ void dma_unmap_page_attrs(struct device *dev, dma_addr_t addr, size_t size,
->   	if (dma_map_direct(dev, ops) ||
->   	    arch_dma_unmap_page_direct(dev, addr + size))
->   		dma_direct_unmap_page(dev, addr, size, dir, attrs);
-> -	else if (ops->unmap_page)
-> +	else
->   		ops->unmap_page(dev, addr, size, dir, attrs);
->   	debug_dma_unmap_page(dev, addr, size, dir);
->   }
-> @@ -291,7 +291,7 @@ void dma_unmap_sg_attrs(struct device *dev, struct scatterlist *sg,
->   	if (dma_map_direct(dev, ops) ||
->   	    arch_dma_unmap_sg_direct(dev, sg, nents))
->   		dma_direct_unmap_sg(dev, sg, nents, dir, attrs);
-> -	else if (ops->unmap_sg)
-> +	else
->   		ops->unmap_sg(dev, sg, nents, dir, attrs);
->   }
->   EXPORT_SYMBOL(dma_unmap_sg_attrs);
+On Mon, Aug 12, 2024 at 06:00:01PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.10.5 release.
+> There are 263 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--T95vhYXTCHZKL4E3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAma7UDAACgkQJNaLcl1U
+h9DhYgf+MenCIPT4aj76h6dnttqLNQPQiaNw9np66ECIzhDzDqizNyzmFbnpeVZg
+9upy3BrItyxsMqQ6A8ht5THSz4K4a9g5S4bCGElK3dA323A1qKTq8MAa7moj6Goi
+htIB7KMl1Bh4TTP0BZd5zlJw/ksys0t34Ro1D7cp2eLKrF3VEg9Akm00Jy5GRS4x
+A/jyFoIYpbBG+JN8beGMezVse//HFiNbst6BQY42EKevbVLPQsxPhoHYPzyAtZXl
+CRs+wAGytzJcKhDQsn1PM/0M9TooL4MJA4cZHRyvhUpgSBBKL9kkPYuB9IwDc9qF
+9YvMOmwpr8DFL5zGqzxVDzfwN9mPSQ==
+=6YIB
+-----END PGP SIGNATURE-----
+
+--T95vhYXTCHZKL4E3--
 
