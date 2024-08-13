@@ -1,119 +1,101 @@
-Return-Path: <linux-kernel+bounces-285273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D80950B80
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:33:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66944950B83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8DE21C20CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 291A228720F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A1D19FA8E;
-	Tue, 13 Aug 2024 17:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4891A2C24;
+	Tue, 13 Aug 2024 17:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bj6qz1Wr"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OQo0XQ32"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F00225D9;
-	Tue, 13 Aug 2024 17:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6956B18C3D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723570404; cv=none; b=Pb2jI1TWzpYykUzXKSr92rDqGo/jpb44suEkbNBKYdOyzD+/WuEvNNZcoUlAn19EDzjzrwd8m/IqO1jBtLBzmCFn3Zwqvr0vRLgtzohPzVmOSAVHtWte4G/BHAIQNjKwyU3Avf+PFbv1IfRSZ+jWKWRT5qcmZ9xAXeeskThhOqA=
+	t=1723570577; cv=none; b=q8/yONkF23xRGncaQuGqNzXwWBXyJ5A6bnzTNYCMQjiaFBpktQHwBR3/SpXZkM0pBfoRyl5JRTWLe1/nOgKQOx5k6EO44i9/pMU+s2syAU+dkIr0NRhiOkv023Hh0AyDeVOLMltO9tiA4qMRvxJla3vfdTmitxmfpiR/FAzFgKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723570404; c=relaxed/simple;
-	bh=NippkUP8S8P6tmv9MWO/YV21PyZxIiRkf0vTLiatWHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r3fnRUEePV0h9sSAHaqmjSlbpQ75h+8Ut20m7robjGRR02dpJVeNyEp8yxBrd0Cd2t6I6wIZ3E5EsMAItlyPNfIovPWeDILYCzFRUYW6lFYMEb1PDVDT14r7H/3Mz/Mrfjj8ot8h11kbh+jvKWX3XvCbUR30erpXtD/p9Tlahwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bj6qz1Wr; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7a0e8b76813so3843433a12.3;
-        Tue, 13 Aug 2024 10:33:22 -0700 (PDT)
+	s=arc-20240116; t=1723570577; c=relaxed/simple;
+	bh=Snsxhi3LIQZcXAKg3rDQSNDIeb30hQkyvxggbi0dWFw=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sCicgaR8L1k+U0uUc6e3sIMdaDvy1okjhwtXbafqE2fqJnYaDJvOXDQaFXTavuvxCh9LHzKPmFnYUfaKG/lG0suBH8l35XGjmIFm72yhg7VwyceSoTbm5ICiUSsPNquOu9O7dUsUOeFo3o6+MJYhym9j6jwCvfC+yteuewFMv38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OQo0XQ32; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fc6f3ac7beso46141675ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723570402; x=1724175202; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1HHxSyDfeWbCkXYqvZXREN7pKpypD1FMvFzppC390k0=;
-        b=bj6qz1WrXW86YIcbNKAqUeLOpT44cfFgiwDvn1OPAyLMxHSmMruBiUPhVWEQ9abkj6
-         64QnC8Xzqo0O9w6MliKmoiCOdAH+apu0EJHRrYw8skH/yraoFZahmFm/Iye4+ic9ug/F
-         noMKbNlyil8EdX7wU92Tkunn6fIDVBxl0kflDMAWBr+3N27QHIe4m/s4uN6hmgAUiApt
-         QGW2EyTHq8J56MKcmIVyGnE4pmmRao+aKiUyweD1Rb0OOzT+FqX0Qd2KtcOE4y29J3FJ
-         ycSod6Fh9PnfDAEALramw/lhzhrPdttvHQ9D5+n+LEEr7DbAiDaY0UnhTfPm+2Ys81od
-         avQg==
+        d=google.com; s=20230601; t=1723570576; x=1724175376; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qaxx+RIlGX+ihV0yke86zTWP07hgBW9xJr8rC5KpwXM=;
+        b=OQo0XQ32bjh0iBL5axa6SqPpuz/ew1BXtJu1dzlV6iVZ61Ojh5edef7Lnhtkndv6V7
+         xqK8V+/2pHd9RL3u8gfMoDCQacUNStIog2s7MgkKma04UDSuQ2yrUHtDsLGcJu6etvex
+         W+zdmOOf7ycJ6dYEj9NA24+BSpadURfId87UQXUf7FoWgJdlKKZe6VqM1SFTbj0hqIu8
+         SRxnGAGgKik2dMx9/UQPQyGeNKIUW+/xaOLyPi8yZoCwCShz4YdOEbbpaNGO3tmbz77W
+         dLBFKh+fan5KJlcum9jMg5KQQ3PBpUt2QF3SQZmoIaBTaHFpnMKG0H9MGUs3fdMORP09
+         tRDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723570402; x=1724175202;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1HHxSyDfeWbCkXYqvZXREN7pKpypD1FMvFzppC390k0=;
-        b=Bx/Ok3ws0CboQMmjIyN/JedHEszqhSk7TOwI8UMerqxqdRUC91x9owFqfDNHHE6Mue
-         N6oWeT+c4mbRk6nkW6KbRDv6MeQQBIoo6oGqUFRuS8iKVKBnDLHXAipA6ahaHkTv/zt1
-         yLnT+NFFaw9lwQsk4ngxtzOLmmcgzDISavaiDwL/FZu1xoPIUGiVi2pyE7XM3W/yeRQW
-         IzjUJqiHTmLqMhsez3OHEdF/YWjubHUaRefQMj5n8Mn2u+Ym82MqkNBoM1v0Z7wRE1yo
-         0xyp3Kq6bPLQejjDja5bvOtzjeaJX7EcCsPjYENU9eAZN2WwvOJA72X0qGAvaqj2FPpw
-         zRWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVJFPT16unXJS19AkJ9wSQOPJOOdXZXVRRzhTUr1jTZ/ZF1Oi60xRi1PFR5eVFWQVudYA5VZ5KmXFOk3or22N4aG5w8vtZZ6AqyF2G/oXGlLThgNYmTCNJT97HsY3zMHMqmvcl
-X-Gm-Message-State: AOJu0YyuVbCiiT+/VqZ3XZ3FXM61ra0LWcyKPu1rzqwYZ+ChTdvuKew7
-	QWlAmrPjD8DCselPWNTMy1OGmrL5DYdJ4dY8I0ppQcZ16c8K//ur
-X-Google-Smtp-Source: AGHT+IGa1SaY3ln0jbsWCZAx6W6HgJvu5yyS++HH3R4q3AxSmm4MUhbWEhhkRTsOCJ/F6m27oShQaA==
-X-Received: by 2002:a05:6a21:3a81:b0:1c8:b10d:eadb with SMTP id adf61e73a8af0-1c8eae81196mr594808637.17.1723570402320;
-        Tue, 13 Aug 2024 10:33:22 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-710e5a43948sm5986814b3a.122.2024.08.13.10.33.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 10:33:21 -0700 (PDT)
-Message-ID: <e2f49750-5b64-4adc-9989-e9155fe2a729@gmail.com>
-Date: Tue, 13 Aug 2024 10:33:19 -0700
+        d=1e100.net; s=20230601; t=1723570576; x=1724175376;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qaxx+RIlGX+ihV0yke86zTWP07hgBW9xJr8rC5KpwXM=;
+        b=EAUdnvmZDnhC4MahZIVaUYD0xiui3KKZXJ/if/HV/cGf9sB6wNtUFPkqE3UDfJcPCe
+         2IkF0a7YNu0hAI4qpOsjDqg91/cET92IU6O4jPJPCIuqCyVVATkCTRxl9ptH9RV8R9p+
+         RWGE9nLq3T4Hr9No4mWbSwDB6UB+GjoA4ROezAPCyv8x35fMSDVJOw4lrOh12+vMEkdB
+         BJ04LupOwOCfXcJZ2JZfcDgos0fskLiQIZppv/d9lZQuirgLyFVbtQ2ub3NfRi+mI+Vo
+         D/AHGC92XqeUpNdB9fm5w+PDdgnfVLTg/XzXbE1Aj2obCJn17aRV41FLAoERf0o7wO9Q
+         Y3bQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlclQibIqoDrweZKjrVpyJSOjDcpqNLZthz4x7YEwdHM3bjkDSIIOkuhTA2kCl3fi3fI5x0KCM2Ic4oTRQvbKR2qQaQUcGCjyxGNmM
+X-Gm-Message-State: AOJu0YyqAp4vNe5LO4oefzJqGbHhEqOEH2+cPyIImSSd2jg9RwxiN1xx
+	dyPbyz87enf58HuDA/BS1f/irZvSIq4nrm1kRkZmFrHazuXLpAkeXdYMiyeO6h2xMW1KWhzJHMh
+	nbg==
+X-Google-Smtp-Source: AGHT+IEAaxGWcx079WWkKDEjS2dVuIZWuu8HYSM3PufJYi/0hU7fPNMjSiLPVYS4fPuoi7FYVv5lbw02/Yo=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d2d1:b0:1fb:6151:f630 with SMTP id
+ d9443c01a7336-201d64a5e6bmr80045ad.10.1723570575607; Tue, 13 Aug 2024
+ 10:36:15 -0700 (PDT)
+Date: Tue, 13 Aug 2024 10:36:14 -0700
+In-Reply-To: <20240813164244.751597-1-coltonlewis@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.10 000/263] 6.10.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240812160146.517184156@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20240812160146.517184156@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20240813164244.751597-1-coltonlewis@google.com>
+Message-ID: <ZruZjhSRqo7Zx_1r@google.com>
+Subject: Re: [PATCH 0/6] Extend pmu_counters_test to AMD CPUs
+From: Sean Christopherson <seanjc@google.com>
+To: Colton Lewis <coltonlewis@google.com>
+Cc: kvm@vger.kernel.org, Mingwei Zhang <mizhang@google.com>, 
+	Jinrong Liang <ljr.kernel@gmail.com>, Jim Mattson <jmattson@google.com>, 
+	Aaron Lewis <aaronlewis@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/12/24 09:00, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.10.5 release.
-> There are 263 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 14 Aug 2024 16:00:26 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.10.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.10.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Tue, Aug 13, 2024, Colton Lewis wrote:
+> (I was positive I had sent this already, but I couldn't find it on the
+> mailing list to reply to and ask for reviews.)
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+You did[*], it's sitting in my todo folder.  Two things.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+1. Err on the side of caution when potentially resending, and tag everything
+RESEND.  Someone seeing a RESEND version without having seen the original version
+is no big deal.  But someone seeing two copies of the same patches/emails can get
+quite confusing.
 
+2. Something is funky in your send flow.  The original posing says 0/7 in the
+cover letter, but there are only 6 patches.
+
+[*] https://lore.kernel.org/all/20240802182240.1916675-1-coltonlewis@google.com
 
