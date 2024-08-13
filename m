@@ -1,729 +1,562 @@
-Return-Path: <linux-kernel+bounces-285319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43419950C05
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58BCB950C0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94FC3B24865
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:14:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85CE2B21642
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3288B1A3BC1;
-	Tue, 13 Aug 2024 18:13:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B155F1A38E0;
+	Tue, 13 Aug 2024 18:15:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="eBuAxzwV"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Oe9EmP40"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2071.outbound.protection.outlook.com [40.107.22.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6831A38D4;
-	Tue, 13 Aug 2024 18:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723572816; cv=none; b=S27F+zvD1BXFOuyg6scG98np+IBtd3QXs70cGe4Wx8wmPAjrpIqK7mwTlGCppnRx/zFzLJfe4Mmhr1xznqxRdPDwMGqL8QdjJeb5mrleC7HjA6wTCgMa8yq+Wv+sjzcBpoVudOBmZnsU0VhefJR2K9pcTwnCDZBmnjO+L30zMh8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723572816; c=relaxed/simple;
-	bh=wzcvKf3hhuSOWpQ+D3URem/nzfOEYSq0HpYu+SLtTpg=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O1rin6eujbiWkxNML0nXiKWoAER7MrZ+yAFsViB0vjzD5mRQ6ScfLiNiSW03NrBgwqZoBrlVv8SOrizCdru4OPc/4krIWohix6PFVYXBM/WDSukUdd+JIFteN6wcw8L1fNXyD3TsbQtowKZp22uV1DO+pVOZcNKmsP22JYy+1gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=eBuAxzwV; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1723572814; x=1755108814;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=wzcvKf3hhuSOWpQ+D3URem/nzfOEYSq0HpYu+SLtTpg=;
-  b=eBuAxzwVGgn0gJtJyWk/UBE3foLDcgGxXHmN0PHuqasGc2EoelsUc4Sz
-   8r+UJwtDv8nTXYXRlQ9jV+WW7b5p5Qx5M0PeyBffLh8W+qpcI08AImR6A
-   EKWROxFSkJO29OMEkzRzoT1msb66NpFO7IscfTgMeT6rQ2FPfaVjDVZ2x
-   WZoyNvtV0BEFooqi1Ay6xTdEwatYTM3qfHhQaNDvLJvKgiXkB+r3T6bDX
-   sf0PRGq7LdWgqLbMGfuK/NGPT+lgdjPKAF4tm9sQy5gp2MvMjb+ENF24Z
-   +GjZUQ+En3pQ0Kothob3iH9ZihJZYM21O6LVo02BdsJ2antcIyZDNPZGC
-   Q==;
-X-CSE-ConnectionGUID: v1sbJLSpTMaPZ9cGmAsWIw==
-X-CSE-MsgGUID: Cvb9Ue85SrCM3nJAdKvVYA==
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="261364149"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Aug 2024 11:13:32 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 13 Aug 2024 11:13:03 -0700
-Received: from HYD-DK-UNGSW08.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 13 Aug 2024 11:12:59 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>
-Subject: [PATCH net-next v2 2/2] net: phy: microchip_t1: Adds support for lan887x phy
-Date: Tue, 13 Aug 2024 23:45:15 +0530
-Message-ID: <20240813181515.863208-3-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240813181515.863208-1-divya.koppera@microchip.com>
-References: <20240813181515.863208-1-divya.koppera@microchip.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E500DA3D;
+	Tue, 13 Aug 2024 18:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723572950; cv=fail; b=rzX/Cg9TAxH5/LGw+w0SumpzZvdVQdPiwYQNUZsggNebW2MeezVouhWKWdSah/Xe8/GYFyeAjQbhTGlVwjPjEWwyS5mrUND9k+ObKcfiXnsVQo+Evvi4QfGB4C3iuTiyanEj0/FTQr9GJiDWGXckXmV+kSJzrFXQILl0bAw18l4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723572950; c=relaxed/simple;
+	bh=tmY/OYNS5ZEcJpEPFyMpbb8lO1q2KGHOVDJexo0/Q4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XgPjMsTabWT6NgE4q5PIwJYGQXWHp02jp6Tq1N8E1NxIIUV52bHW9YMfz0BzwwCHBhlfafFEiPrZSIi+U4TeckBjg9oIc56Nj08VptCHG1HN2lJGyd67pZS1r/BIN0wSv0nbDXuQZIE8U4qbDrundwWZ4NNCeGSkxkFmhcC5ipI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Oe9EmP40; arc=fail smtp.client-ip=40.107.22.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P/juN9hoEx7W+FBmAr7x09yIyb1jqmDeaTmK0f0Ac6bD/H27wAJUgG9+LZ+Ilv52emMZE8KCT698BsX+08nKNY2KMm+cELJhcjA2EcEhUA6h/PQQ4ewZ8xxBgv4PQg2WBvLLTtqhbiRYDRaKbxCJxa2L3c0BbFgOBSr1l7Q5syJ6oLGSsihkdKwz1395vfsscP5LmiyirhBjnb042dc+HJOMBg3Xx10ucrIxJLxTvrur+meIYXCj1naLPoLzLmuaej0sU5BfoT8WFC6MJ2aDC/5s+Ev9UN6dgVSbiLW3IAIu81rnaE2OtUZQ0TgLQ7O91K5s9qHn7+xAsbds7tNk5w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4ekuRPYDPW3t5UszjlJORQXGX059HLeLVERZD6vDP34=;
+ b=ia9qTguf4QVPid9El8e8j2ohwqeUXQjIK2B+cvSZcGIVlxBFNPHzEv2bO60JW6SJwXbYYxm731eknuMT+oabc1/P/bRS4XgMRUbq7ZzOgV2ZCIrlDyAa0Q2AwxLXihmfR2kqU4sZLizfny2HZafgdbI4p23/CPf0UkhGRElLeQcMC8VXU4WWsjvVRqv2IlF48iQjGt6q9Xo3K0N4gspuoytSXM56ROaBXBwUxYHyNPSq/LPiCT8ECGmSvzLAQOg+7ju0or0upBw8urox4UiiCp41trSFiwPctFZTn8dDWdN2gxTMSlocrqHCO22+Afp6wG+zYE+cr1Io4JxwsfpV4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ekuRPYDPW3t5UszjlJORQXGX059HLeLVERZD6vDP34=;
+ b=Oe9EmP40m7aqbj32mVQTe0yzdw81kgt7jry+5jfBDM33VPhqqJfNch1HUjtU/gGLTZ6uElrRJY+cP6Y/+GfVx39EJz3N6Ouciu3Pe7ToKW2ux+Ze1JkKSKkA/t/O43WrsIHJD6rtD417XMdJTSldxtBUYSOMsd2tr2xmhvpP7qyRS9Qq4+WWkYpOVnMinMs0wwbmeHBSxr7V4/3gIH5Fq2fOAyjW1S+AsKLpbbJpG0WQaEd5Yb7iZ5qISYqtMykD00+YnUrJLDeE8y2D952hz7hGf4fL5+w30niVBMS7F4Q4SjryYzOEY5VYPTHHu+9rC05X11bUdv7FDtEvCNuPHw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DUZPR04MB9947.eurprd04.prod.outlook.com (2603:10a6:10:4d9::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.20; Tue, 13 Aug
+ 2024 18:15:44 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Tue, 13 Aug 2024
+ 18:15:44 +0000
+Date: Tue, 13 Aug 2024 14:15:35 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Felipe Balbi <balbi@kernel.org>,
+	Wesley Cheng <quic_wcheng@quicinc.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: Re: [PATCH v2 4/7] usb: dwc3: core: Expose core driver as library
+Message-ID: <Zruix+aadUL2F2jY@lizhi-Precision-Tower-5810>
+References: <20240811-dwc3-refactor-v2-0-91f370d61ad2@quicinc.com>
+ <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811-dwc3-refactor-v2-4-91f370d61ad2@quicinc.com>
+X-ClientProxiedBy: BY3PR10CA0027.namprd10.prod.outlook.com
+ (2603:10b6:a03:255::32) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DUZPR04MB9947:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e953500-247d-4f59-e0d1-08dcbbc3f255
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?l1iuXnwttTQTiYlUvW/qgfdUte4OqAHMZj+/A5MXw2yzchqiAIjkbxujYRND?=
+ =?us-ascii?Q?7i4OrttrxpUsKOnth193Vw5p5uvrxXecMTrUo1CWvn9GW0FYTuMzm9zwUjIB?=
+ =?us-ascii?Q?fVjD2jgkZ7Zkh+W6MtkViPu2Svc6PcoBtJukTIO9qc/7PcKopVTG9slHWGoL?=
+ =?us-ascii?Q?sJwE8YvGg7qtO2aP7lTixU4YGasgyyM4jn/Bdu7Xqvm8RE1dQDwhcs20szqS?=
+ =?us-ascii?Q?8fEQE9yVdCEyREcth1I17jGAots2GwKLLn8d11kGkssBTzSmK/DWarsKFBDD?=
+ =?us-ascii?Q?WOojX8bZ/gRwCw5dMu2ryUwKtb7g/OVeGrmp/uIo3M+QDauIdauIyJgzcIor?=
+ =?us-ascii?Q?pQXMugjCrxdj7QUQiJqu6WKt1X6KMWtUQLwMkCKhpaDQnj6isgwh79+f8xWC?=
+ =?us-ascii?Q?+xTwmGQDXTKO5VAAMXOKdbjHa3nNdJeJoDR44vx3OUO/KzG2ocmb+t6r6lXw?=
+ =?us-ascii?Q?33rVz+beQYYAMKmKJZm2kElHierwgxXYRKPuvT48Zv3jdB+Nc1beTayDL0aP?=
+ =?us-ascii?Q?mrBpEkRfzpK47gDrDlLLa1VyqeUHoi86qQmqzxXSL9FWQi0g//c3ScMRBqMm?=
+ =?us-ascii?Q?KLyxdDM4ddlDFyJhQQGaX9ikS7KoVR1BVhi0g47skqYiYJkpxRhPhjjwdyUF?=
+ =?us-ascii?Q?OLC49z+LvEHDeUY6pP7JNN5hGpXHPbKdR9WOZ72+UrF7LSvNrRB2kAcGHDyM?=
+ =?us-ascii?Q?ueaP1sALLi7k8+oMuM8Odh4XjzN0pbs7VbeQNP9JRD7jN3pz/B3T/YchMZbY?=
+ =?us-ascii?Q?jmnS54jsXpLbLZJ99f6CUfASSYV89oxJwZnvbKTwD7YRPzj6nLvOvT7bQQ8x?=
+ =?us-ascii?Q?Vz0vpZRXPpEG9K37ehkZ4POHq9HGlB5ZZf7onGJAi8wat8ll0SO8YbU0z+Wk?=
+ =?us-ascii?Q?eqmQ/3Q9xmMOA/4WJXLz+udtPYyCZOXF0DT2aErkUxi/wmIc6Hwvvt9B2nUb?=
+ =?us-ascii?Q?40jvaTIYvS5BYLw9+bwG2w3/Z9NTyPvsGBMCpCKqQc5nldGfmFk6SH52IKZs?=
+ =?us-ascii?Q?j+6XAfUg1xbjSw99S6GzfQ7VdJzVIDPJX3S/iCrEgFHvNbP/Rf9ByM9Yvsk/?=
+ =?us-ascii?Q?bWAZo4V3w76WIyhqQwWEcqKsxnaxGOypOtnee8Kw3s0edrWKKTtUwjuXpmNz?=
+ =?us-ascii?Q?Ms6E5W3E46aessaEQWxpj17+GDUrHuMFxp09bSzoisoFY7c3pHiR38iwFd5A?=
+ =?us-ascii?Q?VIlEPgH/hOJcuirALOUxlSkkkBvRO/TwBeG7+ASA8ttrogkTcmGrMAGj6sAp?=
+ =?us-ascii?Q?LFQeFdkbeztrUWL6SaLKiEksUz6GzBo+cHh8zxD7pbs37ZQeqVLExZl762Pb?=
+ =?us-ascii?Q?wZSVl2CXWz47LNhIOdde7u+EEGQxNuT1BNf/LiepKlkawzvJqA/kx7suiiZg?=
+ =?us-ascii?Q?vZn6gy2s+VANAumKAplYR3c3ZPnkhwR0bSUJY1XT8CBD6kZyaA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Y5sTNj6BTVCnkZKsNdFtE3iCheU0wwoMgAqeyq5KYPl8A09A1Bcj19HDBdaD?=
+ =?us-ascii?Q?DzYmUpqpVUYyXKiIoi+dXs6jmiMfp5CNTDnUehpNlecLeg42hgay8rzBJwLy?=
+ =?us-ascii?Q?BHQsdSC/OMtsL6nixaFTVWZQhTWF+JAZBVVZ16raEUMPlUqfo2ZEDRv6+/R7?=
+ =?us-ascii?Q?O/WrLMsubX/X6AWIA8TuHThGE1Xa6GbAlkXskNL+scd3Bh2viG3l65ROaSmV?=
+ =?us-ascii?Q?707svNBSfQ7wS2a4OJfSvPzxXuQi8qahnf3uXn3uFSskXDSMteKOUcX77YmG?=
+ =?us-ascii?Q?vJ7whv8txOErWXZDWgYi/NoSQQLluVR8e7pX6NCnM1plfjjyP3vfa0XIsAGO?=
+ =?us-ascii?Q?l+iaoiPGUtT9aE+ACzgbHQqz3OIKeZ1YKgpWfLyJWKpzqRR+sDil/97Q2NzS?=
+ =?us-ascii?Q?83cl3n8Rv8A5IFD2tl/pq39eIr8KuIdzzOWS/n/DjL5J4LaqQfcqf3ivNkK/?=
+ =?us-ascii?Q?inFrGXsHfKBlNhbKE6ujlOJHkQ0F84D4s76+ThWhXdq+LWAOsFFUyO/qn7aS?=
+ =?us-ascii?Q?aPTnk/VdXOgtPezsUdZeK73NPDF6UQ6dWlEJ/SQRyk4cneAyhoMwAbPD0G9y?=
+ =?us-ascii?Q?WfNO2oeWJMb9TUSfaEh1uwyenB8FykY/pyl2Upd9Ik9SSJZ14vRr0uKvRo1p?=
+ =?us-ascii?Q?+czIZMZ9dXuONTisHgh2s0fVoNdM5akhQ5CqR1LL3TWLK7m99356DKhNGf74?=
+ =?us-ascii?Q?wJFKVGQCmTwXrG8zh76LsVUd0KiyfuJRZcy787V9oZakmxkONXF6e6Ghl5Lm?=
+ =?us-ascii?Q?hpDMGKyXnIa7JSQWbX6mSGSSFWNuz+WdhElyjubyry1gkmnaxy/ZAgNoa4KP?=
+ =?us-ascii?Q?Hh2fY5Jtj3wfxTt41FzGf8LSpSHEuAsWkVMxenHrA6MEGFemAQeuBcGZzf+O?=
+ =?us-ascii?Q?w8oK+IoZz4xb5LE8Wew6NYvQGi3Ihdwya6uJV7Eq5o8wjC40ovOUyQe4xhMo?=
+ =?us-ascii?Q?XCHG9JbWs7IswIc5CMvh//Wbd5S+TP6bkzWpYbIpaxKAmUxBEb7xqnmn4ihr?=
+ =?us-ascii?Q?76Bgw7oPW5kaunVvDBNcOyJn0L6y0GD3JGT0neVG7UC9ufya9Ooh/Hscu1WH?=
+ =?us-ascii?Q?O7nR/NGTQtpG3xmtTdvlNSnc0nL3zSd3LJOAidZEaYLx7toEJOUMcjPK2AHl?=
+ =?us-ascii?Q?76CyiQxFihKvUb8nawRXVT18WkF5dyBS0hCTpz51AW4jRn8PBv2i551jDuwQ?=
+ =?us-ascii?Q?NpHIomVRd8QgimDRILllVAqJuqmAVif9O/nO/rts+VIJ7GDTiRQZ00q6dnQ5?=
+ =?us-ascii?Q?HaWih593gZoGzGSQc8uEyZhtop2xVQe2FLhUYK39aGBbDzemFE4/6GcL7y10?=
+ =?us-ascii?Q?Upp92O+L6TQeD9IzU+Lc14QvYofwJbnQZHzT2VBWQJXXxhpi2b7znRqFnz/c?=
+ =?us-ascii?Q?fggae5R3WG7hYcFxQG42k/DgvPXl72f8FVxoPkcx7kvIwVSgu4RYFXjCOsGS?=
+ =?us-ascii?Q?BB1Zqdd3jtOSbo12nuxuC/ui5rK5xALhX4RQsEAY6F2P0zOSpm7mbYjGE4lc?=
+ =?us-ascii?Q?eraX4aUc7ZBSdgFYtOcZaO6R3gLPEg/7NsTJD/V8OFC7O8IzR1Oyg2qZgnlI?=
+ =?us-ascii?Q?kcS6nO0aKUTrKYcujC0=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e953500-247d-4f59-e0d1-08dcbbc3f255
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 18:15:43.9454
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DdkELy2h6XmrIrK4lYH5qYzLEtRku+5X0jap8+Sjfd3/Y5fJS2rkN4Z9hqt+6TB5rnrObDsqejqSIf2h9fPwvA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DUZPR04MB9947
 
-The LAN887x is a Single-Port Ethernet Physical Layer Transceiver compliant
-with the IEEE 802.3bw (100BASE-T1) and IEEE 802.3bp (1000BASE-T1)
-specifications. The device provides 100/1000 Mbit/s transmit and receive
-capability over a single Unshielded Twisted Pair (UTP) cable. It supports
-communication with an Ethernet MAC via standard RGMII/SGMII interfaces.
+On Sun, Aug 11, 2024 at 08:12:01PM -0700, Bjorn Andersson wrote:
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+>
+> The DWC3 IP block is handled by three distinct device drivers: XHCI,
+> DWC3 core and a platform specific (optional) DWC3 glue driver.
+>
+> This has resulted in, at least in the case of the Qualcomm glue, the
+> presence of a number of layering violations, where the glue code either
+> can't handle, or has to work around, the fact that core might not probe
+> deterministically.
+>
+> An example of this is that the suspend path should operate slightly
+> different depending on the device operating in host or peripheral mode,
+> and the only way to determine the operating state is to peek into the
+> core's drvdata.
+>
+> The Qualcomm glue driver is expected to make updates in the qscratch
+> register region (the "glue" region) during role switch events, but with
+> the glue and core split using the driver model, there is no reasonable
+> way to introduce listeners for mode changes.
+>
+> Split the dwc3 core platform_driver callbacks and their implementation
+> and export the implementation, to make it possible to deterministically
+> instantiate the dwc3 core as part of the dwc3 glue drivers and to
+> allow flattening of the DeviceTree representation.
+>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  drivers/usb/dwc3/core.c | 169 +++++++++++++++++++++++++++++++-----------------
+>  drivers/usb/dwc3/core.h |   3 +
+>  2 files changed, 114 insertions(+), 58 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 734de2a8bd21..6addb3c367e6 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -36,6 +36,7 @@
+>
+>  #include "core.h"
+>  #include "gadget.h"
+> +#include "glue.h"
+>  #include "io.h"
+>
+>  #include "debug.h"
+> @@ -2076,10 +2077,11 @@ static int dwc3_get_num_ports(struct dwc3 *dwc)
+>  	return 0;
+>  }
+>
+> -static int dwc3_probe(struct platform_device *pdev)
+> +struct dwc3 *dwc3_probe(struct platform_device *pdev, struct resource *res,
+> +			bool ignore_clocks_and_resets, void *glue)
+>  {
+>  	struct device		*dev = &pdev->dev;
+> -	struct resource		*res, dwc_res;
+> +	struct resource		dwc_res;
+>  	unsigned int		hw_mode;
+>  	void __iomem		*regs;
+>  	struct dwc3		*dwc;
+> @@ -2087,15 +2089,10 @@ static int dwc3_probe(struct platform_device *pdev)
+>
+>  	dwc = devm_kzalloc(dev, sizeof(*dwc), GFP_KERNEL);
+>  	if (!dwc)
+> -		return -ENOMEM;
+> +		return ERR_PTR(-ENOMEM);
+>
+>  	dwc->dev = dev;
+> -
+> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	if (!res) {
+> -		dev_err(dev, "missing memory resource\n");
+> -		return -ENODEV;
+> -	}
+> +	dwc->glue = glue;
+>
+>  	dwc->xhci_resources[0].start = res->start;
+>  	dwc->xhci_resources[0].end = dwc->xhci_resources[0].start +
+> @@ -2123,7 +2120,7 @@ static int dwc3_probe(struct platform_device *pdev)
+>
+>  	regs = devm_ioremap_resource(dev, &dwc_res);
+>  	if (IS_ERR(regs))
+> -		return PTR_ERR(regs);
+> +		return ERR_CAST(regs);
+>
+>  	dwc->regs	= regs;
+>  	dwc->regs_size	= resource_size(&dwc_res);
+> @@ -2132,15 +2129,17 @@ static int dwc3_probe(struct platform_device *pdev)
+>
+>  	dwc3_get_software_properties(dwc);
+>
+> -	dwc->reset = devm_reset_control_array_get_optional_shared(dev);
+> -	if (IS_ERR(dwc->reset)) {
+> -		ret = PTR_ERR(dwc->reset);
+> -		goto err_put_psy;
+> -	}
+> +	if (!ignore_clocks_and_resets) {
+> +		dwc->reset = devm_reset_control_array_get_optional_shared(dev);
+> +		if (IS_ERR(dwc->reset)) {
+> +			ret = PTR_ERR(dwc->reset);
+> +			goto err_put_psy;
+> +		}
+>
+> -	ret = dwc3_get_clocks(dwc);
+> -	if (ret)
+> -		goto err_put_psy;
+> +		ret = dwc3_get_clocks(dwc);
+> +		if (ret)
+> +			goto err_put_psy;
+> +	}
+>
+>  	ret = reset_control_deassert(dwc->reset);
+>  	if (ret)
+> @@ -2225,7 +2224,7 @@ static int dwc3_probe(struct platform_device *pdev)
+>
+>  	dma_set_max_seg_size(dev, UINT_MAX);
+>
+> -	return 0;
+> +	return dwc;
+>
+>  err_exit_debugfs:
+>  	dwc3_debugfs_exit(dwc);
+> @@ -2249,14 +2248,33 @@ static int dwc3_probe(struct platform_device *pdev)
+>  	if (dwc->usb_psy)
+>  		power_supply_put(dwc->usb_psy);
+>
+> -	return ret;
+> +	return ERR_PTR(ret);
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_probe);
+>
+> -static void dwc3_remove(struct platform_device *pdev)
+> +static int dwc3_plat_probe(struct platform_device *pdev)
+>  {
+> -	struct dwc3	*dwc = platform_get_drvdata(pdev);
+> +	struct resource *res;
+> +	struct dwc3 *dwc;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "missing memory resource\n");
+> +		return -ENODEV;
+> +	}
+>
+> -	pm_runtime_get_sync(&pdev->dev);
+> +	dwc = dwc3_probe(pdev, res, false, NULL);
+> +	if (IS_ERR(dwc))
+> +		return PTR_ERR(dwc);
+> +
+> +	platform_set_drvdata(pdev, dwc);
+> +
+> +	return 0;
+> +}
+> +
+> +void dwc3_remove(struct dwc3 *dwc)
+> +{
+> +	pm_runtime_get_sync(dwc->dev);
+>
+>  	dwc3_core_exit_mode(dwc);
+>  	dwc3_debugfs_exit(dwc);
+> @@ -2264,22 +2282,28 @@ static void dwc3_remove(struct platform_device *pdev)
+>  	dwc3_core_exit(dwc);
+>  	dwc3_ulpi_exit(dwc);
+>
+> -	pm_runtime_allow(&pdev->dev);
+> -	pm_runtime_disable(&pdev->dev);
+> -	pm_runtime_dont_use_autosuspend(&pdev->dev);
+> -	pm_runtime_put_noidle(&pdev->dev);
+> +	pm_runtime_allow(dwc->dev);
+> +	pm_runtime_disable(dwc->dev);
+> +	pm_runtime_dont_use_autosuspend(dwc->dev);
+> +	pm_runtime_put_noidle(dwc->dev);
+>  	/*
+>  	 * HACK: Clear the driver data, which is currently accessed by parent
+>  	 * glue drivers, before allowing the parent to suspend.
+>  	 */
+> -	platform_set_drvdata(pdev, NULL);
+> -	pm_runtime_set_suspended(&pdev->dev);
+> +	dev_set_drvdata(dwc->dev, NULL);
+> +	pm_runtime_set_suspended(dwc->dev);
+>
+>  	dwc3_free_event_buffers(dwc);
+>
+>  	if (dwc->usb_psy)
+>  		power_supply_put(dwc->usb_psy);
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_remove);
+> +
+> +static void dwc3_plat_remove(struct platform_device *pdev)
+> +{
+> +	dwc3_remove(platform_get_drvdata(pdev));
+> +}
+>
+>  #ifdef CONFIG_PM
+>  static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+> @@ -2450,9 +2474,8 @@ static int dwc3_runtime_checks(struct dwc3 *dwc)
+>  	return 0;
+>  }
+>
+> -static int dwc3_runtime_suspend(struct device *dev)
+> +int dwc3_runtime_suspend(struct dwc3 *dwc)
+>  {
+> -	struct dwc3     *dwc = dev_get_drvdata(dev);
+>  	int		ret;
+>
+>  	if (dwc3_runtime_checks(dwc))
+> @@ -2464,10 +2487,10 @@ static int dwc3_runtime_suspend(struct device *dev)
+>
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_runtime_suspend);
+>
+> -static int dwc3_runtime_resume(struct device *dev)
+> +int dwc3_runtime_resume(struct dwc3 *dwc)
+>  {
+> -	struct dwc3     *dwc = dev_get_drvdata(dev);
+>  	int		ret;
+>
+>  	ret = dwc3_resume_common(dwc, PMSG_AUTO_RESUME);
+> @@ -2484,15 +2507,14 @@ static int dwc3_runtime_resume(struct device *dev)
+>  		break;
+>  	}
+>
+> -	pm_runtime_mark_last_busy(dev);
+> +	pm_runtime_mark_last_busy(dwc->dev);
+>
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_runtime_resume);
+>
+> -static int dwc3_runtime_idle(struct device *dev)
+> +int dwc3_runtime_idle(struct dwc3 *dwc)
+>  {
+> -	struct dwc3     *dwc = dev_get_drvdata(dev);
+> -
+>  	switch (dwc->current_dr_role) {
+>  	case DWC3_GCTL_PRTCAP_DEVICE:
+>  		if (dwc3_runtime_checks(dwc))
+> @@ -2504,52 +2526,67 @@ static int dwc3_runtime_idle(struct device *dev)
+>  		break;
+>  	}
+>
+> -	pm_runtime_mark_last_busy(dev);
+> -	pm_runtime_autosuspend(dev);
+> +	pm_runtime_mark_last_busy(dwc->dev);
+> +	pm_runtime_autosuspend(dwc->dev);
+>
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_runtime_idle);
+> +
+> +static int dwc3_plat_runtime_suspend(struct device *dev)
+> +{
+> +	return dwc3_runtime_suspend(dev_get_drvdata(dev));
+> +}
+> +
+> +static int dwc3_plat_runtime_resume(struct device *dev)
+> +{
+> +	return dwc3_runtime_resume(dev_get_drvdata(dev));
+> +}
+> +
+> +static int dwc3_plat_runtime_idle(struct device *dev)
+> +{
+> +	return dwc3_runtime_idle(dev_get_drvdata(dev));
+> +}
+>  #endif /* CONFIG_PM */
+>
+>  #ifdef CONFIG_PM_SLEEP
+> -static int dwc3_suspend(struct device *dev)
+> +int dwc3_suspend(struct dwc3 *dwc)
+>  {
+> -	struct dwc3	*dwc = dev_get_drvdata(dev);
+>  	int		ret;
+>
+>  	ret = dwc3_suspend_common(dwc, PMSG_SUSPEND);
+>  	if (ret)
+>  		return ret;
+>
+> -	pinctrl_pm_select_sleep_state(dev);
+> +	pinctrl_pm_select_sleep_state(dwc->dev);
+>
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_suspend);
+>
+> -static int dwc3_resume(struct device *dev)
+> +int dwc3_resume(struct dwc3 *dwc)
+>  {
+> -	struct dwc3	*dwc = dev_get_drvdata(dev);
+>  	int		ret;
+>
+> -	pinctrl_pm_select_default_state(dev);
+> +	pinctrl_pm_select_default_state(dwc->dev);
+>
+> -	pm_runtime_disable(dev);
+> -	pm_runtime_set_active(dev);
+> +	pm_runtime_disable(dwc->dev);
+> +	pm_runtime_set_active(dwc->dev);
+>
+>  	ret = dwc3_resume_common(dwc, PMSG_RESUME);
+>  	if (ret) {
+> -		pm_runtime_set_suspended(dev);
+> +		pm_runtime_set_suspended(dwc->dev);
+>  		return ret;
+>  	}
+>
+> -	pm_runtime_enable(dev);
+> +	pm_runtime_enable(dwc->dev);
+>
+>  	return 0;
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_resume);
+>
+> -static void dwc3_complete(struct device *dev)
+> +void dwc3_complete(struct dwc3 *dwc)
+>  {
+> -	struct dwc3	*dwc = dev_get_drvdata(dev);
+>  	u32		reg;
+>
+>  	if (dwc->current_dr_role == DWC3_GCTL_PRTCAP_HOST &&
+> @@ -2559,15 +2596,31 @@ static void dwc3_complete(struct device *dev)
+>  		dwc3_writel(dwc->regs, DWC3_GUCTL3, reg);
+>  	}
+>  }
+> +EXPORT_SYMBOL_GPL(dwc3_complete);
+> +
+> +static int dwc3_plat_suspend(struct device *dev)
+> +{
+> +	return dwc3_suspend(dev_get_drvdata(dev));
+> +}
+> +
+> +static int dwc3_plat_resume(struct device *dev)
+> +{
+> +	return dwc3_resume(dev_get_drvdata(dev));
+> +}
+> +
+> +static void dwc3_plat_complete(struct device *dev)
+> +{
+> +	dwc3_complete(dev_get_drvdata(dev));
+> +}
+>  #else
+> -#define dwc3_complete NULL
+> +#define dwc3_plat_complete NULL
+>  #endif /* CONFIG_PM_SLEEP */
+>
+>  static const struct dev_pm_ops dwc3_dev_pm_ops = {
+> -	SET_SYSTEM_SLEEP_PM_OPS(dwc3_suspend, dwc3_resume)
+> -	.complete = dwc3_complete,
+> -	SET_RUNTIME_PM_OPS(dwc3_runtime_suspend, dwc3_runtime_resume,
+> -			dwc3_runtime_idle)
+> +	SET_SYSTEM_SLEEP_PM_OPS(dwc3_plat_suspend, dwc3_plat_resume)
 
-LAN887x supports following features,
-- Events/Interrupts
-- LED/GPIO Operation
-- IEEE 1588 (PTP)
-- SQI
-- Sleep and Wakeup (TC10)
-- Cable Diagnostics
+since you touch this line,
+suggest use new SYSTEM_SLEEP_PM_OPS() and RUNTIME_PM_OPS() help macro.
+also CONFIG_PM_SLEEP can be removed.
 
-First patch only supports 100Mbps and 1000Mbps force-mode.
+Frank
 
-Signed-off-by: Divya.Koppera <divya.koppera@microchip.com>
----
- drivers/net/phy/microchip_t1.c | 577 ++++++++++++++++++++++++++++++++-
- 1 file changed, 576 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index a35528497a57..5732ad65e7f9 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -12,6 +12,7 @@
- 
- #define PHY_ID_LAN87XX				0x0007c150
- #define PHY_ID_LAN937X				0x0007c180
-+#define PHY_ID_LAN887X				0x0007c1f0
- 
- /* External Register Control Register */
- #define LAN87XX_EXT_REG_CTL                     (0x14)
-@@ -94,8 +95,101 @@
- /* SQI defines */
- #define LAN87XX_MAX_SQI			0x07
- 
-+/* Chiptop registers */
-+#define LAN887X_PMA_EXT_ABILITY_2		0x12
-+#define LAN887X_PMA_EXT_ABILITY_2_1000T1	BIT(1)
-+#define LAN887X_PMA_EXT_ABILITY_2_100T1		BIT(0)
-+
-+/* DSP 100M registers */
-+#define LAN887x_CDR_CONFIG1_100			0x0405
-+#define LAN887x_LOCK1_EQLSR_CONFIG_100		0x0411
-+#define LAN887x_SLV_HD_MUFAC_CONFIG_100		0x0417
-+#define LAN887x_PLOCK_MUFAC_CONFIG_100		0x041c
-+#define LAN887x_PROT_DISABLE_100		0x0425
-+#define LAN887x_KF_LOOP_SAT_CONFIG_100		0x0454
-+
-+/* DSP 1000M registers */
-+#define LAN887X_LOCK1_EQLSR_CONFIG		0x0811
-+#define LAN887X_LOCK3_EQLSR_CONFIG		0x0813
-+#define LAN887X_PROT_DISABLE			0x0825
-+#define LAN887X_FFE_GAIN6			0x0843
-+#define LAN887X_FFE_GAIN7			0x0844
-+#define LAN887X_FFE_GAIN8			0x0845
-+#define LAN887X_FFE_GAIN9			0x0846
-+#define LAN887X_ECHO_DELAY_CONFIG		0x08ec
-+#define LAN887X_FFE_MAX_CONFIG			0x08ee
-+
-+/* PCS 1000M registers */
-+#define LAN887X_SCR_CONFIG_3			0x8043
-+#define LAN887X_INFO_FLD_CONFIG_5		0x8048
-+
-+/* T1 afe registers */
-+#define LAN887X_ZQCAL_CONTROL_1			0x8080
-+#define LAN887X_AFE_PORT_TESTBUS_CTRL2		0x8089
-+#define LAN887X_AFE_PORT_TESTBUS_CTRL4		0x808b
-+#define LAN887X_AFE_PORT_TESTBUS_CTRL6		0x808d
-+#define LAN887X_TX_AMPLT_1000T1_REG		0x80b0
-+#define LAN887X_INIT_COEFF_DFE1_100		0x0422
-+
-+/* PMA registers */
-+#define LAN887X_DSP_PMA_CONTROL			0x810e
-+#define LAN887X_DSP_PMA_CONTROL_LNK_SYNC	BIT(4)
-+
-+/* PCS 100M registers */
-+#define LAN887X_IDLE_ERR_TIMER_WIN		0x8204
-+#define LAN887X_IDLE_ERR_CNT_THRESH		0x8213
-+
-+/* Misc registers */
-+#define LAN887X_REG_REG26			0x001a
-+#define LAN887X_REG_REG26_HW_INIT_SEQ_EN	BIT(8)
-+
-+/* Mis registers */
-+#define LAN887X_MIS_CFG_REG0			0xa00
-+#define LAN887X_MIS_CFG_REG0_RCLKOUT_DIS	BIT(5)
-+#define LAN887X_MIS_CFG_REG0_MAC_MODE_SEL	GENMASK(1, 0)
-+
-+#define LAN887X_MAC_MODE_RGMII			0x01
-+#define LAN887X_MAC_MODE_SGMII			0x03
-+
-+#define LAN887X_MIS_DLL_CFG_REG0		0xa01
-+#define LAN887X_MIS_DLL_CFG_REG1		0xa02
-+
-+#define LAN887X_MIS_DLL_DELAY_EN		BIT(15)
-+#define LAN887X_MIS_DLL_EN			BIT(0)
-+#define LAN887X_MIS_DLL_CONF	(LAN887X_MIS_DLL_DELAY_EN |\
-+				 LAN887X_MIS_DLL_EN)
-+
-+#define LAN887X_MIS_CFG_REG2			0xa03
-+#define LAN887X_MIS_CFG_REG2_FE_LPBK_EN		BIT(2)
-+
-+#define LAN887X_MIS_PKT_STAT_REG0		0xa06
-+#define LAN887X_MIS_PKT_STAT_REG1		0xa07
-+#define LAN887X_MIS_PKT_STAT_REG3		0xa09
-+#define LAN887X_MIS_PKT_STAT_REG4		0xa0a
-+#define LAN887X_MIS_PKT_STAT_REG5		0xa0b
-+#define LAN887X_MIS_PKT_STAT_REG6		0xa0c
-+
-+/* Chiptop common registers */
-+#define LAN887X_COMMON_LED3_LED2		0xc05
-+#define LAN887X_COMMON_LED2_MODE_SEL_MASK	GENMASK(4, 0)
-+#define LAN887X_LED_LINK_ACT_ANY_SPEED		0x0
-+
-+/* MX chip top registers */
-+#define LAN887X_CHIP_SOFT_RST			0xf03f
-+#define LAN887X_CHIP_SOFT_RST_RESET		BIT(0)
-+
-+#define LAN887X_SGMII_CTL			0xf01a
-+#define LAN887X_SGMII_CTL_SGMII_MUX_EN		BIT(0)
-+
-+#define LAN887X_SGMII_PCS_CFG			0xf034
-+#define LAN887X_SGMII_PCS_CFG_PCS_ENA		BIT(9)
-+
-+#define LAN887X_EFUSE_READ_DAT9			0xf209
-+#define LAN887X_EFUSE_READ_DAT9_SGMII_DIS	BIT(9)
-+#define LAN887X_EFUSE_READ_DAT9_MAC_MODE	GENMASK(1, 0)
-+
- #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
--#define DRIVER_DESC	"Microchip LAN87XX/LAN937x T1 PHY driver"
-+#define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
- 
- struct access_ereg_val {
- 	u8  mode;
-@@ -105,6 +199,32 @@ struct access_ereg_val {
- 	u16 mask;
- };
- 
-+struct lan887x_hw_stat {
-+	const char *string;
-+	u8 mmd;
-+	u16 reg;
-+	u8 bits;
-+};
-+
-+static const struct lan887x_hw_stat lan887x_hw_stats[] = {
-+	{ "TX Good Count",                      MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG0, 14},
-+	{ "RX Good Count",                      MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG1, 14},
-+	{ "RX ERR Count detected by PCS",       MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG3, 16},
-+	{ "TX CRC ERR Count",                   MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG4, 8},
-+	{ "RX CRC ERR Count",                   MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG5, 8},
-+	{ "RX ERR Count for SGMII MII2GMII",    MDIO_MMD_VEND1, LAN887X_MIS_PKT_STAT_REG6, 8},
-+};
-+
-+struct lan887x_regwr_map {
-+	u8  mmd;
-+	u16 reg;
-+	u16 val;
-+};
-+
-+struct lan887x_priv {
-+	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
-+};
-+
- static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
- {
- 	u8 prev_bank;
-@@ -860,6 +980,446 @@ static int lan87xx_get_sqi_max(struct phy_device *phydev)
- 	return LAN87XX_MAX_SQI;
- }
- 
-+static int lan887x_rgmii_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* SGMII mux disable */
-+	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				 LAN887X_SGMII_CTL,
-+				 LAN887X_SGMII_CTL_SGMII_MUX_EN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Select MAC_MODE as RGMII */
-+	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
-+			     LAN887X_MIS_CFG_REG0_MAC_MODE_SEL,
-+			     LAN887X_MAC_MODE_RGMII);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Disable PCS */
-+	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				 LAN887X_SGMII_PCS_CFG,
-+				 LAN887X_SGMII_PCS_CFG_PCS_ENA);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* LAN887x Errata: RGMII rx clock active in SGMII mode
-+	 * Disabled it for SGMII mode
-+	 * Re-enabling it for RGMII mode
-+	 */
-+	return phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				  LAN887X_MIS_CFG_REG0,
-+				  LAN887X_MIS_CFG_REG0_RCLKOUT_DIS);
-+}
-+
-+static int lan887x_sgmii_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* SGMII mux enable */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
-+			       LAN887X_SGMII_CTL,
-+			       LAN887X_SGMII_CTL_SGMII_MUX_EN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Select MAC_MODE as SGMII */
-+	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
-+			     LAN887X_MIS_CFG_REG0_MAC_MODE_SEL,
-+			     LAN887X_MAC_MODE_SGMII);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* LAN887x Errata: RGMII rx clock active in SGMII mode.
-+	 * So disabling it for SGMII mode
-+	 */
-+	ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_CFG_REG0,
-+			       LAN887X_MIS_CFG_REG0_RCLKOUT_DIS);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Enable PCS */
-+	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_SGMII_PCS_CFG,
-+				LAN887X_SGMII_PCS_CFG_PCS_ENA);
-+}
-+
-+static int lan887x_config_rgmii_en(struct phy_device *phydev)
-+{
-+	int txc;
-+	int rxc;
-+	int ret;
-+
-+	ret = lan887x_rgmii_init(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Control bit to enable/disable TX DLL delay line in signal path */
-+	txc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG0);
-+	if (txc < 0)
-+		return txc;
-+
-+	/* Control bit to enable/disable RX DLL delay line in signal path */
-+	rxc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG1);
-+	if (rxc < 0)
-+		return rxc;
-+
-+	/* Configures the phy to enable RX/TX delay
-+	 * RGMII        - TX & RX delays are either added by MAC or not needed,
-+	 *                phy should not add
-+	 * RGMII_ID     - Configures phy to enable TX & RX delays, MAC shouldn't add
-+	 * RGMII_RX_ID  - Configures the PHY to enable the RX delay.
-+	 *                The MAC shouldn't add the RX delay
-+	 * RGMII_TX_ID  - Configures the PHY to enable the TX delay.
-+	 *                The MAC shouldn't add the TX delay in this case
-+	 */
-+	switch (phydev->interface) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+		txc &= ~LAN887X_MIS_DLL_CONF;
-+		rxc &= ~LAN887X_MIS_DLL_CONF;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+		txc |= LAN887X_MIS_DLL_CONF;
-+		rxc |= LAN887X_MIS_DLL_CONF;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+		txc &= ~LAN887X_MIS_DLL_CONF;
-+		rxc |= LAN887X_MIS_DLL_CONF;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		txc |= LAN887X_MIS_DLL_CONF;
-+		rxc &= ~LAN887X_MIS_DLL_CONF;
-+		break;
-+	default:
-+		WARN_ONCE(1, "Invalid phydev interface %d\n", phydev->interface);
-+		return 0;
-+	}
-+
-+	/* Configures the PHY to enable/disable RX delay in signal path */
-+	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG1,
-+			     LAN887X_MIS_DLL_CONF, rxc);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Configures the PHY to enable/disable the TX delay in signal path */
-+	return phy_modify_mmd(phydev, MDIO_MMD_VEND1, LAN887X_MIS_DLL_CFG_REG0,
-+			      LAN887X_MIS_DLL_CONF, txc);
-+}
-+
-+static int lan887x_config_phy_interface(struct phy_device *phydev)
-+{
-+	int interface_mode;
-+	int sgmii_dis;
-+	int ret;
-+
-+	/* Read sku efuse data for interfaces supported by sku */
-+	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_EFUSE_READ_DAT9);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* If interface_mode is 1 then efuse sets RGMII operations.
-+	 * If interface mode is 3 then efuse sets SGMII operations.
-+	 */
-+	interface_mode = ret & LAN887X_EFUSE_READ_DAT9_MAC_MODE;
-+	/* SGMII disable is set for RGMII operations */
-+	sgmii_dis = ret & LAN887X_EFUSE_READ_DAT9_SGMII_DIS;
-+
-+	switch (phydev->interface) {
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		/* Reject RGMII settings for SGMII only sku */
-+		ret = -EOPNOTSUPP;
-+
-+		if (!((interface_mode & LAN887X_MAC_MODE_SGMII) ==
-+		    LAN887X_MAC_MODE_SGMII))
-+			ret = lan887x_config_rgmii_en(phydev);
-+		break;
-+	case PHY_INTERFACE_MODE_SGMII:
-+		/* Reject SGMII setting for RGMII only sku */
-+		ret = -EOPNOTSUPP;
-+
-+		if (!sgmii_dis)
-+			ret = lan887x_sgmii_init(phydev);
-+		break;
-+	default:
-+		/* Reject setting for unsupported interfaces */
-+		ret = -EOPNOTSUPP;
-+	}
-+
-+	return ret;
-+}
-+
-+static int lan887x_get_features(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	ret = genphy_c45_pma_read_abilities(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Enable twisted pair */
-+	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, phydev->supported);
-+
-+	/* First patch only supports 100Mbps and 1000Mbps force-mode.
-+	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
-+	 */
-+	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
-+
-+	return 0;
-+}
-+
-+static int lan887x_phy_init(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* Clear loopback */
-+	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				 LAN887X_MIS_CFG_REG2,
-+				 LAN887X_MIS_CFG_REG2_FE_LPBK_EN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Configure default behavior of led to link and activity for any
-+	 * speed
-+	 */
-+	ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1,
-+			     LAN887X_COMMON_LED3_LED2,
-+			     LAN887X_COMMON_LED2_MODE_SEL_MASK,
-+			     LAN887X_LED_LINK_ACT_ANY_SPEED);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* PHY interface setup */
-+	return lan887x_config_phy_interface(phydev);
-+}
-+
-+static int lan887x_phy_config(struct phy_device *phydev,
-+			      const struct lan887x_regwr_map *reg_map, int cnt)
-+{
-+	int ret;
-+
-+	for (int i = 0; i < cnt; i++) {
-+		ret = phy_write_mmd(phydev, reg_map[i].mmd,
-+				    reg_map[i].reg, reg_map[i].val);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int lan887x_phy_setup(struct phy_device *phydev)
-+{
-+	static const struct lan887x_regwr_map phy_cfg[] = {
-+		/* PORT_AFE writes */
-+		{MDIO_MMD_PMAPMD, LAN887X_ZQCAL_CONTROL_1, 0x4008},
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL2, 0x0000},
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL6, 0x0040},
-+		/* 100T1_PCS_VENDOR writes */
-+		{MDIO_MMD_PCS,	  LAN887X_IDLE_ERR_CNT_THRESH, 0x0008},
-+		{MDIO_MMD_PCS,	  LAN887X_IDLE_ERR_TIMER_WIN, 0x800d},
-+		/* 100T1 DSP writes */
-+		{MDIO_MMD_VEND1,  LAN887x_CDR_CONFIG1_100, 0x0ab1},
-+		{MDIO_MMD_VEND1,  LAN887x_LOCK1_EQLSR_CONFIG_100, 0x5274},
-+		{MDIO_MMD_VEND1,  LAN887x_SLV_HD_MUFAC_CONFIG_100, 0x0d74},
-+		{MDIO_MMD_VEND1,  LAN887x_PLOCK_MUFAC_CONFIG_100, 0x0aea},
-+		{MDIO_MMD_VEND1,  LAN887x_PROT_DISABLE_100, 0x0360},
-+		{MDIO_MMD_VEND1,  LAN887x_KF_LOOP_SAT_CONFIG_100, 0x0c30},
-+		/* 1000T1 DSP writes */
-+		{MDIO_MMD_VEND1,  LAN887X_LOCK1_EQLSR_CONFIG, 0x2a78},
-+		{MDIO_MMD_VEND1,  LAN887X_LOCK3_EQLSR_CONFIG, 0x1368},
-+		{MDIO_MMD_VEND1,  LAN887X_PROT_DISABLE, 0x1354},
-+		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN6, 0x3C84},
-+		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN7, 0x3ca5},
-+		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN8, 0x3ca5},
-+		{MDIO_MMD_VEND1,  LAN887X_FFE_GAIN9, 0x3ca5},
-+		{MDIO_MMD_VEND1,  LAN887X_ECHO_DELAY_CONFIG, 0x0024},
-+		{MDIO_MMD_VEND1,  LAN887X_FFE_MAX_CONFIG, 0x227f},
-+		/* 1000T1 PCS writes */
-+		{MDIO_MMD_PCS,    LAN887X_SCR_CONFIG_3, 0x1e00},
-+		{MDIO_MMD_PCS,    LAN887X_INFO_FLD_CONFIG_5, 0x0fa1},
-+	};
-+
-+	return lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+}
-+
-+static int lan887x_100M_setup(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* (Re)configure the speed/mode dependent T1 settings */
-+	if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
-+	    phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED){
-+		static const struct lan887x_regwr_map phy_cfg[] = {
-+			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
-+			{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
-+			{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
-+		};
-+
-+		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+	} else {
-+		static const struct lan887x_regwr_map phy_cfg[] = {
-+			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x0038},
-+			{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100, 0x0014},
-+		};
-+
-+		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+	}
-+	if (ret < 0)
-+		return ret;
-+
-+	return phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_REG_REG26,
-+				LAN887X_REG_REG26_HW_INIT_SEQ_EN);
-+}
-+
-+static int lan887x_1000M_setup(struct phy_device *phydev)
-+{
-+	static const struct lan887x_regwr_map phy_cfg[] = {
-+		{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x003f},
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
-+	};
-+	int ret;
-+
-+	/* (Re)configure the speed/mode dependent T1 settings */
-+	ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+	if (ret < 0)
-+		return ret;
-+
-+	return phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
-+				LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+}
-+
-+static int lan887x_link_setup(struct phy_device *phydev)
-+{
-+	int ret = -EINVAL;
-+
-+	if (phydev->speed == SPEED_1000)
-+		ret = lan887x_1000M_setup(phydev);
-+	else if (phydev->speed == SPEED_100)
-+		ret = lan887x_100M_setup(phydev);
-+
-+	return ret;
-+}
-+
-+/* LAN887x Errata: speed configuration changes require soft reset
-+ * and chip soft reset
-+ */
-+static int lan887x_phy_reset(struct phy_device *phydev)
-+{
-+	int ret, val;
-+
-+	/* Clear 1000M link sync */
-+	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
-+				 LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Clear 100M link sync */
-+	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, LAN887X_REG_REG26,
-+				 LAN887X_REG_REG26_HW_INIT_SEQ_EN);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Chiptop soft-reset to allow the speed/mode change */
-+	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, LAN887X_CHIP_SOFT_RST,
-+			    LAN887X_CHIP_SOFT_RST_RESET);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* CL22 soft-reset to let the link re-train */
-+	ret = phy_modify(phydev, MII_BMCR, BMCR_RESET, BMCR_RESET);
-+	if (ret < 0)
-+		return ret;
-+
-+	/* Wait for reset complete or timeout if > 10ms */
-+	return phy_read_poll_timeout(phydev, MII_BMCR, val, !(val & BMCR_RESET),
-+				    5000, 10000, true);
-+}
-+
-+static int lan887x_phy_reconfig(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	linkmode_zero(phydev->advertising);
-+
-+	ret = genphy_c45_pma_setup_forced(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return lan887x_link_setup(phydev);
-+}
-+
-+static int lan887x_config_aneg(struct phy_device *phydev)
-+{
-+	int ret;
-+
-+	/* LAN887x Errata: speed configuration changes require soft reset
-+	 * and chip soft reset
-+	 */
-+	ret = lan887x_phy_reset(phydev);
-+	if (ret < 0)
-+		return ret;
-+
-+	return lan887x_phy_reconfig(phydev);
-+}
-+
-+static int lan887x_probe(struct phy_device *phydev)
-+{
-+	struct lan887x_priv *priv;
-+
-+	priv = devm_kzalloc(&phydev->mdio.dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	phydev->priv = priv;
-+
-+	return lan887x_phy_setup(phydev);
-+}
-+
-+static u64 lan887x_get_stat(struct phy_device *phydev, int i)
-+{
-+	struct lan887x_hw_stat stat = lan887x_hw_stats[i];
-+	struct lan887x_priv *priv = phydev->priv;
-+	int val;
-+	u64 ret;
-+
-+	if (stat.mmd)
-+		val = phy_read_mmd(phydev, stat.mmd, stat.reg);
-+	else
-+		val = phy_read(phydev, stat.reg);
-+
-+	if (val < 0) {
-+		ret = U64_MAX;
-+	} else {
-+		val = val & ((1 << stat.bits) - 1);
-+		priv->stats[i] += val;
-+		ret = priv->stats[i];
-+	}
-+
-+	return ret;
-+}
-+
-+static void lan887x_get_stats(struct phy_device *phydev,
-+			      struct ethtool_stats *stats, u64 *data)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(lan887x_hw_stats); i++)
-+		data[i] = lan887x_get_stat(phydev, i);
-+}
-+
-+static int lan887x_get_sset_count(struct phy_device *phydev)
-+{
-+	return ARRAY_SIZE(lan887x_hw_stats);
-+}
-+
-+static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(lan887x_hw_stats); i++)
-+		ethtool_puts(&data, lan887x_hw_stats[i].string);
-+}
-+
- static struct phy_driver microchip_t1_phy_driver[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
-@@ -894,6 +1454,20 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.get_sqi_max	= lan87xx_get_sqi_max,
- 		.cable_test_start = lan87xx_cable_test_start,
- 		.cable_test_get_status = lan87xx_cable_test_get_status,
-+	},
-+	{
-+		PHY_ID_MATCH_MODEL(PHY_ID_LAN887X),
-+		.name		= "Microchip LAN887x T1 PHY",
-+		.probe		= lan887x_probe,
-+		.get_features	= lan887x_get_features,
-+		.config_init    = lan887x_phy_init,
-+		.config_aneg    = lan887x_config_aneg,
-+		.get_stats      = lan887x_get_stats,
-+		.get_sset_count = lan887x_get_sset_count,
-+		.get_strings    = lan887x_get_strings,
-+		.suspend	= genphy_suspend,
-+		.resume		= genphy_resume,
-+		.read_status	= genphy_c45_read_status,
- 	}
- };
- 
-@@ -902,6 +1476,7 @@ module_phy_driver(microchip_t1_phy_driver);
- static struct mdio_device_id __maybe_unused microchip_t1_tbl[] = {
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX) },
- 	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN937X) },
-+	{ PHY_ID_MATCH_MODEL(PHY_ID_LAN887X) },
- 	{ }
- };
- 
--- 
-2.34.1
-
+> +	.complete = dwc3_plat_complete,
+> +	SET_RUNTIME_PM_OPS(dwc3_plat_runtime_suspend, dwc3_plat_runtime_resume,
+> +			   dwc3_plat_runtime_idle)
+>  };
+>
+>  #ifdef CONFIG_OF
+> @@ -2595,8 +2648,8 @@ MODULE_DEVICE_TABLE(acpi, dwc3_acpi_match);
+>  #endif
+>
+>  static struct platform_driver dwc3_driver = {
+> -	.probe		= dwc3_probe,
+> -	.remove_new	= dwc3_remove,
+> +	.probe		= dwc3_plat_probe,
+> +	.remove_new	= dwc3_plat_remove,
+>  	.driver		= {
+>  		.name	= "dwc3",
+>  		.of_match_table	= of_match_ptr(of_dwc3_match),
+> diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+> index 1e561fd8b86e..4a0ee9ef72e2 100644
+> --- a/drivers/usb/dwc3/core.h
+> +++ b/drivers/usb/dwc3/core.h
+> @@ -1160,6 +1160,7 @@ struct dwc3_scratchpad_array {
+>   * @gsbuscfg0_reqinfo: store GSBUSCFG0.DATRDREQINFO, DESRDREQINFO,
+>   *		       DATWRREQINFO, and DESWRREQINFO value passed from
+>   *		       glue driver.
+> + * @glue: private reference to any glue context
+>   */
+>  struct dwc3 {
+>  	struct work_struct	drd_work;
+> @@ -1388,6 +1389,8 @@ struct dwc3 {
+>  	int			num_ep_resized;
+>  	struct dentry		*debug_root;
+>  	u32			gsbuscfg0_reqinfo;
+> +
+> +	void			*glue;
+>  };
+>
+>  #define INCRX_BURST_MODE 0
+>
+> --
+> 2.45.2
+>
 
