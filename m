@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-284588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D422C9502E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:51:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7853E9502EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2BC1F23974
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E74DF1F22C63
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:52:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B3419AD93;
-	Tue, 13 Aug 2024 10:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32B319B3ED;
+	Tue, 13 Aug 2024 10:51:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5v5gxaq"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XrLVox5G"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7242119A2BD
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5347F19AD73
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546304; cv=none; b=guiIytzwX5T8ru6/jDlg/jR3NrWNa+7/UOX2Pw6Uq8uePsUzk2mKk5LBvD9wYQGBNIFOtk5pTFpYVQLrCZXzxtiACKL4X/xM6eO6F3LdlyRnjRgBzr7AEKD4BdEX3o1qyo5xljpPJRdzrC5rNTqgHZi7EhaJzCPo0ZAEVb8TFgI=
+	t=1723546306; cv=none; b=UaRnbbfv4Ol6epUh2DC3UdNcf6pCD56uU64zLOEingAMNhIh78UqRb41LuDKdpasDgp2Jt6LG1k99jWddFfuZJxOsWttZJcv+iHqXV9WrNcFW5lK6/5/fKFkw5qy2MYv4ladiVJxutMIjeTqwtq/bbCTrHZD8xeE7TflG8qUjtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546304; c=relaxed/simple;
-	bh=UYVRK9fRkB+3IkiH7yMbBh6im7iaeZ+VrbiWQe8oV7s=;
+	s=arc-20240116; t=1723546306; c=relaxed/simple;
+	bh=vnoCN8F2NWikR+1epy2VJ5R0HpgEtOoZr6bzBa706dc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EnwYCfgFRvFv8dR5KT66Jg03rB+NDz3v2cmQoOJIIrMWAPA+4mMboGZ7dwY44r3e0oQzGBfzaNNc6wM60cSguF+xp2QSWNtPGTfIVeXFpQS2XDvOMSKMjjPnCI2KU/4qbL7VEkXJmvPmpebhoVquSR5cd8nYpJAcdBDXH2rWqDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N5v5gxaq; arc=none smtp.client-ip=209.85.167.41
+	 MIME-Version:Content-Type; b=XSaHEmflZU//jxUO26qlwn7dnv1Ka1pecozSG7YBUxyrAetjnCPsj7wBZqI8bbRhoUs7fB0K2HN3+FFJq5xppZHpWaFbBc3lkQ4hA4mcO8qCnEM+T8Xg1JlAMri0xeDCuS+eGdiAnya/mkRLhx9XL795WZAp6KkkDoCodqMBZPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XrLVox5G; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5320d8155b4so2458979e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:51:42 -0700 (PDT)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52f04150796so6887051e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:51:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723546300; x=1724151100; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723546302; x=1724151102; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lragSOY+WyXV5ZZ+AC/3nB1kh+DnIY/4SWizX87fSmc=;
-        b=N5v5gxaqdHXopi+iXV6h4b0KDL4LM+VhqwQuK6T8Br8I0E8hlPbtbD20cCYxVKQ62C
-         vSo3UYWenfBY/aw0bmmgDgYFmmGb9Ru76aV3Dz1UUEqVT62CAaoJ4FxAMXhNZ/0uWfJy
-         6Yp9z8fIKv7+HHKeks+8iRkXb9JO6X7sAyWM4mZb0vXbxwWTJmmCfZ6jzgIeXfMvAJRQ
-         q4WeAIvFBsxUTlSyaLG+IEZaeRBvAFYg+nKfxuHGqQvAUPk/FQ9jaTsRIvo+xMvhYdzm
-         Fgqz6McnEO/TPuDynb9SsElm2F/QqkVqzuvd9B00CC/UvSs5sduaBssLN51ZLRXdb/xV
-         wcbg==
+        bh=dQhdCIG6a+LBFR6SphoPahDGZ++LmLY0vx0sk4HKH/c=;
+        b=XrLVox5G9ZqVQWpwf+SpVxE7hT/XjP2BiTzH/kF4EK+BaLLfITT2WkSYFtvN5EOW4J
+         2O2tkUgmKqNtEuH8mpyjgQ9DGtZn+YjhjOY/ecC+piAhEdwOSnlr+3B+ioALyyaHKsC3
+         9Ht6iAACrtBjk3yhl/v4sFeDdTZyF0IofzUTHe2vbN24mCGHVYrtirnbN9/llU++Q1B/
+         0+nAxbRQnhPoesZ90DelSWUszrTTH3GC2+RamDOsgdLpQndRM+tvxxSsVd6TiodUOdAj
+         LYhDaPRjJVp+1m4YmFkHihdHPSUcL5puxP3MKIieB65IerJfGNcI+rSBevw/n2/6d+++
+         i4JQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723546300; x=1724151100;
+        d=1e100.net; s=20230601; t=1723546302; x=1724151102;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lragSOY+WyXV5ZZ+AC/3nB1kh+DnIY/4SWizX87fSmc=;
-        b=xTye1y9J9vKrVnYM3aDs9Ac/A5BwOZb6J6HAaieEMo5PvfNNRhkEQgSRmET12JiAAh
-         EnVwHxBeV5pE4XVAXjhyfaFOe16fR9nB9hDoONhQqKkFEwSLEbLrDIxPvVRLdmXSv4jF
-         CZdA1dQOV0aRjymCcnHZBvF05AHO6ZvFVZS5i6F/I/QuLTvWd1AckPb9hKNBGgHV1lP1
-         RF0zmIyu/5y4iinaS7P+JIiVSLys6wCPtIwdSdf0AA1y7JVTqONk8IU3tTiIZUsbV0kI
-         3NwN7zZq/JQ9lcT0VzBUTqIMEwBqDGGKjeyodtyi0urQw9uZ2j+LrE+VebDDEZjsPDul
-         zrdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIHUHOiIvRb3Y+A6Oj+B+4E7TunXaeqFwH1VXbVNjDlyrUiWUGE+zHy3Cq/hBsznWuGHhpXG+AB4WkzSKrvMNkjj2WN2Dg1HiHGycL
-X-Gm-Message-State: AOJu0Yzaphw6BZMdaU6y1lbULcoamrGrqjogF7cZNrIjVioQF2+v7tUT
-	MgoasPgwwX7SylGdwIM4K/pZ1uRMEVh4sigy5So6OZWGVVzKQEUR
-X-Google-Smtp-Source: AGHT+IFBmBPHwR0QDHZKoVinyy3tTqQhhWg3jOVvvlJ/Sxvq5wNS2shu8jAtd2HItIOh+bOK6z5ezA==
-X-Received: by 2002:a05:6512:10c6:b0:52e:95dd:a8ed with SMTP id 2adb3069b0e04-532136613e6mr2058293e87.35.1723546300375;
-        Tue, 13 Aug 2024 03:51:40 -0700 (PDT)
+        bh=dQhdCIG6a+LBFR6SphoPahDGZ++LmLY0vx0sk4HKH/c=;
+        b=F+9jsRhVKiOruO5z8clO7Mz8+yIHd8ao23Iv+MCCvHD/7Rxr7ha+2la1DeYOuHDQLP
+         es99ZW1ES+XnF0jT0LU94ZuPZcGSJcQLbAseAjSwVa9lYAkCpP4ju2C5dHvcdT0c79SK
+         RZm1mMILqpI4+KwgJo09vDP891pNus4gdUeNfldlhaelozjwbAsooxW2lbnxU7FW/Qgc
+         p455uxJLRY3fjMuRaBQv4jMuLtCMsEhcLSXjFEC/oXFQJaTlAgd3PaCw+SJ6FEaAiXK2
+         OXe3ExUw8fave3sBs2TciZsC0hDe9KyTPP+u+YfvSZsPHlo+FW56zscBX3lV6PE900g1
+         ZyaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgt2x0/W9xEn6rjrQIiiCqe3u2haiPRwlgd7Mt0JJPhToeNTV+GIW7KEyWqWIAl2LSr50jtIkFLREIdyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVxQNwZHjd3E/HHZN8FV0mhWq9YxjoUANxNZutFdi7dp+wUGqM
+	L3QMy8h1LzuIyq/6wkuMP39fDohT6kHJHCRstTiH9Kar161Z7bGtvk9peIrL
+X-Google-Smtp-Source: AGHT+IGz72xfDrVPTMYgNZfRCFDLS7p2EH5rjzJWTApdrx62JJLa/NcdcQnhtxEsWIZrL7727HPLLA==
+X-Received: by 2002:a05:6512:282c:b0:52c:cd4f:b95b with SMTP id 2adb3069b0e04-53213657d99mr2098654e87.22.1723546302294;
+        Tue, 13 Aug 2024 03:51:42 -0700 (PDT)
 Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm17290785e9.1.2024.08.13.03.51.39
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm17290785e9.1.2024.08.13.03.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 13 Aug 2024 03:51:40 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
@@ -80,9 +80,9 @@ Cc: melissa.srw@gmail.com,
 	linux-kernel@vger.kernel.org,
 	louis.chauvet@bootlin.com,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [RFC PATCH 02/17] drm/vkms: Move default_config creation to its own function
-Date: Tue, 13 Aug 2024 12:44:13 +0200
-Message-ID: <20240813105134.17439-3-jose.exposito89@gmail.com>
+Subject: [RFC PATCH 03/17] drm/vkms: Set device name from vkms_config
+Date: Tue, 13 Aug 2024 12:44:14 +0200
+Message-ID: <20240813105134.17439-4-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240813105134.17439-1-jose.exposito89@gmail.com>
 References: <20240813105134.17439-1-jose.exposito89@gmail.com>
@@ -95,80 +95,105 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Extract the initialization of the default configuration to a function.
-Refactor, no functional changes.
+In order to be able to create multiple devices, the device name needs to
+be unique.
+
+Allow to set it in the VKMS configuration.
 
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- drivers/gpu/drm/vkms/vkms_config.c | 17 +++++++++++++++++
- drivers/gpu/drm/vkms/vkms_config.h |  3 +++
- drivers/gpu/drm/vkms/vkms_drv.c    |  6 +-----
- 3 files changed, 21 insertions(+), 5 deletions(-)
+ drivers/gpu/drm/vkms/vkms_config.c | 7 +++++--
+ drivers/gpu/drm/vkms/vkms_config.h | 3 ++-
+ drivers/gpu/drm/vkms/vkms_drv.c    | 2 +-
+ drivers/gpu/drm/vkms/vkms_drv.h    | 2 ++
+ 4 files changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
-index c58eda76c238..4c7cda16dfd8 100644
+index 4c7cda16dfd8..6ab8091bf72f 100644
 --- a/drivers/gpu/drm/vkms/vkms_config.c
 +++ b/drivers/gpu/drm/vkms/vkms_config.c
-@@ -19,6 +19,23 @@ struct vkms_config *vkms_config_create(void)
+@@ -8,7 +8,7 @@
+ #include "vkms_config.h"
+ #include "vkms_drv.h"
+ 
+-struct vkms_config *vkms_config_create(void)
++struct vkms_config *vkms_config_create(char *dev_name)
+ {
+ 	struct vkms_config *config;
+ 
+@@ -16,6 +16,8 @@ struct vkms_config *vkms_config_create(void)
+ 	if (!config)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	config->dev_name = dev_name;
++
  	return config;
  }
  
-+struct vkms_config *vkms_config_default_create(bool enable_cursor,
-+					       bool enable_writeback,
-+					       bool enable_overlay)
-+{
-+	struct vkms_config *config;
-+
-+	config = vkms_config_create();
-+	if (IS_ERR(config))
-+		return config;
-+
-+	config->cursor = enable_cursor;
-+	config->writeback = enable_writeback;
-+	config->overlay = enable_overlay;
-+
-+	return config;
-+}
-+
- void vkms_config_destroy(struct vkms_config *config)
+@@ -25,7 +27,7 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
  {
- 	kfree(config);
-diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-index 65da8cd6ff96..83181760b02b 100644
---- a/drivers/gpu/drm/vkms/vkms_config.h
-+++ b/drivers/gpu/drm/vkms/vkms_config.h
-@@ -17,6 +17,9 @@ struct vkms_config {
- 
- /* VKMS Config */
- struct vkms_config *vkms_config_create(void);
-+struct vkms_config *vkms_config_default_create(bool enable_cursor,
-+					       bool enable_writeback,
-+					       bool enable_overlay);
- void vkms_config_destroy(struct vkms_config *config);
- 
- /* DebugFS */
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index 6bf462985731..4e36989589f9 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -219,16 +219,12 @@ static int __init vkms_init(void)
- 	int ret;
  	struct vkms_config *config;
  
 -	config = vkms_config_create();
-+	config = vkms_config_default_create(enable_cursor, enable_writeback, enable_overlay);
++	config = vkms_config_create(DEFAULT_DEVICE_NAME);
  	if (IS_ERR(config))
- 		return PTR_ERR(config);
+ 		return config;
  
- 	default_config = config;
+@@ -47,6 +49,7 @@ static int vkms_config_show(struct seq_file *m, void *data)
+ 	struct drm_device *dev = entry->dev;
+ 	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
  
--	config->cursor = enable_cursor;
--	config->writeback = enable_writeback;
--	config->overlay = enable_overlay;
--
- 	ret = vkms_create(config);
- 	if (ret)
- 		vkms_config_destroy(config);
++	seq_printf(m, "dev_name=%s\n", vkmsdev->config->dev_name);
+ 	seq_printf(m, "writeback=%d\n", vkmsdev->config->writeback);
+ 	seq_printf(m, "cursor=%d\n", vkmsdev->config->cursor);
+ 	seq_printf(m, "overlay=%d\n", vkmsdev->config->overlay);
+diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+index 83181760b02b..ba06aad32799 100644
+--- a/drivers/gpu/drm/vkms/vkms_config.h
++++ b/drivers/gpu/drm/vkms/vkms_config.h
+@@ -8,6 +8,7 @@
+ struct vkms_device;
+ 
+ struct vkms_config {
++	char *dev_name;
+ 	bool writeback;
+ 	bool cursor;
+ 	bool overlay;
+@@ -16,7 +17,7 @@ struct vkms_config {
+ };
+ 
+ /* VKMS Config */
+-struct vkms_config *vkms_config_create(void);
++struct vkms_config *vkms_config_create(char *dev_name);
+ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+ 					       bool enable_writeback,
+ 					       bool enable_overlay);
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+index 4e36989589f9..2f9d1db0cfae 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.c
++++ b/drivers/gpu/drm/vkms/vkms_drv.c
+@@ -160,7 +160,7 @@ static int vkms_create(struct vkms_config *config)
+ 	struct platform_device *pdev;
+ 	struct vkms_device *vkms_device;
+ 
+-	pdev = platform_device_register_simple(DRIVER_NAME, -1, NULL, 0);
++	pdev = platform_device_register_simple(config->dev_name, -1, NULL, 0);
+ 	if (IS_ERR(pdev))
+ 		return PTR_ERR(pdev);
+ 
+diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+index 5c523ca27f22..87e44b51a03f 100644
+--- a/drivers/gpu/drm/vkms/vkms_drv.h
++++ b/drivers/gpu/drm/vkms/vkms_drv.h
+@@ -12,6 +12,8 @@
+ #include <drm/drm_encoder.h>
+ #include <drm/drm_writeback.h>
+ 
++#define DEFAULT_DEVICE_NAME "vkms"
++
+ #define XRES_MIN    10
+ #define YRES_MIN    10
+ 
 -- 
 2.46.0
 
