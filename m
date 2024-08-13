@@ -1,193 +1,127 @@
-Return-Path: <linux-kernel+bounces-285260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E73A950B52
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:21:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0CE950B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEFD5283FFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138D31F23532
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37191A2C06;
-	Tue, 13 Aug 2024 17:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE81A2562;
+	Tue, 13 Aug 2024 17:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VD2k6eBS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J21tYD7f"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9C6170A18;
-	Tue, 13 Aug 2024 17:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6633170A18;
+	Tue, 13 Aug 2024 17:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723569673; cv=none; b=UpZaLlQ1ZhfZUV9GTmjFM+Mu5XsABRgcgpcu/+uf4eZDLJYjdx1VdFdWOP7hE/Qst5JgX43ZLAoSZLKm7PVLCIcBZ9fizqXHPysLni4lPqQOPiWDPnD81QSqMLbF8VxQJrjLGigsO0g+Xk8vFXufBPApIGIix8jhCRyBpnlyIWc=
+	t=1723569771; cv=none; b=iw5aAVVuik3bNP3g9WKSqhEhaVFXoFUIxpQZVnk408bjxUow8SQJDdf3ACAp0SL6oP1t0H2khOily8ctSUqaTYiWMHfWUPnigw7eV4A79wz/hmQkUKzgB8cckNsIkakXEJYbc0rC1wCP5L26NfwROna+Qjmzf+XnfruW9rGWWjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723569673; c=relaxed/simple;
-	bh=EJ3zddtN4dHsXAIsUca3NlyAITki0vkXaggYKAmVHmo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+fPYjRztqRKHfyjZ9Wc1jFTU5VJGBVfwPWczx6Gmoz0Jy5HoKBO0AjIvZLXnPwoSebs9pWTKGbXG80yHS2Hyc+KBJF3oMhbeuIgyLPfVq7RWkdiKIwGlj0BF7CZ+tb+662bflv4+WCEn870Ev4J9B7wX+K7WsmBMChVYnzc8iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VD2k6eBS; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1723569771; c=relaxed/simple;
+	bh=PXjGkj2+4r+pOwvax1EJsHXufhiX5E5s/WYsh43Fu9g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dsxQCad0ahCRYNoT2qNFZmap+5uV1bQs52Zsw0Uwei1BAHPlgNXhECyWkf20AFvlRQX+ze9z4mqcRvZUCfTVTe9TrEIMlpKQYxAY/wn97kmsX+qYZO7oiwA/6V2Yls4Eco5eHEft8PWCrZ3W6ROlJkUSd5JutVT2Z5f6NMcqWTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J21tYD7f; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723569672; x=1755105672;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EJ3zddtN4dHsXAIsUca3NlyAITki0vkXaggYKAmVHmo=;
-  b=VD2k6eBSxE+0SvIfsqdmrcv/Xni5HMpRiipmtqQKuT94nzc/MKPNAv4L
-   wtzsFS5NIrPRc/jgXHoWXbWNrN4BjtHxFJnFHB7ODSotSZ/cKHJREAih5
-   dxCfMVSg2++4lGHHelO4iYyQNzhckwSeniaUyNl2kbYuHyPfKfKbxwIv5
-   wSdDJVHqOa2jAWMfNHFBvcAn4mygru7lFDg2mIeO6xITml+f9g5CgRHQS
-   2aoKy1v0jCuAop7qHuIORz1425md3nSLHiesc3MwiKKfwBq8qiWZWBSJ6
-   VL+2SErwjbbm/d25vRrPbay76NMtY+0qHd+wsBz/G4EwJu+7xPijHIIcu
-   Q==;
-X-CSE-ConnectionGUID: XiuI+sqkRquwu3DQfVMyBg==
-X-CSE-MsgGUID: aVn2UqGCSiG+KV96Fn/uug==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21883718"
+  t=1723569770; x=1755105770;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=PXjGkj2+4r+pOwvax1EJsHXufhiX5E5s/WYsh43Fu9g=;
+  b=J21tYD7f3NOg7A+hHsu/lHuS5Mnv6bUKzP29N75LWZVyJJKpjNRsbdKg
+   iyvj9zupgpC7h50ZWqjEs5nqRUyHpUx3o94hL3x6LdvbAxejx1Ay4jAaC
+   5Vom3aYq7m5ioGkx8Ssj++u9ftHzV0fnpUt2TaZyYZctYworVfVAAJ7n0
+   uxca99Gf8DUW4Jr4d16yWRhzGjOB0lC7FVwF42nolYGYG/gYZ2MkHgBpR
+   LAef8wdZKuzXyLSq6plKFRZC8eO+oZtfV6IU41NHTuedIc46YqY896YU/
+   9/8OX9/kRmJG4QafNF9IBCqi7qzQxPkEHwviv83/3WIif0EhQe32zy8BO
+   g==;
+X-CSE-ConnectionGUID: 1n54UM1rRfazmbduPD0Obg==
+X-CSE-MsgGUID: STHeEZt/RaaaX7DRg7+PPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="39257079"
 X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="21883718"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:21:10 -0700
-X-CSE-ConnectionGUID: Y/cVAO4QTlmfVXabz4w3kg==
-X-CSE-MsgGUID: rerKu6oTRuuzDX2C4q5b4w==
+   d="scan'208";a="39257079"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:22:49 -0700
+X-CSE-ConnectionGUID: 9AfD1iuWTmC/9e/5rre4IQ==
+X-CSE-MsgGUID: YUgBNSyfR5CAsRM+vDHsaw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="62890101"
-Received: from ls.sc.intel.com (HELO localhost) ([172.25.112.54])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:21:09 -0700
-Date: Tue, 13 Aug 2024 10:21:08 -0700
-From: Isaku Yamahata <isaku.yamahata@intel.com>
-To: Yuan Yao <yuan.yao@linux.intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org, kai.huang@intel.com,
-	isaku.yamahata@gmail.com, tony.lindgren@linux.intel.com,
-	xiaoyao.li@intel.com, linux-kernel@vger.kernel.org,
-	Isaku Yamahata <isaku.yamahata@intel.com>,
-	Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: Re: [PATCH 18/25] KVM: TDX: Do TDX specific vcpu initialization
-Message-ID: <ZruWBHdNwIAwm7QE@ls.amr.corp.intel.com>
-References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
- <20240812224820.34826-19-rick.p.edgecombe@intel.com>
- <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
+   d="scan'208";a="58430370"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
+  by fmviesa007.fm.intel.com with ESMTP; 13 Aug 2024 10:22:48 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+	id 474E230125F; Tue, 13 Aug 2024 10:22:48 -0700 (PDT)
+From: Andi Kleen <ak@linux.intel.com>
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,  hannes@cmpxchg.org,
+  riel@surriel.com,  shakeel.butt@linux.dev,  roman.gushchin@linux.dev,
+  yuzhao@google.com,  david@redhat.com,  baohua@kernel.org,
+  ryan.roberts@arm.com,  rppt@kernel.org,  willy@infradead.org,
+  cerasuolodomenico@gmail.com,  corbet@lwn.net,
+  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
+  kernel-team@meta.com
+Subject: Re: [PATCH v3 0/6] mm: split underutilized THPs
+In-Reply-To: <20240813120328.1275952-1-usamaarif642@gmail.com> (Usama Arif's
+	message of "Tue, 13 Aug 2024 13:02:43 +0100")
+References: <20240813120328.1275952-1-usamaarif642@gmail.com>
+Date: Tue, 13 Aug 2024 10:22:48 -0700
+Message-ID: <87y150mj6f.fsf@linux.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240813080009.zowu3woyffwlyazu@yy-desk-7060>
+Content-Type: text/plain
 
-On Tue, Aug 13, 2024 at 04:00:09PM +0800,
-Yuan Yao <yuan.yao@linux.intel.com> wrote:
+Usama Arif <usamaarif642@gmail.com> writes:
+>
+> This patch-series is an attempt to mitigate the issue of running out of
+> memory when THP is always enabled. During runtime whenever a THP is being
+> faulted in or collapsed by khugepaged, the THP is added to a list.
+> Whenever memory reclaim happens, the kernel runs the deferred_split
+> shrinker which goes through the list and checks if the THP was underutilized,
+> i.e. how many of the base 4K pages of the entire THP were zero-filled.
 
-> > +/* VMM can pass one 64bit auxiliary data to vcpu via RCX for guest BIOS. */
-> > +static int tdx_td_vcpu_init(struct kvm_vcpu *vcpu, u64 vcpu_rcx)
-> > +{
-> > +	const struct tdx_sysinfo_module_info *modinfo = &tdx_sysinfo->module_info;
-> > +	struct vcpu_tdx *tdx = to_tdx(vcpu);
-> > +	unsigned long va;
-> > +	int ret, i;
-> > +	u64 err;
-> > +
-> > +	if (is_td_vcpu_created(tdx))
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * vcpu_free method frees allocated pages.  Avoid partial setup so
-> > +	 * that the method can't handle it.
-> > +	 */
-> 
-> This looks not that clear, why vcpu_free can't handle it is not explained.
-> 
-> Looking the whole function, page already added into TD by
-> SEAMCALL should be cleared before free back to kernel,
-> tdx_vcpu_free() can handle them. Other pages can be freed
-> directly and can't be handled by tdx_vcpu_free() because
-> they're not added into TD. Is this right understanding ?
+Sometimes when writing a benchmark I fill things with zero explictly
+to avoid faults later. For example if you want to measure memory
+read bandwidth you need to fault the pages first, but that fault
+pattern may well be zero.
 
-Yes.  If we result in error in the middle of TDX vCPU initialization,
-TDH.MEM.PAGE.RECLAIM() result in error due to TDX module state check.
-TDX module seems to assume that we don't fail in the middle of TDX vCPU
-initialization.  Maybe we can add WARN_ON_ONCE() for such cases.
+With your patch if there is memory pressure there are two effects:
 
+- If things are remapped to the zero page the benchmark
+reading memory may give unrealistically good results because
+what is thinks is a big memory area is actually only backed
+by a single page.
 
-> > +		ret = -EIO;
-> > +		pr_tdx_error(TDH_VP_CREATE, err);
-> > +		goto free_tdvpx;
-> > +	}
-> > +
-> > +	for (i = 0; i < tdx_sysinfo_nr_tdcx_pages(); i++) {
-> > +		va = __get_free_page(GFP_KERNEL_ACCOUNT);
-> > +		if (!va) {
-> > +			ret = -ENOMEM;
-> > +			goto free_tdvpx;
-> 
-> It's possible that some pages already added into TD by
-> tdh_vp_addcx() below and they won't be handled by
-> tdx_vcpu_free() if goto free_tdvpx here;
+- If I expect to write I may end up with an unexpected zeropage->real
+memory fault if the pages got remapped. 
 
-Due to TDX TD state check, we can't free partially assigned TDCS pages.
-TDX module seems to assume that TDH.VP.ADDCX() won't fail in the middle.
+I expect such patterns can happen without benchmarking too.
+I could see it being a problem for latency sensitive applications.
 
+Now you could argue that this all should only happen under memory
+pressure and when that happens things may be slow anyways and your
+patch will still be an improvement.
 
-> > +	else
-> > +		err = tdh_vp_init(tdx, vcpu_rcx);
-> > +
-> > +	if (KVM_BUG_ON(err, vcpu->kvm)) {
-> > +		pr_tdx_error(TDH_VP_INIT, err);
-> > +		return -EIO;
-> > +	}
-> > +
-> > +	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
-> > +	tdx->td_vcpu_created = true;
-> > +
-> > +	return 0;
-> > +
-> > +free_tdvpx:
-> 
-> How about s/free_tdvpx/free_tdcx
-> 
-> In 1.5 TDX spec these pages are all called TDCX pages, and
-> the function context already indicates that we're talking about
-> vcpu's TDCX pages.
+Maybe that's true but there might be still corner cases
+which are negatively impacted by this. I don't have a good solution
+other than a tunable, but I expect it will cause problems for someone.
 
-Oops, this is left over when tdvpx was converted to tdcs.
+The other problem I have with your patch is that it may cause the kernel
+to pollute CPU caches in the background, which again will cause noise in
+the system. Instead of plain memchr_inv, you should probably use some
+primitive to bypass caches or use a NTA prefetch hint at least.
 
-
-> > +static int tdx_vcpu_init(struct kvm_vcpu *vcpu, struct kvm_tdx_cmd *cmd)
-> > +{
-> > +	struct msr_data apic_base_msr;
-> > +	struct vcpu_tdx *tdx = to_tdx(vcpu);
-> > +	int ret;
-> > +
-> > +	if (cmd->flags)
-> > +		return -EINVAL;
-> > +	if (tdx->initialized)
-> > +		return -EINVAL;
-> > +
-> > +	/*
-> > +	 * As TDX requires X2APIC, set local apic mode to X2APIC.  User space
-> > +	 * VMM, e.g. qemu, is required to set CPUID[0x1].ecx.X2APIC=1 by
-> > +	 * KVM_SET_CPUID2.  Otherwise kvm_set_apic_base() will fail.
-> > +	 */
-> > +	apic_base_msr = (struct msr_data) {
-> > +		.host_initiated = true,
-> > +		.data = APIC_DEFAULT_PHYS_BASE | LAPIC_MODE_X2APIC |
-> > +		(kvm_vcpu_is_reset_bsp(vcpu) ? MSR_IA32_APICBASE_BSP : 0),
-> > +	};
-> > +	if (kvm_set_apic_base(vcpu, &apic_base_msr))
-> > +		return -EINVAL;
-> > +
-> > +	ret = tdx_td_vcpu_init(vcpu, (u64)cmd->data);
-
-Because we set guest rcx only, we use cmd->data.  Can we add reserved area for
-future use similar to struct kvm_tdx_init_vm?
-i.e. introduce something like
-struct kvm_tdx_init_vcpu {u64 rcx; u64 reserved[]; }
--- 
-Isaku Yamahata <isaku.yamahata@intel.com>
+-Andi
 
