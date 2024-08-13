@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-285305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDE5950BE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:01:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1A3950BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953B928306E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F37F1F27FBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F461A76D0;
-	Tue, 13 Aug 2024 17:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9DB1AAE09;
+	Tue, 13 Aug 2024 17:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d7uMedKy"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="AdlFFVVz"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD81A7053
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE0D1A7072
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571956; cv=none; b=ne9YsUVdcIujZF42n4QxIUKXHxfs5crkR524mgFo+t0ruXbq6Q51gIFsFaa26hb5OPZYpQNZacmBSSJ/KgPMfTZ/GU4H/J/gbpgUfCcEpzy9z4M1jQwVZeFsSLpHppY67RkLSVjsR+oqbIlC4mt3n5cvh6gpH6oPg/Qb030DUqw=
+	t=1723571956; cv=none; b=QGUFoOyeBfNDj4Kz3Z8Bu2OrT0erwzYycuDweUaseVOhNObEu+RaX3OlKjJMfO12vOqiOIc+vTwSkb+P+K40eJq2ysNjf/f6OZEbr+L4/ULIx52/V8zrnvjg1Zp5PH5LZCi4uwTju2S1jKosl12RAf+OCYab3l/lmuPQ+Lr5JGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723571956; c=relaxed/simple;
-	bh=XQD12zG1QPG/HcaG5FjYzZlsyhlBd7/lSJGZI6B7+aM=;
+	bh=mi3OGU5+5PzqQ+RwIInlLhnSeBSpaUM9wHWhtXy7rTQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sH3GzpNEry5E5MM1eH3tMFmMJ7RfoEmIP/mxbOU7GVIkUAWMJt2oSDDFDHq3MKaFgmtiEZ6tjOZnIKh8/YHpsD1ySmUZINNOj2zcQyVrtfDAsk9lFVDHFYyBXVwkGQ4Dd57luNMzllLi9YxS6/SQ93tquCCKI6YzbQYHWYIPsyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d7uMedKy; arc=none smtp.client-ip=217.70.183.196
+	 Content-Type:Content-Disposition:In-Reply-To; b=bHVYLqCliVrxTYgEbK8HUBj/9qef/qSmqTRVkxYF7cr+D/64ZcW0tWejpCKavgAehYXJichJZD+5pNVXvPW8mKHPL7s68jFraxtV/MGKcigyhbpfShwE7PreGKGyCw5LKxSDOiLYNousBtKxxHaH9kI8bgOz/yqRkG5zOMY0nKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=AdlFFVVz; arc=none smtp.client-ip=217.70.183.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B0CCE0007;
-	Tue, 13 Aug 2024 17:59:05 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3835820007;
+	Tue, 13 Aug 2024 17:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723571946;
+	t=1723571947;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=lIkQrkEd8n0E04wxF41n7IQIaihwVSISMemOCN1Jpac=;
-	b=d7uMedKy3TPH4rzYdOAlnGnuZYJFx01wkNRTwZKW1mhRKcSYhLw6osmAXpaPn2y23JQINW
-	N9prRwMiFCPfXrsw+oGp8E7FkiIxBsNcs0kcpHhcLQzHSsUkkHo+EfAirJnuKBYLVZqV/P
-	4MTFZjHAmp00crqpI43m0uN5ls6F1LrswaP1kEawR1vBjHrVkXDtLaZwvzn8l7f2lUHUWR
-	XOihZMJtqofitC10hKFJS+x6QL/rymhTMyFB29ewXy7Qyf1JL0p9+44oEfcBL41s+ltY3j
-	lIuDQcKkdzQ7lJUBIBqXP2wTvp7rAPNBEdQV9sVFpvdNMwLCqwbCRzaHJr0BKw==
+	bh=p2JpmoK7gE+KJoniDAykDf+cChXQcy8J8qPiiNB0oaE=;
+	b=AdlFFVVz/2wIoUuSIBIWpt0L5th9pzQPNtXJTQloRv84SnmBEgVHSuY1KAwsbUFMFNJR0R
+	mtq8Oa34sHOTzHS1o0+TVXb+fm67s2OyGOC4+PebjWSRopHb+R0AlMje2SfIpdLVF4DMaX
+	rzZ3fjoHbxJ0E9cnr7jiiApOu3PpZ+8ej2QRkjmJI+rXQkbItAdARH2Tsa0o1lTbmC8rU5
+	AYvRe8TGsSty063Xs+nzkrhNKJEVit+kDXMBt8t6S93r8tABo4zFPEKMjw5gkZ6tbR0+Vw
+	UgUt6HvsZr5tH3brNHRASjoK6We8CtSptmfolypKzYLbrWl0fKc5R330vKq1zw==
 Date: Tue, 13 Aug 2024 19:58:59 +0200
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
@@ -52,9 +52,9 @@ Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
 	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
 	tzimmermann@suse.de, airlied@gmail.com,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 12/17] drm/vkms: Allow to configure multiple CRTCs
+Subject: Re: [RFC PATCH 13/17] drm/vkms: Allow to configure multiple encoders
  via configfs
-Message-ID: <Zrue4yt_tGpufiMb@louis-chauvet-laptop>
+Message-ID: <Zrue453QBrJSV4Rl@louis-chauvet-laptop>
 Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
 	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
 	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
@@ -62,7 +62,7 @@ Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
 	tzimmermann@suse.de, airlied@gmail.com,
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 References: <20240813105134.17439-1-jose.exposito89@gmail.com>
- <20240813105134.17439-13-jose.exposito89@gmail.com>
+ <20240813105134.17439-14-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,260 +72,180 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240813105134.17439-13-jose.exposito89@gmail.com>
+In-Reply-To: <20240813105134.17439-14-jose.exposito89@gmail.com>
 X-GND-Sasl: louis.chauvet@bootlin.com
 
 Le 13/08/24 - 12:44, José Expósito a écrit :
-> Create a default subgroup at /config/vkms/crtcs to allow to create as
-> many CRTCs as required. When a CRTC is created, allow to configure the
-> equivalent of the module parameters enable_cursor and enable_writeback.
+> Create a default subgroup at /config/vkms/encoders to allow to create as
+> many encoders as required. When the encoder is created the
+> possible_crtcs subgroup is created allowing to link encoders and CRTCs.
 
-I think this commit is not bissectable, you have issue with:
-
-	mkdir /config/vkms/my-vkms
-	mkdir /config/vkms/my-vkms/crtcs/1
-	rmdir /config/vkms/my-vkms/crtcs/1
-	mkdir /config/vkms/my-vkms/crtcs/1
-	echo 1 > /config/vkms/my-vkms/enabled
-	# Not a crash, but drm is complaining
-	
-and also when creating many crtcs:
-
-	mkdir /config/vkms/my-vkms
-	mkdir /config/vkms/my-vkms/crtcs/{1..32}
-	mkdir /config/vkms/my-vkms/crtcs/33 # Should be forbidden (I also 
-					forgot to manage this case)
-	echo 1 > /config/vkms/my-vkms/enabled
-	# DRM is complaining
-
-or
-
-	mkdir /config/vkms/my-vkms
-	mkdir /config/vkms/my-vkms/crtcs/{1..32}
-	rmdir /config/vkms/my-vkms/crtcs/31 # not 32 because the index 
-						will works "by chance"
-	mkdir /config/vkms/my-vkms/crtcs/31
-	echo 1 > /config/vkms/my-vkms/enabled
-       	# DRM is complaining
-
+I did not test, but the issue about index for crtc are maybe the same for 
+encoders.
+ 
 > Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > ---
->  Documentation/gpu/vkms.rst           |  22 +++-
+>  Documentation/gpu/vkms.rst           |  14 ++-
 >  drivers/gpu/drm/vkms/vkms_config.h   |   3 +
->  drivers/gpu/drm/vkms/vkms_configfs.c | 149 +++++++++++++++++++++++++--
->  3 files changed, 166 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/vkms/vkms_configfs.c | 127 +++++++++++++++++++++++++--
+>  3 files changed, 136 insertions(+), 8 deletions(-)
 > 
 > diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
-> index 9895a9ae76f4..0886349ad4a0 100644
+> index 0886349ad4a0..c69be063d3b4 100644
 > --- a/Documentation/gpu/vkms.rst
 > +++ b/Documentation/gpu/vkms.rst
-> @@ -71,6 +71,25 @@ By default, the instance is disabled::
->    cat /config/vkms/my-vkms/enabled
->    0
+> @@ -76,7 +76,8 @@ And directories are created for each configurable item of the display pipeline::
+>    tree /config/vkms/my-vkms
+>      /config/vkms/my-vkms
+>      ├── crtcs
+> -    └── enabled
+> +    ├── enabled
+> +    └── encoders
 >  
-> +And directories are created for each configurable item of the display pipeline::
+>  To add items to the display pipeline, create one or more directories under the
+>  available paths.
+> @@ -90,6 +91,15 @@ CRTCs have 2 configurable attributes:
+>  - cursor: Enable or disable cursor plane support
+>  - writeback: Enable or disable writeback connector support
+>  
+> +Continue by creating one or more encoders::
 > +
-> +  tree /config/vkms/my-vkms
-> +    /config/vkms/my-vkms
-> +    ├── crtcs
-> +    └── enabled
+> +  sudo mkdir /config/vkms/my-vkms/encoders/encoder0
 > +
-> +To add items to the display pipeline, create one or more directories under the
-> +available paths.
+> +Encoders can be linked to CRTCs by creating a symbolic link under
+> +``possible_crtcs``::
 > +
-> +Start by creating one or more CRTCs::
-> +
-> +  sudo mkdir /config/vkms/my-vkms/crtcs/crtc0
-> +
-> +CRTCs have 2 configurable attributes:
-> +
-> +- cursor: Enable or disable cursor plane support
-> +- writeback: Enable or disable writeback connector support
+> +  sudo ln -s /config/vkms/my-vkms/crtcs/crtc0 /config/vkms/my-vkms/encoders/encoder0/possible_crtcs
 > +
 >  Once you are done configuring the VKMS instance, enable it::
 >  
 >    echo "1" | sudo tee /config/vkms/my-vkms/enabled
-> @@ -79,8 +98,9 @@ Finally, you can remove the VKMS instance disabling it::
+> @@ -100,6 +110,8 @@ Finally, you can remove the VKMS instance disabling it::
 >  
->    echo "0" | sudo tee /config/vkms/my-vkms/enabled
+>  Or removing the top level directory and its subdirectories::
 >  
-> -Or removing the top level directory::
-> +Or removing the top level directory and its subdirectories::
->  
-> +  sudo rmdir /config/vkms/my-vkms/crtcs/*
+> +  sudo rm /config/vkms/my-vkms/encoders/*/possible_crtcs/*
+> +  sudo rmdir /config/vkms/my-vkms/encoders/*
+>    sudo rmdir /config/vkms/my-vkms/crtcs/*
 >    sudo rmdir /config/vkms/my-vkms
 
-Here, I really don't like this way to delete a device, because you may 
-lost objects later.
+Same comment as previously, I think we should forbid this way to delete an 
+instance.
 
-For example, if we take a connector, we want the let the userspace 
-connecting and disconnecting it, so something like
-
-	echo 1 > /config/vkms/my-vkms/connectors/my_conn/connected
-	echo 0 > /config/vkms/my-vkms/connectors/my_conn/connected
-  
-But in the same time, we allows the userspace to delete directory, so you 
-may "loose" your connector
-
-	echo 1 > /config/vkms/my-vkms/connectors/my_conn/connected
-	rmdir /config/vkms/my-vkms/connectors/my_conn/
-	# no way to disconnect it now! you must completly delete the 
-	# device and create a new one
-
-So I think we should totally forbid the deletion of anything if 
-the device is enabled. So to delete one device, you have to:
-
-	echo 0 > /config/vkms/my-vkms/enabled
-	rmdir /config/vkms/my_vkms/{everything}
-
->  Testing With IGT
 > diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
-> index 3237406fa3a3..f96a0456a3d7 100644
+> index f96a0456a3d7..f9423533a7f3 100644
 > --- a/drivers/gpu/drm/vkms/vkms_config.h
 > +++ b/drivers/gpu/drm/vkms/vkms_config.h
-> @@ -3,6 +3,7 @@
->  #ifndef _VKMS_CONFIG_H_
->  #define _VKMS_CONFIG_H_
->  
-> +#include <linux/configfs.h>
->  #include <linux/list.h>
->  #include <linux/types.h>
->  
-> @@ -20,6 +21,8 @@ struct vkms_config_crtc {
+> @@ -29,6 +29,9 @@ struct vkms_config_encoder {
+>  	struct list_head list;
 >  	unsigned int index;
->  	bool cursor;
->  	bool writeback;
+>  	uint32_t possible_crtcs;
 > +	/* only used if created from configfs */
-> +	struct config_group crtc_group;
+> +	struct config_group encoder_group;
+> +	struct config_group possible_crtcs_group;
 
-I don't really like the idea of mixing configfs structure and vkms 
-configuration. Both can have different lifetime and are created in 
-different places.
-
-You already created a vkms_configfs_device structure, why not for a 
-vkms_configfs_crtc?
+Again, I don't like mixing configfs and vkms_config. Can we keep both 
+stuff splitted?
 
 >  };
 >  
->  struct vkms_config_encoder {
+>  struct vkms_config_connector {
 > diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
-> index 3f25295f7788..04278a39cd3c 100644
+> index 04278a39cd3c..c0b62fb93dc0 100644
 > --- a/drivers/gpu/drm/vkms/vkms_configfs.c
 > +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
-> @@ -17,6 +17,8 @@ static bool is_configfs_registered;
->   * @vkms_config: Configuration of the VKMS device
->   * @device_group: Top level configuration group that represents a VKMS device.
+> @@ -19,6 +19,8 @@ static bool is_configfs_registered;
 >   * Initialized when a new directory is created under "/config/vkms/"
-> + * @crtcs_group: Default subgroup of @device_group at "/config/vkms/crtcs".
-> + * Each of its items represent a CRTC
+>   * @crtcs_group: Default subgroup of @device_group at "/config/vkms/crtcs".
+>   * Each of its items represent a CRTC
+> + * @encoders_group: Default subgroup of @device_group at
+> + * "/config/vkms/encoders". Each of its items represent a encoder
 >   * @lock: Lock used to project concurrent access to the configuration attributes
 >   * @enabled: Protected by @lock. The device is created or destroyed when this
 >   * option changes
-> @@ -24,6 +26,7 @@ static bool is_configfs_registered;
->  struct vkms_configfs {
+> @@ -27,6 +29,7 @@ struct vkms_configfs {
 >  	struct vkms_config *vkms_config;
 >  	struct config_group device_group;
-> +	struct config_group crtcs_group;
+>  	struct config_group crtcs_group;
+> +	struct config_group encoders_group;
 >  
 >  	/* protected by @lock */
 >  	struct mutex lock;
-> @@ -33,6 +36,141 @@ struct vkms_configfs {
->  #define config_item_to_vkms_configfs(item) \
->  	container_of(to_config_group(item), struct vkms_configfs, device_group)
+> @@ -45,6 +48,15 @@ struct vkms_configfs {
+>  #define crtcs_item_to_vkms_config_crtc(item) \
+>  	container_of(to_config_group(item), struct vkms_config_crtc, crtc_group)
 >  
-> +#define crtcs_group_to_vkms_configfs(group) \
-> +	container_of(group, struct vkms_configfs, crtcs_group)
+> +#define encoders_group_to_vkms_configfs(group) \
+> +	container_of(group, struct vkms_configfs, encoders_group)
 > +
-> +#define crtcs_item_to_vkms_configfs(item) \
-> +	container_of(to_config_group(item), struct vkms_configfs, crtcs_group)
+> +#define encoders_item_to_vkms_config_encoder(item) \
+> +	container_of(to_config_group(item), struct vkms_config_encoder, encoder_group)
 > +
-> +#define crtcs_item_to_vkms_config_crtc(item) \
-> +	container_of(to_config_group(item), struct vkms_config_crtc, crtc_group)
+> +#define encoder_possible_crtcs_item_to_vkms_config_encoder(item) \
+> +	container_of(to_config_group(item), struct vkms_config_encoder, possible_crtcs_group)
 > +
-> +static ssize_t crtc_cursor_show(struct config_item *item, char *page)
+>  static ssize_t crtc_cursor_show(struct config_item *item, char *page)
+>  {
+>  	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> @@ -171,6 +183,110 @@ static struct config_item_type crtcs_group_type = {
+>  	.ct_owner = THIS_MODULE,
+>  };
+>  
+> +static int encoder_possible_crtcs_allow_link(struct config_item *src,
+> +					     struct config_item *target)
 > +{
-> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +	struct vkms_config_encoder *encoder_cfg;
+> +	struct vkms_config_crtc *crtc_cfg;
 > +
-> +	return sprintf(page, "%d\n", crtc_cfg->cursor);
-> +}
-> +
-> +static ssize_t crtc_cursor_store(struct config_item *item, const char *page,
-> +				 size_t count)
-> +{
-> +	struct vkms_configfs *configfs = crtcs_item_to_vkms_configfs(item->ci_parent);
-> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
-> +	bool cursor;
-> +
-> +	if (kstrtobool(page, &cursor))
+> +	if (target->ci_type != &crtc_group_type)
 > +		return -EINVAL;
-> +
-> +	mutex_lock(&configfs->lock);
-> +
-> +	if (configfs->enabled) {
-> +		mutex_unlock(&configfs->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	crtc_cfg->cursor = cursor;
-> +
-> +	mutex_unlock(&configfs->lock);
-> +
-> +	return (ssize_t)count;
 
-Same comment as for vkms_config, why cursor is hardcoded here? It should 
-be as configurable as other planes (size, color formats...).
+I also need to check on my implementation, be we also need to check if the 
+target is in the correct device, not only the correct type :)
 
 > +
-> +static ssize_t crtc_writeback_show(struct config_item *item, char *page)
-> +{
-> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +	encoder_cfg = encoder_possible_crtcs_item_to_vkms_config_encoder(src);
+> +	crtc_cfg = crtcs_item_to_vkms_config_crtc(target);
 > +
-> +	return sprintf(page, "%d\n", crtc_cfg->writeback);
-> +}
->
-> +static ssize_t crtc_writeback_store(struct config_item *item, const char *page,
-> +				    size_t count)
-> +{
-> +	struct vkms_configfs *configfs = crtcs_item_to_vkms_configfs(item->ci_parent);
-> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
-> +	bool writeback;
-> +
-> +	if (kstrtobool(page, &writeback))
+> +	if (encoder_cfg->possible_crtcs & BIT(crtc_cfg->index))
 > +		return -EINVAL;
 > +
-> +	mutex_lock(&configfs->lock);
+> +	encoder_cfg->possible_crtcs |= BIT(crtc_cfg->index);
 > +
-> +	if (configfs->enabled) {
-> +		mutex_unlock(&configfs->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	crtc_cfg->writeback = writeback;
-> +
-> +	mutex_unlock(&configfs->lock);
-> +
-> +	return (ssize_t)count;
+> +	return 0;
 > +}
 > +
-> +CONFIGFS_ATTR(crtc_, cursor);
-> +CONFIGFS_ATTR(crtc_, writeback);
+> +static void encoder_possible_crtcs_drop_link(struct config_item *src,
+> +					     struct config_item *target)
+> +{
+> +	struct vkms_config_encoder *encoder_cfg;
+> +	struct vkms_config_crtc *crtc_cfg;
 > +
-> +static struct configfs_attribute *crtc_group_attrs[] = {
-> +	&crtc_attr_cursor,
-> +	&crtc_attr_writeback,
-> +	NULL,
+> +	encoder_cfg = encoder_possible_crtcs_item_to_vkms_config_encoder(src);
+> +	crtc_cfg = crtcs_item_to_vkms_config_crtc(target);
+> +
+> +	encoder_cfg->possible_crtcs &= ~BIT(crtc_cfg->index);
+> +}
+> +
+> +static struct configfs_item_operations encoder_possible_crtcs_item_ops = {
+> +	.allow_link = &encoder_possible_crtcs_allow_link,
+> +	.drop_link = &encoder_possible_crtcs_drop_link,
 > +};
 > +
-> +static const struct config_item_type crtc_group_type = {
-> +	.ct_attrs = crtc_group_attrs,
+> +static struct config_item_type encoder_possible_crtcs_group_type = {
+> +	.ct_item_ops = &encoder_possible_crtcs_item_ops,
 > +	.ct_owner = THIS_MODULE,
 > +};
 > +
-> +static struct config_group *make_crtcs_group(struct config_group *group,
-> +					     const char *name)
+> +static const struct config_item_type encoder_group_type = {
+> +	.ct_owner = THIS_MODULE,
+> +};
+> +
+> +static struct config_group *make_encoders_group(struct config_group *group,
+> +						const char *name)
 > +{
-> +	struct vkms_configfs *configfs = crtcs_group_to_vkms_configfs(group);
-> +	struct vkms_config_crtc *crtc_cfg;
+> +	struct vkms_configfs *configfs = encoders_group_to_vkms_configfs(group);
+> +	struct vkms_config_encoder *encoder_cfg;
 > +	int ret;
 > +
 > +	mutex_lock(&configfs->lock);
@@ -335,89 +255,88 @@ be as configurable as other planes (size, color formats...).
 > +		goto err_unlock;
 > +	}
 > +
-> +	crtc_cfg = vkms_config_add_crtc(configfs->vkms_config, false, false);
-> +	if (IS_ERR(crtc_cfg)) {
-> +		ret = PTR_ERR(crtc_cfg);
+> +	encoder_cfg = vkms_config_add_encoder(configfs->vkms_config, 0);
+> +	if (IS_ERR(encoder_cfg)) {
+> +		ret = PTR_ERR(encoder_cfg);
 > +		goto err_unlock;
 > +	}
 > +
-> +	config_group_init_type_name(&crtc_cfg->crtc_group, name, &crtc_group_type);
+> +	config_group_init_type_name(&encoder_cfg->encoder_group, name,
+> +				    &encoder_group_type);
+> +
+> +	config_group_init_type_name(&encoder_cfg->possible_crtcs_group,
+> +				    "possible_crtcs",
+> +				    &encoder_possible_crtcs_group_type);
+> +	configfs_add_default_group(&encoder_cfg->possible_crtcs_group,
+> +				   &encoder_cfg->encoder_group);
 > +
 > +	mutex_unlock(&configfs->lock);
 > +
-> +	return &crtc_cfg->crtc_group;
+> +	return &encoder_cfg->encoder_group;
 > +
 > +err_unlock:
 > +	mutex_unlock(&configfs->lock);
 > +	return ERR_PTR(ret);
 > +}
 > +
-> +static void drop_crtcs_group(struct config_group *group,
-> +			     struct config_item *item)
+> +static void drop_encoders_group(struct config_group *group,
+> +				struct config_item *item)
 > +{
-> +	struct vkms_configfs *configfs = crtcs_group_to_vkms_configfs(group);
-> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +	struct vkms_configfs *configfs = encoders_group_to_vkms_configfs(group);
+> +	struct vkms_config_encoder *encoder_cfg =
+> +		encoders_item_to_vkms_config_encoder(item);
 > +
-> +	vkms_config_destroy_crtc(configfs->vkms_config, crtc_cfg);
+> +	vkms_config_destroy_encoder(configfs->vkms_config, encoder_cfg);
 > +}
 
-Again, free should be in release, not in drop.
-
-And by the way, here you will have the problem I described before: the 
-vkms_config_destroy_crtc does not update possible_crtcs fields, so they 
-became complelty invalids.
-
-And you also have the issue of invalid index, you can create 32 crtcs, 
-delete 32 and recreate 32, the userspace expect it to works (only 32 
-crtcs, wich is the maximum allowed by drm), but the index used in 
-vkms_config are 32..64, which are invalid.
+Same, I think there should not be any free in drop.
 
 > +
-> +static struct configfs_group_operations crtcs_group_ops = {
-> +	.make_group = &make_crtcs_group,
-> +	.drop_item = &drop_crtcs_group,
+> +static struct configfs_group_operations encoders_group_ops = {
+> +	.make_group = &make_encoders_group,
+> +	.drop_item = &drop_encoders_group,
 > +};
 > +
-> +static struct config_item_type crtcs_group_type = {
-> +	.ct_group_ops = &crtcs_group_ops,
+> +static struct config_item_type encoders_group_type = {
+> +	.ct_group_ops = &encoders_group_ops,
 > +	.ct_owner = THIS_MODULE,
 > +};
 > +
 >  static ssize_t device_enabled_show(struct config_item *item, char *page)
 >  {
 >  	struct vkms_configfs *configfs = config_item_to_vkms_configfs(item);
-> @@ -87,7 +225,6 @@ static struct config_group *make_device_group(struct config_group *group,
+> @@ -225,7 +341,6 @@ static struct config_group *make_device_group(struct config_group *group,
 >  					      const char *name)
 >  {
 >  	struct vkms_configfs *configfs;
-> -	struct vkms_config_crtc *crtc_cfg = NULL;
->  	struct vkms_config_encoder *encoder_cfg = NULL;
+> -	struct vkms_config_encoder *encoder_cfg = NULL;
 >  	struct vkms_config_connector *connector_cfg = NULL;
 >  	char *config_name;
-> @@ -110,11 +247,10 @@ static struct config_group *make_device_group(struct config_group *group,
->  		goto err_kfree;
->  	}
+>  	int ret;
+> @@ -252,11 +367,10 @@ static struct config_group *make_device_group(struct config_group *group,
+>  	configfs_add_default_group(&configfs->crtcs_group,
+>  				   &configfs->device_group);
 >  
-> -	crtc_cfg = vkms_config_add_crtc(configfs->vkms_config, false, false);
-> -	if (IS_ERR(crtc_cfg)) {
-> -		ret = PTR_ERR(crtc_cfg);
+> -	encoder_cfg = vkms_config_add_encoder(configfs->vkms_config, BIT(0));
+> -	if (IS_ERR(encoder_cfg)) {
+> -		ret = PTR_ERR(encoder_cfg);
 > -		goto err_kfree;
 > -	}
-> +	config_group_init_type_name(&configfs->crtcs_group, "crtcs",
-> +				    &crtcs_group_type);
-> +	configfs_add_default_group(&configfs->crtcs_group,
+> +	config_group_init_type_name(&configfs->encoders_group, "encoders",
+> +				    &encoders_group_type);
+> +	configfs_add_default_group(&configfs->encoders_group,
 > +				   &configfs->device_group);
->
->  	encoder_cfg = vkms_config_add_encoder(configfs->vkms_config, BIT(0));
->  	if (IS_ERR(encoder_cfg)) {
-> @@ -133,7 +269,6 @@ static struct config_group *make_device_group(struct config_group *group,
+>  
+>  	connector_cfg = vkms_config_add_connector(configfs->vkms_config, BIT(0),
+>  						  connector_status_connected);
+> @@ -269,7 +383,6 @@ static struct config_group *make_device_group(struct config_group *group,
 >  
 >  err_kfree:
 >  	kfree(configfs);
-> -	kfree(crtc_cfg);
->  	kfree(encoder_cfg);
+> -	kfree(encoder_cfg);
 >  	kfree(connector_cfg);
 >  	return ERR_PTR(ret);
+>  }
 > -- 
 > 2.46.0
 > 
