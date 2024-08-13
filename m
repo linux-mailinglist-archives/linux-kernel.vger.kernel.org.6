@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-285275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AD80950B90
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:41:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44076950B94
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3151C221A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:41:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A788B2222E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:42:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B93D1A2C2B;
-	Tue, 13 Aug 2024 17:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMpadfOq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B70C1A2C36;
+	Tue, 13 Aug 2024 17:42:29 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BD3C37E;
-	Tue, 13 Aug 2024 17:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF7A01A08C6
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723570863; cv=none; b=oNjCU6Rqb2vhW66QZBBEkGrRKLB6iPpyO7PCUMQPTahXYmB8FoCjxrKT3U+brQGwOx0r6Z8bp0vaX6GqRQk4BLwdthBPFlFdQnapHIP/BHMI+REG60Lcmw7p0c3uAUGB0lLKpVnXeWSudlMteClI3CPpR5cxtuPFbVCSRUEj2ec=
+	t=1723570948; cv=none; b=Nb4m5oxvIWjXx8byNGYS0YXGTrrI3M7KS3sFUJRcsLWWOqu7/EgTkjJ21rtIo6WO0Xv0TJlet9uM8tRv4Et9/Ys/UNyrwwh5BSKZOOxMKaShJzdsAldX6dx8v6nG9AwBKEad7f7sjfvlDo35UxM/SIFISApk8VnkmQv+6i68geY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723570863; c=relaxed/simple;
-	bh=n+ck5ZGYVQvKs0fi/T4dhxX1TDgYijYpCDGAlciLV0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ejnNkvxYYEZa4jFXZYHBH6ZBYjX6YSEqSAxCFpYt6ZJU9HpgTT9nkFn6cQ4STkc/aHTJXbjOfmXqnscO+OvCNY1pKZV2LABmZX/3zP83lS87bzNBwYenGMW4fxYC9f/F7T+rQb6l+XxXa69BOHFu0PV5OO8IJQFiGTnKPMukLTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMpadfOq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 858BCC32782;
-	Tue, 13 Aug 2024 17:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723570861;
-	bh=n+ck5ZGYVQvKs0fi/T4dhxX1TDgYijYpCDGAlciLV0o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GMpadfOqY2IpIZVxjZc6ICeVL/dyATcsnf+7fcnMtf+oL/LcRLThac/iMwzS991zE
-	 u07bRVhB5AC/fmFRe68SywXPSiPIDF0fliE6k5LcpWDqkcpTIETm9v06ylOsslmVlf
-	 oUbSYMFE2I8LkqqLYQAxD4AI3P86tXNSA11RJxQlzNP385A0vHOYPkQKxn28N0HI5v
-	 Bwe3D4dJ5SCav/Fc09CXRTguQYC64Osz8jtMPEMgFa0gy7TijQprwN54XoKszamxzm
-	 7WnRZx7cWaYYrMuhp27j0W9TGB3gum6qidx1Hp20SuEiCndaGPRHT25rZrPgtzhydl
-	 6wPMD6Kiq3hkg==
-Date: Tue, 13 Aug 2024 11:41:00 -0600
-From: Rob Herring <robh@kernel.org>
-To: Mao Jinlong <quic_jinlmao@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: arm: Add qcom,inst-id for remote etm
-Message-ID: <20240813174100.GA1400130-robh@kernel.org>
-References: <20240807071054.12742-1-quic_jinlmao@quicinc.com>
- <20240807071054.12742-2-quic_jinlmao@quicinc.com>
+	s=arc-20240116; t=1723570948; c=relaxed/simple;
+	bh=2d3VYw/1eOMTBjp7dH5IiNqY/jPTBNsR8t75kEEa7a4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cibDrOKkbSs0ZoL+yf/hq1LLu+OVbNrEgKxCHPJfUgIUZe47G0V1rUECqjATu5xHrLPfuSlKjYv7kZkhotT0tFE6It8TNPUWDpeYRRAyzvFA131R2LjaVfhIlxq+ucmSbDFgOhR+XKF33NRGv4l4U+NDrM+LmQ4v8YRUnxK/y9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-81f8c780fe7so704910539f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:42:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723570946; x=1724175746;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6ngDN4+t5W8gLgpUeHVUEQJgpMaZ70F1wn8Uciag940=;
+        b=CPF8RXEtmJ/yswJT3cO0ET2W6vdlAnk/PQ/CPuYr61c96QldSUrkvZBMZA45S+L7T0
+         GgrQ8RX6r0WK4yy8p/6LWcIEUdiH5bUHeYnAMoKPrxtXOxR4cf0DfvibTFkwqClVmerp
+         l2WTf+vGVAZxCJ3tSaiReG2Iy+VWC86Fjk/PuobJaL5o4irhP1xNJ8CgGbOZaRpjCQf5
+         SiCU36Zi00l6q/y2HuiZYGkkK5YVYD1/1WasGsbU1umffxtEuAChMOdjoZsbvhEnhcVr
+         UuR5cAJEHcbN/lzOP+YzJJa4SNRyIzf8n9bkg46VH7HsWISUp6G7n+mYS+kK7NLrwcd0
+         bgJw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6Xq1BMkdaglw0umILC0lc4UNNny3p0AgqbgrgKpPuRCN3dsuKC9tTH/7R3TSai3QGEdUofZtmJnLwLwS6sJFmrHNj2FzGMYgjEhGr
+X-Gm-Message-State: AOJu0YydB6577deuugmF+Ksrdw2KHvYdrkNpXMGyqqUWKNMx8GjlyEse
+	NZPcguAPo+G052gc8zr6jZ+sRzzZlRaI1/d4NfVQdb6y9ljj7fnuBkxv7gVfekZ29J82BJDPDGd
+	u8HwwzxYstTM8jWMpNqDq4m+zWzAKPQbpKMjg1pAahRw+Gm/aWJPB5s0=
+X-Google-Smtp-Source: AGHT+IHVguG5xXxvhqwOBEihCFi7Yu1nqF/zF7J/rU/bN58IdxkAm0gjS95Q4OqkFr87+2m8AyyFaxmYqbY6T3Cw2GeppG0WdhSv
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807071054.12742-2-quic_jinlmao@quicinc.com>
+X-Received: by 2002:a05:6602:6d05:b0:824:d6b8:8844 with SMTP id
+ ca18e2360f4ac-824dadff815mr966239f.3.1723570945558; Tue, 13 Aug 2024 10:42:25
+ -0700 (PDT)
+Date: Tue, 13 Aug 2024 10:42:25 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f4a1b7061f9421de@google.com>
+Subject: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
+From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
+To: alex.aring@gmail.com, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wpan@vger.kernel.org, 
+	miquel.raynal@bootlin.com, netdev@vger.kernel.org, pabeni@redhat.com, 
+	stefan@datenfreihafen.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Aug 07, 2024 at 12:10:50AM -0700, Mao Jinlong wrote:
-> qcom,inst-id is the instance id used by qmi API to communicate with
-> remote processor.
-> 
-> Signed-off-by: Mao Jinlong <quic_jinlmao@quicinc.com>
-> ---
->  .../bindings/arm/qcom,coresight-remote-etm.yaml        | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> index 4fd5752978cd..a65121505c68 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom,coresight-remote-etm.yaml
-> @@ -20,6 +20,13 @@ properties:
->    compatible:
->      const: qcom,coresight-remote-etm
->  
-> +  qcom,inst-id:
+Hello,
 
-qcom,qmi-id perhaps?
+syzbot found the following issue on:
 
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description:
-> +      This id is used by qmi API to communicate with remote processor for
-> +      enabling and disabling remote etm. Each processor has its unique instance
-> +      id.
+HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel...
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=13da25d3980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e8a2eef9745ade09
+dashboard link: https://syzkaller.appspot.com/bug?extid=e0bd4e4815a910c0daa8
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/9227adf96f75/disk-ee9a43b7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c65c46b78c57/vmlinux-ee9a43b7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/467d374f18b9/bzImage-ee9a43b7.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com
+
+RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 8054 at net/ieee802154/core.c:258 cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
+Modules linked in:
+CPU: 1 UID: 0 PID: 8054 Comm: syz.0.839 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
+Code: a3 2b f6 90 0f 0b 90 43 80 3c 3e 00 75 8d eb 93 e8 c6 a3 2b f6 e9 8b fe ff ff e8 bc a3 2b f6 e9 81 fe ff ff e8 b2 a3 2b f6 90 <0f> 0b 90 e9 73 fe ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90
+RSP: 0018:ffffc9000337f408 EFLAGS: 00010293
+RAX: ffffffff8b67d3ce RBX: 00000000fffffff4 RCX: ffff8880215f3c00
+RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
+RBP: ffff88802324e198 R08: ffffffff8b67d23d R09: 1ffff11004649c3a
+R10: dffffc0000000000 R11: ffffed1004649c3b R12: 0000000000000000
+R13: 0000000000000000 R14: ffff88802324e078 R15: dffffc0000000000
+FS:  00007f2c789956c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff818548d58 CR3: 000000007f648000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:730 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:745
+ ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
+ ___sys_sendmsg net/socket.c:2651 [inline]
+ __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2c77b779f9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f2c78995038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007f2c77d05f80 RCX: 00007f2c77b779f9
+RDX: 0000000000000000 RSI: 0000000020000200 RDI: 000000000000000e
+RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
