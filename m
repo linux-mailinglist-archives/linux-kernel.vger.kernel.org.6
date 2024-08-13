@@ -1,101 +1,83 @@
-Return-Path: <linux-kernel+bounces-284843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A2C9505C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:58:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74DC29505CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75EDD1C20CFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0F3B2811A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A5319B3EE;
-	Tue, 13 Aug 2024 12:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74CA19B3E2;
+	Tue, 13 Aug 2024 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0j17iggL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3cagGaXM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AcNwvEZ7";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LZTPPjzY"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cfni97DO"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ADC19AA41;
-	Tue, 13 Aug 2024 12:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904F719306B;
+	Tue, 13 Aug 2024 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553886; cv=none; b=NT/jD8cg03C5pkSZlMV+mz+BXuumrExMAV+8uaCJK7bV/CLV6NklglizwUVKSH34IsPY4DwjiTpkc5X6QFL0z6mxhwWwu/ByGJrvWGBlccS/04V+Ahc7Koa/Q6v4ao6zTgg/hJqqjbYkCKz5YZSPEV1qmlcsgbzY51wHAzp1Ryo=
+	t=1723553948; cv=none; b=CSwA64NUSSB1omy9g9+mhtTZncqk8bmcL+Rr6IQQuC/dZn1gi3EZ+y+JNFLhnNiIivcag7luQZbQsTo1e4AtEnzzr//ieJSXYOFiKGakaNJJsEZUu9kQLcfW8QjUcPCmB2Qa2a0i93+VFt4CkjG6r+1Z6WgjhXxfvMfblOCw2Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553886; c=relaxed/simple;
-	bh=fprbuUCIft12Lh/fqhPte7xgQHBYCl8hUXaC2w9707M=;
+	s=arc-20240116; t=1723553948; c=relaxed/simple;
+	bh=NGUqAKZu7DbGbw+/v1pFdfDF0SzIy+ywwsTgmpUIUjE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VF/kwALkbII59GxYHn1i1APSG24nSPn5KwoV23RzZWf8i12q5C++G5Vc3lzQe6yECH2z2GOTrSaZoDvmy+29V3ToZF94o3icaHTaEU0bxwA72P4LKYeqmRAMwpJsMk3f44B4QA0grkPfQC1f71DrSdFfd8UIJEpn6Kb+JwbVpP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0j17iggL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3cagGaXM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AcNwvEZ7; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LZTPPjzY; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D448F203AC;
-	Tue, 13 Aug 2024 12:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723553882;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHbJqc/Wg7mLt3KDCd57boNBus+5Zinmvd8FHgmbQIQ=;
-	b=0j17iggL3Re4G2zLK1KciLdYfonnXLvvKv3LEetMghU0VhLM2D+Mhuv05VWf4LfKAjpWOk
-	vYPFxD/70NyoJeoDM+OBvvUaA6nLiCvXL8mlMn2PilqXV5QuEE0u3ozFDp+4j1uN4Uud3k
-	vlHgK69mc6abhyje/Qw5yiCM/+g+fQU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723553882;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHbJqc/Wg7mLt3KDCd57boNBus+5Zinmvd8FHgmbQIQ=;
-	b=3cagGaXMsFn41Tkr0i1VXoWXnH7F2nLIBwRmoILAhuJsWy9R4iyBvYzXErWIBX/0lgdiqA
-	da/AMkuWH4iJBHAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1723553881;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHbJqc/Wg7mLt3KDCd57boNBus+5Zinmvd8FHgmbQIQ=;
-	b=AcNwvEZ7N+pcdDfri0BJiG95cQwIzO3MntLFNsp7AOkE225x3cyyTu86BCm5J/r5aBBUIs
-	3ZyioeDhYa4f3+39ndRebgFa1ZSSv9CrpUOVlCH9sxhdmAth+0FnVO4tT7Vu7Oi5YfRnHe
-	4BFl76LfCGhDlwsng7PTEzS2CZvibKA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1723553881;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aHbJqc/Wg7mLt3KDCd57boNBus+5Zinmvd8FHgmbQIQ=;
-	b=LZTPPjzYFt+3Vv3t5Z4z67ZwbBLiyBiANm+J4ZPpjlBhtQyrk2ul8ozFuhpWT1w31bfDzR
-	l+8RddRMXZ7DtZAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B1C9813983;
-	Tue, 13 Aug 2024 12:58:01 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YDdcKllYu2Y4CwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 13 Aug 2024 12:58:01 +0000
-Date: Tue, 13 Aug 2024 14:57:45 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, kees@kernel.org,
-	gustavoars@kernel.org, linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] btrfs: Annotate struct name_cache_entry with
- __counted_by()
-Message-ID: <20240813125745.GO25962@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20240813105314.58484-2-thorsten.blum@toblux.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XVvbIZ3ovOOaK5sJC5HbQbEMyu3cvfp7ctJ6ct+GT1v3Wki6cq/txv4ho8OaCMSmPw9lPSeaobyp1fb3URg73JrdMrrCs9miX3fA7H/PER5nFPxxBjzKpk8YEdDkdY6GHCRHxtONOtYPBCuoTm1oRw4WWb6mqi+0vn+MwX3irUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cfni97DO; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1ff1cd07f56so45538915ad.2;
+        Tue, 13 Aug 2024 05:59:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723553946; x=1724158746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zyM7uUMkVEtSceI4fLuBD9geFf80chSs9I9VRFpXMCo=;
+        b=Cfni97DOexWL/5w+mwCnjmTidZB2r2zwTkmDvHEX1DudTE+dSIMzXatjffeK1v3ydg
+         0iq7z18OLeIoogreLE0ltL3vdmoulkjtf1O/OInweJvut67nrCLmExGOtHFs+x6UhfBz
+         ZAUEkz8IcMDzTpaEHSY0Wd/oc2Vr7+mXtesXUFa1OFbhDl3TLSJxdMdGfuKUNTI+G9j5
+         tTFW4EX4QYKYczCiGON8ZwXLz7g7UvGhvnbLfMn5u0UWu6JnNA+wf8o+FMp3AJtO/CZL
+         YqEWei4dZxteOCGdHahZpX8wdHvHZ1R5pXXcM7ydg/3jxnuqJgWY7uPZbhZxaDmmyOD2
+         3/ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723553946; x=1724158746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zyM7uUMkVEtSceI4fLuBD9geFf80chSs9I9VRFpXMCo=;
+        b=tOyd2j1CY5aFmpgZchZJ7F+l/a2YYDA9AZp8PR3g9Hu9ClRugeLB0NuJPBHYxXoqSX
+         2IPeujfsqkCB+Onjh49aX4ajqZuVQWQxeBbV2thHmpsdc+rSzwfmttVbS0FRinXCEXzH
+         /MmE3YqfLLAS/EFheQE3P0C9VAHQAXyMP7sSddSAV5zxQAVpaz4W1N5gQZoMWejxRDjm
+         m/h8FyIIlUwDs1+7AkCwAwOUXUuctizBUIVE57vHQJoTfCDcl04mMvw4t66Ah7PAGgp3
+         lBJ9GkPm8S/C5XShWzXVdB1JDYP3KKu2yVRXzAMsegLwJTpbcEzhIjiH6hrVbkmptg73
+         5BjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKS+3mMAFj1at846kniIzNEd4mslrTRNFMg+zPyT+MwH301+oH8oh3Ojo9JZJScVhfMD2q00aqNlWST8axMjHv1y6hFUcJW1fKf84hqKQFHXj6M+on9AvUi/Dwv1NdbY3YFUi8WpAigrVeoXSPsWtRcik0uFDLdNxwPD4v/JjxAPdzb+9b
+X-Gm-Message-State: AOJu0Yxu9pH7PsAcJAsovu3hFE97rUomm2lNwhMnEamvlCTe8sEzyc6P
+	DGWhPcC/0HH8iryuM92Cqbn1EUjXDyZ4QVv4d7vk36TErIxIPiX9
+X-Google-Smtp-Source: AGHT+IHsLXixF1Z01gC11YIoIEf4DqKXDmlKx2EHh+PXchfkK9XFpIz+m95p5vWk89Jg8pswMucdOg==
+X-Received: by 2002:a17:902:d488:b0:1fb:a2c0:53b4 with SMTP id d9443c01a7336-201ca1382e2mr41376875ad.18.1723553945468;
+        Tue, 13 Aug 2024 05:59:05 -0700 (PDT)
+Received: from ux-UP-WHL01 ([113.84.82.68])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd14ac7csm12908785ad.108.2024.08.13.05.58.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 05:59:04 -0700 (PDT)
+Date: Tue, 13 Aug 2024 20:58:50 +0800
+From: Charles Wang <charles.goodix@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: dan.carpenter@linaro.org, conor@kernel.org, robh@kernel.org,
+	dianders@chromium.org, krzk+dt@kernel.org, jikos@kernel.org,
+	bentiss@kernel.org, hbarnor@chromium.org,
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] HID: hid-goodix: Add Goodix HID-over-SPI driver
+Message-ID: <ZrtXwr6HWF64akUP@ux-UP-WHL01>
+References: <20240618084455.1451461-1-charles.goodix@gmail.com>
+ <20240618084455.1451461-2-charles.goodix@gmail.com>
+ <ZoW4_hctu_cSiKA5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,40 +86,166 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813105314.58484-2-thorsten.blum@toblux.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:replyto,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <ZoW4_hctu_cSiKA5@google.com>
 
-On Tue, Aug 13, 2024 at 12:53:15PM +0200, Thorsten Blum wrote:
-> Add the __counted_by compiler attribute to the flexible array member
-> name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> CONFIG_FORTIFY_SOURCE.
+Hi Dmitry,
+
+On Wed, Jul 03, 2024 at 01:47:58PM -0700, Dmitry Torokhov wrote:
+> Hi Charles,
 > 
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> On Tue, Jun 18, 2024 at 04:44:53PM +0800, Charles Wang wrote:
+> > This patch introduces a new driver to support the Goodix GT7986U
+> > touch controller. This device is not compatible with Microsoft's
+> > HID-over-SPI protocol and therefore needs to implement its own
+> > flavor. The data reported is packaged according to the HID
+> > protocol but uses SPI for communication to improve speed. This
+> > enables the device to transmit not only coordinate data but also
+> > corresponding raw data that can be accessed by user-space programs
+> > through the hidraw interface. The raw data can be utilized for
+> > functions like palm rejection, thereby improving the touch experience.
+> > 
+> > Key features:
+> > - Device connection confirmation and initialization
+> > - IRQ-based event reporting to the input subsystem
+> > - Support for HIDRAW operations (GET_REPORT and SET_REPORT)
+> 
+> This looks reasonable good, so:
+> 
+> Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> 
+> A couple of suggestions/nits below:
+> 
+> > +static int goodix_spi_probe(struct spi_device *spi)
+> > +{
+> > +	struct device *dev = &spi->dev;
+> > +	struct goodix_ts_data *ts;
+> > +	int error;
+> > +
+> > +	/* init spi_device */
+> > +	spi->mode            = SPI_MODE_0;
+> > +	spi->bits_per_word   = 8;
+> > +	error = spi_setup(spi);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	ts = devm_kzalloc(dev, sizeof(*ts), GFP_KERNEL);
+> > +	if (!ts)
+> > +		return -ENOMEM;
+> > +
+> 
+> If you do:
+> 
+> 	ts->event_buf = devm_kmalloc(dev, <some nominal size>, GFP_KERNEL);
+> 
+> here and use devm_krealloc() once you figure the true size of event
+> buffer you can stop calling kfree() by hand on remove.
+>
+
+Ack,
+
+> > +	mutex_init(&ts->hid_request_lock);
+> > +	spi_set_drvdata(spi, ts);
+> > +	ts->spi = spi;
+> > +	ts->dev = dev;
+> > +	ts->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+> > +	if (IS_ERR(ts->reset_gpio))
+> > +		return dev_err_probe(dev, PTR_ERR(ts->reset_gpio),
+> > +				     "failed to request reset gpio\n");
+> > +
+> > +	error = device_property_read_u32(dev, "goodix,hid-report-addr",
+> > +					 &ts->hid_report_addr);
+> > +	if (error)
+> > +		return dev_err_probe(dev, error,
+> > +				     "failed get hid report addr\n");
+> > +
+> > +	error = goodix_dev_confirm(ts);
+> > +	if (error)
+> > +		return error;
+> > +
+> > +	/* Waits 150ms for firmware to fully boot */
+> > +	msleep(GOODIX_NORMAL_RESET_DELAY_MS);
+> > +
+> > +	error = goodix_hid_init(ts);
+> > +	if (error) {
+> > +		dev_err(dev, "failed init hid device");
+> > +		return error;
+> > +	}
+> > +
+> > +	error = devm_request_threaded_irq(&ts->spi->dev, ts->spi->irq,
+> > +					  NULL, goodix_hid_irq, IRQF_ONESHOT,
+> > +					  "goodix_spi_hid", ts);
+> > +	if (error) {
+> > +		dev_err(ts->dev, "could not register interrupt, irq = %d, %d",
+> > +			ts->spi->irq, error);
+> > +		goto err_destroy_hid;
+> > +	}
+> > +
+> > +	return 0;
+> > +
+> > +err_destroy_hid:
+> > +	hid_destroy_device(ts->hid);
+> > +	return error;
+> > +}
+> > +
+> > +static void goodix_spi_remove(struct spi_device *spi)
+> > +{
+> > +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
+> > +
+> > +	disable_irq(spi->irq);
+> > +	hid_destroy_device(ts->hid);
+> > +	kfree(ts->event_buf);
+> > +}
+> > +
+> > +static void goodix_spi_shutdown(struct spi_device *spi)
+> > +{
+> > +	struct goodix_ts_data *ts = spi_get_drvdata(spi);
+> > +
+> > +	disable_irq(spi->irq);
+> > +	hid_destroy_device(ts->hid);
+> 
+> Do we really need shutdown() method? It is very rarely that it is
+> needed.
+>
+
+After testing on the machine, we found that this method is only invoked
+during system shutdown. Since the device doesn't require any special
+operations at shutdown, so I think it can be removed.
+
+> > +}
+> > +
+> > +static int goodix_spi_set_power(struct goodix_ts_data *ts, int power_state)
+> > +{
+> > +	u8 power_control_cmd[] = {0x00, 0x00, 0x00, 0x87, 0x02, 0x00, 0x08};
+> > +	int error;
+> > +
+> > +	/* value 0 for power on, 1 for power sleep */
+> > +	power_control_cmd[5] = power_state;
+> > +
+> > +	guard(mutex)(&ts->hid_request_lock);
+> > +	error = goodix_spi_write(ts, ts->hid_report_addr, power_control_cmd,
+> > +				 sizeof(power_control_cmd));
+> > +	if (error) {
+> > +		dev_err(ts->dev, "failed set power mode: %s",
+> > +			power_state == GOODIX_SPI_POWER_ON ? "on" : "sleep");
+> > +		return error;
+> > +	}
+> > +	return 0;
+> > +}
+> > +
+> > +static int goodix_spi_suspend(struct device *dev)
+> > +{
+> > +	struct goodix_ts_data *ts = dev_get_drvdata(dev);
+> > +	int error;
+> > +
+> > +	error = goodix_spi_set_power(ts, GOODIX_SPI_POWER_SLEEP);
+> > +	disable_irq(ts->spi->irq);
+> 
+> Can disable_irq() be called first?
+> 
+
+Ack, calling this first seems better.
 
 Thanks,
 
-Reviewed-by: David Sterba <dsterba@suse.com>
+Charles
 
