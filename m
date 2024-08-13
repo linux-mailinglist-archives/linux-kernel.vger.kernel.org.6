@@ -1,102 +1,148 @@
-Return-Path: <linux-kernel+bounces-284704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E08950444
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:57:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08810950442
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9E9B28312C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B7511C217E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25290199230;
-	Tue, 13 Aug 2024 11:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UMu0UrB0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680E91991D2;
-	Tue, 13 Aug 2024 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80CE1991D2;
+	Tue, 13 Aug 2024 11:57:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48091194A6B
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550259; cv=none; b=IeMnzs3Vb1O43XyIrHKab6Vqg8Em9xaNLgin/dNmcz+FJ7QijITPXFNGAFVhg/RBfgFkxK42PePNHfFmxyuR/baUPLJ7jz5HwoNp5LPYfeukkTMKEO+pFhqubHkvTRuJUvRDu74OF2g3ipxwnxkUE7GM5z6tehiJ71rGuTbj+24=
+	t=1723550228; cv=none; b=BEbQg/MNsi0NKVdX71sEn6btuQLL/ID44eUkG3ekP8lgBzdsZroJUZe2k/WMb5Zud4AJ6kiVtOuaFfBvc7xHWyikMmvf7CT0ieLIHrpqUoxBVpm9rOQYwy7i+C69BD6HhKB96rVU4iXThLL61Mr292TBNOVjY1EWsH0QJ03U6vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550259; c=relaxed/simple;
-	bh=4gN/Y2rCcH73ALAfjmDWuIYSIPnEfOJRUChVr/R2A/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sTxDB40k+a4z510ORkhxf9fIGwS4OcQfAL6Wowzd+jKRkQBNdTPyj6gI8/ntNyI5ER313Mmo5oifV6zVcHT1ExlwY8XnC/DxxoA5IObBJyrhx9Wd4pKDLB05I5lhbreO8XGWFsavcSne0TtJyTe/siA1CDuUHm7+bwEvf2ae1VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UMu0UrB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB279C4AF0B;
-	Tue, 13 Aug 2024 11:57:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723550259;
-	bh=4gN/Y2rCcH73ALAfjmDWuIYSIPnEfOJRUChVr/R2A/A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UMu0UrB0fx/oiTVMqLiP69LupT+NwSAAELrKSvWQF0DSjTZptqOtiLkqDUlE/yelZ
-	 nCmPoIpH6vgF7eXL+ZJ963iRdUHzxli8tUQVfmNxTQ5WYktoCtC5x0U5Yh43qZh4Oo
-	 7Yr2eexupGNdKdVNO56icgcNSfcjwJjhdBB8SWbePb7dtClKK2BXitYPei5CVZL9rm
-	 gVQ0P37vSEA03F/Kg0ZZWOJAUp8YTNt6YnmabULP0l/+Z4espncbA/g+oOnBVOfvkB
-	 jC3IvoAVi4Q6aPHZ6Z7btcFssa4SLaXrY3XeP2VP7xUB3Vje5LEDNkFKc0rj7WCSKp
-	 SDuwj27U7OWNw==
-From: Christian Brauner <brauner@kernel.org>
-To: Phillip Lougher <phillip@squashfs.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Lizhi Xu <lizhi.xu@windriver.com>,
-	syzbot+24ac24ff58dc5b0d26b9@syzkaller.appspotmail.com,
-	akpm@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] Squashfs: sanity check symbolic link size
-Date: Tue, 13 Aug 2024 13:57:01 +0200
-Message-ID: <20240813-chemie-rotation-5ab2a178d043@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240811232821.13903-1-phillip@squashfs.org.uk>
-References: <20240811232821.13903-1-phillip@squashfs.org.uk>
+	s=arc-20240116; t=1723550228; c=relaxed/simple;
+	bh=0h9DecTC/wgE/rnQTdT1OO7GVXnGWIxwfqx97IXDET8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b4u65Uju1cniIRJnXVskGTwN/QHDjmxidh6AGXZpgOs3ZYsEzGG3RY/HNMR5QbgeOLMtzYHI0YHJnCpgPRvmeig6KhoBpD6fRSrBi2+I1P0YFI6p8JUtuPMV4WvkU7atHpky0gkd9rK39cy567wdbglbuWkcyz/IdJmPkHBmmZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DE4112FC;
+	Tue, 13 Aug 2024 04:57:31 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 15D7F3F73B;
+	Tue, 13 Aug 2024 04:57:03 -0700 (PDT)
+Message-ID: <e5a8e78e-2459-453a-b3b7-e1ed2ca4addc@arm.com>
+Date: Tue, 13 Aug 2024 12:57:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1145; i=brauner@kernel.org; h=from:subject:message-id; bh=KjaOO4Q4VSb+ysrAyQ15dfPNcmm9n1J7EzqI1wGjIA8=; b=kA0DAAoWkcYbwGV43KIByyZiAGa7Shah4k8F8KIqpMb1fI45Ix4SgZ27h78wqdFmN0xHiMPFy Yh1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAma7ShYACgkQkcYbwGV43KJJ+AD8DYJS l3X1RrSZjTAX7G4f02xFZTFHW0ejdTwcQq0YSNABANdfOlDQqa30Z2ib3BysDKn2Vh03WXi8NX+ jL8y23fcJ
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iommu/arm-smmu-v3: Report stalled S2 events
+To: Mostafa Saleh <smostafa@google.com>, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ will@kernel.org, joro@8bytes.org
+Cc: jgg@ziepe.ca, nicolinc@nvidia.com, mshavit@google.com
+References: <20240812205255.97781-1-smostafa@google.com>
+ <20240812205255.97781-3-smostafa@google.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240812205255.97781-3-smostafa@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 12 Aug 2024 00:28:21 +0100, Phillip Lougher wrote:
-> Syzkiller reports a "KMSAN: uninit-value in pick_link" bug.
+On 12/08/2024 9:52 pm, Mostafa Saleh wrote:
+> Previously, S2 stall was disabled and in case there was an event it
+> wouldn't be reported on the assumption that it's always pinned  by VFIO.
 > 
-> This is caused by an uninitialised page, which is ultimately caused
-> by a corrupted symbolic link size read from disk.
+> However, now since we can enable stall, devices that use S2 outside
+> VFIO should be able to report the stalls similar to S1.
 > 
-> The reason why the corrupted symlink size causes an uninitialised
-> page is due to the following sequence of events:
+> Also, to keep the old behaviour were S2 events from nested domains were
+> not reported as they are pinned (from VFIO) add a new flag to track this.
 > 
-> [...]
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 18 +++++++++++++-----
+>   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h |  2 ++
+>   2 files changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> index 8d573d9ca93c..ffa865529d73 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> @@ -1733,6 +1733,7 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+>   	u32 sid = FIELD_GET(EVTQ_0_SID, evt[0]);
+>   	struct iopf_fault fault_evt = { };
+>   	struct iommu_fault *flt = &fault_evt.fault;
+> +	struct arm_smmu_domain *smmu_domain;
+>   
+>   	switch (FIELD_GET(EVTQ_0_ID, evt[0])) {
+>   	case EVT_ID_TRANSLATION_FAULT:
+> @@ -1744,10 +1745,6 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+>   		return -EOPNOTSUPP;
+>   	}
+>   
+> -	/* Stage-2 is always pinned at the moment */
+> -	if (evt[1] & EVTQ_1_S2)
+> -		return -EFAULT;
+> -
+>   	if (!(evt[1] & EVTQ_1_STALL))
+>   		return -EOPNOTSUPP;
+>   
+> @@ -1782,6 +1779,15 @@ static int arm_smmu_handle_evt(struct arm_smmu_device *smmu, u64 *evt)
+>   		goto out_unlock;
+>   	}
+>   
+> +	/* It is guaranteed that smmu_domain exists as EVTQ_1_STALL is checked. */
+> +	smmu_domain = to_smmu_domain(iommu_get_domain_for_dev(master->dev));
+> +
+> +	/* nesting domain is always pinned at the moment */
+> +	if (smmu_domain->enable_nesting) {
 
-I've grabbed this. Let me know if this needs to go through elsewhere.
+Ugh, has the whole enable_nesting method still not gone away already?
 
----
+However, at least for now, isn't this functionally equivalent to just 
+testing !(smmu->features & ARM_SMMU_FEAT_TRANS_S1) anyway? We still 
+won't be able to differentiate a nominally-pinned non-nested VFIO domain 
+from a nominally-stallable non-VFIO domain on S2-only hardware.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Thanks,
+Robin.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] Squashfs: sanity check symbolic link size
-      https://git.kernel.org/vfs/vfs/c/810ee43d9cd2
+> +		ret = -EINVAL;
+> +		goto out_unlock;
+> +	}
+> +
+>   	iommu_report_device_fault(master->dev, &fault_evt);
+>   out_unlock:
+>   	mutex_unlock(&smmu->streams_mutex);
+> @@ -3373,8 +3379,10 @@ static int arm_smmu_enable_nesting(struct iommu_domain *domain)
+>   	mutex_lock(&smmu_domain->init_mutex);
+>   	if (smmu_domain->smmu)
+>   		ret = -EPERM;
+> -	else
+> +	else {
+>   		smmu_domain->stage = ARM_SMMU_DOMAIN_S2;
+> +		smmu_domain->enable_nesting = true;
+> +	}
+>   	mutex_unlock(&smmu_domain->init_mutex);
+>   
+>   	return ret;
+> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> index 0dc7ad43c64c..f66efeec2cf8 100644
+> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> @@ -745,6 +745,8 @@ struct arm_smmu_domain {
+>   	spinlock_t			devices_lock;
+>   
+>   	struct mmu_notifier		mmu_notifier;
+> +
+> +	bool				enable_nesting;
+>   };
+>   
+>   /* The following are exposed for testing purposes. */
 
