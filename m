@@ -1,151 +1,114 @@
-Return-Path: <linux-kernel+bounces-285378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDC2950CBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552AC950CC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10832815E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 868E81C23547
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C63F19EEA2;
-	Tue, 13 Aug 2024 19:01:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2320E1A3BAA;
+	Tue, 13 Aug 2024 19:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hTUawf91"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CSdhxiQy"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9084F1A3BBD
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0EC1A3BC4;
+	Tue, 13 Aug 2024 19:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575709; cv=none; b=cmOcOggFe4J8C6BkaMtBPGhHDHxKaySJ1J9oRXWfZYQyOMMVLsxF8c4yGD3P9zupDtGvgpyXPBgUmLnwtiYkaLf3rnkLSAsvLbo7Fdaz2KQU71zzZEAl5so/7d64uyXBazG1R9L3RiH3ZKI51cvPt7TTnymSjdT2CiE2p626bwU=
+	t=1723575724; cv=none; b=GyRQMovpgVs+r2Ew674SH8T3rQ4n7d4O5oXMbI5QpMnmnY8CsugNbzSQD5BwIE0MmQXKSibhE3LXYtoqBQMzttwlNS10xC8Spychkv0G+FuS5m2AqKDJiLsvRCP0qYPuN88nplawu6wQYB03yoEc1IZd0XmQ3+F/GmFRS5q2tOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575709; c=relaxed/simple;
-	bh=8EtjMhM2U1teepjliO2vNVFsTuA++Qo7Vih8/F79ILM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NqxPezSoIiMxDbvPHStbTjS5C1Jg+HLfCAMkkoZo8FHH4T7M4DPTIjg7S/eTK6NzXtqrERygfk7eDQ041WBUwAJLVPxTsoSBD9nThVoCA1pfFLLRnssX+cAu0Ycx8rMauXplJkvSnzZxDt4GxO/wL6PMuNHTzjWgL/XXLRkVB5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hTUawf91; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723575706;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=69IESAqRf0OchHa21rgZCmxwZzdZyLUPDypH3+X6lMI=;
-	b=hTUawf91Xmhw9pSI/y3Fjp8NM+y4kRG+OwSWxr9ouvGM+sLOTlHNkbm8kmlA4Lpv5a2pFx
-	UXuLf715BdkQDjEBIgOUGzeoonV6V9NIlnIPAnnhxat7rVAGP7dDvs+NaY41BG3A36yP2n
-	akbqZWhX0LgUBQVZagiLG3DyGeytSsU=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-wRHYbsfVP2SbPK1KOYZPug-1; Tue,
- 13 Aug 2024 15:01:42 -0400
-X-MC-Unique: wRHYbsfVP2SbPK1KOYZPug-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 202EA18EA8EB;
-	Tue, 13 Aug 2024 19:01:40 +0000 (UTC)
-Received: from [10.2.16.208] (unknown [10.2.16.208])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BE2419560A3;
-	Tue, 13 Aug 2024 19:01:37 +0000 (UTC)
-Message-ID: <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com>
-Date: Tue, 13 Aug 2024 15:01:36 -0400
+	s=arc-20240116; t=1723575724; c=relaxed/simple;
+	bh=Zn1CdejGdzH3qrvO4azODSklzSoXsl0lU9zBAeb/I6s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVaXHxtAVXUMK1C+HmpNUfRcoMxfXOfEu9QaufGAO1woRjZSb8aeOayI/bmrct0UpORnqp+t5eMCxXWVM0NS9QzftR0zywWoaVpN7bVyolvZpxG3EE42ei5v5hEclE72yaT/tLB555r1p3K3I6UozIYm6+HcGAYOjxWrD6yEjOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CSdhxiQy; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc47abc040so38986155ad.0;
+        Tue, 13 Aug 2024 12:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723575722; x=1724180522; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=s068iVhOZ+3GA1IKeu19ZmOzE72AR5vLObVpRyMcB40=;
+        b=CSdhxiQyxdr7iXMyHs4j/GzDDQywY3fePUJOl49GoIHMLZC+AVyNmzsPRUcHi7JQEP
+         Dn1CHY0yn3HluK8g0QSk9N0GhJyTEEOqc678A5GwLTBFsZg/nlT/lsiBZIPqfz9uPmWI
+         FN+h53C22Gj+UipsjVOJoJhBNPmhAXA9R07vThSOttpNQxwq7zDiA7LGExPIa0ry9vBz
+         vgsN+rAmeQCWNDF1B4QssGIAB/o1eYF+sOWZr+pCQ8Te+Z5WPfzkJ7caRPcikS5hMWOW
+         jr2wuJYOMsA+XeoLCx+hRKry8EF5LOSe41/gEsLnwGeyXB9ZXPvZTlw7RxnZtXCuKHyq
+         Xptw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723575722; x=1724180522;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=s068iVhOZ+3GA1IKeu19ZmOzE72AR5vLObVpRyMcB40=;
+        b=rmuR2QAW+Ib20bswjnWzrQNjzxRjQvdUk4TGxZZIuayko1mKDDuNP6YXMivxOAuVff
+         VHGeIJyhZnQmF+N2V4UKbC9BF4bL4nCrx/dMC1tqDpgR8ohoRSi6AicXoqXrkzO9571I
+         97b3fPqU8N7Dlx9ioVqotFGSfBD3LHF/9p+ZRb8h8sVOMHFZiN7VwUMq3tmmPasZfX2f
+         8tM/Y+V5j1Sq/ECFKhPY3Xk5LyGWDGQ7e+ocIdO1201TFXseXksJXGXVfBVQgZWKq/Gw
+         eUfVj5pL2Uv4N3aXUs1NfaAtxKldWJRRfzifWJ2Xqm4qcUXj2LE//M00OUt2Rdb9Py6e
+         GvzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX66vidcBKSyVtZPzprlHVJrKwesog9jqXzTZ3O3470GqMv/1RVK3qTcN39JKVEoWRN2c7uM5HWLuU5OXUu4S2IMycOHNbLDQ/jsEECCJLqT9RiGcRDsZjlsg7vu9pDrVTP2BYU6w==
+X-Gm-Message-State: AOJu0Yy0lHQEEDlTDbLOnVkN72/HmkELiuD3UgSc1tzNrH5XK22bnaK0
+	oJrGJC1WWPL1FacHCt6b1PcyboDBpeXy3mzqodNF4E3j/iSPq7DI
+X-Google-Smtp-Source: AGHT+IF9dG5BwSTQD03rkROc00ErVNht2yV1WtWbGXemgrllsq31QSL+oNbku2+JddTKt1na1aXRhw==
+X-Received: by 2002:a17:902:db02:b0:1ff:493:8de1 with SMTP id d9443c01a7336-201d63bc2acmr6884165ad.1.1723575722165;
+        Tue, 13 Aug 2024 12:02:02 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a93d7sm16985145ad.149.2024.08.13.12.02.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:02:01 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 13 Aug 2024 09:02:00 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: Chen Ridong <chenridong@huawei.com>, lizefan.x@bytedance.com,
+	hannes@cmpxchg.org, longman@redhat.com, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next 2/2] cgroup: Disallow delegatee to write all
+ interfaces outsize of cgroup ns
+Message-ID: <ZrutqDox2rrr7dlA@slm.duckdns.org>
+References: <20240812073746.3070616-1-chenridong@huawei.com>
+ <20240812073746.3070616-3-chenridong@huawei.com>
+ <ex5gnhcoobbw74se4uchhqj2lsrcjx5bsh6m5lva2xmujv7uae@34vwukkwhkbc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load
- acquire
-To: cl@gentwo.org, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ex5gnhcoobbw74se4uchhqj2lsrcjx5bsh6m5lva2xmujv7uae@34vwukkwhkbc>
 
+Hello,
 
-On 8/13/24 14:26, Christoph Lameter via B4 Relay wrote:
-> From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
->
-> Some architectures support load acquire which can save us a memory
-> barrier and save some cycles.
->
-> A typical sequence
->
-> 	do {
-> 		seq = read_seqcount_begin(&s);
-> 		<something>
-> 	} while (read_seqcount_retry(&s, seq);
->
-> requires 13 cycles on ARM64 for an empty loop. Two read memory barriers are
-> needed. One for each of the seqcount_* functions.
->
-> We can replace the first read barrier with a load acquire of
-> the seqcount which saves us one barrier.
->
-> On ARM64 doing so reduces the cycle count from 13 to 8.
->
-> Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
-> ---
->   arch/Kconfig            |  5 +++++
->   arch/arm64/Kconfig      |  1 +
->   include/linux/seqlock.h | 41 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 47 insertions(+)
->
-> diff --git a/arch/Kconfig b/arch/Kconfig
-> index 975dd22a2dbd..3f8867110a57 100644
-> --- a/arch/Kconfig
-> +++ b/arch/Kconfig
-> @@ -1600,6 +1600,11 @@ config ARCH_HAS_KERNEL_FPU_SUPPORT
->   	  Architectures that select this option can run floating-point code in
->   	  the kernel, as described in Documentation/core-api/floating-point.rst.
->   
-> +config ARCH_HAS_ACQUIRE_RELEASE
-> +	bool
-> +	help
-> +	  Architectures that support acquire / release can avoid memory fences
-> +
->   source "kernel/gcov/Kconfig"
->   
->   source "scripts/gcc-plugins/Kconfig"
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index a2f8ff354ca6..19e34fff145f 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -39,6 +39,7 @@ config ARM64
->   	select ARCH_HAS_PTE_DEVMAP
->   	select ARCH_HAS_PTE_SPECIAL
->   	select ARCH_HAS_HW_PTE_YOUNG
-> +	select ARCH_HAS_ACQUIRE_RELEASE
->   	select ARCH_HAS_SETUP_DMA_OPS
->   	select ARCH_HAS_SET_DIRECT_MAP
->   	select ARCH_HAS_SET_MEMORY
+On Mon, Aug 12, 2024 at 06:57:06PM +0200, Michal Koutný wrote:
+...
+> You could also have increased the ancestral limit (if there was any)
+> echo max > dlgt_grp_ns/pids.max // similarly allowed
+> 
+> If you're a root (or otherwise have sufficient permissions) and you can
+> _see_ an ancestral cgroup, you can write to its attributes according to
+> permissions. Thus the delegation works via cgroup ns (in)visibility but
+> cgroup ns root is visible on both sides of the boundary hence the extra
+> check.
 
-Do we need a new ARCH flag? I believe barrier APIs like 
-smp_load_acquire() will use the full barrier for those arch'es that 
-don't define their own smp_load_acquire().
+Yeah, the intended usage scenario w/ NS delegation is that the delegatee
+won't be able to see the ancetral cgroups beyond the delegation point. Chen,
+is this from an actual usecase? If so, can you describe what's going on?
 
-BTW, acquire/release can be considered memory barriers too. Maybe you 
-are talking about preferring acquire/release barriers over read/write 
-barriers. Right?
+Thanks.
 
-Cheers,
-Longman
-
+-- 
+tejun
 
