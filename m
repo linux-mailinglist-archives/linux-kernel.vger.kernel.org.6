@@ -1,227 +1,132 @@
-Return-Path: <linux-kernel+bounces-284181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F7A94FE04
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:39:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A91B94FE06
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5181F21C88
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:39:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E1BC1C2248F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C97F3F9F9;
-	Tue, 13 Aug 2024 06:39:45 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 037743CF63;
+	Tue, 13 Aug 2024 06:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P7rkgZDX"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105D1381B8;
-	Tue, 13 Aug 2024 06:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBFA1CD23;
+	Tue, 13 Aug 2024 06:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723531184; cv=none; b=BpWzuo52/k1ejAyCuRpLLGrjJmwNS0Lu5f+2fsAThUZO/CJjtWNQNwtVPaXuX0W+V8bmGNj1xAOwGgU3SneDFZv+hOiB6CKIYQ6OZ34ZhcY+fEdVLBvU/3hmr+PuM1qZOc/Z5KNMxMOgNsjouh9aFrLXCC5spMatyj7mCDHjHK8=
+	t=1723531216; cv=none; b=QLEt0GTrZJOD8tAs65Ta5FDcc0k2ivOh45JNZvO/U1r7fGuhbXa9ea4oFoHJze/hFytcdSPU7zvm6bo5/wy2d8p0HZJ6BoVzY/dQkOytaWzjZCSH1jfZFOzcl86XimYP4RCsK2V5GmntIB5LqzgnOpilW6VesUepbyQ4bZMVIgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723531184; c=relaxed/simple;
-	bh=AgOTf/1nimd9AxP69hLnqq2R4+9999KwphIxvW77f00=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oxDbXMd3xR9hZRclsWfnx7BTZLQdvIcAemFeTwF8BZcAkPpEE1SlkG+CE5FOkJmjXTfoEy+UZ6sLoqyX9u3BDiEYl7tuv91ZAyBvMyFE+FaHujn1I3CGiCOFGY8cX9S57+f7IcISI+4enJU9OXWeHjUemi1lxf4CTd6YDIketoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjhZ44fYXz4f3jsG;
-	Tue, 13 Aug 2024 14:39:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 531ED1A0568;
-	Tue, 13 Aug 2024 14:39:38 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAHL4Wl_7pmE5E6Bg--.5405S3;
-	Tue, 13 Aug 2024 14:39:35 +0800 (CST)
-Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with
- set device wbps and wiops
-To: Lance Yang <ioworker0@gmail.com>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
- cgroups@vger.kernel.org, josef@toxicpanda.com, tj@kernel.org,
- fujita.tomonori@lab.ntt.co.jp, boqun.feng@gmail.com, a.hindborg@samsung.com,
- paolo.valente@unimore.it, axboe@kernel.dk, vbabka@kernel.org,
- david@redhat.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
- libang.li@antgroup.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20240812150049.8252-1-ioworker0@gmail.com>
- <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
- <9ede36af-fca4-ed41-6b7e-cef157c640bb@huaweicloud.com>
- <CAK1f24mwzXa8Az5WFYu+1UopTCStDWx3yDr1RugLwphS-hWizw@mail.gmail.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <eef1f655-4fff-618d-4b8e-447230ec8ed9@huaweicloud.com>
-Date: Tue, 13 Aug 2024 14:39:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1723531216; c=relaxed/simple;
+	bh=eiYImyIe+mYjjDD8xoPOCd/hI2KuNIuxHNorm1aWa00=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Q+omTF25YDllZbJs0CVXvvwiPwS9BG6vdSoAcSsP0bo0hH/WP1xEWCeshUu5f+/Ipv/m4kOFxnJEmwO3sbjDiOJpmxrSXyZhxG3mjklxiNJ4+9xiFu6StZ5XV8vMtzK9QdLf2H8HaJEKDnOM39+sMyj6l0q9sipTTHTYAcHhIT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P7rkgZDX; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=x6xW72eBbWVaT+8NJmpt2BbFpDPPo+52uKh39Es5tzM=; b=P7rkgZDXPAcSh3DJ7mBNjP3z6s
+	ItrrNL1K6IJAE9O4ITaSiUeL8R5XscIDB7ozUMlRHM4Jmbokwg9YAsXB1hyFxwrcIg9FvB2NB0kV1
+	t5a9QuJYN099pcrF7/ugyTvo2r4D9BYino8Wmho2ycwT6ETMg1zjy1Z072huUF5DsohEeWX9uB4Io
+	sewVC04a7CuG2boXbTOCFdQohPYscvJBg4Gr+LDWnFYjtDtaZj6xn6mi+KUo+I/eX2B/DWDz4sv99
+	98vO/d3Ny1UKvVst7PtKN5pUsw57D7dHPZmGb+2Qm295m2EZixSoJUHhFyWfa6YgCAN0sQZvwjhAs
+	rqhip9tQ==;
+Received: from [2a00:23ee:1958:1906:2ed8:c63c:8737:bcca] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdlCF-00000007iJU-1EG0;
+	Tue, 13 Aug 2024 06:39:56 +0000
+Date: Tue, 13 Aug 2024 07:39:51 +0100
+From: David Woodhouse <dwmw2@infradead.org>
+To: Sean Christopherson <seanjc@google.com>
+CC: Thomas Gleixner <tglx@linutronix.de>, Michael Kelley <mhklinux@outlook.com>,
+ "lirongqing@baidu.com" <lirongqing@baidu.com>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH=5D_clockevents/drivers/i8253=3A?=
+ =?US-ASCII?Q?_Do_not_zero_timer_counter_in_shutdown?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <Zrqh7GlPMRVOVtvY@google.com>
+References: <1675732476-14401-1-git-send-email-lirongqing@baidu.com> <87ttg42uju.ffs@tglx> <SN6PR02MB41571AE611E7D249DABFE56DD4B22@SN6PR02MB4157.namprd02.prod.outlook.com> <87o76c2hw2.ffs@tglx> <30eb7680b3c7ae5370dfbf7510e664181f38b80e.camel@infradead.org> <ZqzzVRQYCmUwD0OL@google.com> <35624750846f564e6789c22801300a542cafa7fb.camel@infradead.org> <Zrqh7GlPMRVOVtvY@google.com>
+Message-ID: <B8008048-5D99-4B78-B63F-862207F78D73@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAK1f24mwzXa8Az5WFYu+1UopTCStDWx3yDr1RugLwphS-hWizw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHL4Wl_7pmE5E6Bg--.5405S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr1ktr4fXw1DZF1UWFyrCrg_yoWrArWUpF
-	Zxt3W7tFs5Gr13Gw1293y0gFyYqwnrJa15Xr1UKr15uFn0qr9Igr4UKr4qgFyFvF1fGw45
-	Zw4fWF12gr1093DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi,
+On 13 August 2024 00:59:40 BST, Sean Christopherson <seanjc@google=2Ecom> w=
+rote:
+>On Fri, Aug 02, 2024, David Woodhouse wrote:
+>> On Fri, 2024-08-02 at 07:55 -0700, Sean Christopherson wrote:
+>> > On Fri, Aug 02, 2024, David Woodhouse wrote:
+>> > > On Thu, 2024-08-01 at 20:54 +0200, Thomas Gleixner wrote:
+>> > > > On Thu, Aug 01 2024 at 16:14, Michael Kelley wrote:
+>> > > > > I don't have a convenient way to test my sequence on KVM=2E
+>> > > >=20
+>> > > > But still fails in KVM
+>> > >=20
+>> > > By KVM you mean the in-kernel one that we want to kill because ever=
+yone
+>> > > should be using userspace IRQ chips these days?
+>> >=20
+>> > What exactly do you want to kill?=C2=A0 In-kernel local APIC obviousl=
+y needs to stay
+>> > for APICv/AVIC=2E
+>>=20
+>> The legacy PIT, PIC and I/O APIC=2E
+>>=20
+>> > And IMO, encouraging userspace I/O APIC emulation is a net negative f=
+or KVM and
+>> > the community as a whole, as the number of VMMs in use these days res=
+ults in a
+>> > decent amount of duplicated work in userspace VMMs, especially when a=
+ccounting
+>> > for hardware and software quirks=2E
+>>=20
+>> I don't particularly care, but I thought the general trend was towards
+>> split irqchip mode, with the local APIC in-kernel but i8259 PIC and I/O
+>> APIC (and the i8254 PIT, which was the topic of this discussion) being
+>> done in userspace=2E
+>
+>Yeah, that's where most everyone is headed, if not already there=2E  Lett=
+ing the
+>I/O APIC live in userspace is probably the right direction long term, I j=
+ust don't
+>love that every VMM seems to have it's own slightly different version=2E =
+ But I think
+>the answer to that is to build a library for (legacy?) device emulation s=
+o that
+>VMMs can link to an implementation instead of copy+pasting from somwhere =
+else and
+>inevitably ending up with code that's frozen in time=2E
 
-在 2024/08/13 13:00, Lance Yang 写道:
-> Hi Kuai,
-> 
-> Thanks a lot for jumping in!
-> 
-> On Tue, Aug 13, 2024 at 9:37 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
->>
->> Hi,
->>
->> 在 2024/08/12 23:43, Michal Koutný 写道:
->>> +Cc Kuai
->>>
->>> On Mon, Aug 12, 2024 at 11:00:30PM GMT, Lance Yang <ioworker0@gmail.com> wrote:
->>>> Hi all,
->>>>
->>>> I've run into a problem with Cgroup v2 where it doesn't seem to correctly limit
->>>> I/O operations when I set both wbps and wiops for a device. However, if I only
->>>> set wbps, then everything works as expected.
->>>>
->>>> To reproduce the problem, we can follow these command-based steps:
->>>>
->>>> 1. **System Information:**
->>>>      - Kernel Version and OS Release:
->>>>        ```
->>>>        $ uname -r
->>>>        6.10.0-rc5+
->>>>
->>>>        $ cat /etc/os-release
->>>>        PRETTY_NAME="Ubuntu 24.04 LTS"
->>>>        NAME="Ubuntu"
->>>>        VERSION_ID="24.04"
->>>>        VERSION="24.04 LTS (Noble Numbat)"
->>>>        VERSION_CODENAME=noble
->>>>        ID=ubuntu
->>>>        ID_LIKE=debian
->>>>        HOME_URL="https://www.ubuntu.com/"
->>>>        SUPPORT_URL="https://help.ubuntu.com/"
->>>>        BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
->>>>        PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
->>>>        UBUNTU_CODENAME=noble
->>>>        LOGO=ubuntu-logo
->>>>        ```
->>>>
->>>> 2. **Device Information and Settings:**
->>>>      - List Block Devices and Scheduler:
->>>>        ```
->>>>        $ lsblk
->>>>        NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
->>>>        sda     8:0    0   4.4T  0 disk
->>>>        └─sda1  8:1    0   4.4T  0 part /data
->>>>        ...
->>>>
->>>>        $ cat /sys/block/sda/queue/scheduler
->>>>        none [mq-deadline] kyber bfq
->>>>
->>>>        $ cat /sys/block/sda/queue/rotational
->>>>        1
->>>>        ```
->>>>
->>>> 3. **Reproducing the problem:**
->>>>      - Navigate to the cgroup v2 filesystem and configure I/O settings:
->>>>        ```
->>>>        $ cd /sys/fs/cgroup/
->>>>        $ stat -fc %T /sys/fs/cgroup
->>>>        cgroup2fs
->>>>        $ mkdir test
->>>>        $ echo "8:0 wbps=10485760 wiops=100000" > io.max
->>>>        ```
->>>>        In this setup:
->>>>        wbps=10485760 sets the write bytes per second limit to 10 MB/s.
->>>>        wiops=100000 sets the write I/O operations per second limit to 100,000.
->>>>
->>>>      - Add process to the cgroup and verify:
->>>>        ```
->>>>        $ echo $$ > cgroup.procs
->>>>        $ cat cgroup.procs
->>>>        3826771
->>>>        3828513
->>>>        $ ps -ef|grep 3826771
->>>>        root     3826771 3826768  0 22:04 pts/1    00:00:00 -bash
->>>>        root     3828761 3826771  0 22:06 pts/1    00:00:00 ps -ef
->>>>        root     3828762 3826771  0 22:06 pts/1    00:00:00 grep --color=auto 3826771
->>>>        ```
->>>>
->>>>      - Observe I/O performance using `dd` commands and `iostat`:
->>>>        ```
->>>>        $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
->>>>        $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
->>
->> You're testing buffer IO here, and I don't see that write back cgroup is
->> enabled. Is this test intentional? Why not test direct IO?
-> 
-> Yes, I was testing buffered I/O and can confirm that CONFIG_CGROUP_WRITEBACK
-> was enabled.
-> 
-> $ cat /boot/config-6.10.0-rc5+ |grep CONFIG_CGROUP_WRITEBACK
-> CONFIG_CGROUP_WRITEBACK=y
-> 
-> We intend to configure both wbps (write bytes per second) and wiops
-> (write I/O operations
-> per second) for the containers. IIUC, this setup will effectively
-> restrict both their block device
-> I/Os and buffered I/Os.
-> 
->> Why not test direct IO?
-> 
-> I was testing direct IO as well. However it did not work as expected with
-> `echo "8:0 wbps=10485760 wiops=100000" > io.max`.
-> 
-> $ time dd if=/dev/zero of=/data/file7 bs=512M count=1 oflag=direct
+Some would say the right answer is to present a micro-vm machine model tha=
+t doesn't have any of that crap at all=2E
 
-So, you're issuing one huge IO, with 512M.
-> 1+0 records in
-> 1+0 records out
-> 536870912 bytes (537 MB, 512 MiB) copied, 51.5962 s, 10.4 MB/s
+Sadly we're going in the wrong direction=2E For >255 vCPUs on AMD machines=
+ it looks like we even have to emulate a full virtual IOMMU with DMA transl=
+ation support=2E Well done, AMD!
 
-And this result looks correct. Please noted that blk-throtl works before
-IO submit, while iostat reports IO that are done. A huge IO can be
-throttled for a long time.
-> 
-> real 0m51.637s
-> user 0m0.000s
-> sys 0m0.313s
-> 
-> $ iostat -d 1 -h -y -p sda
->   tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn
-> kB_dscd Device
->       9.00         0.0k         1.3M         0.0k       0.0k       1.3M
->        0.0k sda
->       9.00         0.0k         1.3M         0.0k       0.0k       1.3M
->        0.0k sda1
-
-I don't understand yet is why there are few IO during the wait. Can you
-test for a raw disk to bypass filesystem?
-
-Thanks,
-Kuai
-
+(Linux is OK with the 15-bit Extended Destination ID, but not Windows)
 
