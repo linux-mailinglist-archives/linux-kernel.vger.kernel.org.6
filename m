@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-284192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FFD94FE28
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90A3394FE26
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F141C1C22838
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:59:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D2C284AD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A334CE05;
-	Tue, 13 Aug 2024 06:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD999433CB;
+	Tue, 13 Aug 2024 06:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R2SwBPuG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G1fiGImM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhslKYMn";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G1fiGImM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vhslKYMn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E54436B;
-	Tue, 13 Aug 2024 06:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CCF41C69
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723532344; cv=none; b=a+BoHe3lWWvQdk8dlEm8CjIccay3YdYbYeq8C2X+vDeDNAd207xhfabB0X0VKfytBxGzQgtB/eDONwR1teZIQPyLm/FUA7T9QcZurIO7CNusgB2HKO6yYtdVJ9C0R44Mh5fiwOfby5MaLCYEZ6tOKTaBvbOBESEvu30YLGbY6pU=
+	t=1723532341; cv=none; b=mGa7WuoKRFvPGDbSoCLnC/KfM5qnUaem61kLBqLxB/ilB9RjwyjdauHdtCFC2I5Z3hBAaDpoQC8PRAdCSyhWci79Mx+pcbhlvQTY9xDmiwL4gIpWzLJ4G3JmukzUTJCN4/WYdxZtewucn/bnmwIVodqoRo5zxr/CKDWjX7XtvQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723532344; c=relaxed/simple;
-	bh=csr4lEhbkequ1alrCctQf2mie5S/MyJtwR2Ya+HwdGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RSmrSPsg+4d3VbRyPD3xldSKF07uzOHqVVrhtakmw0UPaEnbJknAbiU8E1gIxZ7XrCjM08TuR2VL5oJNveYmKk+Qe7UzmFnEtt9SwaLnhn3HNBbzrH+7dOTZfSXKujuouhz0YU9w/k7Nead+S1Q4nYWkqzYJwhYJPCUJ3fyekCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R2SwBPuG; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723532343; x=1755068343;
-  h=date:from:to:cc:subject:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=csr4lEhbkequ1alrCctQf2mie5S/MyJtwR2Ya+HwdGY=;
-  b=R2SwBPuGc0EgGmAi8D5GO/uNT3lt5Ei2/6eDYanOMMJAVboda3V/faHY
-   BEZLopTWTcqJp7OS0rpASVDHBunk8zklelOtMuQxiViLmF64/Ic1jEZsj
-   6WrA5fwziXSDU7iJ6J6bdeVbg0K9LIMhkypiiI+k3y1F6lBv+zbVoMocN
-   97dlrTCOqdpYDFcVYUAnogCGb533i77GwzeB8MegIJJInsYG5JWuaK4MZ
-   V00Xo0AXCBTqP/MVvlnoVX3/cwRfLQsrHZe4fZg7oMD/UvoDEh9H03QGk
-   M2+TT31DvTKZUU+4z3jEi4IAbRiGgCL0X/7CvUe35OMglhnIGpVzVfDvM
-   A==;
-X-CSE-ConnectionGUID: Yv4XiwxWSAiSqiA1WoQILw==
-X-CSE-MsgGUID: ioXGcl0OTdi3rD6BH3RCag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32247168"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="32247168"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:59:02 -0700
-X-CSE-ConnectionGUID: XtvB9tqCSk6+gcm/UxlxQw==
-X-CSE-MsgGUID: u6RN161iRIOg+ZQRMTn2WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63426227"
-Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.112.252])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:58:59 -0700
-Date: Tue, 13 Aug 2024 08:58:54 +0200
-From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
- yangerkun@huawei.com
-Subject: Re: [PATCH RFC -next 01/26] md/md-bitmap: introduce struct
- bitmap_operations
-Message-ID: <20240813085806.00006ec3@linux.intel.com>
-In-Reply-To: <20240810020854.797814-2-yukuai1@huaweicloud.com>
-References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
- <20240810020854.797814-2-yukuai1@huaweicloud.com>
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1723532341; c=relaxed/simple;
+	bh=ERnCb7GNxRzZmUj1NsQxVVH1zhVfW4u5qmEkAr0fYZg=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Pfo8fPONrZa/vlOMJxlVnRoNYUNu1rDr0R2Crr+v4J4V50OpAAHf+J8RTiiwqAqYnal6a/lR3KB+rFBakjNq/geeMl5px2tijKUvNTUcWBGWiRiVUIQ9/e6TAnyglVWMg1IKGCnNLRF5PpQehaqQoYw9X+BaLmZ4w79sbgaMsb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G1fiGImM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhslKYMn; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G1fiGImM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vhslKYMn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C8C3622725;
+	Tue, 13 Aug 2024 06:58:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723532331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
+	b=G1fiGImM9scQXcwgIoi1bPsCRVwMqIVqnpo1pMAnELagGHvcjR7TRt0Xw79pCPQOW9y+n0
+	P9f7JqKUVLo7gJr+etHqCCZVXTr8m3nIFgxAXBh+Xu1MX4fIv48j/wK+/QwJwRNcWSrb5Q
+	qRci2IFugbkFcDn0dyY3sWmYVUdofEo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723532331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
+	b=vhslKYMnWH/XoTFRVabBsX/dDSZ5L4xZsGXLafNfzJ/GvAdCUxZPn3o7mmBNWxmDFOWD9d
+	4+tnFC7MiNyY1YBA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=G1fiGImM;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=vhslKYMn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723532331; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
+	b=G1fiGImM9scQXcwgIoi1bPsCRVwMqIVqnpo1pMAnELagGHvcjR7TRt0Xw79pCPQOW9y+n0
+	P9f7JqKUVLo7gJr+etHqCCZVXTr8m3nIFgxAXBh+Xu1MX4fIv48j/wK+/QwJwRNcWSrb5Q
+	qRci2IFugbkFcDn0dyY3sWmYVUdofEo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723532331;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYv3HXyrUd9oqACj2L8eRTsJyUQpj3b67JE2bftMn28=;
+	b=vhslKYMnWH/XoTFRVabBsX/dDSZ5L4xZsGXLafNfzJ/GvAdCUxZPn3o7mmBNWxmDFOWD9d
+	4+tnFC7MiNyY1YBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60F7313983;
+	Tue, 13 Aug 2024 06:58:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3KjtFCsEu2YaGgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 06:58:51 +0000
+Date: Tue, 13 Aug 2024 08:59:31 +0200
+Message-ID: <87bk1wdi24.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: <broonie@kernel.org>,
+	<andriy.shevchenko@linux.intel.com>,
+	<lgirdwood@gmail.com>,
+	<perex@perex.cz>,
+	<pierre-louis.bossart@linux.intel.com>,
+	<13564923607@139.com>,
+	<alsa-devel@alsa-project.org>,
+	<linux-kernel@vger.kernel.org>,
+	<liam.r.girdwood@intel.com>,
+	<cameron.berkenpas@gmail.com>,
+	<baojun.xu@ti.com>,
+	<soyer@irl.hu>,
+	<Baojun.Xu@fpt.com>,
+	<robinchen@ti.com>
+Subject: Re: [PATCH v2] ALSA: ASoC/tas2781: fix wrong calibrated data order
+In-Reply-To: <20240813043749.108-1-shenghao-ding@ti.com>
+References: <20240813043749.108-1-shenghao-ding@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C8C3622725
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[139.com,gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,gmail.com,perex.cz,139.com,alsa-project.org,vger.kernel.org,intel.com,ti.com,irl.hu,fpt.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Sat, 10 Aug 2024 10:08:29 +0800
-Yu Kuai <yukuai1@huaweicloud.com> wrote:
-
-> From: Yu Kuai <yukuai3@huawei.com>
+On Tue, 13 Aug 2024 06:37:48 +0200,
+Shenghao Ding wrote:
 > 
-> The structure is empty for now, and will be used in later patches to
-> merge in bitmap operations, prepare to implement a new lock free
-> bitmap in the fulture.
+> From: Baojun Xu <baojun.xu@ti.com>
+> 
+> Wrong calibration data order cause sound too low in some device.
+> Fix wrong calibrated data order, add calibration data converssion
+> by get_unaligned_be32() after reading from UEFI.
+> 
+> Fixes: 5be27f1e3ec9 ("ALSA: hda/tas2781: Add tas2781 HDA driver")
+> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+
+Applied to for-linus branch now.
+I corrected the subject prefix, as this is clearly no ASoC change.
 
 
-HI Kuai,
+thanks,
 
-typo: future
-
-I think that as "later" you meant next patches in this patchset, right? If yes,
-Please you "next" instead.
-
-At this point bringing "lock free implementation in the future" looks like
-totally unnecessary. It may happen or may not. Eventually, You can mention it in
-cover letter. What we have now is the most important.
-
-This is just a code rework. The main goal of this (as you mentioned in second
-patch):
-
-"So that the implementation won't be exposed, and it'll be possible
-to invent a new bitmap by replacing bitmap_operations."
-
-but please mention that you are not going to implement second mechanism to not
-confuse reader. You need it to improve code maintainability mainly I think.
-
-I would mention something about common "struct _ops" pattern (the special
-structure to keep related operations together) that it is going to follow now.
-
-For me, this one can be easy merged with the patch 2, so we will got struct +
-usage in one patch.
-
-Anyway, LGTM.
-
-Thanks,
-Mariusz
+Takashi
 
