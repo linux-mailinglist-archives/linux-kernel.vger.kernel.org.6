@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-284403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C2AC95008C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4451B95008E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0F841C229FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA356B23770
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD841448DC;
-	Tue, 13 Aug 2024 08:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7825149C76;
+	Tue, 13 Aug 2024 08:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Snd4Gu1z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QQdU78xX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB6D15B7;
-	Tue, 13 Aug 2024 08:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF10D13A244;
+	Tue, 13 Aug 2024 08:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539480; cv=none; b=GRO9sJbHhGZImdREmj1tdIVorGbnrgbH8v3INS96y+AthrhKYeaE6AU0paXV8CXbwN/R/IQu0BolcGal8V0aJjhdtTdchVcfrLFBNi+pJMJds0P3OX4479i2nMpciwMf3AsQCkPIvyI69IaxzEs5S68C30MGQ//BjU35NofUFag=
+	t=1723539507; cv=none; b=ozoozQYkTDJYDux+rp0B7W0q3wKppYdBydfCKmDtZXSVcGBOEcfzlIAgUtl6gzjwNvDzzgykvltAJSWKjtQ28GE6XcoDw/AxFOgzQtQ2ZFBo7+wst53TKm7SEeMlvpoF8iygbmmyKv6Z6XSMZFcqCifSDpIoNaVKtKCIYP/knfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539480; c=relaxed/simple;
-	bh=hFy5bSdY8DZHR/IeVfsJgaIskZ+yjNUSeemggO+SExI=;
+	s=arc-20240116; t=1723539507; c=relaxed/simple;
+	bh=p/mECUjCfzx4TLpzVePtHWEbhuWAio19RVPoC3aDwrY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NogATrvKL8pq/4v5PVy6Tj1+zHeVr6rOQWYn1YUgKFYJK9SjCeHr4PazMOpZHa1u4LQAVlx9SF6EMSAN5uh6LTyWqiX373pHjv1rJy1/dVxtJn8YtWYY9vr8cEu6W/H/TJsiEcY0pb+j8HzKvO8/O37o2W5vwzNtNVgG0XhIQJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Snd4Gu1z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FEAC4AF09;
-	Tue, 13 Aug 2024 08:57:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VKDoFY4gSHnaE534e5HW0GJZLp6O56JiL5ZBIyf7fw7+Uzj1TpGrRX+ivETs6NvOrDaWvpe1gF9mWcislgJpApqcukA2vqjVCVVbJwPz4OQViyvByQ9BOsUUQR3tOyII2jwtBijohRwK6h8FSGmJ8dS4aWEbUji6GXTAjxAgf7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QQdU78xX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D54CC4AF09;
+	Tue, 13 Aug 2024 08:58:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723539479;
-	bh=hFy5bSdY8DZHR/IeVfsJgaIskZ+yjNUSeemggO+SExI=;
+	s=k20201202; t=1723539506;
+	bh=p/mECUjCfzx4TLpzVePtHWEbhuWAio19RVPoC3aDwrY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Snd4Gu1ziqFbAGSkZOzeT2aMuF+65Sr2mXsfKnCn54HijF52Z75pWG8BE330XXVtT
-	 KEV0Gp4AEfDbIgZnK/KI0Rf3ZGEDJ7gi+4DiNrH1X2KyKREqwwxP6xpwJHg23jcv+n
-	 Btcyitsl4ax4OTLpj2V5Dbk7vG46raLABpuSJQ37H+zLhA1m1uYC7FTZ1zGuVgTyRv
-	 zPgjnoJLv1NG8Q8b5gFillM6vlEAy6tJw2u+pj5ghkl5tMB9uXu9zRJWIawby2NfdJ
-	 W7heVnYfXZEQP15c7yacUokeGYWvUY4iINY5ff6DlnRYpGcOwUpzwiZ7VG48ACaamK
-	 RVmHbfhX3j5Kg==
-Message-ID: <a22e3033-448c-4749-be29-26e72e0c59c1@kernel.org>
-Date: Tue, 13 Aug 2024 10:57:52 +0200
+	b=QQdU78xXY2TGOoWYX3n2+uUIIAOHvc8N1Ac2keBilsP3lQoxFvR7g2ds1vichEYjU
+	 duzNbl4RZzUQ1dZKSqgLCfBC1sEEfytLa3SuhD3RO7EPXkxiCwfckEvn9ambJp7DJX
+	 s7FcOJUxX/C0dLeJ7+Jwxs/9VWOsxVBYDEq4JqlUcyY1kP/x0hrTbz4vev9EOSYGMc
+	 Cf1+FpK814zavGXUS8cdNdfwuKHDJAM/8eYMSM/0wXYeIFtgMZNIIqCcXEo72NnfX6
+	 rzL4epCpXdjkasKXX7uAI4M4slwK+b0drVHW1jyMR7E0dlzLV6avWKowu0SVs8xLdQ
+	 fIdghgTIOZWMg==
+Message-ID: <039f3640-12e7-4bc7-8322-92155e33277c@kernel.org>
+Date: Tue, 13 Aug 2024 10:58:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,7 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/7] arm64: dts: tqma8mqml: change copyright entry to
+Subject: Re: [PATCH 5/7] arm64: dts: tqma8mpql: change copyright entry to
  current TQ Copyright style
 To: Max Merchel <Max.Merchel@ew.tq-group.com>, Shawn Guo
  <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -60,9 +60,9 @@ To: Max Merchel <Max.Merchel@ew.tq-group.com>, Shawn Guo
 Cc: linux@ew.tq-group.com, linux-arm-kernel@lists.infradead.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev
 References: <20240813072019.72735-1-Max.Merchel@ew.tq-group.com>
- <20240813072019.72735-4-Max.Merchel@ew.tq-group.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20240813072019.72735-6-Max.Merchel@ew.tq-group.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -106,44 +106,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240813072019.72735-4-Max.Merchel@ew.tq-group.com>
+In-Reply-To: <20240813072019.72735-6-Max.Merchel@ew.tq-group.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 13/08/2024 09:20, Max Merchel wrote:
-> Add mailing list addresses and missing authors.
+> Replace developer-specific, personal email addresses by mailing list addresses
+> while retaining the author.
 > 
 > Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts | 4 +++-
->  arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml.dtsi       | 4 +++-
->  2 files changed, 6 insertions(+), 2 deletions(-)
+>  .../boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts    | 3 +--
+>  arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts  | 5 +++--
+>  arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi          | 5 +++--
+>  3 files changed, 7 insertions(+), 6 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> index 01b632b220dc..cae7b5ebc71b 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> @@ -1,6 +1,8 @@
->  // SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
+> index d7fd9d36f824..d06755ccfdce 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
+> @@ -2,8 +2,7 @@
 >  /*
-> - * Copyright 2020-2021 TQ-Systems GmbH
-> + * Copyright (c) 2020-2021 TQ-Systems GmbH <linux@ew.tq-group.com>,
+>   * Copyright (c) 2023-2024 TQ-Systems GmbH <linux@ew.tq-group.com>,
+>   * D-82229 Seefeld, Germany.
+> - * Author: Martin Schmiedel
+> - * Author: Alexander Stein
+> + * Author: Martin Schmiedel, Alexander Stein
 
-Srlsy... that's a churn without explanation. Is the email functioning at
-least? Who is there listening? Anyone providing feedback?
-
-> + * D-82229 Seefeld, Germany.
-
-Drop the address, that's not an address book and your company
-regulations do not matter.
-
-> + * Author: Alexander Stein
-
-Git tells who is the author... I am not fan of adding it post-factum.
-Actually, I am not a fan of having it in the first place - it's useless.
-It means nothing: no copyrights, no contact form.
-
-Anyway, all these changes should be squashed.
+NAK
 
 Best regards,
 Krzysztof
