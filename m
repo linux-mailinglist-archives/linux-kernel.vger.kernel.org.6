@@ -1,172 +1,227 @@
-Return-Path: <linux-kernel+bounces-284180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553DA94FDFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:38:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F7A94FE04
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5BEAB23898
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:38:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5181F21C88
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9CE13CF4F;
-	Tue, 13 Aug 2024 06:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="URpm6Pla"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C97F3F9F9;
+	Tue, 13 Aug 2024 06:39:45 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABF744C64;
-	Tue, 13 Aug 2024 06:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 105D1381B8;
+	Tue, 13 Aug 2024 06:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723531120; cv=none; b=S02Lu/R4Wxm0oTEjg4C3VffwnNU4svZHJVfxT8ftPKGuL5Nwgz4m9qNPZhgFvZM0UIXo27/bWdaiEjso1J9ir5VQbLUv/+lDqYMLvOkeZZHD2zvYc0zKSnGgTRvn4nNA8LCTMrh5ZLk9oAGnpmZl8xkuDi/Or9SgZ/nZ2/GFmDw=
+	t=1723531184; cv=none; b=BpWzuo52/k1ejAyCuRpLLGrjJmwNS0Lu5f+2fsAThUZO/CJjtWNQNwtVPaXuX0W+V8bmGNj1xAOwGgU3SneDFZv+hOiB6CKIYQ6OZ34ZhcY+fEdVLBvU/3hmr+PuM1qZOc/Z5KNMxMOgNsjouh9aFrLXCC5spMatyj7mCDHjHK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723531120; c=relaxed/simple;
-	bh=gZXfOgCSbDUjKyomnFKCsMOHrgHqxFBPR0m6J5XfPME=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kr5HNma6PA3F/StuWcKWKSvMImAIB9lfvmQHZGyEa1MvW4GjaungMFvTvQ5sD80cp5y/6qV8dKLBqI24I6J3ZEnk1u6KXPAPiq8Xb+exMrjSsFQYmu57Vx6aXWb4PTXVMMWsH5XDGnLIqG1sjujXHYaFBfOc1aMG16lXqekP1T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=URpm6Pla; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ef95ec938so5270997e87.3;
-        Mon, 12 Aug 2024 23:38:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723531116; x=1724135916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJa60IJFVdBK+UxERtF9fP2C2kOIjqyMYl8iCwtl87Q=;
-        b=URpm6PlagID5gH4+EDYk6LfAzboziQu4EoxMjagIKzeYyG8S6ffsTffqROect5/wVW
-         4LNi1B2tgbhqA15avdnLpHOVXuRdoh4zCJr1Is2KLUfjnCIySv7QAw5LbJuPvh5d4+CI
-         pEUWf4lncumLMZ3vPahulvXS8kDhiyeRtrHs6DILx1H7MV/o4RBpD/oPaKdW7zTn0N2R
-         inQAdWcEep//aTp9w+QBtuzX43UD3oo4iWfyLw+5yj7q5Y7sWCbzQPfrJXaJU7DRNSYC
-         3uthf3TOb0pZ3fnfPGbHMOmOmt1dAQjablZ7EYmOnJBjV1AM81VdXvLk3HDkY3atdQxa
-         neaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723531116; x=1724135916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CJa60IJFVdBK+UxERtF9fP2C2kOIjqyMYl8iCwtl87Q=;
-        b=VtHqjArgDIjlTZGbqdtJN3COIp2oKPdaVxqilXsoh2eGrBK7azOoKNlCWEYYRAC5dD
-         2XDGNObOJV8CwyT22r0/LlAD7/S9R39dzrzI4I59luXVIEwF5xeEA/V7o12IahmY9KNl
-         q2yzOD6vyKcdl3whEANrpt+6qPgL0V5QA2pNJ80jvsQPckCM6An2qdyxxY8UUXxzDPE9
-         QXWdj/OgCZ9DFNq3yw+9gEN4jwRN9bmtMjqKqKN1ibkAH1lk4AszG1/8sfAJJ3B2t1V8
-         saNnhH2doE99qsumT1OCzEeM1eyRH6kJKT1B+baS+iSHrc59KAxJv4xQ0ngR6iqneen1
-         TFTw==
-X-Forwarded-Encrypted: i=1; AJvYcCXxsL2s3WcBedZXz76dxn5y/GPsWyBXQQ5+m/Jc2TSR36akkoxx61n4pYF6jrTL3+hYsoDhX+yrXH40dfeE/ugzOcJ8XFna3uy46m8eIBPMPBpl0sZ4MTttqynkQ0uvFH+v0WuE
-X-Gm-Message-State: AOJu0YzPJyiFeX2wndK9xwE4PFms5YAs3sVHoLSnyHrHLtgx6wpXaaeV
-	XVlqLq475TqkoLIkD1lGi/buSIu0Ol6RViArtyb8o3Jo2lTSBfBn9DxJ7jjj
-X-Google-Smtp-Source: AGHT+IHhkmtFOfnRR50pgIzu5D/40I3gw9Ry+fCCMDd3CDlMfZaly4fo1Ik4GsP056Fe4HFXbMVR8g==
-X-Received: by 2002:a05:6512:1055:b0:52e:9b74:120 with SMTP id 2adb3069b0e04-5321365875cmr1672804e87.19.1723531115765;
-        Mon, 12 Aug 2024 23:38:35 -0700 (PDT)
-Received: from pc636 (host-95-193-9-14.mobileonline.telia.com. [95.193.9.14])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53202b5b447sm830926e87.177.2024.08.12.23.38.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 23:38:35 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 13 Aug 2024 08:38:32 +0200
-To: Will Deacon <will@kernel.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
-	"Hailong . Liu" <hailong.liu@oppo.com>,
-	Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Lorenzo Stoakes <lstoakes@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: vmalloc: Ensure vmap_block is initialised before
- adding to queue
-Message-ID: <Zrr_aI7Xi0tkf06O@pc636>
-References: <20240812171606.17486-1-will@kernel.org>
+	s=arc-20240116; t=1723531184; c=relaxed/simple;
+	bh=AgOTf/1nimd9AxP69hLnqq2R4+9999KwphIxvW77f00=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oxDbXMd3xR9hZRclsWfnx7BTZLQdvIcAemFeTwF8BZcAkPpEE1SlkG+CE5FOkJmjXTfoEy+UZ6sLoqyX9u3BDiEYl7tuv91ZAyBvMyFE+FaHujn1I3CGiCOFGY8cX9S57+f7IcISI+4enJU9OXWeHjUemi1lxf4CTd6YDIketoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjhZ44fYXz4f3jsG;
+	Tue, 13 Aug 2024 14:39:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 531ED1A0568;
+	Tue, 13 Aug 2024 14:39:38 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAHL4Wl_7pmE5E6Bg--.5405S3;
+	Tue, 13 Aug 2024 14:39:35 +0800 (CST)
+Subject: Re: [BUG] cgroupv2/blk: inconsistent I/O behavior in Cgroup v2 with
+ set device wbps and wiops
+To: Lance Yang <ioworker0@gmail.com>, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ cgroups@vger.kernel.org, josef@toxicpanda.com, tj@kernel.org,
+ fujita.tomonori@lab.ntt.co.jp, boqun.feng@gmail.com, a.hindborg@samsung.com,
+ paolo.valente@unimore.it, axboe@kernel.dk, vbabka@kernel.org,
+ david@redhat.com, 21cnbao@gmail.com, baolin.wang@linux.alibaba.com,
+ libang.li@antgroup.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20240812150049.8252-1-ioworker0@gmail.com>
+ <zjbn575huc6pk7jpv2ipoayfk4bvfu5z5imb5muk5drksa7p3q@xcr5imtt4zro>
+ <9ede36af-fca4-ed41-6b7e-cef157c640bb@huaweicloud.com>
+ <CAK1f24mwzXa8Az5WFYu+1UopTCStDWx3yDr1RugLwphS-hWizw@mail.gmail.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <eef1f655-4fff-618d-4b8e-447230ec8ed9@huaweicloud.com>
+Date: Tue, 13 Aug 2024 14:39:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812171606.17486-1-will@kernel.org>
+In-Reply-To: <CAK1f24mwzXa8Az5WFYu+1UopTCStDWx3yDr1RugLwphS-hWizw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHL4Wl_7pmE5E6Bg--.5405S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxAr1ktr4fXw1DZF1UWFyrCrg_yoWrArWUpF
+	Zxt3W7tFs5Gr13Gw1293y0gFyYqwnrJa15Xr1UKr15uFn0qr9Igr4UKr4qgFyFvF1fGw45
+	Zw4fWF12gr1093DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRHUDLUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Aug 12, 2024 at 06:16:06PM +0100, Will Deacon wrote:
-> Commit 8c61291fd850 ("mm: fix incorrect vbq reference in
-> purge_fragmented_block") extended the 'vmap_block' structure to contain
-> a 'cpu' field which is set at allocation time to the id of the
-> initialising CPU.
-> 
-> When a new 'vmap_block' is being instantiated by new_vmap_block(), the
-> partially initialised structure is added to the local 'vmap_block_queue'
-> xarray before the 'cpu' field has been initialised. If another CPU is
-> concurrently walking the xarray (e.g. via vm_unmap_aliases()), then it
-> may perform an out-of-bounds access to the remote queue thanks to an
-> uninitialised index.
-> 
-> This has been observed as UBSAN errors in Android:
-> 
->  | Internal error: UBSAN: array index out of bounds: 00000000f2005512 [#1] PREEMPT SMP
->  |
->  | Call trace:
->  |  purge_fragmented_block+0x204/0x21c
->  |  _vm_unmap_aliases+0x170/0x378
->  |  vm_unmap_aliases+0x1c/0x28
->  |  change_memory_common+0x1dc/0x26c
->  |  set_memory_ro+0x18/0x24
->  |  module_enable_ro+0x98/0x238
->  |  do_init_module+0x1b0/0x310
-> 
-> Move the initialisation of 'vb->cpu' in new_vmap_block() ahead of the
-> addition to the xarray.
-> 
-> Cc: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> Cc: Hailong.Liu <hailong.liu@oppo.com>
-> Cc: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> Cc: Baoquan He <bhe@redhat.com>
-> Cc: Christoph Hellwig <hch@infradead.org>
-> Cc: Lorenzo Stoakes <lstoakes@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: <stable@vger.kernel.org>
-> Fixes: 8c61291fd850 ("mm: fix incorrect vbq reference in purge_fragmented_block")
-> Signed-off-by: Will Deacon <will@kernel.org>
-> ---
-> 
-> I _think_ the insertion into the free list is ok, as the vb shouldn't be
-> considered for purging if it's clean. It would be great if somebody more
-> familiar with this code could confirm either way, however.
-> 
->  mm/vmalloc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 6b783baf12a1..64c0a2c8a73c 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2626,6 +2626,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  	vb->dirty_max = 0;
->  	bitmap_set(vb->used_map, 0, (1UL << order));
->  	INIT_LIST_HEAD(&vb->free_list);
-> +	vb->cpu = raw_smp_processor_id();
->  
->  	xa = addr_to_vb_xa(va->va_start);
->  	vb_idx = addr_to_vb_idx(va->va_start);
-> @@ -2642,7 +2643,6 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
->  	 * integrity together with list_for_each_rcu from read
->  	 * side.
->  	 */
-> -	vb->cpu = raw_smp_processor_id();
->  	vbq = per_cpu_ptr(&vmap_block_queue, vb->cpu);
->  	spin_lock(&vbq->lock);
->  	list_add_tail_rcu(&vb->free_list, &vbq->free);
-> -- 
-> 2.46.0.76.ge559c4bf1a-goog
-> 
-Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Hi,
 
-Makes sense to me. Thank you!
+在 2024/08/13 13:00, Lance Yang 写道:
+> Hi Kuai,
+> 
+> Thanks a lot for jumping in!
+> 
+> On Tue, Aug 13, 2024 at 9:37 AM Yu Kuai <yukuai1@huaweicloud.com> wrote:
+>>
+>> Hi,
+>>
+>> 在 2024/08/12 23:43, Michal Koutný 写道:
+>>> +Cc Kuai
+>>>
+>>> On Mon, Aug 12, 2024 at 11:00:30PM GMT, Lance Yang <ioworker0@gmail.com> wrote:
+>>>> Hi all,
+>>>>
+>>>> I've run into a problem with Cgroup v2 where it doesn't seem to correctly limit
+>>>> I/O operations when I set both wbps and wiops for a device. However, if I only
+>>>> set wbps, then everything works as expected.
+>>>>
+>>>> To reproduce the problem, we can follow these command-based steps:
+>>>>
+>>>> 1. **System Information:**
+>>>>      - Kernel Version and OS Release:
+>>>>        ```
+>>>>        $ uname -r
+>>>>        6.10.0-rc5+
+>>>>
+>>>>        $ cat /etc/os-release
+>>>>        PRETTY_NAME="Ubuntu 24.04 LTS"
+>>>>        NAME="Ubuntu"
+>>>>        VERSION_ID="24.04"
+>>>>        VERSION="24.04 LTS (Noble Numbat)"
+>>>>        VERSION_CODENAME=noble
+>>>>        ID=ubuntu
+>>>>        ID_LIKE=debian
+>>>>        HOME_URL="https://www.ubuntu.com/"
+>>>>        SUPPORT_URL="https://help.ubuntu.com/"
+>>>>        BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+>>>>        PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+>>>>        UBUNTU_CODENAME=noble
+>>>>        LOGO=ubuntu-logo
+>>>>        ```
+>>>>
+>>>> 2. **Device Information and Settings:**
+>>>>      - List Block Devices and Scheduler:
+>>>>        ```
+>>>>        $ lsblk
+>>>>        NAME    MAJ:MIN RM  SIZE RO TYPE MOUNTPOINTS
+>>>>        sda     8:0    0   4.4T  0 disk
+>>>>        └─sda1  8:1    0   4.4T  0 part /data
+>>>>        ...
+>>>>
+>>>>        $ cat /sys/block/sda/queue/scheduler
+>>>>        none [mq-deadline] kyber bfq
+>>>>
+>>>>        $ cat /sys/block/sda/queue/rotational
+>>>>        1
+>>>>        ```
+>>>>
+>>>> 3. **Reproducing the problem:**
+>>>>      - Navigate to the cgroup v2 filesystem and configure I/O settings:
+>>>>        ```
+>>>>        $ cd /sys/fs/cgroup/
+>>>>        $ stat -fc %T /sys/fs/cgroup
+>>>>        cgroup2fs
+>>>>        $ mkdir test
+>>>>        $ echo "8:0 wbps=10485760 wiops=100000" > io.max
+>>>>        ```
+>>>>        In this setup:
+>>>>        wbps=10485760 sets the write bytes per second limit to 10 MB/s.
+>>>>        wiops=100000 sets the write I/O operations per second limit to 100,000.
+>>>>
+>>>>      - Add process to the cgroup and verify:
+>>>>        ```
+>>>>        $ echo $$ > cgroup.procs
+>>>>        $ cat cgroup.procs
+>>>>        3826771
+>>>>        3828513
+>>>>        $ ps -ef|grep 3826771
+>>>>        root     3826771 3826768  0 22:04 pts/1    00:00:00 -bash
+>>>>        root     3828761 3826771  0 22:06 pts/1    00:00:00 ps -ef
+>>>>        root     3828762 3826771  0 22:06 pts/1    00:00:00 grep --color=auto 3826771
+>>>>        ```
+>>>>
+>>>>      - Observe I/O performance using `dd` commands and `iostat`:
+>>>>        ```
+>>>>        $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
+>>>>        $ dd if=/dev/zero of=/data/file1 bs=512M count=1 &
+>>
+>> You're testing buffer IO here, and I don't see that write back cgroup is
+>> enabled. Is this test intentional? Why not test direct IO?
+> 
+> Yes, I was testing buffered I/O and can confirm that CONFIG_CGROUP_WRITEBACK
+> was enabled.
+> 
+> $ cat /boot/config-6.10.0-rc5+ |grep CONFIG_CGROUP_WRITEBACK
+> CONFIG_CGROUP_WRITEBACK=y
+> 
+> We intend to configure both wbps (write bytes per second) and wiops
+> (write I/O operations
+> per second) for the containers. IIUC, this setup will effectively
+> restrict both their block device
+> I/Os and buffered I/Os.
+> 
+>> Why not test direct IO?
+> 
+> I was testing direct IO as well. However it did not work as expected with
+> `echo "8:0 wbps=10485760 wiops=100000" > io.max`.
+> 
+> $ time dd if=/dev/zero of=/data/file7 bs=512M count=1 oflag=direct
 
---
-Uladzislau Rezki
+So, you're issuing one huge IO, with 512M.
+> 1+0 records in
+> 1+0 records out
+> 536870912 bytes (537 MB, 512 MiB) copied, 51.5962 s, 10.4 MB/s
+
+And this result looks correct. Please noted that blk-throtl works before
+IO submit, while iostat reports IO that are done. A huge IO can be
+throttled for a long time.
+> 
+> real 0m51.637s
+> user 0m0.000s
+> sys 0m0.313s
+> 
+> $ iostat -d 1 -h -y -p sda
+>   tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn
+> kB_dscd Device
+>       9.00         0.0k         1.3M         0.0k       0.0k       1.3M
+>        0.0k sda
+>       9.00         0.0k         1.3M         0.0k       0.0k       1.3M
+>        0.0k sda1
+
+I don't understand yet is why there are few IO during the wait. Can you
+test for a raw disk to bypass filesystem?
+
+Thanks,
+Kuai
+
 
