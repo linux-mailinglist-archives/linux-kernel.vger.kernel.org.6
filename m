@@ -1,203 +1,151 @@
-Return-Path: <linux-kernel+bounces-283999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5811E94FBB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:21:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8BE494FBBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84D591C222C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62FEB1F22D9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6698F14F98;
-	Tue, 13 Aug 2024 02:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OzBAIt0y";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ouwnZpAx"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 942F215ACA;
+	Tue, 13 Aug 2024 02:21:44 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8F333D8;
-	Tue, 13 Aug 2024 02:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723515687; cv=fail; b=lEC5QgvHvJHQhJZoSwDAnqNwJDdOdFMNe526o1qA8VE8CBOnbaklm19z1MRXsXkYk8NhWdH1FkQFCCGfg5ktV0Le79U24Ief9mnH2qmr8ZZbJa+8PC0UixZYM3GPMCxD+SzO5D+qZzHHUC3SONfVlOC65R5t+OJOU8ztSfIb554=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723515687; c=relaxed/simple;
-	bh=o1djBEaAU7+68PmLcbz1HGQkJN89B8ZgxqUTQltIwNA=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=hyFdSFiUc4jrCgCPM/3KTLEqtn46r/gQj/Xrr7NmLz8SfHB6QvzunbEJd/LQ7guRC/CFnhwBzK6kwP9pkwRJdNXaPdbfzaS+casTaT2I3QihFhdgBuOVkdbGBdCRRJ8TGNVx4fJqQGCEvfCUDO1f1dG+ZKgkELwHmJkxTDeDdSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=OzBAIt0y; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ouwnZpAx; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CL7JTB017241;
-	Tue, 13 Aug 2024 02:21:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to
-	:cc:subject:from:in-reply-to:message-id:references:date
-	:content-type:mime-version; s=corp-2023-11-20; bh=kRhhmbmzfvlX57
-	GiQiECK4TTj1W84Na8N+DK430K+4s=; b=OzBAIt0yIwzmJitPyTbA8U2l5/WbzD
-	cdlKLVxdprbUJplTmVJbZujpe+2zbwqUcdBwB7fZKwRn6sDqup2G1zi5Er43MYYp
-	QiLnMtEUdQA1SLxtM9dlkdbZoNT6tpdMWkS3+kCuz06wxD8PrpL27d2L01wsb4k0
-	FAV/NgKmNP0gebWYCI91oEs6/BCZ+saoT3I7Uu0f9tPWJoMb03kEuo3x86V7afzI
-	aMyDMPol/2Zi9WH/CGnNbZVe6gOMcZ614eEEXphaYBzkgbBEzphPmziOSRRI1GnX
-	K37oMal4XW2PFn4pKe2JYR89QJqdamLk+V265G4+eV/vb1N4HDHiW3Bw==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 40wy4bd04e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 02:21:19 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 47D28rZv000659;
-	Tue, 13 Aug 2024 02:21:18 GMT
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2168.outbound.protection.outlook.com [104.47.57.168])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 40wxn7wa1y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Aug 2024 02:21:18 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HT3gp6V2Gva5VAVdsFXGjvNF5NlxJPD0gp0B9Y4yBff74Mk6+OUrJ5BDUAG+v+WaQJnmFBKpp+DmzDF0B2f4/oaL3nVEklhpv1ajglPIJzTd9Ny+7E2a5PbyArydaYZeK1cGIgWEm6FxVklsmPNYxl1ANChwzdmLWff3JNYBekOBnwSlJexrpKkH8XIeLcwLrKom4pB6XoniVz4ptFwQZRVThob+os8HvEhdoLcruFbTrCKU3dibCEZol43DwG8QEer+zgL3BkNekLySGcyLE0yoOp+XsNLtxKZ4uE+29sKvQ3ZjvgiLIVi5wpoxKNsNHMpjjxrrkajqL8l8fW9MjQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kRhhmbmzfvlX57GiQiECK4TTj1W84Na8N+DK430K+4s=;
- b=Njta4/BPMWsUgRJ2GDLI7yBjjNO8QiQI/T7m7r8NECSuxiulY2gDgP+YYzh0JSmt64Vw8DErbOgR9lUgNmlQakKCtqnEn8BMKhY1oMqBS77R1HOBjYb/FtPqkhSvHOvseT/evjB61SNDGtE8EDmJp2PTK9s+ppM22LHPAqxYwTjult2i03WcnCq6VnjSI5fw8Zi4JaEcx9rc3a1NSzVv67GwwF/NWO2ujmQ2YT68dLB6h+D8SNur/Zg2sCFxtqdADy0lrrgrbx1/WOy8YI6It7wmwX92Cmkg0WLL/UNWzKPT/fPVqwR3UPUp3QFpiBcxdYaIbr5XWBqVPCSyUeLz1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kRhhmbmzfvlX57GiQiECK4TTj1W84Na8N+DK430K+4s=;
- b=ouwnZpAxyRhLJdiY2Lp9TF3pdRMUTcqRWwaA1Qm7GMhyfYVOpcoWNkInKl4SBlEx6+MtlpLGIIjbbaedqNI8X7qCx4c1omKt4ELwf0iFmPGHCgEpZmiS2HH+hEBxeH31hKWAj+L6DDAHtyB1UFEAoFSmSX1CpEof/gIsgTtjIa8=
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
- by SJ2PR10MB7735.namprd10.prod.outlook.com (2603:10b6:a03:578::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.13; Tue, 13 Aug
- 2024 02:21:16 +0000
-Received: from PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7]) by PH0PR10MB4759.namprd10.prod.outlook.com
- ([fe80::5c74:6a24:843e:e8f7%4]) with mapi id 15.20.7875.015; Tue, 13 Aug 2024
- 02:21:16 +0000
-To: Chris Bainbridge <chris.bainbridge@gmail.com>
-Cc: fengli@smartx.com, hch@lst.de, axboe@kernel.dk, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [REGRESSION] critical target error, bisected
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <yq17cclw4xl.fsf@ca-mkp.ca.oracle.com> (Martin K. Petersen's
-	message of "Mon, 12 Aug 2024 22:09:10 -0400")
-Organization: Oracle Corporation
-Message-ID: <yq1v805uptn.fsf@ca-mkp.ca.oracle.com>
-References: <Zrog4DYXrirhJE7P@debian.local>
-	<yq17cclw4xl.fsf@ca-mkp.ca.oracle.com>
-Date: Mon, 12 Aug 2024 22:21:14 -0400
-Content-Type: text/plain
-X-ClientProxiedBy: MN2PR01CA0039.prod.exchangelabs.com (2603:10b6:208:23f::8)
- To PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942231862A;
+	Tue, 13 Aug 2024 02:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723515704; cv=none; b=n3LOhjV+o4Z6xvu2V0e3SNed5vye+vkhYMKZ6C3Vg4w9Pj3B6++w5xBhKVAxb/9NT9deyboCfsfwe/xxk5mfw+TH8OURh8EYG9L2/oQcG7wrn56yVwfHwNCt1FMotoDNGwKLyzc869RBu1WmtPzIVTjypJLfqeb6sc8QZRtAQFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723515704; c=relaxed/simple;
+	bh=CWDikRhvACJ6VTavQgtCFQU2sXIpkGz0NQquxrwT4Hw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=f6TDa//LwhYT1vDmOs10xG6UHPnq5QQQVx7o81wpTT5EprIWqj3g/3cA0o4GL9xAe2w5OM0e2Qtmkmq6HFEQbBI9qAVZ27HDiIbNkzmGtOlAwQEeX89ZOgKatT4pNtLy0UltYhv127zn4c25yldaiJaiTay069YqHkuC+DIDmJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjZrL2CmBz4f3jM9;
+	Tue, 13 Aug 2024 10:21:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id F323E1A1645;
+	Tue, 13 Aug 2024 10:21:35 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgBXfoQvw7pmIV0pBg--.64234S3;
+	Tue, 13 Aug 2024 10:21:35 +0800 (CST)
+Subject: Re: [PATCH v2 3/6] iomap: advance the ifs allocation if we have more
+ than one blocks per folio
+To: yangerkun <yangerkun@huawei.com>, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
+ brauner@kernel.org, david@fromorbit.com, jack@suse.cz, willy@infradead.org,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com
+References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
+ <20240812121159.3775074-4-yi.zhang@huaweicloud.com>
+ <137c8c6e-ead3-51ed-be5a-c8eba0be3a2d@huawei.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <02adb965-ad95-2b75-f48a-51a4b75ad88b@huaweicloud.com>
+Date: Tue, 13 Aug 2024 10:21:34 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|SJ2PR10MB7735:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6edbf4c0-fc08-4ff2-2bcb-08dcbb3e9c26
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?nMlWJrbXs8+eJeUUm3cxQjPjG3Fy5mKjN0i0dERQ5OqeVCn994KQ3gPPemhu?=
- =?us-ascii?Q?TawVTOKqO7+RB83yqSV9d0JkQji8YAdUKnfbyA/QDFp1yhXA546WlBO7N+3A?=
- =?us-ascii?Q?xJrRJfTDt4JiOhKaHT/2PfYPM6onwyvZbX5iG0Jx0Xd4PyNfR2QszEMqofs8?=
- =?us-ascii?Q?CFcSERhoX6mhhHe5xySMhKmLB+pkFMtFtrFxTL3fM4bcte+U8VuKxPNmCpAP?=
- =?us-ascii?Q?LAUohsUVQbW/TMnQ35cvQNYeoyh96e/fALvO3Vzt8oerBNGNO0bXMxhIOCB8?=
- =?us-ascii?Q?eSK+cfOOtelqvLthGt5j42VF9DLQhnxeGLfDKrnAHuoAvUL97FO/x3aGp3n3?=
- =?us-ascii?Q?131kYzgnCF9g3Y9lW6dE4KWs+x9QeZaUDANVRenuE3XFNHBNWPBlTGOFFM2m?=
- =?us-ascii?Q?ib9kmmZbOyPsMB2sTjTZPV6mMA+/fAD5kV3jHAnKiTObdVrObI2A10gZ3A5B?=
- =?us-ascii?Q?3GBAxUTtXkMhe/hcR5QLW5tBQ4C+h6OlwWKZ5YMNq/0uXLKayMR4DlF+mhY+?=
- =?us-ascii?Q?o+eswAyxvBkeQupca8o0KqzgXyQBKG25RaviKjKu7M/NEp/iiFih+dmiD9w2?=
- =?us-ascii?Q?x962DY5neZXKFW6La4PCDiijWsGTjtgEYZc6RyjNuUUH+B8xBg12sDDqKaLU?=
- =?us-ascii?Q?iJGbes9mc49tRQ3BLqp9zGBts1dOwOjyJWn1FAbipIlwUwpn+mvU7FJcsO/Y?=
- =?us-ascii?Q?ilk4OkRvkBjLG2v/O/whN/sO0vvUah0gJP9zKjq5mN2GuNUNEFnuvDk7KDLi?=
- =?us-ascii?Q?Sk8O0JMSHtHoDV9ub8fZmzuJV8Bs7wTmebebEI3l/KIWi0BgieBvkEwEFo15?=
- =?us-ascii?Q?pudYNiJGOWa9S/imwMD//bzjoNChMw44eZNe6ZeYlXuxW1NyDr1IDRc2JliR?=
- =?us-ascii?Q?hiKNS2Cawjm7rEmxp4ku6+LmbORHPS9OkAMx7wdIhIZ777p5u0e3mSfxay+t?=
- =?us-ascii?Q?yiKWSPqUJrlav66v0G2N0TRJPzCK6bo4A4zSIU+FZCspdztGjEAE6t4ISFMP?=
- =?us-ascii?Q?vnTAO7LbywLfwfBNVKn+Rg//LoF853bxY6zzrolqOqxAVyH0BHxKEHeqdNAK?=
- =?us-ascii?Q?PVnbsyDK6TpdCSnTi7tfPRc9NxAz1vAH4Kmhv6oCnBs/C43HA6j+J80sR+3p?=
- =?us-ascii?Q?sL3ijohyOgROQfx8NYhn0/43LjlWyJTbtKBls1MXd+MBJaRldQUH3dVp+YtB?=
- =?us-ascii?Q?nmsY4scb2+q10WClJTIWSYqnKDVo7X/nWgDM+bfpFydsc3WrhP9FTXuV6x+T?=
- =?us-ascii?Q?rE8268IEf5NMCZbwYl8J2+Qxn4jZ/Yd3VIGFylyE/sOWwNzhCmTcSomK1V47?=
- =?us-ascii?Q?ceoRgUuVVnGTS2LI1N3NvMendNDzpBUzrhCPivd0rSk68w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rGcV6eZwk2GgI/uEZSmmfJC8Ep3oVqqlo/ADPE0AnQYdZCI2NzDHYQUImluq?=
- =?us-ascii?Q?F8/zMqEaD/3XGfebYs6WD/OCFHlB5oZ3TYocq96oRqH5q9GRwSahKauYfj+6?=
- =?us-ascii?Q?6aTp0rdVauyfi+McIYITScibjF8/LmyfA3zEBG5mk8WegiVm2tbc4fWTih2O?=
- =?us-ascii?Q?pEWVo3LxpONX0aMdQZVLcDUXJ3+z95PQgtNplH/LGXvJ2tBd9dGM9NcC2Inw?=
- =?us-ascii?Q?SD7bjksXMS2a/Ao/jfgy38DD/5B3GOL1wkBvIS9E8Q7yBfDEqkuvf3FM91dj?=
- =?us-ascii?Q?2puc9/5zCrpV/Xt6D3QC/8GW1B3BX2WXFdST7EiUJu8j3Y88HPizNtMVw5Ll?=
- =?us-ascii?Q?b/wpnjsTD4kxQ/wDN05j5roJhI6nC+Ly5WHHHu9203om4uzYTLnX5fywpxQ6?=
- =?us-ascii?Q?4tB9nxqGg7xKlVU8l5XYGnXNRqs5qgHS6NzUqbswLcpJwPyPipBr96q6jtGW?=
- =?us-ascii?Q?P5oTp3Y0u3ypEICbOTK/ouH0hmso/snbsfU5GtiP7Y6mXhwtPgEHt5BkpWh9?=
- =?us-ascii?Q?T9MVaauJX3pyQ9G/cKWXia8m1bRqwSqAFeVXw5Qq7pThISire6apCgCKQ9BU?=
- =?us-ascii?Q?QFlIEvKNp8iYrym+aNZ7Pcliv9uq6WaE5DiHztUCYNO527f4ZykV63umn3E3?=
- =?us-ascii?Q?4PVWVWTJpPcS1LnARScB9YCkomog8OqPVdvd3qc/snbTqlIdzGPrkriLdVYU?=
- =?us-ascii?Q?oj9jjtIaznkEhgWF4VU4kyFAMTHE3EMDICdHUrfd71LqAcI0NbO2ibtWf5qu?=
- =?us-ascii?Q?zpnLj6D7SEGmcoWHfOw0nRQqzWzEmG3iUB2pDB0Y5l8Wvzi9uyDgNdx/N2cz?=
- =?us-ascii?Q?ExvUgqdTVTnJjG3BHrJ72m8aoRgJHZL7C0Q7yU4SV1UsojsBZvS3LEXkDmyS?=
- =?us-ascii?Q?xKR/8DbDPguCrDKBDXQZl8zj+fmy4OT0xJT4Hl0e0XHjCz6glmJcNne7CNYc?=
- =?us-ascii?Q?HURQRPkYVe9fckBljLIaGf/KQ5A3IW3W38eN6488K+Iw9SbsQGzZwbBPfR2i?=
- =?us-ascii?Q?CP/QLNNYgb+WJAi5yqg0+D0vW6iE2o5WAGXEubXmakUD5tIX2nrwbg5VcjHp?=
- =?us-ascii?Q?4GbYea2egtn+pCNZ64rGJ9vuEpiIKOuiBoO0T2VYEYBT1qMJPt3IHd6+jYsw?=
- =?us-ascii?Q?aoF2CMOH9fBESVou8HudOSQ6RDb86dbru+gTqSB3CR35sMaAimwSNwXUtj1d?=
- =?us-ascii?Q?7Rmb+SDBqEd/yrRqOpvtG9ktGF5LCZ+hpPxzIRrpXjzSNl0hH9lTIVrjbULi?=
- =?us-ascii?Q?VTEShZl/CUuefi7goGHD9pMd+er5/ggkrNw3sPFNlVzBhkuIMcLDQIxQUK6a?=
- =?us-ascii?Q?Vr2XWVULfOxHAKOnnVvDcwANWPDBYUzRmbqPFo39TxdeYFZdJ5/iZvgsNjgc?=
- =?us-ascii?Q?xUavgMKiMxeKNulJbgIR5OGea3jX997ZJt3ThjP69uiljjbQtxmXRsfk5Te/?=
- =?us-ascii?Q?b2AV7x+8RlT+EoMjjQ7iCvaeqKesD1RkyJtRBavCx5+EWDEn9UC5DbFey8FV?=
- =?us-ascii?Q?p1AqTvYV+PY0z2A+XJSdOqDMDPKMSNggV1cty0PlHUDu+IVLSDqD1ICUlfFv?=
- =?us-ascii?Q?oXCvX4fPy8uX++IvvSPKxu0yBGvQi+mlWyiFuVOP+OgHfZYLndMfS5YOwP+s?=
- =?us-ascii?Q?Gg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	wdGAlhKGAHrjvqgjCrWh2Z+qp/acyl8gm2XyHaTdC94A1wqfXSK8O9ePvv3R5YAQKwlGG7N49Ko5DONdnT0P9k626vaHdNIF8TRGR4I8L295u4vdMpsQagUnQsKp5Yhk0jUNvaNDeza5OkmJ7Bm48+xaucj4lx8q6D6QJdnYQ0Xyn5VNsAurc9Xjth/9/FlvduzelMWx2A0ZBm0hAYvgr5U7cMPxW++cUXPQp4U/CbnGzLGTNHBLp9EtHZbeuOeMYI/7fUU7r4NBD/0EO8Ny1JshBlbyvFY8icRVrb2VaYCWxzQUqrqRo1oH6DF/K4/IYmd0OTq0rrd1BXtnws/VJQWFniIK3cDgouMTf5TuNTL79E1WVIbS6de101qlNNl+kVOwMsX4rCTSM2DTA/ki/xVAfBScKkJQf9UM2Pp+whs38a2ZnYxMmkJyuXBjDX2dygHkLdlyzvxs8BB9j67AwPgR7DsIQZiwc5FJb0B7VXJUDrk6ygIPw1LklcwiO6oW8FD3UNQI9en4m1xG8oqE+aYc1mwIfCI8fWdbJXJNvKMTOlZQx/k8PCZJ23pV6maC+9MvjzurPnvtZPaH1/ZLAKiJ+VTdbXj8tdeuw6H8QEo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6edbf4c0-fc08-4ff2-2bcb-08dcbb3e9c26
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 02:21:16.2678
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eb5JcR68zholwC5WQvAvtRSXdxNyuIqzQ3wosAd5v5HW/Ob1g1Wq2rf0IBhparc98OOSMBPGkPSZYlGUA6ZB6fTVW8h0DxdeHZnTmxkd+mc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7735
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_12,2024-08-12_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
- mlxlogscore=608 bulkscore=0 phishscore=0 mlxscore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2407110000 definitions=main-2408130014
-X-Proofpoint-GUID: 2YQ2_hqbUNmkCybo5y7t8QktyK1DvRUt
-X-Proofpoint-ORIG-GUID: 2YQ2_hqbUNmkCybo5y7t8QktyK1DvRUt
+In-Reply-To: <137c8c6e-ead3-51ed-be5a-c8eba0be3a2d@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBXfoQvw7pmIV0pBg--.64234S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFyUKr4ftr4DZw18Zw4fXwb_yoW5WFy8pr
+	4kKFWUGrWxJrn3urnrtFyUZryUt3yUJ3WUGr48W3W7XF4UJr1jgr4UWFyq9F1UXr4xJr48
+	Xr1jqryxuF15Ar7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
+	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
+	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
+	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
+	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
+	IYCTnIWIevJa73UjIFyTuYvjxUOBMKDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-
-Chris,
-
->> [  195.647099] sd 0:0:0:0: [sda] tag#0 CDB: Write same(16) 93 08 00 00 00 00 04 dd 42 f8 00 00 2d 48 00 00
->> [ 195.647101] critical target error, dev sda, sector 81609464 op
->> 0x3:(DISCARD) flags 0x800 phys_seg 1 prio class 0
+On 2024/8/12 20:47, yangerkun wrote:
+> 
+> 
+> 在 2024/8/12 20:11, Zhang Yi 写道:
+>> From: Zhang Yi <yi.zhang@huawei.com>
 >>
->> This error appears on two different laptops with different USB drives.
->
-> Are these drives usb_storage or uas?
+>> Now we allocate ifs if i_blocks_per_folio is larger than one when
+>> writing back dirty folios in iomap_writepage_map(), so we don't attach
+>> an ifs after buffer write to an entire folio until it starts writing
+>> back, if we partial truncate that folio, iomap_invalidate_folio() can't
+>> clear counterpart block's dirty bit as expected. Fix this by advance the
+>> ifs allocation to __iomap_write_begin().
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>> ---
+>>   fs/iomap/buffered-io.c | 17 ++++++++++++-----
+>>   1 file changed, 12 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+>> index 763deabe8331..79031b7517e5 100644
+>> --- a/fs/iomap/buffered-io.c
+>> +++ b/fs/iomap/buffered-io.c
+>> @@ -699,6 +699,12 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>>       size_t from = offset_in_folio(folio, pos), to = from + len;
+>>       size_t poff, plen;
+>>   +    if (nr_blocks > 1) {
+>> +        ifs = ifs_alloc(iter->inode, folio, iter->flags);
+>> +        if ((iter->flags & IOMAP_NOWAIT) && !ifs)
+>> +            return -EAGAIN;
+>> +    }
+>> +
+>>       /*
+>>        * If the write or zeroing completely overlaps the current folio, then
+>>        * entire folio will be dirtied so there is no need for
+> 
+> The comments upper need change too.
 
-Never mind, I see what's going on. Will fix...
+Will update as well, thanks for pointing this out.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Thanks,
+Yi.
+
+> 
+> 
+>> @@ -710,10 +716,6 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+>>           pos + len >= folio_pos(folio) + folio_size(folio))
+>>           return 0;
+>>   -    ifs = ifs_alloc(iter->inode, folio, iter->flags);
+>> -    if ((iter->flags & IOMAP_NOWAIT) && !ifs && nr_blocks > 1)
+>> -        return -EAGAIN;
+>> -
+>>       if (folio_test_uptodate(folio))
+>>           return 0;
+>>   @@ -1928,7 +1930,12 @@ static int iomap_writepage_map(struct iomap_writepage_ctx *wpc,
+>>       WARN_ON_ONCE(end_pos <= pos);
+>>         if (i_blocks_per_folio(inode, folio) > 1) {
+>> -        if (!ifs) {
+>> +        /*
+>> +         * This should not happen since we always allocate ifs in
+>> +         * iomap_folio_mkwrite_iter() and there is more than one
+>> +         * blocks per folio in __iomap_write_begin().
+>> +         */
+>> +        if (WARN_ON_ONCE(!ifs)) {
+>>               ifs = ifs_alloc(inode, folio, 0);
+>>               iomap_set_range_dirty(folio, 0, end_pos - pos);
+>>           }
+
 
