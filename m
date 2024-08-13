@@ -1,135 +1,151 @@
-Return-Path: <linux-kernel+bounces-285377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99851950CBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDC2950CBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447A21F231B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10832815E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2391A3BDA;
-	Tue, 13 Aug 2024 19:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C63F19EEA2;
+	Tue, 13 Aug 2024 19:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ac4Vw9K3"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hTUawf91"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BAB19AD5C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9084F1A3BBD
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575708; cv=none; b=spQ7Xjg2oihvcP0C56Z97R20poEHxsCFQePxDT4Zite8LsTxRZkohLOlf1yjn0DzNkY3DKqg0JKYFiLfJUE/xxlkfnUKQC/Af5cf1upB4tHQeT4Vwuztz8sIB4m9OeiEImmrzCVWELVZM6PIyB2E9up+ygC65BmrcKQkatWfC08=
+	t=1723575709; cv=none; b=cmOcOggFe4J8C6BkaMtBPGhHDHxKaySJ1J9oRXWfZYQyOMMVLsxF8c4yGD3P9zupDtGvgpyXPBgUmLnwtiYkaLf3rnkLSAsvLbo7Fdaz2KQU71zzZEAl5so/7d64uyXBazG1R9L3RiH3ZKI51cvPt7TTnymSjdT2CiE2p626bwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575708; c=relaxed/simple;
-	bh=B06vCpEVkLscAk1EZQAejwdszDJu8BDjq69UVV3hPZM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSplbrk2y+7mm4ETrKZjtOk9nEa6DZ/igdi/x+/m4cCO+UTHKnOWD6yLoMVCJR+3VkxBtvsrVgwJ+M44b8mkrlwhMJJ02/KqXWuFRfKdOvXa2XCeB2FBTjokrRl7jdhgfDjTIqYOl0ftSbM2IAlUlwQQbnZxSW+HVE56lxehO3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ac4Vw9K3; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42816ca782dso44863375e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:01:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723575705; x=1724180505; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/bvdIz9zw5pv/6chqiDZ2OQiZvZ77IK4vNhyI9I4tGw=;
-        b=Ac4Vw9K3EnkjLNI+v9Z9UL/1IWaI1scoFxfKP1S+VnVkDTCTAqEtrklgFN5mhlHt1U
-         6NNVfg458rIuDylw07BCJc+p+kw1K5als6Afp/CrnJaeumohyDvDaoO3zSruZcNKRImO
-         v/iZQSoiUiNRa1/ZdlXtKiBtH8rKy1n8ukQqudPMivtWigDsh+PXsLMnyjiW37KWLV0I
-         1d+3ll0gpxxrmOmTU+UmFUNxllKov5hU9net3vVuHm1HshgiJMrhuLOvtWgYbALDulaS
-         mDLi7MgSi+iTZf2IFvm9/K0FcklcIPAoLbJfIzo78TsI3XJcoeZikSfZdFGF2oppHrae
-         KW3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723575705; x=1724180505;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/bvdIz9zw5pv/6chqiDZ2OQiZvZ77IK4vNhyI9I4tGw=;
-        b=EcQ3SSt3lo/waz3dHxGA9OCL5fA7pWTRT/5BM7IHHljHSdaJrwwze3xx740zWxrIVN
-         QqaqYUNvd18LRbYfX1VTpbQmreVd4lCL5+qcDORGS8M4DPLUCQb6HxIwaHfZZL6wVPEz
-         L3NSRrYg7Sxeo/cTDllrfwbzX5bNDBoGLr2cJD8CcpSk8DGBPaNG6HZGUW53xZdlIlKK
-         Fr+3ioiYXueWjD4O5YyWdFtxIKsAPGhcCFn3VjvYuDmuEfzrQF7cVg5sB+yJNkbhg9d7
-         6WWp5EeZpfmWsBxxyQ5oRjbG7HBSNM2z7tiTVZF+R5h7/a6Z1d/ElMnSsb3KkxFrW0Wg
-         a6GA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdXi1vggZzWT16Xa6NbsmAdiIzZtAhqoyBydBCyfrL0tKW3/zj33NeHXzBNq/tPuGnbTwyWoMsxBtik97hTXzDoZG1uhthMpeyIy+z
-X-Gm-Message-State: AOJu0YwZEyWZIgqvm5T/FYGz4Yr5QfZWOPHdUA+olRsMbVZSWzhYZrAh
-	MnnIGDSByL1c1K2WfZi2nCAf+BhctRpoOPJrqwmYWCsAwqmXwroRoGyTob099uI=
-X-Google-Smtp-Source: AGHT+IHSXmOSdT9xJa1IO63Ic3pBT1N7/ru5bLA9LmFrAWiboWXekJJr2W814VAyRznK7QNO3pcZxw==
-X-Received: by 2002:a05:600c:19d0:b0:426:58cb:8ca3 with SMTP id 5b1f17b1804b1-429dd23d446mr3364135e9.21.1723575704374;
-        Tue, 13 Aug 2024 12:01:44 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738947sm234170345e9.10.2024.08.13.12.01.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:01:44 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-bluetooth@vger.kernel.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] dt-bindings: bluetooth: bring the HW description closer to reality for wcn6855
-Date: Tue, 13 Aug 2024 21:01:31 +0200
-Message-ID: <20240813190131.154889-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1723575709; c=relaxed/simple;
+	bh=8EtjMhM2U1teepjliO2vNVFsTuA++Qo7Vih8/F79ILM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NqxPezSoIiMxDbvPHStbTjS5C1Jg+HLfCAMkkoZo8FHH4T7M4DPTIjg7S/eTK6NzXtqrERygfk7eDQ041WBUwAJLVPxTsoSBD9nThVoCA1pfFLLRnssX+cAu0Ycx8rMauXplJkvSnzZxDt4GxO/wL6PMuNHTzjWgL/XXLRkVB5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hTUawf91; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723575706;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=69IESAqRf0OchHa21rgZCmxwZzdZyLUPDypH3+X6lMI=;
+	b=hTUawf91Xmhw9pSI/y3Fjp8NM+y4kRG+OwSWxr9ouvGM+sLOTlHNkbm8kmlA4Lpv5a2pFx
+	UXuLf715BdkQDjEBIgOUGzeoonV6V9NIlnIPAnnhxat7rVAGP7dDvs+NaY41BG3A36yP2n
+	akbqZWhX0LgUBQVZagiLG3DyGeytSsU=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-255-wRHYbsfVP2SbPK1KOYZPug-1; Tue,
+ 13 Aug 2024 15:01:42 -0400
+X-MC-Unique: wRHYbsfVP2SbPK1KOYZPug-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 202EA18EA8EB;
+	Tue, 13 Aug 2024 19:01:40 +0000 (UTC)
+Received: from [10.2.16.208] (unknown [10.2.16.208])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 7BE2419560A3;
+	Tue, 13 Aug 2024 19:01:37 +0000 (UTC)
+Message-ID: <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com>
+Date: Tue, 13 Aug 2024 15:01:36 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load
+ acquire
+To: cl@gentwo.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Boqun Feng <boqun.feng@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Describe the inputs from the PMU that the Bluetooth module on wcn6855
-consumes and drop the ones from the host.
+On 8/13/24 14:26, Christoph Lameter via B4 Relay wrote:
+> From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+>
+> Some architectures support load acquire which can save us a memory
+> barrier and save some cycles.
+>
+> A typical sequence
+>
+> 	do {
+> 		seq = read_seqcount_begin(&s);
+> 		<something>
+> 	} while (read_seqcount_retry(&s, seq);
+>
+> requires 13 cycles on ARM64 for an empty loop. Two read memory barriers are
+> needed. One for each of the seqcount_* functions.
+>
+> We can replace the first read barrier with a load acquire of
+> the seqcount which saves us one barrier.
+>
+> On ARM64 doing so reduces the cycle count from 13 to 8.
+>
+> Signed-off-by: Christoph Lameter (Ampere) <cl@gentwo.org>
+> ---
+>   arch/Kconfig            |  5 +++++
+>   arch/arm64/Kconfig      |  1 +
+>   include/linux/seqlock.h | 41 +++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 47 insertions(+)
+>
+> diff --git a/arch/Kconfig b/arch/Kconfig
+> index 975dd22a2dbd..3f8867110a57 100644
+> --- a/arch/Kconfig
+> +++ b/arch/Kconfig
+> @@ -1600,6 +1600,11 @@ config ARCH_HAS_KERNEL_FPU_SUPPORT
+>   	  Architectures that select this option can run floating-point code in
+>   	  the kernel, as described in Documentation/core-api/floating-point.rst.
+>   
+> +config ARCH_HAS_ACQUIRE_RELEASE
+> +	bool
+> +	help
+> +	  Architectures that support acquire / release can avoid memory fences
+> +
+>   source "kernel/gcov/Kconfig"
+>   
+>   source "scripts/gcc-plugins/Kconfig"
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a2f8ff354ca6..19e34fff145f 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -39,6 +39,7 @@ config ARM64
+>   	select ARCH_HAS_PTE_DEVMAP
+>   	select ARCH_HAS_PTE_SPECIAL
+>   	select ARCH_HAS_HW_PTE_YOUNG
+> +	select ARCH_HAS_ACQUIRE_RELEASE
+>   	select ARCH_HAS_SETUP_DMA_OPS
+>   	select ARCH_HAS_SET_DIRECT_MAP
+>   	select ARCH_HAS_SET_MEMORY
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
-Note: This breaks the current contract but the only two users of wcn6855
-upstream - sc8280xp based boards - will be updated in DTS patches sent
-separately.
+Do we need a new ARCH flag? I believe barrier APIs like 
+smp_load_acquire() will use the full barrier for those arch'es that 
+don't define their own smp_load_acquire().
 
- .../bindings/net/bluetooth/qualcomm-bluetooth.yaml     | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+BTW, acquire/release can be considered memory barriers too. Maybe you 
+are talking about preferring acquire/release barriers over read/write 
+barriers. Right?
 
-diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-index 68c5ed111417..64a5c5004862 100644
---- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-+++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
-@@ -172,14 +172,14 @@ allOf:
-               - qcom,wcn6855-bt
-     then:
-       required:
--        - enable-gpios
--        - swctrl-gpios
--        - vddio-supply
--        - vddbtcxmx-supply
-         - vddrfacmn-supply
-+        - vddaon-supply
-+        - vddwlcx-supply
-+        - vddwlmx-supply
-+        - vddbtcmx-supply
-         - vddrfa0p8-supply
-         - vddrfa1p2-supply
--        - vddrfa1p7-supply
-+        - vddrfa1p8-supply
-   - if:
-       properties:
-         compatible:
--- 
-2.43.0
+Cheers,
+Longman
 
 
