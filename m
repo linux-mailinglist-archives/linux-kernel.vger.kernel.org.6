@@ -1,132 +1,118 @@
-Return-Path: <linux-kernel+bounces-284293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B36394FF72
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:15:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E984394FF73
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:16:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60921F25690
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:15:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 285C21C22912
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF09113A87C;
-	Tue, 13 Aug 2024 08:15:45 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA013A240;
+	Tue, 13 Aug 2024 08:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u9OMBMeb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F89015A8;
-	Tue, 13 Aug 2024 08:15:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883E915A8;
+	Tue, 13 Aug 2024 08:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723536945; cv=none; b=dyiC2YVIaAtdeh31HXu8jPNmRcVL5Sd0/3+ZV+3oawiDJ9Xu+6Tm+0qavYFU9WKChx7CFYURHBg/5hV6loXBrM2QgLjM/wknda8J19X0AxeUkrrVpRwpLKc2nJe8em8jVtRi1EtEAlkLJs4PLQpSUIaCEwcdE8pLM9iK3LXiEb0=
+	t=1723536952; cv=none; b=NAotf6pAdIeoKzj6cqT4LEHf5HvKFG4tibP61CcNzRP3gm/J8VvNXSMalZT1ltX6/Kx8/ZfTZcM2vsCsWFEf5/tKLETp+SOIUgMs5/0F7lZx4GZGjxy0NHrfV+nKnMm6Xe957vPlJXf8VBZ+bPCBAzqOlLbccr1gOjHFU1vWT9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723536945; c=relaxed/simple;
-	bh=WlatNkw018HnQm9HKSQXQoBGB4Ekp8dvxocMvEtgYJY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=H4byky2B3RJ+jdukqgJ5kP3zNt7I7exrHNJOoKUER2qXb3ASP1XoDIon8/A6r7pvFYtTxi2AeOj+4DHSdT7I5cE2MQbzfIpvIEkOpcDFHRFtjW6SldmG3ZQ4YxIfd7AAW0tJ39Vv0hQ/5bzJ1rgzDOtBYy9ydqpmdKUMxH9BdsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Wjkhq1bNMz4f3lDV;
-	Tue, 13 Aug 2024 16:15:23 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id D700A1A07B6;
-	Tue, 13 Aug 2024 16:15:37 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCXv4UoFrtmT_FABg--.12400S3;
-	Tue, 13 Aug 2024 16:15:37 +0800 (CST)
-Subject: Re: [PATCH v2 6/6] iomap: reduce unnecessary state_lock when setting
- ifs uptodate and dirty bits
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, djwong@kernel.org, hch@infradead.org,
- brauner@kernel.org, david@fromorbit.com, jack@suse.cz, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-7-yi.zhang@huaweicloud.com>
- <Zro_yj3agfdhM16Q@casper.infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <9c581bc1-fbaf-86cf-4312-9dc87884a884@huaweicloud.com>
-Date: Tue, 13 Aug 2024 16:15:35 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723536952; c=relaxed/simple;
+	bh=SP1JOwQQNV0B9mSzC4pNkikVseIdiCFzSCBHC0Vt9ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/UjerW1l5SXLqxutIkWvFkISDY8LQjMWNN9wNgN0LeiFX06AP3JwaXCE3CqqPEuyWIlACj2nrARiaRl9qIRdcJLQNlY3N8WqSEjB2N2+YuQEryR9NXLh7EekHdZpohtmW8t1PKIawhUfLtvhDWfmaIRSdFGaUeCyslKkFBYftA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u9OMBMeb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A57D4C4AF09;
+	Tue, 13 Aug 2024 08:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723536952;
+	bh=SP1JOwQQNV0B9mSzC4pNkikVseIdiCFzSCBHC0Vt9ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9OMBMebmCOYzHxz13pbUxAhjBkE8hXa4NxZedKGT9/aM2tn0eIdOB4eOotYNza4i
+	 Bh8RPEaBVNtLoqvWC+UGH4D19ZLwtvu57wXA3jU4arroXbNmrEyIqt7J0FLmgy4im8
+	 gGp5tYY9HoQHUw00eCKD2MLwmrO+mgsZzB59Z4fY=
+Date: Tue, 13 Aug 2024 10:15:49 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: lakshmi.sowjanya.d@intel.com
+Cc: tglx@linutronix.de, giometti@enneenne.com, corbet@lwn.net,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	andriy.shevchenko@linux.intel.com, eddie.dong@intel.com,
+	christopher.s.hall@intel.com, pandith.n@intel.com,
+	subramanian.mohan@intel.com, thejesh.reddy.t.r@intel.com
+Subject: Re: [PATCH v10 0/3] Add support for Intel PPS Generator
+Message-ID: <2024081330-retouch-platter-f21d@gregkh>
+References: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zro_yj3agfdhM16Q@casper.infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCXv4UoFrtmT_FABg--.12400S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF45trWDJF13XF1UGw45Jrb_yoW8AFW7pF
-	WDKFZ8tF98AFnFkr1xXrn7Ar1Fq34fWFy8Aa4xGanIyF4rCFsrKFWIg34qkFWxtrn3Ar4Y
-	qF10qFyfWF4DtrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612035359.7307-1-lakshmi.sowjanya.d@intel.com>
 
-On 2024/8/13 1:00, Matthew Wilcox wrote:
-> On Mon, Aug 12, 2024 at 08:11:59PM +0800, Zhang Yi wrote:
->> @@ -866,9 +899,8 @@ static bool __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
->>  	 */
->>  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
->>  		return false;
->> -	iomap_set_range_uptodate(folio, offset_in_folio(folio, pos), len);
->> -	iomap_set_range_dirty(folio, offset_in_folio(folio, pos), copied);
->> -	filemap_dirty_folio(inode->i_mapping, folio);
->> +
->> +	iomap_set_range_dirty_uptodate(folio, from, copied);
->>  	return true;
+On Wed, Jun 12, 2024 at 09:23:56AM +0530, lakshmi.sowjanya.d@intel.com wrote:
+> From: Lakshmi Sowjanya D <lakshmi.sowjanya.d@intel.com>
 > 
-> I wonder how often we overwrite a completely uptodate folio rather than
-> writing new data to a fresh folio?  iow, would this be a measurable
-> optimisation?
+> The goal of the PPS (Pulse Per Second) hardware/software is to generate a
+> signal from the system on a wire so that some third-party hardware can
+> observe that signal and judge how close the system's time is to another
+> system or piece of hardware.
 > 
-> 	if (folio_test_uptodate(folio))
-> 		iomap_set_range_dirty(folio, from, copied);
-> 	else
-> 		iomap_set_range_dirty_uptodate(folio, from, copied);
+> Existing methods (like parallel ports) require software to flip a bit at
+> just the right time to create a PPS signal. Many things can prevent
+> software from doing this precisely. This (Timed I/O) method is better
+> because software only "arms" the hardware in advance and then depends on
+> the hardware to "fire" and flip the signal at just the right time.
 > 
+> To generate a PPS signal with this new hardware, the kernel wakes up
+> twice a second, once for 1->0 edge and other for the 0->1 edge. It does
+> this shortly (~10ms) before the actual change in the signal needs to be
+> made. It computes the TSC value at which edge will happen, convert to a
+> value hardware understands and program this value to Timed I/O hardware.
+> The actual edge transition happens without any further action from the
+> kernel.
+> 
+> The result here is a signal coming out of the system that is roughly
+> 1,000 times more accurate than the old methods. If the system is heavily
+> loaded, the difference in accuracy is larger in old methods.
+> 
+> Application Interface:
+> The API to use Timed I/O is very simple. It is enabled and disabled by
+> writing a '1' or '0' value to the sysfs enable attribute associated with
+> the Timed I/O PPS device. Each Timed I/O pin is represented by a PPS
+> device. When enabled, a pulse-per-second (PPS) synchronized with the
+> system clock is continuously produced on the Timed I/O pin, otherwise it
+> is pulled low.
+> 
+> The Timed I/O signal on the motherboard is enabled in the BIOS setup.
+> Intel Advanced Menu -> PCH IO Configuration -> Timed I/O <Enable>
+> 
+> References:
+> https://en.wikipedia.org/wiki/Pulse-per-second_signal
+> https://drive.google.com/file/d/1vkBRRDuELmY8I3FlfOZaEBp-DxLW6t_V/view
+> https://youtu.be/JLUTT-lrDqw
+>  
+> Patch 1 adds the pps(pulse per second) generator tio driver to the pps
+> subsystem.
+> Patch 2 documentation and usage of the pps tio generator module.
+> Patch 3 includes documentation for sysfs interface.
+> 
+> These patches are based on the timers/core branch:
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/?h=timers/core
+> These changes are dependent on patches that are merged in [1].
 
-Thanks for the suggestion, I'm not sure how often as well, but I suppose
-we could do this optimisation since I've tested it and found this is
-harmless for the case of writing new data to a fresh folio. However, this
-can further improves the overwrite performance, the UnixBench tests result
-shows the performance gain can be increased to about ~15% on my machine
-with 50GB ramdisk and xfs filesystem.
+This series now breaks the build due to api changes in 6.11-rc1.  Please
+fix up and resend.
 
-UnixBench test cmd:
- ./Run -i 1 -c 1 fstime-w
+thanks,
 
-Base:
-x86    File Write 1024 bufsize 2000 maxblocks       524708.0 KBps
-arm64  File Write 1024 bufsize 2000 maxblocks       801965.0 KBps
-
-After this series:
-x86    File Write 1024 bufsize 2000 maxblocks       569218.0 KBps
-arm64  File Write 1024 bufsize 2000 maxblocks       871605.0 KBps
-
-After this measurable optimisation:
-x86    File Write 1024 bufsize 2000 maxblocks       609620.0 KBps
-arm64  File Write 1024 bufsize 2000 maxblocks       910534.0 KBps
-
-Thanks,
-Yi.
-
+greg k-h
 
