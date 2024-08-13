@@ -1,257 +1,135 @@
-Return-Path: <linux-kernel+bounces-285146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C449509CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:07:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7A7E9509D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:07:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F43CB21F4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:07:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AC4280C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0458D1A2546;
-	Tue, 13 Aug 2024 16:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00291A2579;
+	Tue, 13 Aug 2024 16:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PApheRYX"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hcPeNyLZ"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA821A0AE6
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919391DDD1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565124; cv=none; b=JW6r2TWUm0p1hPNs0p5X8ybSXFSgEj30rntrTsA9nVWhn6rWUwDJhq6lxcl+r8iVmXuW2JYOX/BQPYk/+kRcxpt7AH/yzr/inbg3jXKtb9viQe0Wtgnlidm80Wbu4L2rlVIPFC7s8v6VwWpKaIkLNo7oAf9VMeB8yae3SKpMyNg=
+	t=1723565177; cv=none; b=D0DRm00J3nM66ECax0+IQ4iCNR5WRQLwAUTuovupruZZmbWsYfQScmQt7rXX595kqEQE3Gh0W6xvmd8GUIQPtgsAhmGKJXW2KyWxiCvyJgxytQfhZwgrLDgQMoxsTQYNSSIDzKnvHG517kFRYJKnSpxMpNS4D4J7FNWy0F+oo0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565124; c=relaxed/simple;
-	bh=pE/JJsJwAZs7NmM5OlRmLlnWFQnfpSXYpFpeXH1hGrE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UKYKlFxBZHhTADCNIsjtVV3kxvty6KFvY+QjWd0Og045UMvxbZ/7tL5gWN/uKDfjyFWh4wRWmqRzgRVte/G3xYIvqlC+6+/X4MJ8lvZg5bn4ybqsHwS5PukQa0fDKGYJzzZOTLXwoLpilciRylZgBbUoEu34mvf/HuU2ugmYgTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PApheRYX; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so3429a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:05:21 -0700 (PDT)
+	s=arc-20240116; t=1723565177; c=relaxed/simple;
+	bh=2aKDjXMzkzZwy+w6/tkYsoHzsVEy5hXUwzS2g5555oc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sytjV/wkAXssfg6vLLpGxP6xUdydHarM5yP/ynrQKnSpaTh8EnP3z34MVIymzPM+k5xEei7ciyKygcj83H2qqTSP1D8G7PfEvji+Nx4g84NOQd66oZ3rgJHSQG2VYJY4b2EARP6CK6yRl7ZuHZUeIq7srYtkwsjNvg8Q1u2PCXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hcPeNyLZ; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-65fe1239f12so43565427b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:06:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723565120; x=1724169920; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r6TUXGQw9LVl4ztxK/BZhTX+2pcevqPkKUrlJiDLRWU=;
-        b=PApheRYXYAHHQ6m3SBE/210nSXYiyffMdL6ybjtHi7KTMO1kcKOViEmvv26hSq7XGD
-         0HbA7V4KdapGOOXtjjWkV+BbAEUe1kDGB3SATLOTDxzzqdpw0gJYmLszd3JhK6Z0LAob
-         Tni2JkTqKhaRnp+ava8vMYeV0SzV3kkpVe43G1vK3z99lVc3xy4llPEngccdKSMwvBiN
-         ypZd+gk5xC7wTGhxVHms8DO6ZscwiP8E3P6p1Wb0gMfgcA6C7yn4L1EfRFtVBmSfUqD1
-         W5cIrf5nNZxYaZ8tcxA/8KK1tI93Ehxsoe2tw0n9i1rHKm1L1/vMB9hDIvEMwcH/Y/Mq
-         zxww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723565120; x=1724169920;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723565174; x=1724169974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r6TUXGQw9LVl4ztxK/BZhTX+2pcevqPkKUrlJiDLRWU=;
-        b=Bok04/qf9s0MEvP08TryZwEOrZagjV9JYLNZPhQYGIaBuRZTcgffHi1U3+Ek/Vw0fO
-         dcPsVcvFDg5GfiS9m3irZLP6g+rxDpcXUuIlGg5Jcy/oPtDqWmdacfp8ye5C5O7aeELg
-         sWILVUaXPPdd8TcdYKP6VozvWkC7YJorun3EhtXPwaJSwGyFvsECMFx+TuXdaDit3V25
-         tx+kczyO20APX+MSbe1YYxI7T3niQrdHWtg3Oe8T2YFpeHqn1xv81b+xi08cuBpzh3lk
-         VIW8Af4ZSoX2Ds+9OlDcwkQecSmP22hCyX7xLYHEAkl+OkSV4+9+UnozvLqTHDtRqKYG
-         q9Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9xl+c0Riy9dQ80dnNYKfcZP+5PGSPJCBrjfdmVQX4KlJCS9yG+0xiz/2UZEtg9FiMR0UqLK0ac6oxsvdiAHqyYQjf5efUeCCqf3pQ
-X-Gm-Message-State: AOJu0YwAztqNP/1wDQwkzU15Crn819sZQJGOegRKi7he0F5DSaEAjxvQ
-	vm6UpziPNnI+++qlV9HgMWoAGMzuYiagTdh+NGoC5hWu5QE7R/ZHFPh4YLs1k5I=
-X-Google-Smtp-Source: AGHT+IE8bZvoNWekXnFDmPVltvx21KeribfH7wtwpDxLU1aDbLB72Ho09fmJhaygrlpzYUl+4P+d6A==
-X-Received: by 2002:a05:6402:354c:b0:57d:4409:4f48 with SMTP id 4fb4d7f45d1cf-5bd462178a9mr3176525a12.15.1723565120152;
-        Tue, 13 Aug 2024 09:05:20 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f4fe2sm3025709a12.9.2024.08.13.09.05.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 09:05:19 -0700 (PDT)
-Date: Tue, 13 Aug 2024 18:05:18 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: "zhangyongde.zyd" <zhangwarden@gmail.com>
-Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] livepatch: Add using attribute to klp_func for
- using function show
-Message-ID: <ZruEPvstxgBQwN1K@pathway.suse.cz>
-References: <20240805064656.40017-1-zhangyongde.zyd@alibaba-inc.com>
- <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
+        bh=a3nOqROZS7f0NGTQPLW29HPt15nh8yqYVB7M2yR1RNM=;
+        b=hcPeNyLZtXMUFI8j1L3mO55uW0erKcFZSbsf4ljj6qfXKu7eqNoaFhA3px9Fij/RiH
+         S4Eloc4GpRm5OyRLm4qdo1mEhPnZmo4rrL5YHA9r4MUdF0SQik86YRVxdmnB5FgjSGFT
+         HDfJrq6Ns5m8+kr1SbYBD5+WH4h7IX1oU73bLn8xG4qKG5Fvh7abr5z9utM1R/5IzZoA
+         7Adv5Bx+DZmcwg2VVarNAbhIfEzkI5Pbp0yqS2bxCKTYC+Qpzc/xYPLQar6bbJyE86Fk
+         GZbXrdXcv7RssnWYz2P611IhvnYDfGcrtrBrhiKLec27ZNX7Xa9JDyIR5dwGpkUtHHfX
+         tsPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723565174; x=1724169974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a3nOqROZS7f0NGTQPLW29HPt15nh8yqYVB7M2yR1RNM=;
+        b=AM3V/kpuyzmwI96YmE83Omlr6rmARtKWGJxSvzi5UoSqG/tFmOAzLEQ+YYgQqREOWt
+         qAbGffmuTR6cPb1gYJ9KdL1yUNIAMa7FCmypV4amOuPElI7CKmKZzHjjfSrja9/ZWlXE
+         3xXwP0FeqtlZXwjXLxMVMVVo07zr4SixfyJjWtJWr10569OaKcOi8C6+4Z0QJklsrSnn
+         /9cSEu2qWK98v4DQ3gnwIR5Ra9s67C8TBrITsssf3P8nlxDWya+i+9nNbt69msn82CcH
+         qveBBxtB4yxByD4u6OyZzWc4KYs25SoP936ayY6i413WD7nJu/XCMHARd9Oot+74kcNt
+         laDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjLjrKcHDom1ttvhWnce0ddOmcf/muUzyeH8sjR4ccfVJFZ1RiXYfOMkLJ7dXbkHDcIpNKRFwiLV2peRtQ8ZF9Z9Uw1CsyvYxzthaO
+X-Gm-Message-State: AOJu0Ywd5TBHiIbGCND9yozW3xWIHAifkFn0ZiiYbAiiRnUpKRzMTJ6j
+	LYSkdy4q2byEwKJLoSAEE7ywzwYmn+pQGISdw/6YD9+Ze7/R2NHxvj8phE1Kp2/HQmwFv5K8jPE
+	1PIU+Tr+JTdzLVc6PL7oAUVUawU0SjSQ51RA2
+X-Google-Smtp-Source: AGHT+IHMiOhzYAxqia21srgICMd3bpU5d8vj06kU3XcprkI21PIrBAy/i3gJkmKJKshgio8q/XkY77UHu8DFNnuWNYY=
+X-Received: by 2002:a05:690c:250b:b0:651:6888:9fee with SMTP id
+ 00721157ae682-6a9726719d7mr43641887b3.18.1723565174221; Tue, 13 Aug 2024
+ 09:06:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240805064656.40017-2-zhangyongde.zyd@alibaba-inc.com>
+References: <20240813150758.855881-1-surenb@google.com> <20240813150758.855881-2-surenb@google.com>
+ <be75dbc3-3137-44a2-af45-5454728c98a2@redhat.com>
+In-Reply-To: <be75dbc3-3137-44a2-af45-5454728c98a2@redhat.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 13 Aug 2024 09:06:00 -0700
+Message-ID: <CAJuCfpHSp9Jt02qiJATj3H0=oBSUmF3JW_w5w7TNQJ6Vk9gVXA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] alloc_tag: mark pages reserved during CMA
+ activation as not tagged
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 2024-08-05 14:46:56, zhangyongde.zyd wrote:
-> From: Wardenjohn <zhangwarden@gmail.com>
-> 
-> One system may contains more than one livepatch module. We can see
-> which patch is enabled. If some patches applied to one system
-> modifing the same function, livepatch will use the function enabled
-> on top of the function stack. However, we can not excatly know
-> which function of which patch is now enabling.
-> 
-> This patch introduce one sysfs attribute of "using" to klp_func.
-> For example, if there are serval patches  make changes to function
-> "meminfo_proc_show", the attribute "enabled" of all the patch is 1.
-> With this attribute, we can easily know the version enabling belongs
-> to which patch.
-> 
-> The "using" is set as three state. 0 is disabled, it means that this
-> version of function is not used. 1 is running, it means that this
-> version of function is now running. -1 is unknown, it means that
-> this version of function is under transition, some task is still
-> chaning their running version of this function.
-> 
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -773,6 +791,7 @@ static int klp_init_func(struct klp_object *obj, struct klp_func *func)
->  	INIT_LIST_HEAD(&func->stack_node);
->  	func->patched = false;
->  	func->transition = false;
-> +	func->using = 0;
->  
->  	/* The format for the sysfs directory is <function,sympos> where sympos
->  	 * is the nth occurrence of this symbol in kallsyms for the patched
-> @@ -903,6 +922,7 @@ static int klp_init_object(struct klp_patch *patch, struct klp_object *obj)
->  static void klp_init_func_early(struct klp_object *obj,
->  				struct klp_func *func)
->  {
-> +	func->using = false;
+On Tue, Aug 13, 2024 at 8:09=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 13.08.24 17:07, Suren Baghdasaryan wrote:
+> > During CMA activation, pages in CMA area are prepared and then freed
+> > without being allocated. This triggers warnings when memory allocation
+> > debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
+> > by marking these pages not tagged before freeing them.
+> >
+> > Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages =
+as empty")
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Cc: stable@vger.kernel.org # v6.10
+> > ---
+> > Changes since v2 [1]:
+> > - Add and use clear_page_tag_ref helper, per David Hildenbrand
+> >
+> > https://lore.kernel.org/all/20240812192428.151825-1-surenb@google.com/
+> >
+> >   mm/mm_init.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> >
+> > diff --git a/mm/mm_init.c b/mm/mm_init.c
+> > index 907c46b0773f..13c4060bb01a 100644
+> > --- a/mm/mm_init.c
+> > +++ b/mm/mm_init.c
+> > @@ -2245,6 +2245,8 @@ void __init init_cma_reserved_pageblock(struct pa=
+ge *page)
+> >
+> >       set_pageblock_migratetype(page, MIGRATE_CMA);
+> >       set_page_refcounted(page);
+> > +     /* pages were reserved and not allocated */
+> > +     clear_page_tag_ref(page);
+> >       __free_pages(page, pageblock_order);
+> >
+> >       adjust_managed_page_count(page, pageblock_nr_pages);
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-It should be enough to initialize the value only one.
-klp_init_func() is the right place.
-klp_init_func_early() does only the bare minimum to allow freeing.
+Thanks!
 
->  	kobject_init(&func->kobj, &klp_ktype_func);
->  	list_add_tail(&func->node, &obj->func_list);
->  }
-> diff --git a/kernel/livepatch/patch.c b/kernel/livepatch/patch.c
-> index 90408500e5a3..bf4a8edbd888 100644
-> --- a/kernel/livepatch/patch.c
-> +++ b/kernel/livepatch/patch.c
-> @@ -104,7 +104,7 @@ static void notrace klp_ftrace_handler(unsigned long ip,
->  			 * original function.
->  			 */
->  			func = list_entry_rcu(func->stack_node.next,
-> -					      struct klp_func, stack_node);
-> +						struct klp_func, stack_node);
-
-Looks like an unwanted change.
-
->  
->  			if (&func->stack_node == &ops->func_stack)
->  				goto unlock;
-> diff --git a/kernel/livepatch/transition.c b/kernel/livepatch/transition.c
-> index ba069459c101..12241dabce6f 100644
-> --- a/kernel/livepatch/transition.c
-> +++ b/kernel/livepatch/transition.c
-> @@ -119,9 +120,35 @@ static void klp_complete_transition(void)
->  		klp_synchronize_transition();
->  	}
->  
-> -	klp_for_each_object(klp_transition_patch, obj)
-> -		klp_for_each_func(obj, func)
-> -			func->transition = false;
-> +	/*
-> +	* The transition patch is finished. The stack top function is now truly
-> +	* running. The previous function should be set as 0 as none task is 
-> +	* using this function anymore.
-> +	* 
-> +	* If this is a patching patch, all function is using.
-> +	* if this patch is unpatching, all function of the func stack top is using
-> +	*/
-> +	if (klp_target_state == KLP_TRANSITION_PATCHED)
-> +		klp_for_each_object(klp_transition_patch, obj)
-> +			klp_for_each_func(obj, func){
-
-Missing space between "){'"
-
-You should check your patch with ./scripts/checkpatch.pl before sending.
-
-> +				func->using = 1;
-> +				func->transition = false;
-> +				next_func = list_entry_rcu(func->stack_node.next,
-> +								struct klp_func, stack_node);
-
-What if there is only one function on the stack?
-You could take inspiration in klp_ftrace_handler.
-
-> +				next_func->using = 0;
-> +			}
-
-Wrong indentation, see Documentation/process/coding-style.rst
-./scripts/checkpatch.pl would likely caught this.
-
-> +	else
-
-Please, always put multi-line code in { }. It helps to avoid mistakes
-and read the code.
-
-> +		// for the unpatch func, if ops exist, the top of this func is using
-> +		klp_for_each_object(klp_transition_patch, obj)
-> +			klp_for_each_func(obj, func){
-> +				func->transition = false;
-> +				ops = klp_find_ops(func->old_func);
-> +				if (ops){
-> +					stack_top_func = list_first_entry(&ops->func_stack, struct klp_func,
-> +							stack_node);
-> +					stack_top_func->using = 1;
-> +				}
-> +			}
->  
->  	/* Prevent klp_ftrace_handler() from seeing KLP_TRANSITION_IDLE state */
->  	if (klp_target_state == KLP_TRANSITION_PATCHED)
-> @@ -538,6 +565,7 @@ void klp_start_transition(void)
->  		  klp_transition_patch->mod->name,
->  		  klp_target_state == KLP_TRANSITION_PATCHED ? "patching" : "unpatching");
->  
-> +
-
-Extra line?
-
->  	/*
->  	 * Mark all normal tasks as needing a patch state update.  They'll
->  	 * switch either in klp_try_complete_transition() or as they exit the
-> @@ -633,6 +661,9 @@ void klp_init_transition(struct klp_patch *patch, int state)
->  	 *
->  	 * When unpatching, the funcs are already in the func_stack and so are
->  	 * already visible to the ftrace handler.
-> +	 * 
-> +	 * When this patch is in transition, all functions of this patch will
-> +	 * set to be unknown
-
-The sentence is not complete. It does not say what exactly is set to unknown.
-
->  	 */
->  	klp_for_each_object(patch, obj)
->  		klp_for_each_func(obj, func)
-
-
-Alternative solution:
-
-The patch adds a lot of extra complexity to maintain the information.
-
-Alternative solution would be to store the pointer of struct klp_ops
-*ops into struct klp_func. Then using_show() could just check if
-the related struct klp_func in on top of the stack.
-
-It would allow to remove the global list klp_ops and all the related
-code. klp_find_ops() would instead do:
-
-   for_each_patch
-     for_each_object
-       for_each_func
-
-The search would need more code. But it would be simple and
-straightforward. We do this many times all over the code.
-
-IMHO, it would actually remove some complexity and be a win-win solution.
-
-Best Regards,
-Petr
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
