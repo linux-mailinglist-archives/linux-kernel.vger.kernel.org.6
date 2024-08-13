@@ -1,116 +1,188 @@
-Return-Path: <linux-kernel+bounces-285401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7932950CFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:15:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9F6950D00
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9038B286E67
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:15:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 416021F255B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4CD1A4F1A;
-	Tue, 13 Aug 2024 19:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE151A01A1;
+	Tue, 13 Aug 2024 19:15:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="u2qUM5LN"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R0rK46Ma"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511CC1A01A1
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957101A2C15
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576521; cv=none; b=lyka16PPc4SBSQdCGkWTIAbuxa+GKPDFi0pqtm9ktSSdsrFAZU4gmohJ5RbUPU3QvZUQgaIrG+REmJMYzV6EvvhD4nTBdHcKSaowhSiV6pIq6xPpo992PZAGhxU+X03fq/2MaqD8Po90g+46dBdQW6wfA/kgLM1ofGHi6LmqyMc=
+	t=1723576547; cv=none; b=uYwaH5RljaQDTzDPzf8lU/llzEoU9ioLop6oA1W0bwAqqynXMchja9oIPCADKBsQjkWtzjZBUUiPC2Szi3Bln1v9wGcLHTu8nR7LPBDDTtXfQNZsboeiI+rxFg63y65hDGZHXT/nmR7FOWA9XC5LA+F9zbKKWLuJH5V4wWwifGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576521; c=relaxed/simple;
-	bh=U4Xyoz84NINmS5YaWTDoCODzk2mYuYN1PlkFZg6Da9o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YReNRxh21SaNNrUxsyUf/lIlj0VEPWfK7J3c4j2gYVnE2YW3Y03T9ldM8O1P0sPS5EA2jx4jXXXnaCC4YGmI/eplY+ZyCazdnMLRHCFQXzOUPtyd2QbibVF32c7gc3bw35YRccT+WN7x5zQQTKn8C6VdWc//RuTkjxfeP8e/MUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=u2qUM5LN; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc566ac769so52148265ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:15:20 -0700 (PDT)
+	s=arc-20240116; t=1723576547; c=relaxed/simple;
+	bh=toz2rrC0HiyT+Eb8eF0RQri9CoHa+oL7p0JRb3stXx8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqsEcuono8Mg055LbMwdYQ8sps/aoVCPNAC4sqbMP7zAefsyXq8j7V/Q7IX+qh9DMFmsH4yt+Yo/Q8ojdpwDsM2c0lzLf5dhMpI6NGZjxq0oExbiE5slGBTThxQs90dCLgbL3VJDTsObyZ1ZnLBvEhFjuP/qmFRuXm0Zlbs6N0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R0rK46Ma; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-70d2ae44790so4214311b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:15:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723576520; x=1724181320; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U4Xyoz84NINmS5YaWTDoCODzk2mYuYN1PlkFZg6Da9o=;
-        b=u2qUM5LNzTRDS65lVfrgve2nGnWnCpaCIKNX1X1oyF+GjldBkVZn+H0wzpJFgCum8S
-         B3TE5+mm4onsKwhkN2IY2qMorv8n1kAk9vGjy8xBbrZiz6QAPnDOIx35of9AJH1j43uV
-         eSjqZLTyn08ZOBvL/7mhDEFf3r7iXSsQgSsVwiqPhZB23Btf2yWlNZIHyiX4d0iRHk5Q
-         vnMKjYP20YR/SFL1DpqxSfde9VHfbwWXQpSwWGSdkn8fkJCXU0qY7PdUZEfLtaRf60Rc
-         P+QVesUPwEr0+ZP/BVwzjD9Kvmz+8uc4J8+zuZOFQnCGxXbpByFnW7DTuhjULfV2r4W8
-         OeNQ==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1723576545; x=1724181345; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=upO19SozBGW3wqb+VTuxXAbPoh43oKi0VkEemu0qAIE=;
+        b=R0rK46Ma+R1P5JMI/lSLP7ue9SwZQ4yYNjK3oHHdISnWADJrkZxvzDIPvoPP4J5Xl2
+         gApT3oos5doN0XIM8iUyQf7VbKlybcl02UCDoa3WohnO+GCHsnkTRNyOP5idWDtQO5CL
+         wjZ0RD0bBznPwMY1O4HVX9lmJC0+6u4IjwFIzXlhi6YDOGunmTEQtTRFPzz4nsPNDNth
+         DMpYBIQjph8rurXBmoZNo0r/Uh8P00rA75GwMQPTHr8eB4RhWlU2VI2ddLnWdt39/ops
+         74Pv4lsWnnyATTZspr6ht/Mr6IQLNPZ8EoIzWDzjJeuSk460Yinbe46YGlMlM1dFZA3T
+         6IBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723576520; x=1724181320;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U4Xyoz84NINmS5YaWTDoCODzk2mYuYN1PlkFZg6Da9o=;
-        b=kD8iI+j1lVMwRKOhc65xLfb9nAS2LcWSaB75w5m+3nWuKjwkwhBLrSU64vcI+VMmDj
-         ko8tBoiYtTT4SWlZ09MKVfbxvJsb3lFZejhGU6C6whikQrBQBsWHgLIoCN1wwKPvOOOp
-         4C+SNUCRuCyuabufYUTf3IgTTc995gdchiwm/U73a1ILWF3FL8goG8czjQgqgeF1gVE9
-         Zwkp+0PxX2jY3gXzK783ahBn/jE+OM7dppI+x6hcwz+DhUNSMDl02hm4WaC1OpfkRhBF
-         67HyPoDO5vrpsc2WbWkEABTSWwL7pYr5KKAu9ts1egyF8w/r3MwTWU6wWU14refPo+of
-         WpFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdY80Bp63ucKpgFNILyZ6oKIZCZ5Ulzna6S9Uv8MEmKDBbibmmYbXumBE+bSDk27LrYXI+HqgssFUs19eoJINAhjmK6W0Ul4Akzm+t
-X-Gm-Message-State: AOJu0YyCQ4tt6aFPph4n1vyWwIiRc5agPeonx2r+ZlxTSh3dKssmRFlV
-	Exkgw3r++nbqQft2KeuOKsH53oMJCBPfOqter98ti/QsxNirKct50zH+GzCcoLG93S/KfmJ4Wln
-	8plFeuSH+bXDemakork+nP+haxqTx42ZYbMxbPg==
-X-Google-Smtp-Source: AGHT+IGLVONXb2C6YyhnguQvraZmtCfSPGP62p2pX40XsG5b0xAUk+IJq2D5zMhwvCt/35J4267uGhv5ZbOf+n8Ce4E=
-X-Received: by 2002:a17:902:db10:b0:1fd:8eaf:eaa0 with SMTP id
- d9443c01a7336-201d645c66emr6228805ad.38.1723576519642; Tue, 13 Aug 2024
- 12:15:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723576545; x=1724181345;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=upO19SozBGW3wqb+VTuxXAbPoh43oKi0VkEemu0qAIE=;
+        b=LEFftePO+hJ2qJ7QEBuPLbryu/fR79KeqqXaF11GYEpvAMzBwrdwU721j8GXKBtF07
+         uucWpQK4vLi0vKoOGenUbb7dVxNOr7ccjTw+ZEMQLLy5hqTnUlTjYkK7EB5ADwUxhZ5B
+         JB/DXncUIIq8y8g4NOQRFOt+36oT1+ZgYpWYOqFQgEJu5se2WI870e7WUAMTwzBgur1e
+         kIFoIlfpWTQBB5U+AJmeFjnc++5f2ywqzFxP38mBkREGXKsnJZuHb5zOmC/Girc3aFSm
+         cHz5XFGMuxCug5kEPp78sO8TUUa3Du7t9i4v45kYdXIpzBqyM4vzqniKyziegd+Vy6ZF
+         pmYw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6L/ENqQO7cO3s9X0XOq2xqrGJp5BCOBsnR257wZhZXM+Ujmh8Qn7UWkSHd+RagiEDdkag9kT9vO0SJ0gDezT3Ug5cJJO0h43Oiv1t
+X-Gm-Message-State: AOJu0YwPMLlTeeFneLu9h8qLIBbIrTQvmxpc25ERZsbshrOYM/givpUk
+	AZrp7wUgtCKDo9Zjw9DkMJbsjoWwTPoIxi2SXz4dIE0plcjp9Spt1NPbRNM6Jmk=
+X-Google-Smtp-Source: AGHT+IHkE8ev8c9ixTOpOS8k+f7v59VeVKfF+Zqcm+gC19sVxa1p6KC0GWQGsDmZo9DB9KuLB8MPgg==
+X-Received: by 2002:a05:6a00:2383:b0:70e:9408:fc34 with SMTP id d2e1a72fcca58-712671037a2mr688748b3a.7.1723576544561;
+        Tue, 13 Aug 2024 12:15:44 -0700 (PDT)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5873864sm6051385b3a.35.2024.08.13.12.15.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:15:44 -0700 (PDT)
+Date: Tue, 13 Aug 2024 12:15:41 -0700
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Alexandre Ghiti <alex@ghiti.fr>
+Cc: "Wu, Fei" <fei2.wu@intel.com>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, guoren@kernel.org,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>
+Subject: Re: riscv syscall performance regression
+Message-ID: <Zruw3dUAYb3zcxaV@ghost>
+References: <738d3b74-1e10-4eb5-8c0d-1db33feb740a@intel.com>
+ <28cf8a77-e9af-45e4-b178-fd7a478f9b4c@ghiti.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240803-qps615-v2-0-9560b7c71369@quicinc.com> <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
-In-Reply-To: <20240803-qps615-v2-4-9560b7c71369@quicinc.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 13 Aug 2024 21:15:06 +0200
-Message-ID: <CAMRc=MeWFs+M+2kpotRqmcbPgXx8xCWEa-DqatGxWUAcixQb2g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] PCI: Change the parent to correctly represent pcie hierarchy
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, cros-qcom-dts-watchers@chromium.org, 
-	Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, andersson@kernel.org, 
-	quic_vbadigan@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <28cf8a77-e9af-45e4-b178-fd7a478f9b4c@ghiti.fr>
 
-On Sat, Aug 3, 2024 at 5:23=E2=80=AFAM Krishna chaitanya chundru
-<quic_krichai@quicinc.com> wrote:
->
-> Currently the pwrctl driver is child of pci-pci bridge driver,
-> this will cause issue when suspend resume is introduced in the pwr
-> control driver. If the supply is removed to the endpoint in the
-> power control driver then the config space access by the
-> pci-pci bridge driver can cause issues like Timeouts.
->
-> For this reason change the parent to controller from pci-pci bridge.
->
-> Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
+On Tue, Aug 13, 2024 at 02:51:09PM +0200, Alexandre Ghiti wrote:
+> Hi Fei,
+> 
+> On 23/02/2024 06:28, Wu, Fei wrote:
+> > Hi All,
+> > 
+> > I am doing some performance regression testing on a sophgo machine, the
+> > unixbench syscall benchmark drops 14% from 6.1 to 6.6. This change
+> > should be due to commit f0bddf50 riscv: entry: Convert to generic entry.
+> > I know it's a tradeoff, just checking if it's been discussed already and
+> > any improvement can be done.
+> > 
+> > The unixbench benchmark I used is:
+> > 	$ ./syscall 10 getpid
+> > 
+> > The dynamic instruction count per syscall is increased from ~200 to
+> > ~250, this should be the key factor so I switch to test it on system
+> > QEMU to avoid porting different versions on sophgo, and use plugin
+> > libinsn.so to count the instructions. There are a few background noises
+> > during test but the impact should be limited. This is dyninst count per
+> > syscall I got:
+> > 
+> > * commit d0db02c6 (right before the change): ~200
+> > * commit f0bddf50 (the change): ~250
+> > * commit ffd2cb6b (latest upstream): ~250
+> > 
+> > Any comment?
+> > 
+> > Thanks,
+> > Fei.
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+> 
+> So I finally took some time to look into this. Indeed the conversion to the
+> generic entry introduced the overhead you observe.
+> 
+> The numbers I get are similar:
+> 
+> * commit d0db02c6 (right before the change): 185
+> 
+> *  6.11-rc3: 245
+> 
+> I dived a bit deeper and noticed that we could regain ~40 instructions by
+> inlining syscall_exit_to_user_mode() and do_trap_ecall_u():
+> 
+> - we used to intercept the syscall trap but now it's dealt with in the
+> exception vector, not sure if we can inline do_trap_ecall_u()
+> - I quickly tried to inline syscall_exit_to_user_mode() but it pulls quite a
+> few functions and I failed to do so.
+> 
+> Note that a recent effort already inlined most of the common entry functions
+> already
+> https://lore.kernel.org/all/20231218074520.1998026-1-svens@linux.ibm.com/
+> 
+> The remaining instructions are caused by:
+> 
+> * the vector extension handling. It won't improve the above numbers because
+> the test does not use the vector extension, but we could improve
+> __riscv_v_vstate_discard() as mentioned in commit 9657e9b7d253 ("riscv:
+> Discard vector state on syscalls")
+> * the random kernel stack offset
+> 
+> I'll add some performance regressions in my CI in the near future :)
+> 
+> Thanks,
+> 
+> Alex
 
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+I have written patches to do this inlining but haven't sent it out yet.
+I don't know a good way of showing performance improvement so I have
+been hesistant to send it. It is generic so showing the improvement on
+x86 is probably the best. I have also written some patches for cleaning
+up some of the other syscall handling but again haven't been able to
+show performance numbers. I was going to use a thead board but was
+unable to get it to boot on an up-to-date kernel as I posted about here
+[1]. The patches here [2] should also show improvements.
 
-Bjorn,
+I can try to get some numbers and send out the patches.
 
-I think this should go into v6.11 as it does indeed better represent
-the underlying logic.
+Link: https://lore.kernel.org/linux-arm-kernel/ZoydV7vad5JWIcZb@ghost/
+[1]
+Link:
+https://patchwork.kernel.org/project/linux-riscv/cover/20240720171232.1753-1-jszhang@kernel.org/
+[2]
 
-Bart
+- Charlie
+
+> 
+> 
+> 
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
