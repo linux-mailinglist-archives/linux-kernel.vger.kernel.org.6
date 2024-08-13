@@ -1,127 +1,174 @@
-Return-Path: <linux-kernel+bounces-285261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F0CE950B57
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:22:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904F5950B5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:26:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 138D31F23532
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:22:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34D05B2241D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BE81A2562;
-	Tue, 13 Aug 2024 17:22:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D5B1A08D1;
+	Tue, 13 Aug 2024 17:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J21tYD7f"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TsGyk2GG"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6633170A18;
-	Tue, 13 Aug 2024 17:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC380170A18
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723569771; cv=none; b=iw5aAVVuik3bNP3g9WKSqhEhaVFXoFUIxpQZVnk408bjxUow8SQJDdf3ACAp0SL6oP1t0H2khOily8ctSUqaTYiWMHfWUPnigw7eV4A79wz/hmQkUKzgB8cckNsIkakXEJYbc0rC1wCP5L26NfwROna+Qjmzf+XnfruW9rGWWjo=
+	t=1723569955; cv=none; b=DyBbfgNQ5/X/CC+ZRDLGn0zHelTNi2fcUsBxwe3K3Tve8DN1z00kKsUPhyUb0R5iCeriyZ8w1LZwF8cr2ydFWlM9Nfugzdx7l012ZP+MGn3I0ChcwsAm/wMFIE6TWqNHUTb0BHCrOM+mXt1AcpAuafqeGdZkwSnJrltvea76xA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723569771; c=relaxed/simple;
-	bh=PXjGkj2+4r+pOwvax1EJsHXufhiX5E5s/WYsh43Fu9g=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dsxQCad0ahCRYNoT2qNFZmap+5uV1bQs52Zsw0Uwei1BAHPlgNXhECyWkf20AFvlRQX+ze9z4mqcRvZUCfTVTe9TrEIMlpKQYxAY/wn97kmsX+qYZO7oiwA/6V2Yls4Eco5eHEft8PWCrZ3W6ROlJkUSd5JutVT2Z5f6NMcqWTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J21tYD7f; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723569770; x=1755105770;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=PXjGkj2+4r+pOwvax1EJsHXufhiX5E5s/WYsh43Fu9g=;
-  b=J21tYD7f3NOg7A+hHsu/lHuS5Mnv6bUKzP29N75LWZVyJJKpjNRsbdKg
-   iyvj9zupgpC7h50ZWqjEs5nqRUyHpUx3o94hL3x6LdvbAxejx1Ay4jAaC
-   5Vom3aYq7m5ioGkx8Ssj++u9ftHzV0fnpUt2TaZyYZctYworVfVAAJ7n0
-   uxca99Gf8DUW4Jr4d16yWRhzGjOB0lC7FVwF42nolYGYG/gYZ2MkHgBpR
-   LAef8wdZKuzXyLSq6plKFRZC8eO+oZtfV6IU41NHTuedIc46YqY896YU/
-   9/8OX9/kRmJG4QafNF9IBCqi7qzQxPkEHwviv83/3WIif0EhQe32zy8BO
-   g==;
-X-CSE-ConnectionGUID: 1n54UM1rRfazmbduPD0Obg==
-X-CSE-MsgGUID: STHeEZt/RaaaX7DRg7+PPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="39257079"
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="39257079"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:22:49 -0700
-X-CSE-ConnectionGUID: 9AfD1iuWTmC/9e/5rre4IQ==
-X-CSE-MsgGUID: YUgBNSyfR5CAsRM+vDHsaw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="58430370"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.54.38.190])
-  by fmviesa007.fm.intel.com with ESMTP; 13 Aug 2024 10:22:48 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-	id 474E230125F; Tue, 13 Aug 2024 10:22:48 -0700 (PDT)
-From: Andi Kleen <ak@linux.intel.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: akpm@linux-foundation.org,  linux-mm@kvack.org,  hannes@cmpxchg.org,
-  riel@surriel.com,  shakeel.butt@linux.dev,  roman.gushchin@linux.dev,
-  yuzhao@google.com,  david@redhat.com,  baohua@kernel.org,
-  ryan.roberts@arm.com,  rppt@kernel.org,  willy@infradead.org,
-  cerasuolodomenico@gmail.com,  corbet@lwn.net,
-  linux-kernel@vger.kernel.org,  linux-doc@vger.kernel.org,
-  kernel-team@meta.com
-Subject: Re: [PATCH v3 0/6] mm: split underutilized THPs
-In-Reply-To: <20240813120328.1275952-1-usamaarif642@gmail.com> (Usama Arif's
-	message of "Tue, 13 Aug 2024 13:02:43 +0100")
-References: <20240813120328.1275952-1-usamaarif642@gmail.com>
-Date: Tue, 13 Aug 2024 10:22:48 -0700
-Message-ID: <87y150mj6f.fsf@linux.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1723569955; c=relaxed/simple;
+	bh=dJORAOHGUlnmVGD2a9fmQmnPdnSjKv/SmlgbwUlwyLM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PdL8lHOi8UU4TGJHoKRZk3S1FT1kRacxaLoFfHvWRiPbcVG+/vQWz4nDEOl/83qAjXpZzI0uv0kw4YYTsJ7Y0WUdBw8ODKIhj2/eDMCfyAXT/aKqmNCP088yoLOnPFAzX+5Y8NL8MhbTWF/yd89Lq0mZDY2VGgwlT3lsxsmB+6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TsGyk2GG; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2c56da6cso62256841fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:25:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723569952; x=1724174752; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bckSAEjpJ5PpYoR7hQwJ/XriJMBaeLy4LvLcHeVeksk=;
+        b=TsGyk2GGTPkzcKu6u/Waabp3ri1GSFTOuTzAp3SLqDecx2/gEiHSoUyRnGZ4qB6KQy
+         rvjtX+EJrXuPGcIMDAe8XXyP1wrZUdYz4rPj4UfsUGECq7Y2sNOSiIUdzvF/y4GhCWCX
+         Ee25K4EjX6epQWiNyeGZTPHo07s3BR5FGPv8Q4Fzqg4tLLfrIzHGWR9x2sXM7Th9rO4I
+         pCr8H+0XXycHScT5Mco+3aY60iHD3pjWvFLsHBHUfDBp9TWM0pNV8aNerpzwDLnuCsC7
+         XquX2yfl7C6iOo7WB5aKjYa1B4FxmuReDOLhg6XqIXh/hb+GoemVQP7bE41zNGrTM8HP
+         abWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723569952; x=1724174752;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bckSAEjpJ5PpYoR7hQwJ/XriJMBaeLy4LvLcHeVeksk=;
+        b=rJvgNpiizFuBYqfE8n9rUXnMU7JPc/i6pXZoQ84lVuimYh+RKWjTBM8r0xItRoo/1q
+         bOf3UqoEcuMjD5hmlNQ3ysWpvxz9B/0EqVM641M3dwSUNRGmfIA8rnzxhmUNgnuQJPMR
+         qsJcJOtJJ5kAi4K70BnyoqsgF4sHuZ7Gn+HgreQ8ZLzja5fuOvQkkn1G6ABzrmAQta+r
+         KTQqDC0LL81dTZcFPJXZvVdXgRF8iGxRMNWb/T4E3YLLMF2dhWQKYMphh+LiuXkBuxKA
+         jBXzMqEddjiiB8iAbOW2epdrw0VfpFnznteK29KadO4ICeJxJElC5x0OGN9TrLRTe+Km
+         0NOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0HMnVtid5FtU3M0Q9uYOEyTBmcFvXqrp68l9cbR0b2OQ22xnnZNzCh42SeJGJua6QFAZdSlLILr2RuLEY9OdSdC3rYa48Uy/bLonX
+X-Gm-Message-State: AOJu0Yx1L2576/Zonx+4byJNickdrABBZ/s/e/ho+jhiumFS7h8/pieT
+	aJYVrqLbJCSUdtfK0ODTxzmKmsaaGjOq1irPxJa+k4nggQJSJt0H
+X-Google-Smtp-Source: AGHT+IEtrrEbrFUqyvWsVDYn/i0zD/QmSZriq6+kJDYHGaNkWu/OFzS6zY1GHBxy1gwb8T33T63Vgw==
+X-Received: by 2002:a05:651c:b10:b0:2f1:a7f8:810c with SMTP id 38308e7fff4ca-2f3aa2fcd35mr577901fa.33.1723569951313;
+        Tue, 13 Aug 2024 10:25:51 -0700 (PDT)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f33cfsm3048343a12.5.2024.08.13.10.25.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 10:25:50 -0700 (PDT)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 1/2] err.h: Add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_PCPU() functions
+Date: Tue, 13 Aug 2024 19:25:10 +0200
+Message-ID: <20240813172543.38411-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Usama Arif <usamaarif642@gmail.com> writes:
->
-> This patch-series is an attempt to mitigate the issue of running out of
-> memory when THP is always enabled. During runtime whenever a THP is being
-> faulted in or collapsed by khugepaged, the THP is added to a list.
-> Whenever memory reclaim happens, the kernel runs the deferred_split
-> shrinker which goes through the list and checks if the THP was underutilized,
-> i.e. how many of the base 4K pages of the entire THP were zero-filled.
+Add ERR_PTR_PCPU(), PTR_ERR_PCPU() and IS_ERR_PCPU() functions that
+operate on pointers in the percpu address space.
 
-Sometimes when writing a benchmark I fill things with zero explictly
-to avoid faults later. For example if you want to measure memory
-read bandwidth you need to fault the pages first, but that fault
-pattern may well be zero.
+These functions remove the need for (__force void *) function
+argument casts (to avoid sparse -Wcast-from-as warnings).
 
-With your patch if there is memory pressure there are two effects:
+The patch will also avoid future build errors due to pointer address
+space mismatch with enabled strict percpu address space checks.
 
-- If things are remapped to the zero page the benchmark
-reading memory may give unrealistically good results because
-what is thinks is a big memory area is actually only backed
-by a single page.
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
+ include/linux/err.h | 38 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-- If I expect to write I may end up with an unexpected zeropage->real
-memory fault if the pages got remapped. 
+diff --git a/include/linux/err.h b/include/linux/err.h
+index b5d9bb2a2349..997fd6fe1d0c 100644
+--- a/include/linux/err.h
++++ b/include/linux/err.h
+@@ -6,6 +6,7 @@
+ #include <linux/types.h>
+ 
+ #include <asm/errno.h>
++#include <asm/percpu.h>
+ 
+ /*
+  * Kernel pointers have redundant information, so we can use a
+@@ -41,6 +42,22 @@ static inline void * __must_check ERR_PTR(long error)
+ 	return (void *) error;
+ }
+ 
++/**
++ * ERR_PTR_PCPU - Create an error pointer in the percpu address space.
++ * @error: A negative error code.
++ *
++ * Encodes @error into a pointer value in the percpu address space.
++ * Users should consider the result opaque and not assume anything
++ * about how the error is encoded.
++ *
++ * Return: A pointer in the percpu address space with @error encoded
++ *	   within its value.
++ */
++static inline void __percpu * __must_check ERR_PTR_PCPU(long error)
++{
++	return (void __percpu *) error;
++}
++
+ /**
+  * PTR_ERR - Extract the error code from an error pointer.
+  * @ptr: An error pointer.
+@@ -51,6 +68,17 @@ static inline long __must_check PTR_ERR(__force const void *ptr)
+ 	return (long) ptr;
+ }
+ 
++/**
++ * PTR_ERR_PCPU - Extract the error code from an error pointer in the
++ *		  percpu address space.
++ * @ptr: An error pointer in the percpu address space.
++ * Return: The error code within @ptr.
++ */
++static inline long __must_check PTR_ERR_PCPU(const void __percpu *ptr)
++{
++	return (__force long) ptr;
++}
++
+ /**
+  * IS_ERR - Detect an error pointer.
+  * @ptr: The pointer to check.
+@@ -61,6 +89,16 @@ static inline bool __must_check IS_ERR(__force const void *ptr)
+ 	return IS_ERR_VALUE((unsigned long)ptr);
+ }
+ 
++/**
++ * IS_ERR_PCPU - Detect an error pointer in the percpu address space.
++ * @ptr: The pointer in the percpu address space to check.
++ * Return: true if @ptr is an error pointer, false otherwise.
++ */
++static inline bool __must_check IS_ERR_PCPU(const void __percpu *ptr)
++{
++	return IS_ERR_VALUE((__force unsigned long)ptr);
++}
++
+ /**
+  * IS_ERR_OR_NULL - Detect an error pointer or a null pointer.
+  * @ptr: The pointer to check.
+-- 
+2.42.0
 
-I expect such patterns can happen without benchmarking too.
-I could see it being a problem for latency sensitive applications.
-
-Now you could argue that this all should only happen under memory
-pressure and when that happens things may be slow anyways and your
-patch will still be an improvement.
-
-Maybe that's true but there might be still corner cases
-which are negatively impacted by this. I don't have a good solution
-other than a tunable, but I expect it will cause problems for someone.
-
-The other problem I have with your patch is that it may cause the kernel
-to pollute CPU caches in the background, which again will cause noise in
-the system. Instead of plain memchr_inv, you should probably use some
-primitive to bypass caches or use a NTA prefetch hint at least.
-
--Andi
 
