@@ -1,188 +1,216 @@
-Return-Path: <linux-kernel+bounces-284710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 739D4950457
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:02:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2945195045A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3132B2880A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:02:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E18CB24816
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5AF1991D6;
-	Tue, 13 Aug 2024 12:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2914199230;
+	Tue, 13 Aug 2024 12:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="fl53sCSa"
-Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hMuC6p2X"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3A41990A2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689BE2262B;
+	Tue, 13 Aug 2024 12:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550555; cv=none; b=kzMsaeGpvSUFseK4iPa7xSQ/LSvtezE7lVWGFNPVv0TO2yTE9buSvH/zQvCcnDeYuO+c2eAdWeCJzyXfwdO7+BsiDzjQhZY929VeSKZoKO6++fEMpb3vjTCyjgkG1MK7CjbG7X90UaH8zuPGHjdiJQZ59yFdCpmUk5N2Uc6vAOo=
+	t=1723550626; cv=none; b=rwSyboKcvehAa/eqJf3aoNKwGTnFrHPypegYof/1ukUcn1n+fHmLuEux4PdJ8QIGDzGY8B9PMFvAOw8gZnjYbfA0z7XAAKQJhiMyHKOdTT0mUtd2B1inzfeY428ONFPJ5TXLpQs2bJUfe5oHYdodcumPcoSGWf20IduZ+BcSrIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550555; c=relaxed/simple;
-	bh=SCEjQ2f/AVQGw13+jnl/qj3hrJi2gyjF3kjKwUvF/08=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=kAQkd8wE8FPEBE/tjYCYqYVvPIECeV8m69jf1Umngl0/veYVfbztQ10nYGAlsuPLLew4jIWtf8QXtNqD7KdBEXrBuIDkNdYqR+2xTM4vFZonk7QxHrwU9+TzT0v7oV7gIAhTcvYFKt48hbExgbp3tehs6buQD1QgvVO/Evg0moc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=fl53sCSa; arc=none smtp.client-ip=91.26.50.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
-DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
-	q=dns/txt; i=@phytec.de; t=1723550541; x=1726142541;
-	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=SCEjQ2f/AVQGw13+jnl/qj3hrJi2gyjF3kjKwUvF/08=;
-	b=fl53sCSaEuQ4Rv+Q5YD0VX8Xv00qj4R7GoM0gGERibVWTjy4wXgL944uLDGNzukG
-	MvWd1bFZiwxyhnvDQ0eA4bsD/bxh+e3grGvfhFwkbOWLzCMmsAmboSIGfGusAOPR
-	P/gIsqmXtdu5QvWAFJ6plLvunNnhTqoBRFLZZ2NiC98=;
-X-AuditID: ac14000a-03e52700000021bc-3e-66bb4b4c5236
-Received: from berlix.phytec.de (Unknown_Domain [172.25.0.12])
-	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(Client did not present a certificate)
-	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 7F.20.08636.C4B4BB66; Tue, 13 Aug 2024 14:02:20 +0200 (CEST)
-Received: from llp-hahn.hahn.test (172.25.0.11) by Berlix.phytec.de
- (172.25.0.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Tue, 13 Aug
- 2024 14:02:20 +0200
-From: Benjamin Hahn <B.Hahn@phytec.de>
-Date: Tue, 13 Aug 2024 14:02:14 +0200
-Subject: [PATCH] arm64: dts: imx8mp-phyboard-pollux-rdk: Add support for
- PCIe
+	s=arc-20240116; t=1723550626; c=relaxed/simple;
+	bh=BM8v+PENXndSgNTYVvHrTXN87K08owbElsVe0qrI+TU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UhNDry+sXBYS2cBfQWU0A9jUHtFJjl0lW8DfqePm72RuMCLCiliuw/PaMU7yfp6/mdKDbJEv5HcHHX4SfGJbhgAOZP6LSsrsv+7oPi4f1SFhbySuQmBZT5IuNVte/Os8Jp1cty7qYr7hwKu/DgdewyV9+RGk2W5zN3ozQAeBKSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hMuC6p2X; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7a1dcc7bc05so359439885a.0;
+        Tue, 13 Aug 2024 05:03:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723550623; x=1724155423; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J4mgO91X0ECSZtREEM3BoWhZk1QC/8Jzg6tpXLFE4Nc=;
+        b=hMuC6p2Xagg+pGppK14Sa3SN92LGbdKW80B82AsI0yjp7QDt3P+DCZQHAMd7rODum3
+         TKHlOoBdHR7H0wfMBcmKiNlfhcrUWElzSVKBYQra3wtwLcInuiFy6cRXP/k0l1+JRIiX
+         C3szwC7CxhQKQGKndP6nGej4MBFQzlzc5wcKi1E4Bkw8Gd4wHL7K9LSX9SMXcXcZ424t
+         bnn2LfE/hvFC+ogJaGMKTCk4FzA1IKEpNWW5eJDZbbATgi+O7qaO1HXYvuXSa8Az24Y0
+         UlEgON8d+LZCLMBt5vO/6XNEJAs2vg4q7uJOq76zSodAfwU63gc1ryXWFXirRjQfOgaV
+         U9+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723550623; x=1724155423;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J4mgO91X0ECSZtREEM3BoWhZk1QC/8Jzg6tpXLFE4Nc=;
+        b=WMd6JulWDdi4vv9HtoSPgvuqQT+tTrILoc/vJm7Y8XrrYxxGt3Xi+kDr98uG71vmz9
+         3HZh4Ozmogv5h41ysyaYvHU7hoc++1N6rMLMchJ2L9j+rrfgaItIhuWUlA/q8WqH2oQW
+         MKfBBKeGPmP0P3oIIq7mGOxtGrnWk5sJUWHVByr9LGf2tx0D1cc6tuoMOJW8M2Ej/RoW
+         a4VCaKBwM68s+PmLawRhKjsEyu+qs3kipSEqG+lwscH2iTHt4K9Td55mkLsHBXU7b9z5
+         lOjesgaFHyWJbSmMdcOdGTzHHu0C0fFe19LoYMU8dkx6bYDOFdTOXsJmZWwZr2dnmdDP
+         2LUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQKtXHOOj1MqoR8kIyHYoDTKbBg5LLMEwhvFud9uX5yBhB+w1lxS7d89+011Lt1zBVPUCZlglX/Zl3S7YJL42xiOJVI1I4kH+gCsGpdA1oiIW2lFn6LMXvpI3+t9vXpXZuQCUodzH6
+X-Gm-Message-State: AOJu0YxbYsFOYXoH5xx5Fo4jCpFVvJLWWkjSJKfntluHknK1x16EgLhX
+	AeGIwFKqgISHKbx/h0YqyjOeGugUWjZfAfJHeURYA8yj8nMWsGwM
+X-Google-Smtp-Source: AGHT+IGT2fzTngjdee05ugmGl4tk7xJ0T9MPishojJ5VclajUPbjUng4/SWveUmLtJvIhfmk6VXO4A==
+X-Received: by 2002:a05:620a:28ca:b0:7a3:6dd9:efa6 with SMTP id af79cd13be357-7a4e1537391mr410740885a.33.1723550623047;
+        Tue, 13 Aug 2024 05:03:43 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-011.fbsv.net. [2a03:2880:20ff:b::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d64878sm335487285a.24.2024.08.13.05.03.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 05:03:42 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org
+Cc: hannes@cmpxchg.org,
+	riel@surriel.com,
+	shakeel.butt@linux.dev,
+	roman.gushchin@linux.dev,
+	yuzhao@google.com,
+	david@redhat.com,
+	baohua@kernel.org,
+	ryan.roberts@arm.com,
+	rppt@kernel.org,
+	willy@infradead.org,
+	cerasuolodomenico@gmail.com,
+	corbet@lwn.net,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH v3 0/6] mm: split underutilized THPs
+Date: Tue, 13 Aug 2024 13:02:43 +0100
+Message-ID: <20240813120328.1275952-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240813-wip-bhahn-add_pcie_support-v1-1-c1bb062b4e1f@phytec.de>
-X-B4-Tracking: v=1; b=H4sIAEVLu2YC/x3MSwqDMBAA0KvIrDvgF7VXKSUkmbGZTRwSq4J49
- 4Yu3+ZdkDkJZ3hWFyTeJcsaC5pHBT7Y+GEUKoa2bvt6ajo8RNEFGyJaIqNe2OSv6po2dLOjcVh
- 8T/MEJdDEi5z//PW+7x9FLPILbAAAAA==
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Teresa Remmet
-	<t.remmet@phytec.de>
-CC: <upstream@lists.phytec.de>, <devicetree@vger.kernel.org>,
-	<imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>, Benjamin Hahn <B.Hahn@phytec.de>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723550540; l=2384;
- i=B.Hahn@phytec.de; s=20240126; h=from:subject:message-id;
- bh=SCEjQ2f/AVQGw13+jnl/qj3hrJi2gyjF3kjKwUvF/08=;
- b=/0dWgUE99fI6jHFjyRx/49dTec+RsfkxbJuGEClIRp2/pJ4Jzlc+L58U6EP4eHq2V2cbHOyCP
- 3pE9XgdTSedCQDNvkUSg2ZNy/p3fFqqsdHukeRMr2esiO0lHmU6Ui3l
-X-Developer-Key: i=B.Hahn@phytec.de; a=ed25519;
- pk=r04clMulHz6S6js6elPBA+U+zVdDAqJyEyoNd8I3pSw=
-X-ClientProxiedBy: Florix.phytec.de (172.25.0.13) To Berlix.phytec.de
- (172.25.0.12)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmkeLIzCtJLcpLzFFi42JZI8nAo+vjvTvNYPptE4s1e88xWcw/co7V
-	4uFVf4uZ91rZLFZN3cli8XLWPTaLTY+vsVpc3jWHzeL/nh3sFn+3b2KxeLFF3KL7nboDj8fO
-	WXfZPTat6mTz2Lyk3uPF5pmMHv3dLawe/X8NPD5vkgtgj+KySUnNySxLLdK3S+DK2PLxO3vB
-	JaGKdfPusjYw7uTvYuTkkBAwkWh4eJ+xi5GLQ0hgCZPE/L7vTBDOQ0aJPfMbWECq2ATUJHa9
-	ec0KYrMIqEp0tyxiBLGFBfwlXvc+ZQKxeQUEJU7OfAJUz8HBLKApsX6XPkiYWUBeYvvbOcwg
-	YV4BX4n7KwNAxksI7GGUWDnrNjtIjYjADiaJx/2GIAlmgYOMEn/WP2CHuE5Y4vPuNWwQ9m4m
-	iY19HiCDJAQSJXa+lgMJCwnIStw8vwWqRF5i2rnXzBB2qMSRTauZJjAKz0Jy3SyE62YhuW4B
-	I/MqRqHczOTs1KLMbL2CjMqS1GS9lNRNjKAIE2Hg2sHYN8fjECMTB+MhRgkOZiUR3kCTXWlC
-	vCmJlVWpRfnxRaU5qcWHGKU5WJTEeVd3BKcKCaQnlqRmp6YWpBbBZJk4OKUaGG2qHHak7rCU
-	lkgQnX3wtOLltr4pzX9O9qzXDtsw89r2ui2fHZr/rvg8YeLiKuNp4m3H5Fu4b35uvv7o4aeW
-	pwp72GXlKy7HcRlO+X/FY0GZXZmwR9rtiBdqr6Umxz1/cPdin8y+y6nvXOvcI+xDbSfKbs/n
-	nfvdc/qrK6vVemrNxR2Z/eYLnlZiKc5INNRiLipOBABfkb6CngIAAA==
+Content-Transfer-Encoding: 8bit
 
-Add support for the Mini PCIe slot.
+The current upstream default policy for THP is always. However, Meta
+uses madvise in production as the current THP=always policy vastly
+overprovisions THPs in sparsely accessed memory areas, resulting in
+excessive memory pressure and premature OOM killing.
+Using madvise + relying on khugepaged has certain drawbacks over
+THP=always. Using madvise hints mean THPs aren't "transparent" and
+require userspace changes. Waiting for khugepaged to scan memory and
+collapse pages into THP can be slow and unpredictable in terms of performance
+(i.e. you dont know when the collapse will happen), while production
+environments require predictable performance. If there is enough memory
+available, its better for both performance and predictability to have
+a THP from fault time, i.e. THP=always rather than wait for khugepaged
+to collapse it, and deal with sparsely populated THPs when the system is
+running out of memory.
 
-Signed-off-by: Benjamin Hahn <B.Hahn@phytec.de>
----
- .../dts/freescale/imx8mp-phyboard-pollux-rdk.dts   | 42 ++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+This patch-series is an attempt to mitigate the issue of running out of
+memory when THP is always enabled. During runtime whenever a THP is being
+faulted in or collapsed by khugepaged, the THP is added to a list.
+Whenever memory reclaim happens, the kernel runs the deferred_split
+shrinker which goes through the list and checks if the THP was underutilized,
+i.e. how many of the base 4K pages of the entire THP were zero-filled.
+If this number goes above a certain threshold, the shrinker will attempt
+to split that THP. Then at remap time, the pages that were zero-filled are
+mapped to the shared zeropage, hence saving memory. This method avoids the
+downside of wasting memory in areas where THP is sparsely filled when THP
+is always enabled, while still providing the upside THPs like reduced TLB
+misses without having to use madvise.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-index 00a240484c25..0ecb2f62c37f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-phyboard-pollux-rdk.dts
-@@ -6,6 +6,7 @@
- 
- /dts-v1/;
- 
-+#include <dt-bindings/phy/phy-imx8-pcie.h>
- #include <dt-bindings/leds/leds-pca9532.h>
- #include <dt-bindings/pwm/pwm.h>
- #include "imx8mp-phycore-som.dtsi"
-@@ -63,6 +64,17 @@ reg_can2_stby: regulator-can2-stby {
- 		regulator-name = "can2-stby";
- 	};
- 
-+	reg_pcie0: regulator-pcie {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pcie0_reg>;
-+		regulator-name = "MPCIE_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpio = <&gpio1 14 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
- 	reg_lvds1_reg_en: regulator-lvds1 {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
-@@ -195,6 +207,23 @@ &snvs_pwrkey {
- 	status = "okay";
- };
- 
-+&pcie_phy {
-+	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
-+	fsl,clkreq-unsupported;
-+	clocks = <&hsio_blk_ctrl>;
-+	clock-names = "ref";
-+	status = "okay";
-+};
-+
-+/* Mini PCIe */
-+&pcie {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_pcie0>;
-+	reset-gpio = <&gpio1 8 GPIO_ACTIVE_LOW>;
-+	vpcie-supply = <&reg_pcie0>;
-+	status = "okay";
-+};
-+
- &pwm3 {
- 	status = "okay";
- 	pinctrl-names = "default";
-@@ -366,6 +395,19 @@ MX8MP_IOMUXC_SD2_WP__GPIO2_IO20		0x12
- 		>;
- 	};
- 
-+	pinctrl_pcie0: pcie0grp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO11__GPIO1_IO11	0x60 /* open drain, pull up */
-+			MX8MP_IOMUXC_GPIO1_IO08__GPIO1_IO08	0x40
-+		>;
-+	};
-+
-+	pinctrl_pcie0_reg: pcie0reggrp {
-+		fsl,pins = <
-+			MX8MP_IOMUXC_GPIO1_IO14__GPIO1_IO14	0x40
-+		>;
-+	};
-+
- 	pinctrl_pwm3: pwm3grp {
- 		fsl,pins = <
- 			MX8MP_IOMUXC_SPDIF_TX__PWM3_OUT		0x12
+Meta production workloads that were CPU bound (>99% CPU utilzation) were
+tested with THP shrinker. The results after 2 hours are as follows:
 
----
-base-commit: 7c626ce4bae1ac14f60076d00eafe71af30450ba
-change-id: 20240813-wip-bhahn-add_pcie_support-b9bd75fc4d98
+                            | THP=madvise |  THP=always   | THP=always
+                            |             |               | + shrinker series
+                            |             |               | + max_ptes_none=409
+-----------------------------------------------------------------------------
+Performance improvement     |      -      |    +1.8%      |     +1.7%
+(over THP=madvise)          |             |               |
+-----------------------------------------------------------------------------
+Memory usage                |    54.6G    | 58.8G (+7.7%) |   55.9G (+2.4%)
+-----------------------------------------------------------------------------
+max_ptes_none=409 means that any THP that has more than 409 out of 512
+(80%) zero filled filled pages will be split.
 
-Best regards,
+To test out the patches, the below commands without the shrinker will
+invoke OOM killer immediately and kill stress, but will not fail with
+the shrinker:
+
+echo 450 > /sys/kernel/mm/transparent_hugepage/khugepaged/max_ptes_none
+mkdir /sys/fs/cgroup/test
+echo $$ > /sys/fs/cgroup/test/cgroup.procs
+echo 20M > /sys/fs/cgroup/test/memory.max
+echo 0 > /sys/fs/cgroup/test/memory.swap.max
+# allocate twice memory.max for each stress worker and touch 40/512 of
+# each THP, i.e. vm-stride 50K.
+# With the shrinker, max_ptes_none of 470 and below won't invoke OOM
+# killer.
+# Without the shrinker, OOM killer is invoked immediately irrespective
+# of max_ptes_none value and kills stress.
+stress --vm 1 --vm-bytes 40M --vm-stride 50K
+
+v2 -> v3:
+- Use my_zero_pfn instead of page_to_pfn(ZERO_PAGE(..)) (Johannes)
+- Use flags argument instead of bools in remove_migration_ptes (Johannes)
+- Use a new flag in folio->_flags_1 instead of folio->_partially_mapped
+  (David Hildenbrand).
+- Split out the last patch of v2 into 3, one for introducing the flag,
+  one for splitting underutilized THPs on _deferred_list and one for adding
+  sysfs entry to disable splitting (David Hildenbrand).
+
+v1 -> v2:
+- Turn page checks and operations to folio versions in __split_huge_page.
+  This means patches 1 and 2 from v1 are no longer needed.
+  (David Hildenbrand)
+- Map to shared zeropage in all cases if the base page is zero-filled.
+  The uffd selftest was removed.
+  (David Hildenbrand).
+- rename 'dirty' to 'contains_data' in try_to_map_unused_to_zeropage
+  (Rik van Riel).
+- Use unsigned long instead of uint64_t (kernel test robot).
+ 
+Alexander Zhu (1):
+  mm: selftest to verify zero-filled pages are mapped to zeropage
+
+Usama Arif (3):
+  mm: Introduce a pageflag for partially mapped folios
+  mm: split underutilized THPs
+  mm: add sysfs entry to disable splitting underutilized THPs
+
+Yu Zhao (2):
+  mm: free zapped tail pages when splitting isolated thp
+  mm: remap unused subpages to shared zeropage when splitting isolated
+    thp
+
+ Documentation/admin-guide/mm/transhuge.rst    |   6 +
+ include/linux/huge_mm.h                       |   4 +-
+ include/linux/khugepaged.h                    |   1 +
+ include/linux/page-flags.h                    |   3 +
+ include/linux/rmap.h                          |   7 +-
+ include/linux/vm_event_item.h                 |   1 +
+ mm/huge_memory.c                              | 156 ++++++++++++++++--
+ mm/hugetlb.c                                  |   1 +
+ mm/internal.h                                 |   4 +-
+ mm/khugepaged.c                               |   3 +-
+ mm/memcontrol.c                               |   3 +-
+ mm/migrate.c                                  |  74 +++++++--
+ mm/migrate_device.c                           |   4 +-
+ mm/page_alloc.c                               |   5 +-
+ mm/rmap.c                                     |   3 +-
+ mm/vmscan.c                                   |   3 +-
+ mm/vmstat.c                                   |   1 +
+ .../selftests/mm/split_huge_page_test.c       |  71 ++++++++
+ tools/testing/selftests/mm/vm_util.c          |  22 +++
+ tools/testing/selftests/mm/vm_util.h          |   1 +
+ 20 files changed, 333 insertions(+), 40 deletions(-)
+
 -- 
-Benjamin Hahn <B.Hahn@phytec.de>
+2.43.5
 
 
