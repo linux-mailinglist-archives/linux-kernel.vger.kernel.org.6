@@ -1,120 +1,201 @@
-Return-Path: <linux-kernel+bounces-285002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2239507FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:40:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD32F950778
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 678491F22216
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:40:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26CD4B24950
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5225E19E838;
-	Tue, 13 Aug 2024 14:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4A019D09B;
+	Tue, 13 Aug 2024 14:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="L8PNQBb+"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOI8fe0K"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC19125AC;
-	Tue, 13 Aug 2024 14:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A084619D076;
+	Tue, 13 Aug 2024 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723560027; cv=none; b=aokd6zmYekn18/I0QaSeZYqtFZW6sXWpcsLGnx47nWgC9T8WINrq7aAkTX4ZHJmaqcIuCZyYU9Q8uULQEDmvqjYhG+cGGD59EKJMR4jhFaOWhGywVzB2v9ZjC1UOuSlkjE2HEg/WiYI72HSeXpmUQtp5gsze/q6eeRXXVDpw5Hk=
+	t=1723559082; cv=none; b=hdrWcark/Gh56uXzq1nhz2Bkx9lSI8yjlS7xHWLlajr2Bo3jFiRaVwaLzj89PXJCfPQKCCfR8IuxbqIW2PHBkbVA24sBUhFt/OHfpHMUbEKyCwZu+2ARhHH1Xyg53HFBKn2kj4JTyuij230/H1PEB09i2XkZxHI+Qn1hM29N2RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723560027; c=relaxed/simple;
-	bh=VfTachFUIsrZaw4U7xS4CrKA4r4zOSHY9SuORRnXawo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U/SMg5fq3AlSWDjudJ9j8Gh/U5WmfQRwQLVS9syUc350oV7oCmy7WtlybAJups5K2wNGHx1ppGqe8j00P7h95bD52Y5ko9Mb9XQ+kfV4jVSDoiGC9D0V/7O60uaEmteXK7MdiR1j0CnySnQ6o8MLAnSYNpJu6tP8wxbj8uyrVlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=L8PNQBb+ reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id b30a72e207a3cc2c; Tue, 13 Aug 2024 16:40:22 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 5502E6A89A1;
-	Tue, 13 Aug 2024 16:40:22 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723560022;
-	bh=VfTachFUIsrZaw4U7xS4CrKA4r4zOSHY9SuORRnXawo=;
-	h=From:Subject:Date;
-	b=L8PNQBb+M4Mk4FQEJHMthV9jLRRqp+Su1xfDmjgnAdzXmodSyQR0iQBlVcUagwm3e
-	 lDbhNL44i8CGhCdy3r/O6S2AlPPrmzu0qJvdhwBy5WUfIt87/ftPgrUK1o3NP7AN50
-	 2hmkX8qSQpW/E7NjU6e1M7jMfGc4Jblqqzb749uKnUMDgJRspvdnOdpWRTPPw4RGLm
-	 naFbp1JbDY0zJd1DxO806PwOH/OQxxKJxJrLMF02XvWl0Ci784PoCfgWjWqe3ienb8
-	 MW/Udf6v7L/4t43Ul3C8BAQYjRzwsLCHOz8jDONLsL4C+uOa/7XZ768kWtMlCnlgw9
-	 m7Be4XdvQpvXg==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
-Subject:
- [PATCH v1 0/4] thermal: gov_bang_bang: Prevent cooling devices from getting
- stuck in the "on" state
-Date: Tue, 13 Aug 2024 16:23:35 +0200
-Message-ID: <1903691.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1723559082; c=relaxed/simple;
+	bh=Cf5nrxOfWp3lPGd3cNKVX3NV1/THCONrMkgor6cC/74=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X/JdkFZffZKMhXLMopWAG0eyf89IwmZnU86F7k9j8QUGovSSbzFOsXfk6e2p8WJwyNIfCEVU3RHvV+i1kM69fFZiROvgzePVytu+DyhHe2jHvDGhcIVo0xQN5nB18EsCXfDZUuxo6N483CzfOtcZH11gGWKEDK0rh33EIVPybaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOI8fe0K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47B52C4AF0B;
+	Tue, 13 Aug 2024 14:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723559082;
+	bh=Cf5nrxOfWp3lPGd3cNKVX3NV1/THCONrMkgor6cC/74=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YOI8fe0K1UKV7J4nHg1SoV2ZzWhU1nOSzpzzyq8XX3UaH/oujjT+zj8qtyewZTVlo
+	 Io3cfLgrEWDUOu1CeD7i9sshCZr9OjACJYSQuJ+xVB0n3O41mbTr4fVoWDBszwiql1
+	 Yneol9ZWfKGiJqNEweht/kiaT/Tr2bM26CKc9e8np9TVIOaYNMDZkPIsQLYch0U8wb
+	 +QBU+HJHQfzMtACqE7yixFcOyHmMVPks/1eC7Oz2DwSfjtnh5us4JkDL86Ohsqzw3i
+	 uc30OTkWlYESufLgZDVQV7bvICnQ9jqKaKPsuuTYzBi0qBANsIOra+xLNWJ6y7ghtr
+	 NPTHhvloxFonA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so71175591fa.0;
+        Tue, 13 Aug 2024 07:24:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVgjUM9sA+cCcyLVXDDl9Q+nX2M/0C6mfwVFg59I+UOulf3gQJ0IRBo84suCYnzU4E5G/3HLXc97FshfnilWyhBcjwQnFYKblEMI0LRusbvsUxQNYPCEdk71GTYPTDOa1V8BCnlXGT62aC9Nzu/QBTHp3czDqBr8CiWf6PU5KSGCpR5ZQ==
+X-Gm-Message-State: AOJu0YzO10apMfNTeBaubAT4WqbUf/fkK13qtP1pX9CnDSSrR4E9aq36
+	lCAa6sVnY5TlYBoNm39nIco1uXLIlbg7nauiRIa43EN9mVic9GwowcKEX1nGVYwH0A9tLGNZKof
+	yGJzvrvGDzOlKQpv4AGksHTeKtg==
+X-Google-Smtp-Source: AGHT+IGEtxJXAokVeHylGyvLbWPxf9oslPNLlY5/p+Gnfc4iXdhDKRm8W9C2iFoUYgmtU70ocpuAKUExkf0GIUkUUYA=
+X-Received: by 2002:a2e:b6c7:0:b0:2ef:29cd:3183 with SMTP id
+ 38308e7fff4ca-2f2b727737bmr24740261fa.48.1723559080584; Tue, 13 Aug 2024
+ 07:24:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
+References: <20240812203004.3831481-1-Frank.Li@nxp.com>
+In-Reply-To: <20240812203004.3831481-1-Frank.Li@nxp.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 13 Aug 2024 08:24:28 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL2HAeS5BWsmJRzeJb1b7nXgB92KsGe87tT5-LeYmaeyQ@mail.gmail.com>
+Message-ID: <CAL_JsqL2HAeS5BWsmJRzeJb1b7nXgB92KsGe87tT5-LeYmaeyQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] spi: dt-bindings: convert spi-sc18is602.txt to yaml format
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Mark Brown <broonie@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, "open list:SPI SUBSYSTEM" <linux-spi@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	imx@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucfuphgrmhfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhinhhugidqphhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhukhgrshiirdhluhgs
- rgesrghrmhdrtghomhdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehpvghtvghrsehpihhivgdrnhgvth
-X-DCC--Metrics: v370.home.net.pl 1024; Body=24 Fuz1=24 Fuz2=24
+Content-Transfer-Encoding: quoted-printable
 
-Hi Everyone,
+On Mon, Aug 12, 2024 at 2:30=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+>
+> Convert binding doc spi-sc18is602.txt (I2C to SPI bridge) to yaml.
+>
+> Additional change:
+> - ref spi-controller.yaml
+>
+> Fix below warning:
+> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
+> /soc/i2c@2000000/i2c-mux@77/i2c@7/i2c-mux@75/i2c@0/spi@28: failed to matc=
+h any schema with compatible: ['nxp,sc18is602b']
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/spi/nxp,sc18is.yaml   | 52 +++++++++++++++++++
+>  .../devicetree/bindings/spi/spi-sc18is602.txt | 23 --------
+>  2 files changed, 52 insertions(+), 23 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/nxp,sc18is.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/spi/spi-sc18is602.t=
+xt
+>
+> diff --git a/Documentation/devicetree/bindings/spi/nxp,sc18is.yaml b/Docu=
+mentation/devicetree/bindings/spi/nxp,sc18is.yaml
+> new file mode 100644
+> index 0000000000000..8a5d45d976984
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/nxp,sc18is.yaml
+> @@ -0,0 +1,52 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/nxp,sc18is.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NXP SC18IS602/SCIS603 I2C to SPI bridge
 
-After changes made in 6.10, the Bang-bang governor has an initialization problem
-on systems where cooling devices start in the "on" state, but the thermal zone
-temperature stays below the corresponding trip points.
+SCIS603 or SC18IS603?
 
-Namely, the Bang-bang governor only implements a .trip_crossed() callback which
-only runs when a trip point is crossed.  If the zone temperature is always below
-the trip point, that callback will never be invoked.  Now, if a cooling device
-bound to that trip point starts in the "on" state, the governor has no chance
-to change its state to "off".
+> +
+> +maintainers:
+> +  - Frank Li <Frank.Li@nxp.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - nxp,sc18is602
+> +      - nxp,sc18is602b
+> +      - nxp,sc18is603
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clock-frequency:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 7372000
+> +    description:
+> +      external oscillator clock frequency. If not specified, the SC18IS6=
+02
+> +      default frequency (7372000) will be used.
 
-This currently happens in the acerhdf driver, but it may as well happen elsewhere,
-so I think that it needs to be addressed in the thermal subsystem.
+Drop prose that the schema says already.
 
-It can be addressed by adding a .manage() callback to the Bang-bang governor,
-which is done in patch [3/4].  That callback will be invoked every time
-__thermal_zone_device_update() runs, not just when a trip is crossed, so it
-can adjust the states of the cooling devices to the thermal zone temperature.
-However, after running once, it becomes a pure needless overhead because the
-states of cooling devices only need to be fixed up once (modulo some special
-situations like system resume).
+With those fixes,
 
-That's addressed in patch [4/4] which uses governor_data to store the information
-on whether or not the states of the cooling devices will need to be adjusted.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Patches [1-2/4] are preliminary, but IMV it is better to make these changes
-separately for clarity, but also in case they turn out to have a functional
-effect which is not expected.
-
-Overall, this series is a fix candidate for 6.11-rc because the change in
-behavior addressed by it can be regarded as a regression with respect to 6.9.
-
-Unfortunately, it affects this series:
-
-https://lore.kernel.org/linux-pm/114901234.nniJfEyVGO@rjwysocki.net/
-
-which will need to be reordered and rebased (slightly), but because I've dropped
-one broken patch from it already, it will need to be changed anyway.
-
-Thanks!
-
-
-
+> The clock-frequency
+> +      property is relevant and needed only if the chip has an external
+> +      oscillator (SC18IS603).
+> +
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <0>;
+> +
+> +        spi@28 {
+> +            compatible =3D "nxp,sc18is603";
+> +            reg =3D <0x28>;
+> +            clock-frequency =3D <14744000>;
+> +        };
+> +    };
+> +
+> diff --git a/Documentation/devicetree/bindings/spi/spi-sc18is602.txt b/Do=
+cumentation/devicetree/bindings/spi/spi-sc18is602.txt
+> deleted file mode 100644
+> index 02f9033270a24..0000000000000
+> --- a/Documentation/devicetree/bindings/spi/spi-sc18is602.txt
+> +++ /dev/null
+> @@ -1,23 +0,0 @@
+> -NXP SC18IS602/SCIS603
+> -
+> -Required properties:
+> -       - compatible : Should be one of
+> -               "nxp,sc18is602"
+> -               "nxp,sc18is602b"
+> -               "nxp,sc18is603"
+> -       - reg: I2C bus address
+> -
+> -Optional properties:
+> -       - clock-frequency : external oscillator clock frequency. If not
+> -         specified, the SC18IS602 default frequency (7372000) will be us=
+ed.
+> -
+> -The clock-frequency property is relevant and needed only if the chip has=
+ an
+> -external oscillator (SC18IS603).
+> -
+> -Example:
+> -
+> -       sc18is603@28 {
+> -               compatible =3D "nxp,sc18is603";
+> -               reg =3D <0x28>;
+> -               clock-frequency =3D <14744000>;
+> -       }
+> --
+> 2.34.1
+>
 
