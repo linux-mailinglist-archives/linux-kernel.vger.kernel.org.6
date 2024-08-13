@@ -1,143 +1,253 @@
-Return-Path: <linux-kernel+bounces-284319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA6D94FFD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:27:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A00B94FFD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7A25284378
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEAC01C22733
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2061487F9;
-	Tue, 13 Aug 2024 08:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A27013B797;
+	Tue, 13 Aug 2024 08:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ThALaafD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="twMYYR8z"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F1113C691;
-	Tue, 13 Aug 2024 08:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE3E13AD3D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537652; cv=none; b=EFQVKcLD6FgDQzpbHgzTFWvdLZ7yaA0vbt7VyWyifqPnywMVEdLNp643g/wiZmjuoak89hi0ZUgv9Lgd7A9BA70IwgKOKWa4Df8YFEjDqn3+UvP3UgZnEGwJ9V9S11PbZJn91bFfYyShQ5bF5V2iVrZI7Xk6AWfKpP9glZO6L4w=
+	t=1723537663; cv=none; b=gScCP5WleQzD5t61qx6ZSJOd62HGWdxdRNV0toflAMBwlgiIScK5HJaemCOEV6AJOG5dPFG9XRqqpLHIaEVsdAr8AtWzofdV/457huXtdcSuPgaw0Vbj7p931AykC7A9klR7yVSZJF9z3kayi1byBPA4B/GQwBI8msLj7DLCiM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537652; c=relaxed/simple;
-	bh=RyDHZHG1qM+4Ggl8UqXwMYT3dj0QzqQytYDcJf5gWcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmMiE4Pa2WSbQdODbn0IO6T91kxfqArDxt03CiKX7fiNZXzKoXZQN0s4TqX6VNyUt8CadURowJ4lDrMdQNCeYTGSFKIob2B3FOuR4oAWV9LYil92bsV3D8/xOg61b5YSnjhY/hkuw3tKijYxjDBjILk+lihjavEISOk6ACo4ubQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ThALaafD; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723537651; x=1755073651;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RyDHZHG1qM+4Ggl8UqXwMYT3dj0QzqQytYDcJf5gWcw=;
-  b=ThALaafDcl8GrsVeS+hDRlwjf4jGNcYY4SslO1PAg7EGKAXvAuthWZYx
-   tBknVdUdZh2U+6V+u9Bv0bAee0gNmTEGIQJRKojgkRUBzK0RUE2BugYA8
-   PJYx3l0a5G+GYcMwYmCGkS0r0RYZQ6Chgj2X6oIkxFAZW3uN76cTuhR2V
-   vLedWm675LeHznEI3+VE/W/artkw9Gcd2/xM1kMzBJbLvyLQ8AW8hOMTl
-   vPOXwuC2zOUr0G/D0szqiQLbiCxetMZDV4QUxRzcNK3/ZjAI7Sqn2DB0G
-   qvNjnt3Kr0SbHXpKPpdddsAJ2RoEdDkBHGGAjieIT7Xa7NQPG1JN5M9jG
-   w==;
-X-CSE-ConnectionGUID: 0Dam2R8CQuq0oCSBo3GbSA==
-X-CSE-MsgGUID: PQLNKZHxSl2pmChePJU4vg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="44206968"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="44206968"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:27:30 -0700
-X-CSE-ConnectionGUID: V9r30wDxRkWwvgSwb20/Qw==
-X-CSE-MsgGUID: PUr0OWqzQleZMmjieiro2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63432409"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:27:26 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdmsE-0000000Eeuo-1cOg;
-	Tue, 13 Aug 2024 11:27:22 +0300
-Date: Tue, 13 Aug 2024 11:27:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrsY6tMts81T-uFa@smile.fi.intel.com>
-References: <20240812081538.1457396-1-raag.jadav@intel.com>
- <ZroK4oSAte9qdnA8@smile.fi.intel.com>
- <Zrry71BfJ31q3iOi@black.fi.intel.com>
+	s=arc-20240116; t=1723537663; c=relaxed/simple;
+	bh=mdFRkDAirghnDPIOy6KONEfVZD9BXGFjMD0EfxhiJdU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IGcJqU0Ia0+BlzhGz/ZR4OHVq0m0PgHhrCTW4pxPc7I57qzpqwoGunlQzbWVgiyBS12TuZr18A/TGVq2nhTcbGM7zZZzQ+mkwMfglhEKDgq2CbPQXc+RpT355CBEYzrKWeZExotKufDkckmJ63aoJq1iDM1RJQn21T2fRKip3/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=twMYYR8z; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso7233734e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:27:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723537658; x=1724142458; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j+WcU1i8Pfa7H0Uw57fEoiqtGdX8zfLORzxJutrBiD0=;
+        b=twMYYR8zQOO05flMkalfXKomEAErBXUjFtkWa0idC9yCppp23a2zwgPpNoyKBc9JoY
+         vuSE/JAdYObZ3EmUuHtZQ5y2PR+f93/zX6xniy92vOJtbWv8qnfSZKaqk5WQbZTdkTtI
+         6KxVfDl6XsLoKkDKdYqTL+vFMuKPP9l1DYzX1JiD8t5i4vesODUiHtlOXj6I8obUGFyb
+         dGXs+pBJl5PscYvOx9DTXzoM14kptQ+blty7QNiVP1gc6wyth9lhKT95Q1HD0MMaTHZ1
+         G/TwIk1ZXsDrczep4NlKES/mLt5lIg5dlnMpPYgNpgBkBnONbgEyCCR/vtA2AzdltEYv
+         FZwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723537658; x=1724142458;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=j+WcU1i8Pfa7H0Uw57fEoiqtGdX8zfLORzxJutrBiD0=;
+        b=NR3U/DcI/Ftprivzb+DRi9uJTjM6SFml31uPIq3UMY6AqxyXcwIWYWsuKfn45IPoPK
+         OoQb5PKnRs+jeB8EFc1kTzAMC4lbayCVGiTDeYJ2iTRB4fhJJoSeD4uZIr0RotKvSkgR
+         ZdMRM5hrlwCLecWgnFqBEJlSBpbzztqcLjE820p4UDU+JiRCDQ98ALPrNwuWuLlCmek2
+         tTbF84y0ViKD45HZm+XW9wyfgyIvggJ7IkxWiNaIw9lyBjxMDOx1vx7ji6Sjqb5NhLAG
+         RFtCL7kHKjMAiYacwAJsuTTnSBSv178mA2qJgTzGTk2k0DeuQONtm4LgKh2crH+O+hZT
+         Cf3A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDlqBfuhb1jBiCoT2oi7giY50fOlMIGWVUr4RFT8cyPRzslxu/S/TCkdBovOfeH77AXRqfE3V/nko57mtjr0Kk/eGqh3krm3ef3h6k
+X-Gm-Message-State: AOJu0Yw1ze8jSsIBwZlLCO6qgGAuFcGIK/iQ7CkpN1LyF5Ix650qbM7r
+	vXWvPtq7tnNI0COibm2j3NabNPrUkpibkGwU62c+JI/iP7s8G98Lg4oHWROXJQn0GVhJ/SrBLH7
+	RiWo=
+X-Google-Smtp-Source: AGHT+IGMAfyqcznoapwAUt9cItTGv63DkeWVVnGXL12Ac4luSAMASdQbRlHZOzzQ21n7a3N4b4VP8w==
+X-Received: by 2002:a05:6512:b25:b0:52c:def4:386b with SMTP id 2adb3069b0e04-532136637b3mr1972548e87.35.1723537657992;
+        Tue, 13 Aug 2024 01:27:37 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d781047asm13865605e9.0.2024.08.13.01.27.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 01:27:37 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] ARM: davinci: remove unused cpuidle code
+Date: Tue, 13 Aug 2024 10:27:35 +0200
+Message-ID: <20240813082735.52402-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zrry71BfJ31q3iOi@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 08:45:19AM +0300, Raag Jadav wrote:
-> On Mon, Aug 12, 2024 at 04:15:14PM +0300, Andy Shevchenko wrote:
-> > On Mon, Aug 12, 2024 at 01:45:38PM +0530, Raag Jadav wrote:
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-...
+The cpuidle driver in mach-davinci is no longer used by anyone.
+Remove it.
 
-> > > +static int
-> > > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> > > +{
-> > > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > > +	struct hwm_fan_info *fi = &ddat->fi;
-> > > +	u64 rotations, time_now, time;
-> > > +	intel_wakeref_t wakeref;
-> > > +	u32 reg_val, pulses;
-> > > +	int ret = 0;
-> > > +
-> > > +	if (attr != hwmon_fan_input)
-> > > +		return -EOPNOTSUPP;
-> > > +
-> > > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
-> > > +	mutex_lock(&hwmon->hwmon_lock);
-> > > +
-> > > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
-> > > +	time_now = get_jiffies_64();
-> > 
-> > > +	/* Handle HW register overflow */
-> > > +	if (reg_val >= fi->reg_val_prev)
-> > > +		pulses = reg_val - fi->reg_val_prev;
-> > > +	else
-> > > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
-> > 
-> > Isn't it the abs_diff() reimplementation?
-> 
-> Not exactly. This is specific to 32 bit register overflow, so we count
-> from max value.
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ arch/arm/mach-davinci/Makefile        |  1 -
+ arch/arm/mach-davinci/cpuidle.c       | 99 ---------------------------
+ arch/arm/mach-davinci/cpuidle.h       | 15 ----
+ arch/arm/mach-davinci/devices-da8xx.c |  1 -
+ 4 files changed, 116 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/cpuidle.c
+ delete mode 100644 arch/arm/mach-davinci/cpuidle.h
 
-I see. But since you have the both variables of u32, why:
-1) UINT_MAX?
-2) Not simply using
-
-	pulses = reg_val - fi->reg_val_prev;
-
-which will wrap over correctly?
-
-Note, in your case (in comparison to the wrap over variant) the off-by-one is
-present. Is it on purpose?
-
+diff --git a/arch/arm/mach-davinci/Makefile b/arch/arm/mach-davinci/Makefile
+index 450883ea0e73..31d22a5d8e1e 100644
+--- a/arch/arm/mach-davinci/Makefile
++++ b/arch/arm/mach-davinci/Makefile
+@@ -16,7 +16,6 @@ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= da850.o pdata-quirks.o
+ obj-y					+= da8xx-dt.o
+ 
+ # Power Management
+-obj-$(CONFIG_CPU_IDLE)			+= cpuidle.o
+ obj-$(CONFIG_HAVE_CLK)			+= pm_domain.o
+ ifeq ($(CONFIG_SUSPEND),y)
+ obj-$(CONFIG_ARCH_DAVINCI_DA850)	+= pm.o sleep.o
+diff --git a/arch/arm/mach-davinci/cpuidle.c b/arch/arm/mach-davinci/cpuidle.c
+deleted file mode 100644
+index 78a1575c387d..000000000000
+--- a/arch/arm/mach-davinci/cpuidle.c
++++ /dev/null
+@@ -1,99 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * CPU idle for DaVinci SoCs
+- *
+- * Copyright (C) 2009 Texas Instruments Incorporated. https://www.ti.com/
+- *
+- * Derived from Marvell Kirkwood CPU idle code
+- * (arch/arm/mach-kirkwood/cpuidle.c)
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+-#include <linux/cpuidle.h>
+-#include <linux/io.h>
+-#include <linux/export.h>
+-#include <asm/cpuidle.h>
+-
+-#include "cpuidle.h"
+-#include "ddr2.h"
+-
+-#define DAVINCI_CPUIDLE_MAX_STATES	2
+-
+-static void __iomem *ddr2_reg_base;
+-static bool ddr2_pdown;
+-
+-static void davinci_save_ddr_power(int enter, bool pdown)
+-{
+-	u32 val;
+-
+-	val = __raw_readl(ddr2_reg_base + DDR2_SDRCR_OFFSET);
+-
+-	if (enter) {
+-		if (pdown)
+-			val |= DDR2_SRPD_BIT;
+-		else
+-			val &= ~DDR2_SRPD_BIT;
+-		val |= DDR2_LPMODEN_BIT;
+-	} else {
+-		val &= ~(DDR2_SRPD_BIT | DDR2_LPMODEN_BIT);
+-	}
+-
+-	__raw_writel(val, ddr2_reg_base + DDR2_SDRCR_OFFSET);
+-}
+-
+-/* Actual code that puts the SoC in different idle states */
+-static __cpuidle int davinci_enter_idle(struct cpuidle_device *dev,
+-					struct cpuidle_driver *drv, int index)
+-{
+-	davinci_save_ddr_power(1, ddr2_pdown);
+-	cpu_do_idle();
+-	davinci_save_ddr_power(0, ddr2_pdown);
+-
+-	return index;
+-}
+-
+-static struct cpuidle_driver davinci_idle_driver = {
+-	.name			= "cpuidle-davinci",
+-	.owner			= THIS_MODULE,
+-	.states[0]		= ARM_CPUIDLE_WFI_STATE,
+-	.states[1]		= {
+-		.enter			= davinci_enter_idle,
+-		.exit_latency		= 10,
+-		.target_residency	= 10000,
+-		.name			= "DDR SR",
+-		.desc			= "WFI and DDR Self Refresh",
+-	},
+-	.state_count = DAVINCI_CPUIDLE_MAX_STATES,
+-};
+-
+-static int __init davinci_cpuidle_probe(struct platform_device *pdev)
+-{
+-	struct davinci_cpuidle_config *pdata = pdev->dev.platform_data;
+-
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "cannot get platform data\n");
+-		return -ENOENT;
+-	}
+-
+-	ddr2_reg_base = pdata->ddr2_ctlr_base;
+-
+-	ddr2_pdown = pdata->ddr2_pdown;
+-
+-	return cpuidle_register(&davinci_idle_driver, NULL);
+-}
+-
+-static struct platform_driver davinci_cpuidle_driver = {
+-	.driver = {
+-		.name	= "cpuidle-davinci",
+-	},
+-};
+-
+-static int __init davinci_cpuidle_init(void)
+-{
+-	return platform_driver_probe(&davinci_cpuidle_driver,
+-						davinci_cpuidle_probe);
+-}
+-device_initcall(davinci_cpuidle_init);
+-
+diff --git a/arch/arm/mach-davinci/cpuidle.h b/arch/arm/mach-davinci/cpuidle.h
+deleted file mode 100644
+index 976d43073597..000000000000
+--- a/arch/arm/mach-davinci/cpuidle.h
++++ /dev/null
+@@ -1,15 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-only */
+-/*
+- * TI DaVinci cpuidle platform support
+- *
+- * 2009 (C) Texas Instruments, Inc. https://www.ti.com/
+- */
+-#ifndef _MACH_DAVINCI_CPUIDLE_H
+-#define _MACH_DAVINCI_CPUIDLE_H
+-
+-struct davinci_cpuidle_config {
+-	u32 ddr2_pdown;
+-	void __iomem *ddr2_ctlr_base;
+-};
+-
+-#endif
+diff --git a/arch/arm/mach-davinci/devices-da8xx.c b/arch/arm/mach-davinci/devices-da8xx.c
+index 6939166c33c2..5e73a725d5da 100644
+--- a/arch/arm/mach-davinci/devices-da8xx.c
++++ b/arch/arm/mach-davinci/devices-da8xx.c
+@@ -21,7 +21,6 @@
+ #include "common.h"
+ #include "cputype.h"
+ #include "da8xx.h"
+-#include "cpuidle.h"
+ #include "irqs.h"
+ #include "sram.h"
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
