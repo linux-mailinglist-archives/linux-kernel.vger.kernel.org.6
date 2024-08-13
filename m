@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-284792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E323E95052C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:38:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF78F950559
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:43:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 761C6B2104C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B05E1F24531
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82DEF199EA6;
-	Tue, 13 Aug 2024 12:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A61D19AA63;
+	Tue, 13 Aug 2024 12:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0cX+7TfR"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="z0nsa5+M"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8662D21345;
-	Tue, 13 Aug 2024 12:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ADA199E9B;
+	Tue, 13 Aug 2024 12:41:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552722; cv=none; b=BZcE96Ir3IgdXeTL6WRhYaBY3cFl0e7QtP6DdnDZFWnt/lhH31ELUMsCyzpHs8lgRWH34DU91F0/O/wHuYt6sMaZTz6Jfv27wTgYMgIlkiLKm/CFQZm99T2ERhlZgGMTxpcjnlUtG3n23WuVQNwNeIvqm1eD+xI81wFAB0WQxCA=
+	t=1723552870; cv=none; b=fNYXmaXpH+47ozawCDspw806wvG5LYQnZi15f6W0e9ixAJ/YBxotv8d+pWpbdLt4+2ilN8oItJEUQmK5siYJ2Q4dHppHyFmrKWca/dBQC2sbc+LN0LEN5IzmevU7oFh19FIPOqraLsWHJi5/EcrAqlJu5cn9dBO31KuuBpOHMXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552722; c=relaxed/simple;
-	bh=lPTcntDWAP9ZgrzLsA+hOyT0ui0pqN4m3i/LqJnLmFk=;
+	s=arc-20240116; t=1723552870; c=relaxed/simple;
+	bh=Lzb34/CvVVyhI01Dl5f0d3ecyQv2GsEPN7HgFMl3tZE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+biQcNkkfmqwLgwB25yDzvbPFIcLOzVIZPqvW0ReIjOX4jLZtATA4+JYZ1deraa5TWAJVxwvqC2UDB5vrGx81FWDIJyommuTAuWybYOAFL/XIiI7heHtRHPUrJDTUG+1XFd7ZPL7gntI0d0+sdm+N+poHMCy1nlOFRNWi80kU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0cX+7TfR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91123C4AF09;
-	Tue, 13 Aug 2024 12:38:41 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bQXu/4i+W3GOIRn+0Y0x+ioCmW+99/yYn9goaOQpOhI22gM+puoqzuysIPnsGpiYI7uSZ0e/wbck1DHlMQ7B4JtZz33CveIQMktGdlsTXrxMaPeDmGprTFhalyIYcu2FFx+99h/0XjYthI8qdGO2GnHUceHzHxxanum53hB4aJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=z0nsa5+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56C8CC4AF0E;
+	Tue, 13 Aug 2024 12:41:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723552722;
-	bh=lPTcntDWAP9ZgrzLsA+hOyT0ui0pqN4m3i/LqJnLmFk=;
+	s=korg; t=1723552869;
+	bh=Lzb34/CvVVyhI01Dl5f0d3ecyQv2GsEPN7HgFMl3tZE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0cX+7TfRqnxA52EUeFcWVvXT1TPDxiTG7r7LUyim58LTr5X/MePsa1u7EigjNb63+
-	 OdhvQrKt0NgF8YogQ27Z+ul1zW0o4FoCq7HhcClzAIxPZp+5J1UvFn2EHIYrwsU91R
-	 Mar+RDQZBf5IYYqMIR8Sl+iTokzSZBHxEHdpz3vw=
-Date: Tue, 13 Aug 2024 14:38:38 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net,
-	skhan@linuxfoundation.org, Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Bluetooth: vhci: manage mutex with cleanup helpers
-Message-ID: <2024081309-lion-overlying-16a1@gregkh>
-References: <20240813121829.6693-1-0xff07@gmail.com>
+	b=z0nsa5+MgU3tVLGNJuqSqbqjp23XTEfc4pSzF+V7xOrGDrhAMQA+UxUUwE9Fz7KtE
+	 uehD0Z7n6z7JrCNOUxig1FLGafJpzkh9A95/ESi39rTRqtVkhEZmJ12h0JQ16pivgV
+	 ezyOcqozcNcRM1ijhmoxVd4cdlLklFSmZfrInANU=
+Date: Tue, 13 Aug 2024 14:41:06 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc: Jens Wiklander <jens.wiklander@linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+	"op-tee@lists.trustedfirmware.org" <op-tee@lists.trustedfirmware.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Shyam Saini <shyamsaini@linux.microsoft.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Jerome Forissier <jerome.forissier@linaro.org>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Manuel Traut <manut@mecka.net>,
+	Mikko Rapeli <mikko.rapeli@linaro.org>,
+	Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
+Subject: Re: [PATCH v8 1/4] rpmb: add Replay Protected Memory Block (RPMB)
+ subsystem
+Message-ID: <2024081315-cofounder-stem-8b3d@gregkh>
+References: <20240812133127.865879-1-jens.wiklander@linaro.org>
+ <20240812133127.865879-2-jens.wiklander@linaro.org>
+ <2024081346-dutiful-stalemate-0e07@gregkh>
+ <CAHUa44HYQVhT0=E9py2JsO2X93wLhZ=YvH0fBqQpzFBujSGgtw@mail.gmail.com>
+ <2024081346-riveting-unwired-d9dc@gregkh>
+ <PH7PR11MB7605F50AC47D18361D933CE1E5862@PH7PR11MB7605.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240813121829.6693-1-0xff07@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <PH7PR11MB7605F50AC47D18361D933CE1E5862@PH7PR11MB7605.namprd11.prod.outlook.com>
 
-On Tue, Aug 13, 2024 at 08:18:28PM +0800, Yo-Jung (Leo) Lin wrote:
-> Use macros in liunx/cleanup.h for automatic resource cleanup.
-
-That says what you do, but not _why_ you want to do it.
-
+On Tue, Aug 13, 2024 at 12:04:03PM +0000, Winkler, Tomas wrote:
+> > 
+> > On Tue, Aug 13, 2024 at 01:26:18PM +0200, Jens Wiklander wrote:
+> > > On Tue, Aug 13, 2024 at 11:29 AM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Mon, Aug 12, 2024 at 03:31:24PM +0200, Jens Wiklander wrote:
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/misc/rpmb-core.c
+> > > > > @@ -0,0 +1,233 @@
+> > > > > +// SPDX-License-Identifier: GPL-2.0
+> > > >
+> > > > Fine, but:
+> > > >
+> > > > > --- /dev/null
+> > > > > +++ b/include/linux/rpmb.h
+> > > > > @@ -0,0 +1,136 @@
+> > > > > +/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0 */
+> > > >
+> > > > Really?
+> > > >
+> > > > Why?  I need lots of documentation and a lawyer sign off for why
+> > > > this is a dual license for a file that is obviously only for
+> > > > internal Linux kernel stuff.
 > 
-> Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
-> ---
->  drivers/bluetooth/hci_vhci.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
-> index c4046f8f1985..70f0c28372ec 100644
-> --- a/drivers/bluetooth/hci_vhci.c
-> +++ b/drivers/bluetooth/hci_vhci.c
-> @@ -19,6 +19,7 @@
->  #include <linux/errno.h>
->  #include <linux/sched.h>
->  #include <linux/poll.h>
-> +#include <linux/cleanup.h>
->  
->  #include <linux/skbuff.h>
->  #include <linux/miscdevice.h>
-> @@ -468,9 +469,9 @@ static int vhci_create_device(struct vhci_data *data, __u8 opcode)
->  {
->  	int err;
->  
-> -	mutex_lock(&data->open_mutex);
-> -	err = __vhci_create_device(data, opcode);
-> -	mutex_unlock(&data->open_mutex);
-> +	scoped_guard(mutex, &data->open_mutex) {
-> +		err = __vhci_create_device(data, opcode);
-> +	}
+> This was legal approved.
 
-This isn't correct, but also, it's not needed at all :(
+This internal Linux kernel header file for an internal-only Linux kernel
+api?  Wonderful, please get the Intel lawyer who agreed with that to
+sign off on the commit next time around explaining why it needs to be
+this way.
+
+thanks,
 
 greg k-h
 
