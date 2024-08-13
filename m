@@ -1,91 +1,135 @@
-Return-Path: <linux-kernel+bounces-285376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3FAE950CBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:01:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99851950CBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFBD01C228A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447A21F231B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5057E1A3BC1;
-	Tue, 13 Aug 2024 19:01:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2391A3BDA;
+	Tue, 13 Aug 2024 19:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaQGJ4ZC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ac4Vw9K3"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E36D1BF53;
-	Tue, 13 Aug 2024 19:01:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BAB19AD5C
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575687; cv=none; b=jRP6I8TJKkc0ufm/wmIREZdGTJDSvQe9Z9XYsAsRLdv79+4KMvW9j1tFGO6qCaYHMRgs6wTY5680CRCNZJg7TFxC/+RVrFPmbwDCKxbrwA0zdpyFOYcyTWUeOzvUHTHbDJG4esjry4UpeiazezItV12r6WW5x3AX81/IklOWA1c=
+	t=1723575708; cv=none; b=spQ7Xjg2oihvcP0C56Z97R20poEHxsCFQePxDT4Zite8LsTxRZkohLOlf1yjn0DzNkY3DKqg0JKYFiLfJUE/xxlkfnUKQC/Af5cf1upB4tHQeT4Vwuztz8sIB4m9OeiEImmrzCVWELVZM6PIyB2E9up+ygC65BmrcKQkatWfC08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575687; c=relaxed/simple;
-	bh=renmw59HKxMX5MC5Hbv+XrZT1TC9Hrv/wjdkVhu1QGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i02+Fge9k9wY+jBQPenNBXRIWDf1vGsHpcSEofoxKEbeh3X+/zwMkcOfapwieX6WxQbQt2zqanlIaPir706Ts6VzIqtfWxJHiVEA+Q2W+ZvAPxpwfGCreH8zQfzFyydX2//BK65o/vMfgSWK8pPeGwWYL4rlPOnf/MgXiPbHAUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaQGJ4ZC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF127C32782;
-	Tue, 13 Aug 2024 19:01:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723575686;
-	bh=renmw59HKxMX5MC5Hbv+XrZT1TC9Hrv/wjdkVhu1QGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WaQGJ4ZCSgS//R/BPnue0w1ew0ivihpN0P8gDojYPDDh5WnD/D3v4XyvuUkh7yTFx
-	 dO4E4klxoPzahE8evwJIg6hc16C1X6h4CP3LzNAyO5zXO5wW0IBc8L15jO3R4IC6sh
-	 OyBENSWg6koViMKG715xqbjeeph02tqzUfkj8VcdJFQjm4yl18yVw971sLJbKUS6YV
-	 EuGDNVfoXqHAkng9u2DiAjA+MT5EwsWGPZHlI61YHHd/aBTFNqS/de84/7xNW0S5Sp
-	 PZzvB/cIVj+ZF7+FdMVa6yRpMwFfaQ6S7DF3n85wj7/vqiyiSz/Ufmjg50YtZXNrxW
-	 weknuk/ErC8Dg==
-Date: Tue, 13 Aug 2024 13:01:24 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: devicetree@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Conor Dooley <conor+dt@kernel.org>, Mark Brown <broonie@kernel.org>,
-	linux-kernel@vger.kernel.org, Li Yang <leoyang.li@nxp.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Qiang Zhao <qiang.zhao@nxp.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v2 07/36] dt-bindings: soc: fsl: cpm_qe: Add QUICC Engine
- (QE) TSA controller
-Message-ID: <172357568355.1494768.17469941704094420222.robh@kernel.org>
-References: <20240808071132.149251-1-herve.codina@bootlin.com>
- <20240808071132.149251-8-herve.codina@bootlin.com>
+	s=arc-20240116; t=1723575708; c=relaxed/simple;
+	bh=B06vCpEVkLscAk1EZQAejwdszDJu8BDjq69UVV3hPZM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FSplbrk2y+7mm4ETrKZjtOk9nEa6DZ/igdi/x+/m4cCO+UTHKnOWD6yLoMVCJR+3VkxBtvsrVgwJ+M44b8mkrlwhMJJ02/KqXWuFRfKdOvXa2XCeB2FBTjokrRl7jdhgfDjTIqYOl0ftSbM2IAlUlwQQbnZxSW+HVE56lxehO3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ac4Vw9K3; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42816ca782dso44863375e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1723575705; x=1724180505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/bvdIz9zw5pv/6chqiDZ2OQiZvZ77IK4vNhyI9I4tGw=;
+        b=Ac4Vw9K3EnkjLNI+v9Z9UL/1IWaI1scoFxfKP1S+VnVkDTCTAqEtrklgFN5mhlHt1U
+         6NNVfg458rIuDylw07BCJc+p+kw1K5als6Afp/CrnJaeumohyDvDaoO3zSruZcNKRImO
+         v/iZQSoiUiNRa1/ZdlXtKiBtH8rKy1n8ukQqudPMivtWigDsh+PXsLMnyjiW37KWLV0I
+         1d+3ll0gpxxrmOmTU+UmFUNxllKov5hU9net3vVuHm1HshgiJMrhuLOvtWgYbALDulaS
+         mDLi7MgSi+iTZf2IFvm9/K0FcklcIPAoLbJfIzo78TsI3XJcoeZikSfZdFGF2oppHrae
+         KW3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723575705; x=1724180505;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/bvdIz9zw5pv/6chqiDZ2OQiZvZ77IK4vNhyI9I4tGw=;
+        b=EcQ3SSt3lo/waz3dHxGA9OCL5fA7pWTRT/5BM7IHHljHSdaJrwwze3xx740zWxrIVN
+         QqaqYUNvd18LRbYfX1VTpbQmreVd4lCL5+qcDORGS8M4DPLUCQb6HxIwaHfZZL6wVPEz
+         L3NSRrYg7Sxeo/cTDllrfwbzX5bNDBoGLr2cJD8CcpSk8DGBPaNG6HZGUW53xZdlIlKK
+         Fr+3ioiYXueWjD4O5YyWdFtxIKsAPGhcCFn3VjvYuDmuEfzrQF7cVg5sB+yJNkbhg9d7
+         6WWp5EeZpfmWsBxxyQ5oRjbG7HBSNM2z7tiTVZF+R5h7/a6Z1d/ElMnSsb3KkxFrW0Wg
+         a6GA==
+X-Forwarded-Encrypted: i=1; AJvYcCVdXi1vggZzWT16Xa6NbsmAdiIzZtAhqoyBydBCyfrL0tKW3/zj33NeHXzBNq/tPuGnbTwyWoMsxBtik97hTXzDoZG1uhthMpeyIy+z
+X-Gm-Message-State: AOJu0YwZEyWZIgqvm5T/FYGz4Yr5QfZWOPHdUA+olRsMbVZSWzhYZrAh
+	MnnIGDSByL1c1K2WfZi2nCAf+BhctRpoOPJrqwmYWCsAwqmXwroRoGyTob099uI=
+X-Google-Smtp-Source: AGHT+IHSXmOSdT9xJa1IO63Ic3pBT1N7/ru5bLA9LmFrAWiboWXekJJr2W814VAyRznK7QNO3pcZxw==
+X-Received: by 2002:a05:600c:19d0:b0:426:58cb:8ca3 with SMTP id 5b1f17b1804b1-429dd23d446mr3364135e9.21.1723575704374;
+        Tue, 13 Aug 2024 12:01:44 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:3979:ff54:1b42:968a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738947sm234170345e9.10.2024.08.13.12.01.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:01:44 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-bluetooth@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] dt-bindings: bluetooth: bring the HW description closer to reality for wcn6855
+Date: Tue, 13 Aug 2024 21:01:31 +0200
+Message-ID: <20240813190131.154889-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808071132.149251-8-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-On Thu, 08 Aug 2024 09:11:00 +0200, Herve Codina wrote:
-> Add support for the time slot assigner (TSA) available in some
-> PowerQUICC SoC that uses a QUICC Engine (QE) block such as MPC8321.
-> 
-> This QE TSA is similar to the CPM TSA except that it uses UCCs (Unified
-> Communication Controllers) instead of SCCs (Serial Communication
-> Controllers). Also, compared against the CPM TSA, this QE TSA can handle
-> up to 4 TDMs instead of 2 and allows to configure the logic level of
-> sync signals.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  .../bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml   | 210 ++++++++++++++++++
->  include/dt-bindings/soc/qe-fsl,tsa.h          |  13 ++
->  2 files changed, 223 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-tsa.yaml
->  create mode 100644 include/dt-bindings/soc/qe-fsl,tsa.h
-> 
+Describe the inputs from the PMU that the Bluetooth module on wcn6855
+consumes and drop the ones from the host.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Note: This breaks the current contract but the only two users of wcn6855
+upstream - sc8280xp based boards - will be updated in DTS patches sent
+separately.
+
+ .../bindings/net/bluetooth/qualcomm-bluetooth.yaml     | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+index 68c5ed111417..64a5c5004862 100644
+--- a/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
++++ b/Documentation/devicetree/bindings/net/bluetooth/qualcomm-bluetooth.yaml
+@@ -172,14 +172,14 @@ allOf:
+               - qcom,wcn6855-bt
+     then:
+       required:
+-        - enable-gpios
+-        - swctrl-gpios
+-        - vddio-supply
+-        - vddbtcxmx-supply
+         - vddrfacmn-supply
++        - vddaon-supply
++        - vddwlcx-supply
++        - vddwlmx-supply
++        - vddbtcmx-supply
+         - vddrfa0p8-supply
+         - vddrfa1p2-supply
+-        - vddrfa1p7-supply
++        - vddrfa1p8-supply
+   - if:
+       properties:
+         compatible:
+-- 
+2.43.0
 
 
