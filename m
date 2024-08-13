@@ -1,100 +1,143 @@
-Return-Path: <linux-kernel+bounces-283948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765A594FAF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:14:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C29C294FAFC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9D771C210BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:14:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2D371C21DB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 01:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10951749C;
-	Tue, 13 Aug 2024 01:14:16 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38D96AAD;
+	Tue, 13 Aug 2024 01:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dIeS3c+h"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805584C81;
-	Tue, 13 Aug 2024 01:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B40AD2D
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723511655; cv=none; b=dS6D9h9gbW3dUlCR7wZTyWHFm4aDDGHc4QenMS4h6EY2qaxTj22yBvfXr24XYI0IE0PTqiZno/Ukih8fZ57C32v+GdeZeUeB78pUI9gfylndjFfZM7OSV+ukOzlXyN3bRVKWFqOFijDXd+bCQUq2Sv+IbFPGRt69SFRLlfsJFXE=
+	t=1723511827; cv=none; b=hK+3hi+rwcNXZnAA4Ei2ghEpIqfAdaBJW0l97GHizmNQO0imySvZoU5qVkxpJp268G3hxFuzT97IipDctWtkRuApIw/3uWwgmNnumvYHfSG4D0nQk1+QwAjWsgrY2mpIfYGnwn+WH7oXZBjggEH9k5a+93GFulwPNr9QAWzjvcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723511655; c=relaxed/simple;
-	bh=QRJK1qrmLtmgWTXPkRp19MsZgzlSH8bpmDM3MgE5Krk=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=n3rgE+lkpdmnc6ENQWtfyzsmQ+1DvMYjMTEGfV7uX8V4/zlHLosul1b02MR9zLmGXUc7OKTyxUkUDZbFS92RtnkH1+ZwGjVZUMZTgux4/41sirE2UqZPvfwyHXlZW2xg1lrXeMQAX+xR8snPZj+3yR7aosXRsw7gQSAGvN0btwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4WjYJX6h6fzfbNW;
-	Tue, 13 Aug 2024 09:12:12 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7AA48180102;
-	Tue, 13 Aug 2024 09:14:09 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 13 Aug 2024 09:14:09 +0800
-Subject: Re: [PATCH v2] scsi: sd: retry command SYNC CACHE if format in
- progress
-To: Bart Van Assche <bvanassche@acm.org>,
-	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>
-References: <20240810015912.856223-1-liyihang9@huawei.com>
- <be2a8462-38fb-4e74-905d-12bc9f678082@acm.org>
-CC: <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <prime.zeng@huawei.com>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <439a83c1-4a61-0ef3-b77e-917c6ae2d653@huawei.com>
-Date: Tue, 13 Aug 2024 09:14:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1723511827; c=relaxed/simple;
+	bh=fdx4xebKn4zVaEzjrsdRv+DbFnqcmqtYQJIVzKBieCM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1cFs9HL2/dRUdUPHNNeD6c0wQqG3xz9bs1DKpS6All7QkBN5I6S0Q3HkH7pa9yTAuYayyPyfioM/daUFaFolqVrbIYh7xPllx+7vhxb4hmlzr50GT9+5OfzjbWcYwIBi04bm/PvTTddhqFXXy2huNKYAAV8Ye+aw6QRcbXBmR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dIeS3c+h; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1723511820;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ohOtBd0qgYjrP6AMGoydpXhTGTed+etuoRj4y+AjGQ4=;
+	b=dIeS3c+hliq/xB+w6R3A2nk846RU54T+j+9qIjPMDIFpKQyZs8CavFW3gi0tr+Yvl1GTWD
+	pH8OTxJ8avTHRjRS2Je0+yyC1LfAUgtNvrrj/DYEEjQ80OscekNTfcjKMOKGBprXtVvKfb
+	stGaSqvhmj7XTC2nmnA/DF311YD5mRE=
+From: Jose Fernandez <jose.fernandez@linux.dev>
+To: =?UTF-8?q?Thomas=20Wei=C3=9Fschuh?= <linux@weissschuh.net>,
+	Christian Heusel <christian@heusel.eu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: Jose Fernandez <jose.fernandez@linux.dev>,
+	Peter Jung <ptr1337@cachyos.org>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V3] kbuild: control extra pacman packages with PACMAN_EXTRAPACKAGES
+Date: Mon, 12 Aug 2024 19:16:19 -0600
+Message-ID: <20240813011619.13857-1-jose.fernandez@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <be2a8462-38fb-4e74-905d-12bc9f678082@acm.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
+Introduce the PACMAN_EXTRAPACKAGES variable in PKGBUILD to allow users
+to specify which additional packages are built by the pacman-pkg target.
 
+Previously, the api-headers package was always included, and the headers
+package was included only if CONFIG_MODULES=y. With this change, both
+headers and api-headers packages are included by default. Users can now
+control this behavior by setting PACMAN_EXTRAPACKAGES to a
+space-separated list of desired extra packages or leaving it empty to
+exclude all.
 
-On 2024/8/13 5:24, Bart Van Assche wrote:
-> On 8/9/24 6:59 PM, Yihang Li wrote:
->> If formatting a suspended disk (such as formatting with different DIF
->> type), the disk will be resuming first, and then the format command will
->> submit to the disk through SG_IO ioctl.
->>
->> When the disk is processing the format command, the system does not submit
->> other commands to the disk. Therefore, the system attempts to suspend the
->> disk again and sends the SYNC CACHE command. However, the SYNC CACHE
->> command will fail because the disk is in the formatting process, which
->> will cause the runtime_status of the disk to error and it is difficult
->> for user to recover it. Error info like:
->>
->> [  669.925325] sd 6:0:6:0: [sdg] Synchronizing SCSI cache
->> [  670.202371] sd 6:0:6:0: [sdg] Synchronize Cache(10) failed: Result: hostbyte=0x00 driverbyte=DRIVER_OK
->> [  670.216300] sd 6:0:6:0: [sdg] Sense Key : 0x2 [current]
->> [  670.221860] sd 6:0:6:0: [sdg] ASC=0x4 ASCQ=0x4
->>
->> To solve the issue, retry the command until format command is finished.
->>
->> Signed-off-by: Yihang Li <liyihang9@huawei.com>
-> 
-> Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-> 
-> If you want this patch to land in older kernels a "Cc: stable" tag will
-> have to be added.
-> 
-ok, I will add this tag in patch v3.
+For example, to build only the base package without extras:
 
-Thanks,
+make pacman-pkg PACMAN_EXTRAPACKAGES=""
 
-Yihang.
+Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
+Reviewed-by: Peter Jung <ptr1337@cachyos.org>
+---
+v1->v2:
+- Build all extra packages by default
+- Remove unnecessary lines
+v2->v3:
+- Move the default PACMAN_EXTRAPACKAGES value to PKGBUILD
+- Remove all changes done to Makefile.package
+- Conditionally run the install-extmod-build script if CONFIG_MODULES=y
+- Add explicit `mkdir -p "${builddir}"` prior to copying System.map and .config
+
+This patch gives users control over which extra packages are built, addressing
+concerns about build time from adding a new debug package [1]. It allows
+selective inclusion of extra packages before introducing an optional debug
+package.
+
+[1] https://lore.kernel.org/lkml/20240801192008.GA3923315@thelio-3990X/T/
+
+ scripts/package/PKGBUILD | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/scripts/package/PKGBUILD b/scripts/package/PKGBUILD
+index 663ce300dd06..fbd7eb10a52c 100644
+--- a/scripts/package/PKGBUILD
++++ b/scripts/package/PKGBUILD
+@@ -3,10 +3,13 @@
+ # Contributor: Jan Alexander Steffens (heftig) <heftig@archlinux.org>
+ 
+ pkgbase=${PACMAN_PKGBASE:-linux-upstream}
+-pkgname=("${pkgbase}" "${pkgbase}-api-headers")
+-if grep -q CONFIG_MODULES=y include/config/auto.conf; then
+-	pkgname+=("${pkgbase}-headers")
+-fi
++pkgname=("${pkgbase}")
++
++_extrapackages=${PACMAN_EXTRAPACKAGES-headers api-headers}
++for pkg in $_extrapackages; do
++	pkgname+=("${pkgbase}-${pkg}")
++done
++
+ pkgver="${KERNELRELEASE//-/_}"
+ # The PKGBUILD is evaluated multiple times.
+ # Running scripts/build-version from here would introduce inconsistencies.
+@@ -77,10 +80,13 @@ _package-headers() {
+ 	cd "${objtree}"
+ 	local builddir="${pkgdir}/usr/${MODLIB}/build"
+ 
+-	echo "Installing build files..."
+-	"${srctree}/scripts/package/install-extmod-build" "${builddir}"
++	if grep -q CONFIG_MODULES=y include/config/auto.conf; then
++		echo "Installing build files..."
++		"${srctree}/scripts/package/install-extmod-build" "${builddir}"
++	fi
+ 
+ 	echo "Installing System.map and config..."
++	mkdir -p "${builddir}"
+ 	cp System.map "${builddir}/System.map"
+ 	cp .config "${builddir}/.config"
+ 
+
+base-commit: 7809144639f6c92bcb11bd3284b7806a42cc67fe
+-- 
+2.46.0
+
 
