@@ -1,240 +1,149 @@
-Return-Path: <linux-kernel+bounces-285341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539BF950C44
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:29:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FB56950C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF5D28385C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14258283B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E520E1A76B0;
-	Tue, 13 Aug 2024 18:28:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDB3B1A76BC;
+	Tue, 13 Aug 2024 18:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J9kawjOS"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fuv+6xA7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33ECC1A38E3;
-	Tue, 13 Aug 2024 18:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDFF1A38F3
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723573699; cv=none; b=TDQITPW4ohOQfa9NnI95Owdb533dRg86XATMF//5YQ3ikSAssC9MlzmgWJlIgcJNkdWYbNXM32oY+Qf5sFZnzuPp64pUEPYGt+CAaDOp2dT3+VFCs6hu/20sdgt3EjKtqyklVY8ryMixoky2FTm7P0oqm2v4wMMUs+d/KNv/XEE=
+	t=1723573707; cv=none; b=fIaSyTono23cUlXoSrE8yW8TbQoAfTSHpkUwEiqHU2XAFk6+pFP5XS4sRhjDrDdKQzLi157UPBXTiXSU/OMIp2ETgW8m2lsgeHSycpUcr2dOTI34n24JV86+1xp32ovJPFDxVaFpkI2QZkuTJpRdYcBH7d36Q8xfhBht73mABDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723573699; c=relaxed/simple;
-	bh=mIAZG5sUpFuawjYnCf8/ZwImzlvCWBC0p2D0x/RBjPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jdw04wqZ578IYVUjHJ76mLiZBAmSS1fB2+URKTC16aqGROQayXsiNXQo/wSfuvR4pKGFIV1HqjQY2FYPypkV12IaQ4EelZ3REvwn2Gz3GsHFAs2h5DOWUhW7hnBEdcHS1o75rLf2+CM1LD/09tRegewt6n7M6+q2Q7fvBUSbKMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J9kawjOS; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7c691c8f8dcso1205450a12.1;
-        Tue, 13 Aug 2024 11:28:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723573697; x=1724178497; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sh8DmLjcOJd1vt9t/pxgkMxZLl+WSspUiHI7GIGi7O4=;
-        b=J9kawjOShgMoPgz5mm2PdqzPgKHseYvEei8t3bATk9If25rxaUj0g/bhaGRO2YhMh7
-         z8SUnVULwTirjEIxcEkOsz3Be0HMHgE0OaFe4AalaL2sQHtuoBOpzgtYg6NJCvWjllOR
-         Fw4yewuXq2HA9Dj25MVGcCyHdFI7mRV99JZFJeMssiEwxX54ItLBc1zIJ54Wgzr429pb
-         H1/k+r454GdS6BOiEJBVO6ZKTlRFYoE1ijkOyEZj0D4zdZVOXhWbJWUA0YFcAYZm5/so
-         RYbfxxMwYRkKYmH90ZGNVQ7K+7DLJZ39vcamVCXPv1HMaS7nbSjETmrnySDEIQrGzobi
-         R7PA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723573697; x=1724178497;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sh8DmLjcOJd1vt9t/pxgkMxZLl+WSspUiHI7GIGi7O4=;
-        b=i+MJMYEtDdnaMgNwWLu4raYaADO/Bg+ov832PbfSe2SqYuSpHZTrfuSxemkpywlOw7
-         STjgpqRRlTpY0FQrs8AouNLj+PYMmNE04DzjFzUCcsoL5Ox5dDWojD0WTETC0x/mJXsq
-         2Q7U5QbcJ8D/1ET4drTE7DJfAbv9nnfKzA3NSY4nXavA4x6iDAsM9HTe533rJNbbcbvc
-         t/UZCWt32IHgApzLLHyjD3XdOobX7jLTDXJf2+R6xDfma3E7WgM/1ks6ZtJAqb7gRhL2
-         A9Lo2xOR4tLuUfIoQb/udLRUZugtZ6F6PYLTHSyvW7LI8OPObqUvGZUorBIk9bocHfWl
-         Eifg==
-X-Forwarded-Encrypted: i=1; AJvYcCVnlT4BIqGalJ00vew7evf3icvxtlDAwO560y096GH/UEyujf44hIrP6bomGCHhMC6kQGg1UJ41zNPgPOQjq6k/HURkK9hIQvQGxbYP5Q==
-X-Gm-Message-State: AOJu0YyPzy6y4dboWmycW1LMnGO8/dnRL/e2u0nxU4u59WjN4tsI19Pa
-	h/SIhpz0qUpl9+klktFo1jneutFeQJD6Y+3xCk7TMpKu3UVpbrUrhjTOU4pNzl3jVDGJZqT/0wp
-	0xk+7NHutikz8fOh9QjtNaIObdtw=
-X-Google-Smtp-Source: AGHT+IFt3evYFb0030I+G4npVCD6fbwKD6SGrUAptKT7IfvrhGhjYCjzQ7C4kPzpXfABV4ARMDPt2WbtQxxHdGn16tQ=
-X-Received: by 2002:a17:90b:4a01:b0:2c9:6f06:8009 with SMTP id
- 98e67ed59e1d1-2d3aaa754femr481762a91.1.1723573697272; Tue, 13 Aug 2024
- 11:28:17 -0700 (PDT)
+	s=arc-20240116; t=1723573707; c=relaxed/simple;
+	bh=Hpt8Zo5E5ld5ZcUmnN7Q+4OYNPJ9H1oI3fleI51iO8M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=swX6SG+6wYBSMi0Pa2O2pNCwN6OAToI1n89UYLWGDmtDpw+xOQ1gYOv/EB+qhgpDxFq5TyX+9VbZFGsW6BT9EqEXOug3z9/x2EJMKw46enjOKxscQWqT43Z/j5mQ4kxdXP1JBoWRNBHSH9mJTEeCJ8neSWfrx7lpaWIr18W9o6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fuv+6xA7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723573704;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JiRLVePlGkQbycAKOyNYAtTK9fFgSoD/Bslm5dQ9Bug=;
+	b=fuv+6xA7XUzSlonuvlrgkhrwM8jyX185NNwzyjyzhhKR0/TJa2IBZd74VCvSQJWsSqi4G9
+	v5gii4pETtB3Pon3dtl6uq0w/6JGmisuJlgaewSq5JXYGkSBtdGmGemeywlyFyGS4AQx/h
+	aassV3hP1+98d27D2rz+xJUtByoxK1U=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-328-bC5nKgKYPJefVndcaNOblg-1; Tue,
+ 13 Aug 2024 14:28:20 -0400
+X-MC-Unique: bC5nKgKYPJefVndcaNOblg-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6FFE018EB230;
+	Tue, 13 Aug 2024 18:28:19 +0000 (UTC)
+Received: from [10.2.16.208] (unknown [10.2.16.208])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BD4891944A95;
+	Tue, 13 Aug 2024 18:28:17 +0000 (UTC)
+Message-ID: <986ef2c0-4ed7-4b13-82f2-5f14e30d08e1@redhat.com>
+Date: Tue, 13 Aug 2024 14:28:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240322195418.2160164-1-jcmvbkbc@gmail.com> <5b51975f-6d0b-413c-8b38-39a6a45e8821@westnet.com.au>
- <CAMo8Bf+RKVpYT309ystJKVHDqDaK4ZavGe3e-a_jvG7AOcqciw@mail.gmail.com> <a0293b2d-7a43-49b7-8146-c20fd4be262f@westnet.com.au>
-In-Reply-To: <a0293b2d-7a43-49b7-8146-c20fd4be262f@westnet.com.au>
-From: Max Filippov <jcmvbkbc@gmail.com>
-Date: Tue, 13 Aug 2024 11:28:06 -0700
-Message-ID: <CAMo8Bf+GWXxHVorNvE=UWQDXfRvLE1MsK-dRwh_aZrd=ARxm2w@mail.gmail.com>
-Subject: Re: [PATCH] binfmt_elf_fdpic: fix /proc/<pid>/auxv
-To: Greg Ungerer <gregungerer@westnet.com.au>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>, 
-	Kees Cook <keescook@chromium.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] padata: Fix possible divide-by-0 panic in
+ padata_mt_helper()
+To: Kamlesh Gurudasani <kamlesh@ti.com>,
+ Steffen Klassert <steffen.klassert@secunet.com>,
+ Daniel Jordan <daniel.m.jordan@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240806174647.1050398-1-longman@redhat.com>
+ <87jzgonug5.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+ <70e28278-d9cf-4158-b296-cabe7786e4a7@redhat.com>
+ <87h6brobq1.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <87h6brobq1.fsf@kamlesh.i-did-not-set--mail-host-address--so-tickle-me>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Mon, Aug 12, 2024 at 9:53=E2=80=AFPM Greg Ungerer <gregungerer@westnet.c=
-om.au> wrote:
-> On 13/8/24 04:02, Max Filippov wrote:
-> > On Sun, Aug 11, 2024 at 7:26=E2=80=AFPM Greg Ungerer <gregungerer@westn=
-et.com.au> wrote:
-> >> On 23/3/24 05:54, Max Filippov wrote:
-> >>> Althought FDPIC linux kernel provides /proc/<pid>/auxv files they are
-> >>> empty because there's no code that initializes mm->saved_auxv in the
-> >>> FDPIC ELF loader.
-> >>>
-> >>> Synchronize FDPIC ELF aux vector setup with ELF. Replace entry-by-ent=
-ry
-> >>> aux vector copying to userspace with initialization of mm->saved_auxv
-> >>> first and then copying it to userspace as a whole.
-> >>>
-> >>> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
-> >>
-> >> This is breaking ARM nommu builds supporting fdpic and elf binaries fo=
-r me.
-> >>
-> >> Tests I have for m68k and riscv nommu setups running elf binaries
-> >> don't show any problems - I am only seeing this on ARM.
-> >>
-> >>
-> >> ...
-> >> Freeing unused kernel image (initmem) memory: 472K
-> >> This architecture does not have kernel memory protection.
-> >> Run /init as init process
-> >> Internal error: Oops - undefined instruction: 0 [#1] ARM
-> >> Modules linked in:
-> >> CPU: 0 PID: 1 Comm: init Not tainted 6.10.0 #1
-> >> Hardware name: ARM-Versatile (Device Tree Support)
-> >> PC is at load_elf_fdpic_binary+0xb34/0xb80
-> >> LR is at 0x0
-> >> pc : [<00109ce8>]    lr : [<00000000>]    psr: 80000153
-> >> sp : 00823e40  ip : 00000000  fp : 00b8fee4
-> >> r10: 009c9b80  r9 : 00b8ff80  r8 : 009ee800
-> >> r7 : 00000000  r6 : 009f7e80  r5 : 00b8fedc  r4 : 00b87000
-> >> r3 : 00b8fed8  r2 : 00b8fee0  r1 : 00b87128  r0 : 00b8fef0
-> >> Flags: Nzcv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment none
-> >> Control: 00091176  Table: 00000000  DAC: 00000000
-> >> Register r0 information: non-slab/vmalloc memory
-> >> Register r1 information: slab/vmalloc mm_struct start 00b87000 pointer=
- offset 296 size 428
-> >> Register r2 information: non-slab/vmalloc memory
-> >> Register r3 information: non-slab/vmalloc memory
-> >> Register r4 information: slab/vmalloc mm_struct start 00b87000 pointer=
- offset 0 size 428
-> >> Register r5 information: non-slab/vmalloc memory
-> >> Register r6 information: slab/vmalloc kmalloc-32 start 009f7e80 pointe=
-r offset 0 size 32
-> >> Register r7 information: non-slab/vmalloc memory
-> >> Register r8 information: slab/vmalloc kmalloc-512 start 009ee800 point=
-er offset 0 size 512
-> >> Register r9 information: non-slab/vmalloc memory
-> >> Register r10 information: slab/vmalloc kmalloc-128 start 009c9b80 poin=
-ter offset 0 size 128
-> >> Register r11 information: non-slab/vmalloc memory
-> >> Register r12 information: non-slab/vmalloc memory
-> >> Process init (pid: 1, stack limit =3D 0x(ptrval))
-> >> Stack: (0x00823e40 to 0x00824000)
-> >> 3e40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3e60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3e80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3ea0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3ec0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3ee0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3f00: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3f20: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3f40: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3f60: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3f80: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3fa0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3fe0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> Call trace:
-> >>    load_elf_fdpic_binary from bprm_execve+0x1b4/0x488
-> >>    bprm_execve from kernel_execve+0x154/0x1e4
-> >>    kernel_execve from kernel_init+0x4c/0x108
-> >>    kernel_init from ret_from_fork+0x14/0x38
-> >> Exception stack(0x00823fb0 to 0x00823ff8)
-> >> 3fa0:                                     ???????? ???????? ???????? ?=
-???????
-> >> 3fc0: ???????? ???????? ???????? ???????? ???????? ???????? ???????? ?=
-???????
-> >> 3fe0: ???????? ???????? ???????? ???????? ???????? ????????
-> >> Code: bad PC value
-> >> ---[ end trace 0000000000000000 ]---
-> >> note: init[1] exited with irqs disabled
-> >> Kernel panic - not syncing: Attempted to kill init! exitcode=3D0x00000=
-00b
-> >> ---[ end Kernel panic - not syncing: Attempted to kill init! exitcode=
-=3D0x0000000b ]---
-> >>
-> >>
-> >> The code around that PC is:
-> >>
-> >>     109cd0:       e2833ff1        add     r3, r3, #964    @ 0x3c4
-> >>     109cd4:       e5933000        ldr     r3, [r3]
-> >>     109cd8:       e5933328        ldr     r3, [r3, #808]  @ 0x328
-> >>     109cdc:       e5933084        ldr     r3, [r3, #132]  @ 0x84
-> >>     109ce0:       e5843034        str     r3, [r4, #52]   @ 0x34
-> >>     109ce4:       eafffdbc        b       1093dc <load_elf_fdpic_binar=
-y+0x228>
-> >>     109ce8:       e7f001f2        .word   0xe7f001f2
-> >>     109cec:       eb09471d        bl      35b968 <__stack_chk_fail>
-> >>     109cf0:       e59f0038        ldr     r0, [pc, #56]   @ 109d30 <lo=
-ad_elf_fdpic_binary+0xb7c>
-> >>     109cf4:       eb092f03        bl      355908 <_printk>
-> >>     109cf8:       eafffdb7        b       1093dc <load_elf_fdpic_binar=
-y+0x228>
-> >>
-> >>
-> >> Reverting just this change gets it working again.
-> >>
-> >> Any idea what might be going on?
-> >
-> > Other than that the layout of the aux vector has slightly changed I don=
-'t
-> > see anything. I can take a look at what's going on if you can share the
-> > reproducer.
->
-> I build the test binary using a simple script:
->
->    https://github.com/gregungerer/simple-linux/blob/master/build-armnommu=
--linux-uclibc-fdpic.sh
->
-> Run the resulting vmlinux and devicetree under qemu as per comments at to=
-p of that script.
 
-Cool scripts, thanks. I was able to reproduce the issue, it's the
-BUG_ON(csp !=3D sp);
-from the create_elf_fdpic_tables() that causes it. I'm still trying
-to figure out how that happens.
+On 8/11/24 01:44, Kamlesh Gurudasani wrote:
+> Waiman Long <longman@redhat.com> writes:
+>
+>> On 8/10/24 13:44, Kamlesh Gurudasani wrote:
+>>> Waiman Long <longman@redhat.com> writes:
+>>>
+> ...
+>>>> diff --git a/kernel/padata.c b/kernel/padata.c
+>>>> index 53f4bc912712..0fa6c2895460 100644
+>>>> --- a/kernel/padata.c
+>>>> +++ b/kernel/padata.c
+>>>> @@ -517,6 +517,13 @@ void __init padata_do_multithreaded(struct padata_mt_job *job)
+>>>>    	ps.chunk_size = max(ps.chunk_size, job->min_chunk);
+>>>>    	ps.chunk_size = roundup(ps.chunk_size, job->align);
+>>>>    
+>>>> +	/*
+>>>> +	 * chunk_size can be 0 if the caller sets min_chunk to 0. So force it
+>>>> +	 * to at least 1 to prevent divide-by-0 panic in padata_mt_helper().`
+>>>> +	 */
+>>> Thanks for the patch and detailed comment.
+>>>> +	if (!ps.chunk_size)
+>>>> +		ps.chunk_size = 1U;
+>>>> +
+>>> could it be
+>>>           ps.chunk_size = max(ps.chunk_size, 1U);
+>>>           
+>>> or can be merged with earlier max()
+>>>     	ps.chunk_size = max(ps.chunk_size, max(job->min_chunk, 1U));
+>>>     	ps.chunk_size = roundup(ps.chunk_size, job->align);
+>>>
+>>> sits well with how entire file is written and compiler is optimizing
+>>> them to same level.
+>> I had actually thought about doing that as an alternative. I used the
+>> current patch to avoid putting too many max() calls there. I can go this
+>> route if you guys prefer this.
+> Just curious, what is your reason for avoiding too many max() calls? Both
+>          if (!ps.chunk_size)
+>          	ps.chunk_size = 1U;
+> and
+>          ps.chunk_size = max(ps.chunk_size, 1U);
+>
+> are having same number of instructions [1].
+>
+> [1] https://godbolt.org/z/ajrK59c67
+>
+> We can avoid nested max(), though following would make it easier to understand.
+>
+>     ps.chunk_size = max(ps.chunk_size, 1U);
 
---=20
-Thanks.
--- Max
+That will certainly work. My current patch has been merged into the 
+Linus tree. You are welcome to post another patch to clean it up if you 
+want.
+
+Cheers,
+Longman
+
+>
+> Cheers,
+> Kamlesh
+>
+>> Cheers,
+>> Longman
+
 
