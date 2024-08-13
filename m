@@ -1,195 +1,234 @@
-Return-Path: <linux-kernel+bounces-284316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B8C94FFC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 801BB94FFC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:26:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C261C22D7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:25:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A501B1C22DE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3855213AA4E;
-	Tue, 13 Aug 2024 08:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08BE713B284;
+	Tue, 13 Aug 2024 08:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="gaXl6EyJ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Lf5YwlBR"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8503F130A54
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D3A77102
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537518; cv=none; b=T9Ox21elQGILUxVnxsvOqZJ4tWDb2vTZBKjvxCw59PZ5U/QQjy0eGBlVwKj5rDdgeH94rA9w9WcAfIAATRmkAU1QJdPoS6uE1maLRFhB0u2Wqp9O4aQ0uikOjD7vVNA1TUcHPU10puNY2z+KLCmQ+rczZGrXzuJAIMbXq28zAUM=
+	t=1723537554; cv=none; b=nmzq1yZFYrH11R5CqZPhlKWQ5ba9P5mdqTKWRxN3TOE0jK9Tr9eMntW3xxTc33qSnV8Ch7cfGUC4EesHJsGKIL9IHrBZtHyQw0StQAQj3iZeLVRSpCg2FFEXkcbC6WM2qPWnNfetXF33NYaGqXuFKOSmmJk3EMbkgPVDA6h+HUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537518; c=relaxed/simple;
-	bh=ticLzo1D1Z1sjZgeDlR6Zve8BS6KFbGk+IUK2ukCi0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VAlnyPpItk+mo0NYXn3hIaVSIGaQ9PlDzVzXYKGPuD9IGa/cBYQ94feimz+RliINrjM0aq0iuFbNIwPEOdjcfHxOBWg5yKKgrWUKudpkOIRQEDcbSDEMg+UEcKQ0mXcWFGIK9qSB2EB6s8ZbMkZYZPGVuCQe2D308SHksYIqn4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=gaXl6EyJ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ff499841f4so1928505ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:25:16 -0700 (PDT)
+	s=arc-20240116; t=1723537554; c=relaxed/simple;
+	bh=3kVlJQU0BIp2rBktBQ7VmHxx5xBs7qhHp4dNn8b+7kk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Buo9pIT/+sWoVJztYC386iGx86OGiQ/d2N8VsyVR7Gko0iumyqLEUIq2bPfzxGZ2Xp/F93k6mmxFlyf8pxBxLdfEuAGhKQAE9pTqlwem8d7b5uGldUOggr7U7guKvGrfolRVdmyZZwNKGWYQBdaFL19LdvW2iyrpyzYEeoP+jcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Lf5YwlBR; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fdd6d81812so51068625ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1723537516; x=1724142316; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BEVQUoupjy6wk58i7p/fsO85d4SvbuK+rKeOG6aigEM=;
-        b=gaXl6EyJO+y8Y718fexPjOc7v7fiLfQhIoi9yFUjimF2oCiX03m+qHka+ngqLrpup/
-         AFpf6RzI3k1vujQcgz+JUdkv/HVg4IguyWZ/T55QE5rUu2xmCe5xLkWBaF00z28D2NWX
-         iTYglWMjKQfLREG6ewUk5R0u8weUwTVy+UtwM=
+        d=linaro.org; s=google; t=1723537550; x=1724142350; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bo6QM0sBKGRYLVNN4IyVM/GTsc0sueI/A0itTKYR/es=;
+        b=Lf5YwlBRF20w3YaZgvOyChpSP/WwXdiFOLGFwQupfV06e40rSsF5YfTKY6B7LDILG0
+         DxY2cVSpUNVCTaBw3PbzBBgvDpOyNJ9dY06DZtC0J4GeyQzxc2G5eUFZhdcEDut8YRBT
+         9zqsjTTJwbxuKHldksPJqIKa66CVARoYsQettzzOBUpavGLr8ahuZIG+eraAxW0NOSGa
+         9QnnOxMjmRHWObAmlOWdh6Gj6SVw/KnGSIn4f4Zdtmb5jYdxt0aVaOWslAo49/UL8Wn4
+         Pg5nZbC7G0MYNkArnOutTaR8M5tT6dTDhM5Gh3q9qILbCRoAqvl0GZmElFZ37Z5hpDR6
+         3mPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723537516; x=1724142316;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BEVQUoupjy6wk58i7p/fsO85d4SvbuK+rKeOG6aigEM=;
-        b=Y0UwueD5WEtsYITIgRdwuzC3otzZP39NrV55WpRdZnb9sOMLVE2w8c2VdlpB070h6v
-         tjK2bMW+DV0S/hVVEavffLoAqxh+mUdp1gEvy/DQkx530V8LIgRMICFP3gO22+YBep+I
-         T9NgsYBFwnJXXHH2YyoBxUxE61+D3UprDyVcHR5DksIl8fT5jHf6RPa/FrjzDJlnwkUq
-         XYvDRjb8uOpSZCk5bc0x1BiIkM+DtWSD/CU/4ccUGr7Jns/79akhwVa338IgcFlsF4ac
-         f4Jo8W62h6ahXAHQ4O2xh0G8DsUjFsz3vGRx+H4ba8q6LJaz3SWHRF2S1JZB1WlQJ5dE
-         AcDg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZtHRa+ch5+w/+MWewZPchUY1SorsLEHIBlAJXxSaZB8MXYXDEYIg00MlJNOYZFnEM2TBCpz1STLlsieQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKODH9PzpCT7DgGD2seSeGsUxJcpUbujrawZeCVKXllCxmBWbS
-	7jrWYdiplzVnEDoUp8j9i7V1CaIHk/94oVmfbcAlp4qG0a14dsAqZdP7Ub8qc60=
-X-Google-Smtp-Source: AGHT+IEzerHMMnSocDJNSeStQIOJD4TADhd5o4PWjCgbclTFtVtQtLu0V2Mdoxxa/g9NHeXq3eD+Ag==
-X-Received: by 2002:a17:902:dac3:b0:1fc:52f4:1802 with SMTP id d9443c01a7336-201cdb4e08dmr9870845ad.10.1723537515728;
-        Tue, 13 Aug 2024 01:25:15 -0700 (PDT)
-Received: from [192.168.104.75] ([223.118.51.112])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1aa017sm8496045ad.143.2024.08.13.01.25.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 01:25:15 -0700 (PDT)
-Message-ID: <98d8f119-02f7-49af-a891-cb13bd9f9a2d@linuxfoundation.org>
-Date: Tue, 13 Aug 2024 02:25:10 -0600
+        d=1e100.net; s=20230601; t=1723537550; x=1724142350;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bo6QM0sBKGRYLVNN4IyVM/GTsc0sueI/A0itTKYR/es=;
+        b=WzXK/rg21W22TboFsueNX+tXq18wORZcJdm8Ic1sP0AtYk9jyEOi9KbfXmqTWE5yMK
+         UWm3gKfDxcYReS3iIBmYV5pbs/F8sV80tKJgwpwu8N++JZeVV3aE2MgN8k1tl5SiygWW
+         1MT/OUym+Kk+l0k0XKJnWuIdpVlf4XhDkOZU9A4H3sTY9i/2STsonCItxr5pouhdeQdh
+         w/wHVCgT/GJkhv15R9weOxwJHvlQTTewiY08yuih6mNCrK18AEDUn/XoWAsIIEnTHWMs
+         yKwNDiWh3u6Gst6QA/yPNCfLYz7g27JvMsbmpzN+iGt8RhDem76zz9y0FRnZtxRkPnpf
+         pzig==
+X-Forwarded-Encrypted: i=1; AJvYcCV/rX8cpU6l/ZBYq/mwGiVSGr0J8mzZka8PV3KDnKh6501sEYqPdTU1n+xsiMoIWWwg1O8fGTSrwKC/ffXIN3EFGdFbHaIZm3dvy4I0
+X-Gm-Message-State: AOJu0YxpS8E2kuXhGmQft5VL8B6x5iMRgym1P7kRQfceoglqV7gxVuzQ
+	2lH6AIrU5k9uf2QfbMbGGE+GoNLDOdI1Ialv3DW41V1nymBg+hNF7xMapadJ5xyAl+yw+y/Mr3h
+	VnyuwSmau6ViaFnmE5NUNMVFswSEoacz2Ag3mZrv210sE8w4XXz8=
+X-Google-Smtp-Source: AGHT+IH+JUSUQX/w+WP6cJs+S6/ZzZT4XCqDPnT0rLsrzQJZAvyq0RqmK3imTC9gS9X41NL9e1jPOHmTOl7sVhhJSaw=
+X-Received: by 2002:a17:90a:110f:b0:2ca:d1dc:47e2 with SMTP id
+ 98e67ed59e1d1-2d392652468mr3058025a91.33.1723537550475; Tue, 13 Aug 2024
+ 01:25:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: resctrl: ignore builds for unsupported
- architectures
-To: Reinette Chatre <reinette.chatre@intel.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, kernel@collabora.com,
- LKML <linux-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- =?UTF-8?Q?Maciej_Wiecz=C3=B3r-Retman?= <maciej.wieczor-retman@intel.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20240809071059.265914-1-usama.anjum@collabora.com>
- <d60cf782-9ab0-ed4a-0b3e-ba7a73ae8d51@linux.intel.com>
- <080c4692-c53c-417f-9975-0b4ced0b044c@collabora.com>
- <f7593344-203a-8e73-d53e-574ca511d003@linux.intel.com>
- <4072bf51-1d37-4595-a2fa-b72f83c8298b@linuxfoundation.org>
- <6dd1b5ce-2ce2-4d61-beff-a100da213528@intel.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <6dd1b5ce-2ce2-4d61-beff-a100da213528@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240728184551.42133-1-qyousef@layalina.io> <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+In-Reply-To: <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 13 Aug 2024 10:25:39 +0200
+Message-ID: <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Hongyan Xia <hongyan.xia2@arm.com>, 
+	John Stultz <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/12/24 18:05, Reinette Chatre wrote:
-> Hi Shuah,
-> 
-> On 8/12/24 3:49 PM, Shuah Khan wrote:
->> On 8/9/24 02:45, Ilpo Järvinen wrote:
->>> Adding Maciej.
->>>
->>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
->>>> On 8/9/24 12:23 PM, Ilpo Järvinen wrote:
->>>>> On Fri, 9 Aug 2024, Muhammad Usama Anjum wrote:
->>>>>
->>>>>> This test doesn't have support for other architectures. Altough resctrl
->>>>>> is supported on x86 and ARM, but arch_supports_noncont_cat() shows that
->>>>>> only x86 for AMD and Intel are supported by the test.
->>>>>
->>>>> One does not follow from the other. arch_supports_noncont_cat() is only
->>>>> small part of the tests so saying "This test" based on a small subset of
->>>>> all tests is bogus. Also, I don't see any reason why ARCH_ARM could not be
->>>>> added and arch_supports_noncont_cat() adapted accordingly.
->>>> I'm not familiar with resctrl and the architectural part of it. Feel
->>>> free to fix it and ignore this patch.
->>>>
->>>> If more things are missing than just adjusting
->>>> arch_supports_noncont_cat(), the test should be turned off until proper
->>>> support is added to the test.
->>>>
->>>>>> We get build
->>>>>> errors when built for ARM and ARM64.
->>>>>
->>>>> As this seems the real reason, please quote any errors when you use them
->>>>> as justification so it can be reviewed if the reasoning is sound or not.
->>>>
->>>>    CC       resctrl_tests
->>>> In file included from resctrl.h:24,
->>>>                   from cat_test.c:11:
->>>> In function 'arch_supports_noncont_cat',
->>>>      inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
->>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->>>>     74 |         __asm__ __volatile__ ("cpuid\n\t"
->>>>         \
->>>>        |         ^~~~~~~
->>>> cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
->>>>    301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
->>>>        |                 ^~~~~~~~~~~~~
->>>> ../kselftest.h:74:9: error: impossible constraint in 'asm'
->>>>     74 |         __asm__ __volatile__ ("cpuid\n\t"
->>>>         \
->>>>        |         ^~~~~~~
->>>> cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
->>>>    303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
->>>>        |                 ^~~~~~~~~~~~~
->>>
->>> Okay, so it's specific to lack of CPUID. This seems a kselftest common
->>> level problem to me, since __cpuid_count() is provided in kselftest.h.
->>>
->>> Shuah (or others), what is the intended mechanism for selftests to know if
->>> it can be used or not since as is, it's always defined?
->> _cpuid_count() gets defined in ksefltest.h if it can't find it.
->>
->> As the comment says both gcc and cland probide __cpuid_count()
->>
->>    gcc cpuid.h provides __cpuid_count() since v4.4.
->>    Clang/LLVM cpuid.h provides  __cpuid_count() since v3.4.0.
->>
->>>
->>> I see some Makefiles use compile testing a trivial program to decide whether
->>> they build some x86_64 tests or not. Is that what should be done here too,
->>> test if __cpuid_count() compiles or not (and then build some #ifdeffery
->>> based on the result of that compile testing)?
->>>
->>
->> These build errors need to be fixed instead of restricting the build> In some cases when the test can't be supported on an architecture then it is okay
->> to suppress build. This is not a general solution to suppress build warnings
-> 
-> While there is an effort to support Arm in resctrl [1], this is not currently
-> the case and the resctrl selftests as a consequence only support x86 with
-> built-in assumptions that a test runs on either AMD or Intel. After the kernel gains support
-> for Arm more changes will be needed for the resctrl tests to support another architecture
-> so I do think the most appropriate change to address this build failure is to restrict
-> resctrl tests to x86.
-> 
+On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+>
+> On 7/28/24 19:45, Qais Yousef wrote:
+> > Improve the interaction with cpufreq governors by making the
+> > cpufreq_update_util() calls more intentional.
+> >
+> > At the moment we send them when load is updated for CFS, bandwidth for
+> > DL and at enqueue/dequeue for RT. But this can lead to too many updates
+> > sent in a short period of time and potentially be ignored at a critical
+> > moment due to the rate_limit_us in schedutil.
+> >
+> > For example, simultaneous task enqueue on the CPU where 2nd task is
+> > bigger and requires higher freq. The trigger to cpufreq_update_util() by
+> > the first task will lead to dropping the 2nd request until tick. Or
+> > another CPU in the same policy triggers a freq update shortly after.
+> >
+> > Updates at enqueue for RT are not strictly required. Though they do help
+> > to reduce the delay for switching the frequency and the potential
+> > observation of lower frequency during this delay. But current logic
+> > doesn't intentionally (at least to my understanding) try to speed up the
+> > request.
+> >
+> > To help reduce the amount of cpufreq updates and make them more
+> > purposeful, consolidate them into these locations:
+> >
+> > 1. context_switch()
+> > 2. task_tick_fair()
+> > 3. sched_balance_update_blocked_averages()
+> > 4. on sched_setscheduler() syscall that changes policy or uclamp values
+> > 5. on check_preempt_wakeup_fair() if wakeup preemption failed
+> > 6. on __add_running_bw() to guarantee DL bandwidth requirements.
+> >
+> > The update at context switch should help guarantee that RT get the right
+> > frequency straightaway when they're RUNNING. As mentioned though the
+> > update will happen slightly after enqueue_task(); though in an ideal
+> > world these tasks should be RUNNING ASAP and this additional delay
+> > should be negligible. For fair tasks we need to make sure we send
+> > a single update for every decay for the root cfs_rq. Any changes to the
+> > rq will be deferred until the next task is ready to run, or we hit TICK.
+> > But we are guaranteed the task is running at a level that meets its
+> > requirements after enqueue.
+> >
+> > To guarantee RT and DL tasks updates are never missed, we add a new
+> > SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
+> > already running at the right freq, the governor will end up doing
+> > nothing, but we eliminate the risk of the task ending up accidentally
+> > running at the wrong freq due to rate_limit_us.
+> >
+> > Similarly for iowait boost, we ignore rate limits. We also handle a case
+> > of a boost reset prematurely by adding a guard in sugov_iowait_apply()
+> > to reduce the boost after 1ms which seems iowait boost mechanism relied
+> > on rate_limit_us and cfs_rq.decayed preventing any updates to happen
+> > soon after iowait boost.
+> >
+> > The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
+> > time stamps otherwise we can end up delaying updates for normal
+> > requests.
+>
+> Hi Qais,
+> the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+> freq updates still bothered me so let me share my thoughts even though
+> it might be niche enough for us not to care.
+>
+> 1. On fast_switch systems, assuming they are fine with handling the
+> actual updates, we have a bit more work on each context_switch() and
+> some synchronisation, too. That should be fine, if anything there's
+> some performance regression in a couple of niche cases.
+>
+> 2. On !fast_switch systems this gets more interesting IMO. So we have
+> a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+> update request. This task will preempt whatever and currently will
+> pretty much always be running on the CPU it ran last on (so first CPU
+> of the PD).
 
-Sounds good to me. This would be good case for suppressing test build.
+The !fast_switch is a bit of concern for me too but not for the same
+reason and maybe the opposite of yours IIUC your proposal below:
 
->>
->> I would recommend against adding suppress build code when it can be fixed.
-> 
-> I expect after resctrl fs obtains support for Arm the resctrl selftests can be
-> updated to support it with more fine grained architectural checks than a global
-> enable/disable needed at this time.
-> 
->>
->> Let's investigate this problem to fix it properly. I don't see any arm and arm64
->> maintainers and developers on this thread. It would be good to investigate to
->> see if this can be fixed.
+With fast_switch we have the following sequence:
 
-thanks,
--- Shuah
+sched_switch() to task A
+cpufreq_driver_fast_switch -> write new freq target
+run task A
+
+This is pretty straight forward but we have the following sequence
+with !fast_switch
+
+sched_switch() to task A
+queue_irq_work -> raise an IPI on local CPU
+Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+with 1 CPU per PD)
+sched_switch() to sugov dl task
+__cpufreq_driver_target() which can possibly block on a lock
+sched_switch() to task A
+run task A
+
+We can possibly have 2 context switch and one IPi for each "normal"
+context switch which is not really optimal
+
+>
+> The weirdest case I can think of right now is two FAIR iowait tasks on
+> e.g. CPU1 keep waking up the DEADLINE task on CPU0 (same PD) regardless
+> of what is running there.
+> Potentially that means two fair tasks on one CPU CPU-starving an RT
+> task on another CPU, because it keeps getting preempted by the DEADLINE
+> sugov worker.
+> For this to actually happen we need to ensure the tasks
+> context-switching actually results in a different requested frequency
+> every time, which is a bit unlikely without UCLAMP_MAX, let's say task
+> A has 512, task B 1024, task C (RT on CPU1 should have uclamp_min<=512
+> then too otherwise frequency may be dictated by the RT task anyway.)
+> (Note the entire thing also works with Tasks A & B being lower-prio RT
+> too, instead of FAIR and iowait.)
+>
+> Note that due to the nature of SCHED_DEADLINE and the sugov task having
+> 10s period and 1s runtime this behavior is limited to 1s every 10s.
+> The remaining 9s (replenishment time) we won't see any cpufreq updates
+> for that PD at all though.
+>
+> To reproduce, I have [4,5] being one PD:
+>
+> fio --minimal --time_based --name=cpu5_1024uclamp --filename=/dev/nullb0 --runtime=10 --rw=randread --bs=4k--direct=1 --cpus_allowed=5
+> uclampset -M 512 fio --minimal --time_based --name=cpu5_512uclamp --filename=/dev/nullb0 --runtime=10 --rw=randread --bs=4k--direct=1 --cpus_allowed=5
+> and then your RT task on CPU4.
+>
+> Something like this would mitigate that, I think it makes sense even
+> without your patch to get a more predictable idle pattern, just maybe
+> not exactly this patch of course.
+>
+> -->8--
+>
+> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> index 64f614b3db20..c186f8f999fe 100644
+> --- a/kernel/sched/cpufreq_schedutil.c
+> +++ b/kernel/sched/cpufreq_schedutil.c
+> @@ -567,6 +567,8 @@ static void sugov_irq_work(struct irq_work *irq_work)
+>
+>         sg_policy = container_of(irq_work, struct sugov_policy, irq_work);
+>
+> +       /* Try to wake the task here to not preempt or wake up another CPU. */
+> +       sg_policy->worker.task->wake_cpu = smp_processor_id();
+>         kthread_queue_work(&sg_policy->worker, &sg_policy->work);
+>  }
+>
+>
+>
+>
 
