@@ -1,135 +1,121 @@
-Return-Path: <linux-kernel+bounces-284737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38074950498
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:13:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133DA9504A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:14:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9113B21EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:13:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C4283287FC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC71199259;
-	Tue, 13 Aug 2024 12:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277701993AE;
+	Tue, 13 Aug 2024 12:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ljoDSjyP"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LlUAdA81"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB6B187348
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C3E11991AF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551176; cv=none; b=ueujI/TyUFRYk/+nDo9v/BMNCnx9Sw82xmQ34Wyz36PacgxHnprrt/NOq4Yts2wUzac59Jtoc2gQMhv8/2YJodcUz85mpgbP971l7Hh7yY+Yb8Itkbo5UfqhMOBTuGtSIF5xjrXmyJEXZmW5DHAZuNmZoYc60ErseZKHmy62GJw=
+	t=1723551233; cv=none; b=GmXKmX6/S3lkMiHHH2ctpiNsqh15OkAJpR5P34Lc+qRP661sRtvGwfd0PSsP9R01xhraieHe3u0bnh+4tM3Y9FKtTuipK/jvtYZTLIY626renkvJYOVGPusSXmj5Vkfby7OtJlqQSli6er3xrcSqZ179XjTwm8Oj65WoqBKfvPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551176; c=relaxed/simple;
-	bh=Z6aB3+VbuXftYE7kX7d+IQFgJMheZZjMJeOE/72VaSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bqdV5tqaaMPpp8nfYE7fouDD2sUUgwMChH/DTIkhG08wRlvRu0HnfYdlVG1qAsK6Cl0spImcDpxCLwNeZju2OXo3hCX3TSrtvmB7Kye8kAIY6dAPxqa3Bcv1PxwlO/KzpmRpxxSnDEha/00C1Fl/TAAcezjTEUvqQcHIm7FizYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ljoDSjyP; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-264545214efso2918406fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:12:55 -0700 (PDT)
+	s=arc-20240116; t=1723551233; c=relaxed/simple;
+	bh=AhtVc0eRB313SzivG95eO+fvDnddIaj+hD0gJVu5zyc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=IK3ar7ot52Ty/O4BIfBVKh3ZJpczd63X/7ECilxRWIH9pOytDWGEZtycsd9u7+xvYud4bEuqa8yBVMvDdnvE5pxiek7gglkI9ueaO1O4GxBF/mlO1dVtiyv0mZUwhFHxZiNuWYDwAYLCzwi6KMXsmo8BiuzSeKdrMkF0GFGNaqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LlUAdA81; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a1d42da3baso343428985a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723551174; x=1724155974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5EUeHYBgIOyxw1cJ/tffLH8sMTL20Mo78lidlSUpQmE=;
-        b=ljoDSjyPKHbrF+vIr7RIPcRDjJ4pqDDoFSl0MBBbJ4bnPP0SiNPXqRcrglHTMQhcgi
-         Lnad6rwCMqFs30EuhxGmhBXDSL6OB9gmGdKZcj3MkvkruC37EsAqNl8sBvXrgDlK10RY
-         HyIC2/bxhcuQWvSnUJAldiLF2bJ/koKeWWc7tYhHZoySmHV9X4nrwlsuMdWlLf+NrBv7
-         sWCcoM8ADIWDjf6tNRs/zhs9b2y4MkBdSAudJTiDK0azvtUGpQ7s4MTBpe8TAhYNdxbF
-         r4CoQBLkD1AIa34KAg4IqKM2nGrlK8PbCMz6EAMa2jJ4orEM+AgXvIC4/0Ai1CYMy0Wq
-         y0wA==
+        d=chromium.org; s=google; t=1723551230; x=1724156030; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=exEVIAJZd/rYdUXslfft3lBWpWIRwR1McJc3b9INl9w=;
+        b=LlUAdA81g9wNGeTxYHkTqkJrJDjxHBrv0nj3BkwaduKYWicDObc7qmitZ/DB6rgTB9
+         uU9ZwxIgXnI173noR03bRPrBd3QjJiApY1aH3HMzSOl8t4LF1jwq+9J4bwpAHoID44tT
+         xMsSA7gvr2VzSPc95u03vFP1VMFKnEJAwG+fs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723551174; x=1724155974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5EUeHYBgIOyxw1cJ/tffLH8sMTL20Mo78lidlSUpQmE=;
-        b=pc+PjIFP9eteeuBcfOwAfvN6gWabhDCSmJySl0CB+XvjAijiYJcFNWHywEjI26l8uY
-         Wvu9jpStICOgMavweCzKEDBPt/omF7YKJEM7Qf7hy39VJvRhvl9dgzMM30vHVDwdqmA7
-         tUUT9CP81EYgBG5d6UayXvaFCP3ZNrd2HIin5W9IAqR+vREpfAlidOQY6nOwZJrXaOlT
-         Hk332pSHteZV48c6rInOVd7c1lLURajLs1EoEWfSwggP6CSafXHsTObDGVm5n0/qGOQH
-         chYv9/x3440ynDknBz3tVCynmW+X5WyxpJbig8lAJJu59lcVhsm4lQblzt3tjeKTnutJ
-         a2cw==
-X-Gm-Message-State: AOJu0Yz+Nlaq1O6voCZU70herPyHNwLeeK11u7JbljutAd6LwljxnKN9
-	3F1dCtEPdCIP4vWCoVQwmerik1dFi1my7Wx/fCDZPJOsjHK73/KhEyLV3nv2J5VV9XhjWNXi9SY
-	vpnSF28iWUjvkxdFxCC4tRuNog0zt/Hki45lz+w==
-X-Google-Smtp-Source: AGHT+IG+5ZFirbaJq9uj/YXf/F72dBXkXh+6sqJjhFlzF0Sk7mFjDz2GXx0obFufVKkNfw4UwTPe451tzZyRmdCS0Bc=
-X-Received: by 2002:a05:6870:a11a:b0:260:fd20:a880 with SMTP id
- 586e51a60fabf-26fcb8753e6mr3450729fac.42.1723551174451; Tue, 13 Aug 2024
- 05:12:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723551230; x=1724156030;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=exEVIAJZd/rYdUXslfft3lBWpWIRwR1McJc3b9INl9w=;
+        b=lRGxjhB+mNUxJENVBwTq0CBKpjEDM9kn/9r9SSrWkfi/gcVQ/ZEWA6JcfL8WVkTfXt
+         kzoTWTXfDApjJ2iZABOlRjR1oE8+PrGT+3Ald9FhEmmqtJ4TZNITdEoVIahwVCXH4g/h
+         FEaTAHuI2IdNeI1riZnLEYeHhj526+gdMMRO7Eqsd0Z7fH76Ws1IqapJENadN0zomuoh
+         7NDsicN2jC4H+6HWmfB0oROQsHJzuUFfjZz4/cnYZ1mIgZdJuu8p48WUgOWbtcRj8as4
+         09PpNPlrRdSpYRtd2l5W2/f9De7FEpaE7G7RqaGsZxm4ofUmAahpRfPPgXZriqOOn/7V
+         EplA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5E4kRGIlXh5WVaOBXfXq9G8YMTGKWBD7/5Z0WwDkJRk6/H2o3Wy9DRWCCtktLKgW/z+G2JqUAQm7ALbBBKg2QALXGTXUNF14ZtAsv
+X-Gm-Message-State: AOJu0Yw3rC+dOXZiaJKmKmTlUc8R09QlUuGMd08Wyf656OaBnw3xphIU
+	z+IoZLGwZADDr3LKngWlQKHMSFjcBE+hsUCduEMhbYj7pzrzboaJ1SWunivhhA==
+X-Google-Smtp-Source: AGHT+IHEAC5qNhYBF14RuyiMsQL8IDhPP6lbNZuwJIZWarWyGBLPSFdo+w5w+ficdZzhLBjRgODR3A==
+X-Received: by 2002:a05:620a:460a:b0:7a2:db1:573d with SMTP id af79cd13be357-7a4e153e4femr367590785a.36.1723551229916;
+        Tue, 13 Aug 2024 05:13:49 -0700 (PDT)
+Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d71ca8sm331765485a.50.2024.08.13.05.13.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 05:13:49 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH 0/6] media: Fix last smatch warnings
+Date: Tue, 13 Aug 2024 12:13:47 +0000
+Message-Id: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812133127.865879-1-jens.wiklander@linaro.org>
- <20240812133127.865879-2-jens.wiklander@linaro.org> <2024081346-dutiful-stalemate-0e07@gregkh>
- <CAHUa44HYQVhT0=E9py2JsO2X93wLhZ=YvH0fBqQpzFBujSGgtw@mail.gmail.com> <2024081346-riveting-unwired-d9dc@gregkh>
-In-Reply-To: <2024081346-riveting-unwired-d9dc@gregkh>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 13 Aug 2024 14:12:42 +0200
-Message-ID: <CAHUa44GnG1uonKASAYHSt=rNC=73svDFgCfe6XyQT+c+xs+_XA@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] rpmb: add Replay Protected Memory Block (RPMB) subsystem
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Jerome Forissier <jerome.forissier@linaro.org>, Sumit Garg <sumit.garg@linaro.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Manuel Traut <manut@mecka.net>, Mikko Rapeli <mikko.rapeli@linaro.org>, 
-	Tomas Winkler <tomas.winkler@intel.com>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPtNu2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0Nj3eLcxJLkDN3knPzkbF2jtETjJENDcxMLU3MloJaCotS0zAqwcdG
+ xtbUAgffoXl4AAAA=
+To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ =?utf-8?q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
+ linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On Tue, Aug 13, 2024 at 1:36=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Tue, Aug 13, 2024 at 01:26:18PM +0200, Jens Wiklander wrote:
-> > On Tue, Aug 13, 2024 at 11:29=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Mon, Aug 12, 2024 at 03:31:24PM +0200, Jens Wiklander wrote:
-> > > > --- /dev/null
-> > > > +++ b/drivers/misc/rpmb-core.c
-> > > > @@ -0,0 +1,233 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0
-> > >
-> > > Fine, but:
-> > >
-> > > > --- /dev/null
-> > > > +++ b/include/linux/rpmb.h
-> > > > @@ -0,0 +1,136 @@
-> > > > +/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0 */
-> > >
-> > > Really?
-> > >
-> > > Why?  I need lots of documentation and a lawyer sign off for why this=
- is
-> > > a dual license for a file that is obviously only for internal Linux
-> > > kernel stuff.
-> >
-> > I'm sorry that was added via one of the patch sets before mine. I'll
-> > revert to GPL-2.0 only.
->
-> Please be sure to get proper legal approval to change the license of
-> code not written by you :)
+This series completes the smatch warning cleanout.
 
-The dual license was introduced in
-https://lore.kernel.org/lkml/20220405093759.1126835-2-alex.bennee@linaro.or=
-g/,
-but https://lore.kernel.org/linux-mmc/1478548394-8184-2-git-send-email-toma=
-s.winkler@intel.com/
-uses GPL-2.0 only. So reverting to GPL-2.0 only should be OK, don't
-you agree?
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Ricardo Ribalda (6):
+      media: ar0521: Refactor ar0521_power_off()
+      media: i2c: ov5645: Refactor ov5645_set_power_off()
+      media: i2c: s5c73m3: Move clk_prepare to its own function
+      media: tc358746: Move clk_prepare to its own function
+      media: meson: vdec_1: Refactor vdec_1_stop()
+      media: meson: vdec: hevc: Refactor vdec_hevc_start and vdec_hevc_stop
 
-Thanks,
-Jens
+ drivers/media/i2c/ar0521.c                   | 15 ++++++++--
+ drivers/media/i2c/ov5645.c                   | 15 ++++++++--
+ drivers/media/i2c/s5c73m3/s5c73m3-core.c     | 13 ++++++++-
+ drivers/media/i2c/tc358746.c                 | 12 +++++++-
+ drivers/staging/media/meson/vdec/vdec_1.c    | 16 ++++++++---
+ drivers/staging/media/meson/vdec/vdec_hevc.c | 43 +++++++++++++++++++++-------
+ 6 files changed, 92 insertions(+), 22 deletions(-)
+---
+base-commit: c80bfa4f9e0ebfce6ac909488d412347acbcb4f9
+change-id: 20240813-smatch-clock-2fa3b1174857
+
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
