@@ -1,128 +1,323 @@
-Return-Path: <linux-kernel+bounces-284409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE80A9500A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C63DA95009B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:59:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D79B1C22FF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:00:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C46E2819B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E351D17BB2A;
-	Tue, 13 Aug 2024 08:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f5nA37Ur"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B9149007;
+	Tue, 13 Aug 2024 08:59:10 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E915B7;
-	Tue, 13 Aug 2024 08:59:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37515B7;
+	Tue, 13 Aug 2024 08:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539590; cv=none; b=j1fYz8Qk+iKnbsOSZUNOklolmBT9NHC+FjLRfVHfAZWFyFTPt9fUr0tt20UFTxViinyMmDIMcmOAPYW87oqooWYPAo4mP5iF0SRI3lwSbK+A3P/AXaO8dnmldh+K4lkkNrawBiLcvociqgPq5hjnoQycobO25CxEp9WZOt0O3qY=
+	t=1723539550; cv=none; b=nqLkNmAVeXwis9pbOB5XosHLNHrYcBjhzLyX+spdquCYg4ONR7fPKJe3qnFmqzDdoYph2Q9B409mb6YLQ4PaQYvPNoNvV1w97+HBe2uSHHVqNx2wPTTjret0PqpDg0joVTVGxZqG8/VvNuH59z2rD40QwsPX4569teY787Dqo8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539590; c=relaxed/simple;
-	bh=JdP+ROVMh/KRzmmlnV0TwLHRyhPOyOX63BSvHWTPQaI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N7cVOE7GJC0PHEYW5505QTaBxKNSNOZo9Z5Pa/8LinqBkgSGy4IS0UwCVR1XU1Sd1aM7Gbu0q0CYUeoBHKnGnhyLBBXrxEFPFOvDoZfJps0TJfSD8jGtBvg7T7cqzu1GDOr4c01n1bG82UnyZiDULvAEh/Jcy+v1Z7yBmlFYeRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f5nA37Ur; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D3wSbI001097;
-	Tue, 13 Aug 2024 08:59:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Ld6Y5Moq8AyX9mmvL9mUQl
-	4XzuJgmry59u66zwjmbok=; b=f5nA37Urjq3nXNEV4dsVK0SfCJgmQkgmDfJofo
-	NGsLSWyLWt7cFF0wRA+qRTlQDTV9iO9lSL1N8MEb3KQEJUZHRzzzXVmzSLHQJcY+
-	dwhkULAM5/9XtNlIM0HM+9kjKbpBBaeSPA3qFf+VJ7FZOYUWEqNSoc3YGrtRBXM3
-	yQrp306yE8zQRm3EX+Q8y5lF0C5HvRcnGEO5yENyNfrlnyZ1kF2QKuJ7VL64ligo
-	WPfjOzyuybLH+W1p3VblA+0sxdfClynif+s209o2G7XhzRUsRtmn+2iZ71+ZzhF4
-	fJeDbg/+IUns8ZO+yS55yGYkRndv0ebW6UCOfnOVzje6qPLw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3et6rjx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 08:59:43 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D8xgTw011173
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 08:59:42 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 13 Aug 2024 01:59:38 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: qcom: Fix SM_CAMCC_8150 dependencies
-Date: Tue, 13 Aug 2024 14:28:46 +0530
-Message-ID: <20240813085846.941855-1-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723539550; c=relaxed/simple;
+	bh=dpnq0trFccqavqgr70LCuLgsknDOOSbp5PPA9ijbkOs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FqYnuVmuK3JOkHoU2+PKrsLp0av6sk8YTjIg5+WUrNh1xNWfT3uZqpj4TzcCLcozyv9gdMOwF4sLxrj2zH8TaDtvGLaEDzmMHG5JiRsbkFaq3bRKSGOA5VSmmhD3OwXoRVdi/6XkwOtpDVKhsgtim6Vn9yUNvLiEzjIx6bLYkL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A192E1BF207;
+	Tue, 13 Aug 2024 08:58:56 +0000 (UTC)
+Message-ID: <440ca2a7-9dfb-45cd-8331-a8d0afff47d0@ghiti.fr>
+Date: Tue, 13 Aug 2024 10:58:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
-X-Proofpoint-ORIG-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_01,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=684
- lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408130063
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/10] riscv: Add support for userspace pointer masking
+Content-Language: en-US
+To: Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org
+Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
+ Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
+ Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20240625210933.1620802-1-samuel.holland@sifive.com>
+ <20240625210933.1620802-5-samuel.holland@sifive.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20240625210933.1620802-5-samuel.holland@sifive.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-SM_CAMCC_8150 depends on SM_GCC_8150, which inturn depends on ARM64.
-Hence add the dependency to avoid below kernel-bot warning.
+Hi Samuel,
 
-WARNING: unmet direct dependencies detected for SM_GCC_8150
-Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
-Selected by [y]:
-- SM_CAMCC_8150 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
+On 25/06/2024 23:09, Samuel Holland wrote:
+> RISC-V supports pointer masking with a variable number of tag bits
+> (which is called "PMLEN" in the specification) and which is configured
+> at the next higher privilege level.
+>
+> Wire up the PR_SET_TAGGED_ADDR_CTRL and PR_GET_TAGGED_ADDR_CTRL prctls
+> so userspace can request a lower bound on the  number of tag bits and
+> determine the actual number of tag bits. As with arm64's
+> PR_TAGGED_ADDR_ENABLE, the pointer masking configuration is
+> thread-scoped, inherited on clone() and fork() and cleared on execve().
+>
+> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
+>
+> Changes in v2:
+>   - Rebase on riscv/linux.git for-next
+>   - Add and use the envcfg_update_bits() helper function
+>   - Inline flush_tagged_addr_state()
+>
+>   arch/riscv/Kconfig                 | 11 ++++
+>   arch/riscv/include/asm/processor.h |  8 +++
+>   arch/riscv/include/asm/switch_to.h | 11 ++++
+>   arch/riscv/kernel/process.c        | 99 ++++++++++++++++++++++++++++++
+>   include/uapi/linux/prctl.h         |  3 +
+>   5 files changed, 132 insertions(+)
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index b94176e25be1..8f9980f81ea5 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -505,6 +505,17 @@ config RISCV_ISA_C
+>   
+>   	  If you don't know what to do here, say Y.
+>   
+> +config RISCV_ISA_POINTER_MASKING
+> +	bool "Smmpm, Smnpm, and Ssnpm extensions for pointer masking"
+> +	depends on 64BIT
+> +	default y
+> +	help
+> +	  Add support for the pointer masking extensions (Smmpm, Smnpm,
+> +	  and Ssnpm) when they are detected at boot.
+> +
+> +	  If this option is disabled, userspace will be unable to use
+> +	  the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
+> +
+>   config RISCV_ISA_SVNAPOT
+>   	bool "Svnapot extension support for supervisor mode NAPOT pages"
+>   	depends on 64BIT && MMU
+> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
+> index 0838922bd1c8..4f99c85d29ae 100644
+> --- a/arch/riscv/include/asm/processor.h
+> +++ b/arch/riscv/include/asm/processor.h
+> @@ -194,6 +194,14 @@ extern int set_unalign_ctl(struct task_struct *tsk, unsigned int val);
+>   #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2)	riscv_set_icache_flush_ctx(arg1, arg2)
+>   extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long per_thread);
+>   
+> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
+> +/* PR_{SET,GET}_TAGGED_ADDR_CTRL prctl */
+> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg);
+> +long get_tagged_addr_ctrl(struct task_struct *task);
+> +#define SET_TAGGED_ADDR_CTRL(arg)	set_tagged_addr_ctrl(current, arg)
+> +#define GET_TAGGED_ADDR_CTRL()		get_tagged_addr_ctrl(current)
+> +#endif
+> +
+>   #endif /* __ASSEMBLY__ */
+>   
+>   #endif /* _ASM_RISCV_PROCESSOR_H */
+> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+> index 9685cd85e57c..94e33216b2d9 100644
+> --- a/arch/riscv/include/asm/switch_to.h
+> +++ b/arch/riscv/include/asm/switch_to.h
+> @@ -70,6 +70,17 @@ static __always_inline bool has_fpu(void) { return false; }
+>   #define __switch_to_fpu(__prev, __next) do { } while (0)
+>   #endif
+>   
+> +static inline void envcfg_update_bits(struct task_struct *task,
+> +				      unsigned long mask, unsigned long val)
+> +{
+> +	unsigned long envcfg;
+> +
+> +	envcfg = (task->thread.envcfg & ~mask) | val;
+> +	task->thread.envcfg = envcfg;
+> +	if (task == current)
+> +		csr_write(CSR_ENVCFG, envcfg);
+> +}
+> +
+>   static inline void __switch_to_envcfg(struct task_struct *next)
+>   {
+>   	asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0",
+> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+> index e4bc61c4e58a..dec5ccc44697 100644
+> --- a/arch/riscv/kernel/process.c
+> +++ b/arch/riscv/kernel/process.c
+> @@ -7,6 +7,7 @@
+>    * Copyright (C) 2017 SiFive
+>    */
+>   
+> +#include <linux/bitfield.h>
+>   #include <linux/cpu.h>
+>   #include <linux/kernel.h>
+>   #include <linux/sched.h>
+> @@ -171,6 +172,10 @@ void flush_thread(void)
+>   	memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
+>   	clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
+>   #endif
+> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
+> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
+> +		envcfg_update_bits(current, ENVCFG_PMM, ENVCFG_PMM_PMLEN_0);
+> +#endif
 
-Fixes: ea73b7aceff6 ("clk: qcom: Add camera clock controller driver for SM8150")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202408020234.jg9wrvhd-lkp@intel.com/
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+if (IS_ENABLED(CONFIG_RISCV_ISA_POINTER_MASKING) && 
+riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index cf6ad908327f..416002d97062 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -828,6 +828,7 @@ config SM_CAMCC_7150
- 
- config SM_CAMCC_8150
- 	tristate "SM8150 Camera Clock Controller"
-+	depends on ARM64 || COMPILE_TEST
- 	select SM_GCC_8150
- 	help
- 	  Support for the camera clock controller on Qualcomm Technologies, Inc
--- 
-2.25.1
 
+>   }
+>   
+>   void arch_release_task_struct(struct task_struct *tsk)
+> @@ -233,3 +238,97 @@ void __init arch_task_cache_init(void)
+>   {
+>   	riscv_v_setup_ctx_cache();
+>   }
+> +
+> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
+> +static bool have_user_pmlen_7;
+> +static bool have_user_pmlen_16;
+> +
+> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg)
+> +{
+> +	unsigned long valid_mask = PR_PMLEN_MASK;
+> +	struct thread_info *ti = task_thread_info(task);
+> +	unsigned long pmm;
+> +	u8 pmlen;
+> +
+> +	if (is_compat_thread(ti))
+> +		return -EINVAL;
+> +
+> +	if (arg & ~valid_mask)
+> +		return -EINVAL;
+> +
+> +	pmlen = FIELD_GET(PR_PMLEN_MASK, arg);
+> +	if (pmlen > 16) {
+> +		return -EINVAL;
+> +	} else if (pmlen > 7) {
+> +		if (have_user_pmlen_16)
+> +			pmlen = 16;
+> +		else
+> +			return -EINVAL;
+> +	} else if (pmlen > 0) {
+> +		/*
+> +		 * Prefer the smallest PMLEN that satisfies the user's request,
+> +		 * in case choosing a larger PMLEN has a performance impact.
+> +		 */
+> +		if (have_user_pmlen_7)
+> +			pmlen = 7;
+> +		else if (have_user_pmlen_16)
+> +			pmlen = 16;
+> +		else
+> +			return -EINVAL;
+> +	}
+> +
+> +	if (pmlen == 7)
+> +		pmm = ENVCFG_PMM_PMLEN_7;
+> +	else if (pmlen == 16)
+> +		pmm = ENVCFG_PMM_PMLEN_16;
+> +	else
+> +		pmm = ENVCFG_PMM_PMLEN_0;
+> +
+> +	envcfg_update_bits(task, ENVCFG_PMM, pmm);
+> +
+> +	return 0;
+> +}
+> +
+> +long get_tagged_addr_ctrl(struct task_struct *task)
+> +{
+> +	struct thread_info *ti = task_thread_info(task);
+> +	long ret = 0;
+> +
+> +	if (is_compat_thread(ti))
+> +		return -EINVAL;
+> +
+> +	switch (task->thread.envcfg & ENVCFG_PMM) {
+> +	case ENVCFG_PMM_PMLEN_7:
+> +		ret |= FIELD_PREP(PR_PMLEN_MASK, 7);
+> +		break;
+> +	case ENVCFG_PMM_PMLEN_16:
+> +		ret |= FIELD_PREP(PR_PMLEN_MASK, 16);
+> +		break;
+> +	}
+
+
+No need for the |=
+
+
+> +
+> +	return ret;
+> +}
+
+
+In all the code above, I'd use a macro for 7 and 16, something like 
+PMLEN[7|16]?
+
+
+> +
+> +static bool try_to_set_pmm(unsigned long value)
+> +{
+> +	csr_set(CSR_ENVCFG, value);
+> +	return (csr_read_clear(CSR_ENVCFG, ENVCFG_PMM) & ENVCFG_PMM) == value;
+> +}
+> +
+> +static int __init tagged_addr_init(void)
+> +{
+> +	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
+> +		return 0;
+> +
+> +	/*
+> +	 * envcfg.PMM is a WARL field. Detect which values are supported.
+> +	 * Assume the supported PMLEN values are the same on all harts.
+> +	 */
+> +	csr_clear(CSR_ENVCFG, ENVCFG_PMM);
+> +	have_user_pmlen_7 = try_to_set_pmm(ENVCFG_PMM_PMLEN_7);
+> +	have_user_pmlen_16 = try_to_set_pmm(ENVCFG_PMM_PMLEN_16);
+
+
+Shouldn't this depend on the satp mode? sv57 does not allow 16bits for 
+the tag.
+
+
+> +
+> +	return 0;
+> +}
+> +core_initcall(tagged_addr_init);
+
+
+Any reason it's not called from setup_arch()? I see the vector extension 
+does the same; just wondering if we should not centralize all this early 
+extensions decisions in setup_arch() (in my Zacas series, I choose the 
+spinlock implementation in setup_arch()).
+
+
+> +#endif	/* CONFIG_RISCV_ISA_POINTER_MASKING */
+> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+> index 35791791a879..6e84c827869b 100644
+> --- a/include/uapi/linux/prctl.h
+> +++ b/include/uapi/linux/prctl.h
+> @@ -244,6 +244,9 @@ struct prctl_mm_map {
+>   # define PR_MTE_TAG_MASK		(0xffffUL << PR_MTE_TAG_SHIFT)
+>   /* Unused; kept only for source compatibility */
+>   # define PR_MTE_TCF_SHIFT		1
+> +/* RISC-V pointer masking tag length */
+> +# define PR_PMLEN_SHIFT			24
+> +# define PR_PMLEN_MASK			(0x7fUL << PR_PMLEN_SHIFT)
+
+
+I don't understand the need for this shift, can't userspace pass the 
+pmlen value directly without worrying about this?
+
+
+>   
+>   /* Control reclaim behavior when allocating memory */
+>   #define PR_SET_IO_FLUSHER		57
 
