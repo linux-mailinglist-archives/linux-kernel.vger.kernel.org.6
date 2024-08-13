@@ -1,120 +1,96 @@
-Return-Path: <linux-kernel+bounces-284920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30CCE9506DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:48:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9446F9506E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15CE2834E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:48:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5097828331D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0398419CCEB;
-	Tue, 13 Aug 2024 13:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57AC919CD03;
+	Tue, 13 Aug 2024 13:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ME7ff/IW"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tH9WPsem"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E111EA8D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989481EA8D;
+	Tue, 13 Aug 2024 13:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556920; cv=none; b=DFV0m8fgWzrMcS9XdhpFV5uCY/g6H05UoMYJPO0cjQs6FYhw6vxyZl9A35AZnM4QXMgabAVlzF2whxfwYdR2cnJzjGgNQ4JD4dstQzw+KOktu2uy0MUgBWYVf2zCVV0l6oJzx1ox9gHVEIrT7bIUG8mxF13TIaOad6vS+VkiQEQ=
+	t=1723557028; cv=none; b=IbRhVj7ESF4JUQCh9Y6D9LHAaASfzxPA+3Y7lgqbsdY1wy1yIsUbPUpi781O/djWEbH0c/dLeDU9TVi+WElG0KlEcqkhapc4vLeeanGuhUJinjgxaNATo029VqLT5lYH5ff19x5wY8glTMt+QrKocqxYz36jJ7Hgsb6pa1+Aq9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556920; c=relaxed/simple;
-	bh=J7EQyefZIhPS+LFo6BXF2fBKpJZft2paSM+4jMeHsY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TITKrIqkLkbPbpJn++l/dy0Jqec0t12WDrMmH/+vpusEgW+qpMVltjV3CH3clshAHlDO5Dh7xYoP9DXH5WC0Z+Q9k8dPBPvVlAJ+OCP9NgODwrE50W+DWl9C7pIQZ1k1F5ELthgHEBhUSsax+sW8+//CZrJmCM9jQNrv76PbI+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ME7ff/IW; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5bd1a9bdce4so3662308a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1723556915; x=1724161715; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oZNAzTyg6Waa0pqBLj43mkX1Hv89TbQTGu6ZA1/BZfo=;
-        b=ME7ff/IWK6lOO9b13+O2luCtNkWrBSNaxBPQRBfjqQuzcuPswrh+vXrtZ/Go1CFF/3
-         gOpjM6Jpql283qhfVKDGICVtASCXpkx8EozUjh6BSbyJyhsbe021w7IvA0w0cjdsjzkq
-         57/MgMXQmsp/ZJA+mIPlWdQJ8UWHon1sc9Bf5qIDwWvfgjmeh7ORyl5/V2jndCCXcCE+
-         9VGCDPeKjRFTSKauY/2+YKFUpi+5SQbZfR8DRFqMWRi5PTV8HF2KLFqhmQ86bXZLhOO5
-         95evMFHsb4FSc32CYDK0fsHISuBVp7912mZ5KZatrYbTkDF/ABcxpIHqNENO1Vb5L24T
-         SGrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723556915; x=1724161715;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oZNAzTyg6Waa0pqBLj43mkX1Hv89TbQTGu6ZA1/BZfo=;
-        b=GzdThS8vvSsS25iqssHTHmeTWVixwsJEF26aaWREbYdoPHVyihv9n4JyX6wXBKtbfr
-         j8L0jmFSTKhMfGF/bsL/i0DSKHqywSRmV5T92vSekpD9C1ncMZ+iiZGYUKInOFUB1PpY
-         W9V4wYK20eO2w1W1IrtnK3Ai0lrcN0tMgs8tRTg+WuhImWdsPOgzLjr8Gsml9/ncEMAK
-         8B4ZkSddLgC/PvsmCtbn6CQ5y3haxk4v1nubCjLoyF90KubM2dO7W4TG69kAXfn14V+I
-         Mgtcv11wTOd2Kd3EZXodwhhL9uBIwb2Hj5XGxjlltGb9AwJoKKfT1rZqtaudZTIFmJ9v
-         zsrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQECBuMSSDyEKDDZBIWU+qsSHyVxl/of1e2QWxFLJO35tMpZr7Qv2EAOtpYSB7QCtdJ+VkOIZo7AAMrTGY9lE/1PjLn0N7wCXXHD1t
-X-Gm-Message-State: AOJu0Yw9fymlU3Ipoxe8oEQX2R9f5W/nk/QvsTl+GfAqkcfubrJZDWmT
-	MRzrssvR/g2TMurySypA6JTjZ1rDX0N/M0j3zUR6auC1cCxY2EJ5p2tgVjTLNHA=
-X-Google-Smtp-Source: AGHT+IFDI23ZutMxXOA0vQkFPnBjN3ma8S+VSR9VcD5oReOiT667cjDK2CtZzA9egSKOEDpRfH/FOw==
-X-Received: by 2002:a05:6402:27d0:b0:5a2:1693:1a2e with SMTP id 4fb4d7f45d1cf-5bd44c42176mr2862979a12.18.1723556915510;
-        Tue, 13 Aug 2024 06:48:35 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1a5e07a9sm2933877a12.78.2024.08.13.06.48.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:48:35 -0700 (PDT)
-Date: Tue, 13 Aug 2024 15:48:33 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: takakura@valinux.co.jp
-Cc: rostedt@goodmis.org, john.ogness@linutronix.de,
-	senozhatsky@chromium.org, akpm@linux-foundation.org, bhe@redhat.com,
-	lukas@wunner.de, wangkefeng.wang@huawei.com, ubizjak@gmail.com,
-	feng.tang@intel.com, j.granados@samsung.com,
-	stephen.s.brennan@oracle.com, linux-kernel@vger.kernel.org,
-	nishimura@valinux.co.jp, taka@valinux.co.jp
-Subject: Re: [PATCH v3 1/2] Allow cpu backtraces to be written into
- ringbuffer during panic
-Message-ID: <ZrtkMciiYhUK8Fs4@pathway.suse.cz>
-References: <20240812072137.339644-1-takakura@valinux.co.jp>
- <20240812072703.339690-1-takakura@valinux.co.jp>
+	s=arc-20240116; t=1723557028; c=relaxed/simple;
+	bh=Y+N81luiDhpmwTIpzxfPqMn67Yivx08cv0joM+WD/oE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=leAm8SCu4kuQXhmUWD3L8JcKo2pGiezHDTtFUasZ00Kyxh3+OvqNizy5oFv23jRla1HFWkIbAWRmGU5jHE3VsfEhHQDlxjMlfG/GKP1VDDQ5exV1P3s/xv1sbdVoXcOJf/2FtdLytdHIN93w4/YyXtO47PUF9AJqzsy7GKs2Pwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tH9WPsem; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CDD1C4AF0B;
+	Tue, 13 Aug 2024 13:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723557028;
+	bh=Y+N81luiDhpmwTIpzxfPqMn67Yivx08cv0joM+WD/oE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=tH9WPsemb1A+VaddFPBN6MrRffdBGHwoQAiyZVD8Nwy99JYM2T0h/BC9/19N3bbng
+	 ASakimI7XblF4wdXhFdxMJ62Pekln7YxYXD22r2p/wriVqcpXuIYeRmSy5ZLjJGyVA
+	 FwgwsDyLe3Hu6EsjSCSDQH8yJ29SI8vTuZKH6p07QBBtiHT8thPAbyNRIJsvOcnEHJ
+	 39lmrbBRC+vYlXuSO9RsFj9F0fg5uegjEaztBNPaISSJ8bcHAWfC/+AYJq57DIAzCP
+	 Mb+B+AYCM+RMLuIs3vV33ndbAVX5VrBR4pkTg0pJmEwz8AuSePEy3pHL7mqIQfb+KA
+	 gfDKv2va0DUGg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7105D3823327;
+	Tue, 13 Aug 2024 13:50:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240812072703.339690-1-takakura@valinux.co.jp>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v1] mlxbf_gige: disable RX filters until RX path
+ initialized
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172355702725.1643029.11168261839990556381.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Aug 2024 13:50:27 +0000
+References: <20240809163612.12852-1-davthompson@nvidia.com>
+In-Reply-To: <20240809163612.12852-1-davthompson@nvidia.com>
+To: David Thompson <davthompson@nvidia.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, leon@kernel.org, yuehaibing@huawei.com,
+ andriy.shevchenko@linux.intel.com, u.kleine-koenig@pengutronix.de,
+ asmaa@nvidia.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Mon 2024-08-12 16:27:03, takakura@valinux.co.jp wrote:
-> From: Ryo Takakura <takakura@valinux.co.jp>
-> 
-> commit 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing
-> to ringbuffer") disabled non-panic CPUs to further write messages to
-> ringbuffer after panicked.
-> 
-> Since the commit, non-panicked CPU's are not allowed to write to
-> ring buffer after panicked and CPU backtrace which is triggered
-> after panicked to sample non-panicked CPUs' backtrace no longer
-> serves its function as it has nothing to print.
-> 
-> Fix the issue by allowing non-panicked CPUs to write into ringbuffer
-> while CPU backtrace is in flight.
-> 
-> Fixes: 779dbc2e78d7 ("printk: Avoid non-panic CPUs writing to ringbuffer")
-> Signed-off-by: Ryo Takakura <takakura@valinux.co.jp>
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
+Hello:
 
-JFYI, I have pushed this patch into printk/linux.git, branch for-6.11-fixup.
-I am going to create pull request after it spends at least one or two
-days in linux-next.
+This patch was applied to netdev/net.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-The 2nd patch is more complicated. It depends on another patchset
-integrating con->write_atomic() callback. 
+On Fri, 9 Aug 2024 12:36:12 -0400 you wrote:
+> A recent change to the driver exposed a bug where the MAC RX
+> filters (unicast MAC, broadcast MAC, and multicast MAC) are
+> configured and enabled before the RX path is fully initialized.
+> The result of this bug is that after the PHY is started packets
+> that match these MAC RX filters start to flow into the RX FIFO.
+> And then, after rx_init() is completed, these packets will go
+> into the driver RX ring as well. If enough packets are received
+> to fill the RX ring (default size is 128 packets) before the call
+> to request_irq() completes, the driver RX function becomes stuck.
+> 
+> [...]
 
-Best Regards,
-Petr
+Here is the summary with links:
+  - [net,v1] mlxbf_gige: disable RX filters until RX path initialized
+    https://git.kernel.org/netdev/net/c/df934abb185c
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
