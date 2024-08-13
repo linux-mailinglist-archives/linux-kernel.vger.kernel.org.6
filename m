@@ -1,183 +1,144 @@
-Return-Path: <linux-kernel+bounces-284503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44A769501B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F0F395019A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 067C2282C5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:53:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5335A1C21E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5572019AD8E;
-	Tue, 13 Aug 2024 09:52:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7106818CC0F;
+	Tue, 13 Aug 2024 09:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSyB9LG+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ytm7Tvhu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732A81898EB;
-	Tue, 13 Aug 2024 09:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B119D18A94E;
+	Tue, 13 Aug 2024 09:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542764; cv=none; b=JyWu6pDiNCT6ikNuk6I2v/S7Xav8lLvUVJoUEHe8FpyuJjCcW17K/lVFTbF/PyUwEd5m/4HPwPnhR6xCMYI3RnemvDoi9pb5k7qI4CAmbi+bxYVGlfHzjb+NIHUcMVJk+dO5xA65zfnOz+V/5F0aHzmheHnTYJAyMzOv5cOuFLw=
+	t=1723542712; cv=none; b=WGNIDrPMvVZ4gM98lPcwGTv90QUwu1tOroOBQsoq1qxfae4KNncsUes+XWBODeoExv0mdWEs4SZRT64Ke9Sv5jEg83DCXr6plYNX/eFbO/ih9a9nqW7FUYT2j6Ho0P/JvX2gxnqE7jUaGdUZpWNHKwxEgbqNZ2XZgjqRsmfMcHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542764; c=relaxed/simple;
-	bh=BLT/Gf70iMGxhhfoB0MrhPoyame+Ks9oeqNTMocq8Dg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WWydENWRxe5j2TWmydIHN3XA47dhLGtoppK+AOEcFrObUBUaN0Vvg9Z0McPqJpy/5peTjeU1TNjkowW1nuWI32KgmZISrOmpxAIhjf9wAeWf6M8gqR2r2hW1El2986Py4QCmCMg4po2ZbBJrbEP5GVOI3FnwQORgJr9ISvKj8Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSyB9LG+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1317DC4AF12;
-	Tue, 13 Aug 2024 09:52:44 +0000 (UTC)
+	s=arc-20240116; t=1723542712; c=relaxed/simple;
+	bh=uVOY6MUqZfSq5bY4z+orE5FTCDv75mRnwySRQagyf+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kwtZFTvTEnB+2xfilhFwlIkgTKNNysVhNGAaPbkIFL4yTJuW1uh/6A9xQQtgKe4teIu8vtYpbn1gzGnvYtSr/3Wh2hm8/iWcgVZBRB7MoNrAJQ8FbgHpEAhBIc8CTfghFp53iV4Ty3QIdKLTmX4gmhuntVWDG3qx88qw918y2eY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ytm7Tvhu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09894C4AF09;
+	Tue, 13 Aug 2024 09:51:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542764;
-	bh=BLT/Gf70iMGxhhfoB0MrhPoyame+Ks9oeqNTMocq8Dg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=XSyB9LG+/lndNHJJL3di6g6+8eAQzy0DDGE7HA8YGPvoTISGIrpXg4++D9T6ESUhJ
-	 b2YjNGpqSGLc2aC/qz2NfP7RBaD6iMMTsExy2tjo0wWT9bjgchk/e+nVtH444149W1
-	 cv3UzwOgoFHzBrOrqS0AQiRSjN1pKPZlSWiiq2aah57YtsbhMItJj/CG0whex82VEC
-	 mfXqdMHq5YqAx9cdH+BKfPQTupFSAzRl6jU1Fdx47kekDo4WJCygrxBy6spYswEJgr
-	 SiE2sVyIUmjomlX5IIogrp42/VvFBU3kMtipsXUmXaAcD0IE8zizjWnODEmBfpSqm6
-	 YIZ4K5wKHBHIQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0482EC52D7D;
-	Tue, 13 Aug 2024 09:52:44 +0000 (UTC)
-From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
-Date: Tue, 13 Aug 2024 10:51:33 +0100
-Subject: [PATCH v10 3/3] dt-bindings: input: pure gpio support for adp5588
+	s=k20201202; t=1723542712;
+	bh=uVOY6MUqZfSq5bY4z+orE5FTCDv75mRnwySRQagyf+g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ytm7TvhuuejqWWg1WHrU3jv75npQYgUzDDT5st8BLE2SxX1uDkDV0E2HZLzS8jbC2
+	 le65h2j5yY1CN+R5DzTnynWTPTTS+nTJ+loHoZN5Ib+Pja9YJC9jJWboCiM8SwaRUT
+	 2+UToawwW62NZcJorDViGjTDo1D050P2H3KTirPlxzuOpu8Yf7Gj9r+p1FqUeQ05v2
+	 Ny2NBKHPvom94GNNGVgrANr+ata9umSor01qhB4MlwECY48TOKuc91z6v0F4igIXBJ
+	 /+aTwuiv3Ei0jozth6vmA+Xhde3NPflEoXODwfn+cxoxp0QqBKioU+/GNFILu/2aMx
+	 e5AAAOwaKTRsA==
+Message-ID: <25860d8b-a980-4f04-a376-b9cec03605fb@kernel.org>
+Date: Tue, 13 Aug 2024 11:51:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [xdp-hints] Re: [PATCH RFC bpf-next 32/52] bpf, cpumap: switch to
+ GRO from netif_receive_skb_list()
+To: Jakub Kicinski <kuba@kernel.org>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Daniel Xu <dxu@dxuuu.xyz>, Lorenzo Bianconi
+ <lorenzo.bianconi@redhat.com>, Alexander Lobakin
+ <alexandr.lobakin@intel.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Larysa Zaremba <larysa.zaremba@intel.com>,
+ Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
+ Magnus Karlsson <magnus.karlsson@intel.com>,
+ Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+ Jonathan Lemon <jonathan.lemon@gmail.com>, "toke@redhat.com"
+ <toke@redhat.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ David Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ John Fastabend <john.fastabend@gmail.com>, Yajun Deng
+ <yajun.deng@linux.dev>, Willem de Bruijn <willemb@google.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, xdp-hints@xdp-project.net
+References: <20220628194812.1453059-1-alexandr.lobakin@intel.com>
+ <20220628194812.1453059-33-alexandr.lobakin@intel.com>
+ <cadda351-6e93-4568-ba26-21a760bf9a57@app.fastmail.com>
+ <ZrRPbtKk7RMXHfhH@lore-rh-laptop>
+ <54aab7ec-80e9-44fd-8249-fe0cabda0393@intel.com>
+ <308fd4f1-83a9-4b74-a482-216c8211a028@app.fastmail.com>
+ <99662019-7e9b-410d-99fe-a85d04af215c@intel.com>
+ <20240812183307.0b6fbd60@kernel.org>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20240812183307.0b6fbd60@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
-References: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
-In-Reply-To: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
-To: Utsav Agarwal <utsav.agarwal@analog.com>, 
- Michael Hennerich <michael.hennerich@analog.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Arturs Artamonovs <arturs.artamonovs@analog.com>, 
- Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
- Oliver Gaskell <oliver.gaskell@analog.com>, 
- Conor Dooley <conor.dooley@microchip.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723542691; l=2851;
- i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
- bh=zxni+ke8R259oDqwVVzRtBCB7/NKDEt1SGzAW3iTS44=;
- b=Mtcv0z5GVBIilTZ1VsOGVVpBQjyoAgGr65qSRlXeZsP1uKjf3W2oZ4asZJ2ApfW4i/xMWCET7
- JiVMRm+/BlJAczxPQJVboYO+QJbouyP2dopyej8vmk9hdwcFTGQJFj6
-X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
- pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
-X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
- auth_id=178
-X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
-Reply-To: utsav.agarwal@analog.com
-
-From: Utsav Agarwal <utsav.agarwal@analog.com>
-
-Adding software support for enabling the pure gpio capability of the
-device - which allows all I/O to be used as GPIO. Previously, I/O
-configuration was limited by software to partial GPIO support only.
-
-When working in a pure gpio mode, the device does not require the
-certain properties and hence, the following are now made optional:
-	- interrupts
-	- keypad,num-rows
-	- keypad,num-columns
-	- linux,keymap
-
-However, note that the above are required to be specified when
-configuring the device as a keypad, for which dependencies have been added
-such that specifying either one requires the remaining as well.
-
-Also, note that interrupts are made optional, but required when the device
-has either been configured in keypad mode or as an interrupt controller.
-This has been done since they may not necessarily be used when leveraging
-the device purely for GPIO.
-
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
----
- .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++++++++++++----
- 1 file changed, 34 insertions(+), 6 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/input/adi,adp5588.yaml b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-index 26ea66834ae2..0721eef7139d 100644
---- a/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-+++ b/Documentation/devicetree/bindings/input/adi,adp5588.yaml
-@@ -49,7 +49,10 @@ properties:
-   interrupt-controller:
-     description:
-       This property applies if either keypad,num-rows lower than 8 or
--      keypad,num-columns lower than 10.
-+      keypad,num-columns lower than 10. This property is optional if
-+      keypad,num-rows or keypad,num-columns are not specified as the
-+      device is then configured to be used purely for gpio during which
-+      interrupts may or may not be utilized.
- 
-   '#interrupt-cells':
-     const: 2
-@@ -65,13 +68,23 @@ properties:
-     minItems: 1
-     maxItems: 2
- 
-+dependencies:
-+  keypad,num-rows:
-+    - linux,keymap
-+    - keypad,num-columns
-+  keypad,num-columns:
-+    - linux,keymap
-+    - keypad,num-rows
-+  linux,keymap:
-+    - keypad,num-rows
-+    - keypad,num-columns
-+    - interrupts
-+  interrupt-controller:
-+    - interrupts
-+
- required:
-   - compatible
-   - reg
--  - interrupts
--  - keypad,num-rows
--  - keypad,num-columns
--  - linux,keymap
- 
- unevaluatedProperties: false
- 
-@@ -108,4 +121,19 @@ examples:
-             >;
-         };
-     };
--...
-+
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        gpio@34 {
-+            compatible = "adi,adp5588";
-+            reg = <0x34>;
-+
-+            #gpio-cells = <2>;
-+            gpio-controller;
-+        };
-+    };
-+
-+.
-
--- 
-2.34.1
 
 
+
+On 13/08/2024 03.33, Jakub Kicinski wrote:
+> On Fri, 9 Aug 2024 14:20:25 +0200 Alexander Lobakin wrote:
+>> But I think one solution could be:
+>>
+>> 1. We create some generic structure for cpumap, like
+>>
+>> struct cpumap_meta {
+>> 	u32 magic;
+>> 	u32 hash;
+>> }
+>>
+>> 2. We add such check in the cpumap code
+>>
+>> 	if (xdpf->metalen == sizeof(struct cpumap_meta) &&
+>> 	    <here we check magic>)
+>> 		skb->hash = meta->hash;
+>>
+>> 3. In XDP prog, you call Rx hints kfuncs when they're available, obtain
+>> RSS hash and then put it in the struct cpumap_meta as XDP frame metadata.
+> 
+> I wonder what the overhead of skb metadata allocation is in practice.
+> With Eric's "return skb to the CPU of origin" we can feed the lockless
+> skb cache one the right CPU, and also feed the lockless page pool
+> cache. I wonder if batched RFS wouldn't be faster than the XDP thing
+> that requires all the groundwork.
+
+I explicitly developed CPUMAP because I was benchmarking Receive Flow
+Steering (RFS) and Receive Packet Steering (RPS), which I observed was
+the bottleneck.  The overhead was too large on the RX-CPU and bottleneck
+due to RFS and RPS maintaining data structures to avoid Out-of-Order
+packets.   The Flow Dissector step was also a limiting factor.
+
+By bottleneck I mean it didn't scale, as RX-CPU packet per second
+processing speeds was too low compared to the remote-CPU pps.
+Digging in my old notes, I can see that RPS was limited to around 4.8
+Mpps (and I have a weird disabling part of it showing 7.5Mpps).  In [1]
+remote-CPU could process (starts at) 2.7 Mpps when dropping UDP packet
+due to UdpNoPorts configured (and baseline 3.3 Mpps if not remote), thus
+it only scales up-to 1.78 remote-CPUs.  [1] shows how optimizations
+brings remote-CPU to handle 3.2Mpps (close non-remote to 3.3Mpps
+baseline). In [2] those optimizations bring remote-CPU to 4Mpps (for
+UdpNoPorts case).  XDP RX-redirect in [1]+[2] was around 19Mpps (which
+might be lower today due to perf paper cuts).
+
+  [1] 
+https://github.com/xdp-project/xdp-project/blob/master/areas/cpumap/cpumap02-optimizations.org
+  [2] 
+https://github.com/xdp-project/xdp-project/blob/master/areas/cpumap/cpumap03-optimizations.org
+
+The benefits Eric's "return skb to the CPU of origin" should help
+improve the case for the remote-CPU, as I was seeing some bottlenecks in
+how we returned the memory.
+
+--Jesper
 
