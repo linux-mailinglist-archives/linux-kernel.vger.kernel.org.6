@@ -1,137 +1,205 @@
-Return-Path: <linux-kernel+bounces-284531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE529501F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:05:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C0D89501FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187AC2822E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:05:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE5B62810B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616A189BB7;
-	Tue, 13 Aug 2024 10:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB67B19306B;
+	Tue, 13 Aug 2024 10:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hrQBqVUC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="OTFC0ea9"
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2FA17E44F;
-	Tue, 13 Aug 2024 10:05:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3690189BB1
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543503; cv=none; b=TBRE3xbVx4V3pOW9c7xt6MoKihaPSIw31+WSbzH3aHT0Dr+MleLcbx9QvSHATmYXTQF5rDcG9WDCRPEYpOAQnIiHADdk3K+LS/mBmEIzmQ0/0JBzOfb6gSjP28aShf1ryxq8ch0yGJp8TrEp1ln67tfphypjDRv9IiFXyvutdoQ=
+	t=1723543524; cv=none; b=T+1bE4rlWZ1P84k4WCMgYUcgpCVkn5n3QnKrca2GzmUTXOMlMxQAYDeqbY9BA6MBR0jWfSAa75vTP2v+b/3Yl9qG8Se0qmJAffjt+IeP8Hr+/GjidyLbuZT3taiXqbQDLiUQjTwzf6i6flIw5TjschQMXaivhjACaBBoFdIY9DQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543503; c=relaxed/simple;
-	bh=RLM1b5OCpcYBlOO20hjl2IV3j1hiiTdOBey6lSnxJPg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G8XJDvgHdvkYi82jnYO/OqWHLay8EFSWnoyU7BW1tazaKnKMIgmdu0r/vRQKNdnWWOmTNiF5+cfGv62g86eLnGa8VgQuYSTfTizVGlyxczeFbnwuBFWvpIrKxCKYfMkKmv+yEukRUXhcyhR/VBfVfRI4BHblOk5vtwKe96w5Q90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hrQBqVUC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B52FC4AF09;
-	Tue, 13 Aug 2024 10:04:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723543502;
-	bh=RLM1b5OCpcYBlOO20hjl2IV3j1hiiTdOBey6lSnxJPg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hrQBqVUCw5k9G0gc1RkcS1ijD1UN5t2XUl7kVKZcnFwTOcDXYQugFyPZ6YjKMQ9fp
-	 S4dw4BYr/WsAkUlC4Ua7QDf9vLrTeXPKAkicnzGhKFYI4b7d3YDi0+Y5sc1Z1hVgeS
-	 3hchdQyiv/+Vrw19Dxmgl6nOtEisj2isiDbMUdQbe9NjsKfn6EWpzCo124QMiOEvh0
-	 8nyZSKviIxjQ2+XNHY72gYdjjBmIb68q+377GGcOVZCSAaLBBS/G+Zt5/3wNCenN/5
-	 U/YYJNITdTDFbovDPb0FabdQ0Cfmy+daWt8/TLnBBxdqOP3G5P2luyyWDnkDEYyx4K
-	 fp9oJXIltkG7g==
-Message-ID: <033b66e6-f15f-4136-aaae-ba58c9814b97@kernel.org>
-Date: Tue, 13 Aug 2024 12:04:54 +0200
+	s=arc-20240116; t=1723543524; c=relaxed/simple;
+	bh=mcVXGd7HEj3qie/WwvYJrS76ohzixIpRyTnktrmAATU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YGjbkIi5/rppj/Bulf6Jvh0du3AzGMDyZpMZNAgsd374FzRWyPkUiddkWFJm3xtF8xkXc7SvRt2Yt6tipl/2c18+nm/ZA2pBmI1jZRmcngRROo4C0i6U3aI64YxnMgq23hiY4IiWZzublcvxUQTrS54a49Y9qIyO6KIrjkHImg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=OTFC0ea9; arc=none smtp.client-ip=45.157.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Wjn7X6y2ZzDSX;
+	Tue, 13 Aug 2024 12:05:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1723543512;
+	bh=4ouoaXjq3cssWM64uNKVrlNuRIEzdBnGbfaxp1fhKEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OTFC0ea96KOVuNXqUg9PashAKp+Egn6zWk/QOCye+vFUNX0LRrPZ8MU/NninpLGzb
+	 ++vK198kk9pGicr6j0vBkcqOUKb3lPT2liAlmBwZcBbfhLoDmenI9ShiNbojHVCYqj
+	 VCguEmZILYGfE561ONQl3v/qGGk+OQGEbxUalaOo=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Wjn7W5lGDzKHQ;
+	Tue, 13 Aug 2024 12:05:11 +0200 (CEST)
+Date: Tue, 13 Aug 2024 12:05:06 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Casey Schaufler <casey@schaufler-ca.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH v2] fs,security: Fix file_set_fowner LSM hook
+ inconsistencies
+Message-ID: <20240813.la2Aiyico3lo@digikod.net>
+References: <20240812174421.1636724-1-mic@digikod.net>
+ <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 15/17] arm64: dts: imx93-tqma9352-mba93xxla: rename hub to
- usb
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Gregor Herburger <gregor.herburger@ew.tq-group.com>,
- Frank Li <Frank.Li@nxp.com>
-Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com
-References: <20240813-imx_warning-v1-0-3494426aea09@nxp.com>
- <20240813-imx_warning-v1-15-3494426aea09@nxp.com>
- <1802961.VLH7GnMWUR@steina-w> <1998267.usQuhbGJ8B@steina-w>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1998267.usQuhbGJ8B@steina-w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhRp5hMsmZ9jUok+5c20U37XLiXmoEAguorTqRF5MQq2Gg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 13/08/2024 10:49, Alexander Stein wrote:
-> Am Dienstag, 13. August 2024, 10:40:04 CEST schrieb Alexander Stein:
->> Am Dienstag, 13. August 2024, 06:35:10 CEST schrieb Frank Li:
->>> Rename hub to usb to fix below warning:
->>> arch/arm64/boot/dts/freescale/imx93-tqma9352-mba93xxla.dtb: hub@1: $nodename:0: 'hub@1' does not match '^usb(@.*)?'
->>>
->>> Signed-off-by: Frank Li <Frank.Li@nxp.com>
->>
->> Thanks.
->>
->> Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+On Mon, Aug 12, 2024 at 06:26:58PM -0400, Paul Moore wrote:
+> On Mon, Aug 12, 2024 at 1:44 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > The fcntl's F_SETOWN command sets the process that handle SIGIO/SIGURG
+> > for the related file descriptor.  Before this change, the
+> > file_set_fowner LSM hook was used to store this information.  However,
+> > there are three issues with this approach:
+> >
+> > - Because security_file_set_fowner() only get one argument, all hook
+> >   implementations ignore the VFS logic which may not actually change the
+> >   process that handles SIGIO (e.g. TUN, TTY, dnotify).
+> >
+> > - Because security_file_set_fowner() is called before f_modown() without
+> >   lock (e.g. f_owner.lock), concurrent F_SETOWN commands could result to
+> >   a race condition and inconsistent LSM states (e.g. SELinux's fown_sid)
+> >   compared to struct fown_struct's UID/EUID.
+> >
+> > - Because the current hook implementations does not use explicit atomic
+> >   operations, they may create inconsistencies.  It would help to
+> >   completely remove this constraint, as well as the requirements of the
+> >   RCU read-side critical section for the hook.
+> >
+> > Fix these issues by replacing f_owner.uid and f_owner.euid with a new
+> > f_owner.cred [1].  This also saves memory by removing dedicated LSM
+> > blobs, and simplifies code by removing file_set_fowner hook
+> > implementations for SELinux and Smack.
+> >
+> > This changes enables to remove the smack_file_alloc_security
+> > implementation, Smack's file blob, and SELinux's
+> > file_security_struct->fown_sid field.
+> >
+> > As for the UID/EUID, f_owner.cred is not always updated.  Move the
+> > file_set_fowner hook to align with the VFS semantic.  This hook does not
+> > have user anymore [2].
+> >
+> > Before this change, f_owner's UID/EUID were initialized to zero
+> > (i.e. GLOBAL_ROOT_UID), but to simplify code, f_owner's cred is now
+> > initialized with the file descriptor creator's credentials (i.e.
+> > file->f_cred), which is more consistent and simplifies LSMs logic.  The
+> > sigio_perm()'s semantic does not need any change because SIGIO/SIGURG
+> > are only sent when a process is explicitly set with __f_setown().
+> >
+> > Rename f_modown() to __f_setown() to simplify code.
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Jann Horn <jannh@google.com>
+> > Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Cc: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > Link: https://lore.kernel.org/r/20240809-explosionsartig-ablesen-b039dbc6ce82@brauner [1]
+> > Link: https://lore.kernel.org/r/CAHC9VhQY+H7n2zCn8ST0Vu672UA=_eiUikRDW2sUDSN3c=gVQw@mail.gmail.com [2]
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > ---
+> >
+> > Changes since v1:
+> > https://lore.kernel.org/r/20240812144936.1616628-1-mic@digikod.net
+> > - Add back the file_set_fowner hook (but without user) as
+> >   requested by Paul, but move it for consistency.
+> > ---
+> >  fs/fcntl.c                        | 42 +++++++++++++++----------------
+> >  fs/file_table.c                   |  3 +++
+> >  include/linux/fs.h                |  2 +-
+> >  security/security.c               |  5 +++-
+> >  security/selinux/hooks.c          | 22 +++-------------
+> >  security/selinux/include/objsec.h |  1 -
+> >  security/smack/smack.h            |  6 -----
+> >  security/smack/smack_lsm.c        | 39 +---------------------------
+> >  8 files changed, 33 insertions(+), 87 deletions(-)
+> >
+> > diff --git a/fs/fcntl.c b/fs/fcntl.c
+> > index 300e5d9ad913..4217b66a4e99 100644
+> > --- a/fs/fcntl.c
+> > +++ b/fs/fcntl.c
+> > @@ -87,8 +87,8 @@ static int setfl(int fd, struct file * filp, unsigned int arg)
+> >         return error;
+> >  }
+> >
+> > -static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> > -                     int force)
+> > +void __f_setown(struct file *filp, struct pid *pid, enum pid_type type,
+> > +               int force)
+> >  {
+> >         write_lock_irq(&filp->f_owner.lock);
+> >         if (force || !filp->f_owner.pid) {
+> > @@ -97,20 +97,15 @@ static void f_modown(struct file *filp, struct pid *pid, enum pid_type type,
+> >                 filp->f_owner.pid_type = type;
+> >
+> >                 if (pid) {
+> > -                       const struct cred *cred = current_cred();
+> > -                       filp->f_owner.uid = cred->uid;
+> > -                       filp->f_owner.euid = cred->euid;
+> > +                       security_file_set_fowner(filp);
+> > +                       put_cred(rcu_replace_pointer(
+> > +                               filp->f_owner.cred,
+> > +                               get_cred_rcu(current_cred()),
+> > +                               lockdep_is_held(&filp->f_owner.lock)));
+> >                 }
+> >         }
+> >         write_unlock_irq(&filp->f_owner.lock);
+> >  }
 > 
-> Still valid, but there is already https://lore.kernel.org/all/20240808123206.192906-1-festevam@gmail.com/
+> Looking at this quickly, why can't we accomplish pretty much the same
+> thing by moving the security_file_set_fowner() into f_modown (as
+> you've done above) and leveraging the existing file->f_security field
+> as Smack and SELinux do today?  I'm seeing a lot of churn to get a
+> cred pointer into fown_struct which doesn't seem to offer that much
+> additional value.
+
+As explained in the commit message, this patch removes related LSM
+(sub)blobs because they are duplicates of what's referenced by the new
+f_owner.cred, which is a more generic approach and saves memory.  That's
+why the v1 entirely removed the LSM hook, which is now useless.
+
+Also, f_modown() is renamed to __f_setown().
+
 > 
+> From what I can see this seems really focused on adding a cred
+> reference when it isn't clear an additional one is needed.  If a new
+> cred reference *is* needed, please provide an explanation as to why;
+> reading the commit description this isn't clear.  Of course, if I'm
+> mistaken, feel free to correct me, although I'm sure all the people on
+> the Internet don't need to be told that ;)
 
-Fix the schema instead...
-
-Best regards,
-Krzysztof
-
+This is a more generic approach that saves memory, sticks to the VFS
+semantic, and removes code.  So I'd say it's a performance improvement,
+it saves memory, it fixes the LSM/VFS inconsistency, it guarantees
+that the VFS semantic is always visible to each LSMs thanks to the use
+of the same f_owner.cred, and it avoids LSM mistakes (except if an LSM
+implements the now-useless hook).
 
