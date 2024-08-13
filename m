@@ -1,92 +1,94 @@
-Return-Path: <linux-kernel+bounces-285269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85887950B71
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:28:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274AA950B77
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 111FEB26762
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AB921C220A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1D81A2C09;
-	Tue, 13 Aug 2024 17:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A191A2C22;
+	Tue, 13 Aug 2024 17:30:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Oex9KA0u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F31dSPHb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799271A08D1;
-	Tue, 13 Aug 2024 17:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AF5E18C3D;
+	Tue, 13 Aug 2024 17:30:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723570104; cv=none; b=iCwKrIQYerP5MX2e4U7tYPxJH4g8yhfC/ULALF76vyq+k+vm4pOIF7W25KVPz4Wj9wGYiGxuvTH+a22cTWFZ0dDu01WamMPrl/tTgrtGWmsHoc4nuhimjyYSTi57RaW6qi2rC2z3sSrXJcvzTdZZqArNCTX/pzqMFkc0qdMk/Gw=
+	t=1723570229; cv=none; b=ZzfzK8NSGnEovkLK2igdAWfbPppqKNrXFkx4pxQQbtA33XM2i3HRPoSZVEdjAAQ/xe8pVQr3kRo3GPS1WQSjRAEF1JNVP80z5Ixu3B5Y221Bqz23FtWdnXrlNCWIzNhDl4QDm5F+C1iu2QjpDxKk85B5MB2OGXAPab7vDM74kC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723570104; c=relaxed/simple;
-	bh=ndNGlNI76XmLb9K3XXhXrivbtO13RGCPS9qc0tSh6x4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pUxOqLxnRQ2INSwDS/l5oNhUBS9XpBwdRbhI83zabhinVc7zZV+bl44rVL7QF0opqedZ6zkQ5urMt5RxKxDChBZtXRTIJ4zn/YCvcYaNGmkVY3jCa6Y4UO/vgXmO+23dRzsyvh2LukUx/ejELVbfemRbyGfYUHWajZAIKMUW+0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Oex9KA0u; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723570103; x=1755106103;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ndNGlNI76XmLb9K3XXhXrivbtO13RGCPS9qc0tSh6x4=;
-  b=Oex9KA0ugYNaiQobHMwT4zx1aw+KM7vgVeq603uzUH6LOwV2AcRqFAeH
-   fC/DglIii2w1Mm5d3zFYEQbJpkfDGcTtQWTfDAfXpGfnJDGKWMav5pg9E
-   ZgvQ2ZjY82+VSdUJVobK0E553eUrZR4rFtppOGT7gw5ArctEdtCh/Cj0o
-   afoCxp7BcB3icjB3jooU4+LJWDpt5Sa/YnAzqfq8Dk/T3x/ExlWf/z5vS
-   HCHcnK5IAEwG59z6BBj+FykHf1c0YNGIebUSQfK/ATBwScOHtHF4Vbg0b
-   nMTei0q8ipH+U9KvRlZFh3NI+adoSouaM9AeMYkOKuT2oMLjbQThh6KMp
-   A==;
-X-CSE-ConnectionGUID: GZGBwi97S8Ko+P1KKluRMw==
-X-CSE-MsgGUID: mmgiJ8KpRkyQqQZxAjLQvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="25540709"
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="25540709"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:28:22 -0700
-X-CSE-ConnectionGUID: AoXMvM4RQl2MaarUe1at7Q==
-X-CSE-MsgGUID: IobEv8uXSsSBvO99duqDOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
-   d="scan'208";a="63582081"
-Received: from yjiang5-mobl.amr.corp.intel.com (HELO localhost) ([10.124.83.191])
-  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 10:28:21 -0700
-Date: Tue, 13 Aug 2024 10:28:19 -0700
-From: Yunhong Jiang <yunhong.jiang@linux.intel.com>
-To: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Question to hv_vtl_real_mode_header in hv_vtl.c
-Message-ID: <20240813172819.GA6572@yjiang5-mobl.amr.corp.intel.com>
+	s=arc-20240116; t=1723570229; c=relaxed/simple;
+	bh=dFV1+Z8zUpHV/JRQ7S5XaE8x/1h1tJx0+CLa22IsB5w=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=R7WN38OD4UVTP08ZIv4KMzG+2LuXGiKQMYF80QpVrBCv/D8kJ6CLY++928xvbCVcQhg3Kmsb3QCQzf7mP1SQ4N0bBeq3JOS1Uad6VVQjbi4rwrIeeD6Qq81exG1upO9LhmuTB9Bm6n738FV/hDJ/TOSyEhLy+GESpFOWNuLK1aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F31dSPHb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A32A0C4AF0B;
+	Tue, 13 Aug 2024 17:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723570228;
+	bh=dFV1+Z8zUpHV/JRQ7S5XaE8x/1h1tJx0+CLa22IsB5w=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=F31dSPHbtiHrpV5QybwuB4rPIMbalhQVVXF/F4hvuXmcx88SiT8FJox5YmQjg8nDn
+	 4T/6/Nea8YeUF8ENHU8B2DRSFCmybEDU9JSpQMmFbPxbGfbO93N+e+JPZFAofoTnDC
+	 u/Fp1RUTmMtba0HczEgLMBFWyD5lwTxBPgy+YJAcx3rfHtJbd5abECUOr1xUZq4kfB
+	 V2wrYLYQuy4tyj0lO3A19r2j1QZfgXOzN0o5S+3swtTviANYGuFqVpttIN30nGu6wB
+	 cMfX1Z+7MSXdKY3VDCqH+limqPNfNnBawECtTz2Uz+V0CxxcGTrRruRJW/PwJylhQm
+	 3n/wKDfG5ffAw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0123823327;
+	Tue, 13 Aug 2024 17:30:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] perf/bpf: Don't call bpf_overflow_handler() for tracing
+ events
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172357022776.1707128.14984881703439045875.git-patchwork-notify@kernel.org>
+Date: Tue, 13 Aug 2024 17:30:27 +0000
+References: <20240813151727.28797-1-jdamato@fastly.com>
+In-Reply-To: <20240813151727.28797-1-jdamato@fastly.com>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, peterz@infradead.org, andrii@kernel.org,
+ mhiramat@kernel.org, olsajiri@gmail.com, me@kylehuey.com, khuey@kylehuey.com,
+ andrii.nakryiko@gmail.com, stable@vger.kernel.org
 
-Hi, Srinivasan and Dexuan,
-	I have a question to the hv_vtl_real_mode_header in
-arch/x86//hyperv/hv_vtl.c when addressing one patch review comment.
-	In hv_vtl_early_init(), the real_mode_header is set to
-hv_vtl_real_mode_header, but there is no setup to the real_mode_header, since
-the realmode_init() is marked x86_init_noop in hv_vtl_init_platform.
-	How is the real_mode_header(in another word, hv_vtl_real_mode_header)
-used? Is it to meet the access requirement from do_boot_cpu(), so that
-real_mode_header->trampoline_start64 will work, although the start_ip is not
-used?
-	If it's really to support the do_boot_cpu() requirement, how does the
-non-VTL guest meet the access requirement? The hv_vtl_init_platform() is
-unconditionally called from ms_hyperv_init_platform(), so I assume all hyperv
-guest will have the realmode_init() set as x86_init_noop.
+Hello:
 
-Thank you
---jyh
+This patch was applied to bpf/bpf.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Tue, 13 Aug 2024 15:17:27 +0000 you wrote:
+> From: Kyle Huey <me@kylehuey.com>
+> 
+> The regressing commit is new in 6.10. It assumed that anytime event->prog
+> is set bpf_overflow_handler() should be invoked to execute the attached bpf
+> program. This assumption is false for tracing events, and as a result the
+> regressing commit broke bpftrace by invoking the bpf handler with garbage
+> inputs on overflow.
+> 
+> [...]
+
+Here is the summary with links:
+  - [v2] perf/bpf: Don't call bpf_overflow_handler() for tracing events
+    https://git.kernel.org/bpf/bpf/c/100bff23818e
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
