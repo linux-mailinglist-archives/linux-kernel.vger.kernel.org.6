@@ -1,78 +1,163 @@
-Return-Path: <linux-kernel+bounces-285162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E8529509FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:18:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F938950A24
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A10ED1C228EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:18:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C621F2615C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F041A254B;
-	Tue, 13 Aug 2024 16:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC9F1A2553;
+	Tue, 13 Aug 2024 16:29:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WBsIH5Ad"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jy34e68H"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6368561FCF;
-	Tue, 13 Aug 2024 16:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E88C19AD90;
+	Tue, 13 Aug 2024 16:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565872; cv=none; b=qCsxKVrx4r+/E6jAIvh9dELux8xoBoaEDSF8JoOFirRyQd/wKf2Z1j25rDqqCyvOJIvCf266qiNgtubq4rDzMreUK8FwMvokcTSgGnFFEnLJh4LVvibAQbBG+8TVBPsIQ/LmLvgJiPChX840PdDP8V9TTd4B4W3ssjHPcktoM9c=
+	t=1723566547; cv=none; b=Rmz6p/4vYSIZlVWQRjpeZS86Qt/wnD4mO8Jlc2DszwcS+l+T03Cofo/MMoNQ5OyHlDy8DVI3TY3kyJSuLzuuPdbcalnmlRF8zqQakRHsumkfE78MFxPwJi2QiVuTl2XgR2uHO32zSkHQsLCT9icUMWaJfMnfz/LyMAbPEYG0tQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565872; c=relaxed/simple;
-	bh=E5pELByvlHXnl49T38KLBtj2POmo/UVZkpM3ZdNzxWo=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=CChfadBXzAJ77sB4mW/jj0MNWk8VYvWegLbmhcwvjUu+1v98RBXL/n+L6zNCM2ikmwMGESf7JnSAmp60jNJlsokkxPZlkyeblAjbRoj2qSTlY3Fj2Vu91raA6GCSuDxUHuRhU2Wa7r8IuDpeOm12CntK9kXNx46wP4AYLU91Tig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WBsIH5Ad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FB68C4AF09;
-	Tue, 13 Aug 2024 16:17:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723565872;
-	bh=E5pELByvlHXnl49T38KLBtj2POmo/UVZkpM3ZdNzxWo=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=WBsIH5AdSRNGiBGnnev7ENGkkNddfMt8t6NULBxPVNXkhvsfYTkOTODNlpeow4Fty
-	 P7L17zOLenSkZw6UzFFwW7RszI544OEtTRMnxZmRSggXC+R2gO5+eN8tSJy7BsL8kw
-	 DMI2DQAmoQeM/J30l0C7Hr+9+lFay6YpYHQgUaCSwyoDh1u4vk7N7J/9A2NBJVkaSF
-	 LS8RAkUUllZqjuukSNfw+4KNcRMmK6EGEnw3jvsjJckuV3JxyXZmCfgFzvjr4s1XM3
-	 3Syhk3Q10HTu+mUr5+iar7vBhwBuwBvRoO7I5SFrXCfHPjSPmof6pbQybDhJyZWwey
-	 5z1urEUDy500Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 718E43823327;
-	Tue, 13 Aug 2024 16:17:52 +0000 (UTC)
-Subject: Re: [GIT PULL] ksmbd server fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAH2r5mse_XmxXZy8Xhav9S3K2pBvUTPFqf+jhJtOoCn3hM0stQ@mail.gmail.com>
-References: <CAH2r5mse_XmxXZy8Xhav9S3K2pBvUTPFqf+jhJtOoCn3hM0stQ@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAH2r5mse_XmxXZy8Xhav9S3K2pBvUTPFqf+jhJtOoCn3hM0stQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.samba.org/ksmbd.git tags/6.11-rc3-ksmbd-fixes
-X-PR-Tracked-Commit-Id: f6bd41280a44dcc2e0a25ed72617d25f586974a7
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6b4aa469f04999c3f244515fa7491b4d093c5167
-Message-Id: <172356587116.1687982.16180580175572855184.pr-tracker-bot@kernel.org>
-Date: Tue, 13 Aug 2024 16:17:51 +0000
-To: Steve French <smfrench@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, CIFS <linux-cifs@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1723566547; c=relaxed/simple;
+	bh=JGh9VB5dzq5Ts+lVa17EXNj6slFzF9LotVeHXIQDwPM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bOqMHVUyOZty6pPPFA6w6ZfuZwO6KNndJUtZMEEIf5mErhlOp6Zi5qH/g/eptA7YxMvu+IrCXD2tJMyK7DhIMTm0ngd3blthX7T9UmkVEFDdVuEKOjRREDlFPcl9rKf1FelrvFQtFYnnTgXYpFdiwwIif+0aZ7yHJrWuz8TIzEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jy34e68H; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5b8c2a611adso6691530a12.1;
+        Tue, 13 Aug 2024 09:29:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723566544; x=1724171344; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MsbiuRUlmo4RLNQnmGHI8pchnz0f5Sp6onkgIW0DlX4=;
+        b=jy34e68HB7yvy6qkLBKIS1L3FGI2FjTL/vFLQ6dURmeTq22dp7gmp7+QtkxzSxaL/9
+         qm39u4iE14WX5it0/PmNtr6M8CUScX++SuElRySrtgUt61bRWShHIxPmr/EdNEsIjpHr
+         u4t1Cv2TaZMG7qB6v9nDsZlAc4yuFv+ATD5iOXsgJwPNkgks8OodkY63hkHVUi9bH4og
+         zUfvQ5R78DouIO+FBsUIo58e1J8oFgcrz7fvRTmeehOFMd13FZJA9EvqPq07Ah1SYtxA
+         PB+AWce2LviB91Z9rCbQ0dmqa+Mlu+50+kAAfZrVr37eoxSpu96QGE/T1sVrfZvya5Er
+         xcbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723566544; x=1724171344;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MsbiuRUlmo4RLNQnmGHI8pchnz0f5Sp6onkgIW0DlX4=;
+        b=njCcuQhzNiN+47tm1vcVlhK6rEy5jWYdPkQrwgHVBIArQ68aaQGifeNu3a3a1T4J3w
+         aB5p7ncb+Di8mBh+M/66jzH7Uch3Y7fqq0lC2W/d8/lxVL3SRQVYTT11Lup8zqBwxud2
+         46jgGe3cN8S6s89g9X01s2Czd1RdJCjgCIQ1Xg94rrGTh8aRMak47Mc1zRJHRCShDsm8
+         c1DLp6E/6NUhHap5PSTpxktH3bGkHiTVY5/y/viE8CWhl03hc3fuxDskOkxSwmm/Bs1N
+         GQyw6F8nDZGfPjPPOpxiWpnmZCThGYmJKMNMf4lR+/B/O7U6wqEm9i8FaVwbnQQ2uxw6
+         NSag==
+X-Forwarded-Encrypted: i=1; AJvYcCWVw5oI670GNSE06J7JZulLsDamUCPp5YxRSHLgZvWe6z3z/kohebhPWpcrp9z5gE2SkF7Y7fTYVySdChoxZTI3+LD0iX81uoxMjmUQ+1OZJ8227QxnTXKpEzHQ9tKKcx8A3WCUhzsDqF8UiieUepLnZvRpPkmEaTyXq1FjKlh0TJ0ngVof
+X-Gm-Message-State: AOJu0YxOSKbqrPABb+3eAw99tBa1cC9E/N+UB5X1WkoQKbgfhPTDeh1n
+	H9TvXQU1uxR4Nu/zFn9AQk2V1NYVvJUsZ+4N3WvzZr1/ruXJGLrT
+X-Google-Smtp-Source: AGHT+IFhM8MfQy/NKffVoj7J9CoSEpQI9NXHY4jV8akjJkOPDrXqH/6wlV6/772rcL7gJR8l95SVmg==
+X-Received: by 2002:a05:6402:84c:b0:5a2:abcb:c4cf with SMTP id 4fb4d7f45d1cf-5bea1c7f2c7mr31901a12.22.1723566544025;
+        Tue, 13 Aug 2024 09:29:04 -0700 (PDT)
+Received: from localhost (dh207-40-227.xnet.hr. [88.207.40.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd1968af77sm3005390a12.40.2024.08.13.09.29.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 09:29:03 -0700 (PDT)
+From: Mirsad Todorovac <mtodorovac69@gmail.com>
+To: Paolo Abeni <pabeni@redhat.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Mirsad Todorovac <mtodorovac69@gmail.com>,
+	Simon Horman <horms@kernel.org>
+Subject: [PATCH v2 1/1] selftests: net: af_unix: convert param to const char* in __recvpair() to fix warning
+Date: Tue, 13 Aug 2024 18:20:06 +0200
+Message-ID: <20240813162004.2464421-3-mtodorovac69@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-The pull request you sent on Mon, 12 Aug 2024 21:57:04 -0500:
+GCC 13.2.0 reported warning about (void *) being used as a param where (char *)
+is expected:
 
-> git://git.samba.org/ksmbd.git tags/6.11-rc3-ksmbd-fixes
+In file included from msg_oob.c:14:
+msg_oob.c: In function ‘__recvpair’:
+../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’, \
+						but argument 6 has type ‘const void *’ [-Wformat=]
+  106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
+      |                                        ^~~~~~~~~~~~~
+../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+  101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
+      |                 ^~~~~~~~
+msg_oob.c:235:17: note: in expansion of macro ‘TH_LOG’
+  235 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
+      |                 ^~~~~~
+../../kselftest_harness.h:106:40: warning: format ‘%s’ expects argument of type ‘char *’, \
+						but argument 6 has type ‘const void *’ [-Wformat=]
+  106 |                 fprintf(TH_LOG_STREAM, "# %s:%d:%s:" fmt "\n", \
+      |                                        ^~~~~~~~~~~~~
+../../kselftest_harness.h:101:17: note: in expansion of macro ‘__TH_LOG’
+  101 |                 __TH_LOG(fmt, ##__VA_ARGS__); \
+      |                 ^~~~~~~~
+msg_oob.c:259:25: note: in expansion of macro ‘TH_LOG’
+  259 |                 TH_LOG("Expected:%s", expected_errno ? strerror(expected_errno) : expected_buf);
+      |                 ^~~~~~
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6b4aa469f04999c3f244515fa7491b4d093c5167
+As Simon suggested, all calls to __recvpair() have char * as expected_buf param, so
+it is safe to change param type from (const void *) to (const char *), which silences
+the warning.
 
-Thank you!
+Fixes: d098d77232c37 ("selftest: af_unix: Add msg_oob.c.")
+Reported-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-kselftest@vger.kernel.org
+Suggested-by: Simon Horman <horms@kernel.org>
+Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
+---
+v1 -> v2:
+ fixed a typo.
+ change funct param type rather than making two casts, as Simon suggested.
+ changed Subject: line to reflect the modification.
+ minor formatting changes.
 
+v1:
+ initial version to fix the compiler warning.
+
+ tools/testing/selftests/net/af_unix/msg_oob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tools/testing/selftests/net/af_unix/msg_oob.c b/tools/testing/selftests/net/af_unix/msg_oob.c
+index 16d0c172eaeb..535eb2c3d7d1 100644
+--- a/tools/testing/selftests/net/af_unix/msg_oob.c
++++ b/tools/testing/selftests/net/af_unix/msg_oob.c
+@@ -209,7 +209,7 @@ static void __sendpair(struct __test_metadata *_metadata,
+ 
+ static void __recvpair(struct __test_metadata *_metadata,
+ 		       FIXTURE_DATA(msg_oob) *self,
+-		       const void *expected_buf, int expected_len,
++		       const char *expected_buf, int expected_len,
+ 		       int buf_len, int flags)
+ {
+ 	int i, ret[2], recv_errno[2], expected_errno = 0;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+2.43.0
+
 
