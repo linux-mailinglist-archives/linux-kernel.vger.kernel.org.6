@@ -1,130 +1,147 @@
-Return-Path: <linux-kernel+bounces-285197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E30950A70
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:41:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 930C5950A83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA2B91C2341D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:41:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E6E2812E1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34051A2C37;
-	Tue, 13 Aug 2024 16:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744D41A4F2D;
+	Tue, 13 Aug 2024 16:39:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dUvmfI+e"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DR1AZvqy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896E41A0B10
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D4B1A4F1F;
+	Tue, 13 Aug 2024 16:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567096; cv=none; b=SdnTNvFUSV7wym7xK9uh6KkocEsezXY5SRK+O0/E14eidH1dg5z33C0Ss8eHCqB/8o2SCjDiiHz7slLLEJ7a0dd0TjqMt3ovW0gz0C1Wy5O/BqxPieAp7KU3xpi0oADTYs9syUzmCFoCfSNF5VMByaPs1cWanhcHZYqUE7tg/VE=
+	t=1723567144; cv=none; b=VoEoMS5V8Z2nXaGd3OaAuAYnDThKz2UXvMzTTiSRu5/33rV+0nLv9kmstbUgQrZEkIRwbxJ9O+pYq0aNRYnVxMrV33VAorKY1ICnz0NOZceZ+wqx9bBNSQ0zvTgPnOqmbbwBytNlDiFjronZlPLDtpBp/RityHatJ0nc3nDhIgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567096; c=relaxed/simple;
-	bh=l4vfqpnoWKjzhKug8OFPpzvLUpKa1oTaPZqoQ2kGnM8=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Kipu6L4HLw9QYr7Cw5Tq+4l3gr0HnmnDHd+Csizdwu6GErm6/nVkajeXyutt0zSQTUGYit6d1m/Os/iCOCEF/8lQTLLeAKXmD0yzVXDWSqItKgXngfi97Sq93X3Zl1YLmShNxOPgRUshkSEDFaOm8kbKJTZa+qNzthfndNg+Jc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dUvmfI+e; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuanchu.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664916e5b40so507617b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723567093; x=1724171893; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=R6SDifdhjqO17yC0HFRwUIHNeNat6a47KY3Ccl7msPA=;
-        b=dUvmfI+eNjkExXBk1EV5NQ4TFDRx6fMz4ZQeSsjteaa1oOyD6XLvxGBpkDyUAKxoW7
-         2iAM+EaQp/pLXK+xyjsAfqNsSb3GkWNza1jL4+CoU2qanZFWHinU35t6rgsxes0hdrS5
-         lEiVmeLd6fbB7TC8/j3rNIeGuagh09Aa763sYMMeLOhWth3A+FJ1Z8RU/yltEpiIlsmD
-         KpGYAKyVRbL3UGkprjeECoQWLABT8vwbGoeHPmYZMtItisatIO7oY6e9/e2fbF7O71Ky
-         JMAtzfTQyQSE1YDRUsQLFupvuO2xM9R28gxvAA9wnWJ1YE9w3af8dpfNHmJdTySQZ+TB
-         VsEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723567093; x=1724171893;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=R6SDifdhjqO17yC0HFRwUIHNeNat6a47KY3Ccl7msPA=;
-        b=VF2pM/Tmjw3qztzT7MBzK/C8weDx3cTj7pe9LXPiYZqIpHByAHpr3CP5f8H2LVBRnF
-         GKCh4L6g/PHBkU+c1UBZwCJ2xre1LTf0RGTa/zGZerHazZhZ9xK5CCKYEi2YNLBgz5PW
-         H8ekR5LLJlu1CnFnh6clondAlLbV+1YUH+O7K4vFztgBp8QlJyjeHm5UX0Lev0dpz+y2
-         107dP19qUexXfc0juBipqEXuCWat/1abOYURC80c3VdoXEDsN9MFnAy/jt/LIVhb5Yni
-         wfsKnsXJuMeKiFbPblEpi812kgwU7iHbkf+DMs0Zwd2LvsXzjm/gqF3ECkj8kAfYSiG0
-         o72g==
-X-Forwarded-Encrypted: i=1; AJvYcCVoua1623S6dFlkA6mJHV1fSeP+zL7fg4IeucIrbR9axA8vNERyHwjCodGntQmDKWcR4RrKZtaQMUnzRSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIZtFNawhIfy8fsbV+aGhf4N//YfPafvpwumwk0fU5lvahUt84
-	Ho0NYmXdKupRGG81eePnOjOImiWXwplAZTySmP044tNEODFugvTmCKs5hrKvoKaPX8z6u+bSjUw
-	2Z0cTPA==
-X-Google-Smtp-Source: AGHT+IGcnXWZqgJ+ZR2B4X2Y8tCJ7S7CD9pQ8Z0L73phBV4+zSqxFBKdePQrELcLsgKcQMYnrvHZtZWB2mEG
-X-Received: from yuanchu-desktop.svl.corp.google.com ([2620:15c:2a3:200:b50c:66e8:6532:a371])
- (user=yuanchu job=sendgmr) by 2002:a81:77c1:0:b0:648:2f1d:1329 with SMTP id
- 00721157ae682-6ac707e5fc2mr93647b3.1.1723567093393; Tue, 13 Aug 2024 09:38:13
- -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:37:59 -0700
+	s=arc-20240116; t=1723567144; c=relaxed/simple;
+	bh=jGqGS/+YMG58IJdMF3CHYLoIBgb4NHC7NMoRVjSo+V4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=MqAXgp3Kf+PjWQGX3iueIAmOH7fPGrcboE1ty+6lc5hQ7H66/Ay31+rDV5We8ojO4EVuEogS7oWLDAwzEp7fR1ylOlOTBAN89edrh3xtAXjuy6K1DQcJyKk5DWVCdxfCI3a1OunnEHRFvxcTIXOq6tOyjzpSLiVjif4O3g8G4t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DR1AZvqy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A15C4AF0B;
+	Tue, 13 Aug 2024 16:38:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723567144;
+	bh=jGqGS/+YMG58IJdMF3CHYLoIBgb4NHC7NMoRVjSo+V4=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=DR1AZvqy4Pdt9tz7MMJzuAY3ZG3odaJsUXALOcqP5EoPWlkRblooFHWstoHnwUjoj
+	 98dop0kucQTTTCSD8B7fL337IHJCGUQQrDbBfgFiXiOSLYvpPo/k84kZ0FM3RPCSFN
+	 fDOTrZeviBO6wpq0vw68122nXwwesBry47/9W4Y7tBVMdyBt1JHRhTdQT41M0WfpKY
+	 5mVZd/dHVjnQNJIOu4u9PUnoB2npaIEKK0UEc1PWY6aLJ/Af+WD70hv8gos90wCwms
+	 lrPslC4ZLKKlWgQekt8gS/6Zl5maKM+5WoER80Z8LYnR6idU/Ke3cqDchwpncuJb7j
+	 AAPF5VvNVdwrg==
+Message-ID: <6320e4f3-e737-4787-8a72-7bd314ba883c@kernel.org>
+Date: Tue, 13 Aug 2024 18:38:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240813163759.742675-1-yuanchu@google.com>
-Subject: [PATCH] mm: multi-gen LRU: ignore non-leaf pmd_young for force_scan=true
-From: Yuanchu Xie <yuanchu@google.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Lance Yang <ioworker0@gmail.com>, 
-	Huang Ying <ying.huang@intel.com>, Yu Zhao <yuzhao@google.com>
-Cc: Yuanchu Xie <yuanchu@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add base DT for rk3528 SoC
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Yao Zi <ziyao@disroot.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jiri Slaby <jirislaby@kernel.org>, Chris Morgan <macromorgan@hotmail.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Tim Lunn <tim@feathertop.org>,
+ Andy Yan <andyshrk@163.com>, Muhammed Efe Cetin <efectn@protonmail.com>,
+ Jagan Teki <jagan@edgeble.ai>, Dragan Simic <dsimic@manjaro.org>,
+ Ondrej Jirman <megi@xff.cz>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20240803125510.4699-2-ziyao@disroot.org>
+ <20240803125510.4699-5-ziyao@disroot.org>
+ <56bd1478-ce8c-4c1d-ab16-afe4ad462bf5@kernel.org>
+ <Zq-AFWYaqu7zGuz-@ziyaolaptop.my.domain>
+ <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b967ab05-dd0e-4fc5-bee6-ad7639e47bfb@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When non-leaf pmd accessed bits are available, MGLRU page table walks
-can clear the non-leaf pmd accessed bit and ignore the accessed bit on
-the pte if it's on a different node, skipping a generation update as
-well. If another scan occurs on the same node as said skipped pte.
-the non-leaf pmd accessed bit might remain cleared and the pte accessed
-bits won't be checked. While this is sufficient for reclaim-driven
-aging, where the goal is to select a reasonably cold page, the access
-can be missed when aging proactively for workingset estimation of a
-node/memcg.
+On 04/08/2024 16:05, Krzysztof Kozlowski wrote:
+> On 04/08/2024 15:20, Yao Zi wrote:
+>>>
+>>>> +		compatible = "fixed-clock";
+>>>> +		#clock-cells = <0>;
+>>>> +		clock-frequency = <24000000>;
+>>>> +		clock-output-names = "xin24m";
+>>>> +	};
+>>>> +
+>>>> +	gic: interrupt-controller@fed01000 {
+>>>
+>>> Why this all is outside of SoC?
+>>
+>> Just as Heiko says, device tree for all other Rockchip SoCs don't have
+>> a "soc" node. I didn't know why before but just follow the style.
+>>
+>> If you prefer add a soc node, I am willing to.
+> 
+> Surprising as usually we expect MMIO nodes being part of SoC to be under
+> soc@, but if that's Rockchip preference then fine.
 
-In more detail, get_pfn_folio returns NULL if the folio's nid != node
-under scanning, so the page table walk skips processing of said pte. Now
-the pmd_young flag on this pmd is cleared, and if none of the pte's are
-accessed before another scan occurs on the folio's node, the pmd_young
-check fails and the pte accessed bit is skipped.
+One more comment, I forgot we actually have it documented long time ago:
 
-Since force_scan disables various other optimizations, we check
-force_scan to ignore the non-leaf pmd accessed bit.
+https://elixir.bootlin.com/linux/v6.11-rc1/source/Documentation/devicetree/bindings/writing-bindings.rst#L90
 
-Signed-off-by: Yuanchu Xie <yuanchu@google.com>
----
- mm/vmscan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index cfa839284b92..4a112c2d1a64 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -3476,7 +3476,7 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
- 			goto next;
- 
- 		if (!pmd_trans_huge(pmd[i])) {
--			if (should_clear_pmd_young())
-+			if (!walk->force_scan && should_clear_pmd_young())
- 				pmdp_test_and_clear_young(vma, addr, pmd + i);
- 			goto next;
- 		}
-@@ -3563,7 +3563,7 @@ static void walk_pmd_range(pud_t *pud, unsigned long start, unsigned long end,
- 
- 		walk->mm_stats[MM_NONLEAF_TOTAL]++;
- 
--		if (should_clear_pmd_young()) {
-+		if (!walk->force_scan && should_clear_pmd_young()) {
- 			if (!pmd_young(val))
- 				continue;
- 
--- 
-2.46.0.76.ge559c4bf1a-goog
+Best regards,
+Krzysztof
 
 
