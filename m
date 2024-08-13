@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-284982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83F6B950799
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:30:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D723950782
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DE44B28CB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:30:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 605CF1C22044
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:28:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DE419FA99;
-	Tue, 13 Aug 2024 14:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E126419D09D;
+	Tue, 13 Aug 2024 14:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvXseIby"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lUqMMlqO"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC3619EEBD;
-	Tue, 13 Aug 2024 14:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C211719D084
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559317; cv=none; b=uJ6bvqGJ1bW8L6xmh690j4Oowisukx+18zj6GJHeg2WS4/H+YxOfvYcvbmOgCLBD2Ts8pILg8902dKpqt4pH9ZNMsYoq9X1XBH7Yrh7TUiBRB5T/jLIdgj0O+4+iXFSrFTwiqFsjOHe6zdAZZP0hq81WINSK+ssVH6b+MXzu6QU=
+	t=1723559281; cv=none; b=Tsgb0n4k6qmblXhBBGK/fDGmUj1ZwamClXIxfkhRWTk2hhNGU0Huyp49AiYxjOFLWs6fVEvOzCO8bpcoZ8hwt4fyRdF57bueZvRRnpRLoMabonSC+S97ubge9xhjgtiz3VAk07IdtbRPQUh1YJRk/WZQEC2SbWrPpj69Uy6ouCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559317; c=relaxed/simple;
-	bh=MPZXuzZ8WACzat8l11Ii/Qp/mkN47G0iiUtzKBu72R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rxSclDjvFwwUgFJOcKyGQBrRYTCOZTUmz4Ymg07hRO5Wdc1iNYM/iq/3ORYSUH/R4J2xAQ2k6Kb8lg53Mz/oJCFR8rdNlm2OL722HzwgoObblf7zv6kBy7lLpkOBsSf9PgqBc+o2LtP8HCU2+zdskDSQiuIYO1Jp5Kmq653626Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dvXseIby; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f149845fbaso58773361fa.3;
-        Tue, 13 Aug 2024 07:28:35 -0700 (PDT)
+	s=arc-20240116; t=1723559281; c=relaxed/simple;
+	bh=QuzXOOcw0p+Hwecp8XS47xiaICPrsrPtHudJrttUAAc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TUu//XGOx0t0Cu9R/7X3Nq+ILw9Xh9GcaCnW0xxJnd4DPZ3vKMXZ1HKaIt1pO62Wwm4RUX0nR4vvsuQWvJSvqsB+E4V06sXdlxLxQyYt3THa5scVntKNomuAKbin7Jh6Y1zdJ+ydcXi1lBdtMYv7CxjcXqhz4BCZmyPN+aI+PyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lUqMMlqO; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-690404fd27eso52662987b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723559314; x=1724164114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723559278; x=1724164078; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Hn6Gg49+0hckXkrCaPpgjvaSHPmWcIMwvpPpEJxp9s8=;
-        b=dvXseIbyGl8zeqg0bx2q+277fFe0Eav73EWTUtHEbUK7a4FcAolGGNdjd2+DHZ02PE
-         XS+H/Ps8OZY2+Tg9vt/d+uWCTHrV7z6h5Dq8FPW5ceICHpwSlShDADwibqvohekbzmOi
-         UIrBQDtfSH+QJi5PwuPbEf9xx3/fOlBC8yprh/J0myycmr2omha/F0bFhfyVzuu/YRQS
-         1/4wYWSvXcSKLtVV/wy84/nLu/NQ2RZJiIquNmrJflCcFowNvUc2p5AfwGq67koOUYen
-         UIzeaGS36FTgCjtFqcTXDPBLfnBqMqXIn+W6YZeyR48aHi1o+dN54rOFtvoAfcImlIyB
-         4R7Q==
+        bh=J9XaW33utQWkxaHgKfkoizdJFqJGFa4Kya6woGbcGpQ=;
+        b=lUqMMlqO46dT7gMm4Dtf80RJgOsSADHaoOadSn9DKZHe4isg/OrRe73lCSpXrtcR2t
+         jRQ3VY4q0UORTQkBHxqyeaMA+KzUrQdGtPDELiAKfutuEiqdYlVwgv49ncfLoiYNQcFq
+         haE7gjAza+lXOalYAfP0lDufq4Q+KsJs3SYGwTn8B5dpGoEYjNrwGsXFBDsRM3Y2Ht4Y
+         p4r7qDi67x+UGbzpQkTJCAqubMWMXGB8vRDtGooYxkDRdZTVuIykJjeTbPyK8Dmv5Meg
+         BgdVnx8Cv6HdgjDRaCJjKxdwB7n/9yo7/W/nk5xV5xQ4N3NZBNBi+Gvqu9WSqvfACoA2
+         dc9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723559314; x=1724164114;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1723559278; x=1724164078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Hn6Gg49+0hckXkrCaPpgjvaSHPmWcIMwvpPpEJxp9s8=;
-        b=pUK9gqFUjWZaXwFErSAq/QqgbRV1XTKn6KUG/HSELm6eVonqWVBIAcIv05DMQblARA
-         c0Ohqa7dFjWvMJGFSvozP84+DvnjXUVmSdlTnTbPwypS0hY5EcTiB+VSL/Hgd3W8DWpl
-         aR4pQnO5b64zkLjRaazfAs3dHk74IgMOX4dKk0ZWtbM0pXzmCDZKJi3npeM/3S5uO2t2
-         LpqCa1xEyQi4Xjaukn0YdvS3ZnIf8rCYmTRWXjHF6Ve9D0smAMURQZCFSDQoHlK+oE38
-         GWIU3y6GHbJ1bDmwSJB2snrX0Be0TzH1jS7Q1BSrLNrbnis2VkqPtYubPQLYEC4+fqga
-         qqHA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2d7yUGvzsAXYyxXoRjSNtquCsfJqGStU/fbC8pcEYX+paLVQUVsJ3D35fYTiRhSOCoJfjXclCfIpP6NK8H0nYZGNP4pxQMfRAXhKWf3HLZ2+l3l2fIYdCWvzFkUgcodqawivj6c/hY3g6V9/8ohNV5CxZyUUKHzsMy2qWJ8amGA==
-X-Gm-Message-State: AOJu0Yy5Pb/tuqAcPns4fQUTt321cXj6R4LJwOVX50IjY9XD5gAgiOLr
-	Ynd7hkAjSiVGD5gu9/lb8N/uJ5gE8sUq0l335/k67y+bW03XlO1E
-X-Google-Smtp-Source: AGHT+IF87do1H9InRqDB5Qgg5LpkSpMVtB6L44r6xxw4f65l1fI92ZeQAyrs/Ihk8e7lWJ3t2omBYA==
-X-Received: by 2002:a05:651c:19a6:b0:2f0:1a19:f3ec with SMTP id 38308e7fff4ca-2f2b717a379mr30497411fa.33.1723559313735;
-        Tue, 13 Aug 2024 07:28:33 -0700 (PDT)
-Received: from lapsy144.cern.ch (lapsy144.ipv6.cern.ch. [2001:1458:202:99::100:4b])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3fa7c27sm74345166b.66.2024.08.13.07.28.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 07:28:33 -0700 (PDT)
-From: vtpieter@gmail.com
-To: Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Andrew Lunn <andrew@lunn.ch>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	David S Miller <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Vasut <marex@denx.de>
-Cc: Woojung Huh <Woojung.Huh@microchip.com>,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pieter Van Trappen <pieter.van.trappen@cern.ch>
-Subject: [PATCH net-next v6 6/6] net: dsa: microchip: fix tag_ksz egress mask for KSZ8795 family
-Date: Tue, 13 Aug 2024 16:27:40 +0200
-Message-ID: <20240813142750.772781-7-vtpieter@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240813142750.772781-1-vtpieter@gmail.com>
-References: <20240813142750.772781-1-vtpieter@gmail.com>
+        bh=J9XaW33utQWkxaHgKfkoizdJFqJGFa4Kya6woGbcGpQ=;
+        b=tZOpZSiUTkBHCZLAxxYy1CGHb+1613q5GCaRc5PGBKG8rmy2vYx4cXi1ePX6koAqBo
+         8R0SN0P62Ekae1vh5hkfbU9+uRK4wK7DJlZG9U0B+LyMXHzUjrOJpwlg1bCtyGwAO75p
+         h11YFtHz1N5I3lqkJl9J/XHBRYxnyGPU9ykQKt5NbS/3JIc32/TDh2/Tlu/ByA9MhjT5
+         KPHtYdeqlX0MGl9oBQNlUWzVQQIYEsNhISZufQefKsaDvNUP3Msvop6WrI2VKYFGLWBd
+         gmD0z+IAtcrOKmnywZhoR/Rv6J2j61dbAqihDkPeqMgcbt/VQ1pBI6nH8y6B/GGeg1fN
+         0TyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZFD4evDF/0UvNmS1+lQTaRrSYomCj2YX5/pTG73XmFWMScWdCbuJbydSz5u/kAsOML6z2mxF1rQbzGLJH62bfHwaQKgbXeYf/+XmK
+X-Gm-Message-State: AOJu0YyrY6DBfA35bt/ggyfrB2oO7yTp4KvTwJooFIrmHCPP763XfaPb
+	Zszn7yWzM5K7HrfUVjbqcncvJ9er9GgIC4TuLjrDpnQ3fiydcpW/c987oxJx91eM40HNlzApXlk
+	7b58QZv/dCq++0zPbZmsv7LZ4Xz8HVtSFW35X
+X-Google-Smtp-Source: AGHT+IFGCRKANvH4yro0riVKSiJgV/hErH8P3ghOvKIlIw38M8A5+86ZG0mL5CZ6ZYkY+g7RPr4lUQGROSh6loh32zQ=
+X-Received: by 2002:a05:690c:c0d:b0:64b:2cf2:391c with SMTP id
+ 00721157ae682-6a97285f833mr49095967b3.18.1723559278254; Tue, 13 Aug 2024
+ 07:27:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240812192428.151825-1-surenb@google.com> <471af0a8-92fc-4fe0-85e4-193d713d4e57@redhat.com>
+In-Reply-To: <471af0a8-92fc-4fe0-85e4-193d713d4e57@redhat.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 13 Aug 2024 07:27:44 -0700
+Message-ID: <CAJuCfpExN+esSMgOSmSXivDEeiwSqkeOAr6_Pw-yL+-8ajtGYQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] alloc_tag: mark pages reserved during CMA
+ activation as not tagged
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, vbabka@suse.cz, 
+	pasha.tatashin@soleen.com, souravpanda@google.com, keescook@chromium.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Pieter Van Trappen <pieter.van.trappen@cern.ch>
+On Tue, Aug 13, 2024 at 2:25=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 12.08.24 21:24, Suren Baghdasaryan wrote:
+> > During CMA activation, pages in CMA area are prepared and then freed
+> > without being allocated. This triggers warnings when memory allocation
+> > debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
+> > by marking these pages not tagged before freeing them.
+> >
+> > Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages =
+as empty")
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Cc: stable@vger.kernel.org # v6.10
+> > ---
+> > changes since v1 [1]
+> > - Added Fixes tag
+> > - CC'ed stable
+> >
+> > [1] https://lore.kernel.org/all/20240812184455.86580-1-surenb@google.co=
+m/
+> >
+> >   mm/mm_init.c | 10 ++++++++++
+> >   1 file changed, 10 insertions(+)
+> >
+> > diff --git a/mm/mm_init.c b/mm/mm_init.c
+> > index 75c3bd42799b..ec9324653ad9 100644
+> > --- a/mm/mm_init.c
+> > +++ b/mm/mm_init.c
+> > @@ -2245,6 +2245,16 @@ void __init init_cma_reserved_pageblock(struct p=
+age *page)
+> >
+> >       set_pageblock_migratetype(page, MIGRATE_CMA);
+> >       set_page_refcounted(page);
+> > +
+> > +     /* pages were reserved and not allocated */
+> > +     if (mem_alloc_profiling_enabled()) {
+> > +             union codetag_ref *ref =3D get_page_tag_ref(page);
+> > +
+> > +             if (ref) {
+> > +                     set_codetag_empty(ref);
+> > +                     put_page_tag_ref(ref);
+> > +             }
+> > +     }
+>
+> Should we have a helper like clear_page_tag_ref() that wraps this?
 
-Fix the tag_ksz egress mask for DSA_TAG_PROTO_KSZ8795, the port is
-encoded in the two and not three LSB. This fix is for completeness,
-for example the bug doesn't manifest itself on the KSZ8794 because bit
-2 seems to be always zero.
+With this one we have 3 instances of this sequence, so it makes sense
+to have a helper. I'm going to send a v3 with 2 patches - one
+introducing clear_page_tag_ref() and the next one adding this
+instance.
+Thanks for the suggestion, David!
 
-Signed-off-by: Pieter Van Trappen <pieter.van.trappen@cern.ch>
----
- net/dsa/tag_ksz.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/dsa/tag_ksz.c b/net/dsa/tag_ksz.c
-index ee7b272ab715..1f46de394f2e 100644
---- a/net/dsa/tag_ksz.c
-+++ b/net/dsa/tag_ksz.c
-@@ -111,9 +111,10 @@ static struct sk_buff *ksz_common_rcv(struct sk_buff *skb,
-  * DA(6bytes)|SA(6bytes)|....|Data(nbytes)|tag0(1byte)|FCS(4bytes)
-  * ---------------------------------------------------------------------------
-  * tag0 : zero-based value represents port
-- *	  (eg, 0x00=port1, 0x02=port3, 0x06=port7)
-+ *	  (eg, 0x0=port1, 0x2=port3, 0x3=port4)
-  */
- 
-+#define KSZ8795_TAIL_TAG_EG_PORT_M	GENMASK(1, 0)
- #define KSZ8795_TAIL_TAG_OVERRIDE	BIT(6)
- #define KSZ8795_TAIL_TAG_LOOKUP		BIT(7)
- 
-@@ -141,7 +142,8 @@ static struct sk_buff *ksz8795_rcv(struct sk_buff *skb, struct net_device *dev)
- {
- 	u8 *tag = skb_tail_pointer(skb) - KSZ_EGRESS_TAG_LEN;
- 
--	return ksz_common_rcv(skb, dev, tag[0] & 7, KSZ_EGRESS_TAG_LEN);
-+	return ksz_common_rcv(skb, dev, tag[0] & KSZ8795_TAIL_TAG_EG_PORT_M,
-+			      KSZ_EGRESS_TAG_LEN);
- }
- 
- static const struct dsa_device_ops ksz8795_netdev_ops = {
--- 
-2.43.0
-
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
