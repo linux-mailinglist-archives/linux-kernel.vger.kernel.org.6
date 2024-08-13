@@ -1,262 +1,162 @@
-Return-Path: <linux-kernel+bounces-285577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 792A3950FDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:51:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506F4950FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08E1283DB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:51:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09525282B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F291AC43D;
-	Tue, 13 Aug 2024 22:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889F81AB51E;
+	Tue, 13 Aug 2024 22:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hMIDXkBx"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PXIBAScF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C351AB51F
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5221A1A256C;
+	Tue, 13 Aug 2024 22:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723589441; cv=none; b=PE7MFeS0RFyHI2SiyJSldBWFicGxGv91I5QeLqeZNkkGwLs/GdcMLdUhaWTrkDNUTKToKzbAunGPuyRuF1a9KCksRJmVsCp0hiJJgNA5m799QfG7yHd4Pt7S3un1DmD6Di71YOr/A+1D9cJw8O6SDZCi//I7SqDeR4p4pDf1oug=
+	t=1723587971; cv=none; b=oLOtKNaumZ2XMmtl8prEf2bs+ebvG9KLb5WK5p0VW9+71PgVM6Sno+2hDp+tddjkND8+lRG9xhDL3JdZvVTRj0SV6UoIzRqTjKjInb1UEkVVq9azgn7XTCgaz61ytZXBRmyb+hzxNhQ/KdtCI7LVznNhqi2fR3ZNzbgmejTuUC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723589441; c=relaxed/simple;
-	bh=JDVcqKByKpkk/XFjkq6PeFMESkaTJiG8CDpqXb8Zuic=;
-	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=kPQqUXHGUyxa9rTPOept8RCZvdXIcHdvghzG/NwoRXVztteG7OsOgvZk7aLhhJcS91AgHgoJakR/DsCcVxQ09/i/9EWcS3Kga++1Kr2FLNPRz19pP1+namuRMtvxlr/v/pPYdCE8Alc/ui4SnacLPdmR90q/uFdR9iCUDqLvwxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hMIDXkBx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
-	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To;
-	bh=rPs5bSfp4cnPNS65oXy8urZjJQLEvY/WVkoVOqdQkmU=; b=hMIDXkBxwZ/gQ6mOaj4i3nTxRx
-	COOjDGjg4iYVbxD4v2AX9hdLiS33irehZ7nb+ir4bHvqlzBEH8o/pMrxBNSwLVuwTFCSjdEOu3FW3
-	TvIfmaXc5+O11grusj4G/6A14YuuH7zMzGCRBwHLB0T0R8/CSGL19e0lKNn4GZE1AszDZXP2PM//W
-	00cx6W0ywkTfydlJAXXfZ7ecptxLfxYES/AvrRdm78mz1LBmdUfZcz8TsrStJnIFugNp0FdGQlfgs
-	4u7fPGfWnCHYGvPpi6ySgABRlY7IBVIQVc19GW9jg0hvyusJ0pspsHzcdtQB9Jg8Pt1nMNGvZht+8
-	KV+dHgNg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1se0LY-0000000H9ZX-097E;
-	Tue, 13 Aug 2024 22:50:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
-	id 59F17302DB1; Wed, 14 Aug 2024 00:50:29 +0200 (CEST)
-Message-Id: <20240813224016.471745809@infradead.org>
-User-Agent: quilt/0.65
-Date: Wed, 14 Aug 2024 00:25:57 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: mingo@kernel.org,
- tj@kernel.org,
- void@manifault.com
-Cc: peterz@infradead.org,
- juri.lelli@redhat.com,
- vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com,
- rostedt@goodmis.org,
- bsegall@google.com,
- mgorman@suse.de,
- vschneid@redhat.com,
- linux-kernel@vger.kernel.org,
- joelaf@google.com
-Subject: [PATCH 9/9] sched: Add pick_task(.core)
-References: <20240813222548.049744955@infradead.org>
+	s=arc-20240116; t=1723587971; c=relaxed/simple;
+	bh=KFzCLQzasMMzAHmW90HUBXRK0smSMiV9eWOMY+Q99uA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HX2LqhES0udHoG3UrfZqqPs3najGleFP6DMK9f9sy8P++eSBHbkekr/Y9Y+gPTlaP1v9ebYvwUNU1tBqhcPeTt22J7XaEUfiw1RFU0hyElmvEUFE+B6cg1Vd91NmZZnVCGq97KtuF6V5tAaRrkgqo7f02N/e8OCf21loz+CuxFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PXIBAScF; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723587970; x=1755123970;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=KFzCLQzasMMzAHmW90HUBXRK0smSMiV9eWOMY+Q99uA=;
+  b=PXIBAScF8qL6A7KLDGpLOxV1VwFKZRnMv79N7r6qQeldgRdCqn+3TFGM
+   hiKLnnre0MiKOuviDmaHX/ZYdjnvsZBBGDtR7jH+zQJ+bu+7bcaZinJO2
+   Vdi3EZ+8ZAgt6nVB2txu/vp17ZoSPxJ1z9hcmn+Dsn4nO29nCDqbdqfTM
+   SsOhCQvD9TZO2eHgvAQyclkgb9bbnwO27GKMICN2TA8Ax2GOQ9NXhdT0Z
+   KvlzTiUbAgXIro2uL43RtCQAdp46Up+5mUN1YzlfgbobpffJlFXawGe04
+   A8AHTzGaBSocY358WnzI2XS3tRUvOsNc+s5QOtmLFQcNz9RjWqGv5MUmr
+   A==;
+X-CSE-ConnectionGUID: IEHXbi0oR2mxlN8a+5bm3w==
+X-CSE-MsgGUID: c/cxZQy/QO+Ku2kti3Rf4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="32459401"
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="32459401"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 15:26:08 -0700
+X-CSE-ConnectionGUID: tVl7Co+7Raqs7Dv5UzfQRw==
+X-CSE-MsgGUID: YhwQl1U2Qi2LdxQWKIEOVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="62961260"
+Received: from ehanks-mobl1.amr.corp.intel.com (HELO vcostago-mobl3) ([10.124.222.164])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 15:26:07 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Daiwei Li <daiweili@google.com>
+Cc: anthony.l.nguyen@intel.com, daiweili@gmail.com, davem@davemloft.net,
+ edumazet@google.com, intel-wired-lan@lists.osuosl.org, kuba@kernel.org,
+ kurt@linutronix.de, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ pabeni@redhat.com, przemyslaw.kitszel@intel.com, richardcochran@gmail.com,
+ sasha.neftin@intel.com, Daiwei Li <daiweili@google.com>
+Subject: Re: [PATCH iwl-net v2] igb: Fix not clearing TimeSync interrupts
+ for 82580
+In-Reply-To: <20240813033508.781022-1-daiweili@google.com>
+References: <87sev9wrkj.fsf@intel.com>
+ <20240813033508.781022-1-daiweili@google.com>
+Date: Tue, 13 Aug 2024 15:26:07 -0700
+Message-ID: <871q2svz40.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 
-In order to distinguish between a regular vs a core pick_task()
-invocation, add a boolean argument.
+Daiwei Li <daiweili@google.com> writes:
 
-Notably SCX seems to need this, since its core pick
+> 82580 NICs have a hardware bug that makes it
+> necessary to write into the TSICR (TimeSync Interrupt Cause) register
+> to clear it:
+> https://lore.kernel.org/all/CDCB8BE0.1EC2C%25matthew.vick@intel.com/
+>
+> Add a conditional so only for 82580 we write into the TSICR register,
+> so we don't risk losing events for other models.
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/sched.h    |    2 +-
- kernel/sched/core.c      |    8 ++++----
- kernel/sched/deadline.c  |    9 ++-------
- kernel/sched/fair.c      |    9 +++++----
- kernel/sched/idle.c      |    2 +-
- kernel/sched/rt.c        |    2 +-
- kernel/sched/sched.h     |    4 ++--
- kernel/sched/stop_task.c |    2 +-
- 8 files changed, 17 insertions(+), 21 deletions(-)
+Please add some information in the commit message about how to reproduce
+the issue, as Paul suggested.
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -601,7 +601,7 @@ struct sched_rt_entity {
- } __randomize_layout;
- 
- typedef bool (*dl_server_has_tasks_f)(struct sched_dl_entity *);
--typedef struct task_struct *(*dl_server_pick_f)(struct sched_dl_entity *);
-+typedef struct task_struct *(*dl_server_pick_f)(struct sched_dl_entity *, bool);
- 
- struct sched_dl_entity {
- 	struct rb_node			rb_node;
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5885,7 +5885,7 @@ __pick_next_task(struct rq *rq, struct t
- 
- 		/* Assume the next prioritized class is idle_sched_class */
- 		if (!p) {
--			p = pick_task_idle(rq);
-+			p = pick_task_idle(rq, false);
- 			put_prev_set_next_task(rq, prev, p);
- 		}
- 
-@@ -5901,7 +5901,7 @@ __pick_next_task(struct rq *rq, struct t
- 			if (p)
- 				return p;
- 		} else {
--			p = class->pick_task(rq);
-+			p = class->pick_task(rq, false);
- 			if (p) {
- 				put_prev_set_next_task(rq, prev, p);
- 				return p;
-@@ -5939,7 +5939,7 @@ static inline struct task_struct *pick_t
- 	rq->dl_server = NULL;
- 
- 	for_each_class(class) {
--		p = class->pick_task(rq);
-+		p = class->pick_task(rq, true);
- 		if (p)
- 			return p;
- 	}
-@@ -6092,7 +6092,7 @@ pick_next_task(struct rq *rq, struct tas
- 			if (cookie)
- 				p = sched_core_find(rq_i, cookie);
- 			if (!p)
--				p = idle_sched_class.pick_task(rq_i);
-+				p = idle_sched_class.pick_task(rq_i, true);
- 		}
- 
- 		rq_i->core_pick = p;
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -2409,7 +2409,7 @@ static struct sched_dl_entity *pick_next
-  * __pick_next_task_dl - Helper to pick the next -deadline task to run.
-  * @rq: The runqueue to pick the next task from.
-  */
--static struct task_struct *__pick_task_dl(struct rq *rq)
-+static struct task_struct *pick_task_dl(struct rq *rq, bool core)
- {
- 	struct sched_dl_entity *dl_se;
- 	struct dl_rq *dl_rq = &rq->dl;
-@@ -2423,7 +2423,7 @@ static struct task_struct *__pick_task_d
- 	WARN_ON_ONCE(!dl_se);
- 
- 	if (dl_server(dl_se)) {
--		p = dl_se->server_pick_task(dl_se);
-+		p = dl_se->server_pick_task(dl_se, core);
- 		if (!p) {
- 			dl_se->dl_yielded = 1;
- 			update_curr_dl_se(rq, dl_se, 0);
-@@ -2437,11 +2437,6 @@ static struct task_struct *__pick_task_d
- 	return p;
- }
- 
--static struct task_struct *pick_task_dl(struct rq *rq)
--{
--	return __pick_task_dl(rq);
--}
--
- static void put_prev_task_dl(struct rq *rq, struct task_struct *p, struct task_struct *next)
- {
- 	struct sched_dl_entity *dl_se = &p->dl;
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8723,7 +8723,7 @@ static void check_preempt_wakeup_fair(st
- 	resched_curr(rq);
- }
- 
--static struct task_struct *pick_task_fair(struct rq *rq)
-+static struct task_struct *pick_task_fair(struct rq *rq, bool core)
- {
- 	struct sched_entity *se;
- 	struct cfs_rq *cfs_rq;
-@@ -8761,7 +8761,7 @@ pick_next_task_fair(struct rq *rq, struc
- 	int new_tasks;
- 
- again:
--	p = pick_task_fair(rq);
-+	p = pick_task_fair(rq, false);
- 	if (!p)
- 		goto idle;
- 	se = &p->se;
-@@ -8850,9 +8850,10 @@ static bool fair_server_has_tasks(struct
- 	return !!dl_se->rq->cfs.nr_running;
- }
- 
--static struct task_struct *fair_server_pick_task(struct sched_dl_entity *dl_se)
-+static struct task_struct *
-+fair_server_pick_task(struct sched_dl_entity *dl_se, bool core)
- {
--	return pick_task_fair(dl_se->rq);
-+	return pick_task_fair(dl_se->rq, core);
- }
- 
- void fair_server_init(struct rq *rq)
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -462,7 +462,7 @@ static void set_next_task_idle(struct rq
- 	next->se.exec_start = rq_clock_task(rq);
- }
- 
--struct task_struct *pick_task_idle(struct rq *rq)
-+struct task_struct *pick_task_idle(struct rq *rq, bool core)
- {
- 	return rq->idle;
- }
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1736,7 +1736,7 @@ static struct task_struct *_pick_next_ta
- 	return rt_task_of(rt_se);
- }
- 
--static struct task_struct *pick_task_rt(struct rq *rq)
-+static struct task_struct *pick_task_rt(struct rq *rq, bool core)
- {
- 	struct task_struct *p;
- 
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2302,7 +2302,7 @@ struct sched_class {
- 
- 	void (*wakeup_preempt)(struct rq *rq, struct task_struct *p, int flags);
- 
--	struct task_struct *(*pick_task)(struct rq *rq);
-+	struct task_struct *(*pick_task)(struct rq *rq, bool core);
- 	/*
- 	 * Optional! When implemented pick_next_task() should be equivalent to:
- 	 *
-@@ -2451,7 +2451,7 @@ static inline bool sched_fair_runnable(s
- }
- 
- extern struct task_struct *pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf);
--extern struct task_struct *pick_task_idle(struct rq *rq);
-+extern struct task_struct *pick_task_idle(struct rq *rq, bool core);
- 
- #define SCA_CHECK		0x01
- #define SCA_MIGRATE_DISABLE	0x02
---- a/kernel/sched/stop_task.c
-+++ b/kernel/sched/stop_task.c
-@@ -33,7 +33,7 @@ static void set_next_task_stop(struct rq
- 	stop->se.exec_start = rq_clock_task(rq);
- }
- 
--static struct task_struct *pick_task_stop(struct rq *rq)
-+static struct task_struct *pick_task_stop(struct rq *rq, bool core)
- {
- 	if (!sched_stop_runnable(rq))
- 		return NULL;
+>
+> This (partially) reverts commit ee14cc9ea19b ("igb: Fix missing time sync events").
+>
+> Fixes: ee14cc9ea19b ("igb: Fix missing time sync events")
+> Closes: https://lore.kernel.org/intel-wired-lan/CAN0jFd1kO0MMtOh8N2Ztxn6f7vvDKp2h507sMryobkBKe=xk=w@mail.gmail.com/
+> Tested-by: Daiwei Li <daiweili@google.com>
+> Signed-off-by: Daiwei Li <daiweili@google.com>
+> ---
+>
+> @Vinicius Gomes, this is my first time submitting a Linux kernel patch,
+> so apologies if I missed any part of the procedure (e.g. this is
+> currently on top of 6.7.12, the kernel I am running; should I be
+> rebasing on inline?). Also, is there any way to annotate the patch
+> to give you credit for the original change?
 
+Your submission format looks fine. Just a couple details:
+ - No need for setting in-reply-to (or something like it);
+ 
+ - For this particular patch, you got lucky and it applies cleanly
+ against current tip, but for future submissions, for intel-wired-lan
+ and patches intended for the stable tree, please rebase against:
 
+ https://git.kernel.org/pub/scm/linux/kernel/git/tnguy/net-queue.git/
+
+For credits, you can add something like:
+
+Suggested-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+
+>
+>  drivers/net/ethernet/intel/igb/igb_main.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+> index ada42ba63549..1210ddc5d81e 100644
+> --- a/drivers/net/ethernet/intel/igb/igb_main.c
+> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> @@ -6986,6 +6986,16 @@ static void igb_tsync_interrupt(struct igb_adapter *adapter)
+>  	struct e1000_hw *hw = &adapter->hw;
+>  	u32 tsicr = rd32(E1000_TSICR);
+>  	struct ptp_clock_event event;
+> +	const u32 mask = (TSINTR_SYS_WRAP | E1000_TSICR_TXTS |
+> +			  TSINTR_TT0 | TSINTR_TT1 |
+> +			  TSINTR_AUTT0 | TSINTR_AUTT1);
+> +
+
+Please move the declaration of 'mask' up, to follow the convention, the
+"reverse christmas tree" rule. Or separate the attribution from the
+declaration.
+
+> +	if (hw->mac.type == e1000_82580) {
+> +		/* 82580 has a hardware bug that requires a explicit
+
+And as pointed by Paul, "*an* explicit".
+
+> +		 * write to clear the TimeSync interrupt cause.
+> +		 */
+> +		wr32(E1000_TSICR, tsicr & mask);
+> +	}
+>  
+>  	if (tsicr & TSINTR_SYS_WRAP) {
+>  		event.type = PTP_CLOCK_PPS;
+> -- 
+> 2.46.0.76.ge559c4bf1a-goog
+>
+
+-- 
+Vinicius
 
