@@ -1,165 +1,142 @@
-Return-Path: <linux-kernel+bounces-284870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E716950638
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:16:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C7C295063E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:18:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2EBA288790
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:16:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 118EDB224DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E24119CD0F;
-	Tue, 13 Aug 2024 13:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0A319AD6E;
+	Tue, 13 Aug 2024 13:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ViDZakoy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=sntech.de header.i=@sntech.de header.b="G244lL1n"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 612A91E517;
-	Tue, 13 Aug 2024 13:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6509D29A5;
+	Tue, 13 Aug 2024 13:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554956; cv=none; b=Ajl+97JGF0Br1r7GxoZ5dXjldzH4rWe0CyvNAxLUzJnd/8T5yEawKDktTnuXZe9+LmIrKe142Eqp9b7k50q7deWfijMnSYl2kaMIKIJMbtEOEBx/yW421h1TJG1puZTUdI+Ydd36Tf9ZobEan3kbsYpHU/mtiAbGYUeb9MsGmd4=
+	t=1723555103; cv=none; b=FBYJSLUcwjp6Svb+7AJzehzS8qrQq0ayryBFjHRj3qK56R75iXj0NPZPI8PkZOQUp8WDHiJbeAeDnOGg12TXWbSzsJoazdKF0OA1kcW/ikz+d5MmxiDJcfGpjDCkd7a3T9TUS2JToOzQlDkTGmbYn7e3xG/yf8fW6KOADRB1SyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554956; c=relaxed/simple;
-	bh=YvKcJwx5k/w9Z5RN8WQLKZDIz67nb4HyPtqIwVQHDcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=fkUdOM2yPHMapvkbRuyz04hsC9YIYlXex6kT/k/GRRwOBQXvbUNa5E81bod9WeQ5WzeLLkqFsMos3FKKxHYwKLD1EDa0qw+0dD8yaj0SfaXdqGB/pmcfkyguF7kOfFOJSAuZcm8erNESyf5RbHn/vB6H+XqfmEIwiIM6nF0NcPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ViDZakoy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DCAQSP008223;
-	Tue, 13 Aug 2024 13:15:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:in-reply-to:message-id:references:subject:to; s=
-	qcppdkim1; bh=MJ3frZLq3vX5/UZq5IN2RIsYYUFupgBsQWqaDcukM7s=; b=Vi
-	DZakoys/maHmY4iCzIUHUZi0/IuNB9/L5lq9jzEshfUEhg06bh4b5W8lbOe1y+Zx
-	Qrohr9eNAt7hAa6EMQ0PPKf/byJM5SUaaXerANRTQZ+I6X+RFv3WRTekU/59SI/l
-	4Y6OQOnDW1K2tSZkQk8r4WUBks4uQnBiCZDVUYJG7WtNstQCOIG9Ln+LvksnEJkT
-	bIte599mj6CKNK3/1Qmr87hvqV5FA0nlikz3Tdh4btXJE74N6Y0x0RZ/yNQbA5zS
-	DgAxmEFKXr+pThWV2PRePFogw7bpkbbqtEYMLX7fSdbktwx7ePGPlJhcupk35xOz
-	m8JUDvggR5u8yRhVpW1Q==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x15e7vq8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 13:15:47 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47DDFihm001360;
-	Tue, 13 Aug 2024 13:15:44 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 40xkmgxsys-1;
-	Tue, 13 Aug 2024 13:15:44 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47DDFhrM001353;
-	Tue, 13 Aug 2024 13:15:43 GMT
-Received: from hu-sgudaval-hyd.qualcomm.com (hu-msarkar-hyd.qualcomm.com [10.213.111.194])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47DDFhsM001352;
-	Tue, 13 Aug 2024 13:15:43 +0000
-Received: by hu-sgudaval-hyd.qualcomm.com (Postfix, from userid 3891782)
-	id 23654974; Tue, 13 Aug 2024 18:45:43 +0530 (+0530)
-From: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-To: manivannan.sadhasivam@linaro.org, fancer.lancer@gmail.com,
-        vkoul@kernel.org
-Cc: quic_shazhuss@quicinc.com, quic_nitegupt@quicinc.com,
-        quic_ramkri@quicinc.com, quic_nayiluri@quicinc.com,
-        quic_krichai@quicinc.com, quic_vbadigan@quicinc.com,
-        Mrinmay Sarkar <quic_msarkar@quicinc.com>, stable@vger.kernel.org,
-        Cai Huoqing <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 2/2] dmaengine: dw-edma: Do not enable watermark interrupts for HDMA
-Date: Tue, 13 Aug 2024 18:45:38 +0530
-Message-Id: <1723554938-23852-3-git-send-email-quic_msarkar@quicinc.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1723554938-23852-1-git-send-email-quic_msarkar@quicinc.com>
-References: <1723554938-23852-1-git-send-email-quic_msarkar@quicinc.com>
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ef0ibwGKKf_BijZhsu5dckk5sDsJiU0P
-X-Proofpoint-ORIG-GUID: ef0ibwGKKf_BijZhsu5dckk5sDsJiU0P
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- phishscore=0 suspectscore=0 priorityscore=1501 mlxlogscore=465
- clxscore=1015 spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130096
+	s=arc-20240116; t=1723555103; c=relaxed/simple;
+	bh=QxJgUlPp+do3355NmsB8bX6OEgdTHtbytcB/7x2W4As=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g+NSe8RdKT+nX2URG5GkJFU3eegTdF8L20MBLhaluNyzBhw1eJks3oUZZYtzAPRweYK1hm5al2uFKIiR9sAVe3jiNa5UbWsawuQZzGfaJ5e9zTPXDlAKRkOGoV/MIT/uGaY0NFKyzAiDPd9TH+cdAj9U48Ozk5kViuAAb0RDX0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=fail (0-bit key) header.d=sntech.de header.i=@sntech.de header.b=G244lL1n reason="key not found in DNS"; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=u74mvDQoeCXxOK3A7GukZyX7dsdADP3JWCfmDGUIEGM=; b=G244lL1ngDJeW4mSEkMPunTGgZ
+	/ehrSjWm/ejw43wPeicvWorefz2lc/yZzFO9V++8XJA6BHY004sOLTnhHx1rJz5cY04Ckd6u0jRNx
+	h/tJKWztwZmdKL4/33O0V+WL1HurI2lCZG1XhgieX+sUc/iNNE+ofdzPsqOktTecwwOZVbzrMS4IS
+	GASCXYL8nNBHR47cVUG0wLVEjNVWuBI2x7+vFhxpsYOEfoZo4D9O8G6w2TWxYt8JLaQnuUijHWBfE
+	YDJ/GX8SZ/s+tJ+SS4CobMFdwEkcfGiLetiny2/HOprCClkNqU/ZF+oXVsaZ9kkwAjC+7jGL6a4u8
+	nxzQdBYQ==;
+Received: from i53875b02.versanet.de ([83.135.91.2] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sdrP9-0001iC-Ii; Tue, 13 Aug 2024 15:17:39 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sandy Huang <hjc@rock-chips.com>, Andy Yan <andy.yan@rock-chips.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Mark Yao <markyao0591@gmail.com>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, kernel@collabora.com,
+ Alexandre ARNOUD <aarnoud@me.com>, Luis de Arquer <ldearquer@gmail.com>,
+ Algea Cao <algea.cao@rock-chips.com>
+Subject:
+ Re: [PATCH v3 0/5] Add initial support for the Rockchip RK3588 HDMI TX
+ Controller
+Date: Tue, 13 Aug 2024 15:17:37 +0200
+Message-ID: <2006431.fxN4lLDhpz@diego>
+In-Reply-To:
+ <20240807-b4-rk3588-bridge-upstream-v3-0-60d6bab0dc7c@collabora.com>
+References:
+ <20240807-b4-rk3588-bridge-upstream-v3-0-60d6bab0dc7c@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-DW_HDMA_V0_LIE and DW_HDMA_V0_RIE are initialized as BIT(3) and BIT(4)
-respectively in dw_hdma_control enum. But as per HDMA register these
-bits are corresponds to LWIE and RWIE bit i.e local watermark interrupt
-enable and remote watermarek interrupt enable. In linked list mode LWIE
-and RWIE bits only enable the local and remote watermark interrupt.
+Am Mittwoch, 7. August 2024, 13:07:22 CEST schrieb Cristian Ciocaltea:
+> The Rockchip RK3588 SoC family integrates the Synopsys DesignWare HDMI
+> 2.1 Quad-Pixel (QP) TX controller, which is a new IP block, quite
+> different from those used in the previous generations of Rockchip SoCs.
+> 
+> The controller supports the following features, among others:
+> 
+> * Fixed Rate Link (FRL)
+> * Display Stream Compression (DSC)
+> * 4K@120Hz and 8K@60Hz video modes
+> * Variable Refresh Rate (VRR) including Quick Media Switching (QMS)
+> * Fast Vactive (FVA)
+> * SCDC I2C DDC access
+> * Multi-stream audio
+> * Enhanced Audio Return Channel (EARC)
+> 
+> This is the last component that needs to be supported in order to enable
+> the HDMI output functionality on the RK3588 based SBCs, such as the
+> RADXA Rock 5B.  The other components are the Video Output Processor
+> (VOP2) and the Samsung IP based HDMI/eDP TX Combo PHY, for which basic
+> support has been already made available via [1] and [2], respectively.
+> 
+> Please note this is a reworked version of the original series, which
+> relied on a commonized dw-hdmi approach.  Since the general consensus
+> was to handle it as an entirely new IP, I dropped all patches related to
+> the old dw-hdmi and Rockchip glue code - a few of them might still make
+> sense as general improvements and will be submitted separately.
+> 
+> It's worth mentioning the HDMI output support is currently limited to
+> RGB output up to 4K@60Hz, without audio, CEC or any of the HDMI 2.1
+> specific features.  Moreover, the VOP2 driver is not able to properly
+> handle all display modes supported by the connected screens, e.g. it
+> doesn't cope with non-integer refresh rates.
+> 
+> A possible workaround consists of enabling the display controller to
+> make use of the clock provided by the HDMI PHY PLL.  This is still work
+> in progress and will be submitted later, as well as the required DTS
+> updates.
+> 
+> To facilitate testing and experimentation, all HDMI output related
+> patches, including those part of this series, are available at [3].
+> 
+> So far I could only verify this on the RADXA Rock 5B board.
 
-Since the watermark interrupts are not used but enabled, this leads to
-spurious interrupts getting generated. So remove the code that enables
-them to avoid generating spurious watermark interrupts.
+On a rk3588-tiger-haikou (including its DSI hat and my preliminary DSI
+driver) it also works.
 
-And also rename DW_HDMA_V0_LIE to DW_HDMA_V0_LWIE and DW_HDMA_V0_RIE to
-DW_HDMA_V0_RWIE as there is no LIE and RIE bits in HDMA and those bits
-are corresponds to LWIE and RWIE bits.
+Even with both DSI and HDMI at the same time. Both hdmi plugged in on
+boot and also plugging it in during runtime of the board, generates a
+clean image on my 1080p display.
 
-Fixes: e74c39573d35 ("dmaengine: dw-edma: Add support for native HDMA")
-cc: stable@vger.kernel.org
-Signed-off-by: Mrinmay Sarkar <quic_msarkar@quicinc.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
----
- drivers/dma/dw-edma/dw-hdma-v0-core.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+So, series
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 
-diff --git a/drivers/dma/dw-edma/dw-hdma-v0-core.c b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-index a0aabdd..c4c73c4 100644
---- a/drivers/dma/dw-edma/dw-hdma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-hdma-v0-core.c
-@@ -17,8 +17,8 @@ enum dw_hdma_control {
- 	DW_HDMA_V0_CB					= BIT(0),
- 	DW_HDMA_V0_TCB					= BIT(1),
- 	DW_HDMA_V0_LLP					= BIT(2),
--	DW_HDMA_V0_LIE					= BIT(3),
--	DW_HDMA_V0_RIE					= BIT(4),
-+	DW_HDMA_V0_LWIE					= BIT(3),
-+	DW_HDMA_V0_RWIE					= BIT(4),
- 	DW_HDMA_V0_CCS					= BIT(8),
- 	DW_HDMA_V0_LLE					= BIT(9),
- };
-@@ -195,25 +195,14 @@ static void dw_hdma_v0_write_ll_link(struct dw_edma_chunk *chunk,
- static void dw_hdma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- {
- 	struct dw_edma_burst *child;
--	struct dw_edma_chan *chan = chunk->chan;
- 	u32 control = 0, i = 0;
--	int j;
- 
- 	if (chunk->cb)
- 		control = DW_HDMA_V0_CB;
- 
--	j = chunk->bursts_alloc;
--	list_for_each_entry(child, &chunk->burst->list, list) {
--		j--;
--		if (!j) {
--			control |= DW_HDMA_V0_LIE;
--			if (!(chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
--				control |= DW_HDMA_V0_RIE;
--		}
--
-+	list_for_each_entry(child, &chunk->burst->list, list)
- 		dw_hdma_v0_write_ll_data(chunk, i++, control, child->sz,
- 					 child->sar, child->dar);
--	}
- 
- 	control = DW_HDMA_V0_LLP | DW_HDMA_V0_TCB;
- 	if (!chunk->cb)
--- 
-2.7.4
+
 
 
