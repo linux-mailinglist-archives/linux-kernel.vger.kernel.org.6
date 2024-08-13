@@ -1,83 +1,83 @@
-Return-Path: <linux-kernel+bounces-284755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA399504CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:20:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC23E9504CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAF41C20D45
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88A56283F1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EAF71991C2;
-	Tue, 13 Aug 2024 12:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B33199242;
+	Tue, 13 Aug 2024 12:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuXS0sHj"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBhyIjq+"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538D51CF9A;
-	Tue, 13 Aug 2024 12:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39741CF9A;
+	Tue, 13 Aug 2024 12:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551637; cv=none; b=prXJRRodnRDnVydT5v8xTrwqFtabL+/Y7Ys4cZrpLDAUQte/Fr78zcafa8zlJmaYO/hM4GDXC/XEesxYHqlCquz4z1BJ9tRopJNTEZLJexp4uEas/8+Psgb9nK9qYg1uKrNv+3JJqDZHBno8iaN4mHVy8PJ47+Ah6T3vzViMgvI=
+	t=1723551668; cv=none; b=KPyn1QETPB6ipAPbnh/YD1CafOol9+01uXmjAMubzSSbZwRBW0FmNIwPU4bJeamie7ZSqFAz5x3jG3F0gAaK4g9i2p2YepXNRvb9jxfEozPTpj/7j/KU1m8NKR/XeHI82VAcn4ybLbK074ZudkN6qOGdQHX92U5D2Se6iFRdov0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551637; c=relaxed/simple;
-	bh=chAb2GOyV/hBwqq1AGYRaBy1jbqHrZJBU7pvL4YwHDc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Y+jqoFcr1K7+fD96DYl+WzPIvUiRujtJjwZ3mDgHP6Ral8/2XDC9b3emC4dWEgaZMkuBMyjsy2qajk5MO4VA8vZt3jTGn1L3LvJerUj+Id7g4Jdp98ZQC+DOQqv++v7r82n65PbXXRnm2IaJm4PzUMGpW67yM3EoX8YDzagYmDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuXS0sHj; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1723551668; c=relaxed/simple;
+	bh=b52W3h2G4P5UP8NCESlyaSLBng5JFv09JHWK+kZaCyY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d9dRS7mLxuaez3IbsPq4VXUf/7YAoWCNi9VDoM7JPJRUfQ3W8Hi5nAizEkT//bWj1NU1Cp5ClJXvADpdomQlPWQ8NPF8pMpeB6EAjoshY9WXMo27Lb5V7QY2Ubz5OTPZfZJK2mz8BgpDdIwdBN/zJSufQxZn8nMTjU7ML1wL0Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBhyIjq+; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2cb5789297eso3588521a91.3;
-        Tue, 13 Aug 2024 05:20:36 -0700 (PDT)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a7aada2358fso961089766b.0;
+        Tue, 13 Aug 2024 05:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723551635; x=1724156435; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723551665; x=1724156465; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z3mWR2mtNanCFR3pbd+apr4voFLl2lzERm6XILSMuMA=;
-        b=KuXS0sHjU7E/ZYLCTH7sGFln4r6nUxZ8v9ep164DRaatKQIFC2Zt4v6uHMdQXxlV4b
-         g86LYb563BSDYAr43eogjSLjGwpZIKKRgzldblTVtjZXxEXtoCxTeTPCvL+33S/piLRh
-         rwIhZa+JjuTDIqTItnwGM+1h+JZZOSAqE/ogiIA+g2x9eVqkz335RTsgDl90x5CMa1Bb
-         MuWqMRLiwJo6xustLuteYVP7XrhX+fy4zuU7adZx1sOJmyxmUf2495WHRVqwQplJUt2q
-         kGd7HMlID+pie5wM9uGypMZOqs4sMHIZTKixekPa5jvCbRPovFjTx6vHbY9DVyJ52+WG
-         VYXw==
+        bh=kOAxsiK+wFcTkNnMl59b++r9YDEJAEV6e8wbnPnFndE=;
+        b=UBhyIjq+j7KTQXocKomgxp1Hw9jlk+shJlJO4q9himOK4pQIbZeYr8JL1om3L+wo5r
+         bMiHwdHVSvgWxGZ6AyorIBIwOnDUd+c1EayV4YI1UybNrAVOaMk5YiIbHrGvK8H3YQJH
+         gbx+Qc2smhjMGYyVBqCFcPnyIUTZr9S8I6lm7OuaQkYIRU4CQr/h4SJ1SCTxm8E0jYtQ
+         H+blEi+Z7Go0cdCvFnxWflbmWA28axiD3Pd79PMbT6fQ9vLG2P0UTW3JUHA3HSkMMChP
+         g3Im0OE+cYhOR3JLKKWiHosC0Z4GrSjGym3WiZG4GC4VGc6FJo4hwYb8b4bSrlS0RLYu
+         kXnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723551635; x=1724156435;
+        d=1e100.net; s=20230601; t=1723551665; x=1724156465;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Z3mWR2mtNanCFR3pbd+apr4voFLl2lzERm6XILSMuMA=;
-        b=GI/pC0UFDvByTnUO7VC5LMU66wuVcl5Qv3bcC61EuRann0FMmm1Fiq3vv5boI102hG
-         RJEaygzsD472DvmZ2vCaEyMPZ4mDbU+K69hvf/9ZKjAtluthStI9VualDKXfcLSdgIDd
-         PSlBF8sVY8v3BJG2zI3Wf7lIJY8w4+Oi9qQGNOIwdtaV9t3JwiY6kvvxJosw6cL0g6y5
-         U8e5Lrlcm0hT2GT+f5odaHFXzmF2IhD36fz56LuSeWuivXGYj0YXMLUdbxiLfefu9VT/
-         iAoYRlSuY0oXlljmBuw/GYDceVHKNPGhfjuiF/+33XUPgPkyu2aHcV2XAl8aDr5BS2fv
-         4oEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwXfxoetyCvK137GHpYsuWq5AXfTgIQEPdk20WdRvLZs/Ha3IPxrs45zLWcabQgvx+SbNqvjxyu5FF3UgNuIJZB06Lo1unUkXmovCmlk3zL7aNe+Sx0aFtFXlQ6ddkRGwIsAJV1/jeGjKRVEhc
-X-Gm-Message-State: AOJu0Yw1EymyKQzG5iZPcLfqPPrxXbbW2KCeMuRg0WlfmH715UvObUJM
-	HMV65mc12KRNX8t3WJQCksInhmoQKEqp9WoVDB8QDrCcNhwJj/t0
-X-Google-Smtp-Source: AGHT+IE1wpvYvO+X8aOgD1ucXI5Hpo8sCpkifzovrkkhUkzJyZM0MyY3uf4Jalzh0qzJR2XxEwT8ww==
-X-Received: by 2002:a17:90a:7448:b0:2d1:b49d:7f2 with SMTP id 98e67ed59e1d1-2d392548219mr3858002a91.22.1723551635481;
-        Tue, 13 Aug 2024 05:20:35 -0700 (PDT)
-Received: from 0x7f800001.hitronhub.home ([2407:4d00:3c04:81a0:c062:fc81:d816:8b73])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2d1fcf06589sm7092679a91.25.2024.08.13.05.20.32
+        bh=kOAxsiK+wFcTkNnMl59b++r9YDEJAEV6e8wbnPnFndE=;
+        b=PX8WI7Czj57w0a5ilAg7FIb9Z1BeljsQEuFa+IwMSWCyKGmxvoqxdpG0Cj8HUOTmJu
+         cd/8dPKUT0uRmFumly81lQijrgqc4wSiObrCPzFCc3araPoXdo2wRz2DFj9tVJ+JUsip
+         H9Ah0YRMSAvbjNe3Q7MJCN0JUprLxr0cbAvTMtQ6Q4pcrI46/NIX3nxI3ch6a+2JWGMv
+         j/GLd7auNvcseR5iSbyuuPScdF1d0L7PZgotSfDN2NlUHEGUqtUGjJHsV0Zh/g3Hq4Jk
+         cT2D4PsoE/DO+bkeEkviZyT/cCmJ6e3qnpg921z2z4W4ffrizkIwZSJjnQa4vdub6+W2
+         Zqdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHrDweQLlz/r/h4UlVDJveICoPrHQeBL3etO9WG86l5fvd5jk1Ir86bY5Kn2XyQEC2D25WM7RZQ+akIv7A9A9Yybf5Qe7WvMmdRZc4Bwmk2dBxs9mF8vJTzE7wsoKavhkylUmLNLBM
+X-Gm-Message-State: AOJu0Ywi59MnuGD/h+CQzyRKLs1cT6Uv+Gzfv0hXZbAJTwTVmQOoA4cU
+	8PfAtsmi/WoKibk3uIGpWDXa9/y50V3m7Q/+UXLwfbskf5fUjG+bNq30Ui5l
+X-Google-Smtp-Source: AGHT+IGJ5TE9O3tHCy1/atK/zuV+3v75/AcaMaf9xeoF6ny9L0FD+LMoJa02LnJ7uqKabW2N71aH2A==
+X-Received: by 2002:a17:907:7e92:b0:a7a:c7f3:580d with SMTP id a640c23a62f3a-a80f0b9d525mr261524066b.25.1723551664640;
+        Tue, 13 Aug 2024 05:21:04 -0700 (PDT)
+Received: from lenovo.homenet.telecomitalia.it (host-79-17-17-86.retail.telecomitalia.it. [79.17.17.86])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f41849cesm65358766b.199.2024.08.13.05.21.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 05:20:34 -0700 (PDT)
-From: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-To: 
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	ricardo@marliere.net,
-	skhan@linuxfoundation.org,
-	0xff07@gmail.com,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: vhci: manage mutex with cleanup helpers
-Date: Tue, 13 Aug 2024 20:18:28 +0800
-Message-Id: <20240813121829.6693-1-0xff07@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 13 Aug 2024 05:21:03 -0700 (PDT)
+From: Matteo Croce <technoboy85@gmail.com>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Matteo Croce <teknoraver@meta.com>
+Subject: [PATCH bpf-next v4 0/2] bpf: enable generic kfuncs for BPF_CGROUP_* programs
+Date: Tue, 13 Aug 2024 14:20:58 +0200
+Message-ID: <20240813122100.181246-1-technoboy85@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,39 +86,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Use macros in liunx/cleanup.h for automatic resource cleanup.
+From: Matteo Croce <teknoraver@meta.com>
 
-Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
----
- drivers/bluetooth/hci_vhci.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+From: Matteo Croce <teknoraver@meta.com>
 
-diff --git a/drivers/bluetooth/hci_vhci.c b/drivers/bluetooth/hci_vhci.c
-index c4046f8f1985..70f0c28372ec 100644
---- a/drivers/bluetooth/hci_vhci.c
-+++ b/drivers/bluetooth/hci_vhci.c
-@@ -19,6 +19,7 @@
- #include <linux/errno.h>
- #include <linux/sched.h>
- #include <linux/poll.h>
-+#include <linux/cleanup.h>
- 
- #include <linux/skbuff.h>
- #include <linux/miscdevice.h>
-@@ -468,9 +469,9 @@ static int vhci_create_device(struct vhci_data *data, __u8 opcode)
- {
- 	int err;
- 
--	mutex_lock(&data->open_mutex);
--	err = __vhci_create_device(data, opcode);
--	mutex_unlock(&data->open_mutex);
-+	scoped_guard(mutex, &data->open_mutex) {
-+		err = __vhci_create_device(data, opcode);
-+	}
- 
- 	return err;
- }
+These kfuncs are enabled even in BPF_PROG_TYPE_TRACING, so they
+should be safe also in BPF_CGROUP_* programs.
+
+Reset all the acked-by tags because the code changed a bit.
+
+Signed-off-by: Matteo Croce <teknoraver@meta.com>
+
+Matteo Croce (2):
+  bpf: enable generic kfuncs for BPF_CGROUP_* programs
+  bpf: allow bpf_current_task_under_cgroup() with BPF_CGROUP_*
+
+ include/linux/bpf.h      |  1 +
+ kernel/bpf/btf.c         |  8 ++++++--
+ kernel/bpf/cgroup.c      |  2 ++
+ kernel/bpf/helpers.c     | 29 +++++++++++++++++++++++++++++
+ kernel/trace/bpf_trace.c | 23 -----------------------
+ 5 files changed, 38 insertions(+), 25 deletions(-)
+
 -- 
-2.34.1
+2.46.0
 
 
