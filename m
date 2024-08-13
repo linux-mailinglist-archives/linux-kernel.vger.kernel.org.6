@@ -1,60 +1,57 @@
-Return-Path: <linux-kernel+bounces-285069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F099508D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 092B19508D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7EAFB223EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:20:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D064B223D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A6F1A2561;
-	Tue, 13 Aug 2024 15:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31171A2C02;
+	Tue, 13 Aug 2024 15:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urTqw7Fx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uIRq4xqQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAE9A1A0B13;
-	Tue, 13 Aug 2024 15:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13EC1A2574;
+	Tue, 13 Aug 2024 15:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562374; cv=none; b=hx7RAyjEDfYJ39Vv2DwUxNNpnO88OhH5pHrf5k5QMymM2f7DLw0yoUteGsfvZgVyvW9boajfAkTX/4l7aihNIV+IFyJ5zuWt3quHBgX+mAzBNbvqJ6mmrB+5bLMxcCQ6TAcfEawAlw5XEeCERVeupT+tXv0NImJ+Nb0tb9GJmDU=
+	t=1723562376; cv=none; b=unes8iXXUhqRn6+fr9rQ43sPoIVjkTq8zAEsfTrjn8ihk7tC1KB/Fkys+tloXvuKLhj9ixgkPAyNZYvEB6a+VvOJiz5WtidJjvxjKxTmoqlVfzacm4Lnjb1toGw688SfYTHRcSOvIXwmwApLLCgF76/x5sFksBTqGgl8vFOMuN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562374; c=relaxed/simple;
-	bh=IjWYqvVozMU5xDb4PvFiGRW9tuYNkqmyRRFkJ2XA9nE=;
+	s=arc-20240116; t=1723562376; c=relaxed/simple;
+	bh=Bc2bqEtPf1DXDqArwIt8orSIwhE5/SndDXTmeixZlA8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=V3UMU83zDbvSycEndxpU1MC3NY7BC/9+kkLyF1o4X9QB28FDceiKbwjjhZY8ntLmONMcQwkvOENRSoqIGAlbTFe2ECqYUaQByb/NxoXvpHCuLQ8eX1fe1YVu4o1+VhX8L05avnUMliokiy9VwyOoK0P9RGio/zqPdB3TBHoUio4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urTqw7Fx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D2F6C4AF19;
-	Tue, 13 Aug 2024 15:19:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dotu+v3c3TIsfVAI+bATwVBPsXVJyYlYEiygsetwGHWNeTOgVWRZChZ9a05D2YLbaVKCwQPJVMayJ/7Rg8HmHnzWlb7XHYo1StlRwyQlOC5nR1mWJGf3Q96NYSlcOebnYxVGrB91/amTunIwTm9jBOSBJTZF3+60JVMoWL5AHqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uIRq4xqQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3BD7C4AF0F;
+	Tue, 13 Aug 2024 15:19:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723562373;
-	bh=IjWYqvVozMU5xDb4PvFiGRW9tuYNkqmyRRFkJ2XA9nE=;
+	s=k20201202; t=1723562375;
+	bh=Bc2bqEtPf1DXDqArwIt8orSIwhE5/SndDXTmeixZlA8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=urTqw7Fx3BrW36RwafkTtFLwboqOd8JmA+uleBl5yfSLbyapeVyeqXh9yHQobaZ1f
-	 tK9BQBwCk21H0M4rC4il842m/GbJo3ayEpSE+U5Wku7PwTYfNNlWvQCYhlWr5ZcoLM
-	 gyluLp7NjnuVtc/yRlCrGVxOqJ17O78NRxWXhBszyD61XwRZkOEwzrpGvaFKObERUB
-	 1j16KIWTr9y4o8FOYbLdDLeylZfWMPbzrLqU+2K3ka5tIqA+pjcjg8WN4RRQv3TCab
-	 tNagbceOOkFmHfAyJzFfaDr9Gw57W5A24FuTsnscYLcw8LRQ30A+/twSYmn1pqkIn3
-	 yYkc0xcIMfAbA==
+	b=uIRq4xqQ75yYT2hoAIfVNVvjlcqquqofASETYCKS7ht2+uKm42CHlq7dkSVmfH7xV
+	 ozGQgQ7sVQUgeQNjWlT/K0vnbju8NlqEcxcEsCIlBKNVtHWbnGidP1NR+X4fD7d79Q
+	 Q1v1hvMav8a3EVB3e05pp726eSCw9YfuOebSbDR86mViruvGdEKyMjVS96hMG19Jb/
+	 ioTKcrCjFHSSKJn7z6I72V/Ntl+hVefYTYSbK8pP0j4IAR68Qs40kbRohGiwyRnIAJ
+	 aD2CPTOAtdmtZ9zLFEc2yCsjTK8NlvXgfrvS9+zbNxgZluX4WG+af1o8kCB25S8inR
+	 hTptKsK6Sv1RA==
 From: Mark Brown <broonie@kernel.org>
-To: David Rhodes <david.rhodes@cirrus.com>, 
- Richard Fitzgerald <rf@opensource.cirrus.com>, 
+To: Oder Chiou <oder_chiou@realtek.com>, 
  Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
  Takashi Iwai <tiwai@suse.com>, 
  Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- alsa-devel@alsa-project.org, patches@opensource.cirrus.com, 
  linux-sound@vger.kernel.org
-In-Reply-To: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
-References: <5b906a0cc9b7be15d0d6310069f54254a75ea767.1722951770.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] ASoC: cs43130: Constify struct reg_sequence and
- reg_sequences
-Message-Id: <172356237111.72636.8665526019609243174.b4-ty@kernel.org>
-Date: Tue, 13 Aug 2024 16:19:31 +0100
+In-Reply-To: <96561dd2962d4312eb0e68ab850027f44350d070.1722952334.git.christophe.jaillet@wanadoo.fr>
+References: <96561dd2962d4312eb0e68ab850027f44350d070.1722952334.git.christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] ASoC: rt1318: Constify struct reg_sequence
+Message-Id: <172356237360.72636.10828998960842254413.b4-ty@kernel.org>
+Date: Tue, 13 Aug 2024 16:19:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,18 +62,13 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-37811
 
-On Tue, 06 Aug 2024 15:43:00 +0200, Christophe JAILLET wrote:
-> 'struct reg_sequence' and 'struct reg_sequences' are not modified in this
-> drivers.
+On Tue, 06 Aug 2024 15:52:24 +0200, Christophe JAILLET wrote:
+> 'struct reg_sequence' is not modified in this driver.
 > 
-> Constifying these structures moves some data to a read-only section, so
+> Constifying this structure moves some data to a read-only section, so
 > increase overall security.
 > 
-> On a x86_64, with allmodconfig:
-> Before:
-> ======
->    text	   data	    bss	    dec	    hex	filename
->   54409	   7881	     64	  62354	   f392	sound/soc/codecs/cs43130.o
+> While at it, remove rt1318_INIT_REG_LEN which is ununsed.
 > 
 > [...]
 
@@ -86,8 +78,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: cs43130: Constify struct reg_sequence and reg_sequences
-      commit: 86297bb30ae094e14a3a6c62b870a2f301a180a2
+[1/1] ASoC: rt1318: Constify struct reg_sequence
+      commit: ab73c7c0e5800a44690023cfdfeac72d3b6b95e8
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
