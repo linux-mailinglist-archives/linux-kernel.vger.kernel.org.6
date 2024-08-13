@@ -1,140 +1,114 @@
-Return-Path: <linux-kernel+bounces-285252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19DE950B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:11:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6088950B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 584121F23115
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:11:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 800331F21498
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69681A08CB;
-	Tue, 13 Aug 2024 17:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b="TQZrSouc"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB5C1A2564;
+	Tue, 13 Aug 2024 17:12:46 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA35198A3D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE233D38E;
+	Tue, 13 Aug 2024 17:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723569056; cv=none; b=e3OBx722j+w117gwbZrNIMuK2iC+KBZUsklG/GzAYAamen+YCfJRNe3pU9y5+N+20j7l7S6cUExZRC3LEMy0lbBPo3BsJVxCUEcvaQKve90hewQQZc+DDX+tp+ACMHRhEtMGftUJX8IfjzSJXETXA4yP2BI6Q/L+QK+hp+D0D9w=
+	t=1723569165; cv=none; b=Q6dwC7MbDY9ND5dE7vliIJ9XTdkTUF99VqF1v8PP+tdPa2JPEwlgPr2dpCwt2iaiY4QN9nR5cukKn+TJaRzdXqrxX2lwKCBp1QjUh6WiV8FZIZaWxp53mhw8/2NC4KzAF+kRqvXecrBCOCdGogFtBFcx5CONABHKvlw+mhH6K/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723569056; c=relaxed/simple;
-	bh=7ympOJZpNt6WSAnm/Uh1NWzgl3X3DNcEPRJW0FlCpH4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a3UBshIlfUlc6pW9vc3F3dmf9oExav+rh/SHMokeZP06AFHwMr97bbJlQDeRV50YOFka8JhVFTZ3Mli2T8Vur+6J5iF7jHgAV2KzL+BxUkOL3AJV7AiPocAnvvGr7WPowagRY7dbf76AK9iyj0B+TW6BoqX5TXZeUhBFFQuOgpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; dkim=pass (2048-bit key) header.d=gateworks.com header.i=@gateworks.com header.b=TQZrSouc; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7a94478a4eso10343666b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:10:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks.com; s=google; t=1723569053; x=1724173853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OhtBUgLnrDhhdGzlxz/BjFJWhCixCkk0gwuIiyZNKtA=;
-        b=TQZrSoucQrjeY7jtGNp4htRYvEgfiZVuQ0YjK4seJ4LfWF+D2gkZgqek7FFuBnQ9Oi
-         joQHyot/0WW3CQSmVyFAwnSTPo5aIIzmGXoX6RLydCbP/ZgmYBhzKSogH+kplaFKcPML
-         CW0vGLgpZZwqKH4Se8x4KmXvPTmlGpw/jMJOT+wssNoUN/F/2RKzy1KAPLDqu5vnJP7x
-         m7tMuPJhu5Gk6RTTU8iTfioav52Nu85EHYcEPvG9UmKIqqbYVShGv5wiuIh7rtAG0aRa
-         X2ej4zvW7klyFSaCv1zDCPocen8aY2iUBlAOJ+b7qDWDS0aLFN+c/mVJ35vGksQb5K2O
-         7Mcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723569053; x=1724173853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OhtBUgLnrDhhdGzlxz/BjFJWhCixCkk0gwuIiyZNKtA=;
-        b=wStRiC9OT8tUyv+CDk7ULdfAZYmUBb/F4wSf8BXmDLeJ1SfC2nBli2xtEHaAr4ZjEp
-         sY6sN6624oV05TRFuCRPCAbVAx9IIA9oS7QzP1riZSwzpTund6F6ZhXuBYfeaFGdk30I
-         QK88LifRJPT6Y8X2wPt+81itzZ+BgzxDMjYfiFhLfMcIEdv6RGQgMY+QFI7dJgeVZEXl
-         aFIjrGEb6SL50iOBYhdP9JOQuMrPIBrC5fFh3DusLNYkZ2dze4/qJyiFllYdCBzPweJV
-         tCSKL4Hsw6GF2ug5+IeCoMCJU3mHYpQV/9Yo7RSM9Rf9J+j1X1qcHJlQ8dIhdxkQ/0JG
-         gyBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUINYWAiYuAi3vkBhjs3RScZFNoNF1sGFvtcBV0OZCVpEz9h4+JrK1Gj69Gc85lv1ZBLecZOHjEYX7OX3SjFa7rpBNLHFw8PZ8wsEbb
-X-Gm-Message-State: AOJu0YxuzFXiRbHNNDdw4LkwlU4lZZ3NdMQIVz619v4asH0LRpzzT4uL
-	YAX9ufGd4oV2L07caQMMBn1v6kTPFy5qTdifnEb9Wd7zUBDngL0/Fo2KLj90QHIcGIXeMPW7x9F
-	oRcdpSBaArDYCqbtiU+B33D67Mu+JNdkGBFklNQ==
-X-Google-Smtp-Source: AGHT+IHfrLoNeAHUzX9iSp5yG/DmHNHyvEWlECdWd2S20k6QEuCIF2JQ1mr7dl/AjYpPPWLrA6gS9nYLsHONqns987s=
-X-Received: by 2002:a17:907:f729:b0:a7d:c352:c502 with SMTP id
- a640c23a62f3a-a8362d64c1emr33673666b.30.1723569052201; Tue, 13 Aug 2024
- 10:10:52 -0700 (PDT)
+	s=arc-20240116; t=1723569165; c=relaxed/simple;
+	bh=LCqfXSkkEPSeZ1kiAFPjShQDR+HMV48XK4nlBDvBQ3U=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=OW73Ikzd7HjU4VPgMm0ILVcJkXm62jgaJfJ74tq1rq5rvDtiFpBgjxO6v4oaKUpQQekYtQVESCP8412yuG/tSss9NPMlk+u4Cps0LsSr7oUxzd2Lf8AQ5CcpAQRvD3qbNuupHa1wVN/gltP5uMjd3SLRBhkxTqE97Tt17jcETn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44F6EC4AF09;
+	Tue, 13 Aug 2024 17:12:45 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1sdv4r-00000001TP3-1E3J;
+	Tue, 13 Aug 2024 13:12:57 -0400
+Message-ID: <20240813171104.950972475@goodmis.org>
+User-Agent: quilt/0.68
+Date: Tue, 13 Aug 2024 13:11:04 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Ross Zwisler <zwisler@google.com>,
+ Vincent Donnefort <vdonnefort@google.com>
+Subject: [PATCH 0/2] tracing: Have boot instance use reserve_mem option and use fgraph tracer
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240522215043.3747651-1-tharvey@gateworks.com>
- <CAL_JsqKtc_65tDMFWT0WroNPmW2R0Dd-4Jw101PnyJcPb=7tJA@mail.gmail.com>
- <CAJ+vNU0LBEET=y40BT4OE0zWsu6DxT-SYOrx7qD-h=HH2zENzA@mail.gmail.com> <4faa6881-8828-44de-92fd-6e55495cefb2@linaro.org>
-In-Reply-To: <4faa6881-8828-44de-92fd-6e55495cefb2@linaro.org>
-From: Tim Harvey <tharvey@gateworks.com>
-Date: Tue, 13 Aug 2024 10:10:40 -0700
-Message-ID: <CAJ+vNU1ff0c=wJoVTENGSV5Y3Yh_w5mTU-xoA9XgOX-x744=EQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: fsl: rename gw7905 to gw75xx
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Fabio Estevam <festevam@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Li Yang <leoyang.li@nxp.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2024 at 9:34=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 13/08/2024 18:22, Tim Harvey wrote:
-> > On Fri, May 31, 2024 at 7:13=E2=80=AFAM Rob Herring <robh@kernel.org> w=
-rote:
-> >>
-> >> On Wed, May 22, 2024 at 4:50=E2=80=AFPM Tim Harvey <tharvey@gateworks.=
-com> wrote:
-> >>>
-> >>> The GW7905 was renamed to GW7500 before production release.
-> >>
-> >> Maybe some summary of the discussion and how this changed from one-off
-> >> to wider availability.
-> >>
-> >>>
-> >>> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
-> >>> ---
-> >>>  Documentation/devicetree/bindings/arm/fsl.yaml | 4 ++--
-> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > Hi Rob,
-> >
-> > What is the status of this patch? I'm not clear what tree the
-> > Documentation/devicetree/bindings go through.
->
-> Always via given subsystem. Which subsystem is here? Maintainers should
-> tell you - ARM Freescale/NXP.
->
-> See also:
-> https://elixir.bootlin.com/linux/v6.11-rc3/source/Documentation/devicetre=
-e/bindings/submitting-patches.rst#L79
->
-> Best regards,
-> Krzysztof
->
 
-Krzysztof, thanks - that makes sense.
+Now that "reserve_mem" kernel command line option is upstream, add a patch
+to use it with the ring buffer boot up mappings. That is:
 
-Shawn, what is the status of this series [1]
+  reserve_mem=12M:4096:trace trace_instance=boot_mapped@trace
 
-Best Regards,
+Will allocate 12 megabytes at boot up that is aligned by 4096 bytes and
+label it with "trace". A trace_instance with the name "boot_mapped" will be
+created on top of that memory.
 
-Tim
-1 - https://patchwork.kernel.org/project/linux-arm-kernel/list/?series=3D85=
-5146&state=3D%2A&archive=3Dboth
+Documentation has been updated about this and it states that KASLR can make
+it somewhat unreliable for every boot as well as the layout of the memory
+for the ring buffer may change with new kernel versions which will clear the
+previous buffer.
+
+Also, now that function graph tracing can be used by trace instances,
+update its code to be able to be used by this boot process. This can give a
+nicer trace of a reboot:
+
+           swapper/0-1       [000] d..1.   363.079162:  0)               |              lapic_shutdown() {
+           swapper/0-1       [000] d..1.   363.079163:  0)               |                disable_local_APIC() {
+           swapper/0-1       [000] d..1.   363.079163:  0) + 26.144 us   |                  clear_local_APIC.part.0();
+           swapper/0-1       [000] d....   363.079192:  0) + 29.424 us   |                }
+           swapper/0-1       [000] d....   363.079192:  0) + 30.376 us   |              }
+           swapper/0-1       [000] d..1.   363.079193:  0)               |              restore_boot_irq_mode() {
+           swapper/0-1       [000] d..1.   363.079194:  0)               |                native_restore_boot_irq_mode() {
+           swapper/0-1       [000] d..1.   363.079194:  0) + 13.863 us   |                  disconnect_bsp_APIC();
+           swapper/0-1       [000] d....   363.079209:  0) + 14.933 us   |                }
+           swapper/0-1       [000] d....   363.079209:  0) + 16.009 us   |              }
+           swapper/0-1       [000] d..1.   363.079210:  0)   0.694 us    |              hpet_disable();
+           swapper/0-1       [000] d..1.   363.079211:  0)   0.511 us    |              iommu_shutdown_noop();
+           swapper/0-1       [000] d....   363.079212:  0) # 3980.260 us |            }
+           swapper/0-1       [000] d..1.   363.079212:  0)               |            native_machine_emergency_restart() {
+           swapper/0-1       [000] d..1.   363.079213:  0)   0.495 us    |              tboot_shutdown();
+           swapper/0-1       [000] d..1.   363.079230:  0)               |              acpi_reboot() {
+           swapper/0-1       [000] d..1.   363.079231:  0)               |                acpi_reset() {
+           swapper/0-1       [000] d..1.   363.079232:  0)               |                  acpi_os_write_port() {
+
+This is based on top of:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+     branch: ring-buffer/for-next
+
+Which was supposed to go in the last merge window, but due to
+miscommunication, it did not. As it has been in linux-next, I do not want to
+rebase it, so instead I merged in v6.11-rc1 to get access to the
+reserve_mem kernel command line parameter and applied these patches on top.
+
+
+Steven Rostedt (1):
+      tracing/fgraph: Have fgraph handle previous boot function addresses
+
+Steven Rostedt (Google) (1):
+      tracing: Allow boot instances to use reserve_mem boot memory
+
+----
+ Documentation/admin-guide/kernel-parameters.txt | 13 +++++++++++++
+ kernel/trace/trace.c                            | 19 +++++++++++++------
+ kernel/trace/trace_functions_graph.c            | 23 ++++++++++++++++++-----
+ 3 files changed, 44 insertions(+), 11 deletions(-)
 
