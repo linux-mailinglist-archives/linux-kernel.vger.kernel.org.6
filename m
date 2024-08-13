@@ -1,62 +1,73 @@
-Return-Path: <linux-kernel+bounces-285434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DBF950D73
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA94950D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:02:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6B21F2313C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:58:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 105661F2305F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6ED1A3BDD;
-	Tue, 13 Aug 2024 19:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F1711A4F0A;
+	Tue, 13 Aug 2024 20:01:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hnNncHiF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEbU9YwA"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDB555898
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:58:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB23D54279
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579117; cv=none; b=DEjF4O8p+3rB5jB87OJuEvyxZtf7EsrovJNsU4bWYm25+TL+P8mWrvgR+MKm4f1sLx6g8g+V22PFwm8xXSAFfNHhYmOi/f+ifH8B4H+MdaiPRR+FLkraGsDeH6/1mhrLa7sblC9wL4G5ShE0zXdnpuUiNrKpLYKSuiqnZUvBdZ4=
+	t=1723579312; cv=none; b=AhTCIuRidTmrGPluGECZ8c4KnhrxmkLQxIKcUdwSU4AMr1y+oNtZ0Keci01Y/Qg8rUPzx5H4DrlYUmHRnvjCBIbJ4smf1aaZYyujUysJzXLwyg7GjWheU/Jo4aX6hzd2SOf/jHmNH+BhMjHk4mdeIYl8/KK10s+htRtG0PiUIQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579117; c=relaxed/simple;
-	bh=+nXgt26wlSBMSb6FGMTM9riOviaDIeeL5n12zf7YFKM=;
+	s=arc-20240116; t=1723579312; c=relaxed/simple;
+	bh=S4mnivLfaC6CBnZ9vA9MBqgg+x+E3rHUM2iJioJ/fN8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PxyL8E6YBcSML9KASH+CgD0P8Al0Kf59B6hAY6oRAnFPGGTKx16/jo+h4Zan+/O1IKSSkalEvvqjSBjwzfOPAlGEpi2mcwj6+AcsRIOe6nJJdyT0MH0/qq4SvgtKwkxlWcXu31XdNuxxQs3P6iWXZt8rryPNbUYorNdTKC22ZUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hnNncHiF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723579115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yLCM8/C9gTPKJe0A6J9d70v78GMU1T9JDD/hkFZE3ks=;
-	b=hnNncHiFtufhrWjno1y+PnR3g6T2b5yjo7Ujp7lwn+3uCRAPz6I39k5CJ7DM7RL69gds/T
-	rZZ1yiAeRJfouDFE4tiMieba9DKd7mOYYteErxCgEqS7s/lg3CpIvQZwPgszWpofJHMuC1
-	bcqX6xIeDtbt/R7Yn07AW7gXKfE+bEU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-574-OsHI6CCuNPyyjZErEFIVZw-1; Tue,
- 13 Aug 2024 15:58:32 -0400
-X-MC-Unique: OsHI6CCuNPyyjZErEFIVZw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0D4A41956080;
-	Tue, 13 Aug 2024 19:58:31 +0000 (UTC)
-Received: from [10.2.16.208] (unknown [10.2.16.208])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D93819560AA;
-	Tue, 13 Aug 2024 19:58:28 +0000 (UTC)
-Message-ID: <5d54a189-3c2b-440a-9626-4e00e95a7f77@redhat.com>
-Date: Tue, 13 Aug 2024 15:58:27 -0400
+	 In-Reply-To:Content-Type; b=q+Or18WjVYOqmu37xV28Tztu29Nx3sLkiYfYMk6IdY3bdGY404xjW2uyItGBA/gSxUAxS9+BOOc9c8li6pDrc9PBy6tv/Ipe0Xt6NFnV6DRhgNk+nBSQH86HifaaaJ+oc55Vfr5Op0orTuASUomGCACwEufWPy0+Z/bgrwfxH1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEbU9YwA; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52fd0904243so592850e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:01:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723579309; x=1724184109; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
+        b=hEbU9YwAuUKEftUXuV5Hih/D4iujHrKgJD7aCOnvUZVpV+M1VNa1uI/kLLCb+8eqcs
+         RGfSExHXxDzFpu+wrLtZqJpDN5TAyF5nTJ73wRAeX8ioBL3b2c1DeozK2pbdtHs9oV/Y
+         HcO7zUp+POE/9/xJQznPmMSVoQ1XTsSQDzF+71B2lFUu+/b2tjdVRUBSiwpz8IA8QWxo
+         nckSm2rpk3DMxCsW9hrzZWghB2RYdVlfvdb+ZAEF8sPPkX8XlyI+ktMxtsfGejxaObNq
+         z+yjn5u5JfOjYgLxD9d9xEOLr54mUJpTFwKLmDkVqcrOcSiHDgiewsBJr3xh2PVfh9M5
+         tgFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723579309; x=1724184109;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
+        b=XIKG2XyhrARUiAXsTBY7fEQYr5KPTec4Y0xnjCut3EL2FyQ+6Z8ETM7bPEERU2kl2K
+         LKl9+SDxrQ8dNnC5fWVKC6SNHtakdmOM8UARVY9xhoSMYKHaIal4ExKljQITkKUd70wL
+         OrrEhZL/rjwArzeOxzK7xzeWXHjeofxqFmJHZ7r2HWHhbaWkskEihMA2qYi/Y0/5X5NN
+         EaXA36CuMot51qv5pSkiuojRt41Ok8NPvYfo9AXmSjQNONPZqIk9hpC5u5y20Q7F+cLy
+         /FlfNnYHB8wmZyS9ZiaUrI7HVxpm17sobDjBXqNDDUjqp0ZSkyahbZ+uyu0RA8AicP1b
+         SNZw==
+X-Forwarded-Encrypted: i=1; AJvYcCW1EILlYa1RxlJcMI7+qzs2B0N741lX/5qhFA4wF0hKQBIBtXY55C62rE2f2yxPrUqXpaNDstLXcJsBPJSydCUwE6nuAsjljfTE/Wby
+X-Gm-Message-State: AOJu0YyjVnuVtngbx+6VHGZcy2H34qZv3cjKnCkOkyLc3p1FHXz2EKuc
+	3cnyA3O0Jsf9G5njFIa7u4k55B18meb09itla0SyivJgr8qS2X4u2o/Zu7z81Xw=
+X-Google-Smtp-Source: AGHT+IEy2HUeh4eHrPS74gTyv0LL8fkr5nwO3fJw8lDbNGJBQEugQTA2bj4xmGTeJyDShLmEXgiiAw==
+X-Received: by 2002:a05:6512:3c84:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-532edbb2d5amr162410e87.5.1723579308586;
+        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f4220asm1053557e87.261.2024.08.13.13.01.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
+Message-ID: <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+Date: Tue, 13 Aug 2024 23:01:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,50 +75,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] Avoid memory barrier in read_seqcount() through load
- acquire
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: cl@gentwo.org, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240813-seq_optimize-v1-1-84d57182e6a7@gentwo.org>
- <183ee6fa-1d42-4a01-8446-4f20942680d2@redhat.com>
- <CAHk-=whgwpzsn9XvZt3zRgP87r4mSScD04P_g5JeiR1irN3vRA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
 Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <CAHk-=whgwpzsn9XvZt3zRgP87r4mSScD04P_g5JeiR1irN3vRA@mail.gmail.com>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>, kernel test robot <lkp@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240813094035.974317-1-quic_skakitap@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
+> In zonda_pll_adjust_l_val() replace the divide operator with comparison
+> operator since comparisons are faster than divisions.
+> 
+> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
 
-On 8/13/24 15:48, Linus Torvalds wrote:
-> On Tue, 13 Aug 2024 at 12:01, Waiman Long <longman@redhat.com> wrote:
->> Do we need a new ARCH flag?
-> I'm confused by that question.
->
-> That's clearly exactly what that ARCH_HAS_ACQUIRE_RELEASE is.
->
-> Obviously all architectures "have" it - in the sense that we always
-> have access to a "smp_load_acquire()/smp_store_release()".
+Apparently the change is not a fix, therefore I believe the Fixes tag
+shall be removed.
 
-Sorry for the confusion. What you said above is actually the reason that 
-I ask this question. In the same way, smp_rmb()/wmb() is available for 
-all arches. I am actually asking if it should be a flag that indicates 
-the arch's preference to use acquire/release over rmb/wmb.
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index 2f620ccb41cb..fd8a82bb3690 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
+>   	remainder = do_div(quotient, prate);
+>   	*l = quotient;
 
-Cheers,
-Longman
+Since it's not a fix, but a simplification, you may wish to remove
+an unnecessary 'quotient' local variable:
 
->
-> But if the architecture doesn't support it natively, the old rmb/wmb
-> model may be preferred.
->
-> Although maybe we're at the point where we don't even care about that.
->
->                Linus
->
+remainder = do_div(rate, prate);
 
+>   
+> -	if ((remainder * 2) / prate)
+> +	if ((remainder * 2) >= prate)
+>   		*l = *l + 1;
+
+*l = rate + (u32)(remainder * 2 >= prate);
+
+I hope the assignment above is quite clear...
+
+>   }
+>   
+
+With the review comments above implemented, feel free to add to v2
+
+Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+
+--
+Best wishes,
+Vladimir
 
