@@ -1,115 +1,109 @@
-Return-Path: <linux-kernel+bounces-284630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4078695034B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:08:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE73895034C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:08:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0020285A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:08:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B2EAB27A52
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE5C198A35;
-	Tue, 13 Aug 2024 11:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEBE81990C6;
+	Tue, 13 Aug 2024 11:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TmxcW52n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="XcPbjLUu"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CE221345;
-	Tue, 13 Aug 2024 11:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3B61990C0;
+	Tue, 13 Aug 2024 11:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547279; cv=none; b=AlzLHnX8LoLl3nDEKYfKOICCTfABsYSuhcJY4LNyQkE+yRRsg7UWdmTF7VPiwTPp93KC62psElwUdA3GKBrsGYYGdec7DK9Q8p5cvtnSJDUZ5C6o0PKL3wOJVXx/ueH510qhvFkU+0Dn+wIy4DBIhfqlzdEi8ALcnZgMLXh6Yf0=
+	t=1723547284; cv=none; b=RjO0byuF96336vDHmXTZGqX0DsTxR26Pt2I134kbe/kFcnSf6swUUFNI/H2GNbChO4Ksz+iMylGXk/ulArSN40wZ/UzVTXi8962pNVU1v+lx2FkNbXmdwRUTDT01kw953uFrDmkluyhMK+urII3ZdEx01SbT9ipDTu7VV9nntr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547279; c=relaxed/simple;
-	bh=PRSTM/N89x9mHdAa2T3SRVbBz76/xYZx90d+COq+eac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nUa54v9PD+dt404tD3mTQuK4IOZXWDx73UHxeHGiNT07iyfj85RgUaZhnH9sqRl4Tz+hgSR04NWcoTDYpnPcjORI8+PgxqHOv373Zuq8aInFAzI4OQZh0jDDfbFhNoi30oHky/I9Hoio90tJkqGhAoI7db5KgCNcCiVTFhwuuJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TmxcW52n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C7BC4AF16;
-	Tue, 13 Aug 2024 11:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723547278;
-	bh=PRSTM/N89x9mHdAa2T3SRVbBz76/xYZx90d+COq+eac=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TmxcW52nlBwx2KC7h0LWRmqdGRz6pdSvToLshI6QkmobCdRd2wU+545DZqsF/OXXc
-	 zt4RFXlve5OXxAkhWHWjINraNwYxHEPU04rxXa0yXT4EgeR9kObMO8LZOI02s8VxYy
-	 f5B9Hw+bPy0AmA+Gz4STJo3qifU6cFnfPTcJpRD9E6P+tm2Z+z/kPf45jRm1uyxfY1
-	 DXsicbRPR4z8/asdI1Bln9fxKJBx9caXUjkkDMJEDGqpvICc8n+ylilIJRZO3CVtAN
-	 EDHiJl26sPBPkC78J4ejIX/8hDZkVCu31l2k1sW0U0CJ4QPTAqWPc//o6kurVkzvi2
-	 tqnvZwfK1uzjQ==
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-268e0b13471so528956fac.2;
-        Tue, 13 Aug 2024 04:07:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWRffnjgmIt68e12FHtzjfbobza2vr5AgXLn/97paA5FJrPfo8Qb6dXLaQtQOpo/yUB30mSiDHObIFaZsRVkBO3aoHVEk+B6qQ6qK77EcaQ+KgrmtXqmMPi0zGlrW1OU/1BAPQDQaA=
-X-Gm-Message-State: AOJu0YxABfVCtuu+F4Js+hoLRxuRCOGyV+yfGBCYHmWvTbSmUfleem1f
-	4QrWIpuJcw/xNSqphdR1hzRyT/WZvB+O22Q0g4wsdj1KO5yTUVKccZoXUJ3hxw07BLbU/Z5rckt
-	+9qLb6Nwbzbr3XHzFJgHKgYeITgQ=
-X-Google-Smtp-Source: AGHT+IGvRQQBGVZv0JTADDoQxPdVk4pV/qMYlrtDOH5fp6d6G7BKtu8JD9An29QoSlEQgHZadPAaR1FDTpESGm30+/Y=
-X-Received: by 2002:a05:6871:320a:b0:26f:df8d:fc13 with SMTP id
- 586e51a60fabf-26fdf8e1496mr151375fac.2.1723547277998; Tue, 13 Aug 2024
- 04:07:57 -0700 (PDT)
+	s=arc-20240116; t=1723547284; c=relaxed/simple;
+	bh=XJ/KPDgCVWELMuO8veti2O2voiZLmpnEbpnJ1fVPoSs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lOAYqRCd+Y8f2F4xZ+FO7aNDSBpQLtc7QzohwKAcSceLP5aBqnDgQ7sRnEe50hCgSh0iLuZf4SoFOBK5KS7Z9A2o+PbFKc7o/viQ9e6X8qEz+Rdcrp4QUeR6pXlj2nfyo8k+tRgSnD3nhrG0zoMqXCWDea5x1cCtw4Sctla5/WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=XcPbjLUu; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D2TvTP023256;
+	Tue, 13 Aug 2024 06:07:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=flIsohz418B7fxP3
+	DsCMNcDk7DLGfOnPZ1GVd/PWGk8=; b=XcPbjLUuotgO2BZ+9A5AwDv3p9wLQ7Es
+	hMvn81w+ioKxfK421KdhC45c4rTQVMMTfiaMApKwIgSe23QAflaxtg68spAZR/88
+	56MjBZE5B+YNEPh1Iuqrg9ynjPrzp2KQMC/vJCca7gqJgWInneubPYL0haRdFUWl
+	X83GSggL6KqTXrxAEWsSgjIIUWYhz/jYbjgUM7bUtpwc+mKLwjz/JBufcbmBYCRr
+	8LZ/HOcGUOXrD7DwQEmYj0yy4FPi/5trL8Rci6kvbN89u+KorLAtESiqSmxoV3D9
+	M1M4JQ+52nP/Wyjk08du81T4U9vq4ak4vngK/1OmsASUc3cG3oSWoQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 40x5kwk45s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 06:07:55 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 12:07:53 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Tue, 13 Aug 2024 12:07:52 +0100
+Received: from EDIN4L06LR3.ad.cirrus.com (EDIN4L06LR3.ad.cirrus.com [198.61.68.170])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id AB159820241;
+	Tue, 13 Aug 2024 11:07:52 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <tiwai@suse.com>
+CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <patches@opensource.cirrus.com>,
+        Richard Fitzgerald
+	<rf@opensource.cirrus.com>
+Subject: [PATCH] ALSA: hda: cs35l56: Remove redundant call to hda_cs_dsp_control_remove()
+Date: Tue, 13 Aug 2024 12:07:50 +0100
+Message-ID: <20240813110750.2814-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4941491.31r3eYUQgx@rjwysocki.net> <13573795.uLZWGnKmhe@rjwysocki.net>
- <ZrqxqCVbw18AP5Ou@chenyu5-mobl2>
-In-Reply-To: <ZrqxqCVbw18AP5Ou@chenyu5-mobl2>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 13 Aug 2024 13:07:47 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j8Dqro_=wcA5RD3+g-0pp9np3HyVQP9VU0De_JJAf6Pg@mail.gmail.com>
-Message-ID: <CAJZ5v0j8Dqro_=wcA5RD3+g-0pp9np3HyVQP9VU0De_JJAf6Pg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] x86/sched: Add basic support for CPU capacity scaling
-To: Chen Yu <yu.c.chen@intel.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, x86 Maintainers <x86@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ricardo Neri <ricardo.neri@intel.com>, Tim Chen <tim.c.chen@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: 6sfEIip0XTXCNRzzw4nuM_L8IRJ59QDT
+X-Proofpoint-GUID: 6sfEIip0XTXCNRzzw4nuM_L8IRJ59QDT
+X-Proofpoint-Spam-Reason: safe
 
-Hi,
+The driver doesn't create any ALSA controls for firmware controls, so it
+shouldn't be calling hda_cs_dsp_control_remove().
 
-On Tue, Aug 13, 2024 at 3:27=E2=80=AFAM Chen Yu <yu.c.chen@intel.com> wrote=
-:
->
-> Hi Rafael,
->
-> On 2024-08-12 at 14:42:26 +0200, Rafael J. Wysocki wrote:
-> > +void arch_set_cpu_capacity(int cpu, unsigned long cap, unsigned long b=
-ase_cap,
-> > +                        unsigned long max_freq, unsigned long base_fre=
-q)
-> > +{
-> > +     if (static_branch_likely(&arch_hybrid_cap_scale_key)) {
-> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->capacity,
-> > +                        div_u64(cap << SCHED_CAPACITY_SHIFT, base_cap)=
-);
-> > +             WRITE_ONCE(per_cpu_ptr(arch_cpu_scale, cpu)->freq_ratio,
-> > +                        div_u64(max_freq << SCHED_CAPACITY_SHIFT, base=
-_freq));
-> >
->
-> Would the capacity update be frequently invoked?
+commit 34e1b1bb7324 ("ALSA: hda: cs35l56: Stop creating ALSA controls for
+firmware coefficients") removed the call to hda_cs_dsp_add_controls() but
+didn't remove the call for destroying those controls.
 
-I hope not.
+Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+Fixes: 34e1b1bb7324 ("ALSA: hda: cs35l56: Stop creating ALSA controls for firmware coefficients")
+---
+ sound/pci/hda/cs35l56_hda.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Just wonder if we could
-> first READ_ONCE() to check if the value is already the value we want to
-> change to, to avoid one write and less cache snoop overhead (in case othe=
-r
-> CPU reads this CPU's capacity)
+diff --git a/sound/pci/hda/cs35l56_hda.c b/sound/pci/hda/cs35l56_hda.c
+index 31cc92bac89a..a9dfd62637cf 100644
+--- a/sound/pci/hda/cs35l56_hda.c
++++ b/sound/pci/hda/cs35l56_hda.c
+@@ -413,7 +413,7 @@ static void cs35l56_hda_remove_controls(struct cs35l56_hda *cs35l56)
+ }
+ 
+ static const struct cs_dsp_client_ops cs35l56_hda_client_ops = {
+-	.control_remove = hda_cs_dsp_control_remove,
++	/* cs_dsp requires the client to provide this even if it is empty */
+ };
+ 
+ static int cs35l56_hda_request_firmware_file(struct cs35l56_hda *cs35l56,
+-- 
+2.39.2
 
-Well, I'd rather not complicate the code beyond what is necessary
-unless this is demonstrated to make a measurable difference.
-
-Besides, AFAICS the only case in the caller in which the same values
-can be passed to arch_set_cpu_capacity() is the CPU offline one and
-that should not happen too often.
 
