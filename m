@@ -1,105 +1,101 @@
-Return-Path: <linux-kernel+bounces-285414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 533F4950D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80ED2950D2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08AC81F21793
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:29:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD84284C07
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:33:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F91A4F1A;
-	Tue, 13 Aug 2024 19:29:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D21A2C14;
+	Tue, 13 Aug 2024 19:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwn8Pdob"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aBqLSCEm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BD2122F11;
-	Tue, 13 Aug 2024 19:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691AA1DDF4;
+	Tue, 13 Aug 2024 19:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723577346; cv=none; b=mdkHUn0HDNU7F0WpTwu1+h2h6iOhzMk3SjCXzPzZh7krI+wgDfzmno7Ez28OiOW6TVEdjIB1cXeV3nM2QakdUTWKkwbz7UqvDrQVauwwpIRCWU6DyvHw67cnCGw4dJR+R9QaC8bHj6tToMGK3Jfg/e0enZFb+do6T/HgW8Ngz84=
+	t=1723577597; cv=none; b=hiXqT8Qm8ihHyVkZonHsWmF7KLoVpiIag2pVwAPUO7Jc4BPKFmQCLI+6VPXQPLqdP+0LCZdhsnm3hwq574YqrMZ6hU4xJ+IXTCI4j7Z/aP/bEuGqOk8SHcFPvhUm7uYh+aUs1GVtsJfJ6uck7zrLfMS+n8kb7k54goYtVWWF6uQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723577346; c=relaxed/simple;
-	bh=qXiUz9rk9Z1eDSfcjvPfQIY0OVlSkMuZkPOqueyerGg=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=LAz2dtyvkvuIZJsnQMfdPs0dD/ZNN1iSJn54Yegxn7GhTdCt5lT96sprHyGxVq7wsFc7GTW9jEXpkOTk248QIj1KDNB0xhbOSJd/IXoOKuyAfk/gejG/7jh3zPBYB8bGPt03HdBd/DrBh7jzZTxUYH2yoTX0HLf0KhaonTvtuPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwn8Pdob; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2B38C32782;
-	Tue, 13 Aug 2024 19:29:05 +0000 (UTC)
+	s=arc-20240116; t=1723577597; c=relaxed/simple;
+	bh=0ZUUmkuphhv7Zn3xARGNWRNCqnW09TZsMn+lG/Ct23w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ChZJcDOKA6RYa4w+Y0yYyUcaJB/zPD7tiJ0lBRKgAf0tPmY51MST8rWNVOlub4nlxZ2+VV0WbKMeUbqhG+zSPyLCBwXzjMhDezZ6h5Bm+Hq0ZHqYWFehyedKkGBdvr4r4618O8efGJXAeq9xla3nV/oLwTq3k8/Mmw/SLaDXAj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aBqLSCEm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E65BC32782;
+	Tue, 13 Aug 2024 19:33:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723577346;
-	bh=qXiUz9rk9Z1eDSfcjvPfQIY0OVlSkMuZkPOqueyerGg=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=uwn8PdobnZbcg2tOwfa0buGw2WcFqu4sD9uq0EKIAZhaRISzXwgBbeAJfFULh3Pk+
-	 /YOR4ubYB2tGlVHmUFgCz1krQV0/YNYx8FZW+Hw1ixTY7gkMZDTWU7iw1jc3J/EaKV
-	 IWbfnrVZLBRxWCjv4v5zqlnrK3gNsaEEDjktRV7OW1AA/fU8rBv6tYFqTDixjIEkHj
-	 BHGgg3FBzyspIBLcwgpJIPKW7oQJrl8EGg33Fvc5pWEnqdm7dYV1QyFdfjxMvoS5BX
-	 HhosvbWzG6lerBlKKuAKZN9hH/aNAX9OkUCkpQ5WKoy42nChK51naGFClRc+6auzRX
-	 bkyJzznGzmSPQ==
-Date: Tue, 13 Aug 2024 13:29:04 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1723577597;
+	bh=0ZUUmkuphhv7Zn3xARGNWRNCqnW09TZsMn+lG/Ct23w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aBqLSCEmFcVZGcGVexKglivaMACeswDHBXwIG1ca/s9szXYP+VoNPl00uYiCRtQ+9
+	 9LPECB1obZbUd80mwinjtzsSC/7jzyJNkoR2EoBkOTfIzlg1BF14m07WhBJCbkFbCv
+	 bl6QV+grlYW7dxoape0aQcuvttHLcO42Ua8rws+bmXEHYDqalGtNDdJ6NoeLtjZhRg
+	 1YK/X5KBxmVJn0NlVShV92zhB444WtdssGkIz0jjfFOhnG9xzcvUXID0uTdNX0KU9D
+	 VLnW/rgDV9TStqG6/XTavY92MfZWG/pYbtL6BM4qjzBeGk1BpQ4FZiyI2FEdaIN0cf
+	 kvkLBdzt9U5CA==
+Date: Tue, 13 Aug 2024 13:33:15 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Danila Tikhonov <danila@jiaxyga.com>, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, rafael@kernel.org, viresh.kumar@linaro.org,
+	kees@kernel.org, tony.luck@intel.com, gpiccoli@igalia.com,
+	ulf.hansson@linaro.org, andre.przywara@arm.com,
+	quic_rjendra@quicinc.com, davidwronek@gmail.com,
+	neil.armstrong@linaro.org, heiko.stuebner@cherry.de,
+	rafal@milecki.pl, macromorgan@hotmail.com, linus.walleij@linaro.org,
+	lpieralisi@kernel.org, dmitry.baryshkov@linaro.org,
+	fekz115@gmail.com, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	netdev@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 06/11] dt-bindings: nfc: nxp,nci: Document PN553
+ compatible
+Message-ID: <20240813193315.GA1614564-robh@kernel.org>
+References: <20240808184048.63030-1-danila@jiaxyga.com>
+ <20240808184048.63030-7-danila@jiaxyga.com>
+ <493466e6-d83b-4d91-93a5-233d6da1fdd8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: bcm-kernel-feedback-list@broadcom.com, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Cristian Marussi <cristian.marussi@arm.com>, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, arm-scmi@vger.kernel.org, 
- Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, 
- justin.chen@broadcom.com, opendmb@gmail.com, kapil.hali@broadcom.com, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240813180747.1439034-2-florian.fainelli@broadcom.com>
-References: <20240813180747.1439034-1-florian.fainelli@broadcom.com>
- <20240813180747.1439034-2-florian.fainelli@broadcom.com>
-Message-Id: <172357734438.1612221.15779792680136216420.robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: sram: Document reg-io-width
- property
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <493466e6-d83b-4d91-93a5-233d6da1fdd8@kernel.org>
 
-
-On Tue, 13 Aug 2024 11:07:46 -0700, Florian Fainelli wrote:
-> Some SRAMs need to be accessed with a specific access width, define
-> the 'reg-io-width' property specifying such access sizes.
+On Fri, Aug 09, 2024 at 07:39:53AM +0200, Krzysztof Kozlowski wrote:
+> On 08/08/2024 20:40, Danila Tikhonov wrote:
+> > The PN553 is another NFC chip from NXP, document the compatible in the
+> > bindings.
+> > 
+> > Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> > ---
+> >  Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml b/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
+> > index 6924aff0b2c5..364b36151180 100644
+> > --- a/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
+> > +++ b/Documentation/devicetree/bindings/net/nfc/nxp,nci.yaml
+> > @@ -17,6 +17,7 @@ properties:
+> >            - enum:
+> >                - nxp,nq310
+> >                - nxp,pn547
+> > +              - nxp,pn553
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  Documentation/devicetree/bindings/sram/sram.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
+> Keep the list ordered.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Looks ordered to me. n before p...
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/sram/sram.yaml:106:12: [warning] wrong indentation: expected 10 but found 11 (indentation)
-
-dtschema/dtc warnings/errors:
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240813180747.1439034-2-florian.fainelli@broadcom.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Rob
 
