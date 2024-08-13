@@ -1,101 +1,132 @@
-Return-Path: <linux-kernel+bounces-285144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93B4E9509CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:06:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B63F29509CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0391F273AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:06:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C161286535
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7171A38E1;
-	Tue, 13 Aug 2024 16:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D611A0AFF;
+	Tue, 13 Aug 2024 16:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHl01uIb"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0aOVX3Hz"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6061A38D1;
-	Tue, 13 Aug 2024 16:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5E41A0AE6
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565050; cv=none; b=NtoU0Od0m3EOqhLtgFW7EqB+VZr8KUkUsOjMANJASdWWSl2Xkc0ZDjqEkkD5N6iTCPXgVh78Z9n5ts/4DDkKyaR8Eov+p5EbH1dljdSaZMHdUk8XiOQYvNNHrVUVr7HMtpuvoGlxk2pA0EKogzfvtkOybsPJgWltn8r1M237V3c=
+	t=1723565112; cv=none; b=RHsazke0cC9b5Kd8opIpmqSH0VeSn3oOU1/0HuSr/G1cC7hri+kw7qydWiTIJDlejMZHW+5i8SKhdPRuCEOT9VkqLU2phsY5iNzPDUNWOv9Z+1GVkMzPakzg7nMmJoIpj+rwZLmEg/iCH+dRYy9Wnpd+DTxDH5nNkon+ZVB6eHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565050; c=relaxed/simple;
-	bh=5cqz+U2dSCO5RIgpZA60qfXiuozL0+d/KSZQXgLtsZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AfhB+DPdNPkgDTiYpe3mJuw+HEb1s0w2ZKaIEREWjc2PZ5m5uACJkBj0v952CdzyKtVyRiAIa6UsorEToK9JnlD6cd8n1ReC4jmJojDbvx/qOS2ku5LKpUn/hWMsqtKhEye+SHMN3v4Lij88qgsQiaZFn311Ob/rBCPMJalEhp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kHl01uIb; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-7093b53f315so1705404a34.2;
-        Tue, 13 Aug 2024 09:04:08 -0700 (PDT)
+	s=arc-20240116; t=1723565112; c=relaxed/simple;
+	bh=dsnEFrXQEe30129gATA65SKh4tPfceYgp5NXlRzsf+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JWRzdSUFs0zcq2enheJ6OFtYd5/L11swU+R1QBtFCOUjbep86U0P2w/DQQCijwC1LYK28c4RTMiDU2S88NuHzGFCotVktPOYCe/iwjvgj74p4YQCnMoGW/vcqXIp1ZkMUYB04NjBVxo/SIFuyrhnA/wSzy8G3ae8Kcxqd53JcGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0aOVX3Hz; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-200aa53d6d2so113295ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:05:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723565048; x=1724169848; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=InXjJdicHEAyZ6AXDj018w81VOGiDcYouJtZixUTap0=;
-        b=kHl01uIbWJg6gjyOm/wJlvbGwkqt37xWs30k2ZV8zlKTVAs/YnQeLUZEZsfFbA5gLa
-         LIWhL6efMK/SJv12eSm1UKnpry4xd657miU1HWblnybk+CN7ojR9hyIPHJf7tZi7rogq
-         MavbUUv4/fTajT9U3apo8Z3pA4lXNC3QWAXBKuXCWx4nbV2eK7smMn2WKxZd4Xb2oGay
-         OHo6SNPyzE3R95U7HgS9+5tZHXktVCZy5T8+TfInFQCp0myufu9t/9sdDPLzIupwFEDr
-         /BcvtPFoPAdrAjb6meRC8+FXoVD6hhC1fCh4ZcvMIayi3E4t/cnlKKvEjT7b/fYaU1nL
-         GH5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723565048; x=1724169848;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1723565110; x=1724169910; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=InXjJdicHEAyZ6AXDj018w81VOGiDcYouJtZixUTap0=;
-        b=aVbe03vgnvh36ZYndg0UP7zpthDckOq7G3z2uxs4JgOlJG7Qf7ZHSg8IL7d4yx4ikH
-         h0BpP3VE7mvlfIhMfc9aqfzMZ6b8TF06e+l9a8viTLuoyQCaRx2Cmz5H+slJr3fjZZx5
-         IIHMYMGirv3pbCBN6W+1vZnhAH3BVJ2Fw6/tDO8kZfUDnwBp3Upw3bQL5YK9hCCY3l+w
-         I319siJfrbXzlqC4Bx79RRmFY0u0eVqSBJ+CzGqe48IqDpm8C5mhNf72WOlMHJRFxi+e
-         Isfa70erb9xFMKGa2QA2JnhOEbGJPFj0MtQIxgFLcZyJ+cFmloX03X9plg3cvjKxLAGw
-         yojA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbaRWVvOSxoJmJM5PThxw53eLiZWdu15EztlTjeJSycQ9ANQDwnMbsWHHxnMic28K2rD42EqMeYQgvHS5sx/tqW8yjEUOVf6CHl+GY
-X-Gm-Message-State: AOJu0YzaoGGP2E/NmWOdV7xwhV40kC72f5tZ0I/Clm68MqtdpysVzHBt
-	O2G/oYv7F7pakWnXW5lozbc0eLUCtrjpOUOPPe0LhrNvWX49yJXHOaTPMovB
-X-Google-Smtp-Source: AGHT+IE4ZVEBWwqA/bEIQ3p27SoDuLrN4oR8SOmYdbP/aTFUhGVIzMR7dbLnzzBAHv6wUkLv4JlH7g==
-X-Received: by 2002:a05:6218:260f:b0:1ac:65e9:1678 with SMTP id e5c5f4694b2df-1b19d2e7e18mr520754255d.22.1723565048013;
-        Tue, 13 Aug 2024 09:04:08 -0700 (PDT)
-Received: from fedora ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-841367e2f87sm1016478241.34.2024.08.13.09.04.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 09:04:07 -0700 (PDT)
-Date: Tue, 13 Aug 2024 11:04:11 -0500
-From: Juan =?iso-8859-1?Q?Jos=E9?= Arboleda <soyjuanarbol@gmail.com>
-To: Takashi Iwai <tiwai@suse.de>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ALSA: usb-audio: reduce checkpatch issues in
- quirks-table.h
-Message-ID: <ZruD-9ccJL6tlBM1@fedora>
-References: <cover.1723518816.git.soyjuanarbol@gmail.com>
- <6dabfd5c05c04b0e4fc00a708cc65d691af4e267.1723518816.git.soyjuanarbol@gmail.com>
- <87cymcdi62.wl-tiwai@suse.de>
- <87sev8l97e.wl-tiwai@suse.de>
+        bh=hYWzJyvpTQNIlST/TNx5IAt/1qpwACIOgkuhkXZEt38=;
+        b=0aOVX3Hz9czVpRqT+ewLN0sKVAbXC/UdzZGHVoKKPJcF3N2vatmszAPxh/udHq2iwi
+         cNVfZ7z/Ip8807GXyVpmUTl972pvJeCqvQ6ubOm4Hkd4rSS6d03FMKMDTdO/nl/4LWXH
+         gq01qezG0fcrEmM+LzYrE8ygvcZU2W6b/hdwvdwrf5eenHcbjSZVy17zEhTHljWZUmD0
+         TnQ67n/eKYeAye45uqX5QP8JPmcAgQY7gwczoyc6hJmRDm8VEl+XgihZr6kg0he+pgtV
+         ww1MFggGvTjLeCB0jLb/xEq1fVWbOUEg5NrQIKoQ7OlBDyJg84P24NzNt+7vM5UpUzvT
+         LsQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723565110; x=1724169910;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hYWzJyvpTQNIlST/TNx5IAt/1qpwACIOgkuhkXZEt38=;
+        b=SnawdlTGJdelXmwqY6aFTfLu2XkvqDsepwBkRiU2FFbhwKdfs8BVhAWfX6rNzibCzC
+         BRSUf7TYTAAG4phPrE7QH/+Y4QoG3meKmHkg/2fWQ0g1TuvfbdGpeG97BXpwGEJSPJFz
+         1hJCoQcg9waqi9GVsXTtDE9H+OQyyfMn0sp81LWwjc66k5jLBlPhMRI8oMSFEPkj9T2I
+         v8OHX/6+u8fU9I0loRlcMQfFc2/wfganCqPBmHtcwgo10NfTqKlzm7nrPuNwYaXsOAPM
+         UM9+cEueB9heIsLhN3nIPMp2cMJGjq90Q35lZeQWJieCVWuvMpz3G+PM0s6ZXBZjUSeS
+         x+FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNn7UNIhg29tunSNG0Zk0DtutCJ7eEulLLBRbiHLYRzPfrGbhm3GzmufYXDSHUmvhLOmqOl5K0xFBpACfvPcapcCl3K3E20cf9jkY7
+X-Gm-Message-State: AOJu0YyvUXqiCcGPqImohiEAqzKrM/2lq7aXNuOhjiygBR1PBS5q4ihj
+	ZLHstDC37aCLYx4KGhdXfL+GFe9VDmB8FM9ZAL2gIpQT3xAK3LRtUTnBMkLtyWx+knAftqWdYpI
+	pPn8N3J/Ga0QnFKHa4uICuc5k/WJDb0XY2KpZ7Ib81e9VrsjK4wAo
+X-Google-Smtp-Source: AGHT+IEub4FIB+lio4i4nkw8sW+gRiszAfxdnYj0Bw1TMl0dWkbkwnfXacTcpG2yDl8Cz2lsKatOfYpP8MFyLU5J8so=
+X-Received: by 2002:a17:902:c40c:b0:1f3:3ede:9b0 with SMTP id
+ d9443c01a7336-201ccba5f3fmr1740695ad.10.1723565110178; Tue, 13 Aug 2024
+ 09:05:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sev8l97e.wl-tiwai@suse.de>
+References: <20240813040613.882075-1-irogers@google.com> <ZrtzTTHim_vGX1ma@x1>
+In-Reply-To: <ZrtzTTHim_vGX1ma@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 13 Aug 2024 09:04:57 -0700
+Message-ID: <CAP-5=fUA8T9B2RvXg-Hpj_fHXmwB18ah6Krm3qm5ULH-M04Lqw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf disasm: Fix memory leak for locked operations
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, Kajol Jain <kjain@linux.ibm.com>, 
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> > Honestly speaking, I don't find it's much improvement from the code
-> > readability POV.  (And you don't have to "correct" the spaces in
-> > comment lines :)
+On Tue, Aug 13, 2024 at 7:53=E2=80=AFAM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
+>
+> On Mon, Aug 12, 2024 at 09:06:12PM -0700, Ian Rogers wrote:
+> > lock__parse calls disasm_line__parse passing
+> > &ops->locked.ins.name. Ensure ops->locked.ins.name is freed in
+> > lock__delete.
+> >
+> > Found with lock/leak sanitizer.
 
-> FWIW, the patches below are what I had in my mind.
+Ooops, I meant address/leak sanitizer.
 
-Right. Your patchset makes way more sense when you read the codebase.
-As you already made the code better, I dropped the patch for the
-"cleanup" and, left only the support for Yamaha P-125 patch.
+> Applied both patches to perf-tools-next.
 
-Regards,
--Juan
+Thanks, could you fix the commit message.
+
+Thanks,
+Ian
+
+> Thanks,
+>
+> - Arnaldo
+>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/util/disasm.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> > index 22289003e16d..226d2181f694 100644
+> > --- a/tools/perf/util/disasm.c
+> > +++ b/tools/perf/util/disasm.c
+> > @@ -566,6 +566,7 @@ static void lock__delete(struct ins_operands *ops)
+> >               ins_ops__delete(ops->locked.ops);
+> >
+> >       zfree(&ops->locked.ops);
+> > +     zfree(&ops->locked.ins.name);
+> >       zfree(&ops->target.raw);
+> >       zfree(&ops->target.name);
+> >  }
+> > --
+> > 2.46.0.76.ge559c4bf1a-goog
 
