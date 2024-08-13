@@ -1,137 +1,83 @@
-Return-Path: <linux-kernel+bounces-284235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EFE94FEB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:25:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AA3794FEBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038271F241D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:25:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF602843A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1A960EC4;
-	Tue, 13 Aug 2024 07:25:20 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D626558B7;
-	Tue, 13 Aug 2024 07:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7453F60B96;
+	Tue, 13 Aug 2024 07:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="D7jHVW/f"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87C0558B7;
+	Tue, 13 Aug 2024 07:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533920; cv=none; b=Xo7i23HKschoiHO0WwgbjnJqK69rQ82LUd8s8WM3yRXxVt345rllw4WUz3olBbxchrOgOiCGzjS2ubgwuBRNDofmrt/A/DQ5GZCPp7YTGmlwhPODifxLKrR8XcIVRsAuSevII0lF15sQHsVnFX4wCTANK37Pl7tfezNhxbYjkmw=
+	t=1723534079; cv=none; b=lm5RnmjFmjI2P6YXSjnLfsT/rZ1t2VFJCsHX9v0ZE/PViaw+Fk+OesAoZJChBodWFsV0G0UDE6HdaUNsC7L8UiAKj/nrKi5sFO9GEiEaPj0lmKYEegu3uEFsb64/bIUcni6Rdism3zmoEnUZDMfaIvFkhtJy633igJeLTOrBNIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533920; c=relaxed/simple;
-	bh=CVsAp1OHWfxHoBvjNlGDkgbJMESb+MonK/Z1/KlALEw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=nl8O49y7JTCZM3J3CLmjQQd4tCDSKbEoKm88YbA3qEsKnvC//3JuJBYYicaS9bVybpc7KyxyY403EZDL9ux3EmEwbKPp0SQDFb5/6qJOo66dch0x9oLCj28UsYjlZSVM4qUHiiIoik/lgMF1UzqRzTnlCUxV3BWSj/JkqlMCc4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4WjjZh6061z4f3js9;
-	Tue, 13 Aug 2024 15:25:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 851971A0359;
-	Tue, 13 Aug 2024 15:25:14 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgAXPoRZCrtmMJs9Bg--.10498S3;
-	Tue, 13 Aug 2024 15:25:14 +0800 (CST)
-Subject: Re: [PATCH RFC -next 01/26] md/md-bitmap: introduce struct
- bitmap_operations
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
- <20240810020854.797814-2-yukuai1@huaweicloud.com>
- <20240813085806.00006ec3@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <87eb8b55-53af-e47c-8931-044a9ab77086@huaweicloud.com>
-Date: Tue, 13 Aug 2024 15:25:13 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1723534079; c=relaxed/simple;
+	bh=jOyfnNttF+JbOHF1VZDwVIR/LVCxD9x1nxj4aGHIibQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AbdAMxPMGYvXlxIoMejaoUJ8ceFPbvSvGszg4n2X/keXZ2oR2ZO88jwJM6iMs/W+E/IW8YsDSD5OYfGApDzbxBjqQYvFXGYDKz/yMdw9lAHlNLCJdDHGxAlyNL81fZh1/nftOXwtlMJ3cPYg32U13wPPDRwusVF+EwNjHgNZyww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=D7jHVW/f; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=QwCyesgedQKYteFTZ+O3vBV5d0QLs46WyGTgF5Wdcdg=;
+	b=D7jHVW/fyz4l9DKHkQRvCBYWtE0V+ZwIiQmS2FgQ7264CgaloDE47EB4TyAoza
+	H/Vfg5sEM8GTEqWrA0jjTf9v1ge8g4/PAjz28Y1kmPSrNvvkl48yRj2qrzGcWAhO
+	bOTqWRpKn7Hz09bEB7FEYkmK0wu4uTYZN0i6szhNUgs+s=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgC3vyDYCrtm_RFVAg--.43140S3;
+	Tue, 13 Aug 2024 15:27:21 +0800 (CST)
+Date: Tue, 13 Aug 2024 15:27:20 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v2 00/10] arm64: dts: layerscape: collect all fix warning
+ patches
+Message-ID: <ZrsK2G+sjWLLYTew@dragon>
+References: <20240729-ls_warning_all-v2-0-942d80ddd441@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240813085806.00006ec3@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXPoRZCrtmMJs9Bg--.10498S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryrKr1kZr47CF4rZrWUurg_yoW8Xr4DpF
-	4fK39IkFsrJ34xu3WxWrZ7ArySyayvq39xJrn8GwsakFn8ZFn3tF1IkrWY9F9xWrZa9a9F
-	qa12yr95Zw1UAFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUG0PhUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-ls_warning_all-v2-0-942d80ddd441@nxp.com>
+X-CM-TRANSID:Mc8vCgC3vyDYCrtm_RFVAg--.43140S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrtFWftrW3Jr13Wr43tw45GFg_yoWxKwc_uw
+	43Grn7WrsrXa95ArW3Ca1jqF9Yg3W0yryDJFyfK3Z7Jr1ftF13A3sIv34rWr4Y9anxuryD
+	AF15Crs2qwn5ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU03xhJUUUUU==
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiBBI6ZWa6wsf+XQAAsz
 
-Hi,
+On Mon, Jul 29, 2024 at 02:59:22PM -0400, Frank Li wrote:
+> Frank Li (10):
+>       arm64: dts: layerscape: rename aux-bus to bus
+>       arm64: dts: layerscape: rename rcpm as wakeup-control from power-control
+>       arm64: dts: layerscape: use common pcs-handle property
+>       arm64: dts: fsl-ls1043a: change uqe to uqe-bus and remove #address-cells
+>       arm64: dts: fsl-ls1028a: add fsl,ls1028-reset for syscon
+>       arm64: dts: layerscape: add msi-cell = <1> for gic its
+>       arm64: dts: layerscape: remove big-endian for mmc nodes
+>       arm64: dts: fsl-ls1046a: remove big-endian at memory-controller
+>       arm64: dts: layerscape: remove undocumented fsl,ls-pcie-ep
+>       arm64: dts: fsl,ls2085a: remove fsl,ls2085a-pcie
 
-ÔÚ 2024/08/13 14:58, Mariusz Tkaczyk Ð´µÀ:
-> On Sat, 10 Aug 2024 10:08:29 +0800
-> Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> The structure is empty for now, and will be used in later patches to
->> merge in bitmap operations, prepare to implement a new lock free
->> bitmap in the fulture.
-> 
-> 
-> HI Kuai,
-> 
-> typo: future
-> 
-> I think that as "later" you meant next patches in this patchset, right? If yes,
-> Please you "next" instead.
-> 
-> At this point bringing "lock free implementation in the future" looks like
-> totally unnecessary. It may happen or may not. Eventually, You can mention it in
-> cover letter. What we have now is the most important.
-> 
-> This is just a code rework. The main goal of this (as you mentioned in second
-> patch):
-> 
-> "So that the implementation won't be exposed, and it'll be possible
-> to invent a new bitmap by replacing bitmap_operations."
-> 
-> but please mention that you are not going to implement second mechanism to not
-> confuse reader. You need it to improve code maintainability mainly I think.
-> 
-> I would mention something about common "struct _ops" pattern (the special
-> structure to keep related operations together) that it is going to follow now.
-> 
-> For me, this one can be easy merged with the patch 2, so we will got struct +
-> usage in one patch.
-
-Thanks for the review. Got it.
-
-BTW, v2 will look totally different with v1. You can leave v1 for now. :)
-
-Kuai
-
-> 
-> Anyway, LGTM.
-> 
-> Thanks,
-> Mariusz
-> 
-> .
-> 
+Applied all, thanks!
 
 
