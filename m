@@ -1,274 +1,150 @@
-Return-Path: <linux-kernel+bounces-284906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57CA950698
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:35:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA83950692
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D4FE288985
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 442CF287DE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D4919DF92;
-	Tue, 13 Aug 2024 13:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF3D519B59F;
+	Tue, 13 Aug 2024 13:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SaThYnzj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="fqEwTgwc"
+Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D58019DF60;
-	Tue, 13 Aug 2024 13:34:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E5019D069
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556050; cv=none; b=C5r+NhkZmZa5fZzpQqK+LMTsztmiiqwRiIApcALU09n5+nnIQ1QbzK23xAB4Z6AKE3kioFMSso0PZ4hDrrxFI5fzNZQ3imiPYTbGXvqppNBeBSze5rIUPzakRD3s5hSmoj5Yzs8TGOyIBdA7kDpzHozFZ+ktpAHcRvoPfa4XinU=
+	t=1723556043; cv=none; b=R8enHOG1lBl2ShO0Whk3A9hCEnqEDVxCrOwUOy14ZWNczXjOetCqhQlEcjK+TobTX4X2TU0ekITOt2LerwhVq9EqO3k72tXn9bF7Ur8G0YFeNYO2GM9N5s6KdNpEvsT5TIGeJFWuKP/HefzLIX3sE1cQSArMsDbBg4pENmN82Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556050; c=relaxed/simple;
-	bh=N4IAMwyZn68xk4eu3v2PrXkGzwyPHprCfE0DYQKp4KY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sXyz8Rm6V2otcGiLeoMPZiYzfVU7HSc1zAa+D0oBcgWVVTMZaz7hJUuHK7NDRLUF0BNRdiSaem3Au7/5qgkxtndG9wDNAXoh3EJr4EeNXWGTsh8bFtI6gBRx0tSY8g8hunqeB8uLvQGrGBcr6lKOjALIqp3M3gC5q8rAQKBhMq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SaThYnzj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 396BFC4AF13;
-	Tue, 13 Aug 2024 13:34:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723556050;
-	bh=N4IAMwyZn68xk4eu3v2PrXkGzwyPHprCfE0DYQKp4KY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SaThYnzjSJGX3z3UEcAaDVFELC5K1rIJ+KeNkJ0sLsO2Vtr0NHk+iaokgDex9MrVw
-	 sHCSFtgj44g7uK+MyG65Wq8wPfvxNZN+nWg7R1PCIUKG6hkU4MOZ4a46dNmI8rnLq0
-	 IuRrhEGBLUaGBHAWayrmfeBZCEJWq9cpXoGCZBLiMJlnC0+U4cmZnFfsT+Rjn5YNih
-	 84vqoPkZUUngsedZTo0htunYGzU35JM0HGxnbtKjx34UaH69UKSEwJfjZWOFWxhCGk
-	 QpfBsrYIfAXb2nl7ykOMiB1fmH7XfPIXTuUXcRODQy8bwVw8mmfxkcV90WuJlyFPpW
-	 K3FuyTRLvyvbw==
-From: Simon Horman <horms@kernel.org>
-Date: Tue, 13 Aug 2024 14:33:49 +0100
-Subject: [PATCH net-next v2 3/3] net: hns3: Use
- ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+	s=arc-20240116; t=1723556043; c=relaxed/simple;
+	bh=IUixtfKmrSEbm+DElpyKbSULFE3VCo1lZcweQ07vKZ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kNMLHy1mHz+zjAEMC4P2mDzJuA0scaA9yvADfG8sIHc+eX3xqTKMsoWXXGnVW2VTq5W3oO3AeT1fk30+kN+Sn/ZiOZovepiZ0jHsc26XfEycZKsjYO4A54E/Og/hjMcKcRXt0eP453WZJrG/o6xVGD8WzLcOIuT39mPKUGudn3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=fqEwTgwc; arc=none smtp.client-ip=37.205.15.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
+Received: from mordecai.tesarici.cz (unknown [193.86.92.181])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by bee.tesarici.cz (Postfix) with ESMTPSA id 4C55D1E0F82;
+	Tue, 13 Aug 2024 15:33:57 +0200 (CEST)
+Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
+	t=1723556037; bh=t6gpWH8IPDdk9454o+l9OptGhzjcjk+DvpbWwyHTvow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fqEwTgwcxJ2kyxAQDXiU3eiP16ZLHy0gb/pH8Q1o/Geor1VdWaDiAtXcIZa7niiyZ
+	 +fcueGLBlyXcPHRtbt6sOegGQLXB0I9YUgcrlFONTXeQKYgyBdsrL70jjjoxr2Zk8J
+	 Ej+vVePwXBtnvuH3L5qLhTftfkXBMM30fzRvVcPGwTlnXpw+5wNDFKIhhGjNKavISH
+	 tbCZ2tNuhl13OTLB+uU8yNCCv2FWu81ZVgvOIWJoDH/VwSd61f2HuTpGP9mvmKQl7r
+	 Aq90gWKz5djOF0rSao1+raowUK5CePUY1ISPku9S0XJuv2Ba6gvqu1kH6xhcOLvok5
+	 +uRdn8eoLetrg==
+Date: Tue, 13 Aug 2024 15:33:52 +0200
+From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Baoquan He <bhe@redhat.com>, Jinjie Ruan <ruanjinjie@huawei.com>,
+ vgoyal@redhat.com, dyoung@redhat.com, paul.walmsley@sifive.com,
+ palmer@dabbelt.com, aou@eecs.berkeley.edu, chenjiahao16@huawei.com,
+ akpm@linux-foundation.org, kexec@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH -next] crash: Fix riscv64 crash memory reserve dead loop
+Message-ID: <20240813153338.1972c10c@mordecai.tesarici.cz>
+In-Reply-To: <ZrtLz8VHzZIULbOT@arm.com>
+References: <20240802090105.3871929-1-ruanjinjie@huawei.com>
+	<ZqywtegyIS/YXOVv@MiWiFi-R3L-srv>
+	<ZrJ1JkyDVpRRB_9e@arm.com>
+	<ZrJ60vopeGDXFZyK@arm.com>
+	<20240813104006.520bf42d@mordecai.tesarici.cz>
+	<ZrtLz8VHzZIULbOT@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-ipv6_addr-helpers-v2-3-5c974f8cca3e@kernel.org>
-References: <20240813-ipv6_addr-helpers-v2-0-5c974f8cca3e@kernel.org>
-In-Reply-To: <20240813-ipv6_addr-helpers-v2-0-5c974f8cca3e@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: "David S. Miller" <davem@davemloft.net>, 
- David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
- Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Yisen Zhuang <yisen.zhuang@huawei.com>, 
- Salil Mehta <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, 
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-X-Mailer: b4 0.14.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Use new ipv6_addr_cpu_to_be32 and ipv6_addr_be32_to_cpu helpers,
-and IPV6_ADDR_WORDS. This is arguably slightly nicer.
+On Tue, 13 Aug 2024 13:04:31 +0100
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-No functional change intended.
-Compile tested only.
+> Hi Petr,
+>=20
+> On Tue, Aug 13, 2024 at 10:40:06AM +0200, Petr Tesa=C5=99=C3=ADk wrote:
+> > On Tue, 6 Aug 2024 20:34:42 +0100
+> > Catalin Marinas <catalin.marinas@arm.com> wrote: =20
+> > > I haven't tried but it's possible that this patch also breaks those
+> > > arm64 platforms with all RAM above 4GB when CRASH_ADDR_LOW_MAX is
+> > > memblock_end_of_DRAM(). Here all memory would be low and in the absen=
+ce
+> > > of no fallback, it fails to allocate. =20
+> >=20
+> > I'm afraid you've just opened a Pandora box... ;-) =20
+>=20
+> Not that bad ;) but, yeah, this patch was dropped in favour of this:
+>=20
+> https://lore.kernel.org/r/20240812062017.2674441-1-ruanjinjie@huawei.com/
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Link: https://lore.kernel.org/netdev/c7684349-535c-45a4-9a74-d47479a50020@lunn.ch/
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Reviewed-by: Jijie Shao <shaojijie@huawei.com>
-Signed-off-by: Simon Horman <horms@kernel.org>
----
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 79 +++++++++++-----------
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 ++-
- 2 files changed, 44 insertions(+), 43 deletions(-)
+Yes, I have noticed. That one simply preserves the status quo and a
+fuzzy definition of "low".
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 82574ce0194f..ce629cbc5d01 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -13,8 +13,9 @@
- #include <linux/platform_device.h>
- #include <linux/if_vlan.h>
- #include <linux/crash_dump.h>
--#include <net/ipv6.h>
-+
- #include <net/rtnetlink.h>
-+
- #include "hclge_cmd.h"
- #include "hclge_dcb.h"
- #include "hclge_main.h"
-@@ -6278,15 +6279,15 @@ static void hclge_fd_get_ip4_tuple(struct ethtool_rx_flow_spec *fs,
- static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
- 				      struct hclge_fd_rule *rule, u8 ip_proto)
- {
--	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.tcp_ip6_spec.ip6src,
--			  IPV6_SIZE);
--	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.tcp_ip6_spec.ip6src,
--			  IPV6_SIZE);
-+	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-+			      fs->h_u.tcp_ip6_spec.ip6src);
-+	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-+			      fs->m_u.tcp_ip6_spec.ip6src);
- 
--	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.tcp_ip6_spec.ip6dst,
--			  IPV6_SIZE);
--	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.tcp_ip6_spec.ip6dst,
--			  IPV6_SIZE);
-+	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-+			      fs->h_u.tcp_ip6_spec.ip6dst);
-+	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-+			      fs->m_u.tcp_ip6_spec.ip6dst);
- 
- 	rule->tuples.src_port = be16_to_cpu(fs->h_u.tcp_ip6_spec.psrc);
- 	rule->tuples_mask.src_port = be16_to_cpu(fs->m_u.tcp_ip6_spec.psrc);
-@@ -6307,15 +6308,15 @@ static void hclge_fd_get_tcpip6_tuple(struct ethtool_rx_flow_spec *fs,
- static void hclge_fd_get_ip6_tuple(struct ethtool_rx_flow_spec *fs,
- 				   struct hclge_fd_rule *rule)
- {
--	be32_to_cpu_array(rule->tuples.src_ip, fs->h_u.usr_ip6_spec.ip6src,
--			  IPV6_SIZE);
--	be32_to_cpu_array(rule->tuples_mask.src_ip, fs->m_u.usr_ip6_spec.ip6src,
--			  IPV6_SIZE);
-+	ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-+			      fs->h_u.usr_ip6_spec.ip6src);
-+	ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-+			      fs->m_u.usr_ip6_spec.ip6src);
- 
--	be32_to_cpu_array(rule->tuples.dst_ip, fs->h_u.usr_ip6_spec.ip6dst,
--			  IPV6_SIZE);
--	be32_to_cpu_array(rule->tuples_mask.dst_ip, fs->m_u.usr_ip6_spec.ip6dst,
--			  IPV6_SIZE);
-+	ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-+			      fs->h_u.usr_ip6_spec.ip6dst);
-+	ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-+			      fs->m_u.usr_ip6_spec.ip6dst);
- 
- 	rule->tuples.ip_proto = fs->h_u.usr_ip6_spec.l4_proto;
- 	rule->tuples_mask.ip_proto = fs->m_u.usr_ip6_spec.l4_proto;
-@@ -6744,21 +6745,19 @@ static void hclge_fd_get_tcpip6_info(struct hclge_fd_rule *rule,
- 				     struct ethtool_tcpip6_spec *spec,
- 				     struct ethtool_tcpip6_spec *spec_mask)
- {
--	cpu_to_be32_array(spec->ip6src,
--			  rule->tuples.src_ip, IPV6_SIZE);
--	cpu_to_be32_array(spec->ip6dst,
--			  rule->tuples.dst_ip, IPV6_SIZE);
-+	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
-+	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
- 	if (rule->unused_tuple & BIT(INNER_SRC_IP))
- 		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
- 	else
--		cpu_to_be32_array(spec_mask->ip6src, rule->tuples_mask.src_ip,
--				  IPV6_SIZE);
-+		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
-+				      rule->tuples_mask.src_ip);
- 
- 	if (rule->unused_tuple & BIT(INNER_DST_IP))
- 		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
- 	else
--		cpu_to_be32_array(spec_mask->ip6dst, rule->tuples_mask.dst_ip,
--				  IPV6_SIZE);
-+		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
-+				      rule->tuples_mask.dst_ip);
- 
- 	spec->tclass = rule->tuples.ip_tos;
- 	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
-@@ -6777,19 +6776,19 @@ static void hclge_fd_get_ip6_info(struct hclge_fd_rule *rule,
- 				  struct ethtool_usrip6_spec *spec,
- 				  struct ethtool_usrip6_spec *spec_mask)
- {
--	cpu_to_be32_array(spec->ip6src, rule->tuples.src_ip, IPV6_SIZE);
--	cpu_to_be32_array(spec->ip6dst, rule->tuples.dst_ip, IPV6_SIZE);
-+	ipv6_addr_cpu_to_be32(spec->ip6src, rule->tuples.src_ip);
-+	ipv6_addr_cpu_to_be32(spec->ip6dst, rule->tuples.dst_ip);
- 	if (rule->unused_tuple & BIT(INNER_SRC_IP))
- 		memset(spec_mask->ip6src, 0, sizeof(spec_mask->ip6src));
- 	else
--		cpu_to_be32_array(spec_mask->ip6src,
--				  rule->tuples_mask.src_ip, IPV6_SIZE);
-+		ipv6_addr_cpu_to_be32(spec_mask->ip6src,
-+				      rule->tuples_mask.src_ip);
- 
- 	if (rule->unused_tuple & BIT(INNER_DST_IP))
- 		memset(spec_mask->ip6dst, 0, sizeof(spec_mask->ip6dst));
- 	else
--		cpu_to_be32_array(spec_mask->ip6dst,
--				  rule->tuples_mask.dst_ip, IPV6_SIZE);
-+		ipv6_addr_cpu_to_be32(spec_mask->ip6dst,
-+				      rule->tuples_mask.dst_ip);
- 
- 	spec->tclass = rule->tuples.ip_tos;
- 	spec_mask->tclass = rule->unused_tuple & BIT(INNER_IP_TOS) ?
-@@ -7007,7 +7006,7 @@ static void hclge_fd_get_flow_tuples(const struct flow_keys *fkeys,
- 	} else {
- 		int i;
- 
--		for (i = 0; i < IPV6_SIZE; i++) {
-+		for (i = 0; i < IPV6_ADDR_WORDS; i++) {
- 			tuples->src_ip[i] = be32_to_cpu(flow_ip6_src[i]);
- 			tuples->dst_ip[i] = be32_to_cpu(flow_ip6_dst[i]);
- 		}
-@@ -7262,14 +7261,14 @@ static int hclge_get_cls_key_ip(const struct flow_rule *flow,
- 		struct flow_match_ipv6_addrs match;
- 
- 		flow_rule_match_ipv6_addrs(flow, &match);
--		be32_to_cpu_array(rule->tuples.src_ip, match.key->src.s6_addr32,
--				  IPV6_SIZE);
--		be32_to_cpu_array(rule->tuples_mask.src_ip,
--				  match.mask->src.s6_addr32, IPV6_SIZE);
--		be32_to_cpu_array(rule->tuples.dst_ip, match.key->dst.s6_addr32,
--				  IPV6_SIZE);
--		be32_to_cpu_array(rule->tuples_mask.dst_ip,
--				  match.mask->dst.s6_addr32, IPV6_SIZE);
-+		ipv6_addr_be32_to_cpu(rule->tuples.src_ip,
-+				      match.key->src.s6_addr32);
-+		ipv6_addr_be32_to_cpu(rule->tuples_mask.src_ip,
-+				      match.mask->src.s6_addr32);
-+		ipv6_addr_be32_to_cpu(rule->tuples.dst_ip,
-+				      match.key->dst.s6_addr32);
-+		ipv6_addr_be32_to_cpu(rule->tuples_mask.dst_ip,
-+				      match.mask->dst.s6_addr32);
- 	} else {
- 		rule->unused_tuple |= BIT(INNER_SRC_IP);
- 		rule->unused_tuple |= BIT(INNER_DST_IP);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-index b5178b0f88b3..b9fc719880bb 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.h
-@@ -8,7 +8,9 @@
- #include <linux/phy.h>
- #include <linux/if_vlan.h>
- #include <linux/kfifo.h>
-+
- #include <net/devlink.h>
-+#include <net/ipv6.h>
- 
- #include "hclge_cmd.h"
- #include "hclge_ptp.h"
-@@ -718,15 +720,15 @@ struct hclge_fd_cfg {
- };
- 
- #define IPV4_INDEX	3
--#define IPV6_SIZE	4
-+
- struct hclge_fd_rule_tuples {
- 	u8 src_mac[ETH_ALEN];
- 	u8 dst_mac[ETH_ALEN];
- 	/* Be compatible for ip address of both ipv4 and ipv6.
- 	 * For ipv4 address, we store it in src/dst_ip[3].
- 	 */
--	u32 src_ip[IPV6_SIZE];
--	u32 dst_ip[IPV6_SIZE];
-+	u32 src_ip[IPV6_ADDR_WORDS];
-+	u32 dst_ip[IPV6_ADDR_WORDS];
- 	u16 src_port;
- 	u16 dst_port;
- 	u16 vlan_tag1;
+> > Another (unrelated) patch series made us aware of a platforms where RAM
+> > starts at 32G, but IIUC the host bridge maps 32G-33G to bus addresses
+> > 0-1G, and there is a device on that bus which can produce only 30-bit
+> > addresses.
+> >=20
+> > Now, what was the idea behind allocating some crash memory "low"?
+> > Right, it should allow the crash kernel to access devices with
+> > addressing constraints. So, on the above-mentioned platform, allocating
+> > "low" would in fact mean allocating between 32G and 33G (in host address
+> > domain). =20
+>=20
+> Indeed. If that's not available, the crash kernel won't be able to boot
+> (unless the corresponding device is removed from DT or ACPI tables).
 
--- 
-2.43.0
+Then it may be able to boot, but it won't be able to save a crash dump
+on disk or send it over the network, rendering the panic kernel
+environment a bit less useful.=20
 
+> > Should we rethink the whole concept of high/low? =20
+>=20
+> Yeah, it would be good to revisit those at some point. For the time
+> being, 'low' in this context on arm64 means ZONE_DMA memory, basically
+> the common denominator address range that supports all devices on an
+> SoC. For others like x86_32, this means the memory that the kernel can
+> actually map (not necessarily device/DMA related).
+
+Ah, right. I forgot that there are also constraints on the placement of
+the kernel identity mapping in CPU physical address space.
+
+> So, it's not always about the DMA capabilities but also what the crash
+> kernel can map (so somewhat different from the zone allocator case we've
+> been discussing in other threads).
+
+It seems to me that a good panic kernel environment requires:
+
+  1. memory where kernel text/data can be mapped (even at early init)
+  2. memory that is accessible to I/O devices
+  3. memory that can be allocated to user space (e.g. makedumpfile)
+
+The first two blocks may require special placement in bus/CPU physical
+address space, the third does not, but it needs to be big enough for
+the workload.
+
+I'll try to transform this knowledge into something actionable or even
+reviewable.
+
+For now, I agree there's nothing more to discuss.
+
+Thanks
+Petr T
 
