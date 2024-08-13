@@ -1,123 +1,155 @@
-Return-Path: <linux-kernel+bounces-284651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 576AF950390
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:26:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A6B9950393
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 157572826BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FBE21F252F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34241990A3;
-	Tue, 13 Aug 2024 11:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D151991BF;
+	Tue, 13 Aug 2024 11:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q75QLfeg"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KhWDA781"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DE54C8C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80281990C8;
+	Tue, 13 Aug 2024 11:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723548392; cv=none; b=bD3pI0476l1ImQSV/gz6qUpPEonMHiVW3ooUOCEHC7UTmFHd1HK/PaXPS9NWKibmzNVmq8QbLmpJ/Oagwiwoh4vydvuxyKVYg/FO5ijXxfCC7S57pLIwg5vELadtWWm9cKNN9kyALx92H+pAglqss069pwRR3iOozgDPKxuUaaQ=
+	t=1723548395; cv=none; b=ql3v9SAEdUiwVfofm8l0jz2ZSBYS69IJXoS3HiPV6JP/wfqHzqVU1DPbmQaQJ3Lc2NcwE+vRDGOi74FMU/+Z3I2JV1mlJO00gDSa2xoAL5WUOWMIpMGBRxf/bISbqmavzryUIA8jqHzqt2G2a/z7KCbdTTfSDV3Mgd2KVCJiTb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723548392; c=relaxed/simple;
-	bh=FwpQPZaZownGys16tIIRTbTH5Pl+L3AghxOMJwhap/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OUJgECCJSD2Y0aENorjdH9/wgjD3tMF1WZ2U7FepehKtjL1vaqoz6fqAG4+fU7ggJk95CyGJm4YTKh6EQOwfyqtil1YKqQDY7SKjqvyOSvKxpvYaLnTHfhNJTBbjUUQJu2mH2X1ZtL+tN/90WveefKQFRNkIB9b+bTnGiKKz7gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q75QLfeg; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3db1270da60so4131126b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:26:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723548390; x=1724153190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NZ42mAm0PGh+S/W22e7yYSDhvCDheJds0Y8DV5bgOPs=;
-        b=Q75QLfegpDNfJsyNOWzdjpfcscVQ26Gq7NDttuBDkgCOB93ZFuMDQu1nM5F6MKVeb5
-         p4NxmXjUs88r7jTdtPJGVslGe/vWdZrsnZ00Jh1hZscX2TStS0dCQJ6Cis5Twa2v4BX3
-         ur/sCcW5HItptmitilPCiQ04A3dKazPXqxBtvzmlHunyVPfHPRVkB19gxC+YfRBfk9VH
-         drz2HRIpOFDmMDCPH73Mc6+mPQ0dcGzRIAD4hnrzHw7RZy4SjyYtnOzV4GKYmJsFFIKk
-         TKtyf2T6ZZHxP3quVBTFu1Q2aT7aQZ6hq/ul0CDELvLATtXsYeSU7H+9IyoqcjAmw9zP
-         NpNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723548390; x=1724153190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NZ42mAm0PGh+S/W22e7yYSDhvCDheJds0Y8DV5bgOPs=;
-        b=BV9zK/HnIcRc5WHEDxf+R4a6owfl9pYP2077UjD3LBBJ24uqEqZCrAmbuGIRDGmRIz
-         5NkUNIEb+tTtD12P/cCXX3BqZ3GwEHusF9yPgODvK8dMpjuY0sX07wTuPB5Ip5Dh04x+
-         XHtT1hew+7th4542lRHa9c7zrn/V/HrhciFEt8GfWU/mL462g7aPzRstCPjgVoV0+iq2
-         3oN4Pv1DVHttkk2603WneIPBv4sPMkBVIPOH4JUcxhZjaXbKGdPUS3+djLKJ/7lv6Xb0
-         NCS4zxw9lsxdpL2VgesF8AThsI22jaSralzpiSpcdLF+AvFS6QOm9f6U9FgVaZQsSkdF
-         1CDg==
-X-Gm-Message-State: AOJu0YwLbXvs0kdoXWOs98oyXwGE3bqexfSpGXdY56OCbLag9TkAs26o
-	EnjuFjsrGPKc1J03kHgs110sTq0d7LYs0/kz9lGR9jccM18EZSUdffTAbLZWIclyXyew7Pq6USr
-	xCzdNA/cxQDW4xNw1sWHWhULkGOOsNkk0MHh/cA==
-X-Google-Smtp-Source: AGHT+IG8gqm83e9g/rJZ3FO2MQeP4LHgHhY5VJivHLmApt8VoHwKszZd7wDHqUFg9IwoiA+PDtzW6UWv56TdB0upWYk=
-X-Received: by 2002:a05:6870:8a23:b0:25e:1edb:5bcf with SMTP id
- 586e51a60fabf-26fcb641ef2mr3532611fac.6.1723548389774; Tue, 13 Aug 2024
- 04:26:29 -0700 (PDT)
+	s=arc-20240116; t=1723548395; c=relaxed/simple;
+	bh=mCsx0QXngc1tRJLyEc7vROSqNAJTKyqG25u/E86hHu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YtYtwL2NbkQGHOGL+92Jxh6RllbPwU9SzVdPgFrfz9YtySvevWuXoWhTCxVUIjztBqZbL5EWfm/2MKrvNrLVBEYDevnIjCjYIRq4Bw6utGypHnGtvWVYfWDICKbrIw3Ws8xoNdawTH2fSBfEQPnFbRTzOjLBKf0nSrXz1vxqVsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KhWDA781; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723548394; x=1755084394;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mCsx0QXngc1tRJLyEc7vROSqNAJTKyqG25u/E86hHu8=;
+  b=KhWDA781LalIdQcKgrcJNYf5BQTecH1r2DfUNZjEf6P8jkDQgXb/JOfd
+   vujeFhBStj8RFqfzQm3CBMek34bnVVADU5LSu93t8F8/FPiwRTiDbmDvJ
+   OsN3e4YYk/DBa1sr/75XLzwO8MVAfIk799IPz5IYO8lvrlgQjOf17WBKT
+   EXrPunAoMtdXKQf3g2WzCQ6vVGQ68/nI0AexqwCKR4w1mSM9X4DCYSIQf
+   5ixiT46GygaWcsn/dSCgViGNa/9zwymtxyJKmf5v/BlCsv26cvzrIe59b
+   5mvoGllJrUlB8yRvJ+4c76i5x8YKS6Rkrcx0F1Dar6PCG7xSKPXyXUcP0
+   w==;
+X-CSE-ConnectionGUID: ER8qnFbSSgi/xBcqSgmwHg==
+X-CSE-MsgGUID: qrhCEb81SiG13vA5vNuedg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32278827"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="32278827"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:26:33 -0700
+X-CSE-ConnectionGUID: zbbaIvIxQReJCsjUmDVR/Q==
+X-CSE-MsgGUID: Wra6aVTQRlm5QHzdFegvsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63319144"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:26:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdpfW-0000000EhwO-00u9;
+	Tue, 13 Aug 2024 14:26:26 +0300
+Date: Tue, 13 Aug 2024 14:26:25 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, Mark Brown <broonie@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] i2c: Introduce OF component probe function
+Message-ID: <ZrtC4Q4N_3x2KTNb@smile.fi.intel.com>
+References: <20240808095931.2649657-1-wenst@chromium.org>
+ <20240808095931.2649657-4-wenst@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812133127.865879-1-jens.wiklander@linaro.org>
- <20240812133127.865879-2-jens.wiklander@linaro.org> <2024081346-dutiful-stalemate-0e07@gregkh>
-In-Reply-To: <2024081346-dutiful-stalemate-0e07@gregkh>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Tue, 13 Aug 2024 13:26:18 +0200
-Message-ID: <CAHUa44HYQVhT0=E9py2JsO2X93wLhZ=YvH0fBqQpzFBujSGgtw@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] rpmb: add Replay Protected Memory Block (RPMB) subsystem
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Shyam Saini <shyamsaini@linux.microsoft.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Jerome Forissier <jerome.forissier@linaro.org>, Sumit Garg <sumit.garg@linaro.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
-	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Manuel Traut <manut@mecka.net>, Mikko Rapeli <mikko.rapeli@linaro.org>, 
-	Tomas Winkler <tomas.winkler@intel.com>, =?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808095931.2649657-4-wenst@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 13, 2024 at 11:29=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Aug 12, 2024 at 03:31:24PM +0200, Jens Wiklander wrote:
-> > --- /dev/null
-> > +++ b/drivers/misc/rpmb-core.c
-> > @@ -0,0 +1,233 @@
-> > +// SPDX-License-Identifier: GPL-2.0
->
-> Fine, but:
->
-> > --- /dev/null
-> > +++ b/include/linux/rpmb.h
-> > @@ -0,0 +1,136 @@
-> > +/* SPDX-License-Identifier: BSD-3-Clause OR GPL-2.0 */
->
-> Really?
->
-> Why?  I need lots of documentation and a lawyer sign off for why this is
-> a dual license for a file that is obviously only for internal Linux
-> kernel stuff.
+On Thu, Aug 08, 2024 at 05:59:26PM +0800, Chen-Yu Tsai wrote:
+> Some devices are designed and manufactured with some components having
+> multiple drop-in replacement options. These components are often
+> connected to the mainboard via ribbon cables, having the same signals
+> and pin assignments across all options. These may include the display
+> panel and touchscreen on laptops and tablets, and the trackpad on
+> laptops. Sometimes which component option is used in a particular device
+> can be detected by some firmware provided identifier, other times that
+> information is not available, and the kernel has to try to probe each
+> device.
+> 
+> This change attempts to make the "probe each device" case cleaner. The
+> current approach is to have all options added and enabled in the device
+> tree. The kernel would then bind each device and run each driver's probe
+> function. This works, but has been broken before due to the introduction
+> of asynchronous probing, causing multiple instances requesting "shared"
+> resources, such as pinmuxes, GPIO pins, interrupt lines, at the same
+> time, with only one instance succeeding. Work arounds for these include
+> moving the pinmux to the parent I2C controller, using GPIO hogs or
+> pinmux settings to keep the GPIO pins in some fixed configuration, and
+> requesting the interrupt line very late. Such configurations can be seen
+> on the MT8183 Krane Chromebook tablets, and the Qualcomm sc8280xp-based
+> Lenovo Thinkpad 13S.
+> 
+> Instead of this delicate dance between drivers and device tree quirks,
+> this change introduces a simple I2C component probe. function For a
+> given class of devices on the same I2C bus, it will go through all of
+> them, doing a simple I2C read transfer and see which one of them responds.
+> It will then enable the device that responds.
+> 
+> This requires some minor modifications in the existing device tree. The
+> status for all the device nodes for the component options must be set
+> to "failed-needs-probe". This makes it clear that some mechanism is
+> needed to enable one of them, and also prevents the prober and device
+> drivers running at the same time.
 
-I'm sorry that was added via one of the patch sets before mine. I'll
-revert to GPL-2.0 only.
+...
 
-Thanks,
-Jens
+> +int i2c_of_probe_component(struct device *dev, const char *type)
 
->
-> thanks,
->
-> greg k-h
+Use respective scoped variants and remove the related of_node_put() calls.
+
+...
+
+> +		ocs = kzalloc(sizeof(*ocs), GFP_KERNEL);
+
+Use __free()
+
+> +		if (!ocs) {
+> +			ret = -ENOMEM;
+> +			goto err_put_node;
+> +		}
+
+> +err_free_ocs:
+> +	kfree(ocs);
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
