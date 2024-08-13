@@ -1,172 +1,91 @@
-Return-Path: <linux-kernel+bounces-304365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-304438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468A0961F01
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:02:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 062A1962011
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 08:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4E51F2507E
-	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AE581C23A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 28 Aug 2024 06:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90349155345;
-	Wed, 28 Aug 2024 06:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C607E158555;
+	Wed, 28 Aug 2024 06:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="mzge7vzf";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Zo5ShCsY"
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lbIEdOXE"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DED013DB9F;
-	Wed, 28 Aug 2024 06:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.143.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724824966; cv=fail; b=MQnZdlyBznPK4f0tc0XBBAvdqktj3NKME+Ur9Bn+gIbwfRaOHDUKsD8Dh0QgncfKPwkYbfJ+7Lm7yxI39z3URfT9lyvdGstZ7LeWcVdN0XHKeKgFLon6SKlZe4azFUFd2UwPgIOIayLMR/31Vba/B8teKpYa5QZIZB7bf3m4LN0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724824966; c=relaxed/simple;
-	bh=3BelCtSIHqSiXKuKF6doWaxTdu9QXvmsYFD7shlBmR4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ro0rcWoLXwApi1CSMItilHggFzW7A/xW6tSlGKVRXO3p4GruxAy/6+MM4uXsy3atKWpILakBGLgCAiUTfD7RabiVdXQ47N++Ec3JcsJyxC4XHkf63XWcI4znDC5SpEAQiZyS+uJg8/pKGbbjALlOltP2M06tnrucSEG8fFWq354=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=mzge7vzf; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=Zo5ShCsY; arc=fail smtp.client-ip=68.232.143.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1724824964; x=1756360964;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=3BelCtSIHqSiXKuKF6doWaxTdu9QXvmsYFD7shlBmR4=;
-  b=mzge7vzfv3BFwVBPns9VPhIGOWOaA0yrBd8uspdu5YAVNonZ0X7ggdBg
-   +SfQmI4CEgdHPAnwtSsYe2t1iDIQ2KlfvUSA5uTHNT0elEqEAcR2L2eNq
-   OQSir8C/ccrxKya56cOGZrnFgfPvBMg8bj7oZL/eDZ+/ThuPAN3AUMKj4
-   2UtRoyS8mDupnY4D3rpzoYCtw6x5EA560qTYq9LSadwwOZccP9LNdTAjJ
-   zm4B/52A1qDw54F368EECGyNLbNocPtXR1yvlpkje+TqFXuxhhSUiy+nK
-   YlAQG9kxHXfwLW0wnbQiMRWDOK2be8n07m8PCCcymtBxgWm6OKF5Uo8YU
-   A==;
-X-CSE-ConnectionGUID: 0lbKuGFSQt+rv9pf5bvDwg==
-X-CSE-MsgGUID: p9IuYl7UTcm4yIsN2wo9FQ==
-X-IronPort-AV: E=Sophos;i="6.10,181,1719849600"; 
-   d="scan'208";a="25690863"
-Received: from mail-westusazlp17010007.outbound.protection.outlook.com (HELO BYAPR05CU005.outbound.protection.outlook.com) ([40.93.1.7])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Aug 2024 14:02:43 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BTy3d8EhEpNiq1KnTea6rRm4FG53BWY4dZbZVOLZzbVN6r5Pp8W7u5PUBLQxTFggs4fx5tlQ0Kt9s8mXFVUxnw+T9ShQIaww5dDXM8AWuQqg1ep2urYsI3/OI1+skuaOxRRd4dHyu8IWFcUPQHiY+FkIEgK5IWtEfxSG84mdUDpSAjZypOtSrqcVdcQYGvQHE/U9RQrkacFaITQxaKfueKUflHtLgIUXF8JUjUf9DCA3VGs1FclDAx+Gwr29DGCinasY826Eyvbdg5Jner68C43fI1gKVNmYCVJiTNDd5lAHuOKlOAdyZKSRSg2ILp3OiKhcBjZEJxTiDBGqDqJztA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3BelCtSIHqSiXKuKF6doWaxTdu9QXvmsYFD7shlBmR4=;
- b=qxmQ93/N7AmFq+ee8Z7icvJiWI+Q7DI60nTNb8nJMzsCGeggpixhF+1U0m61ziMCVJ44reIcYoP2Ht5CQr4HW1yNzBlmLeIEhTT0CkQKG3l8uN3CTX/eKCstoDakMIXH1IVGwExKenIhbzZrzkqeDFuI12BWFOg1dE9M4611UTGyC3e+lSCxiCCUEoViwBZSZRPuDKUfdpeukVGeAGFMlUJtIu5i7GVCLRsecHcA1Z8ynICRN25rgm7HcYE8b3T0IVaG4m6Inw4a+i/nwcfX6cY4cH36pwFneudK3INf8+rQT1RcUQQObXS6DqJbdfhMV4KAn7kOHWBeR2UnoP6RDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3BelCtSIHqSiXKuKF6doWaxTdu9QXvmsYFD7shlBmR4=;
- b=Zo5ShCsYCOpvY5KwWc0hjBNACa8OEdcOYJNRsa3onslIlgiKYv8lwdznTl82yIw7A5AJqKpq0sAAY64RrMASL5CAbA+8jgXPVgRUlSrjB7OYUXJC50brNEcd+theQtNRXPcQAuo0aby8RwS/gMwWSFxiEnFv83LwJOeYTyFzg/I=
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com (2603:10b6:5:1b7::7) by
- BY5PR04MB6835.namprd04.prod.outlook.com (2603:10b6:a03:22e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.26; Wed, 28 Aug
- 2024 06:02:41 +0000
-Received: from DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f]) by DM6PR04MB6575.namprd04.prod.outlook.com
- ([fe80::bf16:5bed:e63:588f%3]) with mapi id 15.20.7897.021; Wed, 28 Aug 2024
- 06:02:41 +0000
-From: Avri Altman <Avri.Altman@wdc.com>
-To: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>, "quic_cang@quicinc.com"
-	<quic_cang@quicinc.com>, "quic_nitirawa@quicinc.com"
-	<quic_nitirawa@quicinc.com>, "bvanassche@acm.org" <bvanassche@acm.org>,
-	"peter.wang@mediatek.com" <peter.wang@mediatek.com>,
-	"manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>, Alim Akhtar
-	<alim.akhtar@samsung.com>, "James E.J. Bottomley" <jejb@linux.ibm.com>, Bean
- Huo <beanhuo@micron.com>, ChanWoo Lee <cw9316.lee@samsung.com>, Maramaina
- Naresh <quic_mnaresh@quicinc.com>, open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 1/1] scsi: ufs: core: Remove ufshcd_urgent_bkops()
-Thread-Topic: [PATCH v1 1/1] scsi: ufs: core: Remove ufshcd_urgent_bkops()
-Thread-Index: AQHa+NbuggsabfppFkCp7WdE0/XIr7I8Ldfw
-Date: Wed, 28 Aug 2024 06:02:41 +0000
-Message-ID:
- <DM6PR04MB65751E59D4DBB590008D2055FC952@DM6PR04MB6575.namprd04.prod.outlook.com>
-References:
- <0c7f2c8d68408e39c28e3e81addce09cc0ee3969.1724800328.git.quic_nguyenb@quicinc.com>
-In-Reply-To:
- <0c7f2c8d68408e39c28e3e81addce09cc0ee3969.1724800328.git.quic_nguyenb@quicinc.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR04MB6575:EE_|BY5PR04MB6835:EE_
-x-ms-office365-filtering-correlation-id: a79e1e44-9408-487e-36bf-08dcc72706d8
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?yI6Q4sNK/CH52pYo8yRleV0kI8NUAcijwNCJr5TP6CBaAfrT6lq90/gclj/3?=
- =?us-ascii?Q?H38xTEKQd5m5/avelzI5urYjkd3G5R9snmyryzriblO79N0J85zJv6HNRwiy?=
- =?us-ascii?Q?9C9x+iOmcYld5/PNg2+E3a2tJAbqhMfd/OMR84Bm9whTdpoohqmRBCFaW/Aa?=
- =?us-ascii?Q?Lnyof8TqLUAqy+FemEjORRwFmUna0x1ppXkpd6O33p6cNJ2gQbMQNvzsbkIS?=
- =?us-ascii?Q?U5aWgA7vuHZEFEwV5ccv4Rbo/oleksEgOTvUX6CPl4G6eCGIlssVuGWby0+d?=
- =?us-ascii?Q?8QqnJItp90WaWGh5BVJrT8q+KJF9VsJhyeGYMuYHo6aFKv1sp5jsTR1wk11T?=
- =?us-ascii?Q?kZGspbAJeveSSOG0stzo/Bvo2Q3YHViZmzKEG69fbrxM18VmIm/e6EYuozjR?=
- =?us-ascii?Q?LNN5deAMady0YwsrseIK2dfPkb1l6RMzWmxl44/9Ub2p9Tsimo2TNQRQE6Xd?=
- =?us-ascii?Q?WO6XWaY9RlDzziE3vsHThtAek9329kOraKmPNKgkp+pHUXI0yhiq35qc4eQw?=
- =?us-ascii?Q?S+4SD9TdvoJLXFRnVk2Hz1l+ZbeI1/H+Ly9F8qN7oE+UfG/ZBk8pYVCXQGWk?=
- =?us-ascii?Q?QV3R0BssNsVeFw2VAT/uMBuDlhnNlAa29C+JVqekbN44oUN6sMkS0JRusbrU?=
- =?us-ascii?Q?s3Tj2O4JJiOmZdEz4tikBXThFy7pYLlX95hEpOXUBVKZ7W1BqDQHDPmp+R2I?=
- =?us-ascii?Q?lqjYd2z/rw0WbCiZrw2qyzUF5mRAJV1sb2KqiZjji3pHT3/OpFGucvN+0xa2?=
- =?us-ascii?Q?+dKKhFKoULj3sgfGF8wtqqV64PWbfMW3Omqmf3GMh3PPOzrrVwPOwMjvTAQZ?=
- =?us-ascii?Q?zAMUxN5OxQOAHBl2GtuhOY3rRGX7x6s1nhPmQfKg7sZMxt/NduK1mGZWZVmZ?=
- =?us-ascii?Q?IgebNmNrYcpS0FufbLaENzge7Tp6bibF/pFq+9irGUEv9IM1Hy6SLhfZOSev?=
- =?us-ascii?Q?gQRPAzUL/OM0mi0tMKe2Dd3cFqkT1uxxO63n4INp3CaLqpKwz+DZV+7vPyTR?=
- =?us-ascii?Q?lLOrFMWZZMFFkPaMaibF7TExK3w+dwzbxtEkQHrCHZixPCWjjLi+VrClAbVH?=
- =?us-ascii?Q?iSpjKKV5R3hLjF0ZPNS5oSiihp0Ilv9n6SOcatROUhe2ZhVJVKD1YIaWc5mL?=
- =?us-ascii?Q?1JCnVsmaZXDZK+pVRhIbYTmF/7GGNT6sEwEifU6TWqe9pHVue1OKOQnUentw?=
- =?us-ascii?Q?BrJfytHPmuKg6Xlipc2C0Pd0/oF7Efjcg6Z2uyKz7XVbyNZi7J8X84V9xvk+?=
- =?us-ascii?Q?XllPyDsRNPtK98ljMYbIrb0x7L2kcY+ydyBGzNPI+BcHbaxofYH263HtmqUH?=
- =?us-ascii?Q?JMERTC7KG7CpniNZnSGN8Vpf8T5IAAysXN7KAaOGGxisy5PAPOS0ovRfs4E5?=
- =?us-ascii?Q?MHBPDgCxX7HzmINgUy8gnvhr7geAEuFwmE0cmw8/hq9/wH0Hyg=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR04MB6575.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yTTTZI0XanVHrA4/RerMBKoSb6pNBSQN21heNVSSZJ/+6curI+H/Y2PK3VCS?=
- =?us-ascii?Q?zB5jOML2QXp3fcrO+wvv1sHAncL078Q3Oe+kr3jnyujkb1w1uKxR0qk0eGYM?=
- =?us-ascii?Q?bYFjmgVyYxN6H21zSRJdXijwsh+eRsmcF5eOt+MpbRvmAELRP8FNEVAnqHvZ?=
- =?us-ascii?Q?8JPqQ262Tb7Mes/CGm9MeI88swYdG5GGcecuvV36TE/36h8Bn6w7Ec23T4Dq?=
- =?us-ascii?Q?4DkpvxYAYoVpNNFfIR0l02hhEg1x4hog2pppGWDIaXQIdXZHlEIt2tvgUlBb?=
- =?us-ascii?Q?zZsfN5OCNvCiq4s1EjX0INXWlB3pi+nMW/6uGd8O/eMgyUrI05kLR07o8SY9?=
- =?us-ascii?Q?N3fNqwtdjvvpMAEiygZWrQ9uR2ADxFgDcf7g4GUOUSdjU4QRpmg5CKlkUpaF?=
- =?us-ascii?Q?X381DTluUXOlXtrqo/z8VL+rEZzKJI+kvxEXP1EWLXdVT8dcXjoKZQaA3GfC?=
- =?us-ascii?Q?d17r5MZtgQfr5whDpFvTml93x/5zHF0Zcb2i2YIcpgUwj9vWHd53cUKYkp0z?=
- =?us-ascii?Q?gmF+zdkl5K36Rxuf2fgRBm2mgmNlKyOznAVP7w8Qv1GelNxKhhr2oc25Jwkk?=
- =?us-ascii?Q?1TGOxPTNuohR9WHBOpNz76EycrAgg7dEoinn1Opv/QyJRgasnKIod1MBoYUP?=
- =?us-ascii?Q?X6BFievwgvyeay6Now27WF/PIDo4NRX5paMqwjvmB9Ts2Li/S5xXz0EkkR1B?=
- =?us-ascii?Q?/AVk52yZzLjd/LP7gjPFFmv02gnEG2TFNfZTUBak69+ta70VoUzPYIXS8b0X?=
- =?us-ascii?Q?Kuf8tT42zrMtlKEnsDt01HRCNKVZwcsKCktD8qqeypdNR8IFDDo5dMNQ1QE1?=
- =?us-ascii?Q?a3zSwIKxRIH/a9kuyzj5o8thEE1OhyA8rq+RB/kJPF/g6bx0RYCXZ4oUAx2c?=
- =?us-ascii?Q?QekTYoCBCVRkIpiVS/J7tqNTRGrcfqNEkbqqmadJVitsDvp8jnPU/5q5T3ht?=
- =?us-ascii?Q?UDPqu6iNnBu6lWXJ0N035dYBs8+VPI7HhB9iTaB71fqHURX7IGP2jV8yH9R4?=
- =?us-ascii?Q?QQTVyvRi6tbiO2NqkF+EOAXqG3YhDMPtNJDOrfuOFERKivoUNcngJnwBkSLe?=
- =?us-ascii?Q?ssFwoc09U+0nTqhHMzGeevCPHgyyNmBxGB2c5QC6zVK6qY+mqdEOPCAVeJdP?=
- =?us-ascii?Q?/CTH06xy2YUaAB6tpNQi2NcRah/bUWrAe5Vqs4q6xO1Eae1XdODnZjt5oZbY?=
- =?us-ascii?Q?EwN+H4oc4T4kQRDZzyQhr6LuqAHQJ1aETGNUcI2k/NnpNXnzxv2AYnp9I+s2?=
- =?us-ascii?Q?qpXsRpUQp0G3zV6Fd/A/sDeQ3MUbxtyi2RK8Buc1jZI06+W0gtpAZ78Y46r/?=
- =?us-ascii?Q?RhOs0bgcEpQ4YIdAmb9Xtom3dHrAqDZJZl/Es1SuN+gPxsiTVGyQSlYEoKjm?=
- =?us-ascii?Q?yfjH2hHe2evjE1NeoaY+U5cP9Fe2YSseoVNd491ML2Q7z9bmQeX3JClpOiIh?=
- =?us-ascii?Q?dDKoB32MK4Jo8xQfespfMPXqSfuHlr8IbnGb8rbYbD0OfiMk5Kt3zl7D9gO5?=
- =?us-ascii?Q?cdtR9fTyrhuvgY5nPHuXUo277XoX8DOhJeCZa+XipK80/c/48pSCugHD/YNo?=
- =?us-ascii?Q?4VttAc6aK2nYaitc2QnFHhbHx6liunNj0GuD2Jje?=
-Content-Type: text/plain; charset="us-ascii"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEA415852B
+	for <linux-kernel@vger.kernel.org>; Wed, 28 Aug 2024 06:53:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724827994; cv=none; b=GSXZLqd/wZa//R9BGl4r1/u2rfX99HN3bzX+6hh/T3BxpV3xqC+SliEB0sdJo+YjMRTFRoDfvtrRJeS0WAEKI1dGmnEvc8dVlww6DbgYfI22dvPje5JdJj/y+FA2FmYNV7CGjxvqbVWBzHe3b9nVS4XeW4FvQx4qxIrIH4wGccE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724827994; c=relaxed/simple;
+	bh=WHY275wjLM56g0N3SRBcGHEi1SzkjdijrU+iKFix9WA=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=b3cU9I//F3hSuLshMtuEViy6ACqpt6NzmYs2HnuwLW3nZZH7vTesqymNtKOavflb8Thy6c+ApvBr7WqVQwhbas4QZK44Rd34cx6l6sAJqUGJ2G4skDm0cxd3shLhXvVC2F7XR/UYnLulUVkCIY+xijUvw64qcHt3IpBnSg9JWIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lbIEdOXE; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RM3KJm003270;
+	Wed, 28 Aug 2024 06:53:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:in-reply-to:references
+	:content-type:content-transfer-encoding:mime-version:date; s=
+	pp1; bh=bsnxeBU3GWy7xz8iBn1Z+4dktQMsXj48dVCjl5yuv+k=; b=lbIEdOXE
+	e0c/pwaafZfd6pAs6Fy6xEdKiDnFkWMLTgrwV7ZYyLskEcoFcXpIIyCak02gJ6hR
+	yVxADNpy2Dtw6Z/SOi2r/EniZjWcAB0KBg88I1vgrSHyb7b4jxhwUTbwEkYuJRfG
+	4AlKwWnRev6rxiUQ4d+rpGbTIWuqttBuuQQcytof37VihmYEvtq8obaWx4rv8EPy
+	xuTns3QG6wPjhyZKJqQMwAiDGyJZUcx0kVXa6H9Pw2ih7OOjvZ4ruKOO2m4vqryB
+	/srTcHJFvl766gYa7fs3Mbdfb5/ulCYytHClU6vzX5zLeWcKBCt5OXafu+6asbc9
+	3T7FpWudgr4Ang==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 419q8p1fn0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 06:53:01 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 47S2bDav024611;
+	Wed, 28 Aug 2024 06:53:00 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 417vj3e19m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 06:53:00 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47S6qx6M18612644
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 28 Aug 2024 06:52:59 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F30BC20043;
+	Wed, 28 Aug 2024 06:52:58 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2F10020040;
+	Wed, 28 Aug 2024 06:52:58 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.63.197.14])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 28 Aug 2024 06:52:58 +0000 (GMT)
+Received: from jarvis.ozlabs.ibm.com (haven.au.ibm.com [9.63.198.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 87EC9602F4;
+	Wed, 28 Aug 2024 16:52:54 +1000 (AEST)
+Message-ID: <2b345a08daceebb324e730e5f187acba3d388aff.camel@linux.ibm.com>
+Subject: Re: [PATCH 1/2] cxl: Drop printing of DT properties
+From: Andrew Donnellan <ajd@linux.ibm.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Frederic Barrat
+	 <fbarrat@linux.ibm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman
+	 <gregkh@linuxfoundation.org>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240729-dt-cxl-cleanup-v1-1-a75eea80d231@kernel.org>
+References: <20240729-dt-cxl-cleanup-v1-0-a75eea80d231@kernel.org>
+	 <20240729-dt-cxl-cleanup-v1-1-a75eea80d231@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -174,31 +93,275 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	5Iywht4S4E7Erj1XFImM40GN4pAK7D8KYtNSIcD1X6r0ne2Uai8IXIH5ORh41CCg3uUpwqT0wvxtBl5nwxa8uEB166/wndB+GhXOhPzAnx6RttAXu6vkb3EduqK/IWh19kVBjsJLUxv/Lc9p5JAkiulw5zJiCyiwIs9jCWsSo22uDUjqKmGn7VexP2UCwBqPdjRulE26y2LGXZ/hgTe6V2m9khH6UMit5Zy4M0fwj0wAKT/wuID9JpBaTfxBns7m187meHoSGL2+CB2IFrxoBppMqZ47p3wr5tbbf/gZ4DjOfcBGAC6AtThvDavIL0pPrDKzgaal4TDVnKhcGrl4oZ8YKhMrUk974gR+tHcvrX0Yug2Hpl+FZc5fbhNzNtl9360KTjmGl2p/RmiLD1oVlUGs3FtEsbrY+3WGRjD+lEiYKrwJuaJXrJGQTip96xw24vR2+/f9Zw+zmHA0cdy8BRVOTNqqaoL0X3JgaYGhqVxjv87eD/FWSjvWTVwdKc5BqkPyd8IST8EdFQ9l63poQqcnm9RIB3fpmY02bhf7R6uPlEMHoMbwFtOnKW0aIBtOqwW/V5sgVgji4GFdulSlcyB4iVL34hULd9lrmTP/0bIt/y6PpDmQonx1AAqhgnr1
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR04MB6575.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a79e1e44-9408-487e-36bf-08dcc72706d8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Aug 2024 06:02:41.1782
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2wqC+jb5pIK8mFOdj3Bb4zXjs089WiRBpg8KVgGKbAlp1V798h7oLErLDwqAHCb3d8CEkPnGf3SddhFgHVw4Uw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR04MB6835
+Date: Tue, 13 Aug 2024 20:14:15 +1000
+User-Agent: Evolution 3.52.3 (3.52.3-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7sXhPrKmvq_nPAa-3TcMwnMw6nC2MTYN
+X-Proofpoint-ORIG-GUID: 7sXhPrKmvq_nPAa-3TcMwnMw6nC2MTYN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ mlxscore=0 phishscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 suspectscore=0 spamscore=0 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408280041
 
-> The ufshcd_urgent_bkops() is a wrapper function.
-> It only calls the ufshcd_bkops_ctrl(). Remove it to simplify the ufs core=
- driver.
-> Replace any references to ufshcd_urgent_bkops() with ufshcd_bkops_ctrl().
+On Mon, 2024-07-29 at 16:36 -0600, Rob Herring (Arm) wrote:
+> There's little reason to dump DT property values when they can be
+> read
+> at any time from the DT in /proc/device-tree. If such a feature is
+> needed, then it really should be implemented in the DT core such that
+> any module/driver can use it.
 >=20
-> In addition, remove the second parameter in the
-> ufshcd_bkops_ctrl() because the information can be retrieved from the fir=
-st
-> parameter.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+
+I'm okay with this, I think this level of dmesg verbosity was more
+useful in the early days of implementing guest support than it is now,
+and I'm hoping to rip the cxl driver out completely at some point
+anyway.
+
+Acked-by: Andrew Donnellan <ajd@linux.ibm.com>
+
+> ---
+> =C2=A0drivers/misc/cxl/of.c | 101 ++-------------------------------------=
+-
+> ----------
+> =C2=A01 file changed, 3 insertions(+), 98 deletions(-)
 >=20
-> Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
-Acked-by: Avri Altman <avri.altman@wdc.com>
+> diff --git a/drivers/misc/cxl/of.c b/drivers/misc/cxl/of.c
+> index bcc005dff1c0..21ecce0f9403 100644
+> --- a/drivers/misc/cxl/of.c
+> +++ b/drivers/misc/cxl/of.c
+> @@ -19,8 +19,6 @@ static const __be32 *read_prop_string(const struct
+> device_node *np,
+> =C2=A0	const __be32 *prop;
+> =C2=A0
+> =C2=A0	prop =3D of_get_property(np, prop_name, NULL);
+> -	if (cxl_verbose && prop)
+> -		pr_info("%s: %s\n", prop_name, (char *) prop);
+> =C2=A0	return prop;
+> =C2=A0}
+> =C2=A0
+> @@ -32,8 +30,6 @@ static const __be32 *read_prop_dword(const struct
+> device_node *np,
+> =C2=A0	prop =3D of_get_property(np, prop_name, NULL);
+> =C2=A0	if (prop)
+> =C2=A0		*val =3D be32_to_cpu(prop[0]);
+> -	if (cxl_verbose && prop)
+> -		pr_info("%s: %#x (%u)\n", prop_name, *val, *val);
+> =C2=A0	return prop;
+> =C2=A0}
+> =C2=A0
+> @@ -45,8 +41,6 @@ static const __be64 *read_prop64_dword(const struct
+> device_node *np,
+> =C2=A0	prop =3D of_get_property(np, prop_name, NULL);
+> =C2=A0	if (prop)
+> =C2=A0		*val =3D be64_to_cpu(prop[0]);
+> -	if (cxl_verbose && prop)
+> -		pr_info("%s: %#llx (%llu)\n", prop_name, *val,
+> *val);
+> =C2=A0	return prop;
+> =C2=A0}
+> =C2=A0
+> @@ -100,9 +94,6 @@ static int read_phys_addr(struct device_node *np,
+> char *prop_name,
+> =C2=A0					type, prop_name);
+> =C2=A0				return -EINVAL;
+> =C2=A0			}
+> -			if (cxl_verbose)
+> -				pr_info("%s: %#x %#llx (size
+> %#llx)\n",
+> -					prop_name, type, addr,
+> size);
+> =C2=A0		}
+> =C2=A0	}
+> =C2=A0	return 0;
+> @@ -139,27 +130,13 @@ int cxl_of_read_afu_handle(struct cxl_afu *afu,
+> struct device_node *afu_np)
+> =C2=A0
+> =C2=A0int cxl_of_read_afu_properties(struct cxl_afu *afu, struct
+> device_node *np)
+> =C2=A0{
+> -	int i, len, rc;
+> -	char *p;
+> +	int i, rc;
+> =C2=A0	const __be32 *prop;
+> =C2=A0	u16 device_id, vendor_id;
+> =C2=A0	u32 val =3D 0, class_code;
+> =C2=A0
+> =C2=A0	/* Properties are read in the same order as listed in PAPR
+> */
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		pr_info("Dump of the 'ibm,coherent-platform-
+> function' node properties:\n");
+> -
+> -		prop =3D of_get_property(np, "compatible", &len);
+> -		i =3D 0;
+> -		while (i < len) {
+> -			p =3D (char *) prop + i;
+> -			pr_info("compatible: %s\n", p);
+> -			i +=3D strlen(p) + 1;
+> -		}
+> -		read_prop_string(np, "name");
+> -	}
+> -
+> =C2=A0	rc =3D read_phys_addr(np, "reg", afu);
+> =C2=A0	if (rc)
+> =C2=A0		return rc;
+> @@ -173,19 +150,10 @@ int cxl_of_read_afu_properties(struct cxl_afu
+> *afu, struct device_node *np)
+> =C2=A0	else
+> =C2=A0		afu->psa =3D true;
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_string(np, "ibm,loc-code");
+> -		read_prop_string(np, "device_type");
+> -	}
+> -
+> =C2=A0	read_prop_dword(np, "ibm,#processes", &afu-
+> >max_procs_virtualised);
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_dword(np, "ibm,scratchpad-size", &val);
+> -		read_prop_dword(np, "ibm,programmable", &val);
+> -		read_prop_string(np, "ibm,phandle");
+> +	if (cxl_verbose)
+> =C2=A0		read_vpd(NULL, afu);
+> -	}
+> =C2=A0
+> =C2=A0	read_prop_dword(np, "ibm,max-ints-per-process", &afu->guest-
+> >max_ints);
+> =C2=A0	afu->irqs_max =3D afu->guest->max_ints;
+> @@ -199,17 +167,9 @@ int cxl_of_read_afu_properties(struct cxl_afu
+> *afu, struct device_node *np)
+> =C2=A0		afu->pp_irqs--;
+> =C2=A0	}
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_dword(np, "ibm,max-ints", &val);
+> -		read_prop_dword(np, "ibm,vpd-size", &val);
+> -	}
+> -
+> =C2=A0	read_prop64_dword(np, "ibm,error-buffer-size", &afu-
+> >eb_len);
+> =C2=A0	afu->eb_offset =3D 0;
+> =C2=A0
+> -	if (cxl_verbose)
+> -		read_prop_dword(np, "ibm,config-record-type", &val);
+> -
+> =C2=A0	read_prop64_dword(np, "ibm,config-record-size", &afu-
+> >crs_len);
+> =C2=A0	afu->crs_offset =3D 0;
+> =C2=A0
+> @@ -235,15 +195,6 @@ int cxl_of_read_afu_properties(struct cxl_afu
+> *afu, struct device_node *np)
+> =C2=A0					i, class_code);
+> =C2=A0			}
+> =C2=A0		}
+> -
+> -		read_prop_dword(np, "ibm,function-number", &val);
+> -		read_prop_dword(np, "ibm,privileged-function",
+> &val);
+> -		read_prop_dword(np, "vendor-id", &val);
+> -		read_prop_dword(np, "device-id", &val);
+> -		read_prop_dword(np, "revision-id", &val);
+> -		read_prop_dword(np, "class-code", &val);
+> -		read_prop_dword(np, "subsystem-vendor-id", &val);
+> -		read_prop_dword(np, "subsystem-id", &val);
+> =C2=A0	}
+> =C2=A0	/*
+> =C2=A0	 * if "ibm,process-mmio" doesn't exist then per-process mmio
+> is
+> @@ -256,12 +207,6 @@ int cxl_of_read_afu_properties(struct cxl_afu
+> *afu, struct device_node *np)
+> =C2=A0	else
+> =C2=A0		afu->pp_psa =3D false;
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_dword(np, "ibm,supports-aur", &val);
+> -		read_prop_dword(np, "ibm,supports-csrp", &val);
+> -		read_prop_dword(np, "ibm,supports-prr", &val);
+> -	}
+> -
+> =C2=A0	prop =3D read_prop_dword(np, "ibm,function-error-interrupt",
+> &val);
+> =C2=A0	if (prop)
+> =C2=A0		afu->serr_hwirq =3D val;
+> @@ -343,49 +288,15 @@ int cxl_of_read_adapter_handle(struct cxl
+> *adapter, struct device_node *np)
+> =C2=A0
+> =C2=A0int cxl_of_read_adapter_properties(struct cxl *adapter, struct
+> device_node *np)
+> =C2=A0{
+> -	int rc, len, naddr, i;
+> -	char *p;
+> +	int rc;
+> =C2=A0	const __be32 *prop;
+> =C2=A0	u32 val =3D 0;
+> =C2=A0
+> =C2=A0	/* Properties are read in the same order as listed in PAPR
+> */
+> =C2=A0
+> -	naddr =3D of_n_addr_cells(np);
+> -
+> -	if (cxl_verbose) {
+> -		pr_info("Dump of the 'ibm,coherent-platform-
+> facility' node properties:\n");
+> -
+> -		read_prop_dword(np, "#address-cells", &val);
+> -		read_prop_dword(np, "#size-cells", &val);
+> -
+> -		prop =3D of_get_property(np, "compatible", &len);
+> -		i =3D 0;
+> -		while (i < len) {
+> -			p =3D (char *) prop + i;
+> -			pr_info("compatible: %s\n", p);
+> -			i +=3D strlen(p) + 1;
+> -		}
+> -		read_prop_string(np, "name");
+> -		read_prop_string(np, "model");
+> -
+> -		prop =3D of_get_property(np, "reg", NULL);
+> -		if (prop) {
+> -			pr_info("reg: addr:%#llx size:%#x\n",
+> -				of_read_number(prop, naddr),
+> -				be32_to_cpu(prop[naddr]));
+> -		}
+> -
+> -		read_prop_string(np, "ibm,loc-code");
+> -	}
+> -
+> =C2=A0	if ((rc =3D read_adapter_irq_config(adapter, np)))
+> =C2=A0		return rc;
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_string(np, "device_type");
+> -		read_prop_string(np, "ibm,phandle");
+> -	}
+> -
+> =C2=A0	prop =3D read_prop_dword(np, "ibm,caia-version", &val);
+> =C2=A0	if (prop) {
+> =C2=A0		adapter->caia_major =3D (val & 0xFF00) >> 8;
+> @@ -411,12 +322,6 @@ int cxl_of_read_adapter_properties(struct cxl
+> *adapter, struct device_node *np)
+> =C2=A0	if (prop)
+> =C2=A0		adapter->guest->device =3D val;
+> =C2=A0
+> -	if (cxl_verbose) {
+> -		read_prop_dword(np, "ibm,privileged-facility",
+> &val);
+> -		read_prop_dword(np, "revision-id", &val);
+> -		read_prop_dword(np, "class-code", &val);
+> -	}
+> -
+> =C2=A0	prop =3D read_prop_dword(np, "subsystem-vendor-id", &val);
+> =C2=A0	if (prop)
+> =C2=A0		adapter->guest->subsystem_vendor =3D val;
+>=20
+
+--=20
+Andrew Donnellan    OzLabs, ADL Canberra
+ajd@linux.ibm.com   IBM Australia Limited
 
