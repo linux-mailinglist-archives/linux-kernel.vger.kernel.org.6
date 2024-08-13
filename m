@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-285571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9776950FD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:42:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660B7950FE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38EEBB2181B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:42:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2352B1F25978
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710F1AB52D;
-	Tue, 13 Aug 2024 22:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BED1AB524;
+	Tue, 13 Aug 2024 22:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IhvF5fYu"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pM341nC8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B8A1AAE2C
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3ED1AB512
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:52:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723588942; cv=none; b=Ozr5x4x+Tq14zI0xzHGZcQuT6bmC/rnq/Y1kBt5bR4agzhr+inbBnbrSjbQ6y/A864E9Ti7OD8yE0LKGWEuwTjmPEXq2jQ9C6RTu9K+5R/mvfHFDRIe+62tDbT1pO+ztFhfLRfUGQHwIgJzjaevMK+d3AlLeO7rivy8D4K2N2K0=
+	t=1723589549; cv=none; b=u3qW0K87NoeMl2z1x+vqVn3cla7xxFaK6wKuIfOY9ISuODP1FEl644xmJegRY4mqy8IkwmL/VKJukdY2CbP6MVmoVCr/7OFD+GfXiChvHKpOGWpZYagHJNtNUv180kDC3lRc+TKQgBwqYge+cWCrsSk51G/v00dhI8tMQbrYOuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723588942; c=relaxed/simple;
-	bh=/38aI+YAN2Wq+jg1IZPZHLPCfbDsyq9J8zvtu8VEKZc=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NpBrXaB8K/f+LoO9T0TK8HL4pOTqQbk+GhPBM+vl7oEUeAVVCXJkXMhoQ/bEoeSbNy6ivwDfXoPJiuh3NxSVZpVhoFxDGR6/qHXpA9YbCMt5OL8VRWYtcUa1ywC49WsxdheFcgQ1Blnia9ApDO5cl7B6yj5go3Hr7zu7JErAPmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IhvF5fYu; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-664916e5b40so5139297b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723588940; x=1724193740; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=nNyQdek71tWkWFoFbYjEqvCxbsnsam31z3z18l0u0tw=;
-        b=IhvF5fYuHrK2tDaGUA3dUOBJAAh2mvu0SAoI1MYqjLkYlDOWytZ2hTsvYNk8Z7WaM2
-         dL5WE5v5QNrJkpJyyDywBLgSzcUwTxdf4bbKR+iRh+zOp3O7EDPTEBlp6QMwsJZ3p5xJ
-         x9f4BEBiw4HW8+RevqJ0Bs3trDqfOWaAo4nsU5R5PA28L/hhm0UL+71t/jPtHHxgVdpZ
-         Quhc+KvYRhN+iWPizLCDMWZHy0Xp50NeWmCxqQNWyl9i5Jre4sOIGLlm3b9gnhYnJi9e
-         4w61iYVCF8C69mLA9BK/Vk7ngFapAc+W6GR7+RklmkMa80ILlC1GlJ94XZs15+BXFOk+
-         tKIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723588940; x=1724193740;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nNyQdek71tWkWFoFbYjEqvCxbsnsam31z3z18l0u0tw=;
-        b=Rl82vRIhiypIzeKhv/H7+8/dsLKJG8VoHf6CEP1npaFtZB1PqVs/lZdVv3JIOoeZw7
-         H7APXRP+bArvFLZeDsm8h1kjRWPKSF+laIS5z1XBlq7ScKVhnr8U0SwuvPl75kkDbbBo
-         FWJXn20gVcmLEhq2rOrkcrNDSwli6xryS+ZofsHC8Bn4UKWFhdF5jmWR8QWD9eEcq73O
-         dZ8Z5+Low/MwOyELYp/avwhXuAIwvl3XU5X1pyE8CnRmg13DNMiduksUGW8qhj1iFtjX
-         vAA2xJ1uxOXJ8ek5UT8OU/2lDQbgjRVrzu0c5AmD4R9G19ykfSh78+rKBDjKbwvIfAe5
-         kiIA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMOLeHNTXSHcSEwFrJSiFPrt7rKXFSwAggghjvr7u9TYsLpJiA4guB/uXwbo5qY8LssBOJmWKpY4bfAJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxytKjsxaN3nyhC5vBP+zk+Z6SVnNvvXShWHJvY7hvqDB0vQlNF
-	gAXBLliE5SxJgtHzVM95Uv6moy7iowhrIKSk1m1NcuVRvStlI+Rk2uos8kuRBCYao680KHTn5Tm
-	Vgg==
-X-Google-Smtp-Source: AGHT+IFogisWsaivYv9CNJQlglDwle03mtYwK4ZCba6a77yHOJqB85TEgvNiv/CtmfMxOg5eUSyAfr02VmQ=
-X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
- (user=amitsd job=sendgmr) by 2002:a81:77c1:0:b0:648:2f1d:1329 with SMTP id
- 00721157ae682-6ac707e5fc2mr626617b3.1.1723588939990; Tue, 13 Aug 2024
- 15:42:19 -0700 (PDT)
-Date: Tue, 13 Aug 2024 15:42:11 -0700
+	s=arc-20240116; t=1723589549; c=relaxed/simple;
+	bh=taGYQNtBhkBLngecX3rD0z1lOHvXGOPIG4tljyveswA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SX+OsDal6hOlX9wLtWJB7DrksXDgfemzCPJIdPBaQo6HfYicv4uPcF5B3NglfmmJ4idEtXcsqALJUWxm/UtyjybbMgNvrOFrDBCMEi3Y2kg3tRaaH0pLBv8okRpjr86Aq0SsSZNftU/o1U242nXy6OM3/iI+PK0D8Ek47cLbnNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pM341nC8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACF2C4AF0C;
+	Tue, 13 Aug 2024 22:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723589548;
+	bh=taGYQNtBhkBLngecX3rD0z1lOHvXGOPIG4tljyveswA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pM341nC8YVpHBt9jcYyq/lQ9kMmRvfSnJyukeluBc1PzhJ6jHSjgwHyFam3jLsFtJ
+	 4raLd4dAlLq5ZVTGSI6z4Ocput8BmlH524Br9UzKH+FFIWQ2UD1t0guGzsWH1G177j
+	 JqkK0X1ZK1ntfCYLNsByHqW97/YgF589IDTWsMhrK539XIT2C+5raJb8C99bc+tRa7
+	 vFSROiZ3Yw3y47lCQwyqOM8593uYLizA8NpiO0q/2koc10z1j0+mQtVKYtv2yEV3bp
+	 Ogiecxf3fpE4CrOk8jSXF8PzA8km5dI06vZQOMkicB+zBEUFbWdi6m1qS3fi59twH+
+	 AUM3Jl8oU8dug==
+Date: Wed, 14 Aug 2024 00:52:22 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, Shiju Jose
+ <shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, Eric Blake
+ <eblake@redhat.com>, Markus Armbruster <armbru@redhat.com>, Michael Roth
+ <michael.roth@amd.com>, Paolo Bonzini <pbonzini@redhat.com>, Peter Maydell
+ <peter.maydell@linaro.org>, linux-kernel@vger.kernel.org,
+ qemu-arm@nongnu.org, qemu-devel@nongnu.org
+Subject: Re: [PATCH v6 04/10] qapi/ghes-cper: add an interface to do generic
+ CPER error injection
+Message-ID: <20240814005222.74f45f78@foz.lan>
+In-Reply-To: <20240812135744.644deaa9@imammedo.users.ipa.redhat.com>
+References: <cover.1723119423.git.mchehab+huawei@kernel.org>
+	<87799362699e4349ce4a44f3d25698d5764735c6.1723119423.git.mchehab+huawei@kernel.org>
+	<20240812135744.644deaa9@imammedo.users.ipa.redhat.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240813224216.132619-1-amitsd@google.com>
-Subject: [PATCH v1] usb: roles: add lockdep class key to struct usb_role_switch
-From: Amit Sunil Dhamne <amitsd@google.com>
-To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org
-Cc: badhri@google.com, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kyletso@google.com, rdbabiera@google.com, 
-	Amit Sunil Dhamne <amitsd@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-There can be multiple role switch devices running on a platform. Given
-that lockdep is not capable of differentiating between locks of
-different instances, false positive warnings for circular locking are
-reported. To prevent this, register unique lockdep key for each of the
-individual instances.
+Em Mon, 12 Aug 2024 13:57:44 +0200
+Igor Mammedov <imammedo@redhat.com> escreveu:
 
-Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
----
- drivers/usb/roles/class.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> n Platform Error Record - CPER - as defined at the UEFI
+> > +# specification.  See
+> > +# https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
+> > +# for more details.
+> > +#
+> > +# @notification-type: pre-assigned GUID string indicating the record
+> > +#   association with an error event notification type, as defined
+> > +#   at https://uefi.org/specs/UEFI/2.10/Apx_N_Common_Platform_Error_Record.html#record-header
+> > +#
+> > +# @raw-data: Contains a base64 encoded string with the payload of
+> > +#   the CPER.
+> > +#
+> > +# Since: 9.2
+> > +##
+> > +{ 'struct': 'CommonPlatformErrorRecord',
+> > +  'data': {
+> > +      'notification-type': 'str',  
+> 
+> like was mentioned at v5 review,
+> you only need this for setting cper notification type if you are (re)using
+> 
+>   acpi_ghes_generic_error_status() && acpi_ghes_generic_error_data()
+> 
+> however while doing this in (6/10), you are also limiting what
+> could be encoded in headers to some hardcoded values.
+> 
+> Given QEMU doesn't need to know anything about notification type,
+> modulo putting it data block header, it would be beneficial
+> to drop 'notification type' from QAPI interface, and include
+> error status block and error data headers in raw-data.
+> 
+> This way it should be possible to change headers within python script
+> without affecting QEMU and QAPI interface. On top of that
+> ghes_record_cper_errors() could be simplified by dropping (in 6/10)
+>    acpi_ghes_generic_error_status() && acpi_ghes_generic_error_data()
+> and just copying raw-data as is directly into error buffer (assuming
+> script put needed headers cper data).
+> 
+> From fusing pov it's also beneficial to try generate junk error status
+> block headers, for which python script looks like ideal place to put
+> it in.
 
-diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
-index d7aa913ceb8a..807a8f18ec20 100644
---- a/drivers/usb/roles/class.c
-+++ b/drivers/usb/roles/class.c
-@@ -11,6 +11,7 @@
- #include <linux/usb/role.h>
- #include <linux/property.h>
- #include <linux/device.h>
-+#include <linux/lockdep.h>
- #include <linux/module.h>
- #include <linux/mutex.h>
- #include <linux/slab.h>
-@@ -33,6 +34,10 @@ struct usb_role_switch {
- 	usb_role_switch_set_t set;
- 	usb_role_switch_get_t get;
- 	bool allow_userspace_control;
-+
-+#ifdef CONFIG_LOCKDEP
-+	struct lock_class_key key;
-+#endif
- };
- 
- #define to_role_switch(d)	container_of(d, struct usb_role_switch, dev)
-@@ -396,6 +401,11 @@ usb_role_switch_register(struct device *parent,
- 
- 	sw->registered = true;
- 
-+#ifdef CONFIG_LOCKDEP
-+	lockdep_register_key(&sw->key);
-+	lockdep_set_class(&sw->lock, &sw->key);
-+#endif
-+
- 	/* TODO: Symlinks for the host port and the device controller. */
- 
- 	return sw;
-@@ -412,6 +422,11 @@ void usb_role_switch_unregister(struct usb_role_switch *sw)
- {
- 	if (IS_ERR_OR_NULL(sw))
- 		return;
-+
-+#ifdef CONFIG_LOCKDEP
-+	lockdep_unregister_key(&sw->key);
-+#endif
-+
- 	sw->registered = false;
- 	if (dev_fwnode(&sw->dev))
- 		component_del(&sw->dev, &connector_ops);
+Got it. Will change it to just:
 
-base-commit: 38343be0bf9a7d7ef0d160da5f2db887a0e29b62
--- 
-2.46.0.76.ge559c4bf1a-goog
+{ 'command': 'ghes-cper',
+  'data': {
+    'cper': 'str'
+  },
+  'features': [ 'unstable' ]
+}
 
+where cper contains an base64-encoded string with the entire raw data
+including generic error status end generic error data.
+
+I'm moving the current defaults to the python script. Let's merge
+this with the defaults there. The script can later be modified to
+allow changing such defaults.
+
+Thanks,
+Mauro
 
