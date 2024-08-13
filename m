@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-285335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285336-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 071F1950C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:28:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC895950C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DC99B21B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:28:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622CD1F2254C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94B51A38F9;
-	Tue, 13 Aug 2024 18:27:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543E1A38E3;
+	Tue, 13 Aug 2024 18:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1IlkAmc0"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YB2Fhnz7"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A705035894
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E10A61A3BBC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723573678; cv=none; b=I6jAmN6Q1fLvkm14JhSjRCKQGGyjK06idEy9jQAV3nwF3/R9QTDN1YYox0kZLJe9Rqy0q343QKJJjWW56QJqaCASFyfEHJgniFHGgw/RAPBqX22gdtXyW2OIbHChfLk6Q93uZ3R1ANoZDvO6aVcrHC+GfXEVv93hYCnRZDKKJZM=
+	t=1723573682; cv=none; b=e0tUwXeeemjacbLGxmXqdnlwxG/1VDfPcUZHPIt1SkKHB0GOQFpE9KA76sX5UykuAsz3OSly9xiOMGWHF+19nu3Hy99NYMFcab1HAgnjxOwt+759FCbYGV9VyKMg1CJtPNJbmbjBoRu7PH21JjbPrptgHbprPtIBw4aNMkYTobM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723573678; c=relaxed/simple;
-	bh=11Vo1GRIel5+sWXjEZX4YTqPJYZTmDP5+/gfPmKbZgg=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gS/7TTswYf/yYhaaG2/ayGUxgKn2ajPvZP0gW04A3UF9lJub6yFexQE9UfwtX2ne8uXIdLM1c8M/ZF3rkpAJwCyWfdwA8OoZWTPES+VMEBj3Mw90wNj0uIkXjIDXi6Cqgox8xN5BTFCNHal7ZlAPVl/kG38Dz6PkLf0+JrZjksk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1IlkAmc0; arc=none smtp.client-ip=209.85.128.201
+	s=arc-20240116; t=1723573682; c=relaxed/simple;
+	bh=/f0liMwdFEKT7a9xgkPkH9Cx1ArNObmnYwWZxxCvP3k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=q+cKXcpTPSH1w0l+FX6RGoNn+6A3PoOEJo3mDkP3EFaVI1xYw63djY4X2P0/0OYrqfROwLRgFf0VhNx7TibUIWv48xJiMne/YE+pjI0y1n9Q+SwApGrMv71TAwQ1OY2EDNCXp2cyWylf8D1B0XNXKkRvNNhPgjebMpMKJ6pV66A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YB2Fhnz7; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--manojvishy.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-66a2aee82a0so113492027b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:27:56 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02a4de4f4eso10135325276.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:28:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723573675; x=1724178475; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Xx3vUn4Ffi9+cFtQJZC9o9842wkaz5PPRNr6UKhxqa4=;
-        b=1IlkAmc0Y+yU63uOAR8SSCsZ8jPRACi6OYtHVkZ4Ge3iPcKSxCW4zcxre3CQXe8e2I
-         QtgGmkcA+JnPzblbdj6k5KMp9t/IvtfTPxYBnR/k3dxcSWOjYiz12vecOxPdr3rz79Jn
-         BUdu5SRUddAx/2goBu/TjJjXHBL7tJDFWsPDYXuSj6NrUA8uDf+bGSYWjQHjGTx9e//3
-         uij3i+lHqmRkBmTT76CMYfGw51iVzNbz6JkZ2zt5mVKt7Hhkk7KBnG78sunOLRXQKm4E
-         0rJeJ2zeVZ2szGCdXz7YgWBF5n2oLeagI7a6jSHeFv+EsaHxM/zQSYtamCzmICG+7jha
-         xKhg==
+        d=google.com; s=20230601; t=1723573680; x=1724178480; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FUwl2486l/jeLoGKzs9tmDqeNS+tAHZe3YD3ALXm7s=;
+        b=YB2Fhnz7zK4qon2QngSlVmHL7TPsH8eGCcedOwjP3lVLlj7mc5BWm8/uwOs+UzZEwV
+         5N1z+UhsM0hxMlM95mXA6A3ljLKKwTSnkjJDDcBwVf5VHKgdYiQLZ2rcTLw03eyLlybM
+         abZvip6YyUyDfK0fKApj652piqtCCisnzE4pgNeSj7voVEby7YY2FDqa3o5GZN3tDlKF
+         KKhcNonnNzvs1DFjUeKy07RoYSyiEXvXzOHgW5D2BatPe8ioRbOJdeK9ERp0wd7xfvHu
+         SRft6LzhVyWRkYEzMhAyRf1kVERrOYWHQa2Ma7V3Di+yxVpcUJepdRj0MM5expl4Ze0h
+         ogsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723573675; x=1724178475;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx3vUn4Ffi9+cFtQJZC9o9842wkaz5PPRNr6UKhxqa4=;
-        b=vvHix7B1/9jbD4xkKVxxlBCkfeyI1PEqU1DzUs8IoKz79ZgoN6r14NB/XhRQcoafFp
-         7WhRtKH+lDXtajvgdBIs0prAA7O7IdXK6R/4IPxRPFOqmbewXiOFMMNET8qs1W7nyF1E
-         EAMd4NEWbORgexSiBqTKoVaLFkG3A/KWYULVybGDQLBYGD5YWDHsMlq+DYQlieeqtjhL
-         /smkP+xrJ/sxW6kd5QAblLfFlQozB/gldFM58rXIwvA0+GoKYjBoowx1r8PfPDj8W8Ej
-         q605WDT2UKFVivG8fETp5qr7EtPTKdZbk/OWwTBmdCEYH7O2JMdSgX3HzqIwft41YnW1
-         b7QA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqTVjYKiKwrXhLfVZy5ml9hxiO82ioSG5xxCUmrsC+btVEm3BXk4UnW91di6yVFLiVtjSda7KYFv9GcLFokN6p6pGdA1id+5JSt7ZB
-X-Gm-Message-State: AOJu0Yy+cCGU507m+LYmbwwaVzMv3792q5EC0wWbiTDocOlyIUMlFIdo
-	N4S+l0RLxf2Ug77wdF8wc1wQKtp5rqeAghnS7XVbm6wbTKxwRMyb9VIr195f1lE+GsysXjuUCRy
-	t9dlWwKsn9l57D7tXCg==
-X-Google-Smtp-Source: AGHT+IEx3+U3ZkvA7CMIoEjRZ4BxjgN2Bf0euNJuMc/TelI5R1HUUjVY1E3oCM0wKQAMuhyiSiaKXwm0TBtkioIO
+        d=1e100.net; s=20230601; t=1723573680; x=1724178480;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FUwl2486l/jeLoGKzs9tmDqeNS+tAHZe3YD3ALXm7s=;
+        b=AodvZQzX9JaC/pnlquQtYqDMZhKwtNRjgdjjCFt+WjrK17r0FiNJnVsEKuNez4R7JP
+         vC05jDCjjQiwWSODau2M2AdQgY6ArHtWoG8/yWM761SN27qD1hfraBs52suzIlMe39fU
+         SgOk4uEV7PfCz6b2z4OHWgBw+TNJDwrd+KaGN9co53Ndrq+/eTUR/FVOMRlVxjwVArye
+         29EY7yhm8KAODoEyhTb/dNK8QHCsmHxuocQgr9N7M5xpA/za71nmuwxAHd0HnKCxskYn
+         mkOOCiAMDtxjvw9XbeVaaDdsSrG37p7UPMWs3t5Z9N+PK+iBhVMvMO6ZxwBSY/4oCNtc
+         wfKw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2zTSFWtn6HXNOgdwuqMJkRepuMxpfNKylF1qxDd8rj7apS/0HFer2XZqn7pXfAac+O0fOCzmeoWT6P+q7/Q85W4WaWLMGwI2BdnOC
+X-Gm-Message-State: AOJu0YwEQ0NnV+hi/RAHHOGI4ci81dGOgvw9c3XXmnuFaiwUcPUmQR2F
+	p4XUrnH7D/cChPZjQ17Jx3Y6hSjIkijlBJnibd1RG5QQX303lk3pDv9NPbw9HEh0GWLUMUcfxbs
+	CRHBPh0mKxY1lwyD7OA==
+X-Google-Smtp-Source: AGHT+IEtLel87VI5FBoqzbu00ocynCKeHOTMNEky1uO+1XuJvYBO+DGemsm7Z+Cht2r0k2SIU65ZGd3kOoHSPEw8
 X-Received: from manojvishy.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:413f])
- (user=manojvishy job=sendgmr) by 2002:a05:690c:3183:b0:6aa:4e07:ad70 with
- SMTP id 00721157ae682-6ac9736421emr4847b3.2.1723573675642; Tue, 13 Aug 2024
- 11:27:55 -0700 (PDT)
-Date: Tue, 13 Aug 2024 18:27:42 +0000
+ (user=manojvishy job=sendgmr) by 2002:a25:a223:0:b0:e0b:f1fd:1375 with SMTP
+ id 3f1490d57ef6-e1155bafbf9mr618276.10.1723573679918; Tue, 13 Aug 2024
+ 11:27:59 -0700 (PDT)
+Date: Tue, 13 Aug 2024 18:27:43 +0000
+In-Reply-To: <20240813182747.1770032-1-manojvishy@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240813182747.1770032-1-manojvishy@google.com>
 X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-Message-ID: <20240813182747.1770032-1-manojvishy@google.com>
-Subject: [PATCH v1 0/5] IDPF Virtchnl fixes
+Message-ID: <20240813182747.1770032-2-manojvishy@google.com>
+Subject: [PATCH v1 1/5] idpf: address an rtnl lock splat in tx timeout
+ recovery path
 From: Manoj Vishwanathan <manojvishy@google.com>
 To: Tony Nguyen <anthony.l.nguyen@intel.com>, 
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>, "David S. Miller" <davem@davemloft.net>, 
@@ -81,40 +85,51 @@ Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Manoj Vishwanathan <manojvishy@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-This patch series is to enhance IDPF virtchnl error reporting and some
-minor fixes to the locking sequence in virtchnl message handling
-we encountered while testing.
-Also includes a minor clean up with regards to warning we encountered
-in controlq section of IDPF.
+Adopt the same pattern as in other places in the code to take the rtnl
+lock during hard resets.
+Tested the patch by injecting tx timeout in IDPF , observe that idpf
+recovers and IDPF comes back reachable
 
-The issue we had here was a virtchnl processing delay leading to the
-"xn->salt" mismatch, transaction timeout and connection not recovering.
-This was due to default CPU bounded kworker workqueue for virtchnl message
-processing being starved by aggressive userspace load causing the
-virtchnl processing to be delayed and causing a transaction timeout.
-The reason the virtchnl process kworker was stalled as it
-was bound to CPU0 by default and there was immense IRQ traffic to CPU0.
-All of the above with an aggressive user space process on the same core
-lead to the change from Marco Leogrande to convert the idpf workqueues
-to unbound.
+Without this patch causes there is a splat:
+[  270.145214] WARNING: CPU:  PID:  at net/sched/sch_generic.c:534 dev_watchdog
 
+Signed-off-by: Manoj Vishwanathan <manojvishy@google.com>
+---
+ drivers/net/ethernet/intel/idpf/idpf_txrx.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-Manoj Vishwanathan (3):
-  idpf: address an rtnl lock splat in tx timeout recovery path
-  idpf: Acquire the lock before accessing the xn->salt
-  idpf: more info during virtchnl transaction time out
-
-Marco Leogrande (1):
-  idpf: convert workqueues to unbound
-
-Willem de Bruijn (1):
-  idpf: warn on possible ctlq overflow
-
- drivers/net/ethernet/intel/idpf/idpf_main.c   | 15 ++++++++-----
- drivers/net/ethernet/intel/idpf/idpf_txrx.c   | 14 ++++++++++++-
- .../net/ethernet/intel/idpf/idpf_virtchnl.c   | 21 ++++++++++++++-----
- 3 files changed, 39 insertions(+), 11 deletions(-)
-
+diff --git a/drivers/net/ethernet/intel/idpf/idpf_txrx.c b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+index af2879f03b8d..3c01be90fa75 100644
+--- a/drivers/net/ethernet/intel/idpf/idpf_txrx.c
++++ b/drivers/net/ethernet/intel/idpf/idpf_txrx.c
+@@ -4328,14 +4328,26 @@ int idpf_vport_intr_init(struct idpf_vport *vport)
+ {
+ 	char *int_name;
+ 	int err;
++	bool hr_reset_in_prog;
+ 
+ 	err = idpf_vport_intr_init_vec_idx(vport);
+ 	if (err)
+ 		return err;
+ 
+ 	idpf_vport_intr_map_vector_to_qs(vport);
++	/**
++	 * If we're in normal up path, the stack already takes the
++	 * rtnl_lock for us, however, if we're doing up as a part of a
++	 * hard reset, we'll need to take the lock ourself before
++	 * touching the netdev.
++	 */
++	hr_reset_in_prog = test_bit(IDPF_HR_RESET_IN_PROG,
++				    vport->adapter->flags);
++	if (hr_reset_in_prog)
++		rtnl_lock();
+ 	idpf_vport_intr_napi_add_all(vport);
+-
++	if (hr_reset_in_prog)
++		rtnl_unlock();
+ 	err = vport->adapter->dev_ops.reg_ops.intr_reg_init(vport);
+ 	if (err)
+ 		goto unroll_vectors_alloc;
 -- 
 2.46.0.76.ge559c4bf1a-goog
 
