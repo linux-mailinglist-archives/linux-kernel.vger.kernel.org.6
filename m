@@ -1,286 +1,242 @@
-Return-Path: <linux-kernel+bounces-285636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F61E9510B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:41:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A839510BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEDE01F24403
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:41:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930181F243BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA611AD3FF;
-	Tue, 13 Aug 2024 23:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2F81AD3EF;
+	Tue, 13 Aug 2024 23:46:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWVkqTdb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2ZTeVl1n"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F35B1AC450;
-	Tue, 13 Aug 2024 23:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B46383BF;
+	Tue, 13 Aug 2024 23:46:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723592480; cv=none; b=STJ+acLik5A2TQqp4C2haEDPHe7+FG9XiX7hGzlwpJ0TKnTruSwsL8bdun6o1LDRjRDsfNsN6/vqth/pIargDKLF4ApWta2jil7rzX/Emx2BWEvViGcE0BEx3QWp96t5jcZ/ByaaMYnkVB9A2BrvqTyIXlp5cWaX9VfdGeKyq6c=
+	t=1723592767; cv=none; b=peIppLUwa+SBw2VgzcX+UFn99Pm3lsAn+BFHWSbVbVF7yiY4DxVSpyvjgqxe+CyCcFpOq+IKKCOaJBILnKFMJnotIgsciaUlnE2+B3f+nzqIIaieRVwNYl+eDx2jqp/cu4sZJ1YO4I7OrtbNkk1qKkPVAYXjeNIpxMWhMHk/1dU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723592480; c=relaxed/simple;
-	bh=9+G8X6mu1em8ktbp6Mkpzmj/jz1vEg2OnZe0C/AQ+Fs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uQwtQ0qjmRi1JvyNi1fM1ShTiikcsULN3IMiaD8N3+fqN53a6O+9JVKcxjabTMQAqL1AcfQXdFyOp6mY/7OSGWMeN9q6kMqObVMoQWFtVc1lK3GYtZ782pVJsh/NDvKGbZdagxUkXBc1C9FJWkbhzRZeWKHfd+BmQxnxe83Z2nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWVkqTdb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF4AC4AF0C;
-	Tue, 13 Aug 2024 23:41:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723592479;
-	bh=9+G8X6mu1em8ktbp6Mkpzmj/jz1vEg2OnZe0C/AQ+Fs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hWVkqTdbezOB1fC6mLqI9EYI/y+hWCfl/aPkhCTYAdixhFhYX0oNEGOmxGOtu8P+k
-	 rcwlFEg3haECU0ou5Y4nhw2xI2drYKu9OuhbIqO2nTFhWo3qUaZovyI2zaP6vLvnk9
-	 W09TBJS4bBLNfgrPpAara+eEYXpG7lKVDvgkTwyhtOyRscvd93etRAfERjTtgiHCJH
-	 ojdrauKu2l6CFJ0HRMLQSRmghejAGjSeUgw6Y784lryQkUPPwla28nylVoX8xoGbRr
-	 vlXXjGZsj9xDmPJFlhXPTUbL2YZp5Sl2qlGl3cVJm/QpBIYl0bV15wyY6i6Fee1M0M
-	 erhCnxFkXw+Fw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	KP Singh <kpsingh@kernel.org>,
-	Song Liu <song@kernel.org>,
-	bpf@vger.kernel.org,
-	Stephane Eranian <eranian@google.com>
-Subject: [PATCH v2 2/2] perf tools: Print lost samples due to BPF filter
-Date: Tue, 13 Aug 2024 16:41:17 -0700
-Message-ID: <20240813234117.2265235-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
-In-Reply-To: <20240813234117.2265235-1-namhyung@kernel.org>
-References: <20240813234117.2265235-1-namhyung@kernel.org>
+	s=arc-20240116; t=1723592767; c=relaxed/simple;
+	bh=SHgY4ZvnWkFc93CY6rQuMpZOg5xNuwIcczixIIZwUis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fm+W3Zp3rf4zpSzHKIfhMgzJVRWacDVw80CpGl6UU7GIqDoLN/86h4iX8UelNXxoUP+zSyAdf1VzLJo1TBDJdy6xVnN3ihBSpEXTh+rOywB0gU2Yu2jjH7nV67QaekH5FLTA5jn8rw2jDeWr/ZFhf5XX5AKlI3bvK48wt3PaEi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2ZTeVl1n; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=btvoCIHjpMVaBKfPYLfJYOWHcXgBOeBZSXsRuU6oyxo=; b=2ZTeVl1nNyBkwimbRyXw0IBhgm
+	wG48wQMzJjVYoWaclTlRSp8ooSuX1D+uuSx81NOkFpLcPG7S6uMxIxRNDfAvMQ1aGwYVNb8r4HXUo
+	pjYocvWZEVvsL20WKpLG1rwmCDpNO5+A9Ex0tmOiCKZBfTUWoep88gurhldDm+kgWq4AkExJ+nUZU
+	Q2V1HgsM4pf5r3HG2RjH3dVMlZPkB9QsymsFQkDHbJhHz0EgHxUwe7wRWQKGi4m65Ovkzq0MbpRKY
+	X9bhe2L0n+dljceBTRMSzdbl0NSpfhKhV+B1fImnZDz7JEbDDNmiR+xfzjJH3/k3WAMyIAfYtqNhG
+	DZ0XLwQw==;
+Received: from [50.53.9.16] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1se1Cy-00000005DRu-0WM0;
+	Tue, 13 Aug 2024 23:45:46 +0000
+Message-ID: <227f9190-e065-462e-9a25-0ebd5e3dc955@infradead.org>
+Date: Tue, 13 Aug 2024 16:45:42 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/7] Docs/admin-guide/mm/workingset_report: document
+ sysfs and memcg interfaces
+To: Yuanchu Xie <yuanchu@google.com>, David Hildenbrand <david@redhat.com>,
+ "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+ Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>,
+ Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ Gregory Price <gregory.price@memverge.com>, Huang Ying
+ <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Lance Yang <ioworker0@gmail.com>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
+ David Rientjes <rientjes@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner
+ <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>,
+ Yosry Ahmed <yosryahmed@google.com>, Matthew Wilcox <willy@infradead.org>,
+ Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>,
+ Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
+ Abel Wu <wuyun.abel@bytedance.com>,
+ "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20240813165619.748102-1-yuanchu@google.com>
+ <20240813165619.748102-8-yuanchu@google.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240813165619.748102-8-yuanchu@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Print the actual dropped sample count in the event stat.
+Hi,
 
-  $ sudo perf record -o- -e cycles --filter 'period < 10000' \
-      -e instructions --filter 'ip > 0x8000000000000000' perf test -w noploop | \
-      perf report --stat -i-
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.058 MB - ]
+On 8/13/24 9:56 AM, Yuanchu Xie wrote:
+> Add workingset reporting documentation for better discoverability of
+> its sysfs and memcg interfaces. Also document the required kernel
+> config to enable workingset reporting.
+> 
+> Change-Id: Ib9dfc9004473baa6ef26ca7277d220b6199517de
+> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
+> ---
+>  Documentation/admin-guide/mm/index.rst        |   1 +
+>  .../admin-guide/mm/workingset_report.rst      | 105 ++++++++++++++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
+> 
 
-  Aggregated stats:
-                 TOTAL events:        469
-                  MMAP events:        268  (57.1%)
-                  COMM events:          2  ( 0.4%)
-                  EXIT events:          1  ( 0.2%)
-                SAMPLE events:         16  ( 3.4%)
-                 MMAP2 events:         22  ( 4.7%)
-          LOST_SAMPLES events:          2  ( 0.4%)
-               KSYMBOL events:         89  (19.0%)
-             BPF_EVENT events:         39  ( 8.3%)
-                  ATTR events:          2  ( 0.4%)
-        FINISHED_ROUND events:          1  ( 0.2%)
-              ID_INDEX events:          1  ( 0.2%)
-            THREAD_MAP events:          1  ( 0.2%)
-               CPU_MAP events:          1  ( 0.2%)
-          EVENT_UPDATE events:          2  ( 0.4%)
-             TIME_CONV events:          1  ( 0.2%)
-               FEATURE events:         20  ( 4.3%)
-         FINISHED_INIT events:          1  ( 0.2%)
-  cycles stats:
-                SAMPLE events:          2
-    LOST_SAMPLES (BPF) events:       4010
-  instructions stats:
-                SAMPLE events:         14
-    LOST_SAMPLES (BPF) events:       3990
+> diff --git a/Documentation/admin-guide/mm/workingset_report.rst b/Documentation/admin-guide/mm/workingset_report.rst
+> new file mode 100644
+> index 000000000000..ddcc0c33a8df
+> --- /dev/null
+> +++ b/Documentation/admin-guide/mm/workingset_report.rst
+> @@ -0,0 +1,105 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=================
+> +Workingset Report
+> +=================
+> +Workingset report provides a view of memory coldness in user-defined
+> +time intervals, i.e. X bytes are Y milliseconds cold. It breaks down
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/builtin-report.c    |  9 +++++++--
- tools/perf/ui/stdio/hist.c     |  4 ++--
- tools/perf/util/events_stats.h | 15 ++++++++++++++-
- tools/perf/util/hist.c         | 19 +++++++++++++++----
- tools/perf/util/hist.h         |  1 +
- tools/perf/util/machine.c      |  5 +++--
- tools/perf/util/session.c      |  5 +++--
- 7 files changed, 45 insertions(+), 13 deletions(-)
+                   e.g., X bytes are Y milliseconds cold.
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 1643113616f4..c304d9b06190 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -795,8 +795,13 @@ static int count_lost_samples_event(const struct perf_tool *tool,
- 
- 	evsel = evlist__id2evsel(rep->session->evlist, sample->id);
- 	if (evsel) {
--		hists__inc_nr_lost_samples(evsel__hists(evsel),
--					   event->lost_samples.lost);
-+		struct hists *hists = evsel__hists(evsel);
-+		u32 count = event->lost_samples.lost;
-+
-+		if (event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_BPF)
-+			hists__inc_nr_dropped_samples(hists, count);
-+		else
-+			hists__inc_nr_lost_samples(hists, count);
- 	}
- 	return 0;
- }
-diff --git a/tools/perf/ui/stdio/hist.c b/tools/perf/ui/stdio/hist.c
-index 9372e8904d22..74b2c619c56c 100644
---- a/tools/perf/ui/stdio/hist.c
-+++ b/tools/perf/ui/stdio/hist.c
-@@ -913,11 +913,11 @@ size_t events_stats__fprintf(struct events_stats *stats, FILE *fp)
- 			continue;
- 
- 		if (i && total) {
--			ret += fprintf(fp, "%16s events: %10d  (%4.1f%%)\n",
-+			ret += fprintf(fp, "%20s events: %10d  (%4.1f%%)\n",
- 				       name, stats->nr_events[i],
- 				       100.0 * stats->nr_events[i] / total);
- 		} else {
--			ret += fprintf(fp, "%16s events: %10d\n",
-+			ret += fprintf(fp, "%20s events: %10d\n",
- 				       name, stats->nr_events[i]);
- 		}
- 	}
-diff --git a/tools/perf/util/events_stats.h b/tools/perf/util/events_stats.h
-index f43e5b1a366a..eabd7913c309 100644
---- a/tools/perf/util/events_stats.h
-+++ b/tools/perf/util/events_stats.h
-@@ -18,7 +18,18 @@
-  * PERF_RECORD_LOST_SAMPLES event. The number of lost-samples events is stored
-  * in .nr_events[PERF_RECORD_LOST_SAMPLES] while total_lost_samples tells
-  * exactly how many samples the kernel in fact dropped, i.e. it is the sum of
-- * all struct perf_record_lost_samples.lost fields reported.
-+ * all struct perf_record_lost_samples.lost fields reported without setting the
-+ * misc field in the header.
-+ *
-+ * The BPF program can discard samples according to the filter expressions given
-+ * by the user.  This number is kept in a BPF map and dumped at the end of perf
-+ * record in a PERF_RECORD_LOST_SAMPLES event.  To differentiate it from other
-+ * lost samples, perf tools sets PERF_RECORD_MISC_LOST_SAMPLES_BPF flag in the
-+ * header.misc field.  The number of dropped-samples events is stored in
-+ * .nr_events[PERF_RECORD_LOST_SAMPLES] while total_dropped_samples tells
-+ * exactly how many samples the BPF program in fact dropped, i.e. it is the sum
-+ * of all struct perf_record_lost_samples.lost fields reported with the misc
-+ * field set in the header.
-  *
-  * The total_period is needed because by default auto-freq is used, so
-  * multiplying nr_events[PERF_EVENT_SAMPLE] by a frequency isn't possible to get
-@@ -28,6 +39,7 @@
- struct events_stats {
- 	u64 total_lost;
- 	u64 total_lost_samples;
-+	u64 total_dropped_samples;
- 	u64 total_aux_lost;
- 	u64 total_aux_partial;
- 	u64 total_aux_collision;
-@@ -48,6 +60,7 @@ struct hists_stats {
- 	u32 nr_samples;
- 	u32 nr_non_filtered_samples;
- 	u32 nr_lost_samples;
-+	u32 nr_dropped_samples;
- };
- 
- void events_stats__inc(struct events_stats *stats, u32 type);
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 0f554febf9a1..29cbbd2c7d6f 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -2380,6 +2380,11 @@ void hists__inc_nr_lost_samples(struct hists *hists, u32 lost)
- 	hists->stats.nr_lost_samples += lost;
- }
- 
-+void hists__inc_nr_dropped_samples(struct hists *hists, u32 lost)
-+{
-+	hists->stats.nr_dropped_samples += lost;
-+}
-+
- static struct hist_entry *hists__add_dummy_entry(struct hists *hists,
- 						 struct hist_entry *pair)
- {
-@@ -2724,18 +2729,24 @@ size_t evlist__fprintf_nr_events(struct evlist *evlist, FILE *fp)
- 
- 	evlist__for_each_entry(evlist, pos) {
- 		struct hists *hists = evsel__hists(pos);
-+		u64 total_samples = hists->stats.nr_samples;
-+
-+		total_samples += hists->stats.nr_lost_samples;
-+		total_samples += hists->stats.nr_dropped_samples;
- 
--		if (symbol_conf.skip_empty && !hists->stats.nr_samples &&
--		    !hists->stats.nr_lost_samples)
-+		if (symbol_conf.skip_empty && total_samples == 0)
- 			continue;
- 
- 		ret += fprintf(fp, "%s stats:\n", evsel__name(pos));
- 		if (hists->stats.nr_samples)
--			ret += fprintf(fp, "%16s events: %10d\n",
-+			ret += fprintf(fp, "%20s events: %10d\n",
- 				       "SAMPLE", hists->stats.nr_samples);
- 		if (hists->stats.nr_lost_samples)
--			ret += fprintf(fp, "%16s events: %10d\n",
-+			ret += fprintf(fp, "%20s events: %10d\n",
- 				       "LOST_SAMPLES", hists->stats.nr_lost_samples);
-+		if (hists->stats.nr_dropped_samples)
-+			ret += fprintf(fp, "%20s events: %10d\n",
-+				       "LOST_SAMPLES (BPF)", hists->stats.nr_dropped_samples);
- 	}
- 
- 	return ret;
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 30c13fc8cbe4..4ea247e54fb6 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -371,6 +371,7 @@ void hists__inc_stats(struct hists *hists, struct hist_entry *h);
- void hists__inc_nr_events(struct hists *hists);
- void hists__inc_nr_samples(struct hists *hists, bool filtered);
- void hists__inc_nr_lost_samples(struct hists *hists, u32 lost);
-+void hists__inc_nr_dropped_samples(struct hists *hists, u32 lost);
- 
- size_t hists__fprintf(struct hists *hists, bool show_header, int max_rows,
- 		      int max_cols, float min_pcnt, FILE *fp,
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index c08774d06d14..00a49d0744fc 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -642,8 +642,9 @@ int machine__process_lost_event(struct machine *machine __maybe_unused,
- int machine__process_lost_samples_event(struct machine *machine __maybe_unused,
- 					union perf_event *event, struct perf_sample *sample)
- {
--	dump_printf(": id:%" PRIu64 ": lost samples :%" PRI_lu64 "\n",
--		    sample->id, event->lost_samples.lost);
-+	dump_printf(": id:%" PRIu64 ": lost samples :%" PRI_lu64 "%s\n",
-+		    sample->id, event->lost_samples.lost,
-+		    event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_BPF ? " (BPF)" : "");
- 	return 0;
- }
- 
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index d2bd563119bc..774eb3382000 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -1290,8 +1290,9 @@ static int machines__deliver_event(struct machines *machines,
- 			evlist->stats.total_lost += event->lost.lost;
- 		return tool->lost(tool, event, sample, machine);
- 	case PERF_RECORD_LOST_SAMPLES:
--		if (tool->lost_samples == perf_event__process_lost_samples &&
--		    !(event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_BPF))
-+		if (event->header.misc & PERF_RECORD_MISC_LOST_SAMPLES_BPF)
-+			evlist->stats.total_dropped_samples += event->lost_samples.lost;
-+		else if (tool->lost_samples == perf_event__process_lost_samples)
- 			evlist->stats.total_lost_samples += event->lost_samples.lost;
- 		return tool->lost_samples(tool, event, sample, machine);
- 	case PERF_RECORD_READ:
+> +the user pages in the system per-NUMA node, per-memcg, for both
+> +anonymous and file pages into histograms that look like:
+> +::
+> +
+> +    1000 anon=137368 file=24530
+> +    20000 anon=34342 file=0
+> +    30000 anon=353232 file=333608
+> +    40000 anon=407198 file=206052
+> +    9223372036854775807 anon=4925624 file=892892
+> +
+> +The workingset reports can be used to drive proactive reclaim, by
+> +identifying the number of cold bytes in a memcg, then writing to
+> +``memory.reclaim``.
+> +
+> +Quick start
+> +===========
+> +Build the kernel with the following configurations. The report relies
+> +on Multi-gen LRU for page coldness.
+> +
+> +* ``CONFIG_LRU_GEN=y``
+> +* ``CONFIG_LRU_GEN_ENABLED=y``
+> +* ``CONFIG_WORKINGSET_REPORT=y``
+> +
+> +Optionally, the aging kernel daemon can be enabled with the following
+> +configuration.
+> +* ``CONFIG_WORKINGSET_REPORT_AGING=y``
+> +
+> +Sysfs interfaces
+> +================
+> +``/sys/devices/system/node/nodeX/workingset_report/page_age`` provides
+> +a per-node page age histogram, showing an aggregate of the node's lruvecs.
+> +Reading this file causes a hierarchical aging of all lruvecs, scanning
+> +pages and creates a new Multi-gen LRU generation in each lruvec.
+> +For example:
+> +::
+> +
+> +    1000 anon=0 file=0
+> +    2000 anon=0 file=0
+> +    100000 anon=5533696 file=5566464
+> +    18446744073709551615 anon=0 file=0
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/page_age_intervals``
+> +is a comma separated list of time in milliseconds that configures what
+
+        comma-separated
+
+> +the page age histogram uses for aggregation. For the above histogram,
+> +the intervals are:
+> +::
+
+I guess just change the "are:" to "are::" and change the line that only
+contains "::" to a blank line.  Otherwise there is a warning:
+
+Documentation/admin-guide/mm/workingset_report.rst:54: ERROR: Unexpected indentation.
+
+
+> +    1000,2000,100000
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/refresh_interval``
+> +defines the amount of time the report is valid for in milliseconds.
+> +When a report is still valid, reading the ``page_age`` file shows
+> +the existing valid report, instead of generating a new one.
+> +
+> +``/sys/devices/system/node/nodeX/workingset_report/report_threshold``
+> +specifies how often the userspace agent can be notified for node
+> +memory pressure, in milliseconds. When a node reaches its low
+> +watermarks and wakes up kswapd, programs waiting on ``page_age`` are
+> +woken up so they can read the histogram and make policy decisions.
+> +
+> +Memcg interface
+> +===============
+> +While ``page_age_interval`` is defined per-node in sysfs, ``page_age``,
+> +``refresh_interval`` and ``report_threshold`` are available per-memcg.
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.page_age``
+> +The memcg equivalent of the sysfs workingset page age histogram
+> +breaks down the workingset of this memcg and its children into
+> +page age intervals. Each node is prefixed with a node header and
+> +a newline. Non-proactive direct reclaim on this memcg can also
+> +wake up userspace agents that are waiting on this file.
+> +e.g.
+
+   E.g.
+
+> +::
+> +
+> +    N0
+> +    1000 anon=0 file=0
+> +    2000 anon=0 file=0
+> +    3000 anon=0 file=0
+> +    4000 anon=0 file=0
+> +    5000 anon=0 file=0
+> +    18446744073709551615 anon=0 file=0
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.refresh_interval``
+> +The memcg equivalent of the sysfs refresh interval. A per-node
+> +number of how much time a page age histogram is valid for, in
+> +milliseconds.
+> +e.g.
+
+   E.g.
+
+> +::
+> +
+> +    echo N0=2000 > memory.workingset.refresh_interval
+> +
+> +``/sys/fs/cgroup/.../memory.workingset.report_threshold``
+> +The memcg equivalent of the sysfs report threshold. A per-node
+> +number of how often userspace agent waiting on the page age
+> +histogram can be woken up, in milliseconds.
+> +e.g.
+
+   E.g.
+
+> +::
+> +
+> +    echo N0=1000 > memory.workingset.report_threshold
+
 -- 
-2.46.0.76.ge559c4bf1a-goog
-
+~Randy
 
