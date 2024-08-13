@@ -1,49 +1,74 @@
-Return-Path: <linux-kernel+bounces-284654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7732A9503A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:30:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EC749503B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9F031C22712
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:30:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF1B41C21D67
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F3061991A4;
-	Tue, 13 Aug 2024 11:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOCT/6Ks"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FD8199221;
+	Tue, 13 Aug 2024 11:31:57 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA85518B480;
-	Tue, 13 Aug 2024 11:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C100186E37;
+	Tue, 13 Aug 2024 11:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723548630; cv=none; b=OJ7feyqhrIAuwkZAB0cVOvAi8VJ+FiFR08CZwRDqYftLJEDAlpICBiDhtKifFfVjp2Qvk5fxdl3f2+M6gohbfjm4SHsLLLM4e9sExrb4dG7S248GvPTIM0QUk40K23bBuKnSRwsbUnOA9r3bLIAbRCPajk0BCdS2bJu/qBzRAwI=
+	t=1723548717; cv=none; b=snCLzz9qlO7XLOxWHJRj4a0cOm5YFa5vgbWsfPrA9xz6z2YYMJg0pKFxyKhr/P++5ceGnHogcyxNH9WXmicNs+W7ZQVeICDwSXxuili8OR1unGDhxjRZAezynSIr+388iAnEAPYc4MagbH+yvDcTl8HdNZiftRJdTpFQLdWf20M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723548630; c=relaxed/simple;
-	bh=kiwXUxfjx4OtcKC14SZI8xUFCU5QGPX4eXEN8CbXRLM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=sShtepDCZRwFfuBZ0rmg1akSWDaMsw0J9jjFZhJYEB2qTteieBBeu1AP1a/Fg5V/xbAKthCALi1npdWnBa3+McaKs4afDvyKily+28coPyNZUiAk3Vc5/aJa8/FP7VzCkjNLpDcj1TSBwtKrRwOTjOhT6Fbl3L6yJaf/m3ps1t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOCT/6Ks; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C097C4AF0B;
-	Tue, 13 Aug 2024 11:30:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723548630;
-	bh=kiwXUxfjx4OtcKC14SZI8xUFCU5QGPX4eXEN8CbXRLM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HOCT/6Ks9SESeseIvikOwerpDR78YS4ROZoV5WqO9XHA9EokNr5d3KulKwHsxH9Vm
-	 +lIwOH4EXJkWrf+/cmvX6AX2jhSiOdHyFtxIhtTjGxLxx/CHYhCPLesXAMmh7ucSmg
-	 gAZmQt7mDq6wbgHQDvtGGfhyQS3bXxrouzAsn5uE/G/dKD5EfQIixWoUDsKucnupEp
-	 0JLll8NdhvHt6P+8nyURKE5n9Qc9DbH/xtBpYT5vVjYk8Ys9fakAj1q97Hy8w1MEjO
-	 3gkVR+z+iXhQQBTr9RlOzQcj9ip7YOiAkqP5153xDUJ3Rb+QC/xbOiqgLD7FECOA49
-	 qv3Z8t3nAEMAA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EB83823327;
-	Tue, 13 Aug 2024 11:30:30 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1723548717; c=relaxed/simple;
+	bh=zrjblW4tZJGZS02KKKIzCi8Z3jnHJwQ/UCFoFzmkP0o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=o5hZcfn8kkWNxyZ8mTy2bbh4sUjlKyQjyfjHMfbQP04TJTsp3fNAeAZHowr6+YnA8Pkq5hQ6w1A+DCjlbkE76XbNBBQiwsd8es6vlRKx8MI5KET4+krP/4RK15PuRswri85/8w04PUvoYSrNsiKIsE1Pfrls5FwBa6vOo7/WtxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 988baac0596711efa216b1d71e6e1362-20240813
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
+	DN_TRUSTED, SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS
+	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, CIE_UNKNOWN
+	GTI_FG_BS, GTI_C_CI, GTI_FG_IT, GTI_RG_INFO, GTI_C_PP
+	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+	ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:9b98c4d9-6d46-41ef-b372-383cf6360baa,IP:20,
+	URL:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:35
+X-CID-INFO: VERSION:1.1.38,REQID:9b98c4d9-6d46-41ef-b372-383cf6360baa,IP:20,UR
+	L:0,TC:0,Content:-5,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:35
+X-CID-META: VersionHash:82c5f88,CLOUDID:4482d10b48165bdb2116332a68ef9560,BulkI
+	D:240804171638GUAHFMRT,BulkQuantity:2,Recheck:0,SF:66|23|17|19|43|74|200|1
+	02,TC:nil,Content:0,EDM:5,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:n
+	il,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_ULS
+X-UUID: 988baac0596711efa216b1d71e6e1362-20240813
+X-User: zhanghao1@kylinos.cn
+Received: from pve.sebastian [(118.250.0.224)] by mailgw.kylinos.cn
+	(envelope-from <zhanghao1@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1628703220; Tue, 13 Aug 2024 19:31:34 +0800
+From: zhanghao <zhanghao1@kylinos.cn>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zhanghao <zhanghao1@kylinos.cn>,
+	syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com
+Subject: [PATCH] bcachefs: Add check for the size of combined key and value
+Date: Tue, 13 Aug 2024 19:31:19 +0800
+Message-Id: <20240813113119.114475-1-zhanghao1@kylinos.cn>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,48 +76,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v3 net] net: mana: Fix doorbell out of order violation and
- avoid unnecessary doorbell rings
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172354862926.1604273.6519840713233454447.git-patchwork-notify@kernel.org>
-Date: Tue, 13 Aug 2024 11:30:29 +0000
-References: <1723219138-29887-1-git-send-email-longli@linuxonhyperv.com>
-In-Reply-To: <1723219138-29887-1-git-send-email-longli@linuxonhyperv.com>
-To: Long Li <longli@linuxonhyperv.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
- decui@microsoft.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, shradhagupta@linux.microsoft.com,
- horms@kernel.org, kotaranov@microsoft.com, schakrabarti@linux.microsoft.com,
- erick.archer@outlook.com, paulros@microsoft.com,
- linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
- longli@microsoft.com, stable@vger.kernel.org
 
-Hello:
+The bkey_val_bytes() gets the number of bytes of value
+stored in bkey->u64s.If u64s is smaller than BKEY_U64s,
+it causes a negative number to be converted to an
+unsigned number.
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+Reported-by: syzbot+1a11884d9c9f1353942d@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=1a11884d9c9f1353942d
+Fixes: ba81523eaac3 ("bcachefs: Split out bkey_types.h")
+Link: https://lore.kernel.org/all/00000000000025321f061d7b62ff@google.com/T/
 
-On Fri,  9 Aug 2024 08:58:58 -0700 you wrote:
-> From: Long Li <longli@microsoft.com>
-> 
-> After napi_complete_done() is called when NAPI is polling in the current
-> process context, another NAPI may be scheduled and start running in
-> softirq on another CPU and may ring the doorbell before the current CPU
-> does. When combined with unnecessary rings when there is no need to arm
-> the CQ, it triggers error paths in the hardware.
-> 
-> [...]
+Signed-off-by: zhanghao <zhanghao1@kylinos.cn>
+---
+ fs/bcachefs/bkey_types.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Here is the summary with links:
-  - [v3,net] net: mana: Fix doorbell out of order violation and avoid unnecessary doorbell rings
-    https://git.kernel.org/netdev/net/c/58a63729c957
+diff --git a/fs/bcachefs/bkey_types.h b/fs/bcachefs/bkey_types.h
+index c9ae9e42b385..60fa5af93032 100644
+--- a/fs/bcachefs/bkey_types.h
++++ b/fs/bcachefs/bkey_types.h
+@@ -21,6 +21,8 @@ static inline struct bkey_i *bkey_next(struct bkey_i *k)
+ 
+ static inline size_t bkey_val_bytes(const struct bkey *k)
+ {
++	if (k->u64s < BKEY_U64s)
++		return 0;
+ 	return bkey_val_u64s(k) * sizeof(u64);
+ }
+ 
 
-You are awesome, thank you!
+base-commit: d74da846046aeec9333e802f5918bd3261fb5509
+prerequisite-patch-id: 1ec511753fc7aab35ba0e982013cf91ba4403da6
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+2.39.2
 
 
