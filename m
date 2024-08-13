@@ -1,215 +1,159 @@
-Return-Path: <linux-kernel+bounces-284291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3057C94FF6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:13:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1B794FF6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 624301C22448
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E9711C20E70
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4080D13A409;
-	Tue, 13 Aug 2024 08:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="TFRY1IKm"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F345D13A894;
+	Tue, 13 Aug 2024 08:14:26 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6EC137930
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD0F3DBBF
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723536812; cv=none; b=c7IeiOyD/d2ciMXFD8/f9hqs7clXZJPDQeYkGmfL39U/QoGM0H8iL5S1zJtbqJAc/jC5o/gU21WD9ps2B+/stUGBQa0DjuOmwNHUc+THWrSQwfO2o8tKY87CchJnDQGygsTsfKFqmF6M/6l3ND0lBEsTQw1G8Hxpvhu8TxKdjHg=
+	t=1723536866; cv=none; b=AAuukuHC0G/MN1V/0IU1uZtP7lnpwi3Ac46PCLSpj/G8IQ8LmKvkJZjPasWA1bf/OOodNAyaDctSmO91sOoRkiXnPZmPFzO0RMEL6Ynn97Sz6pacswwCWjmozzw3Gc57EVXxaisIg4Z5ptfsDgzviAnepZQ3BlzBPwfK6CDelPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723536812; c=relaxed/simple;
-	bh=KI/vFrEyEg5EFIYU/iBV01qglnGbaphkmdipf2rX5jo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gbHBNuMEHSvd+ReOzrpZwAd24jdN4/pm8C5OhzRFWX6jWqin1zJTLcj0KLiQho4Uez5TKIvH7dCWBmysE578+Uzkh08Knew18ppb/Jijdp2rKb+yiXFDiSU8FDNWek4YFWLbP91ldY6DW9nm2UL+UtaXDgQUSJtgMMmI4CdDNWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=TFRY1IKm; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc60c3ead4so34457285ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:13:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1723536810; x=1724141610; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MPwCQlZV6XnO0rlNbX/WsNAZ1kHHhsOKatz4Qfacl5c=;
-        b=TFRY1IKmKrfmoV4Uj0/os8oGPK3sHfDnk8E8Fd03OrC1ijShxK8oKI62ZpDeYcyrm0
-         mXLM4JTJWJMgd0zDrhx/PlXg9TVKCvAvLVmmTCaFJa8KRX/Y9b9cv/bdWMhZ0PLoLpAe
-         qsxh9XUcBC+wZJrSS0uqtKk5uOeUjkeYKqAZ7v/dpNyvtEHYI5RDg4N7A7csKBY/CukU
-         YVahVS/n2+IR99uN/rRy0MgHBhjivRKgdhcLhyMZyQi8F7D/mvSuDI2pEUXUBqQaExPB
-         3duQaqJLCsfgPf9qrUeSco61AsWS9a/TRFlAV+EfEYBmZHldbzNkyYyE2hneg2K4wSkm
-         sbyA==
+	s=arc-20240116; t=1723536866; c=relaxed/simple;
+	bh=FomqjS+QYX3iOXUn9eK+j8WW5o5T9/81V/pSIQuT21E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GMR3fohPbynDA5UXoE4b6BjAVnOfIRdsWqgEdUYfxX/iNg0VltUs7lSSZZGEDbVHrK6LfDkNPktAVZXlsfUZTYDdMB03+7CyNAOmQJCombeOnYPf2k+Yh9AHOQjSVVIPZqeuBFfopnabOI1UiTZriXIu4WKtF6Mr+Z1RtLPbgak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-824c925d120so118569239f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:14:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723536810; x=1724141610;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MPwCQlZV6XnO0rlNbX/WsNAZ1kHHhsOKatz4Qfacl5c=;
-        b=j3QKpa9Lsoxgw2Z/2Ia8oHtBXiniVLYuBd0Zfd0uEWM6Ld8Rwu1sAucaD7F3sq0MKs
-         J+aZqs1P+ZxNXJ5zdQJsMaRwWo+UOiuFZMUDAxUz8X2CWF6NZ25ZVjYKytuXswMbNKIW
-         PtfFt6dMBUzV5tweFES3uEBtHtFH7PJ49L4zKz/kzhi/APzaddx5pizeSYi7RLRH1W4/
-         qTGVn6994SvWPZJEhJl5QPtxVXAzz7zc5QHPyLA6xykp/+5DNjX7JL0pNM4VMU3d7hEK
-         44FOhM66dJcxy+yUgZh7K/qXa/ujj+nLVviiPcoveyVgTMUY99s0NMXY9pRDxV5vocT+
-         Tn8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXpxQAoUPbe6lU15KXpW3sSnDJ3o0hnfLoLTD3p2E114LMSRq8xouMbi47BItBQNw9I1L+tYCDdyNz0F8XRCXxCkLGHEZRDiOf5bCoX
-X-Gm-Message-State: AOJu0YzHmyMxypxSvXnHG4Iw5gwJmW2ru4wFm5zolZSQs7OjbXbcKfTZ
-	qgBA8xEsQj4vMJ56b3JnX8jjM0cwKu6qL35SXgOr/NCY1ZQSJ3u0PeC25cmxI6Q=
-X-Google-Smtp-Source: AGHT+IFGyOzsELsbEN5dq5CT9Zf/5PMWDUy7RodzkZu3Mk7cSMnkmo/3cHgdPDhbNHigLjznXjqnXw==
-X-Received: by 2002:a17:902:d487:b0:1ff:39d7:a1b0 with SMTP id d9443c01a7336-201ca1ca41bmr30756345ad.50.1723536809857;
-        Tue, 13 Aug 2024 01:13:29 -0700 (PDT)
-Received: from hsinchu35-syssw01.internal.sifive.com (59-124-168-89.hinet-ip.hinet.net. [59.124.168.89])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1e29afsm8289885ad.309.2024.08.13.01.13.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 01:13:29 -0700 (PDT)
-From: Nick Hu <nick.hu@sifive.com>
-To: anup@brainfault.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	linux-pm@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	greentime.hu@sifive.com,
-	zong.li@sifive.com
-Cc: Nick Hu <nick.hu@sifive.com>,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH] cpuidle: riscv-sbi: Allow cpuidle pd used by other devices
-Date: Tue, 13 Aug 2024 16:13:24 +0800
-Message-Id: <20240813081324.3205944-1-nick.hu@sifive.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1723536864; x=1724141664;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GhJ6QKXDPYK+XhTmeEEM6fSsRRxyeZJ5BW8H6AN89BE=;
+        b=a9wbQIITbH8JVlsfEvVr3j55SUXzkwCY7Abqy7lWI4s9R5km+04O33oJOnLxZLxLwG
+         2q9/sx2qFD/U4yyiCTQydK3CDO26gkiXF6x5IA8JgOOSkvjP/d4Du9welFHc40GnRA3Y
+         7MFjybjGpzFb0pVDdiwzkU22ZxWBJ082Q/EbzPFjSgmYO4rZhAF03V1Rr1rCswkLVskf
+         ZO4FN/3skxuQE1xFGMGsysNkZvcB9ku0xD8qtATneFB9H/1Cc3Ah74cggZy3gtP10Ddy
+         NCnU+XdR1n5a+YyYQJ9r1t7HgO9X8hDVUaJsTfRuUcyq9P0IuwVzBS+VBk6pvnHWw2d4
+         5MZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW8dhsWPHM4OE5UPIq8KKTQwmUhtZ2fPKjyCOg2CR+YvLo2upGzAzGTSKaxQZ2z2VO7XMVA5cAqFijRgxbWkqXkDBE37pKuHULzNOuV
+X-Gm-Message-State: AOJu0Yz35HP9hhjKDAkLDX0drcoMIzU+eEZoAflsQwwQ2a9yzRAnPaEq
+	zwDXAxhQZx2jiQiWpIKGS3Gbfr40y/IzZx6YQWlMkCrL/7FN7ex1Cz4NAPvxrJGeS2kGJdyjOhq
+	QQKPl38nu8nO7tA5nlazT/klxxMBl5HbRJiZY7SVu0OQivkoITmWyxE0=
+X-Google-Smtp-Source: AGHT+IHnDCAEuCrVymfF3bPssNiX8CsFNfas8Pk3Gce4Fl3ARBep0rxDoWq497+aQo6UosyZPAeLQBW1Bbnf9pEQTZ2UTvH/ARaR
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:218f:b0:397:9426:e7fc with SMTP id
+ e9e14a558f8ab-39c476a6361mr2018065ab.0.1723536864005; Tue, 13 Aug 2024
+ 01:14:24 -0700 (PDT)
+Date: Tue, 13 Aug 2024 01:14:23 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008964f1061f8c32b6@google.com>
+Subject: [syzbot] [iomap?] [xfs?] WARNING in iomap_write_begin
+From: syzbot <syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com>
+To: brauner@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-To prevent the probe of consumer devices being deferred, create the
-platform devices for each pd node under '/cpus/power-domains' and move the
-driver initailization to the arch_initcall.
-The consumer devices that inside the cpu/cluster power domain may register
-the genpd notifier where their power domains are point to the pd nodes
-under '/cpus/power-domains'. If the cpuidle.off==1, the genpd notifier
-will fail due to sbi_cpuidle_pd_allow_domain_state is not set. We also
-need the sbi_cpuidle_cpuhp_up/down to invoke the callbacks. Therefore,
-add a cpuidle_disabled() check before registering the cpuidle driver to
-address the issue.
+Hello,
 
-Signed-off-by: Nick Hu <nick.hu@sifive.com>
-Link: https://lore.kernel.org/lkml/20240226065113.1690534-1-nick.hu@sifive.com/
-Suggested-by: Anup Patel <apatel@ventanamicro.com>
+syzbot found the following issue on:
+
+HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel...
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10b70c5d980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9358cc4a2e37fd30
+dashboard link: https://syzkaller.appspot.com/bug?extid=296b1c84b9cbf306e5a0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139519d9980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13deb97d980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e6062f24de48/disk-ee9a43b7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5d3ec6153dbd/vmlinux-ee9a43b7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/98dbabb91d02/bzImage-ee9a43b7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/4d05d229907e/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+296b1c84b9cbf306e5a0@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 __iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+WARNING: CPU: 1 PID: 5222 at fs/iomap/buffered-io.c:727 iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Modules linked in:
+CPU: 1 UID: 0 PID: 5222 Comm: syz-executor247 Not tainted 6.11.0-rc2-syzkaller-00111-gee9a43b7cfe2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
+RIP: 0010:__iomap_write_begin fs/iomap/buffered-io.c:727 [inline]
+RIP: 0010:iomap_write_begin+0x13f0/0x16f0 fs/iomap/buffered-io.c:830
+Code: b5 0d 01 90 48 c7 c7 a0 54 fa 8b e8 da 19 2b ff 90 0f 0b 90 90 e9 74 ef ff ff e8 5b f1 68 ff e9 4b f6 ff ff e8 51 f1 68 ff 90 <0f> 0b 90 bb fb ff ff ff e9 e9 fe ff ff e8 3e f1 68 ff 90 0f 0b 90
+RSP: 0018:ffffc90003a577c0 EFLAGS: 00010293
+RAX: ffffffff822a858f RBX: 0000000000000080 RCX: ffff888023080000
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000000
+RBP: ffffc90003a57a50 R08: ffffffff822a8294 R09: 1ffff11029263f69
+R10: dffffc0000000000 R11: ffffed1029263f6a R12: ffffc90003a579b0
+R13: ffffc90003a57bf0 R14: ffffc90003a57990 R15: 0000000000000800
+FS:  000055555f8fc480(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020001000 CR3: 0000000079b06000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ iomap_unshare_iter fs/iomap/buffered-io.c:1351 [inline]
+ iomap_file_unshare+0x460/0x780 fs/iomap/buffered-io.c:1391
+ xfs_reflink_unshare+0x173/0x5f0 fs/xfs/xfs_reflink.c:1681
+ xfs_file_fallocate+0x6be/0xa50 fs/xfs/xfs_file.c:997
+ vfs_fallocate+0x553/0x6c0 fs/open.c:334
+ ksys_fallocate fs/open.c:357 [inline]
+ __do_sys_fallocate fs/open.c:365 [inline]
+ __se_sys_fallocate fs/open.c:363 [inline]
+ __x64_sys_fallocate+0xbd/0x110 fs/open.c:363
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2d716a6899
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd620c3d18 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f2d716a6899
+RDX: 0000000000000000 RSI: 0000000000000040 RDI: 0000000000000006
+RBP: 0000000000000000 R08: 0700000000000000 R09: 0700000000000000
+R10: 0000000000002000 R11: 0000000000000246 R12: 00007ffd620c3d60
+R13: 00007ffd620c3fe8 R14: 431bde82d7b634db R15: 00007f2d716ef03b
+ </TASK>
+
+
 ---
- drivers/cpuidle/cpuidle-riscv-sbi.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/cpuidle/cpuidle-riscv-sbi.c b/drivers/cpuidle/cpuidle-riscv-sbi.c
-index a6e123dfe394..d6b01fc64f94 100644
---- a/drivers/cpuidle/cpuidle-riscv-sbi.c
-+++ b/drivers/cpuidle/cpuidle-riscv-sbi.c
-@@ -16,6 +16,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_platform.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-@@ -25,6 +26,7 @@
- #include <asm/smp.h>
- #include <asm/suspend.h>
- 
-+#include "cpuidle.h"
- #include "dt_idle_states.h"
- #include "dt_idle_genpd.h"
- 
-@@ -336,6 +338,9 @@ static int sbi_cpuidle_init_cpu(struct device *dev, int cpu)
- 		return ret;
- 	}
- 
-+	if (cpuidle_disabled())
-+		return 0;
-+
- 	ret = cpuidle_register(drv, NULL);
- 	if (ret)
- 		goto deinit;
-@@ -380,20 +385,26 @@ static int sbi_cpuidle_pd_power_off(struct generic_pm_domain *pd)
- struct sbi_pd_provider {
- 	struct list_head link;
- 	struct device_node *node;
-+	struct platform_device *pdev;
- };
- 
- static LIST_HEAD(sbi_pd_providers);
- 
- static int sbi_pd_init(struct device_node *np)
- {
-+	struct platform_device *pdev;
- 	struct generic_pm_domain *pd;
- 	struct sbi_pd_provider *pd_provider;
- 	struct dev_power_governor *pd_gov;
- 	int ret = -ENOMEM;
- 
-+	pdev = of_platform_device_create(np, np->name, NULL);
-+	if (!pdev)
-+		goto out;
-+
- 	pd = dt_idle_pd_alloc(np, sbi_dt_parse_state_node);
- 	if (!pd)
--		goto out;
-+		goto free_pdev;
- 
- 	pd_provider = kzalloc(sizeof(*pd_provider), GFP_KERNEL);
- 	if (!pd_provider)
-@@ -419,6 +430,7 @@ static int sbi_pd_init(struct device_node *np)
- 		goto remove_pd;
- 
- 	pd_provider->node = of_node_get(np);
-+	pd_provider->pdev = pdev;
- 	list_add(&pd_provider->link, &sbi_pd_providers);
- 
- 	pr_debug("init PM domain %s\n", pd->name);
-@@ -430,6 +442,8 @@ static int sbi_pd_init(struct device_node *np)
- 	kfree(pd_provider);
- free_pd:
- 	dt_idle_pd_free(pd);
-+free_pdev:
-+	of_platform_device_destroy(&pdev->dev, NULL);
- out:
- 	pr_err("failed to init PM domain ret=%d %pOF\n", ret, np);
- 	return ret;
-@@ -447,6 +461,7 @@ static void sbi_pd_remove(void)
- 		if (!IS_ERR(genpd))
- 			kfree(genpd);
- 
-+		of_platform_device_destroy(&pd_provider->pdev->dev, NULL);
- 		of_node_put(pd_provider->node);
- 		list_del(&pd_provider->link);
- 		kfree(pd_provider);
-@@ -548,7 +563,10 @@ static int sbi_cpuidle_probe(struct platform_device *pdev)
- 	/* Setup CPU hotplut notifiers */
- 	sbi_idle_init_cpuhp();
- 
--	pr_info("idle driver registered for all CPUs\n");
-+	if (cpuidle_disabled())
-+		pr_info("cpuidle is disabled\n");
-+	else
-+		pr_info("idle driver registered for all CPUs\n");
- 
- 	return 0;
- 
-@@ -592,4 +610,4 @@ static int __init sbi_cpuidle_init(void)
- 
- 	return 0;
- }
--device_initcall(sbi_cpuidle_init);
-+arch_initcall(sbi_cpuidle_init);
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
