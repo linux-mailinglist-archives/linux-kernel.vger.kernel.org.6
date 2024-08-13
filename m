@@ -1,170 +1,109 @@
-Return-Path: <linux-kernel+bounces-284670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63AF19503E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:38:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30AFC9503E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D2DB2556E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:38:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E136F2832E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F771991AD;
-	Tue, 13 Aug 2024 11:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEF21991A4;
+	Tue, 13 Aug 2024 11:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zca166UX"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QON+yy9e"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E9170A2B;
-	Tue, 13 Aug 2024 11:37:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078861990C7
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549072; cv=none; b=VziQWm4gd8Dt+KkHBJhNx11DcskznT0yOJV4UsSTauDjaz1wJ+oNVNVRquoUmvb/pSIi01Sspe0l8V5vd4XkKmpUlPKiFp3WkkjjIjLAzHcRrHzqfSM143YkdjZ9DHDq//ADwAX5rKgXFUHbZLsY/VAN0T6am408hyBWtRcuFzI=
+	t=1723549207; cv=none; b=EYcEQSsACbc7pbsUYC7X3lMf192tPsrlVQKvYqxF+PcQWBnlCuaq6xEmVzeT9q8hLiWKtBgYg8Apm320C9uZLYhNefK2jJoXH7OzBX75O0NUugYk99XHRMLg1FeLI/qenIR08BIA5B5+IVHJoSIvkn8XnsSRle2AKJWGa5rygIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549072; c=relaxed/simple;
-	bh=PJWrgO5y3JhQ6pVObk1LLEY6Ws3Bwk+wMwfRzlsIZFA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fa7scv6IPuV1kBgJ6OlI8DRuKi5DUhm5kVwxkRohV/c4mtMaRKEPdrLsfBXc0pLtz1Ma21izxzcTnGdA7j3+VF9OZL4zG5H1TXXupCfOJfo7Io/cdFhOIU9d53iq212vz8kdMgmp4Kn08Zy5+NncbEq4Pwp9s85EsttyiMd0xwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zca166UX; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1723549060; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=2I77YcUJn4wmoyRvCpJBoQDGsqzU26+ytOtN/lJqgpI=;
-	b=Zca166UXp0gsLxPfMParM7J41ZaWOC1flL67+gzZ/V2W+yGvBXNsPBKbq5Yu6aQOvlggmCGXFkuiOKWCdRKS3O+Nf3kwjgz3cH9Lsda8Aq0JLIc8rOhO5TwXmRS2earhdcN93g20SEwBwUrWRixtnKizp/ng0Mtr7PTtL3kp7/E=
-Received: from 30.221.149.156(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WCp.8vm_1723549058)
-          by smtp.aliyun-inc.com;
-          Tue, 13 Aug 2024 19:37:39 +0800
-Message-ID: <b4b49770-2042-4ee8-a1e8-1501cdd807cf@linux.alibaba.com>
-Date: Tue, 13 Aug 2024 19:37:38 +0800
+	s=arc-20240116; t=1723549207; c=relaxed/simple;
+	bh=MBj/IPaPFxPxj6fGkyjj4CXV6ibq84TQK25CrkFxYGY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IZFgclYJTTQl26OX1d6RjYIOLcEZihhbdFXaVQuU0TH+XsiYxlQQsMHD+mFt1UtKKDq2DjcOXoV9Qt4wHct5t4XrN5NuhI+IfqLU7U8GIge9ZR5kYDbw4nn1vR6Qd2T+sjqKVcBzBMYwf+1bA2ti5AIkZQh0/iqNl2aKOYG15SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QON+yy9e; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4929992a5e2so1451825137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723549205; x=1724154005; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n3iM3JlQoj/JH14LpprHDFDJxwBHakdfeCSkNH9T7Is=;
+        b=QON+yy9eiDSdZPPU7aQArQYPXJt2coBmv0VhQpiT9RuX3lyDNoCTaFo9kgKZZG9JE1
+         Q2TQrHOatuV0upLFpOCg1XqIvH7m/I6b/cXyIXDqQBAnFhTJxAPyjiZXayWEuhHMT3ww
+         JDK2U83p4iDbp5J0mdLpx4Uo4b9c3QsOuh2dMmOFN7kgqe9VqKv1fVkhsT4kDhz0hUL1
+         LaCNobzyWeK9FVN8j4AawarFXvICF0tAwOhCIXkUwU+pEoUCUA3J7Qu+Y2VXtoKcWzd+
+         PI4DOKlYhJb1AdXr+KlkWQb9xFrZPPJxNsXJED0+u08t3tTvsam6shVGqFkIhtp+DyUv
+         Fqsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723549205; x=1724154005;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n3iM3JlQoj/JH14LpprHDFDJxwBHakdfeCSkNH9T7Is=;
+        b=hr5GHsO6sqQE7Uf46i79ShWSZQr6nuPf3HFfEi3pybaaY4yevx9RbW0QSdj9+s/M8W
+         zLAybG3sDPQ9380YgdubyKZGXnSzrLVurvKuZBWOeQ2D3TFj348WeAc1owXUaNZ+7lbn
+         3rhmm77PA3tEaTSsuytU8V2BPwfXh7fp3ptefGKLsAe2hmCgkg3AqpFKs7T2Q8feDEq+
+         M6/KmHJY9cCNXeBNFfE95hOgoIpgADdweyd8fMfIRcXpexJ+v3hTZTp7RNDHy+hwXP7L
+         SeAZguQrp3CI8IrYY+cCjaVv2s/x/m0lVw+0Oi7Ahb7RlYZIACu0U4+xFOT/TVMt6FgT
+         VUhw==
+X-Gm-Message-State: AOJu0YxHNMcZxkABa/zjpNEVcbAJbLJ9bwWF53rad7Op2B0rJmoiMrI3
+	xgYUMqK6I++3OwXMWtMgIgf1BiQVQSB8S90+4CFMvTUh3w0ItqtECVU9GWbC0US16nQNPPsu+ph
+	yvnnDNpTPv+RjUfKeqgyAZLl0q19V4Zy0FQJVwQ==
+X-Google-Smtp-Source: AGHT+IH/Ayw4yCzrsfeWtAnc+zMsCpOBkgCk6tCYIHz/eJrBynFShqqkfWUhr9H375g92b5UR5Oi8tTUQgRk6kB2SqA=
+X-Received: by 2002:a67:af11:0:b0:493:31f9:d14a with SMTP id
+ ada2fe7eead31-49743b39179mr3031746137.27.1723549204826; Tue, 13 Aug 2024
+ 04:40:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net,v3] net/smc: prevent NULL pointer dereference in
- txopt_get
-To: Jeongjun Park <aha310510@gmail.com>, wenjia@linux.ibm.com,
- jaka@linux.ibm.com, gbayer@linux.ibm.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com
-Cc: davem@davemloft.net, dust.li@linux.alibaba.com, edumazet@google.com,
- pabeni@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, netdev@vger.kernel.org,
- syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-References: <20240813100722.181250-1-aha310510@gmail.com>
-Content-Language: en-US
-From: "D. Wythe" <alibuda@linux.alibaba.com>
-In-Reply-To: <20240813100722.181250-1-aha310510@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240812133127.865879-1-jens.wiklander@linaro.org> <20240812133127.865879-4-jens.wiklander@linaro.org>
+In-Reply-To: <20240812133127.865879-4-jens.wiklander@linaro.org>
+From: Sumit Garg <sumit.garg@linaro.org>
+Date: Tue, 13 Aug 2024 17:09:53 +0530
+Message-ID: <CAFA6WYNwsgLD4bYRbPPG4MqshP8cmvZ5YdvgnX6Zsoeez8b-bw@mail.gmail.com>
+Subject: Re: [PATCH v8 3/4] tee: add tee_device_set_dev_groups()
+To: Jens Wiklander <jens.wiklander@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, 
+	op-tee@lists.trustedfirmware.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Jerome Forissier <jerome.forissier@linaro.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Bart Van Assche <bvanassche@acm.org>, 
+	Randy Dunlap <rdunlap@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Manuel Traut <manut@mecka.net>, Mikko Rapeli <mikko.rapeli@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi Jens,
 
-
-On 8/13/24 6:07 PM, Jeongjun Park wrote:
-> Since smc_inet6_prot does not initialize ipv6_pinfo_offset, inet6_create()
-> copies an incorrect address value, sk + 0 (offset), to inet_sk(sk)->pinet6.
+On Mon, 12 Aug 2024 at 19:01, Jens Wiklander <jens.wiklander@linaro.org> wrote:
 >
-> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock practically
-> point to the same address, when smc_create_clcsk() stores the newly
-> created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6 is corrupted
-> into clcsock. This causes NULL pointer dereference and various other
-> memory corruptions.
+> Add tee_device_set_dev_groups() to TEE drivers to supply driver specific
+> attribute groups. The class specific attributes are from now on added
+> via the tee_class, which currently only consist of implementation_id.
 >
-> To solve this, we need to add a smc6_sock structure for ipv6_pinfo_offset
-> initialization and modify the smc_sock structure.
->
-> Reported-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-> Tested-by: syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com
-> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+> Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 > ---
->   net/smc/smc.h      | 19 ++++++++++---------
->   net/smc/smc_inet.c | 24 +++++++++++++++---------
->   2 files changed, 25 insertions(+), 18 deletions(-)
->
-> diff --git a/net/smc/smc.h b/net/smc/smc.h
-> index 34b781e463c4..f4d9338b5ed5 100644
-> --- a/net/smc/smc.h
-> +++ b/net/smc/smc.h
-> @@ -284,15 +284,6 @@ struct smc_connection {
->   
->   struct smc_sock {				/* smc sock container */
->   	struct sock		sk;
-> -	struct socket		*clcsock;	/* internal tcp socket */
-> -	void			(*clcsk_state_change)(struct sock *sk);
-> -						/* original stat_change fct. */
-> -	void			(*clcsk_data_ready)(struct sock *sk);
-> -						/* original data_ready fct. */
-> -	void			(*clcsk_write_space)(struct sock *sk);
-> -						/* original write_space fct. */
-> -	void			(*clcsk_error_report)(struct sock *sk);
-> -						/* original error_report fct. */
->   	struct smc_connection	conn;		/* smc connection */
->   	struct smc_sock		*listen_smc;	/* listen parent */
->   	struct work_struct	connect_work;	/* handle non-blocking connect*/
-> @@ -325,6 +316,16 @@ struct smc_sock {				/* smc sock container */
->   						/* protects clcsock of a listen
->   						 * socket
->   						 * */
-> +	struct socket		*clcsock;	/* internal tcp socket */
-> +	void			(*clcsk_state_change)(struct sock *sk);
-> +						/* original stat_change fct. */
-> +	void			(*clcsk_data_ready)(struct sock *sk);
-> +						/* original data_ready fct. */
-> +	void			(*clcsk_write_space)(struct sock *sk);
-> +						/* original write_space fct. */
-> +	void			(*clcsk_error_report)(struct sock *sk);
-> +						/* original error_report fct. */
-> +
->   };
->   
->   #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-> diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-> index bece346dd8e9..25f34fd65e8d 100644
-> --- a/net/smc/smc_inet.c
-> +++ b/net/smc/smc_inet.c
-> @@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
->   };
->   
->   #if IS_ENABLED(CONFIG_IPV6)
-> +struct smc6_sock {
-> +	struct smc_sock smc;
-> +	struct ipv6_pinfo np;
-> +};
+>  drivers/misc/rpmb-core.c | 155 +++++++++++++++++++--------------------
 
-I prefer to:
+These changes don't seem to belong to this patch but rather patch #1.
 
-struct ipv6_pinfo inet6;
+>  drivers/tee/tee_core.c   |  19 +++--
 
-> +
->   static struct proto smc_inet6_prot = {
-> -	.name		= "INET6_SMC",
-> -	.owner		= THIS_MODULE,
-> -	.init		= smc_inet_init_sock,
-> -	.hash		= smc_hash_sk,
-> -	.unhash		= smc_unhash_sk,
-> -	.release_cb	= smc_release_cb,
-> -	.obj_size	= sizeof(struct smc_sock),
-> -	.h.smc_hash	= &smc_v6_hashinfo,
-> -	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
-> +	.name				= "INET6_SMC",
-> +	.owner				= THIS_MODULE,
-> +	.init				= smc_inet_init_sock,
-> +	.hash				= smc_hash_sk,
-> +	.unhash				= smc_unhash_sk,
-> +	.release_cb			= smc_release_cb,
-> +	.obj_size			= sizeof(struct smc6_sock),
-> +	.h.smc_hash			= &smc_v6_hashinfo,
-> +	.slab_flags			= SLAB_TYPESAFE_BY_RCU,
-> +	.ipv6_pinfo_offset		= offsetof(struct smc6_sock, np),
->   };
->   
->   static const struct proto_ops smc_inet6_stream_ops = {
-> --
+>  include/linux/rpmb.h     |  53 +++++--------
 
+Ditto here.
+
+-Sumit
 
