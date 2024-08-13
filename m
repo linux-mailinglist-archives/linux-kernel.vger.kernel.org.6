@@ -1,162 +1,162 @@
-Return-Path: <linux-kernel+bounces-284707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BCA950450
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:00:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E22CC950454
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:02:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7023D1F24144
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:00:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F752287B42
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7403A199230;
-	Tue, 13 Aug 2024 12:00:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914B91991DF;
+	Tue, 13 Aug 2024 12:02:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VFz1nV5c"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gYeUvquH"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F7F2262B;
-	Tue, 13 Aug 2024 12:00:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633B62262B;
+	Tue, 13 Aug 2024 12:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550432; cv=none; b=VHj4e5vzpu+fHozxI9R+8RXubleqvg8BMRSrNwsfzf3Bnw/x40LVLYzxYUoEM2dwSxil4WNl0d3hMsfCZy0Ndg5EzqhvrpRq1R3kgF2VEofE8F7QlEkmJH7zlsFC6zeKa7NVFNcT40Ms81dgthztnYdQH1paRXMYU83etSlkp8c=
+	t=1723550523; cv=none; b=JIK+hn+hNSuUCDSasOLZ1QBg7Pd1Qycn2sQiQNvnhXRnJlMObOzkzn4MaAc//pBC8BVrT7s1H/5Oo3qLAYPECfVO0LEtQs9ymmtnb930B7VUbm+tnxmiAUnqWfdsxJ0CZZm5EuRVV8eznZRBzYvl6QpN+l4os9a8TXwd5Bf9ohA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550432; c=relaxed/simple;
-	bh=P2P+IPK8OxVaTbE+VHwERMLUnrzgIBP1sGkCKZ2Re0A=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qb/tIJZlSjnsqfQQmTojZNcvLxvco3ZDF/8ZMCe+/3NgB2S0Spfm9yHij88QxVNbWy64ouYSI12nX0V9X7z5+sXK6Zx2LvmtzILrVmm4EMMXOPJsJUgeE6DOf7M0H+5mE1YDk/fCL0v8dgoBWpBEu+xc2ox0Hc/fMH3i6HDrlpo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VFz1nV5c; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D55Q64022221;
-	Tue, 13 Aug 2024 12:00:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=fOmxoSF/1d1Ywg0TZfCBTQ
-	F5UTf7/BQy0/K6Nqag4VI=; b=VFz1nV5ca3/z6CIzbOavUpfBpm77MwYS4RP0Km
-	LKgmiiIJvsNreQIMuuN5Hn7lvMO/+Nd9k6oud7CQ/DT99iJjsELqeRuq10CV9fVJ
-	xlWfyNNSCmVUQBMNUnPHA6wLbMlY1oYa22g6omwX1LqfFeQPjXkks8IRT7+k5NwR
-	MrNs45pkZx5O0oe1RJZ7SWmzmqCuaZCgpgYrVqgwIGqkQWw0hta8ZvMcWsrdNaA8
-	PnQrosBXkTPgyHXHJ+i44Wukwhzd1Xi0HO6iWPHlnuDBZ4Nav5Yq7v0jGKN/6XBe
-	JpdSV7CTZtmOw5YK9wKon8h5CLRXOmj9BpQDq3EjQnO8CKrw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7yhu3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:00:26 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DC0Pjs032627
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Aug 2024 12:00:25 GMT
-Received: from hu-c-gdjako-lv.qualcomm.com (10.49.16.6) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 13 Aug 2024 05:00:25 -0700
-From: Georgi Djakov <quic_c_gdjako@quicinc.com>
-To: <andersson@kernel.org>, <quic_mdtipton@quicinc.com>,
-        <quic_viveka@quicinc.com>
-CC: <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
-Date: Tue, 13 Aug 2024 05:00:15 -0700
-Message-ID: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1723550523; c=relaxed/simple;
+	bh=WoxzxQV1ooQd4sb4UGzBvOFbkbnqQDKsPPMquAA7wMk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O6jHdAf3kaCajlOc3ZS7c8rY9M6IAn9s0C3hUpYSf+uotNoXUrUubDjrFnfROjj4/9SvUwQfTiuN+aUMUqJTMy8x5+mwHL9oJZ8Hxjvz3+2XmR/G8QZWms/OLpKChgbsX4JiZ6BQrrtAd9Zf0ygMHGmtrkLLsnFHKzv1CNZszcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gYeUvquH; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6bd777e6623so22924236d6.3;
+        Tue, 13 Aug 2024 05:02:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723550521; x=1724155321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8lKe2IZzXANr7tMnM64bs7C7lJQXJvi3Yh98xyr+R3c=;
+        b=gYeUvquHYNQBpUOsoOkqJcRzAtuBymqC0blwoMv3DIMbE5tUOZSCTSg9wczSFyUJ/o
+         jAkySvXOHverIhdPgpChQmiUsH0mFtCguDqUdzEPQEo5WtKpaAJgujChIv+LhqvDfivT
+         cOAcVKycuS/COd281hAlwsbAn+SUw9ZLlM+Eg9nvcdrCBf9m0up5gOvfymxd3wJ15iNO
+         F5dOUrnmGFne18xXf8dDDbQ7WFje330INo3I6Lq08i0G6MO8k6DZhrOZxoW/MDQVsCMp
+         TyhMUC8aZM+j7P0Ob20cRV5LHrJBje9fZjo+iAgLuku189xsNkA92ZMBQCanZI1uMRfr
+         sk5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723550521; x=1724155321;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8lKe2IZzXANr7tMnM64bs7C7lJQXJvi3Yh98xyr+R3c=;
+        b=mGiNqOtoscoW+OZT8bRJcI1YXppXCvSTOyq/SFfzYv/bCRNfP1Dv3B+aa4Pgru3kZl
+         uZEakReEtlCT2aPHfRY+Z7cBoSZK9fQ2bAFtToFzOtFLbr7JFjaAcT+13XG2kfOoZN97
+         u51i+5EKKRFWbV1ttrxfDe7YycRnRwIhTC/u14uGckyIgXB+MDngJuj9WZG+kW8UTdI8
+         FlSe46oaTK+6INLm4X2NTHx7ACiyvFimvyWPTwta5nm95JfHBdPR+6MbzHAoJH2YnYKr
+         mLhXQMLK/BxeaOatfyEUTFnwWoonVobUSAfMV15TXFWK9kGkPryA+O2sOt6HEIufXFWm
+         bM5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUtrvHkcAY/uk0CeP3Sl27gNIpceWO/MQrNbUsB5GG/nwPGTXZEWvyYBXhvNVXIFGNKp8jqyioWvjcfXDjUoiLJ1du4ifkprouJap8J
+X-Gm-Message-State: AOJu0YxOctsBiGHG0a2i+HwCeZ3R8kgh+zuveYe7enuhltEOgMcBFzvd
+	PehGVhgt7IIl+NT957+KE2qPpMz/8M01Z8t3QV33nlNLEipqQMCc
+X-Google-Smtp-Source: AGHT+IHHvzj09SebJbcuJ/1mNymCt6orZzcJ2wp/qIiGAqZtLn1D+Y2//gKE+pHCoWmXVK8igCX4Fw==
+X-Received: by 2002:a05:6214:5507:b0:6bb:a0f6:8b32 with SMTP id 6a1803df08f44-6bf4f7de658mr32844146d6.33.1723550521072;
+        Tue, 13 Aug 2024 05:02:01 -0700 (PDT)
+Received: from [130.235.83.196] (nieman.control.lth.se. [130.235.83.196])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82e6db59sm33111936d6.143.2024.08.13.05.01.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 05:02:00 -0700 (PDT)
+Message-ID: <6766edb4-2f56-4b52-9e6d-343ae00d6957@gmail.com>
+Date: Tue, 13 Aug 2024 14:01:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6EY5uqp18Z8sonNckYy2CGEkqNJOqTa3
-X-Proofpoint-ORIG-GUID: 6EY5uqp18Z8sonNckYy2CGEkqNJOqTa3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-13_03,2024-08-13_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
- suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=819 mlxscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408130086
+User-Agent: Mozilla Thunderbird
+Subject: Re: XFS mount timeout in linux-6.9.11
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Chandan Babu R <chandan.babu@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+References: <71864473-f0f7-41c3-95f2-c78f6edcfab9@gmail.com>
+ <ZraeRdPmGXpbRM7V@dread.disaster.area>
+ <252d91e2-282e-4af4-b99b-3b8147d98bc3@gmail.com>
+ <ZrfzsIcTX1Qi+IUi@dread.disaster.area>
+ <4697de37-a630-402f-a547-cc4b70de9dc3@gmail.com>
+ <ZrlRggozUT6dJRh+@dread.disaster.area>
+ <6a19bfdf-9503-4c3b-bc5b-192685ec1bdd@gmail.com>
+ <ZrslIPV6/qk6cLVy@dread.disaster.area>
+Content-Language: en-US
+From: Anders Blomdell <anders.blomdell@gmail.com>
+In-Reply-To: <ZrslIPV6/qk6cLVy@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The sdm845 platforms have a hardware issue that requires keeping
-some of the MMNOC GDSCs in SW collapse mode (which is the power-on
-default). But if some driver tries to use these GDSCs and the mode
-is updated because of runtime pm calls, we may get a board hang.
-Introduce a flag to skip any updates to the power collapse settings
-for the impacted GDSCs to avoid unexpected board hangs.
 
-Cc: Mike Tipton <quic_mdtipton@quicinc.com>
-Cc: Vivek Aknurwar <quic_viveka@quicinc.com>
-Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
----
- drivers/clk/qcom/gcc-sdm845.c | 6 +++---
- drivers/clk/qcom/gdsc.c       | 3 +++
- drivers/clk/qcom/gdsc.h       | 1 +
- 3 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index dc3aa7014c3e..019b780e31c8 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3503,7 +3503,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-@@ -3512,7 +3512,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
-@@ -3521,7 +3521,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = VOTABLE,
-+	.flags = VOTABLE | SKIP_SET_COLLAPSE,
- };
- 
- static struct clk_regmap *gcc_sdm670_clocks[] = {
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index fa5fe4c2a2ee..4b83cec9137c 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -121,6 +121,9 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
- 	u32 reg, mask;
- 	int ret;
- 
-+	if (sc->flags & SKIP_SET_COLLAPSE)
-+		return 0;
-+
- 	if (sc->collapse_mask) {
- 		reg = sc->collapse_ctrl;
- 		mask = sc->collapse_mask;
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 1e2779b823d1..6bb7e023a19a 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -68,6 +68,7 @@ struct gdsc {
- #define RETAIN_FF_ENABLE	BIT(7)
- #define NO_RET_PERIPH	BIT(8)
- #define HW_CTRL_TRIGGER	BIT(9)
-+#define SKIP_SET_COLLAPSE	BIT(10)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
+On 2024-08-13 11:19, Dave Chinner wrote:
+> On Mon, Aug 12, 2024 at 03:03:49PM +0200, Anders Blomdell wrote:
+>> On 2024-08-12 02:04, Dave Chinner wrote:
+>>>
+>>> Ok, can you run the same series of commands but this time in another
+>>> shell run this command and leave it running for the entire
+>>> mount/unmount/mount/unmount sequence:
+>>>
+>>> # trace-cmd record -e xfs\* -e printk
+> 
+> [snip location of trace]
+> 
+>>> That will tell me what XFS is doing different at mount time on the
+>>> different kernels.
+>> Looks like a timing issue, a trylock fails and brings about a READ_AHEAD burst.
+> 
+> Not timing - it is definitely a bug in the commit the bisect pointed
+> at.
+> 
+> However, it's almost impossible to actually see until someone or
+> something (the trace) points it out directly.
+> 
+> The trace confirmed what I suspected - the READ_AHEAD stuff you see
+> is an inode btree being walked. I knew that we walk the free inode
+> btrees during mount unless you have a specific feature bit set, but
+> I didn't think your filesystem is new enough to have that feature
+> set according to the xfs_info output.
+> 
+> However, I couldn't work out why the free inode btrees would take
+> that long to walk as the finobt generally tends towards empty on any
+> filesystem that is frequently allocating inodes. The mount time on
+> the old kernel indicates they are pretty much empty, because the
+> mount time is under a second and it's walked all 8 finobts *twice*
+> during mount.
+> 
+> What the trace pointed out was that the finobt walk to calculate
+> AG reserve space wasn't actually walking the finobt - it was walking
+> the inobt. That indexes all allocated inodes, so mount was walking
+> the btrees that index the ~30 million allocated inodes in the
+> filesystem. That takes a lot of IO, and that's the 450s pause
+> to calculate reserves before we run log recovery, and then the
+> second 450s pause occurs after log recovery because we have to
+> recalculate the reserves once all the intents and unlinked inodes
+> have been replayed.
+> 
+>  From that observation, it was just a matter of tracking down the
+> code that is triggering the walk and working out why it was running
+> down the wrong inobt....
+> 
+> In hindsight, this was a wholly avoidable bug - a single patch made
+> two different API modifications that only differed by a single
+> letter, and one of the 23 conversions missed a single letter. If
+> that was two patches - one for the finobt conversion, the second for
+> the inobt conversion, the bug would have been plainly obvious during
+> review....
+> 
+> Anders, can you try the patch below? It should fix your issue.
+Works like a charm! Thanks for the help!
+
+I take it that this patch goes into linux-stable (and linux-next) quite soon!
+
+/Anders
 
