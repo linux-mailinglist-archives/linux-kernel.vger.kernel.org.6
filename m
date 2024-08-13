@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-284341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CC8E950014
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12DF9950016
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:41:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B23631C225E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBE2A28442A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0AD13B797;
-	Tue, 13 Aug 2024 08:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D9E416DEBD;
+	Tue, 13 Aug 2024 08:41:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sctRuWuO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjhJrf/w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85FB13B294
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A285316C854
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538470; cv=none; b=bStFoEEBjRevkLnmL2UObW1iKK50uD5zSw5DRZDaPKwGhbhwdCxpek/UKvAzGocxpm5l+3aL1JFCAbHnb6fuHghO4/jMTm0ytmu46a6ZV6Twsp+NVJAc79juhPWtlS4oUwB+X20Xc7AOlxzBQJHyuwYewneCn0w9BpLgxcw7K9c=
+	t=1723538474; cv=none; b=utpZRPb1bBs6HrLI+mVmabCSg0Me45U1Q8yy9dORz2NDdmjxOcxC7DD4/OvF0Ga+8bPG8pUEXYoH8mWe+VJlVmc1FPw5CymW53kgkoramJjBWyGEK5er2i9n8ufnJIT9geKZ9b8yyquwRElOb5NmWx2dGuKg2WfmP50DZ/GvFP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538470; c=relaxed/simple;
-	bh=lcqEVHRvpSRBTNxWYIoFd8H0J5LADCF1j8AgJLJ7lyU=;
+	s=arc-20240116; t=1723538474; c=relaxed/simple;
+	bh=PQtx1dFIRykqdoAci1ap2Dlk7DGGX895wpZmxxTa/no=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qGAFZiYpUmWF3v6daH8qOipA/aroORZPYiXVVPz1pm96tV22GA8qGAx74sVx6FmvP9OFRbKmdw+1pI1mr2jkUaIHEFbmKOlRdccH01YxdkxMGWbIHUA0vfPSzgZS3D6vtc4IikxUygoDvHHeHR6DSyyVORUjR3POIMhGvIJOJLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sctRuWuO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C85E4C4AF0B;
-	Tue, 13 Aug 2024 08:41:06 +0000 (UTC)
+	 MIME-Version; b=NKZHfAJKRxVc0JLWL2XeEcHH5kQJ08AVhPXiY9PpnClPGCTav/maArmeGlt9ZffR6e/ddxulspeO2GMkYXn9VTzA2Bbg4ch+gpg1mDG5/WuZd72bLhVdCbSYQiJI0c4NhbqOGl95qXidOszRCMUKelPY8fM1lYEWVflNxh2t820=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjhJrf/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2888C4AF10;
+	Tue, 13 Aug 2024 08:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723538470;
-	bh=lcqEVHRvpSRBTNxWYIoFd8H0J5LADCF1j8AgJLJ7lyU=;
+	s=k20201202; t=1723538474;
+	bh=PQtx1dFIRykqdoAci1ap2Dlk7DGGX895wpZmxxTa/no=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sctRuWuOZUMHpgEBqQgzFcyirs9bs/BF2RsAguyaDVXZh8TyHBKHlq0mAx6t/cAQw
-	 stINPQtq33vZoulhTzvNOnn8M4MantaAoEpY3p+JOyQ9F8NZbvsaIlPdr4HXyvUvjk
-	 NPevCP8yIulU0G8VM9YbZ7C1O0x+RO3pN8CgrlQ4u8hctVFYUu9O1Tub2ebG6P+/64
-	 Rdrg6bNJneuMkPj5szU3VOE1WynC3YoCtCzqSx12ZTaNtQA8fRSPtWuSV02P9bX9Yt
-	 ezIXBlQInIGxfpz1NkDMEMPMmeAIqEDGaiB3RXvQKSzASlDi3SrXYdkYgV1kpkMUE2
-	 GQTccEpwQdpuw==
+	b=JjhJrf/wtkBI9UEBsUcawJtJs8gmNmxHrh1Mo480fI0G6gJrj94bzUPkFtEItVqaS
+	 vvk0HHpWOyA7tNNTEQi1OU+L8oYA8et3hJzE0UaFiy78T/w0wveVetYoCybv1xZK62
+	 NzuSeIFYgYQ6JtJxEw3MRxT41R0yHnWLIUbY2OTTnF8YYcp2OAEnS6xAlUbToI8mEI
+	 ot2el35HS7YnXfjX0Jak615XPEbamwZncUhoSUIXXPWDvOhKVojS7FDYeyhsjH78nq
+	 WuhR1Ueh4Scg40xQw0c26/I0EtwDGn1eQe2qGoIibIksi2gBQ+R+qISZyjaFJIxj1N
+	 bcX3wurSiw0Pg==
 From: alexs@kernel.org
 To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Miaohe Lin <linmiaohe@huawei.com>,
@@ -54,9 +54,9 @@ To: Vitaly Wool <vitaly.wool@konsulko.com>,
 	Yosry Ahmed <yosryahmed@google.com>,
 	nphamcs@gmail.com
 Cc: Alex Shi <alexs@kernel.org>
-Subject: [PATCH v6 01/21] mm/zsmalloc: add zpdesc memory descriptor for zswap.zpool
-Date: Tue, 13 Aug 2024 16:45:47 +0800
-Message-ID: <20240813084611.4122571-2-alexs@kernel.org>
+Subject: [PATCH v6 02/21] mm/zsmalloc: use zpdesc in trylock_zspage()/lock_zspage()
+Date: Tue, 13 Aug 2024 16:45:48 +0800
+Message-ID: <20240813084611.4122571-3-alexs@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240813084611.4122571-1-alexs@kernel.org>
 References: <20240813084611.4122571-1-alexs@kernel.org>
@@ -70,186 +70,192 @@ Content-Transfer-Encoding: 8bit
 
 From: Alex Shi <alexs@kernel.org>
 
-The 1st patch introduces new memory decriptor zpdesc and rename
-zspage.first_page to zspage.first_zpdesc, no functional change.
+To use zpdesc in trylock_zspage()/lock_zspage() funcs, we add couple of helpers:
+zpdesc_lock()/zpdesc_unlock()/zpdesc_trylock()/zpdesc_wait_locked() and
+zpdesc_get()/zpdesc_put() for this purpose.
 
-We removed PG_owner_priv_1 since it was moved to zspage after
-commit a41ec880aa7b ("zsmalloc: move huge compressed obj from
-page to zspage").
+Here we use the folio series func in guts for 2 reasons, one zswap.zpool
+only get single page, and use folio could save some compound_head checking;
+two, folio_put could bypass devmap checking that we don't need.
 
-And keep the memcg_data member, since as Yosry pointed out:
-"When the pages are freed, put_page() -> folio_put() -> __folio_put() will call
-mem_cgroup_uncharge(). The latter will call folio_memcg() (which reads
-folio->memcg_data) to figure out if uncharging needs to be done.
-
-There are also other similar code paths that will check
-folio->memcg_data. It is currently expected to be present for all
-folios. So until we have custom code paths per-folio type for
-allocation/freeing/etc, we need to keep folio->memcg_data present and
-properly initialized."
+BTW, thanks Intel LKP found a build warning on the patch.
 
 Originally-by: Hyeonggon Yoo <42.hyeyoo@gmail.com>
 Signed-off-by: Alex Shi <alexs@kernel.org>
 ---
- mm/zpdesc.h   | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++
- mm/zsmalloc.c | 25 +++++++++---------
- 2 files changed, 84 insertions(+), 13 deletions(-)
- create mode 100644 mm/zpdesc.h
+ mm/zpdesc.h   | 30 ++++++++++++++++++++++++
+ mm/zsmalloc.c | 64 ++++++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 73 insertions(+), 21 deletions(-)
 
 diff --git a/mm/zpdesc.h b/mm/zpdesc.h
-new file mode 100644
-index 000000000000..721ef8861131
---- /dev/null
+index 721ef8861131..782b5ad67cda 100644
+--- a/mm/zpdesc.h
 +++ b/mm/zpdesc.h
-@@ -0,0 +1,72 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* zpdesc.h: zswap.zpool memory descriptor
-+ *
-+ * Written by Alex Shi <alexs@kernel.org>
-+ *	      Hyeonggon Yoo <42.hyeyoo@gmail.com>
-+ */
-+#ifndef __MM_ZPDESC_H__
-+#define __MM_ZPDESC_H__
+@@ -69,4 +69,34 @@ static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
+ 	const struct page *:		(const struct zpdesc *)(p),	\
+ 	struct page *:			(struct zpdesc *)(p)))
+ 
++static inline void zpdesc_lock(struct zpdesc *zpdesc)
++{
++	folio_lock(zpdesc_folio(zpdesc));
++}
 +
-+/*
-+ * struct zpdesc -	Memory descriptor for zpool memory, now is for zsmalloc
-+ * @flags:		Page flags, PG_private: identifies the first component page
-+ * @lru:		Indirectly used by page migration
-+ * @mops:		Used by page migration
-+ * @next:		Next zpdesc in a zspage in zsmalloc zpool
-+ * @handle:		For huge zspage in zsmalloc zpool
-+ * @zspage:		Points to the zspage this zpdesc is a part of
-+ * @first_obj_offset:	First object offset in zsmalloc zpool
-+ * @_refcount:		Indirectly use by page migration
-+ * @memcg_data:		Memory Control Group data.
-+ *
-+ * This struct overlays struct page for now. Do not modify without a good
-+ * understanding of the issues.
-+ */
-+struct zpdesc {
-+	unsigned long flags;
-+	struct list_head lru;
-+	struct movable_operations *mops;
-+	union {
-+		/* Next zpdescs in a zspage in zsmalloc zpool */
-+		struct zpdesc *next;
-+		/* For huge zspage in zsmalloc zpool */
-+		unsigned long handle;
-+	};
-+	struct zspage *zspage;
-+	unsigned int first_obj_offset;
-+	atomic_t _refcount;
-+#ifdef CONFIG_MEMCG
-+	unsigned long memcg_data;
-+#endif
-+};
-+#define ZPDESC_MATCH(pg, zp) \
-+	static_assert(offsetof(struct page, pg) == offsetof(struct zpdesc, zp))
++static inline bool zpdesc_trylock(struct zpdesc *zpdesc)
++{
++	return folio_trylock(zpdesc_folio(zpdesc));
++}
 +
-+ZPDESC_MATCH(flags, flags);
-+ZPDESC_MATCH(lru, lru);
-+ZPDESC_MATCH(mapping, mops);
-+ZPDESC_MATCH(index, next);
-+ZPDESC_MATCH(index, handle);
-+ZPDESC_MATCH(private, zspage);
-+ZPDESC_MATCH(page_type, first_obj_offset);
-+ZPDESC_MATCH(_refcount, _refcount);
-+#ifdef CONFIG_MEMCG
-+ZPDESC_MATCH(memcg_data, memcg_data);
-+#endif
-+#undef ZPDESC_MATCH
-+static_assert(sizeof(struct zpdesc) <= sizeof(struct page));
++static inline void zpdesc_unlock(struct zpdesc *zpdesc)
++{
++	folio_unlock(zpdesc_folio(zpdesc));
++}
 +
-+#define zpdesc_page(zp)			(_Generic((zp),			\
-+	const struct zpdesc *:		(const struct page *)(zp),	\
-+	struct zpdesc *:		(struct page *)(zp)))
++static inline void zpdesc_wait_locked(struct zpdesc *zpdesc)
++{
++	folio_wait_locked(zpdesc_folio(zpdesc));
++}
 +
-+/* Using folio conversion to skip compound_head checking */
-+#define zpdesc_folio(zp)		(_Generic((zp),			\
-+	const struct zpdesc *:		(const struct folio *)(zp),	\
-+	struct zpdesc *:		(struct folio *)(zp)))
++static inline void zpdesc_get(struct zpdesc *zpdesc)
++{
++	folio_get(zpdesc_folio(zpdesc));
++}
 +
-+#define page_zpdesc(p)			(_Generic((p),			\
-+	const struct page *:		(const struct zpdesc *)(p),	\
-+	struct page *:			(struct zpdesc *)(p)))
++static inline void zpdesc_put(struct zpdesc *zpdesc)
++{
++	folio_put(zpdesc_folio(zpdesc));
++}
 +
-+#endif
+ #endif
 diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 5d6581ab7c07..30f0a7abbda3 100644
+index 30f0a7abbda3..25c90224f21f 100644
 --- a/mm/zsmalloc.c
 +++ b/mm/zsmalloc.c
-@@ -13,20 +13,18 @@
+@@ -433,13 +433,17 @@ static __maybe_unused int is_first_page(struct page *page)
+ 	return PagePrivate(page);
+ }
  
- /*
-  * Following is how we use various fields and flags of underlying
-- * struct page(s) to form a zspage.
-+ * struct zpdesc(page) to form a zspage.
-  *
-- * Usage of struct page fields:
-- *	page->private: points to zspage
-- *	page->index: links together all component pages of a zspage
-+ * Usage of struct zpdesc fields:
-+ *	zpdesc->zspage: points to zspage
-+ *	zpdesc->next: links together all component pages of a zspage
-  *		For the huge page, this is always 0, so we use this field
-  *		to store handle.
-- *	page->page_type: PG_zsmalloc, lower 16 bit locate the first object
-- *		offset in a subpage of a zspage
-+ *	zpdesc->first_obj_offset: PG_zsmalloc, lower 16 bit locate the first
-+ *		object offset in a subpage of a zspage
-  *
-- * Usage of struct page flags:
-+ * Usage of struct zpdesc(page) flags:
-  *	PG_private: identifies the first component page
-- *	PG_owner_priv_1: identifies the huge component page
-- *
-  */
- 
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-@@ -64,6 +62,7 @@
- #include <linux/pagemap.h>
- #include <linux/fs.h>
- #include <linux/local_lock.h>
-+#include "zpdesc.h"
- 
- #define ZSPAGE_MAGIC	0x58
- 
-@@ -253,7 +252,7 @@ struct zspage {
- 	};
- 	unsigned int inuse;
- 	unsigned int freeobj;
--	struct page *first_page;
-+	struct zpdesc *first_zpdesc;
- 	struct list_head list; /* fullness list */
- 	struct zs_pool *pool;
- 	rwlock_t lock;
-@@ -448,7 +447,7 @@ static inline void mod_zspage_inuse(struct zspage *zspage, int val)
- 
- static inline struct page *get_first_page(struct zspage *zspage)
++static inline bool is_first_zpdesc(struct zpdesc *zpdesc)
++{
++	return PagePrivate(zpdesc_page(zpdesc));
++}
++
+ /* Protected by class->lock */
+ static inline int get_zspage_inuse(struct zspage *zspage)
  {
--	struct page *first_page = zspage->first_page;
-+	struct page *first_page = zpdesc_page(zspage->first_zpdesc);
+ 	return zspage->inuse;
+ }
  
- 	VM_BUG_ON_PAGE(!is_first_page(first_page), first_page);
+-
+ static inline void mod_zspage_inuse(struct zspage *zspage, int val)
+ {
+ 	zspage->inuse += val;
+@@ -453,6 +457,14 @@ static inline struct page *get_first_page(struct zspage *zspage)
  	return first_page;
-@@ -948,7 +947,7 @@ static void create_page_chain(struct size_class *class, struct zspage *zspage,
- 		set_page_private(page, (unsigned long)zspage);
- 		page->index = 0;
- 		if (i == 0) {
--			zspage->first_page = page;
-+			zspage->first_zpdesc = page_zpdesc(page);
- 			SetPagePrivate(page);
- 			if (unlikely(class->objs_per_zspage == 1 &&
- 					class->pages_per_zspage == 1))
-@@ -1324,7 +1323,7 @@ static unsigned long obj_malloc(struct zs_pool *pool,
- 		link->handle = handle | OBJ_ALLOCATED_TAG;
- 	else
- 		/* record handle to page->index */
--		zspage->first_page->index = handle | OBJ_ALLOCATED_TAG;
-+		zspage->first_zpdesc->handle = handle | OBJ_ALLOCATED_TAG;
+ }
  
- 	kunmap_atomic(vaddr);
- 	mod_zspage_inuse(zspage, 1);
++static struct zpdesc *get_first_zpdesc(struct zspage *zspage)
++{
++	struct zpdesc *first_zpdesc = zspage->first_zpdesc;
++
++	VM_BUG_ON_PAGE(!is_first_zpdesc(first_zpdesc), zpdesc_page(first_zpdesc));
++	return first_zpdesc;
++}
++
+ #define FIRST_OBJ_PAGE_TYPE_MASK	0xffff
+ 
+ static inline void reset_first_obj_offset(struct page *page)
+@@ -745,6 +757,16 @@ static struct page *get_next_page(struct page *page)
+ 	return (struct page *)page->index;
+ }
+ 
++static struct zpdesc *get_next_zpdesc(struct zpdesc *zpdesc)
++{
++	struct zspage *zspage = get_zspage(zpdesc_page(zpdesc));
++
++	if (unlikely(ZsHugePage(zspage)))
++		return NULL;
++
++	return zpdesc->next;
++}
++
+ /**
+  * obj_to_location - get (<page>, <obj_idx>) from encoded object value
+  * @obj: the encoded object value
+@@ -815,11 +837,11 @@ static void reset_page(struct page *page)
+ 
+ static int trylock_zspage(struct zspage *zspage)
+ {
+-	struct page *cursor, *fail;
++	struct zpdesc *cursor, *fail;
+ 
+-	for (cursor = get_first_page(zspage); cursor != NULL; cursor =
+-					get_next_page(cursor)) {
+-		if (!trylock_page(cursor)) {
++	for (cursor = get_first_zpdesc(zspage); cursor != NULL; cursor =
++					get_next_zpdesc(cursor)) {
++		if (!zpdesc_trylock(cursor)) {
+ 			fail = cursor;
+ 			goto unlock;
+ 		}
+@@ -827,9 +849,9 @@ static int trylock_zspage(struct zspage *zspage)
+ 
+ 	return 1;
+ unlock:
+-	for (cursor = get_first_page(zspage); cursor != fail; cursor =
+-					get_next_page(cursor))
+-		unlock_page(cursor);
++	for (cursor = get_first_zpdesc(zspage); cursor != fail; cursor =
++					get_next_zpdesc(cursor))
++		zpdesc_unlock(cursor);
+ 
+ 	return 0;
+ }
+@@ -1658,7 +1680,7 @@ static int putback_zspage(struct size_class *class, struct zspage *zspage)
+  */
+ static void lock_zspage(struct zspage *zspage)
+ {
+-	struct page *curr_page, *page;
++	struct zpdesc *curr_zpdesc, *zpdesc;
+ 
+ 	/*
+ 	 * Pages we haven't locked yet can be migrated off the list while we're
+@@ -1670,24 +1692,24 @@ static void lock_zspage(struct zspage *zspage)
+ 	 */
+ 	while (1) {
+ 		migrate_read_lock(zspage);
+-		page = get_first_page(zspage);
+-		if (trylock_page(page))
++		zpdesc = get_first_zpdesc(zspage);
++		if (zpdesc_trylock(zpdesc))
+ 			break;
+-		get_page(page);
++		zpdesc_get(zpdesc);
+ 		migrate_read_unlock(zspage);
+-		wait_on_page_locked(page);
+-		put_page(page);
++		zpdesc_wait_locked(zpdesc);
++		zpdesc_put(zpdesc);
+ 	}
+ 
+-	curr_page = page;
+-	while ((page = get_next_page(curr_page))) {
+-		if (trylock_page(page)) {
+-			curr_page = page;
++	curr_zpdesc = zpdesc;
++	while ((zpdesc = get_next_zpdesc(curr_zpdesc))) {
++		if (zpdesc_trylock(zpdesc)) {
++			curr_zpdesc = zpdesc;
+ 		} else {
+-			get_page(page);
++			zpdesc_get(zpdesc);
+ 			migrate_read_unlock(zspage);
+-			wait_on_page_locked(page);
+-			put_page(page);
++			zpdesc_wait_locked(zpdesc);
++			zpdesc_put(zpdesc);
+ 			migrate_read_lock(zspage);
+ 		}
+ 	}
 -- 
 2.43.0
 
