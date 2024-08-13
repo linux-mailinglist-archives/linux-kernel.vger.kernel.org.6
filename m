@@ -1,257 +1,104 @@
-Return-Path: <linux-kernel+bounces-285109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A19950975
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:52:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A419C950978
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AECD1285055
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:52:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584F1282EFD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758BF1A073C;
-	Tue, 13 Aug 2024 15:52:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2961A072D;
+	Tue, 13 Aug 2024 15:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhsPtjjj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MoslguCC"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0BE4D8DA;
-	Tue, 13 Aug 2024 15:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1984D8DA;
+	Tue, 13 Aug 2024 15:53:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564361; cv=none; b=oxY9XrzeydOaSMxHJfEP1BBOx4QdMuMn3H7QLII40bFrxLhjGqskr2E4kN3tkIgDIUbQBf+j6J4KgEMYa/0Mulat6jX3rD53Puwx9B21hVGIDkNPOCJ0z96Wk1XU6DDSonlBGbgGtW24FtrZ0K8cN38i6KAIxCaI8xx4WPOxGV0=
+	t=1723564391; cv=none; b=dmHLs+0+cygWeew4D0DzNRgdGvfhdCIKYkDDMyaaghv55qpGP9Ue50fOXihYt5YMLpr0F2V2HWsQEFpcqYcF4BIgSuaACzuNSllJI9G/VARWFDJYTU39nQYJqGkUvH8ib3ty2XZ99N8Oh7s6OoQhWhKeL4ixAt1o1rwpxarkieo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564361; c=relaxed/simple;
-	bh=ZlKUmXlqq9/iNnq096zz+gRPSOfnGhngngYJ4qgE5pI=;
+	s=arc-20240116; t=1723564391; c=relaxed/simple;
+	bh=XZXQn0D9qp6oUZpRwEYVBpQ/F9RMTzsJtw4ybppWYSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z5E4fejYANxJntNjrhVywb7q2KoTF20KiKC+n4n/8GlZ85Ezvap9y0tSSAs1bw7bdErbCK4S5gyjLRI5urEeTE3CUTzt60rn01eVZNC3Di3rz6vnaOxBjIiZGX7Zd4gNVLgUG0pBxQahY7yMiNQO1eBQ8i2vdqDTmEsVB2rjjJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhsPtjjj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652E6C4AF0B;
-	Tue, 13 Aug 2024 15:52:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723564361;
-	bh=ZlKUmXlqq9/iNnq096zz+gRPSOfnGhngngYJ4qgE5pI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MhsPtjjjWazLteTlYkPd9J5ZfufuCVCkSMCfJ7hyxJgs9Jc4MuParMSur9EfM7VUH
-	 YAW7na7jQ/cmkI2KGvg/+6MZMGiryuza4Cw/YXjXe1vpjQMKEF4aRe02FsAEQfQGud
-	 1azzsJ4nJpgn2w4H8984gZTf9eMdf47GQTEw1wMZAPiuUnoNh2wn1IGdiM+48OnaDq
-	 czJisRQLIGZe+fnhEwKavXfthqpdJB9kJrHjEGSVHvMfkyoZI6qtzK8fKw+0HxWAmZ
-	 yNfj3S5x/HuKnMGSGPlx6n+UjEGrWD65Q0guR7y5BSgE9Ht2A4ohwJTz3SMAmk1AWT
-	 FKtgwNV70lRJg==
-Date: Tue, 13 Aug 2024 16:52:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	Bao Cheng Su <baocheng.su@siemens.com>,
-	Chao Zeng <chao.zeng@siemens.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: iio: Add everlight pm16d17 binding
-Message-ID: <20240813-captivity-spellbind-d36ca0f31e22@spud>
-References: <cover.1723527641.git.jan.kiszka@siemens.com>
- <f6476e06cd8d1cf3aff6563530612c536cd45716.1723527641.git.jan.kiszka@siemens.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bDQMV+1JAEQ0WNFCGJaOYZTlXxoy6mQiyAGBBqqDt/46pvs3fTJvDfXRpN+9rFC6hKgDK6na+l7oe9vUHbPjb8JRTQVWMWOF08hag4ion5JxAtVjuxSy2EsZ/4LEeta7niA5r408lOI+5k+QSktH+V82GMui+NhCtlrx9XFjk5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MoslguCC; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1ff4568676eso54446805ad.0;
+        Tue, 13 Aug 2024 08:53:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723564389; x=1724169189; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6pdnkA+t5ian2aHHJUDq7NHgKzc+xyESZiLjyrnpwzY=;
+        b=MoslguCCioFS4MQyS6qItX1zAaVu7b03JZA1jfkcqu4eitQLDUb+1C8CQ9aSKpKMPt
+         9kZ8+Vb3bRcSw3I+rN3P0841ry9dEWLTWc2pFxdQBUd8ZScamfs9Gq/kBasfMekxEj7s
+         p8yHLTcSTQ7/5ruxpOWRyzG+sh9Pm2jTZhkgyChynI6KU752Ko0u0jnJVQArO3thnr3B
+         VaFUFC+Biswkpa2LBl1iEZma40s28awVzTIlub1sLP4frYdNt8VVyASIgS+188ybLuFC
+         OmRRLUXya74nQEsPbt3WOALHbduRuq+Ol1yNIlZN69VJha+yuE7aVAyIBJKavnQxvcXT
+         L5LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723564389; x=1724169189;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6pdnkA+t5ian2aHHJUDq7NHgKzc+xyESZiLjyrnpwzY=;
+        b=ZaFu1+Ary/2Daj3RK5fWZKDBNlKP+yk/MivWIrYy0TTVBYhDiBJCrpW5+U8C23kdHL
+         kYZR6gSeDUqt7jjz0R4zgMbH7ZbNSsdCxw1IBB3rvEi6L+FxvzxeFErRFWdsRSM99cw3
+         Ca6g8I2tdje+N7ynRIQeG8GPq8JYSEnOx+ET77vFFezVNT6Vy8j/1eTEpd89t1Ve30RO
+         knH+3fEN13FUhe/VWvaNZS//AZTG4eGmNK658fxZuaiRLm8UP/vckHULSxr4zlq4/+lj
+         mFHZtbbG0XSbJEy/5ObW6kHwP/dgSGGl1kKN/qRxwp1uYV37hXvPiOzQqMhczdRbkjrv
+         FKjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5DmGGuLYnShD/Y72uNVZbPWqV7FaZPOFg/+OLQMhwdiBTWznj1m2xGMd54Dq3DdT2foekyShvJaeqQPot/5nQoSscI0QovwKxcPwSSdpuwYs5lMR3L1XsDRAinOAGCR2wIiaQv93DAUA=
+X-Gm-Message-State: AOJu0YyfSAHeJ+cn55HetrGmfCeLmz3JLOkAhrMpUnza+J47ImPd1vWr
+	Pj0uz8QMTUcQ++aqcmpaJQrRqAEYqc0cn8rBLJ8732N9RJ6oWjsEhkqAIg==
+X-Google-Smtp-Source: AGHT+IEtCQFeSKon38N3qam/q9EKML/imFjl8GYLR3a8KJlvFvNMztaiAox20Q+RYCRpWgI/JkELxQ==
+X-Received: by 2002:a17:903:2449:b0:200:668f:bfd5 with SMTP id d9443c01a7336-201ca13d746mr49853555ad.21.1723564389002;
+        Tue, 13 Aug 2024 08:53:09 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1bce12sm15219885ad.227.2024.08.13.08.53.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 08:53:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 13 Aug 2024 08:53:07 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: chipcap2: drop cc2_disable() in the probe and
+ return dev_err_probe()
+Message-ID: <95a73570-0ea9-4396-866e-ffb6fc8a2ba0@roeck-us.net>
+References: <20240813-chipcap2-probe-improvements-v2-1-e9a2932a8a00@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2VX6fNxUtDign4YH"
-Content-Disposition: inline
-In-Reply-To: <f6476e06cd8d1cf3aff6563530612c536cd45716.1723527641.git.jan.kiszka@siemens.com>
-
-
---2VX6fNxUtDign4YH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240813-chipcap2-probe-improvements-v2-1-e9a2932a8a00@gmail.com>
 
-On Tue, Aug 13, 2024 at 07:40:41AM +0200, Jan Kiszka wrote:
-> From: Chao Zeng <chao.zeng@siemens.com>
->=20
-> Add the binding document for the everlight pm16d17 sensor.
->=20
-> Signed-off-by: Chao Zeng <chao.zeng@siemens.com>
-> Co-developed-by: Baocheng Su <baocheng.su@siemens.com>
-> Signed-off-by: Baocheng Su <baocheng.su@siemens.com>
+On Tue, Aug 13, 2024 at 12:59:53AM +0200, Javier Carrasco wrote:
+> There is no need to actively disable a regulator that has not been
+> enabled by the driver, which makes the call to cc2_disable() in the
+> probe function meaningless, because the probe function never enables
+> the device's dedicated regulator.
+> 
+> Once the call to cc2_disable() is dropped, the error paths can directly
+> return dev_err_probe() in all cases.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Ditto here Jan.
-
-> ---
->  .../iio/proximity/everlight,pm16d17.yaml      | 95 +++++++++++++++++++
->  1 file changed, 95 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/proximity/everl=
-ight,pm16d17.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/everlight,pm=
-16d17.yaml b/Documentation/devicetree/bindings/iio/proximity/everlight,pm16=
-d17.yaml
-> new file mode 100644
-> index 000000000000..fadc3075181a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/proximity/everlight,pm16d17.y=
-aml
-> @@ -0,0 +1,95 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/proximity/everlight,pm16d17.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Everlight PM-16D17 Ambient Light & Proximity Sensor
-> +
-> +maintainers:
-> +  - Chao Zeng <chao.zeng@siemens.com>
-> +
-> +description: |
-> +  This sensor uses standard I2C interface. Interrupt function is not cov=
-ered.
-
-Bindings should be complete, even if software doesn't use the
-interrupts. Can you document them please.
-
-> +  Datasheet: https://en.everlight.com/sensor/category-proximity_sensor/d=
-igital_proximity_sensor/
-
-Do you have a link to a datasheet? The link to the pm16d17 here 404s for
-me.
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - everlight,pm16d17
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ps-gain:
-> +    description: Receiver gain of proximity sensor
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8]
-> +    default: 1
-> +
-> +  ps-itime:
-
-How did you get itime from conversion time? To the layman (like me!)
-conversion-time would make more sense...
-
-Also, "ps"? The whole thing is a proxy sensor, so why have that prefix
-on properties. What is missing however is a vendor prefix.
-
-> +    description: Conversion time for proximity sensor [ms]
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-Instead of a string, please use the -us suffix, and put this in
-microseconds instead.
-
-In total, that would be s/ps-itime/everlight,conversion-time-us/.
-
-I would, however, like to know why this is a property of the hardware.
-What factors do you have to consider when determining what value to put
-in here?
-
-> +    enum:
-> +      - "0.4"
-> +      - "0.8"
-> +      - "1.6"
-> +      - "3.2"
-> +      - "6.3"
-> +      - "12.6"
-> +      - "25.2"
-> +    default: "0.4"
-> +
-> +  ps-wtime:
-> +    description: Waiting time for proximity sensor [ms]
-> +    $ref: /schemas/types.yaml#/definitions/string
-
-All of the same comments apply here. E.g. why "wtime" isntead of
-"waiting-time" and so on.
-I would really like to know why these things are properties of the
-hardware, rather than something that software should control.
-
-> +    enum:
-> +      - "12.5"
-> +      - "25"
-> +      - "50"
-> +      - "100"
-> +      - "200"
-> +      - "400"
-> +      - "800"
-> +      - "1600"
-> +    default: "12.5"
-> +
-> +  ps-ir-led-pulse-count:
-> +    description: IR LED drive pulse count
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-
-All custom properties require a vendor prefix, not "ps". Again, what
-makes this a property of the hardware, rather than something that
-software should control?
-
-> +    minimum: 1
-> +    maximum: 256
-> +    default: 1
-> +
-> +  ps-offset-cancel:
-> +    description: |
-> +      When PS offset cancel function is enabled, the result of subtracti=
-ng any
-> +      value specified by the PS offset cancel register from the internal=
- PS
-> +      output data is written to the PS output data register.
-
-Again, what makes this a property of the hardware? What hardware related
-factors determine that value that you put in here?
+Applied.
 
 Thanks,
-Conor.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    default: 0
-> +    maximum: 65535
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +        #address-cells =3D <1>;
-> +        #size-cells =3D <0>;
-> +
-> +        lightsensor: pm16d17@44 {
-> +            compatible =3D "everlight,pm16d17";
-> +            reg =3D <0x44>;
-> +
-> +            ps-gain =3D <1>;
-> +            ps-itime =3D "0.4";
-> +            ps-wtime =3D "12.5";
-> +            ps-ir-led-pulse-count =3D <1>;
-> +            ps-offset-cancel =3D <280>;
-> +        };
-> +    };
-> --=20
-> 2.43.0
->=20
-
---2VX6fNxUtDign4YH
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZruBRQAKCRB4tDGHoIJi
-0gbgAPY6XCZ4NPiuN7/Q9RHJY3EJ2FM+sX/sRAtOqS031dAfAQCgOsa90zWkxzvq
-GfQrOrbGe+Sf6+rB1Z0SfpoAn/A+Cg==
-=O01h
------END PGP SIGNATURE-----
-
---2VX6fNxUtDign4YH--
+Guenter
 
