@@ -1,37 +1,62 @@
-Return-Path: <linux-kernel+bounces-284407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C63DA95009B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3505A9500A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C46E2819B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2DF52837C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79B9149007;
-	Tue, 13 Aug 2024 08:59:10 +0000 (UTC)
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494AE17C235;
+	Tue, 13 Aug 2024 08:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PB4vsCF5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD37515B7;
-	Tue, 13 Aug 2024 08:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EF86170A18;
+	Tue, 13 Aug 2024 08:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539550; cv=none; b=nqLkNmAVeXwis9pbOB5XosHLNHrYcBjhzLyX+spdquCYg4ONR7fPKJe3qnFmqzDdoYph2Q9B409mb6YLQ4PaQYvPNoNvV1w97+HBe2uSHHVqNx2wPTTjret0PqpDg0joVTVGxZqG8/VvNuH59z2rD40QwsPX4569teY787Dqo8I=
+	t=1723539590; cv=none; b=sl88jxMmJCJdhMrLCZxLXDYbhLG1r8KsdgraAY/v5FUqlfGimLxhf84plT2JXcPnpTo5t8cz7Y9NnJdXhSJ7YTKsfUrgyHoCNsdVGjhyX/JQYhe6uxjgffn7vQHxBe4MFzDdFzZL9m1pG5OmVtlCR0RroIIRH2kzNfJkVuqTYC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539550; c=relaxed/simple;
-	bh=dpnq0trFccqavqgr70LCuLgsknDOOSbp5PPA9ijbkOs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FqYnuVmuK3JOkHoU2+PKrsLp0av6sk8YTjIg5+WUrNh1xNWfT3uZqpj4TzcCLcozyv9gdMOwF4sLxrj2zH8TaDtvGLaEDzmMHG5JiRsbkFaq3bRKSGOA5VSmmhD3OwXoRVdi/6XkwOtpDVKhsgtim6Vn9yUNvLiEzjIx6bLYkL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A192E1BF207;
-	Tue, 13 Aug 2024 08:58:56 +0000 (UTC)
-Message-ID: <440ca2a7-9dfb-45cd-8331-a8d0afff47d0@ghiti.fr>
-Date: Tue, 13 Aug 2024 10:58:55 +0200
+	s=arc-20240116; t=1723539590; c=relaxed/simple;
+	bh=0uNafAcjTUIswRlZd7alQFxJCH3U2zk37KAlOg//AkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F01qO6IXOahd4BT9kMckSjCsb9zUm3Wsq8mZf45jOFfvi0zrPALIBjm5xTiSTc40HPaHRBwI97kQcjpmPVyL/kHW2H3/SE89+ECgOzGWvH4OSTIFPPSs/Ay9ln3SckXLzrNL672lABgc+q9s8+ZeVWn00SNvuO2IGJpt8T32VKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PB4vsCF5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D8XdrM026773;
+	Tue, 13 Aug 2024 08:59:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wf+xQ3wWS3PreoxrbGzblnSn9IAqkU3lFqA/v/vy3MA=; b=PB4vsCF57P9nqMcn
+	nAxQYc4G2Swru6MVB0oTm16c0x9eLE9AEtMn6OwPgevZak4tBR9v24HeeKWx9Ugn
+	Asmz/PNG736MVWwAncVQUGmz5axvntvr2biZhjFAM9dX7W31KMEDxjtgdjJfZ8UE
+	gKRO0F9XDaIvXN/CjafBkawzdZwnyK87ya/3F9a3zWZZLYHuvxF/L3rL8nUbTY5Y
+	UlWk4jMDvlfCWqDmnjgY2+SOf/zz846nD2Ey8Q/9JectMU7oXzQwZp7SeElxk6q7
+	vjWUovzdei0nnrDKxwr43D/MZDAaPzF2R7MDNhLrg2wsP4KpGKM80mZfo16l99sD
+	i7aC8Q==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410437r2m3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:44 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D8xhDP021875
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:43 GMT
+Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 01:59:37 -0700
+Message-ID: <2229cc1a-0fa0-4291-874e-43b31f82ef50@quicinc.com>
+Date: Tue, 13 Aug 2024 16:59:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -39,285 +64,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 04/10] riscv: Add support for userspace pointer masking
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: sa8775p-ride: Add QCS9100
+ compatible
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Tingwei Zhang
+	<quic_tingweiz@quicinc.com>,
+        Tengfei Fan <quic_tengfan@quicinc.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240806-add_qcs9100_soc_id-v1-0-04d14081f304@quicinc.com>
+ <20240806-add_qcs9100_soc_id-v1-4-04d14081f304@quicinc.com>
+ <90eae361-7d5d-440f-a85d-dfd81b384fe7@kernel.org>
+ <4a350e94-3c95-48e1-9ea8-ced483c1aa45@quicinc.com>
+ <14ec06bd-0c27-4930-8bce-d3f5b68067ed@kernel.org>
+ <ace5b3e1-f4a2-4c04-821a-e797d0f55cae@quicinc.com>
+ <9323127a-e6b5-4835-afa0-4ce0086fd9d1@kernel.org>
+ <0d1c44b9-3d5f-4d93-af64-1756e52f4fe3@quicinc.com>
+ <47c966c7-8736-44a2-8ec7-4d7989efa9cd@kernel.org>
+ <72b2d710-a7cb-45cf-9dad-e9fbd876697b@quicinc.com>
+ <d9060b49-66fe-4001-86cd-dda5e213e454@kernel.org>
+From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
 Content-Language: en-US
-To: Samuel Holland <samuel.holland@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-riscv@lists.infradead.org
-Cc: devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
- linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>,
- Conor Dooley <conor@kernel.org>, kasan-dev@googlegroups.com,
- Atish Patra <atishp@atishpatra.org>, Evgenii Stepanov <eugenis@google.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Rob Herring <robh+dt@kernel.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20240625210933.1620802-1-samuel.holland@sifive.com>
- <20240625210933.1620802-5-samuel.holland@sifive.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20240625210933.1620802-5-samuel.holland@sifive.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: alex@ghiti.fr
-
-Hi Samuel,
-
-On 25/06/2024 23:09, Samuel Holland wrote:
-> RISC-V supports pointer masking with a variable number of tag bits
-> (which is called "PMLEN" in the specification) and which is configured
-> at the next higher privilege level.
->
-> Wire up the PR_SET_TAGGED_ADDR_CTRL and PR_GET_TAGGED_ADDR_CTRL prctls
-> so userspace can request a lower bound on the  number of tag bits and
-> determine the actual number of tag bits. As with arm64's
-> PR_TAGGED_ADDR_ENABLE, the pointer masking configuration is
-> thread-scoped, inherited on clone() and fork() and cleared on execve().
->
-> Signed-off-by: Samuel Holland <samuel.holland@sifive.com>
-> ---
->
-> Changes in v2:
->   - Rebase on riscv/linux.git for-next
->   - Add and use the envcfg_update_bits() helper function
->   - Inline flush_tagged_addr_state()
->
->   arch/riscv/Kconfig                 | 11 ++++
->   arch/riscv/include/asm/processor.h |  8 +++
->   arch/riscv/include/asm/switch_to.h | 11 ++++
->   arch/riscv/kernel/process.c        | 99 ++++++++++++++++++++++++++++++
->   include/uapi/linux/prctl.h         |  3 +
->   5 files changed, 132 insertions(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index b94176e25be1..8f9980f81ea5 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -505,6 +505,17 @@ config RISCV_ISA_C
->   
->   	  If you don't know what to do here, say Y.
->   
-> +config RISCV_ISA_POINTER_MASKING
-> +	bool "Smmpm, Smnpm, and Ssnpm extensions for pointer masking"
-> +	depends on 64BIT
-> +	default y
-> +	help
-> +	  Add support for the pointer masking extensions (Smmpm, Smnpm,
-> +	  and Ssnpm) when they are detected at boot.
-> +
-> +	  If this option is disabled, userspace will be unable to use
-> +	  the prctl(PR_{SET,GET}_TAGGED_ADDR_CTRL) API.
-> +
->   config RISCV_ISA_SVNAPOT
->   	bool "Svnapot extension support for supervisor mode NAPOT pages"
->   	depends on 64BIT && MMU
-> diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
-> index 0838922bd1c8..4f99c85d29ae 100644
-> --- a/arch/riscv/include/asm/processor.h
-> +++ b/arch/riscv/include/asm/processor.h
-> @@ -194,6 +194,14 @@ extern int set_unalign_ctl(struct task_struct *tsk, unsigned int val);
->   #define RISCV_SET_ICACHE_FLUSH_CTX(arg1, arg2)	riscv_set_icache_flush_ctx(arg1, arg2)
->   extern int riscv_set_icache_flush_ctx(unsigned long ctx, unsigned long per_thread);
->   
-> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
-> +/* PR_{SET,GET}_TAGGED_ADDR_CTRL prctl */
-> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg);
-> +long get_tagged_addr_ctrl(struct task_struct *task);
-> +#define SET_TAGGED_ADDR_CTRL(arg)	set_tagged_addr_ctrl(current, arg)
-> +#define GET_TAGGED_ADDR_CTRL()		get_tagged_addr_ctrl(current)
-> +#endif
-> +
->   #endif /* __ASSEMBLY__ */
->   
->   #endif /* _ASM_RISCV_PROCESSOR_H */
-> diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
-> index 9685cd85e57c..94e33216b2d9 100644
-> --- a/arch/riscv/include/asm/switch_to.h
-> +++ b/arch/riscv/include/asm/switch_to.h
-> @@ -70,6 +70,17 @@ static __always_inline bool has_fpu(void) { return false; }
->   #define __switch_to_fpu(__prev, __next) do { } while (0)
->   #endif
->   
-> +static inline void envcfg_update_bits(struct task_struct *task,
-> +				      unsigned long mask, unsigned long val)
-> +{
-> +	unsigned long envcfg;
-> +
-> +	envcfg = (task->thread.envcfg & ~mask) | val;
-> +	task->thread.envcfg = envcfg;
-> +	if (task == current)
-> +		csr_write(CSR_ENVCFG, envcfg);
-> +}
-> +
->   static inline void __switch_to_envcfg(struct task_struct *next)
->   {
->   	asm volatile (ALTERNATIVE("nop", "csrw " __stringify(CSR_ENVCFG) ", %0",
-> diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-> index e4bc61c4e58a..dec5ccc44697 100644
-> --- a/arch/riscv/kernel/process.c
-> +++ b/arch/riscv/kernel/process.c
-> @@ -7,6 +7,7 @@
->    * Copyright (C) 2017 SiFive
->    */
->   
-> +#include <linux/bitfield.h>
->   #include <linux/cpu.h>
->   #include <linux/kernel.h>
->   #include <linux/sched.h>
-> @@ -171,6 +172,10 @@ void flush_thread(void)
->   	memset(&current->thread.vstate, 0, sizeof(struct __riscv_v_ext_state));
->   	clear_tsk_thread_flag(current, TIF_RISCV_V_DEFER_RESTORE);
->   #endif
-> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
-> +	if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-> +		envcfg_update_bits(current, ENVCFG_PMM, ENVCFG_PMM_PMLEN_0);
-> +#endif
-
-if (IS_ENABLED(CONFIG_RISCV_ISA_POINTER_MASKING) && 
-riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
+In-Reply-To: <d9060b49-66fe-4001-86cd-dda5e213e454@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: BF6k1lOAP8RYqrrHq8EUNjZCnsof3ufv
+X-Proofpoint-GUID: BF6k1lOAP8RYqrrHq8EUNjZCnsof3ufv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_01,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1011
+ mlxlogscore=989 malwarescore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 mlxscore=0 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130063
 
 
->   }
->   
->   void arch_release_task_struct(struct task_struct *tsk)
-> @@ -233,3 +238,97 @@ void __init arch_task_cache_init(void)
->   {
->   	riscv_v_setup_ctx_cache();
->   }
-> +
-> +#ifdef CONFIG_RISCV_ISA_POINTER_MASKING
-> +static bool have_user_pmlen_7;
-> +static bool have_user_pmlen_16;
-> +
-> +long set_tagged_addr_ctrl(struct task_struct *task, unsigned long arg)
-> +{
-> +	unsigned long valid_mask = PR_PMLEN_MASK;
-> +	struct thread_info *ti = task_thread_info(task);
-> +	unsigned long pmm;
-> +	u8 pmlen;
-> +
-> +	if (is_compat_thread(ti))
-> +		return -EINVAL;
-> +
-> +	if (arg & ~valid_mask)
-> +		return -EINVAL;
-> +
-> +	pmlen = FIELD_GET(PR_PMLEN_MASK, arg);
-> +	if (pmlen > 16) {
-> +		return -EINVAL;
-> +	} else if (pmlen > 7) {
-> +		if (have_user_pmlen_16)
-> +			pmlen = 16;
-> +		else
-> +			return -EINVAL;
-> +	} else if (pmlen > 0) {
-> +		/*
-> +		 * Prefer the smallest PMLEN that satisfies the user's request,
-> +		 * in case choosing a larger PMLEN has a performance impact.
-> +		 */
-> +		if (have_user_pmlen_7)
-> +			pmlen = 7;
-> +		else if (have_user_pmlen_16)
-> +			pmlen = 16;
-> +		else
-> +			return -EINVAL;
-> +	}
-> +
-> +	if (pmlen == 7)
-> +		pmm = ENVCFG_PMM_PMLEN_7;
-> +	else if (pmlen == 16)
-> +		pmm = ENVCFG_PMM_PMLEN_16;
-> +	else
-> +		pmm = ENVCFG_PMM_PMLEN_0;
-> +
-> +	envcfg_update_bits(task, ENVCFG_PMM, pmm);
-> +
-> +	return 0;
-> +}
-> +
-> +long get_tagged_addr_ctrl(struct task_struct *task)
-> +{
-> +	struct thread_info *ti = task_thread_info(task);
-> +	long ret = 0;
-> +
-> +	if (is_compat_thread(ti))
-> +		return -EINVAL;
-> +
-> +	switch (task->thread.envcfg & ENVCFG_PMM) {
-> +	case ENVCFG_PMM_PMLEN_7:
-> +		ret |= FIELD_PREP(PR_PMLEN_MASK, 7);
-> +		break;
-> +	case ENVCFG_PMM_PMLEN_16:
-> +		ret |= FIELD_PREP(PR_PMLEN_MASK, 16);
-> +		break;
-> +	}
 
+On 8/13/2024 4:34 PM, Krzysztof Kozlowski wrote:
+> On 12/08/2024 09:07, Tingwei Zhang wrote:
+>> 在 8/12/2024 2:15 PM, Krzysztof Kozlowski 写道:
+>>> On 12/08/2024 04:16, Tingwei Zhang wrote:
+>>>> On 8/8/2024 7:05 PM, Krzysztof Kozlowski wrote:
+>>>>> On 07/08/2024 13:04, Tingwei Zhang wrote:
+>>>>>> On 8/7/2024 5:35 PM, Krzysztof Kozlowski wrote:
+>>>>>>> On 07/08/2024 11:17, Tengfei Fan wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 8/7/2024 3:28 PM, Krzysztof Kozlowski wrote:
+>>>>>>>>> On 06/08/2024 06:19, Tengfei Fan wrote:
+>>>>>>>>>> Add QCS9100 compatible in sa8775p ride and sa8775p ride r3 board DTS.
+>>>>>>>>>> QCS9100 references SA8775p, they share the same SoC DTSI and board DTS.
+>>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> I don't understand this. You claim here that QCS9100 references SA8775p
+>>>>>>>>> but your diff says other way: SA8775p references QCS9100.
+>>>>>>>>>
+>>>>>>>>> Sorry, that's confusing.
+>>>>>>>>>
+>>>>>>>>> Best regards,
+>>>>>>>>> Krzysztof
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I will update the compatible as follows to indicate that QCS9100
+>>>>>>>> references SA8775p.
+>>>>>>>>
+>>>>>>>> compatible = "qcom,sa8775p-ride", "qcom,qcs9100", "qcom,sa8775p";
+>>>>>>>
+>>>>>>> Is this still correct, though? sa8775p won't come with qcs9100 SoC.
+>>>>>> We have a new board. Hardware is same as sa877p-ride except sa8775p is
+>>>>>> replaced with qcs9100. We add qcs9100 SoC compatible to sa8775p-ride
+>>>>>
+>>>>> Does "new board" mean that "old board" disappears? No users to care
+>>>>> about it? Or just the existing board is being changed (like new revision)?
+>>>>
+>>>> We will support both boards. Sa8775p-ride board with sa8775p chipset and
+>>>> sa8775p-ride board with qcs9100 chipset. Both of them can be used for
+>>>> development.
+>>>
+>>> Patch does something else then - changes compatibles for the existing
+>>> (old) board.
+>>
+>> Can you educate us the right way to add the qcs9100 SoC support in 
+>> sa8775p-ride board? We don't want to duplicate whole device tree file 
+>> since all the hardwares are same except the SoC, so we add qcs9100 SoC 
+>> compatible to sa8775p-ride board and still keep sa8775p SoC compatible.
+> 
+> Split board DTS into shared DTSI (just don't forget about proper
+> -M/-C/-B arguments for format-patch) and include it in relevant boards.
+> You also need new SoC DTSI. This will be unusual code, but it matches
+> what you want to achieve.
 
-No need for the |=
+If we create two additional DTSs, a total of four DTBs will be generated.
+Should we update the current board DTSs (sa8775p-ride-r3.dts and
+sa8775p-ride.dts) to support the pin-to-pin compatible QCS9100 and
+SA8775p SoCs?
 
+Considering the higher usage of QCS9100 boards in IoT compared to
+SA8775p in automotive for these DTBs, perhaps we should prioritize the
+'qcom,qcs9100' compatibility before 'qcom,sa8775p'.
+> 
+> Best regards,
+> Krzysztof
+> 
 
-> +
-> +	return ret;
-> +}
-
-
-In all the code above, I'd use a macro for 7 and 16, something like 
-PMLEN[7|16]?
-
-
-> +
-> +static bool try_to_set_pmm(unsigned long value)
-> +{
-> +	csr_set(CSR_ENVCFG, value);
-> +	return (csr_read_clear(CSR_ENVCFG, ENVCFG_PMM) & ENVCFG_PMM) == value;
-> +}
-> +
-> +static int __init tagged_addr_init(void)
-> +{
-> +	if (!riscv_has_extension_unlikely(RISCV_ISA_EXT_SUPM))
-> +		return 0;
-> +
-> +	/*
-> +	 * envcfg.PMM is a WARL field. Detect which values are supported.
-> +	 * Assume the supported PMLEN values are the same on all harts.
-> +	 */
-> +	csr_clear(CSR_ENVCFG, ENVCFG_PMM);
-> +	have_user_pmlen_7 = try_to_set_pmm(ENVCFG_PMM_PMLEN_7);
-> +	have_user_pmlen_16 = try_to_set_pmm(ENVCFG_PMM_PMLEN_16);
-
-
-Shouldn't this depend on the satp mode? sv57 does not allow 16bits for 
-the tag.
-
-
-> +
-> +	return 0;
-> +}
-> +core_initcall(tagged_addr_init);
-
-
-Any reason it's not called from setup_arch()? I see the vector extension 
-does the same; just wondering if we should not centralize all this early 
-extensions decisions in setup_arch() (in my Zacas series, I choose the 
-spinlock implementation in setup_arch()).
-
-
-> +#endif	/* CONFIG_RISCV_ISA_POINTER_MASKING */
-> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
-> index 35791791a879..6e84c827869b 100644
-> --- a/include/uapi/linux/prctl.h
-> +++ b/include/uapi/linux/prctl.h
-> @@ -244,6 +244,9 @@ struct prctl_mm_map {
->   # define PR_MTE_TAG_MASK		(0xffffUL << PR_MTE_TAG_SHIFT)
->   /* Unused; kept only for source compatibility */
->   # define PR_MTE_TCF_SHIFT		1
-> +/* RISC-V pointer masking tag length */
-> +# define PR_PMLEN_SHIFT			24
-> +# define PR_PMLEN_MASK			(0x7fUL << PR_PMLEN_SHIFT)
-
-
-I don't understand the need for this shift, can't userspace pass the 
-pmlen value directly without worrying about this?
-
-
->   
->   /* Control reclaim behavior when allocating memory */
->   #define PR_SET_IO_FLUSHER		57
+-- 
+Thx and BRs,
+Aiqun(Maria) Yu
 
