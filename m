@@ -1,170 +1,117 @@
-Return-Path: <linux-kernel+bounces-285572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9C4950FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:50:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B07950F86
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE0161C2228E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFA32B2241A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7241AB512;
-	Tue, 13 Aug 2024 22:50:31 +0000 (UTC)
-Received: from sxb1plsmtpa01-04.prod.sxb1.secureserver.net (sxb1plsmtpa01-04.prod.sxb1.secureserver.net [92.204.81.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826ED1AAE10;
+	Tue, 13 Aug 2024 22:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X/4sV7UM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AF236B11
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.204.81.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D021826AFB
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723589431; cv=none; b=lmrtYrhiQtLBw9tHnkqPiFsh0P7OcKM+i540QG2/LXppjJAN9B09JaUE1z1kkZYci5xTrGLnQJYgWueEaIP2QqNvuSoW1BZzI2X3m8FuxFeqH0thmokxqYlNOg5t3PodK8rwafOg4yZc0wnjCXrTkGNnI2kX17LK8qt4yl4K+cg=
+	t=1723586894; cv=none; b=IumOlfKbNkWAloLIrS9bKtCx8X7akWAnhi5wNJSwN/psCSgsf2Wg0Tcv8T/Kco1xesPEbNgD4Sh3kg0pvG3gynFpVZcQOxqNGiBlpyUZHMo4GsjJQ1BXQc7dhxNT5ucqnCWFkwa7nqyRo/PDB2O+oK0PErfReyXIHv365mY2XYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723589431; c=relaxed/simple;
-	bh=49NHkGj4gMT2BNbHsogNRL4db5RNDTOexw5fc9yMBwo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCchpmwzhcIPOXWqqAi9cZY1XTuopLB9EEHcl6UzBe3L27s6YsKNMlYbr8nNUOZVvMQrHU+bA9F8d/7tIYxxpWAmXnH/HcpfZVejE3/AZ5SeQWRtXd5xI8eVGqcyXm+NuHH+sPy3zmRmGivdXKRRR58ZF1usxOFXvwBBrSQEOHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net; spf=pass smtp.mailfrom=piie.net; arc=none smtp.client-ip=92.204.81.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=piie.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piie.net
-Received: from [192.168.1.27] ([109.90.180.58])
-	by :SMTPAUTH: with ESMTPSA
-	id dykRsdOMofewidykTsOcWp; Tue, 13 Aug 2024 14:08:10 -0700
-X-CMAE-Analysis: v=2.4 cv=fYxmyFQF c=1 sm=1 tr=0 ts=66bbcb3b
- a=ujCVow8R4Y5jPCx6COW8WA==:117 a=ujCVow8R4Y5jPCx6COW8WA==:17
- a=IkcTkHD0fZMA:10 a=M51BFTxLslgA:10 a=QyXUC8HyAAAA:8 a=t3YNmgBSAAAA:8
- a=uA_CGoYEU2hLf27nDvEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=ctH_qozkpUrkr3SVbfwb:22
-X-SECURESERVER-ACCT: peter@piie.net
-Message-ID: <f8721601-3eb8-4655-a207-fb7e38de2867@piie.net>
-Date: Tue, 13 Aug 2024 23:08:06 +0200
+	s=arc-20240116; t=1723586894; c=relaxed/simple;
+	bh=RVp/3Jm/vGpRVsC5wWe8uhyY3BOPage89QkUfN4y71A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JWSXkU0FVp2yBF6XoF8mCtJINLG9hshTfb8JwshY7id9NGUxLYie3ndQBKkTQHit/orR0lKBMuJhQhWUZVQ5REa4KKduvyOfp3ZuFeLiwH94WS9LRNF8PIZnS700bUdlqGZNqF4aCYW67o+N2b9xMXVV4PDnpD6qEbt1kM8k38A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X/4sV7UM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=0dw7TpPqoQ/iCGcXQKDxO6JOltSrDdi0YYRWVHZjDsY=; b=X/4sV7UMgZarP9//BZyZ8MoeGM
+	D4PbFqiygZg6u/0Y/asNUgWP/WAy1vB6D3Mo5J9HSe29eBP9q7LrNQ9L/9huWgsyPLIgCiJJksE/h
+	iNOodq6Q0GE62wPZtzirRZ0qPIOSs6kLDYb4MJLX4kTzbnaQ97iTrOAJs/ur/I32OGXT5SoGbau0i
+	4auPAVA9S3Gz6yTzKZLf407vdmxDb3MUioIFUtTOoEyqLgbIKvSOPwHOXWytapXsVgAieSFgWqbYN
+	fW0eOCdgffId6srI+C04D4B8t6dbHHQ3jNfr4xu2r5J993VK5pNk11VH7yTAqdUgJwYedZvqMwbCX
+	FSrf9E6A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sdzgN-0000000H6IW-2Dsk;
+	Tue, 13 Aug 2024 22:07:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8AD7130074E; Wed, 14 Aug 2024 00:07:57 +0200 (CEST)
+Date: Wed, 14 Aug 2024 00:07:57 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [PATCH 12/24] sched/fair: Prepare exit/cleanup paths for
+ delayed_dequeue
+Message-ID: <20240813220757.GA22760@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <20240727105029.631948434@infradead.org>
+ <xhsmh8qx0y4n0.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20240813215421.GA10328@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to
- reduce overhead
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
-References: <1903691.tdWV9SEqCh@rjwysocki.net>
- <2285575.iZASKD2KPV@rjwysocki.net>
-Content-Language: en-US
-From: =?UTF-8?Q?Peter_K=C3=A4stle?= <peter@piie.net>
-In-Reply-To: <2285575.iZASKD2KPV@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4xfGedixXDMi4Jj7OHNj9s1SlJyk2fAnQI15GP1ma5XklIJsg6LrNxyokXv2o2GRHRVqA8s5g+QZx6swcLlGCYbkaCYOoAjUKbTS4c9X+gvP9s+1xf7lYA
- f8yH5JdFbi/qWyBFgxSaAOattJZuIedYyknEAaRAY60W5D+RjEhcN0k5vnWuuwkxeoILKPdZ9NuFycUkXxeUTvT/HXcIEpObWq092nC0J1mQ/034cH1FRZp8
- LF3wsePwXYkDF8gdTwTkJEvep2WSidkBMUUDoOhqxayu+mwiNzWuWZOX2qey9ZDx13ZEZ2OE1Vt3OfYrpduIqFlPeq/iOOlBytwaJsunszcnB3Fe4ZqsLzXg
- GdSxoggLL6jFa+fpMHezO7zH0Nd5GQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813215421.GA10328@noisy.programming.kicks-ass.net>
 
-On 13.08.24 16:29, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Tue, Aug 13, 2024 at 11:54:21PM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 13, 2024 at 02:43:47PM +0200, Valentin Schneider wrote:
+> > On 27/07/24 12:27, Peter Zijlstra wrote:
+> > > @@ -12817,10 +12830,26 @@ static void attach_task_cfs_rq(struct ta
+> > >  static void switched_from_fair(struct rq *rq, struct task_struct *p)
+> > >  {
+> > >       detach_task_cfs_rq(p);
+> > > +	/*
+> > > +	 * Since this is called after changing class, this isn't quite right.
+> > > +	 * Specifically, this causes the task to get queued in the target class
+> > > +	 * and experience a 'spurious' wakeup.
+> > > +	 *
+> > > +	 * However, since 'spurious' wakeups are harmless, this shouldn't be a
+> > > +	 * problem.
+> > > +	 */
+> > > +	p->se.sched_delayed = 0;
+> > > +	/*
+> > > +	 * While here, also clear the vlag, it makes little sense to carry that
+> > > +	 * over the excursion into the new class.
+> > > +	 */
+> > > +	p->se.vlag = 0;
+> > 
+> > RQ lock is held, the task can't be current if it's ->sched_delayed; is a
+> > dequeue_task() not possible at this point?  Or just not worth it?
 > 
-> After running once, the for_each_trip_desc() loop in
-> bang_bang_manage() is pure needless overhead because it is not going to
-> make any changes unless a new cooling device has been bound to one of
-> the trips in the thermal zone or the system is resuming from sleep.
-> 
-> For this reason, make bang_bang_manage() set governor_data for the
-> thermal zone and check it upfront to decide whether or not it needs to
-> do anything.
-> 
-> However, governor_data needs to be reset in some cases to let
-> bang_bang_manage() know that it should walk the trips again, so add an
-> .update_tz() callback to the governor and make the core additionally
-> invoke it during system resume.
-> 
-> To avoid affecting the other users of that callback unnecessarily, add
-> a special notification reason for system resume, THERMAL_TZ_RESUME, and
-> also pass it to __thermal_zone_device_update() called during system
-> resume for consistency.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Hurmph, I really can't remember why I did it like this :-(
 
-Acked-by: Peter Kästle <peter@piie.net>
+Obviously I remember it right after hitting send...
 
-> ---
->   drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
->   drivers/thermal/thermal_core.c  |    3 ++-
->   include/linux/thermal.h         |    1 +
->   3 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/thermal/gov_bang_bang.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-> +++ linux-pm/drivers/thermal/gov_bang_bang.c
-> @@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
->   	const struct thermal_trip_desc *td;
->   	struct thermal_instance *instance;
->   
-> +	/* If the code below has run already, nothing needs to be done. */
-> +	if (tz->governor_data)
-> +		return;
-> +
->   	for_each_trip_desc(tz, td) {
->   		const struct thermal_trip *trip = &td->trip;
->   
-> @@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
->   				bang_bang_set_instance_target(instance, 0);
->   		}
->   	}
-> +
-> +	tz->governor_data = (void *)true;
-> +}
-> +
-> +static void bang_bang_update_tz(struct thermal_zone_device *tz,
-> +				enum thermal_notify_event reason)
-> +{
-> +	/*
-> +	 * Let bang_bang_manage() know that it needs to walk trips after binding
-> +	 * a new cdev and after system resume.
-> +	 */
-> +	if (reason == THERMAL_TZ_BIND_CDEV || reason == THERMAL_TZ_RESUME)
-> +		tz->governor_data = NULL;
->   }
->   
->   static struct thermal_governor thermal_gov_bang_bang = {
->   	.name		= "bang_bang",
->   	.trip_crossed	= bang_bang_control,
->   	.manage		= bang_bang_manage,
-> +	.update_tz	= bang_bang_update_tz,
->   };
->   THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1692,7 +1692,8 @@ static void thermal_zone_device_resume(s
->   
->   	thermal_debug_tz_resume(tz);
->   	thermal_zone_device_init(tz);
-> -	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-> +	thermal_governor_update_tz(tz, THERMAL_TZ_RESUME);
-> +	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
->   
->   	complete(&tz->resume);
->   	tz->resuming = false;
-> Index: linux-pm/include/linux/thermal.h
-> ===================================================================
-> --- linux-pm.orig/include/linux/thermal.h
-> +++ linux-pm/include/linux/thermal.h
-> @@ -55,6 +55,7 @@ enum thermal_notify_event {
->   	THERMAL_TZ_BIND_CDEV, /* Cooling dev is bind to the thermal zone */
->   	THERMAL_TZ_UNBIND_CDEV, /* Cooling dev is unbind from the thermal zone */
->   	THERMAL_INSTANCE_WEIGHT_CHANGED, /* Thermal instance weight changed */
-> +	THERMAL_TZ_RESUME, /* Thermal zone is resuming after system sleep */
->   };
->   
->   /**
-> 
-> 
-> 
+We've just done:
+
+	dequeue_task();
+	p->sched_class = some_other_class;
+	enqueue_task();
+
+IOW, we're enqueued as some other class at this point. There is no way
+we can fix it up at this point.
+
+Perhaps I can use the sched_class::switching_to thing sched_ext will
+bring.
+
+For now, lets keep things as is. I'll look at things later
+
 
