@@ -1,71 +1,77 @@
-Return-Path: <linux-kernel+bounces-284134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999CA94FD5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:42:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB33394FD64
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC63D1C2267B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67FA22830FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B72F28DA5;
-	Tue, 13 Aug 2024 05:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06492D611;
+	Tue, 13 Aug 2024 05:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oXL+ggOr"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IBBBzPNm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302292C19E;
-	Tue, 13 Aug 2024 05:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BF71C69D;
+	Tue, 13 Aug 2024 05:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723527685; cv=none; b=a/ZzaLvyDtvAOUi38302hP3MbFIMH8n11b+TGcVzLfA7F0J6GwulKTcMKfzd1y8zcMNQpuM/7za1QhmhN3zlSUPHg9wlwe/Gv2iFljObWWyo+hXXRDrFVWS10oG93EoCJbdihSoLeC9BDqmECcPtsRWkjjfueAgBuo2tpqRN97c=
+	t=1723527930; cv=none; b=QytTfzKBkje/BurFaNsIU1UmIIsJZl96VwZR5kacYOFUL2y57DOmoia7IekzyVsD1xSmLItRcJon4h1bQ4kDtEpR+CLRcBHyF7Odv3Ps+Be0Jq3GqL3C8ctx6zIOrAdoeeCtNl3rxlT4jeTu/lV/cTeSkLP7LPPmfOxWWEPDqdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723527685; c=relaxed/simple;
-	bh=i49iooVK0nCmN7mBhxTyADBk+5BtpXEZY4WJwPZbSME=;
+	s=arc-20240116; t=1723527930; c=relaxed/simple;
+	bh=YwpuBVSFNyDvfJmlX29Z5q0LHVN5p+qw1by/SJOWLDk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gjcSv23LAz/CbwOzdsMJy62n6YZFm3h8PxeUTndNBrebMZJTk2zB4qwKIxSurqTiHahgGfOnB2Gxf++g4HswQVyFFK6yzB4BUxRSEh9vU2UL//HnPQivGPgXo6a6qtEqg4xhr0bdT/xBLX+oB8KzxrA4o+BI/3Bb5uamO0JWM6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oXL+ggOr; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HbO1EYl5czIqfwARjxEt22LiBn82E4H9bfJsvtc+EjY=; b=oXL+ggOrdCjoKtMhmVfXLcx9Ur
-	/Vq6hSt/096cHs0MblkRe7e99WnyXtYK7Kc0kemMw/6+IMIDKFFaIME/N4hZ3IDAYu0UvQ1pI1ny+
-	YjyBdStcBBBKJrRO9evMX1hIwyEX7nbM0r3rHzH6wBzJCkqzMz+JVpiWVDM5gSqefo0CMhsZ8ebMj
-	jWrk3JyxdmBQYyZcawkrlvAZMrMC3cFc7P8y6WXor2f/HVftliBDfsFKqQD5pCLQ9YHW4WzKYkWbX
-	WDkSbaFbszEzLTgdvkhvXIXVKNAHwSnqMFE1qjLNKHGdbFZNTebWBrVBIV2Nn8LSuaWvEcnA/gKFt
-	wBiMbFjA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdkHY-00000002TJW-3iEA;
-	Tue, 13 Aug 2024 05:41:20 +0000
-Date: Mon, 12 Aug 2024 22:41:20 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Martin Oliveira <martin.oliveira@eideticom.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	Artemy Kovalyov <artemyko@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Leon Romanovsky <leon@kernel.org>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Michael Guralnik <michaelgur@nvidia.com>,
-	Mike Marciniszyn <mike.marciniszyn@intel.com>,
-	Shiraz Saleem <shiraz.saleem@intel.com>, Tejun Heo <tj@kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Sloan <david.sloan@eideticom.com>
-Subject: Re: [PATCH v5 3/4] mm/gup: allow FOLL_LONGTERM & FOLL_PCI_P2PDMA
-Message-ID: <ZrryAFGBCG1cyfOA@infradead.org>
-References: <20240808183340.483468-1-martin.oliveira@eideticom.com>
- <20240808183340.483468-4-martin.oliveira@eideticom.com>
- <ZrmuGrDaJTZFrKrc@infradead.org>
- <20240812231249.GG1985367@ziepe.ca>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHkGnZl+pMZBvDonPWhx3ydB4rCeBJ2AzhlL9vGvGxNyXqSGXSJ5zgBUhfuKBxOUS95Xo0EzasPQ4zlT4nRx2E9cAaRRCOj8VYdICDIsrF2mUmCFbQuMSa2uMBpZKkdyaLXobTT9jvPhpANs7PntXWHC5d2GyDGk+XizCO5bCqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IBBBzPNm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723527928; x=1755063928;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YwpuBVSFNyDvfJmlX29Z5q0LHVN5p+qw1by/SJOWLDk=;
+  b=IBBBzPNmfKJfeSmquIWfuEhWAp9gNHVBpGccp2ZbodAyR05Z7wSXgLt+
+   9j8QwioHk6/TDOPIy6+k8SgO8nnXtHk1rP1AkHM3wG8gLK+gQWXW2iwwN
+   sBsXCIyLpSukoHI5u6Qjb46xiA1QYfk4h22XGRj5fx2K6jmBdmXO1fGv0
+   pAdNjrXmYbf9zysnDG9juPUFTOl3VYCWsGxkhRJmDUaxGblwR+bmpxYdX
+   fa+kd9OG64w/PBdkAWUx6ZIGjUrHPQYPJ7+Vk54VAgNZfyZq2UHQrA8fh
+   Gw5WuglU9zgrtmAiXqf66dTM3LIDizS5eLXC3sP9bJ/DalKqK54ocwDVI
+   Q==;
+X-CSE-ConnectionGUID: 8Lc98bAUR1S4xQWMhwNK2A==
+X-CSE-MsgGUID: 0KQF8qQjS9yJxOCI6BOVlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21538930"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21538930"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 22:45:27 -0700
+X-CSE-ConnectionGUID: c9dFyZmbSLqazA9E/vH8Og==
+X-CSE-MsgGUID: oXlUV/1dR6SazqjesTO58g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="81776598"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 22:45:22 -0700
+Date: Tue, 13 Aug 2024 08:45:19 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
+	anshuman.gupta@intel.com, badal.nilawar@intel.com,
+	riana.tauro@intel.com, ashutosh.dixit@intel.com,
+	karthik.poosa@intel.com
+Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
+Message-ID: <Zrry71BfJ31q3iOi@black.fi.intel.com>
+References: <20240812081538.1457396-1-raag.jadav@intel.com>
+ <ZroK4oSAte9qdnA8@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,18 +80,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812231249.GG1985367@ziepe.ca>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <ZroK4oSAte9qdnA8@smile.fi.intel.com>
 
-On Mon, Aug 12, 2024 at 08:12:49PM -0300, Jason Gunthorpe wrote:
-> > This is unfortunately not really minor unless we have a well documented
-> > way to force this :(
+On Mon, Aug 12, 2024 at 04:15:14PM +0300, Andy Shevchenko wrote:
+> On Mon, Aug 12, 2024 at 01:45:38PM +0530, Raag Jadav wrote:
+> > Add hwmon support for fan1_input attribute, which will expose fan speed
+> > in RPM. With this in place we can monitor fan speed using lm-sensors tool.
+> > 
+> > $ sensors
+> > i915-pci-0300
+> > Adapter: PCI adapter
+> > in0:         653.00 mV
+> > fan1:        3833 RPM
+> > power1:           N/A  (max =  43.00 W)
+> > energy1:      32.02 kJ
 > 
-> It is not that different from blocking driver unbind while FDs are
-> open which a lot of places do in various ways?
+> ...
+> 
+> > +static int
+> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> > +{
+> > +	struct i915_hwmon *hwmon = ddat->hwmon;
+> > +	struct hwm_fan_info *fi = &ddat->fi;
+> > +	u64 rotations, time_now, time;
+> > +	intel_wakeref_t wakeref;
+> > +	u32 reg_val, pulses;
+> > +	int ret = 0;
+> > +
+> > +	if (attr != hwmon_fan_input)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
+> > +	mutex_lock(&hwmon->hwmon_lock);
+> > +
+> > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> > +	time_now = get_jiffies_64();
+> 
+> > +	/* Handle HW register overflow */
+> > +	if (reg_val >= fi->reg_val_prev)
+> > +		pulses = reg_val - fi->reg_val_prev;
+> > +	else
+> > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
+> 
+> Isn't it the abs_diff() reimplementation?
 
-Where do we block driver unbind with an open resource?  The whole
-concept is that open resources will pin the in-memory object (and
-modulo for a modular driver), but never an unbind or hardware
-unplug, of which unbind really just is a simulation.
+Not exactly. This is specific to 32 bit register overflow, so we count
+from max value.
+
+Raag
 
