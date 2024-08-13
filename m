@@ -1,287 +1,159 @@
-Return-Path: <linux-kernel+bounces-285222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD41950AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAD8950AF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35024280E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:57:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB90E1F2335E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0D61A2567;
-	Tue, 13 Aug 2024 16:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418FB1A4F1C;
+	Tue, 13 Aug 2024 16:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="E5n+EdQ7"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2054.outbound.protection.outlook.com [40.107.21.54])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="Pkj94tWF"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5C955892;
-	Tue, 13 Aug 2024 16:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723568245; cv=fail; b=hhVR65ezwDKxi8nt9cYC2PKEngfuUflAyvrE8slpNYXJI3mN5LMrMQW4W9zZvzZ1c7diqt7TinncevYWbSjzxbM6b8T72lsr/10tIrkszLlea3cXx0APqLTN0wLazqw6kDKaI/STiS7MlpItTVBMkGI0j5inuYGD18wKGOKvWHY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723568245; c=relaxed/simple;
-	bh=KxW7Na5P4OEjhYlGdx3SkWjOuVipVGbyNM2Dj8lLcCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=jElD+Hyxhh23mM4D0n11/i94bU8/7HsnzO+OkHwFdVrhvJSOVti84Hage2fXUWMoxUW7cT1vk1u6ZA2xwMmY/7GteUX3Yo/CyF0PGm82JdIl60+IU+ugEzUhgg8XYAt46e3AiEBWxYCoaAPVHhCnEBo2I0S1+tgaVFqTS1bLEB4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=E5n+EdQ7; arc=fail smtp.client-ip=40.107.21.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J89fRP2QQrHM02DGgyZpbsVPODo0PGyklSDYhCXg9LVHTeAd5/Vqby80m4xQYa4xvE8qy4kM7jbj/PZfOx4xVZzMbgERcZCj+VyzdAABO/r15+SgQ30zdobBcXWHRHIye/olMynZC2fQF0PfzhmUN80cI5B4t1ElZfi6Nt5MsPAFaSAzy2I7i9748CMErlafrZ7kJD9zyVQg12/RUybFjT0zd3M2avlxvSrFWWUNaUSsoZxdjyBHt0TIMAvKgIA5NeF1F5u80F9c+qF5qBybA9hFoIVgHxwsMVXpkLpB7z89NEFRakyKFUiQA/B7cscb4ihPSvsVZfYipB4J2esaKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m0TPo/D0vDO42eZJLlH8uD46KCeaQQL1p66ZoH+/Z+c=;
- b=S7QSrN3hm3acc6LKbEpFT5JAUH0A2euepkuC69fFY902ZryV6qhWNNejY4RJK6tCP74V9dVlujYR+ClYVmSSeY3H681iog31mlXiTlmcFQ1lmxg+szy/WRqUOx3Orqv6kJEN9G4g4kPfCorw1DbqISikpQvNy7yEao/6BbRdPTMNL6SYttNtfPNQDZB8udEPGUpAK4Fg8fv1LIEYtm6j+qjKc1siMfu8XrORzeF/w+4HdMR5HZ2BbMAROsk9CobUL2JZUmVqGW1qpXfTCIGWG9B0PJ8ZvvxED7iBbq12VszGeDZFD/OK3dypPDf658ZAntjRSbjUB1KY544fiXKfBQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m0TPo/D0vDO42eZJLlH8uD46KCeaQQL1p66ZoH+/Z+c=;
- b=E5n+EdQ7J8IScLrrP40vpAwYyyjnBZaMagsNYRRViMBZiowTpnFIXoO1ehDxEAs6bAUM7YJow5NAbCLTiEAgWtiOl/nK89OjVBogQyaI9hg1k0TQZp05Sy68WIkHdXjesJOvwl49cEhTlVyNQGYnOqZJH9fn2/LXj0zMoIchqphb3ptN+aBYSpZZrw4kan/U9aSadhiwcjRCf+KBqf11Z4XC6ZKZd0u1dHX0neRyne+c0E2jyKktbKcit8HEIOfWNSkbnQKL3XMn5Iu108cXhkRzaLKf+VO06lUB9U78ETIs70KwdrA4b9NhjXaJyymdfOS0VoqL8+aFM3Vx5ceIZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DBBPR04MB8060.eurprd04.prod.outlook.com (2603:10a6:10:1e6::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7849.22; Tue, 13 Aug
- 2024 16:57:19 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%3]) with mapi id 15.20.7849.019; Tue, 13 Aug 2024
- 16:57:19 +0000
-Date: Tue, 13 Aug 2024 12:57:11 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"jun.li@nxp.com" <jun.li@nxp.com>, Peter Chen <peter.chen@nxp.com>
-Subject: Re: [PATCH 3/4] usb: dwc3: core: add a core init flag for device
- mode resume
-Message-ID: <ZruQZ/Y/aqIcO0tq@lizhi-Precision-Tower-5810>
-References: <20240712-dwc-mp-v1-0-295e5c4e3ec9@nxp.com>
- <20240712-dwc-mp-v1-3-295e5c4e3ec9@nxp.com>
- <20240807011347.ucxlxmcikizreioj@synopsys.com>
- <ZrZC8AFtmR3Zn1c9@lizhi-Precision-Tower-5810>
- <20240809231844.okzwndlds3zh75rh@synopsys.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240809231844.okzwndlds3zh75rh@synopsys.com>
-X-ClientProxiedBy: SJ0PR03CA0358.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A1C1A2C09;
+	Tue, 13 Aug 2024 16:59:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723568395; cv=none; b=fE18jD8R6qZq0FRlnydpTV1UeIoMhlIKKudkg+C9K4n0Zzac7kmLkPcWbYbzNsOBBoyRWIUDBUt4LoV5yA61I7X/stBMKbEoxU/soROQ+Q34tBMUQ3/uPKy7AP+d2ZKsLVpna6NZMiOP7CPUzMbxg3dPNYXb1BjBwBRE53/J63U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723568395; c=relaxed/simple;
+	bh=H+GSxbRciVzhtZLSyCldyivM6OBE/OBkYicOMwnH20s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ah9zaRrLne3J0opD7d9UH2ce15iO8NUBPUzwUR3qJqyVQs/jGBR/P0vEXdDaolPeXIatvtIO2ckDoqcHF6pT6P0uUnRAyb6V2T0EBNJpx1kIcGS2r5v9tkrrbHa2kJPj1tKWgvsZjfxTxj7LfSfQ4wJ5ABFIRbK1D0i0cUasLb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=Pkj94tWF; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=p45lBwAXRul2ADDWjeHKzk8SKP407UQNCGCoZE9Qvk8=; t=1723568393;
+	x=1724000393; b=Pkj94tWFE66+cMUEJP4JH2Yu1ZWM2Kv73ff7btpxcu2pJwX/5dJ4aoSVHOUb0
+	ERwaURVI8E8rLbAfgG018a1JpDZjXAWICebSXkspza+7GBKlLdWVf12XYVTREBZIsQoILuRTS7BvC
+	1r1sxkU/OcTJhShzYelJ1tSus8HJ2O6cSDiCBQ3IyxhguhhOtTaQUzNmsZEkWnb8LQP1kk/JXkTw8
+	vS8uVmKCUXv0c0ljqFwHHBl80zXnvy0q6mY82/BMbXrp+NGJ6WBKG9gogc5A7aXXl4uGWipsrpTw9
+	h5zp/bnn3gO+5bNXUkMhuFVBgbQPVP7ZSrkmmbVoziGofLdjuw==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sdus8-0002zG-Oh; Tue, 13 Aug 2024 18:59:48 +0200
+Message-ID: <4193d3e2-8b24-45d3-8454-f3eb7c73c36a@leemhuis.info>
+Date: Tue, 13 Aug 2024 18:59:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 066273ac-bebb-4d34-0433-08dcbbb8fe2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?b24a3/rQidMqXNSr8oow7ZhHwu/2meZvSn76LHzSmcwwKz7/qqPx8oh1Wb1o?=
- =?us-ascii?Q?7DifEnGQIqMQgaKdA5fOsG6u0qtC8zSXr0zIeFBLQ8vT9EC+sh96LJwNwXD7?=
- =?us-ascii?Q?dUPQddHn7j88rvoLfu1y2oRZ3n5kKd7nnIixcIZg/i7kVKZOIRT6WWaQPTjB?=
- =?us-ascii?Q?oGxLzrWi8D3mr3wGgoaOih4duE0biRed78KPg7zqV28X257uh2mWLZ+Amkwa?=
- =?us-ascii?Q?waj3V7UsBg28e6k+iyQ+rDR5sohMLenadNVNbIJeG+T3ePqqDUnqJSXoQ1J0?=
- =?us-ascii?Q?nS/OaTQkYe1bDftVfKMWOOlA8u658yiwml7TaTRcYtPWTubxmT1CuHSgCY0E?=
- =?us-ascii?Q?qR59WhP1gbzbkMKJ6hVyzQ0HWqNC7A9oExKbaI3HWkQt1AU3ip7Kk7f7bydT?=
- =?us-ascii?Q?9h9NvyIXr9b1Kxi/q/N1cvYp9gpzGvDtUlEMrjZdKm8np2LaO1k1jFlWGs+3?=
- =?us-ascii?Q?JD8wWKmbaABv6fl12Y5rdqbtpyJUzIJOSALK4EjIlZigVxpTDYe1hrvg9qnE?=
- =?us-ascii?Q?Acyu3U0MBSbxcrlB8z43qX/Z1hLCTvMJ0vltZJ6+LoqmOSeWCQzvw0p6VkYB?=
- =?us-ascii?Q?8+GqHf27jF9AonUQ5Ue/7QAz2/5OBJLOqR4u8rjzuhOb4718DVeYBDw9NLIV?=
- =?us-ascii?Q?7PWGBR0klDA0BG2bZO7/CvYwFWvLbv8OMEDIQsletKx1qb+zIdCnOh3/adoR?=
- =?us-ascii?Q?5fXI/ITo2HVWQmJzha8/l1wa264UUNroSgqSvu7jGApJCHgEZdLR6cpZZryd?=
- =?us-ascii?Q?7Xjc5MfA4XfzSU1Yv/GP6DvOiQox3wNKh1lgxMvc2iRtTpMki7VaIiMyMuZt?=
- =?us-ascii?Q?RHYHFfNrEPYN439NiqzMRPxi/Ok3UmE3aBdZYT+mcSZPHfdS+4IJVHSg45qI?=
- =?us-ascii?Q?BffmkY96oFGi8MzkwXrBw4baHBuFuvtu60uClWV1d2b6TIkPcDAxjS/zujDk?=
- =?us-ascii?Q?teyMHRa0yZOibqnCmFbqBRd819NGmX7dctgi9Zl5nyXNwKh/Ue641wANklhr?=
- =?us-ascii?Q?kp6G8jKSzYh+LwCja/iWRVrdhe0YdZZWSm+stwleyrXD1/3+e9o4ZZ7eZTSm?=
- =?us-ascii?Q?xmi1tNjsayPSOOuAbpm1mhqxnYFQ+948090SPjU0O2HI+L4/rthz+AEqL0ly?=
- =?us-ascii?Q?XXreqldWXa1X426MP9Xa+K8xxSqnqkK+jNrgyEcM2/VObpd0Y1M+dwQb/cRz?=
- =?us-ascii?Q?eNhU5FoixLerxmNVa3iCljukFvXoDeNAytueLFcB/E9q1R99ohiup8EEQqis?=
- =?us-ascii?Q?Y6BxI8zp6BgP4VLJ6ARzL/T1jbQB3czayOBrHPlfUO52BBasc+Pr9GTEnPoi?=
- =?us-ascii?Q?T1oMCEZ2kE8lzUilcksl2jQjoitbmO6Jgak1QZMrarlOav+tYBqROkQJXX+t?=
- =?us-ascii?Q?CnIIw0OD5xYvVPnag5erJ0jwWl/Q6K9sjIKs/B79uLD2VzMkFw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Z/ejW7z+vF8KhGLHGynhpt+P2gczWDGQkoPOeyFaZSjpd2akGRYg+4CtNrOC?=
- =?us-ascii?Q?Vq7Td7FnCCinHH1nEJzZWPOxHxZ86Oiwrkh5ZRBIspqx4DRz6C+OdLZx2AXy?=
- =?us-ascii?Q?tcoqI4OpXybs9/b9+ggbddr7MZm3hSYFK68rymDyAVwK5HrvweslVOROKIoU?=
- =?us-ascii?Q?6DjnE4wmaePHjA/H6EyHl9cCwXTF4uurhQ8XR8xh/5hYQkcHDYhqRF3r96yU?=
- =?us-ascii?Q?ZKt6O6ejIUrq2urm/kLuZ4S3k0hWCRFaOwAlASI9bYsnJauVl61ZJEE6WE1D?=
- =?us-ascii?Q?Mi4uZpsKwb3weU3gcynbVRKS0Abr/nUpgrJs927fr2IzpFaevN+rQGbu2t8+?=
- =?us-ascii?Q?Vcb7Ypu6q8CzAZ05rjd9NxuddW4SwUyu16rC9Fbc22UykIsQldExmZQC3EXm?=
- =?us-ascii?Q?jMhNJHQ4DSGq2kAWRzOhV8/G1TBLyC/WcNE82xhLMQZG4VHpXIScSER7PjP2?=
- =?us-ascii?Q?K3p9+h8gaZzA/oF+TwfS4MqIhz1XyRfH9Xb0GtMuAHVt66c3jWoibfAjUECF?=
- =?us-ascii?Q?tvRbrAqZt7QWtCqGsbK4IXr7ddDgQLmixN8bMq2J5zVJfV82hbjHtnQFM+PN?=
- =?us-ascii?Q?FoDFjmWy+4hSmZtgri9eo9UmSnioZrGaBQMgdPjBFxTkCUVrN7nJWjHuPMzi?=
- =?us-ascii?Q?x9L0m1m1vNN1t+coyB3wjboxoZKMEJJh8hwaaGe/qsiScCLZ81LXZtW0fuUZ?=
- =?us-ascii?Q?D6bqURwIT7n0eWp6Q4PosfNlhfuik1GeHllkb63syDo0nXNJe0PUJ4KJkCkS?=
- =?us-ascii?Q?3ryrcJpi/0/zObvGetPAaAJYBZks8t7imOHG5w9/2cCuRF2yLXBSZYzqRzNw?=
- =?us-ascii?Q?UZGeLMMZ60Nn0+Sc3IHyZXkarNbUEXpdcw1F//bh0xDkxDEmDOvzkBIDWVUl?=
- =?us-ascii?Q?eCBm478nWClHgPgPwCP+Q5WVadPb5J9K4+xjCh9k+JZJcIf1efoTHLZX8VCG?=
- =?us-ascii?Q?rZn4kXL7O0eGOqx+JygnYmdw/5D0yg2np2TOPNqnqu8IFQzvEiTxJwVbYa17?=
- =?us-ascii?Q?eTsZURxaOb9jX5KylbATDTkWW+kjHSXV9GbliZ5w7glea9hM1CYPbVL2fRaT?=
- =?us-ascii?Q?T82B+hvT4BEmXQeDBs34MV4TOARmVNtyg+OQwL8JTYENASYNla+EXMVzBCRD?=
- =?us-ascii?Q?XTFVUg5HwkLFI1z19mJFK/QYAg8+AYZVv46sltJ43KmXA6pgFW6+p+TgKDBi?=
- =?us-ascii?Q?qRt2SLtEFZ7zJ4soAio/vzj+n6CzOZPddUyadcGR1vcisfXgmTHQejwydcPY?=
- =?us-ascii?Q?/Ug8a2Ma1eGegv9YrMWQUfpaq36d20GhmjhntWoBswpR6aJBaLKCXpoJ3CzY?=
- =?us-ascii?Q?AAAkiqqwrhCQ5wQVKlNLa4kqPMSja6t+rglB1iAgG8G/xcaN3olic5qS5dQy?=
- =?us-ascii?Q?gDnDkOQvwOKa9PBCQisb3l3Auo2DaldxlM3/y1snK2VNqtIhPLKWISXzvvMH?=
- =?us-ascii?Q?bX4hWqKvq2d8rj6kcLLzhua3CYfQzCXBlp9cBqRehI0A5e0SyBj6tl8mLrFk?=
- =?us-ascii?Q?OmjTJrdNe6Z2TsW8NPPqH6iHArknv1V46z3Q1mhTqnLMH6O9PyuWFmKaxqbA?=
- =?us-ascii?Q?ofw6I0zKYtAhisy5y2ZH8ykpgTakb5KnXFwuyljg?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 066273ac-bebb-4d34-0433-08dcbbb8fe2d
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Aug 2024 16:57:19.3832
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 9EsvggJWtEQ8UVabmjz/MxcHlNAlwUyKAQoH8gKPB8wKUDZQXwC8tmowvWhW/Woq5PAzY8jp++zMM5eWy50uEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8060
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/3] tools build: Avoid circular .fixdep-in.o.cmd
+ issues
+To: Brian Norris <briannorris@chromium.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Thomas Richter <tmricht@linux.ibm.com>, Josh Poimboeuf
+ <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+ bpf@vger.kernel.org, linux-kbuild@vger.kernel.org
+References: <20240715203325.3832977-1-briannorris@chromium.org>
+ <20240715203325.3832977-3-briannorris@chromium.org>
+ <99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info>
+ <ZruMaIGu8EoAE1Fy@google.com>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <ZruMaIGu8EoAE1Fy@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1723568393;9434566f;
+X-HE-SMSGID: 1sdus8-0002zG-Oh
 
-On Fri, Aug 09, 2024 at 11:18:53PM +0000, Thinh Nguyen wrote:
-> On Fri, Aug 09, 2024, Frank Li wrote:
-> > On Wed, Aug 07, 2024 at 01:13:52AM +0000, Thinh Nguyen wrote:
-> > > On Fri, Jul 12, 2024, Frank Li wrote:
-> > > > From: Li Jun <jun.li@nxp.com>
-> > > >
-> > > > The runtime resume will happen before system resume if system wakeup by
-> > > > device mode wakeup event(e.g, VBUS). Add a flag to avoid init twice.
-> > >
-> > > What's the consequence of going through the resuming sequence twice?
-> > > Will this cause any functional issue?
-> >
-> > static int dwc3_core_init_for_resume(struct dwc3 *dwc)
-> > {
-> >
-> > 	...
-> >         ret = dwc3_clk_enable(dwc);
-> >         if (ret)
-> >                 goto assert_reset;
-> >
-> > 	...
-> > }
-> >
-> > clk will be enabled twice, the reference count in clk will be wrong because
-> > clk_disable() only once at suspend.
->
-> Please capture these info in the commit message.
->
-> >
-> > So clk will be always ON at next suspend.
-> >
-> > Frank Li
-> >
->
-> dwc3_clk_enable() happens in probe() and dwc3_core_init_for_resume(),
-> but you're checking dwc->core_inited in dwc3_core_init(). Why?
+On 13.08.24 18:40, Brian Norris wrote:
+> On Mon, Aug 12, 2024 at 08:32:29AM +0200, Thorsten Leemhuis wrote:
+>> Lo! TWIMC, this change broke my daily arm64 and x86_64 Fedora vanilla RPM
+>> builds on all Fedora releases when it hit -next a few days ago. Reverting
+>> it fixes the problem.
+>>
+>> The problem is related to the RPM magic somehow, as building worked fine
+>> when when I omitted stuff like "-specs=/usr/lib/rpm/redhat/redhat-
+>> hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1" from the
+>> make call. So the real problem might be that space somewhere.
+> [...]
+> I don't have a Fedora installation on hand at the moment, and the logs
+> don't seem to include most of the actual kernel build logs
+> (stdout+stderr of a V=1 build might help), but I think what you've
+> provided so far has highlighted one possible problem -- that the new
+> one-shot compile+link is ignoring HOSTCFLAGS, which were previously
+> respected via tools/build/Build.include. Could you try the following
+> diff? I'll cook a proper patch and description later, but for now:
+> 
+> --- a/tools/build/Makefile
+> +++ b/tools/build/Makefile
+> @@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
+>  endif
+>  
+>  $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
+> -	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+> +	$(QUIET_CC)$(HOSTCC) $(HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
 
-I have not check dwc->core_inited in dwc3_core_init(). Just set init value
-dwc->core_inited = true
+Many thx for looking into this. Seems that does resolve the problem (I
+did not perform a full build, but without this the build fails after a
+few seconds, and now it ran through).
 
-Do you means dwc3_core_init() as dwc3_resume_common()?
+I don't care much, but feel free to add a
 
->
-> If the issue is only related to clk_enable(), perhaps just check that?
+Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
 
-This should be major one. Any paired operator between suspend/resume should
-have issue.
+Thx again!
 
-Frank
-
->
-> (minor nit: rename core_inited to core_initialized if you plan to do
-> that)
->
-> Thanks,
-> Thinh
->
-> > > >
-> > > > Reviewed-by: Peter Chen <peter.chen@nxp.com>
-> > > > Signed-off-by: Li Jun <jun.li@nxp.com>
-> > > > Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> > > > ---
-> > > >  drivers/usb/dwc3/core.c | 13 +++++++++++++
-> > > >  drivers/usb/dwc3/core.h |  1 +
-> > > >  2 files changed, 14 insertions(+)
-> > > >
-> > > > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> > > > index 734de2a8bd212..d60917fad8c52 100644
-> > > > --- a/drivers/usb/dwc3/core.c
-> > > > +++ b/drivers/usb/dwc3/core.c
-> > > > @@ -950,6 +950,8 @@ static void dwc3_core_exit(struct dwc3 *dwc)
-> > > >  	dwc3_phy_exit(dwc);
-> > > >  	dwc3_clk_disable(dwc);
-> > > >  	reset_control_assert(dwc->reset);
-> > > > +
-> > > > +	dwc->core_inited = false;
-> > > >  }
-> > > >
-> > > >  static bool dwc3_core_is_valid(struct dwc3 *dwc)
-> > > > @@ -1446,6 +1448,8 @@ static int dwc3_core_init(struct dwc3 *dwc)
-> > > >  		dwc3_writel(dwc->regs, DWC3_LLUCTL, reg);
-> > > >  	}
-> > > >
-> > > > +	dwc->core_inited = true;
-> > > > +
-> > > >  	return 0;
-> > > >
-> > > >  err_power_off_phy:
-> > > > @@ -2375,6 +2379,15 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
-> > > >
-> > > >  	switch (dwc->current_dr_role) {
-> > > >  	case DWC3_GCTL_PRTCAP_DEVICE:
-> > > > +		/*
-> > > > +		 * system resume may come after runtime resume
-> > > > +		 * e.g. rpm suspend -> pm suspend -> wakeup
-> > > > +		 * -> rpm resume -> system resume, so if already
-> > > > +		 *  runtime resumed, system resume should skip it.
-> > > > +		 */
-> > > > +		if (dwc->core_inited)
-> > > > +			break;
-> > > > +
-> > > >  		ret = dwc3_core_init_for_resume(dwc);
-> > > >  		if (ret)
-> > > >  			return ret;
-> > > > diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-> > > > index 1e561fd8b86e2..8a4bfd9a25b19 100644
-> > > > --- a/drivers/usb/dwc3/core.h
-> > > > +++ b/drivers/usb/dwc3/core.h
-> > > > @@ -1195,6 +1195,7 @@ struct dwc3 {
-> > > >  	struct clk		*utmi_clk;
-> > > >  	struct clk		*pipe_clk;
-> > > >
-> > > > +	bool			core_inited;
-> > > >  	struct reset_control	*reset;
-> > > >
-> > > >  	struct usb_phy		*usb2_phy;
-> > > >
-> > > > --
-> > > > 2.34.1
-> > > >
+Ciao, Thorsten
 
