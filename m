@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-285040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEFC095088B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:09:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E21795088C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98499281032
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5B36281448
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA70F19FA8A;
-	Tue, 13 Aug 2024 15:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2DD19FA6B;
+	Tue, 13 Aug 2024 15:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VZErF4m+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J/uxd/Dg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3073C1DFD1
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:08:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A161E4A4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:09:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723561735; cv=none; b=I7Zl4U2sThVMHFRP6wJ5H7x6FsufKysQUS58WZSnE0pdszR+3RlcRT6f9KuaYZYZbQ6KOTqT2qfplCnqCVAOqXWKCxsSBVHmI+xnBiz17BO07U5LpERVOnieCoBqvMyvp/pyrmrp6WUWeT4gctSi3TauW4OZu1kbNV3uIMKITNI=
+	t=1723561756; cv=none; b=k7tV0hqIb9S4x4yOwZkzPmcliClq7VfqgfR3hRmdpY9vCJ5s3VRdzZeo5Ys7ewQ/SrKUwoZNmzRMbnpjb6No6HitGJJdoJn0cUGBOnq0A6H4GLVwndi90u9hpPAw3nZZf5Stea5BLJ3Hm23W3WxYtHBp8DxERONS+8FbhAxs3VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723561735; c=relaxed/simple;
-	bh=/aFOSunKY4cAr+gPK0RzKG2+tAOexUZ8Sc0slBjK688=;
+	s=arc-20240116; t=1723561756; c=relaxed/simple;
+	bh=/GcEWWpZq8y+N37/E08NFUqXKYdVeGt36Z/qjZUVTW8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L2fnRxzK0k65gge8mLtjzdivciXlWQkUMA0IwEObe7dQlmmDHggjo9mpJIKip25GZeRwBtvq+0IBi2/E6NArDOIoaVvVuWw+Yca1qQWzPDGnQiXC6qFc3PTQReYuuLyZ8vwp1VU8YyFWbqGhyRcUiCrc1oo8mUiAVcK87X8Uav4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VZErF4m+; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=XNBquiq+HbopLy5m78rq6qO1nDEY/JTJQBZQc2N3qnfdt0a6rV2u29Y1l6JayY/9DLLI8dXwiUri3bhxH598KmmAWU6ri+iMvly+7K8K8FtX/oV7ESRPsWmNFysI5vwjIUtcdfLkoi/FQDetZP0C2rUQXhkJwfACli5+cmGG1Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J/uxd/Dg; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723561732;
+	s=mimecast20190719; t=1723561754;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pKrrT/7S5wbSyPZ1x9NUafoaRV+So0xiopVs8EC6c1M=;
-	b=VZErF4m+9qd8A/WcXeCPLMzUUqr+Ix7fxznzaABUErbcvZVH9RScXIY/bUIRbQFZFl975A
-	HZhDMc+6a5q09kz2AvdAmQF4uSipHl8DHdCFz/tMYiHr13fymVqkt/yDTw5ElkvXntlpkU
-	1crMtZMdc/hFFQMTHaFiNoI1EMjp70w=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=tYfScfbGIJQnIlB+eAa395d/aizhLRfIRY/+GrJId/U=;
+	b=J/uxd/DgDdULni9UNLml25TBjQShrD/rJstOfFkQvQT09MdJM80z1P/HQtg7WMPJ/xLgmL
+	Ev4EME22fTfY/XA49aaiGNmn+/l+2d5fiBdRBuOp79jPcbecKkNxJ/PdYpIcikx62mrBCk
+	pPCeLLtMVD+ffkR/laqyCGFHgtEPiIM=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-246-kq6Qu01TMVSDUkfhHKztow-1; Tue, 13 Aug 2024 11:08:50 -0400
-X-MC-Unique: kq6Qu01TMVSDUkfhHKztow-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4280a434147so41341795e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:08:50 -0700 (PDT)
+ us-mta-295-1kPgdP6mPtSjf0zrcJTGTw-1; Tue, 13 Aug 2024 11:09:12 -0400
+X-MC-Unique: 1kPgdP6mPtSjf0zrcJTGTw-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3687eca5980so2744779f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:09:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723561729; x=1724166529;
+        d=1e100.net; s=20230601; t=1723561752; x=1724166552;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=pKrrT/7S5wbSyPZ1x9NUafoaRV+So0xiopVs8EC6c1M=;
-        b=Vzbw+0i1h+zlNJq9v7zvWU9x6KsB63xxcazA/QcXz6jJcDxf3a0/fV8qrldUeCmRed
-         f+ECt+5hQu7ULV9z13CypL8xdcAACY/EYnbmXGcjk6JYoztRVpBMYhZLO2QlIlwycHzp
-         aq9roWXSBjrY6J93raY9Jjz+eiZuCEPr32Q+qXuGtr5YfqNr4Yt9yRJ+1X04//oCUnQP
-         Dh4r9HpOVUseVER87dImkdJ1IGXyepH94Ck3FBpQbw4OICwlX6t0W9s+416fGwb+S5pM
-         yE7iXcgotqBl1m52wQAkoBWkz5j9jmKCQkd4PeU2EfvW/XxKLjWSD7cMITlI02Js+lao
-         wKEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVstwrzUCwlgopMN8g/EBb0qdKwaix1dvdPecbDxipI85r3yuhZjJO5qmlQFxfsl42pg53ueYciwfqGmfXCPEd+28HcBO+BaGq9KWts
-X-Gm-Message-State: AOJu0YyUwKULY+EfO8BFP3Rluwi09/xWngsxfJ89YKrf5Qgdfs+aCP7V
-	29tDroxzcPD5NN508w71rq1E8s7vggHQ92Xpi5H/gPu82XCkxM2ptbc3V6H3iQwuJg4HMYUfdjT
-	0BBJMEIkawyxDokdbga0rCxCZQp31OMOUW09DDjFmnwCxcyMagpUAnfawIcxtIw==
-X-Received: by 2002:a05:600c:358a:b0:426:593c:935f with SMTP id 5b1f17b1804b1-429d47f425emr28623415e9.1.1723561729578;
-        Tue, 13 Aug 2024 08:08:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHOT44Oa6xbbMALe2SjF6Po9x6pcvKvF+My0TM6/JIT53x8QKH/Ijr1Kw5GHekr6Hd7OSqCFQ==
-X-Received: by 2002:a05:600c:358a:b0:426:593c:935f with SMTP id 5b1f17b1804b1-429d47f425emr28623155e9.1.1723561729111;
-        Tue, 13 Aug 2024 08:08:49 -0700 (PDT)
+        bh=tYfScfbGIJQnIlB+eAa395d/aizhLRfIRY/+GrJId/U=;
+        b=VpPDDxQC3I/5nXrYV/BNlbxJnQSWhaNuQYPXM9Dx/aH0e1Hm7PR1nlIVjwu8P8nQLC
+         ZT0sVAQIB93ipj/CSFzQMvlpMu6eGvKSUAEtRPIjWcPgGNymjVGtKp/coRMIm7m1kl80
+         0snwOyZBSGuW23urcvvbDhjb9gtuXEsPGWjndkU+SSmsFAGefdOtyojntym1pUV0Juji
+         oHUeeKucd9eLjB1mGyHT7AuVjp7On4hfZ/LjrUDnSagcDzxJlj2WCBq+kJ/8OR3Dv69v
+         K/nulcl4FyQ2Zycdf0+e+VJi5gZa5BJYv87j6zrESV2eilvz0gzyAzkOVo2tiHgFMKi0
+         qGvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3JwWbkfM0sauFS/SZxp5ZJ7tLSIxLsaq+n4Yfe4CpsAk2m6cZv9g1SgdT0ukekuRS+ncz6gvSaedXdGez1OnXJmbZSXUYLsQbbWwW
+X-Gm-Message-State: AOJu0Ywq0Kvd96WxODKQaWakYMdCmYS5WWhG1scNsD424riR/0PXOqFd
+	LsJy6ZdEoVcPps60hrqMNE/qAoD2h6oSq6w5H1Thlvvb1yVpBGmOv0jTtfqJY85uk9yNDuNACTe
+	I+xHZRwjjN0WcUtEuhHjQ4VnUL4ifHb5d0qAbknFLydzgaY3vyDltOERg7zjjYQ==
+X-Received: by 2002:a5d:648f:0:b0:366:e9f3:c242 with SMTP id ffacd0b85a97d-3716ccf080emr2779661f8f.12.1723561751704;
+        Tue, 13 Aug 2024 08:09:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFmTz7CthlDbY7apOcB7y5Lbw2eI043yEX1VOouAoqnffjtEsqQdJRlQOGjfFnoZTDEUp7oCA==
+X-Received: by 2002:a5d:648f:0:b0:366:e9f3:c242 with SMTP id ffacd0b85a97d-3716ccf080emr2779633f8f.12.1723561751189;
+        Tue, 13 Aug 2024 08:09:11 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738e0csm234790085e9.16.2024.08.13.08.08.48
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4c937bb9sm10678075f8f.34.2024.08.13.08.09.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 08:08:48 -0700 (PDT)
-Message-ID: <30a2d98d-6f72-4a88-8d90-8a5861b0b2c6@redhat.com>
-Date: Tue, 13 Aug 2024 17:08:47 +0200
+        Tue, 13 Aug 2024 08:09:10 -0700 (PDT)
+Message-ID: <be75dbc3-3137-44a2-af45-5454728c98a2@redhat.com>
+Date: Tue, 13 Aug 2024 17:09:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,13 +82,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] alloc_tag: introduce clear_page_tag_ref() helper
- function
+Subject: Re: [PATCH v3 2/2] alloc_tag: mark pages reserved during CMA
+ activation as not tagged
 To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, vbabka@suse.cz, pasha.tatashin@soleen.com,
  souravpanda@google.com, keescook@chromium.org, linux-kernel@vger.kernel.org,
  linux-mm@kvack.org, stable@vger.kernel.org
 References: <20240813150758.855881-1-surenb@google.com>
+ <20240813150758.855881-2-surenb@google.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -136,21 +137,41 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240813150758.855881-1-surenb@google.com>
+In-Reply-To: <20240813150758.855881-2-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13.08.24 17:07, Suren Baghdasaryan wrote:
-> In several cases we are freeing pages which were not allocated using
-> common page allocators. For such cases, in order to keep allocation
-> accounting correct, we should clear the page tag to indicate that the
-> page being freed is expected to not have a valid allocation tag.
-> Introduce clear_page_tag_ref() helper function to be used for this.
+> During CMA activation, pages in CMA area are prepared and then freed
+> without being allocated. This triggers warnings when memory allocation
+> debug config (CONFIG_MEM_ALLOC_PROFILING_DEBUG) is enabled. Fix this
+> by marking these pages not tagged before freeing them.
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
+> Fixes: d224eb0287fb ("codetag: debug: mark codetags for reserved pages as empty")
 > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 > Cc: stable@vger.kernel.org # v6.10
 > ---
+> Changes since v2 [1]:
+> - Add and use clear_page_tag_ref helper, per David Hildenbrand
+> 
+> https://lore.kernel.org/all/20240812192428.151825-1-surenb@google.com/
+> 
+>   mm/mm_init.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/mm/mm_init.c b/mm/mm_init.c
+> index 907c46b0773f..13c4060bb01a 100644
+> --- a/mm/mm_init.c
+> +++ b/mm/mm_init.c
+> @@ -2245,6 +2245,8 @@ void __init init_cma_reserved_pageblock(struct page *page)
+>   
+>   	set_pageblock_migratetype(page, MIGRATE_CMA);
+>   	set_page_refcounted(page);
+> +	/* pages were reserved and not allocated */
+> +	clear_page_tag_ref(page);
+>   	__free_pages(page, pageblock_order);
+>   
+>   	adjust_managed_page_count(page, pageblock_nr_pages);
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
