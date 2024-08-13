@@ -1,151 +1,132 @@
-Return-Path: <linux-kernel+bounces-284017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C04D294FBF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:50:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97A2694FBFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 383BEB223DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:50:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535C928322B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B532033A;
-	Tue, 13 Aug 2024 02:49:31 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5416918C3B;
+	Tue, 13 Aug 2024 02:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TJ3+panW"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A435E1E86A;
-	Tue, 13 Aug 2024 02:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F15518AEA;
+	Tue, 13 Aug 2024 02:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723517371; cv=none; b=XEzZdZDy6rc1bRSaFfwrFQTVTZEgZDQUpWO3Otu/sAmsjeuwLY/ru7gYYnY1X3FHtHDuJJ3VtPWVqQNcBiic4Z9DSEnVPCVeecCzXMpSHLP+5PSmWr3pOufVBBl95Jk/cU42q7PTpakDzcg3r+RClYod3mSGRmPANlIHEXjypkQ=
+	t=1723517443; cv=none; b=H8cJQ4FzzEp09Tfs+Z0Q3yV6tn56aRQsc9hNptYftAbxmvkxr2u5f3jaB468jyOhpvMWPFY2ILprHRit6DO+26moe2+Sy0doAjwoCelf1oY/GG9vrDwXnUYI9POLz2OgHM7gGoE+9A4IUh5yrQzrcXVAogCwLQrPelxQsgqGihQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723517371; c=relaxed/simple;
-	bh=hQKnZrBwQM09zuJSipp9urEd+Q+xJzQsaB5ZluAZ2UU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dPziTh8A7xroTv/h8onfOWYITX1WVAjCbj0et1tjZyqk3v20oAV1YyMR5LV4cIlhMEaEsYbsHponYRowNc05iivtLbU8RxKHpV00ljyN3XsKBCnBce0ZS2UTyjP0bbTxX1ksSv76/rgnLqXskbT0ymUscCyC9/TN3WXbhLUcO/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjbSV36mNz4f3jZQ;
-	Tue, 13 Aug 2024 10:49:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id B2E1A1A07BA;
-	Tue, 13 Aug 2024 10:49:23 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgBnj4WxybpmnD0rBg--.782S3;
-	Tue, 13 Aug 2024 10:49:23 +0800 (CST)
-Subject: Re: [PATCH v2 4/6] iomap: correct the dirty length in page mkwrite
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, hch@infradead.org, brauner@kernel.org,
- david@fromorbit.com, jack@suse.cz, willy@infradead.org, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com
-References: <20240812121159.3775074-1-yi.zhang@huaweicloud.com>
- <20240812121159.3775074-5-yi.zhang@huaweicloud.com>
- <20240812164536.GE6043@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <0ee2814f-2878-bcff-7baf-703327091805@huaweicloud.com>
-Date: Tue, 13 Aug 2024 10:49:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1723517443; c=relaxed/simple;
+	bh=CF9HW3eNFhOVDA/sxRBdxiNTt85AJDi7Zr7sdnYlRo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KIYDJmtomNfwi6sW1g2w9m47O6jNXjy34w88oGHnoL6741XWkuRgpM3NFboQsB9h64jyt7BytM7PJR9oAEMN6XGfbqrl8R46tJhbjRIlXHnBHvzKeAyDRHoiFzlK7mjlmK3XPuFe8pLxjNEa4W/m/dL7rIvHKYPk9LiOT+ivgmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TJ3+panW; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-691c85525ebso47369127b3.0;
+        Mon, 12 Aug 2024 19:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723517440; x=1724122240; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5X/LLJbCQIJdAHCZobbfZ15M33n1HKUhsdxOtakpmKU=;
+        b=TJ3+panWonqSSnbGJ/5VSGdAcGT0hxM4XB4rX0Sz96kTgHX9zkrbyvVed+aNePNzND
+         /Gim2f5m17rIQxkTx+iK7fyX/IRJM7PBEyxiGq9AAM2fIGAcscw7gXiwlguqn9DErYCc
+         cJZlAi9QdtKm5RCJgt48uK/HXnTKq38BIfHCpFg2I+IwxP4H6UpswvVZtH6fh4EyQAKn
+         5HpYLmPo1246WyEYf+utFAwzfgzizrpEu4opZ4l2TfNBguZG1wiButMgG39FSmmYT2ut
+         lRhk6qIs3YMpR80yE/maknjOIe2plD5v7KBQuEWSkIHEbRtnWwH4U4WARRQ1qml166zH
+         qNgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723517440; x=1724122240;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5X/LLJbCQIJdAHCZobbfZ15M33n1HKUhsdxOtakpmKU=;
+        b=Bi55IwczXhgiZPHp4Fc/ewt6HA0NOl5whd3Yiz0ksiPzI96AHbLgkEn+xrL69+otv6
+         baf5WedgvCJ8RvrbBTORXEmiJEmHAvkrDQa/V8o1+U9aep98pU6vEL0TD/5I6xicVLWQ
+         IPPsmUwqN+SxaOITydIhf6IbZHHQ1Lx2mloYGsjkeb4Z/c/xCdHs8EpoVpmglV07Lvi1
+         +fuwTmNF04Z4wsBzOG1m+YiH9uXR7zsI6zwYQAFL+tAG+5c6Ulv/+evnWt7BbRLZE9xD
+         OY62X/A6Yi5jOur5SBXkJllP/nwxYe4gf/oN4XMvZvbARvQRoJLJxCUBvjYkFFvWNNo/
+         mf5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFUyb8zgtXb1+0YoeQK3qxWk3ZzAqim8vfei5W6pV7qdXgt1BhpmjrTbAbb1VTPZOQt8UfViJWDR30xbTLXrxN9lqh6wCC421Is4PN
+X-Gm-Message-State: AOJu0YyReeT3jOUmpcelMQhnZaexkjDOAIcnG1tsGXzaFM7AHjlbQS6F
+	z1dkmvg+BZGx7mIYKhEpZnhK8mXvlZB0o5vW4M6AI9Yh7dxgFUJIbsZ/joce/W2RCsBrybhI2tZ
+	cGApGoJQGcn7WofGRPrVf5XCdDYQ=
+X-Google-Smtp-Source: AGHT+IEtD8/3jwjUQ+AEI2oWq1b72HdraqJL7SYGlFXfY5Ubeh//o2e4Ryc3x/THyllge9fIvvnW9ZqvGRbDPAY7n8s=
+X-Received: by 2002:a05:690c:f92:b0:665:30bf:7752 with SMTP id
+ 00721157ae682-6a97151cb4dmr28162177b3.2.1723517440450; Mon, 12 Aug 2024
+ 19:50:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240812164536.GE6043@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgBnj4WxybpmnD0rBg--.782S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ury5AFW7WFy7tr4xXw1DWrg_yoW8Kw1DpF
-	WDKFWqkr48J3Zruwn3Ar1Yvr10kr9xXw40yF17W343AFn8ur12gr1UK3Wj9F1xKr13Aw4S
-	vF4jqa4xXFyjyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+References: <20240812190700.14270-1-rosenp@gmail.com> <20240812190700.14270-3-rosenp@gmail.com>
+ <ae818694-e697-41cc-a731-73cd50dd7d99@lunn.ch> <CAKxU2N9p4DrbREqHuagmVS=evjK48SWE5NM3RbD5zF6D-H93kA@mail.gmail.com>
+ <38c43119-4158-4be8-8919-f6890a5f4722@lunn.ch>
+In-Reply-To: <38c43119-4158-4be8-8919-f6890a5f4722@lunn.ch>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 12 Aug 2024 19:50:29 -0700
+Message-ID: <CAKxU2N8-bPnkouJ_95U9NkRh7AP94MuMJTMeThWQhnuL1n0SMg@mail.gmail.com>
+Subject: Re: [PATCH net-next 2/3] net: ag71xx: use devm for of_mdiobus_register
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/8/13 0:45, Darrick J. Wong wrote:
-> On Mon, Aug 12, 2024 at 08:11:57PM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> When doing page mkwrite, iomap_folio_mkwrite_iter() dirty the entire
->> folio by folio_mark_dirty() even the map length is shorter than one
->> folio. However, on the filesystem with more than one blocks per folio,
->> we'd better to only set counterpart block's dirty bit according to
->> iomap_length(), so open code folio_mark_dirty() and pass the correct
->> length.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->> ---
->>  fs/iomap/buffered-io.c | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
->> index 79031b7517e5..ac762de9a27f 100644
->> --- a/fs/iomap/buffered-io.c
->> +++ b/fs/iomap/buffered-io.c
->> @@ -1492,7 +1492,10 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
->>  		block_commit_write(&folio->page, 0, length);
->>  	} else {
->>  		WARN_ON_ONCE(!folio_test_uptodate(folio));
->> -		folio_mark_dirty(folio);
->> +
->> +		ifs_alloc(iter->inode, folio, 0);
->> +		iomap_set_range_dirty(folio, 0, length);
->> +		filemap_dirty_folio(iter->inode->i_mapping, folio);
-> 
-> Is it correct to be doing a lot more work by changing folio_mark_dirty
-> to filemap_dirty_folio?  Now pagefaults call __mark_inode_dirty which
-> they did not before.  Also, the folio itself must be marked dirty if any
-> of the ifs bitmap is marked dirty, so I don't understand the change
-> here.
-> 
+On Mon, Aug 12, 2024 at 7:41=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Aug 12, 2024 at 02:35:45PM -0700, Rosen Penev wrote:
+> > On Mon, Aug 12, 2024 at 2:28=E2=80=AFPM Andrew Lunn <andrew@lunn.ch> wr=
+ote:
+> > >
+> > > On Mon, Aug 12, 2024 at 12:06:52PM -0700, Rosen Penev wrote:
+> > > > Allows removing ag71xx_mdio_remove.
+> > > >
+> > > > Removed local mii_bus variable and assign struct members directly.
+> > > > Easier to reason about.
+> > >
+> > > This mixes up two different things, making the patch harder to
+> > > review. Ideally you want lots of little patches, each doing one thing=
+,
+> > > and being obviously correct.
+> > >
+> > > Is ag->mii_bus actually used anywhere, outside of ag71xx_mdio_probe()=
+?
+> > > Often swapping to devm_ means the driver does not need to keep hold o=
+f
+> > > the resources. So i actually think you can remove ag->mii_bus. This
+> > > might of been more obvious if you had first swapped to
+> > > devm_of_mdiobus_register() without the other changes mixed in.
+> > not sure I follow. mdiobus_unregister would need to be called in
+> > remove without devm. That would need a private mii_bus of some kind.
+> > So with devm this is unneeded?
+>
+> If you use devm_of_mdiobus_register(), the device core will call
+> devm_mdiobus_unregister() on remove. Your patch removed
+> mdiobus_unregister() in remove....
+>
+> Is there any user of ag->mii_bus left after converting to
+> devm_of_mdiobus_register()?
+There is not. I've applied the change removing mii_bus from ag locally.
 
-This change is just open code iomap_dirty_folio() and correct the length
-that passing to iomap_set_range_dirty().
+From testing, nothing has blown up. Although there's still a problem
+with switched ports (except for lan1) dying after a while. I think
+that bug's in qca8k though.
 
-bool iomap_dirty_folio(struct address_space *mapping, struct folio *folio)
-{
-	struct inode *inode = mapping->host;
-	size_t len = folio_size(folio);
-...
-	ifs_alloc(inode, folio, 0);
-	iomap_set_range_dirty(folio, 0, len);
-	return filemap_dirty_folio(mapping, folio);
-}
-
-Before this change, the code also call filemap_dirty_folio() (though
-folio_mark_dirty()->iomap_dirty_folio()->filemap_dirty_folio()), so it call
-__mark_inode_dirty() too. After this change, filemap_dirty_folio()->
-folio_test_set_dirty() will mark the folio dirty. Hence there is no
-difference between the two points you mentioned. Am I missing something?
-
-Thanks,
-Yi.
-
-> 
->>  	}
->>  
->>  	return length;
->> -- 
->> 2.39.2
->>
->>
-
+calling restart results in no surprises, unlike with some of my other
+questionable patches.
+>
+>         Andrew
 
