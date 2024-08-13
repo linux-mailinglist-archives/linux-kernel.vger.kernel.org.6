@@ -1,116 +1,147 @@
-Return-Path: <linux-kernel+bounces-284628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE69B950345
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:07:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBEAF950349
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:07:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6A028570F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:07:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CCFD1F23BFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5BA198E6E;
-	Tue, 13 Aug 2024 11:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84494198E6E;
+	Tue, 13 Aug 2024 11:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZR7rP3GO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FmjpXsPN"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ED2198A05;
-	Tue, 13 Aug 2024 11:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E21921345;
+	Tue, 13 Aug 2024 11:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547209; cv=none; b=DQXv9eoggmqb8T9Unkt5UnKdkUr08eABxPk2HWZpCideG1oBh3pUUADHBWNq3kVIVvh7HwIEY+5L+BFlgDit6WqFEEapxhE9DFJ9ytKSKyOJ97SCLabZPr1aFlAyIcwRKdpL56TZoIu85FsG7ZJQc0BBfytaADC0RkmkJpr14C0=
+	t=1723547251; cv=none; b=mPGgXx2IgaiZBdp7E9U2cQvkVX7aOsxuG1G33Mn3qcXUGqITsjGO1Gu079vfMioZVqVESm8nSnAYcgEzc2u8pR9X7C279tR+Zsep2RkR2zg1ijx8mHsu2F812YpxfEJIc19gsVh6XgAemjPniabgW8kBbSHOV5QF82X0K8y19x8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547209; c=relaxed/simple;
-	bh=ecC8fTAmiz1HxGR6Ja05qAtWqbB+IKJQljZIIPuUt08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N3PEhQOcHmAcHPsOGex9JeT9kIgYKLBMJaVzZU21vi0u6KLa30CDCWLmJ97/zr/AiP4UORXYZiS4lkRTH+KUGH8mCzgyL+R+3ipazRiWPryaz7IRfGBovWRHupuXhSiSicFEHXF/NUC6dEUSE62lJr1sK/mXiXhAbwlBbRwU+4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZR7rP3GO; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723547208; x=1755083208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ecC8fTAmiz1HxGR6Ja05qAtWqbB+IKJQljZIIPuUt08=;
-  b=ZR7rP3GO0bh96Gg+g+ePvFG1sf5a/r5CqMaGqL2uPJACvFFDHAFHHjsD
-   2xurueqYJG+v8msxEEcQvkx2FuOKrkE3WxmMYxFFJeAFvMvX+ktR/pp7F
-   TE8so3StfSBQSfsLw7SSh/CaP2KJdh08o83trYVXaqGAFBEalHZ05d+Ar
-   cRvIRfp0EPw2kMLScJMfIJOH0L5CSsGcw0i9kOpVphEzZfCDvZxMQOsUC
-   mFHiJnfEEEs41QZj/4zx1UKw/Sh8RSkMtq4cO3TGxTPCsrQCjDQzADF+2
-   F4Ve33gekguV3AKONPrl8onFJtaLU4aCyvMzUiJxPbU7fg6ybxHdF8NfQ
-   A==;
-X-CSE-ConnectionGUID: M0D0j1ApQ+qq+sEfInVKUA==
-X-CSE-MsgGUID: 7xgO+LLhSHKtyrvd/MkrSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21676129"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21676129"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:06:47 -0700
-X-CSE-ConnectionGUID: k7YHe4RWRGKGxsspcQ2+lQ==
-X-CSE-MsgGUID: KdgWFSyGQGWxhUvH8ySm/A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63026283"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:06:42 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdpMN-0000000Ehbe-2IsC;
-	Tue, 13 Aug 2024 14:06:39 +0300
-Date: Tue, 13 Aug 2024 14:06:39 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
-	linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Cosmin Tanislav <cosmin.tanislav@analog.com>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	Marcus Folkesson <marcus.folkesson@gmail.com>,
-	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] drivers: iio: adc: add support for ad777x family
-Message-ID: <Zrs-P_dBMXDAz-Dz@smile.fi.intel.com>
-References: <20240724155517.12470-1-ramona.nechita@analog.com>
- <20240724155517.12470-5-ramona.nechita@analog.com>
- <7d474c3d-22ed-45d5-8224-caaf124b72a0@kernel.org>
+	s=arc-20240116; t=1723547251; c=relaxed/simple;
+	bh=uugB4eTDuGQJnFKfIFPjwiieP1yYLYGEZ5iU7r3LsJI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fqCcgCV124N9MFkl15VaxJU/2bfin/AEh1HT7hIt2USq39X5h3NnMoNMsmG6aaK7Lk8Mjv5IldLLTkCRbdVS3/dnipZgfADFPtBsX+W04DAuddizzwJNX4imdmkTS3XJmxqT/aX0xInMlt63ag+/BBTd4N0GGqKwHy03TmGOR1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=FmjpXsPN; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.0.43] (cpc141996-chfd3-2-0-cust928.12-3.cable.virginm.net [86.13.91.161])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7A79F4AB;
+	Tue, 13 Aug 2024 13:06:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1723547191;
+	bh=uugB4eTDuGQJnFKfIFPjwiieP1yYLYGEZ5iU7r3LsJI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FmjpXsPNxgAZsJdy702YFvpUd9tgOOpQu9v+ztsPkipMYA6T/GAIMcmwPvyMg1gkE
+	 fZyeNrspr36V86TW2soCct++smDDlflnQlxWk/NxgWy62TTpBrgzLzpXjGa4aurUuk
+	 CBNkv87hiFX2pOvl/Is9b36k0RxkAKJ++i4Ap9iU=
+Message-ID: <694f66f1-1b38-4d14-b52b-4610b619b517@ideasonboard.com>
+Date: Tue, 13 Aug 2024 12:07:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7d474c3d-22ed-45d5-8224-caaf124b72a0@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] MAINTAINERS: Mark UVC gadget driver as orphan
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ linux-kernel@vger.kernel.org
+Cc: Michael Grzeschik <mgr@pengutronix.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
+ linux-media@vger.kernel.org
+References: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+Content-Language: en-US
+From: Dan Scally <dan.scally@ideasonboard.com>
+Autocrypt: addr=dan.scally@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240813104447.25821-1-laurent.pinchart@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 24, 2024 at 06:14:52PM +0200, Krzysztof Kozlowski wrote:
-> On 24/07/2024 17:54, Ramona Alexandra Nechita wrote:
 
-...
-
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching.
-
-I would be more precise
-
-  `git log --oneline --no-merges -- DIRECTORY_OR_FILE`
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+On 13/08/2024 11:44, Laurent Pinchart wrote:
+> I haven't had time to maintain the UVC gadget driver for a long while.
+> Dan Scally confirmed he is also in a similar -ENOTIME situation with no
+> short term hope of fixing that. Being listed as maintainers doesn't help
+> progress, so mark the driver as orphan to reflect the current state.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> ---
+Acked-by: Daniel Scally <dan.scally@ideasonboard.com>
+> Dan, could you please ack this patch ?
+>
+> Michael, feel free to take over if you want. You have been active on the
+> code base recently, so that makes you the best candidate, even if I
+> disagree with most of your technical decisions. I'm a bit sad to leave a
+> driver I cared about without trust in its future, hopefully the future
+> will prove I was wrong.
+> ---
+>   MAINTAINERS | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8766f3e5e87e..e6df197f1a58 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -23819,10 +23819,8 @@ F:	drivers/media/usb/uvc/
+>   F:	include/uapi/linux/uvcvideo.h
+>   
+>   USB WEBCAM GADGET
+> -M:	Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> -M:	Daniel Scally <dan.scally@ideasonboard.com>
+>   L:	linux-usb@vger.kernel.org
+> -S:	Maintained
+> +S:	Orphan
+>   F:	drivers/usb/gadget/function/*uvc*
+>   F:	drivers/usb/gadget/legacy/webcam.c
+>   F:	include/uapi/linux/usb/g_uvc.h
+>
 
