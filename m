@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-285497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DDD5950E32
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:57:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44652950E39
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:59:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6204B1C2323F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0F31F2394B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C301A7060;
-	Tue, 13 Aug 2024 20:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BB11A7072;
+	Tue, 13 Aug 2024 20:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZuSCHYIp"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzFBZ6Yb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728D44C61
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5A244C61;
+	Tue, 13 Aug 2024 20:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723582664; cv=none; b=hyTvqfMhaImRvR0UpDzaq2hhCLV8TzH2Iv2G0qxysHslu77hbqWe49EHe9N4Cc6d0XcoTJxb/R/RHySsHbWQj6GWakzQFMF32ExGZJ88t2FOgVrFWZSwsd01E0FtHLeLpl4QPwrQc8XWl2Pgrb0VKZwpOr+dLWvZTzMh7c6Bg/w=
+	t=1723582776; cv=none; b=qPQEGzSMg+q3WRBLsN5uJJEDwST63KnoqE6Xb8zA+2TPPh8g/h3SMB9CBSeCoWj3SMuud8fwarqqimFluKPhkKCL2F5FrMYMKJvEXvju1eUDVnHkS38D7UdmQPJ82GzpLyPazjO3WtFVC3tzjhqpsbxRv1r25+B7kqiMxbaEglU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723582664; c=relaxed/simple;
-	bh=QQb+yoLfcbSuHiQDh6IBowxVUFi4AdCKYv7lkzs4ibs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=QChtb/xAcweZvv9r46V33qt/3BRV0ycAXQc4unO8i93ZmqdIAFz+Ii0ENgAAMRbykSI6L9oNYlKCxU2kLZ9WP5Irxq3UsLrt/JLWHXDeAqnhoIVeoWJnOfNEDynQolTTZMMJHzUmhJs3edQxTzPJJM+/kI+xIjj2665A1YBwrt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZuSCHYIp; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723582662; x=1755118662;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=QQb+yoLfcbSuHiQDh6IBowxVUFi4AdCKYv7lkzs4ibs=;
-  b=ZuSCHYIpCP46ei8CdFgXYkY/pWFI0xmW29DeeFX7mfcKdWiax+/CdX5H
-   UrzFUgQLsGbCxuicPil62AONbkZjkr9OI2RCin7tXZajjeXal2TN9zOEj
-   SiYnamOHRmvbmhOct75TvMzxpklf5sFKRnklHLGg47+98K2uQOMqmTnWh
-   dfDh5OAY4P8A0uIpsKur1wxew7tggjP9ZTm3dFNLgaqMXagrIhV8Hz4ku
-   UWXLn7ZZbgM7U+pmaq9ZQ/lNEr7/x0la/6xKvFdPpcSVOL794mLXcQzq/
-   +9Q25OM1A9wi37gHYKyru+Juk8o5Q3E5dDs5rLOzK1uRHzhcGfDVkBKfK
-   A==;
-X-CSE-ConnectionGUID: AqHeBk14S2ip8YLDB8OdaQ==
-X-CSE-MsgGUID: RYgpIsMsQ7uWLleoN/XTVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="32451616"
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="32451616"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 13:57:41 -0700
-X-CSE-ConnectionGUID: tyoaJ9HUR1imQSi7hQLr8w==
-X-CSE-MsgGUID: 7E88kVq3Rii7wBX0OV9ikw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
-   d="scan'208";a="59095734"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 13 Aug 2024 13:57:39 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdyaG-0000iw-2X;
-	Tue, 13 Aug 2024 20:57:36 +0000
-Date: Wed, 14 Aug 2024 04:56:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Aurabindo Pillai <aurabindo.pillai@amd.com>
-Subject: ld.lld: warning:
- src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c:6544:0:
- stack frame size (3416) exceeds limit (3072) in function
- 'dml_core_mode_support.138133'
-Message-ID: <202408140456.k2UqhEiG-lkp@intel.com>
+	s=arc-20240116; t=1723582776; c=relaxed/simple;
+	bh=n9dg36LXmN2upFJapMn9PpdzfL1juCkf2K9+76G+g80=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=qTRqK3PRqAkFdFB5vMQOB/3P9iDCB1A0vSa9JNEdjKrAIIQs00Sn/oBA45ILrfWzFBfO4HU6VKuXZA9ygP3oDJ8xMTGa/Lv+1WCvvNKrUzVywuFJTFxZaIjUxr5Xi8FQFaxjEQOm/fHEqf2mFFaLOAqXL/EtFvoUttK0sdtd1kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzFBZ6Yb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CD4C32782;
+	Tue, 13 Aug 2024 20:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723582775;
+	bh=n9dg36LXmN2upFJapMn9PpdzfL1juCkf2K9+76G+g80=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=NzFBZ6YbcMhvmgf7XIZ2DzmarlbrWhFmaDDbK97NoCOsjcPVuoabA2tAGqCPSNXyr
+	 RYbEj6H/qTw36+dVpoEkPVD82k/KRXLkfMSUEsZBBYwAWgyGCBRsIPS43oPRw++9l8
+	 kcYPGTN/HaOsDM164QtRaHiyZr7VSez2LjyjHiXxa7loxO2maFhTGSzb4QxVNGRwRR
+	 Tlk/tIUXJ0FRLiM/l93r/cZtQo6iJdOEd94Ys/klshVHxgLOQkgF0i0mWS8TTfcuNY
+	 dLd7sB42vcETMjCWuQO3/vF0e2lITU8fLY/1QgD+t4KxqGTybDOvo0adFSSRrdT84d
+	 WJIPrhQYf2zVg==
+Date: Tue, 13 Aug 2024 14:59:33 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ "David S . Miller" <davem@davemloft.net>, Kalle Valo <kvalo@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Jeff Johnson <jjohnson@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
+ Jakub Kicinski <kuba@kernel.org>, ath11k@lists.infradead.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ netdev@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20240813190306.154943-1-brgl@bgdev.pl>
+References: <20240813190306.154943-1-brgl@bgdev.pl>
+Message-Id: <172358277338.2007176.5717215982820920385.robh@kernel.org>
+Subject: Re: [PATCH] dt-bindings: net: ath11k: document the inputs of the
+ ath11k on WCN6855
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   6b4aa469f04999c3f244515fa7491b4d093c5167
-commit: aa463cc850c464091cb749317372b70415d3e7d9 drm/amd/display: Fix CFLAGS for dml2_core_dcn4_calcs.o
-date:   4 months ago
-config: x86_64-randconfig-002-20240810 (https://download.01.org/0day-ci/archive/20240814/202408140456.k2UqhEiG-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240814/202408140456.k2UqhEiG-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408140456.k2UqhEiG-lkp@intel.com/
+On Tue, 13 Aug 2024 21:03:05 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Describe the inputs from the PMU of the ath11k module on WCN6855.
+> 
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>  .../net/wireless/qcom,ath11k-pci.yaml         | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
 
-All warnings (new ones prefixed by >>):
+My bot found errors running 'make dt_binding_check' on your patch:
 
-   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:6711:0: stack frame size (4888) exceeds limit (3072) in function 'dml_core_mode_support'
-   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/display_mode_core.c:8280:0: stack frame size (3264) exceeds limit (3072) in function 'dml_core_mode_programming'
->> ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_dcn4_calcs.c:6544:0: stack frame size (3416) exceeds limit (3072) in function 'dml_core_mode_support.138133'
-   ld.lld: warning: src/consumer/drivers/gpu/drm/amd/amdgpu/../display/dc/dml2/dml21/src/dml2_core/dml2_core_shared.c:755:0: stack frame size (3432) exceeds limit (3072) in function 'dml2_core_shared_mode_support'
-   vmlinux.o: warning: objtool: .text.jffs2_erase_pending_blocks: unexpected end of section
+yamllint warnings/errors:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddrfacmn-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddaon-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddwlcx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddwlmx-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddrfa0p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddrfa1p2-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddrfa1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddpcie0p9-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/wireless/qcom,ath11k-pci.example.dtb: wifi@0: 'vddpcie1p8-supply' is a required property
+	from schema $id: http://devicetree.org/schemas/net/wireless/qcom,ath11k-pci.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240813190306.154943-1-brgl@bgdev.pl
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
