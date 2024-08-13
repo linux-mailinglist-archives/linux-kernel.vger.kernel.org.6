@@ -1,210 +1,181 @@
-Return-Path: <linux-kernel+bounces-284782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B56950516
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:34:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83233950518
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC08283653
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D76C1F216FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CE6019E7F0;
-	Tue, 13 Aug 2024 12:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708BC199EA6;
+	Tue, 13 Aug 2024 12:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="advjup4V"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="Lw8i0X7Y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C2D19DF52
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8BE199E93;
+	Tue, 13 Aug 2024 12:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723552299; cv=none; b=bqjAeDUgYdWv3ueAY56nT1jO6VZzQST42bPCKXMtsmPKDJalAYQSxCjQVi+l2wxxQj2YW8E/uz0nWS8AjCcEdK69ld/YqeL4AigugozaKspYH563tGEzqbS9GTJa+viMGXkKsuY7dIjAtnKe3/Fhqr929xq8sROdGKjxo8ufX4o=
+	t=1723552363; cv=none; b=mnVSYzc4vGpC84w6A34kPGlpF5JWuN0xrLUZcL2QFyx+euEedkhxVynN5/CTFlv28JDYcBOLEUfdb1zcVw+ks5stwx34B708lFb65ua41NVw0ggK7wxla9hts3l1wSR8QSKAn3gcm9nrxtZ1ZcgrNg+bRclQaVexq1GKxceomCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723552299; c=relaxed/simple;
-	bh=+CaEvMFtp6+vW8dd+4vdYR7UCy2/V+0eTuF+Ay8On5w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U4geYZqU9sbrjg2S3HVDxr0863yCCYrWDwQpQD9B1+JrhgWOkMRCItiwnFCjQfRQ8WsvFnOULXOrJjfwiZQru1WlyrbbVdlmO9rwHp+iV/He/lX/tHY2jtg3+smR369QHYxARpYGG2tIla2SSJaUb6O7+qjiqm9w56uJ9GrsCXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=advjup4V; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5cdf7edddc5so2870042eaf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:31:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723552297; x=1724157097; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GH6hs7TBxxS/YEw6+1SJGhyHiJvtnJuQXXY87tDn62g=;
-        b=advjup4VBND4CuAVj8l9GuqzmubjR+lgB6UfV/S5B0v5UudhjHRGF7s6n0wQUa8we0
-         OaOjX4GMaqAZb07kFx1EhJF82JQmo1M6WhEzKfu2EMqrn9GMmJqfx2/5yow0b7qct6L5
-         Od5IOWWUHXWK0AjLTaC55JGDUjuN1bDo3Q5tQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723552297; x=1724157097;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GH6hs7TBxxS/YEw6+1SJGhyHiJvtnJuQXXY87tDn62g=;
-        b=objcRVtdHRwANMzyK9J7n/YNy0SiKT+hwxt/PXvTXaLuV9/3AN4aTCxmRfh0PEspj0
-         qPYd0ZXT86iFUL/6bz1c8M23PCnBmQNuOS9ML5CK8ILBXBwxbGqrH4rONxdlF7cgu3WF
-         s5zuj1074l5isQDiEmXVeuTGY0sAqo0JNUfeLaq87dIYGcbMuygRVj6QB6QAGT/yTihZ
-         YYi+Kfow4848JLJLLf5FrXbqA/RWv1lWI10UF5mcR3qIk/uQZ9gds0M1EoFdnupUJvkA
-         Hsas/ySdELeHyWzZeIpQdAzL7nrDrBRnVDRc6atXR9iNMqEfoEueAoRwNThN0fStHW7Q
-         q4Xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBXHntMX9ntYPYnGL1ioDUsew25dN7TZ819aFqgG9zHUkERpzKTuOjFhaphvyd+X5vnlFWO88VpylhVlgfv74LNGggJ8OXphLatW65
-X-Gm-Message-State: AOJu0YyONZ6DwLG/qc2g4l1/2ftEQocDvjqje1IZXt+sdTGoCtUG68YC
-	1zucrim5Nc3B+QUQF0IxGaw8hKpA4YBgnN0d3+QN7shDttYkQuVe+gm9i/lIMg==
-X-Google-Smtp-Source: AGHT+IHogC7GOQUcmfObrPNW1iILSP+KxRxv47DDOynRgsgLm33kY19LjuOqUoeUX6BYwlxMP62DDA==
-X-Received: by 2002:a05:6358:7e47:b0:1ac:66ef:a369 with SMTP id e5c5f4694b2df-1b19d2eb1e2mr402285655d.21.1723552296539;
-        Tue, 13 Aug 2024 05:31:36 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d66093sm337126685a.12.2024.08.13.05.31.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 05:31:35 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 13 Aug 2024 12:31:30 +0000
-Subject: [PATCH v6 10/10] media: venus: Convert one-element-arrays to
- flex-arrays
+	s=arc-20240116; t=1723552363; c=relaxed/simple;
+	bh=gE0ZYFPD+0rjYYUfTXTkptg3LDSOZxo9b0+1h/Rdcns=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MA6SvBdyjkQRj+r9JjwzGboe/VyV+pA3MjqBT7Lxouo90OK5zXfRp0LdolMPdx7KZ0layvF9KLgLGnD0tNXsZp9jV2SZvqt62x4flk/xBVIO2nZkw5pw2G+c3B9ggxeYL6X75QYxx3L5HhQ/dThSIIcXGt6OhFdqyYdllaLRz7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=Lw8i0X7Y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1723552358;
+	bh=k474NsT/hKGeKvuNMaZrdo5+Fa1c4TN5fkh3uTGeTZw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Lw8i0X7Ys1rzFFGNLZf515xcM/EcWHWC1DxmbUymthE87tHCGx/WgfcnJXG5ESg0j
+	 eP7HCCMu/Zziu/4nRu1DZbFrGWprDTIqPewyCDudnYFLcIdvb+Phu++ftbLjTC36Js
+	 mpd1NWEfJmDfpK3fUuHuyd092E+DQkOU4cWqzgWxGTYcnDIcmOgnker29j5vxgw6aS
+	 jSZoOesbn9XjdyoUn2HwXRH4FgADnzY6z+suRcIF1hp7pX6yZPWGrw1ol99R669VmY
+	 g5JbeiHddUV5Gr95vNUq54o1gXiMCyHaO0ex8PiIbi728Q2zugJsSFlbEKxMOg9kDb
+	 mShQV5joPctHA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4WjrPd5sjWz4xCV;
+	Tue, 13 Aug 2024 22:32:37 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Niklas Cassel <cassel@kernel.org>
+Cc: =?utf-8?Q?Kolbj=C3=B8rn?= Barmen <linux-ppc@kolla.no>,
+ linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org, =?utf-8?B?Sm9u?=
+ =?utf-8?B?w6HFoQ==?= Vidra
+ <vidra@ufal.mff.cuni.cz>, Christoph Hellwig <hch@lst.de>,
+ linux@roeck-us.net
+Subject: Re: Since 6.10 - kernel oops/panics on G4 macmini due to change in
+ drivers/ata/pata_macio.c
+In-Reply-To: <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
+References: <62d248bb-e97a-25d2-bcf2-9160c518cae5@kolla.no>
+ <3b6441b8-06e6-45da-9e55-f92f2c86933e@ufal.mff.cuni.cz>
+ <Zrstcei9WN9sRfdX@x1-carbon.wireless.wdc>
+Date: Tue, 13 Aug 2024 22:32:36 +1000
+Message-ID: <87sev81u3f.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-cocci-flexarray-v6-10-de903fd8d988@chromium.org>
-References: <20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org>
-In-Reply-To: <20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This structures are not used, and have a single element array at the end
-of them.
+Niklas Cassel <cassel@kernel.org> writes:
+> Hello Jon=C3=A1=C5=A1, Kolbj=C3=B8rn,
+>
+> thank you for the report.
+>
+> On Tue, Aug 13, 2024 at 07:49:34AM +0200, Jon=C3=A1=C5=A1 Vidra wrote:
+>> On Tue 13. Aug 2024 0:32:37 CEST, Kolbj=C3=B8rn Barmen wrote:
+>> > Ever since 6.10, my macmini G4 behaved unstable when dealing with lots=
+ of
+>> > I/O activity, such as sync'ing of Gentoo portage tree, unpacking kernel
+>> > source tarball, building large software packages (or kernel) etc.
+>> >=20
+>> > After a bit of testing, and patient kernel rebuilding (while crashing)=
+ I
+>> > found the cuplit to be this commit/change
+>> >=20
+>> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/diff/=
+?id=3D09fe2bfa6b83f865126ce3964744863f69a4a030
+>>=20
+>> I've been able to reproduce this pata_macio bug on a desktop PowerMac G4
+>> with the 6.10.3 kernel version. Reverting the linked change
+>> ("ata: pata_macio: Fix max_segment_size with PAGE_SIZE =3D=3D 64K") makes
+>> the errors go away.
+>
+> Michael, as the author of the this commit, could you please look into
+> this issue?
 
-This fix the following cocci warnings:
-drivers/media/platform/qcom/venus/hfi_helper.h:764:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1041:5-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1088:39-51: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1093:5-22: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1144:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1239:4-8: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_helper.h:1272:4-13: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:85:5-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:180:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-drivers/media/platform/qcom/venus/hfi_cmds.h:189:5-9: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
+I can. My commit was really just working around the warning in the SCSI
+core which appeared after afd53a3d8528, it was supposed to just fix the
+warning without changing behaviour. Though obviously it did for 4KB
+PAGE_SIZE kernels.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/platform/qcom/venus/hfi_cmds.h   |  6 +++---
- drivers/media/platform/qcom/venus/hfi_helper.h | 14 +++++++-------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+I don't have easy access to my mac-mini so it would be helpful if you
+can test changes Jon=C3=A1=C5=A1 and/or Kolbj=C3=B8rn.
 
-diff --git a/drivers/media/platform/qcom/venus/hfi_cmds.h b/drivers/media/platform/qcom/venus/hfi_cmds.h
-index 63b93a34f609..1cd1b5e2d056 100644
---- a/drivers/media/platform/qcom/venus/hfi_cmds.h
-+++ b/drivers/media/platform/qcom/venus/hfi_cmds.h
-@@ -82,7 +82,7 @@ struct hfi_sys_set_buffers_pkt {
- 	u32 buffer_type;
- 	u32 buffer_size;
- 	u32 num_buffers;
--	u32 buffer_addr[1];
-+	u32 buffer_addr[];
- };
- 
- struct hfi_sys_ping_pkt {
-@@ -177,7 +177,7 @@ struct hfi_session_empty_buffer_uncompressed_plane1_pkt {
- 	u32 filled_len;
- 	u32 offset;
- 	u32 packet_buffer2;
--	u32 data[1];
-+	u32 data;
- };
- 
- struct hfi_session_empty_buffer_uncompressed_plane2_pkt {
-@@ -186,7 +186,7 @@ struct hfi_session_empty_buffer_uncompressed_plane2_pkt {
- 	u32 filled_len;
- 	u32 offset;
- 	u32 packet_buffer3;
--	u32 data[1];
-+	u32 data;
- };
- 
- struct hfi_session_fill_buffer_pkt {
-diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
-index 755aabcd8048..f44059f19505 100644
---- a/drivers/media/platform/qcom/venus/hfi_helper.h
-+++ b/drivers/media/platform/qcom/venus/hfi_helper.h
-@@ -761,7 +761,7 @@ struct hfi_multi_stream_3x {
- 
- struct hfi_multi_view_format {
- 	u32 views;
--	u32 view_order[1];
-+	u32 view_order[];
- };
- 
- #define HFI_MULTI_SLICE_OFF			0x1
-@@ -1038,7 +1038,7 @@ struct hfi_codec_supported {
- 
- struct hfi_properties_supported {
- 	u32 num_properties;
--	u32 properties[1];
-+	u32 properties[];
- };
- 
- struct hfi_max_sessions_supported {
-@@ -1085,12 +1085,12 @@ struct hfi_resource_ocmem_requirement {
- 
- struct hfi_resource_ocmem_requirement_info {
- 	u32 num_entries;
--	struct hfi_resource_ocmem_requirement requirements[1];
-+	struct hfi_resource_ocmem_requirement requirements[];
- };
- 
- struct hfi_property_sys_image_version_info_type {
- 	u32 string_size;
--	u8  str_image_version[1];
-+	u8  str_image_version[];
- };
- 
- struct hfi_codec_mask_supported {
-@@ -1141,7 +1141,7 @@ struct hfi_extradata_header {
- 	u32 port_index;
- 	u32 type;
- 	u32 data_size;
--	u8 data[1];
-+	u8 data[];
- };
- 
- struct hfi_batch_info {
-@@ -1236,7 +1236,7 @@ static inline void hfi_bufreq_set_count_min_host(struct hfi_buffer_requirements
- 
- struct hfi_data_payload {
- 	u32 size;
--	u8 data[1];
-+	u8 data[];
- };
- 
- struct hfi_enable_picture {
-@@ -1269,7 +1269,7 @@ struct hfi_buffer_alloc_mode_supported {
- 
- struct hfi_mb_error_map {
- 	u32 error_map_size;
--	u8 error_map[1];
-+	u8 error_map[];
- };
- 
- struct hfi_metadata_pass_through {
+> We could revert your patch, which appears to work for some users,
+> but that would again break setups with PAGE_SIZE =3D=3D 64K.
+> (I assume that Jon=C3=A1=C5=A1 and Kolbj=C3=B8rn are not building with PA=
+GE_SIZE =3D=3D 64K.)
 
--- 
-2.46.0.76.ge559c4bf1a-goog
+Yes they are using 4K, it says so in the oops.
+
+>> ------------[ cut here ]------------
+>> kernel BUG at drivers/ata/pata_macio.c:544!
+>
+> https://github.com/torvalds/linux/blob/v6.11-rc3/drivers/ata/pata_macio.c=
+#L544
+>
+> It seems that the
+> while (sg_len) loop does not play nice with the new .max_segment_size.
+
+Right, but only for 4KB kernels for some reason. Is there some limit
+elsewhere that prevents the bug tripping on 64KB kernels, or is it just
+luck that no one has hit it?
+
+I wonder if the best solution is something like below. It effectively
+reverts to the old behaviour for 4KB page size, and should avoid the
+same bug happening on 64KB page size kernels.
+
+cheers
+
+
+diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+index 1b85e8bf4ef9..eaffa510de49 100644
+--- a/drivers/ata/pata_macio.c
++++ b/drivers/ata/pata_macio.c
+@@ -208,6 +208,19 @@ static const char* macio_ata_names[] =3D {
+ /* Don't let a DMA segment go all the way to 64K */
+ #define MAX_DBDMA_SEG		0xff00
+=20
++#ifdef CONFIG_PAGE_SIZE_64KB
++/*
++ * The SCSI core requires the segment size to cover at least a page, so
++ * for 64K page size kernels it must be at least 64K. However the
++ * hardware can't handle 64K, so pata_macio_qc_prep() will split large
++ * requests. To handle the split requests the tablesize must be halved.
++ */
++#define MAX_SEGMENT_SIZE SZ_64K
++#define SG_TABLESIZE (MAX_DCMDS / 2)
++#else
++#define MAX_SEGMENT_SIZE MAX_DBDMA_SEG
++#define SG_TABLESIZE MAX_DCMDS
++#endif
+=20
+ /*
+  * Wait 1s for disk to answer on IDE bus after a hard reset
+@@ -912,16 +925,10 @@ static int pata_macio_do_resume(struct pata_macio_pri=
+v *priv)
+=20
+ static const struct scsi_host_template pata_macio_sht =3D {
+ 	__ATA_BASE_SHT(DRV_NAME),
+-	.sg_tablesize		=3D MAX_DCMDS,
++	.sg_tablesize		=3D SG_TABLESIZE,
+ 	/* We may not need that strict one */
+ 	.dma_boundary		=3D ATA_DMA_BOUNDARY,
+-	/*
+-	 * The SCSI core requires the segment size to cover at least a page, so
+-	 * for 64K page size kernels this must be at least 64K. However the
+-	 * hardware can't handle 64K, so pata_macio_qc_prep() will split large
+-	 * requests.
+-	 */
+-	.max_segment_size	=3D SZ_64K,
++	.max_segment_size	=3D MAX_SEGMENT_SIZE,
+ 	.device_configure	=3D pata_macio_device_configure,
+ 	.sdev_groups		=3D ata_common_sdev_groups,
+ 	.can_queue		=3D ATA_DEF_QUEUE,
 
 
