@@ -1,105 +1,153 @@
-Return-Path: <linux-kernel+bounces-284735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2677A950492
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:11:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77681950473
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569C61C2265A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:11:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3960A28560B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD4D19CD0F;
-	Tue, 13 Aug 2024 12:10:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E686199259;
+	Tue, 13 Aug 2024 12:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jughurPf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4DB7199381;
-	Tue, 13 Aug 2024 12:10:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80C92262B;
+	Tue, 13 Aug 2024 12:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551018; cv=none; b=CJMv3oeOgAUOOlvyXsjLvDSZk5cmWv8Zg5iXrOY9LVrmtTR9T9v89Z/J6U/8N6JRqV1CPCUo0r4Padhfuo0JtnFEsCTgOh5z8YolIvAK8af3a7apadqWZaUl+DgiXx23BAaf5TkXLg0AqNeyu2rl8woKyG/1Luybv2NWOf0TF6M=
+	t=1723550870; cv=none; b=PV26C3Hr7rMC6E3uHnbHOGoS2Hbyci8o69O/OPlo64jLXghp/QWqGzWT3fNNlA/eTAK4+W8pvjApQf66YXqOgMGxTnwlGWXIB2Vk9rSA40Tn0KixLB3K2c2g78VdIxQIr5gizhQtXVxWtyWEuljICcqDPfugHdGAO9OSWWHDmb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551018; c=relaxed/simple;
-	bh=4+JwmEywB2twePl4a6aS2KtUCCJuJ+Jo9YEkl6zHl3U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uHTDRj766LQO45wWHrTuoD5j5UbLKQsixl20efbQ45Tf/hfLT5VSSoIehKxycIke/G329xrfqg9AkWG60wdygAshY4NA4X8YeasovW2ZeoIlyFFsOpSosb4VDvTbSpKFnpS9lKlz5jg5DtfjeoG5uFXK+36W/qp53QW+6Pe3HyI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjqvT6g3Mz4f3n5l;
-	Tue, 13 Aug 2024 20:09:57 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 9456F1A07B6;
-	Tue, 13 Aug 2024 20:10:12 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.124.27])
-	by APP3 (Coremail) with SMTP id _Ch0CgDnl7YhTbtmPh4XBg--.33191S9;
-	Tue, 13 Aug 2024 20:10:12 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] ext4: check buffer_verified in advance to avoid unneeded ext4_get_group_info
-Date: Tue, 13 Aug 2024 20:07:12 +0800
-Message-Id: <20240813120712.2592310-8-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20240813120712.2592310-1-shikemeng@huaweicloud.com>
-References: <20240813120712.2592310-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1723550870; c=relaxed/simple;
+	bh=eboqPDFBQBeHXdKa2+N374z8eTUgt6A+omNECwR9BdM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=aw0mevfXlOX59PBYdjps7RRbogRJVzG1kROMYX3cmATkt1dpsVD0VgCyvznnamFmo85Ps1p3Kk1V0sm5VnrHAJbsdJplIPTQmHpEp2EyubkFqR6zeKywBgHVPMzZ11FfrBZPDwBfFuib7iL+32LcrWdT/CDTV2Oq/jRCrDQ/zTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jughurPf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D4bde3021398;
+	Tue, 13 Aug 2024 12:07:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UAgyaTKkoWXNtcaRI74DXqrR9yRQ3PKCrjmt7l19c9I=; b=jughurPfn3IrCsir
+	gCzmL+2ASzjmX6kPqZ6FfF2Olbtb6UcDcXBdRocu+YMfRdsRH0504d7kvnq7bM25
+	rZsoSyQgdaT9TlRc/2Iqz3UeJS0v78mmwe9OSsXJKxX600WzQ6FAgUqlzxfPB0+/
+	VtKTmRctZAAe/ZpadHqAfBmDuvzERKXfmgOsuOmMQsTHErs8FgsLZaunOGFt2nM1
+	JRiV7oF0SmoDZOi5ZlbQjqTAuz/z80mh/CITSFLQuHlF5c1MNo5XjLzKQj1RqO4f
+	YeKpG/S1+BslVpqr5t0Kz2QRdl6r/jWWRGYRYpf6wJ90Cu3iBdQWxCyFjJQ4KXAX
+	SzKegw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7yjq8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:07:36 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DC7ZUd003966
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:07:35 GMT
+Received: from [10.253.33.134] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 05:07:31 -0700
+Message-ID: <cd8ac2dd-e56d-4551-b3bf-6994c2064f1b@quicinc.com>
+Date: Tue, 13 Aug 2024 20:07:28 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgDnl7YhTbtmPh4XBg--.33191S9
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFykXw1fWF13Gry3ArWDArb_yoW3ZFbEka
-	4kAa1kC3yfJwn7CF4vk3yYyr48KFWkXr15GFWftF13uF1UJFyrZ3ykArnxAFs7ua17JF1D
-	K3Z7ZFW7tr4IgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVAYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l82xGYIkIc2x26280x7IE14v26r126s
-	0DM28IrcIa0xkI8VCY1x0267AKxVW5JVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
-	Y2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14
-	v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+User-Agent: Mozilla Thunderbird
+From: Jie Luo <quic_luoj@quicinc.com>
+Subject: Re: [PATCH 3/4] arm64: defconfig: Enable Qualcomm IPQ common PLL
+ clock controller
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Krzysztof Kozlowski <krzk@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Konrad Dybcio
+	<konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>
+References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
+ <20240808-qcom_ipq_cmnpll-v1-3-b0631dcbf785@quicinc.com>
+ <afbf0554-56a5-4df0-9e4b-97c065d78bb3@kernel.org>
+ <41aea3f3-d21a-4d8e-a91a-0fe06947c75f@quicinc.com>
+ <379dc513-2eb5-4d33-a09e-e8861dddc502@lunn.ch>
+Content-Language: en-US
+In-Reply-To: <379dc513-2eb5-4d33-a09e-e8861dddc502@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Wvl6s8UG0d8YoLotil6OsCOBM22MjdxJ
+X-Proofpoint-ORIG-GUID: Wvl6s8UG0d8YoLotil6OsCOBM22MjdxJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_04,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1015
+ suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=636 mlxscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130088
 
-Check buffer_verified in advance to avoid unneeded ext4_get_group_info.
-This could be a simple cleanup as complier may handle this.
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
----
- fs/ext4/ialloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
-index 0cb109037384..e700236303cd 100644
---- a/fs/ext4/ialloc.c
-+++ b/fs/ext4/ialloc.c
-@@ -87,10 +87,10 @@ static int ext4_validate_inode_bitmap(struct super_block *sb,
- 	if (EXT4_SB(sb)->s_mount_state & EXT4_FC_REPLAY)
- 		return 0;
- 
--	grp = ext4_get_group_info(sb, block_group);
--
- 	if (buffer_verified(bh))
- 		return 0;
-+
-+	grp = ext4_get_group_info(sb, block_group);
- 	if (!grp || EXT4_MB_GRP_IBITMAP_CORRUPT(grp))
- 		return -EFSCORRUPTED;
- 
--- 
-2.30.0
+On 8/9/2024 9:34 PM, Andrew Lunn wrote:
+> On Fri, Aug 09, 2024 at 07:36:35PM +0800, Jie Luo wrote:
+>>
+>>
+>> On 8/8/2024 10:41 PM, Krzysztof Kozlowski wrote:
+>>> On 08/08/2024 16:03, Luo Jie wrote:
+>>>> The common PLL clock controller provides fixed rate output clocks to
+>>>> the hardware blocks that enable ethernet function on IPQ platform.
+>>>
+>>> That's defconfig for all platforms, so how anyone can guess which one
+>>> you target here? Be specific, which company, which Soc, which board
+>>> needs it.
+>>>
+>>
+>> Sure, I will update the commit message as below to provide the details
+>> required.
+>>
+>> The common PLL hardware block is available in the Qualcomm IPQ SoC such
+>> as IPQ9574 and IPQ5332. It provides fixed rate output clocks to Ethernet
+>> related hardware blocks such as external Ethernet PHY or switch. This
+>> driver is initially being enabled for IPQ9574. All boards based on
+>> IPQ9574 SoC will require to include this driver in the build.
+> 
+> Does it provide more than Ethernet clocks? I'm just wondering why the
+> name `common`, when it seems pretty uncommon, specialised for Ethernet
+> clocks on a couple of SoCs.
+> 
+>     Andrew
+
+No, this block does not provide any other functionality other than
+allowing this PLL to be configured for supplying clocks to Ethernet
+devices. The hardware programming guide names this block as the 'CMN'
+block, so we included the 'cmn' phrase in the driver namespace. However,
+I will update commit message to clarify that 'cmn' is the block name and
+it does not provide any other function other than enabling clocks to
+Ethernet related devices.
+
 
 
