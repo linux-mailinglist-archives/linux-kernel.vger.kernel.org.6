@@ -1,120 +1,190 @@
-Return-Path: <linux-kernel+bounces-284684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A908995040A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:48:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63A9F950416
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC3BB1C2250E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:48:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C68DFB23E6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE70199239;
-	Tue, 13 Aug 2024 11:47:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE293199240;
+	Tue, 13 Aug 2024 11:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EnMLezDq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fplwx3XU"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40649170A2B;
-	Tue, 13 Aug 2024 11:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C586E199239;
+	Tue, 13 Aug 2024 11:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549656; cv=none; b=S5sAFKc2k1h9pBhQ6kJnrTDwSWGoMN49ntVFBXsxs72pnwUBOWt6pB2hfKagAeRM2jPRj63v1f9ob6oq4cHYt5CwGcj8IOJ6tuBmBT48cLNws/I1fTEpjp36yzp49DF+LVRI5k8IexT/LlEV6tyAjwGCOCXzIs1TvVgYuxTtSMo=
+	t=1723549707; cv=none; b=ka8ZacmMo+TbyUcsaBscaJk2K8GSia2IjLVNH0ipMykhnQZmPTX3YnxDNspU/7UtzNqQSAs9gD9ALDKyCFmnaQLb4fPbG+aE9KqI9/KTXafqqmBLfdTFY7HULnmOkCez+2meyINN/pFHzrOrIO4qo9rLOdcYGWOMHKsujTpJMQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549656; c=relaxed/simple;
-	bh=G3pOGZVBqXB7sYa2biEjElbdDn1qcCVetk8yRjFI7VY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yi/MSFTno3VEvC1H/1hv/9a7r3tvdds/zzYAoC4CbmLd39OzfyAsREJDdsAJd5SrjIHHUjYlDld9dUvPTXr5zX9DorJHvfmhFxES3c9HPYcHnXq1pCPK49n4TuTq4Zgkzc3QsqyvDjIongkLseozvavI/t7Zkomk5IMGkbzhZ1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EnMLezDq; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723549655; x=1755085655;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G3pOGZVBqXB7sYa2biEjElbdDn1qcCVetk8yRjFI7VY=;
-  b=EnMLezDqBNHPWTSdYnU33I/gWqbZeP3sN7Q8m0KHQ16ku9RLPuheaWIl
-   hYwRNcAuCktYwr8cWFeXP8dX4pvBkO54iawqae3d3ObTjHPeN0zyMl/+n
-   IGjbd6VdOU0HbyPs2ClowqYtYzvqdxLyQnBflE2wla4gH5KcIf9KpAnAQ
-   PqdfsEz63IaeENuefBdaHU0+K+XLzx8AoY2Ihy2BUxYAUs23tMpHBwJRX
-   CPOuj6T77DO8O05F+ptku4Bhbkx3txC7RaVpd61MvnknU6Vqd8oVMOA7Y
-   jBUb1QhQTR53E1BtOJL8iYjpquCOdcJZfMhwWkIFfobSKp1N7pJv9Ve+Y
-   g==;
-X-CSE-ConnectionGUID: bnvg5LeKS+6PtVjF5/P1DQ==
-X-CSE-MsgGUID: xTutnZ81RxmudOgWL05MBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21523385"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21523385"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:47:35 -0700
-X-CSE-ConnectionGUID: VQZ2r7WpSwadk3elOT4wXg==
-X-CSE-MsgGUID: EAyy5BgcTr6dvpG+kQFuLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="63038013"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:47:30 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdpzs-0000000EiH4-0Rht;
-	Tue, 13 Aug 2024 14:47:28 +0300
-Date: Tue, 13 Aug 2024 14:47:27 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrtHz1aY_Lf_XIsL@smile.fi.intel.com>
-References: <20240809061525.1368153-1-raag.jadav@intel.com>
- <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
- <ZrtCIU8On4ZKILmh@black.fi.intel.com>
+	s=arc-20240116; t=1723549707; c=relaxed/simple;
+	bh=V1B78nsPXwKtwYadG9TpwoAohUkSiZj7ncPcaNfxp9E=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EVuO0HHg2Gl8KnH2eij5ACNxWQXmW7aV6FHcFD2z4Q5C3EN6xWqStUR1YwHOPqOR6FzdZVpIaUDHAYUfnAzC5Psx7hTi/HQ4LNNyHpRCIpjimUIepLChdGuRxF1KjMHnLnHRf++oPkLwYqr9M/YqVPvPABvB6vgPtTQWF9pdPx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fplwx3XU; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-710ffaf921fso1353019b3a.1;
+        Tue, 13 Aug 2024 04:48:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723549705; x=1724154505; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e93oae2VnzqVNZVCAViMoa1uvgxDslJYuHwS+x1kihw=;
+        b=Fplwx3XUIcZTiLBKxC0tCvLOYF49q0ZZY9foxMoxWtwBWf55wYqNlcqdq1vIijUyuR
+         qE5BPfjz19kVhWgSbGhNwR6oDxp2z9SHaSUZzkCiph85ar4eH8QDoICTKj+73Yx1HTQb
+         SgR11U5b1t2hHL8cRmsKKdUM8j5gm43TOk16UQY8BE6BhJIqbwFYSLg0EH4g7kw4QIGc
+         LNluWaxWzlIZ2MpLcljp3dJYUkCe36Sk7drW+TrGKCw90LdA7Cr+/6W1tO1AMYMqTYLc
+         vKjJU+pLKs3HtLZYZ5+hdvlB9QbYD8uK57LKvCFJRPK3Gb/lWP60/81vbLCBooL1aJuW
+         cjKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723549705; x=1724154505;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e93oae2VnzqVNZVCAViMoa1uvgxDslJYuHwS+x1kihw=;
+        b=HpKZjmjhBcN302Tn52XvGauG9/oavsGbWPDwzVqVAJwp4+t99/QQpuou8G9lVaxHJo
+         ffDOhyTXV6qRTyWu1ETdan+2+dSXIV62xyM3SO/SJvny2VBUqB+w4RpCNPk3RWhngu+I
+         wGmox7VYZlizh94kg8+7KVBWHEMaByS5kSnfTb1s+Wn2Sh5sL6f25lDffqM0nNsRqUVG
+         n7Gl2FOX8xXSr5hB81sLjwk26UOjzY778QBydfM3tLcD97TVsY7ap9ENUVp8eHz7KsRj
+         06HH8Je42+EwRi2LhYJFyZ0Os0M1vKEBr9pRRGpeVD5LGqGu+GO4I20tLUTamPtN2tTZ
+         XVgw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWBWhnodkOgy5+R6zTk1kirBLSzqEnO+uNMbQG7gcIqn+SdBLrs0TOHsWscRhWMTnlWXKcgXRbTShPi7AXPi3b/Zy9A+Cvi+MNJ+SL
+X-Gm-Message-State: AOJu0Yzf50YGrGz4eudeU/NY0fx9LD6mXGRLAFn7UNA1+pyLPKkpg4/G
+	DlgPs8OeebsJgIcwdLidLOVPHXffG21O1Jgpp7Bz4GivHrnsZ4eo
+X-Google-Smtp-Source: AGHT+IGxt8hPD8mJsm6gJter71iHAjEsFjuWECdz+VoqMfy71FcU+f7SGPt+SjXcXj2P7sGD0bgpJQ==
+X-Received: by 2002:a05:6a20:c78f:b0:1c3:b148:690e with SMTP id adf61e73a8af0-1c8da1925c8mr4631707637.5.1723549704906;
+        Tue, 13 Aug 2024 04:48:24 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-710e5a562bbsm5548755b3a.111.2024.08.13.04.48.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 04:48:24 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: Serge Semin <fancer.lancer@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Joao Pinto <jpinto@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	xfr@outlook.com,
+	rock.xu@nio.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v2 2/7] net: stmmac: drop stmmac_fpe_handshake
+Date: Tue, 13 Aug 2024 19:47:28 +0800
+Message-Id: <02703a16d35eaa28ad513d56bc52427e0fcbbddd.1723548320.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1723548320.git.0x1207@gmail.com>
+References: <cover.1723548320.git.0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrtCIU8On4ZKILmh@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 02:23:13PM +0300, Raag Jadav wrote:
-> On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
-> > On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
+ethtool --set-mm can trigger FPE verification processe by calling
+stmmac_fpe_send_mpacket, stmmac_fpe_handshake should be gone.
 
-...
+Signed-off-by: Furong Xu <0x1207@gmail.com>
+---
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 23 +------------------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   |  8 -------
+ 2 files changed, 1 insertion(+), 30 deletions(-)
 
-> > > +	/*
-> > > +	 * HW register value is accumulated count of pulses from
-> > > +	 * PWM fan with the scale of 2 pulses per rotation.
-> > > +	 */
-> > > +	rotations = pulses >> 1;
-> > 
-> > In accordance with the comment the
-> > 
-> > 	rotations = pulses / 2;
-> > 
-> > looks better.
-> 
-> This change seems to cause a build error in v5.
-> Something to do with __udivdi3 on i386.
-
-No, it's not this change.
-Please, read report carefully.
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 529fe31f8b04..3072ad33b105 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3533,13 +3533,9 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
+ 
+ 	stmmac_set_hw_vlan_mode(priv, priv->hw);
+ 
+-	if (priv->dma_cap.fpesel) {
++	if (priv->dma_cap.fpesel)
+ 		stmmac_fpe_start_wq(priv);
+ 
+-		if (priv->fpe_cfg.enable)
+-			stmmac_fpe_handshake(priv, true);
+-	}
+-
+ 	return 0;
+ }
+ 
+@@ -7425,22 +7421,6 @@ static void stmmac_fpe_lp_task(struct work_struct *work)
+ 	clear_bit(__FPE_TASK_SCHED, &priv->fpe_task_state);
+ }
+ 
+-void stmmac_fpe_handshake(struct stmmac_priv *priv, bool enable)
+-{
+-	if (priv->fpe_cfg.hs_enable != enable) {
+-		if (enable) {
+-			stmmac_fpe_send_mpacket(priv, priv->ioaddr,
+-						&priv->fpe_cfg,
+-						MPACKET_VERIFY);
+-		} else {
+-			priv->fpe_cfg.lo_fpe_state = FPE_STATE_OFF;
+-			priv->fpe_cfg.lp_fpe_state = FPE_STATE_OFF;
+-		}
+-
+-		priv->fpe_cfg.hs_enable = enable;
+-	}
+-}
+-
+ static int stmmac_xdp_rx_timestamp(const struct xdp_md *_ctx, u64 *timestamp)
+ {
+ 	const struct stmmac_xdp_buff *ctx = (void *)_ctx;
+@@ -7902,7 +7882,6 @@ int stmmac_suspend(struct device *dev)
+ 				     priv->plat->tx_queues_to_use,
+ 				     priv->plat->rx_queues_to_use, false);
+ 
+-		stmmac_fpe_handshake(priv, false);
+ 		stmmac_fpe_stop_wq(priv);
+ 	}
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+index 9cc41ed01882..b0cc45331ff7 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
+@@ -1078,11 +1078,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
+ 
+ 	netdev_info(priv->dev, "configured EST\n");
+ 
+-	if (fpe) {
+-		stmmac_fpe_handshake(priv, true);
+-		netdev_info(priv->dev, "start FPE handshake\n");
+-	}
+-
+ 	return 0;
+ 
+ disable:
+@@ -1107,9 +1102,6 @@ static int tc_taprio_configure(struct stmmac_priv *priv,
+ 			     false);
+ 	netdev_info(priv->dev, "disabled FPE\n");
+ 
+-	stmmac_fpe_handshake(priv, false);
+-	netdev_info(priv->dev, "stop FPE handshake\n");
+-
+ 	return ret;
+ }
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
