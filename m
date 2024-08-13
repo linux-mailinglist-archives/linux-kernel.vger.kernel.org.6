@@ -1,70 +1,61 @@
-Return-Path: <linux-kernel+bounces-283934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-283935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D33894FAA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:22:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FCA94FAA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:25:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB0D11F218CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:22:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01018282641
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 00:25:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2467B187F;
-	Tue, 13 Aug 2024 00:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EmzohQk+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5756817FF;
+	Tue, 13 Aug 2024 00:25:02 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CEB80B;
-	Tue, 13 Aug 2024 00:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45D4184F;
+	Tue, 13 Aug 2024 00:25:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723508541; cv=none; b=gVUheQrJL/SBuBUT+TvUOT7jKJRY8XZHcm3sd+BmWkkgssULHrLrnaugV79pJv0ygJP9PRHdkrdsQhPuuibvmiOi1ILpb8jDMvqGFsS3d/HlaCcgcrxpjBF+3lW0LrM4xGBx9l/v6ftCZ9Mi2Qx/C0dwEPt8MgSDA3C3bRyRbhQ=
+	t=1723508701; cv=none; b=SngbPTgH+JBorJ5405R4vp1QgSrp2pi9EGree/ZFw/v5heuykek2cqFcsRNvkosGW0trxrrIv2+7SBnfwjCZ360jzhtqekLmHxB07ZTtXWsAfWn7uI00SycAIPfZHdqvq9zz3X7hMiVNGnlO9aWTNby4vfZLnMjp5dafrKHu6pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723508541; c=relaxed/simple;
-	bh=DAz1B+3uwro0Q8Bh/N+Rxsq8lpnfn1mcP0ssTJXVg78=;
+	s=arc-20240116; t=1723508701; c=relaxed/simple;
+	bh=E3UgAigyPZ4GktOoWU3YxcQofkYxoQ2A8IuYC2xknQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WAuUcUmIT7UwBr+sy5ZVOZUH5MJApg2MTYdF6CC8wiikqir44wxhJXShhmV0t9z8AoT9f8UhfIY8LLZbsECXsf5mxjqWWKiJT1LD5u8V8WmOlvVuCYmHUFjqaAr6JsMP5ISFyNvmJVn8WB2vhzWixhZhe4EuAnew/a13NQgTStI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EmzohQk+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A8BC4AF0E;
-	Tue, 13 Aug 2024 00:22:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723508540;
-	bh=DAz1B+3uwro0Q8Bh/N+Rxsq8lpnfn1mcP0ssTJXVg78=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EmzohQk+ArsxuT3eFBf94Tw5pbWFb34nzZfU8ttB1sI7pJOMxGz6pE6R7rBbkf+Ym
-	 zB7Eqf9z8lm46wJDrI12c+Bo0YhasROIwjd4sGy4vGNqyXPRAPPYJgLyDOnYSEKWxg
-	 h5zv8jYCm6r3pwVebsRMf9QSs6fRYINil3es/3I7YiiwwQHexCWTU8khD0V/AG8LDG
-	 9sbtYZU6owp14LbkP7G0sXvCLAnO0R8ibXl8qO6OlxjC1OJ9yZ5rx0pXOaO6JsyJug
-	 8B0DUywhCWQO+j1235peTpH0WKJOPL/fAUMI16NnWGv0S1qkIHICO5AgGGtBJAOBJX
-	 OPoIrkkyjFE4Q==
-Date: Mon, 12 Aug 2024 17:22:18 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>, Nishanth Menon <nm@ti.com>
-Cc: Roger Quadros <rogerq@kernel.org>, Suman Anna <s-anna@ti.com>, Sai
- Krishna <saikrishnag@marvell.com>, Jan Kiszka <jan.kiszka@siemens.com>, Dan
- Carpenter <dan.carpenter@linaro.org>, Diogo Ivo <diogo.ivo@siemens.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Kory Maincent
- <kory.maincent@bootlin.com>, Simon Horman <horms@kernel.org>, Andrew Lunn
- <andrew@lunn.ch>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>, Conor
- Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob
- Herring <robh@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, Vignesh
- Raghavendra <vigneshr@ti.com>, <netdev@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, Tero Kristo <kristo@kernel.org>,
- <srk@ti.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 1/6] dt-bindings: soc: ti: pruss: Add documentation
- for PA_STATS support
-Message-ID: <20240812172218.3c63cfaf@kernel.org>
-In-Reply-To: <39ed6b90-aab6-452d-a39b-815498a00519@ti.com>
-References: <20240729113226.2905928-1-danishanwar@ti.com>
-	<20240729113226.2905928-2-danishanwar@ti.com>
-	<b6196edc-4e14-41e9-826e-7b58f9753ef5@kernel.org>
-	<20240806150341.evrprkjp3hb6d74p@mockup>
-	<39ed6b90-aab6-452d-a39b-815498a00519@ti.com>
+	 MIME-Version:Content-Type; b=cMKAsHmY7Z6T5gJ60PFotV53Y53lY8EgHv7HaHe0yPqfJras1kCaR0xJnJvcromq5Pu68EKmsVhrPH5Lk3TDGfby08Ok+eY95TpvAlopmNfNHvV3jLS9toof1K4L62W2yGQgkEPR9/3Qa5pWWHZuvWzRUly6LuSfOVWaVoMxk+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F620C4AF0E;
+	Tue, 13 Aug 2024 00:24:57 +0000 (UTC)
+Date: Mon, 12 Aug 2024 20:25:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Yury Norov
+ <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, David
+ Gow <davidgow@google.com>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Andy
+ Shevchenko <andy@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Brown
+ <broonie@kernel.org>, Matti Vaittinen <mazziesaccount@gmail.com>,
+ linux-hardening@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ kunit-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org, Palmer
+ Dabbelt <palmer@rivosinc.com>, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Charlie Jenkins <charlie@rivosinc.com>,
+ Simon Horman <horms@kernel.org>, Jakub Kicinski <kuba@kernel.org>, Arnd
+ Bergmann <arnd@arndb.de>, Shuah Khan <skhan@linuxfoundation.org>, Daniel
+ Latypov <dlatypov@google.com>, Guenter Roeck <linux@roeck-us.net>, David
+ Howells <dhowells@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
+ <mic@digikod.net>, Marco Elver <elver@google.com>, Mark Rutland
+ <mark.rutland@arm.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Vlastimil Babka <vbabka@suse.cz>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Nathan Chancellor <nathan@kernel.org>, Fangrui Song
+ <maskray@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] lib: Move KUnit tests into tests/ subdirectory
+Message-ID: <20240812202507.453bda6b@gandalf.local.home>
+In-Reply-To: <20240720181025.work.002-kees@kernel.org>
+References: <20240720181025.work.002-kees@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,24 +65,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 12 Aug 2024 11:20:56 +0530 MD Danish Anwar wrote:
-> > If the net maintainers are OK, they could potentially take the binding
-> > patch along with the driver mods corresponding to this - I am a bit
-> > unsure of picking up a binding if the driver implementation is heading
-> > the wrong way.   
-> 
-> Hi Jakub, Paolo, David, Andrew,
-> 
-> Will it be okay to pick this binding patch to net-next tree. Nishant is
-> suggesting since the driver changes are done in drivers/net/ the binding
-> can be picked by net maintainers.
-> 
-> Please let us know if it will be okay to take this binding to net-next.
-> I can post a new series with just the binding and the driver patch to
-> net-next if needed.
+On Sat, 20 Jul 2024 11:10:30 -0700
+Kees Cook <kees@kernel.org> wrote:
 
-Nishanth, could you send an official Ack tag?
+> Following from the recent KUnit file naming discussion[1], move all
+> KUnit tests in lib/ into lib/tests/.
+> 
+> Link: https://lore.kernel.org/lkml/20240720165441.it.320-kees@kernel.org/ [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
 
-No problem with merging it via net-next.
-On the code itself you may want to use ethtool_puts().
+Strong-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+I was talking with Masami and asking him where the kunit test code lives
+and after pointing to lib/ I was disgusted with what I saw. I told him,
+"why isn't this in its own "tests/" directory"? And he mentioned this patch
+(which I forgot about).
+
+So yes, please move it.
+
+Thanks,
+
+-- Steve
+
+
+> I can carry this in the hardening tree. To disrupt people as little as
+> possible, I'm hoping to send this either at the end of -rc1 or early
+> in -rc2.
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> Cc: David Gow <davidgow@google.com>
+> Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Matti Vaittinen <mazziesaccount@gmail.com>
+> Cc: linux-hardening@vger.kernel.org
+> Cc: linux-kselftest@vger.kernel.org
+> Cc: kunit-dev@googlegroups.com
+> Cc: linux-trace-kernel@vger.kernel.org
+>
 
