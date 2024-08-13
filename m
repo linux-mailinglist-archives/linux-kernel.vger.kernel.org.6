@@ -1,119 +1,159 @@
-Return-Path: <linux-kernel+bounces-284915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66EDA9506C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0A89506CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994891C209F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E7028A5BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA85119CCF8;
-	Tue, 13 Aug 2024 13:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76E8619CCEB;
+	Tue, 13 Aug 2024 13:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtXwyBtc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IjzEeNjh"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE30D60EC4;
-	Tue, 13 Aug 2024 13:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6819B5B8
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556389; cv=none; b=WiRNMg9A6w2C9OdBnfJJOLKTU01BXdDG0tJWyTq0RnW4jzsxYPSMvkpE71b1iSrSZbe6QF5xKst6ObxdlUvHHjtjGuCo/AxQ8z6MLAu+ll3glv/L8kQ2LyJH1gbBPhJizN1F0UOFcXfVHhxz1jb6eBx7Ilvaj5CQStoPQSSobsA=
+	t=1723556412; cv=none; b=SWGX5sgBAfiU4iMTCwcp6WDHuFUKeYOmkZ3NFJ304mcAZ7dZkG/ssrhqAo7rqujM2n7FMZqv43ggY/N4RCT1or0UOA/q6xW5TO3vkGvglFK4BRM89tM5/n1qrIl93IFhWmfYVukwuQICoPktjYzY/BZdK5DdohJgTz8N7r/NJKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556389; c=relaxed/simple;
-	bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hvMdLx3sAQFVq+2HHstY1aQ7q5pAeCEYwCg6bgZ458YJ4ieE7NR8uLG1zUlyCehVaIUzCKgjx62jPMPb+K8tOc+rG6yqYdgCwUqXK6VG0rTxTNSQQSgFMCdkTWDT+nkM7mB6eSQPDQr5kYsfcgxvSFTXrHElMNLgAvm8XP85ThY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtXwyBtc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3C0BC4AF09;
-	Tue, 13 Aug 2024 13:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723556388;
-	bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
-	h=From:Date:Subject:To:Cc:From;
-	b=CtXwyBtcQmclsv9nEWsuu9fWoRpeALgeMKF3XTOwLR0DPm11eO7eo7wd6RivlwAAo
-	 RWmiJ7FNnck6Z5N1zdtbmZoPtoG32dIoOtt6AWoHBS22Win4/QyWyoSTiMWVXQGKTz
-	 2e3ftaV/EaHa6Bpsr6L8kOkL65dQCcv8pJho3I4JUYS1aaVz+jYtsHk+CZAUodEmU3
-	 HyAn1PFowIMUG46kjyERJGlmaXvI1mGOM6DpAgZXKKjvIM6x9L9SijW1LJrwaU8YJ/
-	 nzWnDt+de2JXzFWGZJOdBxET/x0WhfN1BR6G/TXduWfLbPWjYBNmhXkU9mTPYWRGql
-	 BccoFIPm9weFQ==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Tue, 13 Aug 2024 15:39:34 +0200
-Subject: [PATCH net] selftests: net: lib: kill PIDs before del netns
+	s=arc-20240116; t=1723556412; c=relaxed/simple;
+	bh=858VKP5wdxus3iAQughoZMO3MbRsGJImJ8GB4BVPZlI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KB0GxrKXMXpN9PH7JDyvrCikcQQXcjyRdEu0BqaDCcAQNMc/dwHP1kAbbIkNQhOzdl5elM7IrRLprA8vWq2tLhfRP5/sY798Du9WLtxRp9vMu9vI0MFlSQQPXD+XcRobZI1tWWmfr9wW9CCjPzOpU2wUh1K1EXIgunakKjc5XaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IjzEeNjh; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42807cb6afdso26385e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723556408; x=1724161208; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VwMV+d/24nmdzqweqrHjOWK1WqG9SPFvkXHNO/cskp8=;
+        b=IjzEeNjhiPpeQXzTT0/m2gckulCkkkxYaeubBpl8G8tPKMJLSESUeVeIRb+Bzgp2ai
+         2PQM1tuIDa0LW7xWQ0mDFqyHAtoji7bTd8JYvJyJ/WCshHOMmxY5mDLy64J6O/GRklso
+         UBFNYj9477sRrM6GrrQuAuMFRcvGPUsEplfLRKgcBe92yWsPflz+3YtUrAi2Gbx1PJIR
+         sNL58xgvQuxGwloNWWHM42xil9vQMbXOPEPbZlI4cFzZRyvjEJHyo+wyiFQt+1Nbbpho
+         ebywuL4IMIF2n6pjv8Ikkxk7ZqhlKWgf6QP3q8E4TLg3Bzytc3ZjOHEw01uuO1VMpls7
+         SiZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723556408; x=1724161208;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwMV+d/24nmdzqweqrHjOWK1WqG9SPFvkXHNO/cskp8=;
+        b=HdpEkM6AbGcm3AwhqTfy/gagymH/HhnH48Pa1S7hD/WUiwPoOg/chU5d0xDoKqNqvj
+         fWmGc5GCK1g2KXNt8tpfjNcifGEJRsugxcZsjeA/VIpPeLTnEvz4jzLEOT55nLmzKDYK
+         FxUW4NV2PVkNN5aWJHMO9gR00Ar+lb2mzCOim0Vl60yO5G/OfY9/7f4s1y4EZ5uJvKQ4
+         ttAv0S84vKWRNTBw7La4jNjEyHMWAaYiNLRQ29pCibkpElo95fO4WknNG2mAabF5iWmD
+         WYb19NSdHvWpDLVG2zFIFy97csSwUD6Yk5uxirPSIpocQ+2Ic2wMTkLhVgfBekEAuIg5
+         rBaw==
+X-Gm-Message-State: AOJu0Yx+IWGNnGc+PHoJcN7NW/zGNabTaaOgnGckGgsaFDdce8onPUWV
+	dQn31AhOkUBtPW8PXWdCCirPwGR5Vw+e2GFyocGRkTd51/L4vqrhfY5hGyj8sIfi8caddp5+nMr
+	0RA==
+X-Google-Smtp-Source: AGHT+IGzihwEYjxxVx7+f1NJuiQnxOAZ92M9WPFwek7xX6OzFxHriBfJrZekTSS6jeVCS17HOiYQmA==
+X-Received: by 2002:a05:600c:1d95:b0:426:8ee5:3e9c with SMTP id 5b1f17b1804b1-429d715b507mr568645e9.6.1723556407703;
+        Tue, 13 Aug 2024 06:40:07 -0700 (PDT)
+Received: from google.com (203.75.199.104.bc.googleusercontent.com. [104.199.75.203])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd2bb4sm10455272f8f.91.2024.08.13.06.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 06:40:07 -0700 (PDT)
+Date: Tue, 13 Aug 2024 13:40:03 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, will@kernel.org,
+	joro@8bytes.org, jgg@ziepe.ca, nicolinc@nvidia.com,
+	mshavit@google.com
+Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
+Message-ID: <ZrtiM3J4jEFOZ1y5@google.com>
+References: <20240812205255.97781-1-smostafa@google.com>
+ <20240812205255.97781-2-smostafa@google.com>
+ <fc80ffde-2d19-4bd6-9590-a80049302ad7@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-upstream-net-20240813-selftests-net-lib-kill-v1-1-27b689b248b8@kernel.org>
-X-B4-Tracking: v=1; b=H4sIABViu2YC/z2NywqDMBBFf0Vm3QGfrfZXpIu03rSDMUomFUH89
- wYXXZ7D5dydFEGgdM92ClhFZfYJiktGr4/xb7AMianMyzpvi4q/i8YAM7FH5L9VOBuhUU/t5Mm
- jOMf21l1rU5mmtaCUXAKsbOddT2lJj+P4AUP8F1KDAAAA
-To: mptcp@lists.linux.dev, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Shuah Khan <shuah@kernel.org>, 
- Hangbin Liu <liuhangbin@gmail.com>, Petr Machata <petrm@nvidia.com>
-Cc: netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mat Martineau <martineau@kernel.org>, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1427; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=JiW2g111/T9vwg7V0O7d5Da9gYPfoiBmqdXrIR1zkBk=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBmu2Ih2tgE3mKo82PooAHQqtAlS0SutfN+iLo+P
- bd/L7QH6tKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZrtiIQAKCRD2t4JPQmmg
- c9lZD/9pH0LZLwr1ok0Jgepa9D2tQqV6P+qgeuOxnAnxA8j4inoPl5PUxLdLI1H3nKECS9WgFSZ
- yXsDwhtCQHKOzFfKrueNnTZSxJQJ5mHpMorxxPuhun6buI75wZXdIKEqCGekKq1GeCmaqv4+28u
- vW6mLWbQ0sjH2fpkN6KpWiQCgEmnM55iiS9AKWJF16XIkJMm7wzqwYqmoOAEFtqBrpPa6D6ikli
- 90eKHxe7apSl1upOIXCNKI7bmPC/h6Ugr1cz81Bi/ieq5ApS6zmbQEGNHS5yh2jugWxPTp7Btc0
- x2jVqw0N0THPhmJBrA54S6dxspohY7f9MmSn6dYbu2zFbGDdcI5fHprscZRvMzgDqa/XeMjTKTb
- NYh/TsaWK0QVcqYuGtuXMjl+6Kj79Ll1+aPTGlPKlriXi0o/1Tns2yAVI1M1nqXQmpGM6eJlMMJ
- FLOGAU9m7S58OTd3LLb4AG19rrm5jtviQZkTe2UbQfssDfYT90jWz56bqGE0JcuxmbNb6qWUzD0
- UBeNJAbpVqCymjIZEsQL+jDXvRiTknCFovhYyqC00qZwrjfXKTaEbPL0GttFX4mK/zsBrVPLdvY
- +hbE5Tc9jatIMeJgO+jXjHCGUz9iBy7oKklJQ7B952H26nvac0d+rQ3HlhemfIM5Rx8Q7m3u4FS
- Iy3cpdO1gW3IvrQ==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fc80ffde-2d19-4bd6-9590-a80049302ad7@arm.com>
 
-When deleting netns, it is possible to still have some tasks running,
-e.g. background tasks like tcpdump running in the background, not
-stopped because the test has been interrupted.
+Hi Robin,
 
-Before deleting the netns, it is then safer to kill all attached PIDs,
-if any. That should reduce some noises after the end of some tests, and
-help with the debugging of some issues. That's why this modification is
-seen as a "fix".
+On Tue, Aug 13, 2024 at 12:46:26PM +0100, Robin Murphy wrote:
+> On 12/08/2024 9:52 pm, Mostafa Saleh wrote:
+> > S2S must be set when stall model is forced "ARM_SMMU_FEAT_STALL_FORCE".
+> > But at the moment the driver ignores that, instead of doing the minimum
+> > and only set S2S for “ARM_SMMU_FEAT_STALL_FORCE” we can just match what
+> 
+> This was highly confusing, until the 3rd reading when I realised that maybe
+> "instead of..." does not in fact belong to the description of the current
+> behaviour, and it does start making sense if you swap the previous comma and
+> full stop with each other.
 
-Fixes: 25ae948b4478 ("selftests/net: add lib.sh")
-Acked-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- tools/testing/selftests/net/lib.sh | 1 +
- 1 file changed, 1 insertion(+)
+Will do, I will also reword it to make it more clear.
 
-diff --git a/tools/testing/selftests/net/lib.sh b/tools/testing/selftests/net/lib.sh
-index d0219032f773..8ee4489238ca 100644
---- a/tools/testing/selftests/net/lib.sh
-+++ b/tools/testing/selftests/net/lib.sh
-@@ -146,6 +146,7 @@ cleanup_ns()
- 
- 	for ns in "$@"; do
- 		[ -z "${ns}" ] && continue
-+		ip netns pids "${ns}" 2> /dev/null | xargs -r kill || true
- 		ip netns delete "${ns}" &> /dev/null || true
- 		if ! busywait $BUSYWAIT_TIMEOUT ip netns list \| grep -vq "^$ns$" &> /dev/null; then
- 			echo "Warn: Failed to remove namespace $ns"
+> 
+> > S1 does which also set it for “ARM_SMMU_FEAT_STALL” and the master
+> > has requested stalls.
+> > This makes the driver more consistent when running on different SMMU
+> > instances with different supported stages.
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > ---
+> >   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 5 +++++
+> >   drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 1 +
+> >   2 files changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > index a31460f9f3d4..8d573d9ca93c 100644
+> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
+> > @@ -1562,6 +1562,11 @@ void arm_smmu_make_cdtable_ste(struct arm_smmu_ste *target,
+> >   		(cd_table->cdtab_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
+> >   		FIELD_PREP(STRTAB_STE_0_S1CDMAX, cd_table->s1cdmax));
+> > +	/* S2S is ignored if stage-2 exists but not enabled. */
+> > +	if (master->stall_enabled &&
+> > +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
+> > +		target->data[0] |= FIELD_PREP(STRTAB_STE_2_S2S, 1);
+> 
+> In the middle of the ASID?
 
----
-base-commit: 58a63729c957621f1990c3494c702711188ca347
-change-id: 20240813-upstream-net-20240813-selftests-net-lib-kill-f7964a3a58fe
+Agh, of course it should be [2], sorry about that; it was late when I
+wrote the patch :)
 
-Best regards,
--- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
+I will send a v2 with the fix.
 
+Thanks,
+Mostafa
+> 
+> Thanks,
+> Robin.
+> 
+> > +
+> >   	target->data[1] = cpu_to_le64(
+> >   		FIELD_PREP(STRTAB_STE_1_S1DSS, s1dss) |
+> >   		FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+> > diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > index 14bca41a981b..0dc7ad43c64c 100644
+> > --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h
+> > @@ -267,6 +267,7 @@ struct arm_smmu_ste {
+> >   #define STRTAB_STE_2_S2AA64		(1UL << 51)
+> >   #define STRTAB_STE_2_S2ENDI		(1UL << 52)
+> >   #define STRTAB_STE_2_S2PTW		(1UL << 54)
+> > +#define STRTAB_STE_2_S2S		(1UL << 57)
+> >   #define STRTAB_STE_2_S2R		(1UL << 58)
+> >   #define STRTAB_STE_3_S2TTB_MASK		GENMASK_ULL(51, 4)
 
