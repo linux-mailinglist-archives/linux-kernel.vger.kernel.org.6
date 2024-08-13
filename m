@@ -1,58 +1,76 @@
-Return-Path: <linux-kernel+bounces-285216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0C28950AB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:48:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A1F1950ABD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0F72813E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:48:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8F70B24BAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B88F1A254F;
-	Tue, 13 Aug 2024 16:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5D21A2555;
+	Tue, 13 Aug 2024 16:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaRCMPrb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XllG348N"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA7621CA9F;
-	Tue, 13 Aug 2024 16:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F3454918
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567682; cv=none; b=H4IvBKXGHsCQs0xfIagWpv/VkntwvSqcPEAqG5iawjFXotudF5HwW4IxblYRDdjHej93t7Sny7qcplim5/Ai5iAibvhBNNx5SmEmbCrLiQ/wUEsNfl3/2TDn+PpwV8SrJUoGP25QpKsKNDv0mgS393gZPhvxeF/YcVLcOwHvg7Q=
+	t=1723567729; cv=none; b=di78Kpb4RKIhjtYhinGHH2PTiaFK5fUUOZoD5YNMr7+XIA9Nxfl0ofEhOFV+49HCTgGEdyMn1OmvGBcBs38Q1qwOhkZ7dydZMY8pyAn8xugtfCra+YYRZSZXQEx2dNMdoH6eWb1sY9CKHyOQ1md1z5UOmELuWdC42EF/Zuw2ah8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567682; c=relaxed/simple;
-	bh=4M4/2ndZD8ihgIUkgGf5dGl54Oh/MaPdrS3ud8ewJE8=;
+	s=arc-20240116; t=1723567729; c=relaxed/simple;
+	bh=AbyZZV8OemEO6yQWBbj90k325MRdx2HrxlcMri6YGQA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MKQWF76rRT4xli7pDWXBctKo0mC5nKke6lNDtwKrvPD3EP5HhqQJBNHP5rlOErljs7c80sKuwqGX1LLDR1o6m1jXqEjlntAdPTFdi7RuefFqhQmjgaVooyYXO56SCHx5HafYXtJ4sj4vckXjjLVDR7tRe6tSk9afUdKrD5/PXjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZaRCMPrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02034C4AF09;
-	Tue, 13 Aug 2024 16:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723567681;
-	bh=4M4/2ndZD8ihgIUkgGf5dGl54Oh/MaPdrS3ud8ewJE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZaRCMPrbX/PHYwENhUmLW7RZUUtO0z4X7FhEwfURlgtGh1sP/8MUpWlBwjbPGDzza
-	 j13ST+5A6u9LGkLS5YJmqKQTv54Xy5fOXYt+YdbtncoGIXw9+rbN9brFo5rMtQam1T
-	 cufyWIEzqD9i1+EqaeLixhvmpVIeGumUw0Oxju7exUQS3WNUX0pfSkbpL1lYMlHrmw
-	 PS4TMpJwNGipMRNrpsl1xtPtTVTHgWBFY/CJumsBzOfwVmkV0Wc8eVwH0y/HntxrrS
-	 Djf0Af78G+z7j+x+oBRop6zge+Yl/OTizCBoa8foIuZPkc/s9+xZ12guxzgJUdF4lF
-	 mlca0GAV2pwnw==
-Date: Tue, 13 Aug 2024 10:47:59 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: devicetree@vger.kernel.org, Saravana Kannan <saravanak@google.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] of: property: add of_property_for_each_u64
-Message-ID: <172356767808.1192975.11867376910372288467.robh@kernel.org>
-References: <20240804-clk-u64-v4-0-8e55569f39a4@nxp.com>
- <20240804-clk-u64-v4-1-8e55569f39a4@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WbsMm3AyKz+k3cXSicP/63396lNkmC9O+vIMcCCwnI+LNH0s4OS4Wn72TPkoYBqFVEknz7D6M5mwpLCmfM0CUXha5ABzgT8Bdw3lebn90fm9L5AMoarazHaVEXUQzBgBfBsyuNfCGI/1CZZGG5uPcCG64A6X2zoz/ImUTqhuG7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XllG348N; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fc587361b6so47150525ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:48:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1723567728; x=1724172528; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1B3Gf2ESIqFOuwatjJBDFN+ZmaA9cH3bs2DrpeTPuZQ=;
+        b=XllG348NuaTu/X87n6jTIxZq70C5aISv91H7hAhFrpQo8n0k7iHgQY2ikxQGQUn6Dy
+         rUhjJO3Pfx8f1jNV5iMZjbRgCtFf7Vj2MpF5u5fG5mtUao5nkJOiX5IxUqWfKcsoY64G
+         X20ZoLOyC8qnhRVyzbqmPswAZZl9xe/FzffzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723567728; x=1724172528;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1B3Gf2ESIqFOuwatjJBDFN+ZmaA9cH3bs2DrpeTPuZQ=;
+        b=s/xByRTPgd602I2os6/by5ooP/78mSjFeNCWvqiwe0qfKAzdNIizLQmdQ99GWO5HmS
+         cjSP8NlURC0QS+8WhSQ5RD/09z7DPeedM+i1IYpHDz8elLLptPvuXUxU4Kbbwg0ueMmP
+         TUVf85jzf36h56L+CfleR2eJvG64tp+cW8ggaq9X+AUgnN3m4ikqgG6uWn3h66qUqEWA
+         T/DIlIR1ytPG1ChTJRm3F0+70YQdhKRNlpPPz7Gvd0nKq2Und3ebOs4M6/IkLgl14niQ
+         ELs0ImpJImdfCskXwxijg0hriW8DU7Qgkyx/3jtERfc7uQFuXnpiLnHb+bPNbp6xUeJp
+         Q+SA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYk0NgloEZ2QA38ysEbiG3ameR7Z0R1DrrOH4sc+B7uIHPCeKxRZiE+b4NmT05YS9BknCxtYnpunMqJeTGCFiuagkijQmsGSgGtKBp
+X-Gm-Message-State: AOJu0Yzr4Y9EVV2bB4Mk6ScfWYXhi2NqP/M1fINzXSJ6HBK7DD68yi0/
+	taKae+5TcWZl3BYABorcKTsVcFk2VXl4Z9dSfo3G13fQ2Sgvpn2HdQUgNMvcpg==
+X-Google-Smtp-Source: AGHT+IEj0wPMiW8kmdwXC1HxDPUfbMhHQQB3MyjLItlZspVvqa8S7vnINZrGuQzEF1UyzVq2TpavBA==
+X-Received: by 2002:a17:903:32c2:b0:1fc:6ebf:9092 with SMTP id d9443c01a7336-201d64e85e5mr1012705ad.57.1723567727726;
+        Tue, 13 Aug 2024 09:48:47 -0700 (PDT)
+Received: from localhost ([2620:15c:9d:2:45ad:979d:1377:77f0])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201cd1a9389sm15752865ad.135.2024.08.13.09.48.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 09:48:47 -0700 (PDT)
+Date: Tue, 13 Aug 2024 09:48:46 -0700
+From: Brian Norris <briannorris@chromium.org>
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Francesco Dolcini <francesco@dolcini.it>, Kalle Valo <kvalo@kernel.org>,
+	David Lin <yu-hao.lin@nxp.com>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@pengutronix.de
+Subject: Re: [PATCH] wifi: mwifiex: keep mwifiex_cfg80211_ops constant
+Message-ID: <ZruOblIWV7_aogyu@google.com>
+References: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,23 +79,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240804-clk-u64-v4-1-8e55569f39a4@nxp.com>
+In-Reply-To: <20240809-mwifiex-duplicate-mwifiex_cfg80211_ops-v1-1-23e0e6290ace@pengutronix.de>
 
-
-On Sun, 04 Aug 2024 20:32:55 +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Fri, Aug 09, 2024 at 11:51:48AM +0200, Sascha Hauer wrote:
+> With host_mlme support being added mwifiex_cfg80211_ops is no longer
+> constant, but supplemented with the host_mlme related ops when host_mlme
+> support is enabled. This doesn't work with multiple adapters when only
+> few of then have host_mlme support. Duplicate mwifiex_cfg80211_ops
+> before using it and keep the original constant.
 > 
-> Preparing for assigned-clock-rates-u64 support, add function
-> of_property_for_each_u64 to iterate each u64 value
+> While at it mark mwifiex_cfg80211_ops const to prevent people from
+> changing it again during runtime.
 > 
-> Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/of/property.c | 23 +++++++++++++++++++++++
->  include/linux/of.h    | 23 +++++++++++++++++++++++
->  2 files changed, 46 insertions(+)
-> 
+> Fixes: 36995892c271c ("wifi: mwifiex: add host mlme for client mode")
+> Signed-off-by: Sascha Hauer <s.hauer@pengutronix.de>
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-
+Acked-by: Brian Norris <briannorris@chromium.org>
 
