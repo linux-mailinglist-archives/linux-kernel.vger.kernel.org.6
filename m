@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-285114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE007950989
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:55:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 437EA95098B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AB3FB26196
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:55:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E215E1F230D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37F11A08A1;
-	Tue, 13 Aug 2024 15:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8DA11A08A1;
+	Tue, 13 Aug 2024 15:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OlhHEa+Q"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l5MhdNux"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D58EF1A0729
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3C2AF0D;
+	Tue, 13 Aug 2024 15:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564512; cv=none; b=dMl84Hcu7SAvutDIStudZMoEJnw2xxu56zfSCRk3HbVsl3qYI4AiORc8jX3GuS91/BgLbBO7JLeNjWYs9qF0j3RI6S+5nxCgttnGFKgNmgvffmwWlXLG9UN9rznkeqeXXbTi2TJ31W/zc5qrC5ORgP1Os8pQQX6LZFCHNbtkkw0=
+	t=1723564524; cv=none; b=Rqpy2mtveM28VFC6KxN1TKG2NmGH/YAd2bxcrZBYNLBCd6Ew0y3WYIBMZNoJugE779e8DtRJYGvW7QZVdRHuJOUPXILdpijF1gntXTSlSQ2LZFeUxtSRlJJImORztPF7PTOeG9xc7I24R6bFB7gf0kLJU4lwIWYs1dKqwbrhSSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564512; c=relaxed/simple;
-	bh=ofzzO/MDsGwGtQPGj1xQIn1dKHbuD3rWUlrc0rP5vzg=;
+	s=arc-20240116; t=1723564524; c=relaxed/simple;
+	bh=KLRQ9XCMyV4+IoLC63KlpiQQx6VJgzr/PuSqrkEfaa4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OuOpZuKVVqM3r4eEc3JBcomc2mdVTVAwq2lO17XmzLFFgB2Fuedw5fEuLOPeFhlg/NjbcO4LNp/orcPKD1j/y/daYR+L2oRbhWVh/ylo1nArUN+KkuN4w1bb4k1zknE815ezVTJ2XmiF/oi07RgTsgRGDiULmC712EQkeaX1MPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OlhHEa+Q; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1fd78c165eeso45164075ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:55:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=PB7zl3d9RcNDp17HRE+CKxNfyOqLD2AhoNUO/Z3Gtx/ZfN1lo47qWjPE0UGLe33m/fF1iDzz91Dz8IW3Ed4xEP5rHsyrpsQ4HEH6YA6dzT8kaKb8NCe1+MObg558TTx+3qRTBHRBscLsuYszaXwh1kkKzVfHFl6x9PDCIz6VgyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l5MhdNux; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2cb4c584029so4378390a91.3;
+        Tue, 13 Aug 2024 08:55:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723564509; x=1724169309; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723564522; x=1724169322; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XA69NfodEyCttT6a+GrneJTF8uIIfegjqkueNkAJX18=;
-        b=OlhHEa+QUH22Kg0KKji9HZSAHrncprzcurOYQqWDHT9KMKI5Fwg8ryT6g8XrzB7kK0
-         BflecDhnkalJJokAKchgRmC5vYHQ2hUVnmhQTUOxoDQEhNNKZNwxyHi49Kg+tfzeOyZr
-         3tp0UD0Cg7nlAyfpKjIfJnDuBsIiu8bh/qkXJIOqsJ49nzJw7pWuR65GwptsOv5uUrg9
-         ByJ96ORctt0LETNt08zKVgjC/qPkuYU8WS9NYKpAnEMUM0w+GE7YN24/5uOJpweEZ9aw
-         sEMb4Y7oQuSb5tx2XsZwMFnsS45KnUNFAw69K2ocp94nF/qTB2lXEIfk3TDVUl91P3El
-         mShA==
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JNEc4eFJdLCTJFxQk4jRqMY314XfkiZ1DqdWjlphD8k=;
+        b=l5MhdNuxjtpo7H/lPAqTAopquIHQl84xd0K+90nNb+PY9UkNGlyYRjLs5SxdMR9Qik
+         mOaF/4U3i/UehLD3L328hAg0nPidd+bQW1kj1v1kQH7IqLa/3TalNPKQ+U2sXlMUcRN6
+         iq7Jox0BOSvNaUYocG1z/DWP7JtguCA6PDpHytX8gSss9p4PmVzfnVQEe/Bh9kkKdyaM
+         l/BNQJNzaWon3D0niWgs7lMgMhkEAtsTwn6QsLj8XSI+FaxODRiG22jVPk796GY+PKWT
+         5pCimFsI1NhjCebFgE1ror20pZhJrczDeAQsbmgR/5+K7wr4xhdejwKnQv93LEUGn5Y/
+         JSng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564509; x=1724169309;
+        d=1e100.net; s=20230601; t=1723564522; x=1724169322;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XA69NfodEyCttT6a+GrneJTF8uIIfegjqkueNkAJX18=;
-        b=rPDeaNRbjrEV7bFoqaK98Hb6Gso+rfn1mZVN0Un8J5GkAL0iwlrY2o36vJemriDNY8
-         pJp6EV7TPDoMMTkWHVmRtRQNHSFcOmr/ou74ts/n/hJj0dofsoOvwCbphgqCnAxx+3IN
-         xtSP7EkqddfiKmsq1f8+WFWPQ7gH69zB62QA4Q1N/6SxcHOwTgQs5Kh+BaBWcXyL+kB1
-         FCxU+VRN88Wp3rc9/QVG2fvW6vcG39xs1UrVE7aZZh2pnQ0hip9sTXmhAc1pf9wfoyaB
-         JIz+T8yHf6OyHL74UWZMSMR9kKQKkUYNKKU1jVZpqCM/OF57Q0/zHn4z4Mijp9rEwG07
-         +Cvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVe3qdpKvMAmSnyZPu7BoGZfGy9N3E8apT0BxFgp54k7/SJGx7ifqsFZDug9ZLwYARJ9qryBHe2eWkexlrlkO6R0byjJjPFNsFvbu4D
-X-Gm-Message-State: AOJu0YzyS/zzzBSXmTCusYnoOFiGG63F14LcwUEnK20PESdtr86Y7M4D
-	t4lQ0RoAmCTJSrrBpw5QnxTk/6fp7mBbHbkK0Fpvc0rYieeC9QJt4nQw/TSIxkI=
-X-Google-Smtp-Source: AGHT+IG9G6M+t+VKPSzwKnxIYBB8RhmRRqGfZJq4Bi9ZrcsR6TvNvFeeyp7dUt+EdE/zkwku9m48sA==
-X-Received: by 2002:a17:903:230a:b0:1fb:a38b:c5a7 with SMTP id d9443c01a7336-201ca185904mr58149375ad.13.1723564509168;
-        Tue, 13 Aug 2024 08:55:09 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:d596:d55b:d99d:7ece])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a93d7sm15220855ad.149.2024.08.13.08.55.07
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JNEc4eFJdLCTJFxQk4jRqMY314XfkiZ1DqdWjlphD8k=;
+        b=UqvQ9ex70FrLahWIyHHOdQunLG4/WouzFZMmwE/aOa+cYDwpRn13RtQhzG7kWG5U0/
+         kVwdBYEjX6u6+40iRagsOvL5nAdwGZ68dNIbkkrv5PiaGGZgqJ4v5/nRCvUl9hHWQxI3
+         aFEGMQR5+mJhCjf6zc0KINNXzcu6gQ2vwlPg2i8VzfZpP/ADaBlLxj30vjqax25Dq3kG
+         RWOz7vPNbG41G7vYEztSXMlqWnIFopggcfZEOaV2PeJBcl85nPTBPPzUGQEYvK1LrtbB
+         UVWMEt9ns4DJsimSi42WeDkpLJ+nf1+zqwESaLGuvkHmXOnfMwiRaf0cfZHnja77XcMF
+         T1Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTo1i2Jy1RSgJF0EINIPhEZDDQN3LOFP8N3pSfFjDI9v6HvLJBLWjLiEw/2LTmYL94aaDAzWMAlAa0LaluIrvbC8ZbB+QQ4T44y57tvJXr74pTfoPVmpYSLPfaQpy3/HjlOxKrg90NGNQ=
+X-Gm-Message-State: AOJu0YxDHkINzO+lOCxJ+9SZq1dsroy8zFuyYLWMYKdU0Om4PQw3j8Wz
+	v0tRenaZCWILQPqF0cTnt7RI2ZtqvZhJ7KEX3T7FMl9TJwxe7GjO
+X-Google-Smtp-Source: AGHT+IHsNoLdrX0R4zp4o2c8WmRrDV2F3h2rC+DtkfhJfrI5TN9h3V521gKbzOJvd+yeGYEpdFTIyw==
+X-Received: by 2002:a17:90b:3b46:b0:2cd:2f63:a447 with SMTP id 98e67ed59e1d1-2d39267dcdbmr4411975a91.36.1723564521500;
+        Tue, 13 Aug 2024 08:55:21 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1fd02102dsm7465294a91.51.2024.08.13.08.55.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:55:08 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:55:05 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: Andrew Davis <afd@ti.com>
-Cc: Hari Nagalla <hnagalla@ti.com>, Bjorn Andersson <andersson@kernel.org>,
-	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] remoteproc: keystone: Use devm action to release
- reserved memory
-Message-ID: <ZruB2VhA78GRWG9X@p14s>
-References: <20240802182300.244055-1-afd@ti.com>
- <20240802182300.244055-3-afd@ti.com>
+        Tue, 13 Aug 2024 08:55:20 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 13 Aug 2024 08:55:19 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Denis Pauk <pauk.denis@gmail.com>
+Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, attila@fulop.one
+Subject: Re: [PATCH] hwmon: (nct6775) add G15CF to ASUS WMI monitoring list
+Message-ID: <3c1c6785-b994-486d-a255-8c8bd8080eb1@roeck-us.net>
+References: <20240812152652.1303-1-pauk.denis@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,77 +83,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240802182300.244055-3-afd@ti.com>
+In-Reply-To: <20240812152652.1303-1-pauk.denis@gmail.com>
 
-On Fri, Aug 02, 2024 at 01:22:56PM -0500, Andrew Davis wrote:
-> This helps prevent mistakes like freeing out of order in cleanup functions
-> and forgetting to free on error paths.
+On Mon, Aug 12, 2024 at 06:26:38PM +0300, Denis Pauk wrote:
+> Boards G15CF has got a nct6775 chip, but by default there's no use of it
+> because of resource conflict with WMI method.
 > 
-> Signed-off-by: Andrew Davis <afd@ti.com>
-> ---
->  drivers/remoteproc/keystone_remoteproc.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/keystone_remoteproc.c b/drivers/remoteproc/keystone_remoteproc.c
-> index 8f0f7a4cfef26..033e573544fef 100644
-> --- a/drivers/remoteproc/keystone_remoteproc.c
-> +++ b/drivers/remoteproc/keystone_remoteproc.c
-> @@ -358,6 +358,13 @@ static int keystone_rproc_of_get_dev_syscon(struct platform_device *pdev,
->  	return 0;
->  }
->  
-> +static void keystone_rproc_mem_release(void *data)
-> +{
-> +	struct device *dev = data;
-> +
-> +	of_reserved_mem_device_release(dev);
-> +}
-> +
->  static int keystone_rproc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -434,8 +441,14 @@ static int keystone_rproc_probe(struct platform_device *pdev)
->  		goto disable_clk;
->  	}
->  
-> -	if (of_reserved_mem_device_init(dev))
-> +	ret = of_reserved_mem_device_init(dev);
-> +	if (ret) {
->  		dev_warn(dev, "device does not have specific CMA pool\n");
-> +	} else {
-> +		ret = devm_add_action_or_reset(dev, keystone_rproc_mem_release, dev);
-> +		if (ret)
-> +			return ret;
+> This commit adds such board to the WMI monitoring list.
 
-It gets sorted out in the next patches but we still need to "goto disable_clk"
-to avoid git-bisect problems.
+Please read the documentation for proper patch descriptions.
+Specifically,
 
-I have applied the first two patches of this set so no need to resend them.
+> Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
+> instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
+> to do frotz", as if you are giving orders to the codebase to change
+> its behaviour.
+
+I'll fix that up, but please keep it in mind for future patches.
+
+Applied,
 
 Thanks,
-Mathieu
+Guenter
 
-> +	}
->  
->  	/* ensure the DSP is in reset before loading firmware */
->  	ret = reset_control_status(ksproc->reset);
-> @@ -459,7 +472,6 @@ static int keystone_rproc_probe(struct platform_device *pdev)
->  	return 0;
->  
->  release_mem:
-> -	of_reserved_mem_device_release(dev);
->  	gpiod_put(ksproc->kick_gpio);
->  disable_clk:
->  	pm_runtime_put_sync(dev);
-> @@ -476,7 +488,6 @@ static void keystone_rproc_remove(struct platform_device *pdev)
->  	gpiod_put(ksproc->kick_gpio);
->  	pm_runtime_put_sync(&pdev->dev);
->  	pm_runtime_disable(&pdev->dev);
-> -	of_reserved_mem_device_release(&pdev->dev);
->  }
->  
->  static const struct of_device_id keystone_rproc_of_match[] = {
-> -- 
-> 2.39.2
 > 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=204807
+> Signed-off-by: Denis Pauk <pauk.denis@gmail.com>
+> Tested-by: Attila <attila@fulop.one>
+> ---
+>  drivers/hwmon/nct6775-platform.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/hwmon/nct6775-platform.c b/drivers/hwmon/nct6775-platform.c
+> index 9aa4dcf4a6f3..096f1daa8f2b 100644
+> --- a/drivers/hwmon/nct6775-platform.c
+> +++ b/drivers/hwmon/nct6775-platform.c
+> @@ -1269,6 +1269,7 @@ static const char * const asus_msi_boards[] = {
+>  	"EX-B760M-V5 D4",
+>  	"EX-H510M-V3",
+>  	"EX-H610M-V3 D4",
+> +	"G15CF",
+>  	"PRIME A620M-A",
+>  	"PRIME B560-PLUS",
+>  	"PRIME B560-PLUS AC-HES",
 
