@@ -1,142 +1,162 @@
-Return-Path: <linux-kernel+bounces-284481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C4A950177
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:44:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 985D695017B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:45:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1CD1C21C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:44:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44B0C1F23363
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74418183CA6;
-	Tue, 13 Aug 2024 09:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02668170A23;
+	Tue, 13 Aug 2024 09:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3tcJffT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="A5O06AQq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DE/mDdRD"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A86DC17BB2F;
-	Tue, 13 Aug 2024 09:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55261AACC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542275; cv=none; b=HXDAx/5ZWmma7tAusVGv8UwH2Hv1hSMyPmZ39xfgBGHII7zJaIq2eZbhmVHT6Fl+JLxkfuRabLTlrtk1bljNEDNrWzps7s1OawyHfna/FIAAr8aAetzf+ayX6QrsVGruxgus3aXSb0o23kJMWCy3nfpLoTpp52jT0dl12/0TbR4=
+	t=1723542323; cv=none; b=TYBPyg5v67HJBW43KxBoiMW2RPsbThLOCuDGiN2DBkL0ScdVO81WCI3q5cGYSKYvMlzxcJRLXEuP8hNK2fHiEvYfo9Ocfh1uS/ujjqkUQiFr2K9kILOdxBl4hyEc/6uyT+3c1+D9LwKT2i2vKwb4fzoVctaihGKszjqezLTGujM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542275; c=relaxed/simple;
-	bh=SDemi+5U8Bbd/34MSSn5EvYbmxFLpvWFYLnrE18bp/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pc9qMeJcB63iwjoMB224ZepO7JW7rlWOI1vWTes1QdWV4bfdNJC2IU4b9Zq4HImW2tmdNdd/crDPhg5scz6LterqOD0ttrQu2KMqE36/6wkaW/BfSfqsNlGIUy4K0EFhl3tyWaMw9H6Uda3PzlYhKA3+0Jmpgne8Bz6xTOcprCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3tcJffT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90823C4AF0B;
-	Tue, 13 Aug 2024 09:44:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723542275;
-	bh=SDemi+5U8Bbd/34MSSn5EvYbmxFLpvWFYLnrE18bp/g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=V3tcJffTCTB0SVhUBpyarhy1C/QOGR33qiRl2cFfpmiQv8HjoJwLj/YZ/vx80pyj0
-	 Wu/VRNYQOnO34V1p26nCm8kT3jzz6ogB4VspsUYZRkTcyXe9bXFmGdInnxD+qKzl4w
-	 YeMWnqOrgN5cZgKoxD5+e2KYO4pAx4kqa0Pm48nVY4iUOtwDukH+GPa2i7uAuHr7si
-	 aaYLi5xTZSulzAUXsdK4889OzddmprRBedUe1VwIG1a5sKxrbue7RaMNKex8z6sN1l
-	 gvF6mBBtArWx2Z8wtW7VcGLSii6ucT42Fh6tMWRjhsB+9oRZStJEVDV/utZ/Igy7k8
-	 idV8MIz4fKDHw==
-Message-ID: <82ee2be2-366e-40b2-ac95-e755443032be@kernel.org>
-Date: Tue, 13 Aug 2024 11:44:28 +0200
+	s=arc-20240116; t=1723542323; c=relaxed/simple;
+	bh=JVyPSheHUAEcpgaxF05paJ+TS0rMFm6vhatbCjsQLSA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iw9exwiekH+R7MBOWFQ6xG9E4W/0xtv+1oga5lQ3qEq96unFdNTl7cttE4wS+ETb5OuTsADJ6kj9Ru58UVFNdAfGWGmXxisCudHdkWIn71ZiSgxR0fR3Jp0CwX1fSbwlTzoSdF/nBHFCWuOz2tCExTMZL9LU7LBWxKfJxnEEAuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=A5O06AQq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DE/mDdRD; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723542320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eitc1yGvAu2XVOt8W1EaGMOFNjza3NrKpTTe5GpqR34=;
+	b=A5O06AQqtI38iW1KAwdW3S7yoU2TQ7Vs3YnbnWHyK43JT3cG8rS5qmzYrr0DWzYyTfvfZD
+	dMykCOWo27DJGw1YdzijugiVpJomNtR7FRi0xYcWzErIzptOQZ14WUN/mcopdXwiG3us6J
+	0WFcNXEI3yMfLXZy/930c73YK5zb3W3CA7CePlBqe2Aic3paiIOUIIim/F/u08/RqblWzq
+	Dq7GA6kctk6TMVW74YWuu1/hymN8v8MTt1IffVsS6mT5c6kV/jZ+4+D/bNGG3QeXhh2vmD
+	PE62NmqVyX9fKq7awP9Apwh02TImmxkC6vTLWkgDiId2tBdJgcgTl88wZBg4zA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723542320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Eitc1yGvAu2XVOt8W1EaGMOFNjza3NrKpTTe5GpqR34=;
+	b=DE/mDdRDOJ//XxFXeAOloMjx7x2hZc0YYa0ydURMDmkK3HT/x5eAiPUm19375VX10jAKmk
+	Byr84+M5ArR4fYDQ==
+To: Felix Moessbauer <felix.moessbauer@siemens.com>,
+ linux-kernel@vger.kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, jan.kiszka@siemens.com, Sebastian Andrzej
+ Siewior <bigeasy@linutronix.de>, qyousef@layalina.io, Felix Moessbauer
+ <felix.moessbauer@siemens.com>
+Subject: Re: [PATCH v3 1/1] hrtimer: use and report correct timerslack
+ values for realtime tasks
+In-Reply-To: <20240813072953.209119-2-felix.moessbauer@siemens.com>
+References: <20240813072953.209119-1-felix.moessbauer@siemens.com>
+ <20240813072953.209119-2-felix.moessbauer@siemens.com>
+Date: Tue, 13 Aug 2024 11:45:19 +0200
+Message-ID: <87ed6src28.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] ARM: dts: imx6qdl: Rename USB hub node name
-To: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Markus Niebel <Markus.Niebel@ew.tq-group.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com
-References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com>
- <20240812143431.98323-6-Markus.Niebel@ew.tq-group.com>
- <781e8fcd-3814-4537-8ecf-efab0a380fff@kernel.org>
- <1901821.CQOukoFCf9@steina-w>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1901821.CQOukoFCf9@steina-w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 13/08/2024 11:27, Alexander Stein wrote:
-> Am Dienstag, 13. August 2024, 11:20:08 CEST schrieb Krzysztof Kozlowski:
->> On 12/08/2024 16:34, Markus Niebel wrote:
->>> From: Alexander Stein <alexander.stein@ew.tq-group.com>
->>>
->>> According to microchip,usb2514.yaml the node name shall be usb-hub.
->>
->> That's not true. The schema does not say anything like this. Old name is
->> correct. NAK.
-> 
-> So, is the schema incorrect? There is the dtbs_check warning:
-> arch/arm/boot/dts/nxp/imx/imx6q-mba6b.dtb: hub@1: $nodename:0: 'hub@1' does not match '^usb(@.*)?'
->         from schema $id: http://devicetree.org/schemas/usb/microchip,usb2514.yaml#
+On Tue, Aug 13 2024 at 09:29, Felix Moessbauer wrote:
+> @@ -2569,10 +2569,11 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+>  	}
+>  
+>  	task_lock(p);
+> -	if (slack_ns == 0)
+> -		p->timer_slack_ns = p->default_timer_slack_ns;
+> -	else
+> -		p->timer_slack_ns = slack_ns;
+> +	if (task_is_realtime(p))
+> +		slack_ns = 0;
 
-If you have a warning, shorten it and paste it so this will be obvious.
-If you look at several bindings, the hub is widely used name. I think
-the schema is not correct here - I do not see any properties from
-usb.yaml being used here (for usb2514). What's more, if you compare
-usb2514 with any other on-board HUB representations (because that's the
-only point why we have it in bindings, right?), none of them reference
-usb(-hcd)?.yaml.
+This should respect the user supplied value, i.e.
 
-These are not USB controllers, IMO.
+    if (!task_is_realtime(p) && !slack_ns)
+	    slack_ns = p->default_timer_slack_ns;
 
-Best regards,
-Krzysztof
+> +	else if (slack_ns == 0)
+> +		slack_ns = p->default_timer_slack_ns;
+> +	p->timer_slack_ns = slack_ns;
+>  	task_unlock(p);
+>  
+>  out:
+> diff --git a/fs/select.c b/fs/select.c
+> index 9515c3fa1a03..153124ed50fd 100644
+> --- a/fs/select.c
+> +++ b/fs/select.c
+> @@ -77,19 +77,13 @@ u64 select_estimate_accuracy(struct timespec64 *tv)
+>  {
+>  	u64 ret;
+>  	struct timespec64 now;
+> -
+> -	/*
+> -	 * Realtime tasks get a slack of 0 for obvious reasons.
+> -	 */
+> -
+> -	if (rt_task(current))
+> -		return 0;
+> +	u64 slack = current->timer_slack_ns;
+>  
+>  	ktime_get_ts64(&now);
+>  	now = timespec64_sub(*tv, now);
+>  	ret = __estimate_accuracy(&now);
+> -	if (ret < current->timer_slack_ns)
+> -		return current->timer_slack_ns;
+> +	if (ret < slack || slack == 0)
+> +		return slack;
 
+Seriously? Do all the calculations first and then discard them when
+slack is 0?
+
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index ae1b42775ef9..195d2f2834a9 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -406,6 +406,14 @@ static void __setscheduler_params(struct task_struct *p,
+>  	else if (fair_policy(policy))
+>  		p->static_prio = NICE_TO_PRIO(attr->sched_nice);
+>  
+> +	/* rt-policy tasks do not have a timerslack */
+> +	if (task_is_realtime(p)) {
+> +		p->timer_slack_ns = 0;
+> +	} else if (p->timer_slack_ns == 0) {
+> +		/* when switching back to non-rt policy, restore timerslack */
+> +		p->timer_slack_ns = p->default_timer_slack_ns;
+> +	}
+> +
+>  	/*
+>  	 * __sched_setscheduler() ensures attr->sched_priority == 0 when
+>  	 * !rt_policy. Always setting this ensures that things like
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 3a2df1bd9f64..e3c4cffb520c 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -2557,6 +2557,8 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>  			error = current->timer_slack_ns;
+>  		break;
+>  	case PR_SET_TIMERSLACK:
+> +		if (task_is_realtime(current))
+> +			break;
+
+Why are you declaring that a RT task has to have 0 slack if we are
+lifting the hard coded slack zeroing in the hrtimer functions?
+
+Thanks,
+
+        tglx
 
