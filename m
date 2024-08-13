@@ -1,163 +1,233 @@
-Return-Path: <linux-kernel+bounces-284864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46A995061F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:12:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B322950622
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:12:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0471E1C22CAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D45287462
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61ED19ADAA;
-	Tue, 13 Aug 2024 13:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5990719B3DD;
+	Tue, 13 Aug 2024 13:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YdDshMQ7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jgOPz3i3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YdDshMQ7";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="jgOPz3i3"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fC9/7Smm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179DD18A94E;
-	Tue, 13 Aug 2024 13:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3327199E84;
+	Tue, 13 Aug 2024 13:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723554708; cv=none; b=SzMbdR8o/4wFtAQFujCKZswKiQleiBWUgvkR8MFOCPqsYaoA2XooFeKGzuky9nhQLOtDz0GBjfvFjXSk9Q7lmuq2HoTBsmQZxxXq3nB/8+gswDQI296kPkw4UvVkauKob/+528o8jvW1SKau6vusFHmtPrpC/PtnsokMXZqH1E4=
+	t=1723554756; cv=none; b=sqOXebTTrvAxym8ooRjYhEIhBJqwkxh7hSEldiuSEFcKVgzBdSGCQiZMm9Cvlbr584fhLY/sO0/Sz2WBhIVu0Od7oaE2+CkWCmBKTQyY5RgLb0uRn6IUerPCrb2RRw8sw3m0JkiyprBifhjXFJDOAa/gj55tSuvixzUbcWUnq1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723554708; c=relaxed/simple;
-	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQD1ZWly2giJMtz4hNfb8TauzoIzJdVGiHJryYzd6Sg8tVblfvWmfttp2nk3oNpJPXD8QK57j200rtsuC1QDROQlgNrKA2hTDofOn1QQUCGRNuDaA8YHZsBcDflsePjwzzgI98z78TCpsrVyi1SaQ6QKSvYBCo1JcEOVakiwEm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YdDshMQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jgOPz3i3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YdDshMQ7; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=jgOPz3i3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 25794203AD;
-	Tue, 13 Aug 2024 13:11:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723554705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
-	b=YdDshMQ7mxAV0JmLSj07L+9KBwxzqqdROUsHk7zW52djSfjt2r1H+mR0AfJZRzuk2w8yfX
-	vv5bj/v6JTTBnlWHHXZ4Ss3AtQLlYksZuydh38qcf0wxRJg74gpxtK2rIsgwb85A4c7jeU
-	Nns7Nr84GgwQXduUdiV1cIG9Nwke9Kk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723554705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
-	b=jgOPz3i3I+pHId0uPcovGl1gP+PcrknurukRnQ9/MIRbTNL2FznL1bIx+X+VU/S0YIXfBU
-	3Bi2rUnnKahamfCQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=YdDshMQ7;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=jgOPz3i3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723554705; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
-	b=YdDshMQ7mxAV0JmLSj07L+9KBwxzqqdROUsHk7zW52djSfjt2r1H+mR0AfJZRzuk2w8yfX
-	vv5bj/v6JTTBnlWHHXZ4Ss3AtQLlYksZuydh38qcf0wxRJg74gpxtK2rIsgwb85A4c7jeU
-	Nns7Nr84GgwQXduUdiV1cIG9Nwke9Kk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723554705;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nwrRtJCWatyFdWExCpf1lT5rClcrqjnVxyIfQtEz6Gk=;
-	b=jgOPz3i3I+pHId0uPcovGl1gP+PcrknurukRnQ9/MIRbTNL2FznL1bIx+X+VU/S0YIXfBU
-	3Bi2rUnnKahamfCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F16EB13983;
-	Tue, 13 Aug 2024 13:11:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7myfOpBbu2buDwAAD6G6ig
-	(envelope-from <dwagner@suse.de>); Tue, 13 Aug 2024 13:11:44 +0000
-Date: Tue, 13 Aug 2024 15:11:44 +0200
-From: Daniel Wagner <dwagner@suse.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
-	Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
-	Christoph Hellwig <hch@lst.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
-	Jason Wang <jasowang@redhat.com>, Kashyap Desai <kashyap.desai@broadcom.com>, 
-	Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>, Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Nilesh Javali <njavali@marvell.com>, 
-	GR-QLogic-Storage-Upstream@marvell.com, Jonathan Corbet <corbet@lwn.net>, 
-	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com, 
-	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <6449daa0-b8e1-4c5d-86ad-19dada7c849e@flourine.local>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
- <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
- <ZrtX4pzqwVUEgIPS@fedora>
+	s=arc-20240116; t=1723554756; c=relaxed/simple;
+	bh=uoqDNeAJb5WryfWJBMETwWztM1l30CYsj7KasEM+Z9M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=csXp2xxQNqyy6ECZJvmYmmqviAKmCDOEJQ6bYLin/rP47O17Ir2zkz0dEDu+HQupbXVy7mEIiZtHoLecmzPhAT2l1b3NiO8Lzgjy0i5lb/LfHSkF57Cf769s97HvJNND0Se6EO1NtOp0w6XmxbcOSPE+zxE1Qun8Qf6VsSOVz+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fC9/7Smm; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723554755; x=1755090755;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uoqDNeAJb5WryfWJBMETwWztM1l30CYsj7KasEM+Z9M=;
+  b=fC9/7SmmK+8AuFZa0iNlVG/YdjMJWyoiYEW4FfIy/RvNw8/HN/WtWgx2
+   hX40sh1fZeP00BFkUJt6MH91hN2kQhoF7KkGzvKkKg/fxMVjSacBZOzOj
+   m2/MjWcNedbkryvKjhFx6lP/e02yiC0lVosfoajyt0ZrHU7+w/Md0pqz0
+   Dr8iZ96u/5lvW4MjjApBXJHwTcAk7bE7Sig0TIuloioryyUPW38JXqVvF
+   GSXyufLATeSz4UzkPCZ9hRsb9WZCp3e7TSuFz34kAyMig4KGD4jkUITPT
+   nuCn7q8WSERvDBrlZuHQlcA3HBtb66obayQlTKhOKXM0XRdaXSItlOHe8
+   A==;
+X-CSE-ConnectionGUID: 6Geag84+QkaacR24eu7reQ==
+X-CSE-MsgGUID: yzZwOIMzS4S1cBQtyO5diA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="39225786"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="39225786"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 06:12:34 -0700
+X-CSE-ConnectionGUID: /1gIWA2uQG6JpkF1c4ltyA==
+X-CSE-MsgGUID: +sfTXrSuT56MHEjC6oHieA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58610132"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 13 Aug 2024 06:12:32 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 9EE6F2CC; Tue, 13 Aug 2024 16:12:30 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Kate Hsuan <hpa@redhat.com>,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH v1 1/1] media: atomisp: Replace rarely used macro from math_support.h
+Date: Tue, 13 Aug 2024 16:12:25 +0300
+Message-ID: <20240813131225.2232817-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZrtX4pzqwVUEgIPS@fedora>
-X-Rspamd-Queue-Id: 25794203AD
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[34];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,lst.de,oracle.com,redhat.com,broadcom.com,marvell.com,lwn.net,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,lists.linux.dev,microchip.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLbomrtoisjzkgzhj6iko5ju7u)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,flourine.local:mid,suse.de:dkim]
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 08:56:02PM GMT, Ming Lei wrote:
-> With patch 14 and the above change, managed irq's affinity becomes not
-> matched with blk-mq mapping any more.
+Replace rarely used macro by generic ones from Linux kernel headers.
 
-Ah, got it. The problem here is that I need to update also the irq
-affinity mask for the hctx when offlining a CPU.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ .../atomisp/pci/hive_isp_css_include/math_support.h      | 6 ------
+ .../ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c        | 9 +++++----
+ .../ipu2_io_ls/yuv444_io_ls/ia_css_yuv444_io.host.c      | 9 +++++----
+ .../media/atomisp/pci/runtime/binary/src/binary.c        | 3 ++-
+ .../media/atomisp/pci/runtime/isys/src/virtual_isys.c    | 8 ++++----
+ 5 files changed, 16 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h b/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
+index 160c496784b7..907f9ebcc60d 100644
+--- a/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
++++ b/drivers/staging/media/atomisp/pci/hive_isp_css_include/math_support.h
+@@ -28,12 +28,6 @@
+ #define CEIL_SHIFT(a, b)     (((a) + (1 << (b)) - 1) >> (b))
+ #define CEIL_SHIFT_MUL(a, b) (CEIL_SHIFT(a, b) << (b))
+ 
+-#if !defined(PIPE_GENERATION)
+-
+-#define ceil_div(a, b)		(CEIL_DIV(a, b))
+-
+-#endif /* !defined(PIPE_GENERATION) */
+-
+ /*
+  * For SP and ISP, SDK provides the definition of OP_std_modadd.
+  * We need it only for host
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c
+index 0091e2a3da52..c32659894c29 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/bayer_io_ls/ia_css_bayer_io.host.c
+@@ -13,9 +13,11 @@
+  * more details.
+  */
+ 
++#include <linux/bitops.h>
++#include <linux/math.h>
++
+ #include "ia_css_bayer_io.host.h"
+ #include "dma.h"
+-#include "math_support.h"
+ #ifndef IA_CSS_NO_DEBUG
+ #include "ia_css_debug.h"
+ #endif
+@@ -29,9 +31,8 @@ int ia_css_bayer_io_config(const struct ia_css_binary      *binary,
+ 	const struct ia_css_frame **out_frames = (const struct ia_css_frame **)
+ 		&args->out_frame;
+ 	const struct ia_css_frame_info *in_frame_info = ia_css_frame_get_info(in_frame);
+-	const unsigned int ddr_bits_per_element = sizeof(short) * 8;
+-	const unsigned int ddr_elems_per_word = ceil_div(HIVE_ISP_DDR_WORD_BITS,
+-						ddr_bits_per_element);
++	const unsigned int ddr_elems_per_word =
++		DIV_ROUND_UP(HIVE_ISP_DDR_WORD_BITS, BITS_PER_TYPE(short));
+ 	unsigned int size_get = 0, size_put = 0;
+ 	unsigned int offset = 0;
+ 	int ret;
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/yuv444_io_ls/ia_css_yuv444_io.host.c b/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/yuv444_io_ls/ia_css_yuv444_io.host.c
+index 32c504a950ce..5b2d5023b5ee 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/yuv444_io_ls/ia_css_yuv444_io.host.c
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/ipu2_io_ls/yuv444_io_ls/ia_css_yuv444_io.host.c
+@@ -13,9 +13,11 @@ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ */
+ 
++#include <linux/bitops.h>
++#include <linux/math.h>
++
+ #include "ia_css_yuv444_io.host.h"
+ #include "dma.h"
+-#include "math_support.h"
+ #ifndef IA_CSS_NO_DEBUG
+ #include "ia_css_debug.h"
+ #endif
+@@ -29,9 +31,8 @@ int ia_css_yuv444_io_config(const struct ia_css_binary      *binary,
+ 	const struct ia_css_frame **out_frames = (const struct ia_css_frame **)
+ 		&args->out_frame;
+ 	const struct ia_css_frame_info *in_frame_info = ia_css_frame_get_info(in_frame);
+-	const unsigned int ddr_bits_per_element = sizeof(short) * 8;
+-	const unsigned int ddr_elems_per_word = ceil_div(HIVE_ISP_DDR_WORD_BITS,
+-						ddr_bits_per_element);
++	const unsigned int ddr_elems_per_word =
++		DIV_ROUND_UP(HIVE_ISP_DDR_WORD_BITS, BITS_PER_TYPE(short));
+ 	unsigned int size_get = 0, size_put = 0;
+ 	unsigned int offset = 0;
+ 	int ret;
+diff --git a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+index b0f904a5e442..2ff522f7dec8 100644
+--- a/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
++++ b/drivers/staging/media/atomisp/pci/runtime/binary/src/binary.c
+@@ -328,7 +328,8 @@ ia_css_binary_dvs_grid_info(const struct ia_css_binary *binary,
+ 
+ 	dvs_info = &info->dvs_grid.dvs_grid_info;
+ 
+-	/* for DIS, we use a division instead of a ceil_div. If this is smaller
++	/*
++	 * For DIS, we use a division instead of a DIV_ROUND_UP(). If this is smaller
+ 	 * than the 3a grid size, it indicates that the outer values are not
+ 	 * valid for DIS.
+ 	 */
+diff --git a/drivers/staging/media/atomisp/pci/runtime/isys/src/virtual_isys.c b/drivers/staging/media/atomisp/pci/runtime/isys/src/virtual_isys.c
+index 52483498239d..2e0193671f4b 100644
+--- a/drivers/staging/media/atomisp/pci/runtime/isys/src/virtual_isys.c
++++ b/drivers/staging/media/atomisp/pci/runtime/isys/src/virtual_isys.c
+@@ -13,6 +13,8 @@
+  * more details.
+  */
+ 
++#include <linux/bitops.h>
++#include <linux/math.h>
+ #include <linux/string.h> /* for memcpy() */
+ 
+ #include "system_global.h"
+@@ -20,7 +22,6 @@
+ 
+ #include "ia_css_isys.h"
+ #include "ia_css_debug.h"
+-#include "math_support.h"
+ #include "virtual_isys.h"
+ #include "isp.h"
+ #include "sh_css_defs.h"
+@@ -558,7 +559,7 @@ static int32_t calculate_stride(
+ 		bits_per_pixel = CEIL_MUL(bits_per_pixel, 8);
+ 
+ 	pixels_per_word = HIVE_ISP_DDR_WORD_BITS / bits_per_pixel;
+-	words_per_line  = ceil_div(pixels_per_line_padded, pixels_per_word);
++	words_per_line  = DIV_ROUND_UP(pixels_per_line_padded, pixels_per_word);
+ 	bytes_per_line  = HIVE_ISP_DDR_WORD_BYTES * words_per_line;
+ 
+ 	return bytes_per_line;
+@@ -690,7 +691,6 @@ static bool calculate_ibuf_ctrl_cfg(
+     const isp2401_input_system_cfg_t	*isys_cfg,
+     ibuf_ctrl_cfg_t			*cfg)
+ {
+-	const s32 bits_per_byte = 8;
+ 	s32 bits_per_pixel;
+ 	s32 bytes_per_pixel;
+ 	s32 left_padding;
+@@ -698,7 +698,7 @@ static bool calculate_ibuf_ctrl_cfg(
+ 	(void)input_port;
+ 
+ 	bits_per_pixel = isys_cfg->input_port_resolution.bits_per_pixel;
+-	bytes_per_pixel = ceil_div(bits_per_pixel, bits_per_byte);
++	bytes_per_pixel = BITS_TO_BYTES(bits_per_pixel);
+ 
+ 	left_padding = CEIL_MUL(isys_cfg->output_port_attr.left_padding, ISP_VEC_NELEMS)
+ 		       * bytes_per_pixel;
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
