@@ -1,202 +1,218 @@
-Return-Path: <linux-kernel+bounces-284839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A079505B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:57:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E729505AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:56:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDFD61C20751
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:57:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 197F91F25845
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:56:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA5F19B3C8;
-	Tue, 13 Aug 2024 12:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ERda31H0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29F719B3D3
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F50219B3EE;
+	Tue, 13 Aug 2024 12:56:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EAE319ADA8;
+	Tue, 13 Aug 2024 12:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553800; cv=none; b=TGc7zf8pbsFqqY9E5CbUyePA1NNSfQuhdAcrHuRnkGT3G3HAQ7C2uJZUwiMRvogl5IFdrskpjiccNigvhIo16X4C26UB/m4ipp0vbek1+GwCWBuM8MmZpzPdvaWnkgm+sYVY6HT8TxW9/oNG1d0wHnrZnW0y39KT7BOcJpqHI4c=
+	t=1723553777; cv=none; b=ccEqyDWurR1BgcHQm8V4NwW90CQfqX/W9XxwYb3cgRcLRGPNMbEtUcO73p1Lco8YH/xY0dAbj66aKudGvlj6hQNWEQi9Bvtkrq8gXSBYsj0fwYDssewfYUsU0+z3+8lfkXDlvMet57SZ7YOQ0P9JVo/cP1E8zbNhF3iQkRfwk80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553800; c=relaxed/simple;
-	bh=dtfdG2/tny22RWPYnguJl5VfCgrZVLKuqTdshHOe1L8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyS4pbrfqT7fvJRd6SQinC6XcHP1ua01Yh2wCR7bsDYnzZZoDxmA+pxYBGTS6XJW5EO/tF2fYp7IWEvexH/gBf5MV2W7ANTJFBaarToAWHzcNhImlQoZd+obCmG9p5riMZuqQtCTF+dufGnWRbeByeVdkmGUGrjdimQhJL0CBuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ERda31H0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723553797;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fdMETTEImRyAVHiJjuMBFrMxCEIjWPptnF/f3Mcubwk=;
-	b=ERda31H043J6urycAeLXbND56GXAKX9qXXRp9vTYdBN8P2REFIv4htrgO0zUIB5qMa48fS
-	+VlqLg9Jr6EsFZjlMIdYx4DCDDJKHsLzBdAwJMqRbUvCc2fiOZGSvr4wo/dE2MM8I8Ws/Q
-	Sl9KDvandwrYbhR3NSnc2immFVObhS4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-81-aWKwkjLwMuy558NDq8AgRg-1; Tue,
- 13 Aug 2024 08:56:32 -0400
-X-MC-Unique: aWKwkjLwMuy558NDq8AgRg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B21C91954B13;
-	Tue, 13 Aug 2024 12:56:27 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.133])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CDEF119560AA;
-	Tue, 13 Aug 2024 12:56:08 +0000 (UTC)
-Date: Tue, 13 Aug 2024 20:56:02 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Daniel Wagner <dwagner@suse.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	John Garry <john.g.garry@oracle.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Kashyap Desai <kashyap.desai@broadcom.com>,
-	Sumit Saxena <sumit.saxena@broadcom.com>,
-	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
-	Chandrakanth patil <chandrakanth.patil@broadcom.com>,
-	Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
-	Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>,
-	Sridhar Balaraman <sbalaraman@parallelwireless.com>,
-	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev,
-	megaraidlinux.pdl@broadcom.com, mpi3mr-linuxdrv.pdl@broadcom.com,
-	MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com,
-	linux-doc@vger.kernel.org, ming.lei@redhat.com
-Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
- is enabled
-Message-ID: <ZrtX4pzqwVUEgIPS@fedora>
-References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
- <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
+	s=arc-20240116; t=1723553777; c=relaxed/simple;
+	bh=wFtTI19K2p9zqVAIUz0fc1eIvdJ9DNFocqaSowv19pg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X9oGhijQ7QyJWex6Mbt+j1ntJmypX0v7dqx1M4IIkv3d66t06y8B7bm3vetcYxNbQL/rzWap5HHDtOciNGJfX/bUSJNb1eLv+OKbpafrxdXVuzGbM/jPHPJIAuozUn+ve/+7A25VtIPTs8T5Q+sSMSPkzhSu7jGD+rWRAW1yaq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A028312FC;
+	Tue, 13 Aug 2024 05:56:40 -0700 (PDT)
+Received: from [10.57.84.20] (unknown [10.57.84.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9B3FA3F73B;
+	Tue, 13 Aug 2024 05:56:13 -0700 (PDT)
+Message-ID: <93d9ffb2-482d-49e0-8c67-b795256d961a@arm.com>
+Date: Tue, 13 Aug 2024 13:56:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/1] cpuidle/menu: Address performance drop from favoring
+ physical over polling cpuidle state
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>, rafael@kernel.org,
+ daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: gautam@linux.ibm.com
+References: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20240809073120.250974-1-aboorvad@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 06, 2024 at 02:06:47PM +0200, Daniel Wagner wrote:
-> When isolcpus=io_queue is enabled all hardware queues should run on the
-> housekeeping CPUs only. Thus ignore the affinity mask provided by the
-> driver. Also we can't use blk_mq_map_queues because it will map all CPUs
-> to first hctx unless, the CPU is the same as the hctx has the affinity
-> set to, e.g. 8 CPUs with isolcpus=io_queue,2-3,6-7 config
+On 8/9/24 08:31, Aboorva Devarajan wrote:
+> This patch aims to discuss a potential performance degradation that can occur
+> in certain workloads when the menu governor prioritizes selecting a physical
+> idle state over a polling state for short idle durations. 
 > 
->   queue mapping for /dev/nvme0n1
->         hctx0: default 2 3 4 6 7
->         hctx1: default 5
->         hctx2: default 0
->         hctx3: default 1
+> Note: This patch is intended to showcase a performance degradation, applying
+> this patch could lead to increased power consumption due to the trade-off between
+> performance and power efficiency, potentially causing a higher preference for
+> performance at the expense of power usage.
 > 
->   PCI name is 00:05.0: nvme0n1
->         irq 57 affinity 0-1 effective 1 is_managed:0 nvme0q0
->         irq 58 affinity 4 effective 4 is_managed:1 nvme0q1
->         irq 59 affinity 5 effective 5 is_managed:1 nvme0q2
->         irq 60 affinity 0 effective 0 is_managed:1 nvme0q3
->         irq 61 affinity 1 effective 1 is_managed:1 nvme0q4
-> 
-> where as with blk_mq_hk_map_queues we get
-> 
->   queue mapping for /dev/nvme0n1
->         hctx0: default 2 4
->         hctx1: default 3 5
->         hctx2: default 0 6
->         hctx3: default 1 7
-> 
->   PCI name is 00:05.0: nvme0n1
->         irq 56 affinity 0-1 effective 1 is_managed:0 nvme0q0
->         irq 61 affinity 4 effective 4 is_managed:1 nvme0q1
->         irq 62 affinity 5 effective 5 is_managed:1 nvme0q2
->         irq 63 affinity 0 effective 0 is_managed:1 nvme0q3
->         irq 64 affinity 1 effective 1 is_managed:1 nvme0q4
-> 
-> Signed-off-by: Daniel Wagner <dwagner@suse.de>
-> ---
->  block/blk-mq-cpumap.c | 56 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
-> 
-> diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-> index c1277763aeeb..7e026c2ffa02 100644
-> --- a/block/blk-mq-cpumap.c
-> +++ b/block/blk-mq-cpumap.c
-> @@ -60,11 +60,64 @@ unsigned int blk_mq_num_online_queues(unsigned int max_queues)
->  }
->  EXPORT_SYMBOL_GPL(blk_mq_num_online_queues);
->  
-> +static bool blk_mq_hk_map_queues(struct blk_mq_queue_map *qmap)
-> +{
-> +	struct cpumask *hk_masks;
-> +	cpumask_var_t isol_mask;
-> +
-> +	unsigned int queue, cpu;
-> +
-> +	if (!housekeeping_enabled(HK_TYPE_IO_QUEUE))
-> +		return false;
-> +
-> +	/* map housekeeping cpus to matching hardware context */
-> +	hk_masks = group_cpus_evenly(qmap->nr_queues);
-> +	if (!hk_masks)
-> +		goto fallback;
-> +
-> +	for (queue = 0; queue < qmap->nr_queues; queue++) {
-> +		for_each_cpu(cpu, &hk_masks[queue])
-> +			qmap->mq_map[cpu] = qmap->queue_offset + queue;
-> +	}
-> +
-> +	kfree(hk_masks);
-> +
-> +	/* map isolcpus to hardware context */
-> +	if (!alloc_cpumask_var(&isol_mask, GFP_KERNEL))
-> +		goto fallback;
-> +
-> +	queue = 0;
-> +	cpumask_andnot(isol_mask,
-> +		       cpu_possible_mask,
-> +		       housekeeping_cpumask(HK_TYPE_IO_QUEUE));
-> +
-> +	for_each_cpu(cpu, isol_mask) {
-> +		qmap->mq_map[cpu] = qmap->queue_offset + queue;
-> +		queue = (queue + 1) % qmap->nr_queues;
-> +	}
-> +
 
-With patch 14 and the above change, managed irq's affinity becomes not
-matched with blk-mq mapping any more.
+Not really a menu expert, but at this point I don't know who dares call
+themselves one.
+The elephant in the room would be: Does teo work better for you?
 
-If the last CPU in managed irq's affinity becomes offline, blk-mq
-mapping may have other isolated CPUs, so IOs in this hctx won't be
-drained from blk_mq_hctx_notify_offline() in case of CPU offline,
-but genirq still shutdowns this manage irq.
+> ==================================================
+> System details in which the degradation is observed:
+> 
+> $ uname -r
+> 6.10.0+
+> 
+> $ lscpu
+> Architecture:             ppc64le
+>   Byte Order:             Little Endian
+> CPU(s):                   160
+>   On-line CPU(s) list:    0-159
+> Model name:               POWER10 (architected), altivec supported
+>   Model:                  2.0 (pvr 0080 0200)
+>   Thread(s) per core:     8
+>   Core(s) per socket:     3
+>   Socket(s):              6
+>   Physical sockets:       4
+>   Physical chips:         2
+>   Physical cores/chip:    6
+> Virtualization features:
+>   Hypervisor vendor:      pHyp
+>   Virtualization type:    para
+> Caches (sum of all):
+>   L1d:                    1.3 MiB (40 instances)
+>   L1i:                    1.9 MiB (40 instances)
+>   L2:                     40 MiB (40 instances)
+>   L3:                     160 MiB (40 instances)
+> NUMA:
+>   NUMA node(s):           6
+>   NUMA node0 CPU(s):      0-31
+>   NUMA node1 CPU(s):      32-71
+>   NUMA node2 CPU(s):      72-79
+>   NUMA node3 CPU(s):      80-87
+>   NUMA node4 CPU(s):      88-119
+>   NUMA node5 CPU(s):      120-159
+> 
+> 
+> $ cpupower idle-info
+> CPUidle driver: pseries_idle
+> CPUidle governor: menu
+> analyzing CPU 0:
+> 
+> Number of idle states: 2
+> Available idle states: snooze CEDE
+> snooze:
+> Flags/Description: snooze
+> Latency: 0
+> Residency: 0
+> Usage: 6229
+> Duration: 402142
+> CEDE:
+> Flags/Description: CEDE
+> Latency: 12
+> Residency: 120
+> Usage: 191411
+> Duration: 36329999037
+> 
+> ==================================================
+> 
+> The menu governor contains a condition that selects physical idle states over,
+> such as the CEDE state over polling state, by checking if their exit latency meets
+> the latency requirements. This can lead to performance drops in workloads with
+> frequent short idle periods.
+> 
+> The specific condition which causes degradation is as below (menu governor):
+> 
+> ```
+> if (s->target_residency_ns > predicted_ns) {
+>     ...
+>     if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+>         s->exit_latency_ns <= latency_req &&
+>         s->target_residency_ns <= data->next_timer_ns) {
+>         predicted_ns = s->target_residency_ns;
+>         idx = i;
+>         break;
+>     }
+>     ...
+> }
+> ```
+> 
+> This condition can cause the menu governor to choose the CEDE state on Power
+> Systems (residency: 120 us, exit latency: 12 us) over a polling state, even
+> when the predicted idle duration is much shorter than the target residency
+> of the physical state. This misprediction leads to performance degradation
+> in certain workloads.
+> 
 
-So IO hang risk is introduced here, it should be the reason of your
-hang observation.
+So clearly the condition
+s->target_residency_ns <= data->next_timer_ns)
+is supposed to prevent this, but data->next_timer_ns isn't accurate,
+have you got any idea what it's set to in your workload usually?
+Seems like your workload is timer-based, so the idle duration should be
+predicted accurately.
 
 
-Thanks, 
-Ming
+> ==================================================
+> Test Results
+> ==================================================
+> 
+> This issue can be clearly observed with the below test.
+> 
+> A test with multiple wakee threads and a single waker thread was run to
+> demonstrate this issue. The waker thread periodically wakes up the wakee
+> threads after a specific sleep duration, creating a repeating of sleep -> wake
+> pattern. The test was run for a stipulated period, and cpuidle statistics are
+> collected.
+> 
+> ./cpuidle-test -a 0 -b 10 -b 20 -b 30 -b 40 -b 50 -b 60 -b 70 -r 20 -t 60
+> 
+> ==================================================
+> Results (Baseline Kernel):
+> ==================================================
+> Wakee 0[PID 8295] affined to CPUs: 10,
+> Wakee 2[PID 8297] affined to CPUs: 30,
+> Wakee 3[PID 8298] affined to CPUs: 40,
+> Wakee 1[PID 8296] affined to CPUs: 20,
+> Wakee 4[PID 8299] affined to CPUs: 50,
+> Wakee 5[PID 8300] affined to CPUs: 60,
+> Wakee 6[PID 8301] affined to CPUs: 70,
+> Waker[PID 8302] affined to CPUs: 0,
+> 
+> |-----------------------------------|-------------------------|-----------------------------|
+> | Metric                            | snooze                  | CEDE                        |
+> |-----------------------------------|-------------------------|-----------------------------|
+> | Usage                             | 47815                   | 2030160                     |
+> | Above                             | 0                       | 2030043                     |
+> | Below                             | 0                       | 0                           |
+> | Time Spent (us)                   | 976317 (1.63%)          | 51046474 (85.08%)           |
+> | Overall average sleep duration    | 28.721 us               |                             |
+> | Overall average wakeup latency    | 6.858 us                |                             |
+> |-----------------------------------|-------------------------|-----------------------------|
+> 
+> In this test, without the patch, the CPU often enters the CEDE state for
+> sleep durations of around 20-30 microseconds, even though the CEDE state's
+> residency time is 120 microseconds. This happens because the menu governor
+> prioritizes the physical idle state (CEDE) if its exit latency is within
+> the latency limits. It also uses next_timer_ns for comparison, which can
+> be farther off than the actual idle duration as it is more predictable,
+> instead of using predicted idle duration as a comparision point with the
+> target residency.
+
+Ideally that shouldn't be the case though (next_timer_ns be farther off the
+actual idle duration).
+
+> [snip]
 
 
