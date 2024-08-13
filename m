@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-285203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A90950A8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:42:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04396950A8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:43:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DB421C23463
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFF951F23B19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0491A2C12;
-	Tue, 13 Aug 2024 16:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB12C1A255E;
+	Tue, 13 Aug 2024 16:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a2brPvgs"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2GWcwcXf"
+Received: from mail-io1-f73.google.com (mail-io1-f73.google.com [209.85.166.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656F11A0AE4
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E5019CCF2
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 16:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567213; cv=none; b=tIyxB9ce9xQz7cODTHM7XCPoLHVWX08hcW93K9F1/DnPfWcnir/oZASo8QQEnYJKQyd9GLIJbBY1CrE90pPsK5Dsz3O93xfRU6VD+3Z4if/mXNbkFPttSUbBu/B23qYHXfPGKTrLwfUhznhVBGsWIiDixv7tUFy/cFbtFAOYZhA=
+	t=1723567396; cv=none; b=ZmIb3+6VJ2Vu5boPPQ1R6TD8Xp4HOChfUnB9ec2B+sZY+tm1S14xZ/HQB/yKJnwfUmusvRrE+MkzgMgW+z9Bv/qqCCk8vnwwVPmu46uWMhqnJnbtTwwdBmcBEZRWPxNLYR09JnMOg0tdw3ZW6gw5F3MM1Z7ILTNjDXNkmnqt9FE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567213; c=relaxed/simple;
-	bh=z9ThKaCl2dwq7iAZdlUAc8Sa13mjVWGUvaiqO0kBgkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gE4ivxSSTaze5wWaNvRKFl/70smnsOU4P/TUHwPfZtCdsRJ2+17pw/Cr67iZQLOqJjuj2GB3FvWKLCB475dbzXUB86+NkOleJZ1itgghNUi0N+e6JNCFOnnW7mV4zP7u54MeeRvc+uFX/0fhqhPchZtV2cZ6qg3NknQyqfJeKWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=a2brPvgs; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fc569440e1so52594945ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:40:12 -0700 (PDT)
+	s=arc-20240116; t=1723567396; c=relaxed/simple;
+	bh=a76Sn8lUGnQIx1tPlDSzmCkNqiGpbPkord6pZ2O1lNA=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=p9vDA9rGEEVrMSUSyBIYVKuabywl3wjnI0wF8hbJZM8PwKHIC6oqukop+mSDebiK0uqXmxoQMLSKb1UIrvNWlprLhi1NtELg9XSnncRLAq6BzzSEavF5nX6eE/q5eRh1zGRrkwsKqf3gOvMym/HsL075w8N1Q1RQGupR8tP7L6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2GWcwcXf; arc=none smtp.client-ip=209.85.166.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--coltonlewis.bounces.google.com
+Received: by mail-io1-f73.google.com with SMTP id ca18e2360f4ac-81f8edd7370so723099139f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:43:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723567212; x=1724172012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UIj0JJnYshjIVjXZcWpKVRySnGCTB+N0e3BxW4PAJ2c=;
-        b=a2brPvgsk37d3qEyACZw8pnMuzwnqzj8UVLFy0XDBxdHcZBcdvbXNJ8srijEPHliOP
-         /EiS3GAHdEvtm2cNhaUiC78JjFz3LDzcXujtGcT9AS4sIZftNpOExDZoxiz32MZrkqqi
-         IwwtVgcK89m4JXQFMxV2Xby5TMMYa4cxnDIvY=
+        d=google.com; s=20230601; t=1723567394; x=1724172194; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=jk7IQol6duajyqIm/9vwpiSEjjpf9mSBlNXL0oxxX8g=;
+        b=2GWcwcXfj7vogo9cxryMT0WfApNC+IET82huWJEPSrXXWXKvnaJ+5ha6n4gOa0ZbAh
+         b46FffgEJll1VTUDlGZJTu9y/YyIszhJWnmMN3CUR04NTlqvhSi/F4paVKENVCJLP+j7
+         6toX1I2QEC4AtIpjNrdKvx6/lxbvG/ovTt9HOEDRx4IjZ98yvp1hf58d/hoQiW71QWbb
+         nzy3KSrN+E0MHLveunrcXHjRFparwKjMzxjERrJ6UodFd7wTvaWu6hIB7wHAgHtai0Ye
+         3S2SpFuEydAiN31iIke7pkWdkHibAmpmA3W+l830So3+37linAoTHaq4Ed1MhiZDnCQC
+         WA0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723567212; x=1724172012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIj0JJnYshjIVjXZcWpKVRySnGCTB+N0e3BxW4PAJ2c=;
-        b=lm6/6rTpAg0/aovt/XcVQYKZucZZ9phmLQ/P7sqU05R2SOTx6rUt8qUZFbITSszfKf
-         ikVc0S30mj+GIYse8zCaKRsEpquCha/smnGVG1umyUNIMPSzBj8dThHelHF8qF5REste
-         VEDUQAc7y9Qzuh7zCgHHpTIvFIcS3BUCmiUtPYN39vh5FQbTXaiaFQp6OowC3tAsg6UB
-         ZDig4JAeVmRKGGIbyqCOBlhNXQ5d5iU39IWci7xZavRdss4LITEuQtUkUAfJZm9hQAu0
-         xN/dl1ydhrk4Ah8eaH2R/5h51K9kxJRgmQoSXSKMclMFt9Gk5TNQgZIsSuKEXvGb8jyj
-         N45g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsmfieL5Lv4Q2KDoSQmakaGvKSoXXTf7t52AUxvW1ST+0sOaR6pNAHobU3w7eZcGyDKxnV4VjDy7Oulx1bhLfOGM6g1j2+uMYZ6t4V
-X-Gm-Message-State: AOJu0YwuODJUoijm23CeJyNIWmiH8ZJPmyHBrA5Ek9qHoxr+5y5Zqd+F
-	fIlO2V2iQiHXadGl71b2DOGkxDA7Q+WVTCye7T3V83JvGNzYOsDq0BXMBZ4p9w==
-X-Google-Smtp-Source: AGHT+IH/REf7OKTZn9xv3HDv0yFQhoCXp3NXeg4RoixeHv4QdV9uxYQmfmO+wc0WQGBCMgKE9Yyo2Q==
-X-Received: by 2002:a17:903:1c6:b0:1fb:9280:c970 with SMTP id d9443c01a7336-201d638d7a2mr1036295ad.7.1723567211719;
-        Tue, 13 Aug 2024 09:40:11 -0700 (PDT)
-Received: from localhost ([2620:15c:9d:2:45ad:979d:1377:77f0])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201cd130632sm15867485ad.49.2024.08.13.09.40.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 09:40:11 -0700 (PDT)
-Date: Tue, 13 Aug 2024 09:40:08 -0700
-From: Brian Norris <briannorris@chromium.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>, bpf@vger.kernel.org,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] tools build: Avoid circular .fixdep-in.o.cmd
- issues
-Message-ID: <ZruMaIGu8EoAE1Fy@google.com>
-References: <20240715203325.3832977-1-briannorris@chromium.org>
- <20240715203325.3832977-3-briannorris@chromium.org>
- <99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info>
+        d=1e100.net; s=20230601; t=1723567394; x=1724172194;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jk7IQol6duajyqIm/9vwpiSEjjpf9mSBlNXL0oxxX8g=;
+        b=DS9twVk5GjgadEG5eRyWtZ8HCrc/+xMifdzLAFgKExlZakpDR1/gYT5LXwLEKXl+GF
+         E+Hkeuxm2pNbS6n+HZfY/QPk3VGOOHt6ZrG0b26uYl99j1YULko8l/KoiYCE6Ongb+Iz
+         qnzC7M9xBpkgeXmvP9xPg8Ra96M+a7cGscuUgBQkUVw1Gd5VnOpIiH7+Ir6TAjL4XREe
+         aps1ciOe08BIHCsJMLjMfvINE4pWEZonvleIHWr9D3FNTYlMwYhRKFtBmwjzBaSI7zMu
+         CQHBgyGXKEd81bNB0GhpQ6Ska9W0kZxpEJYT5fBPAHXsi+XYbgz0rGZWVNOvh+r5eIAp
+         Jqkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeC+qfKTVafpZ9pIsPtJzSM1Vl2TsqZnrjSII9lRS+k8PBioRwSJ6bfDI/wJvzM8GL/14/WSBX3kkv63eKwJKaPtRMr8FCbQjlvRMy
+X-Gm-Message-State: AOJu0Yx0OL5Dh52Lk+sZ4uZPh6cZitLrtgBDgr3bwPeMGJgfPh6VONws
+	sqtM1FhVVD96fPJARw5PCztTMbY3RoRcubSatV7Ge6RgsWBgQ54lBYNiwGmw5GgdC5+TWDBcxUV
+	V2HYUlh4Hekp9YkFZul2JFw==
+X-Google-Smtp-Source: AGHT+IHlSFQqmN9TKjjYPCTzVt/OdeV4DkEj+bFrAV1W7DSNq4vagSFdnRo0HqbFUXWJpNm2rfh5f2AZY2PBIEOLKA==
+X-Received: from coltonlewis-kvm.c.googlers.com ([fda3:e722:ac3:cc00:2b:ff92:c0a8:14ce])
+ (user=coltonlewis job=sendgmr) by 2002:a05:6e02:12ca:b0:383:4db4:cbe0 with
+ SMTP id e9e14a558f8ab-39d12502a17mr150075ab.5.1723567393828; Tue, 13 Aug 2024
+ 09:43:13 -0700 (PDT)
+Date: Tue, 13 Aug 2024 16:42:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <99ae0d34-ed76-4ca0-a9fd-c337da33c9f9@leemhuis.info>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
+Message-ID: <20240813164244.751597-1-coltonlewis@google.com>
+Subject: [PATCH 0/6] Extend pmu_counters_test to AMD CPUs
+From: Colton Lewis <coltonlewis@google.com>
+To: kvm@vger.kernel.org
+Cc: Mingwei Zhang <mizhang@google.com>, Jinrong Liang <ljr.kernel@gmail.com>, 
+	Jim Mattson <jmattson@google.com>, Aaron Lewis <aaronlewis@google.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Colton Lewis <coltonlewis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Thorsten,
+(I was positive I had sent this already, but I couldn't find it on the
+mailing list to reply to and ask for reviews.)
 
-On Mon, Aug 12, 2024 at 08:32:29AM +0200, Thorsten Leemhuis wrote:
-> Lo! TWIMC, this change broke my daily arm64 and x86_64 Fedora vanilla RPM
-> builds on all Fedora releases when it hit -next a few days ago. Reverting
-> it fixes the problem.
-> 
-> The problem is related to the RPM magic somehow, as building worked fine
-> when when I omitted stuff like "-specs=/usr/lib/rpm/redhat/redhat-
-> hardened-cc1 -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1" from the
-> make call. So the real problem might be that space somewhere.
-> 
-> 
-> This is how the build fails on x86_64:
-> 
-> + /usr/bin/make -s 'HOSTCFLAGS=-O2  -fexceptions -g -grecord-gcc-switches -pipe -Wall -Werror=format-security -Wp,-U_FORTIFY_SOURCE,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -specs=/usr/lib/rpm/redhat/redhat-hardened-cc1 -fstack-protector-strong -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -m64 -march=x86-64 -mtune=generic -fasynchronous-unwind-tables -fstack-clash-protection -fcf-protection   ' 'HOSTLDFLAGS=-Wl,-z,relro -Wl,--as-needed  -Wl,-z,pack-relative-relocs -Wl,-z,now -specs=/usr/lib/rpm/redhat/redhat-hardened-ld -specs=/usr/lib/rpm/redhat/redhat-annobin-cc1  -Wl,--build-id=sha1 -specs=/usr/lib/rpm/redhat/redhat-package-notes ' ARCH=x86_64 'KCFLAGS= ' WITH_GCOV=0 -j2 bzImage
-> /usr/bin/ld: /tmp/ccMoR0Wr.o: relocation R_X86_64_32 against `.rodata' can not be used when making a PIE object; recompile with -fPIE
-> /usr/bin/ld: failed to set dynamic section sizes: bad value
-> collect2: error: ld returned 1 exit status
-> make[4]: *** [Makefile:47: /builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/tools/objtool/fixdep] Error 1
-> make[3]: *** [/builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/tools/build/Makefile.include:15: fixdep] Error 2
-> make[2]: *** [Makefile:73: objtool] Error 2
-> make[1]: *** [/builddir/build/BUILD/kernel-next-20240812/linux-6.11.0-0.0.next.20240812.329.vanilla.fc40.x86_64/Makefile:1361: tools/objtool] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-> make: *** [Makefile:226: __sub-make] Error 2
-> error: Bad exit status from /var/tmp/rpm-tmp.ZQfBFY (%build)
+Extend pmu_counters_test to AMD CPUs.
 
-I don't have a Fedora installation on hand at the moment, and the logs
-don't seem to include most of the actual kernel build logs
-(stdout+stderr of a V=1 build might help), but I think what you've
-provided so far has highlighted one possible problem -- that the new
-one-shot compile+link is ignoring HOSTCFLAGS, which were previously
-respected via tools/build/Build.include. Could you try the following
-diff? I'll cook a proper patch and description later, but for now:
+As the AMD PMU is quite different from Intel with different events and
+feature sets, this series introduces a new code path to test it,
+specifically focusing on the core counters including the
+PerfCtrExtCore and PerfMonV2 features. Northbridge counters and cache
+counters exist, but are not as important and can be deferred to a
+later series.
 
---- a/tools/build/Makefile
-+++ b/tools/build/Makefile
-@@ -44,4 +44,4 @@ ifneq ($(wildcard $(TMP_O)),)
- endif
- 
- $(OUTPUT)fixdep: $(srctree)/tools/build/fixdep.c
--	$(QUIET_CC)$(HOSTCC) $(KBUILD_HOSTLDFLAGS) -o $@ $<
-+	$(QUIET_CC)$(HOSTCC) $(HOSTCFLAGS) $(KBUILD_HOSTLDFLAGS) -o $@ $<
+The first patch is a bug fix that could be submitted separately.
+
+The series has been tested on both Intel and AMD machines, but I have
+not found an AMD machine old enough to lack PerfCtrExtCore. I have
+made efforts that no part of the code has any dependency on its
+presence.
+
+I am aware of similar work in this direction done by Jinrong Liang
+[1]. He told me he is not working on it currently and I am not
+intruding by making my own submission.
+
+[1] https://lore.kernel.org/kvm/20231121115457.76269-1-cloudliang@tencent.com/
+
+Colton Lewis (6):
+  KVM: x86: selftests: Fix typos in macro variable use
+  KVM: x86: selftests: Define AMD PMU CPUID leaves
+  KVM: x86: selftests: Set up AMD VM in pmu_counters_test
+  KVM: x86: selftests: Test read/write core counters
+  KVM: x86: selftests: Test core events
+  KVM: x86: selftests: Test PerfMonV2
+
+ .../selftests/kvm/include/x86_64/processor.h  |   7 +
+ .../selftests/kvm/x86_64/pmu_counters_test.c  | 267 ++++++++++++++++--
+ 2 files changed, 249 insertions(+), 25 deletions(-)
+
+--
+2.46.0.76.ge559c4bf1a-goog
 
