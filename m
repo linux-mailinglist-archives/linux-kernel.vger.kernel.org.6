@@ -1,137 +1,198 @@
-Return-Path: <linux-kernel+bounces-285447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF791950D95
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:07:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8AC950DA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99F5F281C4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:07:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4FC1B22A2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180EF1A4F25;
-	Tue, 13 Aug 2024 20:07:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F681A705D;
+	Tue, 13 Aug 2024 20:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="rQ4vJqTc"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="at2a1ZgW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6FF44C61;
-	Tue, 13 Aug 2024 20:07:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF8544C61;
+	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579654; cv=none; b=TLtAKtQ2xOZYQn0T3Lk/qRNF1bSYzE64zwiLyxygJNy1cdAOP2rItMl6QGe8bp3fe14epMx45VKxF1uRs+L+L53THESyevTznIFG3ncr5ZuFdLMHbPT+/tSiCGjYC4u7hsK37DppkOmTX291eYiq9Pp8yoa/oL9eySlQgSoWbE4=
+	t=1723579722; cv=none; b=hoSwiNwAPa+dMWTkzSCt08ZwW4E2YeXD49kCQA7NKASPgCq9Z/d/lk3ip1rT0FC2NCDN8lQuWMhGhtlyL19OVXxZugF9INAl1yHpZGRJonNw/AATlzUbp5jMi3RQxJhXJSb3nrnFTgTEz7IvqQ57HlwP26FYQnyEqLoaZS47EtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579654; c=relaxed/simple;
-	bh=/SXSt9VbXqIM8kyDndi2gEtfqFn1BbcY/BP9EV1bxpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GipAYh2bhYnekFHEELvanSiJ/jcO6F6DckGrB8zGyFyJfRWXDac0Fbr9x4YD5+GWNYWoBj9de6RAU7zFj7u7/HzFd9j2mPGPlErCuNEVRiPhVEgV17nlZC1dzrW2bEJcf9vZsO4H1M+8iPXt1uJuxNDdVpPWjP/N9Yawow4a+ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=rQ4vJqTc; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1723579619; x=1724184419; i=christian@heusel.eu;
-	bh=/SXSt9VbXqIM8kyDndi2gEtfqFn1BbcY/BP9EV1bxpU=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=rQ4vJqTcdQI7gVYBjtZbXd3cl+3uqpHIc5oGThgJ3sCumM0qYdMV+bA1bci+Vdp1
-	 vcHvCKWVQyKfJDnwO7siRvM7l5hUPXQgtq9Z9nFaoai/rRwwgOTXFww/Q0o3yBC6Y
-	 9BOTskbkAxiEw8b4+j7xNSnthZ6O/MRwjIeDzLe2g0uGtItuSZRRUVH74A/kieo2S
-	 dLmZ8eNQKqicEtA4EY4ZrBAwKLp/KeGab2dSae8LXiyZol/VZE01euqL/OrB44uP+
-	 B+k9r8pJ0S6KPxRKIxUz7vuSNIzmVfNmEECJvTmNLbl3Cu6NdVdj6wiD0YRUiA0ze
-	 /M662N69GXjoNz57BQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([80.140.201.142]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M89TB-1sYj0D3epn-007lih; Tue, 13 Aug 2024 22:06:58 +0200
-Date: Tue, 13 Aug 2024 22:06:57 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Jose Fernandez <jose.fernandez@linux.dev>
-Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Nathan Chancellor <nathan@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Peter Jung <ptr1337@cachyos.org>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V3] kbuild: control extra pacman packages with
- PACMAN_EXTRAPACKAGES
-Message-ID: <129eeb10-5fe2-4a7f-8edb-9d02e4330f59@heusel.eu>
-References: <20240813011619.13857-1-jose.fernandez@linux.dev>
+	s=arc-20240116; t=1723579722; c=relaxed/simple;
+	bh=IHVCkzfRVwRcrgQI0uynjD8r+bXwAWdk1AbhMeu7VsY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rPIvB0siUg/wDYJGuHi1t6rEO5ncxXoHtO/ZZ91aaoIV+rzVOIXC0DP+eRPI9T80VJbBmhNF9jQ4IFGiHRN8zJvipceCLXOPxaaI4c4/tZT5dVMxAAsZ7lxdfRwOHswGqb51oC40fo7Q4JW6N8Pb9UyjhdwQm5bZ9b56E4Xbx0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=at2a1ZgW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9282BC32782;
+	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723579721;
+	bh=IHVCkzfRVwRcrgQI0uynjD8r+bXwAWdk1AbhMeu7VsY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=at2a1ZgW5s+f/kB6aEi+Q6Ukh0O9e7jJKyWBFcCq7eP7OELvRIqDr5IFIrbq+HtWE
+	 GQxCHx7OtjWOxq87/BWd6t0v+HJCD4GcpRFeI4fJXrNAp3vC468yroD6XBZklwrqVI
+	 cX4A7fEL8+gUAD2Nd2UGIZa8KYFxDzncmtBTIU1W83A/l3+qB8kjcoMU/cGV2z+g2w
+	 9DxSGVRfdXhRxDYSjczfqrhC1xetADoaN2I5g9ao9VSWju2dpEzLSktGp0uRFdZngE
+	 3kcU30BpVNGo3cp1yOzx90Asdysy9M3FFTKl++7czcRCAyNClTMkeASr+F8PTThMcA
+	 D9q6Z/nOBmEMw==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB6BC52D7C;
+	Tue, 13 Aug 2024 20:08:41 +0000 (UTC)
+From: Utsav Agarwal via B4 Relay <devnull+utsav.agarwal.analog.com@kernel.org>
+Subject: [PATCH v11 0/3] adp5588-keys: Support for dedicated gpio operation
+Date: Tue, 13 Aug 2024 21:07:16 +0100
+Message-Id: <20240813-adp5588_gpio_support-v11-0-9ea490d6c41d@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2lwwpyglkpsbvwfq"
-Content-Disposition: inline
-In-Reply-To: <20240813011619.13857-1-jose.fernandez@linux.dev>
-X-Provags-ID: V03:K1:fsnF8B18ToL5IL4m3TjVOTMV+301kn0IcyFRMVf2+gqeNDg01ah
- 5fjLAMNdXNoy3ezZrfX4iIIoJHTOpyAyL26GUlRYMJ6KAh/WfYaM3sRsPztC06RuZidgKGD
- y/44qg/FLTPITWP6pBs+6K9O1KU4wmPl27u2JsrhSOGAtbwfiZGZW2oxfVGbnuvT3a5bQCA
- MIPwq8+wWxvkWjB7/hWXQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YSucZGpK7n8=;aHMKjeI1G14dL3+egY4rqf7jBkE
- xDgmavzOyr4ozse5w5PVDKqOjOm24WELBNcFpGXV4Jh/2O+0apQ8YnuwT7RufZ5UMxXgCECC/
- u09TviE48ZjJ7gxNB7R6BZVX6bBQ5rgu90b+Qi6Z83rIhLP12+w1o62FoNjbyqEr0e2ZmDyrJ
- Rpx03bnvk9MMsLhTKyg1/tRRzI/Q42uck7XVQ5671+HUOurz0gRJXwyzT4ig4tkWA1xvtxLJI
- YwoeI9LWgAohlwAynIp6glJD/PMuOj+TnswDhOnH4Src2kOMI+ALiD4GDwddFjglaF2DHbLOj
- DeMI2h2s36N6zO3C7IZZ4Wwjt0JDhx1Y4XoU3S+EwkPGRF5444K5KkGgCRTdCk7xOMRrD4KzM
- 9ueDsYcJeuXjFM5HxHint2JOclGchNZod4WTzSy3YG35UIIMilo77LTAdjdAPdCkLylyfA6gN
- QRuO7yvS08jDPtkX8UPWLr1FZYyv5Mq8Uul5StxyqZ5QAEx69wGaUMOsQKgFwTT8JEsnLObKN
- 2hz29WTzYcmIAnwuXTtYHfbp0nGlH5+utAvBD81+jnG/3QXjk0xH7+wsq6tXZvtMYfUmZsQDM
- DgROdziNYEOQv+1HpwstmShZgje5SkkNNRFqCY6q9jL4Kt/QJTz2BglbNi+6k4CKP62SCbzq9
- IbZHiIf5iHX1EjYe5nKZ+U9OsmagPUtvynMMtqmiho/qqBBDOyd79AmC8aUCPmqRL6rIh1Bvg
- e67zNC4oBu1J1+jE9+ZlkDTCu6xMRF/RA==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPS8u2YC/43QQWrDMBAF0KsEreuikWdkuaveo4SgkWRH0FrGT
+ k1K8N0rZ1MX1zTL/2HewL+JMQwxjOLlcBNDmOIYU5cDwNNBuLPt2lBEnwuhpEJZSSis74mMObV
+ 9TKfxs+/TcCk0eVbsFdi6Efm0H0ITr3f37ZjzOY6XNHzd30y4tP+AExayQGS2EpFCLV9tZ99T+
+ +zSh1jEidZKuaPQotSNC9ZLX/6h6LWCO4rOimNNBOgrQN4o1SNKlZVQYuAqsCW7VcwjismKksY
+ 15NEprzdK/aMYqXeUetnFawDD2msqNwrIFQN784LMjrVcOlLOGW5+OfM8fwMxfQbZYAIAAA==
+To: Utsav Agarwal <utsav.agarwal@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Arturs Artamonovs <arturs.artamonovs@analog.com>, 
+ Vasileios Bimpikas <vasileios.bimpikas@analog.com>, 
+ Oliver Gaskell <oliver.gaskell@analog.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723579648; l=4364;
+ i=utsav.agarwal@analog.com; s=20240701; h=from:subject:message-id;
+ bh=IHVCkzfRVwRcrgQI0uynjD8r+bXwAWdk1AbhMeu7VsY=;
+ b=XclfHEzU5JHAwyGfDjOjhwxwNPjbuVDLqk3ZcZVnUE9tc+vsGUOHEE6OuL2tPkfADU03z+BRJ
+ m6gMpKFtzkqCeIk/wsVZ2tSXuMaIpwJHfFN0zytrVr6JCR7noS3l+Tb
+X-Developer-Key: i=utsav.agarwal@analog.com; a=ed25519;
+ pk=mIG5Dmd3TO5rcICwTsixl2MoUcf/i2u+jYqifd7+fmI=
+X-Endpoint-Received: by B4 Relay for utsav.agarwal@analog.com/20240701 with
+ auth_id=178
+X-Original-From: Utsav Agarwal <utsav.agarwal@analog.com>
+Reply-To: utsav.agarwal@analog.com
+
+Current state of the driver for the ADP5588/87 only allows partial
+I/O to be used as GPIO. This support was previously present as a
+separate gpio driver, which was dropped with the commit
+5ddc896088b0 ("gpio: gpio-adp5588: drop the driver") since the
+functionality was deemed to have been merged with adp5588-keys.
+
+This series of patches re-enables this support by allowing the driver to 
+relax the requirement for registering a keymap and enable pure GPIO 
+operation. 
+
+Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
+---
+Changelog
+==========
+
+Changes in v11:
+	- dtbinding: Restored accidently deleted characters in previous
+	  revision
+- Link to v10: https://lore.kernel.org/r/20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com
+
+Changes in v10:
+	- Corrected changelog ordering
+	- Changed dtbinding commit to clarify all changes are made in
+	  software. The commit message now also expands on what
+	  the desired pure gpio mode is
+	- Added acquired tags to commits
+	- dt-binding:
+		Removed multiple blank lines before the dependecies block
+	  	Removed excess headers included in dtbinding example
+	  	Removed constraint being repeated in free form text
+	  	Merged outlying dependency into a single block
+- Link to v9: https://lore.kernel.org/r/20240806-adp5588_gpio_support-v9-0-4d6118b6d653@analog.com
+
+Changes in v9:
+	- Added dt-binding dependency for interrupt-controller. Now if
+	  interrupt-controller is specified, interrupts must be
+	  provided.
+- Link to v8: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v8-0-208cf5d4c2d6@analog.com
+
+Changes in v8:
+	- Fixed indentation in document example (removed extra spaces)
+- Link to v7: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v7-0-e34eb7eba5ab@analog.com
+
+Changes in v7:
+	- Fixed commit subject for transported patch 
+	- Driver now does not setup gpio_irq_chip if 
+	  interrupt has not been provided
+	- Fixed indentation for dtbinding example
+- Link to v6: https://lore.kernel.org/r/20240704-adp5588_gpio_support-v6-0-cb65514d714b@analog.com
+
+Changes in v6:
+	- Restored functionality to register interrupts in GPIO
+	  mode(i.e, these are optional but not exclusive to keypad mode
+	  since even in pure gpio mode, they can be used as inputs via 
+	  gpio-keys)
+	- Updated dt-bindings such that each keypad property depends on
+	  the others. Interrupts, although optional are now required by 
+	  keypad mode but are not limited to it.
+- Link to v5: https://lore.kernel.org/r/20240703-adp5588_gpio_support-v5-0-49fcead0d390@analog.com
+
+V5:
+	- Removed extra property "gpio-only", now pure gpio mode is
+	  detected via the adbsence of keypad specific properties.
+	- Added dependencies for keypad properties to preserve
+	  the original requirements in case a pure gpio mode is not
+	  being used.
+	- Added additional description for why the "interrupts" property
+	  was made optional
+	- Rebased current work based on https://lore.kernel.org/linux-input/ZoLt_qBCQS-tG8Ar@google.com/
+- Link to v4: https://lore.kernel.org/r/20240701-adp5588_gpio_support-v4-0-44bba0445e90@analog.com
+
+V4:
+	- Added dt-bindings patch
+
+V3:
+	-  Moved device_property_present() for reading "gpio-only" into 
+	adp558_fw_parse()
+	-  Added print statements in case of error
+
+V2: 
+	-  Changed gpio_only from a local variable to a member of struct
+	adp5588_kpad
+	-  Removed condition from adp5588_probe() to skip adp5588_fw_parse() if 
+	gpio-only specified. adp558_fw_parse() now handles and returns
+	0 if gpio-only has been specified.
+	-  Added a check in adp5588_fw_parse() to make sure keypad 
+	properties(keypad,num-columns and keypad,num-rows) were not defined when 
+	gpio-only specified
+
+---
+
+---
+Dmitry Torokhov (1):
+      Input: adp5588-keys - use guard notation when acquiring mutexes
+
+Utsav Agarwal (2):
+      Input: adp5588-keys - add support for pure gpio
+      dt-bindings: input: pure gpio support for adp5588
+
+ .../devicetree/bindings/input/adi,adp5588.yaml     | 38 ++++++++--
+ drivers/input/keyboard/adp5588-keys.c              | 86 +++++++++++++---------
+ 2 files changed, 83 insertions(+), 41 deletions(-)
+---
+base-commit: 1c52cf5e79d30ac996f34b64284f2c317004d641
+change-id: 20240701-adp5588_gpio_support-65db2bd21a9f
+
+Best regards,
+-- 
+Utsav Agarwal <utsav.agarwal@analog.com>
 
 
---2lwwpyglkpsbvwfq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On 24/08/12 07:16PM, Jose Fernandez wrote:
-> Introduce the PACMAN_EXTRAPACKAGES variable in PKGBUILD to allow users
-> to specify which additional packages are built by the pacman-pkg target.
->=20
-> Previously, the api-headers package was always included, and the headers
-> package was included only if CONFIG_MODULES=3Dy. With this change, both
-> headers and api-headers packages are included by default. Users can now
-> control this behavior by setting PACMAN_EXTRAPACKAGES to a
-> space-separated list of desired extra packages or leaving it empty to
-> exclude all.
->=20
-> For example, to build only the base package without extras:
->=20
-> make pacman-pkg PACMAN_EXTRAPACKAGES=3D""
->=20
-> Signed-off-by: Jose Fernandez <jose.fernandez@linux.dev>
-> Reviewed-by: Peter Jung <ptr1337@cachyos.org>
-
-Reviewed-by: Christian Heusel <christian@heusel.eu>
-Tested-by: Christian Heusel <christian@heusel.eu>
-
---2lwwpyglkpsbvwfq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAma7vOEACgkQwEfU8yi1
-JYUxWA/+OKRM3CmmWjHAcJH5X58mltgn06iiuo34KcwFm2YKniqIY3qp1zDSzEmt
-d4L+lD5ujgrsO73wq0nJS4CTD7HDWxP+8JEBkHC61BNQyiwPFurXUVzNdwEi2xQz
-TUC5ORh9Id2CxAw2TOQPXBv6Vn15qiim1erunVcnGh1jY4xhWaS1305xc3/mx4uq
-jV36oJwMQ6up8imIKKtXvhGQs6whBL9LPkAro+kToTX8zopD3W/PJviQHJRJy56w
-pv0dXuF47HavkWCCTY/A5mswxbaWHf2UEpaexl0+/+LiL03/r+CCCI/sSn2Taktj
-mP1ZZuvQdi5z9w5tky1vE8y1TXyfXIy8qkEcvv51knThEQ3Ybn+UTNr+8ptUinq4
-vA9uDHY8T9ing3WTNxppJI06mKk4eq2DyuQRn6gXtXbXWeL/3J1qCbnlVeMmTcEF
-HD4l2Lt898pfn+CVv8pjfM6qveJroz8vTXLclrUHBM0uCOw43nt8ycDkmfVep0Vj
-flqcr5MqKI73u6ibC3RtEQROgNQxdbHTKSlvzf7JD2lFrFMvCs9IV+Y+7yKpECMT
-ijQBMO0Gu07x3JO5DibpmGUwtTLGb18YRgSvxQF0bSJaN+smfTBZQtxE4PFSXX+x
-6i3WX8WgfIFSkDySZwacZ5X3EwiTiweOR3ep6B9+0kFUP3kqLCo=
-=bMfG
------END PGP SIGNATURE-----
-
---2lwwpyglkpsbvwfq--
 
