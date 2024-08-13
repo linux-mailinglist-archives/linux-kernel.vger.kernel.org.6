@@ -1,197 +1,106 @@
-Return-Path: <linux-kernel+bounces-284405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330E895008F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5572950090
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B350A1F22FC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A168D28228A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70BB13C9CB;
-	Tue, 13 Aug 2024 08:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483CD17A584;
+	Tue, 13 Aug 2024 08:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I48YQts0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a5H6mRCy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184CF13A244
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:58:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3328B16DEA9
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539517; cv=none; b=EZTg2v9AaOB5oeh/y28JJZJ7RQQzIqExWGL008dP0tibft5X6HVYoQeO6ooYqLho+WuebOkvLREocjCvQ5Cq90W+EWiUPlLScpVJuDKlMFOkPDdaAP9Vd5Yi7LcHvRGh/SCkjMbHSbSoVGm3GESGAfuD0ilc50zgIgAXI76xZJo=
+	t=1723539523; cv=none; b=L4B0ox68aY0+QIreGC+bhdexOoJKnaS6uSkr0HU01z1jMYxgVKGo5fLSo+VZ9g2XYJRxtEIWMB6OmOkGktbcNB1Upps3jkst+9UET1yfGI7tI3sjMAVRWRObpLb//VjQ+MG1iP6z0vnxGe40eQBod9Z2/H/tdm+zeYycdelaxRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539517; c=relaxed/simple;
-	bh=7NQeNfFpaCXWMDNowtEOSAtlyV+7MKBfKJDqRukDraQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V39FcfsGzHVe8biCTIbO19NdlxQiIhO2QQE/eyi+vfIkPjTVxDioGVpDsIUt5Rbics0hwoLnl+JYMezPU9IWRzhowqDX9DiifRz+8Wr0IZT01gG3IHH6DkprWbCyVnvax9CwxPwO/ocgvKKXYxU1mrNZqp/aJrGwQjXVe5+A24Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I48YQts0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2049C4AF0B;
-	Tue, 13 Aug 2024 08:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723539516;
-	bh=7NQeNfFpaCXWMDNowtEOSAtlyV+7MKBfKJDqRukDraQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I48YQts0xZw9IRiHpoO1JAdZe2hAgqmfcMiGtJtgHPcpTa/sRWZv6nUwGLOuaf86H
-	 9hax3I+y6A4t1s6q95k6LReGpuH9xsOcSC4WOQ++5TZOVt/1Kry087t9Be/L7GzmVw
-	 XncCqH901VOAEo7K0i1tw5WuXzw5vF85kT17X13sIISj22D0R9nOAuQgoagwfvP7Ur
-	 yBy5rl282JieOLj854QDNXgl/QSeiErKyF+SfaJZQXijreW1d2FiGqGMchqX/9kVZQ
-	 LWfQbyufLv7QU2pq/6wkZiYd5+VMxKrnZX9Yb3u/CYCw47nM77opG5qdX8iRiJbajp
-	 UWw5RIzIxt/PQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sdnMQ-003HCh-P8;
-	Tue, 13 Aug 2024 09:58:34 +0100
-Date: Tue, 13 Aug 2024 09:58:34 +0100
-Message-ID: <86zfpgztmt.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Shanker Donthineni <sdonthineni@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/gic-v3: Allow unused SGIs for drivers/modules
-In-Reply-To: <20240813033925.925947-1-sdonthineni@nvidia.com>
-References: <20240813033925.925947-1-sdonthineni@nvidia.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1723539523; c=relaxed/simple;
+	bh=xhW5B081ZHwaTydzE8ITH5iE0gMJFJtC0dKffU7RnQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=efWkp9Z5bztCtooVRYvTA/WEAKM4nmQI8Q67i9HB03qOK3q2G4MLYVu+y7juSWJHNZpDq6PXGaxZ7MN/ZuW47/a9n8QIosvET3T0S+Q6AuLiG+TCOML49d1GzuHoZPMgR3yJNg9ysH/xwQ/JhEHW4cjHTzQfuv0jwdqFLZokNls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a5H6mRCy; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723539522; x=1755075522;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=xhW5B081ZHwaTydzE8ITH5iE0gMJFJtC0dKffU7RnQU=;
+  b=a5H6mRCy/7QUv40GuLfQbSf17NBYxV3osm4bEr2I9YJ/iC6rRKeDzsZd
+   LemnDGdDJBRCNnturp3z48So0G0QwITbhd91ns+eMvVIBVLRLLepL8Evj
+   C3RoTxjh5/odNKJVOhhOqAGUHwAQwrJL/6Nc9156mqHOL1IBuqbQj5nRp
+   3BhaGL+Pcx04Umw6Hm8AcFyvyQZfynlYQHr6GAtQopbyxxQihPevE/2Tz
+   Y52Vnj9p1XWlihn/S1q59nkvFbrXom/EmvRbHJ1hEqfGVBVn0DGea17Jq
+   wIXw5E6xlTb5usKxBIiOTnp43NuKz/BFRMsX8b0X0cow76TU6hstKBehI
+   g==;
+X-CSE-ConnectionGUID: 0/KXoREdR9Ks/8yJsuRrdw==
+X-CSE-MsgGUID: nMP/N3doSQyAbf8bUhLSxQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21831413"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21831413"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:58:41 -0700
+X-CSE-ConnectionGUID: Q2uoRRdZQFOkD8xr8YMFRg==
+X-CSE-MsgGUID: UnNbS80ZQGG6T0inChlm4g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63291175"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:58:38 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdnMS-0000000EfRD-1Uu2;
+	Tue, 13 Aug 2024 11:58:36 +0300
+Date: Tue, 13 Aug 2024 11:58:36 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Herve Codina <herve.codina@bootlin.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v1 1/2] irqdomain: Unify checks for bus_token
+Message-ID: <ZrsgPHPVp7HelXkH@smile.fi.intel.com>
+References: <20240812193101.1266625-1-andriy.shevchenko@linux.intel.com>
+ <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
+ <87o75wrff7.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: sdonthineni@nvidia.com, tglx@linutronix.de, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87o75wrff7.ffs@tglx>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 13 Aug 2024 04:39:25 +0100,
-Shanker Donthineni <sdonthineni@nvidia.com> wrote:
+On Tue, Aug 13, 2024 at 10:32:44AM +0200, Thomas Gleixner wrote:
+> On Mon, Aug 12 2024 at 22:29, Andy Shevchenko wrote:
+> > The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
+> > Since bus_token is enum, the later is more robust against changes.
+> > Unify all checks to follow the latter variant.
+> >
+> > Fixes: 0b21add71bd9 ("irqdomain: Handle domain bus token in irq_domain_create()")
+> > Fixes: 1bf2c9282927 ("irqdomain: Cleanup domain name allocation")
 > 
-> The commit 897e9e60c016 ("firmware: arm_ffa: Initial support for scheduler
-> receiver interrupt") adds support for SGI interrupts in the FFA driver.
-> However, the validation for SGIs in the GICv3 is too strict, causing the
-> driver probe to fail.
+> I'm fine with the change per se, but what does this fix? It's correct
+> code, no?
 
-It probably is a good thing that I wasn't on Cc for this patch,
-because I would have immediately NAK'd it. Sudeep, please consider
-this a retrospective NAK!
-
-> 
-> This patch relaxes the SGI validation check, allowing callers to use SGIs
-> if the requested SGI number is greater than or equal to MAX_IPI, which
-> fixes the TFA driver probe failure.
-> 
-> This issue is observed on NVIDIA server platform with FFA-v1.1.
->  [    7.918099] PTP clock support registered
->  [    7.922110] EDAC MC: Ver: 3.0.0
->  [    7.945063] ARM FF-A: Driver version 1.1
->  [    7.949068] ARM FF-A: Firmware version 1.1 found
->  [    7.977832] GICv3: [Firmware Bug]: Illegal GSI8 translation request
->  [    7.984237] ARM FF-A: Failed to create IRQ mapping!
->  [    7.989220] ARM FF-A: Notification setup failed -61, not enabled
->  [    8.000198] ARM FF-A: Failed to register driver sched callback -95
->  [    8.011322] scmi_core: SCMI protocol bus registered
-> 
-> Signed-off-by: Shanker Donthineni <sdonthineni@nvidia.com>
-> ---
->  arch/arm64/include/asm/arch_gicv3.h | 17 +++++++++++++++++
->  arch/arm64/kernel/smp.c             | 17 -----------------
->  drivers/irqchip/irq-gic-v3.c        |  2 +-
->  3 files changed, 18 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/arch_gicv3.h b/arch/arm64/include/asm/arch_gicv3.h
-> index 9e96f024b2f19..ecf81df2915c7 100644
-> --- a/arch/arm64/include/asm/arch_gicv3.h
-> +++ b/arch/arm64/include/asm/arch_gicv3.h
-> @@ -188,5 +188,22 @@ static inline bool gic_has_relaxed_pmr_sync(void)
->  	return cpus_have_cap(ARM64_HAS_GIC_PRIO_RELAXED_SYNC);
->  }
->  
-> +enum ipi_msg_type {
-> +	IPI_RESCHEDULE,
-> +	IPI_CALL_FUNC,
-> +	IPI_CPU_STOP,
-> +	IPI_CPU_CRASH_STOP,
-> +	IPI_TIMER,
-> +	IPI_IRQ_WORK,
-> +	NR_IPI,
-> +	/*
-> +	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
-> +	 * with trace_ipi_*
-> +	 */
-> +	IPI_CPU_BACKTRACE = NR_IPI,
-> +	IPI_KGDB_ROUNDUP,
-> +	MAX_IPI
-> +};
-> +
->  #endif /* __ASSEMBLY__ */
->  #endif /* __ASM_ARCH_GICV3_H */
-> diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> index 5e18fbcee9a20..373cd815d9a43 100644
-> --- a/arch/arm64/kernel/smp.c
-> +++ b/arch/arm64/kernel/smp.c
-> @@ -64,23 +64,6 @@ struct secondary_data secondary_data;
->  /* Number of CPUs which aren't online, but looping in kernel text. */
->  static int cpus_stuck_in_kernel;
->  
-> -enum ipi_msg_type {
-> -	IPI_RESCHEDULE,
-> -	IPI_CALL_FUNC,
-> -	IPI_CPU_STOP,
-> -	IPI_CPU_CRASH_STOP,
-> -	IPI_TIMER,
-> -	IPI_IRQ_WORK,
-> -	NR_IPI,
-> -	/*
-> -	 * Any enum >= NR_IPI and < MAX_IPI is special and not tracable
-> -	 * with trace_ipi_*
-> -	 */
-> -	IPI_CPU_BACKTRACE = NR_IPI,
-> -	IPI_KGDB_ROUNDUP,
-> -	MAX_IPI
-> -};
-> -
->  static int ipi_irq_base __ro_after_init;
->  static int nr_ipi __ro_after_init = NR_IPI;
->  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index c19083bfb9432..0d2038d8cd311 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -1655,7 +1655,7 @@ static int gic_irq_domain_translate(struct irq_domain *d,
->  		if(fwspec->param_count != 2)
->  			return -EINVAL;
->  
-> -		if (fwspec->param[0] < 16) {
-> +		if (fwspec->param[0] < MAX_IPI) {
->  			pr_err(FW_BUG "Illegal GSI%d translation request\n",
->  			       fwspec->param[0]);
->  			return -EINVAL;
-
-No. This is the wrong approach, and leads to inconsistent behaviour if
-we ever change this MAX_IPI value. It also breaks 32 bit builds, and
-makes things completely inconsistent between ACPI and DT.
-
-I don't know how the FFA code was tested, because I cannot see how it
-can work.
-
-*IF* we are going to allow random SGIs being requested by random
-drivers, we need to be able to do it properly. Not as a side hack like
-this.
-
-	M.
+Technically yes, it's correct code as long as nobody touches the mentioned enum.
+It fixes the style and makes it robust against the changes.
 
 -- 
-Without deviation from the norm, progress is not possible.
+With Best Regards,
+Andy Shevchenko
+
+
 
