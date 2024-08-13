@@ -1,116 +1,194 @@
-Return-Path: <linux-kernel+bounces-284584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF199502D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:47:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE589502D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:49:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 580F3282FEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:47:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620AC1C223C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D23C199380;
-	Tue, 13 Aug 2024 10:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="r3l1+fhI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F8C19AA68;
+	Tue, 13 Aug 2024 10:49:44 +0000 (UTC)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69FB876025;
-	Tue, 13 Aug 2024 10:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07A623D0;
+	Tue, 13 Aug 2024 10:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546068; cv=none; b=R8o0ob2LL5zRb2OU+/+2TG9bDBNsDUE5PNPZiRkQTKoyggatVOQrrtdZFJOweRt14WxR+lRLiZXdqLlK9XL/DYkVuPpG0Vcz2z37EAqLFKw+V95rvMJgKG0nqM2C06SWdSzdyFkfsCcbnCk4w8n47Z+3S+U2sbLUs8JuIZiFha8=
+	t=1723546183; cv=none; b=G5HRFFWlLAprmWnyZyVdftEzC7h7vWIvhJxnPXZNBCIFtlWP6Upbrttbnl8aR3jSYk20kHEQT5qp1B5mttxx75Oo6UIk0bqzQiGjepPO/iDZaCk2TZQ4X2vyNiOMKTvbsxBOBW/wDrg4EXlXDwBUsoUGFeD2HdMCfwZL5eoiFsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546068; c=relaxed/simple;
-	bh=Ushq3yq7eWPKyCu11/TlftefcEeOEHU4isTbb6y9I+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toHK916jyhqlT82zHzWXk8ZYdm2JYVfM46TPeiE2Y7bZ5GwPE4EeVhnqjrp35sflCew7TDrqgEkkQHi/dxRdSp+i9aCvjG9tN4Ag5REdDj5NRwKxN9kj7L8D/qIQrMv6w2dWm259GnfEdo4SpiwNaA3qxc6eRjnMuz/0q2UBFpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=r3l1+fhI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50A2CC4AF09;
-	Tue, 13 Aug 2024 10:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723546067;
-	bh=Ushq3yq7eWPKyCu11/TlftefcEeOEHU4isTbb6y9I+Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=r3l1+fhIRmS9mVp9YWscCFT0O+MMtFftrTyItd37qVs5e8+2XwFCbwuB6TvXljSfa
-	 IP1Scsg6cBjg3zWrUne6jNxPwG1JNQsnKaT0JkRQ1mcbCZji01evJYP156ZxJXo2IP
-	 f7lcKvbRAFa8yVN5r2qYVLRU3zy45mkz15IyKHWw=
-Date: Tue, 13 Aug 2024 12:47:44 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: dennis@kernel.org, tj@kernel.org, cl@linux.com, mpe@ellerman.id.au,
-	benh@kernel.crashing.org, paulus@samba.org,
-	christophe.leroy@csgroup.eu, mahesh@linux.ibm.com,
-	linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v5.10 v2] powerpc: Avoid nmi_enter/nmi_exit in real mode
- interrupt.
-Message-ID: <2024081318-onion-record-fdc7@gregkh>
-References: <20240806071616.1671691-1-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1723546183; c=relaxed/simple;
+	bh=2bAnjcylwCIbEgunZmUYly7eRS7HTnWhdO9hyO2NFAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jlx3tl/ARvcCoC+2rwvUgPm7SCTrVCOcby/gYt66xQn2T9ZKulaBRqzL705UTbQimTKT+xIgujEhV1+M1YlmdaUrIwH2jDejZ4uCUTJcJynSs0nyL9k5DOFKEj3koVq84PVqMkTR8zu+A5XqC9hl2wYYTEX2nKbtkkOmokNhMFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f04c29588so1629295e87.3;
+        Tue, 13 Aug 2024 03:49:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723546177; x=1724150977;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EUm/bEXImaEK1obrlqGtsRYLmCBpTLTnHcA0pud0em4=;
+        b=Y3280MklEv5LPlKZR4rUey0CuK6dJ2pu5xfhP4SeT6GpdM32eiTqQvJ8BBreObrnF9
+         +F0navCBBXlhyTagIzbZbJMWWG0CydBU+2pCrFB6kyIsBQKdXleUW2ct/1MyHGg813fd
+         TWPQQm8OAl32DoMxlRX4Ns6G/TvuA62KLsxMz3xVmUYs241wwfi9cT4zEDEtlrryj4Ef
+         VIIKGBoFcXqxF13z5slDEIpjWjwyuEOUWtnip7AktxRz5Yuh2V6YaRisHX3uWJ9KhxDN
+         rr8UyKrLqqjMBYR2UlTvyqM/Yk1dWWp+e4dBUeEJiN5BnGNn8rhvr1TEzFIsaclNsHvx
+         +eZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWol0nensxEzqX3Av9+21/iMzrFn+hR/hpC/2XWL5SSWU1A7sE2dMWD59FvhVGHzppMmZpFQWPcPAkEt79X6XdzWiatGOLXPmckLPH+rNOSyrZYF6wTvq7K0c40P12+na0kZrN++qHFutE=
+X-Gm-Message-State: AOJu0YzBcdXEdC35ngExcfZAR38xoETN3yy/3xldJWWP3eGoEHi4KuhU
+	MHfZcdJaDceNlo1Q1qgBOZPMdTAGxUBd1AYJjfgC1WAglIU3fB/B
+X-Google-Smtp-Source: AGHT+IHFz76jpw0cuOkw55EbndtRrNzhWyNedTeXoCWLJpudYR4McHuWZWp2bJyFKaWegBlDp9CVDg==
+X-Received: by 2002:a05:6512:685:b0:52c:db04:5a57 with SMTP id 2adb3069b0e04-5321365dccamr1956558e87.31.1723546176526;
+        Tue, 13 Aug 2024 03:49:36 -0700 (PDT)
+Received: from nuc.fritz.box (p200300f6f732f200fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f732:f200:fa63:3fff:fe02:74c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429c775c912sm131513875e9.45.2024.08.13.03.49.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 03:49:36 -0700 (PDT)
+From: Johannes Thumshirn <jth@kernel.org>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org (open list:BTRFS FILE SYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Qu Wenruo <wqu@suse.com>,
+	Filipe Manana <fdmanana@suse.com>
+Subject: [PATCH v2] btrfs: reduce chunk_map lookups in btrfs_map_block
+Date: Tue, 13 Aug 2024 12:49:20 +0200
+Message-ID: <bc73d318c7f24196cdc7305b6a6ce516fb4fc81d.1723546054.git.jth@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240806071616.1671691-1-ruanjinjie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 06, 2024 at 07:16:16AM +0000, Jinjie Ruan wrote:
-> From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-> 
-> [ Upstream commit 0db880fc865ffb522141ced4bfa66c12ab1fbb70 ]
-> 
-> nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
-> crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
-> interrupt handler) if percpu allocation comes from vmalloc area.
-> 
-> Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
-> wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
-> percpu allocation is from the embedded first chunk. However with
-> CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
-> allocation can come from the vmalloc area.
-> 
-> With kernel command line "percpu_alloc=page" we can force percpu allocation
-> to come from vmalloc area and can see kernel crash in machine_check_early:
-> 
-> [    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
-> [    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
-> [    1.215719] --- interrupt: 200
-> [    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
-> [    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
-> [    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
-> 
-> Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
-> first chunk is not embedded.
-> 
-> CVE-2024-42126
-> Cc: stable@vger.kernel.org#5.10.x
-> Cc: gregkh@linuxfoundation.org
-> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
-> Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
-> [ Conflicts in arch/powerpc/include/asm/interrupt.h
->   because machine_check_early() and machine_check_exception()
->   has been refactored. ]
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
-> v2:
-> - Also fix for CONFIG_PPC_BOOK3S_64 not enabled.
-> - Add Upstream.
-> - Cc stable@vger.kernel.org.
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
-You forgot a 5.15.y version, which is of course required if we were to
-take a 5.10.y version :(
+Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() in
+btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
+to be able to calculate the number of copies.
 
-Please resubmit both.
+So split out the code getting the number of copies from btrfs_num_copies()
+into a helper called btrfs_chunk_map_num_copies() and directly call it
+from btrfs_map_block() and btrfs_num_copies().
 
-thanks,
+This saves us one rbtree lookup per btrfs_map_block() invocation.
 
-greg k-h
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+Changes in v2:
+- Added Reviewed-bys
+- Reflowed comments
+- Moved non RAID56 cases to the end without an if
+Link to v1:
+https://lore.kernel.org/all/20240812165931.9106-1-jth@kernel.org/
+
+ fs/btrfs/volumes.c | 58 +++++++++++++++++++++++++---------------------
+ 1 file changed, 32 insertions(+), 26 deletions(-)
+
+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+index e07452207426..796f6350a017 100644
+--- a/fs/btrfs/volumes.c
++++ b/fs/btrfs/volumes.c
+@@ -5781,38 +5781,44 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info *fs_info)
+ 	write_unlock(&fs_info->mapping_tree_lock);
+ }
+ 
++static int btrfs_chunk_map_num_copies(struct btrfs_chunk_map *map)
++{
++	enum btrfs_raid_types index = btrfs_bg_flags_to_raid_index(map->type);
++
++	if (map->type & BTRFS_BLOCK_GROUP_RAID5)
++		return 2;
++
++	/*
++	 * There could be two corrupted data stripes, we need to loop
++	 * retry in order to rebuild the correct data.
++	 *
++	 * Fail a stripe at a time on every retry except the stripe
++	 * under reconstruction.
++	 */
++	if (map->type & BTRFS_BLOCK_GROUP_RAID6)
++		return map->num_stripes;
++
++	/* Non-RAID56, use their ncopies from btrfs_raid_array. */
++	return btrfs_raid_array[index].ncopies;
++}
++
+ int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len)
+ {
+ 	struct btrfs_chunk_map *map;
+-	enum btrfs_raid_types index;
+-	int ret = 1;
++	int ret;
+ 
+ 	map = btrfs_get_chunk_map(fs_info, logical, len);
+ 	if (IS_ERR(map))
+ 		/*
+-		 * We could return errors for these cases, but that could get
+-		 * ugly and we'd probably do the same thing which is just not do
+-		 * anything else and exit, so return 1 so the callers don't try
+-		 * to use other copies.
++		 * We could return errors for these cases, but that
++		 * could get ugly and we'd probably do the same thing
++		 * which is just not do anything else and exit, so
++		 * return 1 so the callers don't try to use other
++		 * copies.
+ 		 */
+ 		return 1;
+ 
+-	index = btrfs_bg_flags_to_raid_index(map->type);
+-
+-	/* Non-RAID56, use their ncopies from btrfs_raid_array. */
+-	if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
+-		ret = btrfs_raid_array[index].ncopies;
+-	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
+-		ret = 2;
+-	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
+-		/*
+-		 * There could be two corrupted data stripes, we need
+-		 * to loop retry in order to rebuild the correct data.
+-		 *
+-		 * Fail a stripe at a time on every retry except the
+-		 * stripe under reconstruction.
+-		 */
+-		ret = map->num_stripes;
++	ret = btrfs_chunk_map_num_copies(map);
+ 	btrfs_free_chunk_map(map);
+ 	return ret;
+ }
+@@ -6462,14 +6468,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info, enum btrfs_map_op op,
+ 	io_geom.stripe_index = 0;
+ 	io_geom.op = op;
+ 
+-	num_copies = btrfs_num_copies(fs_info, logical, fs_info->sectorsize);
+-	if (io_geom.mirror_num > num_copies)
+-		return -EINVAL;
+-
+ 	map = btrfs_get_chunk_map(fs_info, logical, *length);
+ 	if (IS_ERR(map))
+ 		return PTR_ERR(map);
+ 
++	num_copies = btrfs_chunk_map_num_copies(map);
++	if (io_geom.mirror_num > num_copies)
++		return -EINVAL;
++
+ 	map_offset = logical - map->start;
+ 	io_geom.raid56_full_stripe_start = (u64)-1;
+ 	max_len = btrfs_max_io_len(map, map_offset, &io_geom);
+-- 
+2.43.0
+
 
