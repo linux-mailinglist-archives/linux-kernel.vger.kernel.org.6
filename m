@@ -1,248 +1,323 @@
-Return-Path: <linux-kernel+bounces-284467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 439D0950145
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:32:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A9895014E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C61891F24B08
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C2BC1F236FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CAD18E022;
-	Tue, 13 Aug 2024 09:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E839C17CA1F;
+	Tue, 13 Aug 2024 09:35:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HHlzNg10"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b5/TQWYH";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Yo+CnOYr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8031417C7CC;
-	Tue, 13 Aug 2024 09:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCDC8BF3;
+	Tue, 13 Aug 2024 09:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723541516; cv=none; b=aQ7qzLG8ejmCB7BCXB14wJcO3bbLXTlgVP1QKS3MjRQk+Yk+Xl5vdv/7Pu++eyH6E4LfNJPxGDCsBTLncjQ144zD57/IB+kcVJFcRgBFFmmIF0jkZAIjjbCdfiUOcz9oV6whJzqkYuNIF4BtqMMXf86rQmXN2BdQYVoFsaELOqg=
+	t=1723541730; cv=none; b=s1R93jBDxuqmYfADVBxUV/UR8DM6x/xZhjf2ZY+VGaMrMZC4GEWRGWLu1i7fZ9EpZmiMg5E2E6pol7lrWTb7qkCCbYQ1b731KV9r0RwMgS+g0rlNb5jSLGuK8YR/OuEgACtTeVL4jcrnkZieTLMDT08PDSBc8zS0OnJbps6XfEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723541516; c=relaxed/simple;
-	bh=OJtM7QuA+FTUJm2AUnYIgvlJxFP7SRKBskfsRzvpuQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IwFtTY412HTylmssytSKt8/TKQb86nPwWZ0mBZsLsq65jEF4boHP5c032H68+azwfv9lg9FfVFI45eyOceFDuUrDPcad2L8CHcqKGI09TH9GD8qVI2bU+U58G77JznrYZDL1SZwPQRG7UajFA4rP0aaIdokLG6ANzhpzLGIZs/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HHlzNg10; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1fd9e70b592so39547085ad.3;
-        Tue, 13 Aug 2024 02:31:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723541514; x=1724146314; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=35gPZlKK15jUEgTaWSZkIPQe/ceudO5mMDu9MAQSfWQ=;
-        b=HHlzNg10OQ7TfZ6lViElTVMAtTrDHcRWMyCrnnfKj+VXTqOyMdjgxMlKjFUD3HE2R+
-         SFPpo4elVxbK1IQOOvrqGQ4B/3RPiSIGHdftJC7j0AdarrAS7cr2vZd9w6zY2RnE2MsH
-         S5e/ehiIoNOuV2FfhDZl9NeVyVdBNoBd78HfIl0RFASvD6Fz1ecr2/yi0FxBvKsnif39
-         vTwvZdpgnx0lCh8CLv3t/CXEEwtD/LwsWEtR0WX683JCuBD4xcIilUU4yvXaANLN4rZU
-         w9Utc+8tGFoZCdSU0g4HKbzzdnscASHQdkb7+uf2oL5iGChyHunyysHV6Na+1SXCs8/L
-         ULrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723541514; x=1724146314;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=35gPZlKK15jUEgTaWSZkIPQe/ceudO5mMDu9MAQSfWQ=;
-        b=adiv4MRkBfDTGo61tpZXLieLoo6WW/m15pq+wRPK+A7+unR8KbqQJiPnj17EahtRJb
-         jnBol7skOuAD4xf1Akqy3hpZXwpWtfhD7DcEYtU86AWr3SJqZXFBPkGJYJPjxuCiqtQn
-         EIu8vzCiRWMgg4Szfj3hEfMRlHMGgFL3Mc+WdPc5uUSIRxt5OiyoaHe69HwwuGaB98g4
-         ldZX2CDsTL/yt6u2Eer8q+HYmzeiY8awOtMTE9hMw0WxQ0hBP9lHxftGlxTdq+gS1qxu
-         5FhH2XlO33DZC6jWVkl9GF05wMZrexkWeHk7noyN1M3jy9KprY1Mj3lzOW3SdBeEzaq3
-         9Eaw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/cUs9JeM6gWMlCehpe0kpNvPdGud6fVWtof6O8acXu6MCqt7FWKv4cEQ2QcZ70TwU3RMT7yUohY1/5dcl4rzacOC0uLMwbJaYsZHW/Y7EIFkIHprapj8zuEKpYkZnmidXHAQzQSwP8YCElPpJ+Gvo9v5eG0lEuVaMNRpyjqtRYg==
-X-Gm-Message-State: AOJu0Ywz8Ysa4rUhkUTBZpGWlMvW8OtnhGgin2RlN41w+sVhMImb9ytw
-	Skh/51CzCHEwziFI4Zz7dfouDoAgHmsbUvz0JwdtQ0Ko7DMGFsPJ
-X-Google-Smtp-Source: AGHT+IGgdJRnPNtIKrI3UOQ8wFxysKdGOtOO8vdWkSDuDxaJQhAUIsF0G70EOs1HhHSWjq93ibQosw==
-X-Received: by 2002:a17:903:18a:b0:1f8:44f8:a364 with SMTP id d9443c01a7336-201ca1ca1d6mr40370655ad.48.1723541513614;
-        Tue, 13 Aug 2024 02:31:53 -0700 (PDT)
-Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1cfe91sm9549405ad.291.2024.08.13.02.31.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 02:31:53 -0700 (PDT)
-From: Jeongjun Park <aha310510@gmail.com>
-To: alibuda@linux.alibaba.com
-Cc: aha310510@gmail.com,
-	davem@davemloft.net,
-	dust.li@linux.alibaba.com,
-	edumazet@google.com,
-	gbayer@linux.ibm.com,
-	guwen@linux.alibaba.com,
-	jaka@linux.ibm.com,
-	kuba@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	tonylu@linux.alibaba.com,
-	wenjia@linux.ibm.com
-Subject: Re: [PATCH net] net/smc: prevent NULL pointer dereference in txopt_get
-Date: Tue, 13 Aug 2024 18:31:47 +0900
-Message-Id: <20240813093147.175682-1-aha310510@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <4ccf34a0-3db2-4cbf-a9b2-cf585af8c63a@linux.alibaba.com>
-References: <4ccf34a0-3db2-4cbf-a9b2-cf585af8c63a@linux.alibaba.com>
+	s=arc-20240116; t=1723541730; c=relaxed/simple;
+	bh=ddvDltN9Mgsmou/EaGG4a0VaxVVqxbTKjbTiqNMEeyw=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=I4Np+JmmFxbXWaUmDMG0HvoQH2cki6zC4bn8SVlMj8CMiJt7n9JxpWehpslE5sZNGBJ/F0VISY87Ha489xWtERgCr5JbhF2lRCbOi+Yv/vSO2cVRgQj8mE5o0l/X+WK+FMba76DSygb6tPXybpIn/VheDX474Z+fZsVJdXDBNBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b5/TQWYH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Yo+CnOYr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1723541726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sPWBBDJU7xycHw83tZfdCxw6fWdvqJgVNnPRw9B4yYQ=;
+	b=b5/TQWYHviQ+nW8b2BeGJJJa+nhVp9dMiGiVqEXbL6stHi4kqSjJV9+KD/yM22uLBuypv8
+	sxCkkqTcdTv3z/bNpVguXEppD0dghagT51vFwNh2Yij3nPNlBBMdGEiZwlYyQ/+WTP2Ltp
+	KgkOoA/SSxRVPqCPBT9bZqicmlgom2KDcfvVfrXvaSMP+n0IJkzzKUFzm1K6yZNGbTvCpn
+	oWcSNOrSERIcAF041nYr4qHMlNUNGtlRE67+7DrvkPpTDYzFQ8taO0Chl2gAvMy26G51zI
+	65FMDYJ95BhXaK1E7gsEuCmi/GoGE2HVrD6Ywq4e0H50qLmfnqasvsP4MRJZ1A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1723541726;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sPWBBDJU7xycHw83tZfdCxw6fWdvqJgVNnPRw9B4yYQ=;
+	b=Yo+CnOYrpmW3Yt1nO9Kha4AaH4X+qDnHwgTE6qp1Rz+M95+QVDhsKh0Z/K8f4WuGGZGnX9
+	9xjWE9A8/DOiS+CA==
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, kevin_chen@aspeedtech.com,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v1 2/2] irqchip/aspeed-intc: Add support for 10 INTC
+ interrupts on AST27XX platforms
+In-Reply-To: <20240813074338.969883-3-kevin_chen@aspeedtech.com>
+References: <20240813074338.969883-1-kevin_chen@aspeedtech.com>
+ <20240813074338.969883-3-kevin_chen@aspeedtech.com>
+Date: Tue, 13 Aug 2024 11:35:25 +0200
+Message-ID: <87h6borciq.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=y
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-D. Wythe wrote:
-> On 8/13/24 4:05 PM, Gerd Bayer wrote:
-> > On Sun, 2024-08-11 at 02:22 +0900, Jeongjun Park wrote:
-> >> Since smc_inet6_prot does not initialize ipv6_pinfo_offset,
-> >> inet6_create() copies an incorrect address value, sk + 0 (offset), to
-> >> inet_sk(sk)->pinet6.
-> >>
-> >> In addition, since inet_sk(sk)->pinet6 and smc_sk(sk)->clcsock
-> >> practically point to the same address, when smc_create_clcsk() stores
-> >> the newly created clcsock in smc_sk(sk)->clcsock, inet_sk(sk)->pinet6
-> >> is corrupted into clcsock. This causes NULL pointer dereference and
-> >> various other memory corruptions.
-> >>
-> >> To solve this, we need to add a smc6_sock structure for
-> >> ipv6_pinfo_offset initialization and modify the smc_sock structure.
-> > I can not argue substantially with that... There's very little IPv6
-> > testing that I'm aware of. But do you really need to move that much
-> > code around and change whitespace for you fix?
-> >
-> > [--- snip ---]
-> >
-> >
-> >> Fixes: d25a92ccae6b ("net/smc: Introduce IPPROTO_SMC")
-> >> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
-> >> ---
-> >>   net/smc/smc.h      | 19 ++++++++++---------
-> >>   net/smc/smc_inet.c | 24 +++++++++++++++---------
-> >>   2 files changed, 25 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/net/smc/smc.h b/net/smc/smc.h
-> >> index 34b781e463c4..f4d9338b5ed5 100644
-> >> --- a/net/smc/smc.h
-> >> +++ b/net/smc/smc.h
-> >> @@ -284,15 +284,6 @@ struct smc_connection {
-> >>   
-> >>   struct smc_sock {                          /* smc sock
-> >> container */
-> >>      struct sock             sk;
-> >> -    struct socket           *clcsock;       /* internal tcp
-> >> socket */
-> >> -    void                    (*clcsk_state_change)(struct sock
-> >> *sk);
-> >> -                                            /* original
-> >> stat_change fct. */
-> >> -    void                    (*clcsk_data_ready)(struct sock
-> >> *sk);
-> >> -                                            /* original
-> >> data_ready fct. */
-> >> -    void                    (*clcsk_write_space)(struct sock
-> >> *sk);
-> >> -                                            /* original
-> >> write_space fct. */
-> >> -    void                    (*clcsk_error_report)(struct sock
-> >> *sk);
-> >> -                                            /* original
-> >> error_report fct. */
-> >>      struct smc_connection   conn;           /* smc connection */
-> >>      struct smc_sock         *listen_smc;    /* listen
-> >> parent */
-> >>      struct work_struct      connect_work;   /* handle non-
-> >> blocking connect*/
-> >> @@ -325,6 +316,16 @@ struct smc_sock {                               /*
-> >> smc sock container */
-> >>                                              /* protects clcsock
-> >> of a listen
-> >>                                               * socket
-> >>                                               * */
-> >> +    struct socket           *clcsock;       /* internal tcp
-> >> socket */
-> >> +    void                    (*clcsk_state_change)(struct sock
-> >> *sk);
-> >> +                                            /* original
-> >> stat_change fct. */
-> >> +    void                    (*clcsk_data_ready)(struct sock
-> >> *sk);
-> >> +                                            /* original
-> >> data_ready fct. */
-> >> +    void                    (*clcsk_write_space)(struct sock
-> >> *sk);
-> >> +                                            /* original
-> >> write_space fct. */
-> >> +    void                    (*clcsk_error_report)(struct sock
-> >> *sk);
-> >> +                                            /* original
-> >> error_report fct. */
-> >> +
-> >>   };
+On Tue, Aug 13 2024 at 15:43, Kevin Chen wrote:
+> There are 10 interrupt source of soc0_intc in CPU die INTC.
+>   1. 6 interrupt sources in IO die of soc1_intc0~soc1_intc5.
+>   2. 2 interrupt sources in LTPI of ltpi0_intc0 and ltpi0_intc1.
+>   3. 2 interrupt sources in LTPI of ltpi1_intc0 and ltpi1_intc1.
+> Request GIC interrupt to check each bit in status register to do next
+> level INTC handler.
 >
-> Hi Jeongjun,
->
-> I have no problem with this fix, thank you for your assistance.
-> But, what this here was for ?
+> In next level INTC handler of IO die or LTPI INTC using soc1_intcX combining
+> 32 interrupt sources into soc0_intc11 in CPU die. In soc1_intcX, handler
+> would check 32 bit of status register to do the requested device
+> handler.
 
-Sorry for the confusion. It looks like the tab character was accidentally 
-used. We will fix that and send you a v2 patch.
+I can't figure out what this word salad is trying to tell me. Nothing in
+the code does any combining. The handler reads the very same
+INTC_INT_STATUS_REG.
 
 >
->
-> >>   
-> >>   #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
-> >> diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
-> >> index bece346dd8e9..3c54faef6042 100644
-> >> --- a/net/smc/smc_inet.c
-> >> +++ b/net/smc/smc_inet.c
-> >> @@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
-> >>   };
-> >>   
-> >>   #if IS_ENABLED(CONFIG_IPV6)
-> >> +struct smc6_sock {
-> >> +    struct smc_sock smc;
-> >> +    struct ipv6_pinfo np;
-> >> +};
-> >> +
-> >>   static struct proto smc_inet6_prot = {
-> >> -    .name           = "INET6_SMC",
-> >> -    .owner          = THIS_MODULE,
-> >> -    .init           = smc_inet_init_sock,
-> >> -    .hash           = smc_hash_sk,
-> >> -    .unhash         = smc_unhash_sk,
-> >> -    .release_cb     = smc_release_cb,
-> >> -    .obj_size       = sizeof(struct smc_sock),
-> >> -    .h.smc_hash     = &smc_v6_hashinfo,
-> >> -    .slab_flags     = SLAB_TYPESAFE_BY_RCU,
-> >> +    .name                  = "INET6_SMC",
-> >> +    .owner                 = THIS_MODULE,
-> >> +    .init                  = smc_inet_init_sock,
-> >> +    .hash                  = smc_hash_sk,
-> >> +    .unhash                = smc_unhash_sk,
-> >> +    .release_cb            = smc_release_cb,
-> >> +    .obj_size              = sizeof(struct smc6_sock),
-> >> +    .h.smc_hash            = &smc_v6_hashinfo,
-> >> +    .slab_flags            = SLAB_TYPESAFE_BY_RCU,
-> >> +    .ipv6_pinfo_offset = offsetof(struct smc6_sock, np),
->
-> Since you have done alignment, why not align the  '='.
->
-> > The line above together with the definition of struct smc6_sock seem to
-> > be the only changes relevant to fixing the issue, IMHO.
-> >
-> >>   };
-> >>   
-> >>   static const struct proto_ops smc_inet6_stream_ops = {
-> >> --
-> >>
-> > Thanks, Gerd
 
-Regards,
-Jeongjun Park
+This lacks a Signed-off-by: tag. See Documentation/process/
+
+> ---
+>  drivers/irqchip/Makefile          |   1 +
+>  drivers/irqchip/irq-aspeed-intc.c | 198 ++++++++++++++++++++++++++++++
+> +
+> +#define INTC_INT_ENABLE_REG	0x00
+> +#define INTC_INT_STATUS_REG	0x04
+> +
+> +struct aspeed_intc_ic {
+> +	void __iomem		*base;
+> +	raw_spinlock_t		gic_lock;
+> +	raw_spinlock_t		intc_lock;
+> +	struct irq_domain	*irq_domain;
+> +};
+> +
+> +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc)
+> +{
+> +	struct aspeed_intc_ic *intc_ic = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	unsigned long bit, status, flags;
+> +
+> +	chained_irq_enter(chip, desc);
+> +
+> +	raw_spin_lock_irqsave(&intc_ic->gic_lock, flags);
+
+There is no point for irqsave(). This code is invoked with interrupts
+disabled and please convert to:
+
+        scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+
+> +	status = readl(intc_ic->base + INTC_INT_STATUS_REG);
+> +	for_each_set_bit(bit, &status, 32) {
+
+Please use a define and not a hardcoded number.
+
+> +		generic_handle_domain_irq(intc_ic->irq_domain, bit);
+> +		writel(BIT(bit), intc_ic->base + INTC_INT_STATUS_REG);
+> +	}
+
+        }
+
+> +	raw_spin_unlock_irqrestore(&intc_ic->gic_lock, flags);
+> +
+> +	chained_irq_exit(chip, desc);
+> +}
+> +
+> +static void aspeed_intc_irq_mask(struct irq_data *data)
+> +{
+> +	struct aspeed_intc_ic *intc_ic = irq_data_get_irq_chip_data(data);
+> +	unsigned int mask = readl(intc_ic->base + INTC_INT_ENABLE_REG) & ~BIT(data->hwirq);
+> +	unsigned long flags;
+
+Invoked with interrupts disabled too.
+
+> +	raw_spin_lock_irqsave(&intc_ic->intc_lock, flags);
+> +	writel(mask, intc_ic->base + INTC_INT_ENABLE_REG);
+> +	raw_spin_unlock_irqrestore(&intc_ic->intc_lock, flags);
+
+        guard(raw_spinlock)(&intc_ic->intc_lock);
+	writel(mask, intc_ic->base + INTC_INT_ENABLE_REG);
+
+> +}
+> +
+> +static void aspeed_intc_irq_unmask(struct irq_data *data)
+> +{
+> +	struct aspeed_intc_ic *intc_ic = irq_data_get_irq_chip_data(data);
+> +	unsigned int unmask = readl(intc_ic->base + INTC_INT_ENABLE_REG) | BIT(data->hwirq);
+> +	unsigned long flags;
+
+Ditto.
+
+> +	raw_spin_lock_irqsave(&intc_ic->intc_lock, flags);
+> +	writel(unmask, intc_ic->base + INTC_INT_ENABLE_REG);
+> +	raw_spin_unlock_irqrestore(&intc_ic->intc_lock, flags);
+> +}
+> +
+> +static int aspeed_intc_irq_set_affinity(struct irq_data *data, const struct cpumask *dest,
+> +					bool force)
+> +{
+> +	return -EINVAL;
+> +}
+
+No point for this stub, just leave irq_set_affinity uninitialized. The
+core code checks that pointer for NULL. Aside of that this stub and the
+assignment would need a #ifdef CONFIG_SMP guard.
+
+> +static struct irq_chip aspeed_intc_chip = {
+> +	.name			= "ASPEED INTC",
+> +	.irq_mask		= aspeed_intc_irq_mask,
+> +	.irq_unmask		= aspeed_intc_irq_unmask,
+> +	.irq_set_affinity	= aspeed_intc_irq_set_affinity,
+> +};
+> +
+> +static int aspeed_intc_ic_map_irq_domain(struct irq_domain *domain, unsigned int irq,
+> +					 irq_hw_number_t hwirq)
+> +{
+> +	irq_set_chip_and_handler(irq, &aspeed_intc_chip, handle_level_irq);
+> +	irq_set_chip_data(irq, domain->host_data);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops aspeed_intc_ic_irq_domain_ops = {
+> +	.map = aspeed_intc_ic_map_irq_domain,
+
+	.map	= aspeed_intc_ic_map_irq_domain,
+
+> +};
+> +
+> +static int __init aspeed_intc_ic_of_init(struct device_node *node, struct device_node *parent)
+> +{
+> +	struct aspeed_intc_ic *intc_ic;
+> +	int ret = 0;
+> +	int irq;
+
+        int irq, ret;
+
+No point in initializing ret.
+
+> +	intc_ic = kzalloc(sizeof(*intc_ic), GFP_KERNEL);
+> +	if (!intc_ic)
+> +		return -ENOMEM;
+> +
+> +	intc_ic->base = of_iomap(node, 0);
+> +	if (!intc_ic->base) {
+> +		pr_err("Failed to iomap intc_ic base\n");
+> +		ret = -ENOMEM;
+> +		goto err_free_ic;
+> +	}
+> +	writel(0xffffffff, intc_ic->base + INTC_INT_STATUS_REG);
+> +	writel(0x0, intc_ic->base + INTC_INT_ENABLE_REG);
+> +
+> +	irq = irq_of_parse_and_map(node, 0);
+> +	if (!irq) {
+> +		pr_err("Failed to get irq number\n");
+> +		ret = -EINVAL;
+> +		goto err_iounmap;
+> +	}
+> +
+> +	intc_ic->irq_domain = irq_domain_add_linear(node, 32,
+> +						    &aspeed_intc_ic_irq_domain_ops, intc_ic);
+> +	if (!intc_ic->irq_domain) {
+> +		ret = -ENOMEM;
+> +		goto err_iounmap;
+> +	}
+> +
+> +	raw_spin_lock_init(&intc_ic->gic_lock);
+> +	raw_spin_lock_init(&intc_ic->intc_lock);
+> +
+> +	intc_ic->irq_domain->name = "aspeed-intc-domain";
+
+See above.
+
+> +	irq_set_chained_handler_and_data(irq,
+> +					 aspeed_intc_ic_irq_handler, intc_ic);
+> +
+> +	return 0;
+> +
+> +err_iounmap:
+> +	iounmap(intc_ic->base);
+> +err_free_ic:
+> +	kfree(intc_ic);
+> +	return ret;
+> +}
+> +
+> +static int __init aspeed_intc_ic_of_init_v2(struct device_node *node,
+> +					    struct device_node *parent)
+> +{
+> +	struct aspeed_intc_ic *intc_ic;
+> +	int ret = 0;
+> +	int irq, i;
+> +
+> +	intc_ic = kzalloc(sizeof(*intc_ic), GFP_KERNEL);
+> +	if (!intc_ic)
+> +		return -ENOMEM;
+> +
+> +	intc_ic->base = of_iomap(node, 0);
+> +	if (!intc_ic->base) {
+> +		pr_err("Failed to iomap intc_ic base\n");
+> +		ret = -ENOMEM;
+> +		goto err_free_ic;
+> +	}
+> +	writel(0xffffffff, intc_ic->base + INTC_INT_STATUS_REG);
+> +	writel(0x0, intc_ic->base + INTC_INT_ENABLE_REG);
+> +
+> +	intc_ic->irq_domain = irq_domain_add_linear(node, 32,
+> +						    &aspeed_intc_ic_irq_domain_ops, intc_ic);
+> +	if (!intc_ic->irq_domain) {
+> +		ret = -ENOMEM;
+> +		goto err_iounmap;
+> +	}
+> +
+> +	raw_spin_lock_init(&intc_ic->gic_lock);
+> +	raw_spin_lock_init(&intc_ic->intc_lock);
+> +
+> +	intc_ic->irq_domain->name = "aspeed-intc-domain";
+
+So up to this point aspeed_intc_ic_of_init_v2() is a verbatim copy of
+aspeed_intc_ic_of_init(). Why can't you reuse that function? It's not
+rocket science to make that work.
+
+> +	for (i = 0; i < of_irq_count(node); i++) {
+> +		irq = irq_of_parse_and_map(node, i);
+> +		if (!irq) {
+> +			pr_err("Failed to get irq number\n");
+> +			ret = -EINVAL;
+> +			goto err_iounmap;
+
+Assume #0 and #1 succeed. #2 fails and leaves the chained handlers and
+the irqdomain around, but then unmaps the base and frees the data which
+the handler and the domain code needs. Seriously?
+
+> +		} else {
+
+Pointless else as the if clause terminates with a goto.
+
+> +			irq_set_chained_handler_and_data(irq, aspeed_intc_ic_irq_handler, intc_ic);
+
+So if I understand the code correctly then the hardware coalesces the
+pending bits into a single status register, but depending on which part
+of the SoC raised the interrupt one of the demultiplex interrupts is
+raised in the GIC.
+
+Any of those demultiplex interrupt handles _all_ pending bits and
+therefore you need gic_lock to serialize them, right?
+
+Thanks,
+
+        tglx
 
