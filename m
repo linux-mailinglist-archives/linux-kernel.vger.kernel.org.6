@@ -1,83 +1,82 @@
-Return-Path: <linux-kernel+bounces-284328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932BB94FFEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:32:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B212E94FFEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:35:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D34A1F25126
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:32:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D5D282C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:35:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC4013A888;
-	Tue, 13 Aug 2024 08:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D09713B791;
+	Tue, 13 Aug 2024 08:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0viyZsIx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JPtvMgUt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kp9/Clgt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EA86BFC0
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:32:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F48E4D8DA;
+	Tue, 13 Aug 2024 08:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723537967; cv=none; b=t00cQLhT4DFuM8svUYNxFOg2tIqALxj8EicD9W5vodDXwcIyR7Mn+bN6K/lNi0lNb1M3vTt20YI+4uo5ybmfcp91xXLHZ01mUR6xznvZExuEomPbEsJCwp4TI6jdF/knZDOJmNcw5gmHgs2O5nF1KtW08EoqRzQG9TPTgDN3vDg=
+	t=1723538094; cv=none; b=MQLxpzCD3BIl7MZUcviFO3RfHYZdNPPGjhDT8Kd4ilKom/GtYDdTmU4Ph1jF3K4IHIpGuFzgmsoX3r41a+MtWFIE48+kHGJSgXCsDE9AWpgWz3IalMSQthGITBIUjhMXUNMluMUPfmdq9Mp3npy1sT8XKxk6Dtdr3b4VCiEnDtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723537967; c=relaxed/simple;
-	bh=gcwMyVmIie1YHSkNUh7M2SXPnib/2BebV8hlry2PKlY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GRu639bze/6FIYMosVH5GJXa2qtwSOxLNf0ovj8BF8wUzbZQpbwEZ60SgyOf9UkFifj1JU3nfzw6wOvASzaHdBGJcEEe+50SyDsCJhZMtTu2WCC7tAY3KeeBhnT4GX3kcWneJxLurL5MdgJsO1J2n7dChr76rjWg1xP9FthIh38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0viyZsIx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JPtvMgUt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723537964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gcwMyVmIie1YHSkNUh7M2SXPnib/2BebV8hlry2PKlY=;
-	b=0viyZsIxbM51bEsCpG9ji9cxODaBPPCvX2Tbnh5rQEFJYlDmczo56hXVZPFwdSdv9sn/XP
-	1y5+IGF/n/EnBuBk+ClE7AMKRKSNNAFC/AX7g7UztHiB2qkLmMQBV8JE2mxSjnKkf6iK9a
-	0ZH3sVw2d2nk0xFJ5AAL7kOEWyePa1Y7QInkc/y2bT4VoJJ/tP5nCkUnMuJokmhG0s/PWM
-	4dNI0yhhJ+RLxFhfzzkKMvUmZ0oeVvk9ekeAewc1wecbnDfMDwO6ncgYOhiBjFI8EctD7r
-	KWTPwmeBUtbLi/RbGHPeWe/u3atlm9XrENdkL8ewT7uUoqZc2ol0BQrepLpyFQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723537964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gcwMyVmIie1YHSkNUh7M2SXPnib/2BebV8hlry2PKlY=;
-	b=JPtvMgUtjEpnEdBBe9SVZ6DUyJzXW6jlXBVMIr3DgNKbLwmClsMa5+W5fsSjTZ0FP0nx08
-	OXtilZa4/LIY5xCQ==
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- linux-kernel@vger.kernel.org
-Cc: Herve Codina <herve.codina@bootlin.com>, Matti Vaittinen
- <mazziesaccount@gmail.com>, Mark Brown <broonie@kernel.org>, Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/2] irqdomain: Unify checks for bus_token
-In-Reply-To: <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
-References: <20240812193101.1266625-1-andriy.shevchenko@linux.intel.com>
- <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
-Date: Tue, 13 Aug 2024 10:32:44 +0200
-Message-ID: <87o75wrff7.ffs@tglx>
+	s=arc-20240116; t=1723538094; c=relaxed/simple;
+	bh=F2ez4MWPV74i5399D6eGZ2gkkUWIljQQtxoa0iFrZNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5WnMzitjA8cx47b3bVgGRa0PTZi71Us8Zmf+RlEDgvXRXNbAiwpShXVVloYsEln78uvTU6n1UKXpC9ZcrH5PCG5cgX/jkQzzOvzN+ACBpFdAwaXvCtWxyaDoJ/YV1OdC3fdFprlhV+M6077phs785emCjtfsnaiM1fLNbvuhoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kp9/Clgt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D22C4AF10;
+	Tue, 13 Aug 2024 08:34:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723538093;
+	bh=F2ez4MWPV74i5399D6eGZ2gkkUWIljQQtxoa0iFrZNQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kp9/ClgtJfrRdWXXg6YxB7jdL+KdKHZmQ7IB7FJ6nD0Mbgxp0k+IJ6QFOSEYDbj7p
+	 xIzCLtQq72nGKdxPMEH8fnwf/Q7aNG0lQPReJmKD2KkhojsmnFNZOIGsVFzCyK7mBt
+	 NNIMvowZUJupc60zYeLn6ysrtEHRh+NUexMjjsD8=
+Date: Tue, 13 Aug 2024 10:34:51 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: crwulff@gmail.com
+Cc: linux-usb@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Perr Zhang <perr@usb7.net>, Pavel Hofman <pavel.hofman@ivitera.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] usb: gadget: f_uac1: Change volume name and remove
+ alt names
+Message-ID: <2024081335-wrist-earpiece-a738@gregkh>
+References: <20240804002912.3293177-2-crwulff@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240804002912.3293177-2-crwulff@gmail.com>
 
-On Mon, Aug 12 2024 at 22:29, Andy Shevchenko wrote:
-> The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
-> Since bus_token is enum, the later is more robust against changes.
-> Unify all checks to follow the latter variant.
->
-> Fixes: 0b21add71bd9 ("irqdomain: Handle domain bus token in irq_domain_create()")
-> Fixes: 1bf2c9282927 ("irqdomain: Cleanup domain name allocation")
+On Sat, Aug 03, 2024 at 08:29:13PM -0400, crwulff@gmail.com wrote:
+> From: Chris Wulff <crwulff@gmail.com>
+> 
+> This changes the UAPI to align with disussion of alt settings work.
+> 
+> fu_name is renamed to fu_vol_name, and alt settings mode names
+> are removed for now in favor of future work where they will be
+> settable in subdirectories for each alt mode.
+> 
+> discussion thread for api changes for alt mode settings:
+> https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@ivitera.com/T/
 
-I'm fine with the change per se, but what does this fix? It's correct
-code, no?
+What is now going to break due to this change?  What userspace tools use
+the old names that need to be changed?
+
+Are you _SURE_ that you can rename external files like this and
+everything will keep on working?
+
+thanks,
+
+greg k-h
 
