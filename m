@@ -1,151 +1,83 @@
-Return-Path: <linux-kernel+bounces-284488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B50950188
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:49:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F6D95018A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F2DD28409D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 513B928465F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C336117D346;
-	Tue, 13 Aug 2024 09:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9AE189BAD;
+	Tue, 13 Aug 2024 09:49:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QUkL3zEq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5UqDRIY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DEE17D340
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:48:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDA5117CA12;
+	Tue, 13 Aug 2024 09:49:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542540; cv=none; b=ufvw/YXEEkaFJPtQuVDW6PNZnk1crM0hhy7SnxZ6yBlIIZjoucHsUWypXV6cKlaXCyU+oWHyXPWfLX+pyeXAHhYpViIiALQJuz4VNmOggtD85D51ejAj1Dexy+siJuUum3nXxRw4AlO4elV4X2pmoLGr/jMnO7DGMueoWp2U+Gw=
+	t=1723542546; cv=none; b=ef47nxhgN3aihZocSBBURE+bhcLrMTaVScHyv877BXhk22+GPTJlFOc/YlDruDS69zHQa8WyjBsOK/A4F4VxukbuKzzJ9uogLps8HMNHkv3GYb8UrW/n0ERzbdZ5/WGDeB3o8EWv9Tr7rByogv2EXC1ozQkwLFVHyfFcXihrf/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542540; c=relaxed/simple;
-	bh=BSZG1+5s/sE2Goac0r8lF5q5eqorj17xuKKmsD1eWlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYUYLnTYSbXqcLRcXfp0XsgYVrLtnKzTQO5hDQBie761nh4lZb8ggt+BIppo6WbgmmaDFCyO/DvaQnkDtWxidi7GYjD45JwJ6hs9MmKShoxT7FQUZwUicgretS/Z9cKCcKXwLr7skUqqsFIHPtBvKMenIZZDPRpXn/nRktNzIDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QUkL3zEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F371C4AF09;
-	Tue, 13 Aug 2024 09:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723542539;
-	bh=BSZG1+5s/sE2Goac0r8lF5q5eqorj17xuKKmsD1eWlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QUkL3zEql3jVC23iH1ASPrwUDBIhJzM3LSl/QZ1S8/r9qmkDmaNwE+cIuql5Qwiin
-	 eVGbG3ymEo0/0WeLzpgiY7B5kk+YnVvKuOCDoid5voI8S+k3/hpHlruWnC8W/Ngcyk
-	 +bkuDjewuXPnSZYCsvJfkgQnAh9m4ljlZ2n0gYgs=
-Date: Tue, 13 Aug 2024 11:48:51 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH 01/27] driver core: Constify driver API
- device_find_child()
-Message-ID: <2024081359-dart-transpire-8143@gregkh>
-References: <20240811-const_dfc_done-v1-0-9d85e3f943cb@quicinc.com>
- <20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com>
+	s=arc-20240116; t=1723542546; c=relaxed/simple;
+	bh=8fDU1EJcJbp7TqLl3KPDcjnqpz0sGS18/Q/mFMtTAOI=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=CCv5ptXQmte3FxVtlq3C6kOFAxKFdNrH22IsAMAdnugVAsl+84lPeDjFVzTj9p2HW2G5ywO0f4jNIOVRXonDxMnAZc0he16sQPck5zJpia1CiFgycVz7P6t7dsf9+HUrpmOK/XMNbDyMvz4tnReUH/anItI+q9XilgfS/YxZDeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J5UqDRIY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06BC1C4AF0B;
+	Tue, 13 Aug 2024 09:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723542546;
+	bh=8fDU1EJcJbp7TqLl3KPDcjnqpz0sGS18/Q/mFMtTAOI=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=J5UqDRIYrSqnZnnN51vSOy1K9u/n9mEdhrmO4KIzmIKSQYhBIjDtjkcX06m1AcDGL
+	 nsK/1eIBokVtGFJTdDCwsOPRh9pv/OK5zzkvP4BF7sPmkus4QCF9Fyz3tbsR1W3iiF
+	 3lejAbrrCvV6Q3VVWjXhMEEqwSzjXnsyYt7jB8ZFIjYwWR3AY0u7paJXMKK/Q7OxEp
+	 P5BdBV2rGxgO91IS2bGQnyXY/c2f4RzWGCScSWSbhgD8tPER40g5jiYCWqytnn0tGK
+	 vDljK26Qn3GjaS1SVcvhILYPW5Ajy/jzVqzdCb51u0H0SKjVBvFADwiePkc60EYrFT
+	 uZrDBTNDQzNSA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH wireless] wifi: mt76: mt7921: fix NULL pointer access in
+ mt7921_ipv6_addr_change
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20240812104542.80760-1-spasswolf@web.de>
+References: <20240812104542.80760-1-spasswolf@web.de>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: linux-wireless@vger.kernel.org, Bert Karwatzki <spasswolf@web.de>,
+ Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@kernel.org>,
+ deren.wu@mediatek.com, linux-mediatek@lists.infradead.org,
+ lorenzo.bianconi@redhat.com, mingyen.hsieh@mediatek.com,
+ sean.wang@mediatek.com, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <172354254201.696913.4098326996173451607.kvalo@kernel.org>
+Date: Tue, 13 Aug 2024 09:49:03 +0000 (UTC)
 
-On Sun, Aug 11, 2024 at 10:24:52AM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+Bert Karwatzki <spasswolf@web.de> wrote:
+
+> When disabling wifi mt7921_ipv6_addr_change() is called as a notifier.
+> At this point mvif->phy is already NULL so we cannot use it here.
 > 
-> Constify the following driver API:
-> struct device *device_find_child(struct device *dev, void *data,
-> 		int (*match)(struct device *dev, void *data));
-> to
-> struct device *device_find_child(struct device *dev, const void *data,
->                                  device_match_t match);
-> typedef int (*device_match_t)(struct device *dev, const void *data);
-> Since it should not modify caller's match data @*data.
-> 
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/base/core.c    | 11 +++--------
->  include/linux/device.h |  4 ++--
->  2 files changed, 5 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> index 3f3ebdb5aa0b..f152e0f8fb03 100644
-> --- a/drivers/base/core.c
-> +++ b/drivers/base/core.c
-> @@ -4062,8 +4062,8 @@ EXPORT_SYMBOL_GPL(device_for_each_child_reverse);
->   *
->   * NOTE: you will need to drop the reference with put_device() after use.
->   */
-> -struct device *device_find_child(struct device *parent, void *data,
-> -				 int (*match)(struct device *dev, void *data))
-> +struct device *device_find_child(struct device *parent, const void *data,
-> +				 device_match_t match)
->  {
->  	struct klist_iter i;
->  	struct device *child;
-> @@ -4108,11 +4108,6 @@ struct device *device_find_child_by_name(struct device *parent,
->  }
->  EXPORT_SYMBOL_GPL(device_find_child_by_name);
->  
-> -static int match_any(struct device *dev, void *unused)
-> -{
-> -	return 1;
-> -}
-> -
->  /**
->   * device_find_any_child - device iterator for locating a child device, if any.
->   * @parent: parent struct device
-> @@ -4124,7 +4119,7 @@ static int match_any(struct device *dev, void *unused)
->   */
->  struct device *device_find_any_child(struct device *parent)
->  {
-> -	return device_find_child(parent, NULL, match_any);
-> +	return device_find_child(parent, NULL, device_match_any);
->  }
->  EXPORT_SYMBOL_GPL(device_find_any_child);
->  
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index b2423fca3d45..76f10bdbb4ea 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -1073,8 +1073,8 @@ int device_for_each_child(struct device *dev, void *data,
->  			  int (*fn)(struct device *dev, void *data));
->  int device_for_each_child_reverse(struct device *dev, void *data,
->  				  int (*fn)(struct device *dev, void *data));
-> -struct device *device_find_child(struct device *dev, void *data,
-> -				 int (*match)(struct device *dev, void *data));
-> +struct device *device_find_child(struct device *dev, const void *data,
-> +				 device_match_t match);
->  struct device *device_find_child_by_name(struct device *parent,
->  					 const char *name);
->  struct device *device_find_any_child(struct device *parent);
-> 
-> -- 
-> 2.34.1
-> 
+> Signed-off-by: Bert Karwatzki <spasswolf@web.de>
+> Signed-off-by: Felix Fietkau <nbd@nbd.name>
 
-This patch breaks the build:
+Patch applied to wireless.git, thanks.
 
-./include/linux/device.h:1077:6: error: unknown type name 'device_match_t'
- 1077 |                                  device_match_t match);
-      |                                  ^
-1 error generated.
-make[2]: *** [scripts/Makefile.build:117: arch/x86/kernel/asm-offsets.s] Error 1
-make[1]: *** [/mnt/fast_t2/linux/work/driver-core/Makefile:1193: prepare0] Error 2
+479ffee68d59 wifi: mt76: mt7921: fix NULL pointer access in mt7921_ipv6_addr_change
 
-How did you test it?
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20240812104542.80760-1-spasswolf@web.de/
 
-And as you are changing the parameters here, doesn't the build break
-also because of that?
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-thanks,
-
-greg k-h
 
