@@ -1,189 +1,155 @@
-Return-Path: <linux-kernel+bounces-285548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C29950F67
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:59:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71691950F76
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CCF2856A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:59:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A35ACB247C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4421AAE24;
-	Tue, 13 Aug 2024 21:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3133B1AB507;
+	Tue, 13 Aug 2024 21:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZJxrfRsY"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m8vm42l5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535304CE05
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75151A7062;
+	Tue, 13 Aug 2024 21:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723586373; cv=none; b=Uf5Cjd8+IuDxtO6tJTjTD9cK6PqsczoNdN5VfJ38Vp1mVByDf2iJ+r+yhdlIpqQ5laUXK3kp+9m/9XG0gy/rE2fLwR7g7v8IrGnKbDP5zPPMlW6bPBn/5a/fWyM9NFoE3SK9tUeq8/8/7PTjTn2bfFkeVjiS5VmfnJow4Yi8VGA=
+	t=1723586387; cv=none; b=cxTLurdbiKOoWVK0qzqr0No7i/tmEJBjiCLOVCsEcNHc18Qw4L/WU11aNvwa+LQpbW8ebq33EbsitNb9ywhZ3hbHljQ6D/UdEkwn/pdiyHOkr1Ws/P73B+SOuyZtPGdsBi8QhMj3vQ80TMNM8vcMJOid+f8rzkIcH7YDg/NOYig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723586373; c=relaxed/simple;
-	bh=/utoQ7QhykoB3OmPAdObcVrX3Z1NvdQTn/S1AAQy0Rk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCHPIhdBfarfi9d0j+LV0NHSk1j00bKRV2huV5Qt3JHL3bV5sXtnvggGaZ429M6FDe2JZbulS3MRotPvRSOIn6Nq36cfAFEkGOko3NgqoZkN6Jj0HjpZwO8yXDnKdI6hMSEdUPSuGOWzjltzZ7vM/rpBTNUmumpjsfai+fwwmyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZJxrfRsY; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7b2dbd81e3so756552266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:59:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723586369; x=1724191169; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ue2knfvsIDz2WfMwE8l0p1USDW2XxsIyv+dv3fPEPdw=;
-        b=ZJxrfRsYhgXrfOnm6XkGbFX+kH3MaZscvOLRpECnKgR3OajPOPyyEtU4tpuXL5/OpF
-         gBrdhrjm25JKbIiOUGsHrfPSGelSlscSpWfEIQ/IbkAtqkGhU8kFh4LSboqbelg1e/bp
-         PYfvWJfVYpykq566ub+bIq1KW9pFWMFF+moemMm7rowHCjrY+i+4+/uKWiN8n8gdUn5K
-         aCdF0glRxzzU9OEEMZvL3lydKKhRdurt06FKu0AGvAZZx2ybshfMFVN6QHLQEZB/T/8D
-         +MW4kfRgp7xVofB44KxxPJ2s0+0UjCIAJYCCwEKigL08a6InAOJ0Tla+GxAqS30Xd5in
-         ydUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723586369; x=1724191169;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ue2knfvsIDz2WfMwE8l0p1USDW2XxsIyv+dv3fPEPdw=;
-        b=v/Qfzqt0Bo2plFt/7DldC6IUZjAUcks+ULMBilSuwQ3nOacgWXaGRZwxbouzMBVFPu
-         b+IH9ZLxf6RdwJD9LKOXQyO/+BCymFb7dsJSMJVcWBMl6beRyHlE4wrtCMzmZT98g2AN
-         CZcS1fTEOugQSHlWxT3O3ZNKR0ufRQVsQx8g+fZ+eOeslClqZYjNbetkv8zuCy7RnOjW
-         tm5EZfmyWuFV9GSbmkh+AOq7oCkgSKyMqlcNfGGD7lgv4pxHHebuHDK84PXVgk8uxT1h
-         TjB1mnQ5pN2qYV/s7esnyTBBve4CxAL/duTzUKZX+H5zV5IZy/oBnVlS3USPYQH7LlAo
-         H3Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJCHSsyuAozEn5ctAwSJo7AzMtTWFHyDj+ZtIQ/8mz7jW7rEBpJyc+spDs6Sav72H6mlgAAql283FmQehBsL7IJY+P4ojCrEjCqiXj
-X-Gm-Message-State: AOJu0Ywjh7fL5UvTIl8lz9pvvC/BYCvvxqUksulJGu0zdKwiwjG6wt/+
-	5s7K7CM9nDwgjAhB7W0m9BMu8wLeaN3/faZNegevid5PO8sRHnxoePkfb8Zde5aHJeDBDcxaj+j
-	QntB0nSYSAmTusQPTGPSpbrC7yt3XSYqIlxLE
-X-Google-Smtp-Source: AGHT+IEBRN1K/plIqsXb/K1MyLsFF+JdwEJJrbd5ljEbZT4hYhRrTUCF07gzxpJnAS2CZizqvknI2SOE39UIDkrMt84=
-X-Received: by 2002:a17:906:d7d2:b0:a77:f2c5:84bf with SMTP id
- a640c23a62f3a-a8366c2f1eamr54414566b.2.1723586368927; Tue, 13 Aug 2024
- 14:59:28 -0700 (PDT)
+	s=arc-20240116; t=1723586387; c=relaxed/simple;
+	bh=smDF0r7mvpJmOBP+6nWfU55YrbMwWFuJ1tY+3DSe/84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TTdXC+tLzhtHlyWS3lJ7xdB2LlkAjGVyFA+a2NlSOeX9x9iCPzpxO1mZCoxgM2qonQZqxzhIb5lGQdBh282RgZpyjz3tHPOUCs2v8efk4NPISsSK1SF7T9eGRyNdSoHDQHpunZuwZRAmMrGTvgr1TBn2StKnk9ULXHpng4O36rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m8vm42l5; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723586386; x=1755122386;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=smDF0r7mvpJmOBP+6nWfU55YrbMwWFuJ1tY+3DSe/84=;
+  b=m8vm42l5ddhRTLPa9UUzhGCtYZjYC/5haVGXggF1h1gr8Tk++gwPDQfv
+   gsYu28GRARuVSqXOFZ8ao/BZJHrBX98QvKzV09OqP/jS++CTReBG0hrrl
+   7HVNh3G4faKGYI3sc9qG2DpOdN3xDNLSuSp5mPgg0CaFpxiZRKhDG1ZtB
+   l6F/zoImg1XiF0NdEaeKlINpoEMeuXHdhhqgZKwg1OmKNKo0LXTmFOOAk
+   g2CM2DqrDS2/iHCdx5HMAdbE/vzjkj6YGS6ucDewmpO6ZSMbH/ODwkFmd
+   GJSOWWFzZfmZLh8c8g9dzX4VyHkJ6VsgR2W15dKTcHpp5/XZYcTTruDXd
+   Q==;
+X-CSE-ConnectionGUID: kzC8W+ssTBu1VdBDr78HOg==
+X-CSE-MsgGUID: LUJ6TVsgRfamhawVT2cuIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="33185787"
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="33185787"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 14:59:45 -0700
+X-CSE-ConnectionGUID: czxnPOqVQaaAwqDB554ucw==
+X-CSE-MsgGUID: ho2IFztlTnWPog2fiZlSQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,287,1716274800"; 
+   d="scan'208";a="58737265"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 13 Aug 2024 14:59:40 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdzYH-0000kA-2n;
+	Tue, 13 Aug 2024 21:59:37 +0000
+Date: Wed, 14 Aug 2024 05:59:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Hui-Ping Chen <hpchen0nvt@gmail.com>, miquel.raynal@bootlin.com,
+	richard@nod.at, vigneshr@ti.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, sumit.semwal@linaro.org,
+	christian.koenig@amd.com, esben@geanix.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: Re: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+Message-ID: <202408140515.pbHkvxZD-lkp@intel.com>
+References: <20240812030045.20831-3-hpchen0nvt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240813215358.2259750-1-shakeel.butt@linux.dev>
-In-Reply-To: <20240813215358.2259750-1-shakeel.butt@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 13 Aug 2024 14:58:51 -0700
-Message-ID: <CAJD7tkbm6GxVpRo+9fBreBJxJ=VaQbFoc6PcnQ+ag5bnvqE+qA@mail.gmail.com>
-Subject: Re: [PATCH v2] memcg: use ratelimited stats flush in the reclaim
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Muchun Song <muchun.song@linux.dev>, Jesper Dangaard Brouer <hawk@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Meta kernel team <kernel-team@meta.com>, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812030045.20831-3-hpchen0nvt@gmail.com>
 
-On Tue, Aug 13, 2024 at 2:54=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
-v> wrote:
->
-> The Meta prod is seeing large amount of stalls in memcg stats flush
-> from the memcg reclaim code path. At the moment, this specific callsite
-> is doing a synchronous memcg stats flush. The rstat flush is an
-> expensive and time consuming operation, so concurrent relaimers will
-> busywait on the lock potentially for a long time. Actually this issue is
-> not unique to Meta and has been observed by Cloudflare [1] as well. For
-> the Cloudflare case, the stalls were due to contention between kswapd
-> threads running on their 8 numa node machines which does not make sense
-> as rstat flush is global and flush from one kswapd thread should be
-> sufficient for all. Simply replace the synchronous flush with the
-> ratelimited one.
->
-> One may raise a concern on potentially using 2 sec stale (at worst)
-> stats for heuristics like desirable inactive:active ratio and preferring
-> inactive file pages over anon pages but these specific heuristics do not
-> require very precise stats and also are ignored under severe memory
-> pressure.
->
-> More specifically for this code path, the stats are needed for two
-> specific heuristics:
->
-> 1. Deactivate LRUs
-> 2. Cache trim mode
->
-> The deactivate LRUs heuristic is to maintain a desirable inactive:active
-> ratio of the LRUs. The specific stats needed are WORKINGSET_ACTIVATE*
-> and the hierarchical LRU size. The WORKINGSET_ACTIVATE* is needed to
-> check if there is a refault since last snapshot and the LRU size are
-> needed for the desirable ratio between inactive and active LRUs. See the
-> table below on how the desirable ratio is calculated.
->
-> /* total     target    max
->  * memory    ratio     inactive
->  * -------------------------------------
->  *   10MB       1         5MB
->  *  100MB       1        50MB
->  *    1GB       3       250MB
->  *   10GB      10       0.9GB
->  *  100GB      31         3GB
->  *    1TB     101        10GB
->  *   10TB     320        32GB
->  */
->
-> The desirable ratio only changes at the boundary of 1 GiB, 10 GiB,
-> 100 GiB, 1 TiB and 10 TiB. There is no need for the precise and accurate
-> LRU size information to calculate this ratio. In addition, if
-> deactivation is skipped for some LRU, the kernel will force deactive on
-> the severe memory pressure situation.
->
-> For the cache trim mode, inactive file LRU size is read and the kernel
-> scales it down based on the reclaim iteration (file >> sc->priority) and
-> only checks if it is zero or not. Again precise information is not
-> needed.
->
-> This patch has been running on Meta fleet for several months and we have
-> not observed any issues. Please note that MGLRU is not impacted by this
-> issue at all as it avoids rstat flushing completely.
->
-> Link: https://lore.kernel.org/all/6ee2518b-81dd-4082-bdf5-322883895ffc@ke=
-rnel.org [1]
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+Hi Hui-Ping,
 
-Just curious, does Jesper's patch help with this problem?
+kernel test robot noticed the following build warnings:
 
-> ---
-> Changes since v1:
-> - Updated the commit message.
->
->  mm/vmscan.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 008b62abf104..82318464cd5e 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -2282,10 +2282,11 @@ static void prepare_scan_control(pg_data_t *pgdat=
-, struct scan_control *sc)
->         target_lruvec =3D mem_cgroup_lruvec(sc->target_mem_cgroup, pgdat)=
-;
->
->         /*
-> -        * Flush the memory cgroup stats, so that we read accurate per-me=
-mcg
-> -        * lruvec stats for heuristics.
-> +        * Flush the memory cgroup stats in rate-limited way as we don't =
-need
-> +        * most accurate stats here. We may switch to regular stats flush=
-ing
-> +        * in the future once it is cheap enough.
->          */
-> -       mem_cgroup_flush_stats(sc->target_mem_cgroup);
-> +       mem_cgroup_flush_stats_ratelimited(sc->target_mem_cgroup);
->
->         /*
->          * Determine the scan balance between anon and file LRUs.
-> --
-> 2.43.5
->
+[auto build test WARNING on mtd/nand/next]
+[also build test WARNING on linus/master v6.11-rc3 next-20240813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Hui-Ping-Chen/dt-bindings-mtd-nuvoton-ma35d1-nand-add-new-bindings/20240812-110259
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
+patch link:    https://lore.kernel.org/r/20240812030045.20831-3-hpchen0nvt%40gmail.com
+patch subject: [PATCH 2/2] mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
+config: arc-randconfig-r133-20240813 (https://download.01.org/0day-ci/archive/20240814/202408140515.pbHkvxZD-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20240814/202408140515.pbHkvxZD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408140515.pbHkvxZD-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:119:3: sparse: sparse: symbol 'E_BCHALGORITHM' was not declared. Should it be static?
+>> drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:333:28: sparse: sparse: cast removes address space '__iomem' of expression
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:348:39: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:746:41: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *register ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:746:41: sparse:     expected char *register ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:746:41: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:760:18: sparse: sparse: cast removes address space '__iomem' of expression
+>> drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:774:32: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:774:32: sparse:     expected char *ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:774:32: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:813:32: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:813:32: sparse:     expected char *ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:813:32: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *register ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     expected char *register ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *register ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     expected char *register ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *register ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     expected char *register ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     got void [noderef] __iomem *
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected char *register ptr @@     got void [noderef] __iomem * @@
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     expected char *register ptr
+   drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c:516:49: sparse:     got void [noderef] __iomem *
+
+vim +/E_BCHALGORITHM +119 drivers/mtd/nand/raw/nuvoton_ma35d1_nand.c
+
+   111	
+   112	/* BCH algorithm related constants and variables */
+   113	enum {
+   114		eBCH_NONE = 0,
+   115		eBCH_T8,
+   116		eBCH_T12,
+   117		eBCH_T24,
+   118		eBCH_CNT
+ > 119	} E_BCHALGORITHM;
+   120	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
