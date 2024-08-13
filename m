@@ -1,39 +1,74 @@
-Return-Path: <linux-kernel+bounces-284905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27B7F950695
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:35:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE74595069B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:36:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6BD92886C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE2E288F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C734419DF68;
-	Tue, 13 Aug 2024 13:34:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5945219DF51;
-	Tue, 13 Aug 2024 13:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE3A19B5BC;
+	Tue, 13 Aug 2024 13:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XLlAF8HK"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F25199E82;
+	Tue, 13 Aug 2024 13:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556050; cv=none; b=VcVqTDXIyh1e3DOcW4jLzfFhA9YrzDv6EdGtgnJxPsaS/FpBOEtSJKCg6W7wOO+yYmKkIQwOhiAOaoGwpRjzRKByFPw8kwx0xbonSycY7lLriRwtpakQFF5iGjTaVShYp0AghVx4zlfxYqKCzlObBxaS8CLnn2sN1VD+1NH0OgQ=
+	t=1723556163; cv=none; b=K2N1rHLjNujCjgGt1wZRPKGclmDkvS0omSJFZMGahLhVgJYKN5Nrp7PKdYh64a4nuAPrDfPROKUXK56eGQKd3mb8FrCiKLRt/Xv9nw1lo/WTnKHw/H0fXQlQmAvjMN1Kmy0WdWZysMCMYx7YjisBAXi5yD26zR78lc4UG1nhoYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556050; c=relaxed/simple;
-	bh=lU2SQ94URlj66gon0D6KadISJnb6ovZPlwcfEoHfkFk=;
+	s=arc-20240116; t=1723556163; c=relaxed/simple;
+	bh=Gkg0BwLnMk3aPALRTPUQuNCSk3s0d/bldCGAaKSAMOQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PdasFPZXoyzRGfIE5FA5CVOz/j32LfWCxZevM4lkg1bmqfZmjXn/97RaqzoCjbVEDUVtU3SIZd3TOwuJ+1kgkmr1LJt+OcHZrY7brbQ8R5DuxQKP0eDvQInUUF6ehik2JRn9dTGt8fyfVQcKox1AiWakHMJ0wylRzfPdj5oJTYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D515E12FC;
-	Tue, 13 Aug 2024 06:34:33 -0700 (PDT)
-Received: from [10.57.84.20] (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2029B3F6A8;
-	Tue, 13 Aug 2024 06:34:05 -0700 (PDT)
-Message-ID: <459ae1ee-d114-4fdc-b728-33bde5d08e24@arm.com>
-Date: Tue, 13 Aug 2024 14:34:04 +0100
+	 In-Reply-To:Content-Type; b=NzH40i3UAAZMn3PRATLXQzB7mLaFLEK0VddujYIteVX80X+QaYkncGLGj1JqNfkj9QliqQT1bWDQxQMV7F4NHXAhjiWa14ll/LQQXwbpHZT6qPwyhfTgNcHeOoA1Z3n2KsUG0qbd+tK435FESZij/J9ODqFBmbvkQNSjbpHW97M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XLlAF8HK; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D3wN7K015926;
+	Tue, 13 Aug 2024 13:35:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=3
+	lJ7ufApJ3WrBKr2+j4OA0WfYzY72XZhoVhPSoAYrm8=; b=XLlAF8HKz5jfRPG14
+	yQq5GzUUTDuua0V6C5yKyyFH556RsBne2j2ZL0UXq7qsjXtxnQUwrAz4msgqO1IK
+	UFRg++dNQFV4QM+ilcIoD9CQZCqP5TMMmnW6gKrVnAPdpiUi5Glqpth3lWAiaKmB
+	jXWjzidFNmGXKP5TC1amx7xyI57Kzm8sV2/uhTtuNtMq1mXhlVzd8VZtWNWb2JHI
+	Vm2EkNErZutWtJiD1DD+cSAgdCzYgmgiwwzxMNEFQ65zCtf4FsWQnLr2WJz1XFDQ
+	BhTd/VKdMaBRtw/uYiGwk4ggqaelr4fcauKyqyRzqrAZOE2fKrgu192RImna6Giy
+	bhqGA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40xr5de7qr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 13:35:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DBukL4016309;
+	Tue, 13 Aug 2024 13:35:54 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 40xkhpksqy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 13:35:54 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DDZn3B55443766
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 13:35:51 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF93A20043;
+	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A309720040;
+	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
+Received: from [9.171.22.151] (unknown [9.171.22.151])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 13 Aug 2024 13:35:48 +0000 (GMT)
+Message-ID: <221ba279-e48b-4002-9530-c6186e3e8042@linux.ibm.com>
+Date: Tue, 13 Aug 2024 15:35:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,123 +76,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/cpufreq: Use USEC_PER_SEC for deadline task
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>,
- Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>
-References: <3c726cf5-0c94-4cc6-aff0-a453d840d452@arm.com>
- <20240809012410.marjxrio3sjequnn@airbuntu>
- <ZrXIb7BFOWY11DKt@jlelli-thinkpadt14gen4.remote.csb>
- <CAKfTPtD_QzYVeTbQ-j2mOsKmCcjUaxo403M_HYCWbT2RjjGb7w@mail.gmail.com>
- <25da50cb-776f-42db-9821-e86a441259c0@arm.com>
- <ZrtdYXW2VullBiop@jlelli-thinkpadt14gen4.remote.csb>
+Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
 Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <ZrtdYXW2VullBiop@jlelli-thinkpadt14gen4.remote.csb>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>,
+        linux-s390@vger.kernel.org
+References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
+ <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
+ <2024081331-bonnet-fiftieth-9a14@gregkh>
+ <your-ad-here.call-01723549827-ext-8444@work.hours>
+ <2024081319-patriarch-brutishly-653f@gregkh>
+From: Alexandra Winter <wintera@linux.ibm.com>
+In-Reply-To: <2024081319-patriarch-brutishly-653f@gregkh>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: jGnAHsZNFOB64koH2_Q4V5dsY3Bu2YNu
+X-Proofpoint-GUID: jGnAHsZNFOB64koH2_Q4V5dsY3Bu2YNu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_05,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxlogscore=999 adultscore=0 spamscore=0 impostorscore=0 clxscore=1011
+ lowpriorityscore=0 malwarescore=0 priorityscore=1501 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130098
 
-On 8/13/24 14:19, Juri Lelli wrote:
-> On 13/08/24 11:17, Christian Loehle wrote:
->> On 8/13/24 08:54, Vincent Guittot wrote:
->>> On Fri, 9 Aug 2024 at 09:42, Juri Lelli <juri.lelli@redhat.com> wrote:
->>>>
->>>> On 09/08/24 02:24, Qais Yousef wrote:
->>>>> Adding more sched folks to CC
->>>>>
->>>>> On 08/06/24 14:41, Christian Loehle wrote:
->>>>>> Convert the sugov deadline task attributes to use the available
->>>>>> definitions to make them more readable.
->>>>>> No functional change.
->>>>>>
->>>>>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->>>>>> ---
->>>>>>  kernel/sched/cpufreq_schedutil.c | 6 +++---
->>>>>>  1 file changed, 3 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
->>>>>> index eece6244f9d2..012b38a04894 100644
->>>>>> --- a/kernel/sched/cpufreq_schedutil.c
->>>>>> +++ b/kernel/sched/cpufreq_schedutil.c
->>>>>> @@ -654,9 +654,9 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
->>>>>>              * Fake (unused) bandwidth; workaround to "fix"
->>>>>>              * priority inheritance.
->>>>>>              */
->>>>>> -           .sched_runtime  =  1000000,
->>>>>> -           .sched_deadline = 10000000,
->>>>>> -           .sched_period   = 10000000,
->>>>>> +           .sched_runtime  = USEC_PER_SEC,
->>>>>> +           .sched_deadline = 10 * USEC_PER_SEC,
->>>>>> +           .sched_period   = 10 * USEC_PER_SEC,
->>>>>
->>>>> I think NSEC_PER_MSEC is the correct one. The units in
->>>>> include/uapi/linux/sched/types.h is not specified. Had to look at
->>>>> sched-deadline.rst to figure it out.
->>
->> Huh, that's what I used, see below.
->>
->>>>
->>>> In practice it's the same number :). But, you are correct, we want
->>>> 1ms/10ms and unit is nanoseconds, so NSEC_PER_MSEC.
+
+
+On 13.08.24 14:43, Greg Kroah-Hartman wrote:
+>>> I don't understand, why can't dev_set_name() be called here?
 >>>
->>> Yes NSEC_PER_MSEC is the correct unit
->>
->> Thank you Qais, Juri and Vincent, but if I'm not missing something we
->> have a contradiction.
->> This patch should indeed be NSEC_PER_MSEC and I'll send a v2 but:
->> - Documentation/scheduler/sched-deadline.rst talks about microseconds:
->> SCHED_DEADLINE [18] uses three parameters, named "runtime", "period", and
->>  "deadline", to schedule tasks. A SCHED_DEADLINE task should receive
->>  "runtime" microseconds of execution time every "period" microseconds, and
->>  these "runtime" microseconds are available within "deadline" microseconds
->>  from the beginning of the period.
->>
->> - sched_setattr / sched_getattr manpages talks about nanoseconds:
->>        sched_deadline
->>               This field specifies the "Deadline" parameter for deadline
->>               scheduling.  The value is expressed in nanoseconds.
->>
->> - include/uapi/linux/sched/types.h doesn't mention any unit.
->> I will add that to the v2 series.
->>
->> - kernel/sched/deadline.c works with nanoseconds internally (although
->> with the precision limitation in microseconds).
->>
->> No conversion so
->> attr->sched_deadline (uapi) == dl_se->dl_deadline (kernel) etc.
->> So Documentation/scheduler/sched-deadline.rst is false or what is it that
->> I'm missing?
->>
+[...]
 > 
-> As you say above, internal resolution is essentially down to 1us
-> (microsecond) and we also check that parameters are at least 1us or
-> bigger [1].
+> But step back, why is this needed at all anyway?  No other subsystem or
+> driver needs/wants this, what makes this api so special?  Why not figure
+> out your name beforehand?
 > 
-> syscalls and internal mechanics work with nanoseconds, but I don't think
-> this is a contradiction.
-> 
-> 1 - https://elixir.bootlin.com/linux/v6.10.4/source/kernel/sched/deadline.c#L3065
-> 
+> thanks,
 
-All good then you reckon?
-Still the part about schedtool is wrong:
 
--->8--
+Vasily, the following update to Heiko's patch does not touch lib/kobject.c
+According to a quick test it still solves the original issue and does compile
+with W=1 and iucv as a module.
 
-diff --git a/Documentation/scheduler/sched-deadline.rst b/Documentation/scheduler/sched-deadline.rst
-index 9fe4846079bb..f7475d101e7a 100644
---- a/Documentation/scheduler/sched-deadline.rst
-+++ b/Documentation/scheduler/sched-deadline.rst
-@@ -759,7 +759,7 @@ Appendix A. Test suite
-   # schedtool -E -t 10000000:100000000 -e ./my_cpuhog_app
- 
-  With this, my_cpuhog_app is put to run inside a SCHED_DEADLINE reservation
-- of 10ms every 100ms (note that parameters are expressed in microseconds).
-+ of 10ms every 100ms (note that parameters are expressed in nanoseconds).
-  You can also use schedtool to create a reservation for an already running
-  application, given that you know its pid::
- 
+diff --git a/net/iucv/iucv.c b/net/iucv/iucv.c
+index 64102a31b569..6a819ba4ccab 100644
+--- a/net/iucv/iucv.c
++++ b/net/iucv/iucv.c
+@@ -86,13 +86,17 @@ struct device *iucv_alloc_device(const struct attribute_group **attrs,
+ {
+        struct device *dev;
+        va_list vargs;
++       char buf[20];
+        int rc;
+
+        dev = kzalloc(sizeof(*dev), GFP_KERNEL);
+        if (!dev)
+                goto out_error;
+        va_start(vargs, fmt);
+-       rc = kobject_set_name_vargs(&dev->kobj, fmt, vargs);
++       rc = vsnprintf(buf, 20, fmt, vargs);
++       if (!rc)
++               rc = dev_set_name(dev, buf);
+        va_end(vargs);
+        if (rc)
+                goto out_error;
+
+
+
+Maybe Greg has somethign like this in mind?
 
