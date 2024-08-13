@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-284594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94A8C9502F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:52:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A5D9502F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52782286220
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:52:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4FBD1C221AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211C219D066;
-	Tue, 13 Aug 2024 10:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4150419D091;
+	Tue, 13 Aug 2024 10:51:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQN+FPPg"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B1MerMkW"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B3819CCF2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E79F19CD0A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546311; cv=none; b=iuxaW09731bo/s0NbxLP//sUvFo45nXJ14upADwTRBN3AtBygKIdWwWvTlLAFhJx94mR61IIRPiOLfTCXBXm6DzosJpKdEUrQoduDWmwfnnNobRhdXoyxiVtL7rsdlKe5K7SswwpVTih/s/BY13cL+6CGWZaazqxmhFA3j/IUus=
+	t=1723546313; cv=none; b=i+G1axXDDfy5RXEgmQuYYTfwFmr6bo+sxXWxvelJpqumAOyvtPSDBgLyiez96RTMejoVjBgzSJ995hZqVVmPNv7TbI2drNoTthLtG59Df2ODe9ZvlRZ+PxxVXlNgMwy9xOcL5BtVOa2dEMfcCmQF+l5JnpTy0iZ9Rgf7ZtVHIMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546311; c=relaxed/simple;
-	bh=5VTbR7iPQ9XE5cd0WXphMMLzFTYPblcphuvT2F/YhTQ=;
+	s=arc-20240116; t=1723546313; c=relaxed/simple;
+	bh=IEbzy0xiW/7I/kkCdKp6/fuhTTcrQvU7IOcSqo0GqmE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K0Gb9t02Z85x3YI2P+yU9Qrsf99Mb+Db7IuK5Y+7Hb84X/kZoRr3zeLg/d9XQ2sizhMhF9vqN3PRC3rI34dLOhoCaHA3VIKnzXa3uuJUqOTkjtFS0OHiLykYxukPXuvt14Y9vvuNMQHLufpG5Bqeoz8KATSb6wXHkMTvIFEh2Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQN+FPPg; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version:Content-Type; b=of4vMOF4diJj8oXSPUhZvXFgY29K8XnbPiBEBy2IpJhBLPBMHWiEz/sOGCvjC06vL82MZJ4EjBI4PQdf4PAffeBA3o+Tl2A0geLxIWF1qkWFi7z87pflAy0Jh88h7p/KsKRXKiKVtz8edWELz4IION5xlfsocxF7X+rCPCfcHbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B1MerMkW; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-429d2d7be1eso9210345e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:51:49 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01afa11cso6533752e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:51:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723546308; x=1724151108; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1723546309; x=1724151109; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yPJvcbH5lYbi1tdr48EenmYPKkhD5TMeNHQFHVN3Exg=;
-        b=AQN+FPPg/sbUKGcRfKikr/NhfH9ppc51WHRR4FBK9tMaMW8o1JQluzQ0FFHbcUJVyx
-         so8+/qHm2X1S2vFNV0vSA4vC8JFHGyfRIt04Nqo4QLg2Ao0Bbk7QPZ7yA70vIIjJ7EdD
-         F0LJwxp0P+8rQzkYytwqxnoY20+oaMDgwkhe3xQ5AKNXR5je7wdEBPwyyh2GrFaBWLI8
-         1F5jMPEWJqGc8JXJs8K9xyJL09rxeG6l3yIZh0umT5dS1icnNqJF6vX4HMx6ZFIPDqMd
-         xydWoFIjp1JljpAouLf9ERYcVvYxeFushwsLeaZ25vvQB003uNZy0iBSmtvDAuug0Rf8
-         MQXQ==
+        bh=z1b1Eswx9qL8T6Rd6UW0NQch1ATeb/MIAR8sy8FcP0k=;
+        b=B1MerMkWpGwJsV2Maw99U9QckYDjO780MtYxW5UePmpwoFZ9te2Xanxa0BYWglSJ5C
+         rJJUREx6TxmoIK7FQrZlk41NudSDE5bnyfLK/uKxdxP4i1pXNmioPGrvwPJBiVoWFQXY
+         H7/MItszdVxFBUWV6nkx2XdEVaW/7EGj7Ru72kwpsLfzd1gm41/SRiAGTnUd9BsMo/IG
+         bW1M1mv16IkbD+/mgcDtwEQzo3ai4ZhkbsVRC/dJ+Ujwu+6l6EGD1gLn1A+ayDCmTYS2
+         0BBHt/XE+ADXwultC+SmKNNB0q5eyvFtTlytbkbpu78/s0bmjBW2TKEzSKvCvXFiudZY
+         rsDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723546308; x=1724151108;
+        d=1e100.net; s=20230601; t=1723546309; x=1724151109;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yPJvcbH5lYbi1tdr48EenmYPKkhD5TMeNHQFHVN3Exg=;
-        b=a4XjidlhQb8UhDqF4PDbpllm+zYDTYqaSo5D2PLSNSx5FJYQwLTTyN1d30e5BcdUBd
-         CfchnfdR/pLVVwjuLWEFg7aOQcI1OfN5lliodvjIgiUGa4eVghMeOeFsntDj1s1q2ZLa
-         BdvVklfk0StXJJcIB1/s6nYlfZvG+/z935q5yf67p08C1ApG9NRmgcc5nIMafkbr380Z
-         t8c4Lds8ZZESXgy+lGw21xfEcdfHDNN2g+CKgQm+IBlvpQBeId59/DXaKPfdDeLwLRBw
-         3OMypGHFkDeweIJdulENje5xwYVddic9iIidHyRI0OpllXYxDeVfT6Ey94KYDBRuFHz9
-         hDLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZhVP7i5XmoUj7ulVaR/9O5fYFxlnwcMWpPxmFhtAr2/HOxEdxF3/lJhMO1efOhIL35DKZu0e6rOEQFrQd5tnG1SRsqf70eUrpzFvE
-X-Gm-Message-State: AOJu0YwyF+Q+7alIZ8W5GajnMySeUiQwp2sRDgU64uLbC7Ufn7O8Eg0R
-	oGI3gB0dQwub1zNlVc9Gc3yzr3hz/RMOv33lp+aMw5f7hFH800G4
-X-Google-Smtp-Source: AGHT+IHcFaaF5NVEVnvtNiV476r9AqohxbQTNIubIsJ2CbGH8C94GlKmoddxaTxdje9PNBr2TQhbQA==
-X-Received: by 2002:a05:600c:1c17:b0:426:6981:1bd with SMTP id 5b1f17b1804b1-429d6280c76mr19765785e9.5.1723546307600;
-        Tue, 13 Aug 2024 03:51:47 -0700 (PDT)
+        bh=z1b1Eswx9qL8T6Rd6UW0NQch1ATeb/MIAR8sy8FcP0k=;
+        b=gDRRU6kHgJLRfjJjbki0Sv5xnfKJjrnoKG3/CRBaAbuXYsvk4gxWX8layaTpZF6wuN
+         I5UDwxcBypxS7IFNirvTjffrF+zJ7PI+yWDyt3A7SMTYS+T1YuZveh2VqjDTPmO7WKSG
+         d4pbmayJ72fnua/FvZY0TNSyYcnLyF4bTjGLmhRwPcEZHqY0pMm56zOMzlX/q0xZSMi6
+         2aVnlin/iVelYugnW6bk+rAIFFnGj/Lw9Pu4ug9XevevtBews3623PDysWW3RdEX1MWU
+         EVNi293tJY9mDJEcghl9dpQrkyoBwIuz0a9LfNij9nOnvE0NkMsRYNcRjpSdY4FBEZfc
+         GcWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAnwa+gMhe8hld5ln1ANvc7nKgOxY0KkBPzeqeSRrCPyY8BuAtUnLR/xz3tTymi0epRNuKdjVeYrZJ4XfPMSHxnEuzVPCB3hfHrVdV
+X-Gm-Message-State: AOJu0Ywv4VNUOvFwpm3cyz8qL6bAGhWr4FvRraUUxaaipRN9O2vFTdVj
+	48wIUHvCNENBi7ApRdehK92LcuxM5LhpibxONCvCxwffPav0bl1d
+X-Google-Smtp-Source: AGHT+IHDMdoPIt0vDtMzdf2vnVHY+f/UlarsLfOsG/b/9vpdwiWF/yN55OgcMzvIyUbn7rGva+IR1w==
+X-Received: by 2002:a05:6512:1592:b0:52b:bf8e:ffea with SMTP id 2adb3069b0e04-532136840a4mr1940424e87.40.1723546308846;
+        Tue, 13 Aug 2024 03:51:48 -0700 (PDT)
 Received: from fedora.. ([213.94.26.172])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm17290785e9.1.2024.08.13.03.51.46
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d877e066sm17290785e9.1.2024.08.13.03.51.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 03:51:46 -0700 (PDT)
+        Tue, 13 Aug 2024 03:51:48 -0700 (PDT)
 From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
 To: rodrigosiqueiramelo@gmail.com
 Cc: melissa.srw@gmail.com,
@@ -80,9 +80,9 @@ Cc: melissa.srw@gmail.com,
 	linux-kernel@vger.kernel.org,
 	louis.chauvet@bootlin.com,
 	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
-Subject: [RFC PATCH 07/17] drm/vkms: Use managed memory to create connectors
-Date: Tue, 13 Aug 2024 12:44:18 +0200
-Message-ID: <20240813105134.17439-8-jose.exposito89@gmail.com>
+Subject: [RFC PATCH 08/17] drm/vkms: Allow to configure multiple connectors
+Date: Tue, 13 Aug 2024 12:44:19 +0200
+Message-ID: <20240813105134.17439-9-jose.exposito89@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20240813105134.17439-1-jose.exposito89@gmail.com>
 References: <20240813105134.17439-1-jose.exposito89@gmail.com>
@@ -95,130 +95,186 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-A future patch will allow to create multiple connectors. Use managed
-memory to simplify the code.
+Add a list of connector configurations to vkms_config and add as many
+connector as configured during output initialization.
 
-Refactor, no functional changes.
+For backwards compatibility, create a single connector in the default
+configuration.
 
 Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 ---
- drivers/gpu/drm/vkms/vkms_drv.h    |  5 ---
- drivers/gpu/drm/vkms/vkms_output.c | 53 +++++++++++++++++-------------
- 2 files changed, 31 insertions(+), 27 deletions(-)
+ drivers/gpu/drm/vkms/vkms_config.c | 40 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_config.h | 12 +++++++++
+ drivers/gpu/drm/vkms/vkms_output.c | 11 +++++---
+ 3 files changed, 59 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-index 2466e8b0231f..cac37d21654a 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.h
-+++ b/drivers/gpu/drm/vkms/vkms_drv.h
-@@ -121,14 +121,9 @@ struct vkms_crtc {
+diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+index 6a8dfebee24e..a456f9db3c66 100644
+--- a/drivers/gpu/drm/vkms/vkms_config.c
++++ b/drivers/gpu/drm/vkms/vkms_config.c
+@@ -19,6 +19,7 @@ struct vkms_config *vkms_config_create(char *dev_name)
+ 	config->dev_name = dev_name;
+ 	config->crtcs = (struct list_head)LIST_HEAD_INIT(config->crtcs);
+ 	config->encoders = (struct list_head)LIST_HEAD_INIT(config->encoders);
++	config->connectors = (struct list_head)LIST_HEAD_INIT(config->connectors);
  
- struct vkms_config;
+ 	return config;
+ }
+@@ -30,6 +31,7 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+ 	struct vkms_config *config;
+ 	struct vkms_config_crtc *crtc_cfg;
+ 	struct vkms_config_encoder *encoder_cfg;
++	struct vkms_config_connector *connector_cfg;
  
--struct vkms_output {
--	struct drm_connector connector;
--};
--
- struct vkms_device {
- 	struct drm_device drm;
- 	struct platform_device *platform;
--	struct vkms_output output;
- 	struct list_head crtcs;
- 	const struct vkms_config *config;
- };
-diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
-index 7afe37aea52d..4413cf88afc7 100644
---- a/drivers/gpu/drm/vkms/vkms_output.c
-+++ b/drivers/gpu/drm/vkms/vkms_output.c
-@@ -9,7 +9,6 @@
+ 	config = vkms_config_create(DEFAULT_DEVICE_NAME);
+ 	if (IS_ERR(config))
+@@ -46,6 +48,10 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+ 	if (IS_ERR(encoder_cfg))
+ 		return ERR_CAST(encoder_cfg);
  
- static const struct drm_connector_funcs vkms_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = drm_connector_cleanup,
- 	.reset = drm_atomic_helper_connector_reset,
- 	.atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-@@ -29,6 +28,33 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
- 	.get_modes    = vkms_conn_get_modes,
- };
++	connector_cfg = vkms_config_add_connector(config, BIT(0));
++	if (IS_ERR(connector_cfg))
++		return ERR_CAST(connector_cfg);
++
+ 	return config;
+ }
  
-+static struct drm_connector *vkms_connector_init(struct vkms_device *vkms_device,
-+						 uint32_t possible_encoders)
+@@ -53,6 +59,7 @@ void vkms_config_destroy(struct vkms_config *config)
+ {
+ 	struct vkms_config_crtc *crtc_cfg, *crtc_tmp;
+ 	struct vkms_config_encoder *encoder_cfg, *encoder_tmp;
++	struct vkms_config_connector *connector_cfg, *connector_tmp;
+ 
+ 	list_for_each_entry_safe(crtc_cfg, crtc_tmp, &config->crtcs, list)
+ 		vkms_config_destroy_crtc(config, crtc_cfg);
+@@ -60,6 +67,9 @@ void vkms_config_destroy(struct vkms_config *config)
+ 	list_for_each_entry_safe(encoder_cfg, encoder_tmp, &config->encoders, list)
+ 		vkms_config_destroy_encoder(config, encoder_cfg);
+ 
++	list_for_each_entry_safe(connector_cfg, connector_tmp, &config->connectors, list)
++		vkms_config_destroy_connector(config, connector_cfg);
++
+ 	kfree(config);
+ }
+ 
+@@ -70,6 +80,7 @@ static int vkms_config_show(struct seq_file *m, void *data)
+ 	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+ 	struct vkms_config_crtc *crtc_cfg;
+ 	struct vkms_config_encoder *encoder_cfg;
++	struct vkms_config_connector *connector_cfg;
+ 	int n;
+ 
+ 	seq_printf(m, "dev_name=%s\n", vkmsdev->config->dev_name);
+@@ -90,6 +101,13 @@ static int vkms_config_show(struct seq_file *m, void *data)
+ 		n++;
+ 	}
+ 
++	n = 0;
++	list_for_each_entry(connector_cfg, &vkmsdev->config->connectors, list) {
++		seq_printf(m, "connector(%d).possible_encoders=%d\n", n,
++			   connector_cfg->possible_encoders);
++		n++;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -166,3 +184,25 @@ void vkms_config_destroy_encoder(struct vkms_config *config,
+ 	list_del(&encoder_cfg->list);
+ 	kfree(encoder_cfg);
+ }
++
++struct vkms_config_connector *vkms_config_add_connector(struct vkms_config *config,
++							uint32_t possible_encoders)
 +{
-+	struct drm_connector *connector;
-+	int ret;
++	struct vkms_config_connector *connector_cfg;
 +
-+	connector = drmm_kzalloc(&vkms_device->drm, sizeof(*connector), GFP_KERNEL);
-+	if (!connector) {
-+		DRM_ERROR("Failed to allocate connector\n");
++	connector_cfg = kzalloc(sizeof(*connector_cfg), GFP_KERNEL);
++	if (!connector_cfg)
 +		return ERR_PTR(-ENOMEM);
-+	}
 +
-+	ret = drmm_connector_init(&vkms_device->drm, connector,
-+				  &vkms_connector_funcs,
-+				  DRM_MODE_CONNECTOR_VIRTUAL, NULL);
-+	if (ret) {
-+		DRM_ERROR("Failed to init connector\n");
-+		kfree(connector);
-+		return ERR_PTR(ret);
-+	}
++	connector_cfg->possible_encoders = possible_encoders;
++	list_add_tail(&connector_cfg->list, &config->connectors);
 +
-+	connector->possible_encoders = possible_encoders;
-+	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-+
-+	return connector;
++	return connector_cfg;
 +}
 +
- static struct drm_encoder *vkms_encoder_init(struct vkms_device *vkms_device,
- 					     uint32_t possible_crtcs,
- 					     unsigned int index)
-@@ -72,9 +98,8 @@ static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index)
++void vkms_config_destroy_connector(struct vkms_config *config,
++				   struct vkms_config_connector *connector_cfg)
++{
++	list_del(&connector_cfg->list);
++	kfree(connector_cfg);
++}
+diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+index b717b5c0d3d9..f1dd59fc6300 100644
+--- a/drivers/gpu/drm/vkms/vkms_config.h
++++ b/drivers/gpu/drm/vkms/vkms_config.h
+@@ -20,12 +20,18 @@ struct vkms_config_encoder {
+ 	uint32_t possible_crtcs;
+ };
  
- int vkms_output_init(struct vkms_device *vkmsdev, int index)
++struct vkms_config_connector {
++	struct list_head list;
++	uint32_t possible_encoders;
++};
++
+ struct vkms_config {
+ 	char *dev_name;
+ 	bool cursor;
+ 	bool overlay;
+ 	struct list_head crtcs;
+ 	struct list_head encoders;
++	struct list_head connectors;
+ 	/* only set when instantiated */
+ 	struct vkms_device *dev;
+ };
+@@ -52,4 +58,10 @@ struct vkms_config_encoder *vkms_config_add_encoder(struct vkms_config *config,
+ void vkms_config_destroy_encoder(struct vkms_config *config,
+ 				 struct vkms_config_encoder *encoder_cfg);
+ 
++/* Connectors */
++struct vkms_config_connector *vkms_config_add_connector(struct vkms_config *config,
++							uint32_t possible_encoders);
++void vkms_config_destroy_connector(struct vkms_config *config,
++				   struct vkms_config_connector *connector_cfg);
++
+ #endif /* _VKMS_CONFIG_H_ */
+diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+index 4413cf88afc7..021a491de817 100644
+--- a/drivers/gpu/drm/vkms/vkms_output.c
++++ b/drivers/gpu/drm/vkms/vkms_output.c
+@@ -100,6 +100,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
  {
--	struct vkms_output *output = &vkmsdev->output;
  	struct drm_device *dev = &vkmsdev->drm;
--	struct drm_connector *connector = &output->connector;
-+	struct drm_connector *connector;
+ 	struct drm_connector *connector;
++	struct vkms_config_connector *connector_cfg;
  	struct drm_encoder *encoder;
  	struct vkms_config_encoder *encoder_cfg;
  	struct vkms_crtc *vkms_crtc;
-@@ -117,14 +142,9 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+@@ -142,10 +143,6 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
  		}
  	}
  
--	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
--				 DRM_MODE_CONNECTOR_VIRTUAL);
--	if (ret) {
--		DRM_ERROR("Failed to init connector\n");
--		return ret;
--	}
+-	connector = vkms_connector_init(vkmsdev, BIT(index));
+-	if (IS_ERR(connector))
+-		return PTR_ERR(connector);
 -
--	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
-+	connector = vkms_connector_init(vkmsdev, BIT(index));
-+	if (IS_ERR(connector))
-+		return PTR_ERR(connector);
- 
  	list_for_each_entry(encoder_cfg, &vkmsdev->config->encoders, list) {
  		encoder = vkms_encoder_init(vkmsdev, encoder_cfg->possible_crtcs,
-@@ -133,18 +153,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+ 					    encoder_cfg->index);
+@@ -153,6 +150,12 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
  			return PTR_ERR(encoder);
  	}
  
--	ret = drm_connector_attach_encoder(connector, encoder);
--	if (ret) {
--		DRM_ERROR("Failed to attach connector to encoder\n");
--		goto err_attach;
--	}
--
++	list_for_each_entry(connector_cfg, &vkmsdev->config->connectors, list) {
++		connector = vkms_connector_init(vkmsdev, connector_cfg->possible_encoders);
++		if (IS_ERR(connector))
++			return PTR_ERR(connector);
++	}
++
  	drm_mode_config_reset(dev);
  
  	return 0;
--
--err_attach:
--	drm_connector_cleanup(connector);
--
--	return ret;
- }
 -- 
 2.46.0
 
