@@ -1,76 +1,113 @@
-Return-Path: <linux-kernel+bounces-284020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78BB394FC00
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D8B894FC0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1809A1F222CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4896E283319
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 02:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75AA18AEA;
-	Tue, 13 Aug 2024 02:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D37218E1E;
+	Tue, 13 Aug 2024 02:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="QCx29F0s"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE73714A96;
-	Tue, 13 Aug 2024 02:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiZGm5wz"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576D17BA6;
+	Tue, 13 Aug 2024 02:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723517617; cv=none; b=TG+4R+G1nNtSYmEO82HlHXemGHPxpwglzJhCffrGeTds5xbd5xW2/mX9GFIndsLPgDPwhqohXx1Y8MXePQjTt3DQ5gpv+j93fyWZKjSc25hGYlerjfhq1zrr6HCGjgeRRWlDvRJcpmxedBu0//wA1AuslLSowtUDUrShlwbf6B0=
+	t=1723517839; cv=none; b=C3ZUEMUbXKS4X2XTTAAhXkv8wUoMlJdwvGzaBwzmJnPlbm1De5oa49k2ompVsF4dIbzBCY/TkAl11LvXLyc3B9s1QIUAhYx7E9rYkWlCYxfx+cHr80MMucktADiQHlPZL8Zc8FEfFFpCWAHdbxZbYhnlgkcj+8dCmaPRFosDqws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723517617; c=relaxed/simple;
-	bh=zpkHEFl4nm22LoiuuejnIWLVPftUOUGgk7YSO/YixTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lfaXb+5KbXQwCSHswF1OS4+eTcpARxyH+P0sK50g1y1PdvnYRddSvMo45ZipWAef+jqWsvFZeKXsK39D6+Cc0rva8qkp0rJjGg7AxlNzL5ijbhNwXBbSXpkcmHetKZ9Qs2jYsbjBw8gGua1p5PWWZE00PP4ghMKMWJJULcTRDXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=QCx29F0s; arc=none smtp.client-ip=1.95.21.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=c1gYxZpW54fh+G7bon+YmrbzMVsseD0KKts9l3Dg63Q=;
-	b=QCx29F0sHHo7LCGKn6Ye0N3F2CwmpN5p3GQ+djlDzTjCAwYUD4r6CLR98F02Le
-	xnrgksktLUpSA2m2HHZVpS6mQBObEysamDN21Ix7Dz0zjPmAh24L6hBXvR46Z/fK
-	X67CeTIRfSYodyD1AW+5F786dWw/euyLoSe6LwMFl5SJ0=
-Received: from dragon (unknown [117.62.10.86])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgBnjyePyrpme1FSAg--.41505S3;
-	Tue, 13 Aug 2024 10:53:05 +0800 (CST)
-Date: Tue, 13 Aug 2024 10:53:03 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] arm64: dts: imx95: correct a55 power-domains
-Message-ID: <ZrrKj5pjypWHN29f@dragon>
-References: <20240729064111.2060746-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1723517839; c=relaxed/simple;
+	bh=NbuWSsfWO7OXBBd8+8YHEHbJ6H15j0Rc9ZOUpmvs5dY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=FNgGxi+gvqsx6SvflBPeU9z/dquB3ILB3An+DJM+xIa5Twxdu7/bvBgw1CkN8mTPM1wyS2TsylEYkfs3hKsfX130v+YtU5KO9K5u/yyye3VlwmHVDteZbqG4aaPOrnLfQjRlc/NXcc0umS8Jl1brrWsLBxRS8tfIz6gNW3bdbbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiZGm5wz; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52efd855adbso6302409e87.2;
+        Mon, 12 Aug 2024 19:57:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723517836; x=1724122636; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=f6wH2+oLPen397N26sm4V5YXSI4rXx3+DYcxWeal5y4=;
+        b=iiZGm5wz5wve8wbfX479csL6i2sc9Ai6cWcnPfvEcDx4/3gwJlqmAMxXj12h5Atf+J
+         kr0bAXflf9tbnsbxJrJALg1XtimwXqCpsrYAmrhn5DGJYrwYL95rIh3ogx30/o5J0Ja6
+         wE1WiF0yMmQdnzr0U/e/0M489VUAb47OC/IyuWPo0mScANZI3yDQ99Bb5LiU5i8om4LD
+         P7UExXhTs3wqFDig82/J6vFcgVJHd/1xwDkzckqrHc4A/IHfHKaXFIBD4ljhdJIQOVDD
+         sSdbd8D6aUjsDOIO92PnEOSqKMyu+r0s9V9uSzgOuAh+hODTCgREaC5MuMtZilLkCuh9
+         1Ytg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723517836; x=1724122636;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f6wH2+oLPen397N26sm4V5YXSI4rXx3+DYcxWeal5y4=;
+        b=iLZn7hAyZlaXgyzN4HnZDgAC0FnBKrUchJFUhDf/tpJgpbQFmL/JtV5uzkxg8eAuFH
+         yYe2zelGT2yQMSMCMG+EPeWcGVoHz/YnEtBLjVRbCExP0TSQplcgfVmBrGto450uB9g6
+         FUC8fMRIalNufn97l9bvchUoAvD6Ck/jK2/ZXNQNj9J0F99LX9Jgq6x3wet2WK8jAk4C
+         /LLoutjStwGCQKBOAiaDlXNZC7aTI+9cRUTCNFDUfUESXAO+6xvHU46CZ1+yLyIf3qBG
+         DIYISbkf1OS/aj46/Pc0zgRmUMwbk4dzlHTMlTpD25IYmwn7vNB/QGYSMapzLXbe04dS
+         +Z9g==
+X-Forwarded-Encrypted: i=1; AJvYcCXltiLax0icUZB3STTlEu9VRd6Hp26qL/klOyfw4yn4JQrc88UZZq3qRx3Fbr19OpVnCOPqduW1UdKSBkqq/K7Y4w99oY+SWY6NBQfE
+X-Gm-Message-State: AOJu0YwiZY2HoGuex6Qcm8wF3oHnmkNzGGEDQjYdZmIz072QW0bXh6b7
+	RFHY7T5RkPwvHC7G8V95yDmpJYpEFZxkUP+GcWf1Bu2Bp5JsJN+XGTedJg9+aNWUj/yZkDcaiSJ
+	rZ/Islr26b0pEY+BtSSXB3zAKARNz2ZLj
+X-Google-Smtp-Source: AGHT+IEPJVgxazoRtoq7E3354DYuPh4VoSBhQZ2Mw0kIncBcJ87Envj5B3ny1E10j7mV3H3KBYhJI/O+/HjXu7/GXsw=
+X-Received: by 2002:a05:6512:4024:b0:52c:e312:2082 with SMTP id
+ 2adb3069b0e04-5321369454cmr1098872e87.54.1723517835745; Mon, 12 Aug 2024
+ 19:57:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240729064111.2060746-1-peng.fan@oss.nxp.com>
-X-CM-TRANSID:Mc8vCgBnjyePyrpme1FSAg--.41505S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUI038UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxY6ZWa6xN8YQwAAse
+From: Steve French <smfrench@gmail.com>
+Date: Mon, 12 Aug 2024 21:57:04 -0500
+Message-ID: <CAH2r5mse_XmxXZy8Xhav9S3K2pBvUTPFqf+jhJtOoCn3hM0stQ@mail.gmail.com>
+Subject: [GIT PULL] ksmbd server fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, Namjae Jeon <linkinjeon@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jul 29, 2024 at 02:41:11PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> The A55 power domains is for SCMI performance usage, so for device power
-> on/off. Correct the power-domains entry to use scmi_perf not scmi_devpd.
-> 
-> Fixes: 5e3cbb8e4256 ("arm64: dts: freescale: add i.MX95 basic dtsi")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Please pull the following changes since commit
+8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Applied, thanks!
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
+are available in the Git repository at:
+
+  git://git.samba.org/ksmbd.git tags/6.11-rc3-ksmbd-fixes
+
+for you to fetch changes up to f6bd41280a44dcc2e0a25ed72617d25f586974a7:
+
+  ksmbd: override fsids for smb2_query_info() (2024-08-08 22:54:09 -0500)
+
+----------------------------------------------------------------
+2 smb3 server fixes for access denied problem on share path checks
+
+----------------------------------------------------------------
+Namjae Jeon (2):
+      ksmbd: override fsids for share path check
+      ksmbd: override fsids for smb2_query_info()
+
+ fs/smb/server/mgmt/share_config.c | 15 ++++++++++++---
+ fs/smb/server/mgmt/share_config.h |  4 +++-
+ fs/smb/server/mgmt/tree_connect.c |  9 +++++----
+ fs/smb/server/mgmt/tree_connect.h |  4 ++--
+ fs/smb/server/smb2pdu.c           |  9 ++++++++-
+ fs/smb/server/smb_common.c        |  9 +++++++--
+ fs/smb/server/smb_common.h        |  2 ++
+ 7 files changed, 39 insertions(+), 13 deletions(-)
+
+-- 
+Thanks,
+
+Steve
 
