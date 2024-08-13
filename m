@@ -1,80 +1,156 @@
-Return-Path: <linux-kernel+bounces-284028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F06494FC2D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:22:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC5B894FC2B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC5E283362
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:22:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D32771C22409
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5D21BC39;
-	Tue, 13 Aug 2024 03:22:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="I6xgm9zi"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA1E1CA89;
-	Tue, 13 Aug 2024 03:21:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6B21B7FD;
+	Tue, 13 Aug 2024 03:21:47 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6370917588
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723519319; cv=none; b=isqjb6myb/6V/neVi/G1PO4qDFG/unhgS5wWpGEcf/3EBmpA9739laoe1aqRM2joAI4/dN5ukpPITUDS6xCHQtf99Aa/V/3vq0OSKfHc8rLGdGUnAF0rvAwlM98ruYRj49FXMFnFxyE0sVwQMninKSL6JiUBybIVepFG9eDVcTs=
+	t=1723519306; cv=none; b=O3dasdHRxYAmljyVgglPZIcaTjUFPrWLSZ/s1HSutNLiYAQL4g5HL3J8by4fyaqF3/MifEq/7IltMzE4TlgAiCrTInTyHy36iKEX3I1FafnOMNRei8J56YNhyqkFsnI9OfL8rbsc4N911CrMTj7qMqsl0qKpCD6adTLDDfk3GUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723519319; c=relaxed/simple;
-	bh=qa8hrCIuw/DZvzNGXRkoic1AaKOPbfAItMwf5cEK41w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m49OLGODgVl8P4wwRKFU9D9ZhJ9JehzxxxTqdU0W5TE7rVzjwkrYN1y0Xhtdi5q/h861GgbuBICwRI4wXA5QEdOvOuM8nJ9R4yvfzOcOnihEhyknqkmBmy9AzcfACmhaIWRUjXyI9G7RU/qUdGmAVHUim77gxgQpSCJLqtc5uM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=I6xgm9zi; arc=none smtp.client-ip=1.95.21.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=VaTN/iONQn/aQCaJ3eYqrbMR3KgB3UWpWae6aU/82zc=;
-	b=I6xgm9zi5IvbrWPQPSBTqd4MtKQoB417slFQ8vBF7OJpbh05yynFkUVts87S7b
-	3RrXum5xqZuDgA6Jck80HCN6wEuqFgXbAeiXviS78AvVi3Th+S7b84McmQVolUTY
-	r4JEazZSno+8L4hQ1fS27uMIjYvrNYo3VGidxiIuy5Dhw=
-Received: from dragon (unknown [117.62.10.86])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgCHjyAu0bpm3JtSAg--.42013S3;
-	Tue, 13 Aug 2024 11:21:20 +0800 (CST)
-Date: Tue, 13 Aug 2024 11:21:18 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, wahrenst@gmx.net,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] arm64: dts: imx93: add cache info
-Message-ID: <ZrrRLoffDDsrP2Kw@dragon>
-References: <20240801081111.1492688-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1723519306; c=relaxed/simple;
+	bh=jaifP1WMz5uLYTTMZUPNkubruCzqSurMSyvVN2fge4k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=MMYQMjGVDwwAsP1AG07NJ3VyJ1ZMhxuY35HIzsaqOvXEt8e4hlxlKstkp+ZexBLBHrKkobordW/mWe1o0+JkrhhmprQFYedNbYfERx1fVf4GBVHhyXY9r/Zk4CjVpv8Ejlm3qYdI0ukNSkkJBrcGsD3TTDXJmjWOTfu1Lt9V+/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81faf98703eso668394139f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 20:21:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723519304; x=1724124104;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9lfUdpJPWTIADxzvXJcxfaCW8wSvem+H+8YjVi6VBpk=;
+        b=EMSH0Ic5qIY289+jGSFSZn26OP1PEX5JjUP4I3QyabHusV9RGxMuD4dQK5dLVU9D9k
+         1XB5w9tFEZZ9GhXiDc8hmu088o7xfpx8xa/3uBlUoWQNNmNUQOiIOj8TC1rAi4hMBt0o
+         iYCJfMG/RZftUy7+o57viJZ/ZW6hcdSu/4U8s5iDN2JlWU/iohab2KFqf3ViZS1wquaM
+         XfG7b/WdPm9D/6I0xofRdGFgdpUg23S7VcMQKjci2/EaUzDa/4YHxtsuRGdqUjl6HcsP
+         prNDzmAQIEI6uayLK65wBwlGYPyQBnBpgPsT1bcbR7TUCVTw5UK/PNArNluZhqxDi08Q
+         GiVQ==
+X-Gm-Message-State: AOJu0YxI0nucnbvHTEHBkjNHnDoop27vfNi/MkIdDEKpcXIuSAUA2E5c
+	rXGRzTT79kPoDuKOxIMgq1U0kJDxDLbql+1PKm3MOaaow90VlGgFXqsh1wD8q3Ofhhw9/jFWwV5
+	XGL4mwb41NBdQ1FY9S0uvn+csNGgqNWewbU4jlsFT9hzYIAA1dwOr3Tc=
+X-Google-Smtp-Source: AGHT+IG4PojAjeU5q21hM8KRftoYNqndQvKuKXLBE897Eo1et18fqjz0luPh8hVwE49MtqYv9ws9b3tn9zLVPkTpVSmmKkumA47w
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240801081111.1492688-1-peng.fan@oss.nxp.com>
-X-CM-TRANSID:Mc8vCgCHjyAu0bpm3JtSAg--.42013S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsPfHUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgo6ZWa6xHErEgABsG
+X-Received: by 2002:a05:6638:8405:b0:4c2:7179:ce03 with SMTP id
+ 8926c6da1cb9f-4ca9f6a67f2mr114584173.2.1723519304408; Mon, 12 Aug 2024
+ 20:21:44 -0700 (PDT)
+Date: Mon, 12 Aug 2024 20:21:44 -0700
+In-Reply-To: <000000000000fabef5061f429db7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e734dd061f881b07@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
+From: syzbot <syzbot+f69bfae0a4eb29976e44@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Aug 01, 2024 at 04:11:11PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> i.MX93 features two Cortex-A55 cores with per core L1 Instruction
-> cache size 32KB, L1 data cache size 32KB, per core L2 cache 64KB, and
-> unified 256KB L3 cache.
-> 
-> Add the cache info to remove cacheinfo warnings at boot:
-> "cacheinfo: Unable to detect cache hierarchy for CPU 0"
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Applied, thanks!
+***
 
+Subject: Re: [syzbot] [net?] [s390?] general protection fault in smc_diag_dump_proto
+Author: aha310510@gmail.com
+
+#syz test git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+
+---
+ net/smc/smc.h      | 19 ++++++++++---------
+ net/smc/smc_inet.c | 24 +++++++++++++++---------
+ 2 files changed, 25 insertions(+), 18 deletions(-)
+
+diff --git a/net/smc/smc.h b/net/smc/smc.h
+index 34b781e463c4..f4d9338b5ed5 100644
+--- a/net/smc/smc.h
++++ b/net/smc/smc.h
+@@ -284,15 +284,6 @@ struct smc_connection {
+ 
+ struct smc_sock {				/* smc sock container */
+ 	struct sock		sk;
+-	struct socket		*clcsock;	/* internal tcp socket */
+-	void			(*clcsk_state_change)(struct sock *sk);
+-						/* original stat_change fct. */
+-	void			(*clcsk_data_ready)(struct sock *sk);
+-						/* original data_ready fct. */
+-	void			(*clcsk_write_space)(struct sock *sk);
+-						/* original write_space fct. */
+-	void			(*clcsk_error_report)(struct sock *sk);
+-						/* original error_report fct. */
+ 	struct smc_connection	conn;		/* smc connection */
+ 	struct smc_sock		*listen_smc;	/* listen parent */
+ 	struct work_struct	connect_work;	/* handle non-blocking connect*/
+@@ -325,6 +316,16 @@ struct smc_sock {				/* smc sock container */
+ 						/* protects clcsock of a listen
+ 						 * socket
+ 						 * */
++	struct socket		*clcsock;	/* internal tcp socket */
++	void			(*clcsk_state_change)(struct sock *sk);
++						/* original stat_change fct. */
++	void			(*clcsk_data_ready)(struct sock *sk);
++						/* original data_ready fct. */
++	void			(*clcsk_write_space)(struct sock *sk);
++						/* original write_space fct. */
++	void			(*clcsk_error_report)(struct sock *sk);
++						/* original error_report fct. */
++
+ };
+ 
+ #define smc_sk(ptr) container_of_const(ptr, struct smc_sock, sk)
+diff --git a/net/smc/smc_inet.c b/net/smc/smc_inet.c
+index bece346dd8e9..3c54faef6042 100644
+--- a/net/smc/smc_inet.c
++++ b/net/smc/smc_inet.c
+@@ -60,16 +60,22 @@ static struct inet_protosw smc_inet_protosw = {
+ };
+ 
+ #if IS_ENABLED(CONFIG_IPV6)
++struct smc6_sock {
++	struct smc_sock smc;
++	struct ipv6_pinfo np;
++};
++
+ static struct proto smc_inet6_prot = {
+-	.name		= "INET6_SMC",
+-	.owner		= THIS_MODULE,
+-	.init		= smc_inet_init_sock,
+-	.hash		= smc_hash_sk,
+-	.unhash		= smc_unhash_sk,
+-	.release_cb	= smc_release_cb,
+-	.obj_size	= sizeof(struct smc_sock),
+-	.h.smc_hash	= &smc_v6_hashinfo,
+-	.slab_flags	= SLAB_TYPESAFE_BY_RCU,
++	.name		       = "INET6_SMC",
++	.owner		       = THIS_MODULE,
++	.init		       = smc_inet_init_sock,
++	.hash		       = smc_hash_sk,
++	.unhash		       = smc_unhash_sk,
++	.release_cb	       = smc_release_cb,
++	.obj_size	       = sizeof(struct smc6_sock),
++	.h.smc_hash	       = &smc_v6_hashinfo,
++	.slab_flags	       = SLAB_TYPESAFE_BY_RCU,
++	.ipv6_pinfo_offset = offsetof(struct smc6_sock, np),
+ };
+ 
+ static const struct proto_ops smc_inet6_stream_ops = {
+--
 
