@@ -1,49 +1,59 @@
-Return-Path: <linux-kernel+bounces-284023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9344294FC19
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:08:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DDE94FC1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 05:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F16BB22335
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:08:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFE21C21223
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 03:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E687E1B7FD;
-	Tue, 13 Aug 2024 03:08:26 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AEE1B947;
+	Tue, 13 Aug 2024 03:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri9eYZNG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF341862A;
-	Tue, 13 Aug 2024 03:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4277FF;
+	Tue, 13 Aug 2024 03:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723518506; cv=none; b=jkTwFnKTk6bHZ4EIk1yv+ICwVEA825ovvhJabNbStvED9ShA7xxaUiNEhM9Sxu6/OFX2y3/CRs/rPxSs+q7N8DvUOUroyMzfnOtMi51CLrwtCzJFyToE+s+wffKxik+fuIZjhpoMojJQFtKdi83Q5LfZJAsMR3iV/R2KMRrn3s0=
+	t=1723518540; cv=none; b=q7c7Gv56Y263cJVXwGj3CU5pckiEaqwY2MPPMAMBLktWObEkhDzII8mRQ7si7iAOIl65yWjQ/4B6dAEYn96Jau0NE7jh8Az4buNV2OCyyYYop5cKBpIvKtAZ06SRr+0GB7iMUSnZ5UQL2byaC0raZpGBChpu0PlzMKmCADleigA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723518506; c=relaxed/simple;
-	bh=G8mlqUI4Vj75JSRSXWP8BhfuW8A9ZPbv9FEMFDs01nw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IBUi/rCRfKk4PhcabIhCUaX7QPx8g+NLYMq5KuteubPvUY8VD8EJ+31u4EmqBE0PvskgZ9AZLDi/gFbT/5n8BO8O82/SUZrF19/SD2pY0EwF4I5q+hNk8mPzliYsLQ/bvXz4xhzXpDEuZZV+831hKYUHVkMquO0F0fqTDdJXRf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-03 (Coremail) with SMTP id rQCowAA3XQARzrpmFDniBQ--.21605S2;
-	Tue, 13 Aug 2024 11:08:10 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: giometti@enneenne.com,
-	christophe.jaillet@wanadoo.fr,
-	linux@treblig.org,
-	gregkh@linuxfoundation.org,
-	sudipm.mukherjee@gmail.com,
-	make24@iscas.ac.cn,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] pps: add an error check in parport_attach
-Date: Tue, 13 Aug 2024 11:08:00 +0800
-Message-Id: <20240813030800.3949400-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723518540; c=relaxed/simple;
+	bh=6k5nSQtJtH639Pc0R1xX1c1uq0+Pcw9PtbV+Zs8RPoU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SOan6Se5d4bAuWOemyCqDNHTW1JpOV8oFRVBG2wy2iFQnJf4eUw3AUcPhb7u+N7YmpkXpu+RUR9mGScLKYQ9vrcopbrJJTdlaSQEjglfKNysRUfZEmbSOLwdG37Rjg7qJjJpfEyqWK6Gbk/Yp5Cvya3e8KPWCYm4Civ6BazJaUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri9eYZNG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3014EC4AF0D;
+	Tue, 13 Aug 2024 03:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723518539;
+	bh=6k5nSQtJtH639Pc0R1xX1c1uq0+Pcw9PtbV+Zs8RPoU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ri9eYZNGU1jl4ElFnp6jIgpb+01H+uCG91c018sngULAYs0l7FAZAKuj/Ns490ob7
+	 ZD6saz/lGOxnkJ7ig+QwfW819Rgx/xpsOvQJEyYmHEk/DmpQmaVIuZIajyDbNKV2jj
+	 gyGko9UexVxcRmUSdB4tCtE6tbfDowI39qSRw2lu8FgJK5qj4rA25+Gyj8K4qLjLjo
+	 sgFDGI7lQ6fq4DVF2K9q4BnngcIMw4J108xwJNEmKntOv29ZSc8V7efS2izWSOikQP
+	 1B45RreXCvMYAoVTu0Ip0SIJnWt20CXgwdYENjzTRksf8Hbu4gBDVhTukU6pbl8uDg
+	 hDQJ1KFsYel1A==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Subject: [PATCH] perf annotate-data: Set bitfield member offset and size properly
+Date: Mon, 12 Aug 2024 20:08:58 -0700
+Message-ID: <20240813030858.2138615-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.46.0.76.ge559c4bf1a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,77 +61,132 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAA3XQARzrpmFDniBQ--.21605S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Zw1fZw4xGFWxCrW5uryrXrb_yoW8Ww17pF
-	WkuFyYqrZ7Xayqkws7Z3Z5WFyrCw1xta1xuFWUK34ak3W3KryFyFW293409F18Jr4DAa45
-	CFsxKayvkF47AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxV
-	WxJr0_GcWlnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAq
-	YI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUQvtAUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-In parport_attach, the return value of ida_alloc is unchecked, witch leads
-to the use of an invalid index value.
+The bitfield members might not have DW_AT_data_member_location.  Let's
+use DW_AT_data_bit_offset to set the member offset correct.  Also use
+DW_AT_bit_size for the name like in a C program.
 
-To address this issue, index should be checked. When the index value is
-abnormal, the device should be freed.
+Before:
+  Annotate type: 'struct sk_buff' (1 samples)
+        Percent     Offset       Size  Field
+  -      100.00          0        232  struct sk_buff {
+  +        0.00          0         24      union  ;
+  +        0.00         24          8      union  ;
+  +        0.00         32          8      union  ;
+           0.00         40         48      char[] cb;
+  +        0.00         88         16      union  ;
+           0.00        104          8      long unsigned int      _nfct;
+         100.00        112          4      unsigned int   len;
+           0.00        116          4      unsigned int   data_len;
+           0.00        120          2      __u16  mac_len;
+           0.00        122          2      __u16  hdr_len;
+           0.00        124          2      __u16  queue_mapping;
+           0.00        126          0      __u8[] __cloned_offset;
+           0.00          0          1      __u8   cloned;
+           0.00          0          1      __u8   nohdr;
+           0.00          0          1      __u8   fclone;
+           0.00          0          1      __u8   peeked;
+           0.00          0          1      __u8   head_frag;
+           0.00          0          1      __u8   pfmemalloc;
+           0.00          0          1      __u8   pp_recycle;
+           0.00        127          1      __u8   active_extensions;
+  +        0.00        128         60      union  ;
+           0.00        188          4      sk_buff_data_t tail;
+           0.00        192          4      sk_buff_data_t end;
+           0.00        200          8      unsigned char* head;
 
-Found by code review, compile tested only.
+After:
+  Annotate type: 'struct sk_buff' (1 samples)
+        Percent     Offset       Size  Field
+  -      100.00          0        232  struct sk_buff {
+  +        0.00          0         24      union  ;
+  +        0.00         24          8      union  ;
+  +        0.00         32          8      union  ;
+           0.00         40         48      char[] cb
+  +        0.00         88         16      union  ;
+           0.00        104          8      long unsigned int      _nfct;
+         100.00        112          4      unsigned int   len;
+           0.00        116          4      unsigned int   data_len;
+           0.00        120          2      __u16  mac_len;
+           0.00        122          2      __u16  hdr_len;
+           0.00        124          2      __u16  queue_mapping;
+           0.00        126          0      __u8[] __cloned_offset;
+           0.00        126          1      __u8   cloned:1;
+           0.00        126          1      __u8   nohdr:1;
+           0.00        126          1      __u8   fclone:2;
+           0.00        126          1      __u8   peeked:1;
+           0.00        126          1      __u8   head_frag:1;
+           0.00        126          1      __u8   pfmemalloc:1;
+           0.00        126          1      __u8   pp_recycle:1;
+           0.00        127          1      __u8   active_extensions;
+  +        0.00        128         60      union  ;
+           0.00        188          4      sk_buff_data_t tail;
+           0.00        192          4      sk_buff_data_t end;
+           0.00        200          8      unsigned char* head;
 
-Cc: stable@vger.kernel.org
-Fixes: 55dbc5b5174d ("pps: remove usage of the deprecated ida_simple_xx() API")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- drivers/pps/clients/pps_parport.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ tools/perf/util/annotate-data.c | 34 +++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/pps/clients/pps_parport.c b/drivers/pps/clients/pps_parport.c
-index 63d03a0df5cc..9ab7f6961e42 100644
---- a/drivers/pps/clients/pps_parport.c
-+++ b/drivers/pps/clients/pps_parport.c
-@@ -149,6 +149,11 @@ static void parport_attach(struct parport *port)
- 	}
+diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+index ff85d190e3ac..d9e0ca61b6b5 100644
+--- a/tools/perf/util/annotate-data.c
++++ b/tools/perf/util/annotate-data.c
+@@ -202,7 +202,7 @@ static int __add_member_cb(Dwarf_Die *die, void *arg)
+ 	struct annotated_member *parent = arg;
+ 	struct annotated_member *member;
+ 	Dwarf_Die member_type, die_mem;
+-	Dwarf_Word size, loc;
++	Dwarf_Word size, loc, bit_size = 0;
+ 	Dwarf_Attribute attr;
+ 	struct strbuf sb;
+ 	int tag;
+@@ -226,15 +226,37 @@ static int __add_member_cb(Dwarf_Die *die, void *arg)
+ 	if (dwarf_aggregate_size(&die_mem, &size) < 0)
+ 		size = 0;
  
- 	index = ida_alloc(&pps_client_index, GFP_KERNEL);
-+	if (index < 0) {
-+		pr_err("failed to get index\n");
-+		goto err_free_device;
-+	}
+-	if (!dwarf_attr_integrate(die, DW_AT_data_member_location, &attr))
+-		loc = 0;
+-	else
++	if (dwarf_attr_integrate(die, DW_AT_data_member_location, &attr))
+ 		dwarf_formudata(&attr, &loc);
++	else {
++		/* bitfield member */
++		if (dwarf_attr_integrate(die, DW_AT_data_bit_offset, &attr) &&
++		    dwarf_formudata(&attr, &loc) == 0)
++			loc /= 8;
++		else
++			loc = 0;
 +
- 	memset(&pps_client_cb, 0, sizeof(pps_client_cb));
- 	pps_client_cb.private = device;
- 	pps_client_cb.irq_func = parport_irq;
-@@ -159,7 +164,7 @@ static void parport_attach(struct parport *port)
- 						    index);
- 	if (!device->pardev) {
- 		pr_err("couldn't register with %s\n", port->name);
--		goto err_free;
-+		goto err_free_ida;
- 	}
++		if (dwarf_attr_integrate(die, DW_AT_bit_size, &attr) &&
++		    dwarf_formudata(&attr, &bit_size) == 0)
++			size = (bit_size + 7) / 8;
++	}
  
- 	if (parport_claim_or_block(device->pardev) < 0) {
-@@ -187,8 +192,9 @@ static void parport_attach(struct parport *port)
- 	parport_release(device->pardev);
- err_unregister_dev:
- 	parport_unregister_device(device->pardev);
--err_free:
-+err_free_ida:
- 	ida_free(&pps_client_index, index);
-+err_free_device:
- 	kfree(device);
- }
- 
+ 	member->type_name = strbuf_detach(&sb, NULL);
+ 	/* member->var_name can be NULL */
+-	if (dwarf_diename(die))
+-		member->var_name = strdup(dwarf_diename(die));
++	if (dwarf_diename(die)) {
++		if (bit_size) {
++			if (asprintf(&member->var_name, "%s:%ld",
++				     dwarf_diename(die), (long)bit_size) < 0)
++				member->var_name = NULL;
++		} else {
++			member->var_name = strdup(dwarf_diename(die));
++		}
++
++		if (member->var_name == NULL) {
++			free(member);
++			return DIE_FIND_CB_END;
++		}
++	}
+ 	member->size = size;
+ 	member->offset = loc + parent->offset;
+ 	INIT_LIST_HEAD(&member->children);
 -- 
-2.25.1
+2.46.0.76.ge559c4bf1a-goog
 
 
