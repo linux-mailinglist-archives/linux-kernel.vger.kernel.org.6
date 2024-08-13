@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-285438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43F31950D7E
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB94950D7F
 	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:03:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4613B23DA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5410284E3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0251A4F2A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76B61A4F30;
 	Tue, 13 Aug 2024 20:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sJhg1jir";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uYPq5k3q"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tm3BlkMk";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aYLb+lQV"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D154A953;
-	Tue, 13 Aug 2024 20:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F73C54279;
+	Tue, 13 Aug 2024 20:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579409; cv=none; b=M6pv00dRaStHNpy43GyzRO2RnhhGaJGWGwUoN4rM3Mao5kma2HlOKRrCB+T7gz79lvChheLyhFf1/Drat/1iL5RYSDqUpMEshtlIaZlTD1WqMu2x1nIRED4lFQLvq9olWkGQvW1Zt3SqpYj8IPbMrEfRaT2i8/R/EgCxXKJc92k=
+	t=1723579409; cv=none; b=DTeNF/WaHdigPhA30Yvsz7+t1t8+9Rk0sz1n8QU5QjCW+GZnm9Z0oovMSOgzK/h2woMGWP63ySqHPK7Tk2puNp5YDzbhw+fRxLXDN2v1spUKZC1ScwUMzsDT3qK8JAWh45LzWS8xu3D9Md4MbGd+KbQ8+qWWVmz22sDaVYUWpMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723579409; c=relaxed/simple;
-	bh=j4Rl5dwmzBAE8rsXPrzl+AyjmQT3LBZPtT4nr+bWkXQ=;
+	bh=RzknwgPbiNhY/LKOt4GV9bGfbenUiHQcyJreWnJKU+g=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=OVkguJvSgkXULakijGdrfKRGp1Ubo5+1YMazLtDmuLAZ7ZybVF//asaBre3YbE6Fgh6zVUQ1zg03ydzMG6a+PdANXfmhUFoidCHb9Roxg/Os4IZg4x4PStSEMOFopS66UBp5au1CvWMR6rMxfSFxAmMPH7VekBKUnzqrbF+g2S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sJhg1jir; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uYPq5k3q; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=QD7npFFoxJO0ssLU2uKXW0d147SvHrx8angLVFuWO3mj6WigScl3ZqCWgOE4DcjENZP9f5hXpyayNUjlnaBDWVLc1/fOVaAeArUPjwTokYA4lBSIPpdHe058spaYaP0JANbcjReh+BMTeG0OBmhTFGQmnbWxgh3HVbs+aZG9DQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tm3BlkMk; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aYLb+lQV; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 13 Aug 2024 20:03:24 -0000
+Date: Tue, 13 Aug 2024 20:03:25 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723579405;
+	s=2020; t=1723579406;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pUbDTg6GBkmIIUXvz96p508+q5Wr+osrDqkyrMZmpD8=;
-	b=sJhg1jircI/uIEE6xnCu0X5KKLVn8Hl6gdD3s6hpO7MZLdhrOOwTi97kNZFMH7b4MptRfJ
-	FhRlkB8+5CX8HPWg3LxQIAOFlAFT3X7zQ6TMT1nmsJFRUF8s95ziYBPy2h+Hhk+qBsxVId
-	kQg4avht4001XjoH2dM9wWrQIAqjlPoZ9aGKsdPEVwIANmdIG6Xite4L5aCk/Xz8M4fZ1g
-	5aZPt81ZoJyp4cjJWciFm0ptLJBy06d/HSlX1QKUuTactB4NAvTqkBiDM1StAGt+ZfN5Fq
-	DhyparLf0jJV6NAK4L8NJCN35oHpFa8CPVPTkdQGvaaYFHRHXUY9yIGeeSxK0g==
+	bh=A+n8G5bArBPaZqSqaHgGg7Oxd4c9xzaH67CrWQ3YqVU=;
+	b=tm3BlkMkEjH507jo0+udvhCgZ/cXn9sUpUPql3yUj8wjyE3XGH/pVH7qz/gX9Xb5rqIPMp
+	o7A1Gq0yacsIjGA3kHVWv3mk5WQlvXLjyOV6Snz+x/74iSXHC5JlPHStBqBdW8YiP7AnJn
+	PV+akCnNNhmg+2U5XKGDppuGn4+10nxsTMbNftXlJVwPwtHWqabQh80PwgxHpdMti9kT0i
+	2EKOpjpdRaK5Ou/Epc0iNv6Cma0e/zz49LQtCWpJkOeIUYcO7pbDOKAI9H3hYTeT4EUDWJ
+	pwru069ZltBnvoV2fnBpfvV+wFFeg2eRgWD9o8SDepRJwFtCRGSPg0e7H+xaQA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723579405;
+	s=2020e; t=1723579406;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pUbDTg6GBkmIIUXvz96p508+q5Wr+osrDqkyrMZmpD8=;
-	b=uYPq5k3qstWx5hQ4nX7loqz75WBTurWYFvdWrnwcBtpu1HM17cQfqLOGHBzQ1opEV0sqkf
-	qYs+PxF4VMVNwVBw==
+	bh=A+n8G5bArBPaZqSqaHgGg7Oxd4c9xzaH67CrWQ3YqVU=;
+	b=aYLb+lQViJ7d0Oz2cvT9ARZa4Wzv5wCMJcBtwFNVlyzKP0xRmeU9xCULkm+GnOTWnb7bNy
+	14/jRRUYNcyCGXAw==
 From: "tip-bot2 for Xin Li (Intel)" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/fred] x86/fred: Enable FRED right after init_mem_mapping()
+Subject: [tip: x86/fred] x86/fred: Parse cmdline param "fred=" in
+ cpu_parse_early_param()
 Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>,
  Thomas Gleixner <tglx@linutronix.de>, "Xin Li (Intel)" <xin@zytor.com>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240709154048.3543361-4-xin@zytor.com>
-References: <20240709154048.3543361-4-xin@zytor.com>
+In-Reply-To: <20240709154048.3543361-2-xin@zytor.com>
+References: <20240709154048.3543361-2-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172357940456.2215.3119070109667388257.tip-bot2@tip-bot2>
+Message-ID: <172357940564.2215.7241066302191703798.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,139 +82,97 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/fred branch of tip:
 
-Commit-ID:     a97756cbec448032f84b5bbfe4e101478d1e01e0
-Gitweb:        https://git.kernel.org/tip/a97756cbec448032f84b5bbfe4e101478d1e01e0
+Commit-ID:     989b5cfaa7b6054f4e1bde914470ee091c23e6a5
+Gitweb:        https://git.kernel.org/tip/989b5cfaa7b6054f4e1bde914470ee091c23e6a5
 Author:        Xin Li (Intel) <xin@zytor.com>
-AuthorDate:    Tue, 09 Jul 2024 08:40:48 -07:00
+AuthorDate:    Tue, 09 Jul 2024 08:40:46 -07:00
 Committer:     Thomas Gleixner <tglx@linutronix.de>
 CommitterDate: Tue, 13 Aug 2024 21:59:21 +02:00
 
-x86/fred: Enable FRED right after init_mem_mapping()
+x86/fred: Parse cmdline param "fred=" in cpu_parse_early_param()
 
-On 64-bit init_mem_mapping() relies on the minimal page fault handler
-provided by the early IDT mechanism. The real page fault handler is
-installed right afterwards into the IDT.
+Depending on whether FRED is enabled, sysvec_install() installs a system
+interrupt handler into either into FRED's system vector dispatch table or
+into the IDT.
 
-This is problematic on CPUs which have X86_FEATURE_FRED set because the
-real page fault handler retrieves the faulting address from the FRED
-exception stack frame and not from CR2, but that does obviously not work
-when FRED is not yet enabled in the CPU.
+However FRED can be disabled later in trap_init(), after sysvec_install()
+has been invoked already; e.g., the HYPERVISOR_CALLBACK_VECTOR handler is
+registered with sysvec_install() in kvm_guest_init(), which is called in
+setup_arch() but way before trap_init().
 
-To prevent this enable FRED right after init_mem_mapping() without
-interrupt stacks. Those are enabled later in trap_init() after the CPU
-entry area is set up.
+IOW, there is a gap between FRED is available and available but disabled.
+As a result, when FRED is available but disabled, early sysvec_install()
+invocations fail to install the IDT handler resulting in spurious
+interrupts.
 
-[ tglx: Encapsulate the FRED details ]
+Fix it by parsing cmdline param "fred=" in cpu_parse_early_param() to
+ensure that FRED is disabled before the first sysvec_install() incovations.
 
-Fixes: 14619d912b65 ("x86/fred: FRED entry/exit and dispatch code")
+Fixes: 3810da12710a ("x86/fred: Add a fred= cmdline param")
 Reported-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
 Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Xin Li (Intel) <xin@zytor.com>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240709154048.3543361-4-xin@zytor.com
----
- arch/x86/include/asm/processor.h |  3 ++-
- arch/x86/kernel/cpu/common.c     | 15 +++++++++++++--
- arch/x86/kernel/setup.c          |  7 ++++++-
- arch/x86/kernel/smpboot.c        |  2 +-
- arch/x86/kernel/traps.c          |  2 +-
- 5 files changed, 23 insertions(+), 6 deletions(-)
+Link: https://lore.kernel.org/all/20240709154048.3543361-2-xin@zytor.com
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index a75a07f..399f7d1 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -582,7 +582,8 @@ extern void switch_gdt_and_percpu_base(int);
- extern void load_direct_gdt(int);
- extern void load_fixmap_gdt(int);
- extern void cpu_init(void);
--extern void cpu_init_exception_handling(void);
-+extern void cpu_init_exception_handling(bool boot_cpu);
-+extern void cpu_init_replace_early_idt(void);
- extern void cr4_init(void);
- 
- extern void set_task_blockstep(struct task_struct *task, bool on);
+---
+ arch/x86/kernel/cpu/common.c |  5 +++++
+ arch/x86/kernel/traps.c      | 26 --------------------------
+ 2 files changed, 5 insertions(+), 26 deletions(-)
+
 diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 6de12b3..a4735d9 100644
+index d4e539d..10a5402 100644
 --- a/arch/x86/kernel/cpu/common.c
 +++ b/arch/x86/kernel/cpu/common.c
-@@ -2176,7 +2176,7 @@ static inline void tss_setup_io_bitmap(struct tss_struct *tss)
-  * Setup everything needed to handle exceptions from the IDT, including the IST
-  * exceptions which use paranoid_entry().
-  */
--void cpu_init_exception_handling(void)
-+void cpu_init_exception_handling(bool boot_cpu)
- {
- 	struct tss_struct *tss = this_cpu_ptr(&cpu_tss_rw);
- 	int cpu = raw_smp_processor_id();
-@@ -2196,13 +2196,24 @@ void cpu_init_exception_handling(void)
- 	setup_ghcb();
+@@ -1510,6 +1510,11 @@ static void __init cpu_parse_early_param(void)
+ 	if (cmdline_find_option_bool(boot_command_line, "nousershstk"))
+ 		setup_clear_cpu_cap(X86_FEATURE_USER_SHSTK);
  
- 	if (cpu_feature_enabled(X86_FEATURE_FRED)) {
--		cpu_init_fred_exceptions();
-+		/* The boot CPU has enabled FRED during early boot */
-+		if (!boot_cpu)
-+			cpu_init_fred_exceptions();
++	/* Minimize the gap between FRED is available and available but disabled. */
++	arglen = cmdline_find_option(boot_command_line, "fred", arg, sizeof(arg));
++	if (arglen != 2 || strncmp(arg, "on", 2))
++		setup_clear_cpu_cap(X86_FEATURE_FRED);
 +
- 		cpu_init_fred_rsps();
- 	} else {
- 		load_current_idt();
- 	}
- }
- 
-+void __init cpu_init_replace_early_idt(void)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_FRED))
-+		cpu_init_fred_exceptions();
-+	else
-+		idt_setup_early_pf();
-+}
-+
- /*
-  * cpu_init() initializes state that is per-CPU. Some data is already
-  * initialized (naturally) in the bootstrap process, such as the GDT.  We
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 6129dc2..f1fea50 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1039,7 +1039,12 @@ void __init setup_arch(char **cmdline_p)
- 
- 	init_mem_mapping();
- 
--	idt_setup_early_pf();
-+	/*
-+	 * init_mem_mapping() relies on the early IDT page fault handling.
-+	 * Now either enable FRED or install the real page fault handler
-+	 * for 64-bit in the IDT.
-+	 */
-+	cpu_init_replace_early_idt();
- 
- 	/*
- 	 * Update mmu_cr4_features (and, indirectly, trampoline_cr4_features)
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 0c35207..dc4fff8 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -246,7 +246,7 @@ static void notrace start_secondary(void *unused)
- 		__flush_tlb_all();
- 	}
- 
--	cpu_init_exception_handling();
-+	cpu_init_exception_handling(false);
- 
- 	/*
- 	 * Load the microcode before reaching the AP alive synchronization
+ 	arglen = cmdline_find_option(boot_command_line, "clearcpuid", arg, sizeof(arg));
+ 	if (arglen <= 0)
+ 		return;
 diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 6afb41e..197d588 100644
+index 4fa0b17..6afb41e 100644
 --- a/arch/x86/kernel/traps.c
 +++ b/arch/x86/kernel/traps.c
-@@ -1411,7 +1411,7 @@ void __init trap_init(void)
- 	sev_es_init_vc_handling();
+@@ -1402,34 +1402,8 @@ DEFINE_IDTENTRY_SW(iret_error)
+ }
+ #endif
  
- 	/* Initialize TSS before setting up traps so ISTs work */
--	cpu_init_exception_handling();
-+	cpu_init_exception_handling(true);
+-/* Do not enable FRED by default yet. */
+-static bool enable_fred __ro_after_init = false;
+-
+-#ifdef CONFIG_X86_FRED
+-static int __init fred_setup(char *str)
+-{
+-	if (!str)
+-		return -EINVAL;
+-
+-	if (!cpu_feature_enabled(X86_FEATURE_FRED))
+-		return 0;
+-
+-	if (!strcmp(str, "on"))
+-		enable_fred = true;
+-	else if (!strcmp(str, "off"))
+-		enable_fred = false;
+-	else
+-		pr_warn("invalid FRED option: 'fred=%s'\n", str);
+-	return 0;
+-}
+-early_param("fred", fred_setup);
+-#endif
+-
+ void __init trap_init(void)
+ {
+-	if (cpu_feature_enabled(X86_FEATURE_FRED) && !enable_fred)
+-		setup_clear_cpu_cap(X86_FEATURE_FRED);
+-
+ 	/* Init cpu_entry_area before IST entries are set up */
+ 	setup_cpu_entry_areas();
  
- 	/* Setup traps as cpu_init() might #GP */
- 	if (!cpu_feature_enabled(X86_FEATURE_FRED))
 
