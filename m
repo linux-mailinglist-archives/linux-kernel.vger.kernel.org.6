@@ -1,145 +1,167 @@
-Return-Path: <linux-kernel+bounces-284674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766FE9503F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DD69503FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2939B1F26702
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389321F20EF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765CC1991AA;
-	Tue, 13 Aug 2024 11:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179EA1991CA;
+	Tue, 13 Aug 2024 11:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fiCN1956";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aWDHmumI";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iz6DxFO+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JHCU7YQO"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn7MwSWR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EBD170A2B;
-	Tue, 13 Aug 2024 11:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31D52D611;
+	Tue, 13 Aug 2024 11:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549392; cv=none; b=qykxC/dd1UcD421TpPCHJkAtmTx29/EUmn9JFox+5m5djpVPbf0ZSzk+oWekDaVYhIZrzuN1Yk8R3bphi58+ABDFbO7ah3C6woTGmOArCou6rpObVYaeOWlOQsxByLyJKsxkz9/45eK7SZ+gH7PO5yYVUWeOBSG7DJkkfdn+D9E=
+	t=1723549526; cv=none; b=tyuGJ2kfBn8fivVXVS9YFCOnq/KrRK9y2/lnzyTptAtncNyJRLwFChGS539UqKJOa/zVC+8Jda2RyWXjhKVPl9EEP/tfWJZHtZ1CDAkCh/pYsh++RkPzs2CyIW1wY16pviBCEHn99mAdkXezFVhoPi0WIynwHHFa+vAuQbK6tNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549392; c=relaxed/simple;
-	bh=pjUfrEENcwPiuW1gXWM710zyRSsutznZkJKROw7R1o8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OnGYEGxw1lMpVqjOALXkQakg3AvoSbeZrquvwayRnOep0kYOjG5CIUxUunKK/lOTNcy0kBIJWRxuKKGxRoc8yNL65p9vPaV7vITfuvH3mtTegydGEHBSUDLK+NxktLNhAMz9DxJIi/upaZ9JMlXL5P/46bx5T/SqPC7aVoUpdv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fiCN1956; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aWDHmumI; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iz6DxFO+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JHCU7YQO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E4DEE227A1;
-	Tue, 13 Aug 2024 11:43:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723549389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
-	b=fiCN19565Qx1VSqMY3NU3oGaDboK4WMsqd0cMyY0zj4awButn3o4sW19YqtyP4jnyWFLn5
-	nnHKY/gRgaWfk0XJ8QKY2Ouygk21GsFMPuCYfUOaXvAYymzQFbnm+14GeyGcfYkH3praeW
-	HcNRdnnxumb4q4siY2ccIwsnVVhTh9k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723549389;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
-	b=aWDHmumIq+Opn/9js5XTCoHB2g5u5xXSpYKhLNW35qkp/6xnRb4SkMWXOhE3joFyHNG2XO
-	Jt3zqhqJOq/H0uCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723549387; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
-	b=iz6DxFO+HoJwOsKmBRRGP1rbhrPYIt1XTB8TujjiOCkjkAY4zoiJPRLNEbq10+oNsCuTo7
-	PwD7MP8eJ//44kx2DRr7oRfXkrC45NK2sdvLD9YgPCmDWQqdgmrm9OfJaEPi/5zPQ87MV0
-	N4wfDhlycX+WdT6pGsPP3aEwIli6ykQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723549387;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hyhXYO2osn1IltdLcMAc23cZGDHEk3jzE+nzBzn+GDU=;
-	b=JHCU7YQOcjSUu1tkgKer3oiB/OuC09UZafAtKAYdYuHvXlu1wgg+568BdETGCWVyxDJ2cZ
-	qnUUFuTSTCH5vODQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C605013ABD;
-	Tue, 13 Aug 2024 11:43:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VwbDL8tGu2Y4cgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 11:43:07 +0000
-Date: Tue, 13 Aug 2024 13:43:44 +0200
-Message-ID: <87le10myvj.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc: <tiwai@suse.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<patches@opensource.cirrus.com>
-Subject: Re: [PATCH] ALSA: hda: cs35l41: Remove redundant call to hda_cs_dsp_control_remove()
-In-Reply-To: <20240813113209.648-1-rf@opensource.cirrus.com>
-References: <20240813113209.648-1-rf@opensource.cirrus.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1723549526; c=relaxed/simple;
+	bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lzGkb548IDesyc+8INfqTmFjEvswRS/t8bLK8i8Ec631z/bocRSEmp1BgQZWoM/ptLQSiM5bt0JBS3+HXjL/80Is2rPyTEi4qxm+tYmE133U/Mx8HoMYIrE2S5fZ8GxpAFb8QkHVrsFCat+TD6tEs+kpMngp848NhzltEZwVP8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn7MwSWR; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723549525; x=1755085525;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=4S7bFWnGTGe5F/hKeyLOIxVvEHDSz1EjGPCsdLTcSe4=;
+  b=Sn7MwSWRGgUxMrgrIYZ79Mb7IvLaGolV72Pgg2dFDa7uFhYo8QSVrFy2
+   X3yIVmxHQGob8ZWOZlg/J0EG8wXJgeGWX/jRPMAeMarKEzniKYrivxVSM
+   vgTwQTs8DoyEf3CK06USz8QTMhEoRFIVGeR0EdTNF2IyYDKcZN6qV5KFL
+   rZuTd/0eXetaANXsMvGgLoyNtq9gw1nG6AM3lCHxYgAt0jByXZaaPtmxY
+   5Sl8ThDmaki+pdp5nzHWRaumLBwShnr7pe6bKZyYp+xpTLgi2a4hf85wg
+   JWTZHyVmI4LXgyFuFAqBUnk5+VrzpbHhEVdVzPd7T8ihxZ3GXEAsIiZ+R
+   A==;
+X-CSE-ConnectionGUID: wS6y8s7bTkKKSRIUdmPQEg==
+X-CSE-MsgGUID: RkVhylHqS9WbeX0hneKdrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="47109653"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="47109653"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:45:24 -0700
+X-CSE-ConnectionGUID: CIwk+6DETtaD7q/E3IQgAg==
+X-CSE-MsgGUID: MvFldAgNSQeC0+Wgcchl1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="89440581"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 13 Aug 2024 04:45:19 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdpxl-0000Nq-2h;
+	Tue, 13 Aug 2024 11:45:17 +0000
+Date: Tue, 13 Aug 2024 19:44:55 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Christian Brauner <brauner@kernel.org>,
+	Paul Moore <paul@paul-moore.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>
+Subject: Re: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
+Message-ID: <202408131900.xhbYFHR4-lkp@intel.com>
+References: <20240812144936.1616628-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.991];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,cirrus.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240812144936.1616628-1-mic@digikod.net>
 
-On Tue, 13 Aug 2024 13:32:09 +0200,
-Richard Fitzgerald wrote:
-> 
-> The driver doesn't create any ALSA controls for firmware controls, so it
-> shouldn't be calling hda_cs_dsp_control_remove().
-> 
-> commit 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for
-> firmware coefficients") removed the call to hda_cs_dsp_add_controls() but
-> didn't remove the call for destroying those controls.
-> 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
-> Fixes: 312c04cee408 ("ALSA: hda: cs35l41: Stop creating ALSA Controls for firmware coefficients")
+Hi Mickaël,
 
-Applied now.  Thanks.
+kernel test robot noticed the following build warnings:
 
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master v6.11-rc3]
+[cannot apply to brauner-vfs/vfs.all next-20240813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Takashi
+url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/fs-security-Fix-file_set_fowner-LSM-hook-inconsistencies/20240813-004648
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20240812144936.1616628-1-mic%40digikod.net
+patch subject: [PATCH] fs,security: Fix file_set_fowner LSM hook inconsistencies
+config: x86_64-randconfig-122-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131900.xhbYFHR4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408131900.xhbYFHR4-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+>> fs/file_table.c:153:25: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct cred const [noderef] __rcu *cred @@     got struct cred const * @@
+   fs/file_table.c:153:25: sparse:     expected struct cred const [noderef] __rcu *cred
+   fs/file_table.c:153:25: sparse:     got struct cred const *
+>> fs/file_table.c:157:36: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:157:36: sparse:     expected struct cred const *cred
+   fs/file_table.c:157:36: sparse:     got struct cred const [noderef] __rcu *cred
+   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
+   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
+   fs/file_table.c:69:28: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cred const *cred @@     got struct cred const [noderef] __rcu *cred @@
+   fs/file_table.c:69:28: sparse:     expected struct cred const *cred
+   fs/file_table.c:69:28: sparse:     got struct cred const [noderef] __rcu *cred
+
+vim +153 fs/file_table.c
+
+   147	
+   148	static int init_file(struct file *f, int flags, const struct cred *cred)
+   149	{
+   150		int error;
+   151	
+   152		f->f_cred = get_cred(cred);
+ > 153		f->f_owner.cred = get_cred(cred);
+   154		error = security_file_alloc(f);
+   155		if (unlikely(error)) {
+   156			put_cred(f->f_cred);
+ > 157			put_cred(f->f_owner.cred);
+   158			return error;
+   159		}
+   160	
+   161		rwlock_init(&f->f_owner.lock);
+   162		spin_lock_init(&f->f_lock);
+   163		mutex_init(&f->f_pos_lock);
+   164		f->f_flags = flags;
+   165		f->f_mode = OPEN_FMODE(flags);
+   166		/* f->f_version: 0 */
+   167	
+   168		/*
+   169		 * We're SLAB_TYPESAFE_BY_RCU so initialize f_count last. While
+   170		 * fget-rcu pattern users need to be able to handle spurious
+   171		 * refcount bumps we should reinitialize the reused file first.
+   172		 */
+   173		atomic_long_set(&f->f_count, 1);
+   174		return 0;
+   175	}
+   176	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
