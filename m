@@ -1,162 +1,114 @@
-Return-Path: <linux-kernel+bounces-284607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46C2950302
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:55:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE52D95030A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517841F23016
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:55:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FB7D1F22D8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E028819AD48;
-	Tue, 13 Aug 2024 10:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C1919D095;
+	Tue, 13 Aug 2024 10:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IiJD61xr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="Xzery2+L"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32682191489
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:52:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9461219CD06
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:53:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546379; cv=none; b=hTHZ2yQO0/kA1+vabirQ4NXw3Mh4WcFm1uK6ypp4v9NnFKmDULqhOPYCZSbApGTAJdpS4f70YfJBFruBdE3geMmIELta/yjE5Wt2DabcD6laCq0q0jcyhh4zNGT4vpSmMaY8NQBeru7j4fMWPeMv+O+Nn2A0cjpLNl0u/OZYGM8=
+	t=1723546416; cv=none; b=N2/W+ksKh/xyD5yQvUbI/fKAdJSXc7A1u5XsNT9tOHUDTCjUAoxLwm3uE6fNvzJz7e+JZnGXwV1zztU9XfiJ9h3lUzCgnnzthQ+K1gDAC8vBQ7rSX9XSWh1SUz9pGP+kfHqcXU0mc2YJLPImUk9zY+o5RxUK1f20olcMhew1nxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546379; c=relaxed/simple;
-	bh=XM3a8VWak9PxycIbmZCh+wJ2tfXvnwnWWKYdvHzsofM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fFyJdv3tlTnYwaTn24crMrLXoi1eVAqTlojAD7hgIyy1KKGB/qme3N81APEtPUNnAllXlEINupvaGe/h7DcPSPyCjDjomELRySX/6WWCrf/SaTenY+HAkOrPlHQ9X4VKt4MLHX6QKFc7Q9y7Cb0hfUFDG80UvIXBW0mbNqMuJvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IiJD61xr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E513C4AF09;
-	Tue, 13 Aug 2024 10:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1723546378;
-	bh=XM3a8VWak9PxycIbmZCh+wJ2tfXvnwnWWKYdvHzsofM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IiJD61xrkx64FeGdy0yKZDwDa/UrP/828KTr1PNtSY9gz4HMwmCmdF6mIkFnDmyvN
-	 +VZLbS2n27m8JPVTJKelCbttpYElAufFiFBMw924GMyr2Fe9xoL0l6ZZIFmW8SywM2
-	 WemA/cMY2K40OSpYR0uNZ7GY43zYnQH0cGChrMkI=
-Date: Tue, 13 Aug 2024 12:52:55 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: quic_zijuhu <quic_zijuhu@quicinc.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/27] driver core: Constify driver API
- device_find_child()
-Message-ID: <2024081329-zero-cloud-d7e4@gregkh>
-References: <20240811-const_dfc_done-v1-0-9d85e3f943cb@quicinc.com>
- <20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com>
- <2024081359-dart-transpire-8143@gregkh>
- <f9cdd4eb-7c2c-403b-bfd2-06b48a7ca92c@quicinc.com>
+	s=arc-20240116; t=1723546416; c=relaxed/simple;
+	bh=afPCevgdcFFsmtNXdZ850iNIr+9bwUzdnNja76MSoeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KZwu1Ga0Hai5VhM4ut7xPoENViCcpBd+OFr6qyU8NiBpJjLGgsSDkio6QQTp1EGJjt+isThHWnDryDb4h2kh86ef6AtOKlp7hNSrtJk+3eJeFEf+zqXE+JYkY777YTmnL86WNd2aSlH4cbqKKPtLKcj8YB0qVXFu1LUhNHW91Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=Xzery2+L; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5b391c8abd7so6313197a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 03:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1723546413; x=1724151213; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mL6WsGMZ/qoNr9tALWa0VvXLLfikjSA2GI/ckscWigM=;
+        b=Xzery2+L9GTbsweFcu9MEniP2hfFSf8xyyAKRIn4j/ABH4kn0U7g8HCMj8Rf39GNU1
+         7GW0SBzSD+eBXHOrfaNxH0FfcY8x0s4P3bbn603Cx6szkM9Rb+LJXDw1rD8SFRxu7vyr
+         8kbDh2aDgPLBRRLD7LaWE2b1f6+DsAFSBOHkVTLUUFd4PA9hsXqNM8cH3edEVOnXBAy9
+         NBnqz13xo+BU15CBwFD+Ie+plgALGT5NJe1+qDC++vBBlMaWZ2c5n0yDBYdFZNp85KGm
+         z37hc9IZg3vqHzUDZYuupdYY1F2LWiKHs/XctM05/z87CsUCU8aCszO3AQekXVbHZGOY
+         oAUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723546413; x=1724151213;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mL6WsGMZ/qoNr9tALWa0VvXLLfikjSA2GI/ckscWigM=;
+        b=eE0KNGWqLrH20HELf4kpNJRRLvQP0ehjHFHAH+KuPMfqM3b5fFWp1akkzF5HgnPLIf
+         d4kIZjKnOrfvIL1aNO47e7zYZ+dU/mzAiZadwJSAOCMs/4JWNNragVr0DBQTUly5+ygM
+         tlUdWu5aWEZ2aC80757d2KbHsq4WYQRAZDgAfFibZH8pCdA2GP9eKBz70ObZqGKcgCep
+         7vq9mp/9OYbouzDosRsnKUZwnK7Qq3HpnICUUSi4EKlgjXlAwsNf/dmULANBfAoZFrUD
+         e4GcFbT+ZnXNbjXzznb6hGQpCotfs4Pfxg3ldLBlvnCV0Mu3XdyUaI1+N7pX/WJv4bDZ
+         ie7A==
+X-Forwarded-Encrypted: i=1; AJvYcCW0iWtJdnaPxEsZZJtgF8J2O4x2pmJTNa/TGm1n3N7OVATJh/p2H0ENw50SlC3ihKeczwMo64wlsVt+PhAoYGdDkjVVmzulu0K12mRb
+X-Gm-Message-State: AOJu0YyAClqBYuVHGdBrBG9M+tOYE7qLjK3bQXnIShIoCojOp9inj8yb
+	VaUnnR+l4DrPD2LxCeE58FKazPrfzHr68dQe8ND2h+GLFt8lRCVyncwUGsHhXfk=
+X-Google-Smtp-Source: AGHT+IHVjFzXHfV3YKBeYS9Fv1QrhBgZvi3taudAr8E7H76pEBKVWSjmLKsj+27p/1JROgS8BDE4Kg==
+X-Received: by 2002:a05:6402:5112:b0:5a3:55a5:39f1 with SMTP id 4fb4d7f45d1cf-5bd44c274e2mr2274219a12.13.1723546412549;
+        Tue, 13 Aug 2024 03:53:32 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-62-216-208-163.dynamic.mnet-online.de. [62.216.208.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bd187f2c82sm2847889a12.14.2024.08.13.03.53.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 03:53:32 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	kees@kernel.org,
+	gustavoars@kernel.org
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] btrfs: Annotate struct name_cache_entry with __counted_by()
+Date: Tue, 13 Aug 2024 12:53:15 +0200
+Message-ID: <20240813105314.58484-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f9cdd4eb-7c2c-403b-bfd2-06b48a7ca92c@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 06:39:48PM +0800, quic_zijuhu wrote:
-> On 8/13/2024 5:48 PM, Greg Kroah-Hartman wrote:
-> > On Sun, Aug 11, 2024 at 10:24:52AM +0800, Zijun Hu wrote:
-> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> >>
-> >> Constify the following driver API:
-> >> struct device *device_find_child(struct device *dev, void *data,
-> >> 		int (*match)(struct device *dev, void *data));
-> >> to
-> >> struct device *device_find_child(struct device *dev, const void *data,
-> >>                                  device_match_t match);
-> >> typedef int (*device_match_t)(struct device *dev, const void *data);
-> >> Since it should not modify caller's match data @*data.
-> >>
-> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> >> ---
-> >>  drivers/base/core.c    | 11 +++--------
-> >>  include/linux/device.h |  4 ++--
-> >>  2 files changed, 5 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> >> index 3f3ebdb5aa0b..f152e0f8fb03 100644
-> >> --- a/drivers/base/core.c
-> >> +++ b/drivers/base/core.c
-> >> @@ -4062,8 +4062,8 @@ EXPORT_SYMBOL_GPL(device_for_each_child_reverse);
-> >>   *
-> >>   * NOTE: you will need to drop the reference with put_device() after use.
-> >>   */
-> >> -struct device *device_find_child(struct device *parent, void *data,
-> >> -				 int (*match)(struct device *dev, void *data))
-> >> +struct device *device_find_child(struct device *parent, const void *data,
-> >> +				 device_match_t match)
-> >>  {
-> >>  	struct klist_iter i;
-> >>  	struct device *child;
-> >> @@ -4108,11 +4108,6 @@ struct device *device_find_child_by_name(struct device *parent,
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(device_find_child_by_name);
-> >>  
-> >> -static int match_any(struct device *dev, void *unused)
-> >> -{
-> >> -	return 1;
-> >> -}
-> >> -
-> >>  /**
-> >>   * device_find_any_child - device iterator for locating a child device, if any.
-> >>   * @parent: parent struct device
-> >> @@ -4124,7 +4119,7 @@ static int match_any(struct device *dev, void *unused)
-> >>   */
-> >>  struct device *device_find_any_child(struct device *parent)
-> >>  {
-> >> -	return device_find_child(parent, NULL, match_any);
-> >> +	return device_find_child(parent, NULL, device_match_any);
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(device_find_any_child);
-> >>  
-> >> diff --git a/include/linux/device.h b/include/linux/device.h
-> >> index b2423fca3d45..76f10bdbb4ea 100644
-> >> --- a/include/linux/device.h
-> >> +++ b/include/linux/device.h
-> >> @@ -1073,8 +1073,8 @@ int device_for_each_child(struct device *dev, void *data,
-> >>  			  int (*fn)(struct device *dev, void *data));
-> >>  int device_for_each_child_reverse(struct device *dev, void *data,
-> >>  				  int (*fn)(struct device *dev, void *data));
-> >> -struct device *device_find_child(struct device *dev, void *data,
-> >> -				 int (*match)(struct device *dev, void *data));
-> >> +struct device *device_find_child(struct device *dev, const void *data,
-> >> +				 device_match_t match);
-> >>  struct device *device_find_child_by_name(struct device *parent,
-> >>  					 const char *name);
-> >>  struct device *device_find_any_child(struct device *parent);
-> >>
-> >> -- 
-> >> 2.34.1
-> >>
-> > 
-> > This patch breaks the build:
-> > 
-> > ./include/linux/device.h:1077:6: error: unknown type name 'device_match_t'
-> >  1077 |                                  device_match_t match);
-> >       |                                  ^
-> > 1 error generated.
-> > make[2]: *** [scripts/Makefile.build:117: arch/x86/kernel/asm-offsets.s] Error 1
-> > make[1]: *** [/mnt/fast_t2/linux/work/driver-core/Makefile:1193: prepare0] Error 2
-> > 
-> > How did you test it?
-> > 
-> > And as you are changing the parameters here, doesn't the build break
-> > also because of that?
-> > 
-> 
-> it seems these dependency patches listed within [PATCH 00/27] are not
-> picked up.
+Add the __counted_by compiler attribute to the flexible array member
+name to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-Of course not, please send stand-alone series if you need them to be
-applied in a specific order.
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ fs/btrfs/send.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 4ca711a773ef..de185b23cfd0 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -347,7 +347,7 @@ struct name_cache_entry {
+ 	int ret;
+ 	int need_later_update;
+ 	int name_len;
+-	char name[];
++	char name[] __counted_by(name_len);
+ };
+ 
+ /* See the comment at lru_cache.h about struct btrfs_lru_cache_entry. */
+-- 
+2.46.0
 
-greg k-h
 
