@@ -1,188 +1,208 @@
-Return-Path: <linux-kernel+bounces-285086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55E20950918
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B14B95091D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B25B9B220F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:28:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C30F1C221A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FD511A01B3;
-	Tue, 13 Aug 2024 15:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078411A0706;
+	Tue, 13 Aug 2024 15:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8enr/xb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6oA+cQO"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD1F19E831;
-	Tue, 13 Aug 2024 15:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47619D886;
+	Tue, 13 Aug 2024 15:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562881; cv=none; b=jzoqadqo+foAvgKcP31FWJI6TG/7baqIN1jTh9CHgqrVSao1t6km8fUDWQGDMaygsh2NFhUl0+OkG9H9SSkoatVaG28lXYIJb5GZlljjJXhCYA+1ju9pJx/OfOvUgTTsGNfQ1P9RB8WlBrMPUf2/tSWoLVT4/i00eTVXzsAcIoA=
+	t=1723562921; cv=none; b=nLoqmO/fP4OKO4eSqPZnx9rDy9rS0DhCXLE3XiAyMSFcApk4w+3aw0CdS5M9wA3Alszl1uqfOlGo5y4UoJn2/Bw46+qnlB5OuuPvNXqA9w7kcSPJFie7pTjywpem6256nvvc0IMfD/Yy4glr/VADFqF6XL4DgICrIeRHoqcoS1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562881; c=relaxed/simple;
-	bh=lSaC+RGCNUD3mMS/A24X19ve7lg70vhrG0nTFJ/Kvh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TierUZiTZdhKE3PTmB689gT+ydZxK2oBoZ678AH0YaGupgoek8oXL0yVySP1BnXAJYgWTSsiPdRpO3jyBGgxAZ7D5t7CFXMiWTNh0gXQGU5c1ibVChKGeN7uJGE8EKRAq2MgjQDVdBFpoMx2AqLdcTLA5+4/pMK8CFSGaBUh7Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8enr/xb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02178C4AF09;
-	Tue, 13 Aug 2024 15:27:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723562880;
-	bh=lSaC+RGCNUD3mMS/A24X19ve7lg70vhrG0nTFJ/Kvh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u8enr/xbdSosS9TaP1PddYNKhtRrxJEB4uSbk1paDNP0a06nIorLqOENMzklWeP2u
-	 IRjLdRmAB/2SQ9bm8XNuV+N9lDmO2smxmBjRjtVY534AZm6t5FlZVE6VC6uD8tUkIg
-	 IlIoKM6jTWrbWdt/reNDlzkilPPHt3AwlYlN0uyPHW4h9vfbHy65WQLFsXPPNq16W3
-	 IHHvHTealwqZ2cWYI0qD70kdqiP7wn2f8iJLuJ14tDRdtUazinLTteEHFFa+BCIJbC
-	 WTGNYubVE0kpJCT0bv+uSy2K24+phKcC8S2Gym7Svfa0yDMON1EO39AcdYbC/SGGAE
-	 uipzkxUcD6SZw==
-Date: Tue, 13 Aug 2024 16:27:55 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Agarwal, Utsav" <Utsav.Agarwal@analog.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"Hennerich, Michael" <Michael.Hennerich@analog.com>,
-	"Gaskell, Oliver" <Oliver.Gaskell@analog.com>,
-	Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Bimpikas, Vasileios" <Vasileios.Bimpikas@analog.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	"Artamonovs, Arturs" <Arturs.Artamonovs@analog.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for adp5588
-Message-ID: <20240813-talon-uproar-f27c6f194d59@spud>
-References: <20240813-adp5588_gpio_support-v10-0-aab3c52cc8bf@analog.com>
- <20240813-adp5588_gpio_support-v10-3-aab3c52cc8bf@analog.com>
- <172354752239.384988.5705833300903132689.robh@kernel.org>
- <SJ0PR03MB634347015AE14A06A3837E199B862@SJ0PR03MB6343.namprd03.prod.outlook.com>
+	s=arc-20240116; t=1723562921; c=relaxed/simple;
+	bh=Ovr/D785l5BYc8W6iV5RgkT5O87h86WSv+qFh+XHzKk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gD8jTYeJI6L0Sq+xb65/em9S7XhdRJM61XF8XXApesgUSVTlJKLBiJ62LMyxQVtNBWIOT48yDn5S55NTAQSHejsj09yLVrpC1peRTxzdtE9TiPgA+bznZND/zu2+YzJ8jwA+lj1qEvtktwWBmiVEaJn5QSfH7yCTeZ5ROB4iBX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6oA+cQO; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ef2d96164aso61198091fa.3;
+        Tue, 13 Aug 2024 08:28:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723562917; x=1724167717; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Az5RaI5b63ud2RixYEXJkMIxZwNm3gKEQ9Iv2ve9pLI=;
+        b=e6oA+cQOMNDqoeHFwqqDdU8jtJSYTqv00KjGivfXPY+FGNMzA1GCRCWxUKQ4shsMEF
+         sxCqfxYRPLKsd0lG/Of+fnQPwrzQMRgOctzyqoAhs/UvVBm/+Zu+Z3gSfea1FvVMLOxI
+         wXwYlTSV4yNr24XwwtOsYI9fKrXEecW32xMHkm2SUPgccFm9hgd2euJXAf4/Kpzy023C
+         ijbXX/fzTvb4SIuRKeJPLQgv6olLhhpoXn2NrJRAY/5DS7BYJ43yc4dia2UI36or36QS
+         QRsauUFUlP2ll3pbKd/UGR6W0SF+ycFhjP3Y9/1vL11Dkh68pPpBc9rlIGwjeLf6BPBX
+         qMDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723562917; x=1724167717;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Az5RaI5b63ud2RixYEXJkMIxZwNm3gKEQ9Iv2ve9pLI=;
+        b=ukk12gK8/PYbJ6uP1bknOJNQ6/wUgIGg/hF9HB6b1CBOFcWvnUzKRcIPZtHNWoj7QF
+         OuC8l/uTR6Tmfl/mVQtknlug2wT3jTnZEd17dQQCRSBOUQMrKGcYRL5N2fDwQ3KJPW3O
+         fYOL+70Tdpa66CFDQMMwpMSF5KRzFN2xruBzoJ420uSTqzTDA5Pxdf+9T0Vv6gFMOmc9
+         1qy8jQvN0sPliziHEj94uFrI18cEWt3Ivgvdgjlm5Tq4BPZ+WItSmcR35dVc+/PZUIZ1
+         QNHsyqQolxwaBfQAbU4MqyqvNtlF7cRqxIgG6x4Prx/E1boQvhf6E/nZMOdwnoH0kanY
+         kI4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXG/DVQIxh1FvO7j+OeHeqc3Qt83iW9GWgL5YXmnsKTwt1uO75Yp+dEHglYCHqUaQrH0s8i3oS0Cncf9xu0Nh9G+wniHcVHmXVJ9Es7fHz9tprU+/v2/jFFZVaLezEjyAnMRCMgOBjXH2V6C22wIvYvb1+haZ5WHADqjkO5K2/VlEwEYe0=
+X-Gm-Message-State: AOJu0Yy2YpX1Hr1vfHmVWGy65fPlkAzmlKBHnd62iUhCBvhI6WDcpcPo
+	cqn6AUGMe6J9E6qzcpTsE+vZCAN134FJwe/CjJdMj7VrPmAuERdpYaX9gJUw
+X-Google-Smtp-Source: AGHT+IFJRLK1J7OBinMaGVyi5AHKztjR/0deAHLi2xkzUg7sJUQlSb9CP9w81gztjoWEeSttmEIygg==
+X-Received: by 2002:a2e:be87:0:b0:2ef:23ec:9356 with SMTP id 38308e7fff4ca-2f2b712f827mr35129951fa.8.1723562916946;
+        Tue, 13 Aug 2024 08:28:36 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-149-85.dynamic.spd-mgts.ru. [109.252.149.85])
+        by smtp.googlemail.com with ESMTPSA id 38308e7fff4ca-2f2ad92caddsm5475441fa.62.2024.08.13.08.28.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 08:28:36 -0700 (PDT)
+Message-ID: <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
+Date: Tue, 13 Aug 2024 18:28:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UaxSKSzzvZNZC0gh"
-Content-Disposition: inline
-In-Reply-To: <SJ0PR03MB634347015AE14A06A3837E199B862@SJ0PR03MB6343.namprd03.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
+To: Breno Leitao <leitao@debian.org>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>, dmitry.osipenko@collabora.com
+Cc: Andi Shyti <andi.shyti@kernel.org>, Laxman Dewangan
+ <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com,
+ Michael van der Westhuizen <rmikey@meta.com>,
+ "open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>,
+ "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240808121447.239278-1-leitao@debian.org>
+ <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
+ <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
+ <ZrtgfkzuCbNju3i9@gmail.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Content-Language: en-US
+In-Reply-To: <ZrtgfkzuCbNju3i9@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+13.08.2024 16:32, Breno Leitao пишет:
+> Hello Andy,
+> 
+> On Fri, Aug 09, 2024 at 02:03:27PM +0300, Andy Shevchenko wrote:
+>> On Fri, Aug 9, 2024 at 2:57 AM Andi Shyti <andi.shyti@kernel.org> wrote:
+>>> On Thu, Aug 08, 2024 at 05:14:46AM GMT, Breno Leitao wrote:
+> 
+>>>> The problem arises because during __pm_runtime_resume(), the spinlock
+>>>> &dev->power.lock is acquired before rpm_resume() is called. Later,
+>>>> rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+>>>> mutexes, triggering the error.
+>>>>
+>>>> To address this issue, devices on ACPI are now marked as not IRQ-safe,
+>>>> considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+>>
+>> This is a step in the right direction
+> 
+> Thanks
+> 
+>> but somewhere in the replies
+>> here I would like to hear about roadmap to get rid of the
+>> pm_runtime_irq_safe() in all Tegra related code.
+> 
+> Agree, that seems the right way to go, but this is a question to
+> maintainers, Laxman and Dmitry.
+> 
+> By the way, looking at lore, I found that the last email from Laxman is
+> from 2022. And Dmitry seems to be using a different email!? Let me copy
+> the Dmitry's other email (dmitry.osipenko@collabora.com) here.
+> 
+>>>> +     if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
+>>>
+>>> looks good to me, can I have an ack from Andy here?
+>>
+>> I prefer to see something like
+>> is_acpi_node() / is_acpi_device_node() / is_acpi_data_node() /
+>> has_acpi_companion()
+>> instead depending on the actual ACPI representation of the device.
+>>
+>> Otherwise no objections.
+>> Please, Cc me (andy@kernel.org) for the next version.
+> 
+> Thanks for the feedback, I agree that leveraging the functions about
+> should be better. What about something as:
+> 
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Thu Jun 6 06:27:07 2024 -0700
+> 
+>     Do not mark ACPI devices as irq safe
+>     
+>     On ACPI machines, the tegra i2c module encounters an issue due to a
+>     mutex being called inside a spinlock. This leads to the following bug:
+>     
+>             BUG: sleeping function called from invalid context at kernel/locking/mutex.c:585
+>             in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282, name: kssif0010
+>             preempt_count: 0, expected: 0
+>             RCU nest depth: 0, expected: 0
+>             irq event stamp: 0
+>     
+>             Call trace:
+>             __might_sleep
+>             __mutex_lock_common
+>             mutex_lock_nested
+>             acpi_subsys_runtime_resume
+>             rpm_resume
+>             tegra_i2c_xfer
+>     
+>     The problem arises because during __pm_runtime_resume(), the spinlock
+>     &dev->power.lock is acquired before rpm_resume() is called. Later,
+>     rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+>     mutexes, triggering the error.
+>     
+>     To address this issue, devices on ACPI are now marked as not IRQ-safe,
+>     considering the dependency of acpi_subsys_runtime_resume() on mutexes.
+>     
+>     Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+>     Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+>     Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 85b31edc558d..1df5b4204142 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  	 * domain.
+>  	 *
+>  	 * VI I2C device shouldn't be marked as IRQ-safe because VI I2C won't
+> -	 * be used for atomic transfers.
+> +	 * be used for atomic transfers. ACPI device is not IRQ safe also.
+>  	 */
+> -	if (!IS_VI(i2c_dev))
+> +	if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
+>  		pm_runtime_irq_safe(i2c_dev->dev);
+>  
+>  	pm_runtime_enable(i2c_dev->dev);
+> 
 
---UaxSKSzzvZNZC0gh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Looks good, thanks
 
-On Tue, Aug 13, 2024 at 11:50:41AM +0000, Agarwal, Utsav wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Rob Herring (Arm) <robh@kernel.org>
-> > Sent: Tuesday, August 13, 2024 12:12 PM
-> > To: Agarwal, Utsav <Utsav.Agarwal@analog.com>
-> > Cc: devicetree@vger.kernel.org; Hennerich, Michael
-> > <Michael.Hennerich@analog.com>; Gaskell, Oliver
-> > <Oliver.Gaskell@analog.com>; Conor Dooley <conor+dt@kernel.org>; Sa, Nu=
-no
-> > <Nuno.Sa@analog.com>; linux-kernel@vger.kernel.org; Bimpikas, Vasileios
-> > <Vasileios.Bimpikas@analog.com>; Conor Dooley
-> > <conor.dooley@microchip.com>; Artamonovs, Arturs
-> > <Arturs.Artamonovs@analog.com>; Krzysztof Kozlowski <krzk+dt@kernel.org=
->;
-> > linux-input@vger.kernel.org; Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> > Subject: Re: [PATCH v10 3/3] dt-bindings: input: pure gpio support for =
-adp5588
-> >=20
-> > [External]
-> >=20
-> >=20
-> > On Tue, 13 Aug 2024 10:51:33 +0100, Utsav Agarwal wrote:
-> > > Adding software support for enabling the pure gpio capability of the
-> > > device - which allows all I/O to be used as GPIO. Previously, I/O
-> > > configuration was limited by software to partial GPIO support only.
-> > >
-> > > When working in a pure gpio mode, the device does not require the
-> > > certain properties and hence, the following are now made optional:
-> > > 	- interrupts
-> > > 	- keypad,num-rows
-> > > 	- keypad,num-columns
-> > > 	- linux,keymap
-> > >
-> > > However, note that the above are required to be specified when
-> > > configuring the device as a keypad, for which dependencies have been =
-added
-> > > such that specifying either one requires the remaining as well.
-> > >
-> > > Also, note that interrupts are made optional, but required when the d=
-evice
-> > > has either been configured in keypad mode or as an interrupt controll=
-er.
-> > > This has been done since they may not necessarily be used when levera=
-ging
-> > > the device purely for GPIO.
-> > >
-> > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > Signed-off-by: Utsav Agarwal <utsav.agarwal@analog.com>
-> > > ---
-> > >  .../devicetree/bindings/input/adi,adp5588.yaml     | 40 ++++++++++++=
-++++++-
-> > ---
-> > >  1 file changed, 34 insertions(+), 6 deletions(-)
-> > >
-> >=20
-> > My bot found errors running 'make dt_binding_check' on your patch:
-> >=20
-> > yamllint warnings/errors:
-> > ./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: [erro=
-r]
-> > syntax error: could not find expected ':' (syntax)
-> >=20
-> > dtschema/dtc warnings/errors:
-> > /builds/robherring/dt-review-
-> > ci/linux/Documentation/devicetree/bindings/input/adi,adp5588.yaml: igno=
-ring,
-> > error parsing file
-> > ./Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could=
- not
-> > find expected ':'
-> > make[2]: *** Deleting file
-> > 'Documentation/devicetree/bindings/input/adi,adp5588.example.dts'
-> > Documentation/devicetree/bindings/input/adi,adp5588.yaml:140:1: could n=
-ot
-> > find expected ':'
-> > make[2]: *** [Documentation/devicetree/bindings/Makefile:26:
-> > Documentation/devicetree/bindings/input/adi,adp5588.example.dts] Error 1
-> > make[2]: *** Waiting for unfinished jobs....
-> > make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1432:
-> > dt_binding_check] Error 2
-> > make: *** [Makefile:224: __sub-make] Error 2
-> >=20
->=20
-> Apologies, it seems like I accidently deleted the characters towards the =
-end=20
-> of the yaml file when making changes...
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-If you make any changes, particularly to an already reviewed binding,
-please be sure to run the tests again before sending.
+> but somewhere in the replies
+> here I would like to hear about roadmap to get rid of the
+> pm_runtime_irq_safe() in all Tegra related code.
 
-Thanks,
-Conor.
+What is the problem with pm_runtime_irq_safe()? There were multiple
+problems with RPM for this driver in the past, it wasn't trivial to make
+it work for all Tegra HW generations. Don't expect anyone would want to
+invest time into doing it all over again.
 
---UaxSKSzzvZNZC0gh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrt7ewAKCRB4tDGHoIJi
-0p8/AQDjN3yyk7fx+hDY5Wx3AXRyeMU9MulyUrmVqHY9obTKEAEAvpWCf+REWN74
-6JVkj0utXBG+pqf8RMBacwhLLnwZ2Aw=
-=KW6c
------END PGP SIGNATURE-----
-
---UaxSKSzzvZNZC0gh--
 
