@@ -1,116 +1,148 @@
-Return-Path: <linux-kernel+bounces-284378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC66E950056
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:51:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7204C950057
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:51:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A17A1C20DA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:51:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B7E2854DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C4C17BB19;
-	Tue, 13 Aug 2024 08:50:28 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB5C17BB2F;
+	Tue, 13 Aug 2024 08:50:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40CE168C3F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C401F13B797
 	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539028; cv=none; b=GsFZ8NJuc2VXLZsQyMfYW504OcsC5Ic6eBqlRyxKg9zXfaowCS+nQmXbxdbDQc2H/t5sqK0jQ/zHoNlbZpxCtv+Wq3/zMLWrjjeu+TwQ8G3koTZFEWcQxJPVjXLPIKOhI6GEg+vKYMCMIm4nkb7OilPqgxd3EjBsOQ+XQovIyYU=
+	t=1723539028; cv=none; b=IM77D2jg9LCL7YMkWm8+zMd+sWETUOmenFIF4RPTBdCXiDMYV9eSBxFGM15yVEtH6vTrxjSDZfdm+Ppbd4n9no1Njjx6FhXC74KLi6S+3HmFyJygThv3Y1/aqGxApYcrFu4NGwDqTQjbJA+jVWLtV4JF1ddKE+r03xLeeo6gRp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723539028; c=relaxed/simple;
-	bh=a77vzZH8M9X2YCz4S1gBsgqpm0rdO/QsxjeeWdRToMs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=SNj99x3bYYbgVrgFp1lqM/3m0qbfOzu/EUb4xieXi3eC2WHGtstnhkoOHPslK0k2vFsMddTlP+pqdzOfu5SFhQFOkZhoEvXa5SOP+L/lbQpfGfZeGSrAyIteg1kck25jZcPb9ILmRvF5h+Njd+nelCa70Ro/Yvvo7oo+6ZKiIoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+	bh=4NxmO5ltZeGQXiAiJ+EcFxxc4454ZV8oqjSBB8jhoUU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BZOkJ1OrGHIgpcPPUj2gO1CJswT+PtCzjfpQ3MT0yoxMaU09+EhjrZ6nCe6vKQeyuXoiQTL2i+xbQqhUbVjwTRscRt0YDbweXtJpr0J+g+Upu9R49OkPXnjQk9r6eWAPxYI5nzhE7L5E/tS8NeSqRkg0ZJ2+eVe+pIlhBjM45hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-39b0bee2173so71370055ab.2
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3cd1813aso64533375ab.0
         for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:50:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1723539026; x=1724143826;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=LvENnSmObhEM6ZsL9ErHbWtIin6Dvt4eRyEgj1I7YQE=;
-        b=NOm640G3J1VE/sEp0IGlBiWsBisbOh3k5WFZH1nJwq6CP9LbRGux8DouT6a7lLqWiq
-         hGwEAEACbdZmO48GUOO82ZELcKUZI9/MVcd+aeb0cNOONZDsJ1tnOPY7fPfwMOeOuYpa
-         WxqCf2kQfeyA2oGumAxhthNN3ETXQN3PPGIaJZWClRhUgDPx704P8C28tsaYoi372/U8
-         lcWTy1Yz2KlS1M8ptJnfE/k3VMdcc90jUds6B9rxDQlpD3FZh4khuLf00+HDY4XDVMGx
-         +ncahEk3j+q5LHehHexuHqU5Jf+cfQJQoN2l1bLGERenBOJYQJ3hxMQwrDsuypPYyqv7
-         okNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUHmDv/UUH/pOfQrSY2s9eJG7fbuNXdpoKMfszvjA5LWjH1x0Gmia9ztYU4pUixmJ9dSI82W6aXX9EMHNAL0XjBI3agTTN6Ss92rbNR
-X-Gm-Message-State: AOJu0YzHjl3VSsQjFyulMPNXhD2xcQ0FEbMcc9hf0EX7nw+4ilxygyLh
-	jrDXkw3ZqRXk+SNrfUOfmsV+EErcRaepwkdjHvQZ3hxuextABZ2vgA9tZxPeM0qERYyy4LsA7Bt
-	PWrP3RbUNN3V7bja4ZQuCWr2aeZi0aK7mzM76isMBJ8k8NBzaatEnkoE=
-X-Google-Smtp-Source: AGHT+IFmPg87DFHnivJ8edbz8wx7pox/ARjigon/ScmR0A8+TGhf+Tv7+eV+TA98qS3nQOYEe8Ha9nU/RhQGhE9uvWzC/cBmAAVz
+        bh=zBikLu0ZlOFa2v3oX/TYYq/extNaQfM31RVjvKEWsIQ=;
+        b=NtsT43xEjK6AT16a30DH8790PGMPlsSbJOBGYTMR2Tvd6AQblffgbsamRQ0cF0q/rD
+         QpuDvVX7mLr+Irmz7a2EqV7X09T2mBCciZSV6UiC9lS3fyL9DTV3n9bNu5l4xo5NOzW1
+         AgSILqAHtnNHPUog+eUKLc2wWw+Dt6jxEx/7DK7aigAG26P55/BzQZoYW/hs5VepPNcd
+         FAFK6+v7wFcpS8ROd6xrkG2LQtyTis/ZSfjcgSel8bXTXNRU2GMbIO+d660oAMhMuEjs
+         HS8Ib4gKBdSDdYqM/unUFKyymnSXC0A7XCFZ+BfGUB1vcqqbpIOM7tof+BHhsuRRtDiS
+         EGqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFAGgzKxQ2nZT6zQVqkip/z+BKQUyx4QE1E7X0so/A+roJH9m1eAoHfzHoEMNeqMaaUHKIZt3LQcdwbtTr7FGjsSWiymgl73ACL6xv
+X-Gm-Message-State: AOJu0YxqWwAYbIP/LuaFhvFZpH4piPKjcqvM6zFeWTm0PmbzH9Se5ZVC
+	Ml9bk9P2VBfsd5IhND3L1XTIE6INsgCsqKDRiC/ux3jZ4mSV9sWQ0VwtYQx8xSNhzaOihq1gB9k
+	/SBo82hcvHeoOiBj/zz+Jwth6oNKEKnQ79FOSKZgmrZ0jGJHjDHti1Oo=
+X-Google-Smtp-Source: AGHT+IHYxS103QZdmH3b7TXqaMAVbjPo6XDAuJtWEeoQgNjF1CF4ijZnDdHSkyv84sjVMvE9W77gSKD9GSuNyCucrLaRmEKy0p4Q
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a43:b0:39a:e900:7e3e with SMTP id
- e9e14a558f8ab-39c4790206dmr1485795ab.3.1723539025904; Tue, 13 Aug 2024
+X-Received: by 2002:a05:6e02:156c:b0:397:b509:6441 with SMTP id
+ e9e14a558f8ab-39c4783ec8fmr1455185ab.2.1723539025616; Tue, 13 Aug 2024
  01:50:25 -0700 (PDT)
 Date: Tue, 13 Aug 2024 01:50:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000065552a061f8cb396@google.com>
-Subject: [syzbot] [io-uring?] KCSAN: data-race in io_sq_thread /
- io_sq_thread_park (9)
-From: syzbot <syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com>
-To: asml.silence@gmail.com, axboe@kernel.dk, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000060ef65061f8cb3d4@google.com>
+Subject: [syzbot] [bcachefs?] Unable to handle kernel execute from
+ non-executable memory at virtual address ADDR
+From: syzbot <syzbot+8798e95c2e5511646dac@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    6a0e38264012 Merge tag 'for-6.11-rc2-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1019759d980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cb57e6ebf675f9d2
-dashboard link: https://syzkaller.appspot.com/bug?extid=2b946a3fd80caf971b21
+HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11028061980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35545feca25ede03
+dashboard link: https://syzkaller.appspot.com/bug?extid=8798e95c2e5511646dac
 compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/753a842a966b/disk-6a0e3826.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e12e23519777/vmlinux-6a0e3826.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/bce0584a8cb4/bzImage-6a0e3826.xz
+disk image: https://storage.googleapis.com/syzbot-assets/caeac6485006/disk-c912bf70.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/501c87f28da9/vmlinux-c912bf70.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6812e99b7182/Image-c912bf70.gz.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2b946a3fd80caf971b21@syzkaller.appspotmail.com
+Reported-by: syzbot+8798e95c2e5511646dac@syzkaller.appspotmail.com
 
-==================================================================
-BUG: KCSAN: data-race in io_sq_thread / io_sq_thread_park
-
-write to 0xffff888111459638 of 8 bytes by task 10761 on cpu 1:
- io_sq_thread+0xdab/0xff0 io_uring/sqpoll.c:383
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-read to 0xffff888111459638 of 8 bytes by task 10329 on cpu 0:
- io_sq_thread_park+0x1b/0x80 io_uring/sqpoll.c:47
- io_ring_exit_work+0x197/0x500 io_uring/io_uring.c:2786
- process_one_work kernel/workqueue.c:3231 [inline]
- process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3312
- worker_thread+0x526/0x700 kernel/workqueue.c:3390
- kthread+0x1d1/0x210 kernel/kthread.c:389
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-value changed: 0xffff8881223d0000 -> 0x0000000000000000
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 10329 Comm: kworker/u8:8 Not tainted 6.11.0-rc2-syzkaller-00027-g6a0e38264012 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/27/2024
-Workqueue: iou_exit io_ring_exit_work
-==================================================================
+Unable to handle kernel execute from non-executable memory at virtual address ffff0000f1a56540
+KASAN: maybe wild-memory-access in range [0xfffc00078d2b2a00-0xfffc00078d2b2a07]
+Mem abort info:
+  ESR = 0x000000008600000f
+  EC = 0x21: IABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x0f: level 3 permission fault
+swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001aca1d000
+[ffff0000f1a56540] pgd=0000000000000000, p4d=180000023ffff003, pud=180000023f41b003, pmd=180000023f28d003, pte=0068000131a56707
+Internal error: Oops: 000000008600000f [#1] PREEMPT SMP
+Modules linked in:
+CPU: 1 PID: 6849 Comm: bch-reclaim/loo Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : 0xffff0000f1a56540
+lr : __bch2_increment_clock+0x45c/0x4f8 fs/bcachefs/clock.c:152
+sp : ffff8000a06c6510
+x29: ffff8000a06c6540 x28: ffff0000f5200000 x27: dfff800000000000
+x26: ffff0000f5204b78 x25: ffff0000f5204b80 x24: 0000000000000001
+x23: ffff0000eb1e1008 x22: ffff0000f5204b30 x21: ffff0000f5204b18
+x20: ffff8000a0417620 x19: ffff8000a0417620 x18: 1fffe000367a85de
+x17: ffff80008f2dd000 x16: ffff80008032d32c x15: 0000000000000001
+x14: 1fffe000367ab200 x13: 0000000000000000 x12: 0000000000000003
+x11: 0000000000000001 x10: 0000000000000003 x9 : 0000000000000001
+x8 : ffff0000f1a56540 x7 : ffff8000802a3bb0 x6 : 0000000000000000
+x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000007 x1 : ffff80008b2c0360 x0 : ffff8000a0417620
+Call trace:
+ 0xffff0000f1a56540
+ bch2_increment_clock fs/bcachefs/clock.h:19 [inline]
+ bch2_btree_node_alloc+0x874/0xd9c fs/bcachefs/btree_update_interior.c:427
+ bch2_btree_node_alloc_replacement+0xf4/0x904 fs/bcachefs/btree_update_interior.c:448
+ btree_split+0x1530/0x4c84 fs/bcachefs/btree_update_interior.c:1662
+ bch2_btree_split_leaf+0x148/0x734 fs/bcachefs/btree_update_interior.c:1857
+ bch2_trans_commit_error+0x2a4/0x1068 fs/bcachefs/btree_trans_commit.c:918
+ __bch2_trans_commit+0x35e4/0x592c fs/bcachefs/btree_trans_commit.c:1138
+ bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
+ wb_flush_one_slowpath+0x114/0x158 fs/bcachefs/btree_write_buffer.c:126
+ wb_flush_one+0x870/0xd88 fs/bcachefs/btree_write_buffer.c:168
+ bch2_btree_write_buffer_flush_locked+0x1200/0x243c fs/bcachefs/btree_write_buffer.c:347
+ btree_write_buffer_flush_seq+0x6d0/0x7e8 fs/bcachefs/btree_write_buffer.c:442
+ bch2_btree_write_buffer_journal_flush+0x58/0x94 fs/bcachefs/btree_write_buffer.c:457
+ journal_flush_pins+0x524/0xa10 fs/bcachefs/journal_reclaim.c:553
+ __bch2_journal_reclaim+0x71c/0x1024 fs/bcachefs/journal_reclaim.c:685
+ bch2_journal_reclaim_thread+0x154/0x4b8 fs/bcachefs/journal_reclaim.c:727
+ kthread+0x288/0x310 kernel/kthread.c:389
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
+Code: ffffffff ffffffff 00000000 00000000 (ffffffff) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	ffffffff 	.inst	0xffffffff ; undefined
+   4:	ffffffff 	.inst	0xffffffff ; undefined
+* 10:	ffffffff 	.inst	0xffffffff ; undefined <-- trapping instruction
 
 
 ---
