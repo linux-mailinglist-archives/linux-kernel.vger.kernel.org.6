@@ -1,110 +1,219 @@
-Return-Path: <linux-kernel+bounces-285593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73A1950FFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:57:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B63E951004
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:58:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53FE5B26B47
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:57:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CC4A1C21EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:58:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9407A1AB53C;
-	Tue, 13 Aug 2024 22:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F2F1ABEA8;
+	Tue, 13 Aug 2024 22:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q49BPO3Q"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bnUyn2ta"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932FB36B11;
-	Tue, 13 Aug 2024 22:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0264E1AAE0A;
+	Tue, 13 Aug 2024 22:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723589847; cv=none; b=CRqK2LXs1JA/N3OyaSYkEJROXK1QnfbxQDSxMoRWiicuTYDy2qdROgve4R0iFiqCTqRP6tvRfvBXMsL//R0E5ls11RrsxZD3gs1f4FhZDu0vFMD2AGO4PoRpYPaW9mz2//pvbdM0/tCSVKD0JiyvBJQYGZim6B2EEVsm+wtXQGk=
+	t=1723589893; cv=none; b=ASRDIGH3jwc5gKWXkhLdjYS1xIDZ+lNsHTPBHRd1ruXT/mYaCMJ90E8NGhIsboSeexiH0y4aPh+Tr8LMQNp6QZGEQ2xHle/ZXWD63/1rGvd+Id2Y3Dy3BMgXfsKhCRmKOriIOtfSClWqlyEP/VkwqKXoQCF+TnoD+yuadPZsE90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723589847; c=relaxed/simple;
-	bh=GN/tNCf1J+3djJB1qyOAIMGREHE4dIzC14ofAY9keQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E/WhnQWSNoK0M+kwKnzmPQFyFqerhUljoqwJHdqvwCJag8Q7AbBVyWGM5FAKHuDP5V0dBXy5fN+atCs8KoNk+BVtonH3Xhyme6uzaRrwIsZK9Ib62u4bYPI/0eW2JPwpOfpVONVLd+R+nQyjSxcVEXUDx75QzvUie51yyhuLO04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q49BPO3Q; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2cb5787b4a5so3975060a91.2;
-        Tue, 13 Aug 2024 15:57:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723589846; x=1724194646; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E+X9amBCNGzPbKLhSrsybSJwOHCEylYOwiuwStURnpQ=;
-        b=Q49BPO3QzwCu5uG49zPy4ixwcxFRofWZW+ivx/7IicbV53nQt6BIqe5Fay1RLyuvxJ
-         Rxo9QuKeFDMbJ5HaYq6XayTGDjHG+50Ke6j7DMQoOlS25GPz8h6lk7KwHSOl/vsqwW2y
-         b0jgZ/UfmuvrF50h8C7+a5hBAGDVX3JUkvHR7GXvFYS1YlKbIl++12lOk54jryKnWNbj
-         PSeKzeHFbO4CuwycX3wf4AxuRAgu/dnx2CC3L7K6jmehj3Z+NtVfi+UMo43KEPr5B9RQ
-         8+tWMFLYcjmNr0r1p96duiEZaXV+VCo+FngSLSy86zd55crQMRPQhDUF4SFfAM78ts5m
-         huOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723589846; x=1724194646;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E+X9amBCNGzPbKLhSrsybSJwOHCEylYOwiuwStURnpQ=;
-        b=eTJ1Twstrn0kAUpmH2cEewtRcKzITy7mV2uu8CUBhszBgtGBJka5UFm61NANqZNAwz
-         uA0pheTZkl42F7hOrVSVOgv9te4B/Rtkx0U+aTuiS642uxro47FBoPmFQUAkFk5KK0+1
-         XUjLAipbWpWqQQp1Nbl7oxeysUS+lL/sjU78Cdfloj3IS4qTM+L/u2a9U55X3vwyoKV0
-         D6+6Ukqv2gfaswfgl2rharU11tT9873DsnY4wEXp/xiMcXtlhI+uwAAxMnutZ82qZW6/
-         X7xTDHx7NCur8PwRp9/aU3mUr5S0snJWFMJfHYB3SE27dYq/FGdtOLsUo7zhiZU2KObH
-         3iNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfPFMPqHelNkFrFaPN8lUTXFbycyiIOcogQxu3hgrtU1OZS4N49F4y+85O1prbLrVzTN72jta1/6V9vq9rVT0SttQuJH/M8diuVbDDky5hbtY5DjOy3e8dpxS4wRZES3kVJkwL9dUDXrMBvO6twmzbVvqgiqliP6YrTO1IaULmezWhpQk6XRaU4iquTKWNJZ2ydpqYsA==
-X-Gm-Message-State: AOJu0YzYqcGy26rWs5mi4KaEPCrlQTwMrDEnGf9WOS1RZqPj25BoENhN
-	PGfqnDYKpaqxdzlqeXN11zounYNoIaCtBSjMF3UTIyniVla/KJY0hNyAzeuX6EXs9wsAA4oGTYg
-	oW6k2oq9Ig53j4+D9byw0k96DQ5g4hw==
-X-Google-Smtp-Source: AGHT+IEknBc9gZ8ToZRdgOZ21NGJ7+F84SQdCx1+V9pZydDzRl629BLydncsPEzDtfoq2qbwFCCXqwGj6f5s2S5NF3o=
-X-Received: by 2002:a17:90a:10d7:b0:2c9:923e:faf1 with SMTP id
- 98e67ed59e1d1-2d3aaa8a696mr1183852a91.18.1723589845703; Tue, 13 Aug 2024
- 15:57:25 -0700 (PDT)
+	s=arc-20240116; t=1723589893; c=relaxed/simple;
+	bh=v6pouzSjcUubJw/OLcJ2anfWGui3sH49fxAKvgWiqqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MDq7ueVEB8/oyUgTHOKgDEiuz9uUDOdHx9ITC2S64uczaDGy3dzutF2tiqmPB7tEaswlKVJIaP2BMdKKy+KGP+Ui4A4bpHZ1bYrSupKlV62qUxeFA7oq1e9/h02Ypyb3u6Enj8FRojxpilp3+kNAytgWRQYITMvRM+MYUUGHcpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bnUyn2ta; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DCpTrR002395;
+	Tue, 13 Aug 2024 22:57:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gIL8R124Of5TZX5wuk8bz/6NSDthT5u39JslZvw5xWQ=; b=bnUyn2taEsFo120f
+	aDfi8xAXE4/49Wtnkp+VAjs0ie7H24kmQ0Zb52l2H9wyJoCTanQUlwIXXGs4iiH0
+	lKug3mE1Y6rSOmhAyznmCo1ei9k+wrSv2BIKiImss5YVIGMOC2iIpYRLSD2pVeQk
+	KBFFL2lsPummAneqfAlYXjKdjDew10e5rOw0RON7NebDDuT5WVqDkFTaME6TrgOu
+	CfMPyLOH5XotZ0brNyMxp3JPlFO4CTK7FJkf9U0PwY7vjrVdAqusnvQnQvaQs1Bh
+	ZrhITT2EvsKyaWdycfPcXk2dcfacAx0wTcqdQyGU5HqSVRstzK45b9amykW43gGn
+	uXydyg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x16815va-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 22:57:47 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DMvjSW005026
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 22:57:45 GMT
+Received: from [10.110.24.42] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 13 Aug
+ 2024 15:57:45 -0700
+Message-ID: <6855763c-0230-4535-a603-343059de5202@quicinc.com>
+Date: Tue, 13 Aug 2024 15:57:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240814085319.719b42ff@canb.auug.org.au>
-In-Reply-To: <20240814085319.719b42ff@canb.auug.org.au>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 13 Aug 2024 15:57:13 -0700
-Message-ID: <CAEf4BzY56aDs3GsVPAKM0=VZA6GGZFr5ZTDYZqf_cxMQP5UDYw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the bpf-next tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 09/34] ASoC: Add SOC USB APIs for adding an USB
+ backend
+To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
+        <perex@perex.cz>, <conor+dt@kernel.org>, <corbet@lwn.net>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
+        <Thinh.Nguyen@synopsys.com>, <bgoswami@quicinc.com>, <tiwai@suse.com>,
+        <gregkh@linuxfoundation.org>, <robh@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <alsa-devel@alsa-project.org>
+References: <20240801011730.4797-1-quic_wcheng@quicinc.com>
+ <20240801011730.4797-10-quic_wcheng@quicinc.com>
+ <09fde4e6-c3be-484d-a7a5-bd653dc42094@linux.intel.com>
+ <f761530c-a49b-4dd5-b01c-97d08931e0ab@quicinc.com>
+ <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <acf4de1d-d551-4539-8353-3c85aa3d965c@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _WsJpwi-2I3ra7escjcgBbfBvs8wZqXW
+X-Proofpoint-ORIG-GUID: _WsJpwi-2I3ra7escjcgBbfBvs8wZqXW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_12,2024-08-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ suspectscore=0 mlxlogscore=999 impostorscore=0 malwarescore=0 spamscore=0
+ mlxscore=0 priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130165
 
-On Tue, Aug 13, 2024 at 3:53=E2=80=AFPM Stephen Rothwell <sfr@canb.auug.org=
-.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   e811c1ee15c7 ("bpf: convert bpf_token_create() to CLASS(fd, ...)")
->   795bc52f75ad ("bpf: more trivial fdget() conversions")
->   139dc6fa791d ("bpf: trivial conversions for fdget()")
->   2d74d8e9897c ("bpf: switch maps to CLASS(fd, ...)")
->   b57c48f806fd ("bpf: switch fdget_raw() uses to CLASS(fd_raw, ...)")
->   b7014005e1e8 ("bpf: convert __bpf_prog_get() to CLASS(fd, ...)")
->
-> are missing a Signed-off-by from their committers.
->
+Hi Pierre,
 
-That was fast! I'll add my SOBs and force-push, thanks!
+On 8/1/2024 11:26 PM, Pierre-Louis Bossart wrote:
+>
+> On 8/1/24 23:43, Wesley Cheng wrote:
+>> Hi Pierre,
+>>
+>> On 8/1/2024 1:02 AM, Pierre-Louis Bossart wrote:
+>>>
+>>>> +/**
+>>>> + * struct snd_soc_usb_device
+>>>> + * @card_idx - sound card index associated with USB device
+>>>> + * @pcm_idx - PCM device index associated with USB device
+>>>> + * @chip_idx - USB sound chip array index
+>>>> + * @num_playback - number of playback streams
+>>>> + * @num_capture - number of capture streams
+>>> so here we have a clear separation between playback and capture...
+>> Thanks for the quick review of the series, I know that its a lot of work, so its much appreciated.
+>>
+>> I guess in the past revisions there was some discussions that highlighted on the fact that, currently, in our QC USB offload implementation we're supporting playback only, and maybe it should be considered to also expand on the capture path.  I went ahead and added some sprinkles of that throughout the SOC USB layer, since its vendor agnostic, and some vendors may potentially have that type of support.  Is it safe to assume that this is the right thinking?  If so, I will go and review some of the spots that may need to consider both playback and capture paths ONLY for soc-usb. (as you highlighted one below)  Else, I can note an assumption somewhere that soc-usb supports playback only and add the capture path when implemented.
+> I don't think it's as simple as playback only or playback+capture. If
+> there is no support for capture, then there is also no support for
+> devices with implicit feedback - which uses the capture path. So you
+> gradually start drawing a jagged boundary of what is supported and what
+> isn't.
+>
+> My preference would be to add capture in APIs where we can, with TODOs
+> added to make sure no one us under any illusion that the code is fully
+> tested. But at least some of the basic plumbing will be in place.
+>
+> Takashi should chime in on this...
+>
+>>>> + * @list - list head for SoC USB devices
+>>>> + **/
+>>>> +struct snd_soc_usb_device {
+>>>> +	int card_idx;
+>>>> +	int pcm_idx;
+>>>> +	int chip_idx;
+>>>> +	int num_playback;
+>>>> +	int num_capture;
+>>>> +	struct list_head list;
+>>>> +};
+>>>> +
+>>>> +/**
+>>>> + * struct snd_soc_usb
+>>>> + * @list - list head for SND SOC struct list
+>>>> + * @component - reference to ASoC component
+>>>> + * @num_supported_streams - number of supported concurrent sessions
+>>> ... but here we don't. And it's not clear what the working 'sessions'
+>>> means in the comment.
 
-> --
-> Cheers,
-> Stephen Rothwell
+After taking a look at this "num_supported_streams" naming a bit more, I wanted to check with you to see adds to the complexity of the terminology being used across soc-usb.
+
+The intention of this is to define how many concurrent USB devices the USB backend can support.  So for example, if the audio DSP did support multiple USB devices at the same time, this would denote that.  This is where I wanted to make sure the terminology was right....  So in this case, to me, it makes more sense if num_supported_streams --> num_supported_devices, because it determines how many USB devices the ASoC USB backend DAI can manage/support.  This adds a bit to the reason why I think using the term "port" for explaining the SOC USB context is reasonable.
+
+Thanks
+
+Wesley Cheng
+
+>>>> + * @connection_status_cb - callback to notify connection events
+>>>> + * @priv_data - driver data
+>>>> + **/
+>>>> +struct snd_soc_usb {
+>>>> +	struct list_head list;
+>>>> +	struct snd_soc_component *component;
+>>>> +	unsigned int num_supported_streams;
+>>>> +	int (*connection_status_cb)(struct snd_soc_usb *usb,
+>>>> +			struct snd_soc_usb_device *sdev, bool connected);
+>>>> +	void *priv_data;
+>>>> +};
+>>>> +/**
+>>>> + * snd_soc_usb_allocate_port() - allocate a SOC USB device
+>>> USB port?
+>> Noted, refer to the last comment.
+>>>> + * @component: USB DPCM backend DAI component
+>>>> + * @num_streams: number of offloading sessions supported
+>>> same comment, is this direction-specific or not?
+>> Depending on what you think about my first comment above, I'll also fix or remove the concept of direction entirely.
+>>>> + * @data: private data
+>>>> + *
+>>>> + * Allocate and initialize a SOC USB device.  This will populate parameters that
+>>>> + * are used in subsequent sequences.
+>>>> + *
+>>>> + */
+>>>> +struct snd_soc_usb *snd_soc_usb_allocate_port(struct snd_soc_component *component,
+>>>> +					      int num_streams, void *data)
+>>>> +{
+>>>> +	struct snd_soc_usb *usb;
+>>>> +
+>>>> +	usb = kzalloc(sizeof(*usb), GFP_KERNEL);
+>>>> +	if (!usb)
+>>>> +		return ERR_PTR(-ENOMEM);
+>>>> +
+>>>> +	usb->component = component;
+>>>> +	usb->priv_data = data;
+>>>> +	usb->num_supported_streams = num_streams;
+>>>> +
+>>>> +	return usb;
+>>>> +}
+>>>> +EXPORT_SYMBOL_GPL(snd_soc_usb_allocate_port);
+>>>> +
+>>>> +/**
+>>>> + * snd_soc_usb_free_port() - free a SOC USB device
+>>>> + * @usb: allocated SOC USB device
+>>>> +
+>>>> + * Free and remove the SOC USB device from the available list of devices.
+>>> Now I am lost again on the device:port relationship. I am sure you've
+>>> explained this before but I forget things and the code isn't
+>>> self-explanatory.
+>>>
+>> Ok, I think the problem is that I'm interchanging the port and device terminology, because from the USB perspective its one device connected to a USB port, so its a one-to-one relation.  Removing that mindset, I think the proper term here would still be "port," because in the end SOC USB is always only servicing a port.  If this is the case, do you have any objections using this terminology in the Q6AFE as well as ASoC?  I will use consistent wording throughout SOC USB if so.
+> I am not sure USB uses 'port' at all. If by 'port' you meant 'connector'
+> it's not quite right, USB audio works across hubs.
+>
+>
 
