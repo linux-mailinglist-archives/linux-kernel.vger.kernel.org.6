@@ -1,130 +1,101 @@
-Return-Path: <linux-kernel+bounces-285046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D53F59508AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:14:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B759508AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:14:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABFA1F2304C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:14:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33714284873
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DA881A01AB;
-	Tue, 13 Aug 2024 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4851C1A01A1;
+	Tue, 13 Aug 2024 15:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DB9IDQ1A"
-Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AzcKh0Fc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC98C19E831;
-	Tue, 13 Aug 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4CA3B192;
+	Tue, 13 Aug 2024 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562036; cv=none; b=a4Eg7zlnMTjWshNBbSULp9S+vCjEPdp6quni1GH48l+9MP8vQTmL6vJ38UzFqaRyNvvLC2bR6WOhbHrgbjcsWWZT87z8FJVjZnne49WEglOXc/DkvQp4VMACKUvL2lQFhG+FeZ4TKT6fbDPkVOBn0JfAxM6kmUd3pptk6qeoZYc=
+	t=1723562079; cv=none; b=XeIz7TQLXulHl96+B575C7o2cxpAonUHvTnhtu9yMc2qOw9SDUV8ILGRLzyYqNzMIYc7/KV8smmDtLB7BrA6XMLz/d8EQXhKqo9ND7riMJ8yu69of4rq5jJ4EfnXkradkUn/g6dGZQC4W2jsorooY3BgF31mebSnFxn66v/4U6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562036; c=relaxed/simple;
-	bh=V40vtNjwzGLNCCt68Yz73rtKAj1di36sAeB6peUqnPw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gQWtMyeFUnYbvnyEtieEjbhg01WSyAJDWjdfMfRbIFmtqu9AB+zf3l3vFfWs3yPCZ1YSdaPj5zAuGkjAwF2nCKB/uEpm8AEZM/S80kHbd9RIDU7MyCoxh6B1n6+LlAYKcuMzVe9nKy+Bnbg+2v959koXIpnI+CSI1pjkONh/6HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DB9IDQ1A; arc=none smtp.client-ip=103.168.172.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 828951151ADA;
-	Tue, 13 Aug 2024 11:13:53 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 13 Aug 2024 11:13:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1723562033; x=1723648433; bh=TTJo0dwlhYuw65a/8dXX89xJMsBi
-	5E/g7VpWhakXTAw=; b=DB9IDQ1AKHuSDtrMc338xQnd5fiRIQe8PSgxMMWfFGKA
-	m/ur+iYp8iPTvWmSt6mAWU2t9maLpz71gRDhZjVuRTiXWScqSnjcxlbgkVwEtQ3h
-	hjp7vD6WH9oAfale31o1EMYf+QU15cm3LPYz1YRLdccxSnZIQ8XYXnNEA84jqQka
-	8igIc3pi/JJJkxD5NiqyrVlV3VlMq2uPB+omTt2v6Brcvg9SW69dyGWO1Oom4jU3
-	0s/jZ5EZS0HLbhd+5o8WHrnAuZnVjgzgX+tsIN+lDq/kW9B64uaPlGcpTcVgRcJI
-	UtNEpUuRo3eiAmAR502itrGXjm5LzqQn5C1chK83Fw==
-X-ME-Sender: <xms:MHi7ZiAJKirRQQM4cKUO85dFkmnuX8hlgcHZiFry2vsOt7IZUKjUGQ>
-    <xme:MHi7Zsi-jilgvn-IDdpN-AaCKJsL8ckca9X_4Zsom6kKUR0Xvm87fAsw4YAAwsFLv
-    HWxlKTUxK_ZPCc>
-X-ME-Received: <xmr:MHi7ZllD7zi45hwJd9ExcxNa0xeJ-IQvqdncvWCNLD6nIAiw7Z8Ne3O0_RKVafwK8COPWvucID3JDwRz_9BJ7oH4ofsGiA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgkeehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
-    hrgheqnecuggftrfgrthhtvghrnhepffetvddtieduteduleffveelgfehkeetudevveev
-    leehheekkedtjeeifeeuffeunecuffhomhgrihhnpehnvghtfhhilhhtvghrrdhorhhgne
-    cuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepihguohhs
-    tghhsehiughoshgthhdrohhrghdpnhgspghrtghpthhtohepudefpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    ghhufigvnheslhhinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopeifvghnjh
-    hirgeslhhinhhugidrihgsmhdrtghomhdprhgtphhtthhopehjrghkrgeslhhinhhugidr
-    ihgsmhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpd
-    hrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprghlihgsuhgurgeslhhinh
-    hugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehtohhnhihluheslhhinhhugidr
-    rghlihgsrggsrgdrtghomh
-X-ME-Proxy: <xmx:MHi7ZgwPUb3rJCDNg3bB1De9qNdZRXzrx6bmXqpJOmZ37WqRLyzpEA>
-    <xmx:MHi7ZnT0W_IKseXJ9vRUBfmk9KuCGtJilEiqQ8OzYMdBNw72n1UwQQ>
-    <xmx:MHi7ZrbpnUK7Z10vVFDDEi6usa683qdfLYMlFszHzI9GOjKR2O5sNw>
-    <xmx:MHi7ZgSYm_fb1bgzv6i9lIwky86TtKYkiaw0o1KVxhHTLcCM6sKE6w>
-    <xmx:MXi7ZmKhLR4sSGm_0gP343jLYhkXzLtntEW3l1RTiFvn_3ifPwjPWTFD>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 13 Aug 2024 11:13:51 -0400 (EDT)
-Date: Tue, 13 Aug 2024 18:13:48 +0300
-From: Ido Schimmel <idosch@idosch.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Wen Gu <guwen@linux.alibaba.com>, wenjia@linux.ibm.com,
-	jaka@linux.ibm.com, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, alibuda@linux.alibaba.com,
-	tonylu@linux.alibaba.com, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-	danieller@nvidia.com
-Subject: Re: [PATCH net-next v2 1/2] net/smc: introduce statistics for
- allocated ringbufs of link group
-Message-ID: <Zrt4LGFh7kMwGczb@shredder.mtl.com>
-References: <20240807075939.57882-1-guwen@linux.alibaba.com>
- <20240807075939.57882-2-guwen@linux.alibaba.com>
- <20240812174144.1a6c2c7a@kernel.org>
- <b3e8c9b9-f708-4906-b010-b76d38db1fb1@linux.alibaba.com>
- <20240813074042.14e20842@kernel.org>
+	s=arc-20240116; t=1723562079; c=relaxed/simple;
+	bh=WBQDgpze3nOImWdFR2VP7QJc+vFPXo94UaLalSef/cQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jDzN2gl6uhgrbqNqmPot6VqNEpc2UuHnjjKIZO69j7dwNLgZqbKmVMfUZNus7mM8LfJd+hb18y0y5mz0ASQP6Gc78+mdw2Cd4fNacleRR77aUBm6NhcAiZFwRqJoj+e9yCGuckZ3PEQd5q1YcPgexXjIRsrp1/azYxAGDq8dHko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AzcKh0Fc; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723562078; x=1755098078;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=WBQDgpze3nOImWdFR2VP7QJc+vFPXo94UaLalSef/cQ=;
+  b=AzcKh0FcNwx9B5LdWTqCTJ5dWGLhIs5WAbSSadPLrsajs2PM2lVkcPDt
+   AvLxYyZaTJNOiYRnNhaN7uEbtFto4EpiqV/WLWioBmaaaxt66OcT6L9vL
+   wFZ2HlFbxYTuPXpkoXDRxEHiVXksKVMwzCNsJksMOOmxmy3HF6OBjUfm7
+   fk2J0Ox/nkdPAfue/C3JaTAf8NEteoXpnQ5CXy3CltzorJ68G0dC4h6pb
+   lqhWehU7NF/cfY8KhYpTxrcF5xpU2wP7l667tpNrrmm4eh80MvOxWiTjK
+   BCi7yi1PNdJU+jez+7Vm24mAyxdxrEAiy9oLKtXplXhbAonbk+d9PgU6M
+   A==;
+X-CSE-ConnectionGUID: JlPQHC8EQX6vhkiNtAPZgA==
+X-CSE-MsgGUID: kl+8lUJOTdOnqw7fYPe9yQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="33136463"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="33136463"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 08:14:37 -0700
+X-CSE-ConnectionGUID: 4QLPTbJrTc2D49Rf/SSRHQ==
+X-CSE-MsgGUID: lWGoRVsIRkqcp+mRKGnprQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="81925585"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.228.22]) ([10.124.228.22])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 08:14:34 -0700
+Message-ID: <efc22d22-9cb6-41f7-a703-e96cbaf0aca7@intel.com>
+Date: Tue, 13 Aug 2024 23:14:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813074042.14e20842@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 25/25] KVM: x86: Add CPUID bits missing from
+ KVM_GET_SUPPORTED_CPUID
+To: Chao Gao <chao.gao@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org,
+ kai.huang@intel.com, isaku.yamahata@gmail.com,
+ tony.lindgren@linux.intel.com, linux-kernel@vger.kernel.org
+References: <20240812224820.34826-1-rick.p.edgecombe@intel.com>
+ <20240812224820.34826-26-rick.p.edgecombe@intel.com>
+ <ZrtEvEh4UJ6ZbPq5@chao-email>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <ZrtEvEh4UJ6ZbPq5@chao-email>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 13, 2024 at 07:40:42AM -0700, Jakub Kicinski wrote:
-> On Tue, 13 Aug 2024 17:55:17 +0800 Wen Gu wrote:
-> > On 2024/8/13 08:41, Jakub Kicinski wrote:
-> > > On Wed,  7 Aug 2024 15:59:38 +0800 Wen Gu wrote:  
-> > >> +	if (nla_put_u64_64bit(skb, SMC_NLA_LGR_R_SNDBUF_ALLOC,
-> > >> +			      lgr->alloc_sndbufs, SMC_NLA_LGR_R_PAD))  
-> > > 
-> > > nla_put_uint()  
-> > 
-> > Hi, Jakub. Thank you for reminder.
-> > 
-> > I read the commit log and learned the advantages of this helper.
-> > But it seems that the support for corresponding user-space helpers
-> > hasn't kept up yet, e.g. can't find a helper like nla_get_uint in
-> > latest libnl.
-> 
-> Add it, then.
+On 8/13/2024 7:34 PM, Chao Gao wrote:
+> I think adding new fixed-1 bits is fine as long as they don't break KVM, i.e.,
+> KVM shouldn't need to take any action for the new fixed-1 bits, like
+> saving/restoring more host CPU states across TD-enter/exit or emulating
+> CPUID/MSR accesses from guests
 
-Danielle added one to libmnl:
+I disagree. Adding new fixed-1 bits in a newer TDX module can lead to a 
+different TD with same cpu model.
 
-https://git.netfilter.org/libmnl/commit/?id=102942be401a99943b2c68981b238dadfa788f2d
+People may argue that for the new features that have no vmcs control bit 
+(usually the new instruction) face the similar issue. Booting a VM with 
+same cpu model on a new platform with such new feature leads to the VM 
+actually can use the new feature.
 
-Intention is to use it in ethtool once it appears in a released version
-of libmnl.
+However, for the perspective of CPUID, VMM at least can make sure it 
+unchanged, though guest can access the feature even when guest CPUID 
+tells no such feature. This is virtualization hole. no one like it.
 
