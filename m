@@ -1,156 +1,97 @@
-Return-Path: <linux-kernel+bounces-284170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2098994FDD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 830DE94FDE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:32:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B819E1F21D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 256741F21D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984583A8D8;
-	Tue, 13 Aug 2024 06:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EDF3BBF1;
+	Tue, 13 Aug 2024 06:32:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQ/UimrU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VY1VIgIB"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D352A38;
-	Tue, 13 Aug 2024 06:30:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EFFA38;
+	Tue, 13 Aug 2024 06:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723530634; cv=none; b=cZVOrUPtnMJyVRC2iHI5tpU2VLoLIfmTOwhW2jRHShzPnBYmGPuNEvyxWfKy1dGVvkcZpzUaKxY3vtIFNYGv/rzM14TWOYPbM2a6JEpRgMcRqO5elt5SBqSRM0/d/hue81nZP2iLx5oa4d+gHimEZby6gZQV6Fhuut44qRUT5wE=
+	t=1723530741; cv=none; b=pWGfap1xR426x8lwQZjDfJtfv70AYL+5kPvsxYqJ/XvTeCneL110LMGtH8IdtIYrRgY6IjVoi768uZQE45WJ2n3/u3alk3fytp6G+uWZwwS1ywL8RuxEtKPwUNYc7JbmjKEAELpv0K7MsdLuUYWBEYvyAsMTJdRZXFr5XjGETVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723530634; c=relaxed/simple;
-	bh=DmKnLXUCM72x1dzkF1cuvWtBK8szozZg09Qg4VMff0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YE17TJBCA0gwLU9LKvW4CpRP+SfOscQjDwplrrCD5OfmC5j27lgsp7FdBlo2uva8FKZE82wnBs7GeU0SvfrRjBAPfmzB/DtzRyZnapLoAlQTywp321S4qFsmK0G/tQw90SO7RxkuY1fmi1KNj0UvQFnP2dojV0AxUI1VY/crhEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQ/UimrU; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723530633; x=1755066633;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DmKnLXUCM72x1dzkF1cuvWtBK8szozZg09Qg4VMff0U=;
-  b=eQ/UimrUwtpXzLBw+o80gBeAcCe2d56nXF2MiDd9ouYnkvLlDf/twt5j
-   0VVSwW+eDq9XqmzPL80zcVYmhb/5Y59Scrr20MEvwIqQ+Xmn18QrRCCgN
-   sJjp32lgwVHKILROenNo1Js+ZTHQYW99z48dqVRYgY5P9t+2anOYw3rdn
-   v0i2EankwGHjGGUntZZPqczUrao1VTUrT+EV63G5y2rGo2x6QkLuG2ZJn
-   uXOjW9sYHNt8rpK4A1gvQmqeQeQyHaaszdxL9clxYVMOA6QK3ESrRIoSF
-   pOXiWTOTp6Fh/D89WWlu50//iW9lC7Rr6cojg5op6LD2E8JbzoEw1xF3G
-   g==;
-X-CSE-ConnectionGUID: MWZEFqH2SXi9JeIQ1PKMdw==
-X-CSE-MsgGUID: jTZNG0kcTHqf3M+xQ/BAzw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32819302"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="32819302"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:30:30 -0700
-X-CSE-ConnectionGUID: OK0xb/X4QSK98fK2qnVG0A==
-X-CSE-MsgGUID: yIz5n0FASNiiwTlY+NexCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="58632017"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:30:25 -0700
-Date: Tue, 13 Aug 2024 09:30:22 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andi Shyti <andi.shyti@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net,
-	andriy.shevchenko@linux.intel.com, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, anshuman.gupta@intel.com,
-	badal.nilawar@intel.com, riana.tauro@intel.com,
-	ashutosh.dixit@intel.com, karthik.poosa@intel.com
-Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
-Message-ID: <Zrr9fobk-zahLpIO@black.fi.intel.com>
-References: <20240812081538.1457396-1-raag.jadav@intel.com>
- <ZroTN3UudwvIJ7oR@ashyti-mobl2.lan>
+	s=arc-20240116; t=1723530741; c=relaxed/simple;
+	bh=Scht2teRvd9wrXAQi4J4232Xwe3lKglEDbeja/d0A6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oz9/pEQH8jSfDsu0etfJxXIn7dDul883Txm0ixVpVB1aScPUaU8tpQdqjvfYMylWZttYwKaGRmaDxQzVXpevyvDcnxB47fILg4mVxr9Z83GH1XS0c4K7+NnryKeO8859LA8zvdo6PjUxwoKwbAPbNPPBKiqtPPcpqsz1XcG9/No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VY1VIgIB; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-664b4589b1aso47562267b3.1;
+        Mon, 12 Aug 2024 23:32:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723530739; x=1724135539; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H+lp+6ga0pU9laZ07nXGFAMwhQ6m6VJIn8wZydb8H98=;
+        b=VY1VIgIBTjTKCB+WTJ9plUxc7HqgykQVm8mWOoZk5mrckPLBuTGDF/l5xZf3ExEScR
+         KSP6VDYkNybGyo25o0B8+DnJFzZ7WmNDJWmSEJ6GxjVXv6AMTC1AgWgz/JjbPz+H/4lv
+         QD+c1P5B1KlLHFiCq2i+VwSzN2jOKVfTPbeJrbhBGUDuQm8iPUXHPsYND7IZQlXAX9ed
+         QbFAZWtdGv55U89dk1Rew34KhMvM7PQZUL9FrgfrkD05vRdjqT9QRNHgvPteo03t2h42
+         D4RAewclVnv+2gKFYrdkC0cyxVZuDCAV+nobQSi//n0wX8EEYE1moKJxMvOhm6iMfUsx
+         XQXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723530739; x=1724135539;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=H+lp+6ga0pU9laZ07nXGFAMwhQ6m6VJIn8wZydb8H98=;
+        b=EgDr4iRSuXj+rR/4ehZmO/VjQNtMcTmz6mVF0o2zBLn4jHttwRRDLnplpipNbxhPum
+         sxZuWFOofrFQ003XdrkzbkEp3fVzuxuiLSZq71wt5mgP18APQkzcKXymkiO7k16ydEi/
+         ihuChZRDrfl9c6eT2mR6Eo8cUH5dmcbwVF7c1HXBeMEbU4XSXBC5ui8jY3ScaoNvqtn1
+         oxJZ/CH7s7No8XBLkp1Pk6idzzkxRhiQOqr8pLJtNeaCnHT4S50kYJ/N4Z0+GXSNKF36
+         y+aPc3HiEV3JGCoAXuAY14q7yPI+VmLakJkTa31CaBU/eVL51vvqB38Y8C6+TM6aK/sw
+         adqg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3NCIa9xADuIBMdqhgAZF4P70w1HjmmS6ZuDqWgDR7pPS97Mw162CEHR/9VPdGLJDCeEG/Z8jo7RqgQUKkslQTXFB/dSpzNS/ToQSo
+X-Gm-Message-State: AOJu0YxvuW1ZuZhz7P1Fx6BTF8amBNho2XKVE0zVHEHFY4tiUG/EVgdp
+	RtQALCrTlSuxPkVG1MlDrN8KXVQkLVvSorj3HSRGg+XsZLiKq1gj5oqjCKbQfR06kc8PYEffY0v
+	1MCcwi/dMlS223IdAl4oCNRgngU+LUdg9
+X-Google-Smtp-Source: AGHT+IFsV/KI6dci/F7G0iXCwf2EV9DUTE3HBVc+eezsckmOzEWDNwXUcaxaN3BKNBZAXWq4dPqE4JGAQjwrv2MBLQI=
+X-Received: by 2002:a05:690c:4501:b0:65f:96e9:42f4 with SMTP id
+ 00721157ae682-6a9e7656cccmr17096487b3.15.1723530739210; Mon, 12 Aug 2024
+ 23:32:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZroTN3UudwvIJ7oR@ashyti-mobl2.lan>
+References: <20240813061728.GB3072284@maili.marvell.com>
+In-Reply-To: <20240813061728.GB3072284@maili.marvell.com>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Mon, 12 Aug 2024 23:32:08 -0700
+Message-ID: <CAKxU2N-hBo84N4uR9-Vk2wx3FRk_j644_tnKbMRsj7BCX6hC1A@mail.gmail.com>
+Subject: Re: [PATCH net-next 3/3] net: ag71xx: use devm for register_netdev
+To: Ratheesh Kannoth <rkannoth@marvell.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, linux@armlinux.org.uk, 
+	linux-kernel@vger.kernel.org, o.rempel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 03:50:47PM +0200, Andi Shyti wrote:
-> Hi Raag,
-> 
-> > +static int
-> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
-> > +{
-> > +	struct i915_hwmon *hwmon = ddat->hwmon;
-> > +	struct hwm_fan_info *fi = &ddat->fi;
-> > +	u64 rotations, time_now, time;
-> > +	intel_wakeref_t wakeref;
-> > +	u32 reg_val, pulses;
-> > +	int ret = 0;
-> > +
-> > +	if (attr != hwmon_fan_input)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
-> > +	mutex_lock(&hwmon->hwmon_lock);
-> > +
-> > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
-> > +	time_now = get_jiffies_64();
-> > +
-> > +	/* Handle HW register overflow */
-> > +	if (reg_val >= fi->reg_val_prev)
-> > +		pulses = reg_val - fi->reg_val_prev;
-> > +	else
-> > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
-> > +
-> > +	/*
-> > +	 * HW register value is accumulated count of pulses from
-> > +	 * PWM fan with the scale of 2 pulses per rotation.
-> > +	 */
-> > +	rotations = pulses / 2;
-> > +
-> > +	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
-> > +	if (unlikely(!time)) {
-> > +		ret = -EAGAIN;
-> > +		goto exit;
-> > +	}
-> 
-> Can you please add a comment describing how you obtain the speed
-> calculation?
-
-That's what I initially tried but ended up dropping it in favour of RPM
-formula below, which I found to be doing a better job of explaining than
-a few lines of description.
-
-> Basically at every read you store the values. Is it possible that
-> we don't have reads for a long time and the register resets more
-> than once?
-
-Considering a fan continuously running at higher speeds (for example 4000 RPM
-which is quite optimistic), with the scale of 2 pulses per rotation, a 32 bit
-register will take around a year to overflow, which is more than most usecases
-I could think of.
-
-Raag
-
-> > +	/*
-> > +	 * Convert to minutes for calculating RPM.
-> > +	 * RPM = number of rotations * msecs per minute / time in msecs
-> > +	 */
-> > +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
-> > +
-> > +	fi->reg_val_prev = reg_val;
-> > +	fi->time_prev = time_now;
-> > +exit:
-> > +	mutex_unlock(&hwmon->hwmon_lock);
-> > +	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
-> > +	return ret;
-> > +}
+On Mon, Aug 12, 2024 at 11:17=E2=80=AFPM Ratheesh Kannoth <rkannoth@marvell=
+.com> wrote:
+>
+> On 2024-08-13 at 00:36:53, Rosen Penev (rosenp@gmail.com) wrote:
+> >
+> > -     err =3D register_netdev(ndev);
+> > +     err =3D devm_register_netdev(ndev);
+> devm_register_netdev() needs two arguments.
+Rebasing error. Will be fixed in v2.
+>
+> >
 
