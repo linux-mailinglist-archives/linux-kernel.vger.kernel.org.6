@@ -1,258 +1,186 @@
-Return-Path: <linux-kernel+bounces-284190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F4A94FE25
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:57:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDA694FE23
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 374BCB21573
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 980F51F21952
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602C9446B4;
-	Tue, 13 Aug 2024 06:56:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDA3433CB;
+	Tue, 13 Aug 2024 06:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hcjojFAG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Tf49YoSR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SSLwWqpD";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Tf49YoSR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SSLwWqpD"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38CC433C0;
-	Tue, 13 Aug 2024 06:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B793BBFB;
+	Tue, 13 Aug 2024 06:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723532217; cv=none; b=QfIM2jLO0EdhCTjOKmii+hzJAJG9vkzCwqVnYHi5f0iItSALRX0+1xWQejaKQiywz6Jc/j2VyfGoc7XrLNOl1t7odLZrzGpaIFj+gO65HbH5/S+nAvv6J2WD8R8w5wjUEoMGYXzgO5Pt4onvCMYUyc6MK/awGeDcUgtplr5uk1Q=
+	t=1723532198; cv=none; b=pfVD2JD0bwCXpZ+K9J4Im77nBlAtK4gVh7zuVT9D7WT/Eo9d8TwIlQUNlw5FuZYyO8bfmqS7f5YwV8hFyWXIXXwMwXGXmnjL+pSJdkezpW2UkyYwd7mTDSO17o2v9SuD0PJJRzsamjVuM+tOsJF5m1oUJ4WRoErYuRwix/WJezs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723532217; c=relaxed/simple;
-	bh=NHOdCzL4wuGKAeymLhchgwhLNrjYY+kFKC2JRUoWQgI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O3gfwGmHXrwF1hdpPpg8wTjtu3YQZ6vrOfU0E++oa0Y9kQGUBTlodl6MZlefTkn8Uqfhe/+cfV7X37tdTb8wXgLfisCpCie4PysDi7bxMSanZwFfns/vf7MinBwtqcYnJA65wXwfSoIj/4RGzOIaahYZS2dW/P5QIIr5bkiiddo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hcjojFAG; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723532216; x=1755068216;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=NHOdCzL4wuGKAeymLhchgwhLNrjYY+kFKC2JRUoWQgI=;
-  b=hcjojFAG2Fo8Liv857gd+CQCrhCwPTgz11F5oaPv0PtOH9MX7dOO9PwH
-   nKWZJFWLr0lYiqtaHZ6pDYxbP5KMQBX/psAa6anMW7lfCqDanPnO4pDub
-   tu5U7orCVA8xmXY+CsjJLEzy7k1Qkz5cP9vlgrSk7Y7t5rDdCy1uIDNf0
-   YgvbU3NbcBO0ASqmfVN4cMQHg0j0Q9wskpQvVcUbJxmepk1kUVI01UA+l
-   XmNQ7AQ2iZRdxrDUe/gCSvDhRWIyQTIoat5qw/Ddwn3tfGMY6Lm3LZvgp
-   7zg8ynOd5JdDJVrGXoWhbyLsjvLjIKIQmSDzmZct+/gDN8qsIYNKK9xfw
-   Q==;
-X-CSE-ConnectionGUID: y9wby8NbRpqdL5qhxG16+Q==
-X-CSE-MsgGUID: dc1ri8khTVSomOnVS3sClg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25436740"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="25436740"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:54:52 -0700
-X-CSE-ConnectionGUID: 0cX1NQqBRNuNA2e7CA7e9g==
-X-CSE-MsgGUID: R0lEkji+Tea5UuKzz3o7hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="58501481"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:54:48 -0700
-Message-ID: <ea60f002-ec6f-4481-9617-6e8cf4c8edd6@linux.intel.com>
-Date: Tue, 13 Aug 2024 14:54:45 +0800
+	s=arc-20240116; t=1723532198; c=relaxed/simple;
+	bh=GzDmjyA9qpOP6bZ2PN7E9sKqCfDgQQFEumgOmZVth+Y=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DnC0uBPbnxnPzAWKW8DLNpPu9qiCI14mvnjk215ZsL89dgI3UgZM9UOkPA7rAkjUQCmms4pOYXH8BeuwY6CpHWmS7j0UEQTBCFmyeTMrPbnuLu53f6bIYFAM7jjICp6xJ8oO6gGvBd15upI09CuIqX4dP1cjN+zp+NwFvGQukx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Tf49YoSR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SSLwWqpD; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Tf49YoSR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SSLwWqpD; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4AF452035C;
+	Tue, 13 Aug 2024 06:56:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723532189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIBGOgywqiviTEt8cyJqNNk8OTWsWTYZ7dP6GFBF1j4=;
+	b=Tf49YoSREe+1dCLPiDqBmRLzPEAoBVDRvaI13X2ZbzKexcrHtCFSpqvmWSumfJDnrnjHZH
+	WnI6edqy7avJes1Zt3Km/s06azDkPaWYG+fiuBAugxSeQb7lwESFx6LeGVj4IfqQIdHffx
+	F3KvnhM/nIukmZCIVqI2DzoGJNg5aCQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723532189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIBGOgywqiviTEt8cyJqNNk8OTWsWTYZ7dP6GFBF1j4=;
+	b=SSLwWqpD93JGOzcOBVHzXbv63D2n85glqKz4J0f5yXYYZlw8bndP555ryDmuJ/uB3YFo4G
+	gX2m60/MT9z2USAg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Tf49YoSR;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SSLwWqpD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723532189; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIBGOgywqiviTEt8cyJqNNk8OTWsWTYZ7dP6GFBF1j4=;
+	b=Tf49YoSREe+1dCLPiDqBmRLzPEAoBVDRvaI13X2ZbzKexcrHtCFSpqvmWSumfJDnrnjHZH
+	WnI6edqy7avJes1Zt3Km/s06azDkPaWYG+fiuBAugxSeQb7lwESFx6LeGVj4IfqQIdHffx
+	F3KvnhM/nIukmZCIVqI2DzoGJNg5aCQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723532189;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIBGOgywqiviTEt8cyJqNNk8OTWsWTYZ7dP6GFBF1j4=;
+	b=SSLwWqpD93JGOzcOBVHzXbv63D2n85glqKz4J0f5yXYYZlw8bndP555ryDmuJ/uB3YFo4G
+	gX2m60/MT9z2USAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 159DC13983;
+	Tue, 13 Aug 2024 06:56:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VRYABJ0Du2ZUGQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 13 Aug 2024 06:56:29 +0000
+Date: Tue, 13 Aug 2024 08:57:09 +0200
+Message-ID: <87cymcdi62.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Juan =?ISO-8859-1?Q?Jos=E9?= Arboleda <soyjuanarbol@gmail.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com
+Subject: Re: [PATCH 2/2] ALSA: usb-audio: reduce checkpatch issues in quirks-table.h
+In-Reply-To: <6dabfd5c05c04b0e4fc00a708cc65d691af4e267.1723518816.git.soyjuanarbol@gmail.com>
+References: <cover.1723518816.git.soyjuanarbol@gmail.com>
+	<6dabfd5c05c04b0e4fc00a708cc65d691af4e267.1723518816.git.soyjuanarbol@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v3 1/5] perf x86/topdown: Complete topdown slots/metrics
- events check
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
- Dapeng Mi <dapeng1.mi@intel.com>
-References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
- <20240712170339.185824-2-dapeng1.mi@linux.intel.com> <ZroQ7wiw6JB-sjps@x1>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <ZroQ7wiw6JB-sjps@x1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -5.51
+X-Rspamd-Queue-Id: 4AF452035C
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
+
+On Tue, 13 Aug 2024 05:31:28 +0200,
+Juan José Arboleda wrote:
+> 
+> Reduced checkpatch errors from 185 to 2, and warnings from 4 to 1 in
+> sound/usb/quirks-table.h.
+> 
+> Remaining issues were reviewed and considered non-blocking.
+> 
+> Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
+
+Honestly speaking, I don't find it's much improvement from the code
+readability POV.  (And you don't have to "correct" the spaces in
+comment lines :)
+
+That is, if the reason of the changes is only about the complaint from
+checkpatch, we can simply ignore it.  Above all, applying space-only
+fixes would make the stable backports more difficult.
+
+OTOH, if we really want to improve the code readability, maybe it'd be
+better to introduce some macros to simplify the definitions.  e.g.
+
+/* Quirk driver_info, use like QUIRK_DRIVER_INFO { ... } */
+#define QUIRK_DRIVER_INFO \
+	.driver_info = (unsigned long)&(const struct snd_usb_audio_quirk)
+
+/* Quirk data entry for struct audioformat */
+#define QUIRK_DATA_AUDIOFORMAT \
+	.data = &(const struct audioformat)
+/* Quirk data entry for struct snd_usb_midiendpoint_info */
+#define QUIRK_DATA_MIDI_EP_INFO \
+	.data = &(const struct snd_usb_midi_endpoint_info)
+
+and replace accordingly.
+
+But again, I'm not sure whether it's worth.  Macros might be good from
+the code safety as the open code is error prone, though.
 
 
-On 8/12/2024 9:41 PM, Arnaldo Carvalho de Melo wrote:
-> On Fri, Jul 12, 2024 at 05:03:35PM +0000, Dapeng Mi wrote:
->> It's not complete to check whether an event is a topdown slots or
->> topdown metrics event by only comparing the event name since user
->> may assign the event by RAW format, e.g.
->>
->> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
->>
->>  Performance counter stats for 'sleep 1':
->>
->>      <not counted>      instructions
->>      <not counted>      cpu/r400/
->>    <not supported>      cpu/r8300/
->>
->>        1.002917796 seconds time elapsed
->>
->>        0.002955000 seconds user
->>        0.000000000 seconds sys
->>
->> The RAW format slots and topdown-be-bound events are not recognized and
->> not regroup the events, and eventually cause error.
->>
->> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
->> to detect whether an event is topdown slots/metrics event by comparing
->> the event config directly, and use these two helpers to replace the
->> original event name comparisons.
-> Looks ok, I made a comment below, please take a look
->  
->> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
->> ---
->>  tools/perf/arch/x86/util/evlist.c  |  8 ++---
->>  tools/perf/arch/x86/util/evsel.c   |  3 +-
->>  tools/perf/arch/x86/util/topdown.c | 48 +++++++++++++++++++++++++++++-
->>  tools/perf/arch/x86/util/topdown.h |  2 ++
->>  4 files changed, 55 insertions(+), 6 deletions(-)
->>
->> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
->> index b1ce0c52d88d..332e8907f43e 100644
->> --- a/tools/perf/arch/x86/util/evlist.c
->> +++ b/tools/perf/arch/x86/util/evlist.c
->> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
->>  	if (topdown_sys_has_perf_metrics() &&
->>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
->>  		/* Ensure the topdown slots comes first. */
->> -		if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->name, "uops_retired.slots"))
->> +		if (arch_is_topdown_slots(lhs))
->>  			return -1;
->> -		if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->name, "uops_retired.slots"))
->> +		if (arch_is_topdown_slots(rhs))
->>  			return 1;
->>  		/* Followed by topdown events. */
->> -		if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->name, "topdown"))
->> +		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
->>  			return -1;
->> -		if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->name, "topdown"))
->> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
->>  			return 1;
->>  	}
->>  
->> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
->> index 090d0f371891..181f2ba0bb2a 100644
->> --- a/tools/perf/arch/x86/util/evsel.c
->> +++ b/tools/perf/arch/x86/util/evsel.c
->> @@ -6,6 +6,7 @@
->>  #include "util/pmu.h"
->>  #include "util/pmus.h"
->>  #include "linux/string.h"
->> +#include "topdown.h"
->>  #include "evsel.h"
->>  #include "util/debug.h"
->>  #include "env.h"
->> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
->>  	    strcasestr(evsel->name, "uops_retired.slots"))
->>  		return false;
->>  
->> -	return strcasestr(evsel->name, "topdown") || strcasestr(evsel->name, "slots");
->> +	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
->>  }
->>  
->>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
->> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
->> index 3f9a267d4501..49f25d67ed77 100644
->> --- a/tools/perf/arch/x86/util/topdown.c
->> +++ b/tools/perf/arch/x86/util/topdown.c
->> @@ -32,6 +32,52 @@ bool topdown_sys_has_perf_metrics(void)
->>  }
->>  
->>  #define TOPDOWN_SLOTS		0x0400
->> +bool arch_is_topdown_slots(const struct evsel *evsel)
->> +{
->> +	if (evsel->core.attr.config == TOPDOWN_SLOTS)
->> +		return true;
->> +
->> +	return false;
->> +}
->> +
->> +static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
->> +{
->> +	int *config = vstate;
->> +	int event = 0;
->> +	int umask = 0;
->> +	char *str;
->> +
->> +	if (!strcasestr(info->name, "topdown"))
->> +		return 0;
->> +
->> +	str = strcasestr(info->str, "event=");
->> +	if (str)
->> +		sscanf(str, "event=%x", &event);
->> +
->> +	str = strcasestr(info->str, "umask=");
->> +	if (str)
->> +		sscanf(str, "umask=%x", &umask);
->> +
->> +	if (event == 0 && *config == (event | umask << 8))
->> +		return 1;
->> +
->> +	return 0;
->> +}
->> +
->> +bool arch_is_topdown_metrics(const struct evsel *evsel)
->> +{
->> +	struct perf_pmu *pmu = evsel__find_pmu(evsel);
->> +	int config = evsel->core.attr.config;
-> Humm, can we cache this information? I.e. have some evsel->is_topdown:1
-> bit to avoid having to traverse all events if we call this multiple
-> times for the same evsel? 
+thanks,
 
-Yeah, good point. Thanks.
-
-
->
-> - Arnaldo
->
->> +	if (!pmu || !pmu->is_core)
->> +		return false;
->> +
->> +	if (perf_pmu__for_each_event(pmu, false, &config,
->> +				     compare_topdown_event))
->> +		return true;
->> +
->> +	return false;
->> +}
->>  
->>  /*
->>   * Check whether a topdown group supports sample-read.
->> @@ -44,7 +90,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
->>  	if (!evsel__sys_has_perf_metrics(leader))
->>  		return false;
->>  
->> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
->> +	if (arch_is_topdown_slots(leader))
->>  		return true;
->>  
->>  	return false;
->> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
->> index 46bf9273e572..1bae9b1822d7 100644
->> --- a/tools/perf/arch/x86/util/topdown.h
->> +++ b/tools/perf/arch/x86/util/topdown.h
->> @@ -3,5 +3,7 @@
->>  #define _TOPDOWN_H 1
->>  
->>  bool topdown_sys_has_perf_metrics(void);
->> +bool arch_is_topdown_slots(const struct evsel *evsel);
->> +bool arch_is_topdown_metrics(const struct evsel *evsel);
->>  
->>  #endif
->> -- 
->> 2.40.1
->>
+Takashi
 
