@@ -1,129 +1,162 @@
-Return-Path: <linux-kernel+bounces-284608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 204B7950304
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:56:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A46C2950302
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:55:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9EAE1F2302B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 517841F23016
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F6B19CCEC;
-	Tue, 13 Aug 2024 10:53:08 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E028819AD48;
+	Tue, 13 Aug 2024 10:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IiJD61xr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5B219AD6A;
-	Tue, 13 Aug 2024 10:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32682191489
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:52:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546387; cv=none; b=qO+onkX93I2DLXrE79OgD0PwWK2TFXsCfKRMi+3jmnAmil/QzH4YV2iGicqwCcx/ahIzTK808Hhww/gi3g/V6+CdoLoTcc5xhgO0xLmwZNsqULbl/uUxg/MlyauB/l9o3QJFeWUOckRnNZjTnwUTon6HzlAXiu8K7p37PiM4erQ=
+	t=1723546379; cv=none; b=hTHZ2yQO0/kA1+vabirQ4NXw3Mh4WcFm1uK6ypp4v9NnFKmDULqhOPYCZSbApGTAJdpS4f70YfJBFruBdE3geMmIELta/yjE5Wt2DabcD6laCq0q0jcyhh4zNGT4vpSmMaY8NQBeru7j4fMWPeMv+O+Nn2A0cjpLNl0u/OZYGM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546387; c=relaxed/simple;
-	bh=T6g62YpEekCI1rH9Nwkq3kpgd4jTgMz2DiZupGh+tNQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P6gsjtgsx0kf35zCR71TuXH9AMpYahKqlO8fXF3DINQr5uZ96+LVs1d8rzNXJiM3RLLA8DsjcfCMevVSaLRmrvwR4XMCRIOXB4rJqwJK6O/eKtUyllBD3qmsRUXWIYXfIvxdTHC6J31eBda8qPZEUJi7kADvGzhPofNY62FfLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Wjp5M6jz1z20l3s;
-	Tue, 13 Aug 2024 18:48:23 +0800 (CST)
-Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id C49DE1401E9;
-	Tue, 13 Aug 2024 18:52:56 +0800 (CST)
-Received: from [10.67.109.254] (10.67.109.254) by
- kwepemi100008.china.huawei.com (7.221.188.57) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 13 Aug 2024 18:52:56 +0800
-Message-ID: <71736d6d-a218-185b-4dab-e8c0cd1e8a9d@huawei.com>
-Date: Tue, 13 Aug 2024 18:52:55 +0800
+	s=arc-20240116; t=1723546379; c=relaxed/simple;
+	bh=XM3a8VWak9PxycIbmZCh+wJ2tfXvnwnWWKYdvHzsofM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFyJdv3tlTnYwaTn24crMrLXoi1eVAqTlojAD7hgIyy1KKGB/qme3N81APEtPUNnAllXlEINupvaGe/h7DcPSPyCjDjomELRySX/6WWCrf/SaTenY+HAkOrPlHQ9X4VKt4MLHX6QKFc7Q9y7Cb0hfUFDG80UvIXBW0mbNqMuJvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IiJD61xr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E513C4AF09;
+	Tue, 13 Aug 2024 10:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723546378;
+	bh=XM3a8VWak9PxycIbmZCh+wJ2tfXvnwnWWKYdvHzsofM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IiJD61xrkx64FeGdy0yKZDwDa/UrP/828KTr1PNtSY9gz4HMwmCmdF6mIkFnDmyvN
+	 +VZLbS2n27m8JPVTJKelCbttpYElAufFiFBMw924GMyr2Fe9xoL0l6ZZIFmW8SywM2
+	 WemA/cMY2K40OSpYR0uNZ7GY43zYnQH0cGChrMkI=
+Date: Tue, 13 Aug 2024 12:52:55 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: quic_zijuhu <quic_zijuhu@quicinc.com>
+Cc: Zijun Hu <zijun_hu@icloud.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/27] driver core: Constify driver API
+ device_find_child()
+Message-ID: <2024081329-zero-cloud-d7e4@gregkh>
+References: <20240811-const_dfc_done-v1-0-9d85e3f943cb@quicinc.com>
+ <20240811-const_dfc_done-v1-1-9d85e3f943cb@quicinc.com>
+ <2024081359-dart-transpire-8143@gregkh>
+ <f9cdd4eb-7c2c-403b-bfd2-06b48a7ca92c@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v5.10 v2] powerpc: Avoid nmi_enter/nmi_exit in real mode
- interrupt.
-Content-Language: en-US
-To: Greg KH <gregkh@linuxfoundation.org>
-CC: <dennis@kernel.org>, <tj@kernel.org>, <cl@linux.com>,
-	<mpe@ellerman.id.au>, <benh@kernel.crashing.org>, <paulus@samba.org>,
-	<christophe.leroy@csgroup.eu>, <mahesh@linux.ibm.com>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
-	<stable@vger.kernel.org>
-References: <20240806071616.1671691-1-ruanjinjie@huawei.com>
- <2024081318-onion-record-fdc7@gregkh>
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-In-Reply-To: <2024081318-onion-record-fdc7@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemi100008.china.huawei.com (7.221.188.57)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f9cdd4eb-7c2c-403b-bfd2-06b48a7ca92c@quicinc.com>
 
-
-
-On 2024/8/13 18:47, Greg KH wrote:
-> On Tue, Aug 06, 2024 at 07:16:16AM +0000, Jinjie Ruan wrote:
->> From: Mahesh Salgaonkar <mahesh@linux.ibm.com>
->>
->> [ Upstream commit 0db880fc865ffb522141ced4bfa66c12ab1fbb70 ]
->>
->> nmi_enter()/nmi_exit() touches per cpu variables which can lead to kernel
->> crash when invoked during real mode interrupt handling (e.g. early HMI/MCE
->> interrupt handler) if percpu allocation comes from vmalloc area.
->>
->> Early HMI/MCE handlers are called through DEFINE_INTERRUPT_HANDLER_NMI()
->> wrapper which invokes nmi_enter/nmi_exit calls. We don't see any issue when
->> percpu allocation is from the embedded first chunk. However with
->> CONFIG_NEED_PER_CPU_PAGE_FIRST_CHUNK enabled there are chances where percpu
->> allocation can come from the vmalloc area.
->>
->> With kernel command line "percpu_alloc=page" we can force percpu allocation
->> to come from vmalloc area and can see kernel crash in machine_check_early:
->>
->> [    1.215714] NIP [c000000000e49eb4] rcu_nmi_enter+0x24/0x110
->> [    1.215717] LR [c0000000000461a0] machine_check_early+0xf0/0x2c0
->> [    1.215719] --- interrupt: 200
->> [    1.215720] [c000000fffd73180] [0000000000000000] 0x0 (unreliable)
->> [    1.215722] [c000000fffd731b0] [0000000000000000] 0x0
->> [    1.215724] [c000000fffd73210] [c000000000008364] machine_check_early_common+0x134/0x1f8
->>
->> Fix this by avoiding use of nmi_enter()/nmi_exit() in real mode if percpu
->> first chunk is not embedded.
->>
->> CVE-2024-42126
->> Cc: stable@vger.kernel.org#5.10.x
->> Cc: gregkh@linuxfoundation.org
->> Reviewed-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->> Tested-by: Shirisha Ganta <shirisha@linux.ibm.com>
->> Signed-off-by: Mahesh Salgaonkar <mahesh@linux.ibm.com>
->> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
->> Link: https://msgid.link/20240410043006.81577-1-mahesh@linux.ibm.com
->> [ Conflicts in arch/powerpc/include/asm/interrupt.h
->>   because machine_check_early() and machine_check_exception()
->>   has been refactored. ]
->> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
->> ---
->> v2:
->> - Also fix for CONFIG_PPC_BOOK3S_64 not enabled.
->> - Add Upstream.
->> - Cc stable@vger.kernel.org.
+On Tue, Aug 13, 2024 at 06:39:48PM +0800, quic_zijuhu wrote:
+> On 8/13/2024 5:48 PM, Greg Kroah-Hartman wrote:
+> > On Sun, Aug 11, 2024 at 10:24:52AM +0800, Zijun Hu wrote:
+> >> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>
+> >> Constify the following driver API:
+> >> struct device *device_find_child(struct device *dev, void *data,
+> >> 		int (*match)(struct device *dev, void *data));
+> >> to
+> >> struct device *device_find_child(struct device *dev, const void *data,
+> >>                                  device_match_t match);
+> >> typedef int (*device_match_t)(struct device *dev, const void *data);
+> >> Since it should not modify caller's match data @*data.
+> >>
+> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> >> ---
+> >>  drivers/base/core.c    | 11 +++--------
+> >>  include/linux/device.h |  4 ++--
+> >>  2 files changed, 5 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> >> index 3f3ebdb5aa0b..f152e0f8fb03 100644
+> >> --- a/drivers/base/core.c
+> >> +++ b/drivers/base/core.c
+> >> @@ -4062,8 +4062,8 @@ EXPORT_SYMBOL_GPL(device_for_each_child_reverse);
+> >>   *
+> >>   * NOTE: you will need to drop the reference with put_device() after use.
+> >>   */
+> >> -struct device *device_find_child(struct device *parent, void *data,
+> >> -				 int (*match)(struct device *dev, void *data))
+> >> +struct device *device_find_child(struct device *parent, const void *data,
+> >> +				 device_match_t match)
+> >>  {
+> >>  	struct klist_iter i;
+> >>  	struct device *child;
+> >> @@ -4108,11 +4108,6 @@ struct device *device_find_child_by_name(struct device *parent,
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(device_find_child_by_name);
+> >>  
+> >> -static int match_any(struct device *dev, void *unused)
+> >> -{
+> >> -	return 1;
+> >> -}
+> >> -
+> >>  /**
+> >>   * device_find_any_child - device iterator for locating a child device, if any.
+> >>   * @parent: parent struct device
+> >> @@ -4124,7 +4119,7 @@ static int match_any(struct device *dev, void *unused)
+> >>   */
+> >>  struct device *device_find_any_child(struct device *parent)
+> >>  {
+> >> -	return device_find_child(parent, NULL, match_any);
+> >> +	return device_find_child(parent, NULL, device_match_any);
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(device_find_any_child);
+> >>  
+> >> diff --git a/include/linux/device.h b/include/linux/device.h
+> >> index b2423fca3d45..76f10bdbb4ea 100644
+> >> --- a/include/linux/device.h
+> >> +++ b/include/linux/device.h
+> >> @@ -1073,8 +1073,8 @@ int device_for_each_child(struct device *dev, void *data,
+> >>  			  int (*fn)(struct device *dev, void *data));
+> >>  int device_for_each_child_reverse(struct device *dev, void *data,
+> >>  				  int (*fn)(struct device *dev, void *data));
+> >> -struct device *device_find_child(struct device *dev, void *data,
+> >> -				 int (*match)(struct device *dev, void *data));
+> >> +struct device *device_find_child(struct device *dev, const void *data,
+> >> +				 device_match_t match);
+> >>  struct device *device_find_child_by_name(struct device *parent,
+> >>  					 const char *name);
+> >>  struct device *device_find_any_child(struct device *parent);
+> >>
+> >> -- 
+> >> 2.34.1
+> >>
+> > 
+> > This patch breaks the build:
+> > 
+> > ./include/linux/device.h:1077:6: error: unknown type name 'device_match_t'
+> >  1077 |                                  device_match_t match);
+> >       |                                  ^
+> > 1 error generated.
+> > make[2]: *** [scripts/Makefile.build:117: arch/x86/kernel/asm-offsets.s] Error 1
+> > make[1]: *** [/mnt/fast_t2/linux/work/driver-core/Makefile:1193: prepare0] Error 2
+> > 
+> > How did you test it?
+> > 
+> > And as you are changing the parameters here, doesn't the build break
+> > also because of that?
+> > 
 > 
-> You forgot a 5.15.y version, which is of course required if we were to
-> take a 5.10.y version :(
-> 
-> Please resubmit both.
+> it seems these dependency patches listed within [PATCH 00/27] are not
+> picked up.
 
-Sorry for forgetting the 5.15.y, I'll resend it sooner, thank you!
+Of course not, please send stand-alone series if you need them to be
+applied in a specific order.
 
-> 
-> thanks,
-> 
-> greg k-h
+thanks,
+
+greg k-h
 
