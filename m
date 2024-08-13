@@ -1,128 +1,102 @@
-Return-Path: <linux-kernel+bounces-284900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9941095068E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:34:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B92795068D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91959B2333E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0B52876B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D919B5A3;
-	Tue, 13 Aug 2024 13:33:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213E919AD56;
-	Tue, 13 Aug 2024 13:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF9D919B3DA;
+	Tue, 13 Aug 2024 13:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmYjnoYr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE4D19AD6E;
+	Tue, 13 Aug 2024 13:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723556029; cv=none; b=XRTnUtSA+WCPDa4ID9BNEKxfdj7zacHBoubsJUoFIXAxaAvJAHPDEpUf+EjcbuMCDRrv0QXQBVskmD+em1P+OWovLShPwA9rA1QKZ3i+dxFzUw1py2yaXrf28hR5QPRfuT1RpAe2XbTXZlsddyRcXdr3uyfFfduWgcnq0JUNojs=
+	t=1723556038; cv=none; b=Gx4Kk716VLwBw44WguYNnWaPuDGg+dGgZm0qummsDQgachCVTzgKj4aLBbb6YIMV8/G5w62v89L5B9n/QbrTEcXGLIjA8HtzDEUm34BYBxf/3UVfytyj5dXx3a+eTgKFu6zg16OH0ia6IF8LnwdujibwNCwZm1ror1f6dJmHKv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723556029; c=relaxed/simple;
-	bh=Z1ZsCp/XO1iuTEc+GAwxMtnVpWs/xmuGXWBt8klgSnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nuxc11KurOYxc/rcBVbCZbx5js71jVWYmKzZDZUbVUTISrQDgO/70UfMoNdDFaG65PX2VTa4AQ2eHc9TDJKR9WNgpJ6h66qFEwIAM2cYUdwvnpr/FhiJqbhexn/yRh+/PKtoRwgpTCcypen9YHNdJL0hqK0CZUL9XbAyp38HWX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2A0C812FC;
-	Tue, 13 Aug 2024 06:34:12 -0700 (PDT)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 28A173F6A8;
-	Tue, 13 Aug 2024 06:33:45 -0700 (PDT)
-Date: Tue, 13 Aug 2024 14:33:42 +0100
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Dhruva Gole <d-gole@ti.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	arm-scmi@vger.kernel.org, sudeep.holla@arm.com
-Subject: Re: [PATCH] firmware: arm_scmi: Update various protocols versions
-Message-ID: <Zrtgtu9FF4um7kit@pluto>
-References: <20240812174027.3931160-1-cristian.marussi@arm.com>
- <20240813112237.drwgvhor3eisaj6t@lcpd911>
+	s=arc-20240116; t=1723556038; c=relaxed/simple;
+	bh=z+NJxoXGT6DAoM3jpcIPdgMxSjAu22qbMus24gzDpxw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VSsaxn45fu26U9PxAfMB1vaWc0QgD0k/fFJ8ComCZbWXb+trsAst5kev9kK8yq3jUfxFYWO7i4SXEQZ2GD/uO9r7EXbqzsnXi2VKL0Nz8gG3YtwdplpWPD0t2n8MojhsbLMpezczP1BiarHpZ5HyHgOzv05YGYCuudLZcLUkmbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmYjnoYr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682B9C4AF09;
+	Tue, 13 Aug 2024 13:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723556036;
+	bh=z+NJxoXGT6DAoM3jpcIPdgMxSjAu22qbMus24gzDpxw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=pmYjnoYrLCAXhpLUA6LwgPyFir2W7RJXhjAg2B3WS7Y2aG761JlUYoHj4497xm2or
+	 8VanwvABUAjAqANhqMgkyhq8bwDOMlhTjjbYJavTD/mxwOSGU3+Wo2oTimalDq+pwc
+	 TP0ZXIsaEj+lM2bX6bdxKwPtIb8tJ9Skq1LACKwXL/p9W5W5vY/j8F6jaG2+u0WW2o
+	 FETcPeZ216/C/11FgCOSwQhGnunDyJp6N8MNna6s1nAR/abzkcHQ4ui4TRfH2CTERp
+	 DInpgca+MDes+PhFoIB6c4MpA4oaP2sH4o3AIu53in9Ah2HN0Lnv6eABtf0/OJ323b
+	 DmLgwm0Ws2hdA==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v2 0/3] ipv6: Add
+ ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+Date: Tue, 13 Aug 2024 14:33:46 +0100
+Message-Id: <20240813-ipv6_addr-helpers-v2-0-5c974f8cca3e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240813112237.drwgvhor3eisaj6t@lcpd911>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALpgu2YC/32NQQqDMBBFryKz7pQkjaJdeY8iJZqJhkqUiQSLe
+ PcGD9Dl4/HfPyASe4rwLA5gSj76JWRQtwKGyYSR0NvMoITSopYK/Zqqt7GWcaJ5JY7omrrXjXa
+ 9oArybmVyfr+aLwi0YaB9gy6bycdt4e91luTl/3STRIHG9KWV7lEOWrQf4kDzfeERuvM8fw8A0
+ tO9AAAA
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ David Ahern <dsahern@kernel.org>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>, 
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Yisen Zhuang <yisen.zhuang@huawei.com>, 
+ Salil Mehta <salil.mehta@huawei.com>, Jijie Shao <shaojijie@huawei.com>, 
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+X-Mailer: b4 0.14.0
 
-On Tue, Aug 13, 2024 at 04:52:37PM +0530, Dhruva Gole wrote:
-> On Aug 12, 2024 at 18:40:27 +0100, Cristian Marussi wrote:
-> > A few protocol versions had been increased with SCMI v3.2.
-> > Update accordingly the supported version define in the kernel stack, since
-> > all the mandatory Base commands are indeed already supported.
-> > 
-> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
-> > ---
-> >  drivers/firmware/arm_scmi/base.c    | 2 +-
-> 
-> I assume this patch supersedes [1] ?
-> 
-> [1] https://lore.kernel.org/arm-scmi/ZrZMLZq_-b9EFRgn@pluto/T/#t
-> 
+Hi,
 
-Oh Yes, I replied to myself on that saying that I spotted more versions
-ro fix.
+This series adds and uses some new helpers,
+ipv6_addr_{cpu_to_be32,be32_to_cpu}, which are intended to assist in
+byte order manipulation of IPv6 addresses stored as as arrays.
 
-> >  drivers/firmware/arm_scmi/power.c   | 2 +-
-> >  drivers/firmware/arm_scmi/reset.c   | 2 +-
-> >  drivers/firmware/arm_scmi/sensors.c | 2 +-
-> >  drivers/firmware/arm_scmi/system.c  | 2 +-
-> >  drivers/firmware/arm_scmi/voltage.c | 2 +-
-> >  6 files changed, 6 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/firmware/arm_scmi/base.c b/drivers/firmware/arm_scmi/base.c
-> > index 97254de35ab0..9939b1d84b7a 100644
-> > --- a/drivers/firmware/arm_scmi/base.c
-> > +++ b/drivers/firmware/arm_scmi/base.c
-> > @@ -14,7 +14,7 @@
-> >  #include "notify.h"
-> >  
-> >  /* Updated only after ALL the mandatory features for that version are merged */
-> > -#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20000
-> > +#define SCMI_PROTOCOL_SUPPORTED_VERSION		0x20001
-> 
-> Just curious, in upstream master TF-A I see 0x20000 still? [1]
-> 
-> [1] https://github.com/ARM-software/arm-trusted-firmware/blob/master/drivers/scmi-msg/base.h#L12
-> 
+---
+Changes in v2:
+- Collected tags from Andrew Lunn and Jijie Shao. Thanks!
+- Corrected typo in commit message of 1st patch: cpy -> CPU.
+  Thanks to Andrew Lunn.
+- Also enhanced same commit message to mention both helpers.
+- Link to v1: https://lore.kernel.org/r/20240812-ipv6_addr-helpers-v1-0-aab5d1f35c40@kernel.org
 
-So, the thig goes like this.
+---
+Simon Horman (3):
+      ipv6: Add ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+      net: ethernet: mtk_eth_soc: Use ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
+      net: hns3: Use ipv6_addr_{cpu_to_be32,be32_to_cpu} helpers
 
-This patch fixes the version of the maximum supported version in the kernel SCMI
-stack, since it was wrongly left to the old version...wrongly becase we really
-support already all the mandatory feats for those versions..it ws just
-that the minor was not bumped properly...my bad.
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 79 +++++++++++-----------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  8 ++-
+ drivers/net/ethernet/mediatek/mtk_ppe.c            | 10 +--
+ drivers/net/ethernet/mediatek/mtk_ppe_debugfs.c    |  9 +--
+ include/net/ipv6.h                                 | 12 ++++
+ 5 files changed, 66 insertions(+), 52 deletions(-)
 
-What happens, Kernel side, is that the we support all the SCMI versions up to
-the declared supported version above and, if we detect an OLDER version on the
-platform we will just silently backdrop to the older version as advertised by
-the platform, WHILE if we detect a NEWER unsupported platform version for a
-protocol, we will try a NEGOTIATE_PROTOCOL to ask the platform to use an older
-known-to-us version (difficult that a platform suppors multiple vers) and then
-we'll go using our newest protocol vwersion stack against this even more
-new platform protocol implementation.... best effort with a WARNING.
+base-commit: dd1bf9f9df156b43e5122f90d97ac3f59a1a5621
 
-This patch is just bumping that minors, since all the feats are really
-supported already (as said), but without this, it if it happened that we
-encountered a platform advertising the latest version we would have
-complained (as above specified) even though we really suppported that
-version.
-
-Having said that, TF-A and SCP can certainly still not have been updated
-(and maybe some protocols will never be updated..,) but that is not an
-issue from the Linux agent persepctive (as said above)
-
-> 
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> 
-
-Thanks for having a look.
-Cristian
 
