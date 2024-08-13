@@ -1,128 +1,126 @@
-Return-Path: <linux-kernel+bounces-284621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816AB950332
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:03:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8DA950335
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:04:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38007285067
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:03:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E28B1C2257A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5069197A9B;
-	Tue, 13 Aug 2024 11:03:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FF519755E;
+	Tue, 13 Aug 2024 11:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YYba8t5A";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="pKGZPbvS"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kypDTB4h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551F921345;
-	Tue, 13 Aug 2024 11:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A289616A955;
+	Tue, 13 Aug 2024 11:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723546984; cv=none; b=XkY2qeEKdbS+NyA7peKV01+SP32UD110krgs4Vg6i7/TukOa3sD22SItrfZK0trfxaSTqtRq1z9c5rKoZCFEcm/6+ig9xSvqYqSPvUnxjwmguk1Gimrgy0Xk1oUGrjL7WxeZXdm/JIqAxVf8rFTTrbBZVjZ6RyG6oTJQH+9MOTU=
+	t=1723547064; cv=none; b=oxzWThwhPj448rOioAG3S+mSSquWRrwnLe1wRmE1sBqAKY6KmlFB0rE6Q5HvMTuqWI15FAZHQl7L7Z0WXfRpM/bcCf2pqNCSRGhBcKsb41kZFM4S33eNSMNHzFHRouU1dknLTw6IP4Tv9LYK/02QDhXZgPI/BT7kqPZlPVCpqCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723546984; c=relaxed/simple;
-	bh=PwUa5/OanIErRHAvEgE9UQwuwofhy8HwKU6/7A/LFUk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NhnjFfKkoCIoH/c9tLuB7TzMGmYe2e5XhztA/ksY6qPb/ZrRg27vUwHn72b45b53K/3I8g5B5W1+PylY1s/wyfyEE46cDVaHKocgogOLIMPUqwRaoF61nD0C3NhJTY0Wf8+7IILsS2QKgwduUumLWhMm5XKUG4LCHHxnD9NhjpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YYba8t5A; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=pKGZPbvS reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723546980; x=1755082980;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=BX8/YcQITWwz1XEoFgy9ZmyJuYxThxbscbz2octGzAE=;
-  b=YYba8t5A03+yASvcoMRUnGJtY32FtSZxhi4STzpdEJr3FjFsqcnlT7mB
-   ib1GdQoQs9UjJeoGnswSLBQbK2X0mlzGOxYwoM/NXD3YkOiUGiVQ1stCm
-   ma9NbgmBYwWTt5l0pRGyhcTNzoqz0S1dERamxdAr6kyFURm/hWfO9fzef
-   AnWJuepAbjhYrejgFAyECpUVypPJO24gEA4fNhAepAOv8oVOtqDi7e8jV
-   z+d9mQ50oy8tFAO9t1W454ZFLCYmGa+okiKL1XAhvwotQN4awebXVh/h5
-   46BSEZaSz9BfWb4pK+bFw1zVGn8ldOdbJZ8VMd8FJWr+9Yxfko97yA1za
-   Q==;
-X-CSE-ConnectionGUID: F/Gzg1pvRoySPc4KafHwrw==
-X-CSE-MsgGUID: dgzq19lBT/62vuCWd0dEMg==
-X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
-   d="scan'208";a="38383452"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Aug 2024 13:02:58 +0200
-X-CheckPoint: {66BB3D62-A-45EF2B36-F6E28480}
-X-MAIL-CPID: 8522DF81CEE9203FFD6B6412A29F7287_0
-X-Control-Analysis: str=0001.0A782F1B.66BB3D62.0069,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3070E164987;
-	Tue, 13 Aug 2024 13:02:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723546973;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=BX8/YcQITWwz1XEoFgy9ZmyJuYxThxbscbz2octGzAE=;
-	b=pKGZPbvS8nX3DhTjo+uJRpFLzFrd/5oQ7jlkpOLLK7qGpyzGCTxMZwbfgr3maNhy+a/sDe
-	FoFv+qrZ7XjuT2+h/FUwmSoexwgbd0KNmJTtZSMpP2P1SuT2rnx39g/ksZhL+3tGqp2EQ+
-	Q/caBG8ibAJVRMVlbYsWmBBeyCykCNr7JoVvtdaYNi26fGjdpbOib0uyg9VEPvfijc+zSG
-	CEVLVlafOzKfGb46I6zD7JOdvCY+N26AhMlRucV04FCjsqIyD+F39JLRaVYYO4U9632ctZ
-	G/pF85M8j6P7JV9bpPTuVtLNAC5OFONnQBhhCZiwsjLD3INKbaLsx15hmvv85A==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Markus Niebel <Markus.Niebel@ew.tq-group.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com
-Subject: Re: [PATCH 5/5] ARM: dts: imx6qdl: Rename USB hub node name
-Date: Tue, 13 Aug 2024 13:02:54 +0200
-Message-ID: <2621134.Lt9SDvczpP@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <82ee2be2-366e-40b2-ac95-e755443032be@kernel.org>
-References: <20240812143431.98323-1-Markus.Niebel@ew.tq-group.com> <1901821.CQOukoFCf9@steina-w> <82ee2be2-366e-40b2-ac95-e755443032be@kernel.org>
+	s=arc-20240116; t=1723547064; c=relaxed/simple;
+	bh=8TaRiZ2EeMGyY1kCBHmLbin11zdCmEm7XZ+KwckaCF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQFEbXbR3Uf2XZ618gfO2/SIJGqcmejrWaJQ4eeRgbCx4EYIXRio8oOEKuIaYPOe1GVGfnSTSB5JepBufCutUbxTEXnS1lYCXoP/HDuZj4/ZBs1fXYl1JfMp+xbu+JpCWm6sggK3XMxZebb1wa+zoe4CDdfC1TyNTvgKPQNOVFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kypDTB4h; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723547063; x=1755083063;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8TaRiZ2EeMGyY1kCBHmLbin11zdCmEm7XZ+KwckaCF4=;
+  b=kypDTB4hbP2AWnV6Zfwr9c6+rkCMKibgcVR/g50cVoFys7ON4Ii10aG+
+   C3P8/0deR/NBOcDPz+eZKib48G4KEhLfyCtOtIZlJaCrkxnoZBlu6/KkK
+   jjEL26cB81JRiS95rGsaSCLJH0oZdgJuBXjaktLbQ91fSVNqPfd7tLbh5
+   YXFFigXa1FcnKtZR+aIQvBDRhnS1gpoe+j1O1ksugcRu0r55Ia4bH+ebv
+   Vlvsi1VyiE6cPPy0dLXfTiwFZd0TGD570t1VlpH78TiQ3e4EFQj+NxHgw
+   bCug+ZcQWv4FovPHGEelv6m+H55a84pFwzpCm+slOCFh+wzswKQBvmEkg
+   A==;
+X-CSE-ConnectionGUID: Xkp2rCddR1SDxkZTY0hUnA==
+X-CSE-MsgGUID: 8pnuddTwSYa88swlKEtYbQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="12982989"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="12982989"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:04:22 -0700
+X-CSE-ConnectionGUID: CayKrEGCRr6KHCkCcao5RQ==
+X-CSE-MsgGUID: N9dxt86OT8CPsiWgPRNpBw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="59204435"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 13 Aug 2024 04:04:20 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdpK5-0000N8-1J;
+	Tue, 13 Aug 2024 11:04:17 +0000
+Date: Tue, 13 Aug 2024 19:03:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH] modpost: simplify modpost_log()
+Message-ID: <202408131830.qX4gs2P0-lkp@intel.com>
+References: <20240812144542.2121342-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240812144542.2121342-1-masahiroy@kernel.org>
 
-Am Dienstag, 13. August 2024, 11:44:28 CEST schrieb Krzysztof Kozlowski:
-> On 13/08/2024 11:27, Alexander Stein wrote:
-> > Am Dienstag, 13. August 2024, 11:20:08 CEST schrieb Krzysztof Kozlowski:
-> >> On 12/08/2024 16:34, Markus Niebel wrote:
-> >>> From: Alexander Stein <alexander.stein@ew.tq-group.com>
-> >>>
-> >>> According to microchip,usb2514.yaml the node name shall be usb-hub.
-> >>
-> >> That's not true. The schema does not say anything like this. Old name =
-is
-> >> correct. NAK.
-> >=20
-> > So, is the schema incorrect? There is the dtbs_check warning:
-> > arch/arm/boot/dts/nxp/imx/imx6q-mba6b.dtb: hub@1: $nodename:0: 'hub@1' =
-does not match '^usb(@.*)?'
-> >         from schema $id: http://devicetree.org/schemas/usb/microchip,us=
-b2514.yaml#
->=20
-> If you have a warning, shorten it and paste it so this will be obvious.
-> If you look at several bindings, the hub is widely used name. I think
-> the schema is not correct here - I do not see any properties from
-> usb.yaml being used here (for usb2514). What's more, if you compare
-> usb2514 with any other on-board HUB representations (because that's the
-> only point why we have it in bindings, right?), none of them reference
-> usb(-hcd)?.yaml.
->=20
-> These are not USB controllers, IMO.
+Hi Masahiro,
 
-I raised that concern in [1] already, but nobody commented.
+kernel test robot noticed the following build warnings:
 
-Best regards,
-Alexander
+[auto build test WARNING on masahiroy-kbuild/for-next]
+[also build test WARNING on masahiroy-kbuild/fixes linus/master v6.11-rc3 next-20240813]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1] https://lore.kernel.org/all/3633627.mvXUDI8C0e@steina-w/
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/modpost-simplify-modpost_log/20240813-003654
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
+patch link:    https://lore.kernel.org/r/20240812144542.2121342-1-masahiroy%40kernel.org
+patch subject: [PATCH] modpost: simplify modpost_log()
+config: loongarch-randconfig-001-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131830.qX4gs2P0-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131830.qX4gs2P0-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408131830.qX4gs2P0-lkp@intel.com/
 
+All warnings (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
+>> WARNING: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
+>> WARNING: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
