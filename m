@@ -1,143 +1,143 @@
-Return-Path: <linux-kernel+bounces-284475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22FC950161
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:41:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84ECA950168
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:42:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6FCB1C23911
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:41:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F011F23D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC2DD17E919;
-	Tue, 13 Aug 2024 09:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6BF17E919;
+	Tue, 13 Aug 2024 09:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Aes8Por/"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w5+b3lm8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562FB17C7C2
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F3817C7C2
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723542091; cv=none; b=hpNcukhBQBDhoF8/F6lvQsCSsbhw2b22WAnK14lfR/W/Hf7GAqMuaAnnRStHEXoeueddIBH5DArkRriJYrUWB2Sk1q4/sUtsFFVAvc7wYbWqrsGgXEp12KuKMYYnI0iQPZDkoRWKyZEq7TIurkcJxlWWiKrZ8/0vdwMirDKUiog=
+	t=1723542114; cv=none; b=JZERpWjFLnvTReDv+rBabr/ClumiISFxBbJekJUrbB5rbFE0wD0LhjqaN4yF5ApaEWltZsW0/4V39WBGQxQsmF7WSlRCyzylTOHgAPHtcH4uZlCVD17rfypVBV9fhWQxEcJd56aGpM84c0PtpF4LWZTJVXnWP42farepIxxDdQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723542091; c=relaxed/simple;
-	bh=GowZfBUArZDrThXkpk1uy4u6pTSdlwhoXMcs/PPonto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IA4x+cP2DAXj2nhBE/CpytRYAYqd5BTDUCBlIIUjm3uw+kYAE8ZJSZWd1mPz49pwHeyZzH9AHrlLJTDhhyiEB/xejkKl/TdXi7no53McASCemgGqAAv1smW+a8GYki+RMJw2KkiqamPZD/dr4j4BgKtkjO5xClN7KaAWcayUsQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Aes8Por/; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5314c6dbaa5so4559828e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 02:41:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723542087; x=1724146887; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eItjPGBQyvpJiWnOn46lnVpGsIhUMx1VDP+7wHZATso=;
-        b=Aes8Por/VM2IqllsAZT5nQL76L2qzu0cNGSuqZtlJOYjI8fbvnMv1JMZRcq7Ompib3
-         Lb1q0SY8O6UkUIStf7ukbRjXrMXWItkyeMQzfuiLKSL35LtmVSJw8Q3zPTf+yN5c5kOY
-         2IpsyO7BN76aF1MwCw0L6c1u+fE9aC2pmmJ+fNd6IL2KITOAV75+hkDAcGIGKJKKXopA
-         X1u2gCGaJCSKzwMGfVmam4C/UqWThwIMsk47yfQ5qozs6vjs3xSoYBc2KYDq08/XEtpY
-         v9ubtKtYvseEYapkIDDocn0uTxZoWGB7ooUczVuZjxnYTsCBjSBoo2hzz1aB41q7xs21
-         ltaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723542087; x=1724146887;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eItjPGBQyvpJiWnOn46lnVpGsIhUMx1VDP+7wHZATso=;
-        b=DZVUv36ZZLAzaCOkMGvR3Mcyx4Oo5jsDbzenveqv1J9J/o9RwVtwOHme2RmJGebo2X
-         mXqKSWrGSAX5RGLUHBOTQl/vkM79tjo8QCfYf6XgY/Zu0EQXRmQm0NptecZWYCpxh/zd
-         09oaWBtyDKBzL4drR3jhxLJredGHJluOw0zOTL0MjsPbjSinzQ9ZZb6Tiy0LI/Y/vjqW
-         GnnuLeCldAZRE+9qxrgKAghaiEq6CFr2ZdKnKEYlz/3k23hYnOW0QaQigBz6awVceZ4f
-         TAel18cd+gHCjwvP/197aqWEupyLxcaQXVBjNb0PZ9HQ4p5TMl7bxLfSQ6hKslEd0N0D
-         Mizg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4k5XPTQ15FyiMh25xcSR6XqkLIvI3pC74KxfB9FIwUfkodcN+BPrVruO9+K5gxelAbSs+pyabT4ackAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjY3KMSeJbU7fCuyKyRsdcOLGm++RcyZjwL2IUzN9L4MYfGCY9
-	IbJ/yhX/d9nnFVTcSPbNijZ471xKwS7TbqYmIg4SNNedX1bJji9q
-X-Google-Smtp-Source: AGHT+IEmVGyzW4I6MImE67T9Pw4r0FlDQHXbCStVpUhgRs/dbKdieg8qONNaAYIQ0vAUOwy+lNnZvA==
-X-Received: by 2002:a05:6512:1088:b0:530:e1ee:d95 with SMTP id 2adb3069b0e04-5321364847emr2009121e87.1.1723542086719;
-        Tue, 13 Aug 2024 02:41:26 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200eb3c33sm967879e87.19.2024.08.13.02.41.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 02:41:26 -0700 (PDT)
-Message-ID: <0c68db10-5d3a-4fdb-ae7a-6465d17c0712@gmail.com>
-Date: Tue, 13 Aug 2024 12:41:24 +0300
+	s=arc-20240116; t=1723542114; c=relaxed/simple;
+	bh=tzhK6m4voq98kYClzQDHV7AWqew7oBQ/+NqrY5LsO/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4TNuBLSOI8LrawXmugopLsoDKN6NNaFLIC4cN3SNEDEqC60OB7KLDC3ol8FoLM4nN5eDUF3mYSbQoQh4q1xv1dFuUEtpJp0zKhHAgjEDynaIYETnJaWp6lnooCvPZR4/1pD0ZfQub0PBF4CPyE7VyCmGIvFC7IA4sQ5K4q+yQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w5+b3lm8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3ABE0C4AF0B;
+	Tue, 13 Aug 2024 09:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723542113;
+	bh=tzhK6m4voq98kYClzQDHV7AWqew7oBQ/+NqrY5LsO/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=w5+b3lm8L9SlPGkAcFRYZ3/DOOcyOCE6BJOdBouO21qbnXu6lo4P344ELmSe8VAzj
+	 EOutuySH7VMBubt3/0ylEz7K6hpElgSnR/zxxOAdZcZLVdt6BqBCuTtOr/dMI5hbs9
+	 VgFdjX6TEU0fo4Tgk5wnO5tmJRsvEE5oGfLwuPRQ=
+Date: Tue, 13 Aug 2024 11:41:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2] driver core: Simplify driver API
+ device_find_child_by_name() implementation
+Message-ID: <2024081330-posting-tapestry-9372@gregkh>
+References: <20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] irqdomain: Unify checks for bus_token
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: Herve Codina <herve.codina@bootlin.com>, Mark Brown <broonie@kernel.org>
-References: <20240812193101.1266625-1-andriy.shevchenko@linux.intel.com>
- <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US, en-GB
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240811-simply_api_dfcbn-v2-1-d0398acdc366@quicinc.com>
 
-On 8/12/24 22:29, Andy Shevchenko wrote:
-> The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
-> Since bus_token is enum, the later is more robust against changes.
-> Unify all checks to follow the latter variant.
-
-I don't really have a strong opinion on this but for me the
-if (bus_token) reads better. Te bus_token is either set (and set to 
-something else but zero), or not. This logic is nicely reflected by the 
-check 'if (bus_token)'. Still, I suppose the 'DOMAIN_BUS_ANY' is for a 
-reason, and some people indeed claim that consistency matters ;)
-
-> Fixes: 0b21add71bd9 ("irqdomain: Handle domain bus token in irq_domain_create()")
-> Fixes: 1bf2c9282927 ("irqdomain: Cleanup domain name allocation")
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->   kernel/irq/irqdomain.c | 22 ++++++++++++++--------
->   1 file changed, 14 insertions(+), 8 deletions(-)
+On Sun, Aug 11, 2024 at 01:49:58PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index 01001eb615ec..18d253e10e87 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -130,8 +130,10 @@ EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
->   
->   static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus_token bus_token)
->   {
-> -	domain->name = bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token) :
-> -				   kasprintf(GFP_KERNEL, "%s", base);
-> +	if (bus_token == DOMAIN_BUS_ANY)
-> +		domain->name = kasprintf(GFP_KERNEL, "%s", base);
-> +	else
-> +		domain->name = kasprintf(GFP_KERNEL, "%s-%d", base, bus_token);
+> Simplify device_find_child_by_name() implementation by using existing
+> driver APIs device_find_child() and device_match_name().
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+> Changes in v2:
+> - Correct commit message and remove all unnecessary comments and codes
+> - Link to v1: https://lore.kernel.org/lkml/20240720-simplify_drv_api-v1-1-07c5e028cccf@quicinc.com
+> ---
+>  drivers/base/core.c | 13 +------------
+>  1 file changed, 1 insertion(+), 12 deletions(-)
+> 
+> diff --git a/drivers/base/core.c b/drivers/base/core.c
+> index f152e0f8fb03..8ed593d7e0be 100644
+> --- a/drivers/base/core.c
+> +++ b/drivers/base/core.c
+> @@ -4093,18 +4093,7 @@ EXPORT_SYMBOL_GPL(device_find_child);
+>  struct device *device_find_child_by_name(struct device *parent,
+>  					 const char *name)
+>  {
+> -	struct klist_iter i;
+> -	struct device *child;
+> -
+> -	if (!parent)
+> -		return NULL;
+> -
+> -	klist_iter_init(&parent->p->klist_children, &i);
+> -	while ((child = next_device(&i)))
+> -		if (sysfs_streq(dev_name(child), name) && get_device(child))
+> -			break;
+> -	klist_iter_exit(&i);
+> -	return child;
+> +	return device_find_child(parent, name, device_match_name);
+>  }
+>  EXPORT_SYMBOL_GPL(device_find_child_by_name);
+>  
+> 
+> ---
+> base-commit: bfa54a793ba77ef696755b66f3ac4ed00c7d1248
+> change-id: 20240811-simply_api_dfcbn-eebeb153bec7
+> prerequisite-change-id: 20240811-const_dfc_done-c5c206675c6b:v1
+> prerequisite-patch-id: 475b810c1ccacab955c654c223d5214f70c4f6c8
+> prerequisite-patch-id: 81a5ccaa144a7732cae29fc5ea1a13426becee5b
+> prerequisite-patch-id: 9b77254186b7366809f949f5643f9437fa2528a0
+> prerequisite-patch-id: 95308bb3eedcf8c4a5e30aa3071116148495329e
+> prerequisite-patch-id: ee643a52674e2aead02f7be3d011d88507970436
+> prerequisite-patch-id: 0625de1f03ef4350b1828f0faff7a9d9bdebae94
+> prerequisite-patch-id: 6e671f2891f6ed906a35e0a90b5d8cd71c382b9c
+> prerequisite-patch-id: 8859b6fa330c363ef37567fc0a5421c0b9ecd8dc
+> prerequisite-patch-id: fe9aa57807bbb8b98dba32abd614d8f2e27565cd
+> prerequisite-patch-id: d03febd9c0afd5d21a2f664d748da7d7811a8e84
+> prerequisite-patch-id: c7425de06cf7032d54ff72f610d7632941be976e
+> prerequisite-patch-id: 54c942a1a492ba04480337f99dc901a8d4def782
+> prerequisite-patch-id: 7e8f4a3e378d5329b886a9a3719add3cbb10e3e3
+> prerequisite-patch-id: 34ff831994ac7bc265f567bacefff8ae687ccd40
+> prerequisite-patch-id: 66d46c755c25065e9d440a4137e1e8ccc245e0be
+> prerequisite-patch-id: 15bc81129ee07324b5a8faa39a5e6aea59952573
+> prerequisite-patch-id: fe9ca6ae244761b48469f375fe1fc8c9c7b24204
+> prerequisite-patch-id: a6fd24b37269a06a91fd926fa5111a19cdec7551
+> prerequisite-patch-id: 2f584b03145bc7d01e3ea632c6abb89d3b543d93
+> prerequisite-patch-id: 10e0d06e0340ce5028cd109fffa7f0720c70d242
+> prerequisite-patch-id: 0f9ea4a7c63d15c5c1324c5666901f0704c129ca
+> prerequisite-patch-id: 4f56ebd28ae00a50130f58409d934ca79ccec6a9
+> prerequisite-patch-id: 70e7432951b43a67204bb7eb6c437ba135def0f1
+> prerequisite-patch-id: 1718891e69e1d2031336b4a6e7f251c50619f336
+> prerequisite-patch-id: 5f838fb00256dbadfd36735ef3a1b1e43ec20549
+> prerequisite-patch-id: f4b36e4136d462c8ba9f94f777a6fa1a054b8809
+> prerequisite-patch-id: 56c12ce5dc6bfb090fa7801fa3f31c4e52b50775
+> prerequisite-patch-id: 2b23c8c2ae90030a59d267297b478584447b78ac
+> prerequisite-patch-id: 294c325d517e318063c61af218607d9721f1cc5f
+> prerequisite-patch-id: 38fb282ac119a88af58a88b38c9cdc74372df404
+> prerequisite-patch-id: d3ab2693194b77403d6ce20edf25ee3896d0260b
+> prerequisite-patch-id: 19b69184800129923777ee2acd2629565c69291b
+> prerequisite-patch-id: f58374cebf0ada070fc0825736424dd177e49676
 
-You could do:
-	domain->name = bus_token == DOMAIN_BUS_ANY ? kasprintf(...
-to squeeze this a bit more compact (and to maintain the previous style) 
-- but my personal preference is to not have a ternary. Well, again 
-nothing I would have a really strong opinion.
+As those ids are not going to be in my tree (or anyone else's), how are
+we supposed to apply this?
 
-Anyways, the logic looks solid to me so, FWIW:
+confused,
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-Yours,
-	-- Matti
-
--- 
-Matti Vaittinen
-Linux kernel developer at ROHM Semiconductors
-Oulu Finland
-
-~~ When things go utterly wrong vim users can always type :help! ~~
-
+greg k-h
 
