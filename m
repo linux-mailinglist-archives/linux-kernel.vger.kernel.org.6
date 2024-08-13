@@ -1,162 +1,127 @@
-Return-Path: <linux-kernel+bounces-284264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7832494FF19
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:52:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB90A94FF1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8CA1F24D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:52:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C3F1F239A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D2B757E5;
-	Tue, 13 Aug 2024 07:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E10524B0;
+	Tue, 13 Aug 2024 07:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C5Yrv3FM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H288B9Pa"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF4A7347B;
-	Tue, 13 Aug 2024 07:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FEE446B4
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 07:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723535512; cv=none; b=HNpBczevO/0AoDwSN28v4cBBRflPFYE4zvZ10RkmBDX5yy3DK3z8lJJNOG0yILJRaVxVa54aHgNp2SJ6BkJg11B7u4lRwI9enkOHI1dVPEp7Mvektwp73l9eGPj861I2NeIlwpRgpYXkT52/i3r5pBcPr706eafLOlzinsvYbaA=
+	t=1723535661; cv=none; b=QDKnYmjil2qwuZM/Rm+itk3oWkYAVNUGFyzMSdj2GQc64Kf+B28zeA8o8OZmacvBCBEpDd+xVoXodQXXFa/NuHpZoJBIUodti4pp3ZSW2IvytScO0lQ4pVneyKhgN3LW/kTo3pKjKOpksfkt32Ts0C6j7cNlZbJM7CYCEa0FUXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723535512; c=relaxed/simple;
-	bh=qG6R67PuNzLOMoFZrmQVHHjW2nl7BE98fXcqz2qXGt4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=mxl1nsjAUJRpP8qB5prFPNclSuRBSat/Y/mu4YmPzq4ULCfeUSxNV9GtxtXTu5zSFiZoHRoMSEUJvn/4Y8rr3VnCmdouVtViBVUPuL+GS6G2H4Q3iLGKxESyd74zKuPm+fao5J/ybljHZw5CZyl3YtvvtLtKQUCeX5jNJZpr91Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C5Yrv3FM; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723535511; x=1755071511;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=qG6R67PuNzLOMoFZrmQVHHjW2nl7BE98fXcqz2qXGt4=;
-  b=C5Yrv3FMgMOGW5umeQ1sNjlGt9t//ZnjOTGeKaugpy1JJI0UR/MC55MG
-   woXv0iqs9NBLLOgmXO7tQEJkg8EfEmW9WgawhlBqRbTbOv7fbCzsIPVoI
-   1NybwSI/E1x0YVNuTKmoq5K0NigcAaCwZcsjGaCJyZAiDC9DpJ5Reed7v
-   OS9Mgwt1GnH0m0524sBUX3hOOTq7wtZZMGgsudXfQncUsG9nrF5h8a67b
-   j4FU8TzeIi4oR2KxxHAcVax2jLz44P+5drS+pd45pyVJCXuUFS0AgpfFy
-   BETDKU1sL+sNXSA2CxzJBDtxpoYmMtHUBqo1MHiFPlirsRRlLe8luEi6Y
-   Q==;
-X-CSE-ConnectionGUID: OG0e0XKxQ/uiA+TTb1GCFQ==
-X-CSE-MsgGUID: zk+2cVNPRKG/Q48M0QMm4A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21538519"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21538519"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:51:50 -0700
-X-CSE-ConnectionGUID: cCSlt7ccQAuBTbX1v5tAaA==
-X-CSE-MsgGUID: gZz/dOTTR2SNF2ez0bNDXw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="58657473"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.153])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:51:47 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 13 Aug 2024 10:51:43 +0300 (EEST)
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86/intel-uncore-freq: Do not present separate
- package-die domain
-In-Reply-To: <d21c069438cc9c314e29fe9b75a97cf15ab6e087.camel@linux.intel.com>
-Message-ID: <3982985e-d8c1-7307-7187-aae438d9b75e@linux.intel.com>
-References: <20240731185756.1853197-1-srinivas.pandruvada@linux.intel.com>  <cd7cc6b8-4993-937b-072b-8fbc1e309a4d@linux.intel.com> <d21c069438cc9c314e29fe9b75a97cf15ab6e087.camel@linux.intel.com>
+	s=arc-20240116; t=1723535661; c=relaxed/simple;
+	bh=Tagmd0ZHFfAZHe1r1Mr1oZyeFx8z9898PM42DLkVG04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s3tqPPmrv9t2h1YLYUxcbaQAfP+oDplj/+rvwTMEavL6Z3DzdAajUPL7YmLPwYop1uRIOsSpdCxH855hBHy1AA1+bGSjyVySM6vMS8asb/q2LXzdrpupIyA3M07W6u4nVGRy9fKRqqIOQuj00b8o4PfT3yMDSCr82UfJFjlvtJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H288B9Pa; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2cb7cd6f5f2so4028804a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 00:54:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723535660; x=1724140460; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=quunBnpR+uyAazpYXeUKYV/u6uqA7jUaGY1RNyrzJvk=;
+        b=H288B9Pa2ncrbNPkFbSWzfldBmbSIMQmZzXSzvr5jlLsuBUGP4RK97HKVX6XYtzt2p
+         me/kmcVraJqZt3wq9G/p9ya/fwe0vSgbQggYhL21Gj4kZ1+aAoUOsDPonuY3cdc/ssX8
+         i9jZC6033cwkXY3zBsG62Jx4l9luC+E1k3/SFEKt62Qy98hxr2KkCH2GwA0mPWDdSJtq
+         cHlsLA2PFL/gHjRFqRZTV7T0AbJlwoHNlOkLkKsdNhSfROqyjG4BxO87SabE5Wm9Pv5y
+         PpZS+G396f8D4nvp7hFGAwdqsrl4S+jmUf3MpRrvZGgoz6iIu/L/Oj/5WhoPyniCgaNg
+         mV8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723535660; x=1724140460;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=quunBnpR+uyAazpYXeUKYV/u6uqA7jUaGY1RNyrzJvk=;
+        b=BKfaAa2NZB8/Vo4v8MXYWcNyw0y0N7DIBOQoNHg46a4GfxjJEbz5GBVR+qC5BGQ7x2
+         Ot0HCnIgSc8rogjpvQXJKgI21czNshAEY8iO4jUPB4dVeIcmhOaOFFfGI1nirWbJUHH1
+         0tMJVnYSi2cCMo1NxeJY83rgewYdnsEWSEjhzL3wYVYgMhVuCtVq59FMBiIzbdngwPmW
+         te97TyU3VqMvq2neAYYbq+kalp1j0Du5pVIPdL20dx7wBg25DcOJqfIpLtPQ7eSajs8A
+         8P1L7FAG7YwsSdAOHi5qder5C1BlPGE6cpSUYB0yNigjU1l30g3XLtSX/YcjqoeRQYJv
+         Eb2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXwY+w3SYQ9Rapt4Z4BWQcFBz+8pVSZ+k8/kQLoPif6fxwgeQVwJwPlMKHImp8zV1rocjcK064dcuMS1js7CxdbHwO9cn/1ktBtx1IX
+X-Gm-Message-State: AOJu0YzQTNYsZTHqhO96M53jTHeQ7WCM2kxo98xasG+FXLtt19GAfbyv
+	DcoxRS/su9emcNpbkU+QPYxlbN/8cQDHR4zt84FCUVuumecnoyulous3jPAvXVpJ+203k7Qa22m
+	0nG9G2bNMfVAPvZiC3lJ8PRgDdXw6w+omRima5g==
+X-Google-Smtp-Source: AGHT+IGjquCO6vuNugRLHkV98nNv6JV31HDxkHG2BV4oq9FFnH3FXSVBipvECEDVXrTZNgI3x5FxnIOGlvzKaRohCqw=
+X-Received: by 2002:a17:90a:6785:b0:2cb:4bed:ed35 with SMTP id
+ 98e67ed59e1d1-2d39269da03mr2808886a91.41.1723535659547; Tue, 13 Aug 2024
+ 00:54:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-806437562-1723534995=:963"
-Content-ID: <8b3c0406-69ad-40eb-459e-c30612cb7799@linux.intel.com>
+References: <3c726cf5-0c94-4cc6-aff0-a453d840d452@arm.com> <20240809012410.marjxrio3sjequnn@airbuntu>
+ <ZrXIb7BFOWY11DKt@jlelli-thinkpadt14gen4.remote.csb>
+In-Reply-To: <ZrXIb7BFOWY11DKt@jlelli-thinkpadt14gen4.remote.csb>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 13 Aug 2024 09:54:08 +0200
+Message-ID: <CAKfTPtD_QzYVeTbQ-j2mOsKmCcjUaxo403M_HYCWbT2RjjGb7w@mail.gmail.com>
+Subject: Re: [PATCH] sched/cpufreq: Use USEC_PER_SEC for deadline task
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Qais Yousef <qyousef@layalina.io>, Christian Loehle <christian.loehle@arm.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-pm@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>
+Content-Type: text/plain; charset="UTF-8"
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Fri, 9 Aug 2024 at 09:42, Juri Lelli <juri.lelli@redhat.com> wrote:
+>
+> On 09/08/24 02:24, Qais Yousef wrote:
+> > Adding more sched folks to CC
+> >
+> > On 08/06/24 14:41, Christian Loehle wrote:
+> > > Convert the sugov deadline task attributes to use the available
+> > > definitions to make them more readable.
+> > > No functional change.
+> > >
+> > > Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> > > ---
+> > >  kernel/sched/cpufreq_schedutil.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+> > > index eece6244f9d2..012b38a04894 100644
+> > > --- a/kernel/sched/cpufreq_schedutil.c
+> > > +++ b/kernel/sched/cpufreq_schedutil.c
+> > > @@ -654,9 +654,9 @@ static int sugov_kthread_create(struct sugov_policy *sg_policy)
+> > >              * Fake (unused) bandwidth; workaround to "fix"
+> > >              * priority inheritance.
+> > >              */
+> > > -           .sched_runtime  =  1000000,
+> > > -           .sched_deadline = 10000000,
+> > > -           .sched_period   = 10000000,
+> > > +           .sched_runtime  = USEC_PER_SEC,
+> > > +           .sched_deadline = 10 * USEC_PER_SEC,
+> > > +           .sched_period   = 10 * USEC_PER_SEC,
+> >
+> > I think NSEC_PER_MSEC is the correct one. The units in
+> > include/uapi/linux/sched/types.h is not specified. Had to look at
+> > sched-deadline.rst to figure it out.
+>
+> In practice it's the same number :). But, you are correct, we want
+> 1ms/10ms and unit is nanoseconds, so NSEC_PER_MSEC.
 
---8323328-806437562-1723534995=:963
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <755bd14e-122f-9313-ea0e-0af5279aa9b2@linux.intel.com>
+Yes NSEC_PER_MSEC is the correct unit
 
-On Mon, 12 Aug 2024, srinivas pandruvada wrote:
-> On Mon, 2024-08-12 at 14:16 +0300, Ilpo J=E4rvinen wrote:
-> > On Wed, 31 Jul 2024, Srinivas Pandruvada wrote:
-> >=20
-> > > The scope of uncore control is per power domain in a package and
-> > > die.
-> > > A package-die can have multiple power domains on some processors.
-> > > In this
-> > > case package-die domain (root domain) aggregates all information
-> > > from
-> > > power domains in it.
-> > >=20
-> > > On some processors, CPUID enumerates the die number same as power
-> > > domain
-> > > ID. In this case there is one to one relationship between package-
-> > > die and
-> > > power domain ID. There is no use of aggregating information from
-> > > all
-> > > power domain IDs as the information will be duplicate and
-> > > confusing. In
-> > > this case do not create separate package-die domain.
-> >=20
-> > Hi Srinivas,
-> >=20
-> > I got confused by this changelog because its order is quite
-> > illogical.
-> >=20
-> > First paragraph talks about case A. When you say "all information"=20
-> > is "aggregated", I immediately make the assumption that the
-> > aggregated=20
-> > information is what is wanted because, well, you normally want "all=20
-> > information" and nothing else is being told here.
-> >=20
-> > Second paragraph starts to talk about case B and then suddenly
-> > switches to=20
-> > talk what should have been done in case A (that aggregated
-> > information is=20
-> > useless/confusing).
-> >=20
-> Is this any better:
->=20
-> "
-> The scope of uncore control is per power domain in a package and die
-> with TPMI.
->=20
-> There are two types of processor configurations possible:
-> 1. A compute die is not enumerated in CPUID. In this case there is only
-> one die in a package. In this case there will be multiple power domains
-> in a single die.
-> 2. A power domain in a package is enumerated as a compute die in CPUID.
-> So there is one to one relationship between a die and power domain.
-
-So there are multiple dies in a package and one to one relationship=20
-between a die and power domain.
-
-?
-
->=20
-> To allow die level controls, the current implementation creates a root
-> domain and aggregates all information from power domains in it. This
-> is well suited for configuration 1 above.
->=20
-> But when newer processors use configuration 2 above, this will present
-> redundant information, So no use of aggregating. In this case do not
-> create separate root domain.
-> "
-
-Yes, it is now clearer. A minor suggestion above to better map with the=20
-code (explicitly stating the condition that matches to the check done
-by the code).
-
---=20
- i.
---8323328-806437562-1723534995=:963--
+>
 
