@@ -1,97 +1,60 @@
-Return-Path: <linux-kernel+bounces-285001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0440A9507F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:39:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F66950800
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:40:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F5A71F2181C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:39:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5ED81F229B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5EE719EED8;
-	Tue, 13 Aug 2024 14:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C9E19EEA1;
+	Tue, 13 Aug 2024 14:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJUMvPwY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SetsQxGE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F219E802;
-	Tue, 13 Aug 2024 14:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE191D556;
+	Tue, 13 Aug 2024 14:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559961; cv=none; b=TuO4QbzTBMr5oFp40Y3QwOdSkxiSrFmymYJTRg/kz6oOiIGej2LGcl4MkTzz30Rf6j/cB7bswh88YTXOC102dc7Uvn4mZ6qLdvZ3AZ9e0eETFVhqf9idpBiCSd1GZnsbu8BviXxO6EMXW36ZdKeo2/9D6AICqmn8XhX4DKRpd+Y=
+	t=1723560044; cv=none; b=K8p6PaM/Fx9OECmZXMNK9fhwoptofONkIRffmfseRqRPvHbVl0JdyK3QSVFtz2nbk5lo4oFAUoZ6YJtjrC0F1tNbGSJTNviagNGAj6N6AbbELlBrT6iOMeWZ4cf4eomRXyTDOECVzvVzRYk6pr31swQxFtHTJgUT30QvdtY3kz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559961; c=relaxed/simple;
-	bh=BkMT1oZs8wsRPi0UzxeExZ+sMn6QcdSVOxPluJLt7fQ=;
+	s=arc-20240116; t=1723560044; c=relaxed/simple;
+	bh=3mtwcw8cIpdiaFg8tJrwA2QQtyR1zaK7gcobQGihP5M=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hgIG9oAS7o+mmdqIhPmDoFD+K0YJXKsnfVrUNrYrhr2IO4g3m0dLptqSzRekY1aC5SfBjsfrRM7DIlXn8V22YX3b00NjZztyFO9tGVLkUtdXGBMWbpf8ctgEXLrXHjJ2kzaDVp/EF0O5XJ4UQupZR1+huJtVr6VKdRSHHue/Q28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJUMvPwY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C51EC4AF09;
-	Tue, 13 Aug 2024 14:39:18 +0000 (UTC)
+	 MIME-Version:Content-Type; b=IiW7KthFjckwnJHAjUE4/UzOXY0FzwLL2leqeOISVChOsQuwM4Cd22GqryoKGBJHNtZrL0Edae25rU2+4jZB95Ppti41oG1uc2A5YhIbMALatEY3CGGqnRXm0H5ZUuUKHeUQprw9BoDw7QVolSXAlJMTTMdiT/+6qdZNApz60LY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SetsQxGE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5BA1C4AF09;
+	Tue, 13 Aug 2024 14:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723559960;
-	bh=BkMT1oZs8wsRPi0UzxeExZ+sMn6QcdSVOxPluJLt7fQ=;
+	s=k20201202; t=1723560044;
+	bh=3mtwcw8cIpdiaFg8tJrwA2QQtyR1zaK7gcobQGihP5M=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kJUMvPwYEz4twWJkX2/DBO6lgBCLmry7xNwcj7mHVF1Wu2r8anDxNlilhF+jy27aG
-	 Jx4dgTgc0s0HDaUublN5PoN+H2skcCgaLvJGlu/2GxlZwYI7trTSQQXdb74w8R7tRn
-	 kCAPwm2Cvvz4ybkwcPKvuy2ErXaxmTGR863mS4+qtva0pxa/f44xuE8jHSz/3UVCmz
-	 lVJkV9Q5J5+Req3XUGUlQgEEwM+nqyKtfAcw+m/7oLQ42wuYXHvL56R/79oq9hyP1W
-	 bTxxyYQPhwO7iNiUaDaMkCYKVsACtIKK6NbL+EWpR45m+gJVBf9pcDvFLplWXr/S3t
-	 BGr028oZ7DLMQ==
-Date: Tue, 13 Aug 2024 07:39:17 -0700
+	b=SetsQxGELs8awFF3bRGJPR/k66veI0jQ71TtxPTFsmhgX/1WRLpGjVYl/Jsl47Qxe
+	 539SrsciKNze5cIb02gWia30GpltCsycfaMKtEgkhMV4VSQSpXN/tXowb2TaZZfkC+
+	 2oLitHj4foQicehBe9/LQIWwZ5YKZfsHlt9uQ912V5R3SDJFqThkYgsNH/1QRxgMqN
+	 Of+7xGhDxXNGnzLDeagfds3fgsnne33yz7lYoq5DaVTeNjm231Bjd+y76uLfQp3YN5
+	 98Dl3A6ZRsxIecmTgTKEYGpo79SwXAhF85pILSZiepdv1grBWTdl2CNsHm4JwFZ5Nq
+	 G0wtJKs6RdEEQ==
+Date: Tue, 13 Aug 2024 07:40:42 -0700
 From: Jakub Kicinski <kuba@kernel.org>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org, Donald Hunter
- <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan
- Corbet <corbet@lwn.net>, Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge
- Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Arnd Bergmann <arnd@arndb.de>, Steffen
- Klassert <steffen.klassert@secunet.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>, Willem de
- Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan <shuah@kernel.org>,
- Sumit Semwal <sumit.semwal@linaro.org>, Christian =?UTF-8?B?S8O2bmln?=
- <christian.koenig@amd.com>, Bagas Sanjaya <bagasdotme@gmail.com>, Christoph
- Hellwig <hch@infradead.org>, Nikolay Aleksandrov <razor@blackwall.org>,
- Taehee Yoo <ap420073@gmail.com>, David Wei <dw@davidwei.uk>, Jason
- Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>, Shailend
- Chand <shailend@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-Subject: Re: [PATCH net-next v18 07/14] memory-provider: dmabuf devmem
- memory provider
-Message-ID: <20240813073917.690ac1cc@kernel.org>
-In-Reply-To: <5a51b11d-9c35-42a5-879b-08dc7ca2ca18@gmail.com>
-References: <20240805212536.2172174-1-almasrymina@google.com>
-	<20240805212536.2172174-8-almasrymina@google.com>
-	<20240806135924.5bb65ec7@kernel.org>
-	<CAHS8izOA80dxpB9rzOwv7Oe_1w4A7vo5S3c3=uCES8TSnjyzpg@mail.gmail.com>
-	<20240808192410.37a49724@kernel.org>
-	<CAHS8izMH4UhD+UDYqMjt9d=gu-wpGPQBLyewzVrCWRyoVtQcgA@mail.gmail.com>
-	<fc6a8f0a-cdb4-4705-a08f-7033ef15213e@gmail.com>
-	<20240809205236.77c959b0@kernel.org>
-	<CAHS8izOXwZS-8sfvn3DuT1XWhjc--7-ZLjr8rMn1XHr5F+ckbA@mail.gmail.com>
-	<48f3a61f-9e04-4755-b50c-8fae6e6112eb@gmail.com>
-	<20240812105732.5d2845e4@kernel.org>
-	<CAHS8izPb51gvEHGHeQwWTs4YmimLLamau1c4j=Z4KGM8ZJrx5g@mail.gmail.com>
-	<a6747b29-ed79-49d4-9ffe-b62074db1e09@gmail.com>
-	<20240812165708.33234ed6@kernel.org>
-	<5a51b11d-9c35-42a5-879b-08dc7ca2ca18@gmail.com>
+To: Wen Gu <guwen@linux.alibaba.com>
+Cc: wenjia@linux.ibm.com, jaka@linux.ibm.com, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, alibuda@linux.alibaba.com,
+ tonylu@linux.alibaba.com, linux-kernel@vger.kernel.org,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 1/2] net/smc: introduce statistics for
+ allocated ringbufs of link group
+Message-ID: <20240813074042.14e20842@kernel.org>
+In-Reply-To: <b3e8c9b9-f708-4906-b010-b76d38db1fb1@linux.alibaba.com>
+References: <20240807075939.57882-1-guwen@linux.alibaba.com>
+	<20240807075939.57882-2-guwen@linux.alibaba.com>
+	<20240812174144.1a6c2c7a@kernel.org>
+	<b3e8c9b9-f708-4906-b010-b76d38db1fb1@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,25 +64,20 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 13 Aug 2024 03:31:13 +0100 Pavel Begunkov wrote:
-> I'm getting lost, so repeating myself a bit. What I think
-> would be a good approach is if we get an error back from
-> the driver if it doesn't support netiov / providers.
+On Tue, 13 Aug 2024 17:55:17 +0800 Wen Gu wrote:
+> On 2024/8/13 08:41, Jakub Kicinski wrote:
+> > On Wed,  7 Aug 2024 15:59:38 +0800 Wen Gu wrote:  
+> >> +	if (nla_put_u64_64bit(skb, SMC_NLA_LGR_R_SNDBUF_ALLOC,
+> >> +			      lgr->alloc_sndbufs, SMC_NLA_LGR_R_PAD))  
+> > 
+> > nla_put_uint()  
 > 
-> netdev_rx_queue_restart() {
-> 	...
-> 	err = dev->queue_mgmt_ops->ndo_queue_mem_alloc();
-> 	if (err == -EOPNOTSUPP) // the driver doesn't support netiov
-> 		return -EOPNOTSUPP;
-> 	...
-> }
+> Hi, Jakub. Thank you for reminder.
 > 
-> That can be done if drivers opt in to support providers,
-> e.g. via a page pool flag.
-> 
-> What I think wouldn't be a great option is getting back a
-> "success" from the driver even though it ignored
+> I read the commit log and learned the advantages of this helper.
+> But it seems that the support for corresponding user-space helpers
+> hasn't kept up yet, e.g. can't find a helper like nla_get_uint in
+> latest libnl.
 
-page pool params are not the right place for a supported flag.
-Sooner or later we'll want to expose this flag to user space.
+Add it, then.
 
