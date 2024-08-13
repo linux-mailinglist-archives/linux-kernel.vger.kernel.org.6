@@ -1,39 +1,64 @@
-Return-Path: <linux-kernel+bounces-284188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 830B394FE1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:53:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F4A94FE25
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A866B1C22443
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:53:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 374BCB21573
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:57:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355F84317C;
-	Tue, 13 Aug 2024 06:53:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224A73BBFB
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602C9446B4;
+	Tue, 13 Aug 2024 06:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hcjojFAG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A38CC433C0;
+	Tue, 13 Aug 2024 06:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723532021; cv=none; b=RbPSy4RntagbtQbKVtzLV3q8deG3LYvh92/j7uSC150QQm0WSNRK6g0xCbcXUyq6uBNc7uopD1CuKImJqR8loonGWZx3kZhvoozR9/sPc0YgKpsIXRkTM0XpWUJ9YfoeSTNH8LnwYrzd0qp7Zbs+fywLtUDraB8g3XYdE7hyfOc=
+	t=1723532217; cv=none; b=QfIM2jLO0EdhCTjOKmii+hzJAJG9vkzCwqVnYHi5f0iItSALRX0+1xWQejaKQiywz6Jc/j2VyfGoc7XrLNOl1t7odLZrzGpaIFj+gO65HbH5/S+nAvv6J2WD8R8w5wjUEoMGYXzgO5Pt4onvCMYUyc6MK/awGeDcUgtplr5uk1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723532021; c=relaxed/simple;
-	bh=qemWfSTJHKWEHM94RKC3FR9sl/oT0O+11bgLPLS0EIM=;
+	s=arc-20240116; t=1723532217; c=relaxed/simple;
+	bh=NHOdCzL4wuGKAeymLhchgwhLNrjYY+kFKC2JRUoWQgI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pgayxhk4fm+8ej1Pc+kPY6PGtTcTqf0PNmUCfyiJOy8evs/Uc52V++XEWPtR2/C5JZ0P1CM0hulqsRDzPTbMeWC/WshZ1bt3Sn9VdncOtvzDiwhFYmcb1q7cKR5MRLdk2HJ2UOhaK1jON5KMBIBuFTvdvO+/wTgSuEudhnD3fUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3585112FC;
-	Mon, 12 Aug 2024 23:54:03 -0700 (PDT)
-Received: from [10.163.57.59] (unknown [10.163.57.59])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B169D3F40C;
-	Mon, 12 Aug 2024 23:53:33 -0700 (PDT)
-Message-ID: <6c479aba-10b9-46ba-92fa-d3b20cc82d61@arm.com>
-Date: Tue, 13 Aug 2024 12:23:31 +0530
+	 In-Reply-To:Content-Type; b=O3gfwGmHXrwF1hdpPpg8wTjtu3YQZ6vrOfU0E++oa0Y9kQGUBTlodl6MZlefTkn8Uqfhe/+cfV7X37tdTb8wXgLfisCpCie4PysDi7bxMSanZwFfns/vf7MinBwtqcYnJA65wXwfSoIj/4RGzOIaahYZS2dW/P5QIIr5bkiiddo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hcjojFAG; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723532216; x=1755068216;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NHOdCzL4wuGKAeymLhchgwhLNrjYY+kFKC2JRUoWQgI=;
+  b=hcjojFAG2Fo8Liv857gd+CQCrhCwPTgz11F5oaPv0PtOH9MX7dOO9PwH
+   nKWZJFWLr0lYiqtaHZ6pDYxbP5KMQBX/psAa6anMW7lfCqDanPnO4pDub
+   tu5U7orCVA8xmXY+CsjJLEzy7k1Qkz5cP9vlgrSk7Y7t5rDdCy1uIDNf0
+   YgvbU3NbcBO0ASqmfVN4cMQHg0j0Q9wskpQvVcUbJxmepk1kUVI01UA+l
+   XmNQ7AQ2iZRdxrDUe/gCSvDhRWIyQTIoat5qw/Ddwn3tfGMY6Lm3LZvgp
+   7zg8ynOd5JdDJVrGXoWhbyLsjvLjIKIQmSDzmZct+/gDN8qsIYNKK9xfw
+   Q==;
+X-CSE-ConnectionGUID: y9wby8NbRpqdL5qhxG16+Q==
+X-CSE-MsgGUID: dc1ri8khTVSomOnVS3sClg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="25436740"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="25436740"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:54:52 -0700
+X-CSE-ConnectionGUID: 0cX1NQqBRNuNA2e7CA7e9g==
+X-CSE-MsgGUID: R0lEkji+Tea5UuKzz3o7hg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58501481"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.225.1]) ([10.124.225.1])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:54:48 -0700
+Message-ID: <ea60f002-ec6f-4481-9617-6e8cf4c8edd6@linux.intel.com>
+Date: Tue, 13 Aug 2024 14:54:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,223 +66,193 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP &
- HDFGRTR2_GROUP based FGU handling
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
- Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
- <20240620065807.151540-11-anshuman.khandual@arm.com>
- <865xu3kh4r.wl-maz@kernel.org> <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
- <878qyy35e5.wl-maz@kernel.org> <47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
- <86tthhi0nz.wl-maz@kernel.org> <c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
- <86o76c1b8p.wl-maz@kernel.org> <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
- <86bk2b198o.wl-maz@kernel.org> <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
- <87sevk4kgr.wl-maz@kernel.org>
+Subject: Re: [Patch v3 1/5] perf x86/topdown: Complete topdown slots/metrics
+ events check
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>,
+ Dapeng Mi <dapeng1.mi@intel.com>
+References: <20240712170339.185824-1-dapeng1.mi@linux.intel.com>
+ <20240712170339.185824-2-dapeng1.mi@linux.intel.com> <ZroQ7wiw6JB-sjps@x1>
 Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <87sevk4kgr.wl-maz@kernel.org>
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <ZroQ7wiw6JB-sjps@x1>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 8/4/24 16:35, Marc Zyngier wrote:
-> On Sat, 03 Aug 2024 11:38:11 +0100,
-> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>
->> On 8/2/24 16:29, Marc Zyngier wrote:
->>> On Fri, 02 Aug 2024 10:25:44 +0100,
->>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>>> On 8/1/24 21:33, Marc Zyngier wrote:
->>>>> On Thu, 01 Aug 2024 11:46:22 +0100,
->>>>> Anshuman Khandual <anshuman.khandual@arm.com> wrote:
->>> [...]
->>>
->>>>>> +	SR_FGT(SYS_SPMACCESSR_EL1,	HDFGRTR2, nSPMACCESSR_EL1, 0),
->>>>> This (and I take it most of the stuff here) is also gated by
->>>>> MDCR_EL2.SPM, which is a coarse grained trap. That needs to be
->>>>> described as well. For every new register that you add here.
->>>> I did not find a SPM field in MDCR_EL2 either in latest ARM ARM or in
->>>> the latest XML. But as per current HDFGRTR2_EL2 description the field
->>>> nSPMACCESSR_EL1 is gated by FEAT_SPMU feature, which is being checked
->>>> via ID_AA64DFR1_EL1.PMU when required. So could you please give some
->>>> more details.
->>> I misspelled it. It is MDCR_EL2.EnSPM.
->>>
->>> And you are completely missing the point. It is not about
->>> HDFGRTR2_EL2, but about SPMACCESSR_EL1 (and all its little friends).
->>>
->>> To convince yourself, just look at the pseudocode for SPMACCESSR_EL1,
->>> limited to an EL1 access:
->>>
->>> elsif PSTATE.EL == EL1 then
->>>     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
->>>         UNDEFINED;
->>>     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMACCESSR_EL1 == '0') then
->>>         AArch64.SystemAccessTrap(EL2, 0x18);
->>>     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
->>>         AArch64.SystemAccessTrap(EL2, 0x18);
->>>     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
->>>         if EL3SDDUndef() then
->>>             UNDEFINED;
->>>         else
->>>             AArch64.SystemAccessTrap(EL3, 0x18);
->>>     elsif EffectiveHCR_EL2_NVx() IN {'111'} then
->>>         X[t, 64] = NVMem[0x8E8];
->>>     else
->>>         X[t, 64] = SPMACCESSR_EL1;
->>>
->>>
->>> Can you spot the *TWO* conditions where we take an exception to EL2
->>> with 0x18 as the EC?
->>>
->>> - One is when HDFGxTR2_EL2.nSPMACCESSR_EL1 == '0': that's a fine
->>>   grained trap.
->>> - The other is when MDCR_EL2.EnSPM == '0': that's a coarse grained
->>>   trap.
->>>
->>> Both conditions need to be captured in the various tables in this
->>> file, for each and every register that you describe.
->> Ahh, got it now. Because now KVM knows about SPMACCESSR_EL1 register,
->> access to that register must also be enabled via both fine grained trap
->> (HDFGxTR2_EL2.nSPMACCESSR_EL1) and coarse grained trap (MDCR_EL2.EnSPM).
->>
->> For all the registers that are being added via FEAT_FGT2 here in this
->> patch, their corresponding CGT based path also needs to be enabled via
->> corresponding CGT_MDCR_XXX groups.
-> Exactly.
-> 
->>> [...]
->>>
->>>>> Now, the main issues are that:
->>>>>
->>>>> - you're missing the coarse grained trapping for all the stuff you
->>>>>   have just added. It's not a huge amount of work, but you need, for
->>>>>   each register, to describe what traps apply to it. The fine grained
->>>>>   stuff is most, but not all of it. There should be enough of it
->>>>>   already to guide you through it.
->>>> Coarse grained trapping for FEAT_FGT2 based fine grained registers ?
->>> Not for FEAT_FGT2. For the registers that FEAT_FGT2 traps. Can you see
->>> the difference?
->> Understood, for example PMIAR_EL1 register which FEAT_FGT2 now traps via
->>
->> SR_FGT(SYS_PMIAR_EL1,           HDFGRTR2, nPMIAR_EL1, 0),
->>
->> also needs to have corresponding coarse grained trap.
->>
->> SR_TRAP(SYS_PMIAR_EL1,          CGT_MDCR_TPM),
-> Yup.
-> 
->> Similarly corresponding SR_TRAP() needs to be covered for all registers
->> that are now being trapped with FEAT_FGT2.
->>
->> Example code snippet.
->>
->> ........
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(8), CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(9), CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(10),        CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(11),        CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(12),        CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(13),        CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(14),        CGT_MDCR_EnSPM),
->> +       SR_TRAP(SYS_SPMEVFILT2R_EL0(15),        CGT_MDCR_EnSPM),
-> I think it is a bit more complicated than just that. Again, look at
-> the pseudocode:
-> 
-> elsif PSTATE.EL == EL1 then
->     if HaveEL(EL3) && EL3SDDUndefPriority() && MDCR_EL3.EnPM2 == '0' then
->         UNDEFINED;
->     elsif HaveEL(EL3) && EL3SDDUndefPriority() && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
->         UNDEFINED;
->     elsif EL2Enabled() && IsFeatureImplemented(FEAT_FGT2) && ((HaveEL(EL3) && SCR_EL3.FGTEn2 == '0') || HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0') then
->         AArch64.SystemAccessTrap(EL2, 0x18);
->     elsif EL2Enabled() && MDCR_EL2.EnSPM == '0' then
->         AArch64.SystemAccessTrap(EL2, 0x18);
->     elsif EL2Enabled() && SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
->         AArch64.SystemAccessTrap(EL2, 0x18);
->     elsif HaveEL(EL3) && MDCR_EL3.EnPM2 == '0' then
->         if EL3SDDUndef() then
->             UNDEFINED;
->         else
->             AArch64.SystemAccessTrap(EL3, 0x18);
->     elsif HaveEL(EL3) && SPMACCESSR_EL3<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00' then
->         if EL3SDDUndef() then
->             UNDEFINED;
->         else
->             AArch64.SystemAccessTrap(EL3, 0x18);
->     elsif !IsSPMUCounterImplemented(UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m) then
->         X[t, 64] = Zeros(64);
->     else
->         X[t, 64] = SPMEVFILT2R_EL0[UInt(SPMSELR_EL0.SYSPMUSEL), (UInt(SPMSELR_EL0.BANK) * 16) + m];
-> 
-> which shows that an SPMEVFILT2Rn_EL0 access from EL1 traps to EL2 if:
-> 
-> - either HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0', (check)
-> - or MDCR_EL2.EnSPM == '0', (check)
-> - or SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00'
-> 
-> and that last condition requires some more handling as you need to
-> evaluate both SPMSELR_EL0.SYSPMUSEL and the corresponding field of
-> SPMACCESSR_EL2 to make a decision. It's not majorly complicated, but
-> it isn't solved by simply setting a static attribute.
 
-So IIUC you are suggesting to handle SYS_SPMEVFILT2R_EL0() registers via
-complex condition checks where the CGT_XXX can be directed to a function
-callback instead ? For example, something like the following (untested).
+On 8/12/2024 9:41 PM, Arnaldo Carvalho de Melo wrote:
+> On Fri, Jul 12, 2024 at 05:03:35PM +0000, Dapeng Mi wrote:
+>> It's not complete to check whether an event is a topdown slots or
+>> topdown metrics event by only comparing the event name since user
+>> may assign the event by RAW format, e.g.
+>>
+>> perf stat -e '{instructions,cpu/r400/,cpu/r8300/}' sleep 1
+>>
+>>  Performance counter stats for 'sleep 1':
+>>
+>>      <not counted>      instructions
+>>      <not counted>      cpu/r400/
+>>    <not supported>      cpu/r8300/
+>>
+>>        1.002917796 seconds time elapsed
+>>
+>>        0.002955000 seconds user
+>>        0.000000000 seconds sys
+>>
+>> The RAW format slots and topdown-be-bound events are not recognized and
+>> not regroup the events, and eventually cause error.
+>>
+>> Thus add two helpers arch_is_topdown_slots()/arch_is_topdown_metrics()
+>> to detect whether an event is topdown slots/metrics event by comparing
+>> the event config directly, and use these two helpers to replace the
+>> original event name comparisons.
+> Looks ok, I made a comment below, please take a look
+>  
+>> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+>> ---
+>>  tools/perf/arch/x86/util/evlist.c  |  8 ++---
+>>  tools/perf/arch/x86/util/evsel.c   |  3 +-
+>>  tools/perf/arch/x86/util/topdown.c | 48 +++++++++++++++++++++++++++++-
+>>  tools/perf/arch/x86/util/topdown.h |  2 ++
+>>  4 files changed, 55 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
+>> index b1ce0c52d88d..332e8907f43e 100644
+>> --- a/tools/perf/arch/x86/util/evlist.c
+>> +++ b/tools/perf/arch/x86/util/evlist.c
+>> @@ -78,14 +78,14 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+>>  	if (topdown_sys_has_perf_metrics() &&
+>>  	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
+>>  		/* Ensure the topdown slots comes first. */
+>> -		if (strcasestr(lhs->name, "slots") && !strcasestr(lhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(lhs))
+>>  			return -1;
+>> -		if (strcasestr(rhs->name, "slots") && !strcasestr(rhs->name, "uops_retired.slots"))
+>> +		if (arch_is_topdown_slots(rhs))
+>>  			return 1;
+>>  		/* Followed by topdown events. */
+>> -		if (strcasestr(lhs->name, "topdown") && !strcasestr(rhs->name, "topdown"))
+>> +		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs))
+>>  			return -1;
+>> -		if (!strcasestr(lhs->name, "topdown") && strcasestr(rhs->name, "topdown"))
+>> +		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs))
+>>  			return 1;
+>>  	}
+>>  
+>> diff --git a/tools/perf/arch/x86/util/evsel.c b/tools/perf/arch/x86/util/evsel.c
+>> index 090d0f371891..181f2ba0bb2a 100644
+>> --- a/tools/perf/arch/x86/util/evsel.c
+>> +++ b/tools/perf/arch/x86/util/evsel.c
+>> @@ -6,6 +6,7 @@
+>>  #include "util/pmu.h"
+>>  #include "util/pmus.h"
+>>  #include "linux/string.h"
+>> +#include "topdown.h"
+>>  #include "evsel.h"
+>>  #include "util/debug.h"
+>>  #include "env.h"
+>> @@ -44,7 +45,7 @@ bool arch_evsel__must_be_in_group(const struct evsel *evsel)
+>>  	    strcasestr(evsel->name, "uops_retired.slots"))
+>>  		return false;
+>>  
+>> -	return strcasestr(evsel->name, "topdown") || strcasestr(evsel->name, "slots");
+>> +	return arch_is_topdown_metrics(evsel) || arch_is_topdown_slots(evsel);
+>>  }
+>>  
+>>  int arch_evsel__hw_name(struct evsel *evsel, char *bf, size_t size)
+>> diff --git a/tools/perf/arch/x86/util/topdown.c b/tools/perf/arch/x86/util/topdown.c
+>> index 3f9a267d4501..49f25d67ed77 100644
+>> --- a/tools/perf/arch/x86/util/topdown.c
+>> +++ b/tools/perf/arch/x86/util/topdown.c
+>> @@ -32,6 +32,52 @@ bool topdown_sys_has_perf_metrics(void)
+>>  }
+>>  
+>>  #define TOPDOWN_SLOTS		0x0400
+>> +bool arch_is_topdown_slots(const struct evsel *evsel)
+>> +{
+>> +	if (evsel->core.attr.config == TOPDOWN_SLOTS)
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>> +
+>> +static int compare_topdown_event(void *vstate, struct pmu_event_info *info)
+>> +{
+>> +	int *config = vstate;
+>> +	int event = 0;
+>> +	int umask = 0;
+>> +	char *str;
+>> +
+>> +	if (!strcasestr(info->name, "topdown"))
+>> +		return 0;
+>> +
+>> +	str = strcasestr(info->str, "event=");
+>> +	if (str)
+>> +		sscanf(str, "event=%x", &event);
+>> +
+>> +	str = strcasestr(info->str, "umask=");
+>> +	if (str)
+>> +		sscanf(str, "umask=%x", &umask);
+>> +
+>> +	if (event == 0 && *config == (event | umask << 8))
+>> +		return 1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel)
+>> +{
+>> +	struct perf_pmu *pmu = evsel__find_pmu(evsel);
+>> +	int config = evsel->core.attr.config;
+> Humm, can we cache this information? I.e. have some evsel->is_topdown:1
+> bit to avoid having to traverse all events if we call this multiple
+> times for the same evsel? 
 
---- a/arch/arm64/kvm/emulate-nested.c
-+++ b/arch/arm64/kvm/emulate-nested.c
-@@ -116,6 +116,7 @@ enum cgt_group_id {
-        __COMPLEX_CONDITIONS__,
-        CGT_CNTHCTL_EL1PCTEN = __COMPLEX_CONDITIONS__,
-        CGT_CNTHCTL_EL1PTEN,
-+       CGT_TEST,
- 
-        CGT_CPTR_TTA,
- 
-@@ -486,6 +487,23 @@ static enum trap_behaviour check_cptr_tta(struct kvm_vcpu *vcpu)
-        return BEHAVE_HANDLE_LOCALLY;
- }
- 
-+static enum trap_behaviour check_test(struct kvm_vcpu *vcpu)
-+{
-+       u64 spmaccessr_el2 = __vcpu_sys_reg(vcpu, SPMACCESSR_EL2);
-+       u64 spmselr_el2 = __vcpu_sys_reg(vcpu, SPMSELR_EL0);
-+       u64 mdcr_el2 = __vcpu_sys_reg(vcpu, MDCR_EL2);
-+       int syspmusel, spmaccessr_idx;
-+
-+       if (!(mdcr_el2 & MDCR_EL2_EnSPM)) {
-+               syspmusel = FIELD_GET(SPMSELR_EL0_SYSPMUSEL_MASK, spmselr_el2);
-+               spmaccessr_idx = syspmusel * 2;
-+
-+               if (((spmaccessr_el2 >> spmaccessr_idx) & 0x3) == 0x0)
-+                       return BEHAVE_FORWARD_ANY;
-+       }
-+       return BEHAVE_HANDLE_LOCALLY;
-+}
-+
- #define CCC(id, fn)                            \
-        [id - __COMPLEX_CONDITIONS__] = fn
- 
-@@ -493,6 +511,7 @@ static const complex_condition_check ccc[] = {
-        CCC(CGT_CNTHCTL_EL1PCTEN, check_cnthctl_el1pcten),
-        CCC(CGT_CNTHCTL_EL1PTEN, check_cnthctl_el1pten),
-        CCC(CGT_CPTR_TTA, check_cptr_tta),
-+       CCC(CGT_TEST, check_test),
- };
- 
- /*
-@@ -1163,7 +1182,7 @@ static const struct encoding_to_trap_config encoding_to_cgt[] __initconst = {
-        SR_TRAP(SYS_SPMEVFILTR_EL0(14), CGT_MDCR_EnSPM),
-        SR_TRAP(SYS_SPMEVFILTR_EL0(15), CGT_MDCR_EnSPM),
- 
--       SR_TRAP(SYS_SPMEVFILT2R_EL0(0), CGT_MDCR_EnSPM),
-+       SR_TRAP(SYS_SPMEVFILT2R_EL0(0), CGT_TEST),
-        SR_TRAP(SYS_SPMEVFILT2R_EL0(1), CGT_MDCR_EnSPM),
-        SR_TRAP(SYS_SPMEVFILT2R_EL0(2), CGT_MDCR_EnSPM),
-        SR_TRAP(SYS_SPMEVFILT2R_EL0(3), CGT_MDCR_EnSPM),
+Yeah, good point. Thanks.
+
+
+>
+> - Arnaldo
+>
+>> +	if (!pmu || !pmu->is_core)
+>> +		return false;
+>> +
+>> +	if (perf_pmu__for_each_event(pmu, false, &config,
+>> +				     compare_topdown_event))
+>> +		return true;
+>> +
+>> +	return false;
+>> +}
+>>  
+>>  /*
+>>   * Check whether a topdown group supports sample-read.
+>> @@ -44,7 +90,7 @@ bool arch_topdown_sample_read(struct evsel *leader)
+>>  	if (!evsel__sys_has_perf_metrics(leader))
+>>  		return false;
+>>  
+>> -	if (leader->core.attr.config == TOPDOWN_SLOTS)
+>> +	if (arch_is_topdown_slots(leader))
+>>  		return true;
+>>  
+>>  	return false;
+>> diff --git a/tools/perf/arch/x86/util/topdown.h b/tools/perf/arch/x86/util/topdown.h
+>> index 46bf9273e572..1bae9b1822d7 100644
+>> --- a/tools/perf/arch/x86/util/topdown.h
+>> +++ b/tools/perf/arch/x86/util/topdown.h
+>> @@ -3,5 +3,7 @@
+>>  #define _TOPDOWN_H 1
+>>  
+>>  bool topdown_sys_has_perf_metrics(void);
+>> +bool arch_is_topdown_slots(const struct evsel *evsel);
+>> +bool arch_is_topdown_metrics(const struct evsel *evsel);
+>>  
+>>  #endif
+>> -- 
+>> 2.40.1
+>>
 
