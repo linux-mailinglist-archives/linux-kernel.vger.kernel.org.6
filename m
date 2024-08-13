@@ -1,67 +1,150 @@
-Return-Path: <linux-kernel+bounces-284695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AF095042C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:51:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E5295042E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195EE1F218F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCFD81C211F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D615199391;
-	Tue, 13 Aug 2024 11:50:17 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077FD199256;
+	Tue, 13 Aug 2024 11:50:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YW1I3BSi"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD0819923D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED9B19923D;
+	Tue, 13 Aug 2024 11:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723549817; cv=none; b=oQGGFo8v8MHVX5BJ5YHL/9D955nbWefH53YMYU5ZPXvsOvCGTlMRM6OIECwpFqpSThKQYsd/XIKM9GJl4dmLHgoBkEMysEC8JVj2p033/GzLnJTqWIHnr1Tuo30aSXms7LEfugb6+f1Z3deytbGS6NGmGceC+Gq2n+qW7eor23U=
+	t=1723549845; cv=none; b=EXYtg9x1iJP4WOWiO+M5EdeL3mTgpKrRezD2+ZDfIANTJasSPfa01GymSFDr8lkGAVHkdLKCBuF1SjicoNCWdx+hEHRdQ5yaCuVUlvlfZ5e9+usFSmGOYnb5Fapwl2ilUHOby3LvWMLw75crZ9ljKiXsRLQ/0ddmBwcLp/+xV3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723549817; c=relaxed/simple;
-	bh=jqt54muLOVo9ftAomttUciUspyyZLMAhKp2YqEsQZKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7hwrLyzCzG3JD53xwdDvHnx9cF/cnqw6hHyOSbG3W9hfRRKxEygmfBD2e0BecKRzxloHM00YUxG9e1damtlRof/USdtcAaUSv0GM1sAySO76sreKWhdbV6xFwr3nEFKwVZ+dj2gkFLa+bO34VPMiBZlWrAYfZiFrOcnLhWc6jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B1611227A87; Tue, 13 Aug 2024 13:50:02 +0200 (CEST)
-Date: Tue, 13 Aug 2024 13:50:02 +0200
-From: Christoph Hellwig <hch@lst.de>
+	s=arc-20240116; t=1723549845; c=relaxed/simple;
+	bh=momqMPg58eXRuraxzLRA5+Vm9sT9ngqIOc9ZLV6IMQE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GaXz/YN3nYKJ7zcHnfeb29EM4rB0Cwosa5UbFd49yYoSO6UhC/a8WJx2IKhsMtvphq35+Hl6773gdYbO3mBk/Fgp5EAdTTZnCOq6ilgbvz9w2KyDktwAZ3MScWu2xxMq2YtSlxeRaGgbTr6qPcZnRSEYu94c7/S4IVyTpjtyaR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YW1I3BSi; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D6Q7VH002444;
+	Tue, 13 Aug 2024 11:50:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:content-type
+	:in-reply-to:content-transfer-encoding:mime-version; s=pp1; bh=N
+	7TwkXSoYtsHI6ke9wVuBzCSrBwOGWPut1J0RcJCaA0=; b=YW1I3BSibDiUF3IyS
+	KhhE1HsKhpQKteQI1egfqknCzyNBjy39TP7kkPmrJWTXmIJWdzb+WevR8oRVGIyb
+	f9OnIomMqb2ULgd6AG3SuQt7/SWQrOIuxIUY542XT0AA6W4KjbJRFURawnQdo6rm
+	DqgN78vWJ6dQqQII7IH6bcXVr+tEq1PeO1S3Al2y2h1dIhqp4xx2hnZjX92GhsQV
+	Dw1i86b8r8+YNpXFY9GA/XNWgSLlLu46RRz6BKvsPcuXc7AzTbn0C2DFbc7Olemu
+	jLrMhadaK925+jJlGUVaXj/otl8wV3MAi8xjBwibs3ffBANdKRSNIlR1gyrVdoTY
+	ntlwg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 40wwmpqr4t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 11:50:35 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 47DA0G9S020901;
+	Tue, 13 Aug 2024 11:50:35 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 40xn832yfv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 11:50:35 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 47DBoTMp52691220
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 13 Aug 2024 11:50:31 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9376720043;
+	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 375E42004B;
+	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
+Received: from localhost (unknown [9.179.17.215])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 13 Aug 2024 11:50:29 +0000 (GMT)
+Date: Tue, 13 Aug 2024 13:50:27 +0200
+From: Vasily Gorbik <gor@linux.ibm.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Jason Gunthorpe <jgg@nvidia.com>, leonro@nvidia.com
-Subject: Re: [PATCH v4 0/2] DMA IOMMU static calls
-Message-ID: <20240813115002.GA2825@lst.de>
-References: <cover.1721818168.git.leon@kernel.org> <20240805122050.GA480973@unreal> <2024081330-dismiss-unsealed-0f21@gregkh>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, Alexandra Winter <wintera@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH 2/2] s390/iucv: Fix vargs handling in iucv_alloc_device()
+Message-ID: <your-ad-here.call-01723549827-ext-8444@work.hours>
+References: <cover.thread-d8267b.your-ad-here.call-01723545029-ext-2515@work.hours>
+ <patch-2.thread-d8267b.git-d8267bded9e9.your-ad-here.call-01723545029-ext-2515@work.hours>
+ <2024081331-bonnet-fiftieth-9a14@gregkh>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2024081331-bonnet-fiftieth-9a14@gregkh>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PE4u4Rl_NwdOX-Jb7eFQ4UuuSWBXnxAa
+X-Proofpoint-GUID: PE4u4Rl_NwdOX-Jb7eFQ4UuuSWBXnxAa
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024081330-dismiss-unsealed-0f21@gregkh>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_03,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
+ impostorscore=0 suspectscore=0 spamscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 clxscore=1015 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130083
 
-On Tue, Aug 13, 2024 at 11:58:51AM +0200, Greg Kroah-Hartman wrote:
-> I thought we were trying to get away from adding iommu stuff to struct
-> device, but oh well :(
+On Tue, Aug 13, 2024 at 12:52:19PM +0200, Greg Kroah-Hartman wrote:
+> On Tue, Aug 13, 2024 at 12:42:37PM +0200, Vasily Gorbik wrote:
+> > From: Heiko Carstens <hca@linux.ibm.com>
+> > 
+> > iucv_alloc_device() gets a format string and a varying number of
+> > arguments. This is incorrectly forwarded by calling dev_set_name() with
+> > the format string and a va_list, while dev_set_name() expects also a
+> > varying number of arguments.
+> > 
+> > Fix this and call kobject_set_name_vargs() instead which expects a
+> > va_list parameter.
+> 
+> I don't understand, why can't dev_set_name() be called here?
+> 
+> Calling "raw" kobject functions is almost never the correct thing to be
+> doing, ESPECIALLY as you have a struct device here.
 
-Strictly speaking this is DMA-API stuff, despite being related to
-dma-iommu.  And yes, I'd like to eventually move this out of
-struct device into a separate dma_device, but that's pretty big
-lift and for now this uses one of many spare bits without growing the
-structure.
+struct device *iucv_alloc_device(const struct attribute_group **attrs,
+                                 void *priv, const char *fmt, ...);
 
+va_start(vargs, fmt); initializes vargs to point to the first argument after fmt.
+
+__printf(2, 0) int kobject_set_name_vargs(struct kobject *kobj, const char *fmt, va_list vargs);
+
+__printf(2, 3) int dev_set_name(struct device *dev, const char *name, ...);
+
+dev_set_name is expecting to receive individual variable arguments
+directly (...), not a va_list.
+
+The (...) in dev_set_name is meant to be expanded into individual
+arguments, but when you pass a va_list to it, this expansion doesn't
+happen. Instead, the va_list is just treated as a pointer or a single
+argument, leading to undefined or incorrect behavior.
+
+So, would it be okay to reuse kobject_set_name_vargs() here, or would you propose
+introducing another helper just for this case? e.g.
+
+int dev_set_name_vargs(struct device *dev, const char *fmt, va_list vargs)
+{
+჻·······return kobject_set_name_vargs(&dev->kobj, fmt, vargs);
+}
+EXPORT_SYMBOL_GPL(dev_set_name_vargs)
+
+The bz link should be:
+Link: https://bugzilla.suse.com/show_bug.cgi?id=1228425
 
