@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-285553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AFAF950F8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:14:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5529F950F8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B02311F2330E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:14:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EC46B22811
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D452D1AAE38;
-	Tue, 13 Aug 2024 22:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB851A76BA;
+	Tue, 13 Aug 2024 22:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W57qoIUL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+I2LiXd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163EF26AFB;
-	Tue, 13 Aug 2024 22:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A45F91AAE39;
+	Tue, 13 Aug 2024 22:15:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723587243; cv=none; b=t1GkALh0aPsD++y6bEVBLbZz47AvjJLAu8eNyWSHSESoKM4fDZAK6/1H/Cja/53kei3DSDBOkPMW2TZMwjOPjHoXL/5LQMy03Z1SzWQBbyAEVs6cXsLgMlfYq3udunOKlHkOC+sOq4RznN9BNgNTeHWIEF9QY1dSnCHPomETWTE=
+	t=1723587306; cv=none; b=kiHiUd9+h+pZJUN+MXyEcfw3hm8fxiL1o4M0fcKtGVJuAmVr5f5Txg7j8SKHn4NcANLNLz70+vqgLurk4A86iYdLbBe1M8niMtBqNvwkDmwcrU7YnOAJOic2VGzf4Wkc3fKQsW0vqBtlSdi9EemAxGZMbE2E4r/34iZS+xRnS38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723587243; c=relaxed/simple;
-	bh=Wfd+NoNOY6S54NJAiFTLX6WnTIUN38Ya2ZXlRx3OWLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TVZEcwBVBOKF4hEJe/Zkl/UFx+x9+VbyYwkxzGHkb+UsWWEGWVvoVEl+FEHOpS/l1lKJZ2MJAmTQf19DmWHp4y5QGaarxHBYTdSTnPBIHa23TduzVYMoqqL/zPxOAUaW7AoARbxFCtl3c6op3k+aeOLGKxNBxbQKV7C/28zm+Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W57qoIUL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57750C32782;
-	Tue, 13 Aug 2024 22:14:01 +0000 (UTC)
+	s=arc-20240116; t=1723587306; c=relaxed/simple;
+	bh=vt6nsaewShD5afhtTMqHJ1S+APpB3N3wBMEHbNW3qUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dPbHhdIQ955MlBwdPBUrb14vNSV9gp/W8kgCaj/M1XZPBIMALEfjZclApsF6dYkdP3x/6gyP9ZSnfsbEUnUIWS+e84QTZHIglGk9L+uvwyl33wwRmCYJdxO0ipB74YOFokLebPsk7cY+yTls289lFGEFkrDhoxnxqzc9bM+wO94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+I2LiXd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE195C32782;
+	Tue, 13 Aug 2024 22:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723587242;
-	bh=Wfd+NoNOY6S54NJAiFTLX6WnTIUN38Ya2ZXlRx3OWLI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=W57qoIULUCOmIUSExooMbDOEMTNXyHuNg9jIk6Nf5haURqo+p4bzGaGHskg0nJgHT
-	 6PfELsT0KrR3qFKCdEc8zAkSpg6IUG3tAyRvVzt69I905K7ujFfey41N3E7cqFDnhv
-	 oxlM+wilbEAV3IQn8xg4ypDUT0/XP+dxBUryXpd63RhkG83zpnVnW2IUIekbDcbk6M
-	 NzTtQL/HICG2aZkQDTAguWFQ4OtQm3shLrCZoxV0cRWLWorfRoCNd+pLZDMn9rfMLb
-	 KBri4WoeqRGeNLN3ssp5FdmkzoQ2ZlH02M06J89mcqKU2Pnhx+JmDlE8932TisIzbk
-	 /411jOcmBQuPA==
-Date: Tue, 13 Aug 2024 16:13:58 -0600
+	s=k20201202; t=1723587306;
+	bh=vt6nsaewShD5afhtTMqHJ1S+APpB3N3wBMEHbNW3qUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=U+I2LiXdxJ76KzfaGzu8o11VOrCk3Ib4xUrt0mhb+mfRGCammi1tl7M/cpfDgRRP6
+	 kBKB/gODwylm/C3TY7hsdjP8Rr8huvrJtZ5AIuU1L+mv0Ef82M+scNjn2cTiapiBad
+	 OAx8Tfk1z3tFeW5AiVeP+9EUT50rONMvpPagRXLDaAeNelgpVUUX0mTXORRaBwBadD
+	 onQwzkncA4HPPX464R8dVQIOXB8TcnmpmkKu+IwaxUcB8sv0ibIeen6YcUBET8dvd5
+	 vL08YO3RAHpQ7ik0U9zjpl4LbHVPJcD3mLXVdPMC5WQgsx/QsQeY8OFqRvHB1Ib957
+	 h0HEOQj0rhsAg==
+Date: Tue, 13 Aug 2024 16:15:02 -0600
 From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
 To: Jamal Hadi Salim <jhs@mojatatu.com>,
 	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
@@ -51,9 +51,10 @@ To: Jamal Hadi Salim <jhs@mojatatu.com>,
 Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
 	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 0/2][next] UAPI: net/sched - cxgb4: Fix
- -Wflex-array-member-not-at-end warning
-Message-ID: <cover.1723586870.git.gustavoars@kernel.org>
+Subject: [PATCH 1/2][next] UAPI: net/sched: Use __struct_group() in flex
+ struct tc_u32_sel
+Message-ID: <e59fe833564ddc5b2cc83056a4c504be887d6193.1723586870.git.gustavoars@kernel.org>
+References: <cover.1723586870.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,20 +63,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1723586870.git.gustavoars@kernel.org>
 
-Small patch series aimed at fixing a -Wflex-array-member-not-at-end
-warning by creating a new tagged struct within a flexible structure.
-We then use this new struct type to fix a problematic middle-flex-array
-declaration in a composite struct.
+Use the `__struct_group()` helper to create a new tagged
+`struct tc_u32_sel_hdr`. This structure groups together all the
+members of the flexible `struct tc_u32_sel` except the flexible
+array. As a result, the array is effectively separated from the
+rest of the members without modifying the memory layout of the
+flexible structure.
 
-Gustavo A. R. Silva (2):
-  UAPI: net/sched: Use __struct_group() in flex struct tc_u32_sel
-  cxgb4: Avoid -Wflex-array-member-not-at-end warning
+This new tagged struct will be used to fix problematic declarations
+of middle-flex-arrays in composite structs[1].
 
- .../chelsio/cxgb4/cxgb4_tc_u32_parse.h        |  2 +-
- include/uapi/linux/pkt_cls.h                  | 23 +++++++++++--------
- 2 files changed, 14 insertions(+), 11 deletions(-)
+[1] https://git.kernel.org/linus/d88cabfd9abc
 
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+ include/uapi/linux/pkt_cls.h | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
+
+diff --git a/include/uapi/linux/pkt_cls.h b/include/uapi/linux/pkt_cls.h
+index d36d9cdf0c00..2c32080416b5 100644
+--- a/include/uapi/linux/pkt_cls.h
++++ b/include/uapi/linux/pkt_cls.h
+@@ -246,16 +246,19 @@ struct tc_u32_key {
+ };
+ 
+ struct tc_u32_sel {
+-	unsigned char		flags;
+-	unsigned char		offshift;
+-	unsigned char		nkeys;
+-
+-	__be16			offmask;
+-	__u16			off;
+-	short			offoff;
+-
+-	short			hoff;
+-	__be32			hmask;
++	/* New members MUST be added within the __struct_group() macro below. */
++	__struct_group(tc_u32_sel_hdr, hdr, /* no attrs */,
++		unsigned char		flags;
++		unsigned char		offshift;
++		unsigned char		nkeys;
++
++		__be16			offmask;
++		__u16			off;
++		short			offoff;
++
++		short			hoff;
++		__be32			hmask;
++	);
+ 	struct tc_u32_key	keys[];
+ };
+ 
 -- 
 2.34.1
 
