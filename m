@@ -1,128 +1,564 @@
-Return-Path: <linux-kernel+bounces-285293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1986950BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:57:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48195950BE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB862816A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:57:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BCBCB21ACF
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373311A38D4;
-	Tue, 13 Aug 2024 17:57:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85B111A7071;
+	Tue, 13 Aug 2024 17:59:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="g5ysmiry"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="NE2KUCRu"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035CF1A2C32
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60AB11A3BCD
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571822; cv=none; b=byXOv88eO2VUhRl59oDHx3ul/v33eZQXJc2ALa7f1yL7HKEhchxGHToaj2Ym9OuyZcBMxwyz0BKUNuc36q33kxdrI3inlvh3wFXO7nJyREx/NvN2lNLFvMCHjJgO0F3aNM5v0vohmhl/Em3CcV3WxzUU1aKajhBur5EEWLS84Ko=
+	t=1723571953; cv=none; b=tSZgkRj/rcwP2OffIxgugHHCK2GaQSEyRS1RnJ1RbyOCSQkEpe9WMCs0qJeBUd/UDscig0l0jg9SRHypihM6nVBEjPOxxiDhQR7WCaJuj7upvcN4jOpHk3KVfcPcxp+zP3As8G7td564yWJfjqs9EIWvl6FcltOlNBa8w2s2zHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571822; c=relaxed/simple;
-	bh=757LLvYh7tCy/Za0nmABifBJAXzCB8Y9uZkMalML1LY=;
+	s=arc-20240116; t=1723571953; c=relaxed/simple;
+	bh=UkOUgn4ugavKMhLTwrgW67Tku6h03K1IoAebSMCUsaI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nvO0pmD2x9q2V2e3wO2ulpmqRaD5FXb3hkxcuEqFnCBuiEzZTtNjuo0MSe1wsmADWWdlye4Fa7Ogcy0xDL9d8OtQMC+xln1vN2QlYV9tTNTUlnWpYIY0THFAHLCUD0S6oFjVLy95n++toHXJ+0F3IlG1/O7nNCSS0WNQoGBuTY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=g5ysmiry; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso37910726d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:57:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723571820; x=1724176620; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqHCv1f37dJdFmlxfLDwmGn7VkBUztlhPRalJOl3Txc=;
-        b=g5ysmiryuLrvfAKoSHoFlunF5Ak/mXEWobK0dBdZniSYb0iD8/EFf3ssDMDkPERP6H
-         Ih2YyKAk0pIPZ4mh+khVjLV24Du8sRXMD1tkord34INDg9CE68gw2qFLVpXlQE0rb6Al
-         ctuZgSWq20iyK2iFwLyOeLzVhtvTjI3t16CtlWd3kXJtevl1xLCG7bZZRQL+BOYG/vHU
-         7GowgLUbF7HRTBl/qMGqjkdnXcoF+E006gyDRGfA8chs4cB+dMVjgpEPr3irtJ6hgm0g
-         h/s9Gj3jUFzgUvJJMB1hXdguCRH+3nL/M0FrwP7J0cSEJJL3JahwrS99ojWJI99c8fN2
-         LzoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723571820; x=1724176620;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CqHCv1f37dJdFmlxfLDwmGn7VkBUztlhPRalJOl3Txc=;
-        b=XI6N1/vsV2Uwe8pdpXyJCxxKsb26KZ53pqlbkO/p1M59CDbHt1QAS+WlhRgCBbsqf+
-         qFrk3njgXJtTmwA9H+nWsZFwU5sedjlQPUa9QzZMb0sC800Y7ef5IEpV6ugu6w6edPnR
-         ExJg0NJ2P4mVWgOh2BB+Be05P9kv1cYFCO021V8Jw0y+EdJJ7wJdKsf5xk+5l07svYzF
-         W3V72UPko9syqNPiFaWqsw2VS/hlPoCORSxAZvxa0hvuw8kHO0pPo0Do7XukeMe2oFm5
-         +Myv/2qiFVxqQxdqsfA2qpreazFc5JGqE0CaeKKhwIXI1mLZ08dMhKDGWwcXw0qp7JyV
-         kZjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTnAKSp4G8bYMyKiRRfNK2ZrdczHlr8w/KhlB++7cqaILIAY0WEDc14OKDe466InQFcgOUUzGAMOVTpg7/LC7K4Q9D+mUfiEejAQAZ
-X-Gm-Message-State: AOJu0YybvmPeh3h5Ldy/p8/NzFAGKksiZTQJXfs/gbuBWH971Acv9ImL
-	c64P+zGH8/NzaF5UUgNtPTXu1M7FqLCl1oEb82R4CCNU3fhbHEe+M7LWjByJ7w0=
-X-Google-Smtp-Source: AGHT+IF0ahYqaweAPCwsOz0r2FqFsLLNlBLP+hAUNAK3I7TnTFqEVk0JoImTkYUd7Un7vFvQodQtow==
-X-Received: by 2002:a05:6214:318e:b0:6b8:5afd:8f89 with SMTP id 6a1803df08f44-6bf5d23f9b3mr2429676d6.37.1723571819915;
-        Tue, 13 Aug 2024 10:56:59 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82e33ec9sm35691786d6.77.2024.08.13.10.56.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:56:59 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sdvlS-008pOM-3A;
-	Tue, 13 Aug 2024 14:56:58 -0300
-Date: Tue, 13 Aug 2024 14:56:58 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Pranjal Shrivastava <praan@google.com>
-Cc: Baolu Lu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
-	Kunkun Jiang <jiangkunkun@huawei.com>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Nicolin Chen <nicolinc@nvidia.com>,
-	Michael Shavit <mshavit@google.com>,
-	Mostafa Saleh <smostafa@google.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
-	tangnianyao@huawei.com
-Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
- scenarios
-Message-ID: <20240813175658.GO1985367@ziepe.ca>
-References: <20240724102417.GA27376@willie-the-truck>
- <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
- <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
- <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
- <20240805123001.GB9326@willie-the-truck>
- <ZrDwolC6oXN44coq@google.com>
- <20240806124943.GF676757@ziepe.ca>
- <ZrJIM8-pS31grIVR@google.com>
- <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
- <ZrTNGepJXbmfuKBK@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQtz02XOX/5pWrEpAo1snixdJ+FweTipTAYQYdlMBCHPYC9lv2pZQLJ+1M5iFOC0XEHJm6L9dWfQjqOviWNo22mgpdNl3FzbhMRtByOn3RpYi8nAJeEW49RHEs/Liz6qIp7ZxzSGmbga9OiVzmbNqdyVRvEXHowoqOUm7Xa313o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=NE2KUCRu; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2F21A240005;
+	Tue, 13 Aug 2024 17:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723571943;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dejwQO/IByLQQk1Olumnre9RPQk3PFi8Nd8Sz+iDMvc=;
+	b=NE2KUCRudXuZTvXVHgjtH7iqonZl84sK+ZHKDT1c2Kf/cbOlzwzZHCUhsXkiWLoFFHBsiO
+	ddm8BDCcjKbQn6umkvSbknEriZusXa+Y1lUYvh/x9o34iz14sYLlKdhXS376kxrrM0XYUK
+	GEe3qdz8+YWZT6DITiee7kpSzmuQo0v2ID1PlyoA6h+uQHJmwbUTyFkm6RFk1ECWrKrpoy
+	HJAB9l12VQjVzrQTkTvYKqpmoBuVyEQvXk7O7um5PmTnxuBDqnpt9xQPKcle16EkDhuhcw
+	Jahe3vteHx2/4N+B9WlFq/Q5IsSE63dDkhPdWb12r9W3QiUYk6ctCPxewc9ylw==
+Date: Tue, 13 Aug 2024 19:58:55 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/17] drm/vkms: Allow to configure multiple CRTCs
+Message-ID: <Zrue3y6Lr6D4s1Tn@louis-chauvet-laptop>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240813105134.17439-1-jose.exposito89@gmail.com>
+ <20240813105134.17439-5-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ZrTNGepJXbmfuKBK@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240813105134.17439-5-jose.exposito89@gmail.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Thu, Aug 08, 2024 at 01:50:17PM +0000, Pranjal Shrivastava wrote:
+Le 13/08/24 - 12:44, José Expósito a écrit :
+> Add a list of CRTC configurations to vkms_config and add as many CRTCs
+> as configured during output initialization.
 > 
-> Kunkun -- Please try this diff and check if it fixes the problem?
+> For backwards compatibility, create a single CRTC in the default
+> configuration.
+> 
+> Since writeback support, vblank and composer states are now per CRTC,
+> extract all the fields to the vkms_crtc structure and allow each
+> vkms_device to have a list of CRTCs.
+> 
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 
-This looks OK to me, you should send it as a proper patch..
 
->  	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
-> -		report_partial_fault(iopf_param, fault);
-> +		ret = report_partial_fault(iopf_param, fault);
->  		iopf_put_dev_fault_param(iopf_param);
->  		/* A request that is not the last does not need to be ack'd */
+If we choose your implementation, can you split this commit in two? I 
+think you did two interesting stuff here:
+- Creating the vkms_crtc structure
+- Creating the vkms_crtc_config
+
+> ---
+>  drivers/gpu/drm/vkms/vkms_composer.c  | 30 ++++----
+>  drivers/gpu/drm/vkms/vkms_config.c    | 54 ++++++++++++++-
+>  drivers/gpu/drm/vkms/vkms_config.h    | 15 +++-
+>  drivers/gpu/drm/vkms/vkms_crtc.c      | 99 ++++++++++++++-------------
+>  drivers/gpu/drm/vkms/vkms_drv.c       | 10 ++-
+>  drivers/gpu/drm/vkms/vkms_drv.h       | 35 +++++++---
+>  drivers/gpu/drm/vkms/vkms_output.c    | 38 +++++-----
+>  drivers/gpu/drm/vkms/vkms_writeback.c | 27 ++++----
+>  8 files changed, 197 insertions(+), 111 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.c b/drivers/gpu/drm/vkms/vkms_config.c
+> index 6ab8091bf72f..3af750071f04 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.c
+> +++ b/drivers/gpu/drm/vkms/vkms_config.c
+> @@ -26,20 +27,29 @@ struct vkms_config *vkms_config_default_create(bool enable_cursor,
+>  					       bool enable_overlay)
+>  {
+>  	struct vkms_config *config;
+> +	struct vkms_config_crtc *crtc_cfg;
+>  
+>  	config = vkms_config_create(DEFAULT_DEVICE_NAME);
+>  	if (IS_ERR(config))
+>  		return config;
+>  
+>  	config->cursor = enable_cursor;
+> -	config->writeback = enable_writeback;
+>  	config->overlay = enable_overlay;
+>  
+> +	crtc_cfg = vkms_config_add_crtc(config, enable_writeback);
+> +	if (IS_ERR(crtc_cfg))
+> +		return ERR_CAST(crtc_cfg);
 > +
-> +		if (ret)
-> +			goto err_bad_iopf;
+>  	return config;
+>  }
+>  
+>  void vkms_config_destroy(struct vkms_config *config)
+>  {
+> +	struct vkms_config_crtc *crtc_cfg, *crtc_tmp;
+> +
+> +	list_for_each_entry_safe(crtc_cfg, crtc_tmp, &config->crtcs, list)
+> +		vkms_config_destroy_crtc(config, crtc_cfg);
+> +
+>  	kfree(config);
+>  }
+>  
+> @@ -48,12 +58,20 @@ static int vkms_config_show(struct seq_file *m, void *data)
+>  	struct drm_debugfs_entry *entry = m->private;
+>  	struct drm_device *dev = entry->dev;
+>  	struct vkms_device *vkmsdev = drm_device_to_vkms_device(dev);
+> +	struct vkms_config_crtc *crtc_cfg;
+> +	int n;
+>  
+>  	seq_printf(m, "dev_name=%s\n", vkmsdev->config->dev_name);
+> -	seq_printf(m, "writeback=%d\n", vkmsdev->config->writeback);
+>  	seq_printf(m, "cursor=%d\n", vkmsdev->config->cursor);
+>  	seq_printf(m, "overlay=%d\n", vkmsdev->config->overlay);
+>  
+> +	n = 0;
+> +	list_for_each_entry(crtc_cfg, &vkmsdev->config->crtcs, list) {
+> +		seq_printf(m, "crtc(%d).writeback=%d\n", n,
+> +			   crtc_cfg->writeback);
+> +		n++;
+> +	}
+> +
+>  	return 0;
+>  }
+>  
+> @@ -66,3 +84,35 @@ void vkms_config_debugfs_init(struct vkms_device *vkms_device)
+>  	drm_debugfs_add_files(&vkms_device->drm, vkms_config_debugfs_list,
+>  			      ARRAY_SIZE(vkms_config_debugfs_list));
+>  }
+> +
+> +struct vkms_config_crtc *vkms_config_add_crtc(struct vkms_config *config,
+> +					      bool enable_writeback)
+> +{
+> +	struct vkms_config_crtc *crtc_cfg;
+> +
+> +	crtc_cfg = kzalloc(sizeof(*crtc_cfg), GFP_KERNEL);
+> +	if (!crtc_cfg)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	crtc_cfg->writeback = enable_writeback;
+> +
+> +	crtc_cfg->index = 0;
+> +	if (!list_empty(&config->crtcs)) {
+> +		struct vkms_config_crtc *last;
+> +
+> +		last = list_last_entry(&config->crtcs, struct vkms_config_crtc,
+> +				       list);
+> +		crtc_cfg->index = last->index + 1;
+> +	}
+
+This code may break if you create 32 crtc, delete the 31 first, and then 
+recreate 31 crtc. The indexes will be 31..63, which is wrong I think for 
+the `possible_crtc` mask.
+
+That why in my series I choose to use drm_crtc_mask with the created crtc 
+instance, so I don't have to manage in my code this case, I just rely on 
+drm core implementation to provide indexes.
+
+> +
+> +	list_add_tail(&crtc_cfg->list, &config->crtcs);
+> +
+> +	return crtc_cfg;
+> +}
+> +
+> +void vkms_config_destroy_crtc(struct vkms_config *config,
+> +			      struct vkms_config_crtc *crtc_cfg)
+> +{
+> +	list_del(&crtc_cfg->list);
+> +	kfree(crtc_cfg);
+> +}
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index ba06aad32799..bc40a0e3859a 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -3,15 +3,22 @@
+>  #ifndef _VKMS_CONFIG_H_
+>  #define _VKMS_CONFIG_H_
+>  
+> +#include <linux/list.h>
+>  #include <linux/types.h>
+>  
+>  struct vkms_device;
+>  
+> +struct vkms_config_crtc {
+> +	struct list_head list;
+> +	unsigned int index;
+> +	bool writeback;
+> +};
+> +
+>  struct vkms_config {
+>  	char *dev_name;
+> -	bool writeback;
+>  	bool cursor;
+>  	bool overlay;
+> +	struct list_head crtcs;
+>  	/* only set when instantiated */
+>  	struct vkms_device *dev;
+>  };
+> @@ -26,4 +33,10 @@ void vkms_config_destroy(struct vkms_config *config);
+>  /* DebugFS */
+>  void vkms_config_debugfs_init(struct vkms_device *vkms_device);
+>  
+> +/* CRTCs */
+> +struct vkms_config_crtc *vkms_config_add_crtc(struct vkms_config *config,
+> +					      bool enable_writeback);
+> +void vkms_config_destroy_crtc(struct vkms_config *config,
+> +			      struct vkms_config_crtc *crtc_cfg);
+> +
+>  #endif /* _VKMS_CONFIG_H_ */
+
+
+
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor)
+> +struct vkms_crtc *vkms_crtc_init(struct drm_device *dev,
+> +				 struct drm_plane *primary,
+> +				 struct drm_plane *cursor,
+> +				 unsigned int index)
+>  {
+> -	struct vkms_output *vkms_out = drm_crtc_to_vkms_output(crtc);
+> -	int ret;
+> +	struct vkms_crtc *crtc;
+>  
+> -	ret = drmm_crtc_init_with_planes(dev, crtc, primary, cursor,
+> -					 &vkms_crtc_funcs, NULL);
+> -	if (ret) {
+> -		DRM_ERROR("Failed to init CRTC\n");
+> -		return ret;
+> +	crtc = drmm_crtc_alloc_with_planes(dev, struct vkms_crtc, base, primary,
+> +					   cursor, &vkms_crtc_funcs, NULL);
+> +	if (IS_ERR(crtc)) {
+> +		DRM_ERROR("Failed to alloc CRTC\n");
+> +		return crtc;
 >  	}
+>  
+> -	drm_crtc_helper_add(crtc, &vkms_crtc_helper_funcs);
+> +	crtc->base.index = index;
+> +	primary->possible_crtcs = drm_crtc_mask(&crtc->base);
 
-rebase it on -rc3 and there will be a return line added here
-too.. Maybe you don't want the goto in that cast
+It feel strange to configure the primary plane possible_crtc inside the 
+vkms_crtc_init function, espicially when it is already configured in
+vkms_plane_init.
 
-Jason
+The previous comment apply for allocating index to crtc, it is already 
+managed by the drm core (in drmm_crtc_alloc_with_plane). I don't think 
+this is an issue for the core to have it changed, but I would prefer to 
+avoid duplicating this management in vkms.
+
+> +	if (cursor)
+> +		cursor->possible_crtcs = drm_crtc_mask(&crtc->base);
+
+(same for cursor)
+
+> -	drm_mode_crtc_set_gamma_size(crtc, VKMS_LUT_SIZE);
+> -	drm_crtc_enable_color_mgmt(crtc, 0, false, VKMS_LUT_SIZE);
+> +	INIT_LIST_HEAD(&crtc->list);
+>  
+> -	spin_lock_init(&vkms_out->lock);
+> -	spin_lock_init(&vkms_out->composer_lock);
+> +	drm_crtc_helper_add(&crtc->base, &vkms_crtc_helper_funcs);
+>  
+> -	vkms_out->composer_workq = alloc_ordered_workqueue("vkms_composer", 0);
+> -	if (!vkms_out->composer_workq)
+> -		return -ENOMEM;
+> +	drm_mode_crtc_set_gamma_size(&crtc->base, VKMS_LUT_SIZE);
+> +	drm_crtc_enable_color_mgmt(&crtc->base, 0, false, VKMS_LUT_SIZE);
+> +
+> +	spin_lock_init(&crtc->lock);
+> +	spin_lock_init(&crtc->composer_lock);
+> +
+> +	crtc->composer_workq = alloc_ordered_workqueue("vkms_composer", 0);
+> +	if (!crtc->composer_workq)
+> +		return ERR_PTR(-ENOMEM);
+>
+> -	return ret;
+> +	return crtc;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
+> index 2f9d1db0cfae..15a2ba26d190 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.c
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.c
+> @@ -54,9 +54,12 @@ DEFINE_DRM_GEM_FOPS(vkms_driver_fops);
+>  static void vkms_release(struct drm_device *dev)
+>  {
+>  	struct vkms_device *vkms = drm_device_to_vkms_device(dev);
+> +	struct vkms_crtc *vkms_crtc;
+>  
+> -	if (vkms->output.composer_workq)
+> -		destroy_workqueue(vkms->output.composer_workq);
+> +	list_for_each_entry(vkms_crtc, &vkms->crtcs, list) {
+> +		if (vkms_crtc->composer_workq)
+> +			destroy_workqueue(vkms_crtc->composer_workq);
+> +	}
+>  }
+
+To avoid managing this per-crtc, you can maybe use 
+drmm_add_action_or_reset [1] and let drm core manage the call to 
+destroy_workqueue.
+
+[1]: https://github.com/Fomys/linux/commit/c4d665599798265aedd131f93cff8c7263cacff8#diff-08d2420ad9a7a48e3c7dafa0f61e0a7c860a53de2f41659d03735875cffebea5R318
+  
+>  static void vkms_atomic_commit_tail(struct drm_atomic_state *old_state)
+> @@ -177,6 +180,7 @@ static int vkms_create(struct vkms_config *config)
+>  	}
+>  	vkms_device->platform = pdev;
+>  	vkms_device->config = config;
+> +	vkms_device->crtcs = (struct list_head)LIST_HEAD_INIT(vkms_device->crtcs);
+
+Why do you need a cast here?
+
+>  	config->dev = vkms_device;
+>  
+>  	ret = dma_coerce_mask_and_coherent(vkms_device->drm.dev,
+> @@ -187,7 +191,7 @@ static int vkms_create(struct vkms_config *config)
+>  		goto out_devres;
+>  	}
+>  
+> -	ret = drm_vblank_init(&vkms_device->drm, 1);
+> +	ret = drm_vblank_init(&vkms_device->drm, list_count_nodes(&config->crtcs));
+
+Thanks, I think I forgot this change in my implementation!
+
+>  	if (ret) {
+>  		DRM_ERROR("Failed to vblank\n");
+>  		goto out_devres;
+> diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
+> index 87e44b51a03f..3156ff896c33 100644
+> --- a/drivers/gpu/drm/vkms/vkms_drv.h
+> +++ b/drivers/gpu/drm/vkms/vkms_drv.h
+> @@ -4,6 +4,7 @@
+>  #define _VKMS_DRV_H_
+>  
+>  #include <linux/hrtimer.h>
+> +#include <linux/list.h>
+>  
+>  #include <drm/drm.h>
+>  #include <drm/drm_framebuffer.h>
+> @@ -98,10 +99,11 @@ struct vkms_crtc_state {
+>  	u64 frame_end;
+>  };
+>  
+> -struct vkms_output {
+> -	struct drm_crtc crtc;
+> -	struct drm_encoder encoder;
+> -	struct drm_connector connector;
+> +struct vkms_crtc {
+> +	struct list_head list;
+> +
+> +	struct drm_crtc base;
+> +
+>  	struct drm_writeback_connector wb_connector;
+>  	struct hrtimer vblank_hrtimer;
+>  	ktime_t period_ns;
+> @@ -119,19 +121,28 @@ struct vkms_output {
+>  
+>  struct vkms_config;
+>  
+> +struct vkms_output {
+> +	struct drm_encoder encoder;
+> +	struct drm_connector connector;
+> +};
+> +
+>  struct vkms_device {
+>  	struct drm_device drm;
+>  	struct platform_device *platform;
+>  	struct vkms_output output;
+> +	struct list_head crtcs;
+>  	const struct vkms_config *config;
+>  };
+
+I don't think you need to store the list of crtcs. You can use 
+drm_for_each_crtc and container_of macro to get the vkms_crtc structure. 
+
+>  
+> -#define drm_crtc_to_vkms_output(target) \
+> -	container_of(target, struct vkms_output, crtc)
+> -
+>  #define drm_device_to_vkms_device(target) \
+>  	container_of(target, struct vkms_device, drm)
+>  
+> +#define drm_crtc_to_vkms_crtc(crtc) \
+> +	container_of(crtc, struct vkms_crtc, base)
+> +
+> +#define timer_to_vkms_crtc(timer) \
+> +	container_of(timer, struct vkms_crtc, vblank_hrtimer)
+> +
+>  #define to_vkms_crtc_state(target)\
+>  	container_of(target, struct vkms_crtc_state, base)
+>  
+> @@ -139,8 +150,10 @@ struct vkms_device {
+>  	container_of(target, struct vkms_plane_state, base.base)
+>  
+>  /* CRTC */
+> -int vkms_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+> -		   struct drm_plane *primary, struct drm_plane *cursor);
+> +struct vkms_crtc *vkms_crtc_init(struct drm_device *dev,
+> +				 struct drm_plane *primary,
+> +				 struct drm_plane *cursor,
+> +				 unsigned int index);
+>  
+>  int vkms_output_init(struct vkms_device *vkmsdev, int index);
+>  
+> @@ -156,11 +169,11 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
+>  
+>  /* Composer Support */
+>  void vkms_composer_worker(struct work_struct *work);
+> -void vkms_set_composer(struct vkms_output *out, bool enabled);
+> +void vkms_set_composer(struct vkms_crtc *vkms_crtc, bool enabled);
+>  void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state *plane, int y);
+>  void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
+>  
+>  /* Writeback */
+> -int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
+> +int vkms_enable_writeback_connector(struct vkms_crtc *vkms_crtc);
+>  
+>  #endif /* _VKMS_DRV_H_ */
+> diff --git a/drivers/gpu/drm/vkms/vkms_output.c b/drivers/gpu/drm/vkms/vkms_output.c
+> index afe3945c1962..dcd32bc30e17 100644
+> --- a/drivers/gpu/drm/vkms/vkms_output.c
+> +++ b/drivers/gpu/drm/vkms/vkms_output.c
+> @@ -32,8 +32,7 @@ static const struct drm_connector_helper_funcs vkms_conn_helper_funcs = {
+>  	.get_modes    = vkms_conn_get_modes,
+>  };
+>  
+> -static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
+> -				  struct drm_crtc *crtc)
+> +static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index)
+>  {
+>  	struct vkms_plane *overlay;
+>  
+> @@ -42,7 +41,7 @@ static int vkms_add_overlay_plane(struct vkms_device *vkmsdev, int index,
+>  		return PTR_ERR(overlay);
+>  
+>  	if (!overlay->base.possible_crtcs)
+> -		overlay->base.possible_crtcs = drm_crtc_mask(crtc);
+> +		overlay->base.possible_crtcs = BIT(index);
+
+Again, I prefer to see `drm_crtc_mask` to compute possible_crtcs bitmask.
+  
+>  	return 0;
+>  }
+> @@ -53,7 +52,8 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  	struct drm_device *dev = &vkmsdev->drm;
+>  	struct drm_connector *connector = &output->connector;
+>  	struct drm_encoder *encoder = &output->encoder;
+> -	struct drm_crtc *crtc = &output->crtc;
+> +	struct vkms_crtc *vkms_crtc;
+> +	struct vkms_config_crtc *crtc_cfg;
+>  	struct vkms_plane *primary, *cursor = NULL;
+>  	int ret;
+>  	int writeback;
+> @@ -65,7 +65,7 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  
+>  	if (vkmsdev->config->overlay) {
+>  		for (n = 0; n < NUM_OVERLAY_PLANES; n++) {
+> -			ret = vkms_add_overlay_plane(vkmsdev, index, crtc);
+> +			ret = vkms_add_overlay_plane(vkmsdev, index);
+>  			if (ret)
+>  				return ret;
+>  		}
+> @@ -77,15 +77,26 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  			return PTR_ERR(cursor);
+>  	}
+>  
+> -	ret = vkms_crtc_init(dev, crtc, &primary->base, &cursor->base);
+> -	if (ret)
+> -		return ret;
+> +	list_for_each_entry(crtc_cfg, &vkmsdev->config->crtcs, list) {
+> +		vkms_crtc = vkms_crtc_init(dev, &primary->base, &cursor->base,
+> +					   crtc_cfg->index);
+> +		if (IS_ERR(vkms_crtc))
+> +			return PTR_ERR(vkms_crtc);
+> +
+> +		list_add_tail(&vkms_crtc->list, &vkmsdev->crtcs);
+> +
+> +		if (crtc_cfg->writeback) {
+> +			writeback = vkms_enable_writeback_connector(vkms_crtc);
+> +			if (writeback)
+> +				DRM_ERROR("Failed to init writeback connector\n");
+> +		}
+> +	}
+
+You are creating multiple CRTC, but only link planes to the `index` one. 
+Is this intentional? DRM is not happy if a CRTC don't have any primary 
+plane.
+
+>  
+>  	ret = drm_connector_init(dev, connector, &vkms_connector_funcs,
+>  				 DRM_MODE_CONNECTOR_VIRTUAL);
+>  	if (ret) {
+>  		DRM_ERROR("Failed to init connector\n");
+> -		goto err_connector;
+> +		return ret;
+>  	}
+>  
+>  	drm_connector_helper_add(connector, &vkms_conn_helper_funcs);
+> @@ -104,12 +115,6 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  		goto err_attach;
+>  	}
+>  
+> -	if (vkmsdev->config->writeback) {
+> -		writeback = vkms_enable_writeback_connector(vkmsdev);
+> -		if (writeback)
+> -			DRM_ERROR("Failed to init writeback connector\n");
+> -	}
+> -
+>  	drm_mode_config_reset(dev);
+>  
+>  	return 0;
+> @@ -120,8 +125,5 @@ int vkms_output_init(struct vkms_device *vkmsdev, int index)
+>  err_encoder:
+>  	drm_connector_cleanup(connector);
+>  
+> -err_connector:
+> -	drm_crtc_cleanup(crtc);
+> -
+>  	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
+> index bc724cbd5e3a..b317cb291586 100644
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
