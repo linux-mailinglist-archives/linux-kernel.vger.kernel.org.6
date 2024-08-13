@@ -1,192 +1,80 @@
-Return-Path: <linux-kernel+bounces-284242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B9B894FECF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:31:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF1694FED2
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:32:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 268D3284284
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8207D2848D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD20274063;
-	Tue, 13 Aug 2024 07:31:06 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18CA4963A;
-	Tue, 13 Aug 2024 07:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56A56F099;
+	Tue, 13 Aug 2024 07:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="ocyy+UZ/"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDA4A29;
+	Tue, 13 Aug 2024 07:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723534266; cv=none; b=WiKbvqQ0tLI8lBCQOxCh4I4BspakHH5LCHztdbhika9t1H/NsJVz215VSmugUYSL+0Z5ZNLkvO8l+qR47edKyrzlikRY6au2MvVEWf/FixIaVH5/Iur2UCl2ZTKGzFHn60wSBY2ptHuI1wJDlyjj+zp5s9y3sPXFLKCHkb9yKsA=
+	t=1723534332; cv=none; b=L39/prMFGCH/fTBAITJgjSp35nsUwfrLw5omvNFlae0ZogLXa0fEzRIgHL5vUm5ToOslyNKDehvRGMn65/TPR19Y/IOeRIAxmB5xyV+f2gxIrSzD64xOl7GrZv2v8nOVNDULstBrnvc0IoSFEHvzwOFcNjuv5LtuVKFWdtZ+8tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723534266; c=relaxed/simple;
-	bh=6DsmWakHreIAbC56i4NT9jkuhHsis9SKdMYocwe4eYc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TIAbIRt5hJofTwbSZUB6j5bgkXdbca9JoAsyGhnK2jeBfZ6E6SPAm6HFxr+EUI1gd9ZNyPXS95CqSv8qc5L4+aLgjaSIFlbsAKD7TMbJa9kiTwYIZB3cIKjnRhl3/yU0cPAKcwXKdfqLRuDzOZVwJ29Ma3vUh/rebwSR95O5fvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4WjjjJ5225z4f3jLc;
-	Tue, 13 Aug 2024 15:30:44 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5A1A81A0568;
-	Tue, 13 Aug 2024 15:30:59 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgBXzIKxC7tmYfw9Bg--.41817S3;
-	Tue, 13 Aug 2024 15:30:59 +0800 (CST)
-Subject: Re: [PATCH RFC -next 03/26] md/md-bitmap: merge md_bitmap_load() into
- bitmap_operations
-To: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>,
- Yu Kuai <yukuai1@huaweicloud.com>
-Cc: song@kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
- <20240810020854.797814-4-yukuai1@huaweicloud.com>
- <20240813090726.000032cd@linux.intel.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <8f561148-761a-a487-5dc2-1567588c49b0@huaweicloud.com>
-Date: Tue, 13 Aug 2024 15:30:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1723534332; c=relaxed/simple;
+	bh=LNbX/eGj7S6s2oQOxIXOz4b2aAignCwMHqgSXjse6/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KCtMU4vFhG7bFX8RLLYCFEA2qdEPgUoSLjiUYOXRtIMAkBdoBesXFv5hsZQpTc0+yjbJdyCeTOWZcdXNNRnMZp6VeV6ENfoekWJBfETZ8tQwy/d3QLdKy5JGf4NPlR/50FGa6mouF1e089O9icj4TbVE5JBzRoUoCX0hlJXG1NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=ocyy+UZ/; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=ukwzqntnKiYBe01W6Rd4Je4ETHW/Jrrdv/yN98FKgbs=;
+	b=ocyy+UZ/pXoblY3mHzRyFuJ/zgFWPUtsXrLra0hexmbZlOK+Bxal2J/g31csls
+	MES9SqkXGacB76coMRN1z2WbrcG3PPye7PAbqRhO634hLru6p/e/SVY5tmH1D1qG
+	ls58Qhy9uNVEDbEKoZ9ynrZF2+3Ddk+W5nwhUJlqYdKO0=
+Received: from dragon (unknown [117.62.10.86])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgA3_Y7MC7tmbM5hAg--.39332S3;
+	Tue, 13 Aug 2024 15:31:25 +0800 (CST)
+Date: Tue, 13 Aug 2024 15:31:23 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: imx95: add DDR Perf Monitor node
+Message-ID: <ZrsLy7hu3gBMedCc@dragon>
+References: <20240805201416.2974996-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240813090726.000032cd@linux.intel.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXzIKxC7tmYfw9Bg--.41817S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWw47AFy3AFWktw1fur4DArb_yoW5uFy7pF
-	Z7ta45Cw45JrWagF12vFyv93WFqw1ktr9xKrWxGw1fuF9rXFnxGF4rWF4Ykw1rGF13GFsI
-	vw15tr1rur1xXFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvK14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7I2V7IY0VAS07AlzVAY
-	IcxG8wCY1x0262kKe7AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUQo7NUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240805201416.2974996-1-Frank.Li@nxp.com>
+X-CM-TRANSID:Ms8vCgA3_Y7MC7tmbM5hAg--.39332S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUsPfHUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCRE6ZWa7CfsF3QAAsw
 
-Hi,
+On Mon, Aug 05, 2024 at 04:14:15PM -0400, Frank Li wrote:
+> From: Xu Yang <xu.yang_2@nxp.com>
+> 
+> Add DDR Perf Monitor for i.MX95.
+> 
+> Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+> Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-ÔÚ 2024/08/13 15:07, Mariusz Tkaczyk Ð´µÀ:
-> On Sat, 10 Aug 2024 10:08:31 +0800
-> Yu Kuai <yukuai1@huaweicloud.com> wrote:
-> 
->> From: Yu Kuai <yukuai3@huawei.com>
->>
->> So that the implementation won't be exposed, and it'll be possible
->> to invent a new bitmap by replacing bitmap_operations.
-> 
-> I don't like repeating same commit message for few patches.
-> 
->>
->> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->> ---
->>   drivers/md/md-bitmap.c |  6 +++---
->>   drivers/md/md-bitmap.h | 10 +++++++++-
->>   2 files changed, 12 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
->> index d731f7d4bbbb..9a9f0fe3ebd0 100644
->> --- a/drivers/md/md-bitmap.c
->> +++ b/drivers/md/md-bitmap.c
->> @@ -1965,7 +1965,7 @@ static struct bitmap *bitmap_create(struct mddev
->> *mddev, int slot) return ERR_PTR(err);
->>   }
->>   
->> -int md_bitmap_load(struct mddev *mddev)
->> +static int bitmap_load(struct mddev *mddev)
->>   {
->>   	int err = 0;
->>   	sector_t start = 0;
->> @@ -2021,7 +2021,6 @@ int md_bitmap_load(struct mddev *mddev)
->>   out:
->>   	return err;
->>   }
->> -EXPORT_SYMBOL_GPL(md_bitmap_load);
->>   
->>   /* caller need to free returned bitmap with md_bitmap_free() */
->>   struct bitmap *get_bitmap_from_slot(struct mddev *mddev, int slot)
->> @@ -2411,7 +2410,7 @@ location_store(struct mddev *mddev, const char *buf,
->> size_t len) }
->>   
->>   			mddev->bitmap = bitmap;
->> -			rv = md_bitmap_load(mddev);
->> +			rv = bitmap_load(mddev);
->>   			if (rv) {
->>   				mddev->bitmap_info.offset = 0;
->>   				md_bitmap_destroy(mddev);
->> @@ -2710,6 +2709,7 @@ const struct attribute_group md_bitmap_group = {
->>   
->>   static struct bitmap_operations bitmap_ops = {
->>   	.create			= bitmap_create,
->> +	.load			= bitmap_load,
->>   };
->>   
->>   void mddev_set_bitmap_ops(struct mddev *mddev)
->> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
->> index a7cbf0c692fc..de7fbe5903dd 100644
->> --- a/drivers/md/md-bitmap.h
->> +++ b/drivers/md/md-bitmap.h
->> @@ -236,6 +236,7 @@ struct bitmap {
->>   
->>   struct bitmap_operations {
->>   	struct bitmap* (*create)(struct mddev *mddev, int slot);
->> +	int (*load)(struct mddev *mddev);
->>   };
->>   
->>   /* the bitmap API */
->> @@ -250,7 +251,14 @@ static inline struct bitmap *md_bitmap_create(struct
->> mddev *mddev, int slot) return mddev->bitmap_ops->create(mddev, slot);
->>   }
->>   
->> -int md_bitmap_load(struct mddev *mddev);
->> +static inline int md_bitmap_load(struct mddev *mddev)
->> +{
->> +	if (!mddev->bitmap_ops->load)
->> +		return -EOPNOTSUPP;
->> +
->> +	return mddev->bitmap_ops->load(mddev);
->> +}
-> 
-> At this point we have only on bitmpa op (at that probably won't change), so if
-> we we have bitmap_ops assigned (mddev->bitmap_ops != NULL) then ->load is must
-> have, hence I don't see a need for this wrapper.
-
-Yes, we must define the load op otherwise the bitmap_ops is meaningless.
-
-> 
-> you probably made this to avoid changes across code. If yes, please mention it
-> in commit message but I still would prefer to replace them all by calls to
-> mddev->bitmap_ops->load().
-
-I'll replace to use mddev->bitmap_ops->load() directly, and other
-places. And I'll keep this inline helper for some ops that is used for
-md-cluster, because I'm not planning to support md-cluster for the new
-bitmap first.
-
-Thanks,
-Kuai
-
-> 
-> Mariusz
-> 
-> 
-> .
-> 
+Applied both, thanks!
 
 
