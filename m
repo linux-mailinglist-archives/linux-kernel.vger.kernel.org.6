@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-284884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6942950664
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:25:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C8B950665
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050951C225D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:25:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BCDA1C224E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6D319CD02;
-	Tue, 13 Aug 2024 13:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFD219CD18;
+	Tue, 13 Aug 2024 13:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MDfVY8Y0"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RUKI/Rn3"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C0319B5A3
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09F219B5BC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:25:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723555498; cv=none; b=LuN38+5GgtACpIHpi60rAzZMFCz/TYUppanlNVUEclIG5Up6ZdPr/xdKqT5Ag56p+DFG0QA0d3EHQGSPK+aMAyJxL9BTLz3m7+IaDpRRjNwwCSEd6PVKZniI9NWS7IorAfc0514tFk2eAfYucwpYi5WO63+JYNH9R1oPiosT268=
+	t=1723555506; cv=none; b=hYmBTqygxWLlXDN8eyBJeAKDf5BpqBDR5LGH9nXJzGBKzmS3gdM9dRxgzRipZIDnU06x3LZsMmS/xkaLG9aGC6Cq/hlwMvvxWwbsE6WjNhzO2NH8/sLqeyzQIWRGfmgDDQA0X3vR6Iy8mQLc9iooV9/afsW4c0ycNcStBp7062s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723555498; c=relaxed/simple;
-	bh=169AxUGyTxrsEVYe8bfX3XyoWe92S2PZ842YmAzlLUc=;
+	s=arc-20240116; t=1723555506; c=relaxed/simple;
+	bh=sk8jQ7TSnFQUuaoZblpBoM3GuHBThM7t2sSndxy08T0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IZMHwbeiGL/ykWYpPNnzYUlgqEpXepPvu056gDw8sMMOIXieMVfhALH4pqJivU45UCqBRSHHrmHIsnUW50BTZ++2u/U4p08jNWTmPs40suHXldN2HmtVBMGkC87owWi5lN8opzhmG4agoGCBQ8zNxPlLQO9EA7mnVzI0shQiwZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MDfVY8Y0; arc=none smtp.client-ip=209.85.128.43
+	 MIME-Version; b=qvF8LfR8Nj2wzewxkkE0LPRHLzMtHoTywdGVr9KryEnBKxUHR9/UyRVbBd/A/rWxMrgvaC6ucIHo7oqW7XubUOGZU3FK5Zbj/qeL0Ys3pMRYeQXQbV60r+LrPJoXSp71V6refaFZenT3YVr9AIk46dNKq0YUiV/E/upo8TQ06QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RUKI/Rn3; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42817bee9e8so41151795e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:24:56 -0700 (PDT)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e3129851so40531605e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723555495; x=1724160295; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723555503; x=1724160303; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G8nva4x7yooIvcMdEZLd+2R1OWdlEwTPtLBsl8/711k=;
-        b=MDfVY8Y0MrmEwRBDochpJdUq/lEnlnyW05js9JdOowF6g3qGhCqwzLAP3N7pdqi8h+
-         Q7/WeZWZ81sqn+jS0v3zM/7LbM11eNHc34Eh1M6VFFhVfjmWY0rsnA6wdNxPTZdgkBV+
-         uF4AVjP9WkUjjxkqnZrh0XxQwiE6jLDvj3GH3zuojG4YiB1Jki42eB8DD2gYinED8dHp
-         1sRhdGu3dIKfZ7TcA+8sUlNhxlXxeFQHAUQgfrIAQTwbp9IJ5mAFViPtITT06eZG2zv3
-         DPEiHNoPUHDxIgM/iA3H0NXN0/O/R2SszD6o3Go3wuw2x65VS4zWnofdNnCQzxdk1PiZ
-         kvUQ==
+        bh=5mUMDC/pIRcRlMc7URQ4bqWH4ou9rkjeyAIxTsLOjwA=;
+        b=RUKI/Rn3O4aURT2ShtYQQ3jKAjOHq7BLf+P96vQgA0LDWT/losfWZfRg9MRLToZT6c
+         UN7OV/7sOVKEF0DqW1WcpEdwNzrM0DrQ1gCby+T4x7nO1R9jLmU/XaqZH10Psp+pgnoU
+         mvYcvLv0vO84sOdFxItRg1FsjhEf7zp7AcEQZvUkRDq9kxSR7dbOoKVHY2P+x4zNiI0Z
+         vUQt2wmfGa8EvhMSw8zgA5oqpORUHE8Pjq91+02pHGiOe+X/l7fHaCSL1EEczig/68Yi
+         /QJAclLe0xkdt6gi0jrvAGdwlIiBecprBLur/5h7sNWs14aDisMHME/GT4dDC8EvNmOD
+         /tLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723555495; x=1724160295;
+        d=1e100.net; s=20230601; t=1723555503; x=1724160303;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G8nva4x7yooIvcMdEZLd+2R1OWdlEwTPtLBsl8/711k=;
-        b=t/OB9JTiYfrpchbrovJPL3EB6sfFOVDNA8Qaz24M+AeTwxlboPBDvGTRzI5URyKFUW
-         znq4CoL0cv4IRdl9nS9MCHrJPG0OCxfB7fJPlREc/keu8bgAsq26Hg2JGb8KoXv+G0Vq
-         ptF5n17Hjmu0paPW8CgO74zsIKMInD3Nz1jCCTjRk716jb+pjLDuD8+3swOGJ18hlqyZ
-         1aXQB9CHyEb4S2DSKXB8Agb20hitk6Ev50AQWje9N7/ST+1ymYo+ACETshw5cbcVF3GH
-         LhFAem/FaJ0MxAJf2lRYI4FZwHnTMUoY/lIzg6p6/9vLI3OzFm3bfCC3b29PG23IJAXT
-         diEA==
-X-Forwarded-Encrypted: i=1; AJvYcCULgvWBzgzK8+rp9S9+6Mje/513N9vvl88e4UirZvuewbXHNNDPHqzWMTzhhhGzQ2d6WHhc7MUqUe0S6517eIRfbEm0XrI9tW9Ujl9h
-X-Gm-Message-State: AOJu0Yyn2w3FvJ7xViz8WtF/OiehT1gGWYdBN+YNHZvZMTnEI4v/mqMi
-	+M5c1aeN9XIyA1IYi97HtaKrc7tfw16vvScO/WTp4IBH8BR+YG9/dC+lXi3vwOU=
-X-Google-Smtp-Source: AGHT+IEB1qfIIkAEbIEcPEEgKpvjsK/gwklipRfgBKtNp6pSHRtCu9iLJZf0fYv5sQNz+N8Z4iTFNA==
-X-Received: by 2002:a05:600c:3b07:b0:429:994:41a2 with SMTP id 5b1f17b1804b1-429d47f19f2mr27005205e9.7.1723555494826;
-        Tue, 13 Aug 2024 06:24:54 -0700 (PDT)
+        bh=5mUMDC/pIRcRlMc7URQ4bqWH4ou9rkjeyAIxTsLOjwA=;
+        b=D14zNQTgRZaWAg06JdOmfT0D9G1E7PK9HAZSz83guznOx7y1bbePUpzH+tbeojX0Td
+         QAysez2sW2UFgmDY3F6VI4QM3eLwKVaJI2/JMqLG75vkagBOTAfYi7p3SrAOANJfUF3B
+         PSArr5efNsdfDkc7iqc3XxSpp9w49GYTnLfNC+wcfZWF41VQc2i8WXWSx8Jt9yzGyysh
+         oVmuJUOuBJKhIxK2tKYv57KKpwRK5onKTvM7timbIHLibTC1ZvV5CHGmUmmXkoqNYI8N
+         eC7cAiUdAHJO3VDg9JcN23OZ+5Eznlb0UNOOZ+a2mDcr/lYSaIXSq3t+4pYRem6jDPpK
+         XSAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXU+Y1O59Ga7WL7kxpr/LXx12ks+TmiSXp+puMznIlQlv6ifnUnWZzksi4dHJgHDg4HlvXeirh2IIkjthnUPFK0poS7dnWYrJLGH0wB
+X-Gm-Message-State: AOJu0YxKDQHyC/ozBj2QymsuInHCh3SOIZf+ihEg+mf57hgUmNTisggY
+	v39BLIeMmudWtEywGtFoa9aMph+dchEZBTSRzLd78uHq9ucgJy+92rjFCv8m7/Y=
+X-Google-Smtp-Source: AGHT+IGw1QWxHLTWtfvThNKdG+ceHa5O84W33fyasp2TM4dbvhwsCi+UKFDYqmXqt/QG5hQn4Fsr4g==
+X-Received: by 2002:a05:600c:1d2a:b0:426:6388:d59f with SMTP id 5b1f17b1804b1-429d47f4ac1mr26464035e9.1.1723555503354;
+        Tue, 13 Aug 2024 06:25:03 -0700 (PDT)
 Received: from localhost.localdomain ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.24.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c738d21sm223186625e9.12.2024.08.13.06.25.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 06:24:54 -0700 (PDT)
+        Tue, 13 Aug 2024 06:25:02 -0700 (PDT)
 From: James Clark <james.clark@linaro.org>
 To: irogers@google.com,
 	linux-perf-users@vger.kernel.org
@@ -88,9 +88,9 @@ Cc: James Clark <james.clark@linaro.org>,
 	Dominique Martinet <asmadeus@codewreck.org>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/7] perf stat: Initialize instead of overwriting clock event
-Date: Tue, 13 Aug 2024 14:23:09 +0100
-Message-Id: <20240813132323.98728-2-james.clark@linaro.org>
+Subject: [PATCH 2/7] perf stat: Remove unused default_null_attrs
+Date: Tue, 13 Aug 2024 14:23:10 +0100
+Message-Id: <20240813132323.98728-3-james.clark@linaro.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240813132323.98728-1-james.clark@linaro.org>
 References: <20240813132323.98728-1-james.clark@linaro.org>
@@ -102,40 +102,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This overwrite relies on the clock event remaining at index 0 and is
-quite a way down from where the array is initialized, making it easy to
-miss. Just initialize it with the correct clock event to begin with.
+All current implementations of arch_evlist__add_default_attrs() do
+nothing if nr_attrs is 0. To avoid confusion that it's used, remove it.
+
+It appears that it used to be used as a mechanism to add topdown events,
+but this is now done separately.
 
 Signed-off-by: James Clark <james.clark@linaro.org>
 ---
- tools/perf/builtin-stat.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ tools/perf/builtin-stat.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
 diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index 1f92445f7480..a65f58f8783f 100644
+index a65f58f8783f..cf6a1923811b 100644
 --- a/tools/perf/builtin-stat.c
 +++ b/tools/perf/builtin-stat.c
-@@ -1817,7 +1817,9 @@ static int add_default_attributes(void)
- {
- 	struct perf_event_attr default_attrs0[] = {
+@@ -1930,7 +1930,6 @@ static int add_default_attributes(void)
+ 	(PERF_COUNT_HW_CACHE_RESULT_MISS	<< 16)				},
+ };
  
--  { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_TASK_CLOCK		},
-+  { .type = PERF_TYPE_SOFTWARE, .config = target__has_cpu(&target) ?
-+						PERF_COUNT_SW_CPU_CLOCK :
-+						PERF_COUNT_SW_TASK_CLOCK	},
-   { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_CONTEXT_SWITCHES	},
-   { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_CPU_MIGRATIONS		},
-   { .type = PERF_TYPE_SOFTWARE, .config = PERF_COUNT_SW_PAGE_FAULTS		},
-@@ -2030,9 +2032,6 @@ static int add_default_attributes(void)
+-	struct perf_event_attr default_null_attrs[] = {};
+ 	const char *pmu = parse_events_option_args.pmu_filter ?: "all";
  
- 	if (!evsel_list->core.nr_entries) {
- 		/* No events so add defaults. */
--		if (target__has_cpu(&target))
--			default_attrs0[0].config = PERF_COUNT_SW_CPU_CLOCK;
+ 	/* Set attrs if no event is selected and !null_run: */
+@@ -2072,10 +2071,6 @@ static int add_default_attributes(void)
+ 			evlist__splice_list_tail(evsel_list, &metric_evlist->core.entries);
+ 			evlist__delete(metric_evlist);
+ 		}
 -
- 		if (evlist__add_default_attrs(evsel_list, default_attrs0) < 0)
- 			return -1;
- 		if (perf_pmus__have_event("cpu", "stalled-cycles-frontend")) {
+-		/* Platform specific attrs */
+-		if (evlist__add_default_attrs(evsel_list, default_null_attrs) < 0)
+-			return -1;
+ 	}
+ 
+ 	/* Detailed events get appended to the event list: */
 -- 
 2.34.1
 
