@@ -1,282 +1,236 @@
-Return-Path: <linux-kernel+bounces-285108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E4C950972
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:52:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6DC95097B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:53:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23B4DB21CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:52:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87CC282043
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347DA1A0732;
-	Tue, 13 Aug 2024 15:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2AB1A08C0;
+	Tue, 13 Aug 2024 15:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FYYxFd6F"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9e8wuHN"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7348D2AF0D;
-	Tue, 13 Aug 2024 15:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A401A08AF;
+	Tue, 13 Aug 2024 15:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564348; cv=none; b=u8sRCrKJpiXix9+Z7/HdwvVtzZyhIQ4voXRffHM746UrQ68o/DYo3KaVZYzDgmZ5lWXhC0g4juqJlzSbnd9RV/VP2mmmQF199SeFzzw2sPabAtMZKxdOMnNmDBzwST9LzntK5RN8pmRkxgsSAV6TGjgH6cVAzGJVZZ4d41/Xs/Y=
+	t=1723564395; cv=none; b=poQyGpRww3p8qn5wXizYNO50QpJMyTYMJTgWqyMPuRCKwyY7CNxd+Ljiu092gyVQ9EtrWeKjd9KrCdC7ocUtZR8ToL4N2/c1z/ssoz4LsJAmxtn17nrICtH8ANcqX6jO0eW3/Ya/XHCyHqFoDKTfI6QMBTry5+XsbnOlo9Is/hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564348; c=relaxed/simple;
-	bh=G51j+6mgixsrvrTEkFw6+wGXbpg01Kkx5ZnpqrwxpZg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oiWTEMa0rFN5ThmTJNv/l2thAmdiwjELwdEfpHTbGoXqtrnkh31MY4t2eyIepWSBfdcI6LDvfvwsZF4ARStIMLYRmu5R4tVypcoro+zCRTq3tcyv3khLtMwbf49PSxGsRFQI37wJLPGYtYdd1Eo9UnPaUYd2djxeBV/j8CE8HpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FYYxFd6F; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1723564395; c=relaxed/simple;
+	bh=9fA3d9mOtTgOMc7lpd9Ha2OUGkJvO2dH+JvQy2riqWo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d3PykWRO/UuMoi6XlszP9h2Z9+XK4QPk/rmV/m8SCLQZ0xM/N6XtKb21bHQX5cMiwgkSAw9wwJo+smX9H9jzsehbhc3Di+V4nASz9QmqEUXuD9CcRnsz3BkWyARXNJp0gr4msyjWeBTCiCX4lJIoCOWxnB6TNE7bsyt48rCFv7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b9e8wuHN; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70eae5896bcso5077133b3a.2;
-        Tue, 13 Aug 2024 08:52:26 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a7a843bef98so103670466b.2;
+        Tue, 13 Aug 2024 08:53:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723564346; x=1724169146; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFY6eLVhFGsgfmIcw0L1TquWMQDeEJOfidswP04YC2c=;
-        b=FYYxFd6F4S3B4sYKbpeekrdXX1dUF4o+N6bhhMURhit67QEH/9pR4qNk/99ITMWZM6
-         cR3H41vLq5NhyTteeCjc+EqlVv6uDlkP4Z8I/e+W+KZJ/AFoMSnSMFwkmEtjMZbRu8Yk
-         whWRjtC0mpCkCqItOygZhtT6rN2CEoEJ3w50ggQ4DnKjWf3x7vum0hOQ+8zVWqmZftcT
-         qU/GqEs1KSTBrI5davVi38/w4LhgNVvYp1jmrKo4t9ZYTBtikVXoonUuDSRl3VkhUafY
-         ESLaqWyEFfGQkDHyPJJQVCnvqzzuDn82wVy/kwx9D+ZfNKULvEVTnPP2GW5GScAI1ZWk
-         OscA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564346; x=1724169146;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1723564391; x=1724169191; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yFY6eLVhFGsgfmIcw0L1TquWMQDeEJOfidswP04YC2c=;
-        b=FkJSw1jcfBk7N4m3y1FE6519ZGSnhRyR47eTPWEQxt01/uNH7a3uN96n/XM1WgmDiq
-         m6zXqXj24QDfFTM40Nr6e/Fdv7WpCyeaQofLG440VSgcArqdH9NNtUfroo5QX4TbyV/O
-         bKVwr2hIfZO9KfIv59ftH9SktiCEcih5g18SAOxKpteFSvCqd4n2Xwxm8VoBa7k0RE9r
-         3qjqVrriiMsk0nIw+l2RPWTNT8T8m6BsVu+CztR7T3wQTGea52SwPJINwDwanpE9WRUL
-         hamfjQ1/2hBrDPOISxvxd4rnpPxi6wbqGwoPqtq5IuPKjeGCyA4i1VF3+YNNym8EGqhZ
-         IJ7w==
-X-Forwarded-Encrypted: i=1; AJvYcCV+0E9ZSY3dvofPD/FF/nRr3jVP8/bI29blfDgRxOXinQH6wpuGTyMWHyiMBrKpI9DhoLQqgVH5+9l13nRyhwrbvbLbAXB3Dgoa9+jOwMdWrFo/nvO1jpgNYdY+BSusLk7gyTnpV+iVY79IN0JgUrK6eVJwjmy125H1C+EsNxGmy8C/NmJf
-X-Gm-Message-State: AOJu0YzUZX4ngWK7QZvzsgmwImZ5vf7kkBgHTFa5sACuM6Tx8f59EEd0
-	fNRXuSyXs71qHAcm3s3Oehm+q7LKWx394dEpreV0Gh5e/Lv51yd3
-X-Google-Smtp-Source: AGHT+IErq0HKb41NmWWelk0AEt/7g6IKL/rQ2BIKehRQQCwE4wQnHSqUR6unWrjrfHbC3RtCIF/r6w==
-X-Received: by 2002:a05:6a20:9f4f:b0:1c6:ed5e:24f with SMTP id adf61e73a8af0-1c8eae8dd84mr166176637.23.1723564345570;
-        Tue, 13 Aug 2024 08:52:25 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979d3d58sm1638489a12.18.2024.08.13.08.52.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 08:52:24 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <10680d13-442d-4f12-a77c-2bd05f11dc10@roeck-us.net>
-Date: Tue, 13 Aug 2024 08:52:22 -0700
+        bh=7CDi0nxQmTMyJKYhv9r7kLUMtOrJfHPG/K7bxYyY1w0=;
+        b=b9e8wuHNYFQkQEaTn3NI4YEWThMhYImPE8cwhw9cWTgCR0Sqv/xocAS3Y2LaMHNItv
+         3Iss/WLr4/JMaVAjnP7SBtTUxwxFsF4GIm8Vr5p1O6uPATmI26Oco6bYpKrd2Cjfn1ag
+         fxwXQHopNlrAaYagLNb57ptraui+40Au7H2S3CCyHMwmNW921Zr6qmGQ8IE+W7t9S+oG
+         DKPVipfPqv8g49ZlT7GGM0t5cMXPrBFt0P+uQ7Ay1xQ7Et2OK2wZzgJjGFZ+ZhXFLFor
+         6Y4UmREv7laOfIS+g9gdiqXeLI74jwUL+QyOOypNQLL7xZXKJFODyYRnPc0NNE0eB0Rl
+         K8vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723564391; x=1724169191;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7CDi0nxQmTMyJKYhv9r7kLUMtOrJfHPG/K7bxYyY1w0=;
+        b=SqM2vJy2OpErzS78QwBmV+h7RKm0eAKiZnnSuo7objNWbbcQ6NwnWcbZBmstZGr3Pr
+         tLe8bMAt/KS6VdbMfpwJ8n3BJeRzC/9CyxCNmp0DFH3dxEw/nGxuxUZzjHTtL/ietQF6
+         HZbs/2l9mOPi2c4TWO02ROmFibdpSnKzyCKVkOalUq/HkuXHkWUVOIBrRyglVQE6tLL6
+         iqQFBuonzUB6cGo7zTI0HQK834ZtZyLsBQBRIoBp8WTHcx8GkNCYs17TqDIgBBvBtvjD
+         5y5n+J7H9yQY/Gc1M90I0+HkdP7XgJYaEJsg9H1yTE1m8eBoGgjGzv8JeVE2Gqp8yUof
+         RdkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvpa6BgQnqdB9XlW46eW1OrU5D3OmQmd7V6PclAnVOCaLrrHRCN/xcnO9u+VomREcSL4AhxIECV5h0TUvb+SiXgdMb5e8pfxgRHxWdkAWYOamTPScR9K9b0FMDsKhQkUgrSdritZzaqGDLWnPIaH2vOJoQHZDfof7FmHHOV5CHfPvs3mU=
+X-Gm-Message-State: AOJu0YxFXga9O4QnxFNRNxkOV4rT3mbphymYyjWgvQpcG+Crpx1tauUh
+	bJP+LL5P1gYqnKaXplanniwVTAWHMiLbE9oHYRVo2kQWSBhor/KVkpbO23RrXIBDD1/ALacUbpR
+	VMVNSC3I5tj/pBi+tWqB+b3l76LM=
+X-Google-Smtp-Source: AGHT+IHBDs7hd3lYmRZBPSM7XMnGRcrkT4qnvOiSdgv1s1zqTxc2eoPS+CWhK5VTx9y8Fw8swyYk8/eAA4ngm2DhLKk=
+X-Received: by 2002:a17:907:f7a8:b0:a6f:d990:338c with SMTP id
+ a640c23a62f3a-a80ed1efea2mr309054966b.20.1723564391099; Tue, 13 Aug 2024
+ 08:53:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] dt-bindings: hwmon: Add maxim max31790
-To: Conor Dooley <conor@kernel.org>,
- Chanh Nguyen <chanh@os.amperecomputing.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Justin Ledford
- <justinledford@google.com>, devicetree@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
- OpenBMC Maillist <openbmc@lists.ozlabs.org>,
- Open Source Submission <patches@amperecomputing.com>,
- Phong Vo <phong@os.amperecomputing.com>,
- Thang Nguyen <thang@os.amperecomputing.com>,
- Quan Nguyen <quan@os.amperecomputing.com>
-References: <20240813084152.25002-1-chanh@os.amperecomputing.com>
- <20240813084152.25002-2-chanh@os.amperecomputing.com>
- <20240813-sister-hamburger-586eff8b45fc@spud>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20240813-sister-hamburger-586eff8b45fc@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240808121447.239278-1-leitao@debian.org> <ff4haeeknghdr5pgpp3va7opnrx5ivlpaw5ppboqrq75733iul@zy4c7mu3foma>
+ <CAHp75VdbRexEx90ybaFsiPhg8O0CzvpkWT1ER31GnP-y8a1e+w@mail.gmail.com>
+ <ZrtgfkzuCbNju3i9@gmail.com> <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
+In-Reply-To: <cf2d6ff5-dfea-4e25-8eee-e4e8c9cb1e7e@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 13 Aug 2024 18:52:33 +0300
+Message-ID: <CAHp75VdHT3g91AirBQGodw1sHbq7U=oKnJq3oSqDcNYS+OUOKQ@mail.gmail.com>
+Subject: Re: [PATCH RESEND] Do not mark ACPI devices as irq safe
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Breno Leitao <leitao@debian.org>, dmitry.osipenko@collabora.com, 
+	Andi Shyti <andi.shyti@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, leit@meta.com, 
+	Michael van der Westhuizen <rmikey@meta.com>, 
+	"open list:I2C SUBSYSTEM HOST DRIVERS" <linux-i2c@vger.kernel.org>, 
+	"open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 8/13/24 08:33, Conor Dooley wrote:
-> On Tue, Aug 13, 2024 at 08:41:52AM +0000, Chanh Nguyen wrote:
->> Add device tree bindings and an example for max31790 device.
->>
->> Signed-off-by: Chanh Nguyen <chanh@os.amperecomputing.com>
->> ---
->> Changes in v2:
->>   - Update filename of the maxim,max31790.yaml                        [Krzysztof]
->>   - Add the common fan schema to $ref                                 [Krzysztof]
->>   - Update the node name to "fan-controller" in maxim,max31790.yaml   [Krzysztof]
->>   - Drop "driver" in commit title                                     [Krzysztof]
->> Changes in v3:
->>   - Drop redundant "bindings" in commit title                         [Krzysztof]
->>   - Add the clocks and resets property in example                     [Krzysztof]
->>   - Add child node refer to fan-common.yaml                           [Krzysztof, Conor]
->> ---
->>   .../bindings/hwmon/maxim,max31790.yaml        | 81 +++++++++++++++++++
->>   1 file changed, 81 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->> new file mode 100644
->> index 000000000000..d28a6373edd3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/hwmon/maxim,max31790.yaml
->> @@ -0,0 +1,81 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/hwmon/maxim,max31790.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: The Maxim MAX31790 Fan Controller
->> +
->> +maintainers:
->> +  - Guenter Roeck <linux@roeck-us.net>
-> 
-> Why Guenter and not you?
-> 
+On Tue, Aug 13, 2024 at 6:28=E2=80=AFPM Dmitry Osipenko <digetx@gmail.com> =
+wrote:
+>
+> 13.08.2024 16:32, Breno Leitao =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Hello Andy,
+> >
+> > On Fri, Aug 09, 2024 at 02:03:27PM +0300, Andy Shevchenko wrote:
+> >> On Fri, Aug 9, 2024 at 2:57=E2=80=AFAM Andi Shyti <andi.shyti@kernel.o=
+rg> wrote:
+> >>> On Thu, Aug 08, 2024 at 05:14:46AM GMT, Breno Leitao wrote:
+> >
+> >>>> The problem arises because during __pm_runtime_resume(), the spinloc=
+k
+> >>>> &dev->power.lock is acquired before rpm_resume() is called. Later,
+> >>>> rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> >>>> mutexes, triggering the error.
+> >>>>
+> >>>> To address this issue, devices on ACPI are now marked as not IRQ-saf=
+e,
+> >>>> considering the dependency of acpi_subsys_runtime_resume() on mutexe=
+s.
+> >>
+> >> This is a step in the right direction
+> >
+> > Thanks
+> >
+> >> but somewhere in the replies
+> >> here I would like to hear about roadmap to get rid of the
+> >> pm_runtime_irq_safe() in all Tegra related code.
+> >
+> > Agree, that seems the right way to go, but this is a question to
+> > maintainers, Laxman and Dmitry.
+> >
+> > By the way, looking at lore, I found that the last email from Laxman is
+> > from 2022. And Dmitry seems to be using a different email!? Let me copy
+> > the Dmitry's other email (dmitry.osipenko@collabora.com) here.
+> >
+> >>>> +     if (!IS_VI(i2c_dev) && !ACPI_HANDLE(i2c_dev->dev))
+> >>>
+> >>> looks good to me, can I have an ack from Andy here?
+> >>
+> >> I prefer to see something like
+> >> is_acpi_node() / is_acpi_device_node() / is_acpi_data_node() /
+> >> has_acpi_companion()
+> >> instead depending on the actual ACPI representation of the device.
+> >>
+> >> Otherwise no objections.
+> >> Please, Cc me (andy@kernel.org) for the next version.
+> >
+> > Thanks for the feedback, I agree that leveraging the functions about
+> > should be better. What about something as:
+> >
+> > Author: Breno Leitao <leitao@debian.org>
+> > Date:   Thu Jun 6 06:27:07 2024 -0700
+> >
+> >     Do not mark ACPI devices as irq safe
+> >
+> >     On ACPI machines, the tegra i2c module encounters an issue due to a
+> >     mutex being called inside a spinlock. This leads to the following b=
+ug:
+> >
+> >             BUG: sleeping function called from invalid context at kerne=
+l/locking/mutex.c:585
+> >             in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 1282=
+, name: kssif0010
+> >             preempt_count: 0, expected: 0
+> >             RCU nest depth: 0, expected: 0
+> >             irq event stamp: 0
+> >
+> >             Call trace:
+> >             __might_sleep
+> >             __mutex_lock_common
+> >             mutex_lock_nested
+> >             acpi_subsys_runtime_resume
+> >             rpm_resume
+> >             tegra_i2c_xfer
+> >
+> >     The problem arises because during __pm_runtime_resume(), the spinlo=
+ck
+> >     &dev->power.lock is acquired before rpm_resume() is called. Later,
+> >     rpm_resume() invokes acpi_subsys_runtime_resume(), which relies on
+> >     mutexes, triggering the error.
+> >
+> >     To address this issue, devices on ACPI are now marked as not IRQ-sa=
+fe,
+> >     considering the dependency of acpi_subsys_runtime_resume() on mutex=
+es.
+> >
+> >     Co-developed-by: Michael van der Westhuizen <rmikey@meta.com>
+> >     Signed-off-by: Michael van der Westhuizen <rmikey@meta.com>
+> >     Signed-off-by: Breno Leitao <leitao@debian.org>
+> >
+> > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-te=
+gra.c
+> > index 85b31edc558d..1df5b4204142 100644
+> > --- a/drivers/i2c/busses/i2c-tegra.c
+> > +++ b/drivers/i2c/busses/i2c-tegra.c
+> > @@ -1802,9 +1802,9 @@ static int tegra_i2c_probe(struct platform_device=
+ *pdev)
+> >        * domain.
+> >        *
+> >        * VI I2C device shouldn't be marked as IRQ-safe because VI I2C w=
+on't
+> > -      * be used for atomic transfers.
+> > +      * be used for atomic transfers. ACPI device is not IRQ safe also=
+.
+> >        */
+> > -     if (!IS_VI(i2c_dev))
+> > +     if (!IS_VI(i2c_dev) && !has_acpi_companion(i2c_dev->dev))
+> >               pm_runtime_irq_safe(i2c_dev->dev);
+> >
+> >       pm_runtime_enable(i2c_dev->dev);
+> >
+>
+> Looks good, thanks
+>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 
-Fine with me, actually. We don't expect individual driver maintainers
-in the hardware monitoring subsystem, and this chip doesn't have an
-explicit maintainer. Forcing people to act as maintainer for .yaml
-files they submit can only result in fewer submissions. I prefer to be
-listed as maintainer over having no devicetree bindings.
+LGTM as well, feel free to add
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+to the above when sending it formally.
 
->> +
->> +description: >
->> +  The MAX31790 controls the speeds of up to six fans using six
->> +  independent PWM outputs. The desired fan speeds (or PWM duty cycles)
->> +  are written through the I2C interface.
->> +
->> +  Datasheets:
->> +    https://datasheets.maximintegrated.com/en/ds/MAX31790.pdf
->> +
->> +properties:
->> +  compatible:
->> +    const: maxim,max31790
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    maxItems: 1
->> +
->> +  "#pwm-cells":
->> +    const: 1
->> +
->> +patternProperties:
->> +  "^fan-[0-9]+$":
->> +    $ref: fan-common.yaml#
->> +    unevaluatedProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    i2c {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      fan-controller@21 {
->> +        compatible = "maxim,max31790";
->> +        reg = <0x21>;
->> +        clocks = <&sys_clk>;
->> +        resets = <&reset 0>;
->> +      };
->> +    };
-> 
-> What does this example demonstrate? The one below seems useful, this one
-> I don't quite understand - what's the point of a fan controller with no
-> fans connected to it? What am I missing?
-> 
+> > but somewhere in the replies
+> > here I would like to hear about roadmap to get rid of the
+> > pm_runtime_irq_safe() in all Tegra related code.
+>
+> What is the problem with pm_runtime_irq_safe()?
 
-Just guessing, but maybe this is supposed to reflect a system which only monitors fan
-speeds but does not implement fan control.
+It's a hack. It has no reasons to stay in the kernel. It also prevents
+PM from working properly (in some cases, not Tegra).
 
-Guenter
+> There were multiple
+> problems with RPM for this driver in the past, it wasn't trivial to make
+> it work for all Tegra HW generations. Don't expect anyone would want to
+> invest time into doing it all over again.
 
-> Otherwise, this looks pretty good.
-> 
-> Cheers,
-> Conor.
-> 
->> +  - |
->> +    i2c {
->> +      #address-cells = <1>;
->> +      #size-cells = <0>;
->> +
->> +      pwm_provider: fan-controller@20 {
->> +        compatible = "maxim,max31790";
->> +        reg = <0x20>;
->> +        clocks = <&sys_clk>;
->> +        resets = <&reset 0>;
->> +        #pwm-cells = <1>;
->> +
->> +        fan-0 {
->> +          pwms = <&pwm_provider 1>;
->> +        };
->> +
->> +        fan-1 {
->> +          pwms = <&pwm_provider 2>;
->> +        };
->> +      };
->> +    };
->> +
->> -- 
->> 2.43.0
->>
+You may always refer to the OMAP case, which used to have 12 (IIRC,
+but definitely several) calls to this API and now 0. Taking the OMAP
+case into consideration I believe it's quite possible to get rid of
+this hack and retire the API completely. Yes, this may take months or
+even years. But I would like to have this roadmap be documented.
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
