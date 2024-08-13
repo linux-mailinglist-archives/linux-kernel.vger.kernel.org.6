@@ -1,210 +1,115 @@
-Return-Path: <linux-kernel+bounces-285421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1838950D40
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:39:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAAC950D47
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:41:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E627B1C23548
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:39:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A14CFB28061
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 883A11A2C22;
-	Tue, 13 Aug 2024 19:39:09 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D396F1A254F;
+	Tue, 13 Aug 2024 19:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KuXpm8zq"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A2D44C97;
-	Tue, 13 Aug 2024 19:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF8543AB0
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723577949; cv=none; b=RT7X8K02mFE3ogV8kHknp9P2dY8IgWk6SnIgL0DVT3XyIXR6cyynqnKMSIvi7QK/7vmITQ7m3qQbuGtETzYgs+R0CziaspSKGGIgKdGhl1EhTP0R/cvFp3POe/T5yAwVlYFgf1dES6JArYO2hbbLkZA8sFowB05on5NV0IELqxg=
+	t=1723578052; cv=none; b=WsF7YounHMptJ8H1m7MkIFyDL/krHwv1LtX3WHIEpeaRIK7un1QNBB5LMGH+FITsEn/ikhmBY+XNwyCQFuuP0LG3HGJ0gh9uxK9AXjJOREvfQuS2983zEklyfQkXv7haXoZBixGVUkKF4BP2EmdM7NaZSE5B+ij0E5Z8PSQboHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723577949; c=relaxed/simple;
-	bh=lG7IomfuKHNuswLSyUl7mClGTN9Q43IhaBK4tL2STGk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=mAe8FKASHu+nwxKJl5oBbW/kduQcxwQDEgq31uvzZA20TcmgLpn+Y/z53zPo/qG4aE0x678lr1POnKlqcZS74uObn/NYxjdhoV7mbv0lbxPx/BYgansw/+oJgXlmExjzNI//Kr4h34JZ5esY4XnfUzAidwXYQ4fLOTj2EKZPueM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-From: Sam James <sam@gentoo.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>,  Andrii Nakryiko
- <andrii@kernel.org>,  Eduard Zingerman <eddyz87@gmail.com>,  Alexei
- Starovoitov <ast@kernel.org>,  Daniel Borkmann <daniel@iogearbox.net>,
-  Martin KaFai Lau <martin.lau@linux.dev>,  Song Liu <song@kernel.org>,
-  Yonghong Song <yonghong.song@linux.dev>,  John Fastabend
- <john.fastabend@gmail.com>,  KP Singh <kpsingh@kernel.org>,  Stanislav
- Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>,  Jiri Olsa
- <jolsa@kernel.org>,  "Jose E . Marchesi" <jose.marchesi@oracle.com>,
-  Andrew Pinski <quic_apinski@quicinc.com>,  Kacper =?utf-8?B?U8WCb21pxYRz?=
- =?utf-8?B?a2k=?=
- <kacper.slominski72@gmail.com>,  Arsen =?utf-8?Q?Arsenovi=C4=87?=
- <arsen@gentoo.org>,
-  bpf@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] libbpf: workaround -Wmaybe-uninitialized false positive
-In-Reply-To: <CAEf4Bza3RH6p=KJu8cm2jb4QwKCHc5ZUskE9cvWTBXyXFUKHuA@mail.gmail.com>
-	(Andrii Nakryiko's message of "Mon, 12 Aug 2024 14:02:51 -0700")
-Organization: Gentoo
-References: <12cec1262be71de5f1d9eae121b637041a5ae247.1723459079.git.sam@gentoo.org>
-	<61cf5568-7a01-4231-8189-006bde4ec0ad@oracle.com>
-	<CAEf4Bza3RH6p=KJu8cm2jb4QwKCHc5ZUskE9cvWTBXyXFUKHuA@mail.gmail.com>
-Date: Tue, 13 Aug 2024 20:38:59 +0100
-Message-ID: <878qx0gqlo.fsf@gentoo.org>
+	s=arc-20240116; t=1723578052; c=relaxed/simple;
+	bh=0XCz4z/9nesUOFpikK91xRt3rXIBg+NxQXA82zBy2gU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IKAIp/UQGSJtg+cDf/coz8Qz7GAVc5mP3+dk18NnOG8aEohGnC9vhDsWWrlO9lPknWHSgiLfJLC8hFUSmVCWCACFTBoXRtro70rDOnNWSNI1Qjpg3C1jpa1Nuajvihi6TF+1+bruJT0/2JEPnHnaTnUF5sOiL99gkfcZWcno0CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KuXpm8zq; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fc5296e214so56300725ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:40:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723578050; x=1724182850; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XI0xx1+8K5NJsUQsWsds8lFOqeeVisrv81Aups4+psI=;
+        b=KuXpm8zqBRWLxpKyq7qkRXawGuX8eAJgjG86aUr0u2glzBlzKgey45eZoAMs8ffras
+         5ffkpMMrlOzBTnLT5Q6CObhOciGcJ+AO9UcneQxWEAOYcUPoJJGEzOtMMkEWS9duJs6d
+         7yfwm1+5UpZRBS/J0DxF/AgpJykY+uXK9iHn6yZswAkmI648lFmhZFGPst0SdR6YpXPb
+         avT4iED/GhiAHS5j6fhQWzxBlBKIdmuDoL8hyzTwjx5V+V2hAM6pjBqeMbwklHjFiLDj
+         izQDTBBP2b5BbzejRHX+SYFx/zbsoK3PesRU46apkwfxAS1HrMkG2BEgyFBnTSXS2VUe
+         Y34A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723578050; x=1724182850;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XI0xx1+8K5NJsUQsWsds8lFOqeeVisrv81Aups4+psI=;
+        b=RIXyXNhJ5MBeMXGdmOSLx0VgLZ6vjHpPBs4annfWexLke5NY+K4k1Kn05c+dbisXDj
+         HrjIoD9MqilaBqjNI6mpS/f1jRvxqTHm4n+kpqXdIIWgy7DZuOWX2ScQRFIfrG6ZR3bw
+         BeYDKjZXTeLx/9Ic0QsbyBZ9kYAfMfzBdrHD9S8BbCH/fBdyOl5s5dfK94HFu2MsBd59
+         jengARA4cLFQtAy3deef1jfOZ8fA2af7g8Yy/mfUeTpKITEkrV8w6lfu+mmw1Dfi2yTy
+         u2mDX1M6Ht+GS8ZXvmJLK6zPawGubQKzhfoAFEFp/yneastfnYJJee58eyIrFea5XI7S
+         ubHQ==
+X-Gm-Message-State: AOJu0YydB3/RMxrmFPkQPIc23XieGLi8ggAoY5cg7ioLJeiJHymgT+mm
+	buxWaY2Lbym5Z8xogoJtwdObVItK46ZR3Z5nTAzUjB3ClPKk0UwZ066CEQ==
+X-Google-Smtp-Source: AGHT+IGLkyBr+QXIGEvH3BMKPN5Ne7VSGDZikWg+16bqwcK0qMcxQKF1XBoS9EXsp3dFDkxn6pOodw==
+X-Received: by 2002:a17:902:d50e:b0:1fc:5fc9:84bc with SMTP id d9443c01a7336-201d64d1ae8mr5571445ad.62.1723578049957;
+        Tue, 13 Aug 2024 12:40:49 -0700 (PDT)
+Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a949bsm17222265ad.121.2024.08.13.12.40.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 12:40:49 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Tue, 13 Aug 2024 09:40:48 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Lai Jiangshan <jiangshanlai@gmail.com>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH 1/4] workqueue: Make wq_affn_dfl_set() use
+ wq_online_cpumask
+Message-ID: <Zru2wILO6RwB1d-u@slm.duckdns.org>
+References: <20240802211850.1211737-1-tj@kernel.org>
+ <20240802211850.1211737-2-tj@kernel.org>
+ <CAJhGHyAv_jwMxFoU6Wa2epfCQK_0LsAkBhFwkGX-ZT-9tAdwYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJhGHyAv_jwMxFoU6Wa2epfCQK_0LsAkBhFwkGX-ZT-9tAdwYg@mail.gmail.com>
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
+On Thu, Aug 08, 2024 at 12:23:32PM +0800, Lai Jiangshan wrote:
+> > @@ -6909,18 +6909,16 @@ static int wq_affn_dfl_set(const char *val, const struct kernel_param *kp)
+> >         if (affn == WQ_AFFN_DFL)
+> >                 return -EINVAL;
+> >
+> > -       cpus_read_lock();
+> >         mutex_lock(&wq_pool_mutex);
+> >
+> >         wq_affn_dfl = affn;
+> >
+> >         list_for_each_entry(wq, &workqueues, list) {
+> > -               for_each_online_cpu(cpu)
+> > +               for_each_cpu(cpu, wq_online_cpumask)
+> >                         unbound_wq_update_pwq(wq, cpu);
+> >         }
+> 
+> I think it should be for_each_possible_cpu() for updating the pwqs.
 
-> On Mon, Aug 12, 2024 at 6:57=E2=80=AFAM Alan Maguire <alan.maguire@oracle=
-.com> wrote:
->>
->> On 12/08/2024 11:37, Sam James wrote:
->> > In `elf_close`, we get this with GCC 15 -O3 (at least):
->> > ```
->> > In function =E2=80=98elf_close=E2=80=99,
->> >     inlined from =E2=80=98elf_close=E2=80=99 at elf.c:53:6,
->> >     inlined from =E2=80=98elf_find_func_offset_from_file=E2=80=99 at e=
-lf.c:384:2:
->> > elf.c:57:9: warning: =E2=80=98elf_fd.elf=E2=80=99 may be used uninitia=
-lized [-Wmaybe-uninitialized]
->> >    57 |         elf_end(elf_fd->elf);
->> >       |         ^~~~~~~~~~~~~~~~~~~~
->> > elf.c: In function =E2=80=98elf_find_func_offset_from_file=E2=80=99:
->> > elf.c:377:23: note: =E2=80=98elf_fd.elf=E2=80=99 was declared here
->> >   377 |         struct elf_fd elf_fd;
->> >       |                       ^~~~~~
->> > In function =E2=80=98elf_close=E2=80=99,
->> >     inlined from =E2=80=98elf_close=E2=80=99 at elf.c:53:6,
->> >     inlined from =E2=80=98elf_find_func_offset_from_file=E2=80=99 at e=
-lf.c:384:2:
->> > elf.c:58:9: warning: =E2=80=98elf_fd.fd=E2=80=99 may be used uninitial=
-ized [-Wmaybe-uninitialized]
->> >    58 |         close(elf_fd->fd);
->> >       |         ^~~~~~~~~~~~~~~~~
->> > elf.c: In function =E2=80=98elf_find_func_offset_from_file=E2=80=99:
->> > elf.c:377:23: note: =E2=80=98elf_fd.fd=E2=80=99 was declared here
->> >   377 |         struct elf_fd elf_fd;
->> >       |                       ^~~~~~
->> > ```
->> >
->> > In reality, our use is fine, it's just that GCC doesn't model errno
->> > here (see linked GCC bug). Suppress -Wmaybe-uninitialized accordingly
->> > by initializing elf_fd.elf to -1.
->> >
->> > I've done this in two other functions as well given it could easily
->> > occur there too (same access/use pattern).
->> >
->>
->> hmm, looking at this again - given that there are multiple consumers -
->
-> yes, I don't like that each caller has to remember to initialize the
-> struct that is clearly initialized by elf_open() itself, so see below.
->
-> pw-bot: cr
->
->> I suppose another option would perhaps be to
->>
->> - have elf_open() to init int fd =3D -1, Elf *elf =3D NULL.
->
-> I'd do just
->
-> elf_fd->elf =3D NULL;
-> elf_fd->fd =3D -1;
->
-> and do nothing else. This should be enough for compiler to not trigger th=
-is.
+Can you send a patch?
 
-OK.
+Thanks.
 
->
->> - have error paths in elf_open() "goto out"; at out: we set elf_fd->fd,
->> elf_fd->elf to fd, elf
->> - have elf_close() exit it elf_fd < 0 (since 0 is a valid fd), as it
->> will for the error cases
->>
->
-> Let's not touch anything else, this should be enough.
->
->
->> Might all be bit excessive, and might not even fix the false positive
->> issue here, so
->>
->> > Link: https://gcc.gnu.org/PR114952
->> > Signed-off-by: Sam James <sam@gentoo.org>
->>
->> Reviewed-by: Alan Maguire <alan.maguire@oracle.com>
->>
->> > ---
->> > v3: Initialize to -1 instead of using a pragma.
->> >
->> > Range-diff against v2:
->> > 1:  8f5c3b173e4cb < -:  ------------- libbpf: workaround -Wmaybe-unini=
-tialized false positive
->> > -:  ------------- > 1:  12cec1262be71 libbpf: workaround -Wmaybe-unini=
-tialized false positive
->> >
->> >  tools/lib/bpf/elf.c | 6 +++---
->> >  1 file changed, 3 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/tools/lib/bpf/elf.c b/tools/lib/bpf/elf.c
->> > index c92e02394159e..00ea3f867bbc8 100644
->> > --- a/tools/lib/bpf/elf.c
->> > +++ b/tools/lib/bpf/elf.c
->> > @@ -374,7 +374,7 @@ long elf_find_func_offset(Elf *elf, const char *bi=
-nary_path, const char *name)
->> >   */
->> >  long elf_find_func_offset_from_file(const char *binary_path, const ch=
-ar *name)
->> >  {
->> > -     struct elf_fd elf_fd;
->> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
->> >       long ret =3D -ENOENT;
->> >
->> >       ret =3D elf_open(binary_path, &elf_fd);
->> > @@ -412,7 +412,7 @@ int elf_resolve_syms_offsets(const char *binary_pa=
-th, int cnt,
->> >       int err =3D 0, i, cnt_done =3D 0;
->> >       unsigned long *offsets;
->> >       struct symbol *symbols;
->> > -     struct elf_fd elf_fd;
->> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
->> >
->> >       err =3D elf_open(binary_path, &elf_fd);
->> >       if (err)
->> > @@ -507,7 +507,7 @@ int elf_resolve_pattern_offsets(const char *binary=
-_path, const char *pattern,
->> >       int sh_types[2] =3D { SHT_SYMTAB, SHT_DYNSYM };
->> >       unsigned long *offsets =3D NULL;
->> >       size_t cap =3D 0, cnt =3D 0;
->> > -     struct elf_fd elf_fd;
->> > +     struct elf_fd elf_fd =3D { .fd =3D -1 };
->> >       int err =3D 0, i;
->> >
->> >       err =3D elf_open(binary_path, &elf_fd);
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iOUEARYKAI0WIQQlpruI3Zt2TGtVQcJzhAn1IN+RkAUCZru2U18UgAAAAAAuAChp
-c3N1ZXItZnByQG5vdGF0aW9ucy5vcGVucGdwLmZpZnRoaG9yc2VtYW4ubmV0MjVB
-NkJCODhERDlCNzY0QzZCNTU0MUMyNzM4NDA5RjUyMERGOTE5MA8cc2FtQGdlbnRv
-by5vcmcACgkQc4QJ9SDfkZAPMgEA7XDQpwzpI8shOtCDuwhKkZNSTdguPclyA/4x
-ZT9DnXQBAO+PzWg3TsYOzxO7d5hS1yDNaZqJ3iI34t4XW93rY9gN
-=vKNv
------END PGP SIGNATURE-----
---=-=-=--
+-- 
+tejun
 
