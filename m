@@ -1,107 +1,228 @@
-Return-Path: <linux-kernel+bounces-284279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5CC994FF4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:03:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789DD94FEFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F75280E29
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:03:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8179B21C9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:43:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32DA3176FCF;
-	Tue, 13 Aug 2024 08:02:36 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2977A139CF6;
+	Tue, 13 Aug 2024 07:43:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fqa8U33+"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E0C13D50E;
-	Tue, 13 Aug 2024 08:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B136BFC0;
+	Tue, 13 Aug 2024 07:43:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723536155; cv=none; b=OLUO9yRoU2ExCmSV8YaEt9osR5cOMu40DfB4HeV2nYEfHnFAUM7auK/HJO+AE/gy1QyjVanKXlGRY/gw2qjDSj2RTWBljxYsVMB9Jy9z8xOO2oHFyfsPkJIEBnc/TsnRkaeNZpJXF/OOC8IfB2guxh8rCHMBnNhhauaC8EmBL6A=
+	t=1723534993; cv=none; b=loc/g0r67TJ80UMxPjrgEUiDFCbDEeDPRGa9fccdGsS79s0vrbFZ3Uq5FjhanXvdfIqXaTRc9xJ3crbzO6xdFhJ9yli70qWxUJdoZIKZc/nRjn92tn8h8O2Z8zWAP8Zn/1dI3QjultUVSY/9CpDom5oqBPNxrH7vK9+e/SQf3jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723536155; c=relaxed/simple;
-	bh=+pROoBrurakCGvGD6Blb+j4X0fhL0kJk1RxtcHF2TWU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=sfM/T8++H0o9ZKJLLe0xbTtlx9y7l/sqMdjHvSag+tmKI+YzbwGFQn5X55YtJRo9jk83MJsStzeCNNK0AaXO8/QwYNwblmQC+AmMn5zDNQjyOYWKeQMp7deKZc7gS1y+8Q9lKtWTfYeR5yXD7z1WMkg1xTsOA01RTlsAQiDNYtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8680B1A11AF;
-	Tue, 13 Aug 2024 10:02:27 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F48A1A11BD;
-	Tue, 13 Aug 2024 10:02:27 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 18113181D0FD;
-	Tue, 13 Aug 2024 16:02:26 +0800 (+08)
-From: Richard Zhu <hongxing.zhu@nxp.com>
-To: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	l.stach@pengutronix.de
-Cc: hongxing.zhu@nxp.com,
-	devicetree@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kernel@pengutronix.de,
-	imx@lists.linux.dev
-Subject: [PATCH v5 4/4] arm64: dts: imx8mm: Add dbi2 and atu reg for i.MX8MM PCIe EP
-Date: Tue, 13 Aug 2024 15:42:23 +0800
-Message-Id: <1723534943-28499-5-git-send-email-hongxing.zhu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
-References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1723534993; c=relaxed/simple;
+	bh=lO7y/ykZycuZGhGSqBoExlsPzpEu4qzTNGz32eEnpgk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dNzafr7vjzn7D2RbWvGWfHlQ6G2nbAqD6ikD/UBzap846eTHjkn9+o5KkoEKtKecVsJUcRGL0RPhmK+H58SLxmjjnu+/OeDN1z4L4tgzBSIi415h/gD7oHTtQYNFSH00GKzQzOdJquzGoAlg4au2SnnoTawFD5PdFZ5Xs8LAmbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Fqa8U33+; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 47D7gaF7119095;
+	Tue, 13 Aug 2024 02:42:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1723534956;
+	bh=v9l96O9yf68qz5Yj6hIzDOX+wl1EikjY2B0QdiBfiGM=;
+	h=From:To:CC:Subject:Date;
+	b=Fqa8U33+T5/oarCZffUQddinohLPnc7NGZ4TACLb7S47Yh5jJRB8FC7LecCf1hI7l
+	 DNWjgYhQXTkiOfYiaQFeIPPQ8KlvsZQQED0BBNZAmvVVUBkWoLT5WwBxowRfPUtb4F
+	 kwlROesyXwyL6iuVgzhabLLWhzAxEyzQmhAAut70=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 47D7gan6056076
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 13 Aug 2024 02:42:36 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 13
+ Aug 2024 02:42:36 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 13 Aug 2024 02:42:36 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 47D7gawn025644;
+	Tue, 13 Aug 2024 02:42:36 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 47D7gZTA008707;
+	Tue, 13 Aug 2024 02:42:35 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>, Andrew Lunn <andrew@lunn.ch>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman
+	<horms@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+        Eric Dumazet
+	<edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>
+CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH net-next v2 0/7] Introduce HSR offload support for ICSSG
+Date: Tue, 13 Aug 2024 13:12:26 +0530
+Message-ID: <20240813074233.2473876-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add dbi2 and iatu reg for i.MX8MM PCIe EP.
+Hi All,
+This series introduces HSR offload support for ICSSG driver. To support HSR
+offload to hardware, ICSSG HSR firmware is used.
 
-For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the
-driver. This method is not good.
+This series introduces,
+1. HSR frame offload support for ICSSG driver.
+2. HSR Tx Packet duplication offload
+3. HSR Tx Tag and Rx Tag offload
+4. Multicast filtering support in HSR offload mode.
+5. Dependencies related to IEP.
 
-In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
-Frank suggests to fetch the dbi2 and atu from DT directly. This commit is
-preparation to do that for i.MX8MM PCIe EP.
+HSR Test Setup:
+--------------
 
-These changes wouldn't break driver function. When "dbi2" and "atu"
-properties are present, i.MX PCIe driver would fetch the according base
-addresses from DT directly. If only two reg properties are provided, i.MX
-PCIe driver would fall back to the old method.
+     ___________           ___________           ___________
+    |           | Link AB |           | Link BC |           |
+  __|   AM64*   |_________|   AM64    |_________|   AM64*   |___
+ |  | Station A |         | Station B |         | Station C |   |
+ |  |___________|         |___________|         |___________|   |
+ |                                                              |
+ |______________________________________________________________|
+                            Link CA
+ *Could be any device that supports two ethernet interfaces.
 
-Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mm.dtsi | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+Steps to switch to HSR frame forward offload mode:
+-------------------------------------------------
+Example assuming eth1, eth2 ports of ICSSG1 on AM64-EVM
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-index 9535dedcef59..4de3bf22902b 100644
---- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
-@@ -1375,9 +1375,11 @@ pcie0: pcie@33800000 {
- 
- 		pcie0_ep: pcie-ep@33800000 {
- 			compatible = "fsl,imx8mm-pcie-ep";
--			reg = <0x33800000 0x400000>,
--			      <0x18000000 0x8000000>;
--			reg-names = "dbi", "addr_space";
-+			reg = <0x33800000 0x100000>,
-+			      <0x18000000 0x8000000>,
-+			      <0x33900000 0x100000>,
-+			      <0x33b00000 0x100000>;
-+			reg-names = "dbi", "addr_space", "dbi2", "atu";
- 			num-lanes = <1>;
- 			interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "dma";
+  1) Enable HSR offload for both interfaces
+      ethtool -K eth1 hsr-fwd-offload on
+      ethtool -K eth1 hsr-dup-offload on
+      ethtool -K eth1 hsr-tag-ins-offload on
+      ethtool -K eth1 hsr-tag-rm-offload on
+
+      ethtool -K eth2 hsr-fwd-offload on
+      ethtool -K eth2 hsr-dup-offload on
+      ethtool -K eth2 hsr-tag-ins-offload on
+      ethtool -K eth2 hsr-tag-rm-offload on
+
+  2) Create HSR interface and add slave interfaces to it
+      ip link add name hsr0 type hsr slave1 eth1 slave2 eth2 \
+    supervision 45 version 1
+
+  3) Add IP address to the HSR interface
+      ip addr add <IP_ADDR>/24 dev hsr0
+
+  4) Bring up the HSR interface
+      ip link set hsr0 up
+
+Switching back to Dual EMAC mode:
+--------------------------------
+  1) Delete HSR interface
+      ip link delete hsr0
+
+  2) Disable HSR port-to-port offloading mode, packet duplication
+      ethtool -K eth1 hsr-fwd-offload off
+      ethtool -K eth1 hsr-dup-offload off
+      ethtool -K eth1 hsr-tag-ins-offload off
+      ethtool -K eth1 hsr-tag-rm-offload off
+
+      ethtool -K eth2 hsr-fwd-offload off
+      ethtool -K eth2 hsr-dup-offload off
+      ethtool -K eth2 hsr-tag-ins-offload off
+      ethtool -K eth2 hsr-tag-rm-offload off
+
+Testing the port-to-port frame forward offload feature:
+-----------------------------------------------------
+  1) Connect the LAN cables as shown in the test setup.
+  2) Configure Station A and Station C in HSR non-offload mode.
+  3) Configure Station B is HSR offload mode.
+  4) Since HSR is a redundancy protocol, disconnect cable "Link CA",
+     to ensure frames from Station A reach Station C only through
+     Station B.
+  5) Run iperf3 Server on Station C and client on station A.
+  7) Check the CPU usage on Station B.
+
+CPU usage report on Station B using mpstat when running UDP iperf3:
+-------------------------------------------------------------------
+
+  1) Non-Offload case
+  -------------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.50    0.00  3.52  29.15    0.00    0.00   66.83
+    0  0.00   0.00  0.00    0.00  7.00  58.00    0.00    0.00   35.00
+    1  0.00   0.00  0.99    0.00  0.99   0.00    0.00    0.00   98.02
+
+  2) Offload case
+  ---------------
+  CPU  %usr  %nice  %sys %iowait  %irq  %soft  %steal  %guest   %idle
+  all  0.00   0.00  0.00    0.00  0.50   0.00    0.00    0.00   99.50
+    0  0.00   0.00  0.99    0.00  0.00   0.00    0.00    0.00   99.01
+    1  0.00   0.00  0.00    0.00  0.00   0.00    0.00    0.00  100.00
+
+Note:
+1) At the very least, hsr-fwd-offload must be enabled.
+   Without offloading the port-to-port offload, other
+   HSR offloads cannot be enabled.
+
+2) Inorder to enable hsr-tag-ins-offload, hsr-dup-offload
+   must also be enabled as these are tightly coupled in
+   the firmware implementation.
+
+Changes from v1 to v2:
+*) Modified patch 2/7 to only contain code movement as suggested by
+   Dan Carpenter <dan.carpenter@linaro.org>
+*) Added patch 3/7 by splitting it from 2/6 as the patch is not part of
+   code movement done in patch 2/7.
+*) Rebased on latest net-next/main.
+
+MD Danish Anwar (5):
+  net: ti: icssg-prueth: Enable IEP1
+  net: ti: icss-iep: Move icss_iep structure
+  net: ti: icssg-prueth: Stop hardcoding def_inc
+  net: ti: icssg-prueth: Add support for HSR frame forward offload
+  net: ti: icssg-prueth: Add multicast filtering support in HSR mode
+
+Ravi Gunasekaran (2):
+  net: ti: icssg-prueth: Enable HSR Tx Packet duplication offload
+  net: ti: icssg-prueth: Enable HSR Tx Tag and Rx Tag offload
+
+ drivers/net/ethernet/ti/icssg/icss_iep.c      |  72 -------
+ drivers/net/ethernet/ti/icssg/icss_iep.h      |  73 ++++++-
+ .../net/ethernet/ti/icssg/icssg_classifier.c  |   1 +
+ drivers/net/ethernet/ti/icssg/icssg_common.c  |  16 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.c  |  10 +-
+ drivers/net/ethernet/ti/icssg/icssg_config.h  |   2 +
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c  | 187 ++++++++++++++++--
+ drivers/net/ethernet/ti/icssg/icssg_prueth.h  |   7 +
+ 8 files changed, 273 insertions(+), 95 deletions(-)
+
+
+base-commit: 0a3e6939d4b33d68bce89477b9db01d68b744749
 -- 
-2.37.1
+2.34.1
 
 
