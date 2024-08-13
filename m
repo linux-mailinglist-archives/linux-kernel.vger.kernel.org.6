@@ -1,36 +1,37 @@
-Return-Path: <linux-kernel+bounces-285007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A538A95080A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:44:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A855295080C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46A7E1F21766
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:44:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426E1B22507
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324EB19EED4;
-	Tue, 13 Aug 2024 14:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699819F485;
+	Tue, 13 Aug 2024 14:44:04 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCD419EEA6;
-	Tue, 13 Aug 2024 14:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAAE19EEDF;
+	Tue, 13 Aug 2024 14:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723560240; cv=none; b=I8GAu+jAs+odAIhxUWWfsblX31s9yHH5EoFkqqO1RkVux99tsVhliKtV2sg++A11SGTMavIDHqxwbxkM97q1kikspdVFSdCv4wFvsE7iNL1BuO/yP618bdQ+GGom7tZ9XvlvERQ6TiBFTEQTH9yOWWSM5VWlAUH3IHgP2VLGg1c=
+	t=1723560243; cv=none; b=BLiWAuE3zqPHjOqIneMpWQUSdnWeXKewn13XX7Y+066jatBUNr76v4egFYBLBSSzDB1r+L0Yl+bAxbX3BRAUZG2hBBdxSCW68aVKxFE9uSzuRXORWGmgzLtlocLuncWjIF6hHRbHFzInQxNcf4orFJgOTLSKEsf7kBPDlrnF2F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723560240; c=relaxed/simple;
-	bh=YNg/KKJ0sSvf3vGZvLY2X31BCdxXV1DKmzobQPyQwDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sgpun8cyjpjRHEICa4miPZygM10kqEg2cTJAvY777Q0ud9qFtIcV7LIsf52LG+goHunEug/QckLkkG920oNWb2PWEBxnfibpGwI7hSt4ZV8DKiSElU420SBdp2AANrm86YOhC4qFApIDSVOUJWVtL5+mSS+pgZofGMi4SqNttog=
+	s=arc-20240116; t=1723560243; c=relaxed/simple;
+	bh=IZkUOEj+ynT1cgZSlkqf7jexEJo9g6ns6R0oSMRUXb8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BwBXpZfPJRU2L4trZr+2QibiLDSiFwGGzfjxQosTZCjH9BjT3gQgJ+hQhSkfz4oSIzdcelJYGHtGMt95neogPcXxaMZ95aLDmO+5ODBQ71FbFlCHxyNlufgx+Rl4tSWgzlTER+3yaCeBSFFrYQBkO23BP7JuDL3X83sxgMFxpYM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C46BB12FC;
-	Tue, 13 Aug 2024 07:44:22 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DAE8D1596;
+	Tue, 13 Aug 2024 07:44:26 -0700 (PDT)
 Received: from e127648.arm.com (unknown [10.57.84.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3BCCE3F58B;
-	Tue, 13 Aug 2024 07:43:54 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6BE453F58B;
+	Tue, 13 Aug 2024 07:43:58 -0700 (PDT)
 From: Christian Loehle <christian.loehle@arm.com>
 To: linux-pm@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -43,10 +44,12 @@ Cc: vincent.guittot@linaro.org,
 	juri.lelli@redhat.com,
 	dietmar.eggemann@arm.com,
 	Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH 0/4] sched/deadline: nanoseconds clarifications
-Date: Tue, 13 Aug 2024 15:43:44 +0100
-Message-Id: <20240813144348.1180344-1-christian.loehle@arm.com>
+Subject: [PATCH 1/4] sched/deadline: Convert schedtool example to chrt
+Date: Tue, 13 Aug 2024 15:43:45 +0100
+Message-Id: <20240813144348.1180344-2-christian.loehle@arm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240813144348.1180344-1-christian.loehle@arm.com>
+References: <20240813144348.1180344-1-christian.loehle@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,28 +58,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A couple of clarifications about the time units for the deadline
-parameters uncovered in the discussion around
-https://lore.kernel.org/lkml/3c726cf5-0c94-4cc6-aff0-a453d840d452@arm.com/
+chrt has SCHED_DEADLINE support so convert the example instead of
+relying on a schedtool fork. While at it fix the wrong mentioning
+of microseconds, it was nanoseconds for both schedtool and chrt.
 
-While at it I changed the documentation example to chrt instead
-of the schedtool fork.
-
-No functional changes.
-
-Christian Loehle (4):
-  sched/deadline: Convert schedtool example to chrt
-  sched/deadline: Clarify nanoseconds in uapi
-  cpufreq/cppc: Use NSEC_PER_MSEC for deadline task
-  sched/cpufreq: Use NSEC_PER_MSEC for deadline task
-
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
  Documentation/scheduler/sched-deadline.rst | 14 ++++++--------
- drivers/cpufreq/cppc_cpufreq.c             |  6 +++---
- include/uapi/linux/sched/types.h           |  6 +++---
- kernel/sched/cpufreq_schedutil.c           |  6 +++---
- 4 files changed, 15 insertions(+), 17 deletions(-)
+ 1 file changed, 6 insertions(+), 8 deletions(-)
 
---
+diff --git a/Documentation/scheduler/sched-deadline.rst b/Documentation/scheduler/sched-deadline.rst
+index 9fe4846079bb..22838ed8e13a 100644
+--- a/Documentation/scheduler/sched-deadline.rst
++++ b/Documentation/scheduler/sched-deadline.rst
+@@ -749,21 +749,19 @@ Appendix A. Test suite
+  of the command line options. Please refer to rt-app documentation for more
+  details (`<rt-app-sources>/doc/*.json`).
+ 
+- The second testing application is a modification of schedtool, called
+- schedtool-dl, which can be used to setup SCHED_DEADLINE parameters for a
+- certain pid/application. schedtool-dl is available at:
+- https://github.com/scheduler-tools/schedtool-dl.git.
++ The second testing application is done using chrt which has support
++ for SCHED_DEADLINE.
+ 
+  The usage is straightforward::
+ 
+-  # schedtool -E -t 10000000:100000000 -e ./my_cpuhog_app
++  # chrt -d -T 10000000 -D 100000000 0 ./my_cpuhog_app
+ 
+  With this, my_cpuhog_app is put to run inside a SCHED_DEADLINE reservation
+- of 10ms every 100ms (note that parameters are expressed in microseconds).
+- You can also use schedtool to create a reservation for an already running
++ of 10ms every 100ms (note that parameters are expressed in nanoseconds).
++ You can also use chrt to create a reservation for an already running
+  application, given that you know its pid::
+ 
+-  # schedtool -E -t 10000000:100000000 my_app_pid
++  # chrt -d -T 10000000 -D 100000000 -p 0 my_app_pid
+ 
+ Appendix B. Minimal main()
+ ==========================
+-- 
 2.34.1
 
 
