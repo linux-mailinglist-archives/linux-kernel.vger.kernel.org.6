@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-284521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3E99501E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:02:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE709501E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E06FB263BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:02:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B995B1F229BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455091898EB;
-	Tue, 13 Aug 2024 10:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6513BADF;
+	Tue, 13 Aug 2024 10:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vNjUHDcR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pbsfun8d"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F1719470;
-	Tue, 13 Aug 2024 10:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863C017E47A;
+	Tue, 13 Aug 2024 10:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723543333; cv=none; b=KBtFdwkukhZjgxvGb/zI8OrkmKwufptDe3hfZQERef7Ko8nH9JesIsviumVmTUyP7HoHlWKLBQfof8vpKmuzt9b5dyraG9dsu84LmOVejcxA5UBifBIbnyxzfZpDyOpOz3f/ApMncd4Kmpfzwqj6zmTO5HgjnIINWwkQOUiNNcw=
+	t=1723543372; cv=none; b=PQM2yocma05Dy4Jf+EuNeL1Pbsd91qaohnRUIybHUF8LR+Nmsqz0AeQ6FDpUS9Zupl5ys8MlyMdRo06K7yt9YX6Xc2BJXIOa/RsZh+w+Y0eW2aAkRYFAPbyZydqP6tUJgmcfAfH3EDmkWc3W54PCQUjbbQ+jHTks3leSSWRWh0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723543333; c=relaxed/simple;
-	bh=IU1Z4vn1Z/iiP1G5lnUOBiTmixbk/K1Wx2h8/jjbGFI=;
+	s=arc-20240116; t=1723543372; c=relaxed/simple;
+	bh=geIIrqrStzuHUWz2L3K9X9+pe17jHJrBlOvnhjq4Og0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QQBFSsNAUHydf0SX/i9/HppoF51FEt8LGx9LjzPC2S95eInt5sGG6x+JlWE+9veZbjdlJjtnJS0SeSMiWxK2nt9KnpsFdXArdPnkk7qFDpnWQ8QHZlUyJVV2i2/oOL4WMpLtua/I1QYUDchy9B5ZEzRz44Cqy+jMUhVvAE5d/K0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vNjUHDcR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D898C4AF09;
-	Tue, 13 Aug 2024 10:02:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Ii7vn6dW+tg/XDmYyxmQknOr3STnSQvmQ2SeWwBlcX02bzumDAVG1VWrnpTNTwvLTArGZ6QmfWU/FqNJwKH+JtG58mXBlOQz53ok7PvY4rm9TGznp92TD6THo0cbjAW0xmGZYy9+LRdb42OE9nWyPSIdi2K8pAxqmm2tFN3LMlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pbsfun8d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E42C4AF0B;
+	Tue, 13 Aug 2024 10:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723543333;
-	bh=IU1Z4vn1Z/iiP1G5lnUOBiTmixbk/K1Wx2h8/jjbGFI=;
+	s=k20201202; t=1723543372;
+	bh=geIIrqrStzuHUWz2L3K9X9+pe17jHJrBlOvnhjq4Og0=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vNjUHDcREr66M2w7tmSrq0RvLWKpNzLNwMKWylBEzOuNT1ODIeF7sUBlsduo6txHN
-	 oW4Yw6bUTj6ySCwEQnj8pZYYElLOkWuH/TPseBMa3sZMk+i0XuCyxafHrppypNUvkO
-	 I9Vf8nKOeRTwZnn+TZK7QfUeIKnMONSF522IpdC8w3UKUqV3L+3lWmYlYmpAg2v+vR
-	 GdFEfKyS7Is/Aj2mgkJYVCV4E5n9JTMDY5xuupYG3r1ORzlxyy1/wQK/M0WJlj/PJI
-	 Tu7JQQOoCG1NtRDDyaQJmHfXjirHCjxKwdkTUJ42dje+xd/PocULV1/UD/D/LOAi8l
-	 eBblvsmS0Or0Q==
-Message-ID: <51ae6e70-5f16-4bae-8cc9-97caa1430f98@kernel.org>
-Date: Tue, 13 Aug 2024 12:02:06 +0200
+	b=Pbsfun8dib/nEBFuuCTPB9TWjPY2M6eqPzLtYBxYYXqj5iVW0XQcz9aJVTPeg/k1z
+	 k/ONrQYxfkRQoo+DmS3aneBhWYoATAQx3vArp2XudKwIO4xEKO2Y5Q7CzjQdDvtvrz
+	 NNEJ9Gx1p0o0Ej1qoliTbFsLII2zpjVqBFiX3Khq3v+kC5YAht+BwCN16fqaIavcpx
+	 XLk8rg+QjmGpXeKDq4eA1LV22iUl3GnUYI+1BP9QuRbj5ghth4OO2lOdfOknqEktsJ
+	 WDWlCvhXUgO0xlNnj8PxCp6j2CeRZPbzHuAJGkcqf5EP0S2ll2LxmFC5ucpgS7JU/H
+	 mJH8fNNMB5eKg==
+Message-ID: <21591cf8-5695-4085-a4e7-e84618503278@kernel.org>
+Date: Tue, 13 Aug 2024 12:02:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/17] arm64: dts: imx8mm-venice: rename rs485_en as
- rs485-en-hog
+Subject: Re: [PATCH 08/17] arm64: dts: fsl-ls1046a-qds: rename mdio-mux-emi to
+ mdio-mux-emi@54
 To: Frank Li <Frank.Li@nxp.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
@@ -63,7 +63,7 @@ Cc: devicetree@vger.kernel.org, imx@lists.linux.dev,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  linux@ew.tq-group.com
 References: <20240813-imx_warning-v1-0-3494426aea09@nxp.com>
- <20240813-imx_warning-v1-4-3494426aea09@nxp.com>
+ <20240813-imx_warning-v1-8-3494426aea09@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,38 +109,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240813-imx_warning-v1-4-3494426aea09@nxp.com>
+In-Reply-To: <20240813-imx_warning-v1-8-3494426aea09@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 13/08/2024 06:34, Frank Li wrote:
-> Rename gpio rs485_en as rs485-en-hog to fix below warning:
-> arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtb:
->   gpio@30230000: 'rs485_en' does not match any of the regexes: '^(hog-[0-9]+|.+-hog(-[0-9]+)?)$', 'pinctrl-[0-9]+'
+On 13/08/2024 06:35, Frank Li wrote:
+> mdio-mux-emi have reg property. Rename it as mdio-mux-emi@54.
+
+That's correct name.
 > 
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso | 2 +-
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs422.dtso     | 4 ++--
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs485.dtso     | 4 ++--
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs232-rts.dtso | 2 +-
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs422.dtso     | 4 ++--
->  arch/arm64/boot/dts/freescale/imx8mm-venice-gw73xx-0x-rs485.dtso     | 4 ++--
->  6 files changed, 10 insertions(+), 10 deletions(-)
+>  arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso
-> index 47d3c0c49e8a0..bb2056746f8c9 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-venice-gw72xx-0x-rs232-rts.dtso
-> @@ -16,7 +16,7 @@
->  /plugin/;
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> index 25eb1d5a69381..5c504ff47f2ca 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a-qds.dts
+> @@ -237,7 +237,7 @@ &fpga {
+>  	#address-cells = <1>;
+>  	#size-cells = <1>;
 >  
->  &gpio4 {
-> -	rs485_en {
-> +	rs485-en-hog {
+> -	mdio-mux-emi1 {
+> +	mdio-mux-emi1@54 {
 
-These are simple node renames. Squash them all, not one board by one.
+and that's not correct.
 
+>  		compatible = "mdio-mux-mmioreg", "mdio-mux";
+>  		mdio-parent-bus = <&mdio0>;
+>  		#address-cells = <1>;
+> 
 
 Best regards,
 Krzysztof
