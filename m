@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-285152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA5B59509E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:11:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A998B9509E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 183F91C22684
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:11:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17011C2259F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C2D1A0AE6;
-	Tue, 13 Aug 2024 16:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7276E1A0AF3;
+	Tue, 13 Aug 2024 16:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NexbOm3/"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X5Pyu/5D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3D41A0709;
-	Tue, 13 Aug 2024 16:10:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAA11A0709;
+	Tue, 13 Aug 2024 16:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723565455; cv=none; b=CpNjcaT4ZywP0aeZ0hNwMMlKCmUpB9HSeoyS02xamhjwgnk47uCZIfG0HndF2M4wgCGpujenw8MW5Lw8QsQQNBjgx872a/ZiFTobccfEXDuyNvglTwgtGUp0AzLplPNQBb9/QiX87YClYC3XDoHDKH+/b90op+LpQl8rLBGDWxg=
+	t=1723565530; cv=none; b=kxlX8jh2JUdZHcPOT2vZ2pBuyP7KOvpZASFTq6Kng/rzZ/UDhOqa3zwwJV48iAk2Ju9uNx41q2KOqgudqCBrtWZeimlK+/J5X34Yv1A8e0k/g6hvm2X2Afw4KmEPWaCOs4GKh7jZJ9zvqA9vsuTHRfLJiYHZMykRYe55HAOovCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723565455; c=relaxed/simple;
-	bh=v7ndlf8rGJH2AMQnD6DjRDLEm+mmv6/JnXt+FpXGG30=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Z1rI/7UWU/DOkMcml4QIc4GtoQModaBPqpD95CPiZ73m9bZGtQxyDiz4Zp9vUaAccU7F+urbZhJZ3rsMBi/+fpoJw/YT8aEe8ZZNhCIwBXxAeWrRpXOGSvnXBXUCrR8YdsqRdx7g1AwezoNE/W0hCAFGKaiT752Qc4aEcI72gfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NexbOm3/; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3db2315d7ceso3345948b6e.1;
-        Tue, 13 Aug 2024 09:10:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723565453; x=1724170253; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F1ItDKknhypftn5aMxxhUDKlZ20vPD5JiPeIzkuMvB0=;
-        b=NexbOm3/nR9BNJPalId7hL7ZFIpKS1jcSYCeJfC3Vx+IIV+jJFGi7h8wQu1RtNK9v1
-         c9TVD9fYRvE1xQALZiritZ4z8NS5n6uQHpoBkm/y9ArfKjasvv+6ISyyDuaQewP3Yv/P
-         43o64fgDWySmVh07ORGpRKv8gd+WRTA/4IixcwsZulD9a3TUU66ELLy3Yxp+CGv7CaJC
-         5IZoECrV6F/LcugFC2BAFNN9y+TWO3SJqvidESNLSEYmHOMoTL7cpRP8HwKjVBAxtEDr
-         S6XAV9X/vT8hZXY9cqzWw7A2pKD8XRBtQZXd5siX+IgahoGxafJLYtmBVAnmj8TdWmOx
-         BvfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723565453; x=1724170253;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F1ItDKknhypftn5aMxxhUDKlZ20vPD5JiPeIzkuMvB0=;
-        b=U1YYIxMj/gGaE86XCSpj+AjPNT4S0fa6EHInFI9VSxkF8Ff/dUDFXDWwtQDkBZjTNy
-         afRcFp2moWdzGcYmA8S4hMnvf8J1+qXjgSBCXo/ZlieyY/3Pe4axkcMn6IhQKkz/l3tK
-         iJ/m6mWx/PPi5wa6SXkh5v1lUnxNfQSKDipI+fxLCCJBD4v6x5YFX2hY6za/UzTQtJ3Y
-         1wkMuRdgDhWJeBA3XnKJclm2kne4tls3KeBjpCOHBZ8if4qYntz6WRcqr9V81TGh7Qx3
-         ibmVK7iml2GCWR5Wvpq12qEHin2kblg3hfR5o2i1PTgnz5CjzA6Gi7iBqZ3trVj20Quk
-         MRdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl2SYpyB7rd7BAp9zREa5Z61iLAGPMKacnFj+5TB0qeyYwmB8FLksC1pFj24MAhpAG5TH3zu3rsafDaxMwHDqmJI8MLumUXoYO3zQl
-X-Gm-Message-State: AOJu0YxaSCYqtbDNWMPv4H3tbFDf643dCwLjHtvxITGEYw+PG5Pqq/kU
-	MYHlVJshgaw3ZykiEOw2fMR1GM8+Pkaqw+13DMgP9lKlX9SsX72BKcLyjGky
-X-Google-Smtp-Source: AGHT+IE6h64K92eu87EKVNu/gVKkMsME55kMAwBdkjr/XSCYVrUyORzK94QcURJR3i67akT23qyV/Q==
-X-Received: by 2002:a05:6808:16ac:b0:3db:15ed:2a21 with SMTP id 5614622812f47-3dd1ee075c7mr4761864b6e.16.1723565452797;
-        Tue, 13 Aug 2024 09:10:52 -0700 (PDT)
-Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f91f2b9179sm969978e0c.5.2024.08.13.09.10.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 09:10:52 -0700 (PDT)
-From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-To: linux-sound@vger.kernel.org,
+	s=arc-20240116; t=1723565530; c=relaxed/simple;
+	bh=OT1jMBEIYbcJ4ISbVWZe5XVYi/0pcQuZSkg7Dpj36hI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bN+EJOYAmYXZZnDk6J0sDHo+GMshluefzP6gO6ywDzudT3i+TgQUJIF1te0a48NgGxgkpejC4quR4GNG1487cBLrx6YwdqLzDzsPDCJ28ReaVeOhsRAqVS2IhhxjrqkkCAFOX5k7ChGPVYsDWYq3dDND9LclUN0YWZyanJkx7eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X5Pyu/5D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A30FC4AF0B;
+	Tue, 13 Aug 2024 16:12:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1723565530;
+	bh=OT1jMBEIYbcJ4ISbVWZe5XVYi/0pcQuZSkg7Dpj36hI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X5Pyu/5DS3i3+P352b3/TudoHJl3Gy9i0L9Wv5WPSmRm5mgoalV6H82adKYic3G0N
+	 orrvGmbqA8NRVWsFOQ/4hoUFHQx7oGvJRTJ8NrvVsJBrt/7n/oGV5csJmhgZwX9vuy
+	 5dBd0MJkVqMENHar9HP3/WNldyU+oaJ6gQ/jJkvg=
+Date: Tue, 13 Aug 2024 18:12:07 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Chris Wulff <crwulff@gmail.com>
+Cc: linux-usb@vger.kernel.org, Lee Jones <lee@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Perr Zhang <perr@usb7.net>, Pavel Hofman <pavel.hofman@ivitera.com>,
 	linux-kernel@vger.kernel.org
-Cc: tiwai@suse.com,
-	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-Subject: [PATCH v3] ALSA: usb-audio: Support Yamaha P-125 quirk entry
-Date: Tue, 13 Aug 2024 11:10:53 -0500
-Message-ID: <20240813161053.70256-1-soyjuanarbol@gmail.com>
-X-Mailer: git-send-email 2.46.0
+Subject: Re: [PATCH v3] usb: gadget: f_uac1: Change volume name and remove
+ alt names
+Message-ID: <2024081348-muskiness-fountain-7e75@gregkh>
+References: <20240804002912.3293177-2-crwulff@gmail.com>
+ <2024081335-wrist-earpiece-a738@gregkh>
+ <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
 
-This patch adds a USB quirk for the Yamaha P-125 digital piano.
+On Tue, Aug 13, 2024 at 08:56:26AM -0400, Chris Wulff wrote:
+> On Tue, Aug 13, 2024 at 4:34 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Sat, Aug 03, 2024 at 08:29:13PM -0400, crwulff@gmail.com wrote:
+> > > From: Chris Wulff <crwulff@gmail.com>
+> > >
+> > > This changes the UAPI to align with disussion of alt settings work.
+> > >
+> > > fu_name is renamed to fu_vol_name, and alt settings mode names
+> > > are removed for now in favor of future work where they will be
+> > > settable in subdirectories for each alt mode.
+> > >
+> > > discussion thread for api changes for alt mode settings:
+> > > https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@ivitera.com/T/
+> >
+> > What is now going to break due to this change?  What userspace tools use
+> > the old names that need to be changed?
+> >
+> > Are you _SURE_ that you can rename external files like this and
+> > everything will keep on working?
+> 
+> Nothing is using them, since they were just introduced. I wanted to get
+> the API changed before they make it to mainline and somebody starts
+> using them.
+> 
+> You just applied the patch that introduced them into usb-next on 7/31/2024,
+> just after v6.11-rc1 so they haven't yet made it to the mainline kernel.
+> 
+> This is the patch that introduces them:
+> 
+> https://lore.kernel.org/all/CO1PR17MB541911B0C80D21E4B575E48CE1112@CO1PR17MB5419.namprd17.prod.outlook.com/
 
-Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
----
-Hey! Thanks for taking the time to review my patch.
+Ah, thanks, I totally forgot that.  Remember, I deal with about 1000+
+patches a week...
 
-I had a little mistake in V2, I forgot to stage my new diff for
-amending. Sorry
+thanks,
 
-Attending your sorting by id suggestion, I've moved the P-125 to the
-bottom.
-
-Regards,
--Juan
----
- sound/usb/quirks-table.h | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index f13a8d63a019..aaa6a515d0f8 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -273,6 +273,7 @@ YAMAHA_DEVICE(0x105a, NULL),
- YAMAHA_DEVICE(0x105b, NULL),
- YAMAHA_DEVICE(0x105c, NULL),
- YAMAHA_DEVICE(0x105d, NULL),
-+YAMAHA_DEVICE(0x1718, "P-125"),
- {
- 	USB_DEVICE(0x0499, 0x1503),
- 	.driver_info = (unsigned long) & (const struct snd_usb_audio_quirk) {
--- 
-2.46.0
-
+greg k-h
 
