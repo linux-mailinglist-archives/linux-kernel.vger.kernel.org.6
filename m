@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-284582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8BB29502C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF6A9502CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697D31F236D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDB51286DB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D119E199EA5;
-	Tue, 13 Aug 2024 10:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M7oeg30Q"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889B619A2A2;
+	Tue, 13 Aug 2024 10:46:22 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A649E19412F;
-	Tue, 13 Aug 2024 10:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5511B368;
+	Tue, 13 Aug 2024 10:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723545956; cv=none; b=mdH134eUMRojZHGjh2O3WwTuqtE9hX4DE8/vIlcavScaF2aahtJHI0fJcgeS+sG4lXB5yacmbB+35l+V1npibFgaqLyQMSQOkkcvJ/2rDVMzD86NARagjJfxIcMnKIDk7LUBInwds05a7IrjIt1d+yONgpsm8gkhKJofnYK3Eng=
+	t=1723545982; cv=none; b=CKIp5NFMv2p/L4Q7us/P4mi6NF9llm9QxNq39eSug9t8y6i0AUCHTcVKoU4dKjalX5Y1PA1e13SD/njFCobRl8cTOpekJR+3cLdYyeNMQzySqGbGulcdn6VJkBn54a/KbSHlqZp34coIeMlRQkoCBRz0ITe92v6+EoU9O2hw0PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723545956; c=relaxed/simple;
-	bh=v81MhE6xDXgDZOFXo+ZC17F/It7tvKtBSbnCvwss14Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PEwLCmapSYZw9KoAhamo1h6MKvxD6rkEG01MSF7KBUfwY1KBd9o7TsbyYEEle2ZQYsp5xb5XQJL30PEIviadXbEUR/pXt6PfdykaLtXnvxjAnQU7R5MLhPzj0q9h8EV8Q1ibvxLKjxBBZeXqE8jiTP8aLlASt4UZkTWPEJlclj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M7oeg30Q; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723545954; x=1755081954;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=v81MhE6xDXgDZOFXo+ZC17F/It7tvKtBSbnCvwss14Y=;
-  b=M7oeg30QnaExdZm9e67V5ihPXT3g56xFrcs9FNjH3Fp3a7sh/5MY3J1O
-   uXlTARuxkLArUVDIVqP+191HS5oKmfpoOEAZzWFb1qyagoIzZnIgw0sKW
-   un94584DuqGmUICKbHNoYvcwfK5Yr33h9MeILHwQqa6mJ2qDUiUSn0ghu
-   Brdi/NnuHhS108FWvwrxuJ3pm6AotRWg7S7YysX0V2X2/FTty0IF5HFH+
-   FgHQRtPUBUfYWTuUnyc5FnSnaKDC561mxX7wa9uS7OL1bUcjzGmygKDCc
-   wNIETn+AP1xrfX/7cs2Tj894LRozlGEf4PbrGRtFB4EJLk6wD9VWMttwd
-   g==;
-X-CSE-ConnectionGUID: JleBrvYgTYi2n4GLcBdsxA==
-X-CSE-MsgGUID: 4I5f5SLOT96bgsaKw8s+Dw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39148404"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="39148404"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 03:45:54 -0700
-X-CSE-ConnectionGUID: vMHT6o2AS5SnzpzhOdOgKg==
-X-CSE-MsgGUID: /nl3434FS8Wc/mvNuYIfAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="62786989"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.153])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 03:45:51 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	Shuah Khan <shuah@kernel.org>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	linux-kselftest@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>,
-	Fenghua Yu <fenghua.yu@intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [RFC PATCH 3/3] kselftest: Provide __cpuid_count() stub on non-x86 archs
-Date: Tue, 13 Aug 2024 13:45:15 +0300
-Message-Id: <20240813104515.19152-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com>
-References: <20240813104515.19152-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1723545982; c=relaxed/simple;
+	bh=/fjXahSEjF9ZhlV6L3LaHMKecBdvEBPMXHpQdm2U2cA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBZrMCnh7CNooZotXuirRUPF53+EkwDJOnIaAdlvGTpiPOQNMfn+9MmSat3+i73TOFfKadjvz3d9Jq5IeG0hcrAheHl9S4ozDULuM66T36z5JeJy86IKCBuHM1n7wP4VDcjcWV6nGtw8txJLxIDkR/8ikUb/B45UXb+1OBAAJm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso581346266b.0;
+        Tue, 13 Aug 2024 03:46:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723545979; x=1724150779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EaRqNknoiXIxBgYUXTCTJlYjmV6mokfwA1oMnDDM/HA=;
+        b=niYtyPj+sTHt88R2K9tau2cy3xqKNsFZLanL+LRDknhe9iBU8i1Ew2HGaw9AOGieIW
+         dDApjyObDOmCeuoFwQOTFttjYDcqrSZ1v2OeKEzmZk6DkO6OtDkTDHFmPF4RmO7C9eJa
+         HIRa4BbIIPQsJypsYCDN0Ezq2ZBK/RrakROqYP8qVxHCXOan3gd1DbecwH92BxylWulo
+         6TfhO1RJ2/Py3Zih5gkT9VP33STKJuSBx2/wkNGBA752Tr+ldb6f0G3aXipwG4tWv5bi
+         AbOpXLv21+RcxxpjNRRXxjIjfFDFl8bHQwH8jkDgjq7NSHAk3kElhTSrOIRv8Zf8oiHv
+         Q4+g==
+X-Forwarded-Encrypted: i=1; AJvYcCXvp63pjBKRUAv1Lkb/DbLSMZzVO7kd5EMThqT6wNrARXE6So1kmNK03SNhlUgRkc00FrhY7roKkN995WjAQxokVTJOk/eTPSefBDRwcyFuth6/m454GLERtKfMXuCI0GUZBSFBQLBBnJf/ejPTP//Ri3Bd9ea28zU34WayL3fIreuikVAr
+X-Gm-Message-State: AOJu0YzmHSWgHWbF5d8aezfgnENdNJ6DZoET71tdeJ8nAp6Hhnv0dcFe
+	dUf7f/nr6INF85keMup9z0UcPCL5WKkZSlFyMqcd6cnEWFMKwqJ7vTlKfQ==
+X-Google-Smtp-Source: AGHT+IHDTiyEw8hKE9wVP2vCQm1qA4pO92wamZ6Y1mgtvqkgOHxFimnP6vee5n3w6zJbOY3sUnEVUQ==
+X-Received: by 2002:a17:906:db03:b0:a7a:a7b8:adb1 with SMTP id a640c23a62f3a-a80ed258a71mr203720766b.36.1723545978473;
+        Tue, 13 Aug 2024 03:46:18 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f47b4asm59489166b.36.2024.08.13.03.46.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 03:46:17 -0700 (PDT)
+Date: Tue, 13 Aug 2024 03:46:15 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] net: netconsole: Constify struct
+ config_item_type
+Message-ID: <Zrs5dyMWT5u8qXNV@gmail.com>
+References: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9c205b2b4bdb09fc9e9d2cb2f2936ec053da1b1b.1723325900.git.christophe.jaillet@wanadoo.fr>
 
-Building resctrl selftest fails on ARM because it uses __cpuid_count()
-that fails the build with error:
+Hello Christophe,
 
-  CC       resctrl_tests
-In file included from resctrl.h:24,
-                 from cat_test.c:11:
-In function 'arch_supports_noncont_cat',
-    inlined from 'noncont_cat_run_test' at cat_test.c:323:6:
-../kselftest.h:74:9: error: impossible constraint in 'asm'
-   74 |         __asm__ __volatile__ ("cpuid\n\t"
-       \
-      |         ^~~~~~~
-cat_test.c:301:17: note: in expansion of macro '__cpuid_count'
-  301 |                 __cpuid_count(0x10, 1, eax, ebx, ecx, edx);
-      |                 ^~~~~~~~~~~~~
-../kselftest.h:74:9: error: impossible constraint in 'asm'
-   74 |         __asm__ __volatile__ ("cpuid\n\t"
-       \
-      |         ^~~~~~~
-cat_test.c:303:17: note: in expansion of macro '__cpuid_count'
-  303 |                 __cpuid_count(0x10, 2, eax, ebx, ecx, edx);
-      |                 ^~~~~~~~~~~~~
+On Sat, Aug 10, 2024 at 11:39:04PM +0200, Christophe JAILLET wrote:
+> 'struct config_item_type' is not modified in this driver.
+> 
+> This structure is only used with config_group_init_type_name() which takes
+> a const struct config_item_type* as a 3rd argument.
+> 
+> This also makes things consistent with 'netconsole_target_type' witch is
+> already const.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>   33007	   3952	   1312	  38271	   957f	drivers/net/netconsole.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>   33071	   3888	   1312	  38271	   957f	drivers/net/netconsole.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-The resctrl selftest would run that code only on Intel CPUs but
-as is, the code cannot be build at all.
+Reviewed-by: Breno Leitao <leitao@debian.org>
 
-Provide an empty stub for __cpuid_count() if it is not supported
-to allow build to succeed.
+> Compile tested-only.
 
-Reported-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- tools/testing/selftests/kselftest.h | 6 ++++++
- tools/testing/selftests/lib.mk      | 4 ++++
- 2 files changed, 10 insertions(+)
+I've tested it using a selftime I am creating, and it is all good.
 
-diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
-index b8967b6e29d5..71593add1b39 100644
---- a/tools/testing/selftests/kselftest.h
-+++ b/tools/testing/selftests/kselftest.h
-@@ -70,10 +70,16 @@
-  * have __cpuid_count().
-  */
- #ifndef __cpuid_count
-+#ifdef HAVE_CPUID
- #define __cpuid_count(level, count, a, b, c, d)				\
- 	__asm__ __volatile__ ("cpuid\n\t"				\
- 			      : "=a" (a), "=b" (b), "=c" (c), "=d" (d)	\
- 			      : "0" (level), "2" (count))
-+#else
-+#define __cpuid_count(level, count, a, b, c, d)	do {			\
-+	(void)a; (void)b; (void)c; (void)d;				\
-+} while (0)
-+#endif
- #endif
- 
- /* define kselftest exit codes */
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index d6edcfcb5be8..236db9b24037 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -199,6 +199,10 @@ clean: $(if $(TEST_GEN_MODS_DIR),clean_mods_dir)
- # Build with _GNU_SOURCE by default
- CFLAGS += -D_GNU_SOURCE=
- 
-+ifeq ($(ARCH),$(filter $(ARCH),x86 x86_64))
-+CFLAGS += -DHAVE_CPUID=
-+endif
-+
- # Enables to extend CFLAGS and LDFLAGS from command line, e.g.
- # make USERCFLAGS=-Werror USERLDFLAGS=-static
- CFLAGS += $(USERCFLAGS)
--- 
-2.39.2
-
+Thanks for the patch!
+--breno
 
