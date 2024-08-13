@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-284840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90C29505B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:57:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C2779505BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE311C20C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:57:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283FB1F261CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3E619D07B;
-	Tue, 13 Aug 2024 12:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDCD19B5BB;
+	Tue, 13 Aug 2024 12:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeuruCEO"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fLPXPxtq"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE35B19B3D8;
-	Tue, 13 Aug 2024 12:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF56319ADA8
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553801; cv=none; b=Wz/+nkleBXRyAABdxoBQDUje+PJiWdlE/hX9z/sm3UXjxxX6gN3BBHQzdCe46IxQxXH92GKuIImsFvrH2KKBJP8YS5VFJ4HM2DpGORg05GZ1JwVL0BR+50EBpNfHbFIUNmSZ8dGr/4phimwtMA2uDxhyiNh+kDT90la8c+d3lAM=
+	t=1723553827; cv=none; b=IQnUga1tcpUU/HRoIbjPRJa5UX5zQAQNqEBsM45t/aYjIxRTDKGGSNbbEpg+YgVjdCL872O6vmWves6FKe4ejx6Gkq9Co6+JT+Ho605JpjLlMBuP8cv+iHH9g4Um8GccWxcjCU7R70NpxLw3ZTLm4mz7utNdVW79N6Qvyr5ekMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553801; c=relaxed/simple;
-	bh=whbRnYju75UWipX2ZGr+GH/9h9Pj/Z1GL6BBF28Y3jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VMHkwAfc/LRGGAr65HFTmebrcizzxJ1lkXUdaYFLUk0oBH87kUdCd1axMmop/U8U/E8zJdKTBqoOcuT/RAjmtKUuXVemJlUE5k9Fn2jf5lxbFUEOjtgOR5ugCpvf8tx1Uaxuy9dtwW1GQRPMElPmT4x5Vy3Ehxy071oROeSVjG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SeuruCEO; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-367990aaef3so3095370f8f.0;
-        Tue, 13 Aug 2024 05:56:39 -0700 (PDT)
+	s=arc-20240116; t=1723553827; c=relaxed/simple;
+	bh=/IucKzJr1pjGm8UzlqVDbC6DYKSJ1VXL16illXAKyr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BPUOarynrYJ05KecPDUVOmbrWxVfKqRZoAnWhLN5Dc66DHitnteTytNEEiwN8/sCLhjxj/F9SdYHCWVmkRbITHSrG2CXzj/grKNXrWAlz653UHdZm1QfzZ4Rj6b+Du9U9aaStl19ho7Y6sxj/hRH+W6yDlf5kcZcHgPdWF32Bdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fLPXPxtq; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f025b94e07so64404671fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:57:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723553798; x=1724158598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N0tUAb7xzL2y2cfaINDDXHjm40ddk5vPxuhg5vBeQr8=;
-        b=SeuruCEONfA3aceGqvP8mGldFdh35xtCL9zyE852L/Vlwfl6oZy+v1w5Myezl1n9Sr
-         kTY4szp7Xmhv+d67M1VSKTmDadf3MaoNs2fl6E4skQfmqlmAMmzGZPs+/pI+p1b+RnRs
-         OshF7iEBYc2B0nQR8KnOYuhcTFDccZ3URETgkfDygTRd0iqxMeW6N9FRc4EQuTNZwnBk
-         3ZueRK92Ffb+KvsSb+DZXDet5bgWNMwKZ6Xsca37N72nV276V9vexGdK1VMDT66xRnwT
-         2S5l93o5kw1SU0yUKV7gKCc38T05FWjvTmVLKw6ZDLd3fEfzNjWuwlwPVcMZCXuMGETj
-         4Iow==
+        d=linaro.org; s=google; t=1723553824; x=1724158624; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hfkyu+ccADY0k0FfxuRa1b4o2Bw2fvhvcVBZ4pCO39I=;
+        b=fLPXPxtqnUU3Dudw0K3vp8Kfht6m2bvl6vGRbd+T7Yq4Gq2HNvKK/qnD+KUFMKLkyj
+         1G4sS4uv1TO0Xm41aQctmBPWMDd7LAwzs56qTg6Jam1jVpdrHT1hIB7pKrh7SS270mR8
+         Du6jw5Ukdk5K2kadfUD4fdDIjSucACHAZBMxSFPlyANYwY+9f9C0wNOs8+FMBG4JxICa
+         uH/kucUPE/KtnIiLkE13BzzhL9qF2HF3lcz1WVLMUPKoZlXHl9XZbP0wo22jpuqVAurR
+         vCRVPmIDfwRjhZ2wU5N8ddW0mivWNA46hwywsjA6y2teQCUecdlHJvw3MyuplAhfjqB0
+         4XMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723553798; x=1724158598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N0tUAb7xzL2y2cfaINDDXHjm40ddk5vPxuhg5vBeQr8=;
-        b=Sfcvqj//od0Td6Wx54mTxF7WlG+vgvT0pCxgRcQ3xe8X5wQOGjAMS4QMB0ivEr33iz
-         Y9tAzs78LQ1hqQkDnKJYX1HLqjH4HBiOJ63D0WH/I4Sr/B8esgeqWmfF8M2uXYj+sN+Y
-         Unumfc51M9GOuaCXdBlDL7F2tgNktSl0wQWFDJ0kFAXT1qO/8lSPqYH7sr/Ei4Wfj0ou
-         lENu2XsKIWNuexj5a18mbv6mNuhl/nanxHObCu1fEIeNR0jD2c0isNHb2npJ06Eq5esf
-         xWkwQ5rBPP0XJLourNjaD+tDLOVF86V9AHcqeU7aIJoCR30DO/LnlYsz+I6JD0G11KzC
-         b7IQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOIJFWjfl3waFsq51yBRj2GybUZ+n3XpNHoXjN1o4QEzqBCr6umEnF9++wpn6aAAIMm99G3VFXWvi6kGpZhGo3KIyAApGqBHcFqiGP
-X-Gm-Message-State: AOJu0YxNiHLAc2p2OJS+h0hahhKNsmlL+tZ1HQdGxUVIxxV80zuqMOJg
-	+EEEbjQ/IjkxWOhxKX6YDNIv/BikANn39hrMYKeC1c/XikHgdqF0z1UEl8voXku/pspztEZYyMu
-	w3idSRZjFsMqzqC3C6/I444ZGnII=
-X-Google-Smtp-Source: AGHT+IFo1+br8YX61HWh8cYSwERwzh+iP0J5n6X1I0605mKTFVkgDpdxxygsikzkjEZKdPfOlxzi7VeiAH5fyo8sLys=
-X-Received: by 2002:a5d:4882:0:b0:368:31c7:19d9 with SMTP id
- ffacd0b85a97d-3716cceba21mr2151749f8f.12.1723553797884; Tue, 13 Aug 2024
- 05:56:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1723553824; x=1724158624;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hfkyu+ccADY0k0FfxuRa1b4o2Bw2fvhvcVBZ4pCO39I=;
+        b=xF8fprHHnTE2NactFdqGZdH3PRsyNK2o3iEnHIwgeN2A3qgo3PZOE+oh2Rnp38ScMi
+         34gjmvkscFtb/wZtOQtJorBir9NMx6/MBtrVxrqHP33fyKwH18kUenfInV3UJIyh1Pj8
+         fUnc0qPh2ucTH6stElmnGAe7WJjkwm/B0nP6Q8z8KK2+zASuF9oc2JCjLSrwGUvfiuOj
+         6sXIQlVYp+RIveEF/rrwAHFGudqq764isJPcvstdYjv0/8Eo4mfn7DC9p+XIqSIRqTMg
+         TwURz9a3rHczRtdsTBf2bAO6rOxaPx8E10vrGjFuM2RM2hmQDFPAR9fu3aIjA5zakXFg
+         f0ww==
+X-Forwarded-Encrypted: i=1; AJvYcCVXPSD8mRcYhM/PSNAxynsWG5B/yz5PGfKi5Uy1QjUWd4YquiUUphVRBBT5rlCTAeQ0rrMvAGUa8TqT9Qh47gku0YHGudwYSG9JM9CY
+X-Gm-Message-State: AOJu0YwlNb1Uslft80A44jRzeRPi54NrTxtAhhLKF7h4/SpbNKGJxdGs
+	GWchxRcNeacJIjEWkN3TFE1ePviDryXaTMzfZo5XgFCev6LIItZcZpLmZoZrMBQ=
+X-Google-Smtp-Source: AGHT+IF8eG+A/qDyy+QvlE7p4WfVNrboSKHMAxVYe01bthgvvA+JzP9CUdv9MtoWOah02cUOZUIUwQ==
+X-Received: by 2002:a05:651c:b29:b0:2ef:2281:2158 with SMTP id 38308e7fff4ca-2f2b7132d7dmr27774751fa.1.1723553824007;
+        Tue, 13 Aug 2024 05:57:04 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f3f47b26sm68417366b.41.2024.08.13.05.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 05:57:03 -0700 (PDT)
+Date: Tue, 13 Aug 2024 15:56:59 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Krzysztof =?utf-8?Q?Ha=C5=82asa?= <khalasa@piap.pl>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 3/6] media: i2c: s5c73m3: Move clk_prepare to its own
+ function
+Message-ID: <5282172f-f8b4-4706-af30-f5bf9a2a3f8a@stanley.mountain>
+References: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
+ <20240813-smatch-clock-v1-3-664c84295b1c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240804002912.3293177-2-crwulff@gmail.com> <2024081335-wrist-earpiece-a738@gregkh>
-In-Reply-To: <2024081335-wrist-earpiece-a738@gregkh>
-From: Chris Wulff <crwulff@gmail.com>
-Date: Tue, 13 Aug 2024 08:56:26 -0400
-Message-ID: <CAB0kiB+ONUpx9Ozg9x836BEdCtSSm-J+jpy2BKoDgVF1CP9O9Q@mail.gmail.com>
-Subject: Re: [PATCH v3] usb: gadget: f_uac1: Change volume name and remove alt names
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, Lee Jones <lee@kernel.org>, 
-	Jeff Johnson <quic_jjohnson@quicinc.com>, Perr Zhang <perr@usb7.net>, 
-	Pavel Hofman <pavel.hofman@ivitera.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813-smatch-clock-v1-3-664c84295b1c@chromium.org>
 
-On Tue, Aug 13, 2024 at 4:34=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Sat, Aug 03, 2024 at 08:29:13PM -0400, crwulff@gmail.com wrote:
-> > From: Chris Wulff <crwulff@gmail.com>
-> >
-> > This changes the UAPI to align with disussion of alt settings work.
-> >
-> > fu_name is renamed to fu_vol_name, and alt settings mode names
-> > are removed for now in favor of future work where they will be
-> > settable in subdirectories for each alt mode.
-> >
-> > discussion thread for api changes for alt mode settings:
-> > https://lore.kernel.org/linux-usb/35be4668-58d3-894a-72cf-de1afaacae45@=
-ivitera.com/T/
->
-> What is now going to break due to this change?  What userspace tools use
-> the old names that need to be changed?
->
-> Are you _SURE_ that you can rename external files like this and
-> everything will keep on working?
+On Tue, Aug 13, 2024 at 12:13:50PM +0000, Ricardo Ribalda wrote:
+> Smatch is very confused by a clk_prepare_enable() being called in an
+> error-path. Fix this warning by moving the clk_prepare_enable() to its
+> own function.
+> 
+> drivers/media/i2c/s5c73m3/s5c73m3-core.c:1425 __s5c73m3_power_off() warn: 'state->clock' from clk_prepare_enable() not released on lines: 1425.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
 
-Nothing is using them, since they were just introduced. I wanted to get
-the API changed before they make it to mainline and somebody starts
-using them.
+To be honest, maybe I should remove the clk_prepare_enable/disable() from the
+check_unwind.c.  Or at least move them into their own check so that I can
+tweak this kind of thing more easily.
 
-You just applied the patch that introduced them into usb-next on 7/31/2024,
-just after v6.11-rc1 so they haven't yet made it to the mainline kernel.
+regards,
+dan carpenter
 
-This is the patch that introduces them:
-
-https://lore.kernel.org/all/CO1PR17MB541911B0C80D21E4B575E48CE1112@CO1PR17M=
-B5419.namprd17.prod.outlook.com/
-
->
-> thanks,
->
-> greg k-h
 
