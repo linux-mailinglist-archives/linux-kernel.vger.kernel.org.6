@@ -1,105 +1,114 @@
-Return-Path: <linux-kernel+bounces-285409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417F3950D12
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:22:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA613950D16
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:23:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C31EB214EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:22:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37924B25D74
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EB4D1A4F12;
-	Tue, 13 Aug 2024 19:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703F11A4F11;
+	Tue, 13 Aug 2024 19:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjT1yhEW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="f6rwTdig"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C681A254F;
-	Tue, 13 Aug 2024 19:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723576931; cv=none; b=V6B4Z8NxfnloqLGuZnNMPmkRM3xdPhtEc6IRi0LIwQqWlGLQkxfa+ZRrB70uK3RxomYL4Ob4+SVRtEIyLj7FM7x70S6aLmL9Bk1sdHVH33vHzhWpFCb2NqAilwj0jDheWZ4khytyKDcC/ynk61OtiKdfubfPnzA/XYPgQJy4fT0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723576931; c=relaxed/simple;
-	bh=lY0lhb7BmsOpLYdU0VWU9WKDBRrqBJFGFjFhgXBLCKE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=WFgCYpeJhyngSugGY5FnE95lcmVFncxVZRs2P1CRpcO6SBp2maoTnw5xmDQjVgaagkAHwzMJVmjfS2d7frOp0kKB930bsy1uXox6r4on2qkNLvkRgaGkTJhIEFZzI9TnuyVwdoSXSIAND04U2qiiRF1XCmnC8zaj7xI2ZCYaA5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjT1yhEW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13576C32782;
-	Tue, 13 Aug 2024 19:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723576930;
-	bh=lY0lhb7BmsOpLYdU0VWU9WKDBRrqBJFGFjFhgXBLCKE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=LjT1yhEWOHKC3GgbzCgJn8mQU4nqby5KyyHdpWeBpk9IjPPKsw9Q3yhsuqYSjcbXV
-	 g9kMh7aK2FQ5DgC+6adeOLvQhE6DK6ZT7mA0qxYEg+EM5/HCAIi/cQD9Yi/eoB6Tbj
-	 DcwcOIgTUypMsKq5HbU7rzXVrdeJlFAsH79d64xO/PNO41eQBirTyQDrN0N0TvGQGY
-	 xRxSC9ILb53lCQmfY8zdQjZ3zNqXea4uFk+FtwVTMuXIhx5Nynl2jxSlMmbyF2IFq/
-	 awD8N40SLh2BSAJuni2j2L9B0hdDDfa/Y7sAFQcaZ6VrHyK1KggEWftHE+Tl3pu+FE
-	 LgYX7zr1pSMbw==
-From: Mark Brown <broonie@kernel.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-spi@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Frank Li <Frank.Li@nxp.com>
-Cc: imx@lists.linux.dev
-In-Reply-To: <20240813154444.3886690-1-Frank.Li@nxp.com>
-References: <20240813154444.3886690-1-Frank.Li@nxp.com>
-Subject: Re: [PATCH v2 1/1] spi: dt-bindings: convert spi-sc18is602.txt to
- yaml format
-Message-Id: <172357692761.130711.16237572865002261472.b4-ty@kernel.org>
-Date: Tue, 13 Aug 2024 20:22:07 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FADF1A3BD3
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723577004; cv=pass; b=PGwUplA8Q/2i9APZWRdUnUNF7X8JaE+eA7uKG0wV+Pl2AnSV93NmDlEcg1vE0vNnvhRlYkQBIRMriS7gsnn5C9NMd11VC8MfyApDUPv+7a7/JR5HXYmQYklfLniro1ft9hg/AzhjmmKJufka0Xt/BhmTx5tK8K+v463y6wQj69o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723577004; c=relaxed/simple;
+	bh=jS3I1UzIJ44oquZnHYmJGFTN9KgQd26gGC230wQZ4ic=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:Subject:MIME-Version:
+	 Content-Type; b=SgaAjPCjT8zcqpBeE4i5PKdJ2ILUp1KNB/HaKshkEBsMjra+VPu0ZBbtsICT0NMDsyAqXxJMPgkILKbPyFRqosu6TuEtLq0XUP+7UtOR1hM/+5imfL9AKnV+nRgONxu+eJUqHzHg5lGn9lnq8XxjmLdENQT1uuqPjv2YW3rwxPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=f6rwTdig; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Delivered-To: kernel@collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1723576978; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=K96ngpZg7BwHSiatLdwuHB/e8EavEKBETgVRe5eWXEVHdiux4xLaegXuyTOL26fxtuKwfmYQ5RUcp4sxbB8HElPyKuzz1gdyQZyAtBZBlD09XqZFKKcajeMHSL+pYuy0OybebDlz9jgLoYXZNyq34c26/ASCOBM8xMkxdbf8INk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1723576978; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xStHEN3DFYF+rBHqF+MX09tbCCUNzakqxHaQgIl1Nfc=; 
+	b=LkZJDr6RqokLiba1s2JqOVU9DmgyCKGUtB8bcTN+p/3PTnUSJGpJRjnZYmNgAW+uacRCZy1AsE+i52UaooreR0oyTmqbLacwK08oSAhL27cDEr1aQIngpROIhtgYeGmc3YBfxHpjdN/PZJPa44QL4hezyU722JMpvwpVyXBDYak=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723576978;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=xStHEN3DFYF+rBHqF+MX09tbCCUNzakqxHaQgIl1Nfc=;
+	b=f6rwTdigptOcUpmKz+ZGW5cwxkb/G66HFBIJL8o2W9lH6MYuWUH51mpLAbyrSj8M
+	AAZwV9XCWElGWnRwEqVldb76fbyTEz+T+jD0RuBIvXA408JEd0nUcJtkPwd1otmNYHq
+	zL01CBotus/uZmMFRhlQdbj2hWQUlVxcrWVZajdU=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1723576946556359.0535966500198; Tue, 13 Aug 2024 12:22:26 -0700 (PDT)
+Date: Tue, 13 Aug 2024 20:22:26 +0100
+From: Robert Beckett <bob.beckett@collabora.com>
+To: "Thomas Gleixner" <tglx@linutronix.de>,
+	"Peter Zijlstra" <peterz@infradead.org>
+Cc: "x86" <x86@kernel.org>, "linux-kernel" <linux-kernel@vger.kernel.org>,
+	"Engineering - Kernel" <kernel@collabora.com>
+Message-ID: <1914d310f3d.12a7d406f898033.7903291218646592039@collabora.com>
+In-Reply-To: 
+Subject: CONFIG_MITIGATION_CALL_DEPTH_TRACKING
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Tue, 13 Aug 2024 11:44:43 -0400, Frank Li wrote:
-> Convert binding doc spi-sc18is602.txt (I2C to SPI bridge) to yaml.
-> 
-> Additional change:
-> - ref spi-controller.yaml
-> 
-> Fix below warning:
-> arch/arm64/boot/dts/freescale/fsl-lx2160a-bluebox3.dtb:
-> /soc/i2c@2000000/i2c-mux@77/i2c@7/i2c-mux@75/i2c@0/spi@28: failed to match any schema with compatible: ['nxp,sc18is602b']
-> 
-> [...]
+Hi,
 
-Applied to
+After upgrading from 6.1 to 6.5 based kernel we noticed a regression in boot times
+on AMD Zen 2 based device.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+After some debug, we figured out that CONFIG_MITIGATION_CALL_DEPTH_TRACKING
+(or CONFIG_CALL_DEPTH_TRACKING as it was then) seemed to cause the slow down.
 
-Thanks!
+Having two 6.5 kernels, one with it enabled and one without, with no other differences
+we performed 101 reboots with each version.
 
-[1/1] spi: dt-bindings: convert spi-sc18is602.txt to yaml format
-      commit: 1c4d834e4e81637995b079fdb64fad4c32af15c8
+It showed a median boot to graphical.target of 8.537s with it enabled and 5.938s with it
+disabled as measured via systemd-analyze. This difference (within noise) matches the
+regressing in boot times observed after the kernel upgrade.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Post boot runtime comparisons show as [1] that there is nothing between them.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+I'd appreciate any advice you can give, especially around these questions:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+- The original patch series [1] mentioned runtime performance testing. Does anyone
+know of any boot time testing write-ups that may have occurred at the time?
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+- The help for the config mentions a 5% text size overhead. While I could (perhaps
+naively) expect up to 5% more page cache misses etc during boot up, is a ~30% slow
+down explainable via this config? (no kernel boot params are specified for mitigations
+so all defaults apply)
 
-Thanks,
-Mark
+- I am tempted to conclude that if we want to mitigate retbleed in a consistent way
+that we should just disable this option and rely on CONFIG_CPU_IBRS_ENTRY. Is 
+there any other option to support accelerated Intel mitigation without penalising 
+AMD boot up times due to the overhead?
 
+
+any thoughts would be greatly appreciated.
+
+Bob
+
+
+[1] https://lore.kernel.org/all/20220915111039.092790446@infradead.org/
 
