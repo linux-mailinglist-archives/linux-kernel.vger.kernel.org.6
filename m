@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-285618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7334295107D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:24:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4024295107F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 01:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1122E1C21E90
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA84B2265F
 	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794C61AC452;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714C61AC451;
 	Tue, 13 Aug 2024 23:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nTK5MBEC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSBjYnXW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DCA1ABEDC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8621AC421
 	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 23:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723591451; cv=none; b=CwnJEUgjWru1tT3B+iaVgZV13AdsomNHVLKoMzyjVRizS4sAGd0CoyJ/cfomMOnwIxFAG6dHPK8PqZjn6cA32lAd+K7EsABjKJAqzbMRl/QGyB7i+NfivvXJbA4HLhcLoBneDW1KpdeJbGTyZTrJd0Xp+vFwilD7nkPPy9FuL8A=
+	t=1723591451; cv=none; b=sdEo4WbceAG2Kq9bqnxRUMTHiCcZT8i+4uvYvefI3wHc4bGQKwiY4NvrNPIbnNu5nEi0gX56KOXwwPD7312rbtOOkn4+Lb72BHhWB6lhyHoqCDmo6XV3PXb3f5H9qGjqA7L1zwCKNQ2Ps+2KsXL++4TBZqdQ5YN13IjVvQIr/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723591451; c=relaxed/simple;
-	bh=7SZ1So9xfJQq48rQZfysiQEF2+M+2VHIMENgBvOnmBs=;
+	bh=LhonfX5szAcii0iSJEisUGaz09LnvbNzPlyCpn2Dcys=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jk9g5VsXHMRQ2tqvcx2tntJfSLfF7MFauQp1mLnXQzTampHafDiPME2jDzWQ0uhzmjXiOal5uC9KjB2WJs8HV8LXPs0Yqrxx41dqjg4JURVIgT0IeAHO5baw7QsEcOU0b4DukoK3uzPzandPpFHBxNCF2NIdatiXzleHsyvk+gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nTK5MBEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C3F3C4AF10;
+	 MIME-Version; b=dqStvQWKph8Qqc9LJlTHt09qcZ8pUgzUD+Lj52JSOyddX27pnb+idmQNEds0AZW9FDvglm0K7pazNWe2R0HC62GtRyhM19h7QlwDiygWKvNk2WaytitVCB7j/Z1/UUPo3NB2m5F+HCgnVHLzw/9wQ5seZe1zoRSbDoIjtMSo9Dk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSBjYnXW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8D8C4AF11;
 	Tue, 13 Aug 2024 23:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1723591451;
-	bh=7SZ1So9xfJQq48rQZfysiQEF2+M+2VHIMENgBvOnmBs=;
+	bh=LhonfX5szAcii0iSJEisUGaz09LnvbNzPlyCpn2Dcys=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nTK5MBECnzDZzBeugqMxgAZwqQ9opBQO48aKxxt9N3UW1YlqSqehUfKqEZ5x/OqUU
-	 B+t51h7DztOunj02fc4+x4Ywxa1GzdjB7xmbLXCLa8SZViuF/GG1rcYBY+WUemSUo9
-	 Ug9vyoixyBuNIHcqsPf6oYvDdglRmuzj9VYWTZ+VB9EYLCKa0+ma44n5q2ekG6hBqE
-	 72dE1W7Jj9rzBRsgSaawGBtPTXnpbYSsgtm8Ewj2dpVU+GCSuNu6ZiudJ51pkIHFzp
-	 PrfhpV5pYsOlBwED1jWw7jzBbko1BUVREF0bTjSgXLz9WtrEtddd2/mwTspYSFix15
-	 FYMNStd6VIINQ==
+	b=hSBjYnXWRr+QLyi4RFPXVIWToOlwx9s2LbVoBmBqJ/yIhJQ6ZJhUjTKbig3zqOlzZ
+	 BbNs2RcnQf+DgR6cEIMr8pRsF/OX4a3KM4Fo5lfw8nBiIhv7SedVWk2Wz+KQ4aCq1b
+	 Ue5hCMyMKnmxIrgVIL92fzs8WIUPlTiIGd1bNGtSg3oDWE8d9eMMxCildMjKdKB3Ou
+	 WFAKZAjcZDIzwis6nn6kmn5BlSuZ5GhNMq9XiegBftPp/PgygAMTjkXjgg6THhhrKE
+	 yjp2ZlbQ2/AdmM+F2gfnJOY66WD4eY3iJ+DPMlIBFn0FbHuihnAmY9QB8EqOYCFxQ/
+	 zVkxbafngrNbg==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1se0s5-00000002asU-1mFo;
+	id 1se0s5-00000002asY-1ssk;
 	Wed, 14 Aug 2024 01:24:09 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: 
 Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Shiju Jose <shiju.jose@huawei.com>,
 	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Ani Sinha <anisinha@redhat.com>,
 	Dongjiu Geng <gengdongjiu1@gmail.com>,
-	Igor Mammedov <imammedo@redhat.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
-	qemu-devel@nongnu.org
-Subject: [PATCH v7 06/10] acpi/ghes: add support for generic error injection via QAPI
-Date: Wed, 14 Aug 2024 01:23:28 +0200
-Message-ID: <2104a34f6233dc4a220739348f1a21689fbd3354.1723591201.git.mchehab+huawei@kernel.org>
+	qemu-devel@nongnu.org,
+	Igor Mammedov <imammedo@redhat.com>
+Subject: [PATCH v7 07/10] docs: acpi_hest_ghes: fix documentation for CPER size
+Date: Wed, 14 Aug 2024 01:23:29 +0200
+Message-ID: <55354bc0c5cfed5f6f042ae746c84983263c8019.1723591201.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <cover.1723591201.git.mchehab+huawei@kernel.org>
 References: <cover.1723591201.git.mchehab+huawei@kernel.org>
@@ -71,118 +69,34 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Provide a generic interface for error injection via GHESv2.
+While the spec defines a CPER size of 4KiB for each record,
+currently it is set to 1KiB. Fix the documentation and add
+a pointer to the macro name there, as this may help to keep
+it updated.
 
-This patch is co-authored:
-    - original ghes logic to inject a simple ARM record by Shiju Jose;
-    - generic logic to handle block addresses by Jonathan Cameron;
-    - generic GHESv2 error inject by Mauro Carvalho Chehab;
-
-Co-authored-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Co-authored-by: Shiju Jose <shiju.jose@huawei.com>
-Co-authored-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Acked-by: Igor Mammedov <imammedo@redhat.com>
 ---
- hw/acpi/ghes.c         | 57 ++++++++++++++++++++++++++++++++++++++++++
- hw/acpi/ghes_cper.c    |  2 +-
- include/hw/acpi/ghes.h |  3 +++
- 3 files changed, 61 insertions(+), 1 deletion(-)
+ docs/specs/acpi_hest_ghes.rst | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index f93499d7d647..2f6b50d57ed2 100644
---- a/hw/acpi/ghes.c
-+++ b/hw/acpi/ghes.c
-@@ -495,6 +495,63 @@ int acpi_ghes_record_errors(enum AcpiGhesNotifyType notify,
- NotifierList acpi_generic_error_notifiers =
-     NOTIFIER_LIST_INITIALIZER(error_device_notifiers);
+diff --git a/docs/specs/acpi_hest_ghes.rst b/docs/specs/acpi_hest_ghes.rst
+index 68f1fbe0a4af..c3e9f8d9a702 100644
+--- a/docs/specs/acpi_hest_ghes.rst
++++ b/docs/specs/acpi_hest_ghes.rst
+@@ -67,8 +67,10 @@ Design Details
+ (3) The address registers table contains N Error Block Address entries
+     and N Read Ack Register entries. The size for each entry is 8-byte.
+     The Error Status Data Block table contains N Error Status Data Block
+-    entries. The size for each entry is 4096(0x1000) bytes. The total size
+-    for the "etc/hardware_errors" fw_cfg blob is (N * 8 * 2 + N * 4096) bytes.
++    entries. The size for each entry is defined at the source code as
++    ACPI_GHES_MAX_RAW_DATA_LENGTH (currently 1024 bytes). The total size
++    for the "etc/hardware_errors" fw_cfg blob is
++    (N * 8 * 2 + N * ACPI_GHES_MAX_RAW_DATA_LENGTH) bytes.
+     N is the number of the kinds of hardware error sources.
  
-+void ghes_record_cper_errors(uint8_t *cper, size_t len,
-+                             enum AcpiGhesNotifyType notify, Error **errp)
-+{
-+    uint64_t cper_addr, read_ack_start_addr;
-+    enum AcpiHestSourceId source;
-+    AcpiGedState *acpi_ged_state;
-+    AcpiGhesState *ags;
-+    uint64_t read_ack;
-+
-+    if (ghes_notify_to_source_id(notify, &source)) {
-+        error_setg(errp,
-+                   "GHES: Invalid error block/ack address(es) for notify %d",
-+                   notify);
-+        return;
-+    }
-+
-+    acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
-+                                                       NULL));
-+    g_assert(acpi_ged_state);
-+    ags = &acpi_ged_state->ghes_state;
-+
-+    cper_addr = le64_to_cpu(ags->ghes_addr_le);
-+    cper_addr += 2 * ACPI_HEST_SRC_ID_COUNT * sizeof(uint64_t);
-+    cper_addr += source * ACPI_GHES_MAX_RAW_DATA_LENGTH;
-+
-+    read_ack_start_addr = le64_to_cpu(ags->hest_addr_le);
-+    read_ack_start_addr += source * HEST_GHES_V2_TABLE_SIZE + HEST_ACK_OFFSET;
-+
-+    cpu_physical_memory_read(read_ack_start_addr,
-+                             &read_ack, sizeof(uint64_t));
-+
-+    /* zero means OSPM does not acknowledge the error */
-+    if (!read_ack) {
-+        error_setg(errp,
-+                   "Last CPER record was not acknowledged yet");
-+        read_ack = 1;
-+        cpu_physical_memory_write(read_ack_start_addr,
-+                                  &read_ack, sizeof(uint64_t));
-+        return;
-+    }
-+
-+    read_ack = cpu_to_le64(0);
-+    cpu_physical_memory_write(read_ack_start_addr,
-+                              &read_ack, sizeof(uint64_t));
-+
-+    /* Build CPER record */
-+
-+    if (len > ACPI_GHES_MAX_RAW_DATA_LENGTH) {
-+        error_setg(errp, "GHES CPER record is too big: %ld", len);
-+    }
-+
-+    /* Write the generic error data entry into guest memory */
-+    cpu_physical_memory_write(cper_addr, cper, len);
-+
-+    notifier_list_notify(&acpi_generic_error_notifiers, NULL);
-+}
-+
- bool acpi_ghes_present(void)
- {
-     AcpiGedState *acpi_ged_state;
-diff --git a/hw/acpi/ghes_cper.c b/hw/acpi/ghes_cper.c
-index 92ca84d738de..2328dbff7012 100644
---- a/hw/acpi/ghes_cper.c
-+++ b/hw/acpi/ghes_cper.c
-@@ -29,5 +29,5 @@ void qmp_ghes_cper(const char *qmp_cper,
-         return;
-     }
- 
--    /* TODO: call a function at ghes */
-+    ghes_record_cper_errors(cper, len, ACPI_GHES_NOTIFY_GPIO, errp);
- }
-diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
-index 2524b5e64624..dacd82c6857e 100644
---- a/include/hw/acpi/ghes.h
-+++ b/include/hw/acpi/ghes.h
-@@ -74,6 +74,9 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
- int acpi_ghes_record_errors(enum AcpiGhesNotifyType notify,
-                             uint64_t error_physical_addr);
- 
-+void ghes_record_cper_errors(uint8_t *cper, size_t len,
-+                             enum AcpiGhesNotifyType notify,Error **errp);
-+
- /**
-  * acpi_ghes_present: Report whether ACPI GHES table is present
-  *
+ (4) QEMU generates the ACPI linker/loader script for the firmware. The
 -- 
 2.46.0
 
