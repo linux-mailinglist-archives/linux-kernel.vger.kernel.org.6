@@ -1,83 +1,141 @@
-Return-Path: <linux-kernel+bounces-285290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159B8950BBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:53:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14984950BC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:54:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDBF51F26CB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFEA1F26DB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23521A3BA0;
-	Tue, 13 Aug 2024 17:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB001A38E9;
+	Tue, 13 Aug 2024 17:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9sm/SZ2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8D51A38C7;
-	Tue, 13 Aug 2024 17:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="dmb1BZne"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE0B55892;
+	Tue, 13 Aug 2024 17:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571564; cv=none; b=AKTtcKewun+Yl4gMZKsNT/PUryYlj24nyrRZBF8nqg4CfWniNSIM1ChpXm9jQFuBCJlLn+gFfsmKFPVt7a7wk5eeKPXU6mdJF8MaHCLVBqZ9MBrGLYVCNf38HKj9CxJpUGx6CfliE/HGu0c8iirsG5aEr13T/KucvG4LgSK9ya8=
+	t=1723571677; cv=none; b=t5YcTDVWcsFuVTP5JdrAwZYTRDPM5nkOXYRN19XWTGnzKIn3sgUYEtWGSCbQ/f75aMyEwhdKeQ5PeoMzORMGKbXHpFNt1mbl8aAnAsPbYJomo9HO9Y5tB4lu7dcCypJjVaX+FQnYKfUGbzFqcuxOyT24j/k6ZAIfPXPsB2Q+SxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571564; c=relaxed/simple;
-	bh=jaYTKhnDz3cMLzKRvanDv4iTcOL4tRkIj20bw5Jjpqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ApmQiMW94glkT0YBQtsJleHxrIA1z6Gx5PK34n0swcShKnCZpItjIQDKQaH+g1mWm2OZUk4bgHmyBzPEXYTavfhsoV5Z5OtG4JPsen+jVLcQSPOMKMXcKYiHZamy8Nittty+bk/3NqrIpWqAH/5PmbqqTTP96Pt6ccAVsQ+PHW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9sm/SZ2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 548B8C32782;
-	Tue, 13 Aug 2024 17:52:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723571563;
-	bh=jaYTKhnDz3cMLzKRvanDv4iTcOL4tRkIj20bw5Jjpqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z9sm/SZ27CLm4wwI40WqKEWvAs5rxegOlUNAOon2mYDYBSjIR1wRQuZmArQt11AJq
-	 BRbTBAzrGwsClPUTPFymdzhcwGG510Q8X3+uu12zDM8PghXDPZL6wqkbqym1DNb5A5
-	 I7DUB9z0VbH1LnzwQPwTsqeHcG2lRgl8R5WVBdOk2Fr6a5+yizuPscbMtDSRiVZjDJ
-	 rCuu3noVnzT3HObqOt/BRr1pKyonqlP0agZNRvO4GHFgSrzD/lB/Ht1v0XNDL4XHGh
-	 D3Bn5LrDZgb6sYj2LcqKxHggY0juSjfUAH2Nl2savflaWyl48SPLuBZD38p/6zOP2v
-	 hlLQIWusVrp1Q==
-Date: Tue, 13 Aug 2024 11:52:41 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	linux-samsung-soc@vger.kernel.org,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] dt-bindings: arm: samsung: Document dreamlte
- board binding
-Message-ID: <172357156117.1415479.12001231226456740741.robh@kernel.org>
-References: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
- <20240807090858.356366-10-ivo.ivanov.ivanov1@gmail.com>
+	s=arc-20240116; t=1723571677; c=relaxed/simple;
+	bh=OZ8AP9XkMsyzC1rp7t6xBJ1ljv/JLSQ6tTrIq+3/6jM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rYtOWGB+hytqUr7YOCQDLTbSJ71qZ6f8FQhPSgquk71DTg3wYHTJ3/qmdmehxi0azb+ZiWqlHwyJ+gHVjiUgR5NH8QBiuqhYqHl5AOmSEBYed0FFnP3gwfo7GPfedtgofahwIR+MOT84/s/73SnbWyhLKgMWLUtyRoV85k9Ca1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=dmb1BZne; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.137.106.151] (unknown [131.107.174.23])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3B9FE20B7165;
+	Tue, 13 Aug 2024 10:54:30 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3B9FE20B7165
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1723571670;
+	bh=nytHXNFUCvkjmExa31/IXH9nsS7Ke1ecqy5aOeZ0RVQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dmb1BZneqM72oPSe5DHw6ecIL62wYqVSoAd4vHn1OI6tbReWkMBOsAQwHOD1uJj15
+	 ici03yt3QfhtBQViHqWGIFo0+ZmMtlFPo/guJBTjh1+RFYmPmkUTt5X40IoxKyuN0+
+	 Imj1rgCamzVJDKZ83X9QPeow5gpEbDFPehT/Kkys=
+Message-ID: <e1dd4dcf-8e2e-4e7b-9d40-533efd123103@linux.microsoft.com>
+Date: Tue, 13 Aug 2024 10:54:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240807090858.356366-10-ivo.ivanov.ivanov1@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v20 02/20] ipe: add policy parser
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: corbet@lwn.net, zohar@linux.ibm.com, jmorris@namei.org, tytso@mit.edu,
+ ebiggers@kernel.org, axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, eparis@redhat.com, paul@paul-moore.com,
+ linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ linux-security-module@vger.kernel.org, fsverity@lists.linux.dev,
+ linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+ audit@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Deven Bowers <deven.desai@linux.microsoft.com>
+References: <1722665314-21156-1-git-send-email-wufan@linux.microsoft.com>
+ <1722665314-21156-3-git-send-email-wufan@linux.microsoft.com>
+ <20240810155000.GA35219@mail.hallyn.com>
+Content-Language: en-US
+From: Fan Wu <wufan@linux.microsoft.com>
+In-Reply-To: <20240810155000.GA35219@mail.hallyn.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-On Wed, 07 Aug 2024 12:08:57 +0300, Ivaylo Ivanov wrote:
-> Add binding for the Samsung Galaxy S8 (SM-G950F) board, which is
-> based on the Samsung Exynos8895 SoC.
+
+On 8/10/2024 8:50 AM, Serge E. Hallyn wrote:
+> On Fri, Aug 02, 2024 at 11:08:16PM -0700, Fan Wu wrote:
+>> From: Deven Bowers <deven.desai@linux.microsoft.com>
+>>
+>> IPE's interpretation of the what the user trusts is accomplished through
 > 
-> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-> ---
->  .../devicetree/bindings/arm/samsung/samsung-boards.yaml     | 6 ++++++
->  1 file changed, 6 insertions(+)
+> nit: "of what the user trusts" (drop the extra 'the')
+> 
+>> its policy. IPE's design is to not provide support for a single trust
+>> provider, but to support multiple providers to enable the end-user to
+>> choose the best one to seek their needs.
+>>
+>> This requires the policy to be rather flexible and modular so that
+>> integrity providers, like fs-verity, dm-verity, or some other system,
+>> can plug into the policy with minimal code changes.
+>>
+>> Signed-off-by: Deven Bowers <deven.desai@linux.microsoft.com>
+>> Signed-off-by: Fan Wu <wufan@linux.microsoft.com>
+> 
+> This all looks fine.  Just one comment below.
+> 
+Thank you for reviewing this!
+
+> 
+>> +/**
+>> + * parse_rule() - parse a policy rule line.
+>> + * @line: Supplies rule line to be parsed.
+>> + * @p: Supplies the partial parsed policy.
+>> + *
+>> + * Return:
+>> + * * 0		- Success
+>> + * * %-ENOMEM	- Out of memory (OOM)
+>> + * * %-EBADMSG	- Policy syntax error
+>> + */
+>> +static int parse_rule(char *line, struct ipe_parsed_policy *p)
+>> +{
+>> +	enum ipe_action_type action = IPE_ACTION_INVALID;
+>> +	enum ipe_op_type op = IPE_OP_INVALID;
+>> +	bool is_default_rule = false;
+>> +	struct ipe_rule *r = NULL;
+>> +	bool first_token = true;
+>> +	bool op_parsed = false;
+>> +	int rc = 0;
+>> +	char *t;
+>> +
+>> +	r = kzalloc(sizeof(*r), GFP_KERNEL);
+>> +	if (!r)
+>> +		return -ENOMEM;
+>> +
+>> +	INIT_LIST_HEAD(&r->next);
+>> +	INIT_LIST_HEAD(&r->props);
+>> +
+>> +	while (t = strsep(&line, IPE_POLICY_DELIM), line) {
+> 
+> If line is passed in as NULL, t will be NULL on the first test.  Then
+> you'll break out and call parse_action(NULL), which calls
+> match_token(NULL, ...), which I do not think is safe.
+> 
+> I realize the current caller won't pass in NULL, but it seems worth
+> checking for here in case some future caller is added by someone
+> who's unaware.
+> 
+> Or, maybe add 'line must not be null' to the function description.
 > 
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Yes, I agree that adding a NULL check would be better. I will include it 
+in the next version.
 
+-Fan
 
