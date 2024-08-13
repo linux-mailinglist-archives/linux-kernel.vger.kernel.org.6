@@ -1,188 +1,116 @@
-Return-Path: <linux-kernel+bounces-284626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEADE950340
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:06:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE69B950345
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:07:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3235AB26E99
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B6A028570F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:07:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71CCB198A2F;
-	Tue, 13 Aug 2024 11:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5BA198E6E;
+	Tue, 13 Aug 2024 11:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TsRBCUMj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZR7rP3GO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202DE17A583
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 11:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ED2198A05;
+	Tue, 13 Aug 2024 11:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547183; cv=none; b=OKii+K9mWRyjnk1vbE3mRNX11C++XDLSDOvX7Huq5QDAWoaHKsrySEIL0ZyKnncOPEtY5IrZPFgh9qlCGMMKvbKeYlhdw+riaYwuxt/jR4cgPGiuRuPgq3ZKVgGrE+i8F8gvMqJsQp0EJG3UYzW5+EjBMvlp9ycsyvJQEtthxIQ=
+	t=1723547209; cv=none; b=DQXv9eoggmqb8T9Unkt5UnKdkUr08eABxPk2HWZpCideG1oBh3pUUADHBWNq3kVIVvh7HwIEY+5L+BFlgDit6WqFEEapxhE9DFJ9ytKSKyOJ97SCLabZPr1aFlAyIcwRKdpL56TZoIu85FsG7ZJQc0BBfytaADC0RkmkJpr14C0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547183; c=relaxed/simple;
-	bh=bkhqbZYWYWSZvsQl29u3Z23IpM9oWQsNayuAc+Nsvbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o0LxyNETgss1Uu5b/3IJn5cM66ysS5vCNP7b7N+GlCeYPGoOjTwn/AZBMIjMNH6mZW+8YJ81qKsHmAsK9m5RAPBpD36zZHWTd2cbBOPrHEdObl1+naI2Z/8GV82WVCpK38MLBtqC3bHljS/YLZ63QnLFx2fil7yaoDB2OvDBwQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TsRBCUMj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723547181;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t2NdeYI2y6Sud7cQVQ4w+JoVN5gbV8B7m8JMtP5JxuA=;
-	b=TsRBCUMjFSgKArNRL+c5D/5noXlqn/rHZn53FAHMwurUFzLj/8U7XBwL6iG5JJMpZZohYw
-	uxsEd6q/rjZJyzirEQMh1rrjWmdCzPc6/U6JIBZNI+X4iVSqBhlB8Sebji3mzRWCC0vpl7
-	Nh18d+R+RjmcE9tgBsh/TyxhucLXayw=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-Kq7MVmywPca4zZ6E0w534A-1; Tue, 13 Aug 2024 07:06:20 -0400
-X-MC-Unique: Kq7MVmywPca4zZ6E0w534A-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4281d62be91so10408035e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:06:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723547178; x=1724151978;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t2NdeYI2y6Sud7cQVQ4w+JoVN5gbV8B7m8JMtP5JxuA=;
-        b=gS5jAiadqSx+z8G7WwPqqXWo43wMOZWmpKXx0IAhWvADS5pKdeKhbWZCyZ0rthTpQg
-         pvoYaFpQkrcjXjc3M9qwBEbmFSfRxaGSvmTqEYKQeUefjBBYPjPpS8dC0QhARJH7Un9E
-         1H0e/UZeqakl2FpKlMhDVr7WrmuExqgoPpH+hYEUgbjtQEz9g/21sQ9jjIszsy3AGySZ
-         U+Ok7ZqwLM8+s4M70qPlkjCkcmfgrOvrtThlnPaLw7rgoTtUDsEEkGZ9b6RdZbGbrJbM
-         nNlTU0zj/anBhOJxIBJEezBKw0feD5ezw8Angl8/lsQbEhfMKCUTbaunuS1fXzHtV0Vh
-         88eg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqxBy5esgp6XtnpDK6LU3G8FQWshhgel4Tr375XTLBQhoiEh7DkL8WdKEXU5xwbLmp7xJRON3I6qiwTGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7O7RsUTcQnlJBIk8LTNPUZDI74ahxd/4VgQ9A45m51c/VOb56
-	5fSP/BLC7H8AGaqZHgcDCnmz27OwiL3ilX9ovTBiF8VkebtgSHJG98DfleiGBfBdhEfJorOb9yF
-	qOV1xkU8s56sFKZYNEOfYv3oR4BF75EbCOToZwc7WqQGgrhqbdtNeFrNXjSp5uQ==
-X-Received: by 2002:a5d:6d82:0:b0:367:9505:73ed with SMTP id ffacd0b85a97d-3716fc78f67mr732475f8f.7.1723547177673;
-        Tue, 13 Aug 2024 04:06:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFa7Vi7jbvh74+IcXC90KHicELNDDcvYfv7kh0HQ3hv001MY6PHY4Uwx5U6i85VLvRvhb37Nw==
-X-Received: by 2002:a5d:6d82:0:b0:367:9505:73ed with SMTP id ffacd0b85a97d-3716fc78f67mr732456f8f.7.1723547177128;
-        Tue, 13 Aug 2024 04:06:17 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1708:9110:151e:7458:b92f:3067? ([2a0d:3344:1708:9110:151e:7458:b92f:3067])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4cfef6fasm9961156f8f.60.2024.08.13.04.06.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 04:06:16 -0700 (PDT)
-Message-ID: <8fe01ef6-2c85-4843-b686-8cb43cc1f454@redhat.com>
-Date: Tue, 13 Aug 2024 13:06:15 +0200
+	s=arc-20240116; t=1723547209; c=relaxed/simple;
+	bh=ecC8fTAmiz1HxGR6Ja05qAtWqbB+IKJQljZIIPuUt08=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N3PEhQOcHmAcHPsOGex9JeT9kIgYKLBMJaVzZU21vi0u6KLa30CDCWLmJ97/zr/AiP4UORXYZiS4lkRTH+KUGH8mCzgyL+R+3ipazRiWPryaz7IRfGBovWRHupuXhSiSicFEHXF/NUC6dEUSE62lJr1sK/mXiXhAbwlBbRwU+4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZR7rP3GO; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723547208; x=1755083208;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ecC8fTAmiz1HxGR6Ja05qAtWqbB+IKJQljZIIPuUt08=;
+  b=ZR7rP3GO0bh96Gg+g+ePvFG1sf5a/r5CqMaGqL2uPJACvFFDHAFHHjsD
+   2xurueqYJG+v8msxEEcQvkx2FuOKrkE3WxmMYxFFJeAFvMvX+ktR/pp7F
+   TE8so3StfSBQSfsLw7SSh/CaP2KJdh08o83trYVXaqGAFBEalHZ05d+Ar
+   cRvIRfp0EPw2kMLScJMfIJOH0L5CSsGcw0i9kOpVphEzZfCDvZxMQOsUC
+   mFHiJnfEEEs41QZj/4zx1UKw/Sh8RSkMtq4cO3TGxTPCsrQCjDQzADF+2
+   F4Ve33gekguV3AKONPrl8onFJtaLU4aCyvMzUiJxPbU7fg6ybxHdF8NfQ
+   A==;
+X-CSE-ConnectionGUID: M0D0j1ApQ+qq+sEfInVKUA==
+X-CSE-MsgGUID: 7xgO+LLhSHKtyrvd/MkrSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21676129"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="21676129"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:06:47 -0700
+X-CSE-ConnectionGUID: k7YHe4RWRGKGxsspcQ2+lQ==
+X-CSE-MsgGUID: KdgWFSyGQGWxhUvH8ySm/A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="63026283"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:06:42 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdpMN-0000000Ehbe-2IsC;
+	Tue, 13 Aug 2024 14:06:39 +0300
+Date: Tue, 13 Aug 2024 14:06:39 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+	linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] drivers: iio: adc: add support for ad777x family
+Message-ID: <Zrs-P_dBMXDAz-Dz@smile.fi.intel.com>
+References: <20240724155517.12470-1-ramona.nechita@analog.com>
+ <20240724155517.12470-5-ramona.nechita@analog.com>
+ <7d474c3d-22ed-45d5-8224-caaf124b72a0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 2/2] net: ipv6: ioam6: new feature tunsrc
-To: Justin Iurman <justin.iurman@uliege.be>, netdev@vger.kernel.org
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, linux-kernel@vger.kernel.org
-References: <20240809123915.27812-1-justin.iurman@uliege.be>
- <20240809123915.27812-3-justin.iurman@uliege.be>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240809123915.27812-3-justin.iurman@uliege.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d474c3d-22ed-45d5-8224-caaf124b72a0@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 8/9/24 14:39, Justin Iurman wrote:
-> This patch provides a new feature (i.e., "tunsrc") for the tunnel (i.e.,
-> "encap") mode of ioam6. Just like seg6 already does, except it is
-> attached to a route. The "tunsrc" is optional: when not provided (by
-> default), the automatic resolution is applied. Using "tunsrc" when
-> possible has a benefit: performance.
+On Wed, Jul 24, 2024 at 06:14:52PM +0200, Krzysztof Kozlowski wrote:
+> On 24/07/2024 17:54, Ramona Alexandra Nechita wrote:
 
-It's customary to include performances figures in performance related 
-changeset ;)
+...
 
-> 
-> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
-> ---
->   include/uapi/linux/ioam6_iptunnel.h |  7 +++++
->   net/ipv6/ioam6_iptunnel.c           | 48 ++++++++++++++++++++++++++---
->   2 files changed, 51 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/uapi/linux/ioam6_iptunnel.h b/include/uapi/linux/ioam6_iptunnel.h
-> index 38f6a8fdfd34..6cdbd0da7ad8 100644
-> --- a/include/uapi/linux/ioam6_iptunnel.h
-> +++ b/include/uapi/linux/ioam6_iptunnel.h
-> @@ -50,6 +50,13 @@ enum {
->   	IOAM6_IPTUNNEL_FREQ_K,		/* u32 */
->   	IOAM6_IPTUNNEL_FREQ_N,		/* u32 */
->   
-> +	/* Tunnel src address.
-> +	 * For encap,auto modes.
-> +	 * Optional (automatic if
-> +	 * not provided).
-> +	 */
-> +	IOAM6_IPTUNNEL_SRC,		/* struct in6_addr */
-> +
->   	__IOAM6_IPTUNNEL_MAX,
->   };
->   
-> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
-> index cd2522f04edf..e0e73faf9969 100644
-> --- a/net/ipv6/ioam6_iptunnel.c
-> +++ b/net/ipv6/ioam6_iptunnel.c
-> @@ -42,6 +42,8 @@ struct ioam6_lwt {
->   	struct ioam6_lwt_freq freq;
->   	atomic_t pkt_cnt;
->   	u8 mode;
-> +	bool has_tunsrc;
-> +	struct in6_addr tunsrc;
->   	struct in6_addr tundst;
->   	struct ioam6_lwt_encap tuninfo;
->   };
-> @@ -72,6 +74,7 @@ static const struct nla_policy ioam6_iptunnel_policy[IOAM6_IPTUNNEL_MAX + 1] = {
->   	[IOAM6_IPTUNNEL_MODE]	= NLA_POLICY_RANGE(NLA_U8,
->   						   IOAM6_IPTUNNEL_MODE_MIN,
->   						   IOAM6_IPTUNNEL_MODE_MAX),
-> +	[IOAM6_IPTUNNEL_SRC]	= NLA_POLICY_EXACT_LEN(sizeof(struct in6_addr)),
->   	[IOAM6_IPTUNNEL_DST]	= NLA_POLICY_EXACT_LEN(sizeof(struct in6_addr)),
->   	[IOAM6_IPTUNNEL_TRACE]	= NLA_POLICY_EXACT_LEN(
->   					sizeof(struct ioam6_trace_hdr)),
-> @@ -144,6 +147,11 @@ static int ioam6_build_state(struct net *net, struct nlattr *nla,
->   	else
->   		mode = nla_get_u8(tb[IOAM6_IPTUNNEL_MODE]);
->   
-> +	if (tb[IOAM6_IPTUNNEL_SRC] && mode == IOAM6_IPTUNNEL_MODE_INLINE) {
-> +		NL_SET_ERR_MSG(extack, "no tunnel source expected in this mode");
-> +		return -EINVAL;
-> +	}
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching.
 
-when mode is IOAM6_IPTUNNEL_MODE_AUTO, the data path could still add the 
-encapsulation for forwarded packets, why explicitly preventing this 
-optimization in such scenario?
+I would be more precise
 
-> +
->   	if (!tb[IOAM6_IPTUNNEL_DST] && mode != IOAM6_IPTUNNEL_MODE_INLINE) {
->   		NL_SET_ERR_MSG(extack, "this mode needs a tunnel destination");
->   		return -EINVAL;
-> @@ -178,6 +186,14 @@ static int ioam6_build_state(struct net *net, struct nlattr *nla,
->   	ilwt->freq.n = freq_n;
->   
->   	ilwt->mode = mode;
-> +
-> +	if (!tb[IOAM6_IPTUNNEL_SRC]) {
-> +		ilwt->has_tunsrc = false;
-> +	} else {
-> +		ilwt->has_tunsrc = true;
-> +		ilwt->tunsrc = nla_get_in6_addr(tb[IOAM6_IPTUNNEL_SRC]);
+  `git log --oneline --no-merges -- DIRECTORY_OR_FILE`
 
-Since you are going to use the source address only if != ANY, I think it 
-would be cleaner to refuse such addresses here. That will avoid an 
-additional check in the datapath.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Cheers,
-
-Paolo
 
 
