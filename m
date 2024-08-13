@@ -1,181 +1,165 @@
-Return-Path: <linux-kernel+bounces-285476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9617D950DFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF012950E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:34:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 414AB284D33
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F121A1C22C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9719B1A7041;
-	Tue, 13 Aug 2024 20:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746B1A7043;
+	Tue, 13 Aug 2024 20:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i/KJwZyO"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRKSMv8a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 272384436A;
-	Tue, 13 Aug 2024 20:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B504436A;
+	Tue, 13 Aug 2024 20:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723581204; cv=none; b=QM9x6FwS5AVn0qTgxOUlkoxMiJf4rzOLsErW3kvOQd39dwQj3fNzEyccpIf60LSpXce2ua5Iu+nUqW1pOrlv+IdAWL4InpMBy/USflKlur0eNc3x+ikyIsIzCv7cyoZ9GSx5MUmjK2+NO9awyiLGL++H6KIFfj0xIsqeKyKuacg=
+	t=1723581253; cv=none; b=QRUR4hT9rMGeuR3rvYJwT1bxJQBj0KrgwLsioEQGdGa5UvDxfNoS5vnWlnaP6WQ94IjX8XiIkKvflopqW9UZNBwxc058hkw4wDk0N+eu/5OUd5XAMkKxBDWxLkdKJoS+bwM3pXYJ9k1ke5rOW8qj7jQSBpOYZaKOdJFZnDuUHFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723581204; c=relaxed/simple;
-	bh=k9NVdV7QJy7QWOchjNpKeM81d23iSXGuo+157PXQtbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WXxj9iSPaYPZxkLNH3LUNFp1X0b+OT//N5IBadU13n4qt2c9AnB4Az9gQswvRr1nEeiFc998uiiYraV/Y6oSgygttUT2e8y/ENDm0uZiIh1TB4iCm33wNEhiMVRcFvbghsj8xVfEYGQXfTKZtC7bwAqFGPEpb8acS9eqIFB+0oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i/KJwZyO; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso7881472a12.1;
-        Tue, 13 Aug 2024 13:33:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723581201; x=1724186001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JqzZpM8PtuFAPQraVfX2TWqheb6GNwSDUTMcbEAdyPw=;
-        b=i/KJwZyO9274oKmF9hJXxnWxyM6qhALl9IPyPZH8FTxpBGvA56gFkvNcmgQvX8V3bN
-         QbYzcKPLnJexwVteeNpunrAhB1wsz2OYBbUKsiCsc4BNVx7ihsz4tHG4fnScHwtCcFS2
-         D4T9IwPXtj7/A8ngPLGJDG2dGwMpEXLP+6dnmXvc5K5cSVai4gMKRd42zDyVPhrVcY6T
-         iPRsxjF//vN1c1a/3DTStLCdKFwbbmK03A2lvRsAs4Zo9yXhBvEHytBYJTZNx8v+qzKe
-         l6AucfPp79DDH2Qqkql8bUWLv9tyu07es2OsPYdCJ7or3BVsJECwTLya0Kb2sgECbIxW
-         1cEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723581201; x=1724186001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqzZpM8PtuFAPQraVfX2TWqheb6GNwSDUTMcbEAdyPw=;
-        b=rioQmGKHORbR45rDyZfPmPn41g1EdKlcqSTHwccHL2kR+vmiDXVK+D0mBBAN6g8uwg
-         bF/ONz9sMLd0ZDxb8QYrcXdCmBV11SfoI3F4+Skw4WMJcLFUvFZKvYLW3GpsUJD/rFX5
-         NV/CylD6gHS4t31gBnVL6kd+Iiazm78DvKlp1QLiBhkwLhw0jbHopXgippi+k9alaUJX
-         hNH7hs81N20+smY8H5b5pGgM462JNsN9XKM9SIU/F70jxqX1wxhCgbVylvDGBL/8np9E
-         L1TSA/CoBPna1OO2gMdhRRHPbbkiqXi20vzKxFAFVo+rCgE63evl5G2BPlPPk37pQE89
-         Bo3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKCdNUAnErdMflzm7ybgN2VZnPqtgoF6wRN8GEQ0dfI5NvamYB6L8sqVF4XGPz6pxchKgQMxyt5C76OkuQyRWyf3IuFnu6fb6fOENX
-X-Gm-Message-State: AOJu0YzsBn3zS2qtNhiEkAUxqR8isDG9HcKImmxqNCz909ocPMJuJhIt
-	WUM7Fr6B+05JY1FBR6ivnsSm10h3tpPTs1HV7TeoLyBW92ywvRAm
-X-Google-Smtp-Source: AGHT+IENCWW45EkzC0VEt+p4fK0fVuN70Y+X10RXdlBebi1thH5+goIJmDuw3cMWbTIBOvoe2IGqrA==
-X-Received: by 2002:a17:907:f786:b0:a77:e55a:9e92 with SMTP id a640c23a62f3a-a8366d47ebcmr35190366b.30.1723581200966;
-        Tue, 13 Aug 2024 13:33:20 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-40-227.xnet.hr. [88.207.40.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f414f06bsm95426166b.159.2024.08.13.13.33.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 13:33:20 -0700 (PDT)
-Message-ID: <b20eded4-0663-49fb-ba88-5ff002a38a7f@gmail.com>
-Date: Tue, 13 Aug 2024 22:33:02 +0200
+	s=arc-20240116; t=1723581253; c=relaxed/simple;
+	bh=aW7W23fUjUQbZbzoo2O9zrLSi/tpsyqurgJDlIT3Luk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MkFL1nTxfDeVzC+f8TKRmCYVp5HlDRl89w2OVkqPZamIWO1gSjr5Sepyfg3wdzxqAt2u0FNlWESZikgXyNIKSZWQoS6MwLsVmvRCxs71FRhooncUpCQXepleSB3JDrGEKCikDAVI+5hhoUmU414x8UhzOboQb5T4rh1nwHERuGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRKSMv8a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAC9C32782;
+	Tue, 13 Aug 2024 20:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723581252;
+	bh=aW7W23fUjUQbZbzoo2O9zrLSi/tpsyqurgJDlIT3Luk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NRKSMv8agI1IaeiAz6EvRYCpGs9PLQF4zp9gOXigS6euL88D9DisYhKc6vvg2otUr
+	 5TWRiEj0i52R0oVBxBaokQvW1I3GCcVwvmGCtpou4IqFNt/CQoOGB4Cfqkfw8SGwGg
+	 Jw+gEIWFpL6FvliwItwFVNeUgi99+hBJi6dA3mi4B3kMK+W1IcCL/n3BwCAYGfuh6I
+	 GUv8XY5vymw15wV3Oa/virVLXZlKNSj1YmdgMT7UVMVSQfJdfJZ93/wc3ZWsExVMLw
+	 TyXk48dxO51sB4uAwB50xcGOHeihPCy0O/0zjUFnnMTvxQ0ffXzPYZRI7EPji9p2q1
+	 LYX801ZRStHSw==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org
+Cc: peterz@infradead.org,
+	oleg@redhat.com,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jolsa@kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be per-CPU one
+Date: Tue, 13 Aug 2024 13:34:09 -0700
+Message-ID: <20240813203409.3985398-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: =?UTF-8?Q?Re=3A_=5BBUG=5D_arch/x86/kvm/vmx/vmx=5Fonhyperv=2Eh=3A109?=
- =?UTF-8?B?OjM2OiBlcnJvcjogZGVyZWZlcmVuY2Ugb2YgTlVMTCDigJgw4oCZ?=
-To: Vitaly Kuznetsov <vkuznets@redhat.com>,
- Sean Christopherson <seanjc@google.com>
-Cc: kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org
-References: <b44227c5-5af6-4243-8ed9-2b8cdc0e5325@gmail.com>
- <Zpq2Lqd5nFnA0VO-@google.com>
- <207a5c75-b6ad-4bfb-b436-07d4a3353003@gmail.com> <87a5i05nqj.fsf@redhat.com>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <87a5i05nqj.fsf@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+trace_uprobe->nhit counter is not incremented atomically, so its value
+is questionable in when uprobe is hit on multiple CPUs simultaneously.
 
+Also, doing this shared counter increment across many CPUs causes heavy
+cache line bouncing, limiting uprobe/uretprobe performance scaling with
+number of CPUs.
 
-On 7/29/24 15:31, Vitaly Kuznetsov wrote:
-> Mirsad Todorovac <mtodorovac69@gmail.com> writes:
-> 
->> On 7/19/24 20:53, Sean Christopherson wrote:
->>> On Fri, Jul 19, 2024, Mirsad Todorovac wrote:
->>>> Hi, all!
->>>>
->>>> Here is another potential NULL pointer dereference in kvm subsystem of linux
->>>> stable vanilla 6.10, as GCC 12.3.0 complains.
->>>>
->>>> (Please don't throw stuff at me, I think this is the last one for today :-)
->>>>
->>>> arch/x86/include/asm/mshyperv.h
->>>> -------------------------------
->>>>   242 static inline struct hv_vp_assist_page *hv_get_vp_assist_page(unsigned int cpu)
->>>>   243 {
->>>>   244         if (!hv_vp_assist_page)
->>>>   245                 return NULL;
->>>>   246 
->>>>   247         return hv_vp_assist_page[cpu];
->>>>   248 }
->>>>
->>>> arch/x86/kvm/vmx/vmx_onhyperv.h
->>>> -------------------------------
->>>>   102 static inline void evmcs_load(u64 phys_addr)
->>>>   103 {
->>>>   104         struct hv_vp_assist_page *vp_ap =
->>>>   105                 hv_get_vp_assist_page(smp_processor_id());
->>>>   106 
->>>>   107         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>>>   108                 vp_ap->nested_control.features.directhypercall = 1;
->>>>   109         vp_ap->current_nested_vmcs = phys_addr;
->>>>   110         vp_ap->enlighten_vmentry = 1;
->>>>   111 }
->>>>
-> 
-> ...
-> 
->>
->> GCC 12.3.0 appears unaware of this fact that evmcs_load() cannot be called with hv_vp_assist_page() == NULL.
->>
->> This, for example, silences the warning and also hardens the code against the "impossible" situations:
->>
->> -------------------><------------------------------------------------------------------
->> diff --git a/arch/x86/kvm/vmx/vmx_onhyperv.h b/arch/x86/kvm/vmx/vmx_onhyperv.h
->> index eb48153bfd73..8b0e3ffa7fc1 100644
->> --- a/arch/x86/kvm/vmx/vmx_onhyperv.h
->> +++ b/arch/x86/kvm/vmx/vmx_onhyperv.h
->> @@ -104,6 +104,11 @@ static inline void evmcs_load(u64 phys_addr)
->>         struct hv_vp_assist_page *vp_ap =
->>                 hv_get_vp_assist_page(smp_processor_id());
->>  
->> +       if (!vp_ap) {
->> +               pr_warn("BUG: hy_get_vp_assist_page(%d) returned NULL.\n", smp_processor_id());
->> +               return;
->> +       }
->> +
->>         if (current_evmcs->hv_enlightenments_control.nested_flush_hypercall)
->>                 vp_ap->nested_control.features.directhypercall = 1;
->>         vp_ap->current_nested_vmcs = phys_addr;
-> 
-> As Sean said, this does not seem to be possible today but I uderstand
-> why the compiler is not able to infer this. If we were to fix this, I'd
-> suggest we do something like "BUG_ON(!vp_ap)" (with a comment why)
-> instead of the suggested patch:
+Solve both problems by making this a per-CPU counter.
 
-That sounds awesome, but I really dare not poke into KVM stuff at my level. :-/
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+---
+ kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
-> - pr_warn() is not ratelimited
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index c98e3b3386ba..c3df411a2684 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -17,6 +17,7 @@
+ #include <linux/string.h>
+ #include <linux/rculist.h>
+ #include <linux/filter.h>
++#include <linux/percpu.h>
+ 
+ #include "trace_dynevent.h"
+ #include "trace_probe.h"
+@@ -62,7 +63,7 @@ struct trace_uprobe {
+ 	char				*filename;
+ 	unsigned long			offset;
+ 	unsigned long			ref_ctr_offset;
+-	unsigned long			nhit;
++	unsigned long __percpu		*nhits;
+ 	struct trace_probe		tp;
+ };
+ 
+@@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	if (!tu)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	tu->nhits = alloc_percpu(unsigned long);
++	if (!tu->nhits) {
++		ret = -ENOMEM;
++		goto error;
++	}
++
+ 	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
+ 	if (ret < 0)
+ 		goto error;
+@@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
+ 	return tu;
+ 
+ error:
++	free_percpu(tu->nhits);
+ 	kfree(tu);
+ 
+ 	return ERR_PTR(ret);
+@@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
+ 	path_put(&tu->path);
+ 	trace_probe_cleanup(&tu->tp);
+ 	kfree(tu->filename);
++	free_percpu(tu->nhits);
+ 	kfree(tu);
+ }
+ 
+@@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
+ {
+ 	struct dyn_event *ev = v;
+ 	struct trace_uprobe *tu;
++	unsigned long nhits;
++	int cpu;
+ 
+ 	if (!is_trace_uprobe(ev))
+ 		return 0;
+ 
+ 	tu = to_trace_uprobe(ev);
++
++	nhits = 0;
++	for_each_possible_cpu(cpu) {
++		nhits += per_cpu(*tu->nhits, cpu);
++	}
++
+ 	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
+-			trace_probe_name(&tu->tp), tu->nhit);
++		   trace_probe_name(&tu->tp), nhits);
+ 	return 0;
+ }
+ 
+@@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
+ 	int ret = 0;
+ 
+ 	tu = container_of(con, struct trace_uprobe, consumer);
+-	tu->nhit++;
++
++	this_cpu_inc(*tu->nhits);
+ 
+ 	udd.tu = tu;
+ 	udd.bp_addr = instruction_pointer(regs);
+-- 
+2.43.5
 
-This is indeed a problem. I did not see that coming.
-
-> - 'return' from evmcs_load does not propagate the error so the VM is
-> going to misbehave somewhere else.
-
-Agreed. But, frankly, I do not see where to jump or return to in case of such bug.
-
-I would just feel safer with a sentinel or a return value check, just as in userland some
-people expect malloc() to always succeed - but the diligent check return value of this and
-all syscalls. ;-)
-
-Best regards,
-Mirsad Todorovac
 
