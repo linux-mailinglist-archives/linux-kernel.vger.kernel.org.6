@@ -1,85 +1,82 @@
-Return-Path: <linux-kernel+bounces-285236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB4A2950B04
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:02:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F2D5950B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75FCC1F2371A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340D91C23FDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F4C1A3BB9;
-	Tue, 13 Aug 2024 17:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D753219D09C;
+	Tue, 13 Aug 2024 17:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bNcRVM/8"
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gc5+eFBv"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60B2C1A3BAF
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:01:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC661CA9F
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723568496; cv=none; b=OnxFDqTr1m2NXVbPXV49f0OG3dDjIuF21gMhdIx2psXZ6AlFf4Cey0Ti0dSd02kvUC6X3qSVqdtmJsf0kq9mqOfFEO4xdlTuXdV05VdC5LLhDCqsXkAwpsx4hgJL6B5OGoprqNyv8UeQffIj7h6u08IsFzGvuCa+zO8i8eKReWI=
+	t=1723568606; cv=none; b=tvkXntHySlzKsZg4MORvQTh0KkxvxMK76YO2zJIRXB5vJUVQnQJf0gdbhTu+27mW1UoUXlI06jrfyxswzmoRqsFUqFMjpcUSUvmOpJ/6uR7G+dmranvDedQUE0BqGH7t9EM7GZboQP9XH53Bt3R0D7Pla3rs6Vilt4gojY+DhPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723568496; c=relaxed/simple;
-	bh=qK7H9c8ScAhkcm7a+Iyl1+AnmCsHVRrU+XjzmjpeyjE=;
+	s=arc-20240116; t=1723568606; c=relaxed/simple;
+	bh=+88RSkxN/H6afefxdGHCqq377VWT9vaJAn1EHtYr1rc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VK2IsX1CuaH9lvWfCXmKOGik9lDLVI39+UkT0SdyhB94x4fqwjxgJxqCguMcA9wq4/pI+sy1WpJzdvhnx+PaPznQCDzv7hqW2RnUTw8Fyt1WM8lk5EMrP3zxPfJFbaZ4coGDhguDIsGT5EO9rpcZ6RZyVstoljj/w5ymYiEpi+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=bNcRVM/8; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7a1dcc7bc05so379830585a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:01:34 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQd89cGDy9ECWPypwoinZBGHq6bU2w+SMr3OxOpz33aCrDR1Nxy2Obmw0ul8zTeZJTJRTylOf2AGbTxvmq+FsGeJ3ta/mnJ3zldQJOnCx73ZsjdiuLlRp4j6M44+7XaU3QLS1ggCI8luzfHN1XhBNcQsIoo/y0QyTEh3SaJ3Ggc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gc5+eFBv; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6bba6ced3d4so27979736d6.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:03:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1723568493; x=1724173293; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723568603; x=1724173403; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=zqcYDyfx63llFdcrlT+i8nPzWoVuQ+JI9Z24vWzRXhc=;
-        b=bNcRVM/80gGoqc7xJG1M8OMBcvi2AiFWp0C3FJRDWGkUxzcREv4bRiFszh7fgZFAuI
-         R5zVEWOt07kuXWOQAQ7uVKrL63s7jWUpDsA25aaf7Mpbj42H6j7LJBflGLX5yFTyf42B
-         8ZhFSHliaPqPTnvzGFiFy5jafr23+S9vA87zATH46P7flUTYAD9mAfZqB4Sc6373X2o9
-         NdwvDAxiZ5XMurdPLyzBYIJ9RDP+HU6mZjDyx+Frrs149ing6qwYvc9IPP6emjsMuLIm
-         rhe/FtXJTsgTca1fcu+M+F6kRXDvrY6xdFKShCCQMEp/iMq5F+brK/eGlYtPy8hbIqxB
-         Gk0A==
+        bh=+N8UBYC8SKNdClQHm8KFeXbKwY6AotyQfa8NkNjLDpo=;
+        b=gc5+eFBvZK/qicNx++aTYKtLhAmXPlOHadQ6wp8pjKguIhM7JyakS+8zPx5kJaj2Xb
+         YMhr8PrSE4bx/DSIz2FUEwacQPwq/rnga0JseR+zQfr8HitACGf7KJBJOgcFxvEDSoXN
+         G5mP1lQnMEE1S4yoUS/XjjVH5SYFRjUED3MAYdMufhh9b49zUytwMDpEil6Yf0hySriP
+         +x6ci5pBGBOpIE53GNIm+zuGyu9UGtVe+0bNO/InijHnUbm4mvrArUEZa8sS28ZVHP1y
+         ryRDYNDHckWx0Mt1o77kW2hHiSnKVRazhG0VwUbAnzgRK1MuWGpJLOsJa5XMGDWESCq4
+         crIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723568493; x=1724173293;
+        d=1e100.net; s=20230601; t=1723568603; x=1724173403;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zqcYDyfx63llFdcrlT+i8nPzWoVuQ+JI9Z24vWzRXhc=;
-        b=dGxj2PdLeUJtsJqkwLQOxs5ryNPmmjuZgg0CMdiOp702RMPC/4qxr3Fg/MKgXxc+sN
-         kxXm7b7WeWkijXs/qWea7UWPmGVx7SVQwwxHNyF+GQg4dsmNp4fFlzS7xHGwU2LKfGk9
-         I9KYuu4WghbLe0d/w3qd+fiiDab3lKEB5LJrbTuF0nSh3Io9+0bHJqysA6H5v7qizSHq
-         1HdfD1VeiZ19vThfpYTHIZ0hP15fSM4KfD5+aAiDoxCalHudHcg2+akOsEFh+br0WEET
-         UU3ny6yGnoWo1tE7a0EDoBJPYYXLzp0iblpKp7Wvh80T9EpO5LsiJI7jmvMnlYxVxA4P
-         TWCw==
-X-Gm-Message-State: AOJu0Yw2lc/n0zqZ+NRDIcozI2S6hvzNdtp2yOTYvmTD4RTemEebQurX
-	agYXD0VXNX5HloHP40FQBOMXHA1ldASjUB7SMr5O5Z52iQq0zUrJsirwfh5SypA=
-X-Google-Smtp-Source: AGHT+IH9qH6c+uE5D7rTpZcL15JqZ+BNudgq7vqqsZepyxSSqNlsyYLjo+0/hLQXF6OoqZycQcsP+A==
-X-Received: by 2002:a05:620a:40d5:b0:7a3:6dd9:efa6 with SMTP id af79cd13be357-7a4ee33e36fmr32897085a.33.1723568492820;
-        Tue, 13 Aug 2024 10:01:32 -0700 (PDT)
-Received: from ziepe.ca ([128.77.69.90])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d7122bsm354386885a.40.2024.08.13.10.01.31
+        bh=+N8UBYC8SKNdClQHm8KFeXbKwY6AotyQfa8NkNjLDpo=;
+        b=L01kOVlV606aa+KKVnEMnL5uY9cGV2BgiWamJilgtVyrcIrMREviLsACQeInBffcSh
+         oPKShTP8zznsfGcRU0z98rR9h8Qe4EEn061n5+8KstWDVByiAbkiNcGXnkpDoMa8k2Dj
+         hLKmx7WwnSwMBQtvyRV9SnX2734WKaSha0GWZMk8JkQKnhOvMtOcRdk6Lh7xMP9yNdW4
+         q7N2sgvRYHWCHolpr/S4g+oyoViHyViK+1g4oXHa/d5F+w7FuL+6dltSKvoPYLqiImeU
+         SdKc3PXAX1NKMUf+NDVI2ALDgNWVEPJqpjLica+suuTRuzObuKyE9RJE+L41Y5UORwFN
+         8Gfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUV4YQL4KV+dJnmTMjkT52rovnKk2jNiuz9tqV4f/UTeuEIQ9kz0JdB8Eo6xzHloRJvE2oBSbIXFwiMLk21qZaOUwGaYk/Q5h2uOPFI
+X-Gm-Message-State: AOJu0YytKHO1d2dcc1dPS3aJALi2EkaLVH9//vD90awG4nvEWu83Niih
+	Yt651Ej1dJ43d9fq9MmXj7OfPTh3hmRhiGrGPIiG47m/CrucVjFEW2hbMDI1BvaHmsGbQPYpmdQ
+	=
+X-Google-Smtp-Source: AGHT+IEthgbcgoAs4AuQD1OxGgSkqwR6WBXoTTpYwsR/9bZNZTl31mk8MOD1vQ8KTchWQT15dBdhBQ==
+X-Received: by 2002:a17:90a:680d:b0:2cd:2992:e8e5 with SMTP id 98e67ed59e1d1-2d3aab422a5mr123893a91.33.1723568572275;
+        Tue, 13 Aug 2024 10:02:52 -0700 (PDT)
+Received: from thinkpad ([220.158.156.101])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9ca6c4dsm10810545a91.33.2024.08.13.10.02.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:01:31 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1sdutm-008ZLC-Ba;
-	Tue, 13 Aug 2024 14:01:30 -0300
-Date: Tue, 13 Aug 2024 14:01:30 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, will@kernel.org,
-	robin.murphy@arm.com, joro@8bytes.org, nicolinc@nvidia.com,
-	mshavit@google.com
-Subject: Re: [PATCH 1/2] iommu/arm-smmu-v3: Match Stall behaviour for S2
-Message-ID: <20240813170130.GM1985367@ziepe.ca>
-References: <20240812205255.97781-1-smostafa@google.com>
- <20240812205255.97781-2-smostafa@google.com>
+        Tue, 13 Aug 2024 10:02:51 -0700 (PDT)
+Date: Tue, 13 Aug 2024 22:32:47 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom-ep: Do not enable resources during probe()
+Message-ID: <20240813170247.GA26796@thinkpad>
+References: <20240727090604.24646-1-manivannan.sadhasivam@linaro.org>
+ <uk7ooezo3c3jiz2ayvfqatudpvzx6ofooc2vtpgzbembpg4y66@7tuow5vkxf55>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,45 +86,48 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240812205255.97781-2-smostafa@google.com>
+In-Reply-To: <uk7ooezo3c3jiz2ayvfqatudpvzx6ofooc2vtpgzbembpg4y66@7tuow5vkxf55>
 
-On Mon, Aug 12, 2024 at 08:52:54PM +0000, Mostafa Saleh wrote:
-> S2S must be set when stall model is forced "ARM_SMMU_FEAT_STALL_FORCE".
-> But at the moment the driver ignores that, instead of doing the minimum
-> and only set S2S for “ARM_SMMU_FEAT_STALL_FORCE” we can just match what
-> S1 does which also set it for “ARM_SMMU_FEAT_STALL” and the master
-> has requested stalls.
-> This makes the driver more consistent when running on different SMMU
-> instances with different supported stages.
+On Sat, Jul 27, 2024 at 01:32:40PM +0300, Dmitry Baryshkov wrote:
+> On Sat, Jul 27, 2024 at 02:36:04PM GMT, Manivannan Sadhasivam wrote:
+> > Starting from commit 869bc5253406 ("PCI: dwc: ep: Fix DBI access failure
+> > for drivers requiring refclk from host"), all the hardware register access
+> > (like DBI) were moved to dw_pcie_ep_init_registers() which gets called only
+> > in qcom_pcie_perst_deassert() i.e., only after the endpoint received refclk
+> > from host.
+> > 
+> > So there is no need to enable the endpoint resources (like clk, regulators,
+> > PHY) during probe(). Hence, remove the call to qcom_pcie_enable_resources()
+> > helper from probe(). This was added earlier because dw_pcie_ep_init() was
+> > doing DBI access, which is not done now.
 > 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 5 +++++
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h | 1 +
->  2 files changed, 6 insertions(+)
+> ... moreover his makes PCIe EP fail on some of the platforms as powering
+> on PHY requires refclk from the RC side, which is not enabled at the
+> probe time.
 > 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> index a31460f9f3d4..8d573d9ca93c 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-> @@ -1562,6 +1562,11 @@ void arm_smmu_make_cdtable_ste(struct arm_smmu_ste *target,
->  		(cd_table->cdtab_dma & STRTAB_STE_0_S1CTXPTR_MASK) |
->  		FIELD_PREP(STRTAB_STE_0_S1CDMAX, cd_table->s1cdmax));
->  
-> +	/* S2S is ignored if stage-2 exists but not enabled. */
-> +	if (master->stall_enabled &&
-> +	    smmu->features & ARM_SMMU_FEAT_TRANS_S2)
-> +		target->data[0] |= FIELD_PREP(STRTAB_STE_2_S2S, 1);
 
-The style semes to be to just use
+Yeah. I hope Bjorn/Krzysztof could add this to the commit message while
+applying.
 
-target->data[] |= STRTAB_xx
+> Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
 
-For single bit, not FIELD_PREP, even though it does work.
+Thanks!
 
-And as Robin noted it is data[2], the naming is supposed to make that
-apparent with _2_ indicating the word.. But it is quite easy to make
-this typo.
+- Mani
 
-Jason
+> > While at it, let's also call dw_pcie_ep_deinit() in err path to deinit the
+> > EP controller in the case of failure.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/controller/dwc/pcie-qcom-ep.c | 14 ++++----------
+> >  1 file changed, 4 insertions(+), 10 deletions(-)
+> 
+> -- 
+> With best wishes
+> Dmitry
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
