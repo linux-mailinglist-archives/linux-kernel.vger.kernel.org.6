@@ -1,119 +1,161 @@
-Return-Path: <linux-kernel+bounces-284207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AEA694FE77
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:16:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97AE994FE7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C83283A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:16:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD5301C22B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B230060B96;
-	Tue, 13 Aug 2024 07:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040F158ABF;
+	Tue, 13 Aug 2024 07:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oQfshzgB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="MwZp5mCr";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="hC63vtzP"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AF736139;
-	Tue, 13 Aug 2024 07:16:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774E64C81;
+	Tue, 13 Aug 2024 07:17:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533378; cv=none; b=X9BaqDWAOikJVUmBdq0+hJ4rFNHcAS38j318lHLICnvZum4w7MTdiN29DUV6vs7WqS2K05TTtSbTDOgLLXVcxvjFSFUgeGEsSWpvyeO/Be1nx1fwUZ9H3gQXuGrZAtq7k/muiddSR2847asQYxS4fKSJTqbdH+0ehkc0Xq9mEow=
+	t=1723533433; cv=none; b=HkgNuqedYyvTg8MKlr3/zAQb+HK2f5dxeuUdndVOOFgolh1pkjIm6xqyF50g4Sl/oKiLHPVOqPyxctVykuYC2e0fHs45GbhSTMexH7btsR2xuNfoohWNv/62VidPOqQerXb1i94cTdMmyh1Av8oUsf3JLFQ7gdzIdKdehpyfceE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533378; c=relaxed/simple;
-	bh=Zw38o+oLyow2tsJrgb+SA6FlgG4nHiNDqOq3Xu6bCOE=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=BjafUvxqzJFHtuuiygUvhF5z/MVY3dnd/By311fEG4KqWz5h3PmKUBDoFf/e1tKpFXdTaUvRJup4+NhRBcguNJKyKbO+j2ftrWX/UwTVA+GZrBMN25G2RihL88MoNneh1hr+ukUA1rvioG6efLUUa7bmhueq0EW2oLdXU7QrBpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oQfshzgB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB13C4AF09;
-	Tue, 13 Aug 2024 07:16:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723533377;
-	bh=Zw38o+oLyow2tsJrgb+SA6FlgG4nHiNDqOq3Xu6bCOE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oQfshzgBYzi06GWTwVnYuFQ3M2OJFuGmpSKXX2xposVRmUl+p/hkTjLGQitQoIj1O
-	 Ra6aElb2eP9oQjEOzDt+h2rSVKUXHA61UlL83EveTxWSW3rNRzzZ4p/zNBn5qWBD+D
-	 QZ+PQwQXITqEMtVzQO9eOXjjn1h8UQcjkBNg3vjj/XdPm6kuc41gkdSCG6C1y7lR6I
-	 JS30VHXT4yf6F/DQSSFqFQ3quo9EMIWwucL1Kpd6DojwlhH3Q9AWJN24kz18jHw/KX
-	 ublu3qxLW8rt88IMS1z6/l7TTnfvyQq7doYIi26FptgdASvmxrz8/gVBpYt9NRkSp+
-	 VNFQdtt7aVF3g==
-Received: from disco-boy.misterjones.org ([217.182.43.188] helo=www.loen.fr)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sdllP-003F8N-7R;
-	Tue, 13 Aug 2024 08:16:15 +0100
+	s=arc-20240116; t=1723533433; c=relaxed/simple;
+	bh=9pX1OaonTIu4bKYzWQDBGmB7EQBH1hs+F1VSkLTdjyA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HKPP+/mjzai6KLoAkJzYzHEcsUPRzoaPd5qwapqnpLo6LZt+HxFy4F8KxrX5O+oqMer+kQ3By5RRHw8dlADwqYjYepSTF6u8/W9D6ZE8TUtOvYV0xur+/CgmAnnZ2U1mwN+Xs3U2ZgGUWRwxdVqurj+orueJBkCuS/4kFDUmPd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=MwZp5mCr; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=hC63vtzP reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1723533430; x=1755069430;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=6Gcv9SaYMhdUFSH3ll9l5WDvFGE6rvx7LNmkMGKQPOk=;
+  b=MwZp5mCrjLWFdQ6lT8HyfJ/HAmID6xe04CNNmhnhzWphziyOW6ssp6us
+   WHPznkdUH2Ose9+P8NpdRWDKl4Yl2I41nQmrlt3tGpoDFaKiX6CK0m7Ke
+   RaYeLgoiw1+NTuPuKptfcOUkMCe50xN212RoLYSCKv9ejzC9t4G06lTkr
+   bR5FndcybzIy09gqbSAVuor8dsrjGWjkIgg6JULjpm24n64nVvtpPkILs
+   7qjpnWCGJwKSofVzp0C8+20bGTsgL3TMkXZH/sCBIfsqrRV0kJBl63y8M
+   jsSEjYI1EXbn18GEs2hG0YB9XZBCC5IxkVzWo/0iluNPMQjnLPgCjUs31
+   Q==;
+X-CSE-ConnectionGUID: xLD9tkCvQfqzhMpWAeNsGA==
+X-CSE-MsgGUID: a1Te5wApRt6N/NyLeMNrNg==
+X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
+   d="scan'208";a="38375830"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 13 Aug 2024 09:17:08 +0200
+X-CheckPoint: {66BB0874-A-2C7A84BB-EFCBC4CF}
+X-MAIL-CPID: 31DB44AB7A2FE553655F68547661D27C_2
+X-Control-Analysis: str=0001.0A782F1F.66BB0874.00A6,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 26DAA16423A;
+	Tue, 13 Aug 2024 09:17:03 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1723533424; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=6Gcv9SaYMhdUFSH3ll9l5WDvFGE6rvx7LNmkMGKQPOk=;
+	b=hC63vtzPI4q4DE/LW69AO/VzvdhQgNrQ4KGO+cfd9OP9FeOYWU22oyxdxcSLG5f6bZ/EEj
+	L6TeWjIdJESZMvmrjvPauywdq8LdpmJe7zeR6mij2m9o03hsjFKBrWfGOgOx1EBwnUtFeA
+	fBmTHCtETVvnSPknV6Iw3AQ3KgbYsf6Pr2rOF4JtP0LAk3etAlPKuP73CSCH+K4IpzfKeS
+	QSJINYGRMJn2sFUlLRbi+jXQBR1mIKdcX4R625B404+0gSyj/fzoUD2ToEUhfqubdkDMJl
+	3uDIHdg6MBZIAQZrnYR2NwFayeA48AjEw3u5T+7m2nZoIJClrgMMbfCbWlRC+A==
+From: Max Merchel <Max.Merchel@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>
+Cc: Max Merchel <Max.Merchel@ew.tq-group.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 00/10] ARM: Fix license and copyright texts
+Date: Tue, 13 Aug 2024 09:16:26 +0200
+Message-Id: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 13 Aug 2024 08:16:15 +0100
-From: Marc Zyngier <maz@kernel.org>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, Oliver Upton
- <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>, Suzuki K
- Poulose <suzuki.poulose@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [RFC 10/10] KVM: arm64: nv: Add new HDFGRTR2_GROUP &
- HDFGRTR2_GROUP based FGU handling
-In-Reply-To: <6c479aba-10b9-46ba-92fa-d3b20cc82d61@arm.com>
-References: <20240620065807.151540-1-anshuman.khandual@arm.com>
- <20240620065807.151540-11-anshuman.khandual@arm.com>
- <865xu3kh4r.wl-maz@kernel.org>
- <4d256df7-1ec7-4300-b5c8-355f46c0e869@arm.com>
- <878qyy35e5.wl-maz@kernel.org>
- <47dc4299-52cc-4f98-929b-fb86bd9757ae@arm.com>
- <86tthhi0nz.wl-maz@kernel.org>
- <c84d0081-5afa-4bc2-82f4-a6dd07b8ab87@arm.com>
- <86o76c1b8p.wl-maz@kernel.org>
- <d56735e2-3fee-4d91-84e1-a5b480ec0ce1@arm.com>
- <86bk2b198o.wl-maz@kernel.org>
- <fb9bef18-adf2-4d3a-8205-b22a65b0c6db@arm.com>
- <87sevk4kgr.wl-maz@kernel.org>
- <6c479aba-10b9-46ba-92fa-d3b20cc82d61@arm.com>
-User-Agent: Roundcube Webmail/1.4.15
-Message-ID: <39b14f98acfa1afcbdcb46950c62e6c7@kernel.org>
-X-Sender: maz@kernel.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 217.182.43.188
-X-SA-Exim-Rcpt-To: anshuman.khandual@arm.com, linux-arm-kernel@lists.infradead.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 2024-08-13 07:53, Anshuman Khandual wrote:
-> On 8/4/24 16:35, Marc Zyngier wrote:
->> which shows that an SPMEVFILT2Rn_EL0 access from EL1 traps to EL2 if:
->> 
->> - either HDFGRTR2_EL2.nSPMEVTYPERn_EL0 == '0', (check)
->> - or MDCR_EL2.EnSPM == '0', (check)
->> - or SPMACCESSR_EL2<(UInt(SPMSELR_EL0.SYSPMUSEL) * 2) + 
->> 1:UInt(SPMSELR_EL0.SYSPMUSEL) * 2> == '00'
->> 
->> and that last condition requires some more handling as you need to
->> evaluate both SPMSELR_EL0.SYSPMUSEL and the corresponding field of
->> SPMACCESSR_EL2 to make a decision. It's not majorly complicated, but
->> it isn't solved by simply setting a static attribute.
-> 
-> So IIUC you are suggesting to handle SYS_SPMEVFILT2R_EL0() registers 
-> via
-> complex condition checks where the CGT_XXX can be directed to a 
-> function
-> callback instead ? For example, something like the following 
-> (untested).
+Hi all,
 
-[...]
+this series changes Devicetree licenses to included file licenses and changes TQ copyright entries to unify TQ-Systems copyright entries.
+It also corrects the spelling of TQ-Systems.
 
-Something like that, yes.
+Best regards,
+Max
 
-         M.
+Max Merchel (10):
+  ARM: dts: tqma7: change licenses to use the same as imx7
+  ARM: dts: tqma7: change copyright entry to current TQ Copyright style
+  ARM: dts: tqma6: use GPL-2.0-only as used by included imx6 device
+    trees
+  ARM: dts: tqma6: change copyright entry to current TQ Copyright style
+  ARM: dts: tqma6ul: change copyright entry to current TQ Copyright
+    style
+  ARM: dts: tqma6ull: change copyright entry to current TQ Copyright
+    style
+  ARM: dts: tqma6ul[l]: correct spelling of TQ-Systems
+  ARM: dts: tqma6ul: use licensed as used by included imx6ull device
+    tree
+  ARM: dts: tqmls1021: change licenses to use the same as ls1021a
+  ARM: dts: tqmls1021: change copyright entry to current TQ Copyright
+    style
+
+ arch/arm/boot/dts/nxp/imx/imx6dl-mba6.dtsi               | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6dl-mba6a.dts               | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6dl-mba6b.dts               | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6dl-tqma6a.dtsi             | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6dl-tqma6b.dtsi             | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6q-mba6.dtsi                | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6q-mba6a.dts                | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6q-mba6b.dts                | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6q-tqma6a.dtsi              | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6q-tqma6b.dtsi              | 2 +-
+ arch/arm/boot/dts/nxp/imx/imx6qdl-mba6.dtsi              | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-mba6a.dtsi             | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-mba6b.dtsi             | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6.dtsi             | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6a.dtsi            | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6qdl-tqma6b.dtsi            | 7 +++++--
+ arch/arm/boot/dts/nxp/imx/imx6qp-mba6b.dts               | 5 +++--
+ arch/arm/boot/dts/nxp/imx/imx6qp-tqma6b.dtsi             | 2 +-
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul-common.dtsi     | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul1-mba6ulx.dts    | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul1.dtsi           | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul2-mba6ulx.dts    | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul2.dtsi           | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul2l-mba6ulx.dts   | 9 +++++----
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ul2l.dtsi          | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ulx-common.dtsi    | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ul-tqma6ulxl-common.dtsi   | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ull-tqma6ull2-mba6ulx.dts  | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ull-tqma6ull2.dtsi         | 7 ++++---
+ arch/arm/boot/dts/nxp/imx/imx6ull-tqma6ull2l-mba6ulx.dts | 9 +++++----
+ arch/arm/boot/dts/nxp/imx/imx6ull-tqma6ull2l.dtsi        | 9 +++++----
+ arch/arm/boot/dts/nxp/imx/imx7-mba7.dtsi                 | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7-tqma7.dtsi                | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7d-mba7.dts                 | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7d-tqma7.dtsi               | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7s-mba7.dts                 | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/imx7s-tqma7.dtsi               | 8 +++++---
+ arch/arm/boot/dts/nxp/imx/mba6ulx.dtsi                   | 7 ++++---
+ .../arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts | 4 ++--
+ arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi         | 4 ++--
+ 40 files changed, 155 insertions(+), 101 deletions(-)
+
 -- 
-Jazz is not dead. It just smells funny...
+2.33.0
+
 
