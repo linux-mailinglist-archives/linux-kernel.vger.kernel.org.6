@@ -1,165 +1,161 @@
-Return-Path: <linux-kernel+bounces-284059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4034494FC80
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:04:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95B194FC82
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 968E31F22B1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4BC283492
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 029C21C286;
-	Tue, 13 Aug 2024 04:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC641C287;
+	Tue, 13 Aug 2024 04:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cx71XHCJ"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gDjlykrN"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7525F9E8
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F48514F98
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723521868; cv=none; b=L9f5hmehz17aqlPsngHtBWQPEL7dqlNDLlpkPARMKo0kSbnir6zzcJIgITcwKsLY+DiZB3xDqKXvh4EEoLh/IVyY2/S00xEG85bZILFB3/6oxgIyrY9oOnQeN3MZgPR8wpddOd/K/SFashTqIKIWFg79hAYLBFEzBL96N5wWwiY=
+	t=1723521898; cv=none; b=r95yN81sPLd+mlBNgX3kzgVUFO7cP0Pn0MqV6hyPqZzx4C/FYfHmRPsw6+SHmtaoK4Tc+mgyLuGNvnhB2hrK6hQKSXzEmMfdu6XVn0M/YnJmNUEY0umge9+9hr6UTNfGd++NyB/Ih3m78vzZ7/y21j7+gFxOrCseGbepuVAnhKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723521868; c=relaxed/simple;
-	bh=RBLuOpa6/6KuZb5ZUiFSN5p9kDO6fr0QcfXEYDrzFlM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZREhjG4tiTlN1zpW5OG5lYHXggbevzcsqlrtGSUs/HM5AAQHuXcoktu/n/ZbIu/OAccTFRdkIhxEfqqf8EESHcu3wR0fxLp2h8l+0vlgtvMb4wnE4IBuvDMVx445Gseu2j3rTWhYtbOGV45ZSTrekESNv9d5aXwHCTybULfRyrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cx71XHCJ; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1fd6d695662so55955115ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:04:26 -0700 (PDT)
+	s=arc-20240116; t=1723521898; c=relaxed/simple;
+	bh=EcZZm4CJUm3zXZIu6azr1f2Vecpbky8jyiiMJ5x2r9o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XAfQhGAIJexXY4X/GYDZtiwvVka0PnLTTbzMNuasIFSqK35ypxS+fq2WrooRaimfGU4qkd9DqJbnu+utsQe9wHmRmZ1PHNqSei6rOU73yEE4Fzh944FVtKyic8oEqmjvYPJ6f8a37Im1pp+zbxL/oeMXEZp3uiIQ1JAzJ1fQL8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gDjlykrN; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4280b3a7efaso37593575e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1723521866; x=1724126666; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xr7C32v6c2xit879iiq1ZVSHFKFJKtQ1IiBykzo7yK0=;
-        b=Cx71XHCJRnpgif2r0Lkuqu8QgLe6fvYg4Kodi+lROB2tj3YBk5grbuDgBLDof4OkVm
-         0auB+p7U/cWcmJ53VBv4hstNZPE8Utxn0GDhmA4c8QyrZhU5q/ecYvWuwgU5ZcPwwu45
-         rkS+8PN4oX2WUA0XRO+oZfoXPsBiLyOu6pkQcHO+dIANxauzW9zD9cKYxRmEB/X14BZf
-         hhOfyDInD0V8w7wemgsmHC02Sj5t2vf6gk+yKlOFtcsT3TR0Pr5uncvyEfqbJdsuFqgM
-         k3Km2rzgC0DwT8s4pzsYg9v3TnhPZ2OUnudKhSTMIZu5wGXLNI72J9/PSyxXeakgL0W+
-         msig==
+        d=gmail.com; s=20230601; t=1723521894; x=1724126694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=En16KWI62fl9qTE96h/U4N3IelKgrLoPh565oRUDNpM=;
+        b=gDjlykrNDXgjgZ7qvk1sjidqTIQ3kfYXQ9mmwjvJlO2y82uHv0Y5upr1NP1fZtrrCO
+         K2NTooUeJW39vwUMDruqMdCy5zupMhhd64f5KTntKynVPT3v4ex+oanTVEaflici84GF
+         zKCfhkIAWnpObuIJh5mNQkZlxbA8oMIz8iVsX1NlEk1P+wXoPdcMn/pwMUaGE1UAaWWq
+         eCN43CfnNzmEeKDbUUT8rGWlZUJ3HfLWIl+oBwYJ+bXtyLaPdBegKHIBnG5jIKsoGRVS
+         X9+DIhWGO9zwJlxx0lw+H2r+MEoR7dt8UjQpCviAeh4VrczEj4KrQ8cSfntup9vAZaAq
+         DyMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723521866; x=1724126666;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xr7C32v6c2xit879iiq1ZVSHFKFJKtQ1IiBykzo7yK0=;
-        b=vpHMl80c2mDMI/qv8tlIjRb+UdmTLGtR9+cykh3xjZjjSxysUyc6+fp/q60xfeH7cw
-         aD6I0qDIl9OMg3VOH/EsfRoH7lZ/7xW3Il/OF/EFyKxCqXXRFu1wLo3oJgNKSBFwts77
-         lEryw2k3Wc2c0BPBHZaNVbEo253msTaNCRb6oh1Zw7Po9qMVnQ9nJgxFRZwspwz5lY1J
-         m7/PBwyr/QezEZd5FoGEnXQ1O82W4EvTabKDld2PIXUtx0oCL8oR50g8W83Ms37EpjSY
-         taSOiFjXFjbkUBcAJnaVkY3qNXuokNB+Fm6/3/L6ywCznfRWWU9EIx6/DYBIW/ALjFve
-         SKQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbQ55/nddqVH2tJ1FN9SNaF3EiK+bzMi2CpUUtPSyzZfjS7JN7Lpge30RiDvbaGuHIm9JqZlzuTXOO7MAOk1npI4iHyeWWFigh2HxW
-X-Gm-Message-State: AOJu0Yz5hOCVGvOQnAYhQmnmJCxJrQ+U91MhxIFb4O/Gi5tdPxx5LbJI
-	Td+czKHjzf5qxaQtiEcPNpfyVvrOO8t0a7bTJUp5ABVA5lpoBfxOKzOOUFxExiNjBi4ACY86AvR
-	BJQ==
-X-Google-Smtp-Source: AGHT+IE0Ey9nvTvCCBhSwJ3Y5zSB2eUuiv0MOxdgaSuEN1zHD4D5H59HYPhmPXB6LWhWDDa9QhdhzhYYnUg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:903:2311:b0:1fd:8e8d:8695 with SMTP id
- d9443c01a7336-201ca1ecf6bmr102765ad.12.1723521865969; Mon, 12 Aug 2024
- 21:04:25 -0700 (PDT)
-Date: Mon, 12 Aug 2024 21:04:24 -0700
-In-Reply-To: <20240612115040.2423290-4-dan.carpenter@linaro.org>
+        d=1e100.net; s=20230601; t=1723521894; x=1724126694;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=En16KWI62fl9qTE96h/U4N3IelKgrLoPh565oRUDNpM=;
+        b=rNa8aExPE076tR/TqHK4XNebmB5CSN6EMJBG4oDE8MHWURhuZmUlrArj20F1aBD1M8
+         PvutA6C8D0CszHd/lgsrlPUwPTwOlDgHDx9Vddp7bcZ3eJ1DBbwQmTWrP/Q5DhG63aGl
+         7/nPBEn+4ZEvFIYQVqZw7TD5OwnKD3kHGctgQLIJbkXOYSOexdtzlmbJ65D9lRyX0PaS
+         JjXbUrvucT1HejlgDuAWJ/O3StVGyksUQn4haHWcavXUS5oenZsOBB73N4E7EDp16K1O
+         IJreCHCyl1IReiLhIHROZhS4ul6D8eMqHts+xM6vVF7A+HohkKr3dFVIKkym6KOnQaYu
+         QHbQ==
+X-Gm-Message-State: AOJu0YxfhWDOi3O/t113UE++O6Mq0Fvg/q2DUv2pffh5z3WABsC0xq4Q
+	vfcLYR9dvHOsI/3mSnfuQbCga4ZEKhWCsefVaLoTPwxFS73LqdbL
+X-Google-Smtp-Source: AGHT+IGcgmH2rDRaO17GvzoH+LLLAH81PbZhR2r/bfyRtBWhXWaxsNSg8TLLDrm8UqEQFWoq4xUtcg==
+X-Received: by 2002:a5d:5284:0:b0:366:ec2c:8646 with SMTP id ffacd0b85a97d-3716cd24ddemr1447562f8f.43.1723521894311;
+        Mon, 12 Aug 2024 21:04:54 -0700 (PDT)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ecc7a52sm8910469f8f.103.2024.08.12.21.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 21:04:53 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: eli.billauer@gmail.com,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com
+Subject: [PATCH] drivers/xillybus: fix deadlock upon cleanup_dev
+Date: Tue, 13 Aug 2024 09:04:25 +0500
+Message-Id: <20240813040425.187418-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240612115040.2423290-2-dan.carpenter@linaro.org> <20240612115040.2423290-4-dan.carpenter@linaro.org>
-Message-ID: <ZrrbSFVpVs0eX1ZQ@google.com>
-Subject: Re: [PATCH 2/2] KVM: SVM: Fix an error code in sev_gmem_post_populate()
-From: Sean Christopherson <seanjc@google.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: error27@gmail.com, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 12, 2024, Dan Carpenter wrote:
-> The copy_from_user() function returns the number of bytes which it
-> was not able to copy.  Return -EFAULT instead.
+syzbot found an issue [1] when cleanup_dev() is called twice,
+causing deadlock. It is called in xillyusb_probe()
+in the end of wakeup_all():
 
-Unless I'm misreading the code and forgetting how all this works, this is
-intentional.  The direct caller treats any non-zero value as a error:
+	INIT_WORK(&xdev->wakeup_workitem, wakeup_all);
 
-		ret = post_populate(kvm, gfn, pfn, p, max_order, opaque);
+then on "goto fail" path it's called again, where it's deadlocked in
+destroy_workqueue(xdev->workq) due to first call's work_completion.
 
-		put_page(pfn_to_page(pfn));
-		if (ret)
-			break;
-	}
+Also the deadlock prevents UAF as cleanup_dev frees struct xillyusb_dev.
 
-	filemap_invalidate_unlock(file->f_mapping);
+It should be also the cause of previous syzbot report which was fixed in
+commit 0d151a103775 ("Bluetooth: hci_core: cancel all works upon
+hci_unregister_dev()").
 
-	fput(file);
-	return ret && !i ? ret : i;
+[1]
+WARNING: possible recursive locking detected
+6.11.0-rc2-syzkaller-00004-gb446a2dae984 #0 Not tainted
+--------------------------------------------
+kworker/0:1H/58 is trying to acquire lock:
+((wq_completion)xillyusb){+.+.}-{0:0},
+((wq_completion)xillyusb){+.+.}-{0:0},
 
-and the indirect caller specifically handles a non-zero count:
+but task is already holding lock:
+((wq_completion)xillyusb){+.+.}-{0:0},
+((wq_completion)xillyusb){+.+.}-{0:0},
 
-	count = kvm_gmem_populate(kvm, params.gfn_start, src, npages,
-				  sev_gmem_post_populate, &sev_populate_args);
-	if (count < 0) {
-		argp->error = sev_populate_args.fw_error;
-		pr_debug("%s: kvm_gmem_populate failed, ret %ld (fw_error %d)\n",
-			 __func__, count, argp->error);
-		ret = -EIO;
-	} else {
-		params.gfn_start += count;
-		params.len -= count * PAGE_SIZE;
-		if (params.type != KVM_SEV_SNP_PAGE_TYPE_ZERO)
-			params.uaddr += count * PAGE_SIZE;
+other info that might help us debug this:
+ Possible unsafe locking scenario:
 
-		ret = 0;
-		if (copy_to_user(u64_to_user_ptr(argp->data), &params, sizeof(params)))
-			ret = -EFAULT;
-	}
+       CPU0
+       ----
+  lock((wq_completion)xillyusb);
+  lock((wq_completion)xillyusb);
 
-and KVM's docs even call out that success doesn't mean "done".
+ *** DEADLOCK ***
 
-  Upon success, this command is not guaranteed to have processed the entire
-  range requested. Instead, the ``gfn_start``, ``uaddr``, and ``len`` fields of
-  ``struct kvm_sev_snp_launch_update`` will be updated to correspond to the
-  remaining range that has yet to be processed. The caller should continue
-  calling this command until those fields indicate the entire range has been
-  processed, e.g. ``len`` is 0, ``gfn_start`` is equal to the last GFN in the
-  range plus 1, and ``uaddr`` is the last byte of the userspace-provided source
-  buffer address plus 1. In the case where ``type`` is KVM_SEV_SNP_PAGE_TYPE_ZERO,
-  ``uaddr`` will be ignored completely.
+ May be due to missing lock nesting notation
 
-> 
-> Fixes: dee5a47cc7a4 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  arch/x86/kvm/svm/sev.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
-> index 70d8d213d401..14bb52ebd65a 100644
-> --- a/arch/x86/kvm/svm/sev.c
-> +++ b/arch/x86/kvm/svm/sev.c
-> @@ -2220,9 +2220,10 @@ static int sev_gmem_post_populate(struct kvm *kvm, gfn_t gfn_start, kvm_pfn_t pf
->  		if (src) {
->  			void *vaddr = kmap_local_pfn(pfn + i);
->  
-> -			ret = copy_from_user(vaddr, src + i * PAGE_SIZE, PAGE_SIZE);
-> -			if (ret)
-> +			if (copy_from_user(vaddr, src + i * PAGE_SIZE, PAGE_SIZE)) {
-> +				ret = -EFAULT;
->  				goto err;
-> +			}
->  			kunmap_local(vaddr);
->  		}
->  
-> -- 
-> 2.43.0
-> 
+2 locks held by kworker/0:1H/58:
+ #0: ((wq_completion)xillyusb){+.+.}-{0:0},
+ #0: ((wq_completion)xillyusb){+.+.}-{0:0},
+ #1: ((work_completion)(&xdev->wakeup_workitem)){+.+.}-{0:0},
+ #1: ((work_completion)(&xdev->wakeup_workitem)){+.+.}-{0:0},
+
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+Reported-by: syzbot+e528c9aad0fb5383ec83@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e528c9aad0fb5383ec83
+Fixes: a53d1202aef1 ("char: xillybus: Add driver for XillyUSB (Xillybus variant for USB)")
+---
+ drivers/char/xillybus/xillyusb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/char/xillybus/xillyusb.c b/drivers/char/xillybus/xillyusb.c
+index 5a5afa14ca8c..099fe681aed5 100644
+--- a/drivers/char/xillybus/xillyusb.c
++++ b/drivers/char/xillybus/xillyusb.c
+@@ -2151,6 +2151,7 @@ static int xillyusb_probe(struct usb_interface *interface,
+ 	if (!xdev->workq) {
+ 		dev_err(&interface->dev, "Failed to allocate work queue\n");
+ 		rc = -ENOMEM;
++		kref_put(&xdev->kref, cleanup_dev);
+ 		goto fail;
+ 	}
+ 
+@@ -2174,7 +2175,6 @@ static int xillyusb_probe(struct usb_interface *interface,
+ 
+ fail:
+ 	usb_set_intfdata(interface, NULL);
+-	kref_put(&xdev->kref, cleanup_dev);
+ 	return rc;
+ }
+ 
+-- 
+2.34.1
+
 
