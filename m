@@ -1,202 +1,128 @@
-Return-Path: <linux-kernel+bounces-285292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08EE6950BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:56:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B1986950BC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFDE6281714
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DB862816A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DA21A38D0;
-	Tue, 13 Aug 2024 17:56:24 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373311A38D4;
+	Tue, 13 Aug 2024 17:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="g5ysmiry"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0A022F11
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035CF1A2C32
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571783; cv=none; b=C2d7o5GrSve8bdeaDAZFqWCLFFdwMEhHbFUBzRP2XaLMut9/qyqGdySnuCpe8MVFeL0C16zcfj2ieDdWm1PmS719VtrxNv+PKhmuoOTn3A5CvWh2wwrLKbS4S0COZwk85cOeDn1X0ex/GxwJuyjPxEwhj1H0NGFhPEYINrXaMz0=
+	t=1723571822; cv=none; b=byXOv88eO2VUhRl59oDHx3ul/v33eZQXJc2ALa7f1yL7HKEhchxGHToaj2Ym9OuyZcBMxwyz0BKUNuc36q33kxdrI3inlvh3wFXO7nJyREx/NvN2lNLFvMCHjJgO0F3aNM5v0vohmhl/Em3CcV3WxzUU1aKajhBur5EEWLS84Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571783; c=relaxed/simple;
-	bh=tCPCJ/TpJCda4BgwZL+Ym/aFi3VCjhUXEV2ViGdNsxQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=i1UL3B0fEeC0L4n86l8oZrMP95w9YstvcliB7MCAiCHjEcuIlC6NN4dMrMCmsdd507HrMxY0njVjVuSgzYCUHLuNS1/vTzpntnh0OxsUfgQPOZmm1j5LabOirUUmDszex3Y5crZcekm+N6ZwSnCK2+TwHeTQWuW8chGyYT3bjAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-81f8edd7370so731277339f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:56:22 -0700 (PDT)
+	s=arc-20240116; t=1723571822; c=relaxed/simple;
+	bh=757LLvYh7tCy/Za0nmABifBJAXzCB8Y9uZkMalML1LY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nvO0pmD2x9q2V2e3wO2ulpmqRaD5FXb3hkxcuEqFnCBuiEzZTtNjuo0MSe1wsmADWWdlye4Fa7Ogcy0xDL9d8OtQMC+xln1vN2QlYV9tTNTUlnWpYIY0THFAHLCUD0S6oFjVLy95n++toHXJ+0F3IlG1/O7nNCSS0WNQoGBuTY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=g5ysmiry; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6b7a4668f1fso37910726d6.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:57:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1723571820; x=1724176620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CqHCv1f37dJdFmlxfLDwmGn7VkBUztlhPRalJOl3Txc=;
+        b=g5ysmiryuLrvfAKoSHoFlunF5Ak/mXEWobK0dBdZniSYb0iD8/EFf3ssDMDkPERP6H
+         Ih2YyKAk0pIPZ4mh+khVjLV24Du8sRXMD1tkord34INDg9CE68gw2qFLVpXlQE0rb6Al
+         ctuZgSWq20iyK2iFwLyOeLzVhtvTjI3t16CtlWd3kXJtevl1xLCG7bZZRQL+BOYG/vHU
+         7GowgLUbF7HRTBl/qMGqjkdnXcoF+E006gyDRGfA8chs4cB+dMVjgpEPr3irtJ6hgm0g
+         h/s9Gj3jUFzgUvJJMB1hXdguCRH+3nL/M0FrwP7J0cSEJJL3JahwrS99ojWJI99c8fN2
+         LzoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723571781; x=1724176581;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1723571820; x=1724176620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mhLZCqzwDFLBPIoFDag5GyusiC/lZjZlVdw7TtMKxkg=;
-        b=hQkIR0qQ+c30/TdVcn0EKbLZ9S1iWLmnaH/21OU+wxY0kAAeHtjVr5Etkv8XgmWIlg
-         XQGKJW1UJ3w6IowHCOXV8w3K4kNwJT5wJUe4KzjzhKLDezn7FTG7PN4S7d6QgxIX+lee
-         vZqQguMpvKJoHXXxxjdwA6Q+DQd+rjM7RU3oj/3y1jT0vz/UlOUSyDBv0+rHrpICgq6x
-         wOZQiO62G67FFbsAN8LWu2F3dmZFfzAx2UZMHRClnnl9wDUHqqVRRE726yM2O64aILHC
-         6qYQFdpWIQoDc9idkh8L7wYriCkZehCC4zC6Ht/vJa/9gklt4GpcHUG280mHCb7V6Ire
-         zh6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXtdwvuOBoB8hI0ePgZudjK9tcAaVc++5rMbBaCpiI2PyWWBKfgFrLcOKG9HTVtEha3VQqsNiuKysoCa9Mtz+ihHbZGQPNNhvypOuq0
-X-Gm-Message-State: AOJu0Yx6v3YcB7vQAk2vsmAHLWS2mTaothTMy8rQbCny3yHtvPNOTk9Z
-	uYK/UI4yj3QUV5fz7hfdTPoBYcVSWOzE1a/fUwZv2SZAI1NgphdjmKchDJqfZrpxQn0jlxdmDpR
-	6O6WV6oBwNH47I6vCThTujB32GMNWqUqdP+9+emx7Gk/TzllojLIxRDk=
-X-Google-Smtp-Source: AGHT+IEViqgu+EBcH9mSvm3xuwiktyHxtfQ/wtAqkbCOOcV+hmpjwai+VPqJNaRo2ss2yIU48A5sijwVPyR9LjUBZtuyvyZKJAjP
+        bh=CqHCv1f37dJdFmlxfLDwmGn7VkBUztlhPRalJOl3Txc=;
+        b=XI6N1/vsV2Uwe8pdpXyJCxxKsb26KZ53pqlbkO/p1M59CDbHt1QAS+WlhRgCBbsqf+
+         qFrk3njgXJtTmwA9H+nWsZFwU5sedjlQPUa9QzZMb0sC800Y7ef5IEpV6ugu6w6edPnR
+         ExJg0NJ2P4mVWgOh2BB+Be05P9kv1cYFCO021V8Jw0y+EdJJ7wJdKsf5xk+5l07svYzF
+         W3V72UPko9syqNPiFaWqsw2VS/hlPoCORSxAZvxa0hvuw8kHO0pPo0Do7XukeMe2oFm5
+         +Myv/2qiFVxqQxdqsfA2qpreazFc5JGqE0CaeKKhwIXI1mLZ08dMhKDGWwcXw0qp7JyV
+         kZjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTnAKSp4G8bYMyKiRRfNK2ZrdczHlr8w/KhlB++7cqaILIAY0WEDc14OKDe466InQFcgOUUzGAMOVTpg7/LC7K4Q9D+mUfiEejAQAZ
+X-Gm-Message-State: AOJu0YybvmPeh3h5Ldy/p8/NzFAGKksiZTQJXfs/gbuBWH971Acv9ImL
+	c64P+zGH8/NzaF5UUgNtPTXu1M7FqLCl1oEb82R4CCNU3fhbHEe+M7LWjByJ7w0=
+X-Google-Smtp-Source: AGHT+IF0ahYqaweAPCwsOz0r2FqFsLLNlBLP+hAUNAK3I7TnTFqEVk0JoImTkYUd7Un7vFvQodQtow==
+X-Received: by 2002:a05:6214:318e:b0:6b8:5afd:8f89 with SMTP id 6a1803df08f44-6bf5d23f9b3mr2429676d6.37.1723571819915;
+        Tue, 13 Aug 2024 10:56:59 -0700 (PDT)
+Received: from ziepe.ca ([128.77.69.90])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6bd82e33ec9sm35691786d6.77.2024.08.13.10.56.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 10:56:59 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1sdvlS-008pOM-3A;
+	Tue, 13 Aug 2024 14:56:58 -0300
+Date: Tue, 13 Aug 2024 14:56:58 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Pranjal Shrivastava <praan@google.com>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Will Deacon <will@kernel.org>,
+	Kunkun Jiang <jiangkunkun@huawei.com>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Nicolin Chen <nicolinc@nvidia.com>,
+	Michael Shavit <mshavit@google.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	wanghaibin.wang@huawei.com, yuzenghui@huawei.com,
+	tangnianyao@huawei.com
+Subject: Re: [bug report] iommu/arm-smmu-v3: Event cannot be printed in some
+ scenarios
+Message-ID: <20240813175658.GO1985367@ziepe.ca>
+References: <20240724102417.GA27376@willie-the-truck>
+ <c2f6163e-47f0-4dce-b077-7751816be62f@linux.intel.com>
+ <CAN6iL-QvE29-t4B+Ucg+AYMPhr9cqDa8xGj9oz_MAO5uyZyX2g@mail.gmail.com>
+ <5e8e6857-44c9-40a1-f86a-b8b5aae65bfb@huawei.com>
+ <20240805123001.GB9326@willie-the-truck>
+ <ZrDwolC6oXN44coq@google.com>
+ <20240806124943.GF676757@ziepe.ca>
+ <ZrJIM8-pS31grIVR@google.com>
+ <315e95d4-064d-4322-a9d3-97e96c013b4d@linux.intel.com>
+ <ZrTNGepJXbmfuKBK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6209:b0:803:85e8:c40b with SMTP id
- ca18e2360f4ac-824dadde687mr341039f.3.1723571781437; Tue, 13 Aug 2024 10:56:21
- -0700 (PDT)
-Date: Tue, 13 Aug 2024 10:56:21 -0700
-In-Reply-To: <AS4PR10MB5766C0B97CCA5D2A1D2F8CD0F5862@AS4PR10MB5766.EURPRD10.PROD.OUTLOOK.COM>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c722e7061f945377@google.com>
-Subject: Re: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
-From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
-To: r.vuijk@sownet.nl
-Cc: r.vuijk@sownet.nl, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZrTNGepJXbmfuKBK@google.com>
 
-> #syz unsubscribe
->
-> ________________________________
-> From: syzbot <syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com>
-> Sent: Tuesday, August 13, 2024 7:42:25 PM
-> To: alex.aring@gmail.com <alex.aring@gmail.com>; davem@davemloft.net <dav=
-em@davemloft.net>; edumazet@google.com <edumazet@google.com>; kuba@kernel.o=
-rg <kuba@kernel.org>; linux-kernel@vger.kernel.org <linux-kernel@vger.kerne=
-l.org>; linux-wpan@vger.kernel.org <linux-wpan@vger.kernel.org>; miquel.ray=
-nal@bootlin.com <miquel.raynal@bootlin.com>; netdev@vger.kernel.org <netdev=
-@vger.kernel.org>; pabeni@redhat.com <pabeni@redhat.com>; stefan@datenfreih=
-afen.org <stefan@datenfreihafen.org>; syzkaller-bugs@googlegroups.com <syzk=
-aller-bugs@googlegroups.com>
-> Subject: [syzbot] [wpan?] WARNING in cfg802154_switch_netns (2)
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    ee9a43b7cfe2 Merge tag 'net-6.11-rc3' of git://git.kernel=
-...
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D13da25d398000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3De8a2eef9745ad=
-e09
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3De0bd4e4815a910c=
-0daa8
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
-ian) 2.40
->
-> Unfortunately, I don't have any reproducer for this issue yet.
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/9227adf96f75/dis=
-k-ee9a43b7.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/c65c46b78c57/vmlinu=
-x-ee9a43b7.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/467d374f18b9/b=
-zImage-ee9a43b7.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+e0bd4e4815a910c0daa8@syzkaller.appspotmail.com
->
-> RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
->  </TASK>
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 8054 at net/ieee802154/core.c:258 cfg802154_switch_n=
-etns+0x37f/0x390 net/ieee802154/core.c:258
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 8054 Comm: syz.0.839 Not tainted 6.11.0-rc2-syzkaller-=
-00111-gee9a43b7cfe2 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 06/27/2024
-> RIP: 0010:cfg802154_switch_netns+0x37f/0x390 net/ieee802154/core.c:258
-> Code: a3 2b f6 90 0f 0b 90 43 80 3c 3e 00 75 8d eb 93 e8 c6 a3 2b f6 e9 8=
-b fe ff ff e8 bc a3 2b f6 e9 81 fe ff ff e8 b2 a3 2b f6 90 <0f> 0b 90 e9 73=
- fe ff ff 66 0f 1f 84 00 00 00 00 00 90 90 90 90 90
-> RSP: 0018:ffffc9000337f408 EFLAGS: 00010293
-> RAX: ffffffff8b67d3ce RBX: 00000000fffffff4 RCX: ffff8880215f3c00
-> RDX: 0000000000000000 RSI: 00000000fffffff4 RDI: 0000000000000000
-> RBP: ffff88802324e198 R08: ffffffff8b67d23d R09: 1ffff11004649c3a
-> R10: dffffc0000000000 R11: ffffed1004649c3b R12: 0000000000000000
-> R13: 0000000000000000 R14: ffff88802324e078 R15: dffffc0000000000
-> FS:  00007f2c789956c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007ff818548d58 CR3: 000000007f648000 CR4: 00000000003506f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  nl802154_wpan_phy_netns+0x13d/0x210 net/ieee802154/nl802154.c:1292
->  genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
->  genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
->  genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
->  netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
->  genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
->  netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
->  netlink_unicast+0x7f0/0x990 net/netlink/af_netlink.c:1357
->  netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
->  sock_sendmsg_nosec net/socket.c:730 [inline]
->  __sock_sendmsg+0x221/0x270 net/socket.c:745
->  ____sys_sendmsg+0x525/0x7d0 net/socket.c:2597
->  ___sys_sendmsg net/socket.c:2651 [inline]
->  __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2680
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f2c77b779f9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f2c78995038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-> RAX: ffffffffffffffda RBX: 00007f2c77d05f80 RCX: 00007f2c77b779f9
-> RDX: 0000000000000000 RSI: 0000000020000200 RDI: 000000000000000e
-> RBP: 00007f2c78995090 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-> R13: 0000000000000000 R14: 00007f2c77d05f80 R15: 00007fff6de33538
->  </TASK>
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
+On Thu, Aug 08, 2024 at 01:50:17PM +0000, Pranjal Shrivastava wrote:
+> 
+> Kunkun -- Please try this diff and check if it fixes the problem?
 
-Command #1:
-unknown command "unsubscribe"
+This looks OK to me, you should send it as a proper patch..
 
+>  	if (!(fault->prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE)) {
+> -		report_partial_fault(iopf_param, fault);
+> +		ret = report_partial_fault(iopf_param, fault);
+>  		iopf_put_dev_fault_param(iopf_param);
+>  		/* A request that is not the last does not need to be ack'd */
+> +
+> +		if (ret)
+> +			goto err_bad_iopf;
+>  	}
+
+rebase it on -rc3 and there will be a return line added here
+too.. Maybe you don't want the goto in that cast
+
+Jason
 
