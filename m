@@ -1,96 +1,68 @@
-Return-Path: <linux-kernel+bounces-284706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E51D95044B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2BCA950450
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09D0C286F14
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:59:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7023D1F24144
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625EE199238;
-	Tue, 13 Aug 2024 11:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7403A199230;
+	Tue, 13 Aug 2024 12:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="glg2xvLK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6KH5SUKc";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="jAzaYaXr";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4+MRS/Cv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VFz1nV5c"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3A01991AA;
-	Tue, 13 Aug 2024 11:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F7F2262B;
+	Tue, 13 Aug 2024 12:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723550363; cv=none; b=l5bA+N4U6KHHOeYN7qCwiVu8j2TI7sYa5ra25SlzVAxgv7mh1ugCx7sfY4QjnOFT3dzTLDKttn6Jz0vaIK2vKspX6QkkqZ5v5fCk9z1beMLMOU5C6Cu51ouk1bx4q3oE6ms2XOJwMqgkfHXUrcKtdW7uqxyt1UOc2OoEJZb9K7g=
+	t=1723550432; cv=none; b=VHj4e5vzpu+fHozxI9R+8RXubleqvg8BMRSrNwsfzf3Bnw/x40LVLYzxYUoEM2dwSxil4WNl0d3hMsfCZy0Ndg5EzqhvrpRq1R3kgF2VEofE8F7QlEkmJH7zlsFC6zeKa7NVFNcT40Ms81dgthztnYdQH1paRXMYU83etSlkp8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723550363; c=relaxed/simple;
-	bh=YKUhh138MKddwNXT//mlPFhV2bsCE5QjxVJU7COwIY8=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=lxtETotCVtLFt38ncO6U9OsNXD3fT7WElLRz2kQH6mH/PR7MWLRNslqkeyuVS81cQPcp9GRY0rvidiSOo7BTVS/Y/kMV5xfXZGrcuMufyCqJvg8n7gX+//UCsSj7ERqs40PqUzqlElAkzLV4VGF6FTKWIi3grApssHAoF1Gua8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=glg2xvLK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6KH5SUKc; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=jAzaYaXr; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4+MRS/Cv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E5B61F74B;
-	Tue, 13 Aug 2024 11:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723550360; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YzbTbyzS1OF3r8pmcPB9/80dU+RKX4grDiTjBdUyQoA=;
-	b=glg2xvLKG3Ua7x17igx/wtY2TI4C7bGHdmxZI4DPCcXZ/3ZZiMKBqNRndE+TZvmbLXe0Y6
-	NCao+bov+ExiVcN3wrB+aPzCNJSB36uoyYh8buk4ADwT0/w09HPv3hjmUZJ8d0QHLo4OMP
-	4Ae/REaBvr1sPFP4hE7nL10itF3dBf4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723550360;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YzbTbyzS1OF3r8pmcPB9/80dU+RKX4grDiTjBdUyQoA=;
-	b=6KH5SUKcqKESay3+iZU8pXy8ydknSahCk4X2ljFFsfqLjKDsC5BDoNaGxUv9krBns4GoeE
-	Hi/24/XrRwsaNkDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=jAzaYaXr;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="4+MRS/Cv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723550359; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YzbTbyzS1OF3r8pmcPB9/80dU+RKX4grDiTjBdUyQoA=;
-	b=jAzaYaXrK73U7/2T4pEbWEZ84MvnEhdRNsWNzrXsxzUWKWEuEkskfu713Rd8lZQVOAokg+
-	Vzs2RI9rPEXprF+FnYOBiu32Qh/LkbcQrkhrxnNNhUtH8vTBAcbSfVfG3m2hP8B0uA/4En
-	L9tnQaiNoY6s8oEMLdX3daSXkf3Z0ko=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723550359;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=YzbTbyzS1OF3r8pmcPB9/80dU+RKX4grDiTjBdUyQoA=;
-	b=4+MRS/CvIjo/f5HeOgh288b69m0PRnR09v8bMKsDi7MUlENjjyYREY63GOYYlCcRVomFDO
-	dygbrCMcVulHsMAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EDA4F13ABD;
-	Tue, 13 Aug 2024 11:59:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id McDWOZZKu2YWdwAAD6G6ig
-	(envelope-from <tbogendoerfer@suse.de>); Tue, 13 Aug 2024 11:59:18 +0000
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	David Ahern <dsahern@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net] ip6_tunnel: Fix broken GRO
-Date: Tue, 13 Aug 2024 13:59:10 +0200
-Message-Id: <20240813115910.87101-1-tbogendoerfer@suse.de>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1723550432; c=relaxed/simple;
+	bh=P2P+IPK8OxVaTbE+VHwERMLUnrzgIBP1sGkCKZ2Re0A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Qb/tIJZlSjnsqfQQmTojZNcvLxvco3ZDF/8ZMCe+/3NgB2S0Spfm9yHij88QxVNbWy64ouYSI12nX0V9X7z5+sXK6Zx2LvmtzILrVmm4EMMXOPJsJUgeE6DOf7M0H+5mE1YDk/fCL0v8dgoBWpBEu+xc2ox0Hc/fMH3i6HDrlpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VFz1nV5c; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D55Q64022221;
+	Tue, 13 Aug 2024 12:00:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fOmxoSF/1d1Ywg0TZfCBTQ
+	F5UTf7/BQy0/K6Nqag4VI=; b=VFz1nV5ca3/z6CIzbOavUpfBpm77MwYS4RP0Km
+	LKgmiiIJvsNreQIMuuN5Hn7lvMO/+Nd9k6oud7CQ/DT99iJjsELqeRuq10CV9fVJ
+	xlWfyNNSCmVUQBMNUnPHA6wLbMlY1oYa22g6omwX1LqfFeQPjXkks8IRT7+k5NwR
+	MrNs45pkZx5O0oe1RJZ7SWmzmqCuaZCgpgYrVqgwIGqkQWw0hta8ZvMcWsrdNaA8
+	PnQrosBXkTPgyHXHJ+i44Wukwhzd1Xi0HO6iWPHlnuDBZ4Nav5Yq7v0jGKN/6XBe
+	JpdSV7CTZtmOw5YK9wKon8h5CLRXOmj9BpQDq3EjQnO8CKrw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7yhu3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:00:26 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47DC0Pjs032627
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 12:00:25 GMT
+Received: from hu-c-gdjako-lv.qualcomm.com (10.49.16.6) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 13 Aug 2024 05:00:25 -0700
+From: Georgi Djakov <quic_c_gdjako@quicinc.com>
+To: <andersson@kernel.org>, <quic_mdtipton@quicinc.com>,
+        <quic_viveka@quicinc.com>
+CC: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
+Date: Tue, 13 Aug 2024 05:00:15 -0700
+Message-ID: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,98 +70,93 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Score: -5.01
-X-Rspamd-Queue-Id: 0E5B61F74B
-X-Spamd-Result: default: False [-5.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Level: 
-X-Spam-Flag: NO
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6EY5uqp18Z8sonNckYy2CGEkqNJOqTa3
+X-Proofpoint-ORIG-GUID: 6EY5uqp18Z8sonNckYy2CGEkqNJOqTa3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_03,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
+ suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ priorityscore=1501 mlxlogscore=819 mlxscore=0 lowpriorityscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408130086
 
-GRO code checks for matching layer 2 headers to see, if packet belongs
-to the same flow and because ip6 tunnel set dev->hard_header_len
-this check fails in cases, where it shouldn't. To fix this don't
-set hard_header_len, but use needed_headroom like ipv4/ip_tunnel.c
-does.
+The sdm845 platforms have a hardware issue that requires keeping
+some of the MMNOC GDSCs in SW collapse mode (which is the power-on
+default). But if some driver tries to use these GDSCs and the mode
+is updated because of runtime pm calls, we may get a board hang.
+Introduce a flag to skip any updates to the power collapse settings
+for the impacted GDSCs to avoid unexpected board hangs.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Cc: Mike Tipton <quic_mdtipton@quicinc.com>
+Cc: Vivek Aknurwar <quic_viveka@quicinc.com>
+Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
 ---
- net/ipv6/ip6_tunnel.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/clk/qcom/gcc-sdm845.c | 6 +++---
+ drivers/clk/qcom/gdsc.c       | 3 +++
+ drivers/clk/qcom/gdsc.h       | 1 +
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/net/ipv6/ip6_tunnel.c b/net/ipv6/ip6_tunnel.c
-index 9dee0c127955..dcbc668906c6 100644
---- a/net/ipv6/ip6_tunnel.c
-+++ b/net/ipv6/ip6_tunnel.c
-@@ -1507,7 +1507,8 @@ static void ip6_tnl_link_config(struct ip6_tnl *t)
- 			tdev = __dev_get_by_index(t->net, p->link);
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index dc3aa7014c3e..019b780e31c8 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3503,7 +3503,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
  
- 		if (tdev) {
--			dev->hard_header_len = tdev->hard_header_len + t_hlen;
-+			dev->needed_headroom = tdev->hard_header_len +
-+				tdev->needed_headroom + t_hlen;
- 			mtu = min_t(unsigned int, tdev->mtu, IP6_MAX_MTU);
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3512,7 +3512,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
  
- 			mtu = mtu - t_hlen;
-@@ -1731,6 +1732,7 @@ ip6_tnl_siocdevprivate(struct net_device *dev, struct ifreq *ifr,
- int ip6_tnl_change_mtu(struct net_device *dev, int new_mtu)
- {
- 	struct ip6_tnl *tnl = netdev_priv(dev);
-+	int t_hlen = tnl->hlen + sizeof(struct ipv6hdr);
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3521,7 +3521,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = VOTABLE,
++	.flags = VOTABLE | SKIP_SET_COLLAPSE,
+ };
  
- 	if (tnl->parms.proto == IPPROTO_IPV6) {
- 		if (new_mtu < IPV6_MIN_MTU)
-@@ -1740,10 +1742,10 @@ int ip6_tnl_change_mtu(struct net_device *dev, int new_mtu)
- 			return -EINVAL;
- 	}
- 	if (tnl->parms.proto == IPPROTO_IPV6 || tnl->parms.proto == 0) {
--		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len)
-+		if (new_mtu > IP6_MAX_MTU - dev->hard_header_len - t_hlen)
- 			return -EINVAL;
- 	} else {
--		if (new_mtu > IP_MAX_MTU - dev->hard_header_len)
-+		if (new_mtu > IP_MAX_MTU - dev->hard_header_len - t_hlen)
- 			return -EINVAL;
- 	}
- 	WRITE_ONCE(dev->mtu, new_mtu);
-@@ -1887,12 +1889,11 @@ ip6_tnl_dev_init_gen(struct net_device *dev)
- 	t_hlen = t->hlen + sizeof(struct ipv6hdr);
+ static struct clk_regmap *gcc_sdm670_clocks[] = {
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index fa5fe4c2a2ee..4b83cec9137c 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -121,6 +121,9 @@ static int gdsc_update_collapse_bit(struct gdsc *sc, bool val)
+ 	u32 reg, mask;
+ 	int ret;
  
- 	dev->type = ARPHRD_TUNNEL6;
--	dev->hard_header_len = LL_MAX_HEADER + t_hlen;
- 	dev->mtu = ETH_DATA_LEN - t_hlen;
- 	if (!(t->parms.flags & IP6_TNL_F_IGN_ENCAP_LIMIT))
- 		dev->mtu -= 8;
- 	dev->min_mtu = ETH_MIN_MTU;
--	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len;
-+	dev->max_mtu = IP6_MAX_MTU - dev->hard_header_len - t_hlen;
- 
- 	netdev_hold(dev, &t->dev_tracker, GFP_KERNEL);
- 	netdev_lockdep_set_classes(dev);
--- 
-2.35.3
-
++	if (sc->flags & SKIP_SET_COLLAPSE)
++		return 0;
++
+ 	if (sc->collapse_mask) {
+ 		reg = sc->collapse_ctrl;
+ 		mask = sc->collapse_mask;
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index 1e2779b823d1..6bb7e023a19a 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -68,6 +68,7 @@ struct gdsc {
+ #define RETAIN_FF_ENABLE	BIT(7)
+ #define NO_RET_PERIPH	BIT(8)
+ #define HW_CTRL_TRIGGER	BIT(9)
++#define SKIP_SET_COLLAPSE	BIT(10)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 
