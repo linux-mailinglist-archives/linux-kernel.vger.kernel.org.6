@@ -1,147 +1,184 @@
-Return-Path: <linux-kernel+bounces-285278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FDFD950B96
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:45:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8F9950B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:48:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4380B22AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:45:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F891F225C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1201A2C16;
-	Tue, 13 Aug 2024 17:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A7A81A2C3E;
+	Tue, 13 Aug 2024 17:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="JZHXeVxU"
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S5/UhpGu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2360719924A
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:45:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7FF1BC5C;
+	Tue, 13 Aug 2024 17:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571139; cv=none; b=Q5vgUO/WmZDamTVK8fddJ2F9bk4jgXTim/bsoVhU5vHTd5QU1gqgJMgaRH9xz7NuH+55Kp4xCJkvcrmlpFelpshL7QBI5d/w1xOwn9nRw6u8Xk5tU79ThLkIrA5xpK9LP7w2oRIsRzs2wOKsbw2XqaNMEHyU0/1+oLvYWKNJ/4g=
+	t=1723571295; cv=none; b=k5WUByrRNH2Rr3f4JhDH/cV0UsGZ7XZ08vSghb5h5Ogz7H5GokvEo1Pq17Jgb6CnQaO+gGflIWs0O5JsFiS/IvFT/bUIODUwS/NDDn7lOhRG8imUorpmcEqyM5+yOkgATsWGiZaeDMc1Qz7E/HGAHyH3yPBXA5HD+E37KGjGmHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571139; c=relaxed/simple;
-	bh=6+afeR/+pZK6lPx8k3vBYy4jK0VSoZbaaGxo+2MWvac=;
-	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
-	 Content-Type; b=HvbcvC1WirwUNLUbzNKUonC0of40AKDS2EFkpw5dD4b66Pt+Gqr/P6B1wVetF11irs69bkmSm4qhr01P6CZDELkBerL3dW5V8NFD+1NK1OD7Nk2nJrqPBT66GUY3Dw00+Bv2jygZyWV8OyUjEwNGoEYFtU4iagTNAVtr9ptevSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=JZHXeVxU; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-260f863109cso3391053fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:45:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1723571136; x=1724175936; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MubgzmTkGoLk6Sy+ubAhLb2lJQ+c10dRYN9KCEZDVvQ=;
-        b=JZHXeVxUK5T2ppeLe/3OoTTLV3uOcZW7fImZ1CBpY3srgYOAPt3UBgstBY2VQNv3ud
-         0Ra3CHtwSsHkw5nnvdxtqjuF0I8SQQ4y3Xfj76XyIoBwFGIYBx8svptkGkjqZiJ/sKLS
-         FmeclE6bquxahLBZgdCmtbaNV+p8ngP4ZbsxMOuUsFUrhiQTuR1mS0H/dwAoNVIr8pJy
-         b6jzTclV0NSKhU/yvE7/MfM+a1Hhw0J01y9izsDVjLVVcid5SBAjG9kdJyJqLQZIKK8l
-         dg4lrKfZt88UC7fSyGFdtU0y2tslaNABZGF8kdRK6BbP2u27Pu7S/x/x2xgTnzckjd/3
-         iJ7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723571136; x=1724175936;
-        h=content-transfer-encoding:mime-version:message-id:to:from:cc
-         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MubgzmTkGoLk6Sy+ubAhLb2lJQ+c10dRYN9KCEZDVvQ=;
-        b=iGj1MYW14As7RdA1UmzigciOfym8isJjnUIExOO4vR2gJxWpuTiwM/OhDI2A56uQkC
-         FenJVKeAP4ijrPY/M1+sswnBaMGm8Q8CXEQM9KhPvSXSR8Ds6Dz57M3GCbEw/9ZGQ+y0
-         NpY5oMjnQOrivhq4TVaAj/sgwfNA+Taoou/N7n9gapl7uaCjn5aLLwC5MGZe+dzd87gy
-         f9N7ORug8DO1DbwnAbzenbxgydjzdqRgbw5Z3g9ThjKldcq/4La5xP7QPLREFEyRYPT6
-         5Rz4u8GFMqI1uaK21AY1F86k844h0OzuFTLvDOWwThGmxHyNED6MaNcH/QqnKrwITIe+
-         TTfw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/op8dtkmDzd+sKICJcIscVWa72FWkU6JS1lHxvACQjTHbr5RqJSt+4DcKK9ZhKVMS1Mn17Ku5/3QKdE0Fqp26dUWWXmoWNS2EjEdW
-X-Gm-Message-State: AOJu0YyKbzbhSZaKyp96juwb6WWarhosMJNg84Jp9I+2EIeHb/vS1xJL
-	PGOWnuK1tkoXCdICrotVR6XuBjtK/218sdMSMAIZo1K07D+nVBIcfAkvgHwdIp4=
-X-Google-Smtp-Source: AGHT+IE3uqwNiNxWMS0aZLT9JubHN+Eh10Kr02K6qabc5dhWWvlSu3SRh9RQgttofqo3VUev7YFzlQ==
-X-Received: by 2002:a05:6870:1612:b0:261:1eb4:dd8e with SMTP id 586e51a60fabf-26fe5a04303mr455099fac.2.1723571135449;
-        Tue, 13 Aug 2024 10:45:35 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7c6979d3d58sm1755063a12.18.2024.08.13.10.45.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 10:45:34 -0700 (PDT)
-Date: Tue, 13 Aug 2024 10:45:34 -0700 (PDT)
-X-Google-Original-Date: Tue, 13 Aug 2024 10:45:21 PDT (-0700)
-Subject:     Re: [RFC PATCH] riscv: Enable generic CPU vulnerabilites support
-In-Reply-To: <20240703022732.2068316-1-ruanjinjie@huawei.com>
-CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
-  samuel.holland@sifive.com, tglx@linutronix.de, linux-riscv@lists.infradead.org,
-  linux-kernel@vger.kernel.org, ruanjinjie@huawei.com
-From: Palmer Dabbelt <palmer@dabbelt.com>
-To: ruanjinjie@huawei.com
-Message-ID: <mhng-8bda3a10-9d6d-4aac-acdf-1287278e7e82@palmer-ri-x1c9>
+	s=arc-20240116; t=1723571295; c=relaxed/simple;
+	bh=WE8ITbVyzmCUV4Lw++OtwTduWTg5/B0KnjIq2iAvUUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lz504EZX83w3FXotTrXGsNyjGZGeVv5IEJre4NcQgu8lmlOkZA4r3MLVKftd5QQ4NN1/aAcApV0CMDnCi9Z+nxAoCMQhKTxAqKNOHsQG9pp48jrF07eUfdIO8aD/CDdE1Wh/2W6NiycXpegYlZaT/hlgov8YrqGNQWg+QzkA+w8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S5/UhpGu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A725C32782;
+	Tue, 13 Aug 2024 17:48:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723571294;
+	bh=WE8ITbVyzmCUV4Lw++OtwTduWTg5/B0KnjIq2iAvUUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S5/UhpGuyJrZoRud3cCTtYrfXWHO7BdAZUtuk9pSXiD1UE2uGjcoXzlG7XMmeV5Rz
+	 61bccschp+uXI+vOrKfZPMuujUjOHNEM4cKYeG5gjKsygibWJHWIHshJwpWCQO7Z/g
+	 bIjbaQV/003sWt/X8P6zoanDRqAMcgPsSuK4hyihmtVHZTKGdvsG0mLIV08nJT38f5
+	 Q9uOQFhkozP99ky9E62Y9P+GN9NioPeuwJmuREo1OSTc0xroTt0hYXvMxAb5zl/53m
+	 GISTdJtHndIQrqmxO7/CrB4Pwuq3L6DQ/anJdafH4DXgbMo/15F/EMZythvrC0P+iP
+	 8/LV4pSJ1+u8Q==
+Date: Tue, 13 Aug 2024 11:48:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] arm64: dts: exynos: Add initial support for
+ exynos8895 SoC
+Message-ID: <20240813174813.GA1402173-robh@kernel.org>
+References: <20240807090858.356366-1-ivo.ivanov.ivanov1@gmail.com>
+ <20240807090858.356366-9-ivo.ivanov.ivanov1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240807090858.356366-9-ivo.ivanov.ivanov1@gmail.com>
 
-On Tue, 02 Jul 2024 19:27:32 PDT (-0700), ruanjinjie@huawei.com wrote:
-> Currently x86, ARM and ARM64 support generic CPU vulnerabilites, but
-> RISC-V not, such as:
->
-> 	# cd /sys/devices/system/cpu/vulnerabilities/
-> x86:
-> 	# cat spec_store_bypass
-> 		Mitigation: Speculative Store Bypass disabled via prctl and seccomp
-> 	# cat meltdown
-> 		Not affected
->
-> ARM64:
->
-> 	# cat spec_store_bypass
-> 		Mitigation: Speculative Store Bypass disabled via prctl and seccomp
-> 	# cat meltdown
-> 		Mitigation: PTI
->
-> RISC-V:
->
-> 	# cat /sys/devices/system/cpu/vulnerabilities
-> 	# ... No such file or directory
->
-> As SiFive RISC-V Core IP offerings are not affected by Meltdown and
-> Spectre, it can use the default weak function as below:
->
-> 	# cat spec_store_bypass
-> 		Not affected
-> 	# cat meltdown
-> 		Not affected
->
-> Link: https://www.sifive.cn/blog/sifive-statement-on-meltdown-and-spectre
->
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+On Wed, Aug 07, 2024 at 12:08:56PM +0300, Ivaylo Ivanov wrote:
+> Exynos 8895 SoC is an ARMv8 mobile SoC found in the Samsung Galaxy
+> S8 (dreamlte), S8 Plus (dream2lte), Note 8 (greatlte) and the Meizu
+> 15 Plus (m1891). Add minimal support for that SoC, including:
+> 
+> - All 8 cores via PSCI
+> - ChipID
+> - Generic ARMV8 Timer
+> - Enumarate all pinctrl nodes
+> 
+> Further platform support will be added over time.
+> 
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
 > ---
->  arch/riscv/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 0525ee2d63c7..3b44e7b51436 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -85,6 +85,7 @@ config RISCV
->  	select GENERIC_ATOMIC64 if !64BIT
->  	select GENERIC_CLOCKEVENTS_BROADCAST if SMP
->  	select GENERIC_CPU_DEVICES
-> +	select GENERIC_CPU_VULNERABILITIES
->  	select GENERIC_EARLY_IOREMAP
->  	select GENERIC_ENTRY
->  	select GENERIC_GETTIMEOFDAY if HAVE_GENERIC_VDSO
+>  .../boot/dts/exynos/exynos8895-pinctrl.dtsi   | 1378 +++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos8895.dtsi    |  253 +++
+>  2 files changed, 1631 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos8895.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+> new file mode 100644
+> index 000000000..1dcb61e2e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos8895-pinctrl.dtsi
+> @@ -0,0 +1,1378 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
 
-Thanks.  This is an RFC, but I'm just going to pick it up on for-next: 
-we had a recent round of RISC-V vulnerabilities crop up, so it's time to 
-start tracking those for users.
+Every other Exynos dts file is GPL2. This should match or do dual 
+licensing which is preferred.
 
-It's queued up for now, it'll show up on for-next proper assumin it 
-passes the tests.
+> +/*
+> + * Samsung's Exynos 8895 SoC pin-mux and pin-config device tree source
+> + *
+> + * Copyright (c) 2024, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> + */
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include "exynos-pinctrl.h"
+> +
+> +&pinctrl_alive {
+> +	gpa0: gpa0 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	gpa1: gpa1 {
 
-Thanks!
+gpio-1
+
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells = <3>;
+> +		interrupt-parent = <&gic>;
+> +		interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> +	};
+> +
+> +	gpa2: gpa2 {
+
+gpio-2
+
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +	};
+> +
+> +	gpa3: gpa3 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +	};
+> +
+> +	gpa4: gpa4 {
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +	};
+> +
+> +	bt_hostwake: bt-hostwake {
+
+Name pinctrl nodes with some pattern to distinguish what they are. 
+'-pins$' is a common pattern. Looking at the binding patch, you may need 
+to split it out since we were probably stuck with no pattern on existing 
+chips.
+
+> +		samsung,pins = "gpa2-3";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+> +		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_INPUT>;
+> +		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
+> +	};
 
