@@ -1,133 +1,144 @@
-Return-Path: <linux-kernel+bounces-285557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5EA950F93
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:18:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A18D950FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2024 00:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45F0CB249BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:18:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96F01C22162
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B421AB507;
-	Tue, 13 Aug 2024 22:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD001AAE37;
+	Tue, 13 Aug 2024 22:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C1ivD9mi"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VTYj39Tk"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A616D1AAE06
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEE91AAE10
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 22:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723587507; cv=none; b=TK5IKFVsEbfpnFRQN1TOb7E5Nqi/cuwT72RODDBe/+BWlkg26J8c+3e8XBvt14NhnF6rx35QFcR5Z+8EENBXuIuFpLYl+KbkD39g21nwD0/cdDQeRFmxlD0hzkhJdxulhgLXSkTryHR05Wp84wjaK0TKvbs2JKT/9d6X/QTvaqE=
+	t=1723587596; cv=none; b=ZnnADGOlYvgsF4Eu6bwGH3+wYUWkn5oI3l5LoP9yXeWn4CnswRvbfvgj77gwGHlgxXoTz21Y3eock4qlka3FKQ8J4BsqzqR4RvcDHIzfhPmwqglzZu00Et0pmXLReZ0XxQLaZsHf0XC/ppolhFBdBKs/1aUWR9y2zr6eLwq3rEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723587507; c=relaxed/simple;
-	bh=t56MRumctEXbx6FmmaUnp96COXmxLmPDJ8TFps9e8Qw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OBH/QXZFCvt5hjlGS030sy3okMyy7UXZspN2MMfMNcHkfKVsxn0J/Y+tsy/OG39ldrQqCGSjPKy2y02GQT0nZG0wmGQHl/ku74ccygP78QJXIZkh87vdjKCGExUvzQbF2MkTYSLWq25pRPPDa5CyKaKrmmPP+XFbfc6GY1ocH0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C1ivD9mi; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uoiLbBV1P/kZcpQtke8gf//MV/a3BtQIb+J6uvUf5PE=; b=C1ivD9milRouJPBR1cQtQy5uQt
-	fTnYwNrVzt/B6LMXaUNAqTR+Up0U/FOqM7+4W9QawweImtaiTnqaXE4oe5r02uNQ5UeBN+jk0gTRL
-	PnXfL7qxVgxpdNg22F/HXclWk5T/TwtZevHy3e0GIKDU34Zaw6hPGi7+rViR1P0SS+muTy0f4Y9ep
-	NeYC6WFDVjlPNOLNiYVq2q9ltBqVyVeu5py+RAMxM9F/boGBCPE2q0v3Zde2T+OeELhfZRqmuSi8J
-	7mpnP2PsTw4AggR/GobnL3O/t9pBmcPB1KLyfzxYVa94urKXjV3EqMJ28sqbuv/KpAfBYiezpirzo
-	iRm04Ukw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sdzqC-00000007rp5-16Sz;
-	Tue, 13 Aug 2024 22:18:08 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1B1C030074E; Wed, 14 Aug 2024 00:18:07 +0200 (CEST)
-Date: Wed, 14 Aug 2024 00:18:06 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, linux-kernel@vger.kernel.org,
-	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
-	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
-Subject: Re: [PATCH 19/24] sched/eevdf: Fixup PELT vs DELAYED_DEQUEUE
-Message-ID: <20240813221806.GB10328@noisy.programming.kicks-ass.net>
-References: <20240727102732.960974693@infradead.org>
- <20240727105030.514088302@infradead.org>
- <xhsmh7ccky4mr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	s=arc-20240116; t=1723587596; c=relaxed/simple;
+	bh=tL+y4hkE1xuXNMnDdiyTI/3GxU8hWLdSXIrkjZ9WbAo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=BeOcg/ouKTUUsCzIZNzE272oB4FdxXoA+/+u4AWjVpxjfDFcYYMkF86iH4inAaj7StsNtGaq4X2DPmU0G9PbIBCq+PRd4j/MPQN0pFEQ7KnlOOYlp72ywAJHzGXnuAbkFJGFzJ+8TX/0Iy+0q0rEUvK1j4WP44mmVH4yU42S2O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VTYj39Tk; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-710bdddb95cso3618663b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:19:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723587592; x=1724192392; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aL3ypITUp89KlV2kP9EV/LgQKSjWAesVMfZkvBn3ycM=;
+        b=VTYj39Tk7Tbr1CuqMXwXVbPcPO14EgylzyGTMMZoMuTno9TYXZbFZNzmqS3oCJhNUU
+         ywBVq5MfWQSU3/YeJ8RjTHPb1NbcEteiCE5HXDTDzJvLUsVCqCqeRN9twEwsNrMu0nTh
+         xfdXdILys8TfIC9GSpZS26/nraW8/RiNlItJ08sjR3da+YmTokAUhN/ZZ8SJ5r2vpHdO
+         83ugsqf18cx4bZJZkwqr1N5RlR16mhGaeYfobs9aJt61wh50fk1LzOkGQQdMnCtCSE5R
+         /I4IqL/+1QM4VkDiTKtmFBgUWtNpAfYWcIH2mMkgPYxbJ2UI9AVD0PXBo4lnAPzhZ30r
+         E3yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723587592; x=1724192392;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aL3ypITUp89KlV2kP9EV/LgQKSjWAesVMfZkvBn3ycM=;
+        b=fhxW/u+9tNiEun3TUjCJ/5jNQBe4dwQFnJlZj6bt8sGjpS7wPldU2bEwLsqbI/wEb5
+         AJytKmRdVK7KRIsqFGiyjX5k9rTCVuwKjO/oj96eD1QVPTPtGyO71zLbm8xdNWQSzhKF
+         EbHBAO+Ku6BGpNnVI3OfZK/mNNxLDkNKfdtWPECkTHt9ssdnIGTXUDVFcg95VXFoqkar
+         RWaF06CQjFIF7t885+iUUj+VnXt7rdzlKtcXifl6eZMrP5+flqBHmZ90UR7JEd4nonCn
+         KdQ1d+qDs2EdA03EkyOruxPitEyhAPCwhfXAOAlK1+Pm+4R856MKiF0c0r/iqy14snBa
+         lIqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgeuZ/pEakfjZKe1wEzCg49CG2TCw8itkr9Owqutz1GWbckdBb4s/rqQX4FAhCFGAWIq9qreNm2MNB3Ws+5AsGmir8Pkq/ofypHM+5
+X-Gm-Message-State: AOJu0YyW5xnHKoZZzv3VzuupbnsqIuxZT5POHMUQWVlVT6EUou2H/Ga5
+	H8b2mdj1XymN7lEafO+BxMdQRtHARfrkRiMxVSQ8r7qHm8C6L7YszypoGaHWBz0=
+X-Google-Smtp-Source: AGHT+IERf4X277E5hrGy/fd9rT+i98XPhrp8RywcLeI1O0XYaGkfZEZ9GcdyAmWodd41BiVUfiR2YA==
+X-Received: by 2002:a05:6a00:1151:b0:70d:2e24:af73 with SMTP id d2e1a72fcca58-712673ac8fcmr1029398b3a.24.1723587592549;
+        Tue, 13 Aug 2024 15:19:52 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-712681419d3sm258449b3a.13.2024.08.13.15.19.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 15:19:52 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: a0230503 <a-kaur@ti.com>, Dhruva Gole <d-gole@ti.com>
+Cc: Markus Schneider-Pargmann <msp@baylibre.com>, Nishanth Menon
+ <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
+ <ssantosh@kernel.org>, Vibhore Vardhan <vibhore@ti.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Dave
+ Gerlach <d-gerlach@ti.com>, Georgi Vlaev <g-vlaev@ti.com>
+Subject: Re: [PATCH v9 3/4] firmware: ti_sci: Introduce Power Management Ops
+In-Reply-To: <5f6093e5-cf67-4516-b5b8-929987b05a2e@ti.com>
+References: <20240809135347.2112634-1-msp@baylibre.com>
+ <20240809135347.2112634-4-msp@baylibre.com>
+ <20240812054717.6lzkt3lxclzec3zy@lcpd911> <7hcymdphky.fsf@baylibre.com>
+ <20240813034935.wqehblov3e5gur3r@lcpd911>
+ <5f6093e5-cf67-4516-b5b8-929987b05a2e@ti.com>
+Date: Tue, 13 Aug 2024 15:19:51 -0700
+Message-ID: <7hy150njzs.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xhsmh7ccky4mr.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain
 
-On Tue, Aug 13, 2024 at 02:43:56PM +0200, Valentin Schneider wrote:
-> On 27/07/24 12:27, Peter Zijlstra wrote:
-> > Note that tasks that are kept on the runqueue to burn off negative
-> > lag, are not in fact runnable anymore, they'll get dequeued the moment
-> > they get picked.
-> >
-> > As such, don't count this time towards runnable.
-> >
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > ---
-> >  kernel/sched/fair.c  |    2 ++
-> >  kernel/sched/sched.h |    6 ++++++
-> >  2 files changed, 8 insertions(+)
-> >
-> > --- a/kernel/sched/fair.c
-> > +++ b/kernel/sched/fair.c
-> > @@ -5388,6 +5388,7 @@ dequeue_entity(struct cfs_rq *cfs_rq, st
-> >                       if (cfs_rq->next == se)
-> >                               cfs_rq->next = NULL;
-> >                       se->sched_delayed = 1;
-> > +			update_load_avg(cfs_rq, se, 0);
-> 
-> Shouldn't this be before setting ->sched_delayed? accumulate_sum() should
-> see the time delta as spent being runnable.
-> 
-> >                       return false;
-> >               }
-> >       }
-> > @@ -6814,6 +6815,7 @@ requeue_delayed_entity(struct sched_enti
-> >       }
-> >
-> >       se->sched_delayed = 0;
-> > +	update_load_avg(cfs_rq, se, 0);
-> 
-> Ditto on the ordering
+a0230503 <a-kaur@ti.com> writes:
 
-Bah, so I remember thinking about it and then I obviously go and do it
-the exact wrong way around eh? Let me double check this tomorrow morning
-with the brain slightly more awake :/
+> On 13/08/24 09:19, Dhruva Gole wrote:
+>> On Aug 12, 2024 at 14:16:45 -0700, Kevin Hilman wrote:
+>> [...]
+>>>>> +/**
+>>>>> + * struct ti_sci_msg_resp_lpm_wake_reason - Response for TI_SCI_MSG_LPM_WAKE_REASON.
+>>>>> + *
+>>>>> + * @hdr:		Generic header.
+>>>>> + * @wake_source:	The wake up source that woke soc from LPM.
+>>>>> + * @wake_timestamp:	Timestamp at which soc woke.
+>>>>> + *
+>>>>> + * Response to a generic message with message type TI_SCI_MSG_LPM_WAKE_REASON,
+>>>>> + * used to query the wake up source from low power mode.
+>>>>> + */
+>>>>> +struct ti_sci_msg_resp_lpm_wake_reason {
+>>>>> +	struct ti_sci_msg_hdr hdr;
+>>>>> +	u32 wake_source;
+>>>>> +	u64 wake_timestamp;
+>>>>> +} __packed;
+>>>>> +
+>>>>
+>>>> It looks like we forgot to update the parameters in this API.
+>>>> See [1]:
+>>>>
+>>>> struct tisci_msg_lpm_wake_reason_req
+>>>>
+>>>> We're missing here the wake_pin, mode and 2 rsvd fields as well.
+>>>>
+>>>> [1] https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html#tisci-msg-lpm-wake-reason
+>>>>
+>>>
+>>> The docs mention how to interpret the pin, but not the mode.  This
+>>> driver should translate this mode number to some human-readable state
+>>> for better debug messages.
+>>>
+>>> Kevin
+>> 
+>> Agreed, we would all benefit from a logic that prints the human-readable
+>> state. The way to interpret the mode would be just as:
+>> https://software-dl.ti.com/tisci/esd/latest/2_tisci_msgs/pm/lpm.html#supported-low-power-modes
+>> 
+>> So for eg. 0x0 = TISCI_MSG_VALUE_SLEEP_MODE_DEEP_SLEEP
+>> 
+>
+> Missing the call to ti_sci_msg_cmd_lpm_wake_reason in resume path.
+>
 
-> >  }
-> >
-> >  /*
-> > --- a/kernel/sched/sched.h
-> > +++ b/kernel/sched/sched.h
-> > @@ -816,6 +816,9 @@ static inline void se_update_runnable(st
-> >
-> >  static inline long se_runnable(struct sched_entity *se)
-> >  {
-> > +	if (se->sched_delayed)
-> > +		return false;
-> > +
-> 
-> Per __update_load_avg_se(), delayed-dequeue entities are still ->on_rq, so
-> their load signal will increase. Do we want a similar helper for the @load
-> input of ___update_load_sum()?
+Oops, OK.  Will be added for v10.
 
-So the whole reason to keep then enqueued is so that they can continue
-to compete for vruntime, and vruntime is load based. So it would be very
-weird to remove them from load.
+Thanks,
 
+Kevin
 
