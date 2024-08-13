@@ -1,76 +1,88 @@
-Return-Path: <linux-kernel+bounces-284622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A8DA950335
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A67BF950339
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 13:04:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E28B1C2257A
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:04:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C0CD1F23279
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:04:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FF519755E;
-	Tue, 13 Aug 2024 11:04:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FA5198E99;
+	Tue, 13 Aug 2024 11:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kypDTB4h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9faWz5u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A289616A955;
-	Tue, 13 Aug 2024 11:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD1F189911;
+	Tue, 13 Aug 2024 11:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723547064; cv=none; b=oxzWThwhPj448rOioAG3S+mSSquWRrwnLe1wRmE1sBqAKY6KmlFB0rE6Q5HvMTuqWI15FAZHQl7L7Z0WXfRpM/bcCf2pqNCSRGhBcKsb41kZFM4S33eNSMNHzFHRouU1dknLTw6IP4Tv9LYK/02QDhXZgPI/BT7kqPZlPVCpqCM=
+	t=1723547079; cv=none; b=HfKPRdqptbO2mtMLl4EASAIw+t0DbBwdaDgGq1U6W+RPInsA02tV9E6YWqZImQWMbylbSR2vzkIAUfvi4lBMejlzw+lftPu5bDKyPSdeHv1Yi1titvdeiNsGmBLngtLzk/2beUwPfFp9Yp/4a3bhHykLSYYRNP0vfXnrdGa22Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723547064; c=relaxed/simple;
-	bh=8TaRiZ2EeMGyY1kCBHmLbin11zdCmEm7XZ+KwckaCF4=;
+	s=arc-20240116; t=1723547079; c=relaxed/simple;
+	bh=njoHA5JSKaX6TwL7T+KhWyO4vGic5hSRZmgTLQWpcxM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JQFEbXbR3Uf2XZ618gfO2/SIJGqcmejrWaJQ4eeRgbCx4EYIXRio8oOEKuIaYPOe1GVGfnSTSB5JepBufCutUbxTEXnS1lYCXoP/HDuZj4/ZBs1fXYl1JfMp+xbu+JpCWm6sggK3XMxZebb1wa+zoe4CDdfC1TyNTvgKPQNOVFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kypDTB4h; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZIg6Re5jer6x0VIk/l4xEhF5qT0qzMjZCY2qfR9JNepzx47zIpvHE2rocmpwZH8gvEZ10ZHv5UySiyBmISNj/fKiZnCx+qv89l658NCGVwogCHDOXCNSvPsufL7Y9xb43JzLnqkh2r9zzzxbQEI7wcrqRvSMG3Z+YORalnpEyWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9faWz5u; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723547063; x=1755083063;
+  t=1723547077; x=1755083077;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=8TaRiZ2EeMGyY1kCBHmLbin11zdCmEm7XZ+KwckaCF4=;
-  b=kypDTB4hbP2AWnV6Zfwr9c6+rkCMKibgcVR/g50cVoFys7ON4Ii10aG+
-   C3P8/0deR/NBOcDPz+eZKib48G4KEhLfyCtOtIZlJaCrkxnoZBlu6/KkK
-   jjEL26cB81JRiS95rGsaSCLJH0oZdgJuBXjaktLbQ91fSVNqPfd7tLbh5
-   YXFFigXa1FcnKtZR+aIQvBDRhnS1gpoe+j1O1ksugcRu0r55Ia4bH+ebv
-   Vlvsi1VyiE6cPPy0dLXfTiwFZd0TGD570t1VlpH78TiQ3e4EFQj+NxHgw
-   bCug+ZcQWv4FovPHGEelv6m+H55a84pFwzpCm+slOCFh+wzswKQBvmEkg
-   A==;
-X-CSE-ConnectionGUID: Xkp2rCddR1SDxkZTY0hUnA==
-X-CSE-MsgGUID: 8pnuddTwSYa88swlKEtYbQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="12982989"
+  bh=njoHA5JSKaX6TwL7T+KhWyO4vGic5hSRZmgTLQWpcxM=;
+  b=k9faWz5uIRYh1Dc2p3XH/+zutSJwVI/OxqOKR9rQ8eAsvbt9a2ELESM1
+   ozIBMhJVaTX4m/+DT0exabIwgMZfu3I6Sgd5IFyXCpQyJ5ue+iz7QdWg3
+   y6o74n1N20GelUyz+rNp8TmZ/oLqr3taowHOn6gJDszeSVwT9patj6bf5
+   7T6t1CZoidH7AdBhu78BqOiCkCvmGewYimOuIUSVEXOEpi5+xUTP8yh8a
+   ddjke0MaI130jUPqTiwC/TLhqDfzrDVFWahUQZVLlbRXTKtxCGQeaQ9Xq
+   HLsstxcfnOMsmUm266y4CupF37icSZTGnEF4s06zEhdIHAmA2iVafPTro
+   Q==;
+X-CSE-ConnectionGUID: K/NcO4JmQH+4+dZcoptWeA==
+X-CSE-MsgGUID: pl/DkCLERGKh4xWlKGLk2w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="33104878"
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="12982989"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:04:22 -0700
-X-CSE-ConnectionGUID: CayKrEGCRr6KHCkCcao5RQ==
-X-CSE-MsgGUID: N9dxt86OT8CPsiWgPRNpBw==
+   d="scan'208";a="33104878"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:04:36 -0700
+X-CSE-ConnectionGUID: 6KFF9cYnQxiaAxRB/h5AIg==
+X-CSE-MsgGUID: WBEqdBVlQ+qJYQbfWPKPgg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="59204435"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 13 Aug 2024 04:04:20 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sdpK5-0000N8-1J;
-	Tue, 13 Aug 2024 11:04:17 +0000
-Date: Tue, 13 Aug 2024 19:03:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] modpost: simplify modpost_log()
-Message-ID: <202408131830.qX4gs2P0-lkp@intel.com>
-References: <20240812144542.2121342-1-masahiroy@kernel.org>
+   d="scan'208";a="89291865"
+Received: from smile.fi.intel.com ([10.237.72.54])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 04:04:33 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1sdpKH-0000000EhZn-1SMV;
+	Tue, 13 Aug 2024 14:04:29 +0300
+Date: Tue, 13 Aug 2024 14:04:29 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+Cc: linux-iio@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Cosmin Tanislav <cosmin.tanislav@analog.com>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marcus Folkesson <marcus.folkesson@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	Liam Beguin <liambeguin@gmail.com>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/3] Documentation: ABI: added filter mode doc in
+ sysfs-bus-iio
+Message-ID: <Zrs9vYERyOmeOEZ8@smile.fi.intel.com>
+References: <20240724155517.12470-1-ramona.nechita@analog.com>
+ <20240724155517.12470-4-ramona.nechita@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,48 +91,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240812144542.2121342-1-masahiroy@kernel.org>
+In-Reply-To: <20240724155517.12470-4-ramona.nechita@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Masahiro,
+On Wed, Jul 24, 2024 at 06:54:40PM +0300, Ramona Alexandra Nechita wrote:
+> The filter mode / filter type property is used for ad4130
+> and ad7779 drivers, therefore the ABI doc file for ad4130
+> was removed, merging both of them in the sysfs-bus-iio
 
-kernel test robot noticed the following build warnings:
+Missed grammatical period at the end.
 
-[auto build test WARNING on masahiroy-kbuild/for-next]
-[also build test WARNING on masahiroy-kbuild/fixes linus/master v6.11-rc3 next-20240813]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Masahiro-Yamada/modpost-simplify-modpost_log/20240813-003654
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git for-next
-patch link:    https://lore.kernel.org/r/20240812144542.2121342-1-masahiroy%40kernel.org
-patch subject: [PATCH] modpost: simplify modpost_log()
-config: loongarch-randconfig-001-20240813 (https://download.01.org/0day-ci/archive/20240813/202408131830.qX4gs2P0-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240813/202408131830.qX4gs2P0-lkp@intel.com/reproduce)
+> +What:		/sys/bus/iio/devices/iio:deviceX/filter_type_available
+> +What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
+> +KernelVersion:	6.1
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408131830.qX4gs2P0-lkp@intel.com/
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltage-voltage_filter_mode_available
+> -KernelVersion:  6.2
 
-All warnings (new ones prefixed by >>, old ones prefixed by <<):
+> -What:		/sys/bus/iio/devices/iio:deviceX/in_voltageY-voltageZ_filter_mode
+> -KernelVersion:  6.2
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in mm/kasan/kasan_test_module.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/devfreq/governor_powersave.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-mgr-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-bridge-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fpga/tests/fpga-region-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-core.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-hub.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-aspeed.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-master-gpio.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/fsi/fsi-scom.o
->> WARNING: modpost: "kvm_restore_lsx" [arch/loongarch/kvm/kvm.ko] undefined!
->> WARNING: modpost: "kvm_restore_lasx" [arch/loongarch/kvm/kvm.ko] undefined!
+So, the commit message is silent about version downgrade. Was it a typo
+or on purpose?
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With Best Regards,
+Andy Shevchenko
+
+
 
