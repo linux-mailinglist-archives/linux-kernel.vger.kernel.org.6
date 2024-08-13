@@ -1,200 +1,264 @@
-Return-Path: <linux-kernel+bounces-284746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BCB29504B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:15:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9569504B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3EB1F2275D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728AE1F233A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD6D199242;
-	Tue, 13 Aug 2024 12:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EF7017D345;
+	Tue, 13 Aug 2024 12:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fDvvYQh+"
-Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="r26n4vCU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BHpSXUKz"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4509D19B3DA
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC51990AD
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:15:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723551239; cv=none; b=h6I11Zo7GHWlGtNO8mbHTvqFkamvjnjO50/jUvS7AIOHygnyCl3VB59V7LwXSz5/Q+p+tNsfniTM8VMshimFLXEXo6SQ6AyAQI0crDmDu0vkqykBN+GSQrsR76EegusmjV+QzgcA+SBbyEqIm+urxV65+6I1zClVlJXsYlN8R7A=
+	t=1723551310; cv=none; b=NXVtKyUqPQPmmGxB7lCHAUlcuAbaJ0BkPAWPdP6CXSnUOyrTpS9ivao1wRIjeWemiePZl3tWSbWsWgYJYDUkrwnVIBoKc8vufW4MKyS8Aiuj8rDY/Cija11x8F0fNRwa63HRBSOiDyvUVZfbARPhhgsMshMB6A6pZmIdtMyGarQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723551239; c=relaxed/simple;
-	bh=jH7TrqthPbyuatpm9k3mnNi3VlOKWR/v7KyFH3wuPGA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Mqttpc5XqjD2YDVLOCmezW1xvx+cAhpnh4mOpATxgOpwV8vunUbF+4RXbnmS1PcDwWRCL3Gx/grQf+G2ZdoM0sQzY/0Vh0VRQwGQG7bfxtDf7XTgb1/8jGmwHuJR4B6DLXF7FH7AmvzOM88dOOV96PV1gbk791wQ4NTfoOYtKEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fDvvYQh+; arc=none smtp.client-ip=209.85.210.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-70943713472so2149890a34.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 05:13:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1723551236; x=1724156036; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tbox2ZoitlY78mZ2yFdlFoyXWXf8v8pDSpmA621vz/E=;
-        b=fDvvYQh+g7IkDt64D6KWdNujPXX001pS8SBuLzJjCJZiKkIZx4McB+OVlTdt3DZzeB
-         kRrUq1Mw+cmm1q8s2ywwXAMLNKm3lpu2dnFA6lJ0I2gtxNEsCBhQYkRCrXqZtb6JnSZk
-         02tCQzypa0MFgeFkhMnI6ZZ35CSS7Jx4zz7vo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723551236; x=1724156036;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=tbox2ZoitlY78mZ2yFdlFoyXWXf8v8pDSpmA621vz/E=;
-        b=Uvh1ks10BY4bLQuv6vR8NEQUhY5IVCQ9YCAFrwD1omdYALNCLKw1l2dl/zSQkV/HZW
-         Kb5MHzWcwUlmQ67nosnpvPvFNHQrlYGcgT+lF/ejIIQSALoO+GLoO2cOvHEQRIEw89tU
-         vTtQCMiiul8dDSh0mGyjQXjXvmiFelWUtvWBnGyIeUQwa3v0a5WPX7PDFIoAYJTBR/yO
-         Rc59TmIdnJT1fjOaK5+2STY9xElXmGMZPV6H9biMA82R3QO31xyuAwQv/t1L1zYrpr4H
-         xCkcGZ5EGuzSstJiDGgKKVD5a9ihmwxcGCA+wHdbwizbvSQ3FtCOJ9LVpuV6L+OP+BDl
-         0Twg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTTiRYN63o0koyLkMsotUPYuyGqUR3JRSfMDQdd9ueYoHeX6DzQ65IVtHPR/YHTQr52ejZpZG56DqiB6UPGwkbNJjJhQvKjYpmzSuV
-X-Gm-Message-State: AOJu0Yw6w/0KSFER/48S6V8KchDxUEmBkqJziMfIY8Jj7gCuEwAFx0PL
-	oUU93XwJ0wpPhYYLhNYcNlVKhGMO9ladeHbWL6iZ0LV74mrW72gQL0A2/6/9HA==
-X-Google-Smtp-Source: AGHT+IGgXIJUCN4cjOUkGFgon+WiB2P8zLnuNtMLuoWTLxNw2YXdYtwoDqVO1oPdH1blkel8OnEpNw==
-X-Received: by 2002:a05:6358:e4a4:b0:1af:1105:49b7 with SMTP id e5c5f4694b2df-1b19d2f4c8fmr402139355d.30.1723551236049;
-        Tue, 13 Aug 2024 05:13:56 -0700 (PDT)
-Received: from denia.c.googlers.com (123.178.145.34.bc.googleusercontent.com. [34.145.178.123])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7a4c7d71ca8sm331765485a.50.2024.08.13.05.13.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 05:13:55 -0700 (PDT)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 13 Aug 2024 12:13:53 +0000
-Subject: [PATCH 6/6] media: meson: vdec: hevc: Refactor vdec_hevc_start and
- vdec_hevc_stop
+	s=arc-20240116; t=1723551310; c=relaxed/simple;
+	bh=dx796VhjmO843byt+mnLduUbr/0a4t5ggKZEQlfoaI4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IPkuFcR8FRegfPQXz3LXrXE1QBqEwbYJcVrxvwAKvP3p/RCBt0p7wlOf9eSl4aCaQPzlITsYy0U5A5cssGgLgbENycx+GMiS0Nf+X6UcsG2LkrBKKI8XjaWuHtEYRPJILDlwAPGZknJWsrsGzpzMbHSSLzSg0YVMJiAtxZ2PGEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=r26n4vCU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BHpSXUKz; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-05.internal (phl-compute-05.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 7CA4D138FD8B;
+	Tue, 13 Aug 2024 08:15:07 -0400 (EDT)
+Received: from wimap26 ([10.202.2.86])
+  by phl-compute-05.internal (MEProxy); Tue, 13 Aug 2024 08:15:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1723551307;
+	 x=1723637707; bh=hf+XpJftr/yARgkX8SCc/syV29CdeZlrpAmAw+8JxVk=; b=
+	r26n4vCUogWVf2cfYIS9OPG+yQMg33JuMc1B5ckaUnYCT7bmVUxVDb3sRMuEnMvs
+	Z5ojRRZ/oxGp06OuC5JGHbnfpU/6vh98hHZ6F8o1oPOWcgJg3bWRRfiruzx0yuEo
+	171j6gikJ2AusSs5q24wJP3PdpXwCmwGCXikU84jVSt45T+VHz02AqG+FT8wyeVo
+	nIoLGcnEmULNeLVn8hquakzvkc6wI3k3y8SME1NaLHRuEXwNLzo8GGmQ+LBN1J09
+	qWOpytwiGm7BdPMRYLMNfq90fSditRrEBeQ34uVBhXxlJv4iJIYDVR3kSG9Qui3m
+	VUtZUhE1Bqejc/nuQc1qdA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1723551307; x=
+	1723637707; bh=hf+XpJftr/yARgkX8SCc/syV29CdeZlrpAmAw+8JxVk=; b=B
+	HpSXUKzgZ8ccy0tQipw9XF5ByuEDZbmamh5k2XjUxqpiriifJX217IuhUli7BzEW
+	V3cEQGN8DnYoDN8+zenJy0TmEOFK8HET+mEAASfqmwmL18uviUgMMoyQwuNDv9mQ
+	R3+Y8rTCq5qgF3VSSrKM16wNsuuqDNgdldSZhHjCsqvPdbg1W3y82KWE8Vs2MiGV
+	LJGC44fcNEEn9imm1r9ljZQ62LflkNegTokuDYolX8L36+KVBodtJBgJ8B4R+BaU
+	VWUKHM/VBwMLHCkMzB+S2CHO2FXVQOW/7CuDFKYgg0Y3umNRMd+jVB1k+Nu8Gj+h
+	qczgP7NQsM6I+Dk2zOocg==
+X-ME-Sender: <xms:S067ZlNjc7VsViLKIIUPGjbAXrt1Vd_7rbcLLS6TPzzJABf69CQM0A>
+    <xme:S067Zn_417_xg5Yw2N4whdZCdaw1OPYtkzXV47MfZEivC8TeX7fGfKuzY0zbtcaBM
+    l81tzyN0wtg-VxaB6w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddggeelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepmhgrthhtihdrvhgrihhtthhinhgvnhesfhhirdhrohhhmhgvuhhrohhpvgdrtgho
+    mhdprhgtphhtthhopehmrgiiiihivghsrggttghouhhnthesghhmrghilhdrtghomhdprh
+    gtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghf
+    rggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonh
+    higidruggvpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhn
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhg
+X-ME-Proxy: <xmx:S067ZkRAq-a5fdh2Zzrq46pRqjxD_ELvUDcBV0ADLJ88gWlNaZE8MQ>
+    <xmx:S067ZhvhOo485zf36GbI2AFhQc2TifsWg3EgIfkhR7yDT6FJcY06xg>
+    <xmx:S067Ztfed6Ae0RTRO4995h-EiHc2PUrmVqasbmYgzFi8mT2oZ6rmQw>
+    <xmx:S067Zt2nWWZJa551YteGo9Qgl8fb8NVFnxuKUyTNszX8SIc6LVi6XA>
+    <xmx:S067ZlRDHMY3NP8nwdP2MpXuXdJXnsbPVJX3cpuWFxdtktSA5LULiVj_>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 4E8F419C0089; Tue, 13 Aug 2024 08:15:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240813-smatch-clock-v1-6-664c84295b1c@chromium.org>
-References: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
-In-Reply-To: <20240813-smatch-clock-v1-0-664c84295b1c@chromium.org>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>, 
- =?utf-8?q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, 
- linux-staging@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Date: Tue, 13 Aug 2024 13:14:46 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Matti Vaittinen" <mazziesaccount@gmail.com>,
+ "Matti Vaittinen" <matti.vaittinen@fi.rohmeurope.com>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Cc: "Mark Brown" <broonie@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org
+Message-Id: <f6aa806f-41fb-4051-9ee2-f039cd4fe0ce@app.fastmail.com>
+In-Reply-To: <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
+References: <cover.1723120028.git.mazziesaccount@gmail.com>
+ <32d07bd79eb2b5416e24da9e9e8fe5955423dcf9.1723120028.git.mazziesaccount@gmail.com>
+ <27033022-cdbe-40d9-8a97-cdc4d5c25dbe@flygoat.com>
+ <78fabd1a-0c68-4e23-8293-89c56eb9010b@gmail.com>
+ <c3379142-10bc-4f14-b8ac-a46927aeac38@gmail.com>
+Subject: Re: [PATCH v2 1/3] irqdomain: simplify simple and legacy domain creation
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Make a new function __vdec_hevc_start(), that does all the
-initialization, except the clock initialization for G12A and SM1.
 
-Factor out all the stop logic, except the clk_disable_unprepare(), to a
-new function __vdec_hevc_stop. This allows vdec_hevc_start() to
-explicitly celan-out the clock during the error-path.
 
-The following smatch warnings are fixed:
+=E5=9C=A82024=E5=B9=B48=E6=9C=8813=E6=97=A5=E5=85=AB=E6=9C=88 =E4=B8=8B=E5=
+=8D=881:02=EF=BC=8CMatti Vaittinen=E5=86=99=E9=81=93=EF=BC=9A
+> Hi Jiaxun,
+>
+> On 8/13/24 13:54, Matti Vaittinen wrote:
+>> On 8/13/24 13:19, Jiaxun Yang wrote:
+>>>
+>>>
+>>> On 2024/8/8 13:34, Matti Vaittinen wrote:
+>>>> Move a bit more logic in the generic __irq_domain_instantiate() fro=
+m the
+>>>> irq_domain_create_simple() and the irq_domain_create_legacy(). This=
+ does
+>>>> simplify the irq_domain_create_simple() and irq_domain_create_legac=
+y().
+>>>> It will also ease the use of irq_domain_instantiate() instead of the
+>>>> irq_domain_create_simple() or irq_domain_create_legacy() by allowin=
+g the
+>>>> callers of irq_domain_instantiate() to omit the IRQ association and
+>>>> irq_desc allocation code.
+>>>>
+>>>> Reduce code duplication by introducing the hwirq_base and virq_base
+>>>> members in the irq_domain_info structure, creating helper function
+>>>> for allocating irq_descs, and moving logic from the .._legacy() and
+>>>> the .._simple() to the more generic irq_domain_instantiate().
+>>>
+>>> Hi all,
+>>>
+>>> This patch currently in next had caused regression on MIPS systems.
+>
+> ...
+>
+>>> Do you have any idea on how should we fix it?
+>
+> This is quick'n dirty but do you think you could try following? (I hav=
+e=20
+> only compile-tested it). I'll also attach the patch as I have no idea =
+if=20
+> this mail client mutilates patches. I can send in proper format if it =
+helps.
 
-drivers/staging/media/meson/vdec/vdec_hevc.c:227 vdec_hevc_start() warn: 'core->vdec_hevc_clk' from clk_prepare_enable() not released on lines: 227.
-drivers/staging/media/meson/vdec/vdec_hevc.c:227 vdec_hevc_start() warn: 'core->vdec_hevcf_clk' from clk_prepare_enable() not released on lines: 227.
+Can confirm it fixed booting!
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/staging/media/meson/vdec/vdec_hevc.c | 43 +++++++++++++++++++++-------
- 1 file changed, 32 insertions(+), 11 deletions(-)
+Thanks for quick fix.
 
-diff --git a/drivers/staging/media/meson/vdec/vdec_hevc.c b/drivers/staging/media/meson/vdec/vdec_hevc.c
-index afced435c907..1939c47def58 100644
---- a/drivers/staging/media/meson/vdec/vdec_hevc.c
-+++ b/drivers/staging/media/meson/vdec/vdec_hevc.c
-@@ -110,7 +110,7 @@ static u32 vdec_hevc_vififo_level(struct amvdec_session *sess)
- 	return readl_relaxed(sess->core->dos_base + HEVC_STREAM_LEVEL);
- }
- 
--static int vdec_hevc_stop(struct amvdec_session *sess)
-+static void __vdec_hevc_stop(struct amvdec_session *sess)
- {
- 	struct amvdec_core *core = sess->core;
- 	struct amvdec_codec_ops *codec_ops = sess->fmt_out->codec_ops;
-@@ -142,6 +142,13 @@ static int vdec_hevc_stop(struct amvdec_session *sess)
- 	else
- 		regmap_update_bits(core->regmap_ao, AO_RTI_GEN_PWR_SLEEP0,
- 				   GEN_PWR_VDEC_HEVC, GEN_PWR_VDEC_HEVC);
-+}
-+
-+static int vdec_hevc_stop(struct amvdec_session *sess)
-+{
-+	struct amvdec_core *core = sess->core;
-+
-+	__vdec_hevc_stop(sess);
- 
- 	clk_disable_unprepare(core->vdec_hevc_clk);
- 	if (core->platform->revision == VDEC_REVISION_G12A ||
-@@ -151,20 +158,12 @@ static int vdec_hevc_stop(struct amvdec_session *sess)
- 	return 0;
- }
- 
--static int vdec_hevc_start(struct amvdec_session *sess)
-+static int __vdec_hevc_start(struct amvdec_session *sess)
- {
- 	int ret;
- 	struct amvdec_core *core = sess->core;
- 	struct amvdec_codec_ops *codec_ops = sess->fmt_out->codec_ops;
- 
--	if (core->platform->revision == VDEC_REVISION_G12A ||
--	    core->platform->revision == VDEC_REVISION_SM1) {
--		clk_set_rate(core->vdec_hevcf_clk, 666666666);
--		ret = clk_prepare_enable(core->vdec_hevcf_clk);
--		if (ret)
--			return ret;
--	}
--
- 	clk_set_rate(core->vdec_hevc_clk, 666666666);
- 	ret = clk_prepare_enable(core->vdec_hevc_clk);
- 	if (ret) {
-@@ -223,10 +222,32 @@ static int vdec_hevc_start(struct amvdec_session *sess)
- 	return 0;
- 
- stop:
--	vdec_hevc_stop(sess);
-+	__vdec_hevc_stop(sess);
-+	clk_disable_unprepare(core->vdec_hevc_clk);
- 	return ret;
- }
- 
-+static int vdec_hevc_start(struct amvdec_session *sess)
-+{
-+	struct amvdec_core *core = sess->core;
-+	int ret;
-+
-+	if (core->platform->revision == VDEC_REVISION_G12A ||
-+	    core->platform->revision == VDEC_REVISION_SM1) {
-+		clk_set_rate(core->vdec_hevcf_clk, 666666666);
-+		ret = clk_prepare_enable(core->vdec_hevcf_clk);
-+		if (ret)
-+			return ret;
-+
-+		ret = __vdec_hevc_start(sess);
-+		if (ret)
-+			clk_disable_unprepare(core->vdec_hevcf_clk);
-+		return ret;
-+	}
-+
-+	return __vdec_hevc_start(sess);
-+}
-+
- struct amvdec_ops vdec_hevc_ops = {
- 	.start = vdec_hevc_start,
- 	.stop = vdec_hevc_stop,
+- Jiaxun
 
--- 
-2.46.0.76.ge559c4bf1a-goog
+>
+>
+> From: Matti Vaittinen <mazziesaccount@gmail.com>
+> Date: Tue, 13 Aug 2024 14:34:27 +0300
+> Subject: [PATCH] irqdomain: Fix irq_domain_create_legacy() when=20
+> first_irq is 0
+>
+> The
+> 70114e7f7585 ("irqdomain: Simplify simple and legacy domain creation")
+> changed logic of calling the irq_domain_associate_many() from the
+> irq_domain_create_legacy() when first_irq is set to 0. Before the chan=
+ge,
+> the irq_domain_associate_many() is unconditionally called inside the
+> irq_domain_create_legacy(). After the change, the call is omitted when
+> first_irq is set to 0. This breaks MIPS systemns where
+> drivers/irqchip/irq-mips-cpu.c has irq_domain_add_legacy() called with
+> first_irq set to 0.
+>
+> Fixes: 70114e7f7585 ("irqdomain: Simplify simple and legacy domain=20
+> creation")
+> Signed-off-by Matti Vaittinen <mazziesaccount@gmail.com>
+> ---
+>   kernel/irq/irqdomain.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index 01001eb615ec..5be165399a96 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -300,7 +300,8 @@ static void irq_domain_instantiate_descs(const=20
+> struct irq_domain_info *info)
+>   }
+>
+>   static struct irq_domain *__irq_domain_instantiate(const struct=20
+> irq_domain_info *info,
+> -						   bool cond_alloc_descs)
+> +						   bool cond_alloc_descs,
+> +						   bool cond_force_associate)
+>   {
+>   	struct irq_domain *domain;
+>   	int err;
+> @@ -337,10 +338,9 @@ static struct irq_domain=20
+> *__irq_domain_instantiate(const struct irq_domain_info
+>   		irq_domain_instantiate_descs(info);
+>
+>   	/* Legacy interrupt domains have a fixed Linux interrupt number */
+> -	if (info->virq_base > 0) {
+> +	if (cond_force_associate || info->virq_base > 0)
+>   		irq_domain_associate_many(domain, info->virq_base, info->hwirq_bas=
+e,
+>   					  info->size - info->hwirq_base);
+> -	}
+>
+>   	return domain;
+>
+> @@ -360,7 +360,7 @@ static struct irq_domain=20
+> *__irq_domain_instantiate(const struct irq_domain_info
+>    */
+>   struct irq_domain *irq_domain_instantiate(const struct irq_domain_in=
+fo=20
+> *info)
+>   {
+> -	return __irq_domain_instantiate(info, false);
+> +	return __irq_domain_instantiate(info, false, false);
+>   }
+>   EXPORT_SYMBOL_GPL(irq_domain_instantiate);
+>
+> @@ -464,7 +464,7 @@ struct irq_domain *irq_domain_create_simple(struct=20
+> fwnode_handle *fwnode,
+>   		.ops		=3D ops,
+>   		.host_data	=3D host_data,
+>   	};
+> -	struct irq_domain *domain =3D __irq_domain_instantiate(&info, true);
+> +	struct irq_domain *domain =3D __irq_domain_instantiate(&info, true, =
+false);
+>
+>   	return IS_ERR(domain) ? NULL : domain;
+>   }
+> @@ -513,7 +513,7 @@ struct irq_domain *irq_domain_create_legacy(struct=20
+> fwnode_handle *fwnode,
+>   		.ops		=3D ops,
+>   		.host_data	=3D host_data,
+>   	};
+> -	struct irq_domain *domain =3D irq_domain_instantiate(&info);
+> +	struct irq_domain *domain =3D __irq_domain_instantiate(&info, false,=
+ true);
+>
+>   	return IS_ERR(domain) ? NULL : domain;
+>   }
+> --=20
+> 2.45.2
+>
+>
+>
+> =E9=99=84=E4=BB=B6:
+> * 0001-irqdomain-Fix-irq_domain_create_legacy-when-first_ir.patch
 
+--=20
+- Jiaxun
 
