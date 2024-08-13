@@ -1,128 +1,141 @@
-Return-Path: <linux-kernel+bounces-284428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E40A9500DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:07:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81219500E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 11:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF7DB2831AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EE6E1F21E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:09:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52590187348;
-	Tue, 13 Aug 2024 09:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DEC17B43F;
+	Tue, 13 Aug 2024 09:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YZPOp+Cy"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYEBvutO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B1F16DEA9;
-	Tue, 13 Aug 2024 09:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DABF1487F9;
+	Tue, 13 Aug 2024 09:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723540035; cv=none; b=GSeuWCWZubZC8trEmhTS2RVMS84JHhKaV1zZ8jetNNH3E8EuxkVjXwWt37sq83scEuTbQE6Hauhkhs9xm+K5nsi01YlQg1ydD0iaxpxQZ/yh/9iCl7BXmRly+QDQiK4zcXlosR6pjG3gAXoAXzoPDk1eNYBTLxDepxES9BmDpzM=
+	t=1723540134; cv=none; b=ZR4o7HdSRyczBLPAPOZPtqjNFckjvXNuOR+ZGvxExqvJLljm1jp0xVbRKtya0HdifB0v5Oc/gYa7hkFP2/fKoZouv98g/FIYtmLCirvG72gJBs1mnyRtX7brmgtY/cgsFQA47KljD8j13+1L/r250Nz9JapZy/ug37SiSFZILck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723540035; c=relaxed/simple;
-	bh=MhUR2OtEH7deQ3ME11VZl5HWuFTUQGCj7IYjEBrbMgo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TRe/daXbKpeNltCeiclCLEn1s3nKCC/BBN0bYbJELLUXCHcmvtXtU9TnKkIdOvHqp4izvdd47cgHj9hgLbFgUodelkLs6gHXPkq+6Vsw9oQLm+wSfYG+XGmiG+h0kZiMHK/MInoufiaBNXCRxOcdMMo9CtMhi9Ha5ctl048OEW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YZPOp+Cy; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2EFD71C0003;
-	Tue, 13 Aug 2024 09:07:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1723540025;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LuigKssXYiPCEK+V39HggWwcnvNgqn3KueYYJ6PbxGQ=;
-	b=YZPOp+CykyQGKIQivmGaH1s94KMe4kQsroHSg2DMg1QzYxPPFCtGrzmcy/NPVmlwc+JLm+
-	QBfZiuXK5wp9wocsq/PmUBY5BXSlHr9SKWNe0Lt5ylrJWhFYrLFFpHnE3kBv30gnWtApfa
-	gCh0hqzV6qTpCNQluwzKtWm/krKcBKwY/LPD/vVyAdG+MWOiyThyjuaholGs+1bYA6u1hS
-	r/BgXMxVnjLADPYxXahdWg628mMIJIjnTZodHt/WJfFVIghKTiuxidM8Bpg0on0n2/Y+Um
-	7IQYZbFfzvs9ZIgocR1XRFLbcOLBHHYJ2BfQQk+p5Qzz3elwXDSWlxBW1rylTQ==
-Date: Tue, 13 Aug 2024 11:06:59 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andrzej Hajda
- <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>,
- Robert Foss <rfoss@kernel.org>, Laurent Pinchart
- <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan
- <saravanak@google.com>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Paul Kocialkowski <contact@paulk.fr>, =?UTF-8?Q?Herv=C3=A9?= Codina
- <herve.codina@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-i2c@vger.kernel.org, Paul Kocialkowski
- <paul.kocialkowski@bootlin.com>
-Subject: Re: [PATCH v3 1/7] dt-bindings: connector: add GE SUNH hotplug
- addon connector
-Message-ID: <20240813110659.65f2ab72@booty>
-In-Reply-To: <20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
-References: <20240809-hotplug-drm-bridge-v3-0-b4c178380bc9@bootlin.com>
-	<20240809-hotplug-drm-bridge-v3-1-b4c178380bc9@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1723540134; c=relaxed/simple;
+	bh=tTf12N2sToOZT7o8BtfaUvPnYFIk5jf+p6GVTlx/nZE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tw77gXYJUaT9/5AUKVHF3q3oLnzNOtj+YaS4R+64mKHKvAgHPLD9c9HTfyE8Wvm+087sZ/GokqTVvaglzJW5ke1OIzoN3LFDXhiWW/cVpbpB+/Q3Bupa7AES1AR9B+kCa0F0p1abaftkVQ3CQ1VQANlShu7LHy3fZtWjYuM7Vxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYEBvutO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 771CBC4AF09;
+	Tue, 13 Aug 2024 09:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723540134;
+	bh=tTf12N2sToOZT7o8BtfaUvPnYFIk5jf+p6GVTlx/nZE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TYEBvutOMZuRpqKyMZvJ5GWIfk/GtSRU602TPwFrHxjFyajT+y1rgdMvDyKo7tqm+
+	 9shItNdyi5x0NA6IHnVD/i1gc3HCocQBgyRV3vRp3Zx+vWjKdf1jANB0cJ/7rf2Z6r
+	 Tqhg2CfvucabNkZzbZeolvYWzopYtleiwZExyGvzOW7V+xVeiJPFSW7eLTbLyPeCIR
+	 VLvUJ4Nz1pu8gPDLRjves5A8H83BkT2dCguc5CCJPZ2zZNiNcyK/oOVLdITrGONRtq
+	 YQFvRvDwf4+jz9RCjPAXVBcC+RLxF5IzeqK2G8/8FZ6KYjiY0y25BYNk3O1l8ZqwsM
+	 Qn1cxBD4CjCDg==
+Message-ID: <9ab6419c-2066-4c6d-bb6a-f78d4845b2b5@kernel.org>
+Date: Tue, 13 Aug 2024 11:08:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] dt-bindings: display: panel-simple-lvds-dual-ports:
+ use unevaluatedProperties
+To: Frank Li <Frank.li@nxp.com>, Liu Ying <victor.liu@nxp.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Thierry Reding
+ <thierry.reding@gmail.com>, Sam Ravnborg <sam@ravnborg.org>,
+ "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ imx@lists.linux.dev
+References: <20240812193626.3826250-1-Frank.Li@nxp.com>
+ <143d7bcb-c3ee-4f9f-833c-6680a25681b2@nxp.com>
+ <ZrrWi0HuAIDe7C0x@lizhi-Precision-Tower-5810>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <ZrrWi0HuAIDe7C0x@lizhi-Precision-Tower-5810>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello,
-
-On Fri, 09 Aug 2024 17:34:49 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-
-> Add bindings for the GE SUNH add-on connector. This is a physical,
-> hot-pluggable connector that allows to attach and detach at runtime an
-> add-on adding peripherals on non-discoverable busses.
+On 13/08/2024 05:44, Frank Li wrote:
+> On Tue, Aug 13, 2024 at 10:32:04AM +0800, Liu Ying wrote:
+>> On 08/13/2024, Frank Li wrote:
+>>> Replace additionalProperties with unevaluatedProperties because it ref to
+>>> panel-common.yaml.
+>>
+>> This would allow all properties in panel-common.yaml, which is not expected.
+>> Isn't adding 'panel-timing: true' next to 'enable-gpios: true' enough?
 > 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Strange, you ref to panel-common.yaml, suppose it will use all common
+> preperties.
+> 
+> Krzysztof Kozlowski:
+> 
+> Can I just add panel-timing:true for this case?
 
-...
+Yes, although I would claim that most of the panel-common schema also
+applies here...
 
-> +examples:
-> +  # This is the description of the connector as it should appear in the
-> +  # main DTS describing the "main" board up to the connector.
+Best regards,
+Krzysztof
 
-The comment from now on has outdated content referring to v2 and which I
-forgot to remove before sending v3:
-
->      This is
-> +  # supposed to be used together with the overlays in the two following
-> +  # examples. The addon_connector and hotplug_conn_dsi_out labels are
-> +  # referenced by the overlays in those examples.
-
-Fixed locally.
-
-> +  - |
-> +    / {
-> +        #include <dt-bindings/gpio/gpio.h>
-
-I also removed the root node which is not needed and cause bot warnings,
-and with that done the #include went back to a correct position.
-
-The above are queued for v4.
-
-Luca
-
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
