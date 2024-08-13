@@ -1,212 +1,116 @@
-Return-Path: <linux-kernel+bounces-285117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B74950992
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FE8950993
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989FA1C21047
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:56:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5491F22FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EEC01A08AB;
-	Tue, 13 Aug 2024 15:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE621A08AB;
+	Tue, 13 Aug 2024 15:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjvfWiDv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBya9z8z"
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26212AF0D
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF41A08A6;
+	Tue, 13 Aug 2024 15:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564592; cv=none; b=BJExdUzw7MP8zwH+d0yAONGkcJD+7qn5/1VxOqkKoIfvcQ/6Dwuj9SxUiE4hLyrDwP2H+6WmAhWZWkuxdGfnEyBWAKdmeIL8gsOJCZg1pMgYB83uDhtn+Y4eORNE5CFcIuX/V1BjE/SUVglZv7xQEOqVlXxTaQNwf/Ehcuy4+8A=
+	t=1723564613; cv=none; b=ejJcSD+H+QKMEg9lBizwAMoVyXngR7FSkERSIY3nVzWz05vndyzYYnkLOHGOicXFFGQKXGt4yRKeRGVA65dA0i4sGlvzIVmTPGAo8SUjZ/pPF1HqQ+1ueBg87QaTKfH7Kaz7vCcO5EHOekPZk+x8wq4nQKASq9xwiLvDKeQ17ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564592; c=relaxed/simple;
-	bh=3zW0n2w2QVfloPYCYYl/UF5OwhbG9EcTRphaq9+k7jE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HiBDbg37YxEOQFGRhTerywBIZaFZ5zPziQ65qf057DIRteedJyoDcCAdMw6edRMeFbu9hUbHFnpUI+nzafCIzc1zgbzh3dftlDKrx/ToKu6jAKgwg/7ley4ltGaR9L1tH9XPK8YRxV91HHbencvtMTHhmkpmFxYFtiJafBF0rK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjvfWiDv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA76C4AF09
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:56:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723564592;
-	bh=3zW0n2w2QVfloPYCYYl/UF5OwhbG9EcTRphaq9+k7jE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DjvfWiDvfABLpLpzbIjVlpxgRJdvhHxD+NKu9G/tf1CjEj7TylwPMZcZbRjzRxiwr
-	 EccakfHJ434ur7XSEbQc9zvewTEq02zwo05kmokMe3IOjrApW2jt1Ur4Zm2iSjieYN
-	 yZjlXlb+fjtrO8RHm4DgozrMS/1DH7IM7SgPJuBowA9v0WHo15SSuDuRhFed1zs6Ki
-	 KNlRhqOdPZrsOtzCcsq/kA9adA4pa/PSo6IHqhS+6/aX88odCDkSgfmIglZVGWncqa
-	 wO6N//3dXgyJ+XlDP7YmOOiMKVo8OJvE0d1BYTzvzSckfXtfckIuHm8ADZJ0LBzOpY
-	 +eEKegQ9wVWCA==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5b9d48d1456so2432146a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:56:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWrdasO/Y4kMD1a1NGUlrKlUgv7yWLb9JXOuFLmHGyVP8drwLRbr3LniZLic0nCPYoCHPMUfrihow+YCy+kUErR/mDanACSWnFmF1XQ
-X-Gm-Message-State: AOJu0YwnuGO7wisQyJkRJOcDZV7WI7o3tWxGRfmX4oUfovVdu/zvZDNh
-	fhVM+SI6Kx+W16Puj94+OySUBlwacZZvT3e6gBcqTNdBjl2dwoL3NyfFqTPsVUv//JwYdJMK1pS
-	kAE9AVpzphcjDOajEtvlxn5bdkUMO26ygXAjw
-X-Google-Smtp-Source: AGHT+IEoccaNChcOKrH4yV7UVrRWGO1c3dtiERqart7IKHJrf1vUXhXn/JNnmMB1oIBZwRAc6N4ouC4NWBr5UlZtj+4=
-X-Received: by 2002:a05:6402:354c:b0:57d:4409:4f48 with SMTP id
- 4fb4d7f45d1cf-5bd462178a9mr3149592a12.15.1723564591218; Tue, 13 Aug 2024
- 08:56:31 -0700 (PDT)
+	s=arc-20240116; t=1723564613; c=relaxed/simple;
+	bh=ngc1hLOMkQFWBcGLsLCn+/86MLQuNCme09RUqmCXKe4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=awRzDZnBhe0fSppZYX/iVSPe9pJYrKA7dS6dlWjrBA806oFUUBK61zfMj6Yo1DobJfSQQMkiqcDxLo0DfnOkDx3iclCB16uyBwXjuFxagO5k4QnpAjGlgcA/LX0De0mG8vv+CNNfFEfojLV27P4jefSARiu1lvoMucrQoRN6R38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBya9z8z; arc=none smtp.client-ip=209.85.217.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49294bbd279so2353620137.0;
+        Tue, 13 Aug 2024 08:56:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723564611; x=1724169411; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIk7K7uDNXRgkjiz9GrUCqEfmLUY/1vRneZ0qMbh0tA=;
+        b=EBya9z8zLxyKIhlKpP+spT0t1Xy3NzRIfX9JoRH23/zYiFXawzF/vIDX/W9qQ2qlyP
+         Zck08ip2WPYWdLSVBkfpP9V7maNPqu5HJSWR8uonSb9GhLy3g4SpP9ig8mUSxni6ch4Q
+         oMCfalYV3exGDyPtBvbg4ZrA7eWonWQfFHZS+KhKKU7QcQVvs9C3/42+2KWVnQpP/oio
+         Dwycwl/FPxEtcuToUQa5HukCUNCvqDGG67e6S2Ug8TZUriWGeW8tierCKyWyqSr9u9F0
+         JlIfqrbyjzRwXBiYWL//bzyjBJtYLPyvvOd+oxM1yh5sNqqywf96nNWr1xvlturYtcnD
+         bOrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723564611; x=1724169411;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BIk7K7uDNXRgkjiz9GrUCqEfmLUY/1vRneZ0qMbh0tA=;
+        b=aw94IhhL3pCsFV2pKLqSugOtcFfzuXWv+YVwdDAP3pRwlhdfwFA+Y0UYDI3hkZY+Hy
+         cdl6q3WlZewPFSEFRFuYxKNH3RXVP/+vfMc0XROQx8ayI6637np36RiCNfjt1LF6Zm/7
+         23dVlqalEiEHZ/upkHbMGV6+WpzwsIkLBNZ/+/+4xn4UaWPsIXvMoCQCYyhtWll5CvJp
+         tvkdqhttLzJnRKjmvbJP41YzafS32F8ymvFn+JIR2ZTM/hP1l+ytNlXqGB65w38Qwao6
+         8DzBYYcx8jjQkQxTR2JJPNnyeX8LwwSAQN1yiEMRHJUqiX7jXsKMA2X0ss4Qo+2y7xqS
+         QpPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhrcAGmdufBiI9uWFskbhO/BRllFzpXkZks+YLTHxlg8vPdXTBvfNL/Q9aerlQYcvTOWcoyr8rSHGROb95fY4PX6ee2NlsJ7OB1z3m
+X-Gm-Message-State: AOJu0Yw6Ms11kQhSrdpvhIAV3/He9qLMk1d2tf38bepbE6cgPcysrPdu
+	KWEPKlBoJsdyyJqU4J1Q/9hc/Okgid1vo7xEal5TcW/M6OytiV+BowOdeSDU
+X-Google-Smtp-Source: AGHT+IGNH6iBSXfO0StwAXfg50vBUBsYFAR6PIRZfKq+usqod4RU29+6tWbpTj4SvrdW0RikylD4LA==
+X-Received: by 2002:a05:6102:5127:b0:48f:db3d:593e with SMTP id ada2fe7eead31-4975990e708mr168236137.14.1723564611095;
+        Tue, 13 Aug 2024 08:56:51 -0700 (PDT)
+Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-49709fa31f7sm1089283137.26.2024.08.13.08.56.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 08:56:50 -0700 (PDT)
+From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+To: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
+Subject: [PATCH v2] ALSA: usb-audio: Support Yamaha P-125 quirk entry
+Date: Tue, 13 Aug 2024 10:56:53 -0500
+Message-ID: <20240813155653.35203-1-soyjuanarbol@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net> <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net> <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net> <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net> <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
- <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
- <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
- <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
- <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
- <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com> <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
-In-Reply-To: <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 13 Aug 2024 17:56:20 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
-Message-ID: <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 13, 2024 at 6:08=E2=80=AFAM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> On 8/12/24 15:02, KP Singh wrote:
-> > On Mon, Aug 12, 2024 at 11:33=E2=80=AFPM Paul Moore <paul@paul-moore.co=
-m> wrote:
-> >>
-> >> On Mon, Aug 12, 2024 at 5:14=E2=80=AFPM KP Singh <kpsingh@kernel.org> =
-wrote:
-> >>> On Mon, Aug 12, 2024 at 9:33=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> >>>> On Mon, Aug 12, 2024 at 1:12=E2=80=AFPM KP Singh <kpsingh@kernel.org=
-> wrote:
-> >>>>>
-> >>>>> JFYI, I synced with Guenter and all arch seem to pass and alpha doe=
-s
-> >>>>> not work due to a reason that I am unable to debug. I will try doin=
-g
-> >>>>> more debugging but I will need more alpha help here (Added the
-> >>>>> maintainers to this thread).
-> >>>>
-> >>>> Thanks for the update; I was hoping that we might have a resolution
-> >>>> for the Alpha failure by now but it doesn't look like we're that
-> >>>> lucky.  Hopefully the Alpha devs will be able to help resolve this
-> >>>> without too much trouble.
-> >>>>
-> >>>> Unfortunately, this does mean that I'm going to drop the static call
-> >>>> patches from the lsm/dev branch so that we can continue merging othe=
-r
-> >>>> things.  Of course this doesn't mean the static call patches can't
-> >>>> come back in later during this dev cycle once everything is solved i=
-f
-> >>>> there is still time, and worst case there is always the next dev
-> >>>> cycle.
-> >>>>
-> >>>
-> >>> Do we really want to drop them for alpha? I would rather disable
-> >>> CONFIG_SECURITY for alpha and if people really care for alpha we can
-> >>> enable it. Alpha folks, what do you think?
-> >>
-> >> Seriously?  I realize Alpha is an older, lesser used arch, but it is
-> >> still a supported arch and we are not going to cause a regression for
-> >> the sake of a new feature.  As I mentioned earlier, once the problem
-> >> is resolved we can bring the patchset back into lsm/dev; if it gets
-> >> resolved soon enough we can even do it during this dev cycle.
-> >>
-> >
-> > Okay, more data for the alpha folks, when I moved trap_init() before
-> > early_security_init() everything seemed to work, I think we might need
-> > to call trap_init() from setup_arch and this would fix the issue. As
-> > to why? I don't know :)
-> >
-> > Would alpha folks be okay with this patch:
-> >
-> > kpsingh@kpsingh:~/projects/linux$ git diff
-> > diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-> > index bebdffafaee8..53909c1be4cf 100644
-> > --- a/arch/alpha/kernel/setup.c
-> > +++ b/arch/alpha/kernel/setup.c
-> > @@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
-> >          setup_smp();
-> >   #endif
-> >          paging_init();
-> > +       trap_init();
-> >   }
-> >
-> >
-> > and provide me some reason as to why this works, it would be great for
-> > a patch description
-> >
->
-> Your code triggers a trap (do_entUna, unaligned access) which isn't handl=
-ed unless
-> trap_init() has been called before.
->
-> Reason is that static_calls_table is not 8-byte aligned, causing the unal=
-igned
-> access in:
->
-> static void __init lsm_static_call_init(struct security_hook_list *hl)
-> {
->          struct lsm_static_call *scall =3D hl->scalls;
->          int i;
->
->          for (i =3D 0; i < MAX_LSM_COUNT; i++) {
->                  /* Update the first static call that is not used yet */
->                  if (!scall->hl) {                                       =
-       <-- here
->                          __static_call_update(scall->key, scall->trampoli=
-ne,
->                                               hl->hook.lsm_func_addr);
->                          scall->hl =3D hl;
->                          static_branch_enable(scall->active);
->                          return;
->                  }
->                  scall++;
->          }
->          panic("%s - Ran out of static slots.\n", __func__);
-> }
->
-> A somewhat primitive alternate fix is:
->
-> diff --git a/security/security.c b/security/security.c
-> index aa059d0cfc29..dea9736b2014 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -156,7 +156,7 @@ static __initdata struct lsm_info *exclusive;
->    * and a trampoline (STATIC_CALL_TRAMP) which are used to call
->    * __static_call_update when updating the static call.
->    */
-> -struct lsm_static_calls_table static_calls_table __ro_after_init =3D {
-> +struct lsm_static_calls_table static_calls_table __ro_after_init __attri=
-bute__((aligned(8))) =3D {
->   #define INIT_LSM_STATIC_CALL(NUM, NAME)                                =
-        \
+This patch adds a USB quirk for the Yamaha P-125 digital piano.
 
-I think it's worth making it aligned at 8 byte, a much simpler fix
-than the arch change. Paul, I will rebase my series with these
-patches, better descriptions and post them later today.
+Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
+---
+Hey! Thanks for taking the time to review my patch.
 
-- KP
+Attending your sorting by id suggestion, I've moved the P-125 to the
+bottom.
 
->          (struct lsm_static_call) {                                      =
-\
->                  .key =3D &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),  =
-  \
->
-> Guenter
->
+Regards,
+-Juan
+---
+ sound/usb/quirks-table.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
+index f13a8d63a019..24e6f68e2f1e 100644
+--- a/sound/usb/quirks-table.h
++++ b/sound/usb/quirks-table.h
+@@ -239,6 +239,7 @@ YAMAHA_DEVICE(0x1030, "PSR-295/293"),
+ YAMAHA_DEVICE(0x1031, "DGX-205/203"),
+ YAMAHA_DEVICE(0x1032, "DGX-305"),
+ YAMAHA_DEVICE(0x1033, "DGX-505"),
++YAMAHA_DEVICE(0x1718, "P-125"),
+ YAMAHA_DEVICE(0x1034, NULL),
+ YAMAHA_DEVICE(0x1035, NULL),
+ YAMAHA_DEVICE(0x1036, NULL),
+-- 
+2.46.0
+
 
