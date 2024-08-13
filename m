@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-284959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FBE4950755
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:15:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B365950767
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:18:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C22DF1C22A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:15:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADF71F23C5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6289E19EEC7;
-	Tue, 13 Aug 2024 14:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CED119D09B;
+	Tue, 13 Aug 2024 14:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azkwPqRf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="akETTczI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A991F19EEB6
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B033519B3ED;
+	Tue, 13 Aug 2024 14:17:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723558440; cv=none; b=iP4Pzy3FQGRLdhIKbSesI60UQXh1eOACPWEorZSsp1LPEQsRvcQjpKA7yBm2gyf9wzkzvOrokgRO4fgaWI8UQA0QU3+5lygEZDWzhLvngL91OTVS6dJdDu7JLy9G3waJulLYxNuKgnofeyCY4pYVmLdtoDCysl+LuXawcPMHQV4=
+	t=1723558640; cv=none; b=Y7vDNG39dl2REg2nsn4FF4GFUlReUG5SQ5pkYqb0T6MHRBLMJdFJstA17snPYLElrvV92evVL0xCjMukQmluttDr7KOKS/kFgmRFHMjupG7RI5IWeFmFYWczY5fVvKPuXlYHJwmFXo3220tvaPv0aK9LkeVKKXXxIcD9B+G8qRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723558440; c=relaxed/simple;
-	bh=+Rahtg2CIbqQVDwx0J+IxStkz1u33ze7GCP87Z5bhDY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MCxPFAeka/emssZspP3R0/mQvQ99OZOS4xCFCmn8a6jKBJ/VtiQKsUW6KkkEhWAHqp1h2rt9uiT+w1My8M5AqLZyvDQTjh6QjJWDYwYAt/IemTU1p1N8OlCioIsNuqqF1TWnRg4nvo9tU5V7q22zpOnB+H5PYLxTpWMlYR8t76c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azkwPqRf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF9DC4AF11;
-	Tue, 13 Aug 2024 14:13:58 +0000 (UTC)
+	s=arc-20240116; t=1723558640; c=relaxed/simple;
+	bh=Ts02BaX1uJBucVrRoYv/f607u6/Qe7CljCeo1TcnB1o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lMkvM7TD2BxS/S0VDQJOx7YHSanKqObg3NRSucjbLVeF+F5goCOfOKTxWvvzFSbm+H0ALKSgnThAosbDovl/MHzazrh0NyOqkG/PcnNGXtopVLRrmhvBNDyIaZHMpQye2DbfvUGI9zU6rmo8+bCLN9ggCkqqbGmVnp+oc9Cfyzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=akETTczI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41956C4AF09;
+	Tue, 13 Aug 2024 14:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723558440;
-	bh=+Rahtg2CIbqQVDwx0J+IxStkz1u33ze7GCP87Z5bhDY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=azkwPqRfL6kB75jA+pqe+ygYJJV/FrIXp79ryh2MjDe6l9aF+7/8bbWxzpTHMQFm2
-	 7RFyhMAzw2BHCVZNj78tyeVGZzzP5CGKx+QXsLuZAsOOPOcJQgomYIqhqkxHa3zFKo
-	 w2me4nsj27Tbom/J9J16Tom96uQagm2Avj1KsxT9wuHZWSwemdPkgZ59l+KbGcS8JW
-	 SqYW/r+LmwSIDyj5a77se9l2UghPwZcqqOI45l6HXB1JR+rL1l/LXSaImKvPFX0FfE
-	 5dEDxiTJOI8g2hJYucr/KDKj4P1lMR1p3U8wAQrshzW4t259xs4wkVxyk5xEIXLO1P
-	 ZRuY/bcCD+bjQ==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chao Yu <chao@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH 9/9] f2fs: convert f2fs_handle_page_eio() to use folio
-Date: Tue, 13 Aug 2024 22:13:31 +0800
-Message-Id: <20240813141331.417067-9-chao@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20240813141331.417067-1-chao@kernel.org>
-References: <20240813141331.417067-1-chao@kernel.org>
+	s=k20201202; t=1723558640;
+	bh=Ts02BaX1uJBucVrRoYv/f607u6/Qe7CljCeo1TcnB1o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=akETTczIweO4EVNKAeoT9iyLYwL8xm6U3nSR0TYlL8u1t7nbfvShuXn0mKX5sHs/q
+	 tDaaWC+JKCqOEBDfxfOcYwh5XXTaKYi57CDnUZMtAdQpgabl35qRf+SOXs+NPhDmM5
+	 jMhBP0zgiQ+tCgEmL6dpjBkbHTj4i+0QPEiE+VK6p/WHxQXM+52typMPLkC7SaXd6g
+	 adQJ51OTLGEAZ7W5Q7nOOemnh+UT0WpJGSDtozbLJoTFKoB4Nv6TGJThKpax/mBmWH
+	 tCHbu5wNLeyqrUpadE9f4aLX3dxt7UQzk7Y7gpXEDCnjWYl8gvlmUQ2WKfcsfJTDB7
+	 jGpf1mtYCp54Q==
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2f1a7faa4d5so48321241fa.3;
+        Tue, 13 Aug 2024 07:17:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtfE03HX6gsyGA03Q7ZOuTVdr0CdrZBBoAljIjPX+wEBaRaqMSpGly1GZqIMXIIWgXCFOm4Nynb5xQ9C4JH31F3RFs1If3tHU5/T9ocWQp0aHKgYIwG9seVcmoCzYKOBIhX+FPEjEF1utA7rEw4IHSXyWae5XLEHoYWucPSC/h8zBroqc8EA==
+X-Gm-Message-State: AOJu0Yyd8QK2ICPAEpxN3aV1fl4KOC4TYB8fcSSLAfdRSB2maorgzMST
+	vSz9pt5xkimUuMQJNfRnrYod55dOokesYvTgZzPg98VjAbQ8HXhOvsVSaOmrmmdj7jlVrjLX2aA
+	byNdQMrCwvMEHcRGNLQbnUrq/fA==
+X-Google-Smtp-Source: AGHT+IG4ZD1LYUmTcjNxsu4NSl0NVMrynBgp0QWu3I61S59AOffl8L/RksPbuMpvt7XgOGWntMOsVjpu4+iKl0U5l+Q=
+X-Received: by 2002:a2e:be93:0:b0:2ef:2bb4:2ea1 with SMTP id
+ 38308e7fff4ca-2f2b712cfedmr34435731fa.4.1723558638412; Tue, 13 Aug 2024
+ 07:17:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1722355365.git.daniel@makrotopia.org> <d2beb15377dc8b580ca5557b1a4a6f50b74055aa.1722355365.git.daniel@makrotopia.org>
+In-Reply-To: <d2beb15377dc8b580ca5557b1a4a6f50b74055aa.1722355365.git.daniel@makrotopia.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 13 Aug 2024 08:17:05 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKG+dMJjPXrWiQ8qZ7yfpdX3R22ntKRBawYZWTaW_9GWA@mail.gmail.com>
+Message-ID: <CAL_JsqKG+dMJjPXrWiQ8qZ7yfpdX3R22ntKRBawYZWTaW_9GWA@mail.gmail.com>
+Subject: Re: [PATCH v9 3/3] arm64: dts: rockchip: add DT entry for RNG to RK356x
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Dragan Simic <dsimic@manjaro.org>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@debian.org>, 
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Francesco Dolcini <francesco.dolcini@toradex.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	linux-crypto@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Convert to use folio, so that we can get rid of 'page->index' to
-prepare for removal of 'index' field in structure page [1].
+On Tue, Jul 30, 2024 at 10:11=E2=80=AFAM Daniel Golle <daniel@makrotopia.or=
+g> wrote:
+>
+> From: Aurelien Jarno <aurelien@aurel32.net>
+>
+> Include the just added Rockchip RNG driver for RK356x SoCs and
+> enable it on RK3568.
+>
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  4 ++++
+>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 10 ++++++++++
+>  2 files changed, 14 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk3568.dtsi
+> index f1be76a54ceb0..2a6ca20e607fd 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> @@ -257,6 +257,10 @@ power-domain@RK3568_PD_PIPE {
+>         };
+>  };
+>
+> +&rng {
+> +       status =3D "okay";
+> +};
+> +
+>  &usb_host0_xhci {
+>         phys =3D <&usb2phy0_otg>, <&combphy0 PHY_TYPE_USB3>;
+>         phy-names =3D "usb2-phy", "usb3-phy";
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk356x.dtsi
+> index 4690be841a1cd..d160a23fd4959 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> @@ -1113,6 +1113,16 @@ sdhci: mmc@fe310000 {
+>                 status =3D "disabled";
+>         };
+>
+> +       rng: rng@fe388000 {
+> +               compatible =3D "rockchip,rk3568-rng";
+> +               reg =3D <0x0 0xfe388000 0x0 0x4000>;
+> +               clocks =3D <&cru CLK_TRNG_NS>, <&cru HCLK_TRNG_NS>;
+> +               clock-names =3D "core", "ahb";
+> +               resets =3D <&cru SRST_TRNG_NS>;
+> +               reset-names =3D "reset";
 
-[1] https://lore.kernel.org/all/Zp8fgUSIBGQ1TN0D@casper.infradead.org/
+This adds a new warning:
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Chao Yu <chao@kernel.org>
----
- fs/f2fs/checkpoint.c | 2 +-
- fs/f2fs/f2fs.h       | 6 ++++--
- fs/f2fs/node.c       | 2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index ffaf295a198a..7f76460b721f 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -99,7 +99,7 @@ static struct page *__get_meta_page(struct f2fs_sb_info *sbi, pgoff_t index,
- 	}
- 
- 	if (unlikely(!PageUptodate(page))) {
--		f2fs_handle_page_eio(sbi, page->index, META);
-+		f2fs_handle_page_eio(sbi, page_folio(page), META);
- 		f2fs_put_page(page, 1);
- 		return ERR_PTR(-EIO);
- 	}
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c29ed8b6eea6..28b6246e07f9 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -4666,9 +4666,11 @@ static inline void f2fs_io_schedule_timeout(long timeout)
- 	io_schedule_timeout(timeout);
- }
- 
--static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi, pgoff_t ofs,
--					enum page_type type)
-+static inline void f2fs_handle_page_eio(struct f2fs_sb_info *sbi,
-+				struct folio *folio, enum page_type type)
- {
-+	pgoff_t ofs = folio->index;
-+
- 	if (unlikely(f2fs_cp_error(sbi)))
- 		return;
- 
-diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-index 2b764c86aacc..7beaa3690e03 100644
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -1492,7 +1492,7 @@ static struct page *__get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid,
- out_put_err:
- 	/* ENOENT comes from read_node_page which is not an error. */
- 	if (err != -ENOENT)
--		f2fs_handle_page_eio(sbi, page->index, NODE);
-+		f2fs_handle_page_eio(sbi, page_folio(page), NODE);
- 	f2fs_put_page(page, 1);
- 	return ERR_PTR(err);
- }
--- 
-2.40.1
-
+rng@fe388000: 'reset-names' does not match any of the regexes: 'pinctrl-[0-=
+9]+'
 
