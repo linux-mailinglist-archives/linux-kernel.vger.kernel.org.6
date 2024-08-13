@@ -1,138 +1,259 @@
-Return-Path: <linux-kernel+bounces-285062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD85B9508C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:18:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA7E9508C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7470528522D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:18:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89992868B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A17191A08BB;
-	Tue, 13 Aug 2024 15:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5D11A0B13;
+	Tue, 13 Aug 2024 15:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="gGkepzjd"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kP/NkGyj"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431991A0703
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 15:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9625E1A0722;
+	Tue, 13 Aug 2024 15:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723562270; cv=none; b=pJ2OCf7jlTfq9d5lBub9UVcUA3y4aJlGK1CzarGxqxQQfuKzg8LacUAZ3H/BG9dlknA9V1PBQlhqqKvOQmitsawd+myuZhXlAP2F83whnzhMbjAN5Ux/0dgR72+k8nafkktx0pkRoYgVO9axRSqA3tBWww9FZ7EvRkg/a3KmA8c=
+	t=1723562289; cv=none; b=ryBIN1DTFDhVlGRE4+D8D0KCcuJ9qUsTg0pTEdFtF63cekp34B7LSA83hFCgH/0FOiv8FuRF2NZ/T9brtFNBL/Qu3PejZirNVcl67OYByFm2/fRH3nIDxykiNCDUMB6Kr//JZUhJBSdCpX82vMmioB6drxLRyMOo1zlQIyhsudg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723562270; c=relaxed/simple;
-	bh=9Chp8Kdbu6SYoSV/XqRtuBNB0Ulomj1BCqRJZlB19WI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=raYeI4g0HbVWHGHVV5cGHV98ATZlXOgU0Qj5YK+KSt8ew7C/oKsiJsHljgW5O9mD6ylXgtqz41i2LWJkHJn+DritK4rUvoo3wKrjFMRErmFuc64nOwSxR501xWtFdV5EoatT/VW2HHVrV1ae/1kc5rC7tmyDHrpj4c4Fsls34To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=gGkepzjd; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7a115c427f1so3672390a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1723562268; x=1724167068; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w4KRY8X4IunmA74dEqtckpgjQWJ1kH7nl8/HPopsHUI=;
-        b=gGkepzjdZ1ZhClkJZH45b5IBGm3WJbOVMk8F3+VHG3eNrsgYgQEK2LN8xqwVnk6Ppn
-         srCICIYNNeyjcpVT2gcXQOuJGY+NWQX1QMfgaee0Bzj/C2utB8OO3jc7ZAAUfelV09dT
-         xVTbFr7zQ8EMoG1BAWk1fRUitpewQXiKnM1Ns=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723562268; x=1724167068;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w4KRY8X4IunmA74dEqtckpgjQWJ1kH7nl8/HPopsHUI=;
-        b=RdCSgw6fodLZutQWX17XX9+K+YKco+tmkGrM/lWqJQMdI+xfihpRJf9wfoUGuqcxTY
-         7bmy8iTIQFPAd8taEN5r1xvBXZkicjcBX7TmF2eEbLRAr0PQ/v7asq/llr5RTw5qeDim
-         RUlgfTVHO1yDvM5nwzjztqjgTM3uU3uH7Y3qocSDOJvBRMu+5bPMxIg8l3kSRYSs3jkx
-         pPVCocQCqeAIHjOx0Erm2PEPA6OJLCJN/6ZJRQ57Y/3q1QamePT4V0wcnogd0Hlt24ct
-         yDb05KwfW9SocVilmTS9mH3YCJUQcSu98QN2/0Hnozj48UVWLVmZRQJnJgVkvHxSlHjY
-         ClzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVcsbjBQ6WLNC/4OiIPE54CEfD7skFX/B3qwE6lIyB+kyATAsMRSsrTIUYvQ5kG7Q79L4X+u+T5zzmdwQtl948DOEc61on/eze9dNbH
-X-Gm-Message-State: AOJu0Yyn85ysRVteolXMyfViYPWCBqivjW6SOuY2xyx6D/nnyrhpRI6v
-	h4JND+tD0CrdMo1aY4U/DeZ2FBUZUKxbljSfzgWdqgJ/1ImnpUhdGRvU2GSjG+8=
-X-Google-Smtp-Source: AGHT+IHXm0x6rVFLg4sEMfOVNl/u+rp1s8fKEkxeX/qIQGEqM6BLnURVvMM4eI5C7/juC0jCPJ61ww==
-X-Received: by 2002:a17:90a:cf08:b0:2c6:ee50:5af4 with SMTP id 98e67ed59e1d1-2d3924d8178mr4202148a91.6.1723562268440;
-        Tue, 13 Aug 2024 08:17:48 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1fce6cfc1sm7409649a91.6.2024.08.13.08.17.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:17:48 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Cc: peterz@infradead.org,
-	andrii@kernel.org,
-	mhiramat@kernel.org,
-	olsajiri@gmail.com,
-	me@kylehuey.com,
-	Kyle Huey <khuey@kylehuey.com>,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Joe Damato <jdamato@fastly.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] perf/bpf: Don't call bpf_overflow_handler() for tracing events
-Date: Tue, 13 Aug 2024 15:17:27 +0000
-Message-Id: <20240813151727.28797-1-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1723562289; c=relaxed/simple;
+	bh=bDQtUiyRqgXSrfcO2IpA6p2hoMfDdxPBCSaGfTJ8BA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FxH5VeJ7frVsBdJKA6mSaLEE5b8YQqdWmxmdhftIFWfwF6Wu3ThOZcHnCCdChiixfBNh7yx8ByiP3NedqXb6sOhfThFPnhU130Hoebf9wjrR+ZPwpqe0ujGUbLo97EmsAnjxGvIJvk5MmWt1rdGHaAxk0aiyYQMzXBKsL1WSPCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kP/NkGyj; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=dYqXKTE0pJmqsYJ3Ya6dkUmsddYDJwkWesi3gUrybOY=; b=kP/NkGyjtatFYvMgGblUbH53N5
+	jSyscBcKbPqpIcDRMVd80u+koQXNzG1iact6gDC1JhX0yjPpr0iBS0uSrICsF2KTKXYdkvZmYMyXT
+	S+Jtna8IsWgpgtHnfzgdkK7QGoMQg6vdnw24XygR2DL1yxAKFKhzsjDoJq2zrw7a05Fc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sdtHV-004h7O-EP; Tue, 13 Aug 2024 17:17:53 +0200
+Date: Tue, 13 Aug 2024 17:17:53 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>, Simon Horman <horms@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, srk@ti.com,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next v2 4/7] net: ti: icssg-prueth: Add support for
+ HSR frame forward offload
+Message-ID: <082f81fc-c9ad-40d7-8172-440765350b48@lunn.ch>
+References: <20240813074233.2473876-1-danishanwar@ti.com>
+ <20240813074233.2473876-5-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813074233.2473876-5-danishanwar@ti.com>
 
-From: Kyle Huey <me@kylehuey.com>
+On Tue, Aug 13, 2024 at 01:12:30PM +0530, MD Danish Anwar wrote:
+> Add support for offloading HSR port-to-port frame forward to hardware.
+> When the slave interfaces are added to the HSR interface, the PRU cores
+> will be stopped and ICSSG HSR firmwares will be loaded to them.
+> 
+> Similarly, when HSR interface is deleted, the PRU cores will be stopped
+> and dual EMAC firmware will be loaded to them.
 
-The regressing commit is new in 6.10. It assumed that anytime event->prog
-is set bpf_overflow_handler() should be invoked to execute the attached bpf
-program. This assumption is false for tracing events, and as a result the
-regressing commit broke bpftrace by invoking the bpf handler with garbage
-inputs on overflow.
+Maybe a dumb question, because i don't know HSR....
 
-Prior to the regression the overflow handlers formed a chain (of length 0,
-1, or 2) and perf_event_set_bpf_handler() (the !tracing case) added
-bpf_overflow_handler() to that chain, while perf_event_attach_bpf_prog()
-(the tracing case) did not. Both set event->prog. The chain of overflow
-handlers was replaced by a single overflow handler slot and a fixed call to
-bpf_overflow_handler() when appropriate. This modifies the condition there
-to check event->prog->type == BPF_PROG_TYPE_PERF_EVENT, restoring the
-previous behavior and fixing bpftrace.
+Can you have one interface in a HSR network, another interface in a
+non-HSR network, and bridge packets between the two worlds? Do you
+want the HSR firmware, the Switchdev firmware, or Dual EMAC and do the
+bridge in software?
 
-Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-Suggested-by: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Reported-by: Joe Damato <jdamato@fastly.com>
-Closes: https://lore.kernel.org/lkml/ZpFfocvyF3KHaSzF@LQ3V64L9R2/
-Fixes: f11f10bfa1ca ("perf/bpf: Call BPF handler directly, not through overflow machinery")
-Cc: stable@vger.kernel.org
-Tested-by: Joe Damato <jdamato@fastly.com> # bpftrace
----
-v2:
-  - Update patch based on Andrii's suggestion
-  - Update commit message
+>  void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac)
+>  {
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> index dae52a83a378..2f485318c940 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
+> @@ -455,7 +455,7 @@ int icssg_config(struct prueth *prueth, struct prueth_emac *emac, int slice)
+>  	struct icssg_flow_cfg __iomem *flow_cfg;
+>  	int ret;
+>  
+> -	if (prueth->is_switch_mode)
+> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
+>  		icssg_init_switch_mode(prueth);
 
- kernel/events/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Maybe icssg_init_switch_mode() needs renaming if it is used for more
+than switch mode? There are other functions which might need
+generalising.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index aa3450bdc227..c973e3c11e03 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9706,7 +9706,8 @@ static int __perf_event_overflow(struct perf_event *event,
- 
- 	ret = __perf_event_account_interrupt(event, throttle);
- 
--	if (event->prog && !bpf_overflow_handler(event, data, regs))
-+	if (event->prog && event->prog->type == BPF_PROG_TYPE_PERF_EVENT &&
-+	    !bpf_overflow_handler(event, data, regs))
- 		return ret;
- 
- 	/*
--- 
-2.25.1
+> +#define NETIF_PRUETH_HSR_OFFLOAD	NETIF_F_HW_HSR_FWD
+> +
+>  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
+>  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
+>  
+> @@ -118,6 +121,19 @@ static irqreturn_t prueth_tx_ts_irq(int irq, void *dev_id)
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static struct icssg_firmwares icssg_hsr_firmwares[] = {
+> +	{
+> +		.pru = "ti-pruss/am65x-sr2-pru0-pruhsr-fw.elf",
+> +		.rtu = "ti-pruss/am65x-sr2-rtu0-pruhsr-fw.elf",
+> +		.txpru = "ti-pruss/am65x-sr2-txpru0-pruhsr-fw.elf",
+> +	},
+> +	{
+> +		.pru = "ti-pruss/am65x-sr2-pru1-pruhsr-fw.elf",
+> +		.rtu = "ti-pruss/am65x-sr2-rtu1-pruhsr-fw.elf",
+> +		.txpru = "ti-pruss/am65x-sr2-txpru1-pruhsr-fw.elf",
+> +	}
+> +};
+> +
+>  static struct icssg_firmwares icssg_switch_firmwares[] = {
+>  	{
+>  		.pru = "ti-pruss/am65x-sr2-pru0-prusw-fw.elf",
+> @@ -152,6 +168,8 @@ static int prueth_emac_start(struct prueth *prueth, struct prueth_emac *emac)
+>  
+>  	if (prueth->is_switch_mode)
+>  		firmwares = icssg_switch_firmwares;
+> +	else if (prueth->is_hsr_offload_mode)
+> +		firmwares = icssg_hsr_firmwares;
 
+Documentation/networking/netdev-features.rst
+
+* hsr-fwd-offload
+
+This should be set for devices which forward HSR (High-availability Seamless
+Redundancy) frames from one port to another in hardware.
+
+To me, this suggests if the flag is not set, you should keep in dual
+EMACS or switchdev mode and perform HSR in software.
+
+> +static int emac_ndo_set_features(struct net_device *ndev,
+> +				 netdev_features_t features)
+> +{
+> +	netdev_features_t hsr_feature_present = ndev->features & NETIF_PRUETH_HSR_OFFLOAD;
+> +	netdev_features_t hsr_feature_wanted = features & NETIF_PRUETH_HSR_OFFLOAD;
+
+I would not add the _PRUETH_ alias. There is nothing _PRUETH_ specific
+here, its just plain HSR offload.
+
+> +static int prueth_hsr_port_link(struct net_device *ndev)
+> +{
+> +	struct prueth_emac *emac = netdev_priv(ndev);
+> +	struct prueth *prueth = emac->prueth;
+> +	struct prueth_emac *emac0;
+> +	struct prueth_emac *emac1;
+> +
+> +	emac0 = prueth->emac[PRUETH_MAC0];
+> +	emac1 = prueth->emac[PRUETH_MAC1];
+> +
+> +	if (prueth->is_switch_mode) {
+> +		dev_err(prueth->dev, "Switching from bridge to HSR mode not allowed\n");
+> +		return -EINVAL;
+
+I think you want EOPNOTSUPP, so that it is performed in software, not
+offloaded to hardware. And this is not an error condition, it is just
+a limitation of your hardware/firmware.
+
+> +	prueth->hsr_members |= BIT(emac->port_id);
+> +	if (!prueth->is_switch_mode && !prueth->is_hsr_offload_mode) {
+> +		if (prueth->hsr_members & BIT(PRUETH_PORT_MII0) &&
+> +		    prueth->hsr_members & BIT(PRUETH_PORT_MII1)) {
+> +			if (!(emac0->ndev->features & NETIF_PRUETH_HSR_OFFLOAD) &&
+> +			    !(emac1->ndev->features & NETIF_PRUETH_HSR_OFFLOAD)) {
+> +				dev_err(prueth->dev, "Enable HSR offload on both interfaces\n");
+> +				return -EINVAL;
+
+Again, EOPNOTSUPP, so it falls back to software, and no dev_err().
+
+> +			}
+> +			prueth->is_hsr_offload_mode = true;
+> +			prueth->default_vlan = 1;
+> +			emac0->port_vlan = prueth->default_vlan;
+> +			emac1->port_vlan = prueth->default_vlan;
+> +			icssg_change_mode(prueth);
+> +			dev_err(prueth->dev, "Enabling HSR offload mode\n");
+
+This is not an error condition. dev_dbg().
+
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void prueth_hsr_port_unlink(struct net_device *ndev)
+> +{
+> +	struct prueth_emac *emac = netdev_priv(ndev);
+> +	struct prueth *prueth = emac->prueth;
+> +	struct prueth_emac *emac0;
+> +	struct prueth_emac *emac1;
+> +
+> +	emac0 = prueth->emac[PRUETH_MAC0];
+> +	emac1 = prueth->emac[PRUETH_MAC1];
+> +
+> +	prueth->hsr_members &= ~BIT(emac->port_id);
+> +	if (prueth->is_hsr_offload_mode) {
+> +		prueth->is_hsr_offload_mode = false;
+> +		emac0->port_vlan = 0;
+> +		emac1->port_vlan = 0;
+> +		prueth->hsr_dev = NULL;
+> +		prueth_emac_restart(prueth);
+> +		dev_info(prueth->dev, "Enabling Dual EMAC mode\n");
+
+dev_dbg().
+
+> +	}
+> +}
+> +
+>  /* netdev notifier */
+>  static int prueth_netdevice_event(struct notifier_block *unused,
+>  				  unsigned long event, void *ptr)
+> @@ -1047,6 +1141,8 @@ static int prueth_netdevice_event(struct notifier_block *unused,
+>  	struct netlink_ext_ack *extack = netdev_notifier_info_to_extack(ptr);
+>  	struct net_device *ndev = netdev_notifier_info_to_dev(ptr);
+>  	struct netdev_notifier_changeupper_info *info;
+> +	struct prueth_emac *emac = netdev_priv(ndev);
+> +	struct prueth *prueth = emac->prueth;
+>  	int ret = NOTIFY_DONE;
+>  
+>  	if (ndev->netdev_ops != &emac_netdev_ops)
+> @@ -1056,6 +1152,26 @@ static int prueth_netdevice_event(struct notifier_block *unused,
+>  	case NETDEV_CHANGEUPPER:
+>  		info = ptr;
+>  
+> +		if ((ndev->features & NETIF_PRUETH_HSR_OFFLOAD) &&
+> +		    is_hsr_master(info->upper_dev)) {
+> +			if (info->linking) {
+> +				if (!prueth->hsr_dev) {
+> +					prueth->hsr_dev = info->upper_dev;
+> +
+> +					icssg_class_set_host_mac_addr(prueth->miig_rt,
+> +								      prueth->hsr_dev->dev_addr);
+> +				} else {
+> +					if (prueth->hsr_dev != info->upper_dev) {
+> +						dev_err(prueth->dev, "Both interfaces must be linked to same upper device\n");
+
+dev_dbg()
+
+	Andrew
 
