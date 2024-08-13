@@ -1,163 +1,119 @@
-Return-Path: <linux-kernel+bounces-284371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B848A950044
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:47:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBCB895004F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78F0D28278E
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:47:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F6E1C22B13
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC76213C812;
-	Tue, 13 Aug 2024 08:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564F5166F3C;
+	Tue, 13 Aug 2024 08:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i+uuIi/u";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Sgx4Vzk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b="daSUufPw"
+Received: from mail.fris.de (mail.fris.de [116.203.77.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8616139D05;
-	Tue, 13 Aug 2024 08:47:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D04CC14A086;
+	Tue, 13 Aug 2024 08:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.77.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538849; cv=none; b=B2xnqzaL9bc59hCu8wN5uTKiqClLkCXfBt37DnTRlF68aOk0gWlTrY5cf+FhqjVaBxI62wRAqDLdYUO8rxmQDb2NLrXZjUILwXBgDiPUuRi4eBesVG98UkdPvV9TY5pUeGveYuRn7GB2P2HIgpOS6xJG08Y5QVUE2NWX3vLsiJM=
+	t=1723539008; cv=none; b=YKPEgmE+YgQM2CNkEkxVvUwBjUHBwFNDpmyd5+SLj9wvqMneP6z8TRA0ZokpJF9LXGLhCgTNf+oWpaFNaEr20PIrbnkU2H5eCmcSpyBPsHSOqzBzNRX/d13Te+2UMrwubfAVDIoPsD8AEujYKoH7HMwwSd5GQgOm9l+ueM8yTe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538849; c=relaxed/simple;
-	bh=QFt6cA9V5XHosef2t0llppVEFUX6eU0vAsKCjWxN5Bc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=iPvLBLRdzBSJl84Zj2WuUGrwPidRjBz/2RzvYI+jmtJg1r6juIJX8gmMIqbmnYSEpOeI8f+5tazlUmzwkrqSfyOBkkMyIvsQNfR3zvucYUvBBPjYzZK9sYgLt8aF6V3bH4HFJ9OdPZ15m0cbESsvwgoYmoNjqwIHLmqsBKjyObM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i+uuIi/u; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Sgx4Vzk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 13 Aug 2024 08:47:25 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1723538846;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2mba2zbe5vCCRYVXnwJow2HUP/rdS4F1DZj0LQhiv8=;
-	b=i+uuIi/uU0RsLAYmSDpzEG+k++dhKN+/2R5HKYlCyLv7dtwCGR0noxBXuTHH7WBlEkOR8n
-	3fPjVjfCPp7ozRxWIRFbIn1tH8oVx48L8xUhM8Gr0QXhEi3/SrvNMygciYBDjWZDmep05Z
-	Q6/dximIIQL+R87pFDdCqrAHHRTLB5FSi7bUhLzyAgNKuKkuS+/esgm26FwFsMnCNG0tKE
-	afUT4qWAfRpk6JveP/Ws9iHLQ+VRujdG2kv83mRLrhG7ay8ey+HjgUVEHBjMI62bIoJfEM
-	/MNojR3+H8UGpqYw5X0m6PWQio2APsHdRquOPop/+ttvaCy5m5NF9866FzMrGg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1723538846;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2mba2zbe5vCCRYVXnwJow2HUP/rdS4F1DZj0LQhiv8=;
-	b=1Sgx4Vzkxx0KEpf1p2S7F/FClqmLsFvy0A9KqpIRWe02JPg5rNULzrZCBEScnsl1raKnmt
-	d/bzvV/5TaZaTqAQ==
-From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] irqdomain: Clarify checks for bus_token
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
-References: <20240812193101.1266625-2-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1723539008; c=relaxed/simple;
+	bh=/xwO7i1d0K7SzaMDoitk3HqY4xnvSTvIVJ4aE7SJvAc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MJRY+fXQ53BF3LvHJsLpg9K13+XC6/FRj4jssKld/KT3jhc2wb7EW3fgpvq6+JBsUu0YWThyj6GgSkjMEkwhu9Mb2EaKxCfR5Kwkp2vZx/vKo25PP7Yo4RNlp2YYMtdayWGaXnxQ3PwxxjIXNhtjFOU2mrRmdk7pdvoCHVhNl5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de; spf=fail smtp.mailfrom=fris.de; dkim=pass (2048-bit key) header.d=fris.de header.i=@fris.de header.b=daSUufPw; arc=none smtp.client-ip=116.203.77.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fris.de
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=fris.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 47B48BFB2F;
+	Tue, 13 Aug 2024 10:49:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fris.de; s=dkim;
+	t=1723538995; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=3k1ZBl8d8rkvFQWkw414ec4CjT7YEnjNYqNTjvI5dwI=;
+	b=daSUufPwlsPaOvkx35lpkmY40Zdmja7rnLNHa5h4l9iifBp7bvffFb2K1J++OccHpjZ0sa
+	GLCVmQNhopBWwTasiOwHedxcVlQxyBOwApOzxqWZp2qEO5m2Y9sdf+HHnMzlqCO+iBe2d+
+	FCPV0lB02jkHI7/cc3FNSABO2xORErMj8kMwbK1pMUNz1K2ORkOZqzvWlf8/D0YdmSa6xr
+	TySXqK6/FO2MnB4Qzdrxkqbqdwf+aYTnxPvAJyuDOzQpJJL6mSF6RaYxE+F+CwfFaZgfjx
+	y+SkXHZrr+lLCnOsxo0vB3EG/2AByvvaw9C2KhIJNe25RxcONxuOO55lm5g3NQ==
+From: Frieder Schrempf <frieder@fris.de>
+To: Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>
+Cc: Frieder Schrempf <frieder.schrempf@kontron.de>,
+	Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Fabio Estevam <festevam@denx.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+	Hiago De Franco <hiago.franco@toradex.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Mathieu Othacehe <m.othacehe@gmail.com>,
+	Michael Walle <mwalle@kernel.org>,
+	Parthiban Nallathambi <parthiban@linumiz.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH v5 0/2] Add support for Kontron OSM-S i.MX93 SoM and carrier  board
+Date: Tue, 13 Aug 2024 10:49:03 +0200
+Message-ID: <20240813084934.46004-1-frieder@fris.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172353884572.2215.16761185917267853525.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-The following commit has been merged into the irq/core branch of tip:
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Commit-ID:     c0ece64497992473aabbcbb007e2afecc8d750a2
-Gitweb:        https://git.kernel.org/tip/c0ece64497992473aabbcbb007e2afecc8d750a2
-Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate:    Mon, 12 Aug 2024 22:29:39 +03:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 13 Aug 2024 10:40:09 +02:00
+Patch 1: board DT bindings
+Patch 2: add devicetrees
 
-irqdomain: Clarify checks for bus_token
+Changes for v5:
+* Address Shawn's review comments (thanks!)
 
-The code uses if (bus_token) and if (bus_token == DOMAIN_BUS_ANY).
+Changes for v4:
+* Reorder enable-active-high property
+* Add dedicated pinctrl settings for different SDHC speed modes
+* Add SION bit for SDHC pinctrls as workaround for SoC erratum
 
-Since bus_token is an enum, the latter is more robust against changes.
+Changes for v3:
+* remove applied patches
+* rebase onto v6.11-rc1
 
-Convert all !bus_token checks to explicitely check for DOMAIN_BUS_ANY.
+Changes for v2:
+* remove applied patches 1 and 2
+* add tags
+* improvements suggested by Krzysztof (thanks!)
+* add missing Makefile entry for DT
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240812193101.1266625-2-andriy.shevchenko@linux.intel.com
+Frieder Schrempf (2):
+  dt-bindings: arm: fsl: Add Kontron i.MX93 OSM-S based boards
+  arm64: dts: Add support for Kontron i.MX93 OSM-S SoM and BL carrier
+    board
 
----
- kernel/irq/irqdomain.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ .../devicetree/bindings/arm/fsl.yaml          |   6 +
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../dts/freescale/imx93-kontron-bl-osm-s.dts  | 163 +++++
+ .../dts/freescale/imx93-kontron-osm-s.dtsi    | 628 ++++++++++++++++++
+ 4 files changed, 798 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-bl-osm-s.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx93-kontron-osm-s.dtsi
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 01001eb..18d253e 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -130,8 +130,10 @@ EXPORT_SYMBOL_GPL(irq_domain_free_fwnode);
- 
- static int alloc_name(struct irq_domain *domain, char *base, enum irq_domain_bus_token bus_token)
- {
--	domain->name = bus_token ? kasprintf(GFP_KERNEL, "%s-%d", base, bus_token) :
--				   kasprintf(GFP_KERNEL, "%s", base);
-+	if (bus_token == DOMAIN_BUS_ANY)
-+		domain->name = kasprintf(GFP_KERNEL, "%s", base);
-+	else
-+		domain->name = kasprintf(GFP_KERNEL, "%s-%d", base, bus_token);
- 	if (!domain->name)
- 		return -ENOMEM;
- 
-@@ -146,8 +148,10 @@ static int alloc_fwnode_name(struct irq_domain *domain, const struct fwnode_hand
- 	const char *suf = suffix ? : "";
- 	char *name;
- 
--	name = bus_token ? kasprintf(GFP_KERNEL, "%pfw-%s%s%d", fwnode, suf, sep, bus_token) :
--			   kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, suf);
-+	if (bus_token == DOMAIN_BUS_ANY)
-+		name = kasprintf(GFP_KERNEL, "%pfw-%s", fwnode, suf);
-+	else
-+		name = kasprintf(GFP_KERNEL, "%pfw-%s%s%d", fwnode, suf, sep, bus_token);
- 	if (!name)
- 		return -ENOMEM;
- 
-@@ -166,11 +170,13 @@ static int alloc_unknown_name(struct irq_domain *domain, enum irq_domain_bus_tok
- 	static atomic_t unknown_domains;
- 	int id = atomic_inc_return(&unknown_domains);
- 
--	domain->name = bus_token ? kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus_token) :
--				   kasprintf(GFP_KERNEL, "unknown-%d", id);
--
-+	if (bus_token == DOMAIN_BUS_ANY)
-+		domain->name = kasprintf(GFP_KERNEL, "unknown-%d", id);
-+	else
-+		domain->name = kasprintf(GFP_KERNEL, "unknown-%d-%d", id, bus_token);
- 	if (!domain->name)
- 		return -ENOMEM;
-+
- 	domain->flags |= IRQ_DOMAIN_NAME_ALLOCATED;
- 	return 0;
- }
-@@ -200,7 +206,7 @@ static int irq_domain_set_name(struct irq_domain *domain, const struct irq_domai
- 			return alloc_name(domain, fwid->name, bus_token);
- 		default:
- 			domain->name = fwid->name;
--			if (bus_token)
-+			if (bus_token != DOMAIN_BUS_ANY)
- 				return alloc_name(domain, fwid->name, bus_token);
- 		}
- 
+-- 
+2.46.0
+
 
