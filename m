@@ -1,132 +1,215 @@
-Return-Path: <linux-kernel+bounces-284220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F80594FE92
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:20:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DEAA94FE83
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 09:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29C76B24CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:20:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCCE2B246D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 07:18:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C82613958C;
-	Tue, 13 Aug 2024 07:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AECB13C812;
+	Tue, 13 Aug 2024 07:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="Cm4PpMbV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="lFqoxGmr"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jXeUCkpJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0EF189BB1;
-	Tue, 13 Aug 2024 07:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9C013B791;
+	Tue, 13 Aug 2024 07:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723533475; cv=none; b=K7o89+eFlbviJvEFJCoz91BlkxQ0RrE/y4MyVPXzCz7GJItbasN7xFBuElnJZlEa30gX5iJEJH9yubcU2iKqXb4XqfFlp8xszPJhjZXDFCOTEykYXoYacGhbgI54sh4Gp6RKDLceM/zTYIpMJrb48gDjBtmdAUaphctKoV6l7xE=
+	t=1723533448; cv=none; b=PpPvSL56MxT+G6xvLaam1tdVBBp8mzv4hMZXMed2j6ipN67FDsK/hmX8w+Sq/UksViL8Hbq1IW302978WIPA1ksSO8xHLvTSBbToQilp6L8BYdYZ4TBHFfT34iJ9MXEmA7HGJw5/aRA3O5iFe6UbnVO0cHV124k1/HHjeKwqB+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723533475; c=relaxed/simple;
-	bh=Z8xOfcZHk8vMeGNF785fOWaSG9UPd8klNoQ23vntWyY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VgYKYw94fNYEIXdYkw73kOUI4YIiTsUXNta8+kMgHmcWEArDCSS2LysKLC3VkDOeAVCRG3i2/CrMRBMIA20E81zFVWNkz83cVvGbV9UiVg5rA/91eY/AfXlb8C6W3h13Qu3W2gSXfJwnkxohOvMH8IINKGIXBDur06LRdW1PI7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=Cm4PpMbV; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=lFqoxGmr reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1723533473; x=1755069473;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
+	s=arc-20240116; t=1723533448; c=relaxed/simple;
+	bh=rSfOoHYLjbHwRzm1rpzMuYbKnXWG4cxuzGdhaGtJfSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A1I70XqDcSjRJ/XnQNrqPrl7h276YWjh3PkpQ0FzunHoKCVkWbdcI7UiS1/7m2vi/U6VmyV6SFJpMOx5FePdUFBFXTlZmTOdrqsxW4NEXdAa1qPjcdXDlPivX4yPHeHl+AkdziI+/TFj84nVkX/zJ6CPVtmMPrB+AcaaZ6hYti8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jXeUCkpJ; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723533448; x=1755069448;
+  h=date:from:to:cc:subject:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=oS3CvCuspSgDcVNPV15uToPe08f2Wogfp5h1cRL3+TE=;
-  b=Cm4PpMbVY7pzzh3aJ4Vct9Qq+oqB3AT74iRm5GahIM7g1rfXK6lExsto
-   pqNJytZLqIDZDMS4+9i0ffJX+EuXkAoFqBXUllNFwZEAT+bvlp3pk+sFf
-   mKPnsS5fIit1sd3nT4n8jY/ZZ679boWKu87Tgqj3FmY1I9bgfsN5CVAnV
-   JGbL0SQcW2DeEm+wy7I0IHaaWdBHBYWDcRpE5dY1bFl6RoSx8NrNmm0p/
-   hGVpbgPxcr4xSvDRmujoHU1k+iPi/4sum1nUrmEnIR3zDv9V6L67w/vlh
-   kLscjd0rSRmc4pT1zg3+id8XKKMUsVRW8d+OK9DJAojtxvyoB0ymo4pUC
-   g==;
-X-CSE-ConnectionGUID: 9XOBsU0TSemZ0MbLcoZ2vg==
-X-CSE-MsgGUID: vYJNhZDZSM2FA0V9VGg25g==
-X-IronPort-AV: E=Sophos;i="6.09,285,1716242400"; 
-   d="scan'208";a="38375864"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 13 Aug 2024 09:17:53 +0200
-X-CheckPoint: {66BB08A0-31-E9ED6009-C4B0BEC8}
-X-MAIL-CPID: F05CC513CC245D2B93E9B160095DB18E_3
-X-Control-Analysis: str=0001.0A782F1D.66BB08A1.004B,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 8742F16423A;
-	Tue, 13 Aug 2024 09:17:48 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1723533468; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=oS3CvCuspSgDcVNPV15uToPe08f2Wogfp5h1cRL3+TE=;
-	b=lFqoxGmrLYrSdkHJg2i5UoiQ23XemKYQhohtisiWWy8A2r2B05s68GBcUCaOc36JClQ8Z5
-	2tAm3fgm4KpnHGmqg77luZnTYa9zA+IvI4lWEoShg2it/RBzmakZN773G4vbPRWVCcDOPv
-	BdPVacLF6AGicGXCOqQ2BsomB1hSmeTGxQHR6RTpmjvwHuhL8zyRWuQKILxmv5bYJ0nzxl
-	wjFeMVnVGIriJnATZlzzOYcuw1HGuSIC/mantRJcx6+KEVJSgfIpvUGcewRmeHeqkd2vYG
-	y/VpQ+7I7qxKillvPC7GmliExj5cyXl5WK+2jLa1G64WbIr8Ah0MtSj6y6AyHg==
-From: Max Merchel <Max.Merchel@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Max Merchel <Max.Merchel@ew.tq-group.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] ARM: dts: tqmls1021: change copyright entry to current TQ Copyright style
-Date: Tue, 13 Aug 2024 09:16:36 +0200
-Message-Id: <20240813071637.72528-11-Max.Merchel@ew.tq-group.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
-References: <20240813071637.72528-1-Max.Merchel@ew.tq-group.com>
+  bh=rSfOoHYLjbHwRzm1rpzMuYbKnXWG4cxuzGdhaGtJfSc=;
+  b=jXeUCkpJ7x/yQMbS8GD9suJVjKEelpkKMIfX/sI/eTIwT/AD/jYlHLP9
+   tVFgCuQqVwHioU5ABfPIGouoGmxQvHxYgIKm4S+RinKxERi70/fV6tJeP
+   qdP+d+tRevCtoXz3oXDC+nBibwU+OUwbJ8Yjtr+Qu1lkHnL3OTRIl58f9
+   mPjoQAcnIyjgG0yq6Rk+SgSmB5u0eQRVdVaG3NwAaN+g9G74J872unOZr
+   cI3FGm3sn1exKm9901GYAKFCI9n9dSPjHRjhR8axNjBHvTYhgXbHPElb8
+   X9QCo9bJvaLCqJfDiUY5tNbXOypN0GfgD/M+DUWtw6jBY8NzBfIyOL/cI
+   w==;
+X-CSE-ConnectionGUID: +YgstOkZTACtm9RHZcWxsw==
+X-CSE-MsgGUID: M1IenQ4wTH6yTYOSPXYQ0A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="33061751"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="33061751"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:17:27 -0700
+X-CSE-ConnectionGUID: Y+c+3U4bSh2EZCW8Ec5PBQ==
+X-CSE-MsgGUID: rgXa8TPsQ3mH98wmN5U1rg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58443949"
+Received: from mtkaczyk-mobl.ger.corp.intel.com (HELO localhost) ([10.245.112.252])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 00:17:24 -0700
+Date: Tue, 13 Aug 2024 09:17:19 +0200
+From: Mariusz Tkaczyk <mariusz.tkaczyk@linux.intel.com>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: song@kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
+ yangerkun@huawei.com
+Subject: Re: [PATCH RFC -next 07/26] md/md-bitmap: merge
+ md_bitmap_update_sb() into bitmap_operations
+Message-ID: <20240813091719.0000202a@linux.intel.com>
+In-Reply-To: <20240810020854.797814-8-yukuai1@huaweicloud.com>
+References: <20240810020854.797814-1-yukuai1@huaweicloud.com>
+	<20240810020854.797814-8-yukuai1@huaweicloud.com>
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Unification of TQ-Systems copyright entries.
+On Sat, 10 Aug 2024 10:08:35 +0800
+Yu Kuai <yukuai1@huaweicloud.com> wrote:
 
-Signed-off-by: Max Merchel <Max.Merchel@ew.tq-group.com>
----
- arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts | 2 +-
- arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi          | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> So that the implementation won't be exposed, and it'll be possible
+> to invent a new bitmap by replacing bitmap_operations.
 
-diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts
-index d441a67fb4ee..d294b9f6b086 100644
---- a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts
-+++ b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a-mbls1021a.dts
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
- /*
-  * Copyright 2013-2014 Freescale Semiconductor, Inc.
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
-diff --git a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi
-index 2f9387c34ca3..229a30b84c36 100644
---- a/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi
-+++ b/arch/arm/boot/dts/nxp/ls/ls1021a-tqmls1021a.dtsi
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-or-later OR MIT
- /*
-  * Copyright 2013-2014 Freescale Semiconductor, Inc.
-- * Copyright 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-+ * Copyright (c) 2018-2023 TQ-Systems GmbH <linux@ew.tq-group.com>,
-  * D-82229 Seefeld, Germany.
-  * Author: Alexander Stein
-  */
--- 
-2.33.0
+Please update commit message.
+
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md-bitmap.c  | 15 ++++++++-------
+>  drivers/md/md-bitmap.h  | 11 ++++++++++-
+>  drivers/md/md-cluster.c |  3 ++-
+>  drivers/md/md.c         |  4 ++--
+>  4 files changed, 22 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/md/md-bitmap.c b/drivers/md/md-bitmap.c
+> index 0ff733756043..b34f13aa2697 100644
+> --- a/drivers/md/md-bitmap.c
+> +++ b/drivers/md/md-bitmap.c
+> @@ -472,7 +472,7 @@ static void md_bitmap_wait_writes(struct bitmap *bitmap)
+>  
+>  
+>  /* update the event counter and sync the superblock to disk */
+> -void md_bitmap_update_sb(struct bitmap *bitmap)
+> +static void bitmap_update_sb(struct bitmap *bitmap)
+>  {
+>  	bitmap_super_t *sb;
+>  
+> @@ -510,7 +510,6 @@ void md_bitmap_update_sb(struct bitmap *bitmap)
+>  		write_sb_page(bitmap, bitmap->storage.sb_index,
+>  			      bitmap->storage.sb_page, 1);
+>  }
+> -EXPORT_SYMBOL(md_bitmap_update_sb);
+>  
+>  /* print out the bitmap file superblock */
+>  static void bitmap_print_sb(struct bitmap *bitmap)
+> @@ -893,7 +892,7 @@ static void md_bitmap_file_unmap(struct bitmap_storage
+> *store) static void md_bitmap_file_kick(struct bitmap *bitmap)
+>  {
+>  	if (!test_and_set_bit(BITMAP_STALE, &bitmap->flags)) {
+> -		md_bitmap_update_sb(bitmap);
+> +		bitmap_update_sb(bitmap);
+>  
+>  		if (bitmap->storage.file) {
+>  			pr_warn("%s: kicking failed bitmap file %pD4 from
+> array!\n", @@ -1796,7 +1795,7 @@ static void bitmap_flush(struct mddev *mddev)
+>  	md_bitmap_daemon_work(mddev);
+>  	if (mddev->bitmap_info.external)
+>  		md_super_wait(mddev);
+> -	md_bitmap_update_sb(bitmap);
+> +	bitmap_update_sb(bitmap);
+>  }
+>  
+>  /*
+> @@ -2014,7 +2013,7 @@ static int bitmap_load(struct mddev *mddev)
+>  	mddev_set_timeout(mddev, mddev->bitmap_info.daemon_sleep, true);
+>  	md_wakeup_thread(mddev->thread);
+>  
+> -	md_bitmap_update_sb(bitmap);
+> +	bitmap_update_sb(bitmap);
+
+You changed function name here and it is harmful for git blame. What is the
+reason behind that? it must be described in commit message to help Song making
+the decision if it is worthy merging or not.
+
+>  
+>  	if (test_bit(BITMAP_WRITE_ERROR, &bitmap->flags))
+>  		err = -EIO;
+> @@ -2075,7 +2074,7 @@ int md_bitmap_copy_from_slot(struct mddev *mddev, int
+> slot, }
+>  
+>  	if (clear_bits) {
+> -		md_bitmap_update_sb(bitmap);
+> +		bitmap_update_sb(bitmap);
+>  		/* BITMAP_PAGE_PENDING is set, but bitmap_unplug needs
+>  		 * BITMAP_PAGE_DIRTY or _NEEDWRITE to write ... */
+>  		for (i = 0; i < bitmap->storage.file_pages; i++)
+> @@ -2568,7 +2567,7 @@ backlog_store(struct mddev *mddev, const char *buf,
+> size_t len) mddev_create_serial_pool(mddev, rdev);
+>  	}
+>  	if (old_mwb != backlog)
+> -		md_bitmap_update_sb(mddev->bitmap);
+> +		bitmap_update_sb(mddev->bitmap);
+>  
+>  	mddev_unlock_and_resume(mddev);
+>  	return len;
+> @@ -2712,6 +2711,8 @@ static struct bitmap_operations bitmap_ops = {
+>  	.load			= bitmap_load,
+>  	.destroy		= bitmap_destroy,
+>  	.flush			= bitmap_flush,
+> +
+> +	.update_sb		= bitmap_update_sb,
+>  };
+>  
+>  void mddev_set_bitmap_ops(struct mddev *mddev)
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index 935c5dc45b89..29c217630ae5 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -239,6 +239,8 @@ struct bitmap_operations {
+>  	int (*load)(struct mddev *mddev);
+>  	void (*destroy)(struct mddev *mddev);
+>  	void (*flush)(struct mddev *mddev);
+> +
+> +	void (*update_sb)(struct bitmap *bitmap);
+>  };
+>  
+>  /* the bitmap API */
+> @@ -277,7 +279,14 @@ static inline void md_bitmap_flush(struct mddev *mddev)
+>  	mddev->bitmap_ops->flush(mddev);
+>  }
+>  
+> -void md_bitmap_update_sb(struct bitmap *bitmap);
+> +static inline void md_bitmap_update_sb(struct mddev *mddev)
+> +{
+> +	if (!mddev->bitmap || !mddev->bitmap_ops->update_sb)
+> +		return;
+
+I would like to avoid dead code here. !mddev->bitmap is probably not an option
+an this point in code. !mddev->bitmap_ops->update_sb i not an option because we
+have only one bitmap op. Do I miss something?
+
+I will stop here for today now to give you a chance to reply, to be sure that
+we are on same page. I see that my comments are similar so it may not be worthy
+to go one by one and repeat same comment. I may miss something important.
+
+Thanks
+Mariusz
 
 
