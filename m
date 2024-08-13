@@ -1,219 +1,429 @@
-Return-Path: <linux-kernel+bounces-285294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A945950BCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:59:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEDE5950BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:01:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88DFEB22FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953B928306E
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7865D1A38DB;
-	Tue, 13 Aug 2024 17:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F461A76D0;
+	Tue, 13 Aug 2024 17:59:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZwDCyGb6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="d7uMedKy"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3C837E;
-	Tue, 13 Aug 2024 17:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BD81A7053
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 17:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723571941; cv=none; b=l58ubUXqCt6NJs30R2aoSiGZzrnTwPFYUgno+e5DJv5a/ycYPRyXOm3r3k7CyXVrztYMvyb/DpRVozoRnPanLbtFox7Z/S8rgKSB70U5woxEuvkSnvTIq0YINrPGe6+O18gt89XvVHFfooitHXnGDtgQaQQqOdWt0M/13yW01zY=
+	t=1723571956; cv=none; b=ne9YsUVdcIujZF42n4QxIUKXHxfs5crkR524mgFo+t0ruXbq6Q51gIFsFaa26hb5OPZYpQNZacmBSSJ/KgPMfTZ/GU4H/J/gbpgUfCcEpzy9z4M1jQwVZeFsSLpHppY67RkLSVjsR+oqbIlC4mt3n5cvh6gpH6oPg/Qb030DUqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723571941; c=relaxed/simple;
-	bh=Udh93aatepcn0N17vUvPrrHSs078UxAKq9paEPu2A5c=;
+	s=arc-20240116; t=1723571956; c=relaxed/simple;
+	bh=XQD12zG1QPG/HcaG5FjYzZlsyhlBd7/lSJGZI6B7+aM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mb2gCtN4Y/HZ2eq1OPsIn1YPWl2pG9CzspbsKvg5dRRYawfUUCdyzbroriGDGvicMy3Zxtc/vL3SRZUCwz/TivaXuRlZgD5w6q8FzRxV8sr2ry0lSn3f6WLGu6kzzR3be79tnias2Ug4QcHXUb+0813PWCoLxfsXPLL+c79zCmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZwDCyGb6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B77EDC32782;
-	Tue, 13 Aug 2024 17:59:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723571941;
-	bh=Udh93aatepcn0N17vUvPrrHSs078UxAKq9paEPu2A5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZwDCyGb6ESpAiWDw4I308wrMi6IOTwHGwFGfY5esWLUgJYkXthW4SMWzvWqFcj8vk
-	 /I4QDNzP3K1ZegzoYJu3oQGzUMsZ/Jqq3atk8HecHUIxUe/8yAL0VPq4JsfBMiGqwN
-	 ogtKbNzXakaii7goxXBJ2W+bdXMTWLB3S82PAyalkGfG5wX/u8xTdyDlr3RDNxlg3H
-	 RcFE143uOXbrfPabZagQWw3gjTrblLj1TwGIvpHRhsVeY/kQIcOsH6uQrcerZHfbUe
-	 ymHPssfV7j+vKiXWOSw3+vpzYtq7kAAYGXFIYgHfyCRBq04KyMJy5pxkMbEtKel5YR
-	 i8y5i62e3OHwg==
-Date: Tue, 13 Aug 2024 11:58:59 -0600
-From: Rob Herring <robh@kernel.org>
-To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Sandy Huang <hjc@rock-chips.com>,
-	Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mark Yao <markyao0591@gmail.com>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-	kernel@collabora.com, Alexandre ARNOUD <aarnoud@me.com>,
-	Luis de Arquer <ldearquer@gmail.com>
-Subject: Re: [PATCH v3 3/5] dt-bindings: display: rockchip: Add schema for
- RK3588 HDMI TX Controller
-Message-ID: <20240813175859.GA1415670-robh@kernel.org>
-References: <20240807-b4-rk3588-bridge-upstream-v3-0-60d6bab0dc7c@collabora.com>
- <20240807-b4-rk3588-bridge-upstream-v3-3-60d6bab0dc7c@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sH3GzpNEry5E5MM1eH3tMFmMJ7RfoEmIP/mxbOU7GVIkUAWMJt2oSDDFDHq3MKaFgmtiEZ6tjOZnIKh8/YHpsD1ySmUZINNOj2zcQyVrtfDAsk9lFVDHFYyBXVwkGQ4Dd57luNMzllLi9YxS6/SQ93tquCCKI6YzbQYHWYIPsyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=d7uMedKy; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9B0CCE0007;
+	Tue, 13 Aug 2024 17:59:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1723571946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lIkQrkEd8n0E04wxF41n7IQIaihwVSISMemOCN1Jpac=;
+	b=d7uMedKy3TPH4rzYdOAlnGnuZYJFx01wkNRTwZKW1mhRKcSYhLw6osmAXpaPn2y23JQINW
+	N9prRwMiFCPfXrsw+oGp8E7FkiIxBsNcs0kcpHhcLQzHSsUkkHo+EfAirJnuKBYLVZqV/P
+	4MTFZjHAmp00crqpI43m0uN5ls6F1LrswaP1kEawR1vBjHrVkXDtLaZwvzn8l7f2lUHUWR
+	XOihZMJtqofitC10hKFJS+x6QL/rymhTMyFB29ewXy7Qyf1JL0p9+44oEfcBL41s+ltY3j
+	lIuDQcKkdzQ7lJUBIBqXP2wTvp7rAPNBEdQV9sVFpvdNMwLCqwbCRzaHJr0BKw==
+Date: Tue, 13 Aug 2024 19:58:59 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
+Cc: rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 12/17] drm/vkms: Allow to configure multiple CRTCs
+ via configfs
+Message-ID: <Zrue4yt_tGpufiMb@louis-chauvet-laptop>
+Mail-Followup-To: =?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>,
+	rodrigosiqueiramelo@gmail.com, melissa.srw@gmail.com,
+	mairacanal@riseup.net, hamohammed.sa@gmail.com, daniel@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240813105134.17439-1-jose.exposito89@gmail.com>
+ <20240813105134.17439-13-jose.exposito89@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240807-b4-rk3588-bridge-upstream-v3-3-60d6bab0dc7c@collabora.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240813105134.17439-13-jose.exposito89@gmail.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-On Wed, Aug 07, 2024 at 02:07:25PM +0300, Cristian Ciocaltea wrote:
-> Rockchip RK3588 SoC integrates the Synopsys DesignWare HDMI 2.1
-> Quad-Pixel (QP) TX controller IP.
-> 
-> Since this is a new IP block, quite different from those used in the
-> previous generations of Rockchip SoCs, add a dedicated binding file.
-> 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Le 13/08/24 - 12:44, José Expósito a écrit :
+> Create a default subgroup at /config/vkms/crtcs to allow to create as
+> many CRTCs as required. When a CRTC is created, allow to configure the
+> equivalent of the module parameters enable_cursor and enable_writeback.
+
+I think this commit is not bissectable, you have issue with:
+
+	mkdir /config/vkms/my-vkms
+	mkdir /config/vkms/my-vkms/crtcs/1
+	rmdir /config/vkms/my-vkms/crtcs/1
+	mkdir /config/vkms/my-vkms/crtcs/1
+	echo 1 > /config/vkms/my-vkms/enabled
+	# Not a crash, but drm is complaining
+	
+and also when creating many crtcs:
+
+	mkdir /config/vkms/my-vkms
+	mkdir /config/vkms/my-vkms/crtcs/{1..32}
+	mkdir /config/vkms/my-vkms/crtcs/33 # Should be forbidden (I also 
+					forgot to manage this case)
+	echo 1 > /config/vkms/my-vkms/enabled
+	# DRM is complaining
+
+or
+
+	mkdir /config/vkms/my-vkms
+	mkdir /config/vkms/my-vkms/crtcs/{1..32}
+	rmdir /config/vkms/my-vkms/crtcs/31 # not 32 because the index 
+						will works "by chance"
+	mkdir /config/vkms/my-vkms/crtcs/31
+	echo 1 > /config/vkms/my-vkms/enabled
+       	# DRM is complaining
+
+> Signed-off-by: José Expósito <jose.exposito89@gmail.com>
 > ---
->  .../display/rockchip/rockchip,dw-hdmi-qp.yaml      | 188 +++++++++++++++++++++
->  1 file changed, 188 insertions(+)
+>  Documentation/gpu/vkms.rst           |  22 +++-
+>  drivers/gpu/drm/vkms/vkms_config.h   |   3 +
+>  drivers/gpu/drm/vkms/vkms_configfs.c | 149 +++++++++++++++++++++++++--
+>  3 files changed, 166 insertions(+), 8 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi-qp.yaml b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi-qp.yaml
-> new file mode 100644
-> index 000000000000..33572c88a589
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/rockchip/rockchip,dw-hdmi-qp.yaml
-> @@ -0,0 +1,188 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/rockchip/rockchip,dw-hdmi-qp.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> diff --git a/Documentation/gpu/vkms.rst b/Documentation/gpu/vkms.rst
+> index 9895a9ae76f4..0886349ad4a0 100644
+> --- a/Documentation/gpu/vkms.rst
+> +++ b/Documentation/gpu/vkms.rst
+> @@ -71,6 +71,25 @@ By default, the instance is disabled::
+>    cat /config/vkms/my-vkms/enabled
+>    0
+>  
+> +And directories are created for each configurable item of the display pipeline::
 > +
-> +title: Rockchip DW HDMI QP TX Encoder
+> +  tree /config/vkms/my-vkms
+> +    /config/vkms/my-vkms
+> +    ├── crtcs
+> +    └── enabled
 > +
-> +maintainers:
-> +  - Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+> +To add items to the display pipeline, create one or more directories under the
+> +available paths.
 > +
-> +description:
-> +  Rockchip RK3588 SoC integrates the Synopsys DesignWare HDMI QP TX controller
-> +  IP and a HDMI/eDP TX Combo PHY based on a Samsung IP block.
+> +Start by creating one or more CRTCs::
 > +
-> +allOf:
-> +  - $ref: ../bridge/synopsys,dw-hdmi-qp.yaml#
+> +  sudo mkdir /config/vkms/my-vkms/crtcs/crtc0
+> +
+> +CRTCs have 2 configurable attributes:
+> +
+> +- cursor: Enable or disable cursor plane support
+> +- writeback: Enable or disable writeback connector support
+> +
+>  Once you are done configuring the VKMS instance, enable it::
+>  
+>    echo "1" | sudo tee /config/vkms/my-vkms/enabled
+> @@ -79,8 +98,9 @@ Finally, you can remove the VKMS instance disabling it::
+>  
+>    echo "0" | sudo tee /config/vkms/my-vkms/enabled
+>  
+> -Or removing the top level directory::
+> +Or removing the top level directory and its subdirectories::
+>  
+> +  sudo rmdir /config/vkms/my-vkms/crtcs/*
+>    sudo rmdir /config/vkms/my-vkms
 
-Use full path: /schemas/display/bridge/...
+Here, I really don't like this way to delete a device, because you may 
+lost objects later.
 
-> +  - $ref: /schemas/sound/dai-common.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - rockchip,rk3588-dw-hdmi-qp
-> +
-> +  clocks:
-> +    minItems: 4
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      # The next clocks are optional, but shall be specified in this
-> +      # order when present.
-> +      - description: TMDS/FRL link clock
-> +      - description: Video datapath clock
-> +
-> +  clock-names:
-> +    minItems: 4
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - enum: [hdp, hclk_vo1]
-> +      - const: hclk_vo1
-> +
-> +  interrupts:
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - description: HPD interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - {}
-> +      - const: hpd
-> +
-> +  phys:
-> +    maxItems: 1
-> +    description: The HDMI/eDP PHY.
-> +
-> +  phy-names:
-> +    const: hdmi
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          Port node with one endpoint connected to a vop node.
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description:
-> +          Port node with one endpoint connected to a hdmi-connector node.
+For example, if we take a connector, we want the let the userspace 
+connecting and disconnecting it, so something like
 
-ports can go in the common schema. The description should be what the 
-data and direction are for the ports. What the connection is can vary 
-and is outside the scope of this binding.
+	echo 1 > /config/vkms/my-vkms/connectors/my_conn/connected
+	echo 0 > /config/vkms/my-vkms/connectors/my_conn/connected
+  
+But in the same time, we allows the userspace to delete directory, so you 
+may "loose" your connector
+
+	echo 1 > /config/vkms/my-vkms/connectors/my_conn/connected
+	rmdir /config/vkms/my-vkms/connectors/my_conn/
+	# no way to disconnect it now! you must completly delete the 
+	# device and create a new one
+
+So I think we should totally forbid the deletion of anything if 
+the device is enabled. So to delete one device, you have to:
+
+	echo 0 > /config/vkms/my-vkms/enabled
+	rmdir /config/vkms/my_vkms/{everything}
+
+>  Testing With IGT
+> diff --git a/drivers/gpu/drm/vkms/vkms_config.h b/drivers/gpu/drm/vkms/vkms_config.h
+> index 3237406fa3a3..f96a0456a3d7 100644
+> --- a/drivers/gpu/drm/vkms/vkms_config.h
+> +++ b/drivers/gpu/drm/vkms/vkms_config.h
+> @@ -3,6 +3,7 @@
+>  #ifndef _VKMS_CONFIG_H_
+>  #define _VKMS_CONFIG_H_
+>  
+> +#include <linux/configfs.h>
+>  #include <linux/list.h>
+>  #include <linux/types.h>
+>  
+> @@ -20,6 +21,8 @@ struct vkms_config_crtc {
+>  	unsigned int index;
+>  	bool cursor;
+>  	bool writeback;
+> +	/* only used if created from configfs */
+> +	struct config_group crtc_group;
+
+I don't really like the idea of mixing configfs structure and vkms 
+configuration. Both can have different lifetime and are created in 
+different places.
+
+You already created a vkms_configfs_device structure, why not for a 
+vkms_configfs_crtc?
+
+>  };
+>  
+>  struct vkms_config_encoder {
+> diff --git a/drivers/gpu/drm/vkms/vkms_configfs.c b/drivers/gpu/drm/vkms/vkms_configfs.c
+> index 3f25295f7788..04278a39cd3c 100644
+> --- a/drivers/gpu/drm/vkms/vkms_configfs.c
+> +++ b/drivers/gpu/drm/vkms/vkms_configfs.c
+> @@ -17,6 +17,8 @@ static bool is_configfs_registered;
+>   * @vkms_config: Configuration of the VKMS device
+>   * @device_group: Top level configuration group that represents a VKMS device.
+>   * Initialized when a new directory is created under "/config/vkms/"
+> + * @crtcs_group: Default subgroup of @device_group at "/config/vkms/crtcs".
+> + * Each of its items represent a CRTC
+>   * @lock: Lock used to project concurrent access to the configuration attributes
+>   * @enabled: Protected by @lock. The device is created or destroyed when this
+>   * option changes
+> @@ -24,6 +26,7 @@ static bool is_configfs_registered;
+>  struct vkms_configfs {
+>  	struct vkms_config *vkms_config;
+>  	struct config_group device_group;
+> +	struct config_group crtcs_group;
+>  
+>  	/* protected by @lock */
+>  	struct mutex lock;
+> @@ -33,6 +36,141 @@ struct vkms_configfs {
+>  #define config_item_to_vkms_configfs(item) \
+>  	container_of(to_config_group(item), struct vkms_configfs, device_group)
+>  
+> +#define crtcs_group_to_vkms_configfs(group) \
+> +	container_of(group, struct vkms_configfs, crtcs_group)
+> +
+> +#define crtcs_item_to_vkms_configfs(item) \
+> +	container_of(to_config_group(item), struct vkms_configfs, crtcs_group)
+> +
+> +#define crtcs_item_to_vkms_config_crtc(item) \
+> +	container_of(to_config_group(item), struct vkms_config_crtc, crtc_group)
+> +
+> +static ssize_t crtc_cursor_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +
+> +	return sprintf(page, "%d\n", crtc_cfg->cursor);
+> +}
+> +
+> +static ssize_t crtc_cursor_store(struct config_item *item, const char *page,
+> +				 size_t count)
+> +{
+> +	struct vkms_configfs *configfs = crtcs_item_to_vkms_configfs(item->ci_parent);
+> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +	bool cursor;
+> +
+> +	if (kstrtobool(page, &cursor))
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&configfs->lock);
+> +
+> +	if (configfs->enabled) {
+> +		mutex_unlock(&configfs->lock);
+> +		return -EINVAL;
+> +	}
+> +
+> +	crtc_cfg->cursor = cursor;
+> +
+> +	mutex_unlock(&configfs->lock);
+> +
+> +	return (ssize_t)count;
+
+Same comment as for vkms_config, why cursor is hardcoded here? It should 
+be as configurable as other planes (size, color formats...).
 
 > +
-> +    required:
-> +      - port@0
-> +      - port@1
+> +static ssize_t crtc_writeback_show(struct config_item *item, char *page)
+> +{
+> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
 > +
-> +  power-domains:
-> +    maxItems: 1
+> +	return sprintf(page, "%d\n", crtc_cfg->writeback);
+> +}
+>
+> +static ssize_t crtc_writeback_store(struct config_item *item, const char *page,
+> +				    size_t count)
+> +{
+> +	struct vkms_configfs *configfs = crtcs_item_to_vkms_configfs(item->ci_parent);
+> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +	bool writeback;
 > +
-> +  resets:
-> +    minItems: 2
-> +    maxItems: 2
+> +	if (kstrtobool(page, &writeback))
+> +		return -EINVAL;
 > +
-> +  reset-names:
-> +    items:
-> +      - const: ref
-> +      - const: hdp
+> +	mutex_lock(&configfs->lock);
 > +
-> +  "#sound-dai-cells":
-> +    const: 0
+> +	if (configfs->enabled) {
+> +		mutex_unlock(&configfs->lock);
+> +		return -EINVAL;
+> +	}
 > +
-> +  rockchip,grf:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Most HDMI QP related data is accessed through SYS GRF regs.
+> +	crtc_cfg->writeback = writeback;
 > +
-> +  rockchip,vo1_grf:
+> +	mutex_unlock(&configfs->lock);
+> +
+> +	return (ssize_t)count;
+> +}
+> +
+> +CONFIGFS_ATTR(crtc_, cursor);
+> +CONFIGFS_ATTR(crtc_, writeback);
+> +
+> +static struct configfs_attribute *crtc_group_attrs[] = {
+> +	&crtc_attr_cursor,
+> +	&crtc_attr_writeback,
+> +	NULL,
+> +};
+> +
+> +static const struct config_item_type crtc_group_type = {
+> +	.ct_attrs = crtc_group_attrs,
+> +	.ct_owner = THIS_MODULE,
+> +};
+> +
+> +static struct config_group *make_crtcs_group(struct config_group *group,
+> +					     const char *name)
+> +{
+> +	struct vkms_configfs *configfs = crtcs_group_to_vkms_configfs(group);
+> +	struct vkms_config_crtc *crtc_cfg;
+> +	int ret;
+> +
+> +	mutex_lock(&configfs->lock);
+> +
+> +	if (configfs->enabled) {
+> +		ret = -EINVAL;
+> +		goto err_unlock;
+> +	}
+> +
+> +	crtc_cfg = vkms_config_add_crtc(configfs->vkms_config, false, false);
+> +	if (IS_ERR(crtc_cfg)) {
+> +		ret = PTR_ERR(crtc_cfg);
+> +		goto err_unlock;
+> +	}
+> +
+> +	config_group_init_type_name(&crtc_cfg->crtc_group, name, &crtc_group_type);
+> +
+> +	mutex_unlock(&configfs->lock);
+> +
+> +	return &crtc_cfg->crtc_group;
+> +
+> +err_unlock:
+> +	mutex_unlock(&configfs->lock);
+> +	return ERR_PTR(ret);
+> +}
+> +
+> +static void drop_crtcs_group(struct config_group *group,
+> +			     struct config_item *item)
+> +{
+> +	struct vkms_configfs *configfs = crtcs_group_to_vkms_configfs(group);
+> +	struct vkms_config_crtc *crtc_cfg = crtcs_item_to_vkms_config_crtc(item);
+> +
+> +	vkms_config_destroy_crtc(configfs->vkms_config, crtc_cfg);
+> +}
 
-rockchip,vo1-grf
+Again, free should be in release, not in drop.
+
+And by the way, here you will have the problem I described before: the 
+vkms_config_destroy_crtc does not update possible_crtcs fields, so they 
+became complelty invalids.
+
+And you also have the issue of invalid index, you can create 32 crtcs, 
+delete 32 and recreate 32, the userspace expect it to works (only 32 
+crtcs, wich is the maximum allowed by drm), but the index used in 
+vkms_config are 32..64, which are invalid.
+
+> +
+> +static struct configfs_group_operations crtcs_group_ops = {
+> +	.make_group = &make_crtcs_group,
+> +	.drop_item = &drop_crtcs_group,
+> +};
+> +
+> +static struct config_item_type crtcs_group_type = {
+> +	.ct_group_ops = &crtcs_group_ops,
+> +	.ct_owner = THIS_MODULE,
+> +};
+> +
+>  static ssize_t device_enabled_show(struct config_item *item, char *page)
+>  {
+>  	struct vkms_configfs *configfs = config_item_to_vkms_configfs(item);
+> @@ -87,7 +225,6 @@ static struct config_group *make_device_group(struct config_group *group,
+>  					      const char *name)
+>  {
+>  	struct vkms_configfs *configfs;
+> -	struct vkms_config_crtc *crtc_cfg = NULL;
+>  	struct vkms_config_encoder *encoder_cfg = NULL;
+>  	struct vkms_config_connector *connector_cfg = NULL;
+>  	char *config_name;
+> @@ -110,11 +247,10 @@ static struct config_group *make_device_group(struct config_group *group,
+>  		goto err_kfree;
+>  	}
+>  
+> -	crtc_cfg = vkms_config_add_crtc(configfs->vkms_config, false, false);
+> -	if (IS_ERR(crtc_cfg)) {
+> -		ret = PTR_ERR(crtc_cfg);
+> -		goto err_kfree;
+> -	}
+> +	config_group_init_type_name(&configfs->crtcs_group, "crtcs",
+> +				    &crtcs_group_type);
+> +	configfs_add_default_group(&configfs->crtcs_group,
+> +				   &configfs->device_group);
+>
+>  	encoder_cfg = vkms_config_add_encoder(configfs->vkms_config, BIT(0));
+>  	if (IS_ERR(encoder_cfg)) {
+> @@ -133,7 +269,6 @@ static struct config_group *make_device_group(struct config_group *group,
+>  
+>  err_kfree:
+>  	kfree(configfs);
+> -	kfree(crtc_cfg);
+>  	kfree(encoder_cfg);
+>  	kfree(connector_cfg);
+>  	return ERR_PTR(ret);
+> -- 
+> 2.46.0
+> 
+
+-- 
+Louis Chauvet, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
