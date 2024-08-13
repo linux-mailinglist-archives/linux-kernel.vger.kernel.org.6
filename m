@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-285125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DE89509A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:59:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8696F9509B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7AD1C2210F
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:59:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EB6A28714D
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FF41A0AF8;
-	Tue, 13 Aug 2024 15:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33A21A2C21;
+	Tue, 13 Aug 2024 16:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTdULFAs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WuZAGNnx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215F01A08B8;
-	Tue, 13 Aug 2024 15:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD761A4F19;
+	Tue, 13 Aug 2024 16:01:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564750; cv=none; b=b/zGj4cal9YGPJu8N0j50TmjJ/TO3suWaBKpOIaeK/l2psRs0ipTQONFyjfli7h+nS5aButU0jHwh2s88tW5CfgkuFgKogRZwrZNC+bkKQ9zTSFrGLolqA7N1d0BlLNcgRKpfd/+jIfM4HyCA0lc1GjhtVN2lIOdoTWpNb4lkuk=
+	t=1723564910; cv=none; b=eqF9WtYnTDBOArGeQqb7my3XhDYYrLwO2AcLmk3tu7U6E95AiSKIRE88gQXGdIoMnVI9zA8CUxHJiTWY2iu6N16vAynr1q7QvOkd03TSHypl64bu+rfLTnw2NvX5JPhSNEc9DkmGsuR8uNwY8jHqt1b4Zhw2EaMiYW7iuoqKb4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564750; c=relaxed/simple;
-	bh=LkMm6dF7ExphNxxRq0QmoYg7CBmD+Q94nhUd54iaQ3M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kwLd+8DLlbJQ2ITJ19oQ9SKvzTJij+UDSahmrWvaRL4wy2PI98ucWmlykFzx24mDP/PA2lsspg8oPW57lb1B4L9dn8R4qtYKyYb2MHAeBLuVpJwuATE+9HeJOprJOFewVqn/xKvtb6oo5yVXewdPKDDHF2H41ijDguzsnB42uVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTdULFAs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 689B0C4AF0B;
-	Tue, 13 Aug 2024 15:59:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723564749;
-	bh=LkMm6dF7ExphNxxRq0QmoYg7CBmD+Q94nhUd54iaQ3M=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=fTdULFAs5fezNLXLvda50spfrYVo4jvaGsKHjxRtvtRU8dChe1kFgkD2AvxLCgRS+
-	 ZNkTc8gvO/gTZmKLYVMOLy0UNy9fB3BQ5yv/Qu/pv5M0ThAE5HLWgT9ULImlremJqq
-	 AiYYcrkFnu3mYLQSSZM/nmyxOvhdU64N/GuNGdxAmiU9RWXrol+wcw+wa77B+nz3VS
-	 iaIiqWBlBec1eQjcduau/xZAJEtGhqF5lii+siYu3c3RstW9rEzdqVvwS+ndXl/XEi
-	 XS7djwJDqbXuQOPWVYmYxs4G+D6aH32JbM6qxswmyzGc/5afs9UIIYc8lEg5WiH48m
-	 FINO9QU1r+/ng==
-Message-ID: <7181442b-574e-4fab-94c0-e3282ac2d16d@kernel.org>
-Date: Tue, 13 Aug 2024 17:59:03 +0200
+	s=arc-20240116; t=1723564910; c=relaxed/simple;
+	bh=e0lFy6FRF2WXlTEkhLmqv9oTDPHM2XOKmZ5WnOizTBw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XIsTtTsEqcwSNZ1NQIPT5wfXdNzhboSAYU3miO9JwoRkx5XMKe5IMq/PY76uOIqIsdYhpQQOmY3BxObSTUNarjfbk0+342amnIjkQeMuIKVGnjWA5Wntfi3ZSxcpXsxs9S1hE07VWdbMc7u1R28ahyhlJclHXh/QCnP3IiYqzi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WuZAGNnx; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723564909; x=1755100909;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=e0lFy6FRF2WXlTEkhLmqv9oTDPHM2XOKmZ5WnOizTBw=;
+  b=WuZAGNnxQfUiFuutQxmQRyTUdgJJ3u+vi/r2I5ekdhJF0NNJQC/TQDCC
+   wDbc7csMcIBxBNofY1tlhaPkUnyxjeaSzxcyXV0StfX9SmXLrR6KIlTxV
+   p9JSZ2eRBH0t5/LpNfl3fOER+/M1hbyr5z/ypS9XFTKpWZ4hJxKanfNvq
+   aLER3wqUu0feikLyOq9Z5DELXweeqIBdiK9SgeMbpEvjPrCr5upa4J8Xs
+   Luzp9hOUwDd2yPT5wxJcAK4x0qbrimVWpHQlrfwgxH/J3IIS3CuUqsNcv
+   38aIDb7Da7ucCOPEDfO0PtBxszdaQ1B64heyjeBIyCcmmcCn1CphboZuQ
+   Q==;
+X-CSE-ConnectionGUID: mmAcKH8MSimSwvq6OzI6qw==
+X-CSE-MsgGUID: wrWp4pyHSp+Fe+OvDnz80Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21606849"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="21606849"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 09:01:48 -0700
+X-CSE-ConnectionGUID: /ugbMIfoRCKlSjzTKc4s2A==
+X-CSE-MsgGUID: cQB2c0RMR0OXN7TEuOJXYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="81944400"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.244.153])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 09:01:24 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 13 Aug 2024 19:01:21 +0300 (EEST)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: irenic.rajneesh@gmail.com, david.e.box@linux.intel.com, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/7] Create Intel PMC SSRAM Telemetry driver
+In-Reply-To: <20240809204648.1124545-1-xi.pardee@linux.intel.com>
+Message-ID: <ad5e7c93-33fa-4a5e-35af-7f99150dd4be@linux.intel.com>
+References: <20240809204648.1124545-1-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] iio: imu: smi240: imu driver
-To: "Shen Jianping (ME-SE/EAD2)" <Jianping.Shen@de.bosch.com>,
- "jic23@kernel.org" <jic23@kernel.org>, "lars@metafoo.de" <lars@metafoo.de>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "dima.fedrau@gmail.com" <dima.fedrau@gmail.com>,
- "marcelo.schmitt1@gmail.com" <marcelo.schmitt1@gmail.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Lorenz Christian (ME-SE/EAD2)" <Christian.Lorenz3@de.bosch.com>,
- "Frauendorf Ulrike (ME/PJ-SW3)" <Ulrike.Frauendorf@de.bosch.com>,
- "Dolde Kai (ME-SE/PAE-A3)" <Kai.Dolde@de.bosch.com>
-References: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
- <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
- <561b467a-58aa-471c-8ea6-cd6ef927c287@kernel.org>
- <AM8PR10MB47217665274B9848EB21FA65CD862@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <AM8PR10MB47217665274B9848EB21FA65CD862@AM8PR10MB4721.EURPRD10.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 13/08/2024 11:41, Shen Jianping (ME-SE/EAD2) wrote:
->> +EXPORT_SYMBOL_GPL(smi240_core_probe);
->> +
->> +MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>"); 
->> +MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>"); 
->> +MODULE_DESCRIPTION("Bosch SMI240 driver"); MODULE_LICENSE("Dual 
->> +BSD/GPL");
+On Fri, 9 Aug 2024, Xi Pardee wrote:
+
+> This patch series removes the SSRAM support from Intel PMC Core driver
+> and creates a separate PCI driver for SSRAM device. The new Intel PMC
+> SSRAM driver provides the following functionalities:
+>  
+> 1. Search and store the PMC information in a structure, including PWRMBASE
+> address and devid for each available PMC. Then Intel PMC Core driver
+> achieves the PMC information using the API provided by the new driver.
+>  
+> 2. Search and register Intel Platform Monitoring Techology telemetry
+> regions so they would by available for read through sysfs and Intel PMT
+> API. Intel PMC Core driver can achieve Low Power Mode requirement
+> information from a telemetry region registered by the new driver.
+> The above functionalities was previously handled by Intel PMC Core
+> driver. Intel PMC Core driver returns -EPROBE_DEFER when trying to read
+> data from a telem region that is not available yet. This setup may
+> result in an infinite loop of .probe() calls as Intel PMC Core driver
+> creates child devices. Creating a separate PCI driver avoids the infinite
+> loop possibility.
+>  
+> Xi Pardee (7):
+>   platform/x86:intel/pmc: Remove SSRAM support from PMC Core
+>   platform/x86:intel/pmc: Create Intel PMC SSRAM Telemetry driver
+>   platform/x86:intel/pmc: Add support to get PMC information from SSRAM
+>   platform/x86:intel/pmt: Get PMC from SSRAM for available platforms
+>   platform/x86:intel/pmt: Create inline version for telemetry functions
+>   platform/x86:intel/pmc: Add support to Retrieve LPM information
+>   platform/x86:intel/pmc: Get LPM information for available platforms
+
+Hi,
+
+I don't see why the removal first, then re-add approach would be justified 
+here. You're basically adding the same code back later in many cases with 
+only very minimal changes, and some changes are entirely pointless such as 
+pmc_idx -> pmc_index parameter rename. This is just a big pain to review.
+
+I'd suggest you move functions in first patch into core.c. Try to 
+avoid logic/code changes other than making making the necessary functions 
+non-static and adding the prototypes for them into a header (temporarily).
+
+Then rename the ssram file to its new name in the second change.
+
+Then do the rework on top of that (and make things back static again).
+
+Try to split the rework into sensible chunks, anything that can be taken 
+away from the main rework change is less lines to review in that patch.
+If you e.g. want to do pcidev -> pdev renames, put them into own separate 
+change (and do it consistently then, not just for some of the cases like
+currently :-/).
+
+The move patches are nearly trivial to review and take large chunk of 
+diff away from the actual rework itself which doesn't seem that 
+complicated to review once the 1:1 move bits and trivial rename churn is
+eliminated from the diff.
+
+>  drivers/platform/x86/intel/pmc/Kconfig        |  13 +-
+>  drivers/platform/x86/intel/pmc/Makefile       |   8 +-
+>  drivers/platform/x86/intel/pmc/arl.c          |  36 +-
+>  drivers/platform/x86/intel/pmc/core.c         | 216 +++++++++++-
+>  drivers/platform/x86/intel/pmc/core.h         |  25 +-
+>  drivers/platform/x86/intel/pmc/core_ssram.c   | 326 ------------------
+>  drivers/platform/x86/intel/pmc/lnl.c          |  36 +-
+>  drivers/platform/x86/intel/pmc/mtl.c          |  34 +-
+>  .../platform/x86/intel/pmc/ssram_telemetry.c  | 184 ++++++++++
+>  .../platform/x86/intel/pmc/ssram_telemetry.h  |  45 +++
+>  drivers/platform/x86/intel/pmt/telemetry.h    |  19 +-
+>  11 files changed, 550 insertions(+), 392 deletions(-)
+>  delete mode 100644 drivers/platform/x86/intel/pmc/core_ssram.c
+>  create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.c
+>  create mode 100644 drivers/platform/x86/intel/pmc/ssram_telemetry.h
 > 
-> Hm? How many modules do you have here? What are their names?
 > 
-> We have one module, named  "Bosch SMI240 driver". Any problem here?
 
-That's not the name of the module. That's description. What is the
-module filename (filename=name!)?
-
-Fix your quoting, because you misrepresent people's comments.
-
-Best regards,
-Krzysztof
+-- 
+ i.
 
 
