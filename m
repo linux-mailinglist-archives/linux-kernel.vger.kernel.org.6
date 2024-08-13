@@ -1,165 +1,253 @@
-Return-Path: <linux-kernel+bounces-285477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF012950E01
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:34:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB61A950E03
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 22:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F121A1C22C95
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:34:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1A347B22B9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D746B1A7043;
-	Tue, 13 Aug 2024 20:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7EE1A7043;
+	Tue, 13 Aug 2024 20:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRKSMv8a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iXQoPi66"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20B504436A;
-	Tue, 13 Aug 2024 20:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB454436A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 20:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723581253; cv=none; b=QRUR4hT9rMGeuR3rvYJwT1bxJQBj0KrgwLsioEQGdGa5UvDxfNoS5vnWlnaP6WQ94IjX8XiIkKvflopqW9UZNBwxc058hkw4wDk0N+eu/5OUd5XAMkKxBDWxLkdKJoS+bwM3pXYJ9k1ke5rOW8qj7jQSBpOYZaKOdJFZnDuUHFY=
+	t=1723581454; cv=none; b=kIRDxdHfpu+JXCMhcCR3oNCFMQlI5HrPJcx9qbUonDz3a3S/EPD69/FCSheHGBqxVMJmlAAdeCbsw2ZwNbolwD/gf3EG8MUFjqC9rPbNVk1/c+jUefusPEHIv229M+vIuDnW1wmzkeF6NrCI/hkB41U9S3tv/4+i8v9r76i43Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723581253; c=relaxed/simple;
-	bh=aW7W23fUjUQbZbzoo2O9zrLSi/tpsyqurgJDlIT3Luk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MkFL1nTxfDeVzC+f8TKRmCYVp5HlDRl89w2OVkqPZamIWO1gSjr5Sepyfg3wdzxqAt2u0FNlWESZikgXyNIKSZWQoS6MwLsVmvRCxs71FRhooncUpCQXepleSB3JDrGEKCikDAVI+5hhoUmU414x8UhzOboQb5T4rh1nwHERuGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRKSMv8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BAC9C32782;
-	Tue, 13 Aug 2024 20:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723581252;
-	bh=aW7W23fUjUQbZbzoo2O9zrLSi/tpsyqurgJDlIT3Luk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=NRKSMv8agI1IaeiAz6EvRYCpGs9PLQF4zp9gOXigS6euL88D9DisYhKc6vvg2otUr
-	 5TWRiEj0i52R0oVBxBaokQvW1I3GCcVwvmGCtpou4IqFNt/CQoOGB4Cfqkfw8SGwGg
-	 Jw+gEIWFpL6FvliwItwFVNeUgi99+hBJi6dA3mi4B3kMK+W1IcCL/n3BwCAYGfuh6I
-	 GUv8XY5vymw15wV3Oa/virVLXZlKNSj1YmdgMT7UVMVSQfJdfJZ93/wc3ZWsExVMLw
-	 TyXk48dxO51sB4uAwB50xcGOHeihPCy0O/0zjUFnnMTvxQ0ffXzPYZRI7EPji9p2q1
-	 LYX801ZRStHSw==
-From: Andrii Nakryiko <andrii@kernel.org>
-To: linux-trace-kernel@vger.kernel.org,
-	rostedt@goodmis.org,
-	mhiramat@kernel.org
-Cc: peterz@infradead.org,
-	oleg@redhat.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jolsa@kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v3] uprobes: turn trace_uprobe's nhit counter to be per-CPU one
-Date: Tue, 13 Aug 2024 13:34:09 -0700
-Message-ID: <20240813203409.3985398-1-andrii@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1723581454; c=relaxed/simple;
+	bh=ssoUrR2MUenVnn0G0oWygFv6uWNnhpSr7dhSarQrh/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MJe0SEhcl3Loes4AWTtU1DBkKYWS3uqsHBPUsgXXRO58t1flLP/8WWzpdqNqVrJXby9ZyErrov0s+WaayvKyQ5t/iXp+1E3o5J3mXLdHK8q6Vd8o5f6dH1mXZa9ukSzAqbDdvSblh2lmtou6+J/482z1ZxNib5X8BS45A9+2+dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iXQoPi66; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1723581449;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=De9NMJzxGYMXCFYYNuYNKYWMOUUelr8gYoH0sgIr7zY=;
+	b=iXQoPi66yMydtLvrZ4SRjoBN73biEFC7kU2L2Ea61imu1lOczDz4PYDzr1gS1g/6LGwXkR
+	oMSBjaoh6dNJHzwpdqLCO+dP/AiOF4pItQIDDGvRmmCn4B2eU5NSddsK0iDMiGnOj+tMgb
+	TveEt75fes02rohyuhfb01ciJMdBx1Y=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-10-jyOdfchdMDKIW9Fbo6mJjQ-1; Tue, 13 Aug 2024 16:37:28 -0400
+X-MC-Unique: jyOdfchdMDKIW9Fbo6mJjQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-36831948d94so3525713f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 13:37:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723581447; x=1724186247;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=De9NMJzxGYMXCFYYNuYNKYWMOUUelr8gYoH0sgIr7zY=;
+        b=JUpjsg0tMoGtjumz21YpWNxnMhtFhfY5LSpunaBXcZcdcp0VDlkBcG/UUThDbDZKeg
+         k5Ur5ErbMyz125Xd+yHqfGRJFFwtFgnq04srXs5Cuu5KTxNj+MEQ0x8Ie6pNnftVWHeP
+         1CCzM1c45zexBZWeC2BWju5l81RKD2vA0ssBSfD7dDiv/6Y0YG/V5RxRq5pUdAHnvobW
+         /sb4QGrCLlHZcK7+AA3xDnIrlyEzIjLVlu4kty9tqbDip+sCp29OCByXfsoZbhMd7XWR
+         KZegyssIdFKIYvMEptda+6NAldoZPi/F4a+PqZVpSqMecchRFc7lOpyIG4CLXhqsUwZT
+         llUg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoNM8oBkh5HT0D79y7bfkR+qXqUPZFeVubrAnwE74Rnt+UUNuJhcOvztdEQ1QSxeyo58s1iEgb4XisBm5zSpud/haRwphH8bAz2uPr
+X-Gm-Message-State: AOJu0YwzT5g819zf1ap45rhtP8TBsr3j57DIQCIM+9soTHe0Wr9Q25DJ
+	Ese7yf4c76WnZ8C2uTTJ9A/TdOCRSvW6F/HO74XGWjTjh1ZY41xhKAMASYQfPbxzU0VlhneuP8R
+	RtRJpKqvRnRiu7wFx62xDUF3LEPant1wwtHH0yC2nlQtZ+eTUtgpE9FcMu86www==
+X-Received: by 2002:a5d:6284:0:b0:368:74c0:6721 with SMTP id ffacd0b85a97d-3717780facbmr453738f8f.38.1723581446889;
+        Tue, 13 Aug 2024 13:37:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFcugufgzUZYf2EvsRoYFlOyZPm5fd34FmAlCTu8To2eSYdt0fLONv0y0UWPb/BR0XnGBGBJw==
+X-Received: by 2002:a5d:6284:0:b0:368:74c0:6721 with SMTP id ffacd0b85a97d-3717780facbmr453719f8f.38.1723581446384;
+        Tue, 13 Aug 2024 13:37:26 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f09:3f00:d228:bd67:7baa:d604? (p200300d82f093f00d228bd677baad604.dip0.t-ipconnect.de. [2003:d8:2f09:3f00:d228:bd67:7baa:d604])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36e4ebd30f5sm11201902f8f.92.2024.08.13.13.37.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Aug 2024 13:37:26 -0700 (PDT)
+Message-ID: <2e14537b-cf91-479d-a665-c3e174cf2c66@redhat.com>
+Date: Tue, 13 Aug 2024 22:37:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] userfaultfd: Fix checks for huge PMDs
+To: Jann Horn <jannh@google.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Pavel Emelianov <xemul@virtuozzo.com>, Andrea Arcangeli
+ <aarcange@redhat.com>, Hugh Dickins <hughd@google.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Qi Zheng <zhengqi.arch@bytedance.com>, stable@vger.kernel.org
+References: <20240813-uffd-thp-flip-fix-v2-0-5efa61078a41@google.com>
+ <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240813-uffd-thp-flip-fix-v2-1-5efa61078a41@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-trace_uprobe->nhit counter is not incremented atomically, so its value
-is questionable in when uprobe is hit on multiple CPUs simultaneously.
+On 13.08.24 22:25, Jann Horn wrote:
+> This fixes two issues.
+> 
+> I discovered that the following race can occur:
+> 
+>    mfill_atomic                other thread
+>    ============                ============
+>                                <zap PMD>
+>    pmdp_get_lockless() [reads none pmd]
+>    <bail if trans_huge>
+>    <if none:>
+>                                <pagefault creates transhuge zeropage>
+>      __pte_alloc [no-op]
+>                                <zap PMD>
+>    <bail if pmd_trans_huge(*dst_pmd)>
+>    BUG_ON(pmd_none(*dst_pmd))
+> 
+> I have experimentally verified this in a kernel with extra mdelay() calls;
+> the BUG_ON(pmd_none(*dst_pmd)) triggers.
+> 
+> On kernels newer than commit 0d940a9b270b ("mm/pgtable: allow
+> pte_offset_map[_lock]() to fail"), this can't lead to anything worse than
+> a BUG_ON(), since the page table access helpers are actually designed to
+> deal with page tables concurrently disappearing; but on older kernels
+> (<=6.4), I think we could probably theoretically race past the two BUG_ON()
+> checks and end up treating a hugepage as a page table.
+> 
+> The second issue is that, as Qi Zheng pointed out, there are other types of
+> huge PMDs that pmd_trans_huge() can't catch: devmap PMDs and swap PMDs
+> (in particular, migration PMDs).
+> On <=6.4, this is worse than the first issue: If mfill_atomic() runs on a
+> PMD that contains a migration entry (which just requires winning a single,
+> fairly wide race), it will pass the PMD to pte_offset_map_lock(), which
+> assumes that the PMD points to a page table.
+> Breakage follows: First, the kernel tries to take the PTE lock (which will
+> crash or maybe worse if there is no "struct page" for the address bits in
+> the migration entry PMD - I think at least on X86 there usually is no
+> corresponding "struct page" thanks to the PTE inversion mitigation, amd64
+> looks different).
+> If that didn't crash, the kernel would next try to write a PTE into what it
+> wrongly thinks is a page table.
+> 
+> As part of fixing these issues, get rid of the check for pmd_trans_huge()
+> before __pte_alloc() - that's redundant, we're going to have to check for
+> that after the __pte_alloc() anyway.
+> 
+> Backport note: pmdp_get_lockless() is pmd_read_atomic() in older
+> kernels.
+> 
+> Reported-by: Qi Zheng <zhengqi.arch@bytedance.com>
+> Closes: https://lore.kernel.org/r/59bf3c2e-d58b-41af-ab10-3e631d802229@bytedance.com
+> Cc: stable@vger.kernel.org
+> Fixes: c1a4de99fada ("userfaultfd: mcopy_atomic|mfill_zeropage: UFFDIO_COPY|UFFDIO_ZEROPAGE preparation")
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>   mm/userfaultfd.c | 22 ++++++++++++----------
+>   1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index e54e5c8907fa..290b2a0d84ac 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -787,21 +787,23 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+>   		}
+>   
+>   		dst_pmdval = pmdp_get_lockless(dst_pmd);
+> -		/*
+> -		 * If the dst_pmd is mapped as THP don't
+> -		 * override it and just be strict.
+> -		 */
+> -		if (unlikely(pmd_trans_huge(dst_pmdval))) {
+> -			err = -EEXIST;
+> -			break;
+> -		}
+>   		if (unlikely(pmd_none(dst_pmdval)) &&
+>   		    unlikely(__pte_alloc(dst_mm, dst_pmd))) {
+>   			err = -ENOMEM;
+>   			break;
+>   		}
+> -		/* If an huge pmd materialized from under us fail */
+> -		if (unlikely(pmd_trans_huge(*dst_pmd))) {
+> +		dst_pmdval = pmdp_get_lockless(dst_pmd);
+> +		/*
+> +		 * If the dst_pmd is THP don't override it and just be strict.
+> +		 * (This includes the case where the PMD used to be THP and
+> +		 * changed back to none after __pte_alloc().)
+> +		 */
+> +		if (unlikely(!pmd_present(dst_pmdval) || pmd_trans_huge(dst_pmdval) ||
+> +			     pmd_devmap(dst_pmdval))) {
 
-Also, doing this shared counter increment across many CPUs causes heavy
-cache line bouncing, limiting uprobe/uretprobe performance scaling with
-number of CPUs.
+Likely in the future we should turn the latter part into a "pmd_leaf()" 
+check.
 
-Solve both problems by making this a per-CPU counter.
+> +			err = -EEXIST;
+> +			break;
+> +		}
+> +		if (unlikely(pmd_bad(dst_pmdval))) {
+>   			err = -EFAULT;
+>   			break;
+>   		}
+> 
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
----
- kernel/trace/trace_uprobe.c | 24 +++++++++++++++++++++---
- 1 file changed, 21 insertions(+), 3 deletions(-)
+Acked-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-index c98e3b3386ba..c3df411a2684 100644
---- a/kernel/trace/trace_uprobe.c
-+++ b/kernel/trace/trace_uprobe.c
-@@ -17,6 +17,7 @@
- #include <linux/string.h>
- #include <linux/rculist.h>
- #include <linux/filter.h>
-+#include <linux/percpu.h>
- 
- #include "trace_dynevent.h"
- #include "trace_probe.h"
-@@ -62,7 +63,7 @@ struct trace_uprobe {
- 	char				*filename;
- 	unsigned long			offset;
- 	unsigned long			ref_ctr_offset;
--	unsigned long			nhit;
-+	unsigned long __percpu		*nhits;
- 	struct trace_probe		tp;
- };
- 
-@@ -337,6 +338,12 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
- 	if (!tu)
- 		return ERR_PTR(-ENOMEM);
- 
-+	tu->nhits = alloc_percpu(unsigned long);
-+	if (!tu->nhits) {
-+		ret = -ENOMEM;
-+		goto error;
-+	}
-+
- 	ret = trace_probe_init(&tu->tp, event, group, true, nargs);
- 	if (ret < 0)
- 		goto error;
-@@ -349,6 +356,7 @@ alloc_trace_uprobe(const char *group, const char *event, int nargs, bool is_ret)
- 	return tu;
- 
- error:
-+	free_percpu(tu->nhits);
- 	kfree(tu);
- 
- 	return ERR_PTR(ret);
-@@ -362,6 +370,7 @@ static void free_trace_uprobe(struct trace_uprobe *tu)
- 	path_put(&tu->path);
- 	trace_probe_cleanup(&tu->tp);
- 	kfree(tu->filename);
-+	free_percpu(tu->nhits);
- 	kfree(tu);
- }
- 
-@@ -815,13 +824,21 @@ static int probes_profile_seq_show(struct seq_file *m, void *v)
- {
- 	struct dyn_event *ev = v;
- 	struct trace_uprobe *tu;
-+	unsigned long nhits;
-+	int cpu;
- 
- 	if (!is_trace_uprobe(ev))
- 		return 0;
- 
- 	tu = to_trace_uprobe(ev);
-+
-+	nhits = 0;
-+	for_each_possible_cpu(cpu) {
-+		nhits += per_cpu(*tu->nhits, cpu);
-+	}
-+
- 	seq_printf(m, "  %s %-44s %15lu\n", tu->filename,
--			trace_probe_name(&tu->tp), tu->nhit);
-+		   trace_probe_name(&tu->tp), nhits);
- 	return 0;
- }
- 
-@@ -1512,7 +1529,8 @@ static int uprobe_dispatcher(struct uprobe_consumer *con, struct pt_regs *regs)
- 	int ret = 0;
- 
- 	tu = container_of(con, struct trace_uprobe, consumer);
--	tu->nhit++;
-+
-+	this_cpu_inc(*tu->nhits);
- 
- 	udd.tu = tu;
- 	udd.bp_addr = instruction_pointer(regs);
 -- 
-2.43.5
+Cheers,
+
+David / dhildenb
 
 
