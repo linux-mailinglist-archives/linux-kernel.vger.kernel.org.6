@@ -1,163 +1,131 @@
-Return-Path: <linux-kernel+bounces-285539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEF1950F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75F35950F3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 23:41:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E065FB23BC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:39:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912D628493F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:41:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B427D1AAE13;
-	Tue, 13 Aug 2024 21:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809781A76DB;
+	Tue, 13 Aug 2024 21:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UbW+QwNa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+xg7bnSE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UbW+QwNa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+xg7bnSE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KjT/scjd"
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B1E17B515;
-	Tue, 13 Aug 2024 21:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA761A76BB
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 21:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723585136; cv=none; b=jjkyuUxfAW2y5o/5A9Q9DD/JAhRSS6Y+lTRurAiE5FFlpRr7xSMd/pWD7yVEv4YgJ7NzOwaPVbkoeeraKmfcPc242c9o+lYNIIKeoGj4eOL2uR3DMWzyLX78YQHYcfP8klgDa1sqXByqejJWaCvMip2QlsZLy8y36bWpwbKVPEM=
+	t=1723585294; cv=none; b=j77nJQZgYzVjVgLf3k4s/AQCZ3wuawk3dSBn6M9T3BdzD1P5ugN090e9LeDlUP1f4C7Ol3NjGo98u2uho2z7PFkyRGxDiNG2mVkU7+7Ok3L1IFOGlgO6BjD6DqKIrCGIp3pHam033FtOyzm7blctcbCkjjhNALp3vH9JMN8nQXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723585136; c=relaxed/simple;
-	bh=9iKXwVoJ5E4Wbrn8BdfiIq4j9pWBgWl50Zmq3RudUbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZWB4PIHDE5b2o+nuw6jkC57jv7A+cEIKczFT+7uskZpQ5HuAifrq5byjQd+Js1mKNBk0VXNoDRmprJgcF+pGongpBZGmh/iuMoG441L0GyT5Hl/ECobZ3oamcA+ZnfEpHHJXNxBG/GVhfbmymAxot2U+aUd9gUTwI4hKyBEq9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UbW+QwNa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+xg7bnSE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UbW+QwNa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+xg7bnSE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 11F522261B;
-	Tue, 13 Aug 2024 21:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723585132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eneo3/ifjbPg5RZh5p7VfUhYIE7MbBS6psghNR6gg0k=;
-	b=UbW+QwNa7cSGVNPTfnu0eEpB/KUxdNhKuubEpXXrAel0C+nDQR+6QMfe8qxDcszakonwOt
-	ali33wgNoJmPDoHUnwbtuI/FK6mEBbyulGDqkV8QUGTWJDl8liaMq4dZ6eV8XnoqjGnqpi
-	xoXhmRvF3+r8aD5seEVvRKVjxtCW5rs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723585132;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eneo3/ifjbPg5RZh5p7VfUhYIE7MbBS6psghNR6gg0k=;
-	b=+xg7bnSEPjuxXcwpx4go904CtHj9KdvGIuWp2ORtYLJ1ooX/t+LbOwchGWFN+pVLYnvGZv
-	Dpixx/DLMGUqhMDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1723585132; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eneo3/ifjbPg5RZh5p7VfUhYIE7MbBS6psghNR6gg0k=;
-	b=UbW+QwNa7cSGVNPTfnu0eEpB/KUxdNhKuubEpXXrAel0C+nDQR+6QMfe8qxDcszakonwOt
-	ali33wgNoJmPDoHUnwbtuI/FK6mEBbyulGDqkV8QUGTWJDl8liaMq4dZ6eV8XnoqjGnqpi
-	xoXhmRvF3+r8aD5seEVvRKVjxtCW5rs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1723585132;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eneo3/ifjbPg5RZh5p7VfUhYIE7MbBS6psghNR6gg0k=;
-	b=+xg7bnSEPjuxXcwpx4go904CtHj9KdvGIuWp2ORtYLJ1ooX/t+LbOwchGWFN+pVLYnvGZv
-	Dpixx/DLMGUqhMDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A8C9136A2;
-	Tue, 13 Aug 2024 21:38:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id +lkWI2vSu2aRGgAAD6G6ig
-	(envelope-from <svarbanov@suse.de>); Tue, 13 Aug 2024 21:38:51 +0000
-Message-ID: <3352aa92-6c50-45c6-b5a7-215e359bdf0c@suse.de>
-Date: Wed, 14 Aug 2024 00:38:50 +0300
+	s=arc-20240116; t=1723585294; c=relaxed/simple;
+	bh=NlaYgVLUQMjxBSw7Pa9XDmYAwLHfrOYpQGartspqsEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UincrXlzaBhZphFWca7u6PlSPfjLlZuUlrQiiUjwHGtY8IIHyVPT2etBICf2XC3uw4ax7n5jwwwSeRXL7FK0c1nqyYvzcYA8l4jAb5Z4C0kI7jKfbDQrudrVntQc7c+FMB5Q48MKFBiSHniE0GxwKw6ze1PhlLOkLy+IqyHGPCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KjT/scjd; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4f5153a3a73so2005311e0c.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1723585292; x=1724190092; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DNKxyCD3sL9Pw4tETI2CMJBPkS8nM7pR4jRQHwUDzl0=;
+        b=KjT/scjdIU8gVcU3Z9moxPpUBliINT2ei1j/LQ7DhTr9Pw+oJmykv4BjBrlxxoOnPw
+         CtvnRWKxEb6qhqQMdmxUEKdhiVBB4XCrG2+JUublmtL0D+DJLSFCGvm23fXZ5k7JOSxx
+         JxEWvtfqJAV7PG7wkHAM83MAy63fqN8hCKJ1OLsKQ8lbsGXGAoRr5Ee5pHfPMCqN1JEF
+         Jw88/0+GwyLhK4AcsHik4vlDFmQht9vsFGktrYkqKHjFUs5crczs8LJtVe6u9XcbN+/G
+         7kUEzQOXlgXqUrd2QjrfiLnCAugLHompNN/4T1a8koXhLKRPe8mwVO4T7EI59nVowkM2
+         n40A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723585292; x=1724190092;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DNKxyCD3sL9Pw4tETI2CMJBPkS8nM7pR4jRQHwUDzl0=;
+        b=EI4I57hPKCYzFZO52xM2ZipcKDvqtI+azNH9bc24v/hv8cBhF14vKgcOSk6IHdjrQN
+         etOeGJdhHGk7L6Zc/tWDgiAlggFNvMI2wP9ct5kM4TMNK1xMvmZ+0dYPAjNU42Kg4X8o
+         DpMWL4J/IMDpmkx480CZoi7caqimfyNTbPrgbzBXDUjW0RnFDDuXdeMQZInZU5QZGkPT
+         qbtMlsUPIFz/6ZNJ2TKHEG/WXMY+FqaF9F9f62RLCIOADG2idTx8s+sgi1DssGsG/5Jx
+         lGR8yU3E+s4yd7M3gizTaHclXMuuttxtWmIoejje4k8LRIjBqIpYnU+nPl0qQe3Rz0ww
+         QYjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKtFmMucWm9XekYJlGILEnEWfN5hRyPG8A1lA0wSp0aI09pFF3Zn/93xk89kUtpILNVL3DDXA2sq+ounoOIYo2kV7azAzW4kvKakaa
+X-Gm-Message-State: AOJu0YzQoruWBOmZ3yXoFJxnEiQQc/mPS/lEZyTpZ0cZJThq7cD8iTZO
+	x4Lo3s8exlbfpRFTxp51CQtYcKykiWjzYd74m+AyGl44OURlZGFNOojnks5L6l7y//5H88orQ+s
+	Z2PiOYWow9n4LUfVQALLSOBqfh9BuTEbafscvFfA0vuU08utTBg==
+X-Google-Smtp-Source: AGHT+IFfSvp9hKL/DBf+nQtcz5Qrf9LVeKWTmO/Ig+c7saqhe3JpHcjhAdhxNl48Tm/dhwF7GKWKraao4Zus39qM5iI=
+X-Received: by 2002:a05:6122:2524:b0:4f5:199b:2a61 with SMTP id
+ 71dfb90a1353d-4fad23165a6mr1197419e0c.9.1723585291776; Tue, 13 Aug 2024
+ 14:41:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/10] media: venus: Use flex array for
- hfi_session_release_buffer_pkt
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Hans Verkuil <hverkuil-cisco@xs4all.nl>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240813-cocci-flexarray-v6-0-de903fd8d988@chromium.org>
- <20240813-cocci-flexarray-v6-1-de903fd8d988@chromium.org>
-Content-Language: en-US
-From: Stanimir Varbanov <svarbanov@suse.de>
-In-Reply-To: <20240813-cocci-flexarray-v6-1-de903fd8d988@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.79
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[xs4all.nl,vger.kernel.org];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[chromium.org,gmail.com,quicinc.com,linaro.org,kernel.org];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,xs4all.nl]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20240812224823.3914837-1-yuzhao@google.com> <20240813140007.2459882ce674b45ecf1403f7@linux-foundation.org>
+In-Reply-To: <20240813140007.2459882ce674b45ecf1403f7@linux-foundation.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Tue, 13 Aug 2024 15:40:53 -0600
+Message-ID: <CAOUHufb1MTZ2gmZhdev-X7frj4uBpp_84aGxNeVNq3640q7-xA@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v2] mm/hugetlb_vmemmap: batch HVO work when demoting
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Muchun Song <muchun.song@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+On Tue, Aug 13, 2024 at 3:00=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Mon, 12 Aug 2024 16:48:23 -0600 Yu Zhao <yuzhao@google.com> wrote:
+>
+> > Batch the HVO work, including de-HVO of the source and HVO of the
+> > destination hugeTLB folios, to speed up demotion.
+> >
+> > After commit bd225530a4c7 ("mm/hugetlb_vmemmap: fix race with
+> > speculative PFN walkers"), each request of HVO or de-HVO, batched or
+> > not, invokes synchronize_rcu() once. For example, when not batched,
+> > demoting one 1GB hugeTLB folio to 512 2MB hugeTLB folios invokes
+> > synchronize_rcu() 513 times (1 de-HVO plus 512 HVO requests), whereas
+> > when batched, only twice (1 de-HVO plus 1 HVO request). And the
+> > performance difference between the two cases is significant, e.g.,
+> >   echo 2048kB >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote_size
+> >   time echo 100 >/sys/kernel/mm/hugepages/hugepages-1048576kB/demote
+> >
+> > Before this patch:
+> >   real     8m58.158s
+> >   user     0m0.009s
+> >   sys      0m5.900s
+> >
+> > After this patch:
+> >   real     0m0.900s
+> >   user     0m0.000s
+> >   sys      0m0.851s
+>
+> That's a large change.  I assume the now-fixed regression was of
+> similar magnitude?
 
-On 8/13/24 15:31, Ricardo Ribalda wrote:
-> Replace the old style single element array with a flex array. We do not
-> allocate this structure, so the size change should not be an issue.
-> 
-> This fixes the following cocci warning:
-> drivers/media/platform/qcom/venus/hfi_cmds.h:204:5-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-> 
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Acked-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+Correct, and only the `real` time was regressed, due to
+synchronize_rcu(); the `sys` time is an improvement, since it's not
+affected by synchronize_rcu() (or not I could measure).
 
-Could you inverse the order of the tags, please. "Signed-off-by" must be
-first and then the others.
+> > Note that this patch changes the behavior of the `demote` interface
+> > when de-HVO fails. Before, the interface aborts immediately upon
+> > failure; now, it tries to finish an entire batch, meaning it can make
+> > extra progress if the rest of the batch contains folios that do not
+> > need to de-HVO.
+> >
+> > Fixes: bd225530a4c7 ("mm/hugetlb_vmemmap: fix race with speculative PFN=
+ walkers")
+>
+> Do we think we should add this to 6.10.x?  I do.
 
-All patches in the series has this issue.
-
-~Stan
-
+Agreed.
 
