@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-285381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B2A950CC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB2F950CE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 21:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E3C1C22E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78A851C237A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 19:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE2B1A3BC7;
-	Tue, 13 Aug 2024 19:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B76591A4F0D;
+	Tue, 13 Aug 2024 19:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j0NfnlrF"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iaPV2Cg6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDC61097B
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 19:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 083001A3BC7;
+	Tue, 13 Aug 2024 19:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723575857; cv=none; b=E9nwjnqIlkJQdITAFOpuCsA+jSfuZLLJp6GKHagyG9yzcPDoQ538bveeATcDFOtgV50k475atxMzDs+Hz3Ks4jbEN6hZqDKPuQ8sqQnuM9/cR1KLy+oIWpi/EvKJwu2wqEiAqIeEZEU/uz31N6E9GP+rdvGiU42VH4q1AuG8Vfw=
+	t=1723576158; cv=none; b=hWTxsB81Tzr2xWdBWJXRMw1EgrjIZ6gSRaJy3wZPpLnV0bbfKHQaNmVcdg8aZ6eTAXLFkLVGBe8UkPK7uoU/1Ap7FRgLnMstUy4snxRUnMkMVwpGFv8edDzGKmhMT1XnITQbkbsIV8RhU13OswQT/SWWANKcHYuEhaxQuBf4rX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723575857; c=relaxed/simple;
-	bh=DngfM7504RFdshdTxoUjceF4KJ/bZilO9ufue7YzFhw=;
+	s=arc-20240116; t=1723576158; c=relaxed/simple;
+	bh=5yLTqYrEVFQBJuTrsiDLUVqVWQqyOnzlNTbvg0gBosQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SDYYygNgu59zypS7Grk50QCyBDL2pmH9PhGCONJ2IflM/kWgdK0yV1K0rtkif6O19msmNv01firpwaiJqHUNL8MCd5LQyYPZN3KhNGyiBaCKeWMbD6pkS/JjIyOIYna46ERkhz37wjwsCW3olwG+NSOcCCaVCpHr2uTwS/3AnB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j0NfnlrF; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fdd6d81812so57588755ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 12:04:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723575855; x=1724180655; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KwdyItdOBjgi7Kans4AaT44akFS7oahigY4s0qP0bFg=;
-        b=j0NfnlrFY6sRsGaF7vYqamwkEb/rjugrbagxZywmngeyVkLvXfaNXnoZwxqUTtn2IV
-         8pEVUtE92h9KkAcRp2kYtw5Q3w1/c2dHnLQdDWDspaUiSVFP8Wnq3GVpv966Gv9zLHSo
-         8bDF/t3pZ/f9xelU/Q2PjL088fYkzjvqTUmQB32vWns3DvktCovUXJ7k0/wz7c3MVqxa
-         MwlyC9jMPuYkXIiopodXDKeUEpq17zv2gKiXp8b9GjriqKdyRBpqWUcGy/TugsNKo+7P
-         bXrAvZfZlspgDSSp33Xzu8n7G8NxTgsNlwfxxIL5dUYpGFCcdr58rT1ZMkjR2M7WLXNR
-         5vjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723575855; x=1724180655;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KwdyItdOBjgi7Kans4AaT44akFS7oahigY4s0qP0bFg=;
-        b=SmLuiK5c3tBn3GgobFwXSI/681v5IpsXUg48c/Q0mbBpYaqXqmPiWx8RmpBEGBOMVp
-         kSIeCHYy95oEFdXSn5DRq6c3c+HctPsvjBhweBxvbQ31DJo+bxqv1ZUYv1BtPsjMXOjo
-         sOQ/nHCPPRMSNRsQNQrHuQ5hwAE2jiqIClyQIIVEIiirH2BuS8oNbLIZNLKgvFkDx7NH
-         qjyug3CJ8ig9YlShXhH7Jkrp8CAYmUj9Levga++KDUE6sG7Aiu8XFskFlKUxZBKkJZo4
-         n1UYveBNcCua06+sFx09DLSO+x5ZryRRuVWD/Vv5kK8N+Bk0/O50Q4FjIOOX/+EoG5aL
-         CkaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOhbu4x+im+jSOe0kIgaI/3XZvH2r4Ev5YldgrAkaBQUHeA30Km9Lsn4p7N9aPp4tRtiDk0+FoNFlJ7IaXTMz/hODl5wlOHg2JijGU
-X-Gm-Message-State: AOJu0Yw9QlN7NwcZyYaKkrjstUy+nYAtyDrmxs7S4MSna6A2Y0mUl4yK
-	tAtj4NAb0xoUeHMMkAibY/osVb590AnBzXLx+xJlsVhQpWmXija5
-X-Google-Smtp-Source: AGHT+IGYi8pBuIg2OuXLtnoHO8vZ9WW7IUFApPzkL3UnWEL4IRP8eJ/v1Sp03U4fV/oB07SrCBsbxA==
-X-Received: by 2002:a17:903:18b:b0:1ff:3c4f:e93d with SMTP id d9443c01a7336-201d65c09f4mr5832055ad.55.1723575854779;
-        Tue, 13 Aug 2024 12:04:14 -0700 (PDT)
-Received: from localhost (dhcp-72-235-129-167.hawaiiantel.net. [72.235.129.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1cbae3sm16976035ad.279.2024.08.13.12.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 12:04:14 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Tue, 13 Aug 2024 09:04:13 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Manu Bretelle <chantr4@gmail.com>
-Cc: void@manifault.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: define missing cfi stubs for sched_ext
-Message-ID: <ZruuLRv2h6RYWAFb@slm.duckdns.org>
-References: <20240813185625.535541-1-chantr4@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NB2WrZp+MezVvntEqQTBS73d5P3rzqVFNoduWhSep2vW/s1ltY2hHw67a9zyr1+NJylpjdvh5kQeaag6ASHlJjYCPNRFlPfbH5+P4k8BaCxypLCXi78fpW5YtyAGoE980pdrX7TPEVPPEJ5nF77BVDc2ULHx5K3X/HPweBxQNNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iaPV2Cg6; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723576157; x=1755112157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5yLTqYrEVFQBJuTrsiDLUVqVWQqyOnzlNTbvg0gBosQ=;
+  b=iaPV2Cg6Vk4UysQvw+uXX0bMJLss9PaSJtlbLUAUyiFLQzBNYYl4FnaW
+   WlsXZc7Ddu78802F9wYEbY2FSnpo3iEruTadffIBUUks+HLImUbAmLZXm
+   Vddfn1jESgXnAHZp9/7ZnzaqZTIymEJJWQnhukZwjOyrmarsw4lkH1RCV
+   XLp1yu9CT1ficnd01iKA77S3wUsJr6pmmyCh7BDcjlNloHVZ/+5l5NP1l
+   mGDEehRbRQfzmnpsJqErcEqliO68TVz3EZNRUPAlHXdbLpWWo2w4XJPke
+   1/RvVbQ0Y97wVwL9nXQS7vqgrYWiByvlvaC+Hcc/a1FjKMapFgJhs/QYy
+   g==;
+X-CSE-ConnectionGUID: g5b5cTQnT0mXXkQGDvvK3Q==
+X-CSE-MsgGUID: M3hGPMg2TDmf/p+yqo5VQQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="21907742"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="21907742"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 12:05:41 -0700
+X-CSE-ConnectionGUID: 6mYXJ2zMRLqwskgoE5g5gw==
+X-CSE-MsgGUID: h8E2xQ/tSUCvLL31HYqiLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="58754347"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 13 Aug 2024 12:05:37 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sdwpq-0000fW-1n;
+	Tue, 13 Aug 2024 19:05:34 +0000
+Date: Wed, 14 Aug 2024 03:05:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Elad Yifee <eladwf@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, eladwf@gmail.com, daniel@makrotopia.org,
+	Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+	Mark Lee <Mark-MC.Lee@mediatek.com>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Chen Lin <chen45464546@163.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH net v2] net: ethernet: mtk_eth_soc: fix memory leak in
+ LRO rings release
+Message-ID: <202408140256.AkgMaR7u-lkp@intel.com>
+References: <20240812152126.14598-1-eladwf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,38 +87,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240813185625.535541-1-chantr4@gmail.com>
+In-Reply-To: <20240812152126.14598-1-eladwf@gmail.com>
 
-On Tue, Aug 13, 2024 at 11:56:25AM -0700, Manu Bretelle wrote:
-> `__bpf_ops_sched_ext_ops` was missing the initialization of some struct
-> attributes.
-> With
-> https://lore.kernel.org/all/20240722183049.2254692-4-martin.lau@linux.dev/
-> every single attributes need to be initialized programs (like scx_layered)
-> will fail to load.
-> 
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_init not found in kernel, skipping it as it's set to zero
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_exit not found in kernel, skipping it as it's set to zero
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_prep_move not found in kernel, skipping it as it's set to zero
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_move not found in kernel, skipping it as it's set to zero
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_cancel_move not found in kernel, skipping it as it's set to zero
->   05:26:48 [INFO] libbpf: struct_ops layered: member cgroup_set_weight not found in kernel, skipping it as it's set to zero
->   05:26:48 [WARN] libbpf: prog 'layered_dump': BPF program load failed: unknown error (-524)
->   05:26:48 [WARN] libbpf: prog 'layered_dump': -- BEGIN PROG LOAD LOG --
->   attach to unsupported member dump of struct sched_ext_ops
->   processed 0 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak_states 0 mark_read 0
->   -- END PROG LOAD LOG --
->   05:26:48 [WARN] libbpf: prog 'layered_dump': failed to load: -524
->   05:26:48 [WARN] libbpf: failed to load object 'bpf_bpf'
->   05:26:48 [WARN] libbpf: failed to load BPF skeleton 'bpf_bpf': -524
->   Error: Failed to load BPF program
-> 
-> Signed-off-by: Manu Bretelle <chantr4@gmail.com>
+Hi Elad,
 
-Applied to sched_ext/for-6.12.
+kernel test robot noticed the following build errors:
 
-Thanks.
+[auto build test ERROR on net/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Elad-Yifee/net-ethernet-mtk_eth_soc-fix-memory-leak-in-LRO-rings-release/20240813-015755
+base:   net/main
+patch link:    https://lore.kernel.org/r/20240812152126.14598-1-eladwf%40gmail.com
+patch subject: [PATCH net v2] net: ethernet: mtk_eth_soc: fix memory leak in LRO rings release
+config: arm-randconfig-003-20240813 (https://download.01.org/0day-ci/archive/20240814/202408140256.AkgMaR7u-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240814/202408140256.AkgMaR7u-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408140256.AkgMaR7u-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c: In function 'mtk_rx_put_buff':
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:28: error: expected expression before 'unsigned'
+    1768 |                 free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
+         |                            ^~~~~~~~
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:17: error: too few arguments to function 'free_pages'
+    1768 |                 free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
+         |                 ^~~~~~~~~~
+   In file included from include/linux/xarray.h:16,
+                    from include/linux/radix-tree.h:21,
+                    from include/linux/idr.h:15,
+                    from include/linux/kernfs.h:12,
+                    from include/linux/sysfs.h:16,
+                    from include/linux/kobject.h:20,
+                    from include/linux/of.h:18,
+                    from drivers/net/ethernet/mediatek/mtk_eth_soc.c:9:
+   include/linux/gfp.h:372:13: note: declared here
+     372 | extern void free_pages(unsigned long addr, unsigned int order);
+         |             ^~~~~~~~~~
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:42: error: expected ';' before 'data'
+    1768 |                 free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
+         |                                          ^~~~
+         |                                          ;
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1767:9: warning: this 'else' clause does not guard... [-Wmisleading-indentation]
+    1767 |         else
+         |         ^~~~
+   drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:93: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'else'
+    1768 |                 free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
+         |                                                                                             ^
+>> drivers/net/ethernet/mediatek/mtk_eth_soc.c:1768:93: error: expected statement before ')' token
+
+
+vim +/unsigned +1768 drivers/net/ethernet/mediatek/mtk_eth_soc.c
+
+  1759	
+  1760	static void mtk_rx_put_buff(struct mtk_rx_ring *ring, void *data, bool napi)
+  1761	{
+  1762		if (ring->page_pool)
+  1763			page_pool_put_full_page(ring->page_pool,
+  1764						virt_to_head_page(data), napi);
+  1765		else if (ring->frag_size <= PAGE_SIZE)
+  1766			skb_free_frag(data);
+> 1767		else
+> 1768			free_pages(unsigned long)data, get_order(mtk_max_frag_size(ring->frag_size)));
+  1769	}
+  1770	
 
 -- 
-tejun
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
