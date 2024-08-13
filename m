@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-284983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD17C95079C
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:31:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90CBB9507B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:33:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDCAA1F21168
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B57941C21886
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D8719D893;
-	Tue, 13 Aug 2024 14:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B805E19D077;
+	Tue, 13 Aug 2024 14:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="Gvkp1tcb"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c2afW7Nj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27BE19D085;
-	Tue, 13 Aug 2024 14:29:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D6E125AC
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 14:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723559377; cv=none; b=LEF3yNFYB8OkGoiL2uQfoZm31nOCWLhb1IHqQP7Ly7xUmXnRBGobHvJ3N5P9JndUQl8uL1tEVbXU5IUlmitR94k1eNXU7QDAxe8IZO7Wo724va5cLgmwoFJT86Uypyp7K62qymMmnnkGkT/BAIxv19b/DEW8W8BenhdTz54XrYc=
+	t=1723559581; cv=none; b=MYIzgbNZ4Ho3kndt97vnY/MPNNE6a4M6b3AKgvjtyHG9TMj/xWGGQyjslTwaVJSll7eAMolmm6nAzz+cr6J/pRqJ7gkyi4jZ/YsJX9TNMIFX8es5t52pTMLVTtyhz4kHYWLTokMMDv+8Krv6OFTu90+r6DArMdirum64vDQfXb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723559377; c=relaxed/simple;
-	bh=vyM2fA16LJrP9OVcGZqbYqkThW+wMsHSi2s0W/9M4BI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bOG/JRK8sJxruAKYMt1L6MaEB7WsgnlnqwlPnHrRRHo1aZ5D7DRbSwZNLfcby0Sx/TcpWGvb8ASn9olvdiE+trmbYjBXZc0n2AuCWEAbghtfsnTGAc/k8Toe4yI2VHQXOoP+5ABQkDuzuYRBbv0tqQdopPBGpXFiXicGHIYHED4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=fail (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=Gvkp1tcb reason="signature verification failed"; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.2.0)
- id 04688625b4e6996d; Tue, 13 Aug 2024 16:29:26 +0200
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 3506C6A89B8;
-	Tue, 13 Aug 2024 16:29:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1723559366;
-	bh=vyM2fA16LJrP9OVcGZqbYqkThW+wMsHSi2s0W/9M4BI=;
-	h=From:Subject:Date;
-	b=Gvkp1tcbQ657HG2RBh4wWa2tRf4gI5g+2C2bqtrPvjWBjXzU9DY2XKDhhG3kQVbKa
-	 XQ9cjopxSgE0QlPJEtvAQyUctQfDmzjU+t/xbkLcUzppN0PxbEAZcw/kZDJi2bnOju
-	 89eYROzrTgRPYLvYENtzYb7z1+lOD60VaEPZjjuuiNwfLP3fSkmRIlYNo8rRAnT23W
-	 yj+znvNx25KPp40xywZhRo2kWsfbZd3c5zKMJOn9M8yM7tTduegKMmSQGjvZdXa5u3
-	 b5rTeK3MzderIuBK63ojIguucMaLl4Fv88emMqRq21lwauCADse2ONhNJ72YTXCqYH
-	 WhNsDpeOL5JSQ==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Peter =?ISO-8859-1?Q?K=E4stle?= <peter@piie.net>
-Subject:
- [PATCH v1 4/4] thermal: gov_bang_bang: Use governor_data to reduce overhead
-Date: Tue, 13 Aug 2024 16:29:11 +0200
-Message-ID: <2285575.iZASKD2KPV@rjwysocki.net>
-In-Reply-To: <1903691.tdWV9SEqCh@rjwysocki.net>
-References: <1903691.tdWV9SEqCh@rjwysocki.net>
+	s=arc-20240116; t=1723559581; c=relaxed/simple;
+	bh=yYmSADZI5opGeLzpfk5KFVFuK9V4rm2ESSze6SWYrc0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NhiwXQFNrXA3k2R45q3uMQ5ZBBvlpNy1sfH0zoiRR9RXSNWqZfJBuCMQHpSUs2lyo8BbYzTqV2l7gMSZZ8xplyWB9uqpWvW6kUUuzxUvHhLTOpY02oQURZ/OuLg0lHWH79HhvFs6Amn3FUH19HryyEo6aQwrseIwJUbxc52U0Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c2afW7Nj; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723559580; x=1755095580;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yYmSADZI5opGeLzpfk5KFVFuK9V4rm2ESSze6SWYrc0=;
+  b=c2afW7NjuV1h4pBiL5GFApql6tAe92jRjcM8+jvWs4GZ4reg2DRA5zLK
+   Ap0kSnhWjw80xBQ2H8roK8WfszwHOu+fMxNEc47lG9fihi18YjZRtXfti
+   weT3ErPs7Wk3yBEdDKUIzUfuGWuGErLylef9KML9kBjXYxJIWaFugOsPE
+   mMQnPZy66EPir3nYz1athmcRf9YLNK3HWIgACkfRJLb8xcfMG78VTVym8
+   BnWWcyTSMnXDl5sMIP3JjH4Fziln7j23STqPE5TtOg9X3CqWQznIBydg1
+   7ioiSgb1fxZvBJCmHKAAXDCHeEitb5jH8jkYJgQq+NZZf801gVSnvFzLI
+   g==;
+X-CSE-ConnectionGUID: aF3kJMsZTUGEXHO2QwoxiA==
+X-CSE-MsgGUID: T2n1q2P8T7eiVWgYREVrMQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="25490177"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="25490177"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 07:32:59 -0700
+X-CSE-ConnectionGUID: 96evE7TcQXy6fBhvy5nVQw==
+X-CSE-MsgGUID: JtW4SInQStyxOwsut3YheA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="58561914"
+Received: from mwiniars-desk2.ger.corp.intel.com (HELO intel.com) ([10.245.246.4])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 07:32:54 -0700
+Date: Tue, 13 Aug 2024 16:32:50 +0200
+From: Andi Shyti <andi.shyti@linux.intel.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Andi Shyti <andi.shyti@linux.intel.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/bridge: ti-sn65dsi83: use dev_err_probe when failing
+ to get panel bridge
+Message-ID: <ZrtuksiarZNS8L79@ashyti-mobl2.lan>
+References: <20240808-ti-sn65dsi83-dev_err_probe-v1-1-72417aa275ab@bootlin.com>
+ <ZrSfayN4U6Lk3UCj@ashyti-mobl2.lan>
+ <20240813101643.5bf8d245@booty>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: spam:low
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeeftddruddtvddgjeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftddtmdenucfjughrpefhvfevufffkfgjfhgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepvdffueeitdfgvddtudegueejtdffteetgeefkeffvdeftddttdeuhfegfedvjefhnecukfhppeduleehrddufeeirdduledrleegnecuufhprghmkfhppeduleehrddufeeirdduledrleegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepudelhedrudefiedrudelrdelgedphhgvlhhopehkrhgvrggthhgvrhdrlhhotggrlhhnvghtpdhmrghilhhfrhhomhepfdftrghfrggvlhculfdrucghhihsohgtkhhifdcuoehrjhifsehrjhifhihsohgtkhhirdhnvghtqedpnhgspghrtghpthhtohepiedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohep
- uggrnhhivghlrdhlvgiitggrnhhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtohepphgvthgvrhesphhiihgvrdhnvght
-X-DCC--Metrics: v370.home.net.pl 1024; Body=6 Fuz1=6 Fuz2=6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240813101643.5bf8d245@booty>
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Hi Luca,
 
-After running once, the for_each_trip_desc() loop in
-bang_bang_manage() is pure needless overhead because it is not going to
-make any changes unless a new cooling device has been bound to one of
-the trips in the thermal zone or the system is resuming from sleep.
+On Tue, Aug 13, 2024 at 10:16:43AM +0200, Luca Ceresoli wrote:
+> On Thu, 8 Aug 2024 11:35:23 +0100
+> Andi Shyti <andi.shyti@linux.intel.com> wrote:
+> > On Thu, Aug 08, 2024 at 12:26:14PM +0200, Luca Ceresoli wrote:
+> > > When devm_drm_of_get_bridge() fails, the probe fails silently. Use
+> > > dev_err_probe() instead to log an error or report the deferral reason,
+> > > whichever is applicable.
+> > > 
+> > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > ---
+> > >  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > index 57a7ed13f996..60b9f14d769a 100644
+> > > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > > @@ -606,7 +606,7 @@ static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+> > >  
+> > >  	panel_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
+> > >  	if (IS_ERR(panel_bridge))
+> > > -		return PTR_ERR(panel_bridge);
+> > > +		return dev_err_probe(dev, PTR_ERR(panel_bridge), "Failed to get panel bridge\n");  
+> > 
+> > patch looks good, but the message is a bit misleading. You are
+> > not failing to get the panel bridge, but you are failing to find
+> > a panel bridge in a DT node. Right?
+> 
+> As I can see from both the documentation and the code,
+> devm_drm_of_get_bridge() is really returning a pointer to a panel
+> bridge, potentially allocating and adding it in case it was not present
+> before. Navigating the device tree is only a part of what it does.
+> 
+> Do you think I am missing something?
 
-For this reason, make bang_bang_manage() set governor_data for the
-thermal zone and check it upfront to decide whether or not it needs to
-do anything.
+No, maybe it's me being a bit pedantic. In the sense that we are
+not really failing to get the panel, but most probably the panel
+is not installed. I'm not strong on this comment, though, so that
+feel free to add:
 
-However, governor_data needs to be reset in some cases to let
-bang_bang_manage() know that it should walk the trips again, so add an
-.update_tz() callback to the governor and make the core additionally
-invoke it during system resume.
+Reviewed-by: Andi Shyti <andi.shyti@linux.intel.com>
 
-To avoid affecting the other users of that callback unnecessarily, add
-a special notification reason for system resume, THERMAL_TZ_RESUME, and
-also pass it to __thermal_zone_device_update() called during system
-resume for consistency.
-
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/thermal/gov_bang_bang.c |   18 ++++++++++++++++++
- drivers/thermal/thermal_core.c  |    3 ++-
- include/linux/thermal.h         |    1 +
- 3 files changed, 21 insertions(+), 1 deletion(-)
-
-Index: linux-pm/drivers/thermal/gov_bang_bang.c
-===================================================================
---- linux-pm.orig/drivers/thermal/gov_bang_bang.c
-+++ linux-pm/drivers/thermal/gov_bang_bang.c
-@@ -86,6 +86,10 @@ static void bang_bang_manage(struct ther
- 	const struct thermal_trip_desc *td;
- 	struct thermal_instance *instance;
- 
-+	/* If the code below has run already, nothing needs to be done. */
-+	if (tz->governor_data)
-+		return;
-+
- 	for_each_trip_desc(tz, td) {
- 		const struct thermal_trip *trip = &td->trip;
- 
-@@ -107,11 +111,25 @@ static void bang_bang_manage(struct ther
- 				bang_bang_set_instance_target(instance, 0);
- 		}
- 	}
-+
-+	tz->governor_data = (void *)true;
-+}
-+
-+static void bang_bang_update_tz(struct thermal_zone_device *tz,
-+				enum thermal_notify_event reason)
-+{
-+	/*
-+	 * Let bang_bang_manage() know that it needs to walk trips after binding
-+	 * a new cdev and after system resume.
-+	 */
-+	if (reason == THERMAL_TZ_BIND_CDEV || reason == THERMAL_TZ_RESUME)
-+		tz->governor_data = NULL;
- }
- 
- static struct thermal_governor thermal_gov_bang_bang = {
- 	.name		= "bang_bang",
- 	.trip_crossed	= bang_bang_control,
- 	.manage		= bang_bang_manage,
-+	.update_tz	= bang_bang_update_tz,
- };
- THERMAL_GOVERNOR_DECLARE(thermal_gov_bang_bang);
-Index: linux-pm/drivers/thermal/thermal_core.c
-===================================================================
---- linux-pm.orig/drivers/thermal/thermal_core.c
-+++ linux-pm/drivers/thermal/thermal_core.c
-@@ -1692,7 +1692,8 @@ static void thermal_zone_device_resume(s
- 
- 	thermal_debug_tz_resume(tz);
- 	thermal_zone_device_init(tz);
--	__thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
-+	thermal_governor_update_tz(tz, THERMAL_TZ_RESUME);
-+	__thermal_zone_device_update(tz, THERMAL_TZ_RESUME);
- 
- 	complete(&tz->resume);
- 	tz->resuming = false;
-Index: linux-pm/include/linux/thermal.h
-===================================================================
---- linux-pm.orig/include/linux/thermal.h
-+++ linux-pm/include/linux/thermal.h
-@@ -55,6 +55,7 @@ enum thermal_notify_event {
- 	THERMAL_TZ_BIND_CDEV, /* Cooling dev is bind to the thermal zone */
- 	THERMAL_TZ_UNBIND_CDEV, /* Cooling dev is unbind from the thermal zone */
- 	THERMAL_INSTANCE_WEIGHT_CHANGED, /* Thermal instance weight changed */
-+	THERMAL_TZ_RESUME, /* Thermal zone is resuming after system sleep */
- };
- 
- /**
-
-
-
+Thanks,
+Andi
 
