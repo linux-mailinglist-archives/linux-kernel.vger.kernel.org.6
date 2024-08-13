@@ -1,245 +1,193 @@
-Return-Path: <linux-kernel+bounces-285330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92886950C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:24:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B677950C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 20:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4ABAD2857C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:24:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49575285782
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265ED1A38D7;
-	Tue, 13 Aug 2024 18:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C021A38DD;
+	Tue, 13 Aug 2024 18:26:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Il/l47X3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pa4Li6Uk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56EB91A2560
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 18:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E7935894;
+	Tue, 13 Aug 2024 18:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723573478; cv=none; b=huSoqa0djJrRCJrRPUjP8M9MVCEGZn1VFFa92OpQzwC7k7nQkd63oZEuvyvtJnvsiHFbou3gpcDsH1PX/u+Fl1KnvkPNfzSDG7CIiXtrByjEvHUR3ImOK+WtMHUMzA/lm0HqkLTXXs0jYVgmbz3HWy7xNo2nN1PPPKTyRaXGxSo=
+	t=1723573563; cv=none; b=dmKWvE4irQig/00E5enjqgIJgtBTSReg77zFXttRn0xJAb88rHRKC5ebZhyQlAn5nHKOuRvRyxLD+/ZMQgY6gdHGUU5eQFai+XzmNja3/Eu4s4V99npAPKJR/XT9EWJl9P9OvBzP/R95zpbjhbXrjuSRBQPSpreQNWIsTpKjjJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723573478; c=relaxed/simple;
-	bh=Wf89HB0JuBuXM/v6zgDf4chaaOhtvYYLu8c84Gc4k5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F7bON2Yxw2U5l+mhMx4QQaeuruIOXbv2XKIS7/HM/PqHXvLd8nILBXlQa8O2esTct2s1YH+2sydxRIK7mpBnqixIVz/18Y3BfwuqBSS55HJJBsZx3rFP5uDMr/ua8bftE+yid69bncOprTLi89IcqN2IkNTTkL3kJ0WFDgJBMHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Il/l47X3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1723573475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZjeRpoHvIJg5MafdM5/VBNm6LQMFYWDnbQpg1j0Ad4c=;
-	b=Il/l47X3xu0mM3gJc7z5lDefoC4QL8xh8knW44aTg5lL2vgbBJ1R72kU+0MKsgfBrrP5RH
-	WpNrmKdFoLcVg2z8ksLEs0OF5WogAj/SX4foJg+3L5s8cimZR31efJuljxAjXv3yyTDDqY
-	Q0+9spn+R3JuONW1LaU4U/rNajPien8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-20-Gu2X6rZNPP6Xwvztoi3viw-1; Tue,
- 13 Aug 2024 14:24:16 -0400
-X-MC-Unique: Gu2X6rZNPP6Xwvztoi3viw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 25BCC1925388;
-	Tue, 13 Aug 2024 18:24:10 +0000 (UTC)
-Received: from [10.2.16.208] (unknown [10.2.16.208])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C4FA619560A3;
-	Tue, 13 Aug 2024 18:24:00 +0000 (UTC)
-Message-ID: <6ca76824-331f-407f-afa6-bf75cdca6d96@redhat.com>
-Date: Tue, 13 Aug 2024 14:23:57 -0400
+	s=arc-20240116; t=1723573563; c=relaxed/simple;
+	bh=X/RhGHI5I+eLq6MIzW8PFCsIaPH0gvXDQbvnvsDnvcA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RAJgQl5oa5q1n62WGc3ps9KpTXoMeQwmu6PRNl0kQiSYX3xEb6UXYLAk6yfJP43B1wPmjleEygqNqWmccI/X5Sl7rR2+dV4GfYox/fNJC7eW1niC3abwHOewWA+JTuwy8Ebw9nANUJ9BN3kbklcPjaNXcQOORGebJLsY3ET0stU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pa4Li6Uk; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723573561; x=1755109561;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=X/RhGHI5I+eLq6MIzW8PFCsIaPH0gvXDQbvnvsDnvcA=;
+  b=Pa4Li6UkzBy4SZVMcbnC6qoKCUzh0AfrPdgZwavUwLCN6fsrqc6MHfJ3
+   j42IiizXf3JT+rObmSVG1+Phlhzuhl1dJDugHMBCx8LzjkgVAR2JqNYKm
+   o1+KaUnZKrrUT3FnVYoKNhFvDQqLQJg/PTWXhuupH5vG0chkkyC33pHUK
+   tmkq5pO0VTaVHzoTT42dhWWzR2PFKVNHrPuhci22BZEae31ZFHq3BAomg
+   OnFGpaGlTqiHwAIGlw/m1Ge+Ama+XAcrs54h2H9b2jmBIvpRrgyA+7nWx
+   WPNEV0tKkO7VaJorV7FbKdF2MkiRB4kGsyFKhPwUSki1T6npGK8O72Fls
+   Q==;
+X-CSE-ConnectionGUID: qkPbto2lQRKk6Ow1qQywUA==
+X-CSE-MsgGUID: 5ScsTmddRoKCA1jL9uKAtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11163"; a="24667184"
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="24667184"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 11:26:00 -0700
+X-CSE-ConnectionGUID: 2lInno0gQNyovCmc8izrWg==
+X-CSE-MsgGUID: M7AtvTALT/2ewlxSO+v4vA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,286,1716274800"; 
+   d="scan'208";a="62911307"
+Received: from cmdeoliv-mobl.amr.corp.intel.com (HELO localhost) ([10.125.109.241])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 11:25:59 -0700
+From: Ira Weiny <ira.weiny@intel.com>
+Date: Tue, 13 Aug 2024 13:25:57 -0500
+Subject: [PATCH] cxl/region: Remove lock from memory notifier callback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] Docs/admin-guide/mm/workingset_report: document
- sysfs and memcg interfaces
-To: Yuanchu Xie <yuanchu@google.com>, David Hildenbrand <david@redhat.com>,
- "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
- Khalid Aziz <khalid.aziz@oracle.com>, Henry Huang <henry.hj@antgroup.com>,
- Yu Zhao <yuzhao@google.com>, Dan Williams <dan.j.williams@intel.com>,
- Gregory Price <gregory.price@memverge.com>, Huang Ying
- <ying.huang@intel.com>, Andrew Morton <akpm@linux-foundation.org>,
- Lance Yang <ioworker0@gmail.com>, Randy Dunlap <rdunlap@infradead.org>,
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: Kalesh Singh <kaleshsingh@google.com>, Wei Xu <weixugc@google.com>,
- David Rientjes <rientjes@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Johannes Weiner
- <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Shuah Khan <shuah@kernel.org>,
- Yosry Ahmed <yosryahmed@google.com>, Matthew Wilcox <willy@infradead.org>,
- Sudarshan Rajagopalan <quic_sudaraja@quicinc.com>,
- Kairui Song <kasong@tencent.com>, "Michael S. Tsirkin" <mst@redhat.com>,
- Vasily Averin <vasily.averin@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
- Miaohe Lin <linmiaohe@huawei.com>, Qi Zheng <zhengqi.arch@bytedance.com>,
- Abel Wu <wuyun.abel@bytedance.com>,
- "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, cgroups@vger.kernel.org, linux-kselftest@vger.kernel.org
-References: <20240813165619.748102-1-yuanchu@google.com>
- <20240813165619.748102-8-yuanchu@google.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240813165619.748102-8-yuanchu@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Message-Id: <20240813-fix-notifiers-v1-1-efd23a18688d@intel.com>
+X-B4-Tracking: v=1; b=H4sIADSlu2YC/x2MSwqAIBQAryJvneAvyK4SLcye9TYaGhGId09aD
+ sxMhYKZsMDMKmR8qFCKHeTAwJ8uHshp7wxKKCMmqXmgl8d0UyDMhVvr9Sg2YYxT0JsrYxf+37K
+ 29gGjqmAJXwAAAA==
+To: Davidlohr Bueso <dave@stgolabs.net>, 
+ Jonathan Cameron <jonathan.cameron@huawei.com>, 
+ Dave Jiang <dave.jiang@intel.com>, 
+ Alison Schofield <alison.schofield@intel.com>, 
+ Vishal Verma <vishal.l.verma@intel.com>, 
+ Dan Williams <dan.j.williams@intel.com>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ira Weiny <ira.weiny@intel.com>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1723573557; l=3584;
+ i=ira.weiny@intel.com; s=20221211; h=from:subject:message-id;
+ bh=X/RhGHI5I+eLq6MIzW8PFCsIaPH0gvXDQbvnvsDnvcA=;
+ b=Yxcp83IkiNMm99+GDSIQ1nNY/qPVzEw6VjRRKYBrVO2ZPhu++AfM5J2N1Hq4Vx6WQrUSaECGs
+ H1h/l6a9n/uD8UdGZfN0x8KqMzMZMmCcMM4NBXVDY9soSZCzrDYhmus
+X-Developer-Key: i=ira.weiny@intel.com; a=ed25519;
+ pk=noldbkG+Wp1qXRrrkfY1QJpDf7QsOEthbOT7vm0PqsE=
 
+In testing Dynamic Capacity Device (DCD) support, a lockdep splat
+revealed an ABBA issue between the memory notifiers and the DCD extent
+processing code.[0]  Changing the lock ordering within DCD proved
+difficult because regions must be stable while searching for the proper
+region and then the device lock must be held to properly notify the DAX
+region driver of memory changes.
 
-On 8/13/24 12:56, Yuanchu Xie wrote:
-> Add workingset reporting documentation for better discoverability of
-> its sysfs and memcg interfaces. Also document the required kernel
-> config to enable workingset reporting.
->
-> Change-Id: Ib9dfc9004473baa6ef26ca7277d220b6199517de
-> Signed-off-by: Yuanchu Xie <yuanchu@google.com>
-> ---
->   Documentation/admin-guide/mm/index.rst        |   1 +
->   .../admin-guide/mm/workingset_report.rst      | 105 ++++++++++++++++++
+Dan points out in the thread that notifiers should be able to trust that
+it is safe to access static data.  Region data is static once the device
+is realized and until it's destruction.  Thus it is better to manage the
+notifiers within the region driver.
 
-The new memory cgroup control files need to be documented in 
-Documentation/admin-guide/cgroup-v2.rst as well.
+Remove the need for a lock by ensuring the notifiers are active only
+during the region's lifetime.
 
-Cheers,
-Longman
+Link: https://lore.kernel.org/all/66b4cf539a79b_a36e829416@iweiny-mobl.notmuch/ [0]
+Cc: Huang, Ying <ying.huang@intel.com>
+Suggested-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+---
+ drivers/cxl/core/region.c | 31 ++++++++++++++++++++-----------
+ 1 file changed, 20 insertions(+), 11 deletions(-)
 
->   2 files changed, 106 insertions(+)
->   create mode 100644 Documentation/admin-guide/mm/workingset_report.rst
->
-> diff --git a/Documentation/admin-guide/mm/index.rst b/Documentation/admin-guide/mm/index.rst
-> index 8b35795b664b..61a2a347fc91 100644
-> --- a/Documentation/admin-guide/mm/index.rst
-> +++ b/Documentation/admin-guide/mm/index.rst
-> @@ -41,4 +41,5 @@ the Linux memory management.
->      swap_numa
->      transhuge
->      userfaultfd
-> +   workingset_report
->      zswap
-> diff --git a/Documentation/admin-guide/mm/workingset_report.rst b/Documentation/admin-guide/mm/workingset_report.rst
-> new file mode 100644
-> index 000000000000..ddcc0c33a8df
-> --- /dev/null
-> +++ b/Documentation/admin-guide/mm/workingset_report.rst
-> @@ -0,0 +1,105 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=================
-> +Workingset Report
-> +=================
-> +Workingset report provides a view of memory coldness in user-defined
-> +time intervals, i.e. X bytes are Y milliseconds cold. It breaks down
-> +the user pages in the system per-NUMA node, per-memcg, for both
-> +anonymous and file pages into histograms that look like:
-> +::
-> +
-> +    1000 anon=137368 file=24530
-> +    20000 anon=34342 file=0
-> +    30000 anon=353232 file=333608
-> +    40000 anon=407198 file=206052
-> +    9223372036854775807 anon=4925624 file=892892
-> +
-> +The workingset reports can be used to drive proactive reclaim, by
-> +identifying the number of cold bytes in a memcg, then writing to
-> +``memory.reclaim``.
-> +
-> +Quick start
-> +===========
-> +Build the kernel with the following configurations. The report relies
-> +on Multi-gen LRU for page coldness.
-> +
-> +* ``CONFIG_LRU_GEN=y``
-> +* ``CONFIG_LRU_GEN_ENABLED=y``
-> +* ``CONFIG_WORKINGSET_REPORT=y``
-> +
-> +Optionally, the aging kernel daemon can be enabled with the following
-> +configuration.
-> +* ``CONFIG_WORKINGSET_REPORT_AGING=y``
-> +
-> +Sysfs interfaces
-> +================
-> +``/sys/devices/system/node/nodeX/workingset_report/page_age`` provides
-> +a per-node page age histogram, showing an aggregate of the node's lruvecs.
-> +Reading this file causes a hierarchical aging of all lruvecs, scanning
-> +pages and creates a new Multi-gen LRU generation in each lruvec.
-> +For example:
-> +::
-> +
-> +    1000 anon=0 file=0
-> +    2000 anon=0 file=0
-> +    100000 anon=5533696 file=5566464
-> +    18446744073709551615 anon=0 file=0
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/page_age_intervals``
-> +is a comma separated list of time in milliseconds that configures what
-> +the page age histogram uses for aggregation. For the above histogram,
-> +the intervals are:
-> +::
-> +    1000,2000,100000
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/refresh_interval``
-> +defines the amount of time the report is valid for in milliseconds.
-> +When a report is still valid, reading the ``page_age`` file shows
-> +the existing valid report, instead of generating a new one.
-> +
-> +``/sys/devices/system/node/nodeX/workingset_report/report_threshold``
-> +specifies how often the userspace agent can be notified for node
-> +memory pressure, in milliseconds. When a node reaches its low
-> +watermarks and wakes up kswapd, programs waiting on ``page_age`` are
-> +woken up so they can read the histogram and make policy decisions.
-> +
-> +Memcg interface
-> +===============
-> +While ``page_age_interval`` is defined per-node in sysfs, ``page_age``,
-> +``refresh_interval`` and ``report_threshold`` are available per-memcg.
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.page_age``
-> +The memcg equivalent of the sysfs workingset page age histogram
-> +breaks down the workingset of this memcg and its children into
-> +page age intervals. Each node is prefixed with a node header and
-> +a newline. Non-proactive direct reclaim on this memcg can also
-> +wake up userspace agents that are waiting on this file.
-> +e.g.
-> +::
-> +
-> +    N0
-> +    1000 anon=0 file=0
-> +    2000 anon=0 file=0
-> +    3000 anon=0 file=0
-> +    4000 anon=0 file=0
-> +    5000 anon=0 file=0
-> +    18446744073709551615 anon=0 file=0
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.refresh_interval``
-> +The memcg equivalent of the sysfs refresh interval. A per-node
-> +number of how much time a page age histogram is valid for, in
-> +milliseconds.
-> +e.g.
-> +::
-> +
-> +    echo N0=2000 > memory.workingset.refresh_interval
-> +
-> +``/sys/fs/cgroup/.../memory.workingset.report_threshold``
-> +The memcg equivalent of the sysfs report threshold. A per-node
-> +number of how often userspace agent waiting on the page age
-> +histogram can be woken up, in milliseconds.
-> +e.g.
-> +::
-> +
-> +    echo N0=1000 > memory.workingset.report_threshold
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 21ad5f242875..971a314b6b0e 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -2313,8 +2313,6 @@ static void unregister_region(void *_cxlr)
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	int i;
+ 
+-	unregister_memory_notifier(&cxlr->memory_notifier);
+-	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
+ 	device_del(&cxlr->dev);
+ 
+ 	/*
+@@ -2396,7 +2394,6 @@ static int cxl_region_nid(struct cxl_region *cxlr)
+ 	struct cxl_region_params *p = &cxlr->params;
+ 	struct resource *res;
+ 
+-	guard(rwsem_read)(&cxl_region_rwsem);
+ 	res = p->res;
+ 	if (!res)
+ 		return NUMA_NO_NODE;
+@@ -2484,14 +2481,6 @@ static struct cxl_region *devm_cxl_add_region(struct cxl_root_decoder *cxlrd,
+ 	if (rc)
+ 		goto err;
+ 
+-	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
+-	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
+-	register_memory_notifier(&cxlr->memory_notifier);
+-
+-	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
+-	cxlr->adist_notifier.priority = 100;
+-	register_mt_adistance_algorithm(&cxlr->adist_notifier);
+-
+ 	rc = devm_add_action_or_reset(port->uport_dev, unregister_region, cxlr);
+ 	if (rc)
+ 		return ERR_PTR(rc);
+@@ -3386,6 +3375,14 @@ static int is_system_ram(struct resource *res, void *arg)
+ 	return 1;
+ }
+ 
++static void shutdown_notifiers(void *_cxlr)
++{
++	struct cxl_region *cxlr = _cxlr;
++
++	unregister_memory_notifier(&cxlr->memory_notifier);
++	unregister_mt_adistance_algorithm(&cxlr->adist_notifier);
++}
++
+ static int cxl_region_probe(struct device *dev)
+ {
+ 	struct cxl_region *cxlr = to_cxl_region(dev);
+@@ -3418,6 +3415,18 @@ static int cxl_region_probe(struct device *dev)
+ out:
+ 	up_read(&cxl_region_rwsem);
+ 
++	if (rc)
++		return rc;
++
++	cxlr->memory_notifier.notifier_call = cxl_region_perf_attrs_callback;
++	cxlr->memory_notifier.priority = CXL_CALLBACK_PRI;
++	register_memory_notifier(&cxlr->memory_notifier);
++
++	cxlr->adist_notifier.notifier_call = cxl_region_calculate_adistance;
++	cxlr->adist_notifier.priority = 100;
++	register_mt_adistance_algorithm(&cxlr->adist_notifier);
++
++	rc = devm_add_action_or_reset(&cxlr->dev, shutdown_notifiers, cxlr);
+ 	if (rc)
+ 		return rc;
+ 
+
+---
+base-commit: afdab700f65e14070d8ab92175544b1c62b8bf03
+change-id: 20240813-fix-notifiers-99c350b044a2
+
+Best regards,
+-- 
+Ira Weiny <ira.weiny@intel.com>
 
 
