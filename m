@@ -1,75 +1,39 @@
-Return-Path: <linux-kernel+bounces-285170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 855FB950A17
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC670950A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7E70B27757
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:26:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57CC41F235D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940BF1A0B0F;
-	Tue, 13 Aug 2024 16:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwkJ40gF"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3319B61FCF;
-	Tue, 13 Aug 2024 16:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB0AB61FCF;
+	Tue, 13 Aug 2024 16:26:15 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBCF1A0B05;
+	Tue, 13 Aug 2024 16:26:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723566368; cv=none; b=m3oLGvawjWYhZ5TpyKFRRUdsSGcJwM7R48x1n17TRur1Qkc78ioFhukOtcQr9atap9WhnGkmfzU6OrAFDtF7ZhGe8u1cjfBumW5g9v3i1uJOBPnJGLBcktsgROBBfmUX3clCRzDeXI6g3l5S4c0yujy13EW7CjBYAY0cl+vg54Y=
+	t=1723566375; cv=none; b=cPmrn9X5GzNIAFP3cK08oiYm8SbVfAVx5wjhpyIA8hK2fwJpx9sQnYfgeOdVwfDvEp0IRQAoTHShQPRltLKZ50JLkiaGEmocMsmORP9QoPKoPghE3SHmfKCQKHPD5hmQJD6HD7LOxYXIOggIGv+wCcj75zyBnWH+GJaGY7koiCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723566368; c=relaxed/simple;
-	bh=agXT0dZl4Uk71PG6PzHE1NGe13Bgoa22tCvbIL+B4yM=;
+	s=arc-20240116; t=1723566375; c=relaxed/simple;
+	bh=CIdIywtMybE4qzk2fc4+X7ax6VAHi/2wrUQv7J5GpyM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y4XeZ05ILQWfsJT8u99ovegXbddFl23+ujqGh6oxevqN5y0oiqXNlnKCMlWZrh8VIPpMFTtcJwHn45IUbbELcGd3uAVLDgD0kPu06LfdqxV3R5oXi/tpPQbQOp/wGvx8R7XvbLWTb97pkjpKwF1qIZwbI3UDst0EqAFl2LiBIeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwkJ40gF; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2cb5787b4a5so3734216a91.2;
-        Tue, 13 Aug 2024 09:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723566366; x=1724171166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=TnY46YJjqTmhw3pbEcy+36BXHkNWaIA0UMO/jVkxsmw=;
-        b=SwkJ40gFg6NTsEqPRMhDbqmZbMKsZ8ef8RMxp1gWuECsphN6KCturMH52QV9Hp8sXp
-         ZEIJGZyo20dAyKKTegezNI3zV1yxZAqW60sWXyXETDghTnJgqb9H1g5fsZM1lhPemQZ5
-         7j43KtPuVKH+kZ8YLi3HO4Yo2Y9jglpCIX+ULXhaxelWFyDoFezA4lOfXsnttbZvO58D
-         LJh00N+4kt+FSfEXV51IPxUVQnLUWP0h29BAM+FIKvjM+hsi2asrv+tNJcYOU0RgYLVu
-         nutL8bFlDVXXzjGg5fBPNXC6HhfToW/vHsR4JsPM6SK5UwqzhOsEoec7vke+Un0n7MYc
-         hy1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723566366; x=1724171166;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TnY46YJjqTmhw3pbEcy+36BXHkNWaIA0UMO/jVkxsmw=;
-        b=TBQKe2FY4gTzAgVtpvu/bplP4Ewh1AgLM9yV/r6/etXVIsnuhAJlWc7xlIMpHavjaz
-         LqMv/qeyKlUo0lcvsuK+SNomfqscKM4irmPv9lSRIxPYH22JJ+LDzSfo4Qt5grNtvU0g
-         maW1Kql6rP7Zc37F3v9jNNqZttW+gcMVIp47iQhAOzDUTEYVCDCM/oyA6VnlWkidFN7A
-         h63PEvAr5ovxDC/bU26Kq/jGmbLD74C629nazV0eBGOL3ruFpKv8Z3l/QJ6nNkB0Z0p4
-         0oavpZmv5GUU0e1j/nPvEB7yTuUbhDxbFARXnynRU+G6KV8p64dV7yaet59OdKDjhkNH
-         hMLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUu3db2X8Pr5wm/2El9j2hzCzAJt9SlL3uSQ31uacp8ZhP/fm9Lm+IOsheZjCXcTdKfsprXEeb8Ovdo5YIcFGNC6emD8kMlKYJQYS3+CMqSsfU5O4kndGiA9WvWZyL3B6ya3t8MfJnAAvMUHnLMiG0YPo87
-X-Gm-Message-State: AOJu0Yy6Q6v4L9j8ne7nHeSxewIvT6WS51yH8mkp2oOG810uh+zlSM0Y
-	eepB/qs+gYHNw0DoQj37+ARdan0+x6JioY7wtj36sll7qxAa9J1L
-X-Google-Smtp-Source: AGHT+IFQsWEvwruURKGXG4BhEe1HJ5Noha5qeeaZru71+xTTFp8sFwIUKSMFGHemyWTcJsx4dnA/iA==
-X-Received: by 2002:a17:90b:4b03:b0:2c9:81a2:e8da with SMTP id 98e67ed59e1d1-2d3aab79c8dmr4042a91.35.1723566365447;
-        Tue, 13 Aug 2024 09:26:05 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9ca749csm10685543a91.35.2024.08.13.09.26.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 09:26:04 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <f088987e-32d5-4a86-808e-6cfc372c3c80@roeck-us.net>
-Date: Tue, 13 Aug 2024 09:26:02 -0700
+	 In-Reply-To:Content-Type; b=H0sM340QuQu+BS8mttyKwsWhz7AjoF4ODJaz2mx+a2GZ2oJnxv8ZuVoQ2X2KbAxeS/tmKPoeUbFOb3x9K7JWkhCJKVAZpNADn122O42a0TM+jH3ghqpWuFqZRU2GL/DV2jP4qqcTGCsE4X5SNGeMqHqKvGz+/bGKttGfQ9egzWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A01F12FC;
+	Tue, 13 Aug 2024 09:26:38 -0700 (PDT)
+Received: from [10.57.84.20] (unknown [10.57.84.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9C00A3F6A8;
+	Tue, 13 Aug 2024 09:26:09 -0700 (PDT)
+Message-ID: <bfcd8175-c6bc-41a2-8ee9-93061e446c40@arm.com>
+Date: Tue, 13 Aug 2024 17:26:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,121 +41,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, Nathan Chancellor <nathan@kernel.org>,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- bp@alien8.de, sfr@canb.auug.org.au, peterz@infradead.org,
- ink@jurassic.park.msu.ru, richard.henderson@linaro.org
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net>
- <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
- <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net>
- <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
- <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
- <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
- <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
- <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
- <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
- <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
- <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
+Subject: Re: [PATCH v7] sched: Consolidate cpufreq updates
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
+ Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Valentin Schneider <vschneid@redhat.com>, Hongyan Xia
+ <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240728184551.42133-1-qyousef@layalina.io>
+ <ca6b1db0-37d9-462e-87e4-d3bbd5eec7a3@arm.com>
+ <CAKfTPtBWLe4hMBhJeSqvoW10dAF3Bgj+zcYGMgBfwUhkgytkEQ@mail.gmail.com>
+ <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CACYkzJ4eZWh2R_ZoeiNLLKFARWJOWo7Hkdp015fHEnmYLJaHGQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <CAKfTPtAJNjUe=4eQxq0M6==6O7dtJrw6rtwE6-xaWMJdSmfKcA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 8/13/24 08:56, KP Singh wrote:
-> On Tue, Aug 13, 2024 at 6:08 AM Guenter Roeck <linux@roeck-us.net> wrote:
-[ ... ]
->> A somewhat primitive alternate fix is:
+On 8/13/24 09:27, Vincent Guittot wrote:
+> On Tue, 13 Aug 2024 at 10:25, Vincent Guittot
+> <vincent.guittot@linaro.org> wrote:
 >>
->> diff --git a/security/security.c b/security/security.c
->> index aa059d0cfc29..dea9736b2014 100644
->> --- a/security/security.c
->> +++ b/security/security.c
->> @@ -156,7 +156,7 @@ static __initdata struct lsm_info *exclusive;
->>     * and a trampoline (STATIC_CALL_TRAMP) which are used to call
->>     * __static_call_update when updating the static call.
->>     */
->> -struct lsm_static_calls_table static_calls_table __ro_after_init = {
->> +struct lsm_static_calls_table static_calls_table __ro_after_init __attribute__((aligned(8))) = {
->>    #define INIT_LSM_STATIC_CALL(NUM, NAME)                                        \
+>> On Mon, 5 Aug 2024 at 17:35, Christian Loehle <christian.loehle@arm.com> wrote:
+>>>
+>>> On 7/28/24 19:45, Qais Yousef wrote:
+>>>> Improve the interaction with cpufreq governors by making the
+>>>> cpufreq_update_util() calls more intentional.
+>>>>
+>>>> At the moment we send them when load is updated for CFS, bandwidth for
+>>>> DL and at enqueue/dequeue for RT. But this can lead to too many updates
+>>>> sent in a short period of time and potentially be ignored at a critical
+>>>> moment due to the rate_limit_us in schedutil.
+>>>>
+>>>> For example, simultaneous task enqueue on the CPU where 2nd task is
+>>>> bigger and requires higher freq. The trigger to cpufreq_update_util() by
+>>>> the first task will lead to dropping the 2nd request until tick. Or
+>>>> another CPU in the same policy triggers a freq update shortly after.
+>>>>
+>>>> Updates at enqueue for RT are not strictly required. Though they do help
+>>>> to reduce the delay for switching the frequency and the potential
+>>>> observation of lower frequency during this delay. But current logic
+>>>> doesn't intentionally (at least to my understanding) try to speed up the
+>>>> request.
+>>>>
+>>>> To help reduce the amount of cpufreq updates and make them more
+>>>> purposeful, consolidate them into these locations:
+>>>>
+>>>> 1. context_switch()
+>>>> 2. task_tick_fair()
+>>>> 3. sched_balance_update_blocked_averages()
+>>>> 4. on sched_setscheduler() syscall that changes policy or uclamp values
+>>>> 5. on check_preempt_wakeup_fair() if wakeup preemption failed
+>>>> 6. on __add_running_bw() to guarantee DL bandwidth requirements.
+>>>>
+>>>> The update at context switch should help guarantee that RT get the right
+>>>> frequency straightaway when they're RUNNING. As mentioned though the
+>>>> update will happen slightly after enqueue_task(); though in an ideal
+>>>> world these tasks should be RUNNING ASAP and this additional delay
+>>>> should be negligible. For fair tasks we need to make sure we send
+>>>> a single update for every decay for the root cfs_rq. Any changes to the
+>>>> rq will be deferred until the next task is ready to run, or we hit TICK.
+>>>> But we are guaranteed the task is running at a level that meets its
+>>>> requirements after enqueue.
+>>>>
+>>>> To guarantee RT and DL tasks updates are never missed, we add a new
+>>>> SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
+>>>> already running at the right freq, the governor will end up doing
+>>>> nothing, but we eliminate the risk of the task ending up accidentally
+>>>> running at the wrong freq due to rate_limit_us.
+>>>>
+>>>> Similarly for iowait boost, we ignore rate limits. We also handle a case
+>>>> of a boost reset prematurely by adding a guard in sugov_iowait_apply()
+>>>> to reduce the boost after 1ms which seems iowait boost mechanism relied
+>>>> on rate_limit_us and cfs_rq.decayed preventing any updates to happen
+>>>> soon after iowait boost.
+>>>>
+>>>> The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
+>>>> time stamps otherwise we can end up delaying updates for normal
+>>>> requests.
+>>>
+>>> Hi Qais,
+>>> the idea of SCHED_CPUFREQ_FORCE_UPDATE and the possiblity of spamming
+>>> freq updates still bothered me so let me share my thoughts even though
+>>> it might be niche enough for us not to care.
+>>>
+>>> 1. On fast_switch systems, assuming they are fine with handling the
+>>> actual updates, we have a bit more work on each context_switch() and
+>>> some synchronisation, too. That should be fine, if anything there's
+>>> some performance regression in a couple of niche cases.
+>>>
+>>> 2. On !fast_switch systems this gets more interesting IMO. So we have
+>>> a sugov DEADLINE task wakeup for every (in a freq-diff resulting)
+>>> update request. This task will preempt whatever and currently will
+>>> pretty much always be running on the CPU it ran last on (so first CPU
+>>> of the PD).
+>>
+>> The !fast_switch is a bit of concern for me too but not for the same
+>> reason and maybe the opposite of yours IIUC your proposal below:
+>>
+>> With fast_switch we have the following sequence:
+>>
+>> sched_switch() to task A
+>> cpufreq_driver_fast_switch -> write new freq target
+>> run task A
+>>
+>> This is pretty straight forward but we have the following sequence
+>> with !fast_switch
+>>
+>> sched_switch() to task A
+>> queue_irq_work -> raise an IPI on local CPU
+>> Handle IPI -> wakeup and queue sugov dl worker on local CPU (always
+>> with 1 CPU per PD)
+>> sched_switch() to sugov dl task
+>> __cpufreq_driver_target() which can possibly block on a lock
+>> sched_switch() to task A
+>> run task A
+>>
 > 
-> I think it's worth making it aligned at 8 byte, a much simpler fix
-> than the arch change. Paul, I will rebase my series with these
-> patches, better descriptions and post them later today.
+> sent a bit too early
 > 
+>> We can possibly have 2 context switch and one IPi for each "normal"
+>> context switch which is not really optimal
+> 
+> It would be good to find a way to skip the spurious back and forth
+> between the normal task and sugov
 
-I think that would make sense, since it might well be that other architectures
-have similar problems but it isn't seen because static_calls_table just happens
-to be aligned properly there. Also, even if unaligned accesses that early were
-supported, it is probably undesirable to have those in the running code if it
-can be avoided due to the overhead involved.
+Just to confirm I understand your concern correctly, that's more or
+less the behavior without Qais' patch as well though, isn't it?
+Ignoring the move from "This happens at enqueue" vs. "this
+happens at context switch".
+Since sugov doesn't queue any work if the desired frequency doesn't
+change I imagine it's not too bad?
+Or are you more concerned that the work is queued multiple times
+simultaneously for multiple CPUs of the same PD? If so we can
+work around that with the work_in_progress state to at least limit
+that window by a lot.
 
-With the above change:
-
-Build results:
-	total: 158 pass: 158 fail: 0
-Qemu test results:
-	total: 539 pass: 539 fail: 0
-Unit test results:
-	pass: 370886 fail: 3
-
-There are a couple of caveats, unrelated to your patch series:
-- I can not enable (and thus not test) security configurations
-   on sh4 and sh4eb; doing so results in immediate qemu crashes.
-- I can not enable / test security configurations on riscv32
-   since it results in kernel images getting too large to fit
-   into the available memory. I'll try to work around it,
-   but for now I can only test with riscv64.
-
-Guenter
-
+[snip]
 
