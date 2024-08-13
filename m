@@ -1,252 +1,121 @@
-Return-Path: <linux-kernel+bounces-284065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93D094FC8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:08:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F1E94FC8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D022826CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:08:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E73282B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 04:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765F71CAA6;
-	Tue, 13 Aug 2024 04:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517ED1CD16;
+	Tue, 13 Aug 2024 04:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NqmuzGRa"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pttmDIC3"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86671BF3A;
-	Tue, 13 Aug 2024 04:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A98A1BF3A
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 04:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723522081; cv=none; b=W2iQnI0Y7gRbNH6DrIovMvg5BWpHCgnWrp6lO15NwihSiSGWoREC1idVlp664RrrCQUuy7yqf617QWmd7ppU7VgW+V75MCEdFsrHo2BPpm7F2b4kSTBxKBb8E38ud/qloE1wVKwBkdc7+BMMZ8xRt9ToJvym0Bqnbb/ni959bes=
+	t=1723522123; cv=none; b=Mw7NoGC5f7L50CjvJVZ3cpaPyHWzki89v26TE2An2UbLjso6Wje4mZBKFEYSJfWck2tmiT8NalXhcpqdU9kIz4yL4ee70ag/VLAOymxaOzbip1t+HEAuUof/MlFG1+4XUi7MyNLGdZBxcNjWk/LZDyMlRvxn6ooRX7W4Lt2uHHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723522081; c=relaxed/simple;
-	bh=0FHwdFo1cbfd/xpppN57qHU6RywVoM+hW6prsLErDjo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SDaGZ8UXTRCTrLkdKwrG/DFGMr1w0pCYfhuJBbHliIpCfYvEo2Z2yCfsNfIBkErUyvVN0Iku20T3hYvICyezi8j/eL0gKjehGH0dv/AFKsQodMGvG5/UfODZTkkD0zRip9Hz9w2hbCaRNlll3Bn61YYrNWdtommntS5eabWx0qM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NqmuzGRa; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d1a74a43bso3681830b3a.1;
-        Mon, 12 Aug 2024 21:07:59 -0700 (PDT)
+	s=arc-20240116; t=1723522123; c=relaxed/simple;
+	bh=fntJhyjcOy7oflqhtRO9KzJcdMa1SeI7MODbm3MN5k8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eE+AZ0v+qCiQ/QQE5VC9xynM1TFuKhvt8kcz5rourEOFZYCC8UUTcswt4fdatYsye6reNUJ5YYx69Bpz/JPTg8yl74lgO6sXKYh2VlmgjT7LHpVyGAe7h0glHOP0gtAc4iwHhAKa1xDa8BnnxIQFozxYZAi0aMjqrnfkQ9L3obE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pttmDIC3; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-721d20a0807so5143513a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 21:08:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723522079; x=1724126879; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=6NF2wsA61l1FkXb4eKHpTc6UtfpI/JIOh1marXYcl3w=;
-        b=NqmuzGRaNuZJvKshMTav46pGZDxpOoZ+YqPCl31c0Wy+wOFUa/89OQEEMf70/1fcBT
-         pxcjourTVxAv4ceJ34hAvp2lQ79PMR3GXWaUvnby2SIMuxIu44FC+Tw3FSHxiz1oyTIz
-         5YwsTaNUnmM+skhOMToCMpz9Q8mynP/hYZ1WGXg1PJMO0ROSbfaPBSVEHYWPKyen4gln
-         Ugk3/bWlm/MDl3he7PNJoRl1VNDlBnhYS6/xT8qoAARb2GFLmDw6mUwitEEezVYxSc1H
-         dhN/ypiP5WmO+J4sIlJYlnaUQ/rSyYT1d1pKGkgtxYkEQS8H8iTc7mNtZJmic8yn//kN
-         RuXw==
+        d=google.com; s=20230601; t=1723522121; x=1724126921; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHWstkZJouFpjxURopjUp/N24tS1IjVlq4SVfgNsTjg=;
+        b=pttmDIC3mo2QvDY0rB/HLf9xG8H5+2h+oxtP6JF3ueCkClU6ipnmFiGJeRgp0Fr/fP
+         O08xiI9cALKHYN41+5BpUkYRtc5zfqGUTZddwWnzg0lOvdwqShPDQNPwyI7aOZSiWMct
+         kfcVxEqDk2C83YJ3kr3jAuibwGaYdzi++0YfhuZcGV9kX23UwoHdpYoyQCdbvWs3rFQ3
+         xESPpvKpmZUe7rSgLiOh/ttK9TwXkCZnhfgCgPFfvHkB3+YrBLl6Q8YxUMdDxG5308mG
+         OZkTouYL3WQibvAiG7WvLAtXtYSBGbfiYk/BCRUhIh81e1qha42K/zV62q+MFdYf9XUC
+         AlnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723522079; x=1724126879;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6NF2wsA61l1FkXb4eKHpTc6UtfpI/JIOh1marXYcl3w=;
-        b=kd52CWXPPeQ+aNgKex7T57RAfSkGjUX8q4MqrskGEMHvbjdYscayXDhA79TDUDAfsw
-         Sr3PGoTsss56Im9rJDi2bFA/X3CzgGqWceADAGPpLgUqBmDcXiTb0UpLx5zZvSC86biC
-         dEJXnHcAiON/5ZOAznGZahrkYAihQ18OTz5g6yvOrfLKrXSlclIF1Dy72WpGXARsq2Kr
-         8+UbIHEgh/6Yb67sQivfs1KxmeROEAmceYOd4VZSb0qk8B63N5O7OUbM6I8nwXcLFdI7
-         df1N0KO+TKSpMz18hdQEDvL2UQjJId1xi6/bcpKuuT0yNfCC6WLp61jR3ePzi6fqtQ34
-         oLKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2mV7d4SUXOeHbTtxjiaDGHHn2rR2yqYhuZXF4wPS+50kH9Nb/GYfsFzCd36/WdfnXpVdSPtBctByxRz5iYU04KAsR8utzLgxnulKWz/s1+Q6c3wmzp39LnFbsD4EsQ5n4+ziP2Uvx6/Jb1x1WuQGJSTJO
-X-Gm-Message-State: AOJu0Yxc58EA/24sjOxAgUIWk3p9w1rBajCBe2CWUULFwsgi7KVBdkc6
-	mrFmfqpqhCqrd6fxdb5K3IbvcSla7hG1AL+ziJA0uU+7FNbEKME5
-X-Google-Smtp-Source: AGHT+IHj77rGRBe3tmPKEL/+pWD4425i7Jlr9klDhvdctApJeZ2gS4Is/Iz+O9PDZUyvPoiLeBLc5A==
-X-Received: by 2002:a05:6a21:3982:b0:1c6:fc56:744 with SMTP id adf61e73a8af0-1c8d754d4e9mr3332488637.31.1723522078920;
-        Mon, 12 Aug 2024 21:07:58 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2d1c9db74absm9225321a91.42.2024.08.12.21.07.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Aug 2024 21:07:58 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <b3c04f8a-b7e9-4dc7-849e-aeaed508b8cf@roeck-us.net>
-Date: Mon, 12 Aug 2024 21:07:56 -0700
+        d=1e100.net; s=20230601; t=1723522121; x=1724126921;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SHWstkZJouFpjxURopjUp/N24tS1IjVlq4SVfgNsTjg=;
+        b=vGJaLa9EhRedg8/Fpxrla/SI0paGaGJ1vZ7ZRLzXk5l3UmaqMSDlXtm9CWlnEZgrcE
+         zH5tGYi0eWOcjZCAwC4Peu/5ZoK9fMgEv9hsKDohlq7f/qZNJKoTYcvrrsTZYCX6yoZZ
+         3NTu+j0Qu7kmt/lGRdMfXi9ImsKxaDQPyiBGmoDUb2VmOZ0y4P8vmGorF3Yt8CiPEo55
+         Ub+PfTLt/lh5W+45fBu41HN/RBgeENOvob2Fzr55mwVlPrn/4OPkqoHt6+cSnKv98tvS
+         6gVJpQuEfRI9FlV0ToQ8QB5E5ZqrgBPclySwRmqJDEVMVDRp+q4oLIP54D3TWullcTg6
+         2sag==
+X-Forwarded-Encrypted: i=1; AJvYcCXO306Ljdi6BBDKLrLoQ4Oi75aXcs457PrZutapJzHz+FXZacJK+LYh4x5VVBDoma4Ly7Am+uQFBE4iPLcStCeDxq47uppzdu17pROu
+X-Gm-Message-State: AOJu0YyA4cdska1884EUF/Xr9vl01uS3VGKHWZlQ3BW2Kh4W8EFQNfQw
+	ZOTvvs8brpEIEpn9rHgPtjS4Y2k2/lE3xu0IF+FtOdHGEMehUQHa2HIachcBBIKIDg7mhEHpijs
+	Jrw==
+X-Google-Smtp-Source: AGHT+IFy3tS0mDbLSJ3VFDM24v3F0/Bto9CsIFpJ5YeCwKlmxhaKPoZAnTM6U8EqvRJ7bCMM985q93CMz9Q=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a63:db46:0:b0:6e3:e0bc:a332 with SMTP id
+ 41be03b00d2f7-7c69507d656mr4242a12.2.1723522121034; Mon, 12 Aug 2024 21:08:41
+ -0700 (PDT)
+Date: Mon, 12 Aug 2024 21:08:39 -0700
+In-Reply-To: <20240612115040.2423290-3-dan.carpenter@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: KP Singh <kpsingh@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au,
- peterz@infradead.org, ink@jurassic.park.msu.ru, richard.henderson@linaro.org
-References: <CAHC9VhQpX-nnBd_aKTg7BxaMqTUZ8juHUsQaQbA=hggePMtxcw@mail.gmail.com>
- <873b04da-7a1e-47b9-9cfd-81db5d76644d@roeck-us.net>
- <CAHC9VhTd0MKVXsZ7J_b_Mmr2vP+RMJtxzfsgpH1rZ_hoHY1D3A@mail.gmail.com>
- <779dfb7f-d690-432e-8461-b26935974ac6@roeck-us.net>
- <0673d2b2-ad78-46f4-93b2-73ea3acd70f7@roeck-us.net>
- <CACYkzJ63DRLtDy6DAsGhz8_mM1pUSaC-DjbCtTBtEMP0c-=yRg@mail.gmail.com>
- <d9fc949a-6945-4c41-83de-c3717d536c15@roeck-us.net>
- <CAHC9VhRGt-b8PmtR-hZwOWB1zfmuhfftoppjacqrjq60tm0mag@mail.gmail.com>
- <8061553f-6bfc-4ee6-a8f1-e3741cf5ae6c@roeck-us.net>
- <CAHC9VhSKzxknTgKQu6ODoyxhc3skcjh_h11wSQrEvWb_vP5Ziw@mail.gmail.com>
- <CACYkzJ6NuGQchRaj-QD_XzQWNT8c3zb0ZEBXWjzjAckQdNDCWw@mail.gmail.com>
- <CAHC9VhQjCHBii=CwMMnbs0hiiN-Dy49S+3gpDvaXp-YQyEHTGw@mail.gmail.com>
- <CACYkzJ7vC7OJWdgm6LbOL82eO=27cn7Gh8i6-HOp_A94-SU-gA@mail.gmail.com>
- <CAHC9VhQPHsqnNd2S_jDbWC3LcmXDG1EoaU_Cat8RoxJv3U=_Tg@mail.gmail.com>
- <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <CACYkzJ5J8K2D8xqT+CCrbvp57P=GbCB+XYXkAaKXojsFhuaWEw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20240612115040.2423290-2-dan.carpenter@linaro.org> <20240612115040.2423290-3-dan.carpenter@linaro.org>
+Message-ID: <ZrrcR-kJ8hP6afWb@google.com>
+Subject: Re: [PATCH 1/2] KVM: SVM: Fix uninitialized variable bug
+From: Sean Christopherson <seanjc@google.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: error27@gmail.com, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ashish Kalra <ashish.kalra@amd.com>, 
+	Brijesh Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On 8/12/24 15:02, KP Singh wrote:
-> On Mon, Aug 12, 2024 at 11:33 PM Paul Moore <paul@paul-moore.com> wrote:
->>
->> On Mon, Aug 12, 2024 at 5:14 PM KP Singh <kpsingh@kernel.org> wrote:
->>> On Mon, Aug 12, 2024 at 9:33 PM Paul Moore <paul@paul-moore.com> wrote:
->>>> On Mon, Aug 12, 2024 at 1:12 PM KP Singh <kpsingh@kernel.org> wrote:
->>>>>
->>>>> JFYI, I synced with Guenter and all arch seem to pass and alpha does
->>>>> not work due to a reason that I am unable to debug. I will try doing
->>>>> more debugging but I will need more alpha help here (Added the
->>>>> maintainers to this thread).
->>>>
->>>> Thanks for the update; I was hoping that we might have a resolution
->>>> for the Alpha failure by now but it doesn't look like we're that
->>>> lucky.  Hopefully the Alpha devs will be able to help resolve this
->>>> without too much trouble.
->>>>
->>>> Unfortunately, this does mean that I'm going to drop the static call
->>>> patches from the lsm/dev branch so that we can continue merging other
->>>> things.  Of course this doesn't mean the static call patches can't
->>>> come back in later during this dev cycle once everything is solved if
->>>> there is still time, and worst case there is always the next dev
->>>> cycle.
->>>>
->>>
->>> Do we really want to drop them for alpha? I would rather disable
->>> CONFIG_SECURITY for alpha and if people really care for alpha we can
->>> enable it. Alpha folks, what do you think?
->>
->> Seriously?  I realize Alpha is an older, lesser used arch, but it is
->> still a supported arch and we are not going to cause a regression for
->> the sake of a new feature.  As I mentioned earlier, once the problem
->> is resolved we can bring the patchset back into lsm/dev; if it gets
->> resolved soon enough we can even do it during this dev cycle.
->>
+On Wed, Jun 12, 2024, Dan Carpenter wrote:
+> If snp_lookup_rmpentry() fails then "assigned" is printed in the error
+> message but it was never initialized.  Initialize it to false.
 > 
-> Okay, more data for the alpha folks, when I moved trap_init() before
-> early_security_init() everything seemed to work, I think we might need
-> to call trap_init() from setup_arch and this would fix the issue. As
-> to why? I don't know :)
+> Fixes: dee5a47cc7a4 ("KVM: SEV: Add KVM_SEV_SNP_LAUNCH_UPDATE command")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> The compiler is generally already zeroing stack variables so this doesn't cost
+> anything.
 > 
-> Would alpha folks be okay with this patch:
+>  arch/x86/kvm/svm/sev.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> kpsingh@kpsingh:~/projects/linux$ git diff
-> diff --git a/arch/alpha/kernel/setup.c b/arch/alpha/kernel/setup.c
-> index bebdffafaee8..53909c1be4cf 100644
-> --- a/arch/alpha/kernel/setup.c
-> +++ b/arch/alpha/kernel/setup.c
-> @@ -657,6 +657,7 @@ setup_arch(char **cmdline_p)
->          setup_smp();
->   #endif
->          paging_init();
-> +       trap_init();
->   }
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 43a450fb01fd..70d8d213d401 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -2199,7 +2199,7 @@ static int sev_gmem_post_populate(struct kvm *kvm, gfn_t gfn_start, kvm_pfn_t pf
+>  
+>  	for (gfn = gfn_start, i = 0; gfn < gfn_start + npages; gfn++, i++) {
+>  		struct sev_data_snp_launch_update fw_args = {0};
+> -		bool assigned;
+> +		bool assigned = false;
+
+I would rather delete all the printks, or if people really like the printks, at
+least provide some helpers to dedup the code.  E.g. sev_gmem_prepare() has more
+or less the exact same behavior, but doesn't have the same flaw.
+
+>  		int level;
+>  
+>  		if (!kvm_mem_is_private(kvm, gfn)) {
+> -- 
+> 2.43.0
 > 
-> 
-> and provide me some reason as to why this works, it would be great for
-> a patch description
-> 
-
-Your code triggers a trap (do_entUna, unaligned access) which isn't handled unless
-trap_init() has been called before.
-
-Reason is that static_calls_table is not 8-byte aligned, causing the unaligned
-access in:
-
-static void __init lsm_static_call_init(struct security_hook_list *hl)
-{
-         struct lsm_static_call *scall = hl->scalls;
-         int i;
-
-         for (i = 0; i < MAX_LSM_COUNT; i++) {
-                 /* Update the first static call that is not used yet */
-                 if (!scall->hl) {						<-- here
-                         __static_call_update(scall->key, scall->trampoline,
-                                              hl->hook.lsm_func_addr);
-                         scall->hl = hl;
-                         static_branch_enable(scall->active);
-                         return;
-                 }
-                 scall++;
-         }
-         panic("%s - Ran out of static slots.\n", __func__);
-}
-
-A somewhat primitive alternate fix is:
-
-diff --git a/security/security.c b/security/security.c
-index aa059d0cfc29..dea9736b2014 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -156,7 +156,7 @@ static __initdata struct lsm_info *exclusive;
-   * and a trampoline (STATIC_CALL_TRAMP) which are used to call
-   * __static_call_update when updating the static call.
-   */
--struct lsm_static_calls_table static_calls_table __ro_after_init = {
-+struct lsm_static_calls_table static_calls_table __ro_after_init __attribute__((aligned(8))) = {
-  #define INIT_LSM_STATIC_CALL(NUM, NAME)                                        \
-         (struct lsm_static_call) {                                      \
-                 .key = &STATIC_CALL_KEY(LSM_STATIC_CALL(NAME, NUM)),    \
-
-Guenter
-
 
