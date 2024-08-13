@@ -1,168 +1,155 @@
-Return-Path: <linux-kernel+bounces-284379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7204C950057
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:51:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AFC495005A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32B7E2854DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1412D1C20C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB5C17BB2F;
-	Tue, 13 Aug 2024 08:50:29 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443CF170A03;
+	Tue, 13 Aug 2024 08:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hi3gatKA"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C401F13B797
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DF913B797
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 08:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723539028; cv=none; b=IM77D2jg9LCL7YMkWm8+zMd+sWETUOmenFIF4RPTBdCXiDMYV9eSBxFGM15yVEtH6vTrxjSDZfdm+Ppbd4n9no1Njjx6FhXC74KLi6S+3HmFyJygThv3Y1/aqGxApYcrFu4NGwDqTQjbJA+jVWLtV4JF1ddKE+r03xLeeo6gRp8=
+	t=1723539040; cv=none; b=klj5fDhIxpeQbCjfa2k6dYCDtfIDEZ5rIqY+8rwU77Px5FmWm6MBhjxysFshqWpywtZpPj0fjoNyyHnc/r70DpYiOKtfBaSWRBc0AaeZvllWc7997n3iIDX5wXkMQDEqFMhyUQ18YuFh7f5XOxMDq/F6tLGVnDjp0Q2InFGaOdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723539028; c=relaxed/simple;
-	bh=4NxmO5ltZeGQXiAiJ+EcFxxc4454ZV8oqjSBB8jhoUU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BZOkJ1OrGHIgpcPPUj2gO1CJswT+PtCzjfpQ3MT0yoxMaU09+EhjrZ6nCe6vKQeyuXoiQTL2i+xbQqhUbVjwTRscRt0YDbweXtJpr0J+g+Upu9R49OkPXnjQk9r6eWAPxYI5nzhE7L5E/tS8NeSqRkg0ZJ2+eVe+pIlhBjM45hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-39b3cd1813aso64533375ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:50:26 -0700 (PDT)
+	s=arc-20240116; t=1723539040; c=relaxed/simple;
+	bh=8RyVeR2vWOKQkN+gObPAjdpPyb5M5WyBCqfnjlaswIQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=R+d4CvEnD+YOh/wQNB82OoNEJgCYHeJHgAUMsV3Pv7HF2uuQi4u7yQzU1iXztd94g01cIN8droy/8Or9iNs47U+yPfMOzSptrRRYo0aKGWYQ0mJ2pj4baZNNNC71aujdSJ1kD1zQu1fC7e6NEZaMrOpSR3ABdY5U8ND/5/1JfWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hi3gatKA; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-7a263f6439eso3219854a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 01:50:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723539038; x=1724143838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Rts6zB0WN8mMRj2VryIEa8o9z99JeetoeSk17QbpEU=;
+        b=Hi3gatKALh59OWK4vthcbi+fAzIpXCQ3gXfyWJX+ITbjGWSpevNvKQJFfw8NV8ZLQ0
+         rBwRwuNfAjvdEJWAN5ZaS5w9xH+QQoDdTK7912S1D6XuFv3r7dQBVjmysUInJlOFJYHk
+         Qs0p6woNLDGLWzHU5yf8zj0JK9kqsQ+IUZ2OrY9DO/R1kXljHHajbZkdj3mnsgjFURHW
+         ZG5KVpoclA5TbfV90M1QOR+Pq92EGn7mQdyQz1uQUEml9+s3vzbh68R4O4pN97s7Ckjf
+         wS9PcQpKmQ6hGRcyUXzkYcSeiR3HEW+a4688iVbs37UtMoTTOiuXRtLl9fxEOAQldYjd
+         US0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723539026; x=1724143826;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zBikLu0ZlOFa2v3oX/TYYq/extNaQfM31RVjvKEWsIQ=;
-        b=NtsT43xEjK6AT16a30DH8790PGMPlsSbJOBGYTMR2Tvd6AQblffgbsamRQ0cF0q/rD
-         QpuDvVX7mLr+Irmz7a2EqV7X09T2mBCciZSV6UiC9lS3fyL9DTV3n9bNu5l4xo5NOzW1
-         AgSILqAHtnNHPUog+eUKLc2wWw+Dt6jxEx/7DK7aigAG26P55/BzQZoYW/hs5VepPNcd
-         FAFK6+v7wFcpS8ROd6xrkG2LQtyTis/ZSfjcgSel8bXTXNRU2GMbIO+d660oAMhMuEjs
-         HS8Ib4gKBdSDdYqM/unUFKyymnSXC0A7XCFZ+BfGUB1vcqqbpIOM7tof+BHhsuRRtDiS
-         EGqw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFAGgzKxQ2nZT6zQVqkip/z+BKQUyx4QE1E7X0so/A+roJH9m1eAoHfzHoEMNeqMaaUHKIZt3LQcdwbtTr7FGjsSWiymgl73ACL6xv
-X-Gm-Message-State: AOJu0YxqWwAYbIP/LuaFhvFZpH4piPKjcqvM6zFeWTm0PmbzH9Se5ZVC
-	Ml9bk9P2VBfsd5IhND3L1XTIE6INsgCsqKDRiC/ux3jZ4mSV9sWQ0VwtYQx8xSNhzaOihq1gB9k
-	/SBo82hcvHeoOiBj/zz+Jwth6oNKEKnQ79FOSKZgmrZ0jGJHjDHti1Oo=
-X-Google-Smtp-Source: AGHT+IHYxS103QZdmH3b7TXqaMAVbjPo6XDAuJtWEeoQgNjF1CF4ijZnDdHSkyv84sjVMvE9W77gSKD9GSuNyCucrLaRmEKy0p4Q
+        d=1e100.net; s=20230601; t=1723539038; x=1724143838;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3Rts6zB0WN8mMRj2VryIEa8o9z99JeetoeSk17QbpEU=;
+        b=bRe0lmtR6dCBKpPt7whDkGhUHTE9G5ZZHdINiFea59URRA0oO7icdcHeLwnC7XAt0/
+         wETU6XoJulVPFNne/mFznPjd1EGomIDMFqd3jUDjAxCLkfzY22HRGo1zTeNQoS6zjoEk
+         Ie3xm/64/hEehfVqNVMqPkjmUIwhm9nh6dsovxU1dyS6yUgF8RFiCTR2dm/02757RUlq
+         dXt8raX0zUMtXZYLefHrx6qZClqDtvn5Wfr8m8wZepq0JKp0NTLvcp0vIwGfrSL7rW5r
+         +vCpvXP+cmxtvJdWhuBPPMv/B2Etiyz6GwBp4kNsiLispUQsBl3OyN8zaHoHp5e81EhX
+         E4rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVS2UpZukUUU4TYHWeIbaCUkutk/Yx6gw937vbkSvxVKSBjnagYIIPbzKp8iP0cNnNiAKl6PeOuZ9P4SaiODkQqBHrxPwLWANDIVLI
+X-Gm-Message-State: AOJu0YyVQtLGUz1T7KH/3Jz2XWtNk8zZXxOfI57FakCiwa8agv239dZX
+	kXnZjkWIQgL8e9TH7hzgcRfzN7RgxVL+0cLgxVO5syoDQBeJazIV
+X-Google-Smtp-Source: AGHT+IEsIqbIirAGl7TPh/KDv0TOehaMxpmSPAbGOBplieWhUuKxu1EkWXJmILPBHPmyG8lIOvab5w==
+X-Received: by 2002:a05:6a20:9f99:b0:1c4:214c:d885 with SMTP id adf61e73a8af0-1c8d7594063mr3775722637.36.1723539038153;
+        Tue, 13 Aug 2024 01:50:38 -0700 (PDT)
+Received: from dev0.. ([2405:201:6803:30b3:c766:226f:440c:9eab])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-201cd1a9403sm8888895ad.151.2024.08.13.01.50.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 01:50:37 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: airlied@gmail.com,
+	daniel@ffwll.ch,
+	dri-devel@lists.freedesktop.org,
+	jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	julia.lawall@inria.fr,
+	linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de
+Subject: Re: [PATCH v2] gpu: ipu-v3: Add cleanup attribute for prg_node for auto cleanup
+Date: Tue, 13 Aug 2024 14:20:31 +0530
+Message-Id: <20240813085031.1097134-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <2aabc166-bf34-49b3-b938-bbfb0f85e8bb@linuxfoundation.org>
+References: <2aabc166-bf34-49b3-b938-bbfb0f85e8bb@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:156c:b0:397:b509:6441 with SMTP id
- e9e14a558f8ab-39c4783ec8fmr1455185ab.2.1723539025616; Tue, 13 Aug 2024
- 01:50:25 -0700 (PDT)
-Date: Tue, 13 Aug 2024 01:50:25 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000060ef65061f8cb3d4@google.com>
-Subject: [syzbot] [bcachefs?] Unable to handle kernel execute from
- non-executable memory at virtual address ADDR
-From: syzbot <syzbot+8798e95c2e5511646dac@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Tue, 13 Aug 2024 02:30:54 -0600, Shuah Khan wrote:
+> On 8/12/24 13:37, Abhinav Jain wrote:
+> > Hello,
+> > Can this be kindly reviewed? Thanks.
+>
+> You removed all the relevant information for people to be able to review the
+> patch :)
+>
+> thanks,
+> -- Shuah
 
-syzbot found the following issue on:
+Sorry, here is the patch link and I am attaching inlined as well:
+https://lore.kernel.org/all/20240704132142.1003887-1-jain.abhinav177@gmail.com/
 
-HEAD commit:    c912bf709078 Merge remote-tracking branches 'origin/arm64-..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=11028061980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35545feca25ede03
-dashboard link: https://syzkaller.appspot.com/bug?extid=8798e95c2e5511646dac
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/caeac6485006/disk-c912bf70.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/501c87f28da9/vmlinux-c912bf70.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/6812e99b7182/Image-c912bf70.gz.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+8798e95c2e5511646dac@syzkaller.appspotmail.com
-
-Unable to handle kernel execute from non-executable memory at virtual address ffff0000f1a56540
-KASAN: maybe wild-memory-access in range [0xfffc00078d2b2a00-0xfffc00078d2b2a07]
-Mem abort info:
-  ESR = 0x000000008600000f
-  EC = 0x21: IABT (current EL), IL = 32 bits
-  SET = 0, FnV = 0
-  EA = 0, S1PTW = 0
-  FSC = 0x0f: level 3 permission fault
-swapper pgtable: 4k pages, 48-bit VAs, pgdp=00000001aca1d000
-[ffff0000f1a56540] pgd=0000000000000000, p4d=180000023ffff003, pud=180000023f41b003, pmd=180000023f28d003, pte=0068000131a56707
-Internal error: Oops: 000000008600000f [#1] PREEMPT SMP
-Modules linked in:
-CPU: 1 PID: 6849 Comm: bch-reclaim/loo Not tainted 6.10.0-rc7-syzkaller-gc912bf709078 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : 0xffff0000f1a56540
-lr : __bch2_increment_clock+0x45c/0x4f8 fs/bcachefs/clock.c:152
-sp : ffff8000a06c6510
-x29: ffff8000a06c6540 x28: ffff0000f5200000 x27: dfff800000000000
-x26: ffff0000f5204b78 x25: ffff0000f5204b80 x24: 0000000000000001
-x23: ffff0000eb1e1008 x22: ffff0000f5204b30 x21: ffff0000f5204b18
-x20: ffff8000a0417620 x19: ffff8000a0417620 x18: 1fffe000367a85de
-x17: ffff80008f2dd000 x16: ffff80008032d32c x15: 0000000000000001
-x14: 1fffe000367ab200 x13: 0000000000000000 x12: 0000000000000003
-x11: 0000000000000001 x10: 0000000000000003 x9 : 0000000000000001
-x8 : ffff0000f1a56540 x7 : ffff8000802a3bb0 x6 : 0000000000000000
-x5 : 0000000000000001 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000007 x1 : ffff80008b2c0360 x0 : ffff8000a0417620
-Call trace:
- 0xffff0000f1a56540
- bch2_increment_clock fs/bcachefs/clock.h:19 [inline]
- bch2_btree_node_alloc+0x874/0xd9c fs/bcachefs/btree_update_interior.c:427
- bch2_btree_node_alloc_replacement+0xf4/0x904 fs/bcachefs/btree_update_interior.c:448
- btree_split+0x1530/0x4c84 fs/bcachefs/btree_update_interior.c:1662
- bch2_btree_split_leaf+0x148/0x734 fs/bcachefs/btree_update_interior.c:1857
- bch2_trans_commit_error+0x2a4/0x1068 fs/bcachefs/btree_trans_commit.c:918
- __bch2_trans_commit+0x35e4/0x592c fs/bcachefs/btree_trans_commit.c:1138
- bch2_trans_commit fs/bcachefs/btree_update.h:170 [inline]
- wb_flush_one_slowpath+0x114/0x158 fs/bcachefs/btree_write_buffer.c:126
- wb_flush_one+0x870/0xd88 fs/bcachefs/btree_write_buffer.c:168
- bch2_btree_write_buffer_flush_locked+0x1200/0x243c fs/bcachefs/btree_write_buffer.c:347
- btree_write_buffer_flush_seq+0x6d0/0x7e8 fs/bcachefs/btree_write_buffer.c:442
- bch2_btree_write_buffer_journal_flush+0x58/0x94 fs/bcachefs/btree_write_buffer.c:457
- journal_flush_pins+0x524/0xa10 fs/bcachefs/journal_reclaim.c:553
- __bch2_journal_reclaim+0x71c/0x1024 fs/bcachefs/journal_reclaim.c:685
- bch2_journal_reclaim_thread+0x154/0x4b8 fs/bcachefs/journal_reclaim.c:727
- kthread+0x288/0x310 kernel/kthread.c:389
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
-Code: ffffffff ffffffff 00000000 00000000 (ffffffff) 
----[ end trace 0000000000000000 ]---
-----------------
-Code disassembly (best guess):
-   0:	ffffffff 	.inst	0xffffffff ; undefined
-   4:	ffffffff 	.inst	0xffffffff ; undefined
-* 10:	ffffffff 	.inst	0xffffffff ; undefined <-- trapping instruction
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+> Add cleanup attribute for device node prg_node.
+> Remove of_node_put for device node prg_node as it is unnecessary now.
+>
+> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+> ---
+> - PATCH v1:
+> https://lore.kernel.org/all/20240702150109.1002065-1-jain.abhinav177@gmail.com/
+>
+> - Changes since v1:
+>  Enhanced the commit description to better suit the work being done
+>  as per the feedback in v1
+> ---
+> drivers/gpu/ipu-v3/ipu-prg.c | 7 ++-----
+> 1 file changed, 2 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/ipu-v3/ipu-prg.c b/drivers/gpu/ipu-v3/ipu-prg.c
+> index 729605709955..d1f46bc761ec 100644
+> --- a/drivers/gpu/ipu-v3/ipu-prg.c
+> +++ b/drivers/gpu/ipu-v3/ipu-prg.c
+> @@ -84,8 +84,8 @@ static LIST_HEAD(ipu_prg_list);
+>  struct ipu_prg *
+>  ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
+>  {
+> -	struct device_node *prg_node = of_parse_phandle(dev->of_node,
+> -							name, 0);
+> +	struct device_node *prg_node __free(device_node) =
+> +		of_parse_phandle(dev->of_node, name, 0);
+> 	struct ipu_prg *prg;
+> 
+> 	mutex_lock(&ipu_prg_list_mutex);
+> @@ -95,14 +95,11 @@ ipu_prg_lookup_by_phandle(struct device *dev, const char *name, int ipu_id)
+> 			device_link_add(dev, prg->dev,
+> 					DL_FLAG_AUTOREMOVE_CONSUMER);
+> 			prg->id = ipu_id;
+> -			of_node_put(prg_node);
+> 			return prg;
+> 		}
+> 	}
+> 	mutex_unlock(&ipu_prg_list_mutex);
+> 
+> -	of_node_put(prg_node);
+> -
+>      	return NULL;
+>  }
+> 
+> -- 
+> 2.34.1
 
