@@ -1,320 +1,175 @@
-Return-Path: <linux-kernel+bounces-284361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 496BF950032
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:45:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 091F395003A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3E51C22ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C55E1C228F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665CB195F3A;
-	Tue, 13 Aug 2024 08:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUxYqMxy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242B114A08F;
+	Tue, 13 Aug 2024 08:44:03 +0000 (UTC)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F21717CA0A;
-	Tue, 13 Aug 2024 08:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C48E613B2B2;
+	Tue, 13 Aug 2024 08:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538542; cv=none; b=YOwCOuAxlw9YvTJ1yhL4uQCpheQ7UtPeKBhdIhmZ+kW0U8RU7DrbScu0I0CZTB602k+DwjLcGjOnlk0QNAVjlffdgqRQcGx37Y/Q0KWRb9zIhYMg/6/uVaeFlTPp2vT6gHuwCHcxx5+WoP76F5N75MBrRGRueK/LBxoDveJfKdc=
+	t=1723538642; cv=none; b=bPXerhfnoflNmCAlu29M1X0Q6VL0Lg6LY+sJ1J9OimhuHib6rkbMx/GAOTkhJ6OGf83KDNReoxaNZ864FLnQ4yM4uHrI4CmtV4jaTxfjNewA7b3epyuk+6Fofg1rqafcW2lbS6YOmLXBWR4ORAuumQ/dGMOsI1M8ziDhmYyEYUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538542; c=relaxed/simple;
-	bh=cmBNhwLcmcbf8rZqlKMIjSvUsYcFWzgiMUxZqih0KBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=HsoAcWB0A7NdaXbEBgcnpM+ho0YH8+9egjfLIdp9PYGVboyNdAU6edNFyacPTmqEiOZczvXrK6oD6uNM8vlD8PNUjf34aleZg0r81jEO7Cyf4JiHd7TtT8vXiUwaFv7Cl5FykIVZsStJjRFLqWfesBs5Lf0MozyDgZQ9us8ZRwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUxYqMxy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 591F9C4AF10;
-	Tue, 13 Aug 2024 08:42:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723538542;
-	bh=cmBNhwLcmcbf8rZqlKMIjSvUsYcFWzgiMUxZqih0KBY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=fUxYqMxyrFka/lkJZ29kvDwRYdCr5xdqYPxwCeop9NKC2Lhd5FAuxZJzh/PHpBK0l
-	 5OoxKBjROBsyg7n5LMOr1D9NykqL5IwGg2qJp0Oong3YyiKcrO6jK0wjbJI6t3D/Yh
-	 huFMK2EYhXEPvJRm9HTs1BF2EiLM+ZOa6DKSJXwP/fwydO+8Moir2vVFM2cN9wCgWV
-	 ahHZVSj/oTEi0qC45NDqiZ4uQ+ADLXfvnFnskYy2FxNvQMcE1Pb1ISVbYXueGTo77K
-	 lScrhd886ujb9JjTj1EePsgYTVyQ/UdCD4pDtnJNMEqtPEPhk0xwBYDrFucE2bjwWT
-	 6wNnKt/B0Zzlg==
-Message-ID: <9cc3ef01-6f95-4ce2-9e3d-cc679b50feb6@kernel.org>
-Date: Tue, 13 Aug 2024 10:42:16 +0200
+	s=arc-20240116; t=1723538642; c=relaxed/simple;
+	bh=/gM131dPh0P0yoxt1nxBVMIws7k0WEoZtkn1AChzN4w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bNskXivOMiUPTDHrLJarL0vxJOwDwviqVcucLkJQzlvSNH9wrADPx3gMhgtsvYVC8UDSAWCUBmTHD/lS0t3eUXsNmyO/2NdZwK6ooCJpTUjItU9JTXgsk4Do7vi8DiX5pF6ofvh5Ehd5h2O7knety5Rk2Cs1ZJWRpn8g09SIFgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so626855766b.2;
+        Tue, 13 Aug 2024 01:44:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723538639; x=1724143439;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cC2PyexXPDW7ka4IjjgZPFfLFHP6Q3fx9e5k3osnd28=;
+        b=JKlmFQOgdr9C/GfH7zMVbfSqrha7fFre2+q4tZNhrhZz4Ob0VQDRGtMb+b6EsOMmQV
+         Go+hcVvQK4bhKCZMsFtwc0zjX5+JBFGTcgwvF7JCVthF3TvoFxTL7IM369+041fsL1co
+         cfB07ig9nPlBbMWs3ym3n1NQs+//ZpOaAo2Vd+5XhTi+/wzG0M2I2zzbfiW2zKCf9b5u
+         G8SxXbebPHBlMrBN8Rqzv+zkLiB+e5kDKcpNAkDn9dnJU08awwFKizGA+77SDWaC0cnQ
+         FqNff4Jv7LxTjTg+cc0j7bV+0b5MqLiPd726zg7ouQVK6IGQtidrbEXP4QoQ97DFQI4D
+         1JTw==
+X-Forwarded-Encrypted: i=1; AJvYcCUikNLrsrzXaUOf4zNmGcx5UzlMnUI+NnsCUzudtIB9Wj/pdQ59++6MG++w5kRDk+eJVcQGthCyv2OFjRreayzy3BGGbpWwGbaoiap1KPBk1MQwAHHm2ox2EmG2jSqDKXtahTiI7Gz3eg==
+X-Gm-Message-State: AOJu0YwEsuhwAAEMtYZnxgSkM5lxCca4oRAoBDK50pSRDosCKmMCFZaf
+	mKQqdLfQSzs3IrSjZCd/i56R44PYgJdjK1XZpCPtAY+haLF2BAOQ
+X-Google-Smtp-Source: AGHT+IEFs7hEdNwjzfIuQqncHDIY/VqfkUAcvB/QBGM5T81EBacvh3Or/nXIm55fnBLMjr+w3r4t4A==
+X-Received: by 2002:a17:907:efcb:b0:a71:ddb8:9394 with SMTP id a640c23a62f3a-a80ed260133mr195793366b.40.1723538638929;
+        Tue, 13 Aug 2024 01:43:58 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-003.fbsv.net. [2a03:2880:30ff:3::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a80f411aef3sm50716366b.106.2024.08.13.01.43.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2024 01:43:58 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: martin.petersen@oracle.com,
+	Sathya Prakash <sathya.prakash@broadcom.com>,
+	Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
+Cc: leit@meta.com,
+	MPT-FusionLinux.pdl@broadcom.com (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-scsi@vger.kernel.org (open list:LSILOGIC MPT FUSION DRIVERS (FC/SAS/SPI)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] scsi: message: fusion: Make compilation warning free
+Date: Tue, 13 Aug 2024 01:43:24 -0700
+Message-ID: <20240813084325.3097653-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] dt-bindings: interrupt-controller: Add support for
- ASPEED AST27XX INTC
-To: Kevin Chen <kevin_chen@aspeedtech.com>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org
-References: <20240813074338.969883-1-kevin_chen@aspeedtech.com>
- <20240813074338.969883-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240813074338.969883-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 13/08/2024 09:43, Kevin Chen wrote:
-> The ASPEED AST27XX interrupt controller(INTC) combines 32 interrupt
-> sources into 1 interrupt into GIC from CPU die to CPU die.
-> The INTC design contains soc0_intc and soc1_intc module doing hand shake
-> between CPU die and IO die INTC.
-> 
-> In soc0_intc11, each bit represent 1 GIC_SPI interrupt from soc1_intcX.
-> In soc1_intcX, each bit represent 1 device interrupt in IO die.
-> 
-> By soc1_intcX in IO die, AST27XX INTC combines 32 interrupt sources to
-> 1 interrupt source in soc0_intc11 in CPU die, which achieve the
-> interrupt passing between the different die in AST27XX.
-> ---
+There are a few of unused variable in mptsas, and the compiler complains
+about it. Let's get them removed.
 
-This was never tested. Please do not send untested code.
+	drivers/message/fusion/mptsas.c:4234:6: warning: variable 'rc' set but not used [-Wunused-but-set-variable]
+	 4234 |         int rc;
+	drivers/message/fusion/mptsas.c:4793:17: warning: variable 'timeleft' set but not used [-Wunused-but-set-variable]
+	 4793 |         unsigned long    timeleft;
+	drivers/message/fusion/mptsas.c:1528:5: warning: variable 'fw_id' set but not used [-Wunused-but-set-variable]
+	 1528 |         u8 fw_id;
+	drivers/message/fusion/mptsas.c:4869:9: warning: variable 'termination_count' set but not used [-Wunused-but-set-variable]
+	 4869 |         u32                      termination_count;
+	drivers/message/fusion/mptsas.c:4870:9: warning: variable 'query_count' set but not used [-Wunused-but-set-variable]
+	 4870 |         u32                      query_count;
 
-It does not look like you tested the bindings, at least after quick
-look. Please run `make dt_binding_check` (see
-Documentation/devicetree/bindings/writing-schema.rst for instructions).
-Maybe you need to update your dtschema and yamllint.
+Remove those that are unused, and mark others as __maybe_unused, if they
+are used depending on the logging option.
 
-Limited review follows due to lack of basic testing.
+Since scsi_device_reprobe() must have its value checked and it isn't,
+add a WARN_ON() to let user know if something goes unexpected.
 
->  .../aspeed,ast2700-intc.yaml                  | 120 ++++++++++++++++++
->  1 file changed, 120 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-> new file mode 100644
-> index 000000000000..93d7141bf9f9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/aspeed,ast2700-intc.yaml
-> @@ -0,0 +1,120 @@
-> +# SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/aspeed,ast2700-intc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Aspeed Interrupt Controller driver
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changelog:
 
-Drop driver, describe hardware. Aspeed or some specific SoC?
+v2:
+  * Add a warning if scsi_device_reprobe() fails.
+  * Mark query_count and termination_count as __maybe_unused.
 
-> +
-> +description:
-> +  These bindings are for the Aspeed interrupt controller. The AST2700
+v1:
+  * https://lore.kernel.org/all/20240807094000.398857-1-leitao@debian.org/
 
-Drop first sentence. Pointless.
+ drivers/message/fusion/mptsas.c | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
 
-> +  SoC families include a legacy register layout before a re-designed
-> +  layout, but the bindings do not prescribe the use of one or the other.
-
-Entire description is pointless - you do not say anything valuable here.
-Describe this hardware instead.
-
-
-> +
-> +maintainers:
-> +  - Kevin Chen <kevin_chen@aspeedtech.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/interrupt-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-
-Drop
-
-> +      - items:
-
-Drop
-
-> +        - enum:
-> +          - aspeed,ast2700-intc-ic
-> +          - aspeed,ast2700-intc-icv2
-> +        description: |
-> +          Use "aspeed,ast2700-intc-ic" for soc1 INTC in IO die
-> +          Use "aspeed,ast2700-intc-icv2" for soc0 INTC in CPU die
-
-Use consistent naming. Isn't your other block called 0 and 1? Why using
-different namings?
-
-> +
-> +  interrupt-controller: true
-> +
-> +  interrupts-extended:
-
-interrupts instead.
-
-> +    minItems: 1
-> +    maxItems: 3
-> +    description:
-> +      Specifies which contexts are connected to the INTC, with "-1" specifying
-> +      that a context is not present. Each node pointed to should be a
-> +      aspeed,ast2700-intc-ic or aspeed,ast2700-intc-icv2 nodes which are pointed
-> +      to gic node.
-
-Don't repeat constraints in free form text. Describe items instead.
-
-
-> +
-> +  "#address-cells":
-> +    const: 2
-
-Blank line
-
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  '#interrupt-cells':
-> +    const: 2
-> +    description: |
-
-Do not need '|' unless you need to preserve formatting.
-
-> +      The first cell cell is the interrupt source IRQ number, and the second cell
-> +      is the trigger type as defined in interrupt.txt in this directory.
-> +
-> +  reg:
-> +    minItems: 1
-> +    maxItems: 2
-> +    description: |
-> +      The first cell cell is the interrupt enable register, and the second cell
-> +      is the status register.
-
-List and describe the items instead.
-
-> +
-> +  ranges: true
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 10
-> +    description: |
-> +      Interrupt source of the CPU interrupts. In soc0_intc in CPU die INTC each bit
-> +      represent soc1_intc interrupt source. soc0_intc take care 10 interrupt source
-> +      from soc1_intc0~5 and ltpi0/1_soc1_intc0/1.
-
-No, you cannot have both. That's total mess. Anyway, standard comment
-applies - list and describe items.
-
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +
-> +additionalProperties: false
-> +
-> +example:
-> +  - |
-> +    soc0_intc: interrupt-controller@12100000 {
-
-Drop label
-
-> +      compatible = "simple-mfd";
-
-No, it's not. Drop. Look how other bindings do it.
-
-> +      reg = <0 0x12100000 0 0x4000>;
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +      ranges = <0x0 0x0 0x0 0x12100000 0x0 0x4000>;
-
-Read DTS coding style.
-
-> +
-> +      soc0_intc11: interrupt-controller@1b00 {
-
-Drop label
-
-> +        compatible = "aspeed,ast2700-intc-icv2";
-> +        interrupts = <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 193 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 194 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 195 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
-> +        #interrupt-cells = <2>;
-> +        interrupt-controller;
-> +        reg = <0x0 0x1b00 0x0 0x10>;
-
-DTS coding style
-
-> +      };
-> +    };
-> +
-> +  - |
-> +    soc1_intc: interrupt-controller@14c18000 {
-> +      compatible = "simple-mfd";
-> +      reg = <0 0x14c18000 0 0x400>;
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +      ranges = <0x0 0x0 0x0 0x14c18000 0x0 0x400>;
-> +
-> +      soc1_intc0: interrupt-controller@100 {
-> +       compatible = "aspeed,ast2700-intc-ic";
-
-Drop this example, almost no differences.
-
-Best regards,
-Krzysztof
+diff --git a/drivers/message/fusion/mptsas.c b/drivers/message/fusion/mptsas.c
+index a0bcb0864ecd..00a738ef601c 100644
+--- a/drivers/message/fusion/mptsas.c
++++ b/drivers/message/fusion/mptsas.c
+@@ -1447,7 +1447,7 @@ mptsas_add_end_device(MPT_ADAPTER *ioc, struct mptsas_phyinfo *phy_info)
+ 	struct sas_port *port;
+ 	struct sas_identify identify;
+ 	char *ds = NULL;
+-	u8 fw_id;
++	u8 fw_id __maybe_unused;
+ 
+ 	if (!phy_info) {
+ 		dfailprintk(ioc, printk(MYIOC_s_ERR_FMT
+@@ -1525,7 +1525,7 @@ mptsas_del_end_device(MPT_ADAPTER *ioc, struct mptsas_phyinfo *phy_info)
+ 	struct mptsas_phyinfo *phy_info_parent;
+ 	int i;
+ 	char *ds = NULL;
+-	u8 fw_id;
++	u8 fw_id __maybe_unused;
+ 	u64 sas_address;
+ 
+ 	if (!phy_info)
+@@ -4231,10 +4231,8 @@ mptsas_find_phyinfo_by_phys_disk_num(MPT_ADAPTER *ioc, u8 phys_disk_num,
+ static void
+ mptsas_reprobe_lun(struct scsi_device *sdev, void *data)
+ {
+-	int rc;
+-
+ 	sdev->no_uld_attach = data ? 1 : 0;
+-	rc = scsi_device_reprobe(sdev);
++	WARN_ON(scsi_device_reprobe(sdev));
+ }
+ 
+ static void
+@@ -4790,7 +4788,6 @@ mptsas_issue_tm(MPT_ADAPTER *ioc, u8 type, u8 channel, u8 id, u64 lun,
+ 	MPT_FRAME_HDR	*mf;
+ 	SCSITaskMgmt_t	*pScsiTm;
+ 	int		 retval;
+-	unsigned long	 timeleft;
+ 
+ 	*issue_reset = 0;
+ 	mf = mpt_get_msg_frame(mptsasDeviceResetCtx, ioc);
+@@ -4826,8 +4823,7 @@ mptsas_issue_tm(MPT_ADAPTER *ioc, u8 type, u8 channel, u8 id, u64 lun,
+ 	mpt_put_msg_frame_hi_pri(mptsasDeviceResetCtx, ioc, mf);
+ 
+ 	/* Now wait for the command to complete */
+-	timeleft = wait_for_completion_timeout(&ioc->taskmgmt_cmds.done,
+-	    timeout*HZ);
++	wait_for_completion_timeout(&ioc->taskmgmt_cmds.done, timeout * HZ);
+ 	if (!(ioc->taskmgmt_cmds.status & MPT_MGMT_STATUS_COMMAND_GOOD)) {
+ 		retval = -1; /* return failure */
+ 		dtmprintk(ioc, printk(MYIOC_s_ERR_FMT
+@@ -4870,8 +4866,8 @@ mptsas_broadcast_primitive_work(struct fw_event_work *fw_event)
+ 	int			task_context;
+ 	u8			channel, id;
+ 	int			 lun;
+-	u32			 termination_count;
+-	u32			 query_count;
++	u32			 termination_count __maybe_unused;
++	u32			 query_count __maybe_unused;
+ 
+ 	dtmprintk(ioc, printk(MYIOC_s_DEBUG_FMT
+ 	    "%s - enter\n", ioc->name, __func__));
+-- 
+2.43.5
 
 
