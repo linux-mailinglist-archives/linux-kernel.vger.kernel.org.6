@@ -1,231 +1,242 @@
-Return-Path: <linux-kernel+bounces-284560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394E1950270
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:27:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 385CF95027A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B665D1F22BA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:27:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6ECEDB272C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 10:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058E91946C1;
-	Tue, 13 Aug 2024 10:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8YRfTDQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC2A219149E;
+	Tue, 13 Aug 2024 10:27:52 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C1A18DF62;
-	Tue, 13 Aug 2024 10:27:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C1E189918
+	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 10:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723544827; cv=none; b=PDzB+nUOj7FudkPxADo4APNRN/PT4GK2ZdH0qUcHCqUtnVadHNM+HKFNE+OKPAryKXEefDxr7vC3qWuBh4GUwfcelUdnivwpGugZ/L6vx4g9OEtVBrvItlq6mErjEm4bierU9YIdq/J5GLLwUBTtoBIF8XzFAW3sddvfAz11ALQ=
+	t=1723544872; cv=none; b=IvTts0EgJnw0Xr/OOOLRRLHWZvWSMzMdPLg5KB5UE/IyHGfh8HPNTu+nIBi2ibCwSnD9z/fZop7oOxyagOIfLh81CyFC0cEWcEIfzun6oLtEhVZQmf8h/iVJiGsFGSeq78WAQ2kybC67SFlhr80bvKzVgP25yUEi82J74QZKNsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723544827; c=relaxed/simple;
-	bh=whD3H4/YPbcQqCEdT/d7oKczontTk3uLQSOgIE/FGxI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dyUw0jrJI1q1F92u6X7hUkFZJnreFqbBDqq37czzDOE5r1dhyaBYxAzSttz03TTjnbiMe/iX9exRu1/VSesDCuGs4BYrh/91Kky5C2+dr1RATBBsPxqyhIlmCyaKP2wZ/TtlFX6Eft+o90F9Tk9UWivHaZg9T31DkVo9spqA0TI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8YRfTDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BD00C4AF0B;
-	Tue, 13 Aug 2024 10:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723544826;
-	bh=whD3H4/YPbcQqCEdT/d7oKczontTk3uLQSOgIE/FGxI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=q8YRfTDQ5y/6+/BOgtfNk34bYBqLlnZD3dwOMaIunBU8b8KXijf2SMIQK8WOr2qqO
-	 dNE2qkpL5S3f9J0PfsHAgJXhs6+w4zHZrwaR30mOt+52RA6xPaSPP9Wvtu1OAdOraZ
-	 7T+kLMud80zEMNqrLDh+QSimtFUs4npZs1mEFmH3gAK0iB/FTx7rzM6p69D19tJJWi
-	 gqjAJQVlGzRlcd3t2KaVlQSR3Q8nbbTvz/5Ftr1aTJB46xL0NU9ciVHfPVpvwfjX1O
-	 Z49R19XENLVpdTqlMKwFo801oC3qq2cD+jdxr4PvEYLjg068+QBs1fG21dfle28WnU
-	 YHuTgP5Rz7X4A==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a9e25008aso74222466b.0;
-        Tue, 13 Aug 2024 03:27:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX+lnXIGHP0v6h5cno9BM+z2L8/Qhe2UALAZM1HH73/S8OKQFMCqU+RxtO0kp3zk02wAFv7M4Cdzs3sGPsbKTODZybriYwe7Z73/8Hd7db3R1A/5yDPpNO59DX15MLdEXQaCftOJHPyhXg=
-X-Gm-Message-State: AOJu0YzMWw9QeIote+BZPd7/3ZKzIJh65kSUK5EoC+QY8rWol7gECnpf
-	BKVQA0xzyvKBIrgsCCJWHdI1zNop4VWGcsHvilC1kXSHKjIiB4ujA5Dr+AtGYviEbynGRkb+9xc
-	IndCO3wWtA0G3OWoOJMUZZW+Pp6o=
-X-Google-Smtp-Source: AGHT+IGHdspHEbs6oPwEELfckFST2N3+WXraVbD6ObT2rgImU9WBraFQ9WOWSQyKcRluBUbyaJGBFlMgU2YaE06kMR0=
-X-Received: by 2002:a17:907:f148:b0:a7a:929f:c0ce with SMTP id
- a640c23a62f3a-a80ed1efe70mr254124966b.19.1723544825105; Tue, 13 Aug 2024
- 03:27:05 -0700 (PDT)
+	s=arc-20240116; t=1723544872; c=relaxed/simple;
+	bh=+4zpDIvmo7m8mge0BRl+spY0/iPXTDu4xWLM49DNuN0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=crImA0tK8zknES0ZOoleeJdomd0htlmnnyTwn8pWUv1csAKOwbjy5WQhmy7LAv7Dpn9WK6KYUTvtCpImCnonO+jXfy+uOQ6FM0DFZ+gTGxEQeljF1WgKAm4CsrwTBbmGTrwytwuYuFdmHHtV21sa+CRfY3tkZSAVArOKFR18r84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdokg-0000Lw-Uf; Tue, 13 Aug 2024 12:27:42 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdokg-0006WA-Fn; Tue, 13 Aug 2024 12:27:42 +0200
+Received: from mgr by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mgr@pengutronix.de>)
+	id 1sdokg-000cyt-0v;
+	Tue, 13 Aug 2024 12:27:42 +0200
+Date: Tue, 13 Aug 2024 12:27:42 +0200
+From: Michael Grzeschik <mgr@pengutronix.de>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Daniel Scally <dan.scally@ideasonboard.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Avichal Rakesh <arakesh@google.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 07/10] usb: gadget: uvc: add g_parm and s_parm for
+ frame interval
+Message-ID: <Zrs1HhLLkun6_0jD@pengutronix.de>
+References: <20240403-uvc_request_length_by_interval-v4-0-ca22f334226e@pengutronix.de>
+ <20240403-uvc_request_length_by_interval-v4-7-ca22f334226e@pengutronix.de>
+ <20240813092253.GB19716@pendragon.ideasonboard.com>
+ <20240813092820.GC19716@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240812165931.9106-1-jth@kernel.org>
-In-Reply-To: <20240812165931.9106-1-jth@kernel.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Tue, 13 Aug 2024 11:26:28 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H71KCunZHKZhbNxJEAWriJ4eZzogBNMmpT39o_LzaBWBA@mail.gmail.com>
-Message-ID: <CAL3q7H71KCunZHKZhbNxJEAWriJ4eZzogBNMmpT39o_LzaBWBA@mail.gmail.com>
-Subject: Re: [PATCH] btrfs: reduce chunk_map lookups in btrfs_map_block
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	"open list:BTRFS FILE SYSTEM" <linux-btrfs@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pCnE4S7EaTs2hXjB"
+Content-Disposition: inline
+In-Reply-To: <20240813092820.GC19716@pendragon.ideasonboard.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mgr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--pCnE4S7EaTs2hXjB
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 12, 2024 at 6:18=E2=80=AFPM Johannes Thumshirn <jth@kernel.org>=
- wrote:
+On Tue, Aug 13, 2024 at 12:28:20PM +0300, Laurent Pinchart wrote:
+>On Tue, Aug 13, 2024 at 12:22:55PM +0300, Laurent Pinchart wrote:
+>> On Tue, Aug 13, 2024 at 11:09:31AM +0200, Michael Grzeschik wrote:
+>> > The uvc gadget driver is lacking the information which frame interval
+>> > was set by the host. We add this information by implementing the g_parm
+>> > and s_parm callbacks.
+>>
+>> As I've said countless times, this kind of hack is not the right way to
+>> pass information that the kernel has no use for between two userspace
+>> components. Please stop butchering this driver.
 >
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+>Reading further patches in the series I see that you would like to get
+>more precise bandwidth information from userspace. That is fine, but I
+>don't think s_parm is the right option. This is not a regular V4L2
+>driver, pass it the exat information it needs instead, through a
+>dedicated API that will provide all the needed data.
+
+We have an API, where we can handover the framerate. Why invent
+something new. All we need to fix is also patch you uvc-gadget
+implementation.
+
+What other API do you suggest then? Come up with something super new and
+special, only dedicated for UVC then?
+
+Regards,
+Michael
+
+>> > Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
+>> > ---
+>> > v3 -> v4: -
+>> > v2 -> v3: -
+>> > v1 -> v2: -
+>> > ---
+>> >  drivers/usb/gadget/function/uvc.h      |  1 +
+>> >  drivers/usb/gadget/function/uvc_v4l2.c | 52 +++++++++++++++++++++++++=
++++++++++
+>> >  2 files changed, 53 insertions(+)
+>> >
+>> > diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/fu=
+nction/uvc.h
+>> > index b3a5165ac70ec..f6bc58fb02b84 100644
+>> > --- a/drivers/usb/gadget/function/uvc.h
+>> > +++ b/drivers/usb/gadget/function/uvc.h
+>> > @@ -100,6 +100,7 @@ struct uvc_video {
+>> >  	unsigned int width;
+>> >  	unsigned int height;
+>> >  	unsigned int imagesize;
+>> > +	unsigned int interval;
+>> >  	struct mutex mutex;	/* protects frame parameters */
+>> >
+>> >  	unsigned int uvc_num_requests;
+>> > diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadg=
+et/function/uvc_v4l2.c
+>> > index de41519ce9aa0..392fb400aad14 100644
+>> > --- a/drivers/usb/gadget/function/uvc_v4l2.c
+>> > +++ b/drivers/usb/gadget/function/uvc_v4l2.c
+>> > @@ -307,6 +307,56 @@ uvc_v4l2_set_format(struct file *file, void *fh, =
+struct v4l2_format *fmt)
+>> >  	return ret;
+>> >  }
+>> >
+>> > +static int uvc_v4l2_g_parm(struct file *file, void *fh,
+>> > +			    struct v4l2_streamparm *parm)
+>> > +{
+>> > +	struct video_device *vdev =3D video_devdata(file);
+>> > +	struct uvc_device *uvc =3D video_get_drvdata(vdev);
+>> > +	struct uvc_video *video =3D &uvc->video;
+>> > +	struct v4l2_fract timeperframe;
+>> > +
+>> > +	if (parm->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE)
+>> > +		return -EINVAL;
+>> > +
+>> > +	/* Return the actual frame period. */
+>> > +	timeperframe.numerator =3D video->interval;
+>> > +	timeperframe.denominator =3D 10000000;
+>> > +	v4l2_simplify_fraction(&timeperframe.numerator,
+>> > +		&timeperframe.denominator, 8, 333);
+>> > +
+>> > +	uvcg_dbg(&uvc->func, "Getting frame interval of %u/%u (%u)\n",
+>> > +		timeperframe.numerator, timeperframe.denominator,
+>> > +		video->interval);
+>> > +
+>> > +	parm->parm.output.timeperframe =3D timeperframe;
+>> > +	parm->parm.output.capability =3D V4L2_CAP_TIMEPERFRAME;
+>> > +
+>> > +	return 0;
+>> > +}
+>> > +
+>> > +static int uvc_v4l2_s_parm(struct file *file, void *fh,
+>> > +			    struct v4l2_streamparm *parm)
+>> > +{
+>> > +	struct video_device *vdev =3D video_devdata(file);
+>> > +	struct uvc_device *uvc =3D video_get_drvdata(vdev);
+>> > +	struct uvc_video *video =3D &uvc->video;
+>> > +	struct v4l2_fract timeperframe;
+>> > +
+>> > +	if (parm->type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE)
+>> > +		return -EINVAL;
+>> > +
+>> > +	timeperframe =3D parm->parm.output.timeperframe;
+>> > +
+>> > +	video->interval =3D v4l2_fraction_to_interval(timeperframe.numerator,
+>> > +		timeperframe.denominator);
+>> > +
+>> > +	uvcg_dbg(&uvc->func, "Setting frame interval to %u/%u (%u)\n",
+>> > +		timeperframe.numerator, timeperframe.denominator,
+>> > +		video->interval);
+>> > +
+>> > +	return 0;
+>> > +}
+>> > +
+>> >  static int
+>> >  uvc_v4l2_enum_frameintervals(struct file *file, void *fh,
+>> >  		struct v4l2_frmivalenum *fival)
+>> > @@ -577,6 +627,8 @@ const struct v4l2_ioctl_ops uvc_v4l2_ioctl_ops =3D=
+ {
+>> >  	.vidioc_dqbuf =3D uvc_v4l2_dqbuf,
+>> >  	.vidioc_streamon =3D uvc_v4l2_streamon,
+>> >  	.vidioc_streamoff =3D uvc_v4l2_streamoff,
+>> > +	.vidioc_s_parm =3D uvc_v4l2_s_parm,
+>> > +	.vidioc_g_parm =3D uvc_v4l2_g_parm,
+>> >  	.vidioc_subscribe_event =3D uvc_v4l2_subscribe_event,
+>> >  	.vidioc_unsubscribe_event =3D uvc_v4l2_unsubscribe_event,
+>> >  	.vidioc_default =3D uvc_v4l2_ioctl_default,
 >
-> Currently we're calling btrfs_num_copies() before btrfs_get_chunk_map() i=
-n
-> btrfs_map_block(). But btrfs_num_copies() itself does a chunk map lookup
-> to be able to calculate the number of copies.
+>--=20
+>Regards,
 >
-> So split out the code getting the number of copies from btrfs_num_copies(=
-)
-> into a helper called btrfs_chunk_map_num_copies() and directly call it
-> from btrfs_map_block() and btrfs_num_copies().
+>Laurent Pinchart
 >
-> This saves us one rbtree lookup per btrfs_map_block() invocation.
->
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/btrfs/volumes.c | 50 +++++++++++++++++++++++++++-------------------
->  1 file changed, 29 insertions(+), 21 deletions(-)
->
-> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-> index e07452207426..4863bdb4d6f4 100644
-> --- a/fs/btrfs/volumes.c
-> +++ b/fs/btrfs/volumes.c
-> @@ -5781,10 +5781,33 @@ void btrfs_mapping_tree_free(struct btrfs_fs_info=
- *fs_info)
->         write_unlock(&fs_info->mapping_tree_lock);
->  }
->
-> +static int btrfs_chunk_map_num_copies(struct btrfs_chunk_map *map)
 
-Can be made const.
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
-> +{
-> +       enum btrfs_raid_types index =3D btrfs_bg_flags_to_raid_index(map-=
->type);
-> +
-> +       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
-> +       if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
-> +               return btrfs_raid_array[index].ncopies;
+--pCnE4S7EaTs2hXjB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Since the index is only used here, it could be declared here.
-Or just just shorten the function to something like this, which also
-addresses Qu's comment:
+-----BEGIN PGP SIGNATURE-----
 
-static int btrfs_chunk_map_num_copies(const struct btrfs_chunk_map *map)
-{
-     enum btrfs_raid_types index =3D btrfs_bg_flags_to_raid_index(map->type=
-);
+iQIzBAABCgAdFiEElXvEUs6VPX6mDPT8C+njFXoeLGQFAma7NRsACgkQC+njFXoe
+LGT4GA//cTsUBnXQ98Sk+yIYqx8HYSf4OH1QQHaAkSsFEp7JzKiAzJ0gI3lVEmaC
+/P6NHuTef2ogVwh8GkAHYQm0OlmRDo8Xa3SLtQjcWaOyVWMk7CYNrDCrRA4MVeFn
+3ugSD0LLhpTvTwffMlwE7y5twxa6FN0jN3JAlOY3kmWGx4ICvTQnIONWlROvASef
+a+FraRgs59nzkRc8wdtUj321rnn2gtVcoPYQlVTF3ID39ylhNLi/7WWO/hEjQoDL
+rM7V1qCj5HPq2Ejw1CGta1Wt01iCmsRqgB6x+L86z1vu88L8lYIzS6rBGlk5kbXf
+v6PcVay24l4YehiVHXBzrU7PaZ9QAgixIYakJb4H0xNNygxnhyVRVG2T11XRdHTu
+oVs5qanzsu0B1akxxmlLx36FYrgtP0It3Eu5jDydo8hrlxg74hEs0hGCiG18lkRe
+vzEWyOMoCehlb+6FKby7PiX+sxkFcr+9/ZJFmk3+ehn3aGFEDyuYlYYk9vsWuz0g
+ZcH+z1IunYJx0ddXV2pyrRlDyNAOTqu1FBHRy2J0RJyenH0IRU/C3yV2gV6z2erV
+A3kJSJtDYAJyTAVBxx8M0XIs+/AKenUUrKKjf45yS1+H4mlaPbLtwYmdYXyuMaYh
+U6VJVh9q4hek9ZtW1ehQ1j90XMQRiNbZyP3rY16Y9pKjUmK+v8U=
+=VH8x
+-----END PGP SIGNATURE-----
 
-     if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-         return 2;
-
-    /*
-     * There could be two corrupted data stripes, we need
-     * to loop retry in order to rebuild the correct data.
-     *
-     * Fail a stripe at a time on every retry except the
-     * stripe under reconstruction.
-     */
-    if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-        return map->num_stripes;
-
-    /* Non-RAID56, use their ncopies from btrfs_raid_array. */
-    return btrfs_raid_array[index].ncopies;
-}
-
-Less code, less one if statement, and no need for the assert Qu mentioned.
-
-> +
-> +       if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-> +               return 2;
-> +
-> +       /*
-> +        * There could be two corrupted data stripes, we need
-> +        * to loop retry in order to rebuild the correct data.
-> +        *
-> +        * Fail a stripe at a time on every retry except the
-> +        * stripe under reconstruction.
-
-Since this is moving the comment and it falls too short of the 80
-characters line length,
-it's a good opportunity to reformat it to have the lines closer to 80
-characters.
-
-Otherwise it looks fine:
-
-Reviewed-by: Filipe Manana <fdmanana@suse.com>
-
-Thanks.
-
-> +        */
-> +       if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-> +               return map->num_stripes;
-> +
-> +       return 1;
-> +}
-> +
->  int btrfs_num_copies(struct btrfs_fs_info *fs_info, u64 logical, u64 len=
-)
->  {
->         struct btrfs_chunk_map *map;
-> -       enum btrfs_raid_types index;
->         int ret =3D 1;
->
->         map =3D btrfs_get_chunk_map(fs_info, logical, len);
-> @@ -5797,22 +5820,7 @@ int btrfs_num_copies(struct btrfs_fs_info *fs_info=
-, u64 logical, u64 len)
->                  */
->                 return 1;
->
-> -       index =3D btrfs_bg_flags_to_raid_index(map->type);
-> -
-> -       /* Non-RAID56, use their ncopies from btrfs_raid_array. */
-> -       if (!(map->type & BTRFS_BLOCK_GROUP_RAID56_MASK))
-> -               ret =3D btrfs_raid_array[index].ncopies;
-> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
-> -               ret =3D 2;
-> -       else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
-> -               /*
-> -                * There could be two corrupted data stripes, we need
-> -                * to loop retry in order to rebuild the correct data.
-> -                *
-> -                * Fail a stripe at a time on every retry except the
-> -                * stripe under reconstruction.
-> -                */
-> -               ret =3D map->num_stripes;
-> +       ret =3D btrfs_chunk_map_num_copies(map);
->         btrfs_free_chunk_map(map);
->         return ret;
->  }
-> @@ -6462,14 +6470,14 @@ int btrfs_map_block(struct btrfs_fs_info *fs_info=
-, enum btrfs_map_op op,
->         io_geom.stripe_index =3D 0;
->         io_geom.op =3D op;
->
-> -       num_copies =3D btrfs_num_copies(fs_info, logical, fs_info->sector=
-size);
-> -       if (io_geom.mirror_num > num_copies)
-> -               return -EINVAL;
-> -
->         map =3D btrfs_get_chunk_map(fs_info, logical, *length);
->         if (IS_ERR(map))
->                 return PTR_ERR(map);
->
-> +       num_copies =3D btrfs_chunk_map_num_copies(map);
-> +       if (io_geom.mirror_num > num_copies)
-> +               return -EINVAL;
-> +
->         map_offset =3D logical - map->start;
->         io_geom.raid56_full_stripe_start =3D (u64)-1;
->         max_len =3D btrfs_max_io_len(map, map_offset, &io_geom);
-> --
-> 2.43.0
->
->
+--pCnE4S7EaTs2hXjB--
 
