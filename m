@@ -1,302 +1,156 @@
-Return-Path: <linux-kernel+bounces-284173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B91E94FDDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:31:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2098994FDD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 08:30:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA15D281319
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:31:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B819E1F21D0A
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 06:30:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3CC3BB32;
-	Tue, 13 Aug 2024 06:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984583A8D8;
+	Tue, 13 Aug 2024 06:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqYJfeaW"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eQ/UimrU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D00F44393
-	for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2024 06:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D352A38;
+	Tue, 13 Aug 2024 06:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723530662; cv=none; b=VA0fSKaQNdmwhqXML0tP1lhuUypjDYbFzuKAflN65sl3BX3V958Yy/wpc8yvnx6020yjl/Xm6aZ9Ek1Qr7KXLIJjADgsQKJ7ZYtLa0NhcQVFzvCthE2YLpBxLL4+UlmEsoZGThuZlOf9xohFMdCziPmlGdAaD6xmhqQ2FybhQmM=
+	t=1723530634; cv=none; b=cZVOrUPtnMJyVRC2iHI5tpU2VLoLIfmTOwhW2jRHShzPnBYmGPuNEvyxWfKy1dGVvkcZpzUaKxY3vtIFNYGv/rzM14TWOYPbM2a6JEpRgMcRqO5elt5SBqSRM0/d/hue81nZP2iLx5oa4d+gHimEZby6gZQV6Fhuut44qRUT5wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723530662; c=relaxed/simple;
-	bh=CdivoeaAr3lYU0Z5j4OlwyOz1nmuX2TSQ+f7cUhOuAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BgwZZzuhyw0RxFkP/AD5uRTUbuE5sXpDaQ0xxShVr4VhnfIH9Xb93lz1ofcMvdDbH6gpuSgOyyAZC4JJWXXY71uNj/MK5Wnb7nUWkUVQJSNnJkFgPmBqM6i543AWhXFRtN8ekHRbOQxMRcjMxkmSr7I0+vc++3mU/ewiOXcvhh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqYJfeaW; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3db51133978so3609802b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Aug 2024 23:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723530659; x=1724135459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BCRwCY9EDZcaC0Ax+MD/I4e/vXfkLFmA0dK7jr+FvWs=;
-        b=KqYJfeaWy1XvkNUufzT9Sgek/b2PEj8UATorSHADHe9KRvNpuSnPr/pYKlwZot76bD
-         xSnTgC1T8e52N+pkSPWo90w1Tw8F5JMOYrll/Fps4WZ5hlP2Oz95VBgp7kjipKmptQtI
-         hhoOv+JT0vbx90jPDEPB27D2WwQUF0hOVEZutmVuWvq0WViFQ3Qkg/2SzGBXftgDWlQr
-         tkmzvmVYtWA65dnrbOXI5FQAWpbxAkkuva1KtL39TeUg5tvn9aFISZlb234n5yuZe06i
-         DpL+IrQWSKaQhv320nDijRDwQU0xUjIwuAXOcibbj5v5QLPzF4mpnW2peyacXzK/eXWz
-         aFXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723530659; x=1724135459;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BCRwCY9EDZcaC0Ax+MD/I4e/vXfkLFmA0dK7jr+FvWs=;
-        b=m09oQkQRDWnRLVdNulPvVONF5Xpw9RH0v2N5ebWbXko8LqiYlTfVSfyutE906yXkNq
-         ghJHeK87I9VoRn/pwYONi+vu7788tPIANxPTnHLiP3TyY30unxskOGcCdDoQCEjNVLNv
-         7Tx9YfFUnctfcOmPQHc5oZY//Q8n2i2E0V/NYwfLfms49dLy/U8zHd0eGO9blonR3G9R
-         mZoWoxKk/Hisfw+hjMSycnTXLVxgMiEFqqNRNQjc5WUlHbNkwnDzE8/sa//eYwIjEvhD
-         HOZ14KPU8DtlDOTNSbLmLzRkLRZgLRgFglhEoL0dKKwnPYOF7Rou9N/Llg8W4IoPkzun
-         MDOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYs9XmZelMhpYcYWKxA0ge477OQCyOkkJjxMjDwxTDcXEG5VBU3F4z5qixTkHA8XReLwTB+G3M2zKkxb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+ozL+fQZaxyYklzFNWzCy5xLQg+n8mHb69iLg/rJV6UvWY4qK
-	q0MaBPkkvpqG/ZY0Y+FJd7zIMpg6EgbHxCSaH5hD/SLFub6BQUmU
-X-Google-Smtp-Source: AGHT+IEdAD3lQBiintdbrrYL9Q9u1r8Hb7gnuu2Rg873fjM/Qkagyegk+fduHZKHHicbc3C/esKghA==
-X-Received: by 2002:a05:6808:199d:b0:3da:b35d:52e0 with SMTP id 5614622812f47-3dd1eee0effmr2829791b6e.43.1723530659653;
-        Mon, 12 Aug 2024 23:30:59 -0700 (PDT)
-Received: from distilledx.srmu.edu.in ([2401:4900:6325:9539:8b89:ebee:b1a0:5ff9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-710e5874ef7sm4991965b3a.38.2024.08.12.23.30.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Aug 2024 23:30:59 -0700 (PDT)
-From: Tejas Vipin <tejasvipin76@gmail.com>
-To: maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	neil.armstrong@linaro.org,
-	quic_jesszhan@quicinc.com
-Cc: dianders@chromium.org,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Tejas Vipin <tejasvipin76@gmail.com>
-Subject: [PATCH v2 2/2] drm/panel: jdi-fhd-r63452: transition to mipi_dsi wrapped functions
-Date: Tue, 13 Aug 2024 11:59:12 +0530
-Message-ID: <20240813062912.467280-3-tejasvipin76@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20240813062912.467280-1-tejasvipin76@gmail.com>
-References: <20240813062912.467280-1-tejasvipin76@gmail.com>
+	s=arc-20240116; t=1723530634; c=relaxed/simple;
+	bh=DmKnLXUCM72x1dzkF1cuvWtBK8szozZg09Qg4VMff0U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YE17TJBCA0gwLU9LKvW4CpRP+SfOscQjDwplrrCD5OfmC5j27lgsp7FdBlo2uva8FKZE82wnBs7GeU0SvfrRjBAPfmzB/DtzRyZnapLoAlQTywp321S4qFsmK0G/tQw90SO7RxkuY1fmi1KNj0UvQFnP2dojV0AxUI1VY/crhEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eQ/UimrU; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723530633; x=1755066633;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=DmKnLXUCM72x1dzkF1cuvWtBK8szozZg09Qg4VMff0U=;
+  b=eQ/UimrUwtpXzLBw+o80gBeAcCe2d56nXF2MiDd9ouYnkvLlDf/twt5j
+   0VVSwW+eDq9XqmzPL80zcVYmhb/5Y59Scrr20MEvwIqQ+Xmn18QrRCCgN
+   sJjp32lgwVHKILROenNo1Js+ZTHQYW99z48dqVRYgY5P9t+2anOYw3rdn
+   v0i2EankwGHjGGUntZZPqczUrao1VTUrT+EV63G5y2rGo2x6QkLuG2ZJn
+   uXOjW9sYHNt8rpK4A1gvQmqeQeQyHaaszdxL9clxYVMOA6QK3ESrRIoSF
+   pOXiWTOTp6Fh/D89WWlu50//iW9lC7Rr6cojg5op6LD2E8JbzoEw1xF3G
+   g==;
+X-CSE-ConnectionGUID: MWZEFqH2SXi9JeIQ1PKMdw==
+X-CSE-MsgGUID: jTZNG0kcTHqf3M+xQ/BAzw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="32819302"
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="32819302"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:30:30 -0700
+X-CSE-ConnectionGUID: OK0xb/X4QSK98fK2qnVG0A==
+X-CSE-MsgGUID: yIz5n0FASNiiwTlY+NexCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
+   d="scan'208";a="58632017"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Aug 2024 23:30:25 -0700
+Date: Tue, 13 Aug 2024 09:30:22 +0300
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andi Shyti <andi.shyti@linux.intel.com>
+Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
+	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
+	daniel@ffwll.ch, linux@roeck-us.net,
+	andriy.shevchenko@linux.intel.com, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, anshuman.gupta@intel.com,
+	badal.nilawar@intel.com, riana.tauro@intel.com,
+	ashutosh.dixit@intel.com, karthik.poosa@intel.com
+Subject: Re: [PATCH v5] drm/i915/hwmon: expose fan speed
+Message-ID: <Zrr9fobk-zahLpIO@black.fi.intel.com>
+References: <20240812081538.1457396-1-raag.jadav@intel.com>
+ <ZroTN3UudwvIJ7oR@ashyti-mobl2.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZroTN3UudwvIJ7oR@ashyti-mobl2.lan>
 
-Changes the jdi-fhd-r63452 panel to use multi style functions for
-improved error handling.
+On Mon, Aug 12, 2024 at 03:50:47PM +0200, Andi Shyti wrote:
+> Hi Raag,
+> 
+> > +static int
+> > +hwm_fan_read(struct hwm_drvdata *ddat, u32 attr, long *val)
+> > +{
+> > +	struct i915_hwmon *hwmon = ddat->hwmon;
+> > +	struct hwm_fan_info *fi = &ddat->fi;
+> > +	u64 rotations, time_now, time;
+> > +	intel_wakeref_t wakeref;
+> > +	u32 reg_val, pulses;
+> > +	int ret = 0;
+> > +
+> > +	if (attr != hwmon_fan_input)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	wakeref = intel_runtime_pm_get(ddat->uncore->rpm);
+> > +	mutex_lock(&hwmon->hwmon_lock);
+> > +
+> > +	reg_val = intel_uncore_read(ddat->uncore, hwmon->rg.fan_speed);
+> > +	time_now = get_jiffies_64();
+> > +
+> > +	/* Handle HW register overflow */
+> > +	if (reg_val >= fi->reg_val_prev)
+> > +		pulses = reg_val - fi->reg_val_prev;
+> > +	else
+> > +		pulses = UINT_MAX - fi->reg_val_prev + reg_val;
+> > +
+> > +	/*
+> > +	 * HW register value is accumulated count of pulses from
+> > +	 * PWM fan with the scale of 2 pulses per rotation.
+> > +	 */
+> > +	rotations = pulses / 2;
+> > +
+> > +	time = jiffies_delta_to_msecs(time_now - fi->time_prev);
+> > +	if (unlikely(!time)) {
+> > +		ret = -EAGAIN;
+> > +		goto exit;
+> > +	}
+> 
+> Can you please add a comment describing how you obtain the speed
+> calculation?
 
-Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
----
- drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c | 150 ++++++-------------
- 1 file changed, 49 insertions(+), 101 deletions(-)
+That's what I initially tried but ended up dropping it in favour of RPM
+formula below, which I found to be doing a better job of explaining than
+a few lines of description.
 
-diff --git a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-index 483dc88d16d8..9ec567b4a8e2 100644
---- a/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-+++ b/drivers/gpu/drm/panel/panel-jdi-fhd-r63452.c
-@@ -41,142 +41,90 @@ static void jdi_fhd_r63452_reset(struct jdi_fhd_r63452 *ctx)
- static int jdi_fhd_r63452_on(struct jdi_fhd_r63452 *ctx)
- {
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
- 
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xec,
--				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
--				   0x13, 0x15, 0x68, 0x0b, 0xb5);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
--
--	ret = mipi_dsi_dcs_set_tear_on(dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear on: %d\n", ret);
--		return ret;
--	}
--
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
-+					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
-+					 0x13, 0x15, 0x68, 0x0b, 0xb5);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
- 
--	ret = mipi_dsi_dcs_set_pixel_format(dsi, 0x77);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set pixel format: %d\n", ret);
--		return ret;
--	}
--
--	ret = mipi_dsi_dcs_set_column_address(dsi, 0x0000, 0x0437);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set column address: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_tear_on_multi(&dsi_ctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
- 
--	ret = mipi_dsi_dcs_set_page_address(dsi, 0x0000, 0x077f);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set page address: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_ADDRESS_MODE, 0x00);
- 
--	ret = mipi_dsi_dcs_set_tear_scanline(dsi, 0x0000);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set tear scanline: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_set_pixel_format_multi(&dsi_ctx, 0x77);
-+	mipi_dsi_dcs_set_column_address_multi(&dsi_ctx, 0x0000, 0x0437);
-+	mipi_dsi_dcs_set_page_address_multi(&dsi_ctx, 0x0000, 0x077f);
-+	mipi_dsi_dcs_set_tear_scanline_multi(&dsi_ctx, 0x0000);
-+	mipi_dsi_dcs_set_display_brightness_multi(&dsi_ctx, 0x00ff);
- 
--	ret = mipi_dsi_dcs_set_display_brightness(dsi, 0x00ff);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display brightness: %d\n", ret);
--		return ret;
--	}
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
- 
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_CONTROL_DISPLAY, 0x24);
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_WRITE_POWER_SAVE, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, MIPI_DCS_SET_CABC_MIN_BRIGHTNESS, 0x00);
--	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
-+	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 20);
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 80);
- 
--	ret = mipi_dsi_dcs_set_display_on(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display on: %d\n", ret);
--		return ret;
--	}
--	msleep(20);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x04);
-+	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x84, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xc8, 0x11);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
- 
--	ret = mipi_dsi_dcs_exit_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to exit sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(80);
--
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x04);
--	mipi_dsi_dcs_write_seq(dsi, 0x84, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xc8, 0x11);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
--
--	return 0;
-+	return dsi_ctx.accum_err;
- }
- 
--static int jdi_fhd_r63452_off(struct jdi_fhd_r63452 *ctx)
-+static void jdi_fhd_r63452_off(struct jdi_fhd_r63452 *ctx)
- {
- 	struct mipi_dsi_device *dsi = ctx->dsi;
--	struct device *dev = &dsi->dev;
--	int ret;
-+	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
- 
- 	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
- 
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x00);
--	mipi_dsi_generic_write_seq(dsi, 0xd6, 0x01);
--	mipi_dsi_generic_write_seq(dsi, 0xec,
--				   0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
--				   0x13, 0x15, 0x68, 0x0b, 0x95);
--	mipi_dsi_generic_write_seq(dsi, 0xb0, 0x03);
--
--	ret = mipi_dsi_dcs_set_display_off(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to set display off: %d\n", ret);
--		return ret;
--	}
--	usleep_range(2000, 3000);
--
--	ret = mipi_dsi_dcs_enter_sleep_mode(dsi);
--	if (ret < 0) {
--		dev_err(dev, "Failed to enter sleep mode: %d\n", ret);
--		return ret;
--	}
--	msleep(120);
--
--	return 0;
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x00);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xd6, 0x01);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xec,
-+					 0x64, 0xdc, 0xec, 0x3b, 0x52, 0x00, 0x0b, 0x0b,
-+					 0x13, 0x15, 0x68, 0x0b, 0x95);
-+	mipi_dsi_generic_write_seq_multi(&dsi_ctx, 0xb0, 0x03);
-+
-+	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
-+	if (!dsi_ctx.accum_err)
-+		usleep_range(2000, 3000);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
-+	mipi_dsi_msleep(&dsi_ctx, 120);
- }
- 
- static int jdi_fhd_r63452_prepare(struct drm_panel *panel)
- {
- 	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
--	struct device *dev = &ctx->dsi->dev;
- 	int ret;
- 
- 	jdi_fhd_r63452_reset(ctx);
- 
- 	ret = jdi_fhd_r63452_on(ctx);
--	if (ret < 0) {
--		dev_err(dev, "Failed to initialize panel: %d\n", ret);
-+	if (ret < 0)
- 		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
--		return ret;
--	}
- 
--	return 0;
-+	return ret;
- }
- 
- static int jdi_fhd_r63452_unprepare(struct drm_panel *panel)
- {
- 	struct jdi_fhd_r63452 *ctx = to_jdi_fhd_r63452(panel);
--	struct device *dev = &ctx->dsi->dev;
--	int ret;
- 
--	ret = jdi_fhd_r63452_off(ctx);
--	if (ret < 0)
--		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
-+	/*
-+	 * NOTE: We don't return an error here as while the panel won't have
-+	 * been cleanly turned off at least we've asserted the reset signal
-+	 * so it should be safe to power it back on again later
-+	 */
-+	jdi_fhd_r63452_off(ctx);
- 
- 	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
- 
--- 
-2.46.0
+> Basically at every read you store the values. Is it possible that
+> we don't have reads for a long time and the register resets more
+> than once?
 
+Considering a fan continuously running at higher speeds (for example 4000 RPM
+which is quite optimistic), with the scale of 2 pulses per rotation, a 32 bit
+register will take around a year to overflow, which is more than most usecases
+I could think of.
+
+Raag
+
+> > +	/*
+> > +	 * Convert to minutes for calculating RPM.
+> > +	 * RPM = number of rotations * msecs per minute / time in msecs
+> > +	 */
+> > +	*val = DIV_ROUND_UP(rotations * (MSEC_PER_SEC * 60), time);
+> > +
+> > +	fi->reg_val_prev = reg_val;
+> > +	fi->time_prev = time_now;
+> > +exit:
+> > +	mutex_unlock(&hwmon->hwmon_lock);
+> > +	intel_runtime_pm_put(ddat->uncore->rpm, wakeref);
+> > +	return ret;
+> > +}
 
