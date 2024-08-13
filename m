@@ -1,79 +1,113 @@
-Return-Path: <linux-kernel+bounces-284831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-284832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C2995059B
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:53:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A7895059F
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 14:54:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FE15284864
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 704C91C225B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 12:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D0119ADA6;
-	Tue, 13 Aug 2024 12:53:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C9219B3EE;
+	Tue, 13 Aug 2024 12:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwLVNos1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K4sW7RNY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1p5CVffu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="K4sW7RNY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1p5CVffu"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715631993BA;
-	Tue, 13 Aug 2024 12:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC919AA41;
+	Tue, 13 Aug 2024 12:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723553615; cv=none; b=eKR1ArHv4ntgkqzdJncpJgZWzW2Y5/0Fwp9SgpxWkFA5b/6GVnooAke1XuXyN3lrHqpG5+jQEZ0jmJxSah9x5sSsdKCZKy3EFCoU9uQRSer/uIhmSyC5AhLlRXLqqh+7fcdPF9gaQi0hRz7R20kFNnit3WvVbFiH+6FeKYyNX94=
+	t=1723553632; cv=none; b=ftpUuxZH73xGHLSSKz1R9mTninyo8nDcPujH4DUVZNOr+ahM9YtAencIHWhMblhLbUVyjdLlcXqCiMhsb//++tQvvZ+/B9OZg47+fHrlBjCP2/KsJbNqD7GnTY35QB7D5sITdGt+cDTMeHZ7bviKYW0wEOeXyKTr+Bb8C0T0afc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723553615; c=relaxed/simple;
-	bh=s3WViNmjNJ6o3NfDc+gVFx6Ybq9EcXt5R1mltnGBdKE=;
+	s=arc-20240116; t=1723553632; c=relaxed/simple;
+	bh=jwK2TlgIDhYpakRh1Z0xP+alf9Sez9NbvBRofDhBaw8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HOLJPB7NcVyCOe5P+kQ6tN+ggxihUXBHSIj0KNHQUSiKGE68RX8h5gRTbYlwfc5/cclurs6f8+PUkqbGHN8kf3W4bfsLzKk+NKrt4XOnRUKJ7gv1FKmt64+W8TmAqoFCx/Tlq44zojD/4IPzLrmtkRsaILFS5y93Tjn4eohkA+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwLVNos1; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723553613; x=1755089613;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s3WViNmjNJ6o3NfDc+gVFx6Ybq9EcXt5R1mltnGBdKE=;
-  b=FwLVNos14bauskWYbsW4bstXfRkXT2Ri3Ts4Ch9vjaIhDMMwxDLuz0DY
-   R+so4HEJKsnv2WDfvRxSbOXOb0PLs+BjHjQJWkXOrSjBK6chnE2WBtsZ0
-   iaDRpfFubCSAVpnQ+ktk/NqQbFSOS6lLMYyOtZX+E28K3NF1qJrbqOEje
-   tpUQwtViHKuhJQVq+JK75FeYFUpsteQDPBwaw2BQSoWvaiX5TGPcawN7N
-   7VhDQufxFc1pCOe7glliGB+/Oz1gubN6KfrrtU42IIRUAZRtlvDYzoNWV
-   FA+moG+J00JLEwtVMT2GdkEEmMJNgJcyivkjZHaXCupKNY3SLNFp+qqKu
-   Q==;
-X-CSE-ConnectionGUID: q6YUYli1Q9SKs7+UwEJ0cg==
-X-CSE-MsgGUID: FsmOBv+RSNG3nPCDoF+2FQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="39163793"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="39163793"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:53:32 -0700
-X-CSE-ConnectionGUID: qW8nmxWuQcCi7KvEjkkwXQ==
-X-CSE-MsgGUID: YBZBrvvTRwmZiwNFcbn3DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="96189629"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 05:53:28 -0700
-Date: Tue, 13 Aug 2024 15:53:25 +0300
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-	rodrigo.vivi@intel.com, tursulin@ursulin.net, airlied@gmail.com,
-	daniel@ffwll.ch, linux@roeck-us.net, andi.shyti@linux.intel.com,
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org,
-	anshuman.gupta@intel.com, badal.nilawar@intel.com,
-	riana.tauro@intel.com, ashutosh.dixit@intel.com,
-	karthik.poosa@intel.com
-Subject: Re: [PATCH v4] drm/i915/hwmon: expose fan speed
-Message-ID: <ZrtXReujITKx4rHH@black.fi.intel.com>
-References: <20240809061525.1368153-1-raag.jadav@intel.com>
- <ZrYB-GI9L2RSc2bt@smile.fi.intel.com>
- <ZrtCIU8On4ZKILmh@black.fi.intel.com>
- <ZrtHz1aY_Lf_XIsL@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQEH3d9YA4yP8HvAuaPugrgbPA4qNc0xuQqejbobxtBsRpI0r8z3uv1it+44Go29lbTN3n6Fnb+7f2e2PQlBCp0xNwkt9NTTv/k2bspR+ajYQUyopA09pAEmnnBRD54YZfbRTqc5Pjka+QtmLlxT7dpA/BJy0KntptvdCsk3StE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K4sW7RNY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1p5CVffu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=K4sW7RNY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1p5CVffu; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 51CB6203A9;
+	Tue, 13 Aug 2024 12:53:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723553627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldBhhXhLflU1qxSrHLUqzxurI60DSoqQk+G18vzng/Q=;
+	b=K4sW7RNYFvfGPiJ1s4M9XTyUkNNoHbhFCX7/zdRo+Qze9s17TNOIZ+G1pGC8q147PNO3tt
+	C7ZO5R8fUBb8oLsitIngMHXpkPjQte2VX/nkuj80uWcEPiI4/kggiS3ISplU96ioxRiby7
+	R1GMI0V2arrVgBc2fhP1yasHYHDn580=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723553627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldBhhXhLflU1qxSrHLUqzxurI60DSoqQk+G18vzng/Q=;
+	b=1p5CVffu8orDjTT19oDab+6bz5B96IMGuu78zx1L/LcwehiGMx/tHU22DueaJ5ZNehbnpP
+	xPfU7UE4k6H41ZDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=K4sW7RNY;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1p5CVffu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1723553627; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldBhhXhLflU1qxSrHLUqzxurI60DSoqQk+G18vzng/Q=;
+	b=K4sW7RNYFvfGPiJ1s4M9XTyUkNNoHbhFCX7/zdRo+Qze9s17TNOIZ+G1pGC8q147PNO3tt
+	C7ZO5R8fUBb8oLsitIngMHXpkPjQte2VX/nkuj80uWcEPiI4/kggiS3ISplU96ioxRiby7
+	R1GMI0V2arrVgBc2fhP1yasHYHDn580=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1723553627;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ldBhhXhLflU1qxSrHLUqzxurI60DSoqQk+G18vzng/Q=;
+	b=1p5CVffu8orDjTT19oDab+6bz5B96IMGuu78zx1L/LcwehiGMx/tHU22DueaJ5ZNehbnpP
+	xPfU7UE4k6H41ZDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 39A3013983;
+	Tue, 13 Aug 2024 12:53:47 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id wYcIDltXu2bpCQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 13 Aug 2024 12:53:47 +0000
+Date: Tue, 13 Aug 2024 14:53:46 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Sagi Grimberg <sagi@grimberg.me>, Thomas Gleixner <tglx@linutronix.de>, 
+	Christoph Hellwig <hch@lst.de>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	John Garry <john.g.garry@oracle.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, Kashyap Desai <kashyap.desai@broadcom.com>, 
+	Sumit Saxena <sumit.saxena@broadcom.com>, Shivasharan S <shivasharan.srikanteshwara@broadcom.com>, 
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>, Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>, 
+	Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>, Nilesh Javali <njavali@marvell.com>, 
+	GR-QLogic-Storage-Upstream@marvell.com, Jonathan Corbet <corbet@lwn.net>, 
+	Frederic Weisbecker <frederic@kernel.org>, Mel Gorman <mgorman@suse.de>, Hannes Reinecke <hare@suse.de>, 
+	Sridhar Balaraman <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	linux-scsi@vger.kernel.org, virtualization@lists.linux.dev, megaraidlinux.pdl@broadcom.com, 
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v3 15/15] blk-mq: use hk cpus only when isolcpus=io_queue
+ is enabled
+Message-ID: <ba8a2ccd-1893-42e1-8ed9-dde6c43a2c95@flourine.local>
+References: <20240806-isolcpus-io-queues-v3-0-da0eecfeaf8b@suse.de>
+ <20240806-isolcpus-io-queues-v3-15-da0eecfeaf8b@suse.de>
+ <ZrY0jp7S0Xnk9VUw@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,35 +116,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZrtHz1aY_Lf_XIsL@smile.fi.intel.com>
+In-Reply-To: <ZrY0jp7S0Xnk9VUw@fedora>
+X-Spam-Score: -3.01
+X-Rspamd-Queue-Id: 51CB6203A9
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[34];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.dk,kernel.org,grimberg.me,linutronix.de,lst.de,oracle.com,redhat.com,broadcom.com,marvell.com,lwn.net,suse.de,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,lists.linux.dev,microchip.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLbomrtoisjzkgzhj6iko5ju7u)];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Tue, Aug 13, 2024 at 02:47:27PM +0300, Andy Shevchenko wrote:
-> On Tue, Aug 13, 2024 at 02:23:13PM +0300, Raag Jadav wrote:
-> > On Fri, Aug 09, 2024 at 02:48:08PM +0300, Andy Shevchenko wrote:
-> > > On Fri, Aug 09, 2024 at 11:45:25AM +0530, Raag Jadav wrote:
-> 
-> ...
-> 
-> > > > +	/*
-> > > > +	 * HW register value is accumulated count of pulses from
-> > > > +	 * PWM fan with the scale of 2 pulses per rotation.
-> > > > +	 */
-> > > > +	rotations = pulses >> 1;
-> > > 
-> > > In accordance with the comment the
-> > > 
-> > > 	rotations = pulses / 2;
-> > > 
-> > > looks better.
-> > 
-> > This change seems to cause a build error in v5.
-> > Something to do with __udivdi3 on i386.
-> 
-> No, it's not this change.
-> Please, read report carefully.
+On Fri, Aug 09, 2024 at 11:23:58PM GMT, Ming Lei wrote:
+> From above implementation, "isolcpus=io_queue" is actually just one
+> optimization on "isolcpus=managed_irq", and there isn't essential
+> difference between the two.
 
-CI seems to point to DIV_ROUND_UP(), but it's been there since v1.
-So not sure if I entirely understand.
+Indeed, the two versions do not differ so much. I understood, that you
+really want to keep managed_irq as it currently is and that's why I
+thought we need io_queue.
 
-Raag
+> And I'd suggest to optimize 'isolcpus=managed_irq' directly, such as:
+> 
+> - reduce nr_queues or numgrps for group_cpus_evenly() according to
+> house-keeping cpu mask
+
+Okay.
+
+> - spread house-keeping & isolate cpu mask evenly on each queue, and
+> you can use the existed two-stage spread for doing that
+
+Sure if we can get the spreading sorted out so that not all isolcpus are
+mapped to the first hctx.
+
+Thanks,
+Daniel
 
