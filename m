@@ -1,158 +1,136 @@
-Return-Path: <linux-kernel+bounces-285219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300F8950AC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:50:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36AA950A26
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 18:29:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE64CB25B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:50:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83BAC284080
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 16:29:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96201A2557;
-	Tue, 13 Aug 2024 16:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A2A41A2C10;
+	Tue, 13 Aug 2024 16:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b="f17/iu+2"
-Received: from smtp.emenem.pl (cmyk.emenem.pl [217.79.154.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GKfvfuCY"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E28E1EA84;
-	Tue, 13 Aug 2024 16:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.79.154.63
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE201A2573;
+	Tue, 13 Aug 2024 16:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723567805; cv=none; b=UzQ2ycveQq6dizyBtVzlx+QvQZlunIBlaROn4q0c8NQ+oKsjmELLSbOBR6pgYEHScBj5AS2uPmOPEpawHHJ2vpNx0TeMiYFxPolFDtTowdHCALuiN0uxNl07GJA9yWeiK8NCmQ1+Y76ug118+WOM5l/d723m8YdwI4yLcffSDu4=
+	t=1723566551; cv=none; b=AZd/vat//BsYi3FjUklLyvsqedWSbHbANYzlOSY2lBeJbUi7pRwD6VuHyqeRpvMTUQWLPsu9uzhWpy72sSFsm1Yzojz7q8HQXbLp3pP4CcIw3EyBBbiNGGLUWxR1SWevmF4NzxgdKBKPrFZno/Z2Vo1EPUKuI2PTjEhRgqllu1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723567805; c=relaxed/simple;
-	bh=7FlvYxm1sHKssvEviLrXCVI4tO2CdU5hnY4jPFNEJ1w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M67scf+k4q4g2vHcBQtXxHhsqv22nSkjJE/qW3hfA4pkhzqcSCLJC3QtZfXSaenQfLRBVfN6LA02gdxpP+Lm6XNi1HloieDVR8C/NKTtTZ4d0O9H9Nvw6IOrtvN3sCrPl6ftTVmgDOGf/rFY2DBcD4N6Jn/AD6BVFRbDPgT3FG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl; spf=none smtp.mailfrom=ans.pl; dkim=pass (1024-bit key) header.d=ans.pl header.i=@ans.pl header.b=f17/iu+2; arc=none smtp.client-ip=217.79.154.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ans.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ans.pl
-X-Virus-Scanned: amavisd-new at emenem.pl
-Received: from [192.168.1.10] (c-98-45-176-131.hsd1.ca.comcast.net [98.45.176.131])
-	(authenticated bits=0)
-	by cmyk.emenem.pl (8.17.1.9/8.17.1.9) with ESMTPSA id 47DGSkN1013361
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 13 Aug 2024 18:28:48 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ans.pl; s=20190507;
-	t=1723566531; bh=u/YKptwkKOxxpGKP2ofGDqmwMq4DvqlrFcaZ5HKAMeM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=f17/iu+2VneCVljPaWJBKMjd+pKkkGXP7pZbtGarKFGJxwnzi2P+LNG6dzfxQTuGo
-	 LeLQ0ZE4ytKGtETliwD69hA2xQLz+wsRuN2Cl6uoN1n69p4jJv1ZAQ7qRJ5hSduotw
-	 T8lDgmnv7xgJAL1e2hTndnA1FkhYyYztAmErhI8U=
-Message-ID: <9479fe4e-eb0c-407e-84c0-bd60c15baf74@ans.pl>
-Date: Tue, 13 Aug 2024 09:28:44 -0700
+	s=arc-20240116; t=1723566551; c=relaxed/simple;
+	bh=wTHMksnShasaMu0YkQx+byCye7Bb9rVvVk7DsdGChvI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGgj/m/HsfshW5j5iFI4V4AHDX7fAQJ0uKHRjgVbNfO0LtYh8JaN4bHToXaAmuooXxkqm9f8GgPh1HIAiUSaLe+XXxVtv5CxLeuJM4TvrWRfkDBB/SBtu+1gXyO8B7qeEscbhYphvdzPR/mz3IbGlWd0Ep2bCV3ZkfTlEuLLuII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GKfvfuCY; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-428fb103724so160225e9.1;
+        Tue, 13 Aug 2024 09:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723566548; x=1724171348; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dHZnlrhN2AES2SquLcRLOECxi9CzRlchk7IVnfUTEhs=;
+        b=GKfvfuCY4JJ1mcQIhA97CdpG+wWNWkIDz6loxlZxpPIpzMWGCak33/7iiqXozjSYEL
+         p/39GslQWsbw61CuyHrDhhgVhw9PL+7tPxHj+KHuziNnPn9FHjgph3ZtmyT5lyVAEbtc
+         291gkB9X69/nD5YksFFyh9XpmLBxXc9px0UgNzA/nnn660jh8/XGGpwO12UCxYPd25rd
+         yxVlwOlyA2jD79IwVL6KoNQsXhPTWYgYZXQXR/L/OM3Q8OC/47U+coRPtx2YqvQUtS6B
+         1liCWSuPFLAXgrXHPusqa20P1xDCDVToph5NZR/bwK963D8Xob+ODlwXFsqNZhLCfU6k
+         xgRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723566548; x=1724171348;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dHZnlrhN2AES2SquLcRLOECxi9CzRlchk7IVnfUTEhs=;
+        b=OgAk/20j6+fO//Ap31LnnmDxfkhcxu2547H427wA1Izm4OcktSqbDirEpLh5Xw+oOp
+         TUUVATSD5il8DkXS+SKZApMp7M2Wf2lNCz+qtrQMcr1wMGnGunsUe4QtBAnIGTociRv1
+         zdU/6GXeInh3Qi77FJVcsmBySAnfRShd6JDRPaJdYmpM7uSzwYVYBHRkxBCM/aLRsSF1
+         pd0+j0ETrodc3jqLJEloR+PxXUivz6GOUTdz/2qKzSI+9/2rAXaSSKUIl+Lb+V+xhqCy
+         R6aZpX7VviUVm2nCKD2BDgPHWTBupS1h/Lpm5Nu7W4BH13io6mBS7WdxSy/IMW76Sf1Z
+         nzog==
+X-Forwarded-Encrypted: i=1; AJvYcCVgivwUTXKIeYZmTn6eyV5GExVhkWeNalM0iDn20DUoLRP/RA8TAr5NbZGTjB9We1xAYnklpsqf2vUutmflENGolLQldFO0zX8xCv0F3ybfrjyyjN/jbQLQ9wzHSOFoUrj6GjcLjpsZS9gnfPkv2goFPi2idY7YmETnP+H9VqtXqLjM
+X-Gm-Message-State: AOJu0YyfvS785RvpKxpWBzdn7b9kMSqEJEYDg4XhXrF1u3vl2yRLJvpD
+	ODv8FVh3ib2iDQkDIYyL+9Pyu9wcorXnUv2nl3kUas52rDl98R9GazivoVADMk7UXZMsp8Y8Co7
+	/5ObXMBeeR9pDnPCawCg7VI8/2R0=
+X-Google-Smtp-Source: AGHT+IEH6RWi44HaYQZCtjAKZvTHcH6VPvbJHSFdtTUFD5tvlEOWaGUQvp5fgB7LeQzj0zd7GSq7omX92zNzaIeDwsc=
+X-Received: by 2002:a05:600c:470f:b0:426:5e32:4857 with SMTP id
+ 5b1f17b1804b1-429dcfe4b40mr2984495e9.0.1723566548086; Tue, 13 Aug 2024
+ 09:29:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal sensor
- in the SPD case" - "sysfs: cannot create duplicate filename"
-To: Heiner Kallweit <hkallweit1@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: stable@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
- <3365237d-5fb7-4cbd-a1c0-aff39433f5c2@gmail.com>
- <be8eb641-a16d-4fc5-b4cc-35c663c37df7@ans.pl>
- <55445bee-03c6-4725-8b1d-5f656018a8af@ans.pl>
- <93f1b363-9d1e-4d18-991f-b85e7ec0cfb0@gmail.com>
-From: =?UTF-8?Q?Krzysztof_Ol=C4=99dzki?= <ole@ans.pl>
-Content-Language: en-US
-In-Reply-To: <93f1b363-9d1e-4d18-991f-b85e7ec0cfb0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20240813151752.95161-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240813151752.95161-2-thorsten.blum@toblux.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 13 Aug 2024 09:28:56 -0700
+Message-ID: <CAADnVQKEgG5bXvLMLYupAZO6xahWHU7mc06KFfseNoYUvoJbRQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: Annotate struct bpf_cand_cache with __counted_by()
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 03.08.2024 at 10:19, Heiner Kallweit wrote:
-> On 23.07.2024 16:12, Krzysztof Olędzki wrote:
->> On 06.07.2024 at 18:42, Krzysztof Olędzki wrote:
->>> On 02.07.2024 at 13:25, Heiner Kallweit wrote:
->>>> On 23.06.2024 20:47, Krzysztof Olędzki wrote:
->>>>> Hi,
->>>>>
->>>>> After upgrading kernel to Linux 6.6.34 on one of my systems, I noticed "sysfs: cannot create duplicate filename" and i2c registration errors in dmesg, please see below.
->>>>>
->>>>> This seems to be related to https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=4d5ace787273cb159bfdcf1c523df957938b3e42 - reverting the change fixes the problem.
->>>
->>> <CUT>
->>>
->>>>
->>>> Could you please test whether the attached two experimental patches fix the issue for you?
->>>> They serialize client device instantiation per I2C adapter, and include the client device
->>>> name in the check whether a bus address is busy.
->>>
->>> Sadly, they crash the kernel.
->>>
->>> I will get serial console attached there next week, so will be able to capture the full crash.
->>> For now, I was able to obtain a photo. I'm very sorry for the quality, just wanted to provide
->>> something for now.
->>
->> Sorry it took me so long - my attempts to coordinate setting up serial console
->> were not successful, so it had to wait for me to go there in person...
->>
->> I have attached complete dmesg, summary:
->>
->> [   10.905953] rtmutex deadlock detected
->> [   10.909959] WARNING: CPU: 5 PID: 83 at kernel/locking/rtmutex.c:1642 __rt_mutex_slowlock_locked.constprop.0+0x10f/0x1a5
->> [   10.920961] CPU: 5 PID: 83 Comm: kworker/u16:3 Not tainted 6.6.34-o5 #1
->> [   10.929970] Hardware name: Dell Inc. PowerEdge T110 II/0PM2CW, BIOS 2.10.0 05/24/2018
->> [   10.938954] Workqueue: events_unbound async_run_entry_fn
->>
->>
->> [   11.336954] BUG: scheduling while atomic: kworker/u16:3/83/0x00000002
->> [   11.342953] Preemption disabled at:
->> [   11.342953] [<0000000000000000>] 0x0
->> [   11.350953] CPU: 5 PID: 83 Comm: kworker/u16:3 Tainted: G        W          6.6.34-o5 #1
->> [   11.361954] Hardware name: Dell Inc. PowerEdge T110 II/0PM2CW, BIOS 2.10.0 05/24/2018
->> [   11.369953] Workqueue: events_unbound async_run_entry_fn
->>
-> Thanks a lot for the comprehensive info. Reason for the deadlock is that calls to
-> i2c_new_client_device() can be nested. So another solution approach is needed.
-> I'd appreciate if you could test also the new version below.
+On Tue, Aug 13, 2024 at 8:19=E2=80=AFAM Thorsten Blum <thorsten.blum@toblux=
+.com> wrote:
+>
+> Add the __counted_by compiler attribute to the flexible array member
+> cands to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> CONFIG_FORTIFY_SOURCE.
+>
+> Increment cnt before adding a new struct to the cands array.
 
-The patch did not apply cleanly for Linux-6.6, so I had to tweak it a little
-bit for the include/linux/i2c.h part, but it does seem to work. Everything
-gets detected and there are no warning / errors:
+why? What happens otherwise?
 
-
-[    8.311414] i2c i2c-12: 4/4 memory slots populated (from DMI)
-[    8.314112] at24 12-0050: 256 byte spd EEPROM, read-only
-[    8.314856] i2c i2c-12: Successfully instantiated SPD at 0x50
-[    8.317513] at24 12-0051: 256 byte spd EEPROM, read-only
-[    8.318252] i2c i2c-12: Successfully instantiated SPD at 0x51
-[    8.320909] at24 12-0052: 256 byte spd EEPROM, read-only
-[    8.322126] i2c i2c-12: Successfully instantiated SPD at 0x52
-[    8.325538] at24 12-0053: 256 byte spd EEPROM, read-only
-[    8.326789] i2c i2c-12: Successfully instantiated SPD at 0x53
-
-# sensors|grep -A2 jc42
-jc42-i2c-12-19
-Adapter: SMBus I801 adapter at 3000
-temp1:        +36.5°C  (low  =  +0.0°C)
---
-jc42-i2c-12-1b
-Adapter: SMBus I801 adapter at 3000
-temp1:        +35.0°C  (low  =  +0.0°C)
---
-jc42-i2c-12-1a
-Adapter: SMBus I801 adapter at 3000
-temp1:        +36.0°C  (low  =  +0.0°C)
---
-jc42-i2c-12-18
-Adapter: SMBus I801 adapter at 3000
-temp1:        +36.5°C  (low  =  +0.0°C)
-
-Feel free to add:
-Tested-by: Krzysztof Piotr Oledzki <ole@ans.pl>
-
-Thanks,
- Krzysztof
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  kernel/bpf/btf.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 520f49f422fe..42bc70a56fcd 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -7240,7 +7240,7 @@ struct bpf_cand_cache {
+>         struct {
+>                 const struct btf *btf;
+>                 u32 id;
+> -       } cands[];
+> +       } cands[] __counted_by(cnt);
+>  };
+>
+>  static DEFINE_MUTEX(cand_cache_mutex);
+> @@ -8784,9 +8784,9 @@ bpf_core_add_cands(struct bpf_cand_cache *cands, co=
+nst struct btf *targ_btf,
+>                 memcpy(new_cands, cands, sizeof_cands(cands->cnt));
+>                 bpf_free_cands(cands);
+>                 cands =3D new_cands;
+> -               cands->cands[cands->cnt].btf =3D targ_btf;
+> -               cands->cands[cands->cnt].id =3D i;
+>                 cands->cnt++;
+> +               cands->cands[cands->cnt - 1].btf =3D targ_btf;
+> +               cands->cands[cands->cnt - 1].id =3D i;
+>         }
+>         return cands;
+>  }
+> --
+> 2.46.0
+>
 
