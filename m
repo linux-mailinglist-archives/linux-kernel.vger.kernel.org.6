@@ -1,116 +1,132 @@
-Return-Path: <linux-kernel+bounces-285118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-285119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FE8950993
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:56:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4320950996
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 17:57:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5491F22FB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:56:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D50A61C20FCC
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2024 15:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE621A08AB;
-	Tue, 13 Aug 2024 15:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098B01A08C4;
+	Tue, 13 Aug 2024 15:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EBya9z8z"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MtwF/Z4i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF41A08A6;
-	Tue, 13 Aug 2024 15:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443742AF0D;
+	Tue, 13 Aug 2024 15:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723564613; cv=none; b=ejJcSD+H+QKMEg9lBizwAMoVyXngR7FSkERSIY3nVzWz05vndyzYYnkLOHGOicXFFGQKXGt4yRKeRGVA65dA0i4sGlvzIVmTPGAo8SUjZ/pPF1HqQ+1ueBg87QaTKfH7Kaz7vCcO5EHOekPZk+x8wq4nQKASq9xwiLvDKeQ17ec=
+	t=1723564658; cv=none; b=alEb6hIjSqfSKkW629AZTCEwODpUr4O3x+RIuogl/AzlloP7PNBbXGiKChnzsBNGzPF6SFI8Xp+EQO2QaQlz2EkkeGU7lZsil9Alo70z4ZSlwu2Spl+w2t/+QxCf3Y/pegShkbXy1zBUbTmaq+kbLdDLY9PNuKgKLoZHWQ1jxug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723564613; c=relaxed/simple;
-	bh=ngc1hLOMkQFWBcGLsLCn+/86MLQuNCme09RUqmCXKe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=awRzDZnBhe0fSppZYX/iVSPe9pJYrKA7dS6dlWjrBA806oFUUBK61zfMj6Yo1DobJfSQQMkiqcDxLo0DfnOkDx3iclCB16uyBwXjuFxagO5k4QnpAjGlgcA/LX0De0mG8vv+CNNfFEfojLV27P4jefSARiu1lvoMucrQoRN6R38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EBya9z8z; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-49294bbd279so2353620137.0;
-        Tue, 13 Aug 2024 08:56:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1723564611; x=1724169411; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BIk7K7uDNXRgkjiz9GrUCqEfmLUY/1vRneZ0qMbh0tA=;
-        b=EBya9z8zLxyKIhlKpP+spT0t1Xy3NzRIfX9JoRH23/zYiFXawzF/vIDX/W9qQ2qlyP
-         Zck08ip2WPYWdLSVBkfpP9V7maNPqu5HJSWR8uonSb9GhLy3g4SpP9ig8mUSxni6ch4Q
-         oMCfalYV3exGDyPtBvbg4ZrA7eWonWQfFHZS+KhKKU7QcQVvs9C3/42+2KWVnQpP/oio
-         Dwycwl/FPxEtcuToUQa5HukCUNCvqDGG67e6S2Ug8TZUriWGeW8tierCKyWyqSr9u9F0
-         JlIfqrbyjzRwXBiYWL//bzyjBJtYLPyvvOd+oxM1yh5sNqqywf96nNWr1xvlturYtcnD
-         bOrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723564611; x=1724169411;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BIk7K7uDNXRgkjiz9GrUCqEfmLUY/1vRneZ0qMbh0tA=;
-        b=aw94IhhL3pCsFV2pKLqSugOtcFfzuXWv+YVwdDAP3pRwlhdfwFA+Y0UYDI3hkZY+Hy
-         cdl6q3WlZewPFSEFRFuYxKNH3RXVP/+vfMc0XROQx8ayI6637np36RiCNfjt1LF6Zm/7
-         23dVlqalEiEHZ/upkHbMGV6+WpzwsIkLBNZ/+/+4xn4UaWPsIXvMoCQCYyhtWll5CvJp
-         tvkdqhttLzJnRKjmvbJP41YzafS32F8ymvFn+JIR2ZTM/hP1l+ytNlXqGB65w38Qwao6
-         8DzBYYcx8jjQkQxTR2JJPNnyeX8LwwSAQN1yiEMRHJUqiX7jXsKMA2X0ss4Qo+2y7xqS
-         QpPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWhrcAGmdufBiI9uWFskbhO/BRllFzpXkZks+YLTHxlg8vPdXTBvfNL/Q9aerlQYcvTOWcoyr8rSHGROb95fY4PX6ee2NlsJ7OB1z3m
-X-Gm-Message-State: AOJu0Yw6Ms11kQhSrdpvhIAV3/He9qLMk1d2tf38bepbE6cgPcysrPdu
-	KWEPKlBoJsdyyJqU4J1Q/9hc/Okgid1vo7xEal5TcW/M6OytiV+BowOdeSDU
-X-Google-Smtp-Source: AGHT+IGNH6iBSXfO0StwAXfg50vBUBsYFAR6PIRZfKq+usqod4RU29+6tWbpTj4SvrdW0RikylD4LA==
-X-Received: by 2002:a05:6102:5127:b0:48f:db3d:593e with SMTP id ada2fe7eead31-4975990e708mr168236137.14.1723564611095;
-        Tue, 13 Aug 2024 08:56:51 -0700 (PDT)
-Received: from fedora.. ([2800:e6:4001:fca7:b7e8:4418:a953:72f2])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-49709fa31f7sm1089283137.26.2024.08.13.08.56.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2024 08:56:50 -0700 (PDT)
-From: =?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-To: linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	=?UTF-8?q?Juan=20Jos=C3=A9=20Arboleda?= <soyjuanarbol@gmail.com>
-Subject: [PATCH v2] ALSA: usb-audio: Support Yamaha P-125 quirk entry
-Date: Tue, 13 Aug 2024 10:56:53 -0500
-Message-ID: <20240813155653.35203-1-soyjuanarbol@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1723564658; c=relaxed/simple;
+	bh=z3i387JAO9gcZOh6PxBYRgTtfMQNGrcehBlbd38lPbc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=gjfRVvZrqTjJM+HDlGbgdvkao42zvLFrxVxRDO31w0TL45mL8L3qPneXrGAkEHMwzyV5aK4tMcyRlcQdqHYyVtIdK+qVr4KUS0741EaSrE2+TyTBDVLtk2oJ02P8LeRB1+aHdDkWhCdwwHyFtIo4dLjiojgQ6j4sRv6xs2hKmBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MtwF/Z4i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59640C4AF09;
+	Tue, 13 Aug 2024 15:57:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723564657;
+	bh=z3i387JAO9gcZOh6PxBYRgTtfMQNGrcehBlbd38lPbc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=MtwF/Z4iHI0Yfl8aqv6a1g2hzDd7v2D6v5F69lB1bGI1QVX1Big89it1oxQk3T8Li
+	 Eqz0HTxaPthrnMcqGw+DDt97Vu1a0m1u5M0qTHsltPFpK6CdxTX/Ptoc+pAbt8MJL4
+	 zxTmRUu6uuSoe2LBL9BNSd4ArOkrqBdth79VgVl2NAS0r+LxfSjPJE8XxUozd18wpP
+	 X08sE8sTTu3s5Ed4tMyH9RjJrPkXVzz1mkxyprAn9uIHQtjTbW1tYmma1xPcTC75Xz
+	 DOQNqvgLBCUzxkf1M9qj8krM8xG9IecRFRs7f6n5YkzqY1miXLAeUy8zFo/Zbw5RPT
+	 lvJQalt8urYxg==
+Message-ID: <703979cd-c189-41c0-a61c-eb7e90e225e6@kernel.org>
+Date: Tue, 13 Aug 2024 17:57:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] iio: imu: smi240: imu driver
+To: Jianping.Shen@de.bosch.com, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dima.fedrau@gmail.com, marcelo.schmitt1@gmail.com,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Christian.Lorenz3@de.bosch.com,
+ Ulrike.Frauendorf@de.bosch.com, Kai.Dolde@de.bosch.com
+References: <20240809111635.106588-1-Jianping.Shen@de.bosch.com>
+ <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240809111635.106588-3-Jianping.Shen@de.bosch.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-This patch adds a USB quirk for the Yamaha P-125 digital piano.
+On 09/08/2024 13:16, Jianping.Shen@de.bosch.com wrote:
+> +
+> +MODULE_AUTHOR("Markus Lochmann <markus.lochmann@de.bosch.com>");
+> +MODULE_AUTHOR("Stefan Gutmann <stefan.gutmann@de.bosch.com>");
+> +MODULE_DESCRIPTION("Bosch SMI240 driver");
+> +MODULE_LICENSE("Dual BSD/GPL");
 
-Signed-off-by: Juan José Arboleda <soyjuanarbol@gmail.com>
----
-Hey! Thanks for taking the time to review my patch.
+Let's be clear here: if you bothered to look at your module, you would
+see that it is duplicated. I judged by code review and questioned it.
+This should lead you to double and triple check. But instead of
+double-checking, you engage in long discussion with reviewer. Sorry,
+that's wasting my time. Your job is to check it, if you got comments on
+this, not mine.
 
-Attending your sorting by id suggestion, I've moved the P-125 to the
-bottom.
+Please carefully read upstreaming guides/presentations and which
+mistakes to avoid. Hint: wasting reviewer's time.
 
-Regards,
--Juan
----
- sound/usb/quirks-table.h | 1 +
- 1 file changed, 1 insertion(+)
+NAK.
 
-diff --git a/sound/usb/quirks-table.h b/sound/usb/quirks-table.h
-index f13a8d63a019..24e6f68e2f1e 100644
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -239,6 +239,7 @@ YAMAHA_DEVICE(0x1030, "PSR-295/293"),
- YAMAHA_DEVICE(0x1031, "DGX-205/203"),
- YAMAHA_DEVICE(0x1032, "DGX-305"),
- YAMAHA_DEVICE(0x1033, "DGX-505"),
-+YAMAHA_DEVICE(0x1718, "P-125"),
- YAMAHA_DEVICE(0x1034, NULL),
- YAMAHA_DEVICE(0x1035, NULL),
- YAMAHA_DEVICE(0x1036, NULL),
--- 
-2.46.0
+Best regards,
+Krzysztof
 
 
